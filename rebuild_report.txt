@@ -1,0 +1,9 @@
+PID | full_bytes | open/close | $left | hero2col | menu | bodyOK | dollar_edits
+39 | 6129 | 2/2 OK | 0 | True | True | True | []
+40 | 5313 | 2/2 OK | 0 | True | True | True | []
+41 | 6115 | 2/2 OK | 0 | True | True | True | []
+42 | 6105 | 2/2 OK | 0 | True | True | True | []
+86 | 6126 | 2/2 OK | 0 | True | True | True | []
+88 | 6143 | 2/2 OK | 0 | True | True | True | []
+90 | 4518 | 2/2 OK | 0 | True | True | True | []
+121 | 5351 | 2/2 OK | 0 | True | True | True | []
