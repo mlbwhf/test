@@ -1,6 +1,21 @@
 # Agile Agilist GEO/LLM-SEO Optimization Manifest
 _Generated offline due to WPCOM API rate-limit. Paste these sections into wp-admin Gutenberg editor on the corresponding pages, or push via WPCOM MCP when API clears._
 
+## Live page-ID map (verified via WPCOM read, 2026-06-01, site 247366622)
+Open each page directly at `wp-admin/post.php?post=<ID>&action=edit`. **Do not trust the old handover ID list** — several entries there point to trashed draft clones (e.g. handover "SPC = 24776" is a trashed clone; the live SPC is 1914).
+
+| Manifest section | Live page title | **Page ID** | URL |
+|---|---|---|---|
+| Homepage | Home | **961** (slug `trusted-by-enterprises`) | https://agile-agilist.com/ |
+| APM | Agile Product Management (APM) | **3605** | /training/adv-safe/apm/ |
+| RTE | SAFe Release Train Engineer (RTE) | **1917** | /training/adv-safe/rte/ |
+| LPM | SAFe Lean Portfolio Management (LPM) | **1928** | /training/adv-safe/lpm/ |
+| ASPC | Advanced SAFe Practice Consultant (ASPC) | **1835** | /training/adv-safe/aspc/ |
+| SPC | Implementing SAFe with SPC | **1914** | /training/adv-safe/spc/ |
+| Leading SAFe (SA) | Leading SAFe (SA) Certification | **24467** (slug `sa`) | /training/safe/sa/ |
+
+Parent hub for the adv-safe children = **5373** (`/training/adv-safe/`). Blog index = **7156** (`/blogs/`).
+
 ## How to apply
 1. Open the target page in WordPress admin → Edit
 2. Switch to Code editor view (3-dot menu → Code editor)
