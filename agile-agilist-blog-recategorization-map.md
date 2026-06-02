@@ -1,4 +1,5 @@
 # Blog Recategorization Map — 44 Uncategorized Posts
+> ✅ **EXECUTED & VERIFIED 2026-06-02** — all 44 posts recategorized via MCP; `Uncategorized` count is now **0**. New distribution: Agile 35 · AI 56 · Digital Transformation 61 · Executive Coaching 61 · Innovation 43.
 _Live pull 2026-06-02 (category 1 = Uncategorized, count 44). Target categories: AI(83), Agile(84), Executive Coaching(85), Digital Transformation(86), Innovation(100). Action: add the primary category, remove cat 1. Posts already carrying real categories keep them; just drop Uncategorized._
 
 | ID | Title | → Primary category |
