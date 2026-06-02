@@ -1,34 +1,32 @@
-# Per-Page SEO Titles & Meta Descriptions (competitor-researched)
-_Based on page-1 competitor title patterns (Scaled Agile, KnowledgeHut, Simpliaxis, Global Knowledge, Agilemania, etc.), 2026-06._
+# Agile Agilist — SEO Titles & Meta Descriptions (competitor-researched)
+_Source: live SERP analysis of scaledagile.com, KnowledgeHut, Simplilearn, StarAgile, Simpliaxis, et al. (2026-06)._
 
-> ⚠️ **How to apply:** AIOSEO stores SEO title/description in its own DB table, **not** in REST-writable post meta — so these **cannot be pushed via the WPCOM MCP**. Apply each in **wp-admin → edit page → AIOSEO sidebar → Title / Meta Description**. (Do *not* change the WordPress page title/H1 for this — that's the wrong field and can affect the URL/nav.)
+> ✅ **Correction to an earlier note:** this site uses **Jetpack SEO**, not AIOSEO. The page meta exposes `jetpack_seo_html_title` (SEO title) and `advanced_seo_description` (meta description) as **REST/MCP-writable fields**. So these CAN be pushed via the WPCOM MCP — small, safe, reversible 2-field writes per page. (Do NOT change the WordPress page title/H1 for this.)
 
-## Competitor patterns that shaped these
-- **Acronym-in-parentheses is universal** — include both spelled-out name + acronym (Google matches both).
-- **`Primary Keyword | Brand`** pipe pattern dominates page 1.
-- **"Certification" + "Training"** are the two highest-intent modifiers.
-- **AI angle is under-contested** — Scaled Agile itself now uses "AI-Empowered/AI-Native"; this is Agile Agilist's differentiator (AI-Native + Gold/SPCT).
-- **Location is a separate SERP** — don't cram "Toronto" into course titles; build dedicated geo pages instead.
+## Competitor patterns observed
+- **Course-name-first titles win** — exact credential string at the front, brand after a pipe.
+- **Dual-keyword titling** — pack both the formal course name ("Leading SAFe") and the acronym ("SAFe Agilist") since users search both.
+- **"AI-Empowered / AI-Native" is now the official differentiator** — Scaled Agile itself titles pages this way.
+- **Toronto/Canada geo cluster is under-contested** — no SAFe Gold Partner owns it. Clear opening.
 
-## The 7 pages (char counts in brackets)
+## Per-page recommendations
 
-| # | Page (ID) | SEO Title | Meta Description | Primary keyword |
+| Page | ID | SEO Title (≤60) | Meta Description (≤155) | Primary keyword |
 |---|---|---|---|---|
-| 1 | Homepage (961) | `SAFe Gold Partner & SPCT-Led Training \| Agile Agilist` [54] | SAFe Gold Partner delivering AI-Native, SPCT-led SAFe certification & enterprise transformation across Toronto & North America. Book a consult. [142] | SAFe Gold Partner |
-| 2 | ASPC (1835) | `ASPC Certification: Advanced SAFe Consultant \| Agilist` [52] | Earn your Advanced SAFe Practice Consultant (ASPC) certification with SPCT-led, AI-empowered training. Lead enterprise transformations. Enroll now. [146] | ASPC certification |
-| 3 | SPC (1914) | `SPC Certification: Implementing SAFe Training \| Agilist` [54] | Get SAFe Practice Consultant (SPC) certified via SPCT-led Implementing SAFe training. Become a certified change agent. Reserve your seat today. [141] | SPC certification |
-| 4 | RTE (1917) | `RTE Certification: SAFe Release Train Engineer \| Agilist` [55] | SAFe Release Train Engineer (RTE) certification with AI-empowered, SPCT-led training. Master PI Planning & ART facilitation. Enroll today. [137] | SAFe RTE certification |
-| 5 | LPM (1928) | `LPM Certification: SAFe Lean Portfolio Mgmt \| Agilist` [53] | SAFe Lean Portfolio Management (LPM) certification training, SPCT-led. Align strategy, funding & execution to value. Book your LPM course now. [140] | SAFe LPM certification |
-| 6 | APM (3605) | `APM Certification: SAFe Agile Product Mgmt \| Agilist` [52] | SAFe Agile Product Management (APM) certification with SPCT-led training. Master design thinking & product strategy. Enroll in your APM course. [140] | SAFe APM certification |
-| 7 | Leading SAFe (24467) | `Leading SAFe: SAFe Agilist (SA) Certification \| Agilist` [55] | Get SAFe Agilist (SA) certified with AI-empowered Leading SAFe training. 2-day SPCT-led course + exam. Lead Lean-Agile transformation. Enroll. [140] | Leading SAFe / SAFe Agilist |
+| Homepage | 961 | `SAFe Gold Partner & AI-Native Training \| Agile Agilist` | `SPCT-led SAFe certification & enterprise transformation. AI-Native SAFe from a Gold Partner serving Toronto, Canada & North America. Book now.` | SAFe Gold Partner |
+| ASPC | 1835 | `Advanced SAFe Practice Consultant (ASPC) Cert \| Agile Agilist` | `Earn your ASPC certification with SPCT-led, AI-driven training for senior SPCs. Lead large-scale SAFe transformations. Reserve your seat today.` | Advanced SAFe Practice Consultant (ASPC) certification |
+| SPC | 1914 | `Implementing SAFe® with SPC Certification \| Agile Agilist` | `Become a SAFe Practice Consultant. 4-day SPCT-led Implementing SAFe course + exam. Lead Agile transformation in Toronto & North America. Enroll.` | SPC certification / Implementing SAFe |
+| RTE | 1917 | `SAFe Release Train Engineer (RTE) Certification \| Agile Agilist` | `Lead Agile Release Trains & PI Planning. AI-empowered, SPCT-led RTE certification training with exam included. Toronto & North America. Book now.` | SAFe Release Train Engineer (RTE) certification |
+| LPM | 1928 | `SAFe Lean Portfolio Management (LPM) Cert \| Agile Agilist` | `Master Lean budgeting, governance & portfolio strategy. SPCT-led SAFe LPM certification with exam. Serving Toronto, Canada & the US. Enroll today.` | SAFe Lean Portfolio Management (LPM) certification |
+| APM | 3605 | `SAFe Agile Product Management (APM) Cert \| Agile Agilist` | `Lead product strategy, vision & roadmaps with SAFe. 3-day SPCT-led APM certification training + exam. Toronto & North America. Reserve a seat.` | SAFe Agile Product Management (APM) certification |
+| Leading SAFe (SA) | 24467 | `Leading SAFe® Certification – SAFe Agilist \| Agile Agilist` | `Earn your SAFe Agilist (SA) certification in our 2-day AI-empowered Leading SAFe course. SPCT-led, exam included. Toronto & Canada. Book today.` | Leading SAFe certification / SAFe Agilist |
 
-> **Brand-wording decision needed:** titles abbreviate brand to "Agilist" to stay ≤60 chars. To keep full "Agile Agilist", drop a descriptor word, e.g. `SPC Certification: SAFe Practice Consultant | Agile Agilist` [58].
+## High-value keyword opportunities (target with content)
+- **Cost queries:** `SAFe certification cost`, `SPC certification cost`, `RTE certification cost`, `ASPC renewal fee`
+- **Comparison (low competition):** `SPC vs ASPC`, `SAFe certification levels`, `which SAFe certification should I get`
+- **Salary magnets:** `Release Train Engineer salary`, `SAFe Agilist salary`, `SPC salary`
+- **Geo (clearest opening):** `SAFe training Toronto`, `Leading SAFe Canada`, `SAFe certification Canada` → build dedicated `/toronto` + `/canada` landing pages
+- **Differentiators:** `AI-Native SAFe`, `SPCT-led SAFe training`, `SAFe Gold Partner`
 
-## High-value keyword opportunities (competitors rank, we don't)
-1. **Geo course pages** — biggest gap. Rivals run `/ca/.../toronto` URLs owning "SAFe certification Toronto/Canada". Build `/training/safe/sa/toronto/`, `.../canada/` for top courses. Strongest local-SEO moat for a Toronto Gold partner.
-2. **"SAFe certification cost"** cluster — high commercial intent, dominated by aggregators not partners. Add transparent pricing/cost FAQ blocks per course.
-3. **"SPC vs ASPC" comparison** — single comparison page funnels to both course pages (already drafted in aspc-spc-fixes.md).
-4. **"AI-Native / AI-Empowered SAFe"** — emerging, low-competition pillar/cluster opportunity.
-5. **"Implementing SAFe"** standalone keyword — ensure it's in SPC H1 + title.
-6. **"Gold SPCT Partner" / "SPCT-led"** trust terms — genuine eligibility moat (only Gold SPCT partners deliver public Implementing SAFe + RTE).
-7. **"6.0" version** modifier — add to body H1s/schema.
+## Application
+Each is a 2-field MCP write per page (`jetpack_seo_html_title`, `advanced_seo_description`) — small, safe, reversible. Ready to push on your go.
