@@ -1,59 +1,53 @@
-# Blog Index/Hub Redesign — "Most-Read" + SEO Design Spec
-_Pairs with agile-agilist-blog-consolidation-design.md (taxonomy/dedupe). This doc = the new front-end design. Site: WP.com Jetpack/Atomic, ~120 posts, 5 categories._
+# Blog Index / Hub — SEO Design Spec (Most-Read surfacing)
+_agile-agilist.com (WordPress, Jetpack/Atomic) · ~120 posts · 5 categories. Pairs with agile-agilist-blog-consolidation-design.md (taxonomy/dedupe). Goal: surface MOST-READ posts + 2025–2026 SEO best practice._
 
-## 1. "Most Popular" surfacing strategy
-**Two-tier model** (HubSpot's editorial + data pattern):
+## 1. "Most Popular" surfacing — hybrid model
+**Primary data source: Jetpack Stats "Top Posts & Pages" block** (you already run Jetpack — real pageview data, no extra plugin/queries).
+- Caveat: Jetpack Top Posts lags a few hours and is volatile on short windows for a 120-post B2B blog.
 
-| Tier | Source | Why |
+**Recommended: hybrid (curated hero + auto trending)** — what HubSpot/Ahrefs effectively do (their "popular" lists are curated from analytics, not raw auto-feeds):
+
+| Strip | Source | Why |
 |---|---|---|
-| Real popularity | **Jetpack Stats → Top Posts & Pages**, 30-day window | Already on the Atomic stack; server-side; **no per-view DB writes**. Use 30-day for "Most-Read This Month", all-time for "Reader Favorites". |
-| Editorial override | A `featured` tag / sticky posts | Promote strategic pillar posts even if a clickbait post out-views them. |
+| **Most Popular / Editor's Top Picks** (hero) | Manually curated, re-validated quarterly from a Jetpack Stats CSV export | Stable, keyword-rich, carries internal-link equity to your strongest evergreen pillars; no daily flicker |
+| **Trending this month** (secondary) | Jetpack Top Posts block, 30-day window, grid, 4 items | Auto-freshness, zero maintenance |
 
-Avoid view-logging plugins (WordPress Popular Posts) unless needed — they write on every request (CWV hit). Jetpack all-time list caps at top 500 (irrelevant at 120 posts).
-
-**Rule:** headline strip = 3 curated "Featured"; second strip = 6 Jetpack 30-day Top Posts.
+> Curate the hero (most link equity); automate the secondary.
 
 ## 2. Page layout (top → bottom)
-1. **Breadcrumb** — Home › Blog
-2. **Hub hero / H1** — e.g. "Insights on Agile, AI & Transformation" + 140–160-char SEO intro
-3. **Sticky category nav** — AI · Digital Transformation · Exec Coaching · Innovation · Agile + 🔍 search
-4. **Featured strip** (editorial) — 1 large + 2 small cards, "Editor's Picks"
-5. **⭐ Most-Read This Month** (Jetpack 30-day) — numbered 1–5 list or 4–6 card row
-6. **Browse by category** — 5 pillar tiles linking to `/category/…` hubs
-7. **Latest posts** — 3-col/2/1 responsive card grid
-8. **Numbered pagination** (`/blog/page/2/`) — not infinite scroll
-9. **Newsletter / CTA**
-10. **Footer internal links**
+1. Breadcrumb: Home › Blog
+2. H1 "The Agile-Agilist Blog" + 40–60-word keyword-rich intro (indexable hub context)
+3. ⭐ **Most Popular / Editor's Top Picks** — H2 + 4–5 large curated cards (the LCP zone)
+4. **Category nav** — 5 pills + "All", real `<a href>` to `/category/` archives (crawlable, not JS-only)
+5. 🔥 **Trending this month** — Jetpack Top Posts block (30-day grid, 4 items)
+6. **Latest posts** — 3-col card grid, 12/page, numbered crawlable pagination
+7. **Browse by topic** — 5 category cluster cards w/ descriptions
+8. Newsletter CTA / footer
 
-Label Featured vs Most-Read distinctly (editorial vs data). Keep hero text-led so LCP stays small.
+## 3. Card anatomy
+- 16:9 featured image (explicit width/height or `aspect-ratio` → no CLS)
+- Category pill (real `<a>` to archive) + read time (~225 wpm, round up)
+- Title as H3, descriptive keyword-rich anchor — **whole card clickable but anchor text = the title**, never "Read more"
+- 2-line custom excerpt (`-webkit-line-clamp`), hand-written for top posts
+- Author · Date; don't shrink card text below 14px
 
-## 3. Card anatomy (minimal)
-- 16:9 featured image in a fixed `aspect-ratio` box (zero CLS), WebP, `srcset`; eager only for above-fold popular strip, else `loading="lazy"`.
-- One metadata line: category pill (links to archive) · read-time (~200–230 wpm).
-- Title = H3, **the title is the crawlable anchor** (descriptive anchor text, not "read more").
-- Excerpt clamped to fixed char count (~120–160) via `-webkit-line-clamp`.
-- Whole card clickable; 16px padding; `minmax()`+`fr` grid tracks.
-
-## 4. Schema (JSON-LD)
-- **Blog hub:** `ItemList` (position-ordered visible posts) + `BreadcrumbList`; optional `CollectionPage`/`Blog` page type.
-- **Category pages:** `BreadcrumbList` (Home › Blog › AI).
-- **Posts:** `Article` + `Person` (author) + `Organization` (publisher+logo) + `BreadcrumbList`.
-- Yoast/Rank Math (or AIOSEO) emit Breadcrumb/Article automatically; **ItemList for the curated strips is the one custom dev piece** (custom block or `wp_head` hook).
+## 4. Schema markup
+- **Hub:** `CollectionPage` wrapping `ItemList` (summary format — `ListItem` = `position` + `url`).
+- **Each post:** `Article`/`BlogPosting`.
+- **Breadcrumb:** `BreadcrumbList`. Validate with Google Rich Results Test.
 
 ## 5. Internal linking & crawlability
-- Treat each **category as a pillar hub** with a real intro paragraph (not a bare archive). Clusters link up to pillar; pillars link down; siblings cross-link. Priority posts within 1–3 clicks; no orphans.
-- **Numbered pagination** with real `<a href>` (no JS-only buttons, no `#fragment`); `rel=next/prev` is deprecated — don't rely on it. Self-referencing canonical on each page; **do NOT `noindex` page 2+** (blocks crawl paths). Avoid pure infinite scroll; if "Load more", keep crawlable paginated `href` fallback.
-- Descriptive anchor text = post title/topic phrase.
+- **Pillar/cluster = your 5 categories.** Posts link up to pillar; pillar links down; 2–3 lateral links per post. 3-click rule.
+- **Pagination = numbered `<a href>`** (`/blogs/page/2/`). **No JS-only infinite scroll / Load-more as sole nav.** Category pills = real links.
+- Self-referencing canonicals on paginated pages; keep page/2+ indexable.
 
-## 6. Core Web Vitals checklist
-- **LCP <2.5s:** WebP/AVIF hero via `srcset`/`sizes`, `fetchpriority="high"` + `loading="eager"` on the single above-fold LCP image; text-led hero; Jetpack Site Accelerator CDN.
-- **CLS <0.1:** every card image in fixed `aspect-ratio` box w/ explicit width/height; reserve nav/font space; `font-display: swap`; no content injected above existing on load-more.
-- **INP <200ms:** minimize hub JS; prefer link-based category filtering (real archives) over heavy client-side JS; defer non-critical scripts.
+## 6. Core Web Vitals
+- **LCP:** first 1–2 above-fold images `loading="eager"` + `fetchpriority="high"` (never lazy-load LCP image); rest `loading="lazy"`; WebP/AVIF via Jetpack Photon; preconnect `i0.wp.com`.
+- **CLS:** explicit dimensions on every image; reserve pill/read-time space; `font-display:swap`.
+- **INP:** defer non-critical JS.
+- 12 posts/page; don't add a 2nd popular-posts plugin (Jetpack block is server-cached); test mobile CWV.
 
-## 7. Atomic/WP.com implementation notes
-- Most-Popular = Jetpack **Top Posts & Pages** block (30-day + all-time). No extra plugin.
-- Featured strip = sticky posts or `featured` tag + Query Loop block.
-- Latest grid = Query Loop block, 3-col, numbered pagination block.
-- Category tiles + breadcrumbs + Article schema = native theme blocks + SEO plugin.
-- **ItemList JSON-LD for curated strips = the one custom piece.**
-- Build as a **draft page** first, pull theme presets, preview, then publish.
+## Validation (what top blogs do)
+- Ahrefs hand-curates "Top blogs of 2025" → supports curated hero.
+- 56% of most-viewed 2025 posts were research/data-driven → curate evergreen winners (your McKinsey/BCG pieces) into a permanent "Most Popular" slot.
+- Topic clusters: ~30% more organic traffic, rankings hold 2.5× longer.
