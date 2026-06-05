@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "Innovation Framework Certification",
+      "description": "Certification in the Innovation Framework dimension of Implementing SAFe across four tracks (Practitioner, Leader, Master, Coach), five innovation dimensions, and a 90-day cohort cadence that turns innovation into a repeatable enterprise capability.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Implementing SAFe",
+        "url": "https://implementing-safe.com"
+      },
+      "url": "https://implementing-safe.com/certifications/innovation-framework-cert/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P90D"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who is this certification designed for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Practitioners and leaders inside established enterprises responsible for building, running, or scaling an innovation capability — not early-stage startup founders. Each track is scoped to a specific organizational role so the curriculum speaks to the actual decisions and constraints you face."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does this differ from a standard agile or design thinking certification?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Agile and design-thinking certifications address specific methodologies. The Innovation Framework Certification addresses the organizational system those methodologies operate within — the strategic, portfolio, cultural, and metric conditions that determine whether any methodology sustains. It is complementary, not competing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can my organization run a private cohort with a customized curriculum?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Private corporate cohorts are the most common mode for more than eight participants. Contextualization includes mapping the five dimensions to your internal terminology, incorporating anonymized internal case material, and adjusting capstone deliverables to outputs usable inside your organization."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What time commitment does participation require?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Approximately four to six hours per month: two live 90-minute facilitated sessions plus one to three hours of structured async work producing phase deliverables. It is designed to be compatible with a full-time role across the 90-day duration."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the certification recognized outside the program?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The credential signals a verifiable competency: the ability to diagnose, design, and operate a multi-dimension innovation system inside an established enterprise. Organizations that deploy the program use track completion as a qualification threshold for innovation-lead roles. Recognition scales with framework adoption in your industry and network."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I advance from Foundational to Advanced tracks after completing the program?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Practitioner and Leader credentials are prerequisites for the Master track, and the Master credential is the prerequisite for the Coach track. There is no required waiting period; many participants complete two tracks within a single calendar year."
+          }
+        }
+      ]
+    }
+  ]
+}

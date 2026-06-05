@@ -1,0 +1,69 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "AI-Native SAFe Certification",
+      "description": "Implementing SAFe's AI-Native certification across three role-aligned tracks (Practitioner, Release Train Engineer, Transformation Lead), six modules, and a 90-day cohort cadence for building the AI-native operating model inside a scaled-agile enterprise.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Implementing SAFe",
+        "url": "https://implementing-safe.com"
+      },
+      "url": "https://implementing-safe.com/certifications/ai-native-cert/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P8W"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is this certification recognized by Scaled Agile, Inc.?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The AI-Native SAFe Certification is issued by Implementing SAFe and reflects our proprietary curriculum built on top of the SAFe framework. It is not a Scaled Agile, Inc. credential. It is recognized by member organizations within the Implementing SAFe practitioner network and is designed to complement, not replace, existing SAFe certifications."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if a practitioner cannot complete a module within the cohort window?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Practitioners who miss up to one live session per module may access the recording and complete a written reflection as a substitute. Those who fall more than one module behind are offered a one-time transfer to the next cohort at no additional charge, provided the gap is reported before the program midpoint."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the capstone require access to live organizational data or tooling?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The capstone can be built around a representative or anonymized value stream. Practitioners in sensitive industries — defense, financial services, healthcare — regularly complete it without exposing proprietary systems or data. The rubric evaluates quality of analysis and coherence of the integration approach, not operational specifics."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does certification remain current as AI tooling evolves?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Certifications carry a two-year active status. Renewal requires a single-day continuing education session covering curriculum updates. The curriculum is reviewed and updated semi-annually by the Implementing SAFe content council to reflect the current state of enterprise AI deployment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can organizations integrate this certification into internal talent and L&D frameworks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Enterprise enrollment clients receive a certification framework brief for integration into competency models, role progression frameworks, and learning management systems — including badge specifications, competency descriptors per level, and proficiency anchors for performance assessments."
+          }
+        }
+      ]
+    }
+  ]
+}
