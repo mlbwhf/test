@@ -27,12 +27,21 @@ become publishable stats) *and* drives email capture + repeat visits.
 ## 2. Information Architecture
 
 ### Top navigation
-- **Reports** — long-form aggregated + original reports
 - **Statistics** — the searchable stat library (the core asset)
+- **Reports** — long-form aggregated + original reports
+- **News** — timely AI news, roundups, and analysis
+- **Blog** — explainers, opinion, how-tos, guides
 - **Topics** — themed hub pages
 - **Trends** — annual "State of…" pillar pages
 - **Assessment** — the Enterprise AI Readiness tool
 - **About / Methodology**
+
+> Scope: the site is a full **AI knowledge hub** — hard statistics + reports as
+> the durable, evergreen core, with **News and Blog** providing freshness,
+> recurring traffic, and an on-ramp into the stats. News/blog posts should
+> link *into* the relevant statistics and pillar pages (this internal linking
+> is what compounds SEO over time). Tone: accessible/editorial, but every
+> number is still sourced and dated.
 
 ### Content types
 | Type | Purpose | Key fields |
@@ -46,6 +55,7 @@ become publishable stats) *and* drives email capture + repeat visits.
 > a consistent post template**. Recommendation below.
 
 ### Taxonomies (apply to every stat/report)
+- **Content format:** Statistic · Report · News · Blog/Explainer
 - **Topic:** Adoption & Usage · Enterprise AI · Investment & Funding · Jobs & Labor · Models & Benchmarks · Safety & Governance · Generative AI · Infrastructure & Compute
 - **Industry:** Healthcare · Finance · Retail · Manufacturing · Tech · Public Sector · Education
 - **Region:** Global · North America · Europe · Asia-Pacific · Other
