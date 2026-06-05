@@ -8,4 +8,55 @@ Author: Report AI
 Text Domain: report-ai
 */
 
-/* Child-theme styles are driven by theme.json. Add any overrides below. */
+/* Most styling is driven by theme.json. The rules below add the "premium
+   research portal" data treatment (AI-Index palette) per the design spec. */
+
+/* ---- Data tables: dashboard styling ---- */
+.wp-block-table {
+	border-collapse: collapse;
+	width: 100%;
+	font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+	margin: 2rem 0;
+}
+.wp-block-table th {
+	background-color: #0e2f56;       /* Deep Network Blue */
+	color: #ffffff;                  /* forced white for contrast */
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 0.85rem;
+	letter-spacing: 0.05em;
+	padding: 14px 18px;
+	text-align: left;
+}
+.wp-block-table td {
+	padding: 16px 18px;
+	border-bottom: 1px solid #eef2f7;
+	color: #2d3748;
+	font-size: 0.95rem;
+}
+/* Emphasize the final "shift / net change" column in Insight Orange */
+.wp-block-table td:last-child {
+	font-weight: 700;
+	color: #e67e22;
+}
+.wp-block-table tbody tr:hover {
+	background-color: #f8faff;       /* subtle scan-line hover */
+}
+
+/* ---- TL;DR / Executive-summary "terminal" box ----
+   Add the class "llm-snippet-target" to the Executive summary group
+   (Block → Advanced → Additional CSS class) to activate this treatment. */
+.llm-snippet-target {
+	background-color: #f7f9fc;
+	border-left: 4px solid #e67e22;
+	border-radius: 8px;
+	padding: clamp(1.25rem, 3vw, 2rem);
+	margin: 2rem 0;
+}
+
+/* ---- Numeric legibility: tabular figures for metrics ---- */
+.has-xx-large-font-size,
+.wp-block-table td {
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum" 1;
+}
