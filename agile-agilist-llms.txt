@@ -1,0 +1,36 @@
+# Agile Agilist
+
+> Agile Agilist is a SAFe® Gold Partner delivering SPCT-led Scaled Agile Framework (SAFe) certification, enterprise Agile transformation, innovation, and AI-Native leadership training across Toronto, Canada, and North America. The practice combines official SAFe certification courses with an AI-Native operating model and assessment tooling to help enterprises move from framework adoption to measurable business agility.
+
+## SAFe Certification Training — Advanced
+- [Advanced SAFe® Practice Consultant (ASPC)](https://agile-agilist.com/training/adv-safe/aspc/): Advanced certification for senior change agents leading large-scale, multi-train, AI-native SAFe transformations.
+- [Implementing SAFe® — SPC Certification](https://agile-agilist.com/training/adv-safe/spc/): SAFe Practice Consultant certification authorizing you to train and coach Agile Release Trains and lead enterprise transformations.
+- [SAFe® Release Train Engineer (RTE)](https://agile-agilist.com/training/adv-safe/rte/): Certification for facilitating Agile Release Trains, PI Planning, and program-level flow.
+- [SAFe® Lean Portfolio Management (LPM)](https://agile-agilist.com/training/adv-safe/lpm/): Lean budgeting, governance, and portfolio strategy for connecting strategy to execution.
+- [SAFe® Agile Product Management (APM)](https://agile-agilist.com/training/adv-safe/apm/): Design Thinking and customer-centric product management aligned to Scaled Agile Framework 6.0.
+
+## SAFe Certification Training — Core
+- [Leading SAFe® (SAFe Agilist / SA)](https://agile-agilist.com/training/safe/sa/): The foundational SAFe Agilist certification for executives, leaders, and change agents.
+- [SAFe® Product Owner / Product Manager (POPM)](https://agile-agilist.com/training/safe/popm/): Role-based certification for product owners and managers in a SAFe enterprise.
+- [SAFe® Business Owner (BO)](https://agile-agilist.com/training/safe/bo/): Workshop for business owners accountable for value in an Agile Release Train.
+- [SAFe® Foundations Micro-Credential](https://agile-agilist.com/training/safe-found/): Entry-level SAFe foundations credential.
+- [All SAFe Training](https://agile-agilist.com/training/): Full catalog of SAFe certification courses and learning paths.
+
+## AI-Native & Innovation Training
+- [AI-Native Training & Certification](https://agile-agilist.com/training/ai-native/): Programs for building the AI-native enterprise operating model and leadership capability.
+- [AI-Native SAFe Implementation Roadmap](https://agile-agilist.com/services/business-agility/methodology/): The methodology for an AI-native SAFe transformation, phase by phase.
+
+## Assessments & Tools
+- [Certification Path-Finder](https://agile-agilist.com/assessments/cert-recommender/): Recommends the right SAFe certification based on your role and goals.
+- [Mutation Readiness Assessment](https://agile-agilist.com/assessments/mutation-readiness/): Evaluates how ready your operating model is for durable, AI-native change.
+- [Innovation Framework Assessment](https://agile-agilist.com/assessments/innovation-framework/): Diagnoses enterprise innovation capability and gaps.
+- [Agile Assessment](https://agile-agilist.com/assessments/agile-assessment/): Measures organizational agile maturity.
+- [AI Assessment](https://agile-agilist.com/assessments/ai-assessment/): Assesses AI readiness across people, process, and technology.
+- [Product Management Assessment](https://agile-agilist.com/assessments/product-management-assessment/): Evaluates product management maturity.
+- [All Assessments](https://agile-agilist.com/assessments/): Full suite of agility, AI, and innovation diagnostics.
+
+## Company & Insights
+- [Home](https://agile-agilist.com/): SAFe Gold Partner overview — certification, transformation, and AI-native leadership.
+- [About](https://agile-agilist.com/about/): The practice, its SPCT-led delivery model, and credentials.
+- [Services](https://agile-agilist.com/services/): Enterprise Agile transformation and consulting services.
+- [Blog](https://agile-agilist.com/blogs/): Data-dense articles on AI-Native enterprise transformation, SAFe, innovation, and leadership.
