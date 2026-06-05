@@ -1,0 +1,11 @@
+/*
+Theme Name: Report AI
+Theme URI: https://report-ai.org
+Description: Block child theme of Twenty Twenty-Five for report-ai.org. Adds the AI-Index color identity (Deep Network Blue / Data Flow Blue / Insight Orange), the Inter typeface, an ai-statistic custom post type at /stats/, and hub + single "data node" templates with per-page Dataset JSON-LD for GEO/LLM crawlers.
+Template: twentytwentyfive
+Version: 1.0.0
+Author: Report AI
+Text Domain: report-ai
+*/
+
+/* Child-theme styles are driven by theme.json. Add any overrides below. */
