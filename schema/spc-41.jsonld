@@ -25,10 +25,26 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "What is the format and passing score of the SAFe Practice Consultant (SPC) exam?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The SPC examination is a web-based, closed-book, 120-minute timed test of 60 multiple-choice and multiple-select questions. Candidates must achieve an 83% passing score — 50 of 60 correct — to unlock the official credential."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is internal SPC training critical for corporate Agile transformations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "External consulting interventions rarely stick long-term without an internal guiding coalition. Training internal change agents ensures that custom value streams, DevOps pipelines, and continuous-delivery methods are sustained by leaders embedded permanently within the corporate structure."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Who is this course designed for?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The Implementing SAFe course is designed for experienced Agile practitioners, enterprise coaches, transformation leads, senior Scrum Masters, Release Train Engineers, and internal change-management professionals who are preparing to lead or sustain a SAFe transformation at program or portfolio scale. It is not an introductory Agile course."
+            "text": "The Implementing SAFe course is designed for experienced Agile practitioners, enterprise coaches, transformation leads, senior Scrum Masters, Release Train Engineers, and internal change-management professionals preparing to lead or sustain a SAFe transformation at program or portfolio scale. It is not an introductory Agile course."
           }
         },
         {
@@ -36,7 +52,7 @@
           "name": "What are the prerequisites?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Scaled Agile recommends that candidates have five or more years of experience in software development, IT, or business transformation, including exposure to Agile at the team level. No formal pre-certification is required to attend, though completing the SAFe for Teams or POPM course beforehand materially improves the learning experience."
+            "text": "Five or more years of experience in software development, IT, or business transformation, including exposure to Agile at the team level, is recommended. No formal pre-certification is required to attend, though completing the SAFe for Teams or POPM course beforehand materially improves the learning experience."
           }
         },
         {
@@ -44,7 +60,7 @@
           "name": "How does the SPC certification renewal work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The SPC certification is valid for one year. Renewal requires earning continuing education units through SAFe events, SAFe Studio learning paths, community contribution, or a refresher course, managed through the Scaled Agile Community Portal. Annual renewal keeps your licence to deliver courses current."
+            "text": "The SPC certification is valid for one year. Renewal requires earning continuing education units through SAFe events, SAFe Studio learning paths, community contribution, or a refresher course, managed through the Scaled Agile Community Portal."
           }
         },
         {
@@ -52,7 +68,7 @@
           "name": "Can SPCs deliver SAFe courses to external clients?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Certified SPCs who become Scaled Agile Partners are authorised to deliver public and private SAFe courses to external organisations under the partnership agreement and licensing terms. Our practice can advise on the partnership pathway as part of post-course coaching support."
+            "text": "Yes. Certified SPCs who become Scaled Agile Partners are authorised to deliver public and private SAFe courses to external organisations under the partnership agreement and licensing terms."
           }
         },
         {
