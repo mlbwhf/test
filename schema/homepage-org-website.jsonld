@@ -1,0 +1,51 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://implementing-safe.com/#organization",
+      "name": "Implementing SAFe",
+      "alternateName": "Implementing SAFe — The 5-Dimensional Framework",
+      "url": "https://implementing-safe.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://implementing-safe.com/wp-content/uploads/2026/05/implementing-safe-favicon.png",
+        "width": 512,
+        "height": 512
+      },
+      "description": "SPCT-led SAFe transformation practice that operationalizes the Scaled Agile Framework through a 5-dimensional operating model: SAFe Implementation, Innovation Framework, AI-Native, AI Automation, and Mutation.",
+      "knowsAbout": [
+        "Scaled Agile Framework",
+        "SAFe implementation",
+        "SAFe Practice Consultant (SPC) certification",
+        "Advanced SAFe Practice Consultant (ASPC)",
+        "AI-Native enterprise transformation",
+        "Lean Portfolio Management",
+        "Agile Release Train"
+      ],
+      "sameAs": [
+        "__ADD_LINKEDIN_URL__",
+        "__ADD_YOUTUBE_URL__",
+        "__ADD_X_OR_OTHER__"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://implementing-safe.com/#website",
+      "url": "https://implementing-safe.com/",
+      "name": "Implementing SAFe",
+      "publisher": {
+        "@id": "https://implementing-safe.com/#organization"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://implementing-safe.com/?s={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
