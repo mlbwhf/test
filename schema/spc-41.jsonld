@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "Implementing SAFe® with SPC Certification",
+      "description": "SPCT-led, 4-day SAFe Practice Consultant (SPC) certification course with the full 5-dimensional Implementing SAFe operating model embedded. Authorises graduates to train and coach Agile Release Trains, facilitate PI Planning, and lead large-scale SAFe transformations.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Implementing SAFe",
+        "url": "https://implementing-safe.com"
+      },
+      "url": "https://implementing-safe.com/certifications/spc/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P4D"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who is this course designed for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Implementing SAFe course is designed for experienced Agile practitioners, enterprise coaches, transformation leads, senior Scrum Masters, Release Train Engineers, and internal change-management professionals who are preparing to lead or sustain a SAFe transformation at program or portfolio scale. It is not an introductory Agile course."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the prerequisites?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Scaled Agile recommends that candidates have five or more years of experience in software development, IT, or business transformation, including exposure to Agile at the team level. No formal pre-certification is required to attend, though completing the SAFe for Teams or POPM course beforehand materially improves the learning experience."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the SPC certification renewal work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The SPC certification is valid for one year. Renewal requires earning continuing education units through SAFe events, SAFe Studio learning paths, community contribution, or a refresher course, managed through the Scaled Agile Community Portal. Annual renewal keeps your licence to deliver courses current."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can SPCs deliver SAFe courses to external clients?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Certified SPCs who become Scaled Agile Partners are authorised to deliver public and private SAFe courses to external organisations under the partnership agreement and licensing terms. Our practice can advise on the partnership pathway as part of post-course coaching support."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the course available virtually as well as in person?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Both modalities are offered. Virtual delivery uses collaborative facilitation tooling such as digital PI Planning boards and breakout environments to replicate in-person simulation fidelity. Class sizes are kept deliberately small in both formats."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What differentiates this delivery from other providers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Instruction is provided by an SPCT, not a certified SPC acting as facilitator. The SPCT tier is held by fewer than 200 practitioners globally, so debriefs, coaching conversations, and roadmapping exercises draw on a substantially deeper reference set than standard SPC-led delivery."
+          }
+        }
+      ]
+    }
+  ]
+}

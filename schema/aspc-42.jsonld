@@ -1,0 +1,69 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "Advanced SAFe Practice Consultant (ASPC) Certification",
+      "description": "Advanced, SPCT-led certification for practicing SPCs leading multi-train value streams, portfolio governance, and AI-Native, AI Automation, and Mutation dimensions in enterprise SAFe transformations. Assessed across seven competency dimensions.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Implementing SAFe",
+        "url": "https://implementing-safe.com"
+      },
+      "url": "https://implementing-safe.com/certifications/aspc/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P12W"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What are the formal prerequisites for ASPC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Candidates must hold a current SAFe Program Consultant (SPC 5 or later) certification and demonstrate a minimum of two years in a role with direct accountability for multi-team or multi-ART SAFe delivery, plus attendance at a SAFe for Lean Enterprises or equivalent event within the past three years. A prerequisite waiver may be petitioned with equivalent demonstrated expertise."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is the ASPC assessment scored?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each of the seven competency dimensions is scored on a four-point rubric (Emerging, Developing, Proficient, Distinguished). A credential requires a minimum of Proficient on all seven, with no dimension below Developing. A targeted deferral with a 90-day resubmission window applies to one or two deficient dimensions without resubmitting the full portfolio."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can evidence artifacts come from confidential client engagements?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Assessors routinely evaluate anonymized artifacts from confidential engagements under a formal NDA signed by all panel members. Structural and methodological substance drives scoring, not brand names, so anonymization does not disadvantage candidates."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long is the ASPC credential valid and what does renewal require?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The ASPC credential carries a three-year validity period aligned with SAFe's major version cycle. Renewal requires 40 continuing practice hours in relevant SAFe or scaled-agile practice areas plus attestation of active practitioner engagement. Lapsed credentials require full re-application."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does ASPC preparation align with SAFe 6.0?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All preparation materials, rubrics, and artifact templates are maintained against the current production version of SAFe and updated within 60 days of a major version release. Mid-cycle candidates receive a delta briefing and version-specific Q&A sessions at no additional charge."
+          }
+        }
+      ]
+    }
+  ]
+}
