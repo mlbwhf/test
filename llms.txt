@@ -1,0 +1,25 @@
+# Implementing SAFe
+
+> Implementing SAFe is an SPCT-led practice that goes beyond SAFe® certification to operationalize a complete enterprise operating model. Its 5-Dimensional Framework — SAFe Implementation, Innovation Framework, AI-Native, AI Automation, and Mutation — helps Fortune 500s, federal agencies, and high-growth companies make Scaled Agile transformations that sustain rather than quietly revert. Delivered by a SAFe® Gold/SPCT partner with 21+ years of field experience and 2,500+ practitioners trained.
+
+## The 5-Dimensional Framework
+- [The 5-Dimensional Framework](https://implementing-safe.com/framework/): Overview of the five dimensions that turn a SAFe certification into a working operating model.
+- [Dimension 1 — SAFe Implementation](https://implementing-safe.com/framework/safe-implementation/): The proven structural decisions, sequencing, and conditions that make a SAFe rollout stick. Includes the 8-step implementation sequence.
+- [Dimension 2 — Innovation Framework](https://implementing-safe.com/framework/innovation/): A repeatable system (ideation pipeline, lean validation, portfolio bridge, scaling playbook) for scaling innovation across three horizons without destabilizing delivery.
+- [Dimension 3 — AI-Native](https://implementing-safe.com/framework/ai-native/): Re-architecting team, ART, and portfolio operations with AI embedded at every layer; AI-Native maturity stages from Isolated to Systemic.
+- [Dimension 4 — AI Automation](https://implementing-safe.com/framework/ai-automation/): End-to-end technical automation across task, workflow, and decision tiers with reversibility and human oversight.
+- [Dimension 5 — Mutation](https://implementing-safe.com/framework/mutation/): How operating-model change becomes permanent — tracking, detecting, and responding to drift.
+
+## Certifications & Training
+- [Certifications](https://implementing-safe.com/certifications/): All Implementing SAFe certification tracks.
+- [Implementing SAFe — SPC Certification](https://implementing-safe.com/certifications/spc/): 4-day SPCT-led SAFe Practice Consultant course with the full 5-dimensional framework embedded.
+- [Advanced SAFe Practice Consultant (ASPC)](https://implementing-safe.com/certifications/aspc/): Advanced training for senior change agents leading large-scale, AI-native transformations.
+- [AI-Native Certification](https://implementing-safe.com/certifications/ai-native-cert/): Three tracks (Foundations, Change Agent, Executive) for building the AI-native operating model.
+- [Innovation Framework Certification](https://implementing-safe.com/certifications/innovation-framework-cert/): Certification in structured, scalable enterprise innovation within SAFe.
+
+## Consulting & Roadmap
+- [Enterprise Consulting](https://implementing-safe.com/consulting/): Coached and fully-delivered SAFe transformation engagements.
+- [Implementation Roadmap](https://implementing-safe.com/roadmap/): Five phases, three engagement models, and 90/180/365-day milestones for an enterprise SAFe transformation.
+
+## About
+- [Home](https://implementing-safe.com/): Implementing SAFe overview — the operating model beyond the certification.
