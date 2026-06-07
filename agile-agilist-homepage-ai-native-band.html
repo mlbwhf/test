@@ -1,0 +1,67 @@
+# Homepage AI-Native Feature Band — PASTE-SAFE snippet
+# Site: agile-agilist.com  |  Page: Home (ID 961, slug `trusted-by-enterprises`)
+#
+# Purpose (per the GEO/Ads report): "give AI-Native prominent real estate"
+# Strategy: a dedicated band that elevates AI-Native Foundations (the hot product) to
+# its own section ABOVE the assessments band — without rewriting the existing homepage.
+#
+# HOW TO PLACE
+# 1. wp-admin → Pages → Home → Edit → ⋮ → Code editor
+# 2. Find the line that says:
+#       <!-- ============ ASSESSMENTS — with proper SVG icons per card ============ -->
+#    (search for "ASSESSMENTS — with proper SVG")
+# 3. Paste the ENTIRE block below DIRECTLY ABOVE that comment line.
+# 4. Update (stay in Code editor; do NOT switch to Visual).
+#
+# WHAT THIS GIVES YOU
+# - A standalone "AI-Native is here" hero band right after the main hero
+# - Big "View AI-Native cohorts" + "Talk to an advisor" CTAs
+# - Trust signals (SAFe Gold Partner, SPCT-led)
+# - Targets the Ads-flagged surge: "ai training near me", "ai upskilling", "AI training Toronto"
+
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"60px","bottom":"60px","left":"24px","right":"24px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull" style="padding:60px 24px;background:linear-gradient(135deg,#053947 0%,#0170B9 100%)">
+<!-- wp:html -->
+<style>
+.aa-ai-band{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;color:#fff}
+@media(max-width:880px){.aa-ai-band{grid-template-columns:1fr;gap:28px}}
+.aa-ai-eb{display:inline-block;padding:6px 14px;background:rgba(251,191,36,.18);color:#fbbf24;border:1px solid rgba(251,191,36,.4);border-radius:30px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.aa-ai-band h2{font-size:42px;font-weight:800;color:#fff !important;line-height:1.1;letter-spacing:-0.015em;margin:0 0 16px}
+.aa-ai-band h2 span{background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.aa-ai-band p.aa-ai-sub{font-size:17px;color:#cbd5e1 !important;line-height:1.6;margin:0 0 24px;max-width:560px}
+.aa-ai-cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.aa-ai-cta-row a{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:8px;font-size:15px;font-weight:800;text-decoration:none;transition:all .2s}
+.aa-ai-primary{background:#fbbf24;color:#053947 !important;box-shadow:0 6px 20px rgba(251,191,36,.32)}
+.aa-ai-primary:hover{background:#f59e0b;transform:translateY(-2px)}
+.aa-ai-ghost{background:transparent;color:#fff !important;border:2px solid rgba(255,255,255,.5)}
+.aa-ai-ghost:hover{background:rgba(255,255,255,.08);border-color:#fff}
+.aa-ai-trust{font-size:13px;color:#cbd5e1;font-weight:600}
+.aa-ai-trust strong{color:#fff}
+.aa-ai-tracks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aa-ai-track{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:18px;text-decoration:none;transition:all .22s;display:block;backdrop-filter:blur(6px)}
+.aa-ai-track:hover{background:rgba(255,255,255,.1);transform:translateY(-3px);border-color:rgba(251,191,36,.5)}
+.aa-ai-track-tag{font-size:10px;font-weight:800;color:#fbbf24;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.aa-ai-track h4{font-size:14px;font-weight:800;color:#fff;margin:0 0 4px;line-height:1.25}
+.aa-ai-track p{font-size:11.5px;color:#cbd5e1 !important;margin:0;line-height:1.4}
+</style>
+<div class="aa-ai-band">
+  <div>
+    <span class="aa-ai-eb">🤖 Now enrolling — AI-Native cohorts</span>
+    <h2>Become <span>AI-Native</span> in days, not months.</h2>
+    <p class="aa-ai-sub">Live, SPCT-led training that upskills product, engineering, and leadership teams to embed AI into every layer of how work gets done. Hands-on labs. Exam included. Pass guarantee. Live virtual globally, in person on request.</p>
+    <div class="aa-ai-cta-row">
+      <a class="aa-ai-primary" href="/training/ai-native/">View AI-Native cohorts →</a>
+      <a class="aa-ai-ghost" href="https://meetings.hubspot.com/john2795">Talk to an advisor</a>
+    </div>
+    <div class="aa-ai-trust">★★★★★ <strong>4.9/5</strong> · <strong>SAFe® Gold Partner</strong> · <strong>SPCT-led</strong> · 9 languages · Exam-pass support</div>
+  </div>
+  <div class="aa-ai-tracks">
+    <a class="aa-ai-track" href="/training/ai-native/ai-native-ready-certification/"><div class="aa-ai-track-tag">★ Most popular</div><h4>AI-Native Foundations</h4><p>The fast on-ramp. Build the shared vocabulary and operating habits.</p></a>
+    <a class="aa-ai-track" href="/training/ai-native/ai-native-change-agent/"><div class="aa-ai-track-tag">Change agents</div><h4>AI-Native Change Agent</h4><p>Lead AI-native transformations across ARTs and portfolios.</p></a>
+    <a class="aa-ai-track" href="/training/ai-native/ai-native-ready-certification-2/"><div class="aa-ai-track-tag">Executives</div><h4>Leading the AI-Native Org</h4><p>Executive briefing on AI-native operating model design.</p></a>
+    <a class="aa-ai-track" href="/training/ai-native/ai-native-foundations/"><div class="aa-ai-track-tag">Foundations · 1-day</div><h4>AI-Ready Foundation</h4><p>Entry-level credential for AI literacy in delivery teams.</p></a>
+  </div>
+</div>
+<!-- /wp:html -->
+</div>
+<!-- /wp:group -->

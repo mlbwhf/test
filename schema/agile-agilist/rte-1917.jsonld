@@ -1,0 +1,39 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "SAFe® Release Train Engineer (RTE) Certification",
+      "description": "SPCT-led, AI-empowered Release Train Engineer (RTE) certification training with exam included. Lead Agile Release Trains, facilitate PI Planning, and instrument flow at program scale. Live virtual globally; in-person on request.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Agile Agilist",
+        "url": "https://agile-agilist.com",
+        "sameAs": [
+          "https://www.linkedin.com/company/agile-agilist"
+        ]
+      },
+      "url": "https://agile-agilist.com/training/adv-safe/rte/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P3D",
+        "inLanguage": [
+          "en",
+          "es",
+          "fr",
+          "ar"
+        ]
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "CAD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://agile-agilist.com/training/adv-safe/rte/"
+      }
+    }
+  ]
+}
