@@ -30,14 +30,18 @@
 | FAQ | 13 | https://marks750.sg-host.com/faq/ |
 | Contact / Book a Demo | 14 | https://marks750.sg-host.com/contact/ |
 
+## Navigation menu + footer
+Added an **in-page top navigation bar** and a **4-column footer** (with working links to all
+pages + contact + copyright) to **all 9 pages**. Every nav/footer link points to a live page,
+so site-wide navigation works now. Colors: bar/footer `#1c130c`, links cream `#f6efe6`,
+Contact accent teal `#2fa89b`.
+
+> Optional upgrade: for a single global header/footer managed in one place, rebuild these in
+> **Elementor → Templates → Theme Builder** (Hello Biz header/footer) and remove the in-page
+> versions. The MCP can't edit Elementor templates, so the in-page bar/footer is the working
+> equivalent until then.
+
 ## Remaining manual steps (not possible via the MCP)
-1. **Navigation menu** — the MCP has no menu operation, and Hello Biz uses a classic menu.
-   In wp-admin → **Appearance → Menus**, create a menu and add the pages in this order,
-   then assign it to the theme's primary/header location:
-   ```
-   Home · How It Works · The Machines · Industries · Pricing & ROI · Our Coffee · About · Contact
-   ```
-   (Tip: with Hello Biz/Elementor you may set the header menu in the Elementor header template.)
-2. **Trash the default "Sample Page"** (id 2) — leftover from setup. (I can do this for you.)
+1. **Trash the default "Sample Page"** (id 2) — leftover from setup. (I can do this for you.)
 3. **Images, real prices, machine specs, contact details** — see implementation-guide.md.
 4. **Point brew-n-chill.com** at the site and set it primary when ready.
