@@ -4,7 +4,7 @@ _Updated 2026-06-07. All items below are DRAFTS. Nothing live, no existing slug/
 ## ✅ Created this session (drafts — safe, new slugs)
 | Page | ID | Slug | Preview | Notes |
 |---|---|---|---|---|
-| SAFe Training — London/UK | 26177 | `/safe-certification-training-london/` | `?page_id=26177&preview=true` | UK time, GBP. SAFe-only. |
+| SAFe Training — London/UK | 26177 | `/safe-certification-training-london/` | **LIVE** | UK time, GBP. SAFe-only. |
 | SAFe Training — Europe | 26178 | `/safe-certification-training-europe/` | `?page_id=26178&preview=true` | CET, EUR. SAFe-only. |
 | SAFe Training — South Africa | 26179 | `/safe-certification-training-south-africa/` | `?page_id=26179&preview=true` | SAST, ZAR. SAFe-only. |
 | SAFe & AI — Middle East | 26180 | `/safe-ai-training-middle-east/` | `?page_id=26180&preview=true` | GST, Sun–Thu, AED/SAR, Arabic-on-request, **in-person AI-Native section**. |
