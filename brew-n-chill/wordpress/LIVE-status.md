@@ -12,6 +12,11 @@
   and a CTA banner. Uses 8 **placeholder images** (picsum.photos seeds) the owner will replace
   — each has descriptive alt text ("…replace with your photo"). Brand colors used:
   Espresso `#2B1D13`, Roast `#7A4A25`, Cream `#F6EFE6`, Chill teal `#2FA89B`.
+- ✅ **All 8 interior pages restyled** to the same template (hero banner + colored bands +
+  image placeholders + CTA): How It Works, The Machines (3 product images), Industries
+  (6-card grid), Pricing & ROI (colored pricing columns), Our Coffee (3 blend cards), About
+  (media-text), FAQ, Contact (2-column with contact card). ~25 placeholder images total, all
+  with "…replace with your photo" alt text.
 
 | Page | ID | URL |
 |---|---|---|
