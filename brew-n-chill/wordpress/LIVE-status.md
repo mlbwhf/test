@@ -7,6 +7,11 @@
 - ✅ 9 pages created and **published** (Gutenberg blocks, SEO title + meta description on each).
 - ✅ Site title set to **Brew-n-Chill**; tagline set.
 - ✅ Static homepage set to **Home** (page id 6).
+- ✅ **Homepage redesigned** (2026-06-08) with a full-width hero cover, brand-colored
+  section bands (cream / espresso / roast), media-text rows, a 6-card industries image grid,
+  and a CTA banner. Uses 8 **placeholder images** (picsum.photos seeds) the owner will replace
+  — each has descriptive alt text ("…replace with your photo"). Brand colors used:
+  Espresso `#2B1D13`, Roast `#7A4A25`, Cream `#F6EFE6`, Chill teal `#2FA89B`.
 
 | Page | ID | URL |
 |---|---|---|
