@@ -32,10 +32,17 @@ brew-n-chill/
 
 ## Option A: import it yourself (15–20 min)
 
-### 1. Pick a theme
-Use a modern **block theme** so the Gutenberg content looks great out of the box:
-- **Twenty Twenty-Five** (ships with WordPress), or **Ollie**, **Raft**, or **Astra** (free).
-- Set brand colors in **Appearance → Editor → Styles** using the palette in `brand/brand-positioning.md`.
+### 1. Theme — keep the current one (Hello Biz)
+We're staying on the site's current theme, **Hello Biz** (Elementor's lightweight starter). The
+published page content renders through it as-is. Hello Biz is intentionally minimal and is styled
+through **Elementor**, not theme.json, so set the brand look there:
+- **Elementor → Site Settings → Global Colors:** replace the default orange accent with the
+  coffee-brown / chill-teal palette in `brand/brand-positioning.md` (Roast `#7A4A25`, Espresso
+  `#3A2A1E`, Cream `#F6EFE6`, Chill teal `#2FA89B`).
+- **Elementor → Site Settings → Global Fonts:** set a friendly sans for body and a display face for headings.
+- **Templates → Theme Builder:** the **Header** (logo + navigation menu) and **Footer** are built
+  here in Hello Biz. This is also where the nav menu lives.
+- Content width is 800px (wide 1200px) — matches the layout the pages were written for.
 
 ### 2. Import the pages
 1. WordPress Admin → **Tools → Import → WordPress** (install the "WordPress" importer if prompted).
