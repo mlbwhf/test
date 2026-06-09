@@ -16,9 +16,12 @@ _Updated 2026-06-09. All DRAFTS unless noted._
 Role: **the OFFICIAL SAFe framework explained** (partner education) — distinct from implementing-safe.com (proprietary 5-D model).
 | Page | ID | Slug | Status |
 |---|---|---|---|
-| Homepage — Official Framework Explained | 7 | `/implementing-safe-framework-explained/` | draft |
+| Homepage — Official Framework Explained (6-card grid) | 7 | `/implementing-safe-framework-explained/` | draft |
+| The Disciplines of SAFe, Explained (creative card design) | 8 | `/safe-disciplines-explained/` | draft |
 | The SAFe Implementation Roadmap, Explained | 5 | `/safe-implementation-roadmap-explained/` | draft |
 | SAFe Configurations, Explained | 6 | `/safe-configurations-explained/` | draft |
+| Customizing SAFe, Explained | 9 | `/customizing-safe-explained/` | draft |
+| Advanced SPC (ASPC), Explained | 10 | `/advanced-spc-aspc-explained/` | draft |
 
 **Guardrails applied:** original wording only (no reproduction of framework.scaledagile.com), trademark attribution on every page, "not official" disclaimer, nofollow on commercial cross-links.
 
