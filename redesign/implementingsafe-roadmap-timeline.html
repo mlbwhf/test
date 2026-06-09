@@ -1,0 +1,71 @@
+# Roadmap page — UPGRADED CREATIVE DESIGN (vertical phase timeline)
+# Replaces the plain-text body of implementingsafe.org page 5 (/safe-implementation-roadmap-explained/).
+# Paste-ready: drop the whole block into the Code editor, OR I apply it via MCP once reconnected.
+# Self-contained CSS namespaced .isr-* — no theme dependency.
+
+<!-- wp:html -->
+<style>
+.isr-wrap{max-width:1000px;margin:0 auto;font-family:inherit}
+.isr-hero{background:linear-gradient(135deg,#0f2a3d 0%,#1d4e6b 55%,#0e7490 100%);color:#fff;padding:56px 28px;border-radius:18px;text-align:center}
+.isr-eb{display:inline-block;padding:6px 14px;background:rgba(255,255,255,.14);color:#cde8f5;border:1px solid rgba(255,255,255,.3);border-radius:30px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:16px}
+.isr-hero h1{font-size:clamp(1.9rem,4.5vw,2.8rem);font-weight:800;margin:0 0 14px;line-height:1.1;color:#fff}
+.isr-hero p{font-size:17px;color:#cde8f5;max-width:680px;margin:0 auto;line-height:1.6}
+.isr-time{position:relative;margin:44px 0 12px;padding-left:8px}
+.isr-row{position:relative;display:grid;grid-template-columns:74px 1fr;gap:18px;padding-bottom:26px}
+.isr-row:last-child{padding-bottom:0}
+.isr-rail{position:relative;display:flex;justify-content:center}
+.isr-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#fff;background:var(--c);box-shadow:0 6px 16px rgba(15,42,61,.18);z-index:2}
+.isr-line{position:absolute;top:52px;bottom:-26px;width:3px;background:linear-gradient(var(--c),var(--c2));left:50%;transform:translateX(-50%);z-index:1}
+.isr-row:last-child .isr-line{display:none}
+.isr-card{background:#fff;border:1px solid #e7ecf1;border-radius:14px;border-left:5px solid var(--c);padding:20px 22px;transition:transform .2s,box-shadow .2s}
+.isr-card:hover{transform:translateX(4px);box-shadow:0 12px 28px rgba(15,42,61,.1)}
+.isr-card h3{margin:0 0 6px;font-size:18px;font-weight:800;color:#0f2a3d}
+.isr-card p{margin:0;color:#51606e;font-size:14.5px;line-height:1.55}
+.isr-pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--c);background:var(--cl);padding:3px 9px;border-radius:20px;margin-bottom:8px}
+.isr-warn{margin:30px 0;padding:20px 22px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;border-left:5px solid #f59e0b}
+.isr-warn h3{margin:0 0 6px;color:#9a3412;font-size:16px;font-weight:800}
+.isr-warn p{margin:0;color:#7c2d12;font-size:14px;line-height:1.55}
+.isr-foot{margin:24px 0;padding:22px 24px;border-radius:14px;background:#f1f5f9;border:1px solid #e2e8f0}
+.isr-foot p{margin:0 0 10px;font-weight:700;color:#0f172a}
+.isr-foot a{color:#0e7490;font-weight:700}
+.isr-attr{font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:14px}
+</style>
+<div class="isr-wrap">
+  <div class="isr-hero">
+    <span class="isr-eb">SAFe® Gold Partner education</span>
+    <h1>The SAFe Implementation Roadmap</h1>
+    <p>A change-management pattern that sequences a transformation so leadership alignment, trained change agents, and a working operating model are in place <em>before</em> teams are asked to change how they deliver.</p>
+  </div>
+  <div class="isr-time">
+    <div class="isr-row" style="--c:#6366f1;--c2:#0ea5e9;--cl:#eef2ff">
+      <div class="isr-rail"><div class="isr-num">1</div><div class="isr-line"></div></div>
+      <div class="isr-card"><span class="isr-pill">Align</span><h3>Reach the tipping point &amp; align leadership</h3><p>Transformation starts when leaders agree the current way of working can no longer meet the business need — driven by a threat (falling behind) or an opportunity (a new market). Without shared urgency at the top, everything downstream stalls.</p></div>
+    </div>
+    <div class="isr-row" style="--c:#0ea5e9;--c2:#10b981;--cl:#e0f2fe">
+      <div class="isr-rail"><div class="isr-num">2</div><div class="isr-line"></div></div>
+      <div class="isr-card"><span class="isr-pill">Enable</span><h3>Build the change engine</h3><p>Train internal change agents (SPCs), educate executives in Lean-Agile leadership, and stand up a Lean-Agile Center of Excellence (LACE) — the capability that carries the transformation after consultants leave.</p></div>
+    </div>
+    <div class="isr-row" style="--c:#10b981;--c2:#f59e0b;--cl:#d1fae5">
+      <div class="isr-rail"><div class="isr-num">3</div><div class="isr-line"></div></div>
+      <div class="isr-card"><span class="isr-pill">Design</span><h3>Design the operating model</h3><p>Identify your value streams and organize people into Agile Release Trains around them, then build the implementation plan and pick the first ART to launch. The highest-leverage decision in the whole roadmap.</p></div>
+    </div>
+    <div class="isr-row" style="--c:#f59e0b;--c2:#8b5cf6;--cl:#fef3c7">
+      <div class="isr-rail"><div class="isr-num">4</div><div class="isr-line"></div></div>
+      <div class="isr-card"><span class="isr-pill">Launch</span><h3>Launch &amp; coach the first ART</h3><p>Prepare the train, train the teams, and run the first PI Planning to launch it — then coach execution through the first few Program Increments. The real learning happens in delivery, not the classroom.</p></div>
+    </div>
+    <div class="isr-row" style="--c:#8b5cf6;--c2:#8b5cf6;--cl:#ede9fe">
+      <div class="isr-rail"><div class="isr-num">5</div><div class="isr-line"></div></div>
+      <div class="isr-card"><span class="isr-pill">Scale</span><h3>Scale &amp; sustain</h3><p>Launch more ARTs and value streams, extend Lean-Agile practices to the portfolio, and keep improving. There is no “done” — only a more capable operating model over time.</p></div>
+    </div>
+  </div>
+  <div class="isr-warn">
+    <h3>⚠ Where teams get stuck</h3>
+    <p>The common failure points: skipping leadership alignment (phase 1), launching ARTs before the operating model is designed (phase 3), and treating training as the finish line instead of coaching real delivery (phase 4). Most stalled rollouts trace back to one of these.</p>
+  </div>
+  <div class="isr-foot">
+    <p>Putting the roadmap into practice</p>
+    <p style="font-weight:400;color:#334155;margin:0">Explore <a href="https://agile-agilist.com/training/" rel="nofollow">SPCT-led SAFe training</a>, or see how the <a href="https://implementing-safe.com" rel="nofollow">5-Dimensional implementation model</a> extends the official roadmap.</p>
+  </div>
+  <p class="isr-attr">SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. This page is independent educational commentary by a SAFe® Gold Partner and is not official Scaled Agile content. For the official framework, visit framework.scaledagile.com.</p>
+</div>
+<!-- /wp:html -->
