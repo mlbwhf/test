@@ -22,6 +22,14 @@ Role: **the OFFICIAL SAFe framework explained** (partner education) — distinct
 | SAFe Configurations, Explained | 6 | `/safe-configurations-explained/` | draft |
 | Customizing SAFe, Explained | 9 | `/customizing-safe-explained/` | draft |
 | Advanced SPC (ASPC), Explained | 10 | `/advanced-spc-aspc-explained/` | draft |
+| Lean Portfolio Management, Explained | 16 | `/lean-portfolio-management-explained/` | draft |
+| Team and Technical Agility, Explained | 17 | `/team-and-technical-agility-explained/` | draft |
+| Product Development Flow, Explained | 18 | `/product-development-flow-explained/` | draft |
+| Large Solution Integration & Delivery, Explained | 19 | `/large-solution-integration-delivery-explained/` | draft |
+| Leadership and Culture, Explained | 20 | `/leadership-and-culture-explained/` | draft |
+| AI Augmented Workforce, Explained | 21 | `/ai-augmented-workforce-explained/` | draft |
+
+_Disciplines hub (8) cards now link to each deep-dive (16–21). Creative redesigns applied live to pages 5, 6, 9, 10._
 
 **Guardrails applied:** original wording only (no reproduction of framework.scaledagile.com), trademark attribution on every page, "not official" disclaimer, nofollow on commercial cross-links.
 
