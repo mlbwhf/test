@@ -38,3 +38,9 @@ _Disciplines hub (8) cards now link to each deep-dive (16–21). Creative redesi
 **Open decisions:**
 - scaledagile101.com must NOT also be a SAFe-explainer (would cannibalize implementingsafe.org) — redirect it here or give it a different angle.
 - Confirm domain-name use is OK under the Gold Partner agreement before publishing implementingsafe.org publicly (user: owned 2 yrs, no issue — proceeding on their call).
+
+## implementingsafe.org — NOW LIVE (published 2026-06-09)
+- All 13 pages published. Static front page set to Home (7). Site title "Implementing SAFe", tagline set.
+- Added: SAFe Glossary (31) `/safe-glossary/`.
+- Live URLs: implementingsafe.org/ (home), /safe-disciplines-explained/, /safe-implementation-roadmap-explained/, /safe-configurations-explained/, /customizing-safe-explained/, /advanced-spc-aspc-explained/, /safe-glossary/, + 6 discipline deep-dives (/lean-portfolio-management-explained/ etc.)
+- REMAINING (manual, no MCP menu API): build nav menu in Appearance > Menus.
