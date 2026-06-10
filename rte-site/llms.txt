@@ -1,0 +1,20 @@
+# RTE – Release Train Engineer
+
+> A focused resource on the SAFe® Release Train Engineer (RTE) role and RTE training. Explains what an RTE does, the certification, salary and career outlook, and how to get trained — with courses delivered in English, French, and Spanish, live-online and in-person.
+
+## Pages
+- [Home](/): Overview of the RTE role and training (English, Français, Español; live-online and in-person).
+- [RTE Role & Responsibilities](/rte-role-responsibilities/): The five core responsibilities, the ART events an RTE facilitates, and how the RTE differs from a Scrum Master.
+- [RTE Certification](/rte-certification/): Course content, exam format (60 questions, 120 minutes, ~73% to pass), prerequisites, cost, and how training is delivered (3 languages; online and in-person).
+- [Become an RTE](/become-an-rte/): Salary range ($115K–$185K US, 2026), demand, and the career path from Scrum Master to STE, SPC, and transformation leadership.
+- [FAQ](/faq/): Common questions about the RTE role, certification, prerequisites, exam, and salary.
+- [About](/about/): About this resource and how to get in touch.
+
+## Training delivery
+- Languages: English, French (Français), Spanish (Español).
+- Formats: live-online (worldwide) and in-person (across our service countries).
+- The RTE is a 3-day instructor-led course; the first certification exam attempt is included.
+
+## Key facts
+- The RTE is the servant leader and "chief Scrum Master" of an Agile Release Train (ART).
+- An ART is 5–12 teams (50–125 people) delivering on a Program Increment cadence (8–12 weeks).

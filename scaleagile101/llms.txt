@@ -1,0 +1,17 @@
+# ScaleAgile 101
+
+> A free, plain-English educational resource explaining the Scaled Agile Framework (SAFe) for beginners: what scaled agile is, the core roles, the delivery cadence and events, and a glossary of key terms.
+
+ScaleAgile 101 is a neutral, vendor-independent learning guide. It does not sell a product; it helps newcomers understand how large organizations coordinate many Agile teams to deliver value.
+
+## Core guides
+- [What is Scaled Agile?](/what-is-scaled-agile/): Definition of scaled agile and SAFe, why organizations scale Agile, the four levels (Team, Program/ART, Large Solution, Portfolio), and the Lean-Agile mindset.
+- [The core roles](/core-roles/): Scrum Master, Product Owner, Agile Team, Release Train Engineer (RTE), Product Management, System Architect, and Business Owners.
+- [Cadence & events](/cadence-and-events/): Program Increment (PI), iterations, PI Planning, ART Sync, System Demo, and Inspect & Adapt.
+- [Glossary](/glossary/): Plain-English definitions of ART, PI, PI Planning, RTE, PO, WSJF, value stream, Lean Portfolio Management, and more.
+- [FAQ](/faq/): Beginner questions about Agile vs. Scaled Agile, SAFe, the Agile Release Train, PI Planning, and the RTE role.
+
+## Key facts
+- An Agile Release Train (ART) is 5–12 teams (50–125 people) delivering on a shared cadence.
+- A Program Increment (PI) is typically an 8–12 week timebox bookended by PI Planning and Inspect & Adapt.
+- The Release Train Engineer (RTE) is the servant leader who facilitates ART events and keeps value flowing.
