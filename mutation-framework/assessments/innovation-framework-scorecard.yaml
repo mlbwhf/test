@@ -1,0 +1,115 @@
+# Innovation Framework Scorecard — machine-readable specification
+# Version: 1.0-draft (pending owner review)
+#
+# Companion instrument to the Mutation Readiness Scorecard. Where the
+# Mutation Readiness Scorecard measures an organization's general capacity
+# to adapt, this scorecard measures maturity against the four layers of
+# the Innovation Framework specifically. Use it when an organization is
+# actively implementing the framework and needs a layer-by-layer gap map.
+
+assessment:
+  id: innovation-framework-scorecard
+  name: Innovation Framework Scorecard
+  version: "1.0-draft"
+  scale:
+    type: likert
+    min: 1
+    max: 5
+    labels:
+      1: Not started
+      2: Isolated pockets
+      3: Established in places
+      4: Standard practice
+      5: Continuously improving
+  scoring:
+    # Points per question = answer - 1 (0-4). 16 questions, total 0-64.
+    normalization:
+      raw_min: 16
+      raw_max: 80
+      scaled_min: 0
+      scaled_max: 64
+  bands:
+    - id: forming
+      name: Forming
+      range: [0, 26]
+      summary: >
+        The framework exists on paper. Adoption is sponsor-driven and
+        fragile; one leadership change could erase it.
+    - id: performing
+      name: Performing
+      range: [27, 47]
+      summary: >
+        Two or more layers are genuinely operational. The risk is now
+        uneven adoption — strong layers masking weak ones.
+    - id: transforming
+      name: Transforming
+      range: [48, 64]
+      summary: >
+        All four layers reinforce each other and survive leadership
+        rotation. Focus shifts to recalibration and teaching others.
+  layers:
+    - id: ai-enablement
+      name: AI Enablement
+      definition: >
+        AI capability deployed into real workflows with measurable cycle-time
+        or quality impact — not pilots and demos.
+      questions:
+        - id: AE1
+          text: AI-assisted workflows are in production in at least three distinct functions.
+        - id: AE2
+          text: We measure before/after cycle time or quality for each AI-assisted workflow.
+        - id: AE3
+          text: Model and tool selection follows a documented evaluation process, not vendor enthusiasm.
+        - id: AE4
+          text: Every AI deployment has a named owner responsible for drift, quality, and guardrails.
+    - id: technical-backbone
+      name: Technical Backbone
+      definition: >
+        The platform substrate — pipelines, observability, integration — that
+        lets experiments graduate to production without heroics.
+      questions:
+        - id: TB1
+          text: A new experiment can reach a production-like environment in under a week.
+        - id: TB2
+          text: Observability is good enough that we detect regressions before customers report them.
+        - id: TB3
+          text: Core systems expose APIs that internal teams can build against without negotiation.
+        - id: TB4
+          text: Technical debt is tracked and budgeted against, not just lamented.
+    - id: lean-portfolio
+      name: Lean Portfolio & Value Streams
+      definition: >
+        Funding and prioritization organized around value streams with
+        rolling reallocation, replacing annual project budgeting.
+      questions:
+        - id: LP1
+          text: Funding flows to value streams, not to projects with fixed annual budgets.
+        - id: LP2
+          text: Portfolio review happens at least quarterly with real reallocation, not rubber-stamping.
+        - id: LP3
+          text: Every initiative has explicit leading indicators reviewed on a cadence.
+        - id: LP4
+          text: Stopping an initiative releases its people and budget within one cycle.
+    - id: human-mutation
+      name: Human Mutation
+      definition: >
+        The behavioral substrate: leadership rewiring, psychological safety,
+        and a continuous-learning culture. Without this layer the other
+        three regress within 18 months.
+      questions:
+        - id: HM1
+          text: Leaders run and visibly learn from their own experiments.
+        - id: HM2
+          text: Communities of practice meet regularly and influence real decisions.
+        - id: HM3
+          text: Career progression rewards people who adapt, teach, and de-risk change.
+        - id: HM4
+          text: Retrospectives at every level produce changes that stick.
+  report:
+    required_elements:
+      - total_normalized_score
+      - band
+      - per_layer_scores
+      - weakest_layer_callout   # the framework's sequencing rule: fix the
+                                # weakest layer first; layers compound
+      - cta

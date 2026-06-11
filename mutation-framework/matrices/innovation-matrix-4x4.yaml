@@ -1,0 +1,66 @@
+# The 4x4 Innovation Matrix — machine-readable specification
+# Version: 1.0-draft (pending owner review)
+#
+# Plots every initiative in the portfolio on two axes:
+#   X — Ambition: how far the initiative departs from today's business
+#   Y — Unit of change: what the initiative actually changes
+# Portfolio health = coverage, not concentration. A portfolio entirely in
+# the bottom-left optimizes itself into irrelevance; entirely top-right
+# burns out. See reference/framework-guide-v1.0.md §4.
+
+matrix:
+  id: innovation-matrix-4x4
+  version: "1.0-draft"
+  x_axis:
+    name: Ambition
+    levels:
+      - id: optimize
+        name: Optimize
+        definition: Make the existing thing measurably better.
+      - id: extend
+        name: Extend
+        definition: Take the existing thing to new users, markets, or uses.
+      - id: transform
+        name: Transform
+        definition: Replace how the thing works while keeping what it is for.
+      - id: mutate
+        name: Mutate
+        definition: Change what the organization is for; obsolete part of yourself before the market does.
+  y_axis:
+    name: Unit of change
+    levels:
+      - id: product
+        name: Product
+        definition: What you sell or deliver.
+      - id: process
+        name: Process
+        definition: How the work gets done.
+      - id: business-model
+        name: Business model
+        definition: How value is captured and priced.
+      - id: organization
+        name: Organization
+        definition: How people, structure, and incentives are arranged.
+  cells:
+    # Keyed [y_axis_id, x_axis_id]; example gives the archetypal move.
+    - [product, optimize]:        "Feature refinement, quality, cost-down"
+    - [product, extend]:          "New segment, new geography, new channel"
+    - [product, transform]:       "Re-platform; same job, new mechanism"
+    - [product, mutate]:          "Launch the product that cannibalizes your flagship"
+    - [process, optimize]:        "Automation of existing steps"
+    - [process, extend]:          "Proven process applied to a new function"
+    - [process, transform]:       "AI-native rebuild of the workflow end-to-end"
+    - [process, mutate]:          "Eliminate the process; the job disappears"
+    - [business-model, optimize]: "Pricing and packaging tuning"
+    - [business-model, extend]:   "Existing model into adjacent revenue stream"
+    - [business-model, transform]:"Ownership to subscription; product to platform"
+    - [business-model, mutate]:   "Give away the old revenue line to own the new one"
+    - [organization, optimize]:   "Spans, layers, and role clarity"
+    - [organization, extend]:     "Replicate a high-performing team pattern"
+    - [organization, transform]:  "Value-stream reorganization, rolling budgets"
+    - [organization, mutate]:     "New entity with its own rules, shielded from the core"
+  portfolio_rules:
+    - Every active initiative gets exactly one cell; arguments about which cell are diagnostic gold.
+    - Healthy portfolios hold positions in at least 3 of 4 ambition columns at all times.
+    - The Mutate column is funded with capped, kill-criteria experiments (see templates/risk-assessment-canvas.md), never with the core P&L.
+    - Re-plot quarterly; initiatives drift left over time — that drift is normal, but unnoticed drift is how transformation programs die.
