@@ -46,9 +46,9 @@ assessment:
         - Stand up a SignalNet — a distributed, semi-anonymous logging
           system for any employee to surface weak signals (full template
           in Mutation Readiness Appendix E; see also
-          templates/signalnet-logging-template.md).
+          templates/signalnet.md).
         - Run an Assumption Audit on your current strategy (template in
-          Appendix C, or Chapter 4 of the Operating Manual).
+          Appendix C / Chapter 4; see also templates/assumption-audit.md).
         - Begin a weekly signal review at the leadership team level,
           30 minutes, anomaly-focused.
       reading_list:

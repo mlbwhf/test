@@ -75,7 +75,8 @@ design*, and pretending otherwise would have gamed the score.
 
 Meridian's leadership reviewed the +18-month results and made an explicit,
 documented choice: hold at strong Mutation-Aware until the core system
-replacement lands, then revisit the Mutate column of the matrix. Whether
+replacement lands, then revisit a radical-pattern bet on the Innovation
+Matrix. Whether
 that is prudence or the first chapter of a DeltaCore story depends entirely
 on facts not yet in evidence — chiefly, how much time their market actually
 gives them. The framework's contribution is not that it forced a different

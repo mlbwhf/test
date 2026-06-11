@@ -1,66 +1,188 @@
-# The 4x4 Innovation Matrix — machine-readable specification
-# Version: 1.0-draft (pending owner review)
+---
+# Canonical 4x4 Innovation Matrix
+# Source: The Innovation Playground (novel), Chapter 6 — "The Matrix"
+# Version: 1.0 (June 2026)
+# License: CC BY-SA 4.0
 #
-# Plots every initiative in the portfolio on two axes:
-#   X — Ambition: how far the initiative departs from today's business
-#   Y — Unit of change: what the initiative actually changes
-# Portfolio health = coverage, not concentration. A portfolio entirely in
-# the bottom-left optimizes itself into irrelevance; entirely top-right
-# burns out. See reference/framework-guide-v1.0.md §4.
+# This file is the canonical specification for the 4x4 Innovation Matrix.
+# Use this to reconcile the matrix-cells draft flag in the framework
+# repository. The matrix appears in Chapter 6 of the novel as the artifact
+# Maya pins to the conference-room whiteboard, and on the final page of
+# that chapter as the version Oliver circulates to the board.
+#
+# Axes:
+#   - Rows ("types") describe WHAT changes
+#   - Columns ("patterns") describe HOW MUCH it changes and how the
+#     market responds
+#
+# Important caveat carried in the novel:
+#   "Disruptive" is a market-dynamics concept (Christensen), not a
+#   magnitude. It is included on the patterns axis because customers
+#   recognize the word, but the matrix's narrator names the caveat
+#   explicitly so the reader does not conflate it with "radical."
 
-matrix:
-  id: innovation-matrix-4x4
-  version: "1.0-draft"
-  x_axis:
-    name: Ambition
-    levels:
-      - id: optimize
-        name: Optimize
-        definition: Make the existing thing measurably better.
-      - id: extend
-        name: Extend
-        definition: Take the existing thing to new users, markets, or uses.
-      - id: transform
-        name: Transform
-        definition: Replace how the thing works while keeping what it is for.
-      - id: mutate
-        name: Mutate
-        definition: Change what the organization is for; obsolete part of yourself before the market does.
-  y_axis:
-    name: Unit of change
-    levels:
-      - id: product
-        name: Product
-        definition: What you sell or deliver.
-      - id: process
-        name: Process
-        definition: How the work gets done.
-      - id: business-model
-        name: Business model
-        definition: How value is captured and priced.
-      - id: organization
-        name: Organization
-        definition: How people, structure, and incentives are arranged.
-  cells:
-    # Keyed [y_axis_id, x_axis_id]; example gives the archetypal move.
-    - [product, optimize]:        "Feature refinement, quality, cost-down"
-    - [product, extend]:          "New segment, new geography, new channel"
-    - [product, transform]:       "Re-platform; same job, new mechanism"
-    - [product, mutate]:          "Launch the product that cannibalizes your flagship"
-    - [process, optimize]:        "Automation of existing steps"
-    - [process, extend]:          "Proven process applied to a new function"
-    - [process, transform]:       "AI-native rebuild of the workflow end-to-end"
-    - [process, mutate]:          "Eliminate the process; the job disappears"
-    - [business-model, optimize]: "Pricing and packaging tuning"
-    - [business-model, extend]:   "Existing model into adjacent revenue stream"
-    - [business-model, transform]:"Ownership to subscription; product to platform"
-    - [business-model, mutate]:   "Give away the old revenue line to own the new one"
-    - [organization, optimize]:   "Spans, layers, and role clarity"
-    - [organization, extend]:     "Replicate a high-performing team pattern"
-    - [organization, transform]:  "Value-stream reorganization, rolling budgets"
-    - [organization, mutate]:     "New entity with its own rules, shielded from the core"
-  portfolio_rules:
-    - Every active initiative gets exactly one cell; arguments about which cell are diagnostic gold.
-    - Healthy portfolios hold positions in at least 3 of 4 ambition columns at all times.
-    - The Mutate column is funded with capped, kill-criteria experiments (see templates/risk-assessment-canvas.md), never with the core P&L.
-    - Re-plot quarterly; initiatives drift left over time — that drift is normal, but unnoticed drift is how transformation programs die.
+name: "Innovation Matrix"
+subtitle: "Four Types x Four Patterns"
+source: "The Innovation Playground, Chapter 6"
+version: "1.0"
+
+axes:
+  rows:
+    label: "Types — what changes"
+    items:
+      - id: "product"
+        label: "PRODUCT"
+        description: "What you sell. The artifact the customer receives."
+      - id: "process"
+        label: "PROCESS"
+        description: "How you make it. The internal operations that produce the artifact."
+      - id: "business_model"
+        label: "BUSINESS MODEL"
+        description: "How you make money from it. The flow of value between you and the customer."
+      - id: "customer_experience"
+        label: "CUSTOMER EXPERIENCE"
+        description: "How customers experience it. The end-to-end interaction surface."
+
+  columns:
+    label: "Patterns — how much and how the market reacts"
+    items:
+      - id: "incremental"
+        label: "INCREMENTAL"
+        description: "Small refinements within the existing model."
+      - id: "architectural"
+        label: "ARCHITECTURAL"
+        description: "Reconfiguration of the existing components — different order, different relationships, same parts."
+      - id: "radical"
+        label: "RADICAL"
+        description: "Breakthrough capability that did not previously exist."
+      - id: "disruptive"
+        label: "DISRUPTIVE"
+        description: "Market-dynamics pattern (Christensen) — entrant serves segment incumbents have ignored, then moves up. NOT a magnitude. Included because it is the canonical vocabulary, with the caveat preserved in the narrator's voice."
+
+cells:
+  product:
+    incremental:
+      examples:
+        - "Apple iPhone yearly camera and chip upgrades"
+        - "Toyota's hybrid refinements"
+      summary: "Annual feature upgrades on a known platform."
+    architectural:
+      examples:
+        - "Boeing 787 Dreamliner — composite materials, modular global supply chain"
+      summary: "Same product category, fundamentally re-architected materials and supply chain."
+    radical:
+      examples:
+        - "CRISPR-Cas9 gene editing"
+        - "The first Tesla Roadster"
+        - "NVIDIA's H100"
+      summary: "Long timelines; defended budget. The capability did not exist before."
+      novel_note: "In the novel, Maya argues this cell with CRISPR. Daniel raises the dire-wolf scientific objection (Aenocyon dirus is a separate genus; Colossal's pups are CRISPR-edited gray wolves, not de-extinction). Maya pivots: the capability is real, the marketing claim is contested."
+    disruptive:
+      examples:
+        - "The first iPhone (2007), abstracting away feature phones"
+        - "Honda motorcycles entering the US bottom of the market"
+      summary: "Bottom-of-market entrant moves up, displaces incumbent."
+
+  process:
+    incremental:
+      examples:
+        - "Toyota Production System refinements"
+        - "Six Sigma"
+        - "Lean Manufacturing iterations"
+      summary: "Continuous improvement within an established methodology."
+    architectural:
+      examples:
+        - "BMW's industrial-metaverse digital-twin factories — simulate the factory before pouring concrete"
+      summary: "Same output, re-architected sequence of operations."
+      novel_note: "In the novel, Max argues this cell. His pitch: treat development as a simulation problem — build the experience first, test with synthetic users, then code."
+    radical:
+      examples:
+        - "Tesla's Giga Press — single-cast rear underbody replacing 70+ welded parts"
+        - "Pharma's CRISPR-accelerated R&D pipelines"
+      summary: "Manufacturing or operations methods that did not exist before."
+    disruptive:
+      examples:
+        - "SpaceX reusable rockets"
+      summary: "Changed who could enter the launch market by changing the economics of who can build one."
+
+  business_model:
+    incremental:
+      examples:
+        - "Amazon Prime annual benefit expansion"
+        - "Adobe Creative Cloud's annual price tweaks"
+      summary: "Refinements to an established subscription or transaction model."
+    architectural:
+      examples:
+        - "Netflix DVD -> streaming -> original content. Same customer relationship, fundamentally re-architected revenue and content flow."
+        - "Xerox 1959 — copier as lease plus per-copy fee"
+      summary: "Same product, completely re-arranged how money flows."
+      novel_note: "In the novel, Daniel argues this cell with the Xerox 1959 example. Revenue went from approximately $33M (1959) to over $1.1B (1968), reaching the $2B range by 1971-72. Same product, different architecture of the money."
+    radical:
+      examples:
+        - "Spotify replacing music ownership with subscription streams"
+        - "The Stripe API as a programmable payments primitive"
+      summary: "New economic primitives that did not previously exist as a category."
+    disruptive:
+      examples:
+        - "Klarna's buy-now-pay-later threatening credit cards"
+        - "AWS pricing compute as a metered utility, attacking the on-prem data centre"
+      summary: "Entrant model attacks incumbent from an underserved segment."
+
+  customer_experience:
+    incremental:
+      examples:
+        - "Apple retail-store layout refinements"
+        - "Quarterly UX polish on the SaaS dashboard"
+      summary: "Continuous experience improvement within the existing model."
+    architectural:
+      examples:
+        - "Disney MagicBand re-architecting the park visit around a single wearable"
+      summary: "Same rides, completely re-arranged experience architecture. Profit per visitor measurably improved in year one."
+      novel_note: "In the novel, Daniel argues this cell as his second pick, in the same column as his business-model pick (column: Architectural). Oliver circles this cell as one of two strategic priorities — re-architect the enterprise relationship with existing customers."
+    radical:
+      examples:
+        - "ChatGPT's conversational interface as a category"
+        - "Apple Vision Pro's spatial-computing layer"
+      summary: "New experience primitive that did not exist before."
+    disruptive:
+      examples:
+        - "Airbnb attacking hotels from below"
+        - "Uber attacking taxis"
+      summary: "Replacing the incumbent experience model with one priced for a segment the incumbent ignored."
+      novel_note: "In the novel, Rhea argues this cell with the Airbnb example, then maps it onto the mid-market segment Helix is taking from Deltacore. Oliver circles this cell as the other strategic priority — defend the mid-market segment."
+
+# Oliver's strategic synthesis in the novel
+oliver_synthesis:
+  circled_cells:
+    - "customer_experience x disruptive  (Rhea's pick — defend the mid-market)"
+    - "customer_experience x architectural (Daniel's second pick — re-architect the enterprise relationship)"
+  separately_funded:
+    - "product x radical  (Maya's pick — long-term bet on the explore budget, separate team, separate KPIs)"
+  operating_model_commitment:
+    - "process x architectural  (Max's pick — not a bet, the means by which the bets get executed)"
+  rationale: "Two cells, one theme (Customer Experience), one supporting operating-model change. Compounding bets, not divergent ones."
+
+# Christensen disruption caveat — preserved verbatim from the novel
+disruption_caveat: |
+  "Disruptive" is included on the patterns axis because customers recognize the word.
+  But disruption is about who wins and who loses in a market, not about how dramatic
+  the change is. Conflating "disruptive" with "radical" is a category error that
+  Christensen himself pushed back against. The matrix uses "disruptive" with the
+  caveat preserved — the framework owes the reader the precision, even when the
+  vocabulary is shared with the loose popular usage.
+
+# Default-mode usage notes
+usage:
+  bet_count: "Most companies should circle 2 of the 16 cells as primary bets. Some circle a third as a long-horizon explore bet on a separate budget."
+  same_row_vs_different_row: "Bets in the same row (e.g. Customer Experience x Disruptive + Customer Experience x Architectural) compound. Bets across different rows diverge. Default toward compounding."
+  the_assumption: "The matrix is a forcing function. It is at its most useful when a team is being asked to circle FEWER cells than they want to."
+
+attribution:
+  framework_lineage:
+    - "Henderson, R. M., and Clark, K. B. (1990). 'Architectural Innovation: The Reconfiguration of Existing Product Technologies and the Failure of Established Firms.' Administrative Science Quarterly."
+    - "Christensen, C. M. (1997). The Innovator's Dilemma. HBR Press."
+    - "Christensen, C. M. and Raynor, M. E. (2003). The Innovator's Solution. HBR Press."
+    - "Keeley, L., Walters, H., Pikkel, R., and Quinn, B. (2013). Ten Types of Innovation. Wiley."
+    - "Satell, G. (2017). 'The 4 Types of Innovation and the Problems They Solve.' Harvard Business Review, June 2017."
+    - "OECD (2018). Oslo Manual 2018: Guidelines for Collecting, Reporting and Using Data on Innovation."
+  novel_appearance: "The Innovation Playground (2026), Chapter 6 — 'The Matrix.'"

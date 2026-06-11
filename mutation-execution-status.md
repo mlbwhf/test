@@ -1,6 +1,6 @@
 # Mutation Readiness Build — Execution Status
 
-**Date:** 2026-06-11 (session 2) · **Source:** Handover Brief v1.0 (Mark
+**Date:** 2026-06-11 (session 3) · **Source:** Handover Brief v1.0 (Mark
 Saymen) · **Built by:** Claude Code agent · **Branch:** `claude/trusting-galileo-84n4qw`
 
 ## ✅ Canon reconciliation complete (session 2)
@@ -27,11 +27,18 @@ against them**:
   server re-tested: identical results on identical inputs (incl. N/A
   normalization and rapid mode).
 
-**Still working drafts needing the books' text to finalize:** the Five
-Lever names (Operating Manual Ch. 9), the 4×4 matrix cell archetypes, the
-SignalNet template vs. Appendix E, the Assumption Audit template
-(Appendix C — not yet in the repo), and the three case studies
-(composites; flagged in their headers).
+**Session 3 — all four draft flags resolved with owner-supplied canon:**
+Five Levers (Chapter 9, verbatim at `levers/`), Innovation Matrix (novel
+Ch. 6, Types × Patterns, Christensen caveat preserved in YAML + SVG),
+SignalNet (Appendix E, at `templates/signalnet.md`), Assumption Audit
+(Chapter 4, at `templates/assumption-audit.md`). Guide §4/§5/§7,
+glossary, README, and case-study vocabulary reconciled; guide PDF
+regenerated. **Licenses confirmed by owner** (CC BY-SA 4.0 docs / MIT
+code) — "pending" notes removed.
+
+**Remaining content draft:** the three case studies are still composites —
+and `case-study-deltacore.md` collides with the novel's protagonist
+company (see `mutation-website-copy-flags.md`, Flag 1).
 
 ## Workstream status
 
@@ -46,7 +53,6 @@ SignalNet template vs. Appendix E, the Assumption Audit template
 
 1. Primary domain — and reserve all three candidates within 7 days (risk register)
 2. GitHub org name (`mutationreadiness` vs `mutation-readiness`) → create org + `framework` repo; contents ready to push
-3. Confirm licenses (CC BY-SA 4.0 docs + MIT code, as drafted)
 4. Legal entity timing
 5. Community manager approach
 6. Certification pricing (Wave 3)
@@ -55,14 +61,19 @@ SignalNet template vs. Appendix E, the Assumption Audit template
 9. Conduct-contact email for CODE_OF_CONDUCT.md
 10. Review the working-draft items listed above (Five Levers names, matrix
     cells, case studies) against the books' manuscripts
-11. **New:** review the 3 blog posts + 6 Discord seed posts in
+11. Review the 3 blog posts + 6 Discord seed posts in
     `mutation-launch-content.md`
+12. **New (session 3):** rule on the website-copy canon flags in
+    `mutation-website-copy-flags.md` — especially Flag 1 (DeltaCore name
+    collision with the novel's protagonist company)
 
 ## Suggested next actions
 
 - Owner: create the GitHub org → agent can push `mutation-framework/` verbatim
-- Owner: supply Appendix C (Assumption Audit) and Appendix E (SignalNet)
-  text → agent reconciles the two templates and adds the missing
-  Assumption Audit template
+- Owner: drop The_Innovation_Playground_FINAL docx (and Operating Manual
+  manuscript) in Drive → agent resolves Flag 1, /books copy, sample
+  chapters, word/page-count claims
+- Owner: GitHub org + domains within the stated 48h window → agent pushes
+  the repo verbatim
 - Beta-test both Claude Code skills with real users (day-45 milestone;
   also a risk-register item: 15–20 beta users for the scoring logic)

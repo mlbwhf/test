@@ -21,21 +21,24 @@ because *her* decisions were fast.
 
 ## What they did (three quarters)
 
-**Quarter 1 — Cadence and Capital.** Installed the weekly signal review
-(30 minutes, Mondays, product ops as owner). Moved 15% of the product
-budget out of annual line items into a protected exploration pool —
-separate from the core P&L, evaluated on learning yield, with pre-agreed
-kill criteria per bet (risk-assessment canvas, every time). Ambidextrous
-Capital, in other words, installed as a mechanism rather than a speech.
+**Quarter 1 — The cadence and the exploration pool.** Installed the weekly
+signal review (30 minutes, Mondays, product ops as owner, the Appendix E
+cluster–triage–assign–capture agenda). Moved 15% of the product budget out
+of annual line items into a protected exploration pool — separate from the
+core P&L, evaluated on learning yield, with pre-agreed kill criteria per
+bet (risk-assessment canvas, every time). Ambidextrous capital allocation,
+in other words, installed as a mechanism rather than a speech.
 
-**Quarter 2 — Configuration.** The signal review surfaced a converging
-signal: three enterprise customers independently asked whether Elevate's
-collaboration features would survive AI-generated design workflows. Rather
-than commission a strategy deck, they stood up a 5-person team in 11 days
-(their previous best was 7 weeks) in the *Process / Transform* cell of the
-4×4 matrix: rebuild the review workflow assuming AI drafts the first pass.
+**Quarter 2 — The first circled cell.** The signal review surfaced a
+converging signal: three enterprise customers independently asked whether
+Elevate's collaboration features would survive AI-generated design
+workflows. Rather than commission a strategy deck, they circled the
+*Process × Architectural* cell of the Innovation Matrix and stood up a
+5-person team in 11 days (their previous best was 7 weeks): rebuild the
+review workflow assuming AI drafts the first pass — same output,
+re-architected sequence of operations.
 
-**Quarter 3 — Conviction.** Two of the pool's six experiments hit kill
+**Quarter 3 — Leadership goes first.** Two of the pool's six experiments hit kill
 criteria and were stopped on schedule. The CEO presented one of the killed
 experiments — her own pet idea — at the all-hands, including what it cost
 and what it taught. Q1.3 ("a cadence for surfacing anomalies without

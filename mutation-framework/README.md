@@ -29,9 +29,12 @@ server into your agents, fork the templates into your wiki.
 ```
 assessments/      The two scorecards — Markdown for humans, YAML as the
                   machine-readable source of truth, plus a Python scorer
-templates/        SignalNet log, Risk Assessment Canvas, Innovation KPI
-                  Scorecard, Leading Indicator Dashboard
-matrices/         The 4×4 Innovation Matrix (SVG + YAML spec)
+templates/        SignalNet (Appendix E), Assumption Audit (Chapter 4),
+                  Risk Assessment Canvas, Innovation KPI Scorecard,
+                  Leading Indicator Dashboard
+levers/           Chapter 9 — The Five Levers of Reinvention (canonical)
+matrices/         The Innovation Matrix — four Types × four Patterns
+                  (canonical YAML from the novel's Chapter 6, + SVG)
 reference/        The Framework Guide — the canonical, versioned document
 claude-skills/    Guided assessment skills for Claude Code
 mcp-server/       Model Context Protocol server exposing the assessment
@@ -46,9 +49,11 @@ translations/     Community translations — contributions welcome
 Six **dimensions** measure readiness (Signal Sensitivity, Structural
 Flexibility, AI Talent Flywheel, Ambidextrous Capital, Ethical Guardrails,
 Narrative Coherence), scored 0–72 into three **bands** (Mutation-Blind,
-Mutation-Aware, Mutation-Ready). The **4×4 Innovation Matrix** makes portfolio shape
-visible. The **Five Levers** of reinvention (Operating Manual, Chapter 9)
-are the only things you can actually pull. Three **loops** keep
+Mutation-Aware, Mutation-Ready). The **Innovation Matrix** (four Types × four Patterns) makes bet shape
+visible. The **Five Levers of Reinvention** (Platform-first mindset,
+Ecosystem orchestration, AI talent flywheel, Ambidextrous capital
+allocation, Ethical guardrails for AI velocity) are the structural moves
+that close the gaps. Three **loops** keep
 it alive: a weekly signal review, a quarterly reassessment and re-plot, an
 annual recalibration. The companion **Innovation Framework Scorecard**
 (five Principles, /75) measures the innovation culture underneath — run it
@@ -97,7 +102,7 @@ first; the Framework Guide is versioned deliberately and changes slowly.
 
 ## License
 
-Dual-licensed (pending final owner confirmation):
+Dual-licensed (owner-confirmed):
 
 - **Documents** (guide, assessments, templates, case studies):
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)

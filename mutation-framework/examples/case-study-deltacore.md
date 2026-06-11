@@ -37,7 +37,7 @@ quarter-end crunch ("just this week"), a senior skeptic's standing
 conflict, a junior owner who couldn't compel attendance. By month four the
 SignalNet had become a write-only document.
 
-**They ran the Mutate column from the core P&L.** The dynamic-pricing
+**They ran the explore bet from the core P&L.** The dynamic-pricing
 response was eventually funded — as a line item inside the services
 division whose margins it threatened. The division ran it with the
 diligence a body applies to a transplant it intends to reject: staffed with

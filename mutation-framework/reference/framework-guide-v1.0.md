@@ -8,7 +8,7 @@ definitions, instruments, and cadences for building an organization that
 adapts faster than its market changes.*
 
 This guide is licensed under Creative Commons Attribution-ShareAlike 4.0
-(CC BY-SA 4.0), pending owner confirmation. You may share and adapt it with
+(CC BY-SA 4.0). You may share and adapt it with
 attribution, under the same license.
 
 ---
@@ -138,70 +138,96 @@ repository (`assessments/mutation-readiness-scorecard.yaml`).
 
 ## 4. The 4×4 Innovation Matrix
 
-The matrix plots every initiative in the portfolio on two axes.
+The matrix (introduced in Chapter 6 of *The Innovation Playground*) plots
+innovation bets on two axes: four **Types** and four **Patterns**.
 
-**Ambition** (columns): *Optimize* — make the existing thing measurably
-better; *Extend* — take it to new users, markets, or uses; *Transform* —
-replace how it works while keeping what it is for; *Mutate* — change what
-the organization is for, obsoleting part of yourself before the market does.
+**Types** (rows — *what* changes): *Product* — what you sell, the artifact
+the customer receives; *Process* — how you make it; *Business model* — how
+you make money from it; *Customer experience* — how customers experience
+it, the end-to-end interaction surface.
 
-**Unit of change** (rows): *Product* — what you sell; *Process* — how work
-gets done; *Business model* — how value is captured; *Organization* — how
-people, structure, and incentives are arranged.
+**Patterns** (columns — *how much* it changes and how the market reacts):
+*Incremental* — small refinements within the existing model;
+*Architectural* — reconfiguration of existing components, different order
+and relationships, same parts; *Radical* — breakthrough capability that
+did not previously exist; *Disruptive* — the market-dynamics pattern, an
+entrant serving a segment incumbents have ignored, then moving up.
 
-The matrix exists to make portfolio shape visible. Three rules govern its
-use:
+**The Christensen caveat**, preserved verbatim from the novel:
 
-1. **Every active initiative gets exactly one cell.** Arguments about which
-   cell are not friction; they are the diagnosis surfacing.
-2. **Healthy portfolios hold positions in at least three of the four
-   ambition columns at all times.** A portfolio entirely in Optimize/Extend
-   is optimizing itself into irrelevance; a portfolio entirely in
-   Transform/Mutate has mistaken adrenaline for strategy.
-3. **The Mutate column is funded only with capped, kill-criteria
-   experiments** — never from the core P&L, and ideally shielded
-   structurally (separate team, separate rules, separate building if
-   necessary).
+> "Disruptive" is included on the patterns axis because customers
+> recognize the word. But disruption is about who wins and who loses in a
+> market, not about how dramatic the change is. Conflating "disruptive"
+> with "radical" is a category error that Christensen himself pushed back
+> against. The matrix uses "disruptive" with the caveat preserved — the
+> framework owes the reader the precision, even when the vocabulary is
+> shared with the loose popular usage.
 
-Initiatives drift left over time as they mature. The drift is normal;
-*unnoticed* drift is how transformation programs quietly become maintenance
-programs. Re-plot quarterly.
+Three usage rules govern the matrix:
+
+1. **Circle two of the sixteen cells as primary bets.** Some organizations
+   circle a third as a long-horizon explore bet on a separate budget with
+   separate KPIs. The matrix is a forcing function: it is at its most
+   useful when a team is being asked to circle *fewer* cells than they
+   want to.
+2. **Bets in the same row compound; bets across different rows diverge.**
+   Default toward compounding (the novel's worked example: Customer
+   experience × Disruptive plus Customer experience × Architectural — two
+   cells, one theme, one supporting operating-model change).
+3. **Fund radical-pattern bets from the protected exploration budget**
+   (see Ambidextrous capital allocation, §5), never from the core P&L's
+   quarterly cycle.
+
+The full cell-by-cell specification with worked examples is published in
+the repository at `matrices/innovation-matrix-4x4.{yaml,svg}`.
 
 ## 5. The Five Levers of Reinvention
 
-> **Draft note:** the canonical Five Levers are defined in Chapter 9 of
-> *Mutation Readiness: An Operating Manual for Innovation in the Age of
-> AI*. The lever names below are a working draft and must be reconciled
-> against Chapter 9 by the author before v1.0 final.
+If the signals tell you stagnation is setting in, the levers tell you what
+to do about it. These are the structural moves that distinguish companies
+that successfully reinvent themselves from companies that try to and fail
+(Operating Manual, Chapter 9 — full text in the repository at
+`levers/chapter-9-five-levers-of-reinvention.md`).
 
-When an assessment reveals a gap, these are the five levers an organization
-can actually pull. Every intervention the framework prescribes is a setting
-of one or more of these levers; if a proposed action does not map to a
-lever, it is commentary, not intervention.
+1. **Platform-first mindset.** Shift from shipping discrete products to
+   building extensible platforms others can plug into, contribute to, and
+   scale with. Platforms create network effects and reduce the marginal
+   cost of innovation. Exemplar: NVIDIA's CUDA — fifteen years of quiet
+   network effects, then a roughly tenfold market-capitalization outcome
+   when the AI boom arrived on a platform every serious lab already used.
 
-1. **Capital.** Move money on a rolling cadence instead of an annual one.
-   Reallocation ratio — the percentage of innovation budget that moved this
-   quarter — is the lever's gauge. Zero for three consecutive quarters means
-   the lever is rusted shut.
+2. **Ecosystem orchestration.** Curate, empower, and coordinate a network
+   of external contributors, partners, and communities around your core
+   stack. Strategic control now means controlling the ecosystem narrative,
+   not the customer transaction. Exemplar: the AWS Marketplace.
 
-2. **Cadence.** Install the operating rhythm: weekly signal review,
-   quarterly reassessment and portfolio re-plot, annual recalibration (§7).
-   Cadence is the cheapest lever and the most commonly skipped, because
-   calendars are where intentions go to die.
+3. **AI talent flywheel.** Attract and retain cross-disciplinary AI talent
+   and build feedback loops between them and your core value proposition.
+   Talent migration is a leading indicator of organizational energy.
+   Exemplar: Anthropic's 2022–2026 hiring pattern and the research output
+   it produced. (This lever is also Dimension 3 of the scorecard.)
 
-3. **Capability.** Build AI fluency and experimentation skill deliberately:
-   embedded in real workflows with measured before/after deltas, not
-   training catalogs. Capability investments are experiments too — they
-   carry leading indicators and review dates.
+4. **Ambidextrous capital allocation.** Balance funding between core
+   operations (exploitation) and exploratory innovation (exploration),
+   with distinct KPIs and timelines for each. Track return on learning,
+   not just return on investment, and protect the explore budget from the
+   exploit P&L's quarterly cycles. Exemplar: Google's DeepMind
+   acquisition. (Also Dimension 4 of the scorecard.)
 
-4. **Configuration.** Make structure cheap to change: modular processes,
-   value-stream funding, teams that can form and dissolve in weeks. The
-   gauge is the last actual reconfiguration, timed end to end.
+5. **Ethical guardrails for AI velocity.** Embed ethical design, risk
+   forecasting, and safety architecture into AI decisions — not as a
+   compliance checklist but as a velocity multiplier. Containment is not
+   the opposite of velocity; it is what enables sustained velocity.
+   (Also Dimension 5 of the scorecard.)
 
-5. **Conviction.** Leadership behavior and incentives. Leaders run their own
-   experiments and publish their own position changes; compensation rewards
-   adaptation. This lever cannot be delegated, which is why it is listed
-   last and matters first.
+**Sequencing.** Each lever in isolation produces a modest effect; the
+compounding occurs when several are pulled in coordination (Microsoft
+under Nadella pulled levers 1, 3, 4, and 5 over a decade). From a
+stagnating position the usual order is: platform first, because it
+determines the structure of everything that follows; talent second,
+because the talent builds the platform; capital allocation third, because
+the talent needs the runway; ecosystem and guardrails in parallel, because
+they govern how the platform interacts with the world.
 
 ## 6. The Mutation Readiness Scorecard
 
@@ -267,17 +293,27 @@ Theatre will fail at mutation readiness regardless of what it installs.
 The framework runs on three loops. All three are required; the framework
 does not function as an annual event.
 
-**Weekly — signal review (30 minutes).** Fixed agenda: new signals (10
-minutes, 60 seconds each, no debate), status changes on watched signals (10
-minutes), and at most one escalation decision (10 minutes). One owner, one
-log, same slot every week. This meeting is the framework's heartbeat; if
-only one practice survives contact with your calendar, keep this one.
+**Weekly — signal review (30 minutes).** The leadership team reviews the
+SignalNet weekly with the structured agenda from Appendix E: **Cluster**
+(group signals by theme), **Triage** (noise, weak signal, or actionable
+signal), **Assign** (actionable signals get a named owner and a 30-day
+investigation budget), **Capture** (a one-paragraph note to the Insight
+Journal documenting the cluster and the decision). This meeting is the
+framework's heartbeat; if only one practice survives contact with your
+calendar, keep this one.
+
+**Semiannual — Assumption Audit (two hours).** Run the Chapter 4 audit
+every six months for each business unit or product line: six to eight
+cross-functional people, every strategic assumption marked Verified /
+Inherited / Aspirational, the five most expensive untested beliefs ranked,
+and the two highest-leverage experiments scheduled with owner, budget, and
+a 90-day deadline (template at `templates/assumption-audit.md`).
 
 **Quarterly — reassessment and re-plot (half day).** Re-run the scorecard as
-a team scan; re-plot the portfolio on the 4×4 matrix; review the leading
+a team scan; re-plot bets on the Innovation Matrix; review the leading
 indicator dashboard and the KPI scorecard; audit the quarter's surprises
 against the SignalNet (was the miss a sensing failure or a deciding
-failure?); set or reset one lever (§5).
+failure?); check mutation latency against the 21-day target.
 
 **Annual — recalibration (one to two days).** Step back from the loops:
 re-examine whether the dimensions are weighted right for your context,
@@ -295,7 +331,8 @@ sensing — attention is the scarcest budget the framework spends.
 | **Kill criteria** | Evidence, defined before funding, that ends an experiment by a set date. |
 | **Kill latency** | How long an initiative survives past its own kill criteria. Target: zero. |
 | **Leading indicator** | A measure that moves before the outcome does, while action is still possible. |
-| **Lever** | One of the Five Levers of reinvention (Operating Manual, Chapter 9; working draft names in §5). |
+| **Assumption Audit** | Semiannual two-hour exercise marking every strategic assumption Verified, Inherited, or Aspirational, then testing the most expensive unverified ones (Operating Manual, Chapter 4). |
+| **Lever** | One of the Five Levers of Reinvention: Platform-first mindset, Ecosystem orchestration, AI talent flywheel, Ambidextrous capital allocation, Ethical guardrails for AI velocity (Operating Manual, Chapter 9). |
 | **Mutation** | An environmental change large enough that the organization's current design is no longer the right answer. |
 | **Mutation exposure** | The cost of *inaction* if a signal proves real; the systematically underpriced side of the risk ledger. |
 | **Mutation latency** | Time from signal identification to organizational decision. Target: under 21 days. |
@@ -335,8 +372,10 @@ Contributions, translations, and case studies are welcome — see
 ---
 
 **Changelog**
-- **v1.0-draft (June 2026)** — initial draft for owner review. Dimensions,
+- **v1.0-draft (June 2026)** — draft for owner review. Dimensions,
   questions, scoring rubric, bands, and band actions reconciled with the
-  canonical assessment (Appendix A of the Operating Manual). Five Lever
-  names (§5) and 4×4 matrix cell archetypes (§4) remain working drafts
-  requiring owner sign-off before v1.0 final.
+  canonical assessment (Appendix A); Five Levers reconciled with Chapter 9;
+  Innovation Matrix reconciled with the novel's Chapter 6 (Types × Patterns,
+  Christensen caveat preserved); SignalNet and Assumption Audit templates
+  replaced with the canonical Appendix E / Chapter 4 text. Licenses
+  confirmed (CC BY-SA 4.0 documents, MIT code).
