@@ -23,12 +23,12 @@ decline to make.
 | | Baseline | +6 months | +18 months |
 |---|---|---|---|
 | **Total** | 29 (Mutation-Blind) | 38 | 43 (Mutation-Aware) |
-| Signal Detection | 4 | 9 | 10 |
-| Decision Velocity | 5 | 6 | 6 |
-| Experimentation Capacity | 4 | 7 | 8 |
-| AI Fluency | 3 | 5 | 8 |
-| Structural Plasticity | 6 | 6 | 5 |
-| Leadership Posture | 7 | 5 | 6 |
+| Signal Sensitivity | 4 | 9 | 10 |
+| Structural Flexibility | 5 | 6 | 6 |
+| AI Talent Flywheel | 3 | 5 | 8 |
+| Ambidextrous Capital | 4 | 7 | 8 |
+| Ethical Guardrails | 7 | 5 | 6 |
+| Narrative Coherence | 6 | 6 | 5 |
 
 ## What worked
 
@@ -36,33 +36,40 @@ decline to make.
 insurer's native culture — underwriters are professional signal-readers.
 Within two quarters, claims staff were logging fraud-pattern and
 climate-exposure signals that previously lived in hallway conversation.
-Signal Detection 4→10 was the cheapest nine points the framework offers.
+Signal Sensitivity 4→10 was the cheapest six points the framework offers.
 
-**Experiments thrived inside regulatory rails.** Capped experiments with
-pre-written kill criteria turned out to be *easier* to clear with
-compliance than open-ended projects, because the canvas answered the
-questions compliance was going to ask anyway. AI Fluency rose on the same
-mechanism: narrow, measured deployments in claims triage and document
-intake, each with a named owner.
+**Exploration capital thrived inside regulatory rails.** A protected,
+capped experiment pool with pre-written kill criteria turned out to be
+*easier* to clear with compliance than open-ended projects, because the
+canvas answered the questions compliance was going to ask anyway. The AI
+Talent Flywheel turned on the same mechanism: actuaries and claims leads
+were paired with embedded AI-literate hires on narrow, measured
+deployments in claims triage and document intake — and those hires stayed,
+because their work shipped.
 
-**Note the Leadership Posture dip at +6 months.** Baseline 7 was a
-personal-scan artifact; the first team scan repriced it at 5. The framework
-treats this honesty correction as progress. It rarely feels like progress.
+**Note the Ethical Guardrails dip at +6 months.** Baseline 7 was a
+personal-scan artifact — the CDO had equated a strong compliance function
+with AI governance. The first team scan repriced it at 5: compliance was
+reviewing AI deployments after the fact, with legal rather than
+engineering at the centre. The framework treats this honesty correction as
+progress. It rarely feels like progress.
 
 ## What plateaued — and why
 
-**Decision Velocity stalled at 6.** Meridian's board meets quarterly and
-its capital decisions are, by charter and by regulation, deliberate. The
-framework's rolling-reallocation lever collided with a governance model
-that exists for sound prudential reasons. They compromised: a small
-pre-authorized experiment pool moves monthly; everything else keeps its
-cadence.
+**Structural Flexibility stalled at 6.** Meridian's board meets quarterly
+and its restructuring decisions are, by charter and by regulation,
+deliberate. The framework's act-within-a-quarter standard collided with a
+governance model that exists for sound prudential reasons. They
+compromised: the pre-authorized experiment pool moves monthly; structural
+changes keep their cadence.
 
-**Structural Plasticity went slightly backward.** A core policy-system
+**Narrative Coherence went slightly backward.** A core policy-system
 replacement — necessary, multi-year, monolithic — consumed exactly the
-slack that plasticity requires. The framework's honest reading: an
-organization mid-transplant has lower plasticity *by design*, and
-pretending otherwise would have gamed the score.
+leadership attention that a living strategic narrative requires. Asked
+what Meridian was for in the current market, employees increasingly
+answered with the system migration. The framework's honest reading: an
+organization mid-transplant tells itself a transitional story *by
+design*, and pretending otherwise would have gamed the score.
 
 ## The open question
 

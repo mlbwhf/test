@@ -19,7 +19,7 @@ server into your agents, fork the templates into your wiki.
 
 | If you are a… | Start with |
 |---|---|
-| **Leader** wondering where you stand | The [Mutation Readiness Scorecard](assessments/mutation-readiness-scorecard.md) — 18 questions, ~10 minutes |
+| **Leader** wondering where you stand | The [Mutation Readiness Scorecard](assessments/mutation-readiness-scorecard.md) — 18 questions, ~15 minutes |
 | **Practitioner** running the framework | The [Framework Guide](reference/framework-guide-v1.0.md), then the [templates](templates/) |
 | **Facilitator** assessing a team | The [Claude Code skill](claude-skills/mutation-readiness-assessment.md) for guided sessions |
 | **Developer** integrating it into tools | The [machine-readable specs](assessments/) (YAML) and the [MCP server](mcp-server/) |
@@ -43,14 +43,16 @@ translations/     Community translations — contributions welcome
 
 ## The framework in one paragraph
 
-Six **dimensions** measure readiness (Signal Detection, Decision Velocity,
-Experimentation Capacity, AI Fluency, Structural Plasticity, Leadership
-Posture), scored 0–72 into three **bands** (Mutation-Blind, Mutation-Aware,
-Mutation-Ready). The **4×4 Innovation Matrix** makes portfolio shape
-visible. Five **levers** (Capital, Cadence, Capability, Configuration,
-Conviction) are the only things you can actually pull. Three **loops** keep
+Six **dimensions** measure readiness (Signal Sensitivity, Structural
+Flexibility, AI Talent Flywheel, Ambidextrous Capital, Ethical Guardrails,
+Narrative Coherence), scored 0–72 into three **bands** (Mutation-Blind,
+Mutation-Aware, Mutation-Ready). The **4×4 Innovation Matrix** makes portfolio shape
+visible. The **Five Levers** of reinvention (Operating Manual, Chapter 9)
+are the only things you can actually pull. Three **loops** keep
 it alive: a weekly signal review, a quarterly reassessment and re-plot, an
-annual recalibration. The [Framework Guide](reference/framework-guide-v1.0.md)
+annual recalibration. The companion **Innovation Framework Scorecard**
+(five Principles, /75) measures the innovation culture underneath — run it
+first. The [Framework Guide](reference/framework-guide-v1.0.md)
 is the canonical definition; everything else derives from it.
 
 ## Quick start: score yourself in two minutes

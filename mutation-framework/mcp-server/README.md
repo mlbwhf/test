@@ -12,10 +12,10 @@ Spec embedded from `assessments/mutation-readiness-scorecard.yaml` v1.0-draft.
 
 | Tool | Purpose |
 |---|---|
-| `run_assessment(unit_of_analysis, mode)` | Returns the 18 questions, scale, and facilitation instructions. Modes: `personal-scan`, `team-scan`, `quarterly-trend`. |
-| `score_responses(answers, unit_of_analysis?)` | Scores 18 Likert answers (keyed `SD1`…`LP3`) → total 0–72, band, per-dimension profile. |
-| `generate_report(score_data)` | Renders score data as a markdown report with dimension bars and 30-day actions. |
-| `get_band_recommendations(band)` | Band definition + three 30-day actions for `mutation-blind` / `mutation-aware` / `mutation-ready`. |
+| `run_assessment(unit_of_analysis, mode)` | Returns the 18 questions, scale, and facilitation instructions. Modes: `full` (18 questions) and `rapid` (6 questions, /30). |
+| `score_responses(answers, unit_of_analysis?)` | Scores 18 Likert answers (keyed `Q1.1`…`Q6.3`, `null` = N/A) → total 0–72, band, per-dimension profile. |
+| `generate_report(score_data)` | Renders score data as a markdown report with dimension bars, band actions, and reading list. |
+| `get_band_recommendations(band)` | Band reading, recommended actions, and reading list for `mutation-blind` / `mutation-aware` / `mutation-ready`. |
 
 ## Run locally
 

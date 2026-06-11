@@ -1,115 +1,188 @@
 # Innovation Framework Scorecard — machine-readable specification
-# Version: 1.0-draft (pending owner review)
+# Version: 1.0-draft (content reconciled with the canonical skill file,
+# source: the five Principles from Part I of "Mutation Readiness: An
+# Operating Manual for Innovation in the Age of AI" by Mark Saymen)
 #
-# Companion instrument to the Mutation Readiness Scorecard. Where the
-# Mutation Readiness Scorecard measures an organization's general capacity
-# to adapt, this scorecard measures maturity against the four layers of
-# the Innovation Framework specifically. Use it when an organization is
-# actively implementing the framework and needs a layer-by-layer gap map.
+# Companion instrument to the Mutation Readiness Scorecard. Mutation
+# Readiness measures whether the organization can sense and respond to
+# AI-age change; this scorecard measures whether it has the cultural
+# operating system underneath that lets innovation happen at all. Run this
+# one first; an organization scoring as Innovation Theatre will fail at
+# Mutation Readiness regardless of what they install.
 
 assessment:
   id: innovation-framework-scorecard
   name: Innovation Framework Scorecard
   version: "1.0-draft"
+  source: >
+    The Innovators Framework — five Principles from Part I of "Mutation
+    Readiness: An Operating Manual for Innovation in the Age of AI".
   scale:
     type: likert
     min: 1
     max: 5
+    na_allowed: true
     labels:
-      1: Not started
-      2: Isolated pockets
-      3: Established in places
-      4: Standard practice
-      5: Continuously improving
+      1: Strongly disagree
+      2: Disagree
+      3: Neutral
+      4: Agree
+      5: Strongly agree
   scoring:
-    # Points per question = answer - 1 (0-4). 16 questions, total 0-64.
-    normalization:
-      raw_min: 16
-      raw_max: 80
-      scaled_min: 0
-      scaled_max: 64
+    # Principle score: sum of three answered questions (max 15).
+    # Total score: sum of 5 principles (max 75).
+    # If any items are N/A, normalize the total to a percentage rather
+    # than reporting a raw score.
+    principle_max: 15
+    total_max: 75
   bands:
-    - id: forming
-      name: Forming
-      range: [0, 26]
-      summary: >
-        The framework exists on paper. Adoption is sponsor-driven and
-        fragile; one leadership change could erase it.
-    - id: performing
-      name: Performing
-      range: [27, 47]
-      summary: >
-        Two or more layers are genuinely operational. The risk is now
-        uneven adoption — strong layers masking weak ones.
-    - id: transforming
-      name: Transforming
-      range: [48, 64]
-      summary: >
-        All four layers reinforce each other and survive leadership
-        rotation. Focus shifts to recalibration and teaching others.
-  layers:
-    - id: ai-enablement
-      name: AI Enablement
+    - id: innovation-theatre
+      name: Innovation Theatre
+      range: [0, 30]
+      reading: >
+        The organization uses the language of innovation but does not run
+        the practices. Innovation work is performed for management or
+        external audiences, not lived in daily decisions. The cultural
+        foundation is missing.
+    - id: innovation-practicing
+      name: Innovation Practicing
+      range: [31, 55]
+      reading: >
+        The rituals exist. Some teams have internalized them. The whole
+        organization has not yet absorbed them into how decisions are
+        actually made. The biggest gap is usually between what leadership
+        says and what the performance system rewards.
+    - id: innovation-native
+      name: Innovation Native
+      range: [56, 75]
+      reading: >
+        Innovation is identity, not department. The practices are visible
+        in everyday decisions, in how people talk in meetings, in how the
+        performance system actually works. The risk is now complacency
+        rather than absence.
+  principles:
+    - id: fail-forward
+      name: Fail Forward (Grit & Agility)
       definition: >
-        AI capability deployed into real workflows with measurable cycle-time
-        or quality impact — not pilots and demos.
+        The discipline of running structured experiments, learning from
+        failure, and recovering quickly — Edmondson's intelligent failure:
+        new territory, opportunity-driven, informed by prior knowledge,
+        sized as small as possible while still producing learning.
       questions:
-        - id: AE1
-          text: AI-assisted workflows are in production in at least three distinct functions.
-        - id: AE2
-          text: We measure before/after cycle time or quality for each AI-assisted workflow.
-        - id: AE3
-          text: Model and tool selection follows a documented evaluation process, not vendor enthusiasm.
-        - id: AE4
-          text: Every AI deployment has a named owner responsible for drift, quality, and guardrails.
-    - id: technical-backbone
-      name: Technical Backbone
+        - id: "Q1.1"
+          text: >
+            Does your team run small, structured experiments with explicit
+            hypotheses and pre-defined learning goals — not just "let's try
+            it and see"?
+        - id: "Q1.2"
+          text: >
+            When something fails, do you have a structured way to debrief
+            it (Failure Harvest, post-mortem) that surfaces what the team
+            believed before, what they believe now, and what to do next —
+            without blame?
+        - id: "Q1.3"
+          text: >
+            Is iteration and perseverance publicly recognized in your
+            performance system, not just successful outcomes?
+    - id: open-communication
+      name: Open Communication & Candid Feedback
       definition: >
-        The platform substrate — pipelines, observability, integration — that
-        lets experiments graduate to production without heroics.
+        Psychological safety combined with radical candor. The combination
+        is the practice — safety without candor becomes comfort; candor
+        without safety becomes harassment.
       questions:
-        - id: TB1
-          text: A new experiment can reach a production-like environment in under a week.
-        - id: TB2
-          text: Observability is good enough that we detect regressions before customers report them.
-        - id: TB3
-          text: Core systems expose APIs that internal teams can build against without negotiation.
-        - id: TB4
-          text: Technical debt is tracked and budgeted against, not just lamented.
-    - id: lean-portfolio
-      name: Lean Portfolio & Value Streams
+        - id: "Q2.1"
+          text: >
+            Do team members feel safe to challenge ideas — including ideas
+            from leadership — without political consequence to the person
+            who challenged?
+        - id: "Q2.2"
+          text: >
+            Is feedback typically shared in real time, in the moment,
+            rather than saved for annual reviews?
+        - id: "Q2.3"
+          text: >
+            When senior leaders make decisions employees disagree with, do
+            those employees say so — and is the disagreement engaged
+            seriously rather than dismissed?
+    - id: mental-models
+      name: Challenging Mental Models
       definition: >
-        Funding and prioritization organized around value streams with
-        rolling reallocation, replacing annual project budgeting.
+        The discipline of questioning assumptions you have been treating as
+        facts: first-principles thinking, blue-ocean reframing, scenario
+        planning, "what if we assumed the opposite."
       questions:
-        - id: LP1
-          text: Funding flows to value streams, not to projects with fixed annual budgets.
-        - id: LP2
-          text: Portfolio review happens at least quarterly with real reallocation, not rubber-stamping.
-        - id: LP3
-          text: Every initiative has explicit leading indicators reviewed on a cadence.
-        - id: LP4
-          text: Stopping an initiative releases its people and budget within one cycle.
-    - id: human-mutation
-      name: Human Mutation
+        - id: "Q3.1"
+          text: >
+            Does your team regularly question fundamental assumptions about
+            your industry, customers, or business model — not as a workshop
+            exercise, but in real decisions?
+        - id: "Q3.2"
+          text: >
+            When you face a hard problem, does someone on the team know how
+            to use first-principles reasoning to break it down to
+            underlying physical or economic facts?
+        - id: "Q3.3"
+          text: >
+            Has your team explicitly retired a "sacred cow" — a practice
+            everyone assumed was non-negotiable — in the past 12 months?
+    - id: flexible-structure
+      name: Flexible Structure / Agile Decision-Making
       definition: >
-        The behavioral substrate: leadership rewiring, psychological safety,
-        and a continuous-learning culture. Without this layer the other
-        three regress within 18 months.
+        The organization is structured so that decisions happen close to
+        the work and information flows across boundaries faster than it
+        flows up the chain (Conway's Law; the Inverse Conway Maneuver).
       questions:
-        - id: HM1
-          text: Leaders run and visibly learn from their own experiments.
-        - id: HM2
-          text: Communities of practice meet regularly and influence real decisions.
-        - id: HM3
-          text: Career progression rewards people who adapt, teach, and de-risk change.
-        - id: HM4
-          text: Retrospectives at every level produce changes that stick.
+        - id: "Q4.1"
+          text: >
+            Are teams aligned to customer outcomes or value streams, rather
+            than to internal functions (marketing, engineering, sales)?
+        - id: "Q4.2"
+          text: >
+            Do teams have decision-making autonomy without escalation for
+            most operational choices in their area?
+        - id: "Q4.3"
+          text: >
+            When something needs to change structurally — a new team, a
+            different reporting line, a deprecated process — does it happen
+            within a quarter, or does it take a year of approvals?
+    - id: growth-mindset
+      name: Growth Mindset at Scale
+      definition: >
+        Dweck's individual mindset framework extended to the organizational
+        level (Murphy, Cultures of Growth): how the organization rewards
+        effort and learning vs how it rewards talent and outcomes.
+      questions:
+        - id: "Q5.1"
+          text: >
+            Does your performance review system explicitly reward how an
+            employee helped others grow — with comparable weight to
+            delivery metrics?
+        - id: "Q5.2"
+          text: >
+            Do employees have dedicated, protected time for self-directed
+            learning, experimentation, or curiosity-driven work (Google
+            20%, Atlassian Innovation Weeks, LinkedIn InDay, Cisco
+            Illuminate, or your own equivalent)?
+        - id: "Q5.3"
+          text: >
+            When senior leaders fail or change their minds, do they share
+            what they learned, publicly, more than once a year?
+  rapid_mode:
+    # One question per principle, the strongest single signal each.
+    question_ids: ["Q1.2", "Q2.1", "Q3.3", "Q4.3", "Q5.1"]
+    total_max: 25
+    bands:
+      - { id: innovation-theatre, range: [0, 10] }
+      - { id: innovation-practicing, range: [11, 18] }
+      - { id: innovation-native, range: [19, 25] }
   report:
     required_elements:
-      - total_normalized_score
+      - total_score              # /75, or percentage if any N/A
       - band
-      - per_layer_scores
-      - weakest_layer_callout   # the framework's sequencing rule: fix the
-                                # weakest layer first; layers compound
-      - cta
+      - per_principle_scores     # each /15
+      - strongest_and_weakest    # the gap is usually the finding
+      - contradiction_surfaced   # rhetoric vs performance system
+      - thirty_sixty_ninety_day_actions  # tied to the weakest two principles
+      - mutation_readiness_referral      # suggest the companion assessment
+                                          # if >55, or >40 in Practicing

@@ -7,7 +7,11 @@
  *   run_assessment(unit_of_analysis, mode)  -> questions + instructions
  *   score_responses(answers)                -> scores, band, profile
  *   generate_report(score_data)             -> formatted markdown report
- *   get_band_recommendations(band)          -> 30-day actions for a band
+ *   get_band_recommendations(band)          -> actions + reading for a band
+ *
+ * Scoring per Appendix A of the Operating Manual: each question 1-5 (N/A
+ * allowed); dimension score = floor(sum * 12 / (5 * answered_count)),
+ * headline 0-12; total = sum of six dimensions, out of 72.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -16,6 +20,7 @@ import { z } from "zod";
 import {
   ALL_QUESTION_IDS,
   BANDS,
+  DIMENSION_MAX,
   DIMENSIONS,
   MAX_SCORE,
   SCALE,
@@ -28,6 +33,7 @@ interface DimensionScore {
   name: string;
   points: number;
   maxPoints: number;
+  naCount: number;
 }
 
 interface ScoreData {
@@ -35,14 +41,16 @@ interface ScoreData {
   unitOfAnalysis?: string;
   totalScore: number;
   maxScore: number;
+  percentage?: number;
   band: string;
-  bandSummary: string;
-  thirtyDayActions: string[];
+  bandReading: string;
+  recommendedActions: string[];
+  readingList: string[];
   dimensions: DimensionScore[];
 }
 
 function scoreResponses(
-  answers: Record<string, number>,
+  answers: Record<string, number | null>,
   unitOfAnalysis?: string
 ): ScoreData {
   const missing = ALL_QUESTION_IDS.filter((id) => !(id in answers));
@@ -50,32 +58,48 @@ function scoreResponses(
     throw new Error(`Missing answers for: ${missing.join(", ")}`);
   }
   for (const [id, v] of Object.entries(answers)) {
-    if (!Number.isInteger(v) || v < SCALE.min || v > SCALE.max) {
+    if (v !== null && (!Number.isInteger(v) || v < SCALE.min || v > SCALE.max)) {
       throw new Error(
-        `Answer for ${id} must be an integer ${SCALE.min}-${SCALE.max}, got ${v}`
+        `Answer for ${id} must be an integer ${SCALE.min}-${SCALE.max} or null for N/A, got ${v}`
       );
     }
   }
 
-  const dimensions: DimensionScore[] = DIMENSIONS.map((d) => ({
-    id: d.id,
-    name: d.name,
-    points: d.questions.reduce((s, q) => s + (answers[q.id] - SCALE.min), 0),
-    maxPoints: d.questions.length * (SCALE.max - SCALE.min),
-  }));
+  let anyNa = false;
+  const dimensions: DimensionScore[] = DIMENSIONS.map((d) => {
+    const vals = d.questions.map((q) => answers[q.id]);
+    const answered = vals.filter((v): v is number => v !== null);
+    if (answered.length === 0) {
+      throw new Error(`All questions N/A in dimension ${d.id}`);
+    }
+    if (answered.length < vals.length) anyNa = true;
+    const sum = answered.reduce((s, v) => s + v, 0);
+    return {
+      id: d.id,
+      name: d.name,
+      points: Math.floor((sum * DIMENSION_MAX) / (SCALE.max * answered.length)),
+      maxPoints: DIMENSION_MAX,
+      naCount: vals.length - answered.length,
+    };
+  });
   const totalScore = dimensions.reduce((s, d) => s + d.points, 0);
   const band = bandForScore(totalScore);
 
-  return {
+  const data: ScoreData = {
     version: VERSION,
     unitOfAnalysis,
     totalScore,
     maxScore: MAX_SCORE,
     band: band.name,
-    bandSummary: band.summary,
-    thirtyDayActions: band.thirtyDayActions,
+    bandReading: band.reading,
+    recommendedActions: band.recommendedActions,
+    readingList: band.readingList,
     dimensions,
   };
+  if (anyNa) {
+    data.percentage = Math.round((totalScore * 1000) / MAX_SCORE) / 10;
+  }
+  return data;
 }
 
 function renderReport(data: ScoreData): string {
@@ -83,9 +107,11 @@ function renderReport(data: ScoreData): string {
   const lines: string[] = [
     `# Mutation Readiness Report${data.unitOfAnalysis ? ` — ${data.unitOfAnalysis}` : ""}`,
     "",
-    `**Total: ${data.totalScore}/${data.maxScore} — ${data.band}** (scorecard ${data.version})`,
+    `**Total: ${data.totalScore}/${data.maxScore} — ${data.band}**` +
+      (data.percentage !== undefined ? ` (${data.percentage}% with N/A items normalized)` : "") +
+      ` (scorecard ${data.version})`,
     "",
-    data.bandSummary,
+    data.bandReading,
     "",
     "## Dimension profile",
     "",
@@ -94,20 +120,25 @@ function renderReport(data: ScoreData): string {
   ];
   for (const d of data.dimensions) {
     const bar = "█".repeat(d.points) + "░".repeat(d.maxPoints - d.points);
-    lines.push(`| ${d.name} | ${d.points}/${d.maxPoints} | ${bar} |`);
+    const na = d.naCount > 0 ? ` (${d.naCount} N/A)` : "";
+    lines.push(`| ${d.name} | ${d.points}/${d.maxPoints}${na} | ${bar} |`);
   }
   lines.push(
     "",
-    `**Weakest dimension: ${weakest.name}.** The framework's rule: the lowest dimension, not the total, sets the work program.`,
+    `**Weakest dimension: ${weakest.name}.** The lowest dimension, not the total, sets the work program.`,
     "",
-    "## Your next 30 days",
+    "## Recommended actions for this band",
     ""
   );
-  data.thirtyDayActions.forEach((a, i) => lines.push(`${i + 1}. ${a}`));
+  data.recommendedActions.forEach((a, i) => lines.push(`${i + 1}. ${a}`));
+  if (data.readingList.length > 0) {
+    lines.push("", "## Recommended reading", "");
+    data.readingList.forEach((r) => lines.push(`- ${r}`));
+  }
   lines.push(
     "",
     "---",
-    "*Generated by the Mutation Readiness MCP server. Framework guide and templates: see the framework repository.*"
+    "*Generated with the Mutation Readiness framework from* Mutation Readiness: An Operating Manual for Innovation in the Age of AI *(companion to the novel* The Innovation Playground*).*"
   );
   return lines.join("\n");
 }
@@ -116,13 +147,10 @@ const answersShape = Object.fromEntries(
   ALL_QUESTION_IDS.map((id) => [
     id,
     z
-      .number()
-      .int()
-      .min(SCALE.min)
-      .max(SCALE.max)
-      .describe(`Likert response for ${id} (${SCALE.min}-${SCALE.max})`),
+      .union([z.number().int().min(SCALE.min).max(SCALE.max), z.null()])
+      .describe(`Likert response for ${id} (${SCALE.min}-${SCALE.max}, or null for N/A)`),
   ])
-) as Record<string, z.ZodNumber>;
+) as Record<string, z.ZodType<number | null>>;
 
 const server = new McpServer({
   name: "mutation-readiness",
@@ -131,16 +159,16 @@ const server = new McpServer({
 
 server.tool(
   "run_assessment",
-  "Start a Mutation Readiness assessment: returns the 18 questions, the 1-5 scale, and facilitation instructions for the given unit of analysis and mode. Ask the user the questions, then call score_responses.",
+  "Start a Mutation Readiness assessment: returns the 18 questions, the 1-5 scale, and facilitation instructions for the given unit of analysis and mode. Ask the user the questions conversationally, then call score_responses.",
   {
     unit_of_analysis: z
       .string()
-      .describe("What is being assessed: company, division, or team name"),
+      .describe("What is being assessed: the user themselves, a team, or the whole organization"),
     mode: z
-      .enum(["personal-scan", "team-scan", "quarterly-trend"])
-      .default("personal-scan")
+      .enum(["full", "rapid"])
+      .default("full")
       .describe(
-        "personal-scan: one respondent. team-scan: each leader answers independently; the spread is a finding. quarterly-trend: repeat team scan for trend lines."
+        "full: all 18 questions (~15 min, default). rapid: 6 questions, one per dimension (Q1.2, Q2.2, Q3.2, Q4.3, Q5.3, Q6.1), scored /30 with bands 0-12 / 13-22 / 23-30."
       ),
   },
   async ({ unit_of_analysis, mode }) => ({
@@ -162,15 +190,15 @@ server.tool(
                 4: "Agree",
                 5: "Strongly agree",
               },
+              naAllowed: true,
             },
             instructions: [
-              `All answers must describe "${unit_of_analysis}" as it is today, not as planned.`,
-              "Ask one dimension at a time; announce each dimension by name.",
-              "If a respondent's story conflicts with their number, surface it and let them re-rate.",
-              mode === "team-scan" || mode === "quarterly-trend"
-                ? "Collect each respondent's answers independently before revealing anyone else's; report the spread per question."
-                : "Single respondent: remind them personal scans skew optimistic.",
-              "When all 18 answers are collected, call score_responses.",
+              `All answers must describe "${unit_of_analysis}" as it is today, not as planned. A "yes" that applies only to a small sub-team is a 3, not a 5.`,
+              "Ask conversationally, one dimension at a time — do not paste a Likert scale at the respondent.",
+              "If the respondent gives a story rather than a score, infer the 1-5 score, state it, and ask for confirmation before logging.",
+              "If the respondent doesn't know or it's not applicable, mark the question null (N/A) and move on.",
+              "If an answer is self-flattering and contradicts something said earlier, gently note the tension.",
+              "When all answers are collected, call score_responses.",
             ],
             dimensions: DIMENSIONS,
           },
@@ -184,14 +212,17 @@ server.tool(
 
 server.tool(
   "score_responses",
-  "Score a complete set of 18 Likert answers (1-5, keyed by question id SD1..LP3). Returns total (0-72), band, and per-dimension profile. Pass the result to generate_report.",
+  "Score a complete set of 18 Likert answers (1-5 or null for N/A, keyed by question id Q1.1..Q6.3). Dimension scores are 0-12 (floor(sum*12/(5*answered))); total 0-72. Returns band, profile, actions, and reading list. Pass the result to generate_report.",
   {
-    answers: z.object(answersShape).describe("All 18 answers keyed by question id"),
+    answers: z.object(answersShape).describe("All 18 answers keyed by question id (null = N/A)"),
     unit_of_analysis: z.string().optional(),
   },
   async ({ answers, unit_of_analysis }) => {
     try {
-      const data = scoreResponses(answers as Record<string, number>, unit_of_analysis);
+      const data = scoreResponses(
+        answers as Record<string, number | null>,
+        unit_of_analysis
+      );
       return {
         content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
       };
@@ -206,7 +237,7 @@ server.tool(
 
 server.tool(
   "generate_report",
-  "Render score data (output of score_responses) as a formatted markdown report with dimension bars, weakest-dimension callout, and 30-day actions.",
+  "Render score data (output of score_responses) as a formatted markdown report with dimension bars, weakest-dimension callout, band actions, and reading list.",
   {
     score_data: z
       .object({
@@ -214,15 +245,18 @@ server.tool(
         unitOfAnalysis: z.string().optional(),
         totalScore: z.number().int().min(0).max(MAX_SCORE),
         maxScore: z.number(),
+        percentage: z.number().optional(),
         band: z.string(),
-        bandSummary: z.string(),
-        thirtyDayActions: z.array(z.string()),
+        bandReading: z.string(),
+        recommendedActions: z.array(z.string()),
+        readingList: z.array(z.string()),
         dimensions: z.array(
           z.object({
             id: z.string(),
             name: z.string(),
             points: z.number(),
             maxPoints: z.number(),
+            naCount: z.number(),
           })
         ),
       })
@@ -235,7 +269,7 @@ server.tool(
 
 server.tool(
   "get_band_recommendations",
-  "Get the band definition and the three recommended 30-day actions for a readiness band.",
+  "Get the band reading, recommended actions, and reading list for a readiness band.",
   {
     band: z
       .enum(["mutation-blind", "mutation-aware", "mutation-ready"])

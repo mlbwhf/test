@@ -73,7 +73,7 @@ Start your 30 days.
 Email gate → redirect to ScoreApp funnel.
 **ScoreApp config:** questions and scoring exactly per
 `mutation-framework/assessments/mutation-readiness-scorecard.yaml`
-(points = answer − 1; bands 0–30 / 31–50 / 51–72). Result page must show:
+(dimension = floor(sum × 12 / 15), total /72; bands 0–30 / 31–50 / 51–72). Result page must show:
 total score, band, 6-axis radar, three band actions, PDF download,
 **CTA: book a discovery call (Cal.com embed)**.
 

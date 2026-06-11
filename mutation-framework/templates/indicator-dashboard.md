@@ -20,21 +20,21 @@ outcome does, while you can still act.
 
 | Dimension | Leading indicator (chosen) | Current | 90-day target | Owner | Trend |
 |---|---|---|---|---|---|
-| Signal Detection | | | | | ▲ ▼ ▬ |
-| Decision Velocity | | | | | ▲ ▼ ▬ |
-| Experimentation Capacity | | | | | ▲ ▼ ▬ |
-| AI Fluency | | | | | ▲ ▼ ▬ |
-| Structural Plasticity | | | | | ▲ ▼ ▬ |
-| Leadership Posture | | | | | ▲ ▼ ▬ |
+| Signal Sensitivity | | | | | ▲ ▼ ▬ |
+| Structural Flexibility | | | | | ▲ ▼ ▬ |
+| AI Talent Flywheel | | | | | ▲ ▼ ▬ |
+| Ambidextrous Capital | | | | | ▲ ▼ ▬ |
+| Ethical Guardrails | | | | | ▲ ▼ ▬ |
+| Narrative Coherence | | | | | ▲ ▼ ▬ |
 
 ## Indicator menu
 
-- **Signal Detection:** new signals logged per week · % of signals from outside your industry · # of distinct people who logged a signal this month
-- **Decision Velocity:** median age of open decisions · % of decisions made at team level vs. escalated · budget reallocation events per quarter
-- **Experimentation Capacity:** experiments concluded per month · median experiment cost · days from idea to first data
-- **AI Fluency:** % of staff using AI tools weekly (measured, not surveyed) · # of workflows with measured AI before/after deltas · median time for a new AI tool from evaluation to availability
-- **Structural Plasticity:** days to stand up a new team (last actual, not policy) · % of budget on rolling vs. annual cycle · # of cross-team dependencies per initiative
-- **Leadership Posture:** # of leader position-changes stated publicly this quarter · upward bad-news latency (days from known-below to known-at-top, sampled) · % of retro actions implemented within one cycle
+- **Signal Sensitivity:** new signals logged per week · % of signals from sources outside your own dashboards · # of distinct people who logged a signal this month · mutation latency (days from signal identification to organizational decision — target < 21)
+- **Structural Flexibility:** days from concept to validated learning (last actual) · # of restructuring decisions acted on within a quarter · % of teams aligned to value streams vs. functions
+- **AI Talent Flywheel:** # of major teams with an embedded AI-literate member · % of AI talent outside the central ML function · # of strategy decisions with AI talent in the room this quarter
+- **Ambidextrous Capital:** exploration budget as % of total (protected, separate from core P&L) · % of exploration bets evaluated on learning yield · # of experiments surviving their first quarterly review
+- **Ethical Guardrails:** % of AI deployments with explicit operating boundaries and a recalibration cadence · time to produce an audit-quality explanation of an AI decision (sampled) · # of engineering (not legal) reviewers per AI launch
+- **Narrative Coherence:** % of employees who can state what the company is for in the current market (sampled quarterly) · months since the strategic narrative was last updated · % of 30-day hires who can articulate the narrative
 
 ## The leading-indicator test
 

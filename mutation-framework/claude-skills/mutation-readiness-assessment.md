@@ -1,147 +1,247 @@
 ---
 name: mutation-readiness-assessment
 description: >
-  Run the Mutation Readiness Scorecard as a guided, conversational
-  assessment — 18 questions across 6 dimensions — then score it, assign a
-  band (Mutation-Blind / Mutation-Aware / Mutation-Ready), and produce a
-  personalized report with per-dimension scores and three 30-day actions.
-  Use when the user wants to assess an organization's or team's mutation
-  readiness, innovation readiness, or capacity to adapt to AI-era change.
+  Run the Mutation Readiness Assessment — an 18-question, 6-dimension
+  diagnostic of an organization's capability to sense, respond, and adapt
+  at AI-age speed. Trigger when the user says things like "assess my
+  organization's innovation capability," "run a mutation readiness check,"
+  "score my team on innovation," "where does my company sit on AI
+  readiness," or asks for a diagnostic of how AI-ready / signal-led /
+  adaptive their organization is. Conducts the assessment conversationally,
+  scores the result, and produces a written personalized report with a
+  30-60-90-day action plan.
+allowed-tools: Read, Write
 ---
 
-# Mutation Readiness Assessment (guided)
+# Mutation Readiness Assessment
 
-You are facilitating the **Mutation Readiness Scorecard** (v1.0-draft) from
-the Mutation Readiness Framework. Source of truth for questions, scoring,
-and bands: `assessments/mutation-readiness-scorecard.yaml` in this
-repository — read it if available; the essentials are inlined below so the
-skill also works standalone.
+This skill conducts a diagnostic conversation with the user about their organization's innovation and adaptation capability. It is the runnable version of the assessment in *Mutation Readiness: An Operating Manual for Innovation in the Age of AI* (the companion to the novel *The Innovation Playground*).
 
-## Session flow
+## When to use
 
-1. **Frame (once, briefly).** Tell the user: 18 statements, six dimensions,
-   rate each 1–5 (1 = strongly disagree, 5 = strongly agree). Answers
-   should describe the organization *as it is*, not as planned. Ask one
-   thing first: **what is the unit of analysis** — whole company, division,
-   or team? All answers must be about that unit.
-2. **Ask the 18 questions** in order, one dimension at a time (announce
-   each dimension by name). Accept shorthand ("4", "agree"→4,
-   "neutral"→3). If the user answers with a story instead of a number,
-   reflect it back and propose a rating for them to confirm. Do not skip
-   questions; "don't know" → ask for best estimate and flag it in the
-   report.
-3. **Score.** Points per question = (rating − 1). Dimension score = sum of
-   its 3 questions (0–12). Total = sum of all (0–72). If Python is
-   available, prefer `python3 assessments/score.py --answers <18 values>`;
-   otherwise compute manually and double-check the arithmetic.
-4. **Report.** Produce the report in the format below. Tailor the
-   commentary to their actual answers — quote what they told you.
+The user is asking, in one form or another, "how does my organization rate on innovation / AI readiness / adaptive capacity?" Possible phrasings:
 
-## Scoring bands
+- "Run a mutation readiness assessment on my team"
+- "Score my company on innovation capability"
+- "How AI-native is my organization really?"
+- "Help me diagnose where we are on adaptive capacity"
+- "Give me an honest read on our innovation maturity"
+- "I want to assess my team against the Five Levers framework"
 
-| Band | Range | One-line reading |
-|---|---|---|
-| Mutation-Blind | 0–30 | You don't yet see the signals that matter, or see them too late to act. |
-| Mutation-Aware | 31–50 | You see change coming, but structures, budgets, and incentives still reward the old game. |
-| Mutation-Ready | 51–72 | You sense, decide, and reconfigure faster than your market changes. |
+Do **not** use this skill for generic strategy advice or for one-off questions about a single innovation practice. It is a multi-turn diagnostic that takes about 15 minutes to complete properly.
 
-## The 18 questions
+## What the skill does
 
-**Signal Detection** — SD1: We systematically scan for weak signals of
-technological and market change, including from outside our own industry.
-SD2: Frontline observations about customer or market shifts reach
-decision-makers within days, not quarters. SD3: We keep a shared, living
-log of signals that is reviewed on a regular cadence, not an ad-hoc inbox.
+1. Briefs the user on what the assessment is, what it measures, and how long it takes (~15 min).
+2. Asks the user to choose perspective (themselves, their team, their whole organization). The unit-of-analysis matters; a 50-person team can be Mutation-Ready while the surrounding 5,000-person enterprise is Mutation-Blind.
+3. Walks the user through 18 questions across 6 dimensions, in order. For each question:
+   - Ask the question conversationally (do NOT paste a 5-point Likert scale at them).
+   - If the user gives a free-text answer, infer a 1–5 score and tell them what you inferred, asking for confirmation.
+   - If the user wants to skip or doesn't know, mark as N/A and reduce the dimension's denominator proportionally.
+4. After all 18 questions, computes the total score (max 60 for 12 questions answered out of 12; max 72 with full 18; if some N/A, normalize to a percentage).
+5. Interprets the score against the three bands.
+6. Writes a personalized report to a file (default: mutation-readiness-report-{date}.md) containing:
+   - Total score and band
+   - Per-dimension scores
+   - Top 3 specific weaknesses with named practices to install
+   - A 30-60-90 day action plan tailored to the band
+   - Recommended reading from the bibliography
 
-**Decision Velocity** — DV1: When a significant signal is confirmed, we can
-reallocate budget toward a response within one quarter. DV2: Decision
-rights for experiments sit with the teams closest to the signal, not with a
-remote committee. DV3: We stop underperforming initiatives quickly and
-without political fallout for the people who ran them.
+## The 6 dimensions
 
-**Experimentation Capacity** — EC1: We run a continuous portfolio of small,
-cheap experiments rather than a few large bets. EC2: Failed experiments are
-documented and mined for learning, not quietly buried. EC3: Teams have
-self-service access to the tools, data, and budget they need to test an
-idea this week, not next quarter.
+Each dimension is scored from 0 to 12 (three questions, 1–5 each, max 15; but the rubric uses 0–12 as the operationally meaningful band).
 
-**AI Fluency** — AF1: AI tools are embedded in everyday workflows across
-functions, not confined to a lab or a pilot team. AF2: Our people have a
-realistic working understanding of what current AI can and cannot do.
-AF3: We have explicit guardrails for AI use (data, quality, ethics) that
-enable adoption rather than block it.
+### Dimension 1 — Signal Sensitivity
 
-**Structural Plasticity** — SP1: We can stand up, resize, or dissolve a
-team around a new opportunity within weeks. SP2: Budgets are reviewed and
-reallocated on a rolling basis rather than locked for the fiscal year.
-SP3: Our processes and tooling are modular enough that changing one part
-does not force changing everything.
+The capability to detect, interpret, and act on weak signals before lagging metrics confirm them.
 
-**Leadership Posture** — LP1: Leaders here publicly change their positions
-when evidence contradicts them. LP2: Psychological safety is high enough
-that bad news travels upward fast and unfiltered. LP3: Incentives reward
-adaptation and learning, not only predictability and plan compliance.
+**Q1.1** Does your team monitor weak signals from at least three sources outside your own dashboards on a weekly basis? (Examples of sources: customer Discord channels, developer forums, GitHub trends, competitor hiring patterns, regulatory leaks.)
 
-## 30-day actions by band
+**Q1.2** Can you name a specific behavioural change in your customer base that you noticed in the past 30 days *before* it appeared in your metrics?
 
-**Mutation-Blind:** (1) Stand up a weekly 30-minute signal review with one
-named owner and a shared log. (2) Run this assessment with each leadership
-team member individually and compare answers — the spread is the diagnosis.
-(3) Pick one stalled decision older than 90 days and force it to a yes/no
-this month; document what blocked it.
+**Q1.3** Do you have a structured cadence — a meeting, a ritual, a tool — for surfacing internal anomalies without political consequence to the person who raised them?
 
-**Mutation-Aware:** (1) Give one team a protected experiment budget with
-pre-agreed kill criteria and a 30-day review date. (2) Move one recurring
-decision from a committee to the team closest to the customer; measure
-cycle time before and after. (3) Map current AI usage across functions and
-pick the two biggest gaps.
+### Dimension 2 — Structural Flexibility
 
-**Mutation-Ready:** (1) Schedule the quarterly reassessment now and assign
-an owner per dimension. (2) Publish one internal case study of a killed
-experiment and what it taught you. (3) Stress-test structural plasticity by
-simulating one team re-formation end-to-end on paper; fix the slowest step.
+The organization's ability to reshape itself faster than competitors can retool.
 
-## Report format
+**Q2.1** Are your teams aligned to customer outcomes (streams of value) rather than to internal functions (marketing, engineering, sales, etc.)?
 
+**Q2.2** Can a new product idea move from concept to validated learning in your organization in under 90 days?
+
+**Q2.3** When you identified a need to restructure something in the past 12 months, did you act on it within a quarter?
+
+### Dimension 3 — AI Talent Flywheel
+
+The organization's capability to attract, retain, and integrate AI-literate talent across functions.
+
+**Q3.1** Do you have at least one AI-literate person embedded in every major product or business team?
+
+**Q3.2** Is your AI talent distributed across the organization, or isolated in a single AI/ML function?
+
+**Q3.3** Does your AI talent have direct exposure to strategy decisions, not just to implementation work?
+
+### Dimension 4 — Ambidextrous Capital
+
+The discipline of balancing exploit (proven operations) with explore (uncertain bets) in your funding model.
+
+**Q4.1** Do you have a protected exploration budget that is separate from your core P&L?
+
+**Q4.2** Are exploration bets evaluated on learning yield, not on traditional ROI?
+
+**Q4.3** Can an experiment with no clear ROI survive its first quarterly business review without being defunded?
+
+### Dimension 5 — Ethical Guardrails
+
+Containment-as-velocity: the institutional discipline that lets you ship AI fast without dramatic reputational failure.
+
+**Q5.1** Is every AI deployment in your organization governed by explicit operating boundaries and a recalibration cadence?
+
+**Q5.2** Do you have an AI governance function (not just a compliance function) with engineering rather than legal at its centre?
+
+**Q5.3** Can you produce, on request, an audit-quality explanation of any AI-driven decision affecting a customer?
+
+### Dimension 6 — Narrative Coherence
+
+The shared story that lets the organization act in concert under uncertainty.
+
+**Q6.1** Can your employees describe, in their own words, what your organization is for in the current market (not the 2018 market)?
+
+**Q6.2** Has your leadership team updated the strategic narrative — the story you tell about why this company exists and why it wins — in the past 18 months?
+
+**Q6.3** Can new hires articulate your strategic narrative after their first month on the job?
+
+## Scoring
+
+- Each question: 1 (strongly disagree) to 5 (strongly agree). N/A allowed.
+- Dimension score: sum of three answered questions (max 15); convert to /12 by floor(sum * 12 / 15) for the headline number.
+- Total score: sum of 6 dimension scores out of 72.
+
+## Bands
+
+| **Band** | **Score** | **Reading** |
+|:-:|:-:|:-:|
+| Mutation-Blind | 0–30 | Your organization is operating on lagging metrics in an environment that is mutating around it. Disruption is probably already happening, undetected. |
+| Mutation-Aware | 31–50 | Your organization can sense change but cannot yet act on it at the right cadence. The sense-to-respond gap is the primary risk. |
+| Mutation-Ready | 51–72 | Your organization is operating in the top decile. The risk now is complacency. |
+
+## Recommended actions by band
+
+### Mutation-Blind (0–30)
+
+Install signal-sensitivity practices in the next 30 days. Specifically:
+
+- Stand up a SignalNet — a distributed, semi-anonymous logging system for any employee to surface weak signals (full template in *Mutation Readiness* Appendix E)
+- Run an Assumption Audit on your current strategy (full template in Appendix C, or see Chapter 4 of the Operating Manual)
+- Begin a weekly signal review at the leadership team level, 30 minutes, anomaly-focused
+- Read: Amy Edmondson, *Right Kind of Wrong* (2023); Mustafa Suleyman, *The Coming Wave* (2023)
+
+### Mutation-Aware (31–50)
+
+You can see signals but can't act on them. Focus on closing the sense-to-respond gap.
+
+- Build an experimentation engine using the five components in Chapter 10 of the Operating Manual
+- Apply the Five Levers framework deliberately (Chapter 9) — pick the two levers your organization scored lowest on and design specific 90-day moves on each
+- Measure mutation latency: time from signal identification to organizational decision. Target < 21 days.
+- Read: Iansiti & Lakhani, *Competing in the Age of AI* (2020); Rita McGrath, *Seeing Around Corners* (2019); Ethan Mollick, *Co-Intelligence* (2024)
+
+### Mutation-Ready (51–72)
+
+You're in the top decile. The risk is complacency.
+
+- Institutionalize the practices that got you here. They erode without explicit maintenance.
+- Begin to mentor adjacent organizations. The best stress-test of whether your practices are real is whether you can teach them.
+- Consider whether the language of "mutation readiness" should be part of how you describe your operating model externally — to investors, to talent, to partners.
+- Read: Edmondson, *The Fearless Organization* (2018); Murphy, *Cultures of Growth* (2024); the Anthropic interpretability research (Mapping the Mind, May 2024; On the Biology of a Large Language Model, March 2025)
+
+## How to facilitate the assessment
+
+Tone: collegial, specific, opinionated. You are not a survey form. You are a thoughtful consultant walking a real human through a diagnostic.
+
+Pacing: average ~50 seconds per question. Don't rush. After each answer, briefly reflect back what you heard so the user feels heard before moving on.
+
+Inference: if the user gives a story rather than a score (most will), infer the score and say "I'd score that a 3 out of 5 — does that feel right?" before logging.
+
+Honesty: if the user gives an obviously self-flattering answer that doesn't square with what they've said elsewhere in the conversation, gently note the tension. This is the Edmondson candor practice applied to the assessment itself.
+
+Skip with grace: if the user doesn't know an answer or it's not applicable, mark N/A and move on. Do not stall.
+
+After all 18 questions, summarize back the per-dimension scores conversationally, ask the user if anything in the scoring surprises them (their answer to that question is often the most useful diagnostic in the whole assessment), then offer to write the report.
+
+## Output format
+
+Write the report to a file in the current directory. Default filename: mutation-readiness-report-{YYYY-MM-DD}.md.
+
+The report structure:
+
+```markdown
+# Mutation Readiness Assessment — {Organization or Team Name}
+
+**Date:** {date}
+**Unit of analysis:** {what they assessed — team, business unit, whole org}
+**Total score:** {score} / 72 — **{Band}**
+
+## Per-dimension scores
+
+| Dimension | Score | Band |
+| --- | --- | --- |
+| Signal Sensitivity | X / 12 | {strong/medium/weak} |
+| Structural Flexibility | X / 12 | … |
+| AI Talent Flywheel | X / 12 | … |
+| Ambidextrous Capital | X / 12 | … |
+| Ethical Guardrails | X / 12 | … |
+| Narrative Coherence | X / 12 | … |
+
+## The diagnostic
+
+{2-3 paragraphs of personalized analysis based on the user's answers.
+Quote back specific things they said. Name the top 2-3 strengths and the
+top 2-3 weaknesses.}
+
+## What surprised the user
+
+{If they told you something surprised them in the scoring, repeat it here
+and treat it as the leading signal. It usually is.}
+
+## 30-day actions
+
+{3-5 specific, concrete actions sized to be doable in the next 30 days.
+Each action names: what to do, who to involve, what success looks like.}
+
+## 60-day actions
+
+{2-4 actions sized for the next 31-60 days, building on the 30-day work.}
+
+## 90-day actions
+
+{1-3 larger actions that compound on the 30/60 work. These usually involve
+a structural move — a hire, a budget reallocation, a re-org.}
+
+## Recommended reading for this band
+
+{Pull 3-5 sources from the band-specific list above. Include one author /
+book per source, no URLs.}
+
+---
+
+*This assessment was conducted using the Mutation Readiness framework
+from* Mutation Readiness: An Operating Manual for Innovation in the Age of
+AI *(the companion volume to the novel* The Innovation Playground*).*
 ```
-MUTATION READINESS REPORT — [unit of analysis] — [date]
 
-Total: [N]/72 — [BAND]
-[2–3 sentences interpreting the band in terms of THEIR answers.]
+## Quality bar
 
-Dimension profile (0–12):
-  Signal Detection          [n]  [one-line comment tied to their answers]
-  Decision Velocity         [n]  ...
-  Experimentation Capacity  [n]  ...
-  AI Fluency                [n]  ...
-  Structural Plasticity     [n]  ...
-  Leadership Posture        [n]  ...
+A good Mutation Readiness report is:
 
-Your weakest dimension is [X]. The framework's rule: the lowest dimension,
-not the total, sets the work program.
+- **Specific.** Quote back at least three things the user actually said. Generic advice is the failure mode of every assessment.
+- **Uncomfortable.** If everything in the report feels reassuring, you have done the assessment wrong. Surface at least one thing the user did not want to hear.
+- **Actionable on Monday.** If a 30-day action requires more than two people to approve before it can begin, it is not a 30-day action. Redesign it.
+- **Honest about uncertainty.** Where the user's answers were thin, say so. Don't pretend the assessment knows more than the inputs warrant.
 
-Your next 30 days:
-  1. [band action, adapted to their context]
-  2. ...
-  3. ...
+## Variant: rapid mode
 
-Flags: [any "don't know" estimates, or any dimension where their narrative
-contradicted their numeric rating]
-```
+If the user says "give me a quick read" or "I don't have 15 minutes," compress to 6 questions — one per dimension, the strongest single signal each. Use Q1.2, Q2.2, Q3.2, Q4.3, Q5.3, Q6.1. Score out of 30. Bands: 0–12 Mutation-Blind, 13–22 Mutation-Aware, 23–30 Mutation-Ready. The full version remains the default.
 
-After the report, offer (do not push): a deeper team scan, the 4×4
-portfolio plot (`matrices/innovation-matrix-4x4.yaml`), or the templates in
-`templates/`.
+## Source
 
-## Facilitation rules
-
-- Never reveal scoring math or band thresholds mid-assessment; it anchors
-  answers.
-- If a rating and the user's story conflict (story says "we haven't killed
-  a project in years", rating says 4 on DV3), gently surface the conflict
-  and let them re-rate. Note unresolved conflicts in Flags.
-- One unit of analysis per session. If they want to assess two units,
-  finish one report first.
-- This is a draft instrument (v1.0-draft); if the user spots an ambiguous
-  question, capture the feedback and suggest they file an issue on the
-  framework repository.
+This skill packages the Mutation Readiness Scorecard from Appendix A of *Mutation Readiness: An Operating Manual for Innovation in the Age of AI* by Mark Saymen. The framework integrates work by Amy Edmondson (psychological safety, intelligent failure), Mary Murphy (cultures of growth), Carol Dweck (mindset), Ethan Mollick (co-intelligence), Mustafa Suleyman (containment), Marco Iansiti and Karim Lakhani (AI factory), Rita McGrath (inflection points), Skelton & Pais (Team Topologies), and the Anthropic interpretability research from 2024–2025.

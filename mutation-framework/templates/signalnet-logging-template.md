@@ -4,7 +4,8 @@
 
 A SignalNet is a shared, living log of weak signals — early evidence of
 technological, market, or behavioral change that could matter to your
-organization. It is the operational backbone of the **Signal Detection**
+organization — distributed and semi-anonymous, so any employee can log
+without political consequence (Operating Manual, Appendix E). It is the operational backbone of the **Signal Sensitivity**
 dimension. One log, one owner, one weekly cadence.
 
 ## The log

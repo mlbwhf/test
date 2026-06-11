@@ -1,6 +1,7 @@
 # Mutation Readiness Scorecard
 
-**Version 1.0-draft** · 18 questions · 6 dimensions · ~10 minutes
+**Version 1.0-draft** · 18 questions · 6 dimensions · ~15 minutes
+**Source:** Appendix A of *Mutation Readiness: An Operating Manual for Innovation in the Age of AI* by Mark Saymen
 
 > Machine-readable source of truth: [`mutation-readiness-scorecard.yaml`](mutation-readiness-scorecard.yaml).
 > The web assessment, the Claude Code skill, and the MCP server all derive
@@ -8,79 +9,97 @@
 
 ## What this measures
 
-Mutation readiness is an organization's ability to **sense, decide, and
-reconfigure faster than its market changes**. The scorecard measures it
-across six dimensions, three questions each.
+The organization's capability to **sense, respond, and adapt at AI-age
+speed**, across six dimensions, three questions each. The unit-of-analysis
+matters: a 50-person team can be Mutation-Ready while the surrounding
+5,000-person enterprise is Mutation-Blind. Decide what you are scoring
+before you start, and hold every answer to that unit.
 
 ## How to score
 
-Answer every question on a 1–5 scale (1 = strongly disagree, 5 = strongly
-agree). Your score for each question is **(answer − 1)**, so each question
-contributes 0–4 points and the total ranges 0–72.
+Rate each question 1 (strongly disagree) to 5 (strongly agree). N/A is
+allowed — reduce that dimension's denominator proportionally.
 
-| Band | Score | Meaning |
+- **Dimension score:** sum of the three answers (max 15), converted to the
+  0–12 headline number by floor(sum × 12 / 15).
+- **Total score:** sum of the six dimension scores, out of 72.
+- If some questions are N/A, normalize the total to a percentage.
+
+| Band | Score | Reading |
 |---|---|---|
-| **Mutation-Blind** | 0–30 | You don't yet see the signals that matter, or see them too late to act. |
-| **Mutation-Aware** | 31–50 | You see change coming, but structures, budgets, and incentives still reward the old game. |
-| **Mutation-Ready** | 51–72 | You sense, decide, and reconfigure faster than your market changes. |
-
-Run it three ways for best results: individually across the leadership team
-(the spread between answers is itself a diagnostic), as a team workshop, and
-quarterly as a trend line.
+| **Mutation-Blind** | 0–30 | Operating on lagging metrics in an environment that is mutating around you. Disruption is probably already happening, undetected. |
+| **Mutation-Aware** | 31–50 | You can sense change but cannot yet act on it at the right cadence. The sense-to-respond gap is the primary risk. |
+| **Mutation-Ready** | 51–72 | Top decile. The risk now is complacency. |
 
 ## The questions
 
-### 1. Signal Detection
-*Can you see change coming — early, and from outside your industry?*
+### Dimension 1 — Signal Sensitivity
+*The capability to detect, interpret, and act on weak signals before lagging metrics confirm them.*
 
-1. **SD1** — We systematically scan for weak signals of technological and market change, including from outside our own industry.
-2. **SD2** — Frontline observations about customer or market shifts reach decision-makers within days, not quarters.
-3. **SD3** — We keep a shared, living log of signals that is reviewed on a regular cadence, not an ad-hoc inbox.
+- **Q1.1** Does your team monitor weak signals from at least three sources outside your own dashboards on a weekly basis? (Customer Discord channels, developer forums, GitHub trends, competitor hiring patterns, regulatory leaks.)
+- **Q1.2** Can you name a specific behavioural change in your customer base that you noticed in the past 30 days *before* it appeared in your metrics?
+- **Q1.3** Do you have a structured cadence — a meeting, a ritual, a tool — for surfacing internal anomalies without political consequence to the person who raised them?
 
-### 2. Decision Velocity
-*How fast does a confirmed signal become a resourced response?*
+### Dimension 2 — Structural Flexibility
+*The organization's ability to reshape itself faster than competitors can retool.*
 
-4. **DV1** — When a significant signal is confirmed, we can reallocate budget toward a response within one quarter.
-5. **DV2** — Decision rights for experiments sit with the teams closest to the signal, not with a remote committee.
-6. **DV3** — We stop underperforming initiatives quickly and without political fallout for the people who ran them.
+- **Q2.1** Are your teams aligned to customer outcomes (streams of value) rather than to internal functions?
+- **Q2.2** Can a new product idea move from concept to validated learning in under 90 days?
+- **Q2.3** When you identified a need to restructure something in the past 12 months, did you act on it within a quarter?
 
-### 3. Experimentation Capacity
-*Can you run many small bets and learn from all of them?*
+### Dimension 3 — AI Talent Flywheel
+*The capability to attract, retain, and integrate AI-literate talent across functions.*
 
-7. **EC1** — We run a continuous portfolio of small, cheap experiments rather than a few large bets.
-8. **EC2** — Failed experiments are documented and mined for learning, not quietly buried.
-9. **EC3** — Teams have self-service access to the tools, data, and budget they need to test an idea this week, not next quarter.
+- **Q3.1** Do you have at least one AI-literate person embedded in every major product or business team?
+- **Q3.2** Is your AI talent distributed across the organization, or isolated in a single AI/ML function?
+- **Q3.3** Does your AI talent have direct exposure to strategy decisions, not just to implementation work?
 
-### 4. AI Fluency
-*Is AI capability embedded in real work, or confined to pilots?*
+### Dimension 4 — Ambidextrous Capital
+*The discipline of balancing exploit (proven operations) with explore (uncertain bets) in your funding model.*
 
-10. **AF1** — AI tools are embedded in everyday workflows across functions, not confined to a lab or a pilot team.
-11. **AF2** — Our people have a realistic working understanding of what current AI can and cannot do.
-12. **AF3** — We have explicit guardrails for AI use (data, quality, ethics) that enable adoption rather than block it.
+- **Q4.1** Do you have a protected exploration budget that is separate from your core P&L?
+- **Q4.2** Are exploration bets evaluated on learning yield, not on traditional ROI?
+- **Q4.3** Can an experiment with no clear ROI survive its first quarterly business review without being defunded?
 
-### 5. Structural Plasticity
-*How fast can you reshape teams, budgets, and processes around an opportunity?*
+### Dimension 5 — Ethical Guardrails
+*Containment-as-velocity: the institutional discipline that lets you ship AI fast without dramatic reputational failure.*
 
-13. **SP1** — We can stand up, resize, or dissolve a team around a new opportunity within weeks.
-14. **SP2** — Budgets are reviewed and reallocated on a rolling basis rather than locked for the fiscal year.
-15. **SP3** — Our processes and tooling are modular enough that changing one part does not force changing everything.
+- **Q5.1** Is every AI deployment governed by explicit operating boundaries and a recalibration cadence?
+- **Q5.2** Do you have an AI governance function (not just a compliance function) with engineering rather than legal at its centre?
+- **Q5.3** Can you produce, on request, an audit-quality explanation of any AI-driven decision affecting a customer?
 
-### 6. Leadership Posture
-*Do leaders model adaptation, and do incentives reward learning?*
+### Dimension 6 — Narrative Coherence
+*The shared story that lets the organization act in concert under uncertainty.*
 
-16. **LP1** — Leaders here publicly change their positions when evidence contradicts them.
-17. **LP2** — Psychological safety is high enough that bad news travels upward fast and unfiltered.
-18. **LP3** — Incentives reward adaptation and learning, not only predictability and plan compliance.
+- **Q6.1** Can your employees describe, in their own words, what your organization is for in the *current* market (not the 2018 market)?
+- **Q6.2** Has your leadership team updated the strategic narrative in the past 18 months?
+- **Q6.3** Can new hires articulate your strategic narrative after their first month on the job?
+
+## Rapid mode
+
+Six questions — the strongest single signal per dimension: Q1.2, Q2.2,
+Q3.2, Q4.3, Q5.3, Q6.1. Score out of 30. Bands: 0–12 Mutation-Blind,
+13–22 Mutation-Aware, 23–30 Mutation-Ready.
 
 ## After scoring
 
-Each band has three recommended 30-day actions — see the
-[Framework Guide](../reference/framework-guide-v1.0.md) §6, or run the
-[Claude Code skill](../claude-skills/mutation-readiness-assessment.md) for a
-guided session with a generated report.
+Each band carries recommended actions and a reading list — see the YAML
+spec or the [Framework Guide](../reference/framework-guide-v1.0.md). For a
+guided conversational session with a personalized 30-60-90-day report, use
+the [Claude Code skill](../claude-skills/mutation-readiness-assessment.md).
 
-To score programmatically:
+To score programmatically (18 answers in Q1.1…Q6.3 order; `na` allowed):
 
 ```bash
 python3 score.py --answers 3,4,2,3,3,4,2,2,3,4,3,3,2,2,3,3,4,3
+python3 score.py --answers 3,4,na,3,3,4,2,2,3,4,3,3,2,2,3,3,4,3
+python3 score.py --rapid --answers 4,3,2,3,4,2
 ```
+
+## Companion instrument
+
+Run the [Innovation Framework Scorecard](innovation-framework-scorecard.md)
+*first* if you haven't measured your innovation culture: it scores the
+cultural operating system underneath these practices. An organization in
+Innovation Theatre will fail at Mutation Readiness regardless of what it
+installs.

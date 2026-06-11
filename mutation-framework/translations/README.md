@@ -30,7 +30,7 @@ gratefully credited.
   their diagnostic force; where a literal translation reads as ambiguous,
   prefer a natural phrasing and add a translator's note.
 - **Never change the numbers.** Scoring math, band thresholds, question
-  counts, and question IDs (SD1…LP3) stay identical in every language —
+  counts, and question IDs (Q1.1…Q6.3) stay identical in every language —
   tools depend on them.
 - **Track the version you translated.** When the English source moves to a
   new version, an issue will be opened per language; translations carry a

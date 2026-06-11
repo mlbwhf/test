@@ -2,8 +2,10 @@
  * Embedded Mutation Readiness Scorecard specification.
  *
  * Canonical source: ../../assessments/mutation-readiness-scorecard.yaml
- * (v1.0-draft). This module mirrors it so the server has no runtime file
- * or YAML dependency. If the YAML changes, regenerate this file.
+ * (v1.0-draft, reconciled with Appendix A of "Mutation Readiness: An
+ * Operating Manual for Innovation in the Age of AI"). This module mirrors
+ * it so the server has no runtime file or YAML dependency. If the YAML
+ * changes, regenerate this file.
  */
 
 export interface Question {
@@ -22,79 +24,81 @@ export interface Band {
   id: string;
   name: string;
   range: [number, number];
-  summary: string;
-  thirtyDayActions: string[];
+  reading: string;
+  recommendedActions: string[];
+  readingList: string[];
 }
 
 export const SCALE = { min: 1, max: 5 } as const;
+export const DIMENSION_MAX = 12;
 export const MAX_SCORE = 72;
 export const VERSION = "1.0-draft";
 
 export const DIMENSIONS: Dimension[] = [
   {
-    id: "signal-detection",
-    name: "Signal Detection",
+    id: "signal-sensitivity",
+    name: "Signal Sensitivity",
     definition:
-      "The ability to notice weak signals of technological, market, and behavioral change early — including from outside the organization's own industry — and route them to people who can act.",
+      "The capability to detect, interpret, and act on weak signals before lagging metrics confirm them.",
     questions: [
-      { id: "SD1", text: "We systematically scan for weak signals of technological and market change, including from outside our own industry." },
-      { id: "SD2", text: "Frontline observations about customer or market shifts reach decision-makers within days, not quarters." },
-      { id: "SD3", text: "We keep a shared, living log of signals that is reviewed on a regular cadence, not an ad-hoc inbox." },
+      { id: "Q1.1", text: "Does your team monitor weak signals from at least three sources outside your own dashboards on a weekly basis? (Examples: customer Discord channels, developer forums, GitHub trends, competitor hiring patterns, regulatory leaks.)" },
+      { id: "Q1.2", text: "Can you name a specific behavioural change in your customer base that you noticed in the past 30 days before it appeared in your metrics?" },
+      { id: "Q1.3", text: "Do you have a structured cadence — a meeting, a ritual, a tool — for surfacing internal anomalies without political consequence to the person who raised them?" },
     ],
   },
   {
-    id: "decision-velocity",
-    name: "Decision Velocity",
+    id: "structural-flexibility",
+    name: "Structural Flexibility",
     definition:
-      "The speed and decisiveness with which a confirmed signal becomes a resourced response — including the speed of stopping things.",
+      "The organization's ability to reshape itself faster than competitors can retool.",
     questions: [
-      { id: "DV1", text: "When a significant signal is confirmed, we can reallocate budget toward a response within one quarter." },
-      { id: "DV2", text: "Decision rights for experiments sit with the teams closest to the signal, not with a remote committee." },
-      { id: "DV3", text: "We stop underperforming initiatives quickly and without political fallout for the people who ran them." },
+      { id: "Q2.1", text: "Are your teams aligned to customer outcomes (streams of value) rather than to internal functions (marketing, engineering, sales, etc.)?" },
+      { id: "Q2.2", text: "Can a new product idea move from concept to validated learning in your organization in under 90 days?" },
+      { id: "Q2.3", text: "When you identified a need to restructure something in the past 12 months, did you act on it within a quarter?" },
     ],
   },
   {
-    id: "experimentation-capacity",
-    name: "Experimentation Capacity",
+    id: "ai-talent-flywheel",
+    name: "AI Talent Flywheel",
     definition:
-      "The standing ability to run many small, cheap, fast experiments and harvest learning from all of them, including the failures.",
+      "The organization's capability to attract, retain, and integrate AI-literate talent across functions.",
     questions: [
-      { id: "EC1", text: "We run a continuous portfolio of small, cheap experiments rather than a few large bets." },
-      { id: "EC2", text: "Failed experiments are documented and mined for learning, not quietly buried." },
-      { id: "EC3", text: "Teams have self-service access to the tools, data, and budget they need to test an idea this week, not next quarter." },
+      { id: "Q3.1", text: "Do you have at least one AI-literate person embedded in every major product or business team?" },
+      { id: "Q3.2", text: "Is your AI talent distributed across the organization, or isolated in a single AI/ML function?" },
+      { id: "Q3.3", text: "Does your AI talent have direct exposure to strategy decisions, not just to implementation work?" },
     ],
   },
   {
-    id: "ai-fluency",
-    name: "AI Fluency",
+    id: "ambidextrous-capital",
+    name: "Ambidextrous Capital",
     definition:
-      "How deeply practical AI capability is embedded in everyday work across the organization — beyond pilots, labs, and slideware.",
+      "The discipline of balancing exploit (proven operations) with explore (uncertain bets) in your funding model.",
     questions: [
-      { id: "AF1", text: "AI tools are embedded in everyday workflows across functions, not confined to a lab or a pilot team." },
-      { id: "AF2", text: "Our people have a realistic working understanding of what current AI can and cannot do." },
-      { id: "AF3", text: "We have explicit guardrails for AI use (data, quality, ethics) that enable adoption rather than block it." },
+      { id: "Q4.1", text: "Do you have a protected exploration budget that is separate from your core P&L?" },
+      { id: "Q4.2", text: "Are exploration bets evaluated on learning yield, not on traditional ROI?" },
+      { id: "Q4.3", text: "Can an experiment with no clear ROI survive its first quarterly business review without being defunded?" },
     ],
   },
   {
-    id: "structural-plasticity",
-    name: "Structural Plasticity",
+    id: "ethical-guardrails",
+    name: "Ethical Guardrails",
     definition:
-      "How quickly the organization can reshape teams, budgets, processes, and tooling around a new opportunity without a reorg trauma.",
+      "Containment-as-velocity: the institutional discipline that lets you ship AI fast without dramatic reputational failure.",
     questions: [
-      { id: "SP1", text: "We can stand up, resize, or dissolve a team around a new opportunity within weeks." },
-      { id: "SP2", text: "Budgets are reviewed and reallocated on a rolling basis rather than locked for the fiscal year." },
-      { id: "SP3", text: "Our processes and tooling are modular enough that changing one part does not force changing everything." },
+      { id: "Q5.1", text: "Is every AI deployment in your organization governed by explicit operating boundaries and a recalibration cadence?" },
+      { id: "Q5.2", text: "Do you have an AI governance function (not just a compliance function) with engineering rather than legal at its centre?" },
+      { id: "Q5.3", text: "Can you produce, on request, an audit-quality explanation of any AI-driven decision affecting a customer?" },
     ],
   },
   {
-    id: "leadership-posture",
-    name: "Leadership Posture",
+    id: "narrative-coherence",
+    name: "Narrative Coherence",
     definition:
-      "The behavioral substrate: whether leaders model adaptation, whether bad news travels upward fast, and whether incentives reward learning over plan compliance.",
+      "The shared story that lets the organization act in concert under uncertainty.",
     questions: [
-      { id: "LP1", text: "Leaders here publicly change their positions when evidence contradicts them." },
-      { id: "LP2", text: "Psychological safety is high enough that bad news travels upward fast and unfiltered." },
-      { id: "LP3", text: "Incentives reward adaptation and learning, not only predictability and plan compliance." },
+      { id: "Q6.1", text: "Can your employees describe, in their own words, what your organization is for in the current market (not the 2018 market)?" },
+      { id: "Q6.2", text: "Has your leadership team updated the strategic narrative — the story you tell about why this company exists and why it wins — in the past 18 months?" },
+      { id: "Q6.3", text: "Can new hires articulate your strategic narrative after their first month on the job?" },
     ],
   },
 ];
@@ -104,39 +108,64 @@ export const BANDS: Band[] = [
     id: "mutation-blind",
     name: "Mutation-Blind",
     range: [0, 30],
-    summary:
-      "The organization does not yet see the signals of change that matter, or sees them too late to act. Innovation happens by accident, not design.",
-    thirtyDayActions: [
-      "Stand up a weekly 30-minute signal review with one named owner; log every signal in a shared document.",
-      "Run the assessment with your leadership team individually and compare answers — the spread is the diagnosis.",
-      "Pick one stalled decision older than 90 days and force it to a yes/no this month; document what blocked it.",
+    reading:
+      "Your organization is operating on lagging metrics in an environment that is mutating around it. Disruption is probably already happening, undetected.",
+    recommendedActions: [
+      "Stand up a SignalNet — a distributed, semi-anonymous logging system for any employee to surface weak signals (template in Mutation Readiness Appendix E).",
+      "Run an Assumption Audit on your current strategy (template in Appendix C, or Chapter 4 of the Operating Manual).",
+      "Begin a weekly signal review at the leadership team level, 30 minutes, anomaly-focused.",
+    ],
+    readingList: [
+      "Amy Edmondson, Right Kind of Wrong (2023)",
+      "Mustafa Suleyman, The Coming Wave (2023)",
     ],
   },
   {
     id: "mutation-aware",
     name: "Mutation-Aware",
     range: [31, 50],
-    summary:
-      "The organization sees change coming and talks about it, but its structures, budgets, and incentives still reward the old game. Awareness has not yet become capability.",
-    thirtyDayActions: [
-      "Give one team a protected experiment budget with pre-agreed kill criteria and a 30-day review date.",
-      "Move one recurring decision from a committee to the team closest to the customer; measure cycle time before and after.",
-      "Map your current AI usage across functions with the indicator-dashboard template; pick the two biggest gaps.",
+    reading:
+      "Your organization can sense change but cannot yet act on it at the right cadence. The sense-to-respond gap is the primary risk.",
+    recommendedActions: [
+      "Build an experimentation engine using the five components in Chapter 10 of the Operating Manual.",
+      "Apply the Five Levers framework deliberately (Chapter 9) — pick the two levers your organization scored lowest on and design specific 90-day moves on each.",
+      "Measure mutation latency: time from signal identification to organizational decision. Target < 21 days.",
+    ],
+    readingList: [
+      "Iansiti & Lakhani, Competing in the Age of AI (2020)",
+      "Rita McGrath, Seeing Around Corners (2019)",
+      "Ethan Mollick, Co-Intelligence (2024)",
     ],
   },
   {
     id: "mutation-ready",
     name: "Mutation-Ready",
     range: [51, 72],
-    summary:
-      "The organization senses, decides, and reconfigures faster than its market changes. The work now is keeping the edge: cadence, recalibration, and not regressing under pressure.",
-    thirtyDayActions: [
-      "Schedule the quarterly reassessment now and assign a dimension owner for each of the six dimensions.",
-      "Publish one internal case study of a killed experiment and what it taught you; make learning visible.",
-      "Stress-test structural plasticity by simulating one team re-formation end-to-end on paper; fix the slowest step.",
+    reading:
+      "Your organization is operating in the top decile. The risk now is complacency.",
+    recommendedActions: [
+      "Institutionalize the practices that got you here. They erode without explicit maintenance.",
+      "Begin to mentor adjacent organizations. The best stress-test of whether your practices are real is whether you can teach them.",
+      "Consider whether the language of \"mutation readiness\" should be part of how you describe your operating model externally — to investors, to talent, to partners.",
+    ],
+    readingList: [
+      "Amy Edmondson, The Fearless Organization (2018)",
+      "Mary Murphy, Cultures of Growth (2024)",
+      "Anthropic interpretability research (Mapping the Mind, 2024; On the Biology of a Large Language Model, 2025)",
     ],
   },
 ];
+
+/** Rapid mode: one question per dimension, the strongest single signal. */
+export const RAPID_MODE = {
+  questionIds: ["Q1.2", "Q2.2", "Q3.2", "Q4.3", "Q5.3", "Q6.1"],
+  totalMax: 30,
+  bands: [
+    { id: "mutation-blind", range: [0, 12] as [number, number] },
+    { id: "mutation-aware", range: [13, 22] as [number, number] },
+    { id: "mutation-ready", range: [23, 30] as [number, number] },
+  ],
+};
 
 export const ALL_QUESTION_IDS: string[] = DIMENSIONS.flatMap((d) =>
   d.questions.map((q) => q.id)

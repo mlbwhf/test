@@ -54,17 +54,18 @@ not projects, trends, or quarters; they are shifts in what works. The
 emergence of capable generative AI is a mutation. So was the smartphone. So
 is a regulatory regime change in your industry.
 
-**Mutation readiness.** The organization's standing capacity to detect a
-mutation early, decide what to do about it quickly, and reconfigure itself
-to act on that decision — measured across six dimensions (§3) on a 0–72
+**Mutation readiness.** The organization's capability to sense, respond,
+and adapt at AI-age speed — measured across six dimensions (§3) on a 0–72
 scale with three bands:
 
-- **Mutation-Blind (0–30):** the organization does not see the signals that
-  matter, or sees them too late to act.
-- **Mutation-Aware (31–50):** the organization sees change coming, but its
-  structures, budgets, and incentives still reward the old game.
-- **Mutation-Ready (51–72):** the organization senses, decides, and
-  reconfigures faster than its market changes.
+- **Mutation-Blind (0–30):** the organization is operating on lagging
+  metrics in an environment that is mutating around it. Disruption is
+  probably already happening, undetected.
+- **Mutation-Aware (31–50):** the organization can sense change but cannot
+  yet act on it at the right cadence. The sense-to-respond gap is the
+  primary risk.
+- **Mutation-Ready (51–72):** the organization is operating in the top
+  decile. The risk now is complacency.
 
 **Signal.** A discrete, observable piece of evidence that a mutation may be
 under way: a customer behaving differently, a technology crossing a
@@ -99,37 +100,37 @@ none is sufficient. The dimensions are deliberately cross-functional — no
 single department can own mutation readiness, and an organization that
 assigns it to one has already failed the assessment.
 
-1. **Signal Detection.** Can you see change coming — early, and from outside
-   your own industry? Operationalized by the SignalNet: one shared log, one
-   owner, one weekly review.
+1. **Signal Sensitivity.** The capability to detect, interpret, and act on
+   weak signals before lagging metrics confirm them. Operationalized by the
+   SignalNet — a distributed, semi-anonymous log any employee can write to
+   — and a weekly, anomaly-focused signal review.
 
-2. **Decision Velocity.** How fast does a confirmed signal become a
-   resourced response? Includes the under-measured half: how fast you stop
-   things. Kill latency — how long initiatives survive past their own kill
-   criteria — is the most honest measure of decision velocity.
+2. **Structural Flexibility.** The organization's ability to reshape itself
+   faster than competitors can retool: teams aligned to streams of value
+   rather than functions, concept-to-validated-learning in under 90 days,
+   restructuring decisions acted on within a quarter.
 
-3. **Experimentation Capacity.** Can you run many small, cheap experiments
-   concurrently and harvest learning from all of them, including failures?
-   Capacity is infrastructure plus permission: tools, data, budget access,
-   and the cultural fact of what happens to people whose experiments fail.
+3. **AI Talent Flywheel.** The capability to attract, retain, and integrate
+   AI-literate talent across functions — embedded in every major team
+   rather than isolated in a single AI/ML silo, and exposed to strategy
+   decisions, not just implementation work.
 
-4. **AI Fluency.** Is AI capability embedded in everyday work across
-   functions, with realistic understanding of its limits and guardrails that
-   enable rather than block? In the mutation era this dimension moves
-   fastest and decays fastest; it is reassessed on the same cadence as the
-   others but rarely stays still between assessments.
+4. **Ambidextrous Capital.** The discipline of balancing exploit (proven
+   operations) with explore (uncertain bets) in the funding model: a
+   protected exploration budget separate from the core P&L, bets evaluated
+   on learning yield, experiments that can survive their first quarterly
+   business review.
 
-5. **Structural Plasticity.** How quickly can teams, budgets, processes, and
-   tooling be reshaped around a new opportunity? Plasticity is measured in
-   actuals, not policy: the last team you actually stood up, the last budget
-   you actually moved mid-year.
+5. **Ethical Guardrails.** Containment-as-velocity: the institutional
+   discipline that lets you ship AI fast without dramatic reputational
+   failure. Explicit operating boundaries and a recalibration cadence for
+   every AI deployment; a governance function with engineering rather than
+   legal at its centre; audit-quality explanations on request.
 
-6. **Leadership Posture.** The behavioral substrate beneath the other five:
-   whether leaders visibly change position when evidence contradicts them,
-   whether bad news travels upward fast, and whether incentives reward
-   adaptation over plan compliance. Field experience is unambiguous:
-   organizations strong on dimensions 1–5 and weak on 6 regress within 18
-   months.
+6. **Narrative Coherence.** The shared story that lets the organization act
+   in concert under uncertainty: employees who can say what the company is
+   for in the *current* market, a strategic narrative refreshed within the
+   past 18 months, new hires who can articulate it after their first month.
 
 The full instrument — 18 questions, three per dimension, with scoring rubric
 — is defined in §6 and published in machine-readable form in the framework
@@ -168,6 +169,11 @@ programs. Re-plot quarterly.
 
 ## 5. The Five Levers of Reinvention
 
+> **Draft note:** the canonical Five Levers are defined in Chapter 9 of
+> *Mutation Readiness: An Operating Manual for Innovation in the Age of
+> AI*. The lever names below are a working draft and must be reconciled
+> against Chapter 9 by the author before v1.0 final.
+
 When an assessment reveals a gap, these are the five levers an organization
 can actually pull. Every intervention the framework prescribes is a setting
 of one or more of these levers; if a proposed action does not map to a
@@ -199,47 +205,62 @@ lever, it is commentary, not intervention.
 
 ## 6. The Mutation Readiness Scorecard
 
-The scorecard is the framework's core instrument: **18 statements, three per
-dimension, each rated 1–5** (strongly disagree → strongly agree).
+The scorecard is the framework's core instrument: **18 questions, three per
+dimension, each rated 1–5** (strongly disagree → strongly agree), N/A
+allowed. It is published in full in Appendix A of the Operating Manual and
+in machine-readable form in the framework repository.
 
-**Scoring rubric.** Each statement scores (rating − 1), contributing 0–4
-points. Total range **0–72**. Per-dimension scores range 0–12 and are
-reported alongside the total as a six-axis profile (radar chart in rendered
-reports). Band thresholds: Mutation-Blind 0–30, Mutation-Aware 31–50,
-Mutation-Ready 51–72.
+**Scoring rubric.** Dimension score = sum of the three answered questions
+(max 15), converted to the 0–12 headline number by floor(sum × 12 / 15);
+with N/A items the denominator reduces proportionally. Total = sum of the
+six dimension scores, out of **72**, reported alongside a six-axis profile
+(radar chart in rendered reports); if any items are N/A the total is also
+normalized to a percentage. Band thresholds: Mutation-Blind 0–30,
+Mutation-Aware 31–50, Mutation-Ready 51–72.
 
-**Administration.** Three modes, in increasing order of value:
+**Administration.** Choose the unit of analysis first — yourself, a team,
+or the whole organization — and hold every answer to it. A 50-person team
+can be Mutation-Ready inside a Mutation-Blind enterprise, and a "yes" that
+applies only to a sub-team is a 3, not a 5. Three modes, in increasing
+order of value:
 
-- *Personal scan* (10 minutes): one leader answers for the organization.
-  Fast, free, and systematically optimistic — useful as a door, not a
-  diagnosis.
+- *Personal scan* (~15 minutes): one leader answers. Fast, free, and
+  systematically optimistic — useful as a door, not a diagnosis.
 - *Team scan*: each member of a leadership team answers independently
   before seeing each other's responses. The spread between answers is
-  itself a primary finding; a team whose scores on Leadership Posture
+  itself a primary finding; a team whose scores on Narrative Coherence
   diverge by more than 4 points has located its real agenda.
 - *Quarterly trend*: the same team scan repeated on the recalibration
   cadence. The trend line matters more than any absolute score.
+
+A *rapid mode* exists for screening: six questions, one per dimension
+(Q1.2, Q2.2, Q3.2, Q4.3, Q5.3, Q6.1), scored out of 30 with bands 0–12 /
+13–22 / 23–30. It is a screen, not a diagnosis.
 
 **Interpretation rules.**
 
 - The *lowest* dimension, not the total, sets the work program. Dimensions
   compound; a 12-12-12-12-12-2 profile underperforms a 9-9-9-9-9-9 one.
-- Each band carries three prescribed 30-day actions (published in the
-  scorecard specification). They are deliberately small: the framework's
-  bias is that a small action taken this month beats a roadmap admired this
-  quarter.
+- Each band carries prescribed actions and a reading list (published in
+  the scorecard specification), delivered as a 30-60-90-day plan in
+  facilitated reports. A key Mutation-Aware metric: **mutation latency**,
+  the time from signal identification to organizational decision —
+  target under 21 days.
 - Scores are self-reported and will inflate under audience pressure. Never
   attach compensation or public league tables to scorecard results; the
   instrument measures honesty as much as readiness, and incentivized
   scores measure neither.
 
-The full question text, band definitions, and 30-day actions are normative
-and published in the repository at
+The full question text, band definitions, and actions are normative and
+published in the repository at
 `assessments/mutation-readiness-scorecard.{md,yaml}`. The companion
-**Innovation Framework Scorecard** (16 questions across the four
-implementation layers: AI Enablement, Technical Backbone, Lean Portfolio &
-Value Streams, Human Mutation) serves organizations actively implementing
-the framework and is published alongside it.
+**Innovation Framework Scorecard** (15 questions across the five
+Principles of the Innovators Framework: Fail Forward, Open Communication &
+Candid Feedback, Challenging Mental Models, Flexible Structure / Agile
+Decision-Making, Growth Mindset at Scale; scored /75 into Innovation
+Theatre / Practicing / Native) measures the cultural operating system
+underneath these practices. Run it *first*: an organization in Innovation
+Theatre will fail at mutation readiness regardless of what it installs.
 
 ## 7. Recommended Cadence
 
@@ -274,12 +295,13 @@ sensing — attention is the scarcest budget the framework spends.
 | **Kill criteria** | Evidence, defined before funding, that ends an experiment by a set date. |
 | **Kill latency** | How long an initiative survives past its own kill criteria. Target: zero. |
 | **Leading indicator** | A measure that moves before the outcome does, while action is still possible. |
-| **Lever** | One of five things an organization can actually change: Capital, Cadence, Capability, Configuration, Conviction (§5). |
+| **Lever** | One of the Five Levers of reinvention (Operating Manual, Chapter 9; working draft names in §5). |
 | **Mutation** | An environmental change large enough that the organization's current design is no longer the right answer. |
 | **Mutation exposure** | The cost of *inaction* if a signal proves real; the systematically underpriced side of the risk ledger. |
+| **Mutation latency** | Time from signal identification to organizational decision. Target: under 21 days. |
 | **Reallocation ratio** | Percentage of innovation budget that moved between initiatives in a quarter. |
 | **Signal** | A discrete, observable piece of evidence that a mutation may be under way. |
-| **SignalNet** | The shared, living signal log and its weekly review cadence. |
+| **SignalNet** | A distributed, semi-anonymous logging system for any employee to surface weak signals, with a weekly review cadence (Operating Manual, Appendix E). |
 | **Team scan** | Scorecard mode where each leader answers independently; the spread is a primary finding. |
 
 ## 9. Acknowledgments and References
@@ -288,7 +310,16 @@ The Mutation Readiness Framework was developed by Mark Saymen and is
 elaborated in *The Innovation Playground* and *Mutation Readiness: An
 Operating Manual for Innovation in the Age of AI*.
 
-The framework stands on ground prepared by others: the lean startup and
+The framework integrates work by Amy Edmondson (psychological safety,
+intelligent failure), Mary Murphy (cultures of growth), Carol Dweck
+(mindset), Kim Scott (radical candor), Ethan Mollick (co-intelligence),
+Mustafa Suleyman (containment), Marco Iansiti and Karim Lakhani (the AI
+factory), Rita McGrath (inflection points), Adam Grant (hidden potential),
+Matthew Skelton and Manuel Pais (Team Topologies), Peter Senge (the
+learning organization), and the Anthropic interpretability research from
+2024–2025.
+
+It also stands on ground prepared by the lean startup and
 evidence-based innovation tradition (build–measure–learn, innovation
 accounting); portfolio approaches to innovation ambition (McKinsey's three
 horizons and their critics); the agile and lean-portfolio body of practice,
@@ -304,7 +335,8 @@ Contributions, translations, and case studies are welcome — see
 ---
 
 **Changelog**
-- **v1.0-draft (June 2026)** — initial draft for owner review. Authored
-  from the project handover brief; question text, band actions, lever
-  names, and matrix cell archetypes require owner sign-off before v1.0
-  final.
+- **v1.0-draft (June 2026)** — initial draft for owner review. Dimensions,
+  questions, scoring rubric, bands, and band actions reconciled with the
+  canonical assessment (Appendix A of the Operating Manual). Five Lever
+  names (§5) and 4×4 matrix cell archetypes (§4) remain working drafts
+  requiring owner sign-off before v1.0 final.

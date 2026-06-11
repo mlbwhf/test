@@ -12,8 +12,8 @@
 DeltaCore scored **44/72 — Mutation-Aware** on its first scorecard, run as
 a personal scan by the Chief Digital Officer. Per the framework's warning,
 the personal scan skewed optimistic: a team scan three months later came in
-at 36, with Leadership Posture at 3/12 — the lowest score the facilitators
-had recorded.
+at 36, with Ambidextrous Capital at 3/12 — the lowest score the
+facilitators had recorded.
 
 The signal that should have organized everything was already in hand:
 two of DeltaCore's largest customers had begun pilots with a competitor
@@ -24,11 +24,12 @@ logged anywhere or escalated to anyone.
 ## What they did — and where it went wrong
 
 **They bought tools instead of pulling levers.** The response to the AI
-Fluency score was an enterprise AI platform license and a training catalog.
-Eighteen months later, AF1 ("AI embedded in everyday workflows") had moved
-from 2 to 3; the platform's weekly active usage was under 4% of seats. No
-workflow had a measured before/after delta — the deployment had owners for
-procurement, none for outcomes.
+Talent Flywheel score was an enterprise AI platform license and a training
+catalog. Eighteen months later the dimension had moved from 4/12 to 5/12;
+the platform's weekly active usage was under 4% of seats, and the AI
+talent that existed stayed walled inside a single ML function with no
+exposure to strategy (Q3.2 and Q3.3 both flat at 1). The deployment had
+owners for procurement, none for outcomes.
 
 **They installed the cadence, then let the calendar eat it.** The weekly
 signal review ran for nine weeks. It died the way such meetings die: a
