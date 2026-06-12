@@ -63,6 +63,27 @@ Scaled Agile, Inc. typically restricts partners from using **"SAFe" or "Scaled A
 
 ---
 
+## ✅ FINALIZED DECISIONS (2026-06-12)
+- **safe-spc.com → 301 → `https://agile-agilist.com/training/adv-safe/spc/`** (covers SPC **and** ASPC — the SPC page links to the ASPC sibling). Confirmed by owner. Standalone domain (not WordPress/MCP) → set at registrar or SiteGround.
+- **implementingsafe.org** → now a LIVE content site ("official SAFe framework explained"), NOT a redirect. (Owner accepted the trademark risk.)
+- **report-ai.org** → live WordPress; research-first, gated full report for leads, paid/subscription later; training stays on agile-agilist via funnel.
+
+### How to set up the safe-spc.com 301 (owner task — pick one)
+**Option A — Registrar URL forwarding** (if the domain lives at a registrar with forwarding):
+- Forward type: **Permanent (301)**
+- Destination: `https://agile-agilist.com/training/adv-safe/spc/`
+- Forward path: **ON** · Wildcard/SSL: **ON**
+
+**Option B — SiteGround** (if the domain is added to SiteGround):
+1. Add `safe-spc.com` to SiteGround and point its DNS there; enable free SSL (Let's Encrypt).
+2. Site Tools → **Domain → Redirects**: redirect `safe-spc.com` (all paths) → `https://agile-agilist.com/training/adv-safe/spc/`, type **301 Permanent**.
+   - Or via `.htaccess` in its document root:
+     ```
+     RewriteEngine On
+     RewriteRule ^(.*)$ https://agile-agilist.com/training/adv-safe/spc/ [R=301,L]
+     ```
+3. Verify: visiting `http://safe-spc.com` and `https://safe-spc.com` both 301 to the SPC page over HTTPS.
+
 ## Decisions needed from you
 1. **Canonical SPC page** (sets the `safe-spc.com` target AND resolves the SPC consolidation):
    - (A) `agile-agilist.com/training/adv-safe/spc/` — *recommended (commercial)*
