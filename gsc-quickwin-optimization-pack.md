@@ -45,3 +45,36 @@ Also: **cross-link commercial pages to each other** ("Related certifications") a
 3. Apply Section B titles/metas.
 4. 301 the AI-Native Foundations duplicate; consolidate SPC pages.
 5. Re-check GSC in 2–3 weeks for position/CTR movement.
+
+---
+
+## HOW TO APPLY SECTIONS A & B IN AIOSEO (step-by-step)
+_Titles/metas can't be written via MCP (AIOSEO owns them). Do this per page — ~2 min each._
+
+For EACH page in Sections A & B:
+1. **wp-admin → Pages** → search the page (e.g. "Advance Scrum Master" for `/training/safe/asm/`) → **Edit**.
+2. In the editor, find the **AIOSEO Settings** box **below the content area** (scroll down). If you don't see it, click the **AIOSEO** button in the editor's top toolbar (the AIOSEO logo) to open the sidebar.
+3. Click the **General** tab → you'll see a **Snippet Preview** with a **Search Appearance / Edit Snippet** section.
+4. **Post Title field:** delete what's there and paste the new SEO Title from the table above. (If AIOSEO shows smart-tags like `#separator_sa #site_title`, you can leave the separator/site-title tags at the end and put your title before them — or replace fully; just keep it ≤60 chars. The preview bar turns green when length is good.)
+5. **Meta Description field:** paste the new meta description (≤155 chars; preview bar green).
+6. Click **Update** (top right) to save the page.
+7. Repeat for all 7 pages (Section A first: ASM, AI-Native Foundations, ASPC, SPC; then Section B: DevOps, POPM, LPM).
+8. **Speed up re-indexing:** Google **Search Console → URL Inspection** → paste each updated URL → **Request Indexing**. (Bing auto-picks up via your IndexNow plugin.)
+
+Tip: AIOSEO Pro also has **Quick Edit** SEO fields in the Pages list (hover a page → Quick Edit) — faster if available on your plan.
+
+## INTERNAL LINKS — paste-safe snippet (for the 2 large posts)
+The `ais-impact-on-agile-roles` post (~20K) and `collapse-of-attention-the-cognitive-debt-crisis` are too large to safely re-send via MCP. Add this at the **end** of each (Classic editor: switch to **Text/HTML** view and paste at the bottom; or add a **Custom HTML** block):
+
+```html
+<div style="margin:36px 0;padding:24px 26px;border-radius:14px;background:linear-gradient(135deg,#053947,#0170B9);color:#fff">
+<p style="margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#fbbf24">Build the capability</p>
+<p style="margin:0 0 14px;font-size:18px;font-weight:800;color:#fff">Upskill your team for an AI-native way of working.</p>
+<p style="margin:0 0 16px;color:#cbd5e1;font-size:14px;line-height:1.55">Our <strong>AI-Native Foundations</strong> certification covers prompt engineering, AI ethics, and embedding AI into daily workflows. No coding required. SPCT-led, live-virtual, exam included.</p>
+<a href="https://agile-agilist.com/training/ai-native/ai-native-foundations/" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:13px 24px;border-radius:8px;text-decoration:none;font-size:15px">Explore AI-Native Foundations →</a>
+</div>
+```
+
+### Internal links — status
+- ✅ Live: prompt-repetition (18665), evolution-of-genai-use-cases (1755)
+- ⏳ Paste-safe (you add): ais-impact-on-agile-roles (1724), collapse-of-attention-cognitive-debt
