@@ -121,3 +121,25 @@ Both the hero "recent cohorts" list AND the calendar are the **Easy Events Calen
 - **Delivery language** (class actually taught in another language, own date) = **different cohort = its own event/product.**
 - **Currency** = multi-currency at checkout, not duplicate products.
 - To translate product display across language pages cleanly: WPML/Polylang + WooCommerce multilingual add-on (same product, translated content, **shared stock**), or link all language pages to the one product.
+
+---
+
+## ADDENDUM 2 — "same design + all native payment + auto-updating": how
+
+### Competitor class-page structure (researched)
+Competitors use **ONE combined page per course** — information + schedule + enroll CTA all on the **same** page. They do **NOT** keep a separate "information" page and a separate "registration" page for the same course (that's duplicate content / cannibalization). Registration is a **CTA + checkout step** on the course page, not a second indexable page. **Your current single course page IS the correct model — keep it; don't split.** (The pilot enroll page must therefore be either merged into the course page or kept noindex as a transactional step — never a competing indexed page.)
+
+### The blocker to "one record, fully automatic"
+Your display plugin **Easy Events Calendar (Xylus)** only *displays* events — it does **not** sell paid tickets or manage seat capacity. So with it you can't have ONE record per cohort that both shows AND sells; you'd keep two records (display event + a separate product/ticket) = semi-manual.
+
+### Recommended path to get all three (same look + all native + auto)
+**Migrate cohort events from Easy Events Calendar → The Events Calendar + Event Tickets (which you ALREADY have installed).** Then:
+- **One record per cohort** (the event) = appears in hero + calendar AND is purchasable with **price + seat capacity** via WooCommerce/WooPayments (Stripe) on-site.
+- **Add an event once → everything updates automatically** (hero "recent 4", calendar, availability, sold-out).
+- **Re-skin** the hero "recent 4" list + calendar with The Events Calendar shortcodes/blocks to **match your current look** (a styling task — I can produce the markup).
+- **Bonus: consolidates plugin bloat** — drop the Xylus event plugins + redundant Eventbrite plugins; one events engine.
+- Keep **Eventbrite parallel** during the cutover.
+
+**Trade-off:** a re-skin of the two display blocks + migrating existing events. End result looks identical, works better, fully automatic. Need **Event Tickets Plus (~$99/yr)** for WooCommerce-paid tickets.
+
+**If you'd rather not migrate now:** keep Easy Events Calendar for display and point each event's Register at a native product/ticket (two records, semi-manual). Same design, but not single-record-automatic.
