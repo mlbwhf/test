@@ -143,3 +143,30 @@ Your display plugin **Easy Events Calendar (Xylus)** only *displays* events — 
 **Trade-off:** a re-skin of the two display blocks + migrating existing events. End result looks identical, works better, fully automatic. Need **Event Tickets Plus (~$99/yr)** for WooCommerce-paid tickets.
 
 **If you'd rather not migrate now:** keep Easy Events Calendar for display and point each event's Register at a native product/ticket (two records, semi-manual). Same design, but not single-record-automatic.
+
+---
+
+## ADDENDUM 3 — Leading SAFe migration: YOUR SIDE vs MY SIDE
+
+### 🟦 YOUR SIDE (wp-admin / payments — I can't reach these)
+1. **Install + activate Event Tickets Plus** (~$99/yr). (The Events Calendar + Event Tickets free already active.)
+2. **Payments:** WooCommerce → **WooPayments** (already active = Stripe) → enable **BNPL (Klarna/Affirm) + Apple/Google Pay + multi-currency**.
+3. **Event Tickets → Settings → Commerce → set WooCommerce** as the ticket provider.
+4. **Create the Leading SAFe cohorts as events** in The Events Calendar (date, time, **timezone**, online/in-person). Put them in a **category/tag** for Leading SAFe — **tell me that slug** (e.g. `leading-safe`).
+5. On **each event → add a Ticket** (Event Tickets): **price + capacity (= seats)**. Capacity auto-sells-out.
+6. **Test a ticket purchase** (Stripe test mode → live).
+7. **Send me:** the category slug + price + (optionally) the dates → unblocks my markup.
+8. *(Optional)* migrate the existing Easy Events Calendar "sa" events into The Events Calendar so there's one system.
+9. After my snippets: **paste them** into `/sa/` (Code editor) + add the schema (AIOSEO/WPCode). Then **publish**.
+
+### 🟩 MY SIDE (content/markup via MCP — paste-safe, I won't edit the 100K page directly)
+1. **Surfaced Enroll band** for the top of `/sa/` (price, financing, trust, "See dates & enroll").
+2. **Re-skinned cohorts list + calendar** using The Events Calendar blocks/shortcodes (auto-updating), styled to match your current look — delivered as **paste-safe snippets** that replace the old `[wp_events …]` and `[easy_events_calendar …]` blocks.
+3. **Course + CourseInstance schema** (one course, many dated instances).
+4. Each cohort's Enroll → its ticket/checkout.
+
+### Honest note
+The **backend (events + tickets + payments + capacity) is yours** — that's what makes it native, automatic, and capacity-aware. **I do the page markup.** A pixel-perfect match of the current list style may need a small page-builder tweak on your side; the function (auto-pull, native checkout, capacity) will be solid.
+
+### Fastest alternative (if you don't want a re-skin yet)
+Keep your **existing display blocks** unchanged and only **repoint each event's Register link** to the native ticket/checkout. Zero re-skin, registration goes native immediately; downside = two records per cohort (display + ticket) instead of one. Good for a quick pilot; full migration later.
