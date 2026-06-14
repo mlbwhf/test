@@ -98,3 +98,26 @@ One Course, many dated instances (the SEO-correct model). Update dates/price.
 3. **You:** paste the /sa/ section + schema; add cohort events (4); test payment (11).
 4. **Both:** go live on /sa/, keep Eventbrite parallel, measure 2–3 wks, then roll to SPC/AI-Native/POPM.
 5. **Parallel (you, anytime):** AIOSEO titles/metas (9) + 301s (10) from the other packs.
+
+---
+
+## ADDENDUM — keep current course-page design + language handling
+
+### How the course pages are actually built (inspected on /sa/ 24467)
+Both the hero "recent cohorts" list AND the calendar are the **Easy Events Calendar** plugin, pulling native event posts by category:
+- Hero list: `[wp_events category="sa" events_list layout="style4" col="1" posts_per_page="5"]`
+- Calendar: `[easy_events_calendar category="sa"]`
+**Eventbrite is only the per-event Register link — not the data source.** Dates already come from your own event posts.
+
+### Go native WITHOUT changing the design
+1. Keep both shortcodes. (Change `posts_per_page="5"`→`"4"` for 4 in the hero.)
+2. Per cohort event, **repoint "Register"** from the Eventbrite URL → native checkout target:
+   - WooCommerce product/variation (**stock = seat capacity**), or Event Tickets ticket, or registration page `?cohort=`.
+3. New cohort = create the Easy Events Calendar event (category, date) + its native checkout target; hero + calendar auto-update.
+- **Display layer = Easy Events Calendar (unchanged). Checkout + capacity layer = WooCommerce product/Event Tickets + Stripe.**
+
+### Languages — ONE product per cohort (do NOT split by language)
+- **Website language** (page translated, same class) = **same product** — translate display only. Separate products per language would **split seat capacity** and reporting. Don't.
+- **Delivery language** (class actually taught in another language, own date) = **different cohort = its own event/product.**
+- **Currency** = multi-currency at checkout, not duplicate products.
+- To translate product display across language pages cleanly: WPML/Polylang + WooCommerce multilingual add-on (same product, translated content, **shared stock**), or link all language pages to the one product.
