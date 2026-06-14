@@ -170,3 +170,29 @@ The **backend (events + tickets + payments + capacity) is yours** — that's wha
 
 ### Fastest alternative (if you don't want a re-skin yet)
 Keep your **existing display blocks** unchanged and only **repoint each event's Register link** to the native ticket/checkout. Zero re-skin, registration goes native immediately; downside = two records per cohort (display + ticket) instead of one. Good for a quick pilot; full migration later.
+
+---
+
+## ✅ CONFIRMED DECISION (2026-06-14) — supersedes Addendums 2 & 3
+**Payment path = DIRECT STRIPE via Fluent Forms. NO WooCommerce, NO Event Tickets, no new plugins.**
+(Addendums 2–3 proposing Event Tickets/The Events Calendar migration are a DEFERRED alternative — only revisit if strict *automatic* per-cohort sold-out becomes essential.)
+
+What this means for the Leading SAFe page update:
+- **Display stays exactly as-is** — keep the Easy Events Calendar hero list + calendar. **No re-skin needed.**
+- **Each "sa" event's Register link → the Fluent Forms form** on the course page, pre-selecting the cohort:
+  `https://agile-agilist.com/training/safe/sa/?cohort=<DATE>#register`
+- **Form** = "Leading SAFe — Register" (Deliverable 1): cohort dropdown with `{get.cohort}` prefill + Stripe payment + attendee fields → Zapier → HubSpot.
+- **Capacity (honest):** managed *within Fluent Forms* — set an entry limit, and close/remove a cohort option when it fills. This is the one thing Event Tickets would do more automatically; we accept manual capacity in exchange for staying lean (the trade we already chose).
+
+### Your side
+1. Connect **Stripe** in Fluent Forms; enable BNPL + wallets + currencies in Stripe.
+2. Build the **"Leading SAFe — Register"** form (Deliverable 1).
+3. **Zapier → HubSpot**.
+4. In each Easy Events Calendar "sa" event, set the **Register URL** → `/training/safe/sa/?cohort=<DATE>#register`.
+5. Set the form **entry limit** (capacity); close a cohort option when full.
+6. Send me **FORM_ID + price**.
+
+### My side
+1. **Surfaced Enroll band + a "#register" form section** (`[fluentform id="FORM_ID"]`) → paste-safe snippet for `/sa/`.
+2. **Course + CourseInstance schema.**
+(No re-skin — display unchanged.)
