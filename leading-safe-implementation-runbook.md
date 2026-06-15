@@ -215,3 +215,19 @@ Implications:
 - **Also add:** "How did you hear about us?" (Search engine / LLM / Referral / Scaled Agile / Other+specify) → map to a HubSpot property for attribution (the LLM option tracks GEO/AI-search referrals).
 
 Pilot recommendation: ship with the **toggle + single conditional attendee** (covers "manager registers one person"); add the repeater or route big groups via the **group-quote** path as a fast follow.
+
+---
+
+## ADDENDUM 5 — Stop hand-editing the cohort dropdown (auto-populate from the calendar)
+**Problem:** 6+ months of cohorts → don't maintain dates twice (calendar + form dropdown).
+**Single source of truth = Easy Events Calendar events** (category `sa`) — already drives the hero + calendar.
+**Fix:** make the form's Cohort field **auto-populate from those events** so adding a class once = it appears in hero, calendar, AND the form.
+
+Options (Fluent Forms Pro):
+- **A (recommended): Post / CPT Selection (Dynamic Field)** → Post Type = the events CPT, filter category `sa`, upcoming, order by event start-date meta. `{get.cohort}` still pre-selects from `?cohort=`. Auto-updates; works for direct visitors. Ref: fluentforms.com/docs/post-selection-module-in-fluent-forms/
+- **B (leanest): hidden Cohort field** = `{get.cohort}` from each event's Register link; no dropdown. Pair with the auto cohort list above the form for direct visitors.
+- Custom code alt: filter `fluentform/rendering_field_data_select` to populate from a wp_query.
+
+Competitor validation: KnowledgeHut/Simplilearn run a central schedule that auto-feeds display + registration — same single-source pattern.
+
+TODO: identify the Easy Events Calendar CPT slug + the order-by-event-date query for the Post Selection field.
