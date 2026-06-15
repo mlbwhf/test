@@ -196,3 +196,22 @@ What this means for the Leading SAFe page update:
 1. **Surfaced Enroll band + a "#register" form section** (`[fluentform id="FORM_ID"]`) → paste-safe snippet for `/sa/`.
 2. **Course + CourseInstance schema.**
 (No re-skin — display unchanged.)
+
+---
+
+## ADDENDUM 4 — Registrant ≠ Attendee (registering on behalf of others)
+Add to the form:
+1. **Registrant block** (buyer): Name, Email, Company, Phone — always shown.
+2. **Radio "Who is attending this course?"** → "I'm attending myself" / "I'm registering someone else / my team".
+3. **Attendee block — Conditional Logic: show when radio = "someone else / my team":**
+   - Single: Attendee First/Last Name + Attendee Email.
+   - Group: a **Repeater field** (Name + Email per row), one per seat.
+4. **If "myself"** → attendee = registrant (no extra fields).
+5. **Payment = Seats × price** (tie Quantity to the payment Item Quantity).
+
+Implications:
+- **Ticket email** → send to the ATTENDEE (`{inputs.attendee_email}`) too, not only the buyer (add a 2nd conditional notification). Group/repeater: send the registrant a summary listing all attendees first; per-attendee emails = advanced.
+- **SAFe Studio roster + HubSpot** → upload the **attendee** to the roster; registrant = the HubSpot contact/deal, attendees in deal notes (or as extra contacts).
+- **Also add:** "How did you hear about us?" (Search engine / LLM / Referral / Scaled Agile / Other+specify) → map to a HubSpot property for attribution (the LLM option tracks GEO/AI-search referrals).
+
+Pilot recommendation: ship with the **toggle + single conditional attendee** (covers "manager registers one person"); add the repeater or route big groups via the **group-quote** path as a fast follow.
