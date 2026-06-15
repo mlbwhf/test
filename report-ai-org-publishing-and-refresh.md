@@ -18,7 +18,7 @@ than dumping all five at once.
 | # | Report | Status | Slot |
 |---|--------|--------|------|
 | 1 | The State of Enterprise AI in 2026 (post id 14) | **Scheduled** | Thu 2026-06-18 |
-| 2 | AI Adoption Statistics 2026 | Not drafted — slot reserved | Thu 2026-06-25 |
+| 2 | AI Adoption Statistics 2026 (post id 433) | **Scheduled** | Thu 2026-06-25 |
 | 3 | Generative AI in the Enterprise | Not drafted — slot reserved | Thu 2026-07-02 |
 | 4 | AI Investment & Funding Trends | Not drafted — slot reserved | Thu 2026-07-09 |
 | 5 | AI & Jobs: Labor Market Statistics | Not drafted — slot reserved | Thu 2026-07-16 |
