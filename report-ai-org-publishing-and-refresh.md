@@ -36,6 +36,14 @@ than dumping all five at once.
 > post that doesn't exist yet, and auto-publishing an empty placeholder would
 > push a blank page live. Draft first, then schedule into the slot.
 
+### Weekly homepage update (same Thursday run)
+
+The homepage **"Leading AI assistants — weekly active users"** panel is
+weekly-cadence data, so it is refreshed **weekly** (not monthly): on the same
+Thursday run, re-check each assistant's latest weekly-active-user figure
+(ChatGPT / Gemini / Meta AI / Copilot / Claude / Perplexity) and update the
+bar widths + numbers on page id 6.
+
 ---
 
 ## B. Monthly homepage stat refresh (1st of each month)
@@ -51,10 +59,9 @@ re-checked. Each month:
    - Worldwide AI spend — Gartner
    - Use gen AI at work — (source still to be confirmed)
    - Inference cost, GPT-3.5-class — Stanford HAI AI Index
-2. **Re-verify the assistant ranking** (ChatGPT / Gemini / Meta AI / Copilot /
-   Claude / Perplexity weekly active users) against each provider's latest
-   disclosure. These are currently **illustrative** — priority is to replace
-   with confirmed figures.
+2. _(The assistant **weekly**-active-users panel is refreshed on the weekly
+   Thursday run — see section A, not here. Figures are currently
+   **illustrative**; priority is to replace with confirmed numbers.)_
 3. **Re-verify the 2024 / 2025 back-figures** (also currently illustrative) so
    the trend bars are fully defensible.
 4. **Bump the stamp** to the current month.
@@ -73,9 +80,11 @@ dashboard. Create **two scheduled sessions** pointed at this repo:
   > via the WordPress MCP, bump the "Last updated" stamp, and report what
   > changed.
 - **Weekly** (Thursdays, ~13:00 UTC) — prompt:
-  > Run section A of `report-ai-org-publishing-and-refresh.md`: if the next
-  > pillar report in the table is drafted and complete, schedule it into its
-  > slot; otherwise report which report is still missing.
+  > Run section A of `report-ai-org-publishing-and-refresh.md`: (1) refresh the
+  > homepage "Leading AI assistants — weekly active users" panel on page id 6
+  > against each provider's latest weekly-active-user figures; and (2) if the
+  > next pillar report in the table is drafted and complete, schedule it into
+  > its slot, otherwise report which report is still missing.
 
 Docs: https://code.claude.com/docs/en/claude-code-on-the-web
 
