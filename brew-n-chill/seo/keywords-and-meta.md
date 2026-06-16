@@ -1,75 +1,60 @@
-# Brew-n-Chill — SEO: keywords, titles & meta
+# Brew-n-Chill — SEO + LLM/GEO Optimization (v2)
 
-## Primary keyword themes (B2B-led)
+_Updated for the Robo-Barista line, coffee **and ice cream**, and the US · Canada · UAE · Saudi Arabia service area._
 
-- automated coffee kiosk / machine for business
-- office coffee service / office coffee machine
-- robotic barista / robot coffee kiosk
-- self-serve / unattended coffee machine
-- coffee vending machine for [office | gym | hotel | hospital | university]
-- lease / rent a coffee machine for business
-- coffee kiosk ROI / profit
+## 1. Primary entities & keywords
 
-## Per-page title tags & meta descriptions
+**Brand/product entity:** "Brew-n-Chill Robo-Barista" (own this phrase everywhere — name, H1s, alt text, schema).
 
-Keep titles ≤ 60 chars, meta descriptions ≤ 155 chars. `{Region}` = your service area.
+High-intent keywords to target:
+- robo barista / robotic barista machine / coffee robot
+- automated coffee kiosk for business / self-serve coffee machine
+- coffee and ice cream vending machine / automated ice cream kiosk / soft serve robot
+- office coffee service · coffee machine for gym / hotel / mall / hospital / university
+- buy / lease / rent a coffee robot · coffee kiosk ROI · coffee kiosk franchise
+- coffee robot UAE / Saudi Arabia / Canada (geo long-tail)
 
-**Home** — `/`
-- Title: `Automated Coffee Kiosks for Business | Brew-n-Chill`
-- Meta: `Barista-grade automated coffee kiosks for offices, gyms, hotels & campuses. 24/7, zero staffing, café-quality coffee. Book a free demo.`
+## 2. Per-page title tags & meta descriptions (≤60 / ≤155 chars)
 
-**How It Works** — `/how-it-works/`
-- Title: `How Our Automated Coffee Kiosks Work | Brew-n-Chill`
-- Meta: `Site survey to first cup: how a Brew-n-Chill self-serve coffee kiosk is installed, stocked and serviced — fully managed, no barista needed.`
+| Page | Title tag | Meta description |
+|---|---|---|
+| Home `/` | `Robo-Barista: Coffee & Ice Cream Machine for Business \| Brew-n-Chill` | `Automated Robo-Barista that serves barista-grade coffee and soft-serve ice cream 24/7 — zero staffing. Offices, gyms, malls, hotels. Book a free demo.` |
+| Robo-Barista `/machines/` | `Brew-n-Chill Robo-Barista — Mini, Pro & Max \| Coffee + Ice Cream Robot` | `Compact to full robotic coffee + ice cream kiosks. Robo-Barista Mini, Pro and Max — matched to your footfall and budget. See specs.` |
+| How It Works `/how-it-works/` | `How the Robo-Barista Works — Install to First Cup \| Brew-n-Chill` | `Site survey to first cup: how a Brew-n-Chill Robo-Barista is installed, stocked and serviced — fully managed, no barista, coffee and ice cream.` |
+| Industries `/industries/` | `Coffee & Ice Cream Kiosks for Offices, Malls, Gyms, Hotels \| Brew-n-Chill` | `Automated Robo-Barista kiosks for offices, malls, cinemas, gyms, hotels, hospitals and campuses. See where coffee + ice cream performs best.` |
+| Pricing & ROI `/pricing-roi/` | `Robo-Barista Pricing & ROI — $120K vs a Café \| Brew-n-Chill` | `A staffed café costs ~$280K/yr in payroll. A $120K Robo-Barista needs zero baristas. See the savings, payback and maintenance options.` |
+| Our Coffee `/our-coffee/` | `Our Coffee & Ice Cream — Brew and Chill \| Brew-n-Chill` | `Specialty beans for the coffee, premium soft-serve for the chill. Brew-n-Chill recipes are dialled in for the Robo-Barista — café-grade every time.` |
+| About `/about/` | `About Brew-n-Chill — Coffee + Ice Cream Robo-Barista Partner` | `We pair the best automated coffee + ice cream technology with our own brand — turnkey Robo-Barista kiosks for businesses. Buy, lease or revenue-share.` |
+| FAQ `/faq/` | `Robo-Barista FAQ — Install, Cost, Coffee & Ice Cream \| Brew-n-Chill` | `Space, power, maintenance, payment, coffee + ice cream quality and contracts — common questions about the Brew-n-Chill Robo-Barista, answered.` |
+| Contact `/contact/` | `Book a Free Robo-Barista Demo \| Brew-n-Chill` | `Tell us about your space and we'll recommend a Robo-Barista, model the economics and arrange a tasting. Serving US, Canada, UAE & Saudi Arabia.` |
 
-**The Machines** — `/machines/`
-- Title: `Coffee Kiosk Machines & Robotic Baristas | Brew-n-Chill`
-- Meta: `Compact countertop units to full robotic coffee bars. We curate the best automated coffee hardware and match it to your footfall and budget.`
+Set these via the page `meta` fields `jetpack_seo_html_title` and `advanced_seo_description` (already wired in the page updates), or in Rank Math / Yoast.
 
-**Industries** — `/industries/`
-- Title: `Coffee Kiosks for Offices, Gyms, Hotels & More | Brew-n-Chill`
-- Meta: `Automated coffee kiosks for offices, gyms, hotels, hospitals, universities and retail. See where unattended coffee performs best.`
+## 3. Structured data (schema.org) — for SEO + LLM citeability
 
-**Pricing & ROI** — `/pricing-roi/`
-- Title: `Coffee Kiosk Pricing, Lease & ROI | Brew-n-Chill`
-- Meta: `Buy, lease or revenue-share a coffee kiosk. ~$240/day revenue potential, $3–4k monthly net, 12–18 month payback. Request an ROI model.`
-
-**Our Coffee** — `/our-coffee/`
-- Title: `Our Coffee — Specialty Beans for Kiosks | Brew-n-Chill`
-- Meta: `Brew-n-Chill specialty beans and blends are dialled in for automated kiosks, so every cup tastes like a café made it.`
-
-**About** — `/about/`
-- Title: `About Brew-n-Chill | Coffee Technology + Coffee Brand`
-- Meta: `We pair the best automated coffee technology with a coffee brand built for it — turnkey kiosks for businesses that want great coffee, no café.`
-
-**FAQ** — `/faq/`
-- Title: `Automated Coffee Kiosk FAQ | Brew-n-Chill`
-- Meta: `Install, maintenance, cost, payment, coffee quality and contracts — common questions about Brew-n-Chill automated coffee kiosks, answered.`
-
-**Contact** — `/contact/`
-- Title: `Book a Free Coffee Kiosk Demo | Brew-n-Chill`
-- Meta: `Tell us about your space and we'll recommend a machine, model the economics and arrange a tasting. No obligation.`
-
-## Recommended on-page schema (JSON-LD)
-
-- **Organization** + **LocalBusiness** on Home (name, logo, sameAs, areaServed, contact).
-- **FAQPage** on the FAQ page (each Q/A pair).
-- **Product** / **Offer** on Machines & Pricing if you publish specific models/prices.
+Add via **Rank Math** or **Yoast** (most reliable; the REST API strips inline `<script>` for non-admins):
+- **Organization** (site-wide): name, logo, url, sameAs (socials), areaServed = US, CA, AE, SA, contactPoint (phone +1 647-999-7433, email info@brew-n-chill.com).
+- **Product** + **Offer** on the Robo-Barista page (Mini/Pro/Max).
+- **FAQPage** on the FAQ page (each Q/A).
+- **LocalBusiness** / **Service** with areaServed for the four countries.
 - **BreadcrumbList** site-wide.
 
-Use a plugin (Yoast SEO or Rank Math) to manage titles, meta and schema rather than hard-coding.
+## 4. LLM / GEO (Generative Engine Optimization)
 
-## First content / blog ideas (topical authority + long-tail)
+Make the site easy for ChatGPT, Claude, Perplexity, Google AI Overviews to quote:
+- **Lead with a one-sentence definition** on each page (entity + what it does) — done in hero/intro copy.
+- **Question-style H2/H3s** + concise answers (FAQ format) — high citation rate.
+- **Concrete numbers** stated plainly (60 sec, ~2 m², $120K, ~$280K/yr payroll, 12–18 mo payback).
+- **Consistent entity name** "Brew-n-Chill Robo-Barista" so models bind the brand.
+- **Descriptive alt text** naming the product + action.
+- Publish **`/llms.txt`** at the site root (see `seo/llms.txt`) — a growing convention that gives LLMs a clean map of the site.
+- Keep content in **server-rendered HTML** (it is — Gutenberg), not JS-only, so crawlers/LLMs read it.
 
-1. "What does an automated coffee kiosk cost in 2026?" (pricing long-tail)
-2. "Office coffee and employee retention: the real ROI"
-3. "Buy vs lease vs revenue-share: choosing a coffee kiosk model"
-4. "Best locations for a self-serve coffee kiosk"
-5. "Robotic barista vs traditional café: a cost comparison"
-6. "How much can a coffee kiosk earn per location?"
+## 5. Blog topics (long-tail + GEO authority)
 
-## Local SEO
-
-- Create/verify a Google Business Profile for the service area.
-- Add city/region pages if you serve multiple metros (e.g. `/coffee-kiosks-{city}/`).
-- Consistent NAP (name, address, phone) in the footer and schema.
+1. "Robo-Barista vs traditional café: a 2026 cost comparison"
+2. "How much does an automated coffee + ice cream kiosk cost?"
+3. "Best locations for a coffee and ice cream robot"
+4. "Coffee robots in the UAE & Saudi Arabia: what to know"
+5. "Office coffee and employee retention: the real ROI"
+6. "Buy vs lease vs revenue-share a Robo-Barista"
