@@ -24,11 +24,14 @@ Two pieces — the **page** (snippet) and the **form** (dynamic dropdown). Do bo
 
 ---
 
-## ✅ Confirmed config for this site (use these — no guessing)
-- **Taxonomy:** `event_category` · **term:** `sa`
-- **Cohort option value:** Post ID · **label:** event title + date
-- If `[aa_cohorts]` still renders nothing, pin it explicitly:
-  `[aa_cohorts taxonomy="event_category" post_type="wp_events" date_meta="<from debug box>"]`
+## ✅ Confirmed + PINNED config for this site (no guessing)
+- **Post type:** `wp_events` · **Taxonomy:** `event_category` · **term:** `sa` (id 58)
+- **Start-date meta key:** `start_ts` (Unix timestamp)
+- **Cohort option value:** Post ID · **label:** event title + date · **6 events** live
+- These are now pinned as the shortcode defaults in `aa-cohorts-wpcode-snippet.php`,
+  so plain `[aa_cohorts]` works. (`debug="1"` still available for admins.)
+- Note: the live FORM snippet sorts/labels off `event_start_date` (date string) while
+  this page snippet uses `start_ts` — both resolve to the same 6 dates; cosmetic only.
 
 ## Part 2 — Make the FORM dropdown read the same events (so the link binds)
 > ✅ **DONE / LIVE.** Form 3's Cohort Date dropdown already pulls from the `sa` events

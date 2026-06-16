@@ -26,9 +26,9 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 		'category'  => 'sa',
 		'price'     => '$850',
 		'limit'     => 12,
-		'post_type' => '',   // auto-detect if blank
-		'taxonomy'  => '',   // auto-detect if blank
-		'date_meta' => '',   // auto-detect if blank
+		'post_type' => 'wp_events',       // pinned (confirmed on agile-agilist.com)
+		'taxonomy'  => 'event_category',  // pinned — singular, term "sa" (id 58)
+		'date_meta' => 'start_ts',        // pinned — Unix timestamp
 		'debug'     => '',
 	), $atts, 'aa_cohorts' );
 
