@@ -24,7 +24,17 @@ Two pieces — the **page** (snippet) and the **form** (dynamic dropdown). Do bo
 
 ---
 
+## ✅ Confirmed config for this site (use these — no guessing)
+- **Taxonomy:** `event_category` · **term:** `sa`
+- **Cohort option value:** Post ID · **label:** event title + date
+- If `[aa_cohorts]` still renders nothing, pin it explicitly:
+  `[aa_cohorts taxonomy="event_category" post_type="wp_events" date_meta="<from debug box>"]`
+
 ## Part 2 — Make the FORM dropdown read the same events (so the link binds)
+> ✅ **DONE / LIVE.** Form 3's Cohort Date dropdown already pulls from the `sa` events
+> (label = title + date, value = Post ID) via a live WPCode snippet, verified at
+> `…/enroll-leading-safe-pilot/?cohort=22456` (6 dated options, July 9 pre-selected).
+> Do **not** add a second snippet for this — the steps below are the original reference only.
 Right now form 3's Cohort field is a static dropdown (cohort-1/2/3). Switch it to pull from the same events so the value matches the table's `?cohort=<event-id>` links:
 
 1. Fluent Forms → form 3 → edit the **Cohort Date** field → delete it, add a **"Select" (Dropdown)** field set to **Dynamic** source (Fluent Forms Pro → field → **Advanced → Dynamic Options / Auto Populate → Post/CPT**):

@@ -39,9 +39,9 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 	$taxonomy = $a['taxonomy'];
 	$term     = false;
 	$tax_candidates = array_filter( array(
-		$a['taxonomy'], 'event_categories', 'wp_events_categories',
-		'eec_event_categories', 'events_categories', 'event-categories',
-		'eec_events_categories', 'event_listing_category',
+		$a['taxonomy'], 'event_category', 'event_categories', 'wp_events_categories',
+		'eec_event_category', 'eec_event_categories', 'events_categories',
+		'event-categories', 'eec_events_categories', 'event_listing_category',
 	) );
 	foreach ( $tax_candidates as $tx ) {
 		if ( $tx && taxonomy_exists( $tx ) ) {
