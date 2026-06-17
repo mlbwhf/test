@@ -250,6 +250,9 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
   /* ---- expand-on-click: drive the on-page Fluent form, no reload ---- */
   var formWrap=document.querySelector('.fluentform_wrapper_3')||document.querySelector('.fluentform');
   if(formWrap){var hint=document.createElement('div');hint.id='aa-form-hint';hint.className='aa-form-hint';hint.textContent='👆 Select a cohort above to open registration';formWrap.parentNode.insertBefore(hint,formWrap);formWrap.style.display='none';}
+  // Cohort is chosen by clicking the card → hide the now-redundant dropdown (its value still submits & records the date)
+  var cohortSel=document.querySelector('select[name="dropdown"]');
+  if(cohortSel){var cg=cohortSel.closest('.ff-el-group');if(cg)cg.style.display='none';}
   function selectCohort(id,qty){
     var sel=document.querySelector('select[name="dropdown"]');
     if(sel){sel.value=String(id);sel.dispatchEvent(new Event('change',{bubbles:true}));}
