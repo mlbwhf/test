@@ -19,10 +19,11 @@
 add_shortcode( 'aa_cohorts', function ( $atts ) {
 
 	$a = shortcode_atts( array(
-		'category'=>'sa', 'price'=>'$850', 'compare_at'=>'', 'discount'=>'', 'financing'=>'',
+		'category'=>'sa', 'price'=>'$850', 'price_usd'=>'', 'compare_at'=>'', 'discount'=>'', 'financing'=>'',
 		'coupon'=>'', 'coupon_expires'=>'', 'limit'=>24,
 		'post_type'=>'wp_events', 'taxonomy'=>'event_category', 'date_meta'=>'start_ts', 'debug'=>'',
 	), $atts, 'aa_cohorts' );
+	$price_usd = $a['price_usd'] ?: ( preg_replace('/[^0-9.]/','',$a['price']) ?: '850' );
 
 	$is_admin_user = current_user_can( 'manage_options' );
 	$debug_lines = array();
@@ -108,15 +109,14 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 		$map[$r['id']] = aac_daterange($r['ts']);
 		$caldata[] = array('id'=>$r['id'],'ymd'=>$r['ymd'],'label'=>aac_daterange($r['ts']),'daytype'=>$r['daytype']);
 		$batch = ( $r['daytype']==='weekend' ? 'Weekend Batch' : 'Weekday Batch' );
-		$zt = aac_zone_times($r['ymd']);
+		$ms = aac_et_ms($r['ymd']);
 ?>
       <div class="aa-card" data-month="<?php echo esc_attr($r['month']); ?>" data-daytype="<?php echo esc_attr($r['daytype']); ?>" data-date="<?php echo esc_attr($r['ymd']); ?>" data-cohort="<?php echo esc_attr($r['id']); ?>">
         <div class="aa-card-info">
           <span class="aa-badge">☀ Morning</span>
           <div class="aa-card-date"><?php echo esc_html(aac_daterange($r['ts'])); ?></div>
-<?php foreach ( $zt as $i=>$z ) : ?>
-          <div class="aa-card-time<?php echo $i?' aa-card-time2':''; ?>"><?php echo $i?'':$ic_clock; ?> <span class="aa-tz"><?php echo esc_html($z['lbl']); ?></span> <?php echo esc_html($z['time']); ?></div>
-<?php endforeach; ?>
+          <div class="aa-card-time"><?php echo $ic_clock; ?> <span class="aa-localtime" data-s="<?php echo esc_attr($ms[0]); ?>" data-e="<?php echo esc_attr($ms[1]); ?>"><span class="aa-tz">ET</span> 09:00 AM - 05:00 PM</span></div>
+          <div class="aa-card-time aa-card-time2"><span class="aa-tz">ET</span> 09:00 AM - 05:00 PM</div>
           <div class="aa-card-meta"><?php echo $ic_globe; ?> Online Classroom · <?php echo esc_html($batch); ?></div>
 <?php if ( $r['trainer'] ) : ?>
           <div class="aa-trainer"><?php if ($r['trainer_photo']) : ?><img src="<?php echo esc_url($r['trainer_photo']); ?>" alt=""><?php else : ?><span class="aa-trainer-ini"><?php echo esc_html(aac_initials($r['trainer'])); ?></span><?php endif; ?><span><strong><?php echo esc_html($r['trainer']); ?></strong><br><span class="aa-trainer-role">Trainer</span></span></div>
@@ -128,6 +128,7 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
         <div class="aa-card-buy">
 <?php if ( $a['discount'] ) : ?><div class="aa-sale"><em>Hurry, Sale ends soon!</em> <span class="aa-disc"><?php echo esc_html($a['discount']); ?></span></div><?php endif; ?>
           <div class="aa-price"><?php echo $price; ?><?php if ($a['compare_at']) : ?> <s><?php echo esc_html($a['compare_at']); ?></s><?php endif; ?></div>
+          <div class="aa-local" data-usd="<?php echo esc_attr($price_usd); ?>" style="display:none"></div>
 <?php if ( $a['financing'] ) : ?><div class="aa-fin"><?php echo esc_html($a['financing']); ?> ⓘ</div><?php else : ?><div class="aa-price-sub">per seat · USD</div><?php endif; ?>
 <?php $filling = ( $r['seats']!=='' && (int)$r['seats']>0 && (int)$r['seats']<=5 ); ?>
           <div class="aa-buy-row"><?php if ($filling) : ?><span class="aa-filling">⏳ Filling Fast</span><?php endif; ?><a class="aa-enroll" href="?cohort=<?php echo esc_attr($r['id']); ?>#enroll-form">Enroll Now</a></div>
@@ -150,12 +151,13 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
       <div class="aa-side-inner">
         <div class="aa-side-toprow"><span class="aa-badge">☀ Morning</span><?php if ($a['discount']) : ?><span class="aa-disc"><?php echo esc_html($a['discount']); ?></span><?php endif; ?></div>
         <div class="aa-card-date"><?php echo esc_html(aac_daterange($soonest['ts'])); ?></div>
-<?php foreach ( aac_zone_times($soonest['ymd']) as $i=>$z ) : ?>
-        <div class="aa-card-time<?php echo $i?' aa-card-time2':''; ?>"><?php echo $i?'':$ic_clock; ?> <span class="aa-tz"><?php echo esc_html($z['lbl']); ?></span> <?php echo esc_html($z['time']); ?></div>
-<?php endforeach; ?>
+<?php $sms = aac_et_ms($soonest['ymd']); ?>
+        <div class="aa-card-time"><?php echo $ic_clock; ?> <span class="aa-localtime" data-s="<?php echo esc_attr($sms[0]); ?>" data-e="<?php echo esc_attr($sms[1]); ?>"><span class="aa-tz">ET</span> 09:00 AM - 05:00 PM</span></div>
+        <div class="aa-card-time aa-card-time2"><span class="aa-tz">ET</span> 09:00 AM - 05:00 PM</div>
         <div class="aa-card-meta"><?php echo $ic_globe; ?> Online Classroom · <?php echo esc_html($soonest['daytype']==='weekend'?'Weekend Batch':'Weekday Batch'); ?></div>
         <div class="aa-side-sep"></div>
         <div class="aa-price"><?php echo $price; ?><?php if ($a['compare_at']) : ?> <s><?php echo esc_html($a['compare_at']); ?></s><?php endif; ?></div>
+        <div class="aa-local" data-usd="<?php echo esc_attr($price_usd); ?>" style="display:none"></div>
         <a class="aa-enroll aa-enroll-block" href="?cohort=<?php echo esc_attr($soonest['id']); ?>#enroll-form">Enroll Now</a>
         <a class="aa-side-all" href="#cohorts">View all Schedules ›</a>
       </div>
@@ -337,6 +339,21 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
   var cp=document.querySelector('.aa-coupon-copy');
   if(cp){cp.addEventListener('click',function(){var t=cp.getAttribute('data-code');if(navigator.clipboard){navigator.clipboard.writeText(t);}cp.textContent='✓ Copied';setTimeout(function(){cp.textContent='⧉ Copy';},1500);});}
 
+  /* ---- localize class time + price to the visitor ---- */
+  (function(){
+    var tzShort='';try{var pp=new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(new Date());var zz=pp.filter(function(x){return x.type==='timeZoneName';})[0];tzShort=zz?zz.value:'';}catch(e){}
+    var o={hour:'2-digit',minute:'2-digit'};
+    document.querySelectorAll('.aa-localtime').forEach(function(el){var s=+el.getAttribute('data-s'),e=+el.getAttribute('data-e');if(!s||!e)return;try{var ls=new Date(s).toLocaleTimeString([],o),le=new Date(e).toLocaleTimeString([],o);el.innerHTML='<span class="aa-tz">'+(tzShort||'Local')+'</span> '+ls+' - '+le+' · your time';}catch(x){}});
+    var SYM={USD:'$',CAD:'C$',GBP:'£',EUR:'€',AUD:'A$',AED:'AED ',SAR:'SAR ',ZAR:'R',INR:'₹',SGD:'S$',CHF:'CHF ',NZD:'NZ$'};
+    var TZC={'America/Toronto':'CAD','America/Vancouver':'CAD','America/Edmonton':'CAD','America/Winnipeg':'CAD','America/Halifax':'CAD','America/Regina':'CAD','America/St_Johns':'CAD','America/Moncton':'CAD','Europe/London':'GBP','Asia/Dubai':'AED','Asia/Riyadh':'SAR','Africa/Johannesburg':'ZAR','Asia/Kolkata':'INR','Asia/Calcutta':'INR','Asia/Singapore':'SGD','Europe/Zurich':'CHF','Pacific/Auckland':'NZD'};
+    var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
+    var cur=TZC[tz]||(tz.indexOf('Europe/')===0?'EUR':(tz.indexOf('Australia/')===0?'AUD':'USD'));
+    if(cur==='USD')return;
+    function show(rates){if(!rates||!rates[cur])return;var rate=rates[cur];document.querySelectorAll('.aa-local').forEach(function(el){var usd=parseFloat(el.getAttribute('data-usd'))||0;if(!usd)return;var v=Math.round(usd*rate);el.textContent='≈ '+(SYM[cur]||(cur+' '))+v.toLocaleString()+' '+cur+' · billed in USD';el.style.display='block';});}
+    try{var c=JSON.parse(localStorage.getItem('aa_rates')||'null');if(c&&c.t&&(Date.now()-c.t)<432e5){show(c.r);return;}}catch(e){}
+    fetch('https://open.er-api.com/v6/latest/USD').then(function(r){return r.json();}).then(function(j){if(j&&j.rates){try{localStorage.setItem('aa_rates',JSON.stringify({t:Date.now(),r:j.rates}));}catch(e){}show(j.rates);}}).catch(function(){});
+  })();
+
   /* ---- direct ?cohort= link auto-opens the form ---- */
   var pq=new URLSearchParams(location.search).get('cohort');if(pq&&window.AA_COHORTS[pq]){setTimeout(function(){selectCohort(pq,1);},300);}
   apply();
@@ -350,13 +367,10 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
 if ( ! function_exists('aac_dateish') ) { function aac_dateish($v){ if(is_numeric($v)&&(int)$v>100000000)return true; return $v&&strtotime($v)!==false; } }
 if ( ! function_exists('aac_ts') ) { function aac_ts($v){ if(is_numeric($v)&&(int)$v>100000000)return (int)$v; $t=$v?strtotime($v):false; return $t?:0; } }
 if ( ! function_exists('aac_daterange') ) { function aac_daterange($s){ $z=new DateTimeZone('America/New_York'); return (new DateTime('@'.$s))->setTimezone($z)->format('M j, Y'); } }
-/* All classes 9:00 AM–5:00 PM Eastern → ET / MT / PT (DST handled automatically) */
-if ( ! function_exists('aac_zone_times') ) { function aac_zone_times($ymd){
-	$out=array(); $zones=array('ET'=>'America/New_York','MT'=>'America/Denver','PT'=>'America/Los_Angeles');
+/* UTC millis for 9:00 AM & 5:00 PM Eastern on a given date → JS converts to the visitor's timezone */
+if ( ! function_exists('aac_et_ms') ) { function aac_et_ms($ymd){
 	$ny=new DateTimeZone('America/New_York');
-	try{ $s=new DateTime($ymd.' 09:00:00',$ny); $e=new DateTime($ymd.' 17:00:00',$ny); }catch(Exception $x){ return array(); }
-	foreach($zones as $lbl=>$tz){ $z=new DateTimeZone($tz); $ss=clone $s;$ss->setTimezone($z); $ee=clone $e;$ee->setTimezone($z);
-		$out[]=array('lbl'=>$lbl,'time'=>$ss->format('h:i A').' - '.$ee->format('h:i A')); }
-	return $out;
+	try{ $s=new DateTime($ymd.' 09:00:00',$ny); $e=new DateTime($ymd.' 17:00:00',$ny); }catch(Exception $x){ return array(0,0); }
+	return array( $s->getTimestamp()*1000, $e->getTimestamp()*1000 );
 } }
 if ( ! function_exists('aac_initials') ) { function aac_initials($n){ $p=preg_split('/\s+/',trim($n)); $i=strtoupper(substr($p[0],0,1)); if(count($p)>1)$i.=strtoupper(substr(end($p),0,1)); return $i?:'•'; } }
