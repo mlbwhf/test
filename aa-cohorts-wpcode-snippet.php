@@ -128,7 +128,6 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
         <div class="aa-card-buy">
 <?php if ( $a['discount'] ) : ?><div class="aa-sale"><em>Hurry, Sale ends soon!</em> <span class="aa-disc"><?php echo esc_html($a['discount']); ?></span></div><?php endif; ?>
           <div class="aa-price"><?php echo $price; ?><?php if ($a['compare_at']) : ?> <s><?php echo esc_html($a['compare_at']); ?></s><?php endif; ?></div>
-          <div class="aa-local" data-usd="<?php echo esc_attr($price_usd); ?>" style="display:none"></div>
 <?php if ( $a['financing'] ) : ?><div class="aa-fin"><?php echo esc_html($a['financing']); ?> ⓘ</div><?php else : ?><div class="aa-price-sub">per seat · USD</div><?php endif; ?>
 <?php $filling = ( $r['seats']!=='' && (int)$r['seats']>0 && (int)$r['seats']<=5 ); ?>
           <div class="aa-buy-row"><?php if ($filling) : ?><span class="aa-filling">⏳ Filling Fast</span><?php endif; ?><a class="aa-enroll" href="?cohort=<?php echo esc_attr($r['id']); ?>#enroll-form">Enroll Now</a></div>
@@ -157,7 +156,6 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
         <div class="aa-card-meta"><?php echo $ic_globe; ?> Online Classroom · <?php echo esc_html($soonest['daytype']==='weekend'?'Weekend Batch':'Weekday Batch'); ?></div>
         <div class="aa-side-sep"></div>
         <div class="aa-price"><?php echo $price; ?><?php if ($a['compare_at']) : ?> <s><?php echo esc_html($a['compare_at']); ?></s><?php endif; ?></div>
-        <div class="aa-local" data-usd="<?php echo esc_attr($price_usd); ?>" style="display:none"></div>
         <a class="aa-enroll aa-enroll-block" href="?cohort=<?php echo esc_attr($soonest['id']); ?>#enroll-form">Enroll Now</a>
         <a class="aa-side-all" href="#cohorts">View all Schedules ›</a>
       </div>
@@ -189,6 +187,9 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 .aa-sch-filters .aa-sel{border:1px solid #e2e8f0;border-radius:30px;padding:9px 16px;font-size:13px;color:#0f172a;font-weight:600;background:#fff;cursor:pointer}
 .aa-card{display:grid;grid-template-columns:1.5fr .7fr 1.05fr;border:1px solid #e6e9ee;border-radius:14px;padding:24px 26px;margin-bottom:18px;align-items:center;cursor:pointer;transition:box-shadow .15s,border-color .15s}
 .aa-card:hover{border-color:#16a34a;box-shadow:0 6px 20px rgba(2,44,54,.08)}
+.aa-card.aa-card-active{border-color:#0b1320;border-width:2px;box-shadow:0 8px 26px rgba(2,44,54,.12)}
+#aa-enroll-holder{border:2px solid #16a34a;border-radius:14px;padding:22px 24px;margin:6px 0 22px;background:#f8fffb;animation:aaExpand .25s ease}
+@keyframes aaExpand{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .aa-card-info{display:flex;flex-direction:column;gap:5px;padding-right:24px}
 .aa-card-qty{display:flex;justify-content:center;border-left:1px solid #eef2f6;border-right:1px solid #eef2f6;height:100%;align-items:center}
 .aa-card-buy{padding-left:24px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
@@ -249,24 +250,36 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
   var wrap=document.getElementById('aa-cards');if(!wrap)return;
   var cards=[].slice.call(wrap.querySelectorAll('.aa-card'));
 
-  /* ---- expand-on-click: drive the on-page Fluent form, no reload ---- */
+  /* ---- accordion: the form moves & expands UNDER the cohort you click ---- */
   var formWrap=document.querySelector('.fluentform_wrapper_3')||document.querySelector('.fluentform');
-  if(formWrap){var hint=document.createElement('div');hint.id='aa-form-hint';hint.className='aa-form-hint';hint.textContent='👆 Select a cohort above to open registration';formWrap.parentNode.insertBefore(hint,formWrap);formWrap.style.display='none';}
+  var enrollIntro=document.getElementById('enroll-form');
+  var mainCol=document.querySelector('.aa-sch-main');
+  var holder=null;
+  if(formWrap){
+    holder=document.createElement('div');holder.id='aa-enroll-holder';holder.style.display='none';
+    var ref=enrollIntro||formWrap;ref.parentNode.insertBefore(holder,ref);
+    if(enrollIntro)holder.appendChild(enrollIntro);
+    holder.appendChild(formWrap);
+    var hint=document.createElement('div');hint.id='aa-form-hint';hint.className='aa-form-hint';hint.textContent='👆 Select a cohort above to open registration';
+    (mainCol||document.body).appendChild(hint);
+  }
   // Cohort is chosen by clicking the card → hide the now-redundant dropdown (its value still submits & records the date)
   var cohortSel=document.querySelector('select[name="dropdown"]');
   if(cohortSel){var cg=cohortSel.closest('.ff-el-group');if(cg)cg.style.display='none';}
-  function selectCohort(id,qty){
+  function selectCohort(id,qty,cardEl){
     var sel=document.querySelector('select[name="dropdown"]');
     if(sel){sel.value=String(id);sel.dispatchEvent(new Event('change',{bubbles:true}));}
     if(qty){var qf=document.querySelector('input[name="numeric_field"]');if(qf){qf.value=qty;qf.dispatchEvent(new Event('input',{bubbles:true}));}}
     var h=document.getElementById('aa-form-hint');if(h)h.style.display='none';
-    if(formWrap)formWrap.style.display='';
+    if(holder){ if(cardEl&&cardEl.insertAdjacentElement){cardEl.insertAdjacentElement('afterend',holder);} else if(mainCol){mainCol.appendChild(holder);} holder.style.display=''; }
+    cards.forEach(function(x){x.classList.remove('aa-card-active');}); if(cardEl)cardEl.classList.add('aa-card-active');
     var nm=document.getElementById('aa-cohort-name'),box=document.getElementById('aa-selected-cohort');
     if(nm&&box){nm.textContent=(window.AA_COHORTS[id]||id);box.style.display='block';}
-    var t=document.getElementById('enroll-form')||formWrap;if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+    var t=holder||document.getElementById('enroll-form')||formWrap;if(t)t.scrollIntoView({behavior:'smooth',block:'center'});
   }
   window.aaSelectCohort=selectCohort;
-  function cardClick(c,e){if(e&&e.target&&e.target.closest('.aa-stepper'))return;var id=c.getAttribute('data-cohort');var q=c.querySelector('.aa-qval');selectCohort(id,q?q.textContent:1);}
+  function findCard(id){return document.querySelector('.aa-card[data-cohort="'+id+'"]');}
+  function cardClick(c,e){if(e&&e.target&&e.target.closest('.aa-stepper'))return;var q=c.querySelector('.aa-qval');selectCohort(c.getAttribute('data-cohort'),q?q.textContent:1,c);}
   cards.forEach(function(c){
     c.addEventListener('click',function(e){cardClick(c,e);});
     var en=c.querySelector('.aa-enroll');if(en)en.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();cardClick(c,null);});
@@ -274,8 +287,8 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
     c.querySelector('.aa-plus').addEventListener('click',function(e){e.stopPropagation();q.textContent=parseInt(q.textContent,10)+1;});
     c.querySelector('.aa-minus').addEventListener('click',function(e){e.stopPropagation();var n=parseInt(q.textContent,10)-1;if(n<1)n=1;q.textContent=n;});
   });
-  // sidebar / direct enroll links
-  [].slice.call(document.querySelectorAll('.aa-enroll-block')).forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var m=a.getAttribute('href').match(/cohort=(\d+)/);if(m)selectCohort(m[1],1);});});
+  // sidebar / direct enroll links → open under the matching card
+  [].slice.call(document.querySelectorAll('.aa-enroll-block')).forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var m=a.getAttribute('href').match(/cohort=(\d+)/);if(m)selectCohort(m[1],1,findCard(m[1]));});});
 
   /* ---- filters ---- */
   var now=new Date();
@@ -339,23 +352,15 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
   var cp=document.querySelector('.aa-coupon-copy');
   if(cp){cp.addEventListener('click',function(){var t=cp.getAttribute('data-code');if(navigator.clipboard){navigator.clipboard.writeText(t);}cp.textContent='✓ Copied';setTimeout(function(){cp.textContent='⧉ Copy';},1500);});}
 
-  /* ---- localize class time + price to the visitor ---- */
+  /* ---- localize class time to the visitor's timezone (Stripe handles price/currency) ---- */
   (function(){
     var tzShort='';try{var pp=new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(new Date());var zz=pp.filter(function(x){return x.type==='timeZoneName';})[0];tzShort=zz?zz.value:'';}catch(e){}
     var o={hour:'2-digit',minute:'2-digit'};
     document.querySelectorAll('.aa-localtime').forEach(function(el){var s=+el.getAttribute('data-s'),e=+el.getAttribute('data-e');if(!s||!e)return;try{var ls=new Date(s).toLocaleTimeString([],o),le=new Date(e).toLocaleTimeString([],o);el.innerHTML='<span class="aa-tz">'+(tzShort||'Local')+'</span> '+ls+' - '+le+' · your time';}catch(x){}});
-    var SYM={USD:'$',CAD:'C$',GBP:'£',EUR:'€',AUD:'A$',AED:'AED ',SAR:'SAR ',ZAR:'R',INR:'₹',SGD:'S$',CHF:'CHF ',NZD:'NZ$'};
-    var TZC={'America/Toronto':'CAD','America/Vancouver':'CAD','America/Edmonton':'CAD','America/Winnipeg':'CAD','America/Halifax':'CAD','America/Regina':'CAD','America/St_Johns':'CAD','America/Moncton':'CAD','Europe/London':'GBP','Asia/Dubai':'AED','Asia/Riyadh':'SAR','Africa/Johannesburg':'ZAR','Asia/Kolkata':'INR','Asia/Calcutta':'INR','Asia/Singapore':'SGD','Europe/Zurich':'CHF','Pacific/Auckland':'NZD'};
-    var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
-    var cur=TZC[tz]||(tz.indexOf('Europe/')===0?'EUR':(tz.indexOf('Australia/')===0?'AUD':'USD'));
-    if(cur==='USD')return;
-    function show(rates){if(!rates||!rates[cur])return;var rate=rates[cur];document.querySelectorAll('.aa-local').forEach(function(el){var usd=parseFloat(el.getAttribute('data-usd'))||0;if(!usd)return;var v=Math.round(usd*rate);el.textContent='≈ '+(SYM[cur]||(cur+' '))+v.toLocaleString()+' '+cur+' · billed in USD';el.style.display='block';});}
-    try{var c=JSON.parse(localStorage.getItem('aa_rates')||'null');if(c&&c.t&&(Date.now()-c.t)<432e5){show(c.r);return;}}catch(e){}
-    fetch('https://open.er-api.com/v6/latest/USD').then(function(r){return r.json();}).then(function(j){if(j&&j.rates){try{localStorage.setItem('aa_rates',JSON.stringify({t:Date.now(),r:j.rates}));}catch(e){}show(j.rates);}}).catch(function(){});
   })();
 
   /* ---- direct ?cohort= link auto-opens the form ---- */
-  var pq=new URLSearchParams(location.search).get('cohort');if(pq&&window.AA_COHORTS[pq]){setTimeout(function(){selectCohort(pq,1);},300);}
+  var pq=new URLSearchParams(location.search).get('cohort');if(pq&&window.AA_COHORTS[pq]){setTimeout(function(){selectCohort(pq,1,findCard(pq));},300);}
   apply();
 })();
 </script>
