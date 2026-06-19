@@ -13,11 +13,11 @@ _AIOSEO isn't MCP-writable, so apply each per page: **wp-admin → edit page →
 
 ### /training/safe/asm/
 ```json
-{"@context":"https://schema.org","@type":"Course","name":"SAFe® Advanced Scrum Master (ASM) Certification","description":"SAFe® Advanced Scrum Master (SASM) certification — SPCT-led, live-virtual, exam included. Lead high-performing Agile teams in a SAFe enterprise.","url":"https://agile-agilist.com/training/safe/asm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
+{"@context":"https://schema.org","@type":"Course","name":"SAFe® Advanced Scrum Master (ASM) Certification","description":"SAFe® Advanced Scrum Master (SASM) certification — taught by an Authorised SAFe Instructor (SPC/ASPC), live-virtual, exam included. Lead high-performing Agile teams in a SAFe enterprise.","url":"https://agile-agilist.com/training/safe/asm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
 ```
 ### /training/ai-native/ai-native-foundations/
 ```json
-{"@context":"https://schema.org","@type":"Course","name":"AI-Native Foundations Certification","description":"AI-Native Foundations certification: prompt engineering, AI ethics and daily AI workflows. No coding required. SPCT-led, live-virtual, exam included.","url":"https://agile-agilist.com/training/ai-native/ai-native-foundations/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
+{"@context":"https://schema.org","@type":"Course","name":"AI-Native Foundations Certification","description":"AI-Native Foundations certification: prompt engineering, AI ethics and daily AI workflows. No coding required. Taught by an Authorised SAFe Instructor (SPC/ASPC), live-virtual, exam included.","url":"https://agile-agilist.com/training/ai-native/ai-native-foundations/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
 ```
 ### /training/adv-safe/aspc/
 ```json
@@ -29,15 +29,15 @@ _AIOSEO isn't MCP-writable, so apply each per page: **wp-admin → edit page →
 ```
 ### /training/safe/devops/
 ```json
-{"@context":"https://schema.org","@type":"Course","name":"SAFe® DevOps (SDP) Certification","description":"SAFe® DevOps Practitioner (SDP) certification — build a continuous delivery pipeline with CALMR. SPCT-led, live-virtual, exam included.","url":"https://agile-agilist.com/training/safe/devops/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
+{"@context":"https://schema.org","@type":"Course","name":"SAFe® DevOps (SDP) Certification","description":"SAFe® DevOps Practitioner (SDP) certification — build a continuous delivery pipeline with CALMR. Taught by an Authorised SAFe Instructor (SPC/ASPC), live-virtual, exam included.","url":"https://agile-agilist.com/training/safe/devops/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
 ```
 ### /training/safe/popm/
 ```json
-{"@context":"https://schema.org","@type":"Course","name":"SAFe® Product Owner / Product Manager (POPM) Certification","description":"SAFe® POPM certification — SPCT-led, live-virtual, exam included. Build, prioritize and deliver value in a SAFe enterprise.","url":"https://agile-agilist.com/training/safe/popm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
+{"@context":"https://schema.org","@type":"Course","name":"SAFe® Product Owner / Product Manager (POPM) Certification","description":"SAFe® POPM certification — taught by an Authorised SAFe Instructor (SPC/ASPC), live-virtual, exam included. Build, prioritize and deliver value in a SAFe enterprise.","url":"https://agile-agilist.com/training/safe/popm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
 ```
 ### /training/adv-safe/lpm/
 ```json
-{"@context":"https://schema.org","@type":"Course","name":"SAFe® Lean Portfolio Management (LPM) Certification","description":"SAFe® LPM certification — Lean budgets, portfolio strategy and governance to connect strategy to execution. SPCT-led, exam included.","url":"https://agile-agilist.com/training/adv-safe/lpm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
+{"@context":"https://schema.org","@type":"Course","name":"SAFe® Lean Portfolio Management (LPM) Certification","description":"SAFe® LPM certification — Lean budgets, portfolio strategy and governance to connect strategy to execution. Taught by an Authorised SAFe Instructor (SPC/ASPC), exam included.","url":"https://agile-agilist.com/training/adv-safe/lpm/","provider":{"@type":"Organization","name":"Agile Agilist","sameAs":"https://agile-agilist.com"}}
 ```
 ### /training/safe/sa/  (Leading SAFe — has real price + cohorts → richest schema)
 ```json

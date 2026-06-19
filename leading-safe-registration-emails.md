@@ -101,7 +101,7 @@ Remember to add the attendee to the SAFe Studio roster before class.
 
   <!-- Footer -->
   <tr><td style="background:#0f172a;padding:18px 30px" align="center">
-    <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6">Agile Agilist · SAFe® Gold Partner · SPCT-led<br>
+    <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.6">Agile Agilist · SAFe® Gold Partner · Authorised SAFe Instructor (SPC/ASPC)<br>
     SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc.</p>
   </td></tr>
 

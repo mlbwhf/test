@@ -42,7 +42,7 @@ This is the "pointer to the chosen date."
   "@context": "https://schema.org",
   "@type": "Course",
   "name": "Leading SAFe® (SAFe Agilist) Certification",
-  "description": "SPCT-led Leading SAFe certification — live-virtual, exam included.",
+  "description": "Leading SAFe certification taught by an Authorised SAFe Instructor (SPC/ASPC) — live-virtual, exam included.",
   "provider": { "@type": "Organization", "name": "Agile Agilist", "url": "https://agile-agilist.com" },
   "hasCourseInstance": [
     { "@type": "CourseInstance", "courseMode": "online",
