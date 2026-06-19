@@ -184,7 +184,7 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 .aa-sch-filters .aa-pill.active{background:#0b1320;color:#fff;border-color:#0b1320}
 .aa-sch-filters .aa-pill-static{cursor:default;color:#0e7490;border-color:#a5f3fc;background:#ecfeff}
 .aa-sch-filters .aa-pill-reset{color:#64748b}
-.aa-sch-filters .aa-sel{border:1px solid #e2e8f0;border-radius:30px;padding:9px 16px;font-size:13px;color:#0f172a;font-weight:600;background:#fff;cursor:pointer}
+.aa-sch-filters .aa-sel{border:1px solid #e2e8f0;border-radius:30px;padding:9px 16px;font-size:13px;color:#0f172a;font-weight:600;background:#fff;cursor:pointer;width:auto;max-width:220px;flex:0 0 auto}
 .aa-card{display:grid;grid-template-columns:1.5fr .7fr 1.05fr;border:1px solid #e6e9ee;border-radius:14px;padding:24px 26px;margin-bottom:18px;align-items:center;cursor:pointer;transition:box-shadow .15s,border-color .15s}
 .aa-card:hover{border-color:#16a34a;box-shadow:0 6px 20px rgba(2,44,54,.08)}
 .aa-card.aa-card-active{border-color:#0b1320;border-width:2px;box-shadow:0 8px 26px rgba(2,44,54,.12)}
@@ -247,6 +247,7 @@ add_shortcode( 'aa_cohorts', function ( $atts ) {
 window.AA_COHORTS=<?php echo wp_json_encode($map); ?>;
 window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
 (function(){
+  function aaInit(){
   var wrap=document.getElementById('aa-cards');if(!wrap)return;
   var cards=[].slice.call(wrap.querySelectorAll('.aa-card'));
 
@@ -362,6 +363,8 @@ window.AA_CAL=<?php echo wp_json_encode($caldata); ?>;
   /* ---- direct ?cohort= link auto-opens the form ---- */
   var pq=new URLSearchParams(location.search).get('cohort');if(pq&&window.AA_COHORTS[pq]){setTimeout(function(){selectCohort(pq,1,findCard(pq));},300);}
   apply();
+  }
+  if(document.readyState!=='loading'){aaInit();}else{document.addEventListener('DOMContentLoaded',aaInit);}
 })();
 </script>
 <?php
