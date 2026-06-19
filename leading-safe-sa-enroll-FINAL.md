@@ -16,7 +16,7 @@ _FORM_ID = 3 · $850 USD. Your existing page keeps ALL its content. You add only
 ```html
 <div style="max-width:1080px;margin:18px auto;background:linear-gradient(135deg,#053947,#0170B9);color:#fff;border-radius:16px;padding:28px 28px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
   <div style="flex:1;min-width:260px">
-    <span style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24">SAFe® Gold Partner · SPCT-led</span>
+    <span style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24">SAFe® Gold Partner · Authorised SAFe Instructor (SPC/ASPC)</span>
     <h2 style="margin:6px 0 6px;font-size:24px;font-weight:800;color:#fff">Reserve your Leading SAFe® seat — secure checkout on-site</h2>
     <p style="margin:0;color:#cbd5e1;font-size:14px">Live-virtual · exam included · pass guarantee · card, Apple/Google Pay or financing 🔒</p>
   </div>

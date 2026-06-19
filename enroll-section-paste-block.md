@@ -17,7 +17,7 @@ _Paste via the page **Code editor** (⋮ → Code editor), NOT a Custom HTML blo
 <div style="max-width:1080px;margin:0 auto;background:linear-gradient(135deg,#053947 0%,#0170B9 100%);color:#fff;border-radius:16px;padding:36px 30px">
 <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
 <div style="flex:1;min-width:280px">
-<span style="display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24;margin-bottom:10px">SAFe® Gold Partner · SPCT-led</span>
+<span style="display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24;margin-bottom:10px">SAFe® Gold Partner · Authorised SAFe Instructor (SPC/ASPC)</span>
 <h2 style="margin:0 0 8px;font-size:28px;font-weight:800;color:#fff;line-height:1.15">Leading SAFe® (SAFe Agilist) Certification</h2>
 <p style="margin:0 0 12px;color:#cbd5e1;font-size:15px;line-height:1.55">Live-virtual · exam included · pass guarantee. Secure checkout right here — card, Apple/Google Pay or financing.</p>
 <div style="font-size:13px;color:#e2e8f0">★★★★★ <strong>4.9/5</strong> · Exam included · Money-back pass guarantee 🔒</div>

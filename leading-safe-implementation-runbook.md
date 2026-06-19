@@ -48,7 +48,7 @@ Surfaces dates + on-site checkout on the canonical course page (the bounce + ran
 ```html
 <div style="max-width:1080px;margin:0 auto 28px;background:linear-gradient(135deg,#053947,#0170B9);color:#fff;border-radius:16px;padding:34px 28px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
   <div style="flex:1;min-width:260px">
-    <span style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24">SAFe® Gold Partner · SPCT-led</span>
+    <span style="font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fbbf24">SAFe® Gold Partner · Authorised SAFe Instructor (SPC/ASPC)</span>
     <h2 style="margin:6px 0 6px;font-size:26px;font-weight:800;color:#fff">Reserve your Leading SAFe® seat</h2>
     <p style="margin:0;color:#cbd5e1;font-size:14px">Live-virtual · exam included · pass guarantee · secure checkout right here 🔒</p>
   </div>
@@ -78,7 +78,7 @@ One Course, many dated instances (the SEO-correct model). Update dates/price.
 ```json
 { "@context":"https://schema.org","@type":"Course",
   "name":"Leading SAFe® (SAFe Agilist) Certification",
-  "description":"SPCT-led Leading SAFe certification — live-virtual, exam included.",
+  "description":"Leading SAFe certification taught by an Authorised SAFe Instructor (SPC/ASPC) — live-virtual, exam included.",
   "provider":{"@type":"Organization","name":"Agile Agilist","url":"https://agile-agilist.com"},
   "hasCourseInstance":[
     {"@type":"CourseInstance","courseMode":"online","startDate":"2026-06-20","endDate":"2026-06-21",
