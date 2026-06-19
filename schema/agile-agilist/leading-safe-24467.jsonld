@@ -1,0 +1,39 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "Leading SAFe® (SA) Certification",
+      "description": "Earn the SAFe Agilist (SA) certification in a 2-day, AI-empowered, SPCT-led Leading SAFe course. Exam included. Foundation credential for executives, leaders, and change agents driving SAFe transformations. Live virtual globally; in-person on request.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Agile Agilist",
+        "url": "https://agile-agilist.com",
+        "sameAs": [
+          "https://www.linkedin.com/company/agile-agilist"
+        ]
+      },
+      "url": "https://agile-agilist.com/training/safe/sa/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P2D",
+        "inLanguage": [
+          "en",
+          "es",
+          "fr",
+          "ar"
+        ]
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "CAD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://agile-agilist.com/training/safe/sa/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+# Configurations page — UPGRADED CREATIVE DESIGN (escalating scope tiers + decision strip)
+# Replaces the plain-text body of implementingsafe.org page 6 (/safe-configurations-explained/).
+# Self-contained CSS namespaced .isc-* — no theme dependency.
+
+<!-- wp:html -->
+<style>
+.isc-wrap{max-width:1000px;margin:0 auto;font-family:inherit}
+.isc-hero{background:linear-gradient(135deg,#0f2a3d 0%,#1d4e6b 100%);color:#fff;padding:52px 28px;border-radius:16px;text-align:center}
+.isc-eb{display:inline-block;padding:6px 14px;background:rgba(255,255,255,.14);color:#cde8f5;border:1px solid rgba(255,255,255,.3);border-radius:30px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:16px}
+.isc-hero h1{font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;margin:0 0 12px;line-height:1.12;color:#fff}
+.isc-hero p{font-size:17px;color:#cde8f5;max-width:680px;margin:0 auto;line-height:1.6}
+.isc-tiers{display:flex;flex-direction:column;gap:16px;margin:36px 0}
+.isc-tier{background:#fff;border:1px solid #e7ecf1;border-radius:16px;padding:24px;border-top:5px solid var(--c);transition:transform .2s,box-shadow .2s}
+.isc-tier:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(15,42,61,.12)}
+.isc-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.isc-head h3{margin:0;font-size:20px;font-weight:800;color:#0f2a3d}
+.isc-scope{display:flex;gap:5px;margin-left:auto}
+.isc-dot{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:#eef2f6;color:#94a3b8}
+.isc-dot.on{background:var(--cl);color:var(--c)}
+.isc-tier p{margin:0;color:#51606e;font-size:14.5px;line-height:1.6}
+.isc-best{margin-top:10px;font-size:13px;color:#0f2a3d}
+.isc-best b{color:var(--c)}
+.isc-choose{margin:34px 0;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0}
+.isc-choose h3{margin:0;padding:16px 22px;background:#0f2a3d;color:#fff;font-size:17px;font-weight:800}
+.isc-choose .isc-r{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 22px;border-top:1px solid #eef2f6;align-items:center}
+.isc-choose .isc-r span{font-weight:800;color:#0e7490;white-space:nowrap}
+.isc-tip{margin:24px 0;padding:18px 20px;border-radius:12px;background:#ecfeff;border:1px solid #a5f3fc;color:#155e63;font-size:14px}
+.isc-foot{margin:24px 0;padding:22px 24px;border-radius:14px;background:#f1f5f9;border:1px solid #e2e8f0}
+.isc-foot p{margin:0 0 10px;font-weight:700;color:#0f172a}
+.isc-foot a{color:#0e7490;font-weight:700}
+.isc-attr{font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:14px}
+</style>
+<div class="isc-wrap">
+  <div class="isc-hero">
+    <span class="isc-eb">SAFe® Gold Partner education</span>
+    <h1>SAFe Configurations</h1>
+    <p>SAFe can be adopted at four levels of scope — each adding capability for larger, more complex delivery. Here's what each covers and how to choose.</p>
+  </div>
+  <div class="isc-tiers">
+    <div class="isc-tier" style="--c:#0ea5e9;--cl:#e0f2fe">
+      <div class="isc-head"><h3>Essential SAFe</h3>
+        <div class="isc-scope"><span class="isc-dot on">Team</span><span class="isc-dot on">Program</span><span class="isc-dot">Solution</span><span class="isc-dot">Portfolio</span></div></div>
+      <p>The foundational configuration and starting point for almost every adoption — the Agile Release Train, PI Planning, core roles, and the basic Lean-Agile practices needed to deliver value through one train. Implement only this and you still capture most of the benefit.</p>
+      <p class="isc-best"><b>Best for:</b> a single ART, or organizations just beginning to scale.</p>
+    </div>
+    <div class="isc-tier" style="--c:#10b981;--cl:#d1fae5">
+      <div class="isc-head"><h3>Large Solution SAFe</h3>
+        <div class="isc-scope"><span class="isc-dot on">Team</span><span class="isc-dot on">Program</span><span class="isc-dot on">Solution</span><span class="isc-dot">Portfolio</span></div></div>
+      <p>Adds the coordination layer for solutions too big for one train — complex systems in aerospace, defense, automotive, or large platforms. Introduces the Solution Train to synchronize multiple ARTs and suppliers toward one large deliverable.</p>
+      <p class="isc-best"><b>Best for:</b> big, multi-ART solutions where engineering complexity — not funding — is the challenge.</p>
+    </div>
+    <div class="isc-tier" style="--c:#6366f1;--cl:#eef2ff">
+      <div class="isc-head"><h3>Portfolio SAFe</h3>
+        <div class="isc-scope"><span class="isc-dot on">Team</span><span class="isc-dot on">Program</span><span class="isc-dot">Solution</span><span class="isc-dot on">Portfolio</span></div></div>
+      <p>Connects strategy to execution. Adds Lean Portfolio Management — Lean budgeting, portfolio strategy and funding, and lightweight governance — so the trains' work aligns to strategy and is funded as flowing value streams, not fixed annual projects.</p>
+      <p class="isc-best"><b>Best for:</b> aligning delivery with strategy and modernizing how work is funded.</p>
+    </div>
+    <div class="isc-tier" style="--c:#8b5cf6;--cl:#ede9fe">
+      <div class="isc-head"><h3>Full SAFe</h3>
+        <div class="isc-scope"><span class="isc-dot on">Team</span><span class="isc-dot on">Program</span><span class="isc-dot on">Solution</span><span class="isc-dot on">Portfolio</span></div></div>
+      <p>The most comprehensive configuration — combines team, program, large solution, and portfolio. Used by the largest enterprises building big solutions that also need portfolio-level strategy and governance.</p>
+      <p class="isc-best"><b>Best for:</b> large organizations where both solution complexity and strategy alignment must be solved together.</p>
+    </div>
+  </div>
+  <div class="isc-choose">
+    <h3>Which configuration should you use?</h3>
+    <div class="isc-r"><div>Starting out / single train</div><span>→ Essential</span></div>
+    <div class="isc-r"><div>One large solution, many trains</div><span>→ Large Solution</span></div>
+    <div class="isc-r"><div>Need strategy-to-execution &amp; Lean budgets</div><span>→ Portfolio</span></div>
+    <div class="isc-r"><div>Large enterprise needing all of it</div><span>→ Full</span></div>
+  </div>
+  <div class="isc-tip">💡 <strong>Practical tip:</strong> almost everyone should start with Essential SAFe and add the other dimensions only when a real need appears. Adopting Full SAFe on day one is the classic over-engineering mistake.</div>
+  <div class="isc-foot">
+    <p>Not sure which configuration fits?</p>
+    <p style="font-weight:400;color:#334155;margin:0">Our <a href="https://agile-agilist.com/training/" rel="nofollow">SPCT-led SAFe training and consulting</a> can help you choose and roll out the right configuration — or see the <a href="https://implementing-safe.com" rel="nofollow">5-Dimensional implementation model</a>.</p>
+  </div>
+  <p class="isc-attr">SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. This page is independent educational commentary by a SAFe® Gold Partner and is not official Scaled Agile content. For the official framework, visit framework.scaledagile.com.</p>
+</div>
+<!-- /wp:html -->

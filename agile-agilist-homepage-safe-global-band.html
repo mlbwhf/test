@@ -1,0 +1,77 @@
+# Homepage SAFe-Global Band — PASTE-SAFE, ADDITIVE (no design change)
+# Site: agile-agilist.com | Page: Home (ID 961)
+#
+# STRATEGY SHIFT (per your direction):
+#   SAFe = the VOLUME ENGINE — live-virtual, deliverable globally, in any timezone.
+#   AI-Native = PREMIUM play — demoted here to a small callout scoped to US / Canada / Middle East.
+#
+# This REPLACES the earlier AI-Native-led band concept. It leads with SAFe (global, remote),
+# and keeps AI-Native as a single geo-scoped line so global homepage traffic is pointed at
+# the product you can actually fulfil everywhere.
+#
+# GUARANTEES
+#   - Additive only. Nothing on the existing homepage is edited, removed, or restyled.
+#   - All CSS is namespaced `.aa-sg-*` so it cannot collide with or alter existing styles.
+#   - No existing slug/URL is referenced except your LIVE, already-running ones (/training/, /training/safe/sa/ etc.).
+#
+# HOW TO PLACE
+#   1. wp-admin → Pages → Home → Edit → ⋮ → Code editor
+#   2. Search for:  <!-- ============ ASSESSMENTS — with proper SVG icons per card ============ -->
+#   3. Paste the ENTIRE block below DIRECTLY ABOVE that comment line.
+#   4. Update (stay in Code editor; do NOT switch to Visual).
+#   (If you prefer it lower, it can also go just before the final CTA stepper — placement is your call.)
+
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"64px","bottom":"64px","left":"24px","right":"24px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull" style="padding:64px 24px;background:linear-gradient(135deg,#053947 0%,#0170B9 100%)">
+<!-- wp:html -->
+<style>
+.aa-sg{max-width:1180px;margin:0 auto;color:#fff}
+.aa-sg-head{text-align:center;max-width:760px;margin:0 auto 36px}
+.aa-sg-eb{display:inline-block;padding:6px 14px;background:rgba(251,191,36,.18);color:#fbbf24;border:1px solid rgba(251,191,36,.4);border-radius:30px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.aa-sg-head h2{font-size:40px;font-weight:800;color:#fff !important;line-height:1.12;letter-spacing:-0.015em;margin:0 0 14px}
+.aa-sg-head h2 span{background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.aa-sg-head p{font-size:17px;color:#cbd5e1 !important;line-height:1.6;margin:0}
+.aa-sg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:30px}
+@media(max-width:880px){.aa-sg-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.aa-sg-grid{grid-template-columns:1fr}.aa-sg-head h2{font-size:30px}}
+.aa-sg-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:18px 18px;text-decoration:none;transition:all .22s;display:block;backdrop-filter:blur(6px)}
+.aa-sg-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px);border-color:rgba(251,191,36,.5)}
+.aa-sg-tag{font-size:10px;font-weight:800;color:#fbbf24;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.aa-sg-card h4{font-size:15px;font-weight:800;color:#fff;margin:0 0 4px;line-height:1.25}
+.aa-sg-card p{font-size:12px;color:#cbd5e1 !important;margin:0;line-height:1.45}
+.aa-sg-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+.aa-sg-cta a{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:800;text-decoration:none;transition:all .2s}
+.aa-sg-primary{background:#fbbf24;color:#053947 !important;box-shadow:0 6px 20px rgba(251,191,36,.32)}
+.aa-sg-primary:hover{background:#f59e0b;transform:translateY(-2px)}
+.aa-sg-ghost{background:transparent;color:#fff !important;border:2px solid rgba(255,255,255,.5)}
+.aa-sg-ghost:hover{background:rgba(255,255,255,.08);border-color:#fff}
+.aa-sg-trust{text-align:center;font-size:13px;color:#cbd5e1;font-weight:600}
+.aa-sg-trust strong{color:#fff}
+.aa-sg-ai{max-width:760px;margin:22px auto 0;padding:14px 18px;border-radius:10px;background:rgba(255,255,255,.05);border:1px dashed rgba(251,191,36,.45);text-align:center;font-size:13.5px;color:#e2e8f0}
+.aa-sg-ai a{color:#fbbf24;font-weight:800;text-decoration:none}
+.aa-sg-ai a:hover{text-decoration:underline}
+</style>
+<div class="aa-sg">
+  <div class="aa-sg-head">
+    <span class="aa-sg-eb">🌍 Live virtual · in your timezone</span>
+    <h2>SAFe® certification, <span>delivered live worldwide.</span></h2>
+    <p>SPCT-led, official Scaled Agile courses run live-virtual in your timezone — North America, UK &amp; Europe, the Gulf, and beyond. Local schedule, local currency, exam included, pass support.</p>
+  </div>
+  <div class="aa-sg-grid">
+    <a class="aa-sg-card" href="/training/safe/sa/"><div class="aa-sg-tag">Most popular</div><h4>Leading SAFe® (SA)</h4><p>The foundational SAFe Agilist certification for leaders and change agents.</p></a>
+    <a class="aa-sg-card" href="/training/safe/popm/"><div class="aa-sg-tag">Product</div><h4>SAFe® POPM</h4><p>Role-based certification for product owners and product managers.</p></a>
+    <a class="aa-sg-card" href="/training/adv-safe/spc/"><div class="aa-sg-tag">Advanced</div><h4>Implementing SAFe® (SPC)</h4><p>Train and coach Agile Release Trains; lead enterprise transformation.</p></a>
+    <a class="aa-sg-card" href="/training/adv-safe/rte/"><div class="aa-sg-tag">Advanced</div><h4>SAFe® RTE</h4><p>Facilitate Agile Release Trains, PI Planning, and program-level flow.</p></a>
+    <a class="aa-sg-card" href="/training/adv-safe/lpm/"><div class="aa-sg-tag">Portfolio</div><h4>SAFe® LPM</h4><p>Lean budgeting, governance, and portfolio strategy to execution.</p></a>
+    <a class="aa-sg-card" href="/training/"><div class="aa-sg-tag">Full catalog →</div><h4>All SAFe® courses</h4><p>Browse every certification track and live-virtual cohort date.</p></a>
+  </div>
+  <div class="aa-sg-cta">
+    <a class="aa-sg-primary" href="/training/">View all SAFe® cohorts →</a>
+    <a class="aa-sg-ghost" href="https://meetings.hubspot.com/john2795">Talk to an advisor</a>
+  </div>
+  <div class="aa-sg-trust">★★★★★ <strong>4.9/5</strong> · <strong>SAFe® Gold Partner</strong> · <strong>SPCT-led</strong> · 9 languages · Exam-pass support</div>
+  <div class="aa-sg-ai">⚡ <strong>AI-Native training</strong> — hands-on, in-person &amp; hybrid, available in the <strong>US, Canada &amp; Middle East</strong>. <a href="/training/ai-native/">Explore AI-Native →</a></div>
+</div>
+<!-- /wp:html -->
+</div>
+<!-- /wp:group -->

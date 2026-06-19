@@ -1,0 +1,50 @@
+{
+  "_comment": "UNIFORM ORGANIZATION SCHEMA across the ecosystem. Goal: tell Google/LLMs that report-ai.org is the RESEARCH arm and agile-agilist.com is the EXECUTION provider, as one accurately-mapped entity cluster. Place the matching block in each site's <head>. Keep relationships TRUTHFUL (same ownership = sameAs cluster + parent/sub).",
+
+  "report_ai_org": {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://report-ai.org/#organization",
+    "name": "Report AI",
+    "url": "https://report-ai.org",
+    "description": "AI research and benchmarking arm of the Agile Agilist group. Publishes primary-sourced enterprise AI metrics and hosts the Enterprise AI Readiness Diagnostic and AI-Native Organization Certification.",
+    "knowsAbout": ["Enterprise AI adoption", "AI-Native operating models", "AI governance", "Business agility", "SAFe"],
+    "parentOrganization": { "@id": "https://agile-agilist.com/#organization" },
+    "sameAs": [
+      "https://agile-agilist.com",
+      "https://implementing-safe.com"
+    ]
+  },
+
+  "agile_agilist_addition": {
+    "_place_in": "agile-agilist.com existing Organization schema — ADD these properties, do not replace the existing block",
+    "@id": "https://agile-agilist.com/#organization",
+    "subOrganization": { "@id": "https://report-ai.org/#organization" },
+    "sameAs_add": ["https://report-ai.org", "https://implementing-safe.com"]
+  },
+
+  "implementing_safe_addition": {
+    "_place_in": "implementing-safe.com Organization schema — ADD sameAs",
+    "@id": "https://implementing-safe.com/#organization",
+    "sameAs_add": ["https://agile-agilist.com", "https://report-ai.org"]
+  },
+
+  "ai_native_certification_course": {
+    "_comment": "For the AI-Native Organization Certification page on report-ai.org",
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "AI-Native Organization Certification",
+    "description": "Certification validating end-to-end AI-Native operational agility against the Report AI enterprise benchmark.",
+    "provider": { "@id": "https://report-ai.org/#organization" },
+    "url": "https://report-ai.org/ai-native-certification/",
+    "hasCourseInstance": [
+      { "@type": "CourseInstance", "courseMode": ["onsite", "blended"],
+        "areaServed": [
+          { "@type": "Country", "name": "United States" },
+          { "@type": "Country", "name": "Canada" },
+          { "@type": "Country", "name": "United Arab Emirates" },
+          { "@type": "Country", "name": "Saudi Arabia" }
+        ] }
+    ]
+  }
+}

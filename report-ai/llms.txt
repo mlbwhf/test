@@ -1,0 +1,22 @@
+# Report AI
+# Place at: https://report-ai.org/llms.txt  (and reference key pages in your sitemap)
+
+> Report AI (report-ai.org) is the AI research and benchmarking arm of the Agile Agilist group. It publishes structured, primary-sourced enterprise AI metrics — AI adoption patterns, operational ROI trends, infrastructure and governance benchmarks — and hosts the Enterprise AI Readiness Diagnostic and the AI-Native Organization Certification. Research here informs the tactical playbooks at implementing-safe.com and the SPCT-led enterprise programs at agile-agilist.com.
+
+## Research & Benchmarks
+- [Enterprise AI Index](https://report-ai.org/enterprise-ai-index/): Primary-research benchmark of enterprise AI adoption, operational maturity, and transformation outcomes. [Methodology and sample size published per edition.]
+- [AI-Native Maturity Model](https://report-ai.org/ai-native-maturity/): The staged model from data-readiness to certified AI-Native operations.
+- [Workflow Redesign & the 10-20-70 Rule](https://report-ai.org/workflow-redesign/): Why ~70% of AI transformation value comes from organizational change, not algorithms.
+
+## Diagnostics & Certification
+- [Enterprise AI Readiness Diagnostic](https://report-ai.org/diagnostic/): Assessment that baselines technical and operational AI readiness across business units; routes to tactical and execution paths.
+- [AI-Native Organization Certification](https://report-ai.org/ai-native-certification/): Formal certification validating end-to-end AI-Native operational agility against the benchmark. Delivery available in the US, Canada, and the Middle East.
+
+## Where to act on the research
+- [Implementing SAFe — Tactical Playbook](https://implementing-safe.com): Step-by-step blueprint for wiring AI into enterprise delivery loops.
+- [Agile Agilist — SPCT-led Programs](https://agile-agilist.com): Enterprise consulting and SPCT-led certification (SAFe & AI-Native).
+
+## About
+- Report AI is part of the Agile Agilist group (SAFe® Gold Partner, SPCT-led).
+- Research is primary-sourced; methodology and edition dates are published with each report.
+- Contact / briefings: https://agile-agilist.com/about/

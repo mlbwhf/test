@@ -1,0 +1,39 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Course",
+      "name": "SAFe® Lean Portfolio Management (LPM) Certification",
+      "description": "Master Lean budgeting, portfolio governance, and strategy alignment with the SPCT-led SAFe Lean Portfolio Management (LPM) certification course. Exam included. Live virtual globally; in-person on request.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Agile Agilist",
+        "url": "https://agile-agilist.com",
+        "sameAs": [
+          "https://www.linkedin.com/company/agile-agilist"
+        ]
+      },
+      "url": "https://agile-agilist.com/training/adv-safe/lpm/",
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": [
+          "online",
+          "onsite"
+        ],
+        "courseWorkload": "P3D",
+        "inLanguage": [
+          "en",
+          "es",
+          "fr",
+          "ar"
+        ]
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "CAD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://agile-agilist.com/training/adv-safe/lpm/"
+      }
+    }
+  ]
+}
