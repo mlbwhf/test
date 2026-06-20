@@ -6,9 +6,14 @@ self/team toggle) AND an Eventbrite embedded-checkout modal button.
 
 Output: one <slug>.page.html per course in this directory, plus a manifest.
 """
-import json, os
+import json, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# When embedded in the WordPress theme, the theme supplies the site header menu
+# and footer. Strip the page's own top header (masthead + nav) and bottom footer
+# so it slots inside the theme chrome without duplicate menus top and bottom.
+EMBED_IN_THEME = True
 
 def money(n):
     return "$" + format(n, ",d")
@@ -551,6 +556,12 @@ def build_badge_row(courses, current_slug):
 
 def render_course(c, nav_panel, all_courses):
     html = TEMPLATE
+    if EMBED_IN_THEME:
+        # remove masthead + nav (everything from MASTHEAD up to the sticky bar)
+        html = re.sub(r"\n  <!-- MASTHEAD -->.*?(\n  <!-- STICKY COURSE BAR -->)",
+                      r"\1", html, flags=re.S)
+        # remove the page's own footer (theme provides it)
+        html = re.sub(r"\n  <!-- FOOTER -->.*?\n  </footer>", "", html, flags=re.S)
     html = html.replace("%%NAV_PANEL%%", nav_panel)
     html = html.replace("%%BADGE_ROW%%", build_badge_row(all_courses, c["slug"]))
     repl = {
