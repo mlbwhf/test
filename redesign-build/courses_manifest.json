@@ -3,84 +3,84 @@
     "slug": "leading-safe-sa",
     "title": "Leading SAFe&reg; (SA)",
     "file": "course-leading-safe-sa.page.html",
-    "bytes": 51726
+    "bytes": 51802
   },
   {
     "slug": "safe-scrum-master-ssm",
     "title": "SAFe&reg; Scrum Master (SSM)",
     "file": "course-safe-scrum-master-ssm.page.html",
-    "bytes": 51700
+    "bytes": 51776
   },
   {
     "slug": "safe-popm",
     "title": "SAFe&reg; Product Owner / Product Manager (POPM)",
     "file": "course-safe-popm.page.html",
-    "bytes": 51714
+    "bytes": 51790
   },
   {
     "slug": "safe-for-teams-sp",
     "title": "SAFe&reg; for Teams (SP)",
     "file": "course-safe-for-teams-sp.page.html",
-    "bytes": 51545
+    "bytes": 51621
   },
   {
     "slug": "safe-advanced-scrum-master-sasm",
     "title": "SAFe&reg; Advanced Scrum Master (SASM)",
     "file": "course-safe-advanced-scrum-master-sasm.page.html",
-    "bytes": 51678
+    "bytes": 51754
   },
   {
     "slug": "safe-rte",
     "title": "SAFe&reg; Release Train Engineer (RTE)",
     "file": "course-safe-rte.page.html",
-    "bytes": 51689
+    "bytes": 51765
   },
   {
     "slug": "safe-devops-sdp",
     "title": "SAFe&reg; DevOps (SDP)",
     "file": "course-safe-devops-sdp.page.html",
-    "bytes": 51587
+    "bytes": 51663
   },
   {
     "slug": "safe-agile-product-management-apm",
     "title": "SAFe&reg; Agile Product Management (APM)",
     "file": "course-safe-agile-product-management-apm.page.html",
-    "bytes": 51665
+    "bytes": 51741
   },
   {
     "slug": "safe-lean-portfolio-management-lpm",
     "title": "SAFe&reg; Lean Portfolio Management (LPM)",
     "file": "course-safe-lean-portfolio-management-lpm.page.html",
-    "bytes": 51239
+    "bytes": 51315
   },
   {
     "slug": "safe-architect-arch",
     "title": "SAFe&reg; Architect (ARCH)",
     "file": "course-safe-architect-arch.page.html",
-    "bytes": 51162
+    "bytes": 51238
   },
   {
     "slug": "safe-agile-software-engineering-ase",
     "title": "SAFe&reg; Agile Software Engineering (ASE)",
     "file": "course-safe-agile-software-engineering-ase.page.html",
-    "bytes": 51707
+    "bytes": 51783
   },
   {
     "slug": "implementing-safe-spc",
     "title": "Implementing SAFe&reg; (SPC)",
     "file": "course-implementing-safe-spc.page.html",
-    "bytes": 51601
+    "bytes": 51677
   },
   {
     "slug": "advanced-safe-practice-consultant-aspc",
     "title": "Advanced SAFe&reg; Practice Consultant (ASPC)",
     "file": "course-advanced-safe-practice-consultant-aspc.page.html",
-    "bytes": 51199
+    "bytes": 51275
   },
   {
     "slug": "ai-native-foundations",
     "title": "AI-Native Foundations",
     "file": "course-ai-native-foundations.page.html",
-    "bytes": 51136
+    "bytes": 51212
   }
 ]
