@@ -1,0 +1,206 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
+.aa-rd *{margin:0;padding:0;box-sizing:border-box}
+.aa-rd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#FBFDFD;color:#0E3A44;-webkit-font-smoothing:antialiased;line-height:1.5}
+.aa-rd a{text-decoration:none;color:inherit}
+.aa-rd button{font-family:inherit;cursor:pointer}
+.aa-rd ::selection{background:#0E3A44;color:#fff}
+.aa-rd h1,.aa-rd h2,.aa-rd h3,.aa-rd blockquote{font-family:'Newsreader',Georgia,'Times New Roman',serif}
+.aa-rd .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+@keyframes aaFadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes aaBarGrow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+.aa-rd .aa-wordmark{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:21px;letter-spacing:-.01em;color:#0E3A44}
+.aa-rd .aa-wordmark span{color:#127E88}
+.aa-rd .aa-opt:hover{border-color:#0E3A44!important}
+.aa-rd .aa-begin:hover{background:#127E88!important}
+@media(max-width:880px){.aa-rd .aa-result-grid{grid-template-columns:1fr!important;gap:34px!important}.aa-rd .aa-dim-grid{grid-template-columns:repeat(2,1fr)!important}.aa-rd .aa-h1{font-size:44px!important}}
+</style>
+<div class="aa-rd" style="min-height:100vh;background:#FBFDFD;display:flex;flex-direction:column">
+
+  <header style="border-bottom:1px solid #DCEAEA;background:#FBFDFD">
+    <nav style="max-width:1080px;margin:0 auto;padding:14px 30px;display:flex;align-items:center;gap:20px">
+      <a href="/assessments-redesign/" aria-label="Agile Agilist home" class="aa-wordmark" style="display:block;flex:none">AGILE<span>AGILIST</span></a>
+      <span class="mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#88A0A4;margin-left:6px">Agile Competency Diagnostic</span>
+      <a href="/assessments-redesign/" style="margin-left:auto;font-size:13.5px;font-weight:600;color:#5E7378">&#10005; Exit</a>
+    </nav>
+  </header>
+
+  <div id="aa-progress" style="height:3px;background:#E6F3F3;display:none"><div id="aa-progress-bar" style="height:100%;background:#127E88;width:0%;transition:width .35s cubic-bezier(.4,0,.2,1)"></div></div>
+
+  <main style="flex:1;display:flex;flex-direction:column">
+
+    <!-- INTRO -->
+    <section id="aa-intro" style="max-width:1080px;margin:0 auto;width:100%;padding:60px 30px;flex:1">
+      <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88">Free diagnostic &middot; ~6 minutes &middot; No login</div>
+      <h1 class="aa-h1" style="font-weight:400;font-size:64px;line-height:1.0;letter-spacing:-.03em;color:#0E3A44;margin-top:18px;max-width:820px;text-wrap:balance">Are you <span style="font-style:italic;color:#127E88">actually agile</span> &mdash; or just running the ceremonies?</h1>
+      <p style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:23px;line-height:1.42;color:#3C565E;max-width:660px;margin-top:22px">Twelve honest statements across six capability dimensions. Rate each one, and get an instant maturity read with the single move that will move you furthest.</p>
+      <div class="aa-dim-grid" style="display:grid;grid-template-columns:repeat(3,1fr);margin-top:42px;border-top:1px solid #0E3A44;border-left:1px solid #DCEAEA;max-width:820px">
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">01</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Team Agility</div></div>
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">02</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Technical Excellence</div></div>
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">03</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Product Thinking</div></div>
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">04</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Flow &amp; Delivery</div></div>
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">05</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Leadership &amp; Culture</div></div>
+        <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">06</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Continuous Improvement</div></div>
+      </div>
+      <button type="button" id="aa-begin" class="aa-begin" style="margin-top:36px;font-size:16px;font-weight:600;color:#fff;background:#0E3A44;border:none;padding:16px 30px;border-radius:2px">Begin the diagnostic &#10230;</button>
+      <p class="mono" style="font-size:11px;letter-spacing:.03em;color:#88A0A4;margin-top:14px">Your answers stay in your browser. Nothing is submitted until you choose to.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="aa-quiz" style="max-width:780px;margin:0 auto;width:100%;padding:48px 30px 60px;flex:1;display:none;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <span id="aa-q-dim" class="mono" style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#127E88"></span>
+        <span id="aa-q-count" class="mono" style="font-size:11.5px;letter-spacing:.06em;color:#88A0A4"></span>
+      </div>
+      <h2 id="aa-q-text" style="font-weight:400;font-size:42px;line-height:1.14;letter-spacing:-.02em;color:#0E3A44;margin-top:22px;min-height:140px"></h2>
+      <div id="aa-q-opts" style="display:flex;flex-direction:column;gap:10px;margin-top:14px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:32px">
+        <button type="button" id="aa-back" style="font-size:14px;font-weight:600;padding:10px 4px;background:none;border:none;color:#C7DEDE">&#8592; Back</button>
+        <span class="mono" style="font-size:11px;letter-spacing:.04em;color:#88A0A4">Pick a rating to continue</span>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="aa-result" style="max-width:1080px;margin:0 auto;width:100%;padding:54px 30px 70px;flex:1;display:none">
+      <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88">Your result &middot; Agile Competency</div>
+      <div class="aa-result-grid" style="display:grid;grid-template-columns:.85fr 1.15fr;gap:54px;margin-top:20px;align-items:start">
+        <div style="animation:aaFadeUp .4s ease both">
+          <div id="aa-overall-pct" style="font-family:'Newsreader',Georgia,serif;font-size:128px;line-height:.9;letter-spacing:-.04em;color:#0E3A44"></div>
+          <div id="aa-overall-level" style="display:inline-block;margin-top:14px;font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:30px;color:#127E88"></div>
+          <p id="aa-overall-blurb" style="font-size:15.5px;line-height:1.6;color:#3C565E;margin-top:16px;max-width:360px"></p>
+          <div style="margin-top:24px;border:1px solid #0E3A44;background:#0B2E35;color:#E4F1F1;padding:24px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:-50px;right:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.22),transparent 66%)"></div>
+            <div class="mono" style="position:relative;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#8FCFCF">Your recommended next move</div>
+            <h3 id="aa-rec-title" style="position:relative;font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:24px;color:#fff;margin-top:8px"></h3>
+            <p id="aa-rec-blurb" style="position:relative;font-size:13.5px;line-height:1.55;color:#A7C2C2;margin-top:8px"></p>
+            <a id="aa-rec-cta" href="/training-redesign/" style="position:relative;display:inline-block;margin-top:16px;font-size:14px;font-weight:600;color:#0B2E35;background:#8FCFCF;padding:12px 20px;border-radius:2px"></a>
+          </div>
+        </div>
+        <div style="border-top:1px solid #0E3A44;animation:aaFadeUp .4s ease .08s both">
+          <div id="aa-bars"></div>
+          <div style="display:flex;gap:12px;margin-top:26px;flex-wrap:wrap">
+            <button type="button" id="aa-retake" style="font-size:14.5px;font-weight:600;color:#0E3A44;background:#fff;border:1px solid #C7DEDE;padding:13px 22px;border-radius:2px">&#8635; Retake</button>
+            <a href="/training-redesign/" style="font-size:14.5px;font-weight:600;color:#fff;background:#0E3A44;padding:13px 22px;border-radius:2px">Email me my results</a>
+            <a href="/services-redesign/" style="font-size:14.5px;font-weight:600;color:#0E3A44;padding:13px 22px;border-radius:2px;border:1px solid #C7DEDE">Book a consult</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="border-top:1px solid #DCEAEA;background:#FBFDFD">
+    <div class="mono" style="max-width:1080px;margin:0 auto;padding:18px 30px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:.04em;color:#88A0A4">
+      <span>Agile Agilist &middot; SAFe&reg; Gold Partner</span>
+      <span>Built on the SAFe core competencies</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+(function(){
+  var QS=[
+    {dim:'Team Agility',text:'Our teams self-organise and decide how best to do their own work.'},
+    {dim:'Team Agility',text:'We deliver a working, integrated increment at a predictable cadence.'},
+    {dim:'Technical Excellence',text:'Automated tests and continuous integration cover most of our codebase.'},
+    {dim:'Technical Excellence',text:'We can release to production on demand, with low risk and little drama.'},
+    {dim:'Product Thinking',text:'Work is prioritised by customer value and outcomes, not raw output.'},
+    {dim:'Product Thinking',text:'We validate ideas with real users before building them at scale.'},
+    {dim:'Flow & Delivery',text:'We limit work-in-progress and make our flow of work visible.'},
+    {dim:'Flow & Delivery',text:'Hand-offs and cross-team dependencies rarely block our delivery.'},
+    {dim:'Leadership & Culture',text:'Leaders coach and remove impediments rather than assign tasks.'},
+    {dim:'Leadership & Culture',text:"It's safe here to surface problems, disagree, and admit mistakes."},
+    {dim:'Continuous Improvement',text:'Our retrospectives reliably lead to changes that actually stick.'},
+    {dim:'Continuous Improvement',text:'We measure outcomes and use the data to decide what to improve.'}
+  ];
+  var SCALE=[{label:'Strongly disagree',value:1},{label:'Disagree',value:2},{label:'Neutral',value:3},{label:'Agree',value:4},{label:'Strongly agree',value:5}];
+  var ORDER=['Team Agility','Technical Excellence','Product Thinking','Flow & Delivery','Leadership & Culture','Continuous Improvement'];
+  var REC={
+    'Team Agility':{t:'SAFe® Scrum Master (SSM)',b:'Strengthen team-level facilitation, cadence, and self-organisation.',c:'Explore SSM'},
+    'Technical Excellence':{t:'Agile Software Engineering',b:'Build the test automation and CI/CD backbone that lets you release on demand.',c:'Explore ASE'},
+    'Product Thinking':{t:'Product Owner / Product Manager',b:'Prioritise by value and connect strategy to what your teams actually build.',c:'Explore POPM'},
+    'Flow & Delivery':{t:'Leading SAFe (SA)',b:'Learn to visualise flow, limit WIP, and break cross-team dependencies.',c:'Explore Leading SAFe'},
+    'Leadership & Culture':{t:'Lean-Agile Leadership',b:'Shift leaders from directing tasks to coaching teams and building safety.',c:'Explore Leadership'},
+    'Continuous Improvement':{t:'SAFe DevOps',b:'Close the loop with measurement, feedback, and relentless improvement.',c:'Explore DevOps'}
+  };
+  var BLURB={
+    Forming:'You have the vocabulary of agile but the mechanics are still forming. The fastest gains come from one focused capability.',
+    Developing:'Solid foundations with clear gaps. Targeted training and coaching on your weakest dimension will compound quickly.',
+    Maturing:'You are genuinely agile in most dimensions. Sharpen the remaining gaps to reach a leading level.',
+    Leading:'You operate at a leading level. Focus now on sustaining the culture and mentoring others to scale it.'
+  };
+  var idx=0, answers=[];
+  function levelFor(p){if(p>=80)return'Leading';if(p>=60)return'Maturing';if(p>=40)return'Developing';return'Forming';}
+  var $=function(id){return document.getElementById(id);};
+  function show(stage){
+    $('aa-intro').style.display = stage==='intro'?'block':'none';
+    $('aa-quiz').style.display = stage==='quiz'?'flex':'none';
+    $('aa-result').style.display = stage==='result'?'block':'none';
+    $('aa-progress').style.display = stage==='quiz'?'block':'none';
+    var top=document.querySelector('.aa-rd');
+    if(top&&stage!=='intro'){ top.scrollIntoView({behavior:'smooth',block:'start'}); }
+  }
+  function renderQuiz(){
+    var q=QS[idx];
+    $('aa-q-dim').textContent=q.dim;
+    $('aa-q-count').textContent=(idx+1)+' / '+QS.length;
+    var h=$('aa-q-text'); h.textContent=q.text; h.style.animation='none'; void h.offsetWidth; h.style.animation='aaFadeUp .35s ease both';
+    $('aa-progress-bar').style.width=Math.round((idx/QS.length)*100)+'%';
+    var cur=answers[idx];
+    var wrap=$('aa-q-opts'); wrap.innerHTML='';
+    SCALE.forEach(function(o){
+      var on=cur===o.value;
+      var b=document.createElement('button');
+      b.type='button'; b.className='aa-opt';
+      b.style.cssText='width:100%;text-align:left;padding:16px 20px;border-radius:2px;font-size:15.5px;font-weight:500;background:'+(on?'#0E3A44':'#fff')+';color:'+(on?'#fff':'#0E3A44')+';border:1px solid '+(on?'#0E3A44':'#C7DEDE')+';transition:all .15s ease';
+      b.innerHTML='<span style="display:flex;align-items:center;gap:14px"><span style="width:14px;height:14px;border-radius:50%;flex:none;border:2px solid '+(on?'#8FCFCF':'#BFD9D9')+';background:'+(on?'#8FCFCF':'transparent')+'"></span>'+o.label+'</span>';
+      b.onclick=function(){ pick(o.value); };
+      wrap.appendChild(b);
+    });
+    var back=$('aa-back'); back.style.color=idx>0?'#5E7378':'#C7DEDE';
+  }
+  function pick(value){
+    answers[idx]=value;
+    if(idx>=QS.length-1){ renderResult(); show('result'); }
+    else { idx++; renderQuiz(); }
+  }
+  function renderResult(){
+    var groups={}; QS.forEach(function(q,i){ (groups[q.dim]=groups[q.dim]||[]).push(answers[i]||0); });
+    var results=ORDER.map(function(name){
+      var vals=groups[name]||[];
+      var pct=Math.round((vals.reduce(function(a,b){return a+b;},0)/(vals.length*5))*100);
+      var lvl=levelFor(pct);
+      var color=pct>=60?'#127E88':(pct>=40?'#3C9AA4':'#C58A3D');
+      return {name:name,pct:pct,levelLabel:lvl.toUpperCase(),color:color};
+    });
+    var overall=Math.round(results.reduce(function(a,r){return a+r.pct;},0)/results.length);
+    var lvl=levelFor(overall);
+    var lowest=results.slice().sort(function(a,b){return a.pct-b.pct;})[0];
+    var rec=REC[lowest.name];
+    $('aa-overall-pct').textContent=overall+'%';
+    $('aa-overall-level').textContent=lvl;
+    $('aa-overall-blurb').textContent=BLURB[lvl];
+    $('aa-rec-title').textContent=rec.t;
+    $('aa-rec-blurb').textContent='Your lowest dimension is '+lowest.name+' ('+lowest.pct+'%). '+rec.b;
+    $('aa-rec-cta').innerHTML=rec.c+' &#10230;';
+    var bars=$('aa-bars'); bars.innerHTML='';
+    results.forEach(function(r){
+      var row=document.createElement('div');
+      row.style.cssText='padding:18px 0;border-bottom:1px solid #DCEAEA';
+      row.innerHTML='<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:nowrap">'+
+        '<span style="font-family:\'Newsreader\',Georgia,serif;font-style:italic;font-size:20px;color:#0E3A44;white-space:nowrap">'+r.name+'</span>'+
+        '<span style="display:flex;align-items:baseline;gap:10px;flex:none"><span class="mono" style="font-size:11px;letter-spacing:.04em;color:#88A0A4">'+r.levelLabel+'</span><span style="font-family:\'Newsreader\',Georgia,serif;font-size:22px;color:#0E3A44">'+r.pct+'%</span></span></div>'+
+        '<div style="height:8px;background:#E6F3F3;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+r.pct+'%;background:'+r.color+';transform-origin:left;animation:aaBarGrow .6s cubic-bezier(.4,0,.2,1) both"></div></div>';
+      bars.appendChild(row);
+    });
+  }
+  function init(){
+    $('aa-begin').onclick=function(){ idx=0; answers=[]; renderQuiz(); show('quiz'); };
+    $('aa-back').onclick=function(){ if(idx>0){ idx--; renderQuiz(); } };
+    $('aa-retake').onclick=function(){ idx=0; answers=[]; show('intro'); };
+  }
+  if(document.readyState!=='loading'){ init(); } else { document.addEventListener('DOMContentLoaded',init); }
+})();
+</script>
+<!-- /wp:html -->
