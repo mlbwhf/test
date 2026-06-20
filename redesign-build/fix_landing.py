@@ -47,6 +47,9 @@ def fix(html):
 
     # 3) remove the page's own footer
     html = re.sub(r"\s*<!-- FOOTER -->.*?</footer>", "", html, flags=re.S)
+    # the opening <main> often lived in the stripped nav region; drop the orphan
+    if "<main" not in html:
+        html = html.replace("</main>", "")
     return html
 
 
