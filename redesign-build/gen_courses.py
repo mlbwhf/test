@@ -22,7 +22,7 @@ TEMPLATE = r"""<!-- wp:html -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
 .aa-rd *{margin:0;padding:0;box-sizing:border-box}
-.aa-rd{--aa-w:1340px;--aa-pad:clamp(18px,4vw,46px);width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#FBFDFD;color:#0E3A44;-webkit-font-smoothing:antialiased;line-height:1.5}
+.aa-rd{--aa-w:1340px;--aa-pad:clamp(18px,4vw,46px);width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#FBFDFD;color:#0E3A44;-webkit-font-smoothing:antialiased;line-height:1.5}
 .aa-rd .wrap{width:100%;max-width:var(--aa-w);margin-inline:auto;padding-inline:var(--aa-pad)}
 .aa-rd a{text-decoration:none;color:inherit}
 .aa-rd ::selection{background:#127E88;color:#fff}
