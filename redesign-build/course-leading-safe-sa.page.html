@@ -52,7 +52,7 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "Leading SAFe® (SA) Certification", "description": "Lead a Lean-Agile transformation by applying SAFe® and its principles of Lean, systems thinking, and agile development. Two days, live-virtual, with an…", "provider": {"@type": "Organization", "name": "Agile Agilist", "sameAs": "https://agile-agilist.com"}, "url": "https://agile-agilist.com/training/safe/sa/", "offers": {"@type": "Offer", "price": "850", "priceCurrency": "USD", "category": "Paid", "availability": "https://schema.org/InStock"}, "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "P2D", "instructor": {"@type": "Person", "name": "Authorised SAFe Instructor (SPC/ASPC)"}}}</script>
 
   <!-- STICKY COURSE BAR -->
-  <div style="position:sticky;top:0;z-index:50;background:rgba(251,252,254,.9);backdrop-filter:blur(12px);border-bottom:1px solid #DCEAEA">
+  <div class="aa-coursebar" style="position:sticky;top:var(--aa-top,0px);z-index:50;background:rgba(251,252,254,.9);backdrop-filter:blur(12px);border-bottom:1px solid #DCEAEA">
     <div style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:11px 30px;display:flex;align-items:center;gap:24px">
       <div style="display:flex;align-items:center;gap:13px">
         <span class="badge badge-sm" aria-hidden="true"><b>SA</b><i>CERTIFIED</i></span>
@@ -431,7 +431,22 @@
   function render(){ if(!$('aa-qty'))return; $('aa-qty').textContent=qty; $('aa-qty-sum').textContent=qty; var t=fmt(qty*PRICE); $('aa-total-btn').textContent=t; $('aa-total-line').textContent=t; $('aa-total-big').textContent=t; }
   function seg(el,on){ if(!el)return; if(on){el.style.background='#127E88';el.style.color='#fff';el.style.border='1px solid #127E88';} else {el.style.background='#fff';el.style.color='#3C565E';el.style.border='1px solid #C7DEDE';} }
   function setWho(w){ who=w; seg($('aa-self'),w==='self'); seg($('aa-team'),w==='team'); var tf=$('aa-team-fields'); if(tf) tf.style.display = w==='team'?'grid':'none'; }
+  /* === keep the sticky course bar just below the theme's site header ===
+     Auto-measures whichever header is fixed/sticky, so it adapts if the
+     header height changes. Non-sticky header -> offset 0 (bar pins to top). */
+  function setHeaderOffset(){
+    var sels=['#masthead','.site-header','header.site-header','#site-header','.ast-header-wrap','.site-header-wrap','#header','header[role="banner"]','header'];
+    var off=0;
+    for(var i=0;i<sels.length;i++){
+      var el=document.querySelector(sels[i]);
+      if(!el) continue;
+      var cs=getComputedStyle(el);
+      if(cs.position==='fixed'||cs.position==='sticky'){ off=Math.round(el.getBoundingClientRect().height); break; }
+    }
+    document.documentElement.style.setProperty('--aa-top', off+'px');
+  }
   function init(){
+    setHeaderOffset(); window.addEventListener('resize',setHeaderOffset); window.addEventListener('load',setHeaderOffset);
     if($('aa-inc')) $('aa-inc').onclick=function(){ qty=Math.min(20,qty+1); render(); };
     if($('aa-dec')) $('aa-dec').onclick=function(){ qty=Math.max(1,qty-1); render(); };
     if($('aa-self')) $('aa-self').onclick=function(){ setWho('self'); };
