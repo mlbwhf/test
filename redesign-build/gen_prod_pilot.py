@@ -71,6 +71,58 @@ def enroll_design(enroll):
     return intro + panel
 
 
+def _card(b, cat, title, desc, url, accent="#C7DEDE"):
+    return (
+        '<a href="' + url + '" class="path-card" style="border:1px solid ' + accent + ';background:#fff;padding:22px 24px;display:flex;flex-direction:column;transition:border-color .16s">'
+        '<div style="display:flex;align-items:center;gap:11px">'
+        '<span class="badge badge-sm" aria-hidden="true"><b>' + b + '</b><i>CERT</i></span>'
+        '<span class="mono" style="font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#88A0A4">' + cat + '</span>'
+        '</div>'
+        '<h3 class="nr" style="font-weight:400;font-size:22px;color:#0E3A44;margin-top:15px">' + title + '</h3>'
+        '<p style="font-size:13.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">' + desc + '</p>'
+        '<span style="font-size:13px;font-weight:600;color:#127E88;margin-top:16px">View course &#10230;</span>'
+        '</a>'
+    )
+
+
+def _group(label, cards, minw="270px"):
+    return (
+        '<div class="mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;margin-top:44px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #DCEAEA">' + label + '</div>'
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(' + minw + ',1fr));gap:16px">' + ''.join(cards) + '</div>'
+    )
+
+
+def build_path_sa():
+    """SA career-path navigation: variations of Leading SAFe, same-category SAFe
+    roles, and the advanced leadership next steps. URLs verified against the live
+    site. Replaces the generic 14-badge map + off-path AI-Native card."""
+    g1 = _group("Variations of Leading SAFe &mdash; same SA cert, specialised context", [
+        _card("SA", "Government", "Leading SAFe for Government", "The SAFe Agilist course tailored to public-sector programs, compliance, and government delivery.", "/training/safe-industry/sa-gov/", "#BCE0E5"),
+        _card("SA", "Hardware", "SAFe for Hardware", "Lean-Agile leadership applied to cyber-physical and hardware-intensive systems.", "/training/safe-industry/safe-for-hardware/", "#BCE0E5"),
+    ], "330px")
+    g2 = _group("More SAFe role certifications &mdash; same category", [
+        _card("SSM", "SAFe role", "SAFe Scrum Master", "Facilitate Agile teams and the key events of an Agile Release Train.", "/training/safe/scrum-master/"),
+        _card("POPM", "SAFe role", "Product Owner / Manager", "Deliver value through the Continuous Delivery Pipeline as a PO/PM.", "/training/safe/popm/"),
+        _card("SASM", "SAFe role", "Advanced Scrum Master", "Coach Agile teams to excel across a SAFe enterprise.", "/training/safe/asm/"),
+        _card("SDP", "SAFe role", "SAFe DevOps", "Build a continuous delivery pipeline and a DevOps culture.", "/training/safe/devops/"),
+    ])
+    g3 = _group("Advance your leadership path &mdash; next steps", [
+        _card("SPC", "Advanced", "Implementing SAFe", "Become the change agent who can teach SAFe and launch Agile Release Trains.", "/training/adv-safe/spc/"),
+        _card("LPM", "Advanced", "Lean Portfolio Management", "Connect strategy to execution with Lean budgeting and portfolio flow.", "/training/adv-safe/lpm/"),
+        _card("APM", "Advanced", "Agile Product Management", "Design and deliver products with Design Thinking and customer centricity.", "/training/adv-safe/apm/"),
+        _card("ARCH", "Advanced", "SAFe for Architects", "Lead architecture across Agile Release Trains and value streams.", "/training/safe-industry/arch/"),
+        _card("ASPC", "Advanced", "Advanced Practice Consultant", "The senior SAFe consultant credential, beyond SPC.", "/training/adv-safe/aspc/"),
+    ])
+    return (
+        '<!-- YOUR PATH -->\n  <section id="path" style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:84px 30px 0">\n'
+        '    <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 04 ) — Where this leads</div>\n'
+        '    <h2 class="nr h2" style="font-weight:400;font-size:52px;line-height:1.02;letter-spacing:-.02em;color:#0E3A44;margin-top:14px;max-width:760px">Your SAFe <span style="font-style:italic">career path.</span></h2>\n'
+        '    <p style="font-size:15px;line-height:1.6;color:#5E7378;margin-top:12px;max-width:620px">Leading SAFe is your foundation. Specialise by industry, round out the core SAFe roles, or advance into portfolio, product, and consulting credentials.</p>\n'
+        '    ' + g1 + '\n    ' + g2 + '\n    ' + g3 + '\n'
+        '  </section>'
+    )
+
+
 def transform(code, fluent_id, eb_event_id):
     pub = {c["code"]: c for c in json.load(open(os.path.join(HERE, "courses_publish.json")))}
     c = pub[code]
@@ -86,7 +138,7 @@ def transform(code, fluent_id, eb_event_id):
 
     block_head = html[:i_coh].rstrip() + "\n</div>\n<!-- /wp:html -->"
     block_sched = schedule_blocks(cat)
-    block_path = wrap_html(html[i_path:i_enroll])
+    block_path = wrap_html(build_path_sa())
     block_enroll = wrap_html(enroll_design(html[i_enroll:i_faq]))
     block_form = '<!-- wp:shortcode -->\n[fluentform id="%s"]\n<!-- /wp:shortcode -->' % fluent_id
     block_faq = '<!-- wp:html -->\n<div class="aa-rd">\n' + html[i_faq:]
