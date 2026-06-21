@@ -2,155 +2,155 @@
   {
     "code": "SA",
     "file": "course-leading-safe-sa.page.html",
-    "bytes": 52610,
+    "bytes": 52556,
     "slug": "sa",
     "section": "safe",
     "wp_title": "Leading SAFe\u00ae (SA) Certification",
     "url": "/training/safe/sa/",
     "meta_description": "Lead a Lean-Agile transformation by applying SAFe\u00ae and its principles of Lean, systems thinking, and agile development. Two days, live-virtual, with an\u2026",
-    "parent_id": 20
+    "live_id": 24
   },
   {
     "code": "SSM",
     "file": "course-safe-scrum-master-ssm.page.html",
-    "bytes": 52575,
+    "bytes": 52521,
     "slug": "scrum-master",
     "section": "safe",
     "wp_title": "Scrum Master",
     "url": "/training/safe/scrum-master/",
     "meta_description": "Become the Scrum Master who facilitates Agile teams within a SAFe enterprise \u2014 running team and program events, supporting PI execution, and coaching te\u2026",
-    "parent_id": 20
+    "live_id": 26
   },
   {
     "code": "POPM",
     "file": "course-safe-popm.page.html",
-    "bytes": 52608,
+    "bytes": 52554,
     "slug": "popm",
     "section": "safe",
     "wp_title": "SAFe Product Owner/Product Manager POPM",
     "url": "/training/safe/popm/",
     "meta_description": "Master the responsibilities of the Product Owner and Product Manager in a SAFe enterprise \u2014 writing stories, managing backlogs, and delivering value thr\u2026",
-    "parent_id": 20
+    "live_id": 27
   },
   {
     "code": "SP",
     "file": "course-safe-for-teams-sp.page.html",
-    "bytes": 52460,
+    "bytes": 52406,
     "slug": "team-practitioner",
     "section": "safe-industry",
     "wp_title": "SAFe\u00aefor Teams- SAFe Practitioner (SP)",
     "url": "/training/safe-industry/team-practitioner/",
     "meta_description": "Build the skills to be a high-performing member of an Agile Release Train \u2014 how to plan and execute work, collaborate across teams, and deliver value in\u2026",
-    "parent_id": 21
+    "live_id": 30
   },
   {
     "code": "SASM",
     "file": "course-safe-advanced-scrum-master-sasm.page.html",
-    "bytes": 52552,
+    "bytes": 52498,
     "slug": "asm",
     "section": "safe",
     "wp_title": "Advance Scrum Master",
     "url": "/training/safe/asm/",
     "meta_description": "Take your Scrum Master practice to the program level \u2014 facilitating cross-team interactions, supporting DevOps and built-in quality, and coaching the Ag\u2026",
-    "parent_id": 20
+    "live_id": 28
   },
   {
     "code": "RTE",
     "file": "course-safe-rte.page.html",
-    "bytes": 52580,
+    "bytes": 52526,
     "slug": "rte",
     "section": "adv-safe",
     "wp_title": "SAFe Release Train Engineer (RTE)",
     "url": "/training/adv-safe/rte/",
     "meta_description": "Become the servant leader and coach of the Agile Release Train \u2014 facilitating ART events and processes, driving relentless improvement, and leading the\u2026",
-    "parent_id": 22
+    "live_id": 34
   },
   {
     "code": "SDP",
     "file": "course-safe-devops-sdp.page.html",
-    "bytes": 52455,
+    "bytes": 52401,
     "slug": "devops",
     "section": "safe",
     "wp_title": "SAFe DevOps",
     "url": "/training/safe/devops/",
     "meta_description": "Map your Continuous Delivery Pipeline, optimise the flow of value from idea to production, and build the culture, automation, and measurement that relea\u2026",
-    "parent_id": 20
+    "live_id": 29
   },
   {
     "code": "APM",
     "file": "course-safe-agile-product-management-apm.page.html",
-    "bytes": 52554,
+    "bytes": 52500,
     "slug": "apm",
     "section": "adv-safe",
     "wp_title": "Agile Product Management (APM)",
     "url": "/training/adv-safe/apm/",
     "meta_description": "Use design thinking and a Lean-Agile mindset to discover, build, and bring to market products customers love \u2014 from vision and roadmap to pricing, packa\u2026",
-    "parent_id": 22
+    "live_id": 35
   },
   {
     "code": "LPM",
     "file": "course-safe-lean-portfolio-management-lpm.page.html",
-    "bytes": 52134,
+    "bytes": 52080,
     "slug": "lpm",
     "section": "adv-safe",
     "wp_title": "SAFe Lean Portfolio Management (LPM)",
     "url": "/training/adv-safe/lpm/",
     "meta_description": "Align strategy and execution by applying Lean and systems thinking to portfolio strategy, funding, and operations \u2014 connecting the portfolio to enterpri\u2026",
-    "parent_id": 22
+    "live_id": 36
   },
   {
     "code": "ARCH",
     "file": "course-safe-architect-arch.page.html",
-    "bytes": 52046,
+    "bytes": 51992,
     "slug": "arch",
     "section": "safe-industry",
     "wp_title": "SAFe for Architects",
     "url": "/training/safe-industry/arch/",
     "meta_description": "Lead the architecture of large solutions in a Lean-Agile enterprise \u2014 aligning architecture with business value, enabling continuous delivery, and guidi\u2026",
-    "parent_id": 21
+    "live_id": 31
   },
   {
     "code": "ASE",
     "file": "course-safe-agile-software-engineering-ase.page.html",
-    "bytes": 52608,
+    "bytes": 52554,
     "slug": "ase",
     "section": "safe-industry",
     "wp_title": "SAFe Agile Software Engineering (ASE)",
     "url": "/training/safe-industry/ase/",
     "meta_description": "Build the technical practices that make continuous delivery real \u2014 test-first, behaviour-driven development, and Agile architecture that lets teams rele\u2026",
-    "parent_id": 21
+    "live_id": 32
   },
   {
     "code": "SPC",
     "file": "course-implementing-safe-spc.page.html",
-    "bytes": 52501,
+    "bytes": 52447,
     "slug": "spc",
     "section": "adv-safe",
     "wp_title": "Implementing SAFe\u00ae with SPC Certification",
     "url": "/training/adv-safe/spc/",
     "meta_description": "Become the change agent who can teach SAFe, launch Agile Release Trains, and lead an enterprise transformation end-to-end. Four days, live-virtual, with\u2026",
-    "parent_id": 22
+    "live_id": 37
   },
   {
     "code": "ASPC",
     "file": "course-advanced-safe-practice-consultant-aspc.page.html",
-    "bytes": 52114,
+    "bytes": 52060,
     "slug": "aspc",
     "section": "adv-safe",
     "wp_title": "Advanced SAFe\u00ae Practice Consultant (ASPC) Certification",
     "url": "/training/adv-safe/aspc/",
     "meta_description": "Deepen your consulting practice beyond SPC \u2014 advanced coaching, measuring transformation outcomes, and guiding complex enterprise change at the portfoli\u2026",
-    "parent_id": 22
+    "live_id": 38
   },
   {
     "code": "AINF",
     "file": "course-ai-native-foundations.page.html",
-    "bytes": 52034,
+    "bytes": 51980,
     "slug": "ai-native-foundations",
     "section": "ai-native",
     "wp_title": "AI-Native Foundations",
     "url": "/training/ai-native/ai-native-foundations/",
     "meta_description": "Extend SAFe into the AI age \u2014 AI-Native ways of working, an AI Enablement layer, and Innovation Culture baked into delivery. Learn the Five Disciplines\u2026",
-    "parent_id": 23
+    "live_id": 33
   }
 ]

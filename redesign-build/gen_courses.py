@@ -106,24 +106,24 @@ TEMPLATE = r"""<!-- wp:html -->
   <!-- NAV -->
   <header style="background:#FBFDFD;border-bottom:1px solid #DCEAEA">
     <nav class="wrap" style="padding-top:15px;padding-bottom:15px;display:flex;align-items:center;gap:34px">
-      <a href="/home-redesign/" aria-label="Agile Agilist home" class="wm" style="font-size:22px;flex:none">AGILE<span>AGILIST</span></a>
+      <a href="/" aria-label="Agile Agilist home" class="wm" style="font-size:22px;flex:none">AGILE<span>AGILIST</span></a>
       <div style="display:flex;align-items:center;gap:26px;margin-left:6px;font-size:14.5px;font-weight:500;color:#3C565E">
         <div class="nav-i nav-hide">
-          <a href="/training-redesign/" class="lnk">Training<span class="caret">&#9660;</span></a>
+          <a href="/training/" class="lnk">Training<span class="caret">&#9660;</span></a>
           <div class="nav-p"><div class="nav-c" style="grid-template-columns:1fr 1fr">%%NAV_PANEL%%</div></div>
         </div>
         <div class="nav-i nav-hide">
-          <a href="/assessments-redesign/" class="lnk">Assessments<span class="caret">&#9660;</span></a>
-          <div class="nav-p"><div class="nav-c"><div class="nav-col"><span class="nav-cap">Assess &amp; benchmark</span><a class="nav-l" href="/assessments-redesign/">Agile maturity assessment<span class="nc">FREE</span></a><a class="nav-l" href="/assessments-redesign/">SAFe readiness scorecard<span class="nc">10 MIN</span></a><a class="nav-l" href="/assessments-redesign/">Team health check<span class="nc">FREE</span></a></div></div></div>
+          <a href="/assessments/" class="lnk">Assessments<span class="caret">&#9660;</span></a>
+          <div class="nav-p"><div class="nav-c"><div class="nav-col"><span class="nav-cap">Assess &amp; benchmark</span><a class="nav-l" href="/assessments/">Agile maturity assessment<span class="nc">FREE</span></a><a class="nav-l" href="/assessments/">SAFe readiness scorecard<span class="nc">10 MIN</span></a><a class="nav-l" href="/assessments/">Team health check<span class="nc">FREE</span></a></div></div></div>
         </div>
         <div class="nav-i nav-hide">
-          <a href="/services-redesign/" class="lnk">Services<span class="caret">&#9660;</span></a>
-          <div class="nav-p"><div class="nav-c"><div class="nav-col"><span class="nav-cap">For organisations</span><a class="nav-l" href="/services-redesign/">Corporate &amp; private cohorts</a><a class="nav-l" href="/services-redesign/">SAFe transformation consulting</a><a class="nav-l" href="/services-redesign/">Enterprise coaching</a><a class="nav-l" href="/services-redesign/">Book a consult<span class="nc">&#10230;</span></a></div></div></div>
+          <a href="/services/" class="lnk">Services<span class="caret">&#9660;</span></a>
+          <div class="nav-p"><div class="nav-c"><div class="nav-col"><span class="nav-cap">For organisations</span><a class="nav-l" href="/services/">Corporate &amp; private cohorts</a><a class="nav-l" href="/services/">SAFe transformation consulting</a><a class="nav-l" href="/services/">Enterprise coaching</a><a class="nav-l" href="/services/">Book a consult<span class="nc">&#10230;</span></a></div></div></div>
         </div>
-        <a href="/home-redesign/" class="lnk nav-hide">About</a>
+        <a href="/" class="lnk nav-hide">About</a>
       </div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:18px">
-        <a href="/services-redesign/" class="lnk nav-hide" style="font-size:14px;font-weight:600;color:#0E3A44">Book a consult</a>
+        <a href="/services/" class="lnk nav-hide" style="font-size:14px;font-weight:600;color:#0E3A44">Book a consult</a>
         <a href="#enroll" class="btn-d" style="font-size:14px;font-weight:600;color:#fff;background:#0B2E35;padding:11px 19px;border-radius:2px">Enroll &#10230;</a>
       </div>
     </nav>
@@ -158,14 +158,14 @@ TEMPLATE = r"""<!-- wp:html -->
     <div style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:9px 30px;display:flex;align-items:center;justify-content:center;gap:14px;font-size:13.5px;text-align:center">
       <span class="mono" style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#BFE1E1">Teams</span>
       <span style="font-weight:500">Training a team of 5+? Save with group pricing and private cohorts.</span>
-      <a href="/services-redesign/" style="font-weight:600;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:1px">Request a group quote &#10230;</a>
+      <a href="/services/" style="font-weight:600;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:1px">Request a group quote &#10230;</a>
     </div>
   </div>
 
   <!-- HERO -->
   <section style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:42px 30px 0">
     <div class="mono" style="display:flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4">
-      <a href="/training-redesign/" class="lnk">Training</a><span>/</span><a href="/training-redesign/" class="lnk">SAFe by Role</a><span>/</span><span style="color:#127E88">%%CODE%%</span>
+      <a href="/training/" class="lnk">Training</a><span>/</span><a href="/training/" class="lnk">SAFe by Role</a><span>/</span><span style="color:#127E88">%%CODE%%</span>
     </div>
     <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;margin-top:26px">Certification &middot; %%DURATION%% &middot; Live-virtual</div>
     <h1 class="nr h1" style="font-weight:400;font-size:80px;line-height:.96;letter-spacing:-.025em;color:#0E3A44;margin-top:18px;text-wrap:balance">%%TITLE%%<br><span style="font-style:italic;color:#127E88">%%HERO_ITALIC%%</span></h1>
@@ -311,7 +311,7 @@ TEMPLATE = r"""<!-- wp:html -->
       <div class="badge-row">%%BADGE_ROW%%</div>
     </div>
     <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:42px">
-      <a href="/training-redesign/" style="border:1px solid #C7DEDE;background:#fff;padding:32px;display:flex;flex-direction:column">
+      <a href="/training/" style="border:1px solid #C7DEDE;background:#fff;padding:32px;display:flex;flex-direction:column">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
           <div>
             <span class="mono" style="display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#2C7C8C;border:1px solid #BCE0E5;background:#EAF6F7;padding:5px 10px;border-radius:2px">SAFe&reg; track</span>
@@ -323,7 +323,7 @@ TEMPLATE = r"""<!-- wp:html -->
         <div style="height:1px;background:#EAF6F7;margin:20px 0"></div>
         <div style="display:flex;align-items:center;justify-content:space-between"><span class="nr" style="font-size:22px;color:#0E3A44">From $3,495</span><span style="font-size:14px;font-weight:600;color:#2C7C8C">Explore SPC &#10230;</span></div>
       </a>
-      <a href="/training-redesign/" style="border:1px solid #DAD2F4;background:#fff;padding:32px;display:flex;flex-direction:column;position:relative;overflow:hidden">
+      <a href="/training/" style="border:1px solid #DAD2F4;background:#fff;padding:32px;display:flex;flex-direction:column;position:relative;overflow:hidden">
         <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(110,60,244,.12),transparent 68%)"></div>
         <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
           <div>
@@ -466,7 +466,7 @@ TEMPLATE = r"""<!-- wp:html -->
       </div>
       <div style="position:relative;display:flex;flex-direction:column;gap:12px;min-width:220px">
         <a href="#enroll" style="font-size:15.5px;font-weight:600;color:#0B2E35;background:#fff;padding:15px 28px;border-radius:2px;text-align:center">Enroll now &middot; %%PRICE%%</a>
-        <a href="/services-redesign/" style="font-size:15.5px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.28);padding:15px 28px;border-radius:2px;text-align:center">Talk to an advisor</a>
+        <a href="/services/" style="font-size:15.5px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.28);padding:15px 28px;border-radius:2px;text-align:center">Talk to an advisor</a>
       </div>
     </div>
   </section>
@@ -485,7 +485,7 @@ TEMPLATE = r"""<!-- wp:html -->
       </div>
       <div>
         <h4 class="mono" style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-bottom:16px">More training</h4>
-        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px"><a href="/training-redesign/">All SAFe courses</a><a href="/training-redesign/">AI-Native track</a><a href="/assessments-redesign/">Assessments</a><a href="/services-redesign/">Corporate training</a></div>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:14px"><a href="/training/">All SAFe courses</a><a href="/training/">AI-Native track</a><a href="/assessments/">Assessments</a><a href="/services/">Corporate training</a></div>
       </div>
     </div>
     <div class="mono" style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:22px 30px;border-top:1px solid rgba(233,238,248,.1);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:11.5px;letter-spacing:.04em;color:#6E798E">
@@ -562,7 +562,7 @@ def build_nav_panel(courses):
     return (
         '<div class="nav-col"><span class="nav-cap">SAFe&reg; certifications</span>%s</div>'
         '<div class="nav-col"><span class="nav-cap">AI-Native track</span>%s'
-        '<a class="nav-l" href="/training-redesign/">View all training<span class="nc">&#10230;</span></a></div>'
+        '<a class="nav-l" href="/training/">View all training<span class="nc">&#10230;</span></a></div>'
         % (safe, ai)
     )
 
