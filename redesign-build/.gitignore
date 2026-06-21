@@ -1,1 +1,4 @@
 _params.json
+# Scratch payloads written by the page-apply tooling (transient)
+.params.json
+.toolinput.json
