@@ -435,18 +435,33 @@
      Auto-measures whichever header is fixed/sticky, so it adapts if the
      header height changes. Non-sticky header -> offset 0 (bar pins to top). */
   function setHeaderOffset(){
-    var sels=['#masthead','.site-header','header.site-header','#site-header','.ast-header-wrap','.site-header-wrap','#header','header[role="banner"]','header'];
-    var off=0;
+    /* Astra sticky header: prefer the cloned fixed header (#ast-fixed-header /
+       .ast-header-sticked), which shrinks on scroll; fall back to the main header. */
+    var sels=['#ast-fixed-header','.ast-header-sticked','#masthead','header#masthead','.site-header','.ast-header-wrap','.site-header-wrap','#header','header[role="banner"]','header'];
+    var off=0, hz=null;
     for(var i=0;i<sels.length;i++){
       var el=document.querySelector(sels[i]);
       if(!el) continue;
       var cs=getComputedStyle(el);
-      if(cs.position==='fixed'||cs.position==='sticky'){ off=Math.round(el.getBoundingClientRect().height); break; }
+      var h=el.getBoundingClientRect().height;
+      if((cs.position==='fixed'||cs.position==='sticky') && h>0){
+        off=Math.round(h);
+        var z=parseInt(cs.zIndex,10); if(!isNaN(z)) hz=z;
+        break;
+      }
     }
     document.documentElement.style.setProperty('--aa-top', off+'px');
+    /* keep our course bar just under the theme header so Astra menu dropdowns win */
+    var bar=document.querySelector('.aa-rd .aa-coursebar');
+    if(bar && hz!==null){ bar.style.zIndex=String(Math.max(1,hz-1)); }
   }
+  var _offTick=false;
+  function onScrollOffset(){ if(!_offTick){ _offTick=true; requestAnimationFrame(function(){ setHeaderOffset(); _offTick=false; }); } }
   function init(){
-    setHeaderOffset(); window.addEventListener('resize',setHeaderOffset); window.addEventListener('load',setHeaderOffset);
+    setHeaderOffset();
+    window.addEventListener('resize',setHeaderOffset);
+    window.addEventListener('load',setHeaderOffset);
+    window.addEventListener('scroll',onScrollOffset,{passive:true});
     if($('aa-inc')) $('aa-inc').onclick=function(){ qty=Math.min(20,qty+1); render(); };
     if($('aa-dec')) $('aa-dec').onclick=function(){ qty=Math.max(1,qty-1); render(); };
     if($('aa-self')) $('aa-self').onclick=function(){ setWho('self'); };
