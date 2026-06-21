@@ -15,6 +15,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # so it slots inside the theme chrome without duplicate menus top and bottom.
 EMBED_IN_THEME = True
 
+# SEO preservation: production slug, section (parent under /training/), and the
+# exact page title to keep, keyed by course code. Pulled from agile-agilist.com.
+SEO_MAP = {
+    "SA":   {"slug": "sa",                "section": "safe",          "wp_title": "Leading SAFe® (SA) Certification"},
+    "SSM":  {"slug": "scrum-master",      "section": "safe",          "wp_title": "Scrum Master"},
+    "POPM": {"slug": "popm",              "section": "safe",          "wp_title": "SAFe Product Owner/Product Manager POPM"},
+    "SP":   {"slug": "team-practitioner", "section": "safe-industry", "wp_title": "SAFe®for Teams- SAFe Practitioner (SP)"},
+    "SASM": {"slug": "asm",               "section": "safe",          "wp_title": "Advance Scrum Master"},
+    "RTE":  {"slug": "rte",               "section": "adv-safe",      "wp_title": "SAFe Release Train Engineer (RTE)"},
+    "SDP":  {"slug": "devops",            "section": "safe",          "wp_title": "SAFe DevOps"},
+    "APM":  {"slug": "apm",               "section": "adv-safe",      "wp_title": "Agile Product Management (APM)"},
+    "LPM":  {"slug": "lpm",               "section": "adv-safe",      "wp_title": "SAFe Lean Portfolio Management (LPM)"},
+    "ARCH": {"slug": "arch",              "section": "safe-industry", "wp_title": "SAFe for Architects"},
+    "ASE":  {"slug": "ase",               "section": "safe-industry", "wp_title": "SAFe Agile Software Engineering (ASE)"},
+    "SPC":  {"slug": "spc",               "section": "adv-safe",      "wp_title": "Implementing SAFe® with SPC Certification"},
+    "ASPC": {"slug": "aspc",              "section": "adv-safe",      "wp_title": "Advanced SAFe® Practice Consultant (ASPC) Certification"},
+    "AINF": {"slug": "ai-native-foundations", "section": "ai-native", "wp_title": "AI-Native Foundations"},
+}
+
+def course_url(code):
+    s = SEO_MAP[code]
+    return "/training/%s/%s/" % (s["section"], s["slug"])
+
 def money(n):
     return "$" + format(n, ",d")
 
@@ -69,6 +92,7 @@ TEMPLATE = r"""<!-- wp:html -->
 @media(max-width:560px){.aa-rd .h1{font-size:40px!important}.aa-rd .h2{font-size:32px!important}}
 </style>
 <div class="aa-rd" id="top">
+%%SCHEMA%%
 
   <!-- MASTHEAD -->
   <div style="border-bottom:1px solid #DCEAEA">
@@ -531,8 +555,8 @@ def build_modules(mods):
 def build_nav_panel(courses):
     """Training mega-dropdown: SAFe column + AI-Native column, links to /<slug>/."""
     def link(c):
-        return ('<a class="nav-l" href="/%s/">%s<span class="nc">%s</span></a>'
-                % (c["slug"], c["title"].replace("&reg;", "").split(" (")[0].strip(), c["code"]))
+        return ('<a class="nav-l" href="%s">%s<span class="nc">%s</span></a>'
+                % (course_url(c["code"]), c["title"].replace("&reg;", "").split(" (")[0].strip(), c["code"]))
     safe = "".join(link(c) for c in courses if c["track"] == "safe")
     ai = "".join(link(c) for c in courses if c["track"] == "ai")
     return (
@@ -548,10 +572,43 @@ def build_badge_row(courses, current_slug):
     for c in courses:
         here = " badge-here" if c["slug"] == current_slug else ""
         out.append(
-            '<a href="/%s/" title="%s"><span class="badge badge-lg%s"><b>%s</b><i>CERT</i></span></a>'
-            % (c["slug"], c["title"].replace("&reg;", ""), here, c["code"])
+            '<a href="%s" title="%s"><span class="badge badge-lg%s"><b>%s</b><i>CERT</i></span></a>'
+            % (course_url(c["code"]), c["title"].replace("&reg;", ""), here, c["code"])
         )
     return "".join(out)
+
+
+def meta_description(c):
+    """~155-char SEO meta description from the hero summary."""
+    import re as _re
+    txt = _re.sub(r"<[^>]+>", "", c["hero_sub"])
+    txt = txt.replace("&mdash;", "—").replace("&amp;", "&").replace("&reg;", "®")
+    txt = _re.sub(r"\s+", " ", txt).strip()
+    return (txt[:152].rstrip() + "…") if len(txt) > 155 else txt
+
+
+def build_schema(c):
+    """schema.org Course JSON-LD for SEO + LLM discoverability."""
+    import json as _json
+    wp = SEO_MAP[c["code"]]["wp_title"].replace("®", "®")
+    days = c["duration"].split()[0]
+    workload = "P%sD" % days if days.isdigit() else "P1D"
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": wp,
+        "description": meta_description(c),
+        "provider": {"@type": "Organization", "name": "Agile Agilist",
+                      "sameAs": "https://agile-agilist.com"},
+        "url": "https://agile-agilist.com" + course_url(c["code"]),
+        "offers": {"@type": "Offer", "price": str(c["price"]), "priceCurrency": "USD",
+                    "category": "Paid", "availability": "https://schema.org/InStock"},
+        "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online",
+                               "courseWorkload": workload,
+                               "instructor": {"@type": "Person", "name": "Authorised SAFe Instructor (SPC/ASPC)"}},
+    }
+    return ('<script type="application/ld+json">%s</script>'
+            % _json.dumps(data, ensure_ascii=False))
 
 
 def render_course(c, nav_panel, all_courses):
@@ -564,6 +621,7 @@ def render_course(c, nav_panel, all_courses):
         html = re.sub(r"\n  <!-- FOOTER -->.*?\n  </footer>", "", html, flags=re.S)
     html = html.replace("%%NAV_PANEL%%", nav_panel)
     html = html.replace("%%BADGE_ROW%%", build_badge_row(all_courses, c["slug"]))
+    html = html.replace("%%SCHEMA%%", build_schema(c))
     repl = {
         "%%TITLE%%": c["title"],
         "%%CERT%%": c["cert"],
@@ -604,9 +662,15 @@ def main():
         fn = "course-%s.page.html" % c["slug"]
         with open(os.path.join(HERE, fn), "w") as f:
             f.write(html)
-        manifest.append({"slug": c["slug"], "title": c["title"], "file": fn, "bytes": len(html)})
-        print("wrote %-44s %6d bytes" % (fn, len(html)))
-    json.dump(manifest, open(os.path.join(HERE, "courses_manifest.json"), "w"), indent=2)
+        seo = SEO_MAP[c["code"]]
+        manifest.append({
+            "code": c["code"], "file": fn, "bytes": len(html),
+            "slug": seo["slug"], "section": seo["section"],
+            "wp_title": seo["wp_title"], "url": course_url(c["code"]),
+            "meta_description": meta_description(c),
+        })
+        print("wrote %-44s -> %-28s %6d bytes" % (fn, course_url(c["code"]), len(html)))
+    json.dump(manifest, open(os.path.join(HERE, "courses_publish.json"), "w"), indent=2)
     print("\n%d course pages generated." % len(manifest))
 
 
