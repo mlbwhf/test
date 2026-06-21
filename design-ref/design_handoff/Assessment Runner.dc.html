@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#FBFDFD;color:#0E3A44;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit;cursor:pointer}
+  ::selection{background:#0E3A44;color:#fff}
+  h1,h2,h3,blockquote{font-family:'Newsreader',Georgia,'Times New Roman',serif}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @keyframes aaLogoPop{0%{opacity:.85;transform:scale(.93)}55%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+  @keyframes fadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes barGrow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+  @media (prefers-reduced-motion:reduce){.aa-logo{animation:none!important}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#FBFDFD;display:flex;flex-direction:column">
+
+  <!-- NAV -->
+  <header style="border-bottom:1px solid #DCEAEA;background:#FBFDFD">
+    <nav style="max-width:1080px;margin:0 auto;padding:14px 30px;display:flex;align-items:center;gap:20px">
+      <a href="Assessments Landing.dc.html" aria-label="Agile Agilist home" class="aa-logo" style="display:block;height:36px;width:74px;flex:none;opacity:1;animation:aaLogoPop 1s cubic-bezier(.2,.7,.2,1) both"><img src="assets/logo-agile-agilist.png" alt="Agile Agilist" style="height:100%;width:100%;object-fit:contain;object-position:left center;display:block"></a>
+      <span class="mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#88A0A4;margin-left:6px">Agile Competency Diagnostic</span>
+      <a href="Assessments Landing.dc.html" style="margin-left:auto;font-size:13.5px;font-weight:600;color:#5E7378" style-hover="color:#127E88">✕ Exit</a>
+    </nav>
+  </header>
+
+  <!-- PROGRESS (quiz only) -->
+  <sc-if value="{{ inQuiz }}" hint-placeholder-val="{{ false }}">
+  <div style="height:3px;background:#E6F3F3"><div style="height:100%;background:#127E88;width:{{ progressPct }};transition:width .35s cubic-bezier(.4,0,.2,1)"></div></div>
+  </sc-if>
+
+  <main style="flex:1;display:flex;flex-direction:column">
+
+  <!-- ===== INTRO ===== -->
+  <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ true }}">
+  <section style="max-width:1080px;margin:0 auto;width:100%;padding:60px 30px;flex:1">
+    <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88">Free diagnostic · ~6 minutes · No login</div>
+    <h1 style="font-weight:400;font-size:64px;line-height:1.0;letter-spacing:-.03em;color:#0E3A44;margin-top:18px;max-width:820px;text-wrap:balance">Are you <span style="font-style:italic;color:#127E88">actually agile</span> — or just running the ceremonies?</h1>
+    <p style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:23px;line-height:1.42;color:#3C565E;max-width:660px;margin-top:22px">Twelve honest statements across six capability dimensions. Rate each one, and get an instant maturity read with the single move that will move you furthest.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);margin-top:42px;border-top:1px solid #0E3A44;border-left:1px solid #DCEAEA;max-width:820px">
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">01</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Team Agility</div></div>
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">02</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Technical Excellence</div></div>
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">03</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Product Thinking</div></div>
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">04</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Flow &amp; Delivery</div></div>
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">05</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Leadership &amp; Culture</div></div>
+      <div style="padding:20px 22px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA"><div class="mono" style="font-size:10.5px;color:#88A0A4;letter-spacing:.04em">06</div><div style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:19px;color:#0E3A44;margin-top:4px">Continuous Improvement</div></div>
+    </div>
+
+    <button type="button" onClick="{{ start }}" style="margin-top:36px;font-size:16px;font-weight:600;color:#fff;background:#0E3A44;border:none;padding:16px 30px;border-radius:2px" style-hover="background:#127E88">Begin the diagnostic ⟶</button>
+    <p class="mono" style="font-size:11px;letter-spacing:.03em;color:#88A0A4;margin-top:14px">Your answers stay in your browser. Nothing is submitted until you choose to.</p>
+  </section>
+  </sc-if>
+
+  <!-- ===== QUIZ ===== -->
+  <sc-if value="{{ inQuiz }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:780px;margin:0 auto;width:100%;padding:48px 30px 60px;flex:1;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <span class="mono" style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#127E88">{{ qDimension }}</span>
+      <span class="mono" style="font-size:11.5px;letter-spacing:.06em;color:#88A0A4">{{ qNumber }} / {{ qTotal }}</span>
+    </div>
+    <h2 key="q-{{ qIndex }}" style="font-weight:400;font-size:42px;line-height:1.14;letter-spacing:-.02em;color:#0E3A44;margin-top:22px;min-height:140px;animation:fadeUp .35s ease both">{{ qText }}</h2>
+
+    <div key="opts-{{ qIndex }}" style="display:flex;flex-direction:column;gap:10px;margin-top:14px;animation:fadeUp .35s ease .05s both">
+      <sc-for list="{{ options }}" as="opt" hint-placeholder-count="5">
+        <button type="button" onClick="{{ opt.onPick }}" style="{{ opt.style }}">
+          <span style="display:flex;align-items:center;gap:14px"><span style="{{ opt.dotStyle }}"></span>{{ opt.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:32px">
+      <button type="button" onClick="{{ back }}" style="{{ backStyle }}">← Back</button>
+      <span class="mono" style="font-size:11px;letter-spacing:.04em;color:#88A0A4">Pick a rating to continue</span>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== RESULT ===== -->
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1080px;margin:0 auto;width:100%;padding:54px 30px 70px;flex:1">
+    <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88">Your result · Agile Competency</div>
+    <div style="display:grid;grid-template-columns:.85fr 1.15fr;gap:54px;margin-top:20px;align-items:start">
+      <!-- overall -->
+      <div style="animation:fadeUp .4s ease both">
+        <div style="font-family:'Newsreader',Georgia,serif;font-size:128px;line-height:.9;letter-spacing:-.04em;color:#0E3A44">{{ overallPct }}</div>
+        <div style="display:inline-block;margin-top:14px;font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:30px;color:#127E88">{{ overallLevel }}</div>
+        <p style="font-size:15.5px;line-height:1.6;color:#3C565E;margin-top:16px;max-width:360px">{{ overallBlurb }}</p>
+        <div style="margin-top:24px;border:1px solid #0E3A44;background:#0B2E35;color:#E4F1F1;padding:24px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-50px;right:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.22),transparent 66%)"></div>
+          <div class="mono" style="position:relative;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#8FCFCF">Your recommended next move</div>
+          <h3 style="position:relative;font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:24px;color:#fff;margin-top:8px">{{ recTitle }}</h3>
+          <p style="position:relative;font-size:13.5px;line-height:1.55;color:#A7C2C2;margin-top:8px">{{ recBlurb }}</p>
+          <a href="Training Landing.dc.html" style="position:relative;display:inline-block;margin-top:16px;font-size:14px;font-weight:600;color:#0B2E35;background:#8FCFCF;padding:12px 20px;border-radius:2px" style-hover="background:#fff">{{ recCta }} ⟶</a>
+        </div>
+      </div>
+      <!-- dimension bars -->
+      <div style="border-top:1px solid #0E3A44;animation:fadeUp .4s ease .08s both">
+        <sc-for list="{{ results }}" as="r" hint-placeholder-count="6">
+          <div style="padding:18px 0;border-bottom:1px solid #DCEAEA">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:nowrap">
+              <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:20px;color:#0E3A44;white-space:nowrap">{{ r.name }}</span>
+              <span style="display:flex;align-items:baseline;gap:10px;flex:none"><span class="mono" style="font-size:11px;letter-spacing:.04em;color:#88A0A4">{{ r.levelLabel }}</span><span style="font-family:'Newsreader',Georgia,serif;font-size:22px;color:#0E3A44">{{ r.pctLabel }}</span></span>
+            </div>
+            <div style="height:8px;background:#E6F3F3;margin-top:10px;overflow:hidden"><div style="{{ r.barStyle }}"></div></div>
+          </div>
+        </sc-for>
+        <div style="display:flex;gap:12px;margin-top:26px;flex-wrap:wrap">
+          <button type="button" onClick="{{ restart }}" style="font-size:14.5px;font-weight:600;color:#0E3A44;background:#fff;border:1px solid #C7DEDE;padding:13px 22px;border-radius:2px" style-hover="border-color:#0E3A44">↻ Retake</button>
+          <a href="#" style="font-size:14.5px;font-weight:600;color:#fff;background:#0E3A44;padding:13px 22px;border-radius:2px" style-hover="background:#127E88">Email me my results</a>
+          <a href="#" style="font-size:14.5px;font-weight:600;color:#0E3A44;padding:13px 22px;border-radius:2px;border:1px solid #C7DEDE" style-hover="border-color:#0E3A44">Book a consult</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  </main>
+
+  <footer style="border-top:1px solid #DCEAEA;background:#FBFDFD">
+    <div class="mono" style="max-width:1080px;margin:0 auto;padding:18px 30px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:.04em;color:#88A0A4">
+      <span>Agile Agilist · SAFe® Gold Partner</span>
+      <span>Built on the SAFe core competencies</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:840}}">
+class Component extends DCLogic {
+  state = { stage: 'intro', idx: 0, answers: [] };
+
+  questions() {
+    return [
+      { dim: 'Team Agility', text: 'Our teams self-organise and decide how best to do their own work.' },
+      { dim: 'Team Agility', text: 'We deliver a working, integrated increment at a predictable cadence.' },
+      { dim: 'Technical Excellence', text: 'Automated tests and continuous integration cover most of our codebase.' },
+      { dim: 'Technical Excellence', text: 'We can release to production on demand, with low risk and little drama.' },
+      { dim: 'Product Thinking', text: 'Work is prioritised by customer value and outcomes, not raw output.' },
+      { dim: 'Product Thinking', text: 'We validate ideas with real users before building them at scale.' },
+      { dim: 'Flow & Delivery', text: 'We limit work-in-progress and make our flow of work visible.' },
+      { dim: 'Flow & Delivery', text: 'Hand-offs and cross-team dependencies rarely block our delivery.' },
+      { dim: 'Leadership & Culture', text: 'Leaders coach and remove impediments rather than assign tasks.' },
+      { dim: 'Leadership & Culture', text: "It's safe here to surface problems, disagree, and admit mistakes." },
+      { dim: 'Continuous Improvement', text: 'Our retrospectives reliably lead to changes that actually stick.' },
+      { dim: 'Continuous Improvement', text: 'We measure outcomes and use the data to decide what to improve.' },
+    ];
+  }
+
+  scale() {
+    return [
+      { label: 'Strongly disagree', value: 1 },
+      { label: 'Disagree', value: 2 },
+      { label: 'Neutral', value: 3 },
+      { label: 'Agree', value: 4 },
+      { label: 'Strongly agree', value: 5 },
+    ];
+  }
+
+  levelFor(p) {
+    if (p >= 80) return 'Leading';
+    if (p >= 60) return 'Maturing';
+    if (p >= 40) return 'Developing';
+    return 'Forming';
+  }
+
+  pick(value) {
+    const answers = this.state.answers.slice();
+    answers[this.state.idx] = value;
+    const last = this.state.idx >= this.questions().length - 1;
+    if (last) {
+      this.setState({ answers, stage: 'result' });
+    } else {
+      this.setState({ answers, idx: this.state.idx + 1 });
+    }
+  }
+
+  computeResults() {
+    const qs = this.questions();
+    const groups = {};
+    qs.forEach((q, i) => {
+      (groups[q.dim] = groups[q.dim] || []).push(this.state.answers[i] || 0);
+    });
+    const order = ['Team Agility','Technical Excellence','Product Thinking','Flow & Delivery','Leadership & Culture','Continuous Improvement'];
+    const results = order.map((name) => {
+      const vals = groups[name] || [];
+      const pct = Math.round((vals.reduce((a,b)=>a+b,0) / (vals.length * 5)) * 100);
+      const level = this.levelFor(pct);
+      const color = pct >= 60 ? '#127E88' : (pct >= 40 ? '#3C9AA4' : '#C58A3D');
+      return {
+        name, pct,
+        pctLabel: pct + '%',
+        levelLabel: level.toUpperCase(),
+        barStyle: 'height:100%;width:' + pct + '%;background:' + color + ';transform-origin:left;animation:barGrow .6s cubic-bezier(.4,0,.2,1) both',
+      };
+    });
+    return results;
+  }
+
+  renderVals() {
+    const stage = this.state.stage;
+    const qs = this.questions();
+    const base = {
+      isIntro: stage === 'intro',
+      inQuiz: stage === 'quiz',
+      isResult: stage === 'result',
+      start: () => this.setState({ stage: 'quiz', idx: 0, answers: [] }),
+      restart: () => this.setState({ stage: 'intro', idx: 0, answers: [] }),
+    };
+
+    if (stage === 'quiz') {
+      const q = qs[this.state.idx];
+      const current = this.state.answers[this.state.idx];
+      const options = this.scale().map((o) => {
+        const on = current === o.value;
+        return {
+          label: o.label,
+          onPick: () => this.pick(o.value),
+          style: 'width:100%;text-align:left;padding:16px 20px;border-radius:2px;font-size:15.5px;font-weight:500;background:' + (on ? '#0E3A44' : '#fff') + ';color:' + (on ? '#fff' : '#0E3A44') + ';border:1px solid ' + (on ? '#0E3A44' : '#C7DEDE') + ';transition:all .15s ease',
+          dotStyle: 'width:14px;height:14px;border-radius:50%;flex:none;border:2px solid ' + (on ? '#8FCFCF' : '#BFD9D9') + ';background:' + (on ? '#8FCFCF' : 'transparent'),
+        };
+      });
+      return Object.assign(base, {
+        qDimension: q.dim,
+        qText: q.text,
+        qIndex: this.state.idx,
+        qNumber: this.state.idx + 1,
+        qTotal: qs.length,
+        progressPct: Math.round((this.state.idx / qs.length) * 100) + '%',
+        options,
+        back: () => this.state.idx > 0 && this.setState({ idx: this.state.idx - 1 }),
+        backStyle: 'font-size:14px;font-weight:600;padding:10px 4px;background:none;border:none;color:' + (this.state.idx > 0 ? '#5E7378' : '#C7DEDE'),
+      });
+    }
+
+    if (stage === 'result') {
+      const results = this.computeResults();
+      const overall = Math.round(results.reduce((a,r)=>a+r.pct,0) / results.length);
+      const level = this.levelFor(overall);
+      const lowest = results.slice().sort((a,b)=>a.pct-b.pct)[0];
+      const recMap = {
+        'Team Agility': { t:'SAFe® Scrum Master (SSM)', b:'Strengthen team-level facilitation, cadence, and self-organisation.', c:'Explore SSM' },
+        'Technical Excellence': { t:'Agile Software Engineering', b:'Build the test automation and CI/CD backbone that lets you release on demand.', c:'Explore ASE' },
+        'Product Thinking': { t:'Product Owner / Product Manager', b:'Prioritise by value and connect strategy to what your teams actually build.', c:'Explore POPM' },
+        'Flow & Delivery': { t:'Leading SAFe (SA)', b:'Learn to visualise flow, limit WIP, and break cross-team dependencies.', c:'Explore Leading SAFe' },
+        'Leadership & Culture': { t:'Lean-Agile Leadership', b:'Shift leaders from directing tasks to coaching teams and building safety.', c:'Explore Leadership' },
+        'Continuous Improvement': { t:'SAFe DevOps', b:'Close the loop with measurement, feedback, and relentless improvement.', c:'Explore DevOps' },
+      };
+      const rec = recMap[lowest.name];
+      const blurbMap = {
+        Forming: 'You have the vocabulary of agile but the mechanics are still forming. The fastest gains come from one focused capability.',
+        Developing: 'Solid foundations with clear gaps. Targeted training and coaching on your weakest dimension will compound quickly.',
+        Maturing: 'You are genuinely agile in most dimensions. Sharpen the remaining gaps to reach a leading level.',
+        Leading: 'You operate at a leading level. Focus now on sustaining the culture and mentoring others to scale it.',
+      };
+      return Object.assign(base, {
+        results,
+        overallPct: overall + '%',
+        overallLevel: level,
+        overallBlurb: blurbMap[level],
+        recTitle: rec.t,
+        recBlurb: 'Your lowest dimension is ' + lowest.name + ' (' + lowest.pct + '%). ' + rec.b,
+        recCta: rec.c,
+      });
+    }
+
+    return base;
+  }
+}
+</script>
+</body>
+</html>
