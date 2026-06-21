@@ -32,8 +32,8 @@ SECTIONS = [
 ]
 AI = ("AI-Native", "/training/ai-native/", "AI-Native Foundations — extend SAFe into the AI age",
       "/training/ai-native/ai-native-foundations/")
-TOP = [("Home", "/home-redesign/"), ("Assessments", "/assessments-redesign/"),
-       ("Services", "/services-redesign/"), ("Digital Transformation", "/service-digital-transformation/")]
+TOP = [("Home", "/"), ("Assessments", "/assessments/"),
+       ("Services", "/services/"), ("Digital Transformation", "/service-digital-transformation/")]
 
 CSS = """
 .aa-hd *{margin:0;padding:0;box-sizing:border-box}
@@ -156,7 +156,7 @@ def build():
         '<div class="aa-mega" id="aa-mega-tr" role="region" aria-label="Training menu"><div class="aa-mega-cols">%s</div>%s</div></li>'
         '%s'
         '</ul>'
-        '<div class="aa-actions"><a href="/services-redesign/" class="aa-act-t">Book a consult</a><a href="/training/" class="aa-act-c">View cohorts &rarr;</a></div>'
+        '<div class="aa-actions"><a href="/services/" class="aa-act-t">Book a consult</a><a href="/training/" class="aa-act-c">View cohorts &rarr;</a></div>'
         '</nav></header>\n'
         '<div class="aa-drawer" id="aa-drawer" hidden><ul class="aa-dl">'
         '<li><a href="%s">%s</a></li>'
