@@ -176,7 +176,7 @@ HERO_FN = r'''  function heroUpcoming(){
     var host=document.getElementById('aa-upcoming');
     if(host){
       var esc=function(s){ var x=document.createElement('div'); x.textContent=s||''; return x.innerHTML; };
-      var top=items.slice(0,4), html='<div class="aa-up-h">Upcoming classes</div>';
+      var top=items.slice(0,3), html='<div class="aa-up-h">Upcoming classes</div>';
       for(var k=0;k<top.length;k++){
         var it=top[k];
         var ext=it.href ? (it.href.charAt(0)!=='#') : false;
