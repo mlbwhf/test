@@ -241,13 +241,18 @@ add_action( 'init', 'rentnova_register_blueprint_block' );
 function rentnova_fallback_menu() {
 	echo '<ul id="rn-primary-menu" class="rn-menu">';
 	$items = array(
-		'Owners' => '#owners',
-		'Manage' => '#manage',
-		'Stays'  => '#stays',
-		'About'  => '#about',
+		__( 'Owners', 'rentnova' )  => home_url( '/owners/' ),
+		__( 'Stays', 'rentnova' )   => home_url( '/stays/' ),
+		__( 'About', 'rentnova' )   => home_url( '/about/' ),
+		__( 'Contact', 'rentnova' ) => home_url( '/contact/' ),
 	);
 	foreach ( $items as $label => $url ) {
 		printf( '<li><a href="%s">%s</a></li>', esc_url( $url ), esc_html( $label ) );
 	}
+	printf(
+		'<li><a class="rn-nav__cta" href="%s">%s</a></li>',
+		esc_url( home_url( '/contact/' ) ),
+		esc_html__( 'Free feasibility →', 'rentnova' )
+	);
 	echo '</ul>';
 }

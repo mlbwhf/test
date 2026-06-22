@@ -237,6 +237,51 @@ button { font: inherit; }
 .rn-footer__copy { font-size: 13px; color: #7f9384; }
 
 /* ============================================================
+   PAGES — shared patterns (Owners / About / Contact)
+   ============================================================ */
+
+/* Two-col narrative: body + side facts */
+.rn-narrative { display: grid; grid-template-columns: 1.4fr 1fr; gap: 60px; align-items: start; }
+.rn-narrative__body { font-size: 17px; line-height: 1.7; color: var(--rn-muted); max-width: 640px; }
+.rn-narrative__body h2 { font-family: var(--rn-font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: var(--rn-text); margin: 36px 0 14px; line-height: 1.1; }
+.rn-narrative__body h2:first-child { margin-top: 0; }
+.rn-narrative__body p { margin: 0 0 18px; }
+.rn-narrative__aside { background: var(--rn-paper2); border: 1px solid var(--rn-line); border-radius: 8px; padding: 28px; }
+.rn-narrative__aside dl { margin: 0; }
+.rn-narrative__aside dt { font-family: var(--rn-font-mono); font-size: 11px; color: var(--rn-terra); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+.rn-narrative__aside dd { margin: 0 0 18px; font-size: 15px; color: var(--rn-text); font-weight: 600; }
+.rn-narrative__aside dd:last-child { margin-bottom: 0; }
+
+/* Contact two-col: info + form */
+.rn-contact { display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: start; }
+.rn-contact__info { display: flex; flex-direction: column; }
+.rn-contact__row { padding: 18px 0; border-bottom: 1px solid var(--rn-line); }
+.rn-contact__row:last-child { border-bottom: none; }
+.rn-contact__label { font-family: var(--rn-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rn-terra); margin-bottom: 6px; }
+.rn-contact__val { font-size: 17px; font-weight: 600; color: var(--rn-text); }
+.rn-contact__val a { transition: color .15s ease; }
+.rn-contact__val a:hover { color: var(--rn-terra); }
+
+/* Form */
+.rn-form { background: var(--rn-paper2); border: 1px solid var(--rn-line); border-radius: 10px; padding: 32px; display: grid; gap: 16px; }
+.rn-form__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.rn-form__row { display: grid; gap: 6px; }
+.rn-form__row label { font-family: var(--rn-font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rn-muted); }
+.rn-form input, .rn-form textarea, .rn-form select { font: inherit; padding: 12px 14px; border: 1px solid var(--rn-line); border-radius: 4px; background: #fff; color: var(--rn-text); }
+.rn-form input:focus, .rn-form textarea:focus, .rn-form select:focus { outline: 2px solid var(--rn-terra); outline-offset: 2px; border-color: var(--rn-terra); }
+.rn-form textarea { min-height: 110px; resize: vertical; }
+.rn-form button { justify-self: start; margin-top: 6px; }
+
+/* Feature grid (Owners "what's included") */
+.rn-feat { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--rn-line); border-radius: 8px; overflow: hidden; background: #fff; }
+.rn-feat__row { padding: 24px; border-bottom: 1px solid var(--rn-line); border-right: 1px solid var(--rn-line); }
+.rn-feat__row:nth-child(2n) { border-right: none; }
+.rn-feat__row:nth-last-child(-n+2) { border-bottom: none; }
+.rn-feat__no { font-family: var(--rn-font-mono); font-size: 11px; color: var(--rn-terra); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+.rn-feat__t { font-family: var(--rn-font-display); font-size: 18px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 6px; color: var(--rn-text); }
+.rn-feat__p { font-size: 14.5px; line-height: 1.55; color: var(--rn-muted); margin: 0; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1100px) {
@@ -263,4 +308,11 @@ button { font: inherit; }
   .rn-head__note { text-align: left; }
   .rn-head .rn-h2 { font-size: 34px; }
   .rn-cta .rn-h2 { font-size: 34px; }
+  .rn-narrative, .rn-contact { grid-template-columns: 1fr; gap: 30px; }
+  .rn-form { padding: 24px; }
+  .rn-form__cols { grid-template-columns: 1fr; }
+  .rn-feat { grid-template-columns: 1fr; }
+  .rn-feat__row { border-right: none; }
+  .rn-feat__row:nth-last-child(-n+2) { border-bottom: 1px solid var(--rn-line); }
+  .rn-feat__row:last-child { border-bottom: none; }
 }
