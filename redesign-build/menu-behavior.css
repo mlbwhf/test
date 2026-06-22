@@ -1,0 +1,47 @@
+/* === AA MENU BEHAVIOR — Astra classic menu (desktop) ===
+   Adds interaction/animation to your existing navy/gold menu (colors unchanged).
+   Append to Customize > Additional CSS. Scoped to desktop so it won't affect the
+   mobile drawer. If a dropdown doesn't animate, your Astra submenu may use a
+   different class — right-click the open menu > Inspect, send me the markup, and
+   I'll adjust the selectors. */
+
+@media(min-width:922px){
+
+  /* 1) Sliding underline on top-level items */
+  .main-header-menu > .menu-item > .menu-link{position:relative}
+  .main-header-menu > .menu-item > .menu-link::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:#D4AF37;transform:scaleX(0);transform-origin:left;
+    transition:transform .2s ease;
+  }
+  .main-header-menu > .menu-item:hover > .menu-link::after,
+  .main-header-menu > .menu-item.current-menu-item > .menu-link::after{transform:scaleX(1)}
+
+  /* 2) Dropdown submenu = animated card (fade + slide in) */
+  .main-header-menu .sub-menu{
+    background:#fff !important;
+    border:1px solid #0A1929 !important;
+    border-radius:8px !important;
+    box-shadow:0 18px 50px -20px rgba(10,25,41,.45) !important;
+    padding:8px !important;
+    display:block !important;
+    opacity:0;visibility:hidden;transform:translateY(8px);pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+  }
+  .main-header-menu .menu-item-has-children:hover > .sub-menu,
+  .main-header-menu .menu-item-has-children:focus-within > .sub-menu{
+    opacity:1 !important;visibility:visible !important;transform:translateY(0) !important;pointer-events:auto;
+  }
+
+  /* 3) Submenu link hover highlight */
+  .main-header-menu .sub-menu .menu-link{border-radius:5px;transition:background .14s ease,color .14s ease}
+  .main-header-menu .sub-menu .menu-item:hover > .menu-link{
+    background:rgba(212,175,55,.12);color:#D4AF37 !important;
+  }
+
+  /* 4) Caret rotates when its dropdown opens */
+  .main-header-menu .ast-menu-toggle{transition:transform .2s ease}
+  .main-header-menu .menu-item-has-children:hover > .menu-link .ast-menu-toggle,
+  .main-header-menu .menu-item-has-children:hover > .ast-menu-toggle{transform:rotate(180deg)}
+}
+/* === END AA MENU BEHAVIOR === */
