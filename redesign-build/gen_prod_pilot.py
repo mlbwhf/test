@@ -135,36 +135,40 @@ DEMAND_NAV_FN = (
 
 
 HERO_FN = r'''  function heroUpcoming(){
-    var dateEl=null;
-    var spans=document.querySelectorAll('.aa-rd section .nr');
-    for(var i=0;i<spans.length;i++){ if(spans[i].textContent.trim()==='Next date'){ dateEl=spans[i]; break; } }
-    if(!dateEl) return;
-    function fmt(s){ if(!s) return null; var d=new Date(String(s).replace(' ','T')); if(isNaN(d.getTime())) return null; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-    function apply(items){
-      items=(items||[]).filter(function(v,i,a){ return v && a.indexOf(v)===i; });
-      if(!items.length) return;
-      var idx=0;
-      function show(){ dateEl.style.transition='opacity .3s'; dateEl.style.opacity='0'; setTimeout(function(){ dateEl.textContent=items[idx]; dateEl.style.opacity='1'; idx=(idx+1)%items.length; },300); }
-      show(); if(items.length>1) setInterval(show,3800);
+    /* Read the live [wp_events] (WP Event Aggregator) schedule already on the page
+       and (a) fill the hero 'Next date' with the soonest cohort, (b) build the
+       hero 'Upcoming classes' list. Plain-text dates only; no machine-readable attrs. */
+    var rows=document.querySelectorAll('.wpea_frontend_archive .archive-event');
+    if(!rows.length) return;
+    var items=[];
+    for(var i=0;i<rows.length;i++){
+      var ev=rows[i];
+      var mEl=ev.querySelector('.event_date .month'), dEl=ev.querySelector('.event_date .date');
+      if(!mEl||!dEl) continue;
+      var tEl=ev.querySelector('.event_title'), aEl=ev.querySelector('a.wpea-text-deco'), wEl=ev.querySelector('.widget_event_sdate');
+      items.push({ mon:(mEl.textContent||'').trim(), day:(dEl.textContent||'').trim(),
+        title:tEl?(tEl.textContent||'').trim():'', when:wEl?(wEl.textContent||'').replace(/\s+/g,' ').trim():'',
+        href:aEl?aEl.getAttribute('href'):null });
     }
-    function scrapeFallback(){
-      var nodes=document.querySelectorAll('time[datetime], .tribe-event-date-start, .tribe-events-calendar-list__event-datetime, [class*="event"] [class*="date"]');
-      var rx=/([A-Z][a-z]{2,8})\s+\d{1,2}(?:,?\s*\d{4})?/;
-      var out=[];
-      for(var i=0;i<nodes.length && out.length<6;i++){
-        var raw=(nodes[i].getAttribute && nodes[i].getAttribute('datetime')) || nodes[i].textContent || '';
-        var f=fmt(raw); if(!f){ var m=String(raw).match(rx); if(m) f=m[0]; }
-        if(f) out.push(f);
+    if(!items.length) return;
+    var spans=document.querySelectorAll('.aa-rd section .nr'), dateEl=null;
+    for(var j=0;j<spans.length;j++){ if(spans[j].textContent.trim()==='Next date'){ dateEl=spans[j]; break; } }
+    if(dateEl){ dateEl.textContent=items[0].mon+' '+items[0].day; }
+    var host=document.getElementById('aa-upcoming');
+    if(host){
+      var esc=function(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; };
+      var top=items.slice(0,4), html='<div class="aa-up-h">Upcoming classes</div>';
+      for(var k=0;k<top.length;k++){
+        var it=top[k];
+        var o=it.href?('<a href="'+esc(it.href)+'" target="_blank" rel="noopener" '):'<div ';
+        var c=it.href?'</a>':'</div>';
+        html+=o+'class="aa-up-row">'
+          +'<span class="aa-up-chip"><span class="aa-up-mon">'+esc(it.mon)+'</span><span class="aa-up-day">'+esc(it.day)+'</span></span>'
+          +'<span class="aa-up-meta"><span class="aa-up-title">'+esc(it.title)+'</span><span class="aa-up-when">'+esc(it.when)+'</span></span>'
+          +c;
       }
-      apply(out);
+      host.innerHTML=html; host.style.display='block';
     }
-    try {
-      var now=new Date().toISOString().slice(0,10)+' 00:00:00';
-      fetch('/wp-json/tribe/events/v1/events?per_page=8&start_date='+encodeURIComponent(now)+'&categories=sa',{headers:{'Accept':'application/json'}})
-        .then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(d){ var items=[]; if(d && d.events){ for(var i=0;i<d.events.length;i++){ var f=fmt(d.events[i].start_date||d.events[i].utc_start_date); if(f) items.push(f); } } if(items.length) apply(items); else scrapeFallback(); })
-        .catch(scrapeFallback);
-    } catch(e){ scrapeFallback(); }
   }
 '''
 
