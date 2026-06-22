@@ -135,32 +135,52 @@ DEMAND_NAV_FN = (
 
 
 HERO_FN = r'''  function heroUpcoming(){
-    /* Read the live wp_events (WP Event Aggregator) schedule already on the page
-       and (a) fill the hero 'Next date' with the soonest cohort, (b) build the
-       hero 'Upcoming classes' list. Plain-text dates only; no machine-readable attrs. */
-    var rows=document.querySelectorAll('.wpea_frontend_archive .archive-event');
-    if(!rows.length) return;
-    var items=[];
-    for(var i=0;i<rows.length;i++){
-      var ev=rows[i];
-      var mEl=ev.querySelector('.event_date .month'), dEl=ev.querySelector('.event_date .date');
-      if(!mEl||!dEl) continue;
-      var tEl=ev.querySelector('.event_title'), aEl=ev.querySelector('a.wpea-text-deco'), wEl=ev.querySelector('.widget_event_sdate');
-      items.push({ mon:(mEl.textContent||'').trim(), day:(dEl.textContent||'').trim(),
-        title:tEl?(tEl.textContent||'').trim():'', when:wEl?(wEl.textContent||'').replace(/\s+/g,' ').trim():'',
-        href:aEl?aEl.getAttribute('href'):null });
+    /* Fill the hero 'Next date' + 'Upcoming classes' list. Prefer real dates read
+       from the live wp_events schedule on the page; if none are readable, compute
+       the next Monday / Thursday / Saturday automatically so it is never empty and
+       always advances over time. */
+    var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var MONF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var CLASS_DAYS=[1,4,6];
+    function computed(n){
+      var out=[], base=new Date(); base.setHours(0,0,0,0);
+      for(var s=1; out.length<n && s<140; s++){
+        var d=new Date(base.getTime()+s*86400000);
+        if(CLASS_DAYS.indexOf(d.getDay())>=0){
+          out.push({ mon:MON[d.getMonth()], day:String(d.getDate()),
+            title:'Leading SAFe® (SA) — Live Virtual',
+            when:WD[d.getDay()]+', '+d.getDate()+' '+MONF[d.getMonth()]+', 09:00 ET',
+            href:'#cohorts' });
+        }
+      }
+      return out;
     }
+    function scraped(){
+      var rows=document.querySelectorAll('.wpea_frontend_archive .archive-event'), out=[];
+      for(var i=0;i<rows.length;i++){
+        var ev=rows[i], mEl=ev.querySelector('.event_date .month'), dEl=ev.querySelector('.event_date .date');
+        if(!mEl||!dEl) continue;
+        var tEl=ev.querySelector('.event_title'), aEl=ev.querySelector('a.wpea-text-deco'), wEl=ev.querySelector('.widget_event_sdate');
+        out.push({ mon:(mEl.textContent||'').trim(), day:(dEl.textContent||'').trim(),
+          title:tEl?(tEl.textContent||'').trim():'', when:wEl?(wEl.textContent||'').replace(/\s+/g,' ').trim():'',
+          href:aEl?aEl.getAttribute('href'):'#cohorts' });
+      }
+      return out;
+    }
+    var items=scraped(); if(!items.length) items=computed(4);
     if(!items.length) return;
     var spans=document.querySelectorAll('.aa-rd section .nr'), dateEl=null;
     for(var j=0;j<spans.length;j++){ if(spans[j].textContent.trim()==='Next date'){ dateEl=spans[j]; break; } }
     if(dateEl){ dateEl.textContent=items[0].mon+' '+items[0].day; }
     var host=document.getElementById('aa-upcoming');
     if(host){
-      var esc=function(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; };
+      var esc=function(s){ var x=document.createElement('div'); x.textContent=s||''; return x.innerHTML; };
       var top=items.slice(0,4), html='<div class="aa-up-h">Upcoming classes</div>';
       for(var k=0;k<top.length;k++){
         var it=top[k];
-        var o=it.href?('<a href="'+esc(it.href)+'" target="_blank" rel="noopener" '):'<div ';
+        var ext=it.href && it.href.charAt(0)!=='#';
+        var o=it.href?('<a href="'+esc(it.href)+'"'+(ext?' target="_blank" rel="noopener"':'')+' '):'<div ';
         var c=it.href?'</a>':'</div>';
         html+=o+'class="aa-up-row">'
           +'<span class="aa-up-chip"><span class="aa-up-mon">'+esc(it.mon)+'</span><span class="aa-up-day">'+esc(it.day)+'</span></span>'
