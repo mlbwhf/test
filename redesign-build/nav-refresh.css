@@ -1,0 +1,90 @@
+/* ============================================================================
+   Agile Agilist — Top navigation style refresh
+   Matches the course-page redesign (teal #127E88 accent, clean hover underline,
+   card-style dropdowns). STRUCTURE AND LINKS ARE UNCHANGED — this is style only.
+
+   HOW TO APPLY (site-wide): WP Admin → Appearance → Customize → Additional CSS
+   → paste this block → Publish. Affects every page; no page edits needed.
+
+   Targets both the block navigation ("Primary") and Astra's classic menu classes,
+   so it works whichever your header renders. If any selector doesn't bite, send me
+   a screenshot/markup of the header and I'll tighten it.
+   ============================================================================ */
+
+/* --- Top-level menu links --- */
+.wp-block-navigation .wp-block-navigation-item__content,
+.main-header-menu > .menu-item > a,
+.ast-nav-menu > .menu-item > a,
+.ast-builder-menu .menu-item > a {
+  color: #0E3A44;
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: .005em;
+  position: relative;
+  transition: color .16s ease;
+}
+
+/* Hover / focus / current page → teal */
+.wp-block-navigation .wp-block-navigation-item__content:hover,
+.wp-block-navigation .wp-block-navigation-item__content:focus,
+.wp-block-navigation .current-menu-item > .wp-block-navigation-item__content,
+.main-header-menu > .menu-item > a:hover,
+.ast-nav-menu > .menu-item > a:hover,
+.ast-nav-menu > .menu-item.current-menu-item > a,
+.ast-builder-menu .menu-item > a:hover {
+  color: #127E88 !important;
+}
+
+/* --- Animated underline under top-level items --- */
+.wp-block-navigation > ul > .wp-block-navigation-item > .wp-block-navigation-item__content::after,
+.main-header-menu > .menu-item > a::after,
+.ast-nav-menu > .menu-item > a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 2px;
+  background: #127E88;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .18s ease;
+}
+.wp-block-navigation > ul > .wp-block-navigation-item:hover > .wp-block-navigation-item__content::after,
+.main-header-menu > .menu-item:hover > a::after,
+.ast-nav-menu > .menu-item:hover > a::after {
+  transform: scaleX(1);
+}
+
+/* --- Dropdown / submenu panels: clean white card --- */
+.wp-block-navigation .wp-block-navigation__submenu-container,
+.main-header-menu .sub-menu,
+.ast-nav-menu .sub-menu {
+  background: #ffffff !important;
+  border: 1px solid #0E3A44 !important;
+  border-radius: 2px;
+  box-shadow: 0 22px 60px -24px rgba(8, 37, 43, .45) !important;
+  padding: 8px !important;
+}
+
+/* --- Submenu links --- */
+.wp-block-navigation__submenu-container .wp-block-navigation-item__content,
+.main-header-menu .sub-menu .menu-item > a,
+.ast-nav-menu .sub-menu .menu-item > a {
+  color: #3C565E !important;
+  font-size: 13.5px;
+  border-radius: 2px;
+  transition: background .14s ease, color .14s ease;
+}
+.wp-block-navigation__submenu-container .wp-block-navigation-item__content:hover,
+.main-header-menu .sub-menu .menu-item > a:hover,
+.ast-nav-menu .sub-menu .menu-item > a:hover {
+  background: #F1F8F8 !important;
+  color: #0E3A44 !important;
+}
+
+/* --- Header CTA / primary button, if present in the menu --- */
+.ast-button-wrap .ast-custom-button,
+.main-header-menu .menu-item .button {
+  background: #127E88 !important;
+  border-color: #127E88 !important;
+  border-radius: 2px !important;
+}
