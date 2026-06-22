@@ -22,6 +22,19 @@
 .aa-rd .btn-eb:hover{background:#0E3A44!important;color:#fff!important}
 .aa-rd .row-c:hover{background:#F1F8F8}
 .aa-rd .path-card:hover{border-color:#127E88!important}
+/* hero upcoming-classes list (auto from [wp_events]) */
+.aa-rd #aa-upcoming .aa-up-h{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#88A0A4;margin-bottom:10px}
+.aa-rd .aa-up-row{display:flex;gap:13px;align-items:center;padding:11px 13px;border:1px solid #DCEAEA;border-bottom:none;background:#fff;transition:background .14s}
+.aa-rd .aa-up-row:last-child{border-bottom:1px solid #DCEAEA}
+.aa-rd .aa-up-row:hover{background:#F1F8F8}
+.aa-rd .aa-up-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:50px;height:50px;background:#127E88;color:#fff;border-radius:2px;line-height:1;flex:none}
+.aa-rd .aa-up-mon{font-family:ui-monospace,Menlo,monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.aa-rd .aa-up-day{font-family:'Newsreader',Georgia,serif;font-size:21px;font-weight:500;margin-top:1px}
+.aa-rd .aa-up-meta{display:flex;flex-direction:column;min-width:0}
+.aa-rd .aa-up-title{font-size:13.5px;font-weight:600;color:#0E3A44;line-height:1.25}
+.aa-rd .aa-up-when{font-size:11.5px;color:#5E7378;margin-top:3px}
+/* hide the orphaned Eventbrite default (purple) checkout button injected by WP Event Aggregator */
+#wpea-eventbrite-checkout-trigger{display:none!important}
 .aa-rd input:focus{border-color:#127E88!important;background:#fff!important;outline:none}
 .aa-rd .step:hover{border-color:#127E88!important;color:#127E88!important}
 /* dropdown navigation */
@@ -109,6 +122,9 @@
           <div style="padding:22px 0 0 24px"><div class="nr" style="font-size:42px;color:#0E3A44;line-height:1">9</div><div class="mono" style="font-size:11px;color:#88A0A4;margin-top:6px;letter-spacing:.03em">LANGUAGES</div></div>
         </div>
       </div>
+
+      <!-- UPCOMING CLASSES (auto-filled from the [wp_events] schedule) -->
+      <div id="aa-upcoming" style="display:none;margin-bottom:18px"></div>
 
       <!-- ENROLLMENT CARD -->
       <div style="position:sticky;top:78px;border:1px solid #0E3A44;background:#fff">
