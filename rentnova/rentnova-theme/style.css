@@ -1,0 +1,266 @@
+/*
+Theme Name: RentNova Blueprint
+Theme URI: https://rent-nova.com/
+Author: RentNova
+Author URI: https://rent-nova.com/
+Description: Blueprint direction for RentNova — turn your residence into income. Homeowner-led theme with an animated architectural section-drawing hero, a three-track services model (Convert / Manage / Stay), a six-step pipeline, revenue-share messaging, and a Stays custom post type for direct-booking listings. Bold green + terracotta on warm paper.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.5
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: rentnova
+*/
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root {
+  --rn-ink: #16241b;       /* dark green */
+  --rn-ink2: #1a1a17;      /* near-black */
+  --rn-paper: #f1efe8;     /* warm paper */
+  --rn-paper2: #e9e5da;
+  --rn-terra: #c45e35;     /* terracotta */
+  --rn-sand: #e0a583;      /* light clay */
+  --rn-text: #1a1a17;
+  --rn-muted: #5a574c;
+  --rn-line: #d8d3c5;
+  --rn-line-dk: #2f4537;
+  --rn-mint: #8ba090;
+  --rn-font-sans: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --rn-font-display: 'Archivo', system-ui, sans-serif;
+  --rn-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --rn-max: 1320px;
+  --rn-pad: 56px;
+}
+
+/* ============================================================
+   RESET / BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--rn-font-sans);
+  color: var(--rn-text);
+  background: var(--rn-paper);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { margin: 0; }
+button { font: inherit; }
+
+.rn-shell { max-width: var(--rn-max); margin: 0 auto; }
+.rn-wrap { padding-left: var(--rn-pad); padding-right: var(--rn-pad); }
+
+.rn-btn {
+  display: inline-block;
+  font-size: 15px; font-weight: 700;
+  padding: 14px 24px; border-radius: 4px;
+  cursor: pointer; border: none;
+  transition: transform .15s ease, filter .15s ease;
+}
+.rn-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.rn-btn--terra { background: var(--rn-terra); color: #fff; }
+.rn-btn--dark  { background: var(--rn-ink2); color: #fff; }
+.rn-btn--ghost { border: 1.5px solid #4a5e4f; color: var(--rn-paper); }
+
+.rn-eyebrow {
+  font-family: var(--rn-font-mono);
+  font-size: 12px; letter-spacing: 0.16em;
+  color: var(--rn-terra); text-transform: uppercase;
+}
+
+/* ============================================================
+   HEADER / NAV
+   ============================================================ */
+.rn-header { background: var(--rn-ink); color: var(--rn-paper); }
+.rn-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px var(--rn-pad);
+  max-width: var(--rn-max); margin: 0 auto;
+}
+.rn-brand { display: flex; align-items: baseline; gap: 14px; }
+.rn-brand__name { font-family: var(--rn-font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.rn-brand__loc { font-family: var(--rn-font-mono); font-size: 11px; letter-spacing: 0.12em; color: #7f9384; text-transform: uppercase; }
+.rn-menu { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 600; list-style: none; margin: 0; padding: 0; }
+.rn-menu a { transition: color .15s ease; }
+.rn-menu a:hover { color: var(--rn-sand); }
+.rn-nav__cta { background: var(--rn-terra); color: #fff; padding: 11px 20px; border-radius: 4px; font-weight: 700; }
+.rn-burger { display: none; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.rn-hero { background: var(--rn-ink); color: var(--rn-paper); padding: 56px var(--rn-pad) 64px; }
+.rn-hero__inner { max-width: var(--rn-max); margin: 0 auto; }
+.rn-hero__grid { display: grid; grid-template-columns: 430px 1fr; gap: 52px; align-items: center; }
+.rn-hero__eyebrow { margin-bottom: 22px; }
+.rn-hero h1 {
+  font-family: var(--rn-font-display);
+  font-size: 74px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em;
+  margin-bottom: 22px;
+}
+.rn-hero h1 em { color: var(--rn-sand); font-style: normal; }
+.rn-hero__lead { font-size: 18px; line-height: 1.55; color: #c8d2c8; margin: 0 0 28px; max-width: 400px; }
+.rn-hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.rn-stats { display: flex; margin-top: 50px; border-top: 1px solid var(--rn-line-dk); }
+.rn-stat { flex: 1; padding: 24px 20px 0; border-right: 1px solid var(--rn-line-dk); }
+.rn-stat:last-child { border-right: none; }
+.rn-stat__n { font-family: var(--rn-font-display); font-size: 34px; font-weight: 800; }
+.rn-stat__l { font-size: 13px; color: var(--rn-mint); margin-top: 4px; }
+
+/* ---- Blueprint figure ---- */
+.rn-bp {
+  position: relative;
+  border: 1px solid #34493b;
+  background: #13201a;
+  background-image:
+    linear-gradient(rgba(234,229,214,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234,229,214,0.055) 1px, transparent 1px);
+  background-size: 34px 34px;
+  border-radius: 4px; padding: 8px; overflow: hidden;
+}
+.rn-bp__corner { position: absolute; width: 16px; height: 16px; }
+.rn-bp__corner--tl { top: 8px; left: 8px; border-left: 1px solid #6f8475; border-top: 1px solid #6f8475; }
+.rn-bp__corner--tr { top: 8px; right: 8px; border-right: 1px solid #6f8475; border-top: 1px solid #6f8475; }
+.rn-bp__corner--bl { bottom: 8px; left: 8px; border-left: 1px solid #6f8475; border-bottom: 1px solid #6f8475; }
+.rn-bp__corner--br { bottom: 8px; right: 8px; border-right: 1px solid #6f8475; border-bottom: 1px solid #6f8475; }
+.rn-bp svg { width: 100%; height: auto; display: block; }
+.rn-bp__tag {
+  position: absolute; top: 20px; left: 20px;
+  font-family: var(--rn-font-mono); font-size: 11px; letter-spacing: 0.1em;
+  color: var(--rn-sand); text-transform: uppercase; white-space: nowrap;
+  animation: rnFloatTag 4s ease-in-out infinite;
+}
+
+/* ---- Blueprint animations ---- */
+@keyframes rnDrawIn { to { stroke-dashoffset: 0; } }
+@keyframes rnFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rnFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rnScanY { 0% { transform: translateY(0); opacity: 0; } 8% { opacity: .55; } 70% { opacity: .55; } 100% { transform: translateY(560px); opacity: 0; } }
+@keyframes rnFloatTag { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+.rn-bp svg .rn-draw   { animation: rnDrawIn 1.7s ease forwards; }
+.rn-bp svg .rn-fade   { opacity: 0; animation: rnFadeIn .8s ease forwards; }
+.rn-bp svg .rn-fadeup { opacity: 0; animation: rnFadeUp .6s ease forwards; }
+.rn-bp svg .rn-scan   { animation: rnScanY 5s ease-in-out infinite 2.6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rn-bp svg * { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; transform: none !important; }
+  .rn-bp__tag { animation: none !important; }
+}
+
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
+.rn-section { padding: 64px var(--rn-pad); max-width: var(--rn-max); margin: 0 auto; }
+.rn-section--tight { padding-bottom: 0; }
+.rn-h2 { font-family: var(--rn-font-display); font-weight: 800; letter-spacing: -0.03em; }
+.rn-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; gap: 24px; }
+.rn-head .rn-h2 { font-size: 46px; line-height: 1.0; }
+.rn-head__note { font-size: 15px; color: var(--rn-muted); max-width: 280px; text-align: right; margin: 0; }
+
+/* ============================================================
+   TRACKS
+   ============================================================ */
+.rn-tracks { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--rn-line); }
+.rn-track { padding: 32px; border-right: 1px solid var(--rn-line); }
+.rn-track:last-child { border-right: none; }
+.rn-track--alt { background: var(--rn-paper2); }
+.rn-track__no { font-family: var(--rn-font-display); font-size: 15px; font-weight: 800; color: var(--rn-terra); margin-bottom: 18px; }
+.rn-track h3 { font-size: 23px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.01em; }
+.rn-track p { font-size: 15px; line-height: 1.55; color: var(--rn-muted); margin: 0 0 18px; }
+.rn-track__img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; background: var(--rn-paper2); }
+
+/* ============================================================
+   PIPELINE
+   ============================================================ */
+.rn-pipe-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+.rn-pipe-head .rn-h2 { font-size: 38px; }
+.rn-pipe-head span { font-size: 14px; color: var(--rn-muted); }
+.rn-pipe { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.rn-step { color: var(--rn-paper); padding: 20px 18px; border-radius: 6px; }
+.rn-step__no { font-family: var(--rn-font-mono); font-size: 12px; color: var(--rn-sand); margin-bottom: 24px; }
+.rn-step__l { font-size: 16px; font-weight: 700; }
+.rn-step--1 { background: #16241b; }
+.rn-step--2 { background: #1f3326; }
+.rn-step--3 { background: #284230; }
+.rn-step--4 { background: #31503b; }
+.rn-step--5 { background: #3a5e45; }
+.rn-step--6 { background: var(--rn-terra); }
+.rn-step--6 .rn-step__no { color: #f7d9c8; }
+
+/* ============================================================
+   REVENUE SHARE
+   ============================================================ */
+.rn-rev {
+  margin: 0 var(--rn-pad); max-width: calc(var(--rn-max) - var(--rn-pad) * 2);
+  margin-left: auto; margin-right: auto;
+  background: var(--rn-ink2); color: var(--rn-paper); border-radius: 10px;
+  padding: 48px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center;
+}
+.rn-rev .rn-h2 { font-size: 40px; line-height: 1.02; }
+.rn-rev .rn-h2 em { color: var(--rn-sand); font-style: normal; }
+.rn-rev p { font-size: 16px; line-height: 1.6; color: #c7c3b6; margin: 0; }
+
+/* ============================================================
+   STAYS
+   ============================================================ */
+.rn-stays { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.rn-stay { border: 1px solid var(--rn-line); border-radius: 8px; overflow: hidden; background: #fff; transition: transform .18s ease, box-shadow .18s ease; }
+.rn-stay:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(22,36,27,.12); }
+.rn-stay__img { width: 100%; height: 240px; object-fit: cover; background: var(--rn-paper2); }
+.rn-stay__body { padding: 22px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.rn-stay__loc { font-family: var(--rn-font-mono); font-size: 11px; color: #8a8576; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.rn-stay__name { font-size: 22px; font-weight: 800; }
+.rn-stay__meta { font-size: 14px; color: var(--rn-muted); margin-top: 4px; }
+.rn-stay__price { text-align: right; flex: none; }
+.rn-stay__price b { font-family: var(--rn-font-display); font-size: 26px; font-weight: 800; display: block; }
+.rn-stay__price span { font-size: 11px; color: #8a8576; }
+.rn-stays-link { font-size: 15px; font-weight: 700; color: var(--rn-terra); }
+
+/* ============================================================
+   CTA / FOOTER
+   ============================================================ */
+.rn-cta { background: var(--rn-terra); color: #fff; padding: 64px var(--rn-pad); text-align: center; }
+.rn-cta .rn-h2 { font-family: var(--rn-font-display); font-size: 48px; font-weight: 900; letter-spacing: -0.035em; line-height: 0.98; margin-bottom: 14px; }
+.rn-cta p { font-size: 17px; line-height: 1.5; opacity: 0.92; max-width: 560px; margin: 0 auto 28px; }
+
+.rn-footer { background: var(--rn-ink); color: var(--rn-paper); }
+.rn-footer__inner { padding: 30px var(--rn-pad); display: flex; justify-content: space-between; align-items: center; max-width: var(--rn-max); margin: 0 auto; flex-wrap: wrap; gap: 12px; }
+.rn-footer__name { font-family: var(--rn-font-display); font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+.rn-footer__copy { font-size: 13px; color: #7f9384; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .rn-hero__grid { grid-template-columns: 1fr; gap: 36px; }
+  .rn-hero h1 { font-size: 60px; }
+}
+@media (max-width: 860px) {
+  :root { --rn-pad: 28px; }
+  .rn-menu { display: none; }
+  .rn-burger { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; background: transparent; border: 1px solid #4a5e4f; border-radius: 4px; color: var(--rn-paper); cursor: pointer; }
+  .rn-menu.is-open { display: flex; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: flex-start; gap: 0; background: var(--rn-ink); padding: 8px 28px 20px; z-index: 40; }
+  .rn-menu.is-open li { width: 100%; padding: 12px 0; border-bottom: 1px solid var(--rn-line-dk); }
+  .rn-header { position: relative; }
+  .rn-hero h1 { font-size: 48px; }
+  .rn-stats { flex-wrap: wrap; }
+  .rn-stat { flex: 1 0 50%; border-bottom: 1px solid var(--rn-line-dk); }
+  .rn-tracks { grid-template-columns: 1fr; }
+  .rn-track { border-right: none; border-bottom: 1px solid var(--rn-line); }
+  .rn-pipe { grid-template-columns: repeat(2, 1fr); }
+  .rn-rev { grid-template-columns: 1fr; gap: 20px; padding: 32px; }
+  .rn-rev .rn-h2 { font-size: 30px; }
+  .rn-stays { grid-template-columns: 1fr; }
+  .rn-head { flex-direction: column; align-items: flex-start; }
+  .rn-head__note { text-align: left; }
+  .rn-head .rn-h2 { font-size: 34px; }
+  .rn-cta .rn-h2 { font-size: 34px; }
+}
