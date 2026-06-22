@@ -135,7 +135,7 @@ DEMAND_NAV_FN = (
 
 
 HERO_FN = r'''  function heroUpcoming(){
-    /* Read the live [wp_events] (WP Event Aggregator) schedule already on the page
+    /* Read the live wp_events (WP Event Aggregator) schedule already on the page
        and (a) fill the hero 'Next date' with the soonest cohort, (b) build the
        hero 'Upcoming classes' list. Plain-text dates only; no machine-readable attrs. */
     var rows=document.querySelectorAll('.wpea_frontend_archive .archive-event');
