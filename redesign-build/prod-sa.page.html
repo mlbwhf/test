@@ -222,7 +222,7 @@
 <!-- /wp:html -->
 
 <!-- wp:html -->
-<div class="aa-rd"><section style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:84px 30px 0"><div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 03 ) — Upcoming cohorts</div><h2 class="nr h2" style="font-weight:400;font-size:52px;line-height:1.02;letter-spacing:-.02em;color:#0E3A44;margin-top:14px">Pick a date.<br><span style="font-style:italic">Register your seat.</span></h2><p style="font-size:15px;line-height:1.6;color:#5E7378;margin-top:12px;max-width:560px">Live virtual classes — register via Eventbrite from the schedule below, or <a href="https://meetings.hubspot.com/john2795" style="color:#127E88;font-weight:600">book a call</a> for group rates &amp; private cohorts.</p></section></div>
+<div class="aa-rd"><section id="cohorts" style="width:100%;max-width:var(--aa-w,1340px);margin:0 auto;padding:84px 30px 0"><div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 03 ) — Upcoming cohorts</div><h2 class="nr h2" style="font-weight:400;font-size:52px;line-height:1.02;letter-spacing:-.02em;color:#0E3A44;margin-top:14px">Pick a date.<br><span style="font-style:italic">Register your seat.</span></h2><p style="font-size:15px;line-height:1.6;color:#5E7378;margin-top:12px;max-width:560px">Live virtual classes — register via Eventbrite from the schedule below, or <a href="https://meetings.hubspot.com/john2795" style="color:#127E88;font-weight:600">book a call</a> for group rates &amp; private cohorts.</p></section></div>
 <!-- /wp:html -->
 
 <!-- wp:shortcode -->
@@ -364,9 +364,42 @@
     var a=document.createElement('a'); a.id='aa-nav-demand'; a.href='#demand'; a.className='lnk'; a.textContent='In demand';
     if(ref && ref.nextSibling){ nav.insertBefore(a, ref.nextSibling); } else { nav.appendChild(a); }
   }
+  function heroUpcoming(){
+    var dateEl=null;
+    var spans=document.querySelectorAll('.aa-rd section .nr');
+    for(var i=0;i<spans.length;i++){ if(spans[i].textContent.trim()==='Next date'){ dateEl=spans[i]; break; } }
+    if(!dateEl) return;
+    function fmt(s){ if(!s) return null; var d=new Date(String(s).replace(' ','T')); if(isNaN(d.getTime())) return null; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+    function apply(items){
+      items=(items||[]).filter(function(v,i,a){ return v && a.indexOf(v)===i; });
+      if(!items.length) return;
+      var idx=0;
+      function show(){ dateEl.style.transition='opacity .3s'; dateEl.style.opacity='0'; setTimeout(function(){ dateEl.textContent=items[idx]; dateEl.style.opacity='1'; idx=(idx+1)%items.length; },300); }
+      show(); if(items.length>1) setInterval(show,3800);
+    }
+    function scrapeFallback(){
+      var nodes=document.querySelectorAll('time[datetime], .tribe-event-date-start, .tribe-events-calendar-list__event-datetime, [class*="event"] [class*="date"]');
+      var rx=/([A-Z][a-z]{2,8})\s+\d{1,2}(?:,?\s*\d{4})?/;
+      var out=[];
+      for(var i=0;i<nodes.length && out.length<6;i++){
+        var raw=(nodes[i].getAttribute && nodes[i].getAttribute('datetime')) || nodes[i].textContent || '';
+        var f=fmt(raw); if(!f){ var m=String(raw).match(rx); if(m) f=m[0]; }
+        if(f) out.push(f);
+      }
+      apply(out);
+    }
+    try {
+      var now=new Date().toISOString().slice(0,10)+' 00:00:00';
+      fetch('/wp-json/tribe/events/v1/events?per_page=8&start_date='+encodeURIComponent(now)+'&categories=sa',{headers:{'Accept':'application/json'}})
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){ var items=[]; if(d && d.events){ for(var i=0;i<d.events.length;i++){ var f=fmt(d.events[i].start_date||d.events[i].utc_start_date); if(f) items.push(f); } } if(items.length) apply(items); else scrapeFallback(); })
+        .catch(scrapeFallback);
+    } catch(e){ scrapeFallback(); }
+  }
   function init(){
     setHeaderOffset();
     addDemandNav();
+    heroUpcoming();
     window.addEventListener('resize',setHeaderOffset);
     window.addEventListener('load',setHeaderOffset);
     window.addEventListener('scroll',onScrollOffset,{passive:true});
