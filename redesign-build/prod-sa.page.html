@@ -328,11 +328,11 @@
   var EB_EVENT_ID = '1988473663255';
   var TRIGGERS = ['eb-trigger','eb-trigger-2','eb-trigger-3'];
   function wireEB(){
-    var ready = EB_EVENT_ID && EB_EVENT_ID.indexOf('REPLACE_') !== 0;
+    var ready = EB_EVENT_ID ? (EB_EVENT_ID.indexOf('REPLACE_') !== 0) : false;
     TRIGGERS.forEach(function(id){
       var el = document.getElementById(id);
       if(!el) return;
-      if(ready && window.EBWidgets){
+      if(ready ? window.EBWidgets : false){
         window.EBWidgets.createWidget({ widgetType:'checkout', eventId:EB_EVENT_ID, modal:true, modalTriggerElementId:id });
       } else {
         el.addEventListener('click', function(e){
@@ -362,7 +362,7 @@
       if(!el) continue;
       var cs=getComputedStyle(el);
       var h=el.getBoundingClientRect().height;
-      if((cs.position==='fixed'||cs.position==='sticky') && h>0){
+      if((cs.position==='fixed'||cs.position==='sticky') ? h>0 : false){
         off=Math.round(h);
         var z=parseInt(cs.zIndex,10); if(!isNaN(z)) hz=z;
         break;
@@ -371,7 +371,7 @@
     document.documentElement.style.setProperty('--aa-top', off+'px');
     /* keep our course bar just under the theme header so Astra menu dropdowns win */
     var bar=document.querySelector('.aa-rd .aa-coursebar');
-    if(bar && hz!==null){ bar.style.zIndex=String(Math.max(1,hz-1)); }
+    if(bar ? hz!==null : false){ bar.style.zIndex=String(Math.max(1,hz-1)); }
   }
   var _offTick=false;
   function onScrollOffset(){ if(!_offTick){ _offTick=true; requestAnimationFrame(function(){ setHeaderOffset(); _offTick=false; }); } }
@@ -380,7 +380,7 @@
     if(!nav || document.getElementById('aa-nav-demand')) return;
     var ref=nav.querySelector('a[href="#included"]');
     var a=document.createElement('a'); a.id='aa-nav-demand'; a.href='#demand'; a.className='lnk'; a.textContent='In demand';
-    if(ref && ref.nextSibling){ nav.insertBefore(a, ref.nextSibling); } else { nav.appendChild(a); }
+    if(ref ? ref.nextSibling : false){ nav.insertBefore(a, ref.nextSibling); } else { nav.appendChild(a); }
   }
   function heroUpcoming(){
     /* Fill the hero 'Next date' + 'Upcoming classes' list. Prefer real dates read
@@ -393,7 +393,7 @@
     var CLASS_DAYS=[1,4,6];
     function computed(n){
       var out=[], base=new Date(); base.setHours(0,0,0,0);
-      for(var s=1; out.length<n && s<140; s++){
+      for(var s=1; (out.length<n)?(s<140):false; s++){
         var d=new Date(base.getTime()+s*86400000);
         if(CLASS_DAYS.indexOf(d.getDay())>=0){
           out.push({ mon:MON[d.getMonth()], day:String(d.getDate()),
@@ -427,7 +427,7 @@
       var top=items.slice(0,4), html='<div class="aa-up-h">Upcoming classes</div>';
       for(var k=0;k<top.length;k++){
         var it=top[k];
-        var ext=it.href && it.href.charAt(0)!=='#';
+        var ext=it.href ? (it.href.charAt(0)!=='#') : false;
         var o=it.href?('<a href="'+esc(it.href)+'"'+(ext?' target="_blank" rel="noopener"':'')+' '):'<div ';
         var c=it.href?'</a>':'</div>';
         html+=o+'class="aa-up-row">'

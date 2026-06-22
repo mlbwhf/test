@@ -429,11 +429,11 @@
   var EB_EVENT_ID = 'REPLACE_WITH_EVENTBRITE_EVENT_ID';
   var TRIGGERS = ['eb-trigger','eb-trigger-2','eb-trigger-3'];
   function wireEB(){
-    var ready = EB_EVENT_ID && EB_EVENT_ID.indexOf('REPLACE_') !== 0;
+    var ready = EB_EVENT_ID ? (EB_EVENT_ID.indexOf('REPLACE_') !== 0) : false;
     TRIGGERS.forEach(function(id){
       var el = document.getElementById(id);
       if(!el) return;
-      if(ready && window.EBWidgets){
+      if(ready ? window.EBWidgets : false){
         window.EBWidgets.createWidget({ widgetType:'checkout', eventId:EB_EVENT_ID, modal:true, modalTriggerElementId:id });
       } else {
         el.addEventListener('click', function(e){
@@ -463,7 +463,7 @@
       if(!el) continue;
       var cs=getComputedStyle(el);
       var h=el.getBoundingClientRect().height;
-      if((cs.position==='fixed'||cs.position==='sticky') && h>0){
+      if((cs.position==='fixed'||cs.position==='sticky') ? h>0 : false){
         off=Math.round(h);
         var z=parseInt(cs.zIndex,10); if(!isNaN(z)) hz=z;
         break;
@@ -472,7 +472,7 @@
     document.documentElement.style.setProperty('--aa-top', off+'px');
     /* keep our course bar just under the theme header so Astra menu dropdowns win */
     var bar=document.querySelector('.aa-rd .aa-coursebar');
-    if(bar && hz!==null){ bar.style.zIndex=String(Math.max(1,hz-1)); }
+    if(bar ? hz!==null : false){ bar.style.zIndex=String(Math.max(1,hz-1)); }
   }
   var _offTick=false;
   function onScrollOffset(){ if(!_offTick){ _offTick=true; requestAnimationFrame(function(){ setHeaderOffset(); _offTick=false; }); } }
