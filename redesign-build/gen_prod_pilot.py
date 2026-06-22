@@ -22,7 +22,7 @@ def wrap_html(inner):
 
 def schedule_blocks(cat):
     intro = (
-        '<!-- wp:html -->\n<div class="aa-rd"><section style="width:100%;max-width:var(--aa-w,1340px);'
+        '<!-- wp:html -->\n<div class="aa-rd"><section id="cohorts" style="width:100%;max-width:var(--aa-w,1340px);'
         'margin:0 auto;padding:84px 30px 0">'
         '<div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">'
         '( 03 ) — Upcoming cohorts</div>'
@@ -134,6 +134,41 @@ DEMAND_NAV_FN = (
 )
 
 
+HERO_FN = r'''  function heroUpcoming(){
+    var dateEl=null;
+    var spans=document.querySelectorAll('.aa-rd section .nr');
+    for(var i=0;i<spans.length;i++){ if(spans[i].textContent.trim()==='Next date'){ dateEl=spans[i]; break; } }
+    if(!dateEl) return;
+    function fmt(s){ if(!s) return null; var d=new Date(String(s).replace(' ','T')); if(isNaN(d.getTime())) return null; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+    function apply(items){
+      items=(items||[]).filter(function(v,i,a){ return v && a.indexOf(v)===i; });
+      if(!items.length) return;
+      var idx=0;
+      function show(){ dateEl.style.transition='opacity .3s'; dateEl.style.opacity='0'; setTimeout(function(){ dateEl.textContent=items[idx]; dateEl.style.opacity='1'; idx=(idx+1)%items.length; },300); }
+      show(); if(items.length>1) setInterval(show,3800);
+    }
+    function scrapeFallback(){
+      var nodes=document.querySelectorAll('time[datetime], .tribe-event-date-start, .tribe-events-calendar-list__event-datetime, [class*="event"] [class*="date"]');
+      var rx=/([A-Z][a-z]{2,8})\s+\d{1,2}(?:,?\s*\d{4})?/;
+      var out=[];
+      for(var i=0;i<nodes.length && out.length<6;i++){
+        var raw=(nodes[i].getAttribute && nodes[i].getAttribute('datetime')) || nodes[i].textContent || '';
+        var f=fmt(raw); if(!f){ var m=String(raw).match(rx); if(m) f=m[0]; }
+        if(f) out.push(f);
+      }
+      apply(out);
+    }
+    try {
+      var now=new Date().toISOString().slice(0,10)+' 00:00:00';
+      fetch('/wp-json/tribe/events/v1/events?per_page=8&start_date='+encodeURIComponent(now)+'&categories=sa',{headers:{'Accept':'application/json'}})
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){ var items=[]; if(d && d.events){ for(var i=0;i<d.events.length;i++){ var f=fmt(d.events[i].start_date||d.events[i].utc_start_date); if(f) items.push(f); } } if(items.length) apply(items); else scrapeFallback(); })
+        .catch(scrapeFallback);
+    } catch(e){ scrapeFallback(); }
+  }
+'''
+
+
 def _stat(num, label):
     return (
         '<div style="padding:6px 0">'
@@ -232,10 +267,10 @@ def transform(code, fluent_id, eb_event_id):
     i_scripts = html.index('<script src="https://www.eventbrite.com')
     cta = html[i_cta:i_scripts]
     scripts = html[i_scripts:]
-    scripts = scripts.replace("  function init(){", DEMAND_NAV_FN + "  function init(){")
+    scripts = scripts.replace("  function init(){", DEMAND_NAV_FN + HERO_FN + "  function init(){")
     scripts = scripts.replace(
         "    setHeaderOffset();\n    window.addEventListener('resize',setHeaderOffset);",
-        "    setHeaderOffset();\n    addDemandNav();\n    window.addEventListener('resize',setHeaderOffset);")
+        "    setHeaderOffset();\n    addDemandNav();\n    heroUpcoming();\n    window.addEventListener('resize',setHeaderOffset);")
 
     block_head = html[:i_coh].rstrip() + "\n</div>\n<!-- /wp:html -->"
     block_demand = wrap_html(build_demand_sa())
