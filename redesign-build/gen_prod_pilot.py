@@ -129,7 +129,7 @@ DEMAND_NAV_FN = (
     "    if(!nav || document.getElementById('aa-nav-demand')) return;\n"
     "    var ref=nav.querySelector('a[href=\"#included\"]');\n"
     "    var a=document.createElement('a'); a.id='aa-nav-demand'; a.href='#demand'; a.className='lnk'; a.textContent='In demand';\n"
-    "    if(ref && ref.nextSibling){ nav.insertBefore(a, ref.nextSibling); } else { nav.appendChild(a); }\n"
+    "    if(ref ? ref.nextSibling : false){ nav.insertBefore(a, ref.nextSibling); } else { nav.appendChild(a); }\n"
     "  }\n"
 )
 
@@ -145,7 +145,7 @@ HERO_FN = r'''  function heroUpcoming(){
     var CLASS_DAYS=[1,4,6];
     function computed(n){
       var out=[], base=new Date(); base.setHours(0,0,0,0);
-      for(var s=1; out.length<n && s<140; s++){
+      for(var s=1; (out.length<n)?(s<140):false; s++){
         var d=new Date(base.getTime()+s*86400000);
         if(CLASS_DAYS.indexOf(d.getDay())>=0){
           out.push({ mon:MON[d.getMonth()], day:String(d.getDate()),
@@ -179,7 +179,7 @@ HERO_FN = r'''  function heroUpcoming(){
       var top=items.slice(0,4), html='<div class="aa-up-h">Upcoming classes</div>';
       for(var k=0;k<top.length;k++){
         var it=top[k];
-        var ext=it.href && it.href.charAt(0)!=='#';
+        var ext=it.href ? (it.href.charAt(0)!=='#') : false;
         var o=it.href?('<a href="'+esc(it.href)+'"'+(ext?' target="_blank" rel="noopener"':'')+' '):'<div ';
         var c=it.href?'</a>':'</div>';
         html+=o+'class="aa-up-row">'
