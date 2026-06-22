@@ -1,0 +1,36 @@
+/* === AA SCHEDULE LIST + CALENDAR — match the new SA design (teal) ===
+   Add this to Appearance > Customize > Additional CSS (or your WPCode CSS snippet).
+   These style the WP Event Aggregator list ([wp_events]) and the Easy Events
+   Calendar ([easy_events_calendar]) to match the redesigned course pages.
+   NOTE: applied site-wide; if your calendar/list also appears on a page that must
+   stay navy/gold, tell me and I'll scope these to the course page IDs. */
+
+/* --- WP Event Aggregator list ([wp_events]) --- */
+.wpea_frontend_archive{display:flex;flex-direction:column;width:100%;max-width:1100px;margin:18px auto 0;padding:0 30px}
+.wpea_frontend_archive .archive-event{width:100%;float:none !important;max-width:100% !important}
+.wpea_frontend_archive .wpea_widget{border:1px solid #DCEAEA;border-bottom:none;background:#fff;box-shadow:none !important;transition:background .14s}
+.wpea_frontend_archive .archive-event:last-child .wpea_widget{border-bottom:1px solid #DCEAEA}
+.wpea_frontend_archive .wpea_widget:hover{background:#F1F8F8}
+.wpea_frontend_archive .event_details{display:flex;align-items:center;gap:16px;padding:14px 18px;height:auto !important}
+.wpea_frontend_archive .event_date_style4{flex:none;margin:0 !important;padding:0 !important;background:none !important}
+.wpea_frontend_archive .event_date_style4 > div{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;height:56px;background:#127E88;color:#fff;border-radius:2px;line-height:1}
+.wpea_frontend_archive .event_date_style4 .month{font-family:ui-monospace,Menlo,monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#fff !important}
+.wpea_frontend_archive .event_date_style4 .date{font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:500;margin-top:2px;color:#fff !important}
+.wpea_frontend_archive .event_desc{flex:1;min-width:0}
+.wpea_frontend_archive a.wpea-text-deco{color:#0E3A44 !important;text-decoration:none}
+.wpea_frontend_archive .event_title{font-size:15px;font-weight:600;color:#0E3A44 !important;line-height:1.3}
+.wpea_frontend_archive .widget_event_sdate,.wpea_frontend_archive .wpea-text-limit{font-size:12.5px;color:#5E7378 !important;margin-top:4px !important;margin-bottom:0}
+.wpea_frontend_archive .widget_event_sdate i,.wpea_frontend_archive .wpea-text-limit i{color:#127E88;margin-right:6px}
+.wpea_frontend_archive nav.prev-next-posts a,.wpea_frontend_archive .prev-next-posts a{color:#127E88 !important;font-weight:600}
+
+/* --- Easy Events Calendar ([easy_events_calendar] / FullCalendar) --- */
+#xylusec-calendar-container{width:100%;max-width:1100px;margin:26px auto 0;padding:0 30px}
+#xylusec-calendar-container .xylusec-c-button{background:#fff !important;border:1px solid #C7DEDE !important;color:#3C565E !important;border-radius:2px !important;box-shadow:none !important}
+#xylusec-calendar-container .xylusec-c-button.active,#xylusec-calendar-container .xylusec-c-button:hover{background:#127E88 !important;border-color:#127E88 !important;color:#fff !important}
+#xylusec-calendar .fc-button-primary{background:#127E88 !important;border-color:#127E88 !important;box-shadow:none !important}
+#xylusec-calendar .fc-button-primary:hover,#xylusec-calendar .fc-button-primary:not(:disabled).fc-button-active{background:#0C5E66 !important;border-color:#0C5E66 !important}
+#xylusec-calendar .fc-event,#xylusec-calendar .fc-event-main,#xylusec-calendar .fc-daygrid-event{background:#127E88 !important;border-color:#127E88 !important;color:#fff !important}
+#xylusec-calendar .fc-daygrid-day.fc-day-today{background:#EAF6F7 !important}
+#xylusec-calendar .fc-col-header-cell-cushion,#xylusec-calendar .fc-daygrid-day-number{color:#0E3A44 !important;text-decoration:none}
+#xylusec-calendar a{color:#127E88}
+/* === END AA SCHEDULE LIST + CALENDAR === */
