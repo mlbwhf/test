@@ -1,0 +1,59 @@
+/* ===== AGILE AGILIST mega-menu header styles =====
+   Paste this whole block into: Customize > Additional CSS */
+
+.aa-meganav{--mn-teal:#127E88;--mn-ink:#0E3A44;--mn-navy:#0B2E35;--mn-mut:#88A0A4;--mn-line:#DCEAEA;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;width:100%}
+.aa-meganav *{box-sizing:border-box}
+.aa-meganav a{text-decoration:none;color:inherit}
+.aa-mn-bar{display:flex;align-items:center;gap:34px;width:100%;max-width:1340px;margin:0 auto;padding:0 30px;min-height:64px}
+.aa-mn-logo{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.04em;color:var(--mn-ink);font-weight:500}
+.aa-mn-logo b{color:var(--mn-teal);font-weight:700}
+.aa-mn-nav{display:flex;align-items:center;gap:28px}
+.aa-mn-link{position:relative;font-size:14.5px;font-weight:500;color:var(--mn-ink);padding:21px 0;transition:color .16s;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.aa-mn-link:hover{color:var(--mn-teal)}
+.aa-mn-caret{font-size:9px;color:var(--mn-mut);transition:transform .18s,color .18s}
+.aa-mn-has:hover .aa-mn-caret{transform:rotate(180deg);color:var(--mn-teal)}
+.aa-mn-trigger::after{content:"";position:absolute;left:0;right:0;bottom:14px;height:2px;background:var(--mn-teal);transform:scaleX(0);transform-origin:left;transition:transform .18s}
+.aa-mn-has:hover .aa-mn-trigger,.aa-mn-has:hover .aa-mn-trigger .aa-mn-caret{color:var(--mn-teal)}
+.aa-mn-has:hover .aa-mn-trigger::after{transform:scaleX(1)}
+.aa-mn-item{position:relative;display:flex;align-items:center}
+.aa-mn-panel{position:absolute;top:100%;left:0;width:760px;background:#fff;border:1px solid var(--mn-ink);
+  box-shadow:0 28px 70px -28px rgba(8,37,43,.5);opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .18s,transform .18s,visibility .18s;z-index:80}
+.aa-mn-has:hover .aa-mn-panel,.aa-mn-has:focus-within .aa-mn-panel{opacity:1;visibility:visible;transform:translateY(0)}
+.aa-mn-grid{display:grid;grid-template-columns:1fr 1fr}
+.aa-mn-cell{padding:24px 28px;border-right:1px solid var(--mn-line);border-bottom:1px solid var(--mn-line);display:flex;flex-direction:column;transition:background .14s}
+.aa-mn-cell:nth-child(2n){border-right:none}
+.aa-mn-cell:hover{background:#F1F8F8}
+.aa-mn-cap{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mn-teal)}
+.aa-mn-title{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:23px;color:var(--mn-ink);margin-top:9px}
+.aa-mn-desc{font-size:13px;color:#5E7378;margin-top:9px;line-height:1.5}
+.aa-mn-flag{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 28px;background:var(--mn-navy);position:relative;overflow:hidden}
+.aa-mn-flag::before{content:"";position:absolute;top:-40px;right:90px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(60,80,224,.45),transparent 70%)}
+.aa-mn-flag-txt{position:relative;display:flex;flex-direction:column}
+.aa-mn-cap-d{color:#8FCFCF}
+.aa-mn-title-d{color:#fff}
+.aa-mn-desc-d{color:#A7C2C2}
+.aa-mn-explore{position:relative;font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+.aa-mn-flag:hover .aa-mn-explore{color:#8FCFCF}
+.aa-mn-cta{margin-left:auto;display:flex;align-items:center;gap:20px}
+.aa-mn-consult{font-size:14px;font-weight:600;color:var(--mn-ink)}
+.aa-mn-consult:hover{color:var(--mn-teal)}
+.aa-mn-enroll{font-size:14px;font-weight:600;color:#fff;background:var(--mn-teal);padding:11px 20px;border-radius:2px;white-space:nowrap}
+.aa-mn-enroll:hover{background:#0C5E66}
+
+/* Stop the header from clipping the dropdown */
+.ast-primary-header-bar,.main-header-bar,.site-header,.ast-primary-header,.ast-header-bar{overflow:visible !important}
+
+/* Mobile fallback */
+@media(max-width:980px){
+  .aa-mn-bar{flex-wrap:wrap;gap:14px;min-height:0;padding:12px 18px}
+  .aa-mn-nav{flex-wrap:wrap;gap:16px;width:100%}
+  .aa-mn-link{padding:6px 0}
+  .aa-mn-trigger::after{display:none}
+  .aa-mn-panel{position:static;width:100%;opacity:1;visibility:visible;transform:none;border:none;box-shadow:none}
+  .aa-mn-grid{grid-template-columns:1fr}
+  .aa-mn-cell{border-right:none;padding:14px 0}
+  .aa-mn-flag{flex-direction:column;align-items:flex-start;gap:12px}
+  .aa-mn-cta{width:100%}
+}
