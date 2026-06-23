@@ -22,7 +22,7 @@ High-intent keywords to target:
 | Robo-Barista `/machines/` | `Brew-n-Chill Robo-Barista — Mini, Pro & Max \| Coffee + Ice Cream Robot` | `Compact to full robotic coffee + ice cream kiosks. Robo-Barista Mini, Pro and Max — matched to your footfall and budget. See specs.` |
 | How It Works `/how-it-works/` | `How the Robo-Barista Works — Install to First Cup \| Brew-n-Chill` | `Site survey to first cup: how a Brew-n-Chill Robo-Barista is installed, stocked and serviced — fully managed, no barista, coffee and ice cream.` |
 | Industries `/industries/` | `Coffee & Ice Cream Kiosks for Offices, Malls, Gyms, Hotels \| Brew-n-Chill` | `Automated Robo-Barista kiosks for offices, malls, cinemas, gyms, hotels, hospitals and campuses. See where coffee + ice cream performs best.` |
-| Pricing & ROI `/pricing-roi/` | `Robo-Barista Pricing & ROI — $120K vs a Café \| Brew-n-Chill` | `A staffed café costs ~$280K/yr in payroll. A $120K Robo-Barista needs zero baristas. See the savings, payback and maintenance options.` |
+| Pricing & ROI `/pricing-roi/` | `Robo-Barista Pricing & ROI — $75K vs a Café \| Brew-n-Chill` | `A staffed café costs ~$280K/yr in payroll. A $75K Robo-Barista needs zero baristas. See the savings, payback and maintenance options.` |
 | Our Coffee `/our-coffee/` | `Our Coffee & Ice Cream — Brew and Chill \| Brew-n-Chill` | `Specialty beans for the coffee, premium soft-serve for the chill. Brew-n-Chill recipes are dialled in for the Robo-Barista — café-grade every time.` |
 | About `/about/` | `About Brew-n-Chill — Coffee + Ice Cream Robo-Barista Partner` | `We pair the best automated coffee + ice cream technology with our own brand — turnkey Robo-Barista kiosks for businesses. Buy, lease or revenue-share.` |
 | FAQ `/faq/` | `Robo-Barista FAQ — Install, Cost, Coffee & Ice Cream \| Brew-n-Chill` | `Space, power, maintenance, payment, coffee + ice cream quality and contracts — common questions about the Brew-n-Chill Robo-Barista, answered.` |
@@ -44,7 +44,7 @@ Add via **Rank Math** or **Yoast** (most reliable; the REST API strips inline `<
 Make the site easy for ChatGPT, Claude, Perplexity, Google AI Overviews to quote:
 - **Lead with a one-sentence definition** on each page (entity + what it does) — done in hero/intro copy.
 - **Question-style H2/H3s** + concise answers (FAQ format) — high citation rate.
-- **Concrete numbers** stated plainly (60 sec, ~2 m², $120K, ~$280K/yr payroll, 12–18 mo payback).
+- **Concrete numbers** stated plainly (60 sec, ~2 m², $75K, ~$280K/yr payroll, 12–18 mo payback).
 - **Consistent entity name** "Brew-n-Chill Robo-Barista" so models bind the brand.
 - **Descriptive alt text** naming the product + action.
 - Publish **`/llms.txt`** at the site root (see `seo/llms.txt`) — a growing convention that gives LLMs a clean map of the site.

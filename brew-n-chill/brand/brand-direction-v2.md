@@ -70,6 +70,6 @@ Fastest paths: (a) set **Logo + Site Icon** in *wp-admin → Appearance → Cust
 2. Sticky **cream/white nav**, airier white/warm-white bands, lighter hero overlays.
 3. Add **ice cream / "Chill"** offering to Home, Machines, Our Coffee, Industries, FAQ.
 4. Rename machines to **Robo-Barista Mini / Pro / Max**.
-5. Pricing & ROI: **café-vs-Robo-Barista cost analysis** ($120K all-in vs ~$280K/yr payroll + $42K/mo opex; optional maintenance contract).
+5. Pricing & ROI: **café-vs-Robo-Barista cost analysis** ($75K all-in vs ~$280K/yr payroll + $42K/mo opex; optional maintenance contract).
 6. Real **phone/email/service area** in footer + contact.
 7. Embed the **two promo videos**; swap **real photos** into heroes/sections; set **logo + favicon**.
