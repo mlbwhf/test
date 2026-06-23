@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RentNova — Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="rentnova-theme/style.css">
+</head>
+<body>
+
+<header class="rn-header">
+  <nav class="rn-nav" aria-label="Primary">
+    <a class="rn-brand" href="./RentNova%20Blueprint.dc.html">
+      <span class="rn-brand__name">RentNova</span>
+      <span class="rn-brand__loc">Mississauga · GTA</span>
+    </a>
+    <ul id="rn-primary-menu" class="rn-menu">
+      <li><a href="owners.html">Owners</a></li>
+      <li><a href="#">Stays</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" aria-current="page">Contact</a></li>
+      <li><a class="rn-nav__cta" href="contact.html">Free feasibility →</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="content">
+
+  <section class="rn-hero" style="padding-bottom:48px;">
+    <div class="rn-hero__inner">
+      <div class="rn-eyebrow" style="margin-bottom:22px;">Contact</div>
+      <h1 style="font-size:64px;max-width:820px;">Send your address.<br>Get <em>real numbers</em> back.</h1>
+      <p class="rn-hero__lead" style="max-width:560px;">Thirty-minute feasibility call. Free. You'll leave with what your lot allows, what it could generate, and what it would cost — concrete figures, not ranges.</p>
+    </div>
+  </section>
+
+  <section class="rn-section">
+    <div class="rn-contact">
+
+      <div class="rn-contact__info">
+        <div class="rn-contact__row">
+          <div class="rn-contact__label">Email</div>
+          <div class="rn-contact__val"><a href="mailto:hello@rent-nova.com">hello@rent-nova.com</a></div>
+        </div>
+        <div class="rn-contact__row">
+          <div class="rn-contact__label">Phone</div>
+          <div class="rn-contact__val"><a href="tel:+19055550143">+1 (905) 555-0143</a></div>
+        </div>
+        <div class="rn-contact__row">
+          <div class="rn-contact__label">Where</div>
+          <div class="rn-contact__val">Mississauga · GTA west</div>
+        </div>
+        <div class="rn-contact__row">
+          <div class="rn-contact__label">Hours</div>
+          <div class="rn-contact__val">Mon–Fri · 9am–6pm ET</div>
+        </div>
+        <div class="rn-contact__row">
+          <div class="rn-contact__label">Response</div>
+          <div class="rn-contact__val">Within one business day</div>
+        </div>
+      </div>
+
+      <form class="rn-form" method="post" action="#">
+        <div class="rn-form__cols">
+          <div class="rn-form__row">
+            <label for="rn-name">Your name</label>
+            <input type="text" id="rn-name" name="rn_name" required autocomplete="name">
+          </div>
+          <div class="rn-form__row">
+            <label for="rn-email">Email</label>
+            <input type="email" id="rn-email" name="rn_email" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="rn-form__cols">
+          <div class="rn-form__row">
+            <label for="rn-phone">Phone (optional)</label>
+            <input type="tel" id="rn-phone" name="rn_phone" autocomplete="tel">
+          </div>
+          <div class="rn-form__row">
+            <label for="rn-goal">What you're after</label>
+            <select id="rn-goal" name="rn_goal">
+              <option value="convert">Convert my home</option>
+              <option value="manage">Manage an existing unit</option>
+              <option value="stay">Book a stay</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rn-form__row">
+          <label for="rn-address">Property address (optional)</label>
+          <input type="text" id="rn-address" name="rn_address" autocomplete="street-address" placeholder="Street, City, ON">
+        </div>
+
+        <div class="rn-form__row">
+          <label for="rn-msg">Anything we should know</label>
+          <textarea id="rn-msg" name="rn_msg" rows="4" placeholder="Lot size, basement situation, timeline…"></textarea>
+        </div>
+
+        <button type="submit" class="rn-btn rn-btn--terra">Send → book the call</button>
+      </form>
+
+    </div>
+  </section>
+
+  <section class="rn-cta">
+    <h2 class="rn-h2">Prefer to read first?<br>See <em>finished homes</em>.</h2>
+    <p>Browse the homes we converted and now run. Walk-throughs of the basement / main / garden split.</p>
+    <a class="rn-btn rn-btn--dark" href="#">View finished homes →</a>
+  </section>
+
+</main>
+
+<footer class="rn-footer">
+  <div class="rn-footer__inner">
+    <span class="rn-footer__name">RentNova</span>
+    <span class="rn-footer__copy">© 2026 RentNova · Mississauga &amp; the GTA</span>
+  </div>
+</footer>
+
+</body>
+</html>
