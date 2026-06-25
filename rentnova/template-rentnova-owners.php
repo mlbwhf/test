@@ -1,0 +1,350 @@
+<?php
+/**
+ * Template Name: RentNova Owners
+ *
+ * Drop-in Owners-page template for any existing WordPress theme.
+ * Self-contained: all CSS is scoped under `.rnbp` and printed inline,
+ * so it does NOT depend on your active theme's styles and will not
+ * leak styles into the rest of your site.
+ *
+ * HOW TO USE
+ * 1. Copy this file into your active theme (or child theme) folder,
+ *    e.g. wp-content/themes/<your-theme>/template-rentnova-owners.php
+ * 2. WordPress admin → Pages → Add New (title: "Owners", slug: "owners").
+ * 3. In Page Attributes → Template, choose "RentNova Owners".
+ * 4. Publish. The page renders inside your existing header/footer.
+ *
+ * Edit copy directly in the markup below.
+ *
+ * @package rentnova-dropin
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_header();
+?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ===== RentNova Owners — scoped drop-in styles ===== */
+.rnbp{
+  width:100vw; position:relative; left:50%; right:50%;
+  margin-left:-50vw; margin-right:-50vw;
+  --rn-ink:#16241b; --rn-ink2:#1a1a17; --rn-paper:#f1efe8; --rn-paper2:#e9e5da;
+  --rn-terra:#c45e35; --rn-sand:#e0a583; --rn-muted:#5a574c; --rn-line:#d8d3c5;
+  --rn-line-dk:#2f4537; --rn-mint:#8ba090; --rn-pad:56px; --rn-max:1320px;
+  font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  color:var(--rn-ink2); background:var(--rn-paper); line-height:1.5;
+  -webkit-font-smoothing:antialiased; box-sizing:border-box; overflow:hidden;
+}
+.rnbp *,.rnbp *::before,.rnbp *::after{ box-sizing:border-box; }
+.rnbp img{ max-width:100%; height:auto; display:block; }
+.rnbp h1,.rnbp h2,.rnbp h3{ margin:0; }
+.rnbp a{ color:inherit; text-decoration:none; }
+.rnbp__sec{ max-width:var(--rn-max); margin:0 auto; padding:64px var(--rn-pad); }
+.rnbp__eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; }
+.rnbp__btn{ display:inline-block; font-size:15px; font-weight:700; padding:14px 24px; border-radius:4px; cursor:pointer; border:none; transition:transform .15s ease,filter .15s ease; }
+.rnbp__btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+.rnbp__btn--terra{ background:var(--rn-terra); color:#fff; }
+.rnbp__btn--dark{ background:var(--rn-ink2); color:#fff; }
+.rnbp__btn--ghost{ border:1.5px solid #4a5e4f; color:var(--rn-paper); }
+.rnbp__h2{ font-family:'Archivo',sans-serif; font-weight:800; letter-spacing:-.03em; }
+
+/* hero */
+.rnbp__hero{ background:var(--rn-ink); color:var(--rn-paper); padding:56px var(--rn-pad) 64px; }
+.rnbp__hgrid{ display:grid; grid-template-columns:430px 1fr; gap:52px; align-items:center; max-width:var(--rn-max); margin:0 auto; }
+.rnbp__hero h1{ font-family:'Archivo',sans-serif; font-size:64px; font-weight:900; line-height:.92; letter-spacing:-.04em; margin:22px 0; }
+.rnbp__hero h1 em{ color:var(--rn-sand); font-style:normal; }
+.rnbp__lead{ font-size:18px; line-height:1.55; color:#c8d2c8; margin:0 0 28px; max-width:400px; }
+.rnbp__actions{ display:flex; gap:12px; flex-wrap:wrap; }
+.rnbp__stats{ display:flex; margin:50px auto 0; max-width:var(--rn-max); border-top:1px solid var(--rn-line-dk); }
+.rnbp__stat{ flex:1; padding:24px 20px 0; border-right:1px solid var(--rn-line-dk); }
+.rnbp__stat:last-child{ border-right:none; }
+.rnbp__stat b{ font-family:'Archivo',sans-serif; font-size:34px; font-weight:800; display:block; }
+.rnbp__stat span{ font-size:13px; color:var(--rn-mint); margin-top:4px; display:block; }
+
+/* blueprint figure */
+.rnbp__bp{ position:relative; border:1px solid #34493b; background:#13201a;
+  background-image:linear-gradient(rgba(234,229,214,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(234,229,214,.055) 1px,transparent 1px);
+  background-size:34px 34px; border-radius:4px; padding:8px; overflow:hidden; }
+.rnbp__corner{ position:absolute; width:16px; height:16px; }
+.rnbp__corner--tl{ top:8px; left:8px; border-left:1px solid #6f8475; border-top:1px solid #6f8475; }
+.rnbp__corner--tr{ top:8px; right:8px; border-right:1px solid #6f8475; border-top:1px solid #6f8475; }
+.rnbp__corner--bl{ bottom:8px; left:8px; border-left:1px solid #6f8475; border-bottom:1px solid #6f8475; }
+.rnbp__corner--br{ bottom:8px; right:8px; border-right:1px solid #6f8475; border-bottom:1px solid #6f8475; }
+.rnbp__bp svg{ width:100%; height:auto; display:block; }
+.rnbp__tag{ position:absolute; top:20px; left:20px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--rn-sand); text-transform:uppercase; white-space:nowrap; animation:rnbpFloat 4s ease-in-out infinite; }
+
+@keyframes rnbpDraw{ to{ stroke-dashoffset:0; } }
+@keyframes rnbpUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+@keyframes rnbpIn{ from{ opacity:0;} to{ opacity:1;} }
+@keyframes rnbpScan{ 0%{ transform:translateY(0); opacity:0;} 8%{ opacity:.55;} 70%{ opacity:.55;} 100%{ transform:translateY(560px); opacity:0;} }
+@keyframes rnbpFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-4px);} }
+@media (prefers-reduced-motion:reduce){
+  .rnbp__bp svg *{ animation:none!important; stroke-dashoffset:0!important; opacity:1!important; transform:none!important; }
+  .rnbp__tag{ animation:none!important; }
+}
+
+/* section heads */
+.rnbp__head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:36px; gap:24px; }
+.rnbp__head .rnbp__h2{ font-size:46px; line-height:1; }
+.rnbp__note{ font-size:15px; color:var(--rn-muted); max-width:280px; text-align:right; margin:0; }
+
+/* tracks */
+.rnbp__tracks{ display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--rn-line); }
+.rnbp__track{ padding:32px; border-right:1px solid var(--rn-line); }
+.rnbp__track:last-child{ border-right:none; }
+.rnbp__track--alt{ background:var(--rn-paper2); }
+.rnbp__track-no{ font-family:'Archivo',sans-serif; font-size:15px; font-weight:800; color:var(--rn-terra); margin-bottom:18px; }
+.rnbp__track h3{ font-size:23px; font-weight:800; margin-bottom:12px; letter-spacing:-.01em; }
+.rnbp__track p{ font-size:15px; line-height:1.55; color:var(--rn-muted); margin:0; }
+
+/* pipeline */
+.rnbp__pipehead{ display:flex; align-items:baseline; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+.rnbp__pipehead .rnbp__h2{ font-size:38px; }
+.rnbp__pipehead span{ font-size:14px; color:var(--rn-muted); }
+.rnbp__pipe{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.rnbp__step{ color:var(--rn-paper); padding:20px 18px; border-radius:6px; }
+.rnbp__step b{ font-size:16px; font-weight:700; display:block; }
+.rnbp__step i{ font-family:'IBM Plex Mono',monospace; font-style:normal; font-size:12px; color:var(--rn-sand); margin-bottom:24px; display:block; }
+.rnbp__step--1{ background:#16241b; } .rnbp__step--2{ background:#1f3326; } .rnbp__step--3{ background:#284230; }
+.rnbp__step--4{ background:#31503b; } .rnbp__step--5{ background:#3a5e45; } .rnbp__step--6{ background:var(--rn-terra); }
+.rnbp__step--6 i{ color:#f7d9c8; }
+
+/* feature grid (Owners "What's included") */
+.rnbp__feat{ display:grid; grid-template-columns:repeat(2,1fr); border:1px solid var(--rn-line); border-radius:8px; overflow:hidden; background:#fff; }
+.rnbp__feat-row{ padding:24px; border-bottom:1px solid var(--rn-line); border-right:1px solid var(--rn-line); }
+.rnbp__feat-row:nth-child(2n){ border-right:none; }
+.rnbp__feat-row:nth-last-child(-n+2){ border-bottom:none; }
+.rnbp__feat-no{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--rn-terra); letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px; }
+.rnbp__feat-t{ font-family:'Archivo',sans-serif; font-size:18px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px; color:var(--rn-ink2); }
+.rnbp__feat-p{ font-size:14.5px; line-height:1.55; color:var(--rn-muted); margin:0; }
+
+/* revenue */
+.rnbp__rev{ max-width:calc(var(--rn-max) - var(--rn-pad)*2); margin:0 auto; background:var(--rn-ink2); color:var(--rn-paper); border-radius:10px; padding:48px; display:grid; grid-template-columns:1.3fr 1fr; gap:40px; align-items:center; }
+.rnbp__rev .rnbp__h2{ font-size:40px; line-height:1.02; }
+.rnbp__rev .rnbp__h2 em{ color:var(--rn-sand); font-style:normal; }
+.rnbp__rev p{ font-size:16px; line-height:1.6; color:#c7c3b6; margin:0; }
+
+/* cta */
+.rnbp__cta{ background:var(--rn-terra); color:#fff; padding:64px var(--rn-pad); text-align:center; }
+.rnbp__cta .rnbp__h2{ font-size:48px; font-weight:900; letter-spacing:-.035em; line-height:.98; margin-bottom:14px; }
+.rnbp__cta p{ font-size:17px; line-height:1.5; opacity:.92; max-width:560px; margin:0 auto 28px; }
+
+@media (max-width:1100px){
+  .rnbp__hgrid{ grid-template-columns:1fr; gap:36px; }
+  .rnbp__hero h1{ font-size:60px; }
+}
+@media (max-width:860px){
+  .rnbp{ --rn-pad:28px; }
+  .rnbp__hero h1{ font-size:48px; }
+  .rnbp__stats{ flex-wrap:wrap; }
+  .rnbp__stat{ flex:1 0 50%; border-bottom:1px solid var(--rn-line-dk); }
+  .rnbp__tracks{ grid-template-columns:1fr; }
+  .rnbp__track{ border-right:none; border-bottom:1px solid var(--rn-line); }
+  .rnbp__pipe{ grid-template-columns:repeat(2,1fr); }
+  .rnbp__feat{ grid-template-columns:1fr; }
+  .rnbp__feat-row{ border-right:none; }
+  .rnbp__feat-row:nth-last-child(-n+2){ border-bottom:1px solid var(--rn-line); }
+  .rnbp__feat-row:last-child{ border-bottom:none; }
+  .rnbp__rev{ grid-template-columns:1fr; gap:20px; padding:32px; }
+  .rnbp__rev .rnbp__h2{ font-size:30px; }
+  .rnbp__head{ flex-direction:column; align-items:flex-start; }
+  .rnbp__note{ text-align:left; }
+  .rnbp__head .rnbp__h2{ font-size:34px; }
+  .rnbp__cta .rnbp__h2{ font-size:34px; }
+}
+</style>
+
+<div class="rnbp">
+
+	<!-- HERO -->
+	<section class="rnbp__hero" id="rnbp-owners-top">
+		<div class="rnbp__hgrid">
+			<div>
+				<div class="rnbp__eyebrow">For owners</div>
+				<h1>One home.<br>Two or three<br><em>legal income</em> units.</h1>
+				<p class="rnbp__lead">You own the lot. We turn it into a multi-unit asset — designed, built, furnished, listed and run by one team on a revenue-share. Statements monthly, no flat fees.</p>
+				<div class="rnbp__actions">
+					<a class="rnbp__btn rnbp__btn--terra" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Free feasibility →</a>
+					<a class="rnbp__btn rnbp__btn--ghost" href="<?php echo esc_url( home_url( '/stays/' ) ); ?>">See finished homes</a>
+				</div>
+			</div>
+
+			<!-- ANIMATED BLUEPRINT (same brand mark as homepage hero) -->
+			<div class="rnbp__bp">
+				<span class="rnbp__corner rnbp__corner--tl"></span>
+				<span class="rnbp__corner rnbp__corner--tr"></span>
+				<span class="rnbp__corner rnbp__corner--bl"></span>
+				<span class="rnbp__corner rnbp__corner--br"></span>
+				<svg viewBox="0 0 1200 730" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Architectural section: one lot converted into three legal units — basement suite, main residence, detached garden suite.">
+					<defs>
+						<marker id="rnbpoArr" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto"><path d="M1,1 L8,4.5 L1,8" fill="none" stroke="#cdd6cc" stroke-width="1"/></marker>
+						<pattern id="rnbpoHb" width="9" height="9" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="9" stroke="#eae5d6" stroke-width="1" stroke-opacity="0.30"/></pattern>
+						<pattern id="rnbpoHm" width="11" height="11" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="11" stroke="#eae5d6" stroke-width="1" stroke-opacity="0.16"/></pattern>
+						<pattern id="rnbpoHg" width="8" height="8" patternTransform="rotate(-45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="8" stroke="#e0a583" stroke-width="1" stroke-opacity="0.28"/></pattern>
+						<pattern id="rnbpoEarth" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M0,22 L22,0 M-4,4 L4,-4 M18,26 L26,18" stroke="#eae5d6" stroke-width="0.8" stroke-opacity="0.10"/></pattern>
+					</defs>
+					<rect x="180" y="520" width="760" height="150" fill="url(#rnbpoEarth)" style="opacity:0;animation:rnbpIn 1s ease forwards 1.1s;"/>
+					<rect x="260" y="520" width="360" height="120" fill="url(#rnbpoHb)" style="opacity:0;animation:rnbpIn .8s ease forwards 1.15s;"/>
+					<rect x="260" y="270" width="360" height="250" fill="url(#rnbpoHm)" style="opacity:0;animation:rnbpIn .8s ease forwards 1.3s;"/>
+					<path d="M690,520 L690,410 L775,360 L860,410 L860,520 Z" fill="url(#rnbpoHg)" style="opacity:0;animation:rnbpIn .8s ease forwards 1.45s;"/>
+					<g stroke="#eae5d6" fill="none" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+						<path d="M260,640 L260,270 L250,270 L440,150 L630,270 L620,270 L620,640 Z" style="stroke-dasharray:1500;stroke-dashoffset:1500;animation:rnbpDraw 1.7s ease forwards .05s;"/>
+						<path d="M260,520 L620,520" style="stroke-dasharray:380;stroke-dashoffset:380;animation:rnbpDraw .7s ease forwards .9s;"/>
+						<path d="M260,395 L620,395" style="stroke-dasharray:380;stroke-dashoffset:380;animation:rnbpDraw .7s ease forwards 1.0s;"/>
+						<path d="M260,270 L620,270" style="stroke-dasharray:380;stroke-dashoffset:380;animation:rnbpDraw .7s ease forwards 1.1s;"/>
+						<path d="M560,235 L560,200 L585,200 L585,250" style="stroke-dasharray:120;stroke-dashoffset:120;animation:rnbpDraw .6s ease forwards 1.5s;"/>
+						<path d="M300,520 L300,460 L340,460 L340,520" stroke-width="1.6" style="stroke-dasharray:200;stroke-dashoffset:200;animation:rnbpDraw .6s ease forwards 1.7s;"/>
+						<path d="M690,520 L690,410 L685,410 L775,360 L865,410 L860,410 L860,520 Z" style="stroke-dasharray:560;stroke-dashoffset:560;animation:rnbpDraw 1.1s ease forwards 1.2s;"/>
+						<path d="M70,520 L1130,520" stroke-width="1.4" style="stroke-dasharray:1060;stroke-dashoffset:1060;animation:rnbpDraw 1.6s ease forwards .2s;"/>
+					</g>
+					<g stroke="#cdd6cc" fill="none" stroke-width="1.3" stroke-linejoin="round">
+						<g style="opacity:0;animation:rnbpUp .5s ease forwards 1.7s;"><rect x="292" y="592" width="80" height="34" rx="2"/><line x1="292" y1="604" x2="372" y2="604"/><rect x="540" y="566" width="62" height="22" rx="2"/></g>
+						<g style="opacity:0;animation:rnbpUp .5s ease forwards 1.85s;"><rect x="298" y="474" width="92" height="30" rx="3"/><line x1="298" y1="486" x2="390" y2="486"/><rect x="518" y="480" width="92" height="14" rx="2"/><circle cx="460" cy="490" r="13"/></g>
+						<g style="opacity:0;animation:rnbpUp .5s ease forwards 2.0s;"><rect x="298" y="350" width="74" height="34" rx="2"/><line x1="298" y1="362" x2="372" y2="362"/><rect x="510" y="350" width="74" height="34" rx="2"/><line x1="510" y1="362" x2="584" y2="362"/></g>
+						<g style="opacity:0;animation:rnbpUp .5s ease forwards 2.1s;"><rect x="706" y="478" width="58" height="28" rx="2"/><line x1="706" y1="489" x2="764" y2="489"/><circle cx="818" cy="490" r="10"/></g>
+						<g style="opacity:0;animation:rnbpUp .5s ease forwards 2.2s;"><circle cx="440" cy="476" r="7"/><path d="M440,483 L440,512 M440,512 L432,520 M440,512 L448,520 M440,492 L431,503 M440,492 L449,503"/></g>
+					</g>
+					<g stroke="#7f9384" fill="none" stroke-width="1.2" style="opacity:0;animation:rnbpIn 1s ease forwards 2.0s;">
+						<line x1="150" y1="520" x2="150" y2="476"/><circle cx="150" cy="460" r="26" stroke-dasharray="4 4"/>
+						<line x1="1015" y1="520" x2="1015" y2="482"/><circle cx="1015" cy="466" r="23" stroke-dasharray="4 4"/>
+					</g>
+					<g stroke="#cdd6cc" fill="none" stroke-width="1" style="opacity:0;animation:rnbpUp .6s ease forwards 2.3s;">
+						<line x1="206" y1="150" x2="206" y2="640" marker-start="url(#rnbpoArr)" marker-end="url(#rnbpoArr)"/>
+						<line x1="206" y1="150" x2="250" y2="150" stroke-dasharray="3 3" stroke-opacity="0.5"/>
+						<line x1="206" y1="640" x2="260" y2="640" stroke-dasharray="3 3" stroke-opacity="0.5"/>
+						<line x1="260" y1="688" x2="620" y2="688" marker-start="url(#rnbpoArr)" marker-end="url(#rnbpoArr)"/>
+						<line x1="260" y1="640" x2="260" y2="694" stroke-dasharray="3 3" stroke-opacity="0.5"/>
+						<line x1="620" y1="640" x2="620" y2="694" stroke-dasharray="3 3" stroke-opacity="0.5"/>
+						<line x1="690" y1="556" x2="860" y2="556" marker-start="url(#rnbpoArr)" marker-end="url(#rnbpoArr)" stroke-opacity="0.75"/>
+					</g>
+					<g fill="#cdd6cc" font-family="IBM Plex Mono, monospace" style="opacity:0;animation:rnbpUp .6s ease forwards 2.45s;">
+						<text x="196" y="400" font-size="15" text-anchor="middle" transform="rotate(-90 196 400)">9.0 m</text>
+						<text x="440" y="709" font-size="15" text-anchor="middle">12.6 m</text>
+						<text x="775" y="548" font-size="12" text-anchor="middle" fill="#e0a583">6.4 m</text>
+					</g>
+					<g stroke="#e0a583" fill="none" stroke-width="1.2" style="opacity:0;animation:rnbpUp .6s ease forwards 2.55s;">
+						<path d="M520,455 L880,455"/><circle cx="520" cy="455" r="3.5" fill="#e0a583" stroke="none"/>
+						<path d="M540,585 L760,585 L880,610"/><circle cx="540" cy="585" r="3.5" fill="#e0a583" stroke="none"/>
+						<path d="M820,440 L820,300 L880,300"/><circle cx="820" cy="440" r="3.5" fill="#e0a583" stroke="none"/>
+					</g>
+					<g font-family="IBM Plex Mono, monospace" style="opacity:0;animation:rnbpUp .6s ease forwards 2.7s;">
+						<text x="892" y="450" font-size="20" font-weight="500" fill="#e0a583">02</text>
+						<text x="924" y="445" font-size="14" fill="#f1efe8" letter-spacing="0.06em">MAIN RESIDENCE</text>
+						<text x="924" y="463" font-size="11.5" fill="#9fb0a3">4 BR · owner-occupied or leased</text>
+						<text x="892" y="606" font-size="20" font-weight="500" fill="#e0a583">01</text>
+						<text x="924" y="601" font-size="14" fill="#f1efe8" letter-spacing="0.06em">LEGAL BASEMENT SUITE</text>
+						<text x="924" y="619" font-size="11.5" fill="#9fb0a3">1 BR · separate entrance</text>
+						<text x="892" y="296" font-size="20" font-weight="500" fill="#e0a583">03</text>
+						<text x="924" y="291" font-size="14" fill="#f1efe8" letter-spacing="0.06em">GARDEN SUITE</text>
+						<text x="924" y="309" font-size="11.5" fill="#9fb0a3">1 BR · detached · short-stay</text>
+					</g>
+					<g style="opacity:0;animation:rnbpIn .8s ease forwards 1.0s;">
+						<circle cx="1095" cy="120" r="26" fill="none" stroke="#6f8475" stroke-width="1"/>
+						<path d="M1095,100 L1101,122 L1095,116 L1089,122 Z" fill="#e0a583" stroke="none"/>
+						<text x="1095" y="150" font-size="11" fill="#9fb0a3" text-anchor="middle" font-family="IBM Plex Mono, monospace">N</text>
+					</g>
+					<g style="opacity:0;animation:rnbpIn .8s ease forwards 2.8s;" font-family="IBM Plex Mono, monospace">
+						<rect x="906" y="630" width="270" height="74" fill="none" stroke="#4a5e4f" stroke-width="1"/>
+						<line x1="906" y1="654" x2="1176" y2="654" stroke="#4a5e4f" stroke-width="1"/>
+						<line x1="1041" y1="654" x2="1041" y2="704" stroke="#4a5e4f" stroke-width="1"/>
+						<text x="918" y="648" font-size="13" fill="#f1efe8" font-weight="500" letter-spacing="0.08em">RENTNOVA — SECTION A–A</text>
+						<text x="918" y="674" font-size="10.5" fill="#9fb0a3">PROJECT</text>
+						<text x="918" y="692" font-size="12" fill="#e0a583">RN·MISS·01</text>
+						<text x="1053" y="674" font-size="10.5" fill="#9fb0a3">SCALE</text>
+						<text x="1053" y="692" font-size="12" fill="#f1efe8">1 : 100</text>
+					</g>
+					<g style="animation:rnbpScan 5s ease-in-out infinite 2.6s;">
+						<line x1="240" y1="150" x2="900" y2="150" stroke="#e0a583" stroke-width="1.5" stroke-opacity="0.6"/>
+					</g>
+				</svg>
+				<div class="rnbp__tag">● 3 units · 1 lot</div>
+			</div>
+		</div>
+
+		<div class="rnbp__stats">
+			<div class="rnbp__stat"><b>3 units</b><span>from one lot</span></div>
+			<div class="rnbp__stat"><b>1 team</b><span>design → manage</span></div>
+			<div class="rnbp__stat"><b>$0</b><span>feasibility call</span></div>
+			<div class="rnbp__stat"><b>Rev-share</b><span>paid when you are</span></div>
+		</div>
+	</section>
+
+	<!-- THREE TRACKS -->
+	<section class="rnbp__sec">
+		<div class="rnbp__head">
+			<h2 class="rnbp__h2">Three tracks,<br>one address.</h2>
+			<p class="rnbp__note">Build it. Run it. Or just come stay in it. Pick your starting line.</p>
+		</div>
+		<div class="rnbp__tracks">
+			<div class="rnbp__track">
+				<div class="rnbp__track-no">01 — CONVERT</div>
+				<h3>Turn your home into units</h3>
+				<p>Add a legal basement suite, garden suite, or multiplex conversion. Feasibility, design, permits, construction.</p>
+			</div>
+			<div class="rnbp__track rnbp__track--alt">
+				<div class="rnbp__track-no">02 — MANAGE</div>
+				<h3>Furnish, list &amp; run it</h3>
+				<p>Furniture, styling, the small touches, and full short-rental management — Airbnb &amp; direct, on a revenue-share with monthly statements.</p>
+			</div>
+			<div class="rnbp__track">
+				<div class="rnbp__track-no">03 — STAY</div>
+				<h3>Book a stay, direct</h3>
+				<p>The same homes we design and run, bookable direct — skip the platform fees. Real hosts, real keys, coffee in the cupboard.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- PIPELINE -->
+	<section class="rnbp__sec" style="padding-top:0;">
+		<div class="rnbp__pipehead">
+			<h2 class="rnbp__h2">One contract. Every step.</h2>
+			<span>Builders hand you keys. We keep going.</span>
+		</div>
+		<div class="rnbp__pipe">
+			<div class="rnbp__step rnbp__step--1"><i>01</i><b>Feasibility</b></div>
+			<div class="rnbp__step rnbp__step--2"><i>02</i><b>Design</b></div>
+			<div class="rnbp__step rnbp__step--3"><i>03</i><b>Build</b></div>
+			<div class="rnbp__step rnbp__step--4"><i>04</i><b>Furnish</b></div>
+			<div class="rnbp__step rnbp__step--5"><i>05</i><b>List</b></div>
+			<div class="rnbp__step rnbp__step--6"><i>06</i><b>Manage</b></div>
+		</div>
+	</section>
+
+	<!-- WHAT'S INCLUDED -->
+	<section class="rnbp__sec" style="padding-top:0;">
+		<div class="rnbp__head">
+			<h2 class="rnbp__h2" style="font-size:38px;">What's included.</h2>
+			<p class="rnbp__note">One contract covers every line below.</p>
+		</div>
+		<div class="rnbp__feat">
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">A1 — FEASIBILITY</div><h3 class="rnbp__feat-t">Lot study &amp; zoning</h3><p class="rnbp__feat-p">What your lot allows under current bylaws — basement suite, garden suite, multiplex — with cost and timeline ranges.</p></div>
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">A2 — PERMITS</div><h3 class="rnbp__feat-t">Drawings &amp; approvals</h3><p class="rnbp__feat-p">Architectural drawings, applications, inspections — handled. You stay informed without filing anything.</p></div>
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">B1 — BUILD</div><h3 class="rnbp__feat-t">Construction</h3><p class="rnbp__feat-p">Vetted GCs, fixed scope, weekly photo updates, a single point of contact for the whole build.</p></div>
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">B2 — FURNISH</div><h3 class="rnbp__feat-t">Style &amp; turn-key fit</h3><p class="rnbp__feat-p">Furniture, linens, kitchenware, art, signage — guests-ready on day one.</p></div>
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">C1 — LIST</div><h3 class="rnbp__feat-t">Direct + platforms</h3><p class="rnbp__feat-p">Direct-book site plus Airbnb / Booking.com listings, dynamic pricing, photography, listing copy.</p></div>
+			<div class="rnbp__feat-row"><div class="rnbp__feat-no">C2 — MANAGE</div><h3 class="rnbp__feat-t">Run it</h3><p class="rnbp__feat-p">Guest comms 24/7, turnovers, restocking, maintenance, monthly statements, year-end summary.</p></div>
+		</div>
+	</section>
+
+	<!-- REVENUE SHARE -->
+	<section class="rnbp__rev">
+		<h2 class="rnbp__h2">You own the asset.<br>We run the income.<br><em>We split the upside.</em></h2>
+		<p>No flat invoice that ignores how the unit performs. We work on a revenue-share — paid when you're paid — and send a clean monthly statement either way.</p>
+	</section>
+
+	<!-- CTA -->
+	<section class="rnbp__cta" id="rnbp-owners-cta">
+		<h2 class="rnbp__h2">A free 30-minute<br>feasibility call.</h2>
+		<p>Tell us your address and your goals. We'll tell you what your lot allows, what it could generate, and what it would cost — real numbers, not ranges.</p>
+		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Book the call →</a>
+	</section>
+
+</div>
+<?php
+get_footer();

@@ -8,8 +8,12 @@ The goal of this task: **apply this design to the existing rent-nova.com WordPre
 ## About the design files
 The files in this bundle are **design references**, not a finished site:
 - `RentNova Blueprint.dc.html` — the visual source of truth (a self-contained HTML prototype). Open it in a browser to see exact layout, colors, type, spacing, and the hero animation timeline. **This is the look to match.**
-- `template-rentnova-blueprint.php` — a **ready-to-use WordPress Page Template**, already ported from the prototype. This is the primary deliverable to install.
-- `rentnova-theme/` — a complete standalone WordPress **theme** version (same design) including a `Stays` custom post type, in case a fuller build is preferred over the drop-in template.
+- `template-rentnova-blueprint.php` — **ready-to-use WordPress Page Template** for the homepage.
+- `template-rentnova-owners.php` — drop-in **Owners** page template (animated-blueprint hero + tracks + pipeline + what's-included + revenue share + CTA).
+- `template-rentnova-about.php` — drop-in **About** page template (hero with by-the-numbers sidebar + narrative + values + revenue share + CTA).
+- `template-rentnova-contact.php` — drop-in **Contact** page template (hero + contact info + feasibility-call form + CTA).
+- `owners.html`, `about.html`, `contact.html` — standalone browsable previews of the three pages above (open directly, no WordPress needed).
+- `rentnova-theme/` — a complete standalone WordPress **theme** version (same design) including a `Stays` custom post type, in case a fuller build is preferred over the drop-in templates.
 - `screenshot.png` — static reference of the finished hero.
 
 The prototype was built in HTML; treat it as the spec. The two PHP deliverables already translate it to WordPress — your job is to install, wire real content/links, and verify on the live theme.
@@ -19,19 +23,24 @@ The prototype was built in HTML; treat it as the spec. The two PHP deliverables 
 
 ---
 
-## Recommended path: the drop-in Page Template
+## Recommended path: the drop-in Page Templates
 
 This is the lowest-risk way to "apply to the existing site." It does **not** replace the active theme.
 
-1. Copy `template-rentnova-blueprint.php` into the active theme — ideally a **child theme** so updates don't overwrite it:
-   `wp-content/themes/<active-or-child-theme>/template-rentnova-blueprint.php`
-2. WordPress admin → **Pages → Add New** (or edit the existing front page).
-3. **Page Attributes → Template → "RentNova Blueprint"**.
-4. Publish. To make it the site homepage: **Settings → Reading → Your homepage displays → A static page → Homepage =** that page.
+1. Copy any (or all) of these four templates into the active theme — ideally a **child theme** so updates don't overwrite them:
+   - `template-rentnova-blueprint.php` → homepage
+   - `template-rentnova-owners.php` → Owners page
+   - `template-rentnova-about.php` → About page
+   - `template-rentnova-contact.php` → Contact page
+
+   Drop them into `wp-content/themes/<active-or-child-theme>/`.
+2. WordPress admin → **Pages → Add New** for each (titles: Owners / About / Contact; slugs match).
+3. **Page Attributes → Template** → pick the matching one (**RentNova Blueprint** / **RentNova Owners** / **RentNova About** / **RentNova Contact**).
+4. Publish. To make the homepage the front page: **Settings → Reading → Your homepage displays → A static page → Homepage =** the page using *RentNova Blueprint*.
 
 ### Why this is safe
-- All CSS/JS is **scoped under `.rnbp`** and printed inline in the template — it cannot leak into or be broken by the active theme.
-- The template calls `get_header()` / `get_footer()`, so the site's existing nav, footer, analytics, and `wp_head`/`wp_footer` hooks all still fire.
+- All CSS is **scoped under `.rnbp`** and printed inline in each template — it cannot leak into or be broken by the active theme.
+- Each template calls `get_header()` / `get_footer()`, so the site's existing nav, footer, analytics, and `wp_head` / `wp_footer` hooks all still fire.
 - The hero/sections use a **full-bleed breakout** (`width:100vw; left:50%; margin-left:-50vw`) so they span edge-to-edge even if the theme wraps page content in a narrow container.
 
 ### What to wire up after install
