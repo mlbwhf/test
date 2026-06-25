@@ -14,7 +14,8 @@ A homeowner-led theme for **RentNova** built around the *“turn your residence 
 | **Revenue share** | “You own the asset. We run the income. We split the upside.” |
 | **Stays CPT** | A **Stays** custom post type with per-listing fields (location, price/night, bedrooms, sleeps, min nights, booking URL). Manage listings from wp-admin. |
 | **Reusable hero** | `[rentnova_blueprint]` shortcode **and** a `rentnova/blueprint` block — drop the animated drawing on any page or post. |
-| **Templates** | `front-page`, `archive-stay`, `single-stay`, `page`, `index`, plus `header` / `footer`. |
+| **Templates** | `front-page`, `archive-stay`, `single-stay`, `page-owners`, `page-about`, `page-contact`, `page`, `index`, plus `header` / `footer`. |
+| **Block patterns** | A **RentNova** category in the inserter with the hero / tracks / pipeline / feature-grid / narrative / values / contact-grid / revenue-share / CTA sections. Marketing pages are composed in the editor — no template editing required. |
 | **Responsive** | Mobile nav, stacked grids, reflowed pipeline. |
 
 ---
@@ -37,7 +38,19 @@ A homeowner-led theme for **RentNova** built around the *“turn your residence 
 2. **Menu** — Appearance → Menus → create a menu, assign it to **Primary Menu**. (Without one, a sensible fallback menu shows.) The terracotta **“Free feasibility →”** button is appended automatically and links to `/contact/`.
 3. **Logo** — Appearance → Customize → Site Identity → add a custom logo (optional; the wordmark shows otherwise).
 4. **Add stays** — **Stays → Add Stay**. Set the featured image, write the description, and fill the *Listing Details* box (location, price, bedrooms, sleeps, min nights, booking URL). The homepage shows the two most recent; `/stays/` lists them all.
-5. **Contact page** — create a page at `/contact/` for the feasibility-call CTAs to point to (swap in your form plugin of choice).
+5. **Marketing pages (Owners / About / Contact)** — Pages → Add New, give each one the slug `owners` / `about` / `contact`. The matching template auto-activates; or assign it manually via Page Attributes → Template. The templates are deliberately thin (`the_content()` only) so the layout is composed from the **RentNova** patterns in the block editor.
+
+### Suggested pattern assembly per page
+
+In the editor, open the inserter → **Patterns** → **RentNova** and drop these in order:
+
+| Page | Patterns |
+|---|---|
+| **Owners** (`/owners/`) | Owners hero · Three tracks · Six-step pipeline · What's-included feature grid · Revenue-share card · Closing CTA |
+| **About** (`/about/`) | About hero · Narrative + side facts · Three values · Revenue-share card · Closing CTA |
+| **Contact** (`/contact/`) | Contact hero · Contact info + form · Closing CTA |
+
+Every pattern uses native core blocks (group / heading / paragraph) where possible, and a single HTML block for sections where the design needs precise grid markup (tracks, pipeline, feature grid, contact form). All copy is editable in-place in the editor.
 
 ---
 

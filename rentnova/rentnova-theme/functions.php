@@ -236,7 +236,25 @@ function rentnova_register_blueprint_block() {
 add_action( 'init', 'rentnova_register_blueprint_block' );
 
 /* ============================================================
- * 7. FALLBACK MENU
+ * 7. BLOCK PATTERNS — auto-loaded from patterns/, this just
+ *    declares the "RentNova" category they bucket into.
+ * ============================================================ */
+function rentnova_register_pattern_category() {
+	if ( ! function_exists( 'register_block_pattern_category' ) ) {
+		return;
+	}
+	register_block_pattern_category(
+		'rentnova',
+		array(
+			'label'       => __( 'RentNova', 'rentnova' ),
+			'description' => __( 'Page sections for RentNova marketing pages.', 'rentnova' ),
+		)
+	);
+}
+add_action( 'init', 'rentnova_register_pattern_category' );
+
+/* ============================================================
+ * 8. FALLBACK MENU
  * ============================================================ */
 function rentnova_fallback_menu() {
 	echo '<ul id="rn-primary-menu" class="rn-menu">';
