@@ -166,7 +166,7 @@ get_header();
 	<section class="rnbp__hero" id="rnbp-owners-top">
 		<div class="rnbp__hgrid">
 			<div>
-				<div class="rnbp__eyebrow">For owners</div>
+				<div class="rnbp__eyebrow">Owners</div>
 				<h1>One home.<br>Two or three<br><em>legal income</em> units.</h1>
 				<p class="rnbp__lead">You own the lot. We turn it into a multi-unit asset — designed, built, furnished, listed and run by one team on a revenue-share. Statements monthly, no flat fees.</p>
 				<div class="rnbp__actions">

@@ -13,7 +13,7 @@
 	<!-- wp:group {"className":"rn-hero__inner","layout":{"type":"default"}} -->
 	<div class="wp-block-group rn-hero__inner">
 		<!-- wp:paragraph {"className":"rn-eyebrow"} -->
-		<p class="rn-eyebrow">For owners</p>
+		<p class="rn-eyebrow">Owners</p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"64px"}}} -->

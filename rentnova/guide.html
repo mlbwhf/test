@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RentNova — Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rn-ink:#16241b; --rn-ink2:#1a1a17; --rn-paper:#f1efe8; --rn-paper2:#e9e5da;
+  --rn-terra:#c45e35; --rn-sand:#e0a583; --rn-muted:#5a574c; --rn-line:#d8d3c5;
+  --rn-line-dk:#2f4537; --rn-mint:#8ba090; --rn-pad:56px; --rn-max:1320px;
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{ margin:0; font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif; color:var(--rn-ink2); background:var(--rn-paper); line-height:1.5; -webkit-font-smoothing:antialiased; }
+img{ max-width:100%; height:auto; display:block; }
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3{ margin:0; }
+
+/* header / nav (same as other previews) */
+.rn-header{ background:var(--rn-ink); color:var(--rn-paper); }
+.rn-nav{ display:flex; align-items:center; justify-content:space-between; padding:22px var(--rn-pad); max-width:var(--rn-max); margin:0 auto; }
+.rn-brand{ display:flex; align-items:baseline; gap:14px; }
+.rn-brand__name{ font-family:'Archivo',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.02em; }
+.rn-brand__loc{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; color:#7f9384; text-transform:uppercase; }
+.rn-menu{ display:flex; align-items:center; gap:30px; font-size:14px; font-weight:600; list-style:none; margin:0; padding:0; }
+.rn-menu a{ transition:color .15s ease; }
+.rn-menu a:hover{ color:var(--rn-sand); }
+.rn-menu [aria-current="page"]{ color:var(--rn-sand); }
+.rn-nav__cta{ background:var(--rn-terra); color:#fff; padding:11px 20px; border-radius:4px; font-weight:700; }
+
+/* hero */
+.rn-hero{ background:var(--rn-ink); color:var(--rn-paper); padding:56px var(--rn-pad) 64px; }
+.rn-hero__inner{ max-width:var(--rn-max); margin:0 auto; }
+.rn-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; margin-bottom:22px; }
+.rn-hero h1{ font-family:'Archivo',sans-serif; font-size:64px; font-weight:900; line-height:.95; letter-spacing:-.04em; margin:0 0 22px; max-width:880px; }
+.rn-hero h1 em{ color:var(--rn-sand); font-style:normal; }
+.rn-hero__lead{ font-size:18px; line-height:1.55; color:#c8d2c8; margin:0; max-width:600px; }
+
+/* buttons */
+.rn-btn{ display:inline-block; font-size:15px; font-weight:700; padding:14px 24px; border-radius:4px; cursor:pointer; border:none; transition:transform .15s ease, filter .15s ease; }
+.rn-btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+.rn-btn--dark{ background:var(--rn-ink2); color:#fff; }
+
+/* toc */
+.rn-toc{ background:var(--rn-paper2); border-bottom:1px solid var(--rn-line); position:sticky; top:0; z-index:5; }
+.rn-toc__in{ max-width:var(--rn-max); margin:0 auto; padding:0 var(--rn-pad); display:flex; align-items:stretch; flex-wrap:wrap; }
+.rn-toc a{ padding:18px 22px; display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:var(--rn-ink2); border-right:1px solid var(--rn-line); transition:background .15s ease; }
+.rn-toc a:last-child{ border-right:none; }
+.rn-toc a:hover{ background:#fff; }
+.rn-toc i{ font-family:'IBM Plex Mono',monospace; font-style:normal; font-size:11px; color:var(--rn-terra); letter-spacing:.08em; }
+.rn-toc__end{ margin-left:auto; color:var(--rn-terra)!important; }
+
+/* step block */
+.rn-step-block{ max-width:var(--rn-max); margin:0 auto; padding:80px var(--rn-pad); border-bottom:1px solid var(--rn-line); }
+.rn-step-block:last-of-type{ border-bottom:none; }
+.rn-step__in{ max-width:1040px; margin:0 auto; }
+.rn-step__head{ display:grid; grid-template-columns:140px 1fr; gap:32px; align-items:center; margin-bottom:32px; }
+.rn-step__badge{ width:120px; height:120px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'Archivo',sans-serif; font-size:52px; font-weight:900; color:var(--rn-paper); letter-spacing:-.04em; }
+.rn-step__badge--1{ background:#16241b; }
+.rn-step__badge--2{ background:#1f3326; }
+.rn-step__badge--3{ background:#284230; }
+.rn-step__badge--4{ background:#31503b; }
+.rn-step__badge--5{ background:#3a5e45; }
+.rn-step__badge--6{ background:var(--rn-terra); }
+.rn-step__label{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; margin-bottom:8px; }
+.rn-step__title{ font-family:'Archivo',sans-serif; font-size:34px; font-weight:800; letter-spacing:-.02em; line-height:1.05; }
+
+.rn-step__meta{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--rn-line); border-bottom:1px solid var(--rn-line); margin-bottom:32px; }
+.rn-step__meta > div{ padding:16px 20px; border-right:1px solid var(--rn-line); }
+.rn-step__meta > div:last-child{ border-right:none; }
+.rn-step__meta span{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.16em; color:var(--rn-mint); text-transform:uppercase; display:block; margin-bottom:4px; }
+.rn-step__meta b{ font-family:'Archivo',sans-serif; font-size:20px; font-weight:800; letter-spacing:-.01em; color:var(--rn-ink2); }
+
+.rn-step__body{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+.rn-step__col h3{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; margin:0 0 14px; font-weight:500; }
+.rn-step__col p{ font-size:16px; line-height:1.65; color:var(--rn-muted); margin:0 0 14px; }
+.rn-step__col p:last-child{ margin-bottom:0; }
+.rn-step__col ul{ list-style:none; margin:0; padding:0; }
+.rn-step__col li{ font-size:15px; line-height:1.5; color:var(--rn-ink2); padding:12px 0; border-bottom:1px dashed var(--rn-line); }
+.rn-step__col li:last-child{ border-bottom:none; }
+.rn-step__col li::before{ content:"·"; color:var(--rn-terra); font-weight:700; padding-right:10px; }
+
+/* faq */
+.rn-faq-section{ background:var(--rn-paper2); padding:80px var(--rn-pad); }
+.rn-faq__in{ max-width:var(--rn-max); margin:0 auto; }
+.rn-h2{ font-family:'Archivo',sans-serif; font-weight:800; letter-spacing:-.03em; }
+.rn-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:36px; gap:24px; }
+.rn-head .rn-h2{ font-size:46px; line-height:1; }
+.rn-head__note{ font-size:15px; color:var(--rn-muted); max-width:280px; text-align:right; margin:0; }
+.rn-faq{ border-top:1px solid var(--rn-line); max-width:920px; margin:0 auto; }
+.rn-faq__item{ border-bottom:1px solid var(--rn-line); }
+.rn-faq__item > summary{ list-style:none; cursor:pointer; padding:24px 0; display:flex; justify-content:space-between; align-items:center; gap:24px; font-family:'Archivo',sans-serif; font-size:20px; font-weight:700; letter-spacing:-.01em; color:var(--rn-ink2); }
+.rn-faq__item > summary::-webkit-details-marker{ display:none; }
+.rn-faq__item > summary::after{ content:"+"; font-family:'IBM Plex Mono',monospace; font-size:24px; font-weight:400; color:var(--rn-terra); flex:none; }
+.rn-faq__item[open] > summary::after{ content:"−"; }
+.rn-faq__item > p{ padding:0 0 24px; margin:0; font-size:16px; line-height:1.65; color:var(--rn-muted); max-width:760px; }
+
+/* cta + footer */
+.rn-cta{ background:var(--rn-terra); color:#fff; padding:64px var(--rn-pad); text-align:center; }
+.rn-cta .rn-h2{ font-size:48px; font-weight:900; letter-spacing:-.035em; line-height:.98; margin-bottom:14px; }
+.rn-cta .rn-h2 em{ color:var(--rn-ink2); font-style:normal; }
+.rn-cta p{ font-size:17px; line-height:1.5; opacity:.92; max-width:560px; margin:0 auto 28px; }
+.rn-footer{ background:var(--rn-ink); color:var(--rn-paper); }
+.rn-footer__inner{ padding:30px var(--rn-pad); display:flex; justify-content:space-between; align-items:center; max-width:var(--rn-max); margin:0 auto; flex-wrap:wrap; gap:12px; }
+.rn-footer__name{ font-family:'Archivo',sans-serif; font-size:20px; font-weight:800; letter-spacing:-.02em; }
+.rn-footer__copy{ font-size:13px; color:#7f9384; }
+
+@media (max-width:1100px){
+  .rn-hero h1{ font-size:54px; }
+  .rn-step__title{ font-size:30px; }
+}
+@media (max-width:860px){
+  :root{ --rn-pad:28px; }
+  .rn-hero h1{ font-size:40px; }
+  .rn-toc{ position:static; overflow-x:auto; }
+  .rn-toc__in{ flex-wrap:nowrap; padding:0; }
+  .rn-toc a{ padding:14px 16px; font-size:13px; white-space:nowrap; flex:none; }
+  .rn-toc__end{ margin-left:0; }
+  .rn-step-block{ padding:48px var(--rn-pad); }
+  .rn-step__head{ grid-template-columns:1fr; gap:20px; }
+  .rn-step__badge{ width:80px; height:80px; font-size:34px; }
+  .rn-step__title{ font-size:26px; }
+  .rn-step__meta{ grid-template-columns:1fr; }
+  .rn-step__meta > div{ border-right:none; border-bottom:1px solid var(--rn-line); }
+  .rn-step__meta > div:last-child{ border-bottom:none; }
+  .rn-step__body{ grid-template-columns:1fr; gap:28px; }
+  .rn-faq-section{ padding:56px var(--rn-pad); }
+  .rn-head{ flex-direction:column; align-items:flex-start; }
+  .rn-head__note{ text-align:left; }
+  .rn-head .rn-h2{ font-size:34px; }
+  .rn-faq__item > summary{ font-size:17px; padding:20px 0; }
+  .rn-cta .rn-h2{ font-size:34px; }
+}
+</style>
+</head>
+<body>
+
+<header class="rn-header">
+  <nav class="rn-nav" aria-label="Primary">
+    <a class="rn-brand" href="./RentNova%20Blueprint.dc.html">
+      <span class="rn-brand__name">RentNova</span>
+      <span class="rn-brand__loc">Mississauga · GTA</span>
+    </a>
+    <ul class="rn-menu">
+      <li><a href="owners.html">Owners</a></li>
+      <li><a href="guide.html" aria-current="page">Guide</a></li>
+      <li><a href="#">Stays</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a class="rn-nav__cta" href="contact.html">Free feasibility →</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <section class="rn-hero">
+    <div class="rn-hero__inner">
+      <div class="rn-eyebrow">Guide</div>
+      <h1>From one home<br>to <em>three working units</em>.<br>Here's how.</h1>
+      <p class="rn-hero__lead">A full walk-through of the six steps we run for every owner — what happens, what it costs, what we need from you. Read it end-to-end or jump to a step.</p>
+    </div>
+  </section>
+
+  <nav class="rn-toc" aria-label="Guide sections">
+    <div class="rn-toc__in">
+      <a href="#step-01"><i>01</i>Feasibility</a>
+      <a href="#step-02"><i>02</i>Design</a>
+      <a href="#step-03"><i>03</i>Build</a>
+      <a href="#step-04"><i>04</i>Furnish</a>
+      <a href="#step-05"><i>05</i>List</a>
+      <a href="#step-06"><i>06</i>Manage</a>
+      <a class="rn-toc__end" href="#faq">FAQ →</a>
+    </div>
+  </nav>
+
+  <section class="rn-step-block" id="step-01">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--1">01</div>
+        <div>
+          <div class="rn-step__label">Feasibility</div>
+          <h2 class="rn-step__title">Figure out what your lot allows.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>1–2 weeks</b></div>
+        <div><span>Cost</span><b>$0 to you</b></div>
+        <div><span>Deliverable</span><b>1-page memo</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>We pull your lot's zoning, bylaw setbacks, parking minimums and floor-area ratios. Then we walk the lot, mark what's physically buildable, and put dollar ranges to each scenario that fits — main-only refresh, plus a basement suite, plus a garden suite, full triplex conversion.</p>
+          <p>You leave Step 01 with concrete numbers for your specific address, not generic ranges off a calculator.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>Your address</li>
+            <li>A few photos of the lot, or a 30-min window to walk it</li>
+            <li>Your goals: live in one unit, rent them all, mix</li>
+            <li>Any survey or floor plan you already have</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-step-block" id="step-02">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--2">02</div>
+        <div>
+          <div class="rn-step__label">Design</div>
+          <h2 class="rn-step__title">Architectural drawings, ready for permit.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>4–8 weeks</b></div>
+        <div><span>Cost</span><b>Fixed at sign-off</b></div>
+        <div><span>Deliverable</span><b>Permit-ready set</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>A 3-D massing study first — one or two cheap, fast options before any drafting time goes in. Once you pick a direction we lock the scope and produce the permit package: site plan, floor plans, elevations, sections, schedules, energy and structural notes.</p>
+          <p>We hand the package to the city. You don't have to learn how building department portals work.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>Feedback on the massing options (1–2 rounds)</li>
+            <li>Sign-off on the final layout</li>
+            <li>Decisions on the half-dozen finishes the design needs to lock</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-step-block" id="step-03">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--3">03</div>
+        <div>
+          <div class="rn-step__label">Build</div>
+          <h2 class="rn-step__title">Permits, demo, build, inspections.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>3–6 months</b></div>
+        <div><span>Cost</span><b>Per fixed scope</b></div>
+        <div><span>Deliverable</span><b>Inspected, habitable units</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>Vetted GCs we run jobs with weekly — not a one-off subcontractor we found for your project. The scope is locked at design sign-off, so the build doesn't drift; change orders are explicit, signed, and itemised.</p>
+          <p>You get a private dashboard with weekly site photos, the change-order log, and the run-rate against your budget.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>Visit the site whenever you want (just text first)</li>
+            <li>Respond to spec questions within 48 hours</li>
+            <li>Sign off on rough-in inspections when they pass</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-step-block" id="step-04">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--4">04</div>
+        <div>
+          <div class="rn-step__label">Furnish</div>
+          <h2 class="rn-step__title">Turn-key fit and finish.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>2–3 weeks</b></div>
+        <div><span>Cost</span><b>$8k–$25k / unit</b></div>
+        <div><span>Deliverable</span><b>Guest-ready unit</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>Furniture, mattresses, linens, kitchen, art, signage. Each unit gets a documented spec sheet — so when something breaks a year from now the replacement matches what was there.</p>
+          <p>We bias to durable mid-tier pieces that read better on camera than they cost. Guests notice; you don't pay for it twice.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>A few style nudges if you have strong preferences</li>
+            <li>Otherwise — we choose. You'll see the spec before we order.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-step-block" id="step-05">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--5">05</div>
+        <div>
+          <div class="rn-step__label">List</div>
+          <h2 class="rn-step__title">Photograph, write, price, publish.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>1 week</b></div>
+        <div><span>Cost</span><b>Included</b></div>
+        <div><span>Deliverable</span><b>Live listings + direct site</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>Professional photo shoot. Listing copy written by someone who's read enough comps to know what converts. Dynamic pricing wired up on Airbnb, Booking.com, and a direct-book page on your own subdomain.</p>
+          <p>Your unit goes live across every channel at the same time, with a co-ordinated launch promo to seed early reviews.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>Sign the management agreement</li>
+            <li>That's it</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-step-block" id="step-06">
+    <div class="rn-step__in">
+      <header class="rn-step__head">
+        <div class="rn-step__badge rn-step__badge--6">06</div>
+        <div>
+          <div class="rn-step__label">Manage</div>
+          <h2 class="rn-step__title">Run it. Forever.</h2>
+        </div>
+      </header>
+      <div class="rn-step__meta">
+        <div><span>Time</span><b>Ongoing</b></div>
+        <div><span>Cost</span><b>Revenue-share</b></div>
+        <div><span>Deliverable</span><b>Monthly statement</b></div>
+      </div>
+      <div class="rn-step__body">
+        <div class="rn-step__col">
+          <h3>What happens</h3>
+          <p>24/7 guest comms, turnovers, restocking, maintenance triage. We send a monthly statement with revenue, fees, occupancy, ADR and a year-end summary you can hand to your accountant without re-typing anything.</p>
+          <p>The revenue-share means we win when your unit performs — there's no flat fee that ignores whether occupancy is 90% or 40%.</p>
+        </div>
+        <div class="rn-step__col">
+          <h3>What you give us</h3>
+          <ul>
+            <li>A credit card on file for guest damage holds</li>
+            <li>Otherwise — nothing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-faq-section" id="faq">
+    <div class="rn-faq__in">
+      <div class="rn-head">
+        <h2 class="rn-h2">Common questions.</h2>
+        <p class="rn-head__note">If yours isn't here, send it over — we'll answer in the feasibility call.</p>
+      </div>
+      <div class="rn-faq">
+        <details class="rn-faq__item">
+          <summary>How much does the whole thing usually cost?</summary>
+          <p>Lot-dependent. A basement suite alone runs $80k–$140k all-in, including design and furnishing. Adding a garden suite typically lands $300k–$500k. The Step 01 feasibility memo gives you the numbers for your specific lot — that's the whole point of starting there.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>What's the revenue-share percentage?</summary>
+          <p>Depends on scope. Pure management is in the 18–24% range. Build-plus-manage gets a different split because we have more skin in the game. Both are spelled out in your engagement letter — no surprises mid-stream.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>Do I need to move out during construction?</summary>
+          <p>For a basement-only build, no — the work happens below grade and the main floor stays habitable. Garden-suite builds happen entirely outside your home. Full multi-unit conversions usually need a 4–8 week stretch where you're either travelling or in a furnished short-stay; we'll help arrange one.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>What if I want to use one of the units myself?</summary>
+          <p>Common. We design and run the rest, and you keep the keys to "yours." The revenue-share only applies to the units we actually manage. Owners who keep the main residence and short-stay the basement + garden suite are our most common setup.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>What if it doesn't pencil out?</summary>
+          <p>The feasibility memo will say so. We'd rather tell you "your lot doesn't justify the build" in week two than two years in. About 1 in 5 lots we look at don't move past Step 01 — and that's a useful answer too.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>Can you do this on a property I don't own yet?</summary>
+          <p>Yes — sometimes we run the feasibility before close so you know what you're buying. Useful when the listing photos hide whether the basement can legally become a suite.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>Who owns the listings?</summary>
+          <p>You. The direct-book URL, the Airbnb and Booking.com accounts, the reviews — all in your name. If you ever leave us, it stays with the property.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>What's the minimum timeline from "yes" to "first guest"?</summary>
+          <p>Basement suite: ~4 months. Garden suite: ~7 months. Full multiplex conversion: 12–18 months depending on city processing. Permit timelines vary more than build timelines.</p>
+        </details>
+        <details class="rn-faq__item">
+          <summary>Do you work outside the GTA?</summary>
+          <p>No. We stay inside a 1-hour radius from Mississauga so we can actually be on-site when something breaks. Saying no a lot is how we keep saying yes well.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="rn-cta">
+    <h2 class="rn-h2">Ready to start with<br><em>Step 01?</em></h2>
+    <p>The feasibility memo is free. Send your address and a couple of photos — we'll put numbers to your lot within two weeks.</p>
+    <a class="rn-btn rn-btn--dark" href="contact.html">Book the call →</a>
+  </section>
+
+</main>
+
+<footer class="rn-footer">
+  <div class="rn-footer__inner">
+    <span class="rn-footer__name">RentNova</span>
+    <span class="rn-footer__copy">© 2026 RentNova · Mississauga &amp; the GTA</span>
+  </div>
+</footer>
+
+</body>
+</html>
