@@ -1,20 +1,18 @@
 <?php
 /**
- * Template Name: RentNova Owners
+ * Template Name: RentNova List With Us
  *
- * Drop-in Owners-page template for any existing WordPress theme.
- * Self-contained: all CSS is scoped under `.rnbp` and printed inline,
- * so it does NOT depend on your active theme's styles and will not
- * leak styles into the rest of your site.
+ * Drop-in "List With Us" page for any existing WordPress theme — the
+ * pitch page for prospective property owners considering putting
+ * their home into RentNova's convert + manage pipeline. Self-contained:
+ * all CSS scoped under `.rnbp` and printed inline, so it does NOT
+ * depend on your active theme's styles.
  *
  * HOW TO USE
- * 1. Copy this file into your active theme (or child theme) folder,
- *    e.g. wp-content/themes/<your-theme>/template-rentnova-owners.php
- * 2. WordPress admin → Pages → Add New (title: "Owners", slug: "owners").
- * 3. In Page Attributes → Template, choose "RentNova Owners".
- * 4. Publish. The page renders inside your existing header/footer.
- *
- * Edit copy directly in the markup below.
+ * 1. Copy this file into your active theme (or child theme) folder.
+ * 2. WordPress admin → Pages → Add New (title: "List With Us", slug: "list-with-us").
+ * 3. In Page Attributes → Template, choose "RentNova List With Us".
+ * 4. Publish.
  *
  * @package rentnova-dropin
  */
@@ -166,8 +164,8 @@ get_header();
 	<section class="rnbp__hero" id="rnbp-owners-top">
 		<div class="rnbp__hgrid">
 			<div>
-				<div class="rnbp__eyebrow">Owners</div>
-				<h1>One home.<br>Two or three<br><em>legal income</em> units.</h1>
+				<div class="rnbp__eyebrow">List with us</div>
+				<h1>List your home.<br>Turn it into<br><em>legal income</em>.</h1>
 				<p class="rnbp__lead">You own the lot. We turn it into a multi-unit asset — designed, built, furnished, listed and run by one team on a revenue-share. Statements monthly, no flat fees.</p>
 				<div class="rnbp__actions">
 					<a class="rnbp__btn rnbp__btn--terra" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Free feasibility →</a>

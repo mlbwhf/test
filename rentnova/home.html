@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RentNova — Direct-book stays in Mississauga &amp; the GTA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="rentnova-theme/style.css">
+<style>
+/* homepage-only extensions to the shared rn-* system */
+.rn-home-hero{ position:relative; min-height:640px; background:#0f1a13 url('https://rent-nova.com/wp-content/uploads/2026/05/6019-featherhead-crescent-mississauga-W4633966-1.jpg') center/cover no-repeat; color:var(--rn-paper); }
+.rn-home-hero::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(15,26,19,0.35) 0%, rgba(15,26,19,0.7) 100%); }
+.rn-home-hero__in{ position:relative; max-width:var(--rn-max); margin:0 auto; padding:80px var(--rn-pad) 60px; }
+.rn-home-hero h1{ font-family:var(--rn-font-display); font-size:72px; font-weight:900; line-height:.95; letter-spacing:-.04em; margin:22px 0 20px; max-width:820px; color:#fff; }
+.rn-home-hero h1 em{ color:var(--rn-sand); font-style:normal; }
+.rn-home-hero__lead{ font-size:19px; line-height:1.55; color:#e6ebe4; margin:0 0 40px; max-width:560px; }
+
+/* search widget */
+.rn-search{ background:rgba(20,32,24,0.85); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.14); border-radius:8px; padding:14px; display:grid; grid-template-columns:1.4fr 1fr 1fr .9fr auto; gap:2px; max-width:960px; }
+.rn-search label{ display:flex; flex-direction:column; padding:12px 16px; background:rgba(255,255,255,0.03); }
+.rn-search label:first-of-type{ border-top-left-radius:4px; border-bottom-left-radius:4px; }
+.rn-search span{ font-family:var(--rn-font-mono); font-size:10.5px; letter-spacing:.16em; color:var(--rn-sand); text-transform:uppercase; margin-bottom:4px; }
+.rn-search input, .rn-search select{ font:inherit; background:transparent; border:none; color:#fff; padding:0; font-size:15px; font-weight:600; }
+.rn-search input:focus, .rn-search select:focus{ outline:none; }
+.rn-search input::placeholder{ color:rgba(255,255,255,0.45); }
+.rn-search option{ background:var(--rn-ink); color:#fff; }
+.rn-search__btn{ background:var(--rn-terra); color:#fff; padding:0 28px; border-radius:4px; font-weight:700; font-size:15px; border:none; cursor:pointer; display:flex; align-items:center; gap:8px; }
+.rn-search__btn:hover{ filter:brightness(1.08); }
+
+/* trust bar */
+.rn-trust{ background:var(--rn-paper2); border-bottom:1px solid var(--rn-line); }
+.rn-trust__in{ max-width:var(--rn-max); margin:0 auto; padding:16px var(--rn-pad); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; font-family:var(--rn-font-mono); font-size:11.5px; letter-spacing:.16em; color:var(--rn-muted); text-transform:uppercase; }
+.rn-trust b{ color:var(--rn-terra); }
+
+/* why direct */
+.rn-why{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--rn-line); border-radius:8px; overflow:hidden; background:#fff; }
+.rn-why__c{ padding:32px; border-right:1px solid var(--rn-line); }
+.rn-why__c:last-child{ border-right:none; }
+.rn-why__no{ font-family:var(--rn-font-mono); font-size:11.5px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; margin-bottom:16px; }
+.rn-why__c h3{ font-family:var(--rn-font-display); font-size:22px; font-weight:800; letter-spacing:-.01em; margin:0 0 10px; }
+.rn-why__c p{ font-size:15px; line-height:1.55; color:var(--rn-muted); margin:0; }
+
+/* featured stays 3-col */
+.rn-stays3{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+
+/* list-with-us band */
+.rn-lwu{ max-width:calc(var(--rn-max) - var(--rn-pad)*2); margin:0 auto; background:var(--rn-ink); color:var(--rn-paper); border-radius:10px; padding:40px 44px; display:flex; justify-content:space-between; align-items:center; gap:32px; }
+.rn-lwu__l{ font-family:var(--rn-font-mono); font-size:11px; letter-spacing:.16em; color:var(--rn-sand); text-transform:uppercase; margin-bottom:10px; }
+.rn-lwu h3{ font-family:var(--rn-font-display); font-size:28px; font-weight:800; letter-spacing:-.02em; margin:0; line-height:1.05; }
+.rn-lwu h3 em{ color:var(--rn-sand); font-style:normal; }
+.rn-lwu p{ font-size:14.5px; color:#c8d2c8; margin:8px 0 0; max-width:520px; }
+
+/* compliance strip */
+.rn-comply{ background:var(--rn-paper2); border-top:1px solid var(--rn-line); border-bottom:1px solid var(--rn-line); }
+.rn-comply__in{ max-width:var(--rn-max); margin:0 auto; padding:20px var(--rn-pad); display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.rn-comply__c{ display:flex; gap:14px; align-items:flex-start; }
+.rn-comply__c strong{ display:block; font-family:var(--rn-font-mono); font-size:10.5px; letter-spacing:.16em; color:var(--rn-terra); text-transform:uppercase; margin-bottom:4px; }
+.rn-comply__c span{ font-size:13.5px; color:var(--rn-ink2); font-weight:600; }
+.rn-comply__c mark{ background:none; color:var(--rn-muted); font-weight:400; }
+
+@media (max-width:1100px){
+  .rn-home-hero h1{ font-size:56px; }
+  .rn-search{ grid-template-columns:1fr 1fr; }
+  .rn-search__btn{ grid-column:1/-1; padding:14px 0; justify-content:center; }
+}
+@media (max-width:860px){
+  .rn-home-hero{ min-height:0; }
+  .rn-home-hero__in{ padding:56px 28px; }
+  .rn-home-hero h1{ font-size:40px; }
+  .rn-search{ grid-template-columns:1fr; }
+  .rn-why{ grid-template-columns:1fr; }
+  .rn-why__c{ border-right:none; border-bottom:1px solid var(--rn-line); }
+  .rn-why__c:last-child{ border-bottom:none; }
+  .rn-stays3{ grid-template-columns:1fr; }
+  .rn-lwu{ flex-direction:column; align-items:flex-start; padding:32px; }
+  .rn-comply__in{ grid-template-columns:1fr; }
+  .rn-trust__in{ font-size:10px; }
+}
+</style>
+</head>
+<body>
+
+<header class="rn-header">
+  <nav class="rn-nav" aria-label="Primary">
+    <a class="rn-brand" href="home.html">
+      <span class="rn-brand__name">RentNova</span>
+      <span class="rn-brand__loc">Mississauga · GTA</span>
+    </a>
+    <ul class="rn-menu">
+      <li><a href="home.html" aria-current="page">Home</a></li>
+      <li><a href="#">Stays</a></li>
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="list-with-us.html">List with us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO with search -->
+  <section class="rn-home-hero">
+    <div class="rn-home-hero__in">
+      <div class="rn-eyebrow" style="color:var(--rn-sand);">Direct-book · Mississauga &amp; GTA</div>
+      <h1>Stay in a home<br>we <em>built to be lived in</em>.</h1>
+      <p class="rn-home-hero__lead">Direct-book short stays around Mississauga and the western GTA. No platform fees, no surprise cleaning charges — just the key code and coffee in the cupboard.</p>
+
+      <!-- TODO(deploy): replace the entire .rn-search block with your Lodgify search shortcode, e.g. [lodgify-search-bar] -->
+      <form class="rn-search" method="get" action="#">
+        <label>
+          <span>Where</span>
+          <input type="text" name="dest" placeholder="Mississauga, ON" value="Mississauga, ON">
+        </label>
+        <label>
+          <span>Check in</span>
+          <input type="date" name="in">
+        </label>
+        <label>
+          <span>Check out</span>
+          <input type="date" name="out">
+        </label>
+        <label>
+          <span>Guests</span>
+          <select name="guests">
+            <option>1 guest</option>
+            <option>2 guests</option>
+            <option>3 guests</option>
+            <option>4 guests</option>
+            <option>5+ guests</option>
+          </select>
+        </label>
+        <button type="submit" class="rn-search__btn">Search →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="rn-trust">
+    <div class="rn-trust__in">
+      <span><b>✦</b> Book direct · no platform fees</span>
+      <span><b>✦</b> Real hosts · local, on-call</span>
+      <span><b>✦</b> Every stay insured to $1M</span>
+      <span><b>✦</b> Licensed &amp; MAT-remitting operator</span>
+    </div>
+  </div>
+
+  <!-- FEATURED STAYS -->
+  <section class="rn-section">
+    <div class="rn-head">
+      <h2 class="rn-h2">Homes ready to book.</h2>
+      <p class="rn-head__note">Every home below is one we designed, furnished and now run.</p>
+    </div>
+    <div class="rn-stays3">
+      <a class="rn-stay" href="#">
+        <img class="rn-stay__img" src="https://rent-nova.com/wp-content/uploads/2026/05/6019-featherhead-crescent-mississauga-W4633966-1.jpg" alt="The Two-Story Home" loading="lazy">
+        <div class="rn-stay__body">
+          <div>
+            <div class="rn-stay__loc">Erin Mills · Mississauga</div>
+            <div class="rn-stay__name">The Two-Story Home</div>
+            <div class="rn-stay__meta">4BR · Sleeps 6 · Min 15 nights</div>
+          </div>
+          <div class="rn-stay__price"><b>$167</b><span>/ night</span></div>
+        </div>
+      </a>
+      <a class="rn-stay" href="#">
+        <img class="rn-stay__img" src="https://rent-nova.com/wp-content/uploads/2026/05/Bedroom-1-scaled.jpg" alt="The Erin Mills Suite" loading="lazy">
+        <div class="rn-stay__body">
+          <div>
+            <div class="rn-stay__loc">Erin Mills · Mississauga</div>
+            <div class="rn-stay__name">The Erin Mills Suite</div>
+            <div class="rn-stay__meta">1BR · Sleeps 2 · Min 3 nights</div>
+          </div>
+          <div class="rn-stay__price"><b>$65</b><span>/ night</span></div>
+        </div>
+      </a>
+      <a class="rn-stay" href="#">
+        <img class="rn-stay__img" src="https://rent-nova.com/wp-content/uploads/2026/05/6019-featherhead-crescent-mississauga-W4633966-1.jpg" alt="The Garden Suite" loading="lazy">
+        <div class="rn-stay__body">
+          <div>
+            <div class="rn-stay__loc">Erin Mills · Mississauga</div>
+            <div class="rn-stay__name">The Garden Suite</div>
+            <div class="rn-stay__meta">1BR · Sleeps 2 · Min 2 nights</div>
+          </div>
+          <div class="rn-stay__price"><b>$89</b><span>/ night</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- WHY BOOK DIRECT -->
+  <section class="rn-section" style="padding-top:0;">
+    <div class="rn-head">
+      <h2 class="rn-h2">Why book direct.</h2>
+      <p class="rn-head__note">The reason we built this instead of just running Airbnb listings.</p>
+    </div>
+    <div class="rn-why">
+      <div class="rn-why__c">
+        <div class="rn-why__no">01 — Cheaper</div>
+        <h3>No platform fees</h3>
+        <p>Airbnb and Booking.com typically add 14–20% on top of the nightly rate for guests. Booking direct with us skips it entirely.</p>
+      </div>
+      <div class="rn-why__c">
+        <div class="rn-why__no">02 — Faster</div>
+        <h3>Direct line to real humans</h3>
+        <p>Text or call the same person who designed the unit. No shift-handoff, no chatbot triage, no "escalating your case."</p>
+      </div>
+      <div class="rn-why__c">
+        <div class="rn-why__no">03 — Better</div>
+        <h3>The stay we'd want</h3>
+        <p>Real espresso, actual pillows, working heat. We stay in every unit ourselves before it goes live — and after.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIST WITH US BAND -->
+  <section style="padding:0 var(--rn-pad) 64px;">
+    <div class="rn-lwu">
+      <div>
+        <div class="rn-lwu__l">Own a home like these?</div>
+        <h3>List your home.<br>Turn it into <em>legal income</em>.</h3>
+        <p>We design, build, furnish, list and run legal short-stay units on your lot. One team, one contract, monthly statements.</p>
+      </div>
+      <a class="rn-btn rn-btn--terra" href="list-with-us.html">List with us →</a>
+    </div>
+  </section>
+
+  <!-- COMPLIANCE STRIP (visible on every guest-facing page) -->
+  <div class="rn-comply">
+    <div class="rn-comply__in">
+      <div class="rn-comply__c">
+        <div>
+          <strong>Toronto STR license</strong>
+          <!-- TODO(deploy): replace [STR-LICENSE] with the real license number once issued -->
+          <span>#[STR-LICENSE] · <mark>displayed on every stay confirmation</mark></span>
+        </div>
+      </div>
+      <div class="rn-comply__c">
+        <div>
+          <strong>MAT included</strong>
+          <span>Ontario / Toronto Municipal Accommodation Tax (6%) already in the nightly rate — <mark>no surprise line item</mark></span>
+        </div>
+      </div>
+      <div class="rn-comply__c">
+        <div>
+          <strong>Insured to $1M</strong>
+          <span>Every guest stay covered by short-term rental liability + property insurance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="rn-footer">
+  <div class="rn-footer__inner">
+    <span class="rn-footer__name">RentNova</span>
+    <span class="rn-footer__copy">© 2026 RentNova · Mississauga &amp; the GTA · STR #[STR-LICENSE]</span>
+  </div>
+</footer>
+
+</body>
+</html>
