@@ -1,0 +1,90 @@
+# robots.txt — agile-agilist.com
+# Last reviewed: 2026-07-04
+#
+# Intentional posture: WELCOME AI crawlers. ChatGPT / Claude / Perplexity /
+# Gemini all reach for text they can cite. Blocking them (Cloudflare's default,
+# or a lazy Disallow: /) removes the site from AI answer surfaces without
+# reducing traditional Google traffic. See AI-VISIBILITY-RUNBOOK.md Phase 1.
+#
+# DEPLOY: overwrite /wp-content/robots.txt (or root robots.txt if WP is aware
+# of it via Yoast/AIOSEO). Then re-verify in Search Console → robots.txt
+# Tester and bing.com/webmasters → Configure My Site → Robots.txt Tester.
+
+# ---- Explicit allow for AI crawlers (order-independent, listed for clarity) ----
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# ---- All other bots (search + AI): default allow, block admin & tag noise ----
+User-agent: *
+Allow: /
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /wp-json/
+Disallow: /xmlrpc.php
+Disallow: /?s=
+Disallow: /search/
+Disallow: /*?replytocom=
+Disallow: /*?add-to-cart=
+Disallow: /author/
+Disallow: /tag/
+Disallow: /category/uncategorized/
+Disallow: /page/
+Allow: /wp-admin/admin-ajax.php
+
+# ---- Sitemaps (AIOSEO-generated, index + per-type) ----
+Sitemap: https://agile-agilist.com/sitemap.xml
+Sitemap: https://agile-agilist.com/post-sitemap.xml
+Sitemap: https://agile-agilist.com/page-sitemap.xml
+Sitemap: https://agile-agilist.com/product-sitemap.xml
+
+# ---- LLM index (also linked from <head>) ----
+# https://agile-agilist.com/llms.txt
+
+# ---- Crawl-delay: intentionally omitted ----
+# GPTBot/ClaudeBot honour it and slow themselves needlessly; the server can
+# take the load. If a specific bot misbehaves, cap it here individually.
