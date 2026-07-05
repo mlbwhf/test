@@ -1,5 +1,5 @@
 # A2 — CRM Activation: Segments + Email Sequences
-_Status: **DRAFT — no sends until Mark approves copy and sets the returning-student discount %.**_
+_Status: **APPROVED by Mark 2026-07-05** — copy approved as drafted; returning-student discount set at **10% (code `ALUMNI10`)**. Outstanding: GBP review short-link for A6._
 _Rules honored: every email links **directly to the Eventbrite listing** (no intermediate pages); ads and ad landing pages untouched; leads ≠ conversions — success is measured only in the A1 report._
 
 ## Tracking convention (read before building links)
@@ -13,6 +13,7 @@ aff=em-react-1 / em-react-2 / em-react-3
 ```
 
 Link shape: `https://www.eventbrite.ca/e/<event-id>?aff=em-quiz-1`
+Organizer page (all live listings): `https://www.eventbrite.ca/o/agileagilist-56013628813`
 
 ## Segments (HubSpot active lists)
 
@@ -54,7 +55,7 @@ Personalization by segment: SA alumni → POPM/SSM; SSM/POPM alumni → RTE/SPC;
 **Day 0 — "Your next rung"**
 Subject: `You're certified {{current_cert}} — here's the natural next step`
 - "Most {{current_cert}} holders we train go on to {{next_course}} because …" (one concrete career reason).
-- Returning-student code: `ALUMNI<XX>` (**Mark sets %**). CTA → `?aff=em-alum-1`
+- Returning-student code: `ALUMNI10` (10%, set by Mark 2026-07-05). CTA → `?aff=em-alum-1`
 
 **Day 6 — proof**
 Subject: `How {{first_name_of_alumnus}} used {{next_course}}` — one story, one CTA → `?aff=em-alum-2`
@@ -85,7 +86,7 @@ Subject: `Upcoming cohort dates (next 8 weeks)`
 
 ## Build checklist (agent, once copy approved)
 
-- [ ] Mark approves all copy above and sets `ALUMNI<XX>` %
+- [x] Mark approves all copy above and sets discount: 10% → `ALUMNI10` (2026-07-05)
 - [ ] Three active lists built in HubSpot per the segment table
 - [ ] Eventbrite tracking links created per the `aff` convention
 - [ ] Sequences built in HubSpot (marketing emails + delays), suppression rules on

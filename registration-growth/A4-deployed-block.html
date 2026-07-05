@@ -1,0 +1,65 @@
+<!-- A4 module AS DEPLOYED 2026-07-05 to: /cert-recommender/ (28611), /career-compass/
+     (28615), /about/ (964). One core/html Gutenberg block appended per page.
+     NOT deployed to the pillar /training/ (1699): that page already carries a native
+     "Upcoming cohorts" section (#cohorts: [easy_events_calendar] + hidden style4
+     [wp_events] feed) built by the parallel website session — A4 is satisfied there.
+     Feed shortcode args match that session's proven working syntax.
+     Data source: the site's own [wp_events] feed (WP Event Aggregator = live Eventbrite
+     import), rendered hidden and re-presented as cards — real dates only, zero manual
+     upkeep. If the feed is empty or the plugin is off, the whole module stays invisible.
+     JS deliberately avoids `&&` and `&` (WP content encoding corrupted `&&` on this site
+     before — see commit 0d6fb34) and builds DOM via createElement, no HTML strings. -->
+<!-- wp:html -->
+<div id="aa4-next-cohorts" style="display:none;margin:34px auto;max-width:1100px;padding:0 24px;font-family:inherit">
+  <h3 style="color:#053947;font-size:24px;margin:0 0 4px">Next cohorts</h3>
+  <p style="color:#475569;font-size:14px;margin:0 0 16px">Live-virtual with an authorised SAFe&reg; instructor &middot; exam included</p>
+  <div id="aa4-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px"></div>
+  <div id="aa4-feed" style="display:none" aria-hidden="true">[wp_events events_list layout="style4" col="2" posts_per_page="20"]</div>
+</div>
+<script>
+(function () {
+  function go() {
+    var box = document.getElementById('aa4-next-cohorts');
+    var host = document.getElementById('aa4-cards');
+    if (!box) { return; }
+    if (!host) { return; }
+    var rows = document.querySelectorAll('#aa4-feed .archive-event');
+    var shown = 0;
+    for (var i = 0; i < rows.length; i++) {
+      if (shown >= 6) { break; }
+      var ev = rows[i];
+      var mEl = ev.querySelector('.event_date .month');
+      var dEl = ev.querySelector('.event_date .date');
+      if (!mEl) { continue; }
+      if (!dEl) { continue; }
+      var tEl = ev.querySelector('.event_title');
+      var aEl = ev.querySelector('a.wpea-text-deco');
+      var wEl = ev.querySelector('.widget_event_sdate');
+      var card = document.createElement('a');
+      card.href = aEl ? aEl.getAttribute('href') : '#';
+      card.style.cssText = 'display:block;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;background:#fff;text-decoration:none;transition:box-shadow .15s';
+      var chip = document.createElement('div');
+      chip.style.cssText = 'font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#127E88;font-weight:700';
+      chip.textContent = (mEl.textContent + ' ' + dEl.textContent).replace(/\s+/g, ' ').trim();
+      var title = document.createElement('div');
+      title.style.cssText = 'color:#053947;font-weight:700;font-size:15px;margin:7px 0 3px;line-height:1.35';
+      title.textContent = tEl ? tEl.textContent.trim() : 'Upcoming cohort';
+      var when = document.createElement('div');
+      when.style.cssText = 'color:#64748b;font-size:13px;margin-bottom:12px';
+      when.textContent = wEl ? wEl.textContent.replace(/\s+/g, ' ').trim() : '';
+      var cta = document.createElement('span');
+      cta.style.cssText = 'display:inline-block;background:#fbbf24;color:#053947;font-weight:700;font-size:13px;padding:8px 16px;border-radius:8px';
+      cta.textContent = 'View dates + register →';
+      card.appendChild(chip);
+      card.appendChild(title);
+      card.appendChild(when);
+      card.appendChild(cta);
+      host.appendChild(card);
+      shown++;
+    }
+    if (shown > 0) { box.style.display = 'block'; }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', go); } else { go(); }
+})();
+</script>
+<!-- /wp:html -->
