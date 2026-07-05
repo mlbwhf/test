@@ -9,8 +9,10 @@
 - 28611 /cert-recommender/ v2 · 28615 /career-compass/ v2 · 28627 pillar v2 · 964 /about/ v8 (+#message form section)
 - GA4 lead event: message_lead (never labelled conversion)
 
-## Legal drafts created (status: draft, lawyer review before publish)
-- 28652 refund · 28653 terms · 28654 privacy · 28655 cookies
+## Legal pages PUBLISHED 2026-07-05 (per Mark's instruction; lawyer pass still advised)
+- 28652 /refund/ · 28653 /terms/ · 28654 /privacy/ · 28655 /cookies/ — all LIVE
+- Cleaned before publish: removed DRAFT banner, [confirm] markers, entity bracket; set effective date 5 Jul 2026; TERMS unchanged
+- STILL PENDING: registered legal entity name + address (item 12); Eventbrite policy-match check (item 13); footer link targets -> /privacy/ /terms/ /refund/ /cookies/ (Astra Footer Builder, manual)
 - Terms modelled on skillbookacademy/knowledgehut structure (both sites blocked by env proxy —
   drafts use industry-standard SAFe-provider terms with [confirm] markers on every number)
 - Pending: registered legal entity name + address (item 12); Eventbrite policy alignment check (item 13)
