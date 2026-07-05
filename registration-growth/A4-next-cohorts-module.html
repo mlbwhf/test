@@ -1,0 +1,42 @@
+<!-- A4 — "Next cohorts" module for UNFROZEN pages only:
+     pillar page, Cert Recommender results, Career Compass results, About page.
+     NEVER paste on an ad landing page during the 30-day freeze (see PLAN.md).
+
+     Usage: paste this whole block into a Custom HTML block, then replace the
+     AA_COHORTS array with the current contents of next-cohorts.json's
+     "cohorts" key (Mark's monthly list). Past dates hide themselves, so a
+     stale month fails safe (module shows nothing rather than a dead date).
+     Styling matches the site's teal (#053947) + yellow (#fbbf24) system. -->
+
+<div id="aa-next-cohorts" style="margin:32px 0;font-family:inherit">
+  <h3 style="color:#053947;font-size:22px;margin:0 0 4px">Next cohorts</h3>
+  <p style="color:#475569;font-size:14px;margin:0 0 16px">Live-virtual with an authorised SAFe® instructor · exam included</p>
+  <div id="aa-nc-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px"></div>
+</div>
+<script>
+(function () {
+  /* Paste the "cohorts" array from next-cohorts.json here on each monthly update */
+  var AA_COHORTS = [
+    { course: "Leading SAFe® (SA)", date: "REPLACE 2026-08-10", days: "2 days · live virtual", city: "Toronto", price: "$850", register: "REPLACE https://www.eventbrite.ca/e/EVENT_ID" }
+  ];
+
+  var wrap = document.getElementById("aa-nc-cards");
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var shown = 0;
+  AA_COHORTS.forEach(function (c) {
+    var d = new Date(c.date + "T00:00:00");
+    if (isNaN(d) || d < today || /REPLACE/.test(c.register)) return; // real future dates with real links only
+    shown++;
+    var nice = d.toLocaleDateString("en-CA", { weekday: "short", year: "numeric", month: "long", day: "numeric" });
+    var card = document.createElement("div");
+    card.style.cssText = "border:1px solid #e2e8f0;border-radius:12px;padding:18px;background:#fff";
+    card.innerHTML =
+      '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#94a3b8">' + c.city + " · " + c.days + "</div>" +
+      '<div style="font-weight:bold;color:#053947;font-size:16px;margin:6px 0 2px">' + c.course + "</div>" +
+      '<div style="color:#0f172a;font-size:15px;margin-bottom:12px">' + nice + " · " + c.price + "</div>" +
+      '<a href="' + c.register + '" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:bold;font-size:14px;text-decoration:none;padding:10px 20px;border-radius:8px">Register →</a>';
+    wrap.appendChild(card);
+  });
+  if (!shown) document.getElementById("aa-next-cohorts").style.display = "none";
+})();
+</script>

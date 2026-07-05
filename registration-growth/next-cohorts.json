@@ -1,0 +1,33 @@
+{
+  "_readme": "A4 data source. Mark updates this monthly (later: generated from the Eventbrite API by a1_registration_report.py's successor). Dates must be REAL scheduled cohorts — the module hides anything in the past automatically. 'register' must be the DIRECT Eventbrite/Corsizio listing URL, never an intermediate page. Course pages in ad campaigns are FROZEN — this module goes only on the pillar page, the two quiz results screens, and the About page.",
+  "updated": "2026-07-05",
+  "cohorts": [
+    {
+      "course": "Leading SAFe® (SA)",
+      "code": "SA",
+      "date": "REPLACE 2026-08-10",
+      "days": "2 days · live virtual",
+      "city": "Toronto",
+      "price": "$850",
+      "register": "REPLACE https://www.eventbrite.ca/e/EVENT_ID"
+    },
+    {
+      "course": "SAFe® POPM",
+      "code": "POPM",
+      "date": "REPLACE 2026-08-24",
+      "days": "2 days · live virtual",
+      "city": "Toronto",
+      "price": "$895",
+      "register": "REPLACE https://www.eventbrite.ca/e/EVENT_ID"
+    },
+    {
+      "course": "AI-Native Foundations",
+      "code": "AI-NATIVE",
+      "date": "REPLACE 2026-09-14",
+      "days": "2 days · Toronto (first public cohort)",
+      "city": "Toronto",
+      "price": "REPLACE",
+      "register": "REPLACE https://www.corsizio.com/EVENT"
+    }
+  ]
+}
