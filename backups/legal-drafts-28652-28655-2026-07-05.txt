@@ -1,0 +1,5 @@
+Backup marker (Rule 9): legal pages 28652 refund / 28653 terms / 28654 privacy / 28655 cookies
+were created as DRAFTS this session (full draft content preserved in session transcript + git commit
+0171677 notes). Published 2026-07-05 after stripping "DRAFT for legal review" banner, [confirm]
+inline markers, and the pending-entity bracket. Policy TERMS unchanged from the drafts.
+Revert path: pages.update status=draft restores draft state; terms text is identical.
