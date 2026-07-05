@@ -1,0 +1,568 @@
+<!-- ============ CERT RECOMMENDER v1 — Agile Agilist ============ -->
+
+<!-- wp:html -->
+<style>
+:root{
+  --cr-teal:#127E88; --cr-teal-dk:#0E3A44; --cr-teal-ink:#0B2E35;
+  --cr-teal-lt:#8FCFCF; --cr-teal-tint:#DCEAEA; --cr-teal-sand:#F5FAFA;
+  --cr-teal-mist:#88A0A4;
+}
+.cr-wrap{max-width:980px;margin:0 auto;padding:0 22px;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--cr-teal-ink)}
+.cr-hero{padding:80px 24px 40px;text-align:center;background:linear-gradient(135deg,var(--cr-teal-dk),var(--cr-teal-ink));color:#fff;border-radius:0;margin:0}
+.cr-hero .eb{display:inline-block;padding:6px 14px;background:rgba(143,207,207,0.16);color:var(--cr-teal-lt);border-radius:30px;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:16px;border:1px solid rgba(143,207,207,0.28)}
+.cr-hero h1{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:52px;line-height:1.08;margin:0 auto 14px;max-width:820px;letter-spacing:-0.01em}
+.cr-hero h1 em{color:var(--cr-teal-lt);font-style:italic}
+.cr-hero p{font-size:18px;color:#DCEAEA;line-height:1.55;margin:0 auto 22px;max-width:640px}
+.cr-hero .cr-meta{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:13px;color:#8FCFCF;font-weight:600}
+.cr-hero .cr-meta strong{color:#fff}
+@media(max-width:780px){.cr-hero h1{font-size:34px}}
+
+.cr-shell{background:var(--cr-teal-sand);padding:40px 0 80px}
+.cr-card{background:#fff;border:1px solid var(--cr-teal-tint);border-radius:18px;padding:36px;box-shadow:0 12px 32px rgba(11,46,53,0.06);position:relative;overflow:hidden}
+
+.cr-prog{display:flex;gap:6px;margin-bottom:26px}
+.cr-prog span{flex:1;height:5px;border-radius:99px;background:var(--cr-teal-tint);transition:background .25s}
+.cr-prog span.on{background:var(--cr-teal)}
+.cr-prog span.done{background:var(--cr-teal-dk)}
+
+.cr-eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--cr-teal);margin-bottom:8px}
+.cr-q-text{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:30px;line-height:1.2;margin:0 0 10px;color:var(--cr-teal-ink)}
+.cr-q-sub{font-size:15px;color:var(--cr-teal-mist);margin:0 0 22px;line-height:1.55}
+
+.cr-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+@media(max-width:640px){.cr-opts{grid-template-columns:1fr}}
+.cr-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1.5px solid var(--cr-teal-tint);border-radius:12px;font-size:14px;font-weight:600;color:var(--cr-teal-ink);cursor:pointer;transition:all .18s;text-align:left;line-height:1.4}
+.cr-opt:hover{border-color:var(--cr-teal);background:var(--cr-teal-sand);transform:translateY(-1px)}
+.cr-opt.sel{border-color:var(--cr-teal);background:var(--cr-teal-tint);box-shadow:0 4px 14px rgba(18,126,136,0.14)}
+.cr-opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--cr-teal-mist);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.cr-opt.sel .dot{border-color:var(--cr-teal);background:var(--cr-teal)}
+.cr-opt.sel .dot::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
+.cr-opt .letter{font-weight:800;color:var(--cr-teal-mist);font-size:11px;letter-spacing:0.5px;margin-right:2px}
+.cr-opt.sel .letter{color:var(--cr-teal)}
+
+.cr-nav{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--cr-teal-tint)}
+.cr-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;border:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.cr-btn-primary{background:var(--cr-teal);color:#fff}
+.cr-btn-primary:hover:not(:disabled){background:var(--cr-teal-dk);transform:translateY(-1px)}
+.cr-btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.cr-btn-ghost{background:transparent;color:var(--cr-teal);border:1.5px solid var(--cr-teal-tint)}
+.cr-btn-ghost:hover{border-color:var(--cr-teal);background:var(--cr-teal-sand)}
+.cr-step-label{font-size:13px;color:var(--cr-teal-mist);font-weight:600}
+
+/* ---------- Start screen ---------- */
+.cr-start-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}
+@media(max-width:640px){.cr-start-benefits{grid-template-columns:1fr}}
+.cr-benefit{padding:14px 16px;background:var(--cr-teal-sand);border-radius:10px;border-left:3px solid var(--cr-teal);font-size:13px;color:var(--cr-teal-ink);line-height:1.45}
+.cr-benefit strong{display:block;font-weight:800;margin-bottom:2px;color:var(--cr-teal-dk)}
+
+/* ---------- Results ---------- */
+.cr-res-hero{text-align:center;padding:14px 0 26px}
+.cr-res-hero .eb{display:inline-block;padding:5px 12px;background:var(--cr-teal-tint);color:var(--cr-teal-dk);border-radius:20px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:12px}
+.cr-res-hero h2{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:36px;line-height:1.15;margin:0 0 8px;color:var(--cr-teal-ink)}
+.cr-res-hero p{font-size:15px;color:var(--cr-teal-mist);margin:0;line-height:1.55}
+
+.cr-rec{background:linear-gradient(135deg,var(--cr-teal-dk),var(--cr-teal));color:#fff;border-radius:16px;padding:32px;margin:0 0 22px;position:relative;overflow:hidden}
+.cr-rec::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(143,207,207,0.18),transparent 70%);border-radius:50%}
+.cr-rec-tag{display:inline-block;padding:4px 12px;background:rgba(143,207,207,0.22);color:var(--cr-teal-lt);border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:2}
+.cr-rec-name{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:42px;line-height:1.05;margin:0 0 8px;color:#fff;position:relative;z-index:2}
+.cr-rec-desc{font-size:15px;color:#DCEAEA;line-height:1.55;margin:0 0 22px;position:relative;z-index:2;max-width:640px}
+.cr-rec-meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px;position:relative;z-index:2}
+.cr-rec-meta-item{font-size:13px;color:#8FCFCF}
+.cr-rec-meta-item strong{display:block;color:#fff;font-size:17px;font-weight:800}
+.cr-rec-cta{display:inline-flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2}
+.cr-rec-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;transition:all .2s}
+.cr-rec-btn-primary{background:#fff;color:var(--cr-teal-dk) !important}
+.cr-rec-btn-primary:hover{transform:translateY(-1px)}
+.cr-rec-btn-ghost{background:transparent;color:#fff !important;border:1.5px solid rgba(255,255,255,0.4)}
+.cr-rec-btn-ghost:hover{background:rgba(255,255,255,0.08);border-color:#fff}
+
+.cr-why{background:var(--cr-teal-sand);border:1px solid var(--cr-teal-tint);border-radius:12px;padding:22px;margin-bottom:22px}
+.cr-why h3{font-size:15px;font-weight:800;color:var(--cr-teal-dk);margin:0 0 10px;text-transform:uppercase;letter-spacing:0.6px}
+.cr-why ul{margin:0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--cr-teal-ink)}
+
+.cr-path{margin-bottom:22px}
+.cr-path h3{font-size:15px;font-weight:800;color:var(--cr-teal-dk);margin:0 0 10px;text-transform:uppercase;letter-spacing:0.6px}
+.cr-path-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.cr-path-row{grid-template-columns:1fr}}
+.cr-path-step{background:#fff;border:1px solid var(--cr-teal-tint);border-radius:10px;padding:16px;text-align:center}
+.cr-path-step-lab{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--cr-teal-mist);margin-bottom:6px}
+.cr-path-step-name{font-size:15px;font-weight:800;color:var(--cr-teal-ink);margin:0 0 4px}
+.cr-path-step-tag{font-size:12px;color:var(--cr-teal-mist)}
+
+/* ---------- Email capture ---------- */
+.cr-cap{background:var(--cr-teal-sand);border:1.5px solid var(--cr-teal-tint);border-radius:14px;padding:26px;margin-top:8px}
+.cr-cap h3{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:24px;color:var(--cr-teal-ink);margin:0 0 6px}
+.cr-cap p{font-size:14px;color:var(--cr-teal-mist);margin:0 0 16px;line-height:1.55}
+.cr-cap-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:640px){.cr-cap-row{grid-template-columns:1fr}}
+.cr-cap input{width:100%;padding:12px 14px;border:1.5px solid var(--cr-teal-tint);border-radius:8px;font-size:14px;color:var(--cr-teal-ink);background:#fff;font-family:inherit;transition:border-color .18s;box-sizing:border-box}
+.cr-cap input:focus{outline:none;border-color:var(--cr-teal)}
+.cr-cap-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--cr-teal-ink);margin-bottom:12px;cursor:pointer}
+.cr-cap-check input{width:16px;height:16px;margin-top:2px;cursor:pointer}
+.cr-cap-btn{width:100%;padding:14px;background:var(--cr-teal);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:inherit}
+.cr-cap-btn:hover:not(:disabled){background:var(--cr-teal-dk)}
+.cr-cap-btn:disabled{opacity:0.55;cursor:not-allowed}
+.cr-cap-note{font-size:11px;color:var(--cr-teal-mist);text-align:center;margin-top:10px;line-height:1.5}
+
+.cr-toast{position:fixed;bottom:24px;right:24px;background:var(--cr-teal-dk);color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 12px 28px rgba(11,46,53,0.28);z-index:9999;opacity:0;transform:translateY(20px);transition:all .3s;max-width:340px}
+.cr-toast.show{opacity:1;transform:translateY(0)}
+
+.cr-restart{text-align:center;margin-top:22px;font-size:13px}
+.cr-restart a{color:var(--cr-teal);font-weight:700;text-decoration:none}
+.cr-restart a:hover{text-decoration:underline}
+
+/* Hidden WPForms container for programmatic submit */
+.cr-hidden-form{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;visibility:hidden}
+</style>
+
+<section class="cr-hero">
+  <span class="eb">Career Selector · Free · SPCT-built</span>
+  <h1>The Professional Agile &amp; <em>SAFe&reg; Career Selector</em></h1>
+  <p>Six questions. Sixty seconds. A hyper-targeted SAFe, AI-Native, or SPC recommendation for your role, stage, and 6-month goals.</p>
+  <div class="cr-meta">
+    <span>&#9733;&#9733;&#9733;&#9733;&#9733; <strong>4.9/5</strong> from 2,500+ graduates</span>
+    <span>&middot;</span>
+    <span><strong>19 SAFe</strong> + <strong>7 AI-Native</strong> tracks matched</span>
+  </div>
+</section>
+
+<div class="cr-shell">
+  <div class="cr-wrap">
+    <div id="cr-app" class="cr-card"></div>
+    <!-- Hidden WPForms form 1768 for email delivery -->
+    <div class="cr-hidden-form" id="cr-hidden-form"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const QUESTIONS = [
+    {
+      id:'role',
+      title:'What&rsquo;s your role today?',
+      sub:'Pick the one that fits your day-to-day work most of the time.',
+      opts:[
+        {v:'ic',    l:'Team member / IC — dev, tester, designer, engineer, analyst'},
+        {v:'sm',    l:'Scrum Master / Agile Coach'},
+        {v:'po',    l:'Product Owner / Product Manager'},
+        {v:'lead',  l:'Team Lead / Manager'},
+        {v:'arch',  l:'Architect / Engineering Lead'},
+        {v:'rte',   l:'Program / Portfolio Manager, RTE, PMO'},
+        {v:'exec',  l:'Executive / Director / VP / C-Suite'},
+        {v:'train', l:'Consultant / Trainer — I want to teach others'}
+      ]
+    },
+    {
+      id:'prior',
+      title:'Any SAFe or agile cert already?',
+      sub:'',
+      opts:[
+        {v:'none',  l:'No &mdash; first one'},
+        {v:'sa',    l:'Yes &mdash; Leading SAFe&reg; (SA)'},
+        {v:'other', l:'Yes &mdash; one other SAFe cert (SSM / POPM / SP)'},
+        {v:'multi', l:'Yes &mdash; multiple SAFe certs'},
+        {v:'nonsafe',l:'Non-SAFe (CSM, PMP, ICAgile, etc.)'}
+      ]
+    },
+    {
+      id:'goal',
+      title:'Main goal in the next 6 months?',
+      sub:'',
+      opts:[
+        {v:'first',    l:'Get my first agile / SAFe credential'},
+        {v:'raise',    l:'Move into a higher-paying agile role or step up in my career'},
+        {v:'transform',l:'Lead/support a major transformation at my company'},
+        {v:'ai',       l:'Add advanced AI capabilities to my agile toolkit'},
+        {v:'spc',      l:'Become an SPC (SAFe Practice Consultant) / elite trainer'}
+      ]
+    },
+    {
+      id:'scale',
+      title:'Your org&rsquo;s scale?',
+      sub:'',
+      opts:[
+        {v:'team',  l:'Single team (5&ndash;15 people)'},
+        {v:'art',   l:'One program / one Agile Release Train (50&ndash;125 people)'},
+        {v:'port',  l:'Multiple ARTs / a large-scale portfolio'},
+        {v:'ent',   l:'Full enterprise (multiple portfolios / thousands of people)'},
+        {v:'indep', l:'Not sure / I&rsquo;m independent / looking for my next gig'}
+      ]
+    },
+    {
+      id:'time',
+      title:'Time you can commit this quarter?',
+      sub:'',
+      opts:[
+        {v:'2d',    l:'Fast-track: A standard 2-day class + exam'},
+        {v:'wk',    l:'Deep dive: A 4&ndash;5-day advanced program with rigorous prep'},
+        {v:'q',     l:'Growth journey: 3&ndash;6 months for a multi-certification pathway'},
+        {v:'long',  l:'Elite track: 6&ndash;12 months on an SPCT/SPC-led mentorship track'}
+      ]
+    },
+    {
+      id:'ai',
+      title:'AI-Native / AI-in-Agile &mdash; where does it sit?',
+      sub:'',
+      opts:[
+        {v:'first',   l:'My #1 priority right now (I want an AI-Native track)'},
+        {v:'add',     l:'A strong complement to SAFe framework practices'},
+        {v:'later',   l:'Not right now &mdash; I want to focus purely on foundational/advanced agile frameworks'}
+      ]
+    }
+  ];
+
+  const CERTS = {
+    SA:   {name:'Leading SAFe',                  code:'SAFe Agilist (SA)',                price:'$795', days:'2 days', href:'/training/leading-safe/'},
+    SP:   {name:'SAFe for Teams',                code:'SAFe Practitioner (SP)',           price:'$795', days:'2 days', href:'/training/safe-for-teams/'},
+    SSM:  {name:'SAFe Scrum Master',             code:'SSM',                              price:'$995', days:'2 days', href:'/training/safe-scrum-master/'},
+    SASM: {name:'SAFe Advanced Scrum Master',    code:'SASM',                             price:'$1,295',days:'2 days', href:'/training/safe-advanced-scrum-master/'},
+    POPM: {name:'SAFe Product Owner / PM',       code:'POPM',                             price:'$995', days:'2 days', href:'/training/safe-popm/'},
+    APM:  {name:'SAFe Agile Product Management', code:'APM',                              price:'$1,295',days:'3 days', href:'/training/safe-apm/'},
+    RTE:  {name:'SAFe Release Train Engineer',   code:'RTE',                              price:'$1,995',days:'3 days', href:'/training/safe-rte/'},
+    ARCH: {name:'SAFe for Architects',           code:'ARCH',                             price:'$1,295',days:'3 days', href:'/training/safe-for-architects/'},
+    LPM:  {name:'SAFe Lean Portfolio Management',code:'LPM',                              price:'$1,995',days:'3 days', href:'/training/safe-lpm/'},
+    SDP:  {name:'SAFe DevOps Practitioner',      code:'SDP',                              price:'$995', days:'2 days', href:'/training/safe-devops/'},
+    SPC:  {name:'SAFe Practice Consultant',      code:'SPC',                              price:'$4,795',days:'5 days', href:'/training/safe-spc/'},
+    RAI:  {name:'Responsible AI Practitioner',   code:'AI-Native · RAI',                  price:'$495', days:'1 day',  href:'/training/responsible-ai/'},
+    AFCC: {name:'AI-First Career Coach',         code:'AI-Native · AF-CC',                price:'$495', days:'1 day',  href:'/training/af-cc/'},
+    AFVSM:{name:'AI-First Value Stream Mapping', code:'AI-Native · AF-VSM',               price:'$495', days:'1 day',  href:'/training/af-vsm/'},
+    ACG:  {name:'AI-Coach Generalist',           code:'AI-Native · ACG',                  price:'$495', days:'1 day',  href:'/training/ai-coach-generalist/'},
+    AINCA:{name:'AI-Native Certified Architect', code:'AI-Native · AINCA',                price:'$495', days:'1 day',  href:'/training/ai-native-architect/'},
+    AINORG:{name:'AI-Native Organizational Change',code:'AI-Native · AINORG',             price:'$495', days:'1 day',  href:'/training/ai-native-org/'}
+  };
+
+  // ---------- Recommendation engine ----------
+  // Fast-Track Priority Logic (4 paths). Ordered: AI-Native > Elite > Specialized > Foundation.
+  function recommend(a){
+    const role=a.role, prior=a.prior, goal=a.goal, scale=a.scale, time=a.time, ai=a.ai;
+    let path, primary, secondary, tertiary, pitch, why=[], nudge=null;
+
+    // ---- Path 1: AI-Native Agile Track ----
+    if(ai==='first' || goal==='ai'){
+      path = 'ai';
+      const aiMap = {ic:'RAI', sm:'ACG', po:'AFCC', lead:'AFCC', arch:'AINCA', rte:'AFVSM', exec:'AINORG', train:'AFCC'};
+      primary   = aiMap[role] || 'RAI';
+      secondary = (role==='exec' || scale==='ent') ? 'AINORG' : (role==='arch' ? 'AINCA' : 'AFCC');
+      if(secondary===primary) secondary = 'RAI';
+      tertiary  = (role==='exec' || role==='rte') ? 'LPM' : 'SA';
+      pitch = 'Frameworks alone aren&rsquo;t enough anymore. You&rsquo;re primed for an AI-Native approach &mdash; learning how to use LLMs to automate schema generation, optimize backlogs, and accelerate software delivery pipelines.';
+      why.push('AI is your top priority, so we lead with an AI-Native cert. The traditional SAFe cert stays queued as the framework foundation you&rsquo;ll layer it onto.');
+    }
+
+    // ---- Path 2: Elite / Enterprise Leadership (SPC / RTE / LPM) ----
+    else if(goal==='spc' || (['rte','exec','train'].includes(role) && ['wk','q','long'].includes(time))){
+      path = 'elite';
+      if(goal==='spc' || role==='train'){ primary='SPC'; secondary='SA'; tertiary='SSM'; }
+      else if(role==='exec' || scale==='port' || scale==='ent'){ primary='LPM'; secondary='SA'; tertiary='SPC'; }
+      else if(role==='rte' || goal==='raise'){ primary='RTE'; secondary='LPM'; tertiary='SPC'; }
+      else { primary='LPM'; secondary='SA'; tertiary='SPC'; }
+      pitch = 'You&rsquo;re operating at scale. To move the needle across multiple ARTs or portfolios, you need the credentials that grant elite delivery or coaching status.';
+      why.push('Your role and time-commitment signal Elite / Enterprise Leadership. This is where careers 2x their compensation band.');
+      // UX-tip nudge if time = 2-day
+      if(time==='2d'){
+        nudge = 'Your goals align perfectly with the Elite SPC track. While it requires a 4&ndash;5 day commitment instead of 2, the career trajectory and ROI make it your highest-value path.';
+      }
+    }
+
+    // ---- Path 3: Specialized Execution Track (SASM / POPM / APM) ----
+    else if(['sm','po','lead'].includes(role) && ['sa','other','nonsafe'].includes(prior)){
+      path = 'specialized';
+      if(role==='sm'){ primary='SASM'; secondary='POPM'; tertiary='RTE'; }
+      else if(role==='po'){ primary = (prior==='multi'||prior==='other') ? 'APM' : 'POPM'; secondary='SASM'; tertiary='LPM'; }
+      else { primary='POPM'; secondary='SASM'; tertiary='LPM'; }
+      pitch = 'You already know the basics of agile. It&rsquo;s time to build deep, role-specific mastery to increase your market value and successfully run complex program levels.';
+      why.push('You have a foundation cert already; the next lever is a role-mastery cert that unlocks the senior tier of your role, not another entry-level.');
+    }
+
+    // ---- Path 4: Enterprise Foundation Track (SA / SP) ----
+    else {
+      path = 'foundation';
+      // IC / lead / arch with no prior cert → SP or SA
+      if(role==='ic' || role==='arch'){ primary='SP'; secondary='SSM'; tertiary='POPM'; }
+      else { primary='SA'; secondary='POPM'; tertiary='SSM'; }
+      pitch = 'The best starting point to understand how strategy aligns with execution at scale. This will give you the foundational language of the Scaled Agile Framework.';
+      why.push('Starting with a foundation cert gives you the vocabulary the whole framework builds on &mdash; it&rsquo;s the fastest credential onto your LinkedIn.');
+    }
+
+    // ---- Cross-path enrichments ----
+    if(ai==='add' && path!=='ai'){
+      const aiMap = {ic:'RAI', sm:'ACG', po:'AFCC', lead:'AFCC', arch:'AINCA', rte:'AFVSM', exec:'AINORG', train:'AFCC'};
+      tertiary = aiMap[role] || 'RAI';
+      why.push('Since you flagged AI as a complement, your Step 3 swaps to an AI-Native cert so you graduate this journey framework-fluent AND AI-fluent.');
+    }
+    if(prior==='none' && path!=='foundation'){
+      why.push('Because you don&rsquo;t hold a SAFe cert yet, we&rsquo;ve made sure Step 2 covers the foundation you need before scaling up.');
+    }
+    if(prior==='multi'){
+      why.push('You already hold multiple certs &mdash; we&rsquo;re pointing you at the highest-leverage next credential, not more entry-level.');
+    }
+
+    return {path, primary, secondary, tertiary, pitch, why, nudge};
+  }
+
+  const state = { step: -1, ans: {}, result: null };
+  const app = document.getElementById('cr-app');
+
+  function render(){
+    if(state.step === -1) return renderStart();
+    if(state.step >= QUESTIONS.length) return renderResults();
+    return renderQuestion();
+  }
+
+  function renderStart(){
+    app.innerHTML = `
+      <div class="cr-eyebrow">Free · 60 seconds · No signup to start</div>
+      <h2 class="cr-q-text">Get your personalized SAFe path in 6 questions.</h2>
+      <p class="cr-q-sub">Built by a Gold-SPCT after 2,500+ graduates. We&rsquo;ll match you to the right cert for your role, stage, and 6-month goal.</p>
+      <div class="cr-start-benefits">
+        <div class="cr-benefit"><strong>Save weeks</strong>No more scrolling through 19 SAFe certs — we narrow it to 1–3.</div>
+        <div class="cr-benefit"><strong>Save money</strong>Skip the wrong-cert mistake ($995 minimum, per class).</div>
+        <div class="cr-benefit"><strong>Land the role</strong>Match to what hiring managers filter for in your title.</div>
+      </div>
+      <div class="cr-nav">
+        <span class="cr-step-label">Ready when you are.</span>
+        <button class="cr-btn cr-btn-primary" onclick="CR.next()">Start &rarr;</button>
+      </div>
+    `;
+  }
+
+  function renderQuestion(){
+    const q = QUESTIONS[state.step];
+    const bars = QUESTIONS.map((_,i)=>{
+      if(i < state.step) return '<span class="done"></span>';
+      if(i === state.step) return '<span class="on"></span>';
+      return '<span></span>';
+    }).join('');
+    const opts = q.opts.map((o,i)=>{
+      const letter = String.fromCharCode(97+i);
+      const sel = state.ans[q.id] === o.v ? 'sel' : '';
+      return `<button class="cr-opt ${sel}" onclick="CR.pick('${q.id}','${o.v}')" type="button">
+        <span class="dot"></span>
+        <span><span class="letter">${letter}.</span> ${o.l}</span>
+      </button>`;
+    }).join('');
+    const canNext = !!state.ans[q.id];
+    app.innerHTML = `
+      <div class="cr-prog">${bars}</div>
+      <div class="cr-eyebrow">Question ${state.step+1} of ${QUESTIONS.length}</div>
+      <h2 class="cr-q-text">${q.title}</h2>
+      ${q.sub ? `<p class="cr-q-sub">${q.sub}</p>` : ''}
+      <div class="cr-opts">${opts}</div>
+      <div class="cr-nav">
+        <button class="cr-btn cr-btn-ghost" onclick="CR.prev()" ${state.step===0?'style="visibility:hidden"':''}>&larr; Back</button>
+        <button class="cr-btn cr-btn-primary" onclick="CR.next()" ${canNext?'':'disabled'}>${state.step===QUESTIONS.length-1 ? 'See my recommendation &rarr;' : 'Next &rarr;'}</button>
+      </div>
+    `;
+  }
+
+  function renderResults(){
+    if(!state.result) state.result = recommend(state.ans);
+    const r = state.result;
+    const primary = CERTS[r.primary];
+    const secondary = CERTS[r.secondary];
+    const tertiary = CERTS[r.tertiary];
+    const whyList = r.why.map(w=>`<li>${w}</li>`).join('');
+
+    app.innerHTML = `
+      <div class="cr-res-hero">
+        <div class="eb">Your Result</div>
+        <h2>Here&rsquo;s the path built for you.</h2>
+        <p>Based on your role, prior experience, goal, scale, time, and AI stance.</p>
+      </div>
+      ${r.nudge ? `<div style="background:#FFF3CD;border:1.5px solid #f0c674;border-left:5px solid #d69e2e;border-radius:10px;padding:16px 20px;margin-bottom:20px;color:#7c5300;font-size:14px;line-height:1.55"><strong style="display:block;font-weight:800;color:#663c00;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;font-size:11px">SPCT&rsquo;s note for you</strong>${r.nudge}</div>` : ''}
+      <div class="cr-rec">
+        <span class="cr-rec-tag">${({ai:'AI-Native Track',elite:'Elite / Enterprise Leadership Track',specialized:'Specialized Execution Track',foundation:'Enterprise Foundation Track'})[r.path]} &middot; Start here</span>
+        <div class="cr-rec-name">${primary.name}</div>
+        <div class="cr-rec-desc">${r.pitch}</div>
+        <div class="cr-rec-meta">
+          <div class="cr-rec-meta-item"><strong>${primary.price}</strong>All-in (course + exam)</div>
+          <div class="cr-rec-meta-item"><strong>${primary.days}</strong>Live virtual</div>
+          <div class="cr-rec-meta-item"><strong>&#10003;</strong>Pass guarantee</div>
+        </div>
+        <div class="cr-rec-cta">
+          <a class="cr-rec-btn cr-rec-btn-primary" href="${primary.href}">View next cohort &rarr;</a>
+          <a class="cr-rec-btn cr-rec-btn-ghost" href="https://meetings.hubspot.com/john2795?utm_source=quiz&utm_medium=cert-recommender&utm_content=${r.path}">Talk to Mark first</a>
+        </div>
+      </div>
+      <div class="cr-why">
+        <h3>Why this cert for you</h3>
+        <ul>${whyList}</ul>
+      </div>
+      <div class="cr-path">
+        <h3>Your 3-step path</h3>
+        <div class="cr-path-row">
+          <div class="cr-path-step">
+            <div class="cr-path-step-lab">Step 1 · Now</div>
+            <div class="cr-path-step-name">${primary.name}</div>
+            <div class="cr-path-step-tag">${primary.price} &middot; ${primary.days}</div>
+          </div>
+          <div class="cr-path-step">
+            <div class="cr-path-step-lab">Step 2 · 3–6 mo</div>
+            <div class="cr-path-step-name">${secondary.name}</div>
+            <div class="cr-path-step-tag">${secondary.price} &middot; ${secondary.days}</div>
+          </div>
+          <div class="cr-path-step">
+            <div class="cr-path-step-lab">Step 3 · 12 mo</div>
+            <div class="cr-path-step-name">${tertiary.name}</div>
+            <div class="cr-path-step-tag">${tertiary.price} &middot; ${tertiary.days}</div>
+          </div>
+        </div>
+      </div>
+      <div class="cr-cap">
+        <h3>Get this in your inbox</h3>
+        <p>We&rsquo;ll email the recommendation and next cohort dates. And if you allow browser notifications, we&rsquo;ll ping you when the cohort is 7 days out.</p>
+        <div class="cr-cap-row">
+          <input type="text" id="cr-cap-name" placeholder="Your name" autocomplete="name" />
+          <input type="email" id="cr-cap-email" placeholder="Work email" autocomplete="email" />
+        </div>
+        <label class="cr-cap-check">
+          <input type="checkbox" id="cr-cap-notify" checked />
+          <span>Also send me a browser notification when I have the tab open (optional).</span>
+        </label>
+        <button class="cr-cap-btn" id="cr-cap-btn" onclick="CR.send()">Email me my recommendation</button>
+        <div class="cr-cap-note">We never share your email. Unsubscribe from any message.</div>
+      </div>
+      <div class="cr-restart">
+        <a href="#" onclick="CR.restart();return false;">&larr; Retake the quiz</a>
+      </div>
+    `;
+  }
+
+  function toast(msg, dur){
+    let t = document.getElementById('cr-toast');
+    if(!t){ t=document.createElement('div'); t.id='cr-toast'; t.className='cr-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    requestAnimationFrame(()=>t.classList.add('show'));
+    clearTimeout(t._h);
+    t._h = setTimeout(()=>t.classList.remove('show'), dur||3500);
+  }
+
+  window.CR = {
+    next(){
+      if(state.step === -1){ state.step=0; render(); return; }
+      const q = QUESTIONS[state.step];
+      if(!state.ans[q.id]) return;
+      state.step++; state.result=null;
+      window.scrollTo({top:document.querySelector('.cr-shell').offsetTop-20,behavior:'smooth'});
+      render();
+    },
+    prev(){ if(state.step>0){ state.step--; render(); } },
+    pick(qid, v){
+      state.ans[qid] = v;
+      render();
+    },
+    restart(){ state.step=-1; state.ans={}; state.result=null; render(); },
+    send(){
+      const name = document.getElementById('cr-cap-name').value.trim();
+      const email = document.getElementById('cr-cap-email').value.trim();
+      const wantNotify = document.getElementById('cr-cap-notify').checked;
+      if(!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        toast('Please enter your name and a valid email.'); return;
+      }
+      const btn = document.getElementById('cr-cap-btn');
+      btn.disabled = true; btn.textContent = 'Sending...';
+      const r = state.result;
+      const body = buildEmailBody(name, r, state.ans);
+      submitToWPForms(name, email, body).then(()=>{
+        btn.textContent = 'Sent! Check your inbox &#10003;';
+        toast('Sent. Also emailed to Mark so he can follow up when you&rsquo;re ready.');
+        if(wantNotify) requestBrowserNotify(r);
+      }).catch(err=>{
+        console.error('cert-rec send err', err);
+        btn.disabled = false;
+        btn.textContent = 'Try again';
+        toast('Couldn&rsquo;t send just now. Please try again.');
+      });
+    }
+  };
+
+  function buildEmailBody(name, r, ans){
+    const primary = CERTS[r.primary], secondary = CERTS[r.secondary], tertiary = CERTS[r.tertiary];
+    const answerLines = QUESTIONS.map(q=>{
+      const opt = q.opts.find(o=>o.v===ans[q.id]);
+      return q.id.toUpperCase()+': '+(opt?opt.l.replace(/&mdash;/g,'-').replace(/<[^>]+>/g,''):'-');
+    }).join('\n');
+    return `Hi ${name},
+
+Here is your personalized SAFe / AI-Native path from Agile Agilist:
+
+RECOMMENDED CERT (Start here)
+${primary.name} (${primary.code}) — ${primary.price}, ${primary.days}
+https://agile-agilist.com${primary.href}
+
+YOUR 3-STEP PATH
+1. ${primary.name} — ${primary.price}, ${primary.days}
+2. ${secondary.name} — ${secondary.price}, ${secondary.days}
+3. ${tertiary.name} — ${tertiary.price}, ${tertiary.days}
+
+WHY WE RECOMMENDED THIS
+${r.why.map(w=>'- '+w.replace(/&[a-z]+;/g,'').replace(/<[^>]+>/g,'')).join('\n')}
+
+Book a free 15-min consult with Mark:
+https://meetings.hubspot.com/john2795?utm_source=quiz&utm_medium=cert-recommender&utm_content=${r.path}
+
+Your quiz answers (for reference):
+${answerLines}
+
+— The Agile Agilist team`;
+  }
+
+  function submitToWPForms(name, email, message){
+    // Uses WPForms form 1768. Requires the form to be embedded on the page
+    // OR to have a REST/AJAX endpoint that accepts name/email/message.
+    // Strategy: locate the injected form (see WPForms placeholder below), fill and submit.
+    return new Promise((resolve, reject)=>{
+      const container = document.getElementById('cr-hidden-form');
+      const form = container && container.querySelector('form.wpforms-form');
+      if(!form){
+        // Fallback: post to admin-ajax stub — requires WPCode PHP snippet server-side.
+        return fetch('/wp-admin/admin-ajax.php?action=aa_cert_lead', {
+          method:'POST', credentials:'same-origin',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body:`name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`
+        }).then(r=>r.ok?resolve():reject(new Error('bad response'))).catch(reject);
+      }
+      // Try common WPForms field IDs — user can edit these to match form 1768.
+      const nameEl  = form.querySelector('input[name*="[name]"]') || form.querySelector('input[type="text"]');
+      const emailEl = form.querySelector('input[type="email"]');
+      const msgEl   = form.querySelector('textarea');
+      if(nameEl) nameEl.value = name;
+      if(emailEl) emailEl.value = email;
+      if(msgEl) msgEl.value = message;
+      // Trigger native submit
+      const btn = form.querySelector('button[type="submit"]');
+      if(!btn) return reject(new Error('no submit'));
+      // WPForms handles ajax response internally; we resolve after short delay
+      btn.click();
+      setTimeout(resolve, 1400);
+    });
+  }
+
+  function requestBrowserNotify(r){
+    if(!('Notification' in window)) return;
+    const primary = CERTS[r.primary];
+    const show = ()=>{
+      try{
+        const n = new Notification('Your recommended cert: '+primary.name, {
+          body: primary.code+' — '+primary.price+', '+primary.days+'. Tap to view the next cohort.',
+          icon: 'https://agile-agilist.com/wp-content/uploads/2025/08/AA-SAFe-Brand-Color-minin.png',
+          tag: 'cert-recommender'
+        });
+        n.onclick = ()=>{ window.focus(); window.location.href = primary.href; };
+      }catch(e){}
+    };
+    if(Notification.permission === 'granted'){ show(); }
+    else if(Notification.permission !== 'denied'){
+      Notification.requestPermission().then(p=>{ if(p==='granted') show(); });
+    }
+  }
+
+  render();
+})();
+</script>
+<!-- /wp:html -->
+
+<!-- WPForms 1768 embed for email delivery (rendered hidden via CSS above). -->
+<!-- wp:shortcode -->
+<div class="cr-hidden-form">[wpforms id="1768" title="false" description="false"]</div>
+<!-- /wp:shortcode -->

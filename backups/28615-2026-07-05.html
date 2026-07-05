@@ -1,0 +1,492 @@
+<!-- ============ CAREER COMPASS v1 (RIASEC / Holland Code) — Agile Agilist ============ -->
+
+<!-- wp:html -->
+<style>
+:root{
+  --cc-teal:#127E88; --cc-teal-dk:#0E3A44; --cc-teal-ink:#0B2E35;
+  --cc-teal-lt:#8FCFCF; --cc-teal-tint:#DCEAEA; --cc-teal-sand:#F5FAFA;
+  --cc-teal-mist:#88A0A4;
+  --cc-R:#E76F51; --cc-I:#2A9D8F; --cc-A:#9B5DE5; --cc-S:#F4A261; --cc-E:#D62828; --cc-C:#264653;
+}
+.cc-wrap{max-width:980px;margin:0 auto;padding:0 22px;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--cc-teal-ink)}
+.cc-hero{padding:80px 24px 40px;text-align:center;background:linear-gradient(135deg,var(--cc-teal-dk),var(--cc-teal-ink));color:#fff}
+.cc-hero .eb{display:inline-block;padding:6px 14px;background:rgba(143,207,207,0.16);color:var(--cc-teal-lt);border-radius:30px;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:16px;border:1px solid rgba(143,207,207,0.28)}
+.cc-hero h1{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:52px;line-height:1.08;margin:0 auto 14px;max-width:780px;letter-spacing:-0.01em}
+.cc-hero h1 em{color:var(--cc-teal-lt);font-style:italic}
+.cc-hero p{font-size:18px;color:#DCEAEA;line-height:1.55;margin:0 auto 22px;max-width:640px}
+.cc-hero .cc-meta{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:13px;color:#8FCFCF;font-weight:600}
+.cc-hero .cc-meta strong{color:#fff}
+@media(max-width:780px){.cc-hero h1{font-size:34px}}
+
+.cc-shell{background:var(--cc-teal-sand);padding:40px 0 80px}
+.cc-card{background:#fff;border:1px solid var(--cc-teal-tint);border-radius:18px;padding:36px;box-shadow:0 12px 32px rgba(11,46,53,0.06);position:relative;overflow:hidden}
+
+.cc-prog{display:flex;gap:6px;margin-bottom:26px}
+.cc-prog span{flex:1;height:5px;border-radius:99px;background:var(--cc-teal-tint);transition:background .25s}
+.cc-prog span.on{background:var(--cc-teal)}
+.cc-prog span.done{background:var(--cc-teal-dk)}
+
+.cc-eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--cc-teal);margin-bottom:8px}
+.cc-q-text{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:30px;line-height:1.2;margin:0 0 10px;color:var(--cc-teal-ink)}
+.cc-q-sub{font-size:15px;color:var(--cc-teal-mist);margin:0 0 22px;line-height:1.55}
+
+.cc-opts{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:22px}
+.cc-opt{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:#fff;border:1.5px solid var(--cc-teal-tint);border-radius:12px;font-size:14px;font-weight:600;color:var(--cc-teal-ink);cursor:pointer;transition:all .18s;text-align:left;line-height:1.45}
+.cc-opt:hover{border-color:var(--cc-teal);background:var(--cc-teal-sand);transform:translateY(-1px)}
+.cc-opt.sel{border-color:var(--cc-teal);background:var(--cc-teal-tint);box-shadow:0 4px 14px rgba(18,126,136,0.14)}
+.cc-opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--cc-teal-mist);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;margin-top:2px}
+.cc-opt.sel .dot{border-color:var(--cc-teal);background:var(--cc-teal)}
+.cc-opt.sel .dot::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
+.cc-opt .letter{font-weight:800;color:var(--cc-teal-mist);font-size:11px;letter-spacing:0.5px;margin-right:3px}
+.cc-opt.sel .letter{color:var(--cc-teal)}
+
+.cc-nav{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--cc-teal-tint)}
+.cc-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;border:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.cc-btn-primary{background:var(--cc-teal);color:#fff}
+.cc-btn-primary:hover:not(:disabled){background:var(--cc-teal-dk);transform:translateY(-1px)}
+.cc-btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.cc-btn-ghost{background:transparent;color:var(--cc-teal);border:1.5px solid var(--cc-teal-tint)}
+.cc-btn-ghost:hover{border-color:var(--cc-teal);background:var(--cc-teal-sand)}
+.cc-step-label{font-size:13px;color:var(--cc-teal-mist);font-weight:600}
+
+.cc-start-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}
+@media(max-width:640px){.cc-start-benefits{grid-template-columns:1fr}}
+.cc-benefit{padding:14px 16px;background:var(--cc-teal-sand);border-radius:10px;border-left:3px solid var(--cc-teal);font-size:13px;color:var(--cc-teal-ink);line-height:1.45}
+.cc-benefit strong{display:block;font-weight:800;margin-bottom:2px;color:var(--cc-teal-dk)}
+
+/* Results */
+.cc-res-hero{text-align:center;padding:14px 0 26px}
+.cc-res-hero .eb{display:inline-block;padding:5px 12px;background:var(--cc-teal-tint);color:var(--cc-teal-dk);border-radius:20px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:12px}
+.cc-res-hero h2{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:36px;line-height:1.15;margin:0 0 8px;color:var(--cc-teal-ink)}
+.cc-res-hero p{font-size:15px;color:var(--cc-teal-mist);margin:0;line-height:1.55}
+
+.cc-arch{background:linear-gradient(135deg,var(--cc-teal-dk),var(--cc-teal));color:#fff;border-radius:16px;padding:32px;margin:0 0 22px;position:relative;overflow:hidden}
+.cc-arch::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(143,207,207,0.18),transparent 70%);border-radius:50%}
+.cc-arch-letter{position:absolute;top:20px;right:26px;font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:120px;line-height:1;color:rgba(255,255,255,0.12);font-weight:500}
+.cc-arch-tag{display:inline-block;padding:4px 12px;background:rgba(143,207,207,0.22);color:var(--cc-teal-lt);border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:2}
+.cc-arch-name{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:42px;line-height:1.05;margin:0 0 4px;color:#fff;position:relative;z-index:2}
+.cc-arch-sub{font-size:14px;color:#8FCFCF;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;margin:0 0 16px;position:relative;z-index:2}
+.cc-arch-desc{font-size:15px;color:#DCEAEA;line-height:1.6;margin:0 0 22px;position:relative;z-index:2;max-width:640px}
+.cc-arch-cta{display:inline-flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2}
+.cc-arch-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 22px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;transition:all .2s}
+.cc-arch-btn-primary{background:#fff;color:var(--cc-teal-dk) !important}
+.cc-arch-btn-ghost{background:transparent;color:#fff !important;border:1.5px solid rgba(255,255,255,0.4)}
+
+.cc-shape{background:var(--cc-teal-sand);border:1px solid var(--cc-teal-tint);border-radius:12px;padding:22px;margin-bottom:22px}
+.cc-shape h3{font-size:15px;font-weight:800;color:var(--cc-teal-dk);margin:0 0 14px;text-transform:uppercase;letter-spacing:0.6px}
+.cc-shape-row{display:flex;flex-direction:column;gap:8px}
+.cc-shape-bar{display:grid;grid-template-columns:130px 1fr 40px;align-items:center;gap:12px}
+.cc-shape-lab{font-size:13px;font-weight:700;color:var(--cc-teal-ink)}
+.cc-shape-track{background:#fff;border:1px solid var(--cc-teal-tint);border-radius:99px;height:14px;overflow:hidden}
+.cc-shape-fill{height:100%;border-radius:99px;transition:width .8s ease-out}
+.cc-shape-val{font-size:13px;font-weight:800;text-align:right;color:var(--cc-teal-mist)}
+
+.cc-careers{margin-bottom:22px}
+.cc-careers h3{font-size:15px;font-weight:800;color:var(--cc-teal-dk);margin:0 0 14px;text-transform:uppercase;letter-spacing:0.6px}
+.cc-careers-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:640px){.cc-careers-grid{grid-template-columns:1fr}}
+.cc-career{background:#fff;border:1px solid var(--cc-teal-tint);border-radius:10px;padding:14px 18px;font-size:14px;color:var(--cc-teal-ink)}
+.cc-career strong{color:var(--cc-teal-dk);font-weight:800}
+
+.cc-training{background:linear-gradient(135deg,var(--cc-teal-tint),#fff);border:1.5px solid var(--cc-teal);border-radius:14px;padding:24px;margin-bottom:22px}
+.cc-training .eb{display:inline-block;padding:4px 10px;background:var(--cc-teal);color:#fff;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px}
+.cc-training h3{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:24px;color:var(--cc-teal-ink);margin:0 0 8px;line-height:1.2}
+.cc-training p{font-size:14px;color:var(--cc-teal-ink);line-height:1.55;margin:0 0 14px}
+.cc-training .cc-training-cta{display:inline-block;padding:11px 20px;background:var(--cc-teal);color:#fff !important;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;transition:all .2s}
+.cc-training .cc-training-cta:hover{background:var(--cc-teal-dk)}
+
+.cc-cap{background:var(--cc-teal-sand);border:1.5px solid var(--cc-teal-tint);border-radius:14px;padding:26px;margin-top:8px}
+.cc-cap h3{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:24px;color:var(--cc-teal-ink);margin:0 0 6px}
+.cc-cap p{font-size:14px;color:var(--cc-teal-mist);margin:0 0 16px;line-height:1.55}
+.cc-cap-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:640px){.cc-cap-row{grid-template-columns:1fr}}
+.cc-cap input{width:100%;padding:12px 14px;border:1.5px solid var(--cc-teal-tint);border-radius:8px;font-size:14px;color:var(--cc-teal-ink);background:#fff;font-family:inherit;box-sizing:border-box}
+.cc-cap input:focus{outline:none;border-color:var(--cc-teal)}
+.cc-cap-check{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--cc-teal-ink);margin-bottom:12px;cursor:pointer}
+.cc-cap-check input{width:16px;height:16px;margin-top:2px}
+.cc-cap-btn{width:100%;padding:14px;background:var(--cc-teal);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.cc-cap-btn:disabled{opacity:0.55;cursor:not-allowed}
+.cc-cap-note{font-size:11px;color:var(--cc-teal-mist);text-align:center;margin-top:10px;line-height:1.5}
+
+.cc-toast{position:fixed;bottom:24px;right:24px;background:var(--cc-teal-dk);color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 12px 28px rgba(11,46,53,0.28);z-index:9999;opacity:0;transform:translateY(20px);transition:all .3s;max-width:340px}
+.cc-toast.show{opacity:1;transform:translateY(0)}
+
+.cc-restart{text-align:center;margin-top:22px;font-size:13px}
+.cc-restart a{color:var(--cc-teal);font-weight:700;text-decoration:none}
+
+.cc-hidden-form{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;visibility:hidden}
+</style>
+
+<section class="cc-hero">
+  <span class="eb">Career Compass · Free · Psychology-based</span>
+  <h1>What kind of work were <em>you built for?</em></h1>
+  <p>Six psychology questions grounded in the Holland Code (RIASEC) — the same framework career counselors have used for 50+ years. Discover the archetype that fits how you actually think and work.</p>
+  <div class="cc-meta">
+    <span><strong>6 questions</strong> &middot; 90 seconds</span>
+    <span>&middot;</span>
+    <span><strong>6 archetypes</strong> mapped</span>
+    <span>&middot;</span>
+    <span><strong>SPCT-mapped</strong> AA training path</span>
+  </div>
+</section>
+
+<div class="cc-shell">
+  <div class="cc-wrap">
+    <div id="cc-app" class="cc-card"></div>
+    <div class="cc-hidden-form" id="cc-hidden-form"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const QUESTIONS = [
+    {
+      id:'project',
+      title:'Your Ideal Project',
+      sub:'When you&rsquo;re tasked with starting a brand-new project, which part sounds the most exciting to you?',
+      opts:[
+        {v:'R',l:'Getting out from behind the desk to physically build, assemble, or test the prototype.'},
+        {v:'I',l:'Researching the underlying data, running experiments, and solving the core logical puzzle.'},
+        {v:'A',l:'Brainstorming the visual concept, writing the story, or designing the unique aesthetic.'},
+        {v:'S',l:'Organizing the team kickoff meeting and making sure everyone feels supported and heard.'},
+        {v:'E',l:'Pitching the final project to stakeholders, selling the vision, and driving the strategy.'},
+        {v:'C',l:'Setting up the spreadsheet tracker, creating the workflow timelines, and organizing data.'}
+      ]
+    },
+    {
+      id:'hobby',
+      title:'The Sunday Night Hobby',
+      sub:'It&rsquo;s a rainy Sunday afternoon with no obligations. How are you most likely spending your time?',
+      opts:[
+        {v:'R',l:'Working with your hands &mdash; fixing a gadget, gardening, crafting, or doing something athletic.'},
+        {v:'I',l:'Deep-diving down a digital rabbit hole reading about science, history, tech, or complex theories.'},
+        {v:'A',l:'Playing an instrument, sketching, writing creative pieces, or exploring new music and digital art.'},
+        {v:'S',l:'Volunteering, catching up with a friend who needs advice, or hosting a gathering.'},
+        {v:'E',l:'Reading a business/leadership book, negotiating a deal, or working on a profitable side hustle.'},
+        {v:'C',l:'Organizing your digital files, budget planning, or playing a highly structured strategy game.'}
+      ]
+    },
+    {
+      id:'strength',
+      title:'Workplace Superpower',
+      sub:'If your colleagues or peers were to praise your biggest strength, what would they say it is?',
+      opts:[
+        {v:'R',l:'&ldquo;You are incredibly practical and can fix or operate almost anything.&rdquo;'},
+        {v:'I',l:'&ldquo;You are a sharp analytical thinker; you find the root cause of complex problems.&rdquo;'},
+        {v:'A',l:'&ldquo;You bring original ideas and creative, out-of-the-box thinking to the table.&rdquo;'},
+        {v:'S',l:'&ldquo;You are empathetic, an amazing listener, and an excellent teacher or mentor.&rdquo;'},
+        {v:'E',l:'&ldquo;You are a natural leader, highly persuasive, and confident when taking risks.&rdquo;'},
+        {v:'C',l:'&ldquo;You are exceptionally detail-oriented, accurate, and systematic.&rdquo;'}
+      ]
+    },
+    {
+      id:'crisis',
+      title:'Solving a Crisis',
+      sub:'A major problem suddenly stalls your progress. What is your instinctual first step to fix it?',
+      opts:[
+        {v:'R',l:'Grab the tools or software directly and start experimenting physically until it works.'},
+        {v:'I',l:'Stop everything to gather facts, analyze data models, and look for patterns.'},
+        {v:'A',l:'Throw out the old rulebook and improvise a completely unconventional, creative solution.'},
+        {v:'S',l:'Gather the group together to talk through the frustration and collaborate on a way forward.'},
+        {v:'E',l:'Take charge of the situation, assign clear roles to people, and make a fast executive decision.'},
+        {v:'C',l:'Check the established guidelines, documentation, or standard operating procedures for an exact answer.'}
+      ]
+    },
+    {
+      id:'env',
+      title:'Environment Match',
+      sub:'Which of these work environments sounds like a place where you would naturally thrive?',
+      opts:[
+        {v:'R',l:'A dynamic, active setting like a laboratory, workshop, outdoor field, or engineering bay.'},
+        {v:'I',l:'A quiet, intellectual environment focused on research, analysis, and data systems.'},
+        {v:'A',l:'An open, unstructured studio or fluid workspace that champions self-expression.'},
+        {v:'S',l:'A highly collaborative space centered on human interaction, teaching, or counseling.'},
+        {v:'E',l:'A fast-paced corporate office, startup hub, or courtroom where goals and influence rule.'},
+        {v:'C',l:'A clean, highly structured environment with clear rules, accurate data, and systemic order.'}
+      ]
+    },
+    {
+      id:'legacy',
+      title:'Legacy and Impact',
+      sub:'At the end of your career, what kind of impact do you want your daily work to have left behind?',
+      opts:[
+        {v:'R',l:'Tangible, concrete things that were built, maintained, or physically produced.'},
+        {v:'I',l:'New knowledge discovered, mysteries solved, or complex technical systems optimized.'},
+        {v:'A',l:'Meaningful art, designs, media, or original concepts that inspired people.'},
+        {v:'S',l:'Lives changed, people educated, or a community that is healthier and more supported.'},
+        {v:'E',l:'Successful businesses built, projects scaled, or people led to reach massive milestones.'},
+        {v:'C',l:'Flawlessly organized systems, clear compliance, and highly efficient, reliable data tracking.'}
+      ]
+    }
+  ];
+
+  const ARCHS = {
+    R:{name:'Realistic',            sub:'The Doer',       color:'#E76F51', desc:'You are energized by hands-on work with tangible results. You think through your hands, prefer building over abstract theorizing, and are the person others trust to actually ship something physical or functional.',
+       careers:['Engineering','IT Hardware / Infrastructure','Robotics','Construction / Field Management','DevOps / Site Reliability'],
+       aa:{tag:'Your AA training path', title:'SAFe&reg; DevOps Practitioner + SAFe&reg; for Architects', desc:'Realistic types thrive in the Continuous Delivery Pipeline and System Architecture roles &mdash; where the framework meets the physical infrastructure. Start with SDP for hands-on delivery, then ARCH for the systems view.', href:'/training/safe-devops/'}},
+    I:{name:'Investigative',        sub:'The Thinker',    color:'#2A9D8F', desc:'You are wired to understand root causes. Where others accept the symptom, you dig for the mechanism. Data, hypothesis, experimentation, and the careful reading of complex systems is where you come alive.',
+       careers:['Data Science','Software Architecture','Medical / Scientific Research','Analytics','Solution Architecture'],
+       aa:{tag:'Your AA training path', title:'AI-Native Certified Architect + Responsible AI Practitioner', desc:'Investigative types are the natural home of the AI-Native track &mdash; where the math, the systems, and the reasoning live. Start with AINCA to shape the system, then RAI to reason about its consequences.', href:'/training/ai-native-architect/'}},
+    A:{name:'Artistic',             sub:'The Creator',    color:'#9B5DE5', desc:'You need room to invent. Rules are useful starting points, not final answers. Whether the medium is design, story, code, or strategy, you produce your best work when you can shape the aesthetic and the concept.',
+       careers:['UI/UX Design','Product Design','Creative Direction','Content Strategy','Creative Technology'],
+       aa:{tag:'Your AA training path', title:'SAFe&reg; Agile Product Management + AI-First Career Coach', desc:'Artistic types thrive in product design and creative direction of an ART. APM gives you the language of product vision; AF-CC pairs your creativity with AI as a co-creator.', href:'/training/safe-apm/'}},
+    S:{name:'Social',               sub:'The Helper',     color:'#F4A261', desc:'You measure a good day by whose life you improved. You lead through empathy, teach through patience, and build trust as a discipline &mdash; the invisible infrastructure every high-functioning team depends on.',
+       careers:['HR / People Management','Corporate Training','Agile Coaching','Education','Counseling / Change Management'],
+       aa:{tag:'Your AA training path', title:'SAFe&reg; Scrum Master + Advanced Scrum Master (SASM)', desc:'Social types are Agile Coaches at their best. Start with SSM to be role-legible, then step into SASM to become the coach every team asks for by name. Long-play: SPC to teach others.', href:'/training/safe-scrum-master/'}},
+    E:{name:'Enterprising',         sub:'The Persuader',  color:'#D62828', desc:'You are wired to move things forward. Deals, ventures, teams, initiatives &mdash; you like the accountability of being the one who has to make it work. Speed, influence, and risk are not obstacles; they are your default operating mode.',
+       careers:['Entrepreneurship','Product Management','Sales / GTM Strategy','Consulting','Executive Leadership'],
+       aa:{tag:'Your AA training path', title:'SAFe&reg; Product Owner / PM + Lean Portfolio Management', desc:'Enterprising types are the growth engine of a SAFe transformation. POPM builds your product muscle; LPM puts you in the room where budgets and strategy meet &mdash; the C-suite&rsquo;s SAFe cert.', href:'/training/safe-popm/'}},
+    C:{name:'Conventional',         sub:'The Organizer',  color:'#264653', desc:'You bring order where others bring noise. Details you spot, timelines you protect, compliance you get right the first time &mdash; the work that keeps organizations from quietly falling apart.',
+       careers:['Operations Management','Finance / Accounting','Database Administration','Program / PMO','Compliance / Governance'],
+       aa:{tag:'Your AA training path', title:'SAFe&reg; Release Train Engineer + Lean Portfolio Management', desc:'Conventional types are the RTEs and PMO leads every ART depends on. RTE gives you the program-level operating rhythm; LPM extends your reach to portfolio-level Lean Budgets and Guardrails.', href:'/training/safe-rte/'}}
+  };
+
+  const state = { step: -1, ans: {}, scores: null };
+  const app = document.getElementById('cc-app');
+
+  function render(){
+    if(state.step === -1) return renderStart();
+    if(state.step >= QUESTIONS.length) return renderResults();
+    return renderQuestion();
+  }
+
+  function renderStart(){
+    app.innerHTML = `
+      <div class="cc-eyebrow">Free &middot; 90 seconds &middot; No signup to start</div>
+      <h2 class="cc-q-text">Discover your work archetype in 6 questions.</h2>
+      <p class="cc-q-sub">Career counselors have used the Holland Code (RIASEC) for 50+ years to match people to work that fits their psychology. We&rsquo;ve turned it into a 90-second read &mdash; then mapped every archetype to the exact Agile Agilist training that lets you lean into it.</p>
+      <div class="cc-start-benefits">
+        <div class="cc-benefit"><strong>Look inward first</strong>Before picking a cert, understand the kind of work you actually thrive in.</div>
+        <div class="cc-benefit"><strong>Backed by research</strong>Holland Code is used by universities and career centers worldwide.</div>
+        <div class="cc-benefit"><strong>Personalized path</strong>Every result maps to a specific SAFe or AI-Native training path.</div>
+      </div>
+      <div class="cc-nav">
+        <span class="cc-step-label">Take a breath. Answer honestly.</span>
+        <button class="cc-btn cc-btn-primary" onclick="CC.next()">Start &rarr;</button>
+      </div>
+    `;
+  }
+
+  function renderQuestion(){
+    const q = QUESTIONS[state.step];
+    const bars = QUESTIONS.map((_,i)=>{
+      if(i < state.step) return '<span class="done"></span>';
+      if(i === state.step) return '<span class="on"></span>';
+      return '<span></span>';
+    }).join('');
+    const opts = q.opts.map((o,i)=>{
+      const letter = String.fromCharCode(65+i);
+      const sel = state.ans[q.id] === o.v ? 'sel' : '';
+      return `<button class="cc-opt ${sel}" onclick="CC.pick('${q.id}','${o.v}')" type="button">
+        <span class="dot"></span>
+        <span><span class="letter">${letter}.</span> ${o.l}</span>
+      </button>`;
+    }).join('');
+    const canNext = !!state.ans[q.id];
+    const isLast = state.step === QUESTIONS.length-1;
+    app.innerHTML = `
+      <div class="cc-prog">${bars}</div>
+      <div class="cc-eyebrow">Question ${state.step+1} of ${QUESTIONS.length} &middot; ${q.title}</div>
+      <h2 class="cc-q-text">${q.sub}</h2>
+      <div class="cc-opts">${opts}</div>
+      <div class="cc-nav">
+        <button class="cc-btn cc-btn-ghost" onclick="CC.prev()" ${state.step===0?'style="visibility:hidden"':''}>&larr; Back</button>
+        <button class="cc-btn cc-btn-primary" onclick="CC.next()" ${canNext?'':'disabled'}>${isLast ? 'Reveal my archetype &rarr;' : 'Next &rarr;'}</button>
+      </div>
+    `;
+  }
+
+  function computeScores(){
+    const s = {R:0,I:0,A:0,S:0,E:0,C:0};
+    Object.values(state.ans).forEach(v=>{ if(s[v]!==undefined) s[v]++; });
+    // Primary = highest; tie-break by RIASEC hexagon order
+    const order = ['R','I','A','S','E','C'];
+    let primary = order[0], max = s[order[0]];
+    for(const k of order){ if(s[k]>max){ max=s[k]; primary=k; } }
+    // Secondary = next-highest that isn't primary
+    let secondary = null, secMax = -1;
+    for(const k of order){ if(k===primary) continue; if(s[k]>secMax){ secMax=s[k]; secondary=k; } }
+    return {scores:s, primary, secondary, total:QUESTIONS.length};
+  }
+
+  function renderResults(){
+    if(!state.scores) state.scores = computeScores();
+    const r = state.scores;
+    const arch = ARCHS[r.primary];
+    const sec = ARCHS[r.secondary];
+    const bars = ['R','I','A','S','E','C'].map(k=>{
+      const a = ARCHS[k];
+      const pct = Math.round((r.scores[k]/r.total)*100);
+      return `<div class="cc-shape-bar">
+        <div class="cc-shape-lab">${a.name} &middot; ${a.sub}</div>
+        <div class="cc-shape-track"><div class="cc-shape-fill" style="width:${pct}%;background:${a.color}"></div></div>
+        <div class="cc-shape-val">${r.scores[k]}/${r.total}</div>
+      </div>`;
+    }).join('');
+    const careers = arch.careers.map(c=>`<div class="cc-career"><strong>${c}</strong></div>`).join('');
+
+    app.innerHTML = `
+      <div class="cc-res-hero">
+        <div class="eb">Your Archetype</div>
+        <h2>You&rsquo;re the ${arch.name} &mdash; ${arch.sub.toLowerCase()}.</h2>
+        <p>Blended with ${sec.name.toLowerCase()} energy in the background. Here&rsquo;s what it means, and where to point it next.</p>
+      </div>
+      <div class="cc-arch">
+        <div class="cc-arch-letter">${r.primary}</div>
+        <span class="cc-arch-tag">Primary archetype</span>
+        <div class="cc-arch-name">${arch.name}</div>
+        <div class="cc-arch-sub">${arch.sub}</div>
+        <div class="cc-arch-desc">${arch.desc}</div>
+        <div class="cc-arch-cta">
+          <a class="cc-arch-btn cc-arch-btn-primary" href="${arch.aa.href}">See your training path &rarr;</a>
+          <a class="cc-arch-btn cc-arch-btn-ghost" href="https://meetings.hubspot.com/john2795?utm_source=quiz&utm_medium=career-compass&utm_content=${r.primary}">Talk to Mark first</a>
+        </div>
+      </div>
+      <div class="cc-shape">
+        <h3>Your Holland shape</h3>
+        <div class="cc-shape-row">${bars}</div>
+      </div>
+      <div class="cc-careers">
+        <h3>Career directions where ${arch.name}s thrive</h3>
+        <div class="cc-careers-grid">${careers}</div>
+      </div>
+      <div class="cc-training">
+        <span class="eb">${arch.aa.tag}</span>
+        <h3>${arch.aa.title}</h3>
+        <p>${arch.aa.desc}</p>
+        <a class="cc-training-cta" href="${arch.aa.href}">Explore this path &rarr;</a>
+      </div>
+      <div class="cc-cap">
+        <h3>Get your archetype report by email</h3>
+        <p>We&rsquo;ll email your full RIASEC shape, career directions, and the mapped Agile Agilist training path.</p>
+        <div class="cc-cap-row">
+          <input type="text" id="cc-cap-name" placeholder="Your name" autocomplete="name" />
+          <input type="email" id="cc-cap-email" placeholder="Work email" autocomplete="email" />
+        </div>
+        <label class="cc-cap-check">
+          <input type="checkbox" id="cc-cap-notify" checked />
+          <span>Also send me a browser notification (optional).</span>
+        </label>
+        <button class="cc-cap-btn" id="cc-cap-btn" onclick="CC.send()">Email me my archetype</button>
+        <div class="cc-cap-note">We never share your email. Unsubscribe anytime.</div>
+      </div>
+      <div class="cc-restart">
+        <a href="#" onclick="CC.restart();return false;">&larr; Retake the quiz</a>
+      </div>
+    `;
+  }
+
+  function toast(msg){
+    let t = document.getElementById('cc-toast');
+    if(!t){ t=document.createElement('div'); t.id='cc-toast'; t.className='cc-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    requestAnimationFrame(()=>t.classList.add('show'));
+    clearTimeout(t._h);
+    t._h = setTimeout(()=>t.classList.remove('show'), 3500);
+  }
+
+  window.CC = {
+    next(){
+      if(state.step === -1){ state.step=0; render(); return; }
+      const q = QUESTIONS[state.step];
+      if(!state.ans[q.id]) return;
+      state.step++; state.scores=null;
+      const shell = document.querySelector('.cc-shell');
+      if(shell) window.scrollTo({top:shell.offsetTop-20,behavior:'smooth'});
+      render();
+    },
+    prev(){ if(state.step>0){ state.step--; render(); } },
+    pick(qid, v){ state.ans[qid] = v; render(); },
+    restart(){ state.step=-1; state.ans={}; state.scores=null; render(); },
+    send(){
+      const name = document.getElementById('cc-cap-name').value.trim();
+      const email = document.getElementById('cc-cap-email').value.trim();
+      const wantNotify = document.getElementById('cc-cap-notify').checked;
+      if(!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('Please enter your name and a valid email.'); return; }
+      const btn = document.getElementById('cc-cap-btn');
+      btn.disabled = true; btn.textContent = 'Sending...';
+      const r = state.scores;
+      const arch = ARCHS[r.primary]; const sec = ARCHS[r.secondary];
+      const body = `Hi ${name},
+
+Your Career Compass (Holland Code / RIASEC) result:
+
+PRIMARY ARCHETYPE: ${arch.name} — ${arch.sub}
+Secondary influence: ${sec.name}
+
+${arch.desc.replace(/&mdash;/g,'-').replace(/&[a-z]+;/g,'')}
+
+YOUR HOLLAND SHAPE
+${['R','I','A','S','E','C'].map(k=>ARCHS[k].name.padEnd(14)+' '+r.scores[k]+'/'+r.total).join('\n')}
+
+CAREER DIRECTIONS WHERE YOU THRIVE
+${arch.careers.map(c=>'- '+c).join('\n')}
+
+YOUR AGILE AGILIST TRAINING PATH
+${arch.aa.title.replace(/&reg;/g,'').replace(/&[a-z]+;/g,'')}
+${arch.aa.desc.replace(/&mdash;/g,'-').replace(/&[a-z]+;/g,'')}
+https://agile-agilist.com${arch.aa.href}
+
+Book a 15-min call with Mark:
+https://meetings.hubspot.com/john2795?utm_source=quiz&utm_medium=career-compass&utm_content=${r.primary}
+
+— The Agile Agilist team`;
+
+      submitToWPForms(name, email, body).then(()=>{
+        btn.textContent = 'Sent! Check your inbox &#10003;';
+        toast('Emailed to you and copied to Mark for follow-up.');
+        if(wantNotify) requestBrowserNotify(arch);
+      }).catch(err=>{ console.error(err); btn.disabled=false; btn.textContent='Try again'; toast('Couldn&rsquo;t send just now.'); });
+    }
+  };
+
+  function submitToWPForms(name, email, message){
+    return new Promise((resolve, reject)=>{
+      const container = document.getElementById('cc-hidden-form');
+      const form = container && container.querySelector('form.wpforms-form');
+      if(!form){
+        return fetch('/wp-admin/admin-ajax.php?action=aa_cert_lead', {
+          method:'POST', credentials:'same-origin',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body:`name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}&source=career-compass`
+        }).then(r=>r.ok?resolve():reject(new Error('bad response'))).catch(reject);
+      }
+      const nameEl  = form.querySelector('input[name*="[name]"]') || form.querySelector('input[type="text"]');
+      const emailEl = form.querySelector('input[type="email"]');
+      const msgEl   = form.querySelector('textarea');
+      if(nameEl) nameEl.value = name;
+      if(emailEl) emailEl.value = email;
+      if(msgEl) msgEl.value = message;
+      const btn = form.querySelector('button[type="submit"]');
+      if(!btn) return reject(new Error('no submit'));
+      btn.click();
+      setTimeout(resolve, 1400);
+    });
+  }
+
+  function requestBrowserNotify(arch){
+    if(!('Notification' in window)) return;
+    const show = ()=>{
+      try{
+        const n = new Notification('Your archetype: '+arch.name+' — '+arch.sub, {
+          body: 'Your Agile Agilist training path: '+arch.aa.title.replace(/&reg;/g,'').replace(/&[a-z]+;/g,''),
+          icon: 'https://agile-agilist.com/wp-content/uploads/2025/08/AA-SAFe-Brand-Color-minin.png',
+          tag: 'career-compass'
+        });
+        n.onclick = ()=>{ window.focus(); window.location.href = arch.aa.href; };
+      }catch(e){}
+    };
+    if(Notification.permission === 'granted'){ show(); }
+    else if(Notification.permission !== 'denied'){
+      Notification.requestPermission().then(p=>{ if(p==='granted') show(); });
+    }
+  }
+
+  render();
+})();
+</script>
+<!-- /wp:html -->
+
+<!-- wp:shortcode -->
+<div class="cc-hidden-form">[wpforms id="1768" title="false" description="false"]</div>
+<!-- /wp:shortcode -->
