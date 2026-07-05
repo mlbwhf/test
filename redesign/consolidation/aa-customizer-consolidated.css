@@ -813,10 +813,20 @@ img.emoji, .aa-rd img.emoji {
 .site-primary-footer-inner-wrap,
 .site-primary-footer-wrap .ast-builder-grid-row-container-inner { background: var(--aa-teal-dark) !important; }
 .site-primary-footer-inner-wrap { padding-left: 0 !important; padding-right: 0 !important; }
-/* Guard: guarantee the header row container never inherits the footer's dark bg */
-#masthead .ast-builder-grid-row-container-inner,
-.main-header-bar .ast-builder-grid-row-container-inner,
-.ast-primary-header-bar .ast-builder-grid-row-container-inner { background: transparent !important; }
+/* Guard: guarantee NO header container inherits the footer's dark bg.
+   The dark block appeared on .site-header-primary-section-center (the box that
+   holds the primary menu), so every plausible header wrapper is forced light. */
+html body #masthead,
+html body #masthead .site-header-primary-section-center,
+html body #masthead .ast-builder-grid-row-container-inner,
+html body #masthead .site-primary-header-wrap,
+html body #masthead .main-header-bar {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+html body #masthead { background: rgba(255,255,255,0.96) !important; }
+html body #masthead .main-header-menu > .menu-item > a,
+html body #masthead .main-header-menu > .menu-item > a > span { color: var(--aa-navy) !important; }
 .site-footer-primary-section-1,
 .ast-builder-html-element,
 .ast-header-html,
