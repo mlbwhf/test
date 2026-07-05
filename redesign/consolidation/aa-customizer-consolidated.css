@@ -806,10 +806,17 @@ img.emoji, .aa-rd img.emoji {
 #aa-footer-block .aa-foot-legal a:hover { color: var(--aa-teal-light); }
 #aa-footer-block .aa-foot-copy { font-size: 11px; color: #7FA6AC; }
 .site-below-footer-wrap { display: none !important; }
+/* NOTE: .ast-builder-grid-row-container-inner is a GENERIC Astra class used in the
+   header too — it must be scoped to the footer wrap, or it darkens the nav bar
+   and the dark menu text becomes invisible. Do NOT unscope this selector. */
 .site-primary-footer-wrap,
 .site-primary-footer-inner-wrap,
-.ast-builder-grid-row-container-inner { background: var(--aa-teal-dark) !important; }
+.site-primary-footer-wrap .ast-builder-grid-row-container-inner { background: var(--aa-teal-dark) !important; }
 .site-primary-footer-inner-wrap { padding-left: 0 !important; padding-right: 0 !important; }
+/* Guard: guarantee the header row container never inherits the footer's dark bg */
+#masthead .ast-builder-grid-row-container-inner,
+.main-header-bar .ast-builder-grid-row-container-inner,
+.ast-primary-header-bar .ast-builder-grid-row-container-inner { background: transparent !important; }
 .site-footer-primary-section-1,
 .ast-builder-html-element,
 .ast-header-html,
