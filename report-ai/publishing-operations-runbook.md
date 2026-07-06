@@ -78,20 +78,38 @@ The "index update" the owner asked for. On the first Monday of each month:
 
 ## 4. Report generation queue (task 3 — "suggest new report to be generated")
 
-Six reports are approved and queued. Generate **one per week**, in order, scheduled for
-Monday 09:00 publishes:
+**STATUS — the first six are DONE (published/scheduled 2026-07-06). Do NOT regenerate them.**
+All six were researched against named primary sources and created as pages under Reports (40):
 
-| # | Publish date | Title | Slug | Parent page | Category ID |
-|---|---|---|---|---|---|
-| 1 | 2026-07-06 | Agentic AI Statistics 2026 | `agentic-ai-statistics-2026` | Reports `40` | Agentic AI `35` |
-| 2 | 2026-07-13 | AI in Healthcare: Adoption & Outcomes 2026 | `ai-healthcare-statistics-2026` | Reports `40` | AI in Healthcare `36` |
-| 3 | 2026-07-20 | Open vs Closed Models 2026 | `open-vs-closed-ai-models-2026` | Reports `40` | Open-Source AI `40` |
-| 4 | 2026-07-27 | AI in Education Statistics 2026 | `ai-education-statistics-2026` | Reports `40` | AI in Education `37` |
-| 5 | 2026-08-03 | The Global AI Regulation Tracker | `global-ai-regulation-tracker` | Reports `40` | AI Policy & Regulation `38` |
-| 6 | 2026-08-10 | AI Deepfakes & Fraud by the Numbers | `ai-deepfakes-fraud-statistics` | Reports `40` | AI Incidents & Misuse `39` |
+| # | Publish date | Title | Page ID | Status |
+|---|---|---|---|---|
+| 1 | 2026-07-06 | Agentic AI Statistics 2026 | `862` | ✅ live |
+| 2 | 2026-07-13 | AI in Healthcare: Adoption & Outcomes 2026 | `863` | ⏳ scheduled |
+| 3 | 2026-07-20 | Open vs Closed AI Models 2026 | `861` | ⏳ scheduled |
+| 4 | 2026-07-27 | AI in Education Statistics 2026 | `865` | ⏳ scheduled |
+| 5 | 2026-08-03 | The Global AI Regulation Tracker | `864` | ⏳ scheduled |
+| 6 | 2026-08-10 | AI Deepfakes & Fraud by the Numbers | `866` | ⏳ scheduled |
+
+The queue is filled through **2026-08-10**. Starting the week of **2026-08-17**, generate the
+NEXT report each Monday. Pick from the backlog below (or propose new topics to the owner first),
+then follow the per-report procedure. Suggested next batch, each with a home category already made:
+AI & Jobs / labor-market 2026 (`5`); AI Safety & Governance 2026 (`7`); AI Investment & Funding
+H2 2026 (`4`); Generative AI usage 2026 (`8`); LLM Market share update (`21`); AI Infrastructure /
+compute & energy refresh (`9`). Confirm the pick, research, schedule for the next open Monday 09:00.
+
+**Editorial-review flags on the scheduled six (skim before their publish dates — there is time):**
+- #3 Open vs Closed (861): cites some 2026 model names surfaced via search (e.g. "GPT-5.5",
+  "Kimi K2.6") — verify against provider disclosures before Jul 20.
+- #5 Regulation Tracker (864): EO 14409 and the "Great American AI Act" discussion draft are
+  confirmed real and described accurately; the EU Annex III deferral to 2 Dec 2027 is labeled
+  "reported-but-evolving" — re-check before Aug 3.
+- Single-firm market-size projections (agentic #1, education #4) are labeled in-text as one estimate.
 
 (If the current date is already past a slot, publish immediately and shift the rest to the
 following Mondays. Categories apply to posts; for pages, the parent placement is what matters.)
+
+**Still open (nice-to-have):** add a link to each report from the Reports hub (page 40) as it goes
+live — deferred here to avoid editing the hub's self-contained HTML blind. Do it when next editing page 40.
 
 ### Per-report procedure
 
