@@ -546,21 +546,39 @@
 			rail.appendChild(b);
 		}
 
-		// "More dates" control — scrolls the rail; when fully scrolled, jumps to the full calendar (#cohorts)
+		// Wrap the rail so a "More dates" control can FLOAT at its right edge (always visible,
+		// not lost inside the horizontal scroll). Scrolls the rail in place — stays in the hero.
+		var wrap;
+		if(rail.parentNode && rail.parentNode.classList.contains('ls-rail-wrap')){
+			wrap = rail.parentNode;
+		} else {
+			wrap = document.createElement('div');
+			wrap.className = 'ls-rail-wrap';
+			rail.parentNode.insertBefore(wrap, rail);
+			wrap.appendChild(rail);
+		}
+		var old = wrap.querySelector('.ls-more'); if(old) old.parentNode.removeChild(old);
 		var more = document.createElement('button');
 		more.type = 'button';
 		more.className = 'ls-more';
 		more.setAttribute('aria-label','See more dates');
 		more.innerHTML = 'More dates <span aria-hidden="true">→</span>';
-		more.addEventListener('click', function(){
-			// scroll the rail in place to reveal more dates — stays in the hero
-			rail.scrollBy({ left: 330, behavior: 'smooth' });
-		});
-		rail.appendChild(more);
+		more.addEventListener('click', function(){ rail.scrollBy({ left: 330, behavior: 'smooth' }); });
+		wrap.appendChild(more);
+		function syncMore(){
+			var maxScroll = rail.scrollWidth - rail.clientWidth;
+			more.style.display = (maxScroll > 8 && rail.scrollLeft < maxScroll - 4) ? '' : 'none';
+		}
+		rail.addEventListener('scroll', syncMore, {passive:true});
+		window.addEventListener('resize', syncMore);
+		setTimeout(syncMore, 60);
 
-		// "Register then Eventbrite" — href set per selected date in pick()
+		// Buttons: "Register [Stripe]" / "Register [Eventbrite]" (logos). EB href set per date in pick()
+		if(stripeBtn){
+			stripeBtn.innerHTML = 'Register <img src="' + STRIPE_LOGO + '" alt="Stripe" style="height:14px;width:auto;vertical-align:middle;display:inline-block;filter:brightness(0) invert(1);margin-left:5px">';
+		}
 		if(ebBtn){
-			ebBtn.innerHTML = 'Register <span style="opacity:.55;font-weight:500">then</span> <img src="' + EB_LOGO + '" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block;margin-left:4px">';
+			ebBtn.innerHTML = 'Register <img src="' + EB_LOGO + '" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block;margin-left:5px">';
 			ebBtn.setAttribute('target','_blank');
 			ebBtn.setAttribute('rel','noopener');
 		}
@@ -583,9 +601,8 @@
 			selectCohort(s.ff);                                       // pre-fill FluentForm 21
 		}
 
-		// "Register then Stripe" -> open the SAME FluentForm 21 (Stripe) with the date pre-selected
+		// "Register [Stripe]" -> open the SAME FluentForm 21 (Stripe) with the date pre-selected
 		if(stripeBtn){
-			stripeBtn.innerHTML = 'Register <span style="opacity:.55;font-weight:500">then</span> <img src="' + STRIPE_LOGO + '" alt="Stripe" style="height:14px;width:auto;vertical-align:middle;display:inline-block;filter:brightness(0) invert(1);margin-left:4px">';
 			stripeBtn.addEventListener('click', function(e){
 				e.preventDefault();
 				selectCohort(sel[current].ff);
