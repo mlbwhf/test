@@ -507,23 +507,10 @@
 	// Rebuilds the legacy .aa-grid2 hero into the v2 "alt hero" (badge column + scrollable
 	// cohort rail + in-place register panel), reading everything from the page itself.
 	// No-ops on: SA (already v2, has #aa-rail) and non-course pages (no .aa-grid2 / #aa-cohorts),
-	// so the geo/ad landing pages are skipped automatically.
-	var BADGES = {
-		'SA':   'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SA.png',
-		'SSM':  'https://agile-agilist.com/wp-content/uploads/2025/11/SAFe-Badge_SSM-AI.png',
-		'SASM': 'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SASM.png',
-		'POPM': 'https://agile-agilist.com/wp-content/uploads/2025/11/SAFe-Badge_POPM-AI.png',
-		'APM':  'https://agile-agilist.com/wp-content/uploads/2025/08/APM.png',
-		'SPC':  'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SPC.png',
-		'SPCT': 'https://agile-agilist.com/wp-content/uploads/2025/08/SPCTWhite.png'
-	};
+	// so the geo/ad landing pages are skipped automatically. The credential badge is read from
+	// the page's own course bar (image for role certs, text badge for micro-credentials).
 	var EB_ORG_DEFAULT = 'https://www.eventbrite.ca/o/agileagilist-56013628813';
-
-	function courseBadge(code, title){
-		if(code && BADGES[code]) return BADGES[code];
-		if(/ai[\s\-]*native\s*foundation/i.test(title)) return 'https://agile-agilist.com/wp-content/uploads/2025/12/ai_foundation_badge_2026.png';
-		return '';   // no dedicated image -> caller clones the page's own text badge
-	}
+	var AI_NATIVE_BADGE = 'https://agile-agilist.com/wp-content/uploads/2025/12/ai_foundation_badge_2026.png';
 
 	function buildHeroV2(){
 		if($('aa-rail')) return;                                    // already v2 (SA) -> skip
@@ -543,18 +530,19 @@
 		var title = (D.title || (h1.textContent || '')).trim();
 		var finTxt = finEl ? (finEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
 
-		// course code from the top course-bar badge (e.g. SA, POPM, AF-VSM)
-		var codeEl = document.querySelector('.aa-coursebar .badge b, .aa-bar .badge b');
-		var code = codeEl ? (codeEl.textContent || '').trim().toUpperCase() : '';
-		var badgeUrl = courseBadge(code, title);
-
-		// badge column: real credential image where we have one, else clone the page's own text badge
-		var badgeHTML = '';
-		if(badgeUrl){
-			badgeHTML = '<img src="' + badgeUrl + '" alt="' + esc(title) + ' credential badge">';
+		// Badge: reuse the page's OWN credential badge — self-maintaining, no per-course map.
+		// Role-cert pages already carry it as <img class="aa-badge-img"> in the course bar
+		// (POPM/SSM/SA/…); micro-credentials use a CSS text badge instead.
+		var barImg = document.querySelector('.aa-coursebar .aa-badge-img, .aa-bar .aa-badge-img, .aa-cred img');
+		var badgeHTML = '', isMicro = false;
+		if(barImg && barImg.getAttribute('src')){
+			badgeHTML = '<img src="' + barImg.getAttribute('src') + '" alt="' + esc(title) + ' credential badge">';
+		} else if(/ai[\s\-]*native\s*foundation/i.test(title)){
+			badgeHTML = '<img src="' + AI_NATIVE_BADGE + '" alt="' + esc(title) + ' credential badge">';
 		} else {
 			var textBadge = document.querySelector('.aa-cred .badge') || document.querySelector('.aa-coursebar .badge, .aa-bar .badge');
 			if(textBadge){
+				isMicro = true;
 				var bn = textBadge.cloneNode(true);
 				bn.removeAttribute('aria-hidden');
 				bn.className = 'badge aa-ls-textbadge';
@@ -564,9 +552,7 @@
 				badgeHTML = bn.outerHTML;
 			}
 		}
-
-		var isMicro = /micro/i.test(code) || /micro/i.test(title) || /^AF-/i.test(code);
-		var subLine = isMicro ? 'Verifiable Credly badge · non-expiring' : 'Verifiable digital badge · renewable yearly';
+		var subLine = (isMicro || /micro/i.test(title)) ? 'Verifiable Credly badge · non-expiring' : 'Verifiable digital badge · renewable yearly';
 
 		var html = ''
 			+ '<div class="ls-top">'
