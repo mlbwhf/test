@@ -515,6 +515,7 @@
 		var ebBtn    = $('aa-rail-eb');
 		var EB_ORG   = rail.getAttribute('data-eb') || '';   // fallback Eventbrite URL if a date has no specific link
 		var EB_LOGO  = 'https://agile-agilist.com/wp-content/uploads/2026/06/evetbrite.webp';
+		var STRIPE_LOGO = 'https://agile-agilist.com/wp-content/uploads/2026/06/Untitled-1.webp';
 		var TIME     = '09:00–17:00 ET';
 		var sel = [];
 		rail.innerHTML = '';
@@ -552,19 +553,14 @@
 		more.setAttribute('aria-label','See more dates');
 		more.innerHTML = 'More dates <span aria-hidden="true">→</span>';
 		more.addEventListener('click', function(){
-			var maxScroll = rail.scrollWidth - rail.clientWidth;
-			if(rail.scrollLeft >= maxScroll - 4){
-				var c = document.getElementById('cohorts');
-				if(c && c.scrollIntoView){ c.scrollIntoView({behavior:'smooth', block:'start'}); }
-			} else {
-				rail.scrollBy({ left: 330, behavior: 'smooth' });
-			}
+			// scroll the rail in place to reveal more dates — stays in the hero
+			rail.scrollBy({ left: 330, behavior: 'smooth' });
 		});
 		rail.appendChild(more);
 
-		// Eventbrite button: show the logo once; href is set per selected date in pick()
+		// "Register then Eventbrite" — href set per selected date in pick()
 		if(ebBtn){
-			ebBtn.innerHTML = '<span class="dot"></span>Reserve on <img src="' + EB_LOGO + '" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block;margin-left:3px">';
+			ebBtn.innerHTML = 'Register <span style="opacity:.55;font-weight:500">then</span> <img src="' + EB_LOGO + '" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block;margin-left:4px">';
 			ebBtn.setAttribute('target','_blank');
 			ebBtn.setAttribute('rel','noopener');
 		}
@@ -587,8 +583,9 @@
 			selectCohort(s.ff);                                       // pre-fill FluentForm 21
 		}
 
-		// "Pay by card" -> open the SAME FluentForm 21 (Stripe) with the date pre-selected
+		// "Register then Stripe" -> open the SAME FluentForm 21 (Stripe) with the date pre-selected
 		if(stripeBtn){
+			stripeBtn.innerHTML = 'Register <span style="opacity:.55;font-weight:500">then</span> <img src="' + STRIPE_LOGO + '" alt="Stripe" style="height:14px;width:auto;vertical-align:middle;display:inline-block;filter:brightness(0) invert(1);margin-left:4px">';
 			stripeBtn.addEventListener('click', function(e){
 				e.preventDefault();
 				selectCohort(sel[current].ff);
