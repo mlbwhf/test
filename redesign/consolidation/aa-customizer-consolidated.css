@@ -1601,4 +1601,15 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 .aa-rd .aa-bar-nav .lnk::after{display:none !important}
 .aa-rd .aa-bar-nav .lnk:hover{color:var(--aa-teal-dark);background:#F1F8F8;border-color:var(--aa-border);border-bottom-color:var(--aa-teal)}
 
-/* ==================== END v2 — AA Global CSS 2026-07-05 (nav v2 + mega reposition/cutoff + footer social incl TikTok + hero-title suppression + SA v2 hero + hero meta chips) ==================== */
+/* ==================== U. CLIENT LOGO WALL (graduates work at) ==================== */
+/* White/transparent logos are normalised with grayscale + multiply so their boxes vanish on a
+   light strip — no per-image background stripping needed. Full colour on hover. */
+.aa-logowall{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 34px;max-width:1180px;margin:16px auto 0;padding:0 20px}
+.aa-logowall .aa-logo{display:flex;align-items:center;justify-content:center;height:46px}
+.aa-logowall img{height:30px;width:auto;max-width:140px;object-fit:contain;filter:grayscale(100%);opacity:.72;mix-blend-mode:multiply;transition:filter .2s,opacity .2s}
+.aa-logowall .aa-logo:hover img{filter:none;opacity:1}
+@media(max-width:640px){ .aa-logowall{gap:14px 22px} .aa-logowall img{height:24px} }
+/* review-card company logo (replaces the gradient avatar when present) */
+.aa-rd .aa-qlogo{height:26px;width:auto;max-width:120px;object-fit:contain;filter:grayscale(100%);opacity:.85;mix-blend-mode:multiply}
+
+/* ==================== END v2 — AA Global CSS 2026-07-05 (nav v2 + mega reposition/cutoff + footer social incl TikTok + hero-title suppression + SA v2 hero + hero meta chips + logo wall) ==================== */
