@@ -1,8 +1,22 @@
-<!-- SA COURSE v2 HERO BLOCK — replaces the current .aa-grid2 hero wp:html block on page 24467.
-     Rail + panel are populated by buildRail() in the AA - Course JS snippet.
-     #aa-rail data-eb = Eventbrite URL (org page; edit if you get a per-course link).
-     Price shown = $997 (live). Badge = media 23044 (SAFe-Badge_SA.png). -->
+<!-- ============================================================
+     COURSE v2 HERO — REUSABLE TEMPLATE (all course pages)
+     Replaces the current .aa-grid2 hero wp:html block.
+     Rail + panel are populated by buildRail() in "AA - Course JS".
+
+     PER-COURSE VARIABLES (the ONLY things you change per page):
+       1. #aa-cohorts  data-title / data-price / data-days / data-length   (config carrier — hidden)
+       2. badge <img src>   → that course's SAFe badge (Media Library URL)
+       3. <h1> course name + <p class="aa-lead"> description
+       4. .ls-badge-name  → the credential name
+       5. .ls-panel .price → the displayed price
+       6. #aa-rail data-eb → Eventbrite URL (org page, or per-course link)
+     Everything else (rail behaviour, panel, Stripe/FluentForm wiring,
+     dates auto-pulled from the calendar) is identical on every course.
+     ============================================================ -->
 <!-- wp:html -->
+<!-- config carrier: keeps class-days + price/currency working; hidden, do not delete -->
+<div id="aa-cohorts" class="aa-cohorts" style="display:none" data-title="Leading SAFe (SA)" data-price="997" data-days="1,2,4" data-length="2"></div>
+
 <div class="ls-top">
 <div>
 <p class="mono aa-eyebrow" style="margin-top:18px">Foundational · SA · 2 days · Live-virtual · 16 PDUs</p>
