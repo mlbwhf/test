@@ -1590,9 +1590,10 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 .aa-rd .ls-badge-col .aa-ls-textbadge{margin:0 auto;flex:none}
 @media(max-width:820px){ .aa-rd .ls-badge-col .aa-ls-textbadge{margin:0} }
 
-/* ASPC course bar: the name line ("Advanced SAFe® (ASPC)") already spells out the cert,
-   so hide the redundant descriptor line ("Adv. Practice Consultant Cert.") beneath it. */
-.page-id-1835 .aa-coursebar .aa-bar-in > div:first-child .mono{display:none}
+/* De-dup the cert name: the course bar already names the credential at the top of the page,
+   so drop the repeated name inside the hero badge column (the eyebrow + badge image still
+   label it). Fixes the "double name" on every v2 course hero. */
+.aa-rd .ls-badge-col .ls-badge-name{display:none}
 
 /* Course-bar sub-nav styled as TABS (visible borders) */
 .aa-rd .aa-bar-nav{gap:4px !important;align-self:stretch;align-items:flex-end}
