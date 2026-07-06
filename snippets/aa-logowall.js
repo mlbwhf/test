@@ -47,20 +47,39 @@
 	}
 
 	function render(){
-		var html = tiles();
 		// 1) explicit placeholders (homepage, anywhere): <div class="aa-logowall" data-auto></div>
+		var html = tiles();
 		var ph = document.querySelectorAll('.aa-logowall[data-auto]');
 		for(var i=0; ph.length > i; i++){
 			if(ph[i].getAttribute('data-done')) continue;
 			ph[i].setAttribute('data-done','1');
 			ph[i].innerHTML = html;
 		}
-		// 2) course/hub "Graduates work at" strip -> convert to the logo wall
-		var strips = document.querySelectorAll('.aa-trust');
-		for(var j=0; strips.length > j; j++){
-			if(strips[j].getAttribute('data-logo')) continue;
-			strips[j].setAttribute('data-logo','1');
-			strips[j].innerHTML = '<div class="aa-logowall">' + html + '</div>';
+		// 2) testimonials: show each reviewer's company logo next to their name (auto-matched)
+		decorateReviews();
+	}
+
+	function decorateReviews(){
+		var cards = document.querySelectorAll('.aa-qcard');
+		if(!cards.length) return;
+		// match longest company names first so "TD Bank"/"Manulife" beat short tokens
+		var byLen = LOGOS.slice().sort(function(a,b){ return b.a.length - a.a.length; });
+		for(var i=0; cards.length > i; i++){
+			var card = cards[i];
+			if(card.getAttribute('data-logo')) continue;
+			var who = card.querySelector('.aa-qwho');
+			var nameEl = card.querySelector('.aa-qname');
+			if(!who || !nameEl) continue;
+			var txt = nameEl.textContent || '';
+			var m = null;
+			for(var j=0; byLen.length > j; j++){ if(byLen[j].a.length > 2 && txt.indexOf(byLen[j].a) >= 0){ m = byLen[j]; break; } }
+			if(!m) continue;
+			card.setAttribute('data-logo','1');
+			var img = document.createElement('img');
+			img.className = 'aa-qlogo'; img.src = m.u; img.alt = m.a; img.loading = 'lazy';
+			var av = who.querySelector('.aa-qav');
+			if(av){ who.replaceChild(img, av); }   // replace the gradient avatar with the company logo
+			else { who.insertBefore(img, who.firstChild); }
 		}
 	}
 
