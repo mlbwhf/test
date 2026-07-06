@@ -29,6 +29,8 @@
 		var TIME     = '09:00–17:00 ET';
 		var sel = [];
 		rail.innerHTML = '';
+		var headSub = document.querySelector('.ls-cohorts-head .sub');
+		if(headSub){ headSub.textContent = 'Click on the date and complete the registration process.'; }
 
 		for(var i=0; items.length > i; i++){
 			var it  = items[i];
@@ -69,7 +71,7 @@
 		}
 		var oldM = wrap.querySelector('.ls-more'); if(oldM) oldM.parentNode.removeChild(oldM);
 		var oldP = wrap.querySelector('.ls-prev'); if(oldP) oldP.parentNode.removeChild(oldP);
-		function page(){ return Math.max(220, rail.clientWidth - 40); }   // advance a full visible page of dates
+		function page(){ return 320; }   // scroll ~2 chips in place (slide, not a full-page swap)
 		var prev = document.createElement('button');
 		prev.type = 'button';
 		prev.className = 'ls-prev';
