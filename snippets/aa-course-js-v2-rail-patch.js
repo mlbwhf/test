@@ -69,27 +69,30 @@
 			rail.parentNode.insertBefore(wrap, rail);
 			wrap.appendChild(rail);
 		}
-		var oldM = wrap.querySelector('.ls-more'); if(oldM) oldM.parentNode.removeChild(oldM);
-		var oldP = wrap.querySelector('.ls-prev'); if(oldP) oldP.parentNode.removeChild(oldP);
+		var oldNav = wrap.querySelectorAll('.ls-nav');
+		for(var q=0; oldNav.length > q; q++){ oldNav[q].parentNode.removeChild(oldNav[q]); }
 		function page(){ return 320; }   // scroll ~2 chips in place (slide, not a full-page swap)
 		var prev = document.createElement('button');
 		prev.type = 'button';
-		prev.className = 'ls-prev';
+		prev.className = 'ls-nav ls-nav-prev';
 		prev.setAttribute('aria-label','Earlier dates');
-		prev.innerHTML = '<span aria-hidden="true">←</span>';
+		prev.innerHTML = '&#8249;';   // ‹
 		prev.addEventListener('click', function(){ rail.scrollBy({ left: -page(), behavior: 'smooth' }); });
-		var more = document.createElement('button');
-		more.type = 'button';
-		more.className = 'ls-more';
-		more.setAttribute('aria-label','See more dates');
-		more.innerHTML = 'More dates <span aria-hidden="true">→</span>';
-		more.addEventListener('click', function(){ rail.scrollBy({ left: page(), behavior: 'smooth' }); });
-		wrap.appendChild(prev);
-		wrap.appendChild(more);
+		var next = document.createElement('button');
+		next.type = 'button';
+		next.className = 'ls-nav ls-nav-next';
+		next.setAttribute('aria-label','More dates');
+		next.innerHTML = '&#8250;';    // ›
+		next.addEventListener('click', function(){ rail.scrollBy({ left: page(), behavior: 'smooth' }); });
+		wrap.insertBefore(prev, rail);   // ‹ before the rail
+		wrap.appendChild(next);          // › after the rail
 		function syncArrows(){
 			var maxScroll = rail.scrollWidth - rail.clientWidth;
-			more.style.display = (maxScroll > 8 && rail.scrollLeft < maxScroll - 4) ? '' : 'none';
-			prev.style.display = (rail.scrollLeft > 4) ? '' : 'none';
+			var noScroll = maxScroll <= 8;
+			prev.style.display = noScroll ? 'none' : '';
+			next.style.display = noScroll ? 'none' : '';
+			prev.disabled = rail.scrollLeft <= 4;
+			next.disabled = rail.scrollLeft >= maxScroll - 4;
 		}
 		rail.addEventListener('scroll', syncArrows, {passive:true});
 		window.addEventListener('resize', syncArrows);

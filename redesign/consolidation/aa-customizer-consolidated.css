@@ -1547,15 +1547,12 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 .aa-rd .ls-chip-time{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.03em;opacity:.55}
 .aa-rd .ls-arrow{flex:none;width:48px;align-self:stretch;border-radius:3px;border:1px solid #C7DEDE;background:#fff;color:#127E88;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
 .aa-rd .ls-arrow:hover{border-color:#127E88;background:#F1F8F8}
-/* "More dates" — floats at the rail's right edge, always visible; scrolls the rail in place */
-.aa-rd .ls-rail-wrap{position:relative}
-.aa-rd .ls-more{position:absolute;top:0;bottom:0;right:0;z-index:3;display:flex;align-items:center;gap:6px;padding:0 16px 0 40px;border:0;cursor:pointer;white-space:nowrap;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#127E88;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,#fff 38%)}
-.aa-rd .ls-more:hover{color:#0B2E35}
-.aa-rd .ls-more span{font-size:16px}
-/* back/earlier arrow — floats at the rail's left edge, appears once scrolled */
-.aa-rd .ls-prev{position:absolute;top:0;bottom:0;left:0;z-index:3;display:none;align-items:center;padding:0 34px 0 12px;border:0;cursor:pointer;color:#127E88;background:linear-gradient(270deg,rgba(255,255,255,0) 0%,#fff 40%)}
-.aa-rd .ls-prev:hover{color:#0B2E35}
-.aa-rd .ls-prev span{font-size:18px;font-weight:700}
+/* Rail flanked by arrow buttons on BOTH sides: [<] dates [>] */
+.aa-rd .ls-rail-wrap{display:flex;align-items:stretch;gap:8px}
+.aa-rd .ls-rail-wrap > .ls-rail{flex:1 1 auto;min-width:0}
+.aa-rd .ls-nav{flex:none;width:44px;align-self:stretch;display:flex;align-items:center;justify-content:center;border:1px solid #C7DEDE;border-radius:3px;background:#fff;color:#127E88;font-size:24px;line-height:1;cursor:pointer;transition:.15s}
+.aa-rd .ls-nav:hover{border-color:#127E88;background:#F1F8F8;color:#0B2E35}
+.aa-rd .ls-nav[disabled]{opacity:.3;cursor:default;pointer-events:none}
 
 .aa-rd .ls-panel{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;background:#F1F8F8;border:1px solid #127E88;border-radius:3px;padding:22px 26px}
 .aa-rd .ls-panel .headline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:8px}
@@ -1588,18 +1585,22 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 .aa-rd .ls-badge-col .aa-tag{font-size:10px;padding:6px 10px}
 @media(max-width:820px){ .aa-rd .ls-badge-col .aa-tags{justify-content:flex-start} }
 
-/* Course-bar sub-nav styled as TABS */
-.aa-rd .aa-bar-nav{gap:2px !important;align-self:stretch;align-items:flex-end}
+/* Course-bar sub-nav styled as TABS (visible borders) */
+.aa-rd .aa-bar-nav{gap:4px !important;align-self:stretch;align-items:flex-end}
 .aa-rd .aa-bar-nav .lnk{
   position:relative;
-  padding:9px 15px !important;
+  padding:8px 15px !important;
   font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--aa-muted);text-transform:none;
-  border:1px solid transparent;border-bottom:2px solid transparent;
-  border-radius:5px 5px 0 0;
+  border:1px solid var(--aa-border);
+  border-bottom:2px solid var(--aa-border);
+  border-radius:6px 6px 0 0;
+  background:#fff;
+  text-decoration:none !important;
   transition:color .15s,background .15s,border-color .15s;
 }
+.aa-rd .aa-bar-nav .lnk:hover{text-decoration:none !important}
 .aa-rd .aa-bar-nav .lnk::after{display:none !important}
-.aa-rd .aa-bar-nav .lnk:hover{color:var(--aa-teal-dark);background:#F1F8F8;border-color:var(--aa-border);border-bottom-color:var(--aa-teal)}
+.aa-rd .aa-bar-nav .lnk:hover{color:var(--aa-teal-dark);background:#F1F8F8;border-color:var(--aa-border-strong);border-bottom-color:var(--aa-teal)}
 
 /* ==================== U. CLIENT LOGO WALL (graduates work at) ==================== */
 /* White/transparent logos are normalised with grayscale + multiply so their boxes vanish on a
