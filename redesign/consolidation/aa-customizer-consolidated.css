@@ -1604,11 +1604,12 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 /* ==================== U. CLIENT LOGO WALL (graduates work at) ==================== */
 /* White/transparent logos are normalised with grayscale + multiply so their boxes vanish on a
    light strip — no per-image background stripping needed. Full colour on hover. */
-.aa-logowall{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 34px;max-width:1180px;margin:16px auto 0;padding:0 20px}
-.aa-logowall .aa-logo{display:flex;align-items:center;justify-content:center;height:46px}
-.aa-logowall img{height:30px;width:auto;max-width:140px;object-fit:contain;filter:grayscale(100%);opacity:.72;mix-blend-mode:multiply;transition:filter .2s,opacity .2s}
+.aa-logowall{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 12px;max-width:1180px;margin:16px auto 0;padding:0 20px}
+/* fixed tile → every logo occupies the SAME footprint regardless of its native size/ratio */
+.aa-logowall .aa-logo{display:flex;align-items:center;justify-content:center;width:150px;height:46px;padding:0 8px}
+.aa-logowall img{max-height:28px !important;max-width:118px !important;width:auto !important;height:auto !important;object-fit:contain;filter:grayscale(100%);opacity:.72;mix-blend-mode:multiply;transition:filter .2s,opacity .2s}
 .aa-logowall .aa-logo:hover img{filter:none;opacity:1}
-@media(max-width:640px){ .aa-logowall{gap:14px 22px} .aa-logowall img{height:24px} }
+@media(max-width:640px){ .aa-logowall .aa-logo{width:120px;height:40px} .aa-logowall img{max-height:24px !important;max-width:96px !important} }
 /* review-card company logo (replaces the gradient avatar when present) */
 .aa-rd .aa-qlogo{height:26px;width:auto;max-width:120px;object-fit:contain;filter:grayscale(100%);opacity:.85;mix-blend-mode:multiply}
 
