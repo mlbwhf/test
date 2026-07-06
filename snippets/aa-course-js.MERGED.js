@@ -557,21 +557,31 @@
 			rail.parentNode.insertBefore(wrap, rail);
 			wrap.appendChild(rail);
 		}
-		var old = wrap.querySelector('.ls-more'); if(old) old.parentNode.removeChild(old);
+		var oldM = wrap.querySelector('.ls-more'); if(oldM) oldM.parentNode.removeChild(oldM);
+		var oldP = wrap.querySelector('.ls-prev'); if(oldP) oldP.parentNode.removeChild(oldP);
+		function page(){ return Math.max(220, rail.clientWidth - 40); }   // advance a full visible page of dates
+		var prev = document.createElement('button');
+		prev.type = 'button';
+		prev.className = 'ls-prev';
+		prev.setAttribute('aria-label','Earlier dates');
+		prev.innerHTML = '<span aria-hidden="true">←</span>';
+		prev.addEventListener('click', function(){ rail.scrollBy({ left: -page(), behavior: 'smooth' }); });
 		var more = document.createElement('button');
 		more.type = 'button';
 		more.className = 'ls-more';
 		more.setAttribute('aria-label','See more dates');
 		more.innerHTML = 'More dates <span aria-hidden="true">→</span>';
-		more.addEventListener('click', function(){ rail.scrollBy({ left: 330, behavior: 'smooth' }); });
+		more.addEventListener('click', function(){ rail.scrollBy({ left: page(), behavior: 'smooth' }); });
+		wrap.appendChild(prev);
 		wrap.appendChild(more);
-		function syncMore(){
+		function syncArrows(){
 			var maxScroll = rail.scrollWidth - rail.clientWidth;
 			more.style.display = (maxScroll > 8 && rail.scrollLeft < maxScroll - 4) ? '' : 'none';
+			prev.style.display = (rail.scrollLeft > 4) ? '' : 'none';
 		}
-		rail.addEventListener('scroll', syncMore, {passive:true});
-		window.addEventListener('resize', syncMore);
-		setTimeout(syncMore, 60);
+		rail.addEventListener('scroll', syncArrows, {passive:true});
+		window.addEventListener('resize', syncArrows);
+		setTimeout(syncArrows, 60);
 
 		// Buttons: "Register [Stripe]" / "Register [Eventbrite]" (logos). EB href set per date in pick()
 		if(stripeBtn){

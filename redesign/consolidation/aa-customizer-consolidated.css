@@ -1506,11 +1506,15 @@ body:has(.aa-hero) .entry-header,
 body:has(.aa-hero) .ast-single-entry-banner,
 body:has(.aa-h1)  .entry-header,
 body:has(.aa-h1)  .ast-single-entry-banner {
-  padding-top: 6px !important;
-  padding-bottom: 6px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
   min-height: 0 !important;
   row-gap: 0 !important;
 }
+/* and pull the content (sticky course bar) up toward the breadcrumb */
+.aa-rd .aa-coursebar { margin-top: -14px; }
+body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-top: 0 !important; margin-top: 0 !important; }
 
 /* ==================== T. SA COURSE v2 HERO — cohort rail + in-place register panel ==================== */
 /* Scrollable date rail + register panel for the course hero (pilot: Leading SAFe / SA).
@@ -1548,6 +1552,10 @@ body:has(.aa-h1)  .ast-single-entry-banner {
 .aa-rd .ls-more{position:absolute;top:0;bottom:0;right:0;z-index:3;display:flex;align-items:center;gap:6px;padding:0 16px 0 40px;border:0;cursor:pointer;white-space:nowrap;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#127E88;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,#fff 38%)}
 .aa-rd .ls-more:hover{color:#0B2E35}
 .aa-rd .ls-more span{font-size:16px}
+/* back/earlier arrow — floats at the rail's left edge, appears once scrolled */
+.aa-rd .ls-prev{position:absolute;top:0;bottom:0;left:0;z-index:3;display:none;align-items:center;padding:0 34px 0 12px;border:0;cursor:pointer;color:#127E88;background:linear-gradient(270deg,rgba(255,255,255,0) 0%,#fff 40%)}
+.aa-rd .ls-prev:hover{color:#0B2E35}
+.aa-rd .ls-prev span{font-size:18px;font-weight:700}
 
 .aa-rd .ls-panel{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;background:#F1F8F8;border:1px solid #127E88;border-radius:3px;padding:22px 26px}
 .aa-rd .ls-panel .headline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:8px}
