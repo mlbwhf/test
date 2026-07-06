@@ -513,7 +513,8 @@
 		var badgeEl  = $('aa-rail-badge');
 		var stripeBtn= $('aa-rail-stripe');
 		var ebBtn    = $('aa-rail-eb');
-		var EB_ORG   = rail.getAttribute('data-eb') || '';   // Eventbrite URL (optional), from data-eb on #aa-rail
+		var EB_ORG   = rail.getAttribute('data-eb') || '';   // fallback Eventbrite URL if a date has no specific link
+		var EB_LOGO  = 'https://agile-agilist.com/wp-content/uploads/2026/06/evetbrite.webp';
 		var TIME     = '09:00–17:00 ET';
 		var sel = [];
 		rail.innerHTML = '';
@@ -526,11 +527,11 @@
 			var full = (WD[dow] ? WD[dow] + ', ' : '') + it.day + ' ' + mf;
 			var kind = i === 0 ? 'hot' : (i === 3 ? 'low' : 'none');
 			var badgeTxt = i === 0 ? 'FAST FILLING' : (i === 3 ? 'FEW SEATS' : '');
+			// specific-event Eventbrite link from the feed; fall back to the org URL only if none
+			var ebHref = (it.href && it.href.charAt(0) !== '#') ? it.href : EB_ORG;
 			sel.push({
-				ff:   it.mon + ' ' + it.day + (it.when ? (' — ' + it.when) : ''), // exact label selectCohort()/fillCohorts() use
-				full: full,
-				badge: badgeTxt,
-				kind: kind
+				ff:   it.mon + ' ' + it.day + (it.when ? (' — ' + it.when) : ''),
+				full: full, badge: badgeTxt, kind: kind, eb: ebHref
 			});
 			var b = document.createElement('button');
 			b.type = 'button';
@@ -544,14 +545,29 @@
 			rail.appendChild(b);
 		}
 
-		// scroll-more arrow
-		var arrow = document.createElement('button');
-		arrow.type = 'button';
-		arrow.className = 'ls-arrow';
-		arrow.setAttribute('aria-label','See more dates');
-		arrow.textContent = '→';
-		arrow.addEventListener('click', function(){ rail.scrollBy({ left: 330, behavior: 'smooth' }); });
-		rail.appendChild(arrow);
+		// "More dates" control — scrolls the rail; when fully scrolled, jumps to the full calendar (#cohorts)
+		var more = document.createElement('button');
+		more.type = 'button';
+		more.className = 'ls-more';
+		more.setAttribute('aria-label','See more dates');
+		more.innerHTML = 'More dates <span aria-hidden="true">→</span>';
+		more.addEventListener('click', function(){
+			var maxScroll = rail.scrollWidth - rail.clientWidth;
+			if(rail.scrollLeft >= maxScroll - 4){
+				var c = document.getElementById('cohorts');
+				if(c && c.scrollIntoView){ c.scrollIntoView({behavior:'smooth', block:'start'}); }
+			} else {
+				rail.scrollBy({ left: 330, behavior: 'smooth' });
+			}
+		});
+		rail.appendChild(more);
+
+		// Eventbrite button: show the logo once; href is set per selected date in pick()
+		if(ebBtn){
+			ebBtn.innerHTML = '<span class="dot"></span>Reserve on <img src="' + EB_LOGO + '" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block;margin-left:3px">';
+			ebBtn.setAttribute('target','_blank');
+			ebBtn.setAttribute('rel','noopener');
+		}
 
 		var current = 0;
 		function pick(i){
@@ -567,7 +583,8 @@
 				badgeEl.className = 'badge ' + (s.badge ? s.kind : '');
 				badgeEl.style.display = s.badge ? '' : 'none';
 			}
-			selectCohort(s.ff);                 // pre-fill FluentForm 21 behind the scenes
+			if(ebBtn && s.eb){ ebBtn.setAttribute('href', s.eb); }   // specific-event Eventbrite link
+			selectCohort(s.ff);                                       // pre-fill FluentForm 21
 		}
 
 		// "Pay by card" -> open the SAME FluentForm 21 (Stripe) with the date pre-selected
@@ -577,17 +594,6 @@
 				selectCohort(sel[current].ff);
 				openReg();
 			});
-		}
-
-		// "Reserve on Eventbrite" -> Eventbrite URL (new tab) if provided, else open the form
-		if(ebBtn){
-			if(EB_ORG){
-				ebBtn.setAttribute('href', EB_ORG);
-				ebBtn.setAttribute('target','_blank');
-				ebBtn.setAttribute('rel','noopener');
-			} else {
-				ebBtn.addEventListener('click', function(e){ e.preventDefault(); openReg(); });
-			}
 		}
 
 		if(items.length) pick(0);

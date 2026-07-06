@@ -1528,6 +1528,10 @@ body:has(.aa-msg-embed) .entry-title { /* message-form pages                    
 .aa-rd .ls-chip-time{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.03em;opacity:.55}
 .aa-rd .ls-arrow{flex:none;width:48px;align-self:stretch;border-radius:3px;border:1px solid #C7DEDE;background:#fff;color:#127E88;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
 .aa-rd .ls-arrow:hover{border-color:#127E88;background:#F1F8F8}
+/* "More dates" control at the end of the rail */
+.aa-rd .ls-more{flex:none;align-self:stretch;border-radius:3px;border:1px dashed #C7DEDE;background:#fff;color:#127E88;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0 16px;white-space:nowrap;transition:.15s}
+.aa-rd .ls-more:hover{border-color:#127E88;background:#F1F8F8}
+.aa-rd .ls-more span{font-size:16px}
 
 .aa-rd .ls-panel{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;background:#F1F8F8;border:1px solid #127E88;border-radius:3px;padding:22px 26px}
 .aa-rd .ls-panel .headline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:8px}
