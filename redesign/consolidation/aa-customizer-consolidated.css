@@ -1456,20 +1456,22 @@ html body #masthead .main-header-menu > .menu-item > a > span { color: var(--aa-
 #aa-footer-block .aa-foot-social .aa-soc-fb::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M22%2012a10%2010%200%2010-11.56%209.88v-6.99H7.9V12h2.54V9.8c0-2.5%201.5-3.89%203.78-3.89%201.09%200%202.24.2%202.24.2v2.46h-1.26c-1.24%200-1.63.77-1.63%201.56V12h2.78l-.44%202.89h-2.34v6.99A10%2010%200%200022%2012z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M22%2012a10%2010%200%2010-11.56%209.88v-6.99H7.9V12h2.54V9.8c0-2.5%201.5-3.89%203.78-3.89%201.09%200%202.24.2%202.24.2v2.46h-1.26c-1.24%200-1.63.77-1.63%201.56V12h2.78l-.44%202.89h-2.34v6.99A10%2010%200%200022%2012z%27%2F%3E%3C%2Fsvg%3E")}
 #aa-footer-block .aa-foot-social .aa-soc-tt::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M16.6%205.82a4.28%204.28%200%2001-1.06-2.82h-3.2v12.86a2.6%202.6%200%2001-2.6%202.5%202.6%202.6%200%2001-2.6-2.6%202.6%202.6%200%20012.6-2.6c.27%200%20.53.04.78.12v-3.28a5.86%205.86%200%2000-.78-.05A5.88%205.88%200%20003.46%2015.7%205.88%205.88%200%20009.34%2021.6a5.88%205.88%200%20005.88-5.9V9.01a7.45%207.45%200%20004.36%201.4V7.2a4.28%204.28%200%2001-2.98-1.38z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M16.6%205.82a4.28%204.28%200%2001-1.06-2.82h-3.2v12.86a2.6%202.6%200%2001-2.6%202.5%202.6%202.6%200%2001-2.6-2.6%202.6%202.6%200%20012.6-2.6c.27%200%20.53.04.78.12v-3.28a5.86%205.86%200%2000-.78-.05A5.88%205.88%200%20003.46%2015.7%205.88%205.88%200%20009.34%2021.6a5.88%205.88%200%20005.88-5.9V9.01a7.45%207.45%200%20004.36%201.4V7.2a4.28%204.28%200%2001-2.98-1.38z%27%2F%3E%3C%2Fsvg%3E")}
 
-/* ==================== R. MEGA MENU REPOSITION (anchor under trigger, clamp to viewport) ==================== */
+/* ==================== R. MEGA MENU — CENTERED ON VIEWPORT + CUTOFF SAFETY ==================== */
 @media (min-width:922px){
-  .main-header-menu > .menu-item.aa-mega { position:relative !important; }
+  /* static parent so the panel centers on the viewport (not on the Training trigger) */
+  .main-header-menu > .menu-item.aa-mega { position:static !important; }
   .main-header-menu > .menu-item.aa-mega > .sub-menu {
-    left:0 !important; right:auto !important; transform:none !important;
-    max-width:min(740px, calc(100vw - 40px)) !important;
-    /* VERTICAL CUTOFF FIX: cap the panel to the viewport and scroll inside it
-       instead of letting a tall mega-menu run off the bottom of the screen. */
-    max-height: calc(100vh - 110px) !important;
+    position: fixed !important;
+    top: var(--aa-top, 80px) !important;      /* sits right under the fixed header (no hover gap) */
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;   /* horizontally centered on screen */
+    z-index: 990 !important;
+    max-width: min(760px, calc(100vw - 40px)) !important;
+    /* cutoff safety net: never taller than the viewport; scroll inside only if it must */
+    max-height: calc(100vh - var(--aa-top, 80px) - 24px) !important;
     overflow-y: auto !important;
     overscroll-behavior: contain;
-  }
-  .main-header-menu > .menu-item.aa-mega:last-of-type > .sub-menu {
-    left:auto !important; right:0 !important;
   }
 }
 /* ==================== S. CUSTOM-HERO PAGES — suppress Astra's stock title H1 ==================== */
