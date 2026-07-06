@@ -503,6 +503,115 @@
 		} catch(e){}
 	}
 
+	// ==================== V2 HERO AUTO-TRANSFORM (universal · every course page) ====================
+	// Rebuilds the legacy .aa-grid2 hero into the v2 "alt hero" (badge column + scrollable
+	// cohort rail + in-place register panel), reading everything from the page itself.
+	// No-ops on: SA (already v2, has #aa-rail) and non-course pages (no .aa-grid2 / #aa-cohorts),
+	// so the geo/ad landing pages are skipped automatically.
+	var BADGES = {
+		'SA':   'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SA.png',
+		'SSM':  'https://agile-agilist.com/wp-content/uploads/2025/11/SAFe-Badge_SSM-AI.png',
+		'SASM': 'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SASM.png',
+		'POPM': 'https://agile-agilist.com/wp-content/uploads/2025/11/SAFe-Badge_POPM-AI.png',
+		'APM':  'https://agile-agilist.com/wp-content/uploads/2025/08/APM.png',
+		'SPC':  'https://agile-agilist.com/wp-content/uploads/2026/05/SAFe-Badge_SPC.png',
+		'SPCT': 'https://agile-agilist.com/wp-content/uploads/2025/08/SPCTWhite.png'
+	};
+	var EB_ORG_DEFAULT = 'https://www.eventbrite.ca/o/agileagilist-56013628813';
+
+	function courseBadge(code, title){
+		if(code && BADGES[code]) return BADGES[code];
+		if(/ai[\s\-]*native\s*foundation/i.test(title)) return 'https://agile-agilist.com/wp-content/uploads/2025/12/ai_foundation_badge_2026.png';
+		return '';   // no dedicated image -> caller clones the page's own text badge
+	}
+
+	function buildHeroV2(){
+		if($('aa-rail')) return;                                    // already v2 (SA) -> skip
+		var root = document.querySelector('.aa-rd');
+		if(!root) return;
+		var grid = root.querySelector('.aa-hero .aa-grid2') || root.querySelector('.aa-grid2');
+		if(!grid) return;                                           // not a standard course hero -> skip
+		var cfg = $('aa-cohorts');
+		if(!cfg) return;
+		var h1 = grid.querySelector('.aa-h1');
+		if(!h1) return;
+		var lead = grid.querySelector('.aa-lead');
+		var tags = grid.querySelector('.aa-tags');
+		var finEl = grid.querySelector('.aa-card-fin');
+		var D = cfg.dataset || {};
+		var price = (D.price || '').toString();
+		var title = (D.title || (h1.textContent || '')).trim();
+		var finTxt = finEl ? (finEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
+
+		// course code from the top course-bar badge (e.g. SA, POPM, AF-VSM)
+		var codeEl = document.querySelector('.aa-coursebar .badge b, .aa-bar .badge b');
+		var code = codeEl ? (codeEl.textContent || '').trim().toUpperCase() : '';
+		var badgeUrl = courseBadge(code, title);
+
+		// badge column: real credential image where we have one, else clone the page's own text badge
+		var badgeHTML = '';
+		if(badgeUrl){
+			badgeHTML = '<img src="' + badgeUrl + '" alt="' + esc(title) + ' credential badge">';
+		} else {
+			var textBadge = document.querySelector('.aa-cred .badge') || document.querySelector('.aa-coursebar .badge, .aa-bar .badge');
+			if(textBadge){
+				var bn = textBadge.cloneNode(true);
+				bn.removeAttribute('aria-hidden');
+				bn.className = 'badge aa-ls-textbadge';
+				bn.setAttribute('style', 'width:104px;height:104px;border-width:2px');
+				var bb = bn.querySelector('b'); if(bb) bb.style.fontSize = '22px';
+				var bi = bn.querySelector('i'); if(bi) bi.style.fontSize = '9px';
+				badgeHTML = bn.outerHTML;
+			}
+		}
+
+		var isMicro = /micro/i.test(code) || /micro/i.test(title) || /^AF-/i.test(code);
+		var subLine = isMicro ? 'Verifiable Credly badge · non-expiring' : 'Verifiable digital badge · renewable yearly';
+
+		var html = ''
+			+ '<div class="ls-top">'
+			+   '<div>' + h1.outerHTML + (lead ? lead.outerHTML : '') + '</div>'
+			+   '<div class="ls-badge-col">'
+			+     badgeHTML
+			+     '<div>'
+			+       '<div class="mono aa-eyebrow">The credential you earn</div>'
+			+       '<div class="ls-badge-name">' + esc(title) + '</div>'
+			+       '<div class="ls-badge-sub">' + subLine + '</div>'
+			+     '</div>'
+			+     (tags ? tags.outerHTML : '')
+			+   '</div>'
+			+ '</div>'
+			+ '<div class="ls-cohorts">'
+			+   '<div class="ls-cohorts-head">'
+			+     '<span class="mono aa-eyebrow">Choose your cohort</span>'
+			+     '<span class="sub">Click on the date and complete the registration process.</span>'
+			+   '</div>'
+			+   '<div id="aa-rail" class="ls-rail" data-eb="' + EB_ORG_DEFAULT + '" aria-label="Course dates"></div>'
+			+   '<div class="ls-panel">'
+			+     '<div>'
+			+       '<div class="mono aa-eyebrow">Selected cohort</div>'
+			+       '<div class="headline">'
+			+         '<span id="aa-rail-date" class="date"></span>'
+			+         '<span id="aa-rail-time" class="time"></span>'
+			+         '<span id="aa-rail-badge" class="badge"></span>'
+			+       '</div>'
+			+       '<div class="price"><span class="n">$' + esc(price) + '</span> USD' + (finTxt ? ' · ' + esc(finTxt) : '') + '</div>'
+			+     '</div>'
+			+     '<div class="ls-actions">'
+			+       '<a id="aa-rail-stripe" class="ls-btn ls-btn-stripe" href="#enroll">Register</a>'
+			+       '<a id="aa-rail-eb" class="ls-btn ls-btn-eb" href="#cohorts">Register</a>'
+			+     '</div>'
+			+   '</div>'
+			+   '<div class="ls-secure">&#128274; SECURE CHECKOUT · CARD · APPLE / G PAY</div>'
+			+ '</div>';
+
+		// insert v2 markup, preserve the hidden #aa-cohorts config carrier, drop the old grid
+		grid.insertAdjacentHTML('beforebegin', html);
+		cfg.style.display = 'none';
+		grid.parentNode.insertBefore(cfg, grid);
+		grid.parentNode.removeChild(grid);
+	}
+
 	// ==================== V2 HERO RAIL (scrollable chips + in-place panel) ====================
 	function buildRail(items){
 		var rail = $('aa-rail');
@@ -637,6 +746,7 @@
 		T(function(){ fillCohorts(ITEMS); });
 		T(function(){ buildCohorts(ITEMS); });
 		T(function(){ buildPick(ITEMS); });
+		T(buildHeroV2);
 		T(function(){ buildRail(ITEMS); });
 		T(wireEB);
 		T(backToTop);

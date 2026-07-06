@@ -447,7 +447,9 @@ article.ast-article-single > .ast-container { padding-top: 0 !important; }
 }
 #xylusec-calendar .fc-daygrid-day.fc-day-today { background: #EAF6F7 !important; }
 #xylusec-calendar a { color: var(--aa-teal); }
-.page-id-24467 .wpea_frontend_archive { display: none !important; }
+/* Hide the raw WP Event Aggregator feed on every course page — the v2 hero rail
+   (buildRail/buildHeroV2) is the only date UI; the feed is a hidden data source. */
+.aa-rd .wpea_frontend_archive { display: none !important; }
 
 /* ==================== I. IMAGE / ICON SIZE CONSTRAINTS ==================== */
 .aa-rd img { max-width: 100%; height: auto; }
@@ -1584,6 +1586,9 @@ body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-
 .aa-rd .ls-badge-col .aa-tags{justify-content:center;gap:6px;margin:6px 0 0}
 .aa-rd .ls-badge-col .aa-tag{font-size:10px;padding:6px 10px}
 @media(max-width:820px){ .aa-rd .ls-badge-col .aa-tags{justify-content:flex-start} }
+/* Text-badge fallback (courses with no dedicated cert image, e.g. micro-credentials): center it */
+.aa-rd .ls-badge-col .aa-ls-textbadge{margin:0 auto;flex:none}
+@media(max-width:820px){ .aa-rd .ls-badge-col .aa-ls-textbadge{margin:0} }
 
 /* Course-bar sub-nav styled as TABS (visible borders) */
 .aa-rd .aa-bar-nav{gap:4px !important;align-self:stretch;align-items:flex-end}
