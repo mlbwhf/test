@@ -1467,4 +1467,18 @@ html body #masthead .main-header-menu > .menu-item > a > span { color: var(--aa-
     left:auto !important; right:0 !important;
   }
 }
-/* ==================== END v2 — AA Global CSS 2026-07-05 (nav v2 + mega reposition + footer social incl TikTok) ==================== */
+/* ==================== S. CUSTOM-HERO PAGES — suppress Astra's stock title H1 ==================== */
+/* These pages ship their own editorial hero, so Astra's auto page-title (the "repeated name"
+   printed under the breadcrumb) duplicated the hero. Hide that one H1; the breadcrumb stays.
+   The hero H1s use .aa-h1 / .aa-hero-* — never .entry-title — so this removes only the duplicate.
+   Astra adds .ast-no-title to the header when its native "Disable Title" toggle is on; this rule
+   makes the fix hold whether or not that toggle is set. */
+.page-id-1699  .entry-header .entry-title,           /* /training/        */
+.page-id-1699  .ast-single-entry-banner .entry-title,
+.page-id-1699  h1.entry-title,
+.page-id-28611 .entry-header .entry-title,           /* /cert-recommender/ */
+.page-id-28611 h1.entry-title,
+.page-id-28615 .entry-header .entry-title,           /* /career-compass/   */
+.page-id-28615 h1.entry-title { display: none !important; }
+
+/* ==================== END v2 — AA Global CSS 2026-07-05 (nav v2 + mega reposition + footer social incl TikTok + hero-title suppression) ==================== */
