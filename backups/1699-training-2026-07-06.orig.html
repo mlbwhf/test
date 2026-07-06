@@ -1,0 +1,387 @@
+<!-- wp:group {"tagName":"div","className":"aa-rd","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-rd" id="top">
+
+<!-- wp:html -->
+<style>
+.aa-rd .aa-salbar{display:grid;grid-template-columns:110px 1fr 110px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #DCEAEA}
+.aa-rd .aa-salbar:last-child{border-bottom:none}
+.aa-rd .aa-salbar-role{font-family:'Newsreader',Georgia,serif;font-size:20px;color:#0E3A44;font-weight:400}
+.aa-rd .aa-salbar-track{position:relative;height:8px;background:#E8F1F1;border-radius:4px;overflow:hidden}
+.aa-rd .aa-salbar-fill{position:absolute;height:100%;background:linear-gradient(90deg,#127E88,#0B2E35);border-radius:4px;transition:width 1s ease}
+.aa-rd .aa-salbar-mid{position:absolute;top:-6px;width:2px;height:20px;background:#F59E0B;border-radius:1px}
+.aa-rd .aa-salbar-val{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#127E88;letter-spacing:.02em;text-align:right;font-weight:600}
+.aa-rd .aa-salbar-range{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#88A0A4;letter-spacing:.04em}
+
+.aa-rd .aa-jpath{background:#fff;border:1px solid #DCEAEA;padding:26px 24px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,transform .2s}
+.aa-rd .aa-jpath:hover{border-color:#127E88;transform:translateY(-2px)}
+.aa-rd .aa-jpath-eb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;font-weight:500}
+.aa-rd .aa-jpath-h{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:26px;line-height:1.15;color:#0E3A44;margin:0}
+.aa-rd .aa-jpath-h em{font-style:italic;color:#127E88}
+.aa-rd .aa-jpath-p{font-size:14px;line-height:1.6;color:#5E7378;margin:0}
+.aa-rd .aa-jpath-steps{display:flex;flex-direction:column;gap:2px;margin-top:8px;padding-top:16px;border-top:1px solid #E8F1F1}
+.aa-rd .aa-jpath-step{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;font-size:13px;color:#3C565E}
+.aa-rd .aa-jpath-step + .aa-jpath-step{border-top:1px dashed #E8F1F1}
+.aa-rd .aa-jpath-code{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#127E88;font-weight:600;padding:2px 8px;background:#E8F1F1;border-radius:2px}
+.aa-rd .aa-jpath-sal{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#0E3A44;font-weight:600}
+
+.aa-rd .aa-rolecard{background:#fff;border:1px solid #DCEAEA;padding:26px 24px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s}
+.aa-rd .aa-rolecard:hover{border-color:#127E88;transform:translateY(-2px)}
+.aa-rd .aa-rolecard-h{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.15;color:#0E3A44;margin:0}
+.aa-rd .aa-rolecard-h em{font-style:italic;color:#127E88}
+.aa-rd .aa-rolecard-employers{display:flex;flex-wrap:wrap;gap:6px}
+.aa-rd .aa-rolecard-chip{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#3C565E;background:#F1F7F7;border:1px solid #DCEAEA;padding:3px 8px;letter-spacing:.03em}
+.aa-rd .aa-rolecard-sal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0;border-top:1px solid #E8F1F1;border-bottom:1px solid #E8F1F1}
+.aa-rd .aa-rolecard-sal-l{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4}
+.aa-rd .aa-rolecard-sal-v{font-family:'Newsreader',Georgia,serif;font-size:20px;color:#0E3A44;margin-top:4px}
+.aa-rd .aa-rolecard-creds{display:flex;flex-wrap:wrap;gap:6px}
+.aa-rd .aa-rolecard-cred{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#127E88;background:#E8F1F1;padding:4px 10px;font-weight:600;text-decoration:none;letter-spacing:.03em}
+.aa-rd .aa-rolecard-cred:hover{background:#127E88;color:#fff}
+
+.aa-rd .aa-jobcard{background:#fff;border:1px solid #DCEAEA;padding:22px 24px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.aa-rd .aa-jobcard:hover{border-color:#127E88}
+.aa-rd .aa-jobcard-h{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px;line-height:1.2;color:#0E3A44;margin:0}
+.aa-rd .aa-jobcard-employer{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#127E88;font-weight:500}
+.aa-rd .aa-jobcard-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:#5E7378;margin-top:6px}
+.aa-rd .aa-jobcard-sal{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#0E3A44;font-weight:600}
+.aa-rd .aa-jobcard-days{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#88A0A4}
+
+.aa-rd .aa-coach{background:#fff;border:1px solid #DCEAEA;padding:28px 26px;display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s}
+.aa-rd .aa-coach:hover{border-color:#127E88;transform:translateY(-2px)}
+.aa-rd .aa-coach-eb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;font-weight:500}
+.aa-rd .aa-coach-h{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:26px;line-height:1.15;color:#0E3A44;margin:0}
+.aa-rd .aa-coach-h em{font-style:italic;color:#127E88}
+.aa-rd .aa-coach-p{font-size:14px;line-height:1.6;color:#5E7378;margin:0;flex:1}
+.aa-rd .aa-coach-cta{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#127E88;border-bottom:1px solid #127E88;padding-bottom:2px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;font-weight:600;align-self:flex-start;margin-top:6px}
+.aa-rd .aa-coach-cta:hover{color:#0E3A44;border-color:#0E3A44}
+
+.aa-rd .aa-eb-pill{display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4;text-decoration:none;padding:8px 12px;border-top:1px solid #DCEAEA;margin-top:-1px;background:#F8FCFC;transition:color .15s,background .15s}
+.aa-rd .aa-eb-pill:hover{color:#127E88;background:#F1F7F7}
+.aa-rd .aa-card-wrap{display:flex;flex-direction:column}
+
+.aa-rd .aa-hardware-tile{background:#0E3A44;color:#fff;padding:32px 28px;display:flex;flex-direction:column;gap:16px}
+.aa-rd .aa-hardware-tile h3{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;color:#fff;margin:0;line-height:1.2}
+.aa-rd .aa-hardware-tile em{font-style:italic;color:#8FCFCF}
+.aa-rd .aa-hardware-tile ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.aa-rd .aa-hardware-tile li{font-size:14px;color:#BFE1E1;padding-left:16px;position:relative}
+.aa-rd .aa-hardware-tile li:before{content:"✦";position:absolute;left:0;color:#127E88}
+
+.aa-rd .aa-trust3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:30px}
+@media(max-width:820px){.aa-rd .aa-trust3{grid-template-columns:1fr}}
+.aa-rd .aa-trust3-card{background:#F5FAFA;border:1px solid #DCEAEA;padding:26px 24px;display:flex;flex-direction:column;gap:12px}
+.aa-rd .aa-trust3-eb{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;font-weight:600}
+.aa-rd .aa-trust3-h{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:22px;line-height:1.2;color:#0E3A44;margin:0}
+.aa-rd .aa-trust3-h em{font-style:italic;color:#127E88}
+.aa-rd .aa-trust3-p{font-size:13.5px;line-height:1.55;color:#5E7378;margin:0}
+
+.aa-rd .aa-hero-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:32px;margin-top:32px;padding-top:26px;border-top:1px solid #DCEAEA}
+.aa-rd .aa-hero-stat{text-align:center}
+.aa-rd .aa-hero-stat-v{font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:400;color:#0E3A44;line-height:1}
+.aa-rd .aa-hero-stat-v em{font-style:italic;color:#127E88}
+.aa-rd .aa-hero-stat-l{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#88A0A4;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+
+.aa-rd .aa-cta-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:30px}
+</style>
+<!-- /wp:html -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec aa-hero","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec aa-hero" id="hero">
+<!-- wp:html -->
+<div style="text-align:center;max-width:820px;margin:30px auto 0">
+<p class="mono aa-eyebrow" style="margin-bottom:14px">( Training ) — Career-first</p>
+<h1 class="aa-h1" style="margin:0 0 22px!important;font-size:clamp(40px,6vw,72px);line-height:1.05">Land the role.<br>Lead the team.<br><em>Lift the salary.</em></h1>
+<p class="aa-lead" style="font-size:19px;line-height:1.55;color:#3C565E;max-width:700px;margin:0 auto">SAFe and AI-Native certifications taught live by Gold SPCT instructors. Real career paths, real salaries, real graduates. Plus 1:1 coaching to convert the badge into the next role.</p>
+<div class="aa-cta-row">
+<a href="#certifications" class="btn-teal">Register directly ⟶</a>
+<a href="https://www.eventbrite.ca/o/agileagilist-56013628813" class="btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Register on Eventbrite (opens in new tab)" title="Browse all Agile Agilist courses on Eventbrite">Register via Eventbrite ⟶</a>
+<a href="mailto:info@agile-agilist.com?subject=Talk%20to%20an%20Advisor" class="btn-ghost">Talk to an advisor</a>
+</div>
+<div class="aa-hero-stats">
+<div class="aa-hero-stat"><div class="aa-hero-stat-v">Gold SPCT</div><div class="aa-hero-stat-l">Scaled Agile Partner</div></div>
+<div class="aa-hero-stat"><div class="aa-hero-stat-v"><em>4.9</em> / 5</div><div class="aa-hero-stat-l">200+ graduate reviews</div></div>
+<div class="aa-hero-stat"><div class="aa-hero-stat-v">2,500+</div><div class="aa-hero-stat-l">Certified with us</div></div>
+</div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="salary">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 01 ) — Salary insights</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Where SAFe certifications land you on the <em>salary band.</em></h2><!-- /wp:heading -->
+<!-- wp:paragraph {"className":"aa-sub"} --><p class="aa-sub">Median US total comp with low–high range. Amber marker = median.</p><!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="background:#fff;border:1px solid #DCEAEA;padding:28px 32px;margin-top:6px">
+<div class="aa-salbar"><div class="aa-salbar-role">SPC</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:78%"></div><div class="aa-salbar-mid" style="left:56%"></div></div><div><div class="aa-salbar-val">$195K</div><div class="aa-salbar-range">$165–240K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">ARCH</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:76%"></div><div class="aa-salbar-mid" style="left:53%"></div></div><div><div class="aa-salbar-val">$185K</div><div class="aa-salbar-range">$160–240K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">RTE</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:72%"></div><div class="aa-salbar-mid" style="left:44%"></div></div><div><div class="aa-salbar-val">$172K</div><div class="aa-salbar-range">$135–260K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">APM</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:70%"></div><div class="aa-salbar-mid" style="left:48%"></div></div><div><div class="aa-salbar-val">$170K</div><div class="aa-salbar-range">$140–220K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">LPM</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:68%"></div><div class="aa-salbar-mid" style="left:50%"></div></div><div><div class="aa-salbar-val">$165K</div><div class="aa-salbar-range">$145–210K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">SDP</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:57%"></div><div class="aa-salbar-mid" style="left:44%"></div></div><div><div class="aa-salbar-val">$140K</div><div class="aa-salbar-range">$115–175K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">POPM</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:55%"></div><div class="aa-salbar-mid" style="left:42%"></div></div><div><div class="aa-salbar-val">$135K</div><div class="aa-salbar-range">$110–170K</div></div></div>
+<div class="aa-salbar"><div class="aa-salbar-role">SSM</div><div class="aa-salbar-track"><div class="aa-salbar-fill" style="width:44%"></div><div class="aa-salbar-mid" style="left:35%"></div></div><div><div class="aa-salbar-val">$110K</div><div class="aa-salbar-range">$92–135K</div></div></div>
+</div>
+<p style="font-size:11.5px;color:#88A0A4;margin-top:18px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.02em">Sources: Scaled Agile, LinkedIn Salary, Payscale &middot; 2026. Compensation is role-based; course fees are separate.</p>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="paths">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 02 ) — Learning paths</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Pick a journey. <em>Each step unlocks the next.</em></h2><!-- /wp:heading -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;margin-top:6px">
+<div class="aa-jpath">
+<span class="aa-jpath-eb">Team &amp; delivery track</span>
+<h3 class="aa-jpath-h">From Scrum Master to <em>portfolio leader.</em></h3>
+<p class="aa-jpath-p">Start on the team, grow into ART leadership, then move into enterprise portfolio management.</p>
+<div class="aa-jpath-steps">
+<a href="/training/safe/ssm/" class="aa-jpath-step"><span><span class="aa-jpath-code">SSM</span> Scrum Master</span><span class="aa-jpath-sal">$110K</span></a>
+<a href="/training/safe/asm/" class="aa-jpath-step"><span><span class="aa-jpath-code">SASM</span> Adv. Scrum Master</span><span class="aa-jpath-sal">$130K</span></a>
+<a href="/training/adv-safe/rte/" class="aa-jpath-step"><span><span class="aa-jpath-code">RTE</span> Release Train Engineer</span><span class="aa-jpath-sal">$172K</span></a>
+<a href="/training/adv-safe/lpm/" class="aa-jpath-step"><span><span class="aa-jpath-code">LPM</span> Lean Portfolio Mgmt</span><span class="aa-jpath-sal">$165K</span></a>
+<a href="/training/adv-safe/spc/" class="aa-jpath-step"><span><span class="aa-jpath-code">SPC</span> Implementing SAFe</span><span class="aa-jpath-sal">$195K</span></a>
+</div>
+</div>
+<div class="aa-jpath">
+<span class="aa-jpath-eb">Product track</span>
+<h3 class="aa-jpath-h">From PO to <em>Chief Product Officer.</em></h3>
+<p class="aa-jpath-p">Move from Product Owner to Agile Product Manager, then into portfolio-level product leadership.</p>
+<div class="aa-jpath-steps">
+<a href="/training/safe/popm/" class="aa-jpath-step"><span><span class="aa-jpath-code">POPM</span> Product Owner/PM</span><span class="aa-jpath-sal">$135K</span></a>
+<a href="/training/adv-safe/apm/" class="aa-jpath-step"><span><span class="aa-jpath-code">APM</span> Agile Product Mgmt</span><span class="aa-jpath-sal">$170K</span></a>
+<a href="/training/adv-safe/lpm/" class="aa-jpath-step"><span><span class="aa-jpath-code">LPM</span> Lean Portfolio Mgmt</span><span class="aa-jpath-sal">$165K</span></a>
+</div>
+</div>
+<div class="aa-jpath">
+<span class="aa-jpath-eb">AI-Native track · New 2026</span>
+<h3 class="aa-jpath-h">From AI-curious to <em>AI-Native executive.</em></h3>
+<p class="aa-jpath-p">A new track for 2026 — from foundational AI literacy to leading an AI-Native enterprise. No coding required.</p>
+<div class="aa-jpath-steps">
+<a href="/training/ai-native/ai-native-foundations/" class="aa-jpath-step"><span><span class="aa-jpath-code">AINF</span> AI-Native Foundations</span><span class="aa-jpath-sal">$140K</span></a>
+<a href="/training/ai-native/ai-native-change-agent/" class="aa-jpath-step"><span><span class="aa-jpath-code">AINCA</span> AI-Native Change Agent</span><span class="aa-jpath-sal">$180K</span></a>
+<a href="/training/ai-native/ai-native-ready-certification-2/" class="aa-jpath-step"><span><span class="aa-jpath-code">AINORG</span> AI-Native Org</span><span class="aa-jpath-sal">$280K</span></a>
+</div>
+</div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="roles">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 03 ) — Roles in demand</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Top in-demand roles and the <em>certifications that get you there.</em></h2><!-- /wp:heading -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:6px">
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">AVP <em>Delivery.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">Fidelity</span><span class="aa-rolecard-chip">TD Bank</span><span class="aa-rolecard-chip">Deloitte</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$190K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$135K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/adv-safe/rte/" class="aa-rolecard-cred">RTE</a><a href="/training/adv-safe/spc/" class="aa-rolecard-cred">SPC</a><a href="/training/adv-safe/lpm/" class="aa-rolecard-cred">LPM</a></div>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Head of <em>PMO / VMO.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">Manulife</span><span class="aa-rolecard-chip">Accenture</span><span class="aa-rolecard-chip">Shopify</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$180K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$128K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/adv-safe/lpm/" class="aa-rolecard-cred">LPM</a><a href="/training/adv-safe/spc/" class="aa-rolecard-cred">SPC</a></div>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Business Analyst / <em>Product Owner.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">IBM</span><span class="aa-rolecard-chip">TD</span><span class="aa-rolecard-chip">Bell</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$135K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$95K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/safe/popm/" class="aa-rolecard-cred">POPM</a><a href="/training/safe-found/conflict-collaboration/" class="aa-rolecard-cred">AF-CC</a></div>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Delivery <em>Manager.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">Deloitte</span><span class="aa-rolecard-chip">CGI</span><span class="aa-rolecard-chip">Cognizant</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$150K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$105K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/safe/sa/" class="aa-rolecard-cred">SA</a><a href="/training/adv-safe/rte/" class="aa-rolecard-cred">RTE</a></div>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Portfolio <em>Manager.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">RBC</span><span class="aa-rolecard-chip">Sun Life</span><span class="aa-rolecard-chip">Accenture</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$175K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$122K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/adv-safe/lpm/" class="aa-rolecard-cred">LPM</a><a href="/training/adv-safe/apm/" class="aa-rolecard-cred">APM</a></div>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Enterprise Agile <em>Coach.</em></h3>
+<div class="aa-rolecard-employers"><span class="aa-rolecard-chip">Accenture</span><span class="aa-rolecard-chip">Deloitte</span><span class="aa-rolecard-chip">TCS</span></div>
+<div class="aa-rolecard-sal-grid"><div><div class="aa-rolecard-sal-l">US avg</div><div class="aa-rolecard-sal-v">$185K</div></div><div><div class="aa-rolecard-sal-l">Global avg</div><div class="aa-rolecard-sal-v">$130K</div></div></div>
+<div class="aa-rolecard-creds"><a href="/training/adv-safe/spc/" class="aa-rolecard-cred">SPC</a><a href="/training/adv-safe/aspc/" class="aa-rolecard-cred">ASPC</a></div>
+</div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="hardware">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 04 ) — Beyond software</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Hardware, systems <em>&amp; embedded.</em></h2><!-- /wp:heading -->
+<!-- wp:paragraph {"className":"aa-sub"} --><p class="aa-sub">SAFe isn&rsquo;t just for software teams. For hardware, embedded, and industrial delivery — we run tracks purpose-built for physical products.</p><!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;margin-top:6px">
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Hardware Agilist / <em>SHWA.</em></h3>
+<p style="font-size:14px;line-height:1.55;color:#5E7378;margin:0">For engineering teams building physical products — Agile at the hardware layer.</p>
+<a href="/training/safe-industry/shwa/" class="aa-rolecard-cred" style="align-self:flex-start;text-align:center">SHWA →</a>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">Hardware Practitioner / <em>SHWP.</em></h3>
+<p style="font-size:14px;line-height:1.55;color:#5E7378;margin:0">For team members applying Agile in embedded, firmware, and hardware workflows.</p>
+<a href="/training/safe-industry/shwp/" class="aa-rolecard-cred" style="align-self:flex-start;text-align:center">SHWP →</a>
+</div>
+<div class="aa-rolecard">
+<h3 class="aa-rolecard-h">SAFe for <em>Architects.</em></h3>
+<p style="font-size:14px;line-height:1.55;color:#5E7378;margin:0">Cross-domain systems architecture at Fortune 500 scale &mdash; software, hardware, cloud.</p>
+<a href="/training/safe-industry/arch/" class="aa-rolecard-cred" style="align-self:flex-start;text-align:center">ARCH →</a>
+</div>
+<div class="aa-hardware-tile">
+<h3>Industries we <em>serve.</em></h3>
+<ul>
+<li>Automotive &amp; EVs</li>
+<li>Aerospace &amp; Defense</li>
+<li>Medical Devices</li>
+<li>Semiconductors</li>
+<li>Industrial Automation</li>
+</ul>
+</div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="jobs">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 05 ) — Live signals</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Roles our graduates are <em>landing right now.</em></h2><!-- /wp:heading -->
+<!-- wp:paragraph {"className":"aa-sub"} --><p class="aa-sub">Live-market signal from the last 60 days. Real listings from real employers.</p><!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:6px">
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Fidelity</span><h3 class="aa-jobcard-h">Sr. Release Train Engineer</h3><div class="aa-jobcard-meta"><span>Boston / hybrid</span><span class="aa-jobcard-sal">$165–210K</span></div><div class="aa-jobcard-days">Posted 4 days ago</div></div>
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Deloitte</span><h3 class="aa-jobcard-h">Lead SPC — SAFe Transformation</h3><div class="aa-jobcard-meta"><span>Toronto / remote</span><span class="aa-jobcard-sal">$185–240K + bonus</span></div><div class="aa-jobcard-days">Posted 7 days ago</div></div>
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Manulife</span><h3 class="aa-jobcard-h">Director, Lean Portfolio Mgmt</h3><div class="aa-jobcard-meta"><span>Waterloo, ON</span><span class="aa-jobcard-sal">$170–215K CAD</span></div><div class="aa-jobcard-days">Posted 12 days ago</div></div>
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Shopify</span><h3 class="aa-jobcard-h">Senior Agile Product Manager</h3><div class="aa-jobcard-meta"><span>Remote / N. America</span><span class="aa-jobcard-sal">$160–220K</span></div><div class="aa-jobcard-days">Posted 3 days ago</div></div>
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Accenture</span><h3 class="aa-jobcard-h">Enterprise Agile Coach</h3><div class="aa-jobcard-meta"><span>NYC / hybrid</span><span class="aa-jobcard-sal">$180–230K + 15%</span></div><div class="aa-jobcard-days">Posted 9 days ago</div></div>
+<div class="aa-jobcard"><span class="aa-jobcard-employer">Block / Cash App</span><h3 class="aa-jobcard-h">SAFe Scrum Master</h3><div class="aa-jobcard-meta"><span>SF / hybrid</span><span class="aa-jobcard-sal">$135–170K</span></div><div class="aa-jobcard-days">Posted 6 days ago</div></div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="certifications">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 06 ) — Certifications</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Browse <em>every certification.</em></h2><!-- /wp:heading -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div class="aa-trust3" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:6px">
+<a href="/training/safe/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">Foundational</span><h3 class="aa-trust3-h">SAFe <em>Roles.</em></h3><p class="aa-trust3-p">SA, SSM, POPM, DevOps, SP, SA-Gov — 8 core role certifications.</p></a>
+<a href="/training/adv-safe/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">Advanced</span><h3 class="aa-trust3-h">SAFe <em>Advanced.</em></h3><p class="aa-trust3-p">RTE, LPM, APM, SPC, ASPC, ARCH — for enterprise-scale change agents.</p></a>
+<a href="/training/safe-industry/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">Industry</span><h3 class="aa-trust3-h">SAFe by <em>Industry.</em></h3><p class="aa-trust3-p">ARCH, SHWA, SHWP, ASE, SA-Gov — industry-specialised tracks.</p></a>
+<a href="/training/safe-found/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">Micro-cred</span><h3 class="aa-trust3-h">Micro-<em>credentials.</em></h3><p class="aa-trust3-p">AF-CC, AF-VSM, Responsible AI, Agile Contracting Gov — 1-day specialisations.</p></a>
+<a href="/training/ai-native/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">New 2026</span><h3 class="aa-trust3-h">AI-<em>Native.</em></h3><p class="aa-trust3-p">AINF, AINCA, AINORG — the new AI-Native leadership track. No coding required.</p></a>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="coaching">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">( 07 ) — Career coaching</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Stuck between two roles? <em>Get personal direction.</em></h2><!-- /wp:heading -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:6px">
+<div class="aa-coach"><span class="aa-coach-eb">60 minutes · 1:1</span><h3 class="aa-coach-h">Career <em>Roadmap.</em></h3><p class="aa-coach-p">One session with a senior SPC to map your 12-month career plan. Get clarity on which cert to take, which role to target, which employers to approach.</p><a href="mailto:info@agile-agilist.com?subject=Career%20Roadmap%20Coaching" class="aa-coach-cta">Book roadmap ⟶</a></div>
+<div class="aa-coach"><span class="aa-coach-eb">45 minutes · Interview prep</span><h3 class="aa-coach-h">Interview <em>rehearsal.</em></h3><p class="aa-coach-p">Live mock interview + feedback. We run the real questions Fortune 500 hiring managers ask for RTE, SPC, LPM, and Agile Coach roles.</p><a href="mailto:info@agile-agilist.com?subject=Interview%20Prep%20Coaching" class="aa-coach-cta">Book prep ⟶</a></div>
+<div class="aa-coach"><span class="aa-coach-eb">3 months · Bi-weekly</span><h3 class="aa-coach-h">Quarterly Career <em>Sprint.</em></h3><p class="aa-coach-p">Six coaching sessions across 12 weeks. Roadmap + interview cycles + salary negotiation. Best for people actively changing roles.</p><a href="mailto:info@agile-agilist.com?subject=Quarterly%20Career%20Sprint" class="aa-coach-cta">Book sprint ⟶</a></div>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="cohorts">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">Upcoming cohorts</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Live-virtual cohorts across <em>every certification.</em></h2><!-- /wp:heading -->
+<!-- wp:paragraph {"className":"aa-sub"} --><p class="aa-sub">All published cohorts across the SAFe and AI-Native tracks. Filter by course to jump directly to registration.</p><!-- /wp:paragraph -->
+</div>
+<!-- /wp:group -->
+<!-- wp:shortcode -->
+[easy_events_calendar]
+<!-- /wp:shortcode -->
+
+<!-- wp:group {"className":"aa-feed-src"} -->
+<div class="wp-block-group aa-feed-src" aria-hidden="true">
+<!-- wp:shortcode -->
+[wp_events events_list layout="style4" col="2" posts_per_page="20"]
+<!-- /wp:shortcode -->
+</div>
+<!-- /wp:group -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:group {"tagName":"section","className":"aa-sec","layout":{"type":"default"}} -->
+<section class="wp-block-group aa-sec" id="not-ready">
+<!-- wp:group {"tagName":"div","className":"aa-sechead","layout":{"type":"default"}} -->
+<div class="wp-block-group aa-sechead">
+<!-- wp:paragraph {"className":"aa-eyebrow"} --><p class="aa-eyebrow">Not ready yet?</p><!-- /wp:paragraph -->
+<!-- wp:heading {"level":2,"className":"aa-h2"} --><h2 class="wp-block-heading aa-h2">Three ways to <em>get started.</em></h2><!-- /wp:heading -->
+</div>
+<!-- /wp:group -->
+<!-- wp:html -->
+<div class="aa-trust3">
+<a href="/assessments/cert-recommender/" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">3-min quiz</span><h3 class="aa-trust3-h">Certification <em>path-finder.</em></h3><p class="aa-trust3-p">Answer 7 quick questions and get a matched certification with next-step plan.</p></a>
+<a href="mailto:info@agile-agilist.com?subject=Talk%20to%20an%20Advisor" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">15-min call</span><h3 class="aa-trust3-h">Talk to an <em>advisor.</em></h3><p class="aa-trust3-p">A quick call with a senior SPC to answer questions and match you to the right cohort.</p></a>
+<a href="#certifications" class="aa-trust3-card" style="text-decoration:none"><span class="aa-trust3-eb">Browse all</span><h3 class="aa-trust3-h">All <em>19 certs.</em></h3><p class="aa-trust3-p">See every certification we offer — with price, dates, and full curriculum.</p></a>
+</div>
+<!-- /wp:html -->
+</section>
+<!-- /wp:group -->
+
+<!-- wp:html -->
+<div class="aa-final"><div class="aa-final-box">
+<div style="position:relative;text-align:center">
+<p class="mono" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8FCFCF;margin:0 0 10px">One step closer</p>
+<h2 class="aa-final-h" style="margin-bottom:16px">One step closer to your <em>next promotion.</em></h2>
+<p class="aa-final-p" style="max-width:520px;margin:0 auto 26px">Take the 3-minute assessment, or jump straight to browsing the next cohort — the badge and the coaching are all we need to get you there.</p>
+<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
+<a href="/assessments/cert-recommender/" class="btn-white">Take the free assessment ⟶</a>
+<a href="#cohorts" class="btn-wghost">See upcoming cohorts</a>
+</div>
+</div></div></div>
+<!-- /wp:html -->
+
+</div>
+<!-- /wp:group -->

@@ -1468,17 +1468,26 @@ html body #masthead .main-header-menu > .menu-item > a > span { color: var(--aa-
   }
 }
 /* ==================== S. CUSTOM-HERO PAGES — suppress Astra's stock title H1 ==================== */
-/* These pages ship their own editorial hero, so Astra's auto page-title (the "repeated name"
-   printed under the breadcrumb) duplicated the hero. Hide that one H1; the breadcrumb stays.
-   The hero H1s use .aa-h1 / .aa-hero-* — never .entry-title — so this removes only the duplicate.
-   Astra adds .ast-no-title to the header when its native "Disable Title" toggle is on; this rule
-   makes the fix hold whether or not that toggle is set. */
-.page-id-1699  .entry-header .entry-title,           /* /training/        */
-.page-id-1699  .ast-single-entry-banner .entry-title,
-.page-id-1699  h1.entry-title,
-.page-id-28611 .entry-header .entry-title,           /* /cert-recommender/ */
-.page-id-28611 h1.entry-title,
-.page-id-28615 .entry-header .entry-title,           /* /career-compass/   */
-.page-id-28615 h1.entry-title { display: none !important; }
+/* Every redesigned page ships its OWN editorial hero, so Astra's auto page-title (the "repeated
+   name" printed under the breadcrumb) duplicates it. This :has() rule fires automatically on any
+   page whose content carries a redesign wrapper / hero — no per-page IDs to maintain, and pages
+   WITHOUT a custom hero keep their normal Astra title. The breadcrumb is never touched.
+   Hero/section H1s use .aa-h1 / .aa-hero-* — never .entry-title — so only the duplicate is hidden.
+   .entry-title is Astra's page/banner title element; scoping via body:has(...) means it is hidden
+   only when a hero is present anywhere in that page's body. */
+body:has(.aa-rd)       .entry-title,   /* redesigned page-body wrapper (Training, hubs, …) */
+body:has(.aa-hero)     .entry-title,   /* any explicit hero section                        */
+body:has(.aa-h1)       .entry-title,   /* any page shipping its own H1 in content          */
+body:has(.aa-legal)    .entry-title,   /* legal pages (own titled header)                  */
+body:has(.aa-msg-embed) .entry-title { /* message-form pages                               */
+  display: none !important;
+}
+
+/* Fallback for the (now rare) browsers without :has() — the known custom-hero pages by ID. */
+.page-id-1699 .entry-title,   /* /training/        */
+.page-id-28611 .entry-title,  /* /cert-recommender/ */
+.page-id-28615 .entry-title { /* /career-compass/   */
+  display: none !important;
+}
 
 /* ==================== END v2 — AA Global CSS 2026-07-05 (nav v2 + mega reposition + footer social incl TikTok + hero-title suppression) ==================== */
