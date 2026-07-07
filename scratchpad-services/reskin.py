@@ -20,6 +20,12 @@ CMAP = {
     "FEF3C7": "F5E7C8",
     "FFFBEB": "FBF6EC",
     "92400E": "6B4A1C",
+    "FDE68A": "EFD9A6",
+    "D97706": "C7902A",
+    "FDBA74": "EFD9A6",
+    # purple/green tints -> teal tints
+    "EDE9FE": "EAF4F4",
+    "DCFCE7": "E4F1F1",
     # greens -> teal (on-brand)
     "22C55E": "127E88",
     "166534": "0B5760",
