@@ -56,13 +56,21 @@
 #masthead {
 	position: fixed;
 	top: 0; left: 0; right: 0;
-	z-index: 999;
+	z-index: 100000;            /* keep the fixed header above all scrolled content so the nav stays clickable */
 	background: rgba(255,255,255,0.96);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	box-shadow: 0 2px 16px rgba(11,46,53,0.06);
 	transition: background .2s, box-shadow .2s;
 }
+#masthead, #masthead a, #masthead button, #masthead .main-header-menu { pointer-events: auto !important; }
+
+/* Mobile menu location has no menu assigned → WordPress falls back to listing every page.
+   Hide the utility / legal / tool pages from that fallback (scoped to .page-item-* so the
+   footer's own legal links are untouched). Real fix: assign the menu to the mobile location. */
+li.page-item-28615, li.page-item-28611, li.page-item-28655, li.page-item-28436,
+li.page-item-28443, li.page-item-28654, li.page-item-28652, li.page-item-28108,
+li.page-item-28653, li.page-item-28627 { display: none !important; }
 .admin-bar #masthead { top: 32px; }
 @media(max-width:782px){ .admin-bar #masthead { top: 46px; } }
 body { padding-top: 80px; }
