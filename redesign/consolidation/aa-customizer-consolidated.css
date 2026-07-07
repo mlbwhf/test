@@ -390,10 +390,27 @@ article.ast-article-single > .ast-container { padding-top: 0 !important; }
     display: none !important;
   }
 }
-/* Center mega panel under the nav (stops edge cut-off) */
+/* Mega panel: fix to the VIEWPORT and centre it there (was centred on the nav, which sits
+   left-of-centre → panel overflowed / was cut off on the right). A hover-bridge spans the gap
+   under the header so moving from the tab to the panel keeps it open and clickable. */
 .main-header-menu,.ast-nav-menu{position:relative}
 .aa-mega{position:static !important}
-.aa-mega > .sub-menu{ top:100% !important; left:50% !important; right:auto !important; transform:translateX(-50%) !important; }
+:root{--aa-hdr:80px}
+body.admin-bar{--aa-hdr:112px}
+@media(min-width:922px){
+  .main-header-menu > .menu-item.aa-mega > .sub-menu{
+    position:fixed !important;
+    top:var(--aa-hdr,80px) !important;
+    left:50% !important; right:auto !important; transform:translateX(-50%) !important;
+    width:min(900px, calc(100vw - 32px)) !important; max-width:none !important; margin:0 !important;
+  }
+  /* invisible bridge across the header→panel gap (only while a mega tab is open) */
+  .main-header-menu > .menu-item.aa-mega:hover > .sub-menu::before,
+  .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu::before{
+    content:"" !important; position:fixed !important; left:0 !important; right:0 !important;
+    top:calc(var(--aa-hdr,80px) - 26px) !important; height:28px !important; background:transparent !important;
+  }
+}
 
 /* ==================== H. XYLUSEC CALENDAR ==================== */
 #xylusec-calendar-container {
