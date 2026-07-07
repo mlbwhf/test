@@ -435,6 +435,35 @@ body.admin-bar{--aa-hdr:112px}
   }
 }
 
+/* ---- MOBILE MENU: show every submenu level ---------------------------------------------------
+   The desktop mega styling above is all scoped to min-width:922px, so on mobile the classic menu
+   falls back to Astra's accordion — which was only expanding some items (Assessments) and not
+   others (Services, Training). Force the mobile menu to render every level as a clean, fully
+   expanded, indented list so all children are always reachable. ------------------------------ */
+@media (max-width:921px){
+  #masthead .sub-menu,
+  .ast-mobile-header-content .sub-menu,
+  .main-header-menu .sub-menu,
+  .ast-nav-menu .sub-menu{
+    display:block !important; position:static !important; transform:none !important;
+    left:auto !important; right:auto !important; top:auto !important;
+    width:auto !important; max-width:none !important; min-width:0 !important;
+    grid-template-columns:none !important;
+    opacity:1 !important; visibility:visible !important; pointer-events:auto !important;
+    height:auto !important; max-height:none !important; overflow:visible !important;
+    background:transparent !important; box-shadow:none !important; border:0 !important;
+    border-radius:0 !important; margin:0 !important; padding:2px 0 2px 16px !important;
+  }
+  /* flatten the desktop "flagship" styling if it ever shows on mobile */
+  #masthead .aa-mega .menu-item.aa-flag{min-height:0 !important;background:transparent !important;padding:0 !important}
+  #masthead .aa-mega .menu-item.aa-flag > a{position:static !important;color:inherit !important;font-size:inherit !important}
+  #masthead .aa-mega .menu-item.aa-flag > a::before{content:none !important}
+  #masthead .aa-mega .menu-item.aa-flag > .sub-menu::after{content:none !important}
+  #masthead .aa-mega .menu-item.aa-feature{position:static !important}
+  /* toggles/arrows no longer needed since every level is shown */
+  #masthead .ast-menu-toggle{display:none !important}
+}
+
 /* ==================== H. XYLUSEC CALENDAR ==================== */
 #xylusec-calendar-container {
 	width: 100%;
