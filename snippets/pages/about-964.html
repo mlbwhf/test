@@ -96,23 +96,37 @@
 .aa-ab-hero-trust strong{color:#fff;font-weight:600}
 .aa-ab-hero-trust .sep{color:rgba(143,207,207,.5)}
 .aa-ab-hero-trust .stars{color:#E6B23C;letter-spacing:1px}
+.aa-ab-hero-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;max-width:960px;margin:40px auto 0}
+.aa-ab-hero-stats .stat{background:rgba(255,255,255,.05);border:1px solid rgba(143,207,207,.20);border-radius:14px;padding:22px 10px;text-align:center}
+.aa-ab-hero-stats .stat b{display:block;font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:30px;color:var(--tl);line-height:1;letter-spacing:-.01em}
+.aa-ab-hero-stats .stat span{display:block;margin-top:8px;font-size:11.5px;color:#B9D4D4;line-height:1.35;letter-spacing:.02em}
+.aa-ab-hero-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.aa-ab-hero-badges span{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#D6E7E7;background:rgba(255,255,255,.05);border:1px solid rgba(143,207,207,.22);border-radius:100px;padding:6px 14px}
+@media(max-width:860px){.aa-ab-hero-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.aa-ab-hero-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:780px){.aa-ab-hero h1{font-size:34px}.aa-ab-hero-sub{font-size:17px}}
 </style>
 <div class="aa-ab-hero-in">
   <span class="aa-ab-hero-eb">About Agile Agilist</span>
-  <h1>One of just <em>125+ SPCTs</em> worldwide &mdash; only 90 in North America &mdash; building the next generation.</h1>
-  <p class="aa-ab-hero-sub">Agile Agilist is a Scaled Agile Gold Partner founded by Mark Saymen, a Gold SAFe Practice Consultant Trainer who has trained Fortune 500 firms, federal and provincial governments, and high-growth scale-ups across North America, the Middle East, and South Asia.</p>
+  <h1>A global footprint in <em>enterprise agility.</em></h1>
+  <p class="aa-ab-hero-sub">Agile Agilist is a Scaled Agile <strong>Gold Partner</strong> &mdash; SPCT-led SAFe certification, AI-Native, and enterprise transformation trusted by Fortune 500s, federal and provincial governments, and high-growth scale-ups from North America to the Middle East and South Asia.</p>
+  <div class="aa-ab-hero-badges">
+    <span>Scaled Agile Gold Partner</span>
+    <span>SPCT-led delivery</span>
+    <span>Fortune 500 &amp; government</span>
+  </div>
   <div class="aa-ab-cta">
     <a class="aa-ab-btn-solid" href="#message">Send us a message &rarr;</a>
     <a class="aa-ab-btn-ghost" href="/training/">View training</a>
-    <a class="aa-ab-btn-ghost" href="#books">Read Mark&rsquo;s book</a>
+    <a class="aa-ab-btn-ghost" href="/customers/">See client results</a>
   </div>
-  <div class="aa-ab-hero-trust">
-    <span><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>4.9/5</strong> from <strong>2,500+</strong> graduates</span>
-    <span class="sep">&middot;</span>
-    <span><strong>9 languages</strong> delivered</span>
-    <span class="sep">&middot;</span>
-    <span><strong>4 continents</strong></span>
+  <div class="aa-ab-hero-stats">
+    <div class="stat"><b>2,500+</b><span>Professionals trained</span></div>
+    <div class="stat"><b>12</b><span>Countries served</span></div>
+    <div class="stat"><b>9</b><span>Languages delivered</span></div>
+    <div class="stat"><b>125+</b><span>SPCTs worldwide</span></div>
+    <div class="stat"><b>4.9/5</b><span>Average rating</span></div>
+    <div class="stat"><b>Gold</b><span>Scaled Agile Partner</span></div>
   </div>
 </div>
 </section>
@@ -515,8 +529,8 @@
 .aa-msg-embed{max-width:640px;margin:28px auto 80px;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:30px 30px 22px;box-shadow:0 18px 44px -22px rgba(11,46,53,.28);text-align:left;font-family:Inter,system-ui,sans-serif}
 </style>
   <span class="eb">Send us a message</span>
-  <h2>Tell Mark where you are &mdash; and <em>where you want to go.</em></h2>
-  <p>Your message goes straight to Mark&rsquo;s inbox. He replies personally, usually within one business day.</p>
+  <h2>Tell us where you are &mdash; and <em>where you want to go.</em></h2>
+  <p>Whether it&rsquo;s a certification, a private cohort, or a full enterprise transformation, tell us what you&rsquo;re working toward. Our team reads every message and replies personally &mdash; usually within one business day.</p>
 </section>
 
 <div class="aa-msg-embed aa-hsform">
