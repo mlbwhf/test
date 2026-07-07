@@ -53,17 +53,29 @@
 }
 
 /* ==================== B. HEADER — STICKY + TEAL ==================== */
-#masthead {
-	position: fixed;
-	top: 0; left: 0; right: 0;
-	z-index: 100000;            /* keep the fixed header above all scrolled content so the nav stays clickable */
-	background: rgba(255,255,255,0.96);
+/* Force a fixed, opaque, top-most header on EVERY page — including pages where Astra's
+   "transparent header" is enabled (Astra sets that header to position:absolute !important,
+   which made it scroll away with the page and become unclickable once you scrolled down).
+   The transform:none override also neutralises Astra's sticky-header slide animation. */
+#masthead,
+body.ast-theme-transparent-header #masthead,
+body.ast-header-break-point #masthead,
+.ast-sticky-active #masthead,
+.ast-header-sticked {
+	position: fixed !important;
+	top: 0 !important; left: 0 !important; right: 0 !important;
+	z-index: 100000 !important;   /* above all scrolled content so the nav stays clickable */
+	background: rgba(255,255,255,0.96) !important;
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	box-shadow: 0 2px 16px rgba(11,46,53,0.06);
+	transform: none !important;
 	transition: background .2s, box-shadow .2s;
 }
-#masthead, #masthead a, #masthead button, #masthead .main-header-menu { pointer-events: auto !important; }
+#masthead, #masthead *,
+#masthead a, #masthead button, #masthead .main-header-menu,
+#masthead .main-header-menu li.menu-item,
+#masthead .main-header-menu li.menu-item > a { pointer-events: auto !important; }
 
 /* Mobile menu location has no menu assigned → WordPress falls back to listing every page.
    Hide the utility / legal / tool pages from that fallback (scoped to .page-item-* so the
@@ -71,8 +83,8 @@
 li.page-item-28615, li.page-item-28611, li.page-item-28655, li.page-item-28436,
 li.page-item-28443, li.page-item-28654, li.page-item-28652, li.page-item-28108,
 li.page-item-28653, li.page-item-28627 { display: none !important; }
-.admin-bar #masthead { top: 32px; }
-@media(max-width:782px){ .admin-bar #masthead { top: 46px; } }
+.admin-bar #masthead { top: 32px !important; }
+@media(max-width:782px){ .admin-bar #masthead { top: 46px !important; } }
 body { padding-top: 80px; }
 body.admin-bar { padding-top: 112px; }
 
