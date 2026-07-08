@@ -79,6 +79,31 @@
 .aa-mat-res-score b{color:#fff}
 .aa-mat-res-desc{font-size:15px;color:#E4F1F1;line-height:1.6;max-width:560px;margin:14px auto 0;position:relative;z-index:2}
 
+/* dashboard */
+.aa-mat-dash{display:grid;grid-template-columns:320px 1fr;gap:18px;margin-top:18px}
+@media(max-width:720px){.aa-mat-dash{grid-template-columns:1fr}}
+.aa-mat-panel{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:22px 22px 20px}
+.aa-mat-panel .cap{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:12px}
+.aa-mat-radar{display:block;width:100%;max-width:300px;margin:0 auto}
+.aa-mat-radar text{font-family:Inter,system-ui,sans-serif;font-size:9.5px;font-weight:600;fill:var(--nv)}
+.aa-mat-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aa-mat-kpi{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.aa-mat-kpi .k{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
+.aa-mat-kpi .v{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:26px;color:var(--t);line-height:1.1;margin-top:5px;letter-spacing:-.01em}
+.aa-mat-kpi .s{font-size:11.5px;color:var(--mu);margin-top:3px}
+.aa-mat-track{margin-top:18px}
+.aa-mat-track-bar{display:flex;gap:4px}
+.aa-mat-track-seg{flex:1;height:10px;border-radius:5px;background:var(--bd)}
+.aa-mat-track-seg.on{background:var(--t)}
+.aa-mat-track-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:9.5px;letter-spacing:.02em;color:var(--mu)}
+.aa-mat-track-labels span.cur{color:var(--t);font-weight:700}
+@media print{
+  .aa-mat-hero,.aa-mat-intro,#mat-quiz,.aa-mat-submit-row,.aa-mat-cta{display:none !important}
+  .aa-mat-app{background:#fff;padding:0}
+  .aa-mat{margin:0;width:auto}
+  .aa-mat-res-card,.aa-mat-track-seg.on,.aa-mat-kpi{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
 .aa-mat-profile{margin-top:22px;background:#fff;border:1px solid var(--bd);border-radius:18px;padding:28px 28px 24px}
 .aa-mat-profile h4{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:22px;color:var(--nv);margin:0 0 18px;letter-spacing:-.01em}
 .aa-mat-row{padding:16px 0;border-top:1px solid var(--bd)}
@@ -132,6 +157,7 @@
 <script>
 (function(){
   var LEVELS=["Absent","Nascent","Designed","Accelerating","Flying"];
+  var SHORT=["Operating Model","Value Delivery","Workforce","Ways of Working"];
   var DIMS=[
     {n:"Operating Model & Alignment", s:"Vision, sponsorship, and how leadership shows up.",
      o:[
@@ -210,11 +236,52 @@
     var idx=Math.round(score)-1; if(idx<0)idx=0; if(idx>4)idx=4; return LEVELS[idx];
   }
 
+  // Radar chart (4 axes, values 1..5) — pure SVG, no libraries
+  function radarSVG(vals){
+    var size=300,c=size/2,R=c-62,N=vals.length;
+    function ang(i){return Math.PI*2*i/N - Math.PI/2;}
+    function pt(i,r){return [c+Math.cos(ang(i))*r, c+Math.sin(ang(i))*r];}
+    var g='';
+    for(var lv=1;lv<=5;lv++){
+      var rr=R*lv/5,ps=[];
+      for(var i=0;i<N;i++){var p=pt(i,rr);ps.push(p[0].toFixed(1)+','+p[1].toFixed(1));}
+      g+='<polygon points="'+ps.join(' ')+'" fill="none" stroke="#DCEAEA" stroke-width="1"/>';
+    }
+    for(var i=0;i<N;i++){var p=pt(i,R);g+='<line x1="'+c+'" y1="'+c+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#DCEAEA" stroke-width="1"/>';}
+    var dp=[],dots='';
+    for(var i=0;i<N;i++){var p=pt(i,R*vals[i]/5);dp.push(p[0].toFixed(1)+','+p[1].toFixed(1));dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="#127E88"/>';}
+    var labs='',dys=[-8,4,16,4];
+    for(var i=0;i<N;i++){var p=pt(i,R+16);labs+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+dys[i]).toFixed(1)+'" text-anchor="middle">'+SHORT[i]+'</text>';}
+    return '<svg class="aa-mat-radar" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Agile maturity radar across four dimensions">'+
+      g+'<polygon points="'+dp.join(' ')+'" fill="rgba(18,126,136,.16)" stroke="#127E88" stroke-width="2" stroke-linejoin="round"/>'+dots+labs+'</svg>';
+  }
+
   submit.addEventListener('click',function(){
     if(picks.some(function(p){return p===null;})) return;
     var scores=picks.map(function(p){return p+1;});
     var avg=scores.reduce(function(a,b){return a+b;},0)/scores.length;
     var stage=stageFor(avg);
+    var stageIdx=LEVELS.indexOf(stage);
+    // dashboard: radar + KPIs + stage track
+    var maxv=Math.max.apply(null,scores), minv=Math.min.apply(null,scores);
+    var strongIdx=scores.indexOf(maxv), weakIdx=scores.indexOf(minv);
+    var tsegs='',tlabs='';
+    for(var t=0;t<5;t++){
+      tsegs+='<div class="aa-mat-track-seg'+(t<=stageIdx?' on':'')+'"></div>';
+      tlabs+='<span'+(t===stageIdx?' class="cur"':'')+'>'+LEVELS[t]+'</span>';
+    }
+    var kpis=
+      '<div class="aa-mat-kpi"><div class="k">Overall stage</div><div class="v">'+stage+'</div><div class="s">Stage '+(stageIdx+1)+' of 5</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Maturity score</div><div class="v">'+avg.toFixed(1)+'</div><div class="s">out of 5.0</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Strongest</div><div class="v" style="font-size:17px">'+SHORT[strongIdx]+'</div><div class="s">'+LEVELS[maxv-1]+'</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Focus area</div><div class="v" style="font-size:17px">'+SHORT[weakIdx]+'</div><div class="s">'+LEVELS[minv-1]+'</div></div>';
+    var dash=
+      '<div class="aa-mat-dash">'+
+        '<div class="aa-mat-panel"><div class="cap">Maturity radar</div>'+radarSVG(scores)+'</div>'+
+        '<div class="aa-mat-panel"><div class="cap">At a glance</div><div class="aa-mat-kpis">'+kpis+'</div>'+
+          '<div class="aa-mat-track"><div class="aa-mat-track-bar">'+tsegs+'</div><div class="aa-mat-track-labels">'+tlabs+'</div></div>'+
+        '</div>'+
+      '</div>';
     // per-dimension rows
     var rows='';
     DIMS.forEach(function(d,di){
@@ -242,14 +309,18 @@
     res.innerHTML=
       '<div class="aa-mat-res-card"><div class="lab">Your overall maturity</div>'+
         '<div class="aa-mat-res-stage">'+stage+'</div>'+
-        '<div class="aa-mat-res-score">Score <b>'+avg.toFixed(1)+' / 5.0</b> &middot; stage '+(LEVELS.indexOf(stage)+1)+' of 5</div>'+
+        '<div class="aa-mat-res-score">Score <b>'+avg.toFixed(1)+' / 5.0</b> &middot; stage '+(stageIdx+1)+' of 5</div>'+
         '<p class="aa-mat-res-desc">'+STAGE_DESC[stage]+'</p></div>'+
+      dash+
       '<div class="aa-mat-profile"><h4>Your profile, dimension by dimension</h4>'+rows+'</div>'+
       '<div class="aa-mat-focus">'+focusHtml+'</div>'+
       '<div class="aa-mat-cta"><p>Want a facilitated maturity assessment and a roadmap to the next stage? Our SPCTs do this with enterprise teams every week.</p>'+
         '<div class="aa-mat-btns"><a class="aa-mat-btn p" href="https://meetings.hubspot.com/john2795">Book a maturity consult &rarr;</a>'+
         '<a class="aa-mat-btn g" href="/services/business-agility/">See how we transform</a>'+
+        '<button class="aa-mat-btn g" id="mat-print" type="button">Save / print</button>'+
         '<button class="aa-mat-btn g" id="mat-retake" type="button">Retake</button></div></div>';
+    var pr=document.getElementById('mat-print');
+    if(pr) pr.addEventListener('click',function(){window.print();});
     res.hidden=false;
     res.scrollIntoView({behavior:'smooth',block:'start'});
     var rt=document.getElementById('mat-retake');
