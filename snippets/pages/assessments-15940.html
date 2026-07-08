@@ -696,14 +696,23 @@ function renderLanding(){
   <div class="aa-card-meta"><span>4 dimensions</span><span>5 levels</span></div>
   <div><a class="aa-btn aa-btn-primary" href="/assessments/agile-maturity/">Start &rarr;</a></div>
 </div>`;
+  const recCard = `
+<div class="aa-card">
+  <div class="aa-card-badge"><span class="aa-pill">Free · Live</span><span style="font-size:11px;color:#64748b;font-weight:600">3 min</span></div>
+  <h3>Cert Recommender</h3>
+  <p class="aa-tag">Which certification is right for me?</p>
+  <p class="aa-desc">7 quick questions on your role, experience, and goals — a personalized career path with the exact cert sequence and salary upside.</p>
+  <div class="aa-card-meta"><span>Career path</span><span>7 questions</span></div>
+  <div><a class="aa-btn aa-btn-primary" href="/cert-recommender/">Start &rarr;</a></div>
+</div>`;
   return `<div class="aa-hero"><div class="aa-inner">
 <span class="aa-eyebrow" style="display:block;text-align:center;width:fit-content;margin:0 auto">Free diagnostics</span>
 <h1>Where does your organization actually stand?</h1>
-<p class="aa-sub">${Object.keys(ASSESSMENTS).length + 1} live diagnostics built by Mark Saymen (Gold SPCT, author of <em>Mutation Readiness</em>). Honest scoring. Tailored 30-60-90 day plan. Zero fluff.</p>
+<p class="aa-sub">${Object.keys(ASSESSMENTS).length + 2} live diagnostics built by Mark Saymen (Gold SPCT, author of <em>Mutation Readiness</em>). Honest scoring. Tailored 30-60-90 day plan. Zero fluff.</p>
 <div class="aa-hero-cta"><a class="aa-btn aa-btn-primary" href="#/run/${Object.keys(ASSESSMENTS)[0]||'innovation-framework'}">Start now &rarr;</a></div>
 <div class="aa-trust-strip"><span>5-15 min each</span><span>·</span><span>No login to start</span><span>·</span><span>Personalized roadmap</span></div>
 </div></div>
-<div class="aa-cards">${liveCards}${matCard}${soonCards}</div>
+<div class="aa-cards">${recCard}${liveCards}${matCard}${soonCards}</div>
 <div style="background:linear-gradient(135deg,#0B2E35,#127E88);color:#fff;padding:50px 24px;text-align:center"><div style="max-width:680px;margin:0 auto">
 <h2 style="font-size:26px;color:#fff;margin-bottom:10px">Want the full diagnostic for every assessment?</h2>
 <p style="color:#cbd5e1;margin-bottom:22px">14-day free trial unlocks the 30-60-90 day action plan, recommended reading per band, and PDF download across all assessments.</p>
