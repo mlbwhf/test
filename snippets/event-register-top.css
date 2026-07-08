@@ -1,0 +1,56 @@
+/* ============================================================================
+   AA — Event page Register CTA  (paste at the END of Additional CSS)
+   Styles the top Register button injected by event-register-top.js, and
+   upgrades the plain "Click to Register" links further down the page into
+   buttons too, all in the aa-teal palette.
+   ========================================================================== */
+
+/* ---- Top CTA block (right under the event title) ---- */
+.aa-ev-reg-top{
+  display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px;
+  margin:18px 0 26px;
+}
+.aa-ev-reg-btn{
+  display:inline-flex; align-items:center; gap:10px;
+  background:#127E88; color:#fff !important;
+  font:600 1.02rem/1 "Inter",system-ui,sans-serif; letter-spacing:.01em;
+  text-decoration:none !important;
+  padding:15px 26px; border-radius:12px;
+  box-shadow:0 14px 30px -12px rgba(11,46,53,.45);
+  transition:background .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.aa-ev-reg-btn:hover,
+.aa-ev-reg-btn:focus{
+  background:#0B2E35; color:#fff !important;
+  transform:translateY(-2px);
+  box-shadow:0 18px 36px -12px rgba(11,46,53,.5);
+}
+.aa-ev-reg-arrow{ font-size:1.1em; transition:transform .18s ease; }
+.aa-ev-reg-btn:hover .aa-ev-reg-arrow{ transform:translateX(4px); }
+.aa-ev-reg-note{
+  font:500 .82rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.02em; text-transform:uppercase;
+  color:#5E7378;
+}
+
+/* ---- Upgrade the in-page "Click to Register" links into buttons ---- */
+.tribe-events-single .tribe-events-event-url a,
+.tribe-events-event-meta a[href*="eventbrite"],
+.tribe-events-single-event-description a[href*="eventbrite"]{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#127E88; color:#fff !important;
+  font-weight:600; text-decoration:none !important;
+  padding:11px 20px; border-radius:10px;
+  transition:background .18s ease;
+}
+.tribe-events-single .tribe-events-event-url a:hover,
+.tribe-events-event-meta a[href*="eventbrite"]:hover,
+.tribe-events-single-event-description a[href*="eventbrite"]:hover{
+  background:#0B2E35; color:#fff !important;
+}
+
+@media (max-width:600px){
+  .aa-ev-reg-btn{ width:100%; justify-content:center; }
+  .aa-ev-reg-note{ width:100%; }
+}
+/* ============================================================================ */
