@@ -1,19 +1,13 @@
 /* ============================================================================
    AA — Event page top area  (REPLACE the previous "AA Event" block with this)
    Paste at the END of Additional CSS. Works with event-register-top.js.
+   Styles ONLY our own .aa-ev-* classes, so no other page is affected.
    ========================================================================== */
-
-/* ---- Hide Venue + Google map (online events) ---- */
-.tribe-events-meta-group-venue,
-.tribe-events-meta-group-gmap,
-.tribe-events-venue-map,
-#tribe-events-gmap-0,
-.tribe-events-gmap{ display:none !important; }
 
 /* ---- Prominent Register button under the event title ---- */
 .aa-ev-reg-top{
   display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px;
-  margin:16px 0 26px;
+  margin:16px 0 28px;
 }
 .aa-ev-reg-btn{
   display:inline-flex; align-items:center; gap:10px;
@@ -29,64 +23,51 @@
   background:#0B2E35; color:#fff !important;
   transform:translateY(-2px); box-shadow:0 18px 36px -12px rgba(11,46,53,.5);
 }
-.aa-ev-reg-arrow{ font-size:1.1em; transition:transform .18s ease; }
+.aa-ev-reg-arrow{ font-size:1.05em; transition:transform .18s ease; }
 .aa-ev-reg-btn:hover .aa-ev-reg-arrow{ transform:translateX(4px); }
 .aa-ev-reg-note{
   font:500 .8rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
   letter-spacing:.02em; text-transform:uppercase; color:#5E7378;
 }
 
-/* ---- Details card: teal accents ---- */
-.aa-ev-details .tribe-events-single-section-title{
-  color:#0B2E35 !important;
-  border-left-color:#127E88 !important;
+/* ---- Details rebuilt as a horizontal row ---- */
+.aa-ev-details{ margin-bottom:8px; }
+.aa-ev-details-grid{
+  display:flex; flex-wrap:wrap; align-items:flex-start;
+  gap:16px 40px; margin-top:6px;
 }
+.aa-ev-cell{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.aa-ev-cell .aa-ev-k{
+  font:600 .72rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.06em; text-transform:uppercase; color:#5E7378;
+}
+.aa-ev-cell .aa-ev-v{
+  font:400 1rem/1.4 "Inter",system-ui,sans-serif; color:#0B2E35;
+}
+.aa-ev-cell .aa-ev-v a{ color:#127E88; }
+.aa-ev-cell-reg{ align-self:center; }   /* vertically centre the button in the row */
 
-/* ---- Details laid out HORIZONTALLY (label on top, value below) ---- */
-.aa-ev-details-dl{
-  display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:minmax(0,1fr);
-  grid-template-rows:auto auto;
-  gap:6px 30px;
-  align-items:start;
-  margin:4px 0 0 !important;
-}
-.aa-ev-details-dl dt{
-  margin:0 !important; padding:0 !important;
-  font:600 .72rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace !important;
-  letter-spacing:.06em; text-transform:uppercase; color:#5E7378 !important;
-}
-.aa-ev-details-dl dd{
-  margin:0 !important; padding:0 !important;
-  font:400 1rem/1.4 "Inter",system-ui,sans-serif;
-  color:#0B2E35;
-}
-.aa-ev-details-dl dd.tribe-events-event-categories a{ color:#127E88; }
-
-/* ---- "Click to Register" turned into a button ---- */
-a.aa-ev-reg-inline,
-.tribe-events-meta-group-details a[href*="eventbrite"],
-.tribe-events-event-url a[href*="eventbrite"]{
+/* ---- "Click to Register" turned into a teal button ---- */
+a.aa-ev-reg-inline{
   display:inline-flex; align-items:center; gap:8px;
   background:#127E88; color:#fff !important;
-  font-weight:600; text-decoration:none !important;
-  padding:9px 18px; border-radius:10px;
-  transition:background .18s ease;
+  font:600 .96rem/1 "Inter",system-ui,sans-serif;
+  text-decoration:none !important;
+  padding:12px 22px; border-radius:11px;
+  box-shadow:0 10px 22px -12px rgba(11,46,53,.4);
+  transition:background .18s ease, transform .18s ease;
 }
 a.aa-ev-reg-inline:hover,
-.tribe-events-meta-group-details a[href*="eventbrite"]:hover,
-.tribe-events-event-url a[href*="eventbrite"]:hover{
-  background:#0B2E35; color:#fff !important;
+a.aa-ev-reg-inline:focus{
+  background:#0B2E35; color:#fff !important; transform:translateY(-1px);
 }
+a.aa-ev-reg-inline .aa-ev-reg-arrow{ font-size:1.05em; transition:transform .18s ease; }
+a.aa-ev-reg-inline:hover .aa-ev-reg-arrow{ transform:translateX(3px); }
 
-/* ---- Responsive: stack the Details on small screens ---- */
+/* ---- Responsive: stack on small screens ---- */
 @media (max-width:720px){
-  .aa-ev-details-dl{
-    grid-auto-flow:row; grid-template-rows:none; grid-template-columns:1fr;
-    gap:3px 0;
-  }
-  .aa-ev-details-dl dd{ margin:0 0 12px !important; }
+  .aa-ev-details-grid{ flex-direction:column; gap:12px; }
+  .aa-ev-cell-reg{ align-self:flex-start; }
   .aa-ev-reg-btn{ width:100%; justify-content:center; }
   .aa-ev-reg-note{ width:100%; }
 }

@@ -1,80 +1,115 @@
 /* ============================================================================
-   AA — Event page top area (The Events Calendar single event)
+   AA — Event page top area  (WP Event Aggregator / Eventbrite events)
    WPCode → JavaScript snippet, Auto Insert → Site Wide Footer.
-   No-op on every non-event page (guarded).
+   No-op on every non-event page (guarded on the /wp-event/ URL + .wpea markup).
 
-   Does, on each event page:
-     1. Hides the Venue block + Google map  (our events are online)
-     2. Marks the Details block so CSS can lay it out HORIZONTALLY
-     3. Turns the "Click to Register" link into a button
+   On each event page it:
+     1. Hides the Venue / organizer / map block  (our events are online)
+     2. Rebuilds the Details block into a clean HORIZONTAL row
+        (Date · Time · Event Category · Register), reading the <strong> labels
+     3. Turns the "Click to Register" link into a teal button
      4. Adds a prominent Register button directly under the event title
-   It keys off visible structure/text, so it survives plugin markup changes.
+   It rebuilds the markup itself, so it is immune to the plugin's row wrapping.
    ========================================================================== */
 (function () {
   function isEventPage() {
-    return /(^|\s)(single-tribe_events|tribe-events)/.test(document.body.className) ||
-      !!document.querySelector('.tribe-events-single, .tribe-events-event-meta, .single-tribe_events');
+    if (/\/wp-event\//.test(location.pathname)) return true;
+    return !!document.querySelector('.wpea_organizer, .single-wp_events, .single-wp_event');
   }
 
-  function metaGroups() {
-    var g = document.querySelectorAll('.tribe-events-event-meta .tribe-events-meta-group');
-    if (g.length) return Array.prototype.slice.call(g);
-    return Array.prototype.slice.call(document.querySelectorAll('.tribe-events-event-meta > div, .tribe-events-meta-group'));
+  // Break a container into {label, valueHTML} items using <strong> as delimiters.
+  function parseItems(container) {
+    var items = [];
+
+    // Case A: each field is its own block element containing a <strong>
+    var blocks = Array.prototype.filter.call(container.children, function (c) {
+      return c.tagName !== 'STRONG' && c.tagName !== 'BR' && c.querySelector && c.querySelector('strong');
+    });
+    var topStrongs = Array.prototype.filter.call(container.children, function (c) { return c.tagName === 'STRONG'; });
+
+    if (blocks.length >= 2 && topStrongs.length === 0) {
+      blocks.forEach(function (row) {
+        var clone = row.cloneNode(true);
+        var s = clone.querySelector('strong');
+        var label = s.textContent.replace(/[:：\s]+$/, '').trim();
+        s.remove();
+        items.push({ label: label, html: clone.innerHTML.trim() });
+      });
+      return items;
+    }
+
+    // Case B: flat — <strong>label</strong> value <br> <strong>…
+    var cur = null;
+    Array.prototype.forEach.call(container.childNodes, function (n) {
+      if (n.nodeType === 1 && n.tagName === 'STRONG') {
+        if (cur) items.push(cur);
+        cur = { label: n.textContent.replace(/[:：\s]+$/, '').trim(), html: '' };
+      } else if (cur) {
+        if (n.nodeType === 1 && n.tagName === 'BR') return;
+        cur.html += (n.nodeType === 1 ? n.outerHTML : (n.textContent || ''));
+      }
+    });
+    if (cur) items.push(cur);
+    return items;
   }
 
   function run() {
     if (!isEventPage()) return;
 
-    /* 1) Remove Venue + map (online) --------------------------------------- */
-    document.querySelectorAll(
-      '.tribe-events-meta-group-venue, .tribe-events-meta-group-gmap, ' +
-      '.tribe-events-venue-map, #tribe-events-gmap-0, .tribe-events-gmap'
-    ).forEach(function (el) { el.style.display = 'none'; });
+    /* 1) Hide Venue / organizer / map (online) ----------------------------- */
+    document.querySelectorAll('.wpea_organizer, .venue, .wpea_map, .wpea-map')
+      .forEach(function (el) { el.style.display = 'none'; });
 
-    metaGroups().forEach(function (grp) {
-      var t = grp.querySelector('.tribe-events-single-section-title, h2, h3');
-      if (t && /venue|location|map|ubicaci|lugar|المكان/i.test(t.textContent)) {
-        grp.style.display = 'none';
+    /* 2) Rebuild Details horizontally -------------------------------------- */
+    var details = document.querySelector('.details');
+    var regUrl = null;
+    if (details && !details.querySelector('.aa-ev-details-grid')) {
+      var items = parseItems(details);
+      if (items.length) {
+        var grid = document.createElement('div');
+        grid.className = 'aa-ev-details-grid';
+        items.forEach(function (it) {
+          var isReg = /regist|eventbrite/i.test(it.label) || /eventbrite/i.test(it.html);
+          var cell = document.createElement('div');
+          cell.className = 'aa-ev-cell' + (isReg ? ' aa-ev-cell-reg' : '');
+          if (isReg) {
+            cell.innerHTML = it.html; // just the link; we button-ify it below
+          } else {
+            cell.innerHTML =
+              '<span class="aa-ev-k">' + it.label + '</span>' +
+              '<span class="aa-ev-v">' + it.html + '</span>';
+          }
+          grid.appendChild(cell);
+        });
+        details.innerHTML = '';
+        details.appendChild(grid);
+        details.classList.add('aa-ev-details');
+
+        var regLink = details.querySelector('.aa-ev-cell-reg a[href]');
+        if (regLink) {
+          regUrl = regLink.href;
+          regLink.classList.add('aa-ev-reg-inline');
+          regLink.innerHTML = 'Register<span class="aa-ev-reg-arrow" aria-hidden="true">&#8594;</span>';
+          regLink.setAttribute('target', '_blank');
+          regLink.setAttribute('rel', 'noopener noreferrer');
+        }
       }
-    });
-    document.querySelectorAll('.tribe-events-single iframe[src*="google"], .tribe-events-single iframe[src*="maps"]')
-      .forEach(function (el) { (el.closest('.tribe-events-meta-group') || el).style.display = 'none'; });
-
-    /* 2) Details block -> horizontal --------------------------------------- */
-    var details = document.querySelector('.tribe-events-meta-group-details');
-    if (!details) {
-      details = metaGroups().filter(function (grp) {
-        var t = grp.querySelector('.tribe-events-single-section-title, h2, h3');
-        return t && /details|detalles|التفاصيل/i.test(t.textContent);
-      })[0];
-    }
-    if (details) {
-      details.classList.add('aa-ev-details');
-      var dl = details.querySelector('dl');
-      if (dl) dl.classList.add('aa-ev-details-dl');
     }
 
-    /* 3) "Click to Register" -> button ------------------------------------- */
-    var scope = document.querySelector('.tribe-events-single, .tribe-events-event-meta') || document;
-    var regAnchors = Array.prototype.filter.call(scope.querySelectorAll('a[href]'), function (a) {
-      if (!/register|regist|سجل|تسجيل/i.test(a.textContent || '')) return false;
-      if (a.getAttribute('href').charAt(0) === '#') return false;
-      if (a.closest('#masthead, header, nav, .main-header-menu, footer, .site-footer, .ast-footer, .aa-ev-reg-top')) return false;
-      return true;
-    });
-    var url = regAnchors.length ? regAnchors[0].href : null;
-    regAnchors.forEach(function (a) { a.classList.add('aa-ev-reg-inline'); });
+    /* fallback: find the register URL anywhere in the details/body ---------- */
+    if (!regUrl) {
+      var any = document.querySelector('.details a[href*="eventbrite"], a[href*="eventbrite"]');
+      if (any) regUrl = any.href;
+    }
 
-    /* 4) Prominent Register button under the title ------------------------- */
-    if (url && !document.querySelector('.aa-ev-reg-top')) {
-      var title = document.querySelector(
-        '.tribe-events-single-event-title, h1.entry-title, .entry-header h1, .ast-single-post .entry-title, h1'
-      );
+    /* 3) Prominent Register button under the title ------------------------- */
+    if (regUrl && !document.querySelector('.aa-ev-reg-top')) {
+      var title = document.querySelector('h1.entry-title, .entry-header h1, .page-title, h1');
       if (title && title.parentNode) {
         var wrap = document.createElement('div');
         wrap.className = 'aa-ev-reg-top';
         wrap.innerHTML =
-          '<a class="aa-ev-reg-btn" href="' + url + '" target="_blank" rel="noopener noreferrer">' +
+          '<a class="aa-ev-reg-btn" href="' + regUrl + '" target="_blank" rel="noopener noreferrer">' +
           'Register<span class="aa-ev-reg-arrow" aria-hidden="true">&#8594;</span></a>' +
           '<span class="aa-ev-reg-note">Online course &middot; secure your seat via Eventbrite</span>';
         title.parentNode.insertBefore(wrap, title.nextSibling);
