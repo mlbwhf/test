@@ -1,0 +1,14 @@
+/* NAV FIX v5 — pin the mega panel FLUSH under the real nav height + kill header blur.
+   Paste AFTER your NAV FIX v3 block. Works with the updated hover-intent JS
+   (which measures the header and sets --aa-hdr). */
+html body #masthead { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+@media (min-width:922px){
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu{
+    top: var(--aa-hdr, 80px) !important;
+    max-height: calc(100vh - var(--aa-hdr, 80px)) !important;
+  }
+  /* keep the panel open when the JS marks its tab .aa-open (hover-intent) */
+  html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+    display:grid !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
+  }
+}
