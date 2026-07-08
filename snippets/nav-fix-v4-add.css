@@ -1,0 +1,7 @@
+/* NAV FIX v4 — add this ONE rule (works with the hover-intent JS snippet).
+   Paste right after your NAV FIX v3 block. */
+@media (min-width:922px){
+  html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+    display:grid !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
+  }
+}
