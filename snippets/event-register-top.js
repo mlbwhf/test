@@ -41,7 +41,7 @@
     wrap.className = 'aa-ev-reg-top';
     wrap.innerHTML =
       '<a class="aa-ev-reg-btn" href="' + url + '" target="_blank" rel="noopener noreferrer">' +
-      'Register for this course<span class="aa-ev-reg-arrow" aria-hidden="true">&#8594;</span></a>' +
+      'Register<span class="aa-ev-reg-arrow" aria-hidden="true">&#8594;</span></a>' +
       '<span class="aa-ev-reg-note">Secure your seat &middot; registration via Eventbrite</span>';
 
     title.parentNode.insertBefore(wrap, title.nextSibling);
