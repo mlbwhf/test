@@ -1,0 +1,80 @@
+/* ==================== Z. NAV FIX v3 — PASTE AT THE VERY END OF ADDITIONAL CSS ====================
+   Add this block after everything else. Do NOT delete anything above it. It is written with an
+   html-body prefix + !important + last source position so it deterministically overrides the older,
+   conflicting mega-menu rules (Sections G + R) and the non-important header rule (Section B).
+
+   Fixes:
+     • Header scrolls away / becomes unclickable on scroll (incl. transparent-header pages)
+     • Desktop mega panel offset from its tab, floating with a gap, and closing when the cursor
+       moves down toward it  →  now a full-width bar flush under the header, with a hover-bridge
+     • Mobile: Services / Training (and deeper) submenus not expanding  →  all levels shown
+   ============================================================================================== */
+
+/* -- Header: always fixed, opaque, top-most & clickable -- */
+html body #masthead,
+html body.ast-theme-transparent-header #masthead,
+html body.ast-header-break-point #masthead,
+html body .ast-sticky-active #masthead {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; right: 0 !important;
+  z-index: 100000 !important;
+  transform: none !important;
+  background: rgba(255,255,255,0.96) !important;
+}
+html body.admin-bar #masthead { top: 32px !important; }
+@media (max-width:782px){ html body.admin-bar #masthead { top: 46px !important; } }
+html body #masthead, html body #masthead *,
+html body #masthead a,
+html body #masthead .main-header-menu li.menu-item > a { pointer-events: auto !important; }
+
+/* -- Desktop mega panel: full-width bar, flush under the header (no offset, gap, or cutoff) -- */
+@media (min-width:922px){
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu {
+    position: fixed !important;
+    top: 80px !important;                         /* flush under the 80px fixed header */
+    left: 0 !important; right: 0 !important; transform: none !important;
+    width: auto !important; max-width: none !important; min-width: 0 !important; margin: 0 !important;
+    padding: 24px max(22px, calc((100vw - 1000px)/2)) 30px !important;  /* content centred to 1000px */
+    border: 0 !important; border-top: 1px solid var(--aa-border) !important; border-radius: 0 !important;
+    box-shadow: 0 24px 48px -22px rgba(8,37,43,.32) !important;
+    max-height: calc(100vh - 80px) !important; overflow-y: auto !important;
+  }
+  html body.admin-bar .main-header-menu > .menu-item.aa-mega > .sub-menu {
+    top: 112px !important; max-height: calc(100vh - 112px) !important;
+  }
+  /* invisible hover-bridge so moving the cursor down from the tab keeps the panel open */
+  html body .main-header-menu > .menu-item.aa-mega:hover > .sub-menu::before,
+  html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu::before {
+    content:"" !important; position: fixed !important; left:0 !important; right:0 !important;
+    top: 56px !important; height: 26px !important; background: transparent !important;
+  }
+}
+
+/* -- Mobile (<=921px): show every submenu level as an indented list -- */
+@media (max-width:921px){
+  html body #masthead .sub-menu,
+  html body .ast-mobile-header-content .sub-menu,
+  html body .main-header-menu .sub-menu {
+    display: block !important; position: static !important; transform: none !important;
+    left:auto !important; right:auto !important; top:auto !important;
+    width:auto !important; max-width:none !important; min-width:0 !important;
+    grid-template-columns: none !important;
+    opacity:1 !important; visibility:visible !important; pointer-events:auto !important;
+    height:auto !important; max-height:none !important; overflow:visible !important;
+    background: transparent !important; box-shadow:none !important; border:0 !important;
+    border-radius:0 !important; margin:0 !important; padding:2px 0 2px 16px !important;
+  }
+  html body #masthead .ast-menu-toggle { display:none !important; }
+  /* keep Astra's mobile drawer above the now-topmost fixed header */
+  html body .ast-mobile-popup-drawer,
+  html body .ast-mobile-header-wrap,
+  html body .ast-builder-menu-mobile,
+  html body #ast-mobile-header { z-index: 100001 !important; }
+  /* flatten the desktop "flagship" styling if it appears in the mobile menu */
+  html body #masthead .aa-mega .menu-item.aa-flag { min-height:0 !important; background:transparent !important; padding:0 !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a { position:static !important; color:inherit !important; font-size:inherit !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a::before,
+  html body #masthead .aa-mega .menu-item.aa-flag > .sub-menu::after { content:none !important; }
+  html body #masthead .aa-mega .menu-item.aa-feature { position:static !important; }
+}
+/* ==================== END NAV FIX v3 ==================== */
