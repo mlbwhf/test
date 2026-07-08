@@ -4,10 +4,17 @@
    Styles ONLY our own .aa-ev-* classes, so no other page is affected.
    ========================================================================== */
 
-/* ---- Prominent Register button under the event title ---- */
+/* ---- Top block: certification badge + prominent Register button ---- */
 .aa-ev-reg-top{
-  display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px;
+  display:flex; flex-wrap:wrap; align-items:center; gap:18px 24px;
   margin:16px 0 28px;
+}
+.aa-ev-badge{
+  height:104px; width:auto; max-width:120px; object-fit:contain;
+  flex:0 0 auto;
+}
+.aa-ev-reg-cta{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px;
 }
 .aa-ev-reg-btn{
   display:inline-flex; align-items:center; gap:10px;
@@ -68,6 +75,8 @@ a.aa-ev-reg-inline:hover .aa-ev-reg-arrow{ transform:translateX(3px); }
 @media (max-width:720px){
   .aa-ev-details-grid{ flex-direction:column; gap:12px; }
   .aa-ev-cell-reg{ align-self:flex-start; }
+  .aa-ev-badge{ height:84px; }
+  .aa-ev-reg-cta{ flex:1 1 100%; }
   .aa-ev-reg-btn{ width:100%; justify-content:center; }
   .aa-ev-reg-note{ width:100%; }
 }
