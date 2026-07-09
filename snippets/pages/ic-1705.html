@@ -57,542 +57,228 @@
 }
 </script>
 
-<div class="aa-svc">
+<div class="aa-sx">
 <style>
-.aa-svc{--t:#127E88;--td:#0B2E35;--nv:#0E3A44;--tl:#8FCFCF;--bd:#DCEAEA;--bds:#C7DEDE;--bg:#F5FAFA;--mu:#5E7378;--am:#127E88;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--nv);width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);overflow-x:clip}
-.aa-svc *{box-sizing:border-box}
-.aa-svc .nr{font-family:'Newsreader',Georgia,'Times New Roman',serif}
-.aa-svc-sec{padding:74px 24px}
-.aa-svc-sec.alt{background:var(--bg)}
-.aa-svc-in{max-width:1180px;margin:0 auto}
-.aa-svc-head{text-align:center;max-width:780px;margin:0 auto 40px}
-.aa-svc-eb{display:inline-block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--t);margin-bottom:14px}
-.aa-svc-eb.am{color:#127E88}
-.aa-svc-h2{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:37px;line-height:1.14;color:var(--nv);margin:0 0 14px;letter-spacing:-.01em}
-.aa-svc-h2 em{font-style:italic;color:var(--t)}
-.aa-svc-sub{font-size:16.5px;line-height:1.6;color:var(--mu);margin:0 auto;max-width:730px}
-.aa-svc-foot{max-width:900px;margin:36px auto 0;padding:20px 26px;background:var(--td);color:#DCEAEA;border-radius:14px;font-size:14.5px;line-height:1.6;text-align:center}
-.aa-svc-foot strong{color:var(--tl);font-weight:600}
-@media(max-width:780px){.aa-svc-h2{font-size:28px}.aa-svc-sec{padding:54px 20px}}
-
-/* ---------- HERO ---------- */
-.aa-svc-hero{position:relative;overflow:hidden;background:radial-gradient(120% 130% at 12% 0%,#123f47 0%,var(--td) 55%,#08222860 100%),var(--td);padding:92px 24px 76px;color:#fff}
-.aa-svc-hero::before,.aa-svc-hero::after{content:"";position:absolute;width:540px;height:540px;border-radius:50%;pointer-events:none}
-.aa-svc-hero::before{top:-170px;left:-150px;background:radial-gradient(circle,rgba(143,207,207,.15),transparent 70%)}
-.aa-svc-hero::after{bottom:-210px;right:-160px;background:radial-gradient(circle,rgba(18,126,136,.30),transparent 70%)}
-.aa-svc-hero-in{max-width:1180px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:1.32fr 1fr;gap:52px;align-items:center}
-@media(max-width:900px){.aa-svc-hero-in{grid-template-columns:1fr;gap:34px}}
-.aa-svc-hero-eb{display:inline-block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tl);padding:6px 15px;border:1px solid rgba(143,207,207,.35);border-radius:30px;margin-bottom:22px}
-.aa-svc-hero h1{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:50px;line-height:1.07;letter-spacing:-.02em;margin:0 0 20px;color:#fff}
-.aa-svc-hero h1 em{font-style:italic;color:var(--tl)}
-.aa-svc-hero-sub{font-size:18px;line-height:1.62;color:#D6E7E7;margin:0 0 28px;max-width:620px}
-.aa-svc-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
-.aa-svc-cta a{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all .2s}
-.aa-svc-btn-solid{background:var(--t);color:#fff !important;box-shadow:0 10px 26px -8px rgba(18,126,136,.6)}
-.aa-svc-btn-solid:hover{background:#0f6c75;transform:translateY(-2px)}
-.aa-svc-btn-am{background:var(--am);color:#ffffff !important;box-shadow:0 10px 26px -10px rgba(18,126,136,.5)}
-.aa-svc-btn-am:hover{background:#0f6c75;transform:translateY(-2px)}
-.aa-svc-btn-ghost{background:transparent;color:#fff !important;border:1.5px solid rgba(255,255,255,.5)}
-.aa-svc-btn-ghost:hover{background:#fff;color:var(--td) !important;border-color:#fff}
-.aa-svc-hero-trust{display:flex;gap:9px 20px;flex-wrap:wrap;font-size:13.5px;color:#B9D4D4;padding-top:22px;border-top:1px solid rgba(255,255,255,.12)}
-.aa-svc-hero-trust strong{color:#fff;font-weight:600}
-.aa-svc-hero-trust .sep{color:rgba(143,207,207,.5)}
-.aa-svc-hero-card{background:rgba(255,255,255,.05);border:1px solid rgba(143,207,207,.22);border-radius:18px;padding:26px 24px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
-.aa-svc-hero-card-label{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl);margin-bottom:8px}
-.aa-svc-hero-card h3{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:21px;color:#fff;margin:0 0 14px}
-.aa-svc-hero-card ul{list-style:none;padding:0;margin:0}
-.aa-svc-hero-card li{font-size:13.5px;color:#EAF3F3;padding:9px 0 9px 26px;position:relative;border-bottom:1px solid rgba(143,207,207,.14);line-height:1.45}
-.aa-svc-hero-card li:last-child{border-bottom:none}
-.aa-svc-hero-card li::before{content:'';position:absolute;left:2px;top:11px;width:9px;height:9px;border-right:2px solid var(--tl);border-bottom:2px solid var(--tl);transform:rotate(45deg);transform-origin:center}
-@media(max-width:780px){.aa-svc-hero h1{font-size:35px}.aa-svc-hero-sub{font-size:16.5px}}
-
-/* ---------- COMPETENCY GRID ---------- */
-.aa-svc-comp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-@media(max-width:980px){.aa-svc-comp{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.aa-svc-comp{grid-template-columns:1fr}}
-.aa-svc-cc{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:24px 22px;transition:all .22s;display:flex;flex-direction:column;gap:11px;position:relative;overflow:hidden}
-.aa-svc-cc:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(11,46,53,.4);border-color:var(--t)}
-.aa-svc-cc-ic{width:44px;height:44px;border-radius:11px;background:var(--bg);border:1px solid var(--bds);color:var(--t);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.aa-svc-cc-ic svg{width:22px;height:22px}
-.aa-svc-cc h3{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:17px;color:var(--nv);line-height:1.28;margin:0}
-.aa-svc-cc p{font-size:13px;color:var(--mu);line-height:1.55;margin:0}
-.aa-svc-cc.spot{background:linear-gradient(180deg,#F2F9F9,#fff);border-color:#C7DEDE}
-.aa-svc-cc.spot .aa-svc-cc-ic{background:#E3F1F1;border-color:#C7DEDE;color:#127E88}
-
-/* ---------- 3-COL COMPARE ---------- */
-.aa-svc-cmp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-@media(max-width:880px){.aa-svc-cmp{grid-template-columns:1fr}}
-.aa-svc-cmp-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:28px 24px;position:relative;overflow:hidden;transition:all .22s}
-.aa-svc-cmp-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(11,46,53,.35)}
-.aa-svc-cmp-card.mid{border-color:var(--t);background:linear-gradient(180deg,#F2F9F9,#fff);box-shadow:0 14px 30px -18px rgba(18,126,136,.4)}
-.aa-svc-cmp-card.mid::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--t),var(--tl))}
-.aa-svc-cmp-pill{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;margin-bottom:12px}
-.aa-svc-cmp-pill::before{content:'';width:9px;height:9px;border-radius:50%;background:#C0453C}
-.aa-svc-cmp-card.mid .aa-svc-cmp-pill::before{background:var(--am)}
-.aa-svc-cmp-card.last .aa-svc-cmp-pill::before{background:#2E9E6B}
-.aa-svc-cmp-pill.r{color:#A23A32}.aa-svc-cmp-pill.a{color:#127E88}.aa-svc-cmp-pill.g{color:#26805A}
-.aa-svc-cmp-card h3{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:20px;color:var(--nv);line-height:1.25;margin:0 0 14px}
-.aa-svc-cmp-card ul{list-style:none;padding:0;margin:0}
-.aa-svc-cmp-card li{font-size:14px;color:var(--mu);line-height:1.55;padding:8px 0 8px 26px;position:relative;border-bottom:1px solid var(--bg)}
-.aa-svc-cmp-card li:last-child{border-bottom:none}
-.aa-svc-cmp-card li::before{position:absolute;left:0;top:7px;font-weight:700}
-.aa-svc-cmp-card.bad li::before{content:'\2717';color:#C0453C}
-.aa-svc-cmp-card.mid li::before{content:'\2192';color:var(--t)}
-.aa-svc-cmp-card.last li::before{content:'\2713';color:#2E9E6B}
-.aa-svc-cmp-card li strong{color:var(--nv);font-weight:600}
-.aa-svc-inl-cta{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:11px 20px;background:var(--t);color:#fff !important;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s}
-.aa-svc-inl-cta:hover{background:#0f6c75;transform:translateY(-1px)}
-
-/* ---------- STEPS ---------- */
-.aa-svc-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-@media(max-width:880px){.aa-svc-steps{grid-template-columns:1fr}}
-.aa-svc-step{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px 26px;transition:all .22s;position:relative;overflow:hidden}
-.aa-svc-step:hover{transform:translateY(-4px);box-shadow:0 18px 38px -22px rgba(11,46,53,.4);border-color:var(--t)}
-.aa-svc-step.lead{border-color:var(--am);background:linear-gradient(180deg,#F2F9F9,#fff)}
-.aa-svc-step-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.aa-svc-step-num{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:34px;color:var(--t);line-height:1;letter-spacing:-.02em}
-.aa-svc-step.lead .aa-svc-step-num{color:#127E88}
-.aa-svc-step-meta{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
-.aa-svc-step h3{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:22px;color:var(--nv);margin:2px 0 0;line-height:1.2}
-.aa-svc-step-desc{font-size:14px;color:var(--mu);line-height:1.6;margin:0 0 16px}
-.aa-svc-step ul{list-style:none;padding:0;margin:0 0 18px}
-.aa-svc-step li{font-size:13px;color:var(--mu);line-height:1.5;padding:7px 0 7px 22px;position:relative;border-bottom:1px solid var(--bg)}
-.aa-svc-step li:last-child{border-bottom:none}
-.aa-svc-step li::before{content:'\2192';position:absolute;left:0;top:7px;color:var(--t);font-weight:700}
-.aa-svc-step-cta{display:inline-flex;align-items:center;gap:6px;padding:11px 20px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s}
-.aa-svc-step-cta.solid{background:var(--am);color:#ffffff !important}
-.aa-svc-step-cta.solid:hover{background:#0f6c75;transform:translateY(-1px)}
-.aa-svc-step-cta.outline{background:transparent;color:var(--t) !important;border:1.5px solid var(--t)}
-.aa-svc-step-cta.outline:hover{background:var(--t);color:#fff !important}
-
-/* ---------- METHODOLOGY ---------- */
-.aa-svc-meth{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:center}
-@media(max-width:980px){.aa-svc-meth{grid-template-columns:1fr;gap:32px}}
-.aa-svc-meth-left h2{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:34px;color:var(--nv);line-height:1.16;margin:12px 0 14px;letter-spacing:-.01em}
-.aa-svc-meth-left h2 em{font-style:italic;color:var(--t)}
-.aa-svc-meth-left p{font-size:15.5px;color:var(--mu);line-height:1.62;margin:0 0 16px}
-.aa-svc-meth-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;align-items:center}
-.aa-svc-meth-stack{background:linear-gradient(160deg,#0a4f63,var(--td));border-radius:18px;padding:22px;position:relative;overflow:hidden;box-shadow:0 30px 60px -30px rgba(11,46,53,.6)}
-.aa-svc-meth-stack::before{content:'';position:absolute;top:-70px;right:-70px;width:240px;height:240px;background:radial-gradient(circle,rgba(143,207,207,.16),transparent 70%);border-radius:50%;pointer-events:none}
-.aa-svc-meth-label{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl);margin-bottom:14px;text-align:center;position:relative;z-index:2}
-.aa-svc-band{padding:15px 16px;border-radius:11px;margin-bottom:9px;display:flex;align-items:center;gap:13px;position:relative;z-index:2;transition:transform .2s}
-.aa-svc-band:hover{transform:translateX(4px)}
-.aa-svc-band:last-child{margin-bottom:0}
-.aa-svc-band.lace{background:linear-gradient(135deg,var(--am),#0f6c75);color:#ffffff}
-.aa-svc-band.ai{background:linear-gradient(135deg,#8FCFCF,#5DB3B3);color:#08282d}
-.aa-svc-band.safe{background:linear-gradient(135deg,var(--t),#0f6c75);color:#fff}
-.aa-svc-band.tech{background:rgba(255,255,255,.06);border:1px solid rgba(143,207,207,.22);color:#EAF3F3}
-.aa-svc-band-num{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.aa-svc-band.tech .aa-svc-band-num{background:rgba(143,207,207,.2)}
-.aa-svc-band-t{font-size:13.5px;font-weight:700;line-height:1.2}
-.aa-svc-band-s{font-size:11px;opacity:.85;font-weight:500;margin-top:2px}
-
-/* ---------- OUTCOMES ---------- */
-.aa-svc-out{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-@media(max-width:900px){.aa-svc-out{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.aa-svc-out{grid-template-columns:1fr}}
-.aa-svc-out-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px 24px;text-align:center;transition:all .22s}
-.aa-svc-out-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(11,46,53,.35);border-color:var(--t)}
-.aa-svc-out-num{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:40px;color:var(--t);line-height:1;letter-spacing:-.02em;margin-bottom:4px}
-.aa-svc-out-card.am .aa-svc-out-num{color:#127E88}
-.aa-svc-out-num span{display:block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-top:8px}
-.aa-svc-out-card h3{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:18px;color:var(--nv);margin:14px 0 8px}
-.aa-svc-out-card p{font-size:13px;color:var(--mu);line-height:1.55;margin:0}
-.aa-svc-note{max-width:900px;margin:34px auto 0;text-align:center;font-size:13.5px;color:var(--mu);line-height:1.62;padding:18px 24px;background:var(--bg);border:1px dashed var(--bds);border-radius:12px;font-style:italic}
-.aa-svc-note strong{color:var(--nv);font-style:normal;font-weight:600}
-
-/* ---------- TESTIMONIALS ---------- */
-.aa-svc-test{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-@media(max-width:880px){.aa-svc-test{grid-template-columns:1fr}}
-.aa-svc-tc{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px 28px;display:flex;flex-direction:column;gap:14px;transition:all .2s}
-.aa-svc-tc:hover{transform:translateY(-3px);box-shadow:0 16px 32px -20px rgba(11,46,53,.35)}
-.aa-svc-tc-stars{color:var(--am);font-size:16px;letter-spacing:2px}
-.aa-svc-tc-q{font-family:'Newsreader',Georgia,serif;font-size:17px;color:var(--nv);line-height:1.5;margin:0;flex:1}
-.aa-svc-tc-auth{display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--bg);margin:0}
-.aa-svc-tc-av{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--td)}
-.aa-svc-tc-av img{width:100%;height:100%;object-fit:cover;display:block}
-.aa-svc-tc-name{font-size:14px;color:var(--nv);font-weight:600}
-.aa-svc-tc-meta{font-size:12px;color:var(--mu)}
-
-/* ---------- COHORTS ---------- */
-.aa-svc-coh{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-@media(max-width:980px){.aa-svc-coh{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.aa-svc-coh{grid-template-columns:1fr}}
-.aa-svc-coh-card{text-decoration:none;display:flex;flex-direction:column;align-items:center;padding:26px 18px;background:#fff;border:1px solid var(--bd);border-radius:14px;transition:all .22s;text-align:center}
-.aa-svc-coh-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px -22px rgba(11,46,53,.4);border-color:var(--t)}
-.aa-svc-coh-badge{width:60px;height:68px;background:var(--td);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;color:#fff;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:13px;font-weight:700;margin-bottom:14px;transition:transform .3s}
-.aa-svc-coh-card:hover .aa-svc-coh-badge{transform:rotate(-6deg) scale(1.06)}
-.aa-svc-coh-card.am .aa-svc-coh-badge{background:linear-gradient(135deg,var(--am),#0f6c75);color:#ffffff}
-.aa-svc-coh-card.tl .aa-svc-coh-badge{background:linear-gradient(135deg,var(--t),#0f6c75)}
-.aa-svc-coh-name{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:15px;color:var(--nv);line-height:1.28;margin:0 0 6px}
-.aa-svc-coh-role{font-size:11.5px;color:var(--mu);line-height:1.4;margin:0 0 10px;min-height:32px}
-.aa-svc-coh-meta{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;font-weight:600;color:var(--t);letter-spacing:.06em;text-transform:uppercase;padding-top:8px;border-top:1px solid var(--bg);width:100%}
-
-/* ---------- TRUST ---------- */
-.aa-svc-trust{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1080px;margin:0 auto}
-@media(max-width:880px){.aa-svc-trust{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){.aa-svc-trust{grid-template-columns:1fr}}
-.aa-svc-trust-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:24px 20px;text-align:center;transition:all .22s}
-.aa-svc-trust-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -20px rgba(11,46,53,.3);border-color:var(--t)}
-.aa-svc-trust-num{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:38px;color:var(--t);line-height:1;letter-spacing:-.02em;margin-bottom:6px}
-.aa-svc-trust-card.am .aa-svc-trust-num{color:#127E88}
-.aa-svc-trust-card h3{font-size:14px;font-weight:600;color:var(--nv);margin:0 0 4px}
-.aa-svc-trust-card p{font-size:12px;color:var(--mu);line-height:1.45;margin:0}
-.aa-svc-logos{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 18px;max-width:1000px;margin:34px auto 0;padding-top:26px;border-top:1px solid var(--bd)}
-.aa-svc-logo{display:inline-flex;align-items:center;justify-content:center;min-width:104px;height:44px;padding:0 18px;background:#fff;border:1px solid var(--bd);border-radius:8px;font-size:13px;font-weight:700;letter-spacing:-.2px;color:var(--nv);transition:all .2s}
-.aa-svc-logo:hover{border-color:var(--t);transform:translateY(-1px)}
-.aa-svc-logo.gov{background:var(--td);color:#fff;border-color:transparent}
-
-/* ---------- FINAL CTA ---------- */
-.aa-svc-fc{position:relative;overflow:hidden;background:radial-gradient(120% 130% at 85% 0%,#123f47 0%,var(--td) 55%,#082228 100%),var(--td);padding:82px 24px;text-align:center;color:#fff}
-.aa-svc-fc::before{content:"";position:absolute;top:-160px;left:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.14),transparent 70%);pointer-events:none}
-.aa-svc-fc-in{max-width:820px;margin:0 auto;position:relative;z-index:2}
-.aa-svc-fc-eb{display:inline-block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tl);margin-bottom:16px}
-.aa-svc-fc h2{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:42px;line-height:1.1;margin:0 auto 14px;max-width:720px;letter-spacing:-.015em;color:#fff}
-.aa-svc-fc h2 em{font-style:italic;color:var(--tl)}
-.aa-svc-fc p{font-size:17px;color:#D6E7E7;line-height:1.6;margin:0 auto 30px;max-width:600px}
-.aa-svc-fc-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:30px}
-.aa-svc-fc-attr{display:flex;justify-content:center;gap:8px 18px;flex-wrap:wrap;font-size:12.5px;color:#9FC3C3;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);max-width:680px;margin:0 auto}
-.aa-svc-fc-attr strong{color:#fff;font-weight:600}
-.aa-svc-fc-attr .sep{color:rgba(143,207,207,.5)}
-@media(max-width:780px){.aa-svc-fc h2{font-size:30px}}
+.aa-sx{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#FBFDFD;color:#0E3A44;line-height:1.5;width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);overflow-x:clip}
+.aa-sx *{box-sizing:border-box}
+.aa-sx h1,.aa-sx h2,.aa-sx h3,.aa-sx blockquote{font-family:'Newsreader',Georgia,'Times New Roman',serif}
+.aa-sx .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.aa-sx a{text-decoration:none;color:inherit}
+.aa-sx a.cell{transition:background .18s ease}
+.aa-sx a.cell:hover{background:#F1F8F8}
+.aa-sx a.btn-dark{transition:background .18s ease}
+.aa-sx a.btn-dark:hover{background:#127E88}
+.aa-sx a.btn-teal:hover{background:#fff}
+.aa-sx a.btn-ghost:hover{border-color:#fff}
+.aa-sx nav.crumb a:hover{color:#127E88}
+@media(max-width:900px){
+  .aa-sx .g-hero{grid-template-columns:1fr !important;gap:30px !important}
+  .aa-sx .g4{grid-template-columns:repeat(2,1fr) !important}
+  .aa-sx .h-xl{font-size:54px !important}
+}
+@media(max-width:760px){
+  .aa-sx .g2{grid-template-columns:1fr !important;gap:26px !important}
+  .aa-sx .g3{grid-template-columns:1fr !important}
+  .aa-sx .g3steps{grid-template-columns:1fr !important}
+  .aa-sx .g3steps>div{border-right:0 !important;padding:22px 0 30px !important;border-top:1px solid rgba(228,241,241,.14)}
+  .aa-sx .h-xl{font-size:44px !important}
+}
+@media(max-width:560px){ .aa-sx .g4{grid-template-columns:1fr !important} }
 </style>
 
-<!-- ============ 1. HERO ============ -->
-<section class="aa-svc-hero">
-  <div class="aa-svc-hero-in">
+<!-- HERO -->
+<section style="max-width:1280px;margin:0 auto;padding:54px 30px 0">
+  <nav aria-label="Breadcrumb" class="mono crumb" style="font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4;display:flex;gap:10px"><a href="/">Home</a><span>/</span><a href="/services/">Services</a><span>/</span><span style="color:#127E88">Innovation Culture</span></nav>
+  <div class="mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#127E88;margin-top:24px">Innovation Culture &middot; SPCT-led &middot; Embedded in PI cadence</div>
+  <h1 class="h-xl" style="font-weight:400;font-size:70px;line-height:1;letter-spacing:-.03em;color:#0E3A44;margin-top:18px;text-wrap:balance;max-width:1000px">Innovation that <span style="font-style:italic;color:#127E88">survives<br>the quarterly review.</span></h1>
+  <div class="g-hero" style="display:grid;grid-template-columns:1.3fr .9fr;gap:54px;margin-top:42px;padding-top:32px;border-top:1px solid #0E3A44;align-items:start">
     <div>
-      <span class="aa-svc-hero-eb">Innovation Culture &middot; SPCT-led</span>
-      <h1>Innovation Culture That <em>Survives the Quarterly Review</em></h1>
-      <p class="aa-svc-hero-sub">Most innovation programs die in 18 months. The reason isn&rsquo;t talent or budget &mdash; it&rsquo;s culture. We embed innovation ceremonies inside the SAFe events you already run, so innovation becomes a muscle, not a side project.</p>
-      <div class="aa-svc-cta">
-        <a class="aa-svc-btn-am" href="https://meetings.hubspot.com/john2795">Book an Innovation Culture consult &rarr;</a>
-        <a class="aa-svc-btn-solid" href="/assessments/innovation-framework/">Take the free assessment</a>
-        <a class="aa-svc-btn-ghost" href="#pillars">See the 5 pillars</a>
-      </div>
-      <div class="aa-svc-hero-trust">
-        <span><strong>SPCT</strong>-led</span><span class="sep">&middot;</span>
-        <span><strong>2,500+</strong> certified</span><span class="sep">&middot;</span>
-        <span><strong>9 languages</strong></span><span class="sep">&middot;</span>
-        <span><strong>Fortune 500</strong> &middot; gov</span>
+      <p style="font-family:'Newsreader',Georgia,serif;font-weight:300;font-size:25px;line-height:1.42;color:#3C565E;max-width:620px">Most innovation programs die in 18 months. The reason isn&rsquo;t talent or budget &mdash; it&rsquo;s culture. We embed innovation ceremonies inside the SAFe events you already run, so innovation becomes a muscle, not a side project.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:26px">
+        <span class="mono" style="font-size:11.5px;letter-spacing:.04em;color:#3C565E;border:1px solid #C7DEDE;padding:8px 13px;border-radius:2px">5 PILLARS</span>
+        <span class="mono" style="font-size:11.5px;letter-spacing:.04em;color:#3C565E;border:1px solid #C7DEDE;padding:8px 13px;border-radius:2px">PI-EMBEDDED CEREMONIES</span>
+        <span class="mono" style="font-size:11.5px;letter-spacing:.04em;color:#3C565E;border:1px solid #C7DEDE;padding:8px 13px;border-radius:2px">MUTATION READINESS</span>
+        <span class="mono" style="font-size:11.5px;letter-spacing:.04em;color:#3C565E;border:1px solid #C7DEDE;padding:8px 13px;border-radius:2px">AI EXPERIMENTATION</span>
       </div>
     </div>
-    <div class="aa-svc-hero-card" aria-label="Innovation Culture at a glance">
-      <div class="aa-svc-hero-card-label">What gets built</div>
-      <h3 class="nr">Innovation that compounds</h3>
-      <ul>
-        <li>5 pillars diagnostic + roadmap</li>
-        <li>Innovation ceremonies inside PI cadence</li>
-        <li>Mutation Workshops + Failure Forums</li>
-        <li>Mental Model Challenges for leaders</li>
-        <li>AI Experimentation Sprints</li>
-        <li>Innovation Framework training (1-3 days)</li>
-      </ul>
+    <div style="border:1px solid #0E3A44;background:#fff;padding:26px">
+      <div class="mono" style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4">What gets built</div>
+      <div style="display:flex;flex-direction:column;margin-top:14px">
+        <div style="display:grid;grid-template-columns:16px 1fr;gap:11px;padding:9px 0;border-bottom:1px solid #DCEAEA"><span style="color:#127E88;font-size:13px">&#10022;</span><span style="font-size:13.5px;color:#3C565E">5 pillars diagnostic + roadmap</span></div>
+        <div style="display:grid;grid-template-columns:16px 1fr;gap:11px;padding:9px 0;border-bottom:1px solid #DCEAEA"><span style="color:#127E88;font-size:13px">&#10022;</span><span style="font-size:13.5px;color:#3C565E">Innovation ceremonies inside PI cadence</span></div>
+        <div style="display:grid;grid-template-columns:16px 1fr;gap:11px;padding:9px 0;border-bottom:1px solid #DCEAEA"><span style="color:#127E88;font-size:13px">&#10022;</span><span style="font-size:13.5px;color:#3C565E">Mutation Workshops + Failure Forums</span></div>
+        <div style="display:grid;grid-template-columns:16px 1fr;gap:11px;padding:9px 0;border-bottom:1px solid #DCEAEA"><span style="color:#127E88;font-size:13px">&#10022;</span><span style="font-size:13.5px;color:#3C565E">Mental Model Challenges for leaders</span></div>
+        <div style="display:grid;grid-template-columns:16px 1fr;gap:11px;padding:9px 0"><span style="color:#127E88;font-size:13px">&#10022;</span><span style="font-size:13.5px;color:#3C565E">AI Experimentation Sprints + framework training</span></div>
+      </div>
+      <a class="btn-dark" href="https://meetings.hubspot.com/john2795" style="display:block;text-align:center;margin-top:18px;font-size:15px;font-weight:600;color:#fff;background:#0E3A44;padding:14px;border-radius:2px">Book an Innovation Culture consult &#10230;</a>
+    </div>
+  </div>
+  <div class="mono" style="display:flex;flex-wrap:wrap;gap:22px;margin-top:30px;font-size:12px;letter-spacing:.03em;color:#5E7378">
+    <span><strong style="color:#0E3A44;font-weight:600">30%+</strong> revenue from new offerings</span><span style="color:#C7DEDE">&middot;</span>
+    <span><strong style="color:#0E3A44;font-weight:600">2&times;</strong> faster idea-to-market</span><span style="color:#C7DEDE">&middot;</span>
+    <span><strong style="color:#0E3A44;font-weight:600">higher</strong> R&amp;D ROI</span><span style="color:#C7DEDE">&middot;</span>
+    <span><strong style="color:#0E3A44;font-weight:600">more</strong> employee ideas shipped</span>
+  </div>
+</section>
+
+<!-- 01 — WHY PROGRAMS FAIL -->
+<section style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 01 ) &mdash; Why innovation programs fail</div>
+  <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:54px;margin-top:16px;align-items:start">
+    <h2 style="font-weight:400;font-size:40px;line-height:1.08;letter-spacing:-.02em;color:#0E3A44">You can&rsquo;t buy innovation with <span style="font-style:italic;color:#127E88">posters and hackathons.</span></h2>
+    <p style="font-size:16px;line-height:1.6;color:#5E7378">Every initiative we&rsquo;ve been asked to rescue has the same diagnosis: no cultural foundation. The tools were fine. The leadership intent was fine. The soil wasn&rsquo;t.</p>
+  </div>
+  <div class="g3" style="display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid #DCEAEA;margin-top:36px">
+    <div style="padding:28px 24px;border-right:1px solid #DCEAEA;border-top:1px solid #0E3A44;min-height:200px;display:flex;flex-direction:column"><span class="mono" style="font-size:10.5px;letter-spacing:.06em;color:#B08A8A">SYMPTOM &middot; BUDGET TOURISM</span><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:23px;color:#0E3A44;margin-top:10px">The 18-month decay</h3><p style="font-size:14px;line-height:1.6;color:#5E7378;margin-top:10px;flex:1">Big launch, lots of energy, then attrition. By month 18 the Innovation Lab is repurposed, the Champion is gone, and the metrics are buried.</p></div>
+    <div style="padding:28px 24px;border-right:1px solid #DCEAEA;border-top:1px solid #0E3A44;min-height:200px;display:flex;flex-direction:column"><span class="mono" style="font-size:10.5px;letter-spacing:.06em;color:#B08A8A">SYMPTOM &middot; PERFORMATIVE</span><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:23px;color:#0E3A44;margin-top:10px">Theatre, not muscle</h3><p style="font-size:14px;line-height:1.6;color:#5E7378;margin-top:10px;flex:1">Ideation workshops with no path to funding. Challenges with no scaling mechanism. Posters about &ldquo;failing fast&rdquo; in a culture that punishes failure.</p></div>
+    <div style="padding:28px 24px;border-right:1px solid #DCEAEA;border-top:1px solid #0E3A44;min-height:200px;display:flex;flex-direction:column;background:#F1F8F8"><span class="mono" style="font-size:10.5px;letter-spacing:.06em;color:#127E88">OUR FIX &middot; EMBEDDED</span><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:23px;color:#0E3A44;margin-top:10px">Survives the QBR</h3><p style="font-size:14px;line-height:1.6;color:#5E7378;margin-top:10px;flex:1">Innovation only survives quarterly business reviews if it&rsquo;s embedded in the operating cadence, not bolted on. That&rsquo;s what we build.</p></div>
+  </div>
+</section>
+
+<!-- 02 — THE 5 PILLARS -->
+<section id="pillars" style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid #0E3A44">
+    <div>
+      <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 02 ) &mdash; The foundation</div>
+      <h2 style="font-weight:400;font-size:46px;line-height:1.02;letter-spacing:-.02em;color:#0E3A44;margin-top:12px">The five pillars of <span style="font-style:italic">Innovation Culture.</span></h2>
+    </div>
+    <p style="font-size:14.5px;line-height:1.6;color:#5E7378;max-width:330px">The foundation under every successful initiative we&rsquo;ve seen. Miss any one and the rest collapse within a year.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);border-left:1px solid #DCEAEA">
+    <div style="padding:26px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:230px;display:flex;flex-direction:column"><span style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#BFE1E1">01</span><div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:#127E88;margin-top:10px">FOUNDATION</div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#0E3A44;margin-top:6px">Psychological Safety</h3><p style="font-size:12.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">People speak up, challenge, and admit mistakes without fear. Edmondson&rsquo;s research-backed foundation.</p></div>
+    <div style="padding:26px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:230px;display:flex;flex-direction:column"><span style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#BFE1E1">02</span><div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:#127E88;margin-top:10px">METHOD</div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#0E3A44;margin-top:6px">Experimentation Mindset</h3><p style="font-size:12.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">Small, cheap, fast experiments by default. Hypothesis-driven backlog items. Death of the &ldquo;business case before code&rdquo; reflex.</p></div>
+    <div style="padding:26px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:230px;display:flex;flex-direction:column"><span style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#BFE1E1">03</span><div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:#127E88;margin-top:10px">CADENCE</div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#0E3A44;margin-top:6px">Continuous Learning</h3><p style="font-size:12.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">Retrospectives that change behaviour, not just collect post-its. Failure Forums. A real learning budget.</p></div>
+    <div style="padding:26px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:230px;display:flex;flex-direction:column"><span style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#BFE1E1">04</span><div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:#127E88;margin-top:10px">SPONSORSHIP</div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#0E3A44;margin-top:6px">Innovation Leadership</h3><p style="font-size:12.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">Leaders who model curiosity, fund experiments, and protect the time and space innovation needs to compound.</p></div>
+    <div style="padding:26px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:230px;display:flex;flex-direction:column"><span style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#BFE1E1">05</span><div class="mono" style="font-size:9.5px;letter-spacing:.06em;color:#127E88;margin-top:10px">STRUCTURE</div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:20px;color:#0E3A44;margin-top:6px">Cross-Functional Flow</h3><p style="font-size:12.5px;line-height:1.55;color:#5E7378;margin-top:8px;flex:1">Product, Eng, Design, Data, and Marketing in the same room. Value streams over silos.</p></div>
+  </div>
+</section>
+
+<!-- 03 — CEREMONIES (dark) -->
+<section style="margin-top:80px;background:#0B2E35;color:#E4F1F1;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-140px;right:-90px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.16),transparent 64%)"></div>
+  <div style="position:relative;max-width:1280px;margin:0 auto;padding:80px 30px">
+    <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#8FCFCF">( 03 ) &mdash; Innovation ceremonies</div>
+    <h2 style="font-weight:300;font-size:50px;line-height:1.02;letter-spacing:-.025em;color:#fff;margin-top:12px;max-width:820px">Embedded in SAFe events &mdash; <span style="font-style:italic;color:#8FCFCF">not bolted on.</span></h2>
+    <p style="font-size:16px;line-height:1.6;color:#A7C2C2;margin-top:18px;max-width:640px">Four lightweight ceremonies that plug directly into the PI cadence you already run. No new framework, no new committee, no new budget line &mdash; just better outcomes from the events you have.</p>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:44px;border-top:1px solid rgba(228,241,241,.16)">
+      <div style="padding:26px 32px 28px 0;border-right:1px solid rgba(228,241,241,.14);border-bottom:1px solid rgba(228,241,241,.14)"><div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:25px;color:#fff">Mutation Workshops</h3><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#8FCFCF">&#8634; 1 IP DAY</span></div><p style="font-size:14px;line-height:1.6;color:#A7C2C2;margin-top:10px">Teams identify external mutations &mdash; market, tech, regulatory &mdash; and design a small experiment to test their org&rsquo;s response. Embedded in the IP iteration so it never competes with delivery.</p><div class="mono" style="font-size:10.5px;letter-spacing:.04em;color:#6F9296;margin-top:12px">INNOVATION PLAYGROUND &middot; QUARTERLY</div></div>
+      <div style="padding:26px 0 28px 32px;border-bottom:1px solid rgba(228,241,241,.14)"><div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:25px;color:#fff">Failure Forums</h3><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#8FCFCF">&#8634; 1 PI RETRO</span></div><p style="font-size:14px;line-height:1.6;color:#A7C2C2;margin-top:10px">Teams share a failed experiment, the hypothesis it tested, and what the org learned. Leaders attend &mdash; and budget the next experiment based on what they heard. Kills the &ldquo;failure is career-limiting&rdquo; reflex.</p><div class="mono" style="font-size:10.5px;letter-spacing:.04em;color:#6F9296;margin-top:12px">MUTATION READINESS &middot; EVERY PI</div></div>
+      <div style="padding:26px 32px 0 0;border-right:1px solid rgba(228,241,241,.14)"><div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:25px;color:#fff">Mental Model Challenges</h3><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#8FCFCF">IN I&amp;A</span></div><p style="font-size:14px;line-height:1.6;color:#A7C2C2;margin-top:10px">A leadership-only session inside Inspect &amp; Adapt. Each leader names one mental model they hold about the business and invites the room to challenge it. The output: one assumption tested next PI &mdash; with budget.</p><div class="mono" style="font-size:10.5px;letter-spacing:.04em;color:#6F9296;margin-top:12px">MUTATION READINESS &middot; EVERY PI</div></div>
+      <div style="padding:26px 0 0 32px"><div style="display:flex;align-items:baseline;justify-content:space-between"><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:25px;color:#fff">AI Experimentation Sprints</h3><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#8FCFCF">2-WK SPRINT</span></div><p style="font-size:14px;line-height:1.6;color:#A7C2C2;margin-top:10px">One ART sprint each PI is reserved for AI experimentation. Teams pick a workflow, prototype an AI-augmented version, and report what changed. The portfolio funds the winners and kills the rest. Fast, cheap, compounding.</p><div class="mono" style="font-size:10.5px;letter-spacing:.04em;color:#6F9296;margin-top:12px">AI-NATIVE TRACK &middot; EVERY PI</div></div>
     </div>
   </div>
 </section>
 
-<!-- ============ 2. WHY INNOVATION FAILS ============ -->
-<section class="aa-svc-sec">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb">Why innovation programs fail</span>
-      <h2 class="aa-svc-h2">You can&rsquo;t buy innovation with <em>posters and hackathons.</em></h2>
-      <p class="aa-svc-sub">Every innovation initiative we&rsquo;ve been asked to rescue has the same diagnosis: no cultural foundation. The tools were fine. The leadership intent was fine. The soil wasn&rsquo;t.</p>
+<!-- 04 — BOOKS -->
+<section style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 04 ) &mdash; From Mark&rsquo;s books</div>
+  <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:54px;margin-top:16px;align-items:start">
+    <h2 style="font-weight:400;font-size:40px;line-height:1.08;letter-spacing:-.02em;color:#0E3A44">Two books. <span style="font-style:italic;color:#127E88">Both teachable today.</span></h2>
+    <p style="font-size:16px;line-height:1.6;color:#5E7378">Mark&rsquo;s books are forthcoming &mdash; but the concepts are already taught through our Innovation Framework training and the Mutation Readiness program. Read them when they ship, or work with the frameworks now.</p>
+  </div>
+  <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:36px">
+    <div style="border:1px solid #DCEAEA;background:#fff;padding:32px 30px;display:flex;flex-direction:column">
+      <span class="mono" style="font-size:10.5px;letter-spacing:.06em;color:#127E88">BOOK 1</span>
+      <h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:30px;color:#0E3A44;margin-top:10px">Mutation Readiness</h3>
+      <p style="font-size:14.5px;line-height:1.6;color:#5E7378;margin-top:6px">An Operating Manual for Innovation in the Age of AI.</p>
+      <p style="font-size:14px;line-height:1.6;color:#5E7378;margin-top:16px;flex:1">The diagnostic-first playbook for organisations facing accelerating external change. Six dimensions: Signal Sensing, Mental Model Agility, Experimentation Capacity, Decision Velocity, Learning Loops, Adaptive Architecture.</p>
+      <div class="mono" style="font-size:11px;letter-spacing:.03em;color:#88A0A4;margin-top:16px;padding-top:16px;border-top:1px solid #EDEDED">6 DIMENSIONS &middot; AI-AGE DIAGNOSTIC &middot; LEADERSHIP</div>
+      <div style="font-size:13.5px;color:#5E7378;margin-top:12px"><strong style="color:#0E3A44">Status:</strong> Book coming soon &mdash; concepts taught today through the Innovation Framework training and the free <a href="/assessments/" style="color:#127E88;font-weight:600">Mutation Readiness assessment</a>.</div>
     </div>
-    <div class="aa-svc-cmp">
-      <div class="aa-svc-cmp-card bad">
-        <span class="aa-svc-cmp-pill r">Symptom &middot; budget tourism</span>
-        <h3>The 18-month decay</h3>
-        <ul>
-          <li>Big launch, lots of energy, then attrition. By month 18, the Innovation Lab is repurposed, the Champion is gone, and the metrics are buried.</li>
-        </ul>
-      </div>
-      <div class="aa-svc-cmp-card bad">
-        <span class="aa-svc-cmp-pill r">Symptom &middot; performative</span>
-        <h3>Theatre, not muscle</h3>
-        <ul>
-          <li>Ideation workshops with no path to funding. Innovation challenges with no scaling mechanism. Posters about &ldquo;failing fast&rdquo; in a culture that punishes failure.</li>
-        </ul>
-      </div>
-      <div class="aa-svc-cmp-card last">
-        <span class="aa-svc-cmp-pill g">Our fix &middot; embedded</span>
-        <h3>Survives the QBR &mdash; how?</h3>
-        <ul>
-          <li>Innovation only survives quarterly business reviews if it&rsquo;s embedded in the operating cadence, not bolted on. That&rsquo;s what we build.</li>
-        </ul>
-      </div>
+    <div style="border:1px solid #DCEAEA;background:#fff;padding:32px 30px;display:flex;flex-direction:column">
+      <span class="mono" style="font-size:10.5px;letter-spacing:.06em;color:#127E88">BOOK 2</span>
+      <h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:30px;color:#0E3A44;margin-top:10px">Innovation Playground</h3>
+      <p style="font-size:14.5px;line-height:1.6;color:#5E7378;margin-top:6px">Where Teams Mutate, Compose, and Compound.</p>
+      <p style="font-size:14px;line-height:1.6;color:#5E7378;margin-top:16px;flex:1">The companion volume that turns the diagnostic into a practice. Mutation Workshops, Failure Forums, Mental Model Challenges, and the AI Experimentation Sprint pattern that powers compounding innovation.</p>
+      <div class="mono" style="font-size:11px;letter-spacing:.03em;color:#88A0A4;margin-top:16px;padding-top:16px;border-top:1px solid #EDEDED">5 PILLARS &middot; INNOVATION CEREMONIES &middot; PRACTITIONERS</div>
+      <div style="font-size:13.5px;color:#5E7378;margin-top:12px"><strong style="color:#0E3A44">Status:</strong> Book coming soon &mdash; ceremonies embedded today through the Innovation Framework training and on-site coaching during PI events.</div>
     </div>
   </div>
 </section>
 
-<!-- ============ 3. THE 5 PILLARS ============ -->
-<section class="aa-svc-sec alt" id="pillars">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb">The 5 pillars</span>
-      <h2 class="aa-svc-h2">The five pillars of <em>Innovation Culture</em></h2>
-      <p class="aa-svc-sub">The foundation under every successful innovation initiative we&rsquo;ve seen. Miss any one of these and the rest collapse within a year.</p>
+<!-- 05 — TRAINING FORMATS -->
+<section style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid #0E3A44">
+    <div>
+      <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 05 ) &mdash; Innovation Framework training</div>
+      <h2 style="font-weight:400;font-size:44px;line-height:1.02;letter-spacing:-.02em;color:#0E3A44;margin-top:12px">Three formats. <span style="font-style:italic">Pick what your team needs.</span></h2>
     </div>
-    <div class="aa-svc-comp">
-      <div class="aa-svc-cc spot">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-        <h3>Psychological Safety</h3>
-        <p>People speak up, challenge, and admit mistakes without fear. Edmondson&rsquo;s research-backed foundation.</p>
-        <p>Foundation</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
-        <h3>Experimentation Mindset</h3>
-        <p>Small, cheap, fast experiments default. Hypothesis-driven backlog items. Death of the &ldquo;business case before code&rdquo; reflex.</p>
-        <p>Method</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
-        <h3>Continuous Learning</h3>
-        <p>Retrospectives that change behaviour, not just collect post-its. Failure Forums. Learning budget.</p>
-        <p>Cadence</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-        <h3>Innovation Leadership</h3>
-        <p>Leaders who model curiosity, fund experiments, and protect the time and space innovation needs to compound.</p>
-        <p>Sponsorship</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg></div>
-        <h3>Cross-Functional Flow</h3>
-        <p>Innovation requires Product, Eng, Design, Data, and Marketing in the same room. Value streams over silos.</p>
-        <p>Structure</p>
-      </div>
-    </div>
+    <p style="font-size:14.5px;line-height:1.6;color:#5E7378;max-width:330px">All SPCT-led, live virtual or on-site in 9 languages. Concepts from both books baked into every cohort.</p>
+  </div>
+  <div class="g3" style="display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid #DCEAEA">
+    <div style="padding:28px 26px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:250px;display:flex;flex-direction:column"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-size:34px;color:#127E88">1d</span><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#88A0A4">FOUNDATIONS</span></div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#0E3A44;margin-top:12px">Practitioner</h3><p style="font-size:13.5px;line-height:1.6;color:#5E7378;margin-top:8px;flex:1">1-day cohort for teams. The 5 pillars, the four innovation ceremonies, and a working diagnostic for your team&rsquo;s current state.</p><div style="margin-top:14px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#5E7378"><span>&middot; 5 pillars deep-dive + self-diagnostic</span><span>&middot; Run a live Mutation Workshop</span><span>&middot; Design your first AI Experimentation Sprint</span></div></div>
+    <div style="padding:28px 26px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:250px;display:flex;flex-direction:column"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-size:34px;color:#127E88">2d</span><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#88A0A4">LEADERS</span></div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#0E3A44;margin-top:12px">Leader</h3><p style="font-size:13.5px;line-height:1.6;color:#5E7378;margin-top:8px;flex:1">2-day cohort for senior leaders. How to fund, protect, and scale innovation across a whole portfolio &mdash; without killing it.</p><div style="margin-top:14px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#5E7378"><span>&middot; Innovation funding patterns (LPM-aligned)</span><span>&middot; Leader Mental Model Challenge facilitation</span><span>&middot; Failure Forum sponsorship &amp; ROI defence</span></div></div>
+    <div style="padding:28px 26px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;min-height:250px;display:flex;flex-direction:column;background:#F1F8F8"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-size:34px;color:#127E88">3d</span><span class="mono" style="font-size:10px;letter-spacing:.05em;color:#127E88">ON-SITE EMBED</span></div><h3 style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;font-size:22px;color:#0E3A44;margin-top:12px">Coaching</h3><p style="font-size:13.5px;line-height:1.6;color:#5E7378;margin-top:8px;flex:1">3-day on-site embed. We run your next PI event with ceremonies live, train facilitators in-flight, and leave a working cadence behind.</p><div style="margin-top:14px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#5E7378"><span>&middot; Live PI Planning + Mutation Workshop</span><span>&middot; Live I&amp;A + Mental Model Challenge</span><span>&middot; Facilitator certification for sustainment</span></div></div>
   </div>
 </section>
 
-<!-- ============ 4. INNOVATION CEREMONIES IN SAFe EVENTS ============ -->
-<section class="aa-svc-sec">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb am">Innovation ceremonies</span>
-      <h2 class="aa-svc-h2">Innovation <em>embedded in SAFe events</em> &mdash; not bolted on</h2>
-      <p class="aa-svc-sub">Four lightweight ceremonies that plug directly into the PI cadence you already run. No new framework, no new committee, no new budget line. Just better outcomes from the events you have.</p>
-    </div>
-    <div class="aa-svc-comp">
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
-        <h3>Mutation Workshops</h3>
-        <p>Replaces 1 IP iteration day</p>
-        <p>Half-day workshop where teams identify external mutations (market, tech, regulatory) and design a small experiment to test their organization&rsquo;s response. Embedded in the IP iteration so it doesn&rsquo;t compete with delivery.</p>
-        <p>Innovation Playground concept &middot; Quarterly</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.84-2.75L13.74 4a2 2 0 00-3.48 0L3.18 16.25A2 2 0 005 19z"/></svg></div>
-        <h3>Failure Forums</h3>
-        <p>Replaces 1 PI retrospective</p>
-        <p>Structured forum where teams share a failed experiment, the hypothesis it tested, and what the org learned. Leaders attend &mdash; and budget the next experiment based on what they heard. Kills the &ldquo;failure is career-limiting&rdquo; reflex.</p>
-        <p>Mutation Readiness concept &middot; Every PI</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
-        <h3>Mental Model Challenges</h3>
-        <p>Embedded in Inspect &amp; Adapt</p>
-        <p>Leadership-only session held inside I&amp;A. Each leader names one mental model they hold about the business and invites the room to challenge it. The output is one assumption that gets tested next PI &mdash; with budget.</p>
-        <p>Mutation Readiness concept &middot; Every PI</p>
-      </div>
-      <div class="aa-svc-cc">
-        <div class="aa-svc-cc-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg></div>
-        <h3>AI Experimentation Sprints</h3>
-        <p>2-week sprint inside the PI</p>
-        <p>One ART sprint each PI is reserved for AI experimentation. Teams pick a workflow, prototype an AI-augmented version, and report what changed. The portfolio funds the winners and kills the rest. Fast, cheap, compounding.</p>
-        <p>AI-Native track &middot; Every PI</p>
-      </div>
-    </div>
+<!-- 06 — TESTIMONIAL -->
+<section style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 06 ) &mdash; From inside the rollouts</div>
+  <blockquote style="font-weight:300;font-size:38px;line-height:1.2;letter-spacing:-.015em;color:#0E3A44;margin-top:22px;max-width:960px;text-wrap:balance"><span style="color:#127E88">&ldquo;</span>Went from CSM to SAFe Practice Consultant in 18 months. Tripled my consulting rate. The career coaching was <span style="font-style:italic">the unlock.</span><span style="color:#127E88">&rdquo;</span></blockquote>
+  <div style="display:flex;align-items:center;gap:13px;margin-top:20px"><span style="width:40px;height:40px;border-radius:50%;overflow:hidden;flex:none;background:#0B2E35"><img src="https://agile-agilist.com/wp-content/uploads/2025/07/anna-ibm-m2WQLW4q8oc9o1kD.jpg" alt="Anna M." style="width:100%;height:100%;object-fit:cover;display:block"></span><span style="font-size:14px;color:#0E3A44"><strong style="font-weight:600">Anna M.</strong> <span style="color:#88A0A4">&middot;</span> Senior Transformation Consultant, IBM</span></div>
+</section>
+
+<!-- 07 — INDUSTRIES / RESULTS -->
+<section style="max-width:1280px;margin:0 auto;padding:80px 30px 0">
+  <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 07 ) &mdash; Industries we serve</div>
+  <div class="g2" style="display:grid;grid-template-columns:1.1fr .9fr;gap:40px;margin-top:12px;align-items:end">
+    <h2 style="font-weight:400;font-size:44px;line-height:1.04;letter-spacing:-.02em;color:#0E3A44">Built for the global &mdash; <span style="font-style:italic;color:#127E88">optimized for the local.</span></h2>
+    <p style="font-size:15px;line-height:1.6;color:#5E7378">We deliver into the sectors where transformation is hardest &mdash; banking, energy, defense, insurance, and professional services &mdash; and where the credential behind the trainer matters most.</p>
+  </div>
+  <div class="g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:34px;border-top:1px solid #0E3A44;border-left:1px solid #DCEAEA">
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Financial Services</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Public Sector &amp; Government</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Non-Profit &amp; Social Impact</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Telecommunications</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Education &amp; Healthcare</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Defense &amp; Aerospace</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Professional Services &amp; Tech</span></div>
+    <div style="padding:22px 20px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;gap:11px;min-height:74px"><span style="color:#127E88;font-size:13px">&#9670;</span><span style="font-size:14px;font-weight:600;color:#0E3A44">Goods-Producing &amp; Supply Chain</span></div>
+  </div>
+  <div class="mono" style="text-align:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#88A0A4;margin-top:44px">Trusted by teams at</div>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px">
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">Deloitte</span>
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">McKinsey</span>
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">KPMG</span>
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">BCG</span>
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">PwC</span>
+    <span style="font-size:14px;font-weight:600;color:#0E3A44;border:1px solid #DCEAEA;background:#fff;padding:9px 18px;border-radius:2px">IBM</span>
+    <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:15px;color:#fff;background:#0B2E35;padding:9px 18px;border-radius:2px">Federal</span>
+    <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:15px;color:#fff;background:#0B2E35;padding:9px 18px;border-radius:2px">Provincial</span>
+  </div>
+  <div class="g3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px">
+    <div style="border:1px solid #DCEAEA;background:#fff;padding:28px 26px;display:flex;flex-direction:column"><div class="mono" style="font-size:12px;font-weight:700;color:#0E3A44;letter-spacing:.03em">TD BANK</div><p style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:18px;line-height:1.42;color:#0E3A44;margin-top:14px;flex:1">&ldquo;Led Agile transformation across a 5,000+ member Business Banking portfolio. Delivery predictability up <span style="color:#127E88">40%</span>.&rdquo;</p><div style="border-top:1px solid #DCEAEA;margin-top:16px;padding-top:14px;font-size:13px;color:#5E7378"><strong style="color:#0E3A44;font-weight:600">Anne H.</strong> &mdash; AVP, Commercial Banking</div></div>
+    <div style="border:1px solid #DCEAEA;background:#fff;padding:28px 26px;display:flex;flex-direction:column"><div class="mono" style="font-size:12px;font-weight:700;color:#0E3A44;letter-spacing:.03em">BELL</div><p style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:18px;line-height:1.42;color:#0E3A44;margin-top:14px;flex:1">&ldquo;Complex change management with executive alignment and Agile maturity assessments. <span style="color:#127E88">20%</span> uplift in customer retention.&rdquo;</p><div style="border-top:1px solid #DCEAEA;margin-top:16px;padding-top:14px;font-size:13px;color:#5E7378"><strong style="color:#0E3A44;font-weight:600">Mara Cal.</strong> &mdash; Senior Manager</div></div>
+    <div style="border:1px solid #DCEAEA;background:#fff;padding:28px 26px;display:flex;flex-direction:column"><div class="mono" style="font-size:12px;font-weight:700;color:#0E3A44;letter-spacing:.03em">SUNCOR</div><p style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:18px;line-height:1.42;color:#0E3A44;margin-top:14px;flex:1">&ldquo;Dual-track Agile and Portfolio frameworks. <span style="color:#127E88">25%</span> increase in strategic initiative throughput.&rdquo;</p><div style="border-top:1px solid #DCEAEA;margin-top:16px;padding-top:14px;font-size:13px;color:#5E7378"><strong style="color:#0E3A44;font-weight:600">Denise A.</strong> &mdash; Portfolio Director</div></div>
+  </div>
+  <p style="text-align:center;font-size:11.5px;color:#88A0A4;margin-top:22px;font-style:italic;line-height:1.6;max-width:760px;margin-left:auto;margin-right:auto">Logos shown represent organizations where participants from Agile Agilist programs work or where private engagements have been delivered. Not an endorsement.</p>
+  <div style="text-align:center;margin-top:26px">
+    <a class="btn-dark" href="/customers/" style="display:inline-block;font-size:15px;font-weight:600;color:#fff;background:#0E3A44;padding:15px 30px;border-radius:2px">See the full customer results &#10230;</a>
   </div>
 </section>
 
-<!-- ============ 5. BOOKS + INNOVATION FRAMEWORK ============ -->
-<section class="aa-svc-sec alt">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb">From Mark&rsquo;s books</span>
-      <h2 class="aa-svc-h2">Two books. <em>Both teachable today.</em></h2>
-      <p class="aa-svc-sub">Mark&rsquo;s books are forthcoming &mdash; but the concepts are already taught through our Innovation Framework training and the Mutation Readiness program. Read them when they ship, or work with the frameworks now.</p>
-    </div>
-    <div class="aa-svc-cmp">
-      <div class="aa-svc-cmp-card mid">
-        <span class="aa-svc-cmp-pill a">Book 1</span>
-        <h3><em>Mutation Readiness</em></h3>
-        <ul>
-          <li>An Operating Manual for Innovation in the Age of AI</li>
-          <li>The diagnostic-first playbook for organizations facing accelerating external change. Six dimensions: Signal Sensing, Mental Model Agility, Experimentation Capacity, Decision Velocity, Learning Loops, Adaptive Architecture.</li>
-          <li>6 dimensions &middot; AI-age diagnostic &middot; Leadership</li>
-          <li><strong>Status:</strong> Book coming soon &mdash; concepts taught today through the Innovation Framework training and the free <a href="/assessments/mutation-readiness/" style="color:var(--t);text-decoration:underline">Mutation Readiness assessment</a>.</li>
-        </ul>
-      </div>
-      <div class="aa-svc-cmp-card mid">
-        <span class="aa-svc-cmp-pill a">Book 2</span>
-        <h3><em>Innovation Playground</em></h3>
-        <ul>
-          <li>Where Teams Mutate, Compose, and Compound</li>
-          <li>The companion volume that turns the diagnostic into a practice. Mutation Workshops, Failure Forums, Mental Model Challenges, and the AI Experimentation Sprint pattern that powers compounding innovation.</li>
-          <li>5 pillars &middot; Innovation ceremonies &middot; Practitioners</li>
-          <li><strong>Status:</strong> Book coming soon &mdash; ceremonies embedded today through the Innovation Framework training and on-site coaching during PI events.</li>
-        </ul>
-      </div>
-    </div>
+<!-- 08 — RELATED -->
+<section style="max-width:1280px;margin:0 auto;padding:72px 30px 0">
+  <div class="mono" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#127E88">( 08 ) &mdash; Related services</div>
+  <div class="g3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:18px;border-top:1px solid #0E3A44;border-left:1px solid #DCEAEA">
+    <a class="cell" href="/services/business-agility/" style="padding:24px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:20px;color:#0E3A44">Business Agility</span><span style="color:#127E88">&#10230;</span></a>
+    <a class="cell" href="/services/product-operating-model/" style="padding:24px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:20px;color:#0E3A44">Product Operating Model</span><span style="color:#127E88">&#10230;</span></a>
+    <a class="cell" href="/services/digital-transformation/" style="padding:24px;border-right:1px solid #DCEAEA;border-bottom:1px solid #DCEAEA;display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:20px;color:#0E3A44">Digital Transformation</span><span style="color:#127E88">&#10230;</span></a>
   </div>
 </section>
 
-<!-- ============ 6. INNOVATION FRAMEWORK TRAINING ============ -->
-<section class="aa-svc-sec">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb">Innovation Framework training</span>
-      <h2 class="aa-svc-h2">Three formats. <em>Pick the one your team needs.</em></h2>
-      <p class="aa-svc-sub">All formats SPCT-led, available live virtual or on-site in 9 languages. Concepts from <em>Mutation Readiness</em> and <em>Innovation Playground</em> baked into every cohort.</p>
+<!-- CONTACT CTA -->
+<section id="contact" style="max-width:1280px;margin:0 auto;padding:80px 30px">
+  <div style="background:#0B2E35;padding:58px 54px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-100px;right:-60px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.22),transparent 65%)"></div>
+    <div style="position:relative;max-width:580px">
+      <h2 style="font-weight:300;font-size:38px;line-height:1.08;letter-spacing:-.02em;color:#fff">Stop launching innovation. Embed it.</h2>
+      <p style="font-size:16px;line-height:1.6;color:#A7C2C2;margin-top:14px">15 minutes with an SPCT. We&rsquo;ll diagnose your Innovation Culture across the 5 pillars and name the one ceremony to add to your next PI &mdash; whether you hire us or not.</p>
     </div>
-    <div class="aa-svc-steps">
-      <div class="aa-svc-step lead">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">1d</div><div><div class="aa-svc-step-meta">Foundations</div><h3>Innovation Framework: Practitioner</h3></div></div>
-        <p class="aa-svc-step-desc">1-day cohort for teams. The 5 pillars, the four innovation ceremonies, and a working diagnostic for your team&rsquo;s current state.</p>
-        <ul>
-          <li>5 pillars deep-dive + self-diagnostic</li>
-          <li>Run a live Mutation Workshop</li>
-          <li>Design your first AI Experimentation Sprint</li>
-        </ul>
-        <a class="aa-svc-step-cta solid" href="https://meetings.hubspot.com/john2795">Book the cohort &rarr;</a>
-      </div>
-      <div class="aa-svc-step">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">2d</div><div><div class="aa-svc-step-meta">Leaders</div><h3>Innovation Framework: Leader</h3></div></div>
-        <p class="aa-svc-step-desc">2-day cohort for senior leaders. How to fund, protect, and scale innovation across an entire portfolio &mdash; without killing it.</p>
-        <ul>
-          <li>Innovation funding patterns (LPM-aligned)</li>
-          <li>Leader Mental Model Challenge facilitation</li>
-          <li>Failure Forum sponsorship &amp; ROI defence</li>
-        </ul>
-        <a class="aa-svc-step-cta outline" href="https://meetings.hubspot.com/john2795">Book the cohort &rarr;</a>
-      </div>
-      <div class="aa-svc-step">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">3d</div><div><div class="aa-svc-step-meta">On-site embed</div><h3>Innovation Framework: Coaching</h3></div></div>
-        <p class="aa-svc-step-desc">3-day on-site embed. We run your next PI event with innovation ceremonies live, train your facilitators in-flight, and leave a working cadence behind.</p>
-        <ul>
-          <li>Live PI Planning + Mutation Workshop</li>
-          <li>Live I&amp;A + Mental Model Challenge</li>
-          <li>Facilitator certification for sustainment</li>
-        </ul>
-        <a class="aa-svc-step-cta outline" href="https://meetings.hubspot.com/john2795">Scope the embed &rarr;</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 7. PHASE 2 - INNOVATION CERTIFICATION TRACK ============ -->
-<section class="aa-svc-sec alt">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb am">&#128640; Coming &middot; Phase 2 roadmap</span>
-      <h2 class="aa-svc-h2">Innovation Certification track: <em>Practitioner &rarr; Leader &rarr; Master</em></h2>
-      <p class="aa-svc-sub">A three-stage certification path under development. Today: live cohorts. Tomorrow: a stackable certification.</p>
-    </div>
-    <div class="aa-svc-steps">
-      <div class="aa-svc-step">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">P</div><div><div class="aa-svc-step-meta">Live today</div><h3>Innovation Practitioner</h3></div></div>
-        <p class="aa-svc-step-desc">Run the 5 pillars and 4 ceremonies inside your team or ART. Badge for everyone who clears the Practitioner cohort.</p>
-      </div>
-      <div class="aa-svc-step">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">L</div><div><div class="aa-svc-step-meta">Live today</div><h3>Innovation Leader</h3></div></div>
-        <p class="aa-svc-step-desc">Lead, fund, and protect an Innovation Culture across a portfolio. Badge for execs and senior leaders who complete the Leader cohort.</p>
-      </div>
-      <div class="aa-svc-step">
-        <div class="aa-svc-step-head"><div class="aa-svc-step-num">M</div><div><div class="aa-svc-step-meta">Live today</div><h3>Innovation Master</h3></div></div>
-        <p class="aa-svc-step-desc">Train others. The instructor certification &mdash; for internal change agents who want to scale the program org-wide.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 8. CROSS-LINK COHORTS + METHODOLOGY ============ -->
-<section class="aa-svc-sec">
-  <div class="aa-svc-in">
-    <div class="aa-svc-meth">
-      <div class="aa-svc-meth-left">
-        <span class="aa-svc-eb">Pairs well with</span>
-        <h2>Innovation lives <em>inside the operating model.</em></h2>
-        <p>The Innovation Framework only compounds when the operating model has room for it. Pair this work with our Business Agility methodology and the SAFe cohorts that protect time for experimentation.</p>
-        <p>Start with the free Innovation Framework assessment to see where your team stands across the 5 pillars.</p>
-        <div class="aa-svc-meth-cta">
-          <a class="aa-svc-btn-am" href="/services/business-agility/methodology/" style="padding:13px 24px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px">See the methodology &rarr;</a>
-          <a class="aa-svc-inl-cta" href="/assessments/innovation-framework/" style="margin-top:0">Take the assessment</a>
-        </div>
-      </div>
-      <div class="aa-svc-coh">
-        <a class="aa-svc-coh-card am" href="/ai-native-foundations/">
-          <div class="aa-svc-coh-badge">ANF</div>
-          <div class="aa-svc-coh-name">AI-Native Foundations</div>
-          <div class="aa-svc-coh-meta">1 day &middot; Innovation + AI</div>
-        </a>
-        <a class="aa-svc-coh-card am" href="/lpm/">
-          <div class="aa-svc-coh-badge">LPM</div>
-          <div class="aa-svc-coh-name">Lean Portfolio Mgmt</div>
-          <div class="aa-svc-coh-meta">3 days &middot; Funds innovation</div>
-        </a>
-        <a class="aa-svc-coh-card tl" href="/leading-safe-agilist/">
-          <div class="aa-svc-coh-badge">SA</div>
-          <div class="aa-svc-coh-name">Leading SAFe</div>
-          <div class="aa-svc-coh-meta">2 days &middot; Leaders</div>
-        </a>
-        <a class="aa-svc-coh-card tl" href="/popm/">
-          <div class="aa-svc-coh-badge">POPM</div>
-          <div class="aa-svc-coh-name">Product Owner / PM</div>
-          <div class="aa-svc-coh-meta">2 days &middot; Experimentation</div>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 9. TESTIMONIALS ============ -->
-<section class="aa-svc-sec alt">
-  <div class="aa-svc-in">
-    <div class="aa-svc-head">
-      <span class="aa-svc-eb">From inside the rollouts</span>
-      <h2 class="aa-svc-h2">What innovation leaders say</h2>
-    </div>
-    <div class="aa-svc-test">
-      <div class="aa-svc-tc">
-        <span class="aa-svc-tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <p class="aa-svc-tc-q">Went from CSM to SAFe Practice Consultant in 18 months. Tripled my consulting rate. The career coaching was the unlock.</p>
-        <div class="aa-svc-tc-auth"><div class="aa-svc-tc-av"><img src="https://agile-agilist.com/wp-content/uploads/2025/07/anna-ibm-m2WQLW4q8oc9o1kD.jpg" alt="Anna M. - IBM"></div><div><div class="aa-svc-tc-name">Anna M.</div><div class="aa-svc-tc-meta">Senior Transformation Consultant &middot; IBM</div></div></div>
-      </div>
-      <div class="aa-svc-tc">
-        <span class="aa-svc-tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <p class="aa-svc-tc-q">Restructured our $80M annual portfolio from project funding to Lean Budgets within 6 months. The Guardrails framework transformed Finance partnership.</p>
-        <div class="aa-svc-tc-auth"><div class="aa-svc-tc-av"><img src="https://agile-agilist.com/wp-content/uploads/2025/07/irene-accenture-mjE9RE249rsp8NpJ.jpg" alt="Irene K. - Accenture"></div><div><div class="aa-svc-tc-name">Irene K.</div><div class="aa-svc-tc-meta">Director of Portfolio Mgmt &middot; Accenture</div></div></div>
-      </div>
-      <div class="aa-svc-tc">
-        <span class="aa-svc-tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <p class="aa-svc-tc-q">Used SAFe to launch our first DevSecOps Agile Release Train. Cut delivery time by 40% while meeting all FedRAMP gates. The SPCT trainer pace + military context discipline was a perfect mix.</p>
-        <div class="aa-svc-tc-auth"><div class="aa-svc-tc-av"><img src="https://agile-agilist.com/wp-content/uploads/2025/07/steve-airforce-A854b5pMwxCW9nxW.jpg" alt="Steve R. - US Air Force"></div><div><div class="aa-svc-tc-name">Steve R.</div><div class="aa-svc-tc-meta">SAFe Release Train Engineer &middot; US Air Force</div></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 10. FINAL CTA ============ -->
-<section class="aa-svc-fc">
-  <div class="aa-svc-fc-in">
-    <span class="aa-svc-fc-eb">&#127919; Next step</span>
-    <h2>Stop launching innovation. <em>Embed it.</em></h2>
-    <p>15 minutes with an SPCT. We&rsquo;ll diagnose your current Innovation Culture across the 5 pillars and tell you the one ceremony to add to your next PI &mdash; whether you hire us or not.</p>
-    <div class="aa-svc-fc-row">
-      <a class="aa-svc-btn-am" href="https://meetings.hubspot.com/john2795">Book an Innovation Culture consult &rarr;</a>
-      <a class="aa-svc-btn-ghost" href="/assessments/innovation-framework/">Take the free assessment</a>
-    </div>
-    <div class="aa-svc-fc-attr">
-      <span><strong>SAFe&reg; Gold Partner</strong></span><span class="sep">&middot;</span>
-      <span>SPCT-led delivery</span><span class="sep">&middot;</span>
-      <span>2,500+ certified</span><span class="sep">&middot;</span>
-      <span>9 languages &middot; 12 countries</span>
+    <div style="position:relative;display:flex;flex-direction:column;gap:12px;min-width:250px">
+      <a class="btn-teal" href="https://meetings.hubspot.com/john2795" style="font-size:15.5px;font-weight:600;color:#0B2E35;background:#8FCFCF;padding:15px 28px;border-radius:2px;text-align:center;transition:background .18s ease">Book an Innovation Culture consult &#10230;</a>
+      <a class="btn-ghost" href="/assessments/" style="font-size:15.5px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.3);padding:15px 28px;border-radius:2px;text-align:center;transition:border-color .18s ease">Take the free assessment</a>
     </div>
   </div>
 </section>
