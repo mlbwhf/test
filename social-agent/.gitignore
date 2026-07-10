@@ -1,0 +1,5 @@
+drafts/
+outbox/
+history/
+state.json
+__pycache__/

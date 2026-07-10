@@ -1,0 +1,74 @@
+# Social media account registry.
+# Each account is an isolated "context": its own focus, voice, audience,
+# hashtags, topic keywords (used for mix-up detection) and publisher.
+#
+# Switch the active account with:  python -m socialagent use <id>
+#
+# publisher options:
+#   outbox   - dry run: writes the final post to social-agent/outbox/ (default, safe)
+#   linkedin - posts via the LinkedIn REST API (needs env token, see publisher_config)
+#   buffer   - queues via the Buffer API
+#   webhook  - POSTs the post JSON to a workflow URL (Zapier / Make / n8n)
+
+accounts:
+  - id: agile-agilist
+    name: Agile Agilist — Company Page
+    platform: linkedin
+    focus: >
+      SAFe training and certification (Leading SAFe, SAFe Scrum Master, ASPC/SPC),
+      AI-native agile transformation, enterprise agility for delivery leaders.
+    audience: >
+      Delivery managers, RTEs, agile coaches, and transformation leads in
+      mid-to-large enterprises, primarily North America and UK/EU.
+    voice: >
+      Authoritative but practical. Speaks from real transformation experience.
+      No hype, no buzzword soup. Short paragraphs, concrete takeaways,
+      one clear call to action (usually a cohort date or course page).
+    hashtags: ["#SAFe", "#LeadingSAFe", "#AgileTransformation", "#ScaledAgile", "#AINative"]
+    topics: [safe, leading safe, scaled agile, rte, pi planning, art, spc, aspc,
+             scrum master, certification, cohort, agile transformation, ai-native]
+    publisher: outbox
+    publisher_config: {}
+
+  - id: personal-brand
+    name: Founder — Personal LinkedIn
+    platform: linkedin
+    focus: >
+      First-person lessons from building a training business, AI tooling for
+      consultants, opinions on where agile and AI-assisted delivery are heading.
+    audience: >
+      Peers: trainers, consultants, founders of boutique services firms;
+      prospective corporate clients who buy from the person, not the brand.
+    voice: >
+      First person, candid, slightly contrarian. Stories and specifics over
+      frameworks. Comfortable admitting mistakes. Soft CTA or none at all.
+    hashtags: ["#BuildInPublic", "#Consulting", "#AI", "#Agile"]
+    topics: [founder, lessons, story, ai tools, claude, automation, consulting,
+             training business, marketing, personal]
+    publisher: outbox
+    publisher_config: {}
+
+  # Example of a fully wired account — copy and adapt.
+  # - id: agile-agilist-video
+  #   name: Agile Agilist — Video / Shorts
+  #   platform: youtube
+  #   focus: Short-form explainers on SAFe concepts and AI-native delivery.
+  #   audience: Practitioners studying for certification exams.
+  #   voice: Energetic, tightly scripted, one concept per video, hook in 3 seconds.
+  #   hashtags: ["#SAFe", "#Shorts"]
+  #   topics: [video, short, explainer, exam prep]
+  #   publisher: webhook
+  #   publisher_config:
+  #     url_env: SOCIAL_WEBHOOK_URL        # env var holding the Zapier/Make URL
+  # - id: agile-agilist-buffer
+  #   ...
+  #   publisher: buffer
+  #   publisher_config:
+  #     token_env: BUFFER_ACCESS_TOKEN     # env var holding the Buffer token
+  #     profile_id: "5xxxxxxxxxxxxxxxxxxx" # Buffer profile to queue into
+  # - id: agile-agilist-li-api
+  #   ...
+  #   publisher: linkedin
+  #   publisher_config:
+  #     token_env: LINKEDIN_ACCESS_TOKEN   # env var holding the OAuth token
+  #     author_urn: "urn:li:organization:12345678"  # or urn:li:person:...
