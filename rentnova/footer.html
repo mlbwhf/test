@@ -1,0 +1,176 @@
+<!--
+  RentNova — site-wide footer (pure HTML, paste-ready)
+  ----------------------------------------------------
+  Same design as rentnova-site-footer-snippet.php but zero PHP.
+  Every placeholder is plain text — edit inline before pasting.
+
+  INSTALL (Kadence — 2 minutes)
+  1. Appearance → Customize → Footer → Bottom Row → set to 1 column,
+     "Custom HTML" (or Appearance → Widgets → Bottom Footer Section 1).
+  2. Add a Custom HTML widget → paste this entire file.
+  3. Save. Purge Cloudflare cache. Load in incognito.
+
+  If you want THIS footer to be the ONLY thing in the site's footer:
+  Customize → Footer → hide the Top Row + Middle Row, keep only Bottom.
+
+  EDIT THESE BEFORE PASTING (search-and-replace)
+    [STR-LICENSE]        → your Toronto STR licence number
+    hello@rent-nova.com  → your real inbox
+    +19055550143 / +1 (905) 555-0143  → your real phone (2 spots each)
+    https://instagram.com/rentnova    → real Instagram URL
+    https://linkedin.com/company/rentnova → real LinkedIn URL
+    © 2026               → bump the year if needed
+
+  Fonts (Archivo / Hanken Grotesk / IBM Plex Mono) auto-load from
+  Google Fonts. Full-bleed via width:100vw / margin-left:-50vw so it
+  escapes Kadence's content container.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+.rn-footer{
+	width:100vw; position:relative; left:50%; right:50%;
+	margin-left:-50vw; margin-right:-50vw;
+	background:#16241b; color:#f1efe8;
+	font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+	font-size:14.5px; line-height:1.55;
+	box-sizing:border-box; -webkit-font-smoothing:antialiased;
+}
+.rn-footer *,.rn-footer *::before,.rn-footer *::after{ box-sizing:border-box; }
+.rn-footer a{ color:#f1efe8; text-decoration:none; transition:color .15s ease; }
+.rn-footer a:hover{ color:#e0a583; }
+
+/* Compliance strip */
+.rn-footer__comply{ background:#1a2e21; border-bottom:1px solid #2f4537; }
+.rn-footer__comply-in{ max-width:1320px; margin:0 auto; padding:18px 56px; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.rn-footer__comply-c strong{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.16em; color:#e0a583; text-transform:uppercase; margin-bottom:4px; font-weight:500; }
+.rn-footer__comply-c span{ font-size:13.5px; color:#f1efe8; font-weight:600; }
+.rn-footer__comply-c mark{ background:none; color:#8ba090; font-weight:400; }
+
+/* Main grid */
+.rn-footer__main{ max-width:1320px; margin:0 auto; padding:56px 56px 40px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:48px; }
+.rn-footer__brand-name{ font-family:'Archivo',sans-serif; font-size:28px; font-weight:800; letter-spacing:-.02em; display:block; margin-bottom:8px; }
+.rn-footer__brand-loc{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; color:#7f9384; text-transform:uppercase; display:block; margin-bottom:22px; }
+.rn-footer__brand-tag{ font-size:14.5px; color:#c8d2c8; margin:0 0 24px; max-width:340px; line-height:1.6; }
+.rn-footer__contact{ display:flex; flex-direction:column; gap:6px; font-size:14px; }
+.rn-footer__contact strong{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.16em; color:#e0a583; text-transform:uppercase; font-weight:500; margin-right:8px; }
+
+.rn-footer__col h3{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.16em; color:#e0a583; text-transform:uppercase; margin:0 0 18px; font-weight:500; }
+.rn-footer__col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+.rn-footer__col li{ font-size:14.5px; }
+
+/* Bottom bar */
+.rn-footer__bar{ border-top:1px solid #2f4537; }
+.rn-footer__bar-in{ max-width:1320px; margin:0 auto; padding:22px 56px; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
+.rn-footer__copy{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em; color:#7f9384; text-transform:uppercase; }
+.rn-footer__copy span{ color:#e0a583; margin-left:12px; }
+.rn-footer__social{ display:flex; gap:20px; align-items:center; }
+.rn-footer__social a{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8ba090; border-bottom:1px solid transparent; padding-bottom:2px; }
+.rn-footer__social a:hover{ color:#e0a583; border-color:#e0a583; }
+.rn-footer__made{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; color:#8ba090; text-transform:uppercase; }
+.rn-footer__made em{ font-style:normal; color:#e0a583; }
+
+@media (max-width:1100px){
+	.rn-footer__main{ grid-template-columns:1fr 1fr 1fr; gap:40px 32px; }
+	.rn-footer__brand{ grid-column:1 / -1; }
+}
+@media (max-width:860px){
+	.rn-footer__comply-in{ grid-template-columns:1fr; padding:16px 28px; gap:12px; }
+	.rn-footer__main{ grid-template-columns:1fr; padding:40px 28px 28px; gap:32px; }
+	.rn-footer__bar-in{ padding:20px 28px; flex-direction:column; align-items:flex-start; gap:16px; }
+}
+</style>
+
+<footer class="rn-footer" role="contentinfo">
+
+	<!-- Compliance strip -->
+	<div class="rn-footer__comply">
+		<div class="rn-footer__comply-in">
+			<div class="rn-footer__comply-c">
+				<strong>Toronto STR license</strong>
+				<span>#[STR-LICENSE] · <mark>displayed on every stay confirmation</mark></span>
+			</div>
+			<div class="rn-footer__comply-c">
+				<strong>MAT included</strong>
+				<span>Toronto MAT (6%) already in the nightly rate — <mark>no surprise line item</mark></span>
+			</div>
+			<div class="rn-footer__comply-c">
+				<strong>Insured to $1M</strong>
+				<span>Every guest stay covered by short-term rental liability + property insurance</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Main grid: brand + 4 link columns -->
+	<div class="rn-footer__main">
+
+		<div class="rn-footer__brand">
+			<span class="rn-footer__brand-name">RentNova</span>
+			<span class="rn-footer__brand-loc">Mississauga · GTA</span>
+			<p class="rn-footer__brand-tag">Direct-book short stays across Mississauga and the western GTA. Homes we designed, built, furnished and now run.</p>
+			<div class="rn-footer__contact">
+				<div><strong>Email</strong><a href="mailto:hello@rent-nova.com">hello@rent-nova.com</a></div>
+				<div><strong>Phone</strong><a href="tel:+19055550143">+1 (905) 555-0143</a></div>
+				<div><strong>Hours</strong>Mon–Fri · 9am–6pm ET</div>
+			</div>
+		</div>
+
+		<nav class="rn-footer__col" aria-label="Explore">
+			<h3>Explore</h3>
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/stays/">Stays</a></li>
+				<li><a href="/guide/">Guide</a></li>
+				<li><a href="/about/">About</a></li>
+			</ul>
+		</nav>
+
+		<nav class="rn-footer__col" aria-label="For owners">
+			<h3>For owners</h3>
+			<ul>
+				<li><a href="/list-with-us/">List with us</a></li>
+				<li><a href="/contact/">Free feasibility →</a></li>
+				<li><a href="/guide/">How it works</a></li>
+			</ul>
+		</nav>
+
+		<nav class="rn-footer__col" aria-label="Company">
+			<h3>Company</h3>
+			<ul>
+				<li><a href="/about/">About</a></li>
+				<li><a href="/contact/">Contact</a></li>
+				<li><a href="/careers/">Careers</a></li>
+			</ul>
+		</nav>
+
+		<nav class="rn-footer__col" aria-label="Legal">
+			<h3>Legal</h3>
+			<ul>
+				<li><a href="/privacy/">Privacy</a></li>
+				<li><a href="/terms/">Terms of service</a></li>
+				<li><a href="/cancellation/">Cancellation policy</a></li>
+				<li><a href="/house-rules/">House rules</a></li>
+			</ul>
+		</nav>
+
+	</div>
+
+	<!-- Bottom bar -->
+	<div class="rn-footer__bar">
+		<div class="rn-footer__bar-in">
+			<div class="rn-footer__copy">
+				© 2026 RentNova · Mississauga &amp; the GTA
+				<span>STR #[STR-LICENSE]</span>
+			</div>
+			<div class="rn-footer__social">
+				<a href="https://instagram.com/rentnova" rel="me noopener">Instagram</a>
+				<a href="https://linkedin.com/company/rentnova" rel="me noopener">LinkedIn</a>
+			</div>
+			<div class="rn-footer__made">Made in <em>Mississauga</em></div>
+		</div>
+	</div>
+
+</footer>
