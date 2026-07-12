@@ -32,13 +32,22 @@ Everything below is committed to git (secrets excluded — `.env` is git-ignored
   python3 src/eventbrite_pull.py --days 30 --expand-event
   ```
 
-### 2. Import 2-year sales CSV → Airtable baseline — ⛔ blocked on the CSV
-- **The CSV was not included** in the uploads, so there was nothing to import.
-- Ready to go the moment you provide it: `scripts/airtable_import_baseline.py` parses the CSV,
-  derives `course_family` with the same logic as the live feed, and batches into Airtable.
-- Airtable access is live via MCP. One base is visible: **"Eventbrite Series Automator"**
-  (`appwJMaD43wjjjPI6`) — it has no registration/snapshot tables yet. Confirm whether to import
-  there or into a new dedicated base, and I'll create the schema + load the rows.
+### 2. Import 2-year sales CSV → Airtable baseline — ✅ base built, import in progress
+- Created a new dedicated Airtable base **"Ads Agent"** (`appCXSWnIISm0c6iF`) with two tables:
+  - **Registration Baseline** (`tblGznEo7jS2Dz0rs`) — ground-truth registrations
+  - **Ad Daily Snapshots** (`tblfivllr8U7t3hFX`) — per-campaign/platform/day (Layer 1)
+- Parsed the CSV (`Certified_SAFe_...Sales_...csv`): a per-class Eventbrite sales export,
+  2022-01-07 → 2026-08-10. Registrations = **Paid tickets sold**, revenue = **Net sales**.
+  Kept the 220 classes with ≥1 paid registration (zero-sale scheduled classes excluded).
+  Reconciles to the CSV TOTALS: **433 registrations, $974,402.94 net**.
+- **Course-family note:** per your correction, **ASPC is its own family** (23 classes,
+  41 registrations, first sale 2025-02-12 — the newer course), kept separate from **SPC**
+  (149 registrations). This split is locked into `eventbrite_pull.course_family` + its self-test.
+- Import status: the Airtable MCP connection was unstable this session and dropped mid-write.
+  Rows landed so far are in the table; any remainder loads reliably with
+  `scripts/airtable_import_baseline.py` (set `AIRTABLE_BASE_ID=appCXSWnIISm0c6iF`,
+  `AIRTABLE_TABLE="Registration Baseline"`). Family breakdown of the full 220:
+  RTE 164, SPC 149, ASPC 41, LEADING_SAFE 29, OTHER 23, SCRUM_MASTER 10, AI_NATIVE 9, POPM 8.
 
 ### 3. Google Ads Script → Google Sheet — ✅ built (paste-to-install)
 - `scripts/google_ads_daily_spend.gs`, with your Sheet ID

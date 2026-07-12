@@ -20,7 +20,8 @@ BASE = "https://www.eventbriteapi.com/v3"
 def course_family(name: str) -> str:
     n = (name or "").lower()
     if "release train" in n or "rte" in n: return "RTE"
-    if "program consultant" in n or "spc" in n: return "SPC_ASPC"
+    if "aspc" in n or ("advanced" in n and "practice consultant" in n): return "ASPC"  # distinct course family
+    if "program consultant" in n or "spc" in n or "practice consultant" in n: return "SPC"
     if "ai-native" in n or "ai native" in n: return "AI_NATIVE"
     if "agilist" in n or "leading" in n: return "LEADING_SAFE"
     if "product owner" in n: return "POPM"
@@ -115,6 +116,10 @@ def _selftest() -> int:
     assert rows[0]["course_family"] == "RTE", rows[0]
     assert rows[1]["course_family"] == "AI_NATIVE", rows[1]
     assert rows[0]["gross"] == "2195.00" and rows[0]["currency"] == "CAD"
+    # SPC vs ASPC are DISTINCT families (ASPC is its own newer course, not merged into SPC).
+    assert course_family("Advanced SAFe Practice Consultant") == "ASPC"
+    assert course_family("Certified SAFe 6 Practice Consultants (SPC)") == "SPC"
+    assert course_family("Certified SAFe Program Consultant training SPC") == "SPC"
     print(json.dumps({"selftest": "PASS", "parsed": rows}, indent=2))
     return 0
 
