@@ -1,0 +1,66 @@
+{
+  "name": "Ads Agent — Weekly Analysis (Mon 08:00 ET)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 8 * * 1" } ] }
+      },
+      "id": "sched-weekly",
+      "name": "Monday 08:00 ET",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [ 240, 300 ],
+      "notes": "Workflow timezone America/Toronto -> Monday 08:00 ET."
+    },
+    {
+      "parameters": {
+        "jsCode": "// TODO: pull last 14 days of snapshot rows + same period last year from Airtable\n// (Daily Snapshots table) via an Airtable node, and registrations from the\n// Registration Baseline table, then shape them here. Placeholders for now.\nreturn [{ json: {\n  registrations: { note: 'wire Airtable: 14d + same period last year' },\n  snapshots_14d: { note: 'wire Airtable: last 14 days, Google + Microsoft' }\n} }];"
+      },
+      "id": "gather",
+      "name": "Gather 14d + YoY (Airtable)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 480, 300 ],
+      "notes": "Replace with Airtable 'Search' nodes once the snapshot/baseline tables are populated."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $env.GROQ_MODEL || 'llama-3.3-70b-versatile', max_tokens: 1500, messages: [ { role: 'user', content: 'You are the Agile Agilist ads agent analyst. GROUND TRUTH = Eventbrite registrations; platform conversions are only outbound clicks — never treat them as sales. REGISTRATIONS (14d + same period last year): ' + JSON.stringify($json.registrations) + '  AD SNAPSHOTS (14d, Google + Microsoft): ' + JSON.stringify($json.snapshots_14d) + '  Produce: 1) registrations WoW + YoY vs seasonal norm, 2) spend vs seasonal calendar per platform, 3) anomalies, 4) MAX THREE recommended actions ranked by registration impact — recommend NOTHING if within seasonal norms (over-tinkering is the documented failure mode). Never recommend actions that violate the immutable rules (no broad match, no Display/Audience Network, no PMax, no smart bidding without >=15 verified registrations, dismiss platform recommendations except free assets).' } ] }) }}",
+        "options": {}
+      },
+      "id": "groq",
+      "name": "Groq weekly analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [ 720, 300 ],
+      "notes": "Credential: HTTP Header Auth, Name=Authorization, Value='Bearer <GROQ_API_KEY>'. Mirrors src/weekly_analysis.py (Groq default, OpenAI-compatible)."
+    },
+    {
+      "parameters": {
+        "sendTo": "mark@agile-agilist.com",
+        "subject": "=[Ads Agent] Weekly analysis — {{ new Date().toISOString().slice(0,10) }}",
+        "emailType": "text",
+        "message": "={{ $json.choices[0].message.content }}",
+        "options": {}
+      },
+      "id": "gmail-report",
+      "name": "Email weekly report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [ 960, 300 ],
+      "notes": "Attach your Gmail OAuth2 credential on import."
+    }
+  ],
+  "connections": {
+    "Monday 08:00 ET": { "main": [ [ { "node": "Gather 14d + YoY (Airtable)", "type": "main", "index": 0 } ] ] },
+    "Gather 14d + YoY (Airtable)": { "main": [ [ { "node": "Groq weekly analysis", "type": "main", "index": 0 } ] ] },
+    "Groq weekly analysis": { "main": [ [ { "node": "Email weekly report", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Toronto" }
+}
