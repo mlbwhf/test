@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -131,6 +132,31 @@ def cmd_post(args) -> None:
     print(f"{status} via {channel}: {ref}")
 
 
+def cmd_import(args) -> None:
+    """Register already-published posts into the ledger so the guard knows them."""
+    acct = get_account(args.account) if args.account else require_active_account()
+    raw = Path(args.file).read_text()
+    if args.split:
+        texts = [s.strip() for s in re.split(r"^## ", raw, flags=re.M)[1:]]
+    else:
+        texts = [raw.strip()]
+    known = {e["fingerprint"] for e in load_history(acct.id)}
+    imported = skipped = 0
+    for text in texts:
+        if not text:
+            continue
+        fp = guard.fingerprint(text)
+        if fp in known:
+            skipped += 1
+            continue
+        known.add(fp)
+        record_post(acct.id, text=text, fingerprint=fp, kind=args.kind,
+                    template="", channel="import", status="imported")
+        imported += 1
+    print(f"Imported {imported} post(s) into '{acct.id}' ledger"
+          + (f" ({skipped} already known)" if skipped else "") + ".")
+
+
 def cmd_history(args) -> None:
     entries = load_history(args.account)
     if not entries:
@@ -156,7 +182,7 @@ def main(argv: list[str] | None = None) -> None:
 
     p = sub.add_parser("draft", help="generate a draft for the active account")
     p.add_argument("brief", help="what the post is about (topic, key points, links, dates)")
-    p.add_argument("--template", "-t", default="announcement", help="template name (without .md)")
+    p.add_argument("--template", "-t", default="executive-story", help="template name (without .md)")
     p.add_argument("--kind", "-k", default="linkedin", choices=KINDS, help="template folder")
     p.add_argument("--account", "-a", help="one-off account override (does not switch)")
     p.set_defaults(func=cmd_draft)
@@ -170,6 +196,14 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--yes", "-y", action="store_true", help="post despite warnings")
     p.add_argument("--force", action="store_true", help="post even if blocked as duplicate")
     p.set_defaults(func=cmd_post)
+
+    p = sub.add_parser("import", help="register already-published posts into the ledger")
+    p.add_argument("file")
+    p.add_argument("--account", "-a", help="account the posts belong to (default: active)")
+    p.add_argument("--kind", "-k", default="linkedin", choices=KINDS)
+    p.add_argument("--split", action="store_true",
+                   help="treat each '## ...' section in the file as a separate post")
+    p.set_defaults(func=cmd_import)
 
     p = sub.add_parser("history", help="show the post ledger")
     p.add_argument("account", nargs="?", help="limit to one account")

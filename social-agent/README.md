@@ -67,9 +67,22 @@ Drop any `.md` file into `templates/linkedin/` or `templates/video/` and it
 becomes available as `--template <filename>`. Templates are free-form: section
 structure, `[PLACEHOLDERS]`, and style notes are all passed to the model as
 the structure to follow. Missing details are filled in and flagged with
-`[CONFIRM: ...]` so you can correct before posting. Three LinkedIn templates
-(announcement, insight, story) and two video templates (short-explainer,
-talking-head) ship as starters — replace them with your own.
+`[CONFIRM: ...]` so you can correct before posting.
+
+Shipped templates:
+
+- **`executive-story`** (the default) — the executive thought-leadership
+  format: `Post: <title>` / `Visual Suggestion:` (ultra-realistic imperfect
+  photo or "Without visuals") / `The Post:` (dated historical hook,
+  one-sentence paragraphs, pivot to the AI-era executive moment, contrarian
+  lesson, grounded close, 2–4 CamelCase hashtags woven inline) / two
+  `CTA Options`. Modeled on the 19-post corpus in
+  `reference/linkedin-samples.md`.
+- **`executive-carousel`** — same post format plus a 4–5 slide carousel spec
+  (text-only bold hook on slide 1, one labeled idea per slide, luxury
+  minimalistic aesthetic).
+- `announcement`, `insight`, `story` — generic LinkedIn starters.
+- `short-explainer`, `talking-head` — video script starters.
 
 ## The mix-up guard
 
@@ -86,6 +99,18 @@ Every draft is checked before it can be posted (`draft` runs it automatically;
 
 Warnings require an explicit confirmation (`--yes` to skip the prompt);
 duplicates are refused outright.
+
+Similarity is *containment*-based (overlap ÷ the smaller text), so a short
+draft that re-treads part of a long past post is still caught.
+
+**Seed the guard with posts published before this tool existed:**
+
+```bash
+# one file = one post
+python -m socialagent import path/to/old-post.md --account executive-insights
+# or a corpus file where each '## ...' section is a post
+python -m socialagent import reference/linkedin-samples.md --account executive-insights --split
+```
 
 ## Publishers
 

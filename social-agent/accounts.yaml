@@ -48,6 +48,29 @@ accounts:
     publisher: outbox
     publisher_config: {}
 
+  - id: executive-insights
+    name: Executive Insights — Thought Leadership
+    platform: linkedin
+    focus: >
+      Story-driven thought leadership for senior executives navigating AI-era
+      transformation: historical business anecdotes (Otellini, Deming, Bezos,
+      SAP, Yokoi) turned into contrarian, actionable lessons on strategy,
+      leadership, data, and enterprise AI adoption.
+    audience: >
+      C-suite and senior enterprise leaders (CEOs, CFOs, CMOs, CIOs) making
+      transformation and AI strategy decisions; consultants advising them.
+    voice: >
+      Authoritative, story-first, lightly contrarian. Opens with a dated,
+      documented moment; builds in one-sentence paragraphs; pivots to what
+      executives face right now; closes grounded and forward-looking.
+      Verified facts and numbers over adjectives. No emoji, no hype.
+    hashtags: ["#Leadership", "#Innovation", "#StrategicPlanning", "#Transformation", "#AI"]
+    topics: [executive, leadership, ceo, boardroom, strategy, transformation,
+             enterprise, innovation, paradigm shift, deming, spreadsheet,
+             data-driven, decision-making, ai adoption, thought leadership]
+    publisher: outbox
+    publisher_config: {}
+
   # Example of a fully wired account — copy and adapt.
   # - id: agile-agilist-video
   #   name: Agile Agilist — Video / Shorts

@@ -48,10 +48,13 @@ def _shingles(text: str, n: int = 3) -> set[tuple[str, ...]]:
 
 
 def similarity(a: str, b: str) -> float:
+    """Containment similarity: how much of the smaller text is contained in
+    the larger one. Catches excerpts/re-treads of long posts, where plain
+    Jaccard stays low because the union is dominated by the longer text."""
     sa, sb = _shingles(a), _shingles(b)
     if not sa or not sb:
         return 0.0
-    return len(sa & sb) / len(sa | sb)
+    return len(sa & sb) / min(len(sa), len(sb))
 
 
 def focus_score(text: str, account: Account) -> int:
