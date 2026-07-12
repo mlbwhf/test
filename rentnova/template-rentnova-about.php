@@ -127,7 +127,7 @@ get_header();
 			<div>
 				<div class="rnbp__eyebrow">About</div>
 				<h1>A homeowner-led team turning lots into <em>income</em>.</h1>
-				<p class="rnbp__lead">We design, build, furnish, list and run the small-multi-unit homes we wished existed when we were doing this ourselves. One team. One contract. Mississauga &amp; the GTA.</p>
+				<p class="rnbp__lead">We design, build, furnish, list and run the small-multi-unit homes we wished existed when we were doing this ourselves. One team. One contract. Mississauga &amp; GTA West.</p>
 			</div>
 			<aside class="rnbp__bynums" aria-label="By the numbers">
 				<div class="rnbp__bynums-h">By the numbers</div>
@@ -153,7 +153,7 @@ get_header();
 				<p>Builders hand you keys; we keep going. The same crew that designs the suite furnishes it, lists it, and runs it. Statements arrive monthly. The revenue-share means we only earn when the unit does — so the incentive is the same on both sides of the contract.</p>
 
 				<h2>Where we work.</h2>
-				<p>Mississauga, Oakville, Burlington and the western GTA — the radius we can actually be on-site within an hour. We say no a lot. It's how we keep saying yes well.</p>
+				<p>Mississauga, Oakville, Burlington, Hamilton and Milton — the radius we can actually be on-site within an hour. We say no a lot. It's how we keep saying yes well.</p>
 			</div>
 			<aside class="rnbp__narr-aside">
 				<dl>

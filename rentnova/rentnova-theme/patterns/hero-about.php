@@ -21,7 +21,7 @@
 		<!-- /wp:heading -->
 
 		<!-- wp:paragraph {"className":"rn-hero__lead"} -->
-		<p class="rn-hero__lead">We design, build, furnish, list and run the small-multi-unit homes we wished existed when we were doing this ourselves. One team. One contract. Mississauga &amp; the GTA.</p>
+		<p class="rn-hero__lead">We design, build, furnish, list and run the small-multi-unit homes we wished existed when we were doing this ourselves. One team. One contract. Mississauga &amp; GTA West.</p>
 		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->

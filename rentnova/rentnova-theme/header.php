@@ -22,7 +22,7 @@
 				<?php the_custom_logo(); ?>
 			<?php else : ?>
 				<span class="rn-brand__name"><?php bloginfo( 'name' ); ?></span>
-				<span class="rn-brand__loc"><?php esc_html_e( 'Mississauga · GTA', 'rentnova' ); ?></span>
+				<span class="rn-brand__loc"><?php esc_html_e( 'Mississauga · GTA West', 'rentnova' ); ?></span>
 			<?php endif; ?>
 		</a>
 

@@ -21,7 +21,7 @@
 			<p>Builders hand you keys; we keep going. The same crew that designs the suite furnishes it, lists it, and runs it. Statements arrive monthly. The revenue-share means we only earn when the unit does — so the incentive is the same on both sides of the contract.</p>
 
 			<h2>Where we work.</h2>
-			<p>Mississauga, Oakville, Burlington and the western GTA — the radius we can actually be on-site within an hour. We say no a lot. It's how we keep saying yes well.</p>
+			<p>Mississauga, Oakville, Burlington, Hamilton and Milton — the radius we can actually be on-site within an hour. We say no a lot. It's how we keep saying yes well.</p>
 		</div>
 
 		<aside class="rn-narrative__aside">

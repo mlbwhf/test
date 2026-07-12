@@ -11,7 +11,7 @@
 		<span class="rn-footer__copy">
 			<?php
 			/* translators: %s: current year. */
-			printf( esc_html__( '© %s RentNova · Mississauga & the GTA', 'rentnova' ), esc_html( gmdate( 'Y' ) ) );
+			printf( esc_html__( '© %s RentNova · Mississauga & GTA West', 'rentnova' ), esc_html( gmdate( 'Y' ) ) );
 			?>
 		</span>
 	</div>

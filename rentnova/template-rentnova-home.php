@@ -156,7 +156,7 @@ get_header();
 		<div class="rnbp__hero-in">
 			<div class="rnbp__eyebrow">Direct-book · Mississauga &amp; GTA</div>
 			<h1>Stay in a home<br>we <em>built to be lived in</em>.</h1>
-			<p class="rnbp__lead">Direct-book short stays around Mississauga and the western GTA. No platform fees, no surprise cleaning charges — just the key code and coffee in the cupboard.</p>
+			<p class="rnbp__lead">Direct-book short stays around Mississauga, Oakville, Burlington, Hamilton and Milton. No platform fees, no surprise cleaning charges — just the key code and coffee in the cupboard.</p>
 
 			<?php
 			// ===== SEARCH WIDGET =====

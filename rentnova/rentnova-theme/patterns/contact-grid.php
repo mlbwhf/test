@@ -24,7 +24,7 @@
 			</div>
 			<div class="rn-contact__row">
 				<div class="rn-contact__label">Where</div>
-				<div class="rn-contact__val">Mississauga · GTA west</div>
+				<div class="rn-contact__val">Mississauga · GTA West</div>
 			</div>
 			<div class="rn-contact__row">
 				<div class="rn-contact__label">Hours</div>

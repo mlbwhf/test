@@ -154,8 +154,8 @@ function rentnova_site_footer_html() {
 
 			<div class="rn-footer__brand">
 				<span class="rn-footer__brand-name">RentNova</span>
-				<span class="rn-footer__brand-loc">Mississauga · GTA</span>
-				<p class="rn-footer__brand-tag">Direct-book short stays across Mississauga and the western GTA. Homes we designed, built, furnished and now run.</p>
+				<span class="rn-footer__brand-loc">Mississauga · GTA West</span>
+				<p class="rn-footer__brand-tag">Direct-book short stays across Mississauga, Oakville, Burlington, Hamilton and Milton. Homes we designed, built, furnished and now run.</p>
 				<div class="rn-footer__contact">
 					<div><strong>Email</strong><a href="mailto:<?php echo esc_attr( $rn_email ); ?>"><?php echo esc_html( $rn_email ); ?></a></div>
 					<div><strong>Phone</strong><a href="tel:<?php echo esc_attr( $rn_phone_tel ); ?>"><?php echo esc_html( $rn_phone_disp ); ?></a></div>
@@ -207,7 +207,7 @@ function rentnova_site_footer_html() {
 		<div class="rn-footer__bar">
 			<div class="rn-footer__bar-in">
 				<div class="rn-footer__copy">
-					© <?php echo esc_html( $rn_year ); ?> RentNova · Mississauga &amp; the GTA
+					© <?php echo esc_html( $rn_year ); ?> RentNova · Mississauga &amp; GTA West
 					<span>STR #<?php echo esc_html( $rn_str_license ); ?></span>
 				</div>
 				<div class="rn-footer__social">

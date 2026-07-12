@@ -113,7 +113,7 @@ get_header();
 			<div class="rnbp__cinfo">
 				<div class="rnbp__crow"><div class="rnbp__clabel">Email</div><div class="rnbp__cval"><a href="mailto:hello@rent-nova.com">hello@rent-nova.com</a></div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Phone</div><div class="rnbp__cval"><a href="tel:+19055550143">+1 (905) 555-0143</a></div></div>
-				<div class="rnbp__crow"><div class="rnbp__clabel">Where</div><div class="rnbp__cval">Mississauga · GTA west</div></div>
+				<div class="rnbp__crow"><div class="rnbp__clabel">Where</div><div class="rnbp__cval">Mississauga · GTA West</div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Hours</div><div class="rnbp__cval">Mon–Fri · 9am–6pm ET</div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Response</div><div class="rnbp__cval">Within one business day</div></div>
 			</div>
