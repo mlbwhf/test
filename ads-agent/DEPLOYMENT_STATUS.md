@@ -43,11 +43,18 @@ Everything below is committed to git (secrets excluded — `.env` is git-ignored
 - **Course-family note:** per your correction, **ASPC is its own family** (23 classes,
   41 registrations, first sale 2025-02-12 — the newer course), kept separate from **SPC**
   (149 registrations). This split is locked into `eventbrite_pull.course_family` + its self-test.
-- Import status: the Airtable MCP connection was unstable this session and dropped mid-write.
-  Rows landed so far are in the table; any remainder loads reliably with
-  `scripts/airtable_import_baseline.py` (set `AIRTABLE_BASE_ID=appCXSWnIISm0c6iF`,
-  `AIRTABLE_TABLE="Registration Baseline"`). Family breakdown of the full 220:
-  RTE 164, SPC 149, ASPC 41, LEADING_SAFE 29, OTHER 23, SCRUM_MASTER 10, AI_NATIVE 9, POPM 8.
+- Import status: **75 of 220 rows imported via MCP** before the Airtable connector became
+  unstable (it began dropping ~half of all writes mid-flight — a connector issue, not the data).
+  **Finish in one reliable command** (needs outbound network, which this sandbox blocks — run it
+  on your machine): it clears the partial 75 and loads all 220 cleanly, no duplicates:
+  ```
+  cd ads-agent && export AIRTABLE_TOKEN=pat...        # PAT with data.records:read+write on the base
+  python scripts/airtable_import_baseline.py "/path/to/Certified_SAFe...Sales...csv" --replace
+  ```
+  The script is pre-wired to base `appCXSWnIISm0c6iF` / table "Registration Baseline" and to this
+  CSV's columns. Registration totals of the full 220 (what you'll see after): **433 registrations,
+  $974,402.94 net.** By family (registrations): RTE 164, SPC 149, ASPC 41, LEADING_SAFE 29,
+  OTHER 23, SCRUM_MASTER 10, AI_NATIVE 9, POPM 8.
 
 ### 3. Google Ads Script → Google Sheet — ✅ built (paste-to-install)
 - `scripts/google_ads_daily_spend.gs`, with your Sheet ID
