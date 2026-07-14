@@ -1,6 +1,19 @@
 # Redeploy manifest — apply to the LIVE site after migration completes
 
-All work below is currently **offline only** (in this repo). Nothing is published or drafted on any live site. When the new hosting is ready, redeploy in this order.
+**STATUS: ALL CHANGES QUEUED — do NOT deploy until the user confirms migration is finished.**
+All work below is currently **offline only** (in this repo). Nothing is published or drafted on any live site. When the new hosting is ready, redeploy everything in this order.
+
+## Queued in this work (deploy checklist)
+- [ ] All 15 page files → republish to their page IDs (table in §1) — content is final in `snippets/pages/`
+- [ ] Pill "back-to-parent" breadcrumb — on all 14 content pages (light pill on light pages; dark-variant pill on About / Customers / FAQ / Agile Maturity dark heroes)
+- [ ] Services landing — Five Dimensions block added; "Mark"/booking CTAs → "Get in touch" (/about/contact/)
+- [ ] Testimonials — role-based reviews (from `reviews.md`) already embedded per page (unique set each)
+- [ ] "Get in touch" CTA sweep — booking/HubSpot/"Message Mark" → /about/contact/ across service pages
+- [ ] Books → "coming soon" (Mutation, Innovation Culture)
+- [ ] CSS — append `nav-mega-v2-patch.css` (+ nav-fix layers) to "AA – Global CSS" (§2)
+- [ ] Nav JS — recreate `AA – Nav JS` from `nav-all-in-one.js` (§3)
+- [ ] Menu — `aa-mega`/`aa-flag` classes, About submenu (flagship + 4), 5 layers under Operating Model (§4)
+- [ ] NOT built yet: AI Automation (layer 04) page
 
 ## 1) Pages — content is in `snippets/pages/<file>` → publish to the page ID
 
