@@ -17,6 +17,11 @@ add_action('template_redirect', function () {
     $map = array(
         '/library/ai-economics/llm-market-statistics-2026'                    => '/indexes/ai-economics/llm-market-statistics-2026/',
         '/library/technical-benchmarks/ai-safety-governance-statistics-2026'  => '/indexes/technical-benchmarks/', // no 1:1 page; hub covers safety & governance
+        // 2026-07-14 IA restructure: pages moved from Reports/top-level into Indexes hubs.
+        '/geography-of-ai'                       => '/indexes/geography-of-ai/',
+        '/reports/sovereign-ai-index-2026'       => '/indexes/geography-of-ai/sovereign-ai-index-2026/',
+        '/reports/agentic-ai-statistics-2026'    => '/indexes/enterprise-ai/agentic-ai-statistics-2026/',
+        '/reports/ai-healthcare-statistics-2026' => '/indexes/ai-by-industry/ai-healthcare-statistics-2026/',
     );
     $trimmed = untrailingslashit($path);
     if (isset($map[$trimmed])) {

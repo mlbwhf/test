@@ -178,6 +178,43 @@ Each month the owner pastes the Site Kit "top search queries" and "top content" 
    (17 views, 1s duration).
 5. **High-engagement pages** (e.g. `/indexes/compare/`, 2m52s) → add homepage/pillar links to them.
 
+## 6d. Information architecture & title conventions (restructured 2026-07-14)
+
+**The one rule: Indexes = evergreen statistics; Reports = news, analysis, and the two series.**
+Never create a new evergreen "…statistics 2026" page under Reports — it belongs under an
+Indexes sub-hub. Current sub-hubs under Indexes (39): State of AI `362`, AI Economics `392`,
+Enterprise AI `393`, Technical Performance `394`, Workforce & Labor `395`,
+**AI by Industry `938`** (healthcare 863, education 865; add finance/manufacturing/retail here),
+**Geography of AI `930`** (pillar: Sovereign AI 934, Regulation Tracker 864; add country/region
+pages here), Compare `360`. Reports (40) holds one-off news reports + Dark Side (498) +
+Real-World (446).
+
+**Title formula (SEO + LLM):** `[Primary keyword phrase] [Year]: [2–3 word qualifier]`,
+≤60 chars, keyword first, year always present on evergreen pages (e.g. "AI Agent Statistics
+2026: Adoption, Market & Reliability"). Nav labels stay short (2–3 words, no year).
+
+**Nav (menu 34):** Indexes (626) now has 8 children (items 946–953, the sub-hubs above).
+Reports keeps 3 children. Glossary stays childless. When adding a sub-hub page, also add a
+menu item under 626.
+
+**Moved-page 301s** (owner adds in Redirection plugin; also in redirect-snippet file):
+`/geography-of-ai/` → `/indexes/geography-of-ai/` · `/reports/sovereign-ai-index-2026/` →
+`/indexes/geography-of-ai/sovereign-ai-index-2026/` · `/reports/agentic-ai-statistics-2026/` →
+`/indexes/enterprise-ai/agentic-ai-statistics-2026/` · `/reports/ai-healthcare-statistics-2026/`
+→ `/indexes/ai-by-industry/ai-healthcare-statistics-2026/`
+
+**SCHEDULED TASKS from search-phrase research (work through in order, one per session):**
+1. ~~"sovereign ai index"~~ ✅ done (934). ~~"cursor $3.3m revenue per employee"~~ ✅ scheduled (935).
+2. "ai hyperscalers" (17 impressions) → add a "Hyperscalers" H2 + FAQ to AI Infrastructure page 93.
+3. "improving health intelligence in chatgpt" → add an FAQ to Healthcare page 863.
+4. "agentic world modeling" → glossary entry for "World Model" exists? verify /glossary/world-model/; expand if thin.
+5. Geography pillar expansion (one per open Monday from Aug 24): "AI in China Statistics 2026" →
+   parent 930; then "US AI Statistics 2026"; then "EU AI Statistics 2026"; then "India AI Statistics 2026".
+6. AI by Industry expansion: "AI in Finance Statistics 2026" (parent 938), then manufacturing, retail, legal.
+7. Retitle-with-year sweep: Dark Side children (500-503, 541-549, 552) and Real-World children
+   (466-472) lack years/keywords — retitle one batch per session using the title formula.
+8. Benchmarks page 1s-duration fix (from §6b) — still open.
+
 ## 6c. Visitor AI assistant (AI Engine plugin, installed 2026-07-14)
 
 The **AI Engine** plugin (v3.6+) is active: a site-wide chatbot that helps visitors find
