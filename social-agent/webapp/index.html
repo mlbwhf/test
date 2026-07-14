@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Content Agent — Groq</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --panel:#ffffff; --ink:#1c1b18; --muted:#6d6a62;
+    --line:#e3e0d8; --accent:#0f6b5c; --accent-ink:#ffffff;
+    --warn:#9a6b00; --warn-bg:#fdf6e3; --bad:#a3272f; --bad-bg:#fbeeee;
+    --ok:#22633c; --ok-bg:#edf6f0; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{display:flex;align-items:center;gap:12px;padding:14px 20px;
+    background:var(--panel);border-bottom:1px solid var(--line)}
+  header h1{font-size:17px;margin:0;font-weight:650}
+  header .spacer{flex:1}
+  main{max-width:1180px;margin:0 auto;padding:18px 20px 60px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 16px}
+  .pill{border:1px solid var(--line);background:var(--panel);border-radius:999px;
+    padding:6px 14px;cursor:pointer;font-size:14px}
+  .pill.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .pill.ghost{border-style:dashed;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);margin:0 0 10px;font-weight:650}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+  select,input[type=text],input[type=password],textarea{
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;
+    background:#fff;color:var(--ink);font:inherit}
+  textarea{resize:vertical}
+  textarea.mono{font-family:var(--mono);font-size:12.5px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row>*{flex:none}
+  .row .grow{flex:1;min-width:120px}
+  button{border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:8px 14px;border-radius:7px;cursor:pointer;font:inherit}
+  button:hover{border-color:#c9c5ba}
+  button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+  button.primary:disabled{opacity:.55;cursor:default}
+  button.small{padding:4px 10px;font-size:13px}
+  .output{white-space:pre-wrap;font-size:14.5px;border:1px solid var(--line);
+    border-radius:8px;padding:14px;min-height:120px;background:#fffdf9;margin-top:12px}
+  .guard{border-radius:8px;padding:10px 12px;margin-top:10px;font-size:13.5px;display:none}
+  .guard.ok{display:block;background:var(--ok-bg);color:var(--ok)}
+  .guard.warn{display:block;background:var(--warn-bg);color:var(--warn)}
+  .guard.bad{display:block;background:var(--bad-bg);color:var(--bad)}
+  .guard ul{margin:6px 0 0;padding-left:18px}
+  .hist{list-style:none;margin:0;padding:0;max-height:480px;overflow-y:auto}
+  .hist li{border-bottom:1px solid var(--line);padding:8px 2px;font-size:13px}
+  .hist li:last-child{border-bottom:none}
+  .hist .meta{color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+  .keychip{font-size:12.5px;color:var(--muted)}
+  .keychip b{color:var(--ok)}
+  .keychip b.missing{color:var(--bad)}
+  dialog{border:1px solid var(--line);border-radius:12px;padding:20px;width:min(720px,92vw)}
+  dialog::backdrop{background:rgba(30,28,22,.45)}
+  dialog h3{margin:0 0 10px;font-size:16px}
+  dialog .row{margin-top:14px;justify-content:flex-end}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .statusline{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Social Content Agent</h1>
+  <span class="keychip" id="keyChip"></span>
+  <span class="spacer"></span>
+  <button class="small" id="btnImport">Import past posts</button>
+  <button class="small" id="btnSettings">Settings</button>
+</header>
+
+<main>
+  <div class="pills" id="accountPills"></div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Compose</h2>
+      <div class="row">
+        <div class="grow">
+          <label for="templateSel">Template</label>
+          <select id="templateSel"></select>
+        </div>
+        <div style="align-self:flex-end"><button class="small" id="btnEditTemplate">Edit</button></div>
+        <div style="align-self:flex-end"><button class="small" id="btnNewTemplate">New</button></div>
+      </div>
+      <label for="brief">Brief — what is the post about? (topic, key facts, dates, links)</label>
+      <textarea id="brief" rows="4" placeholder="e.g. Abraham Wald and survivorship bias in AI vendor case studies"></textarea>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="btnGenerate">Generate draft</button>
+        <button id="btnStop" style="display:none">Stop</button>
+        <span class="statusline" id="status"></span>
+      </div>
+      <div class="output" id="output" contenteditable="true"
+           data-placeholder="Draft appears here — edit freely before saving."></div>
+      <div class="guard" id="guardBox"></div>
+      <div class="row" style="margin-top:12px">
+        <button id="btnCheck">Run guard check</button>
+        <button id="btnCopy">Copy</button>
+        <button class="primary" id="btnPosted">Mark as posted</button>
+      </div>
+      <p class="hint">“Mark as posted” records the text in this account's ledger so future
+        drafts are checked against it. Actual publishing is copy-paste (or your own workflow).</p>
+    </section>
+
+    <aside class="card">
+      <h2>Ledger <span id="histScope"></span></h2>
+      <ul class="hist" id="histList"></ul>
+    </aside>
+  </div>
+</main>
+
+<dialog id="dlgSettings">
+  <h3>Settings</h3>
+  <label for="inKey">Groq API key</label>
+  <input type="password" id="inKey" placeholder="gsk_...">
+  <p class="hint">Stored only in this browser's localStorage and sent only to
+    api.groq.com. Get a key at console.groq.com. Don't use this on a shared machine.</p>
+  <label for="inModel">Model</label>
+  <input type="text" id="inModel" list="modelList">
+  <datalist id="modelList">
+    <option value="llama-3.3-70b-versatile">
+    <option value="openai/gpt-oss-120b">
+    <option value="moonshotai/kimi-k2-instruct">
+    <option value="qwen/qwen3-32b">
+    <option value="llama-3.1-8b-instant">
+  </datalist>
+  <label for="inAccounts">Accounts (JSON)</label>
+  <textarea id="inAccounts" class="mono" rows="14" spellcheck="false"></textarea>
+  <p class="hint">Fields per account: id, name, platform, focus, audience, voice,
+    hashtags[], topics[] (keywords for mix-up detection).</p>
+  <div class="row">
+    <button id="btnSettingsCancel">Cancel</button>
+    <button class="primary" id="btnSettingsSave">Save</button>
+  </div>
+</dialog>
+
+<dialog id="dlgTemplate">
+  <h3 id="dlgTemplateTitle">Edit template</h3>
+  <label for="inTplName">Name</label>
+  <input type="text" id="inTplName">
+  <label for="inTplText">Template text (handed to the model as the structure to follow)</label>
+  <textarea id="inTplText" class="mono" rows="18" spellcheck="false"></textarea>
+  <div class="row">
+    <button id="btnTplDelete" style="margin-right:auto;color:var(--bad)">Delete</button>
+    <button id="btnTplCancel">Cancel</button>
+    <button class="primary" id="btnTplSave">Save</button>
+  </div>
+</dialog>
+
+<dialog id="dlgImport">
+  <h3>Import already-published posts</h3>
+  <p class="hint">Paste posts published before you started using this tool, so the
+    duplicate/mix-up guard knows about them. They are recorded into the ledger of
+    the currently active account.</p>
+  <label><input type="checkbox" id="inSplit" checked>
+    Split into multiple posts on lines starting with “## ”</label>
+  <textarea id="inImport" class="mono" rows="14" spellcheck="false"
+    placeholder="## Post 1: Title&#10;...post text...&#10;&#10;## Post 2: ..."></textarea>
+  <div class="row">
+    <button id="btnImportCancel">Cancel</button>
+    <button class="primary" id="btnImportGo">Import</button>
+  </div>
+</dialog>
+
+<!-- ===== default template texts (raw, no escaping issues) ===== -->
+<script type="text/template" id="tpl-executive-story">
+# LinkedIn — Executive Story (single image or text-only)
+
+Produce the complete deliverable in exactly this format:
+
+Post: [SHORT WORKING TITLE — the person/event/concept]
+Visual Suggestion: [see rules below]
+
+The Post:
+[the post text]
+
+CTA Options:
+[CTA question 1]
+[CTA question 2]
+
+## Visual Suggestion rules
+Choose ONE:
+- An ultra-realistic, slightly imperfect photograph — describe a grounded, minimalistic executive scene (desk objects, boardroom, notebook, watch, glasses). Explicitly avoid artificial gloss and stock-photo aesthetics.
+- "Without visuals." — when the hook or quote is strong enough to carry the post alone; add one line of rationale.
+
+## The Post — structure
+1. Hook (1–2 lines): a specific, dated moment or documented fact about a real person, company, or phenomenon ("In 1972, five engineers walked out of IBM..."). Never open with the lesson.
+2. The story (4–8 very short paragraphs): one or two sentences per paragraph, each on its own line. Concrete numbers, dates, names, dollar amounts. Build to the little-known twist ("Here is the part of the story almost nobody talks about.").
+3. Pivot to now (1–2 short paragraphs): connect directly to what senior executives face today in AI-era transformation.
+4. The lesson (1–2 short paragraphs): what the leaders who handle this well actually do — specific, contrarian, actionable.
+5. Close (1 line): grounded and forward-looking. The signature line "The world has changed, and the leaders who notice will be the ones the next decade is built around." may be used in at most ~1 of every 5 posts.
+
+## Style rules
+- 250–350 words total.
+- Hashtags: 2–4, CamelCase, woven INLINE mid-sentence where the concept appears (e.g. "the coming #IdentityShift") — never dumped at the end.
+- Audience: senior executives navigating AI-era transformation.
+- Voice: authoritative, story-driven, lightly contrarian. Verified facts and numbers over adjectives. No emoji. No "I'm excited to share".
+- Short sentences. Paragraphs of 1–3 lines, each on its own line.
+
+## CTA Options
+Exactly two alternatives, each 1–2 lines, each a direct question inviting comments. At most one with a soft "let's discuss" consulting angle.
+
+## Exemplar (quality bar)
+Post: Paul Otellini
+Visual Suggestion: An ultra-realistic, high-end image of a boardroom table. A slightly creased financial spreadsheet printout sits next to a pair of casually dropped headphones. Minimalistic and grounded.
+
+The Post:
+In 2005, Paul Otellini became the CEO of Intel and took a meeting with Steve Jobs, who was preparing to launch the iPhone and needed chips.
+Otellini ran the spreadsheet, and the numbers said the deal would lose money.
+He followed the spreadsheet, and Apple went elsewhere.
+Every smartphone on Earth now uses an ARM chip, and the forecasted volume in Otellini's spreadsheet was wrong by roughly 100x.
+In his final interview, Otellini admitted his gut told him to say yes, but he couldn't see past the forecasted costs and volumes.
+The deeper irony is that Intel actually owned an ARM chip business called XScale at the time.
+They sold it for $600 million right before the iPhone launched because the margins didn't match its PC business model.
+This is the Otellini moment, and it is being remade right now in almost every senior executive committee focusing on #StrategicPlanning.
+Spreadsheets are tools for evaluating incremental decisions in known markets using historical data.
+When asked to evaluate a paradigm-shifting opportunity, a spreadsheet will systematically recommend against it because its mathematical structure cannot answer the question.
+When evaluating #Innovation and paradigm shifts, the spreadsheet is just one input.
+The cost of being wrong in the direction of caution on a paradigm shift is enormous and asymmetric.
+The world has changed, and the leaders who notice will be the ones the next decade is built around.
+
+CTA Options:
+Have you ever let a spreadsheet talk you out of a paradigm shift? I'd love to hear your story in the comments.
+What other inputs are you prioritizing alongside your spreadsheets to evaluate paradigm shifts?
+</script>
+
+<script type="text/template" id="tpl-executive-carousel">
+# LinkedIn — Executive Carousel (4–5 slides + post)
+
+Produce the complete deliverable in exactly this format:
+
+Post: [SHORT WORKING TITLE]
+Visual Suggestion: A [4 or 5]-slide carousel with a luxury, minimalistic aesthetic.
+Slide 1: [spec]
+Slide 2: [spec]
+...
+
+The Post:
+[the post text]
+
+CTA Options:
+[CTA question 1]
+[CTA question 2]
+
+## Carousel rules
+- 4–5 slides, luxury minimalistic aesthetic, muted backgrounds, clean striking typography.
+- Slide 1: text-only hook in large bold font — the single most arresting line (a dated fact, a quote, or a bold claim). "No graphic needed" is acceptable.
+- Middle slides: alternate "Put a graphic of [simple concrete scene]. Add the text: '...'" with text-only slides. One labeled idea per slide (The Problem / The Solution / The Trap / The Counter-Move).
+- Final slide: text-only takeaway or CTA-style imperative.
+- Slide text must stand alone — a reader who only swipes gets the whole argument.
+
+## The Post — same structure and style as the executive-story template
+Dated documented hook mirroring Slide 1; story in one-to-two-sentence paragraphs each on its own line; concrete numbers and names; pivot to what senior executives face right now; contrarian actionable lesson; one-line grounded close. 250–350 words. 2–4 CamelCase hashtags woven inline mid-sentence, never dumped at the end. No emoji, no hype openers.
+
+## CTA Options
+Exactly two alternative comment-inviting questions, 1–2 lines each; at most one with a soft "let's discuss" angle.
+
+## Exemplar (quality bar)
+Post: Jeff Bezos
+Visual Suggestion: A 4-slide carousel with a modern, clean aesthetic.
+Slide 1: Text-only hook: "Why Amazon ships 200+ new AWS services a year."
+Slide 2: Graphic of two doors. Text: "The Two-Way Doors Policy. Consequential decisions are one-way doors that deserve slow deliberation. But most decisions are two-way doors."
+Slide 3: Text-only slide: "If a two-way decision doesn't work out, you simply walk back through. The argument is the most expensive form of decision-making, while the experiment is the cheapest."
+Slide 4: Text-only CTA: "Stop running two-way door pilots through multi-quarter governance cycles. If it's reversible, why are we arguing about it instead of testing it?"
+
+The Post:
+Jeff Bezos has a rule that explains why Amazon ships 200+ new AWS services a year: the two-way doors policy.
+Consequential, irreversible decisions are one-way doors that deserve slow deliberation, but most decisions are two-way doors. If a two-way decision doesn't work out, you simply walk back through.
+Bezos noted that large organizations suffer from a structural disease where they apply heavy-weight processes to reversible decisions, resulting in slowness and diminished invention.
+The argument is the most expensive form of decision-making, while the experiment is the cheapest.
+This principle built AWS, launching hundreds of small experiments without massive strategy documents.
+Today, almost every new pilot is a two-way door, but enterprises are running them through multi-quarter governance cycles.
+The cost of experimentation has collapsed to near-zero, while the cost of arguing remains high.
+Force the question in your next meeting on #AgileExecution: if it's reversible, why are we arguing about it instead of testing it for true #Innovation?
+
+CTA Options:
+How many of your "one-way door" decisions are actually cheap experiments waiting to happen?
+How can you introduce the two-way door metabolism into your team's weekly cadence?
+</script>
+
+<script type="text/template" id="tpl-video-short-explainer">
+# Video — Short Explainer (30–60s script)
+
+Output a shooting script: per time-coded beat give SAY (spoken words) and SHOW (on-screen text / visual note).
+
+[0:00–0:03] HOOK — SAY: one-sentence question or bold claim about the concept. SHOW: big on-screen text version of the hook (max 6 words).
+[0:03–0:10] SETUP — SAY: why this trips people up / why it matters to the audience. SHOW: 2–3 word keyword captions.
+[0:10–0:40] PAYLOAD — SAY: the explanation in 2–3 crisp steps or a before/after contrast; concrete example required. SHOW: numbered captions or a simple diagram note per step.
+[0:40–0:50] PROOF or PITFALL — SAY: one real-world consequence, stat, or common mistake. SHOW: the number or mistake as on-screen text.
+[0:50–0:60] CTA — SAY: one action only. SHOW: CTA text + handle.
+
+Style: spoken language (contractions, short sentences), no jargon without an instant gloss, whole script reads aloud in under 60 seconds (~150 words).
+</script>
+
+<script>
+"use strict";
+/* ============ storage ============ */
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem("sca:"+k); return v===null? d : JSON.parse(v);}catch{ return d; } },
+  set(k, v){ localStorage.setItem("sca:"+k, JSON.stringify(v)); }
+};
+
+const DEFAULT_ACCOUNTS = [
+  {
+    id:"executive-insights", name:"Executive Insights — Thought Leadership", platform:"linkedin",
+    focus:"Story-driven thought leadership for senior executives navigating AI-era transformation: historical business anecdotes turned into contrarian, actionable lessons on strategy, leadership, data, and enterprise AI adoption.",
+    audience:"C-suite and senior enterprise leaders (CEOs, CFOs, CMOs, CIOs) making transformation and AI strategy decisions; consultants advising them.",
+    voice:"Authoritative, story-first, lightly contrarian. Opens with a dated, documented moment; builds in one-sentence paragraphs; pivots to what executives face right now; closes grounded and forward-looking. Verified facts and numbers over adjectives. No emoji, no hype.",
+    hashtags:["#Leadership","#Innovation","#StrategicPlanning","#Transformation","#AI"],
+    topics:["executive","leadership","ceo","boardroom","strategy","transformation","enterprise","innovation","paradigm shift","deming","spreadsheet","data-driven","decision-making","ai adoption","thought leadership"]
+  },
+  {
+    id:"agile-agilist", name:"Agile Agilist — Company Page", platform:"linkedin",
+    focus:"SAFe training and certification (Leading SAFe, SAFe Scrum Master, ASPC/SPC), AI-native agile transformation, enterprise agility for delivery leaders.",
+    audience:"Delivery managers, RTEs, agile coaches, and transformation leads in mid-to-large enterprises.",
+    voice:"Authoritative but practical. Speaks from real transformation experience. No hype. Short paragraphs, concrete takeaways, one clear call to action (usually a cohort date or course page).",
+    hashtags:["#SAFe","#LeadingSAFe","#AgileTransformation","#ScaledAgile","#AINative"],
+    topics:["safe","leading safe","scaled agile","rte","pi planning","art","spc","aspc","scrum master","certification","cohort","agile transformation","ai-native"]
+  },
+  {
+    id:"personal-brand", name:"Founder — Personal LinkedIn", platform:"linkedin",
+    focus:"First-person lessons from building a training business, AI tooling for consultants, opinions on where agile and AI-assisted delivery are heading.",
+    audience:"Peers: trainers, consultants, founders of boutique services firms; prospective corporate clients who buy from the person, not the brand.",
+    voice:"First person, candid, slightly contrarian. Stories and specifics over frameworks. Comfortable admitting mistakes. Soft CTA or none at all.",
+    hashtags:["#BuildInPublic","#Consulting","#AI","#Agile"],
+    topics:["founder","lessons","story","ai tools","automation","consulting","training business","marketing","personal"]
+  }
+];
+
+function defaultTemplates(){
+  const grab = id => document.getElementById(id).textContent.trim();
+  return {
+    "executive-story": grab("tpl-executive-story"),
+    "executive-carousel": grab("tpl-executive-carousel"),
+    "video-short-explainer": grab("tpl-video-short-explainer")
+  };
+}
+
+const state = {
+  accounts: LS.get("accounts", DEFAULT_ACCOUNTS),
+  templates: null,          // set on init
+  history: LS.get("history", []),
+  active: LS.get("active", null),
+  key: LS.get("key", ""),
+  model: LS.get("model", "llama-3.3-70b-versatile"),
+  abort: null
+};
+
+/* ============ guard (port of socialagent/guard.py) ============ */
+const DUP_THRESHOLD = 0.60, CROSS_THRESHOLD = 0.40, FOCUS_MARGIN = 2;
+
+function normalize(t){
+  return t.toLowerCase()
+    .replace(/https?:\/\/\S+/g," ")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function fingerprint(t){ // FNV-1a 64-bit-ish over normalized text
+  const s = normalize(t);
+  let h1 = 0x811c9dc5, h2 = 0xcbf29ce4;
+  for (let i=0;i<s.length;i++){
+    const c = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+    h2 = Math.imul(h2 ^ c, 0x85ebca6b) >>> 0;
+  }
+  return h1.toString(16).padStart(8,"0") + h2.toString(16).padStart(8,"0");
+}
+function shingles(t, n=3){
+  const w = normalize(t).split(" ").filter(Boolean);
+  const out = new Set();
+  if (w.length < n){ if (w.length) out.add(w.join("")); return out; }
+  for (let i=0;i<=w.length-n;i++) out.add(w.slice(i,i+n).join(""));
+  return out;
+}
+function containment(a,b){
+  const sa = shingles(a), sb = shingles(b);
+  if (!sa.size || !sb.size) return 0;
+  let inter = 0;
+  const [small, big] = sa.size <= sb.size ? [sa,sb] : [sb,sa];
+  for (const x of small) if (big.has(x)) inter++;
+  return inter / Math.min(sa.size, sb.size);
+}
+function focusScore(text, account){
+  const norm = " " + normalize(text) + " ";
+  return (account.topics||[]).reduce((n,kw)=> n + (norm.includes(" "+normalize(kw)+" ")?1:0), 0);
+}
+function guardCheck(text, account){
+  const rep = { blocked:false, ok:true, warnings:[], notes:[], fingerprint: fingerprint(text) };
+  for (const e of state.history){
+    const sim = containment(text, e.text||"");
+    const same = e.account === account.id;
+    if (same && (sim >= DUP_THRESHOLD || e.fingerprint === rep.fingerprint)){
+      rep.blocked = true; rep.ok = false;
+      rep.warnings.push(`near-duplicate of a post already in '${account.id}' ledger (${e.ts}, similarity ${(sim*100).toFixed(0)}%)`);
+    } else if (!same && sim >= CROSS_THRESHOLD){
+      rep.ok = false;
+      rep.warnings.push(`MIX-UP RISK: ${(sim*100).toFixed(0)}% similar to a post from account '${e.account}' (${e.ts}) — is this draft on the right account?`);
+    }
+  }
+  const scores = state.accounts.map(a => [a.id, focusScore(text, a)]);
+  const activeScore = (scores.find(([id])=>id===account.id)||[,0])[1];
+  for (const [id, s] of scores){
+    if (id !== account.id && s >= activeScore + FOCUS_MARGIN){
+      rep.ok = false;
+      rep.warnings.push(`MIX-UP RISK: draft matches '${id}' focus keywords better (${s} vs ${activeScore} for '${account.id}')`);
+    }
+  }
+  rep.notes.push("focus keyword hits: " + scores.sort((a,b)=>b[1]-a[1]).map(([id,s])=>`${id}=${s}`).join(", "));
+  return rep;
+}
+
+/* ============ groq generation ============ */
+function systemPrompt(account, templateText){
+  return `You are the dedicated social media content writer for exactly one account. You never blend in material intended for the operator's other accounts.
+
+<account id="${account.id}">
+Name: ${account.name}
+Platform: ${account.platform}
+Focus: ${account.focus}
+Audience: ${account.audience}
+Voice: ${account.voice}
+Preferred hashtags: ${(account.hashtags||[]).join(" ")}
+</account>
+
+<template>
+${templateText}
+</template>
+
+Rules:
+- Follow the template's structure and fill every placeholder with content grounded in the brief. If the brief lacks a detail a placeholder needs, choose something plausible and mark it [CONFIRM: ...] so the operator can fix it.
+- Stay strictly inside this account's focus and voice. If the brief clearly belongs to a different kind of account, say so in one line at the top (prefixed WARNING:) and still produce the best on-focus draft you can.
+- Write the post ready to publish: no meta commentary, no "Here is your post".
+- Respect platform norms (${account.platform}): length, formatting, hashtag placement.`;
+}
+
+async function generate(account, templateText, brief, onDelta){
+  const ctrl = new AbortController();
+  state.abort = ctrl;
+  const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method:"POST",
+    signal: ctrl.signal,
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+state.key },
+    body: JSON.stringify({
+      model: state.model,
+      stream: true,
+      max_tokens: 4096,
+      messages: [
+        { role:"system", content: systemPrompt(account, templateText) },
+        { role:"user", content: "Content type: social post\nBrief from the operator:\n" + brief }
+      ]
+    })
+  });
+  if (!resp.ok){
+    let msg = resp.status + " " + resp.statusText;
+    try{ msg += " — " + (await resp.json()).error?.message; }catch{}
+    throw new Error("Groq API error: " + msg);
+  }
+  const reader = resp.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "", full = "";
+  for(;;){
+    const {done, value} = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, {stream:true});
+    const lines = buf.split("\n");
+    buf = lines.pop();
+    for (const line of lines){
+      const s = line.trim();
+      if (!s.startsWith("data:")) continue;
+      const payload = s.slice(5).trim();
+      if (payload === "[DONE]") continue;
+      try{
+        const delta = JSON.parse(payload).choices?.[0]?.delta?.content;
+        if (delta){ full += delta; onDelta(full); }
+      }catch{}
+    }
+  }
+  state.abort = null;
+  return full.trim();
+}
+
+/* ============ UI ============ */
+const $ = id => document.getElementById(id);
+
+function activeAccount(){
+  return state.accounts.find(a => a.id === state.active) || state.accounts[0];
+}
+function renderAccounts(){
+  const box = $("accountPills"); box.innerHTML = "";
+  for (const a of state.accounts){
+    const b = document.createElement("button");
+    b.className = "pill" + (a.id === activeAccount().id ? " active" : "");
+    b.textContent = a.name;
+    b.title = a.focus;
+    b.onclick = () => { state.active = a.id; LS.set("active", a.id); renderAccounts(); renderHistory(); };
+    box.appendChild(b);
+  }
+  const edit = document.createElement("button");
+  edit.className = "pill ghost"; edit.textContent = "⚙ accounts";
+  edit.onclick = openSettings;
+  box.appendChild(edit);
+}
+function renderTemplates(){
+  const sel = $("templateSel"); const cur = sel.value;
+  sel.innerHTML = "";
+  for (const name of Object.keys(state.templates)){
+    const o = document.createElement("option"); o.value = o.textContent = name; sel.appendChild(o);
+  }
+  if (state.templates[cur]) sel.value = cur;
+}
+function renderKeyChip(){
+  $("keyChip").innerHTML = state.key
+    ? `key <b>set</b> · model ${state.model}`
+    : `Groq key <b class="missing">missing</b> — open Settings`;
+}
+function renderHistory(){
+  const acct = activeAccount();
+  $("histScope").textContent = "— " + acct.id;
+  const list = $("histList"); list.innerHTML = "";
+  const entries = state.history.filter(e => e.account === acct.id).slice().reverse();
+  if (!entries.length){
+    list.innerHTML = "<li class='meta'>No posts recorded for this account yet.</li>";
+    return;
+  }
+  for (const e of entries){
+    const li = document.createElement("li");
+    const first = (e.text||"").split("\n").find(l=>l.trim()) || "";
+    li.innerHTML = `<div>${escapeHtml(first.slice(0,90))}</div>
+      <div class="meta">${e.ts} · ${e.status} · ${e.fingerprint}</div>`;
+    list.appendChild(li);
+  }
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function showGuard(rep){
+  const box = $("guardBox");
+  box.className = "guard " + (rep.blocked ? "bad" : (rep.ok ? "ok" : "warn"));
+  const head = rep.blocked ? "BLOCKED — near-duplicate" : (rep.ok ? "Guard: OK" : "Guard: warnings");
+  box.innerHTML = `<b>${head}</b> <span style="opacity:.7">(fingerprint ${rep.fingerprint})</span>` +
+    (rep.warnings.length ? "<ul>" + rep.warnings.map(w=>`<li>${escapeHtml(w)}</li>`).join("") + "</ul>" : "") +
+    `<div style="opacity:.7;margin-top:4px">${escapeHtml(rep.notes.join(" · "))}</div>`;
+  return rep;
+}
+
+/* ---- actions ---- */
+$("btnGenerate").onclick = async () => {
+  const brief = $("brief").value.trim();
+  if (!state.key) { openSettings(); return; }
+  if (!brief) { $("status").textContent = "Write a brief first."; return; }
+  const acct = activeAccount();
+  const tplName = $("templateSel").value;
+  const out = $("output");
+  out.textContent = "";
+  $("guardBox").className = "guard";
+  $("btnGenerate").disabled = true; $("btnStop").style.display = "";
+  $("status").textContent = `Generating for '${acct.id}' with ${state.model}…`;
+  try{
+    const text = await generate(acct, state.templates[tplName], brief, t => { out.textContent = t; });
+    $("status").textContent = "Done. Review, edit, then run the guard / mark as posted.";
+    showGuard(guardCheck(text, acct));
+  }catch(err){
+    if (err.name === "AbortError") $("status").textContent = "Stopped.";
+    else $("status").textContent = err.message;
+  }finally{
+    $("btnGenerate").disabled = false; $("btnStop").style.display = "none";
+    state.abort = null;
+  }
+};
+$("btnStop").onclick = () => state.abort?.abort();
+
+$("btnCheck").onclick = () => {
+  const text = $("output").textContent.trim();
+  if (!text){ $("status").textContent = "Nothing to check."; return; }
+  showGuard(guardCheck(text, activeAccount()));
+};
+$("btnCopy").onclick = async () => {
+  const text = $("output").textContent.trim();
+  if (!text) return;
+  await navigator.clipboard.writeText(text);
+  $("status").textContent = "Copied to clipboard.";
+};
+$("btnPosted").onclick = () => {
+  const text = $("output").textContent.trim();
+  if (!text){ $("status").textContent = "Nothing to record."; return; }
+  const acct = activeAccount();
+  const rep = showGuard(guardCheck(text, acct));
+  if (rep.blocked && !confirm("This is a near-duplicate of a past post on this account. Record anyway?")) return;
+  if (!rep.ok && !rep.blocked && !confirm("The guard raised mix-up warnings. Record anyway?")) return;
+  state.history.push({
+    ts: new Date().toISOString().slice(0,19)+"Z",
+    account: acct.id, kind: "post", template: $("templateSel").value,
+    channel: "manual", status: "posted", fingerprint: rep.fingerprint, text
+  });
+  LS.set("history", state.history);
+  renderHistory();
+  $("status").textContent = `Recorded in '${acct.id}' ledger.`;
+};
+
+/* ---- settings dialog ---- */
+function openSettings(){
+  $("inKey").value = state.key;
+  $("inModel").value = state.model;
+  $("inAccounts").value = JSON.stringify(state.accounts, null, 2);
+  $("dlgSettings").showModal();
+}
+$("btnSettings").onclick = openSettings;
+$("btnSettingsCancel").onclick = () => $("dlgSettings").close();
+$("btnSettingsSave").onclick = () => {
+  let accounts;
+  try{
+    accounts = JSON.parse($("inAccounts").value);
+    if (!Array.isArray(accounts) || !accounts.length || accounts.some(a=>!a.id)) throw new Error();
+  }catch{ alert("Accounts JSON is invalid — must be a non-empty array of objects with an 'id'."); return; }
+  state.key = $("inKey").value.trim();
+  state.model = $("inModel").value.trim() || "llama-3.3-70b-versatile";
+  state.accounts = accounts;
+  if (!accounts.some(a=>a.id===state.active)) state.active = accounts[0].id;
+  LS.set("key", state.key); LS.set("model", state.model);
+  LS.set("accounts", accounts); LS.set("active", state.active);
+  renderAccounts(); renderKeyChip(); renderHistory();
+  $("dlgSettings").close();
+};
+
+/* ---- template dialogs ---- */
+let tplEditingNew = false;
+$("btnEditTemplate").onclick = () => {
+  tplEditingNew = false;
+  const name = $("templateSel").value;
+  $("dlgTemplateTitle").textContent = "Edit template";
+  $("inTplName").value = name;
+  $("inTplText").value = state.templates[name];
+  $("btnTplDelete").style.display = "";
+  $("dlgTemplate").showModal();
+};
+$("btnNewTemplate").onclick = () => {
+  tplEditingNew = true;
+  $("dlgTemplateTitle").textContent = "New template";
+  $("inTplName").value = "";
+  $("inTplText").value = "# My template\n\nDescribe the structure, placeholders and style rules the post must follow.";
+  $("btnTplDelete").style.display = "none";
+  $("dlgTemplate").showModal();
+};
+$("btnTplCancel").onclick = () => $("dlgTemplate").close();
+$("btnTplSave").onclick = () => {
+  const name = $("inTplName").value.trim();
+  const text = $("inTplText").value;
+  if (!name){ alert("Template needs a name."); return; }
+  if (!tplEditingNew && name !== $("templateSel").value) delete state.templates[$("templateSel").value];
+  state.templates[name] = text;
+  LS.set("templates", state.templates);
+  renderTemplates(); $("templateSel").value = name;
+  $("dlgTemplate").close();
+};
+$("btnTplDelete").onclick = () => {
+  const name = $("templateSel").value;
+  if (Object.keys(state.templates).length <= 1){ alert("Keep at least one template."); return; }
+  if (!confirm(`Delete template '${name}'?`)) return;
+  delete state.templates[name];
+  LS.set("templates", state.templates);
+  renderTemplates();
+  $("dlgTemplate").close();
+};
+
+/* ---- import dialog ---- */
+$("btnImport").onclick = () => { $("inImport").value = ""; $("dlgImport").showModal(); };
+$("btnImportCancel").onclick = () => $("dlgImport").close();
+$("btnImportGo").onclick = () => {
+  const raw = $("inImport").value;
+  if (!raw.trim()){ $("dlgImport").close(); return; }
+  const acct = activeAccount();
+  const texts = $("inSplit").checked
+    ? raw.split(/^## /m).slice(1).map(s=>s.trim()).filter(Boolean)
+    : [raw.trim()];
+  const parts = texts.length ? texts : [raw.trim()];
+  const known = new Set(state.history.filter(e=>e.account===acct.id).map(e=>e.fingerprint));
+  let n = 0, skipped = 0;
+  for (const t of parts){
+    const fp = fingerprint(t);
+    if (known.has(fp)){ skipped++; continue; }
+    known.add(fp);
+    state.history.push({ ts:new Date().toISOString().slice(0,19)+"Z", account:acct.id,
+      kind:"post", template:"", channel:"import", status:"imported", fingerprint:fp, text:t });
+    n++;
+  }
+  LS.set("history", state.history);
+  renderHistory();
+  $("status").textContent = `Imported ${n} post(s) into '${acct.id}'` + (skipped?` (${skipped} already known)`:"") + ".";
+  $("dlgImport").close();
+};
+
+/* ---- init ---- */
+(function init(){
+  state.templates = LS.get("templates", null) || defaultTemplates();
+  LS.set("templates", state.templates);
+  if (!state.active) state.active = state.accounts[0].id;
+  renderAccounts(); renderTemplates(); renderKeyChip(); renderHistory();
+})();
+</script>
+</body>
+</html>

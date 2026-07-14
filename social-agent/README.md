@@ -7,6 +7,44 @@ templates, guards against duplicates and cross-account mix-ups, and publishes
 through a pluggable channel (dry-run outbox, LinkedIn API, Buffer, or a
 webhook into Zapier/Make/n8n).
 
+Two ways to run it:
+
+- **Browser app (Groq)** — `webapp/index.html`. Fully client-side: open the file
+  in a browser, paste your Groq API key, and everything (accounts, templates,
+  ledger) lives in that browser's localStorage. No install, no server.
+- **Python CLI (Claude)** — the `socialagent` package below. Publishes via
+  pluggable channels and keeps its ledger in files.
+
+## Browser app (Groq) — quickest start
+
+```bash
+# just open it (double-click works too)
+open social-agent/webapp/index.html        # macOS
+xdg-open social-agent/webapp/index.html    # Linux
+```
+
+1. **Settings** → paste your Groq API key (from console.groq.com) and pick a
+   model (default `llama-3.3-70b-versatile`). The key is stored only in your
+   browser's localStorage and sent only to `api.groq.com`.
+2. Pick the account pill (context) you're posting as. Accounts are editable
+   as JSON in Settings — same fields as `accounts.yaml`.
+3. Choose a template (`executive-story`, `executive-carousel`,
+   `video-short-explainer` ship by default — Edit/New to manage your own),
+   write a brief, **Generate draft**. Output streams in and is editable
+   in place.
+4. The guard runs automatically after generation (duplicate block,
+   cross-account mix-up warning, focus-keyword check) — same logic as the
+   Python version. **Copy** the post, publish it, then **Mark as posted** to
+   record it in the ledger so future drafts are checked against it.
+5. **Import past posts** seeds the ledger with content published before you
+   started using the tool (paste, optionally split on `## ` sections — the
+   `reference/linkedin-samples.md` corpus pastes straight in).
+
+Note: the ledger is per-browser. If you draft on two machines, import your
+recent posts on each, or keep to one browser.
+
+## Python CLI (Claude API)
+
 ```
 accounts.yaml          account registry (focus, voice, topics, publisher per account)
 templates/linkedin/    your LinkedIn post templates (.md — drop in your own)
