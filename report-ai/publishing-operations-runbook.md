@@ -208,8 +208,12 @@ menu item under 626.
 2. "ai hyperscalers" (17 impressions) → add a "Hyperscalers" H2 + FAQ to AI Infrastructure page 93.
 3. "improving health intelligence in chatgpt" → add an FAQ to Healthcare page 863.
 4. "agentic world modeling" → glossary entry for "World Model" exists? verify /glossary/world-model/; expand if thin.
-5. Geography pillar expansion (one per open Monday from Aug 24): "AI in China Statistics 2026" →
-   parent 930; then "US AI Statistics 2026"; then "EU AI Statistics 2026"; then "India AI Statistics 2026".
+5. Geography pillar expansion — regional deep-dives under pillar 930, linked from its
+   "Explore by region" grid: ~~China (954, live)~~ ✅ ~~Europe (956, live)~~ ✅
+   ~~India (957, sched Aug 24)~~ ✅ ~~Middle East (955, sched Aug 31)~~ ✅. NEXT regions to add
+   (parent 930, add card to the pillar grid + "Go deeper" on publish): AI in the UK 2026,
+   AI in Japan & South Korea 2026, AI in Southeast Asia 2026, AI in Africa 2026, AI in Latin America 2026.
+   When India/Gulf go live, swap their greyed "Publishes …" cards in pillar 930 for real links.
 6. AI by Industry expansion: "AI in Finance Statistics 2026" (parent 938), then manufacturing, retail, legal.
 7. Retitle-with-year sweep: Dark Side children (500-503, 541-549, 552) and Real-World children
    (466-472) lack years/keywords — retitle one batch per session using the title formula.
