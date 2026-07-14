@@ -163,6 +163,21 @@ Remaining work, in order:
 - Do not retry menu-location assignment via REST (known dead end, see §0).
 - After any failed write, re-list before re-sending (duplicate-content risk).
 
+## 6b. Monthly SEO loop (Site Kit → actions)
+
+Each month the owner pastes the Site Kit "top search queries" and "top content" tables. Then:
+1. **High-impressions / low-CTR queries** → retitle + re-meta the matching page to lead with the
+   query phrase (done 2026-07: page 862 retitled "AI Agent Statistics 2026…" to chase the
+   "ai agent" query's 1,232 impressions).
+2. **Queries with no matching page** → new report into the Monday queue (done 2026-07:
+   Sovereign AI Index published; AI Revenue Per Employee scheduled 2026-08-17).
+3. **404s in top content** → add a 301 to the WPCode redirect snippet
+   (`report-ai/redirect-snippet-library-to-indexes.php`; owner must paste updates into WPCode).
+4. **Pages with ~1s duration / <15% engagement** → content mismatch; rework the intro so the
+   promised stat appears in the first screenful. Flagged 2026-07: `ai-models-benchmarks-statistics-2026`
+   (17 views, 1s duration).
+5. **High-engagement pages** (e.g. `/indexes/compare/`, 2m52s) → add homepage/pillar links to them.
+
 ## 7. Session checklist (start here each run)
 
 1. `pages.list` status=`future` → is the queue healthy (next Monday's report scheduled)?
