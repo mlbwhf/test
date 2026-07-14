@@ -13,7 +13,7 @@ All work below is currently **offline only** (in this repo). Nothing is publishe
 - [ ] CSS — append `nav-mega-v2-patch.css` (+ nav-fix layers) to "AA – Global CSS" (§2)
 - [ ] Nav JS — recreate `AA – Nav JS` from `nav-all-in-one.js` (§3)
 - [ ] Menu — `aa-mega`/`aa-flag` classes, About submenu (flagship + 4), 5 layers under Operating Model (§4)
-- [ ] NOT built yet: AI Automation (layer 04) page
+- [ ] AI Automation (layer 04) page — BUILT (`ai-automation.html`); create at /services/ai-automation/ and repoint menu item 28864 (currently → /services/digital-transformation/)
 
 ## 1) Pages — content is in `snippets/pages/<file>` → publish to the page ID
 
@@ -34,6 +34,7 @@ All work below is currently **offline only** (in this repo). Nothing is publishe
 | mutation.html | 28870 | /services/mutation/ |
 | assessments-landing.html | 15940 | /assessments/ |
 | agile-maturity-assessment.html | 28785 | /assessments/agile-maturity/ |
+| ai-automation.html | NEW (create) | /services/ai-automation/ |
 
 (Page IDs are from the old WordPress.com site; on the migrated DB the same slugs/IDs should carry over. Each file is a full `<!-- wp:html -->` Custom-HTML block — paste as-is.)
 
@@ -55,7 +56,7 @@ Keep the existing mega-menu CSS, then append, in order:
   - Training → AI-Native
   - About → Customers
 - About submenu = Customers (aa-flag) + Our Story (/about/), FAQ (/about/faq/), Send us a message (/about/contact/), Global Offices (/about/#offices)
-- 5 layers under Operating Model: Scaling Iterative Model /services/scaling-iterative-model/, Innovation Framework /services/innovation-culture/, AI-Native /services/ai-native-operating-model/, AI Automation /services/digital-transformation/, Mutation /services/mutation/
+- 5 layers under Operating Model: Scaling Iterative Model /services/scaling-iterative-model/, Innovation Framework /services/innovation-culture/, AI-Native /services/ai-native-operating-model/, AI Automation /services/ai-automation/, Mutation /services/mutation/
 
 ## 5) Reviews source
 `snippets/reviews.md` — the role-based testimonials already embedded in each page file (no action needed unless refreshing).
