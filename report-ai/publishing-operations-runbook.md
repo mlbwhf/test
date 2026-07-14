@@ -178,6 +178,18 @@ Each month the owner pastes the Site Kit "top search queries" and "top content" 
    (17 views, 1s duration).
 5. **High-engagement pages** (e.g. `/indexes/compare/`, 2m52s) → add homepage/pillar links to them.
 
+## 6c. Visitor AI assistant (AI Engine plugin, installed 2026-07-14)
+
+The **AI Engine** plugin (v3.6+) is active: a site-wide chatbot that helps visitors find
+reports instead of using search, and **logs every visitor question** (Discussions in wp-admin).
+- LLM backend: **Groq** (OpenAI-compatible endpoint `https://api.groq.com/openai/v1`) — key is
+  owner-managed in Meow Apps → AI Engine → Environments. Do not print or move keys.
+- Treat the **chat logs as a demand signal**, same as the Site Kit loop (§6b): each month, scan
+  Discussions for questions the site couldn't answer well → those become report topics.
+- If AI Engine is ever insufficient (multi-step flows, RAG pipelines), the owner's chosen
+  escalation is **Flowise** self-hosted (e.g., on the Hostinger VPS post-migration) with its
+  chat widget embedded via WPCode; the AI Engine logs migrate with the WP database.
+
 ## 7. Session checklist (start here each run)
 
 1. `pages.list` status=`future` → is the queue healthy (next Monday's report scheduled)?
