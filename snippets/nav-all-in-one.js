@@ -11,10 +11,15 @@
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
 (function(){
   var MAXW = 940;
-  function setHdr(){
-    var m=document.getElementById('masthead');
-    if(m){ document.documentElement.style.setProperty('--aa-hdr', Math.round(m.getBoundingClientRect().bottom)+'px'); }
+  /* rAF-batched header measurement — avoids forced reflow on every scroll event */
+  var hdrTicking=false, lastHdr=-1;
+  function readWriteHdr(){
+    hdrTicking=false;
+    var m=document.getElementById('masthead'); if(!m) return;
+    var b=Math.round(m.getBoundingClientRect().bottom);
+    if(b!==lastHdr){ lastHdr=b; document.documentElement.style.setProperty('--aa-hdr', b+'px'); }
   }
+  function setHdr(){ if(!hdrTicking){ hdrTicking=true; (window.requestAnimationFrame||function(f){setTimeout(f,16);})(readWriteHdr); } }
   function place(tab){
     var panel = tab.querySelector(':scope > .sub-menu'); if(!panel) return;
     var w = Math.min(MAXW, window.innerWidth - 40);

@@ -14,6 +14,7 @@ All work below is currently **offline only** (in this repo). Nothing is publishe
 - [ ] Nav JS — recreate `AA – Nav JS` from `nav-all-in-one.js` (§3)
 - [ ] Menu — `aa-mega`/`aa-flag` classes, About submenu (flagship + 4), 5 layers under Operating Model (§4)
 - [ ] AI Automation (layer 04) page — BUILT (`ai-automation.html`); create at /services/ai-automation/ and repoint menu item 28864 (currently → /services/digital-transformation/)
+- [ ] Mobile perf — page-level fixes done (image dims + lazy/async, nav-JS reflow). Host/plugin steps in `MOBILE-PERF.md` (LiteSpeed Cache: defer JS, async/critical CSS, add-missing-sizes, WebP, caching, single-hop redirects) — apply after migration.
 
 ## 1) Pages — content is in `snippets/pages/<file>` → publish to the page ID
 
