@@ -231,6 +231,21 @@ reports instead of using search, and **logs every visitor question** (Discussion
   escalation is **Flowise** self-hosted (e.g., on the Hostinger VPS post-migration) with its
   chat widget embedded via WPCode; the AI Engine logs migrate with the WP database.
 
+## 6e. PENDING — retry after 2026-07-14 22:30 UTC session-limit reset
+
+These were queued when the session hit its usage limit; finish them next:
+1. **Homepage LLM-ratings band** — add an "AI models, rated" band to the Home page (id 6)
+   linking the Best AI Models page (/indexes/technical-benchmarks/best-ai-models-2026/, id 964).
+   Insert just before the "Explore the Indexes" section; keep page 6 self-contained; preserve
+   all other content byte-for-byte.
+2. **Analysis blocks on the remaining index hubs** (same pattern as §6d — sourced "The state of
+   play in 2026" block, preserve existing content, back up original first):
+   - **State of AI (362)** — synthesize the 2022→2026 arc (ChatGPT launch → near-universal
+     adoption 88%, ~$2.5T spend, concentrated value).
+   - **AI by Industry (938)** — synthesize cross-sector adoption (healthcare 81% physicians,
+     education 92% undergrads) and the sector-by-sector spread.
+   (Geography 930 and Dark Side stats 576 already have analytical sections — skip.)
+
 ## 7. Session checklist (start here each run)
 
 1. `pages.list` status=`future` → is the queue healthy (next Monday's report scheduled)?
