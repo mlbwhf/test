@@ -1,0 +1,337 @@
+<!-- AIOSEO TITLE: Agile Maturity Assessment — Free Self-Assessment | Agile Agilist -->
+<!-- AIOSEO DESC: Where is your organization on the journey from Absent to Flying? Rate 4 dimensions of agile maturity and get an instant profile with what to build next. Free, no login. -->
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Agile Maturity Assessment",
+  "applicationCategory":"BusinessApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "url":"https://agile-agilist.com/assessments/agile-maturity/",
+  "provider":{"@type":"EducationalOrganization","name":"Agile Agilist","url":"https://agile-agilist.com/"},
+  "description":"A free self-assessment of enterprise agile maturity across four dimensions — Operating Model & Alignment, Value Delivery Engagement, Workforce Enablement, and Ways of Working — scored on a five-stage model from Absent to Flying."
+}
+</script>
+<div class="aa-mat" id="aa-mat">
+<style>
+.aa-mat{--t:#127E88;--td:#0B2E35;--nv:#0E3A44;--tl:#8FCFCF;--bd:#DCEAEA;--bds:#C7DEDE;--bg:#F5FAFA;--mu:#5E7378;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--nv);width:100%;max-width:1280px;margin-left:auto;margin-right:auto;overflow-x:clip}
+.aa-mat em{font-style:italic}
+.aa-mat-eb{display:inline-block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl)}
+
+/* hero */
+.aa-mat-hero{position:relative;overflow:hidden;background:radial-gradient(120% 130% at 15% 0%,#123f47 0%,var(--td) 55%,#08222860 100%),var(--td);padding:82px 24px 66px;text-align:center;color:#fff}
+.aa-mat-hero::before{content:"";position:absolute;top:-160px;left:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.16),transparent 70%);pointer-events:none}
+.aa-mat-hero::after{content:"";position:absolute;bottom:-200px;right:-160px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(18,126,136,.30),transparent 70%);pointer-events:none}
+.aa-mat-hero-in{max-width:780px;margin:0 auto;position:relative;z-index:2}
+.aa-mat-hero .aa-mat-eb{padding:6px 15px;border:1px solid rgba(143,207,207,.35);border-radius:30px;margin-bottom:18px}
+.aa-mat-hero h1{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:46px;line-height:1.1;letter-spacing:-.02em;margin:0 auto 16px;color:#fff}
+.aa-mat-hero h1 em{color:var(--tl)}
+.aa-mat-hero p{font-size:18px;line-height:1.6;color:#D6E7E7;margin:0 auto 16px;max-width:600px}
+.aa-mat-hero .note{font-size:12.5px;color:#9fc4c4;letter-spacing:.02em}
+.aa-mat-scale{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:22px}
+.aa-mat-scale span{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.04em;color:#D6E7E7;background:rgba(255,255,255,.05);border:1px solid rgba(143,207,207,.22);border-radius:100px;padding:5px 12px}
+.aa-mat-scale span b{color:var(--tl);font-weight:600}
+@media(max-width:780px){.aa-mat-hero h1{font-size:33px}}
+
+/* app */
+.aa-mat-app{background:var(--bg);padding:56px 24px 72px}
+.aa-mat-in{max-width:860px;margin:0 auto}
+.aa-mat-intro{text-align:center;font-size:15.5px;color:var(--mu);line-height:1.6;margin:0 auto 34px;max-width:620px}
+
+.aa-mat-dim{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:26px 26px 22px;margin-bottom:18px}
+.aa-mat-dim-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.aa-mat-dim-n{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:var(--t)}
+.aa-mat-dim-h h3{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:23px;color:var(--nv);margin:0;letter-spacing:-.01em}
+.aa-mat-dim-sub{font-size:13px;color:var(--mu);margin:0 0 16px}
+.aa-mat-opts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media(max-width:720px){.aa-mat-opts{grid-template-columns:1fr}}
+.aa-mat-opt{border:1.5px solid var(--bd);border-radius:11px;padding:12px 12px 13px;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,box-shadow .15s;display:flex;flex-direction:column;gap:7px;position:relative}
+.aa-mat-opt:hover{border-color:var(--tl);background:#FBFDFD}
+.aa-mat-opt.sel{border-color:var(--t);background:#EAF6F7;box-shadow:0 8px 22px -14px rgba(18,126,136,.5)}
+.aa-mat-opt-lv{display:flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu)}
+.aa-mat-opt.sel .aa-mat-opt-lv{color:var(--t)}
+.aa-mat-opt-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bds);flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center}
+.aa-mat-opt.sel .aa-mat-opt-dot{border-color:var(--t);background:var(--t)}
+.aa-mat-opt.sel .aa-mat-opt-dot::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+.aa-mat-opt ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.aa-mat-opt li{font-size:12px;line-height:1.4;color:var(--nv);padding-left:12px;position:relative}
+.aa-mat-opt li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--tl)}
+
+.aa-mat-submit-row{text-align:center;margin-top:28px}
+.aa-mat-btn{display:inline-flex;align-items:center;gap:8px;padding:15px 34px;border-radius:100px;font-size:15px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .18s;font-family:inherit}
+.aa-mat-btn.p{background:var(--t);color:#fff;box-shadow:0 6px 18px -6px rgba(18,126,136,.6)}
+.aa-mat-btn.p:hover{background:var(--td);transform:translateY(-2px)}
+.aa-mat-btn.p:disabled{background:var(--bds);color:#fff;cursor:not-allowed;box-shadow:none;transform:none}
+.aa-mat-btn.g{background:#fff;color:var(--nv);border:1.5px solid var(--bd)}
+.aa-mat-btn.g:hover{border-color:var(--t);color:var(--t)}
+.aa-mat-hint{font-size:12.5px;color:var(--mu);margin-top:12px}
+
+/* results */
+.aa-mat-res{margin-top:8px;scroll-margin-top:100px}
+.aa-mat-res-card{background:linear-gradient(160deg,#123f47,var(--td));color:#fff;border-radius:20px;padding:38px 32px;text-align:center;position:relative;overflow:hidden}
+.aa-mat-res-card::after{content:"";position:absolute;top:-80px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.18),transparent 70%);pointer-events:none}
+.aa-mat-res-card .lab{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tl);margin-bottom:10px;position:relative;z-index:2}
+.aa-mat-res-stage{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:52px;line-height:1;color:#fff;margin:0 0 6px;letter-spacing:-.02em;position:relative;z-index:2}
+.aa-mat-res-stage em{color:var(--tl)}
+.aa-mat-res-score{font-size:14px;color:#D6E7E7;position:relative;z-index:2}
+.aa-mat-res-score b{color:#fff}
+.aa-mat-res-desc{font-size:15px;color:#E4F1F1;line-height:1.6;max-width:560px;margin:14px auto 0;position:relative;z-index:2}
+
+/* dashboard */
+.aa-mat-dash{display:grid;grid-template-columns:320px 1fr;gap:18px;margin-top:18px}
+@media(max-width:720px){.aa-mat-dash{grid-template-columns:1fr}}
+.aa-mat-panel{background:#fff;border:1px solid var(--bd);border-radius:18px;padding:22px 22px 20px}
+.aa-mat-panel .cap{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:12px}
+.aa-mat-radar{display:block;width:100%;max-width:300px;margin:0 auto}
+.aa-mat-radar text{font-family:Inter,system-ui,sans-serif;font-size:9.5px;font-weight:600;fill:var(--nv)}
+.aa-mat-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.aa-mat-kpi{background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.aa-mat-kpi .k{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
+.aa-mat-kpi .v{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:26px;color:var(--t);line-height:1.1;margin-top:5px;letter-spacing:-.01em}
+.aa-mat-kpi .s{font-size:11.5px;color:var(--mu);margin-top:3px}
+.aa-mat-track{margin-top:18px}
+.aa-mat-track-bar{display:flex;gap:4px}
+.aa-mat-track-seg{flex:1;height:10px;border-radius:5px;background:var(--bd)}
+.aa-mat-track-seg.on{background:var(--t)}
+.aa-mat-track-labels{display:flex;justify-content:space-between;margin-top:8px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:9.5px;letter-spacing:.02em;color:var(--mu)}
+.aa-mat-track-labels span.cur{color:var(--t);font-weight:700}
+@media print{
+  .aa-mat-hero,.aa-mat-intro,#mat-quiz,.aa-mat-submit-row,.aa-mat-cta{display:none !important}
+  .aa-mat-app{background:#fff;padding:0}
+  .aa-mat{margin:0;width:auto}
+  .aa-mat-res-card,.aa-mat-track-seg.on,.aa-mat-kpi{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+.aa-mat-profile{margin-top:22px;background:#fff;border:1px solid var(--bd);border-radius:18px;padding:28px 28px 24px}
+.aa-mat-profile h4{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:22px;color:var(--nv);margin:0 0 18px;letter-spacing:-.01em}
+.aa-mat-row{padding:16px 0;border-top:1px solid var(--bd)}
+.aa-mat-row:first-of-type{border-top:0;padding-top:0}
+.aa-mat-row-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px}
+.aa-mat-row-name{font-size:14.5px;font-weight:600;color:var(--nv)}
+.aa-mat-row-lv{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:var(--t);white-space:nowrap}
+.aa-mat-meter{display:flex;gap:5px}
+.aa-mat-seg{flex:1;height:8px;border-radius:6px;background:var(--bd)}
+.aa-mat-seg.on{background:var(--t)}
+.aa-mat-row-next{font-size:12.5px;color:var(--mu);line-height:1.5;margin:9px 0 0}
+.aa-mat-row-next b{color:var(--nv);font-weight:600}
+
+.aa-mat-focus{margin-top:22px;background:#EAF6F7;border:1px solid var(--bds);border-radius:16px;padding:24px 26px}
+.aa-mat-focus .aa-mat-eb{color:var(--t);margin-bottom:8px}
+.aa-mat-focus h4{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:21px;color:var(--nv);margin:0 0 8px}
+.aa-mat-focus p{font-size:14px;color:var(--mu);line-height:1.6;margin:0}
+.aa-mat-focus strong{color:var(--nv);font-weight:600}
+
+.aa-mat-cta{margin-top:26px;text-align:center}
+.aa-mat-cta p{font-size:15px;color:var(--mu);margin:0 auto 16px;max-width:460px;line-height:1.6}
+.aa-mat-cta .aa-mat-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+
+<!-- HERO -->
+<section class="aa-mat-hero">
+  <div class="aa-mat-hero-in">
+    <span class="aa-mat-eb">Free self-assessment</span>
+    <h1>Agile Maturity <em>Assessment</em></h1>
+    <p>Where is your organization on the journey from <em>Absent</em> to <em>Flying</em>? Rate four dimensions and get an instant maturity profile &mdash; with what to build next.</p>
+    <div class="aa-mat-scale">
+      <span><b>1</b> Absent</span><span><b>2</b> Nascent</span><span><b>3</b> Designed</span><span><b>4</b> Accelerating</span><span><b>5</b> Flying</span>
+    </div>
+    <p class="note" style="margin-top:18px">Takes 2 minutes &middot; No login &middot; Instant results</p>
+  </div>
+</section>
+
+<!-- APP -->
+<section class="aa-mat-app">
+  <div class="aa-mat-in">
+    <p class="aa-mat-intro">For each dimension, choose the description that best matches your organization <em>today</em>. Be honest &mdash; the profile is only useful if it&rsquo;s real.</p>
+    <div id="mat-quiz"></div>
+    <div class="aa-mat-submit-row">
+      <button class="aa-mat-btn p" id="mat-submit" disabled>See my maturity profile &rarr;</button>
+      <div class="aa-mat-hint" id="mat-hint">Select a level for all four dimensions to continue.</div>
+    </div>
+    <div class="aa-mat-res" id="mat-res" hidden></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var LEVELS=["Absent","Nascent","Designed","Accelerating","Flying"];
+  var SHORT=["Operating Model","Value Delivery","Workforce","Ways of Working"];
+  var DIMS=[
+    {n:"Operating Model & Alignment", s:"Vision, sponsorship, and how leadership shows up.",
+     o:[
+      ["No conversations","Lack of vision & leadership sponsorship"],
+      ["Exploratory discussions","Named sponsorship"],
+      ["Rules of engagement","Challenges identified","Active leadership championship"],
+      ["Peer (leadership) partnerships","Key wins","Shared accountability"],
+      ["Strategic planning","Leaders filling in for each other","Leaders as coaches"]
+     ]},
+    {n:"Value Delivery Engagement", s:"Awareness of agile and value delivery across teams.",
+     o:[
+      ["Lack of awareness","No movement","Ad hoc communication & collaboration"],
+      ["Plans and discussions","Agile-compliance mindset"],
+      ["Strong awareness & understanding of agile and value delivery across functional teams"],
+      ["User-driven activities","Peer coaching","Championing mindset"],
+      ["A way of life","Master coaching"]
+     ]},
+    {n:"Workforce Enablement", s:"Training, tools, and knowledge for the people doing the work.",
+     o:[
+      ["No tools","Training non-existent","Work in silos"],
+      ["Basic training in progress","Inconsistent use of tools"],
+      ["Champions, coaches & training rolled out","Consistently utilized tools"],
+      ["Seamless onboarding","Easy access to knowledge management & tool assistance"],
+      ["Self-sufficient teams training each other","Communities of practice in place"]
+     ]},
+    {n:"Ways of Working", s:"Roles, autonomy, collaboration, and how you improve.",
+     o:[
+      ["Siloed, unaligned or sedimented into waterfall methods"],
+      ["Limited to one area","Agile roles being discussed, inconsistent use, limited autonomy","Focus on cooperation"],
+      ["Process to redefine ways of working in place","Agile roles documented, people transitioning in","Collaboration by design"],
+      ["Core areas covered","Agile roles are championed","Teams collaborate & operate autonomously"],
+      ["Constant reinvention & adjustment","Agile roles help each other","Continuous organizational learning"]
+     ]}
+  ];
+  var STAGE_DESC={
+    "Absent":"Agility isn't on the agenda yet. The opportunity is to build awareness and secure leadership sponsorship before anything else.",
+    "Nascent":"The conversation has started. Named sponsors and early experiments exist — now it needs structure, roles, and consistent tooling.",
+    "Designed":"The operating model is taking shape: rules of engagement, documented roles, and rolled-out training. The work now is to make it stick and scale.",
+    "Accelerating":"Agility is delivering — peer partnerships, championed roles, and autonomous teams. Focus on shared accountability and spreading what works.",
+    "Flying":"Agility is a way of life: leaders coach, teams reinvent continuously, and learning compounds. The work is sustaining it and mentoring the next wave."
+  };
+  var picks=[null,null,null,null];
+  var quiz=document.getElementById('mat-quiz');
+  var submit=document.getElementById('mat-submit');
+  var hint=document.getElementById('mat-hint');
+  var res=document.getElementById('mat-res');
+
+  DIMS.forEach(function(d,di){
+    var dim=document.createElement('div'); dim.className='aa-mat-dim';
+    var opts='';
+    d.o.forEach(function(items,li){
+      var lis=items.map(function(x){return '<li>'+x+'</li>';}).join('');
+      opts+='<div class="aa-mat-opt" data-d="'+di+'" data-l="'+li+'" role="button" tabindex="0">'+
+        '<div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>'+(li+1)+' &middot; '+LEVELS[li]+'</div>'+
+        '<ul>'+lis+'</ul></div>';
+    });
+    dim.innerHTML='<div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 0'+(di+1)+' )</span><h3>'+d.n+'</h3></div>'+
+      '<p class="aa-mat-dim-sub">'+d.s+'</p><div class="aa-mat-opts">'+opts+'</div>';
+    quiz.appendChild(dim);
+  });
+
+  function choose(el){
+    var di=+el.getAttribute('data-d'), li=+el.getAttribute('data-l');
+    picks[di]=li;
+    var sibs=el.parentNode.querySelectorAll('.aa-mat-opt');
+    sibs.forEach(function(s){s.classList.remove('sel');});
+    el.classList.add('sel');
+    var done=picks.every(function(p){return p!==null;});
+    submit.disabled=!done;
+    if(done){ hint.textContent='Ready — see your profile.'; }
+  }
+  quiz.addEventListener('click',function(e){var o=e.target.closest('.aa-mat-opt'); if(o) choose(o);});
+  quiz.addEventListener('keydown',function(e){ if((e.key===' '||e.key==='Enter')){var o=e.target.closest('.aa-mat-opt'); if(o){e.preventDefault();choose(o);}}});
+
+  function stageFor(score){
+    var idx=Math.round(score)-1; if(idx<0)idx=0; if(idx>4)idx=4; return LEVELS[idx];
+  }
+
+  // Radar chart (4 axes, values 1..5) — pure SVG, no libraries
+  function radarSVG(vals){
+    var size=300,c=size/2,R=c-62,N=vals.length;
+    function ang(i){return Math.PI*2*i/N - Math.PI/2;}
+    function pt(i,r){return [c+Math.cos(ang(i))*r, c+Math.sin(ang(i))*r];}
+    var g='';
+    for(var lv=1;lv<=5;lv++){
+      var rr=R*lv/5,ps=[];
+      for(var i=0;i<N;i++){var p=pt(i,rr);ps.push(p[0].toFixed(1)+','+p[1].toFixed(1));}
+      g+='<polygon points="'+ps.join(' ')+'" fill="none" stroke="#DCEAEA" stroke-width="1"/>';
+    }
+    for(var i=0;i<N;i++){var p=pt(i,R);g+='<line x1="'+c+'" y1="'+c+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#DCEAEA" stroke-width="1"/>';}
+    var dp=[],dots='';
+    for(var i=0;i<N;i++){var p=pt(i,R*vals[i]/5);dp.push(p[0].toFixed(1)+','+p[1].toFixed(1));dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="#127E88"/>';}
+    var labs='',dys=[-8,4,16,4];
+    for(var i=0;i<N;i++){var p=pt(i,R+16);labs+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+dys[i]).toFixed(1)+'" text-anchor="middle">'+SHORT[i]+'</text>';}
+    return '<svg class="aa-mat-radar" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Agile maturity radar across four dimensions">'+
+      g+'<polygon points="'+dp.join(' ')+'" fill="rgba(18,126,136,.16)" stroke="#127E88" stroke-width="2" stroke-linejoin="round"/>'+dots+labs+'</svg>';
+  }
+
+  submit.addEventListener('click',function(){
+    if(picks.some(function(p){return p===null;})) return;
+    var scores=picks.map(function(p){return p+1;});
+    var avg=scores.reduce(function(a,b){return a+b;},0)/scores.length;
+    var stage=stageFor(avg);
+    var stageIdx=LEVELS.indexOf(stage);
+    // dashboard: radar + KPIs + stage track
+    var maxv=Math.max.apply(null,scores), minv=Math.min.apply(null,scores);
+    var strongIdx=scores.indexOf(maxv), weakIdx=scores.indexOf(minv);
+    var tsegs='',tlabs='';
+    for(var t=0;t<5;t++){
+      tsegs+='<div class="aa-mat-track-seg'+(t<=stageIdx?' on':'')+'"></div>';
+      tlabs+='<span'+(t===stageIdx?' class="cur"':'')+'>'+LEVELS[t]+'</span>';
+    }
+    var kpis=
+      '<div class="aa-mat-kpi"><div class="k">Overall stage</div><div class="v">'+stage+'</div><div class="s">Stage '+(stageIdx+1)+' of 5</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Maturity score</div><div class="v">'+avg.toFixed(1)+'</div><div class="s">out of 5.0</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Strongest</div><div class="v" style="font-size:17px">'+SHORT[strongIdx]+'</div><div class="s">'+LEVELS[maxv-1]+'</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Focus area</div><div class="v" style="font-size:17px">'+SHORT[weakIdx]+'</div><div class="s">'+LEVELS[minv-1]+'</div></div>';
+    var dash=
+      '<div class="aa-mat-dash">'+
+        '<div class="aa-mat-panel"><div class="cap">Maturity radar</div>'+radarSVG(scores)+'</div>'+
+        '<div class="aa-mat-panel"><div class="cap">At a glance</div><div class="aa-mat-kpis">'+kpis+'</div>'+
+          '<div class="aa-mat-track"><div class="aa-mat-track-bar">'+tsegs+'</div><div class="aa-mat-track-labels">'+tlabs+'</div></div>'+
+        '</div>'+
+      '</div>';
+    // per-dimension rows
+    var rows='';
+    DIMS.forEach(function(d,di){
+      var lv=picks[di]; var segs='';
+      for(var i=0;i<5;i++){ segs+='<span class="aa-mat-seg'+(i<=lv?' on':'')+'"></span>'; }
+      var next='';
+      if(lv<4){
+        var nextItems=d.o[lv+1].map(function(x){return x;}).join(' &middot; ');
+        next='<p class="aa-mat-row-next"><b>Next ('+LEVELS[lv+1]+'):</b> '+nextItems+'</p>';
+      } else {
+        next='<p class="aa-mat-row-next"><b>Top of the model.</b> Sustain it, and mentor others toward it.</p>';
+      }
+      rows+='<div class="aa-mat-row"><div class="aa-mat-row-top"><span class="aa-mat-row-name">'+d.n+'</span>'+
+        '<span class="aa-mat-row-lv">'+(lv+1)+' &middot; '+LEVELS[lv]+'</span></div>'+
+        '<div class="aa-mat-meter">'+segs+'</div>'+next+'</div>';
+    });
+    // focus = lowest dimension(s)
+    var min=Math.min.apply(null,picks);
+    var lowNames=DIMS.filter(function(d,di){return picks[di]===min;}).map(function(d){return d.n;});
+    var focusHtml='<span class="aa-mat-eb">Where to focus next</span>'+
+      '<h4>Start with '+lowNames.join(' & ')+'.</h4>'+
+      '<p>Your lowest-scoring dimension'+(lowNames.length>1?'s are':' is')+' <strong>'+lowNames.join(' & ')+'</strong> at <strong>'+LEVELS[min]+'</strong>. '+
+      'Maturity compounds when the weakest dimension moves &mdash; that&rsquo;s the highest-leverage place to invest next.</p>';
+
+    res.innerHTML=
+      '<div class="aa-mat-res-card"><div class="lab">Your overall maturity</div>'+
+        '<div class="aa-mat-res-stage">'+stage+'</div>'+
+        '<div class="aa-mat-res-score">Score <b>'+avg.toFixed(1)+' / 5.0</b> &middot; stage '+(stageIdx+1)+' of 5</div>'+
+        '<p class="aa-mat-res-desc">'+STAGE_DESC[stage]+'</p></div>'+
+      dash+
+      '<div class="aa-mat-profile"><h4>Your profile, dimension by dimension</h4>'+rows+'</div>'+
+      '<div class="aa-mat-focus">'+focusHtml+'</div>'+
+      '<div class="aa-mat-cta"><p>Want a facilitated maturity assessment and a roadmap to the next stage? Our SPCTs do this with enterprise teams every week.</p>'+
+        '<div class="aa-mat-btns"><a class="aa-mat-btn p" href="https://meetings.hubspot.com/john2795">Book a maturity consult &rarr;</a>'+
+        '<a class="aa-mat-btn g" href="/services/business-agility/">See how we transform</a>'+
+        '<button class="aa-mat-btn g" id="mat-print" type="button">Save / print</button>'+
+        '<button class="aa-mat-btn g" id="mat-retake" type="button">Retake</button></div></div>';
+    var pr=document.getElementById('mat-print');
+    if(pr) pr.addEventListener('click',function(){window.print();});
+    res.hidden=false;
+    res.scrollIntoView({behavior:'smooth',block:'start'});
+    var rt=document.getElementById('mat-retake');
+    if(rt) rt.addEventListener('click',function(){
+      picks=[null,null,null,null];
+      quiz.querySelectorAll('.aa-mat-opt').forEach(function(s){s.classList.remove('sel');});
+      submit.disabled=true; hint.textContent='Select a level for all four dimensions to continue.';
+      res.hidden=true; res.innerHTML='';
+      document.getElementById('aa-mat').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+})();
+</script>
+</div>
