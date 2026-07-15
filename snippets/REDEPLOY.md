@@ -44,9 +44,11 @@ Keep the existing mega-menu CSS, then append, in order:
 - `snippets/nav-fix-v3.css`, `nav-fix-v5-add.css`, `nav-fix-v6-add.css` (header/panel positioning)
 - `snippets/nav-mobile-accordion.css` (mobile)
 - `snippets/nav-mega-v2-patch.css` (flagship fully-clickable + flagship/About/Assessments descriptions)
+- `snippets/nav-2a.css` (Global Nav redesign 2A — utility strip + hairline primary bar + mono uppercase links + underline wipe + LARGER logo + bracket rule + action pills). Dropdown/mega-menu intentionally untouched. Verify the Astra button/logo/menu class names against the live header and tweak `--aa-logo-h` / the `.ast-header-button-*` selectors if needed.
 
 ## 3) JS — WPCode snippets
 - `AA – Nav JS` (JavaScript · Site-Wide Footer) = `snippets/nav-all-in-one.js`
+- `AA – Nav 2A Utility Strip` (JavaScript · Site-Wide Footer) = `snippets/nav-2a-utility-strip.js` (injects the dark utility strip above #masthead). Set the real Sign-in URL (`/sign-in/` placeholder) and confirm the phone number.
 - `AA – Course JS` = `snippets/aa-course-js.MERGED.js` — RE-PASTE (updated: the course-date rail's Eventbrite fallback now reads a per-course URL from `#aa-cohorts data-eb` instead of the org-wide URL). To filter each course to its own classes, add `data-eb="<that course's Eventbrite Collection/series URL>"` to the course page's `#aa-cohorts` element. Without it, it falls back to the org calendar (all courses).
 - `AA – Book a Consult popup`, cohort/schedule snippets — already migrated; verify active.
 
