@@ -47,7 +47,12 @@ Keep the existing mega-menu CSS, then append, in order:
 
 ## 3) JS — WPCode snippets
 - `AA – Nav JS` (JavaScript · Site-Wide Footer) = `snippets/nav-all-in-one.js`
-- `AA – Course JS`, `AA – Book a Consult popup`, cohort/schedule snippets — already migrated; verify active.
+- `AA – Course JS` = `snippets/aa-course-js.MERGED.js` — RE-PASTE (updated: the course-date rail's Eventbrite fallback now reads a per-course URL from `#aa-cohorts data-eb` instead of the org-wide URL). To filter each course to its own classes, add `data-eb="<that course's Eventbrite Collection/series URL>"` to the course page's `#aa-cohorts` element. Without it, it falls back to the org calendar (all courses).
+- `AA – Book a Consult popup`, cohort/schedule snippets — already migrated; verify active.
+
+### Eventbrite behavior notes
+- The date **rail is already course-specific** (scraped from each page). Only the *fallback* link was org-wide — now fixed to be per-course via `data-eb`.
+- The **embedded-in-page Eventbrite modal is gone by design** (the snippet scrolls to `#cohorts` and opens Eventbrite in a new tab). Eventbrite retired its embeddable checkout widget and blocks iframing event pages, so an in-page Eventbrite modal is no longer reliable. The in-page checkout path today is **Stripe** ("Register [Stripe]" → FluentForm 21). If you want to attempt restoring the Eventbrite embedded widget, confirm your Eventbrite account still has embedded checkout enabled first.
 
 ## 4) Menu (Appearance → Menus) — classes + structure
 - `aa-mega` on top-level: Assessments, Services, Training, About

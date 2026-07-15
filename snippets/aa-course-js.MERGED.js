@@ -572,7 +572,7 @@
 			+     '<span class="mono aa-eyebrow">Choose your cohort</span>'
 			+     '<span class="sub">Click on the date and complete the registration process.</span>'
 			+   '</div>'
-			+   '<div id="aa-rail" class="ls-rail" data-eb="' + EB_ORG_DEFAULT + '" aria-label="Course dates"></div>'
+			+   '<div id="aa-rail" class="ls-rail" data-eb="' + esc(D.eb || EB_ORG_DEFAULT) + '" aria-label="Course dates"></div>'
 			+   '<div class="ls-panel">'
 			+     '<div>'
 			+       '<div class="mono aa-eyebrow">Selected cohort</div>'
