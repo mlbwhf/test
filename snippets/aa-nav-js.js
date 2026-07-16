@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v9, consolidated) ====================
+/* ==================== AA — NAV JS (v10, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -27,6 +27,13 @@
        1280px content column (viewport-centered, capped at 1280px) instead
        of centering under whichever tab is hovered — fixes Services'
        mega-menu drifting off the page's actual content edges.
+
+   v10 changelog:
+     - Module 4 rebuilt: was a 1-level "back to parent" link, not a real
+       breadcrumb. buildChain() now walks MAP up to Home and renders every
+       ancestor as a link ("Home / Services / Operating Model / ..."),
+       ending in the current page as a non-link pill. Works for MAP entries
+       and the dynamic /training/ resolver (both recurse through resolve()).
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -213,24 +220,45 @@
     }
     return null;
   }
+  function buildChain(path){
+    var m = resolve(path);
+    if(!m || m.hidden) return null;
+    var chain = [{ href: path, label: m.label, current: true }];
+    var parentPath = m.parent, parentLabel = m.parentLabel;
+    while(parentPath){
+      chain.unshift({ href: parentPath, label: parentLabel, current: false });
+      if(parentPath === '/') break;
+      var pm = resolve(parentPath);
+      if(!pm || pm.hidden) break;
+      parentPath = pm.parent;
+      parentLabel = pm.parentLabel;
+    }
+    return chain;
+  }
   function build(){
     if(document.getElementById('aa-crumb-wrap')) return;
     var path = pathnameNormalized();
+    var chain = buildChain(path);
+    if(!chain) return;
     var m = resolve(path);
-    if(!m || m.hidden) return;
 
     var mast = document.getElementById('masthead') || document.querySelector('header#masthead') || document.querySelector('header.site-header');
     if(!mast) return;
+
+    var crumbsHtml = chain.map(function(node){
+      if(node.current){
+        return '<span class="aa-crumb-here">' + node.label + '</span>';
+      }
+      return '<a href="' + node.href + '" class="aa-crumb-link">' + node.label + '</a>' +
+             '<span class="aa-crumb-sep" aria-hidden="true">/</span>';
+    }).join('');
 
     var wrap = document.createElement('div');
     wrap.id = 'aa-crumb-wrap';
     wrap.className = 'aa-crumb-wrap' + (m.dark ? ' is-dark' : '');
     wrap.innerHTML =
       '<div class="aa-crumb-in">' +
-        '<nav aria-label="Breadcrumb" class="aa-crumb mono">' +
-          '<a href="' + m.parent + '" class="aa-crumb-back">&larr; Back to ' + m.parentLabel + '</a>' +
-          '<span class="aa-crumb-here">' + m.label + '</span>' +
-        '</nav>' +
+        '<nav aria-label="Breadcrumb" class="aa-crumb mono">' + crumbsHtml + '</nav>' +
       '</div>';
 
     var util = document.getElementById('aa-utilstrip');
