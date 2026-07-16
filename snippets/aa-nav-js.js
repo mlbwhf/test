@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v15, consolidated) ====================
+/* ==================== AA — NAV JS (v16, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -98,6 +98,19 @@
        snippets are deactivated — if an old script already injected these
        bars, this file's id-guards skip re-inserting them and the OLD order
        (which put the strip below the nav) is what you keep seeing.
+
+   v16 changelog:
+     - Hot-area escape hatch. Once CSS v18 made the panel JS-controlled, the
+       remaining trap was: an OPEN panel covers the hero, so a click meant for
+       the hero lands on the panel and the old "close only when clicking
+       OUTSIDE .aa-mega" rule never fired. Now ANY click that isn't a real
+       menu link closes the panel (plus a mousedown pre-close), so the panel
+       gets out of the way and the next click reaches the page.
+     - IMPORTANT: if the hot area persists after this, the cause is an OLD nav
+       JS snippet still active alongside this one (it opens the panel without
+       this close logic). Deactivate "hover-intent" (28796), "JS-Mobile global
+       Nav" (28830), "Mobile-nav accordion" (28840) — this file replaces all
+       three.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -199,10 +212,26 @@
        close immediately */
     window.addEventListener('scroll', function(){ if(anyOpen()) closeAll(); }, {passive:true});
     document.addEventListener('keydown', function(e){ if(e.key==='Escape'||e.keyCode===27) closeAll(); });
+    /* Close on ANY click that isn't an actual menu link. This is the escape
+       hatch for the "panel covers the hero" case: when the open panel sits on
+       top of hero content, a click there lands on the panel (empty area), not
+       the page — the old rule (close only when clicking OUTSIDE .aa-mega)
+       therefore never fired and the panel stayed put. Now: click a real menu
+       link -> navigate; click anywhere else (page OR empty panel area) ->
+       close immediately, so the next click reaches the page underneath. */
     document.addEventListener('click', function(e){
       if(!anyOpen()) return;
       var t=e.target;
-      if(!t || !t.closest || !t.closest('.menu-item.aa-mega')) closeAll();
+      if(t && t.closest && t.closest('.menu-item.aa-mega a')) return; /* real menu link — let it navigate */
+      closeAll();
+    }, true);
+    /* Belt-and-braces: also close on mousedown over a non-link area, so the
+       panel is already gone by the time the click resolves on the hero. */
+    document.addEventListener('mousedown', function(e){
+      if(!anyOpen()) return;
+      var t=e.target;
+      if(t && t.closest && t.closest('.menu-item.aa-mega a')) return;
+      if(t && t.closest && t.closest('.menu-item.aa-mega')) closeAll();
     }, true);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
