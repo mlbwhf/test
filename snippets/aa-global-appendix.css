@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v12.1, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v13, FULLY SELF-CONTAINED)
    ****************************************************************************
    * v12 IS A REPLACE, NOT AN APPEND. Select ALL existing content in the      *
    * "AA – Global CSS" WPCode snippet, DELETE it, then paste ONLY this file. *
@@ -109,9 +109,17 @@
        pointer-events:none, and only .aa-open reveals it. Also gave the base
        rule a self-sufficient centered/contained default width so the panel
        is placed correctly even before AA – Nav JS's place() runs.
-   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js) — that file
-   also needs the same treatment: deactivate every other JS snippet that
-   touches the nav/mega-menu/breadcrumb before activating it (see its own
+   What changed in v13:
+     • Flagship band now has `order:-1` so it is ALWAYS the first (top) item
+       in the mega panel regardless of where the flagship item sits in the
+       WordPress menu order. Live render showed About with "FAQ" above the
+       Customers flagship band (because Customers wasn't first in the menu),
+       while Services looked right only because its flagship happened to be
+       first. order:-1 makes it top for every section without touching the
+       menu order.
+   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), also v13 —
+   that file also needs the same treatment: deactivate every other JS snippet
+   that touches the nav/mega-menu/breadcrumb before activating it (see its own
    header comment for the exact list).
    ============================================================================ */
 
@@ -448,6 +456,10 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 @media (min-width:922px){
   .aa-mega > .sub-menu > .menu-item.aa-flag{
     grid-column:1 / -1 !important;
+    order:-1 !important; /* ALWAYS the first (top) item in the panel, no matter
+                            where "Customers"/flagship sits in the WP menu order.
+                            Fixes About showing FAQ above the flagship band while
+                            Services (flagship already first) looked right. */
     position:relative !important;
     display:flex !important;
     flex-direction:column !important;

@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v12.2, consolidated) ====================
+/* ==================== AA — NAV JS (v13, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -67,9 +67,17 @@
        About) now NAVIGATE to their own landing page on click. The mega
        still opens on hover, but a click on the parent used to do nothing
        (items-with-children swallow the click in this setup). We now force
-       window.location on click — but only when the item has a real URL, so
-       genuine "#" placeholder parents are left alone. Modifier-clicks
-       (cmd/ctrl/shift/middle) fall through to the browser's new-tab handling.
+       window.location on click.
+
+   v13 changelog:
+     - Parent-click fix strengthened after live test showed it still not
+       working: (a) the parents are "#" placeholders, so v12.2's "real URL
+       only" guard skipped them — added a label->section fallback
+       (Services->/services/, About->/about/, etc.); (b) moved the listener
+       to CAPTURE phase and use stopImmediatePropagation so we navigate
+       before the theme's own toggle handler can eat the click.
+     - (paired with aa-global-appendix.css v13, which adds order:-1 so the
+       flagship band is always the top item in the panel.)
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -106,16 +114,24 @@
     function closeAll(){ tabs.forEach(function(t){ t.classList.remove('aa-open'); }); }
     function open(tab){ clearTimeout(timer); tabs.forEach(function(t){ if(t!==tab) t.classList.remove('aa-open'); }); setHdr(); place(tab); tab.classList.add('aa-open'); }
     function schedule(){ clearTimeout(timer); timer=setTimeout(closeAll,240); }
+    /* section landing pages, used as a fallback when a mega parent's own link
+       is a "#" placeholder (common — the item exists just to hold the dropdown).
+       Matched against the parent's visible label, case-insensitively. */
+    var SECTION = { services:'/services/', assessments:'/assessments/', training:'/training/', about:'/about/' };
     function topLink(tab){
       var k=tab.children;
       for(var i=0;i<k.length;i++){ if(k[i].tagName==='A') return k[i]; }
       return tab.querySelector(':scope > a');
     }
-    function realHref(a){
+    function targetHref(a){
       if(!a) return null;
       var h=a.getAttribute('href');
-      if(!h || h==='#' || h.charAt(h.length-1)==='#' || h.indexOf('javascript:')===0) return null;
-      return a.href; /* resolved absolute URL */
+      /* 1) a real URL on the link itself wins */
+      if(h && h!=='#' && h.charAt(h.length-1)!=='#' && h.indexOf('javascript:')!==0) return a.href;
+      /* 2) otherwise fall back to the section landing page by label */
+      var t=(a.textContent||'').trim().toLowerCase();
+      for(var key in SECTION){ if(t.indexOf(key)!==-1) return SECTION[key]; }
+      return null;
     }
     tabs.forEach(function(tab){
       var panel=tab.querySelector(':scope > .sub-menu');
@@ -125,20 +141,21 @@
       tab.addEventListener('focusout', schedule);
       if(panel){ panel.addEventListener('mouseenter', function(){ clearTimeout(timer); }); panel.addEventListener('mouseleave', schedule); }
 
-      /* make the top-level parent link navigate to its OWN page on click.
-         The mega opens on hover; a click on "Services"/"About"/etc. should go
-         to /services/, /about/, ... Some theme/menu setups swallow that click
-         (toggle behaviour on items-with-children), so we force it here — but
-         only when the item has a real URL (not "#" placeholder parents). */
-      var a=topLink(tab), href=realHref(a);
-      if(a && href){
+      /* make the top-level parent link NAVIGATE on click. The mega opens on
+         hover; a click on "Services"/"About"/etc. should go to /services/,
+         /about/, ... This menu setup swallows that click (the parent is a
+         "#" toggle), so we force it. Attached in CAPTURE phase so we win
+         before any theme handler can preventDefault/toggle. */
+      var a=topLink(tab);
+      if(a){
         a.addEventListener('click', function(e){
-          /* let modifier-clicks (new tab / download) behave normally */
-          if(e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button!==0) return;
+          if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button!==0) return; /* let new-tab clicks pass */
+          var href=targetHref(a);
+          if(!href) return;               /* genuinely no destination — leave alone */
           e.preventDefault();
-          e.stopPropagation();
+          e.stopImmediatePropagation();
           window.location.assign(href);
-        });
+        }, true);
       }
     });
     header.querySelectorAll('.main-header-menu > .menu-item:not(.aa-mega)').forEach(function(li){ li.addEventListener('mouseenter', closeAll); });
