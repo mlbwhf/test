@@ -1,18 +1,32 @@
-/* ==================== AA — NAV JS (v10, consolidated) ====================
+/* ==================== AA — NAV JS (v12, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
-   REPLACES all of the following — turn them OFF (Inactive), don't paste
-   alongside this file, or you'll get duplicate listeners / conflicting
-   inline styles:
-     Repo files (already folded in, kept only for history):
+   ****************************************************************************
+   * Go to Code Snippets and DEACTIVATE every other snippet that touches the *
+   * nav, mega-menu, mobile accordion, or breadcrumb before activating this. *
+   * Do not just add this one alongside the others.                          *
+   ****************************************************************************
+
+   Why this matters: this file guards against re-inserting its own elements
+   with `if(document.getElementById('aa-crumb-wrap')) return;` (same idea for
+   the utility strip and mobile chevrons). If an OLD breadcrumb/nav script is
+   still active too, whichever script's DOMContentLoaded handler happens to
+   run FIRST wins and the other is silently skipped by that guard. This is
+   exactly what was seen live: an old script still handles the routes it
+   recognizes (About, FAQ, Customers — rendering the OLD "<- Back to Home"
+   1-level link) and blocks this file from running there, while this file
+   only got to run on routes the old script didn't have a route for (deep
+   Training pages), rendering the NEW full-path breadcrumb correctly. Both
+   were active at once. Turn off every one of the following:
+     Live WPCode snippets confirmed active on-site:
+       "hover-intent" (id 28796), "JS-Mobile global Nav" (id 28830),
+       "Mobile-nav accordion" (id 28840), any snippet named "aa-breadcrumb"
+       or similar if one exists separately from those three.
+     Repo files (history only, not live WPCode snippets — for reference):
        nav-all-in-one.js, nav-mega-hover-intent.js (dead duplicate of module 1
        below), nav-mobile-accordion.js (dead duplicate of module 2 below),
        nav-2a-utility-strip.js, aa-breadcrumb.js
-     Live WPCode snippets (found active on-site, not just repo history —
-     this file supersedes all three):
-       "hover-intent" (id 28796), "JS-Mobile global Nav" (id 28830),
-       "Mobile-nav accordion" (id 28840)
 
    Four independent modules, no shared state:
      1. Desktop (min-width:922px) — mega-menu hover-intent + panel placement
@@ -34,6 +48,14 @@
        ancestor as a link ("Home / Services / Operating Model / ..."),
        ending in the current page as a non-link pill. Works for MAP entries
        and the dynamic /training/ resolver (both recurse through resolve()).
+
+   v12 changelog:
+     - No code changes — same buildChain()/place() logic as v10. Bumped to
+       match aa-global-appendix.css v12 (now a full REPLACE, not an append)
+       and added the deactivate-everything-else warning above, since the
+       root cause of "nothing I paste seems to change anything" turned out
+       to be old JS snippets still running alongside this one, not a bug in
+       this file.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */

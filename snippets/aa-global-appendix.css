@@ -1,13 +1,33 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v11, consolidated)
-   Paste this ONE block at the END of "AA – Global CSS" (after the existing
-   base rules: core mega-menu markup + the original ::after descriptions).
+   AA — GLOBAL CSS APPENDIX  (v12, FULLY SELF-CONTAINED)
+   ****************************************************************************
+   * v12 IS A REPLACE, NOT AN APPEND. Select ALL existing content in the      *
+   * "AA – Global CSS" WPCode snippet, DELETE it, then paste ONLY this file. *
+   * Do not paste this after anything else — there should be nothing else    *
+   * in the snippet box once you're done.                                    *
+   ****************************************************************************
 
-   REPLACES all of the following separate append-blocks — delete them if
-   they're already pasted in, then paste this instead:
-     nav-fix-v3.css, nav-fix-v4-add.css, nav-fix-v5-add.css, nav-fix-v6-add.css,
-     nav-mobile-accordion.css, nav-mega-v2-patch.css, nav-2a.css,
-     aa-breadcrumb.css
+   Why this changed: earlier versions (v8–v11) were written as an "appendix"
+   meant to sit AFTER the site's original base mega-menu CSS (grid layout,
+   card typography, some ::after descriptions) — the instruction was always
+   "keep the base rules, paste this at the end." In practice every new
+   version got pasted in ADDITION to the previous one, so the live snippet
+   ended up with the original base rules + v8 + v9 + v10 all active at once,
+   fighting each other by cascade order/specificity. That's why behavior was
+   inconsistent (e.g. the About page showing the OLD 1-level breadcrumb while
+   a Training page correctly showed the NEW full-path one — two different
+   copies of the breadcrumb-building JS were both running, and whichever
+   happened to run first won for routes it recognized).
+
+   v12 fixes this at the root: it now includes everything the base rules
+   used to provide (mega-panel grid layout, category-card typography, valid
+   Services/Assessments descriptions) INLINE, so there is no more "base" to
+   keep separately. This is the whole thing. REPLACES, wholesale:
+     - Every prior individual patch file (nav-fix-v3/v4/v5/v6, nav-mobile-
+       accordion, nav-mega-v2-patch, nav-2a, aa-breadcrumb, "AA MEGA —
+       PATCHES", "Center mega panel", the original "MEGA-MENU — card style"
+       block) — all of it, delete and don't re-paste any of it.
+     - v8, v9, v10, v11 of this same appendix.
 
    What changed in v8 (consolidation):
      • Removed 3 layers of dead/overridden mega-panel rules (v3→v5→v6 each
@@ -56,7 +76,33 @@
        downward, never up), and the nested layers' clearance increased from
        52px to 84px to match. Customers / Career Selector flagship cards
        (single-line titles, no nested sub-menu) left untouched at 118px.
-   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js).
+       (Superseded by v12 below — the whole absolute-position approach is
+       gone.)
+
+   What changed in v12:
+     • Folded in the mega-panel grid layout + category-card typography that
+       previously lived only in the site's original base CSS — this file no
+       longer assumes anything else is pasted alongside it.
+     • Flagship band (section 7) rebuilt a 3rd time, this time for real: the
+       v7–v11 "fully clickable card" design absolutely-positioned the title
+       and guessed a fixed margin-top for the children below it — any time
+       the title wrapped to 2 lines that guess was wrong and they overlapped
+       (reported live on Services/Operating Model). Replaced with a plain
+       flex-column layout (title stacked above a wrapping pill row, no fixed
+       height, no absolute positioning) — the box now always grows to fit
+       its actual content, so the two layers can't overlap regardless of how
+       the title wraps. Applies to every `.aa-flag` item generically (also
+       covers Training → AI-Native, which no prior version styled at all).
+     • Dropped 4 stale Assessments ::after descriptions that targeted URLs
+       that don't exist on the current site (agile-assessment, ai-assessment,
+       product-management-assessment, innovation-framework — old slugs from
+       before the assessments were restructured); kept the ones matching
+       real pages (agile-maturity, mutation-readiness) plus the 4 valid
+       Services descriptions the base CSS used to carry.
+   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js) — that file
+   also needs the same treatment: deactivate every other JS snippet that
+   touches the nav/mega-menu/breadcrumb before activating it (see its own
+   header comment for the exact list).
    ============================================================================ */
 
 /* ---------- 0. Tokens ---------- */
@@ -233,15 +279,21 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 }
 
 /* ---------- 5. Mega panel — desktop: contained card + open state + hover-bridge ----------
-   left/right/width/transform are set inline by AA – Nav JS (contained ~940px
-   card, centered under the hovered tab, clamped to viewport) — not set here. */
+   left/width are set inline by AA – Nav JS (contained card, centered on the
+   site's 1280px content column, clamped to viewport) — not set here. */
 @media (min-width:922px){
+  html body .aa-mega{ position:relative !important; }
   html body .main-header-menu > .menu-item.aa-mega > .sub-menu{
     position:fixed !important;
     top:calc(var(--aa-hdr, 80px) + 6px) !important;
     max-width:none !important;
     margin:0 !important;
-    padding:20px !important;
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+    align-items:stretch !important;
+    gap:14px !important;
+    padding:22px !important;
+    background:#fff !important;
     border:1px solid var(--aa-border) !important;
     border-radius:12px !important;
     box-shadow:0 30px 60px -24px rgba(8,37,43,.42) !important;
@@ -258,6 +310,35 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     content:"" !important; position:fixed !important; left:0 !important; right:0 !important;
     top:var(--aa-hdr, 80px) !important; height:12px !important; background:transparent !important;
   }
+
+  /* category card (non-flagship item: title + nested course/page list) */
+  html body .aa-mega > .sub-menu > .menu-item{
+    min-width:0 !important; width:auto !important;
+    border:1px solid #DCEAEA !important; border-radius:6px !important;
+    padding:16px 18px !important; background:#FBFDFD !important;
+    transition:border-color .15s, background .15s;
+  }
+  html body .aa-mega > .sub-menu > .menu-item:hover{ border-color:#127E88 !important; background:#fff !important; }
+  html body .aa-mega > .sub-menu > .menu-item > a{
+    font-family:'Newsreader',Georgia,serif !important; font-style:italic; font-weight:500 !important;
+    font-size:20px !important; letter-spacing:0 !important; text-transform:none !important;
+    color:#0E3A44 !important; padding:0 0 8px !important; background:transparent !important;
+    border-bottom:1px solid #EAF3F3 !important; margin-bottom:8px !important; display:block !important;
+  }
+  html body .aa-mega > .sub-menu > .menu-item > a:hover{ color:#127E88 !important; background:transparent !important; }
+  html body .aa-mega > .sub-menu > .menu-item > .sub-menu{
+    position:static !important; display:block !important; opacity:1 !important; visibility:visible !important;
+    transform:none !important; left:auto !important; top:auto !important; width:100% !important; min-width:0 !important;
+    margin:0 !important; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important;
+  }
+  html body .aa-mega > .sub-menu .sub-menu > .menu-item > a{
+    padding:6px 10px !important; font-size:13px !important; color:#3C565E !important; background:transparent !important;
+    border-radius:4px !important; margin:0 -10px !important; transition:background .14s, color .14s, padding-left .14s;
+  }
+  html body .aa-mega > .sub-menu .sub-menu > .menu-item > a:hover{ color:#0C5E66 !important; background:#EAF6F7 !important; padding-left:14px !important; }
+  html body .aa-mega > .sub-menu .ast-menu-toggle,
+  html body .aa-mega > .sub-menu .menu-item-has-children > a::after,
+  html body .aa-mega > .sub-menu .menu-item-has-children > a .ast-header-navigation-arrow{ display:none !important; }
 }
 
 /* ---------- 6. Mobile (<=921px): tappable accordion (both render modes) ---------- */
@@ -327,102 +408,98 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
   html body #masthead .aa-mega .menu-item.aa-feature{ position:static !important; }
 }
 
-/* ---------- 7. Mega content — flagship fully-clickable card + descriptions ---------- */
+/* ---------- 7. Flagship band — class "aa-flag" (Operating Model, Customers,
+   Career Selector, AI-Native under Training — any top-level item marked
+   aa-flag gets this treatment automatically) ----------
+   v12: rebuilt from scratch as a CONTENT-DRIVEN column layout (title stacked
+   ABOVE the pill row, min-height:0) instead of a fixed-height box. The old
+   design (v7-v11) absolutely-positioned the title over a fixed-height card
+   and pushed a separately-positioned children list below it with a hardcoded
+   margin-top guess — any time the title wrapped differently than expected,
+   the guessed offset was wrong and the two layers visibly overlapped. Since
+   nothing here has a fixed height or absolute position anymore, the box
+   simply grows to fit whatever the title/pills actually need — overlap is
+   no longer possible by construction, not by tuning a pixel budget. */
 @media (min-width:922px){
-  /* flagship cards (Operating Model, Customers, Career Selector) — whole card clickable */
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]),
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]),
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]){
+  .aa-mega > .sub-menu > .menu-item.aa-flag{
+    grid-column:1 / -1 !important;
     position:relative !important;
-    display:block !important;
-    min-height:118px !important;
-    padding:20px 26px !important;
-  }
-  /* Operating Model's card is taller — it's the only flagship with a nested
-     .sub-menu (the 5 layers) sitting below its title+description, and the
-     title text ("Operating Model in the Age of AI") wraps to 2 lines, which
-     was overflowing the old 118px box and overlapping the layers below it. */
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]){
-    min-height:150px !important;
-  }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a,
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a,
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a{
-    position:absolute !important;
-    inset:0 !important;
-    left:0 !important; top:0 !important;
-    width:100% !important; height:100% !important;
-    margin:0 !important;
-    padding:20px 26px !important;
     display:flex !important;
     flex-direction:column !important;
-    justify-content:center !important;
     align-items:flex-start !important;
-    font-size:22px !important;
-    line-height:1.15 !important;
+    justify-content:center !important;
+    gap:14px !important;
+    min-height:0 !important;
+    padding:22px 26px !important;
+    background:#0B2E35 !important;
+    border-color:#0B2E35 !important;
+    background-image:radial-gradient(circle at 82% 45%, rgba(60,80,224,.40), transparent 55%) !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag > a{
+    position:static !important;
+    display:block !important;
+    max-width:none !important;
     color:#fff !important;
-    z-index:1 !important;
+    border:none !important; margin:0 !important; padding:0 !important;
+    font-size:22px !important; line-height:1.2 !important;
   }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a{
-    justify-content:flex-start !important;
+  .aa-mega > .sub-menu > .menu-item.aa-flag > a::before{
+    content:"FLAGSHIP"; display:block; font-family:ui-monospace,Menlo,monospace; font-style:normal;
+    font-weight:700; font-size:10px; letter-spacing:.14em; color:#8FCFCF; margin-bottom:8px;
   }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a::after,
+  /* pill row (nested .sub-menu = the flagship's own children, e.g. the 5
+     Operating Model layers) — wraps to as many rows as it needs */
+  .aa-mega > .sub-menu > .menu-item.aa-flag > .sub-menu{
+    position:static !important;
+    display:flex !important; flex-wrap:wrap !important;
+    justify-content:flex-start !important; align-items:center !important;
+    gap:10px !important; margin:0 !important; max-width:none !important; width:100% !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag .sub-menu > .menu-item > a{
+    color:#fff !important; font-size:13px !important; padding:8px 14px !important; margin:0 !important;
+    border:1px solid rgba(255,255,255,.25) !important; border-radius:6px !important; background:rgba(255,255,255,.04) !important;
+    white-space:nowrap !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag .sub-menu > .menu-item > a:hover{
+    border-color:#8FCFCF !important; background:rgba(143,207,207,.14) !important; color:#fff !important;
+  }
+  /* leaf flagships with no nested pill row (Customers, Career Selector) get a
+     one-line "Explore ->" caption under the title instead */
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after,
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
     content:"Explore \2192";
-    display:block;
-    margin-top:10px;
-    font-family:ui-monospace,Menlo,monospace;
-    font-size:12px;
-    letter-spacing:.04em;
-    font-weight:600;
-    color:#8FCFCF;
+    display:block; margin-top:8px;
+    font-family:ui-monospace,Menlo,monospace; font-style:normal;
+    font-size:12px; letter-spacing:.04em; font-weight:600; color:#8FCFCF;
   }
 
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > .sub-menu{
-    position:relative !important;
-    z-index:2 !important;
-    justify-content:flex-start !important;
-    max-width:none !important;
-    margin:84px 0 0 !important;
-  }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > .sub-menu::after{
-    content:none !important;
-  }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) .sub-menu > .menu-item > a{
-    white-space:nowrap !important;
-    position:relative !important; z-index:2 !important;
-  }
+  /* remove dropdown caret on top-level menu items */
+  .main-header-menu .ast-header-navigation-arrow,
+  .ast-nav-menu .ast-header-navigation-arrow,
+  .main-header-menu .menu-item-has-children > .menu-link::after{ display:none !important; }
+}
 
-  /* flagship descriptions (Customers / Career Selector have no inner buttons) */
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after{
-    content:"Real results from enterprise transformations.";
+/* ---------- 8. Card descriptions — shared style + per-page content ---------- */
+@media (min-width:922px){
+  /* shared style every ::after description inherits; the rules below only
+     set `content` and rely on this for font/color/spacing */
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag)::after{
+    display:block; font-style:normal; font-weight:400; font-size:12.5px;
+    color:#5E7378; line-height:1.5; margin-top:4px;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    font-weight:400; letter-spacing:0; text-transform:none;
-    color:#A7C2C2; font-size:13px;
   }
-  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
-    content:"Find your career path in six questions.";
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    font-weight:400; letter-spacing:0; text-transform:none;
-    color:#A7C2C2; font-size:13px;
-  }
-
-  /* card descriptions — Assessments (Agile Maturity) + all four About cards */
-  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{
-    content:"See where you stand — Absent to Flying.";
-  }
-  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{
-    content:"Answers to the questions we hear most.";
-  }
-  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{
-    content:"Send us a message — we reply fast.";
-  }
-  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href*="#offices"])::after{
-    content:"Where we work — offices worldwide.";
-  }
-  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/"])::after{
-    content:"The mission — and the people behind the work.";
-  }
+  /* Services */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/business-agility/"])::after{content:"Scale agility across the whole enterprise."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/digital-transformation/"])::after{content:"Modernise how you build and deliver."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/innovation-culture/"])::after{content:"Build a culture that ships new ideas."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/product-operating-model/"])::after{content:"Shift from projects to products."}
+  /* Assessments */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{content:"See where you stand — Absent to Flying."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/mutation-readiness/"])::after{content:"How ready are you to adapt & transform?"}
+  /* About */
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{content:"Answers to the questions we hear most."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{content:"Send us a message — we reply fast."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href*="#offices"])::after{content:"Where we work — offices worldwide."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/"])::after{content:"The mission — and the people behind the work."}
 }
 /* ============================================================================ */
