@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v19, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v20, FULLY SELF-CONTAINED)
    ****************************************************************************
    * WHERE THIS GOES CHANGED IN v18 — READ THIS.                              *
    *                                                                          *
@@ -166,7 +166,29 @@
        strip sits at the very top with the nav below it (the old fixed header
        + 80px padding put the strip under the nav).
 
-   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), currently v15 —
+   What changed in v20 (hot area ROOT CAUSE — found + fixed + PROVEN in a real
+   browser, reproducing the exact live cascade: legacy Additional CSS + this
+   file appended, Chromium + Playwright):
+     • Closed mega panels kept a display:grid box floating over the hero.
+       The old `#masthead *{pointer-events:auto!important}` rule (ID
+       specificity) silently beat every class-level pointer-events:none, and
+       legacy section G forces nested course lists visibility:visible — a
+       visible descendant inside a hidden ancestor IS hit-testable, and
+       opacity:0 does not block clicks. Net effect measured in the repro:
+       an invisible, fully clickable copy of every menu covering the hero
+       AND the nav bar (which is also why parent tabs wouldn't click —
+       Playwright's own error: "Training subtree intercepts pointer events"
+       while hovering Services).
+     • Fix: closed panels are now display:none via ID-boosted selectors
+       (#masthead in the selector outranks every legacy rule). A display:none
+       subtree has no boxes and can never be hit-tested — descendants cannot
+       opt out. Open state (.aa-open, set only by AA – Nav JS) is the one
+       state that renders the panel.
+     • Verified: probe sweep over the hero finds zero menu hit-targets;
+       hover-open, auto-close on leaving, hero clicks, and the tall Training
+       panel all pass.
+
+   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), currently v17 —
    keep it ACTIVE in WPCode. Deactivate every OTHER nav/mega/breadcrumb JS
    snippet (see that file's header for the list).
    ============================================================================ */
@@ -368,7 +390,8 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     width:min(1180px, calc(100vw - 60px)) !important;
     max-width:none !important;
     margin:0 !important;
-    display:grid !important;
+    /* display intentionally NOT set here — closed/open display is governed
+       exclusively by the ID-boosted v20 rules below (none vs grid). */
     grid-template-columns:repeat(2, minmax(0,1fr)) !important;
     align-items:stretch !important;
     gap:14px !important;
@@ -379,37 +402,32 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     box-shadow:0 30px 60px -24px rgba(8,37,43,.42) !important;
     max-height:calc(100vh - var(--aa-hdr, 80px) - 20px) !important;
     overflow-y:auto !important;
-    /* HIDDEN by default — only the .aa-open rule below reveals it. Without
-       this guard (the v12 bug) every mega panel rendered on top of the page
-       at once: wide overlay, intercepted clicks on the nav parents, buried
-       the breadcrumb. */
-    visibility:hidden !important;
-    opacity:0 !important;
-    pointer-events:none !important;
-    transition:opacity .16s ease, visibility .16s ease !important;
   }
-  /* KILL the legacy pure-CSS hover show. The old Additional CSS ("Overlap fix"
-     in section G + NAV FIX v3) reveals the panel on :hover / :focus-within as a
-     FULL-WIDTH fixed overlay — that is the click-trap "hot area", and no JS can
-     close a panel that CSS shows on hover. Force it to stay HIDDEN on hover so
-     the ONLY thing that opens it is the JS `.aa-open` class (which the JS can
-     also close, via its authoritative mouseover/scroll/click/Escape handlers).
-     Higher specificity (html body …) + last-in-file beats the legacy rules. */
-  html body .main-header-menu > .menu-item.aa-mega:hover > .sub-menu,
-  html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu{
+  /* ============== v20 — THE hot-area fix, verified in a real browser ==============
+     Root cause (reproduced locally with the live Additional CSS cascade):
+     closed panels kept a display:grid box floating over the hero, the old
+     `#masthead *{pointer-events:auto!important}` rule (ID specificity) beat
+     every class-level pointer-events:none, and the nested course lists are
+     forced visibility:visible — so an INVISIBLE, fully hit-testable copy of
+     every menu covered the hero AND the nav bar itself (blocking the parent
+     tabs). opacity:0 hides it but does NOT stop clicks/hover.
+     Fix: closed panels are display:none — a display:none subtree has no boxes
+     and can NEVER be hit-tested, descendants cannot opt out. ID-boosted
+     selectors (#masthead) so no legacy rule outranks these. */
+  html body #masthead .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu{
+    display:none !important;
     visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
   }
-  /* BULLETPROOF (v19): the panel is INERT for EVERY state that is not .aa-open —
-     hover, focus-within, or anything else the legacy CSS might try. There is no
-     way for the panel to become clickable/visible unless the JS has opened it.
-     This is the airtight version of the :hover-kill above: it covers states we
-     didn't enumerate, so no legacy rule can reopen the hot area. */
-  html body .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu{
-    visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
+  /* belt-and-braces: also flatten the subtree while closed, defeating BOTH the
+     legacy nested visibility:visible rules and the #masthead* pointer-events
+     rule at higher specificity. Only matches while :not(.aa-open), so the open
+     state falls back to the normal visible styles automatically. */
+  html body #masthead .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu *{
+    visibility:hidden !important; pointer-events:none !important;
   }
-  /* …but .aa-open (set by the JS) DOES reveal it. Placed after the guards
-     so it wins when a tab is both open and hovered. */
-  html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+  /* …and .aa-open (set ONLY by AA – Nav JS) is the one state that shows it. */
+  html body #masthead .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+    display:grid !important;
     visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
   }
   /* remove BOTH my old hover-bridge and the legacy full-width NAV-FIX-v3 bridge
