@@ -1,12 +1,18 @@
-/* ==================== AA — NAV JS (v2, consolidated) ====================
+/* ==================== AA — NAV JS (v9, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
-   REPLACES all of the following separate files — delete them if already
-   pasted in, then paste this instead:
-     nav-all-in-one.js, nav-mega-hover-intent.js (dead duplicate of module 1
-     below), nav-mobile-accordion.js (dead duplicate of module 2 below),
-     nav-2a-utility-strip.js, aa-breadcrumb.js
+   REPLACES all of the following — turn them OFF (Inactive), don't paste
+   alongside this file, or you'll get duplicate listeners / conflicting
+   inline styles:
+     Repo files (already folded in, kept only for history):
+       nav-all-in-one.js, nav-mega-hover-intent.js (dead duplicate of module 1
+       below), nav-mobile-accordion.js (dead duplicate of module 2 below),
+       nav-2a-utility-strip.js, aa-breadcrumb.js
+     Live WPCode snippets (found active on-site, not just repo history —
+     this file supersedes all three):
+       "hover-intent" (id 28796), "JS-Mobile global Nav" (id 28830),
+       "Mobile-nav accordion" (id 28840)
 
    Four independent modules, no shared state:
      1. Desktop (min-width:922px) — mega-menu hover-intent + panel placement
@@ -15,11 +21,17 @@
      4. Breadcrumb injector — pill above the utility strip (must run AFTER
         module 3 so it inserts itself before the strip, not the masthead)
    Pairs with the single "AA – Global CSS" appendix (aa-global-appendix.css).
+
+   v9 changelog (live-QA fixes):
+     - Module 1 place(tab): dropdown panel now centers on the site's
+       1280px content column (viewport-centered, capped at 1280px) instead
+       of centering under whichever tab is hovered — fixes Services'
+       mega-menu drifting off the page's actual content edges.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
 (function(){
-  var MAXW = 940;
+  var CONTENT_MAX = 1280, SIDE_PAD = 30; /* matches the site's own content container (max-width:1280px, 30px side padding) */
   var hdrTicking=false, lastHdr=-1;
   function readWriteHdr(){
     hdrTicking=false;
@@ -29,11 +41,12 @@
   }
   function setHdr(){ if(!hdrTicking){ hdrTicking=true; (window.requestAnimationFrame||function(f){setTimeout(f,16);})(readWriteHdr); } }
   function place(tab){
+    /* v9: align to the page's content column (centered on the viewport, capped
+       at 1280px) instead of centering under the hovered tab — v8 drifted off
+       the site's actual content edges depending on which tab was open. */
     var panel = tab.querySelector(':scope > .sub-menu'); if(!panel) return;
-    var w = Math.min(MAXW, window.innerWidth - 40);
-    var r = tab.getBoundingClientRect();
-    var left = r.left + r.width/2 - w/2;
-    left = Math.max(16, Math.min(left, window.innerWidth - 16 - w));
+    var w = Math.min(CONTENT_MAX - SIDE_PAD*2, window.innerWidth - SIDE_PAD*2);
+    var left = Math.max(SIDE_PAD, (window.innerWidth - w) / 2);
     panel.style.setProperty('left', left+'px', 'important');
     panel.style.setProperty('right', 'auto', 'important');
     panel.style.setProperty('width', w+'px', 'important');

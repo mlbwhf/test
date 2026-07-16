@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v8, consolidated)
+   AA — GLOBAL CSS APPENDIX  (v9, consolidated)
    Paste this ONE block at the END of "AA – Global CSS" (after the existing
    base rules: core mega-menu markup + the original ::after descriptions).
 
@@ -9,11 +9,11 @@
      nav-mobile-accordion.css, nav-mega-v2-patch.css, nav-2a.css,
      aa-breadcrumb.css
 
-   What changed in the consolidation:
+   What changed in v8 (consolidation):
      • Removed 3 layers of dead/overridden mega-panel rules (v3→v5→v6 each
        patched the same properties); kept only the final state.
      • Removed v3's "force-expand every submenu" mobile block — superseded
-       by the accordion in section 7.
+       by the accordion in section 6.
      • Fixed a real conflict: v5 turned OFF the header's backdrop-filter;
        nav-2a turns it ON. Kept 2A's blur (the shipped design direction),
        dropped v5's override.
@@ -21,6 +21,22 @@
        but never declared anywhere — declared it in the tokens block below.
      • Updated the hover-bridge (mega panel) to track the real header height
        via --aa-hdr instead of a stale hardcoded 56px.
+
+   What changed in v9 (live QA fixes, from the first real test on-site):
+     • Header switched from position:fixed to position:sticky. Fixed pinned
+       the nav to the viewport top regardless of DOM order, which visually
+       buried the utility strip + breadcrumb (inserted as normal-flow
+       siblings before #masthead) behind the nav instead of showing them
+       above it. Sticky respects normal flow on load and only locks the nav
+       to top:0 once you've scrolled past the strip/breadcrumb.
+     • Added a rule hiding Astra's own native breadcrumb feature — it was
+       rendering a second "Home » Section » Page" line below the utility
+       strip, on top of (in addition to) this pill. Turn it off in
+       Customizer -> Breadcrumb too; this CSS is the safety net.
+     • Mega-panel horizontal placement (in AA – Nav JS) changed from
+       "centered under the hovered tab" to "aligned to the site's 1280px
+       content column" — it was drifting off the page's actual content
+       edges depending on which tab was hovered.
    Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js).
    ============================================================================ */
 
@@ -30,13 +46,18 @@ html body #masthead{
   --aa-hdr:80px;         /* live header height, kept in sync by JS */
 }
 
-/* ---------- 1. Header: fixed, opaque/blurred, top-most, clickable ---------- */
+/* ---------- 1. Header: STICKY (not fixed), opaque/blurred, clickable ----------
+   Sticky (not fixed) so the utility strip + breadcrumb — inserted as normal-
+   flow siblings BEFORE #masthead — render above it on load and scroll away
+   naturally; the nav only locks to top:0 once you've scrolled past them.
+   (v8 used position:fixed, which pins the nav to the viewport top regardless
+   of DOM order — that buried the strip/breadcrumb behind it. Fixed in v9.) */
 html body #masthead,
 html body.ast-theme-transparent-header #masthead,
 html body.ast-header-break-point #masthead,
 html body .ast-sticky-active #masthead{
-  position:fixed !important;
-  top:0 !important; left:0 !important; right:0 !important;
+  position:sticky !important;
+  top:0 !important;
   z-index:100000 !important;
   transform:none !important;
   box-shadow:none !important;
@@ -110,6 +131,14 @@ html body #masthead .main-header-menu li.menu-item > a{ pointer-events:auto !imp
 .aa-om nav[aria-label="Breadcrumb"],
 .aa-as nav[aria-label="Breadcrumb"],
 .aa-hm nav[aria-label="Breadcrumb"]{ display:none !important; }
+
+/* hide Astra's own native breadcrumb feature (theme setting) — this pill
+   replaces it site-wide. Primary fix should be turning it off in Customizer
+   -> Breadcrumb (or per-page "ast-breadcrumbs-content" meta); this CSS rule
+   is the safety net in case it's still enabled somewhere. */
+html body .ast-breadcrumbs,
+html body .ast-breadcrumbs-wrap,
+html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 
 /* ---------- 4. Logo + top-level nav links (2A) — desktop only ---------- */
 @media (min-width:922px){
