@@ -1,0 +1,36 @@
+/* ============================================================
+   MEGA-MENU LIVE FIXES — paste at the END of Customize → Additional CSS
+   on agile-agilist.com (append; do not delete existing rules).
+   Fixes reported 2026-07-16:
+     1) Flagship band turns white on hover (white text on missing dark bg)
+     2) Global nav "hot area" stays active — invisible open panel eats clicks
+   NOTE ON SELECTORS: the LIVE menu is a newer build than the repo
+   (repo uses .aa-mn-*). If the live markup uses different class names,
+   swap the selectors below for the live ones — structure of the fix is
+   identical. Confirm against the live Header HTML element.
+   ============================================================ */
+
+/* ---- FIX 2: closed dropdown must not intercept pointer events ----
+   Root cause: the panel is hidden with opacity:0 but still laid out over
+   the hero, so it swallows hovers/clicks across its full width. Hiding it
+   from the pointer (and from a11y) unless its item is hovered/focused. */
+.aa-mn-panel{ visibility:hidden !important; pointer-events:none !important; }
+.aa-mn-has:hover > .aa-mn-panel,
+.aa-mn-has:focus-within > .aa-mn-panel{ visibility:visible !important; pointer-events:auto !important; }
+
+/* ---- FIX 1: flagship band must keep its dark background + light text ----
+   Root cause: when the navy background doesn't paint (missing var / override
+   / stuck entry-animation), the white text lands on white = invisible.
+   Force the resting state so it can never render white-on-white. */
+.aa-mn-flag{
+  background:#0B2E35 !important;   /* --mn-navy */
+  opacity:1 !important;
+  animation:none !important;       /* neutralise any stuck fade-in */
+}
+.aa-mn-flag .aa-mn-title-d,
+.aa-mn-flag .aa-mn-explore{ color:#ffffff !important; }
+.aa-mn-flag .aa-mn-cap-d{ color:#8FCFCF !important; }
+.aa-mn-flag .aa-mn-desc-d{ color:#A7C2C2 !important; }
+/* If the live flagship "AI-Native Foundations" pill is a separate element,
+   give it an explicit background + text too so it isn't a ghost outline:
+.aa-mn-flag .aa-mn-flag-btn{ background:#127E88 !important; color:#fff !important; } */

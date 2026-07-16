@@ -17,6 +17,16 @@ Please append the paste-ready block in **`registration-growth/A4-deployed-block.
 
 The block is self-contained and fail-safe (renders nothing if the events feed is empty). It avoids `&&` (the WP encoder corruption from commit 0d6fb34).
 
+## Bugs reported on the LIVE mega-menu (2026-07-16) → for whoever owns the live header
+The live menu is a newer build than the repo `meganav-PART1/PART2` files (repo shows an older, simpler menu). These live on the site only. Registration-growth session could NOT apply them: its connected tools reach report-ai.org (deep admin) and agile-agilist.com pages/posts only — neither can edit agile-agilist's Additional CSS or Header HTML element.
+
+1. **Flagship band turns white on hover** — white text on a dark band whose background isn't painting (missing var / override / stuck fade). White-on-white = invisible.
+2. **Global nav hot area stays active** — the closed dropdown panel is hidden with `opacity:0` but still overlays the hero and intercepts hovers/clicks (needs `visibility:hidden`/`pointer-events:none` when closed).
+
+**Paste-ready fix:** `registration-growth/meganav-live-fixes.css` (append to Customize → Additional CSS). Swap `.aa-mn-*` selectors for the live class names if they differ.
+
+3. **"Register via Eventbrite" leaves the site instead of embedded checkout** — this is expected: embedded checkout is Phase B1 (gated behind A1), NOT a bug. Mark chose 2026-07-16 to keep it as Phase B. The hero button intentionally links out to the Eventbrite organizer page for now.
+
 ## Shared rules (from registration-growth/PLAN.md)
 - Ads and ad landing pages frozen 30 days — Mark must confirm the freeze URL list before anyone edits course pages tied to campaigns.
 - One funnel-affecting change per week; log site changes in `registration-growth/STATUS.md` weekly table so the A1 report can attribute movement.
