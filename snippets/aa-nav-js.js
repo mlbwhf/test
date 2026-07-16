@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v16, consolidated) ====================
+/* ==================== AA — NAV JS (v17, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -111,6 +111,17 @@
        this close logic). Deactivate "hover-intent" (28796), "JS-Mobile global
        Nav" (28830), "Mobile-nav accordion" (28840) — this file replaces all
        three.
+
+   v17 changelog:
+     - GEOMETRY-based close. The mouseover/target close couldn't fire for a
+       tall panel (Training) that covers the whole viewport — every target is
+       still the panel, so there's no "page" to move onto. Now a rAF-throttled
+       mousemove compares the real cursor position to the header box and the
+       open panel box; outside both -> force close. This closes the panel even
+       if something else opened it, and doesn't depend on there being visible
+       page around the panel. The remaining reason it could still stick is a
+       DUPLICATE old nav script re-adding .aa-open — see the 28796/28830/28840
+       note above.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -208,6 +219,34 @@
       if(t && t.closest && t.closest('.main-header-menu > .menu-item.aa-mega, .menu-item.aa-mega')){ clearTimeout(timer); }
       else { schedule(); }
     }, true);
+    /* GEOMETRY close — the authoritative one. The target-based check above
+       fails for a very tall panel (e.g. Training) that covers the whole
+       viewport: there's no "page" left to move onto, so every mouseover
+       target is still the panel and it never closes. This instead compares
+       the actual cursor position to the header box and the OPEN panel box; if
+       the cursor is outside BOTH, the panel is force-closed immediately —
+       regardless of what opened it (works even if a stray old script added
+       .aa-open). rAF-throttled so it's cheap. */
+    var mmTick=false, lastX=0, lastY=0;
+    function geomCheck(){
+      mmTick=false;
+      var open=anyOpen(); if(!open) return;
+      var panel=open.querySelector(':scope > .sub-menu');
+      var hb=header.getBoundingClientRect();
+      var inHeader = lastY>=hb.top && lastY<=hb.bottom && lastX>=hb.left && lastX<=hb.right;
+      var inPanel=false;
+      if(panel){
+        var pb=panel.getBoundingClientRect();
+        var pad=8; /* small forgiveness margin around the panel edges */
+        inPanel = lastX>=pb.left-pad && lastX<=pb.right+pad && lastY>=pb.top-pad && lastY<=pb.bottom+pad;
+      }
+      if(!inHeader && !inPanel) closeAll();
+    }
+    document.addEventListener('mousemove', function(e){
+      if(!anyOpen()) return;
+      lastX=e.clientX; lastY=e.clientY;
+      if(!mmTick){ mmTick=true; (window.requestAnimationFrame||function(f){setTimeout(f,16);})(geomCheck); }
+    }, {passive:true});
     /* scrolling the page, Escape, or a click outside the mega system all
        close immediately */
     window.addEventListener('scroll', function(){ if(anyOpen()) closeAll(); }, {passive:true});
@@ -327,10 +366,10 @@
     '/':                                    { hidden: true },
 
     '/about/':                              { parent: '/',          parentLabel: 'Home',        label: 'About' },
-    '/about/faq/':                          { parent: '/about/',    parentLabel: 'About',       label: 'FAQ',                   dark: true },
+    '/about/faq/':                          { parent: '/about/',    parentLabel: 'About',       label: 'FAQ' },
     '/about/contact/':                      { parent: '/about/',    parentLabel: 'About',       label: 'Contact' },
 
-    '/customers/':                          { parent: '/about/',    parentLabel: 'About',       label: 'Customers',             dark: true },
+    '/customers/':                          { parent: '/about/',    parentLabel: 'About',       label: 'Customers' },
 
     '/services/':                           { parent: '/',          parentLabel: 'Home',        label: 'Services' },
     '/services/business-agility/':          { parent: '/services/', parentLabel: 'Services',    label: 'Business Agility' },
@@ -344,7 +383,7 @@
     '/services/ai-automation/':             { parent: '/services/operating-model/', parentLabel: 'Operating Model', label: 'AI Automation' },
 
     '/assessments/':                        { parent: '/',              parentLabel: 'Home',        label: 'Assessments' },
-    '/assessments/agile-maturity/':         { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Agile Maturity',     dark: true },
+    '/assessments/agile-maturity/':         { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Agile Maturity' },
     '/assessments/cert-recommender/':       { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Career Selector' },
     '/assessments/mutation-readiness/':     { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Mutation Readiness' },
 
