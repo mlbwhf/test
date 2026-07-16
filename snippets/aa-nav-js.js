@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v14, consolidated) ====================
+/* ==================== AA — NAV JS (v15, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -88,6 +88,16 @@
        scroll; (c) close on Escape; (d) close on any click outside the mega
        system. The panel can no longer get stuck open over the page.
      - CSS side unchanged this round — aa-global-appendix.css stays v13.
+
+   v15 changelog:
+     - Breadcrumb now inserts AFTER #masthead (below the nav) instead of at
+       the very top of everything. Final vertical order is now:
+         teal utility strip  ->  nav  ->  breadcrumb  ->  page content
+       which matches the agreed spec (teal on top, breadcrumb under the nav).
+       NOTE: this only shows correctly once the OLD nav/breadcrumb/utility
+       snippets are deactivated — if an old script already injected these
+       bars, this file's id-guards skip re-inserting them and the OLD order
+       (which put the strip below the nav) is what you keep seeing.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -375,9 +385,14 @@
         '<nav aria-label="Breadcrumb" class="aa-crumb mono">' + crumbsHtml + '</nav>' +
       '</div>';
 
-    var util = document.getElementById('aa-utilstrip');
-    var target = util || mast;
-    target.parentNode.insertBefore(wrap, target);
+    /* v15: insert the breadcrumb IMMEDIATELY AFTER #masthead, so it sits
+       BELOW the nav. The utility (teal) strip stays ABOVE the nav (Module 3
+       inserts it before #masthead). Final order top-to-bottom:
+         teal strip  ->  nav (#masthead)  ->  breadcrumb  ->  page content
+       (Earlier versions inserted the breadcrumb before the strip, i.e. at the
+       very top of everything — wrong per the latest spec.) */
+    if(mast.nextSibling){ mast.parentNode.insertBefore(wrap, mast.nextSibling); }
+    else { mast.parentNode.appendChild(wrap); }
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', build);
