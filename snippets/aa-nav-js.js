@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v13, consolidated) ====================
+/* ==================== AA — NAV JS (v14, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -78,6 +78,16 @@
        before the theme's own toggle handler can eat the click.
      - (paired with aa-global-appendix.css v13, which adds order:-1 so the
        flagship band is always the top item in the panel.)
+
+   v14 changelog:
+     - Fixed "mega panel stays open on top of the page / hero not clickable".
+       The old close was a single 240ms timeout that could get skipped if the
+       cursor ended up over the (large, fixed) open panel. Added authoritative
+       closes: (a) a document-level mouseover that closes the moment the
+       cursor is over anything that isn't a mega tab/panel; (b) close on page
+       scroll; (c) close on Escape; (d) close on any click outside the mega
+       system. The panel can no longer get stuck open over the page.
+     - CSS side unchanged this round — aa-global-appendix.css stays v13.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -160,6 +170,30 @@
     });
     header.querySelectorAll('.main-header-menu > .menu-item:not(.aa-mega)').forEach(function(li){ li.addEventListener('mouseenter', closeAll); });
     window.addEventListener('resize', function(){ var o=header.querySelector('.menu-item.aa-mega.aa-open'); if(o) place(o); });
+
+    /* ---- authoritative close (fixes "panel stays open on top of the page,
+       hero not clickable"). The 240ms timeout above is only a soft grace
+       period; these guarantee the panel can never get stuck open: ---- */
+    function anyOpen(){ return header.querySelector('.menu-item.aa-mega.aa-open'); }
+    /* if the pointer is anywhere that is NOT a mega tab or its panel, close.
+       (the open panel is a DOM child of .menu-item.aa-mega, so hovering it
+       still counts as "inside" and keeps it open — only real page content
+       triggers the close.) */
+    document.addEventListener('mouseover', function(e){
+      if(!anyOpen()) return;
+      var t=e.target;
+      if(t && t.closest && t.closest('.main-header-menu > .menu-item.aa-mega, .menu-item.aa-mega')){ clearTimeout(timer); }
+      else { schedule(); }
+    }, true);
+    /* scrolling the page, Escape, or a click outside the mega system all
+       close immediately */
+    window.addEventListener('scroll', function(){ if(anyOpen()) closeAll(); }, {passive:true});
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'||e.keyCode===27) closeAll(); });
+    document.addEventListener('click', function(e){
+      if(!anyOpen()) return;
+      var t=e.target;
+      if(!t || !t.closest || !t.closest('.menu-item.aa-mega')) closeAll();
+    }, true);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
