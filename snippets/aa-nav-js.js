@@ -50,12 +50,17 @@
        and the dynamic /training/ resolver (both recurse through resolve()).
 
    v12 changelog:
-     - No code changes — same buildChain()/place() logic as v10. Bumped to
-       match aa-global-appendix.css v12 (now a full REPLACE, not an append)
-       and added the deactivate-everything-else warning above, since the
-       root cause of "nothing I paste seems to change anything" turned out
-       to be old JS snippets still running alongside this one, not a bug in
-       this file.
+     - buildChain()/place() logic unchanged from v10. Bumped to match
+       aa-global-appendix.css v12 (now a full REPLACE, not an append) and
+       added the deactivate-everything-else warning above, since the root
+       cause of "nothing I paste seems to change anything" turned out to be
+       old JS snippets still running alongside this one, not a bug here.
+     - Removed `dark:true` from the `/about/` MAP entry only (About page's
+       breadcrumb was reported "all teal" — the dark navy variant with every
+       crumb in some shade of teal read as a flat block once v10 added the
+       full path chain; the light variant used everywhere else now applies
+       to About too). FAQ/Customers/Agile Maturity still use dark — not
+       reported as an issue, left as-is.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -195,7 +200,7 @@
   var MAP = {
     '/':                                    { hidden: true },
 
-    '/about/':                              { parent: '/',          parentLabel: 'Home',        label: 'About',                 dark: true },
+    '/about/':                              { parent: '/',          parentLabel: 'Home',        label: 'About' },
     '/about/faq/':                          { parent: '/about/',    parentLabel: 'About',       label: 'FAQ',                   dark: true },
     '/about/contact/':                      { parent: '/about/',    parentLabel: 'About',       label: 'Contact' },
 
