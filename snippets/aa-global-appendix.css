@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v13, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v16, FULLY SELF-CONTAINED)
    ****************************************************************************
    * v12 IS A REPLACE, NOT AN APPEND. Select ALL existing content in the      *
    * "AA – Global CSS" WPCode snippet, DELETE it, then paste ONLY this file. *
@@ -117,7 +117,16 @@
        while Services looked right only because its flagship happened to be
        first. order:-1 makes it top for every section without touching the
        menu order.
-   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), also v13 —
+   What changed in v16:
+     • Flagship band turned WHITE on hover (white title vanished). Cause: the
+       generic category-card rules in section 5 target every `.menu-item`,
+       and the card's `:hover{background:#fff}` (higher specificity via
+       `html body` + `:hover`) overrode the flagship's dark navy background.
+       Added `:not(.aa-flag)` to every generic card rule so they never touch
+       the flagship — it's styled entirely in section 7 and now keeps its
+       dark band on hover.
+
+   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), currently v15 —
    that file also needs the same treatment: deactivate every other JS snippet
    that touches the nav/mega-menu/breadcrumb before activating it (see its own
    header comment for the exact list).
@@ -345,20 +354,25 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
   }
 
   /* category card (non-flagship item: title + nested course/page list) */
-  html body .aa-mega > .sub-menu > .menu-item{
+  /* NOTE: :not(.aa-flag) on every generic card rule — the flagship band is
+     also a .menu-item, and without this exclusion the card's white hover
+     background (higher specificity via html body + :hover) overrode the
+     flagship's dark navy background, turning it white and hiding its white
+     title on hover. The flagship is styled entirely in section 7. */
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag){
     min-width:0 !important; width:auto !important;
     border:1px solid #DCEAEA !important; border-radius:6px !important;
     padding:16px 18px !important; background:#FBFDFD !important;
     transition:border-color .15s, background .15s;
   }
-  html body .aa-mega > .sub-menu > .menu-item:hover{ border-color:#127E88 !important; background:#fff !important; }
-  html body .aa-mega > .sub-menu > .menu-item > a{
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag):hover{ border-color:#127E88 !important; background:#fff !important; }
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag) > a{
     font-family:'Newsreader',Georgia,serif !important; font-style:italic; font-weight:500 !important;
     font-size:20px !important; letter-spacing:0 !important; text-transform:none !important;
     color:#0E3A44 !important; padding:0 0 8px !important; background:transparent !important;
     border-bottom:1px solid #EAF3F3 !important; margin-bottom:8px !important; display:block !important;
   }
-  html body .aa-mega > .sub-menu > .menu-item > a:hover{ color:#127E88 !important; background:transparent !important; }
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag) > a:hover{ color:#127E88 !important; background:transparent !important; }
   html body .aa-mega > .sub-menu > .menu-item > .sub-menu{
     position:static !important; display:block !important; opacity:1 !important; visibility:visible !important;
     transform:none !important; left:auto !important; top:auto !important; width:100% !important; min-width:0 !important;
