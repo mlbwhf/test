@@ -1,0 +1,368 @@
+/* ============================================================================
+   AA — GLOBAL CSS APPENDIX  (v8, consolidated)
+   Paste this ONE block at the END of "AA – Global CSS" (after the existing
+   base rules: core mega-menu markup + the original ::after descriptions).
+
+   REPLACES all of the following separate append-blocks — delete them if
+   they're already pasted in, then paste this instead:
+     nav-fix-v3.css, nav-fix-v4-add.css, nav-fix-v5-add.css, nav-fix-v6-add.css,
+     nav-mobile-accordion.css, nav-mega-v2-patch.css, nav-2a.css,
+     aa-breadcrumb.css
+
+   What changed in the consolidation:
+     • Removed 3 layers of dead/overridden mega-panel rules (v3→v5→v6 each
+       patched the same properties); kept only the final state.
+     • Removed v3's "force-expand every submenu" mobile block — superseded
+       by the accordion in section 7.
+     • Fixed a real conflict: v5 turned OFF the header's backdrop-filter;
+       nav-2a turns it ON. Kept 2A's blur (the shipped design direction),
+       dropped v5's override.
+     • Fixed an undefined variable: `--aa-border` was referenced in 3 files
+       but never declared anywhere — declared it in the tokens block below.
+     • Updated the hover-bridge (mega panel) to track the real header height
+       via --aa-hdr instead of a stale hardcoded 56px.
+   Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js).
+   ============================================================================ */
+
+/* ---------- 0. Tokens ---------- */
+html body #masthead{
+  --aa-border:#DBE6E6;   /* hairline used by the mega panel + logo divider */
+  --aa-hdr:80px;         /* live header height, kept in sync by JS */
+}
+
+/* ---------- 1. Header: fixed, opaque/blurred, top-most, clickable ---------- */
+html body #masthead,
+html body.ast-theme-transparent-header #masthead,
+html body.ast-header-break-point #masthead,
+html body .ast-sticky-active #masthead{
+  position:fixed !important;
+  top:0 !important; left:0 !important; right:0 !important;
+  z-index:100000 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+html body.admin-bar #masthead{ top:32px !important; }
+@media (max-width:782px){ html body.admin-bar #masthead{ top:46px !important; } }
+html body #masthead, html body #masthead *,
+html body #masthead a,
+html body #masthead .main-header-menu li.menu-item > a{ pointer-events:auto !important; }
+
+/* mobile/tablet: solid header (the 2A blur treatment below is desktop-only) */
+@media (max-width:921px){
+  html body #masthead{ background:rgba(255,255,255,.97) !important; }
+}
+/* desktop: 2A translucent hairline chrome */
+@media (min-width:922px){
+  html body #masthead,
+  html body #masthead .ast-primary-header-bar,
+  html body #masthead .main-header-bar,
+  html body #masthead .ast-above-header{
+    background:rgba(251,253,253,.92) !important;
+    -webkit-backdrop-filter:blur(12px) !important; backdrop-filter:blur(12px) !important;
+    border-bottom:1px solid #0E3A44 !important;
+  }
+}
+
+/* ---------- 2. Utility strip (2A) — injected by AA – Nav JS above #masthead ---------- */
+.aa-utilstrip{background:#0E3A44;color:#AFC8C8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.05em}
+.aa-utilstrip-in{max-width:1280px;margin:0 auto;padding:8px 30px;display:flex;align-items:center;gap:22px}
+.aa-utilstrip .u-partner,.aa-utilstrip .u-rating{text-transform:uppercase}
+.aa-utilstrip .u-dot{color:#5E7C7C}
+.aa-utilstrip .u-star{color:#127E88}
+.aa-utilstrip .u-right{margin-left:auto;display:flex;align-items:center;gap:20px}
+.aa-utilstrip a{color:#AFC8C8;text-decoration:none;transition:color .2s ease}
+.aa-utilstrip a:hover{color:#fff}
+.aa-utilstrip .u-div{width:1px;height:12px;background:#3B5C62;display:inline-block}
+.aa-utilstrip .u-signin{color:#EAF4F4;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-transform:uppercase}
+@media(max-width:921px){
+  .aa-utilstrip .u-partner,.aa-utilstrip .u-rating,.aa-utilstrip .u-div{display:none}
+  .aa-utilstrip-in{justify-content:flex-end;padding:7px 18px;gap:16px}
+}
+
+/* ---------- 3. Breadcrumb pill — injected by AA – Nav JS above the utility strip ---------- */
+.aa-crumb-wrap{background:#F4F8F8;border-bottom:1px solid #DBE6E6}
+.aa-crumb-wrap.is-dark{background:#0B2E35;border-bottom:1px solid #0E3A44}
+.aa-crumb-in{max-width:1280px;margin:0 auto;padding:10px 30px}
+.aa-crumb{display:inline-flex;align-items:center;gap:10px;padding:5px 6px 5px 14px;
+  border:1px solid #DBE6E6;border-radius:999px;background:#F4F8F8;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11.5px;letter-spacing:.05em;text-transform:uppercase}
+.aa-crumb-wrap.is-dark .aa-crumb{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
+.aa-crumb-back{color:#88A0A4;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:color .15s ease}
+.aa-crumb-back:hover{color:#127E88}
+.aa-crumb-wrap.is-dark .aa-crumb-back{color:#B9D4D4}
+.aa-crumb-wrap.is-dark .aa-crumb-back:hover{color:#fff}
+.aa-crumb-here{color:#0B5E66;background:#DCEDEE;border-radius:999px;padding:5px 13px}
+.aa-crumb-wrap.is-dark .aa-crumb-here{color:#0B2E35;background:#8FCFCF}
+@media(max-width:721px){
+  .aa-crumb-in{padding:8px 18px}
+  .aa-crumb{font-size:10.5px;gap:8px;padding:4px 5px 4px 12px}
+  .aa-crumb-here{padding:4px 11px}
+}
+/* hide the OLD in-page breadcrumbs still baked into each page file, so the
+   auto-injected pill above never duplicates. Safe to remove this rule once
+   the hardcoded <nav aria-label="Breadcrumb"> is stripped out of every page. */
+.aa-ab nav[aria-label="Breadcrumb"],
+.aa-fq nav[aria-label="Breadcrumb"],
+.aa-cx nav[aria-label="Breadcrumb"],
+.aa-mat nav[aria-label="Breadcrumb"],
+.aa-sx nav[aria-label="Breadcrumb"],
+.aa-om nav[aria-label="Breadcrumb"],
+.aa-as nav[aria-label="Breadcrumb"],
+.aa-hm nav[aria-label="Breadcrumb"]{ display:none !important; }
+
+/* ---------- 4. Logo + top-level nav links (2A) — desktop only ---------- */
+@media (min-width:922px){
+  html body #masthead{ --aa-logo-h:52px; }
+  html body #masthead .site-branding,
+  html body #masthead .ast-site-identity{
+    padding-right:24px !important;
+    border-right:1px solid #CFE0E0 !important;
+  }
+  html body #masthead .custom-logo-link img,
+  html body #masthead .site-logo-img img,
+  html body #masthead .ast-logo-title-inline img,
+  html body #masthead .site-branding img{
+    height:var(--aa-logo-h) !important;
+    width:auto !important; max-width:none !important;
+    object-fit:contain !important; object-position:left center !important;
+  }
+
+  /* top-level only ( > .menu-item > link ) — dropdown/mega content untouched */
+  html body #masthead .main-header-menu > .menu-item > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item > .menu-link,
+  html body #masthead .main-header-menu > .menu-item > a.menu-link,
+  html body #masthead .main-navigation > ul > .menu-item > a{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;
+    font-size:12px !important; letter-spacing:.1em !important; text-transform:uppercase !important;
+    color:#3C565E !important; font-weight:500 !important; position:relative !important;
+  }
+  html body #masthead .main-header-menu > .menu-item > .menu-link::after,
+  html body #masthead .ast-nav-menu > .menu-item > .menu-link::after,
+  html body #masthead .main-navigation > ul > .menu-item > a::after{
+    content:"" !important; position:absolute !important; left:0 !important; right:100% !important;
+    bottom:2px !important; height:1.5px !important; background:#127E88 !important;
+    transition:right .28s ease !important;
+  }
+  html body #masthead .main-header-menu > .menu-item:hover > .menu-link::after,
+  html body #masthead .ast-nav-menu > .menu-item:hover > .menu-link::after,
+  html body #masthead .main-navigation > ul > .menu-item:hover > a::after{ right:0 !important; }
+  html body #masthead .main-header-menu > .menu-item:hover > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item:hover > .menu-link,
+  html body #masthead .main-navigation > ul > .menu-item:hover > a{ color:#0E3A44 !important; }
+  html body #masthead .main-header-menu > .menu-item.current-menu-item > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item.current-menu-item > .menu-link,
+  html body #masthead .main-header-menu > .menu-item.current-menu-parent > .menu-link{
+    color:#0E3A44 !important; font-weight:600 !important;
+  }
+  html body #masthead .main-header-menu > .menu-item > .menu-link .ast-header-navigation-arrow{ display:none !important; }
+
+  /* ---------- Action pills (Enroll / Book a Consultant) ----------
+     Targets Astra header custom buttons. VERIFY class against the live
+     header and adjust the selector if the pills don't pick up. */
+  html body #masthead .ast-custom-button,
+  html body #masthead .ast-header-button-1 .ast-custom-button,
+  html body #masthead .ast-builder-button-element{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;
+    font-size:12px !important; letter-spacing:.08em !important; text-transform:uppercase !important;
+    font-weight:600 !important; border-radius:999px !important; padding:10px 18px !important;
+    transition:border-color .2s ease !important;   /* bg + color SNAP — no transition (avoids white flash) */
+  }
+  html body #masthead .ast-header-button-1 .ast-custom-button{
+    color:#0E3A44 !important; background:transparent !important; border:1px solid #0E3A44 !important;
+  }
+  html body #masthead .ast-header-button-1 .ast-custom-button:hover{
+    background:#127E88 !important; border-color:#127E88 !important; color:#fff !important;
+  }
+  html body #masthead .ast-header-button-2 .ast-custom-button{
+    color:#fff !important; background:#0E3A44 !important; border:1px solid #0E3A44 !important;
+  }
+  html body #masthead .ast-header-button-2 .ast-custom-button:hover{
+    background:#127E88 !important; border-color:#127E88 !important;
+  }
+}
+
+/* ---------- 5. Mega panel — desktop: contained card + open state + hover-bridge ----------
+   left/right/width/transform are set inline by AA – Nav JS (contained ~940px
+   card, centered under the hovered tab, clamped to viewport) — not set here. */
+@media (min-width:922px){
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu{
+    position:fixed !important;
+    top:calc(var(--aa-hdr, 80px) + 6px) !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:20px !important;
+    border:1px solid var(--aa-border) !important;
+    border-radius:12px !important;
+    box-shadow:0 30px 60px -24px rgba(8,37,43,.42) !important;
+    max-height:calc(100vh - var(--aa-hdr, 80px) - 20px) !important;
+    overflow-y:auto !important;
+  }
+  html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+    display:grid !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
+  }
+  /* invisible hover-bridge: keeps the panel open while the cursor crosses the
+     gap between the tab and the panel (tracks the real header height) */
+  html body .main-header-menu > .menu-item.aa-mega:hover > .sub-menu::before,
+  html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu::before{
+    content:"" !important; position:fixed !important; left:0 !important; right:0 !important;
+    top:var(--aa-hdr, 80px) !important; height:12px !important; background:transparent !important;
+  }
+}
+
+/* ---------- 6. Mobile (<=921px): tappable accordion (both render modes) ---------- */
+@media (max-width:921px){
+  /* hide Astra's own submenu toggles — the chevron below manages expansion */
+  html body #masthead .ast-menu-toggle,
+  html body .ast-mobile-popup-drawer .ast-menu-toggle,
+  html body .ast-mobile-header-content .ast-menu-toggle,
+  html body #ast-mobile-header .ast-menu-toggle{ display:none !important; }
+
+  /* collapsed by default */
+  html body #masthead .sub-menu,
+  html body .ast-mobile-popup-drawer .sub-menu,
+  html body .ast-mobile-header-content .sub-menu,
+  html body #ast-mobile-header .sub-menu,
+  html body .main-header-menu .sub-menu,
+  html body .main-navigation .sub-menu{
+    display:block !important; position:static !important;
+    max-height:0 !important; overflow:hidden !important;
+    opacity:0 !important; visibility:hidden !important;
+    transform:none !important; width:auto !important; min-width:0 !important;
+    margin:0 !important; padding:0 0 0 14px !important;
+    background:transparent !important; box-shadow:none !important; border:0 !important;
+    transition:max-height .30s ease, opacity .2s ease !important;
+  }
+  /* expanded state (toggled by the chevron via AA – Nav JS) */
+  html body .menu-item-has-children.aa-mopen > .sub-menu{
+    max-height:1600px !important; opacity:1 !important; visibility:visible !important;
+    padding:2px 0 8px 14px !important;
+  }
+
+  /* chevron toggle — one per parent item, right-aligned over the row */
+  html body #masthead li.menu-item-has-children,
+  html body .ast-mobile-popup-drawer li.menu-item-has-children,
+  html body .ast-mobile-header-content li.menu-item-has-children,
+  html body #ast-mobile-header li.menu-item-has-children,
+  html body .main-navigation li.menu-item-has-children{ position:relative !important; }
+  html body .aa-mchevron{
+    position:absolute !important; top:0 !important; right:0 !important;
+    width:58px !important; height:54px !important;
+    background:transparent !important; border:0 !important; padding:0 !important; margin:0 !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    cursor:pointer !important; z-index:6 !important; -webkit-appearance:none !important; appearance:none !important;
+  }
+  html body .aa-mchevron .aa-mchevron-i{
+    width:11px !important; height:11px !important;
+    border-right:2px solid #0B2E35 !important; border-bottom:2px solid #0B2E35 !important;
+    transform:rotate(45deg) !important; margin-top:-4px !important;
+    transition:transform .25s ease !important; pointer-events:none !important;
+  }
+  html body .menu-item-has-children.aa-mopen > .aa-mchevron .aa-mchevron-i{
+    transform:rotate(-135deg) !important; margin-top:3px !important;
+  }
+  html body li.menu-item-has-children > a{ padding-right:60px !important; }
+
+  /* keep Astra's mobile drawer above the now-topmost fixed header */
+  html body .ast-mobile-popup-drawer,
+  html body .ast-mobile-header-wrap,
+  html body .ast-builder-menu-mobile,
+  html body #ast-mobile-header{ z-index:100001 !important; }
+
+  /* flatten the desktop "flagship" styling if it appears in the mobile menu */
+  html body #masthead .aa-mega .menu-item.aa-flag{ min-height:0 !important; background:transparent !important; padding:0 !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a{ position:static !important; color:inherit !important; font-size:inherit !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a::before,
+  html body #masthead .aa-mega .menu-item.aa-flag > .sub-menu::after{ content:none !important; }
+  html body #masthead .aa-mega .menu-item.aa-feature{ position:static !important; }
+}
+
+/* ---------- 7. Mega content — flagship fully-clickable card + descriptions ---------- */
+@media (min-width:922px){
+  /* flagship cards (Operating Model, Customers, Career Selector) — whole card clickable */
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]),
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]),
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]){
+    position:relative !important;
+    display:block !important;
+    min-height:118px !important;
+    padding:20px 26px !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a{
+    position:absolute !important;
+    inset:0 !important;
+    left:0 !important; top:0 !important;
+    width:100% !important; height:100% !important;
+    margin:0 !important;
+    padding:20px 26px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+    font-size:22px !important;
+    line-height:1.15 !important;
+    color:#fff !important;
+    z-index:1 !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
+    content:"Explore \2192";
+    display:block;
+    margin-top:10px;
+    font-family:ui-monospace,Menlo,monospace;
+    font-size:12px;
+    letter-spacing:.04em;
+    font-weight:600;
+    color:#8FCFCF;
+  }
+
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > .sub-menu{
+    position:relative !important;
+    z-index:2 !important;
+    justify-content:flex-start !important;
+    max-width:none !important;
+    margin:52px 0 0 !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > .sub-menu::after{
+    content:none !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) .sub-menu > .menu-item > a{
+    white-space:nowrap !important;
+    position:relative !important; z-index:2 !important;
+  }
+
+  /* flagship descriptions (Customers / Career Selector have no inner buttons) */
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after{
+    content:"Real results from enterprise transformations.";
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-weight:400; letter-spacing:0; text-transform:none;
+    color:#A7C2C2; font-size:13px;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
+    content:"Find your career path in six questions.";
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-weight:400; letter-spacing:0; text-transform:none;
+    color:#A7C2C2; font-size:13px;
+  }
+
+  /* card descriptions — Assessments (Agile Maturity) + all four About cards */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{
+    content:"See where you stand — Absent to Flying.";
+  }
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{
+    content:"Answers to the questions we hear most.";
+  }
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{
+    content:"Send us a message — we reply fast.";
+  }
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href*="#offices"])::after{
+    content:"Where we work — offices worldwide.";
+  }
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/"])::after{
+    content:"The mission — and the people behind the work.";
+  }
+}
+/* ============================================================================ */

@@ -1,0 +1,232 @@
+/* ==================== AA — NAV JS (v2, consolidated) ====================
+   ONE WPCode JavaScript snippet: "AA – Nav JS"
+   Auto Insert -> Site-Wide Footer.
+
+   REPLACES all of the following separate files — delete them if already
+   pasted in, then paste this instead:
+     nav-all-in-one.js, nav-mega-hover-intent.js (dead duplicate of module 1
+     below), nav-mobile-accordion.js (dead duplicate of module 2 below),
+     nav-2a-utility-strip.js, aa-breadcrumb.js
+
+   Four independent modules, no shared state:
+     1. Desktop (min-width:922px) — mega-menu hover-intent + panel placement
+     2. Mobile (max-width:921px) — tappable accordion
+     3. Utility strip injector — dark strip above #masthead (2A)
+     4. Breadcrumb injector — pill above the utility strip (must run AFTER
+        module 3 so it inserts itself before the strip, not the masthead)
+   Pairs with the single "AA – Global CSS" appendix (aa-global-appendix.css).
+   ========================================================================== */
+
+/* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
+(function(){
+  var MAXW = 940;
+  var hdrTicking=false, lastHdr=-1;
+  function readWriteHdr(){
+    hdrTicking=false;
+    var m=document.getElementById('masthead'); if(!m) return;
+    var b=Math.round(m.getBoundingClientRect().bottom);
+    if(b!==lastHdr){ lastHdr=b; document.documentElement.style.setProperty('--aa-hdr', b+'px'); }
+  }
+  function setHdr(){ if(!hdrTicking){ hdrTicking=true; (window.requestAnimationFrame||function(f){setTimeout(f,16);})(readWriteHdr); } }
+  function place(tab){
+    var panel = tab.querySelector(':scope > .sub-menu'); if(!panel) return;
+    var w = Math.min(MAXW, window.innerWidth - 40);
+    var r = tab.getBoundingClientRect();
+    var left = r.left + r.width/2 - w/2;
+    left = Math.max(16, Math.min(left, window.innerWidth - 16 - w));
+    panel.style.setProperty('left', left+'px', 'important');
+    panel.style.setProperty('right', 'auto', 'important');
+    panel.style.setProperty('width', w+'px', 'important');
+    panel.style.setProperty('transform', 'none', 'important');
+  }
+  function init(){
+    setHdr();
+    window.addEventListener('resize', setHdr);
+    window.addEventListener('scroll', setHdr, {passive:true});
+    if(!window.matchMedia || !window.matchMedia('(min-width:922px)').matches) return;
+    var header=document.getElementById('masthead'); if(!header) return;
+    var tabs=header.querySelectorAll('.main-header-menu > .menu-item.aa-mega'); if(!tabs.length) return;
+    var timer;
+    function closeAll(){ tabs.forEach(function(t){ t.classList.remove('aa-open'); }); }
+    function open(tab){ clearTimeout(timer); tabs.forEach(function(t){ if(t!==tab) t.classList.remove('aa-open'); }); setHdr(); place(tab); tab.classList.add('aa-open'); }
+    function schedule(){ clearTimeout(timer); timer=setTimeout(closeAll,240); }
+    tabs.forEach(function(tab){
+      var panel=tab.querySelector(':scope > .sub-menu');
+      tab.addEventListener('mouseenter', function(){ open(tab); });
+      tab.addEventListener('mouseleave', schedule);
+      tab.addEventListener('focusin', function(){ open(tab); });
+      tab.addEventListener('focusout', schedule);
+      if(panel){ panel.addEventListener('mouseenter', function(){ clearTimeout(timer); }); panel.addEventListener('mouseleave', schedule); }
+    });
+    header.querySelectorAll('.main-header-menu > .menu-item:not(.aa-mega)').forEach(function(li){ li.addEventListener('mouseenter', closeAll); });
+    window.addEventListener('resize', function(){ var o=header.querySelector('.menu-item.aa-mega.aa-open'); if(o) place(o); });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+/* ---------- Module 2 — mobile accordion (chevron toggles, both render modes) ---------- */
+(function () {
+  var MQ = window.matchMedia('(max-width:921px)');
+  function parents() {
+    return document.querySelectorAll(
+      '#masthead li.menu-item-has-children,' +
+      '.ast-mobile-popup-drawer li.menu-item-has-children,' +
+      '.ast-mobile-header-content li.menu-item-has-children,' +
+      '#ast-mobile-header li.menu-item-has-children,' +
+      '.main-navigation li.menu-item-has-children'
+    );
+  }
+  function directSub(li){var k=li.children;for(var i=0;i<k.length;i++){if(k[i].classList&&k[i].classList.contains('sub-menu'))return k[i];}return null;}
+  function directChevron(li){var k=li.children;for(var i=0;i<k.length;i++){if(k[i].classList&&k[i].classList.contains('aa-mchevron'))return k[i];}return null;}
+  function wire() {
+    if (!MQ.matches) return;
+    parents().forEach(function (li) {
+      if (li.getAttribute('data-aa-acc')) return;
+      if (!directSub(li)) return;
+      li.setAttribute('data-aa-acc', '1');
+      var chev = document.createElement('button');
+      chev.type = 'button';
+      chev.className = 'aa-mchevron';
+      chev.setAttribute('aria-label', 'Expand submenu');
+      chev.setAttribute('aria-expanded', 'false');
+      chev.innerHTML = '<span class="aa-mchevron-i" aria-hidden="true"></span>';
+      chev.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var open = li.classList.toggle('aa-mopen');
+        chev.setAttribute('aria-expanded', open ? 'true' : 'false');
+        var pl = li.parentElement;
+        if (pl) {
+          Array.prototype.forEach.call(pl.children, function (sib) {
+            if (sib !== li && sib.classList && sib.classList.contains('aa-mopen')) {
+              sib.classList.remove('aa-mopen');
+              var c = directChevron(sib);
+              if (c) c.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+      });
+      li.appendChild(chev);
+    });
+  }
+  function run() { if (MQ.matches) wire(); }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', run); } else { run(); }
+  if (MQ.addEventListener) MQ.addEventListener('change', run);
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.menu-toggle, .ast-mobile-menu-trigger-fill, .ast-mobile-menu-buttons, [class*="menu-toggle"]')) { setTimeout(wire, 350); }
+  }, true);
+  if (window.MutationObserver) {
+    var mo = new MutationObserver(function () { if (MQ.matches) wire(); });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+})();
+
+/* ---------- Module 3 — utility strip injector (2A) ---------- */
+(function(){
+  function build(){
+    if(document.getElementById('aa-utilstrip')) return;
+    var m = document.getElementById('masthead'); if(!m) return;
+    var d = document.createElement('div');
+    d.id = 'aa-utilstrip';
+    d.className = 'aa-utilstrip';
+    d.innerHTML =
+      '<div class="aa-utilstrip-in">' +
+        '<span class="u-partner">Scaled Agile Gold Partner</span>' +
+        '<span class="u-dot">&middot;</span>' +
+        '<span class="u-rating"><span class="u-star">&#9733;</span> 4.9/5 &middot; 2,500+ leaders trained</span>' +
+        '<span class="u-right">' +
+          '<a class="u-phone" href="tel:+16479997433">+1 (647) 999-7433</a>' +
+          '<span class="u-div"></span>' +
+          '<a class="u-signin" href="/sign-in/">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+            ' Sign in' +
+          '</a>' +
+        '</span>' +
+      '</div>';
+    m.parentNode.insertBefore(d, m);
+  }
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', build); } else { build(); }
+})();
+
+/* ---------- Module 4 — breadcrumb injector (runs after Module 3) ---------- */
+(function(){
+  var MAP = {
+    '/':                                    { hidden: true },
+
+    '/about/':                              { parent: '/',          parentLabel: 'Home',        label: 'About',                 dark: true },
+    '/about/faq/':                          { parent: '/about/',    parentLabel: 'About',       label: 'FAQ',                   dark: true },
+    '/about/contact/':                      { parent: '/about/',    parentLabel: 'About',       label: 'Contact' },
+
+    '/customers/':                          { parent: '/about/',    parentLabel: 'About',       label: 'Customers',             dark: true },
+
+    '/services/':                           { parent: '/',          parentLabel: 'Home',        label: 'Services' },
+    '/services/business-agility/':          { parent: '/services/', parentLabel: 'Services',    label: 'Business Agility' },
+    '/services/digital-transformation/':    { parent: '/services/', parentLabel: 'Services',    label: 'Digital Transformation' },
+    '/services/product-operating-model/':   { parent: '/services/', parentLabel: 'Services',    label: 'Product Operating Model' },
+    '/services/innovation-culture/':        { parent: '/services/', parentLabel: 'Services',    label: 'Innovation Culture' },
+    '/services/operating-model/':           { parent: '/services/', parentLabel: 'Services',    label: 'Operating Model' },
+    '/services/scaling-iterative-model/':   { parent: '/services/operating-model/', parentLabel: 'Operating Model', label: 'Scaling Iterative Model' },
+    '/services/ai-native-operating-model/': { parent: '/services/operating-model/', parentLabel: 'Operating Model', label: 'AI-Native' },
+    '/services/mutation/':                  { parent: '/services/operating-model/', parentLabel: 'Operating Model', label: 'Mutation' },
+    '/services/ai-automation/':             { parent: '/services/operating-model/', parentLabel: 'Operating Model', label: 'AI Automation' },
+
+    '/assessments/':                        { parent: '/',              parentLabel: 'Home',        label: 'Assessments' },
+    '/assessments/agile-maturity/':         { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Agile Maturity',     dark: true },
+    '/assessments/cert-recommender/':       { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Career Selector' },
+    '/assessments/mutation-readiness/':     { parent: '/assessments/',  parentLabel: 'Assessments', label: 'Mutation Readiness' },
+
+    '/training/':                           { parent: '/',          parentLabel: 'Home',        label: 'Training' }
+  };
+
+  function toTitle(slug){
+    return slug.replace(/-/g,' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  }
+  function pathnameNormalized(){
+    var p = location.pathname || '/';
+    if(!/\/$/.test(p)) p += '/';
+    return p;
+  }
+  function resolve(path){
+    if(MAP[path]) return MAP[path];
+    if(path.indexOf('/training/') === 0){
+      var parts = path.split('/').filter(Boolean);
+      if(parts.length === 2){
+        return { parent: '/training/', parentLabel: 'Training', label: toTitle(parts[1]) };
+      }
+      if(parts.length >= 3){
+        var parent = '/training/' + parts[1] + '/';
+        return { parent: parent, parentLabel: toTitle(parts[1]), label: toTitle(parts[2]) };
+      }
+    }
+    return null;
+  }
+  function build(){
+    if(document.getElementById('aa-crumb-wrap')) return;
+    var path = pathnameNormalized();
+    var m = resolve(path);
+    if(!m || m.hidden) return;
+
+    var mast = document.getElementById('masthead') || document.querySelector('header#masthead') || document.querySelector('header.site-header');
+    if(!mast) return;
+
+    var wrap = document.createElement('div');
+    wrap.id = 'aa-crumb-wrap';
+    wrap.className = 'aa-crumb-wrap' + (m.dark ? ' is-dark' : '');
+    wrap.innerHTML =
+      '<div class="aa-crumb-in">' +
+        '<nav aria-label="Breadcrumb" class="aa-crumb mono">' +
+          '<a href="' + m.parent + '" class="aa-crumb-back">&larr; Back to ' + m.parentLabel + '</a>' +
+          '<span class="aa-crumb-here">' + m.label + '</span>' +
+        '</nav>' +
+      '</div>';
+
+    var util = document.getElementById('aa-utilstrip');
+    var target = util || mast;
+    target.parentNode.insertBefore(wrap, target);
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', build);
+  } else {
+    build();
+  }
+})();
