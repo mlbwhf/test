@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v17, consolidated) ====================
+/* ==================== AA — NAV JS (v18, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -122,6 +122,14 @@
        page around the panel. The remaining reason it could still stick is a
        DUPLICATE old nav script re-adding .aa-open — see the 28796/28830/28840
        note above.
+
+   v18 changelog (optimization pass):
+     - SEO/LLM: Module 4 now also injects BreadcrumbList JSON-LD mirroring
+       the visual trail — enables breadcrumb rich results in Google and gives
+       answer engines a machine-readable site hierarchy.
+     - Mobile perf: Module 2's MutationObserver is debounced (350ms) — it
+       previously re-ran wire() on every DOM mutation site-wide (animations,
+       embeds, chat widgets), a constant CPU tax on mobile.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -328,7 +336,16 @@
     if (e.target.closest('.menu-toggle, .ast-mobile-menu-trigger-fill, .ast-mobile-menu-buttons, [class*="menu-toggle"]')) { setTimeout(wire, 350); }
   }, true);
   if (window.MutationObserver) {
-    var mo = new MutationObserver(function () { if (MQ.matches) wire(); });
+    /* v18 perf: debounced — the old callback ran wire() on EVERY DOM mutation
+       site-wide (animations, embeds, chat widgets all trigger it constantly),
+       a real CPU sink on mobile. Now it coalesces bursts into one wire() call
+       350ms after the last mutation, and only while in the mobile breakpoint. */
+    var moT;
+    var mo = new MutationObserver(function () {
+      if (!MQ.matches) return;
+      clearTimeout(moT);
+      moT = setTimeout(wire, 350);
+    });
     mo.observe(document.body, { childList: true, subtree: true });
   }
 })();
@@ -461,6 +478,26 @@
        very top of everything — wrong per the latest spec.) */
     if(mast.nextSibling){ mast.parentNode.insertBefore(wrap, mast.nextSibling); }
     else { mast.parentNode.appendChild(wrap); }
+
+    /* v18 SEO/LLM: BreadcrumbList structured data. The visual pill is plain
+       DOM — invisible to rich results. This JSON-LD mirror is what Google
+       (which indexes JS-injected JSON-LD) and answer engines actually read;
+       it enables the breadcrumb trail under search results snippets. */
+    try{
+      var ld = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': chain.map(function(node, i){
+          var li = { '@type': 'ListItem', 'position': i + 1, 'name': node.label };
+          li.item = location.origin + node.href;
+          return li;
+        })
+      };
+      var s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.text = JSON.stringify(ld);
+      document.head.appendChild(s);
+    }catch(e){ /* never let schema break the visual breadcrumb */ }
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', build);
