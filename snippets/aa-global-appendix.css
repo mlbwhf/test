@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v10, consolidated)
+   AA — GLOBAL CSS APPENDIX  (v11, consolidated)
    Paste this ONE block at the END of "AA – Global CSS" (after the existing
    base rules: core mega-menu markup + the original ::after descriptions).
 
@@ -47,6 +47,15 @@
      • Renamed styles to match: `.aa-crumb-back` (single back-link) is gone,
        replaced by `.aa-crumb-link` (each ancestor) + `.aa-crumb-sep` (the
        "/" between them). `.aa-crumb-here` (current page pill) unchanged.
+
+   What changed in v11:
+     • Services' Operating Model flagship card: title ("Operating Model in
+       the Age of AI") wraps to 2 lines and was overflowing the 118px card,
+       overlapping the 5 layer links sitting below it. Card grown to 150px,
+       title top-aligned instead of centered (so overflow only ever grows
+       downward, never up), and the nested layers' clearance increased from
+       52px to 84px to match. Customers / Career Selector flagship cards
+       (single-line titles, no nested sub-menu) left untouched at 118px.
    Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js).
    ============================================================================ */
 
@@ -329,6 +338,13 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     min-height:118px !important;
     padding:20px 26px !important;
   }
+  /* Operating Model's card is taller — it's the only flagship with a nested
+     .sub-menu (the 5 layers) sitting below its title+description, and the
+     title text ("Operating Model in the Age of AI") wraps to 2 lines, which
+     was overflowing the old 118px box and overlapping the layers below it. */
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]){
+    min-height:150px !important;
+  }
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a,
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a,
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a{
@@ -346,6 +362,9 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     line-height:1.15 !important;
     color:#fff !important;
     z-index:1 !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a{
+    justify-content:flex-start !important;
   }
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > a::after,
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after,
@@ -365,7 +384,7 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     z-index:2 !important;
     justify-content:flex-start !important;
     max-width:none !important;
-    margin:52px 0 0 !important;
+    margin:84px 0 0 !important;
   }
   .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="/services/operating-model/"]) > .sub-menu::after{
     content:none !important;
