@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v12, consolidated) ====================
+/* ==================== AA — NAV JS (v12.2, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -61,6 +61,15 @@
        full path chain; the light variant used everywhere else now applies
        to About too). FAQ/Customers/Agile Maturity still use dark — not
        reported as an issue, left as-is.
+
+   v12.2 changelog:
+     - Module 1: top-level mega parents (Services, Assessments, Training,
+       About) now NAVIGATE to their own landing page on click. The mega
+       still opens on hover, but a click on the parent used to do nothing
+       (items-with-children swallow the click in this setup). We now force
+       window.location on click — but only when the item has a real URL, so
+       genuine "#" placeholder parents are left alone. Modifier-clicks
+       (cmd/ctrl/shift/middle) fall through to the browser's new-tab handling.
    ========================================================================== */
 
 /* ---------- Module 1 — desktop mega-menu (hover-intent + contained card) ---------- */
@@ -97,6 +106,17 @@
     function closeAll(){ tabs.forEach(function(t){ t.classList.remove('aa-open'); }); }
     function open(tab){ clearTimeout(timer); tabs.forEach(function(t){ if(t!==tab) t.classList.remove('aa-open'); }); setHdr(); place(tab); tab.classList.add('aa-open'); }
     function schedule(){ clearTimeout(timer); timer=setTimeout(closeAll,240); }
+    function topLink(tab){
+      var k=tab.children;
+      for(var i=0;i<k.length;i++){ if(k[i].tagName==='A') return k[i]; }
+      return tab.querySelector(':scope > a');
+    }
+    function realHref(a){
+      if(!a) return null;
+      var h=a.getAttribute('href');
+      if(!h || h==='#' || h.charAt(h.length-1)==='#' || h.indexOf('javascript:')===0) return null;
+      return a.href; /* resolved absolute URL */
+    }
     tabs.forEach(function(tab){
       var panel=tab.querySelector(':scope > .sub-menu');
       tab.addEventListener('mouseenter', function(){ open(tab); });
@@ -104,6 +124,22 @@
       tab.addEventListener('focusin', function(){ open(tab); });
       tab.addEventListener('focusout', schedule);
       if(panel){ panel.addEventListener('mouseenter', function(){ clearTimeout(timer); }); panel.addEventListener('mouseleave', schedule); }
+
+      /* make the top-level parent link navigate to its OWN page on click.
+         The mega opens on hover; a click on "Services"/"About"/etc. should go
+         to /services/, /about/, ... Some theme/menu setups swallow that click
+         (toggle behaviour on items-with-children), so we force it here — but
+         only when the item has a real URL (not "#" placeholder parents). */
+      var a=topLink(tab), href=realHref(a);
+      if(a && href){
+        a.addEventListener('click', function(e){
+          /* let modifier-clicks (new tab / download) behave normally */
+          if(e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button!==0) return;
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.assign(href);
+        });
+      }
     });
     header.querySelectorAll('.main-header-menu > .menu-item:not(.aa-mega)').forEach(function(li){ li.addEventListener('mouseenter', closeAll); });
     window.addEventListener('resize', function(){ var o=header.querySelector('.menu-item.aa-mega.aa-open'); if(o) place(o); });
