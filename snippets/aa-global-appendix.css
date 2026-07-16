@@ -1,10 +1,23 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v17, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v18, FULLY SELF-CONTAINED)
    ****************************************************************************
-   * v12 IS A REPLACE, NOT AN APPEND. Select ALL existing content in the      *
-   * "AA – Global CSS" WPCode snippet, DELETE it, then paste ONLY this file. *
-   * Do not paste this after anything else — there should be nothing else    *
-   * in the snippet box once you're done.                                    *
+   * WHERE THIS GOES CHANGED IN v18 — READ THIS.                              *
+   *                                                                          *
+   * Paste this at the VERY END of  Appearance → Customize → Additional CSS   *
+   * (NOT into a WPCode snippet). Reason: the legacy nav/mega/header CSS lives *
+   * in Astra's Additional CSS (the ~1500-line canonical sheet), and Astra    *
+   * loads Additional CSS AFTER WPCode — so a WPCode copy always LOSES on any  *
+   * specificity tie. Putting this last inside Additional CSS is the only     *
+   * place it reliably wins.                                                   *
+   *                                                                          *
+   * THEN: deactivate the WPCode "AA – Global CSS" snippet (its job moves     *
+   * here). Keep the WPCode "AA – Nav JS" snippet ACTIVE (v15+) — it supplies  *
+   * the JavaScript (hover-intent, .aa-open open/close, mobile accordion,     *
+   * utility strip, breadcrumb, clickable parents) that this CSS pairs with.  *
+   *                                                                          *
+   * v18 specifically neutralizes the legacy pure-CSS :hover panel (the       *
+   * click-trap "hot area"), forces the header sticky (teal strip on top),    *
+   * and zeroes the body padding-top the old fixed header added.              *
    ****************************************************************************
 
    Why this changed: earlier versions (v8–v11) were written as an "appendix"
@@ -134,10 +147,28 @@
        source order. (v16's :not(.aa-flag) only fixed the rule inside THIS
        file; v17 also defends against the same rule living elsewhere.)
 
+   What changed in v18 (THE real root cause, found in the live Additional CSS):
+     • The whole reason nothing pasted into WPCode ever fully worked: a
+       COMPLETE second copy of the nav/mega/header system lives in Astra's
+       Additional CSS (Customizer) — sections "B" (#masthead position:fixed +
+       body padding-top:80px), "G" (mega panel + a pure-CSS :hover show +
+       old flagship + .menu-item:hover{background:#fff}), "R", "NAV FIX v3"
+       (full-width fixed panel + full-width hover-bridge), and a mobile
+       accordion block. Astra loads Additional CSS AFTER WPCode, so every
+       specificity tie went to the OLD copy. Fix = this file now lives at the
+       end of Additional CSS instead of WPCode.
+     • Neutralized the legacy pure-CSS :hover panel: the panel is now forced
+       HIDDEN on :hover/:focus-within and shown ONLY via the JS `.aa-open`
+       class — so the JS auto-close actually works and the full-width hover
+       overlay (the "hot area" click-trap) is gone.
+     • Killed the legacy full-width hover-bridge ::before.
+     • Header forced sticky + body padding-top zeroed, so the teal utility
+       strip sits at the very top with the nav below it (the old fixed header
+       + 80px padding put the strip under the nav).
+
    Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), currently v15 —
-   that file also needs the same treatment: deactivate every other JS snippet
-   that touches the nav/mega-menu/breadcrumb before activating it (see its own
-   header comment for the exact list).
+   keep it ACTIVE in WPCode. Deactivate every OTHER nav/mega/breadcrumb JS
+   snippet (see that file's header for the list).
    ============================================================================ */
 
 /* ---------- 0. Tokens ---------- */
@@ -167,6 +198,13 @@ html body.admin-bar #masthead{ top:32px !important; }
 html body #masthead, html body #masthead *,
 html body #masthead a,
 html body #masthead .main-header-menu li.menu-item > a{ pointer-events:auto !important; }
+/* The legacy Additional CSS uses position:fixed + body{padding-top:80px}. With
+   a STICKY header no top padding is needed — and leaving the 80px in place
+   opens a blank gap above the (now in-flow) utility strip. Zero it out so the
+   teal strip sits flush at the very top, nav below it. */
+html body{ padding-top:0 !important; }
+html body.admin-bar{ padding-top:0 !important; }
+@media (max-width:921px){ html body{ padding-top:0 !important; } }
 
 /* mobile/tablet: solid header (the 2A blur treatment below is desktop-only) */
 @media (max-width:921px){
@@ -350,15 +388,28 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     pointer-events:none !important;
     transition:opacity .16s ease, visibility .16s ease !important;
   }
+  /* KILL the legacy pure-CSS hover show. The old Additional CSS ("Overlap fix"
+     in section G + NAV FIX v3) reveals the panel on :hover / :focus-within as a
+     FULL-WIDTH fixed overlay — that is the click-trap "hot area", and no JS can
+     close a panel that CSS shows on hover. Force it to stay HIDDEN on hover so
+     the ONLY thing that opens it is the JS `.aa-open` class (which the JS can
+     also close, via its authoritative mouseover/scroll/click/Escape handlers).
+     Higher specificity (html body …) + last-in-file beats the legacy rules. */
+  html body .main-header-menu > .menu-item.aa-mega:hover > .sub-menu,
+  html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu{
+    visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
+  }
+  /* …but .aa-open (set by the JS) DOES reveal it. Placed after the :hover-kill
+     so it wins when a tab is both open and hovered. */
   html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
     visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
   }
-  /* invisible hover-bridge: keeps the panel open while the cursor crosses the
-     gap between the tab and the panel (tracks the real header height) */
+  /* remove BOTH my old hover-bridge and the legacy full-width NAV-FIX-v3 bridge
+     (::before) — a fixed, full-width invisible strip that widened the hot area. */
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu::before,
   html body .main-header-menu > .menu-item.aa-mega:hover > .sub-menu::before,
   html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu::before{
-    content:"" !important; position:fixed !important; left:0 !important; right:0 !important;
-    top:var(--aa-hdr, 80px) !important; height:12px !important; background:transparent !important;
+    content:none !important; display:none !important;
   }
 
   /* category card (non-flagship item: title + nested course/page list) */
