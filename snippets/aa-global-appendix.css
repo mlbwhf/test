@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v16, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v17, FULLY SELF-CONTAINED)
    ****************************************************************************
    * v12 IS A REPLACE, NOT AN APPEND. Select ALL existing content in the      *
    * "AA – Global CSS" WPCode snippet, DELETE it, then paste ONLY this file. *
@@ -125,6 +125,14 @@
        Added `:not(.aa-flag)` to every generic card rule so they never touch
        the flagship — it's styled entirely in section 7 and now keeps its
        dark band on hover.
+
+   What changed in v17:
+     • DEFENSIVE hover-lock on the flagship band (section 7): forces it to
+       stay dark on hover even if an OLD snippet's generic card-hover rule
+       (`.menu-item:hover{background:#fff}`) is still active in a *different*
+       snippet on the page. Higher-specificity selector wins regardless of
+       source order. (v16's :not(.aa-flag) only fixed the rule inside THIS
+       file; v17 also defends against the same rule living elsewhere.)
 
    Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js), currently v15 —
    that file also needs the same treatment: deactivate every other JS snippet
@@ -482,6 +490,19 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     gap:14px !important;
     min-height:0 !important;
     padding:22px 26px !important;
+    background:#0B2E35 !important;
+    border-color:#0B2E35 !important;
+    background-image:radial-gradient(circle at 82% 45%, rgba(60,80,224,.40), transparent 55%) !important;
+  }
+  /* v17 DEFENSIVE hover-lock: force the flagship band to STAY dark on hover
+     even if an OLD snippet's `.menu-item:hover{background:#fff}` rule is still
+     active on the page. Extra `.main-header-menu` in the selector raises the
+     specificity above any generic card-hover rule so this wins regardless of
+     source-order. This is belt-and-braces on top of the section-5 :not(.aa-flag)
+     exclusion — it protects against card CSS living in a *different* snippet. */
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag,
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag:hover,
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag:focus-within{
     background:#0B2E35 !important;
     border-color:#0B2E35 !important;
     background-image:radial-gradient(circle at 82% 45%, rgba(60,80,224,.40), transparent 55%) !important;
