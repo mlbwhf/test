@@ -99,6 +99,16 @@
        before the assessments were restructured); kept the ones matching
        real pages (agile-maturity, mutation-readiness) plus the 4 valid
        Services descriptions the base CSS used to carry.
+
+   What changed in v12.1 (hotfix — v12 regression):
+     • The section-5 base panel rule set `display:grid` but omitted the
+       hidden-by-default guard (visibility/opacity/pointer-events), so ALL
+       four mega panels rendered on top of the page at once — a wide overlay
+       that swallowed clicks on the nav parents and buried the breadcrumb.
+       Restored the guard: base is now visibility:hidden/opacity:0/
+       pointer-events:none, and only .aa-open reveals it. Also gave the base
+       rule a self-sufficient centered/contained default width so the panel
+       is placed correctly even before AA – Nav JS's place() runs.
    Pairs with the single "AA – Nav JS" snippet (aa-nav-js.js) — that file
    also needs the same treatment: deactivate every other JS snippet that
    touches the nav/mega-menu/breadcrumb before activating it (see its own
@@ -286,6 +296,13 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
   html body .main-header-menu > .menu-item.aa-mega > .sub-menu{
     position:fixed !important;
     top:calc(var(--aa-hdr, 80px) + 6px) !important;
+    /* self-sufficient default placement (centered, contained) so the panel
+       is correct even before AA – Nav JS's place() runs; JS then refines
+       left/width to the exact content column. */
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(1180px, calc(100vw - 60px)) !important;
     max-width:none !important;
     margin:0 !important;
     display:grid !important;
@@ -299,9 +316,17 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
     box-shadow:0 30px 60px -24px rgba(8,37,43,.42) !important;
     max-height:calc(100vh - var(--aa-hdr, 80px) - 20px) !important;
     overflow-y:auto !important;
+    /* HIDDEN by default — only the .aa-open rule below reveals it. Without
+       this guard (the v12 bug) every mega panel rendered on top of the page
+       at once: wide overlay, intercepted clicks on the nav parents, buried
+       the breadcrumb. */
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+    transition:opacity .16s ease, visibility .16s ease !important;
   }
   html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
-    display:grid !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
+    visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
   }
   /* invisible hover-bridge: keeps the panel open while the cursor crosses the
      gap between the tab and the panel (tracks the real header height) */
