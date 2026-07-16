@@ -1,5 +1,5 @@
 /* ============================================================================
-   AA — GLOBAL CSS APPENDIX  (v18, FULLY SELF-CONTAINED)
+   AA — GLOBAL CSS APPENDIX  (v19, FULLY SELF-CONTAINED)
    ****************************************************************************
    * WHERE THIS GOES CHANGED IN v18 — READ THIS.                              *
    *                                                                          *
@@ -399,7 +399,15 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
   html body .main-header-menu > .menu-item.aa-mega:focus-within > .sub-menu{
     visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
   }
-  /* …but .aa-open (set by the JS) DOES reveal it. Placed after the :hover-kill
+  /* BULLETPROOF (v19): the panel is INERT for EVERY state that is not .aa-open —
+     hover, focus-within, or anything else the legacy CSS might try. There is no
+     way for the panel to become clickable/visible unless the JS has opened it.
+     This is the airtight version of the :hover-kill above: it covers states we
+     didn't enumerate, so no legacy rule can reopen the hot area. */
+  html body .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu{
+    visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
+  }
+  /* …but .aa-open (set by the JS) DOES reveal it. Placed after the guards
      so it wins when a tab is both open and hovered. */
   html body .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
     visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
