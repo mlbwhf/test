@@ -1,4 +1,4 @@
-/* ==================== AA — NAV JS (v18, consolidated) ====================
+/* ==================== AA — NAV JS (v19, consolidated) ====================
    ONE WPCode JavaScript snippet: "AA – Nav JS"
    Auto Insert -> Site-Wide Footer.
 
@@ -122,6 +122,12 @@
        page around the panel. The remaining reason it could still stick is a
        DUPLICATE old nav script re-adding .aa-open — see the 28796/28830/28840
        note above.
+
+   v19 changelog (CLS fix):
+     - Adds body.aa-bars-in in the same frame the strip/breadcrumb are
+       injected, releasing the CSS space-reserve (v21.1 clean sheet) so the
+       top-of-page injection no longer shifts the whole page (~0.1 mobile
+       CLS in PageSpeed field data).
 
    v18 changelog (optimization pass):
      - SEO/LLM: Module 4 now also injects BreadcrumbList JSON-LD mirroring
@@ -499,9 +505,17 @@
       document.head.appendChild(s);
     }catch(e){ /* never let schema break the visual breadcrumb */ }
   }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', build);
-  } else {
+  function run(){
     build();
+    /* v19 CLS guard: release the CSS space-reserve (html body:not(.aa-bars-in)
+       padding) in the same frame the injected bars land, so inserting the
+       strip + breadcrumb causes ~zero layout shift. Runs even when the
+       breadcrumb is skipped (home) — the strip from Module 3 is in by now. */
+    if(document.body) document.body.classList.add('aa-bars-in');
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
   }
 })();

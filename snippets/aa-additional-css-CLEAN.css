@@ -1463,6 +1463,23 @@ html body.admin-bar #masthead{ top:32px !important; }
 @media (max-width:782px){ html body.admin-bar #masthead{ top:46px !important; } }
 html body{ padding-top:0 !important; }
 html body.admin-bar{ padding-top:0 !important; }
+/* ---- CLS guard (v21.1) ----
+   AA – Nav JS injects the teal strip + breadcrumb pill at the top of the
+   page from the FOOTER, i.e. after first paint — without a reserve that
+   insertion shifts the entire page down (~0.1 CLS on mobile, seen in
+   PageSpeed field data). Reserve their approximate height up front; the JS
+   adds .aa-bars-in to <body> in the same frame it injects the bars, which
+   releases the reserve — net layout shift ~0. Home has no breadcrumb, so it
+   reserves only the strip height. If JS is disabled the nav bars don't exist
+   at all and the reserve is released by the :not() never matching... it
+   would persist — acceptable: nav itself requires JS on this site. */
+html body:not(.aa-bars-in){ padding-top:78px !important; }
+html body.home:not(.aa-bars-in){ padding-top:34px !important; }
+@media (max-width:921px){
+  html body:not(.aa-bars-in){ padding-top:70px !important; }
+  html body.home:not(.aa-bars-in){ padding-top:31px !important; }
+}
+html body.aa-bars-in{ padding-top:0 !important; }
 /* clickability safety net — deliberately NARROW (#masthead itself + links
    only). The old `#masthead *` version force-enabled pointer-events on the
    hidden mega panels' contents and was one third of the invisible click-trap. */
