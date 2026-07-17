@@ -416,7 +416,7 @@ get_header();
 	<section class="rnbp__cta">
 		<h2 class="rnbp__h2">Ready to start with<br><em>Step 01?</em></h2>
 		<p>The feasibility memo is free. Send your address and a couple of photos — we'll put numbers to your lot within two weeks.</p>
-		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Book the call →</a>
+		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact us →</a>
 	</section>
 
 </div>

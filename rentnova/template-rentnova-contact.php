@@ -112,7 +112,7 @@ get_header();
 
 			<div class="rnbp__cinfo">
 				<div class="rnbp__crow"><div class="rnbp__clabel">Email</div><div class="rnbp__cval"><a href="mailto:hello@rent-nova.com">hello@rent-nova.com</a></div></div>
-				<div class="rnbp__crow"><div class="rnbp__clabel">Phone</div><div class="rnbp__cval"><a href="tel:+19055550143">+1 (905) 555-0143</a></div></div>
+				<div class="rnbp__crow"><div class="rnbp__clabel">Phone</div><div class="rnbp__cval"><a href="tel:+16479997433">647-999-7433</a></div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Where</div><div class="rnbp__cval">Mississauga · GTA West</div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Hours</div><div class="rnbp__cval">Mon–Fri · 9am–6pm ET</div></div>
 				<div class="rnbp__crow"><div class="rnbp__clabel">Response</div><div class="rnbp__cval">Within one business day</div></div>
@@ -131,7 +131,7 @@ get_header();
 				</div>
 				<div class="rnbp__form-row"><label for="rnbp-address">Property address (optional)</label><input type="text" id="rnbp-address" name="rn_address" autocomplete="street-address" placeholder="Street, City, ON"></div>
 				<div class="rnbp__form-row"><label for="rnbp-msg">Anything we should know</label><textarea id="rnbp-msg" name="rn_msg" rows="4" placeholder="Lot size, basement situation, timeline…"></textarea></div>
-				<button type="submit" class="rnbp__btn rnbp__btn--terra">Send → book the call</button>
+				<button type="submit" class="rnbp__btn rnbp__btn--terra">Send message</button>
 			</form>
 
 		</div>

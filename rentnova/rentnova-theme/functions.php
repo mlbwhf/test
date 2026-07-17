@@ -270,7 +270,7 @@ function rentnova_fallback_menu() {
 	printf(
 		'<li><a class="rn-nav__cta" href="%s">%s</a></li>',
 		esc_url( home_url( '/contact/' ) ),
-		esc_html__( 'Free feasibility →', 'rentnova' )
+		esc_html__( 'Contact us →', 'rentnova' )
 	);
 	echo '</ul>';
 }

@@ -39,7 +39,7 @@
 					'menu_id'        => 'rn-primary-menu',
 					'menu_class'     => 'rn-menu',
 					'depth'          => 1,
-					'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s<li><a class="rn-nav__cta" href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Free feasibility →', 'rentnova' ) . '</a></li></ul>',
+					'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s<li><a class="rn-nav__cta" href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact us →', 'rentnova' ) . '</a></li></ul>',
 				)
 			);
 		} else {

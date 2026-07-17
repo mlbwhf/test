@@ -200,7 +200,7 @@ get_header();
 
 	<!-- CTA -->
 	<section class="rnbp__cta">
-		<h2 class="rnbp__h2">Book the feasibility call →</h2>
+		<h2 class="rnbp__h2">Send us your address.</h2>
 		<p>Thirty minutes. No deck. We answer the questions, you decide what's next.</p>
 		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact us →</a>
 	</section>

@@ -19,7 +19,7 @@
 	<!-- /wp:paragraph -->
 
 	<!-- wp:html -->
-	<a class="rn-btn rn-btn--dark" href="/contact/">Book the call →</a>
+	<a class="rn-btn rn-btn--dark" href="/contact/">Contact us →</a>
 	<!-- /wp:html -->
 </section>
 <!-- /wp:group -->

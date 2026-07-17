@@ -26,7 +26,7 @@
 
 		<!-- wp:html -->
 		<div class="rn-hero__actions">
-			<a class="rn-btn rn-btn--terra" href="/contact/">Free feasibility →</a>
+			<a class="rn-btn rn-btn--terra" href="/contact/">Contact us →</a>
 			<a class="rn-btn rn-btn--ghost" href="/stays/">See finished homes</a>
 		</div>
 		<!-- /wp:html -->

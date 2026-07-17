@@ -60,8 +60,8 @@ function rentnova_site_footer_html() {
 	$rn_mat_pct     = '6%';
 	$rn_insurance   = '$1M';
 	$rn_email       = 'hello@rent-nova.com';
-	$rn_phone_disp  = '+1 (905) 555-0143';
-	$rn_phone_tel   = '+19055550143';
+	$rn_phone_disp  = '647-999-7433';
+	$rn_phone_tel   = '+16479997433';
 	$rn_year        = gmdate( 'Y' );
 	$rn_social      = array(
 		'Instagram' => 'https://instagram.com/rentnova',
@@ -177,7 +177,7 @@ function rentnova_site_footer_html() {
 				<h3>For owners</h3>
 				<ul>
 					<li><a href="<?php echo esc_url( home_url( '/list-with-us/' ) ); ?>">List with us</a></li>
-					<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Free feasibility →</a></li>
+					<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact us →</a></li>
 					<li><a href="<?php echo esc_url( home_url( '/guide/' ) ); ?>">How it works</a></li>
 				</ul>
 			</nav>

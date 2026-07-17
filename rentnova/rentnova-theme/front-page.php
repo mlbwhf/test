@@ -159,7 +159,7 @@ get_header();
 	<section class="rn-cta" id="contact">
 		<h2 class="rn-h2"><?php echo wp_kses_post( __( 'A free 30-minute<br>feasibility call.', 'rentnova' ) ); ?></h2>
 		<p><?php esc_html_e( "Tell us your address and your goals. We'll tell you what your lot allows, what it could generate, and what it would cost — real numbers, not ranges.", 'rentnova' ); ?></p>
-		<a class="rn-btn rn-btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Book the call →', 'rentnova' ); ?></a>
+		<a class="rn-btn rn-btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact us →', 'rentnova' ); ?></a>
 	</section>
 
 </main>

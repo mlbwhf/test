@@ -20,7 +20,7 @@
 			</div>
 			<div class="rn-contact__row">
 				<div class="rn-contact__label">Phone</div>
-				<div class="rn-contact__val"><a href="tel:+19055550143">+1 (905) 555-0143</a></div>
+				<div class="rn-contact__val"><a href="tel:+16479997433">647-999-7433</a></div>
 			</div>
 			<div class="rn-contact__row">
 				<div class="rn-contact__label">Where</div>
@@ -70,7 +70,7 @@
 				<label for="rn-msg">Anything we should know</label>
 				<textarea id="rn-msg" name="rn_msg" rows="4" placeholder="Lot size, basement situation, timeline…"></textarea>
 			</div>
-			<button type="submit" class="rn-btn rn-btn--terra">Send → book the call</button>
+			<button type="submit" class="rn-btn rn-btn--terra">Send message</button>
 		</form>
 
 	</div>

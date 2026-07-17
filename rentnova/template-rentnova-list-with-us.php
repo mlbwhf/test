@@ -168,7 +168,7 @@ get_header();
 				<h1>List your home.<br>Turn it into<br><em>legal income</em>.</h1>
 				<p class="rnbp__lead">You own the lot. We turn it into a multi-unit asset — designed, built, furnished, listed and run by one team on a revenue-share. Statements monthly, no flat fees.</p>
 				<div class="rnbp__actions">
-					<a class="rnbp__btn rnbp__btn--terra" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Free feasibility →</a>
+					<a class="rnbp__btn rnbp__btn--terra" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact us →</a>
 					<a class="rnbp__btn rnbp__btn--ghost" href="<?php echo esc_url( home_url( '/stays/' ) ); ?>">See finished homes</a>
 				</div>
 			</div>
@@ -340,7 +340,7 @@ get_header();
 	<section class="rnbp__cta" id="rnbp-owners-cta">
 		<h2 class="rnbp__h2">A free 30-minute<br>feasibility call.</h2>
 		<p>Tell us your address and your goals. We'll tell you what your lot allows, what it could generate, and what it would cost — real numbers, not ranges.</p>
-		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Book the call →</a>
+		<a class="rnbp__btn rnbp__btn--dark" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact us →</a>
 	</section>
 
 </div>
