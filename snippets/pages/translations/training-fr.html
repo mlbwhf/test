@@ -398,29 +398,5 @@
 </div></div></div>
 <!-- /wp:html -->
 
-
-<!-- wp:html -->
-<script>
-/* Keep the Training section-bar just below the theme's sticky header. */
-(function(){
-  var root=document.querySelector('.aa-rd');
-  if(!root) return;
-  var sels=['#ast-fixed-header','.ast-header-sticked','#masthead','.site-header','.ast-header-wrap','header[role="banner"]','header'];
-  function setTop(){
-    var off=0;
-    for(var i=0;i<sels.length;i++){var el=document.querySelector(sels[i]);if(!el)continue;
-      var cs=getComputedStyle(el),h=el.getBoundingClientRect().height;
-      if((cs.position==='fixed'||cs.position==='sticky')&&h>0){off=Math.round(h);break;}}
-    root.style.setProperty('--aa-top',off+'px');
-  }
-  var t=false;function tick(){if(!t){t=true;requestAnimationFrame(function(){setTop();t=false;});}}
-  setTop();
-  window.addEventListener('scroll',tick,{passive:true});
-  window.addEventListener('resize',setTop);
-  window.addEventListener('load',setTop);
-})();
-</script>
-<!-- /wp:html -->
-
 </div>
 <!-- /wp:group -->
