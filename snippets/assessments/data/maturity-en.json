@@ -1,0 +1,186 @@
+{
+ "levels": [
+  "Absent",
+  "Nascent",
+  "Designed",
+  "Accelerating",
+  "Flying"
+ ],
+ "short": [
+  "Operating Model",
+  "Value Delivery",
+  "Workforce",
+  "Ways of Working"
+ ],
+ "dims": [
+  {
+   "n": "Operating Model & Alignment",
+   "s": "Vision, sponsorship, and how leadership shows up.",
+   "o": [
+    [
+     "No conversations",
+     "Lack of vision & leadership sponsorship"
+    ],
+    [
+     "Exploratory discussions",
+     "Named sponsorship"
+    ],
+    [
+     "Rules of engagement",
+     "Challenges identified",
+     "Active leadership championship"
+    ],
+    [
+     "Peer (leadership) partnerships",
+     "Key wins",
+     "Shared accountability"
+    ],
+    [
+     "Strategic planning",
+     "Leaders filling in for each other",
+     "Leaders as coaches"
+    ]
+   ]
+  },
+  {
+   "n": "Value Delivery Engagement",
+   "s": "Awareness of agile and value delivery across teams.",
+   "o": [
+    [
+     "Lack of awareness",
+     "No movement",
+     "Ad hoc communication & collaboration"
+    ],
+    [
+     "Plans and discussions",
+     "Agile-compliance mindset"
+    ],
+    [
+     "Strong awareness & understanding of agile and value delivery across functional teams"
+    ],
+    [
+     "User-driven activities",
+     "Peer coaching",
+     "Championing mindset"
+    ],
+    [
+     "A way of life",
+     "Master coaching"
+    ]
+   ]
+  },
+  {
+   "n": "Workforce Enablement",
+   "s": "Training, tools, and knowledge for the people doing the work.",
+   "o": [
+    [
+     "No tools",
+     "Training non-existent",
+     "Work in silos"
+    ],
+    [
+     "Basic training in progress",
+     "Inconsistent use of tools"
+    ],
+    [
+     "Champions, coaches & training rolled out",
+     "Consistently utilized tools"
+    ],
+    [
+     "Seamless onboarding",
+     "Easy access to knowledge management & tool assistance"
+    ],
+    [
+     "Self-sufficient teams training each other",
+     "Communities of practice in place"
+    ]
+   ]
+  },
+  {
+   "n": "Ways of Working",
+   "s": "Roles, autonomy, collaboration, and how you improve.",
+   "o": [
+    [
+     "Siloed, unaligned or sedimented into waterfall methods"
+    ],
+    [
+     "Limited to one area",
+     "Agile roles being discussed, inconsistent use, limited autonomy",
+     "Focus on cooperation"
+    ],
+    [
+     "Process to redefine ways of working in place",
+     "Agile roles documented, people transitioning in",
+     "Collaboration by design"
+    ],
+    [
+     "Core areas covered",
+     "Agile roles are championed",
+     "Teams collaborate & operate autonomously"
+    ],
+    [
+     "Constant reinvention & adjustment",
+     "Agile roles help each other",
+     "Continuous organizational learning"
+    ]
+   ]
+  }
+ ],
+ "stageDesc": {
+  "Absent": "Agility isn't on the agenda yet. The opportunity is to build awareness and secure leadership sponsorship before anything else.",
+  "Nascent": "The conversation has started. Named sponsors and early experiments exist — now it needs structure, roles, and consistent tooling.",
+  "Designed": "The operating model is taking shape: rules of engagement, documented roles, and rolled-out training. The work now is to make it stick and scale.",
+  "Accelerating": "Agility is delivering — peer partnerships, championed roles, and autonomous teams. Focus on shared accountability and spreading what works.",
+  "Flying": "Agility is a way of life: leaders coach, teams reinvent continuously, and learning compounds. The work is sustaining it and mentoring the next wave."
+ },
+ "key": "agile-maturity",
+ "type": "dimensions",
+ "ui": {
+  "intro": "For each dimension, choose the description that best matches your organization <em>today</em>. Be honest &mdash; the profile is only useful if it&rsquo;s real.",
+  "submit": "See my maturity profile",
+  "hint": "Select a level for all four dimensions to continue.",
+  "ready": "Ready — see your profile.",
+  "resultLab": "Your overall maturity",
+  "scorePre": "Score",
+  "stageWord": "stage",
+  "of": "of",
+  "outOf": "out of 5.0",
+  "radarCap": "Maturity radar",
+  "glanceCap": "At a glance",
+  "kOverall": "Overall stage",
+  "kScore": "Maturity score",
+  "kStrong": "Strongest",
+  "kFocus": "Focus area",
+  "stageOfPre": "Stage",
+  "profileH": "Your profile, dimension by dimension",
+  "nextPre": "Next (",
+  "nextSuf": "):",
+  "top": "<b>Top of the model.</b> Sustain it, and mentor others toward it.",
+  "focusEb": "Where to focus next",
+  "focusStart": "Start with",
+  "focusIs": "is",
+  "focusAre": "are",
+  "focusAt": "at",
+  "focusTail": "Maturity compounds when the weakest dimension moves &mdash; that&rsquo;s the highest-leverage place to invest next.",
+  "print": "Save / print",
+  "retake": "Retake",
+  "focusMid": "Your lowest-scoring dimension"
+ },
+ "cta": {
+  "text": "Want a facilitated maturity assessment and a roadmap to the next stage? Our SPCTs do this with enterprise teams every week.",
+  "primary": {
+   "label": "Book a maturity consult",
+   "href": "https://meetings.hubspot.com/john2795"
+  },
+  "secondary": {
+   "label": "See how we transform",
+   "href": "/services/business-agility/"
+  }
+ },
+ "hero": {
+  "eyebrow": "Free self-assessment",
+  "title": "Agile Maturity <em>Assessment</em>",
+  "sub": "Where is your organization on the journey from <em>Absent</em> to <em>Flying</em>? Rate four dimensions and get an instant maturity profile &mdash; with what to build next.",
+  "note": "Takes 2 minutes &middot; No login &middot; Instant results"
+ }
+}

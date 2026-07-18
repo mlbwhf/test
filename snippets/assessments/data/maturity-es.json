@@ -1,0 +1,186 @@
+{
+ "levels": [
+  "Ausente",
+  "Incipiente",
+  "Diseñado",
+  "Acelerando",
+  "Volando"
+ ],
+ "short": [
+  "Modelo Operativo",
+  "Entrega de Valor",
+  "Fuerza Laboral",
+  "Formas de Trabajo"
+ ],
+ "dims": [
+  {
+   "n": "Modelo Operativo y Alineación",
+   "s": "Visión, patrocinio y cómo se involucra el liderazgo.",
+   "o": [
+    [
+     "Sin conversaciones",
+     "Falta de visión y patrocinio del liderazgo"
+    ],
+    [
+     "Debates exploratorios",
+     "Patrocinio designado"
+    ],
+    [
+     "Reglas de participación",
+     "Desafíos identificados",
+     "Liderazgo que impulsa activamente"
+    ],
+    [
+     "Alianzas entre pares (liderazgo)",
+     "Logros clave",
+     "Responsabilidad compartida"
+    ],
+    [
+     "Planificación estratégica",
+     "Líderes que se cubren entre sí",
+     "Líderes como coaches"
+    ]
+   ]
+  },
+  {
+   "n": "Compromiso con la Entrega de Valor",
+   "s": "Conocimiento de agile y la entrega de valor en los equipos.",
+   "o": [
+    [
+     "Falta de conocimiento",
+     "Sin avances",
+     "Comunicación y colaboración ad hoc"
+    ],
+    [
+     "Planes y debates",
+     "Mentalidad de cumplimiento de agile"
+    ],
+    [
+     "Fuerte conocimiento y comprensión de agile y la entrega de valor en los equipos funcionales"
+    ],
+    [
+     "Actividades impulsadas por los usuarios",
+     "Coaching entre pares",
+     "Mentalidad de promoción"
+    ],
+    [
+     "Una forma de vida",
+     "Coaching experto"
+    ]
+   ]
+  },
+  {
+   "n": "Habilitación de la Fuerza Laboral",
+   "s": "Formación, herramientas y conocimiento para las personas que hacen el trabajo.",
+   "o": [
+    [
+     "Sin herramientas",
+     "Formación inexistente",
+     "Trabajo en silos"
+    ],
+    [
+     "Formación básica en curso",
+     "Uso inconsistente de herramientas"
+    ],
+    [
+     "Promotores, coaches y formación desplegados",
+     "Herramientas utilizadas de forma consistente"
+    ],
+    [
+     "Incorporación fluida",
+     "Acceso fácil a la gestión del conocimiento y asistencia con herramientas"
+    ],
+    [
+     "Equipos autosuficientes que se forman entre sí",
+     "Comunidades de práctica establecidas"
+    ]
+   ]
+  },
+  {
+   "n": "Formas de Trabajo",
+   "s": "Roles, autonomía, colaboración y cómo mejoras.",
+   "o": [
+    [
+     "En silos, sin alineación o sedimentados en métodos en cascada"
+    ],
+    [
+     "Limitado a un área",
+     "Roles ágiles en discusión, uso inconsistente, autonomía limitada",
+     "Enfoque en la cooperación"
+    ],
+    [
+     "Proceso para redefinir las formas de trabajo establecido",
+     "Roles ágiles documentados, personas en transición",
+     "Colaboración por diseño"
+    ],
+    [
+     "Áreas clave cubiertas",
+     "Roles ágiles impulsados",
+     "Los equipos colaboran y operan de forma autónoma"
+    ],
+    [
+     "Reinvención y ajuste constantes",
+     "Los roles ágiles se ayudan entre sí",
+     "Aprendizaje organizacional continuo"
+    ]
+   ]
+  }
+ ],
+ "stageDesc": {
+  "Ausente": "La agilidad aún no está en la agenda. La oportunidad está en generar conocimiento y asegurar el patrocinio del liderazgo antes que cualquier otra cosa.",
+  "Incipiente": "La conversación ha comenzado. Existen patrocinadores designados y primeros experimentos — ahora necesita estructura, roles y herramientas consistentes.",
+  "Diseñado": "El modelo operativo está tomando forma: reglas de participación, roles documentados y formación desplegada. El trabajo ahora es consolidarlo y escalarlo.",
+  "Acelerando": "La agilidad está dando resultados — alianzas entre pares, roles impulsados y equipos autónomos. Enfócate en la responsabilidad compartida y en difundir lo que funciona.",
+  "Volando": "La agilidad es una forma de vida: los líderes actúan como coaches, los equipos se reinventan continuamente y el aprendizaje se acumula. El trabajo es sostenerlo y mentorizar a la siguiente ola."
+ },
+ "key": "agile-maturity",
+ "type": "dimensions",
+ "ui": {
+  "intro": "Para cada dimensión, elige la descripción que mejor refleje tu organización <em>hoy</em>. Sé honesto &mdash; el perfil solo es útil si es real.",
+  "submit": "Ver mi perfil de madurez",
+  "hint": "Selecciona un nivel en las cuatro dimensiones para continuar.",
+  "ready": "Listo — ve tu perfil.",
+  "resultLab": "Tu madurez general",
+  "scorePre": "Puntuación",
+  "stageWord": "etapa",
+  "of": "de",
+  "outOf": "sobre 5.0",
+  "radarCap": "Radar de madurez",
+  "glanceCap": "De un vistazo",
+  "kOverall": "Etapa general",
+  "kScore": "Puntuación de madurez",
+  "kStrong": "Más fuerte",
+  "kFocus": "Área de enfoque",
+  "stageOfPre": "Etapa",
+  "profileH": "Tu perfil, dimensión por dimensión",
+  "nextPre": "Siguiente (",
+  "nextSuf": "):",
+  "top": "<b>Cima del modelo.</b> Mantenla y ayuda a otros a alcanzarla.",
+  "focusEb": "Dónde enfocarte ahora",
+  "focusStart": "Empieza por",
+  "focusIs": "es",
+  "focusAre": "son",
+  "focusAt": "en",
+  "focusTail": "La madurez crece cuando avanza la dimensión más débil &mdash; ahí está la mayor palanca para invertir.",
+  "print": "Guardar / imprimir",
+  "retake": "Repetir",
+  "focusMid": "Tu dimensión con menor puntuación"
+ },
+ "cta": {
+  "text": "¿Quieres una evaluación de madurez facilitada y una hoja de ruta hacia la siguiente etapa? Nuestros SPCT lo hacen con equipos de empresa cada semana.",
+  "primary": {
+   "label": "Reserva una consulta de madurez",
+   "href": "https://meetings.hubspot.com/john2795"
+  },
+  "secondary": {
+   "label": "Descubre cómo transformamos",
+   "href": "/services/business-agility/"
+  }
+ },
+ "hero": {
+  "eyebrow": "Autoevaluación gratuita",
+  "title": "Evaluación de <em>Madurez Agile</em>",
+  "sub": "¿Dónde está tu organización en el camino de <em>Ausente</em> a <em>Volando</em>? Evalúa cuatro dimensiones y obtén un perfil de madurez al instante &mdash; con qué construir a continuación.",
+  "note": "2 minutos &middot; Sin registro &middot; Resultados al instante"
+ }
+}
