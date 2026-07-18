@@ -1,0 +1,144 @@
+<!-- AIOSEO TITLE: Agile Maturity Assessment — Free Self-Assessment | Agile Agilist -->
+<!-- AIOSEO DESC: Where is your organization on the journey from Absent to Flying? Rate 4 dimensions of agile maturity and get an instant profile with what to build next. Free, no login. -->
+<!-- wp:html -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Agile Maturity Assessment",
+  "applicationCategory":"BusinessApplication",
+  "operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "url":"https://agile-agilist.com/assessments/agile-maturity/",
+  "provider":{"@type":"EducationalOrganization","name":"Agile Agilist","url":"https://agile-agilist.com/"},
+  "description":"A free self-assessment of enterprise agile maturity across four dimensions — Operating Model & Alignment, Value Delivery Engagement, Workforce Enablement, and Ways of Working — scored on a five-stage model from Absent to Flying."
+}
+</script>
+<div class="aa-mat" id="aa-mat">
+<style>
+.aa-mat{--t:#127E88;--td:#0B2E35;--nv:#0E3A44;--tl:#8FCFCF;--bd:#DCEAEA;--bds:#C7DEDE;--bg:#F5FAFA;--mu:#5E7378;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--nv);width:100%;max-width:1280px;margin-left:auto;margin-right:auto;overflow-x:clip}
+.aa-mat em{font-style:italic}
+.aa-mat-eb{display:inline-block;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl)}
+
+/* hero */
+.aa-mat-hero{position:relative;overflow:hidden;background:radial-gradient(120% 130% at 15% 0%,#123f47 0%,var(--td) 55%,#08222860 100%),var(--td);padding:82px 24px 66px;text-align:center;color:#fff}
+.aa-mat-hero::before{content:"";position:absolute;top:-160px;left:-140px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(143,207,207,.16),transparent 70%);pointer-events:none}
+.aa-mat-hero::after{content:"";position:absolute;bottom:-200px;right:-160px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(18,126,136,.30),transparent 70%);pointer-events:none}
+.aa-mat-hero-in{max-width:780px;margin:0 auto;position:relative;z-index:2}
+.aa-mat-hero .aa-mat-eb{padding:6px 15px;border:1px solid rgba(143,207,207,.35);border-radius:30px;margin-bottom:18px}
+.aa-mat-hero h1{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:46px;line-height:1.1;letter-spacing:-.02em;margin:0 auto 16px;color:#fff}
+.aa-mat-hero h1 em{color:var(--tl)}
+.aa-mat-hero p{font-size:18px;line-height:1.6;color:#D6E7E7;margin:0 auto 16px;max-width:600px}
+.aa-mat-hero .note{font-size:12.5px;color:#9fc4c4;letter-spacing:.02em}
+.aa-mat-scale{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:22px}
+.aa-mat-scale span{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.04em;color:#D6E7E7;background:rgba(255,255,255,.05);border:1px solid rgba(143,207,207,.22);border-radius:100px;padding:5px 12px}
+.aa-mat-scale span b{color:var(--tl);font-weight:600}
+@media(max-width:780px){.aa-mat-hero h1{font-size:33px}}
+
+/* app */
+.aa-mat-app{background:var(--bg);padding:56px 24px 72px}
+.aa-mat-in{max-width:860px;margin:0 auto}
+.aa-mat-intro{text-align:center;font-size:15.5px;color:var(--mu);line-height:1.6;margin:0 auto 34px;max-width:620px}
+
+.aa-mat-dim{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:26px 26px 22px;margin-bottom:18px}
+.aa-mat-dim-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.aa-mat-dim-n{font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:var(--t)}
+.aa-mat-dim-h h3{font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:23px;color:var(--nv);margin:0;letter-spacing:-.01em}
+.aa-mat-dim-sub{font-size:13px;color:var(--mu);margin:0 0 16px}
+.aa-mat-opts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media(max-width:720px){.aa-mat-opts{grid-template-columns:1fr}}
+.aa-mat-opt{border:1.5px solid var(--bd);border-radius:11px;padding:12px 12px 13px;background:#fff;display:flex;flex-direction:column;gap:7px;position:relative}
+.aa-mat-opt-lv{display:flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mu)}
+.aa-mat-opt-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bds);flex:0 0 auto}
+.aa-mat-opt ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.aa-mat-opt li{font-size:12px;line-height:1.4;color:var(--nv);padding-left:12px;position:relative}
+.aa-mat-opt li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--tl)}
+
+.aa-mat-cta{margin-top:26px;text-align:center}
+.aa-mat-cta p{font-size:15px;color:var(--mu);margin:0 auto 16px;max-width:460px;line-height:1.6}
+.aa-mat-btn{display:inline-flex;align-items:center;gap:8px;padding:15px 34px;border-radius:100px;font-size:15px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .18s;font-family:inherit}
+.aa-mat-btn.p{background:var(--t);color:#fff;box-shadow:0 6px 18px -6px rgba(18,126,136,.6)}
+.aa-mat-btn.p:hover{background:var(--td);transform:translateY(-2px)}
+.aa-mat-btn.g{background:#fff;color:var(--nv);border:1.5px solid var(--bd)}
+.aa-mat-btn.g:hover{border-color:var(--t);color:var(--t)}
+.aa-mat-cta .aa-mat-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+</style>
+
+<!-- HERO -->
+<section class="aa-mat-hero">
+  <div class="aa-mat-hero-in">
+    <nav aria-label="Breadcrumb" class="mono" style="font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px;padding:5px 6px 5px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.06);margin:0 0 20px"><a href="/assessments/" style="color:#B9D4D4;display:inline-flex;align-items:center;gap:7px">&larr; Back to Assessments</a><span style="color:#0B2E35;background:#8FCFCF;border-radius:999px;padding:5px 13px">Agile Maturity</span></nav>
+    <span class="aa-mat-eb">Free self-assessment</span>
+    <h1>Agile Maturity <em>Assessment</em></h1>
+    <p>Where is your organization on the journey from <em>Absent</em> to <em>Flying</em>? Rate four dimensions across a five-stage model &mdash; and see what to build next.</p>
+    <div class="aa-mat-scale">
+      <span><b>1</b> Absent</span><span><b>2</b> Nascent</span><span><b>3</b> Designed</span><span><b>4</b> Accelerating</span><span><b>5</b> Flying</span>
+    </div>
+    <p class="note" style="margin-top:18px">Four dimensions &middot; Five stages &middot; No login</p>
+  </div>
+</section>
+
+<!-- APP (static reference — interactive quiz pasted separately via block editor) -->
+<section class="aa-mat-app">
+  <div class="aa-mat-in">
+    <p class="aa-mat-intro">The maturity model rates four dimensions of enterprise agility. Read each dimension below and locate where your organization sits <em>today</em>, from <em>Absent</em> to <em>Flying</em>.</p>
+
+    <div class="aa-mat-dim">
+      <div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 01 )</span><h3>Operating Model &amp; Alignment</h3></div>
+      <p class="aa-mat-dim-sub">Vision, sponsorship, and how leadership shows up.</p>
+      <div class="aa-mat-opts">
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>1 &middot; Absent</div><ul><li>No conversations</li><li>Lack of vision &amp; leadership sponsorship</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>2 &middot; Nascent</div><ul><li>Exploratory discussions</li><li>Named sponsorship</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>3 &middot; Designed</div><ul><li>Rules of engagement</li><li>Challenges identified</li><li>Active leadership championship</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>4 &middot; Accelerating</div><ul><li>Peer (leadership) partnerships</li><li>Key wins</li><li>Shared accountability</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>5 &middot; Flying</div><ul><li>Strategic planning</li><li>Leaders filling in for each other</li><li>Leaders as coaches</li></ul></div>
+      </div>
+    </div>
+
+    <div class="aa-mat-dim">
+      <div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 02 )</span><h3>Value Delivery Engagement</h3></div>
+      <p class="aa-mat-dim-sub">Awareness of agile and value delivery across teams.</p>
+      <div class="aa-mat-opts">
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>1 &middot; Absent</div><ul><li>Lack of awareness</li><li>No movement</li><li>Ad hoc communication &amp; collaboration</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>2 &middot; Nascent</div><ul><li>Plans and discussions</li><li>Agile-compliance mindset</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>3 &middot; Designed</div><ul><li>Strong awareness &amp; understanding of agile and value delivery across functional teams</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>4 &middot; Accelerating</div><ul><li>User-driven activities</li><li>Peer coaching</li><li>Championing mindset</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>5 &middot; Flying</div><ul><li>A way of life</li><li>Master coaching</li></ul></div>
+      </div>
+    </div>
+
+    <div class="aa-mat-dim">
+      <div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 03 )</span><h3>Workforce Enablement</h3></div>
+      <p class="aa-mat-dim-sub">Training, tools, and knowledge for the people doing the work.</p>
+      <div class="aa-mat-opts">
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>1 &middot; Absent</div><ul><li>No tools</li><li>Training non-existent</li><li>Work in silos</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>2 &middot; Nascent</div><ul><li>Basic training in progress</li><li>Inconsistent use of tools</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>3 &middot; Designed</div><ul><li>Champions, coaches &amp; training rolled out</li><li>Consistently utilized tools</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>4 &middot; Accelerating</div><ul><li>Seamless onboarding</li><li>Easy access to knowledge management &amp; tool assistance</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>5 &middot; Flying</div><ul><li>Self-sufficient teams training each other</li><li>Communities of practice in place</li></ul></div>
+      </div>
+    </div>
+
+    <div class="aa-mat-dim">
+      <div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 04 )</span><h3>Ways of Working</h3></div>
+      <p class="aa-mat-dim-sub">Roles, autonomy, collaboration, and how you improve.</p>
+      <div class="aa-mat-opts">
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>1 &middot; Absent</div><ul><li>Siloed, unaligned or sedimented into waterfall methods</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>2 &middot; Nascent</div><ul><li>Limited to one area</li><li>Agile roles being discussed, inconsistent use, limited autonomy</li><li>Focus on cooperation</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>3 &middot; Designed</div><ul><li>Process to redefine ways of working in place</li><li>Agile roles documented, people transitioning in</li><li>Collaboration by design</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>4 &middot; Accelerating</div><ul><li>Core areas covered</li><li>Agile roles are championed</li><li>Teams collaborate &amp; operate autonomously</li></ul></div>
+        <div class="aa-mat-opt"><div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>5 &middot; Flying</div><ul><li>Constant reinvention &amp; adjustment</li><li>Agile roles help each other</li><li>Continuous organizational learning</li></ul></div>
+      </div>
+    </div>
+
+    <div class="aa-mat-cta">
+      <p>Want a facilitated maturity assessment and a roadmap to the next stage? Our SPCTs do this with enterprise teams every week.</p>
+      <div class="aa-mat-btns">
+        <a class="aa-mat-btn p" href="https://meetings.hubspot.com/john2795">Book a maturity consult &rarr;</a>
+        <a class="aa-mat-btn g" href="/services/business-agility/">See how we transform</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<!-- /wp:html -->
