@@ -1,0 +1,184 @@
+PAGE 28785  (/assessments/agile-maturity/)
+Interactive <script> blocks to paste: 1  |  JSON-LD blocks: 1
+======================================================================
+
+<script>
+(function(){
+  var LEVELS=["Absent","Nascent","Designed","Accelerating","Flying"];
+  var SHORT=["Operating Model","Value Delivery","Workforce","Ways of Working"];
+  var DIMS=[
+    {n:"Operating Model & Alignment", s:"Vision, sponsorship, and how leadership shows up.",
+     o:[
+      ["No conversations","Lack of vision & leadership sponsorship"],
+      ["Exploratory discussions","Named sponsorship"],
+      ["Rules of engagement","Challenges identified","Active leadership championship"],
+      ["Peer (leadership) partnerships","Key wins","Shared accountability"],
+      ["Strategic planning","Leaders filling in for each other","Leaders as coaches"]
+     ]},
+    {n:"Value Delivery Engagement", s:"Awareness of agile and value delivery across teams.",
+     o:[
+      ["Lack of awareness","No movement","Ad hoc communication & collaboration"],
+      ["Plans and discussions","Agile-compliance mindset"],
+      ["Strong awareness & understanding of agile and value delivery across functional teams"],
+      ["User-driven activities","Peer coaching","Championing mindset"],
+      ["A way of life","Master coaching"]
+     ]},
+    {n:"Workforce Enablement", s:"Training, tools, and knowledge for the people doing the work.",
+     o:[
+      ["No tools","Training non-existent","Work in silos"],
+      ["Basic training in progress","Inconsistent use of tools"],
+      ["Champions, coaches & training rolled out","Consistently utilized tools"],
+      ["Seamless onboarding","Easy access to knowledge management & tool assistance"],
+      ["Self-sufficient teams training each other","Communities of practice in place"]
+     ]},
+    {n:"Ways of Working", s:"Roles, autonomy, collaboration, and how you improve.",
+     o:[
+      ["Siloed, unaligned or sedimented into waterfall methods"],
+      ["Limited to one area","Agile roles being discussed, inconsistent use, limited autonomy","Focus on cooperation"],
+      ["Process to redefine ways of working in place","Agile roles documented, people transitioning in","Collaboration by design"],
+      ["Core areas covered","Agile roles are championed","Teams collaborate & operate autonomously"],
+      ["Constant reinvention & adjustment","Agile roles help each other","Continuous organizational learning"]
+     ]}
+  ];
+  var STAGE_DESC={
+    "Absent":"Agility isn't on the agenda yet. The opportunity is to build awareness and secure leadership sponsorship before anything else.",
+    "Nascent":"The conversation has started. Named sponsors and early experiments exist — now it needs structure, roles, and consistent tooling.",
+    "Designed":"The operating model is taking shape: rules of engagement, documented roles, and rolled-out training. The work now is to make it stick and scale.",
+    "Accelerating":"Agility is delivering — peer partnerships, championed roles, and autonomous teams. Focus on shared accountability and spreading what works.",
+    "Flying":"Agility is a way of life: leaders coach, teams reinvent continuously, and learning compounds. The work is sustaining it and mentoring the next wave."
+  };
+  var picks=[null,null,null,null];
+  var quiz=document.getElementById('mat-quiz');
+  var submit=document.getElementById('mat-submit');
+  var hint=document.getElementById('mat-hint');
+  var res=document.getElementById('mat-res');
+
+  DIMS.forEach(function(d,di){
+    var dim=document.createElement('div'); dim.className='aa-mat-dim';
+    var opts='';
+    d.o.forEach(function(items,li){
+      var lis=items.map(function(x){return '<li>'+x+'</li>';}).join('');
+      opts+='<div class="aa-mat-opt" data-d="'+di+'" data-l="'+li+'" role="button" tabindex="0">'+
+        '<div class="aa-mat-opt-lv"><span class="aa-mat-opt-dot"></span>'+(li+1)+' &middot; '+LEVELS[li]+'</div>'+
+        '<ul>'+lis+'</ul></div>';
+    });
+    dim.innerHTML='<div class="aa-mat-dim-h"><span class="aa-mat-dim-n">( 0'+(di+1)+' )</span><h3>'+d.n+'</h3></div>'+
+      '<p class="aa-mat-dim-sub">'+d.s+'</p><div class="aa-mat-opts">'+opts+'</div>';
+    quiz.appendChild(dim);
+  });
+
+  function choose(el){
+    var di=+el.getAttribute('data-d'), li=+el.getAttribute('data-l');
+    picks[di]=li;
+    var sibs=el.parentNode.querySelectorAll('.aa-mat-opt');
+    sibs.forEach(function(s){s.classList.remove('sel');});
+    el.classList.add('sel');
+    var done=picks.every(function(p){return p!==null;});
+    submit.disabled=!done;
+    if(done){ hint.textContent='Ready — see your profile.'; }
+  }
+  quiz.addEventListener('click',function(e){var o=e.target.closest('.aa-mat-opt'); if(o) choose(o);});
+  quiz.addEventListener('keydown',function(e){ if((e.key===' '||e.key==='Enter')){var o=e.target.closest('.aa-mat-opt'); if(o){e.preventDefault();choose(o);}}});
+
+  function stageFor(score){
+    var idx=Math.round(score)-1; if(idx<0)idx=0; if(idx>4)idx=4; return LEVELS[idx];
+  }
+
+  // Radar chart (4 axes, values 1..5) — pure SVG, no libraries
+  function radarSVG(vals){
+    var size=300,c=size/2,R=c-62,N=vals.length;
+    function ang(i){return Math.PI*2*i/N - Math.PI/2;}
+    function pt(i,r){return [c+Math.cos(ang(i))*r, c+Math.sin(ang(i))*r];}
+    var g='';
+    for(var lv=1;lv<=5;lv++){
+      var rr=R*lv/5,ps=[];
+      for(var i=0;i<N;i++){var p=pt(i,rr);ps.push(p[0].toFixed(1)+','+p[1].toFixed(1));}
+      g+='<polygon points="'+ps.join(' ')+'" fill="none" stroke="#DCEAEA" stroke-width="1"/>';
+    }
+    for(var i=0;i<N;i++){var p=pt(i,R);g+='<line x1="'+c+'" y1="'+c+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#DCEAEA" stroke-width="1"/>';}
+    var dp=[],dots='';
+    for(var i=0;i<N;i++){var p=pt(i,R*vals[i]/5);dp.push(p[0].toFixed(1)+','+p[1].toFixed(1));dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="#127E88"/>';}
+    var labs='',dys=[-8,4,16,4];
+    for(var i=0;i<N;i++){var p=pt(i,R+16);labs+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+dys[i]).toFixed(1)+'" text-anchor="middle">'+SHORT[i]+'</text>';}
+    return '<svg class="aa-mat-radar" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Agile maturity radar across four dimensions">'+
+      g+'<polygon points="'+dp.join(' ')+'" fill="rgba(18,126,136,.16)" stroke="#127E88" stroke-width="2" stroke-linejoin="round"/>'+dots+labs+'</svg>';
+  }
+
+  submit.addEventListener('click',function(){
+    if(picks.some(function(p){return p===null;})) return;
+    var scores=picks.map(function(p){return p+1;});
+    var avg=scores.reduce(function(a,b){return a+b;},0)/scores.length;
+    var stage=stageFor(avg);
+    var stageIdx=LEVELS.indexOf(stage);
+    // dashboard: radar + KPIs + stage track
+    var maxv=Math.max.apply(null,scores), minv=Math.min.apply(null,scores);
+    var strongIdx=scores.indexOf(maxv), weakIdx=scores.indexOf(minv);
+    var tsegs='',tlabs='';
+    for(var t=0;t<5;t++){
+      tsegs+='<div class="aa-mat-track-seg'+(t<=stageIdx?' on':'')+'"></div>';
+      tlabs+='<span'+(t===stageIdx?' class="cur"':'')+'>'+LEVELS[t]+'</span>';
+    }
+    var kpis=
+      '<div class="aa-mat-kpi"><div class="k">Overall stage</div><div class="v">'+stage+'</div><div class="s">Stage '+(stageIdx+1)+' of 5</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Maturity score</div><div class="v">'+avg.toFixed(1)+'</div><div class="s">out of 5.0</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Strongest</div><div class="v" style="font-size:17px">'+SHORT[strongIdx]+'</div><div class="s">'+LEVELS[maxv-1]+'</div></div>'+
+      '<div class="aa-mat-kpi"><div class="k">Focus area</div><div class="v" style="font-size:17px">'+SHORT[weakIdx]+'</div><div class="s">'+LEVELS[minv-1]+'</div></div>';
+    var dash=
+      '<div class="aa-mat-dash">'+
+        '<div class="aa-mat-panel"><div class="cap">Maturity radar</div>'+radarSVG(scores)+'</div>'+
+        '<div class="aa-mat-panel"><div class="cap">At a glance</div><div class="aa-mat-kpis">'+kpis+'</div>'+
+          '<div class="aa-mat-track"><div class="aa-mat-track-bar">'+tsegs+'</div><div class="aa-mat-track-labels">'+tlabs+'</div></div>'+
+        '</div>'+
+      '</div>';
+    // per-dimension rows
+    var rows='';
+    DIMS.forEach(function(d,di){
+      var lv=picks[di]; var segs='';
+      for(var i=0;i<5;i++){ segs+='<span class="aa-mat-seg'+(i<=lv?' on':'')+'"></span>'; }
+      var next='';
+      if(lv<4){
+        var nextItems=d.o[lv+1].map(function(x){return x;}).join(' &middot; ');
+        next='<p class="aa-mat-row-next"><b>Next ('+LEVELS[lv+1]+'):</b> '+nextItems+'</p>';
+      } else {
+        next='<p class="aa-mat-row-next"><b>Top of the model.</b> Sustain it, and mentor others toward it.</p>';
+      }
+      rows+='<div class="aa-mat-row"><div class="aa-mat-row-top"><span class="aa-mat-row-name">'+d.n+'</span>'+
+        '<span class="aa-mat-row-lv">'+(lv+1)+' &middot; '+LEVELS[lv]+'</span></div>'+
+        '<div class="aa-mat-meter">'+segs+'</div>'+next+'</div>';
+    });
+    // focus = lowest dimension(s)
+    var min=Math.min.apply(null,picks);
+    var lowNames=DIMS.filter(function(d,di){return picks[di]===min;}).map(function(d){return d.n;});
+    var focusHtml='<span class="aa-mat-eb">Where to focus next</span>'+
+      '<h4>Start with '+lowNames.join(' & ')+'.</h4>'+
+      '<p>Your lowest-scoring dimension'+(lowNames.length>1?'s are':' is')+' <strong>'+lowNames.join(' & ')+'</strong> at <strong>'+LEVELS[min]+'</strong>. '+
+      'Maturity compounds when the weakest dimension moves &mdash; that&rsquo;s the highest-leverage place to invest next.</p>';
+
+    res.innerHTML=
+      '<div class="aa-mat-res-card"><div class="lab">Your overall maturity</div>'+
+        '<div class="aa-mat-res-stage">'+stage+'</div>'+
+        '<div class="aa-mat-res-score">Score <b>'+avg.toFixed(1)+' / 5.0</b> &middot; stage '+(stageIdx+1)+' of 5</div>'+
+        '<p class="aa-mat-res-desc">'+STAGE_DESC[stage]+'</p></div>'+
+      dash+
+      '<div class="aa-mat-profile"><h4>Your profile, dimension by dimension</h4>'+rows+'</div>'+
+      '<div class="aa-mat-focus">'+focusHtml+'</div>'+
+      '<div class="aa-mat-cta"><p>Want a facilitated maturity assessment and a roadmap to the next stage? Our SPCTs do this with enterprise teams every week.</p>'+
+        '<div class="aa-mat-btns"><a class="aa-mat-btn p" href="https://meetings.hubspot.com/john2795">Book a maturity consult &rarr;</a>'+
+        '<a class="aa-mat-btn g" href="/services/business-agility/">See how we transform</a>'+
+        '<button class="aa-mat-btn g" id="mat-print" type="button">Save / print</button>'+
+        '<button class="aa-mat-btn g" id="mat-retake" type="button">Retake</button></div></div>';
+    var pr=document.getElementById('mat-print');
+    if(pr) pr.addEventListener('click',function(){window.print();});
+    res.hidden=false;
+    res.scrollIntoView({behavior:'smooth',block:'start'});
+    var rt=document.getElementById('mat-retake');
+    if(rt) rt.addEventListener('click',function(){
+      picks=[null,null,null,null];
+      quiz.querySelectorAll('.aa-mat-opt').forEach(function(s){s.classList.remove('sel');});
+      submit.disabled=true; hint.textContent='Select a level for all four dimensions to continue.';
+      res.hidden=true; res.innerHTML='';
+      document.getElementById('aa-mat').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+})();
+</script>

@@ -1,0 +1,60 @@
+PAGE 964  (/about/)
+Interactive <script> blocks to paste: 4  |  JSON-LD blocks: 1
+======================================================================
+
+<script>
+(function(){
+  var nav=document.querySelector('.aa-ab-subnav'); if(!nav) return;
+  var links=[].slice.call(nav.querySelectorAll('a[href^="#"]'));
+  var map=links.map(function(a){return {a:a,el:document.getElementById(a.getAttribute('href').slice(1))};}).filter(function(m){return m.el;});
+  function onScroll(){
+    var y=window.pageYOffset+170, cur=null;
+    for(var i=0;i<map.length;i++){ if(map[i].el.getBoundingClientRect().top+window.pageYOffset<=y) cur=map[i]; }
+    links.forEach(function(a){a.classList.remove('active');});
+    if(cur) cur.a.classList.add('active');
+  }
+  var raf; window.addEventListener('scroll',function(){ if(raf)cancelAnimationFrame(raf); raf=requestAnimationFrame(onScroll); },{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true}); onScroll();
+})();
+</script>
+
+<!-- ---- next script block ---- -->
+
+<script src="//js.hsforms.net/forms/embed/v2.js"></script>
+
+<!-- ---- next script block ---- -->
+
+<script>
+(function(){
+  function build(){
+    if(!window.hbspt || !window.hbspt.forms){ return setTimeout(build,150); }
+    hbspt.forms.create({region:"na1",portalId:"46316757",formId:"08b46bf8-1d7c-4cb4-b42c-d066df922ef0",target:"#hs-form-about-964"});
+  }
+  build();
+})();
+</script>
+
+<!-- ---- next script block ---- -->
+
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var page = q.get('aa_page'), band = q.get('aa_band');
+  var sec = document.getElementById('message');
+  if((page || band) && sec && !location.hash){ try{ sec.scrollIntoView(); }catch(e){} }
+  if(!page && !band) return;
+  var tries = 0;
+  var iv = setInterval(function(){
+    tries++;
+    var t = document.querySelector('#hs-form-about-964 textarea');
+    if(t){
+      if(!t.value){
+        t.value = 'Context: ' + (page ? 'came from ' + page : '') + (page && band ? ', ' : '') + (band ? 'interested in ' + band : '') + '\n\n';
+        t.dispatchEvent(new Event('input', {bubbles:true}));
+      }
+      clearInterval(iv);
+    }
+    if(tries > 40) clearInterval(iv);
+  }, 250);
+})();
+</script>

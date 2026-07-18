@@ -1,0 +1,50 @@
+PAGE 28854  (/services/operating-model/)
+Interactive <script> blocks to paste: 1  |  JSON-LD blocks: 1
+======================================================================
+
+<script>
+(function(){
+  function activate(idx){
+    document.querySelectorAll('[data-op-tab]').forEach(function(el){
+      var on = el.getAttribute('data-op-tab') === idx;
+      el.classList.toggle('is-active', on);
+      el.setAttribute('aria-selected', on ? 'true' : 'false');
+      var chev = el.querySelector('.aa-chev'); if(chev){ chev.innerHTML = on ? '&#9679;' : '&#9675;'; }
+    });
+    document.querySelectorAll('[data-op-detail]').forEach(function(el){
+      el.classList.toggle('is-active', el.getAttribute('data-op-detail') === idx);
+    });
+  }
+  document.querySelectorAll('[data-op-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){ activate(btn.getAttribute('data-op-tab')); });
+  });
+
+  var bars = Array.prototype.slice.call(document.querySelectorAll('[data-op-bar]'));
+  var meta = [
+    {num:'01',name:'Scaling Iterative',tag:'Scale delivery · any framework'},
+    {num:'02',name:'Innovation Framework',tag:'Repeatable innovation'},
+    {num:'03',name:'AI-Native',tag:'Operating model rebuilt'},
+    {num:'04',name:'AI Automation',tag:'End-to-end technical'},
+    {num:'05',name:'Mutation',tag:'Where change sticks'}
+  ];
+  var stepEl = document.getElementById('aa-hero-step');
+  var capEl  = document.getElementById('aa-hero-cap');
+  var subEl  = document.getElementById('aa-hero-sub');
+  if (bars.length && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    var step = 1;
+    var paint = function(){
+      bars.forEach(function(el){
+        var i = +el.getAttribute('data-op-bar');
+        el.classList.toggle('is-lit', i < step);
+        el.classList.toggle('is-lead', i === step - 1);
+      });
+      var done = step >= 5, lead = meta[step - 1];
+      if (stepEl) stepEl.textContent = done ? 'Complete' : '0' + step + ' / 05';
+      if (capEl)  capEl.textContent  = done ? 'One operating model.' : lead.name;
+      if (subEl)  subEl.textContent  = done ? 'Five layers — compounding, not snapping back' : lead.tag;
+    };
+    paint();
+    setInterval(function(){ step = step >= 5 ? 1 : step + 1; paint(); }, 1300);
+  }
+})();
+</script>
