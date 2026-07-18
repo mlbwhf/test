@@ -1,45 +1,33 @@
 /* ============================================================
-   Agile Agilist — Language Switcher + Smart Redirect
+   Agile Agilist — Language Switcher + Suggestion Banner
+   (bot-neutral: NO hard redirect — SEO/LLM-safe)
    ------------------------------------------------------------
-   HOW TO INSTALL (once):
-   wp-admin → Code Snippets (WPCode) → Add Snippet → "Add Your Custom Code"
-   → type: JavaScript Snippet → paste EVERYTHING below → Insertion:
-   "Auto Insert", location "Site Wide Footer" → Save & Activate.
-   Name it "AA – Language Switcher".
+   INSTALL (once): wp-admin → WPCode → Add Snippet → Custom Code
+   → JavaScript Snippet → paste all of this → Auto Insert →
+   "Site Wide Footer" → Save & Activate. Name "AA – Language Switcher".
 
    WHAT IT DOES
-   - Injects a small EN · ES · FR · ع switcher into the header (top-right).
-   - English is the DEFAULT and canonical language. English URLs are never
-     altered — ads/tracking keep pointing at them.
-   - Optional auto-redirect: a FIRST-TIME visitor whose browser language is
-     Spanish/French/Arabic is sent to that language's version — but ONLY when
-     it is safe (see guards). Set AUTO_REDIRECT=false to disable.
+   1. A small persistent EN · ES · FR · ع pill (visual selector) — links to
+      the exact translated page when one exists, else the language home.
+   2. A one-time, non-intrusive suggestion BANNER: a first-time visitor whose
+      browser language differs from the page they're on sees a top banner
+      ("¿Prefieres leer en Español? [Cambiar]"). It NEVER auto-redirects, so
+      bots crawl every URL normally and ad landings are never bounced.
+      Dismiss (×) is remembered via localStorage.
 
-   AD & SEO SAFETY GUARDS (auto-redirect is skipped when ANY apply)
-   - The URL carries ad/tracking params (gclid, gbraid, wbraid, fbclid,
-     msclkid, or any utm_*)  → ad landings always stay on the English page.
-   - The visitor already has an aa_lang choice cookie (so we never loop and
-     never override a manual choice).
-   - The page is already a /es/ /fr/ /ar/ page.
-   - No published translation exists for the current page.
-   NOTE: browser-language auto-redirect is a trade-off for SEO. The manual
-   switcher works regardless; if you prefer, set AUTO_REDIRECT=false and keep
-   only the manual switcher.
+   English is the default/canonical language; its URLs are never rewritten.
+   Extend AA_MAP as pages are PUBLISHED (a draft target would 404).
    ============================================================ */
 (function () {
-  var AUTO_REDIRECT = true;              // set false to keep only the manual switcher
-
   var LANGS = [
     { code: 'en', label: 'EN', home: '/' },
     { code: 'es', label: 'ES', home: '/es/' },
     { code: 'fr', label: 'FR', home: '/fr/' },
-    { code: 'ar', label: 'ع', home: '/ar/', rtl: true }  // ع
+    { code: 'ar', label: 'ع', home: '/ar/', rtl: true }
   ];
 
-  /* English path  ->  translated paths.
-     Extend this map as pages are published. Only include LIVE (published)
-     translations; a draft target would 404 for logged-out visitors. */
-  var MAP = {
+  /* English path -> translated paths. Add rows only once the targets are LIVE. */
+  var AA_MAP = {
     '/training/safe/sa/':           { es: '/es/liderando-safe-sa/', fr: '/fr/leading-safe-sa/', ar: '/ar/leading-safe-sa/' },
     '/training/':                   { es: '/es/formacion/',         fr: '/fr/formation/',       ar: '/ar/formation/' },
     '/training/adv-safe/spc/':      { es: '/es/spc/',               fr: '/fr/spc/',             ar: '/ar/spc/' },
@@ -47,6 +35,13 @@
     '/training/adv-safe/rte/':      { es: '/es/rte/',               fr: '/fr/rte/',             ar: '/ar/rte/' },
     '/training/safe/scrum-master/': { es: '/es/scrum-master/',      fr: '/fr/scrum-master/',    ar: '/ar/scrum-master/' },
     '/training/safe/popm/':         { es: '/es/popm/',              fr: '/fr/popm/',            ar: '/ar/popm/' }
+  };
+
+  var BANNER = {
+    es: { text: '¿Prefieres ver este contenido en español?', btn: 'Cambiar a Español' },
+    fr: { text: 'Préférez-vous consulter cette page en français ?', btn: 'Passer au Français' },
+    ar: { text: 'هل تفضّل تصفّح هذه الصفحة بالعربية؟', btn: 'التبديل إلى العربية', rtl: true },
+    en: { text: 'Prefer to read this page in English?', btn: 'Switch to English' }
   };
 
   function norm(p) { return p.replace(/\/+$/, '') + '/'; }
@@ -57,95 +52,91 @@
     if (p.indexOf('/ar/') === 0) return 'ar';
     return 'en';
   }
-  function getCookie(n) {
-    var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)');
-    return m ? decodeURIComponent(m[1]) : null;
-  }
-  function setCookie(n, v) {
-    document.cookie = n + '=' + encodeURIComponent(v) + ';path=/;max-age=' + (365 * 864e2) + ';SameSite=Lax';
-  }
-  function hasAdParams() {
-    return /[?&](gclid|gbraid|wbraid|fbclid|msclkid|utm_[a-z]+)=/i.test(location.search);
-  }
-  /* Resolve the English base path for the current page (whatever language). */
   function enBase() {
     var cur = curLang(), path = norm(location.pathname);
-    if (cur === 'en') return MAP[path] ? path : null;
-    for (var k in MAP) { if (norm(MAP[k][cur] || '') === path) return k; }
+    if (cur === 'en') return AA_MAP[path] ? path : null;
+    for (var k in AA_MAP) { if (norm(AA_MAP[k][cur] || '') === path) return k; }
     return null;
   }
-  /* Where should `lang` go from the current page? null if nowhere sensible. */
   function targetFor(lang) {
     if (lang === curLang()) return null;
     var base = enBase();
     if (lang === 'en') return base || '/';
-    if (base && MAP[base] && MAP[base][lang]) return MAP[base][lang];
+    if (base && AA_MAP[base] && AA_MAP[base][lang]) return AA_MAP[base][lang];
     for (var i = 0; i < LANGS.length; i++) if (LANGS[i].code === lang) return LANGS[i].home;
-    return '/';
-  }
-  function go(lang) {
-    setCookie('aa_lang', lang);
-    var t = targetFor(lang);
-    if (t) location.href = t;
+    return null;                       // no sensible target → don't offer it
   }
 
-  /* ---- UI ---- */
-  function buildUI() {
+  /* ---------- persistent switcher pill ---------- */
+  function buildPill() {
     if (document.getElementById('aa-langsw')) return;
-    var cur = curLang();
-    var wrap = document.createElement('div');
+    var cur = curLang(), wrap = document.createElement('div');
     wrap.id = 'aa-langsw';
-    wrap.setAttribute('role', 'navigation');
     wrap.setAttribute('aria-label', 'Language');
     var html = '<span class="aa-langsw-globe" aria-hidden="true">◉</span>';
     for (var i = 0; i < LANGS.length; i++) {
-      var L = LANGS[i], on = (L.code === cur);
-      html += '<a href="#" data-lang="' + L.code + '" class="aa-langsw-i' + (on ? ' on' : '') + '"' +
+      var L = LANGS[i], on = (L.code === cur), t = on ? '#' : (targetFor(L.code) || null);
+      if (!t) continue;                // hide languages with no live target
+      html += '<a href="' + t + '" data-lang="' + L.code + '" class="aa-langsw-i' + (on ? ' on' : '') + '"' +
               (on ? ' aria-current="true"' : '') + ' lang="' + L.code + '">' + L.label + '</a>';
     }
     wrap.innerHTML = html;
-    wrap.addEventListener('click', function (e) {
-      var a = e.target.closest('a[data-lang]'); if (!a) return;
-      e.preventDefault(); go(a.getAttribute('data-lang'));
-    });
     document.body.appendChild(wrap);
   }
 
+  /* ---------- one-time suggestion banner (no redirect) ---------- */
+  function buildBanner() {
+    try { if (localStorage.getItem('aa-skip-lang') === '1') return; } catch (e) {}
+    var cur = curLang();
+    var bl = (navigator.language || navigator.userLanguage || 'en').toLowerCase().split('-')[0];
+    if (!BANNER[bl] || bl === cur) return;
+    var target = targetFor(bl);
+    if (!target || norm(target) === norm(location.pathname)) return;  // only if a real alternate exists
+
+    var cfg = BANNER[bl];
+    var bar = document.createElement('div');
+    bar.id = 'aa-langbanner';
+    if (cfg.rtl) bar.setAttribute('dir', 'rtl');
+    bar.setAttribute('lang', bl);
+    bar.innerHTML =
+      '<span class="aa-lb-t">' + cfg.text + '</span>' +
+      '<a class="aa-lb-go" href="' + target + '">' + cfg.btn + '</a>' +
+      '<button class="aa-lb-x" type="button" aria-label="Close">&times;</button>';
+    bar.querySelector('.aa-lb-x').addEventListener('click', function () {
+      bar.remove();
+      try { localStorage.setItem('aa-skip-lang', '1'); } catch (e) {}
+    });
+    // Remember choice if they accept, so we don't nag next page
+    bar.querySelector('.aa-lb-go').addEventListener('click', function () {
+      try { localStorage.setItem('aa-skip-lang', '1'); } catch (e) {}
+    });
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+
   var css =
-    '#aa-langsw{position:fixed;top:auto;bottom:18px;right:18px;z-index:99990;display:inline-flex;align-items:center;gap:2px;' +
+    /* pill */
+    '#aa-langsw{position:fixed;bottom:18px;right:18px;z-index:99990;display:inline-flex;align-items:center;gap:2px;' +
     'background:#0B2E35;color:#fff;border:1px solid rgba(143,207,207,.35);border-radius:999px;padding:5px 8px 5px 10px;' +
     'font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.04em;box-shadow:0 8px 24px -10px rgba(11,46,53,.6)}' +
     '#aa-langsw .aa-langsw-globe{color:#8FCFCF;margin-right:4px;font-size:13px;line-height:1}' +
     '#aa-langsw a{color:#B9D4D4;text-decoration:none;padding:3px 7px;border-radius:999px;transition:background .15s,color .15s}' +
     '#aa-langsw a:hover{color:#fff;background:rgba(255,255,255,.08)}' +
     '#aa-langsw a.on{color:#0B2E35;background:#8FCFCF;font-weight:700}' +
-    '@media(max-width:600px){#aa-langsw{bottom:12px;right:12px;font-size:11px}}';
-
-  function injectCSS() {
-    var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s);
-  }
-
-  /* ---- Auto-redirect (guarded) ---- */
-  function maybeRedirect() {
-    if (!AUTO_REDIRECT) return false;
-    if (getCookie('aa_lang')) return false;      // already chose / already redirected
-    if (hasAdParams()) return false;             // protect ad + tracking traffic
-    if (curLang() !== 'en') return false;        // only leave from English
-    var nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase().slice(0, 2);
-    if (nav !== 'es' && nav !== 'fr' && nav !== 'ar') return false;
-    var t = targetFor(nav);
-    if (t && norm(t) !== norm(location.pathname)) {
-      setCookie('aa_lang', nav);
-      location.replace(t);
-      return true;
-    }
-    return false;
-  }
+    '@media(max-width:600px){#aa-langsw{bottom:12px;right:12px;font-size:11px}}' +
+    /* banner */
+    '#aa-langbanner{position:relative;z-index:99991;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;' +
+    'background:#0B2E35;color:#fff;padding:11px 20px;font-family:Inter,system-ui,sans-serif;font-size:14px;' +
+    'border-bottom:1px solid rgba(143,207,207,.30)}' +
+    '#aa-langbanner .aa-lb-t{color:#D6E7E7}' +
+    '#aa-langbanner .aa-lb-go{color:#0B2E35;background:#8FCFCF;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:999px;transition:background .15s}' +
+    '#aa-langbanner .aa-lb-go:hover{background:#B9E4E4}' +
+    '#aa-langbanner .aa-lb-x{background:transparent;border:none;color:#9fc4c4;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}' +
+    '#aa-langbanner .aa-lb-x:hover{color:#fff}';
 
   function init() {
-    if (maybeRedirect()) return;   // if redirecting, don't bother drawing UI
-    injectCSS();
-    buildUI();
+    var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s);
+    buildBanner();   // top of body, before pill
+    buildPill();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
