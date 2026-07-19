@@ -1868,14 +1868,12 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 }
 /* ==================== END — AA Additional CSS v21 CLEAN ==================== */
 
+/* ==================== W. MERIDIAN COURSE HERO + AGENDA (appended) ====================
+   Reusable Meridian hero grid (.aa-mhero) + dynamic "Upcoming sessions" agenda
+   card (buildAgenda -> #aa-agenda). Namespaced under .aa-rd. Merged from
+   aa-meridian-hero.css (RTE hero refine: logo action buttons, one-line rows,
+   taller card aligned to the credential lockup). */
 
-/* ############################################################################
-   W. MERIDIAN COURSE HERO + DYNAMIC AGENDA (appended)
-   Reusable course-hero (RTE and rolling out to all course pages): breadcrumb
-   pill, badge chips, price+rating row, credential lockup, and the light
-   "Upcoming sessions" agenda rendered by the engine's buildAgenda() into
-   #aa-agenda. Uses the --aa-* tokens defined in section A above.
-   ############################################################################ */
 /* ============================================================
    Meridian course-hero — REUSABLE COMPONENT (CSS)
    ------------------------------------------------------------
@@ -1899,7 +1897,7 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
    ============================================================ */
 
 /* two-column hero grid (pitch + dark cohort card) */
-.aa-rd .aa-mhero{display:grid;grid-template-columns:1.4fr 1fr;gap:46px;align-items:start;margin-top:6px}
+.aa-rd .aa-mhero{display:grid;grid-template-columns:1.05fr 1fr;gap:46px;align-items:stretch;margin-top:6px}
 @media(max-width:900px){.aa-rd .aa-mhero{grid-template-columns:1fr!important;gap:30px}}
 
 /* breadcrumb pill */
@@ -1940,6 +1938,7 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 
 /* card shell */
 .aa-rd .aa-agenda{
+	flex:1 1 auto;
 	display:flex;flex-direction:column;
 	border:1px solid #C7DEDE;border-radius:6px;background:#fff;
 	box-shadow:0 10px 30px -18px rgba(8,37,43,.35);
@@ -1958,14 +1957,15 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 
 /* scrollable list — hidden scrollbar */
 .aa-rd .aa-agenda-list{
+	flex:1 1 auto;
 	display:flex;flex-direction:column;gap:8px;
-	max-height:372px;overflow-y:auto;padding:14px 16px;
+	max-height:460px;overflow-y:auto;padding:14px 16px;
 	scrollbar-width:none;-ms-overflow-style:none}
 .aa-rd .aa-agenda-list::-webkit-scrollbar{width:0;height:0;display:none}
 
 /* each session row */
 .aa-rd .aa-agenda-row{
-	display:flex;align-items:center;flex-wrap:wrap;gap:14px;
+	display:flex;align-items:center;flex-wrap:nowrap;gap:14px;
 	border:1px solid #DCEAEA;border-radius:5px;background:#FDFEFE;padding:12px 14px}
 
 /* date tile */
@@ -1980,7 +1980,7 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 
 /* middle block */
 .aa-rd .aa-agenda-mid{
-	flex:1 1 auto;min-width:170px;display:flex;flex-direction:column;
+	flex:1 1 auto;min-width:120px;display:flex;flex-direction:column;
 	align-items:flex-start;gap:5px}
 .aa-rd .aa-agenda-when{
 	font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:17.5px;
@@ -2001,15 +2001,15 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 .aa-rd .aa-agenda-actions{
 	flex:none;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .aa-rd .aa-agenda-reg{
-	display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+	display:inline-flex;align-items:center;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
 	font-weight:600;color:#fff;background:#127E88;border:1px solid #127E88;
-	border-radius:2px;padding:8px 13px;text-decoration:none;line-height:1;cursor:pointer}
+	border-radius:2px;padding:7px 12px;text-decoration:none;line-height:1;cursor:pointer;white-space:nowrap}
 .aa-rd .aa-agenda-reg:hover{background:#0E6A73;border-color:#0E6A73}
 .aa-rd .aa-agenda-eb{
 	display:inline-flex;align-items:center;gap:7px;
 	font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600;
 	color:#E0632F;background:#fff;border:1px solid rgba(224,99,47,.45);
-	border-radius:2px;padding:8px 13px;text-decoration:none;line-height:1}
+	border-radius:2px;padding:7px 12px;text-decoration:none;line-height:1;white-space:nowrap}
 .aa-rd .aa-agenda-eb:hover{border-color:rgba(224,99,47,.8);background:#FFF7F3}
 .aa-rd .aa-agenda-ebdot{
 	flex:none;width:7px;height:7px;border-radius:50%;background:#F6682F;display:inline-block}
@@ -2022,6 +2022,7 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
 
 /* responsive: rows wrap (tile/mid/actions stack), actions stay nowrap internally */
 @media(max-width:560px){
+	.aa-rd .aa-agenda-row{flex-wrap:wrap}
 	.aa-rd .aa-agenda-actions{width:100%}
 	.aa-rd .aa-agenda-reg,.aa-rd .aa-agenda-eb{flex:1 1 auto;text-align:center;justify-content:center}
 }

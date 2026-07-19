@@ -734,6 +734,8 @@
 		var price = (D.price || '').toString();
 		var length = parseInt(D.length || String(LEN), 10) || LEN;
 		var EB_ORG = EB_ORG_DEFAULT;
+		var EB_LOGO = 'https://agile-agilist.com/wp-content/uploads/2026/06/evetbrite.webp';
+		var STRIPE_LOGO = 'https://agile-agilist.com/wp-content/uploads/2026/06/Untitled-1.webp';
 		var TIME_DEFAULT = '09:00–17:00 ET';
 		var rows = '';
 		for(var i=0; items.length > i; i++){
@@ -752,8 +754,8 @@
 				'<span class="aa-agenda-tile"><span class="aa-agenda-mon">'+esc(it.mon)+'</span><span class="aa-agenda-day">'+esc(it.day)+'</span></span>' +
 				'<span class="aa-agenda-mid"><span class="aa-agenda-when">'+esc(full)+'</span>'+pill+'<span class="aa-agenda-meta">'+meta+'</span></span>' +
 				'<span class="aa-agenda-actions">' +
-					'<a href="#enroll" class="aa-agenda-reg" data-ff="'+esc(ff)+'">Register &#10230;</a>' +
-					'<a href="'+esc(ebHref)+'" class="aa-agenda-eb" target="_blank" rel="noopener"><span class="aa-agenda-ebdot"></span>Eventbrite</a>' +
+					'<a href="#enroll" class="aa-agenda-reg" data-ff="'+esc(ff)+'">Register <img src="'+STRIPE_LOGO+'" alt="Stripe" style="height:14px;width:auto;vertical-align:middle;display:inline-block;filter:brightness(0) invert(1);margin-left:5px"></a>' +
+					'<a href="'+esc(ebHref)+'" class="aa-agenda-eb" target="_blank" rel="noopener"><img src="'+EB_LOGO+'" alt="Eventbrite" style="height:14px;width:auto;vertical-align:middle;display:inline-block"></a>' +
 				'</span>' +
 			'</div>';
 		}
