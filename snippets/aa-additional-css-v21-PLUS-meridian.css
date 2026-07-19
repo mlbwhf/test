@@ -1860,6 +1860,10 @@ html body .ast-container > .ast-breadcrumbs{ display:none !important; }
   /* Assessments */
   .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{content:"See where you stand \2014  Absent to Flying."}
   .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/mutation-readiness/"])::after{content:"How ready are you to adapt & transform?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-assessment/"])::after{content:"Score 6 agile competencies \2014  flow to leadership."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/ai-assessment/"])::after{content:"How AI-ready is your operating model?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/product-management-assessment/"])::after{content:"From output to outcomes \2014  how product-led are you?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/innovation-framework/"])::after{content:"How systematically does your org innovate?"}
   /* About */
   .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{content:"Answers to the questions we hear most."}
   .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{content:"Send us a message \2014  we reply fast."}
