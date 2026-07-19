@@ -1,0 +1,1887 @@
+{
+  "assessments": {
+    "innovation-framework": {
+      "id": "innovation-framework",
+      "title": "Evaluación del Marco de Innovación",
+      "tagline": "¿Sois realmente innovadores o solo os llamáis innovadores?",
+      "description": "Un diagnóstico de 15 preguntas sobre el sistema operativo de innovación de tu organización. Mide los cinco Principios: el fundamento cultural que sustenta cada iniciativa de innovación.",
+      "minutes": 12,
+      "questionCount": 15,
+      "source": "Innovators Framework, Parte I — Mutation Readiness de Mark Saymen.",
+      "perspectiveQuestion": {
+        "prompt": "Antes de empezar: ¿qué unidad estás evaluando?",
+        "subtext": "Cuanto más pequeña sea la unidad, más preciso será el resultado. Un equipo sano de 30 personas puede existir dentro de una organización disfuncional de 5.000 personas.",
+        "options": [
+          {
+            "id": "self",
+            "label": "Solo yo / mi propia práctica"
+          },
+          {
+            "id": "team",
+            "label": "Mi equipo inmediato (menos de ~30 personas)"
+          },
+          {
+            "id": "bu",
+            "label": "Mi unidad de negocio / división"
+          },
+          {
+            "id": "org",
+            "label": "Toda la organización"
+          }
+        ]
+      },
+      "dimensions": [
+        {
+          "id": "ff",
+          "name": "Fallar hacia adelante",
+          "color": "#E76F51",
+          "questions": [
+            {
+              "id": "ff1",
+              "text": "¿Tu equipo realiza experimentos pequeños y estructurados con hipótesis explícitas y objetivos de aprendizaje predefinidos, y no solo un \"probemos a ver qué pasa\"?",
+              "probe": "Piensa en el último experimento que hizo tu equipo. ¿Había una hipótesis escrita? ¿Un criterio de éxito predefinido?"
+            },
+            {
+              "id": "ff2",
+              "text": "Cuando algo falla, ¿tenéis una forma estructurada de analizarlo —sacando a la luz lo que el equipo creía antes, lo que cree ahora y qué hacer a continuación— sin culpar a nadie?",
+              "probe": "Una Failure Harvest, un post-mortem sin culpas, cualquier cosa con esa forma."
+            },
+            {
+              "id": "ff3",
+              "text": "¿Se reconocen públicamente la iteración y la perseverancia en tu sistema de desempeño, y no solo los resultados exitosos?",
+              "probe": "¿Alguien en el último ciclo de evaluación fue recompensado por un fracaso productivo?"
+            }
+          ]
+        },
+        {
+          "id": "oc",
+          "name": "Comunicación abierta",
+          "color": "#F4A261",
+          "questions": [
+            {
+              "id": "oc1",
+              "text": "¿Los miembros del equipo se sienten seguros para cuestionar ideas —incluidas las de la dirección— sin consecuencias políticas?",
+              "probe": "Piensa en la última reunión en la que alguien discrepó de la persona más veterana de la sala."
+            },
+            {
+              "id": "oc2",
+              "text": "¿La retroalimentación se comparte normalmente en tiempo real, en el momento, en lugar de reservarse para las evaluaciones anuales?",
+              "probe": "Si alguien se está desviando hoy, ¿cuándo se entera: hoy o dentro de seis meses?"
+            },
+            {
+              "id": "oc3",
+              "text": "Cuando los altos directivos toman decisiones con las que los empleados no están de acuerdo, ¿esos empleados lo dicen, y se toma en serio el desacuerdo?",
+              "probe": "¿O el disenso se recibe con cortesía y luego se ignora en silencio?"
+            }
+          ]
+        },
+        {
+          "id": "mm",
+          "name": "Cuestionar los modelos mentales",
+          "color": "#E9C46A",
+          "questions": [
+            {
+              "id": "mm1",
+              "text": "¿Tu equipo cuestiona con regularidad supuestos fundamentales sobre tu sector, tus clientes o tu modelo de negocio, en decisiones reales?",
+              "probe": "Dentro de discusiones de estrategia reales, no en la jornada externa."
+            },
+            {
+              "id": "mm2",
+              "text": "Cuando os enfrentáis a un problema difícil, ¿alguien sabe usar el razonamiento desde primeros principios para descomponerlo hasta los hechos subyacentes?",
+              "probe": "No \"usamos las palabras de moda correctas\": ¿existe realmente ese músculo?"
+            },
+            {
+              "id": "mm3",
+              "text": "¿Tu equipo ha retirado explícitamente una \"vaca sagrada\" —una práctica que todos daban por innegociable— en los últimos 12 meses?",
+              "probe": "Si es así, nómbrala. Si no puedes nombrar ninguna, esa es la respuesta."
+            }
+          ]
+        },
+        {
+          "id": "fs",
+          "name": "Estructura flexible",
+          "color": "#2A9D8F",
+          "questions": [
+            {
+              "id": "fs1",
+              "text": "¿Los equipos están alineados con los resultados para el cliente o los flujos de valor, en lugar de con funciones internas?",
+              "probe": "Mira tu organigrama. ¿Las cajas están etiquetadas por lo que hacen para los clientes o por disciplina profesional?"
+            },
+            {
+              "id": "fs2",
+              "text": "¿Los equipos tienen autonomía de decisión sin escalar para la mayoría de las decisiones operativas de su área?",
+              "probe": "¿O cada decisión no trivial pasa por un director?"
+            },
+            {
+              "id": "fs3",
+              "text": "Cuando algo necesita un cambio estructural, ¿ocurre en un trimestre o tarda un año de aprobaciones?",
+              "probe": "La última vez que señalaste que hacía falta un cambio estructural: ¿cuánto tardó realmente?"
+            }
+          ]
+        },
+        {
+          "id": "gm",
+          "name": "Mentalidad de crecimiento a escala",
+          "color": "#264653",
+          "questions": [
+            {
+              "id": "gm1",
+              "text": "¿Tu sistema de evaluación del desempeño recompensa explícitamente cómo un empleado ayudó a crecer a otros, con un peso comparable al de las métricas de entrega?",
+              "probe": "En el formulario de evaluación real, no en el póster de valores."
+            },
+            {
+              "id": "gm2",
+              "text": "¿Los empleados disponen de tiempo dedicado y protegido para el aprendizaje autodirigido, la experimentación o el trabajo impulsado por la curiosidad?",
+              "probe": "El 20% de Google, las Innovation Weeks de Atlassian, Cisco Illuminate: tiempo protegido en el calendario."
+            },
+            {
+              "id": "gm3",
+              "text": "Cuando los altos directivos fallan o cambian de opinión, ¿comparten lo que aprendieron, en público, más de una vez al año?",
+              "probe": "El patrón Nadella. ¿O los líderes solo narran los éxitos?"
+            }
+          ]
+        }
+      ],
+      "maxPerQ": 5,
+      "perDimMax": 15,
+      "totalMax": 75,
+      "bands": [
+        {
+          "id": "theatre",
+          "name": "Teatro de la innovación",
+          "min": 0,
+          "max": 30,
+          "headline": "Usáis el lenguaje de la innovación, pero aún no aplicáis las prácticas.",
+          "summary": "El trabajo de innovación se representa para la dirección o para públicos externos, no se vive en las decisiones diarias. Falta el fundamento cultural, y ninguna técnica de la era de la IA lo compensará. La buena noticia: esta es la banda más barata de la que salir. Una práctica concreta, bien instalada en 30 días, moverá la aguja.",
+          "hint": "La mayoría de las organizaciones en Teatro de la innovación puntúan más bajo en Modelos Mentales y Mentalidad de Crecimiento, porque ambos exigen admitir cosas que la organización ha fingido que eran ciertas. Empieza por ahí."
+        },
+        {
+          "id": "practicing",
+          "name": "Innovación en práctica",
+          "min": 31,
+          "max": 55,
+          "headline": "Los rituales existen. El sistema aún no los ha absorbido.",
+          "summary": "Algunos equipos han interiorizado las prácticas. Toda la organización no. La mayor brecha suele estar entre lo que dice la dirección y lo que recompensa el sistema de desempeño. El trabajo ahora es la integración: conectar dos principios concretos durante los próximos 90 días, no lanzar cinco iniciativas culturales simultáneas.",
+          "hint": "Patrón más común: nivel medio en Fallar hacia adelante y Modelos Mentales, bajo en Mentalidad de Crecimiento; el sistema de desempeño recompensa la entrega por encima del aprendizaje. Arregla el mecanismo, no el discurso."
+        },
+        {
+          "id": "native",
+          "name": "Innovación nativa",
+          "min": 56,
+          "max": 75,
+          "headline": "La innovación es identidad, no departamento.",
+          "summary": "Estáis en el decil superior. Las prácticas son visibles en las decisiones cotidianas, en cómo habla la gente en las reuniones, en cómo funciona realmente el sistema de desempeño. El riesgo ahora es la complacencia. Institucionaliza lo que tienes, mentoriza a organizaciones adyacentes y ejecuta Mutation Readiness: la frontera de la era de la IA es tu próximo paso.",
+          "hint": "Ahora importan tres cosas: institucionalizar, mentorizar y graduarse hacia la frontera de la era de la IA."
+        }
+      ],
+      "plans": {
+        "theatre": {
+          "d30": [
+            {
+              "t": "Realiza una Failure Harvest",
+              "d": "Elige un fracaso reciente real. Usa la estructura de cuatro preguntas (qué creíamos antes / después / el experimento siguiente más pequeño / qué difundir). 45 min. Sin PowerPoint."
+            },
+            {
+              "t": "Añade el check-in \"qué tienes en mente\"",
+              "d": "Empieza cada reunión de equipo durante 30 días con una ronda de una frase. Dos minutos en total. Normaliza la vulnerabilidad."
+            },
+            {
+              "t": "Auditoría de supuestos sobre tu estrategia",
+              "d": "Dos horas, multifuncional. Marca cada afirmación como Verificada, Heredada o Aspiracional. La mayoría de los equipos descubren que el 60-70% es heredado."
+            },
+            {
+              "t": "Elimina una fricción burocrática",
+              "d": "Una aprobación que no necesita existir, una reunión que debería ser un mensaje de Slack. Documenta lo que ocurre."
+            },
+            {
+              "t": "Añade \"ayudó a crecer a otros\" a las evaluaciones",
+              "d": "Con el mismo peso que las dimensiones de entrega. No lo anuncies como una iniciativa cultural. Simplemente hazlo."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Convierte la Failure Harvest en una cadencia recurrente",
+              "d": "Mensual. Rota al facilitador. Registrada aparte de las revisiones de estado."
+            },
+            {
+              "t": "Elige el más débil de los 5 principios y diseña un impulso de 90 días",
+              "d": "Un solo principio. Un solo responsable. Sin iniciativas paralelas."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Ajusta la ponderación de la evaluación del desempeño",
+              "d": "Haz que \"ayudó a crecer a otros\" cuente un porcentaje real de la calificación, no una señal difusa."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Amy Edmondson",
+              "t": "Right Kind of Wrong",
+              "y": 2023
+            },
+            {
+              "a": "Kim Scott",
+              "t": "Radical Candor (revised)",
+              "y": 2019
+            },
+            {
+              "a": "Mary Murphy",
+              "t": "Cultures of Growth",
+              "y": 2024
+            }
+          ]
+        },
+        "practicing": {
+          "d30": [
+            {
+              "t": "Identifica los dos principios con puntuación más baja",
+              "d": "Diseña un único plan de 90 días que los conecte. No flujos de trabajo separados."
+            },
+            {
+              "t": "Reescribe una pregunta de la evaluación del desempeño",
+              "d": "De \"¿entregaste?\" a \"¿aprendisteis tú y tu equipo?\". Impleméntala en el próximo ciclo."
+            },
+            {
+              "t": "AMA del liderazgo sobre un error real",
+              "d": "No es RR. PP. El CEO y el equipo directivo narran sobre qué cambiaron de opinión. Mensual."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Reasigna el peso de la compensación",
+              "d": "Haz que \"ayudó a crecer a otros\" cuente un porcentaje real, no una señal difusa."
+            },
+            {
+              "t": "Conecta los dos principios más débiles",
+              "d": "Si Fallar hacia adelante y Mentalidad de Crecimiento son débiles, el vínculo es el sistema de desempeño. Arréglalo una vez, arréglalos ambos."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Audita la brecha entre la retórica del liderazgo y el mecanismo de desempeño",
+              "d": "¿Dónde el discurso es Nativo y la recompensa es Teatro? Arregla primero el menor de los dos."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Ethan Mollick",
+              "t": "Co-Intelligence",
+              "y": 2024
+            },
+            {
+              "a": "Iansiti & Lakhani",
+              "t": "Competing in the Age of AI",
+              "y": 2020
+            },
+            {
+              "a": "Skelton & Pais",
+              "t": "Team Topologies",
+              "y": 2019
+            },
+            {
+              "a": "Adam Grant",
+              "t": "Hidden Potential",
+              "y": 2023
+            }
+          ]
+        },
+        "native": {
+          "d30": [
+            {
+              "t": "Documenta tu modelo operativo",
+              "d": "Si el CEO que instaló las prácticas se va, ¿qué sobrevive? Ponlo por escrito."
+            },
+            {
+              "t": "Elige una organización adyacente para mentorizar",
+              "d": "Socio, cliente, empresa de tu cartera. Realiza una Failure Harvest con ellos. Transfiere la disciplina."
+            },
+            {
+              "t": "Programa Mutation Readiness",
+              "d": "Tu fundamento cultural es sólido. La extensión de la era de la IA es la próxima frontera."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Forma al equipo directivo para operar sin ti",
+              "d": "Las prácticas se erosionan sin un mantenimiento explícito."
+            },
+            {
+              "t": "Externaliza el lenguaje",
+              "d": "Inversores, talento, socios: lleva el modelo operativo a cómo os describís."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Inicia Mutation Readiness a nivel de liderazgo",
+              "d": "Trátalo como la extensión de la era de la IA de lo que ya tienes."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Amy Edmondson",
+              "t": "The Fearless Organization",
+              "y": 2018
+            },
+            {
+              "a": "Anthropic",
+              "t": "Mapping the Mind",
+              "y": 2024
+            },
+            {
+              "a": "Mustafa Suleyman",
+              "t": "The Coming Wave",
+              "y": 2023
+            }
+          ]
+        }
+      }
+    },
+    "mutation-readiness": {
+      "id": "mutation-readiness",
+      "title": "Evaluación de Mutation Readiness",
+      "tagline": "¿Puede tu organización detectar y responder a la velocidad de la era de la IA?",
+      "description": "Un diagnóstico de 18 preguntas sobre la capacidad de tu organización para detectar, responder y adaptarse a medida que el entorno muta a tu alrededor. La extensión del Marco de Innovación para la era de la IA.",
+      "minutes": 15,
+      "questionCount": 18,
+      "source": "Mutation Readiness Scorecard, Apéndice A — Mutation Readiness de Mark Saymen.",
+      "perspectiveQuestion": {
+        "prompt": "Antes de empezar: ¿qué unidad estás evaluando?",
+        "subtext": "Un equipo de 50 personas puede estar preparado para la mutación mientras la empresa de 5.000 personas que lo rodea es ciega a la mutación. Elige con intención.",
+        "options": [
+          {
+            "id": "self",
+            "label": "Solo yo / mi propia práctica"
+          },
+          {
+            "id": "team",
+            "label": "Mi equipo inmediato (menos de ~30 personas)"
+          },
+          {
+            "id": "bu",
+            "label": "Mi unidad de negocio / división"
+          },
+          {
+            "id": "org",
+            "label": "Toda la organización"
+          }
+        ]
+      },
+      "dimensions": [
+        {
+          "id": "ss",
+          "name": "Sensibilidad a las señales",
+          "color": "#E76F51",
+          "questions": [
+            {
+              "id": "ss1",
+              "text": "¿Tu equipo monitorea señales débiles de al menos tres fuentes fuera de vuestros propios paneles cada semana?",
+              "probe": "Discord de clientes, foros de desarrolladores, tendencias de GitHub, patrones de contratación de la competencia, filtraciones regulatorias."
+            },
+            {
+              "id": "ss2",
+              "text": "¿Puedes nombrar un cambio de comportamiento concreto en tu base de clientes en los últimos 30 días, antes de que apareciera en tus métricas?",
+              "probe": "Si es así, ¿cuál fue? Si no puedes nombrar ninguno, la puntuación es baja al margen de los paneles."
+            },
+            {
+              "id": "ss3",
+              "text": "¿Tenéis una cadencia estructurada para sacar a la luz anomalías internas sin consecuencias políticas para quien las plantea?",
+              "probe": "Revisión de anomalías, SignalNet, cualquier cosa con esa forma."
+            }
+          ]
+        },
+        {
+          "id": "sf",
+          "name": "Flexibilidad estructural",
+          "color": "#F4A261",
+          "questions": [
+            {
+              "id": "sf1",
+              "text": "¿Los equipos están alineados con los resultados para el cliente (flujos de valor) en lugar de con funciones internas?",
+              "probe": "Igual que FS-1 del Marco de Innovación, puntuado por separado por razones de velocidad de la IA."
+            },
+            {
+              "id": "sf2",
+              "text": "¿Puede una nueva idea de producto pasar del concepto al aprendizaje validado en menos de 90 días?",
+              "probe": "Aprendizaje validado, no \"MVP lanzado\". Tiempo de calendario de principio a fin."
+            },
+            {
+              "id": "sf3",
+              "text": "Cuando identificaste la necesidad de reestructurar en los últimos 12 meses, ¿actuaste en un trimestre?",
+              "probe": "Nombrar la necesidad no es actuar sobre ella."
+            }
+          ]
+        },
+        {
+          "id": "at",
+          "name": "Motor de talento en IA",
+          "color": "#E9C46A",
+          "questions": [
+            {
+              "id": "at1",
+              "text": "¿Tienes al menos una persona con conocimientos de IA integrada en cada equipo importante de producto o de negocio?",
+              "probe": "Integrada, no consultada desde un grupo central."
+            },
+            {
+              "id": "at2",
+              "text": "¿Tu talento en IA está distribuido por toda la organización o aislado en una única función de IA/ML?",
+              "probe": "Centro de excelencia de nombre; gueto en la práctica: ¿es ese tu patrón?"
+            },
+            {
+              "id": "at3",
+              "text": "¿Tu talento en IA tiene exposición directa a las decisiones de estrategia, no solo al trabajo de implementación?",
+              "probe": "¿En la sala de estrategia o solo en la sala de construcción?"
+            }
+          ]
+        },
+        {
+          "id": "ac",
+          "name": "Capital ambidiestro",
+          "color": "#2A9D8F",
+          "questions": [
+            {
+              "id": "ac1",
+              "text": "¿Tienes un presupuesto de exploración protegido, separado de tu P&L principal?",
+              "probe": "Protegido, no \"lo financiaremos si nos sobra margen\"."
+            },
+            {
+              "id": "ac2",
+              "text": "¿Las apuestas de exploración se evalúan por el rendimiento de aprendizaje, no por el ROI tradicional?",
+              "probe": "¿Qué evidencia necesita producir una apuesta de exploración para considerarse exitosa?"
+            },
+            {
+              "id": "ac3",
+              "text": "¿Puede un experimento sin un ROI claro sobrevivir a su primera revisión trimestral de negocio sin quedarse sin financiación?",
+              "probe": "La prueba de la QBR. La mayoría de la exploración muere aquí."
+            }
+          ]
+        },
+        {
+          "id": "eg",
+          "name": "Salvaguardas éticas",
+          "color": "#264653",
+          "questions": [
+            {
+              "id": "eg1",
+              "text": "¿Cada despliegue de IA se rige por límites operativos explícitos y una cadencia de recalibración?",
+              "probe": "Límites escritos, recalibración programada. No \"confiamos en el equipo\"."
+            },
+            {
+              "id": "eg2",
+              "text": "¿Tenéis una función de gobernanza de IA (no solo cumplimiento) con ingeniería, y no legal, en su centro?",
+              "probe": "La gobernanza diseña las salvaguardas; el cumplimiento las vigila. ¿Quién manda?"
+            },
+            {
+              "id": "eg3",
+              "text": "¿Puedes producir una explicación con calidad de auditoría de cualquier decisión impulsada por IA que afecte a un cliente?",
+              "probe": "Si un regulador lo pidiera mañana, ¿qué pasaría?"
+            }
+          ]
+        },
+        {
+          "id": "nc",
+          "name": "Coherencia narrativa",
+          "color": "#8E44AD",
+          "questions": [
+            {
+              "id": "nc1",
+              "text": "¿Pueden tus empleados describir, con sus propias palabras, para qué existe tu organización en el mercado actual, no en el mercado de 2018?",
+              "probe": "Recorre el pasillo, pregunta a tres personas. La varianza es la puntuación."
+            },
+            {
+              "id": "nc2",
+              "text": "¿Tu equipo de liderazgo ha actualizado la narrativa estratégica en los últimos 18 meses?",
+              "probe": "Actualizada de forma significativa, no \"añadimos una línea sobre IA a la presentación\"."
+            },
+            {
+              "id": "nc3",
+              "text": "¿Pueden las nuevas incorporaciones articular tu narrativa estratégica tras su primer mes?",
+              "probe": "La incorporación o bien enseña la historia o bien la oculta."
+            }
+          ]
+        }
+      ],
+      "maxPerQ": 5,
+      "perDimMax": 15,
+      "totalMax": 90,
+      "normalizeTo": 72,
+      "bands": [
+        {
+          "id": "blind",
+          "name": "Ciego a la mutación",
+          "min": 0,
+          "max": 30,
+          "headline": "Operáis con métricas rezagadas en un entorno que está mutando a vuestro alrededor.",
+          "summary": "La disrupción probablemente ya esté ocurriendo, sin detectarse. La sensibilidad a las señales es la práctica principal que instalar, y es la más barata. No necesitas reestructurar ni volver a presupuestar. Necesitas una cadencia semanal y un lugar donde registrar lo que viste.",
+          "hint": "Las organizaciones ciegas casi siempre puntúan más bajo en Sensibilidad a las Señales y Capital Ambidiestro. Ambas son baratas de iniciar; ninguna requiere un permiso que no tengas ya."
+        },
+        {
+          "id": "aware",
+          "name": "Consciente de la mutación",
+          "min": 31,
+          "max": 50,
+          "headline": "Podéis detectar el cambio, pero aún no podéis actuar sobre él a la cadencia adecuada.",
+          "summary": "La brecha entre detectar y responder es el riesgo principal. Mide la latencia de mutación —el tiempo desde que se identifica una señal hasta la decisión organizativa— y apunta a menos de 21 días. Elige las dos dimensiones con menor puntuación y diseña movimientos concretos de 90 días en cada una.",
+          "hint": "Las organizaciones conscientes suelen tener fuerte la Sensibilidad a las Señales pero débil la Flexibilidad Estructural o el Capital Ambidiestro. Podéis ver, pero no podéis actuar. Cierra la brecha con cadencia, no con más detección."
+        },
+        {
+          "id": "ready",
+          "name": "Preparado para la mutación",
+          "min": 51,
+          "max": 72,
+          "headline": "Estáis en el decil superior. El riesgo ahora es la complacencia.",
+          "summary": "Institucionaliza las prácticas que te trajeron hasta aquí: se erosionan sin un mantenimiento explícito. Empieza a mentorizar a organizaciones adyacentes. Considera si \"mutation readiness\" debería convertirse en lenguaje externo hacia inversores, talento y socios.",
+          "hint": "El riesgo de complacencia es real. Las empresas que pierden la preparación para la mutación la pierden porque las prácticas se erosionan en silencio mientras el lenguaje persiste."
+        }
+      ],
+      "plans": {
+        "blind": {
+          "d30": [
+            {
+              "t": "Pon en marcha un SignalNet",
+              "d": "Registro distribuido y semianónimo para que cualquier empleado saque a la luz señales débiles. Plantilla en el Apéndice E."
+            },
+            {
+              "t": "Auditoría de supuestos sobre tu estrategia",
+              "d": "Dos horas, multifuncional. Marca cada afirmación como Verificada, Heredada o Aspiracional."
+            },
+            {
+              "t": "Revisión semanal de señales a nivel de liderazgo",
+              "d": "30 minutos. Centrada en anomalías. No es una reunión de estado."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Reserva un presupuesto de exploración protegido",
+              "d": "Aunque sea el 2% del P&L. El objetivo es la separación, no el tamaño."
+            },
+            {
+              "t": "Una contratación/rotación con conocimientos de IA por equipo importante",
+              "d": "Distribuida, no centralizada."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Mide la latencia de mutación por primera vez",
+              "d": "El tiempo desde que se identifica una señal hasta la decisión organizativa. Establece la línea base. Luego optimiza."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Amy Edmondson",
+              "t": "Right Kind of Wrong",
+              "y": 2023
+            },
+            {
+              "a": "Mustafa Suleyman",
+              "t": "The Coming Wave",
+              "y": 2023
+            }
+          ]
+        },
+        "aware": {
+          "d30": [
+            {
+              "t": "Construye un motor de experimentación",
+              "d": "Cinco componentes en el Capítulo 10 del Manual de Operaciones."
+            },
+            {
+              "t": "Aplica el marco de las Cinco Palancas",
+              "d": "Elige las dos palancas con menor puntuación. Diseña movimientos concretos de 90 días en cada una."
+            },
+            {
+              "t": "Mide la latencia de mutación",
+              "d": "El tiempo desde que se identifica una señal hasta la decisión. Apunta a menos de 21 días."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Baja una decisión importante un nivel",
+              "d": "Delegación concreta. Documenta qué cambia."
+            },
+            {
+              "t": "Failure Harvest sobre una respuesta lenta",
+              "d": "¿De dónde vino la latencia? ¿Aprobación? ¿Política? ¿Herramientas? Cada una tiene una solución distinta."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Reestructura un equipo hacia la alineación por flujo de valor",
+              "d": "Usa la Maniobra Inversa de Conway. Empieza con un piloto."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Iansiti & Lakhani",
+              "t": "Competing in the Age of AI",
+              "y": 2020
+            },
+            {
+              "a": "Rita McGrath",
+              "t": "Seeing Around Corners",
+              "y": 2019
+            },
+            {
+              "a": "Ethan Mollick",
+              "t": "Co-Intelligence",
+              "y": 2024
+            }
+          ]
+        },
+        "ready": {
+          "d30": [
+            {
+              "t": "Institucionaliza el modelo operativo",
+              "d": "Documenta lo que hacéis. Forma al equipo directivo para operarlo sin ti."
+            },
+            {
+              "t": "Mentoriza a una organización adyacente",
+              "d": "Socio, cliente, empresa de la cartera. Enseñar es la prueba de esfuerzo."
+            },
+            {
+              "t": "Externaliza el lenguaje",
+              "d": "Inversores, talento, socios: Preparado para la mutación se convierte en cómo os describís."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Somételo a prueba con una revisión externa",
+              "d": "Trae a un escéptico. Págale para que encuentre lo que se ha erosionado desde la instalación."
+            },
+            {
+              "t": "Identifica las tres prácticas más frágiles",
+              "d": "¿Cuáles se derrumbarían si su impulsor se fuera mañana? Refuérzalas."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Inicia una red de pares de Mutation Readiness",
+              "d": "Otras organizaciones preparadas para la mutación. El diagnóstico no es único: es una cadencia."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Amy Edmondson",
+              "t": "The Fearless Organization",
+              "y": 2018
+            },
+            {
+              "a": "Mary Murphy",
+              "t": "Cultures of Growth",
+              "y": 2024
+            },
+            {
+              "a": "Anthropic",
+              "t": "Mapping the Mind",
+              "y": 2024
+            }
+          ]
+        }
+      }
+    },
+    "agile-assessment": {
+      "id": "agile-assessment",
+      "title": "Evaluación de Competencia Ágil",
+      "tagline": "¿Qué tan bien está diseñada tu organización para operar de forma ágil, adaptativa y orientada al valor?",
+      "description": "Un diagnóstico de la agilidad organizativa independiente del marco. Mide las seis dimensiones de capacidad que determinan si Scrum/SAFe/Kanban entrega valor o solo entrega teatro.",
+      "minutes": 14,
+      "questionCount": 18,
+      "source": "Agile Agilist Competency Framework. Basado en capacidades, no en marcos.",
+      "perspectiveQuestion": {
+        "prompt": "¿Qué unidad estás evaluando?",
+        "subtext": "Las puntuaciones de agilidad pueden variar mucho entre equipos dentro de la misma empresa. Cuanto más pequeña y específica sea la unidad, más accionable será el diagnóstico.",
+        "options": [
+          {
+            "id": "self",
+            "label": "Solo yo / mi propia práctica"
+          },
+          {
+            "id": "team",
+            "label": "Mi equipo inmediato (menos de ~30 personas)"
+          },
+          {
+            "id": "bu",
+            "label": "Mi unidad de negocio / división"
+          },
+          {
+            "id": "org",
+            "label": "Toda la organización"
+          }
+        ]
+      },
+      "dimensions": [
+        {
+          "id": "ls",
+          "name": "Liderazgo y estrategia",
+          "color": "#E76F51",
+          "questions": [
+            {
+              "id": "ls1",
+              "text": "¿Tus altos directivos modelan los comportamientos que piden a los equipos: asistir a las demos, asumir la responsabilidad de los fracasos, aprender en público?",
+              "probe": "¿O los líderes imponen el lenguaje ágil mientras operan a la vieja usanza?"
+            },
+            {
+              "id": "ls2",
+              "text": "¿Tu estrategia empresarial se traduce en resultados claros y medibles con los que los equipos puedan conectar su trabajo?",
+              "probe": "¿Puede el miembro de equipo promedio nombrar 2-3 objetivos estratégicos a los que sirve su trabajo?"
+            },
+            {
+              "id": "ls3",
+              "text": "Cuando el entorno de negocio cambia, ¿la estrategia realmente se flexibiliza en un trimestre, o seguís ejecutando el plan antiguo?",
+              "probe": "Último cambio externo importante: ¿cuánto tardó el ajuste estratégico?"
+            }
+          ]
+        },
+        {
+          "id": "vd",
+          "name": "Entrega de valor",
+          "color": "#F4A261",
+          "questions": [
+            {
+              "id": "vd1",
+              "text": "¿Tus equipos miden resultados (comportamiento del cliente, impacto en el negocio), no solo entregables (funcionalidades lanzadas, puntos de historia completados)?",
+              "probe": "Cuando un equipo termina una iniciativa importante, ¿qué evidencia demuestra que creó valor?"
+            },
+            {
+              "id": "vd2",
+              "text": "¿Puedes rastrear una funcionalidad desde la idea hasta el impacto de negocio validado de forma estructurada y repetible?",
+              "probe": "¿O las funcionalidades se lanzan y esperáis que fueran lo correcto?"
+            },
+            {
+              "id": "vd3",
+              "text": "¿La retroalimentación del cliente se integra sistemáticamente en las decisiones de producto, no se recopila y se ignora?",
+              "probe": "Muestra el bucle: señal del cliente que entra, decisión que sale."
+            }
+          ]
+        },
+        {
+          "id": "fe",
+          "name": "Flujo y ejecución",
+          "color": "#E9C46A",
+          "questions": [
+            {
+              "id": "fe1",
+              "text": "¿Tus equipos tienen un tiempo de ciclo predecible y medido, y reducirlo es una prioridad explícita?",
+              "probe": "Tiempo de ciclo = desde la aceptación de la idea hasta el valor entregado. ¿Lo medís?"
+            },
+            {
+              "id": "fe2",
+              "text": "¿Las dependencias entre equipos son visibles y se gestionan activamente, no se descubren en el último momento posible?",
+              "probe": "¿Cómo se sacan a la luz y se resuelven las dependencias entre equipos?"
+            },
+            {
+              "id": "fe3",
+              "text": "Cuando el trabajo se bloquea, ¿los impedimentos se resuelven en días, o quedan sin resolver durante semanas?",
+              "probe": "Los últimos 5 impedimentos bloqueantes de tu equipo: promedio de días hasta la resolución."
+            }
+          ]
+        },
+        {
+          "id": "ta",
+          "name": "Autonomía del equipo",
+          "color": "#2A9D8F",
+          "questions": [
+            {
+              "id": "ta1",
+              "text": "¿Los equipos tienen autoridad de decisión sobre cómo trabajan —herramientas, ceremonias, decisiones técnicas— sin escalar cada elección?",
+              "probe": "¿O los directores aprueban la duración del sprint, la elección del marco, la selección de herramientas?"
+            },
+            {
+              "id": "ta2",
+              "text": "¿Los equipos están alineados con flujos de valor o áreas de producto duraderas, en lugar de reorganizarse en equipos de proyecto cada trimestre?",
+              "probe": "La estabilidad del equipo importa. Las reorganizaciones cada 6 meses destruyen la autonomía."
+            },
+            {
+              "id": "ta3",
+              "text": "¿Los equipos tienen acceso directo a clientes/usuarios, o deben pasar por una aprobación de 3 niveles para hablar con ellos?",
+              "probe": "La última vez que tu equipo habló con un cliente real sin intermediación: ¿cuándo?"
+            }
+          ]
+        },
+        {
+          "id": "le",
+          "name": "Aprendizaje y capacitación",
+          "color": "#264653",
+          "questions": [
+            {
+              "id": "le1",
+              "text": "¿El tiempo dedicado y protegido para aprender, experimentar o mejorar el sistema es una práctica real, no un valor declarado?",
+              "probe": "Auditoría del calendario: ¿cuánto tiempo se dedicó al aprendizaje frente a la entrega el trimestre pasado?"
+            },
+            {
+              "id": "le2",
+              "text": "¿Tenéis comunidades de práctica que funcionen y compartan conocimiento más allá de las fronteras de los equipos?",
+              "probe": "CoP que producen artefactos visibles, no solo invitaciones de calendario."
+            },
+            {
+              "id": "le3",
+              "text": "Cuando los equipos descubren mejores prácticas, ¿hay una vía para adoptarlas en toda la organización, o cada equipo redescubre lo mismo?",
+              "probe": "¿La última práctica/herramienta/patrón que se propagó de un equipo a muchos?"
+            }
+          ]
+        },
+        {
+          "id": "cc",
+          "name": "Cultura y mejora continua",
+          "color": "#8E44AD",
+          "questions": [
+            {
+              "id": "cc1",
+              "text": "¿Las retrospectivas producen cambios reales en cómo ocurre el trabajo, o son sesiones de desahogo catárticas pero sin dientes?",
+              "probe": "Última retro: nombra un solo cambio concreto que resultara."
+            },
+            {
+              "id": "cc2",
+              "text": "Cuando los proyectos fracasan o los equipos rinden por debajo de lo esperado, ¿la respuesta es la mejora sistémica, o son culpas, replanificación y exigir más esfuerzo?",
+              "probe": "Decepción reciente: ¿qué se cambió del sistema?"
+            },
+            {
+              "id": "cc3",
+              "text": "¿El trabajo de mejora es visible en el backlog con capacidad explícita asignada, o siempre lo desplaza el trabajo de funcionalidades?",
+              "probe": "¿Qué porcentaje de la capacidad va al trabajo de mejora ajeno a las funcionalidades?"
+            }
+          ]
+        }
+      ],
+      "maxPerQ": 5,
+      "perDimMax": 15,
+      "totalMax": 90,
+      "bands": [
+        {
+          "id": "fragile",
+          "name": "Agilidad frágil",
+          "min": 0,
+          "max": 30,
+          "headline": "Tenéis ceremonias ágiles. Aún no tenéis capacidad ágil.",
+          "summary": "La mayoría de los músculos que determinan la agilidad real —autonomía, flujo, medición de resultados, aprendizaje a escala— son débiles. La buena noticia: podéis salir de esta banda rápido si os centráis en una capacidad en profundidad, no lanzando otra transformación. Elige la dimensión con menor puntuación y realiza un impulso de 90 días.",
+          "hint": "Las organizaciones de Agilidad Frágil casi siempre puntúan más bajo en Entrega de Valor y Mejora Continua, porque ambas exigen admitir dónde se desperdicia el esfuerzo actual. Empieza por ahí."
+        },
+        {
+          "id": "practicing",
+          "name": "Agilidad en práctica",
+          "min": 31,
+          "max": 60,
+          "headline": "Las disciplinas existen. Aún no están a nivel de sistema.",
+          "summary": "Algunos equipos han interiorizado las prácticas. La organización en su conjunto todavía tiene brechas, normalmente en el comportamiento del Liderazgo o en el Flujo a escala. El trabajo ahora es la integración, no nuevos programas. Elige las dos dimensiones más débiles y conéctalas con una única iniciativa de 90 días.",
+          "hint": "La mayoría de las organizaciones de Agilidad en práctica son fuertes en Autonomía del Equipo pero débiles en Liderazgo y Estrategia. Los líderes no se han puesto al día con lo que delegaron."
+        },
+        {
+          "id": "mature",
+          "name": "Agilidad madura",
+          "min": 61,
+          "max": 90,
+          "headline": "La agilidad está entretejida en el modelo operativo, no atornillada por encima.",
+          "summary": "Estáis en el decil superior. Los resultados guían las decisiones, el flujo se mide, los líderes modelan los comportamientos. El riesgo ahora es la complacencia: las prácticas necesitan mantenimiento o se erosionan. Institucionaliza, mentoriza a organizaciones adyacentes y considera la frontera de la era de la IA con Mutation Readiness.",
+          "hint": "Las organizaciones de Agilidad Madura se derrumban en silencio cuando el impulsor se va. Documenta lo que hacéis. Forma a sucesores."
+        }
+      ],
+      "plans": {
+        "fragile": {
+          "d30": [
+            {
+              "t": "Realiza un taller de Descubrimiento de Valor sobre un producto",
+              "d": "90 minutos. Mapea el trabajo actual con los resultados reales para el cliente. Saca a la luz la brecha entre lo que hacen los equipos y lo que valoran los clientes."
+            },
+            {
+              "t": "Haz visibles los impedimentos",
+              "d": "Pon en marcha un tablero de impedimentos compartido. Rastrea el tiempo hasta la resolución. Hazlo semanal. Los altos directivos asisten."
+            },
+            {
+              "t": "Haz que un equipo empiece a practicar la medición de resultados",
+              "d": "Elige un equipo, una iniciativa. Define una métrica de resultado antes de empezar. Mídela tras el lanzamiento. Comparte el resultado."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Asigna el 15% de la capacidad al trabajo de mejora",
+              "d": "Explícito, visible, defendido. No \"ya encontraremos margen\". Asignado en el backlog."
+            },
+            {
+              "t": "Realiza un taller de comportamientos de liderazgo",
+              "d": "El equipo directivo identifica 3 comportamientos que modelará. Compromiso público. Autoevaluación trimestral."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Reestructura un equipo hacia un flujo de valor",
+              "d": "Pilota la Maniobra Inversa de Conway. Documenta qué cambia en el flujo."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Mik Kersten",
+              "t": "Project to Product",
+              "y": 2018
+            },
+            {
+              "a": "Marty Cagan",
+              "t": "Empowered",
+              "y": 2020
+            },
+            {
+              "a": "Skelton & Pais",
+              "t": "Team Topologies",
+              "y": 2019
+            }
+          ]
+        },
+        "practicing": {
+          "d30": [
+            {
+              "t": "Identifica tus 2 dimensiones más débiles",
+              "d": "Diseña un único plan de 90 días que las conecte. Evita ejecutar 5 flujos de mejora paralelos."
+            },
+            {
+              "t": "Mide el tiempo de ciclo como un KPI de liderazgo",
+              "d": "Hazlo visible al mismo nivel que los ingresos y la plantilla. Atención sostenida = mejora sostenida."
+            },
+            {
+              "t": "Realiza un AMA de liderazgo sobre lo que han aprendido",
+              "d": "El equipo directivo narra sobre qué cambiaron de opinión. Cadencia mensual."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Conecta Liderazgo y Flujo",
+              "d": "Si ambos puntúan medio, realiza un recorrido Gemba de altos directivos por el flujo de valor. Saca a la luz la brecha entre la estrategia y la fricción de ejecución."
+            },
+            {
+              "t": "Construye una CoP para una capacidad concreta",
+              "d": "Elige la práctica que más necesitas propagar. Construye la CoP en torno a ella. Mide la adopción."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Audita la dimensión donde la retórica supera a la práctica",
+              "d": "¿Dónde suena Maduro el lenguaje pero la práctica es Frágil? Arregla primero la brecha menor."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Mary Poppendieck",
+              "t": "Lean Software Development",
+              "y": 2003
+            },
+            {
+              "a": "Mary Murphy",
+              "t": "Cultures of Growth",
+              "y": 2024
+            },
+            {
+              "a": "Adam Grant",
+              "t": "Hidden Potential",
+              "y": 2023
+            }
+          ]
+        },
+        "mature": {
+          "d30": [
+            {
+              "t": "Documenta el modelo operativo",
+              "d": "Si el impulsor se va, ¿qué sobrevive? Ponlo por escrito. Las empresas pierden la agilidad de este modo."
+            },
+            {
+              "t": "Identifica una organización adyacente para mentorizar",
+              "d": "Socio, cliente, proveedor. Enseña las prácticas. Enseñar es la prueba de esfuerzo."
+            },
+            {
+              "t": "Programa el Marco de Innovación + Mutation Readiness",
+              "d": "Tu fundamento ágil es sólido. Las fronteras cultural y de la era de la IA son tus próximos pasos."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Forma al equipo directivo para sostener el sistema sin ti",
+              "d": "Combina el modelo operativo con planes de sucesión explícitos."
+            },
+            {
+              "t": "Externaliza el lenguaje",
+              "d": "Inversores, talento, socios: lleva el modelo operativo a cómo os describís."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Inicia el diagnóstico de Mutation Readiness",
+              "d": "Trátalo como la extensión de la era de la IA de lo que ya tienes."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Don Reinertsen",
+              "t": "Principles of Product Development Flow",
+              "y": 2009
+            },
+            {
+              "a": "Amy Edmondson",
+              "t": "The Fearless Organization",
+              "y": 2018
+            },
+            {
+              "a": "Mark Saymen",
+              "t": "Mutation Readiness",
+              "y": 2025
+            }
+          ]
+        }
+      }
+    },
+    "ai-assessment": {
+      "id": "ai-assessment",
+      "title": "Evaluación de Madurez y Preparación en IA",
+      "tagline": "¿Dónde se sitúa realmente tu organización en capacidad, gobernanza y realización de valor en IA?",
+      "description": "Un diagnóstico a nivel de consejo sobre la madurez en IA en 8 dimensiones. Fundamentado en las prácticas líderes de la OCDE, el NIST AI RMF, Gartner y McKinsey. Diseñado para la alta dirección y los responsables de transformación y de auditoría/riesgo.",
+      "minutes": 18,
+      "questionCount": 24,
+      "source": "AI Maturity & Readiness Framework. Síntesis de los Principios de IA de la OCDE, el NIST AI Risk Management Framework, Gartner AI Maturity y McKinsey State of AI.",
+      "perspectiveQuestion": {
+        "prompt": "¿Qué unidad estás evaluando?",
+        "subtext": "La madurez en IA puede variar drásticamente entre unidades de negocio. Elige la unidad donde tengas autoridad de decisión o visibilidad a nivel de consejo.",
+        "options": [
+          {
+            "id": "bu",
+            "label": "Una sola unidad de negocio o división"
+          },
+          {
+            "id": "org",
+            "label": "Toda la organización"
+          },
+          {
+            "id": "board",
+            "label": "Visión de la empresa a nivel de consejo"
+          },
+          {
+            "id": "industry",
+            "label": "Comparando mi organización con pares del sector"
+          }
+        ]
+      },
+      "dimensions": [
+        {
+          "id": "sb",
+          "name": "Estrategia y alineación con el negocio",
+          "color": "#E76F51",
+          "questions": [
+            {
+              "id": "sb1",
+              "text": "¿Tu organización tiene una estrategia de IA explícita que se vincula a resultados de negocio concretos, no solo una declaración de \"visión de IA\"?",
+              "probe": "¿Puedes nombrar tres resultados medibles que tu estrategia de IA debe entregar?"
+            },
+            {
+              "id": "sb2",
+              "text": "¿Las inversiones en IA se priorizan mediante un proceso estructurado que sopesa el valor, el riesgo y el encaje estratégico, no la \"tecnología interesante\"?",
+              "probe": "Últimas 3 decisiones de inversión en IA: ¿qué criterios las impulsaron?"
+            },
+            {
+              "id": "sb3",
+              "text": "¿Tu consejo recibe informes estructurados sobre IA con métricas concretas de resultados de negocio con una cadencia regular?",
+              "probe": "¿O la IA aparece como demos improvisadas al final de la agenda?"
+            }
+          ]
+        },
+        {
+          "id": "lc",
+          "name": "Liderazgo y cultura",
+          "color": "#F4A261",
+          "questions": [
+            {
+              "id": "lc1",
+              "text": "¿Tus altos directivos demuestran fluidez en IA, capaces de discutir sus compensaciones con sus propias palabras, no desde una presentación?",
+              "probe": "Haz un examen sorpresa al CEO y al CFO sobre ingeniería de prompts y selección de modelos: ¿qué pasa?"
+            },
+            {
+              "id": "lc2",
+              "text": "¿El uso responsable de la IA se modela desde arriba, con líderes que usan la IA en su propio trabajo y lo revelan cuando lo hacen?",
+              "probe": "¿O el uso de la IA es cosa de \"colaboradores junior\" mientras los líderes se mantienen distantes de la IA?"
+            },
+            {
+              "id": "lc3",
+              "text": "¿Existe permiso organizativo para experimentar con IA sin miedo a ser castigado por fracasos en fases tempranas?",
+              "probe": "Últimos 3 pilotos de IA que fracasaron: ¿qué les pasó a los equipos que los ejecutaron?"
+            }
+          ]
+        },
+        {
+          "id": "om",
+          "name": "Modelo operativo y formas de trabajar",
+          "color": "#E9C46A",
+          "questions": [
+            {
+              "id": "om1",
+              "text": "¿La IA está integrada en los procesos de negocio existentes, o es un equipo de IA/ML separado al que se llama para proyectos concretos?",
+              "probe": "IA en el flujo frente a IA como centro de costes."
+            },
+            {
+              "id": "om2",
+              "text": "¿Tenéis protocolos claros para la colaboración humano-IA: quién decide, quién revisa, cuándo se consulta a la IA, cuándo la IA está en el bucle?",
+              "probe": "¿O varía según el equipo y el individuo?"
+            },
+            {
+              "id": "om3",
+              "text": "¿Los flujos de trabajo de IA se tratan como sistemas de producción con SLA, observabilidad y reversión, o como proyectos secundarios?",
+              "probe": "¿De grado de producción o experimentales para siempre?"
+            }
+          ]
+        },
+        {
+          "id": "dr",
+          "name": "Preparación de los datos",
+          "color": "#2A9D8F",
+          "questions": [
+            {
+              "id": "dr1",
+              "text": "¿Tu gobernanza de datos es lo bastante madura para sostener la IA: linaje de datos, propiedad, controles de acceso, métricas de calidad?",
+              "probe": "¿O los proyectos de IA dedican el 70% de su tiempo a manipular datos porque los cimientos son inestables?"
+            },
+            {
+              "id": "dr2",
+              "text": "¿Tu infraestructura de datos puede entregar los datos correctos al modelo correcto en el momento correcto: almacenes vectoriales, feature stores, tuberías en tiempo real según se necesite?",
+              "probe": "¿Arquitectura de datos moderna o almacén de datos de 2015?"
+            },
+            {
+              "id": "dr3",
+              "text": "¿Existe una política clara sobre qué datos pueden usarse para entrenamiento, ajuste fino e inferencia de IA, con registros de auditoría?",
+              "probe": "Pregunta del regulador mañana: ¿tienes el rastro?"
+            }
+          ]
+        },
+        {
+          "id": "tt",
+          "name": "Tecnología y herramientas",
+          "color": "#264653",
+          "questions": [
+            {
+              "id": "tt1",
+              "text": "¿Tu stack tecnológico de IA es seguro por diseño: identidad, secretos, defensa contra inyección de prompts, controles de fuga de datos implementados?",
+              "probe": "No \"usamos contratos empresariales\": controles técnicos reales."
+            },
+            {
+              "id": "tt2",
+              "text": "¿Puedes cambiar entre modelos fundacionales sin una reelaboración masiva: arquitectura neutral respecto al proveedor?",
+              "probe": "¿O estás bloqueado por una dependencia profunda de un solo proveedor?"
+            },
+            {
+              "id": "tt3",
+              "text": "¿Tienes un entorno aislado donde los empleados puedan experimentar con IA de forma segura, o hay IA en la sombra ocurriendo en herramientas no autorizadas?",
+              "probe": "¿Cuánto trabajo con IA está ocurriendo ahora mismo en cuentas personales de ChatGPT?"
+            }
+          ]
+        },
+        {
+          "id": "gr",
+          "name": "Gobernanza, riesgo y ética",
+          "color": "#8E44AD",
+          "questions": [
+            {
+              "id": "gr1",
+              "text": "¿Tenéis una función de gobernanza de IA (separada del cumplimiento) con el liderazgo de ingeniería y producto en su centro?",
+              "probe": "La gobernanza diseña las salvaguardas; el cumplimiento las vigila. ¿Quién es dueño del diseño?"
+            },
+            {
+              "id": "gr2",
+              "text": "¿Cada despliegue de IA se rige por límites operativos explícitos, una cadencia de recalibración y protocolos de respuesta a incidentes?",
+              "probe": "Límites escritos, no \"confiamos en el equipo\"."
+            },
+            {
+              "id": "gr3",
+              "text": "¿Puedes producir, a petición del regulador, una explicación con calidad de auditoría de cualquier decisión impulsada por IA que afecte a un cliente o empleado?",
+              "probe": "Comprobación de preparación para el Reglamento de IA de la UE. ¿Qué pasa mañana si te lo piden?"
+            }
+          ]
+        },
+        {
+          "id": "se",
+          "name": "Habilidades y capacitación",
+          "color": "#16A085",
+          "questions": [
+            {
+              "id": "se1",
+              "text": "¿Tienes un programa de alfabetización en IA que haya alcanzado —y sido completado por— más del 50% de tu plantilla?",
+              "probe": "No \"disponible para\": completado por. Alcance real."
+            },
+            {
+              "id": "se2",
+              "text": "¿Las habilidades específicas de IA (ingeniería de prompts, evaluación de modelos, trabajo aumentado por IA) están explícitamente en las descripciones de puesto y en los marcos de competencias?",
+              "probe": "¿O \"informalmente fomentadas\"?"
+            },
+            {
+              "id": "se3",
+              "text": "¿Tu estrategia de talento atrae activamente a perfiles nativos en IA, en todas las funciones, no solo en ingeniería?",
+              "probe": "Perfiles nativos en IA de finanzas, RR. HH., marketing, no solo científicos de datos."
+            }
+          ]
+        },
+        {
+          "id": "vr",
+          "name": "Realización de valor",
+          "color": "#D35400",
+          "questions": [
+            {
+              "id": "vr1",
+              "text": "¿Puedes cuantificar el valor de negocio que la IA ha entregado realmente en los últimos 12 meses: costes ahorrados, ingresos generados, tiempo recuperado?",
+              "probe": "Cifras concretas, auditadas, no anécdotas."
+            },
+            {
+              "id": "vr2",
+              "text": "¿Los proyectos de IA se retiran cuando no aportan valor, o persisten como un \"ya llegaremos\"?",
+              "probe": "El último proyecto de IA que cancelaste: ¿cuándo, por qué, qué se aprendió?"
+            },
+            {
+              "id": "vr3",
+              "text": "¿El seguimiento del valor de la IA está integrado en tus informes de negocio estándar, o es un panel de IA aparte que nadie revisa?",
+              "probe": "¿La IA en la QBR o la IA en el comité de IA?"
+            }
+          ]
+        }
+      ],
+      "maxPerQ": 5,
+      "perDimMax": 15,
+      "totalMax": 120,
+      "normalizeTo": 100,
+      "bands": [
+        {
+          "id": "aspiring",
+          "name": "IA aspiracional",
+          "min": 0,
+          "max": 40,
+          "headline": "Se habla de IA, se demuestra y se presupuesta, pero aún no entrega resultados de negocio medibles.",
+          "summary": "Tenéis ambición de IA sin infraestructura de IA. La estrategia es confusa, falta la gobernanza, el talento es desigual. El riesgo es un gasto significativo con poco que mostrar. La buena noticia: esta es la banda más barata de la que salir; una de las 8 dimensiones, tomada en serio durante 90 días, producirá pruebas reales.",
+          "hint": "Las organizaciones de IA aspiracional casi siempre puntúan más bajo en Preparación de los Datos y Gobernanza. Sin cimientos, cada inversión en IA cuesta 3 veces lo que debería. Empieza por ahí."
+        },
+        {
+          "id": "maturing",
+          "name": "IA en maduración",
+          "min": 41,
+          "max": 75,
+          "headline": "La IA entrega valor en casos de uso concretos. La captura de valor en toda la empresa es la próxima frontera.",
+          "summary": "Tenéis pruebas. La siguiente fase es pasar de victorias individuales a un enfoque de cartera: conectar la IA con la estrategia, desarrollar los músculos del modelo operativo, escalar las habilidades y reforzar la gobernanza antes de que el escalado desencadene un riesgo reputacional. La mayoría de las empresas se estancan aquí durante años; no lo hagáis.",
+          "hint": "Las organizaciones de IA en maduración suelen tener fuertes la Tecnología y los Casos de Uso, y débiles el Modelo Operativo y las Habilidades. El cuello de botella es la organización, no la tecnología."
+        },
+        {
+          "id": "integrated",
+          "name": "IA integrada",
+          "min": 76,
+          "max": 100,
+          "headline": "La IA está entretejida en cómo operáis, y podéis demostrar el valor de negocio, la seguridad y la sostenibilidad.",
+          "summary": "Decil superior. La IA entrega resultados medibles, la gobernanza es sólida, las habilidades están extendidas y vuestros cimientos de datos sostienen la próxima ola. El riesgo ahora: la complacencia en un mercado que se mueve rápido. Ejecuta Mutation Readiness para comprobar si tu organización puede detectar y responder a la velocidad de la era de la IA.",
+          "hint": "Las organizaciones de IA integrada se erosionan cuando los líderes rotan y las prácticas no se institucionalizan. Documenta. Forma a sucesores. Actualiza anualmente."
+        }
+      ],
+      "plans": {
+        "aspiring": {
+          "d30": [
+            {
+              "t": "Realiza una Auditoría de Estrategia de IA",
+              "d": "Dos horas, equipo directivo. Marca cada afirmación sobre IA como Verificada, Heredada o Aspiracional. La mayoría de las organizaciones encuentran que el 70% es aspiracional."
+            },
+            {
+              "t": "Inventaría la IA en la sombra",
+              "d": "Encuesta: ¿quién usa herramientas de IA sin autorización, con qué datos? No castigues: aprende."
+            },
+            {
+              "t": "Pon en marcha la gobernanza de IA (no cumplimiento)",
+              "d": "Ingeniería + producto + riesgo juntos. Mandato inicial: redactar los límites operativos de los despliegues de IA."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Elige un caso de uso de IA con un resultado de negocio medible",
+              "d": "Un solo caso de uso. Métrica definida. Revisión trimestral."
+            },
+            {
+              "t": "Lanza el programa de alfabetización en IA para el equipo directivo primero",
+              "d": "Adopción de arriba abajo. Los líderes que no saben hablar de IA con sus propias palabras no la habilitarán en sus organizaciones."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Establece la propiedad de los datos para los conjuntos prioritarios de IA",
+              "d": "Sin propiedad, los proyectos de IA mueren en la manipulación de datos. Arréglalo de raíz."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Ethan Mollick",
+              "t": "Co-Intelligence",
+              "y": 2024
+            },
+            {
+              "a": "Iansiti & Lakhani",
+              "t": "Competing in the Age of AI",
+              "y": 2020
+            },
+            {
+              "a": "NIST",
+              "t": "AI Risk Management Framework",
+              "y": 2023
+            }
+          ]
+        },
+        "maturing": {
+          "d30": [
+            {
+              "t": "Mapea tu cartera de IA: explorar frente a explotar",
+              "d": "¿Dónde estáis probados? ¿Dónde experimentales? ¿Dónde atascados? Reasigna en consecuencia."
+            },
+            {
+              "t": "Audita la gobernanza de IA con rigor de grado de producción",
+              "d": "Límites, recalibración, respuesta a incidentes. Documentados y probados."
+            },
+            {
+              "t": "Construye el cuadro de mando de valor de la IA",
+              "d": "Cada iniciativa de IA informa mensualmente sobre su valor de negocio. Integrado con la QBR."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Distribuye el talento en IA por cada equipo importante",
+              "d": "Un COE de IA/ML centralizado tiene valor pero crea dependencia. Integra personas con conocimientos de IA directamente."
+            },
+            {
+              "t": "Lanza la alfabetización en IA a escala",
+              "d": "Obligatoria para los mánagers. Opcional pero con recursos para los colaboradores individuales. Finalización rastreada."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Conecta la estrategia de IA con la estrategia empresarial de forma formal",
+              "d": "Revisión conjunta del consejo. La IA ya no es una vía secundaria."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Anthropic",
+              "t": "Mapping the Mind",
+              "y": 2024
+            },
+            {
+              "a": "Andrew Ng",
+              "t": "Machine Learning Yearning",
+              "y": 2018
+            },
+            {
+              "a": "Marc Andreessen",
+              "t": "Why AI Will Save the World",
+              "y": 2023
+            }
+          ]
+        },
+        "integrated": {
+          "d30": [
+            {
+              "t": "Externaliza el modelo operativo de IA",
+              "d": "Inversores, talento, socios. IA integrada se convierte en cómo os describen."
+            },
+            {
+              "t": "Somete la gobernanza a prueba con ejercicios de red team",
+              "d": "Contrata a alguien para que intente romper tus controles de IA. Págale para que encuentre lo débil."
+            },
+            {
+              "t": "Ejecuta el diagnóstico de Mutation Readiness",
+              "d": "La frontera de la era de la IA extiende lo que tienes. Comprueba tu capacidad de detectar y responder."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Mentoriza a organizaciones adyacentes",
+              "d": "Cliente, proveedor, empresa de la cartera. Enseñar es la prueba de esfuerzo."
+            },
+            {
+              "t": "Construye el motor de talento en IA",
+              "d": "Perfiles nativos en IA en todas las funciones. Movilidad interna. Flujo de entrada sostenido."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Establece la seguridad de IA empresarial como una métrica trimestral revisada por el consejo",
+              "d": "Compromiso público. Auditoría externa. Diferenciador con reguladores y clientes."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Mustafa Suleyman",
+              "t": "The Coming Wave",
+              "y": 2023
+            },
+            {
+              "a": "Mark Saymen",
+              "t": "Mutation Readiness",
+              "y": 2025
+            },
+            {
+              "a": "Stuart Russell",
+              "t": "Human Compatible",
+              "y": 2019
+            }
+          ]
+        }
+      }
+    },
+    "product-management-assessment": {
+      "id": "product-management-assessment",
+      "title": "Evaluación de Madurez en Gestión de Producto",
+      "tagline": "¿Hacéis una gestión de producto genuina, o sois una fábrica de funcionalidades con títulos de PM?",
+      "description": "Un diagnóstico de la capacidad de gestión de producto en 6 dimensiones. Identifica dónde los equipos se quedan lanzando funcionalidades que no mueven la métrica, y qué debe cambiar para que la estrategia de producto realmente impulse resultados.",
+      "minutes": 14,
+      "questionCount": 18,
+      "source": "Product Management Maturity Framework, basado en Cagan, Perri y el corpus de trabajo de SVPG.",
+      "perspectiveQuestion": {
+        "prompt": "¿Qué unidad estás evaluando?",
+        "subtext": "La madurez en gestión de producto suele variar enormemente entre líneas de producto. La evaluación más útil se centra en un producto o grupo de productos concreto.",
+        "options": [
+          {
+            "id": "product",
+            "label": "Un producto o línea de producto concreta"
+          },
+          {
+            "id": "team",
+            "label": "Mi equipo de producto inmediato"
+          },
+          {
+            "id": "bu",
+            "label": "Una organización de producto o unidad de negocio"
+          },
+          {
+            "id": "org",
+            "label": "La gestión de producto en toda la empresa"
+          }
+        ]
+      },
+      "dimensions": [
+        {
+          "id": "cd",
+          "name": "Descubrimiento de clientes y problemas",
+          "color": "#E76F51",
+          "questions": [
+            {
+              "id": "cd1",
+              "text": "¿Los equipos de producto hablan directamente con los clientes —no a través de intermediarios, no a través de investigación agregada— con una cadencia regular (semanal o quincenal)?",
+              "probe": "La última conversación con un cliente de cada PM: ¿cuándo? ¿Con qué frecuencia?"
+            },
+            {
+              "id": "cd2",
+              "text": "¿Existe un proceso de descubrimiento estructurado que produzca problemas validados —no problemas supuestos— antes de construir funcionalidades?",
+              "probe": "¿O las funcionalidades se construyen porque una parte interesada lo pidió?"
+            },
+            {
+              "id": "cd3",
+              "text": "Cuando el equipo descubre un problema que vale la pena resolver, ¿puede cancelar o pivotar el trabajo en curso para abordarlo?",
+              "probe": "¿O los roadmaps están bloqueados durante 6-12 meses al margen de lo que se aprenda?"
+            }
+          ]
+        },
+        {
+          "id": "sv",
+          "name": "Estrategia y visión de producto",
+          "color": "#F4A261",
+          "questions": [
+            {
+              "id": "sv1",
+              "text": "¿Cada producto tiene una estrategia de producto explícita, escrita y reciente, distinta de un roadmap?",
+              "probe": "Roadmap = lista de cosas que construir. Estrategia = la elección de dónde jugar y cómo ganar."
+            },
+            {
+              "id": "sv2",
+              "text": "¿Puede un miembro típico del equipo de producto articular la visión de producto con sus propias palabras y conectar su trabajo con ella?",
+              "probe": "Detén a alguien en el pasillo. Pregunta. ¿Qué dice?"
+            },
+            {
+              "id": "sv3",
+              "text": "¿La estrategia se revisa y actualiza cuando cambian señales significativas, no \"tenemos un plan a 3 años, síguelo\"?",
+              "probe": "¿Con qué frecuencia se actualiza la estrategia de forma significativa?"
+            }
+          ]
+        },
+        {
+          "id": "de",
+          "name": "Autoridad de decisión y empoderamiento",
+          "color": "#E9C46A",
+          "questions": [
+            {
+              "id": "de1",
+              "text": "¿Los gestores de producto tienen autoridad de decisión real sobre lo que construye su equipo, o \"gestionan\" las peticiones de las partes interesadas?",
+              "probe": "Los \"equipos misioneros frente a equipos mercenarios\" de Cagan. ¿Cuál describe al vuestro?"
+            },
+            {
+              "id": "de2",
+              "text": "¿Puede un PM decir no a la petición de funcionalidad de un alto ejecutivo —con razones, con respeto— y no ser castigado en su carrera?",
+              "probe": "¿O \"alineación\" es código para acatamiento?"
+            },
+            {
+              "id": "de3",
+              "text": "¿Se confía en los equipos de producto para elegir las soluciones técnicas y de diseño a los problemas, no solo para ejecutar soluciones predecididas?",
+              "probe": "¿El trío de producto (PM/diseño/ingeniería) colabora, o el PM entrega los requisitos?"
+            }
+          ]
+        },
+        {
+          "id": "ev",
+          "name": "Experimentación y validación",
+          "color": "#2A9D8F",
+          "questions": [
+            {
+              "id": "ev1",
+              "text": "¿Los equipos realizan experimentos estructurados (pruebas A/B, prototipos, puertas falsas, MVP tipo concierge) para validar ideas antes de construir del todo?",
+              "probe": "¿O las funcionalidades pasan de la idea a producción sin paso de validación?"
+            },
+            {
+              "id": "ev2",
+              "text": "Cuando los experimentos producen resultados decepcionantes, ¿la respuesta es aprender y pivotar, o lanzar la funcionalidad igualmente porque está en el roadmap?",
+              "probe": "El último experimento que fracasó: ¿qué pasó después?"
+            },
+            {
+              "id": "ev3",
+              "text": "¿Hay presupuesto y tiempo explícitamente asignados al descubrimiento y la experimentación, no metidos a presión en torno a la entrega de funcionalidades?",
+              "probe": "¿Qué porcentaje de la capacidad se asigna al trabajo de descubrimiento?"
+            }
+          ]
+        },
+        {
+          "id": "oo",
+          "name": "Orientación a resultados frente a entregables",
+          "color": "#264653",
+          "questions": [
+            {
+              "id": "oo1",
+              "text": "¿Los equipos de producto se miden por resultados (cambio de comportamiento del cliente, impacto en el negocio) o por entregables (funcionalidades lanzadas, puntos de historia completados)?",
+              "probe": "Evaluaciones del desempeño: ¿qué métricas importan? Los entregables casi siempre ganan sobre el papel."
+            },
+            {
+              "id": "oo2",
+              "text": "Cuando se lanza una funcionalidad, ¿hay una métrica de éxito definida y una revisión a los 30/60/90 días para ver si cuajó?",
+              "probe": "¿O el equipo pasa a la siguiente funcionalidad?"
+            },
+            {
+              "id": "oo3",
+              "text": "¿Las funcionalidades sin éxito se retiran en función de las métricas, o persisten como deuda técnica porque nadie es dueño de la decisión de eliminarlas?",
+              "probe": "La última funcionalidad que eliminaste porque no aportaba valor: ¿cuándo?"
+            }
+          ]
+        },
+        {
+          "id": "sa",
+          "name": "Alineación y comunicación con las partes interesadas",
+          "color": "#8E44AD",
+          "questions": [
+            {
+              "id": "sa1",
+              "text": "¿Las revisiones de producto se centran en resultados y evidencia del cliente, no en actualizaciones de estado de funcionalidades?",
+              "probe": "¿Cómo es la revisión trimestral de producto?"
+            },
+            {
+              "id": "sa2",
+              "text": "¿El roadmap de producto se comunica como un conjunto de apuestas y resultados, no como un compromiso de fábrica de funcionalidades?",
+              "probe": "¿\"Ahora/Siguiente/Después\" o \"funcionalidades entregadas en T1/T2/T3\"?"
+            },
+            {
+              "id": "sa3",
+              "text": "Cuando las partes interesadas presionan por funcionalidades, ¿puede el equipo de producto responder con \"¿qué resultado intentamos lograr?\" y hacer que la conversación realmente cambie?",
+              "probe": "¿O lanzáis la funcionalidad y esperáis lo mejor?"
+            }
+          ]
+        }
+      ],
+      "maxPerQ": 5,
+      "perDimMax": 15,
+      "totalMax": 90,
+      "bands": [
+        {
+          "id": "feature-factory",
+          "name": "Fábrica de funcionalidades",
+          "min": 0,
+          "max": 30,
+          "headline": "Tenéis PM y roadmaps. Aún no tenéis gestión de producto.",
+          "summary": "Las señales: los PM operan como gestores de proyecto para peticiones de las partes interesadas, el éxito se mide en funcionalidades lanzadas, el contacto con el cliente es escaso e indirecto, la \"estrategia\" es un backlog priorizado. La solución no son más PM: es un cambio estructural en cómo se toman las decisiones y qué se mide.",
+          "hint": "Las organizaciones de Fábrica de funcionalidades casi siempre puntúan más bajo en Autoridad de Decisión y Orientación a Resultados. Ambas están vinculadas, y ambas requieren que los altos directivos realmente deleguen. Empieza por sacar a la luz qué se recompensa."
+        },
+        {
+          "id": "product-led",
+          "name": "Práctica orientada a producto",
+          "min": 31,
+          "max": 60,
+          "headline": "Tenéis disciplinas de producto en focos aislados. Aún no sois una organización orientada al producto.",
+          "summary": "Algunos equipos de producto han interiorizado la gestión de producto real: el trío, el descubrimiento, los resultados, la estrategia. La mayoría no. La mayor brecha suele ser la alta dirección: patrocinan roles de producto pero siguen impulsando los compromisos de funcionalidades desde arriba. El trabajo ahora es a nivel de sistema: cambiar los incentivos, cambiar las conversaciones.",
+          "hint": "Las organizaciones de Práctica orientada a producto suelen ser fuertes en Descubrimiento dentro de los equipos pero débiles en Alineación con las Partes Interesadas. Los equipos saben qué hacer; el liderazgo exige la fábrica de funcionalidades."
+        },
+        {
+          "id": "product-mature",
+          "name": "Producto maduro",
+          "min": 61,
+          "max": 90,
+          "headline": "La gestión de producto impulsa la empresa: los resultados guían las decisiones, la evidencia guía las prioridades, los equipos son dueños de sus apuestas.",
+          "summary": "Decil superior. Los PM tienen autoridad, la estrategia es explícita y se actualiza, hay contacto constante con los clientes, los experimentos producen aprendizaje real. Riesgo: complacencia. Los músculos del descubrimiento se erosionan sin mantenimiento explícito, y las prácticas de producto de la era Cagan necesitan actualizarse para el trabajo aumentado por IA.",
+          "hint": "Las organizaciones de producto maduras se derrumban en silencio cuando la alta dirección de producto rota. Documenta el modelo operativo. Forma a sucesores. Actualiza para la gestión de producto aumentada por IA."
+        }
+      ],
+      "plans": {
+        "feature-factory": {
+          "d30": [
+            {
+              "t": "Realiza una Auditoría de Resultados sobre tu roadmap actual",
+              "d": "Para cada elemento importante: ¿qué resultado para el cliente entregará esto? ¿Cómo lo mediremos? La mayoría de los equipos descubren que más del 60% no tiene respuesta."
+            },
+            {
+              "t": "Programa conversaciones semanales con clientes para cada PM",
+              "d": "30 min, cliente real, sin intermediarios. Rastrea el cumplimiento a nivel de liderazgo. Cancela las reuniones que compitan por ese tiempo."
+            },
+            {
+              "t": "Elige un equipo para pilotar una autonomía de producto real",
+              "d": "El PM es dueño de la apuesta. El trío toma las decisiones de solución. Medido por resultados, no por entregables."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Cambia una reunión de revisión importante de entregables a resultados",
+              "d": "Sustituye \"qué se lanzó\" por \"qué cambió para los clientes\". Documenta la diferencia."
+            },
+            {
+              "t": "Asigna el 20% de la capacidad del equipo al descubrimiento",
+              "d": "Explícito, visible. Defendido frente a ser saqueado por el trabajo de funcionalidades."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Reescribe la descripción del puesto de PM",
+              "d": "De \"traduce requisitos\" a \"es dueño de los resultados para el cliente\". Las evaluaciones del desempeño lo siguen."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Marty Cagan",
+              "t": "Inspired",
+              "y": 2018
+            },
+            {
+              "a": "Marty Cagan",
+              "t": "Empowered",
+              "y": 2020
+            },
+            {
+              "a": "Melissa Perri",
+              "t": "Escaping the Build Trap",
+              "y": 2018
+            }
+          ]
+        },
+        "product-led": {
+          "d30": [
+            {
+              "t": "Audita qué equipos operan orientados a producto frente a fábrica de funcionalidades",
+              "d": "Público, honesto. Úsalo para sacar a la luz dónde debe cambiar el comportamiento del liderazgo."
+            },
+            {
+              "t": "Forma a las partes interesadas senior en el lenguaje de resultados",
+              "d": "Taller de 1 día del PM. El equipo directivo aprende a preguntar \"¿qué resultado?\" antes de \"¿qué funcionalidad?\""
+            },
+            {
+              "t": "Estandariza la cadencia de descubrimiento",
+              "d": "Cada equipo ejecuta al menos un bucle de descubrimiento por trimestre. Documentado. Revisado."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Conecta Descubrimiento y Alineación con las Partes Interesadas",
+              "d": "Si los equipos descubren pero las partes interesadas anulan, el descubrimiento se desperdicia. Construye un proceso para que las ideas del descubrimiento fluyan hacia arriba."
+            },
+            {
+              "t": "Haz que las métricas de resultado formen parte del sistema de desempeño",
+              "d": "Con el mismo peso que las métricas de entrega. Impleméntalo en el próximo ciclo de evaluación."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Reestructura la organización de producto hacia flujos de valor",
+              "d": "Sustituye los equipos basados en proyectos por equipos de producto persistentes. La Maniobra Inversa de Conway aplicada al producto."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Teresa Torres",
+              "t": "Continuous Discovery Habits",
+              "y": 2021
+            },
+            {
+              "a": "Jeff Patton",
+              "t": "User Story Mapping",
+              "y": 2014
+            },
+            {
+              "a": "Itamar Gilad",
+              "t": "Evidence-Guided",
+              "y": 2024
+            }
+          ]
+        },
+        "product-mature": {
+          "d30": [
+            {
+              "t": "Documenta el modelo operativo de producto",
+              "d": "Si el CPO rota, ¿qué sobrevive? Las empresas pierden la madurez de producto de este modo."
+            },
+            {
+              "t": "Pilota la gestión de producto aumentada por IA",
+              "d": "Trío + IA como cuarto asiento. Prueba qué cambia en la cadencia de descubrimiento, la velocidad de experimentación y la calidad de las decisiones."
+            },
+            {
+              "t": "Mentoriza a una organización de producto adyacente",
+              "d": "Cliente, empresa de la cartera, socio. Enseña las prácticas. Enseñar es la prueba de esfuerzo."
+            }
+          ],
+          "d60": [
+            {
+              "t": "Externaliza el modelo operativo de producto",
+              "d": "Presentaciones a inversores, reclutamiento, narrativas para clientes. Orientado a producto se convierte en cómo os describen."
+            },
+            {
+              "t": "Actualiza el marco de competencias de PM para el trabajo aumentado por IA",
+              "d": "Nuevas habilidades: diseño de prompts para el descubrimiento, síntesis de investigación aumentada por IA, experimentación en pareja con IA."
+            }
+          ],
+          "d90": [
+            {
+              "t": "Ejecuta los diagnósticos del Marco de Innovación + Mutation Readiness",
+              "d": "Tu fundamento de producto es sólido. Prueba las fronteras cultural y de la era de la IA."
+            }
+          ],
+          "reading": [
+            {
+              "a": "Marty Cagan",
+              "t": "Transformed",
+              "y": 2024
+            },
+            {
+              "a": "Ethan Mollick",
+              "t": "Co-Intelligence",
+              "y": 2024
+            },
+            {
+              "a": "John Cutler",
+              "t": "The Beautiful Mess",
+              "y": 2024
+            }
+          ]
+        }
+      }
+    }
+  },
+  "soon": [
+    {
+      "id": "devops-dora",
+      "title": "DevOps y Métricas DORA",
+      "tag": "Próximamente · T3 2026",
+      "desc": "Lead time, frecuencia de despliegue, tasa de fallos por cambio, MTTR. Las Cuatro Métricas Clave de Accelerate / DORA aplicadas como diagnóstico de madurez. Alineado con SAFe DevOps Practitioner."
+    },
+    {
+      "id": "safe-adoption",
+      "title": "Preparación para Adoptar SAFe",
+      "tag": "Próximamente · T3 2026",
+      "desc": "Diagnóstico previo a la transformación para organizaciones que consideran SAFe. Mide la preparación cultural, estructural y de capacidades antes de comprometer presupuesto."
+    },
+    {
+      "id": "team-health",
+      "title": "Chequeo de Salud del Equipo",
+      "tag": "Próximamente · T3 2026",
+      "desc": "Diagnóstico ligero a nivel de equipo al estilo Spotify. Siempre gratis. 10 preguntas, 5 minutos. Ejecútalo cada trimestre para seguir la trayectoria del equipo."
+    },
+    {
+      "id": "coaching-maturity",
+      "title": "Madurez del Coaching (alineado con ICAgile)",
+      "tag": "Próximamente · T4 2026",
+      "desc": "Para Agile Coaches y colectivos de coaching. Autoevaluación + evaluación por pares frente al modelo de competencias de coaching de ICAgile."
+    }
+  ],
+  "i18n": {
+    "freeLive": "Gratis · En vivo",
+    "min": "min",
+    "dimensions": "dimensiones",
+    "questions": "preguntas",
+    "start": "Comenzar &rarr;",
+    "notifyMe": "Avísame &rarr;",
+    "freeDiagnostics": "Diagnósticos gratuitos",
+    "landingH1": "¿Dónde se sitúa realmente tu organización?",
+    "landingSub": "{n} diagnósticos en vivo creados por Mark Saymen (Gold SPCT, autor de <em>Mutation Readiness</em>). Puntuación honesta. Plan de 30-60-90 días a medida. Cero paja.",
+    "startNow": "Comienza ahora &rarr;",
+    "trustMinEach": "5-15 min cada uno",
+    "trustNoLogin": "Sin registro para empezar",
+    "trustRoadmap": "Hoja de ruta personalizada",
+    "landingCtaH2": "¿Quieres el diagnóstico completo de cada evaluación?",
+    "landingCtaP": "La prueba gratuita de 14 días desbloquea el plan de acción de 30-60-90 días, lecturas recomendadas por banda y descarga en PDF en todas las evaluaciones.",
+    "landingCtaBtn": "Empieza la prueba gratuita de 14 días &rarr;",
+    "unknownAssessment": "Evaluación desconocida",
+    "backToAll": "Volver a todas las evaluaciones",
+    "resultBands": "3 bandas de resultado",
+    "howItWorksLabel": "Cómo funciona:",
+    "howItWorksText": "Cada pregunta acepta una respuesta breve de texto libre. Te sugeriremos una puntuación de 1 a 5 según lo que escribas; puedes anularla. Las respuestas honestas producen diagnósticos útiles; las respuestas optimistas producen mentiras optimistas. No se requiere registro para empezar.",
+    "allAssessments": "Todas las evaluaciones",
+    "begin": "Empezar &rarr;",
+    "calibration": "Calibración",
+    "stepOf": "Paso 1 de {total}",
+    "back": "&larr; Atrás",
+    "questionOf": "P {n} de {total}",
+    "answerPlaceholder": "Escribe aquí tu respuesta honesta...",
+    "reflectNa": "Lo interpretaría como <strong>N/D</strong>",
+    "reflectScore": "Lo puntuaría con un <strong>{n}</strong>",
+    "reflectSuffix": ". Anúlalo abajo si es necesario.",
+    "na": "N/D",
+    "scaleNever": "Nunca",
+    "scaleAlways": "Siempre",
+    "submit": "Enviar",
+    "next": "Siguiente",
+    "crunching": "Procesando tus respuestas...",
+    "rNoAnswer": "Aún sin respuesta.",
+    "rNA": "Interpretando esto como N/D.",
+    "rNever": "Señal fuerte de \"nunca\": puntuando 1.",
+    "rAlways": "Señal fuerte de \"siempre\": puntuando 5.",
+    "rRarely": "Interpretando un tono de \"rara vez\": puntuando 2.",
+    "rNoBut": "Patrón \"no, pero\": puntuando 2.",
+    "rNo": "Interpretando esto como un \"no\": puntuando 1.",
+    "rYesBut": "Patrón \"sí, pero…\": puntuando 3.",
+    "rYesScope": "\"Sí\" de alcance limitado: puntuando 3.",
+    "rYes": "Interpretando esto como un \"sí\" seguro: puntuando 4.",
+    "rHedged": "Punto medio con reservas: puntuando 3.",
+    "rDefault": "Asignando 3 por defecto: ajústalo si te parece incorrecto.",
+    "noAssessment": "Sin evaluación.",
+    "noResultsTitle": "Aún no hay resultados",
+    "noResultsTake": "Realiza primero la {title}.",
+    "startAssessment": "Comenzar la evaluación &rarr;",
+    "outOf": "de {n}",
+    "scoredByDimension": "Cómo puntuaste por dimensión",
+    "diagnosticHint": "Pista diagnóstica:",
+    "shapeGlance": "Tu perfil, de un vistazo",
+    "scoreMeans": "Qué significa tu puntuación",
+    "days30": "30 días",
+    "days60": "60 días",
+    "days90": "90 días",
+    "recommendedReading": "Lecturas recomendadas",
+    "downloadPdf": "Descargar PDF",
+    "gateEyebrow": "Desbloquea el informe completo",
+    "gateH2": "Obtén tu plan de acción de 30-60-90 días",
+    "gateP": "Hoja de ruta personalizada, lecturas recomendadas, descarga en PDF, seguimiento longitudinal: todo se desbloquea con la prueba gratuita de 14 días. Sin tarjeta de crédito.",
+    "gateBtn": "Empieza la prueba gratuita de 14 días &rarr;",
+    "talkToMark": "O habla con Mark",
+    "afterTrial": "Tras la prueba",
+    "price": "149 $",
+    "pricePer": "/año · todas las evaluaciones",
+    "priceLi1": "Plan completo de 30-60-90 por banda",
+    "priceLi2": "Lecturas recomendadas",
+    "priceLi3": "Informe en PDF",
+    "priceLi4": "Seguimiento longitudinal",
+    "priceLi5": "Soporte por email + asesor",
+    "doneWithThis": "¿Terminaste con esta?",
+    "tryNext": "Prueba {title} &rarr;",
+    "allDone": "¡Todo listo!",
+    "gateIntro": "Tu {title} está puntuada y lista. Deja tu email para ver los resultados, y te enviaremos una copia a tu bandeja de entrada.",
+    "workEmailLabel": "Tu email de trabajo",
+    "emailPlaceholder": "tu@tuempresa.com",
+    "firstNameOptional": "Tu nombre (opcional)",
+    "namePlaceholder": "Alex",
+    "seeResults": "Ver mis resultados &rarr;",
+    "noSpam": "Sin spam. Cancela cuando quieras.",
+    "trialTitle": "Empieza tu prueba gratuita de 14 días",
+    "trialDesc": "Desbloquea el plan de 30-60-90 días, lecturas recomendadas, descarga en PDF y seguimiento longitudinal. Sin tarjeta de crédito.",
+    "workEmail": "Email de trabajo",
+    "firstName": "Nombre (opcional)",
+    "activateTrial": "Activar prueba &rarr;",
+    "trialFinePrint": "La prueba termina tras 14 días. Sin cargo.",
+    "invalidEmail": "Introduce un email válido."
+  }
+}
