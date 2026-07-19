@@ -1,14 +1,27 @@
 <!-- ============================================================
-     Meridian course-hero — REUSABLE COMPONENT (markup template)
+     Meridian course-hero v2 — REUSABLE COMPONENT (markup template)
      ------------------------------------------------------------
-     Pair with aa-meridian-hero.css (install that once, site-wide).
-     Drop this block as the hero of any course page (inside the page's
-     .aa-rd wrapper, as a wp:html block). Fill the {{PLACEHOLDERS}}.
+     Pair with aa-meridian-hero.css + aa-agenda.css (install once,
+     site-wide). Drop this block as the hero of any course page
+     (inside the page's .aa-rd wrapper, as a wp:html block). Fill the
+     {{PLACEHOLDERS}}.
 
-     WHY .aa-mhero (not .aa-grid2): the cohort engine's buildHeroV2()
-     only auto-transforms `.aa-grid2` heroes. Using `.aa-mhero` keeps
-     THIS Meridian hero; buildCohorts() still fills #aa-cohorts with the
-     vertical date list, and #aa-register / #eb-trigger stay wired.
+     WHAT CHANGED FROM v1
+       RIGHT column  : the dark #aa-cohorts card is replaced by the LIGHT
+                       scrollable agenda <div id="aa-agenda">. The engine's
+                       buildAgenda() renders "Upcoming sessions" into it,
+                       showing ALL dates with Register + Eventbrite per row.
+       config carrier: #aa-cohorts is kept but HIDDEN (display:none). It
+                       still carries data-title/price/strike/days/length so
+                       buildAgenda()/localizePrices()/buildCohorts() read
+                       config exactly as before. #aa-register and #eb-trigger
+                       are kept (hidden) so nothing that depends on them breaks.
+       LEFT column   : the 3-stat block is replaced by the credential lockup
+                       (badge image + "The credential you earn").
+
+     WHY .aa-mhero (not .aa-grid2): the cohort engine's buildHeroV2() only
+     auto-transforms `.aa-grid2` heroes. Using `.aa-mhero` keeps THIS
+     Meridian hero as-is.
 
      PER-COURSE PLACEHOLDERS:
        {{PARENT_URL}}   e.g. /training/adv-safe/     (breadcrumb parent)
@@ -22,13 +35,12 @@
        {{STRIKE}}       e.g. $2,300   (delete the <s>…</s> if no strike price)
        {{PRICE}}        e.g. $2,150
        {{RATING}}       e.g. 4.9 / 2,500+ CERTIFIED
-       {{STAT1_N}}/{{STAT1_L}} … three hero stats (number + label)
-       {{CARD_TITLE}}   e.g. SAFe RTE          (data-title on #aa-cohorts)
+       {{BADGE_URL}}    e.g. https://…/rte_badge_2026.png   (credential badge image)
+       {{CARD_TITLE}}   e.g. SAFe RTE          (data-title on #aa-cohorts + badge lockup name)
        {{PRICE_NUM}}    e.g. 2,150             (data-price, no $)
        {{STRIKE_NUM}}   e.g. 2,300             (data-strike, no $)
        {{DAYS}}         e.g. 1,2,4             (data-days — engine cohort-day filter)
        {{LENGTH}}       e.g. 3                 (data-length — course length in days)
-       {{FIN}}          e.g. or interest-free financing from $77/mo  (delete row if unused)
      ============================================================ -->
 <div class="aa-mhero">
 <div>
@@ -43,18 +55,17 @@
 <span class="aa-rte-div"></span>
 <span class="aa-rte-rate"><span class="teal">★</span> {{RATING}}</span>
 </div>
-<div class="aa-stats">
-<div class="aa-stat"><div class="aa-stat-n">{{STAT1_N}}</div><div class="aa-stat-l">{{STAT1_L}}</div></div>
-<div class="aa-stat"><div class="aa-stat-n">{{STAT2_N}}</div><div class="aa-stat-l">{{STAT2_L}}</div></div>
-<div class="aa-stat"><div class="aa-stat-n">{{STAT3_N}}</div><div class="aa-stat-l">{{STAT3_L}}</div></div>
-</div></div>
-<div class="aa-card aa-card-dark">
-<div class="aa-card-pad">
-<div class="aa-card-h"><span class="mono aa-card-cap">Choose a cohort</span></div>
-<div id="aa-cohorts" class="aa-cohorts" data-title="{{CARD_TITLE}}" data-price="{{PRICE_NUM}}" data-strike="{{STRIKE_NUM}}" data-days="{{DAYS}}" data-length="{{LENGTH}}"></div>
-<a href="#enroll" id="aa-register" class="btn-teal aa-card-reg">Register &#10230;</a>
-<div class="aa-card-price-row"><span class="mono">FROM</span><span class="aa-card-price"><s>{{STRIKE}}</s> {{PRICE}}</span><span class="mono">USD</span></div>
-<div class="aa-card-fin">{{FIN}}</div>
-<button type="button" id="eb-trigger" class="btn-eb-dark" aria-label="Register via Eventbrite"><span style="color:#fff;font-weight:600;font-size:13px;vertical-align:middle;margin-right:7px">Register via</span><img src="https://agile-agilist.com/wp-content/uploads/2026/06/evetbrite.webp" alt="Eventbrite" style="height:16px;width:auto;display:inline-block;vertical-align:middle"></button>
-<div class="aa-card-secure mono">&#128274; SECURE CHECKOUT &middot; CARD &middot; APPLE/G PAY</div>
+<div class="aa-cred-lockup">
+<img class="aa-cred-badge" src="{{BADGE_URL}}" alt="{{CARD_TITLE}} credential badge">
+<div class="aa-cred-txt">
+<div class="mono aa-cred-cap">The credential you earn</div>
+<div class="aa-cred-name">{{CARD_TITLE}} · verifiable digital badge</div>
 </div></div></div>
+<div class="aa-mhero-right">
+<!-- visible light agenda — engine's buildAgenda() renders "Upcoming sessions" here -->
+<div id="aa-agenda" class="aa-agenda"></div>
+<!-- hidden config carrier + wiring the engine still reads/needs -->
+<div id="aa-cohorts" class="aa-cohorts" data-title="{{CARD_TITLE}}" data-price="{{PRICE_NUM}}" data-strike="{{STRIKE_NUM}}" data-days="{{DAYS}}" data-length="{{LENGTH}}" style="display:none"></div>
+<a href="#enroll" id="aa-register" class="btn-teal" style="display:none">Register &#10230;</a>
+<button type="button" id="eb-trigger" aria-label="Register via Eventbrite" style="display:none">Register via Eventbrite</button>
+</div></div>
