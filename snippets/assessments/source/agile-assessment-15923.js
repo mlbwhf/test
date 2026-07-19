@@ -1,0 +1,735 @@
+
+(function(){
+const ASSESSMENTS = ({
+    'innovation-framework': {
+      id:'innovation-framework',
+      title:'Innovation Framework Assessment',
+      tagline:'Are you actually innovative, or just calling yourselves innovative?',
+      description:'A 15-question diagnostic of your organization\'s innovation operating system. Measures the five Principles — the cultural foundation underneath every innovation initiative.',
+      minutes:12,questionCount:15,
+      source:'Innovators Framework, Part I — Mutation Readiness by Mark Saymen.',
+      perspectiveQuestion:{
+        prompt:'Before we start — what unit are you assessing?',
+        subtext:'The smaller the unit, the more accurate the result. A healthy 30-person team can exist inside a dysfunctional 5,000-person organization.',
+        options:[{id:'self',label:'Just myself / my own practice'},{id:'team',label:'My immediate team (under ~30 people)'},{id:'bu',label:'My business unit / division'},{id:'org',label:'The whole organization'}]
+      },
+      dimensions:[
+        {id:'ff',name:'Fail Forward',color:'#E76F51',
+          questions:[
+            {id:'ff1',text:'Does your team run small, structured experiments with explicit hypotheses and pre-defined learning goals — not just "let\'s try it and see"?',probe:'Think about the last experiment your team ran. Was there a written hypothesis? A pre-defined success criterion?'},
+            {id:'ff2',text:'When something fails, do you have a structured way to debrief it — surfacing what the team believed before, what they believe now, and what to do next — without blame?',probe:'A Failure Harvest, a blameless post-mortem, anything with that shape.'},
+            {id:'ff3',text:'Is iteration and perseverance publicly recognized in your performance system — not just successful outcomes?',probe:'Did anyone in the last review cycle get rewarded for a productive failure?'}
+          ]},
+        {id:'oc',name:'Open Communication',color:'#F4A261',
+          questions:[
+            {id:'oc1',text:'Do team members feel safe to challenge ideas — including from leadership — without political consequence?',probe:'Think about the last meeting where someone disagreed with the most senior person in the room.'},
+            {id:'oc2',text:'Is feedback typically shared in real time, in the moment, rather than saved for annual reviews?',probe:'If someone is missing the mark today, when do they hear about it — today, or in six months?'},
+            {id:'oc3',text:'When senior leaders make decisions employees disagree with, do those employees say so — and is the disagreement engaged seriously?',probe:'Or is dissent received politely and then quietly ignored?'}
+          ]},
+        {id:'mm',name:'Challenging Mental Models',color:'#E9C46A',
+          questions:[
+            {id:'mm1',text:'Does your team regularly question fundamental assumptions about your industry, customers, or business model — in real decisions?',probe:'Inside actual strategy discussions, not at the off-site.'},
+            {id:'mm2',text:'When you face a hard problem, does someone know how to use first-principles reasoning to break it down to underlying facts?',probe:'Not "we use the right buzzwords" — does the muscle actually exist?'},
+            {id:'mm3',text:'Has your team explicitly retired a "sacred cow" — a practice everyone assumed was non-negotiable — in the past 12 months?',probe:'If yes, name it. If you can\'t name one, that\'s the answer.'}
+          ]},
+        {id:'fs',name:'Flexible Structure',color:'#2A9D8F',
+          questions:[
+            {id:'fs1',text:'Are teams aligned to customer outcomes or value streams, rather than to internal functions?',probe:'Look at your org chart. Are the boxes labelled by what they do for customers, or by professional discipline?'},
+            {id:'fs2',text:'Do teams have decision-making autonomy without escalation for most operational choices in their area?',probe:'Or does every non-trivial decision route through a director?'},
+            {id:'fs3',text:'When something needs structural change, does it happen within a quarter, or take a year of approvals?',probe:'Last time you flagged a structural change as needed: how long did it actually take?'}
+          ]},
+        {id:'gm',name:'Growth Mindset at Scale',color:'#264653',
+          questions:[
+            {id:'gm1',text:'Does your performance review system explicitly reward how an employee helped others grow — with weight comparable to delivery metrics?',probe:'On the actual review form, not the values poster.'},
+            {id:'gm2',text:'Do employees have dedicated, protected time for self-directed learning, experimentation, or curiosity-driven work?',probe:'Google 20%, Atlassian Innovation Weeks, Cisco Illuminate — protected calendar time.'},
+            {id:'gm3',text:'When senior leaders fail or change their minds, do they share what they learned, publicly, more than once a year?',probe:'The Nadella pattern. Or do leaders only narrate wins?'}
+          ]}
+      ],
+      maxPerQ:5,perDimMax:15,totalMax:75,
+      bands:[
+        {id:'theatre',name:'Innovation Theatre',min:0,max:30,
+          headline:'You use the language of innovation but don\'t yet run the practices.',
+          summary:'Innovation work is being performed for management or external audiences, not lived in daily decisions. The cultural foundation is missing — and no AI-age technique will compensate for it. Good news: this is the cheapest band to move out of. One specific practice, installed well in 30 days, will move the needle.',
+          hint:'Most Innovation Theatre orgs score Mental Models and Growth Mindset lowest, because both require admitting things the org has been pretending are true. Start there.'},
+        {id:'practicing',name:'Innovation Practicing',min:31,max:55,
+          headline:'The rituals exist. The system hasn\'t yet absorbed them.',
+          summary:'Some teams have internalized the practices. The whole organization has not. The biggest gap is usually between what leadership says and what the performance system rewards. The work now is integration — connecting two specific principles over the next 90 days, not launching five concurrent culture initiatives.',
+          hint:'Most common pattern: medium on Fail Forward and Mental Models, low on Growth Mindset — the performance system rewards delivery over learning. Fix the mechanism, not the speech.'},
+        {id:'native',name:'Innovation Native',min:56,max:75,
+          headline:'Innovation is identity, not department.',
+          summary:'You\'re in the top decile. Practices are visible in everyday decisions, in how people talk in meetings, in how the performance system actually works. The risk now is complacency. Institutionalize what you have, mentor adjacent organizations, and run Mutation Readiness — the AI-age frontier is your next move.',
+          hint:'Three things matter now: institutionalize, mentor, and graduate to the AI-age frontier.'}
+      ],
+      plans:{
+        theatre:{
+          d30:[{t:'Run one Failure Harvest',d:'Pick a real recent failure. Use the four-question structure (what we believed before / after / smallest next experiment / what to broadcast). 45 min. No PowerPoint.'},
+               {t:'Add the "what\'s on your mind" check-in',d:'Start every team meeting for 30 days with a one-line round. Two minutes total. Normalizes vulnerability.'},
+               {t:'Assumption Audit on your strategy',d:'Two hours, cross-functional. Mark every claim Verified, Inherited, or Aspirational. Most teams discover 60-70% is inherited.'},
+               {t:'Remove one bureaucratic friction',d:'One approval that doesn\'t need to exist, one meeting that should be a Slack message. Document what happens.'},
+               {t:'Add "helped others grow" to reviews',d:'Equal weight to delivery dimensions. Don\'t announce it as a culture initiative. Just do it.'}],
+          d60:[{t:'Make Failure Harvest a recurring cadence',d:'Monthly. Rotate facilitator. Tracked separately from status reviews.'},
+               {t:'Pick weakest of 5 principles, design 90-day push',d:'Single principle. Single owner. No parallel initiatives.'}],
+          d90:[{t:'Move performance-review weighting',d:'Make "helped others grow" count for a real percentage of the rating — not a soft signal.'}],
+          reading:[{a:'Amy Edmondson',t:'Right Kind of Wrong',y:2023},{a:'Kim Scott',t:'Radical Candor (revised)',y:2019},{a:'Mary Murphy',t:'Cultures of Growth',y:2024}]
+        },
+        practicing:{
+          d30:[{t:'Identify two lowest-scoring principles',d:'Design a single 90-day plan connecting them. Not separate workstreams.'},
+               {t:'Rewrite one performance-review question',d:'From "did you deliver" to "did you and your team learn." Roll out next cycle.'},
+               {t:'Leadership AMA on a real mistake',d:'Not PR. CEO + senior team narrate what they changed their mind about. Monthly.'}],
+          d60:[{t:'Reallocate compensation weight',d:'Make "helped others grow" count for a real percentage — not a soft signal.'},
+               {t:'Connect the two weakest principles',d:'If Fail Forward and Growth Mindset are weak, the link is the performance system. Fix once, fix both.'}],
+          d90:[{t:'Audit leadership-rhetoric vs performance-mechanism gap',d:'Where is the talk Native and the reward Theatre? Fix the smaller of the two first.'}],
+          reading:[{a:'Ethan Mollick',t:'Co-Intelligence',y:2024},{a:'Iansiti & Lakhani',t:'Competing in the Age of AI',y:2020},{a:'Skelton & Pais',t:'Team Topologies',y:2019},{a:'Adam Grant',t:'Hidden Potential',y:2023}]
+        },
+        native:{
+          d30:[{t:'Document your operating model',d:'If the CEO who installed the practices leaves, what survives? Write it down.'},
+               {t:'Pick one adjacent org to mentor',d:'Partner, customer, portfolio company. Run a Failure Harvest with them. Transfer the discipline.'},
+               {t:'Schedule Mutation Readiness',d:'Your cultural foundation is solid. The AI-age extension is the next frontier.'}],
+          d60:[{t:'Train senior team to run without you',d:'Practices erode without explicit maintenance.'},
+               {t:'Externalize the language',d:'Investors, talent, partners — bring the operating model into how you describe yourselves.'}],
+          d90:[{t:'Begin Mutation Readiness at leadership level',d:'Treat it as the AI-age extension of what you already have.'}],
+          reading:[{a:'Amy Edmondson',t:'The Fearless Organization',y:2018},{a:'Anthropic',t:'Mapping the Mind',y:2024},{a:'Mustafa Suleyman',t:'The Coming Wave',y:2023}]
+        }
+      }
+    },
+    'mutation-readiness':{
+      id:'mutation-readiness',
+      title:'Mutation Readiness Assessment',
+      tagline:'Can your organization sense and respond at AI-age speed?',
+      description:'An 18-question diagnostic of your organization\'s capability to sense, respond, and adapt as the environment mutates around you. The AI-age extension of the Innovation Framework.',
+      minutes:15,questionCount:18,
+      source:'Mutation Readiness Scorecard, Appendix A — Mutation Readiness by Mark Saymen.',
+      perspectiveQuestion:{
+        prompt:'Before we start — what unit are you assessing?',
+        subtext:'A 50-person team can be Mutation-Ready while the surrounding 5,000-person enterprise is Mutation-Blind. Pick deliberately.',
+        options:[{id:'self',label:'Just myself / my own practice'},{id:'team',label:'My immediate team (under ~30 people)'},{id:'bu',label:'My business unit / division'},{id:'org',label:'The whole organization'}]
+      },
+      dimensions:[
+        {id:'ss',name:'Signal Sensitivity',color:'#E76F51',
+          questions:[
+            {id:'ss1',text:'Does your team monitor weak signals from at least three sources outside your own dashboards weekly?',probe:'Customer Discord, dev forums, GitHub trends, competitor hiring patterns, regulatory leaks.'},
+            {id:'ss2',text:'Can you name a specific behavioural change in your customer base in the past 30 days — before it appeared in your metrics?',probe:'If yes, what was it? If you can\'t name one, the score is low regardless of dashboards.'},
+            {id:'ss3',text:'Do you have a structured cadence for surfacing internal anomalies without political consequence to the person who raised them?',probe:'Anomaly review, SignalNet, anything with that shape.'}
+          ]},
+        {id:'sf',name:'Structural Flexibility',color:'#F4A261',
+          questions:[
+            {id:'sf1',text:'Are teams aligned to customer outcomes (streams of value) rather than to internal functions?',probe:'Same as Innovation Framework FS-1, scored separately for AI-velocity reasons.'},
+            {id:'sf2',text:'Can a new product idea move from concept to validated learning in under 90 days?',probe:'Validated learning, not "shipped MVP". End-to-end calendar time.'},
+            {id:'sf3',text:'When you identified a need to restructure in the past 12 months, did you act within a quarter?',probe:'Naming the need is not acting on it.'}
+          ]},
+        {id:'at',name:'AI Talent Flywheel',color:'#E9C46A',
+          questions:[
+            {id:'at1',text:'Do you have at least one AI-literate person embedded in every major product or business team?',probe:'Embedded, not consulted from a central group.'},
+            {id:'at2',text:'Is your AI talent distributed across the organization, or isolated in a single AI/ML function?',probe:'Center of excellence in name; ghetto in practice — is that your pattern?'},
+            {id:'at3',text:'Does your AI talent have direct exposure to strategy decisions, not just to implementation work?',probe:'In the strategy room, or only in the build room?'}
+          ]},
+        {id:'ac',name:'Ambidextrous Capital',color:'#2A9D8F',
+          questions:[
+            {id:'ac1',text:'Do you have a protected exploration budget separate from your core P&L?',probe:'Protected, not "we\'ll fund it if we have slack."'},
+            {id:'ac2',text:'Are exploration bets evaluated on learning yield, not on traditional ROI?',probe:'What evidence does an exploration bet need to produce to be considered successful?'},
+            {id:'ac3',text:'Can an experiment with no clear ROI survive its first quarterly business review without being defunded?',probe:'The QBR test. Most exploration dies here.'}
+          ]},
+        {id:'eg',name:'Ethical Guardrails',color:'#264653',
+          questions:[
+            {id:'eg1',text:'Is every AI deployment governed by explicit operating boundaries and a recalibration cadence?',probe:'Written boundaries, scheduled recalibration. Not "we trust the team."'},
+            {id:'eg2',text:'Do you have an AI governance function (not just compliance) with engineering rather than legal at its centre?',probe:'Governance designs the guardrails; compliance polices them. Who is in charge?'},
+            {id:'eg3',text:'Can you produce an audit-quality explanation of any AI-driven decision affecting a customer?',probe:'If a regulator asked tomorrow, what would happen?'}
+          ]},
+        {id:'nc',name:'Narrative Coherence',color:'#8E44AD',
+          questions:[
+            {id:'nc1',text:'Can your employees describe, in their own words, what your organization is for in the current market — not the 2018 market?',probe:'Walk down the hall, ask three people. The variance is the score.'},
+            {id:'nc2',text:'Has your leadership team updated the strategic narrative in the past 18 months?',probe:'Updated meaningfully, not "we added an AI line to the deck."'},
+            {id:'nc3',text:'Can new hires articulate your strategic narrative after their first month?',probe:'Onboarding either teaches the story or hides it.'}
+          ]}
+      ],
+      maxPerQ:5,perDimMax:15,totalMax:90,normalizeTo:72,
+      bands:[
+        {id:'blind',name:'Mutation-Blind',min:0,max:30,
+          headline:'You\'re operating on lagging metrics in an environment that\'s mutating around you.',
+          summary:'Disruption is probably already happening, undetected. Signal sensitivity is the leading practice to install — and it\'s the cheapest. You don\'t need to restructure or rebudget. You need a weekly cadence and a place to log what you saw.',
+          hint:'Blind orgs almost always score Signal Sensitivity and Ambidextrous Capital lowest. Both are cheap to start; neither requires permission you don\'t already have.'},
+        {id:'aware',name:'Mutation-Aware',min:31,max:50,
+          headline:'You can sense change but can\'t yet act on it at the right cadence.',
+          summary:'The sense-to-respond gap is the primary risk. Measure mutation latency — time from signal identification to organizational decision — and target under 21 days. Pick the two dimensions you scored lowest on and design specific 90-day moves on each.',
+          hint:'Aware orgs usually have Signal Sensitivity strong but Structural Flexibility or Ambidextrous Capital weak. You can see — you can\'t act. Close the gap with cadence, not more sensing.'},
+        {id:'ready',name:'Mutation-Ready',min:51,max:72,
+          headline:'You\'re in the top decile. The risk now is complacency.',
+          summary:'Institutionalize the practices that got you here — they erode without explicit maintenance. Begin to mentor adjacent organizations. Consider whether "mutation readiness" should become external language to investors, talent, and partners.',
+          hint:'The complacency risk is real. The companies that lose mutation readiness lose it because the practices erode silently while the language persists.'}
+      ],
+      plans:{
+        blind:{
+          d30:[{t:'Stand up a SignalNet',d:'Distributed, semi-anonymous logging for any employee to surface weak signals. Template in Appendix E.'},
+               {t:'Assumption Audit on your strategy',d:'Two hours, cross-functional. Mark every claim Verified, Inherited, or Aspirational.'},
+               {t:'Weekly signal review at leadership level',d:'30 minutes. Anomaly-focused. Not a status meeting.'}],
+          d60:[{t:'Carve out protected exploration budget',d:'Even 2% of P&L. The point is separation, not size.'},
+               {t:'One AI-literate hire/rotation per major team',d:'Distributed, not centralized.'}],
+          d90:[{t:'Measure mutation latency for first time',d:'Time from signal identification to organizational decision. Baseline it. Then optimize.'}],
+          reading:[{a:'Amy Edmondson',t:'Right Kind of Wrong',y:2023},{a:'Mustafa Suleyman',t:'The Coming Wave',y:2023}]
+        },
+        aware:{
+          d30:[{t:'Build an experimentation engine',d:'Five components in Chapter 10 of the Operating Manual.'},
+               {t:'Apply Five Levers framework',d:'Pick two lowest-scoring levers. Design specific 90-day moves on each.'},
+               {t:'Measure mutation latency',d:'Time from signal identification to decision. Target under 21 days.'}],
+          d60:[{t:'Move one major decision down a level',d:'Concrete delegation. Document what changes.'},
+               {t:'Failure Harvest on a slow response',d:'Where did latency come from? Approval? Politics? Tooling? Each has a different fix.'}],
+          d90:[{t:'Restructure one team to value-stream alignment',d:'Use Inverse Conway Maneuver. Begin with a pilot.'}],
+          reading:[{a:'Iansiti & Lakhani',t:'Competing in the Age of AI',y:2020},{a:'Rita McGrath',t:'Seeing Around Corners',y:2019},{a:'Ethan Mollick',t:'Co-Intelligence',y:2024}]
+        },
+        ready:{
+          d30:[{t:'Institutionalize the operating model',d:'Document what you do. Train senior team to run it without you.'},
+               {t:'Mentor one adjacent organization',d:'Partner, customer, portfolio co. The teaching is the stress test.'},
+               {t:'Externalize the language',d:'Investors, talent, partners — Mutation-Ready becomes how you describe yourselves.'}],
+          d60:[{t:'Stress-test with external review',d:'Bring in a skeptic. Pay them to find what\'s eroded since installation.'},
+               {t:'Identify three most fragile practices',d:'Which would collapse if their champion left tomorrow? Reinforce.'}],
+          d90:[{t:'Begin a Mutation Readiness peer network',d:'Other Mutation-Ready orgs. The diagnostic isn\'t one-shot — it\'s a cadence.'}],
+          reading:[{a:'Amy Edmondson',t:'The Fearless Organization',y:2018},{a:'Mary Murphy',t:'Cultures of Growth',y:2024},{a:'Anthropic',t:'Mapping the Mind',y:2024}]
+        }
+      }
+    }
+  ,
+  'agile-assessment': {
+    id:'agile-assessment',
+    title:'Agile Competency Assessment',
+    tagline:'How well is your organization actually designed to operate in an agile, adaptive, value-driven way?',
+    description:'A framework-agnostic diagnostic of organizational agility. Measures the six capability dimensions that determine whether Scrum/SAFe/Kanban delivers value or just delivers theatre.',
+    minutes:14, questionCount:18,
+    source:'Agile Agilist Competency Framework. Capability-based, not framework-based.',
+    perspectiveQuestion:{
+      prompt:'What unit are you assessing?',
+      subtext:'Agility scores can vary widely between teams within the same enterprise. The smaller and more specific the unit, the more actionable the diagnostic.',
+      options:[{id:'self',label:'Just myself / my own practice'},{id:'team',label:'My immediate team (under ~30 people)'},{id:'bu',label:'My business unit / division'},{id:'org',label:'The whole organization'}]
+    },
+    dimensions:[
+      {id:'ls',name:'Leadership & Strategy',color:'#E76F51',
+        questions:[
+          {id:'ls1',text:'Do your senior leaders model the behaviors they ask of teams - showing up to demos, taking accountability for failures, learning publicly?',probe:'Or do leaders enforce agile language while operating in old ways?'},
+          {id:'ls2',text:'Is your enterprise strategy translated into clear, measurable outcomes that teams can connect their work to?',probe:'Can the average team member name 2-3 strategic objectives their work serves?'},
+          {id:'ls3',text:'When the business environment shifts, does strategy actually flex within a quarter - or do you keep executing the old plan?',probe:'Last major external change: how long did strategic adjustment take?'}
+        ]},
+      {id:'vd',name:'Value Delivery',color:'#F4A261',
+        questions:[
+          {id:'vd1',text:'Do your teams measure outcomes (customer behavior, business impact) - not just outputs (features shipped, story points done)?',probe:'When a team finishes a major initiative, what evidence proves it created value?'},
+          {id:'vd2',text:'Can you trace a feature from idea to validated business impact in a structured, repeatable way?',probe:'Or do features ship and you hope they were the right thing?'},
+          {id:'vd3',text:'Is customer feedback systematically integrated into product decisions - not collected and ignored?',probe:'Show the loop: customer signal in - decision out.'}
+        ]},
+      {id:'fe',name:'Flow & Execution',color:'#E9C46A',
+        questions:[
+          {id:'fe1',text:'Do your teams have predictable, measured cycle time - and is reducing it an explicit priority?',probe:'Cycle time = idea acceptance to value delivered. Do you measure it?'},
+          {id:'fe2',text:'Are dependencies between teams visible and actively managed - not discovered at the last possible moment?',probe:'How are cross-team dependencies surfaced and resolved?'},
+          {id:'fe3',text:'When work blocks, do impediments get resolved within days - or do they sit unresolved for weeks?',probe:'Last 5 blocking impediments your team faced: average days to resolution.'}
+        ]},
+      {id:'ta',name:'Team Autonomy',color:'#2A9D8F',
+        questions:[
+          {id:'ta1',text:'Do teams have decision-making authority over how they work - tools, ceremonies, technical choices - without escalation for each call?',probe:'Or do directors approve sprint length, framework choice, tool selection?'},
+          {id:'ta2',text:'Are teams aligned to durable value streams or product areas - rather than reshuffled into project teams every quarter?',probe:'Team stability matters. Reorgs every 6 months destroy autonomy.'},
+          {id:'ta3',text:'Do teams have direct access to customers/users - or must they go through a 3-level approval to talk to them?',probe:'Last time your team talked to a real customer without intermediation: how recent?'}
+        ]},
+      {id:'le',name:'Learning & Enablement',color:'#264653',
+        questions:[
+          {id:'le1',text:'Is dedicated, protected time for learning, experimentation, or improving the system a real practice - not a stated value?',probe:'Calendar audit: how much time was spent on learning vs delivery this past quarter?'},
+          {id:'le2',text:'Do you have functioning communities of practice that share knowledge across team boundaries?',probe:'CoPs that produce visible artifacts, not just calendar invites.'},
+          {id:'le3',text:'When teams discover better practices, is there a path for adoption across the organization - or does each team rediscover the same things?',probe:'Latest practice/tool/pattern that spread from one team to many?'}
+        ]},
+      {id:'cc',name:'Culture & Continuous Improvement',color:'#8E44AD',
+        questions:[
+          {id:'cc1',text:'Do retrospectives produce real changes to how work happens - or are they cathartic-but-toothless venting sessions?',probe:'Last retro: name a single concrete change that resulted.'},
+          {id:'cc2',text:'When projects fail or teams underperform, is the response systemic improvement - or is it blame, replan, and demand more effort?',probe:'Recent disappointment: what got changed about the system?'},
+          {id:'cc3',text:'Is improvement work visible in the backlog with explicit capacity allocated - or is it always squeezed out by feature work?',probe:'What percent of capacity goes to non-feature improvement work?'}
+        ]}
+    ],
+    maxPerQ:5, perDimMax:15, totalMax:90,
+    bands:[
+      {id:'fragile',name:'Fragile Agility',min:0,max:30,
+        headline:'You have agile ceremonies. You don\'t yet have agile capability.',
+        summary:'Most of the muscles that determine real agility - autonomy, flow, outcome measurement, learning at scale - are weak. The good news: you can move out of this band fast by focusing on one capability deeply, not by launching another transformation. Pick the lowest-scoring dimension and run a 90-day push.',
+        hint:'Fragile-Agility orgs almost always score lowest on Value Delivery and Continuous Improvement - because both require admitting where current effort is wasted. Start there.'},
+      {id:'practicing',name:'Practicing Agility',min:31,max:60,
+        headline:'The disciplines exist. They\'re not yet system-level.',
+        summary:'Some teams have internalized the practices. The wider org still has gaps - usually in Leadership behavior or Flow at scale. The work now is integration, not new programs. Pick the two weakest dimensions and connect them with a single 90-day initiative.',
+        hint:'Most Practicing-Agility orgs are strong on Team Autonomy but weak on Leadership & Strategy. Leaders haven\'t caught up to what they delegated.'},
+      {id:'mature',name:'Mature Agility',min:61,max:90,
+        headline:'Agility is woven into the operating model, not bolted on.',
+        summary:'You\'re in the top decile. Outcomes drive decisions, flow is measured, leaders model the behaviors. The risk now is complacency - the practices need maintenance or they erode. Institutionalize, mentor adjacent orgs, and consider the AI-age frontier with Mutation Readiness.',
+        hint:'Mature-Agility orgs collapse silently when the champion leaves. Document what you do. Train successors.'}
+    ],
+    plans:{
+      fragile:{
+        d30:[{t:'Run a Value Discovery workshop on one product',d:'90 minutes. Map current work to actual customer outcomes. Surface the gap between what teams do and what customers value.'},
+             {t:'Make impediments visible',d:'Stand up a shared impediment board. Track time-to-resolution. Make weekly. Senior leaders attend.'},
+             {t:'Start one team practicing outcome measurement',d:'Pick one team, one initiative. Define an outcome metric before starting. Measure after shipping. Share the result.'}],
+        d60:[{t:'Allocate 15% of capacity to improvement work',d:'Explicit, visible, defended. Not "we\'ll find slack". Backlog-allocated.'},
+             {t:'Run a leadership behaviors workshop',d:'Senior team identifies 3 behaviors they will model. Public commitment. Quarterly self-assessment.'}],
+        d90:[{t:'Restructure one team toward a value stream',d:'Pilot the Inverse Conway Maneuver. Document what changes about flow.'}],
+        reading:[{a:'Mik Kersten',t:'Project to Product',y:2018},{a:'Marty Cagan',t:'Empowered',y:2020},{a:'Skelton & Pais',t:'Team Topologies',y:2019}]
+      },
+      practicing:{
+        d30:[{t:'Identify your 2 weakest dimensions',d:'Design a single 90-day plan connecting them. Avoid running 5 parallel improvement workstreams.'},
+             {t:'Measure cycle time as a leadership KPI',d:'Make it visible at the same level as revenue and headcount. Sustained attention = sustained improvement.'},
+             {t:'Run a Leadership AMA on what they\'ve learned',d:'Senior team narrates what they changed their mind about. Monthly cadence.'}],
+        d60:[{t:'Connect Leadership & Flow',d:'If both score medium, run a senior-leader Gemba walk through the value stream. Surface the gap between strategy and execution friction.'},
+             {t:'Build a CoP for a specific capability',d:'Pick the practice you most need to spread. Build the CoP around it. Measure adoption.'}],
+        d90:[{t:'Audit dimension where rhetoric > practice',d:'Where does the language sound Mature but the practice is Fragile? Fix the smaller gap first.'}],
+        reading:[{a:'Mary Poppendieck',t:'Lean Software Development',y:2003},{a:'Mary Murphy',t:'Cultures of Growth',y:2024},{a:'Adam Grant',t:'Hidden Potential',y:2023}]
+      },
+      mature:{
+        d30:[{t:'Document the operating model',d:'If the champion leaves, what survives? Write it down. Companies lose agility this way.'},
+             {t:'Identify one adjacent org to mentor',d:'Partner, customer, supplier. Teach the practices. Teaching is the stress test.'},
+             {t:'Schedule the Innovation Framework + Mutation Readiness',d:'Your agile foundation is solid. The cultural and AI-age frontiers are your next moves.'}],
+        d60:[{t:'Train the senior team to sustain the system without you',d:'Pair the operating model with explicit succession plans.'},
+             {t:'Externalize the language',d:'Investors, talent, partners - bring the operating model into how you describe yourselves.'}],
+        d90:[{t:'Begin Mutation Readiness diagnostic',d:'Treat it as the AI-age extension of what you already have.'}],
+        reading:[{a:'Don Reinertsen',t:'Principles of Product Development Flow',y:2009},{a:'Amy Edmondson',t:'The Fearless Organization',y:2018},{a:'Mark Saymen',t:'Mutation Readiness',y:2025}]
+      }
+    }
+  },
+  'ai-assessment': {
+    id:'ai-assessment',
+    title:'AI Maturity & Readiness Assessment',
+    tagline:'Where does your organization actually stand on AI capability, governance, and value realization?',
+    description:'A board-level diagnostic of AI maturity across 8 dimensions. Grounded in OECD, NIST AI RMF, Gartner, and McKinsey leading practices. Designed for C-suite, transformation, and audit/risk leaders.',
+    minutes:18, questionCount:24,
+    source:'AI Maturity & Readiness Framework. Synthesis of OECD AI Principles, NIST AI Risk Management Framework, Gartner AI Maturity, McKinsey State of AI.',
+    perspectiveQuestion:{
+      prompt:'What unit are you assessing?',
+      subtext:'AI maturity can vary dramatically between business units. Pick the unit where you have decision authority or board-level visibility.',
+      options:[{id:'bu',label:'A single business unit or division'},{id:'org',label:'The whole organization'},{id:'board',label:'Board-level view of the enterprise'},{id:'industry',label:'Comparing my org to industry peers'}]
+    },
+    dimensions:[
+      {id:'sb',name:'Strategy & Business Alignment',color:'#E76F51',
+        questions:[
+          {id:'sb1',text:'Does your organization have an explicit AI strategy that ties to specific business outcomes - not just an "AI vision" statement?',probe:'Can you name three measurable outcomes your AI strategy is meant to deliver?'},
+          {id:'sb2',text:'Are AI investments prioritized through a structured process that weighs value, risk, and strategic fit - not "interesting tech"?',probe:'Last 3 AI investment decisions: what criteria drove them?'},
+          {id:'sb3',text:'Does your board receive structured AI updates with concrete business-outcome metrics on a regular cadence?',probe:'Or does AI come up as ad-hoc demos at the bottom of the agenda?'}
+        ]},
+      {id:'lc',name:'Leadership & Culture',color:'#F4A261',
+        questions:[
+          {id:'lc1',text:'Do your senior leaders demonstrate AI fluency - able to discuss AI tradeoffs in their own words, not from a deck?',probe:'Pop quiz the CEO and CFO on prompt engineering and model selection - what happens?'},
+          {id:'lc2',text:'Is responsible AI use modeled from the top - leaders using AI in their own work, disclosing it when they do?',probe:'Or is AI use a "junior contributor" thing while leaders stay AI-distant?'},
+          {id:'lc3',text:'Is there organizational permission to experiment with AI without fear of being punished for early-stage failures?',probe:'Last 3 AI pilots that failed: what happened to the teams that ran them?'}
+        ]},
+      {id:'om',name:'Operating Model & Ways of Working',color:'#E9C46A',
+        questions:[
+          {id:'om1',text:'Is AI integrated into existing business processes - or is it a separate AI/ML team that gets called in for specific projects?',probe:'AI in flow vs AI as cost center.'},
+          {id:'om2',text:'Do you have clear protocols for human-AI collaboration - who decides, who reviews, when AI is consulted, when AI is in the loop?',probe:'Or does it vary by team and individual?'},
+          {id:'om3',text:'Are AI workflows treated as production systems with SLAs, observability, and rollback - or as side projects?',probe:'Production-grade or experimental-forever?'}
+        ]},
+      {id:'dr',name:'Data Readiness',color:'#2A9D8F',
+        questions:[
+          {id:'dr1',text:'Is your data governance mature enough to support AI - data lineage, ownership, access controls, quality metrics?',probe:'Or do AI projects spend 70% of their time wrangling data because foundations are shaky?'},
+          {id:'dr2',text:'Can your data infrastructure deliver the right data to the right model at the right time - vector stores, feature stores, real-time pipelines as needed?',probe:'Modern data architecture or 2015 data warehouse?'},
+          {id:'dr3',text:'Is there a clear policy on what data can be used for AI training, fine-tuning, and inference - with audit trails?',probe:'Regulator question tomorrow: do you have the trail?'}
+        ]},
+      {id:'tt',name:'Technology & Tooling',color:'#264653',
+        questions:[
+          {id:'tt1',text:'Is your AI tech stack secure by design - identity, secrets, prompt-injection defense, data leakage controls in place?',probe:'Not "we use enterprise contracts" - actual technical controls.'},
+          {id:'tt2',text:'Can you swap between foundation models without massive rework - vendor-neutral architecture?',probe:'Or are you locked in by deep dependency on one provider?'},
+          {id:'tt3',text:'Do you have a sandboxed environment where employees can experiment with AI safely - or is shadow AI happening in unsanctioned tools?',probe:'How much AI work is happening on personal ChatGPT accounts right now?'}
+        ]},
+      {id:'gr',name:'Governance, Risk & Ethics',color:'#8E44AD',
+        questions:[
+          {id:'gr1',text:'Do you have an AI governance function (separate from compliance) with engineering and product leadership at its center?',probe:'Governance designs the guardrails; compliance polices them. Who owns design?'},
+          {id:'gr2',text:'Is every AI deployment governed by explicit operating boundaries, recalibration cadence, and incident-response protocols?',probe:'Written boundaries, not "we trust the team".'},
+          {id:'gr3',text:'Can you produce, on regulator request, an audit-quality explanation of any AI-driven decision affecting a customer or employee?',probe:'EU AI Act readiness check. What happens tomorrow if asked?'}
+        ]},
+      {id:'se',name:'Skills & Enablement',color:'#16A085',
+        questions:[
+          {id:'se1',text:'Do you have an AI literacy program that has reached - and been completed by - more than 50% of your workforce?',probe:'Not "available to" - completed by. Real reach.'},
+          {id:'se2',text:'Are AI-specific skills (prompt engineering, model evaluation, AI-augmented work) explicitly in role descriptions and competency frameworks?',probe:'Or "informally encouraged"?'},
+          {id:'se3',text:'Is your talent strategy actively attracting AI-native hires - across all functions, not just engineering?',probe:'AI-native finance, HR, marketing hires - not just data scientists.'}
+        ]},
+      {id:'vr',name:'Value Realization',color:'#D35400',
+        questions:[
+          {id:'vr1',text:'Can you quantify the business value AI has actually delivered in the past 12 months - cost saved, revenue generated, time recovered?',probe:'Hard numbers, audited, not anecdotes.'},
+          {id:'vr2',text:'Are AI projects retired when they fail to deliver value - or do they linger as "we\'ll get there"?',probe:'Last AI project you killed: when, why, what was learned?'},
+          {id:'vr3',text:'Is AI value tracking integrated into your standard business reporting - or is it a separate AI dashboard nobody reviews?',probe:'AI in the QBR or AI in the AI committee?'}
+        ]}
+    ],
+    maxPerQ:5, perDimMax:15, totalMax:120, normalizeTo:100,
+    bands:[
+      {id:'aspiring',name:'AI-Aspiring',min:0,max:40,
+        headline:'AI is talked about, demonstrated, and budgeted - but not yet delivering measurable business outcomes.',
+        summary:'You have AI ambition without AI infrastructure. Strategy is unclear, governance is missing, talent is uneven. The risk is significant spend with little to show for it. Good news: this is the cheapest band to leave - one of the 8 dimensions, taken seriously for 90 days, will produce real proof points.',
+        hint:'AI-Aspiring orgs almost always score lowest on Data Readiness and Governance. Without foundations, every AI investment costs 3x what it should. Start there.'},
+      {id:'maturing',name:'AI-Maturing',min:41,max:75,
+        headline:'AI is delivering value in specific use cases. Enterprise-wide value capture is the next frontier.',
+        summary:'You have proof. The next phase is moving from individual wins to a portfolio approach: connect AI to strategy, build operating-model muscles, scale skills, and harden governance before scaling unlocks reputational risk. Most enterprises stall here for years - don\'t.',
+        hint:'AI-Maturing orgs usually have Tech and Use-Cases strong, Operating Model and Skills weak. The bottleneck is the org, not the tech.'},
+      {id:'integrated',name:'AI-Integrated',min:76,max:100,
+        headline:'AI is woven into how you operate - and you can prove the business value, the safety, and the sustainability.',
+        summary:'Top decile. AI delivers measurable outcomes, governance is strong, skills are widespread, and your data foundations support the next wave. The risk now: complacency in a market moving fast. Run Mutation Readiness to check whether your org can sense and respond at AI-age speed.',
+        hint:'AI-Integrated orgs erode when leaders rotate out and the practices aren\'t institutionalized. Document. Train successors. Refresh annually.'}
+    ],
+    plans:{
+      aspiring:{
+        d30:[{t:'Run an AI Strategy Audit',d:'Two hours, senior team. Mark every AI claim Verified, Inherited, or Aspirational. Most orgs find 70% is aspirational.'},
+             {t:'Inventory shadow AI',d:'Survey: who is using AI tools without sanction, on what data? Don\'t punish - learn.'},
+             {t:'Stand up AI governance (not compliance)',d:'Engineering + product + risk together. Initial mandate: write the operating boundaries for AI deployments.'}],
+        d60:[{t:'Pick one AI use case with measurable business outcome',d:'Single use case. Defined metric. Quarterly review.'},
+             {t:'Launch AI literacy program for the senior team first',d:'Top-down adoption. Leaders that can\'t talk AI in their own words won\'t enable AI in their orgs.'}],
+        d90:[{t:'Establish data ownership for AI-priority datasets',d:'Without ownership, AI projects die in data wrangling. Fix at the root.'}],
+        reading:[{a:'Ethan Mollick',t:'Co-Intelligence',y:2024},{a:'Iansiti & Lakhani',t:'Competing in the Age of AI',y:2020},{a:'NIST',t:'AI Risk Management Framework',y:2023}]
+      },
+      maturing:{
+        d30:[{t:'Map your AI portfolio: explore vs exploit',d:'Where are you proven? Where are you experimental? Where are you stuck? Reallocate accordingly.'},
+             {t:'Audit AI governance for production-grade rigor',d:'Boundaries, recalibration, incident response. Documented and tested.'},
+             {t:'Build the AI value scorecard',d:'Every AI initiative reports business value monthly. Integrated with QBR.'}],
+        d60:[{t:'Distribute AI talent into every major team',d:'Centralized AI/ML COE has value but creates dependency. Embed AI-literate people directly.'},
+             {t:'Launch AI literacy at scale',d:'Mandatory for managers. Optional but resourced for ICs. Tracked completion.'}],
+        d90:[{t:'Connect AI strategy to enterprise strategy formally',d:'Joint board review. AI is no longer a side track.'}],
+        reading:[{a:'Anthropic',t:'Mapping the Mind',y:2024},{a:'Andrew Ng',t:'Machine Learning Yearning',y:2018},{a:'Marc Andreessen',t:'Why AI Will Save the World',y:2023}]
+      },
+      integrated:{
+        d30:[{t:'Externalize the AI operating model',d:'Investors, talent, partners. AI-Integrated becomes how you\'re described.'},
+             {t:'Stress-test governance with red-team exercises',d:'Hire someone to try to break your AI controls. Pay them to find what\'s weak.'},
+             {t:'Run Mutation Readiness diagnostic',d:'The AI-age frontier extends what you have. Check your sense-and-respond capability.'}],
+        d60:[{t:'Mentor adjacent organizations',d:'Customer, supplier, portfolio co. Teaching is the stress test.'},
+             {t:'Build the AI talent flywheel',d:'AI-native hires across functions. Internal mobility. Sustained inflow.'}],
+        d90:[{t:'Establish enterprise AI safety as a board-reviewed quarterly metric',d:'Public commitment. External audit. Differentiator with regulators and customers.'}],
+        reading:[{a:'Mustafa Suleyman',t:'The Coming Wave',y:2023},{a:'Mark Saymen',t:'Mutation Readiness',y:2025},{a:'Stuart Russell',t:'Human Compatible',y:2019}]
+      }
+    }
+  },
+  'product-management-assessment': {
+    id:'product-management-assessment',
+    title:'Product Management Maturity Assessment',
+    tagline:'Are you running genuine product management - or are you a feature factory with PM titles?',
+    description:'A diagnostic of product management capability across 6 dimensions. Identifies where teams are stuck shipping features that don\'t move the metric, and what needs to change for product strategy to actually drive outcomes.',
+    minutes:14, questionCount:18,
+    source:'Product Management Maturity Framework, drawing on Cagan, Perri, and the SVPG body of work.',
+    perspectiveQuestion:{
+      prompt:'What unit are you assessing?',
+      subtext:'Product management maturity often varies wildly across product lines. The most useful assessment focuses on a specific product or product group.',
+      options:[{id:'product',label:'A specific product or product line'},{id:'team',label:'My immediate product team'},{id:'bu',label:'A product organization or business unit'},{id:'org',label:'Product management across the whole company'}]
+    },
+    dimensions:[
+      {id:'cd',name:'Customer & Problem Discovery',color:'#E76F51',
+        questions:[
+          {id:'cd1',text:'Do product teams talk to customers directly - not through proxies, not through aggregated research - on a regular cadence (weekly or biweekly)?',probe:'Last customer conversation each PM had: how recent? How frequent?'},
+          {id:'cd2',text:'Is there a structured discovery process that produces validated problems - not assumed problems - before features are built?',probe:'Or do features get built because a stakeholder asked?'},
+          {id:'cd3',text:'When the team uncovers a problem worth solving, can they cancel or pivot in-flight work to address it?',probe:'Or are roadmaps locked for 6-12 months regardless of what\'s learned?'}
+        ]},
+      {id:'sv',name:'Product Strategy & Vision',color:'#F4A261',
+        questions:[
+          {id:'sv1',text:'Does each product have an explicit, written, recent product strategy - distinct from a roadmap?',probe:'Roadmap = list of things to build. Strategy = the choice of where to play and how to win.'},
+          {id:'sv2',text:'Can a typical product team member articulate the product vision in their own words - and connect their work to it?',probe:'Stop someone in the hall. Ask. What do they say?'},
+          {id:'sv3',text:'Is the strategy revisited and updated when significant signals change - not "we have a 3-year plan, follow it"?',probe:'How often does strategy update meaningfully?'}
+        ]},
+      {id:'de',name:'Decision Authority & Empowerment',color:'#E9C46A',
+        questions:[
+          {id:'de1',text:'Do product managers have actual decision authority over what their team builds - or do they "manage" stakeholder requests?',probe:'Cagan\'s "missionary teams vs mercenary teams". Which describes yours?'},
+          {id:'de2',text:'Can a PM say no to a senior executive\'s feature request - with reasoning, with respect - and not be career-punished?',probe:'Or is "alignment" code for compliance?'},
+          {id:'de3',text:'Are product teams trusted to choose the technical and design solutions to problems - not just execute pre-decided solutions?',probe:'Product trio (PM/design/eng) collaborate, or does PM hand off requirements?'}
+        ]},
+      {id:'ev',name:'Experimentation & Validation',color:'#2A9D8F',
+        questions:[
+          {id:'ev1',text:'Do teams run structured experiments (A/B tests, prototypes, fake doors, concierge MVPs) to validate ideas before fully building?',probe:'Or do features go from idea to production with no validation step?'},
+          {id:'ev2',text:'When experiments produce disappointing results, is the response to learn and pivot - or to ship the feature anyway because it\'s on the roadmap?',probe:'Last experiment that failed: what happened next?'},
+          {id:'ev3',text:'Is there budget and time explicitly allocated to discovery and experimentation - not squeezed in around feature delivery?',probe:'What percent of capacity is allocated to discovery work?'}
+        ]},
+      {id:'oo',name:'Outcome vs Output Orientation',color:'#264653',
+        questions:[
+          {id:'oo1',text:'Are product teams measured on outcomes (customer behavior change, business impact) - or on outputs (features shipped, story points done)?',probe:'Performance reviews: which metrics matter? Outputs almost always win on paper.'},
+          {id:'oo2',text:'When a feature ships, is there a defined success metric and a check-in 30/60/90 days later to see if it landed?',probe:'Or does the team move on to the next feature?'},
+          {id:'oo3',text:'Are unsuccessful features sunset based on metrics - or do they linger as technical debt because nobody owns the kill decision?',probe:'Last feature you removed because it wasn\'t delivering value: when?'}
+        ]},
+      {id:'sa',name:'Stakeholder Alignment & Communication',color:'#8E44AD',
+        questions:[
+          {id:'sa1',text:'Do product reviews focus on outcomes and customer evidence - not feature status updates?',probe:'What does the quarterly product review look like?'},
+          {id:'sa2',text:'Is the product roadmap communicated as a set of bets and outcomes - not as a feature factory commitment?',probe:'"Now/Next/Later" or "Q1/Q2/Q3 features delivered"?'},
+          {id:'sa3',text:'When stakeholders push for features, can the product team respond with "what outcome are we trying to achieve?" - and have the conversation actually shift?',probe:'Or do you ship the feature and hope for the best?'}
+        ]}
+    ],
+    maxPerQ:5, perDimMax:15, totalMax:90,
+    bands:[
+      {id:'feature-factory',name:'Feature Factory',min:0,max:30,
+        headline:'You have PMs and roadmaps. You don\'t yet have product management.',
+        summary:'The signs: PMs operate as project managers for stakeholder requests, success is measured in features shipped, customer contact is sparse and indirect, "strategy" is a stack-ranked backlog. The fix is not more PMs - it\'s a structural shift in how decisions are made and what gets measured.',
+        hint:'Feature Factory orgs almost always score lowest on Decision Authority and Outcome Orientation. The two are linked - and both require senior leaders to actually delegate. Start by surfacing what gets rewarded.'},
+      {id:'product-led',name:'Product-Led Practicing',min:31,max:60,
+        headline:'You have product disciplines in pockets. You\'re not yet a product-led organization.',
+        summary:'Some product teams have internalized real product management - the trio, discovery, outcomes, strategy. Most have not. The biggest gap is usually senior leadership: they sponsor product roles but still drive feature commitments from above. The work now is system-level: change the incentives, change the conversations.',
+        hint:'Product-Led-Practicing orgs are often strong on Discovery within teams but weak on Stakeholder Alignment. Teams know what to do; leadership demands the feature factory.'},
+      {id:'product-mature',name:'Product-Mature',min:61,max:90,
+        headline:'Product management drives the company - outcomes drive decisions, evidence drives priorities, teams own their bets.',
+        summary:'Top decile. PMs have authority, strategy is explicit and updated, customers are in constant contact, experiments produce real learning. Risk: complacency. Discovery muscles erode without explicit maintenance, and Cagan-vintage product practices need refreshing for AI-augmented work.',
+        hint:'Mature product orgs collapse silently when senior product leadership rotates out. Document the operating model. Train successors. Refresh for AI-augmented PM.'}
+    ],
+    plans:{
+      'feature-factory':{
+        d30:[{t:'Run an Outcome Audit on your current roadmap',d:'For each major item: what customer outcome will this deliver? How will we measure it? Most teams discover 60%+ have no answer.'},
+             {t:'Schedule weekly customer conversations for every PM',d:'30 min, real customer, no proxies. Track adherence at the leadership level. Cancel meetings that compete for the time.'},
+             {t:'Pick one team to pilot true product autonomy',d:'PM owns the bet. Trio makes solution decisions. Outcome-measured, not output-measured.'}],
+        d60:[{t:'Change one major review meeting from output to outcome',d:'Replace "what shipped" with "what changed for customers". Document the difference.'},
+             {t:'Allocate 20% of team capacity to discovery',d:'Explicit, visible. Defended from being raided for feature work.'}],
+        d90:[{t:'Rewrite PM job description',d:'From "translates requirements" to "owns customer outcomes". Performance reviews follow.'}],
+        reading:[{a:'Marty Cagan',t:'Inspired',y:2018},{a:'Marty Cagan',t:'Empowered',y:2020},{a:'Melissa Perri',t:'Escaping the Build Trap',y:2018}]
+      },
+      'product-led':{
+        d30:[{t:'Audit which teams are operating product-led vs feature-factory',d:'Public, honest. Use it to surface where leadership behavior needs to change.'},
+             {t:'Train senior stakeholders in outcome-language',d:'PM\'s 1-day workshop. Senior team learns to ask "what outcome?" before "what feature?"'},
+             {t:'Standardize the discovery cadence',d:'Every team runs at least one discovery loop per quarter. Documented. Reviewed.'}],
+        d60:[{t:'Connect Discovery and Stakeholder Alignment',d:'If teams discover but stakeholders override, the discovery is wasted. Build a process for discovery insights to flow up.'},
+             {t:'Make outcome metrics part of the performance system',d:'Equal weight to delivery metrics. Roll out next review cycle.'}],
+        d90:[{t:'Restructure the product organization toward value streams',d:'Replace project-based teams with persistent product teams. Inverse Conway Maneuver applied to product.'}],
+        reading:[{a:'Teresa Torres',t:'Continuous Discovery Habits',y:2021},{a:'Jeff Patton',t:'User Story Mapping',y:2014},{a:'Itamar Gilad',t:'Evidence-Guided',y:2024}]
+      },
+      'product-mature':{
+        d30:[{t:'Document the product operating model',d:'If the CPO rotates out, what survives? Companies lose product maturity this way.'},
+             {t:'Pilot AI-augmented product management',d:'Trio + AI as fourth seat. Test what changes about discovery cadence, experiment velocity, decision quality.'},
+             {t:'Mentor one adjacent product org',d:'Customer, portfolio co, partner. Teach the practices. Teaching is the stress test.'}],
+        d60:[{t:'Externalize the product operating model',d:'Investor decks, recruiting, customer narratives. Product-led becomes how you\'re described.'},
+             {t:'Refresh the PM competency framework for AI-augmented work',d:'New skills: prompt design for discovery, AI-augmented research synthesis, AI-pair experimentation.'}],
+        d90:[{t:'Run the Innovation Framework + Mutation Readiness diagnostics',d:'Your product foundation is strong. Test the cultural and AI-age frontiers.'}],
+        reading:[{a:'Marty Cagan',t:'Transformed',y:2024},{a:'Ethan Mollick',t:'Co-Intelligence',y:2024},{a:'John Cutler',t:'The Beautiful Mess',y:2024}]
+      }
+    }
+  }
+});
+const SOON_CARDS = [
+  {id:'devops-dora',title:'DevOps & DORA Metrics',tag:'Coming soon · Q3 2026',desc:'Lead time, deploy frequency, change-fail rate, MTTR. The Accelerate / DORA Four Key Metrics applied as a maturity diagnostic. Aligned with SAFe DevOps Practitioner.'},
+  {id:'safe-adoption',title:'SAFe Adoption Readiness',tag:'Coming soon · Q3 2026',desc:'Pre-transformation diagnostic for orgs considering SAFe. Measures cultural, structural, and capability readiness before committing budget.'},
+  {id:'team-health',title:'Team Health Check',tag:'Coming soon · Q3 2026',desc:'Spotify-style lightweight team-level diagnostic. Always free. 10 questions, 5 minutes. Run per quarter to track team trajectory.'},
+  {id:'coaching-maturity',title:'Coaching Maturity (ICAgile-aligned)',tag:'Coming soon · Q4 2026',desc:'For Agile Coaches and coaching collectives. Self + peer assessment against the ICAgile coaching competency model.'}
+];
+const STATE = { currentId:null, perspective:null, answers:{}, stepIndex:0, userTier:'free', userEmail:null };
+try { const u = JSON.parse(localStorage.getItem('aa_user') || 'null'); if(u){STATE.userTier=u.tier||'free';STATE.userEmail=u.email||null;}}catch(e){}
+
+function inferScore(text){
+  if(!text||!text.trim()) return {score:null,confidence:0,rationale:'No answer yet.'};
+  const t=text.trim().toLowerCase();
+  if(/\b(n\/a|na|don'?t know|skip|not applicable)\b/.test(t)) return {score:'na',confidence:.9,rationale:'Reading this as N/A.'};
+  if(/\b(never|none|absolutely not|not at all)\b/.test(t)) return {score:1,confidence:.85,rationale:'Strong "never" signal — scoring 1.'};
+  if(/\b(always|every time|consistently|systematically)\b/.test(t)) return {score:5,confidence:.85,rationale:'Strong "always" signal — scoring 5.'};
+  if(/\b(rarely|seldom|hardly|occasionally)/.test(t)) return {score:2,confidence:.75,rationale:'Reading a "rarely" tone — scoring 2.'};
+  if(/^no[\s,]+but/.test(t)) return {score:2,confidence:.7,rationale:'"No, but" pattern — scoring 2.'};
+  if(/^no\b/.test(t)) return {score:1,confidence:.7,rationale:'Reading this as a "no" — scoring 1.'};
+  if(/^yes[\s,]+(sometimes|kind of|trying|partly|partially|mostly when)/.test(t)) return {score:3,confidence:.7,rationale:'"Yes but…" pattern — scoring 3.'};
+  if(/^yes[\s,]+(some teams|in part)/.test(t)) return {score:3,confidence:.7,rationale:'Scope-limited "yes" — scoring 3.'};
+  if(/^yes\b/.test(t)) return {score:4,confidence:.6,rationale:'Reading this as confident "yes" — scoring 4.'};
+  if(/\b(sometimes|maybe|in progress|working on)\b/.test(t)) return {score:3,confidence:.6,rationale:'Hedged middle ground — scoring 3.'};
+  return {score:3,confidence:.3,rationale:'Defaulting to 3 — adjust if it feels off.'};
+}
+
+function getRoute(){
+  const h=location.hash||'#/';
+  const m=h.match(/^#\/(run|results)\/([^\/]+)/);
+  if(m) return {view:m[1],id:m[2]};
+  return {view:'landing'};
+}
+window.addEventListener('hashchange',render);
+window.addEventListener('load',function(){
+  // Auto-route if data-aa-default-id is set on wrapper
+  const wrap = document.getElementById('aa-app');
+  const def = wrap && wrap.getAttribute('data-aa-default-id');
+  if(def && ASSESSMENTS[def] && !location.hash.includes('/run/') && !location.hash.includes('/results/')) {
+    location.hash = '#/run/' + def;
+  } else { render(); }
+});
+
+function render(){
+  const r=getRoute();
+  const el=document.getElementById('aa-content');
+  if(r.view==='landing') el.innerHTML=renderLanding();
+  else if(r.view==='run') startOrResume(r.id,el);
+  else if(r.view==='results') el.innerHTML=renderResults(r.id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderLanding(){
+  const liveCards = Object.values(ASSESSMENTS).map(a => `
+<div class="aa-card">
+  <div class="aa-card-badge"><span class="aa-pill">Free · Live</span><span style="font-size:11px;color:#64748b;font-weight:600">${a.minutes} min</span></div>
+  <h3>${a.title}</h3>
+  <p class="aa-tag">${a.tagline}</p>
+  <p class="aa-desc">${a.description.substring(0,140)}…</p>
+  <div class="aa-card-meta"><span>${a.dimensions.length} dimensions</span><span>${a.questionCount} questions</span></div>
+  <div><a class="aa-btn aa-btn-primary" href="#/run/${a.id}">Start &rarr;</a></div>
+</div>`).join('');
+  const soonCards = SOON_CARDS.map(s => `
+<div class="aa-card aa-soon">
+  <div class="aa-card-badge"><span class="aa-pill aa-pill-soon">${s.tag}</span></div>
+  <h3>${s.title}</h3>
+  <p class="aa-desc">${s.desc}</p>
+  <div><a class="aa-btn aa-btn-ghost" href="https://meetings.hubspot.com/john2795">Notify me &rarr;</a></div>
+</div>`).join('');
+  return `<div class="aa-hero"><div class="aa-inner">
+<span class="aa-eyebrow" style="display:block;text-align:center;width:fit-content;margin:0 auto">Free diagnostics</span>
+<h1>Where does your organization actually stand?</h1>
+<p class="aa-sub">${Object.keys(ASSESSMENTS).length} live diagnostics built by Mark Saymen (Gold SPCT, author of <em>Mutation Readiness</em>). Honest scoring. Tailored 30-60-90 day plan. Zero fluff.</p>
+<div class="aa-hero-cta"><a class="aa-btn aa-btn-primary" href="#/run/${Object.keys(ASSESSMENTS)[0]||'innovation-framework'}">Start now &rarr;</a></div>
+<div class="aa-trust-strip"><span>5-15 min each</span><span>·</span><span>No login to start</span><span>·</span><span>Personalized roadmap</span></div>
+</div></div>
+<div class="aa-cards">${liveCards}${soonCards}</div>
+<div style="background:linear-gradient(135deg,#053947,#0170B9);color:#fff;padding:50px 24px;text-align:center"><div style="max-width:680px;margin:0 auto">
+<h2 style="font-size:26px;color:#fff;margin-bottom:10px">Want the full diagnostic for every assessment?</h2>
+<p style="color:#cbd5e1;margin-bottom:22px">14-day free trial unlocks the 30-60-90 day action plan, recommended reading per band, and PDF download across all assessments.</p>
+<button class="aa-btn aa-btn-accent" onclick="AA.signupTrial()">Start the 14-day free trial &rarr;</button>
+</div></div>`;
+}
+
+function startOrResume(id,el){
+  if(!ASSESSMENTS[id]) { el.innerHTML='<div style="padding:60px;text-align:center"><h2>Unknown assessment</h2><a href="#/" class="aa-btn aa-btn-primary">Back to all assessments</a></div>'; return; }
+  if(STATE.currentId!==id) { STATE.currentId=id; STATE.stepIndex=0; STATE.perspective=null; STATE.answers={}; }
+  renderRunner(el);
+}
+
+function flatQuestions(a){const arr=[];a.dimensions.forEach(d=>d.questions.forEach(q=>arr.push({...q,dim:d})));return arr;}
+
+function renderRunner(el){
+  const a=ASSESSMENTS[STATE.currentId];
+  const qs=flatQuestions(a);
+  const totalSteps=qs.length+2;
+  const progress=Math.round((STATE.stepIndex/totalSteps)*100);
+  let inner=`<div class="aa-runner-inner"><div class="aa-progress"><div class="aa-progress-bar" style="width:${progress}%"></div></div>`;
+  if(STATE.stepIndex===0){
+    inner+=`<div class="aa-step"><div class="aa-step-meta"><span>${a.title}</span><span>~${a.minutes} min</span></div>
+<h2 style="font-size:28px;font-weight:800;margin-bottom:14px">${a.tagline}</h2>
+<p style="margin-bottom:18px;font-size:15px">${a.description}</p>
+<div style="display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;font-size:13px;color:#64748b;font-weight:600">
+<span>${a.dimensions.length} dimensions</span><span>·</span><span>${a.questionCount} questions</span><span>·</span><span>3 result bands</span>
+</div>
+<div style="padding:16px;background:#f8fafc;border-radius:10px;font-size:13px;color:#475569;margin-bottom:20px">
+<strong style="color:#053947">How it works:</strong> Each question accepts a short free-text answer. We'll suggest a 1-5 score based on what you wrote — you can override. Honest answers produce useful diagnostics; rosy answers produce rosy lies. No login required to start.
+</div>
+<div class="aa-nav"><a class="aa-btn aa-btn-ghost" href="#/">All assessments</a><span class="aa-spacer"></span><button class="aa-btn aa-btn-primary" onclick="AA.next()">Begin &rarr;</button></div></div>`;
+  } else if(STATE.stepIndex===1){
+    const pq=a.perspectiveQuestion;
+    inner+=`<div class="aa-step"><div class="aa-step-meta"><span>Calibration</span><span>Step 1 of ${totalSteps-1}</span></div>
+<h2 class="aa-q-text">${pq.prompt}</h2><p class="aa-q-probe">${pq.subtext}</p>
+<div style="display:grid;gap:10px;margin-top:6px">
+${pq.options.map(o=>`<button onclick="AA.pickPerspective('${o.id}')" style="text-align:left;padding:14px 16px;background:#fff;border:1.5px solid var(--aa-line);border-radius:8px;cursor:pointer;font-size:15px;color:var(--aa-ink)">${o.label}</button>`).join('')}
+</div>
+<div class="aa-nav"><button class="aa-btn aa-btn-ghost" onclick="AA.prev()">&larr; Back</button><span class="aa-spacer"></span></div></div>`;
+  } else {
+    const qIdx=STATE.stepIndex-2;
+    const q=qs[qIdx];
+    if(!q){el.innerHTML='<div style="padding:80px;text-align:center"><div style="font-size:50px">🎯</div><h2>Crunching your answers...</h2></div>';setTimeout(()=>submit(),700);return;}
+    const ans=STATE.answers[q.id]||{text:'',score:null};
+    const inf=inferScore(ans.text);
+    const display=ans.score!==null?ans.score:inf.score;
+    const showReflect=ans.text&&ans.text.trim().length>0;
+    inner+=`<div class="aa-step"><div class="aa-step-meta">
+<span class="aa-dim-pill" style="background:${q.dim.color}">${q.dim.name}</span><span>Q ${qIdx+1} of ${qs.length}</span></div>
+<h2 class="aa-q-text">${q.text}</h2>${q.probe?`<p class="aa-q-probe">${q.probe}</p>`:''}
+<textarea class="aa-input" id="aa-input" placeholder="Type your honest answer here..." oninput="AA.onAnswerChange(this.value)">${ans.text||''}</textarea>
+${showReflect?`<div class="aa-reflect"><span style="font-size:18px">💬</span><div>I'd ${inf.score==='na'?'read this as <strong>N/A</strong>':`score that a <strong>${inf.score}</strong>`} — ${inf.rationale.replace(/—.*/,'')}. Override below if needed.</div></div>`:''}
+<div class="aa-likert">${[1,2,3,4,5].map(n=>`<button class="${display===n?'aa-sel':''}" onclick="AA.pickScore(${n})">${n}</button>`).join('')}<button class="${display==='na'?'aa-sel aa-sel-na':''}" onclick="AA.pickScore('na')">N/A</button></div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-top:8px;text-transform:uppercase;letter-spacing:.6px"><span>Never</span><span>Always</span></div>
+<div class="aa-nav"><button class="aa-btn aa-btn-ghost" onclick="AA.prev()">&larr; Back</button><span class="aa-spacer"></span><button class="aa-btn aa-btn-primary" ${display===null?'disabled':''} onclick="AA.next()">${qIdx===qs.length-1?'Submit':'Next'} &rarr;</button></div></div>`;
+  }
+  inner+='</div>';
+  el.innerHTML=`<div class="aa-runner">${inner}</div>`;
+}
+
+function submit(){
+  const a=ASSESSMENTS[STATE.currentId];
+  const dimScores={};
+  a.dimensions.forEach(d=>{
+    let sum=0,n=0;
+    d.questions.forEach(q=>{const ans=STATE.answers[q.id];if(ans&&ans.score!=='na'&&ans.score!==null){sum+=+ans.score;n++;}});
+    dimScores[d.id]=n>0?Math.round((sum/(n*5))*a.perDimMax):0;
+  });
+  let total=Object.values(dimScores).reduce((s,n)=>s+n,0);
+  if(a.normalizeTo) total=Math.round(total*(a.normalizeTo/a.totalMax));
+  const maxDisplay=a.normalizeTo||a.totalMax;
+  const band=a.bands.find(b=>total>=b.min&&total<=b.max)||a.bands[0];
+  const result={assessmentId:a.id,total,maxDisplay,dimScores,band,perspective:STATE.perspective,ts:Date.now()};
+  try{sessionStorage.setItem('aa_result',JSON.stringify(result));}catch(e){}
+  location.hash='#/results/'+a.id;
+}
+
+function renderResults(id){
+  const a=ASSESSMENTS[id];
+  if(!a) return '<div style="padding:60px;text-align:center">No assessment.</div>';
+  let result=null;try{result=JSON.parse(sessionStorage.getItem('aa_result')||'null');}catch(e){}
+  if(!result||result.assessmentId!==id) return `<div style="padding:80px;text-align:center"><h2>No results yet</h2><p style="margin:16px 0">Take the ${a.title} first.</p><a class="aa-btn aa-btn-primary" href="#/run/${id}">Start the assessment &rarr;</a></div>`;
+  if(!STATE.userEmail) return renderEmailGate(a,result);
+  const isPaid=STATE.userTier==='trial'||STATE.userTier==='paid';
+  const radarSvg=buildRadar(a,result);
+  const dimsHtml=a.dimensions.map(d=>{const s=result.dimScores[d.id]||0;const pct=Math.round((s/a.perDimMax)*100);return `<div class="aa-dim-row"><div style="font-size:13px;font-weight:600">${d.name}</div><div class="aa-dim-bar"><div class="aa-dim-fill" style="width:${pct}%;background:${d.color}"></div></div><div class="aa-dim-score">${s}/${a.perDimMax}</div></div>`;}).join('');
+  let html=`<div class="aa-results"><div class="aa-results-inner">
+<div class="aa-score-hero"><div style="font-size:42px">🎉</div><div class="aa-score-num">${result.total}</div><div class="aa-score-out">out of ${result.maxDisplay}</div>
+<div class="aa-score-band">${result.band.name}</div><div class="aa-score-head">${result.band.headline}</div></div>
+<div class="aa-grid-2">
+<div class="aa-panel"><h3>How you scored by dimension</h3>${dimsHtml}<div class="aa-hint"><strong>Diagnostic hint:</strong> ${result.band.hint||''}</div></div>
+<div class="aa-panel"><h3>Your shape, at a glance</h3><div class="aa-radar-wrap">${radarSvg}</div></div>
+</div>
+<div class="aa-panel" style="margin-bottom:22px"><h3>What your score means</h3><p style="font-size:15px;line-height:1.65">${result.band.summary}</p></div>`;
+  if(isPaid){
+    const plan=a.plans[result.band.id];
+    html+=`<div class="aa-plan-grid">
+<div class="aa-plan-card"><h4>30 days</h4>${plan.d30.map(x=>`<div class="aa-plan-action"><strong>${x.t}</strong>${x.d}</div>`).join('')}</div>
+<div class="aa-plan-card"><h4>60 days</h4>${plan.d60.map(x=>`<div class="aa-plan-action"><strong>${x.t}</strong>${x.d}</div>`).join('')}</div>
+<div class="aa-plan-card"><h4>90 days</h4>${plan.d90.map(x=>`<div class="aa-plan-action"><strong>${x.t}</strong>${x.d}</div>`).join('')}</div></div>
+<div class="aa-panel"><h3>Recommended reading</h3><div class="aa-reading">${plan.reading.map(b=>`<div class="aa-book"><strong>${b.t}</strong>${b.a} · ${b.y}</div>`).join('')}</div></div>
+<div style="text-align:center;margin-top:28px"><button class="aa-btn aa-btn-primary" onclick="window.print()">Download PDF</button> <a class="aa-btn aa-btn-ghost" href="#/">All assessments</a></div>`;
+  } else {
+    html+=`<div class="aa-gate"><div class="aa-gate-inner">
+<div><span class="aa-eyebrow" style="background:rgba(251,191,36,.2);color:#fbbf24">Unlock full report</span>
+<h2 style="margin-top:14px">Get your 30-60-90 day action plan</h2>
+<p>Personalized roadmap, recommended reading, PDF download, longitudinal tracking — all unlock with the 14-day free trial. No credit card.</p>
+<button class="aa-btn aa-btn-accent" onclick="AA.signupTrial()">Start 14-day free trial &rarr;</button> &nbsp; <a class="aa-btn aa-btn-ghost" style="color:#fff;border-color:#fff" href="https://meetings.hubspot.com/john2795">Or talk to Mark</a>
+</div>
+<div class="aa-pricing"><div style="font-size:11px;color:#fbbf24;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">After trial</div>
+<div class="aa-amt">$149</div><div class="aa-per">/year · all assessments</div>
+<ul><li>Full 30-60-90 plan per band</li><li>Recommended reading</li><li>PDF report</li><li>Longitudinal tracking</li><li>Email + advisor support</li></ul></div>
+</div></div>`;
+  }
+  // Cross-promote next assessment
+  const otherIds=Object.keys(ASSESSMENTS).filter(x=>x!==id);
+  if(otherIds.length){
+    const next=ASSESSMENTS[otherIds[0]];
+    html+=`<div style="text-align:center;margin-top:28px;padding:22px;background:#fff;border:1px dashed var(--aa-line);border-radius:12px">
+<p style="font-size:13px;color:#64748b;margin-bottom:10px">Done with this one?</p>
+<a class="aa-btn aa-btn-ghost" href="#/run/${next.id}">Try ${next.title} &rarr;</a></div>`;
+  }
+  html+='</div></div>';
+  return html;
+}
+
+function buildRadar(a,result){
+  const dims=a.dimensions;const n=dims.length;const cx=160,cy=160,R=130;
+  const angle=i=>-Math.PI/2+(i*2*Math.PI/n);
+  const pt=(i,r)=>[cx+r*Math.cos(angle(i)),cy+r*Math.sin(angle(i))];
+  let grid='';
+  for(let g=0.25;g<=1;g+=0.25){const poly=dims.map((_,i)=>pt(i,R*g).join(',')).join(' ');grid+=`<polygon points="${poly}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`;}
+  let axes='',labels='';
+  dims.forEach((d,i)=>{const[x,y]=pt(i,R);axes+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;const[lx,ly]=pt(i,R+18);const anchor=lx<cx-4?'end':lx>cx+4?'start':'middle';labels+=`<text x="${lx}" y="${ly+4}" font-size="10" font-weight="600" fill="#475569" text-anchor="${anchor}">${d.name.split(' ').slice(0,2).join(' ')}</text>`;});
+  const dataPoly=dims.map((d,i)=>{const s=result.dimScores[d.id]||0;return pt(i,R*s/a.perDimMax).join(',');}).join(' ');
+  const points=dims.map((d,i)=>{const s=result.dimScores[d.id]||0;const[x,y]=pt(i,R*s/a.perDimMax);return `<circle cx="${x}" cy="${y}" r="4" fill="${d.color}" stroke="#fff" stroke-width="2"/>`;}).join('');
+  return `<svg class="aa-radar" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">${grid}${axes}<polygon points="${dataPoly}" fill="rgba(1,112,185,0.18)" stroke="#0170B9" stroke-width="2"/>${points}${labels}</svg>`;
+}
+
+function renderEmailGate(a,result){return `<div class="aa-results"><div class="aa-results-inner">
+<div class="aa-score-hero" style="background:linear-gradient(135deg,#053947,#0170B9)">
+<div style="font-size:42px">🎉</div>
+<h2 style="color:#fff;font-size:30px;font-weight:800;margin:0 0 10px">All done!</h2>
+<p style="color:#cbd5e1;font-size:16px;max-width:540px;margin:0 auto 22px">Your ${a.title} is scored and ready. Drop your email to see the results — and we'll send a copy to your inbox.</p>
+<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:22px;max-width:440px;margin:0 auto;text-align:left">
+<div class="aa-form-field"><label style="color:#fff">Your work email</label><input type="email" id="aa-gate-email" placeholder="you@yourcompany.com" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff"/></div>
+<div class="aa-form-field"><label style="color:#fff">Your first name (optional)</label><input type="text" id="aa-gate-name" placeholder="Alex" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff"/></div>
+<div id="aa-gate-err" style="font-size:13px;color:#fca5a5;margin-bottom:10px;display:none"></div>
+<button class="aa-btn aa-btn-accent" style="width:100%" onclick="AA.unlockResults('${a.id}')">See my results &rarr;</button>
+<p style="font-size:11px;color:#cbd5e1;text-align:center;margin-top:10px">No spam. Unsubscribe anytime.</p>
+</div></div></div></div>`;}
+
+window.AA={
+  next(){const a=ASSESSMENTS[STATE.currentId];const qs=flatQuestions(a);const ts=qs.length+2;if(STATE.stepIndex>=ts-1){submit();return;}STATE.stepIndex++;renderRunner(document.getElementById('aa-content'));window.scrollTo({top:0,behavior:'smooth'});},
+  prev(){if(STATE.stepIndex===0){location.hash='#/';return;}STATE.stepIndex--;renderRunner(document.getElementById('aa-content'));window.scrollTo({top:0,behavior:'smooth'});},
+  pickPerspective(id){STATE.perspective=id;AA.next();},
+  onAnswerChange(text){const a=ASSESSMENTS[STATE.currentId];const qs=flatQuestions(a);const q=qs[STATE.stepIndex-2];if(!q)return;const inf=inferScore(text);const e=STATE.answers[q.id]||{};STATE.answers[q.id]={text,score:e.score!=null?e.score:inf.score};renderRunner(document.getElementById('aa-content'));setTimeout(()=>{const ta=document.getElementById('aa-input');if(ta){ta.focus();ta.setSelectionRange(text.length,text.length);}},0);},
+  pickScore(n){const a=ASSESSMENTS[STATE.currentId];const qs=flatQuestions(a);const q=qs[STATE.stepIndex-2];if(!q)return;const e=STATE.answers[q.id]||{text:''};STATE.answers[q.id]={text:e.text,score:n};renderRunner(document.getElementById('aa-content'));},
+  openModal(html){document.getElementById('aa-modal-content').innerHTML=html;document.getElementById('aa-modal').classList.add('aa-open');},
+  closeModal(){document.getElementById('aa-modal').classList.remove('aa-open');},
+  signupTrial(){AA.openModal(`<h3 style="font-size:22px;font-weight:800;margin-bottom:8px">Start your 14-day free trial</h3>
+<p style="margin-bottom:16px">Unlocks the 30-60-90 day plan, recommended reading, PDF download, and longitudinal tracking. No credit card.</p>
+<div class="aa-form-field"><label>Work email</label><input type="email" id="aa-trial-email" placeholder="you@yourcompany.com"/></div>
+<div class="aa-form-field"><label>First name (optional)</label><input type="text" id="aa-trial-name" placeholder="Alex"/></div>
+<div id="aa-trial-err" style="font-size:13px;color:#dc2626;margin-bottom:10px;display:none"></div>
+<button class="aa-btn aa-btn-primary" style="width:100%" onclick="AA.activateTrial()">Activate trial &rarr;</button>
+<p style="font-size:11px;color:#64748b;text-align:center;margin-top:10px">Trial ends after 14 days. No charge.</p>`);},
+  unlockResults(id){const e=document.getElementById('aa-gate-email').value.trim();const err=document.getElementById('aa-gate-err');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';err.textContent='Please enter a valid email.';return;}const n=document.getElementById('aa-gate-name').value.trim();STATE.userEmail=e;try{localStorage.setItem('aa_user',JSON.stringify({tier:'free',email:e,name:n,ts:Date.now()}));}catch(_){}render();},
+  activateTrial(){const e=document.getElementById('aa-trial-email').value.trim();const err=document.getElementById('aa-trial-err');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){err.style.display='block';err.textContent='Please enter a valid email.';return;}const n=document.getElementById('aa-trial-name').value.trim();STATE.userTier='trial';STATE.userEmail=e;try{localStorage.setItem('aa_user',JSON.stringify({tier:'trial',email:e,name:n,ts:Date.now(),trialEnds:Date.now()+14*24*60*60*1000}));}catch(_){}AA.closeModal();render();}
+};
+})();
