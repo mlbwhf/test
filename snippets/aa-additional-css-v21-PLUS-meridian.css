@@ -1,0 +1,2043 @@
+/* ============================================================================
+   AGILE AGILIST — "Additional CSS" · v21 CLEAN SHEET (single canonical file)
+   Location: Appearance → Customize → Additional CSS — REPLACES EVERYTHING.
+
+   HOW TO DEPLOY: select ALL existing content in Additional CSS, DELETE it,
+   paste ONLY this file, Publish, purge cache, hard-refresh.
+   Keep WPCode "AA – Nav JS" (v18) ACTIVE. Keep WPCode "AA – Global CSS" OFF.
+
+   What this replaces / why it exists:
+   The previous Additional CSS carried the ENTIRE legacy nav system (fixed
+   header, pure-CSS :hover mega panel = the click-trap, old flagship,
+   NAV FIX v3, an old mobile accordion) PLUS the modern appendix pasted
+   TWICE (v18 + a character-corrupted v19 copy with mojibake inside
+   content: strings). This file is the deduplicated result:
+     KEPT  (verbatim, behavior-preserving): tokens, header phone/CTA, nav
+       dark-pill kill + tab padding, Book-Consult button, entry-banner
+       collapse, calendar (H), image constraints (I), Stripe icon (J),
+       cohort rows (K), footer (L) + social masks (Q), course bar (M),
+       course template (N), message form (O), legal (P), hero-title
+       suppression (S), SA hero + logo wall + tabs (T/U), item-28855.
+     REMOVED (dead/superseded): legacy fixed-header block + body padding,
+       mobile-menu z-index patch (E), old breadcrumb styling (native crumbs
+       are hidden — pill breadcrumb is injected by AA – Nav JS), legacy mega
+       menu (G) + "Center mega panel" + R + NAV FIX v3 + trailing patch
+       blocks + old mobile accordion — all superseded by the AA NAV section
+       at the end; duplicate/corrupted appendix copies.
+     All non-ASCII glyphs in content: strings are CSS-escaped (\2014, \2192,
+       \00b7, \1F512) so copy/paste round-trips can never corrupt them again.
+
+   PERF NOTE: the @import below is render-blocking. Recommended upgrade:
+   set Newsreader in Appearance → Customize → Typography (Astra loads it
+   with preconnect + display=swap), then DELETE the @import line.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300..700;1,300..700&display=swap');
+
+/* ==================== A. DESIGN TOKENS ==================== */
+:root {
+	--aa-teal: #127E88;
+	--aa-teal-dark: #0B2E35;
+	--aa-navy: #0E3A44;
+	--aa-teal-light: #8FCFCF;
+	--aa-text: #0E3A44;
+	--aa-body: #3C565E;
+	--aa-muted: #5E7378;
+	--aa-muted-2: #88A0A4;
+	--aa-border: #DCEAEA;
+	--aa-border-strong: #C7DEDE;
+	--aa-bg: #F5FAFA;
+	--aa-bg-2: #F3FAFA;
+	--aa-accent: #8FCFCF;
+	--aa-amber: #F59E0B;
+	--aa-gold: #D9A93E;
+}
+
+/* ==================== B. HEADER EXTRAS (phone + generic CTA) ====================
+   (Header positioning itself lives in the AA NAV section at the end —
+   sticky, NOT fixed; no body padding-top.) */
+.aa-header-phone {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--aa-navy) !important;
+	font-weight: 600;
+	font-size: 14px;
+	text-decoration: none;
+	margin-right: 14px;
+}
+.aa-header-phone:hover { color: var(--aa-teal) !important; }
+.aa-header-phone svg { width: 14px; height: 14px; color: var(--aa-teal); }
+
+.ast-builder-html-element a.aa-header-cta,
+a.aa-header-cta {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 20px !important;
+	background: var(--aa-teal) !important;
+	color: #fff !important;
+	border-radius: 100px;
+	font-weight: 600 !important;
+	font-size: 13px !important;
+	text-decoration: none !important;
+	transition: all .2s;
+	box-shadow: 0 2px 8px rgba(18,126,136,0.3);
+}
+.ast-builder-html-element a.aa-header-cta:hover,
+a.aa-header-cta:hover {
+	background: var(--aa-teal-dark) !important;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 14px rgba(18,126,136,0.4);
+}
+
+/* ==================== C. NAV — KILL "DARK PILL" + tab hit-area padding ==================== */
+html body .main-header-menu li.menu-item[class*="current"],
+html body .main-header-menu li.menu-item[class*="current"] > a,
+html body .main-header-menu li.menu-item[class*="current"] > a.menu-link,
+html body .main-header-menu li.menu-item[class*="current"] > a > span,
+html body .main-header-menu li.menu-item[class*="ancestor"],
+html body .main-header-menu li.menu-item[class*="ancestor"] > a,
+html body .main-header-menu li.menu-item[class*="ancestor"] > a.menu-link,
+html body .main-header-menu li.menu-item[class*="ancestor"] > a > span,
+html body .main-header-menu li.menu-item.ast-submenu-expanded,
+html body .main-header-menu li.menu-item.ast-submenu-expanded > a,
+html body .main-header-menu .aa-mega,
+html body .main-header-menu .aa-mega > a,
+html body .main-header-menu .aa-mega > a.menu-link {
+	background: transparent !important;
+	background-color: transparent !important;
+	background-image: none !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	color: var(--aa-navy) !important;
+}
+
+@media (min-width: 922px){
+	.main-header-menu > .menu-item > a,
+	.main-header-menu > .menu-item > .menu-link {
+		padding: 18px 18px !important;
+		border-bottom: 3px solid transparent !important;
+		line-height: 1.2 !important;
+		box-sizing: border-box;
+		position: relative;
+		transition: border-color .18s, color .18s;
+	}
+	.main-header-menu > .menu-item:hover > a,
+	.main-header-menu > .menu-item:focus-within > a {
+		border-bottom-color: var(--aa-teal) !important;
+		color: var(--aa-teal) !important;
+	}
+	.main-header-menu > .menu-item[class*="current"] > a::after,
+	.main-header-menu > .menu-item[class*="ancestor"] > a::after {
+		content: '';
+		position: absolute;
+		bottom: -3px; left: 20px; right: 20px;
+		height: 3px;
+		background: var(--aa-teal);
+		opacity: 0.4;
+	}
+}
+
+/* ==================== D. HEADER — BOOK CONSULT BUTTON ==================== */
+.site-header a[href*="consult" i],
+.site-header a[href*="/book" i],
+.site-header a[href*="schedule" i],
+.site-header a[href*="calendly" i],
+.site-header a[href*="meeting" i],
+.ast-primary-header-bar .ast-custom-button:last-of-type,
+a.ast-custom-button-2,
+body .site-header .ast-builder-html-element:last-child a,
+body .site-header .ast-builder-html-element:nth-of-type(2) a,
+body header .ast-builder-html-element:nth-of-type(2) a,
+body .ast-header-html.ast-hf-html-2 a,
+body .ast-header-html.ast-hf-html-1 + .ast-header-html a,
+body a[href*="book" i]:not(.aa-rd *):not(.wp-block-button__link) {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 6px;
+	padding: 12px 26px !important;
+	background: var(--aa-navy) !important;
+	color: #fff !important;
+	border-radius: 100px !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
+	text-decoration: none !important;
+	border: 2px solid var(--aa-navy) !important;
+	transition: all .18s;
+	white-space: nowrap;
+	box-shadow: 0 4px 14px -4px rgba(11,46,53,0.35);
+	margin-left: 12px;
+	line-height: 1;
+}
+.site-header a[href*="consult" i]:hover,
+.site-header a[href*="/book" i]:hover,
+.ast-primary-header-bar .ast-custom-button:last-of-type:hover,
+a.ast-custom-button-2:hover {
+	background: var(--aa-teal) !important;
+	border-color: var(--aa-teal) !important;
+	transform: translateY(-1px);
+}
+
+/* ==================== F. ENTRY BANNER COLLAPSE (kept from old breadcrumb block) ====================
+   Native Astra breadcrumbs are hidden site-wide (see AA NAV section) — the
+   pill breadcrumb is injected by AA – Nav JS. Only the banner-gap fixes stay. */
+.entry-header.ast-no-thumbnail.ast-no-title {
+	margin: 0 !important;
+	padding: 0 !important;
+	min-height: 0 !important;
+}
+article.ast-article-single > .ast-container { padding-top: 0 !important; }
+
+/* header bars must not clip the fixed mega panel */
+.ast-primary-header-bar,.main-header-bar,.site-header,.ast-primary-header,.ast-header-bar{overflow:visible !important}
+
+/* ==================== H. XYLUSEC CALENDAR ==================== */
+#xylusec-calendar-container {
+	width: 100%;
+	max-width: 1100px;
+	margin: 26px auto 0;
+	padding: 0 30px;
+}
+#xylusec-calendar-container .fc-dayGridMonth-view table.fc-col-header,
+#xylusec-calendar-container .fc-daygrid-body.fc-daygrid-body-unbalanced.fc-daygrid-body-natural {
+	width: 100% !important;
+}
+#xylusec-calendar-container .xylusec-c-button {
+	background: #fff !important;
+	border: 1px solid var(--aa-border-strong) !important;
+	color: var(--aa-body) !important;
+	border-radius: 2px !important;
+	box-shadow: none !important;
+}
+#xylusec-calendar-container .xylusec-c-button.fc-active,
+#xylusec-calendar-container .xylusec-c-button:hover {
+	background: var(--aa-teal) !important;
+	border-color: var(--aa-teal) !important;
+	color: #fff !important;
+}
+#xylusec-calendar-container .xylusec-c-button svg path { fill: #3C565E; }
+#xylusec-calendar-container .xylusec-c-button.fc-active svg path,
+#xylusec-calendar-container .xylusec-c-button:hover svg path { fill: #fff; }
+#xylusec-search-events {
+	background: var(--aa-teal) !important;
+	color: #fff !important;
+	border: 0 !important;
+	border-radius: 5px !important;
+}
+#xylusec-calendar .fc-button-primary {
+	background: var(--aa-teal) !important;
+	border-color: var(--aa-teal) !important;
+	box-shadow: none;
+}
+#xylusec-calendar .fc-button-primary:hover,
+#xylusec-calendar .fc-button-primary:not(:disabled).fc-button-active {
+	background: #0C5E66 !important;
+	border-color: #0C5E66 !important;
+}
+#xylusec-calendar .fc-event,
+#xylusec-calendar .fc-event-main,
+#xylusec-calendar .fc-daygrid-event {
+	background: var(--aa-teal) !important;
+	border-color: var(--aa-teal) !important;
+	color: #fff !important;
+}
+#xylusec-calendar .fc-daygrid-day.fc-day-today { background: #EAF6F7 !important; }
+#xylusec-calendar a { color: var(--aa-teal); }
+/* Hide the raw WP Event Aggregator feed on course pages — the v2 hero rail is
+   the only date UI; the feed is a hidden data source. */
+.aa-rd .wpea_frontend_archive { display: none !important; }
+
+/* ==================== I. IMAGE / ICON SIZE CONSTRAINTS ==================== */
+.aa-rd img { max-width: 100%; height: auto; }
+.aa-rd .aa-hero img,
+.aa-rd .aa-card img,
+.aa-rd img[src*="badge" i],
+.aa-rd img[src*="SPC" i],
+.aa-rd img[src*="ASPC" i],
+.aa-rd img[src*="RTE" i],
+.aa-rd img[src*="LPM" i],
+.aa-rd img[src*="APM" i],
+.aa-rd img[src*="ARCH" i],
+.aa-rd img[src*="SASM" i],
+.aa-rd img[src*="POPM" i],
+.aa-rd img.aa-badge-img,
+.aa-rd img.aa-pcard-badge {
+	max-width: 84px !important;
+	max-height: 84px !important;
+	width: auto !important;
+}
+.aa-rd .aa-pcard img { width: 48px !important; height: 48px !important; }
+.aa-rd .aa-trust img { max-height: 32px !important; width: auto !important; }
+img.emoji, .aa-rd img.emoji {
+	height: 1em !important;
+	width: 1em !important;
+	max-height: 20px;
+	max-width: 20px;
+	margin: 0 0.1em;
+	vertical-align: -0.1em;
+	display: inline;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+}
+.aa-rd img[src*="evetbrite" i],
+.aa-rd img[src*="eventbrite" i],
+.aa-rd img[src*="stripe" i],
+.aa-rd img[src*="Untitled-1"],
+.aa-rd img[alt*="Eventbrite" i],
+.aa-rd img[alt*="Stripe" i] {
+	height: 14px !important;
+	max-height: 14px !important;
+	width: auto !important;
+	max-width: 100px !important;
+	vertical-align: middle;
+	display: inline-block;
+}
+.aa-rd .btn-eb-dark img,
+.aa-rd button img[alt*="Eventbrite" i] {
+	height: 16px !important;
+	max-height: 16px !important;
+}
+.aa-rd .aa-card-secure img,
+.aa-rd img[alt*="lock" i],
+.aa-rd img[src*="lock" i] {
+	height: 12px !important;
+	max-height: 12px !important;
+	width: auto !important;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+/* ==================== J. STRIPE ICON IN ENROLL BUTTONS ==================== */
+.aa-rd .aa-card-reg::after,
+.aa-rd .aa-final-cta a.btn-white::after,
+.aa-rd a.btn-teal[href="#enroll"]::after {
+	content: '';
+	display: inline-block;
+	width: 42px; height: 12px;
+	background-image: url('https://agile-agilist.com/wp-content/uploads/2026/06/Untitled-1.webp');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	margin-left: 8px;
+	vertical-align: middle;
+	filter: brightness(0) invert(1);
+	opacity: 0.9;
+}
+.aa-rd .aa-final-cta a.btn-white::after { filter: none; opacity: 0.75; }
+
+/* ==================== K. EVENTS CALENDAR — COHORT-STYLE ROWS ==================== */
+.aa-rd .wpea_frontend_archive {
+	max-width: 1180px;
+	margin: 20px auto;
+	padding: 0;
+}
+.aa-rd .wpea_frontend_archive .archive-event {
+	background: #fff;
+	border: 1px solid var(--aa-border);
+	padding: 18px 22px;
+	margin: 0 0 10px;
+	display: grid;
+	grid-template-columns: auto 1fr auto auto auto;
+	gap: 20px;
+	align-items: center;
+	transition: border-color .15s, transform .15s;
+}
+.aa-rd .wpea_frontend_archive .archive-event:hover {
+	border-color: var(--aa-teal);
+	transform: translateY(-2px);
+}
+.aa-rd .wpea_frontend_archive .event_date {
+	background: #fff !important;
+	color: var(--aa-navy) !important;
+	padding: 8px 12px !important;
+	text-align: center;
+	border: 1px solid var(--aa-border);
+	border-radius: 3px;
+	min-width: 62px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+.aa-rd .wpea_frontend_archive .event_date .month {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--aa-muted-2) !important;
+	background: transparent;
+	padding: 0;
+}
+.aa-rd .wpea_frontend_archive .event_date .date {
+	font-family: 'Newsreader', Georgia, serif;
+	font-size: 22px;
+	line-height: 1;
+	color: var(--aa-teal) !important;
+	font-weight: 400;
+	font-style: italic;
+	background: transparent;
+	padding: 0;
+}
+.aa-rd .wpea_frontend_archive .archive-event:first-child .event_date {
+	background: var(--aa-teal-dark) !important;
+	color: #fff !important;
+	border-color: var(--aa-teal-dark);
+}
+.aa-rd .wpea_frontend_archive .archive-event:first-child .event_date .month { color: rgba(255,255,255,.85) !important; }
+.aa-rd .wpea_frontend_archive .archive-event:first-child .event_date .date { color: #fff !important; }
+.aa-rd .wpea_frontend_archive .event_title {
+	font-family: 'Newsreader', Georgia, serif;
+	font-weight: 400;
+	font-style: italic;
+	font-size: 19px;
+	color: var(--aa-navy) !important;
+	line-height: 1.2;
+	margin: 0 0 4px;
+}
+.aa-rd .wpea_frontend_archive .widget_event_sdate {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	color: var(--aa-muted-2);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+.aa-rd .wpea_frontend_archive .event_btn a,
+.aa-rd .wpea_frontend_archive a.wpea-text-deco {
+	color: var(--aa-teal) !important;
+	font-weight: 600;
+	font-size: 13px;
+	background: transparent;
+	padding: 8px 14px;
+	border: none;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+}
+.aa-rd .wpea_frontend_archive .event_btn a::after,
+.aa-rd .wpea_frontend_archive a.wpea-text-deco::after {
+	content: " \2192";
+	transition: transform .15s;
+}
+.aa-rd .wpea_frontend_archive .event_btn a:hover::after { transform: translateX(3px); }
+@media (max-width: 800px){
+	.aa-rd .wpea_frontend_archive .archive-event {
+		grid-template-columns: auto 1fr;
+		gap: 12px;
+	}
+	.aa-rd .wpea_frontend_archive .event_btn,
+	.aa-rd .wpea_frontend_archive .event_price {
+		grid-column: 1 / -1;
+	}
+}
+.aa-rd .wpea_frontend_archive::after,
+.aa-rd .aa-pick + p::after {
+	content: "\1F512  Secure checkout \00b7 Powered by Stripe \00b7 Card \00b7 Apple Pay \00b7 Google Pay";
+	display: block;
+	text-align: center;
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 11px;
+	letter-spacing: 0.08em;
+	color: var(--aa-muted-2);
+	padding: 22px 12px;
+	text-transform: uppercase;
+	border-top: 1px solid var(--aa-border);
+	margin-top: 12px;
+}
+
+/* ==================== L. FOOTER — TEAL ==================== */
+#aa-footer-block {
+	background: var(--aa-teal-dark);
+	color: #fff;
+	padding: 48px 24px 0;
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+#aa-footer-block * { box-sizing: border-box; }
+#aa-footer-block a { color: var(--aa-border); text-decoration: none; transition: color .2s; }
+#aa-footer-block a:hover { color: var(--aa-teal-light); }
+#aa-footer-block .aa-foot-inner { max-width: 1280px; margin: 0 auto; }
+#aa-footer-block .aa-foot-row {
+	display: flex; flex-wrap: wrap; gap: 32px;
+	padding-bottom: 32px;
+	border-bottom: 1px solid rgba(255,255,255,0.1);
+	align-items: flex-start;
+}
+#aa-footer-block .aa-foot-brand-col { flex: 1.5 1 240px; min-width: 0; }
+#aa-footer-block .aa-foot-col { flex: 1 1 130px; min-width: 0; }
+#aa-footer-block .aa-foot-news {
+	flex: 1.4 1 230px;
+	background: rgba(255,255,255,0.04);
+	border: 1px solid rgba(255,255,255,0.1);
+	border-radius: 10px;
+	padding: 16px;
+}
+#aa-footer-block .aa-foot-brand-logo { margin: 0 0 12px; }
+#aa-footer-block .aa-foot-brand-logo img {
+	height: 38px; width: auto; display: block;
+	filter: brightness(0) invert(1);
+}
+#aa-footer-block .aa-foot-brand-tagline {
+	font-size: 13px; color: #BFE1E1; line-height: 1.5;
+	margin: 0 0 14px; max-width: 280px;
+}
+#aa-footer-block .aa-foot-contact {
+	display: flex; flex-direction: column; gap: 6px;
+	font-size: 13px; margin-bottom: 14px;
+}
+#aa-footer-block .aa-foot-contact a {
+	display: inline-flex; align-items: center; gap: 8px;
+	color: #fff; font-weight: 500;
+}
+#aa-footer-block .aa-foot-contact a:hover { color: var(--aa-teal-light); }
+#aa-footer-block .aa-foot-contact svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--aa-teal-light); }
+#aa-footer-block .aa-foot-social { display: flex; gap: 6px; flex-wrap: wrap; }
+#aa-footer-block .aa-foot-social a {
+	width: 30px; height: 30px;
+	display: flex; align-items: center; justify-content: center;
+	background: rgba(255,255,255,0.06);
+	border: 1px solid rgba(255,255,255,0.1);
+	border-radius: 6px;
+	color: var(--aa-border);
+	transition: all .2s;
+}
+#aa-footer-block .aa-foot-social a:hover {
+	background: var(--aa-teal);
+	color: #fff;
+	border-color: var(--aa-teal);
+	transform: translateY(-2px);
+}
+#aa-footer-block .aa-foot-social svg { width: 14px; height: 14px; }
+#aa-footer-block .aa-foot-col h4 {
+	font-size: 12px; font-weight: 800; color: #fff;
+	text-transform: uppercase; letter-spacing: 1.3px;
+	margin: 0 0 14px;
+	display: flex; align-items: center; gap: 8px;
+}
+#aa-footer-block .aa-foot-col h4 .aa-foot-dot,
+#aa-footer-block .aa-foot-news h4 .aa-foot-dot {
+	width: 6px; height: 6px;
+	background: var(--aa-teal-light);
+	border-radius: 50%;
+	display: inline-block;
+}
+#aa-footer-block .aa-foot-col ul {
+	list-style: none; padding: 0; margin: 0;
+	display: flex; flex-direction: column; gap: 9px;
+}
+#aa-footer-block .aa-foot-col li { font-size: 13px; line-height: 1.35; }
+#aa-footer-block .aa-foot-news h4 {
+	font-size: 12px; font-weight: 800; color: var(--aa-teal-light);
+	text-transform: uppercase; letter-spacing: 1.3px;
+	margin: 0 0 8px;
+	display: flex; align-items: center; gap: 8px;
+}
+#aa-footer-block .aa-foot-news p {
+	font-size: 12px; color: #BFE1E1; line-height: 1.5;
+	margin: 0 0 10px;
+}
+#aa-footer-block .aa-foot-news-form { display: flex; flex-direction: column; gap: 6px; }
+#aa-footer-block .aa-foot-news input {
+	padding: 9px 11px;
+	background: rgba(255,255,255,0.06);
+	border: 1.5px solid rgba(255,255,255,0.12);
+	border-radius: 5px;
+	font-size: 12px; color: #fff;
+	font-family: inherit; width: 100%;
+}
+#aa-footer-block .aa-foot-news input::placeholder { color: #7FA6AC; }
+#aa-footer-block .aa-foot-news input:focus { outline: 0; border-color: var(--aa-teal-light); }
+#aa-footer-block .aa-foot-news button {
+	padding: 9px;
+	background: var(--aa-teal);
+	color: #fff;
+	border: 0; border-radius: 5px;
+	font-size: 12px; font-weight: 800;
+	cursor: pointer;
+	letter-spacing: .3px;
+	transition: background .2s;
+}
+#aa-footer-block .aa-foot-news button:hover { background: var(--aa-teal-dark); }
+#aa-footer-block .aa-foot-cta-highlight {
+	padding: 1px 6px;
+	background: rgba(143,207,207,0.18);
+	color: var(--aa-teal-light);
+	border-radius: 3px;
+	font-size: 9px; font-weight: 800;
+	letter-spacing: 1px; text-transform: uppercase;
+	vertical-align: middle;
+	margin-left: 4px;
+	display: inline-block;
+}
+#aa-footer-block .aa-foot-bottom {
+	padding: 18px 0;
+	display: flex; justify-content: space-between; align-items: center;
+	gap: 18px; flex-wrap: wrap;
+	font-size: 12px; color: #7FA6AC;
+}
+#aa-footer-block .aa-foot-bottom-left {
+	display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+}
+#aa-footer-block .aa-foot-trust-badge {
+	display: inline-flex; align-items: center; gap: 5px;
+	font-size: 10px; color: var(--aa-border);
+	text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+}
+#aa-footer-block .aa-foot-trust-badge svg {
+	width: 13px; height: 13px;
+	color: var(--aa-teal-light); flex-shrink: 0;
+}
+#aa-footer-block .aa-foot-rating {
+	display: inline-flex; align-items: center; gap: 6px;
+	font-size: 12px; color: #fff; font-weight: 600;
+}
+#aa-footer-block .aa-foot-stars { color: var(--aa-teal-light); letter-spacing: 1.5px; font-size: 12px; }
+#aa-footer-block .aa-foot-bottom-right { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+#aa-footer-block .aa-foot-legal { display: flex; gap: 14px; flex-wrap: wrap; }
+#aa-footer-block .aa-foot-legal a { font-size: 11px; color: #7FA6AC; }
+#aa-footer-block .aa-foot-legal a:hover { color: var(--aa-teal-light); }
+#aa-footer-block .aa-foot-copy { font-size: 11px; color: #7FA6AC; }
+.site-below-footer-wrap { display: none !important; }
+/* NOTE: .ast-builder-grid-row-container-inner is a GENERIC Astra class used in
+   the header too — keep it scoped to the footer wrap, or it darkens the nav. */
+.site-primary-footer-wrap,
+.site-primary-footer-inner-wrap,
+.site-primary-footer-wrap .ast-builder-grid-row-container-inner { background: var(--aa-teal-dark) !important; }
+.site-primary-footer-inner-wrap { padding-left: 0 !important; padding-right: 0 !important; }
+/* Guard: no header container inherits the footer's dark bg. (The header's own
+   background is set in the AA NAV section.) */
+html body #masthead .site-header-primary-section-center,
+html body #masthead .ast-builder-grid-row-container-inner,
+html body #masthead .site-primary-header-wrap {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.site-footer-primary-section-1,
+.ast-builder-html-element,
+.ast-header-html,
+.footer-widget-area.ast-footer-html-1 { background: transparent !important; }
+@media (max-width: 900px){
+	#aa-footer-block .aa-foot-row { gap: 24px; }
+	#aa-footer-block .aa-foot-brand-col,
+	#aa-footer-block .aa-foot-news { flex: 1 1 100%; }
+}
+@media (max-width: 600px){
+	#aa-footer-block { padding: 36px 16px 0; }
+	#aa-footer-block .aa-foot-col { flex: 1 1 45%; }
+	#aa-footer-block .aa-foot-bottom {
+		justify-content: center;
+		text-align: center;
+		flex-direction: column;
+	}
+}
+
+/* ==================== M. COURSE BAR ONE-ROW FIXES ==================== */
+.aa-rd .aa-bar-in {
+	flex-wrap: nowrap !important;
+	gap: 20px !important;
+	justify-content: space-between !important;
+	align-items: center !important;
+}
+.aa-rd .aa-bar-nav { flex-wrap: nowrap !important; gap: 4px !important; flex-shrink: 1; }
+.aa-rd .aa-bar-cta { flex-wrap: nowrap !important; gap: 10px !important; flex-shrink: 0 !important; white-space: nowrap; }
+.aa-rd .aa-bar-cta .aa-price { white-space: nowrap; font-size: 16px !important; }
+.aa-rd .aa-bar-cta .btn-teal { white-space: nowrap; padding: 10px 18px !important; font-size: 13px !important; }
+@media (max-width: 1180px){
+	.aa-rd .aa-bar-in { flex-wrap: wrap !important; }
+	.aa-rd .aa-bar-nav { display: none; }
+}
+
+/* ==================== N. AA-RD COURSE MASTER TEMPLATE ==================== */
+.aa-rd {
+	--aa-w: 1340px;
+	--aa-top: 0px;
+	background: #fff;
+	color: var(--aa-text);
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+	line-height: 1.55;
+	scroll-behavior: smooth;
+}
+.aa-rd *,
+.aa-rd *::before,
+.aa-rd *::after { box-sizing: border-box; }
+.aa-rd h1, .aa-rd h2, .aa-rd h3, .aa-rd h4, .aa-rd h5, .aa-rd h6 {
+	color: var(--aa-text);
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	margin: 0;
+}
+.aa-rd p { margin: 0; color: var(--aa-body); }
+.aa-rd a { color: var(--aa-teal); text-decoration: none; }
+.aa-rd a:hover { color: var(--aa-teal-dark); }
+.aa-rd .mono {
+	font-family: ui-monospace, Menlo, Consolas, 'Courier New', monospace;
+	font-size: 11px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--aa-muted-2);
+}
+.aa-rd .nr { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-style: italic; }
+.aa-rd .teal { color: var(--aa-teal); }
+.aa-rd .aa-sec { max-width: var(--aa-w); margin: 0 auto; padding: 60px clamp(18px, 4vw, 46px); }
+.aa-rd .aa-hero { padding-top: 40px; padding-bottom: 24px; }
+.aa-rd .aa-sechead { max-width: 760px; margin: 0 auto 22px; text-align: left; }
+.aa-rd .aa-eyebrow {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 11.5px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--aa-teal);
+	font-weight: 500;
+	margin: 0 0 12px !important;
+}
+.aa-rd .aa-h1 {
+	font-family: 'Newsreader', Georgia, serif;
+	font-weight: 400;
+	font-size: clamp(38px, 5.5vw, 68px);
+	line-height: 1.05;
+	letter-spacing: -0.02em;
+	color: var(--aa-text);
+	margin: 0 0 20px !important;
+}
+.aa-rd .aa-h1 em,
+.aa-rd .aa-h2 em,
+.aa-rd .aa-final-h em,
+.aa-rd .aa-cred-h em { font-style: italic; color: var(--aa-teal); }
+.aa-rd .aa-h2 {
+	font-family: 'Newsreader', Georgia, serif;
+	font-weight: 400;
+	font-size: clamp(28px, 3.4vw, 42px);
+	line-height: 1.1;
+	letter-spacing: -0.015em;
+	color: var(--aa-text);
+	margin: 0 0 12px !important;
+}
+.aa-rd .aa-lead { font-size: 18px; line-height: 1.55; color: var(--aa-body); max-width: 640px; margin: 0 !important; }
+.aa-rd .aa-sub { font-size: 15px; line-height: 1.55; color: var(--aa-muted); margin: 0 !important; }
+.aa-rd .btn-teal,
+.aa-rd .btn-ghost,
+.aa-rd .btn-white,
+.aa-rd .btn-wghost,
+.aa-rd .btn-eb-dark {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 13px 22px;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	cursor: pointer;
+	transition: all .18s;
+	white-space: nowrap;
+}
+.aa-rd .btn-teal { background: var(--aa-teal); color: #fff; border-color: var(--aa-teal); }
+.aa-rd .btn-teal:hover { background: var(--aa-teal-dark); border-color: var(--aa-teal-dark); color: #fff; }
+.aa-rd .btn-ghost { background: transparent; color: var(--aa-text); border-color: var(--aa-text); }
+.aa-rd .btn-ghost:hover { background: var(--aa-text); color: #fff; }
+.aa-rd .btn-white { background: #fff; color: var(--aa-text); border-color: #fff; }
+.aa-rd .btn-white:hover { background: var(--aa-teal-light); border-color: var(--aa-teal-light); color: var(--aa-text); }
+.aa-rd .btn-wghost { background: transparent; color: #fff; border-color: #fff; }
+.aa-rd .btn-wghost:hover { background: #fff; color: var(--aa-text); }
+.aa-rd .btn-eb-dark {
+	background: var(--aa-teal-dark);
+	color: #fff;
+	border-color: var(--aa-teal-dark);
+	width: 100%;
+	justify-content: center;
+	padding: 11px 16px;
+}
+.aa-rd .btn-eb-dark:hover { background: #000; border-color: #000; }
+.aa-rd .lnk { color: var(--aa-body); font-size: 13px; text-decoration: none; padding: 4px 8px; }
+.aa-rd .lnk:hover { color: var(--aa-teal); }
+.aa-rd .aa-bar {
+	position: sticky;
+	top: var(--aa-top, 0);
+	background: rgba(255,255,255,.95);
+	backdrop-filter: blur(8px);
+	border-bottom: 1px solid var(--aa-border);
+	z-index: 90;
+}
+.aa-rd .aa-bar-in {
+	max-width: var(--aa-w);
+	margin: 0 auto;
+	padding: 12px clamp(18px, 4vw, 46px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	flex-wrap: wrap;
+}
+.aa-rd .aa-bar-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.aa-rd .aa-bar-cta { display: flex; align-items: center; gap: 14px; }
+.aa-rd .aa-price {
+	font-family: 'Newsreader', Georgia, serif;
+	font-size: 18px;
+	color: var(--aa-text);
+	letter-spacing: -0.01em;
+	line-height: 1;
+}
+.aa-rd .aa-price s { color: var(--aa-muted-2); font-weight: 400; opacity: 0.65; margin-right: 5px; }
+@media (max-width: 780px){ .aa-rd .aa-bar-nav.coh-hide { display: none; } }
+.aa-rd .badge {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	border: 3px solid var(--aa-teal);
+	border-radius: 50%;
+	color: var(--aa-teal);
+	line-height: 1;
+	font-family: 'Newsreader', Georgia, serif;
+	text-align: center;
+	padding: 4px;
+}
+.aa-rd .badge b { font-weight: 700; font-size: 12px; letter-spacing: 0.02em; }
+.aa-rd .badge i {
+	font-style: normal;
+	font-size: 7px;
+	letter-spacing: 0.1em;
+	color: var(--aa-muted-2);
+	margin-top: 2px;
+	font-family: ui-monospace, Menlo, monospace;
+	text-transform: uppercase;
+}
+.aa-rd .badge-sm b { font-size: 11px; }
+.aa-rd .badge-sm i { font-size: 6.5px; }
+.aa-rd .aa-corp { background: var(--aa-teal-dark); color: #fff; padding: 18px clamp(18px, 4vw, 46px); }
+.aa-rd .aa-corp-in {
+	max-width: var(--aa-w);
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	flex-wrap: wrap;
+	color: #DCEAEA;
+	font-size: 14px;
+}
+.aa-rd .aa-corp-in a {
+	color: var(--aa-teal-light);
+	margin-left: auto;
+	font-weight: 600;
+	border-bottom: 1px solid var(--aa-teal-light);
+	padding-bottom: 2px;
+}
+.aa-rd .aa-corp-in a:hover { color: #fff; border-color: #fff; }
+.aa-rd .aa-grid2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 46px; }
+@media (max-width: 900px){ .aa-rd .aa-grid2 { grid-template-columns: 1fr; gap: 30px; } }
+.aa-rd .aa-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0; }
+.aa-rd .aa-tag {
+	display: inline-block;
+	padding: 8px 12px;
+	border: 1px solid var(--aa-border-strong);
+	border-radius: 2px;
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--aa-body);
+	background: #fff;
+}
+.aa-rd .aa-tag-on { background: var(--aa-teal); color: #fff; border-color: var(--aa-teal); }
+.aa-rd .aa-stats {
+	display: flex;
+	gap: 36px;
+	margin-top: 30px;
+	padding-top: 22px;
+	border-top: 1px solid var(--aa-border);
+	flex-wrap: wrap;
+}
+.aa-rd .aa-stat-n { font-family: 'Newsreader', Georgia, serif; font-size: 34px; color: var(--aa-text); line-height: 1; font-weight: 400; }
+.aa-rd .aa-stat-l {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--aa-muted-2);
+	margin-top: 5px;
+}
+.aa-rd .aa-card { background: #fff; border: 1px solid var(--aa-border); border-radius: 4px; overflow: hidden; }
+.aa-rd .aa-card-dark { background: var(--aa-teal-dark); color: #fff; border-color: var(--aa-teal-dark); }
+.aa-rd .aa-card-pad { padding: 26px 24px; }
+.aa-rd .aa-card-h { margin-bottom: 14px; }
+.aa-rd .aa-card-cap {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 11px;
+	color: var(--aa-teal-light);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.aa-rd .aa-cohorts { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 18px; }
+.aa-rd .aa-co-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 14px;
+	background: rgba(255,255,255,.06);
+	border: 1px solid rgba(255,255,255,.14);
+	border-radius: 3px;
+	cursor: pointer;
+	transition: background .15s, border-color .15s;
+}
+.aa-rd .aa-co-row:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
+.aa-rd .aa-co-row.is-sel { border-color: var(--aa-teal-light); background: rgba(143,207,207,.14); }
+.aa-rd .aa-co-row input[type=radio] { position: absolute; opacity: 0; pointer-events: none; }
+.aa-rd .aa-co-main { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.aa-rd .aa-co-date { color: #fff; font-size: 14px; font-weight: 500; }
+.aa-rd .aa-co-time {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	color: var(--aa-teal-light);
+	letter-spacing: 0.04em;
+}
+.aa-rd .aa-co-tag {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 9.5px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	padding: 3px 8px;
+	border-radius: 2px;
+	color: var(--aa-teal-light);
+	background: rgba(143,207,207,.14);
+}
+.aa-rd .aa-co-tag.hot { color: #FEBB68; background: rgba(254,187,104,.15); }
+.aa-rd .aa-card-reg { display: block; width: 100%; text-align: center; margin-bottom: 12px; }
+.aa-rd .aa-card-price-row { display: flex; align-items: baseline; gap: 10px; justify-content: center; color: #fff; margin-bottom: 4px; }
+.aa-rd .aa-card-price-row .mono { color: var(--aa-muted-2); }
+.aa-rd .aa-card-price { font-family: 'Newsreader', Georgia, serif; font-size: 30px; color: #fff; line-height: 1; }
+.aa-rd .aa-card-price s { color: var(--aa-muted-2); opacity: 0.6; font-weight: 400; }
+.aa-rd .aa-card-fin { text-align: center; color: var(--aa-teal-light); font-size: 12px; margin-bottom: 14px; }
+.aa-rd .aa-card-secure { text-align: center; margin-top: 12px; color: var(--aa-muted-2); font-size: 10px; letter-spacing: 0.05em; }
+.aa-rd .aa-cred { background: var(--aa-teal-dark); color: #fff; padding: 40px clamp(18px, 4vw, 46px); }
+.aa-rd .aa-cred-in { max-width: var(--aa-w); margin: 0 auto; }
+.aa-rd .aa-cred-box { display: grid; grid-template-columns: auto 1fr auto; gap: 32px; align-items: center; }
+@media (max-width: 900px){ .aa-rd .aa-cred-box { grid-template-columns: 1fr; text-align: left; } }
+.aa-rd .aa-cred-h {
+	font-family: 'Newsreader', Georgia, serif;
+	font-weight: 400;
+	font-size: 22px;
+	color: #fff;
+	line-height: 1.3;
+	max-width: 620px;
+	margin: 6px 0 0 !important;
+}
+.aa-rd .aa-cred-stats { display: flex; gap: 26px; }
+.aa-rd .aa-cred-n { font-family: 'Newsreader', Georgia, serif; font-size: 22px; color: #fff; line-height: 1; }
+.aa-rd .aa-cred-l {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10px;
+	color: var(--aa-teal-light);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-top: 4px;
+}
+.aa-rd .aa-trust { background: var(--aa-bg); padding: 24px clamp(18px, 4vw, 46px); border-bottom: 1px solid var(--aa-border); }
+.aa-rd .aa-trust-in {
+	max-width: var(--aa-w);
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	color: var(--aa-muted);
+	font-size: 14px;
+	font-family: ui-monospace, Menlo, monospace;
+	letter-spacing: 0.04em;
+}
+.aa-rd .aa-incl { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 8px; }
+.aa-rd .aa-incl-c { background: #fff; border: 1px solid var(--aa-border); padding: 22px 20px; display: flex; flex-direction: column; gap: 8px; }
+.aa-rd .aa-incl-c.dark { background: var(--aa-teal-dark); color: #fff; border-color: var(--aa-teal-dark); }
+.aa-rd .aa-incl-c.dark .aa-incl-n { color: var(--aa-teal-light); }
+.aa-rd .aa-incl-c.dark .aa-incl-h { color: #fff; }
+.aa-rd .aa-incl-c.dark .aa-incl-p { color: #DCEAEA; }
+.aa-rd .aa-incl-n { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--aa-teal); letter-spacing: 0.08em; font-weight: 500; }
+.aa-rd .aa-incl-h { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: 20px; color: var(--aa-text); margin: 0; line-height: 1.2; }
+.aa-rd .aa-incl-p { font-size: 13.5px; line-height: 1.55; color: var(--aa-muted); margin: 0; }
+.aa-rd .aa-exam { background: var(--aa-bg-2); border: 1px solid var(--aa-border); padding: 22px 26px; margin-top: 22px; border-radius: 2px; }
+.aa-rd .aa-exam-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin-top: 12px; }
+.aa-rd .aa-exam-k {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10px;
+	color: var(--aa-muted-2);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-weight: 500;
+	margin-bottom: 4px;
+}
+.aa-rd .aa-exam-v { font-family: 'Newsreader', Georgia, serif; font-size: 17px; color: var(--aa-text); line-height: 1.2; }
+.aa-rd .aa-mod { display: grid; grid-template-columns: 60px 1fr; gap: 20px; padding: 22px 0; border-top: 1px solid var(--aa-border); }
+.aa-rd .aa-mod:first-child { border-top: none; }
+.aa-rd .aa-mod-n { font-family: ui-monospace, Menlo, monospace; font-size: 15px; color: var(--aa-teal); letter-spacing: 0.02em; line-height: 1; padding-top: 2px; }
+.aa-rd .aa-mod-h { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: 24px; color: var(--aa-text); margin: 0 0 6px; line-height: 1.2; }
+.aa-rd .aa-mod-p { font-size: 15px; line-height: 1.55; color: var(--aa-muted); margin: 0; }
+.aa-rd .aa-demand-panel { margin-top: 12px; }
+.aa-rd .aa-dn { font-family: 'Newsreader', Georgia, serif; font-size: 34px; color: var(--aa-text); line-height: 1; }
+.aa-rd .aa-dl { font-size: 12.5px; color: var(--aa-muted); max-width: 160px; margin: 6px auto 0; }
+.aa-rd .aa-cap {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 11px;
+	color: var(--aa-teal);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-weight: 500;
+}
+.aa-rd .aa-pick { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
+.aa-rd .aa-pick-h { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-style: italic; font-size: 22px; color: var(--aa-text); margin-bottom: 10px; }
+.aa-rd .aa-pick-list { display: flex; flex-direction: column; gap: 10px; }
+.aa-rd .aa-pick-row {
+	display: grid;
+	grid-template-columns: auto 1fr auto auto auto;
+	align-items: center;
+	gap: 20px;
+	padding: 18px 22px;
+	background: #fff;
+	border: 1px solid var(--aa-border);
+	cursor: pointer;
+	text-align: left;
+	font-family: inherit;
+	transition: border-color .15s, transform .15s;
+}
+@media (max-width: 800px){
+	.aa-rd .aa-pick-row { grid-template-columns: auto 1fr; gap: 12px; }
+	.aa-rd .aa-pick-tag, .aa-rd .aa-pick-price, .aa-rd .aa-pick-cta { grid-column: 1 / -1; text-align: left; }
+}
+.aa-rd .aa-pick-row:hover { border-color: var(--aa-teal); transform: translateY(-2px); }
+.aa-rd .aa-pick-row.is-sel { border-color: var(--aa-teal); background: var(--aa-bg-2); }
+.aa-rd .aa-pick-date {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 6px 12px;
+	background: var(--aa-teal);
+	color: #fff;
+	border-radius: 2px;
+	min-width: 60px;
+}
+.aa-rd .aa-pick-mon { font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.9; }
+.aa-rd .aa-pick-day { font-family: 'Newsreader', Georgia, serif; font-size: 22px; line-height: 1; font-weight: 400; }
+.aa-rd .aa-pick-info { display: flex; flex-direction: column; gap: 4px; }
+.aa-rd .aa-pick-batch { font-family: 'Newsreader', Georgia, serif; font-size: 17px; color: var(--aa-text); line-height: 1.2; }
+.aa-rd .aa-pick-fmt { font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--aa-muted-2); letter-spacing: 0.06em; }
+.aa-rd .aa-pick-tag {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	padding: 4px 9px;
+	background: rgba(18,126,136,.1);
+	color: var(--aa-teal);
+	border-radius: 2px;
+}
+.aa-rd .aa-pick-tag.hot { background: rgba(245,158,11,.14); color: #B45309; }
+.aa-rd .aa-pick-price { font-family: 'Newsreader', Georgia, serif; font-size: 20px; color: var(--aa-text); line-height: 1; }
+.aa-rd .aa-pick-price s { color: var(--aa-muted-2); font-weight: 400; opacity: 0.6; margin-right: 4px; }
+.aa-rd .aa-pick-cta { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--aa-teal); font-weight: 600; letter-spacing: 0.05em; }
+.aa-rd .aa-pick-note { font-size: 13px; color: var(--aa-muted); margin-top: 14px; text-align: center; }
+.aa-rd .aa-reg { max-height: 0; opacity: 0; pointer-events: none; overflow: hidden; transition: max-height .5s ease, opacity .3s; }
+.aa-rd .aa-reg.is-open { max-height: 6000px; opacity: 1; pointer-events: auto; margin-top: 30px; }
+.aa-rd .aa-up-h {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	color: var(--aa-teal);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+}
+.aa-rd .aa-up-row {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 12px;
+	padding: 10px 12px;
+	background: rgba(255,255,255,.06);
+	border: 1px solid rgba(255,255,255,.14);
+	border-radius: 3px;
+	margin-bottom: 6px;
+	color: #fff;
+	text-decoration: none;
+	align-items: center;
+}
+.aa-rd .aa-up-chip { display: flex; flex-direction: column; align-items: center; padding: 4px 8px; background: rgba(255,255,255,.1); border-radius: 2px; }
+.aa-rd .aa-up-mon { font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+.aa-rd .aa-up-day { font-family: 'Newsreader', Georgia, serif; font-size: 18px; line-height: 1; }
+.aa-rd .aa-up-meta { display: flex; flex-direction: column; gap: 2px; }
+.aa-rd .aa-up-title { font-size: 13px; line-height: 1.25; color: #fff; }
+.aa-rd .aa-up-when { font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--aa-teal-light); letter-spacing: 0.04em; }
+.aa-rd .aa-quotes2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; margin-top: 10px; }
+.aa-rd .aa-qcard { background: #fff; border: 1px solid var(--aa-border); padding: 32px 30px; display: flex; flex-direction: column; gap: 22px; }
+.aa-rd .aa-qtext { font-family: 'Newsreader', Georgia, serif; font-size: 21px; line-height: 1.4; color: var(--aa-text); margin: 0; }
+.aa-rd .aa-qtext .q { color: var(--aa-teal); font-size: 32px; line-height: 0; vertical-align: bottom; }
+.aa-rd .aa-qwho { display: flex; align-items: center; gap: 12px; padding-top: 18px; border-top: 1px solid var(--aa-border); }
+.aa-rd .aa-qav { width: 42px; height: 42px; background: linear-gradient(135deg, var(--aa-teal), var(--aa-teal-dark)); border-radius: 50%; }
+.aa-rd .aa-qname { font-size: 13.5px; color: var(--aa-text); line-height: 1.3; }
+.aa-rd .aa-enr2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 20px; }
+@media (max-width: 820px){ .aa-rd .aa-enr2 { grid-template-columns: 1fr; } }
+.aa-rd .aa-enr-card { background: #fff; border: 1px solid var(--aa-border); padding: 26px 24px; }
+.aa-rd .aa-enr-card.soft { background: var(--aa-bg-2); }
+.aa-rd .aa-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; color: var(--aa-body); line-height: 1.3; }
+.aa-rd .aa-inc {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 10.5px;
+	color: var(--aa-teal);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+.aa-rd .aa-faqsec { padding-top: 50px; padding-bottom: 50px; }
+.aa-rd .aa-faqh { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: clamp(28px, 3vw, 40px); color: var(--aa-text); margin: 0 0 8px; }
+.aa-rd .aa-faqp { margin-bottom: 30px; }
+.aa-rd .aa-faqwrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 820px){ .aa-rd .aa-faqwrap { grid-template-columns: 1fr; } }
+.aa-rd .aa-faqcol { display: flex; flex-direction: column; gap: 8px; }
+.aa-rd .aa-faq { background: #fff; border: 1px solid var(--aa-border); padding: 0; }
+.aa-rd .aa-faq summary {
+	padding: 16px 20px;
+	font-family: 'Newsreader', Georgia, serif;
+	font-size: 17px;
+	color: var(--aa-text);
+	cursor: pointer;
+	list-style: none;
+	position: relative;
+	padding-right: 44px;
+}
+.aa-rd .aa-faq summary::-webkit-details-marker { display: none; }
+.aa-rd .aa-faq summary::after {
+	content: '+';
+	position: absolute;
+	right: 18px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--aa-teal);
+	font-size: 22px;
+	line-height: 1;
+	transition: transform .2s;
+}
+.aa-rd .aa-faq[open] summary::after { content: '\2212'; }
+.aa-rd .aa-faq p { padding: 0 20px 18px; font-size: 14.5px; line-height: 1.6; color: var(--aa-muted); margin: 0; }
+.aa-rd .aa-faq p a { color: var(--aa-teal); text-decoration: underline; }
+.aa-rd .aa-pathcap {
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 11px;
+	color: var(--aa-teal);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-weight: 500;
+	margin: 28px 0 14px;
+}
+.aa-rd .aa-pathgrid { display: grid; gap: 14px; }
+.aa-rd .aa-pcard {
+	background: #fff;
+	border: 1px solid var(--aa-border);
+	padding: 22px 20px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	text-decoration: none;
+	color: var(--aa-text);
+	transition: border-color .18s, transform .18s;
+	min-height: 88px;
+}
+.aa-rd .aa-pcard:hover { border-color: var(--aa-teal); transform: translateY(-2px); }
+.aa-rd .aa-pcard-h { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: 17px; color: var(--aa-text); line-height: 1.25; margin: 0; }
+.aa-rd .aa-pcard-badge { flex-shrink: 0; }
+.aa-rd .aa-final { background: var(--aa-teal-dark); color: #fff; padding: 60px clamp(18px, 4vw, 46px); }
+.aa-rd .aa-final-box {
+	max-width: var(--aa-w);
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 32px;
+	flex-wrap: wrap;
+}
+.aa-rd .aa-final-h { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-size: clamp(28px, 3.4vw, 40px); color: #fff; line-height: 1.15; margin: 0 0 12px !important; }
+.aa-rd .aa-final-p { color: #DCEAEA; font-size: 15.5px; line-height: 1.55; margin: 0 !important; }
+.aa-rd .aa-final-cta { display: flex; flex-direction: column; gap: 10px; min-width: 240px; }
+.aa-rd .aa-feed-src { position: absolute; left: -9999px; visibility: hidden; pointer-events: none; height: 0; overflow: hidden; }
+#aa-totop { text-decoration: none; }
+#aa-totop:hover { background: var(--aa-teal) !important; }
+@media (max-width: 640px){
+	.aa-rd .aa-sec { padding: 40px 18px; }
+	.aa-rd .aa-hero { padding-top: 28px; padding-bottom: 20px; }
+	.aa-rd .aa-final-box { flex-direction: column; align-items: flex-start; }
+	.aa-rd .aa-final-cta { width: 100%; }
+}
+
+/* ==================== O. SHARED: MESSAGE FORM CARD (WPForms 1768) ==================== */
+.aa-msg-embed {
+	max-width: 640px;
+	margin: 28px auto 90px;
+	background: #fff;
+	border: 1px solid var(--aa-border);
+	border-radius: 16px;
+	padding: 30px 30px 22px;
+	box-shadow: 0 18px 44px rgba(11,46,53,0.12);
+	text-align: left;
+	font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.aa-msg-embed .wpforms-field input[type=text],
+.aa-msg-embed .wpforms-field input[type=email],
+.aa-msg-embed .wpforms-field textarea {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1.5px solid var(--aa-border);
+	border-radius: 8px;
+	font-size: 14px;
+	color: var(--aa-text);
+	background: #fff;
+	font-family: inherit;
+	box-sizing: border-box;
+}
+.aa-msg-embed .wpforms-field input:focus,
+.aa-msg-embed .wpforms-field textarea:focus { outline: none; border-color: var(--aa-teal); }
+.aa-msg-embed .wpforms-submit,
+.aa-msg-embed button[type=submit] {
+	width: 100%;
+	padding: 14px 22px;
+	background: var(--aa-teal);
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	font-size: 15px;
+	font-weight: 800;
+	cursor: pointer;
+	transition: all .2s;
+	font-family: inherit;
+}
+.aa-msg-embed .wpforms-submit:hover,
+.aa-msg-embed button[type=submit]:hover { background: var(--aa-teal-dark); }
+
+/* ==================== P. SHARED: LEGAL PAGES WRAPPER ==================== */
+.aa-legal { max-width: 780px; margin: 0 auto; padding: 60px 24px; font-family: Inter, system-ui, sans-serif; color: var(--aa-teal-dark); line-height: 1.7; }
+.aa-legal h1 { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-weight: 500; font-size: 44px; color: var(--aa-teal-dark); margin: 0 0 8px; line-height: 1.15; }
+.aa-legal .aa-legal-date { font-size: 13px; color: var(--aa-muted-2); font-style: italic; margin-bottom: 36px; display: block; }
+.aa-legal h2 { font-size: 20px; font-weight: 800; color: var(--aa-navy); margin: 34px 0 10px; letter-spacing: -0.01em; }
+.aa-legal p { font-size: 15px; margin: 0 0 14px; }
+.aa-legal ul { font-size: 15px; margin: 0 0 14px 20px; padding: 0; }
+.aa-legal li { margin: 0 0 6px; }
+.aa-legal a { color: var(--aa-teal); text-decoration: underline; }
+.aa-legal-sig { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--aa-border); font-size: 13px; color: var(--aa-muted-2); }
+
+/* ==================== Q. FOOTER SOCIAL ICONS (CSS-mask) ==================== */
+#aa-footer-block .aa-foot-social{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+#aa-footer-block .aa-foot-social .aa-soc{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;transition:all .2s}
+#aa-footer-block .aa-foot-social .aa-soc:hover{background:#127E88;border-color:#127E88;transform:translateY(-2px)}
+#aa-footer-block .aa-foot-social .aa-soc::before{content:"";width:15px;height:15px;background:#DCEAEA;transition:background .2s;-webkit-mask:center/contain no-repeat;mask:center/contain no-repeat}
+#aa-footer-block .aa-foot-social .aa-soc:hover::before{background:#fff}
+#aa-footer-block .aa-foot-social .aa-soc-li::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M19%203a2%202%200%20012%202v14a2%202%200%2001-2%202H5a2%202%200%2001-2-2V5a2%202%200%20012-2h14zM8.34%209.5H5.67V18h2.67V9.5zM7%206.13a1.55%201.55%200%20100%203.1%201.55%201.55%200%20000-3.1zM18.34%2018v-4.67c0-2.5-1.34-3.67-3.13-3.67-1.44%200-2.09.79-2.45%201.35V9.5h-2.67V18h2.67v-4.42c0-1.17.22-2.3%201.67-2.3%201.43%200%201.45%201.34%201.45%202.38V18h2.66z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M19%203a2%202%200%20012%202v14a2%202%200%2001-2%202H5a2%202%200%2001-2-2V5a2%202%200%20012-2h14zM8.34%209.5H5.67V18h2.67V9.5zM7%206.13a1.55%201.55%200%20100%203.1%201.55%201.55%200%20000-3.1zM18.34%2018v-4.67c0-2.5-1.34-3.67-3.13-3.67-1.44%200-2.09.79-2.45%201.35V9.5h-2.67V18h2.67v-4.42c0-1.17.22-2.3%201.67-2.3%201.43%200%201.45%201.34%201.45%202.38V18h2.66z%27%2F%3E%3C%2Fsvg%3E")}
+#aa-footer-block .aa-foot-social .aa-soc-yt::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M23%2012s0-3.4-.43-5.03a2.62%202.62%200%2000-1.84-1.85C19.1%204.7%2012%204.7%2012%204.7s-7.1%200-8.73.42A2.62%202.62%200%20001.43%206.97C1%208.6%201%2012%201%2012s0%203.4.43%205.03a2.62%202.62%200%20001.84%201.85C4.9%2019.3%2012%2019.3%2012%2019.3s7.1%200%208.73-.42a2.62%202.62%200%20001.84-1.85C23%2015.4%2023%2012%2023%2012zM9.75%2015.02V8.98L15.5%2012z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M23%2012s0-3.4-.43-5.03a2.62%202.62%200%2000-1.84-1.85C19.1%204.7%2012%204.7%2012%204.7s-7.1%200-8.73.42A2.62%202.62%200%20001.43%206.97C1%208.6%201%2012%201%2012s0%203.4.43%205.03a2.62%202.62%200%20001.84%201.85C4.9%2019.3%2012%2019.3%2012%2019.3s7.1%200%208.73-.42a2.62%202.62%200%20001.84-1.85C23%2015.4%2023%2012%2023%2012zM9.75%2015.02V8.98L15.5%2012z%27%2F%3E%3C%2Fsvg%3E")}
+#aa-footer-block .aa-foot-social .aa-soc-ig::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M12%202.16c3.2%200%203.58%200%204.85.07%203.25.15%204.77%201.69%204.92%204.92.06%201.27.07%201.65.07%204.85s0%203.58-.07%204.85c-.15%203.23-1.66%204.77-4.92%204.92-1.27.06-1.65.07-4.85.07s-3.58%200-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.16%2015.58%202.16%2015.2%202.16%2012s0-3.58.07-4.85C2.38%203.92%203.9%202.38%207.15%202.23%208.42%202.17%208.8%202.16%2012%202.16zm0%203.68a6.16%206.16%200%20100%2012.32%206.16%206.16%200%20000-12.32zM12%2016a4%204%200%20110-8%204%204%200%20010%208zm6.4-10.4a1.44%201.44%200%20100%202.88%201.44%201.44%200%20000-2.88z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M12%202.16c3.2%200%203.58%200%204.85.07%203.25.15%204.77%201.69%204.92%204.92.06%201.27.07%201.65.07%204.85s0%203.58-.07%204.85c-.15%203.23-1.66%204.77-4.92%204.92-1.27.06-1.65.07-4.85.07s-3.58%200-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.16%2015.58%202.16%2015.2%202.16%2012s0-3.58.07-4.85C2.38%203.92%203.9%202.38%207.15%202.23%208.42%202.17%208.8%202.16%2012%202.16zm0%203.68a6.16%206.16%200%20100%2012.32%206.16%206.16%200%20000-12.32zM12%2016a4%204%200%20110-8%204%204%200%20010%208zm6.4-10.4a1.44%201.44%200%20100%202.88%201.44%201.44%200%20000-2.88z%27%2F%3E%3C%2Fsvg%3E")}
+#aa-footer-block .aa-foot-social .aa-soc-fb::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M22%2012a10%2010%200%2010-11.56%209.88v-6.99H7.9V12h2.54V9.8c0-2.5%201.5-3.89%203.78-3.89%201.09%200%202.24.2%202.24.2v2.46h-1.26c-1.24%200-1.63.77-1.63%201.56V12h2.78l-.44%202.89h-2.34v6.99A10%2010%200%200022%2012z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M22%2012a10%2010%200%2010-11.56%209.88v-6.99H7.9V12h2.54V9.8c0-2.5%201.5-3.89%203.78-3.89%201.09%200%202.24.2%202.24.2v2.46h-1.26c-1.24%200-1.63.77-1.63%201.56V12h2.78l-.44%202.89h-2.34v6.99A10%2010%200%200022%2012z%27%2F%3E%3C%2Fsvg%3E")}
+#aa-footer-block .aa-foot-social .aa-soc-tt::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M16.6%205.82a4.28%204.28%200%2001-1.06-2.82h-3.2v12.86a2.6%202.6%200%2001-2.6%202.5%202.6%202.6%200%2001-2.6-2.6%202.6%202.6%200%20012.6-2.6c.27%200%20.53.04.78.12v-3.28a5.86%205.86%200%2000-.78-.05A5.88%205.88%200%20003.46%2015.7%205.88%205.88%200%20009.34%2021.6a5.88%205.88%200%20005.88-5.9V9.01a7.45%207.45%200%20004.36%201.4V7.2a4.28%204.28%200%2001-2.98-1.38z%27%2F%3E%3C%2Fsvg%3E");mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill%3D%27black%27%20d%3D%27M16.6%205.82a4.28%204.28%200%2001-1.06-2.82h-3.2v12.86a2.6%202.6%200%2001-2.6%202.5%202.6%202.6%200%2001-2.6-2.6%202.6%202.6%200%20012.6-2.6c.27%200%20.53.04.78.12v-3.28a5.86%205.86%200%2000-.78-.05A5.88%205.88%200%20003.46%2015.7%205.88%205.88%200%20009.34%2021.6a5.88%205.88%200%20005.88-5.9V9.01a7.45%207.45%200%20004.36%201.4V7.2a4.28%204.28%200%2001-2.98-1.38z%27%2F%3E%3C%2Fsvg%3E")}
+
+/* ==================== S. CUSTOM-HERO PAGES — suppress Astra's stock title ==================== */
+body:has(.aa-rd)       .entry-title,
+body:has(.aa-hero)     .entry-title,
+body:has(.aa-h1)       .entry-title,
+body:has(.aa-legal)    .entry-title,
+body:has(.aa-msg-embed) .entry-title {
+  display: none !important;
+}
+/* Fallback for browsers without :has() — known custom-hero pages by ID. */
+.page-id-1699 .entry-title,
+.page-id-28611 .entry-title,
+.page-id-28615 .entry-title {
+  display: none !important;
+}
+/* Collapse the empty banner space the hidden title leaves behind. */
+body:has(.aa-rd)  .entry-header,
+body:has(.aa-rd)  .ast-single-entry-banner,
+body:has(.aa-hero) .entry-header,
+body:has(.aa-hero) .ast-single-entry-banner,
+body:has(.aa-h1)  .entry-header,
+body:has(.aa-h1)  .ast-single-entry-banner {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  row-gap: 0 !important;
+}
+.aa-rd .aa-coursebar { margin-top: -14px; }
+body:has(.aa-rd) .entry-content, body:has(.aa-rd) .ast-article-single { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* ==================== T. SA COURSE v2 HERO — cohort rail + register panel ==================== */
+.aa-rd .ls-top{display:grid;grid-template-columns:1.5fr .82fr;gap:52px;align-items:end;margin-top:26px}
+.aa-rd .ls-badge-col{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;border-left:1px solid #DCEAEA;padding-left:32px}
+.aa-rd .ls-badge-col img{width:132px;height:auto;display:block}
+.aa-rd .ls-badge-name{font-family:'Newsreader',Georgia,serif;font-size:24px;line-height:1.1;color:#0E3A44;margin-top:7px}
+.aa-rd .ls-badge-sub{font-size:12.5px;color:#5E7378;margin-top:5px}
+
+.aa-rd .ls-cohorts{margin-top:42px;padding-top:28px;border-top:1px solid #0E3A44}
+.aa-rd .ls-cohorts-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.aa-rd .ls-cohorts-head .sub{font-size:13px;color:#5E7378}
+.aa-rd .ls-cohorts-head b.teal{color:#127E88}
+.aa-rd .ls-cohorts-head b.eb{color:#E0632F}
+
+.aa-rd .ls-rail{display:flex;gap:11px;margin-top:16px;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.aa-rd .ls-rail::-webkit-scrollbar{display:none}
+.aa-rd .ls-chip{display:flex;flex-direction:column;gap:7px;width:148px;flex:none;text-align:left;padding:14px 16px;border-radius:3px;cursor:pointer;font-family:inherit;scroll-snap-align:start;background:#fff;border:1px solid #C7DEDE;color:#0E3A44;transition:.15s}
+.aa-rd .ls-chip:hover{border-color:#127E88}
+.aa-rd .ls-chip.is-active{background:#127E88;border-color:#127E88;color:#fff;box-shadow:0 14px 30px -16px rgba(18,126,136,.7)}
+.aa-rd .ls-chip-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.aa-rd .ls-chip-wd{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.62}
+.aa-rd .ls-chip-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.aa-rd .ls-chip-dot.hot{background:#3FD87A}
+.aa-rd .ls-chip-dot.low{background:#F6C445}
+.aa-rd .ls-chip-dot.none{display:none}
+.aa-rd .ls-chip-date{font-family:'Newsreader',Georgia,serif;font-size:25px;line-height:1}
+.aa-rd .ls-chip-time{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.03em;opacity:.55}
+.aa-rd .ls-arrow{flex:none;width:48px;align-self:stretch;border-radius:3px;border:1px solid #C7DEDE;background:#fff;color:#127E88;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.aa-rd .ls-arrow:hover{border-color:#127E88;background:#F1F8F8}
+.aa-rd .ls-rail-wrap{display:flex;align-items:stretch;gap:8px}
+.aa-rd .ls-rail-wrap > .ls-rail{flex:1 1 auto;min-width:0}
+.aa-rd .ls-nav{flex:none;width:44px;align-self:stretch;display:flex;align-items:center;justify-content:center;border:1px solid #C7DEDE;border-radius:3px;background:#fff;color:#127E88;font-size:24px;line-height:1;cursor:pointer;transition:.15s}
+.aa-rd .ls-nav:hover{border-color:#127E88;background:#F1F8F8;color:#0B2E35}
+.aa-rd .ls-nav[disabled]{opacity:.3;cursor:default;pointer-events:none}
+
+.aa-rd .ls-panel{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;background:#F1F8F8;border:1px solid #127E88;border-radius:3px;padding:22px 26px}
+.aa-rd .ls-panel .headline{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:8px}
+.aa-rd .ls-panel .date{font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:30px;color:#0E3A44}
+.aa-rd .ls-panel .time{font-size:13px;color:#5E7378}
+.aa-rd .ls-panel .badge{font-family:ui-monospace,Menlo,monospace;font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:2px}
+.aa-rd .ls-panel .badge.hot{color:#06351F;background:#C7F2D0}
+.aa-rd .ls-panel .badge.low{color:#5E7378;border:1px solid #C7DEDE}
+.aa-rd .ls-panel .price{font-size:13px;color:#5E7378;margin-top:8px}
+.aa-rd .ls-panel .price .n{font-family:'Newsreader',Georgia,serif;font-size:19px;color:#0E3A44}
+.aa-rd .ls-actions{display:flex;gap:12px;flex-wrap:wrap}
+.aa-rd .ls-btn{display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;padding:15px 24px;border-radius:2px;text-decoration:none;cursor:pointer;transition:.15s;border:0}
+.aa-rd .ls-btn-stripe{color:#fff;background:#127E88}
+.aa-rd .ls-btn-stripe:hover{background:#0C5E66}
+.aa-rd .ls-btn-stripe .brand{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#BFE1E1;opacity:.85}
+.aa-rd .ls-btn-eb{color:#E0632F;background:rgba(224,99,47,.08);border:1px solid rgba(224,99,47,.45)}
+.aa-rd .ls-btn-eb:hover{background:rgba(224,99,47,.16)}
+.aa-rd .ls-btn-eb .dot{width:9px;height:9px;border-radius:50%;background:#F6682F;flex:none}
+.aa-rd .ls-secure{display:flex;align-items:center;gap:8px;margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.04em;color:#88A0A4}
+
+@media(max-width:820px){
+  .aa-rd .ls-top{grid-template-columns:1fr}
+  .aa-rd .ls-badge-col{border-left:0;padding-left:0;border-top:1px solid #DCEAEA;padding-top:24px;align-items:flex-start;text-align:left}
+}
+
+/* ==================== U. CLIENT LOGO WALL + hero badge tweaks ==================== */
+.aa-logowall{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 12px;max-width:1180px;margin:16px auto 0;padding:0 20px}
+.aa-logowall .aa-logo{display:flex;align-items:center;justify-content:center;width:150px;height:46px;padding:0 8px}
+.aa-logowall img{max-height:28px !important;max-width:118px !important;width:auto !important;height:auto !important;object-fit:contain;filter:grayscale(100%);opacity:.72;mix-blend-mode:multiply;transition:filter .2s,opacity .2s}
+.aa-logowall .aa-logo:hover img{filter:none;opacity:1}
+@media(max-width:640px){ .aa-logowall .aa-logo{width:120px;height:40px} .aa-logowall img{max-height:24px !important;max-width:96px !important} }
+.aa-rd .aa-qlogo{height:26px;width:auto;max-width:120px;object-fit:contain;filter:grayscale(100%);opacity:.85;mix-blend-mode:multiply}
+
+/* Bigger cert badge (overrides the global 84px badge cap for the hero badge) */
+.aa-rd .ls-badge-col img{width:150px !important;max-width:none !important;max-height:none !important;height:auto !important}
+.aa-rd .ls-badge-col .aa-tags{justify-content:center;gap:6px;margin:6px 0 0}
+.aa-rd .ls-badge-col .aa-tag{font-size:10px;padding:6px 10px}
+@media(max-width:820px){ .aa-rd .ls-badge-col .aa-tags{justify-content:flex-start} }
+.aa-rd .ls-badge-col .aa-ls-textbadge{margin:0 auto;flex:none}
+@media(max-width:820px){ .aa-rd .ls-badge-col .aa-ls-textbadge{margin:0} }
+
+/* ASPC course bar: hide the redundant descriptor line under the name */
+.page-id-1835 .aa-coursebar .aa-bar-in > div:first-child .mono{display:none}
+
+/* Course-bar sub-nav styled as TABS */
+.aa-rd .aa-bar-nav{gap:4px !important;align-self:stretch;align-items:flex-end}
+.aa-rd .aa-bar-nav .lnk{
+  position:relative;
+  padding:8px 15px !important;
+  font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--aa-muted);text-transform:none;
+  border:1px solid var(--aa-border);
+  border-bottom:2px solid var(--aa-border);
+  border-radius:6px 6px 0 0;
+  background:#fff;
+  text-decoration:none !important;
+  transition:color .15s,background .15s,border-color .15s;
+}
+.aa-rd .aa-bar-nav .lnk:hover{text-decoration:none !important}
+.aa-rd .aa-bar-nav .lnk::after{display:none !important}
+.aa-rd .aa-bar-nav .lnk:hover{color:var(--aa-teal-dark);background:#F1F8F8;border-color:var(--aa-border-strong);border-bottom-color:var(--aa-teal)}
+
+/* ==================== V. EVENT PAGE TOP AREA (.aa-ev-*) ==================== */
+.aa-ev-reg-top{
+  display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px;
+  margin:16px 0 28px;
+}
+.aa-ev-reg-btn{
+  display:inline-flex; align-items:center; gap:10px;
+  background:#127E88; color:#fff !important;
+  font:600 1.02rem/1 "Inter",system-ui,sans-serif; letter-spacing:.01em;
+  text-decoration:none !important;
+  padding:15px 28px; border-radius:12px;
+  box-shadow:0 14px 30px -12px rgba(11,46,53,.45);
+  transition:background .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.aa-ev-reg-btn:hover,
+.aa-ev-reg-btn:focus{
+  background:#0B2E35; color:#fff !important;
+  transform:translateY(-2px); box-shadow:0 18px 36px -12px rgba(11,46,53,.5);
+}
+.aa-ev-reg-arrow{ font-size:1.05em; transition:transform .18s ease; }
+.aa-ev-reg-btn:hover .aa-ev-reg-arrow{ transform:translateX(4px); }
+.aa-ev-reg-note{
+  font:500 .8rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.02em; text-transform:uppercase; color:#5E7378;
+}
+.aa-ev-details{ margin-bottom:8px; }
+.aa-ev-details-grid{
+  display:flex; flex-wrap:wrap; align-items:flex-start;
+  gap:16px 40px; margin-top:6px;
+}
+.aa-ev-cell{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.aa-ev-cell .aa-ev-k{
+  font:600 .72rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.06em; text-transform:uppercase; color:#5E7378;
+}
+.aa-ev-cell .aa-ev-v{
+  font:400 1rem/1.4 "Inter",system-ui,sans-serif; color:#0B2E35;
+}
+.aa-ev-cell .aa-ev-v a{ color:#127E88; }
+.aa-ev-cell-reg{ align-self:center; }
+a.aa-ev-reg-inline{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#127E88; color:#fff !important;
+  font:600 .96rem/1 "Inter",system-ui,sans-serif;
+  text-decoration:none !important;
+  padding:12px 22px; border-radius:11px;
+  box-shadow:0 10px 22px -12px rgba(11,46,53,.4);
+  transition:background .18s ease, transform .18s ease;
+}
+a.aa-ev-reg-inline:hover,
+a.aa-ev-reg-inline:focus{
+  background:#0B2E35; color:#fff !important; transform:translateY(-1px);
+}
+a.aa-ev-reg-inline .aa-ev-reg-arrow{ font-size:1.05em; transition:transform .18s ease; }
+a.aa-ev-reg-inline:hover .aa-ev-reg-arrow{ transform:translateX(3px); }
+@media (max-width:720px){
+  .aa-ev-details-grid{ flex-direction:column; gap:12px; }
+  .aa-ev-cell-reg{ align-self:flex-start; }
+  .aa-ev-reg-btn{ width:100%; justify-content:center; }
+  .aa-ev-reg-note{ width:100%; }
+}
+
+/* One-off: white link for menu item 28855 */
+html body #masthead li.menu-item-28855 > a,
+html body li.menu-item-28855 > a { color:#fff !important; }
+
+/* ############################################################################
+   AA NAV (v21) — THE single nav system. Header, utility strip, breadcrumb
+   pill, mega panel, flagship band, mobile accordion, card descriptions.
+   Pairs with WPCode "AA – Nav JS" v18 (hover-intent, .aa-open open/close,
+   mobile accordion wiring, utility-strip + breadcrumb injectors, clickable
+   parents, BreadcrumbList JSON-LD).
+   Rule content = the browser-verified v20, minus the legacy-fighting layers
+   that are unnecessary now that the legacy nav CSS is deleted from this file.
+   ############################################################################ */
+
+/* ---------- N0. Nav tokens ---------- */
+html body #masthead{
+  --aa-nav-border:#DBE6E6;  /* hairline used by the mega panel + logo divider */
+  --aa-hdr:80px;            /* live header height, kept in sync by JS */
+}
+
+/* ---------- N1. Header: STICKY (not fixed) ----------
+   Sticky so the utility strip + breadcrumb (injected as normal-flow siblings
+   around #masthead by AA – Nav JS) render in document order:
+   teal strip -> nav -> breadcrumb -> content. No body padding-top needed. */
+html body #masthead,
+html body.ast-theme-transparent-header #masthead,
+html body.ast-header-break-point #masthead,
+html body .ast-sticky-active #masthead{
+  position:sticky !important;
+  top:0 !important;
+  z-index:100000 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+html body.admin-bar #masthead{ top:32px !important; }
+@media (max-width:782px){ html body.admin-bar #masthead{ top:46px !important; } }
+html body{ padding-top:0 !important; }
+html body.admin-bar{ padding-top:0 !important; }
+/* ---- CLS guard (v21.1) ----
+   AA – Nav JS injects the teal strip + breadcrumb pill at the top of the
+   page from the FOOTER, i.e. after first paint — without a reserve that
+   insertion shifts the entire page down (~0.1 CLS on mobile, seen in
+   PageSpeed field data). Reserve their approximate height up front; the JS
+   adds .aa-bars-in to <body> in the same frame it injects the bars, which
+   releases the reserve — net layout shift ~0. Home has no breadcrumb, so it
+   reserves only the strip height. If JS is disabled the nav bars don't exist
+   at all and the reserve is released by the :not() never matching... it
+   would persist — acceptable: nav itself requires JS on this site. */
+html body:not(.aa-bars-in){ padding-top:78px !important; }
+html body.home:not(.aa-bars-in){ padding-top:34px !important; }
+@media (max-width:921px){
+  html body:not(.aa-bars-in){ padding-top:70px !important; }
+  html body.home:not(.aa-bars-in){ padding-top:31px !important; }
+}
+html body.aa-bars-in{ padding-top:0 !important; }
+/* clickability safety net — deliberately NARROW (#masthead itself + links
+   only). The old `#masthead *` version force-enabled pointer-events on the
+   hidden mega panels' contents and was one third of the invisible click-trap. */
+html body #masthead,
+html body #masthead a{ pointer-events:auto !important; }
+
+/* mobile/tablet: solid header (blur treatment is desktop-only) */
+@media (max-width:921px){
+  html body #masthead{ background:rgba(255,255,255,.97) !important; }
+}
+/* desktop: translucent hairline chrome */
+@media (min-width:922px){
+  html body #masthead,
+  html body #masthead .ast-primary-header-bar,
+  html body #masthead .main-header-bar,
+  html body #masthead .ast-above-header{
+    background:rgba(251,253,253,.92) !important;
+    -webkit-backdrop-filter:blur(12px) !important; backdrop-filter:blur(12px) !important;
+    border-bottom:1px solid #0E3A44 !important;
+  }
+}
+
+/* ---------- N2. Utility strip — injected by AA – Nav JS above #masthead ---------- */
+.aa-utilstrip{background:#0E3A44;color:#AFC8C8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.05em}
+.aa-utilstrip-in{max-width:1280px;margin:0 auto;padding:8px 30px;display:flex;align-items:center;gap:22px}
+.aa-utilstrip .u-partner,.aa-utilstrip .u-rating{text-transform:uppercase}
+.aa-utilstrip .u-dot{color:#5E7C7C}
+.aa-utilstrip .u-star{color:#127E88}
+.aa-utilstrip .u-right{margin-left:auto;display:flex;align-items:center;gap:20px}
+.aa-utilstrip a{color:#AFC8C8;text-decoration:none;transition:color .2s ease}
+.aa-utilstrip a:hover{color:#fff}
+.aa-utilstrip .u-div{width:1px;height:12px;background:#3B5C62;display:inline-block}
+.aa-utilstrip .u-signin{color:#EAF4F4;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-transform:uppercase}
+@media(max-width:921px){
+  .aa-utilstrip .u-partner,.aa-utilstrip .u-rating,.aa-utilstrip .u-div{display:none}
+  .aa-utilstrip-in{justify-content:flex-end;padding:7px 18px;gap:16px}
+}
+
+/* ---------- N3. Breadcrumb pill — injected by AA – Nav JS below the nav ---------- */
+.aa-crumb-wrap{background:#F4F8F8;border-bottom:1px solid #DBE6E6}
+.aa-crumb-wrap.is-dark{background:#0B2E35;border-bottom:1px solid #0E3A44}
+.aa-crumb-in{max-width:1280px;margin:0 auto;padding:10px 30px}
+.aa-crumb{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;padding:5px 14px;
+  border:1px solid #DBE6E6;border-radius:999px;background:#F4F8F8;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11.5px;letter-spacing:.05em;text-transform:uppercase}
+.aa-crumb-wrap.is-dark .aa-crumb{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06)}
+.aa-crumb-link{color:#88A0A4;text-decoration:none;transition:color .15s ease}
+.aa-crumb-link:hover{color:#127E88}
+.aa-crumb-wrap.is-dark .aa-crumb-link{color:#B9D4D4}
+.aa-crumb-wrap.is-dark .aa-crumb-link:hover{color:#fff}
+.aa-crumb-sep{color:#B7C7C7;margin:0 2px}
+.aa-crumb-wrap.is-dark .aa-crumb-sep{color:rgba(255,255,255,.35)}
+.aa-crumb-here{color:#0B5E66;background:#DCEDEE;border-radius:999px;padding:3px 11px}
+.aa-crumb-wrap.is-dark .aa-crumb-here{color:#0B2E35;background:#8FCFCF}
+@media(max-width:721px){
+  .aa-crumb-in{padding:8px 18px}
+  .aa-crumb{font-size:10.5px;gap:5px;padding:4px 12px}
+  .aa-crumb-here{padding:3px 9px}
+}
+/* hide the OLD in-page breadcrumbs still baked into some page files */
+.aa-ab nav[aria-label="Breadcrumb"],
+.aa-fq nav[aria-label="Breadcrumb"],
+.aa-cx nav[aria-label="Breadcrumb"],
+.aa-mat nav[aria-label="Breadcrumb"],
+.aa-sx nav[aria-label="Breadcrumb"],
+.aa-om nav[aria-label="Breadcrumb"],
+.aa-as nav[aria-label="Breadcrumb"],
+.aa-hm nav[aria-label="Breadcrumb"]{ display:none !important; }
+/* hide Astra's native breadcrumb feature — the pill replaces it site-wide */
+html body .ast-breadcrumbs,
+html body .ast-breadcrumbs-wrap,
+html body .ast-container > .ast-breadcrumbs{ display:none !important; }
+
+/* ---------- N4. Logo + top-level nav links + action pills (desktop) ---------- */
+@media (min-width:922px){
+  html body #masthead{ --aa-logo-h:52px; }
+  html body #masthead .site-branding,
+  html body #masthead .ast-site-identity{
+    padding-right:24px !important;
+    border-right:1px solid #CFE0E0 !important;
+  }
+  html body #masthead .custom-logo-link img,
+  html body #masthead .site-logo-img img,
+  html body #masthead .ast-logo-title-inline img,
+  html body #masthead .site-branding img{
+    height:var(--aa-logo-h) !important;
+    width:auto !important; max-width:none !important;
+    object-fit:contain !important; object-position:left center !important;
+  }
+
+  html body #masthead .main-header-menu > .menu-item > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item > .menu-link,
+  html body #masthead .main-header-menu > .menu-item > a.menu-link,
+  html body #masthead .main-navigation > ul > .menu-item > a{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;
+    font-size:12px !important; letter-spacing:.1em !important; text-transform:uppercase !important;
+    color:#3C565E !important; font-weight:500 !important; position:relative !important;
+  }
+  html body #masthead .main-header-menu > .menu-item > .menu-link::after,
+  html body #masthead .ast-nav-menu > .menu-item > .menu-link::after,
+  html body #masthead .main-navigation > ul > .menu-item > a::after{
+    content:"" !important; position:absolute !important; left:0 !important; right:100% !important;
+    bottom:2px !important; height:1.5px !important; background:#127E88 !important;
+    transition:right .28s ease !important;
+  }
+  html body #masthead .main-header-menu > .menu-item:hover > .menu-link::after,
+  html body #masthead .ast-nav-menu > .menu-item:hover > .menu-link::after,
+  html body #masthead .main-navigation > ul > .menu-item:hover > a::after{ right:0 !important; }
+  html body #masthead .main-header-menu > .menu-item:hover > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item:hover > .menu-link,
+  html body #masthead .main-navigation > ul > .menu-item:hover > a{ color:#0E3A44 !important; }
+  html body #masthead .main-header-menu > .menu-item.current-menu-item > .menu-link,
+  html body #masthead .ast-nav-menu > .menu-item.current-menu-item > .menu-link,
+  html body #masthead .main-header-menu > .menu-item.current-menu-parent > .menu-link{
+    color:#0E3A44 !important; font-weight:600 !important;
+  }
+  html body #masthead .main-header-menu > .menu-item > .menu-link .ast-header-navigation-arrow{ display:none !important; }
+
+  /* Action pills (Enroll / Book Consult) */
+  html body #masthead .ast-custom-button,
+  html body #masthead .ast-header-button-1 .ast-custom-button,
+  html body #masthead .ast-builder-button-element{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;
+    font-size:12px !important; letter-spacing:.08em !important; text-transform:uppercase !important;
+    font-weight:600 !important; border-radius:999px !important; padding:10px 18px !important;
+    transition:border-color .2s ease !important;
+  }
+  html body #masthead .ast-header-button-1 .ast-custom-button{
+    color:#0E3A44 !important; background:transparent !important; border:1px solid #0E3A44 !important;
+  }
+  html body #masthead .ast-header-button-1 .ast-custom-button:hover{
+    background:#127E88 !important; border-color:#127E88 !important; color:#fff !important;
+  }
+  html body #masthead .ast-header-button-2 .ast-custom-button{
+    color:#fff !important; background:#0E3A44 !important; border:1px solid #0E3A44 !important;
+  }
+  html body #masthead .ast-header-button-2 .ast-custom-button:hover{
+    background:#127E88 !important; border-color:#127E88 !important;
+  }
+}
+
+/* ---------- N5. Mega panel — desktop ----------
+   Open/close is JS-ONLY (.aa-open set by AA – Nav JS). Closed panels are
+   display:none — zero boxes, zero hit-testing, the click-trap "hot area" is
+   impossible by construction (browser-verified, see repo repro harness). */
+@media (min-width:922px){
+  html body .aa-mega{ position:relative !important; }
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu{
+    position:fixed !important;
+    top:calc(var(--aa-hdr, 80px) + 6px) !important;
+    /* default placement (centered, contained); AA – Nav JS refines left/width
+       to the exact 1280px content column on open */
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(1180px, calc(100vw - 60px)) !important;
+    max-width:none !important;
+    margin:0 !important;
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+    align-items:stretch !important;
+    gap:14px !important;
+    padding:22px !important;
+    background:#fff !important;
+    border:1px solid var(--aa-nav-border) !important;
+    border-radius:12px !important;
+    box-shadow:0 30px 60px -24px rgba(8,37,43,.42) !important;
+    max-height:calc(100vh - var(--aa-hdr, 80px) - 20px) !important;
+    overflow-y:auto !important;
+  }
+  /* CLOSED = display:none (ID-boosted so nothing outranks it) */
+  html body #masthead .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu{
+    display:none !important;
+    visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
+  }
+  html body #masthead .main-header-menu > .menu-item.aa-mega:not(.aa-open) > .sub-menu *{
+    visibility:hidden !important; pointer-events:none !important;
+  }
+  /* OPEN = .aa-open, set only by AA – Nav JS */
+  html body #masthead .main-header-menu > .menu-item.aa-mega.aa-open > .sub-menu{
+    display:grid !important;
+    visibility:visible !important; opacity:1 !important; pointer-events:auto !important;
+  }
+  /* no hover-bridge pseudo-elements, ever */
+  html body .main-header-menu > .menu-item.aa-mega > .sub-menu::before{
+    content:none !important; display:none !important;
+  }
+
+  /* category card (non-flagship item: title + description + nested list) */
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag){
+    min-width:0 !important; width:auto !important;
+    border:1px solid #DCEAEA !important; border-radius:6px !important;
+    padding:16px 18px !important; background:#FBFDFD !important;
+    transition:border-color .15s, background .15s;
+  }
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag):hover{ border-color:#127E88 !important; background:#fff !important; }
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag) > a{
+    font-family:'Newsreader',Georgia,serif !important; font-style:italic; font-weight:500 !important;
+    font-size:20px !important; letter-spacing:0 !important; text-transform:none !important;
+    color:#0E3A44 !important; padding:0 0 8px !important; background:transparent !important;
+    border-bottom:1px solid #EAF3F3 !important; margin-bottom:8px !important; display:block !important;
+  }
+  html body .aa-mega > .sub-menu > .menu-item:not(.aa-flag) > a:hover{ color:#127E88 !important; background:transparent !important; }
+  html body .aa-mega > .sub-menu > .menu-item > .sub-menu{
+    position:static !important; display:block !important; opacity:1 !important; visibility:visible !important;
+    transform:none !important; left:auto !important; top:auto !important; width:100% !important; min-width:0 !important;
+    margin:0 !important; padding:0 !important; background:transparent !important; border:0 !important; box-shadow:none !important;
+  }
+  html body .aa-mega > .sub-menu .sub-menu > .menu-item > a{
+    padding:6px 10px !important; font-size:13px !important; color:#3C565E !important; background:transparent !important;
+    border-radius:4px !important; margin:0 -10px !important; transition:background .14s, color .14s, padding-left .14s;
+  }
+  html body .aa-mega > .sub-menu .sub-menu > .menu-item > a:hover{ color:#0C5E66 !important; background:#EAF6F7 !important; padding-left:14px !important; }
+  html body .aa-mega > .sub-menu .ast-menu-toggle,
+  html body .aa-mega > .sub-menu .menu-item-has-children > a::after,
+  html body .aa-mega > .sub-menu .menu-item-has-children > a .ast-header-navigation-arrow{ display:none !important; }
+}
+
+/* ---------- N6. Mobile (<=921px): tappable accordion ---------- */
+@media (max-width:921px){
+  html body #masthead .ast-menu-toggle,
+  html body .ast-mobile-popup-drawer .ast-menu-toggle,
+  html body .ast-mobile-header-content .ast-menu-toggle,
+  html body #ast-mobile-header .ast-menu-toggle{ display:none !important; }
+
+  /* collapsed by default */
+  html body #masthead .sub-menu,
+  html body .ast-mobile-popup-drawer .sub-menu,
+  html body .ast-mobile-header-content .sub-menu,
+  html body #ast-mobile-header .sub-menu,
+  html body .main-header-menu .sub-menu,
+  html body .main-navigation .sub-menu{
+    display:block !important; position:static !important;
+    max-height:0 !important; overflow:hidden !important;
+    opacity:0 !important; visibility:hidden !important;
+    transform:none !important; width:auto !important; min-width:0 !important;
+    margin:0 !important; padding:0 0 0 14px !important;
+    background:transparent !important; box-shadow:none !important; border:0 !important;
+    transition:max-height .30s ease, opacity .2s ease !important;
+  }
+  /* expanded state (toggled by the chevron via AA – Nav JS).
+     NOTE: the #masthead variant is required — the collapse rules above include
+     an ID selector (#masthead .sub-menu), so a class-only expanded rule LOSES
+     on specificity whenever Astra renders the mobile menu inline inside the
+     header (it only ever worked in the off-canvas drawer, which sits outside
+     #masthead). Caught by the browser test harness. */
+  html body #masthead .menu-item-has-children.aa-mopen > .sub-menu,
+  html body #ast-mobile-header .menu-item-has-children.aa-mopen > .sub-menu,
+  html body .ast-mobile-popup-drawer .menu-item-has-children.aa-mopen > .sub-menu,
+  html body .ast-mobile-header-content .menu-item-has-children.aa-mopen > .sub-menu,
+  html body .main-navigation .menu-item-has-children.aa-mopen > .sub-menu,
+  html body .menu-item-has-children.aa-mopen > .sub-menu{
+    max-height:1600px !important; opacity:1 !important; visibility:visible !important;
+    padding:2px 0 8px 14px !important;
+  }
+
+  /* chevron toggle */
+  html body #masthead li.menu-item-has-children,
+  html body .ast-mobile-popup-drawer li.menu-item-has-children,
+  html body .ast-mobile-header-content li.menu-item-has-children,
+  html body #ast-mobile-header li.menu-item-has-children,
+  html body .main-navigation li.menu-item-has-children{ position:relative !important; }
+  html body .aa-mchevron{
+    position:absolute !important; top:0 !important; right:0 !important;
+    width:58px !important; height:54px !important;
+    background:transparent !important; border:0 !important; padding:0 !important; margin:0 !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    cursor:pointer !important; z-index:6 !important; -webkit-appearance:none !important; appearance:none !important;
+  }
+  html body .aa-mchevron .aa-mchevron-i{
+    width:11px !important; height:11px !important;
+    border-right:2px solid #0B2E35 !important; border-bottom:2px solid #0B2E35 !important;
+    transform:rotate(45deg) !important; margin-top:-4px !important;
+    transition:transform .25s ease !important; pointer-events:none !important;
+  }
+  html body .menu-item-has-children.aa-mopen > .aa-mchevron .aa-mchevron-i{
+    transform:rotate(-135deg) !important; margin-top:3px !important;
+  }
+  html body li.menu-item-has-children > a{ padding-right:60px !important; }
+
+  /* keep Astra's mobile drawer above the sticky header */
+  html body .ast-mobile-popup-drawer,
+  html body .ast-mobile-header-wrap,
+  html body .ast-builder-menu-mobile,
+  html body #ast-mobile-header{ z-index:100001 !important; }
+
+  /* flatten the desktop flagship styling in the mobile menu */
+  html body #masthead .aa-mega .menu-item.aa-flag{ min-height:0 !important; background:transparent !important; padding:0 !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a{ position:static !important; color:inherit !important; font-size:inherit !important; }
+  html body #masthead .aa-mega .menu-item.aa-flag > a::before,
+  html body #masthead .aa-mega .menu-item.aa-flag > .sub-menu::after{ content:none !important; }
+  html body #masthead .aa-mega .menu-item.aa-feature{ position:static !important; }
+}
+
+/* ---------- N7. Flagship band — class "aa-flag" ----------
+   Content-driven column layout: title stacked above a wrapping pill row, no
+   fixed height, no absolute positioning — the band grows to fit, so title/
+   pills can never overlap. order:-1 keeps it the TOP item regardless of the
+   WordPress menu order. */
+@media (min-width:922px){
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag{
+    grid-column:1 / -1 !important;
+    order:-1 !important;
+    position:relative !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    gap:14px !important;
+    min-height:0 !important;
+    padding:22px 26px !important;
+    text-align:left !important;
+    background:#0B2E35 !important;
+    border-color:#0B2E35 !important;
+    background-image:radial-gradient(circle at 82% 45%, rgba(60,80,224,.40), transparent 55%) !important;
+  }
+  /* stays dark on hover/focus (generic card hover must never touch it) */
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag:hover,
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag:focus-within{
+    background:#0B2E35 !important;
+    border-color:#0B2E35 !important;
+    background-image:radial-gradient(circle at 82% 45%, rgba(60,80,224,.40), transparent 55%) !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag > a{
+    position:static !important;
+    display:block !important;
+    max-width:none !important;
+    color:#fff !important;
+    border:none !important; margin:0 !important; padding:0 !important;
+    font-size:22px !important; line-height:1.2 !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag > a::before{
+    content:"FLAGSHIP"; display:block; font-family:ui-monospace,Menlo,monospace; font-style:normal;
+    font-weight:700; font-size:10px; letter-spacing:.14em; color:#8FCFCF; margin-bottom:8px;
+  }
+  /* pill row (flagship's own children, e.g. the 5 Operating Model layers) */
+  .aa-mega > .sub-menu > .menu-item.aa-flag > .sub-menu{
+    position:static !important;
+    display:flex !important; flex-wrap:wrap !important;
+    justify-content:flex-start !important; align-items:center !important;
+    gap:10px !important; margin:0 !important; max-width:none !important; width:100% !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag .sub-menu > .menu-item > a{
+    color:#fff !important; font-size:13px !important; padding:8px 14px !important; margin:0 !important;
+    border:1px solid rgba(255,255,255,.25) !important; border-radius:6px !important; background:rgba(255,255,255,.04) !important;
+    white-space:nowrap !important;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag .sub-menu > .menu-item > a:hover{
+    border-color:#8FCFCF !important; background:rgba(143,207,207,.14) !important; color:#fff !important;
+  }
+  /* leaf flagships (no nested pill row) get an "Explore ->" caption */
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
+    content:"Explore \2192";
+    display:block; margin-top:8px;
+    font-family:ui-monospace,Menlo,monospace; font-style:normal;
+    font-size:12px; letter-spacing:.04em; font-weight:600; color:#8FCFCF;
+  }
+
+  /* remove dropdown caret on top-level menu items */
+  .main-header-menu .ast-header-navigation-arrow,
+  .ast-nav-menu .ast-header-navigation-arrow,
+  .main-header-menu .menu-item-has-children > .menu-link::after{ display:none !important; }
+}
+
+/* ---------- N8. Card descriptions ---------- */
+@media (min-width:922px){
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag)::after{
+    display:block; font-style:normal; font-weight:400; font-size:12.5px;
+    color:#5E7378; line-height:1.5; margin-top:4px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  /* Services */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/business-agility/"])::after{content:"Scale agility across the whole enterprise."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/digital-transformation/"])::after{content:"Modernise how you build and deliver."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/innovation-culture/"])::after{content:"Build a culture that ships new ideas."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/product-operating-model/"])::after{content:"Shift from projects to products."}
+  /* Assessments */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{content:"See where you stand \2014  Absent to Flying."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/mutation-readiness/"])::after{content:"How ready are you to adapt & transform?"}
+  /* About */
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{content:"Answers to the questions we hear most."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{content:"Send us a message \2014  we reply fast."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href*="#offices"])::after{content:"Where we work \2014  offices worldwide."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/"])::after{content:"The mission \2014  and the people behind the work."}
+}
+/* ==================== END — AA Additional CSS v21 CLEAN ==================== */
+
+
+/* ############################################################################
+   W. MERIDIAN COURSE HERO + DYNAMIC AGENDA (appended)
+   Reusable course-hero (RTE and rolling out to all course pages): breadcrumb
+   pill, badge chips, price+rating row, credential lockup, and the light
+   "Upcoming sessions" agenda rendered by the engine's buildAgenda() into
+   #aa-agenda. Uses the --aa-* tokens defined in section A above.
+   ############################################################################ */
+/* ============================================================
+   Meridian course-hero — REUSABLE COMPONENT (CSS)
+   ------------------------------------------------------------
+   INSTALL (once): WPCode → Add Snippet → Custom Code → CSS Snippet →
+   paste this → Auto Insert → "Site Wide Header" (or append to the
+   existing global course CSS). Name "AA – Meridian Course Hero".
+
+   WHAT IT DOES
+   Styles the reusable Meridian course hero used by RTE and (rolling out)
+   every other course page. Pair it with the markup in
+   `meridian-course-hero.template.html`.
+
+   KEY: the hero's grid uses `.aa-mhero` (NOT `.aa-grid2`). That single
+   class name is deliberate — the cohort engine's buildHeroV2() only
+   auto-transforms `.aa-grid2` heroes, so `.aa-mhero` is preserved as-is,
+   while buildCohorts() still fills #aa-cohorts with the vertical date list.
+
+   Depends on the existing course-CSS variables (--aa-teal, --aa-navy,
+   --aa-border, --aa-muted, --aa-muted-2, --aa-text) and 'Newsreader',
+   which the global course CSS already loads.
+   ============================================================ */
+
+/* two-column hero grid (pitch + dark cohort card) */
+.aa-rd .aa-mhero{display:grid;grid-template-columns:1.4fr 1fr;gap:46px;align-items:start;margin-top:6px}
+@media(max-width:900px){.aa-rd .aa-mhero{grid-template-columns:1fr!important;gap:30px}}
+
+/* breadcrumb pill */
+.aa-rd .aa-rte-crumb{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:5px 6px 5px 13px;border:1px solid var(--aa-border);border-radius:999px;background:#F4F8F8;margin-bottom:20px}
+.aa-rd .aa-rte-crumb a{color:var(--aa-muted-2)}
+.aa-rd .aa-rte-crumb span{color:#0B5E66;background:#DCEDEE;border-radius:999px;padding:4px 12px}
+
+/* badge chips + meta line */
+.aa-rd .aa-rte-kick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.aa-rd .aa-rte-chip{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--aa-teal);border:1px solid #BCE0E5;background:#EAF6F7;padding:6px 11px;border-radius:2px}
+.aa-rd .aa-rte-chip.on{color:#fff;background:var(--aa-teal);border-color:var(--aa-teal)}
+.aa-rd .aa-rte-meta{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--aa-muted)}
+
+/* price + rating row */
+.aa-rd .aa-rte-pr{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:22px}
+.aa-rd .aa-rte-price{font-family:'Newsreader',Georgia,serif;font-size:30px;color:var(--aa-text);line-height:1}
+.aa-rd .aa-rte-price s{color:var(--aa-muted-2);font-size:20px;margin-right:4px}
+.aa-rd .aa-rte-div{width:1px;height:26px;background:var(--aa-border)}
+.aa-rd .aa-rte-rate{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;letter-spacing:.04em;color:var(--aa-muted)}
+@media(max-width:900px){.aa-rd .aa-rte-price{font-size:26px}}
+
+
+/* ---- appended: dynamic "Upcoming sessions" agenda (buildAgenda #aa-agenda) ---- */
+/* ============================================================
+   Meridian "Upcoming sessions" agenda — REUSABLE COMPONENT (CSS)
+   ------------------------------------------------------------
+   Append these rules to aa-meridian-hero.css (they will be merged
+   there later). Styles the light agenda card rendered by the cohort
+   engine's buildAgenda() into #aa-agenda. All rules are namespaced
+   under .aa-rd so nothing leaks outside the course-page wrapper.
+
+   Uses literal design tokens (rather than the --aa-* vars) so the
+   card renders correctly even where those vars are not defined:
+   teal #127E88, hairline #C7DEDE/#DCEAEA, tint #F1F8F8, muted
+   #5E7378, panel bg #FDFEFE, EB orange #E0632F (dot #F6682F),
+   status green #C7F2D0 / text #06351F.
+   ============================================================ */
+
+/* card shell */
+.aa-rd .aa-agenda{
+	display:flex;flex-direction:column;
+	border:1px solid #C7DEDE;border-radius:6px;background:#fff;
+	box-shadow:0 10px 30px -18px rgba(8,37,43,.35);
+	overflow:hidden;font-family:'Newsreader',Georgia,serif}
+
+/* header row */
+.aa-rd .aa-agenda-head{
+	display:flex;align-items:center;justify-content:space-between;gap:12px;
+	padding:12px 16px;border-bottom:1px solid #DCEAEA;background:#fff}
+.aa-rd .aa-agenda-title{
+	font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;
+	letter-spacing:.08em;text-transform:uppercase;color:#127E88}
+.aa-rd .aa-agenda-tz{
+	font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+	letter-spacing:.06em;text-transform:uppercase;color:#88A0A4;white-space:nowrap}
+
+/* scrollable list — hidden scrollbar */
+.aa-rd .aa-agenda-list{
+	display:flex;flex-direction:column;gap:8px;
+	max-height:372px;overflow-y:auto;padding:14px 16px;
+	scrollbar-width:none;-ms-overflow-style:none}
+.aa-rd .aa-agenda-list::-webkit-scrollbar{width:0;height:0;display:none}
+
+/* each session row */
+.aa-rd .aa-agenda-row{
+	display:flex;align-items:center;flex-wrap:wrap;gap:14px;
+	border:1px solid #DCEAEA;border-radius:5px;background:#FDFEFE;padding:12px 14px}
+
+/* date tile */
+.aa-rd .aa-agenda-tile{
+	flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+	width:54px;height:54px;border-radius:4px;background:#F1F8F8;border:1px solid #C7DEDE}
+.aa-rd .aa-agenda-mon{
+	font-family:ui-monospace,Menlo,monospace;font-size:9px;font-weight:700;
+	letter-spacing:.08em;text-transform:uppercase;color:#127E88;line-height:1}
+.aa-rd .aa-agenda-day{
+	font-family:'Newsreader',Georgia,serif;font-size:22px;color:#0E3A44;line-height:1.1}
+
+/* middle block */
+.aa-rd .aa-agenda-mid{
+	flex:1 1 auto;min-width:170px;display:flex;flex-direction:column;
+	align-items:flex-start;gap:5px}
+.aa-rd .aa-agenda-when{
+	font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:17.5px;
+	color:#0E3A44;line-height:1.15}
+.aa-rd .aa-agenda-meta{
+	font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+	letter-spacing:.04em;color:#5E7378}
+
+/* status pills */
+.aa-rd .aa-agenda-pill{
+	display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;
+	font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+	padding:3px 8px;border-radius:2px}
+.aa-rd .aa-agenda-pill.hot{background:#C7F2D0;color:#06351F}
+.aa-rd .aa-agenda-pill.low{background:transparent;color:#5E7378;border:1px solid #C7DEDE}
+
+/* actions — never wrap internally */
+.aa-rd .aa-agenda-actions{
+	flex:none;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.aa-rd .aa-agenda-reg{
+	display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+	font-weight:600;color:#fff;background:#127E88;border:1px solid #127E88;
+	border-radius:2px;padding:8px 13px;text-decoration:none;line-height:1;cursor:pointer}
+.aa-rd .aa-agenda-reg:hover{background:#0E6A73;border-color:#0E6A73}
+.aa-rd .aa-agenda-eb{
+	display:inline-flex;align-items:center;gap:7px;
+	font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600;
+	color:#E0632F;background:#fff;border:1px solid rgba(224,99,47,.45);
+	border-radius:2px;padding:8px 13px;text-decoration:none;line-height:1}
+.aa-rd .aa-agenda-eb:hover{border-color:rgba(224,99,47,.8);background:#FFF7F3}
+.aa-rd .aa-agenda-ebdot{
+	flex:none;width:7px;height:7px;border-radius:50%;background:#F6682F;display:inline-block}
+
+/* footer */
+.aa-rd .aa-agenda-foot{
+	border-top:1px solid #DCEAEA;padding:11px 16px;
+	font-family:ui-monospace,Menlo,monospace;font-size:10px;
+	letter-spacing:.05em;text-transform:uppercase;color:#88A0A4}
+
+/* responsive: rows wrap (tile/mid/actions stack), actions stay nowrap internally */
+@media(max-width:560px){
+	.aa-rd .aa-agenda-actions{width:100%}
+	.aa-rd .aa-agenda-reg,.aa-rd .aa-agenda-eb{flex:1 1 auto;text-align:center;justify-content:center}
+}
+
+/* ------------------------------------------------------------
+   v2 hero support: right column wrapper + LEFT-column credential
+   lockup (replaces the old 3-stat block in meridian-course-hero.v2).
+   ------------------------------------------------------------ */
+.aa-rd .aa-mhero-right{display:flex;flex-direction:column}
+.aa-rd .aa-cred-lockup{
+	display:flex;align-items:center;gap:16px;margin-top:26px;
+	padding-top:22px;border-top:1px solid #DCEAEA}
+.aa-rd .aa-cred-badge{
+	flex:none;width:64px;height:64px;object-fit:contain;display:block}
+.aa-rd .aa-cred-cap{
+	font-family:ui-monospace,Menlo,monospace;font-size:10.5px;font-weight:700;
+	letter-spacing:.08em;text-transform:uppercase;color:#88A0A4;margin-bottom:5px}
+.aa-rd .aa-cred-name{
+	font-family:'Newsreader',Georgia,serif;font-size:17px;color:#0E3A44;line-height:1.25}
