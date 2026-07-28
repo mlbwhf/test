@@ -1,0 +1,112 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.rai-wrap{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:1080px;margin:0 auto;padding:0 20px;line-height:1.55;}
+.rai-wrap *{box-sizing:border-box;}
+.rai-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#2545f5;font-weight:500;margin:0 0 6px;}
+.rai-crumb{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.05em;color:#9a9aa2;text-transform:uppercase;margin:0 0 20px;}
+.rai-crumb a{color:#9a9aa2;text-decoration:none;}
+.rai-crumb a:hover{color:#2545f5;}
+.rai-h1{font-weight:900;font-size:clamp(34px,6vw,58px);line-height:1.0;letter-spacing:-0.03em;margin:6px 0 18px;}
+.rai-intro{font-size:19px;line-height:1.55;color:#3a3a42;max-width:820px;margin:0 0 10px;}
+.rai-updated{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9a9aa2;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 26px;}
+.rai-updated strong{color:#111114;font-weight:600;}
+.rai-wrap a{color:#2545f5;}
+.rai-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#e6e6ea;border:1px solid #e6e6ea;margin:30px 0;}
+.rai-stat{background:#fff;padding:22px 18px;}
+.rai-stat .n{font-weight:900;font-size:clamp(26px,3.6vw,40px);line-height:1;letter-spacing:-0.02em;}
+.rai-stat .n span{color:#2545f5;}
+.rai-stat .l{font-size:12.5px;line-height:1.35;color:#55555e;margin-top:9px;}
+.rai-stat .s{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#9a9aa2;margin-top:6px;}
+.rai-wrap h2{font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;margin:52px 0 8px;padding-top:18px;border-top:2px solid #111114;}
+.rai-wrap p{font-size:16px;line-height:1.65;}
+.rai-tbl{overflow-x:auto;margin:22px 0 36px;}
+.rai-tbl table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:720px;}
+.rai-tbl thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:#111114;font-weight:600;padding:11px 12px;border-bottom:2px solid #111114;background:#fafafb;}
+.rai-tbl thead th:first-child{width:150px;}
+.rai-tbl tbody td{padding:11px 12px;border-bottom:1px solid #ececef;vertical-align:top;}
+.rai-tbl tbody th{text-align:left;font-weight:700;padding:11px 12px;border-bottom:1px solid #ececef;background:#fafafb;font-size:13px;vertical-align:top;}
+.rai-note{background:#f5f5f7;border-left:4px solid #2545f5;border-radius:3px;padding:18px 22px;margin:22px 0;font-size:15px;line-height:1.6;}
+.rai-related{border-left:3px solid #2545f5;background:#f6f6f9;margin-top:44px;padding:22px 24px;border-radius:3px;}
+.rai-related h3{margin-top:0;}
+.rai-src{font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.75;color:#3a3a42;}
+.rai-src a{word-break:break-word;}
+@media(max-width:680px){.rai-stats{grid-template-columns:1fr;}}
+</style>
+
+<div class="rai-wrap">
+  <p class="rai-eyebrow">Regulating AI · Index</p>
+  <p class="rai-crumb"><a href="/">Home</a> / <a href="/indexes/">Indexes</a> / <a href="/indexes/regulating-ai/">Regulating AI</a> / Laws Compared</p>
+  <h1 class="rai-h1">AI Laws Compared: EU vs US vs China vs the World</h1>
+  <p class="rai-intro">Every major economy is regulating AI &mdash; but they disagree on almost everything: whether to write one law or many, whether to protect rights or promote industry, and whether the state, the market, or the labs should hold the controls. This is the side-by-side scorecard of the three models that matter most, plus the soft-law challengers, on the dimensions that decide who actually has to comply.</p>
+  <p class="rai-updated"><strong>Last updated: July 2026.</strong> Companion to our <a href="/indexes/regulating-ai/ai-regulation-by-country-2026/">country-by-country map</a>. Every figure is sourced below.</p>
+
+  <div class="rai-stats">
+    <div class="rai-stat"><div class="n">7<span>%</span></div><div class="l">EU max fine as a share of global turnover &mdash; the world's steepest</div><div class="s">EU AI Act, Art. 99</div></div>
+    <div class="rai-stat"><div class="n">3</div><div class="l">Distinct philosophies: rights-based, market-led, security-led</div><div class="s">EU / US / China</div></div>
+    <div class="rai-stat"><div class="n">$0</div><div class="l">Monetary penalty under Japan's deliberately non-punitive AI law</div><div class="s">AI Promotion Act</div></div>
+  </div>
+
+  <h2>The master scorecard</h2>
+  <p>The clearest way to see the divergence is dimension by dimension. Read down a column for one jurisdiction's whole philosophy; read across a row to see how differently the same question gets answered.</p>
+  <div class="rai-tbl">
+    <table>
+      <thead><tr><th>Dimension</th><th>European Union</th><th>United States</th><th>China</th></tr></thead>
+      <tbody>
+        <tr><th>Legal instrument</th><td>One binding regulation (AI Act 2024/1689)</td><td>No federal law; ~50 state laws + executive orders</td><td>Several binding administrative rules (CAC-led)</td></tr>
+        <tr><th>Core philosophy</th><td>Rights-based, precautionary</td><td>Market-led, pro-innovation</td><td>State control, content &amp; security</td></tr>
+        <tr><th>What triggers coverage</th><td>Risk tier of the <em>use</em> + GPAI compute (10<sup>25</sup> FLOP)</td><td>Varies by state; frontier compute (CA: 10<sup>26</sup>)</td><td>Public-facing service + content type</td></tr>
+        <tr><th>Headline obligation</th><td>Conformity assessment for high-risk systems</td><td>Transparency &amp; anti-discrimination (state-dependent)</td><td>Algorithm registration + content labeling</td></tr>
+        <tr><th>Max penalty</th><td>&euro;35M or 7% global turnover</td><td>e.g. TX $200k/violation; UT $2,500; no federal cap</td><td>Takedown, suspension, license revocation</td></tr>
+        <tr><th>Enforcer</th><td>AI Office + national authorities</td><td>State AGs, FTC, EEOC, sector agencies</td><td>Cyberspace Administration (CAC) + agencies</td></tr>
+        <tr><th>Extraterritorial?</th><td>Yes &mdash; applies to providers serving the EU</td><td>Effectively, via state reach &amp; export controls</td><td>Applies to services offered in China</td></tr>
+        <tr><th>Frontier-model focus</th><td>Yes &mdash; GPAI "systemic risk" tier</td><td>Yes at state level (CA SB 53); no federal</td><td>Indirect (security review, algorithm filing)</td></tr>
+        <tr><th>Status (mid-2026)</th><td>In force; high-risk rules delayed to Dec 2027</td><td>Patchwork live; federal preemption threatened</td><td>In force (layered)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Three philosophies, three answers</h2>
+  <p><strong>The EU protects rights first.</strong> The AI Act starts from the citizen: it bans uses deemed unacceptable (social scoring, most real-time biometric surveillance), then loads the heaviest duties onto "high-risk" systems that touch employment, credit, education, and essential services. Compliance is a <em>conformity assessment</em> &mdash; paperwork, testing, and CE-style marking before deployment. The logic is precautionary: prove it's safe before it ships.</p>
+  <p><strong>The US protects the market first.</strong> Federal policy in 2025&ndash;2026 is explicitly deregulatory, framing rules as a competitiveness risk and even threatening to preempt the states. Real obligations therefore live at the state level and cluster around two narrow concerns: <em>tell people when AI is being used</em> (Utah, Texas) and <em>don't let it discriminate</em> (Illinois, Colorado's surviving core). California's SB 53 is the lone frontier-safety statute &mdash; and even it is transparency, not pre-approval.</p>
+  <p><strong>China protects the state first.</strong> There is no single AI Act; instead, targeted rules govern the things the government cares about most &mdash; recommendation algorithms, deep synthesis, generative-AI services, and, since September 2025, mandatory labeling of AI content with both visible marks and hidden metadata. Enforcement is fast and administrative: register your algorithm, or lose the service.</p>
+
+  <h2>Where the rivals actually agree</h2>
+  <p>For all the divergence, three points of convergence are emerging &mdash; and they're the safest bets for where global norms settle:</p>
+  <ul>
+    <li><strong>Label synthetic content.</strong> The EU (Art. 50 transparency), China (2025 labeling standard), and South Korea all now require AI-generated content to be marked. This is the single most globally consistent rule.</li>
+    <li><strong>Watch the frontier.</strong> Both the EU (10<sup>25</sup> FLOP systemic-risk tier) and California (10<sup>26</sup> frontier threshold) single out the largest models for special duties &mdash; a shared instinct that scale equals risk.</li>
+    <li><strong>Report serious incidents.</strong> The EU's GPAI Code of Practice, California SB 53, and South Korea's Act all create channels to report critical safety incidents to regulators.</li>
+  </ul>
+
+  <h2>Who bites hardest?</h2>
+  <p>On paper, the enforcement gradient runs steeply downhill from Brussels. The EU's <strong>7% of global turnover</strong> is an existential number for a large developer &mdash; for a $50B-revenue firm, up to $3.5B per prohibited-use finding. The US has no federal cap and modest state fines (Texas tops out at $200,000 per violation; Utah at $2,500), but its real leverage is different: <em>litigation and export controls</em>. China's penalties look mild in dollar terms but are arguably the most immediate &mdash; a service can simply be switched off. Japan, by design, imposes no fine at all; its only sanction is public naming.</p>
+  <div class="rai-note">The paradox: the jurisdiction with the smallest headline fines (China) can act fastest, while the one with the largest (the EU) is delaying its toughest rules to 2027&ndash;2028. Severity on paper and speed in practice are not the same thing.</div>
+
+  <h2>What none of them has solved</h2>
+  <p>Every framework above assumes a model its author can reach. None cleanly answers the open-weights problem: once a frontier model's weights are public, no conformity assessment, licensing gate, or content rule can be enforced against the countless copies. That gap &mdash; and the US "kill switch" proposal that tries to close it &mdash; is the subject of our <a href="/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/">forecast on the AI shutdown bill</a>.</p>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>Is the EU or the US stricter on AI?</strong><br>The EU, decisively. It has a binding, comprehensive law with fines up to 7% of global turnover, while the US has no federal AI statute and a deregulatory federal posture &mdash; only a patchwork of narrower state laws.</p>
+  <p><strong>What's the biggest difference between EU and Chinese AI regulation?</strong><br>Focus. The EU regulates AI to protect individual rights (bias, safety, transparency); China regulates it to protect state control over information (algorithm registration, content labeling, security review). The EU fines; China switches services off.</p>
+  <p><strong>Do these laws apply to foreign companies?</strong><br>Largely yes. The EU AI Act, China's rules, and South Korea's Act all reach providers that serve users in their territory, regardless of where the company is based.</p>
+
+  <div class="rai-related">
+    <h3>Related</h3>
+    <p><a href="/indexes/regulating-ai/">Regulating AI &mdash; the pillar</a> · <a href="/indexes/regulating-ai/ai-regulation-by-country-2026/">AI Regulation by Country</a> · <a href="/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/">The AI Kill-Switch Bill</a> · <a href="/indexes/regulating-ai/controlling-ai-research-best-practices/">Controlling AI Research</a> · <a href="/indexes/compare/">Compare AI &mdash; interactive</a></p>
+  </div>
+
+  <h2>Sources</h2>
+  <div class="rai-src">
+    &bull; EU AI Act, Article 99 (penalties) &mdash; <a href="https://artificialintelligenceact.eu/article/99/">artificialintelligenceact.eu/article/99</a><br>
+    &bull; EU AI Act, Article 51 (GPAI systemic risk) &mdash; <a href="https://artificialintelligenceact.eu/article/51/">artificialintelligenceact.eu/article/51</a><br>
+    &bull; White &amp; Case, California SB 53 frontier transparency &mdash; <a href="https://www.whitecase.com/insight-alert/california-enacts-landmark-ai-transparency-law-transparency-frontier-artificial">whitecase.com</a><br>
+    &bull; Norton Rose Fulbright, Texas TRAIGA ($200k/violation) &mdash; <a href="https://www.nortonrosefulbright.com/en/knowledge/publications/c6c60e0c/the-texas-responsible-ai-governance-act">nortonrosefulbright.com</a><br>
+    &bull; China Law Translate, AI content-labeling measures &mdash; <a href="https://www.chinalawtranslate.com/en/ai-labeling/">chinalawtranslate.com</a><br>
+    &bull; White &amp; Case, Japan AI Promotion Act (no penalties) &mdash; <a href="https://www.whitecase.com/insight-alert/japans-first-ai-legislation-becomes-law-focus-promoting-research-and-development-no">whitecase.com</a><br>
+    &bull; Cooley, South Korea AI Basic Act &mdash; <a href="https://www.cooley.com/news/insight/2026/2026-01-27-south-koreas-ai-basic-act-overview-and-key-takeaways">cooley.com</a><br>
+    &bull; EU AI Act GPAI Code of Practice (incident reporting) &mdash; <a href="https://artificialintelligenceact.eu/code-of-practice-overview/">artificialintelligenceact.eu</a>
+  </div>
+</div>
+<!-- /wp:html -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is the EU or the US stricter on AI?","acceptedAnswer":{"@type":"Answer","text":"The EU, decisively. It has a binding, comprehensive law with fines up to 7 percent of global turnover, while the US has no federal AI statute and a deregulatory federal posture, only a patchwork of narrower state laws."}},{"@type":"Question","name":"What is the biggest difference between EU and Chinese AI regulation?","acceptedAnswer":{"@type":"Answer","text":"Focus. The EU regulates AI to protect individual rights such as bias, safety and transparency; China regulates it to protect state control over information through algorithm registration, content labeling and security review. The EU fines; China switches services off."}},{"@type":"Question","name":"Do these laws apply to foreign companies?","acceptedAnswer":{"@type":"Answer","text":"Largely yes. The EU AI Act, China's rules, and South Korea's Act all reach providers that serve users in their territory, regardless of where the company is based."}}]}</script>
