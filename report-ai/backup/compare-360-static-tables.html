@@ -1,0 +1,152 @@
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap');
+.tai-wrap{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:1100px;margin:0 auto;padding:0 20px;line-height:1.55;}
+.tai-wrap h1,.tai-wrap h2,.tai-wrap h3{font-family:'Archivo',sans-serif;color:#111114;letter-spacing:-0.01em;}
+.tai-wrap h1.tai-h1{font-weight:900;text-transform:uppercase;font-size:clamp(34px,6vw,60px);line-height:1.02;letter-spacing:-0.02em;margin:8px 0 18px;}
+.tai-wrap h2.wp-block-heading{font-weight:700;font-size:clamp(22px,3vw,30px);margin:56px 0 14px;padding-top:18px;border-top:2px solid #111114;}
+.tai-wrap h3.wp-block-heading{font-weight:700;font-size:20px;margin:8px 0 12px;}
+.tai-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#2545f5;font-weight:500;margin:0 0 6px;}
+.tai-breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:#9a9aa2;text-transform:uppercase;margin:0 0 22px;}
+.tai-breadcrumb a{color:#9a9aa2;text-decoration:none;}
+.tai-intro{font-size:18px;color:#6e6e76;max-width:780px;margin:0 0 8px;}
+.tai-updated{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#9a9aa2;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 18px;}
+.tai-updated strong{color:#111114;font-weight:500;}
+.tai-wrap a{color:#2545f5;}
+.tai-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#e6e6ea;border:1px solid #e6e6ea;margin:32px 0 16px;}
+.tai-stat{background:#fff;padding:24px 20px;}
+.tai-stat .tai-num{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(30px,4.5vw,46px);line-height:1;color:#111114;letter-spacing:-0.02em;}
+.tai-stat .tai-lbl{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2545f5;font-weight:500;margin-top:10px;}
+.tai-stat .tai-sub{font-size:14px;color:#6e6e76;margin-top:4px;}
+.tai-jump{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:28px 0 36px;padding:18px;background:#f6f6f9;border-left:3px solid #2545f5;}
+.tai-jump strong{width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#9a9aa2;font-weight:500;margin-bottom:4px;}
+.tai-jump a{padding:6px 12px;background:#111114;color:#fff;border-radius:2px;text-decoration:none;font-size:13px;font-weight:600;}
+.tai-cap{font-size:16px;color:#6e6e76;}
+.tai-wrap figure.wp-block-table{margin:24px 0 40px;overflow-x:auto;}
+.tai-wrap figure.wp-block-table table{width:100%;border-collapse:collapse;font-size:15px;}
+.tai-wrap figure.wp-block-table thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#111114;font-weight:500;padding:10px 14px;border-bottom:2px solid #111114;}
+.tai-wrap figure.wp-block-table tbody td{padding:10px 14px;border-bottom:1px solid #e6e6ea;}
+.tai-wrap figure.wp-block-table tbody tr td:last-child{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6e6e76;}
+.tai-related{border-left:3px solid #2545f5;background:#f6f6f9;margin-top:40px;padding:24px;}
+.tai-related h3{margin-top:0;}
+.tai-cmp{border:1px solid #e6e6ea;border-radius:4px;padding:22px;margin:24px 0 40px;background:#fff;}
+.tai-cmp .tai-picker{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin-bottom:18px;}
+.tai-cmp .tai-field{display:flex;flex-direction:column;gap:5px;}
+.tai-cmp label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9a9aa2;font-weight:500;}
+.tai-cmp select{font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;color:#111114;padding:9px 12px;border:1px solid #cfcfd6;border-radius:2px;background:#fff;min-width:210px;cursor:pointer;}
+.tai-cmp .tai-vs{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;font-weight:600;padding-bottom:11px;}
+.tai-cmp table{width:100%;border-collapse:collapse;font-size:15px;}
+.tai-cmp table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:#111114;font-weight:500;padding:11px 14px;border-bottom:2px solid #111114;vertical-align:bottom;}
+.tai-cmp table td{padding:12px 14px;border-bottom:1px solid #e6e6ea;vertical-align:top;line-height:1.45;}
+.tai-cmp table td:first-child{font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;color:#6e6e76;white-space:nowrap;}
+.tai-grade{display:inline-block;min-width:32px;text-align:center;padding:2px 7px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;}
+.tai-gA{color:#1c7a43;background:#e7f0ea;} .tai-gB{color:#2545f5;background:#e8ecfd;} .tai-gC{color:#b5701a;background:#fdf1e3;} .tai-gD{color:#c0392b;background:#fbe9e7;}
+.cmp-static{width:100%;border-collapse:collapse;font-size:14px;}
+.cmp-static th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:10px 12px;border-bottom:2px solid #111114;}
+.cmp-static td{padding:10px 12px;border-bottom:1px solid #e6e6ea;vertical-align:top;line-height:1.4;}
+.cmp-grades th,.cmp-grades td{text-align:center;}
+.cmp-grades th:first-child,.cmp-grades td:first-child{text-align:left;}
+@media(max-width:680px){.tai-stats{grid-template-columns:1fr;}}
+</style>
+
+<div class="tai-wrap">
+<p class="tai-eyebrow">Compare · The AI Index</p>
+<p class="tai-breadcrumb"><a href="/">Home</a> / <a href="/indexes/">Indexes</a> / Compare</p>
+<h1 class="tai-h1">Compare AI — Stats, Laws &amp; Models</h1>
+<p class="tai-intro">The comparison view across everything The AI Index tracks: eight year-over-year statistics tables, plus two side-by-side comparison tables for <strong>AI laws</strong> (by jurisdiction) and <strong>model security</strong> (by developer). Each table carries its primary-source citation — usable whether you're skimming or copying figures into a deck.</p>
+<p class="tai-updated"><strong>Last updated: July 2026.</strong> Figures come from McKinsey, Stanford HAI, Menlo Ventures, OECD, IDC, IEA, WEF; the law and model comparators from our Regulating AI index.</p>
+<div class="tai-stats">
+<div class="tai-stat"><div class="tai-num">10</div><div class="tai-lbl">Interactive tools</div><div class="tai-sub">8 stat tables + 2 comparisons</div></div>
+<div class="tai-stat"><div class="tai-num">2022–2030</div><div class="tai-lbl">Time range covered</div><div class="tai-sub">historical + forecast</div></div>
+<div class="tai-stat"><div class="tai-num">8</div><div class="tai-lbl">Jurisdictions &amp; models</div><div class="tai-sub">laws + security grades</div></div>
+</div>
+<nav aria-label="Compare sections" class="tai-jump">
+<strong>Jump to:</strong>
+<a href="#adoption">Adoption</a>
+<a href="#genai">Generative AI</a>
+<a href="#spend">Enterprise Spend</a>
+<a href="#investment">Investment</a>
+<a href="#benchmarks">Benchmarks</a>
+<a href="#llm">LLM Market</a>
+<a href="#infrastructure">Infrastructure</a>
+<a href="#jobs">Jobs</a>
+<a href="#laws">AI Laws</a>
+<a href="#modelsec">Model Security</a>
+</nav>
+</div>
+
+<div class="tai-wrap">
+<h2 id="adoption" class="wp-block-heading">1. Organizational AI Adoption, 2022–2025</h2>
+<p class="tai-cap">Share of organizations using AI in at least one business function. Adoption was flat near 50% for years — then generative AI broke the curve. Source: <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noreferrer noopener">McKinsey, The State of AI</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Year</th><th>Organizations using AI</th><th>YoY change</th></tr></thead><tbody><tr><td>2022</td><td>~50%</td><td>flat (5-year baseline)</td></tr><tr><td>2023</td><td>55%</td><td>+5 pp</td></tr><tr><td>2024</td><td>78%</td><td>+23 pp</td></tr><tr><td>2025</td><td>88%</td><td>+10 pp</td></tr></tbody></table></figure>
+
+<h2 id="genai" class="wp-block-heading">2. Regular Generative AI Use, 2023–2024</h2>
+<p class="tai-cap">Share of organizations regularly using generative AI in at least one function. Within a year of ChatGPT's launch a third of organizations were already using GenAI; that more than doubled in 2024. Source: <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noreferrer noopener">Stanford HAI, AI Index 2025</a>; <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noreferrer noopener">McKinsey</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Period</th><th>Regularly using GenAI</th><th>Source</th></tr></thead><tbody><tr><td>2023 (post-ChatGPT)</td><td>33%</td><td>McKinsey 2023</td></tr><tr><td>Early 2024</td><td>65%</td><td>McKinsey / Stanford HAI</td></tr><tr><td>Late 2024</td><td>71%</td><td>McKinsey / Stanford HAI</td></tr></tbody></table></figure>
+
+<h2 id="spend" class="wp-block-heading">3. Enterprise Generative AI Spending, 2024–2025</h2>
+<p class="tai-cap">Total enterprise spending on generative AI, in billions of dollars. 2025 was a 3.2× jump over 2024. Source: <a href="https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/" target="_blank" rel="noreferrer noopener">Menlo Ventures, 2025 State of Generative AI in the Enterprise</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Year</th><th>Enterprise GenAI spend</th><th>YoY change</th></tr></thead><tbody><tr><td>2024</td><td>$11.5B</td><td>baseline</td></tr><tr><td>2025</td><td>$37B</td><td>+$25.5B (3.2×)</td></tr></tbody></table></figure>
+
+<h2 id="investment" class="wp-block-heading">4. AI's Share of Global Venture Capital, 2022 vs 2025</h2>
+<p class="tai-cap">In 2022, AI took roughly 30% of global VC. By 2025, that share had doubled to 61% — about $258.7 billion of $427.1 billion deployed. Source: <a href="https://www.oecd.org/en/about/news/announcements/2026/02/ai-firms-capture-61-percent-of-global-venture-capital-in-2025.html" target="_blank" rel="noreferrer noopener">OECD, February 2026</a>; <a href="https://kpmg.com/xx/en/what-we-do/industries/private-enterprise/venture-pulse.html" target="_blank" rel="noreferrer noopener">KPMG Venture Pulse Q4 2025</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Year</th><th>AI share of global VC</th><th>AI VC ($B)</th><th>Total global VC ($B)</th></tr></thead><tbody><tr><td>2022</td><td>30%</td><td>—</td><td>—</td></tr><tr><td>2024</td><td>—</td><td>$252.3B (corp. AI investment, Stanford HAI)</td><td>$391.9B (KPMG)</td></tr><tr><td>2025</td><td>61%</td><td>$258.7B</td><td>$427.1B+ (KPMG: &gt;$500B all rounds)</td></tr></tbody></table></figure>
+
+<h2 id="benchmarks" class="wp-block-heading">5. AI Model Benchmark Gains, 2023–2024</h2>
+<p class="tai-cap">One-year gains (in percentage points) on three of the most-watched AI benchmarks. SWE-bench scores went from 4.4% in 2023 to 71.7% in 2024 — a +67-point jump in a single year. Source: <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noreferrer noopener">Stanford HAI, AI Index Report 2025</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Benchmark</th><th>2023 score</th><th>2024 score</th><th>One-year gain</th></tr></thead><tbody><tr><td>SWE-bench (coding)</td><td>4.4%</td><td>71.7%</td><td>+67.3 pp</td></tr><tr><td>GPQA (graduate-level QA)</td><td>—</td><td>—</td><td>+48.9 pp</td></tr><tr><td>MMMU (multimodal)</td><td>—</td><td>—</td><td>+18.8 pp</td></tr></tbody></table></figure>
+
+<h2 id="llm" class="wp-block-heading">6. Enterprise LLM Market Share, 2023–2025</h2>
+<p class="tai-cap">Share of enterprise LLM API spend by provider. Anthropic went from 12% to 40% in two years — overtaking OpenAI (which fell from 50% to 27%). Source: <a href="https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/" target="_blank" rel="noreferrer noopener">Menlo Ventures</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Provider</th><th>2023</th><th>2024</th><th>2025</th><th>2-year change</th></tr></thead><tbody><tr><td><strong>Anthropic</strong></td><td>12%</td><td>24%</td><td>40%</td><td><strong>+28 pp</strong></td></tr><tr><td>OpenAI</td><td>50%</td><td>~34%</td><td>27%</td><td>–23 pp</td></tr><tr><td>Google</td><td>7%</td><td>~12%</td><td>21%</td><td>+14 pp</td></tr><tr><td>Others</td><td>~31%</td><td>~30%</td><td>~12%</td><td>–19 pp</td></tr></tbody></table></figure>
+
+<h2 id="infrastructure" class="wp-block-heading">7. AI Infrastructure: Energy &amp; Spending, 2024–2035</h2>
+<p class="tai-cap">Global data-center electricity demand is projected to roughly double from 415 TWh in 2024 to about 945 TWh by 2030, with AI-accelerated servers growing ~30% annually. Source: <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer noopener">IEA, Energy and AI</a>.</p>
+<p class="tai-cap">Separately, IDC's AI infrastructure spending tracker shows the capital side of the buildout — from $487B forecast for 2026 to over $1 trillion by 2029. Source: <a href="https://www.idc.com/resource-center/blog/ai-infrastructure-spending-caps-historic-year-at-90-billion-in-q4-2025-2029-spending-to-eclipse-1-trillion/" target="_blank" rel="noreferrer noopener">IDC</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Metric</th><th>2024</th><th>2026</th><th>2030</th><th>2035</th><th>Source</th></tr></thead><tbody><tr><td>Data-center electricity (TWh)</td><td>~415</td><td>—</td><td>~945</td><td>~1,200</td><td>IEA</td></tr><tr><td>AI-accelerated server growth</td><td>baseline</td><td colspan="3">~30% / year (vs ~9% conventional)</td><td>IEA</td></tr><tr><td>AI infrastructure spend</td><td>—</td><td>$487B</td><td>$1T+ (2029)</td><td>—</td><td>IDC</td></tr></tbody></table></figure>
+
+<h2 id="jobs" class="wp-block-heading">8. AI &amp; Jobs: Created vs Displaced by 2030</h2>
+<p class="tai-cap">The World Economic Forum projects 170 million new roles created against 92 million displaced by 2030 — a net +78 million jobs, with 22% workforce churn and 39% of worker skills changing. Source: <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noreferrer noopener">WEF, Future of Jobs Report 2025</a>.</p>
+<figure class="wp-block-table"><table><thead><tr><th>Metric (by 2030)</th><th>Figure</th><th>Source</th></tr></thead><tbody><tr><td>Jobs created</td><td>+170M</td><td>WEF</td></tr><tr><td>Jobs displaced</td><td>–92M</td><td>WEF</td></tr><tr><td>Net change</td><td><strong>+78M</strong></td><td>WEF</td></tr><tr><td>Workforce churn</td><td>22%</td><td>WEF</td></tr><tr><td>Worker skills changing</td><td>39%</td><td>WEF</td></tr></tbody></table></figure>
+
+<h2 id="laws" class="wp-block-heading">9. Compare AI Laws — All Jurisdictions</h2>
+<p class="tai-cap">How the major jurisdictions&rsquo; AI rules line up on approach, scope, maximum penalties and status. Drawn from our <a href="/indexes/regulating-ai/ai-laws-compared-2026/">AI Laws Compared</a> and <a href="/indexes/regulating-ai/ai-regulation-by-country-2026/">Regulation by Country</a> analyses.</p>
+<div class="tai-cmp" style="padding:0;border:none;">
+<div style="overflow-x:auto;"><table class="cmp-static"><thead><tr><th>Jurisdiction</th><th>Instrument</th><th>Approach</th><th>Max penalty</th><th>Status (2026)</th></tr></thead><tbody>
+<tr><td><strong>European Union</strong></td><td>EU AI Act</td><td>Risk-based, rights-first; most comprehensive</td><td>&euro;35M or 7% of global turnover</td><td>In force; high-risk duties to Dec 2027</td></tr>
+<tr><td><strong>United States</strong> (federal)</td><td>No comprehensive law; executive + sectoral</td><td>Market-led; incident-driven proposals</td><td>Proposed $20M/day shutdown penalty (bill)</td><td>Fragmented; state patchwork fills the gap</td></tr>
+<tr><td><strong>California</strong></td><td>SB 53 (Frontier AI transparency)</td><td>Frontier transparency &amp; safety disclosure</td><td>Civil penalties per violation</td><td>Signed Sept 2025; first-in-nation</td></tr>
+<tr><td><strong>China</strong></td><td>Layered CAC rules (algorithm, GenAI)</td><td>State-control-first; content-oriented</td><td>Suspension, fines, criminal liability</td><td>In force, iterating since 2021&ndash;2023</td></tr>
+<tr><td><strong>United Kingdom</strong></td><td>Pro-innovation principles</td><td>Regulator-led principles, not one statute</td><td>Via existing regulators (ICO, CMA)</td><td>Principles live; legislation discussed</td></tr>
+<tr><td><strong>South Korea</strong></td><td>AI Basic Act</td><td>Framework balancing promotion &amp; risk</td><td>Administrative fines</td><td>Enacted; phasing in from 2026</td></tr>
+<tr><td><strong>Brazil</strong></td><td>AI Bill (PL 2338/2023)</td><td>Rights-based, EU-influenced tiers</td><td>Proposed revenue-share fines</td><td>Advancing through Congress</td></tr>
+<tr><td><strong>Canada</strong></td><td>AIDA (was Bill C-27)</td><td>Risk-based, high-impact focus</td><td>Proposed CAD $25M or 5% revenue</td><td>Stalled; under redevelopment</td></tr>
+</tbody></table></div>
+</div>
+
+<h2 id="modelsec" class="wp-block-heading">10. Compare AI Model Security — All Developers</h2>
+<p class="tai-cap">Every leading developer&rsquo;s security posture side by side, graded A–D across six dimensions plus an overall. This ranks security and control, not capability. Full methodology on our <a href="/indexes/regulating-ai/ai-model-security-ratings-2026/">AI Model Security Ratings</a> scorecard.</p>
+<div class="tai-cmp" style="padding:0;border:none;">
+<div style="overflow-x:auto;"><table class="cmp-static cmp-grades"><thead><tr><th>Developer / model</th><th>Safety framework</th><th>Capability testing</th><th>Weight security</th><th>Transparency</th><th>Oversight</th><th>Overall</th></tr></thead><tbody>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">Anthropic (Claude)</td><td><span class="tai-grade tai-gA">A</span></td><td><span class="tai-grade tai-gA">A</span></td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gA">A</span></td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gA">A</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">OpenAI (GPT)</td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gB">B+</span></td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gA">A-</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">Google DeepMind (Gemini)</td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gB">B+</span></td><td><span class="tai-grade tai-gA">A-</span></td><td><span class="tai-grade tai-gB">B+</span></td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gB">B+</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">Microsoft (Copilot)</td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gB">B+</span></td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gB">B-</span></td><td><span class="tai-grade tai-gB">B</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">Meta (Llama, open)</td><td><span class="tai-grade tai-gB">B-</span></td><td><span class="tai-grade tai-gC">C+</span></td><td><span class="tai-grade tai-gD">D</span></td><td><span class="tai-grade tai-gB">B</span></td><td><span class="tai-grade tai-gC">C+</span></td><td><span class="tai-grade tai-gC">C+</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">xAI (Grok)</td><td><span class="tai-grade tai-gC">C</span></td><td><span class="tai-grade tai-gC">C</span></td><td><span class="tai-grade tai-gB">B-</span></td><td><span class="tai-grade tai-gC">C+</span></td><td><span class="tai-grade tai-gC">C-</span></td><td><span class="tai-grade tai-gC">C</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">Mistral (open)</td><td><span class="tai-grade tai-gC">C+</span></td><td><span class="tai-grade tai-gC">C</span></td><td><span class="tai-grade tai-gD">D+</span></td><td><span class="tai-grade tai-gC">C</span></td><td><span class="tai-grade tai-gC">C-</span></td><td><span class="tai-grade tai-gC">C</span></td></tr>
+<tr><td style="text-align:left;font-family:'Archivo',sans-serif;font-weight:700;">DeepSeek (open)</td><td><span class="tai-grade tai-gD">D+</span></td><td><span class="tai-grade tai-gD">D</span></td><td><span class="tai-grade tai-gD">D</span></td><td><span class="tai-grade tai-gC">C-</span></td><td><span class="tai-grade tai-gD">D</span></td><td><span class="tai-grade tai-gD">D+</span></td></tr>
+</tbody></table></div>
+</div>
+<p class="tai-cap" style="font-size:13px;">Grade key: <strong>A</strong> strong, verifiable controls · <strong>B</strong> solid, some gaps · <strong>C</strong> partial / limited disclosure · <strong>D</strong> minimal published control. Open-weight developers are capped on weight security by design.</p>
+
+<h2 class="wp-block-heading">Methodology &amp; sources</h2>
+<p class="tai-cap">Tables pull from primary sources: McKinsey, Stanford HAI, Menlo Ventures, OECD, KPMG, IDC, IEA and the World Economic Forum. The <strong>AI Laws</strong> and <strong>Model Security</strong> comparators draw on our Regulating AI index (EU AI Act, US SB 53 / AI Kill Switch Act, China CAC rules, plus lab safety frameworks and system cards) — editorial assessments of disclosed rules and posture, not legal advice or certification. See our full <a href="/about/">methodology page</a>.</p>
+
+<div class="tai-related">
+<h3>Related Reports &amp; Resources</h3>
+<p><strong>Regulating AI index:</strong> <a href="/indexes/regulating-ai/">Regulating AI (pillar)</a> · <a href="/indexes/regulating-ai/ai-regulation-by-country-2026/">Regulation by Country</a> · <a href="/indexes/regulating-ai/ai-laws-compared-2026/">AI Laws Compared</a> · <a href="/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/">AI Kill-Switch Bill</a> · <a href="/indexes/regulating-ai/controlling-ai-research-best-practices/">Controlling AI Research</a> · <a href="/indexes/regulating-ai/ai-model-security-ratings-2026/">AI Model Security Ratings</a>.</p>
+</div>
+</div>
+
