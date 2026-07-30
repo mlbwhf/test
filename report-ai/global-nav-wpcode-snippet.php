@@ -28,13 +28,16 @@ if ( ! function_exists( 'ai_nav_config' ) ) {
 		return array(
 			// Hide the theme's existing header on all widths (avoid a double nav).
 			'hide_selector' => '.site-header, #masthead',
-			// The four desktop tabs / drawer index rows: page ID => short label + short description.
-			// Order = display order. Swap IDs to change which silos appear (geometry allows exactly 4).
+			// The four items under "Indexes". Page ID => labels. THIS is the rename point:
+			//   'name'  = full label in the mobile drawer row  (rename here — does NOT change the page/SEO title)
+			//   'short' = short label on the desktop tab        (~131px max at 1180px, or it ellipsizes)
+			//   'desc'  = grey description line in the drawer
+			// Order = display order. Swap the page IDs to change which silos appear (exactly 4 by design).
 			'indexes' => array(
-				393 => array( 'short' => 'Adoption',    'desc' => 'Adoption, gen AI, agentic workflows' ),      // Enterprise AI
-				392 => array( 'short' => 'Economics',   'desc' => 'Investment, spend, forecasts, LLM market' ), // AI Economics
-				394 => array( 'short' => 'Performance', 'desc' => 'Benchmarks, compute, infrastructure, safety' ), // Technical Performance
-				395 => array( 'short' => 'Workforce',   'desc' => 'Jobs created & displaced, skills premium' ),  // Workforce & Labor
+				393 => array( 'name' => 'Enterprise AI Adoption',  'short' => 'Adoption',    'desc' => 'Adoption, gen AI, agentic workflows' ),       // page /indexes/enterprise-ai/
+				392 => array( 'name' => 'AI Business & Economics', 'short' => 'Economics',   'desc' => 'Investment, spend, forecasts, LLM market' ),   // page /indexes/ai-economics/
+				394 => array( 'name' => 'Technical Performance',   'short' => 'Performance', 'desc' => 'Benchmarks, compute, infrastructure, safety' ), // page /indexes/technical-benchmarks/
+				395 => array( 'name' => 'Workforce & Labor',       'short' => 'Workforce',   'desc' => 'Jobs created & displaced, skills premium' ),    // page /indexes/workforce-labor/
 			),
 			'menu_id'      => 34,                               // "Primary" menu (flat rows)
 			'subscribe'    => home_url( '/about/contact/' ),    // CTA target
@@ -55,8 +58,8 @@ if ( ! function_exists( 'ai_nav_indexes' ) ) {
 			$kids = get_pages( array( 'parent' => $pid, 'post_status' => 'publish', 'sort_column' => 'menu_order,post_title', 'sort_order' => 'ASC' ) );
 			$out[] = array(
 				'id'    => (int) $pid,
-				'name'  => get_the_title( $pid ),
-				'short' => $meta['short'],
+				'name'  => isset( $meta['name'] ) ? $meta['name'] : get_the_title( $pid ),
+				'short' => isset( $meta['short'] ) ? $meta['short'] : ( isset( $meta['name'] ) ? $meta['name'] : get_the_title( $pid ) ),
 				'desc'  => $meta['desc'],
 				'count' => is_array( $kids ) ? count( $kids ) : 0,
 				'url'   => get_permalink( $pid ),
