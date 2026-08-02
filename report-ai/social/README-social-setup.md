@@ -51,7 +51,12 @@ Publicize only fires on new posts, so a daily statistic needs its own queue.
 - Columns: `Date, Time, X, Instagram, LinkedIn, Text, Hashtags, Link, Image Idea`.
 - On import, map **Text → post text**; append **Hashtags** and **Link** to the text (X counts a link as ~23 chars — all posts are sized to fit 280).
 
-This is **Batch 1 (sample)**. Once you're happy with the voice and format, I'll expand to a rolling **40–60 stat bank** mined across all 366 reports and refill it monthly.
+This is **Batch 1 (sample)**, 17 posts.
+
+## The full stat bank (`stat-bank-full.csv`)
+**42 more posts** mined from 14 reports (Geography of AI, Regulation by Country, Kill-Switch forecast, AI-bubble/hidden-debt, autonomous cyberattacks, Dark Side surveillance/misinformation/jobs/weapons, Best Models 2026). Same 9-column format, scheduled one per weekday **26 Aug – 22 Oct 2026**, 09:30. No overlap with Batch 1.
+
+> **Verify the `Link` column before scheduling.** These URLs were inferred from each report's breadcrumb and have not been checked against the live site — some paths (e.g. `/geography-of-ai/`, the AI-bubble reports, `/indexes/technical-performance/`) may differ. The stat text and source in every post are copied verbatim from the reports and are accurate; only the links need a pass. (On Instagram the link isn't clickable anyway — it lives in your bio.)
 
 ## Images (needed for Instagram)
 Instagram won't post text-only. Each row has an **Image Idea**. Next step I can generate a set of **branded stat cards** (your black / cobalt / Archivo look) as ready-to-upload PNGs — one per stat — so the drip is fully visual. Say the word and I'll produce Batch 1's 17 cards.
