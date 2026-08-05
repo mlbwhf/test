@@ -13,6 +13,13 @@ Every **index** and **report** page on report-ai.org must be a full, self-contai
 
 If an existing index/report is found to be thin (mostly links, no analysis, no tables), expanding it takes priority over creating new pages.
 
+## Linking rules (standing, applies to ALL future work)
+
+1. **External links open in a new tab** — every external `<a>` gets `target="_blank" rel="nofollow noopener"`. A site-wide WPCode JS snippet also enforces this at render time (see site-content/external-links-new-tab.html in the repo); still bake the attributes into new content.
+2. **Internal links open in the same tab** (standard UX/SEO practice — new tabs for internal navigation breaks the back button and multiplies tabs). If the owner explicitly asks for internal links in new tabs too, confirm once, then comply.
+3. **Maximize internal links** — every index/report should link generously to related indexes, reports, and glossary terms. When citing a topic an on-site page covers, always link the on-site page, not the external source.
+4. **Localize external reports/news** — when an external report, study, or news item is worth referencing, REWRITE it in our own voice as an on-site /reports/ page, index section, or dashboard entry (original summary + analysis + data tables, with attribution — never a copied full text; the auto-republished RSS posts are the anti-pattern and should be noindexed/pruned or replaced with rewritten briefs). Then link the on-site version everywhere; the external source remains a citation on that one page.
+
 ## Site facts
 
 - Site: https://report-ai.org (self-hosted WordPress on Hostinger; managed via the "set_up_the_agent" WordPress MCP server).
