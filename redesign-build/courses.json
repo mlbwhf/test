@@ -15,14 +15,38 @@
       "hero_sub": "Lead a Lean-Agile transformation by applying SAFe&reg; and its principles of Lean, systems thinking, and agile development. Two days, live-virtual, with an authorised SAFe instructor (SPC/ASPC) &mdash; <span style=\"font-style:italic;color:#0E3A44\">exam included</span> and a money-back pass guarantee.",
       "audience": "Executives, managers, and change agents leading an Agile transformation. No prerequisites.",
       "modules": [
-        ["Thriving in the digital age with Business Agility", "Why business agility matters and the seven core competencies of the Lean enterprise."],
-        ["Building a Lean-Agile mindset", "The values, principles, and Lean-Agile leadership behaviours that anchor SAFe."],
-        ["Understanding SAFe principles", "Apply the ten immutable principles that underpin every SAFe practice and decision."],
-        ["Experiencing PI Planning", "Run a simulated Program Increment Planning event &mdash; the heartbeat of an Agile Release Train."],
-        ["Releasing value continuously", "Build the Continuous Delivery Pipeline and DevOps culture that release on demand."],
-        ["Leading the transformation", "Lead the change with the SAFe Implementation Roadmap and a Lean-Agile Center of Excellence."]
+        [
+          "Thriving in the digital age with Business Agility",
+          "Why business agility matters and the seven core competencies of the Lean enterprise."
+        ],
+        [
+          "Building a Lean-Agile mindset",
+          "The values, principles, and Lean-Agile leadership behaviours that anchor SAFe."
+        ],
+        [
+          "Understanding SAFe principles",
+          "Apply the ten immutable principles that underpin every SAFe practice and decision."
+        ],
+        [
+          "Experiencing PI Planning",
+          "Run a simulated Program Increment Planning event &mdash; the heartbeat of an Agile Release Train."
+        ],
+        [
+          "Releasing value continuously",
+          "Build the Continuous Delivery Pipeline and DevOps culture that release on demand."
+        ],
+        [
+          "Leading the transformation",
+          "Lead the change with the SAFe Implementation Roadmap and a Lean-Agile Center of Excellence."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "35 / 45 (77%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "35 / 45 (77%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-scrum-master-ssm",
@@ -39,14 +63,38 @@
       "hero_sub": "Become the Scrum Master who facilitates Agile teams within a SAFe enterprise &mdash; running team and program events, supporting PI execution, and coaching teams to high performance. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "New and existing Scrum Masters, team leads, and managers working within an Agile Release Train.",
       "modules": [
-        ["Introducing Scrum in SAFe", "How Scrum operates in a scaled context and the role of the Scrum Master in SAFe."],
-        ["Characterizing the role of the Scrum Master", "Servant leadership, coaching stances, and the SAFe Scrum Master's responsibilities."],
-        ["Experiencing PI Planning", "Prepare for and facilitate the team's part in Program Increment Planning."],
-        ["Facilitating iteration execution", "Run iteration planning, daily stand-ups, reviews, and retrospectives that stick."],
-        ["Finishing the PI", "Support the System Demo, Inspect &amp; Adapt, and continuous improvement across the train."],
-        ["Coaching the Agile team", "Build high-performing teams and improve flow with relentless improvement."]
+        [
+          "Introducing Scrum in SAFe",
+          "How Scrum operates in a scaled context and the role of the Scrum Master in SAFe."
+        ],
+        [
+          "Characterizing the role of the Scrum Master",
+          "Servant leadership, coaching stances, and the SAFe Scrum Master's responsibilities."
+        ],
+        [
+          "Experiencing PI Planning",
+          "Prepare for and facilitate the team's part in Program Increment Planning."
+        ],
+        [
+          "Facilitating iteration execution",
+          "Run iteration planning, daily stand-ups, reviews, and retrospectives that stick."
+        ],
+        [
+          "Finishing the PI",
+          "Support the System Demo, Inspect &amp; Adapt, and continuous improvement across the train."
+        ],
+        [
+          "Coaching the Agile team",
+          "Build high-performing teams and improve flow with relentless improvement."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "33 / 45 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "33 / 45 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-popm",
@@ -63,14 +111,38 @@
       "hero_sub": "Master the responsibilities of the Product Owner and Product Manager in a SAFe enterprise &mdash; writing stories, managing backlogs, and delivering value through the Continuous Delivery Pipeline. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Product Owners, Product Managers, business analysts, and anyone shaping value in an ART.",
       "modules": [
-        ["Analyzing the customer journey", "Apply design thinking and customer-centricity to discover real value."],
-        ["Exploring the Lean-Agile mindset", "How POs and PMs apply SAFe principles to maximise value delivery."],
-        ["Defining needs with the backlog", "Write epics, features, and stories and keep a healthy, prioritised backlog."],
-        ["Preparing for and leading PI Planning", "Drive vision, roadmap, and priorities into Program Increment Planning."],
-        ["Executing the Program Increment", "Support iteration execution, demos, and the steady flow of value."],
-        ["Continuously improving value", "Use feedback and metrics to relentlessly improve outcomes."]
+        [
+          "Analyzing the customer journey",
+          "Apply design thinking and customer-centricity to discover real value."
+        ],
+        [
+          "Exploring the Lean-Agile mindset",
+          "How POs and PMs apply SAFe principles to maximise value delivery."
+        ],
+        [
+          "Defining needs with the backlog",
+          "Write epics, features, and stories and keep a healthy, prioritised backlog."
+        ],
+        [
+          "Preparing for and leading PI Planning",
+          "Drive vision, roadmap, and priorities into Program Increment Planning."
+        ],
+        [
+          "Executing the Program Increment",
+          "Support iteration execution, demos, and the steady flow of value."
+        ],
+        [
+          "Continuously improving value",
+          "Use feedback and metrics to relentlessly improve outcomes."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "33 / 45 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "33 / 45 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-for-teams-sp",
@@ -87,14 +159,38 @@
       "hero_sub": "Build the skills to be a high-performing member of an Agile Release Train &mdash; how to plan and execute work, collaborate across teams, and deliver value in a Program Increment. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "All members of an Agile team joining or working on an Agile Release Train.",
       "modules": [
-        ["Introducing the Agile Release Train", "How teams operate together on an ART to build and deliver value."],
-        ["Building an Agile team", "Roles, events, and artifacts that make a cross-functional Agile team work."],
-        ["Planning the Iteration", "Estimate, plan, and commit to iteration work that ladders up to PI objectives."],
-        ["Executing the Iteration", "Visualise flow, limit WIP, and improve quality with built-in practices."],
-        ["Executing the Program Increment", "Integrate, demo, and align across teams through the PI."],
-        ["Improving relentlessly", "Use Inspect &amp; Adapt to drive continuous improvement."]
+        [
+          "Introducing the Agile Release Train",
+          "How teams operate together on an ART to build and deliver value."
+        ],
+        [
+          "Building an Agile team",
+          "Roles, events, and artifacts that make a cross-functional Agile team work."
+        ],
+        [
+          "Planning the Iteration",
+          "Estimate, plan, and commit to iteration work that ladders up to PI objectives."
+        ],
+        [
+          "Executing the Iteration",
+          "Visualise flow, limit WIP, and improve quality with built-in practices."
+        ],
+        [
+          "Executing the Program Increment",
+          "Integrate, demo, and align across teams through the PI."
+        ],
+        [
+          "Improving relentlessly",
+          "Use Inspect &amp; Adapt to drive continuous improvement."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "34 / 45 (76%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "34 / 45 (76%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-advanced-scrum-master-sasm",
@@ -111,14 +207,38 @@
       "hero_sub": "Take your Scrum Master practice to the program level &mdash; facilitating cross-team interactions, supporting DevOps and built-in quality, and coaching the Agile Release Train. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Experienced Scrum Masters ready to lead at the program and train level.",
       "modules": [
-        ["Exploring the Scrum Master role in SAFe", "Scale facilitation and servant leadership across the Agile Release Train."],
-        ["Applying SAFe principles to facilitation", "Use Lean-Agile principles to coach teams and resolve systemic impediments."],
-        ["Facilitating program execution", "Support cross-team coordination, dependencies, and the flow of value."],
-        ["Improving flow with Kanban and XP", "Build in quality with DevOps, Kanban, and engineering practices."],
-        ["Building high-performing teams", "Foster collaboration, conflict resolution, and team maturity."],
-        ["Leading change as a Scrum Master", "Drive relentless improvement and coach the train to excellence."]
+        [
+          "Exploring the Scrum Master role in SAFe",
+          "Scale facilitation and servant leadership across the Agile Release Train."
+        ],
+        [
+          "Applying SAFe principles to facilitation",
+          "Use Lean-Agile principles to coach teams and resolve systemic impediments."
+        ],
+        [
+          "Facilitating program execution",
+          "Support cross-team coordination, dependencies, and the flow of value."
+        ],
+        [
+          "Improving flow with Kanban and XP",
+          "Build in quality with DevOps, Kanban, and engineering practices."
+        ],
+        [
+          "Building high-performing teams",
+          "Foster collaboration, conflict resolution, and team maturity."
+        ],
+        [
+          "Leading change as a Scrum Master",
+          "Drive relentless improvement and coach the train to excellence."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "120 minutes", "passing": "44 / 60 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "120 minutes",
+        "passing": "44 / 60 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-rte",
@@ -135,14 +255,86 @@
       "hero_sub": "Become the servant leader and coach of the Agile Release Train &mdash; facilitating ART events and processes, driving relentless improvement, and leading the program through PI execution. Three days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>. Taught by a certified SPCT.",
       "audience": "RTEs, Solution Train Engineers, and program managers facilitating an ART. Prerequisite knowledge of SAFe recommended.",
       "modules": [
-        ["Exploring the RTE role", "The servant-leader RTE and how the Agile Release Train operates."],
-        ["Applying SAFe principles", "Use Lean-Agile principles to drive ART performance and flow."],
-        ["Organizing the Agile Release Train", "Design and launch the ART, roles, and cadence."],
-        ["Planning and executing the PI", "Facilitate PI Planning, execution, and the System Demo."],
-        ["Coaching the ART to relentless improvement", "Run Inspect &amp; Adapt and continuously improve the train."],
-        ["Leading the ART at scale", "Coordinate across trains and the Solution Train."]
+        [
+          "Exploring the RTE role",
+          "The servant-leader RTE and how the Agile Release Train operates."
+        ],
+        [
+          "Applying SAFe principles",
+          "Use Lean-Agile principles to drive ART performance and flow."
+        ],
+        [
+          "Organizing the Agile Release Train",
+          "Design and launch the ART, roles, and cadence."
+        ],
+        [
+          "Planning and executing the PI",
+          "Facilitate PI Planning, execution, and the System Demo."
+        ],
+        [
+          "Coaching the ART to relentless improvement",
+          "Run Inspect &amp; Adapt and continuously improve the train."
+        ],
+        [
+          "Leading the ART at scale",
+          "Coordinate across trains and the Solution Train."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "180 minutes", "passing": "42 / 60 (70%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "180 minutes",
+        "passing": "42 / 60 (70%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
+    },
+    {
+      "slug": "safe-ste",
+      "title": "SAFe&reg; Solution Train Engineer (STE)",
+      "cert": "«TBC» official credential name — confirm in partner portal",
+      "code": "STE",
+      "price": 0,
+      "mo": 0,
+      "duration": "«TBC»",
+      "pdus": "«TBC»",
+      "track": "safe",
+      "eb_event_id": "REPLACE_WITH_EVENTBRITE_EVENT_ID",
+      "hero_italic": "Solution Train Engineer",
+      "hero_sub": "Facilitate a Solution Train &mdash; several Agile Release Trains and their suppliers building one integrated solution. Pre- and Post-PI Planning, the Solution Demo, supplier coordination, and integration at scale. Live-virtual, taught by a certified SPCT. <span style=\"font-style:italic;color:#0E3A44\">«TBC» duration and exam inclusion</span>",
+      "audience": "Solution Train Engineers, Release Train Engineers moving up to multi-ART scope, and programme leaders coordinating several ARTs and external suppliers into a single solution. Most relevant to organisations running the Large Solution SAFe configuration. «TBC» confirm official prerequisites",
+      "modules": [
+        [
+          "«TBC» replace with official outline",
+          "The five draft rows below describe the STE role accurately but are NOT the licensed curriculum. Overwrite from the partner portal before publishing."
+        ],
+        [
+          "Draft · The Solution Train and the STE role",
+          "Where the Solution Train sits in Large Solution SAFe and what the STE owns."
+        ],
+        [
+          "Draft · Organising around the solution",
+          "Multiple ARTs, suppliers, and the triad with Solution Management and Solution Architect."
+        ],
+        [
+          "Draft · Pre- and Post-PI Planning",
+          "Setting context before the ARTs plan, then integrating what they committed to."
+        ],
+        [
+          "Draft · Driving the Solution Demo",
+          "Integrating across trains and suppliers to demonstrate the full solution each PI."
+        ],
+        [
+          "Draft · Suppliers and compliance",
+          "Influence without authority, and building verification evidence alongside delivery."
+        ]
+      ],
+      "exam": {
+        "format": "«TBC»",
+        "duration": "«TBC»",
+        "passing": "«TBC»",
+        "access": "«TBC»",
+        "validity": "«TBC»"
+      }
     },
     {
       "slug": "safe-devops-sdp",
@@ -159,14 +351,38 @@
       "hero_sub": "Map your Continuous Delivery Pipeline, optimise the flow of value from idea to production, and build the culture, automation, and measurement that release on demand. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Anyone involved in delivering value through the Continuous Delivery Pipeline &mdash; dev, ops, QA, and management.",
       "modules": [
-        ["Introducing DevOps", "The CALMR approach and why DevOps is essential to business agility."],
-        ["Mapping your Continuous Delivery Pipeline", "Value-stream map the pipeline from concept to cash."],
-        ["Continuous Exploration", "Build a hypothesis-driven backlog with design thinking."],
-        ["Continuous Integration", "Develop, build, test, and stage with automation and quality built in."],
-        ["Continuous Deployment", "Deploy and verify to production with low risk and fast recovery."],
-        ["Release on Demand", "Decouple release from deploy and measure value in production."]
+        [
+          "Introducing DevOps",
+          "The CALMR approach and why DevOps is essential to business agility."
+        ],
+        [
+          "Mapping your Continuous Delivery Pipeline",
+          "Value-stream map the pipeline from concept to cash."
+        ],
+        [
+          "Continuous Exploration",
+          "Build a hypothesis-driven backlog with design thinking."
+        ],
+        [
+          "Continuous Integration",
+          "Develop, build, test, and stage with automation and quality built in."
+        ],
+        [
+          "Continuous Deployment",
+          "Deploy and verify to production with low risk and fast recovery."
+        ],
+        [
+          "Release on Demand",
+          "Decouple release from deploy and measure value in production."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "34 / 45 (76%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "34 / 45 (76%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-agile-product-management-apm",
@@ -183,14 +399,38 @@
       "hero_sub": "Use design thinking and a Lean-Agile mindset to discover, build, and bring to market products customers love &mdash; from vision and roadmap to pricing, packaging, and continuous value. Three days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Product Managers, Product Owners, and product leaders driving product strategy in SAFe.",
       "modules": [
-        ["Analyzing your role as a Product Manager", "Connect strategy to execution as a Lean-Agile Product Manager."],
-        ["Applying design thinking", "Use desirability, feasibility, viability, and sustainability to find value."],
-        ["Exploring markets and users", "Segment markets, build personas, and validate with real users."],
-        ["Driving strategy with market rhythms", "Plan with market rhythms and events to time value to the market."],
-        ["Managing the value stream", "Prioritise with economics and manage the flow of features."],
-        ["Delivering value continuously", "Price, package, and license; measure and pivot with feedback."]
+        [
+          "Analyzing your role as a Product Manager",
+          "Connect strategy to execution as a Lean-Agile Product Manager."
+        ],
+        [
+          "Applying design thinking",
+          "Use desirability, feasibility, viability, and sustainability to find value."
+        ],
+        [
+          "Exploring markets and users",
+          "Segment markets, build personas, and validate with real users."
+        ],
+        [
+          "Driving strategy with market rhythms",
+          "Plan with market rhythms and events to time value to the market."
+        ],
+        [
+          "Managing the value stream",
+          "Prioritise with economics and manage the flow of features."
+        ],
+        [
+          "Delivering value continuously",
+          "Price, package, and license; measure and pivot with feedback."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "120 minutes", "passing": "44 / 60 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "120 minutes",
+        "passing": "44 / 60 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-lean-portfolio-management-lpm",
@@ -207,13 +447,34 @@
       "hero_sub": "Align strategy and execution by applying Lean and systems thinking to portfolio strategy, funding, and operations &mdash; connecting the portfolio to enterprise strategy and Lean budgets. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Executives, portfolio leaders, PMO, and enterprise architects funding and steering the portfolio.",
       "modules": [
-        ["Introducing Lean Portfolio Management", "Why LPM, and the three dimensions of strategy, funding, and operations."],
-        ["Establishing strategy and investment funding", "Connect the portfolio to enterprise strategy and Lean budgets with guardrails."],
-        ["Applying Agile portfolio operations", "Coordinate and support execution across the development value streams."],
-        ["Applying Lean governance", "Forecast and budget dynamically, measure portfolio performance."],
-        ["Implementing your LPM function", "Build and roll out the LPM function with a Value Management Office."]
+        [
+          "Introducing Lean Portfolio Management",
+          "Why LPM, and the three dimensions of strategy, funding, and operations."
+        ],
+        [
+          "Establishing strategy and investment funding",
+          "Connect the portfolio to enterprise strategy and Lean budgets with guardrails."
+        ],
+        [
+          "Applying Agile portfolio operations",
+          "Coordinate and support execution across the development value streams."
+        ],
+        [
+          "Applying Lean governance",
+          "Forecast and budget dynamically, measure portfolio performance."
+        ],
+        [
+          "Implementing your LPM function",
+          "Build and roll out the LPM function with a Value Management Office."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "33 / 45 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "33 / 45 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-architect-arch",
@@ -230,13 +491,34 @@
       "hero_sub": "Lead the architecture of large solutions in a Lean-Agile enterprise &mdash; aligning architecture with business value, enabling continuous delivery, and guiding teams through architectural runway. Three days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "System, solution, and enterprise architects working across Agile Release Trains.",
       "modules": [
-        ["Exploring the SAFe Architect", "The role of architecture in business agility and the Lean enterprise."],
-        ["Architecting for DevOps and release on demand", "Enable the Continuous Delivery Pipeline through architecture."],
-        ["Aligning architecture with business value", "Use architectural runway and enablers to support value flow."],
-        ["Leading and coaching architecture", "Collaborate across teams and influence without authority."],
-        ["Architecting for continuous delivery", "Design for testability, deployability, and operational excellence."]
+        [
+          "Exploring the SAFe Architect",
+          "The role of architecture in business agility and the Lean enterprise."
+        ],
+        [
+          "Architecting for DevOps and release on demand",
+          "Enable the Continuous Delivery Pipeline through architecture."
+        ],
+        [
+          "Aligning architecture with business value",
+          "Use architectural runway and enablers to support value flow."
+        ],
+        [
+          "Leading and coaching architecture",
+          "Collaborate across teams and influence without authority."
+        ],
+        [
+          "Architecting for continuous delivery",
+          "Design for testability, deployability, and operational excellence."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "120 minutes", "passing": "42 / 60 (70%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "120 minutes",
+        "passing": "42 / 60 (70%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "safe-agile-software-engineering-ase",
@@ -253,14 +535,38 @@
       "hero_sub": "Build the technical practices that make continuous delivery real &mdash; test-first, behaviour-driven development, and Agile architecture that lets teams release on demand with built-in quality. Three days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Developers, engineers, architects, and technical leads building software in a SAFe enterprise.",
       "modules": [
-        ["Introducing Agile Software Engineering", "The mindset and practices that underpin technical agility."],
-        ["Connecting principles and practices to flow", "Accelerate flow with Lean-Agile engineering practices."],
-        ["Accelerating flow with quality", "Apply test-first, TDD, and continuous integration."],
-        ["Building Agile technical practices", "Behaviour-driven development and collaborative analysis."],
-        ["Building in quality with Agile design", "Emergent design, refactoring, and design patterns."],
-        ["Implementing with test-driven development", "Pair and practise TDD, BDD, and continuous integration."]
+        [
+          "Introducing Agile Software Engineering",
+          "The mindset and practices that underpin technical agility."
+        ],
+        [
+          "Connecting principles and practices to flow",
+          "Accelerate flow with Lean-Agile engineering practices."
+        ],
+        [
+          "Accelerating flow with quality",
+          "Apply test-first, TDD, and continuous integration."
+        ],
+        [
+          "Building Agile technical practices",
+          "Behaviour-driven development and collaborative analysis."
+        ],
+        [
+          "Building in quality with Agile design",
+          "Emergent design, refactoring, and design patterns."
+        ],
+        [
+          "Implementing with test-driven development",
+          "Pair and practise TDD, BDD, and continuous integration."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "120 minutes", "passing": "45 / 60 (75%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "120 minutes",
+        "passing": "45 / 60 (75%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "implementing-safe-spc",
@@ -277,14 +583,38 @@
       "hero_sub": "Become the change agent who can teach SAFe, launch Agile Release Trains, and lead an enterprise transformation end-to-end. Four days, live-virtual, with the SPC exam and licensing to teach foundational SAFe courses. Taught by a certified SPCT.",
       "audience": "Internal change agents and external consultants leading SAFe adoption. Becomes a certified SPC.",
       "modules": [
-        ["Reaching the tipping point", "Build the case for change and a sense of urgency for transformation."],
-        ["Leading a Lean-Agile transformation", "Train Lean-Agile change agents and lead by example."],
-        ["Launching Agile Release Trains", "Prepare for, plan, and launch your first ARTs."],
-        ["Coaching ART execution", "Coach teams and the train through PI execution and Inspect &amp; Adapt."],
-        ["Extending to the portfolio", "Connect strategy to execution with Lean Portfolio Management."],
-        ["Sustaining and improving", "Build a Lean-Agile Center of Excellence and accelerate the transformation."]
+        [
+          "Reaching the tipping point",
+          "Build the case for change and a sense of urgency for transformation."
+        ],
+        [
+          "Leading a Lean-Agile transformation",
+          "Train Lean-Agile change agents and lead by example."
+        ],
+        [
+          "Launching Agile Release Trains",
+          "Prepare for, plan, and launch your first ARTs."
+        ],
+        [
+          "Coaching ART execution",
+          "Coach teams and the train through PI execution and Inspect &amp; Adapt."
+        ],
+        [
+          "Extending to the portfolio",
+          "Connect strategy to execution with Lean Portfolio Management."
+        ],
+        [
+          "Sustaining and improving",
+          "Build a Lean-Agile Center of Excellence and accelerate the transformation."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "180 minutes", "passing": "47 / 60 (78%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "180 minutes",
+        "passing": "47 / 60 (78%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "advanced-safe-practice-consultant-aspc",
@@ -301,13 +631,34 @@
       "hero_sub": "Deepen your consulting practice beyond SPC &mdash; advanced coaching, measuring transformation outcomes, and guiding complex enterprise change at the portfolio and solution level. Three days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>. Taught by a certified SPCT.",
       "audience": "Practising SPCs ready to lead larger, more complex SAFe transformations.",
       "modules": [
-        ["Advancing the consultant practice", "Sharpen the SPC toolkit for complex, multi-ART transformations."],
-        ["Coaching at scale", "Coach leaders, trains, and portfolios through sustained change."],
-        ["Measuring transformation outcomes", "Use Flow, Competency, and Outcome metrics to guide change."],
-        ["Leading solution-level change", "Guide large solutions and the Solution Train."],
-        ["Sustaining business agility", "Build durable capability and a culture of relentless improvement."]
+        [
+          "Advancing the consultant practice",
+          "Sharpen the SPC toolkit for complex, multi-ART transformations."
+        ],
+        [
+          "Coaching at scale",
+          "Coach leaders, trains, and portfolios through sustained change."
+        ],
+        [
+          "Measuring transformation outcomes",
+          "Use Flow, Competency, and Outcome metrics to guide change."
+        ],
+        [
+          "Leading solution-level change",
+          "Guide large solutions and the Solution Train."
+        ],
+        [
+          "Sustaining business agility",
+          "Build durable capability and a culture of relentless improvement."
+        ]
       ],
-      "exam": {"format": "60 multiple-choice", "duration": "120 minutes", "passing": "44 / 60 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "60 multiple-choice",
+        "duration": "120 minutes",
+        "passing": "44 / 60 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     },
     {
       "slug": "ai-native-foundations",
@@ -324,13 +675,34 @@
       "hero_sub": "Extend SAFe into the AI age &mdash; AI-Native ways of working, an AI Enablement layer, and Innovation Culture baked into delivery. Learn the Five Disciplines and AI-Empowered Agility that define the AI-Native enterprise. Two days, live-virtual, <span style=\"font-style:italic;color:#0E3A44\">exam included</span>.",
       "audience": "Leaders, change agents, and practitioners bringing AI into their ways of working.",
       "modules": [
-        ["The AI-Native enterprise", "Why AI-Native, and the Five Disciplines of AI-Native delivery."],
-        ["AI-Empowered Agility", "The four shifts that bring AI into agile ways of working."],
-        ["Building the AI Enablement layer", "Data, tooling, and platform foundations for AI-Native teams."],
-        ["Human-Centric AI Culture", "Innovation culture, ethics, and trust in an AI-Native organisation."],
-        ["Applying AI across the value stream", "Use AI from discovery to delivery to release on demand."]
+        [
+          "The AI-Native enterprise",
+          "Why AI-Native, and the Five Disciplines of AI-Native delivery."
+        ],
+        [
+          "AI-Empowered Agility",
+          "The four shifts that bring AI into agile ways of working."
+        ],
+        [
+          "Building the AI Enablement layer",
+          "Data, tooling, and platform foundations for AI-Native teams."
+        ],
+        [
+          "Human-Centric AI Culture",
+          "Innovation culture, ethics, and trust in an AI-Native organisation."
+        ],
+        [
+          "Applying AI across the value stream",
+          "Use AI from discovery to delivery to release on demand."
+        ]
       ],
-      "exam": {"format": "45 multiple-choice", "duration": "90 minutes", "passing": "33 / 45 (73%)", "access": "30 days after class", "validity": "1 year renewable"}
+      "exam": {
+        "format": "45 multiple-choice",
+        "duration": "90 minutes",
+        "passing": "33 / 45 (73%)",
+        "access": "30 days after class",
+        "validity": "1 year renewable"
+      }
     }
   ]
 }

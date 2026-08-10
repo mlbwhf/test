@@ -24,6 +24,7 @@ SEO_MAP = {
     "SP":   {"slug": "team-practitioner", "section": "safe-industry", "wp_title": "SAFe®for Teams- SAFe Practitioner (SP)"},
     "SASM": {"slug": "asm",               "section": "safe",          "wp_title": "Advance Scrum Master"},
     "RTE":  {"slug": "rte",               "section": "adv-safe",      "wp_title": "SAFe Release Train Engineer (RTE)"},
+    "STE":  {"slug": "ste",               "section": "adv-safe",      "wp_title": "SAFe Solution Train Engineer (STE)"},
     "SDP":  {"slug": "devops",            "section": "safe",          "wp_title": "SAFe DevOps"},
     "APM":  {"slug": "apm",               "section": "adv-safe",      "wp_title": "Agile Product Management (APM)"},
     "LPM":  {"slug": "lpm",               "section": "adv-safe",      "wp_title": "SAFe Lean Portfolio Management (LPM)"},
