@@ -400,6 +400,16 @@ T["ASE"] = {
 for _c in T:
     T[_c].update(COMMON)
 
+# The "Your SAFe career path" sentence is identical on every EN course page and
+# names SPC regardless of the course. Translate it to each course's own
+# positioning rather than carrying the defect across, and never let the
+# translation memory answer it — TM learned LPM's wording as if it were
+# boilerplate, which is exactly how this spread.
+import crosssell as _cs
+_EN_DEFECT = _cs.sentence("SPC", "en")
+for _c in T:
+    T[_c][_EN_DEFECT] = (_cs.sentence(_c, "es"), _cs.sentence(_c, "fr"))
+
 # JSON-LD: Course name / description / url / instructor, per course and language.
 SCHEMA = {
     "SP": {
