@@ -10,7 +10,7 @@ PROTECT = re.compile(r'(<style\b.*?</style>|<script\b.*?</script>|<!--.*?-->)', 
 TAG = re.compile(r'(<[^>]+>)')
 # HTML entities are glyphs, not copy: collapse them before judging noise, so
 # "30&ndash;75%" and "&middot;" read as figures/punctuation rather than words.
-ENTITY = re.compile(r'&(?:[a-zA-Z]+|#\d+);')
+ENTITY = re.compile(r'&(?:[a-zA-Z][a-zA-Z0-9]*|#\d+);')  # &mdash; &frac12; &#8212;
 # not worth translating: pure punctuation, numerals, single glyphs
 NOISE = re.compile(r'^[\s\d.,%$~:/|·—–\-→←⟶⟵✦✧◆●○«»""\'()\[\]+×x]*$')
 
