@@ -8,8 +8,11 @@ import re, io
 
 PROTECT = re.compile(r'(<style\b.*?</style>|<script\b.*?</script>|<!--.*?-->)', re.S | re.I)
 TAG = re.compile(r'(<[^>]+>)')
-# not worth translating: pure punctuation, numerals, entities, single glyphs
-NOISE = re.compile(r'^[\s\d.,%$&#;:/|·—–\-→←⟶⟵✦✧◆●○«»""\'()\[\]+×x]*$')
+# HTML entities are glyphs, not copy: collapse them before judging noise, so
+# "30&ndash;75%" and "&middot;" read as figures/punctuation rather than words.
+ENTITY = re.compile(r'&(?:[a-zA-Z]+|#\d+);')
+# not worth translating: pure punctuation, numerals, single glyphs
+NOISE = re.compile(r'^[\s\d.,%$~:/|·—–\-→←⟶⟵✦✧◆●○«»""\'()\[\]+×x]*$')
 
 def shred(html):
     """Yield (kind, text) where kind is 'skip' | 'tag' | 'text'."""
@@ -25,7 +28,13 @@ def shred(html):
 
 def translatable(t):
     s = t.strip()
-    return bool(s) and not NOISE.match(s) and len(s) > 1
+    if not s:
+        return False
+    if NOISE.fullmatch(ENTITY.sub('·', s)):
+        return False
+    # single letters matter: "A <strong>scaling model</strong> that ..." needs
+    # its article translated too
+    return len(s) > 1 or s.isalpha()
 
 def segments(html):
     out, seen = [], set()
