@@ -7,6 +7,17 @@
 <style>
 .tai-hero{display:grid;grid-template-columns:1.15fr 1fr;border-bottom:1px solid #111114;background:#fff;font-family:'Archivo',sans-serif;color:#111114;}
 .tai-hero .tai-mono{font-family:'IBM Plex Mono',monospace;}
+/* dynamic entrance — pure CSS, content fully server-rendered */
+@keyframes taiRise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes taiGrow{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+.tai-hero-stat,.tai-hero-l p{animation:taiRise .6s ease-out both;}
+.tai-hero-l p{animation-delay:.15s;}
+.tai-hero-bar{transform-origin:bottom;animation:taiGrow .7s cubic-bezier(.2,.7,.3,1) both;}
+.tai-hero-bar:nth-child(2){animation-delay:.1s;}
+.tai-herocol:nth-child(2) .tai-hero-bar{animation-delay:.2s;}
+.tai-herocol:nth-child(3) .tai-hero-bar{animation-delay:.3s;}
+.tai-herocol:nth-child(4) .tai-hero-bar{animation-delay:.4s;}
+@media(prefers-reduced-motion:reduce){.tai-hero *{animation:none!important;}}
 @media(max-width:900px){.tai-hero{grid-template-columns:1fr;}.tai-hero-l{border-right:none!important;border-bottom:1px solid #e6e6ea;padding:44px 22px 36px!important;}.tai-hero-r{padding:36px 22px 44px!important;}.tai-hero-stat{font-size:84px!important;}}
 </style>
 
@@ -36,10 +47,10 @@
     <div class="tai-mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;margin-bottom:28px;">Organizations using AI, 2023&ndash;2026</div>
     <!-- WEEKLY-EDIT: bars (height = value / max) -->
     <div style="display:flex;align-items:flex-end;gap:40px;height:280px;border-bottom:1px solid #111114;">
-      <div style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">55%</span><span style="display:block;height:62.5%;background:#d8d8de;"></span></div>
-      <div style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">72%</span><span style="display:block;height:81.8%;background:#d8d8de;"></span></div>
-      <div style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">78%</span><span style="display:block;height:88.6%;background:#d8d8de;"></span></div>
-      <div style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">88%</span><span style="display:block;height:100%;background:#2545f5;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">55%</span><span class="tai-hero-bar" style="display:block;height:62.5%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">72%</span><span class="tai-hero-bar" style="display:block;height:81.8%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">78%</span><span class="tai-hero-bar" style="display:block;height:88.6%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">88%</span><span class="tai-hero-bar" style="display:block;height:100%;background:#2545f5;"></span></div>
     </div>
     <div style="display:flex;gap:40px;margin-top:8px;">
       <span class="tai-mono" style="flex:1;max-width:72px;text-align:center;font-size:11px;color:#77777f;">2023</span>

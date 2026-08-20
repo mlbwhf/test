@@ -4,9 +4,22 @@ Source of truth: `prototype/README.md` (design handoff). This file maps it onto 
 real site. Status 2026-08-20: **blocked on the WordPress connector** (disconnected);
 everything below is ready to apply the moment it returns.
 
-Homepage content below the hero is **unchanged** — AI by the Numbers, Leading AI
-Assistants, Popular Models by Country etc. stay exactly as structured today (owner
-direction, 2026-08-20). The hero is added above them.
+**Owner direction (2026-08-20): design only.** The site's existing structure wins
+wherever the handoff differs — existing menu content, existing URLs, existing page
+sections. The handoff contributes visual design (palette flyouts, utility strip,
+hero treatment), not information architecture. Concretely:
+
+- Menu 34 keeps its current items and URLs; we restyle them and add the CSS classes
+  (`nav-tool`, `nav-all`, `menu-reports`) + Description eyebrows. Only additions:
+  the two utility rows in the Indexes palette if missing. No renames, no removals
+  except moving Subscribe out of the primary menu into the utility strip.
+- Homepage content below the hero is **unchanged** — AI by the Numbers and every
+  section under it stays exactly as built. The hero is added above them, made
+  dynamic with pure-CSS entrance animation (bars grow, figure rises; 
+  prefers-reduced-motion respected; all content server-rendered).
+- The right-sidebar widget gets the design-token repalette
+  (`sidebar-widget-redesign.html`) — same content blocks, new skin, and the
+  Latest Reports list refreshed with the three reports published 2026-08-18.
 
 ## Step 1 — Menu 34 (primary), Appearance → Menus equivalent via MCP
 
@@ -84,6 +97,23 @@ lines only. Chart uses the real McKinsey series 55/72/78/88 (the prototype's
 - [ ] Subscribe/Contact/Log in only in the utility strip
 - [ ] No flyout overflow at 769–1100px widths
 - [ ] Hero renders above unchanged existing sections; mobile stacks to one column
+
+## Step 7 — Sidebar widget
+
+`sidebar-widget-redesign.html` → `widget_block` option, block 17 content
+(`wp_update_option`, same mechanism as the 2026-08-15 edit). Original design is
+preserved at `backups/widget_block-17-20260815.html`.
+
+## Who applies what
+
+| Piece | Applied by | Mechanism |
+|---|---|---|
+| Nav + utility-strip CSS | Claude via MCP | merge into Additional CSS (post 258) |
+| Menu 34 classes/eyebrows/order | Claude via MCP | nav_menu_item posts + meta |
+| Customizer click-arrow setting | Claude via MCP | `generate_settings` option |
+| Homepage hero insert (page 6) | Claude via MCP | backup + `wp_alter_post` |
+| Sidebar widget reskin | Claude via MCP | `widget_block` option |
+| **PHP snippet** (utility strip + eyebrow filter) | **Owner, in WPCode** | paste `child-theme-snippets.php` as a new PHP snippet, "Auto Insert / Run Everywhere" — WPCode's error handling deactivates a faulting PHP snippet instead of white-screening the site, which is why this one piece should go through its UI rather than MCP |
 
 ## Phase 2 (later, explicitly deferred)
 
