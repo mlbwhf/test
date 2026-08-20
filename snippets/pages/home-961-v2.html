@@ -116,6 +116,15 @@
 .aa-hp2 .tick span{color:#8A93A8}
 .aa-hp2 .tick i{width:4px;height:4px;border-radius:50%;background:var(--teal);display:inline-block}
 
+/* ---------- training tracks ---------- */
+.aa-hp2 .tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:38px}
+.aa-hp2 .trk{display:flex;flex-direction:column;gap:10px;background:#fff;border:1.5px solid var(--line);
+  border-radius:16px;padding:26px 22px;min-height:44px;transition:all .45s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .trk:hover{border-color:var(--teal);box-shadow:0 12px 28px rgba(14,128,116,.16);transform:translateY(-4px)}
+.aa-hp2 .trk h3{font-size:19px;letter-spacing:-.01em}
+.aa-hp2 .trk p{font-size:13.5px;line-height:1.55;color:var(--muted);flex:1}
+.aa-hp2 .trk b{font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--teal)}
+
 /* ---------- assessments ---------- */
 .aa-hp2 .split{display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,60px);margin-top:38px}
 .aa-hp2 .split>*{flex:1 1 320px;min-width:0}
@@ -235,10 +244,27 @@
   <div class="ticker-in" id="aa-tick"></div>
 </div>
 
-<!-- ============ 02 · ASSESSMENTS ============ -->
+<!-- ============ 02 · ALL TRAINING (19 certs / 5 career tracks) ============ -->
+<section aria-labelledby="aa-h2-train">
+  <div class="aa-w">
+    <p class="kick"><span class="dot" aria-hidden="true"></span>( 02 ) &mdash; All training</p>
+    <h2 id="aa-h2-train" style="margin-top:16px">19 SAFe&reg; certifications. 5 career tracks. <span class="ser" style="color:var(--teal)">One SPCT-led team.</span></h2>
+    <p class="lede" style="max-width:660px">Live virtual classrooms. Exam included. Recordings forever. Pass guarantee &mdash; or your next cohort is on us.</p>
+
+    <div class="tracks">
+      <a class="trk" href="/training/safe-found/"><h3>Micro-Credentials</h3><p>Stackable badges from SAFe + ICAgile. Half-day to 1-day. Specialize fast.</p><b>7 SAFe + 11 ICAgile</b></a>
+      <a class="trk" href="/training/safe/"><h3>SAFe by Role</h3><p>SSM, POPM, SASM, DevOps, BO &mdash; role-specific certifications.</p><b>6 certifications</b></a>
+      <a class="trk" href="/training/adv-safe/"><h3>Advanced Training</h3><p>RTE, LPM, APM, SPC, ASPC &mdash; enterprise transformation leadership.</p><b>5 advanced certs</b></a>
+      <a class="trk" href="/training/safe-industry/"><h3>SAFe by Industry</h3><p>Architects, hardware, government, engineering. Sector-specific.</p><b>6 industry tracks</b></a>
+      <a class="trk" href="/training/ai-native/"><h3>AI-Native</h3><p>AI-Ready, Foundations, Change Agent, Leading the AI-Native Org.</p><b>4 AI tracks</b></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · ASSESSMENTS ============ -->
 <section aria-labelledby="aa-h2-assess">
   <div class="aa-w">
-    <p class="kick"><span class="dot" aria-hidden="true"></span>( 02 ) &mdash; Assessments</p>
+    <p class="kick"><span class="dot" aria-hidden="true"></span>( 03 ) &mdash; Assessments</p>
     <h2 id="aa-h2-assess" style="margin-top:16px">Measure first. <span class="ser" style="color:var(--teal)">Then move.</span></h2>
 
     <div class="split">
@@ -337,10 +363,10 @@
   </div>
 </section>
 
-<!-- ============ 03 · FIVE DIMENSIONS ============ -->
+<!-- ============ 04 · FIVE DIMENSIONS ============ -->
 <section class="dims" aria-labelledby="aa-h2-dims">
   <div class="aa-w">
-    <p class="kick on-navy"><span class="dot" aria-hidden="true"></span>( 03 ) &mdash; Consulting &middot; the five dimensions</p>
+    <p class="kick on-navy"><span class="dot" aria-hidden="true"></span>( 04 ) &mdash; Consulting &middot; the five dimensions</p>
     <h2 id="aa-h2-dims" style="margin-top:16px;color:#fff">One operating model, <span class="ser" style="color:var(--tealL)">five layers deep.</span></h2>
 
     <div class="split">
@@ -390,10 +416,10 @@
   </div>
 </section>
 
-<!-- ============ 04 · CUSTOMER RESULTS ============ -->
+<!-- ============ 05 · CUSTOMER RESULTS ============ -->
 <section aria-labelledby="aa-h2-res">
   <div class="aa-w">
-    <p class="kick"><span class="dot" aria-hidden="true"></span>( 04 ) &mdash; Customer results</p>
+    <p class="kick"><span class="dot" aria-hidden="true"></span>( 05 ) &mdash; Customer results</p>
     <div class="rhead">
       <h2 id="aa-h2-res">The numbers behind <span class="ser" style="color:var(--teal)">the training.</span></h2>
       <p>Real enterprise outcomes from SPCT-led transformation &mdash; across defense, telecom, banking, aerospace, and energy in 12 countries.</p>
