@@ -16,7 +16,7 @@
  * USE (inside the home page's Custom HTML block, or its own shortcode block):
  *     [aa_home_cohorts]
  *     [aa_home_cohorts limit="8"]
- *     [aa_home_cohorts courses="aspc,spc,rte,lpm,arch"]
+ *     [aa_home_cohorts courses="aspc,spc,rte,lpm,apm"]
  *     [aa_home_cohorts debug="1"]           (admin only)
  *
  * Emits the <li> rows for ul#aa-cohorts AND the matching Course /
@@ -40,7 +40,7 @@ function aa_home_cohort_catalog() {
 		'lpm'  => array( 'code' => 'LPM',  'name' => 'Lean Portfolio Management','days' => 2, 'url' => '/training/adv-safe/lpm/',       'schema' => 'SAFe® Lean Portfolio Management (LPM)' ),
 		// no event_category term yet — see note above
 		'ai-native' => array( 'code' => 'AI', 'name' => 'AI-Native Foundations', 'days' => 2, 'url' => '/training/ai-native/ai-native-foundations/', 'schema' => 'AI-Native Foundations' ),
-		'arch' => array( 'code' => 'ARCH', 'name' => 'SAFe for Architects',      'days' => 3, 'url' => '/training/safe-industry/arch/',  'schema' => 'SAFe® for Architects (ARCH)' ),
+		'apm'  => array( 'code' => 'APM',  'name' => 'Agile Product Management', 'days' => 3, 'url' => '/training/adv-safe/apm/',        'schema' => 'SAFe® Agile Product Management (APM)' ),
 		'popm' => array( 'code' => 'POPM', 'name' => 'SAFe POPM',                'days' => 2, 'url' => '/training/safe/popm/',           'schema' => 'SAFe® Product Owner / Product Manager (POPM)' ),
 		'ssm'  => array( 'code' => 'SSM',  'name' => 'SAFe Scrum Master',        'days' => 2, 'url' => '/training/safe/scrum-master/',   'schema' => 'SAFe® Scrum Master (SSM)' ),
 	);
@@ -91,14 +91,18 @@ function aa_home_date_range( $start, $end, $days ) {
 add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 
 	$a = shortcode_atts( array(
-		'courses' => 'aspc,spc,rte,lpm,ai-native,arch,popm,ssm',
+		'courses' => 'aspc,spc,rte,lpm,ai-native,apm,popm,ssm',
 		'limit'   => 6,
 		'schema'  => '1',
 		'debug'   => '',
 	), $atts, 'aa_home_cohorts' );
 
 	$catalog = aa_home_cohort_catalog();
-	$now     = current_time( 'timestamp', true );
+	// Cut off at the start of today in Eastern time, not "right now", so a
+	// cohort that begins today is still listed during the morning.
+	$today   = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
+	$today->setTime( 0, 0, 0 );
+	$now     = $today->getTimestamp();
 	$limit   = max( 1, (int) $a['limit'] );
 
 	$rows = array();
