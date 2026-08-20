@@ -28,8 +28,16 @@
      aggregateRating despite the 4.9 star row, and NO FAQPage — there is no
      visible FAQ section. Both are the standing rules for this site.
 
-     STILL TO WIRE: cohort dates/seats are the design's Aug-2026 placeholders.
-     Replace the <li> contents from the events feed; keep them as text nodes.
+     COHORTS come from [aa_home_cohorts] (aa-home-cohorts-wpcode-snippet.php),
+     reading the same wp_events / event_category / start_ts source already
+     pinned for [aa_cohorts]. Priority order, high-value certifications first:
+     ASPC, SPC, RTE, LPM, AI-Native, ARCH, then POPM, SSM. The panel shows the
+     top 6 that actually have an upcoming date, so it self-heals when a course
+     has none. The shortcode also emits the Course/CourseInstance JSON-LD for
+     exactly the dates it printed.
+
+     AI-Native has no event_category term yet, so it is skipped until one
+     exists and events are tagged to it.
      ============================================================ -->
 
 <style>
@@ -215,14 +223,8 @@
         <p class="kick" style="color:var(--redT)"><span class="dot" aria-hidden="true"></span>Upcoming cohorts</p>
         <a class="lnk" href="/training/">All dates &#10230;</a>
       </div>
-      <!-- TODO: replace these <li> from the live events feed; keep dates/seats as text -->
       <ul class="cohorts" id="aa-cohorts" aria-live="off">
-        <li><a class="coh" data-on="1" data-code="SA" data-start="2026-09-03" href="/training/safe/sa/"><span><span class="coh-n">Leading SAFe</span><span class="coh-d">Live-virtual &middot; Sep 3&ndash;4</span></span><span class="coh-r"><span class="seats low">4 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
-        <li><a class="coh" data-code="SSM" data-start="2026-09-10" href="/training/safe/scrum-master/"><span><span class="coh-n">SAFe Scrum Master</span><span class="coh-d">Live-virtual &middot; Sep 10&ndash;11</span></span><span class="coh-r"><span class="seats">9 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
-        <li><a class="coh" data-code="POPM" data-start="2026-09-17" href="/training/safe/popm/"><span><span class="coh-n">SAFe POPM</span><span class="coh-d">Live-virtual &middot; Sep 17&ndash;18</span></span><span class="coh-r"><span class="seats">12 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
-        <li><a class="coh" data-code="RTE" data-start="2026-09-22" href="/training/adv-safe/rte/"><span><span class="coh-n">Release Train Engineer</span><span class="coh-d">Live-virtual &middot; Sep 22&ndash;25</span></span><span class="coh-r"><span class="seats low">6 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
-        <li><a class="coh" data-code="SPC" data-start="2026-10-05" href="/training/adv-safe/spc/"><span><span class="coh-n">Implementing SAFe</span><span class="coh-d">Live-virtual &middot; Oct 5&ndash;8</span></span><span class="coh-r"><span class="seats">14 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
-        <li><a class="coh" data-code="ASPC" data-start="2026-10-19" href="/training/adv-safe/aspc/"><span><span class="coh-n">Adv. Practice Consultant</span><span class="coh-d">Live-virtual &middot; Oct 19&ndash;22</span></span><span class="coh-r"><span class="seats">10 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        [aa_home_cohorts]
       </ul>
     </div>
 
@@ -534,13 +536,7 @@
 {"@context":"https://schema.org","@graph":[
 {"@type":"EducationalOrganization","@id":"https://agile-agilist.com/#org","name":"Agile Agilist","url":"https://agile-agilist.com/","description":"Live, instructor-led SAFe certification, AI-Native, and corporate agile training from a Scaled Agile Gold Partner. Trusted by 2,500+ professionals across 9 languages and 4 continents, with 500+ live cohorts delivered."},
 {"@type":"Person","@id":"https://agile-agilist.com/#mark-saymen","name":"Mark Saymen","url":"https://agile-agilist.com/about/","jobTitle":"SAFe SPCT (SAFe Practice Consultant Trainer)","description":"SAFe Practice Consultant Trainer (SPCT), one of 125+ globally (90+ in North America). Author of Mutation Readiness: An Operating Manual for Innovation in the Age of AI."},
-{"@type":"WebPage","@id":"https://agile-agilist.com/#home","url":"https://agile-agilist.com/","name":"Agile Agilist — SAFe® certification and AI-Native training","inLanguage":"en","about":{"@id":"https://agile-agilist.com/#org"}},
-{"@type":"Course","name":"Leading SAFe® (SA)","url":"https://agile-agilist.com/training/safe/sa/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-03"}},
-{"@type":"Course","name":"SAFe® Scrum Master (SSM)","url":"https://agile-agilist.com/training/safe/scrum-master/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-10"}},
-{"@type":"Course","name":"SAFe® Product Owner / Product Manager (POPM)","url":"https://agile-agilist.com/training/safe/popm/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-17"}},
-{"@type":"Course","name":"SAFe® Release Train Engineer (RTE)","url":"https://agile-agilist.com/training/adv-safe/rte/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-22"}},
-{"@type":"Course","name":"Implementing SAFe® (SPC)","url":"https://agile-agilist.com/training/adv-safe/spc/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-10-05"}},
-{"@type":"Course","name":"Advanced SAFe® Practice Consultant (ASPC)","url":"https://agile-agilist.com/training/adv-safe/aspc/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-10-19"}}
+{"@type":"WebPage","@id":"https://agile-agilist.com/#home","url":"https://agile-agilist.com/","name":"Agile Agilist — SAFe® certification and AI-Native training","inLanguage":"en","about":{"@id":"https://agile-agilist.com/#org"}}
 ]}
 </script>
 <!-- /wp:html -->
