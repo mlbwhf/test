@@ -1,0 +1,546 @@
+<!-- wp:html -->
+<!-- ============================================================
+     HOMEPAGE v10 — hero rebuild (Space Grotesk / Instrument Serif)
+     Built from: design_handoff_agile_agilist_home/home-final.dc.html
+
+     WIDTH CONSTRAINT (added — the design had none):
+       Every section's content sits in .aa-w { max-width:1340px; margin-inline:auto }
+       matching the site's existing --aa-w. Section backgrounds still run
+       full-bleed (navy Five Dimensions band, navy ticker) as designed.
+
+     CONTENT RECONCILED AGAINST THE LIVE SITE (design data was stale):
+       · Assessment names/times: live names kept — "Cert Recommender" not
+         "SAFe Career Selector", "Product Management Maturity" not "Product
+         Management". Times corrected: PM 14min (design said 12), Innovation
+         12min (10), Mutation Readiness 15min (8), Agile Maturity 2min (15).
+       · Five Dimensions: live layer set, not the design's. Design had
+         "Large-Scale Iterative Model" (live: Scaling Iterative Model),
+         "Innovation Framework" (live: Innovation Culture — and that name
+         collides with the assessment), and layer 04 "Digital Core" pointing
+         at /services/digital-transformation/, which is a different service.
+         Live layer 04 is AI Automation. URLs verified against each service
+         page's own Service schema.
+       · Stat card "5,000+ Trained in one program" contradicted the hero chip
+         and every other page (2,500+). Set to 2,500+ — CONFIRM before launch.
+
+     SCHEMA: Course + CourseInstance for the cohorts (dates are visible text,
+     so the markup describes what is on the page). Deliberately NO
+     aggregateRating despite the 4.9 star row, and NO FAQPage — there is no
+     visible FAQ section. Both are the standing rules for this site.
+
+     STILL TO WIRE: cohort dates/seats are the design's Aug-2026 placeholders.
+     Replace the <li> contents from the events feed; keep them as text nodes.
+     ============================================================ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
+
+.aa-hp2{--navy:#101C33;--teal:#0E8074;--tealL:#3FBFAE;--cream:#F7F5F0;--line:#E2DCCE;
+  --body:#4E4A40;--muted:#6B6455;--mutedN:#9AA3B8;--mutedN2:#AEB7C9;--gold:#DA9A1B;
+  --red:#D34B2A;--redT:#C23A1B;--wrap:1340px;
+  font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--cream);color:var(--navy);line-height:1.6;
+  width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);overflow-x:hidden}
+.aa-hp2 *{box-sizing:border-box}
+.aa-hp2 .aa-w{width:100%;max-width:var(--wrap);margin-inline:auto}
+.aa-hp2 section{padding:clamp(48px,7vw,90px) clamp(20px,4vw,56px)}
+.aa-hp2 a{color:inherit;text-decoration:none}
+.aa-hp2 h1,.aa-hp2 h2,.aa-hp2 h3{margin:0;font-weight:600;letter-spacing:-.03em}
+.aa-hp2 h1{font-size:clamp(38px,4.5vw,64px);line-height:1.04}
+.aa-hp2 h2{font-size:clamp(32px,4.5vw,54px);line-height:1.05}
+.aa-hp2 h3{font-size:clamp(24px,2.6vw,34px)}
+.aa-hp2 p{margin:0}
+.aa-hp2 .ser{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;letter-spacing:0}
+.aa-hp2 .kick{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--teal);display:flex;align-items:center;gap:9px}
+.aa-hp2 .kick.on-navy{color:var(--tealL)}
+.aa-hp2 .dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none;animation:aa-pulse 1.6s ease-in-out infinite}
+.aa-hp2 .pill{display:inline-flex;align-items:center;gap:9px;border-radius:100px;padding:13px 26px;font-size:14.5px;font-weight:600;border:1.5px solid transparent;transition:all .3s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .pill-navy{background:var(--navy);color:var(--cream);box-shadow:0 10px 24px rgba(16,28,51,.22)}
+.aa-hp2 .pill-navy:hover{background:var(--teal)}
+.aa-hp2 .pill-out{border-color:var(--navy);color:var(--navy)}
+.aa-hp2 .pill-out:hover{background:var(--navy);color:var(--cream)}
+.aa-hp2 .lnk{color:var(--teal);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.aa-hp2 .lnk:hover{color:var(--navy)}
+.aa-hp2 .lnk-l{color:var(--tealL)}.aa-hp2 .lnk-l:hover{color:#fff}
+
+@keyframes aa-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.8);opacity:.45}}
+@keyframes aa-fade{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes aa-marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes aa-sweep{to{background-position:200% center}}
+@keyframes aa-drift{0%,100%{transform:translate(0,0)}50%{transform:translate(-26px,20px)}}
+.aa-hp2 .fade{animation:aa-fade .7s ease both}
+
+/* ---------- hero ---------- */
+.aa-hp2 .hero{position:relative;overflow:hidden}
+.aa-hp2 .blob{position:absolute;top:-140px;right:-120px;width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle,rgba(14,128,116,.14),transparent 68%);animation:aa-drift 14s ease-in-out infinite;pointer-events:none}
+.aa-hp2 .hero-grid{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(28px,4vw,64px);align-items:start}
+.aa-hp2 .chip{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--line);border-radius:100px;padding:8px 18px;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--body)}
+.aa-hp2 .chip .dot{color:var(--teal)}
+.aa-hp2 .h1-1{color:var(--teal)}
+.aa-hp2 .h1-3{background:linear-gradient(90deg,var(--navy),var(--teal),var(--navy));background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:aa-sweep 6s linear infinite}
+.aa-hp2 .lede{font-size:16.5px;max-width:560px;color:var(--body);margin-top:22px}
+.aa-hp2 .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.aa-hp2 .trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:24px;font-size:13.5px;color:var(--muted)}
+.aa-hp2 .stars{color:var(--gold);letter-spacing:2px}
+
+.aa-hp2 .coh-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.aa-hp2 .coh-head .dot{color:var(--red)}
+.aa-hp2 ul.cohorts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.aa-hp2 .coh{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  border:1.5px solid var(--line);border-radius:14px;padding:14px 18px;background:transparent;min-height:44px;
+  transition:all .45s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .coh[data-on="1"]{background:#fff;border-color:var(--teal);box-shadow:0 12px 28px rgba(14,128,116,.16);transform:translateX(-6px) scale(1.015)}
+.aa-hp2 .coh-n{font-size:15px;font-weight:600}
+.aa-hp2 .coh-d{font-size:12.5px;color:var(--muted);margin-top:2px}
+.aa-hp2 .coh-r{text-align:right;flex:none}
+.aa-hp2 .seats{display:inline-block;font-size:11.5px;font-weight:700;border-radius:100px;padding:4px 11px;background:rgba(14,128,116,.12);color:var(--teal)}
+.aa-hp2 .seats.low{background:rgba(211,75,42,.12);color:var(--redT)}
+.aa-hp2 .coh-in{display:block;font-size:12px;font-weight:700;color:var(--teal);margin-top:5px}
+
+.aa-hp2 .ticker{background:var(--navy);color:var(--cream);overflow:hidden;padding:13px 0;
+  width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+.aa-hp2 .ticker-in{display:flex;gap:0;width:max-content;animation:aa-marq 32s linear infinite}
+.aa-hp2 .ticker:hover .ticker-in{animation-play-state:paused}
+.aa-hp2 .tick{display:inline-flex;align-items:center;gap:9px;font-size:13px;padding:0 22px;white-space:nowrap}
+.aa-hp2 .tick b{color:var(--tealL);font-weight:700}
+.aa-hp2 .tick span{color:#8A93A8}
+.aa-hp2 .tick i{width:4px;height:4px;border-radius:50%;background:var(--teal);display:inline-block}
+
+/* ---------- assessments ---------- */
+.aa-hp2 .split{display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,60px);margin-top:38px}
+.aa-hp2 .split>*{flex:1 1 320px;min-width:0}
+.aa-hp2 ol.alist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.aa-hp2 .arow{display:flex;align-items:center;gap:16px;padding:15px 16px;border-bottom:1px solid var(--line);
+  border-radius:12px;min-height:44px;transition:all .45s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .arow[data-on="1"]{background:#fff;border:1.5px solid var(--teal);box-shadow:0 10px 24px rgba(14,128,116,.14)}
+.aa-hp2 .anum{font-size:22px;color:var(--muted);flex:none}
+.aa-hp2 .arow[data-on="1"] .anum,.aa-hp2 .arow[data-on="1"] .ameta{color:var(--teal)}
+.aa-hp2 .aname{font-size:16px;font-weight:600;flex:1}
+.aa-hp2 .ameta{font-size:12px;font-weight:700;color:var(--muted);flex:none}
+.aa-hp2 .rep{background:var(--navy);color:var(--cream);border-radius:20px;padding:clamp(24px,3vw,40px);box-shadow:0 18px 40px rgba(16,28,51,.25)}
+.aa-hp2 .rep-eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--tealL)}
+.aa-hp2 .panel{display:none}
+.aa-hp2 .panel[data-on="1"]{display:block;animation:aa-fade .5s ease both}
+.aa-hp2 .rep h3{margin:14px 0 10px}
+.aa-hp2 .rep-desc{font-size:15px;color:var(--mutedN2);line-height:1.65}
+.aa-hp2 .bar-l{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.aa-hp2 .bar-l b{color:var(--tealL);font-weight:700}
+.aa-hp2 .bar{height:8px;border-radius:100px;background:rgba(247,245,240,.12);overflow:hidden;margin-bottom:16px}
+.aa-hp2 .bar>i{display:block;height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--teal),var(--tealL));transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .rep .pill{background:var(--tealL);color:var(--navy);margin-top:8px}
+.aa-hp2 .rep .pill:hover{background:var(--cream)}
+.aa-hp2 .foot{margin-top:30px;font-size:14.5px;color:var(--muted)}
+
+/* ---------- five dimensions ---------- */
+.aa-hp2 .dims{background:var(--navy);color:var(--cream)}
+.aa-hp2 .pyr{display:flex;flex-direction:column;align-items:center;gap:11px}
+.aa-hp2 .pl{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;max-width:560px;
+  border-radius:100px;padding:15px 26px;min-height:44px;background:rgba(247,245,240,.06);
+  border:1.5px solid rgba(247,245,240,.16);color:var(--cream);transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 .pl[data-w="58"]{width:58%}.aa-hp2 .pl[data-w="68"]{width:68%}.aa-hp2 .pl[data-w="78"]{width:78%}
+.aa-hp2 .pl[data-w="88"]{width:88%}.aa-hp2 .pl[data-w="98"]{width:98%}
+.aa-hp2 .pl[data-on="1"]{background:var(--tealL);border-color:var(--tealL);color:#08201C;transform:scale(1.04);box-shadow:0 16px 36px rgba(14,128,116,.35)}
+.aa-hp2 .pl-n{font-size:19px;opacity:.72;flex:none}
+.aa-hp2 .pl-t{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aa-hp2 .dpanel{background:rgba(247,245,240,.05);border:1.5px solid rgba(63,191,174,.35);border-radius:20px;padding:clamp(24px,3vw,40px)}
+.aa-hp2 .dnum{font-size:56px;color:var(--tealL);line-height:1}
+.aa-hp2 .dpanel h3{color:#fff;margin:8px 0 12px}
+.aa-hp2 .ddet{font-size:15.5px;line-height:1.65;color:#C6CDDC}
+.aa-hp2 .tags{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 20px}
+.aa-hp2 .tag{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;background:rgba(63,191,174,.14);color:var(--tealL);border-radius:100px;padding:6px 13px}
+
+/* ---------- results ---------- */
+.aa-hp2 .rhead{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;margin-top:14px}
+.aa-hp2 .rhead p{flex:1 1 320px;max-width:520px;font-size:15.5px;color:var(--body)}
+.aa-hp2 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:40px}
+.aa-hp2 .stat{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:26px 22px}
+.aa-hp2 .stat b{display:block;font-size:clamp(34px,3.6vw,48px);font-weight:700;color:var(--teal);font-variant-numeric:tabular-nums;line-height:1}
+.aa-hp2 .stat span{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:10px}
+.aa-hp2 .logos{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(22px,4vw,52px);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;margin-top:44px}
+.aa-hp2 .logos img{height:34px;width:auto;filter:grayscale(1);opacity:.75}
+.aa-hp2 .logo-cap{text-align:center;font-size:12.5px;color:var(--muted);margin-top:16px}
+.aa-hp2 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:44px}
+.aa-hp2 figure.q{margin:0;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:26px 24px;transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.aa-hp2 figure.q[data-on="1"]{background:var(--navy);border-color:var(--navy);transform:translateY(-6px);box-shadow:0 18px 40px rgba(16,28,51,.25)}
+.aa-hp2 figure.q[data-on="1"] blockquote{color:var(--cream)}
+.aa-hp2 figure.q[data-on="1"] figcaption{color:var(--mutedN2)}
+.aa-hp2 figure.q[data-on="1"] .qlogo{background:var(--cream);border-radius:6px;padding:3px 6px}
+.aa-hp2 blockquote{margin:12px 0 16px;font-size:17px;line-height:1.6;color:var(--navy)}
+.aa-hp2 figcaption{display:flex;align-items:center;gap:11px;font-size:13.5px;color:var(--muted)}
+.aa-hp2 .qlogo{height:26px;width:auto;filter:grayscale(1);opacity:.8;flex:none}
+
+@media(max-width:700px){
+  .aa-hp2 .coh{flex-wrap:wrap}
+  .aa-hp2 .pl{width:100%!important}
+  .aa-hp2 .pl-n{font-size:16px}
+}
+@media(max-width:480px){.aa-hp2 .blob{display:none}}
+@media(prefers-reduced-motion:reduce){
+  .aa-hp2 *,.aa-hp2 *::before,.aa-hp2 *::after{animation:none!important;transition:none!important}
+  .aa-hp2 .ticker-in{animation:none!important}
+  .aa-hp2 .h1-3{background:none;-webkit-text-fill-color:var(--navy);color:var(--navy)}
+}
+</style>
+
+<div class="aa-hp2">
+
+<!-- ============ 01 · HERO ============ -->
+<section class="hero" aria-labelledby="aa-h1">
+  <div class="blob" aria-hidden="true"></div>
+  <div class="aa-w hero-grid">
+
+    <div>
+      <p class="chip fade" style="animation-delay:.02s"><span class="dot" aria-hidden="true"></span>$70M+ saved · 80+ ARTs launched · 2,500+ trained</p>
+      <h1 id="aa-h1" style="margin-top:22px">
+        <span class="ser h1-1 fade" style="display:block;animation-delay:.10s">Land the role.</span>
+        <span class="fade" style="display:block;animation-delay:.22s">Lead the team.</span>
+        <span class="ser h1-3 fade" style="display:block;animation-delay:.34s">Transform the enterprise.</span>
+      </h1>
+      <p class="lede fade" style="animation-delay:.46s">Live, instructor-led SAFe&reg; certification and AI-Native training that gets professionals hired and promoted &mdash; and SPCT-led consulting that transforms Fortune 500s, governments, and global enterprises.</p>
+      <div class="ctas fade" style="animation-delay:.56s">
+        <a class="pill pill-navy" href="/training/">Browse SAFe certifications &#10230;</a>
+        <a class="pill pill-out" href="/customers/">See client results</a>
+      </div>
+      <p class="trust fade" style="animation-delay:.66s">
+        <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span><b style="color:var(--navy)">4.9</b> &middot; 2,500+ certified &middot; 19 SAFe certs &middot; <a class="lnk" href="/assessments/">Free assessment &#10230;</a></span>
+      </p>
+    </div>
+
+    <div>
+      <div class="coh-head">
+        <p class="kick" style="color:var(--redT)"><span class="dot" aria-hidden="true"></span>Upcoming cohorts</p>
+        <a class="lnk" href="/training/">All dates &#10230;</a>
+      </div>
+      <!-- TODO: replace these <li> from the live events feed; keep dates/seats as text -->
+      <ul class="cohorts" id="aa-cohorts" aria-live="off">
+        <li><a class="coh" data-on="1" data-code="SA" data-start="2026-09-03" href="/training/safe/sa/"><span><span class="coh-n">Leading SAFe</span><span class="coh-d">Live-virtual &middot; Sep 3&ndash;4</span></span><span class="coh-r"><span class="seats low">4 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        <li><a class="coh" data-code="SSM" data-start="2026-09-10" href="/training/safe/scrum-master/"><span><span class="coh-n">SAFe Scrum Master</span><span class="coh-d">Live-virtual &middot; Sep 10&ndash;11</span></span><span class="coh-r"><span class="seats">9 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        <li><a class="coh" data-code="POPM" data-start="2026-09-17" href="/training/safe/popm/"><span><span class="coh-n">SAFe POPM</span><span class="coh-d">Live-virtual &middot; Sep 17&ndash;18</span></span><span class="coh-r"><span class="seats">12 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        <li><a class="coh" data-code="RTE" data-start="2026-09-22" href="/training/adv-safe/rte/"><span><span class="coh-n">Release Train Engineer</span><span class="coh-d">Live-virtual &middot; Sep 22&ndash;25</span></span><span class="coh-r"><span class="seats low">6 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        <li><a class="coh" data-code="SPC" data-start="2026-10-05" href="/training/adv-safe/spc/"><span><span class="coh-n">Implementing SAFe</span><span class="coh-d">Live-virtual &middot; Oct 5&ndash;8</span></span><span class="coh-r"><span class="seats">14 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+        <li><a class="coh" data-code="ASPC" data-start="2026-10-19" href="/training/adv-safe/aspc/"><span><span class="coh-n">Adv. Practice Consultant</span><span class="coh-d">Live-virtual &middot; Oct 19&ndash;22</span></span><span class="coh-r"><span class="seats">10 seats left</span><span class="coh-in" data-in>&nbsp;</span></span></a></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-in" id="aa-tick"></div>
+</div>
+
+<!-- ============ 02 · ASSESSMENTS ============ -->
+<section aria-labelledby="aa-h2-assess">
+  <div class="aa-w">
+    <p class="kick"><span class="dot" aria-hidden="true"></span>( 02 ) &mdash; Assessments</p>
+    <h2 id="aa-h2-assess" style="margin-top:16px">Measure first. <span class="ser" style="color:var(--teal)">Then move.</span></h2>
+
+    <div class="split">
+      <ol class="alist" id="aa-alist">
+        <li><a class="arow" data-on="1" href="/assessments/cert-recommender/"><span class="ser anum">01</span><span class="aname">Cert Recommender</span><span class="ameta">Free &middot; 3 min</span></a></li>
+        <li><a class="arow" href="/assessments/agile-assessment/"><span class="ser anum">02</span><span class="aname">Agile Competency</span><span class="ameta">Free &middot; 14 min</span></a></li>
+        <li><a class="arow" href="/assessments/ai-assessment/"><span class="ser anum">03</span><span class="aname">AI Maturity &amp; Readiness</span><span class="ameta">Free &middot; 18 min</span></a></li>
+        <li><a class="arow" href="/assessments/product-management-assessment/"><span class="ser anum">04</span><span class="aname">Product Management Maturity</span><span class="ameta">Free &middot; 14 min</span></a></li>
+        <li><a class="arow" href="/assessments/innovation-framework/"><span class="ser anum">05</span><span class="aname">Innovation Framework</span><span class="ameta">Free &middot; 12 min</span></a></li>
+        <li><a class="arow" href="/assessments/mutation-readiness/"><span class="ser anum">06</span><span class="aname">Mutation Readiness</span><span class="ameta">Free &middot; 15 min</span></a></li>
+        <li><a class="arow" href="/assessments/agile-maturity/"><span class="ser anum">07</span><span class="aname">Agile Maturity</span><span class="ameta">Free &middot; 2 min</span></a></li>
+      </ol>
+
+      <div class="rep" id="aa-rep" aria-live="off">
+        <div class="panel" data-on="1">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 3 min</p>
+          <h3>Cert Recommender</h3>
+          <p class="rep-desc">7 quick questions on your role, experience, and goals. Personalized career path with cert sequence + salary upside.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Role fit</span><b>92</b></div><div class="bar"><i data-pct=".92"></i></div>
+            <div class="bar-l"><span>Cert readiness</span><b>78</b></div><div class="bar"><i data-pct=".78"></i></div>
+            <div class="bar-l"><span>Salary upside</span><b>+34%</b></div><div class="bar"><i data-pct=".64"></i></div>
+          </div>
+          <a class="pill" href="/assessments/cert-recommender/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 14 min</p>
+          <h3>Agile Competency</h3>
+          <p class="rep-desc">18 questions across 6 capability dimensions. Framework-agnostic &mdash; measures muscles, not rituals.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Delivery</span><b>71</b></div><div class="bar"><i data-pct=".71"></i></div>
+            <div class="bar-l"><span>Collaboration</span><b>64</b></div><div class="bar"><i data-pct=".64"></i></div>
+            <div class="bar-l"><span>Adaptability</span><b>58</b></div><div class="bar"><i data-pct=".58"></i></div>
+          </div>
+          <a class="pill" href="/assessments/agile-assessment/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 18 min</p>
+          <h3>AI Maturity &amp; Readiness</h3>
+          <p class="rep-desc">Board-level 24-question diagnostic grounded in OECD, NIST AI RMF, Gartner.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Governance</span><b>41</b></div><div class="bar"><i data-pct=".41"></i></div>
+            <div class="bar-l"><span>Adoption</span><b>55</b></div><div class="bar"><i data-pct=".55"></i></div>
+            <div class="bar-l"><span>Data readiness</span><b>47</b></div><div class="bar"><i data-pct=".47"></i></div>
+          </div>
+          <a class="pill" href="/assessments/ai-assessment/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 14 min</p>
+          <h3>Product Management Maturity</h3>
+          <p class="rep-desc">Diagnoses where teams ship features that don&rsquo;t move the metric. Cagan/SVPG-aligned.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Discovery</span><b>62</b></div><div class="bar"><i data-pct=".62"></i></div>
+            <div class="bar-l"><span>Strategy</span><b>70</b></div><div class="bar"><i data-pct=".70"></i></div>
+            <div class="bar-l"><span>Delivery</span><b>66</b></div><div class="bar"><i data-pct=".66"></i></div>
+          </div>
+          <a class="pill" href="/assessments/product-management-assessment/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 12 min</p>
+          <h3>Innovation Framework</h3>
+          <p class="rep-desc">15 questions across 5 principles. The cultural foundation underneath every innovation initiative.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Idea flow</span><b>52</b></div><div class="bar"><i data-pct=".52"></i></div>
+            <div class="bar-l"><span>Cadence</span><b>44</b></div><div class="bar"><i data-pct=".44"></i></div>
+            <div class="bar-l"><span>Funding</span><b>39</b></div><div class="bar"><i data-pct=".39"></i></div>
+          </div>
+          <a class="pill" href="/assessments/innovation-framework/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 15 min</p>
+          <h3>Mutation Readiness</h3>
+          <p class="rep-desc">18 questions across 6 dimensions. The AI-age extension of the Innovation Framework.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Sensing</span><b>48</b></div><div class="bar"><i data-pct=".48"></i></div>
+            <div class="bar-l"><span>Redesign speed</span><b>36</b></div><div class="bar"><i data-pct=".36"></i></div>
+            <div class="bar-l"><span>Learning loops</span><b>57</b></div><div class="bar"><i data-pct=".57"></i></div>
+          </div>
+          <a class="pill" href="/assessments/mutation-readiness/">Take the assessment &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="rep-eyebrow">Your report preview &middot; Free &middot; 2 min</p>
+          <h3>Agile Maturity</h3>
+          <p class="rep-desc">Rate 4 dimensions of enterprise agile maturity and get an instant profile with what to build next.</p>
+          <div style="margin-top:24px">
+            <div class="bar-l"><span>Team</span><b>74</b></div><div class="bar"><i data-pct=".74"></i></div>
+            <div class="bar-l"><span>Program</span><b>61</b></div><div class="bar"><i data-pct=".61"></i></div>
+            <div class="bar-l"><span>Portfolio</span><b>49</b></div><div class="bar"><i data-pct=".49"></i></div>
+          </div>
+          <a class="pill" href="/assessments/agile-maturity/">Take the assessment &#10230;</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="foot">Your score maps to a certification track and a consulting layer &mdash; <a class="lnk" href="/assessments/">see all seven assessments &#10230;</a></p>
+  </div>
+</section>
+
+<!-- ============ 03 · FIVE DIMENSIONS ============ -->
+<section class="dims" aria-labelledby="aa-h2-dims">
+  <div class="aa-w">
+    <p class="kick on-navy"><span class="dot" aria-hidden="true"></span>( 03 ) &mdash; Consulting &middot; the five dimensions</p>
+    <h2 id="aa-h2-dims" style="margin-top:16px;color:#fff">One operating model, <span class="ser" style="color:var(--tealL)">five layers deep.</span></h2>
+
+    <div class="split">
+      <div class="pyr" id="aa-pyr">
+        <a class="pl" data-w="58" href="/services/mutation/"><span class="ser pl-n">05</span><span class="pl-t">Mutation</span><span aria-hidden="true">&#10230;</span></a>
+        <a class="pl" data-w="68" href="/services/ai-automation/"><span class="ser pl-n">04</span><span class="pl-t">AI Automation</span><span aria-hidden="true">&#10230;</span></a>
+        <a class="pl" data-w="78" href="/services/ai-native-operating-model/"><span class="ser pl-n">03</span><span class="pl-t">AI-Native Operating Model</span><span aria-hidden="true">&#10230;</span></a>
+        <a class="pl" data-w="88" href="/services/innovation-culture/"><span class="ser pl-n">02</span><span class="pl-t">Innovation Culture</span><span aria-hidden="true">&#10230;</span></a>
+        <a class="pl" data-w="98" data-on="1" href="/services/scaling-iterative-model/"><span class="ser pl-n">01</span><span class="pl-t">Scaling Iterative Model</span><span aria-hidden="true">&#10230;</span></a>
+      </div>
+
+      <div class="dpanel" id="aa-dpanel" aria-live="off">
+        <div class="panel" data-on="1">
+          <p class="ser dnum">01</p><h3>Scaling Iterative Model</h3>
+          <p class="ddet">The base layer: a large-scale iterative operating model that moves value across the enterprise &mdash; value streams, cross-functional trains, a fixed cadence, and Lean portfolio governance that funds outcomes instead of projects. Framework-agnostic: SAFe, LeSS, Scrum@Scale, or a hybrid.</p>
+          <div class="tags"><span class="tag">Value streams</span><span class="tag">ART launch</span><span class="tag">Flow metrics</span></div>
+          <a class="lnk lnk-l" href="/services/scaling-iterative-model/">Explore this layer &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="ser dnum">02</p><h3>Innovation Culture</h3>
+          <p class="ddet">Innovation on cadence, not by accident. A repeatable framework that embeds innovation ceremonies into the cadence you already run &mdash; so new value is discovered, tested, and shipped on a schedule, and survives the quarterly review instead of dying in it.</p>
+          <div class="tags"><span class="tag">Idea pipeline</span><span class="tag">Lean startup</span><span class="tag">Funding gates</span></div>
+          <a class="lnk lnk-l" href="/services/innovation-culture/">Explore this layer &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="ser dnum">03</p><h3>AI-Native Operating Model</h3>
+          <p class="ddet">Not AI bolted onto old processes &mdash; the operating model rebuilt for the AI era. AI-native teams, roles, and value streams, with AI fluency embedded from executives to engineers, and governance and ethics designed in from day one rather than retrofitted.</p>
+          <div class="tags"><span class="tag">AI operating model</span><span class="tag">NIST AI RMF</span><span class="tag">Role redesign</span></div>
+          <a class="lnk lnk-l" href="/services/ai-native-operating-model/">Explore this layer &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="ser dnum">04</p><h3>AI Automation</h3>
+          <p class="ddet">The engineering layer that makes AI-native real: MLOps, AI-assisted development, and end-to-end automation across the delivery pipeline &mdash; from commit to production, with quality and security built in. This is what turns AI pilots into shipped, governed capability.</p>
+          <div class="tags"><span class="tag">Agentic workflows</span><span class="tag">MLOps</span><span class="tag">Human oversight</span></div>
+          <a class="lnk lnk-l" href="/services/ai-automation/">Explore this layer &#10230;</a>
+        </div>
+        <div class="panel">
+          <p class="ser dnum">05</p><h3>Mutation</h3>
+          <p class="ddet">The layer that makes change permanent &mdash; the operating rhythm to sense, reconfigure, re-fund, and re-skill continuously, so the transformation keeps adapting instead of snapping back. The difference between a one-time programme and an enterprise that never stops evolving.</p>
+          <div class="tags"><span class="tag">Sensing</span><span class="tag">Dynamic funding</span><span class="tag">Re-skilling</span></div>
+          <a class="lnk lnk-l" href="/services/mutation/">Explore this layer &#10230;</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="foot" style="color:var(--mutedN2)">Training moves people; the operating model moves the enterprise &mdash; 30&ndash;75% faster time-to-market &middot; <a class="lnk lnk-l" href="/services/operating-model/">explore the model &#10230;</a></p>
+  </div>
+</section>
+
+<!-- ============ 04 · CUSTOMER RESULTS ============ -->
+<section aria-labelledby="aa-h2-res">
+  <div class="aa-w">
+    <p class="kick"><span class="dot" aria-hidden="true"></span>( 04 ) &mdash; Customer results</p>
+    <div class="rhead">
+      <h2 id="aa-h2-res">The numbers behind <span class="ser" style="color:var(--teal)">the training.</span></h2>
+      <p>Real enterprise outcomes from SPCT-led transformation &mdash; across defense, telecom, banking, aerospace, and energy in 12 countries.</p>
+    </div>
+
+    <div class="stats" id="aa-stats">
+      <div class="stat"><b data-to="80" data-suf="+">80+</b><span>ARTs launched</span></div>
+      <div class="stat"><b data-to="2500" data-suf="+">2,500+</b><span>Professionals trained</span></div>
+      <div class="stat"><b data-pre="$" data-to="70" data-suf="M+">$70M+</b><span>Operating cost taken out</span></div>
+      <div class="stat"><b data-to="50" data-suf="+">50+</b><span>RTEs developed</span></div>
+      <div class="stat"><b data-to="12">12</b><span>Countries served</span></div>
+    </div>
+
+    <div class="logos">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/IBM.png?w=1200&amp;ssl=1" alt="IBM" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Accenture-Emblem-scaled.png?w=1200&amp;ssl=1" alt="Accenture" loading="lazy">
+      <img src="https://agile-agilist.com/wp-content/uploads/2026/05/deloitte.svg" alt="Deloitte" loading="lazy">
+      <img src="https://agile-agilist.com/wp-content/uploads/2026/05/mckinsey.svg" alt="McKinsey &amp; Company" loading="lazy">
+      <img src="https://agile-agilist.com/wp-content/uploads/2026/05/kpmg.svg" alt="KPMG" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/bcg.jpg?w=1200&amp;ssl=1" alt="Boston Consulting Group" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/PricewaterhouseCoopers_Logo.svg.png?w=1200&amp;ssl=1" alt="PwC" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/TD.png?w=1200&amp;ssl=1" alt="TD Bank" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Manulife-Insurance-Company.png?w=1200&amp;ssl=1" alt="Manulife" loading="lazy">
+      <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/images.jpg?w=1200&amp;ssl=1" alt="U.S. Air Force" loading="lazy">
+    </div>
+    <p class="logo-cap">Organizations whose professionals have trained or transformed with Agile Agilist</p>
+
+    <div class="quotes" id="aa-quotes" aria-live="off">
+      <figure class="q" data-on="1">
+        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+        <blockquote class="ser">Went from CSM to SAFe Practice Consultant in 18 months. Tripled my consulting rate. The career coach made the difference &mdash; not just the certification.</blockquote>
+        <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/IBM.png?w=1200&amp;ssl=1" alt="IBM" loading="lazy"><span><b>Anna M.</b> &middot; Senior Agile Coach</span></figcaption>
+      </figure>
+      <figure class="q">
+        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+        <blockquote class="ser">Restructured our $80M annual portfolio from project funding to Lean Budgets within 6 months. The Guaranteed-Pass framework was a huge differentiator.</blockquote>
+        <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Accenture-Emblem-scaled.png?w=1200&amp;ssl=1" alt="Accenture" loading="lazy"><span><b>Irene K.</b> &middot; Portfolio Director</span></figcaption>
+      </figure>
+      <figure class="q">
+        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+        <blockquote class="ser">Used SAFe to launch our first DevSecOps Agile Release Train. Cut delivery time by 40% while meeting all compliance requirements.</blockquote>
+        <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/images.jpg?w=1200&amp;ssl=1" alt="U.S. Air Force" loading="lazy"><span><b>Steve R.</b> &middot; Program Manager</span></figcaption>
+      </figure>
+    </div>
+
+    <p class="foot"><a class="lnk" href="/customers/">Read the enterprise case studies &#10230;</a></p>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var root=document.querySelector('.aa-hp2'); if(!root) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- rotating groups: one 4.2s clock, independent indices ---- */
+  function group(sel,itemSel,panelSel){
+    var box=root.querySelector(sel); if(!box) return null;
+    var items=[].slice.call(box.querySelectorAll(itemSel));
+    var panels=panelSel?[].slice.call(root.querySelectorAll(panelSel)):null;
+    if(!items.length) return null;
+    var g={i:0,hover:false,
+      set:function(n){
+        g.i=(n+items.length)%items.length;
+        items.forEach(function(el,k){ el.setAttribute('data-on', k===g.i?'1':'0'); });
+        if(panels) panels.forEach(function(p,k){ p.setAttribute('data-on', k===g.i?'1':'0'); });
+        if(panels) fillBars(panels[g.i]);
+      }};
+    items.forEach(function(el,k){
+      el.addEventListener('mouseenter',function(){ g.hover=true; g.set(k); });
+      el.addEventListener('mouseleave',function(){ g.hover=false; });
+      el.addEventListener('focus',function(){ g.set(k); },true);
+    });
+    g.set(0); return g;
+  }
+  function fillBars(panel){
+    if(!panel) return;
+    [].slice.call(panel.querySelectorAll('.bar>i')).forEach(function(b){
+      var p=parseFloat(b.getAttribute('data-pct'))||0;
+      b.style.width='0%';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ b.style.width=(p*100).toFixed(0)+'%'; }); });
+    });
+  }
+  var groups=[group('#aa-cohorts','.coh'),
+              group('#aa-alist','.arow','#aa-rep .panel'),
+              group('#aa-pyr','.pl','#aa-dpanel .panel'),
+              group('#aa-quotes','figure.q')].filter(Boolean);
+  if(!reduce) setInterval(function(){ groups.forEach(function(g){ if(!g.hover) g.set(g.i+1); }); },4200);
+
+  /* ---- "in N days", computed from the cohort start date ---- */
+  var today=new Date(); today.setHours(0,0,0,0);
+  [].slice.call(root.querySelectorAll('.coh[data-start]')).forEach(function(a){
+    var d=new Date(a.getAttribute('data-start')+'T00:00:00');
+    var n=Math.round((d-today)/86400000), t=a.querySelector('[data-in]');
+    if(!t) return;
+    t.textContent = n>1?('in '+n+' days ⟶') : n===1?'tomorrow ⟶' : n===0?'today ⟶' : 'view dates ⟶';
+  });
+
+  /* ---- ticker: duplicate the cohort list once for a seamless loop ---- */
+  var tick=root.querySelector('#aa-tick');
+  if(tick){
+    var rows=[].slice.call(root.querySelectorAll('#aa-cohorts .coh')).map(function(a){
+      var code=a.getAttribute('data-code')||'';
+      return '<span class="tick"><b>'+code+'</b>'+a.querySelector('.coh-n').textContent+
+             '<span>'+a.querySelector('.coh-d').textContent.replace(/^.*?·\s*/,'')+'</span><i></i></span>';
+    }).join('');
+    tick.innerHTML=rows+rows;
+  }
+
+  /* ---- count-ups + first bar fill, once on entering the viewport ---- */
+  function countUp(el){
+    var to=parseFloat(el.getAttribute('data-to')), pre=el.getAttribute('data-pre')||'',
+        suf=el.getAttribute('data-suf')||'', t0=null, dur=1600;
+    if(reduce){ return; }
+    function step(ts){
+      if(!t0) t0=ts;
+      var p=Math.min((ts-t0)/dur,1), e=1-Math.pow(1-p,3);
+      el.textContent=pre+Math.round(to*e).toLocaleString('en-US')+suf;
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if('IntersectionObserver' in window){
+    var seen=new WeakSet();
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting||seen.has(e.target)) return;
+        seen.add(e.target);
+        if(e.target.id==='aa-stats') [].slice.call(e.target.querySelectorAll('b[data-to]')).forEach(countUp);
+        if(e.target.id==='aa-rep') fillBars(e.target.querySelector('.panel[data-on="1"]'));
+      });
+    },{threshold:.25});
+    ['#aa-stats','#aa-rep'].forEach(function(s){ var el=root.querySelector(s); if(el) io.observe(el); });
+  }
+})();
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"EducationalOrganization","@id":"https://agile-agilist.com/#org","name":"Agile Agilist","url":"https://agile-agilist.com/","description":"Live, instructor-led SAFe certification, AI-Native, and corporate agile training from a Scaled Agile Gold Partner. Trusted by 2,500+ professionals across 9 languages and 4 continents, with 500+ live cohorts delivered."},
+{"@type":"Person","@id":"https://agile-agilist.com/#mark-saymen","name":"Mark Saymen","url":"https://agile-agilist.com/about/","jobTitle":"SAFe SPCT (SAFe Practice Consultant Trainer)","description":"SAFe Practice Consultant Trainer (SPCT), one of 125+ globally (90+ in North America). Author of Mutation Readiness: An Operating Manual for Innovation in the Age of AI."},
+{"@type":"WebPage","@id":"https://agile-agilist.com/#home","url":"https://agile-agilist.com/","name":"Agile Agilist — SAFe® certification and AI-Native training","inLanguage":"en","about":{"@id":"https://agile-agilist.com/#org"}},
+{"@type":"Course","name":"Leading SAFe® (SA)","url":"https://agile-agilist.com/training/safe/sa/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-03"}},
+{"@type":"Course","name":"SAFe® Scrum Master (SSM)","url":"https://agile-agilist.com/training/safe/scrum-master/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-10"}},
+{"@type":"Course","name":"SAFe® Product Owner / Product Manager (POPM)","url":"https://agile-agilist.com/training/safe/popm/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-17"}},
+{"@type":"Course","name":"SAFe® Release Train Engineer (RTE)","url":"https://agile-agilist.com/training/adv-safe/rte/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-09-22"}},
+{"@type":"Course","name":"Implementing SAFe® (SPC)","url":"https://agile-agilist.com/training/adv-safe/spc/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-10-05"}},
+{"@type":"Course","name":"Advanced SAFe® Practice Consultant (ASPC)","url":"https://agile-agilist.com/training/adv-safe/aspc/","provider":{"@id":"https://agile-agilist.com/#org"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","startDate":"2026-10-19"}}
+]}
+</script>
+<!-- /wp:html -->
