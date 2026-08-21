@@ -19,7 +19,8 @@
  *     [aa_home_cohorts courses="aspc,spc,rte,lpm,apm"]
  *     [aa_home_cohorts debug="1"]           (admin only)
  *
- * Emits the <li> rows for ul#aa-cohorts AND the matching Course /
+ * Emits .aa-cohort cards for .aa-cohorts__list (or .aa-ticker__item spans with
+ * part="ticker") AND the matching Course /
  * CourseInstance JSON-LD, so the structured data always describes the dates
  * actually printed on the page.
  *
@@ -94,6 +95,7 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 		'courses' => 'aspc,spc,rte,lpm,ai-native,apm,popm,ssm',
 		'limit'   => 6,
 		'schema'  => '1',
+		'part'    => 'cards',   // cards | ticker
 		'debug'   => '',
 	), $atts, 'aa_home_cohorts' );
 
@@ -117,49 +119,71 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	}
 
 	if ( empty( $rows ) ) {
+		if ( $a['part'] === 'ticker' ) { return ''; }
 		// Never print an empty panel — send people to the full schedule instead.
-		return '<li><a class="coh" href="/training/"><span><span class="coh-n">See all upcoming cohorts</span>'
-		     . '<span class="coh-d">Live-virtual · new dates monthly</span></span>'
-		     . '<span class="coh-r"><span class="coh-in">View schedule ⟶</span></span></a></li>';
+		return '<a class="aa-cohort" href="/training/">'
+		     . '<span class="aa-cohort__txt"><span class="aa-cohort__name">See all upcoming cohorts</span>'
+		     . '<span class="aa-cohort__meta">Live-virtual · new dates monthly</span></span>'
+		     . '<span class="aa-cohort__right"><span class="aa-cohort__days">View schedule &#10230;</span></span></a>';
 	}
 
 	$html = '';
 	$instances = array();
-	$first = true;
+	$today = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
+	$today->setTime( 0, 0, 0 );
 	foreach ( $rows as $r ) {
 		$c = $r['c']; $e = $r['e'];
 		$range = aa_home_date_range( $e['start'], $e['end'], $c['days'] );
-		$iso   = ( new DateTime( '@' . $e['start'] ) )->setTimezone( new DateTimeZone( 'America/New_York' ) )->format( 'Y-m-d' );
+		$startD = ( new DateTime( '@' . $e['start'] ) )->setTimezone( new DateTimeZone( 'America/New_York' ) );
+		$iso   = $startD->format( 'Y-m-d' );
+
+		if ( $a['part'] === 'ticker' ) {
+			// One item per course; aa-home.js clones the whole track for the loop.
+			$html .= '<span class="aa-ticker__item">'
+			      . '<span class="aa-ticker__code">' . esc_html( $c['code'] ) . '</span>'
+			      . '<span>' . esc_html( $c['name'] ) . '</span>'
+			      . '<span class="aa-ticker__dates">' . esc_html( $range ) . '</span>'
+			      . '<span class="aa-ticker__sep"></span></span>';
+			continue;
+		}
+
+		// Day count is rendered server-side so it is real text for crawlers;
+		// aa-home.js recomputes it from data-start on every load.
+		$days = (int) $today->diff( ( clone $startD )->setTime( 0, 0, 0 ) )->format( '%r%a' );
+		$label = $days > 1 ? 'in ' . $days . ' days &#10230;'
+		       : ( $days === 1 ? 'tomorrow &#10230;' : ( $days === 0 ? 'today &#10230;' : 'view dates &#10230;' ) );
 
 		$seats_html = '';
 		if ( $e['seats'] !== null && $e['seats'] > 0 ) {
-			$low = $e['seats'] <= 6 ? ' low' : '';
-			$seats_html = '<span class="seats' . $low . '">' . (int) $e['seats'] . ' seats left</span>';
+			$low = $e['seats'] <= 6 ? ' aa-cohort__seats--low' : '';
+			$seats_html = '<span class="aa-cohort__seats' . $low . '">' . (int) $e['seats'] . ' seats left</span>';
 		}
 
-		$html .= '<li><a class="coh"' . ( $first ? ' data-on="1"' : '' )
-		      . ' data-code="' . esc_attr( $c['code'] ) . '"'
+		$html .= '<a class="aa-cohort"'
 		      . ' data-start="' . esc_attr( $iso ) . '"'
+		      . ( $e['seats'] !== null ? ' data-seats="' . (int) $e['seats'] . '"' : '' )
 		      . ' href="' . esc_url( $c['url'] ) . '?cohort=' . (int) $e['id'] . '">'
-		      . '<span><span class="coh-n">' . esc_html( $c['name'] ) . '</span>'
-		      . '<span class="coh-d">Live-virtual · ' . esc_html( $range ) . '</span></span>'
-		      . '<span class="coh-r">' . $seats_html . '<span class="coh-in" data-in>&nbsp;</span></span></a></li>';
-		$first = false;
+		      . '<span class="aa-cohort__txt">'
+		      . '<span class="aa-cohort__name">' . esc_html( $c['name'] ) . '</span>'
+		      . '<span class="aa-cohort__meta">Live-virtual · ' . esc_html( $range ) . '</span></span>'
+		      . '<span class="aa-cohort__right">' . $seats_html
+		      . '<span class="aa-cohort__days">' . $label . '</span></span></a>';
 
 		$instances[] = array(
 			'@type'    => 'Course',
 			'name'     => $c['schema'],
 			'url'      => home_url( $c['url'] ),
-			'provider' => array( '@id' => home_url( '/' ) . '#org' ),
+			'provider' => array( '@type' => 'Organization', 'name' => 'Agile Agilist', 'url' => home_url( '/' ) ),
 			'hasCourseInstance' => array(
 				'@type'      => 'CourseInstance',
 				'courseMode' => 'online',
 				'startDate'  => $iso,
+				'location'   => array( '@type' => 'VirtualLocation', 'url' => home_url( $c['url'] ) ),
 			),
 		);
 	}
 
-	if ( $a['schema'] === '1' && $instances ) {
+	if ( $a['schema'] === '1' && $instances && $a['part'] !== 'ticker' ) {
 		$html .= '<script type="application/ld+json">'
 		      . wp_json_encode( array( '@context' => 'https://schema.org', '@graph' => $instances ) )
 		      . '</script>';

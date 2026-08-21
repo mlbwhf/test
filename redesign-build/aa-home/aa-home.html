@@ -1,0 +1,250 @@
+<!--
+  Agile Agilist — home page redesign markup (sections 01–05).
+  Paste into a WordPress Custom HTML block / Divi Code module, or a page template.
+  Requires aa-home.css + aa-home.js (see WORDPRESS-INSTALL.md).
+  Every section can be split out at the "SECTION" comments and used independently,
+  as long as the wrapping <div class="aa"> is preserved around each piece.
+  All copy is present in the DOM (no JS-injected content) for SEO/LLM readability.
+-->
+<div class="aa">
+
+<!-- ==================== SECTION 01 — HERO ==================== -->
+<section class="aa-hero" aria-labelledby="aa-hero-h1">
+  <div class="aa-hero__blob" aria-hidden="true"></div>
+
+  <div class="aa-hero__grid">
+    <div>
+      <p class="aa-hero__badge"><span class="aa__dot" aria-hidden="true"></span>$70M+ saved · 80+ ARTs launched · 2,500+ trained</p>
+      <h1 id="aa-hero-h1">
+        <span class="aa__serif aa-hero__l1">Land the role.</span>
+        <span>Lead the team.</span>
+        <span class="aa__serif aa-hero__l3">Transform the enterprise.</span>
+      </h1>
+      <p class="aa-hero__body">Live, instructor-led SAFe&reg; certification and AI-Native training that gets professionals hired and promoted &mdash; and SPCT-led consulting that transforms Fortune 500s, governments, and global enterprises.</p>
+      <div class="aa-hero__ctas">
+        <a class="aa__btn aa__btn--solid" href="https://agile-agilist.com/training/">Browse SAFe certifications &#10230;</a>
+        <a class="aa__btn aa__btn--ghost" href="https://agile-agilist.com/customers/">See client results</a>
+      </div>
+      <div class="aa-hero__trust">
+        <span>2,500+ certified</span>
+        <span aria-hidden="true">·</span><span>19 SAFe certs</span>
+        <span aria-hidden="true">·</span><a class="aa__link" href="https://agile-agilist.com/assessments/">Free assessment &#10230;</a>
+      </div>
+    </div>
+
+    <div class="aa-cohorts">
+      <div class="aa-cohorts__head">
+        <h2 class="aa-cohorts__title"><span class="aa__dot aa__dot--alert" aria-hidden="true"></span>Upcoming cohorts</h2>
+        <a class="aa-cohorts__all" href="https://agile-agilist.com/training/">All dates &#10230;</a>
+      </div>
+      <!-- Populate from the real course schedule (CPT / events feed). data-start drives "in N days"; data-seats drives the low-seat chip. -->
+      <div class="aa-cohorts__list">
+        [aa_home_cohorts]
+      </div>
+    </div>
+  </div>
+
+  <!-- JS clones the track once for a seamless loop; keep one copy in source. -->
+  <div class="aa-ticker" aria-hidden="true">
+    <div class="aa-ticker__track">
+      [aa_home_cohorts part="ticker"]
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 02 — ALL TRAINING ==================== -->
+<section class="aa__section aa-training" aria-labelledby="aa-training-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 02 ) &mdash; All training</p>
+      <h2 class="aa__h2" id="aa-training-h2" style="font-size:clamp(30px,4.2vw,50px);line-height:1.06;max-width:760px;">19 SAFe&reg; certifications. 5 career tracks. <em class="aa__serif" style="color:#0E8074;">One SPCT-led team.</em></h2>
+    </div>
+    <p class="aa__lede">Live virtual classrooms. Exam included. Recordings forever. Pass guarantee &mdash; or your next cohort is on us.</p>
+  </div>
+
+  <div class="aa-tracks">
+    <a class="aa-track" href="https://agile-agilist.com/training/safe-found/">
+      <span class="aa-track__num" aria-hidden="true">01</span>
+      <h3>Micro-Credentials</h3>
+      <p class="aa-track__desc">Stackable badges from SAFe + ICAgile. Half-day to 1-day. Specialize fast.</p>
+      <span class="aa__chip">7 SAFe + 11 ICAgile</span>
+      <span class="aa__cta">View track &#10230;</span>
+    </a>
+    <a class="aa-track" href="https://agile-agilist.com/training/safe/">
+      <span class="aa-track__num" aria-hidden="true">02</span>
+      <h3>SAFe by Role</h3>
+      <p class="aa-track__desc">SSM, POPM, SASM, DevOps, BO &mdash; role-specific certifications.</p>
+      <span class="aa__chip">6 certifications</span>
+      <span class="aa__cta">View track &#10230;</span>
+    </a>
+    <a class="aa-track" href="https://agile-agilist.com/training/adv-safe/">
+      <span class="aa-track__num" aria-hidden="true">03</span>
+      <h3>Advanced Training</h3>
+      <p class="aa-track__desc">RTE, LPM, APM, SPC, ASPC &mdash; enterprise transformation leadership.</p>
+      <span class="aa__chip">5 advanced certs</span>
+      <span class="aa__cta">View track &#10230;</span>
+    </a>
+    <a class="aa-track" href="https://agile-agilist.com/training/safe-industry/">
+      <span class="aa-track__num" aria-hidden="true">04</span>
+      <h3>SAFe by Industry</h3>
+      <p class="aa-track__desc">Architects, hardware, government, engineering. Sector-specific.</p>
+      <span class="aa__chip">6 industry tracks</span>
+      <span class="aa__cta">View track &#10230;</span>
+    </a>
+    <a class="aa-track" href="https://agile-agilist.com/training/ai-native/">
+      <span class="aa-track__num" aria-hidden="true">05</span>
+      <h3>AI-Native</h3>
+      <p class="aa-track__desc">AI-Ready, Foundations, Change Agent, Leading the AI-Native Org.</p>
+      <span class="aa__chip">4 AI tracks</span>
+      <span class="aa__cta">View track &#10230;</span>
+    </a>
+  </div>
+  <p class="aa__foot">Every track maps to a role, a salary band, and a cohort date &mdash; <a class="aa__link" href="https://agile-agilist.com/training/">see all 19 certifications &#10230;</a></p>
+</section>
+
+<!-- ==================== SECTION 03 — ASSESSMENTS ==================== -->
+<section class="aa__section aa-assessments" aria-labelledby="aa-assess-h2">
+  <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 03 ) &mdash; Assessments</p>
+  <h2 class="aa__h2" id="aa-assess-h2">Measure first. <em class="aa__serif" style="color:#0E8074;">Then move.</em></h2>
+
+  <div class="aa-assess">
+    <!-- Each row carries its full report payload in data-report so all copy is crawlable. -->
+    <div class="aa-assess__list">
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/cert-recommender/"
+         data-report='{"name":"Cert Recommender","meta":"Free · 3 min","desc":"Seven questions on your role, experience, and goals. Get a personalized 12-month cert roadmap with the salary upside for each step.","bars":[{"label":"Role fit","val":"92","pct":0.92},{"label":"Cert readiness","val":"78","pct":0.78},{"label":"Salary upside","val":"+34%","pct":0.64}]}'>
+        <span class="aa-assess__num" aria-hidden="true">01</span><span class="aa-assess__name">Cert Recommender</span><span class="aa-assess__meta">Free · 3 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/agile-assessment/"
+         data-report='{"name":"Agile Competency","meta":"Free · 14 min","desc":"Eighteen questions across six capability dimensions — framework-agnostic. Measures muscles, not rituals.","bars":[{"label":"Delivery","val":"71","pct":0.71},{"label":"Collaboration","val":"64","pct":0.64},{"label":"Adaptability","val":"58","pct":0.58}]}'>
+        <span class="aa-assess__num" aria-hidden="true">02</span><span class="aa-assess__name">Agile Competency</span><span class="aa-assess__meta">Free · 14 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/ai-assessment/"
+         data-report='{"name":"AI Maturity &amp; Readiness","meta":"Free · 18 min","desc":"A board-level, 24-question diagnostic grounded in OECD, NIST AI RMF, and Gartner — baseline your teams, roles, and governance.","bars":[{"label":"Governance","val":"41","pct":0.41},{"label":"Adoption","val":"55","pct":0.55},{"label":"Data readiness","val":"47","pct":0.47}]}'>
+        <span class="aa-assess__num" aria-hidden="true">03</span><span class="aa-assess__name">AI Maturity &amp; Readiness</span><span class="aa-assess__meta">Free · 18 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/product-management-assessment/"
+         data-report='{"name":"Product Management Maturity","meta":"Free · 14 min","desc":"Benchmark discovery, delivery, and strategy against modern product operating models.","bars":[{"label":"Discovery","val":"62","pct":0.62},{"label":"Strategy","val":"70","pct":0.7},{"label":"Delivery","val":"66","pct":0.66}]}'>
+        <span class="aa-assess__num" aria-hidden="true">04</span><span class="aa-assess__name">Product Management Maturity</span><span class="aa-assess__meta">Free · 14 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/innovation-framework/"
+         data-report='{"name":"Innovation Framework","meta":"Free · 12 min","desc":"Score how reliably your organization turns ideas into shipped value — on cadence, not by accident.","bars":[{"label":"Idea flow","val":"52","pct":0.52},{"label":"Cadence","val":"44","pct":0.44},{"label":"Funding","val":"39","pct":0.39}]}'>
+        <span class="aa-assess__num" aria-hidden="true">05</span><span class="aa-assess__name">Innovation Framework</span><span class="aa-assess__meta">Free · 12 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/mutation-readiness/"
+         data-report='{"name":"Mutation Readiness","meta":"Free · 15 min","desc":"How ready is your operating model to redesign itself? Baseline your continuous-change muscle.","bars":[{"label":"Sensing","val":"48","pct":0.48},{"label":"Redesign speed","val":"36","pct":0.36},{"label":"Learning loops","val":"57","pct":0.57}]}'>
+        <span class="aa-assess__num" aria-hidden="true">06</span><span class="aa-assess__name">Mutation Readiness</span><span class="aa-assess__meta">Free · 15 min</span>
+      </a>
+      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/agile-maturity/"
+         data-report='{"name":"Agile Maturity","meta":"Free · 2 min","desc":"Rate four dimensions of enterprise agile maturity and get an instant profile with what to build next.","bars":[{"label":"Team","val":"74","pct":0.74},{"label":"Program","val":"61","pct":0.61},{"label":"Portfolio","val":"49","pct":0.49}]}'>
+        <span class="aa-assess__num" aria-hidden="true">07</span><span class="aa-assess__name">Agile Maturity</span><span class="aa-assess__meta">Free · 2 min</span>
+      </a>
+    </div>
+
+    <div class="aa-report">
+      <p class="aa-report__eyebrow">Your report preview · <span data-report="meta">Free · 3 min</span></p>
+      <h3 data-report="name">Cert Recommender</h3>
+      <p class="aa-report__desc" data-report="desc">Seven questions on your role, experience, and goals. Get a personalized 12-month cert roadmap with the salary upside for each step.</p>
+      <div class="aa-report__bars">
+        <div class="aa-bar"><div class="aa-bar__label"><span>Role fit</span><b>92</b></div><div class="aa-bar__track"><div class="aa-bar__fill" style="--aa-final-width:92%"></div></div></div>
+        <div class="aa-bar"><div class="aa-bar__label"><span>Cert readiness</span><b>78</b></div><div class="aa-bar__track"><div class="aa-bar__fill" style="--aa-final-width:78%"></div></div></div>
+        <div class="aa-bar"><div class="aa-bar__label"><span>Salary upside</span><b>+34%</b></div><div class="aa-bar__track"><div class="aa-bar__fill" style="--aa-final-width:64%"></div></div></div>
+      </div>
+      <a class="aa__btn aa__btn--teal" data-report="cta" href="https://agile-agilist.com/assessments/cert-recommender/">Take the assessment &#10230;</a>
+    </div>
+  </div>
+  <p class="aa__foot">Your score maps to a certification track and a consulting layer &mdash; <a class="aa__link" href="https://agile-agilist.com/assessments/">see all seven assessments &#10230;</a></p>
+</section>
+
+<!-- ==================== SECTION 04 — FIVE DIMENSIONS ==================== -->
+<section class="aa__section aa-dims" aria-labelledby="aa-dims-h2">
+  <p class="aa__kicker aa__kicker--lt"><span class="aa__dot" aria-hidden="true"></span>( 04 ) &mdash; Consulting · The five dimensions</p>
+  <h2 class="aa__h2" id="aa-dims-h2">One operating model, <em class="aa__serif" style="color:#3FBFAE;">five layers deep.</em></h2>
+
+  <div class="aa-dims__split">
+    <!-- Pyramid: 05 on top → 01 at the bottom. data-w sets the pill width step. -->
+    <div class="aa-pyramid">
+      <a class="aa-layer" data-w="1" href="https://agile-agilist.com/services/mutation/"
+         data-dim='{"num":"05","name":"Mutation","detail":"Continuous self-redesign — the operating model that rewrites itself. Sensing mechanisms, redesign cadence, and learning loops that keep the org ahead of the market.","tags":["Sensing","Redesign cadence","Learning loops"]}'>
+        <span class="aa-layer__num" aria-hidden="true">05</span><span class="aa-layer__name">Mutation</span><span class="aa-layer__arrow" aria-hidden="true">&#10230;</span>
+      </a>
+      <a class="aa-layer" data-w="2" href="https://agile-agilist.com/services/ai-automation/"
+         data-dim='{"num":"04","name":"AI Automation","detail":"The engineering layer that makes AI-native real: MLOps, AI-assisted development, and end-to-end automation across the delivery pipeline — from commit to production, with quality and security built in. This is what turns AI pilots into shipped, governed capability.","tags":["Agentic workflows","MLOps","Human oversight"]}'>
+        <span class="aa-layer__num" aria-hidden="true">04</span><span class="aa-layer__name">AI Automation</span><span class="aa-layer__arrow" aria-hidden="true">&#10230;</span>
+      </a>
+      <a class="aa-layer" data-w="3" href="https://agile-agilist.com/services/ai-native-operating-model/"
+         data-dim='{"num":"03","name":"AI-Native","detail":"The enterprise redesigned around AI — roles, decision rights, and workflows rebuilt so AI is the operating fabric, not a bolt-on tool. Grounded in OECD and NIST AI RMF.","tags":["AI operating model","NIST AI RMF","Role redesign"]}'>
+        <span class="aa-layer__num" aria-hidden="true">03</span><span class="aa-layer__name">AI-Native</span><span class="aa-layer__arrow" aria-hidden="true">&#10230;</span>
+      </a>
+      <a class="aa-layer" data-w="4" href="https://agile-agilist.com/services/innovation-culture/"
+         data-dim='{"num":"02","name":"Innovation Culture","detail":"Innovation on cadence, not by accident. A repeatable pipeline from idea to funded experiment to shipped value — with governance that accelerates instead of blocks.","tags":["Idea pipeline","Lean startup","Funding gates"]}'>
+        <span class="aa-layer__num" aria-hidden="true">02</span><span class="aa-layer__name">Innovation Culture</span><span class="aa-layer__arrow" aria-hidden="true">&#10230;</span>
+      </a>
+      <a class="aa-layer" data-w="5" href="https://agile-agilist.com/services/scaling-iterative-model/"
+         data-dim='{"num":"01","name":"Scaling Iterative Model","detail":"Scale delivery across teams and trains — SAFe, LeSS, or hybrid. ARTs launched, PI cadence installed, flow measured end to end. The foundation every other layer builds on.","tags":["SAFe / LeSS","ART launch","Flow metrics"]}'>
+        <span class="aa-layer__num" aria-hidden="true">01</span><span class="aa-layer__name">Scaling Iterative Model</span><span class="aa-layer__arrow" aria-hidden="true">&#10230;</span>
+      </a>
+    </div>
+
+    <div class="aa-dim-panel">
+      <span class="aa-dim-panel__num" data-dim="num" aria-hidden="true">03</span>
+      <h3 data-dim="name">AI-Native</h3>
+      <p class="aa-dim-panel__detail" data-dim="detail">The enterprise redesigned around AI &mdash; roles, decision rights, and workflows rebuilt so AI is the operating fabric, not a bolt-on tool. Grounded in OECD and NIST AI RMF.</p>
+      <div class="aa-dim-panel__tags" data-dim="tags"><span>AI operating model</span><span>NIST AI RMF</span><span>Role redesign</span></div>
+      <a class="aa-dim-panel__link" data-dim="link" href="https://agile-agilist.com/services/ai-native-operating-model/">Explore this layer &#10230;</a>
+    </div>
+  </div>
+  <p class="aa__foot aa__foot--onnavy">Training moves people; the operating model moves the enterprise &mdash; 30&ndash;75% faster time-to-market · <a class="aa__link aa__link--lt" href="https://agile-agilist.com/services/operating-model/">explore the model &#10230;</a></p>
+</section>
+
+<!-- ==================== SECTION 05 — CUSTOMER RESULTS ==================== -->
+<section class="aa__section aa-results" aria-labelledby="aa-results-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 05 ) &mdash; Customer results</p>
+      <h2 class="aa__h2" id="aa-results-h2">The numbers behind <em class="aa__serif" style="color:#0E8074;">the training.</em></h2>
+    </div>
+    <p class="aa__lede" style="max-width:400px;">Real enterprise outcomes from SPCT-led transformation &mdash; across defense, telecom, banking, aerospace, and energy in 12 countries.</p>
+  </div>
+
+  <!-- Numbers are real text in the DOM; JS animates from 0 using data-value/prefix/suffix. -->
+  <div class="aa-stats">
+    <div class="aa-stat"><span class="aa-stat__num" data-value="80" data-suffix="+">80+</span><span class="aa-stat__label">ARTs launched</span></div>
+    <div class="aa-stat"><span class="aa-stat__num" data-value="5000" data-suffix="+">5,000+</span><span class="aa-stat__label">Trained in one program</span></div>
+    <div class="aa-stat"><span class="aa-stat__num" data-value="70" data-prefix="$" data-suffix="M+">$70M+</span><span class="aa-stat__label">Operating cost taken out</span></div>
+    <div class="aa-stat"><span class="aa-stat__num" data-value="50" data-suffix="+">50+</span><span class="aa-stat__label">RTEs developed</span></div>
+    <div class="aa-stat"><span class="aa-stat__num" data-value="12" data-suffix="">12</span><span class="aa-stat__label">Countries served</span></div>
+  </div>
+
+  <!-- Logos: existing media-library uploads on agile-agilist.com. Swap src for local media IDs if preferred. -->
+  <div class="aa-logos">
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/IBM.png?w=1200&amp;ssl=1" alt="IBM" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Accenture-Emblem-scaled.png?w=1200&amp;ssl=1" alt="Accenture" loading="lazy" />
+    <img src="https://agile-agilist.com/wp-content/uploads/2026/05/deloitte.svg" alt="Deloitte" loading="lazy" />
+    <img src="https://agile-agilist.com/wp-content/uploads/2026/05/mckinsey.svg" alt="McKinsey &amp; Company" loading="lazy" />
+    <img src="https://agile-agilist.com/wp-content/uploads/2026/05/kpmg.svg" alt="KPMG" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/bcg.jpg?w=1200&amp;ssl=1" alt="Boston Consulting Group" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/PricewaterhouseCoopers_Logo.svg.png?w=1200&amp;ssl=1" alt="PwC" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/TD.png?w=1200&amp;ssl=1" alt="TD Bank" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Manulife-Insurance-Company.png?w=1200&amp;ssl=1" alt="Manulife" loading="lazy" />
+    <img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/images.jpg?w=1200&amp;ssl=1" alt="U.S. Air Force" loading="lazy" />
+  </div>
+  <p class="aa-logos__caption">Organizations whose professionals have trained or transformed with Agile Agilist</p>
+
+  <div class="aa-quotes">
+    <figure class="aa-quote">
+      <blockquote>&ldquo;Went from CSM to SAFe Practice Consultant in 18 months. Tripled my consulting rate. The career coach made the difference &mdash; not just the certification.&rdquo;</blockquote>
+      <figcaption><img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/IBM.png?w=1200&amp;ssl=1" alt="IBM" loading="lazy" /><span><strong>Anna M.</strong> · Senior Agile Coach</span></figcaption>
+    </figure>
+    <figure class="aa-quote">
+      <blockquote>&ldquo;Restructured our $80M annual portfolio from project funding to Lean Budgets within 6 months. The Guaranteed-Pass framework was a huge differentiator.&rdquo;</blockquote>
+      <figcaption><img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Accenture-Emblem-scaled.png?w=1200&amp;ssl=1" alt="Accenture" loading="lazy" /><span><strong>Irene K.</strong> · Portfolio Director</span></figcaption>
+    </figure>
+    <figure class="aa-quote">
+      <blockquote>&ldquo;Used SAFe to launch our first DevSecOps Agile Release Train. Cut delivery time by 40% while meeting all compliance requirements.&rdquo;</blockquote>
+      <figcaption><img src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/images.jpg?w=1200&amp;ssl=1" alt="U.S. Air Force" loading="lazy" /><span><strong>Steve R.</strong> · Program Manager</span></figcaption>
+    </figure>
+  </div>
+  <p class="aa__foot"><a class="aa__link" href="https://agile-agilist.com/customers/">Read the enterprise case studies &#10230;</a></p>
+</section>
+
+</div><!-- /.aa -->
