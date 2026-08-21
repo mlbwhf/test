@@ -25,8 +25,11 @@
 
      SCHEMA: Course + CourseInstance for the cohorts (dates are visible text,
      so the markup describes what is on the page). Deliberately NO
-     aggregateRating despite the 4.9 star row, and NO FAQPage — there is no
-     visible FAQ section. Both are the standing rules for this site.
+     aggregateRating and NO FAQPage — there is no visible FAQ section and no
+     visible star rating. Star rows and the "4.9" figure were removed from the
+     hero trust line and the three testimonials: a visible rating with no
+     reviews behind it makes the same claim aggregateRating did. The counts
+     that remain (2,500+ certified, 19 SAFe certs) are facts, not a rating.
 
      COHORTS come from [aa_home_cohorts] (aa-home-cohorts-wpcode-snippet.php),
      reading the same wp_events / event_category / start_ts source already
@@ -91,7 +94,6 @@
 .aa-hp2 .lede{font-size:16.5px;max-width:560px;color:var(--body);margin-top:22px}
 .aa-hp2 .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
 .aa-hp2 .trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:24px;font-size:13.5px;color:var(--muted)}
-.aa-hp2 .stars{color:var(--gold);letter-spacing:2px}
 
 .aa-hp2 .coh-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
 .aa-hp2 .coh-head .dot{color:var(--red)}
@@ -222,8 +224,7 @@
         <a class="pill pill-out" href="/customers/">See client results</a>
       </div>
       <p class="trust fade" style="animation-delay:.66s">
-        <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <span><b style="color:var(--navy)">4.9</b> &middot; 2,500+ certified &middot; 19 SAFe certs &middot; <a class="lnk" href="/assessments/">Free assessment &#10230;</a></span>
+        <span>2,500+ certified &middot; 19 SAFe certs &middot; <a class="lnk" href="/assessments/">Free assessment &#10230;</a></span>
       </p>
     </div>
 
@@ -449,17 +450,14 @@
 
     <div class="quotes" id="aa-quotes" aria-live="off">
       <figure class="q" data-on="1">
-        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
         <blockquote class="ser">Went from CSM to SAFe Practice Consultant in 18 months. Tripled my consulting rate. The career coach made the difference &mdash; not just the certification.</blockquote>
         <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2026/05/IBM.png?w=1200&amp;ssl=1" alt="IBM" loading="lazy"><span><b>Anna M.</b> &middot; Senior Agile Coach</span></figcaption>
       </figure>
       <figure class="q">
-        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
         <blockquote class="ser">Restructured our $80M annual portfolio from project funding to Lean Budgets within 6 months. The Guaranteed-Pass framework was a huge differentiator.</blockquote>
         <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/Accenture-Emblem-scaled.png?w=1200&amp;ssl=1" alt="Accenture" loading="lazy"><span><b>Irene K.</b> &middot; Portfolio Director</span></figcaption>
       </figure>
       <figure class="q">
-        <p class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
         <blockquote class="ser">Used SAFe to launch our first DevSecOps Agile Release Train. Cut delivery time by 40% while meeting all compliance requirements.</blockquote>
         <figcaption><img class="qlogo" src="https://i0.wp.com/agile-agilist.com/wp-content/uploads/2025/09/images.jpg?w=1200&amp;ssl=1" alt="U.S. Air Force" loading="lazy"><span><b>Steve R.</b> &middot; Program Manager</span></figcaption>
       </figure>
