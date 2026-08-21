@@ -3,6 +3,9 @@
 ## Overview
 Redesign of **report-ai.org**: global navigation (ledger-style dropdowns with a two-pane Index Library browser) and the homepage (Figure-of-the-week hero, right sidebar, figures ticker, Model Watch, Index Library band, Compare + Methodology band). Goals in priority order: credibility (measurement-institution signal), findability of the 9 index sections + Reports, low maintenance (nav never edited when a page publishes), mobile/touch support, **LLM/crawler accessibility** (every link server-rendered at all times).
 
+## How to view the prototypes
+Open any `.dc.html` file directly in a browser (keep `support.js` in the same folder). `Report AI Homepage.dc.html` has a **Desktop / Mobile toggle in the top-right** — Mobile renders the full stacked homepage in a 390px frame with a working nav drawer (tap the hamburger). Both views live in the same file and share the same data.
+
 ## About the Design Files
 The `.dc.html` files are **interactive design references** — open in a browser to inspect look and behavior. They are prototypes, NOT production code. Recreate the designs inside the existing WordPress + GeneratePress theme using its mechanisms (`wp_nav_menu()`, block/theme templates, Customizer Additional CSS, child-theme PHP filters). Do not ship the prototype JS.
 
@@ -37,8 +40,18 @@ Anchored to the **header row** (`position:relative` on the primary-nav row; pane
 ### Desktop — Reports dropdown
 Same anchoring, width 320px. Rows: mono 10px uppercase eyebrow (Collection/News, `#77777f`, via menu-item Description field) above Archivo 700 15px name, arrow right. Footer "All Reports →" on `#f5f5f7`.
 
-### Mobile (≤768px)
+### Mobile (≤768px) — see the Mobile toggle in `Report AI Homepage.dc.html`
 No hover anywhere. GeneratePress off-canvas menu with **Dropdown behaviour: "Click – arrow"** (arrow toggles, label navigates). Indexes accordion shows the 9 sections; each section row expands to its pages (same auto-generated level 3). Tap targets ≥44px. Utility links at the drawer footer.
+
+**Prototype-accurate drawer spec (390px frame):**
+- Header 14px/16px padding, hairline bottom border; wordmark Archivo 900 17px; hamburger 44×44px, 1px `#e6e6ea` border, three 18×1.5px ink bars, 4px gap.
+- Drawer is a full-cover panel (`position:absolute; inset:0`, white, above page) with the same header row and a 44×44px `×` close button.
+- Top-level rows: Archivo 700 17px, 16px padding, min-height 44px, `#e6e6ea` bottom border, mono 13px ▲/▼ chevron right-aligned. Indexes defaults **open**, Reports **closed**; Glossary/About are flat links.
+- Section rows (level 2): grid `28px 1fr auto`, 11px 2px padding, min-height 44px, `#f0f0f2` divider — mono 11px cobalt number · Archivo 600 15px name · mono 12px chevron. Each toggles independently (multiple can be open).
+- Page rows (level 3): indented 38px, 10px padding, min-height 40px, `#f5f5f7` divider, Archivo 500 13.5px ink; each section's list ends with a mono 10px cobalt "Section hub →".
+- "Compare Tool →" pinned below the 9 sections (mono 11px uppercase cobalt, min-height 44px).
+- Reports rows: mono 9px uppercase tag over Archivo 600 15px name, min-height 44px.
+- Drawer footer: 16px padding, 1px top border, mono 11px uppercase Subscribe · Contact · Log in (Log in ink, others `#77777f`).
 
 ### Reference CSS starting point
 See `Nav Handoff (Option B).dc.html` for the earlier annotated spec; adapt selectors to `.main-navigation .sub-menu`, add classes `nav-tool`, `menu-reports` via the Menus screen (enable CSS Classes in Screen Options).
@@ -79,10 +92,32 @@ Cobalt eyebrow "THE INDEX LIBRARY" + H2 "Nine sections. Every figure sourced, da
 ### 2.7 Footer
 Ink top border; "REPORT AI" Archivo 900 16px left; mono 11px uppercase links right: Glossary · About · Republishing · Terms.
 
+## 3. Mobile homepage (≤768px) — `Report AI Homepage.dc.html`, Mobile toggle
+Single column, no sidebar. Order top to bottom:
+1. **Header** — wordmark + hamburger (spec above).
+2. **Hero** — 36px/20px padding, ink bottom border. Stat Archivo 900 **72px** (vs 120px desktop); statement 17px/1.45; mono 10px eyebrow + week stamp; confidence badge + source line wrap. The chart moves **below** the statement on `#f5f5f7`, 20px/16px padding, bars 140px tall, 10px gap, mono 11px values / 10px year labels.
+3. **Figures ticker** — 2×2 grid, 16px gap; value Archivo 800 22px, text 12px, meta mono 9px.
+4. **Model Watch** — H2 22px; the three desktop panels stack vertically in one column, each keeping its mono 10px uppercase label. Country and rated-model rows get `min-height:44px`.
+5. **Index Library** — 9 rows as a single-column ledger, grid `32px 1fr auto`, 12px padding, min-height 44px.
+6. **Compare tool** — H2 22px, same two labelled bars, full-width cobalt button (14px vertical padding).
+7. **Methodology** — `#f5f5f7`, H2 22px; the desktop `110px 1fr` badge/description grid becomes a **vertical stack** (badge above text) so descriptions get full width.
+8. **Newsletter** — `#f5f5f7`, email field 12px padding, full-width cobalt Subscribe (13px vertical padding).
+9. **Footer** — wordmark stacked above wrapping mono 11px links, 18px gap.
+
+Dropped on mobile: the desktop utility strip (moves into the drawer footer), the sidebar search, and the Latest report / Latest news blocks. **Decision needed** — if the client wants those on mobile, add them as bands after the newsletter; otherwise wire search to the drawer or a header icon.
+
 ## Interactions & Behavior
 - Dropdown toggles set `aria-expanded`; Escape closes; one panel open at a time; keyboard Tab reaches every link, visible focus.
 - Hovers: rows → `#f5f5f7`; cobalt buttons → ink bg/white; links darken to ink.
 - No animation on desktop dropdowns; mobile drawer/accordion ~220ms ease.
+
+### State model (prototype — mirror this in WP/JS)
+- `panel`: `null | 'indexes' | 'reports'` — one desktop dropdown open at a time.
+- `activeSection`: `0–8` — which section the desktop right pane shows; set on `mouseenter` (desktop) / click (touch); defaults to 0.
+- `drawerOpen`: boolean — mobile off-canvas.
+- `mIndexes` / `mReports`: booleans — top-level accordions; Indexes defaults **true**.
+- `mSections`: map of section index → boolean — level-3 accordions, independently toggleable.
+- `view`: prototype-only Desktop/Mobile switch. **Do not port** — production uses real media queries plus the GeneratePress off-canvas menu.
 
 ## LLM / crawler accessibility (hard requirement)
 - All nav links — including all level-3 index pages inside the library panel — present in server-rendered HTML at all times; hide via CSS (`visibility`/`opacity`/`display` toggled by class), never lazy-load or inject on click.
@@ -93,20 +128,24 @@ Ink top border; "REPORT AI" Archivo 900 16px left; mono 11px uppercase links rig
 - Two-pane library panel needs a custom walker + ~40 lines child-theme CSS/JS (pane switching); markup remains one nested `<ul>` (level 3 = the right pane lists).
 - Reports eyebrows: menu Description field + small PHP filter.
 - Verify panel fit at 769–1100px (`min(760px, 100vw - 80px)` cap).
-- Mobile homepage: sidebar stacks below the ticker; Model Watch panels stack vertically; ticker becomes 2×2.
+- Mobile homepage: exact stacking is specified in section 3 below and demonstrated in the prototype's Mobile view.
+- Mobile drops the sidebar search and the Latest report / Latest news blocks — confirm with the client before shipping (see section 3).
 
 ## Acceptance checklist
 - [ ] Publish a new index page → appears in nav panel + hub with zero menu edits.
 - [ ] JS disabled: every level-2 and level-3 link in view-source.
 - [ ] iPhone: arrow-tap toggles, label-tap navigates; no dead first tap; targets ≥44px.
+- [ ] Mobile: hero stat legible without zoom; chart bars don't overflow at 320px width.
+- [ ] Mobile: Model Watch stacks vertically, ticker is 2×2, methodology badges stack above their text.
+- [ ] Client sign-off on dropping search / latest report / latest news from mobile.
 - [ ] Escape/`aria-expanded` behavior correct; keyboard complete.
 - [ ] Hero figure + chart, ticker, Model Watch, latest report/news update from CMS without deploys.
 - [ ] Subscribe only in utility strip + sidebar newsletter block — never primary menu.
 - [ ] No overlap of hero chart and sidebar at 900–1280px.
 
 ## Files in this bundle
-- `Report AI Homepage.dc.html` — **primary reference**: final homepage with working nav (two-pane library, ledger Reports dropdown), hero, sidebar, ticker, Model Watch, library band, Compare+Methodology, footer.
+- `Report AI Homepage.dc.html` — **primary reference**: desktop homepage (two-pane library nav, ledger Reports dropdown, hero, sidebar, ticker, Model Watch, library band, Compare+Methodology, footer) **and** the complete mobile homepage + nav drawer behind the Mobile toggle.
 - `Report AI Nav.dc.html` — earlier nav exploration (Options A/B, desktop + mobile states) — useful for mobile drawer behavior.
 - `Nav Directions v2.dc.html` — direction studies (1a strip / 1b takeover / 1c ledger — 1c chosen).
 - `Nav Handoff (Option B).dc.html` — earlier WP spec document; superseded where it conflicts with this README.
-- `support.js` — prototype runtime only; ignore.
+- `support.js` — prototype runtime. Required to open the `.dc.html` files locally; **never ship it.**

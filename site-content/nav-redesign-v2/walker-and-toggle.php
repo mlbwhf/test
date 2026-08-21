@@ -19,6 +19,18 @@ add_action( 'generate_before_header', function () {
 	<?php
 }, 5 );
 
+/* 1b — Utility links inside the mobile drawer footer (v3 spec: the desktop
+ *      utility strip is hidden ≤768px and these take its place) */
+add_action( 'generate_after_primary_menu', function () {
+	?>
+	<div class="tai-utility-drawer">
+		<a href="/subscribe/">Subscribe</a>
+		<a href="/about/contact/">Contact</a>
+		<a class="tai-login" href="<?php echo esc_url( wp_login_url() ); ?>">Log in</a>
+	</div>
+	<?php
+} );
+
 /* 2 — Reports eyebrows (menu-item Description rendered inside the link) */
 add_filter( 'nav_menu_item_title', function ( $title, $item, $args ) {
 	if ( isset( $args->theme_location ) && 'primary' === $args->theme_location

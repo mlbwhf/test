@@ -31,6 +31,20 @@ Source: `prototype-v2/README.md` (in repo). Supersedes the Option B dark-palette
    click-arrow setting already live; menu classes (`nav-tool`, `nav-all`,
    `menu-reports`) and Reports eyebrows already live.
 
+## v3 additions (handoff update of 2026-08-21, mobile layer)
+
+- **Mobile drawer** (≤768px): desktop utility strip hidden; utility links render in
+  the drawer footer via the PHP snippet (`generate_after_primary_menu`). GP off-canvas
+  rows restyled to spec: top-level 17px/700, sections 15px numbered, pages 13.5px
+  indented 38px, all ≥44px targets. Covered by `nav-ledger.css` mobile block.
+- **Mobile homepage**: Model Watch stacks, library becomes single-column 44px rows,
+  methodology badges stack above text (`tai-methgrid`), band H2s 22px. Covered by
+  the responsive rules noted in `homepage-bands.html`.
+- **Open decision flagged by the designer**: mobile drops the sidebar search and the
+  Latest report / Latest news blocks. Our GeneratePress layout stacks the sidebar
+  widget BELOW the content on mobile, so those blocks are still reachable at page
+  bottom — treating that as the accepted default; owner can override.
+
 ## Apply order (when the WordPress connector is up)
 
 1. Backup page 6 fragments being replaced → `backups/6-<date>-v2-bands.html`.

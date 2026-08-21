@@ -17,6 +17,235 @@
   </style>
 </helmet>
 
+<div style="max-width:1280px; margin:0 auto; padding:16px 0 12px; display:flex; justify-content:flex-end; font-family:'Archivo',sans-serif;">
+  <div style="display:flex; border:1px solid #e6e6ea; background:#fff;">
+    <button onClick="{{ setView_desktop }}" style="{{ viewBtnDesktop }}">Desktop</button>
+    <button onClick="{{ setView_mobile }}" style="{{ viewBtnMobile }}">Mobile</button>
+  </div>
+</div>
+
+<sc-if value="{{ isMobileView }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:'Archivo',sans-serif; color:#111114; background:#fff; width:390px; margin:0 auto 60px; border:1px solid #e6e6ea; position:relative; overflow:hidden;">
+  <!-- mobile header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-weight:900; font-size:17px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+    <button onClick="{{ toggleDrawer }}" aria-label="Menu" style="width:44px; height:44px; border:1px solid #e6e6ea; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer;">
+      <span style="width:18px; height:1.5px; background:#111114;"></span>
+      <span style="width:18px; height:1.5px; background:#111114;"></span>
+      <span style="width:18px; height:1.5px; background:#111114;"></span>
+    </button>
+  </div>
+
+  <!-- mobile hero -->
+  <div style="padding:36px 20px 32px; border-bottom:1px solid #111114;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#2545f5;">Figure of the week</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf;">W34 · 2026</span>
+    </div>
+    <div style="font-weight:900; font-size:72px; line-height:0.9; letter-spacing:-0.05em;">78<span style="color:#2545f5;">%</span></div>
+    <p style="font-size:17px; line-height:1.45; margin:16px 0 0; text-wrap:pretty;">of enterprises now run at least one AI workload in production — up from 55% a year ago.</p>
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:20px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; border:1px solid #111114; padding:4px 8px;">HIGH confidence</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f;">McKinsey · Jul 2026</span>
+    </div>
+    <div style="margin-top:28px; background:#f5f5f7; padding:20px 16px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f; margin-bottom:16px;">Production AI adoption — YoY</div>
+      <div style="display:flex; align-items:flex-end; gap:10px; height:140px; border-bottom:1px solid #111114;">
+        <sc-for list="{{ heroBars }}" as="b" hint-placeholder-count="4">
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; height:100%;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px;">{{ b.value }}</span>
+            <div style="{{ b.barStyle }}"></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:10px; padding-top:8px;">
+        <sc-for list="{{ heroBars }}" as="b" hint-placeholder-count="4">
+          <span style="flex:1; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#77777f;">{{ b.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- mobile ticker 2x2 -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:14px;">Recently updated figures</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <sc-for list="{{ figures }}" as="f" hint-placeholder-count="4">
+        <a href="#" style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-weight:800; font-size:22px; letter-spacing:-0.03em; color:#111114;">{{ f.value }}</span>
+          <span style="font-size:12px; line-height:1.4; color:#44444a;">{{ f.text }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; text-transform:uppercase; color:#b8b8bf;">{{ f.meta }}</span>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- mobile model watch (stacked) -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:6px;">Model Watch</div>
+    <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.03em; margin:0 0 18px;">Assistants, countries, ratings.</h2>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f; margin-bottom:12px;">Leading AI assistants — WAU</div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:22px;">
+      <sc-for list="{{ assistants }}" as="a" hint-placeholder-count="5">
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-weight:600; font-size:13px;">{{ a.name }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px;">{{ a.wau }}</span>
+          </div>
+          <div style="height:6px; background:#f0f0f2;"><div style="{{ a.fillStyle }}"></div></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f; margin-bottom:8px;">Model leader by country</div>
+    <div style="margin-bottom:22px;">
+      <sc-for list="{{ countryLeaders }}" as="c" hint-placeholder-count="6">
+        <a href="#" style="display:grid; grid-template-columns:1fr auto auto; gap:10px; padding:9px 0; border-bottom:1px solid #f0f0f2; min-height:44px; align-items:center;">
+          <span style="font-weight:600; font-size:13px; color:#111114;">{{ c.country }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ c.model }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f;">{{ c.share }}</span>
+        </a>
+      </sc-for>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f; margin-bottom:8px;">AI models, rated</div>
+    <div>
+      <sc-for list="{{ ratedModels }}" as="m" hint-placeholder-count="5">
+        <a href="#" style="display:grid; grid-template-columns:24px 1fr auto; gap:10px; padding:9px 0; border-bottom:1px solid #f0f0f2; min-height:44px; align-items:center;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ m.rank }}</span>
+          <span style="font-weight:600; font-size:13px; color:#111114;">{{ m.name }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px;">{{ m.score }}</span>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- mobile index library -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:14px;">The Index Library</div>
+    <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+      <a href="#" style="display:grid; grid-template-columns:32px 1fr auto; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid #f0f0f2; min-height:44px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ s.num }}</span>
+        <span style="font-weight:700; font-size:15px; letter-spacing:-0.02em; color:#111114;">{{ s.name }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; text-transform:uppercase; color:#77777f;">{{ s.count }}</span>
+      </a>
+    </sc-for>
+  </div>
+
+  <!-- mobile compare -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">Compare tool</div>
+    <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.03em; margin:0 0 10px; text-wrap:pretty;">Put any two figures side by side.</h2>
+    <p style="font-size:14px; line-height:1.55; color:#44444a; margin:0 0 20px; text-wrap:pretty;">Cross-reference adoption rates, model performance, or labor impact across sources and years — with each figure's confidence rating in view.</p>
+    <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:22px;">
+      <sc-for list="{{ compareRows }}" as="c" hint-placeholder-count="2">
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#77777f; text-transform:uppercase;">{{ c.label }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px;">{{ c.value }}</span>
+          </div>
+          <div style="height:10px; background:#e6e6ea;"><div style="{{ c.fillStyle }}"></div></div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:#b8b8bf; margin-top:5px;">{{ c.source }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <a href="#" style="display:block; text-align:center; background:#2545f5; color:#fff; font-weight:600; font-size:14px; padding:14px 0;">Open Compare →</a>
+  </div>
+
+  <!-- mobile methodology -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea; background:#f5f5f7;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">Methodology</div>
+    <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.03em; margin:0 0 18px;">How we rate confidence</h2>
+    <div style="display:flex; flex-direction:column; border-top:1px solid #e6e6ea;">
+      <sc-for list="{{ ratings }}" as="rt" hint-placeholder-count="3">
+        <div style="display:flex; flex-direction:column; gap:8px; padding:14px 0; border-bottom:1px solid #e6e6ea;">
+          <div style="{{ rt.badgeStyle }}">{{ rt.name }}</div>
+          <p style="font-size:13.5px; line-height:1.55; color:#44444a; margin:0;">{{ rt.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <a href="#" style="display:inline-block; margin-top:18px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Read the full methodology →</a>
+  </div>
+
+  <!-- mobile sidebar blocks stacked -->
+  <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea; background:#f5f5f7;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">The Weekly Figure — newsletter</div>
+    <p style="font-size:14px; line-height:1.55; color:#44444a; margin:0 0 14px;">One sourced, confidence-rated AI statistic in your inbox every Tuesday. No commentary, no spin.</p>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="border:1px solid #e6e6ea; background:#fff; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf;">you@company.com</div>
+      <a href="#" style="display:block; text-align:center; background:#2545f5; color:#fff; font-weight:600; font-size:14px; padding:13px 0;">Subscribe</a>
+    </div>
+  </div>
+
+  <!-- mobile footer -->
+  <div style="padding:24px 20px; display:flex; flex-direction:column; gap:14px;">
+    <div style="font-weight:900; font-size:15px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+    <div style="display:flex; gap:18px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">
+      <a href="#" style="color:#77777f;">Glossary</a>
+      <a href="#" style="color:#77777f;">About</a>
+      <a href="#" style="color:#77777f;">Republishing</a>
+      <a href="#" style="color:#77777f;">Terms</a>
+    </div>
+  </div>
+
+  <!-- mobile drawer -->
+  <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; background:#fff; z-index:20; display:flex; flex-direction:column;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #e6e6ea;">
+        <div style="font-weight:900; font-size:17px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+        <button onClick="{{ toggleDrawer }}" aria-label="Close" style="width:44px; height:44px; border:1px solid #e6e6ea; background:#fff; font-size:20px; cursor:pointer;">×</button>
+      </div>
+      <div style="flex:1; overflow-y:auto;">
+        <div style="border-bottom:1px solid #e6e6ea;">
+          <button onClick="{{ toggleMIndexes }}" style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px; background:none; border:none; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; min-height:44px; cursor:pointer;">Indexes <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#77777f;">{{ chevMIndexes }}</span></button>
+          <sc-if value="{{ mIndexesOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:0 16px 8px;">
+              <sc-for list="{{ mobileSections }}" as="s" hint-placeholder-count="9">
+                <div>
+                  <button onClick="{{ s.toggle }}" style="width:100%; display:grid; grid-template-columns:28px 1fr auto; align-items:center; gap:10px; padding:11px 2px; background:none; border:none; border-bottom:1px solid #f0f0f2; min-height:44px; cursor:pointer; text-align:left;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ s.num }}</span>
+                    <span style="font-family:'Archivo',sans-serif; font-weight:600; font-size:15px; color:#111114;">{{ s.name }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#77777f;">{{ s.chev }}</span>
+                  </button>
+                  <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:2px 0 8px 38px;">
+                      <sc-for list="{{ s.pages }}" as="p" hint-placeholder-count="4">
+                        <a href="#" style="display:flex; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f7; font-size:13.5px; font-weight:500; color:#111114; min-height:40px;">{{ p }}</a>
+                      </sc-for>
+                      <a href="#" style="display:flex; align-items:center; padding:10px 0; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#2545f5; min-height:40px;">Section hub →</a>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <a href="#" style="display:flex; align-items:center; padding:12px 2px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#2545f5; min-height:44px;">Compare Tool →</a>
+            </div>
+          </sc-if>
+        </div>
+        <div style="border-bottom:1px solid #e6e6ea;">
+          <button onClick="{{ toggleMReports }}" style="width:100%; display:flex; justify-content:space-between; align-items:center; padding:16px; background:none; border:none; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; min-height:44px; cursor:pointer;">Reports <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#77777f;">{{ chevMReports }}</span></button>
+          <sc-if value="{{ mReportsOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:0 16px 8px;">
+              <sc-for list="{{ reportMenu }}" as="r" hint-placeholder-count="3">
+                <a href="#" style="display:flex; flex-direction:column; justify-content:center; gap:2px; padding:10px 2px; border-bottom:1px solid #f0f0f2; min-height:44px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                  <span style="font-weight:600; font-size:15px; color:#111114;">{{ r.name }}</span>
+                </a>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <a href="#" style="display:flex; align-items:center; padding:16px; border-bottom:1px solid #e6e6ea; font-weight:700; font-size:17px; color:#111114; min-height:44px;">Glossary</a>
+        <a href="#" style="display:flex; align-items:center; padding:16px; border-bottom:1px solid #e6e6ea; font-weight:700; font-size:17px; color:#111114; min-height:44px;">About</a>
+      </div>
+      <div style="display:flex; gap:20px; padding:16px; border-top:1px solid #e6e6ea; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">
+        <a href="#" style="color:#77777f;">Subscribe</a>
+        <a href="#" style="color:#77777f;">Contact</a>
+        <a href="#" style="color:#111114;">Log in</a>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDesktopView }}" hint-placeholder-val="{{ true }}">
 <div style="font-family:'Archivo',sans-serif; color:#111114; background:#fff; max-width:1280px; margin:0 auto; border-left:1px solid #e6e6ea; border-right:1px solid #e6e6ea;">
 
   <!-- utility strip -->
@@ -323,7 +552,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { panel: null, activeSection: 0 };
+  state = { panel: null, activeSection: 0, view: 'desktop', drawerOpen: false, mIndexes: true, mReports: false, mSections: {} };
   pages = [
     ['AI adoption by company size', 'Production deployment rates', 'GenAI pilot-to-production funnel', 'Enterprise AI budgets', 'Build vs. buy decisions', 'AI vendor market share', 'Time-to-value benchmarks'],
     ['AI revenue & market size', 'AI startup funding', 'AI unicorns tracker', 'Cost of inference trends', 'AI M&A activity', 'ROI case evidence'],
@@ -417,10 +646,35 @@ class Component extends DCLogic {
     { name: 'MEDIUM', desc: 'Credible source with partial methodology or self-reported data.', style: { background: '#fff', color: '#111114', border: '1px solid #111114' } },
     { name: 'DERIVED', desc: 'Our own calculation from two or more rated sources. Working shown.', style: { background: '#fff', color: '#2545f5', border: '1px solid #2545f5' } },
   ];
+  viewBtn(active) {
+    return { background: active ? '#111114' : '#fff', color: active ? '#fff' : '#77777f', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '8px 16px' };
+  }
   renderVals() {
     const s = this.state;
     const active = s.activeSection;
+    const mobile = s.view === 'mobile';
     return {
+      isMobileView: mobile,
+      isDesktopView: !mobile,
+      setView_desktop: () => this.setState({ view: 'desktop', drawerOpen: false }),
+      setView_mobile: () => this.setState({ view: 'mobile' }),
+      viewBtnDesktop: this.viewBtn(!mobile),
+      viewBtnMobile: this.viewBtn(mobile),
+      drawerOpen: s.drawerOpen,
+      toggleDrawer: () => this.setState(st => ({ drawerOpen: !st.drawerOpen })),
+      mIndexesOpen: s.mIndexes,
+      chevMIndexes: s.mIndexes ? '▲' : '▼',
+      toggleMIndexes: () => this.setState(st => ({ mIndexes: !st.mIndexes })),
+      mReportsOpen: s.mReports,
+      chevMReports: s.mReports ? '▲' : '▼',
+      toggleMReports: () => this.setState(st => ({ mReports: !st.mReports })),
+      mobileSections: this.sections.map((sec, i) => ({
+        ...sec,
+        open: !!s.mSections[i],
+        chev: s.mSections[i] ? '▲' : '▼',
+        pages: this.pages[i],
+        toggle: () => this.setState(st => ({ mSections: { ...st.mSections, [i]: !st.mSections[i] } })),
+      })),
       sections: this.sections,
       reportMenu: this.reportMenu,
       librarySections: this.sections.map((sec, i) => ({

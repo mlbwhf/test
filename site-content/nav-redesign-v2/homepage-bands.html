@@ -94,7 +94,7 @@
   <div style="padding:44px 40px;background:#f5f5f7;">
     <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;font-weight:500;">Methodology</div>
     <h2 style="font-weight:800;font-size:26px;margin:0 0 18px;letter-spacing:-0.02em;">How we rate confidence</h2>
-    <div style="display:grid;grid-template-columns:110px 1fr;gap:12px 16px;align-items:start;">
+    <div class="tai-methgrid" style="display:grid;grid-template-columns:110px 1fr;gap:12px 16px;align-items:start;">
       <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:#111114;color:#fff;padding:5px 10px;text-align:center;">High</span>
       <p style="font-size:13.5px;line-height:1.5;color:#44444a;margin:0;">Stated directly in a primary source &mdash; a study, filing, or official dataset &mdash; and dated.</p>
       <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;border:1px solid #111114;color:#111114;padding:4px 10px;text-align:center;">Medium</span>
@@ -106,8 +106,20 @@
   </div>
 </div>
 
-<!-- Responsive additions for the page style block (append before </style>):
+<!-- Responsive additions for the page style block (append before </style>).
+     v3 mobile spec: Model Watch panels stack vertically; library becomes a
+     single-column ledger with 44px rows; methodology badges stack ABOVE their
+     descriptions (full-width text); band H2s drop to 22px.
 .tai-libcell:hover{background:#f5f5f7!important;}
 .tai-libcell:hover .tai-mono:last-child{color:#2545f5!important;}
-@media(max-width:900px){.tai-g3mw{grid-template-columns:1fr!important;}.tai-g3mw>div{border-right:none!important;border-bottom:1px solid #e6e6ea;}.tai-g3lib{grid-template-columns:1fr!important;}}
--->
+@media(max-width:900px){
+.tai-g3mw{grid-template-columns:1fr!important;}
+.tai-g3mw>div{border-right:none!important;border-bottom:1px solid #e6e6ea;}
+.tai-g3lib{grid-template-columns:1fr!important;}
+.tai-libcell{min-height:44px;padding:12px 16px!important;}
+.tai-sec h2{font-size:22px!important;}
+.tai-methgrid{grid-template-columns:1fr!important;gap:6px 0!important;}
+.tai-methgrid span{justify-self:start;margin-top:10px;}
+}
+     NOTE: the Methodology badge/description grid in SWAP 3 must carry
+     class="tai-methgrid" on its grid div for the mobile stack rule. -->
