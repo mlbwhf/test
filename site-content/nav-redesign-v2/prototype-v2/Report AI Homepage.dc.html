@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f5f5f7; }
+    a { color:#2545f5; text-decoration:none; }
+    a:hover { color:#111114; }
+  </style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; color:#111114; background:#fff; max-width:1280px; margin:0 auto; border-left:1px solid #e6e6ea; border-right:1px solid #e6e6ea;">
+
+  <!-- utility strip -->
+  <div style="display:flex; justify-content:flex-end; gap:24px; padding:8px 40px; border-bottom:1px solid #e6e6ea; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.04em; text-transform:uppercase;">
+    <a href="#" style="color:#77777f;">Subscribe</a>
+    <a href="#" style="color:#77777f;">Contact</a>
+    <a href="#" style="color:#111114;">Log in</a>
+  </div>
+
+  <!-- primary nav (Option B) -->
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 40px; border-bottom:1px solid #e6e6ea; position:relative;">
+    <div style="font-weight:900; font-size:20px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+    <div style="display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; letter-spacing:-0.01em;">
+      <div>
+        <button onClick="{{ togglePanel_indexes }}" style="{{ navBtn_indexes }}">Indexes<span style="font-family:'IBM Plex Mono',monospace; font-size:10px; margin-left:6px;">{{ chev_indexes }}</span></button>
+        <sc-if value="{{ panelIsIndexes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; top:calc(100% + 1px); right:40px; width:min(760px, calc(100vw - 80px)); background:#fff; border:1px solid #111114; z-index:10; display:grid; grid-template-columns:minmax(220px,300px) 1fr;">
+            <!-- left rail: 9 sections -->
+            <div style="border-right:1px solid #e6e6ea;">
+              <sc-for list="{{ librarySections }}" as="s" hint-placeholder-count="9">
+                <a href="#" onMouseEnter="{{ s.activate }}" style="{{ s.rowStyle }}">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ s.num }}</span>
+                  <span style="font-weight:700; font-size:14px; letter-spacing:-0.02em;">{{ s.name }}</span>
+                  <span style="{{ s.arrowStyle }}">→</span>
+                </a>
+              </sc-for>
+              <div style="display:flex; padding:12px 18px; background:#f5f5f7; border-top:1px solid #e6e6ea;">
+                <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Compare Tool →</a>
+              </div>
+            </div>
+            <!-- right pane: pages of the active section -->
+            <div style="padding:20px 22px; background:#fff; display:flex; flex-direction:column;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid #111114; padding-bottom:10px; margin-bottom:6px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f;">{{ activeSectionName }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf;">{{ activeSectionCount }}</span>
+              </div>
+              <sc-for list="{{ activePages }}" as="p" hint-placeholder-count="5">
+                <a href="#" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 2px; border-bottom:1px solid #f0f0f2;" style-hover="{{ ledgerHover }}">
+                  <span style="font-weight:500; font-size:13.5px; color:#111114; letter-spacing:-0.01em;">{{ p }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#b8b8bf;">→</span>
+                </a>
+              </sc-for>
+              <a href="#" style="margin-top:auto; padding-top:12px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Section hub →</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <div>
+        <button onClick="{{ togglePanel_reports }}" style="{{ navBtn_reports }}">Reports<span style="font-family:'IBM Plex Mono',monospace; font-size:10px; margin-left:6px;">{{ chev_reports }}</span></button>
+        <sc-if value="{{ panelIsReports }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; top:calc(100% + 1px); right:40px; width:320px; background:#fff; border:1px solid #111114; z-index:10;">
+            <sc-for list="{{ reportMenu }}" as="r" hint-placeholder-count="3">
+              <a href="#" style="display:grid; grid-template-columns:1fr auto; align-items:center; gap:14px; padding:12px 18px; border-bottom:1px solid #e6e6ea;" style-hover="{{ ledgerHover }}">
+                <span style="display:flex; flex-direction:column; gap:3px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                  <span style="font-weight:700; font-size:15px; letter-spacing:-0.02em; color:#111114;">{{ r.name }}</span>
+                </span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf;">→</span>
+              </a>
+            </sc-for>
+            <div style="padding:12px 18px; background:#f5f5f7;">
+              <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">All Reports →</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <a href="#" style="color:#111114; padding:10px 14px;">Glossary</a>
+      <a href="#" style="color:#111114; padding:10px 14px;">About</a>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 340px;">
+  <div style="min-width:0;">
+  <!-- ============ HERO: stat of the week ============ -->
+  <div style="display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); border-bottom:1px solid #111114;">
+    <div style="padding:64px 32px 56px 40px; border-right:1px solid #e6e6ea; display:flex; flex-direction:column; justify-content:space-between; gap:40px; min-width:0;">
+      <div>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#2545f5;">Figure of the week</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#b8b8bf;">W34 · 2026</span>
+        </div>
+        <div style="font-weight:900; font-size:120px; line-height:0.9; letter-spacing:-0.05em;">78<span style="color:#2545f5;">%</span></div>
+        <p style="font-size:22px; line-height:1.4; letter-spacing:-0.01em; max-width:26ch; margin:24px 0 0; text-wrap:pretty;">of enterprises now run at least one AI workload in production — up from 55% a year ago.</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; border:1px solid #111114; padding:5px 10px; color:#111114;">HIGH confidence</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#77777f;">Source: McKinsey State of AI · Jul 2026</span>
+        <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase;">Full figure →</a>
+      </div>
+    </div>
+
+    <!-- comparison chart -->
+    <div style="padding:64px 24px 56px 28px; background:#f5f5f7; display:flex; flex-direction:column; justify-content:flex-end; gap:0; min-width:0;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f; margin-bottom:32px;">Production AI adoption — YoY</div>
+      <div style="display:flex; align-items:flex-end; gap:12px; height:280px; border-bottom:1px solid #111114; padding:0 8px;">
+        <sc-for list="{{ heroBars }}" as="b" hint-placeholder-count="4">
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:10px; height:100%;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#111114;">{{ b.value }}</span>
+            <div style="{{ b.barStyle }}"></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:12px; padding:10px 8px 0;">
+        <sc-for list="{{ heroBars }}" as="b" hint-placeholder-count="4">
+          <span style="flex:1; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f;">{{ b.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- figures ticker: full use of left column width -->
+  <div style="padding:32px 40px; border-bottom:1px solid #e6e6ea;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:18px;">Recently updated figures</div>
+    <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0; border-left:1px solid #e6e6ea;">
+      <sc-for list="{{ figures }}" as="f" hint-placeholder-count="4">
+        <a href="#" style="display:flex; flex-direction:column; gap:8px; padding:4px 18px;" style-hover="{{ tickerHover }}">
+          <span style="font-weight:800; font-size:26px; letter-spacing:-0.03em; color:#111114;">{{ f.value }}</span>
+          <span style="font-size:13px; line-height:1.45; color:#44444a; text-wrap:pretty;">{{ f.text }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#b8b8bf;">{{ f.meta }}</span>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+  </div>
+
+  <!-- ============ RIGHT SIDEBAR ============ -->
+  <aside style="border-left:1px solid #e6e6ea; display:flex; flex-direction:column;">
+    <!-- search -->
+    <div style="padding:20px; border-bottom:1px solid #e6e6ea;">
+      <div style="display:flex; align-items:center; gap:10px; border:1px solid #e6e6ea; padding:11px 14px;">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#77777f;">⌕</span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf;">Search figures, indexes, reports…</span>
+      </div>
+    </div>
+    <!-- newsletter -->
+    <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea; background:#f5f5f7;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">The Weekly Figure — newsletter</div>
+      <p style="font-size:14px; line-height:1.55; color:#44444a; margin:0 0 14px; text-wrap:pretty;">One sourced, confidence-rated AI statistic in your inbox every Tuesday. No commentary, no spin.</p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="border:1px solid #e6e6ea; background:#fff; padding:10px 12px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf;">you@company.com</div>
+        <a href="#" style="display:block; text-align:center; background:#2545f5; color:#fff; font-weight:600; font-size:13px; padding:11px 0;" style-hover="{{ ctaHover }}">Subscribe</a>
+      </div>
+    </div>
+    <!-- latest report -->
+    <div style="padding:24px 20px; border-bottom:1px solid #e6e6ea;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:12px;">Latest report</div>
+      <a href="#" style="display:block;">
+        <div style="display:flex; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; margin-bottom:8px;">
+          <span style="color:#77777f;">Dark Side of AI</span>
+          <span style="color:#b8b8bf;">Aug 2026</span>
+        </div>
+        <div style="font-weight:700; font-size:17px; letter-spacing:-0.02em; line-height:1.3; color:#111114; text-wrap:pretty;">Deepfake fraud losses tripled in twelve months. Here is the audited trail.</div>
+      </a>
+      <a href="#" style="display:inline-block; margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">All reports →</a>
+    </div>
+    <!-- latest news -->
+    <div style="padding:24px 20px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:6px;">Latest news</div>
+      <a href="#" style="display:block; padding:12px 0; border-bottom:1px solid #f0f0f2;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf; margin-bottom:4px;">AUG 19</div>
+        <div style="font-weight:600; font-size:14px; line-height:1.4; color:#111114; text-wrap:pretty;">EU AI Act enforcement: first fines issued, by the numbers</div>
+      </a>
+      <a href="#" style="display:block; padding:12px 0; border-bottom:1px solid #f0f0f2;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf; margin-bottom:4px;">AUG 14</div>
+        <div style="font-weight:600; font-size:14px; line-height:1.4; color:#111114; text-wrap:pretty;">Frontier-model training costs: updated 2026 estimates</div>
+      </a>
+      <a href="#" style="display:block; padding:12px 0;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf; margin-bottom:4px;">AUG 11</div>
+        <div style="font-weight:600; font-size:14px; line-height:1.4; color:#111114; text-wrap:pretty;">17 US states now have AI statutes — tracker update</div>
+      </a>
+    </div>
+  </aside>
+  </div>
+
+  <!-- ============ FULL-WIDTH: MODEL WATCH ============ -->
+  <div style="border-top:1px solid #111114; padding:56px 40px;">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:28px;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:8px;">Model Watch</div>
+        <h2 style="font-weight:800; font-size:30px; letter-spacing:-0.03em; margin:0;">Assistants, countries, ratings — one view.</h2>
+      </div>
+      <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; flex-shrink:0;">Technical Performance →</a>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border:1px solid #e6e6ea;">
+
+      <!-- 1: Leading AI assistants — WAU -->
+      <div style="padding:24px 22px; border-right:1px solid #e6e6ea;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f; margin-bottom:18px;">Leading AI assistants — weekly active users</div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <sc-for list="{{ assistants }}" as="a" hint-placeholder-count="5">
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span style="font-weight:600; font-size:13px; letter-spacing:-0.01em; color:#111114;">{{ a.name }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#111114;">{{ a.wau }}</span>
+              </div>
+              <div style="height:8px; background:#f0f0f2;"><div style="{{ a.fillStyle }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf; margin-top:16px;">Self-reported + app telemetry · Aug 2026 · MEDIUM</div>
+      </div>
+
+      <!-- 2: Which model leads in each country -->
+      <div style="padding:24px 22px; border-right:1px solid #e6e6ea;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f; margin-bottom:18px;">Which AI model leads in each country</div>
+        <div style="display:flex; flex-direction:column;">
+          <sc-for list="{{ countryLeaders }}" as="c" hint-placeholder-count="6">
+            <a href="#" style="display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:12px; padding:8px 2px; border-bottom:1px solid #f0f0f2;" style-hover="{{ ledgerHover }}">
+              <span style="font-weight:600; font-size:13px; color:#111114;">{{ c.country }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ c.model }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f;">{{ c.share }}</span>
+            </a>
+          </sc-for>
+        </div>
+        <a href="#" style="display:inline-block; margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">All 40 countries →</a>
+      </div>
+
+      <!-- 3: AI models, rated -->
+      <div style="padding:24px 22px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#77777f; margin-bottom:18px;">AI models, rated</div>
+        <div style="display:flex; flex-direction:column;">
+          <sc-for list="{{ ratedModels }}" as="m" hint-placeholder-count="5">
+            <a href="#" style="display:grid; grid-template-columns:24px 1fr auto; align-items:center; gap:12px; padding:8px 2px; border-bottom:1px solid #f0f0f2;" style-hover="{{ ledgerHover }}">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ m.rank }}</span>
+              <span style="font-weight:600; font-size:13px; color:#111114;">{{ m.name }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#111114;">{{ m.score }}</span>
+            </a>
+          </sc-for>
+        </div>
+        <a href="#" style="display:inline-block; margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Full ratings →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FULL-WIDTH: INDEX LIBRARY ============ -->
+  <div style="border-top:1px solid #111114; padding:56px 40px;">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:28px;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:8px;">The Index Library</div>
+        <h2 style="font-weight:800; font-size:30px; letter-spacing:-0.03em; margin:0;">Nine sections. Every figure sourced, dated, rated.</h2>
+      </div>
+      <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; flex-shrink:0;">All indexes →</a>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid #e6e6ea; border-left:1px solid #e6e6ea;">
+      <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+        <a href="#" style="display:grid; grid-template-columns:36px 1fr auto; align-items:center; gap:14px; padding:18px 22px; border-right:1px solid #e6e6ea; border-bottom:1px solid #e6e6ea;" style-hover="{{ ledgerHover }}">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">{{ s.num }}</span>
+          <span style="font-weight:700; font-size:16px; letter-spacing:-0.02em; color:#111114;">{{ s.name }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ s.count }}</span>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ============ FULL-WIDTH: COMPARE + METHODOLOGY ============ -->
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); border-top:1px solid #111114;">
+    <div style="padding:48px 40px; border-right:1px solid #e6e6ea;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:12px;">Compare tool</div>
+      <h2 style="font-weight:800; font-size:26px; letter-spacing:-0.03em; margin:0 0 12px; text-wrap:pretty;">Put any two figures side by side.</h2>
+      <p style="font-size:15px; line-height:1.6; color:#44444a; margin:0 0 24px; max-width:48ch;">Cross-reference adoption rates, model performance, or labor impact across sources and years — with each figure's confidence rating in view.</p>
+      <div style="display:flex; flex-direction:column; gap:18px; margin-bottom:28px;">
+        <sc-for list="{{ compareRows }}" as="c" hint-placeholder-count="2">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f; text-transform:uppercase;">{{ c.label }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#111114;">{{ c.value }}</span>
+            </div>
+            <div style="height:10px; background:#e6e6ea;"><div style="{{ c.fillStyle }}"></div></div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#b8b8bf; margin-top:5px;">{{ c.source }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <a href="#" style="display:inline-block; background:#2545f5; color:#fff; font-weight:600; font-size:14px; padding:12px 24px;" style-hover="{{ ctaHover }}">Open Compare →</a>
+    </div>
+    <div style="padding:48px 40px; background:#f5f5f7;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:12px;">Methodology</div>
+      <h2 style="font-weight:800; font-size:26px; letter-spacing:-0.03em; margin:0 0 24px;">How we rate confidence</h2>
+      <div style="display:flex; flex-direction:column; gap:0; border-top:1px solid #e6e6ea;">
+        <sc-for list="{{ ratings }}" as="rt" hint-placeholder-count="3">
+          <div style="display:grid; grid-template-columns:110px 1fr; gap:20px; align-items:start; padding:16px 0; border-bottom:1px solid #e6e6ea;">
+            <div style="{{ rt.badgeStyle }}">{{ rt.name }}</div>
+            <p style="font-size:14px; line-height:1.55; color:#44444a; margin:0;">{{ rt.desc }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <a href="#" style="display:inline-block; margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase;">Read the full methodology →</a>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div style="border-top:1px solid #111114; padding:28px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div style="font-weight:900; font-size:16px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+    <div style="display:flex; gap:24px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">
+      <a href="#" style="color:#77777f;">Glossary</a>
+      <a href="#" style="color:#77777f;">About</a>
+      <a href="#" style="color:#77777f;">Republishing</a>
+      <a href="#" style="color:#77777f;">Terms</a>
+    </div>
+  </div>
+
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { panel: null, activeSection: 0 };
+  pages = [
+    ['AI adoption by company size', 'Production deployment rates', 'GenAI pilot-to-production funnel', 'Enterprise AI budgets', 'Build vs. buy decisions', 'AI vendor market share', 'Time-to-value benchmarks'],
+    ['AI revenue & market size', 'AI startup funding', 'AI unicorns tracker', 'Cost of inference trends', 'AI M&A activity', 'ROI case evidence'],
+    ['Frontier model benchmarks', 'Training compute growth', 'Context window & capability limits', 'Open vs. closed model gap', 'Inference speed & cost'],
+    ['Jobs exposed to automation', 'AI hiring & job postings', 'Wage effects of AI', 'Worker AI usage rates'],
+    ['Deepfake & fraud statistics', 'AI incidents tracker', 'Bias & fairness failures', 'AI-driven cybercrime', 'Misinformation at scale', 'Model safety evaluations'],
+    ['State of AI: annual snapshot', 'Public opinion on AI', 'AI trust surveys'],
+    ['EU AI Act tracker', 'US state AI statutes', 'Global AI policy map', 'Enforcement & fines'],
+    ['AI investment by country', 'Compute & datacenter geography'],
+    ['AI in healthcare', 'AI in finance', 'AI in manufacturing', 'AI in retail', 'AI in media'],
+  ];
+  reportMenu = [
+    { tag: 'Collection', name: 'The Dark Side of AI' },
+    { tag: 'Collection', name: 'Real-World AI' },
+    { tag: 'News', name: 'Latest Reports' },
+  ];
+  figures = [
+    { value: '$644B', text: 'Global GenAI spend forecast for 2026', meta: 'Gartner · Aug 2026 · HIGH' },
+    { value: '41%', text: 'of workers use AI weekly without employer sanction', meta: 'Pew · Jul 2026 · MEDIUM' },
+    { value: '2.4×', text: 'YoY growth in frontier-model training compute', meta: 'Epoch AI · Jul 2026 · DERIVED' },
+    { value: '17', text: 'US states with enacted AI-specific statutes', meta: 'NCSL · Aug 2026 · HIGH' },
+  ];
+  compareData = [
+    { label: 'Enterprise adoption — US', value: '78%', pct: 78, source: 'McKinsey · Jul 2026 · HIGH' },
+    { label: 'Enterprise adoption — EU', value: '61%', pct: 61, source: 'Eurostat · May 2026 · MEDIUM' },
+  ];
+  ratings = [
+    { name: 'HIGH', desc: 'Primary source, transparent method, sample disclosed. Cite freely.', style: { background: '#111114', color: '#fff' } },
+    { name: 'MEDIUM', desc: 'Credible source with partial methodology or self-reported data.', style: { background: '#fff', color: '#111114', border: '1px solid #111114' } },
+    { name: 'DERIVED', desc: 'Our own calculation from two or more rated sources. Working shown.', style: { background: '#fff', color: '#2545f5', border: '1px solid #2545f5' } },
+  ];
+  assistants = [
+    { name: 'ChatGPT', wau: '820M', pct: 100 },
+    { name: 'Gemini', wau: '410M', pct: 50 },
+    { name: 'Claude', wau: '190M', pct: 23 },
+    { name: 'Copilot', wau: '150M', pct: 18 },
+    { name: 'DeepSeek', wau: '120M', pct: 15 },
+  ];
+  countryLeaders = [
+    { country: 'United States', model: 'ChatGPT', share: '54%' },
+    { country: 'India', model: 'ChatGPT', share: '61%' },
+    { country: 'China', model: 'DeepSeek', share: '48%' },
+    { country: 'Germany', model: 'ChatGPT', share: '49%' },
+    { country: 'Brazil', model: 'Gemini', share: '44%' },
+    { country: 'Japan', model: 'ChatGPT', share: '52%' },
+  ];
+  ratedModels = [
+    { rank: '01', name: 'GPT-5.2', score: '94.1' },
+    { rank: '02', name: 'Claude Opus 4.5', score: '93.6' },
+    { rank: '03', name: 'Gemini 3 Pro', score: '92.8' },
+    { rank: '04', name: 'DeepSeek V4', score: '89.4' },
+    { rank: '05', name: 'Llama 5', score: '87.2' },
+  ];
+  navBtn(active) {
+    return { background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Archivo',sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '-0.01em', color: active ? '#2545f5' : '#111114', padding: '10px 14px', display: 'flex', alignItems: 'center' };
+  }
+  sections = [
+    { num: '01', name: 'Enterprise AI Adoption', count: '7 indexes' },
+    { num: '02', name: 'AI Business & Economics', count: '6 indexes' },
+    { num: '03', name: 'Technical Performance', count: '5 indexes' },
+    { num: '04', name: 'Workforce & Labor', count: '4 indexes' },
+    { num: '05', name: 'The Dark Side of AI', count: '6 indexes' },
+    { num: '06', name: 'State of AI', count: '3 indexes' },
+    { num: '07', name: 'Regulating AI', count: '4 indexes' },
+    { num: '08', name: 'The Geography of AI', count: '2 indexes' },
+    { num: '09', name: 'AI by Industry', count: '5 indexes' },
+  ];
+  heroData = [
+    { label: '2023', value: '32%', pct: 32 },
+    { label: '2024', value: '44%', pct: 44 },
+    { label: '2025', value: '55%', pct: 55 },
+    { label: '2026', value: '78%', pct: 78, accent: true },
+  ];
+  compareData = [
+    { label: 'Enterprise adoption — US', value: '78%', pct: 78, source: 'McKinsey · Jul 2026 · HIGH' },
+    { label: 'Enterprise adoption — EU', value: '61%', pct: 61, source: 'Eurostat · May 2026 · MEDIUM' },
+  ];
+  reports = [
+    { tag: 'Dark Side of AI', date: 'Aug 2026', title: 'Deepfake fraud losses tripled in twelve months. Here is the audited trail.' },
+    { tag: 'Real-World AI', date: 'Jul 2026', title: 'What 40 enterprise deployments actually cost — line by line.' },
+    { tag: 'News report', date: 'Jul 2026', title: 'The EU AI Act, one year in: enforcement by the numbers.' },
+  ];
+  figures = [
+    { value: '$644B', text: 'Global GenAI spend forecast for 2026', meta: 'Gartner · Aug 2026 · HIGH' },
+    { value: '41%', text: 'of workers use AI weekly without employer sanction', meta: 'Pew · Jul 2026 · MEDIUM' },
+    { value: '2.4×', text: 'YoY growth in frontier-model training compute', meta: 'Epoch AI · Jul 2026 · DERIVED' },
+    { value: '17', text: 'US states with enacted AI-specific statutes', meta: 'NCSL · Aug 2026 · HIGH' },
+  ];
+  ratings = [
+    { name: 'HIGH', desc: 'Primary source, transparent method, sample disclosed. Cite freely.', style: { background: '#111114', color: '#fff' } },
+    { name: 'MEDIUM', desc: 'Credible source with partial methodology or self-reported data.', style: { background: '#fff', color: '#111114', border: '1px solid #111114' } },
+    { name: 'DERIVED', desc: 'Our own calculation from two or more rated sources. Working shown.', style: { background: '#fff', color: '#2545f5', border: '1px solid #2545f5' } },
+  ];
+  renderVals() {
+    const s = this.state;
+    const active = s.activeSection;
+    return {
+      sections: this.sections,
+      reportMenu: this.reportMenu,
+      librarySections: this.sections.map((sec, i) => ({
+        ...sec,
+        activate: () => this.setState({ activeSection: i }),
+        rowStyle: { display: 'grid', gridTemplateColumns: '28px 1fr auto', alignItems: 'center', gap: '10px', padding: '11px 18px', borderBottom: '1px solid #e6e6ea', background: i === active ? '#f5f5f7' : '#fff', color: '#111114' },
+        arrowStyle: { fontFamily: "'IBM Plex Mono',monospace", fontSize: '12px', color: i === active ? '#2545f5' : '#d8d8de' },
+      })),
+      activeSectionName: this.sections[active].name,
+      activeSectionCount: this.sections[active].count,
+      activePages: this.pages[active],
+      heroBars: this.heroData.map(b => ({ ...b, barStyle: { width: '100%', maxWidth: '72px', height: (b.pct / 78 * 100) + '%', background: b.accent ? '#2545f5' : '#d8d8de' } })),
+      panelIsIndexes: s.panel === 'indexes',
+      panelIsReports: s.panel === 'reports',
+      navBtn_indexes: this.navBtn(s.panel === 'indexes'),
+      navBtn_reports: this.navBtn(s.panel === 'reports'),
+      chev_indexes: s.panel === 'indexes' ? '▲' : '▼',
+      chev_reports: s.panel === 'reports' ? '▲' : '▼',
+      togglePanel_indexes: () => this.setState(st => ({ panel: st.panel === 'indexes' ? null : 'indexes' })),
+      togglePanel_reports: () => this.setState(st => ({ panel: st.panel === 'reports' ? null : 'reports' })),
+      ctaHover: { background: '#111114', color: '#fff' },
+      ledgerHover: { background: '#f5f5f7' },
+      tickerHover: { background: '#f5f5f7' },
+      assistants: this.assistants.map(a => ({ ...a, fillStyle: { width: a.pct + '%', height: '100%', background: '#2545f5' } })),
+      countryLeaders: this.countryLeaders,
+      ratedModels: this.ratedModels,
+      figures: this.figures,
+      compareRows: this.compareData.map(c => ({ ...c, fillStyle: { width: c.pct + '%', height: '100%', background: '#2545f5' } })),
+      ratings: this.ratings.map(r => ({ ...r, badgeStyle: { display: 'inline-block', justifySelf: 'start', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '5px 10px', ...r.style } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

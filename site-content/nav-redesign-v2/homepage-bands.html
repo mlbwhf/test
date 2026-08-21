@@ -1,0 +1,113 @@
+<!-- v2 homepage bands for page 6. Three swaps, applied as wp_alter_post edits.
+     SWAP 1 replaces the three sections: "Leading AI assistants", "Which AI model
+     leads in each country" (entire tai-sec incl. the Geography eyebrow), and
+     "AI models, rated" — from `<div class="tai-sec">\n    <h2 ...Leading AI assistants`
+     through the `See the full ratings` button's closing `</div>`.
+     SWAP 2 replaces the "Explore the Indexes" tai-sec.
+     SWAP 3 inserts before the dark newsletter band (`<div style="background:#111114;color:#fff;padding:44px 40px;display:flex`).
+     All data below is the SAME data currently on the page — restyled only. -->
+
+<!-- ============ SWAP 1: MODEL WATCH band ============ -->
+<div class="tai-sec" style="border-top:1px solid #111114;">
+  <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:10px;font-weight:500;">Model Watch</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:22px;">
+    <h2 style="font-weight:800;font-size:30px;margin:0;letter-spacing:-0.025em;">Assistants, countries, ratings &mdash; one view.</h2>
+    <a class="tai-mono" href="/indexes/technical-benchmarks/" style="font-size:12px;color:#2545f5;text-decoration:none;">Technical Performance &rarr;</a>
+  </div>
+  <div class="tai-g3mw" style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #e6e6ea;">
+
+    <div style="padding:24px;border-right:1px solid #e6e6ea;">
+      <div class="tai-mono" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;font-weight:600;border-bottom:1px solid #111114;padding-bottom:8px;margin-bottom:14px;">Leading AI assistants &mdash; weekly active users</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">ChatGPT</span><span class="tai-mono" style="font-size:12px;">900M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:100%;background:#2545f5;"></span></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">Gemini</span><span class="tai-mono" style="font-size:12px;">650M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:72%;background:#2545f5;"></span></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">Meta AI</span><span class="tai-mono" style="font-size:12px;">600M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:67%;background:#2545f5;"></span></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">Copilot</span><span class="tai-mono" style="font-size:12px;">220M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:24%;background:#2545f5;"></span></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">Claude</span><span class="tai-mono" style="font-size:12px;">80M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:9%;background:#2545f5;"></span></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;font-weight:600;">Perplexity</span><span class="tai-mono" style="font-size:12px;">30M</span></div><div style="height:8px;background:#f0f0f2;"><span style="display:block;height:8px;width:3.3%;background:#2545f5;"></span></div></div>
+      </div>
+      <div class="tai-mono" style="font-size:10px;color:#9a9aa2;margin-top:14px;">Provider-reported &middot; 2026 &middot; not independently audited</div>
+    </div>
+
+    <div style="padding:24px;border-right:1px solid #e6e6ea;">
+      <div class="tai-mono" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;font-weight:600;border-bottom:1px solid #111114;padding-bottom:8px;margin-bottom:6px;">Which AI model leads in each country</div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">United States</span><span class="tai-mono" style="font-size:11px;color:#2545f5;">ChatGPT</span><span class="tai-mono" style="font-size:11px;color:#77777f;">61.7%</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">Europe</span><span class="tai-mono" style="font-size:11px;color:#2545f5;">ChatGPT</span><span class="tai-mono" style="font-size:11px;color:#77777f;">70.8%</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">China</span><span class="tai-mono" style="font-size:11px;color:#c2410c;">Doubao</span><span class="tai-mono" style="font-size:11px;color:#77777f;">382M MAU</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">South Korea</span><span class="tai-mono" style="font-size:11px;color:#059669;">HyperCLOVA X</span><span class="tai-mono" style="font-size:11px;color:#77777f;">language</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">Russia</span><span class="tai-mono" style="font-size:11px;color:#9333ea;">Perplexity</span><span class="tai-mono" style="font-size:11px;color:#77777f;">~48%</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">India</span><span class="tai-mono" style="font-size:11px;color:#2545f5;">ChatGPT</span><span class="tai-mono" style="font-size:11px;color:#77777f;">198M users</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid #f0f0f2;"><span style="font-size:13px;font-weight:600;">Japan</span><span class="tai-mono" style="font-size:11px;color:#2545f5;">ChatGPT</span><span class="tai-mono" style="font-size:11px;color:#77777f;">+34.1%</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:8px 0;"><span style="font-size:13px;font-weight:600;">Brazil</span><span class="tai-mono" style="font-size:11px;color:#2545f5;">ChatGPT</span><span class="tai-mono" style="font-size:11px;color:#77777f;">#3 by traffic</span></div>
+      </div>
+      <a class="tai-mono" href="/indexes/geography-of-ai/popular-ai-models-by-country/" style="display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#2545f5;text-decoration:none;margin-top:12px;">See every country, and why &rarr;</a>
+    </div>
+
+    <div style="padding:24px;">
+      <div class="tai-mono" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;font-weight:600;border-bottom:1px solid #111114;padding-bottom:8px;margin-bottom:6px;">AI models, rated &mdash; July 2026</div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f2;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">01</span><span style="font-size:13px;font-weight:600;">GPT-5.6 Sol</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;&#9679;</span></span></div>
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f2;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">02</span><span style="font-size:13px;font-weight:600;">Claude Opus 4.8</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;</span><span style="color:#c9c9d1;">&#9675;</span></span></div>
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f2;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">03</span><span style="font-size:13px;font-weight:600;">Gemini 3.1 Pro</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;</span><span style="color:#c9c9d1;">&#9675;</span></span></div>
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f2;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">04</span><span style="font-size:13px;font-weight:600;">Qwen3.7-Max</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;</span><span style="color:#c9c9d1;">&#9675;</span></span></div>
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid #f0f0f2;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">05</span><span style="font-size:13px;font-weight:600;">DeepSeek V4-Pro</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;</span><span style="color:#c9c9d1;">&#9675;</span></span></div>
+        <div style="display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">06</span><span style="font-size:13px;font-weight:600;">Grok 4.5</span><span class="tai-mono" style="font-size:13px;letter-spacing:2px;"><span style="color:#2545f5;">&#9679;&#9679;&#9679;&#9679;</span><span style="color:#c9c9d1;">&#9675;</span></span></div>
+      </div>
+      <a class="tai-mono" href="/indexes/technical-benchmarks/best-ai-models-2026/" style="display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#2545f5;text-decoration:none;margin-top:12px;">Full ratings &rarr;</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SWAP 2: INDEX LIBRARY band ============ -->
+<div class="tai-sec" style="border-top:1px solid #111114;">
+  <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:10px;font-weight:500;">The Index Library</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:22px;">
+    <h2 style="font-weight:800;font-size:30px;margin:0;letter-spacing:-0.025em;">Nine sections. Every figure sourced, dated, rated.</h2>
+    <a class="tai-mono" href="/indexes/" style="font-size:12px;color:#2545f5;text-decoration:none;">All indexes &rarr;</a>
+  </div>
+  <div class="tai-g3lib" style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #e6e6ea;border-left:1px solid #e6e6ea;">
+    <a class="tai-libcell" href="/indexes/enterprise-ai/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">01</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Enterprise AI Adoption</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/ai-economics/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">02</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">AI Business &amp; Economics</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/technical-benchmarks/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">03</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Technical Performance</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/workforce-labor/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">04</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Workforce &amp; Labor</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/ai-dark-side-statistics/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">05</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">The Dark Side of AI</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/state-of-ai/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">06</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">State of AI by Year</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/geography-of-ai/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">07</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">The Geography of AI</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/ai-by-industry/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">08</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">AI by Industry</span><span class="tai-mono" style="font-size:12px;color:#d8d8de;">&rarr;</span></a>
+    <a class="tai-libcell" href="/indexes/compare/" style="display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:baseline;padding:18px 20px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;text-decoration:none;color:#111114;background:#f5f5f7;"><span class="tai-mono" style="font-size:11px;color:#2545f5;">&#8644;</span><span style="font-size:16px;font-weight:700;letter-spacing:-0.01em;">Compare AI &mdash; year over year</span><span class="tai-mono" style="font-size:12px;color:#2545f5;">&rarr;</span></a>
+  </div>
+</div>
+
+<!-- ============ SWAP 3 (insert): COMPARE + METHODOLOGY band ============ -->
+<div class="tai-g2" style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111114;border-bottom:1px solid #e6e6ea;">
+  <div style="padding:44px 40px;border-right:1px solid #e6e6ea;">
+    <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;font-weight:500;">Compare Tool</div>
+    <h2 style="font-weight:800;font-size:26px;margin:0 0 10px;letter-spacing:-0.02em;">The same figure, year over year.</h2>
+    <p style="font-size:14px;line-height:1.55;color:#55555e;margin:0 0 22px;max-width:46ch;">Ten sourced comparison threads &mdash; models, laws, spend, adoption &mdash; each figure dated and rated, 2022&ndash;2030.</p>
+    <div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="tai-mono" style="font-size:11px;color:#77777f;">Worldwide AI spend &middot; 2025</span><span class="tai-mono" style="font-size:11px;">$1.76T</span></div><div style="height:10px;background:#e6e6ea;"><span style="display:block;height:10px;width:68%;background:#d8d8de;"></span></div></div>
+    <div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="tai-mono" style="font-size:11px;color:#77777f;">Worldwide AI spend &middot; 2026</span><span class="tai-mono" style="font-size:11px;">$2.59T</span></div><div style="height:10px;background:#e6e6ea;"><span style="display:block;height:10px;width:100%;background:#2545f5;"></span></div></div>
+    <div class="tai-mono" style="font-size:10px;color:#9a9aa2;margin-bottom:22px;">Gartner &middot; May 2026 &middot; HIGH</div>
+    <a class="tai-btn tai-btn-fill" href="/indexes/compare/">Open Compare &rarr;</a>
+  </div>
+  <div style="padding:44px 40px;background:#f5f5f7;">
+    <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;font-weight:500;">Methodology</div>
+    <h2 style="font-weight:800;font-size:26px;margin:0 0 18px;letter-spacing:-0.02em;">How we rate confidence</h2>
+    <div style="display:grid;grid-template-columns:110px 1fr;gap:12px 16px;align-items:start;">
+      <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:#111114;color:#fff;padding:5px 10px;text-align:center;">High</span>
+      <p style="font-size:13.5px;line-height:1.5;color:#44444a;margin:0;">Stated directly in a primary source &mdash; a study, filing, or official dataset &mdash; and dated.</p>
+      <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;border:1px solid #111114;color:#111114;padding:4px 10px;text-align:center;">Medium</span>
+      <p style="font-size:13.5px;line-height:1.5;color:#44444a;margin:0;">Reported by credible secondary coverage, or values that differ slightly across write-ups.</p>
+      <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;border:1px solid #2545f5;color:#2545f5;padding:4px 10px;text-align:center;">Derived</span>
+      <p style="font-size:13.5px;line-height:1.5;color:#44444a;margin:0;">Computed by Report AI &mdash; interpolations and extrapolations, always labelled and explained.</p>
+    </div>
+    <a class="tai-mono" href="/about/" style="display:inline-block;font-size:12px;color:#2545f5;text-decoration:none;margin-top:20px;">Read the full methodology &rarr;</a>
+  </div>
+</div>
+
+<!-- Responsive additions for the page style block (append before </style>):
+.tai-libcell:hover{background:#f5f5f7!important;}
+.tai-libcell:hover .tai-mono:last-child{color:#2545f5!important;}
+@media(max-width:900px){.tai-g3mw{grid-template-columns:1fr!important;}.tai-g3mw>div{border-right:none!important;border-bottom:1px solid #e6e6ea;}.tai-g3lib{grid-template-columns:1fr!important;}}
+-->
