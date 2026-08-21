@@ -12,6 +12,7 @@ import re, io, os, sys, json, difflib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tm as T
 import translations as TR
+import schema_clean
 
 OUT = "/home/user/test/snippets/pages/translations"
 TARGETS = T.TARGETS  # SP / ARCH / ASE -> EN backup filename
@@ -80,7 +81,8 @@ def generate(course, lang, memory, maps):
         if hit is None:
             unresolved.append(s); out.append(raw); continue
         out.append(raw.replace(s, hit))
-    return "".join(out), unresolved
+    html, _ = schema_clean.clean_html("".join(out))
+    return html, unresolved
 
 
 def main():

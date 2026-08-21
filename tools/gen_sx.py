@@ -5,6 +5,7 @@ Dimensions). Fails rather than emitting a page with untranslated copy left in.
 import re, io, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sx
+import schema_clean
 
 OUT = "/home/user/test/snippets/pages/translations"
 
@@ -108,7 +109,11 @@ def generate(src_path, table, keep, lang):
         if pair is None:
             unresolved.append(s); out.append(tok); continue
         out.append(tok.replace(s, pair[0] if lang == 'es' else pair[1]))
-    return tidy("".join(out)), unresolved, dropped_faq
+    html = tidy("".join(out))
+    html, notes = schema_clean.clean_html(html)
+    if notes:
+        dropped_faq = True
+    return html, unresolved, dropped_faq
 
 
 def main():
