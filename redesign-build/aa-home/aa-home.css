@@ -206,3 +206,48 @@
 .aa{--aa-wrap:1340px}
 .aa__section > *{max-width:var(--aa-wrap);margin-inline:auto;width:100%}
 .aa-hero__grid{max-width:calc(var(--aa-wrap) + 2*var(--pad-x));margin-inline:auto}
+
+/* ---- Theme hardening ------------------------------------------------------
+   Astra and the site's Additional CSS style content links with !important:
+
+       .entry-content a{color:#0E3A44 !important;text-decoration:underline !important}
+
+   Specificity cannot beat !important, so these two properties - and only
+   these two - are re-asserted the same way. Verified in a browser against a
+   simulated hostile theme: without this the hero button renders #0E3A44 text
+   on a #101C33 background (invisible) and every link is underlined. */
+
+/* nothing in the block is underlined except deliberate inline links */
+.aa a,.aa a:hover,.aa a:focus,.aa a:active,.aa a:visited{text-decoration:none !important}
+.aa .aa__link,.aa .aa__link:hover{text-decoration:underline !important;text-underline-offset:3px}
+
+/* unclassed links follow their container's colour */
+.aa a:not([class]){color:inherit !important}
+
+/* buttons */
+.aa .aa__btn--solid{color:var(--cream) !important}
+.aa .aa__btn--solid:hover{color:var(--cream) !important}
+.aa .aa__btn--ghost{color:var(--navy) !important}
+.aa .aa__btn--ghost:hover{color:var(--cream) !important}
+.aa .aa__btn--teal,.aa .aa__btn--teal:hover{color:var(--navy) !important}
+
+/* inline links */
+.aa .aa__link{color:var(--teal) !important}
+.aa .aa__link:hover{color:var(--navy) !important}
+.aa .aa__link--lt,.aa .aa__link--lt:hover{color:var(--teal-lt) !important}
+
+/* anything on a dark surface */
+.aa .aa-ticker,.aa .aa-ticker a,.aa .aa-ticker span{color:var(--cream) !important}
+.aa .aa-ticker .aa-ticker__code{color:var(--teal-lt) !important}
+.aa .aa-ticker .aa-ticker__dates{color:var(--on-navy-5) !important}
+.aa .aa-track.is-active,.aa .aa-track.is-active h3,.aa .aa-track.is-active p,
+.aa .aa-track.is-active span{color:var(--cream) !important}
+.aa .aa-quote.is-active,.aa .aa-quote.is-active blockquote,
+.aa .aa-quote.is-active figcaption{color:var(--cream) !important}
+.aa .aa-report,.aa .aa-report h3,.aa .aa-report p,.aa .aa-report span{color:var(--cream) !important}
+.aa .aa-report .aa-report__eyebrow,.aa .aa-report .aa-bar__label b{color:var(--teal-lt) !important}
+.aa .aa-report .aa-report__desc{color:var(--on-navy-3) !important}
+.aa .aa-dims,.aa .aa-dims h2,.aa .aa-dims h3,.aa .aa-dims p{color:var(--cream) !important}
+.aa .aa-dims .aa__kicker--lt{color:var(--teal-lt) !important}
+.aa .aa-layer,.aa .aa-layer span{color:var(--cream) !important}
+.aa .aa-layer.is-active,.aa .aa-layer.is-active span{color:var(--teal-dk) !important}
