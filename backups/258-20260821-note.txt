@@ -1,0 +1,1 @@
+Backup of post 258 (Additional CSS) pre-refactor content is preserved verbatim in the session transcript (wp_get_post 258, 2026-08-21). The duplicate block removed was the second 'THE AI INDEX — global stylesheet' copy (truncated at '.tai-flush' rule, no HEADER/NAV/FOOTER sections) — restorable by re-duplicating the first copy's block up to that rule.
