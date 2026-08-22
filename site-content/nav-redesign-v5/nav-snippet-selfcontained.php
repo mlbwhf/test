@@ -70,7 +70,7 @@ add_filter( 'wp_nav_menu_objects', function ( $items, $args ) {
 			$kids = get_pages( array(
 				'parent'      => (int) $item->object_id,
 				'sort_column' => 'menu_order,post_title',
-				'number'      => 12,
+				'number'      => 10,
 			) );
 		} elseif ( 40 === $tops[ $pid ] ) {
 			$kids = get_pages( array(
@@ -173,8 +173,8 @@ add_action( 'wp_head', function () {
 		/* Two-pane: Indexes 760 / rail 300, Reports 680 / rail 280 */
 		.main-navigation .menu-indexes > .sub-menu,
 		.main-navigation .menu-reports > .sub-menu{ position:absolute!important; }
-		.main-navigation .menu-indexes > .sub-menu{ width:min(760px,calc(100vw - 80px))!important; }
-		.main-navigation .menu-reports > .sub-menu{ width:min(680px,calc(100vw - 80px))!important; }
+		.main-navigation .menu-indexes > .sub-menu{ width:min(760px,calc(100vw - 80px))!important; min-height:420px!important; }
+		.main-navigation .menu-reports > .sub-menu{ width:min(680px,calc(100vw - 80px))!important; min-height:380px!important; }
 		.main-navigation .menu-indexes > .sub-menu > li,
 		.main-navigation .menu-reports > .sub-menu > li{ position:static!important; float:none!important; display:block!important; }
 		.main-navigation .menu-indexes > .sub-menu > li{ width:300px!important; }
@@ -185,7 +185,8 @@ add_action( 'wp_head', function () {
 			top:0!important; right:0!important; bottom:0!important; left:auto!important;
 			transform:none!important; margin:0!important;
 			border:none!important; border-left:1px solid #e6e6ea!important;
-			background:#fff!important; overflow:auto!important; padding:20px 22px!important;
+			background:#fff!important; padding:20px 22px!important;
+			max-height:min(70vh,520px)!important; overflow-y:auto!important; overscroll-behavior:contain;
 		}
 		.main-navigation .menu-indexes > .sub-menu > li > .sub-menu{ width:calc(100% - 300px)!important; }
 		.main-navigation .menu-reports > .sub-menu > li > .sub-menu{ width:calc(100% - 280px)!important; }
@@ -198,9 +199,9 @@ add_action( 'wp_head', function () {
 	}
 
 	/* Pane chrome */
-	.main-navigation .sub-menu .tai-pane-head{ display:flex; justify-content:space-between; align-items:baseline; padding:0 0 10px; border-bottom:1px solid #111114; margin:0 0 8px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#77777f; }
+	.main-navigation .sub-menu .tai-pane-head{ position:sticky; top:0; background:#fff; z-index:2; display:flex; justify-content:space-between; align-items:baseline; padding:0 0 10px; border-bottom:1px solid #111114; margin:0 0 8px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#77777f; }
 	.main-navigation .sub-menu .tai-pane-head .tai-pane-cnt{ color:#b8b8bf; }
-	.main-navigation .sub-menu .tai-pane-hub{ margin-top:auto; border-bottom:none; }
+	.main-navigation .sub-menu .tai-pane-hub{ position:sticky; bottom:0; background:#fff; z-index:2; margin-top:auto; border-bottom:none; border-top:1px solid #f0f0f2; }
 	.main-navigation .sub-menu .sub-menu .tai-pane-hub a{ font-family:'IBM Plex Mono',monospace; font-size:10.5px!important; letter-spacing:.05em; text-transform:uppercase; color:#2545f5!important; font-weight:600!important; padding:12px 2px 0!important; }
 	.main-navigation .sub-menu .sub-menu .tai-pane-hub a::after{ content:none; }
 
