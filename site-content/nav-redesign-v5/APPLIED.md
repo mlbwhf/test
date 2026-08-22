@@ -38,6 +38,18 @@ Source: `prototype-v5/README.md` (bundle "redesign_5"). Applied as delivered.
 3. The homepage "figures ticker" from the design is still intentionally omitted — the existing
    **AI by the Numbers** section covers it and must not be duplicated (owner direction).
 
+## Fix log
+
+**2026-08-22 — two-pane rules never activated.** The pane CSS was gated on a
+`tai-ledger-2pane` body class added from inside the `wp_nav_menu_objects` filter.
+That filter runs when the menu renders, which is *after* `body_class()` has already
+been printed, so the class never reached the body and every level-3 list fell back to
+in-flow rendering (stacked under the active row instead of in the right pane).
+Fix: the pane rules are now scoped to `.main-navigation .menu-indexes` /
+`.menu-reports` — classes applied to the menu item itself, which is reliable — and the
+dead `body_class` filter was removed from the snippet. Active panes also get explicit
+`visibility:visible; opacity:1` so the theme's sub-menu hiding cannot suppress them.
+
 ## Verify
 
 - [ ] Menu optically centered with logo left at 1024–1600px
