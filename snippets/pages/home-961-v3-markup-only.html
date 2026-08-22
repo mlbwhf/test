@@ -1,24 +1,25 @@
 <!-- wp:html -->
 <!-- ============================================================
-     AGILE AGILIST — HOME, MARKUP ONLY
-     Deliberately contains no <style> and no <script>.
+     AGILE AGILIST — HOME · MARKUP ONLY  (paste this one)
 
-     On WordPress.com / Atomic, unfiltered_html is off, so a Custom HTML
-     block has its <style> and <script> stripped by wp_kses — the markup
-     survives but the design and every effect vanish. Install the assets
-     through WPCode instead:
+     No <style> and no <script> on purpose.
 
-       1. aa-home-assets-wpcode-snippet.php   (CSS + JS)
-       2. aa-home-cohorts-wpcode-snippet.php  (cohort + ticker data)
-       3. paste this block into the page
+     WHY: WordPress entity-encodes && to &#038;&#038; when it saves inline
+     JS in a Custom HTML block. aa-home.js has 8 of them, so the script
+     dies on a SyntaxError at line 8 and every JS-driven effect stops —
+     rotation, hover-select, count-ups, bar fills. The CSS is untouched,
+     which is why the design looks correct while nothing moves. This site
+     has hit exactly that before (commit 0d6fb34, "&& to &#038;&#038;
+     SyntaxError halted all hero JS").
 
-     Colours are the handoff's own palette, unchanged: navy #101C33,
-     teal #0E8074, light teal #3FBFAE, cream #F7F5F0, line #E2DCCE.
+     INSTALL — order matters:
+       1. WPCode PHP snippet: aa-home-assets-wpcode-snippet.php   (CSS + JS)
+       2. WPCode PHP snippet: aa-home-cohorts-wpcode-snippet.php  (cohort data)
+       3. paste THIS block into the page
+     Assets loaded through wp_enqueue are never passed through the editor's
+     encoder, so the && survives and the JS runs.
 
-     Changed from the template: global nav removed (theme supplies it);
-     cohorts and ticker driven by [aa_home_cohorts]; two 404 links fixed;
-     assessments and Five Dimensions corrected to the live names/URLs;
-     star rows and the 4.9 removed; 1340px width cap added in the CSS.
+     Colours are the handoff's own palette, unchanged.
      ============================================================ -->
 
 <!--

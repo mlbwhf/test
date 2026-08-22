@@ -1,5 +1,12 @@
 <!-- wp:html -->
 <!-- ============================================================
+     KNOWN LIMITATION — prefer the WPCode route.
+     WordPress encodes && to &#038;&#038; when saving inline JS in a Custom
+     HTML block; aa-home.js has 8, so the script dies on a SyntaxError and
+     nothing animates (the CSS still applies, so it looks right but is
+     inert). Use aa-home-assets-wpcode-snippet.php + the markup-only block
+     instead. This file is only safe where the editor leaves inline JS alone.
+
      AGILE AGILIST — HOME, single-block build
      Source: design_handoff_agile_agilist_home/wordpress (aa-home.{html,css,js})
      used verbatim except for the changes listed below. For the child-theme
