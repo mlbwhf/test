@@ -64,18 +64,12 @@
 .main-navigation .sub-menu .sub-menu a::before{ content:none; }
 
 /* Two-pane library (activated by body class via walker snippet) */
-.tai-ledger-2pane .main-navigation .menu-indexes .sub-menu{
-  width:min(760px,calc(100vw - 80px));
-  display:grid; grid-template-columns:minmax(220px,300px) 1fr;
-  right:0; left:auto;
-}
-.tai-ledger-2pane .main-navigation .menu-indexes .sub-menu > li{ grid-column:1; }
-.tai-ledger-2pane .main-navigation .menu-indexes .sub-menu > li > .sub-menu{
-  grid-column:2; grid-row:1 / span 12; display:none;
-  border-left:1px solid #e6e6ea; height:100%;
-}
-.tai-ledger-2pane .main-navigation .menu-indexes .sub-menu > li.tai-pane-active > a{ background:#f5f5f7; }
-.tai-ledger-2pane .main-navigation .menu-indexes .sub-menu > li.tai-pane-active > .sub-menu{ display:block; }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu{ width:min(760px,calc(100vw - 80px)); }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li{ position:static; width:300px; }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li > .sub-menu{ display:none; position:absolute; top:0; right:0; bottom:0; left:auto; width:calc(100% - 300px); border:none; border-left:1px solid #e6e6ea; background:#fff; overflow:auto; margin:0; }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > a{ background:#f5f5f7; }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > .sub-menu{ display:block; }
+@media(min-width:769px){ .tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu .dropdown-menu-toggle{ display:none; } }
 
 /* Dropdown arrow toggle (GP click-arrow) */
 .main-navigation .main-nav ul li .dropdown-menu-toggle{ padding-left:6px; padding-right:10px; color:#77777f; }
@@ -110,7 +104,8 @@
 }
 @media(min-width:769px){ .tai-utility-drawer{ display:none; } }
 @media(min-width:769px) and (max-width:1100px){
-  .main-navigation .sub-menu{ right:0; left:auto; max-width:calc(100vw - 40px); }
+  .main-navigation .main-nav > ul > li.sfHover > .sub-menu,
+  .main-navigation .main-nav > ul > li:hover > .sub-menu{ right:20px; max-width:calc(100vw - 40px); }
 }
 
 /* v3: anchor dropdown panels to the nav row, not the menu item — stops
