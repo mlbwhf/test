@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "layout": { "contentSize": "780px", "wideSize": "1200px" },
+    "color": {
+      "palette": [
+        { "slug": "navy",      "name": "Navy",       "color": "#143b46" },
+        { "slug": "navy-dark", "name": "Navy Dark",  "color": "#122f38" },
+        { "slug": "navy-ink",  "name": "Navy Ink",   "color": "#14323d" },
+        { "slug": "teal",      "name": "Teal",       "color": "#2f9aa3" },
+        { "slug": "teal-bright","name":"Teal Bright","color": "#3bb0b5" },
+        { "slug": "teal-soft", "name": "Teal Soft",  "color": "#e9f5f5" },
+        { "slug": "cream",     "name": "Warm White", "color": "#f4f7f6" },
+        { "slug": "white",     "name": "White",      "color": "#ffffff" },
+        { "slug": "muted",     "name": "Muted Text", "color": "#3a6670" },
+        { "slug": "faint",     "name": "Faint Text", "color": "#9fc2c7" }
+      ],
+      "custom": false,
+      "customGradient": false
+    },
+    "typography": {
+      "fluid": true,
+      "fontSizes": [
+        { "slug": "small",    "name": "Small",   "size": "0.95rem" },
+        { "slug": "medium",   "name": "Medium",  "size": "1.15rem" },
+        { "slug": "large",    "name": "Large",   "size": "1.4rem" },
+        { "slug": "x-large",  "name": "XL",      "size": "2rem" },
+        { "slug": "xx-large", "name": "2XL",     "size": "2.8rem" },
+        { "slug": "hero",     "name": "Hero",    "size": "3.2rem" }
+      ]
+    },
+    "spacing": {
+      "spacingSizes": [
+        { "slug": "10", "name": "1",  "size": "0.5rem" },
+        { "slug": "20", "name": "2",  "size": "1rem" },
+        { "slug": "30", "name": "3",  "size": "1.5rem" },
+        { "slug": "40", "name": "4",  "size": "2.5rem" },
+        { "slug": "50", "name": "5",  "size": "3.5rem" },
+        { "slug": "60", "name": "6",  "size": "4.5rem" }
+      ]
+    }
+  },
+  "styles": {
+    "color": { "background": "var(--wp--preset--color--white)", "text": "var(--wp--preset--color--navy-ink)" },
+    "elements": {
+      "link":   { "color": { "text": "var(--wp--preset--color--teal)" } },
+      "h1":     { "color": { "text": "var(--wp--preset--color--navy)" } },
+      "h2":     { "color": { "text": "var(--wp--preset--color--navy)" } },
+      "h3":     { "color": { "text": "var(--wp--preset--color--navy)" } },
+      "button": { "color": { "background": "var(--wp--preset--color--teal)", "text": "var(--wp--preset--color--white)" } }
+    }
+  }
+}
