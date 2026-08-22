@@ -6,6 +6,8 @@
   'use strict';
   var ROTATE_MS = 4200;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // The page's language, not the visitor's — this file runs on /, /es/ and /fr/.
+  var lang = document.documentElement.lang || undefined;
 
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -50,14 +52,28 @@
     var root = document.querySelector('.aa');
     if (!root) return;
 
-    /* ---- 01 hero: cohorts + "in N days" ---- */
+    /* ---- 01 hero: cohorts + "in N days" ----
+       The label is rendered server-side too; this recomputes it so a cached
+       page does not show a stale countdown. Wording comes from data-labels,
+       which [aa_home_cohorts] emits in the page's own language — hardcoding
+       "in N days" here printed English over the Spanish and French cards.
+       Counting from local midnight, not from now, is what makes the day
+       boundary land on "tomorrow" instead of "in 1 days". */
+    var midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
     var cohorts = [].slice.call(root.querySelectorAll('.aa-cohort'));
     cohorts.forEach(function (el) {
       var days = el.querySelector('.aa-cohort__days');
       var start = el.getAttribute('data-start');
       if (days && start) {
-        var d = Math.round((new Date(start + 'T00:00:00') - new Date()) / 86400000);
-        days.textContent = d > 0 ? 'in ' + d + ' days ⟶' : 'starting now ⟶';
+        var L = {};
+        try { L = JSON.parse(el.getAttribute('data-labels') || '{}'); } catch (err) {}
+        var d = Math.round((new Date(start + 'T00:00:00') - midnight) / 86400000);
+        var txt = d > 1 ? (L.days || 'in %d days').replace('%d', d)
+                : d === 1 ? (L.tomorrow || 'tomorrow')
+                : d === 0 ? (L.today || 'today')
+                : (L.view || 'view dates');
+        days.textContent = txt + ' ⟶';
       }
       var seats = el.querySelector('.aa-cohort__seats');
       var n = parseInt(el.getAttribute('data-seats'), 10);
@@ -144,10 +160,15 @@
           var p = Math.min(1, (t - t0) / dur);
           var eased = 1 - Math.pow(1 - p, 3);
           stats.forEach(function (el) {
+            // The last frame restores the markup's own string rather than
+            // reformatting it. The source is the translated copy — "2 500+"
+            // on the French page — and toLocaleString() would otherwise
+            // group it by the *visitor's* locale, not the page's.
+            if (p >= 1 || reduce) { el.textContent = el.getAttribute('data-final'); return; }
             var v = parseFloat(el.getAttribute('data-value')) || 0;
             var pre = el.getAttribute('data-prefix') || '';
             var suf = el.getAttribute('data-suffix') || '';
-            el.textContent = pre + Math.round(v * (reduce ? 1 : eased)).toLocaleString() + suf;
+            el.textContent = pre + Math.round(v * eased).toLocaleString(lang) + suf;
           });
           if (p < 1 && !reduce) requestAnimationFrame(step);
         }

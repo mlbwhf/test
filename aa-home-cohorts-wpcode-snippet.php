@@ -17,7 +17,15 @@
  *     [aa_home_cohorts]
  *     [aa_home_cohorts limit="8"]
  *     [aa_home_cohorts courses="aspc,spc,rte,lpm,apm"]
+ *     [aa_home_cohorts lang="es"]           (Spanish / French home pages)
  *     [aa_home_cohorts debug="1"]           (admin only)
+ *
+ * lang="es|fr" translates the chrome — "Live-virtual", "in N days", the seat
+ * chip, month abbreviations — and points each card at the translated course
+ * page (/es/spc/ rather than /training/adv-safe/spc/). The certification names
+ * themselves stay in English on every locale, exactly as the translated course
+ * pages already render them: "SAFe Release Train Engineer" is the credential's
+ * name, not a phrase to translate.
  *
  * Emits .aa-cohort cards for .aa-cohorts__list (or .aa-ticker__item spans with
  * part="ticker") AND the matching Course /
@@ -45,6 +53,66 @@ function aa_home_cohort_catalog() {
 		'popm' => array( 'code' => 'POPM', 'name' => 'SAFe POPM',                'days' => 2, 'url' => '/training/safe/popm/',           'schema' => 'SAFe® Product Owner / Product Manager (POPM)' ),
 		'ssm'  => array( 'code' => 'SSM',  'name' => 'SAFe Scrum Master',        'days' => 2, 'url' => '/training/safe/scrum-master/',   'schema' => 'SAFe® Scrum Master (SSM)' ),
 	);
+}
+
+/**
+ * Chrome strings per locale. Only the wrapper copy is translated; the
+ * certification names in aa_home_cohort_catalog() are proper nouns.
+ */
+function aa_home_cohort_strings( $lang ) {
+	$all = array(
+		'en' => array(
+			'mode'      => 'Live-virtual',
+			'in_days'   => 'in %d days',
+			'tomorrow'  => 'tomorrow',
+			'today'     => 'today',
+			'view'      => 'view dates',
+			'seats'     => '%d seats left',
+			'all_name'  => 'See all upcoming cohorts',
+			'all_meta'  => 'Live-virtual · new dates monthly',
+			'all_cta'   => 'View schedule',
+			'months'    => array( 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec' ),
+			'day_first' => false,
+		),
+		'es' => array(
+			'mode'      => 'En vivo online',
+			'in_days'   => 'en %d días',
+			'tomorrow'  => 'mañana',
+			'today'     => 'hoy',
+			'view'      => 'ver fechas',
+			'seats'     => 'quedan %d plazas',
+			'all_name'  => 'Ver todas las convocatorias',
+			'all_meta'  => 'En vivo online · nuevas fechas cada mes',
+			'all_cta'   => 'Ver calendario',
+			'months'    => array( 'ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic' ),
+			'day_first' => true,
+		),
+		'fr' => array(
+			'mode'      => 'Live à distance',
+			'in_days'   => 'dans %d jours',
+			'tomorrow'  => 'demain',
+			'today'     => 'aujourd’hui',
+			'view'      => 'voir les dates',
+			'seats'     => '%d places restantes',
+			'all_name'  => 'Voir toutes les sessions',
+			'all_meta'  => 'Live à distance · nouvelles dates chaque mois',
+			'all_cta'   => 'Voir le calendrier',
+			'months'    => array( 'janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.' ),
+			'day_first' => true,
+			'first_ordinal' => 'er',
+		),
+	);
+	return isset( $all[ $lang ] ) ? $all[ $lang ] : $all['en'];
+}
+
+/**
+ * Course URL for a locale. The translated course pages sit at /es/<slug>/,
+ * not under /es/training/<section>/, which is the shape already live for
+ * every ES/FR course page on the site.
+ */
+function aa_home_cohort_url( $slug, $url, $lang ) {
+	if ( $lang === 'en' ) { return $url; }
+	return '/' . $lang . '/' . $slug . '/';
 }
 
 /** Next upcoming event for one course slug, or null. */
@@ -78,15 +146,44 @@ function aa_home_next_cohort( $slug, $now ) {
 	);
 }
 
-/** "Sep 3–4" / "Sep 30–Oct 2", in Eastern time. */
-function aa_home_date_range( $start, $end, $days ) {
-	$tz = new DateTimeZone( 'America/New_York' );
-	$s  = ( new DateTime( '@' . $start ) )->setTimezone( $tz );
-	$e  = $end ? ( new DateTime( '@' . $end ) )->setTimezone( $tz )
-	           : ( clone $s )->modify( '+' . max( 0, (int) $days - 1 ) . ' days' );
-	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return $s->format( 'M j' ); }
-	if ( $s->format( 'M' ) === $e->format( 'M' ) )        { return $s->format( 'M j' ) . '–' . $e->format( 'j' ); }
-	return $s->format( 'M j' ) . '–' . $e->format( 'M j' );
+/**
+ * The cohort's dates, in Eastern time.
+ *
+ *   en   Sep 3–4      Sep 30–Oct 2
+ *   es   3–4 sep      30 sep–2 oct
+ *   fr   3–4 sept.    30 sept.–2 oct.
+ *
+ * English puts the month first; Spanish and French put the day first, so the
+ * order is part of the locale, not just the month name. Month names are looked
+ * up in a table rather than formatted, because DateTime::format('M') is always
+ * English and strftime() depends on whatever locale the host happens to set.
+ */
+function aa_home_date_range( $start, $end, $days, $str = null ) {
+	$tz     = new DateTimeZone( 'America/New_York' );
+	$months = $str && ! empty( $str['months'] ) ? $str['months'] : null;
+	$first  = $str && ! empty( $str['day_first'] );
+	$ord    = $str && ! empty( $str['first_ordinal'] ) ? $str['first_ordinal'] : '';
+
+	$s = ( new DateTime( '@' . $start ) )->setTimezone( $tz );
+	$e = $end ? ( new DateTime( '@' . $end ) )->setTimezone( $tz )
+	          : ( clone $s )->modify( '+' . max( 0, (int) $days - 1 ) . ' days' );
+
+	$mon = function ( $d ) use ( $months ) {
+		return $months ? $months[ (int) $d->format( 'n' ) - 1 ] : $d->format( 'M' );
+	};
+	// "1er octobre" in French; plain "1" everywhere else.
+	$day = function ( $d ) use ( $ord ) {
+		return $d->format( 'j' ) === '1' && $ord ? '1' . $ord : $d->format( 'j' );
+	};
+	$one = function ( $d ) use ( $mon, $day, $first ) {
+		return $first ? $day( $d ) . ' ' . $mon( $d ) : $mon( $d ) . ' ' . $day( $d );
+	};
+
+	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return $one( $s ); }
+	if ( $s->format( 'Y-m' ) !== $e->format( 'Y-m' ) )     { return $one( $s ) . '–' . $one( $e ); }
+	// Same month: print it once, on the side the locale puts it.
+	return $first ? $day( $s ) . '–' . $day( $e ) . ' ' . $mon( $s )
+	              : $mon( $s ) . ' ' . $day( $s ) . '–' . $day( $e );
 }
 
 add_shortcode( 'aa_home_cohorts', function ( $atts ) {
@@ -96,9 +193,12 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 		'limit'   => 6,
 		'schema'  => '1',
 		'part'    => 'cards',   // cards | ticker
+		'lang'    => 'en',      // en | es | fr
 		'debug'   => '',
 	), $atts, 'aa_home_cohorts' );
 
+	$lang    = in_array( $a['lang'], array( 'es', 'fr' ), true ) ? $a['lang'] : 'en';
+	$str     = aa_home_cohort_strings( $lang );
 	$catalog = aa_home_cohort_catalog();
 	// Cut off at the start of today in Eastern time, not "right now", so a
 	// cohort that begins today is still listed during the morning.
@@ -121,10 +221,11 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	if ( empty( $rows ) ) {
 		if ( $a['part'] === 'ticker' ) { return ''; }
 		// Never print an empty panel — send people to the full schedule instead.
-		return '<a class="aa-cohort" href="/training/">'
-		     . '<span class="aa-cohort__txt"><span class="aa-cohort__name">See all upcoming cohorts</span>'
-		     . '<span class="aa-cohort__meta">Live-virtual · new dates monthly</span></span>'
-		     . '<span class="aa-cohort__right"><span class="aa-cohort__days">View schedule &#10230;</span></span></a>';
+		$all_url = $lang === 'en' ? '/training/' : '/' . $lang . '/training/';
+		return '<a class="aa-cohort" href="' . esc_url( $all_url ) . '">'
+		     . '<span class="aa-cohort__txt"><span class="aa-cohort__name">' . esc_html( $str['all_name'] ) . '</span>'
+		     . '<span class="aa-cohort__meta">' . esc_html( $str['all_meta'] ) . '</span></span>'
+		     . '<span class="aa-cohort__right"><span class="aa-cohort__days">' . esc_html( $str['all_cta'] ) . ' &#10230;</span></span></a>';
 	}
 
 	$html = '';
@@ -133,9 +234,10 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	$today->setTime( 0, 0, 0 );
 	foreach ( $rows as $r ) {
 		$c = $r['c']; $e = $r['e'];
-		$range = aa_home_date_range( $e['start'], $e['end'], $c['days'] );
+		$range = aa_home_date_range( $e['start'], $e['end'], $c['days'], $str );
 		$startD = ( new DateTime( '@' . $e['start'] ) )->setTimezone( new DateTimeZone( 'America/New_York' ) );
 		$iso   = $startD->format( 'Y-m-d' );
+		$curl  = aa_home_cohort_url( $r['slug'], $c['url'], $lang );
 
 		if ( $a['part'] === 'ticker' ) {
 			// One item per course; aa-home.js clones the whole track for the loop.
@@ -150,35 +252,47 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 		// Day count is rendered server-side so it is real text for crawlers;
 		// aa-home.js recomputes it from data-start on every load.
 		$days = (int) $today->diff( ( clone $startD )->setTime( 0, 0, 0 ) )->format( '%r%a' );
-		$label = $days > 1 ? 'in ' . $days . ' days &#10230;'
-		       : ( $days === 1 ? 'tomorrow &#10230;' : ( $days === 0 ? 'today &#10230;' : 'view dates &#10230;' ) );
+		$label = $days > 1 ? sprintf( $str['in_days'], $days )
+		       : ( $days === 1 ? $str['tomorrow'] : ( $days === 0 ? $str['today'] : $str['view'] ) );
 
 		$seats_html = '';
 		if ( $e['seats'] !== null && $e['seats'] > 0 ) {
 			$low = $e['seats'] <= 6 ? ' aa-cohort__seats--low' : '';
-			$seats_html = '<span class="aa-cohort__seats' . $low . '">' . (int) $e['seats'] . ' seats left</span>';
+			$seats_html = '<span class="aa-cohort__seats' . $low . '">'
+			            . esc_html( sprintf( $str['seats'], (int) $e['seats'] ) ) . '</span>';
 		}
 
+		// aa-home.js recomputes the countdown on cached pages; hand it this
+		// locale's wording so it does not overwrite the card in English.
+		$labels = wp_json_encode( array(
+			'days'     => $str['in_days'],
+			'tomorrow' => $str['tomorrow'],
+			'today'    => $str['today'],
+			'view'     => $str['view'],
+		) );
+
 		$html .= '<a class="aa-cohort"'
+		      . ' data-labels="' . esc_attr( $labels ) . '"'
 		      . ' data-start="' . esc_attr( $iso ) . '"'
 		      . ( $e['seats'] !== null ? ' data-seats="' . (int) $e['seats'] . '"' : '' )
-		      . ' href="' . esc_url( $c['url'] ) . '?cohort=' . (int) $e['id'] . '">'
+		      . ' href="' . esc_url( $curl ) . '?cohort=' . (int) $e['id'] . '">'
 		      . '<span class="aa-cohort__txt">'
 		      . '<span class="aa-cohort__name">' . esc_html( $c['name'] ) . '</span>'
-		      . '<span class="aa-cohort__meta">Live-virtual · ' . esc_html( $range ) . '</span></span>'
+		      . '<span class="aa-cohort__meta">' . esc_html( $str['mode'] . ' · ' . $range ) . '</span></span>'
 		      . '<span class="aa-cohort__right">' . $seats_html
-		      . '<span class="aa-cohort__days">' . $label . '</span></span></a>';
+		      . '<span class="aa-cohort__days">' . esc_html( $label ) . ' &#10230;</span></span></a>';
 
 		$instances[] = array(
 			'@type'    => 'Course',
 			'name'     => $c['schema'],
-			'url'      => home_url( $c['url'] ),
+			'url'      => home_url( $curl ),
+			'inLanguage' => $lang,
 			'provider' => array( '@type' => 'Organization', 'name' => 'Agile Agilist', 'url' => home_url( '/' ) ),
 			'hasCourseInstance' => array(
 				'@type'      => 'CourseInstance',
 				'courseMode' => 'online',
 				'startDate'  => $iso,
-				'location'   => array( '@type' => 'VirtualLocation', 'url' => home_url( $c['url'] ) ),
+				'location'   => array( '@type' => 'VirtualLocation', 'url' => home_url( $curl ) ),
 			),
 		);
 	}

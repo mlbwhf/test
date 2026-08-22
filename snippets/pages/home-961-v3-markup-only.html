@@ -30,6 +30,96 @@
   as long as the wrapping <div class="aa"> is preserved around each piece.
   All copy is present in the DOM (no JS-injected content) for SEO/LLM readability.
 -->
+<!-- Organization + Person entities carried over from the previous homepage build.
+     They are the only JSON-LD the home page has ever had, and dropping them would
+     un-anchor every other page's @id reference to #organization. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "EducationalOrganization",
+      "@id": "https://agile-agilist.com/#organization",
+      "name": "Agile Agilist",
+      "alternateName": "Agile Agilist | SAFe Gold Partner",
+      "url": "https://agile-agilist.com/",
+      "logo": "https://agile-agilist.com/wp-content/uploads/2025/08/AA-SAFe-Brand-Color-minin.png",
+      "image": "https://agile-agilist.com/wp-content/uploads/2025/08/AA-SAFe-Brand-Color-minin.png",
+      "description": "Live, instructor-led SAFe certification, AI-Native, and corporate agile training from a Scaled Agile Gold Partner. Trusted by 2,500+ professionals across 9 languages and 4 continents, with 500+ live cohorts delivered.",
+      "email": "info@agile-agilist.com",
+      "telephone": "+1-647-999-7433",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Toronto",
+        "addressRegion": "ON",
+        "addressCountry": "CA"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/agile-agilist",
+        "https://www.youtube.com/@AgileAgilist",
+        "https://www.instagram.com/agile.agilist",
+        "https://www.facebook.com/agileagilist"
+      ],
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Scaled Agile Gold Partner",
+        "credentialCategory": "Partnership",
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": "Scaled Agile, Inc.",
+          "url": "https://scaledagile.com/"
+        }
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://agile-agilist.com/#mark-saymen",
+      "name": "Mark Saymen",
+      "jobTitle": "SAFe Practice Consultant Trainer (SPCT)",
+      "description": "SAFe Practice Consultant Trainer (SPCT), one of 125+ globally (90+ in North America). Author of Mutation Readiness: An Operating Manual for Innovation in the Age of AI.",
+      "url": "https://agile-agilist.com/about/",
+      "worksFor": {
+        "@id": "https://agile-agilist.com/#organization"
+      },
+      "hasCredential": [
+        {
+          "@type": "EducationalOccupationalCredential",
+          "name": "SAFe SPCT (SAFe Practice Consultant Trainer)",
+          "credentialCategory": "certification",
+          "recognizedBy": {
+            "@type": "Organization",
+            "name": "Scaled Agile, Inc.",
+            "url": "https://scaledagile.com/"
+          }
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          "name": "ICAgile Authorized Instructor",
+          "credentialCategory": "certification",
+          "recognizedBy": {
+            "@type": "Organization",
+            "name": "ICAgile",
+            "url": "https://www.icagile.com/"
+          }
+        }
+      ],
+      "knowsAbout": [
+        "SAFe",
+        "Scaled Agile Framework",
+        "Agile transformation",
+        "AI-Native operating models",
+        "Lean Portfolio Management",
+        "Release Train Engineering",
+        "Innovation strategy"
+      ],
+      "sameAs": [
+        "https://www.linkedin.com/in/marksaymen"
+      ]
+    }
+  ]
+}
+</script>
+
 <div class="aa">
 
 <!-- ==================== SECTION 01 — HERO ==================== -->
@@ -134,7 +224,7 @@
   <div class="aa-assess">
     <!-- Each row carries its full report payload in data-report so all copy is crawlable. -->
     <div class="aa-assess__list">
-      <a class="aa-assess__row" href="https://agile-agilist.com/assessments/cert-recommender/"
+      <a class="aa-assess__row" href="https://agile-agilist.com/cert-recommender/"
          data-report='{"name":"Cert Recommender","meta":"Free · 3 min","desc":"Seven questions on your role, experience, and goals. Get a personalized 12-month cert roadmap with the salary upside for each step.","bars":[{"label":"Role fit","val":"92","pct":0.92},{"label":"Cert readiness","val":"78","pct":0.78},{"label":"Salary upside","val":"+34%","pct":0.64}]}'>
         <span class="aa-assess__num" aria-hidden="true">01</span><span class="aa-assess__name">Cert Recommender</span><span class="aa-assess__meta">Free · 3 min</span>
       </a>
@@ -173,7 +263,7 @@
         <div class="aa-bar"><div class="aa-bar__label"><span>Cert readiness</span><b>78</b></div><div class="aa-bar__track"><div class="aa-bar__fill" style="--aa-final-width:78%"></div></div></div>
         <div class="aa-bar"><div class="aa-bar__label"><span>Salary upside</span><b>+34%</b></div><div class="aa-bar__track"><div class="aa-bar__fill" style="--aa-final-width:64%"></div></div></div>
       </div>
-      <a class="aa__btn aa__btn--teal" data-report="cta" href="https://agile-agilist.com/assessments/cert-recommender/">Take the assessment &#10230;</a>
+      <a class="aa__btn aa__btn--teal" data-report="cta" href="https://agile-agilist.com/cert-recommender/">Take the assessment &#10230;</a>
     </div>
   </div>
   <p class="aa__foot">Your score maps to a certification track and a consulting layer &mdash; <a class="aa__link" href="https://agile-agilist.com/assessments/">see all seven assessments &#10230;</a></p>
@@ -233,7 +323,7 @@
   <!-- Numbers are real text in the DOM; JS animates from 0 using data-value/prefix/suffix. -->
   <div class="aa-stats">
     <div class="aa-stat"><span class="aa-stat__num" data-value="80" data-suffix="+">80+</span><span class="aa-stat__label">ARTs launched</span></div>
-    <div class="aa-stat"><span class="aa-stat__num" data-value="5000" data-suffix="+">5,000+</span><span class="aa-stat__label">Trained in one program</span></div>
+    <div class="aa-stat"><span class="aa-stat__num" data-value="2500" data-suffix="+">2,500+</span><span class="aa-stat__label">Professionals trained</span></div>
     <div class="aa-stat"><span class="aa-stat__num" data-value="70" data-prefix="$" data-suffix="M+">$70M+</span><span class="aa-stat__label">Operating cost taken out</span></div>
     <div class="aa-stat"><span class="aa-stat__num" data-value="50" data-suffix="+">50+</span><span class="aa-stat__label">RTEs developed</span></div>
     <div class="aa-stat"><span class="aa-stat__num" data-value="12" data-suffix="">12</span><span class="aa-stat__label">Countries served</span></div>
