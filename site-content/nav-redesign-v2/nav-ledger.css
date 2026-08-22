@@ -12,7 +12,9 @@
   width:300px; background:#fff; border:1px solid #111114; box-shadow:none;
   margin-top:8px; counter-reset:idx; z-index:999;
 }
-.main-navigation .sub-menu li{ border-bottom:1px solid #f0f0f2; counter-increment:idx; }
+.main-navigation .sub-menu li{ border-bottom:1px solid #f0f0f2; }
+.main-navigation .sub-menu > li{ counter-increment:idx; }
+.main-navigation .sub-menu .sub-menu li{ counter-increment:none; }
 .main-navigation .sub-menu li:last-child{ border-bottom:none; }
 .main-navigation .sub-menu a{
   display:flex; align-items:baseline; gap:12px; padding:11px 18px;
@@ -70,6 +72,13 @@
 .tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > a{ background:#f5f5f7; }
 .tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > .sub-menu{ display:block; }
 @media(min-width:769px){ .tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu .dropdown-menu-toggle{ display:none; } }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > .sub-menu{ display:flex; flex-direction:column; }
+.tai-ledger-2pane .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > a::after{ color:#2545f5; }
+.main-navigation .sub-menu .tai-pane-head{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 18px 8px; border-bottom:1px solid #111114; margin:0 0 4px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#111114; }
+.main-navigation .sub-menu .tai-pane-head .tai-pane-cnt{ color:#9a9aa2; }
+.main-navigation .sub-menu .tai-pane-hub{ margin-top:auto; border-top:1px solid #f0f0f2; border-bottom:none; }
+.main-navigation .sub-menu .sub-menu .tai-pane-hub a{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:#2545f5!important; font-weight:600; padding:12px 18px; }
+.main-navigation .sub-menu .sub-menu .tai-pane-hub a::after{ content:none; }
 
 /* Dropdown arrow toggle (GP click-arrow) */
 .main-navigation .main-nav ul li .dropdown-menu-toggle{ padding-left:6px; padding-right:10px; color:#77777f; }

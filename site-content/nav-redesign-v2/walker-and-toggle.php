@@ -117,11 +117,25 @@ add_action( 'wp_footer', function () {
 			rows.forEach(function(r){r.classList.toggle('tai-pane-active',r===row);});
 		}
 		rows.forEach(function(row){
-			if(!row.querySelector(':scope > .sub-menu'))return;
+			var pane=row.querySelector(':scope > .sub-menu');
+			if(!pane)return;
+			var link=row.querySelector(':scope > a');
+			var nm=link?link.cloneNode(true):null;
+			if(nm){nm.querySelectorAll('.dropdown-menu-toggle,.menu-item-description').forEach(function(x){x.remove();});}
+			var name=nm?nm.textContent.trim():'';
+			var count=pane.querySelectorAll('li').length;
+			var head=document.createElement('li');
+			head.className='tai-pane-head';
+			head.innerHTML='<span>'+name+'</span><span class="tai-pane-cnt">'+count+(count===1?' index':' indexes')+'</span>';
+			pane.insertBefore(head,pane.firstChild);
+			var hub=document.createElement('li');
+			hub.className='tai-pane-hub';
+			var href=link?link.getAttribute('href'):'#';
+			hub.innerHTML='<a href="'+href+'">Section hub →</a>';
+			pane.appendChild(hub);
 			row.addEventListener('mouseenter',function(){activate(row);});
 			row.addEventListener('focusin',function(){activate(row);});
 		});
-		// default: first section active
 		for(var i=0;i<rows.length;i++){
 			if(rows[i].querySelector(':scope > .sub-menu')){activate(rows[i]);break;}
 		}
