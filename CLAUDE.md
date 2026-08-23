@@ -38,3 +38,23 @@ The site's firewall (WAF) intermittently 403-blocks large POST payloads and anyt
 ## Social channels
 
 - Buffer and Jetpack Social each own distinct platforms (no double-posting). Jetpack fires on post publish; Buffer is the queue/calendar.
+
+## Freshness & versioning rule (standing, applies to ALL future work)
+
+Full policy: `content-ops/refresh-policy.md`. Work list: `content-ops/refresh-register.md`.
+On-page pattern: `content-ops/whats-changed-block.html`.
+
+1. **Every index and report carries a cadence.** CRITICAL = monthly (figures that could
+   be wrong within 30 days, or live deals still being negotiated). STANDARD = quarterly.
+   STABLE = semi-annual (definitions, settled history). A MEDIUM-confidence figure
+   attached to a live negotiation is always CRITICAL.
+2. **An update is never a date bump.** It must carry the "What changed" block —
+   previous value, new value, delta, source, and why — with the last three revisions
+   kept visible. Never overwrite a figure silently.
+3. **Update the figure everywhere it appears** — stat tiles, prose, tables, FAQ answers,
+   and JSON-LD. A figure fixed in the tile but stale in the FAQ is the standard failure.
+4. **`dateModified` and the visible "Updated" stamp must always agree.**
+5. **"Reviewed — no change" is a published result.** A checked page should look checked.
+6. **Retractions are immediate**, never scheduled. Corrections do not wait for cadence.
+7. **Source restatements keep both numbers**, marked RESTATED. DERIVED figures are
+   recomputed when inputs change, never carried forward.
