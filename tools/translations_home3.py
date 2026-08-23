@@ -118,10 +118,31 @@ V3 = {
  "see all seven assessments ⟶": (
    "ver las siete evaluaciones &#10230;", "voir les sept évaluations &#10230;"),
 
- # ---- section 04 five dimensions ----
- "( 04 ) — Consulting · The five dimensions": (
-   "( 04 ) &mdash; Consultoría · Las cinco dimensiones",
-   "( 04 ) &mdash; Conseil · Les cinq dimensions"),
+ # ---- section 04 why agile agilist ----
+ "( 04 ) — Why Agile Agilist": (
+   "( 04 ) &mdash; Por qué Agile Agilist", "( 04 ) &mdash; Pourquoi Agile Agilist"),
+
+ # ---- section 05 the methodology ----
+ "( 05 ) — Our flagship methodology": (
+   "( 05 ) &mdash; Nuestra metodología insignia",
+   "( 05 ) &mdash; Notre méthodologie phare"),
+ "Standard SAFe gets you scaled. Our four-layer methodology gets you AI-Native and scaled — with Innovation Culture baked into every cohort. The only SPCT-led roadmap that integrates AI Enablement, Technical Backbone, and Innovation as a single playbook.": (
+   "SAFe estándar te lleva a escalar. Nuestra metodología de cuatro capas te lleva a ser AI-Native y a escalar, con cultura de innovación integrada en cada convocatoria. La única hoja de ruta dirigida por SPCT que integra habilitación de IA, base técnica e innovación en un único manual.",
+   "SAFe standard vous fait passer à l'échelle. Notre méthodologie en quatre couches vous rend AI-Native et à l'échelle — avec une culture d'innovation intégrée à chaque session. La seule feuille de route dirigée par un SPCT qui réunit activation de l'IA, socle technique et innovation dans un seul playbook."),
+ "Explore the methodology ⟶": (
+   "Explora la metodología &#10230;", "Explorer la méthodologie &#10230;"),
+ "Time-to-market": ("Time-to-market", "Time-to-market"),
+ "AI exec workshops · AI-Native ways of working · AI strategy": (
+   "Talleres de IA para dirección · formas de trabajo AI-Native · estrategia de IA",
+   "Ateliers IA pour dirigeants · modes de travail AI-Native · stratégie IA"),
+ "ASE+AI · DevOps · MLOps · AI platform engineering": (
+   "ASE+IA · DevOps · MLOps · ingeniería de plataformas de IA",
+   "ASE+IA · DevOps · MLOps · ingénierie de plateformes IA"),
+
+ # ---- section 06 five dimensions ----
+ "( 06 ) — Consulting · The five dimensions": (
+   "( 06 ) &mdash; Consultoría · Las cinco dimensiones",
+   "( 06 ) &mdash; Conseil · Les cinq dimensions"),
  "One operating model,": ("Un modelo operativo,", "Un modèle opérationnel,"),
  "five layers deep.": ("cinco capas de profundidad.", "en cinq couches."),
 
@@ -160,9 +181,9 @@ V3 = {
    "La formation fait bouger les personnes ; le modèle opérationnel fait bouger l'entreprise — un time-to-market 30 à 75 % plus rapide ·"),
  "explore the model ⟶": ("explora el modelo &#10230;", "explorer le modèle &#10230;"),
 
- # ---- section 05 customer results ----
- "( 05 ) — Customer results": (
-   "( 05 ) &mdash; Resultados de clientes", "( 05 ) &mdash; Résultats clients"),
+ # ---- section 07 customer results ----
+ "( 07 ) — Customer results": (
+   "( 07 ) &mdash; Resultados de clientes", "( 07 ) &mdash; Résultats clients"),
  "The numbers behind": ("Las cifras detrás de", "Les chiffres derrière"),
  "the training.": ("la formación.", "la formation."),
  "Real enterprise outcomes from SPCT-led transformation — across defense, telecom, banking, aerospace, and energy in 12 countries.": (
@@ -189,4 +210,34 @@ V3 = {
  "· Program Manager": ("· Dirección de programa", "· Direction de programme"),
  "Read the enterprise case studies ⟶": (
    "Lee los casos de éxito corporativos &#10230;", "Lire les études de cas entreprise &#10230;"),
+
+ # ---- section 08 your next 12 months ----
+ "( 08 ) — Your next 12 months": (
+   "( 08 ) &mdash; Tus próximos 12 meses", "( 08 ) &mdash; Vos 12 prochains mois"),
+ "Take the 3-min assessment": (
+   "Haz la evaluación de 3 min", "Passez l'évaluation de 3 min"),
+ "Get a personalized cert path based on your role and your goals.": (
+   "Obtén una ruta de certificación personalizada según tu rol y tus objetivos.",
+   "Obtenez un parcours de certification personnalisé selon votre rôle et vos objectifs."),
+ "Start step 1 ⟶": ("Empieza por el paso 1 &#10230;", "Commencer par l'étape 1 &#10230;"),
+ "SAFe Gold SPCT Partner · 2,500+ graduates certified · delivered in 9 languages": (
+   "SAFe Gold SPCT Partner · más de 2500 egresados certificados · impartido en 9 idiomas",
+   "SAFe Gold SPCT Partner · plus de 2 500 diplômés certifiés · dispensé en 9 langues"),
+
+ # ---- section 09 career coaching ----
+ "( 09 ) — Career coaching": (
+   "( 09 ) &mdash; Coaching de carrera", "( 09 ) &mdash; Coaching de carrière"),
+ "Map your 12-month cert and role plan. Salary benchmarks. Gap analysis. Action plan delivered to your inbox after the call.": (
+   "Traza tu plan de certificaciones y de rol a 12 meses. Referencias salariales. Análisis de brechas. Plan de acción en tu correo después de la sesión.",
+   "Tracez votre plan de certifications et de poste sur 12 mois. Repères salariaux. Analyse des écarts. Plan d'action envoyé par e-mail après l'échange."),
+ "Book your roadmap ⟶": ("Reserva tu hoja de ruta &#10230;", "Réserver votre feuille de route &#10230;"),
+ "SPCT-led mock interview for RTE, SPC, LPM, or product roles. Real questions, real feedback, real positioning advice.": (
+   "Simulacro de entrevista dirigido por un SPCT para roles de RTE, SPC, LPM o producto. Preguntas reales, feedback real, consejos de posicionamiento reales.",
+   "Entretien blanc animé par un SPCT pour les rôles RTE, SPC, LPM ou produit. Vraies questions, vrai retour, vrais conseils de positionnement."),
+ "Book a mock interview ⟶": (
+   "Reserva un simulacro de entrevista &#10230;", "Réserver un entretien blanc &#10230;"),
+ "Three months of bi-weekly coaching. Stay on plan, navigate office politics, prep for promotions, get unstuck fast.": (
+   "Tres meses de coaching quincenal. Mantén el plan, maneja la política interna, prepárate para los ascensos y desbloquéate rápido.",
+   "Trois mois de coaching bimensuel. Tenez le cap, naviguez la politique interne, préparez vos promotions, débloquez-vous vite."),
+ "Apply for a sprint ⟶": ("Solicita un sprint &#10230;", "Candidater à un sprint &#10230;"),
 }

@@ -247,6 +247,86 @@
 .aa__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .aa a:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
 
+/* ---- Restored sections ----------------------------------------------------
+   The handoff covered five sections; the live page had nine. These four —
+   Why Agile Agilist, the methodology, the 12-month path and career coaching —
+   are the ones it did not draw, rebuilt from the same tokens and the same
+   card/rotator vocabulary so they read as part of the same page.
+
+   They deliberately do NOT reuse .aa-track / .aa-layer: aa-home.js collects
+   those by class across the whole block, so borrowing them would drop the new
+   cards into the training and pyramid rotator groups. */
+
+/* ( 04 ) Why Agile Agilist — three proof points on white */
+.aa-proof{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:40px}
+.aa-proof__card{display:flex;flex-direction:column;padding:28px 24px;border-radius:18px;
+  background:var(--white);border:1.5px solid var(--line);transition:all .5s var(--ease)}
+.aa-proof__fig{font-size:clamp(38px,4.4vw,52px);line-height:1;letter-spacing:-.03em;color:var(--teal)}
+.aa-proof__lab{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--navy);margin:12px 0 10px}
+.aa-proof__body{font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.aa-proof__card.is-active{background:var(--navy);border-color:var(--navy);transform:translateY(-3px)}
+.aa-proof__card.is-active .aa-proof__fig{color:var(--teal-lt)}
+.aa-proof__card.is-active .aa-proof__lab{color:var(--cream)}
+.aa-proof__card.is-active .aa-proof__body{color:var(--on-navy-2)}
+
+/* ( 05 ) The methodology — deep-green band so it reads apart from the navy
+   Five Dimensions section that follows it */
+.aa-method{background:var(--teal-dk);color:var(--cream)}
+.aa-method h2{color:var(--cream)}
+.aa-method__split{display:flex;flex-wrap:wrap;gap:clamp(24px,3vw,48px);align-items:flex-start;margin-top:40px}
+.aa-method__col{flex:1 1 380px;min-width:300px}
+.aa-method__body{font-size:16px;line-height:1.65;color:var(--on-navy-2);max-width:520px}
+.aa-method__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.aa-method__metrics{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:28px;
+  padding-top:22px;border-top:1.5px solid rgba(247,245,240,.16)}
+.aa-metric{display:flex;flex-direction:column;gap:3px}
+.aa-metric b{font-size:24px;letter-spacing:-.02em;color:var(--teal-lt);font-weight:700}
+.aa-metric span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-navy-4)}
+
+.aa-stack{flex:1 1 400px;min-width:300px;display:flex;flex-direction:column;gap:10px}
+.aa-stack__row{display:flex;align-items:flex-start;gap:16px;padding:18px 22px;border-radius:16px;
+  background:rgba(247,245,240,.06);border:1.5px solid rgba(247,245,240,.16);transition:all .5s var(--ease)}
+.aa-stack__num{flex:none;width:30px;height:30px;border-radius:100px;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;background:rgba(63,191,174,.18);color:var(--teal-lt)}
+.aa-stack__name{display:block;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.aa-stack__detail{display:block;font-size:13.5px;line-height:1.55;color:var(--on-navy-3);margin-top:5px}
+.aa-stack__row.is-active{background:var(--teal-lt);border-color:var(--teal-lt)}
+.aa-stack__row.is-active .aa-stack__num{background:rgba(8,32,28,.22);color:var(--teal-dk)}
+.aa-stack__row.is-active .aa-stack__name,.aa-stack__row.is-active .aa-stack__detail{color:var(--teal-dk)}
+
+/* outline button for the dark bands — --ghost is navy-on-navy there */
+.aa__btn--lt{border:1.5px solid rgba(247,245,240,.38);color:var(--cream);background:transparent}
+.aa__btn--lt:hover{background:rgba(247,245,240,.12)}
+
+/* ( 08 ) Your next 12 months — four steps on navy */
+.aa-path{background:var(--navy);color:var(--cream)}
+.aa-path h2{color:var(--cream)}
+.aa-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:40px}
+.aa-step{display:flex;flex-direction:column;padding:24px;border-radius:18px;
+  background:rgba(247,245,240,.06);border:1.5px solid rgba(247,245,240,.16);transition:all .5s var(--ease)}
+.aa-step__num{font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--teal-lt)}
+.aa-step__name{font-size:19px;line-height:1.2;letter-spacing:-.02em;margin:14px 0 8px;color:var(--cream)}
+.aa-step__desc{font-size:14px;line-height:1.6;color:var(--on-navy-3)}
+.aa-step.is-active{background:var(--teal-lt);border-color:var(--teal-lt)}
+.aa-step.is-active .aa-step__num{color:rgba(8,32,28,.65)}
+.aa-step.is-active .aa-step__name,.aa-step.is-active .aa-step__desc{color:var(--teal-dk)}
+.aa-path__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+
+/* ( 09 ) Career coaching — three offers on white */
+.aa-coach{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:40px}
+.aa-coach__card{display:flex;flex-direction:column;padding:26px 24px;border-radius:18px;
+  background:var(--white);border:1.5px solid var(--line);transition:all .5s var(--ease)}
+.aa-coach__card h3{font-size:21px;line-height:1.2;letter-spacing:-.02em;margin:14px 0 8px}
+.aa-coach__desc{font-size:14.5px;line-height:1.6;color:var(--ink-2);flex:1 1 auto;margin-bottom:18px}
+.aa-coach__card:hover{border-color:var(--teal);transform:translateY(-3px)}
+/* the card is a flex column, so the chip would stretch to full width */
+.aa-coach__card .aa__chip{align-self:flex-start}
+/* .aa a (0,1,1) outranks .aa__cta (0,1,0); elsewhere the CTA is a span inside
+   the link, here it is the link */
+.aa a.aa__cta{color:var(--teal)}
+.aa a.aa__cta:hover{color:var(--navy)}
+
 /* ---- Width constraint (the handoff has none) -------------------------------
    Content caps at 1340px to match the site's --aa-w. Sections keep their full
    width so the navy Five Dimensions band and the hero ticker still bleed edge
@@ -265,8 +345,11 @@
    simulated hostile theme: without this the hero button renders #0E3A44 text
    on a #101C33 background (invisible) and every link is underlined. */
 
-/* nothing in the block is underlined except deliberate inline links */
-.aa a,.aa a:hover,.aa a:focus,.aa a:active,.aa a:visited{text-decoration:none !important}
+/* nothing in the block is underlined except deliberate inline links.
+   [href] is load-bearing: .entry-content a is (0,1,1) and so is a bare .aa a,
+   so whichever stylesheet loads second wins the tie. The attribute selector
+   takes this to (0,2,1) and settles it regardless of enqueue order. */
+.aa a[href],.aa a:hover,.aa a:focus,.aa a:active,.aa a:visited{text-decoration:none !important}
 .aa .aa__link,.aa .aa__link:hover{text-decoration:underline !important;text-underline-offset:3px}
 
 /* unclassed links follow their container's colour */
@@ -278,6 +361,9 @@
 .aa .aa__btn--ghost{color:var(--navy) !important}
 .aa .aa__btn--ghost:hover{color:var(--cream) !important}
 .aa .aa__btn--teal,.aa .aa__btn--teal:hover{color:var(--navy) !important}
+.aa .aa__btn--lt,.aa .aa__btn--lt:hover{color:var(--cream) !important}
+.aa a.aa__cta{color:var(--teal) !important}
+.aa a.aa__cta:hover{color:var(--navy) !important}
 
 /* inline links */
 .aa .aa__link{color:var(--teal) !important}
@@ -299,6 +385,31 @@
 .aa .aa-dims .aa__kicker--lt{color:var(--teal-lt) !important}
 .aa .aa-layer,.aa .aa-layer span{color:var(--cream) !important}
 .aa .aa-layer.is-active,.aa .aa-layer.is-active span{color:var(--teal-dk) !important}
+
+/* restored sections — same treatment, or Astra paints their links #0E3A44 */
+.aa .aa-method,.aa .aa-method h2,.aa .aa-method h3,.aa .aa-method p,
+.aa .aa-path,.aa .aa-path h2,.aa .aa-path p{color:var(--cream) !important}
+.aa .aa-method .aa__kicker--lt,.aa .aa-path .aa__kicker--lt{color:var(--teal-lt) !important}
+.aa .aa-method__body,.aa .aa-path__lede{color:var(--on-navy-2) !important}
+.aa .aa-metric b{color:var(--teal-lt) !important}
+.aa .aa-metric span{color:var(--on-navy-4) !important}
+.aa .aa-stack__row,.aa .aa-stack__row span{color:var(--cream) !important}
+.aa .aa-stack__row .aa-stack__detail{color:var(--on-navy-3) !important}
+.aa .aa-step,.aa .aa-step span{color:var(--cream) !important}
+.aa .aa-step .aa-step__num{color:var(--teal-lt) !important}
+.aa .aa-step .aa-step__desc{color:var(--on-navy-3) !important}
+/* Spotlit cards go teal, so their text has to go dark. These need to be at
+   least as specific as the muted rules just above AND come after them —
+   .aa-step__desc is a <p>, so a rule matching only spans left it light-grey
+   on teal. */
+.aa .aa-stack__row.is-active,.aa .aa-stack__row.is-active span,
+.aa .aa-stack__row.is-active .aa-stack__detail{color:var(--teal-dk) !important}
+.aa .aa-step.is-active,.aa .aa-step.is-active span,.aa .aa-step.is-active h3,
+.aa .aa-step.is-active .aa-step__desc{color:var(--teal-dk) !important}
+.aa .aa-step.is-active .aa-step__num{color:rgba(8,32,28,.65) !important}
+.aa .aa-proof__card.is-active .aa-proof__fig{color:var(--teal-lt) !important}
+.aa .aa-proof__card.is-active .aa-proof__lab{color:var(--cream) !important}
+.aa .aa-proof__card.is-active .aa-proof__body{color:var(--on-navy-2) !important}
 </style>
 
 <!--
@@ -548,9 +659,66 @@
   <p class="aa__foot">Your score maps to a certification track and a consulting layer &mdash; <a class="aa__link" href="https://agile-agilist.com/assessments/">see all seven assessments &#10230;</a></p>
 </section>
 
-<!-- ==================== SECTION 04 — FIVE DIMENSIONS ==================== -->
+<!-- ==================== SECTION 04 — WHY AGILE AGILIST ==================== -->
+<section class="aa__section aa-why" aria-labelledby="aa-why-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 04 ) &mdash; Why Agile Agilist</p>
+      <h2 class="aa__h2" id="aa-why-h2">Why Fortune 500s, governments, and 2,500+ professionals <em class="aa__serif" style="color:#0E8074;">choose us.</em></h2>
+    </div>
+    <p class="aa__lede">Trusted to train and certify teams at IBM, TD Bank, Accenture, Deloitte, McKinsey, KPMG, the U.S. Air Force, and Canadian federal and provincial governments &mdash; 500+ live cohorts delivered across 9 languages and 4 continents.</p>
+  </div>
+
+  <div class="aa-proof">
+    <div class="aa-proof__card">
+      <span class="aa-proof__fig">98%</span>
+      <span class="aa-proof__lab">First-attempt pass rate</span>
+      <p class="aa-proof__body">Above the industry average. Backed by our Fast-Pass study guide, mock exams, and 1:1 post-class coaching.</p>
+    </div>
+    <div class="aa-proof__card">
+      <span class="aa-proof__fig">Top 1%</span>
+      <span class="aa-proof__lab">Scaled Agile credential</span>
+      <p class="aa-proof__body">Every cohort led by an SPCT &mdash; 125+ globally, 90+ in North America. The same credential Scaled Agile uses to train its own instructors.</p>
+    </div>
+    <div class="aa-proof__card">
+      <span class="aa-proof__fig">3&times;</span>
+      <span class="aa-proof__lab">Faster career progression</span>
+      <p class="aa-proof__body">Career coaching is built into every cert. Roadmap, interview prep, salary negotiation &mdash; we help you turn the badge into the next role.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 05 — THE METHODOLOGY ==================== -->
+<section class="aa__section aa-method" aria-labelledby="aa-method-h2">
+  <p class="aa__kicker aa__kicker--lt"><span class="aa__dot" aria-hidden="true"></span>( 05 ) &mdash; Our flagship methodology</p>
+  <h2 class="aa__h2" id="aa-method-h2">The first <em class="aa__serif" style="color:#3FBFAE;">AI-Native SAFe&reg;</em> Implementation Roadmap.</h2>
+
+  <div class="aa-method__split">
+    <div class="aa-method__col">
+      <p class="aa-method__body">Standard SAFe gets you scaled. Our four-layer methodology gets you AI-Native and scaled &mdash; with Innovation Culture baked into every cohort. The only SPCT-led roadmap that integrates AI Enablement, Technical Backbone, and Innovation as a single playbook.</p>
+      <div class="aa-method__ctas">
+        <a class="aa__btn aa__btn--teal" href="https://agile-agilist.com/services/business-agility/methodology/">Explore the methodology &#10230;</a>
+        <a class="aa__btn aa__btn--lt" href="https://agile-agilist.com/about/#message">Book a 15-min consult</a>
+      </div>
+      <div class="aa-method__metrics">
+        <span class="aa-metric"><b>30&ndash;75%</b><span>Time-to-market</span></span>
+        <span class="aa-metric"><b>25&ndash;75%</b><span>Quality</span></span>
+        <span class="aa-metric"><b>25&ndash;57%</b><span>Productivity</span></span>
+      </div>
+    </div>
+
+    <div class="aa-stack">
+      <div class="aa-stack__row"><span class="aa-stack__num" aria-hidden="true">1</span><span><span class="aa-stack__name">AI Enablement Layer</span><span class="aa-stack__detail">AI exec workshops &middot; AI-Native ways of working &middot; AI strategy</span></span></div>
+      <div class="aa-stack__row"><span class="aa-stack__num" aria-hidden="true">2</span><span><span class="aa-stack__name">SAFe Core Transformation Layer</span><span class="aa-stack__detail">SPC &rarr; SA &rarr; LPM &rarr; ARTs &rarr; Value Streams (standard SAFe)</span></span></div>
+      <div class="aa-stack__row"><span class="aa-stack__num" aria-hidden="true">3</span><span><span class="aa-stack__name">Technical Backbone Layer</span><span class="aa-stack__detail">ASE+AI &middot; DevOps &middot; MLOps &middot; AI platform engineering</span></span></div>
+      <div class="aa-stack__row"><span class="aa-stack__num" aria-hidden="true">4</span><span><span class="aa-stack__name">Lean-Agile + AI + Innovation CoE</span><span class="aa-stack__detail">LACE wrapper &mdash; the capability that owns the transformation</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 06 — FIVE DIMENSIONS ==================== -->
 <section class="aa__section aa-dims" aria-labelledby="aa-dims-h2">
-  <p class="aa__kicker aa__kicker--lt"><span class="aa__dot" aria-hidden="true"></span>( 04 ) &mdash; Consulting · The five dimensions</p>
+  <p class="aa__kicker aa__kicker--lt"><span class="aa__dot" aria-hidden="true"></span>( 06 ) &mdash; Consulting · The five dimensions</p>
   <h2 class="aa__h2" id="aa-dims-h2">One operating model, <em class="aa__serif" style="color:#3FBFAE;">five layers deep.</em></h2>
 
   <div class="aa-dims__split">
@@ -589,11 +757,11 @@
   <p class="aa__foot aa__foot--onnavy">Training moves people; the operating model moves the enterprise &mdash; 30&ndash;75% faster time-to-market · <a class="aa__link aa__link--lt" href="https://agile-agilist.com/services/operating-model/">explore the model &#10230;</a></p>
 </section>
 
-<!-- ==================== SECTION 05 — CUSTOMER RESULTS ==================== -->
+<!-- ==================== SECTION 07 — CUSTOMER RESULTS ==================== -->
 <section class="aa__section aa-results" aria-labelledby="aa-results-h2">
   <div class="aa__head">
     <div>
-      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 05 ) &mdash; Customer results</p>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 07 ) &mdash; Customer results</p>
       <h2 class="aa__h2" id="aa-results-h2">The numbers behind <em class="aa__serif" style="color:#0E8074;">the training.</em></h2>
     </div>
     <p class="aa__lede" style="max-width:400px;">Real enterprise outcomes from SPCT-led transformation &mdash; across defense, telecom, banking, aerospace, and energy in 12 countries.</p>
@@ -640,6 +808,62 @@
   <p class="aa__foot"><a class="aa__link" href="https://agile-agilist.com/customers/">Read the enterprise case studies &#10230;</a></p>
 </section>
 
+<!-- ==================== SECTION 08 — YOUR NEXT 12 MONTHS ==================== -->
+<section class="aa__section aa-path" aria-labelledby="aa-path-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker aa__kicker--lt"><span class="aa__dot" aria-hidden="true"></span>( 08 ) &mdash; Your next 12 months</p>
+      <h2 class="aa__h2" id="aa-path-h2">Your next promotion is <em class="aa__serif" style="color:#3FBFAE;">4 days of training</em> away.</h2>
+    </div>
+    <p class="aa__lede aa-path__lede">Four simple steps. No guesswork. Most graduates complete step 4 within 90 days of starting step 1.</p>
+  </div>
+
+  <div class="aa-steps">
+    <div class="aa-step"><span class="aa-step__num" aria-hidden="true">01</span><h3 class="aa-step__name">Take the 3-min assessment</h3><p class="aa-step__desc">Get a personalized cert path based on your role and your goals.</p></div>
+    <div class="aa-step"><span class="aa-step__num" aria-hidden="true">02</span><h3 class="aa-step__name">Pick your path</h3><p class="aa-step__desc">Choose the cert that fits your career and your calendar.</p></div>
+    <div class="aa-step"><span class="aa-step__num" aria-hidden="true">03</span><h3 class="aa-step__name">Get certified</h3><p class="aa-step__desc">Live virtual cohort with an SPCT. Pass first time.</p></div>
+    <div class="aa-step"><span class="aa-step__num" aria-hidden="true">04</span><h3 class="aa-step__name">Land the role</h3><p class="aa-step__desc">Use career coaching to convert the badge into the promotion.</p></div>
+  </div>
+
+  <div class="aa-path__ctas">
+    <a class="aa__btn aa__btn--teal" href="https://agile-agilist.com/cert-recommender/">Start step 1 &#10230;</a>
+    <a class="aa__btn aa__btn--lt" href="https://agile-agilist.com/about/#message">Or talk to an advisor</a>
+  </div>
+  <p class="aa__foot aa__foot--onnavy">SAFe Gold SPCT Partner &middot; 2,500+ graduates certified &middot; delivered in 9 languages</p>
+</section>
+
+<!-- ==================== SECTION 09 — CAREER COACHING ==================== -->
+<section class="aa__section aa-coaching" aria-labelledby="aa-coach-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 09 ) &mdash; Career coaching</p>
+      <h2 class="aa__h2" id="aa-coach-h2">Certified isn&rsquo;t hired. <em class="aa__serif" style="color:#0E8074;">We coach you to both.</em></h2>
+    </div>
+    <p class="aa__lede">1:1 coaching with an SPCT who has hired, trained, and promoted SAFe practitioners across 4 continents. Roadmap, interview prep, or a 3-month career sprint.</p>
+  </div>
+
+  <div class="aa-coach">
+    <div class="aa-coach__card">
+      <span class="aa__chip">60 min</span>
+      <h3>Career Roadmap</h3>
+      <p class="aa-coach__desc">Map your 12-month cert and role plan. Salary benchmarks. Gap analysis. Action plan delivered to your inbox after the call.</p>
+      <a class="aa__cta" href="https://agile-agilist.com/about/#message">Book your roadmap &#10230;</a>
+    </div>
+    <div class="aa-coach__card">
+      <span class="aa__chip">45 min</span>
+      <h3>Interview Prep</h3>
+      <p class="aa-coach__desc">SPCT-led mock interview for RTE, SPC, LPM, or product roles. Real questions, real feedback, real positioning advice.</p>
+      <a class="aa__cta" href="https://agile-agilist.com/about/#message">Book a mock interview &#10230;</a>
+    </div>
+    <div class="aa-coach__card">
+      <span class="aa__chip">3 months</span>
+      <h3>Quarterly Career Sprint</h3>
+      <p class="aa-coach__desc">Three months of bi-weekly coaching. Stay on plan, navigate office politics, prep for promotions, get unstuck fast.</p>
+      <a class="aa__cta" href="https://agile-agilist.com/about/#message">Apply for a sprint &#10230;</a>
+    </div>
+  </div>
+</section>
+
 </div><!-- /.aa -->
 
 <script>
@@ -651,6 +875,8 @@
   'use strict';
   var ROTATE_MS = 4200;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // The page's language, not the visitor's — this file runs on /, /es/ and /fr/.
+  var lang = document.documentElement.lang || undefined;
 
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -695,14 +921,28 @@
     var root = document.querySelector('.aa');
     if (!root) return;
 
-    /* ---- 01 hero: cohorts + "in N days" ---- */
+    /* ---- 01 hero: cohorts + "in N days" ----
+       The label is rendered server-side too; this recomputes it so a cached
+       page does not show a stale countdown. Wording comes from data-labels,
+       which [aa_home_cohorts] emits in the page's own language — hardcoding
+       "in N days" here printed English over the Spanish and French cards.
+       Counting from local midnight, not from now, is what makes the day
+       boundary land on "tomorrow" instead of "in 1 days". */
+    var midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
     var cohorts = [].slice.call(root.querySelectorAll('.aa-cohort'));
     cohorts.forEach(function (el) {
       var days = el.querySelector('.aa-cohort__days');
       var start = el.getAttribute('data-start');
       if (days && start) {
-        var d = Math.round((new Date(start + 'T00:00:00') - new Date()) / 86400000);
-        days.textContent = d > 0 ? 'in ' + d + ' days ⟶' : 'starting now ⟶';
+        var L = {};
+        try { L = JSON.parse(el.getAttribute('data-labels') || '{}'); } catch (err) {}
+        var d = Math.round((new Date(start + 'T00:00:00') - midnight) / 86400000);
+        var txt = d > 1 ? (L.days || 'in %d days').replace('%d', d)
+                : d === 1 ? (L.tomorrow || 'tomorrow')
+                : d === 0 ? (L.today || 'today')
+                : (L.view || 'view dates');
+        days.textContent = txt + ' ⟶';
       }
       var seats = el.querySelector('.aa-cohort__seats');
       var n = parseInt(el.getAttribute('data-seats'), 10);
@@ -778,7 +1018,15 @@
       });
     }
 
-    /* ---- 05 results: stat count-ups + rotating quotes ---- */
+    /* ---- restored sections: their own rotator groups ----
+       Separate selectors on purpose. These cards are not .aa-track or
+       .aa-layer, so they spotlight independently instead of joining the
+       training and pyramid groups. */
+    rotator([].slice.call(root.querySelectorAll('.aa-proof__card')));
+    rotator([].slice.call(root.querySelectorAll('.aa-stack__row')));
+    rotator([].slice.call(root.querySelectorAll('.aa-step')));
+
+    /* ---- 07 results: stat count-ups + rotating quotes ---- */
     var stats = [].slice.call(root.querySelectorAll('.aa-stat__num'));
     if (stats.length) {
       onceInView(root.querySelector('.aa-stats'), function () {
@@ -789,10 +1037,15 @@
           var p = Math.min(1, (t - t0) / dur);
           var eased = 1 - Math.pow(1 - p, 3);
           stats.forEach(function (el) {
+            // The last frame restores the markup's own string rather than
+            // reformatting it. The source is the translated copy — "2 500+"
+            // on the French page — and toLocaleString() would otherwise
+            // group it by the *visitor's* locale, not the page's.
+            if (p >= 1 || reduce) { el.textContent = el.getAttribute('data-final'); return; }
             var v = parseFloat(el.getAttribute('data-value')) || 0;
             var pre = el.getAttribute('data-prefix') || '';
             var suf = el.getAttribute('data-suffix') || '';
-            el.textContent = pre + Math.round(v * (reduce ? 1 : eased)).toLocaleString() + suf;
+            el.textContent = pre + Math.round(v * eased).toLocaleString(lang) + suf;
           });
           if (p < 1 && !reduce) requestAnimationFrame(step);
         }

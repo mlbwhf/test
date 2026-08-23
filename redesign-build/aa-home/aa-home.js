@@ -149,7 +149,15 @@
       });
     }
 
-    /* ---- 05 results: stat count-ups + rotating quotes ---- */
+    /* ---- restored sections: their own rotator groups ----
+       Separate selectors on purpose. These cards are not .aa-track or
+       .aa-layer, so they spotlight independently instead of joining the
+       training and pyramid groups. */
+    rotator([].slice.call(root.querySelectorAll('.aa-proof__card')));
+    rotator([].slice.call(root.querySelectorAll('.aa-stack__row')));
+    rotator([].slice.call(root.querySelectorAll('.aa-step')));
+
+    /* ---- 07 results: stat count-ups + rotating quotes ---- */
     var stats = [].slice.call(root.querySelectorAll('.aa-stat__num'));
     if (stats.length) {
       onceInView(root.querySelector('.aa-stats'), function () {
