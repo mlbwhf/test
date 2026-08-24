@@ -30,7 +30,14 @@ If an existing index/report is found to be thin (mostly links, no analysis, no t
 
 ## Known infrastructure quirk
 
-The site's firewall (WAF) intermittently 403-blocks large POST payloads and anything containing JSON-like `{"..."}` sequences:
+**Correction 2026-08-24:** Hostinger access logs for 18–24 Aug show every MCP POST
+returning 200/204 with no 4xx on the endpoint. The WAF is **not** the cause of MCP
+session drops — the current hypothesis is an idle timeout on the long-lived connection
+(see `content-ops/mcp-diagnosis-v2.md`). After any pause, `mcp_ping` before assuming the
+connection is live. The payload guidance below remains sensible practice for individual
+requests, but must not be cited as the cause of disconnects.
+
+The site's firewall (WAF) has previously 403-blocked large POST payloads and content containing JSON-like `{"..."}` sequences:
 - Prefer `wp_alter_post` (small search/replace edits) over full-content `wp_update_post` for published pages.
 - For JSON-LD edits, use regex mode and/or split into multiple small replacements.
 - On a 403, retry once; repeated 403s can escalate to a temporary IP lockout — back off rather than hammering.
