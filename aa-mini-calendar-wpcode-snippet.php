@@ -20,10 +20,15 @@
  *     [aa_mini_calendar link="course"]            stripes link to course pages
  *     [aa_mini_calendar lang="es"]                Spanish chrome (also: fr)
  *     [aa_mini_calendar months="6"]               lookahead window (default 6)
+ *     [aa_mini_calendar wide="1"]                 full-width — replaces the
+ *                                                 big [easy_events_calendar]
+ *                                                 on the training pages
  *
- * INSTALL: WPCode -> PHP Snippet -> Auto Insert, Run Everywhere. Then swap
- * [easy_event_calendar_mini ...] for [aa_mini_calendar ...] wherever it
- * appears. The Xylus plugin can be deactivated once no page still uses it.
+ * INSTALL: WPCode -> PHP Snippet -> Auto Insert, Run Everywhere. That is
+ * ALL: this snippet also takes over the old [easy_events_calendar] and
+ * [easy_event_calendar_mini] shortcodes (see the bottom of the file), so
+ * every page that embeds them switches to this calendar with no page edits.
+ * Deactivating the snippet hands them straight back to the Xylus plugin.
  *
  * The events query is cached the same way as [aa_home_cohorts]: per-request
  * memo + 10-minute transient keyed by the Eastern day.
@@ -135,7 +140,7 @@ function aa_mcal_events( $cats, $months, &$dbg ) {
 	return $memo[ $key ] = $rows;
 }
 
-add_shortcode( 'aa_mini_calendar', function ( $atts ) {
+function aa_mcal_render( $atts ) {
 	static $instance = 0, $assets_done = false;
 	$instance++;
 
@@ -144,6 +149,7 @@ add_shortcode( 'aa_mini_calendar', function ( $atts ) {
 		'months'   => 6,
 		'link'     => 'enroll',      // enroll | course
 		'lang'     => 'en',
+		'wide'     => '',            // "1" = full-width training-page variant
 		'debug'    => '',
 	), $atts, 'aa_mini_calendar' );
 
@@ -170,7 +176,7 @@ add_shortcode( 'aa_mini_calendar', function ( $atts ) {
 	) );
 
 	$id   = 'aa-mcal-' . $instance;
-	$html = '<div class="aa-mcal" id="' . esc_attr( $id ) . '">'
+	$html = '<div class="aa-mcal' . ( $a['wide'] ? ' aa-mcal--wide' : '' ) . '" id="' . esc_attr( $id ) . '">'
 	      . '<script type="application/json">' . $payload . '</script>'
 	      . '<noscript>';
 	// crawlers and no-JS get a plain dated list — same data, real links
@@ -219,6 +225,19 @@ add_shortcode( 'aa_mini_calendar', function ( $atts ) {
 .aa-mcal-key:hover{color:#127E88}
 .aa-mcal-key i{width:14px;height:7px;border-radius:99px;background:var(--c,#127E88)}
 @media(prefers-reduced-motion:no-preference){.aa-mcal-band{transition:opacity .15s}}
+/* full-width variant for the training pages */
+.aa-mcal--wide{max-width:none}
+.aa-mcal--wide .aa-mcal-head{padding:14px 18px}
+.aa-mcal--wide .aa-mcal-title{font-size:13px}
+.aa-mcal--wide .aa-mcal-grid{padding:12px 14px 8px;gap:0 4px}
+.aa-mcal--wide .aa-mcal-dow{font-size:11px;padding:6px 0}
+.aa-mcal--wide .aa-mcal-cell{min-height:68px;padding:6px 0 4px}
+.aa-mcal--wide .aa-mcal-day{font-size:14px}
+.aa-mcal--wide .aa-mcal-band{height:9px}
+.aa-mcal--wide .aa-mcal-legend{padding:12px 18px 14px;gap:8px 18px}
+.aa-mcal--wide .aa-mcal-key{font-size:11px}
+.aa-mcal--wide .aa-mcal-key i{width:18px;height:9px}
+@media(max-width:600px){.aa-mcal--wide .aa-mcal-cell{min-height:52px}}
 </style>
 <script>
 (function(){
@@ -309,4 +328,35 @@ AA_MCAL_ASSETS;
 		$html .= '<pre style="font-size:11px;white-space:pre-wrap">' . esc_html( "aa_mini_calendar\n" . implode( "\n", $dbg ) ) . '</pre>';
 	}
 	return $html;
-} );
+}
+
+add_shortcode( 'aa_mini_calendar', 'aa_mcal_render' );
+
+/**
+ * TAKEOVER of the old Xylus calendar shortcodes — zero page edits needed.
+ *
+ * WordPress hands a shortcode to whichever handler registered it LAST, so
+ * re-registering these two at a late init priority replaces the Xylus
+ * renderers site-wide the moment this snippet is active:
+ *
+ *   [easy_events_calendar]                the big training-page calendar ->
+ *                                         full-width stripes, course links
+ *   [easy_event_calendar_mini ...]        the per-course mini -> compact
+ *                                         stripes, own registration
+ *
+ * Every page keeps its existing shortcode untouched; deactivating this
+ * snippet hands both back to the Xylus plugin — that is the whole undo.
+ */
+add_action( 'init', function () {
+	add_shortcode( 'easy_events_calendar', function ( $atts ) {
+		$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, 'easy_events_calendar' );
+		return aa_mcal_render( array(
+			'category' => $a['category'], 'lang' => $a['lang'],
+			'link' => 'course', 'wide' => '1',
+		) );
+	} );
+	add_shortcode( 'easy_event_calendar_mini', function ( $atts ) {
+		$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, 'easy_event_calendar_mini' );
+		return aa_mcal_render( array( 'category' => $a['category'], 'lang' => $a['lang'] ) );
+	} );
+}, 99 );
