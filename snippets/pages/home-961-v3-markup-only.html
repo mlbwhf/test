@@ -1,31 +1,21 @@
-<!-- wp:html -->
 <!-- ============================================================
-     AGILE AGILIST — HOME · MARKUP ONLY  (paste this one)
+     AGILE AGILIST — HOME PAGE  (English)
 
-     No <style> and no <script> on purpose.
+     PASTE THIS INTO A "CUSTOM HTML" BLOCK.
+     There is deliberately no <style> and no <script> in here: this site
+     strips both out of a Custom HTML block. The CSS and the JS are installed
+     once, separately, as WPCode CSS and JS snippets — see INSTALL.md.
 
-     WHY: WordPress entity-encodes && to &#038;&#038; when it saves inline
-     JS in a Custom HTML block. aa-home.js has 8 of them, so the script
-     dies on a SyntaxError at line 8 and every JS-driven effect stops —
-     rotation, hover-select, count-ups, bar fills. The CSS is untouched,
-     which is why the design looks correct while nothing moves. This site
-     has hit exactly that before (commit 0d6fb34, "&& to &#038;&#038;
-     SyntaxError halted all hero JS").
-
-     INSTALL — order matters:
-       1. WPCode PHP snippet: aa-home-assets-wpcode-snippet.php   (CSS + JS)
-       2. WPCode PHP snippet: aa-home-cohorts-wpcode-snippet.php  (cohort data)
-       3. paste THIS block into the page
-     Assets loaded through wp_enqueue are never passed through the editor's
-     encoder, so the && survives and the JS runs.
-
-     Colours are the handoff's own palette, unchanged.
+     Needs, installed once and serving every language:
+       1. WPCode  CSS Snippet  — aa-home.css
+       2. WPCode  JS Snippet   — aa-home.js
+       3. WPCode  PHP Snippet  — aa-home-cohorts-wpcode-snippet.php
      ============================================================ -->
 
 <!--
-  Agile Agilist — home page redesign markup (sections 01–05).
+  Agile Agilist — home page markup, sections 01–09.
   Paste into a WordPress Custom HTML block / Divi Code module, or a page template.
-  Requires aa-home.css + aa-home.js (see WORDPRESS-INSTALL.md).
+  Requires the aa-home.css and aa-home.js WPCode snippets (see INSTALL.md).
   Every section can be split out at the "SECTION" comments and used independently,
   as long as the wrapping <div class="aa"> is preserved around each piece.
   All copy is present in the DOM (no JS-injected content) for SEO/LLM readability.
@@ -475,4 +465,3 @@
 </section>
 
 </div><!-- /.aa -->
-<!-- /wp:html -->
