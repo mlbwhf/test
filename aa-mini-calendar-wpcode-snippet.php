@@ -232,7 +232,23 @@ function build(root){
   var view = new Date(now.getFullYear(), now.getMonth(), 1);
   var last = new Date(now.getFullYear(), now.getMonth()+cfg.months-1, 1);
   function parse(s){ var p=s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function iso(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
   function href(m, id){ return m.url + (m.url.charAt(0)==='#' ? '' : '?cohort='+id); }
+  /* Course-page hand-off: when the AA - Course JS engine is present, clicking
+     a stripe also selects that cohort in the pick list and opens the Stripe
+     form, exactly as the retired "AA - Class Calendar" snippet did. The item
+     is matched by its start date against window.AA_COHORTS, and AA_PICK gets
+     the same label shape that engine expects ("Aug 24 - when"). The anchor
+     still navigates to #enroll either way, so a miss degrades to the plain
+     jump instead of a dead click. */
+  var MONA=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pick(ds){
+    if(typeof window.AA_PICK!=='function'||!window.AA_COHORTS||!window.AA_COHORTS.length) return;
+    var p=ds.split('-'), mon=MONA[+p[1]-1], day=+p[2];
+    for(var i=0;i<window.AA_COHORTS.length;i++){ var it=window.AA_COHORTS[i];
+      if(it.mon===mon && parseInt(it.day,10)===day){
+        window.AA_PICK(it.mon+' '+it.day+(it.when?(' — '+it.when):'')); return; } }
+  }
   function render(){
     var y=view.getFullYear(), mo=view.getMonth();
     var first=new Date(y,mo,1), days=new Date(y,mo+1,0).getDate(), lead=first.getDay();
@@ -259,7 +275,7 @@ function build(root){
           var m=cfg.courses[v.c]||{code:v.c,color:'#127E88',url:'#enroll'};
           var isS=+date===+v.s, isE=+date===+v.e;
           h+='<a class="aa-mcal-band'+(isS?' is-start':'')+(isE?' is-end':'')+'" style="--c:'+m.color+'"'
-            +' href="'+href(m,v.id)+'"'
+            +' href="'+href(m,v.id)+'" data-s="'+iso(v.s)+'"'
             +(isS?' aria-label="'+m.code+' · '+S.reg+'" title="'+m.code+'"':' aria-hidden="true" tabindex="-1"')+'></a>';
         }
         h+='</span>'; }
@@ -276,6 +292,8 @@ function build(root){
     root.insertAdjacentHTML('beforeend', h);
   }
   root.addEventListener('click', function(e){
+    var a=e.target.closest('a[data-s]');
+    if(a && a.getAttribute('href').charAt(0)==='#'){ pick(a.getAttribute('data-s')); return; }
     var b=e.target.closest('[data-nav]'); if(!b||b.disabled)return;
     view=new Date(view.getFullYear(), view.getMonth()+ +b.getAttribute('data-nav'), 1); render();
   });
