@@ -2,32 +2,50 @@
 /**
  * Agile Agilist — HOME page assets (aa-home.css + aa-home.js)
  * -----------------------------------------------------------------------------
+ * GENERATED FILE — do not hand-edit.
+ *   Source:    redesign-build/aa-home/aa-home.css
+ *              redesign-build/aa-home/aa-home.js
+ *   Rebuild:   python3 tools/gen_home_assets_snippet.py
+ * Editing the CSS here instead of at the source is how this file went stale
+ * and left four sections of the page unstyled.
+ *
  * WHY THIS EXISTS
  * On WordPress.com / Atomic, `unfiltered_html` is disabled, so <style> and
  * <script> pasted into a Custom HTML block are stripped by wp_kses before they
  * ever reach the browser. The markup survives; the CSS and the behaviour do
  * not — which looks exactly like "the design and the effects are missing".
+ * The editor also rewrites `&&` to `&#038;&#038;` in inline JS, which is a
+ * SyntaxError that kills every effect on the page.
  *
- * Enqueuing from a WPCode PHP snippet bypasses kses entirely, so the rotating
- * spotlights (cohorts, training tracks, assessments, layers, testimonials),
- * the report-panel swap, bar fills, count-ups and the ticker all work.
+ * Enqueuing from a WPCode PHP snippet bypasses both, so the rotating
+ * spotlights (cohorts, training tracks, assessments, proof cards, methodology
+ * rows, layers, steps, testimonials), the report-panel swap, bar fills,
+ * count-ups and the ticker all work.
  *
- * INSTALL
- *   WPCode -> Add Snippet -> PHP Snippet -> paste this -> Auto Insert,
- *   Run Everywhere -> Save + Activate.
+ * INSTALL / UPDATE
+ *   WPCode -> Add Snippet -> PHP Snippet -> paste this WHOLE file -> Auto
+ *   Insert, Run Everywhere -> Save + Activate.
+ *   Updating: open the existing snippet, select all, and paste this file over
+ *   it. It is a full replacement, not something to append to.
  *   Then paste the MARKUP-ONLY block (home-961-v3-markup-only.html) into the
  *   page. That block contains no <style> or <script>, so nothing is stripped.
  *
  * SCOPE
- *   Loads on the front page only. To load elsewhere, change the is_front_page()
- *   guard below (e.g. `if ( ! is_front_page() && ! is_page( 'home' ) ) return;`).
+ *   The English front page plus the ES and FR home pages, which are ordinary
+ *   pages and would otherwise load none of this — the same markup with no CSS
+ *   renders as a column of plain text. Their IDs are in AA_HOME_PAGES below;
+ *   change them there if the pages are ever recreated.
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+/** /es/ and /fr/ — the translated home pages. The English home is the front page. */
+if ( ! defined( 'AA_HOME_PAGES' ) ) { define( 'AA_HOME_PAGES', '29277,29281' ); }
+
 add_action( 'wp_enqueue_scripts', function () {
 
-	if ( ! is_front_page() ) { return; }
+	$extra = array_filter( array_map( 'intval', explode( ',', AA_HOME_PAGES ) ) );
+	if ( ! is_front_page() && ! is_page( $extra ) ) { return; }
 
 	wp_enqueue_style(
 		'aa-fonts',
@@ -37,11 +55,11 @@ add_action( 'wp_enqueue_scripts', function () {
 	);
 
 	// No stylesheet file to host: register an empty handle and hang the CSS off it.
-	wp_register_style( 'aa-home', false, array( 'aa-fonts' ), '1.0.0' );
+	wp_register_style( 'aa-home', false, array( 'aa-fonts' ), '1b774368' );
 	wp_enqueue_style( 'aa-home' );
 	wp_add_inline_style( 'aa-home', aa_home_css() );
 
-	wp_register_script( 'aa-home', '', array(), '1.0.0', true );
+	wp_register_script( 'aa-home', '', array(), '1b774368', true );
 	wp_enqueue_script( 'aa-home' );
 	wp_add_inline_script( 'aa-home', aa_home_js() );
 }, 20 );
@@ -249,6 +267,86 @@ function aa_home_css() {
 .aa__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .aa a:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:6px}
 
+/* ---- Restored sections ----------------------------------------------------
+   The handoff covered five sections; the live page had nine. These four —
+   Why Agile Agilist, the methodology, the 12-month path and career coaching —
+   are the ones it did not draw, rebuilt from the same tokens and the same
+   card/rotator vocabulary so they read as part of the same page.
+
+   They deliberately do NOT reuse .aa-track / .aa-layer: aa-home.js collects
+   those by class across the whole block, so borrowing them would drop the new
+   cards into the training and pyramid rotator groups. */
+
+/* ( 04 ) Why Agile Agilist — three proof points on white */
+.aa-proof{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:40px}
+.aa-proof__card{display:flex;flex-direction:column;padding:28px 24px;border-radius:18px;
+  background:var(--white);border:1.5px solid var(--line);transition:all .5s var(--ease)}
+.aa-proof__fig{font-size:clamp(38px,4.4vw,52px);line-height:1;letter-spacing:-.03em;color:var(--teal)}
+.aa-proof__lab{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--navy);margin:12px 0 10px}
+.aa-proof__body{font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.aa-proof__card.is-active{background:var(--navy);border-color:var(--navy);transform:translateY(-3px)}
+.aa-proof__card.is-active .aa-proof__fig{color:var(--teal-lt)}
+.aa-proof__card.is-active .aa-proof__lab{color:var(--cream)}
+.aa-proof__card.is-active .aa-proof__body{color:var(--on-navy-2)}
+
+/* ( 05 ) The methodology — deep-green band so it reads apart from the navy
+   Five Dimensions section that follows it */
+.aa-method{background:var(--teal-dk);color:var(--cream)}
+.aa-method h2{color:var(--cream)}
+.aa-method__split{display:flex;flex-wrap:wrap;gap:clamp(24px,3vw,48px);align-items:flex-start;margin-top:40px}
+.aa-method__col{flex:1 1 380px;min-width:300px}
+.aa-method__body{font-size:16px;line-height:1.65;color:var(--on-navy-2);max-width:520px}
+.aa-method__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.aa-method__metrics{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:28px;
+  padding-top:22px;border-top:1.5px solid rgba(247,245,240,.16)}
+.aa-metric{display:flex;flex-direction:column;gap:3px}
+.aa-metric b{font-size:24px;letter-spacing:-.02em;color:var(--teal-lt);font-weight:700}
+.aa-metric span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-navy-4)}
+
+.aa-stack{flex:1 1 400px;min-width:300px;display:flex;flex-direction:column;gap:10px}
+.aa-stack__row{display:flex;align-items:flex-start;gap:16px;padding:18px 22px;border-radius:16px;
+  background:rgba(247,245,240,.06);border:1.5px solid rgba(247,245,240,.16);transition:all .5s var(--ease)}
+.aa-stack__num{flex:none;width:30px;height:30px;border-radius:100px;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;background:rgba(63,191,174,.18);color:var(--teal-lt)}
+.aa-stack__name{display:block;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.aa-stack__detail{display:block;font-size:13.5px;line-height:1.55;color:var(--on-navy-3);margin-top:5px}
+.aa-stack__row.is-active{background:var(--teal-lt);border-color:var(--teal-lt)}
+.aa-stack__row.is-active .aa-stack__num{background:rgba(8,32,28,.22);color:var(--teal-dk)}
+.aa-stack__row.is-active .aa-stack__name,.aa-stack__row.is-active .aa-stack__detail{color:var(--teal-dk)}
+
+/* outline button for the dark bands — --ghost is navy-on-navy there */
+.aa__btn--lt{border:1.5px solid rgba(247,245,240,.38);color:var(--cream);background:transparent}
+.aa__btn--lt:hover{background:rgba(247,245,240,.12)}
+
+/* ( 08 ) Your next 12 months — four steps on navy */
+.aa-path{background:var(--navy);color:var(--cream)}
+.aa-path h2{color:var(--cream)}
+.aa-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:40px}
+.aa-step{display:flex;flex-direction:column;padding:24px;border-radius:18px;
+  background:rgba(247,245,240,.06);border:1.5px solid rgba(247,245,240,.16);transition:all .5s var(--ease)}
+.aa-step__num{font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--teal-lt)}
+.aa-step__name{font-size:19px;line-height:1.2;letter-spacing:-.02em;margin:14px 0 8px;color:var(--cream)}
+.aa-step__desc{font-size:14px;line-height:1.6;color:var(--on-navy-3)}
+.aa-step.is-active{background:var(--teal-lt);border-color:var(--teal-lt)}
+.aa-step.is-active .aa-step__num{color:rgba(8,32,28,.65)}
+.aa-step.is-active .aa-step__name,.aa-step.is-active .aa-step__desc{color:var(--teal-dk)}
+.aa-path__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+
+/* ( 09 ) Career coaching — three offers on white */
+.aa-coach{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:40px}
+.aa-coach__card{display:flex;flex-direction:column;padding:26px 24px;border-radius:18px;
+  background:var(--white);border:1.5px solid var(--line);transition:all .5s var(--ease)}
+.aa-coach__card h3{font-size:21px;line-height:1.2;letter-spacing:-.02em;margin:14px 0 8px}
+.aa-coach__desc{font-size:14.5px;line-height:1.6;color:var(--ink-2);flex:1 1 auto;margin-bottom:18px}
+.aa-coach__card:hover{border-color:var(--teal);transform:translateY(-3px)}
+/* the card is a flex column, so the chip would stretch to full width */
+.aa-coach__card .aa__chip{align-self:flex-start}
+/* .aa a (0,1,1) outranks .aa__cta (0,1,0); elsewhere the CTA is a span inside
+   the link, here it is the link */
+.aa a.aa__cta{color:var(--teal)}
+.aa a.aa__cta:hover{color:var(--navy)}
+
 /* ---- Width constraint (the handoff has none) -------------------------------
    Content caps at 1340px to match the site's --aa-w. Sections keep their full
    width so the navy Five Dimensions band and the hero ticker still bleed edge
@@ -267,8 +365,11 @@ function aa_home_css() {
    simulated hostile theme: without this the hero button renders #0E3A44 text
    on a #101C33 background (invisible) and every link is underlined. */
 
-/* nothing in the block is underlined except deliberate inline links */
-.aa a,.aa a:hover,.aa a:focus,.aa a:active,.aa a:visited{text-decoration:none !important}
+/* nothing in the block is underlined except deliberate inline links.
+   [href] is load-bearing: .entry-content a is (0,1,1) and so is a bare .aa a,
+   so whichever stylesheet loads second wins the tie. The attribute selector
+   takes this to (0,2,1) and settles it regardless of enqueue order. */
+.aa a[href],.aa a:hover,.aa a:focus,.aa a:active,.aa a:visited{text-decoration:none !important}
 .aa .aa__link,.aa .aa__link:hover{text-decoration:underline !important;text-underline-offset:3px}
 
 /* unclassed links follow their container's colour */
@@ -280,6 +381,9 @@ function aa_home_css() {
 .aa .aa__btn--ghost{color:var(--navy) !important}
 .aa .aa__btn--ghost:hover{color:var(--cream) !important}
 .aa .aa__btn--teal,.aa .aa__btn--teal:hover{color:var(--navy) !important}
+.aa .aa__btn--lt,.aa .aa__btn--lt:hover{color:var(--cream) !important}
+.aa a.aa__cta{color:var(--teal) !important}
+.aa a.aa__cta:hover{color:var(--navy) !important}
 
 /* inline links */
 .aa .aa__link{color:var(--teal) !important}
@@ -301,6 +405,31 @@ function aa_home_css() {
 .aa .aa-dims .aa__kicker--lt{color:var(--teal-lt) !important}
 .aa .aa-layer,.aa .aa-layer span{color:var(--cream) !important}
 .aa .aa-layer.is-active,.aa .aa-layer.is-active span{color:var(--teal-dk) !important}
+
+/* restored sections — same treatment, or Astra paints their links #0E3A44 */
+.aa .aa-method,.aa .aa-method h2,.aa .aa-method h3,.aa .aa-method p,
+.aa .aa-path,.aa .aa-path h2,.aa .aa-path p{color:var(--cream) !important}
+.aa .aa-method .aa__kicker--lt,.aa .aa-path .aa__kicker--lt{color:var(--teal-lt) !important}
+.aa .aa-method__body,.aa .aa-path__lede{color:var(--on-navy-2) !important}
+.aa .aa-metric b{color:var(--teal-lt) !important}
+.aa .aa-metric span{color:var(--on-navy-4) !important}
+.aa .aa-stack__row,.aa .aa-stack__row span{color:var(--cream) !important}
+.aa .aa-stack__row .aa-stack__detail{color:var(--on-navy-3) !important}
+.aa .aa-step,.aa .aa-step span{color:var(--cream) !important}
+.aa .aa-step .aa-step__num{color:var(--teal-lt) !important}
+.aa .aa-step .aa-step__desc{color:var(--on-navy-3) !important}
+/* Spotlit cards go teal, so their text has to go dark. These need to be at
+   least as specific as the muted rules just above AND come after them —
+   .aa-step__desc is a <p>, so a rule matching only spans left it light-grey
+   on teal. */
+.aa .aa-stack__row.is-active,.aa .aa-stack__row.is-active span,
+.aa .aa-stack__row.is-active .aa-stack__detail{color:var(--teal-dk) !important}
+.aa .aa-step.is-active,.aa .aa-step.is-active span,.aa .aa-step.is-active h3,
+.aa .aa-step.is-active .aa-step__desc{color:var(--teal-dk) !important}
+.aa .aa-step.is-active .aa-step__num{color:rgba(8,32,28,.65) !important}
+.aa .aa-proof__card.is-active .aa-proof__fig{color:var(--teal-lt) !important}
+.aa .aa-proof__card.is-active .aa-proof__lab{color:var(--cream) !important}
+.aa .aa-proof__card.is-active .aa-proof__body{color:var(--on-navy-2) !important}
 AA_HOME_CSS;
 }
 
@@ -314,6 +443,8 @@ function aa_home_js() {
   'use strict';
   var ROTATE_MS = 4200;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // The page's language, not the visitor's — this file runs on /, /es/ and /fr/.
+  var lang = document.documentElement.lang || undefined;
 
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -358,14 +489,28 @@ function aa_home_js() {
     var root = document.querySelector('.aa');
     if (!root) return;
 
-    /* ---- 01 hero: cohorts + "in N days" ---- */
+    /* ---- 01 hero: cohorts + "in N days" ----
+       The label is rendered server-side too; this recomputes it so a cached
+       page does not show a stale countdown. Wording comes from data-labels,
+       which [aa_home_cohorts] emits in the page's own language — hardcoding
+       "in N days" here printed English over the Spanish and French cards.
+       Counting from local midnight, not from now, is what makes the day
+       boundary land on "tomorrow" instead of "in 1 days". */
+    var midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
     var cohorts = [].slice.call(root.querySelectorAll('.aa-cohort'));
     cohorts.forEach(function (el) {
       var days = el.querySelector('.aa-cohort__days');
       var start = el.getAttribute('data-start');
       if (days && start) {
-        var d = Math.round((new Date(start + 'T00:00:00') - new Date()) / 86400000);
-        days.textContent = d > 0 ? 'in ' + d + ' days ⟶' : 'starting now ⟶';
+        var L = {};
+        try { L = JSON.parse(el.getAttribute('data-labels') || '{}'); } catch (err) {}
+        var d = Math.round((new Date(start + 'T00:00:00') - midnight) / 86400000);
+        var txt = d > 1 ? (L.days || 'in %d days').replace('%d', d)
+                : d === 1 ? (L.tomorrow || 'tomorrow')
+                : d === 0 ? (L.today || 'today')
+                : (L.view || 'view dates');
+        days.textContent = txt + ' ⟶';
       }
       var seats = el.querySelector('.aa-cohort__seats');
       var n = parseInt(el.getAttribute('data-seats'), 10);
@@ -441,7 +586,15 @@ function aa_home_js() {
       });
     }
 
-    /* ---- 05 results: stat count-ups + rotating quotes ---- */
+    /* ---- restored sections: their own rotator groups ----
+       Separate selectors on purpose. These cards are not .aa-track or
+       .aa-layer, so they spotlight independently instead of joining the
+       training and pyramid groups. */
+    rotator([].slice.call(root.querySelectorAll('.aa-proof__card')));
+    rotator([].slice.call(root.querySelectorAll('.aa-stack__row')));
+    rotator([].slice.call(root.querySelectorAll('.aa-step')));
+
+    /* ---- 07 results: stat count-ups + rotating quotes ---- */
     var stats = [].slice.call(root.querySelectorAll('.aa-stat__num'));
     if (stats.length) {
       onceInView(root.querySelector('.aa-stats'), function () {
@@ -452,10 +605,15 @@ function aa_home_js() {
           var p = Math.min(1, (t - t0) / dur);
           var eased = 1 - Math.pow(1 - p, 3);
           stats.forEach(function (el) {
+            // The last frame restores the markup's own string rather than
+            // reformatting it. The source is the translated copy — "2 500+"
+            // on the French page — and toLocaleString() would otherwise
+            // group it by the *visitor's* locale, not the page's.
+            if (p >= 1 || reduce) { el.textContent = el.getAttribute('data-final'); return; }
             var v = parseFloat(el.getAttribute('data-value')) || 0;
             var pre = el.getAttribute('data-prefix') || '';
             var suf = el.getAttribute('data-suffix') || '';
-            el.textContent = pre + Math.round(v * (reduce ? 1 : eased)).toLocaleString() + suf;
+            el.textContent = pre + Math.round(v * eased).toLocaleString(lang) + suf;
           });
           if (p < 1 && !reduce) requestAnimationFrame(step);
         }
