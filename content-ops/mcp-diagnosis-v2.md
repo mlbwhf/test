@@ -87,3 +87,28 @@ desktop window.
 If mobile caching is off while a desktop copy of the page is cached, phones receive
 desktop-rendered HTML with no mobile menu markup in it — which would explain why none of
 the CSS or JS changes made any difference on mobile.
+
+---
+
+## Correction, 2026-08-24 (later)
+
+**LiteSpeed Cache is DEACTIVATED on report-ai.org.** I inferred it was active from
+`wp_list_plugins`, which returns only name and version — never activation status. That
+inference was wrong and it propagated into the Hostinger and Meow Apps tickets, both now
+corrected.
+
+Consequences:
+
+- Every "LiteSpeed buffering / LiteSpeed REST caching / Cache Mobile" line of inquiry is
+  **void**. There is no page cache on this site.
+- The edge is Hostinger's CDN only, and it reports `x-hcdn-cache-status: DYNAMIC` with no
+  `Age` and no `Cache-Control` — HTML is not cached at the edge either.
+- The remaining MCP questions still stand, but only the **hcdn idle-limit** and
+  **PHP/LSAPI worker recycling** ones. Drop the LiteSpeed items from the escalation.
+
+**The mobile menu is confirmed a render-time problem, not delivery.** The HTML served to
+phones contains the viewport meta, `#mobile-menu-control-wrapper`, and two
+`button.menu-toggle` elements. GeneratePress emits one responsive document for all
+devices, so there is no desktop/mobile variant for any cache to get wrong. Something in
+CSS or JS is hiding the toggle at render time — most plausibly our own WPCode snippet,
+since it is the only custom CSS touching the header.

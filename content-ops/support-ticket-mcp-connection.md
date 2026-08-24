@@ -20,8 +20,8 @@ is at the hosting/WAF layer rather than in the plugin.
 | MCP server name | `set_up_the_agent` |
 | Client | Claude (remote MCP connector over HTTPS) |
 | Host | Hostinger |
-| Cache | LiteSpeed Cache 7.9 |
-| Other relevant plugins | Jetpack 16.0.1, WPCode Lite 2.3.8, Code Snippets 3.9.6, Security Optimizer 1.6.5, Hostinger Tools 3.0.74 |
+| Cache | **None active** — LiteSpeed Cache is installed but DEACTIVATED. Edge is Hostinger CDN (`server: hcdn`), reporting `x-hcdn-cache-status: DYNAMIC` (HTML not edge-cached) |
+| Other relevant plugins | Jetpack 16.0.1, WPCode Lite 2.3.8, Code Snippets 3.9.6, Hostinger Tools 3.0.74 |
 
 ## Symptom
 

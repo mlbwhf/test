@@ -64,7 +64,7 @@ changelog touches MCP; note your Pro licence if you have one.
 | Site | https://report-ai.org |
 | Plugin | **AI Engine 3.7.0** (provides the MCP server) |
 | Client | Claude remote MCP connector, over HTTPS |
-| Host | Hostinger + LiteSpeed Cache 7.9 |
+| Host | Hostinger (CDN `hcdn`). LiteSpeed Cache is installed but **deactivated** — no page cache in play |
 
 ## Symptom
 
@@ -102,7 +102,7 @@ resuming after a pause was when the connection was found dead.
    extended or refreshed automatically?
 3. Does the plugin **log MCP session starts, ends, and disconnect reasons**? If so, how
    do we enable that? The server's view of these disconnects is the missing piece.
-4. Are there known interactions with **LiteSpeed Cache** or PHP **output buffering**
+4. Are there known interactions with PHP **output buffering** or a reverse-proxy CDN
    that would truncate or close a long-lived response early? Should we exclude the MCP
    endpoint from caching, and if so what is the exact path?
 5. Is there a recommended **idle timeout** value for hosts to configure on `/wp-json/`
