@@ -69,17 +69,49 @@ retire the section permanently, delete the block in the editor.
 
 ## Reading the grid
 
-Each class is a **stripe spanning its days** — a four-day SPC is one continuous
-band across four cells, rounded only at the true start and end, so a class that
-crosses a week boundary continues on the next row in the same lane. Clicking a
-stripe goes to our own registration: `#enroll` on the page it sits on, or the
-course page when the calendar is a hub calendar. The legend lists every course
-with a class in the visible month.
+Each class is a **labelled bar spanning its real days** — a four-day SPC is one
+bar four cells wide carrying its code, course name and a `4d` chip. A class
+crossing a Saturday renders as one bar per week row; overlapping classes pack
+into lanes so nothing ever covers anything else. One-day classes show the code
+only. Past cohorts dim to 55% and lose the hover lift.
 
-Overlapping classes stack in lanes: five on the wide hub calendars, three on
-the compact mini. Anything beyond that shows as a **`+N`** on the day rather
-than disappearing — the legend still names those courses, so a silently
-dropped class would have the grid contradicting the legend below it.
+**Hover or tab to a bar** and a preview card opens below it — track, course,
+dates, hours, price and seats, ending in "Click to open". No click needed, and
+keyboard focus behaves exactly like hover. Near the edge of the window the card
+flips rather than opening off-screen.
+
+**Click a bar** and that cohort opens in the panel beside the calendar:
+description, a fact grid (dates · schedule · credits or instructor · seats
+left), what's included, the price, and the register button. Seats of 6 or fewer
+turn red. The panel is `aria-live`, so a screen reader hears the change.
+
+Below ~1024px the panel moves under the calendar and scrolls into view on
+select. Below ~720px the month grid is replaced by a vertical agenda list of
+the same cohorts — a 7-column grid is unusable at phone width.
+
+### Registration
+
+The register button never collects anything itself. On a page that already has
+the enrol form it scrolls to `#enroll` and pre-selects the cohort through the
+same `AA_PICK` bridge the cohort cards use. On a hub page, where there is no
+form, it deep-links the course page's enrol section as
+`/training/adv-safe/aspc/?cohort=101#enroll` — the `?cohort=` the form's
+populator already reads. There is no second registration path and no second
+payment path.
+
+### Prices
+
+The panel shows a price **only** when the cohort's event carries a `price`
+meta. That is deliberate: a cohort's price is a property of the cohort
+(early-bird, group rates), and the prices in `redesign-build/courses.json` are
+all stale — every one of the 13 disagrees with its live course page (SA 850 vs
+997, ASPC 2495 vs 2899, ARCH 1295 vs 2200). With no `price` meta the panel
+shows no price and the button sends the visitor to the course page, where the
+authoritative number lives. **Fix `courses.json` before wiring it back in.**
+
+`seats_left`, `hours` and `instructor` work the same way — populate the meta
+and the fact appears; leave it empty and the fact is omitted rather than shown
+as "TBC".
 
 ## Course slugs
 
