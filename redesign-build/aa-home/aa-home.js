@@ -31,7 +31,14 @@
     });
     set(0);
     if (!reduce) {
-      timer = setInterval(function () { if (!paused) set(idx + 1); }, ROTATE_MS);
+      // The timer only starts once the group scrolls into view, and skips
+      // ticks while the tab is hidden — five rotators toggling classes in
+      // off-screen sections or a background tab is pure wasted work.
+      onceInView(items[0], function () {
+        timer = setInterval(function () {
+          if (!paused && !document.hidden) set(idx + 1);
+        }, ROTATE_MS);
+      });
     }
     return { set: set, stop: function () { clearInterval(timer); } };
   }
