@@ -1,50 +1,55 @@
 # Home page — install
 
-Supersedes every earlier instruction. Three snippets installed **once**, then
-one block pasted per language.
-
-There is no PHP snippet for the CSS or the JS any more. That approach — a
-26 KB stylesheet and 9 KB of JavaScript embedded inside a PHP heredoc — was
-one 38 KB paste that had to survive intact or the whole page lost its styling,
-and it did not survive. WPCode has native CSS and JS snippet types; they do
-not go through `wp_kses`, so `<style>`/`<script>` stripping was never a reason
-to use PHP for them in the first place.
+Supersedes every earlier instruction. The CSS goes into **Additional CSS**,
+your existing canonical stylesheet — not a separate snippet. One JS snippet
+and one PHP snippet in WPCode, matching the "AA – Nav JS" pattern already
+in place. Everything is installed **once** and serves `/`, `/es/` and `/fr/`.
 
 ---
 
-## 1. WPCode → CSS Snippet — `redesign-build/aa-home/aa-home.css`
+## 1. Additional CSS — two pastes into the v21 sheet
 
-* **Add Snippet → Add Your Custom Code → CSS Snippet**
-* Paste the whole file.
-* **Auto Insert**, **Site Wide Header**. No conditional logic.
-* Save + Activate.
+Appearance → Customize → Additional CSS:
 
-Site-wide is safe and deliberate: every selector in the file is scoped under
-`.aa`, verified by script — nothing outside the home page block can be
-affected. It also means `/`, `/es/` and `/fr/` are covered without any
-page-targeting rules to get wrong.
+1. **Top of the sheet**, directly under the existing Newsreader `@import`,
+   add this line (an `@import` is invalid anywhere else in the sheet):
 
-## 2. WPCode → JS Snippet — `redesign-build/aa-home/aa-home.js`
+   ```css
+   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
+   ```
+
+2. **Very end of the sheet**, paste the whole of
+   `snippets/additional-css-home-section.css` (section **Y. HOME PAGE**).
+
+Publish, purge cache, hard-refresh. Same perf caveat as your Newsreader
+import: the better long-term home for both fonts is Customizer → Typography,
+after which both `@import` lines can be deleted.
+
+Why this is safe in the shared sheet: every selector in section Y is scoped
+under `.aa` (verified by script, zero exceptions). The three class names it
+shares with the course template — `.aa-hero`, `.aa-stats`, `.aa-quotes` — are
+all `.aa-rd`-scoped on the template side, so neither sheet can reach the
+other. Verified by rendering the home pages with the v21 rules loaded first:
+no interference, and v21's own `body:has(.aa-hero)` rule hides the stock
+page title on the home pages as a bonus.
+
+## 2. WPCode → JavaScript Snippet — "AA – Home JS"
 
 * **Add Snippet → Add Your Custom Code → JavaScript Snippet**
-* Paste the whole file.
-* **Auto Insert**, **Site Wide Footer**. No conditional logic.
-* Save + Activate.
+* Paste the whole of `redesign-build/aa-home/aa-home.js`.
+* **Auto Insert**, **Site Wide Footer**, no conditional logic. Save + Activate.
 
-Also safe site-wide: the script's first action is
-`if (!document.querySelector('.aa')) return;`, so on every other page it does
-nothing.
+Safe site-wide, same as AA – Nav JS: its first action is
+`if (!document.querySelector('.aa')) return;` so it does nothing on every
+other page. Do NOT paste this into a Custom HTML block — the editor rewrites
+`&&` to `&#038;&#038;` there and the script dies on a SyntaxError.
 
 ## 3. WPCode → PHP Snippet — `aa-home-cohorts-wpcode-snippet.php`
 
-This one has to be PHP — it reads the events feed. It is small.
-
-* **Add Snippet → Add Your Custom Code → PHP Snippet**
-* Paste the whole file. **Auto Insert**, **Run Everywhere**. Save + Activate.
-* It only registers a shortcode, so it costs nothing on pages that never use it.
-
-Update this snippet if the cohort panel shows English dates on `/es/` or
-`/fr/` — the `lang` attribute is only understood by the current version.
+* Update the existing cohorts snippet to the current file (full replacement).
+* **Auto Insert**, **Run Everywhere**. It only registers a shortcode.
+* The current version understands `lang="es|fr"` — the older one renders the
+  cohort cards in English on the translated pages.
 
 ---
 
@@ -57,38 +62,47 @@ Update this snippet if the cohort panel shows English dates on `/es/` or
 | `/fr/` (page 29281) | `snippets/pages/translations/home-fr.html` |
 
 For each: edit the page, put the whole file into a single **Custom HTML**
-block, replacing whatever is in that block. These files contain no
+block, replacing that block's contents. The files carry no
 `<!-- wp:html -->` wrapper — that is a block-editor delimiter, and pasting it
-*inside* a Custom HTML block nests one html block inside another. Both `/es/`
-and `/fr/` are in that state right now.
+inside a Custom HTML block nests one html block inside another (both `/es/`
+and `/fr/` are in that state now).
 
 ### `/es/` and `/fr/` need one extra step
 
 Both pages currently hold **two** top-level blocks:
 
-1. a Group block with class `aa-rd` — the previous Spanish/French page: its own
-   header bar, its own hero, and a "Cursos disponibles" / course grid of six
-   badge cards;
-2. the Custom HTML block with the new page.
+1. a Group block with class `aa-rd` — the previous Spanish/French page: its
+   own header bar, hero, and the old six-card course grid;
+2. the Custom HTML block.
 
-Replacing the second does not touch the first, which is why the old course
-cards are still showing above the new ones. **Delete the `aa-rd` Group block.**
-Open the block list (the outline icon, top left of the editor), select the
-first Group, delete it.
-
-That Group also still carries the "4.9/5" rating claim that was removed
-everywhere else on the site, so it needs to go regardless.
+Replacing the second never touches the first — that is why the old course
+cards still show above the new page. **Delete the `aa-rd` Group block**: open
+the block outline (list icon, top-left), select the first Group, delete. It
+also still carries the "4.9/5" rating claim removed everywhere else.
 
 ---
 
+## Mobile / SEO / LLM — what is in place
+
+* **Mobile**: verified at 390px in Chromium — no horizontal overflow, cards
+  stack, the ticker and pyramid collapse; hit targets ≥44px;
+  `prefers-reduced-motion` honoured in both section Y and your global Z rule.
+* **SEO**: one `<h1>`, sections under `<h2>` with `aria-labelledby`;
+  Organization + Person JSON-LD localised per language (`inLanguage`,
+  `/es/`-scoped `@id`s); Course/CourseInstance JSON-LD emitted by the cohorts
+  shortcode always matches the dates actually printed; no `aggregateRating`
+  or invisible-FAQ markup anywhere; all images carry `alt` and `loading="lazy"`.
+* **LLM-readable**: every word is real text in the DOM — the hover panels'
+  copy is also in `data-report`/`data-dim` attributes, the stat numbers are
+  server-rendered text that JS merely animates, and the cohort dates are
+  rendered server-side by PHP, not injected.
+* Worth adding when convenient (site-level, not in these files): `hreflang`
+  alternates between `/`, `/es/` and `/fr/` — AIOSEO can emit these.
+
 ## Checking it worked
 
-* View `/` — the hero should be two columns, cohort dates on the right.
-* View `/es/` — same layout, Spanish dates (`22–25 ago`), no course-badge grid
-  above the hero.
-* If the page renders as a single column of unstyled text, the **CSS snippet**
-  is not active — that is the only thing that produces that symptom.
-* If the layout is right but nothing animates on hover, the **JS snippet** is
-  not active.
-* If the cohort panel is empty or in English on `/es/`, the **PHP snippet** is
-  missing or is the older version.
+* `/` — two-column hero, cohort dates on the right, sections animate on hover.
+* `/es/` — same layout, dates like `22–25 ago`, no old course grid above.
+* Unstyled single column of text → the **Additional CSS section** didn't go
+  live (or cache not purged). Layout right but nothing moves → the **JS
+  snippet**. Cohort panel empty or in English on `/es/` → the **PHP snippet**.

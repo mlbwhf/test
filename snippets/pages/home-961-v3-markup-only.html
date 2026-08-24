@@ -6,16 +6,16 @@
      strips both out of a Custom HTML block. The CSS and the JS are installed
      once, separately, as WPCode CSS and JS snippets — see INSTALL.md.
 
-     Needs, installed once and serving every language:
-       1. WPCode  CSS Snippet  — aa-home.css
-       2. WPCode  JS Snippet   — aa-home.js
-       3. WPCode  PHP Snippet  — aa-home-cohorts-wpcode-snippet.php
+     Needs, installed once and serving every language (see INSTALL.md):
+       1. Additional CSS — section Y appended + fonts @import at the top
+       2. WPCode JS Snippet  "AA - Home JS"  — aa-home.js
+       3. WPCode PHP Snippet — aa-home-cohorts-wpcode-snippet.php
      ============================================================ -->
 
 <!--
   Agile Agilist — home page markup, sections 01–09.
   Paste into a WordPress Custom HTML block / Divi Code module, or a page template.
-  Requires the aa-home.css and aa-home.js WPCode snippets (see INSTALL.md).
+  Requires the Additional CSS home section + the AA - Home JS snippet (INSTALL.md).
   Every section can be split out at the "SECTION" comments and used independently,
   as long as the wrapping <div class="aa"> is preserved around each piece.
   All copy is present in the DOM (no JS-injected content) for SEO/LLM readability.
