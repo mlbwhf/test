@@ -221,7 +221,12 @@ add_action( 'wp_head', function () {
 	@media(max-width:768px){
 		.tai-utility{ display:none; }
 		.site-header .inside-header{ display:flex!important; }
-		.menu-toggle{ min-width:44px; min-height:44px; border:1px solid #e6e6ea; background:#fff; color:#111114; }
+		/* Specificity note: GP's generate-style-inline-css sets
+		   .main-navigation .menu-toggle { color: var(--base-3) } = #fff at (0,2,0),
+		   and button.menu-toggle { background-color: transparent } at (0,1,1).
+		   A bare .menu-toggle rule (0,1,0) loses both — the toggle renders white on
+		   the white header and looks absent. Match GP's specificity and win on order. */
+		.main-navigation .menu-toggle{ min-width:44px; min-height:44px; border:1px solid #e6e6ea; background:#fff; color:#111114; }
 		.main-navigation .sub-menu{ width:100%; margin-top:0; border:none; }
 		.main-navigation .main-nav ul li a{ min-height:44px; font-size:17px; font-weight:700; padding:12px 16px; border-bottom:1px solid #e6e6ea; }
 		.main-navigation .sub-menu a{ font-size:15px; font-weight:600; padding:11px 16px; border-bottom:none; }
