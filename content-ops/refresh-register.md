@@ -16,8 +16,8 @@ against its primary source in this workstream.
 |---|---|---|---|---|
 | `/indexes/technical-benchmarks/best-ai-models-2026/` | Intelligence Index composite (58.9), SWE-bench Pro (69.2%), all 9-criteria ratings | Artificial Analysis / LMArena / SWE-bench — leaderboards shift weekly; the page itself says so | 2026-07 | ⏳ |
 | `/indexes/ai-economics/llm-token-price-index/` | ~280× drop, ~10×/yr rate, per-model $/M tokens | Provider price lists — change without notice | 2026-08-05 | ⏳ |
-| `/reports/ai-data-center-cost/` | ~$250B guarantee, ~$350B chip financing, $30–40B phase one | **Deal terms under active negotiation** — page states they may change | 2026-08-18 | ⏳ |
-| `/reports/meta-blackrock-off-balance-sheet-ai-financing/` | 80/20 split, $14.3B, $12.5B notes, lease terms | Transaction documents may be amended; watch for deal #3 | 2026-08-18 | ⏳ |
+| `/reports/ai-data-center-cost/` | ~~$250B~~ **$105B** guarantee (phase one only), ~$350B chip financing, $30–40B phase one | **Deal terms under active negotiation** — page states they may change | **2026-08-24 — UPDATED** | ✅ |
+| `/reports/meta-blackrock-off-balance-sheet-ai-financing/` | 80/20 split, $14.3B, $12.5B notes, lease terms | Transaction documents may be amended; watch for deal #3 | 2026-08-24 (Nvidia comparison figure updated; Meta terms unchanged) | ✅ |
 | `/indexes/ai-economics/ai-bubble-tracker/` | Valuation and capex markers | Market-sensitive by definition | unknown | ⚠️ |
 | Homepage "Figure of the week" (page 6) | Featured figure + 4-year series | Weekly by design — swap the WEEKLY-EDIT lines | 2026-08-22 | ✅ |
 
@@ -53,16 +53,25 @@ against its primary source in this workstream.
 
 ---
 
-## Immediate queue (first pass, when the connector returns)
+## First pass — run 2026-08-24
+
+**1. `/reports/ai-data-center-cost/` — UPDATED. Material change found.**
+The Nvidia guarantee was cut from ~$250B to **up to $105B**, and now covers only the
+project's first phase (~5GW of 10GW), after investors raised concerns about Nvidia's
+risk exposure. Reported by WSJ 14 Aug, corroborated by Reuters and Fortune (18 Aug).
+Actions taken: stat tile, intro, Analysis, financing-loop section, methodology note and
+JSON-LD `dateModified` all updated; "What changed" block added with the previous value
+retained; visible stamp now "Published 18 Aug · Updated 24 Aug". The same figure was
+corrected in the Meta/BlackRock report, which cited it as a comparison.
+*Editorial note:* the cut strengthens the report's thesis — Nvidia pulled back precisely
+because the circular-financing risk the piece describes was questioned by its investors.
+
+**2. `/reports/meta-blackrock-off-balance-sheet-ai-financing/`** — Meta/BlackRock terms
+unchanged; no third JV found. Nvidia comparison figure corrected. Still watch for deal #3.
+
+## Remaining queue
 
 Ordered by risk — highest first:
-
-1. **`/reports/ai-data-center-cost/`** — the Nvidia guarantee and chip financing were
-   "in talks" at publication. Anything from a definitive agreement to a collapse (the
-   earlier $100B commitment already collapsed once) changes the piece materially.
-2. **`/reports/meta-blackrock-off-balance-sheet-ai-financing/`** — check for a third
-   JV. The report's own argument is "watch for deal three"; if it happened, we should
-   be first to say so.
 3. **`/indexes/technical-benchmarks/best-ai-models-2026/`** — ratings are stamped
    July 2026 and the page admits leaderboards shift weekly. Currently our most
    visibly-dated page.
