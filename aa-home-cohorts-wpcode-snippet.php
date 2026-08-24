@@ -115,6 +115,45 @@ function aa_home_cohort_url( $slug, $url, $lang ) {
 	return '/' . $lang . '/' . $slug . '/';
 }
 
+/**
+ * Resolve the priority list to its upcoming events, cached twice over.
+ *
+ * Uncached, one home page view costs up to 16 event queries: 8 courses, each
+ * a term lookup plus a meta-ordered get_posts, and the shortcode runs twice
+ * per page (cards + ticker). The per-request memo collapses the second run to
+ * zero; the 10-minute transient collapses repeat views to zero. The key
+ * carries the Eastern day so a cached payload can never leak yesterday's
+ * "starts today" across midnight, and a newly added event appears within
+ * 10 minutes. debug="1" bypasses both caches.
+ *
+ * Only slug + event facts are stored — names/URLs are re-read from the
+ * catalog on render, so editing this file never serves stale copy.
+ */
+function aa_home_cohort_rows( $courses, $limit, $now, &$dbg, $fresh = false ) {
+	static $memo = array();
+	$key = 'aa_home_cohorts_' . md5( $courses . '|' . $limit . '|' . gmdate( 'Ymd', $now ) );
+	if ( ! $fresh ) {
+		if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
+		$cached = get_transient( $key );
+		if ( is_array( $cached ) ) {
+			$dbg[] = '(served from transient cache)';
+			return $memo[ $key ] = $cached;
+		}
+	}
+	$catalog = aa_home_cohort_catalog();
+	$rows = array();
+	foreach ( array_filter( array_map( 'trim', explode( ',', $courses ) ) ) as $slug ) {
+		if ( count( $rows ) >= $limit )     { break; }
+		if ( ! isset( $catalog[ $slug ] ) ) { $dbg[] = $slug . ': not in catalog'; continue; }
+		$next = aa_home_next_cohort( $slug, $now );
+		if ( ! $next ) { $dbg[] = $slug . ': no upcoming event'; continue; }
+		$rows[] = array( 'slug' => $slug, 'e' => $next );
+		$dbg[]  = $slug . ': ' . gmdate( 'Y-m-d', $next['start'] );
+	}
+	set_transient( $key, $rows, 10 * MINUTE_IN_SECONDS );
+	return $memo[ $key ] = $rows;
+}
+
 /** Next upcoming event for one course slug, or null. */
 function aa_home_next_cohort( $slug, $now ) {
 	$term = get_term_by( 'slug', $slug, 'event_category' );
@@ -207,16 +246,8 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	$now     = $today->getTimestamp();
 	$limit   = max( 1, (int) $a['limit'] );
 
-	$rows = array();
 	$dbg  = array();
-	foreach ( array_filter( array_map( 'trim', explode( ',', $a['courses'] ) ) ) as $slug ) {
-		if ( count( $rows ) >= $limit )  { break; }
-		if ( ! isset( $catalog[ $slug ] ) ) { $dbg[] = $slug . ': not in catalog'; continue; }
-		$next = aa_home_next_cohort( $slug, $now );
-		if ( ! $next ) { $dbg[] = $slug . ': no upcoming event'; continue; }
-		$rows[] = array( 'slug' => $slug, 'c' => $catalog[ $slug ], 'e' => $next );
-		$dbg[]  = $slug . ': ' . gmdate( 'Y-m-d', $next['start'] );
-	}
+	$rows = aa_home_cohort_rows( $a['courses'], $limit, $now, $dbg, (bool) $a['debug'] );
 
 	if ( empty( $rows ) ) {
 		if ( $a['part'] === 'ticker' ) { return ''; }
@@ -233,7 +264,10 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	$today = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
 	$today->setTime( 0, 0, 0 );
 	foreach ( $rows as $r ) {
-		$c = $r['c']; $e = $r['e'];
+		// cached rows carry only the slug — a slug cached before a catalog
+		// edit that removed it is skipped rather than fataling
+		if ( ! isset( $catalog[ $r['slug'] ] ) ) { continue; }
+		$c = $catalog[ $r['slug'] ]; $e = $r['e'];
 		$range = aa_home_date_range( $e['start'], $e['end'], $c['days'], $str );
 		$startD = ( new DateTime( '@' . $e['start'] ) )->setTimezone( new DateTimeZone( 'America/New_York' ) );
 		$iso   = $startD->format( 'Y-m-d' );
