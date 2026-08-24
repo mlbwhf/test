@@ -40,6 +40,21 @@ I'll check LiteSpeed Cache → Cache → Mobile myself and purge. Thanks for poi
 
 # 2 — Ticket for Meow Apps (AI Engine)
 
+## 2a. SHORT VERSION — for the 280-character support form (264 chars)
+
+```
+AI Engine 3.7.0 MCP: remote client session drops after idle gaps, then recovers alone. Host logs show all MCP POSTs 200/204, no 4xx — requests aren't failing, the stream is. Does the MCP server send keepalive frames while idle? Is the session timeout configurable?
+```
+
+If the form has a URL field, link to the full version below. If 280 chars proves too
+limiting, post the full version on the **wordpress.org AI Engine support forum**
+(no length limit, developer is active there) and reference it from the form.
+
+Before sending: check for an AI Engine release newer than 3.7.0 and update if the
+changelog touches MCP; note your Pro licence if you have one.
+
+## 2b. FULL VERSION — for the forum or a follow-up email
+
 **Subject:** AI Engine 3.7.0 — MCP session drops during idle periods (server returns 200/204)
 
 ## Environment
