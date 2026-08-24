@@ -1,0 +1,30 @@
+/* ############################################################################
+   W.1 — AGENDA FILLS THE HERO  (paste at the VERY END of Additional CSS)
+   ----------------------------------------------------------------------------
+   Fixes the blank white block inside the "Upcoming sessions" card on course
+   pages (seen on ASPC). Section W stretches the agenda card to the pitch
+   column's height (align-items:stretch) but caps the session list at 572px —
+   on a tall page the difference renders as dead space under the card footer
+   (browser-measured: 450px of it on ASPC, with rows 10-12 hidden behind a
+   scroll).
+
+   Fix: in the two-column layout, let the list fill whatever height the card
+   is given — more sessions become visible instead of white space, and the
+   footer sits at the card's bottom edge. flex-basis:0 keeps the list's
+   intrinsic contribution at the 420px floor, so a page with a SHORT pitch
+   column is not inflated by a long session list (verified: a 500px column
+   stays 500px). Below 901px the layout is single-column and this rule is
+   inert — the existing 572px cap still governs mobile.
+
+   Verified in-browser against the section-W rules: 12-row list on a 1100px
+   pitch column goes from 9 rows + 450px blank to 12 rows + footer flush.
+   Applies to every page using the Meridian course hero (ASPC, RTE, ...).
+   ############################################################################ */
+@media (min-width:901px){
+  .aa-rd .aa-agenda-list{
+    flex:1 1 0;
+    min-height:420px;
+    max-height:none;
+  }
+}
+/* ==================== END — W.1 agenda fills the hero ==================== */
