@@ -30,27 +30,57 @@
  * every page that embeds them switches to this calendar with no page edits.
  * Deactivating the snippet hands them straight back to the Xylus plugin.
  *
+ * The takeover keeps each page's own category= list, so the hub calendars
+ * stay scoped to their track: /training/adv-safe/ shows only the five
+ * advanced courses, /training/safe/ only the seven role courses. Two pages
+ * carry no calendar at all — see aa_mcal_hidden_slugs() at the bottom.
+ *
  * The events query is cached the same way as [aa_home_cohorts]: per-request
  * memo + 10-minute transient keyed by the Eastern day.
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-/** Course palette + destinations. Falls back to the term slug uppercased. */
+/**
+ * Course palette + destinations, keyed by event_category slug.
+ *
+ * The keys are the term slugs the pages actually pass to the calendar
+ * shortcode, not the course-page slugs — those differ (event "sasm" lives at
+ * /training/safe/asm/, event "sp" at /training/safe-industry/team-practitioner/).
+ * "asm" is kept as an alias because older embeds pass that spelling.
+ *
+ * An unlisted slug still renders: it falls back to the slug uppercased, the
+ * house teal, and /training/. The two SAFe-for-Hardware terms (shwa, shwp) are
+ * deliberately absent — the term slugs do not map unambiguously onto the two
+ * hardware course pages, and the page that used them no longer shows a
+ * calendar. Add them here if that changes.
+ */
 function aa_mcal_catalog() {
 	return array(
+		// Advanced track — /training/adv-safe/
 		'aspc' => array( 'code' => 'ASPC', 'color' => '#0B2E35', 'url' => '/training/adv-safe/aspc/' ),
 		'spc'  => array( 'code' => 'SPC',  'color' => '#127E88', 'url' => '/training/adv-safe/spc/' ),
 		'rte'  => array( 'code' => 'RTE',  'color' => '#3E7CB1', 'url' => '/training/adv-safe/rte/' ),
 		'lpm'  => array( 'code' => 'LPM',  'color' => '#D9A93E', 'url' => '/training/adv-safe/lpm/' ),
 		'apm'  => array( 'code' => 'APM',  'color' => '#8E5BA6', 'url' => '/training/adv-safe/apm/' ),
-		'popm' => array( 'code' => 'POPM', 'color' => '#C2571B', 'url' => '/training/safe/popm/' ),
-		'ssm'  => array( 'code' => 'SSM',  'color' => '#4E8F5B', 'url' => '/training/safe/scrum-master/' ),
+		// Role track — /training/safe/
 		'sa'   => array( 'code' => 'SA',   'color' => '#B04A5A', 'url' => '/training/safe/sa/' ),
-		'asm'  => array( 'code' => 'SASM', 'color' => '#5A6ACF', 'url' => '/training/safe/asm/' ),
+		'ssm'  => array( 'code' => 'SSM',  'color' => '#4E8F5B', 'url' => '/training/safe/scrum-master/' ),
+		'popm' => array( 'code' => 'POPM', 'color' => '#C2571B', 'url' => '/training/safe/popm/' ),
 		'sdp'  => array( 'code' => 'SDP',  'color' => '#3B8EA5', 'url' => '/training/safe/devops/' ),
+		'sasm' => array( 'code' => 'SASM', 'color' => '#5A6ACF', 'url' => '/training/safe/asm/' ),
+		'asm'  => array( 'code' => 'SASM', 'color' => '#5A6ACF', 'url' => '/training/safe/asm/' ),
+		'bo'   => array( 'code' => 'BO',   'color' => '#9B7B2F', 'url' => '/training/safe/bo/' ),
+		// Industry track — /training/safe-industry/
 		'arch' => array( 'code' => 'ARCH', 'color' => '#7A6C5D', 'url' => '/training/safe-industry/arch/' ),
 		'ase'  => array( 'code' => 'ASE',  'color' => '#2F6B4F', 'url' => '/training/safe-industry/ase/' ),
+		'sp'   => array( 'code' => 'SP',   'color' => '#6F8F3E', 'url' => '/training/safe-industry/team-practitioner/' ),
+		'sagov' => array( 'code' => 'SA-GOV', 'color' => '#8C4F2B', 'url' => '/training/safe-industry/sa-gov/' ),
+		// Micro-credentials — /training/safe-found/
+		'micro-conflict' => array( 'code' => 'CONFLICT', 'color' => '#5C6B7A', 'url' => '/training/safe-found/conflict-collaboration/' ),
+		'micro-vsm'      => array( 'code' => 'VSM',      'color' => '#41746B', 'url' => '/training/safe-found/value-stream-mapping/' ),
+		'micro-rai'      => array( 'code' => 'RAI',      'color' => '#7D5BA6', 'url' => '/training/safe-found/responsible-ai-safe/' ),
+		'micro-gov'      => array( 'code' => 'GOV',      'color' => '#A0692E', 'url' => '/training/safe-found/agile-contracting-government/' ),
 	);
 }
 
@@ -218,6 +248,7 @@ function aa_mcal_render( $atts ) {
 .aa-mcal-band.is-end{border-radius:0 99px 99px 0;margin-right:3px}
 .aa-mcal-band.is-start.is-end{border-radius:99px;margin:0 3px}
 .aa-mcal-band.is-pad{visibility:hidden}
+.aa-mcal-more{font-size:9px;line-height:1;color:#5E7B82;padding-left:3px;letter-spacing:.02em}
 .aa-mcal-empty{padding:18px 12px;text-align:center;font-size:12.5px;color:#88A0A4}
 .aa-mcal-legend{display:flex;flex-wrap:wrap;gap:6px 12px;padding:8px 12px 10px;border-top:1px solid #EEF5F5}
 .aa-mcal-key{display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;
@@ -277,7 +308,11 @@ function build(root){
       for(var L=0;;L++){ lanes[L]=lanes[L]||[];
         if(lanes[L].every(function(o){ return v.s>o.e || v.e<o.s; })){ lanes[L].push(v); v.lane=L; break; } }
     });
-    var nLanes=Math.min(lanes.length,3);
+    // The compact mini sits beside a course pitch and has room for three
+    // bands; the wide hub calendar carries a whole track (seven courses on
+    // /training/safe/) and needs more before it starts hiding classes.
+    var MAXL=root.classList.contains('aa-mcal--wide')?5:3;
+    var nLanes=Math.min(lanes.length,MAXL);
     var h='<div class="aa-mcal-head"><div class="aa-mcal-title">'+S.months[mo]+' '+y+'</div>'
       +'<div class="aa-mcal-nav"><button type="button" data-nav="-1" aria-label="'+S.prev+'"'+(view<=now?' disabled':'')+'>&lsaquo;</button>'
       +'<button type="button" data-nav="1" aria-label="'+S.next+'"'+(view>=last?' disabled':'')+'>&rsaquo;</button></div></div>'
@@ -297,6 +332,14 @@ function build(root){
             +' href="'+href(m,v.id)+'" data-s="'+iso(v.s)+'"'
             +(isS?' aria-label="'+m.code+' · '+S.reg+'" title="'+m.code+'"':' aria-hidden="true" tabindex="-1"')+'></a>';
         }
+        // Anything past the last lane would otherwise vanish without trace —
+        // and the legend below still lists its course, so the day would claim
+        // a class the grid does not show. Count the overflow instead.
+        var extra=0;
+        for(var L=nLanes;L<lanes.length;L++){
+          if((lanes[L]||[]).some(function(o){ return date>=o.s && date<=o.e; })){ extra++; }
+        }
+        if(extra){ h+='<span class="aa-mcal-more" title="+'+extra+'">+'+extra+'</span>'; }
         h+='</span>'; }
       h+='</div>';
     }
@@ -360,3 +403,67 @@ add_action( 'init', function () {
 		return aa_mcal_render( array( 'category' => $a['category'], 'lang' => $a['lang'] ) );
 	} );
 }, 99 );
+
+/* ============================================================================
+   PAGES THAT SHOULD CARRY NO CALENDAR AT ALL
+   ----------------------------------------------------------------------------
+   /training/safe-industry/ and /training/safe-found/ each hold a section built
+   around [easy_events_calendar] — an eyebrow, an H2, a sub-line, the calendar,
+   and a hidden [wp_events] feed that exists only to supply it. Suppressing the
+   shortcode alone would leave the heading standing over nothing, so the whole
+   section goes.
+
+   This is done at render time rather than by editing the two pages: the page
+   markup stays exactly as it is, the section is simply never emitted, and
+   deactivating this snippet restores it. Because it is never emitted, it is
+   also gone for crawlers and for anything reading the page as text — which a
+   display:none rule would not achieve.
+
+   To bring a calendar back on one of these pages, delete its slug from
+   aa_mcal_hidden_slugs(). To retire the section for good, delete the block in
+   the editor and this filter stops matching anything.
+   ========================================================================== */
+
+/** Page slugs whose cohorts section is dropped. Both are unique site-wide. */
+function aa_mcal_hidden_slugs() {
+	return array( 'safe-industry', 'safe-found' );
+}
+
+/** True when the page being viewed is one of those. Resolved once per request. */
+function aa_mcal_hide_here() {
+	static $hide = null;
+	if ( $hide !== null ) { return $hide; }
+	$hide = false;
+	if ( ! is_admin() && is_page() ) {
+		$obj = get_queried_object();
+		if ( $obj instanceof WP_Post ) {
+			$hide = in_array( $obj->post_name, aa_mcal_hidden_slugs(), true );
+		}
+	}
+	return $hide;
+}
+
+/** Does this block, or anything nested inside it, embed the big calendar? */
+function aa_mcal_holds_calendar( $block ) {
+	if ( isset( $block['blockName'] ) && $block['blockName'] === 'core/shortcode'
+		&& isset( $block['innerHTML'] ) && strpos( $block['innerHTML'], 'easy_events_calendar' ) !== false ) {
+		return true;
+	}
+	if ( ! empty( $block['innerBlocks'] ) ) {
+		foreach ( $block['innerBlocks'] as $child ) {
+			if ( aa_mcal_holds_calendar( $child ) ) { return true; }
+		}
+	}
+	return false;
+}
+
+add_filter( 'render_block', function ( $html, $block ) {
+	// Cheapest test first — this filter runs for every block on every page.
+	if ( empty( $block['blockName'] ) || $block['blockName'] !== 'core/group' ) { return $html; }
+	if ( ! aa_mcal_hide_here() ) { return $html; }
+	// Only the section wrapper, so the match fires once and not again for the
+	// inner .aa-sechead / .aa-feed-src groups nested inside it.
+	$cls = isset( $block['attrs']['className'] ) ? $block['attrs']['className'] : '';
+	if ( strpos( $cls, 'aa-sec' ) === false ) { return $html; }
+	return aa_mcal_holds_calendar( $block ) ? '' : $html;
+}, 10, 2 );
