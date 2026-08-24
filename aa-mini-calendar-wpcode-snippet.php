@@ -378,10 +378,6 @@ add_shortcode( 'aa_mini_calendar', 'aa_mcal_render' );
 /**
  * TAKEOVER of the old Xylus calendar shortcodes — zero page edits needed.
  *
- * WordPress hands a shortcode to whichever handler registered it LAST, so
- * re-registering these two at a late init priority replaces the Xylus
- * renderers site-wide the moment this snippet is active:
- *
  *   [easy_events_calendar]                the big training-page calendar ->
  *                                         full-width stripes, course links
  *   [easy_event_calendar_mini ...]        the per-course mini -> compact
@@ -389,20 +385,88 @@ add_shortcode( 'aa_mini_calendar', 'aa_mcal_render' );
  *
  * Every page keeps its existing shortcode untouched; deactivating this
  * snippet hands both back to the Xylus plugin — that is the whole undo.
+ *
+ * Done TWO ways, because re-registering alone is not reliable here.
+ *
+ *   1. pre_do_shortcode_tag (the one that actually decides). This filter
+ *      runs immediately before WordPress calls whichever handler is
+ *      registered, and returning anything other than false short-circuits
+ *      that handler. It does not care who registered the tag or when, so it
+ *      works no matter how late WPCode loads this snippet.
+ *
+ *   2. add_shortcode at init:99, kept as a plain re-registration.
+ *
+ * The first attempt used (2) alone, on the reasoning that WordPress hands a
+ * shortcode to whichever handler registered it LAST. That is true, but it
+ * assumes this file is executed before init:99 has already fired — and a
+ * snippet manager that runs its PHP on a later hook silently loses the race,
+ * leaving the old calendar rendering with nothing to show for it. Reproduced:
+ * with init already over, (2) alone hands both tags back to the old plugin,
+ * while (1) takes them over either way. Whether that is what happened on the
+ * live site is unconfirmed — it is simply a failure mode this no longer has.
  */
+function aa_mcal_takeover( $tag, $atts ) {
+	$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, $tag );
+	$args = array( 'category' => $a['category'], 'lang' => $a['lang'] );
+	if ( $tag === 'easy_events_calendar' ) {
+		// The hub-page calendar: full width, stripes link to course pages.
+		$args['link'] = 'course';
+		$args['wide'] = '1';
+	}
+	return aa_mcal_render( $args );
+}
+
+add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
+	if ( $tag === 'easy_events_calendar' || $tag === 'easy_event_calendar_mini' ) {
+		// $attr is '' rather than array() when the shortcode carries none.
+		return aa_mcal_takeover( $tag, is_array( $attr ) ? $attr : array() );
+	}
+	return $short;
+}, 10, 3 );
+
 add_action( 'init', function () {
 	add_shortcode( 'easy_events_calendar', function ( $atts ) {
-		$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, 'easy_events_calendar' );
-		return aa_mcal_render( array(
-			'category' => $a['category'], 'lang' => $a['lang'],
-			'link' => 'course', 'wide' => '1',
-		) );
+		return aa_mcal_takeover( 'easy_events_calendar', $atts );
 	} );
 	add_shortcode( 'easy_event_calendar_mini', function ( $atts ) {
-		$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, 'easy_event_calendar_mini' );
-		return aa_mcal_render( array( 'category' => $a['category'], 'lang' => $a['lang'] ) );
+		return aa_mcal_takeover( 'easy_event_calendar_mini', $atts );
 	} );
 }, 99 );
+
+/**
+ * "Is this snippet actually running?" — [aa_mcal_selftest]
+ *
+ * Drop it on any page while logged in as an administrator. It prints what
+ * this file can see: whether the takeover filter is attached, who currently
+ * owns each old shortcode tag, and whether the current page is on the
+ * suppression list. Nothing renders for logged-out visitors, so it is safe
+ * to leave in place. Answers the one question a screenshot cannot: whether
+ * the old calendar is still showing because the snippet lost, or because
+ * the snippet never ran at all.
+ */
+add_shortcode( 'aa_mcal_selftest', function () {
+	if ( ! current_user_can( 'manage_options' ) ) { return ''; }
+	$owner = function ( $tag ) {
+		global $shortcode_tags;
+		if ( ! isset( $shortcode_tags[ $tag ] ) ) { return 'not registered'; }
+		$cb = $shortcode_tags[ $tag ];
+		if ( is_string( $cb ) ) { return $cb; }
+		if ( is_array( $cb ) ) { return ( is_object( $cb[0] ) ? get_class( $cb[0] ) : $cb[0] ) . '::' . $cb[1]; }
+		return 'closure';
+	};
+	// If this shortcode rendered at all, the file loaded and both filters
+	// were attached with it — they are added unconditionally above. What is
+	// worth printing is who ended up owning the tags, and this page's verdict.
+	$lines = array(
+		'snippet file            : loaded (this box proves it)',
+		'takeover filter         : attached',
+		'easy_events_calendar    : ' . $owner( 'easy_events_calendar' ),
+		'easy_event_calendar_mini: ' . $owner( 'easy_event_calendar_mini' ),
+		'cohorts section here    : ' . ( aa_mcal_hide_here() ? 'suppressed' : 'kept' ),
+	);
+	return '<pre style="font:12px/1.5 monospace;background:#F5FAFA;border:1px solid #CFE3E3;padding:12px;white-space:pre-wrap">'
+		. esc_html( implode( "\n", $lines ) ) . '</pre>';
+} );
 
 /* ============================================================================
    PAGES THAT SHOULD CARRY NO CALENDAR AT ALL
@@ -429,14 +493,28 @@ function aa_mcal_hidden_slugs() {
 	return array( 'safe-industry', 'safe-found' );
 }
 
-/** True when the page being viewed is one of those. Resolved once per request. */
+/**
+ * True when the page whose content is being rendered is one of those.
+ * Resolved once per request.
+ *
+ * Deliberately not gated on is_page(): that is false whenever the content is
+ * rendered outside a normal front-end page view — a REST render, or a cache
+ * being primed through one — and gating on it would let the suppressed
+ * section come back in exactly those contexts, including into a cache entry
+ * later served to visitors. So the queried object is used when there is one
+ * and the post being rendered otherwise. is_admin() still excludes the
+ * editor, where the block must stay visible and editable.
+ */
 function aa_mcal_hide_here() {
 	static $hide = null;
 	if ( $hide !== null ) { return $hide; }
 	$hide = false;
-	if ( ! is_admin() && is_page() ) {
+	if ( ! is_admin() ) {
 		$obj = get_queried_object();
-		if ( $obj instanceof WP_Post ) {
+		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) {
+			$obj = $GLOBALS['post'];
+		}
+		if ( $obj instanceof WP_Post && $obj->post_type === 'page' ) {
 			$hide = in_array( $obj->post_name, aa_mcal_hidden_slugs(), true );
 		}
 	}

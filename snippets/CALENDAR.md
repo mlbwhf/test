@@ -9,10 +9,27 @@ own registration instead of Eventbrite.
 WPCode → **Add Snippet → PHP Snippet** → paste the whole file → **Auto Insert,
 Run Everywhere** → Save + Activate.
 
-No page edits. The snippet re-registers `[easy_events_calendar]` and
-`[easy_event_calendar_mini]` at `init` priority 99, and WordPress hands a
-shortcode to whichever handler registered it last — so every page that already
-embeds one switches over on activation.
+No page edits. The snippet intercepts `[easy_events_calendar]` and
+`[easy_event_calendar_mini]` through `pre_do_shortcode_tag`, which runs just
+before WordPress calls whichever handler is registered — so every page that
+already embeds one switches over on activation, regardless of load order.
+
+### If the old calendar is still showing
+
+Put `[aa_mcal_selftest]` on any page and view it **while logged in as an
+administrator** (it prints nothing for anyone else, so it is safe to leave).
+It reports whether the snippet ran at all and who owns each shortcode tag:
+
+* **Nothing appears** → the snippet is not running. Check it is Activated,
+  set to *Auto Insert · Run Everywhere*, and has no conditional logic
+  attached. This is the usual cause.
+* **Box appears, calendar still old** → the interception is being bypassed
+  by something else on the page; send me the box's contents.
+* **Box appears and says `cohorts section here: suppressed`** on
+  safe-industry / safe-found → that half is working.
+
+Clear any page cache before judging — a cached copy of the page will keep
+serving the old calendar no matter what the snippet does.
 
 Then, once the pages below look right:
 
