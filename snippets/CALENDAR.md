@@ -1,13 +1,28 @@
 # Calendar — install and behaviour
 
-One file: **`aa-mini-calendar-wpcode-snippet.php`**. It replaces the Xylus
-calendar everywhere it appears, driven by our own `wp_events` schedule and our
-own registration instead of Eventbrite.
+The calendar replaces the Xylus calendar everywhere it appears, driven by our
+own `wp_events` schedule and our own registration instead of Eventbrite.
 
-## Install
+## Install — mu-plugin ONLY, never a WPCode paste
 
-WPCode → **Add Snippet → PHP Snippet** → paste the whole file → **Auto Insert,
-Run Everywhere** → Save + Activate.
+> **Do not paste this code into WPCode again.** The copy that was pasted there
+> came out corrupted — its stored tail contains a stray `return false;` that
+> exists in no version of the source — and while that broken snippet was
+> active it also blocked the snippets queued after it, which is why the
+> homepage cohorts died with it and came back the moment it was deactivated.
+> A 40KB paste through a web editor is how this happens; a file upload is not.
+
+Install **`aa-shortcodes-mu-plugin.php`** instead (it carries this calendar
+AND the homepage cohorts):
+
+1. Leave the "mini calendar" WPCode snippet **deactivated** — or delete it.
+2. Upload `aa-shortcodes-mu-plugin.php` into `wp-content/mu-plugins/` using
+   the file manager's **Upload** (not create-and-paste). Confirm the uploaded
+   size matches the local file. It is live immediately; no activation exists.
+3. Every function in that bundle is renamed to an `aamu_` prefix, so it cannot
+   collide with anything still stored in WPCode, active or not, in any order.
+4. If anything ever white-screens: delete the file from `mu-plugins/` and the
+   site is back instantly.
 
 No page edits. The snippet intercepts `[easy_events_calendar]` and
 `[easy_event_calendar_mini]` through `pre_do_shortcode_tag`, which runs just
