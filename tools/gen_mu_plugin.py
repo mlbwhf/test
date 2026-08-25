@@ -77,6 +77,10 @@ HEADER = '''<?php
  * "Your Site is Experiencing a Technical Issue" email WordPress sends the
  * admin — it names the exact file and line of the fatal.
  *
+ * The calendar's CSS and JS are NOT in here — they install as their own
+ * WPCode CSS and JavaScript snippets (snippets/calendar/aa-calendar.css and
+ * aa-calendar.js). This file carries PHP only.
+ *
  * UNINSTALL: delete the file. mu-plugins cannot be deactivated from the admin.
  *
  * DO NOT EDIT HERE. This file is generated from the two sources by

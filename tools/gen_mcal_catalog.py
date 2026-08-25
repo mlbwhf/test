@@ -91,26 +91,20 @@ def php(s):
     return "'" + str(s).replace('\\', '\\\\').replace("'", "\\'") + "'"
 
 
-def course_bullets(c, duration, pdus):
-    """The panel's "What's included" list.
+def num(s):
+    """Leading integer of "3 days" / "60 multiple-choice" / "24 PDUs / SEUs".
 
-    Client copy rule: the certification exam fee IS included and a free retake
-    is NOT — so no retake or pass-guarantee wording is generated here, and none
-    should be added by hand later.
+    Only NUMBERS cross into the catalog; every word around them is added in
+    JS from the locale strings table. Emitting the English phrases meant the
+    Spanish panel read "3 days en vivo" and the French "60 multiple-choice",
+    because those fragments came from courses.json and were never translated.
+
+    courses.json uses «TBC» where a course is not yet specified (STE). That
+    yields 0 here, and the JS omits the bullet — a visitor must never be shown
+    a placeholder token.
     """
-    out = []
-    if duration:
-        out.append('%s live-virtual, instructor-led' % duration)
-    out.append('Certification exam fee included')
-    if pdus:
-        out.append(pdus)
-    exam = c.get('exam')
-    if isinstance(exam, dict):
-        bits = [clean(exam.get('format')), clean(exam.get('duration'))]
-        bits = [b for b in bits if b]
-        if bits:
-            out.append('Exam: ' + ' · '.join(bits))
-    return out
+    m = re.match(r'\s*(\d+)', clean(s) or '')
+    return int(m.group(1)) if m else 0
 
 
 def main():
@@ -121,24 +115,24 @@ def main():
         if c:
             code = c['code']
             name = clean(c.get('cert') or c.get('title'))
-            desc = clean(c.get('hero_sub'), 190)
-            duration = clean(c.get('duration'))
-            pdus = clean(c.get('pdus'))
-            bullets = course_bullets(c, duration, pdus)
+            desc = clean(c.get('hero_sub'), 130)
+            duration = num(c.get('duration'))
+            pdus = num(c.get('pdus'))
+            ex = c.get('exam') if isinstance(c.get('exam'), dict) else {}
+            exam_q = num(ex.get('format'))
+            exam_m = num(ex.get('duration'))
         else:
             code, name = FALLBACK_NAMES.get(term, (term.upper(), term.upper()))
-            desc, duration, pdus, bullets = '', '', '', []
+            desc, duration, pdus, exam_q, exam_m = '', 0, 0, 0, 0
         t = TRACKS[track]
         rows.append(
             "\t\t%-18s => array( 'code' => %-10s 'name' => %s,\n"
             "\t\t\t'track' => %s, 'color' => %s, 'tint' => %s, 'tint_border' => %s,\n"
-            "\t\t\t'url' => %s, 'duration' => %s, 'pdus' => %s,\n"
-            "\t\t\t'bullets' => array(%s),\n"
+            "\t\t\t'url' => %s, 'days' => %d, 'pdus' => %d, 'exam_q' => %d, 'exam_m' => %d,\n"
             "\t\t\t'desc' => %s ),"
             % (php(term), php(code) + ',', php(name),
                php(t[0]), php(t[1]), php(t[2]), php(t[3]),
-               php(url), php(duration), php(pdus),
-               ' ' + ', '.join(php(b) for b in bullets) + ' ' if bullets else '',
+               php(url), duration, pdus, exam_q, exam_m,
                php(desc))
         )
     print("\n".join(rows))

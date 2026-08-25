@@ -3,58 +3,51 @@
 The calendar replaces the Xylus calendar everywhere it appears, driven by our
 own `wp_events` schedule and our own registration instead of Eventbrite.
 
-## Install — mu-plugin ONLY, never a WPCode paste
+## Install — three WPCode snippets, one per kind
 
-> **Do not paste this code into WPCode again.** The copy that was pasted there
-> came out corrupted — its stored tail contains a stray `return false;` that
-> exists in no version of the source — and while that broken snippet was
-> active it also blocked the snippets queued after it, which is why the
-> homepage cohorts died with it and came back the moment it was deactivated.
-> A 40KB paste through a web editor is how this happens; a file upload is not.
+The calendar ships as **three files**, matching the snippet types your site
+already uses successfully (`AA – Home JS`, `AA – Nav JS`):
 
-Install **`aa-shortcodes-mu-plugin.php`** instead (it carries this calendar
-AND the homepage cohorts):
+| # | WPCode snippet type | Name | Paste this | Settings |
+|---|---|---|---|---|
+| 1 | **CSS Snippet** | `AA – Calendar CSS` | `snippets/calendar/aa-calendar.css` | Auto Insert, Site Wide Header |
+| 2 | **JavaScript Snippet** | `AA – Calendar JS` | `snippets/calendar/aa-calendar.js` | Auto Insert, **Site Wide Footer** |
+| 3 | **PHP Snippet** | `AA – Calendar PHP` | `aa-mini-calendar-wpcode-snippet.php` | Auto Insert, **Run Everywhere** |
 
-1. Leave the "mini calendar" WPCode snippet **deactivated** — or delete it.
-2. Upload `aa-shortcodes-mu-plugin.php` into `wp-content/mu-plugins/` using
-   the file manager's **Upload** (not create-and-paste). Confirm the uploaded
-   size matches the local file. It is live immediately; no activation exists.
-3. Every function in that bundle is renamed to an `aamu_` prefix, so it cannot
-   collide with anything still stored in WPCode, active or not, in any order.
-4. If anything ever white-screens: delete the file from `mu-plugins/` and the
-   site is back instantly.
+Activate 1 and 2 **before** 3, so the first page load that renders a calendar
+already has its styles and behaviour.
 
-No page edits. The snippet intercepts `[easy_events_calendar]` and
-`[easy_event_calendar_mini]` through `pre_do_shortcode_tag`, which runs just
-before WordPress calls whichever handler is registered — so every page that
-already embeds one switches over on activation, regardless of load order.
+> **Why three and not one.** The previous build inlined the CSS and JS inside
+> the PHP, in a nowdoc — a 60KB paste into a browser code editor. The copy
+> WPCode stored came back corrupted: its tail carried a stray top-level
+> statement that appears in no version of the source. A snippet that errors
+> takes the snippets queued behind it down with it, which is why the homepage
+> cohort panel died at the same time and revived the moment this snippet was
+> disabled. Split by type, the PHP is half the size, contains no nowdoc, and
+> contains no backslashes at all (the JS regexes now live in a JS snippet,
+> where WordPress slash handling cannot touch them).
 
-### If the old calendar is still showing
+**Never paste the CSS or JS back into the PHP snippet.** That is the specific
+change that broke the site.
 
-Put `[aa_mcal_selftest]` on any page and view it **while logged in as an
-administrator** (it prints nothing for anyone else, so it is safe to leave).
-It reports whether the snippet ran at all and who owns each shortcode tag:
-
-* **Nothing appears** → the snippet is not running. Check it is Activated,
-  set to *Auto Insert · Run Everywhere*, and has no conditional logic
-  attached. This is the usual cause.
-* **Box appears, calendar still old** → the interception is being bypassed
-  by something else on the page; send me the box's contents.
-* **Box appears and says `cohorts section here: suppressed`** on
-  safe-industry / safe-found → that half is working.
-
-Clear any page cache before judging — a cached copy of the page will keep
-serving the old calendar no matter what the snippet does.
-
-Then, once the pages below look right:
+Then, once the calendars render:
 
 1. Deactivate the old **"AA — Class Calendar"** JS snippet. `[aa_mini_calendar]`
-   is a strict superset of it, including the `AA_PICK` hand-off to the course
-   page's cohort picker, so running both would double-render.
+   is a strict superset of it, including the `AA_PICK` hand-off, so running
+   both would double-render.
 2. Deactivate the **Xylus** calendar plugin.
 
-Deactivating this snippet is the whole undo — both shortcodes go straight back
-to the plugin.
+Deactivating the PHP snippet is the whole undo — both old shortcodes go
+straight back to the plugin.
+
+### If a calendar does not appear
+
+Put `[aa_mcal_selftest]` on any page and view it **as an administrator** (it
+prints nothing for anyone else). It reports whether the PHP snippet ran and
+who owns each shortcode tag. Unstyled block of text → the CSS snippet. Styled
+but frozen, no bars → the JS snippet. Nothing at all → the PHP snippet.
+
+Clear any page cache before judging.
 
 ## What each page gets
 

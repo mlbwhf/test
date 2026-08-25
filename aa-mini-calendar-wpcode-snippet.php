@@ -2,58 +2,30 @@
 /**
  * Agile Agilist — COURSE CALENDAR  [aa_mini_calendar]
  * -----------------------------------------------------------------------------
- * Replaces the Xylus calendar. Driven by the site's OWN schedule and
- * registration, never Eventbrite:
+ * Replaces the Xylus calendar, driven by our own schedule and registration:
+ *   post type wp_events · taxonomy event_category · meta start_ts/end_ts
+ *   optional per-cohort meta: seats_left · price · hours · instructor
  *
- *     post type  wp_events  ·  taxonomy event_category  ·  meta start_ts/end_ts
- *     optional per-cohort meta:  seats_left · price · hours · instructor
+ * THREE SNIPPETS, one per kind. The CSS and the JS do NOT belong in here.
+ *   1. WPCode -> CSS Snippet        "AA - Calendar CSS"  <- aa-calendar.css
+ *   2. WPCode -> JavaScript Snippet "AA - Calendar JS"   <- aa-calendar.js
+ *                                   (Site Wide Footer, like "AA - Home JS")
+ *   3. WPCode -> PHP Snippet        "AA - Calendar PHP"  <- this file
+ *                                   (Auto Insert, Run Everywhere)
  *
- * Built to the "1A split" option of the course-calendar design handoff:
+ * An earlier build inlined the CSS and JS in a nowdoc, making this a 60KB
+ * paste into a browser code editor. What WPCode stored came back corrupted —
+ * its tail held a stray top-level statement present in no version of the
+ * source — and a snippet that errors takes the snippets queued behind it with
+ * it, which is how the homepage cohort panel died alongside this calendar.
+ * Splitting by snippet type cut this file by half and removed both the nowdoc
+ * and every backslash from the PHP.
  *
- *   - Each class is a LABELLED BAR spanning its real days — a 4-day SPC is one
- *     bar four cells wide, carrying its code, name and a day-count chip. A
- *     class crossing a Saturday renders as one bar per week row; overlapping
- *     classes pack into lanes so nothing ever covers anything else.
- *   - HOVERING (or tab-focusing) a bar raises a preview card — dates, hours,
- *     price, seats — so the visitor sees the cohort BEFORE clicking. The card
- *     flips at the viewport edge instead of opening off-screen.
- *   - CLICKING opens that cohort in the panel BESIDE the calendar: description,
- *     a fact grid, what's included, price, and the register CTA.
- *
- * REGISTRATION IS NEVER A SECOND PATH. The CTA hands off to the enrol form the
- * site already has: on a page that carries one it scrolls to #enroll and
- * pre-selects the cohort through the same AA_PICK bridge the cohort cards use;
- * everywhere else it deep-links the course page's enrol section with
- * ?cohort=<event id>, which the form's populator reads. This snippet never
- * collects a name, an email or a payment of its own.
- *
- * USE — drop-in for the old shortcode, same attribute name:
- *     [aa_mini_calendar category="aspc"]          one course (course pages)
- *     [aa_mini_calendar]                          every course (training page)
- *     [aa_mini_calendar category="aspc,spc"]      a chosen set
- *     [aa_mini_calendar link="course"]            register goes to the course
- *                                                 page (default: same-page
- *                                                 #enroll form)
- *     [aa_mini_calendar lang="es"]                Spanish chrome (also: fr)
- *     [aa_mini_calendar months="6"]               lookahead window (default 6)
- *     [aa_mini_calendar wide="1"]                 larger grid for a full-width
- *                                                 slot; the detail panel is
- *                                                 beside the calendar either way
- *     [aa_mcal_selftest]                          admin-only diagnostic box
- *
- * INSTALL: WPCode -> PHP Snippet -> Auto Insert, Run Everywhere. That is
- * ALL: this snippet also takes over the old [easy_events_calendar] and
- * [easy_event_calendar_mini] shortcodes (see the bottom of the file), so
- * every page that embeds them switches to this calendar with no page edits.
- * Deactivating the snippet hands them straight back to the Xylus plugin.
- *
- * The takeover keeps each page's own category= list, so the hub calendars
- * stay scoped to their track: /training/adv-safe/ shows only the five
- * advanced courses, /training/safe/ only the seven role courses. Two pages
- * carry no calendar at all — see aa_mcal_hidden_slugs() at the bottom.
- *
- * The events query is cached the same way as [aa_home_cohorts]: per-request
- * memo + 10-minute transient keyed by the Eastern day.
+ * Shortcodes: [aa_mini_calendar category="aspc" link="course" lang="es"
+ * months="6" wide="1"] and the admin-only [aa_mcal_selftest]. This file also
+ * takes over [easy_events_calendar] and [easy_event_calendar_mini], so pages
+ * embedding those switch over with no page edits; deactivating hands them
+ * back to the Xylus plugin. Full behaviour: snippets/CALENDAR.md
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -91,108 +63,87 @@ function aa_mcal_catalog() {
 	return array(
 		'aspc'             => array( 'code' => 'ASPC',    'name' => 'Advanced SAFe Practice Consultant Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
-			'url' => '/training/adv-safe/aspc/', 'duration' => '3 days', 'pdus' => '24 PDUs / SEUs',
-			'bullets' => array( '3 days live-virtual, instructor-led', 'Certification exam fee included', '24 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Deepen your consulting practice beyond SPC — advanced coaching, measuring transformation outcomes, and guiding complex enterprise change at the portfolio and solution level. Three days…' ),
+			'url' => '/training/adv-safe/aspc/', 'days' => 3, 'pdus' => 24, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Deepen your consulting practice beyond SPC — advanced coaching, measuring transformation outcomes, and guiding complex enterprise…' ),
 		'spc'              => array( 'code' => 'SPC',     'name' => 'SAFe Practice Consultant Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
-			'url' => '/training/adv-safe/spc/', 'duration' => '4 days', 'pdus' => '32 PDUs / SEUs',
-			'bullets' => array( '4 days live-virtual, instructor-led', 'Certification exam fee included', '32 PDUs / SEUs', 'Exam: 60 multiple-choice · 180 minutes' ),
-			'desc' => 'Become the change agent who can teach SAFe, launch Agile Release Trains, and lead an enterprise transformation end-to-end. Four days, live-virtual, with the SPC exam and licensing to teach…' ),
+			'url' => '/training/adv-safe/spc/', 'days' => 4, 'pdus' => 32, 'exam_q' => 60, 'exam_m' => 180,
+			'desc' => 'Become the change agent who can teach SAFe, launch Agile Release Trains, and lead an enterprise transformation end-to-end. Four…' ),
 		'rte'              => array( 'code' => 'RTE',     'name' => 'SAFe RTE Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
-			'url' => '/training/adv-safe/rte/', 'duration' => '3 days', 'pdus' => '24 PDUs / SEUs',
-			'bullets' => array( '3 days live-virtual, instructor-led', 'Certification exam fee included', '24 PDUs / SEUs', 'Exam: 60 multiple-choice · 180 minutes' ),
-			'desc' => 'Become the servant leader and coach of the Agile Release Train — facilitating ART events and processes, driving relentless improvement, and leading the program through PI execution. Three…' ),
+			'url' => '/training/adv-safe/rte/', 'days' => 3, 'pdus' => 24, 'exam_q' => 60, 'exam_m' => 180,
+			'desc' => 'Become the servant leader and coach of the Agile Release Train — facilitating ART events and processes, driving relentless…' ),
 		'lpm'              => array( 'code' => 'LPM',     'name' => 'SAFe LPM Certification',
 			'track' => 'Portfolio & Lean', 'color' => '#7A4FA3', 'tint' => '#F1EAF7', 'tint_border' => '#DCC9EA',
-			'url' => '/training/adv-safe/lpm/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Align strategy and execution by applying Lean and systems thinking to portfolio strategy, funding, and operations — connecting the portfolio to enterprise strategy and Lean budgets. Two…' ),
+			'url' => '/training/adv-safe/lpm/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Align strategy and execution by applying Lean and systems thinking to portfolio strategy, funding, and operations — connecting…' ),
 		'apm'              => array( 'code' => 'APM',     'name' => 'SAFe APM Certification',
 			'track' => 'Portfolio & Lean', 'color' => '#7A4FA3', 'tint' => '#F1EAF7', 'tint_border' => '#DCC9EA',
-			'url' => '/training/adv-safe/apm/', 'duration' => '3 days', 'pdus' => '24 PDUs / SEUs',
-			'bullets' => array( '3 days live-virtual, instructor-led', 'Certification exam fee included', '24 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Use design thinking and a Lean-Agile mindset to discover, build, and bring to market products customers love — from vision and roadmap to pricing, packaging, and continuous value. Three…' ),
+			'url' => '/training/adv-safe/apm/', 'days' => 3, 'pdus' => 24, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Use design thinking and a Lean-Agile mindset to discover, build, and bring to market products customers love — from vision and…' ),
 		'sa'               => array( 'code' => 'SA',      'name' => 'SAFe Agilist Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/sa/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Lead a Lean-Agile transformation by applying SAFe® and its principles of Lean, systems thinking, and agile development. Two days, live-virtual, with an authorised SAFe instructor (SPC/ASPC)…' ),
+			'url' => '/training/safe/sa/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Lead a Lean-Agile transformation by applying SAFe® and its principles of Lean, systems thinking, and agile development. Two days…' ),
 		'ssm'              => array( 'code' => 'SSM',     'name' => 'SAFe Scrum Master Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/scrum-master/', 'duration' => '2 days', 'pdus' => '15 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '15 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Become the Scrum Master who facilitates Agile teams within a SAFe enterprise — running team and program events, supporting PI execution, and coaching teams to high performance. Two days…' ),
+			'url' => '/training/safe/scrum-master/', 'days' => 2, 'pdus' => 15, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Become the Scrum Master who facilitates Agile teams within a SAFe enterprise — running team and program events, supporting PI…' ),
 		'popm'             => array( 'code' => 'POPM',    'name' => 'SAFe POPM Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/popm/', 'duration' => '2 days', 'pdus' => '15 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '15 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Master the responsibilities of the Product Owner and Product Manager in a SAFe enterprise — writing stories, managing backlogs, and delivering value through the Continuous Delivery…' ),
+			'url' => '/training/safe/popm/', 'days' => 2, 'pdus' => 15, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Master the responsibilities of the Product Owner and Product Manager in a SAFe enterprise — writing stories, managing backlogs…' ),
 		'sdp'              => array( 'code' => 'SDP',     'name' => 'SAFe DevOps Practitioner Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/devops/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Map your Continuous Delivery Pipeline, optimise the flow of value from idea to production, and build the culture, automation, and measurement that release on demand. Two days, live-virtual…' ),
+			'url' => '/training/safe/devops/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Map your Continuous Delivery Pipeline, optimise the flow of value from idea to production, and build the culture, automation, and…' ),
 		'sasm'             => array( 'code' => 'SASM',    'name' => 'SAFe Advanced Scrum Master Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/asm/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Take your Scrum Master practice to the program level — facilitating cross-team interactions, supporting DevOps and built-in quality, and coaching the Agile Release Train. Two days…' ),
+			'url' => '/training/safe/asm/', 'days' => 2, 'pdus' => 16, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Take your Scrum Master practice to the program level — facilitating cross-team interactions, supporting DevOps and built-in…' ),
 		'asm'              => array( 'code' => 'SASM',    'name' => 'SAFe Advanced Scrum Master Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/asm/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Take your Scrum Master practice to the program level — facilitating cross-team interactions, supporting DevOps and built-in quality, and coaching the Agile Release Train. Two days…' ),
+			'url' => '/training/safe/asm/', 'days' => 2, 'pdus' => 16, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Take your Scrum Master practice to the program level — facilitating cross-team interactions, supporting DevOps and built-in…' ),
 		'sp'               => array( 'code' => 'SP',      'name' => 'SAFe Practitioner Certification',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe-industry/team-practitioner/', 'duration' => '2 days', 'pdus' => '15 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '15 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Build the skills to be a high-performing member of an Agile Release Train — how to plan and execute work, collaborate across teams, and deliver value in a Program Increment. Two days…' ),
+			'url' => '/training/safe-industry/team-practitioner/', 'days' => 2, 'pdus' => 15, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Build the skills to be a high-performing member of an Agile Release Train — how to plan and execute work, collaborate across…' ),
 		'bo'               => array( 'code' => 'BO',      'name' => 'SAFe® Business Owner',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe/bo/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe/bo/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 		'arch'             => array( 'code' => 'ARCH',    'name' => 'SAFe Architect Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
-			'url' => '/training/safe-industry/arch/', 'duration' => '3 days', 'pdus' => '24 PDUs / SEUs',
-			'bullets' => array( '3 days live-virtual, instructor-led', 'Certification exam fee included', '24 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Lead the architecture of large solutions in a Lean-Agile enterprise — aligning architecture with business value, enabling continuous delivery, and guiding teams through architectural…' ),
+			'url' => '/training/safe-industry/arch/', 'days' => 3, 'pdus' => 24, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Lead the architecture of large solutions in a Lean-Agile enterprise — aligning architecture with business value, enabling…' ),
 		'ase'              => array( 'code' => 'ASE',     'name' => 'SAFe Agile Software Engineer Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
-			'url' => '/training/safe-industry/ase/', 'duration' => '3 days', 'pdus' => '24 PDUs / SEUs',
-			'bullets' => array( '3 days live-virtual, instructor-led', 'Certification exam fee included', '24 PDUs / SEUs', 'Exam: 60 multiple-choice · 120 minutes' ),
-			'desc' => 'Build the technical practices that make continuous delivery real — test-first, behaviour-driven development, and Agile architecture that lets teams release on demand with built-in quality…' ),
+			'url' => '/training/safe-industry/ase/', 'days' => 3, 'pdus' => 24, 'exam_q' => 60, 'exam_m' => 120,
+			'desc' => 'Build the technical practices that make continuous delivery real — test-first, behaviour-driven development, and Agile…' ),
 		'sagov'            => array( 'code' => 'SA-GOV',  'name' => 'Leading SAFe® for Government',
 			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			'url' => '/training/safe-industry/sa-gov/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe-industry/sa-gov/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 		'ai-native'        => array( 'code' => 'AINF',    'name' => 'AI-Native Foundations Certification',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
-			'url' => '/training/ai-native/', 'duration' => '2 days', 'pdus' => '16 PDUs / SEUs',
-			'bullets' => array( '2 days live-virtual, instructor-led', 'Certification exam fee included', '16 PDUs / SEUs', 'Exam: 45 multiple-choice · 90 minutes' ),
-			'desc' => 'Extend SAFe into the AI age — AI-Native ways of working, an AI Enablement layer, and Innovation Culture baked into delivery. Learn the Five Disciplines and AI-Empowered Agility that define…' ),
+			'url' => '/training/ai-native/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Extend SAFe into the AI age — AI-Native ways of working, an AI Enablement layer, and Innovation Culture baked into delivery…' ),
 		'micro-conflict'   => array( 'code' => 'CONFLICT', 'name' => 'Advanced Facilitator: Conflict & Collaboration',
 			'track' => 'Micro-Credentials', 'color' => '#2E7D5B', 'tint' => '#E7F3ED', 'tint_border' => '#C6E3D5',
-			'url' => '/training/safe-found/conflict-collaboration/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe-found/conflict-collaboration/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 		'micro-vsm'        => array( 'code' => 'VSM',     'name' => 'Advanced Facilitator: Value Stream Mapping',
 			'track' => 'Micro-Credentials', 'color' => '#2E7D5B', 'tint' => '#E7F3ED', 'tint_border' => '#C6E3D5',
-			'url' => '/training/safe-found/value-stream-mapping/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe-found/value-stream-mapping/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 		'micro-rai'        => array( 'code' => 'RAI',     'name' => 'Achieving Responsible AI with SAFe',
 			'track' => 'Micro-Credentials', 'color' => '#2E7D5B', 'tint' => '#E7F3ED', 'tint_border' => '#C6E3D5',
-			'url' => '/training/safe-found/responsible-ai-safe/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe-found/responsible-ai-safe/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 		'micro-gov'        => array( 'code' => 'GOV',     'name' => 'Agile Contracting for Government',
 			'track' => 'Micro-Credentials', 'color' => '#2E7D5B', 'tint' => '#E7F3ED', 'tint_border' => '#C6E3D5',
-			'url' => '/training/safe-found/agile-contracting-government/', 'duration' => '', 'pdus' => '',
-			'bullets' => array(),
+			'url' => '/training/safe-found/agile-contracting-government/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => '' ),
 	);
 }
@@ -217,6 +168,8 @@ function aa_mcal_strings( $lang ) {
 			'exam_incl' => 'Exam fee included',
 			'reassure'  => 'Live-virtual with a certified instructor. Secure checkout.',
 			'course_page' => 'Full course details ⟶', 'day_first' => false,
+			'b_live' => '%d days live-virtual, instructor-led', 'b_exam' => 'Certification exam fee included',
+			'b_pdus' => '%d PDUs / SEUs', 'b_examfmt' => 'Exam: %q multiple-choice · %m minutes',
 		),
 		'es' => array(
 			'months'    => array( 'Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre' ),
@@ -235,6 +188,8 @@ function aa_mcal_strings( $lang ) {
 			'exam_incl' => 'Examen incluido',
 			'reassure'  => 'En vivo con instructor certificado. Pago seguro.',
 			'course_page' => 'Ver el curso completo ⟶', 'day_first' => true,
+			'b_live' => '%d días en vivo, con instructor', 'b_exam' => 'Tasa de examen incluida',
+			'b_pdus' => '%d PDUs / SEUs', 'b_examfmt' => 'Examen: %q preguntas tipo test · %m minutos',
 		),
 		'fr' => array(
 			'months'    => array( 'Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre' ),
@@ -253,6 +208,8 @@ function aa_mcal_strings( $lang ) {
 			'exam_incl' => 'Examen inclus',
 			'reassure'  => 'En direct avec un formateur certifié. Paiement sécurisé.',
 			'course_page' => 'Voir la fiche complète ⟶', 'day_first' => true,
+			'b_live' => '%d jours en direct, avec formateur', 'b_exam' => "Frais d'examen inclus",
+			'b_pdus' => '%d PDUs / SEUs', 'b_examfmt' => 'Examen : %q questions à choix multiple · %m minutes',
 		),
 	);
 	return isset( $all[ $lang ] ) ? $all[ $lang ] : $all['en'];
@@ -338,7 +295,7 @@ function aa_mcal_events( $cats, $months, &$dbg ) {
 }
 
 function aa_mcal_render( $atts ) {
-	static $instance = 0, $assets_done = false;
+	static $instance = 0;
 	$instance++;
 
 	$a = shortcode_atts( array(
@@ -365,7 +322,7 @@ function aa_mcal_render( $atts ) {
 			? $catalog[ $slug ]
 			: array( 'code' => strtoupper( $slug ), 'name' => strtoupper( $slug ), 'track' => '',
 			         'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
-			         'url' => '/training/', 'bullets' => array(), 'desc' => '' );
+			         'url' => '/training/', 'desc' => '' );
 	}
 
 	// The course URL stays a real course URL even when link="enroll": the panel
@@ -392,514 +349,6 @@ function aa_mcal_render( $atts ) {
 		       . esc_html( $m['code'] . ' · ' . $m['name'] . ' · ' . $r['s'] . ' – ' . $r['e'] ) . '</a><br>';
 	}
 	$html .= '</noscript></div>';
-
-	if ( $assets_done ) { return $html; }
-	$assets_done = true;
-
-	$html .= <<<'AA_MCAL_ASSETS'
-<style>
-/* Agile Agilist course calendar — tokens and layout from the design handoff
-   (design_handoff_course_calendar), option 1A "split": calendar left, detail +
-   register panel right. Type FAMILY inherits from the page on purpose — the
-   handoff specifies DM Sans, but the site already loads three families and is
-   being asked to cut font requests, so only the sizes/weights are adopted. */
-.aa-mcal{
-  --ink:#101C33; --body:#3D3A33; --muted:#4E4A40; --meta:#6B6455;
-  --faint:#8A8375; --faint2:#9A9384; --disabled:#C9C3B4;
-  --l1:#DCD7CB; --l2:#E4E0D6; --l3:#E9E5DB; --l4:#EEEAE0; --l5:#F1EDE3;
-  --panel:#FBFAF7; --onink:#F7F5F0; --teal:#0E8074;
-  display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
-  background:#fff; border:1px solid var(--l2); border-radius:20px;
-  color:var(--ink); font-family:inherit; text-align:left;
-}
-/* No overflow:hidden on the card. The hover preview is absolutely positioned
-   and hangs below its bar, so clipping the card would decapitate every preview
-   opened from the bottom week or the last column. The two children carry the
-   rounded corners instead, which is what overflow:hidden was there for. */
-.aa-mcal__cal{border-radius:20px 0 0 20px}
-.aa-mcal__panel{border-radius:0 20px 20px 0}
-.aa-mcal *{box-sizing:border-box}
-.aa-mcal__cal{padding:26px 26px 30px; border-right:1px solid var(--l3); min-width:0}
-
-/* ---- header ---- */
-.aa-mcal-head{display:flex; align-items:flex-end; justify-content:space-between; gap:14px}
-.aa-mcal-eyebrow{display:block; font-size:11.5px; font-weight:700; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--teal); margin-bottom:4px}
-.aa-mcal-title{font-size:27px; font-weight:600; letter-spacing:-.025em; line-height:1.1; margin:0}
-.aa-mcal-nav{display:flex; gap:7px; flex:none}
-.aa-mcal-nav button{width:36px; height:36px; border:1px solid var(--l1); border-radius:10px;
-  background:#fff; color:var(--meta); font-size:15px; line-height:1; cursor:pointer;
-  display:flex; align-items:center; justify-content:center}
-.aa-mcal-nav button:hover:not(:disabled),
-.aa-mcal-nav button:focus-visible{border-color:var(--teal); color:var(--teal)}
-.aa-mcal-nav button:disabled{opacity:.35; cursor:default}
-
-/* ---- grid ---- */
-.aa-mcal-dows{display:grid; grid-template-columns:repeat(7,1fr); margin-top:18px;
-  border-bottom:1px solid var(--l4); padding-bottom:8px}
-.aa-mcal-dows span{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--faint2); padding-left:4px}
-.aa-mcal-week{border-bottom:1px solid var(--l5); padding:7px 0 9px}
-.aa-mcal-nums{display:grid; grid-template-columns:repeat(7,1fr)}
-.aa-mcal-nums span{font-size:12.5px; font-weight:600; color:var(--body); padding-left:4px}
-.aa-mcal-nums span.is-out{font-weight:400; color:var(--disabled)}
-.aa-mcal-bars{display:grid; grid-template-columns:repeat(7,1fr); gap:4px 2px; margin-top:3px}
-.aa-mcal-slot{position:relative; min-width:0}
-.aa-mcal-slot.is-hov{z-index:60}
-
-/* ---- course bar: the width IS the class length ---- */
-.aa-mcal-bar{display:flex; align-items:center; gap:6px; width:100%; height:26px;
-  padding:0 8px; border-radius:7px; cursor:pointer; text-align:left; overflow:hidden;
-  white-space:nowrap; font-family:inherit; font-size:11.5px;
-  background:var(--tint); color:var(--c); border:1px solid var(--tb);
-  transition:transform .15s ease, box-shadow .15s ease}
-.aa-mcal-bar:hover,.aa-mcal-bar:focus-visible{transform:translateY(-1px); box-shadow:0 2px 10px var(--tb)}
-.aa-mcal-bar.is-sel{background:var(--c); color:#fff; border-color:var(--c); box-shadow:none}
-.aa-mcal-bar b{font-weight:700; flex:none}
-.aa-mcal-bar .n{overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; opacity:.92; font-weight:400}
-.aa-mcal-bar .d{font-size:10px; font-weight:700; opacity:.8; flex:none}
-.aa-mcal-bar.is-tight .n,.aa-mcal-bar.is-tight .d{display:none}
-/* past / sold out */
-.aa-mcal-bar.is-gone{opacity:.55}
-.aa-mcal-bar.is-gone:hover,.aa-mcal-bar.is-gone:focus-visible{transform:none; box-shadow:none}
-
-/* ---- hover preview ---- */
-.aa-mcal-pv{position:absolute; top:calc(100% + 7px); left:0; width:252px; max-width:70vw;
-  background:#fff; border:1px solid var(--l2); border-radius:13px; padding:14px;
-  box-shadow:0 18px 40px rgba(16,28,51,.14); pointer-events:none; z-index:70;
-  opacity:0; visibility:hidden; transform:translateY(-4px);
-  transition:opacity .16s ease, transform .16s ease; white-space:normal}
-.aa-mcal-slot.is-hov .aa-mcal-pv{opacity:1; visibility:visible; transform:translateY(0)}
-.aa-mcal-pv.flip-x{left:auto; right:0}
-.aa-mcal-pv.flip-y{top:auto; bottom:calc(100% + 7px)}
-.aa-mcal-pv__track{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
-.aa-mcal-pv__name{font-size:15px; font-weight:600; margin:5px 0 4px; line-height:1.25}
-.aa-mcal-pv__when{font-size:12.5px; color:var(--muted); line-height:1.45}
-.aa-mcal-pv__hr{height:1px; background:var(--l4); margin:11px 0}
-.aa-mcal-pv__row{display:flex; align-items:center; justify-content:space-between; gap:8px}
-.aa-mcal-pv__price{font-size:12.5px; font-weight:600}
-.aa-mcal-pv__go{font-size:11.5px; font-weight:600; color:var(--teal); margin-top:9px}
-.aa-mcal-pill{font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:100px;
-  background:#E7F2F0; color:#0B665C; white-space:nowrap}
-.aa-mcal-pill.is-low{background:#FBE9E3; color:#B0413E}
-
-/* ---- legend ---- */
-.aa-mcal-legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:16px}
-.aa-mcal-key{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--meta)}
-.aa-mcal-key i{width:10px; height:10px; border-radius:3px; background:var(--c); flex:none}
-.aa-mcal-empty{padding:26px 4px; font-size:13.5px; color:var(--meta)}
-
-/* ---- detail + register panel ---- */
-.aa-mcal__panel{background:var(--panel); padding:26px 26px 30px; display:flex; flex-direction:column; min-width:0}
-.aa-mcal-sel{display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
-.aa-mcal-sel i{width:7px; height:7px; border-radius:50%; background:#D34B2A; flex:none;
-  animation:aa-mcal-pulse 1.4s ease-in-out infinite}
-@keyframes aa-mcal-pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.aa-mcal-rule{width:4px; height:54px; border-radius:2px; background:var(--c,#0E8074); margin:16px 0 14px}
-.aa-mcal-track{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
-.aa-mcal-name{font-size:25px; font-weight:600; letter-spacing:-.028em; line-height:1.14; margin:7px 0 0}
-.aa-mcal-desc{font-size:14px; line-height:1.6; color:var(--muted); margin:11px 0 0}
-
-.aa-mcal-facts{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--l3);
-  border:1px solid var(--l3); border-radius:12px; overflow:hidden; margin-top:18px}
-.aa-mcal-fact{background:#fff; padding:12px 14px; min-width:0}
-.aa-mcal-fact dt{font-size:10.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
-  color:var(--faint2); margin:0}
-.aa-mcal-fact dd{font-size:14.5px; font-weight:600; margin:4px 0 0}
-.aa-mcal-fact dd.is-low{color:#B0413E}
-
-.aa-mcal-inc{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:7px}
-.aa-mcal-inc li{display:flex; gap:7px; font-size:13.5px; color:var(--body); line-height:1.45}
-.aa-mcal-inc li::before{content:"✓"; color:var(--teal); font-weight:700; flex:none}
-
-.aa-mcal-reg{margin-top:auto; padding-top:22px; border-top:1px solid var(--l3)}
-.aa-mcal-price{font-size:22px; font-weight:600; line-height:1.2}
-.aa-mcal-price small{display:block; font-size:11.5px; font-weight:400; color:var(--faint); margin-top:3px}
-.aa-mcal-cta{display:block; width:100%; margin-top:14px; padding:14px; border-radius:100px;
-  background:var(--ink); color:var(--onink) !important; text-align:center; font-size:14.5px;
-  font-weight:600; text-decoration:none !important; border:0; cursor:pointer; font-family:inherit}
-.aa-mcal-cta:hover,.aa-mcal-cta:focus-visible{background:var(--teal); color:var(--onink) !important}
-.aa-mcal-note{font-size:11.5px; color:var(--faint); margin:10px 0 0; line-height:1.5}
-.aa-mcal-more{display:inline-block; margin-top:10px; font-size:12.5px; color:var(--teal)}
-.aa-mcal-hint{font-size:13.5px; color:var(--meta); line-height:1.6; margin:0}
-
-/* ---- wide variant: same layout, larger grid ---- */
-.aa-mcal--wide .aa-mcal__cal{padding:30px 34px 32px}
-.aa-mcal--wide .aa-mcal-title{font-size:32px; letter-spacing:-.03em}
-.aa-mcal--wide .aa-mcal-nums span{font-size:14px; padding-left:6px}
-.aa-mcal--wide .aa-mcal-dows span{padding-left:6px}
-.aa-mcal--wide .aa-mcal-bars{gap:5px 3px}
-.aa-mcal--wide .aa-mcal-bar{height:32px; padding:0 11px; font-size:13px}
-.aa-mcal--wide .aa-mcal-bar .d{font-size:11px}
-.aa-mcal--wide .aa-mcal-week{padding:9px 0 12px}
-
-/* ---- agenda fallback ----
-   Defined BEFORE the media query that switches it on: both rules are a
-   single class, so whichever comes last wins, and with the base rule after
-   the query its display:none silently beat the display:flex and the mobile
-   list never appeared. */
-.aa-mcal-agenda{display:none; flex-direction:column; gap:8px; margin-top:16px}
-.aa-mcal-arow{display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px;
-  border:1px solid var(--l2); border-radius:12px; background:#fff; cursor:pointer;
-  font-family:inherit; text-align:left}
-.aa-mcal-arow.is-sel{border-color:var(--c); box-shadow:inset 3px 0 0 var(--c)}
-.aa-mcal-arow i{width:10px; height:10px; border-radius:3px; background:var(--c); flex:none}
-.aa-mcal-arow .t{flex:1; min-width:0}
-.aa-mcal-arow .t b{display:block; font-size:13.5px; font-weight:600}
-.aa-mcal-arow .t span{display:block; font-size:12px; color:var(--meta); margin-top:2px}
-
-/* ---- responsive: stack, then fall back to an agenda list ---- */
-@media (max-width:1023px){
-  .aa-mcal{grid-template-columns:minmax(0,1fr)}
-  .aa-mcal__cal{border-right:0; border-bottom:1px solid var(--l3); border-radius:20px 20px 0 0}
-  .aa-mcal__panel{padding:22px 22px 26px; border-radius:0 0 20px 20px}
-}
-@media (max-width:719px){
-  .aa-mcal__cal{padding:20px 18px 22px}
-  .aa-mcal--wide .aa-mcal__cal{padding:20px 18px 22px}
-  .aa-mcal-title,.aa-mcal--wide .aa-mcal-title{font-size:22px}
-  /* A 7-column month grid stops working here — show the same cohorts as rows. */
-  .aa-mcal-dows,.aa-mcal-weeks{display:none}
-  .aa-mcal-agenda{display:flex}
-  .aa-mcal-name{font-size:21px}
-}
-
-@media (prefers-reduced-motion:reduce){
-  .aa-mcal-bar,.aa-mcal-pv{transition:opacity .16s ease}
-  .aa-mcal-bar:hover,.aa-mcal-bar:focus-visible{transform:none}
-  .aa-mcal-slot.is-hov .aa-mcal-pv{transform:none}
-  .aa-mcal-pv{transform:none}
-  .aa-mcal-sel i{animation:none}
-}
-</style>
-<script>
-/* Course calendar. One instance per .aa-mcal; config arrives as inline JSON so
-   nothing is fetched. Bars are buttons: hover AND keyboard focus both raise the
-   preview, click selects, and the panel is aria-live so a screen reader hears
-   the change. */
-(function () {
-  'use strict';
-  var MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
-  function boot(root) {
-    if (root.getAttribute('data-mcal-ready')) { return; }
-    root.setAttribute('data-mcal-ready', '1');
-    var tag = root.querySelector('script[type="application/json"]');
-    if (!tag) { return; }
-    var cfg;
-    try { cfg = JSON.parse(tag.textContent); } catch (e) { return; }
-
-    var S = cfg.str, C = cfg.courses;
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    // Local parsing: new Date("2026-09-22") is UTC and shifts bars a day west.
-    function d(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
-    var ev = cfg.events.map(function (r, i) {
-      var s = d(r.s), e = d(r.e);
-      return { i: i, s: s, e: e, c: r.c, id: r.id, seats: r.seats,
-               price: r.price, hours: r.hours, instructor: r.instructor,
-               days: Math.round((e - s) / 86400000) + 1, past: e < today };
-    });
-    function meta(o) { return C[o.c] || { code: o.c.toUpperCase(), name: o.c.toUpperCase(),
-      track: '', color: '#0E8074', tint: '#E7F2F0', tint_border: '#C6E1DC', url: '/training/', bullets: [] }; }
-
-    var view = new Date(today.getFullYear(), today.getMonth(), 1);
-    var last = new Date(today.getFullYear(), today.getMonth() + (cfg.months - 1), 1);
-    var sel = null, hov = null;
-    // Open on the soonest upcoming cohort so the panel is never empty on load.
-    for (var k = 0; k < ev.length; k++) { if (!ev[k].past) { sel = ev[k].i; break; } }
-    if (sel === null && ev.length) { sel = ev[0].i; }
-    // ...and open the GRID on that cohort's month, not on today's. A course
-    // page whose next class is two months out would otherwise load showing an
-    // empty current month while the panel described a cohort not on screen.
-    if (sel !== null) { view = new Date(ev[sel].s.getFullYear(), ev[sel].s.getMonth(), 1); }
-    // The forward bound has to cover the cohorts actually loaded, or the last
-    // one is unreachable when it sits past the months= window.
-    ev.forEach(function (o) {
-      var m = new Date(o.e.getFullYear(), o.e.getMonth(), 1);
-      if (m > last) { last = m; }
-    });
-
-    /* Spanish and French put the day before the month — "17–19 sept. 2026",
-       not "sept. 17–19, 2026" — and drop the comma before the year. Same
-       day_first switch the cohort shortcode uses, so both read alike. */
-    function fmtRange(o) {
-      var M = S.mon_short, a = o.s, b = o.e, y = b.getFullYear();
-      if (S.day_first) {
-        if (a.getMonth() === b.getMonth()) {
-          return a.getDate() + '–' + b.getDate() + ' ' + M[b.getMonth()] + ' ' + y;
-        }
-        return a.getDate() + ' ' + M[a.getMonth()] + ' – ' + b.getDate() + ' ' + M[b.getMonth()] + ' ' + y;
-      }
-      if (a.getMonth() === b.getMonth()) {
-        return M[a.getMonth()] + ' ' + a.getDate() + '–' + b.getDate() + ', ' + y;
-      }
-      return M[a.getMonth()] + ' ' + a.getDate() + ' – ' + M[b.getMonth()] + ' ' + b.getDate() + ', ' + y;
-    }
-    /* The price meta may be "2899", "2,899", "$2,899" or "USD 2899" — editors
-       type all four. A bare number gets grouped and a $ prefix; anything that
-       already carries a symbol or separator is left exactly as entered, since
-       the editor clearly meant that formatting. Grouping uses the PAGE's
-       language, not the visitor's: "2 899" is right on /fr/ and wrong on /. */
-    function money(v) {
-      var s = String(v).trim();
-      if (/^\d+(\.\d+)?$/.test(s)) {
-        try { return '$' + Number(s).toLocaleString(cfg.lang || 'en'); }
-        catch (e) { return '$' + s; }
-      }
-      return s;
-    }
-    function seatsLabel(o) {
-      if (typeof o.seats !== 'number') { return null; }
-      return o.seats <= 6 ? S.seats_left.replace('%d', o.seats) : S.seats.replace('%d', o.seats);
-    }
-    function esc(s) {
-      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-      });
-    }
-
-    /* Where "Register" goes. Never a second registration path: on a page that
-       already carries the enrol form we scroll to it and pre-select the cohort
-       through the same AA_PICK bridge the cohort cards use; everywhere else we
-       deep-link the course page's enrol section with ?cohort=<event id>, which
-       is what the form's populator reads. */
-    function regHref(o) {
-      var m = meta(o);
-      if (cfg.link === 'enroll') { return '#enroll'; }
-      return m.url + (m.url.indexOf('?') < 0 ? '?' : '&') + 'cohort=' + o.id + '#enroll';
-    }
-
-    function weeksOf(y, mo) {
-      var first = new Date(y, mo, 1), dim = new Date(y, mo + 1, 0).getDate();
-      var gridStart = new Date(y, mo, 1 - first.getDay());
-      var n = Math.ceil((first.getDay() + dim) / 7), DAY = 86400000, out = [];
-      for (var w = 0; w < n; w++) {
-        var ws = new Date(gridStart.getTime() + w * 7 * DAY);
-        var we = new Date(ws.getTime() + 6 * DAY);
-        var days = [];
-        for (var i = 0; i < 7; i++) {
-          var dt = new Date(ws.getTime() + i * DAY);
-          days.push({ num: dt.getDate(), out: dt.getMonth() !== mo, today: +dt === +today });
-        }
-        // Greedy first-fit lane packing, clipped to this week, so a class that
-        // crosses a Saturday renders as one bar per week row and nothing overlaps.
-        var lanes = [], bars = [];
-        ev.filter(function (o) { return o.e >= ws && o.s <= we; })
-          .sort(function (p, q) { return p.s - q.s; })
-          .forEach(function (o) {
-            var c0 = Math.max(0, Math.round((o.s - ws) / DAY));
-            var c1 = Math.min(6, Math.round((o.e - ws) / DAY));
-            var lane = 0;
-            while (lanes[lane] !== undefined && lanes[lane] >= c0) { lane++; }
-            lanes[lane] = c1;
-            bars.push({ o: o, col: c0 + 1, span: c1 - c0 + 1, lane: lane + 1 });
-          });
-        out.push({ days: days, bars: bars });
-      }
-      return out;
-    }
-
-    function barHTML(b) {
-      var o = b.o, m = meta(o), tight = b.span === 1;
-      var sl = seatsLabel(o);
-      var aria = m.name + ', ' + fmtRange(o) + ', ' + S.days_n.replace('%d', o.days) + (sl ? ', ' + sl : '');
-      var pv =
-        '<span class="aa-mcal-pv" aria-hidden="true">' +
-          (m.track ? '<span class="aa-mcal-pv__track">' + esc(m.track) + '</span>' : '') +
-          '<div class="aa-mcal-pv__name">' + esc(m.name) + '</div>' +
-          '<div class="aa-mcal-pv__when">' + esc(fmtRange(o)) + ' · ' + esc(S.days_n.replace('%d', o.days)) +
-            (o.hours ? '<br>' + esc(o.hours) : '') + '</div>' +
-          '<div class="aa-mcal-pv__hr"></div>' +
-          '<div class="aa-mcal-pv__row">' +
-            (o.price ? '<span class="aa-mcal-pv__price">' + esc(money(o.price)) + '</span>' : '<span></span>') +
-            (sl ? '<span class="aa-mcal-pill' + (o.seats <= 6 ? ' is-low' : '') + '">' + esc(sl) + '</span>' : '') +
-          '</div>' +
-          '<div class="aa-mcal-pv__go">' + esc(S.click_open) + '</div>' +
-        '</span>';
-      return '<span class="aa-mcal-slot" style="grid-column:' + b.col + ' / span ' + b.span +
-        ';grid-row:' + b.lane + '">' +
-        '<button type="button" class="aa-mcal-bar' + (o.i === sel ? ' is-sel' : '') +
-          (tight ? ' is-tight' : '') + (o.past ? ' is-gone' : '') +
-          '" data-i="' + o.i + '" aria-label="' + esc(aria) + '"' +
-          ' style="--c:' + m.color + ';--tint:' + m.tint + ';--tb:' + m.tint_border + '">' +
-          '<b>' + esc(m.code) + '</b><span class="n">' + esc(m.name) + '</span>' +
-          '<i class="d">' + o.days + 'd</i>' +
-        '</button>' + pv + '</span>';
-    }
-
-    function renderCal() {
-      var y = view.getFullYear(), mo = view.getMonth();
-      var weeks = weeksOf(y, mo);
-      var inMonth = ev.filter(function (o) {
-        return o.e >= new Date(y, mo, 1) && o.s <= new Date(y, mo + 1, 0);
-      });
-      var h = '<div class="aa-mcal-head"><div>' +
-        '<span class="aa-mcal-eyebrow">' + esc(S.eyebrow) + '</span>' +
-        '<h3 class="aa-mcal-title">' + esc((S.months[mo] || MON[mo]) + ' ' + y) + '</h3></div>' +
-        '<div class="aa-mcal-nav">' +
-          '<button type="button" data-nav="-1" aria-label="' + esc(S.prev) + '"' +
-            (view <= new Date(today.getFullYear(), today.getMonth(), 1) ? ' disabled' : '') + '>&lsaquo;</button>' +
-          '<button type="button" data-nav="1" aria-label="' + esc(S.next) + '"' +
-            (view >= last ? ' disabled' : '') + '>&rsaquo;</button>' +
-        '</div></div>';
-
-      h += '<div class="aa-mcal-dows">';
-      S.dow_long.forEach(function (n) { h += '<span>' + esc(n) + '</span>'; });
-      h += '</div><div class="aa-mcal-weeks">';
-      weeks.forEach(function (w) {
-        h += '<div class="aa-mcal-week"><div class="aa-mcal-nums">';
-        w.days.forEach(function (dd) {
-          h += '<span class="' + (dd.out ? 'is-out' : '') + '">' + dd.num + '</span>';
-        });
-        h += '</div>';
-        if (w.bars.length) {
-          h += '<div class="aa-mcal-bars">' + w.bars.map(barHTML).join('') + '</div>';
-        }
-        h += '</div>';
-      });
-      h += '</div>';
-
-      // Under ~720px the month grid is hidden by CSS and this list shows instead.
-      h += '<div class="aa-mcal-agenda">';
-      inMonth.forEach(function (o) {
-        var m = meta(o), sl = seatsLabel(o);
-        h += '<button type="button" class="aa-mcal-arow' + (o.i === sel ? ' is-sel' : '') +
-          '" data-i="' + o.i + '" style="--c:' + m.color + '">' +
-          '<i></i><span class="t"><b>' + esc(m.code + ' · ' + m.name) + '</b>' +
-          '<span>' + esc(fmtRange(o) + ' · ' + S.days_n.replace('%d', o.days)) + '</span></span>' +
-          (sl ? '<span class="aa-mcal-pill' + (o.seats <= 6 ? ' is-low' : '') + '">' + esc(sl) + '</span>' : '') +
-          '</button>';
-      });
-      h += '</div>';
-
-      if (!inMonth.length) { h += '<div class="aa-mcal-empty">' + esc(S.empty) + '</div>'; }
-
-      var seen = {}, leg = '';
-      inMonth.forEach(function (o) {
-        var m = meta(o);
-        if (seen[m.track || m.code]) { return; }
-        seen[m.track || m.code] = 1;
-        leg += '<span class="aa-mcal-key" style="--c:' + m.color + '"><i></i>' + esc(m.track || m.code) + '</span>';
-      });
-      if (leg) { h += '<div class="aa-mcal-legend">' + leg + '</div>'; }
-      root.querySelector('.aa-mcal__cal').innerHTML = h;
-    }
-
-    function renderPanel() {
-      var el = root.querySelector('.aa-mcal__panel');
-      if (sel === null) {
-        el.innerHTML = '<p class="aa-mcal-hint">' + esc(S.pick_hint) + '</p>';
-        return;
-      }
-      var o = ev[sel], m = meta(o), sl = seatsLabel(o);
-      var facts = [
-        [S.f_dates, fmtRange(o), false],
-        [S.f_schedule, S.days_n.replace('%d', o.days) + (o.hours ? ' · ' + o.hours : ''), false]
-      ];
-      // Only facts we actually hold. An unpopulated instructor or seat count is
-      // omitted, never rendered as "TBC".
-      if (o.instructor) { facts.push([S.f_instructor, o.instructor, false]); }
-      else if (m.pdus)  { facts.push([S.f_pdus, m.pdus, false]); }
-      if (sl) { facts.push([S.f_seats, sl, o.seats <= 6]); }
-
-      var h = '<div class="aa-mcal-sel"><i></i>' + esc(S.selected) + '</div>' +
-        '<div class="aa-mcal-rule" style="--c:' + m.color + '"></div>' +
-        (m.track ? '<div class="aa-mcal-track">' + esc(m.track) + '</div>' : '') +
-        '<h4 class="aa-mcal-name">' + esc(m.name) + '</h4>' +
-        (m.desc ? '<p class="aa-mcal-desc">' + esc(m.desc) + '</p>' : '') +
-        '<dl class="aa-mcal-facts">' + facts.map(function (f) {
-          return '<div class="aa-mcal-fact"><dt>' + esc(f[0]) + '</dt>' +
-            '<dd' + (f[2] ? ' class="is-low"' : '') + '>' + esc(f[1]) + '</dd></div>';
-        }).join('') + '</dl>' +
-        ((m.bullets && m.bullets.length)
-          ? '<ul class="aa-mcal-inc">' + m.bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>'
-          : '');
-
-      h += '<div class="aa-mcal-reg">' +
-        (o.price ? '<div class="aa-mcal-price">' + esc(money(o.price)) +
-          '<small>' + esc(S.exam_incl) + '</small></div>' : '') +
-        '<a class="aa-mcal-cta" href="' + esc(regHref(o)) + '" data-reg="' + o.i + '">' +
-          esc(S.register) + '</a>' +
-        '<p class="aa-mcal-note">' + esc(S.reassure) + '</p>' +
-        '<a class="aa-mcal-more" href="' + esc(m.url) + '">' + esc(S.course_page) + '</a>' +
-        '</div>';
-      el.innerHTML = h;
-    }
-
-    function render() { renderCal(); renderPanel(); }
-
-    /* Keep the preview inside the viewport. The prototype did not flip; the
-       handoff asks production to, and without it a bar in the last column or
-       bottom week opens its card off-screen. */
-    function place(slot) {
-      var pv = slot.querySelector('.aa-mcal-pv');
-      if (!pv) { return; }
-      pv.classList.remove('flip-x', 'flip-y');
-      var r = pv.getBoundingClientRect();
-      if (r.right > window.innerWidth - 8) { pv.classList.add('flip-x'); }
-      if (r.bottom > window.innerHeight - 8) { pv.classList.add('flip-y'); }
-    }
-
-    root.addEventListener('click', function (e) {
-      var nav = e.target.closest('[data-nav]');
-      if (nav) {
-        view = new Date(view.getFullYear(), view.getMonth() + (+nav.getAttribute('data-nav')), 1);
-        render();
-        return;
-      }
-      var reg = e.target.closest('[data-reg]');
-      if (reg && cfg.link === 'enroll') {
-        // Same page: hand the cohort to the enrol form rather than navigating.
-        e.preventDefault();
-        var o = ev[+reg.getAttribute('data-reg')];
-        if (typeof window.AA_PICK === 'function') {
-          try { window.AA_PICK(fmtRange(o), o.id); } catch (err) {}
-        }
-        var target = document.getElementById('enroll');
-        if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-        return;
-      }
-      var bar = e.target.closest('[data-i]');
-      if (bar) {
-        sel = +bar.getAttribute('data-i');
-        hov = null;
-        render();
-        if (window.matchMedia && window.matchMedia('(max-width:1023px)').matches) {
-          root.querySelector('.aa-mcal__panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }
-    });
-
-    // Hover and focus must behave identically — the bars are buttons and a
-    // keyboard user has to get the same preview a mouse user gets.
-    function show(e) {
-      var b = e.target.closest('.aa-mcal-bar');
-      if (!b) { return; }
-      var slot = b.parentNode;
-      slot.classList.add('is-hov');
-      place(slot);
-    }
-    function hide(e) {
-      var b = e.target.closest('.aa-mcal-bar');
-      if (b) { b.parentNode.classList.remove('is-hov'); }
-    }
-    root.addEventListener('mouseover', show);
-    root.addEventListener('mouseout', hide);
-    root.addEventListener('focusin', show);
-    root.addEventListener('focusout', hide);
-
-    render();
-  }
-
-  function init() {
-    [].forEach.call(document.querySelectorAll('.aa-mcal'), boot);
-  }
-  if (document.readyState !== 'loading') { init(); }
-  else { document.addEventListener('DOMContentLoaded', init); }
-})();
-</script>
-AA_MCAL_ASSETS;
 
 	if ( $a['debug'] && current_user_can( 'manage_options' ) ) {
 		$html .= '<pre style="font-size:11px;white-space:pre-wrap">' . esc_html( "aa_mini_calendar\n" . implode( "\n", $dbg ) ) . '</pre>';
