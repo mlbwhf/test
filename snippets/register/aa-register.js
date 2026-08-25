@@ -58,8 +58,13 @@
     var f = form1 && form1.querySelector('[name="' + name + '"]');
     return f ? (f.value || '').trim() : '';
   }
+  /* One field gates the flow: a work email. Stripe collects the cardholder
+     name, billing details and the card itself on its own page, and asking for
+     them here first means typing the same things twice. The email is worth
+     keeping — it prefills Stripe, and it is the only trace of someone who
+     abandons on Stripe's page. */
   function detailsOk() {
-    return val('first').length > 1 && val('last').length > 0 && /.+@.+\..+/.test(val('email'));
+    return /.+@.+\..+/.test(val('email'));
   }
   function monthCards(month) {
     return cards.filter(function (c) { return c.closest('.aacal-panel-month').getAttribute('data-month') === month; });
@@ -200,8 +205,7 @@
     var payload = {
       cohort:  state.card.getAttribute('data-cohort'),
       seats:   state.seats,
-      first:   val('first'), last: val('last'), email: val('email'),
-      company: val('company'), phone: val('phone')
+      email:   val('email')
     };
 
     if (!ENDPOINT) {
@@ -274,7 +278,6 @@
     txt(elHint, ok ? 'One more screen — then you\u2019re done.' : 'Name and work email to continue.');
 
     txt(root.querySelector('[data-rev-dates]'), c.getAttribute('data-range'));
-    txt(root.querySelector('[data-rev-name]'), (val('first') + ' ' + val('last')).trim() || '—');
     txt(root.querySelector('[data-rev-email]'), val('email') || '—');
     txt(root.querySelector('[data-rev-seats]'), String(state.seats));
     txt(root.querySelector('[data-rev-total]'), money(total()));

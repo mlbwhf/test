@@ -39,18 +39,29 @@
  * set on the settings page. A secret key pasted into a snippet is a secret
  * stored in the posts table and shown to every admin who opens the editor.
  *
- * PAYMENT LINKS vs SESSIONS. By default this creates a Checkout Session per
- * click: no links to maintain, the price comes from the table, and seats are
- * enforced before the buyer reaches Stripe. A per-course 'payment_link' switches
- * that course to a static Stripe Payment Link instead.
+ * PAYMENT: CHECKOUT SESSIONS, not Payment Links. This creates a session per
+ * click. The alternative — a static Stripe Payment Link — was considered and
+ * rejected for this site:
  *
- * One link PER CLASS does not work here. The schedule is generated, so about
- * 201 batches are live at any moment and roughly seven appear every week —
- * 364 links a year to create and retire by hand, each one dying when its date
- * passes. One link PER COURSE does work: the cohort rides along as
- * client_reference_id. The cost is that the link's price is fixed (no
- * per-cohort or early-bird pricing) and, if the link allows quantity edits,
- * the seat cap cannot be enforced before payment.
+ *   Price integrity. The Offer JSON-LD on the page and the amount charged both
+ *   come from one table here, so structured data cannot advertise a price the
+ *   checkout does not honour. A link's price lives in the Stripe dashboard and
+ *   silently diverges the day either side changes.
+ *   Seats. A session is refused when a batch is full or over-booked. A link
+ *   with adjustable quantity lets a buyer raise the seat count on Stripe's own
+ *   page, past any check made here.
+ *   Maintenance. One link per class is impossible with a generated schedule —
+ *   201 batches live at once, about seven new every week, 364 a year to create
+ *   and retire, each dying when its date passes.
+ *
+ * The cost is one server round trip before the redirect, roughly a third of a
+ * second, covered by the button's "Taking you to Stripe…" state. Stripe hosts
+ * the identical mobile-optimised payment page either way, so nothing about the
+ * payment experience, its SEO or its readability differs.
+ *
+ * A per-course 'payment_link' is still honoured if one is set, and the cohort
+ * rides along as client_reference_id — kept for a fixed-price course where the
+ * link already exists. It is not the recommended path.
  *
  * WEBHOOK: point Stripe at  <site>/wp-json/aa/v1/stripe-webhook  for the
  * checkout.session.completed event. That, not the browser returning, is what
@@ -788,18 +799,14 @@ function aa_reg_panel( $atts ) {
 	    . '<p class="aacal-sel-range" data-sel-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p>'
 	    . '<p class="aacal-sel-batch" data-sel-batch>' . esc_html( $first['batch'] ) . '</p></div>';
 
-	$field = function ( $name, $label, $type = 'text', $auto = '', $req = false ) {
-		return '<label class="aacal-field"><span class="aacal-sr">' . esc_html( $label ) . '</span>'
-		     . '<input name="' . esc_attr( $name ) . '" type="' . esc_attr( $type ) . '"'
-		     . ( $auto ? ' autocomplete="' . esc_attr( $auto ) . '"' : '' )
-		     . ' placeholder="' . esc_attr( $label ) . '"' . ( $req ? ' required' : '' ) . '></label>';
-	};
+	/* ONE FIELD. Everything else — cardholder name, billing address, the card —
+	   Stripe collects on its own page, and asking for it here first is asking
+	   twice. The email stays because it prefills Stripe and because it is the
+	   only record of someone who abandons at the payment step. */
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
-	    . '<div class="aacal-row">' . $field( 'first', 'First name', 'text', 'given-name', true )
-	    . $field( 'last', 'Last name', 'text', 'family-name', true ) . '</div>'
-	    . $field( 'email', 'Work email', 'email', 'email', true )
-	    . '<div class="aacal-row">' . $field( 'company', 'Company', 'text', 'organization' )
-	    . $field( 'phone', 'Phone (optional)', 'tel', 'tel' ) . '</div>'
+	    . '<label class="aacal-field"><span class="aacal-sr">Work email</span>'
+	    . '<input name="email" type="email" autocomplete="email" inputmode="email"'
+	    . ' placeholder="Work email" required></label>'
 	    . '<div class="aacal-seatsrow"><div><p class="aacal-minilabel">Seats</p>'
 	    . '<div class="aacal-stepper"><button type="button" data-seats="-1" aria-label="Fewer seats">&minus;</button>'
 	    . '<span data-seats-value aria-live="polite">1</span>'
@@ -807,14 +814,13 @@ function aa_reg_panel( $atts ) {
 	    . '<div class="aacal-totalbox"><p class="aacal-minilabel">Total</p>'
 	    . '<p class="aacal-total" data-total>' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</p></div></div>'
 	    . '<button type="submit" class="aacal-cta" data-next disabled>Continue to review</button>'
-	    . '<p class="aacal-hint" data-hint>Name and work email to continue.</p>'
+	    . '<p class="aacal-hint" data-hint>Enter your work email to continue.</p>'
 	    . '</form>';
 
 	$h .= '<form class="aacal-panel" data-panel="2" hidden novalidate>'
 	    . '<dl class="aacal-review">'
 	    . '<div><dt>Course</dt><dd>' . esc_html( $course['name'] ) . '</dd></div>'
 	    . '<div><dt>Dates</dt><dd data-rev-dates></dd></div>'
-	    . '<div><dt>Attendee</dt><dd data-rev-name>&mdash;</dd></div>'
 	    . '<div><dt>Email</dt><dd data-rev-email>&mdash;</dd></div>'
 	    . '<div><dt>Seats</dt><dd data-rev-seats>1</dd></div>'
 	    . '<div class="aacal-review-total"><dt>Total &middot; exam fee included</dt>'
@@ -917,11 +923,9 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	if ( ! is_email( $email ) ) {
 		return new WP_Error( 'aa_email', 'Please enter a valid email address.', array( 'status' => 400 ) );
 	}
-	$first = sanitize_text_field( isset( $d['first'] ) ? $d['first'] : '' );
-	$last  = sanitize_text_field( isset( $d['last'] ) ? $d['last'] : '' );
-	if ( $first === '' || $last === '' ) {
-		return new WP_Error( 'aa_name', 'Please enter your name.', array( 'status' => 400 ) );
-	}
+	/* No name is required from the page. Stripe collects the cardholder name
+	   and returns it on the session as customer_details.name, which the
+	   webhook writes to the registration. Asking here would only duplicate it. */
 
 	// Seats: clamp to the order ceiling AND to seats actually left. The client
 	// sends a number; it does not get to decide what is possible.
@@ -975,9 +979,6 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		'metadata[cohort]'  => $cohort['id'],
 		'metadata[course]'  => $found['slug'],
 		'metadata[seats]'   => $seats,
-		'metadata[name]'    => $first . ' ' . $last,
-		'metadata[company]' => sanitize_text_field( isset( $d['company'] ) ? $d['company'] : '' ),
-		'metadata[phone]'   => sanitize_text_field( isset( $d['phone'] ) ? $d['phone'] : '' ),
 	);
 
 	$res = wp_remote_post( 'https://api.stripe.com/v1/checkout/sessions', array(
@@ -1072,7 +1073,9 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 	if ( isset( $s['line_items']['data'][0]['quantity'] ) ) {
 		$seats = max( 1, (int) $s['line_items']['data'][0]['quantity'] );
 	}
-	$name   = isset( $meta['name'] ) ? sanitize_text_field( $meta['name'] ) : '';
+	// Stripe is the source for the buyer's name — the page never asked for it.
+	$name   = isset( $s['customer_details']['name'] ) ? sanitize_text_field( $s['customer_details']['name'] )
+	        : ( isset( $meta['name'] ) ? sanitize_text_field( $meta['name'] ) : '' );
 	$email  = isset( $s['customer_details']['email'] ) ? sanitize_email( $s['customer_details']['email'] )
 	        : ( isset( $s['customer_email'] ) ? sanitize_email( $s['customer_email'] ) : '' );
 
@@ -1087,8 +1090,7 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 			'course'         => isset( $meta['course'] ) ? sanitize_text_field( $meta['course'] ) : '',
 			'seats'          => $seats,
 			'email'          => $email,
-			'company'        => isset( $meta['company'] ) ? sanitize_text_field( $meta['company'] ) : '',
-			'phone'          => isset( $meta['phone'] ) ? sanitize_text_field( $meta['phone'] ) : '',
+			'phone'          => isset( $s['customer_details']['phone'] ) ? sanitize_text_field( $s['customer_details']['phone'] ) : '',
 			'amount_total'   => isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0,
 			'currency'       => isset( $s['currency'] ) ? sanitize_text_field( $s['currency'] ) : '',
 		),
