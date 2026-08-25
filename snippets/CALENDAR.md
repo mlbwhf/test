@@ -11,6 +11,7 @@ already uses successfully (`AA – Home JS`, `AA – Nav JS`):
 | # | WPCode snippet type | Name | Paste this | Settings |
 |---|---|---|---|---|
 | 1 | **CSS Snippet** | `AA – Calendar CSS` | `snippets/calendar/aa-calendar.css` | Auto Insert, Site Wide Header |
+|1b | *or* Additional CSS | — | `snippets/additional-css-calendar-section.css` | paste at the end of the sheet |
 | 2 | **JavaScript Snippet** | `AA – Calendar JS` | `snippets/calendar/aa-calendar.js` | Auto Insert, **Site Wide Footer** |
 | 3 | **PHP Snippet** | `AA – Calendar PHP` | `aa-mini-calendar-wpcode-snippet.php` | Auto Insert, **Run Everywhere** |
 
@@ -29,6 +30,23 @@ already has its styles and behaviour.
 
 **Never paste the CSS or JS back into the PHP snippet.** That is the specific
 change that broke the site.
+
+### CSS: snippet or Additional CSS?
+
+Both work; pick one, never both. `snippets/additional-css-calendar-section.css`
+is the same rules wrapped as **section Z** in the house style of your Additional
+CSS, where the home page already lives as section Y.
+
+* **Additional CSS** — one canonical stylesheet, one less snippet to manage.
+  This matches the principle you set earlier ("why are we introducing another
+  CSS in a snippet, why not update the existing CSS").
+* **CSS snippet** — keeps the calendar's three parts together, so switching the
+  calendar off takes its styles with it, and a bad paste can't touch the sheet
+  every other page depends on.
+
+Safe in the shared sheet either way: every selector is scoped under `.aa-mcal`,
+and the generator refuses to emit the section if that ever stops being true, so
+it cannot reach the course template's `.aa-rd` rules or section Y.
 
 Then, once the calendars render:
 
@@ -74,6 +92,27 @@ the page as text too; a `display:none` rule would not manage that.
 
 To put a calendar back on one of them, remove its slug from that function. To
 retire the section permanently, delete the block in the editor.
+
+## Repeating courses and duplicates
+
+**A course that runs weekly** — RTE starting Monday, Wednesday and Friday every
+week — would otherwise put three bars in one week that are identical down to
+the pixel: same code, same colour, same name, same day chip. When a course
+appears more than once in the visible month its bars show the **date range**
+instead of the course name, since that is the only field that differs. A course
+appearing once keeps its name, which is more useful there.
+
+**The same class stored twice** is collapsed to one bar. A class can exist as
+more than one `wp_events` post — an Eventbrite import beside a hand-made entry,
+a re-import, or one class tagged with two terms meaning the same course (`sasm`
+and `asm` both resolve to SASM). The calendar keys on **course code + start +
+end**, not the term slug, so the alias case collapses too. The first post wins,
+but any optional fact it lacks is filled in from the duplicate — if the import
+carries the dates and the manual entry carries `seats_left`, you keep both.
+`[aa_mini_calendar debug="1"]` lists what was merged, for admins only.
+
+This hides the symptom, not the cause: duplicate posts still sit in `wp_events`
+and still feed anything else reading that post type. Worth cleaning up at source.
 
 ## Reading the grid
 

@@ -124,8 +124,18 @@
       return out;
     }
 
+    /* Courses that run on a weekly cadence — RTE starts Monday, Wednesday and
+       Friday every week — put three bars in one week that are identical down
+       to the pixel: same code, same colour, same course name, same 3d chip.
+       Nothing on the face of them says which is which. When a course appears
+       more than once in the visible month its bars carry the DATE RANGE in
+       place of the name, which is the only field that actually differs. A
+       course appearing once keeps its name, which is more useful there. */
+    var repeats = {};
+
     function barHTML(b) {
       var o = b.o, m = meta(o), tight = b.span === 1;
+      var label = repeats[m.code] > 1 ? fmtRange(o) : m.name;
       var sl = seatsLabel(o);
       var aria = m.name + ', ' + fmtRange(o) + ', ' + S.days_n.replace('%d', o.days) + (sl ? ', ' + sl : '');
       var pv =
@@ -147,7 +157,7 @@
           (tight ? ' is-tight' : '') + (o.past ? ' is-gone' : '') +
           '" data-i="' + o.i + '" aria-label="' + esc(aria) + '"' +
           ' style="--c:' + m.color + ';--tint:' + m.tint + ';--tb:' + m.tint_border + '">' +
-          '<b>' + esc(m.code) + '</b><span class="n">' + esc(m.name) + '</span>' +
+          '<b>' + esc(m.code) + '</b><span class="n">' + esc(label) + '</span>' +
           '<i class="d">' + o.days + 'd</i>' +
         '</button>' + pv + '</span>';
     }
@@ -158,6 +168,12 @@
       var inMonth = ev.filter(function (o) {
         return o.e >= new Date(y, mo, 1) && o.s <= new Date(y, mo + 1, 0);
       });
+      repeats = {};
+      inMonth.forEach(function (o) {
+        var c = meta(o).code;
+        repeats[c] = (repeats[c] || 0) + 1;
+      });
+
       var h = '<div class="aa-mcal-head"><div>' +
         '<span class="aa-mcal-eyebrow">' + esc(S.eyebrow) + '</span>' +
         '<h3 class="aa-mcal-title">' + esc((S.months[mo] || MON[mo]) + ' ' + y) + '</h3></div>' +

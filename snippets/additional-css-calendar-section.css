@@ -1,0 +1,190 @@
+/* ############################################################################
+   Z. COURSE CALENDAR                                    [aa_mini_calendar]
+   ----------------------------------------------------------------------------
+   Generated from snippets/calendar/aa-calendar.css — content hash 479f9b22.
+   Do not hand-edit here; edit that file and regenerate, or the next update
+   overwrites the change.
+
+   Every selector below is scoped under .aa-mcal (verified by this generator,
+   zero exceptions), so this section cannot reach the course template's .aa-rd
+   rules or the home page's section Y.
+
+   If this section is in the sheet, do NOT also run the "AA - Calendar CSS"
+   WPCode snippet — two copies of the same rules, and one of them will drift.
+   ############################################################################ */
+
+/* Agile Agilist course calendar — tokens and layout from the design handoff
+   (design_handoff_course_calendar), option 1A "split": calendar left, detail +
+   register panel right. Type FAMILY inherits from the page on purpose — the
+   handoff specifies DM Sans, but the site already loads three families and is
+   being asked to cut font requests, so only the sizes/weights are adopted. */
+.aa-mcal{
+  --ink:#101C33; --body:#3D3A33; --muted:#4E4A40; --meta:#6B6455;
+  --faint:#8A8375; --faint2:#9A9384; --disabled:#C9C3B4;
+  --l1:#DCD7CB; --l2:#E4E0D6; --l3:#E9E5DB; --l4:#EEEAE0; --l5:#F1EDE3;
+  --panel:#FBFAF7; --onink:#F7F5F0; --teal:#0E8074;
+  display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  background:#fff; border:1px solid var(--l2); border-radius:20px;
+  color:var(--ink); font-family:inherit; text-align:left;
+}
+/* No overflow:hidden on the card. The hover preview is absolutely positioned
+   and hangs below its bar, so clipping the card would decapitate every preview
+   opened from the bottom week or the last column. The two children carry the
+   rounded corners instead, which is what overflow:hidden was there for. */
+.aa-mcal__cal{border-radius:20px 0 0 20px}
+.aa-mcal__panel{border-radius:0 20px 20px 0}
+.aa-mcal *{box-sizing:border-box}
+.aa-mcal__cal{padding:26px 26px 30px; border-right:1px solid var(--l3); min-width:0}
+
+/* ---- header ---- */
+.aa-mcal-head{display:flex; align-items:flex-end; justify-content:space-between; gap:14px}
+.aa-mcal-eyebrow{display:block; font-size:11.5px; font-weight:700; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:4px}
+.aa-mcal-title{font-size:27px; font-weight:600; letter-spacing:-.025em; line-height:1.1; margin:0}
+.aa-mcal-nav{display:flex; gap:7px; flex:none}
+.aa-mcal-nav button{width:36px; height:36px; border:1px solid var(--l1); border-radius:10px;
+  background:#fff; color:var(--meta); font-size:15px; line-height:1; cursor:pointer;
+  display:flex; align-items:center; justify-content:center}
+.aa-mcal-nav button:hover:not(:disabled),
+.aa-mcal-nav button:focus-visible{border-color:var(--teal); color:var(--teal)}
+.aa-mcal-nav button:disabled{opacity:.35; cursor:default}
+
+/* ---- grid ---- */
+.aa-mcal-dows{display:grid; grid-template-columns:repeat(7,1fr); margin-top:18px;
+  border-bottom:1px solid var(--l4); padding-bottom:8px}
+.aa-mcal-dows span{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--faint2); padding-left:4px}
+.aa-mcal-week{border-bottom:1px solid var(--l5); padding:7px 0 9px}
+.aa-mcal-nums{display:grid; grid-template-columns:repeat(7,1fr)}
+.aa-mcal-nums span{font-size:12.5px; font-weight:600; color:var(--body); padding-left:4px}
+.aa-mcal-nums span.is-out{font-weight:400; color:var(--disabled)}
+.aa-mcal-bars{display:grid; grid-template-columns:repeat(7,1fr); gap:4px 2px; margin-top:3px}
+.aa-mcal-slot{position:relative; min-width:0}
+.aa-mcal-slot.is-hov{z-index:60}
+
+/* ---- course bar: the width IS the class length ---- */
+.aa-mcal-bar{display:flex; align-items:center; gap:6px; width:100%; height:26px;
+  padding:0 8px; border-radius:7px; cursor:pointer; text-align:left; overflow:hidden;
+  white-space:nowrap; font-family:inherit; font-size:11.5px;
+  background:var(--tint); color:var(--c); border:1px solid var(--tb);
+  transition:transform .15s ease, box-shadow .15s ease}
+.aa-mcal-bar:hover,.aa-mcal-bar:focus-visible{transform:translateY(-1px); box-shadow:0 2px 10px var(--tb)}
+.aa-mcal-bar.is-sel{background:var(--c); color:#fff; border-color:var(--c); box-shadow:none}
+.aa-mcal-bar b{font-weight:700; flex:none}
+.aa-mcal-bar .n{overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; opacity:.92; font-weight:400}
+.aa-mcal-bar .d{font-size:10px; font-weight:700; opacity:.8; flex:none}
+.aa-mcal-bar.is-tight .n,.aa-mcal-bar.is-tight .d{display:none}
+/* past / sold out */
+.aa-mcal-bar.is-gone{opacity:.55}
+.aa-mcal-bar.is-gone:hover,.aa-mcal-bar.is-gone:focus-visible{transform:none; box-shadow:none}
+
+/* ---- hover preview ---- */
+.aa-mcal-pv{position:absolute; top:calc(100% + 7px); left:0; width:252px; max-width:70vw;
+  background:#fff; border:1px solid var(--l2); border-radius:13px; padding:14px;
+  box-shadow:0 18px 40px rgba(16,28,51,.14); pointer-events:none; z-index:70;
+  opacity:0; visibility:hidden; transform:translateY(-4px);
+  transition:opacity .16s ease, transform .16s ease; white-space:normal}
+.aa-mcal-slot.is-hov .aa-mcal-pv{opacity:1; visibility:visible; transform:translateY(0)}
+.aa-mcal-pv.flip-x{left:auto; right:0}
+.aa-mcal-pv.flip-y{top:auto; bottom:calc(100% + 7px)}
+.aa-mcal-pv__track{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
+.aa-mcal-pv__name{font-size:15px; font-weight:600; margin:5px 0 4px; line-height:1.25}
+.aa-mcal-pv__when{font-size:12.5px; color:var(--muted); line-height:1.45}
+.aa-mcal-pv__hr{height:1px; background:var(--l4); margin:11px 0}
+.aa-mcal-pv__row{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.aa-mcal-pv__price{font-size:12.5px; font-weight:600}
+.aa-mcal-pv__go{font-size:11.5px; font-weight:600; color:var(--teal); margin-top:9px}
+.aa-mcal-pill{font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:100px;
+  background:#E7F2F0; color:#0B665C; white-space:nowrap}
+.aa-mcal-pill.is-low{background:#FBE9E3; color:#B0413E}
+
+/* ---- legend ---- */
+.aa-mcal-legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:16px}
+.aa-mcal-key{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--meta)}
+.aa-mcal-key i{width:10px; height:10px; border-radius:3px; background:var(--c); flex:none}
+.aa-mcal-empty{padding:26px 4px; font-size:13.5px; color:var(--meta)}
+
+/* ---- detail + register panel ---- */
+.aa-mcal__panel{background:var(--panel); padding:26px 26px 30px; display:flex; flex-direction:column; min-width:0}
+.aa-mcal-sel{display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
+.aa-mcal-sel i{width:7px; height:7px; border-radius:50%; background:#D34B2A; flex:none;
+  animation:aa-mcal-pulse 1.4s ease-in-out infinite}
+@keyframes aa-mcal-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.aa-mcal-rule{width:4px; height:54px; border-radius:2px; background:var(--c,#0E8074); margin:16px 0 14px}
+.aa-mcal-track{font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--faint2)}
+.aa-mcal-name{font-size:25px; font-weight:600; letter-spacing:-.028em; line-height:1.14; margin:7px 0 0}
+.aa-mcal-desc{font-size:14px; line-height:1.6; color:var(--muted); margin:11px 0 0}
+
+.aa-mcal-facts{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--l3);
+  border:1px solid var(--l3); border-radius:12px; overflow:hidden; margin-top:18px}
+.aa-mcal-fact{background:#fff; padding:12px 14px; min-width:0}
+.aa-mcal-fact dt{font-size:10.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--faint2); margin:0}
+.aa-mcal-fact dd{font-size:14.5px; font-weight:600; margin:4px 0 0}
+.aa-mcal-fact dd.is-low{color:#B0413E}
+
+.aa-mcal-inc{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:7px}
+.aa-mcal-inc li{display:flex; gap:7px; font-size:13.5px; color:var(--body); line-height:1.45}
+.aa-mcal-inc li::before{content:"✓"; color:var(--teal); font-weight:700; flex:none}
+
+.aa-mcal-reg{margin-top:auto; padding-top:22px; border-top:1px solid var(--l3)}
+.aa-mcal-price{font-size:22px; font-weight:600; line-height:1.2}
+.aa-mcal-price small{display:block; font-size:11.5px; font-weight:400; color:var(--faint); margin-top:3px}
+.aa-mcal-cta{display:block; width:100%; margin-top:14px; padding:14px; border-radius:100px;
+  background:var(--ink); color:var(--onink) !important; text-align:center; font-size:14.5px;
+  font-weight:600; text-decoration:none !important; border:0; cursor:pointer; font-family:inherit}
+.aa-mcal-cta:hover,.aa-mcal-cta:focus-visible{background:var(--teal); color:var(--onink) !important}
+.aa-mcal-note{font-size:11.5px; color:var(--faint); margin:10px 0 0; line-height:1.5}
+.aa-mcal-more{display:inline-block; margin-top:10px; font-size:12.5px; color:var(--teal)}
+.aa-mcal-hint{font-size:13.5px; color:var(--meta); line-height:1.6; margin:0}
+
+/* ---- wide variant: same layout, larger grid ---- */
+.aa-mcal--wide .aa-mcal__cal{padding:30px 34px 32px}
+.aa-mcal--wide .aa-mcal-title{font-size:32px; letter-spacing:-.03em}
+.aa-mcal--wide .aa-mcal-nums span{font-size:14px; padding-left:6px}
+.aa-mcal--wide .aa-mcal-dows span{padding-left:6px}
+.aa-mcal--wide .aa-mcal-bars{gap:5px 3px}
+.aa-mcal--wide .aa-mcal-bar{height:32px; padding:0 11px; font-size:13px}
+.aa-mcal--wide .aa-mcal-bar .d{font-size:11px}
+.aa-mcal--wide .aa-mcal-week{padding:9px 0 12px}
+
+/* ---- agenda fallback ----
+   Defined BEFORE the media query that switches it on: both rules are a
+   single class, so whichever comes last wins, and with the base rule after
+   the query its display:none silently beat the display:flex and the mobile
+   list never appeared. */
+.aa-mcal-agenda{display:none; flex-direction:column; gap:8px; margin-top:16px}
+.aa-mcal-arow{display:flex; align-items:center; gap:10px; width:100%; padding:11px 12px;
+  border:1px solid var(--l2); border-radius:12px; background:#fff; cursor:pointer;
+  font-family:inherit; text-align:left}
+.aa-mcal-arow.is-sel{border-color:var(--c); box-shadow:inset 3px 0 0 var(--c)}
+.aa-mcal-arow i{width:10px; height:10px; border-radius:3px; background:var(--c); flex:none}
+.aa-mcal-arow .t{flex:1; min-width:0}
+.aa-mcal-arow .t b{display:block; font-size:13.5px; font-weight:600}
+.aa-mcal-arow .t span{display:block; font-size:12px; color:var(--meta); margin-top:2px}
+
+/* ---- responsive: stack, then fall back to an agenda list ---- */
+@media (max-width:1023px){
+  .aa-mcal{grid-template-columns:minmax(0,1fr)}
+  .aa-mcal__cal{border-right:0; border-bottom:1px solid var(--l3); border-radius:20px 20px 0 0}
+  .aa-mcal__panel{padding:22px 22px 26px; border-radius:0 0 20px 20px}
+}
+@media (max-width:719px){
+  .aa-mcal__cal{padding:20px 18px 22px}
+  .aa-mcal--wide .aa-mcal__cal{padding:20px 18px 22px}
+  .aa-mcal-title,.aa-mcal--wide .aa-mcal-title{font-size:22px}
+  /* A 7-column month grid stops working here — show the same cohorts as rows. */
+  .aa-mcal-dows,.aa-mcal-weeks{display:none}
+  .aa-mcal-agenda{display:flex}
+  .aa-mcal-name{font-size:21px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .aa-mcal-bar,.aa-mcal-pv{transition:opacity .16s ease}
+  .aa-mcal-bar:hover,.aa-mcal-bar:focus-visible{transform:none}
+  .aa-mcal-slot.is-hov .aa-mcal-pv{transform:none}
+  .aa-mcal-pv{transform:none}
+  .aa-mcal-sel i{animation:none}
+}
+/* ==================== END — Z. course calendar ==================== */

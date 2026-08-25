@@ -4,7 +4,7 @@
  * Description:  Registers [aa_home_cohorts] and [aa_mini_calendar], and takes
  *               over the old Xylus calendar shortcodes. Must-use plugin: loaded
  *               by WordPress before regular plugins, with no activation step.
- * Version:      039dc42
+ * Version:      502f4ff
  * Requires PHP: 7.0
  *
  * -----------------------------------------------------------------------------
@@ -675,7 +675,9 @@ function aamu_mcal_events( $cats, $months, &$dbg ) {
 		$q['tax_query'] = array( $tax );
 	}
 
-	$rows = array();
+	$rows    = array();
+	$seen    = array();   // course+dates already taken, for dedup
+	$catalog = aamu_mcal_catalog();
 	foreach ( get_posts( $q ) as $p ) {
 		$start = (int) get_post_meta( $p->ID, 'start_ts', true );
 		$end   = (int) get_post_meta( $p->ID, 'end_ts', true );
@@ -710,6 +712,32 @@ function aamu_mcal_events( $cats, $months, &$dbg ) {
 			$v = get_post_meta( $p->ID, $k, true );
 			if ( is_scalar( $v ) && $v !== '' ) { $row[ $k ] = (string) $v; }
 		}
+
+		/* DEDUPLICATE. The same class can exist as more than one wp_events post
+		   — an Eventbrite import alongside a hand-made entry, a re-import, or
+		   one class tagged with two terms that mean the same course (sasm and
+		   asm both resolve to SASM). All of those render as two identical bars
+		   stacked on the same days, which is what "two running on Aug 27"
+		   looks like.
+
+		   The key is COURSE CODE plus the two dates, not the term slug, so the
+		   alias case collapses too. The first post wins, but any optional fact
+		   it is missing is filled in from the duplicate: if the import carries
+		   the dates and the manual entry carries seats_left, keeping only one
+		   of them blindly would throw away real data. */
+		$code = isset( $catalog[ $slug ] ) ? $catalog[ $slug ]['code'] : strtoupper( $slug );
+		$dkey = $code . '|' . $row['s'] . '|' . $row['e'];
+		if ( isset( $seen[ $dkey ] ) ) {
+			$first = $seen[ $dkey ];
+			foreach ( array( 'seats', 'price', 'hours', 'instructor' ) as $k ) {
+				if ( ! isset( $rows[ $first ][ $k ] ) && isset( $row[ $k ] ) ) {
+					$rows[ $first ][ $k ] = $row[ $k ];
+				}
+			}
+			$dbg[] = $dkey . ' DUPLICATE of post ' . $rows[ $first ]['id'] . ' — merged, not shown';
+			continue;
+		}
+		$seen[ $dkey ] = count( $rows );
 
 		$rows[] = $row;
 		$dbg[]  = $slug . ' ' . $s->format( 'Y-m-d' ) . '..' . $e->format( 'Y-m-d' )
