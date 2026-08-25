@@ -1,0 +1,235 @@
+<?php
+/**
+ * Agile Agilist — CLAIMS CLEANUP
+ * -----------------------------------------------------------------------------
+ * Removes two claims from every page as it renders, in all four languages:
+ *
+ *   1. The aggregateRating node in the Course JSON-LD — a 4.9 from 2,500
+ *      reviews, with no 2,500 reviews visible anywhere on the page. Google's
+ *      structured-data policy requires the rating to be visible to the reader
+ *      on the same page; a rating that is only in the markup is a manual-action
+ *      risk, not an SEO win.
+ *
+ *   2. The pass guarantee — "money-back pass guarantee", "retake the next
+ *      cohort free or a full refund". It contradicts the copy rule in your own
+ *      design handoff ("the certification exam fee is included; a free retake
+ *      is not") and it is a refund promise sitting on 24 English pages plus
+ *      their Spanish, French and Arabic mirrors.
+ *
+ * -----------------------------------------------------------------------------
+ * WHY THIS IS A SNIPPET AND NOT 70 PAGE EDITS
+ *
+ * The claim is on 24 published English pages and their mirrors. Rewriting each
+ * page is 70-odd chances to corrupt a page for a change that has to be exactly
+ * right on all of them. This does it once, at render, so:
+ *
+ *   - every language is covered, including Arabic wording nobody has to find;
+ *   - deactivating this snippet puts every page back, unchanged;
+ *   - nothing is written to the database, so no page revision is lost.
+ *
+ * It does mean the claim still sits in the stored page content. That is worth
+ * cleaning up eventually, and [aa_claims_report] below lists exactly which
+ * pages still hold it, so the cleanup can be done page by page without
+ * guessing. Until then, nothing is published.
+ *
+ * -----------------------------------------------------------------------------
+ * WHY EXACT PHRASES AND NOT "GUARANTEE"
+ *
+ * Every pattern below is anchored on the whole claim, never on the word
+ * guarantee, because these pages legitimately use that word elsewhere:
+ *
+ *   "Son rangos orientativos, no garantías"        (a disclaimer — keep)
+ *   "Ce sont des ordres de grandeur, pas des garanties"  (same — keep)
+ *   "Le dispositif de réussite garantie a fait une énorme différence"
+ *                                        (a customer quote — keep)
+ *
+ * A pattern that misses leaves the text alone rather than mangling it, and
+ * [aa_claims_report] surfaces the miss.
+ *
+ * INSTALL: WPCode -> PHP Snippet, "AA - Claims", Auto Insert, Run Everywhere.
+ * Independent of the calendar and registration snippets; install it on its own.
+ */
+
+if ( ! function_exists( 'aa_claims_rules' ) ) :
+
+/**
+ * Ordered claim rules, most specific first.
+ *
+ * Each is [pattern, replacement]. Order matters: the mid-sentence form has to
+ * run before the trailing form, or the trailing rule eats the comma the
+ * mid-sentence rule needs.
+ */
+function aa_claims_rules() {
+	return array(
+		/* ---- English ---- */
+		// "Exam included, money-back pass guarantee, and a career-coaching session."
+		array( '/,\s*money[-\s]?back pass guarantee,\s*and\s+/iu', ' and ' ),
+		// "<em>Exam included</em> and a money-back pass guarantee."
+		array( '/\s+and\s+a\s+money[-\s]?back pass guarantee/iu', '' ),
+		array( '/,\s*(?:and\s+a\s+)?money[-\s]?back pass guarantee/iu', '' ),
+		array( '/\s*money[-\s]?back pass guarantee/iu', '' ),
+		// the card body, whichever way it is punctuated
+		array( '/Don(?:\'|&#8217;|\x{2019})t pass on your first attempt\?\s*Retake the next cohort free\s*(?:&mdash;|\x{2014}|-)?\s*or get a full refund\.\s*No questions\.?/iu', '' ),
+
+		/* ---- French ---- */
+		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement\s+et\s+/iu', ' et ' ),
+		array( '/\s+et\s+(?:une\s+)?garantie de r\x{00E9}ussite ou remboursement/iu', '' ),
+		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement/iu', '' ),
+		array( '/Vous ne r\x{00E9}ussissez pas du premier coup\s*\?\s*Refaites la cohorte suivante gratuitement ou recevez un remboursement int\x{00E9}gral\.\s*Sans condition\.?/iu', '' ),
+
+		/* ---- Spanish ---- */
+		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso\s+y\s+/iu', ' y ' ),
+		array( '/\s+y\s+(?:una\s+)?garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', '' ),
+		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', '' ),
+		array( '/\x{00BF}No apruebas al primer intento\?\s*Repite la siguiente cohorte gratis o recibe un reembolso completo\.\s*Sin preguntas\.?/iu', '' ),
+
+		/* ---- Arabic ---- */
+		// The replacement is a literal Arabic comma (U+060C in UTF-8 bytes), not
+		// an \x{} escape — those are pattern syntax and would be emitted verbatim.
+		array( '/\x{060C}\s*\x{0648}\x{0636}\x{0645}\x{0627}\x{0646} \x{0627}\x{0644}\x{0646}\x{062C}\x{0627}\x{062D} \x{0623}\x{0648} \x{0627}\x{0633}\x{062A}\x{0631}\x{062F}\x{0627}\x{062F} \x{0627}\x{0644}\x{0623}\x{0645}\x{0648}\x{0627}\x{0644}\x{060C}\s*/u', "\xD8\x8C " ),
+		array( '/\s*\x{0648}\x{0636}\x{0645}\x{0627}\x{0646} \x{0627}\x{0644}\x{0646}\x{062C}\x{0627}\x{062D} \x{0623}\x{0648} \x{0627}\x{0633}\x{062A}\x{0631}\x{062F}\x{0627}\x{062F} \x{0627}\x{0644}\x{0623}\x{0645}\x{0648}\x{0627}\x{0644}/u', '' ),
+	);
+}
+
+/** The guarantee card heading, per language — used to remove the whole card. */
+function aa_claims_card_headings() {
+	return array(
+		'Money-back pass guarantee',
+		'Garantie de r' . "\xC3\xA9" . 'ussite ou remboursement',
+		'Garant' . "\xC3\xAD" . 'a de aprobaci' . "\xC3\xB3" . 'n o reembolso',
+		"\xD8\xB6\xD9\x85\xD8\xA7\xD9\x86 \xD8\xA7\xD9\x84\xD9\x86\xD8\xAC\xD8\xA7\xD8\xAD \xD8\xA3\xD9\x88 \xD8\xA7\xD8\xB3\xD8\xAA\xD8\xB1\xD8\xAF\xD8\xA7\xD8\xAF \xD8\xA7\xD9\x84\xD8\xA3\xD9\x85\xD9\x88\xD8\xA7\xD9\x84",
+	);
+}
+
+/**
+ * Drop the whole guarantee half of the "what's included" card.
+ *
+ * The card is one heading div followed by one paragraph, identical in every
+ * language:
+ *   <div ...><span ...>&#10038;</span>HEADING</div><p ...>BODY</p>
+ * The other half of that card — "Instant confirmation" — is a different pair
+ * and is left alone, so the card keeps its shape instead of emptying out.
+ */
+function aa_claims_drop_card( $html ) {
+	foreach ( aa_claims_card_headings() as $heading ) {
+		$pat = '#<div\b[^>]*>(?:(?!</div>).)*?' . preg_quote( $heading, '#' )
+		     . '\s*</div>\s*<p\b[^>]*>(?:(?!</p>).)*?</p>#isu';
+		$out = preg_replace( $pat, '', $html );
+		if ( $out !== null ) { $html = $out; }
+	}
+	return $html;
+}
+
+/**
+ * Remove aggregateRating from every JSON-LD block on the page.
+ *
+ * Decoded and re-encoded rather than pattern-matched: the node has nested
+ * braces, and a regex that counts braces in JSON is a bug waiting to happen.
+ * A block that will not decode is returned exactly as it came in.
+ */
+function aa_claims_strip_rating( $html ) {
+	if ( strpos( $html, 'aggregateRating' ) === false ) { return $html; }
+
+	return preg_replace_callback(
+		'#(<script[^>]*type=["\']application/ld\+json["\'][^>]*>)(.*?)(</script>)#is',
+		function ( $m ) {
+			$data = json_decode( $m[2], true );
+			if ( ! is_array( $data ) ) { return $m[0]; }   // leave anything odd alone
+			$data = aa_claims_unset_rating( $data );
+			$json = wp_json_encode( $data );
+			if ( ! is_string( $json ) ) { return $m[0]; }
+			return $m[1] . $json . $m[3];
+		},
+		$html
+	);
+}
+
+/** Walk any depth of the graph and drop every aggregateRating it holds. */
+function aa_claims_unset_rating( $node ) {
+	if ( ! is_array( $node ) ) { return $node; }
+	unset( $node['aggregateRating'] );
+	foreach ( $node as $k => $v ) {
+		if ( is_array( $v ) ) { $node[ $k ] = aa_claims_unset_rating( $v ); }
+	}
+	return $node;
+}
+
+/**
+ * Tidy the punctuation a removal can leave behind, and nothing else.
+ *
+ * Only the full stop and the comma. NOT the colon, semicolon, question or
+ * exclamation mark: French sets a space before all four, so a rule that closed
+ * up " :" would rewrite the typography of every French page on the site —
+ * "pas des garanties : les résultats" is correct French and must stay.
+ */
+function aa_claims_tidy( $html ) {
+	$html = preg_replace( '/[ \t]+([.,])/u', '$1', $html );   // " ." -> "."
+	$html = preg_replace( '/([.,])\1+/u', '$1', $html );      // ".." -> "."
+	$html = preg_replace( '/,\s*\./u', '.', $html );          // ", ." -> "."
+	return $html;
+}
+
+function aa_claims_filter( $html ) {
+	if ( ! is_string( $html ) || $html === '' ) { return $html; }
+	$html = aa_claims_strip_rating( $html );
+	$html = aa_claims_drop_card( $html );
+	foreach ( aa_claims_rules() as $rule ) {
+		$out = preg_replace( $rule[0], $rule[1], $html );
+		if ( $out !== null ) { $html = $out; }   // a failed pattern changes nothing
+	}
+	return aa_claims_tidy( $html );
+}
+add_filter( 'the_content', 'aa_claims_filter', 20 );
+
+/* ============================================================================
+   [aa_claims_report]  —  what is still stored, for admins only
+   Nothing above touches the database. This lists the pages whose stored
+   content still holds a claim, so the source can be cleaned page by page.
+   ========================================================================== */
+function aa_claims_report() {
+	if ( ! current_user_can( 'manage_options' ) ) { return ''; }
+	global $wpdb;
+
+	$needles = array(
+		'aggregateRating'                    => 'rating',
+		'pass guarantee'                     => 'guarantee (EN)',
+		'garantie de r' . "\xC3\xA9" . 'ussite ou remboursement' => 'guarantee (FR)',
+		'garant' . "\xC3\xAD" . 'a de aprobaci' . "\xC3\xB3" . 'n o reembolso' => 'guarantee (ES)',
+		"\xD8\xB6\xD9\x85\xD8\xA7\xD9\x86 \xD8\xA7\xD9\x84\xD9\x86\xD8\xAC\xD8\xA7\xD8\xAD" => 'guarantee (AR)',
+	);
+
+	$rows = array();
+	foreach ( $needles as $needle => $label ) {
+		$found = $wpdb->get_results( $wpdb->prepare(
+			"SELECT ID, post_title, post_type FROM {$wpdb->posts}
+			 WHERE post_status = 'publish' AND post_content LIKE %s",
+			'%' . $wpdb->esc_like( $needle ) . '%'
+		) );
+		foreach ( $found as $p ) {
+			$rows[ $p->ID ]['title'] = $p->post_title;
+			$rows[ $p->ID ]['type']  = $p->post_type;
+			$rows[ $p->ID ]['hits'][] = $label;
+		}
+	}
+
+	if ( ! $rows ) {
+		return '<p><strong>aa_claims_report:</strong> nothing stored. Every page is clean at source.</p>';
+	}
+
+	$h = '<p><strong>aa_claims_report:</strong> ' . count( $rows )
+	   . ' published items still hold a claim in their stored content. Nothing below is being'
+	   . ' published — the snippet removes it as the page renders — but this is the cleanup list.</p>';
+	$h .= '<table style="border-collapse:collapse;font:13px/1.5 system-ui"><tr>'
+	    . '<th style="text-align:left;padding:4px 12px 4px 0">ID</th>'
+	    . '<th style="text-align:left;padding:4px 12px 4px 0">Page</th>'
+	    . '<th style="text-align:left;padding:4px 0">Still holds</th></tr>';
+	foreach ( $rows as $id => $r ) {
+		$h .= '<tr><td style="padding:3px 12px 3px 0"><a href="' . esc_url( get_edit_post_link( $id ) ) . '">' . (int) $id . '</a></td>'
+		    . '<td style="padding:3px 12px 3px 0">' . esc_html( $r['title'] ) . '</td>'
+		    . '<td style="padding:3px 0">' . esc_html( implode( ', ', array_unique( $r['hits'] ) ) ) . '</td></tr>';
+	}
+	return $h . '</table>';
+}
+add_shortcode( 'aa_claims_report', 'aa_claims_report' );
+
+endif;

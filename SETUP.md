@@ -101,6 +101,37 @@ each scoped to its own track), `/training/safe-industry/` and
 
 ---
 
+## Part 2.5 — Claims cleanup (install this one on its own, today)
+
+| # | WPCode type | Name | Paste | Settings |
+|---|---|---|---|---|
+| 1 | **PHP Snippet** | `AA – Claims` | `aa-claims-wpcode-snippet.php` | Auto Insert, **Run Everywhere** |
+
+Independent of everything else — it does not wait for Stripe. It removes two
+claims from every page as it renders, in all four languages:
+
+- **`aggregateRating`** in the Course JSON-LD — a 4.9 from 2,500 reviews with
+  no 2,500 reviews visible on the page. Google requires the rating to be
+  visible to the reader on the same page, so this is a manual-action risk
+  rather than an SEO win.
+- **The pass guarantee** — "money-back pass guarantee", "retake the next cohort
+  free or a full refund". It contradicts the copy rule in your own design
+  handoff, and it is a refund promise on **24 published English pages** plus
+  their Spanish, French and Arabic mirrors.
+
+Nothing is written to the database, so deactivating the snippet puts every page
+back exactly as it was. Put **`[aa_claims_report]`** on any page and view it as
+an administrator to see which pages still hold the claim in their stored
+content — that is the list for cleaning the source later, at leisure.
+
+Checked against all 52 page files in the repo: 33 carried a claim, none carried
+one afterwards, and every JSON-LD block still parses. Legitimate uses of the
+word are untouched — "no garantías", "pas des garanties", the customer quote
+"le dispositif de réussite garantie", and the retake-policy FAQ all survive,
+because every pattern is anchored on the whole claim, never on the word.
+
+---
+
 ## Part 3 — Course registration with Stripe
 
 | # | WPCode type | Name | Paste | Settings |
