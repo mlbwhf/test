@@ -1,84 +1,108 @@
-/* Agile Agilist — course hero (3A) + registration (2B).
-   From the design handoff, with the invoice stub replaced by a real
-   Stripe Checkout redirect. Load order matters: the calendar defines the
-   selection the hero syncs to, so calendar first, hero second — which is
-   the order they are concatenated here. */
+/* Agile Agilist — course hero (3A) + registration (2B shell + 4D dense picker).
+   Calendar half from the latest handoff, with the invoice stub replaced by a
+   real Stripe Checkout redirect. Hero half unchanged and deliberately so.
+   Load order: calendar first (it owns the selection), hero second. */
 
-/* Agile Agilist — Course Calendar 2B behaviour. Vanilla, no deps, IIFE-scoped.
-   Progressive enhancement: markup already shows the full schedule with the next
-   available cohort preselected; this file only adds interaction. */
+/* Agile Agilist — Course Calendar (2B shell + 4D dense picker). Vanilla, IIFE, no deps.
+   Progressive enhancement: the markup already lists every batch with the next available one
+   selected; this file adds month tabs, filtering, seats and the two-step wizard.
+   Adopts the hero's pick via the `aa:cohort-select` document event (one-way, hero → calendar). */
 (function () {
   var root = document.getElementById('aacal');
   if (!root) return;
 
-  /* Wired by the PHP snippet (window.AA_REG). No hand-edited constant: the
-     REST route and its nonce have to match what the server actually
-     registered, and a stale hardcoded URL fails silently at the worst
-     possible moment — the pay click. */
+  /* Wired by the PHP snippet. The REST route and its nonce must match what the
+     server registered, and currency must match what the server will charge —
+     the handoff is written for a Canadian price list and this site bills USD. */
   var CFG = window.AA_REG || {};
-  var ENDPOINT = CFG.checkout || null;
-  /* Currency comes from the server with the page, not a constant here. The
-     handoff was written for a Canadian price list; this site charges USD, and
-     a hardcoded 'C$' would have put the wrong currency next to a real Stripe
-     button. Whatever the server says it will charge is what the page shows. */
-  var PRICE_CURRENCY = (CFG.symbol || '$');
-  var PRICE_LOCALE   = (CFG.locale || 'en-US');
+  var PRICE_CURRENCY = CFG.symbol || '$';
+  var PRICE_LOCALE   = CFG.locale || 'en-US';
   var MAX_SEATS = 12;
+  var ENDPOINT = CFG.checkout || null;
 
-  var tabs   = Array.prototype.slice.call(root.querySelectorAll('.aacal-tab'));
-  var panels = Array.prototype.slice.call(root.querySelectorAll('.aacal-grid'));
-  var cards  = Array.prototype.slice.call(root.querySelectorAll('.aacal-card'));
+  var tabs   = q('.aacal-tab');
+  var months = q('.aacal-panel-month');
+  var chips  = q('.aacal-chip');
+  var cards  = q('.aacal-card');
+  var weeks  = q('.aacal-week');
 
   var form1 = root.querySelector('[data-panel="1"]');
   var form2 = root.querySelector('[data-panel="2"]');
   var done  = root.querySelector('[data-panel="done"]');
-  var steps = Array.prototype.slice.call(root.querySelectorAll('.aacal-step'));
+  var steps = q('.aacal-step');
 
-  var elSelLabel = root.querySelector('[data-sel-label]');
-  var elSelRange = root.querySelector('[data-sel-range]');
-  var elSelBatch = root.querySelector('[data-sel-batch]');
-  var elSeats    = root.querySelector('[data-seats-value]');
-  var elTotal    = root.querySelector('[data-total]');
-  var btnNext    = root.querySelector('[data-next]');
-  var btnPay     = root.querySelector('[data-pay]');
-  var elHint     = root.querySelector('[data-hint]');
-  var consent    = form2.querySelector('[name="consent"]');
+  var elMonthLabel = root.querySelector('[data-month-label]');
+  function on(node, evt, fn) { if (node) node.addEventListener(evt, fn); }
+  function txt(node, s) { if (node) node.textContent = s; }
+  var elCount   = root.querySelector('[data-count]');
+  var elEmpty   = root.querySelector('[data-empty]');
+  var elSelLbl  = root.querySelector('[data-sel-label]');
+  var elSelRng  = root.querySelector('[data-sel-range]');
+  var elSelBat  = root.querySelector('[data-sel-batch]');
+  var elSeats   = root.querySelector('[data-seats-value]');
+  var elTotal   = root.querySelector('[data-total]');
+  var btnNext   = root.querySelector('[data-next]');
+  var btnPay    = root.querySelector('[data-pay]');
+  var elHint    = root.querySelector('[data-hint]');
+  var elHint2   = root.querySelector('[data-hint2]');
+  var consent   = form2 ? form2.querySelector('[name="consent"]') : null;
 
-  var defaultCohort = cards[0];          // next available — the default selection
-  var state = { card: cards[0], seats: 1, step: 1 };
+  var defaultCohort = cards[0];  // next available — the default selection
+  var state = { card: cards[0], seats: 1, step: 1, month: tabs[0].getAttribute('data-month'), filter: 'all' };
 
-  function money(n) {
-    return PRICE_CURRENCY + n.toLocaleString(PRICE_LOCALE);
-  }
+  function q(sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
+  function money(n) { return PRICE_CURRENCY + n.toLocaleString(PRICE_LOCALE); }
   function price(card) { return parseInt(card.getAttribute('data-price'), 10) || 0; }
   function total() { return price(state.card) * state.seats; }
-  function val(name) { return (form1.querySelector('[name="' + name + '"]').value || '').trim(); }
+  function val(name) {
+    var f = form1 && form1.querySelector('[name="' + name + '"]');
+    return f ? (f.value || '').trim() : '';
+  }
   function detailsOk() {
     return val('first').length > 1 && val('last').length > 0 && /.+@.+\..+/.test(val('email'));
   }
+  function monthCards(month) {
+    return cards.filter(function (c) { return c.closest('.aacal-panel-month').getAttribute('data-month') === month; });
+  }
+  function matches(card) {
+    return state.filter === 'all' || card.getAttribute('data-kind') === state.filter;
+  }
 
-  /* ── month tabs ──────────────────────────────────────────────── */
-  function showMonth(month) {
+  /* ── visibility: month + filter, then empty groups ───────────── */
+  function applyVisibility() {
     tabs.forEach(function (t) {
-      var on = t.getAttribute('data-month') === month;
+      var on = t.getAttribute('data-month') === state.month;
       t.classList.toggle('is-on', on);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
+      if (on) txt(elMonthLabel, t.getAttribute('data-month-name'));
     });
-    panels.forEach(function (p) { p.hidden = p.getAttribute('data-month') !== month; });
-  }
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { showMonth(t.getAttribute('data-month')); });
-    t.addEventListener('keydown', function (e) {
-      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (!d) return;
-      e.preventDefault();
-      var next = tabs[(i + d + tabs.length) % tabs.length];
-      next.focus(); showMonth(next.getAttribute('data-month'));
+    months.forEach(function (m) { m.hidden = m.getAttribute('data-month') !== state.month; });
+    chips.forEach(function (c) {
+      var on = c.getAttribute('data-filter') === state.filter;
+      c.classList.toggle('is-on', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-  });
 
-  /* ── cohort selection ────────────────────────────────────────── */
+    cards.forEach(function (c) { c.hidden = !matches(c); });
+    weeks.forEach(function (w) {
+      var shown = Array.prototype.slice.call(w.querySelectorAll('.aacal-card')).filter(function (c) { return !c.hidden; });
+      w.hidden = shown.length === 0;
+      txt(w.querySelector('[data-week-count]'), shown.length === 1 ? '1 batch' : shown.length + ' batches');
+    });
+
+    var all = monthCards(state.month);
+    var visible = all.filter(function (c) { return !c.hidden; });
+    txt(elCount, state.filter === 'all'
+      ? (all.length === 1 ? '1 batch' : all.length + ' batches')
+      : visible.length + ' of ' + all.length + ' batches');
+    if (elEmpty) elEmpty.hidden = visible.length > 0;
+
+    /* never leave a selection the user cannot see */
+    if (visible.length && visible.indexOf(state.card) === -1) selectCard(visible[0]);
+  }
+
+  /* ── selection ───────────────────────────────────────────────── */
   function selectCard(card) {
     state.card = card;
     cards.forEach(function (c) {
@@ -86,10 +110,32 @@
       c.classList.toggle('is-on', on);
       c.querySelector('.aacal-cardbtn').setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    var seatsLeft = parseInt(card.getAttribute('data-seats-left'), 10) || MAX_SEATS;
-    if (state.seats > seatsLeft) state.seats = seatsLeft;
+    var left = parseInt(card.getAttribute('data-seats-left'), 10) || MAX_SEATS;
+    if (state.seats > left) state.seats = left;
     render();
   }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { state.month = t.getAttribute('data-month'); applyVisibility(); });
+    t.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus();
+      state.month = n.getAttribute('data-month');
+      applyVisibility();
+    });
+  });
+
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () { state.filter = c.getAttribute('data-filter'); applyVisibility(); });
+  });
+  on(root.querySelector('[data-clear]'), 'click', function () {
+    state.filter = 'all';
+    applyVisibility();
+  });
+
   cards.forEach(function (c) {
     c.querySelector('.aacal-cardbtn').addEventListener('click', function () {
       goStep(1, false);
@@ -97,27 +143,20 @@
     });
   });
 
-  /* cross-component sync: the hero picker (aa-hero.js) and this calendar share a selection */
-  function announce(card) {
-    document.dispatchEvent(new CustomEvent('aa:cohort-select', {
-      detail: { cohort: card.getAttribute('data-cohort'), source: 'calendar' }
-    }));
-  }
-  cards.forEach(function (c) {
-    c.querySelector('.aacal-cardbtn').addEventListener('click', function () { announce(c); });
-  });
+  /* one-way: the hero hands its pick down to this calendar and never listens back */
   document.addEventListener('aa:cohort-select', function (e) {
     if (!e.detail || e.detail.source === 'calendar') return;
     var match = cards.filter(function (c) { return c.getAttribute('data-cohort') === e.detail.cohort; })[0];
     if (!match || match === state.card) return;
-    var panel = match.closest('.aacal-grid');
-    if (panel) showMonth(panel.getAttribute('data-month'));
+    state.month = match.closest('.aacal-panel-month').getAttribute('data-month');
+    if (!matches(match)) state.filter = 'all';
     goStep(1, false);
     selectCard(match);
+    applyVisibility();
   });
 
   /* ── seats ───────────────────────────────────────────────────── */
-  root.querySelectorAll('[data-seats]').forEach(function (b) {
+  q('[data-seats]').forEach(function (b) {
     b.addEventListener('click', function () {
       var cap = Math.min(MAX_SEATS, parseInt(state.card.getAttribute('data-seats-left'), 10) || MAX_SEATS);
       state.seats = Math.min(cap, Math.max(1, state.seats + parseInt(b.getAttribute('data-seats'), 10)));
@@ -128,9 +167,9 @@
   /* ── steps ───────────────────────────────────────────────────── */
   function goStep(n, focus) {
     state.step = n;
-    form1.hidden = n !== 1;
-    form2.hidden = n !== 2;
-    done.hidden  = n !== 'done';
+    if (form1) form1.hidden = n !== 1;
+    if (form2) form2.hidden = n !== 2;
+    if (done) done.hidden = n !== 'done';
     steps.forEach(function (s) {
       var i = parseInt(s.getAttribute('data-step'), 10);
       s.classList.toggle('is-on', n === i);
@@ -138,29 +177,26 @@
       s.querySelector('.aacal-num').textContent = (typeof n === 'number' && n > i) ? '✓' : String(i);
     });
     if (focus !== false) {
-      var target = n === 2 ? form2 : n === 'done' ? done : form1;
+      var target = (n === 2 ? form2 : n === 'done' ? done : form1) || root;
       var f = target.querySelector('button, input');
       if (f) f.focus({ preventScroll: true });
     }
     render();
   }
 
-  form1.addEventListener('input', render);
-  form1.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (detailsOk()) goStep(2);
-  });
-  consent.addEventListener('change', render);
-  root.querySelector('[data-back]').addEventListener('click', function () { goStep(1); });
+  on(form1, 'input', render);
+  on(form1, 'submit', function (e) { e.preventDefault(); if (detailsOk()) goStep(2); });
+  on(consent, 'change', render);
+  on(root.querySelector('[data-back]'), 'click', function () { goStep(1); });
 
-  form2.addEventListener('submit', function (e) {
+  on(form2, 'submit', function (e) {
     e.preventDefault();
-    if (!consent.checked) { return; }
+    if (!consent || !consent.checked) { return; }
 
-    /* NOTE what is NOT sent: the price, and the total. The browser can edit
-       data-price with devtools, so an amount posted from here could be a
-       dollar. The server takes the cohort id and looks the price up in its
-       own table; seats is sent but re-clamped there too. */
+    /* Note what is NOT sent: price, total, currency. data-price is in the
+       markup so the page can show a running total, and devtools can rewrite
+       it to 1. The server takes the cohort id, looks the price up in its own
+       table, and re-clamps seats against what is actually left. */
     var payload = {
       cohort:  state.card.getAttribute('data-cohort'),
       seats:   state.seats,
@@ -168,14 +204,13 @@
       company: val('company'), phone: val('phone')
     };
 
-    if (!ENDPOINT) {   // no server wired up — say so rather than pretending
-      elHint.textContent = CFG.msgUnavailable || 'Registration is not available right now.';
+    if (!ENDPOINT) {
+      txt(elHint2 || elHint, CFG.msgUnavailable || 'Registration is not available right now.');
       return;
     }
 
-    btnPay.disabled = true;
-    var wasLabel = btnPay.textContent;
-    btnPay.textContent = CFG.msgSending || 'Taking you to checkout…';
+    var wasLabel = btnPay ? btnPay.textContent : '';
+    if (btnPay) { btnPay.disabled = true; btnPay.textContent = CFG.msgSending || 'Taking you to checkout…'; }
 
     fetch(ENDPOINT, {
       method: 'POST',
@@ -185,67 +220,68 @@
       return r.json().then(function (j) { return { ok: r.ok, body: j }; });
     }).then(function (res) {
       if (res.ok && res.body && res.body.url) {
-        // Stripe hosts the card form; we never see card data.
-        window.location.assign(res.body.url);
+        window.location.assign(res.body.url);   // Stripe hosts the card form
         return;
       }
       throw new Error((res.body && res.body.message) || 'checkout failed');
     }).catch(function (err) {
-      btnPay.disabled = false;
-      btnPay.textContent = wasLabel;
-      elHint.textContent = (err && err.message) || CFG.msgError ||
-        'Something went wrong — please email us and we will register you by hand.';
+      if (btnPay) { btnPay.disabled = false; btnPay.textContent = wasLabel; }
+      txt(elHint2 || elHint, (err && err.message) || CFG.msgError ||
+        'We could not start checkout. Please try again, or email us and we will register you by hand.');
     });
   });
 
-  /* The confirmation panel is shown only when Stripe sends the buyer back with
-     ?aa_paid=<cohort>. It is never shown straight after submit: at that point
-     the card has not been charged, and "You're in" would be a lie the user
-     acts on. The webhook is what actually records the sale. */
+  /* Shown only when Stripe sends the buyer back with ?aa_paid=<cohort>. Never
+     straight after submit: at that moment the card has not been charged, and
+     "You're in" is a claim the buyer would act on. The webhook records the
+     sale. No name or email in the URL — that is PII in analytics and
+     referrers — so the confirmation stays impersonal. */
   function showPaidReturn() {
-    var q = new URLSearchParams(window.location.search);
-    var paid = q.get('aa_paid');
+    var q2 = new URLSearchParams(window.location.search);
+    var paid = q2.get('aa_paid');
     if (!paid) { return; }
-    var card = cards.filter(function (c) { return c.getAttribute('data-cohort') === paid; })[0];
-    if (card) { selectCard(card); }
-    var name = q.get('aa_name') || 'there';
-    root.querySelector('[data-done-name]').textContent = name;
-    root.querySelector('[data-done-email]').textContent = q.get('aa_email') || 'you';
-    root.querySelector('[data-done-summary]').textContent =
-      (card ? card.getAttribute('data-range') : paid) +
-      (q.get('aa_seats') ? ' · ' + q.get('aa_seats') + ' seat(s)' : '');
+    var hit = cards.filter(function (c) { return c.getAttribute('data-cohort') === paid; })[0];
+    if (hit) { selectCard(hit, false); }
+    var seats = parseInt(q2.get('aa_seats'), 10) || 1;
+    txt(root.querySelector('[data-done-name]'), 'you');
+    txt(root.querySelector('[data-done-email]'), 'your inbox');
+    txt(root.querySelector('[data-done-summary]'),
+      (hit ? hit.getAttribute('data-range') : paid) + ' · ' + seats + (seats === 1 ? ' seat' : ' seats'));
     goStep('done');
-    root.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  root.querySelector('[data-reset]').addEventListener('click', function () {
-    form1.reset(); form2.reset();
-    state.seats = 1;
+  on(root.querySelector('[data-reset]'), 'click', function () {
+    if (form1) form1.reset();
+    if (form2) form2.reset();
+    state.seats = 1; state.filter = 'all';
+    state.month = defaultCohort.closest('.aacal-panel-month').getAttribute('data-month');
     selectCard(defaultCohort);
+    applyVisibility();
     goStep(1);
   });
 
   /* ── render ──────────────────────────────────────────────────── */
   function render() {
     var c = state.card;
-    elSelLabel.textContent = c === defaultCohort ? 'Selected · next available' : 'Selected';
-    elSelRange.textContent = c.getAttribute('data-range');
-    elSelBatch.textContent = c.getAttribute('data-batch');
-    elSeats.textContent = String(state.seats);
-    elTotal.textContent = money(total());
+    txt(elSelLbl, c === defaultCohort ? 'Selected · next available' : 'Selected');
+    txt(elSelRng, c.getAttribute('data-range'));
+    txt(elSelBat, c.getAttribute('data-batch'));
+    txt(elSeats, String(state.seats));
+    txt(elTotal, money(total()));
 
     var ok = detailsOk();
-    btnNext.disabled = !ok;
-    elHint.textContent = ok ? 'One more screen — then you\u2019re done.' : 'Name and work email to continue.';
+    if (btnNext) btnNext.disabled = !ok;
+    txt(elHint, ok ? 'One more screen — then you\u2019re done.' : 'Name and work email to continue.');
 
-    root.querySelector('[data-rev-dates]').textContent = c.getAttribute('data-range');
-    root.querySelector('[data-rev-name]').textContent  = (val('first') + ' ' + val('last')).trim() || '—';
-    root.querySelector('[data-rev-email]').textContent = val('email') || '—';
-    root.querySelector('[data-rev-seats]').textContent = String(state.seats);
-    root.querySelector('[data-rev-total]').textContent = money(total());
-    btnPay.disabled = !consent.checked;
+    txt(root.querySelector('[data-rev-dates]'), c.getAttribute('data-range'));
+    txt(root.querySelector('[data-rev-name]'), (val('first') + ' ' + val('last')).trim() || '—');
+    txt(root.querySelector('[data-rev-email]'), val('email') || '—');
+    txt(root.querySelector('[data-rev-seats]'), String(state.seats));
+    txt(root.querySelector('[data-rev-total]'), money(total()));
+    if (btnPay) btnPay.disabled = !consent || !consent.checked;
   }
 
+  applyVisibility();
   render();
   showPaidReturn();
 })();
