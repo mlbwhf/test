@@ -229,7 +229,47 @@ specific course to use one, set `'payment_link' => '…'` on that course.
 
 ---
 
-## How the schedule works
+## The AI-Native suite — classroom courses, one date a month per city
+
+Three courses, three cities, **90 cohorts generated**, no dates typed by hand:
+
+| Course | Page | Price | Days | Seats |
+|---|---|---|---|---|
+| AI-Native Foundations (AINF) | 11792 | $1,500 | 2 ⚠️ | 18 |
+| **AI-Native Value Architect** (AINCA) | 11818 | $2,500 | 3 | 18 |
+| Leading the AI-Native Organization (AINORG) | 23813 | $1,500 | 2 | 12 |
+
+Every figure came off your own live pages. **The one exception is marked ⚠️:**
+AI-Native Foundations states its price but never its length. The 2 comes from
+`courses.json`, whose price for that same course ($1,150) is already known to be
+stale — so treat the duration as unverified too. It decides the end date printed
+on all 30 of its cohorts.
+
+**Cities.** Mississauga monthly, Dubai and Riyadh quarterly, for each course.
+Each course takes a different week so one trainer is never in two rooms at once
+— Foundations 1st Thursday, Value Architect 2nd Thursday (your 10 September),
+Leading the Org 3rd Thursday. Verified: zero same-day clashes in a city.
+
+**The Gulf runs on Sundays, not Thursdays.** Friday and Saturday are the weekend
+in Saudi Arabia and the UAE, so a Thursday start there is a weekend class;
+Sunday is the first working day. North American public holidays only move North
+American dates — a Riyadh class no longer shifts off Canadian Remembrance Day.
+
+### ⚠️ One thing to decide: Value Architect runs into Saturday
+
+It is 3 days and it starts Thursday, so all 18 Mississauga dates run
+**Thursday–Saturday** and are flagged as weekend batches. That follows directly
+from the 10 September anchor you gave. If you would rather it stayed inside the
+working week, change its Mississauga `first` to **Tuesday 8** or **Wednesday 9
+September** and the whole series follows. Foundations and Leading the Org are
+2-day and stay Thursday–Friday, so they are unaffected.
+
+To change any date, change `first` on that city — the series is derived, not
+listed.
+
+---
+
+## How the schedule works — live-online courses
 
 You never type a date. Each course carries a cadence:
 

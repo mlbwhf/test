@@ -155,6 +155,103 @@ function aa_reg_courses() {
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
+
+		/* ------------------------------------------------------------------
+		   THE AI-NATIVE SUITE — classroom courses, one date a month per city.
+		   Keys are page slugs, because that is what auto-placement matches on.
+
+		   Everything below was read off your own live pages, not invented:
+
+		     AINF   11792  $1,500  ai-native-foundations
+		     AINCA  11818  $2,500  ai-native-change-agent          3 days
+		     AINORG 23813  $1,500  ai-native-ready-certification-2 2 days, cohort of 12
+
+		   ONE DURATION IS UNCONFIRMED. AINCA states three days in four places
+		   (the chip, the curriculum heading, the FAQ, and courseWorkload P3D)
+		   and AINORG states two the same way. AI-Native Foundations states its
+		   price but not its length anywhere I can read; the 2 comes from
+		   redesign-build/courses.json, whose price for that course ($1,150) is
+		   already known to be stale. Confirm it before going live — it decides
+		   the end date printed on every generated cohort.
+
+		   DATES. You gave one: the first AI-Native Value Architect in
+		   Mississauga is Thursday 10 September, the second Thursday. The rest
+		   follow one rule rather than a list — each course takes its own week
+		   of the month so one trainer is never in two rooms at once:
+
+		     Foundations      1st Thursday     Value Architect  2nd Thursday
+		     Leading the Org  3rd Thursday
+
+		   The Gulf cities run on SUNDAYS, not Thursdays. Thursday-plus-Friday
+		   straddles the Gulf weekend, so every class there would be a weekend
+		   class; Sunday is the first working day of the week in both.
+		   Quarterly, staggered a week apart for the same trainer reason.
+
+		   Change any of it by changing 'first' — the whole series follows.
+		   ------------------------------------------------------------------ */
+		'ai-native-foundations' => array(
+			'code'     => 'AINF',
+			'name'     => 'AI-Native Foundations Certification',
+			'eyebrow'  => 'In person · AINF certification',
+			'h1'       => 'AI-Native Foundations.',
+			'lede'     => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track, and the prerequisite for Value Architect.',
+			'url'      => '/training/ai-native/ai-native-foundations/',
+			'crumb'    => 'AI-Native',
+			'currency' => 'usd',
+			'price'    => 1500,
+			'days'     => 2,          // UNCONFIRMED — see the note above
+			'seats'    => 18,
+			'weeks'    => 78,         // 18 months: a monthly course needs a longer window
+			'proof'    => array( 'In person', 'Exam fee included', 'No prerequisites' ),
+			'schedule' => array(
+				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-03' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-04' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-01' ),
+			),
+		),
+		'ai-native-change-agent' => array(
+			'code'     => 'AINCA',
+			// Renamed from "AI-Native Change Agent". The URL deliberately still
+			// says change-agent: renaming the slug would need a 301 and would
+			// reset the page's search history for no gain.
+			'name'     => 'AI-Native Value Architect Certification',
+			'eyebrow'  => 'In person · AI-Native Value Architect',
+			'h1'       => 'AI-Native Value Architect.',
+			'lede'     => 'Lead enterprise AI adoption — diagnose readiness, build the roadmap, drive the habits, govern the risk, and measure sustained change. Requires AI-Native Foundations first.',
+			'url'      => '/training/ai-native/ai-native-change-agent/',
+			'crumb'    => 'AI-Native',
+			'currency' => 'usd',
+			'price'    => 2500,
+			'days'     => 3,
+			'seats'    => 18,
+			'weeks'    => 78,
+			'proof'    => array( 'In person', 'Exam fee included', 'AINF required' ),
+			'schedule' => array(
+				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-10' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-11' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-08' ),
+			),
+		),
+		'ai-native-ready-certification-2' => array(
+			'code'     => 'AINORG',
+			'name'     => 'Leading the AI-Native Organization',
+			'eyebrow'  => 'In person · Executive workshop',
+			'h1'       => 'Leading the AI-Native Organization.',
+			'lede'     => 'A two-day executive cohort capped at twelve senior leaders — CEOs, COOs, CTOs, CAIOs — designing the AI-Native operating model, with six months of follow-up coaching included.',
+			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
+			'crumb'    => 'AI-Native',
+			'currency' => 'usd',
+			'price'    => 1500,
+			'days'     => 2,
+			'seats'    => 12,         // the page says "capped at 12 senior leaders"
+			'weeks'    => 78,
+			'proof'    => array( '12 seats max', 'Six months coaching', 'Exam fee included' ),
+			'schedule' => array(
+				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-17' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-18' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-15' ),
+			),
+		),
 	);
 }
 
