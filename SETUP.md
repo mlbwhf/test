@@ -22,13 +22,17 @@ snippets queued behind it, which is how the homepage cohorts died with it.
 
 ## Part 0 — Clean up first (5 min)
 
+**If you cannot find any of these, there is nothing to do — skip to Part 2.**
+Not finding them is the expected result if you already replaced the corrupted
+snippet with the three split ones. This part only exists to catch leftovers.
+
 1. WPCode → Code Snippets. **Delete** the old, corrupted calendar PHP snippet —
    the single-snippet one you disabled, not the `AA – Calendar PHP` you
-   replaced it with. If it is already gone, skip this.
+   replaced it with. Gone already? Fine.
 2. Leave the homepage cohorts PHP snippet alone for now.
-3. If a file called `aa-shortcodes-mu-plugin.php` is still in
-   `wp-content/mu-plugins/`, delete it. It is superseded and it is what took
-   the site down.
+3. `aa-shortcodes-mu-plugin.php` in `wp-content/mu-plugins/` — delete if
+   present. It is superseded and it is what took the site down. You never
+   uploaded it successfully, so it is very likely not there.
 
 ---
 
@@ -105,15 +109,41 @@ each scoped to its own track), `/training/safe-industry/` and
 | 2 | **JavaScript Snippet** | `AA – Register JS` | `snippets/register/aa-register.js` | Auto Insert, **Site Wide Footer** |
 | 3 | **PHP Snippet** | `AA – Register PHP` | `aa-register-wpcode-snippet.php` | Auto Insert, **Run Everywhere** |
 
-Then on each course page, two shortcodes:
+### Then tick one box — no page edits
+
+**Settings → AA Registration → "Replace the hero and the Fluent Form" → tick.**
+
+That is the whole page-side install. Your course pages are all built from the
+same template, and two of their blocks are the ones being replaced:
+
+| Block in the page | Becomes |
+|---|---|
+| `<!-- wp:group {"className":"aa-sec aa-hero"} -->` | the new hero with the date picker |
+| `<!-- wp:group {"className":"aa-reg"} -->` — holds `[fluentform id="8"]` | the new two-step registration |
+
+The swap happens as the page renders. Nothing is written to the pages, so:
+
+- there is no moment where a visitor sees the literal text
+  `[aa_course_hero course="spc"]`, which is what a pasted shortcode shows
+  before the snippet is active;
+- unticking the box puts the old hero and the Fluent Form straight back, with
+  nothing to undo by hand;
+- it covers `/es/`, `/fr/` and `/ar/` mirrors of each course too, and picks up
+  the other 16 courses automatically once their cadence is added.
+
+It applies only to pages whose slug has a row in `aa_reg_courses()` — today
+`spc`, `aspc`, `rte`. Every other page is untouched. Send me the cadence for
+the other courses and I will add them.
+
+**If you would rather place them by hand**, leave the box unticked and put the
+two shortcodes in the pages yourself:
 
 ```
-[aa_course_hero course="spc"]        <- first block on the page
-[aa_course_register course="spc"]    <- further down
+[aa_course_hero course="spc"]        <- replacing the hero block
+[aa_course_register course="spc"]    <- replacing the [fluentform id="8"] block
 ```
 
-`course` is `spc`, `aspc` or `rte`. Other courses need a row added to
-`aa_reg_courses()` first — send me their cadence and I will add them.
+Step-by-step for that is in `course-page-shortcode-work-order.md`.
 
 ### Before it can charge anyone
 

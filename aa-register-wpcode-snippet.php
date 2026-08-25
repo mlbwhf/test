@@ -443,6 +443,7 @@ add_action( 'admin_init', function () {
 	register_setting( 'aa_reg', 'aa_reg_stripe_secret', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	register_setting( 'aa_reg', 'aa_reg_stripe_webhook', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	register_setting( 'aa_reg', 'aa_reg_prices_confirmed', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+	register_setting( 'aa_reg', 'aa_reg_autoplace', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 } );
 
 function aa_reg_settings_page() {
@@ -459,6 +460,9 @@ function aa_reg_settings_page() {
 	   . '<p class="description">Starts <code>whsec_</code>. From the Stripe webhook you point at <code>' . esc_html( home_url( '/wp-json/aa/v1/stripe-webhook' ) ) . '</code> for <code>checkout.session.completed</code>.</p></td></tr>';
 	echo '<tr><th scope="row">Prices confirmed</th><td><label><input type="checkbox" name="aa_reg_prices_confirmed" value="yes"' . checked( get_option( 'aa_reg_prices_confirmed' ), 'yes', false ) . '> I have checked every price and currency in the snippet against what we actually charge.</label>'
 	   . '<p class="description">Until this is ticked nothing can be charged. The prices in the code were transcribed from the live course pages and never verified against finance.</p></td></tr>';
+	echo '<tr><th scope="row">Replace the hero and the Fluent Form</th><td><label><input type="checkbox" name="aa_reg_autoplace" value="yes"' . checked( get_option( 'aa_reg_autoplace' ), 'yes', false ) . '> On course pages, swap the old hero for the new one and the Fluent Form for the new registration.</label>'
+	   . '<p class="description">No page edits either way &mdash; the swap happens as the page renders, and unticking this puts the old hero and form straight back. Applies only to pages whose slug has a row in <code>aa_reg_courses()</code>: <code>'
+	   . esc_html( implode( '</code>, <code>', array_keys( aa_reg_courses() ) ) ) . '</code>. Leave this off if you would rather place <code>[aa_course_hero]</code> and <code>[aa_course_register]</code> in the pages by hand.</p></td></tr>';
 	echo '</table>';
 	submit_button();
 	echo '</form>';
@@ -889,6 +893,92 @@ function aa_reg_panel( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_course_register', 'aa_reg_panel' );
+
+/* ============================================================================
+   AUTOMATIC PLACEMENT  —  no page edits at all
+   ----------------------------------------------------------------------------
+   The two shortcodes above can be pasted into a page by hand. They do not have
+   to be. Every course page is built from the same template, and two of its
+   blocks are the ones being replaced:
+
+       <!-- wp:group {"className":"aa-sec aa-hero"} -->   the hero
+       <!-- wp:group {"className":"aa-reg"} -->           [fluentform id="8"]
+
+   so this swaps them at render time, keyed on the page slug. Nothing is
+   written to the pages, which matters for three reasons:
+
+     - A shortcode pasted into a page before this snippet is active renders as
+       the literal text [aa_course_hero course="spc"] to every visitor. With no
+       page edit there is no window in which that can happen.
+     - Switching the snippet off restores the old hero and the Fluent Form
+       exactly, with nothing to undo by hand.
+     - It covers the /es/, /fr/ and /ar/ mirrors of each course, and the other
+       courses as their cadences are added, without touching those pages
+       either.
+
+   OFF BY DEFAULT. The new hero is not the old hero: it carries the batch
+   picker and the next-batch/price facts, and it drops the breadcrumb, the
+   chips and the credential lockup. Tick "Replace the hero and the Fluent Form"
+   in Settings -> AA Registration when you have looked at one and want it, and
+   untick it to put the old pages straight back.
+   ========================================================================== */
+
+/** True when the swap is switched on in settings. */
+function aa_reg_autoplace_on() {
+	return get_option( 'aa_reg_autoplace' ) === 'yes';
+}
+
+/**
+ * The course this page is for, or '' — matched on the page slug.
+ *
+ * The slug is the course key on every language mirror (/training/adv-safe/rte/,
+ * /fr/rte/, /es/rte/), so one lookup covers them all. A slug with no row in
+ * aa_reg_courses() returns '' and the page is left alone, which is what keeps
+ * the other 16 courses untouched until their cadence is known.
+ */
+function aa_reg_page_course() {
+	static $key = null;
+	if ( $key !== null ) { return $key; }
+	$key = '';
+	if ( ! is_admin() ) {
+		$obj = get_queried_object();
+		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+		if ( $obj instanceof WP_Post && $obj->post_type === 'page' ) {
+			$courses = aa_reg_courses();
+			if ( isset( $courses[ $obj->post_name ] ) ) { $key = $obj->post_name; }
+		}
+	}
+	return $key;
+}
+
+/** Does this block carry $want in its className? Token match, not substring. */
+function aa_reg_block_has_class( $block, $want ) {
+	if ( empty( $block['attrs']['className'] ) ) { return false; }
+	return in_array( $want, preg_split( '/\s+/', $block['attrs']['className'] ), true );
+}
+
+/**
+ * Swap the hero block and the Fluent Form block for our own.
+ *
+ * Runs on every block on every page, so it leaves as early as it can: the
+ * course lookup is cached after the first call and returns '' for all but the
+ * handful of pages that have a cadence.
+ */
+function aa_reg_autoplace( $html, $block ) {
+	if ( empty( $block['blockName'] ) || $block['blockName'] !== 'core/group' ) { return $html; }
+	if ( ! aa_reg_autoplace_on() ) { return $html; }
+	$course = aa_reg_page_course();
+	if ( $course === '' ) { return $html; }
+
+	if ( aa_reg_block_has_class( $block, 'aa-hero' ) ) {
+		return aa_reg_hero( array( 'course' => $course ) );
+	}
+	if ( aa_reg_block_has_class( $block, 'aa-reg' ) ) {
+		return aa_reg_panel( array( 'course' => $course ) );
+	}
+	return $html;
+}
+add_filter( 'render_block', 'aa_reg_autoplace', 10, 2 );
 
 /* ============================================================================
    CHECKOUT  —  POST /wp-json/aa/v1/checkout
