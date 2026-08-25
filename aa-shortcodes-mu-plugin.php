@@ -4,7 +4,7 @@
  * Description:  Registers [aa_home_cohorts] and [aa_mini_calendar], and takes
  *               over the old Xylus calendar shortcodes. Must-use plugin: loaded
  *               by WordPress before regular plugins, with no activation step.
- * Version:      e7136ee
+ * Version:      56b5a25
  * Requires PHP: 7.0
  *
  * -----------------------------------------------------------------------------
@@ -18,11 +18,12 @@
  * and no snippet manager in the path that can silently drop them.
  *
  * INSTALL
- *   1. DEACTIVATE the two WPCode PHP snippets first. Leaving them active
- *      redeclares every function below, which is a PHP fatal error. (They are
- *      not doing anything today, so this costs nothing.)
- *   2. Upload this file to  wp-content/mu-plugins/  (create the folder if it
+ *   1. Upload this file to  wp-content/mu-plugins/  (create the folder if it
  *      does not exist). No activation — it is live as soon as it is there.
+ *   2. Deactivate the two WPCode PHP snippets. Not urgent: every section is
+ *      wrapped in a double-load guard, so a copy left active is skipped
+ *      harmlessly instead of fataling — but two copies of dead code is one
+ *      more thing to confuse a future edit.
  *   3. Load the homepage. The cohort cards and the ticker should render.
  *      Put [aa_mcal_selftest] on any page and view it as an administrator to
  *      confirm what registered.
@@ -41,8 +42,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
    Homepage cohort cards + ticker  [aa_home_cohorts]
    from aa-home-cohorts-wpcode-snippet.php
    ============================================================================= */
-if ( ! function_exists( 'aa_home_cohort_rows' ) ) :
-
 /**
  * Agile Agilist — HOME HERO cohort list  [aa_home_cohorts]
  * -----------------------------------------------------------------------------
@@ -81,6 +80,21 @@ if ( ! function_exists( 'aa_home_cohort_rows' ) ) :
  * so the panel simply fills from the next priority course until that term and
  * its events exist.
  */
+
+/* DOUBLE-LOAD GUARD. If another copy of this code is active — an older WPCode
+   snippet left beside this one, or the mu-plugin version — declaring these
+   functions again is a PHP FATAL, and WPCode's error protection answers a
+   fatal by silently deactivating the snippet: "the shortcode stopped working
+   right after we updated the code."
+
+   The whole body is wrapped in this conditional because that is the only
+   placement that works. PHP binds unconditional top-level functions at
+   COMPILE time, before any statement runs — an early `return` guard neither
+   stops the redeclare fatal on the second copy nor lets the first copy run
+   (its own functions already exist by the time it executes). Inside a
+   conditional, declaration happens at runtime: first copy runs everything,
+   second copy skips everything. */
+if ( ! function_exists( 'aa_home_cohort_rows' ) ) :
 
 /** Priority order — highest-value certifications first. */
 function aa_home_cohort_catalog() {
@@ -387,15 +401,13 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	return $html;
 } );
 
+endif; // double-load guard
 
-endif;
 
 /* =============================================================================
    Course calendar + Xylus takeover  [aa_mini_calendar]
    from aa-mini-calendar-wpcode-snippet.php
    ============================================================================= */
-if ( ! function_exists( 'aa_mcal_render' ) ) :
-
 /**
  * Agile Agilist — COURSE CALENDAR  [aa_mini_calendar]
  * -----------------------------------------------------------------------------
@@ -452,6 +464,21 @@ if ( ! function_exists( 'aa_mcal_render' ) ) :
  * The events query is cached the same way as [aa_home_cohorts]: per-request
  * memo + 10-minute transient keyed by the Eastern day.
  */
+
+/* DOUBLE-LOAD GUARD. If another copy of this code is active — an older WPCode
+   snippet left beside this one, or the mu-plugin version — declaring these
+   functions again is a PHP FATAL, and WPCode's error protection answers a
+   fatal by silently deactivating the snippet: "the shortcode stopped working
+   right after we updated the code."
+
+   The whole body is wrapped in this conditional because that is the only
+   placement that works. PHP binds unconditional top-level functions at
+   COMPILE time, before any statement runs — an early `return` guard neither
+   stops the redeclare fatal on the second copy nor lets the first copy run
+   (its own functions already exist by the time it executes). Inside a
+   conditional, declaration happens at runtime: first copy runs everything,
+   second copy skips everything. */
+if ( ! function_exists( 'aa_mcal_render' ) ) :
 
 /**
  * Course palette + destinations, keyed by event_category slug.
@@ -1460,6 +1487,5 @@ add_filter( 'render_block', function ( $html, $block ) {
 	return aa_mcal_holds_calendar( $block ) ? '' : $html;
 }, 10, 2 );
 
-
-endif;
+endif; // double-load guard
 

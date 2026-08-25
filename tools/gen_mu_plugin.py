@@ -47,11 +47,12 @@ HEADER = '''<?php
  * and no snippet manager in the path that can silently drop them.
  *
  * INSTALL
- *   1. DEACTIVATE the two WPCode PHP snippets first. Leaving them active
- *      redeclares every function below, which is a PHP fatal error. (They are
- *      not doing anything today, so this costs nothing.)
- *   2. Upload this file to  wp-content/mu-plugins/  (create the folder if it
+ *   1. Upload this file to  wp-content/mu-plugins/  (create the folder if it
  *      does not exist). No activation — it is live as soon as it is there.
+ *   2. Deactivate the two WPCode PHP snippets. Not urgent: every section is
+ *      wrapped in a double-load guard, so a copy left active is skipped
+ *      harmlessly instead of fataling — but two copies of dead code is one
+ *      more thing to confuse a future edit.
  *   3. Load the homepage. The cohort cards and the ticker should render.
  *      Put [aa_mcal_selftest] on any page and view it as an administrator to
  *      confirm what registered.
@@ -67,16 +68,17 @@ HEADER = '''<?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 '''
 
+# No wrapper of our own: each source now carries its whole body inside an
+# `if ( ! function_exists(...) ) : ... endif;` double-load guard, which also
+# protects this bundle against a WPCode copy left active beside it. (An early
+# `return` cannot do this job — PHP binds unconditional top-level functions at
+# compile time, so the redeclare fatal fires before any guard statement runs.)
 SECTION = '''
 /* =============================================================================
    %(title)s
    from %(src)s
    ============================================================================= */
-if ( ! function_exists( '%(probe)s' ) ) :
-
 %(body)s
-
-endif;
 '''
 
 
@@ -109,8 +111,7 @@ def main():
     for fname, probe, title in SOURCES:
         with open(os.path.join(root, fname)) as fh:
             body = strip_open_tag(fh.read())
-        parts.append(SECTION % {'title': title, 'src': fname,
-                                'probe': probe, 'body': body})
+        parts.append(SECTION % {'title': title, 'src': fname, 'body': body})
     print(''.join(parts).rstrip() + '\n')
 
 

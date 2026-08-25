@@ -40,6 +40,21 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+/* DOUBLE-LOAD GUARD. If another copy of this code is active — an older WPCode
+   snippet left beside this one, or the mu-plugin version — declaring these
+   functions again is a PHP FATAL, and WPCode's error protection answers a
+   fatal by silently deactivating the snippet: "the shortcode stopped working
+   right after we updated the code."
+
+   The whole body is wrapped in this conditional because that is the only
+   placement that works. PHP binds unconditional top-level functions at
+   COMPILE time, before any statement runs — an early `return` guard neither
+   stops the redeclare fatal on the second copy nor lets the first copy run
+   (its own functions already exist by the time it executes). Inside a
+   conditional, declaration happens at runtime: first copy runs everything,
+   second copy skips everything. */
+if ( ! function_exists( 'aa_home_cohort_rows' ) ) :
+
 /** Priority order — highest-value certifications first. */
 function aa_home_cohort_catalog() {
 	return array(
@@ -344,3 +359,5 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 
 	return $html;
 } );
+
+endif; // double-load guard
