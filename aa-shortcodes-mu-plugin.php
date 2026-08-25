@@ -4,29 +4,44 @@
  * Description:  Registers [aa_home_cohorts] and [aa_mini_calendar], and takes
  *               over the old Xylus calendar shortcodes. Must-use plugin: loaded
  *               by WordPress before regular plugins, with no activation step.
- * Version:      56b5a25
+ * Version:      0533637
  * Requires PHP: 7.0
  *
  * -----------------------------------------------------------------------------
  * WHY THIS EXISTS
  *
- * These two bodies of code were originally WPCode PHP snippets, and on this
- * site WPCode PHP snippets do not run: both snippets failed to register their
- * shortcodes, so the homepage printed a literal "[aa_home_cohorts]" and the
- * calendar pages kept rendering the old Xylus calendar. mu-plugins are loaded
- * by WordPress core itself — there is no Activate toggle, no conditional logic,
- * and no snippet manager in the path that can silently drop them.
+ * These two bodies of code were originally WPCode PHP snippets. On this site
+ * the stored copies execute but never register their shortcodes — the
+ * evidence fits a paste truncated at a clean function boundary: it parses,
+ * runs silently, defines its early functions, and never reaches its
+ * add_shortcode call. So the homepage printed a literal "[aa_home_cohorts]"
+ * and the calendar pages kept the old Xylus calendar. This file is loaded by
+ * WordPress core itself, whole, with no editor paste in the path.
+ *
+ * WHY EVERY FUNCTION IS PREFIXED aamu_
+ *
+ * The first bundle used the snippets' own function names and took the site
+ * down on upload: WPCode runs its (partial) copies AFTER mu-plugins, and
+ * redefining a function is a PHP fatal on every request, admin included —
+ * reproduced exactly against the stored copies. With its own prefix this
+ * file cannot collide with anything WPCode holds, in any state, in any
+ * order. The shortcode TAGS are unchanged — re-registering a tag is normal
+ * WordPress behaviour, never a fatal.
  *
  * INSTALL
- *   1. Upload this file to  wp-content/mu-plugins/  (create the folder if it
- *      does not exist). No activation — it is live as soon as it is there.
- *   2. Deactivate the two WPCode PHP snippets. Not urgent: every section is
- *      wrapped in a double-load guard, so a copy left active is skipped
- *      harmlessly instead of fataling — but two copies of dead code is one
- *      more thing to confuse a future edit.
- *   3. Load the homepage. The cohort cards and the ticker should render.
- *      Put [aa_mcal_selftest] on any page and view it as an administrator to
- *      confirm what registered.
+ *   1. UPLOAD this file into  wp-content/mu-plugins/  (create the folder if
+ *      needed) using the file manager's Upload — do not create an empty file
+ *      and paste into a web editor, which is how code gets truncated. After
+ *      upload, confirm the file size matches the local file.
+ *   2. Load the homepage: cohort cards and ticker should render. Put
+ *      [aa_mcal_selftest] on any page and view it as an administrator to see
+ *      what registered. The WPCode snippets can stay active or not — they
+ *      cannot conflict with this file either way.
+ *
+ * IF THE SITE EVER WHITE-SCREENS AFTER A CHANGE HERE: delete this file via
+ * the file manager and the site is back instantly; then check the
+ * "Your Site is Experiencing a Technical Issue" email WordPress sends the
+ * admin — it names the exact file and line of the fatal.
  *
  * UNINSTALL: delete the file. mu-plugins cannot be deactivated from the admin.
  *
@@ -94,10 +109,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
    (its own functions already exist by the time it executes). Inside a
    conditional, declaration happens at runtime: first copy runs everything,
    second copy skips everything. */
-if ( ! function_exists( 'aa_home_cohort_rows' ) ) :
+if ( ! function_exists( 'aamu_home_cohort_rows' ) ) :
 
 /** Priority order — highest-value certifications first. */
-function aa_home_cohort_catalog() {
+function aamu_home_cohort_catalog() {
 	return array(
 		'aspc' => array( 'code' => 'ASPC', 'name' => 'Adv. Practice Consultant', 'days' => 4, 'url' => '/training/adv-safe/aspc/',      'schema' => 'Advanced SAFe® Practice Consultant (ASPC)' ),
 		'spc'  => array( 'code' => 'SPC',  'name' => 'Implementing SAFe',        'days' => 4, 'url' => '/training/adv-safe/spc/',       'schema' => 'Implementing SAFe® (SPC)' ),
@@ -113,9 +128,9 @@ function aa_home_cohort_catalog() {
 
 /**
  * Chrome strings per locale. Only the wrapper copy is translated; the
- * certification names in aa_home_cohort_catalog() are proper nouns.
+ * certification names in aamu_home_cohort_catalog() are proper nouns.
  */
-function aa_home_cohort_strings( $lang ) {
+function aamu_home_cohort_strings( $lang ) {
 	$all = array(
 		'en' => array(
 			'mode'      => 'Live-virtual',
@@ -166,7 +181,7 @@ function aa_home_cohort_strings( $lang ) {
  * not under /es/training/<section>/, which is the shape already live for
  * every ES/FR course page on the site.
  */
-function aa_home_cohort_url( $slug, $url, $lang ) {
+function aamu_home_cohort_url( $slug, $url, $lang ) {
 	if ( $lang === 'en' ) { return $url; }
 	return '/' . $lang . '/' . $slug . '/';
 }
@@ -185,7 +200,7 @@ function aa_home_cohort_url( $slug, $url, $lang ) {
  * Only slug + event facts are stored — names/URLs are re-read from the
  * catalog on render, so editing this file never serves stale copy.
  */
-function aa_home_cohort_rows( $courses, $limit, $now, &$dbg, $fresh = false ) {
+function aamu_home_cohort_rows( $courses, $limit, $now, &$dbg, $fresh = false ) {
 	static $memo = array();
 	$key = 'aa_home_cohorts_' . md5( $courses . '|' . $limit . '|' . gmdate( 'Ymd', $now ) );
 	if ( ! $fresh ) {
@@ -196,12 +211,12 @@ function aa_home_cohort_rows( $courses, $limit, $now, &$dbg, $fresh = false ) {
 			return $memo[ $key ] = $cached;
 		}
 	}
-	$catalog = aa_home_cohort_catalog();
+	$catalog = aamu_home_cohort_catalog();
 	$rows = array();
 	foreach ( array_filter( array_map( 'trim', explode( ',', $courses ) ) ) as $slug ) {
 		if ( count( $rows ) >= $limit )     { break; }
 		if ( ! isset( $catalog[ $slug ] ) ) { $dbg[] = $slug . ': not in catalog'; continue; }
-		$next = aa_home_next_cohort( $slug, $now );
+		$next = aamu_home_next_cohort( $slug, $now );
 		if ( ! $next ) { $dbg[] = $slug . ': no upcoming event'; continue; }
 		$rows[] = array( 'slug' => $slug, 'e' => $next );
 		$dbg[]  = $slug . ': ' . gmdate( 'Y-m-d', $next['start'] );
@@ -211,7 +226,7 @@ function aa_home_cohort_rows( $courses, $limit, $now, &$dbg, $fresh = false ) {
 }
 
 /** Next upcoming event for one course slug, or null. */
-function aa_home_next_cohort( $slug, $now ) {
+function aamu_home_next_cohort( $slug, $now ) {
 	$term = get_term_by( 'slug', $slug, 'event_category' );
 	if ( ! $term || is_wp_error( $term ) ) { return null; }
 
@@ -253,7 +268,7 @@ function aa_home_next_cohort( $slug, $now ) {
  * up in a table rather than formatted, because DateTime::format('M') is always
  * English and strftime() depends on whatever locale the host happens to set.
  */
-function aa_home_date_range( $start, $end, $days, $str = null ) {
+function aamu_home_date_range( $start, $end, $days, $str = null ) {
 	$tz     = new DateTimeZone( 'America/New_York' );
 	$months = $str && ! empty( $str['months'] ) ? $str['months'] : null;
 	$first  = $str && ! empty( $str['day_first'] );
@@ -293,8 +308,8 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	), $atts, 'aa_home_cohorts' );
 
 	$lang    = in_array( $a['lang'], array( 'es', 'fr' ), true ) ? $a['lang'] : 'en';
-	$str     = aa_home_cohort_strings( $lang );
-	$catalog = aa_home_cohort_catalog();
+	$str     = aamu_home_cohort_strings( $lang );
+	$catalog = aamu_home_cohort_catalog();
 	// Cut off at the start of today in Eastern time, not "right now", so a
 	// cohort that begins today is still listed during the morning.
 	$today   = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
@@ -303,7 +318,7 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 	$limit   = max( 1, (int) $a['limit'] );
 
 	$dbg  = array();
-	$rows = aa_home_cohort_rows( $a['courses'], $limit, $now, $dbg, (bool) $a['debug'] );
+	$rows = aamu_home_cohort_rows( $a['courses'], $limit, $now, $dbg, (bool) $a['debug'] );
 
 	if ( empty( $rows ) ) {
 		if ( $a['part'] === 'ticker' ) { return ''; }
@@ -324,10 +339,10 @@ add_shortcode( 'aa_home_cohorts', function ( $atts ) {
 		// edit that removed it is skipped rather than fataling
 		if ( ! isset( $catalog[ $r['slug'] ] ) ) { continue; }
 		$c = $catalog[ $r['slug'] ]; $e = $r['e'];
-		$range = aa_home_date_range( $e['start'], $e['end'], $c['days'], $str );
+		$range = aamu_home_date_range( $e['start'], $e['end'], $c['days'], $str );
 		$startD = ( new DateTime( '@' . $e['start'] ) )->setTimezone( new DateTimeZone( 'America/New_York' ) );
 		$iso   = $startD->format( 'Y-m-d' );
-		$curl  = aa_home_cohort_url( $r['slug'], $c['url'], $lang );
+		$curl  = aamu_home_cohort_url( $r['slug'], $c['url'], $lang );
 
 		if ( $a['part'] === 'ticker' ) {
 			// One item per course; aa-home.js clones the whole track for the loop.
@@ -459,7 +474,7 @@ endif; // double-load guard
  * The takeover keeps each page's own category= list, so the hub calendars
  * stay scoped to their track: /training/adv-safe/ shows only the five
  * advanced courses, /training/safe/ only the seven role courses. Two pages
- * carry no calendar at all — see aa_mcal_hidden_slugs() at the bottom.
+ * carry no calendar at all — see aamu_mcal_hidden_slugs() at the bottom.
  *
  * The events query is cached the same way as [aa_home_cohorts]: per-request
  * memo + 10-minute transient keyed by the Eastern day.
@@ -478,7 +493,7 @@ endif; // double-load guard
    (its own functions already exist by the time it executes). Inside a
    conditional, declaration happens at runtime: first copy runs everything,
    second copy skips everything. */
-if ( ! function_exists( 'aa_mcal_render' ) ) :
+if ( ! function_exists( 'aamu_mcal_render' ) ) :
 
 /**
  * Course palette + destinations, keyed by event_category slug.
@@ -494,7 +509,7 @@ if ( ! function_exists( 'aa_mcal_render' ) ) :
  * hardware course pages, and the page that used them no longer shows a
  * calendar. Add them here if that changes.
  */
-function aa_mcal_catalog() {
+function aamu_mcal_catalog() {
 	return array(
 		'aspc'             => array( 'code' => 'ASPC',    'name' => 'Advanced SAFe Practice Consultant Certification',
 			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
@@ -605,7 +620,7 @@ function aa_mcal_catalog() {
 }
 
 /** Chrome strings — month/day names never go through the server locale. */
-function aa_mcal_strings( $lang ) {
+function aamu_mcal_strings( $lang ) {
 	$all = array(
 		'en' => array(
 			'months'    => array( 'January','February','March','April','May','June','July','August','September','October','November','December' ),
@@ -667,9 +682,9 @@ function aa_mcal_strings( $lang ) {
 
 /**
  * Upcoming events for the requested categories, as plain rows:
- * {s:"Y-m-d", e:"Y-m-d", c:"slug", id:int}. Cached like aa_home_cohort_rows.
+ * {s:"Y-m-d", e:"Y-m-d", c:"slug", id:int}. Cached like aamu_home_cohort_rows.
  */
-function aa_mcal_events( $cats, $months, &$dbg ) {
+function aamu_mcal_events( $cats, $months, &$dbg ) {
 	static $memo = array();
 	$tz    = new DateTimeZone( 'America/New_York' );
 	$from  = new DateTime( 'first day of this month', $tz );
@@ -744,7 +759,7 @@ function aa_mcal_events( $cats, $months, &$dbg ) {
 	return $memo[ $key ] = $rows;
 }
 
-function aa_mcal_render( $atts ) {
+function aamu_mcal_render( $atts ) {
 	static $instance = 0, $assets_done = false;
 	$instance++;
 
@@ -758,12 +773,12 @@ function aa_mcal_render( $atts ) {
 	), $atts, 'aa_mini_calendar' );
 
 	$lang = in_array( $a['lang'], array( 'es', 'fr' ), true ) ? $a['lang'] : 'en';
-	$str  = aa_mcal_strings( $lang );
+	$str  = aamu_mcal_strings( $lang );
 	$cats = array_filter( array_map( 'trim', explode( ',', strtolower( $a['category'] ) ) ) );
 	$dbg  = array();
-	$rows = aa_mcal_events( $cats, (int) $a['months'], $dbg );
+	$rows = aamu_mcal_events( $cats, (int) $a['months'], $dbg );
 
-	$catalog = aa_mcal_catalog();
+	$catalog = aamu_mcal_catalog();
 	$meta    = array();   // term slug => course record, for the JS
 	foreach ( $rows as $r ) {
 		$slug = $r['c'];
@@ -1314,7 +1329,7 @@ AA_MCAL_ASSETS;
 	return $html;
 }
 
-add_shortcode( 'aa_mini_calendar', 'aa_mcal_render' );
+add_shortcode( 'aa_mini_calendar', 'aamu_mcal_render' );
 
 /**
  * TAKEOVER of the old Xylus calendar shortcodes — zero page edits needed.
@@ -1346,7 +1361,7 @@ add_shortcode( 'aa_mini_calendar', 'aa_mcal_render' );
  * while (1) takes them over either way. Whether that is what happened on the
  * live site is unconfirmed — it is simply a failure mode this no longer has.
  */
-function aa_mcal_takeover( $tag, $atts ) {
+function aamu_mcal_takeover( $tag, $atts ) {
 	$a = shortcode_atts( array( 'category' => '', 'lang' => 'en' ), $atts, $tag );
 	$args = array( 'category' => $a['category'], 'lang' => $a['lang'] );
 	if ( $tag === 'easy_events_calendar' ) {
@@ -1354,23 +1369,23 @@ function aa_mcal_takeover( $tag, $atts ) {
 		$args['link'] = 'course';
 		$args['wide'] = '1';
 	}
-	return aa_mcal_render( $args );
+	return aamu_mcal_render( $args );
 }
 
 add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
 	if ( $tag === 'easy_events_calendar' || $tag === 'easy_event_calendar_mini' ) {
 		// $attr is '' rather than array() when the shortcode carries none.
-		return aa_mcal_takeover( $tag, is_array( $attr ) ? $attr : array() );
+		return aamu_mcal_takeover( $tag, is_array( $attr ) ? $attr : array() );
 	}
 	return $short;
 }, 10, 3 );
 
 add_action( 'init', function () {
 	add_shortcode( 'easy_events_calendar', function ( $atts ) {
-		return aa_mcal_takeover( 'easy_events_calendar', $atts );
+		return aamu_mcal_takeover( 'easy_events_calendar', $atts );
 	} );
 	add_shortcode( 'easy_event_calendar_mini', function ( $atts ) {
-		return aa_mcal_takeover( 'easy_event_calendar_mini', $atts );
+		return aamu_mcal_takeover( 'easy_event_calendar_mini', $atts );
 	} );
 }, 99 );
 
@@ -1403,7 +1418,7 @@ add_shortcode( 'aa_mcal_selftest', function () {
 		'takeover filter         : attached',
 		'easy_events_calendar    : ' . $owner( 'easy_events_calendar' ),
 		'easy_event_calendar_mini: ' . $owner( 'easy_event_calendar_mini' ),
-		'cohorts section here    : ' . ( aa_mcal_hide_here() ? 'suppressed' : 'kept' ),
+		'cohorts section here    : ' . ( aamu_mcal_hide_here() ? 'suppressed' : 'kept' ),
 	);
 	return '<pre style="font:12px/1.5 monospace;background:#F5FAFA;border:1px solid #CFE3E3;padding:12px;white-space:pre-wrap">'
 		. esc_html( implode( "\n", $lines ) ) . '</pre>';
@@ -1425,12 +1440,12 @@ add_shortcode( 'aa_mcal_selftest', function () {
    display:none rule would not achieve.
 
    To bring a calendar back on one of these pages, delete its slug from
-   aa_mcal_hidden_slugs(). To retire the section for good, delete the block in
+   aamu_mcal_hidden_slugs(). To retire the section for good, delete the block in
    the editor and this filter stops matching anything.
    ========================================================================== */
 
 /** Page slugs whose cohorts section is dropped. Both are unique site-wide. */
-function aa_mcal_hidden_slugs() {
+function aamu_mcal_hidden_slugs() {
 	return array( 'safe-industry', 'safe-found' );
 }
 
@@ -1446,7 +1461,7 @@ function aa_mcal_hidden_slugs() {
  * and the post being rendered otherwise. is_admin() still excludes the
  * editor, where the block must stay visible and editable.
  */
-function aa_mcal_hide_here() {
+function aamu_mcal_hide_here() {
 	static $hide = null;
 	if ( $hide !== null ) { return $hide; }
 	$hide = false;
@@ -1456,21 +1471,21 @@ function aa_mcal_hide_here() {
 			$obj = $GLOBALS['post'];
 		}
 		if ( $obj instanceof WP_Post && $obj->post_type === 'page' ) {
-			$hide = in_array( $obj->post_name, aa_mcal_hidden_slugs(), true );
+			$hide = in_array( $obj->post_name, aamu_mcal_hidden_slugs(), true );
 		}
 	}
 	return $hide;
 }
 
 /** Does this block, or anything nested inside it, embed the big calendar? */
-function aa_mcal_holds_calendar( $block ) {
+function aamu_mcal_holds_calendar( $block ) {
 	if ( isset( $block['blockName'] ) && $block['blockName'] === 'core/shortcode'
 		&& isset( $block['innerHTML'] ) && strpos( $block['innerHTML'], 'easy_events_calendar' ) !== false ) {
 		return true;
 	}
 	if ( ! empty( $block['innerBlocks'] ) ) {
 		foreach ( $block['innerBlocks'] as $child ) {
-			if ( aa_mcal_holds_calendar( $child ) ) { return true; }
+			if ( aamu_mcal_holds_calendar( $child ) ) { return true; }
 		}
 	}
 	return false;
@@ -1479,12 +1494,12 @@ function aa_mcal_holds_calendar( $block ) {
 add_filter( 'render_block', function ( $html, $block ) {
 	// Cheapest test first — this filter runs for every block on every page.
 	if ( empty( $block['blockName'] ) || $block['blockName'] !== 'core/group' ) { return $html; }
-	if ( ! aa_mcal_hide_here() ) { return $html; }
+	if ( ! aamu_mcal_hide_here() ) { return $html; }
 	// Only the section wrapper, so the match fires once and not again for the
 	// inner .aa-sechead / .aa-feed-src groups nested inside it.
 	$cls = isset( $block['attrs']['className'] ) ? $block['attrs']['className'] : '';
 	if ( strpos( $cls, 'aa-sec' ) === false ) { return $html; }
-	return aa_mcal_holds_calendar( $block ) ? '' : $html;
+	return aamu_mcal_holds_calendar( $block ) ? '' : $html;
 }, 10, 2 );
 
 endif; // double-load guard

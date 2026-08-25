@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 """Bundle the shortcode snippets into one must-use plugin.
 
-WPCode PHP snippets are not executing on agile-agilist.com — two independent
-snippets both failed to register their shortcodes, and the live homepage proves
-it: WordPress texturized `part="ticker"` into `part=&#8221;ticker&#8221;`, which
-it only does OUTSIDE registered shortcodes. A must-use plugin sidesteps the
-whole question: files in wp-content/mu-plugins/ are loaded by WordPress itself,
-before regular plugins, with no activation step and no UI to get wrong.
+The WPCode copies of these snippets never register their shortcodes on
+agile-agilist.com. The live homepage texturized `part="ticker"` into curly
+quotes — WordPress only does that outside registered shortcodes — and the
+site-down reproduction below shows the cohorts copy DOES define its early
+functions, i.e. it executes partially and stops before add_shortcode: the
+signature of a truncated paste. A must-use plugin sidesteps the whole
+question: files in wp-content/mu-plugins/ are loaded whole by WordPress
+itself, before regular plugins, with no editor paste in the path.
 
 The output is a single self-contained file so there is one thing to upload.
 Regenerate after editing either source:
 
     python3 tools/gen_mu_plugin.py > aa-shortcodes-mu-plugin.php
 
-IMPORTANT: the WPCode copies of these snippets must be deactivated first. Both
-would define the same functions, and the second definition is a fatal error.
+Every function in the output is renamed to an aamu_ prefix so the bundle can
+never collide with whatever the WPCode snippet manager still holds — the
+first bundle shared the snippets' function names and a stale WPCode copy
+redeclaring one took the whole site down (reproduced). Shortcode tags are
+left as-is; re-registering a tag is safe by design in WordPress.
 """
 import os
 import re
@@ -39,23 +44,38 @@ HEADER = '''<?php
  * -----------------------------------------------------------------------------
  * WHY THIS EXISTS
  *
- * These two bodies of code were originally WPCode PHP snippets, and on this
- * site WPCode PHP snippets do not run: both snippets failed to register their
- * shortcodes, so the homepage printed a literal "[aa_home_cohorts]" and the
- * calendar pages kept rendering the old Xylus calendar. mu-plugins are loaded
- * by WordPress core itself — there is no Activate toggle, no conditional logic,
- * and no snippet manager in the path that can silently drop them.
+ * These two bodies of code were originally WPCode PHP snippets. On this site
+ * the stored copies execute but never register their shortcodes — the
+ * evidence fits a paste truncated at a clean function boundary: it parses,
+ * runs silently, defines its early functions, and never reaches its
+ * add_shortcode call. So the homepage printed a literal "[aa_home_cohorts]"
+ * and the calendar pages kept the old Xylus calendar. This file is loaded by
+ * WordPress core itself, whole, with no editor paste in the path.
+ *
+ * WHY EVERY FUNCTION IS PREFIXED aamu_
+ *
+ * The first bundle used the snippets' own function names and took the site
+ * down on upload: WPCode runs its (partial) copies AFTER mu-plugins, and
+ * redefining a function is a PHP fatal on every request, admin included —
+ * reproduced exactly against the stored copies. With its own prefix this
+ * file cannot collide with anything WPCode holds, in any state, in any
+ * order. The shortcode TAGS are unchanged — re-registering a tag is normal
+ * WordPress behaviour, never a fatal.
  *
  * INSTALL
- *   1. Upload this file to  wp-content/mu-plugins/  (create the folder if it
- *      does not exist). No activation — it is live as soon as it is there.
- *   2. Deactivate the two WPCode PHP snippets. Not urgent: every section is
- *      wrapped in a double-load guard, so a copy left active is skipped
- *      harmlessly instead of fataling — but two copies of dead code is one
- *      more thing to confuse a future edit.
- *   3. Load the homepage. The cohort cards and the ticker should render.
- *      Put [aa_mcal_selftest] on any page and view it as an administrator to
- *      confirm what registered.
+ *   1. UPLOAD this file into  wp-content/mu-plugins/  (create the folder if
+ *      needed) using the file manager's Upload — do not create an empty file
+ *      and paste into a web editor, which is how code gets truncated. After
+ *      upload, confirm the file size matches the local file.
+ *   2. Load the homepage: cohort cards and ticker should render. Put
+ *      [aa_mcal_selftest] on any page and view it as an administrator to see
+ *      what registered. The WPCode snippets can stay active or not — they
+ *      cannot conflict with this file either way.
+ *
+ * IF THE SITE EVER WHITE-SCREENS AFTER A CHANGE HERE: delete this file via
+ * the file manager and the site is back instantly; then check the
+ * "Your Site is Experiencing a Technical Issue" email WordPress sends the
+ * admin — it names the exact file and line of the fatal.
  *
  * UNINSTALL: delete the file. mu-plugins cannot be deactivated from the admin.
  *
@@ -95,6 +115,36 @@ def strip_open_tag(src):
     return src.rstrip() + '\n'
 
 
+def rename_functions(body):
+    """Give every function in the bundle its own aamu_ prefix.
+
+    Installing the first bundle took the live site down. The function_exists
+    guards protect whichever copy loads SECOND — but WPCode snippets run after
+    mu-plugins, and the copies stored in WPCode are whatever was pasted there,
+    guardless and in an unknown state (the homepage evidence says at least one
+    executes partially without ever reaching its add_shortcode call). A
+    same-named function in that copy redeclares one defined here: fatal, on
+    every request, admin included.
+
+    Renaming ends the whole class of failure instead of managing it: no
+    function here shares a name with any snippet, past or future, so no load
+    order and no stale paste can collide with this file. Shortcode TAGS are
+    left untouched deliberately — re-registering a tag is how WordPress
+    shortcodes work (last registration wins, never a fatal), and the tags are
+    the public interface the pages use.
+
+    The rename is mechanical: collect every `function aa_*` the sources
+    declare, then word-boundary-replace each name everywhere — declarations,
+    call sites, and the 'aa_...' string literals used by function_exists
+    guards and callable references.
+    """
+    names = sorted(set(re.findall(r'\bfunction\s+(aa_\w+)', body)),
+                   key=len, reverse=True)
+    for name in names:
+        body = re.sub(r'\b%s\b' % re.escape(name), 'aamu' + name[2:], body)
+    return body
+
+
 def version():
     """Stamp the bundle with the sources' commit so a live file is traceable."""
     try:
@@ -108,9 +158,15 @@ def version():
 def main():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     parts = [HEADER % {'version': version()}]
+    bodies = []
     for fname, probe, title in SOURCES:
         with open(os.path.join(root, fname)) as fh:
-            body = strip_open_tag(fh.read())
+            bodies.append((title, fname, strip_open_tag(fh.read())))
+    # Rename across the CONCATENATION so cross-file call sites (none today,
+    # but cheap insurance) rename consistently.
+    joined = '\x00'.join(b for _, _, b in bodies)
+    joined = rename_functions(joined)
+    for (title, fname, _), body in zip(bodies, joined.split('\x00')):
         parts.append(SECTION % {'title': title, 'src': fname, 'body': body})
     print(''.join(parts).rstrip() + '\n')
 
