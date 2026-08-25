@@ -1,0 +1,235 @@
+/* Agile Agilist — course hero (3A) + registration (2B).
+   Verbatim from the design handoff, two files concatenated. Namespaces are
+   .aahero- and .aacal-, which collide with nothing already on the site
+   (checked against .aa-mcal, .aa-rd and section Y). */
+
+/* Agile Agilist — Course page hero (3A). Light theme, scoped under .aahero. */
+
+.aahero{--ink:#101C33;--teal-d:#1E5E56;--teal:#278074;--teal-b:#0E8074;--body:#4E4A40;--muted:#6B6455;--faint:#8A8375;
+  --line:#E4E0D6;--line2:#EEEAE0;--line3:#E9E5DB;--paper:#FFFFFF;--tint:#FBFAF7;--chip:#F1EDE3;
+  --mint:#F1F7F5;--mint-line:#D9E7E3;--teal-tint:#F4FAF9;--terra:#D34B2A;--terra-d:#B93F21;
+  --hot-bg:#FBE9E3;--hot:#B0413E;
+  font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;color:var(--ink);line-height:1.5;
+  background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+  -webkit-font-smoothing:antialiased;box-sizing:border-box}
+.aahero *,.aahero *::before,.aahero *::after{box-sizing:inherit}
+.aahero a{color:var(--teal-b);font-weight:600;text-decoration:none}
+.aahero a:hover{color:#0B665C;text-decoration:underline}
+.aahero p,.aahero ul,.aahero h1{margin:0}
+.aahero ul{list-style:none;padding:0}
+
+.aahero-shell{display:grid;grid-template-columns:1fr;gap:32px;padding:34px 20px 30px;align-items:center}
+@media (min-width:900px){.aahero-shell{grid-template-columns:1.05fr .95fr;gap:44px;padding:52px 48px 48px}}
+
+/* copy */
+.aahero-eyebrow{display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;font-weight:700;color:var(--teal-b)}
+.aahero-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-b);animation:aahero-pulse 1.4s ease-in-out infinite}
+@keyframes aahero-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.aahero-h1{margin-top:16px;font-size:clamp(32px,7vw,52px);line-height:1.04;letter-spacing:-.04em;
+  font-weight:600;color:var(--teal-d);text-wrap:balance}
+.aahero-h1 sup{font-size:.45em;vertical-align:super;font-weight:500}
+.aahero-lede{margin-top:16px;font-size:16.5px;line-height:1.6;color:var(--teal);max-width:44ch;text-wrap:pretty}
+.aahero-proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.aahero-proof li{font-size:12.5px;font-weight:600;color:var(--teal-d);background:var(--mint);
+  border:1px solid var(--mint-line);border-radius:100px;padding:8px 14px}
+.aahero-facts{display:flex;align-items:center;gap:14px;margin-top:30px;padding-top:26px;
+  border-top:1px solid var(--line2);flex-wrap:wrap}
+.aahero-minilabel{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#9A9384}
+.aahero-fact{margin-top:5px;font-size:17px;font-weight:600;color:var(--teal-d)}
+.aahero-fact span{font-size:12.5px;font-weight:500;color:var(--faint)}
+.aahero-rule{width:1px;height:34px;background:var(--line)}
+
+/* picker */
+.aahero-picker{min-width:0;background:var(--tint);border:1px solid var(--line3);border-radius:18px;
+  padding:22px 18px 20px;box-shadow:0 16px 40px rgba(16,28,51,.07)}
+@media (min-width:900px){.aahero-picker{padding:26px 24px 24px}}
+.aahero-pickhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.aahero-picktitle{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.aahero-picknote{font-size:12px;color:var(--faint)}
+
+.aahero-tabs{display:flex;gap:7px;margin-top:16px;padding:4px;background:var(--chip);border-radius:100px;
+  width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.aahero-tabs::-webkit-scrollbar{display:none}
+.aahero-tab{flex:0 0 auto;padding:10px 16px;min-height:44px;border:none;background:transparent;color:var(--muted);
+  border-radius:100px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer}
+.aahero-tab.is-on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(16,28,51,.10)}
+.aahero-tab:focus-visible,.aahero-cardbtn:focus-visible,.aahero-cta:focus-visible{outline:2px solid var(--teal-b);outline-offset:2px}
+
+.aahero-list{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.aahero-cardbtn{display:block;width:100%;text-align:left;padding:14px 15px;border-radius:13px;cursor:pointer;
+  font-family:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line3);
+  transition:border-color .15s ease,box-shadow .15s ease}
+.aahero-card.is-on .aahero-cardbtn{background:var(--teal-tint);border-color:var(--teal-b);
+  box-shadow:0 0 0 1px var(--teal-b),0 6px 18px rgba(14,128,116,.10)}
+.aahero-flag{display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:100px;background:var(--ink);
+  color:#F7F5F0;font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.aahero-cardtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.aahero-range{font-size:16.5px;font-weight:600;letter-spacing:-.015em}
+.aahero-check{width:20px;height:20px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:11px;border:1px solid #DCD7CB;background:transparent;color:transparent}
+.aahero-card.is-on .aahero-check{background:var(--teal-b);border-color:var(--teal-b);color:#fff}
+.aahero-batch{display:block;margin-top:5px;font-size:12.5px;color:var(--muted);line-height:1.4}
+.aahero-meta{display:flex;align-items:center;gap:8px;margin-top:9px}
+.aahero-status{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;
+  border-radius:100px;background:var(--chip);color:var(--muted)}
+.aahero-status.is-hot{background:var(--hot-bg);color:var(--hot)}
+.aahero-price{font-size:12.5px;color:var(--faint)}
+
+.aahero-cta{display:block;text-align:center;margin-top:16px;background:var(--terra);color:#FFF7F2;
+  border-radius:100px;padding:15px;min-height:48px;font-size:15px;font-weight:600}
+.aahero-cta:hover{background:var(--terra-d);color:#FFF7F2;text-decoration:none}
+.aahero-hint{font-size:11.5px;color:var(--faint);text-align:center;margin-top:9px}
+.aahero-private{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--line2);font-size:12px;color:var(--muted)}
+
+/* stats bar */
+.aahero-bar{border-top:1px solid var(--line2);background:var(--tint);padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+@media (min-width:900px){.aahero-bar{padding:16px 48px;gap:18px}}
+.aahero-scroll{font-size:12.5px;color:var(--faint)}
+.aahero-stats{display:flex;gap:18px;flex-wrap:wrap}
+.aahero-stats li{font-size:12.5px;color:var(--muted)}
+.aahero-stats strong{color:var(--teal-d);font-weight:600}
+
+@media (prefers-reduced-motion:reduce){.aahero *{animation:none!important;transition:none!important}}
+
+/* Agile Agilist — Course Calendar 2B
+   Scoped under .aacal so it cannot leak into Divi styles.
+   Mobile-first; the two-column shell appears at 860px. */
+
+.aacal{--ink:#101C33;--body:#4E4A40;--muted:#6B6455;--faint:#8A8375;--line:#E9E5DB;--line2:#DCD7CB;
+  --paper:#FFFFFF;--tint:#FBFAF7;--chip:#F4F2ED;--teal:#0E8074;--teal-tint:#F4FAF9;--hot-bg:#FBE9E3;--hot:#B0413E;
+  font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;color:var(--ink);
+  -webkit-font-smoothing:antialiased;line-height:1.5;box-sizing:border-box}
+.aacal *,.aacal *::before,.aacal *::after{box-sizing:inherit}
+.aacal a{color:var(--teal);font-weight:600;text-decoration:none}
+.aacal a:hover{color:#0A625A;text-decoration:underline}
+.aacal-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.aacal-skip{position:absolute;left:-9999px}
+.aacal-skip:focus{position:static;display:inline-block;margin-bottom:8px;padding:8px 12px;background:var(--ink);color:#F7F5F0;border-radius:8px}
+
+.aacal-shell{display:grid;grid-template-columns:1fr;background:var(--paper);
+  border:1px solid #E4E0D6;border-radius:20px;overflow:hidden}
+.aacal-left{padding:22px 18px 26px;min-width:0}
+.aacal-right{padding:22px 18px 26px;background:var(--tint);border-top:1px solid var(--line);min-width:0;display:flex;flex-direction:column}
+
+@media (min-width:860px){
+  .aacal-shell{grid-template-columns:1fr 1fr}
+  .aacal-left{padding:28px;border-right:1px solid var(--line)}
+  .aacal-right{padding:28px;border-top:none}
+}
+
+.aacal-eyebrow{margin:0;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--teal)}
+.aacal-h2{margin:8px 0 0;font-size:clamp(22px,5vw,26px);letter-spacing:-.03em;font-weight:600}
+
+/* month tabs — horizontally scrollable on phones */
+.aacal-tabs{display:flex;gap:7px;margin-top:18px;padding:4px;background:var(--chip);border-radius:100px;
+  width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.aacal-tabs::-webkit-scrollbar{display:none}
+.aacal-tab{flex:0 0 auto;padding:10px 16px;min-height:44px;border:none;background:transparent;color:var(--muted);
+  border-radius:100px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer}
+.aacal-tab.is-on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(16,28,51,.10)}
+.aacal-tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+.aacal-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+@media (min-width:560px){.aacal-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}}
+
+.aacal-card{margin:0}
+.aacal-cardbtn{display:block;width:100%;text-align:left;padding:14px 15px;border-radius:13px;cursor:pointer;
+  font-family:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);
+  transition:border-color .15s ease,box-shadow .15s ease}
+.aacal-cardbtn:hover{border-color:var(--line2)}
+.aacal-cardbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.aacal-card.is-on .aacal-cardbtn{background:var(--teal-tint);border-color:var(--teal);box-shadow:0 0 0 1px var(--teal),0 6px 18px rgba(14,128,116,.10)}
+.aacal-flag{display:inline-block;margin-bottom:8px;padding:3px 8px;border-radius:100px;background:var(--ink);color:#F7F5F0;
+  font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.aacal-cardtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.aacal-range{font-size:16.5px;font-weight:600;letter-spacing:-.015em}
+.aacal-check{width:20px;height:20px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;border:1px solid var(--line2);background:transparent;color:transparent}
+.aacal-card.is-on .aacal-check{background:var(--teal);border-color:var(--teal);color:#fff}
+.aacal-batch{display:block;margin-top:5px;font-size:12.5px;color:var(--muted);line-height:1.4}
+.aacal-meta{display:flex;align-items:center;gap:8px;margin-top:10px}
+.aacal-status{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;
+  border-radius:100px;background:var(--chip);color:var(--muted)}
+.aacal-status.is-hot{background:var(--hot-bg);color:var(--hot)}
+.aacal-price{font-size:12.5px;color:var(--faint)}
+.aacal-note,.aacal-fine{font-size:13px;color:var(--muted)}
+.aacal-note{margin:18px 0 0}
+
+/* right panel */
+.aacal-steps{display:flex;align-items:center;gap:14px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.aacal-step{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--faint)}
+.aacal-step.is-on{color:var(--ink)}
+.aacal-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;background:var(--line);color:var(--faint)}
+.aacal-step.is-on .aacal-num,.aacal-step.is-past .aacal-num{background:var(--teal);color:#fff}
+
+.aacal-selected{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:18px}
+.aacal-selected p{margin:0}
+.aacal-sel-label{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:#9A9384}
+.aacal-sel-range{font-size:15.5px;font-weight:600;margin-top:5px}
+.aacal-sel-batch{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+.aacal-panel{margin-top:18px}
+.aacal-row{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:420px){.aacal-row{grid-template-columns:1fr 1fr}}
+.aacal-field{display:block;min-width:0;margin-top:10px}
+.aacal-row .aacal-field{margin-top:0}
+.aacal-field input{width:100%;border:1px solid var(--line2);background:var(--paper);border-radius:10px;
+  padding:13px;font-size:16px;font-family:inherit;color:var(--ink);min-height:44px}
+.aacal-field input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,128,116,.12)}
+.aacal-field input[aria-invalid="true"]{border-color:var(--hot)}
+
+.aacal-seatsrow{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:16px;flex-wrap:wrap}
+.aacal-minilabel{margin:0;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.aacal-stepper{display:flex;align-items:center;gap:4px;margin-top:8px;border:1px solid var(--line2);
+  background:var(--paper);border-radius:10px;padding:4px}
+.aacal-stepper button{width:44px;height:44px;border:none;background:transparent;border-radius:8px;cursor:pointer;
+  font-size:18px;color:var(--ink);font-family:inherit}
+.aacal-stepper button:hover{background:#F1EDE3}
+.aacal-stepper span{min-width:26px;text-align:center;font-size:14.5px;font-weight:600}
+.aacal-totalbox{text-align:right}
+.aacal-total{margin:4px 0 0;font-size:22px;font-weight:600;letter-spacing:-.02em}
+
+.aacal-cta{width:100%;margin-top:16px;border:none;border-radius:100px;padding:15px;min-height:48px;
+  font:600 15px/1 inherit;font-family:inherit;background:var(--ink);color:#F7F5F0;cursor:pointer}
+.aacal-cta[disabled]{background:var(--line2);color:var(--faint);cursor:not-allowed}
+.aacal-cta:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.aacal-hint{font-size:11.5px;color:var(--faint);text-align:center;margin:9px 0 0}
+
+.aacal-review{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:0}
+.aacal-review>div{display:flex;justify-content:space-between;gap:14px;padding:11px 15px;border-bottom:1px solid #F1EDE3;font-size:13.5px}
+.aacal-review dt{color:var(--faint);margin:0}
+.aacal-review dd{margin:0;font-weight:600;text-align:right;min-width:0}
+.aacal-review-total{background:var(--tint);border-bottom:none;align-items:baseline}
+.aacal-review-total dt{font-weight:600;color:var(--ink);font-size:13.5px}
+.aacal-review-total dd{font-size:21px;letter-spacing:-.02em}
+.aacal-consent{display:flex;gap:9px;margin-top:14px;font-size:12.5px;color:var(--body);line-height:1.45;cursor:pointer}
+.aacal-consent input{margin:2px 0 0;accent-color:var(--teal);width:18px;height:18px;flex:0 0 auto}
+.aacal-backrow{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:11px;flex-wrap:wrap}
+.aacal-backrow .aacal-hint{margin:0}
+.aacal-link{font:600 12.5px/1 inherit;font-family:inherit;color:var(--teal);background:none;border:none;cursor:pointer;padding:6px}
+
+.aacal-done{margin-top:18px;background:var(--teal);color:#F7F5F0;border-radius:14px;padding:22px}
+.aacal-done-h{margin:0;font-size:19px;font-weight:600;letter-spacing:-.02em}
+.aacal-done-p{margin:7px 0 0;font-size:13.5px;opacity:.88;line-height:1.55}
+.aacal-ghost{margin-top:15px;background:rgba(255,255,255,.16);color:#F7F5F0;border:1px solid rgba(255,255,255,.35);
+  border-radius:100px;padding:11px 18px;min-height:44px;font:600 13px/1 inherit;font-family:inherit;cursor:pointer}
+.aacal-fine{margin:auto 0 0;padding-top:20px;font-size:12px;color:var(--faint);line-height:1.5}
+
+@media (prefers-reduced-motion:reduce){.aacal *{transition:none!important;animation:none!important}}
+
+/* ----------------------------------------------------------------------------
+   [hidden] MUST WIN.
+   Both components keep every month in the DOM and hide the inactive ones with
+   the `hidden` attribute — that is what makes the whole schedule crawlable
+   without JS. But the browser's own `[hidden]{display:none}` is a UA rule, and
+   `.aacal-grid{display:grid}` / `.aahero-list{display:flex}` are author rules,
+   so the panels stayed visible and every month rendered at once: 54 cards in a
+   wall instead of the 2 for August. Scoped to these two components so it
+   cannot reach anything else on the site.
+   -------------------------------------------------------------------------- */
+.aacal [hidden],
+.aahero [hidden] { display: none !important; }
