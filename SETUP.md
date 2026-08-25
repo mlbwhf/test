@@ -1,7 +1,13 @@
 # Agile Agilist — full setup
 
-Nothing here is installed yet. This is everything, in the order to do it.
-Each part works on its own, so you can stop after any of them.
+Everything, in the order to do it. Each part works on its own, so you can stop
+after any of them.
+
+**Where you are:** Part 2 (calendar) is installed and working — it needs two
+snippet updates, not an install. Part 3 (course hero + registration) is the
+one that has never been installed; that is the "change of design list and hero
+in each course page" you were describing. Part 1 depends on whether the
+homepage cohorts snippet and `AA – Home JS` are the versions below.
 
 **No file uploads anywhere.** Everything is a WPCode snippet, Additional CSS,
 or a page edit.
@@ -16,8 +22,9 @@ snippets queued behind it, which is how the homepage cohorts died with it.
 
 ## Part 0 — Clean up first (5 min)
 
-1. WPCode → Code Snippets. **Delete** the old calendar PHP snippet (the one you
-   disabled). Do not edit it — its stored copy is corrupted.
+1. WPCode → Code Snippets. **Delete** the old, corrupted calendar PHP snippet —
+   the single-snippet one you disabled, not the `AA – Calendar PHP` you
+   replaced it with. If it is already gone, skip this.
 2. Leave the homepage cohorts PHP snippet alone for now.
 3. If a file called `aa-shortcodes-mu-plugin.php` is still in
    `wp-content/mu-plugins/`, delete it. It is superseded and it is what took
@@ -61,28 +68,32 @@ block, keep the one you paste into.
 
 ---
 
-## Part 2 — Course calendar (all pages)
+## Part 2 — Course calendar — **already installed, two updates outstanding**
 
-| # | WPCode type | Name | Paste | Settings |
-|---|---|---|---|---|
-| 1 | **CSS Snippet** | `AA – Calendar CSS` | `snippets/calendar/aa-calendar.css` | Auto Insert, Site Wide Header |
-| 2 | **JavaScript Snippet** | `AA – Calendar JS` | `snippets/calendar/aa-calendar.js` | Auto Insert, **Site Wide Footer** |
-| 3 | **PHP Snippet** | `AA – Calendar PHP` | `aa-mini-calendar-wpcode-snippet.php` | Auto Insert, **Run Everywhere** |
+The three calendar snippets are live on your site and you confirmed them
+working. Do **not** reinstall. Two changes were made *after* that
+confirmation, both fixing things you reported, and they need re-pasting over
+the snippets you already have:
 
-Activate 1 and 2 before 3.
+| WPCode snippet | Re-paste | What it fixes |
+|---|---|---|
+| `AA – Calendar PHP` | `aa-mini-calendar-wpcode-snippet.php` | **"Aug 27 there are two running"** — the same class stored as two `wp_events` posts now collapses to one bar, keyed on course code + start + end. |
+| `AA – Calendar JS` | `snippets/calendar/aa-calendar.js` | **RTE's Mon/Wed/Fri batches** all drew identical bars. A course appearing more than once in the visible month now labels its bars with the date range instead of the name. |
 
-*Or* put the CSS in Additional CSS instead of a snippet, using
-`snippets/additional-css-calendar-section.css` (section Z). One or the other,
-never both.
+`AA – Calendar CSS` is unchanged — leave it alone.
 
-No page edits: the snippet takes over `[easy_events_calendar]` and
-`[easy_event_calendar_mini]`, so every page carrying them switches over. Then:
+Re-paste = open the existing snippet, select all, replace, update. Do not
+create new snippets, or you get two of each.
 
-1. Check `/training/`, `/training/adv-safe/`, `/training/safe/` (calendars,
-   each scoped to its own track), `/training/safe-industry/` and
-   `/training/safe-found/` (cohorts section gone entirely), and any course page.
-2. Deactivate the old **"AA — Class Calendar"** JS snippet.
-3. Deactivate the **Xylus** calendar plugin.
+Still to do from this part, if you have not already:
+
+1. Deactivate the old **"AA — Class Calendar"** JS snippet (it double-renders
+   against the new one).
+2. Deactivate the **Xylus** calendar plugin.
+
+Then check `/training/`, `/training/adv-safe/`, `/training/safe/` (calendars,
+each scoped to its own track), `/training/safe-industry/` and
+`/training/safe-found/` (cohorts section gone entirely), and any course page.
 
 ---
 
