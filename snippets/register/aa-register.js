@@ -19,6 +19,7 @@
   var PRICE_LOCALE   = CFG.locale || 'en-US';
   var MAX_SEATS = 12;
   var ENDPOINT = CFG.checkout || null;
+  var BATCHES  = CFG.batches || null;
 
   var tabs   = q('.aacal-tab');
   var months = q('.aacal-panel-month');
@@ -96,15 +97,88 @@
       txt(w.querySelector('[data-week-count]'), shown.length === 1 ? '1 batch' : shown.length + ' batches');
     });
 
+    var panel = monthEl(state.month);
+    var lazy = panel && panel.hasAttribute('data-lazy');
     var all = monthCards(state.month);
     var visible = all.filter(function (c) { return !c.hidden; });
-    txt(elCount, state.filter === 'all'
-      ? (all.length === 1 ? '1 batch' : all.length + ' batches')
+    /* While a month is still arriving its rows are not in the DOM, so count
+       from the total the server put on the panel rather than from zero cards —
+       otherwise the header reads "0 batches" for the length of the fetch. */
+    var totalInMonth = lazy ? (parseInt(panel.getAttribute('data-month-count'), 10) || 0) : all.length;
+    txt(elCount, state.filter === 'all' || lazy
+      ? (totalInMonth === 1 ? '1 batch' : totalInMonth + ' batches')
       : visible.length + ' of ' + all.length + ' batches');
-    if (elEmpty) elEmpty.hidden = visible.length > 0;
+    if (elEmpty) elEmpty.hidden = lazy || visible.length > 0;
 
     /* never leave a selection the user cannot see */
     if (visible.length && visible.indexOf(state.card) === -1) selectCard(visible[0]);
+  }
+
+  /* ── months that arrive on demand ────────────────────────────────
+     Only the open month's rows are in the page; the rest are fetched the
+     first time their tab is opened. See the note in the PHP snippet for why.
+     Every month the user has not asked for stays unfetched, and a month is
+     only ever fetched once. */
+  var pending = {};
+
+  function monthEl(month) {
+    return months.filter(function (m) { return m.getAttribute('data-month') === month; })[0];
+  }
+
+  /* Re-find the rows and bind the new ones. Called after a month lands, so
+     the click handlers, the filter and the visibility pass all see the rows
+     that just arrived. Binding is marked on the element rather than tracked
+     in a list, so a second call cannot double-bind a row. */
+  function rescan() {
+    cards = q('.aacal-card');
+    weeks = q('.aacal-week');
+    cards.forEach(function (c) {
+      if (c.getAttribute('data-bound')) return;
+      c.setAttribute('data-bound', '1');
+      c.querySelector('.aacal-cardbtn').addEventListener('click', function () {
+        goStep(1, false);
+        selectCard(c);
+      });
+    });
+  }
+
+  function ensureMonth(month) {
+    var panel = monthEl(month);
+    if (!panel || !panel.hasAttribute('data-lazy')) return Promise.resolve();
+    if (!BATCHES || !CFG.course) return Promise.resolve();
+    if (pending[month]) return pending[month];
+
+    panel.setAttribute('aria-busy', 'true');
+    pending[month] = fetch(BATCHES + '?course=' + encodeURIComponent(CFG.course) +
+                           '&month=' + encodeURIComponent(month))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        panel.innerHTML = (j && j.html) || '';
+        panel.removeAttribute('data-lazy');
+        panel.removeAttribute('aria-busy');
+        rescan();
+      })
+      .catch(function () {
+        /* Leave data-lazy on so the next tab visit tries again, and drop the
+           promise so it is not a cached failure. */
+        panel.removeAttribute('aria-busy');
+        delete pending[month];
+      });
+    return pending[month];
+  }
+
+  /* Everything, for the two paths that look a cohort up by id and cannot know
+     which month it is in: the calendar's hand-off and the return from Stripe. */
+  function ensureAll() {
+    return Promise.all(months.map(function (m) {
+      return ensureMonth(m.getAttribute('data-month'));
+    }));
+  }
+
+  function goMonth(month) {
+    state.month = month;
+    applyVisibility();                              // tab moves now, not after the fetch
+    ensureMonth(month).then(applyVisibility);       // again once the rows are in
   }
 
   /* ── selection ───────────────────────────────────────────────── */
@@ -121,15 +195,14 @@
   }
 
   tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { state.month = t.getAttribute('data-month'); applyVisibility(); });
+    t.addEventListener('click', function () { goMonth(t.getAttribute('data-month')); });
     t.addEventListener('keydown', function (e) {
       var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
       if (!d) return;
       e.preventDefault();
       var n = tabs[(i + d + tabs.length) % tabs.length];
       n.focus();
-      state.month = n.getAttribute('data-month');
-      applyVisibility();
+      goMonth(n.getAttribute('data-month'));
     });
   });
 
@@ -141,24 +214,32 @@
     applyVisibility();
   });
 
-  cards.forEach(function (c) {
-    c.querySelector('.aacal-cardbtn').addEventListener('click', function () {
-      goStep(1, false);
-      selectCard(c);
-    });
-  });
+  rescan();
 
   /* one-way: the hero hands its pick down to this calendar and never listens back */
   document.addEventListener('aa:cohort-select', function (e) {
     if (!e.detail || e.detail.source === 'calendar') return;
-    var match = cards.filter(function (c) { return c.getAttribute('data-cohort') === e.detail.cohort; })[0];
+    adopt(e.detail.cohort);
+  });
+
+  /* The hero and the month calendar both hand a cohort id down, and either can
+     name one in a month whose rows have not been fetched. So: try, and if it
+     is not here yet, fetch the rest and try once more. */
+  function adopt(cohort) {
+    var match = cards.filter(function (c) { return c.getAttribute('data-cohort') === cohort; })[0];
+    if (!match) { ensureAll().then(function () { land(cohort); }); return; }
+    land(cohort, match);
+  }
+
+  function land(cohort, match) {
+    match = match || cards.filter(function (c) { return c.getAttribute('data-cohort') === cohort; })[0];
     if (!match || match === state.card) return;
     state.month = match.closest('.aacal-panel-month').getAttribute('data-month');
     if (!matches(match)) state.filter = 'all';
     goStep(1, false);
     selectCard(match);
     applyVisibility();
-  });
+  }
 
   /* ── seats ───────────────────────────────────────────────────── */
   q('[data-seats]').forEach(function (b) {
@@ -245,12 +326,16 @@
     var paid = q2.get('aa_paid');
     if (!paid) { return; }
     var hit = cards.filter(function (c) { return c.getAttribute('data-cohort') === paid; })[0];
-    if (hit) { selectCard(hit, false); }
+    /* The batch they bought is very often months out, so its rows are not in
+       the page. Fetch the rest and come back, rather than confirming a
+       purchase with a bare cohort id where the dates should be. */
+    if (!hit) { ensureAll().then(showPaidReturn); return; }
+    selectCard(hit, false);
     var seats = parseInt(q2.get('aa_seats'), 10) || 1;
     txt(root.querySelector('[data-done-name]'), 'you');
     txt(root.querySelector('[data-done-email]'), 'your inbox');
     txt(root.querySelector('[data-done-summary]'),
-      (hit ? hit.getAttribute('data-range') : paid) + ' · ' + seats + (seats === 1 ? ' seat' : ' seats'));
+      hit.getAttribute('data-range') + ' · ' + seats + (seats === 1 ? ' seat' : ' seats'));
     goStep('done');
   }
 
@@ -258,6 +343,7 @@
     if (form1) form1.reset();
     if (form2) form2.reset();
     state.seats = 1; state.filter = 'all';
+    // the default is always in the month rendered inline, so no fetch here
     state.month = defaultCohort.closest('.aacal-panel-month').getAttribute('data-month');
     selectCard(defaultCohort);
     applyVisibility();

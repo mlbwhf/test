@@ -103,6 +103,7 @@ function aa_reg_courses() {
 			'h1'       => 'Implementing SAFe® in four days.',
 			'lede'     => 'Taught by practising SPCTs, capped at 18 seats, exam fee included. Leave with the toolkit to launch your first train — not a certificate you file away.',
 			'url'      => '/training/adv-safe/spc/',
+			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
 			'price'    => 2875,
 			'days'     => 4,
@@ -122,6 +123,7 @@ function aa_reg_courses() {
 			'h1'       => 'Advanced SAFe® Practice Consultant.',
 			'lede'     => 'Go beyond SPC — advanced coaching, measuring transformation outcomes, and guiding complex enterprise change at portfolio and solution level.',
 			'url'      => '/training/adv-safe/aspc/',
+			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
 			'price'    => 2899,
 			'days'     => 3,
@@ -140,6 +142,7 @@ function aa_reg_courses() {
 			'h1'       => 'Release Train Engineer in three days.',
 			'lede'     => 'Become the servant leader of the Agile Release Train — facilitating ART events, driving relentless improvement, and leading PI execution.',
 			'url'      => '/training/adv-safe/rte/',
+			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
 			'price'    => 2150,
 			'days'     => 3,
@@ -635,6 +638,50 @@ function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	     . '</button></article>';
 }
 
+/**
+ * The breadcrumb the course pages already carry, byte for byte.
+ *
+ * The new hero replaces the old one wholesale, so anything the old hero had
+ * and this one does not simply disappears. This is the one piece being kept
+ * unchanged: same markup, same `mono aa-rte-crumb` classes (named for RTE but
+ * used by every course page), so the rules already in the sheet style it and
+ * nothing needs adding to the CSS.
+ *
+ * The parent URL is the course URL minus its last segment, which is right for
+ * every course on the site — /training/adv-safe/spc/ sits under
+ * /training/adv-safe/ — and the label is per course because the pages say
+ * "Advanced SAFe" where the parent page is titled "SAFe Advanced".
+ */
+function aa_reg_crumb( $course ) {
+	if ( empty( $course['crumb'] ) || empty( $course['url'] ) ) { return ''; }
+	$parent = trailingslashit( dirname( untrailingslashit( $course['url'] ) ) );
+	return '<nav aria-label="Breadcrumb" class="mono aa-rte-crumb">'
+	     . '<a href="' . esc_url( $parent ) . '">&larr; Back to ' . esc_html( $course['crumb'] ) . '</a>'
+	     . '<span>' . esc_html( $course['code'] ) . '</span></nav>';
+}
+
+/**
+ * One month of the schedule: week groups, each holding its batch rows.
+ *
+ * Shared by the panel (for the open month) and by the REST route (for the
+ * rest), so a lazily-loaded month is byte-identical to one rendered inline.
+ */
+function aa_reg_month_html( $course, $m, $first_id, $cur ) {
+	$h = '';
+	// Week groups turn one long month into three or four short lists.
+	foreach ( aa_reg_by_week( $m['items'] ) as $week ) {
+		$h .= '<section class="aacal-week" data-week><div class="aacal-weekhead">'
+		    . '<h3>' . esc_html( 'Week of ' . ( new DateTime( $week['monday'] ) )->format( 'M j' ) ) . '</h3>'
+		    . '<p data-week-count>' . esc_html( aa_reg_batches_label( count( $week['items'] ) ) ) . '</p>'
+		    . '</div><div class="aacal-rows">';
+		foreach ( $week['items'] as $c ) {
+			$h .= aa_reg_row( $course, $c, $c['id'] === $first_id, $cur );
+		}
+		$h .= '</div></section>';
+	}
+	return $h;
+}
+
 function aa_reg_hero( $atts ) {
 	$a       = shortcode_atts( array( 'course' => 'spc' ), $atts, 'aa_course_hero' );
 	$courses = aa_reg_courses();
@@ -648,6 +695,7 @@ function aa_reg_hero( $atts ) {
 
 	$h  = '<section class="aahero" id="aahero" aria-labelledby="aahero-title"><div class="aahero-shell">';
 	$h .= '<div class="aahero-copy">';
+	$h .= aa_reg_crumb( $course );
 	$h .= '<p class="aahero-eyebrow">' . esc_html( $course['eyebrow'] ) . '</p>';
 	$h .= '<h1 class="aahero-h1" id="aahero-title">' . esc_html( $course['h1'] ) . '</h1>';
 	$h .= '<p class="aahero-lede">' . esc_html( $course['lede'] ) . '</p>';
@@ -765,23 +813,33 @@ function aa_reg_panel( $atts ) {
 		$h .= '</div>';
 	}
 
+	/* Only the open month's rows are in the page. The others arrive from
+	   /wp-json/aa/v1/batches the first time their tab is used.
+
+	   A row is about 1.4KB of markup, and a course running three times a week
+	   for 26 weeks has 78 of them: RTE's panel was 108KB of HTML, on pages
+	   already being trimmed for weight. Every one of those rows was hidden —
+	   a tab panel carries `hidden` until its tab is picked — so the bytes were
+	   paid for on every load and read by nobody.
+
+	   Nothing is lost with JavaScript off either, and that is worth being
+	   precise about: a `hidden` panel stays hidden without JS, so the later
+	   months were already unreachable. What used to be 108KB of unreachable
+	   markup is now one month of reachable markup.
+
+	   The fragment is rendered by aa_reg_row() on the server, the same call as
+	   below, so there is still exactly one thing that decides what a batch is
+	   called. */
 	$i = 0;
 	foreach ( $months as $k => $m ) {
 		$dense = count( $m['items'] ) > aa_reg_dense_at();
 		$h .= '<div class="aacal-panel-month' . ( $dense ? '' : ' is-sparse' ) . '" role="tabpanel"'
 		    . ' id="aacal-panel-' . esc_attr( $k ) . '" aria-labelledby="aacal-tab-' . esc_attr( $k ) . '"'
-		    . ' data-month="' . esc_attr( $k ) . '"' . ( $i === 0 ? '' : ' hidden' ) . '>';
-
-		// Week groups turn one long month into three or four short lists.
-		foreach ( aa_reg_by_week( $m['items'] ) as $week ) {
-			$h .= '<section class="aacal-week" data-week><div class="aacal-weekhead">'
-			    . '<h3>' . esc_html( 'Week of ' . ( new DateTime( $week['monday'] ) )->format( 'M j' ) ) . '</h3>'
-			    . '<p data-week-count>' . esc_html( aa_reg_batches_label( count( $week['items'] ) ) ) . '</p>'
-			    . '</div><div class="aacal-rows">';
-			foreach ( $week['items'] as $c ) {
-				$h .= aa_reg_row( $course, $c, $c['id'] === $first['id'], $cur );
-			}
-			$h .= '</div></section>';
+		    . ' data-month="' . esc_attr( $k ) . '"'
+		    . ' data-month-count="' . (int) count( $m['items'] ) . '"'
+		    . ( $i === 0 ? '' : ' hidden data-lazy="1"' ) . '>';
+		if ( $i === 0 ) {
+			$h .= aa_reg_month_html( $course, $m, $first['id'], $cur );
 		}
 		$h .= '</div>';
 		$i++;
@@ -883,6 +941,8 @@ function aa_reg_panel( $atts ) {
 	   next to the markup so it cannot drift from what was registered. */
 	$h .= '<script>window.AA_REG=' . wp_json_encode( array(
 		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
+		'batches'        => esc_url_raw( rest_url( 'aa/v1/batches' ) ),
+		'course'         => $a['course'],
 		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '€' : '$' ),
 		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
 		'nonce'          => wp_create_nonce( 'wp_rest' ),
@@ -994,7 +1054,54 @@ add_action( 'rest_api_init', function () {
 		'permission_callback' => '__return_true',   // authenticated by signature, below
 		'callback'            => 'aa_reg_webhook',
 	) );
+	register_rest_route( 'aa/v1', '/batches', array(
+		'methods'             => 'GET',
+		'permission_callback' => '__return_true',   // public: the schedule is public
+		'callback'            => 'aa_reg_batches',
+	) );
 } );
+
+/**
+ * GET /wp-json/aa/v1/batches?course=rte&month=2026-11
+ *
+ * One month of schedule rows, for a tab the visitor has just opened. Public
+ * and read-only: it says nothing the page would not have said if every month
+ * had been rendered inline, and it takes no input beyond a course key and a
+ * month, both of which are checked against what the server generated rather
+ * than trusted.
+ */
+function aa_reg_batches( WP_REST_Request $req ) {
+	$courses = aa_reg_courses();
+	$key     = (string) $req->get_param( 'course' );
+	$month   = (string) $req->get_param( 'month' );
+
+	if ( ! isset( $courses[ $key ] ) ) {
+		return new WP_Error( 'aa_course', 'Unknown course.', array( 'status' => 404 ) );
+	}
+	/* The key aa_reg_months() builds, which is month-then-year ("9-2026"), not
+	   ISO. Checked against that shape here and then against the real key set
+	   below, so a made-up month is a 404 rather than anything reaching a date
+	   constructor. */
+	if ( ! preg_match( '/^\d{1,2}-\d{4}$/', $month ) ) {
+		return new WP_Error( 'aa_month', 'Bad month.', array( 'status' => 400 ) );
+	}
+
+	$course  = $courses[ $key ];
+	$cohorts = aa_reg_upcoming( $key, $course );
+	if ( ! $cohorts ) {
+		return new WP_Error( 'aa_month', 'No batches.', array( 'status' => 404 ) );
+	}
+	$months = aa_reg_months( $cohorts );
+	if ( ! isset( $months[ $month ] ) ) {
+		return new WP_Error( 'aa_month', 'No batches that month.', array( 'status' => 404 ) );
+	}
+
+	return array(
+		'month' => $month,
+		'count' => count( $months[ $month ]['items'] ),
+		'html'  => aa_reg_month_html( $course, $months[ $month ], $cohorts[0]['id'], $course['currency'] ),
+	);
+}
 
 function aa_reg_checkout( WP_REST_Request $req ) {
 	if ( ! aa_reg_is_live() ) {
