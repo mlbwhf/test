@@ -1109,26 +1109,50 @@ function aa_reg_autoplace_on() {
 	return get_option( 'aa_reg_autoplace' ) === 'yes';
 }
 
+/** Top-level section slugs that mean "this is a translated mirror". */
+function aa_reg_lang_roots() {
+	return array( 'es', 'fr', 'ar' );
+}
+
 /**
  * The course this page is for, or '' — matched on the page slug.
  *
- * The slug is the course key on every language mirror (/training/adv-safe/rte/,
- * /fr/rte/, /es/rte/), so one lookup covers them all. A slug with no row in
- * aa_reg_courses() returns '' and the page is left alone, which is what keeps
- * the other 16 courses untouched until their cadence is known.
+ * ENGLISH PAGES ONLY, and that restriction is the whole point of this
+ * function rather than a plain slug lookup. The mirrors reuse the English
+ * slug — /training/adv-safe/rte/, /fr/rte/, /es/rte/ and /ar/rte/ are all
+ * post_name "rte" — so a bare slug match would swap a French page's hero for
+ * one built from aa_reg_courses(), whose h1, lede and proof lines are all
+ * English. A French visitor would get an English hero and an English
+ * registration form on a French page.
+ *
+ * So a page under a language root is left alone. When the course table grows
+ * per-language copy, this is the one place that has to change.
+ *
+ * A slug with no row in aa_reg_courses() also returns '', which is what keeps
+ * the other courses untouched until their cadence is known.
  */
 function aa_reg_page_course() {
 	static $key = null;
 	if ( $key !== null ) { return $key; }
 	$key = '';
-	if ( ! is_admin() ) {
-		$obj = get_queried_object();
-		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
-		if ( $obj instanceof WP_Post && $obj->post_type === 'page' ) {
-			$courses = aa_reg_courses();
-			if ( isset( $courses[ $obj->post_name ] ) ) { $key = $obj->post_name; }
-		}
+	if ( is_admin() ) { return $key; }
+
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+	if ( ! ( $obj instanceof WP_Post ) || $obj->post_type !== 'page' ) { return $key; }
+
+	$courses = aa_reg_courses();
+	if ( ! isset( $courses[ $obj->post_name ] ) ) { return $key; }
+
+	// Walk to the top-level ancestor and refuse if it is a language section.
+	$ancestors = get_post_ancestors( $obj->ID );
+	$root      = $ancestors ? end( $ancestors ) : $obj->ID;
+	$root_post = get_post( $root );
+	if ( $root_post && in_array( $root_post->post_name, aa_reg_lang_roots(), true ) ) {
+		return $key;
 	}
+
+	$key = $obj->post_name;
 	return $key;
 }
 

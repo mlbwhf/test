@@ -159,11 +159,15 @@ The swap happens as the page renders. Nothing is written to the pages, so:
   before the snippet is active;
 - unticking the box puts the old hero and the Fluent Form straight back, with
   nothing to undo by hand;
-- it covers `/es/`, `/fr/` and `/ar/` mirrors of each course too, and picks up
-  the other 16 courses automatically once their cadence is added.
+- it picks up the other 16 courses automatically once their cadence is added.
 
-It applies only to pages whose slug has a row in `aa_reg_courses()` — today
-`spc`, `aspc`, `rte`. Every other page is untouched. Send me the cadence for
+**English pages only.** The mirrors reuse the English slug — `/fr/rte/` and
+`/ar/rte/` are both `rte` — so a plain slug match would put an English hero and
+an English form on a French page. Pages under `/es/`, `/fr/` and `/ar/` are
+skipped until the course table carries copy in those languages.
+
+It applies only to English pages whose slug has a row in `aa_reg_courses()` —
+today `spc`, `aspc`, `rte`. Every other page is untouched. Send me the cadence for
 the other courses and I will add them.
 
 **If you would rather place them by hand**, leave the box unticked and put the
