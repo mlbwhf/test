@@ -39,6 +39,19 @@
  * set on the settings page. A secret key pasted into a snippet is a secret
  * stored in the posts table and shown to every admin who opens the editor.
  *
+ * PAYMENT LINKS vs SESSIONS. By default this creates a Checkout Session per
+ * click: no links to maintain, the price comes from the table, and seats are
+ * enforced before the buyer reaches Stripe. A per-course 'payment_link' switches
+ * that course to a static Stripe Payment Link instead.
+ *
+ * One link PER CLASS does not work here. The schedule is generated, so about
+ * 201 batches are live at any moment and roughly seven appear every week —
+ * 364 links a year to create and retire by hand, each one dying when its date
+ * passes. One link PER COURSE does work: the cohort rides along as
+ * client_reference_id. The cost is that the link's price is fixed (no
+ * per-cohort or early-bird pricing) and, if the link allows quantity edits,
+ * the seat cap cannot be enforced before payment.
+ *
  * WEBHOOK: point Stripe at  <site>/wp-json/aa/v1/stripe-webhook  for the
  * checkout.session.completed event. That, not the browser returning, is what
  * records a sale — a buyer can close the tab on the Stripe page after paying.
@@ -89,6 +102,7 @@ function aa_reg_courses() {
 				array( 'dow' => 'Thu', 'slot' => 'morning' ),
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			// 'payment_link' => 'https://buy.stripe.com/xxxx',  // see PAYMENT LINKS below
 		),
 		'aspc' => array(
 			'code'     => 'ASPC',
@@ -133,16 +147,105 @@ function aa_reg_courses() {
 /**
  * Days no class may touch — not as a start, not as an end, not in between.
  *
- * MM-DD entries recur every year; YYYY-MM-DD entries are one-offs. A cohort is
- * discarded if ANY day of its span falls on one of these, which is why a
- * four-day SPC starting Thursday 24 Dec 2026 disappears: it would run through
- * Christmas Day.
+ * This is the HARD list, and it is short on purpose: only the two days nobody
+ * will sit in a classroom. Every other public holiday is handled the opposite
+ * way, by aa_reg_holidays() below — offered rather than removed.
  */
 function aa_reg_blackout() {
 	return array(
 		'12-25',   // Christmas Day
 		'01-01',   // New Year's Day
 	);
+}
+
+/**
+ * North American public holidays for one year, as Y-m-d => label.
+ *
+ * These are NOT blackouts. A Monday public holiday makes the long weekend that
+ * people plan training around — Labour Day, Memorial Day, Family Day — and the
+ * class that starts on it is one of the easiest to fill. So a Monday holiday
+ * produces TWO offers: the holiday Monday itself, and the next working day for
+ * anyone who does want the day off. That is an addition to the cadence, not a
+ * substitution.
+ *
+ * Covers both countries because the audience spans both. Dates are computed,
+ * not tabulated, so this does not expire: PHP's relative formats give the
+ * nth-weekday rules exactly, and Good Friday hangs off easter_date() where the
+ * calendar extension is present.
+ */
+function aa_reg_holidays( $year ) {
+	$y = (int) $year;
+	$d = function ( $expr ) use ( $y ) {
+		return date( 'Y-m-d', strtotime( $expr . ' ' . $y ) );
+	};
+	$out = array(
+		$y . '-01-01'                              => "New Year's Day",
+		$d( 'third monday of february' )           => 'Family Day / Presidents Day',
+		$d( 'last monday of may' )                 => 'Memorial Day',
+		$d( 'monday this week', 0 )                => '',   // placeholder, removed below
+		$y . '-06-19'                              => 'Juneteenth',
+		$y . '-07-01'                              => 'Canada Day',
+		$y . '-07-04'                              => 'Independence Day',
+		$d( 'first monday of august' )             => 'Civic Holiday',
+		$d( 'first monday of september' )          => 'Labour Day',
+		$d( 'second monday of october' )           => 'Thanksgiving (CA) / Indigenous Peoples Day',
+		$y . '-11-11'                              => 'Remembrance Day / Veterans Day',
+		$d( 'fourth thursday of november' )        => 'Thanksgiving (US)',
+		$y . '-12-25'                              => 'Christmas Day',
+		$y . '-12-26'                              => 'Boxing Day',
+	);
+	unset( $out[ $d( 'monday this week', 0 ) ] );
+
+	// Victoria Day: the Monday on or before 24 May.
+	$vic = new DateTime( $y . '-05-24' );
+	$vic->modify( 'monday this week' );
+	if ( $vic > new DateTime( $y . '-05-24' ) ) { $vic->modify( '-1 week' ); }
+	$out[ $vic->format( 'Y-m-d' ) ] = 'Victoria Day';
+
+	if ( function_exists( 'easter_date' ) ) {
+		$out[ date( 'Y-m-d', strtotime( '-2 days', easter_date( $y ) ) ) ] = 'Good Friday';
+	}
+	unset( $out[''] );
+	return $out;
+}
+
+/** True when this date is a public holiday in either country. */
+function aa_reg_is_holiday( $ymd ) {
+	static $cache = array();
+	$y = substr( $ymd, 0, 4 );
+	if ( ! isset( $cache[ $y ] ) ) { $cache[ $y ] = aa_reg_holidays( $y ); }
+	return isset( $cache[ $y ][ $ymd ] );
+}
+
+/** The next day that is neither a weekend nor a public holiday. */
+function aa_reg_next_working_day( $ymd ) {
+	$d = new DateTime( $ymd );
+	for ( $i = 0; $i < 10; $i++ ) {
+		$d->modify( '+1 day' );
+		$dow = (int) $d->format( 'N' );
+		if ( $dow >= 6 ) { continue; }
+		if ( aa_reg_is_holiday( $d->format( 'Y-m-d' ) ) ) { continue; }
+		return $d->format( 'Y-m-d' );
+	}
+	return null;
+}
+
+/**
+ * Weekday or weekend, judged by the WHOLE span, not the start day.
+ *
+ * A Monday-to-Thursday class is a weekday class. The Thursday start of the
+ * same cadence runs Thursday to Sunday and is the weekend option — which is
+ * exactly how these courses offer one: there is no Saturday start, the weekend
+ * option is the mid-week start that carries over. Classifying by start day
+ * called every Mon+Thu batch "weekday" and left the weekend filter empty.
+ */
+function aa_reg_kind( $start, $days ) {
+	$d = new DateTime( $start );
+	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
+		if ( (int) $d->format( 'N' ) >= 6 ) { return 'weekend'; }
+		$d->modify( '+1 day' );
+	}
+	return 'weekday';
 }
 
 /** How many replacement starts to offer when the rule drops a scheduled one. */
@@ -219,7 +322,22 @@ function aa_reg_generate( $slug, $course ) {
 		if ( ! aa_reg_span_ok( $p['start'], $days ) ) { $blocked[] = $p; continue; }
 		if ( isset( $taken[ $p['start'] ] ) ) { continue; }
 		$taken[ $p['start'] ] = true;
-		$out[] = aa_reg_make( $slug, $course, $p['start'], $p['slot'], false );
+		$out[] = aa_reg_make( $slug, $course, $p['start'], $p['slot'] );
+
+		/* A public holiday on a cadence day is an opportunity, not an
+		   obstacle. The long weekend it makes — Labour Day, Memorial Day,
+		   Family Day — is when people can take training without spending
+		   leave, so that start stays. Alongside it goes the next working day,
+		   for everyone who wants the holiday off. Two offers where the
+		   calendar would otherwise force a choice. */
+		if ( aa_reg_is_holiday( $p['start'] ) ) {
+			$twin = aa_reg_next_working_day( $p['start'] );
+			if ( $twin && ! isset( $taken[ $twin ] ) && aa_reg_span_ok( $twin, $days )
+				&& new DateTime( $twin, $tz ) <= $limit ) {
+				$taken[ $twin ] = true;
+				$out[] = aa_reg_make( $slug, $course, $twin, $p['slot'], 'twin' );
+			}
+		}
 	}
 	foreach ( $blocked as $p ) {
 		$added = 0;
@@ -230,7 +348,7 @@ function aa_reg_generate( $slug, $course ) {
 			$cand = $probe->format( 'Y-m-d' );
 			if ( isset( $taken[ $cand ] ) || ! aa_reg_span_ok( $cand, $days ) ) { continue; }
 			$taken[ $cand ] = true;
-			$out[] = aa_reg_make( $slug, $course, $cand, $p['slot'], true );
+			$out[] = aa_reg_make( $slug, $course, $cand, $p['slot'], 'backfill' );
 			$added++;
 		}
 	}
@@ -238,19 +356,25 @@ function aa_reg_generate( $slug, $course ) {
 	return $memo[ $key ] = $out;
 }
 
-function aa_reg_make( $slug, $course, $start, $slot, $is_extra ) {
-	$end = ( new DateTime( $start ) )->modify( '+' . ( max( 1, (int) $course['days'] ) - 1 ) . ' day' );
-	$dow = (int) ( new DateTime( $start ) )->format( 'N' );
+function aa_reg_make( $slug, $course, $start, $slot, $reason = '' ) {
+	$days = max( 1, (int) $course['days'] );
+	$end  = ( new DateTime( $start ) )->modify( '+' . ( $days - 1 ) . ' day' );
+	$kind = aa_reg_kind( $start, $days );
+	// Say WHY an off-cadence date exists. "added date" on the Tuesday after
+	// Labour Day reads like padding; "after the holiday" tells the buyer it is
+	// the alternative to the long-weekend class sitting right above it.
+	$note = '';
+	if ( aa_reg_is_holiday( $start ) )   { $note = ' · long weekend'; }
+	elseif ( $reason === 'twin' )        { $note = ' · after the holiday'; }
+	elseif ( $reason === 'backfill' )    { $note = ' · added date'; }
 	return array(
 		'id'    => $slug . '-' . $start,
 		'start' => $start,
 		'end'   => $end->format( 'Y-m-d' ),
 		'slot'  => $slot,
+		'kind'  => $kind,
 		'seats' => (int) ( isset( $course['seats'] ) ? $course['seats'] : 18 ),
-		// A backfilled start can land on a weekend; say so rather than calling
-		// a Saturday class a "weekday morning batch".
-		'batch' => ( $dow >= 6 ? 'Weekend batch' : aa_reg_slot_label( $slot ) )
-		         . ( $is_extra ? ' · added date' : '' ),
+		'batch' => ( $kind === 'weekend' ? 'Weekend batch' : aa_reg_slot_label( $slot ) ) . $note,
 		'hours' => aa_reg_slot_hours( $slot ),
 	);
 }
@@ -437,34 +561,62 @@ function aa_reg_by_week( $items ) {
 	return $weeks;
 }
 
-/** One batch as a single-line row. */
-function aa_reg_row( $course, $c, $is_first, $cur ) {
+/**
+ * The month tab rail. Hero and schedule both need one, identically wired —
+ * roving tabindex, aria-controls, the long month name for the heading — and
+ * two copies of that is two places for an a11y detail to rot.
+ */
+function aa_reg_tabs( $prefix, $months ) {
+	$h = '<nav class="' . $prefix . '-tabs" role="tablist" aria-label="Choose a month">';
+	$i = 0;
+	foreach ( $months as $k => $m ) {
+		$on = $i === 0;
+		$h .= '<button type="button" role="tab" class="' . $prefix . '-tab' . ( $on ? ' is-on' : '' ) . '"'
+		    . ' id="' . $prefix . '-tab-' . esc_attr( $k ) . '" aria-selected="' . ( $on ? 'true' : 'false' ) . '"'
+		    . ' aria-controls="' . $prefix . '-panel-' . esc_attr( $k ) . '" data-month="' . esc_attr( $k ) . '"'
+		    . ' data-month-name="' . esc_attr( $m['long'] ) . '"'
+		    . ( $on ? '' : ' tabindex="-1"' ) . '>' . esc_html( $m['label'] ) . '</button>';
+		$i++;
+	}
+	return $h . '</nav>';
+}
+
+/**
+ * One batch as a single-line row, for either component.
+ *
+ * $prefix switches the class namespace so the hero keeps its own selectors
+ * (its JS binds .aahero-card / .aahero-cardbtn) while sharing this markup and
+ * every rule that decides what a row says — the kind, the seat state, the
+ * holiday note. Two renderers meant two chances to disagree about what a
+ * batch is called.
+ */
+function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	$left  = aa_reg_seats_left( $course, $c );
 	$hot   = $left <= 6;
-	$dow   = (int) ( new DateTime( $c['start'] ) )->format( 'N' );
-	$kind  = $dow >= 6 ? 'weekend' : 'weekday';
+	$kind  = isset( $c['kind'] ) ? $c['kind'] : aa_reg_kind( $c['start'], $course['days'] );
 	$start = new DateTime( $c['start'] );
-	return '<article class="aacal-card' . ( $is_first ? ' is-on' : '' ) . '"'
+	return '<article class="' . $prefix . '-card' . ( $is_first ? ' is-on' : '' ) . '"'
 	     . ' data-cohort="' . esc_attr( $c['id'] ) . '" data-kind="' . esc_attr( $kind ) . '"'
 	     . ' data-start="' . esc_attr( $c['start'] ) . '" data-end="' . esc_attr( $c['end'] ) . '"'
 	     . ' data-range="' . esc_attr( aa_reg_range( $c['start'], $c['end'] ) ) . '"'
 	     . ' data-batch="' . esc_attr( $c['batch'] ) . '"'
 	     . ' data-price="' . (int) $course['price'] . '"'
+	     . ' data-short="' . esc_attr( aa_reg_range( $c['start'], $c['end'], true ) ) . '"'
 	     . ' data-seats-left="' . (int) $left . '">'
-	     . '<button type="button" class="aacal-cardbtn" aria-pressed="' . ( $is_first ? 'true' : 'false' ) . '">'
-	     . '<span class="aacal-date"><span class="aacal-daynum">' . esc_html( $start->format( 'j' ) ) . '</span>'
-	     . '<span class="aacal-daymon">' . esc_html( strtoupper( $start->format( 'M' ) ) ) . '</span></span>'
-	     . '<span class="aacal-body">'
-	     . '<span class="aacal-line"><span class="aacal-range">'
+	     . '<button type="button" class="' . $prefix . '-cardbtn" aria-pressed="' . ( $is_first ? 'true' : 'false' ) . '">'
+	     . '<span class="' . $prefix . '-date"><span class="' . $prefix . '-daynum">' . esc_html( $start->format( 'j' ) ) . '</span>'
+	     . '<span class="' . $prefix . '-daymon">' . esc_html( strtoupper( $start->format( 'M' ) ) ) . '</span></span>'
+	     . '<span class="' . $prefix . '-body">'
+	     . '<span class="' . $prefix . '-line"><span class="' . $prefix . '-range">'
 	     . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
-	     . ( $is_first ? '<span class="aacal-flag">Next available</span>' : '' ) . '</span>'
-	     . '<span class="aacal-line2"><span class="aacal-kind">'
+	     . ( $is_first ? '<span class="' . $prefix . '-flag">Next available</span>' : '' ) . '</span>'
+	     . '<span class="' . $prefix . '-line2"><span class="' . $prefix . '-kind">'
 	     . esc_html( ucfirst( $kind ) . ' · ' . $c['hours'] ) . '</span>'
-	     . '<span class="aacal-status' . ( $hot ? ' is-hot' : '' ) . '">'
+	     . '<span class="' . $prefix . '-status' . ( $hot ? ' is-hot' : '' ) . '">'
 	     . esc_html( $hot ? sprintf( '%d seats left', $left ) : 'Seats open' ) . '</span></span>'
 	     . '</span>'
-	     . '<span class="aacal-price">' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</span>'
-	     . '<span class="aacal-check" aria-hidden="true">&#10003;</span>'
+	     . '<span class="' . $prefix . '-price">' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</span>'
+	     . '<span class="' . $prefix . '-check" aria-hidden="true">&#10003;</span>'
 	     . '</button></article>';
 }
 
@@ -477,6 +629,7 @@ function aa_reg_hero( $atts ) {
 	if ( ! $cohorts ) { return ''; }
 	$months  = aa_reg_months( $cohorts );
 	$first   = $cohorts[0];
+	$cur     = $course['currency'];
 
 	$h  = '<section class="aahero" id="aahero" aria-labelledby="aahero-title"><div class="aahero-shell">';
 	$h .= '<div class="aahero-copy">';
@@ -498,17 +651,7 @@ function aa_reg_hero( $atts ) {
 	    . '<p class="aahero-picktitle">Pick your dates</p>'
 	    . '<p class="aahero-picknote">' . esc_html( sprintf( _n( '%d batch scheduled', '%d batches scheduled', count( $cohorts ) ), count( $cohorts ) ) ) . '</p></div>';
 
-	$h .= '<nav class="aahero-tabs" role="tablist" aria-label="Choose a month">';
-	$i = 0;
-	foreach ( $months as $k => $m ) {
-		$on = $i === 0;
-		$h .= '<button type="button" role="tab" class="aahero-tab' . ( $on ? ' is-on' : '' ) . '"'
-		    . ' id="aahero-tab-' . esc_attr( $k ) . '" aria-selected="' . ( $on ? 'true' : 'false' ) . '"'
-		    . ' aria-controls="aahero-panel-' . esc_attr( $k ) . '" data-month="' . esc_attr( $k ) . '"'
-		    . ( $on ? '' : ' tabindex="-1"' ) . '>' . esc_html( $m['label'] ) . '</button>';
-		$i++;
-	}
-	$h .= '</nav>';
+	$h .= aa_reg_tabs( 'aahero', $months );
 
 	$i = 0;
 	foreach ( $months as $k => $m ) {
@@ -519,17 +662,12 @@ function aa_reg_hero( $atts ) {
 		   two starts a week that is nine cards in a month tab, which is a
 		   scrolling list where a glanceable picker should be. The complete
 		   schedule is the panel below. */
-		foreach ( array_slice( $m['items'], 0, 3 ) as $c ) {
-			$on = $c['id'] === $first['id'];
-			$h .= '<article class="aahero-card' . ( $on ? ' is-on' : '' ) . '" data-cohort="' . esc_attr( $c['id'] ) . '"'
-			    . ' data-range="' . esc_attr( aa_reg_range( $c['start'], $c['end'] ) ) . '"'
-			    . ' data-short="' . esc_attr( aa_reg_range( $c['start'], $c['end'], true ) ) . '">'
-			    . '<button type="button" class="aahero-cardbtn" aria-pressed="' . ( $on ? 'true' : 'false' ) . '">'
-			    . ( $on ? '<span class="aahero-flag">Next available</span>' : '' )
-			    . '<span class="aahero-cardtop">' . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
-			    . '<span class="aahero-batch">' . esc_html( $c['batch'] . ' · ' . $c['hours'] ) . '</span>'
-			    . '<span class="aahero-meta">' . esc_html( aa_reg_money( $course['price'], $course['currency'] ) ) . '</span>'
-			    . '</button></article>';
+		/* Same row renderer as the schedule below, in the hero's namespace. The
+		   compact row fits more dates in the picker's fixed height than a card
+		   did, and the hero and the list now say the same thing about a batch
+		   because one function decides it. */
+		foreach ( array_slice( $m['items'], 0, 4 ) as $c ) {
+			$h .= aa_reg_row( $course, $c, $c['id'] === $first['id'], $cur, 'aahero' );
 		}
 		$h .= '</div>';
 		$i++;
@@ -578,18 +716,7 @@ function aa_reg_panel( $atts ) {
 	    . '<p class="aacal-count" data-count aria-live="polite">'
 	    . esc_html( aa_reg_batches_label( count( $months[ $first_month ]['items'] ) ) ) . '</p></div>';
 
-	$h .= '<nav class="aacal-tabs" role="tablist" aria-label="Choose a month">';
-	$i = 0;
-	foreach ( $months as $k => $m ) {
-		$on = $i === 0;
-		$h .= '<button type="button" role="tab" class="aacal-tab' . ( $on ? ' is-on' : '' ) . '"'
-		    . ' id="aacal-tab-' . esc_attr( $k ) . '" aria-selected="' . ( $on ? 'true' : 'false' ) . '"'
-		    . ' aria-controls="aacal-panel-' . esc_attr( $k ) . '" data-month="' . esc_attr( $k ) . '"'
-		    . ' data-month-name="' . esc_attr( $m['long'] ) . '"'
-		    . ( $on ? '' : ' tabindex="-1"' ) . '>' . esc_html( $m['label'] ) . '</button>';
-		$i++;
-	}
-	$h .= '</nav>';
+	$h .= aa_reg_tabs( 'aacal', $months );
 
 	/* The weekday/weekend chips only earn their space once a month is dense
 	   enough to need cutting down. At two starts a week a month holds eight or
@@ -607,7 +734,7 @@ function aa_reg_panel( $atts ) {
 	$kinds = array();
 	foreach ( $months as $m ) {
 		foreach ( $m['items'] as $c ) {
-			$kinds[ (int) ( new DateTime( $c['start'] ) )->format( 'N' ) >= 6 ? 'weekend' : 'weekday' ] = true;
+			$kinds[ isset( $c['kind'] ) ? $c['kind'] : 'weekday' ] = true;
 		}
 	}
 	if ( $dense_anywhere && count( $kinds ) > 1 ) {
@@ -807,6 +934,26 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		return new WP_Error( 'aa_seats', sprintf( 'Only %d seat(s) left on that batch.', $left ), array( 'status' => 409 ) );
 	}
 
+	/* PAYMENT LINK MODE. If the course carries one, the buyer goes to that
+	   link instead of a session created here. The cohort travels as
+	   client_reference_id, which is the only per-purchase value a static link
+	   can carry, and the webhook below reads it when metadata is absent.
+
+	   Everything above still runs first — unknown cohort, bad email, full
+	   batch and too many seats are all refused before the link is handed
+	   over. What a link CANNOT do is enforce the rest: its price is fixed on
+	   the link, so per-cohort or early-bird pricing is out, and if the link
+	   allows quantity changes the buyer can raise the seat count on Stripe's
+	   page, past the check just made here. The webhook records what was
+	   actually bought, so an oversell is caught — but after the money. Use
+	   links for a fixed-price course; use sessions when seats are tight. */
+	if ( ! empty( $course['payment_link'] ) ) {
+		return array( 'url' => add_query_arg( array(
+			'client_reference_id' => rawurlencode( $cohort['id'] ),
+			'prefilled_email'     => rawurlencode( $email ),
+		), $course['payment_link'] ) );
+	}
+
 	// THE amount. From the table, never from the request.
 	$unit = (int) round( $course['price'] * 100 );
 	if ( $unit < 100 ) {
@@ -915,8 +1062,16 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 	}
 
 	$meta   = isset( $s['metadata'] ) ? (array) $s['metadata'] : array();
-	$cohort = isset( $meta['cohort'] ) ? sanitize_text_field( $meta['cohort'] ) : '';
+	// A session we created carries metadata; a Payment Link carries only
+	// client_reference_id. Read both so either route records the same sale.
+	$cohort = isset( $meta['cohort'] ) ? sanitize_text_field( $meta['cohort'] )
+	        : ( isset( $s['client_reference_id'] ) ? sanitize_text_field( $s['client_reference_id'] ) : '' );
+	// Quantity is authoritative from the line items when Stripe reports it —
+	// a Payment Link buyer may have changed it on Stripe's page.
 	$seats  = max( 1, (int) ( isset( $meta['seats'] ) ? $meta['seats'] : 1 ) );
+	if ( isset( $s['line_items']['data'][0]['quantity'] ) ) {
+		$seats = max( 1, (int) $s['line_items']['data'][0]['quantity'] );
+	}
 	$name   = isset( $meta['name'] ) ? sanitize_text_field( $meta['name'] ) : '';
 	$email  = isset( $s['customer_details']['email'] ) ? sanitize_email( $s['customer_details']['email'] )
 	        : ( isset( $s['customer_email'] ) ? sanitize_email( $s['customer_email'] ) : '' );
