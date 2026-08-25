@@ -253,10 +253,20 @@ function aa_reg_next_working_day( $ymd ) {
  * option is the mid-week start that carries over. Classifying by start day
  * called every Mon+Thu batch "weekday" and left the weekend filter empty.
  */
-function aa_reg_kind( $start, $days ) {
+/**
+ * Weekday or weekend batch — which depends on where the class runs.
+ *
+ * North America rests Saturday and Sunday. The Gulf rests Friday and Saturday:
+ * Sunday is the first working day of the week in Saudi Arabia and the UAE. A
+ * Sunday class in Riyadh is a weekday class, and calling it a weekend batch
+ * would be wrong in the label, wrong in the filter, and wrong to a buyer
+ * booking leave around it.
+ */
+function aa_reg_kind( $start, $days, $region = 'na' ) {
+	$rest = $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );   // ISO-8601: Mon=1
 	$d = new DateTime( $start );
 	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
-		if ( (int) $d->format( 'N' ) >= 6 ) { return 'weekend'; }
+		if ( in_array( (int) $d->format( 'N' ), $rest, true ) ) { return 'weekend'; }
 		$d->modify( '+1 day' );
 	}
 	return 'weekday';
@@ -297,6 +307,95 @@ function aa_reg_slot_hours( $slot ) {
  * Dec, but classes start 26, 27 and 28 Dec" comes out of the same rule rather
  * than being typed in.
  */
+/**
+ * A classroom course's schedule: each city on its own rhythm.
+ *
+ * The weekly cadence below is for live-online courses, where a class costs a
+ * Zoom room and can run twice a week forever. A classroom course cannot: it
+ * costs a venue and a trainer's flight, so it runs once a month in the home
+ * city and once a quarter in each travel city.
+ *
+ * The rhythm is the SAME WEEKDAY OF THE SAME WEEK each month, not the same
+ * date. A course anchored on Thursday 10 September — the second Thursday —
+ * recurs on the second Thursday of every month after it. Repeating "the 10th"
+ * would land on a Saturday twice a year and drift across the working week; the
+ * nth-weekday form is what a monthly class actually looks like, and it never
+ * needs a weekend rule.
+ *
+ * HOLIDAYS MOVE A CLASSROOM CLASS, they do not twin it. The twin rule — keep
+ * the long-weekend class, add one on the next working day — is right for a
+ * weekly online course, where an extra date costs nothing and the long weekend
+ * is genuinely the slot people want. A monthly classroom class has one date in
+ * the month by definition, so a holiday shifts it to the next working day
+ * rather than doubling the month's offering and the venue booking with it.
+ */
+function aa_reg_generate_places( $slug, $course, $today, $limit, $tz ) {
+	$days = max( 1, (int) $course['days'] );
+	$out  = array();
+
+	foreach ( (array) $course['schedule'] as $place ) {
+		if ( empty( $place['first'] ) || empty( $place['key'] ) ) { continue; }
+		$every = max( 1, (int) ( isset( $place['every'] ) ? $place['every'] : 1 ) );
+		$slot  = isset( $place['slot'] ) ? $place['slot'] : 'morning';
+		$region_of_place = ! empty( $place['region'] ) ? $place['region'] : 'na';
+
+		$anchor = new DateTime( $place['first'], $tz );
+		$anchor->setTime( 0, 0, 0 );
+		// PHP's relative syntax wants the ordinal as a word: "second Thursday
+		// of September 2026". A digit there is a parse error, not a fallback.
+		$words   = array( 1 => 'first', 2 => 'second', 3 => 'third', 4 => 'fourth', 5 => 'fifth' );
+		$n       = (int) ceil( (int) $anchor->format( 'j' ) / 7 );   // the 10th -> the 2nd one
+		$nth     = isset( $words[ $n ] ) ? $words[ $n ] : 'first';
+		$weekday = $anchor->format( 'l' );
+
+		/* Walk months from the anchor, not from today: the anchor fixes which
+		   week of the month this city uses, and a course whose first date has
+		   already passed keeps the same rhythm rather than restarting on
+		   whatever weekday today happens to be. */
+		for ( $i = 0; $i < 60; $i++ ) {
+			$month = ( clone $anchor )->modify( 'first day of +' . ( $i * $every ) . ' month' );
+			$d     = new DateTime( $month->format( 'Y-m' ) . '-01', $tz );
+			$d->modify( $nth . ' ' . $weekday . ' of ' . $d->format( 'F Y' ) );
+			$d->setTime( 0, 0, 0 );
+
+			if ( $d > $limit ) { break; }
+			if ( $d < $today ) { continue; }
+
+			$start  = $d->format( 'Y-m-d' );
+			$reason = '';
+			/* Blocked outright, or on a public holiday: move forward to the
+			   first working day that fits, rather than running the venue on
+			   Christmas or asking people in on a stat.
+
+			   The holiday list is North American, so it only governs North
+			   American cities. Shifting a Riyadh class off Canadian
+			   Remembrance Day, or a Dubai class off US Thanksgiving, would be
+			   moving a date for a day nobody there is taking off. Gulf cities
+			   keep the blackout — running on Christmas Day or New Year's Day
+			   suits nobody's travelling trainer — but not the rest. Give me
+			   the local public holidays for Dubai and Riyadh and they become a
+			   region list of their own. */
+			$holiday = ( $region_of_place === 'na' ) && aa_reg_is_holiday( $start );
+			if ( ! aa_reg_span_ok( $start, $days ) || $holiday ) {
+				$moved = $start;
+				for ( $k = 0; $k < 10; $k++ ) {
+					$moved = aa_reg_next_working_day( $moved );
+					if ( ! $moved ) { break; }
+					$still = ( $region_of_place === 'na' ) && aa_reg_is_holiday( $moved );
+					if ( aa_reg_span_ok( $moved, $days ) && ! $still ) { break; }
+				}
+				if ( ! $moved || ! aa_reg_span_ok( $moved, $days ) ) { continue; }
+				if ( new DateTime( $moved, $tz ) > $limit ) { continue; }
+				$start  = $moved;
+				$reason = 'moved';
+			}
+			$out[] = aa_reg_make( $slug, $course, $start, $slot, $reason, $place );
+		}
+	}
+	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
+	return $out;
+}
+
 function aa_reg_generate( $slug, $course ) {
 	static $memo = array();
 	$tz    = new DateTimeZone( 'America/New_York' );
@@ -308,6 +407,11 @@ function aa_reg_generate( $slug, $course ) {
 	$days  = max( 1, (int) $course['days'] );
 	$weeks = max( 1, (int) ( isset( $course['weeks'] ) ? $course['weeks'] : 26 ) );
 	$limit = ( clone $today )->modify( '+' . $weeks . ' weeks' );
+
+	// A course with cities is scheduled per city, not on a weekly cadence.
+	if ( ! empty( $course['schedule'] ) ) {
+		return $memo[ $key ] = aa_reg_generate_places( $slug, $course, $today, $limit, $tz );
+	}
 
 	$taken   = array();   // start date => true, so backfill cannot collide
 	$planned = array();   // every cadence start in the window, valid or not
@@ -370,18 +474,23 @@ function aa_reg_generate( $slug, $course ) {
 	return $memo[ $key ] = $out;
 }
 
-function aa_reg_make( $slug, $course, $start, $slot, $reason = '' ) {
-	$days = max( 1, (int) $course['days'] );
-	$end  = ( new DateTime( $start ) )->modify( '+' . ( $days - 1 ) . ' day' );
-	$kind = aa_reg_kind( $start, $days );
+function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null ) {
+	$days   = max( 1, (int) $course['days'] );
+	$region = is_array( $place ) && ! empty( $place['region'] ) ? $place['region'] : 'na';
+	$end    = ( new DateTime( $start ) )->modify( '+' . ( $days - 1 ) . ' day' );
+	$kind   = aa_reg_kind( $start, $days, $region );
 	// Say WHY an off-cadence date exists. "added date" on the Tuesday after
 	// Labour Day reads like padding; "after the holiday" tells the buyer it is
 	// the alternative to the long-weekend class sitting right above it.
 	$note = '';
-	if ( aa_reg_is_holiday( $start ) )   { $note = ' · long weekend'; }
+	// The holiday list is North American, so the long-weekend framing only
+	// makes sense for a North American city. Nobody in Riyadh has Canadian
+	// Remembrance Day off.
+	if ( $region === 'na' && aa_reg_is_holiday( $start ) ) { $note = ' · long weekend'; }
 	elseif ( $reason === 'twin' )        { $note = ' · after the holiday'; }
 	elseif ( $reason === 'backfill' )    { $note = ' · added date'; }
-	return array(
+	elseif ( $reason === 'moved' )       { $note = ' · moved off a holiday'; }
+	$c = array(
 		'id'    => $slug . '-' . $start,
 		'start' => $start,
 		'end'   => $end->format( 'Y-m-d' ),
@@ -391,6 +500,18 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '' ) {
 		'batch' => ( $kind === 'weekend' ? 'Weekend batch' : aa_reg_slot_label( $slot ) ) . $note,
 		'hours' => aa_reg_slot_hours( $slot ),
 	);
+
+	/* A classroom course carries where it runs. The id has to carry it too:
+	   two cities can hold the same course on the same day, and the id is what
+	   Stripe, the seat ledger and the ?cohort= deep link all key on. */
+	if ( is_array( $place ) ) {
+		$c['id']       = $slug . '-' . $place['key'] . '-' . $start;
+		$c['place']    = $place['label'];
+		$c['placeKey'] = $place['key'];
+		$c['batch']    = $place['label'] . ' · ' . $c['batch'];
+		if ( isset( $place['seats'] ) ) { $c['seats'] = (int) $place['seats']; }
+	}
+	return $c;
 }
 
 /** Room size minus seats already sold. Never trusts a client-supplied count. */
