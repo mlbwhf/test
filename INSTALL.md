@@ -1,5 +1,11 @@
 # Home page — install
 
+> **If the homepage prints a literal `[aa_home_cohorts]`**, the PHP snippet is
+> not running. That is a WPCode problem, not a code problem — see
+> `aa-shortcodes-mu-plugin.php`, which delivers the same two shortcodes as a
+> must-use plugin that WordPress loads itself. Step 3 below becomes unnecessary
+> once that file is in place.
+
 Supersedes every earlier instruction. The CSS goes into **Additional CSS**,
 your existing canonical stylesheet — not a separate snippet. One JS snippet
 and one PHP snippet in WPCode, matching the "AA – Nav JS" pattern already
