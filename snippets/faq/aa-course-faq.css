@@ -1,0 +1,222 @@
+/* ============================================================================
+   AA — COURSE FAQ + CLOSING BAND (design 1A)
+   ----------------------------------------------------------------------------
+   WPCode -> CSS Snippet, "AA – Course FAQ CSS", Site Wide Header.
+
+   NAMESPACE. .aa-fq (FAQ) and .aa-fb2 (closing band). Not .aa-faq, which the
+   course template already defines for the old <details> cards, and not
+   .aa-final, which it defines for the old closing block. Both of those stay
+   valid for any page still rendering the originals — with the swap switched
+   off, or on a page whose FAQ has no <details> to read.
+
+   Values are the handoff's, verbatim.
+   ============================================================================ */
+
+.aa-fq{
+  --ink:#101C33; --body:#4E4A40; --muted:#6B6455; --muted2:#8A8375;
+  --numidle:#B4BEBC; --teal:#0E8074; --teal-deep:#0E4A47; --teal-lt:#7ED9C9;
+  --bg:#F7FAFA; --card:#FFFFFF; --hair:#E4E9E8; --chip:#F1F5F4; --ondark:#F3F7F6;
+  background:var(--bg); color:var(--ink);
+  font-family:'Instrument Sans','Space Grotesk',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.aa-fq *,.aa-fq *::before,.aa-fq *::after{box-sizing:border-box}
+.aa-fq p{margin:0}
+.aa-fq h2,.aa-fq h3{margin:0;font-weight:600}
+
+.aa-fq-grid{
+  display:grid; grid-template-columns:auto 1fr; gap:clamp(24px,3vw,48px);
+  padding:clamp(34px,3.6vw,56px) clamp(22px,3vw,44px) clamp(28px,3vw,44px);
+  max-width:1440px; margin:0 auto;
+}
+/* min-width:0 on BOTH columns. A grid item defaults to its min-content width
+   and an fr track cannot shrink below that, so a long question in the right
+   column, or the horizontally scrolling chip row in the left one, sizes the
+   track to itself and the page scrolls sideways. The chip row is the sharper
+   case: it has overflow-x:auto and still blew the grid to 561px at 390px wide,
+   because overflow on the CHILD does not stop the PARENT being measured at
+   min-content. */
+.aa-fq-grid > *{min-width:0}
+.aa-fq-list{min-width:0;display:flex;flex-direction:column;gap:9px}
+
+/* ---------- left rail ---------- */
+.aa-fq-rail{width:214px}
+.aa-fq-eyebrow{
+  font-size:11.5px; text-transform:uppercase; letter-spacing:.16em;
+  font-weight:700; color:var(--muted);
+}
+.aa-fq-h{
+  font-size:clamp(30px,2.6vw,40px); line-height:1.06; letter-spacing:-.03em;
+  color:var(--ink); margin:12px 0 0;
+}
+.aa-fq-h em{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-style:italic; font-weight:400; color:var(--teal);
+}
+.aa-fq-sub{font-size:14px;line-height:1.6;color:var(--body);margin:12px 0 22px}
+
+.aa-fq-tabs{display:flex;flex-direction:column;gap:6px}
+.aa-fq-tab{
+  font:inherit; cursor:pointer; min-height:44px; width:100%;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:11px 14px; border-radius:11px;
+  font-size:14px; font-weight:600; letter-spacing:-.01em; text-align:left;
+  background:var(--card); color:var(--body); border:1px solid var(--hair);
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.aa-fq-tab.is-on{background:var(--teal-deep);border-color:var(--teal-deep);color:var(--ondark)}
+.aa-fq-pill{
+  font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:100px;
+  background:var(--chip); color:var(--muted2); flex:none;
+}
+.aa-fq-tab.is-on .aa-fq-pill{background:rgba(243,247,246,.16);color:var(--ondark)}
+
+.aa-fq-foot{
+  font-size:13px; line-height:1.6; color:var(--muted);
+  border-top:1px solid var(--hair); padding-top:16px; margin-top:22px;
+}
+.aa-fq-foot a{color:var(--teal);font-weight:600;border-bottom:1px solid var(--teal)}
+
+/* ---------- accordion ---------- */
+.aa-fq-card{
+  border-radius:14px; background:var(--card); overflow:hidden;
+  border:1px solid var(--hair);
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.aa-fq-card.is-open{border:1.5px solid var(--teal);box-shadow:0 6px 18px rgba(14,128,116,.10)}
+.aa-fq-qh{margin:0;font-size:inherit;font-weight:inherit}
+.aa-fq-q{
+  font:inherit; color:inherit; cursor:pointer; width:100%; min-height:56px;
+  display:flex; align-items:center; gap:16px; padding:17px 20px;
+  text-align:left; background:transparent; border:0;
+}
+.aa-fq-n{
+  font-size:12px; font-weight:700; letter-spacing:.06em; width:24px; flex:none;
+  color:var(--numidle); transition:color .15s ease;
+}
+.aa-fq-card.is-open .aa-fq-n{color:var(--teal)}
+.aa-fq-qt{
+  font-size:16px; font-weight:600; letter-spacing:-.012em; line-height:1.35;
+  color:var(--ink); flex:1 1 auto; min-width:0;
+}
+.aa-fq-chev{
+  width:26px; height:26px; border-radius:50%; flex:none;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--chip); color:var(--muted);
+  transition:background .15s ease,transform .2s ease,color .15s ease;
+}
+.aa-fq-chev::before{content:'\2304';font-size:15px;line-height:1;margin-top:-4px}
+.aa-fq-card.is-open .aa-fq-chev{background:var(--teal);color:#fff;transform:rotate(180deg)}
+
+.aa-fq-a{
+  font-size:14.5px; line-height:1.68; color:var(--body);
+  max-width:640px; margin:0 20px 18px 68px;   /* 68px clears the index number */
+}
+.aa-fq-a p{margin:0 0 10px}
+.aa-fq-a p:last-child{margin-bottom:0}
+.aa-fq-a a{color:var(--teal);text-decoration:underline}
+
+/* ---------- closing band ---------- */
+.aa-fb2{
+  background:#0E4A47; color:#F3F7F6;
+  padding:clamp(30px,3.2vw,46px) clamp(22px,3vw,44px);
+  font-family:'Instrument Sans','Space Grotesk',system-ui,-apple-system,sans-serif;
+}
+.aa-fb2 *,.aa-fb2 *::before,.aa-fb2 *::after{box-sizing:border-box}
+.aa-fb2 p{margin:0}
+.aa-fb2-in{
+  display:grid; grid-template-columns:1fr auto; gap:clamp(24px,3vw,48px);
+  align-items:center; max-width:1440px; margin:0 auto;
+}
+.aa-fb2-in > *{min-width:0}
+.aa-fb2-left{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.aa-fb2-badge{
+  width:74px; height:86px; border-radius:12px; flex:none;
+  background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center; padding:8px;
+}
+/* The course template caps every badge at 84px; inside this band the frame is
+   74px wide, so it is capped again to fit rather than overflow its own box. */
+.aa-fb2-badge img{max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important;object-fit:contain;display:block}
+.aa-fb2-copy{max-width:560px;min-width:0}
+.aa-fb2-h{
+  font-size:clamp(27px,2.5vw,38px); line-height:1.1; letter-spacing:-.028em;
+  font-weight:600; color:#F3F7F6; margin:0;
+}
+.aa-fb2-h em{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-style:italic; font-weight:400; color:#7ED9C9;
+}
+.aa-fb2-facts{
+  list-style:none; margin:16px 0 0; padding:0;
+  display:flex; gap:18px; flex-wrap:wrap;
+  font-size:13.5px; color:rgba(243,247,246,.78);
+}
+.aa-fb2-facts li{display:flex;align-items:center;gap:8px}
+.aa-fb2-facts i{width:5px;height:5px;border-radius:50%;background:#7ED9C9;flex:none}
+
+.aa-fb2-right{text-align:right}
+.aa-fb2-cohort{
+  font-size:12px; text-transform:uppercase; letter-spacing:.14em;
+  font-weight:700; color:rgba(243,247,246,.6);
+}
+.aa-fb2-price{font-size:36px;font-weight:700;letter-spacing:-.03em;margin-top:8px;line-height:1}
+.aa-fb2-scarce{font-size:12.5px;font-weight:600;color:#7ED9C9;margin-top:4px}
+.aa-fb2-cta{display:flex;gap:12px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.aa-fb2-primary,.aa-fb2-secondary{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:16px 26px; border-radius:100px;
+  font-size:15.5px; font-weight:600; min-height:44px;
+  text-decoration:none!important;
+}
+.aa-fb2-primary{
+  background:#D34B2A; color:#fff!important; border:0;
+  box-shadow:0 12px 26px rgba(0,0,0,.24);
+  transition:background .15s ease;
+}
+.aa-fb2-primary:hover{background:#B93E20;color:#fff!important}
+.aa-fb2-primary i{font-style:normal;opacity:.75}
+.aa-fb2-secondary{
+  background:transparent; color:#F3F7F6!important;
+  border:1.5px solid rgba(243,247,246,.35); padding:16px 24px;
+  transition:border-color .15s ease;
+}
+.aa-fb2-secondary:hover{border-color:#F3F7F6;color:#F3F7F6!important}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .aa-fq-grid{grid-template-columns:1fr}
+  .aa-fq-rail{width:auto}
+  /* The rail becomes a scrolling chip row above the accordion. -22px margins
+     let it bleed to the section edge so the last chip is not visually cut
+     off mid-row; the matching padding keeps the first one aligned. */
+  .aa-fq-tabs{
+    flex-direction:row; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    scrollbar-width:none; margin:0 -22px; padding:2px 22px;
+  }
+  .aa-fq-tabs::-webkit-scrollbar{display:none}
+  .aa-fq-tab{width:auto;flex:none}
+  .aa-fq-foot{margin-top:18px}
+  .aa-fq-a{margin-left:20px}
+
+  .aa-fb2-in{grid-template-columns:1fr}
+  .aa-fb2-right{text-align:left}
+  .aa-fb2-cta{justify-content:flex-start}
+}
+@media (max-width:480px){
+  .aa-fb2-cta{flex-direction:column}
+  .aa-fb2-primary,.aa-fb2-secondary{width:100%;justify-content:center}
+}
+
+/* Astra styles content links with !important, which specificity cannot beat.
+   Re-asserted the same way for the two properties it touches. */
+.aa-fq a[href],.aa-fb2 a[href]{text-decoration:none!important}
+.aa-fq .aa-fq-a a,.aa-fq .aa-fq-foot a{text-decoration:underline!important}
+.aa-fq .aa-fq-foot a{color:var(--teal)!important}
+.aa-fq .aa-fq-a a{color:var(--teal)!important}
+
+@media (prefers-reduced-motion:reduce){
+  .aa-fq *,.aa-fq *::before,.aa-fq *::after,
+  .aa-fb2 *,.aa-fb2 *::before,.aa-fb2 *::after{animation:none!important;transition:none!important}
+}
+.aa-fq :focus-visible,.aa-fb2 :focus-visible{outline:2px solid var(--teal,#0E8074);outline-offset:3px;border-radius:8px}
