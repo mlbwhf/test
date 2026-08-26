@@ -1626,10 +1626,39 @@ function aa_reg_block_has_class( $block, $want ) {
  * handful of pages that have a cadence.
  */
 function aa_reg_autoplace( $html, $block ) {
-	if ( empty( $block['blockName'] ) || $block['blockName'] !== 'core/group' ) { return $html; }
+	if ( empty( $block['blockName'] ) ) { return $html; }
 	if ( ! aa_reg_autoplace_on() ) { return $html; }
 	$course = aa_reg_page_course();
 	if ( $course === '' ) { return $html; }
+
+	/* THE BLANK GAP ABOVE THE REGISTRATION.
+	   The old "AA - Course JS" snippet filled two mount points on every course
+	   page: #aa-agenda in the hero, and #aa-pick under the heading "Select your
+	   class, then your registration opens below". With that snippet switched
+	   off they are empty divs -- and #aa-agenda no longer matters, because this
+	   snippet replaces the whole hero section it lived in, but #aa-pick sits in
+	   the #enroll section, which nothing replaces. So the page renders a
+	   heading promising a picker, then several hundred pixels of nothing, and
+	   only then the real registration.
+
+	   Both the heading and the empty div go. Not the rest of the block: the
+	   "what's included" card lives in the same core/html and is still true.
+
+	   Only the EMPTY div is matched. If something ever fills #aa-pick again,
+	   this stops matching and leaves it alone rather than deleting a working
+	   picker. */
+	if ( $block['blockName'] === 'core/html' ) {
+		if ( strpos( $html, 'aa-pick' ) === false ) { return $html; }
+		$cleaned = preg_replace(
+			'#(?:<h\d\b[^>]*>(?:(?!</h\d>).)*?</h\d>\s*)?<div\b[^>]*\bid="aa-pick"[^>]*>\s*</div>#is',
+			'',
+			$html,
+			1
+		);
+		return $cleaned !== null ? $cleaned : $html;
+	}
+
+	if ( $block['blockName'] !== 'core/group' ) { return $html; }
 
 	if ( aa_reg_block_has_class( $block, 'aa-hero' ) ) {
 		return aa_reg_hero( array( 'course' => $course ) );
