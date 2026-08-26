@@ -169,8 +169,135 @@ function aa_claims_tidy( $html ) {
 	return $html;
 }
 
+/* ============================================================================
+   PER-PAGE FIXES
+   ----------------------------------------------------------------------------
+   Everything above applies site-wide. This applies to one named page only,
+   which is what makes it safe to touch things like "3 days" — a string that is
+   correct on the RTE page and wrong on this one.
+
+   AI-NATIVE CHANGE AGENT -> AI-NATIVE VALUE ARCHITECT. The URL deliberately
+   stays /training/ai-native/ai-native-change-agent/; only the name changes.
+   When you do want the slug renamed, say so and it goes with a 301 from the
+   old address in the same change — never without one.
+
+   The page also contradicted itself on two facts and carried three lines
+   copy-pasted from the SPC page. Both are fixed here:
+
+     - It said three days in four places (the chip, the curriculum heading, the
+       FAQ, courseWorkload P3D) and "two days" in the lede. The course is two
+       days, so all five now say two.
+     - It said "Live-virtual" in the lede and "In-person" in the chip. It is
+       in person, in Mississauga, Dubai and Riyadh.
+     - "Pass to earn the globally recognised SAFe Practice Consultant digital
+       badge", "Train to teach SAFe, launch Agile Release Trains", and "SPC is
+       the change-agent credential" all belong to the SPC page.
+
+   THE BADGE GLYPH STILL READS AINCA, deliberately. AINCA abbreviates the old
+   name, so it is wrong on a page called Value Architect — but a credential
+   code is Scaled Agile's to set, not mine to guess, and scaledagile.com is
+   unreachable from here. Tell me the official code and it is one line.
+   ========================================================================== */
+
+/** Page slug => ordered list of exact [find, replace] pairs. */
+function aa_claims_page_rules() {
+	return array(
+		'ai-native-change-agent' => array(
+			/* ---- facts the page got wrong about itself ---- */
+			array( '"courseWorkload": "P3D"', '"courseWorkload": "P2D"' ),
+			array( '"courseMode": "online"', '"courseMode": "onsite"' ),
+			array( 'drive habits, govern risk. Live-virtual, exam included.',
+			       'drive habits, govern risk. In person in Mississauga, Dubai and Riyadh, two days, exam included.' ),
+			array( '3 days &middot; In-person', '2 days &middot; In-person' ),
+			array( '3 days · In-person · North America · Exam included',
+			       '2 days · In person · Mississauga, Dubai and Riyadh · Exam included' ),
+			array( 'with an experienced AI-Native instructor. Live-virtual, two days, <em>exam included</em>',
+			       'with an experienced AI-Native instructor. In person, two days, <em>exam included</em>' ),
+			array( 'Three full days in a live virtual classroom with an authorised SAFe instructor (SPC/ASPC) — not a recording.',
+			       'Two full days in a room with an experienced AI-Native instructor — not a recording.' ),
+			array( '( 02 ) — Curriculum · 3 days', '( 02 ) — Curriculum · 2 days' ),
+			array( '<span>Live 3-day course</span>', '<span>Live 2-day course</span>' ),
+			array( 'Three days, live-virtual, instructor-led by an authorised AI-Native instructor.',
+			       'Two days, in person, instructor-led by an authorised AI-Native instructor.' ),
+			array( 'In-person · Mississauga · Chicago · Arlington, VA',
+			       'In person · Mississauga · Dubai · Riyadh' ),
+
+			/* ---- lines copy-pasted from the SPC page ---- */
+			array( 'Pass to earn the globally recognised SAFe Practice Consultant digital badge.',
+			       'Pass to earn the globally recognised AI-Native Value Architect digital badge.' ),
+			array( 'Train to teach SAFe, launch Agile Release Trains, and lead an enterprise transformation end-to-end.',
+			       'Diagnose AI readiness, build the roadmap, drive adoption, govern the risk, and prove the return.' ),
+			array( 'SPC is the change-agent credential. Pair it with the core SAFe roles you will enable, or advance into portfolio and consulting credentials.',
+			       'Value Architect is the enterprise AI adoption credential. Pair it with the SAFe roles you will be leading, or advance into consulting and portfolio credentials.' ),
+			array( 'Your SAFe <em>career path.</em>', 'Your AI-Native <em>career path.</em>' ),
+		),
+	);
+}
+
+/** The slug of the page being rendered, or ''. Resolved once per request. */
+function aa_claims_page_slug() {
+	static $slug = null;
+	if ( $slug !== null ) { return $slug; }
+	$slug = '';
+	if ( ! is_admin() ) {
+		$obj = get_queried_object();
+		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+		if ( $obj instanceof WP_Post ) { $slug = $obj->post_name; }
+	}
+	return $slug;
+}
+
+/**
+ * Rename the credential everywhere on its own page.
+ *
+ * Done as a sweep rather than a list of sentences because the old name is in
+ * places a list would miss: split across markup in the H1
+ * (`AI-Native<br><em>Change Agent</em>`), bare as "AINCA" in six FAQ answers,
+ * two review quotes and a career statistic, and parenthesised in the reviews
+ * heading. A sweep catches all of them; the exceptions below are what keeps it
+ * from catching things it should not.
+ */
+function aa_claims_rename_va( $html ) {
+	// The badge glyphs are stylised marks, not prose. Park them, sweep, restore.
+	$parked = array();
+	$html = preg_replace_callback( '#<b\b[^>]*>AINCA</b>#i', function ( $m ) use ( &$parked ) {
+		$token = '@@AA_BADGE_' . count( $parked ) . '@@';
+		$parked[ $token ] = $m[0];
+		return $token;
+	}, $html );
+
+	$html = str_replace(
+		array( 'AI-Native Change Agent', 'Change Agent', 'change-agent', 'AINCA' ),
+		array( 'AI-Native Value Architect', 'Value Architect', 'value-architect', 'Value Architect' ),
+		$html
+	);
+
+	// "AI-Native Value Architect (Value Architect) Certification" and friends.
+	$html = str_replace( ' (Value Architect)', '', $html );
+	$html = str_replace( 'Value Architect Value Architect', 'Value Architect', $html );
+
+	return $parked ? str_replace( array_keys( $parked ), array_values( $parked ), $html ) : $html;
+}
+
+function aa_claims_page_fixes( $html ) {
+	$slug  = aa_claims_page_slug();
+	$rules = aa_claims_page_rules();
+	if ( $slug === '' || ! isset( $rules[ $slug ] ) ) { return $html; }
+
+	foreach ( $rules[ $slug ] as $pair ) {
+		$html = str_replace( $pair[0], $pair[1], $html );
+	}
+	if ( $slug === 'ai-native-change-agent' ) {
+		$html = aa_claims_rename_va( $html );
+	}
+	return $html;
+}
+
 function aa_claims_filter( $html ) {
 	if ( ! is_string( $html ) || $html === '' ) { return $html; }
+	// Page fixes run FIRST: they match the stored JSON-LD text, which the
+	// rating strip below re-encodes into a different shape.
+	$html = aa_claims_page_fixes( $html );
 	$html = aa_claims_strip_rating( $html );
 	$html = aa_claims_drop_card( $html );
 	foreach ( aa_claims_rules() as $rule ) {
