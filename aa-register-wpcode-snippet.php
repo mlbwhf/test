@@ -87,8 +87,36 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
    NEVER LEAVE TWO COPIES ACTIVE. [aa_reg_selftest] prints the build below, so
    you can tell which copy is live — and if the shortcode prints nothing at
    all, an older copy without it is the one running. */
+/* IS A SECOND COPY ALREADY LOADED? Ask BEFORE the guard runs, because after it
+   the answer is always yes. If another copy of this file is active, everything
+   below is skipped and this file is dead code — silently. That silence is what
+   made "the hero still looks the old way" take a day to find: an older snippet
+   was winning, autoplace never attached, and nothing anywhere said so.
+   Now it says so, in wp-admin and on the page itself for logged-in admins. */
+$aa_reg_already_loaded = function_exists( 'aa_reg_courses' );
+
 if ( ! defined( 'AA_REG_BUILD' ) ) {
 	define( 'AA_REG_BUILD', '2026-08-26 · autoplace + AI-Native + lazy months' );
+}
+
+if ( $aa_reg_already_loaded ) {
+	$aa_reg_warn = 'Two copies of "AA – Register PHP" are active. Only the one that'
+	             . ' loaded first is running, and it may be the older one — this copy is'
+	             . ' being skipped entirely. Delete the duplicate in WPCode → Code Snippets,'
+	             . ' leaving exactly one. Build seen first: ' . AA_REG_BUILD;
+
+	add_action( 'admin_notices', function () use ( $aa_reg_warn ) {
+		if ( ! current_user_can( 'manage_options' ) ) { return; }
+		echo '<div class="notice notice-error"><p><strong>AA Registration:</strong> '
+		   . esc_html( $aa_reg_warn ) . '</p></div>';
+	} );
+	// Also on the front end, where the symptom actually shows. Admins only.
+	add_action( 'wp_footer', function () use ( $aa_reg_warn ) {
+		if ( ! current_user_can( 'manage_options' ) ) { return; }
+		echo '<div style="position:fixed;left:12px;bottom:12px;z-index:2147483000;max-width:420px;'
+		   . 'background:#8B1A1A;color:#fff;padding:12px 14px;border-radius:6px;'
+		   . 'font:12px/1.5 system-ui,sans-serif">' . esc_html( $aa_reg_warn ) . '</div>';
+	}, 99 );
 }
 
 if ( ! function_exists( 'aa_reg_courses' ) ) :
