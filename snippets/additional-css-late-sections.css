@@ -1,0 +1,449 @@
+/* ############################################################################
+   LATE SECTIONS — added to the live Additional CSS after the v21 base was
+   last exported, and never carried back into the repo until now.
+   ----------------------------------------------------------------------------
+   Every rule here is transcribed verbatim from the live sheet. Nothing is
+   rewritten, reordered inside a section, or "tidied": these are all fixes
+   that were made against a real symptom on a real device, and a cleanup pass
+   that silently changed one of them would be indistinguishable from the bug
+   coming back.
+
+   Order matters and is the live order. N7b comes first, N6.2 follows N6.1, and
+   AA1 is last of the nav rules, because several of these deliberately win on cascade
+   position rather than on specificity.
+
+   One rename, and it is the only content change in this file: the live sheet
+   had TWO sections both called "Z" — this rendering/motion block and the
+   course calendar. Two sections with one letter is how a future edit deletes
+   the wrong one. The calendar keeps Z (it is generated, and its generator
+   writes that letter); this one becomes R.
+   ############################################################################ */
+
+/* ############################################################################
+   N7b. FLAGSHIP SPLIT BAND (built by "AA — Flagband JS")
+   ----------------------------------------------------------------------------
+   The two Assessments flagships (Career Compass + Agile Career Selector) are
+   merged by the snippet into ONE dark band, split side-by-side, each half its
+   own <a> with an SVG motif, eyebrow, description and CTA. Replaces the old
+   two-stacked-bands look. If the JS is inactive, nothing here renders and the
+   plain menu items show as before (fail-safe).
+
+   Comes FIRST in this file so N6.1, N6.2 and AA1 all still follow it, exactly
+   as they do in the live sheet — AA1 is only a "final guard" if it is last.
+   ############################################################################ */
+.aa-flagband{
+  display:grid; grid-template-columns:1fr 1fr; width:100%;
+  background:#0B2E35; color:#fff; overflow:hidden; border-radius:10px;
+}
+.aa-fb-half{
+  position:relative; display:flex; align-items:center; gap:18px;
+  padding:22px 24px; color:#fff; text-decoration:none; transition:background .18s ease;
+}
+.aa-fb-half:hover,.aa-fb-half:focus{ background:#0E3A44; color:#fff; }
+.aa-fb-half + .aa-fb-half{ border-left:1px solid rgba(228,241,241,.16); }
+.aa-fb-svg{ flex:none; display:block; }
+.aa-fb-txt{ display:flex; flex-direction:column; gap:4px; min-width:0; }
+.aa-fb-eyebrow{
+  font-family:ui-monospace,Menlo,monospace; font-size:10px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase; color:#7FC4C4;
+}
+.aa-fb-title{ font-family:'Newsreader',Georgia,serif; font-size:22px; line-height:1.1; color:#fff; }
+.aa-fb-desc{ font-size:12.5px; color:#A7C2C2; line-height:1.45; }
+.aa-fb-cta{
+  margin-left:auto; flex:none; align-self:center; white-space:nowrap;
+  font-family:ui-monospace,Menlo,monospace; font-size:11px; font-weight:700;
+  letter-spacing:.06em; color:#7FC4C4;
+}
+/* DESKTOP ONLY: hide the two original stacked items — the split band replaces
+   them. On mobile these rules do NOT apply, so the plain items show instead. */
+@media (min-width:922px){
+  .menu-item.aa-fb-src{ display:none !important; }
+  html body .main-header-menu .aa-mega > .sub-menu > .menu-item.aa-flag.aa-fb-src{ display:none !important; }
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag.aa-fb-src{ display:none !important; }
+  /* the band spans the whole mega panel and sits on top */
+  .aa-mega > .sub-menu > .aa-flagband{ grid-column:1 / -1 !important; order:-1 !important; margin:0 0 8px !important; }
+}
+/* MOBILE: no dark split band — collapse it entirely; the plain .aa-flag menu
+   items fall back to the standard mobile menu via the N6.1 / N6.2 resets
+   below. Uses the same max-height/overflow collapse as the N6 accordion (belt
+   and suspenders alongside display:none — some engines have kept a
+   display:none element's margin/border box alive when a later script
+   re-touches its inline style). */
+@media (max-width:921px){
+  html body .aa-flagband,
+  html body #masthead .aa-mega > .sub-menu > .aa-flagband,
+  html body .main-header-menu .aa-mega > .sub-menu > .aa-flagband{
+    display:none !important;
+    max-height:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+    visibility:hidden !important;
+  }
+}
+/* stack the two halves on phones */
+@media (max-width:760px){
+  .aa-flagband{ grid-template-columns:1fr; border-radius:8px; }
+  .aa-fb-half + .aa-fb-half{ border-left:none; border-top:1px solid rgba(228,241,241,.16); }
+  .aa-fb-cta{ margin-left:0; }
+}
+/* ==================== END — N7b. flagship split band ==================== */
+
+/* ############################################################################
+   N8. MEGA-PANEL CARD DESCRIPTIONS
+   ----------------------------------------------------------------------------
+   One line of plain-language description under each mega-panel card title,
+   supplied as ::after content keyed off the card's own href. Desktop only —
+   N6.1 turns these off on mobile, where the panel is a plain accordion.
+   ############################################################################ */
+@media (min-width:922px){
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag)::after{
+    display:block; font-style:normal; font-weight:400; font-size:12.5px;
+    color:#5E7378; line-height:1.5; margin-top:4px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  /* Services */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/business-agility/"])::after{content:"Scale agility across the whole enterprise."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/digital-transformation/"])::after{content:"Modernise how you build and deliver."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/innovation-culture/"])::after{content:"Build a culture that ships new ideas."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/services/product-operating-model/"])::after{content:"Shift from projects to products."}
+  /* Assessments */
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-maturity/"])::after{content:"See where you stand \2014  Absent to Flying."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/mutation-readiness/"])::after{content:"How ready are you to adapt & transform?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/agile-assessment/"])::after{content:"Score 6 agile competencies \2014  flow to leadership."}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/ai-assessment/"])::after{content:"How AI-ready is your operating model?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/product-management-assessment/"])::after{content:"From output to outcomes \2014  how product-led are you?"}
+  .aa-mega > .sub-menu > .menu-item:has(> a[href$="/assessments/innovation-framework/"])::after{content:"How systematically does your org innovate?"}
+  /* About */
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/faq/"])::after{content:"Answers to the questions we hear most."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/contact/"])::after{content:"Send us a message \2014  we reply fast."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href*="#offices"])::after{content:"Where we work \2014  offices worldwide."}
+  .aa-mega > .sub-menu > .menu-item:not(.aa-flag):has(> a[href$="/about/"])::after{content:"The mission \2014  and the people behind the work."}
+
+  /* leaf flagships (no nested pill row): rich description + CTA arrow. */
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="career-compass"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="career-selector"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
+    display:block; margin-top:8px; max-width:34ch;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-style:normal;
+    font-size:12.5px; line-height:1.5; letter-spacing:0; font-weight:400; color:#A7C7C7;
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="career-compass"]) > a::after{
+    content:"What you\2019re built for \2014  your Holland-code archetype in 90 seconds.  Take it \2192";
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="career-selector"]) > a::after,
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href*="cert-recommender"]) > a::after{
+    content:"Which cert next, in what order \2014  and the salary upside of each.  Explore \2192";
+  }
+  .aa-mega > .sub-menu > .menu-item.aa-flag:has(> a[href$="/customers/"]) > a::after{
+    content:"Real transformations, measured outcomes.  Explore \2192";
+  }
+
+  /* remove dropdown caret on top-level menu items */
+  .main-header-menu .ast-header-navigation-arrow,
+  .ast-nav-menu .ast-header-navigation-arrow,
+  .main-header-menu .menu-item-has-children > .menu-link::after{ display:none !important; }
+}
+/* ==================== END — N8. mega-panel card descriptions ==================== */
+
+/* ############################################################################
+   N6.1 — MOBILE FLAGSHIP / MEGA-GRID RESET
+   ----------------------------------------------------------------------------
+   Fixes the big EMPTY block above the first sub-item when a mega menu
+   (Training / Services / Assessments / About) is expanded on mobile — the
+   desktop flagship band + 2-col grid were leaking into mobile width.
+   Mobile-only (<=921px) and additive; desktop untouched.
+   ############################################################################ */
+@media (max-width:921px){
+
+  /* mega panel = flat vertical list on mobile (kill any leaked grid) */
+  html body #masthead .aa-mega > .sub-menu{
+    display:block !important;
+    grid-template-columns:none !important;
+    gap:0 !important;
+  }
+
+  /* every mega child = plain accordion row (no desktop card border/order/min-height) */
+  html body #masthead .aa-mega > .sub-menu > .menu-item{
+    grid-column:auto !important;
+    order:0 !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    background-image:none !important;
+  }
+
+  /* the flagship specifically: undo the dark band / flex-column / min-height */
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag{
+    display:block !important;
+    flex-direction:initial !important;
+    align-items:initial !important;
+    justify-content:initial !important;
+    gap:0 !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    background-image:none !important;
+  }
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag > a{
+    display:block !important;
+    position:static !important;
+    min-height:0 !important;
+    height:auto !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:14px 20px !important;
+    font-size:inherit !important;
+    line-height:inherit !important;
+    color:#28354a !important;
+    background:transparent !important;
+  }
+  /* remove the "FLAGSHIP" eyebrow + "Explore ->" caption pseudo-elements on mobile */
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag > a::before,
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag > a::after,
+  html body #masthead .aa-mega > .sub-menu > .menu-item:not(.aa-flag)::after{
+    content:none !important;
+    display:none !important;
+  }
+
+  /* flagship's own nested pill-row behaves as a normal collapsed accordion list */
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag > .sub-menu{
+    display:block !important;
+    flex-wrap:initial !important;
+    gap:0 !important;
+  }
+}
+/* ==================== END — N6.1 mobile flagship reset ==================== */
+
+
+/* ############################################################################
+   COURSE CURRICULUM → HORIZONTAL CARD GRID  (ALL course pages)
+   ----------------------------------------------------------------------------
+   Turns the "( 0x ) — Curriculum / What you'll learn" module list into a
+   compact card grid on EVERY .aa-rd course page — no per-page markup needed.
+   The wrapper is auto-detected: any <div> that directly holds .aa-mod items.
+   (.aa-mod is used only by curriculum modules, so nothing else is affected.)
+   Desktop = 3 across · tablet <=900px = 2 across · mobile <=560px = 1 across.
+   ############################################################################ */
+
+/* module list wrapper -> grid */
+.aa-rd div:has(> .aa-mod){
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:8px;
+}
+
+/* each module -> card tile (overrides the default 60px|1fr stacked row) */
+.aa-rd div:has(> .aa-mod) > .aa-mod{
+  display:block !important;
+  grid-template-columns:none !important;
+  border:1px solid var(--aa-border) !important;
+  border-radius:6px;
+  padding:20px 20px 18px !important;
+  margin:0 !important;
+  background:#fff;
+  transition:border-color .15s, transform .15s;
+}
+.aa-rd div:has(> .aa-mod) > .aa-mod:hover{
+  border-color:var(--aa-teal) !important;
+  transform:translateY(-2px);
+}
+
+/* number above the heading, tighter type inside the card */
+.aa-rd div:has(> .aa-mod) .aa-mod-n{ display:block; margin-bottom:10px; }
+.aa-rd div:has(> .aa-mod) .aa-mod-h{ font-size:19px; margin:0 0 6px; line-height:1.2; }
+.aa-rd div:has(> .aa-mod) .aa-mod-p{ font-size:13.5px; line-height:1.5; }
+
+@media(max-width:900px){
+  .aa-rd div:has(> .aa-mod){ grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:560px){
+  .aa-rd div:has(> .aa-mod){ grid-template-columns:1fr; }
+}
+/* ==================== END — course curriculum grid (all courses) ==================== */
+
+/* ############################################################################
+   N6.2 — MOBILE FLAGSHIP NESTED-SUBMENU COLLAPSE
+   ----------------------------------------------------------------------------
+   Real cause of the big empty gap under an expanded mega menu on mobile:
+   the flagship's OWN nested submenu (e.g. the 5 Operating Model layers under
+   Services, or the AI-Native courses under Training) was rendering OPEN with
+   white text on the light menu background -> invisible -> reads as blank space.
+   Fix: (1) collapse that nested submenu like every other accordion branch —
+   it only opens when its row is tapped; (2) force all mobile mega-submenu link
+   text dark so nothing can hide invisibly again. Mobile-only, additive.
+   ############################################################################ */
+@media (max-width:921px){
+
+  /* collapse the flagship's nested submenu by default */
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag > .sub-menu{
+    max-height:0 !important;
+    overflow:hidden !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+  /* ...open it only when its row is tapped (Nav JS adds .aa-mopen) */
+  html body #masthead .aa-mega > .sub-menu > .menu-item.aa-flag.aa-mopen > .sub-menu{
+    max-height:1600px !important;
+    overflow:visible !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    padding:2px 0 8px 14px !important;
+  }
+
+  /* no invisible white text anywhere in a mobile mega submenu */
+  html body #masthead .aa-mega .sub-menu a,
+  html body #masthead .aa-mega .sub-menu .menu-link{
+    color:#28354a !important;
+    -webkit-text-fill-color:#28354a !important;
+    background:transparent !important;
+  }
+}
+/* ==================== END — N6.2 mobile flagship nested collapse ==================== */
+
+/* ############################################################################
+   R. RENDERING / MOTION / MOBILE OPTIMISATION  (additive, global — last wins)
+   ----------------------------------------------------------------------------
+   WAS labelled "Z" in the live sheet, which collided with the calendar's own
+   Z section. Renamed to R here; the rules are unchanged.
+
+   Perf + a11y + mobile hardening, all non-visual-regressing:
+   - honour prefers-reduced-motion (kills our transitions/animations for users
+     who ask for it — required for accessibility, and stops needless repaint);
+   - text-size-adjust so iOS Safari never auto-inflates hero/agenda type;
+   - overflow-x guard so no wide band can trigger a horizontal scroll on phones;
+   - content-visibility on the tall agenda list to cut off-screen paint cost;
+   - font smoothing + optimizeLegibility on Meridian headings for crisp render.
+   Note: this is a CSS layer only. On-page SEO/LLM signals live in each page's
+   HTML + JSON-LD (already shipped per page), not here.
+   ############################################################################ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{ overflow-x:hidden; }
+.aa-rd .aa-agenda-list{ content-visibility:auto; contain-intrinsic-size:auto 600px; }
+.aa-rd .aa-h1,.aa-rd .aa-mhero .aa-h1,.aa-flag > a{
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+/* ==================== END — R. rendering/motion/mobile optimisation ==================== */
+
+/* ############################################################################
+   W2. MERIDIAN SERVICE HERO  (services — undated, no cohort engine)
+   ----------------------------------------------------------------------------
+   Reuses the .aa-mhero two-column grid + .aa-rte-crumb / .aa-rte-chip / .aa-h1
+   / .aa-lead from the course hero, so services read as the same family. The
+   RIGHT column is a static "At a glance" proof card + a CTA (no agenda / no
+   #aa-cohorts — services aren't dated). Add class "aa-svc-hero" alongside
+   "aa-mhero" on service pages.
+   ############################################################################ */
+.aa-rd .aa-svc-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:26px}
+.aa-rd .aa-svc-btn{display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600;letter-spacing:.03em;color:#fff;background:#127E88;border:1px solid #127E88;border-radius:2px;padding:11px 18px;text-decoration:none;line-height:1}
+.aa-rd .aa-svc-btn:hover{background:#0E6A73;border-color:#0E6A73}
+.aa-rd .aa-svc-link{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.03em;color:var(--aa-muted-2);text-decoration:none;border-bottom:1px solid var(--aa-border);padding-bottom:2px}
+.aa-rd .aa-svc-link:hover{color:var(--aa-teal);border-color:var(--aa-teal)}
+.aa-rd .aa-svc-card{flex:1 1 auto;display:flex;flex-direction:column;border:1px solid #C7DEDE;border-radius:6px;background:#fff;box-shadow:0 10px 30px -18px rgba(8,37,43,.35);overflow:hidden}
+.aa-rd .aa-svc-card-h{padding:12px 18px;border-bottom:1px solid #DCEAEA;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#127E88}
+.aa-rd .aa-svc-rows{display:flex;flex-direction:column;flex:1 1 auto}
+.aa-rd .aa-svc-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1px solid #EEF5F5}
+.aa-rd .aa-svc-row:last-child{border-bottom:none}
+.aa-rd .aa-svc-k{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#88A0A4}
+.aa-rd .aa-svc-v{font-family:'Newsreader',Georgia,serif;font-size:17px;color:#0E3A44;text-align:right;line-height:1.2}
+.aa-rd .aa-svc-foot{padding:12px 18px;border-top:1px solid #DCEAEA;background:#F7FBFB;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:#88A0A4}
+@media(max-width:900px){.aa-rd .aa-svc-cta{margin-top:20px}}
+/* ==================== END — W2. Meridian service hero ==================== */
+
+/* ############################################################################
+   X. LANGUAGE SWITCHER (#aa-langsw) — top bar, clickable
+   ----------------------------------------------------------------------------
+   The custom EN|ES switcher was pinned bottom-right, sitting under the HubSpot
+   chat bubble (that overlap made it un-clickable). Move it to the top-right and
+   lift it above the chat/header layers. Nudge `right` to slide it toward the
+   teal menu strip.
+   ############################################################################ */
+#aa-langsw{
+	position:fixed !important;
+	top:26px !important;
+	right:24px !important;      /* increase to move LEFT toward the teal menu */
+	bottom:auto !important; left:auto !important;
+	z-index:100060 !important;  /* above HubSpot chat + header */
+	pointer-events:auto !important;
+	display:flex !important; gap:2px;
+	background:#F4F8F8; border:1px solid #DCEAEA; border-radius:999px;
+	padding:4px 6px; box-shadow:0 2px 10px rgba(8,37,43,.14);
+}
+#aa-langsw *{ pointer-events:auto !important; }
+/* ==================== END — X. language switcher ==================== */
+
+/* ############################################################################
+   AA1. MOBILE FLAGBAND — FINAL GUARD (appended last so nothing can beat it)
+   ----------------------------------------------------------------------------
+   Belt-and-suspenders re-statement of the N7b mobile collapse, placed at the
+   very end of the nav rules so cascade order can never let an earlier or
+   duplicate rule win. If the blank gap above the flagship items persists after
+   this is live + purged, the element occupying the gap is NOT .aa-flagband —
+   inspect it directly and send the HTML.
+   ############################################################################ */
+@media (max-width:921px){
+  html body #masthead .aa-flagband{
+    display:none !important;
+    max-height:0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    overflow:hidden !important;
+    visibility:hidden !important;
+  }
+}
+/* ==================== END — AA1. mobile flagband final guard ==================== */
+
+/* ############################################################################
+   W.1 — AGENDA FILLS THE HERO
+   ----------------------------------------------------------------------------
+   Fixes the blank white block inside the "Upcoming sessions" card on course
+   pages (seen on ASPC). Section W stretches the agenda card to the pitch
+   column's height (align-items:stretch) but caps the session list at 572px —
+   on a tall page the difference renders as dead space under the card footer
+   (browser-measured: 450px of it on ASPC, with rows 10-12 hidden behind a
+   scroll).
+
+   Fix: in the two-column layout, let the list fill whatever height the card
+   is given — more sessions become visible instead of white space, and the
+   footer sits at the card's bottom edge. flex-basis:0 keeps the list's
+   intrinsic contribution at the 420px floor, so a page with a SHORT pitch
+   column is not inflated by a long session list (verified: a 500px column
+   stays 500px). Below 901px the layout is single-column and this rule is
+   inert — the existing 572px cap still governs mobile.
+
+   Must come after section W, which sets the 572px cap it overrides.
+   ############################################################################ */
+@media (min-width:901px){
+  .aa-rd .aa-agenda-list{
+    flex:1 1 0;
+    min-height:420px;
+    max-height:none;
+  }
+}
+/* ==================== END — W.1 agenda fills the hero ==================== */
