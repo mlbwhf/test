@@ -154,20 +154,27 @@ function aa_claims_unset_rating( $node ) {
 	return $node;
 }
 
-/**
- * Tidy the punctuation a removal can leave behind, and nothing else.
+/* THERE IS NO GENERAL TIDY PASS, and there must not be one.
  *
- * Only the full stop and the comma. NOT the colon, semicolon, question or
- * exclamation mark: French sets a space before all four, so a rule that closed
- * up " :" would rewrite the typography of every French page on the site —
- * "pas des garanties : les résultats" is correct French and must stay.
- */
-function aa_claims_tidy( $html ) {
-	$html = preg_replace( '/[ \t]+([.,])/u', '$1', $html );   // " ." -> "."
-	$html = preg_replace( '/([.,])\1+/u', '$1', $html );      // ".." -> "."
-	$html = preg_replace( '/,\s*\./u', '.', $html );          // ", ." -> "."
-	return $html;
-}
+ * An earlier version closed up whitespace before a full stop or comma across
+ * the whole content, to clean up after a removal. It broke every course page
+ * on the site, because page content contains inline <style> blocks and CSS
+ * puts a space before a dot for a reason:
+ *
+ *     #curriculum .aa-modgrid  ->  #curriculum.aa-modgrid
+ *     .aa-rd .aa-faqwrap       ->  .aa-rd.aa-faqwrap
+ *
+ * A descendant selector became a compound one, matched nothing, and the
+ * two-column FAQ and the module grid silently lost their rules. Nothing looked
+ * wrong in the snippet; the damage was three files away, in markup this filter
+ * had no business touching.
+ *
+ * So every rule in this file is anchored on a specific phrase and replaces it
+ * with finished text. If a removal would leave "  ." or ", and", the fix goes
+ * in that rule, not in a sweep over the whole document. A filter on
+ * the_content sees stylesheets, scripts and JSON as well as prose, and a
+ * pattern general enough to be useful on prose is general enough to corrupt
+ * the rest. */
 
 /* ============================================================================
    PER-PAGE FIXES
@@ -304,7 +311,7 @@ function aa_claims_filter( $html ) {
 		$out = preg_replace( $rule[0], $rule[1], $html );
 		if ( $out !== null ) { $html = $out; }   // a failed pattern changes nothing
 	}
-	return aa_claims_tidy( $html );
+	return $html;
 }
 add_filter( 'the_content', 'aa_claims_filter', 20 );
 
