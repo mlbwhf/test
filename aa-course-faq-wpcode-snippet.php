@@ -401,6 +401,72 @@ function aa_faq_swap( $html, $block ) {
 }
 add_filter( 'render_block', 'aa_faq_swap', 10, 2 );
 
+/**
+ * [aa_faq_selftest] — admin-only. Answers "why is this page still the old FAQ?"
+ *
+ * The swap can fail silently in four different places and they look identical
+ * from the front end, so this reports each one separately: whether the snippet
+ * is running at all, whether the switch is on, whether the page has the block
+ * the swap looks for, and whether that block contains any <details> to read.
+ * A page with the section but zero details means something else already
+ * rewrote the FAQ before this filter saw it.
+ */
+add_shortcode( 'aa_faq_selftest', function () {
+	if ( ! current_user_can( 'manage_options' ) ) { return ''; }
+
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+
+	$secs = 0; $details = 0; $finals = 0; $names = array();
+	if ( $obj instanceof WP_Post && function_exists( 'parse_blocks' ) ) {
+		$walk = function ( $blocks ) use ( &$walk, &$secs, &$details, &$finals, &$names ) {
+			foreach ( $blocks as $b ) {
+				if ( ! empty( $b['blockName'] ) ) {
+					$names[ $b['blockName'] ] = ( isset( $names[ $b['blockName'] ] ) ? $names[ $b['blockName'] ] : 0 ) + 1;
+				}
+				$cls = isset( $b['attrs']['className'] ) ? $b['attrs']['className'] : '';
+				if ( ! empty( $b['blockName'] ) && $b['blockName'] === 'core/group'
+					&& $cls !== '' && in_array( 'aa-faqsec', preg_split( '/\s+/', $cls ), true ) ) {
+					$secs++;
+					$details += substr_count( strtolower( $b['innerHTML'] . implode( '', array_column( (array) $b['innerBlocks'], 'innerHTML' ) ) ), '<details' );
+				}
+				if ( ! empty( $b['blockName'] ) && $b['blockName'] === 'core/html'
+					&& strpos( $b['innerHTML'], 'aa-final' ) !== false ) { $finals++; }
+				if ( ! empty( $b['innerBlocks'] ) ) { $walk( $b['innerBlocks'] ); }
+			}
+		};
+		$walk( parse_blocks( $obj->post_content ) );
+	}
+
+	$found = aa_faq_course();
+	$lines = array(
+		'snippet            : loaded (this box proves it)',
+		'swap switched on   : ' . ( aa_faq_autoplace_on() ? 'YES' : 'NO  <- Settings > AA Course FAQ' ),
+		'this page slug     : ' . ( $obj instanceof WP_Post ? $obj->post_name : '(no post)' ),
+		'resolved course    : ' . ( $found ? $found['slug'] . ' (' . $found['course']['code'] . ')' : 'NONE — the closing band needs this; the FAQ does not' ),
+		'',
+		'blocks the swap looks for:',
+		'  core/group .aa-faqsec : ' . ( $secs ? $secs : '0  <- NOT ON THIS PAGE, nothing to swap' ),
+		'  <details> inside it   : ' . ( $details ? $details : '0  <- section found but EMPTY of questions;' ),
+		'                          ' . ( $details ? '' : '     something rewrote the FAQ before this filter ran' ),
+		'  core/html with aa-final: ' . $finals,
+		'',
+		'is the page block content at all?',
+		'  parsed block types  : ' . ( $names ? count( $names ) : '0  <- classic/freeform page: render_block NEVER fires' ),
+	);
+	if ( $names ) {
+		arsort( $names );
+		$top = array_slice( $names, 0, 6, true );
+		$bits = array();
+		foreach ( $top as $k => $v ) { $bits[] = $k . ' x' . $v; }
+		$lines[] = '  most common         : ' . implode( ', ', $bits );
+	}
+
+	return '<pre style="font:12px/1.55 monospace;background:#F5FAFA;border:1px solid #CFE3E3;'
+	     . 'padding:14px;white-space:pre-wrap;overflow:auto">'
+	     . esc_html( implode( "\n", $lines ) ) . '</pre>';
+} );
+
 /** Settings -> AA Course FAQ: one switch, so the swap reverts without an edit. */
 add_action( 'admin_menu', function () {
 	add_options_page( 'AA Course FAQ', 'AA Course FAQ', 'manage_options', 'aa-faq', function () {
