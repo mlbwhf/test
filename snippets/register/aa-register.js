@@ -11,6 +11,15 @@
   var root = document.getElementById('aacal');
   if (!root) return;
 
+  /* DOUBLE-RUN GUARD. If this file is active twice — an older snippet left
+     beside a newer one with the same name — every handler below binds twice:
+     one click on a seat button adds two seats, one tab click fires two
+     fetches, and one submit posts to Stripe twice. The PHP has the same guard
+     for the same reason. Marking the element rather than a global means a
+     second copy stops here instead of silently doubling everything. */
+  if (root.getAttribute('data-aa-bound')) return;
+  root.setAttribute('data-aa-bound', '1');
+
   /* Wired by the PHP snippet. The REST route and its nonce must match what the
      server registered, and currency must match what the server will charge —
      the handoff is written for a Canadian price list and this site bills USD. */
@@ -382,6 +391,8 @@
 (function () {
   var root = document.getElementById('aahero');
   if (!root) return;
+  if (root.getAttribute('data-aa-bound')) return;   // see the guard note above
+  root.setAttribute('data-aa-bound', '1');
 
   var tabs   = Array.prototype.slice.call(root.querySelectorAll('.aahero-tab'));
   var panels = Array.prototype.slice.call(root.querySelectorAll('.aahero-list'));
