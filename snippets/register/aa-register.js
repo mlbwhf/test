@@ -527,13 +527,13 @@
   /* Keep a form pointed at whatever its own component currently has selected.
      Exported so the pickers can call it; also driven by the shared
      aa:cohort-select event so a pick made anywhere updates every form. */
-  function retarget(form, detail) {
+  function retarget(form, detail, own) {
     if (!form || !detail) return;
     /* A form whose component sets its own batch — the calendar panel, which
-       rebuilds itself for whatever bar is selected — opts out. Otherwise a
-       pick made elsewhere would silently repoint it at a different date than
-       the one printed above it. */
-    if (form.hasAttribute('data-aa-inline-fixed')) return;
+       rebuilds itself for whatever bar is selected — opts out of retargets
+       from ELSEWHERE. `own` is that component calling about its own form,
+       which is how a freshly built form gets its first paint. */
+    if (!own && form.hasAttribute('data-aa-inline-fixed')) return;
 
     if (detail.cohort) {
       form.setAttribute('data-cohort', detail.cohort);

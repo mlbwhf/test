@@ -20,7 +20,15 @@
     function d(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
     var ev = cfg.events.map(function (r, i) {
       var s = d(r.s), e = d(r.e);
-      return { i: i, s: s, e: e, c: r.c, id: r.id, seats: r.seats,
+      /* iso keeps the ORIGINAL "YYYY-MM-DD" alongside the Date. The grid needs
+         a Date to lay bars out; the registration needs the date as a string,
+         and String(new Date(...)) is "Wed Sep 09 2026 00:00:00 GMT-0400 (...)"
+         — which the server's /^\d{4}-\d{2}-\d{2}$/ check rejects, so
+         checkout answered "there is no batch of this course on that date"
+         for a date that was on sale. Never stringify s or e for anything the
+         server or a data- attribute will read. */
+      return { i: i, s: s, e: e, iso: r.s, isoEnd: r.e,
+               c: r.c, id: r.id, seats: r.seats,
                price: r.price, hours: r.hours, instructor: r.instructor,
                days: Math.round((e - s) / 86400000) + 1, past: e < today };
     });
@@ -176,7 +184,7 @@
 
       var h = '<div class="aa-mcal-head"><div>' +
         '<span class="aa-mcal-eyebrow">' + esc(S.eyebrow) + '</span>' +
-        '<h3 class="aa-mcal-title">' + esc((S.months[mo] || MON[mo]) + ' ' + y) + '</h3></div>' +
+        '<h3 class="aa-mcal-title">' + esc(((S.months && S.months[mo]) || MON[mo]) + ' ' + y) + '</h3></div>' +
         '<div class="aa-mcal-nav">' +
           '<button type="button" data-nav="-1" aria-label="' + esc(S.prev) + '"' +
             (view <= new Date(today.getFullYear(), today.getMonth(), 1) ? ' disabled' : '') + '>&lsaquo;</button>' +
@@ -290,7 +298,7 @@
       var sellable = window.AA_REG && window.AA_REG.dates;
       var canBuy = !!(window.AA_REG && window.AA_REG.checkout &&
                       window.AA_REG.course && cfg.link === 'enroll' &&
-                      (!sellable || sellable.indexOf(o.s) !== -1));
+                      (!sellable || sellable.indexOf(o.iso) !== -1));
 
       h += '<div class="aa-mcal-reg">' +
         (o.price ? '<div class="aa-mcal-price">' + esc(money(o.price)) +
@@ -298,7 +306,7 @@
 
       if (canBuy) {
         h += '<form class="aareg-inline aa-mcal-inline" data-aa-inline data-aa-inline-fixed novalidate' +
-               ' data-start="' + esc(o.s) + '">' +
+               ' data-start="' + esc(o.iso) + '">' +
              '<label class="aareg-inline-field"><span class="aacal-sr">Your email</span>' +
              '<input name="email" type="email" autocomplete="email" inputmode="email"' +
              ' placeholder="Your email" required></label>' +
@@ -320,6 +328,14 @@
       h += '<a class="aa-mcal-more" href="' + esc(m.url) + '">' + esc(S.course_page) + '</a>' +
         '</div>';
       el.innerHTML = h;
+
+      /* The in-place form is built HERE, after the register snippet has
+         already painted the forms that were in the page at load. Without this
+         the seat total renders empty until the buyer touches the stepper. */
+      var f = el.querySelector('[data-aa-inline]');
+      if (f && typeof window.AA_REG_RETARGET === 'function') {
+        window.AA_REG_RETARGET(f, { start: f.getAttribute('data-start') }, true);
+      }
     }
 
     function render() { renderCal(); renderPanel(); }
@@ -368,7 +384,7 @@
              in-place form post a batch id the server cannot resolve. It
              travels as eventId for anything that wants the source post. */
           document.dispatchEvent(new CustomEvent('aa:cohort-select', {
-            detail: { start: o.s, end: o.e, eventId: o.id, source: 'calendar' }
+            detail: { start: o.iso, end: o.isoEnd, eventId: o.id, source: 'calendar' }
           }));
           handled = !!document.getElementById('aacal');
         } catch (err) {}
