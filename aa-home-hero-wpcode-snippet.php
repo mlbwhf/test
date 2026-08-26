@@ -82,8 +82,8 @@ function aa_hh_courses() {
  */
 function aa_hh_track( $crumb ) {
 	$map = array(
-		'Advanced SAFe'    => 'SAFe Advanced',
-		'SAFe Advanced'    => 'SAFe Advanced',
+		'Advanced SAFe'    => 'Advanced SAFe',
+		'SAFe Advanced'    => 'Advanced SAFe',
 		'SAFe Roles'       => 'SAFe Roles',
 		'SAFe by Industry' => 'SAFe by Industry',
 		'AI-Native'        => 'AI-Native',
@@ -183,6 +183,7 @@ function aa_hh_strings( $lang ) {
 			'weekday'    => 'Weekday',
 			'weekend'    => 'Weekend',
 			'no_match'   => 'No batches match this track.',
+			'buy_for'    => 'Registering for %1$s · %2$s',
 			'foot'       => 'All batches run live in English.',
 			'foot_link'  => 'Full calendar',
 			'empty'      => 'See all upcoming cohorts',
@@ -314,6 +315,25 @@ function aa_hh_render( $atts ) {
 	$h .= '<p class="aa-hh-nomatch" data-hh-nomatch hidden>' . esc_html( $str['no_match'] ) . '</p>';
 	$h .= '</div>';
 
+	/* ---------- checkout, in place ----------
+	   One form for the whole panel, retargeted as the selection changes,
+	   rather than twelve forms nobody will use eleven of. It posts the batch
+	   id and nothing else about the course: aa_reg_find() resolves that id to
+	   its course server-side, so the home page never has to know -- or be able
+	   to influence -- what anything costs. */
+	if ( function_exists( 'aa_reg_inline' ) && function_exists( 'aa_reg_is_live' ) ) {
+		$first = $rows[0];
+		$h .= '<div class="aa-hh-buy" id="aa-hh-buy">'
+		    . '<p class="aa-hh-buyhead" data-hh-buyhead>'
+		    . esc_html( sprintf( $str['buy_for'],
+		        aa_hh_range( $first['cohort']['start'], $first['cohort']['end'], $str ),
+		        $first['course']['code'] ) )
+		    . '</p>'
+		    . aa_reg_inline( $first['course'], $first['cohort'], $first['course']['currency'], 'aahh' )
+		    . '</div>';
+		$h .= aa_hh_config_script();
+	}
+
 	$h .= '<p class="aa-hh-foot">' . esc_html( $str['foot'] )
 	    . ' <a href="/training/">' . esc_html( $str['foot_link'] ) . ' &#10230;</a></p>';
 
@@ -334,6 +354,34 @@ function aa_hh_render( $atts ) {
 	$h .= '</section>';
 	$h .= aa_hh_schema( $rows );
 	return $h;
+}
+
+/**
+ * window.AA_REG for a page that is not a course page.
+ *
+ * The in-place checkout handler in aa-register.js reads its endpoint, nonce and
+ * currency from window.AA_REG. On a course page the register block emits that;
+ * the home page has no register block, so it is emitted here -- with NO
+ * `course` and NO `dates`, because neither is true of a page showing twelve
+ * different courses. The handler only consults those two when a form carries
+ * data-start, and these forms carry data-cohort instead.
+ *
+ * Guarded on the client rather than the server: if a course page ever includes
+ * this hero, the register block's config is the fuller one and must win.
+ */
+function aa_hh_config_script() {
+	if ( ! function_exists( 'aa_reg_is_live' ) ) { return ''; }
+	$live = aa_reg_is_live();
+
+	return '<script>window.AA_REG=window.AA_REG||' . wp_json_encode( array(
+		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
+		'symbol'         => '$',
+		'locale'         => 'en-US',
+		'nonce'          => wp_create_nonce( 'wp_rest' ),
+		'msgSending'     => 'Taking you to Stripe…',
+		'msgError'       => 'We could not start checkout. Please try again.',
+		'msgUnavailable' => 'Registration is not available right now.',
+	) ) . ';</script>';
 }
 
 /** Where a row's CTA goes: the course page's enrol section, on that batch. */
@@ -367,6 +415,7 @@ function aa_hh_row( $r, $str, $is_first ) {
 	     . ' data-track="' . esc_attr( aa_hh_track( $c['crumb'] ) ) . '"'
 	     . ' data-code="' . esc_attr( $c['code'] ) . '"'
 	     . ' data-range="' . esc_attr( $range ) . '"'
+	     . ' data-price="' . (int) $c['price'] . '"'
 	     . ' data-href="' . esc_attr( aa_hh_enrol_url( $r ) ) . '"'
 	     . ' aria-pressed="' . ( $is_first ? 'true' : 'false' ) . '"'
 	     . ' aria-label="' . esc_attr( $aria ) . '">'

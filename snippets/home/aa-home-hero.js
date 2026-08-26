@@ -30,6 +30,8 @@
   var elEmpty = root.querySelector('[data-hh-nomatch]');
   var elCta   = root.querySelector('[data-hh-cta]');
   var elLabel = root.querySelector('[data-hh-cta-label]');
+  var elForm  = root.querySelector('[data-aa-inline]');
+  var elBuyHd = root.querySelector('[data-hh-buyhead]');
 
   if (!rows.length) { return; }
 
@@ -43,11 +45,36 @@
      the hero being a menu and the hero being a checkout entrance. */
   function paintCta() {
     if (!state.row) { return; }
+    /* With a checkout on the page there is nothing to leave for: the button
+       moves the buyer to the form rather than to another page that would ask
+       the same question again. Without one (register snippet inactive) it
+       keeps the real course-page link the server rendered. */
+    if (elForm && elCta) { elCta.setAttribute('href', '#aa-hh-buy'); }
     if (elLabel) {
       elLabel.textContent = 'Reserve ' + state.row.getAttribute('data-range') +
                             ' · ' + state.row.getAttribute('data-code');
     }
-    if (elCta) { elCta.setAttribute('href', state.row.getAttribute('data-href')); }
+    if (elCta && !elForm) { elCta.setAttribute('href', state.row.getAttribute('data-href')); }
+  }
+
+  /* Point the checkout at the selected batch. It posts a batch id and nothing
+     else about the course -- the server resolves the id to its course and its
+     price -- so retargeting is two attributes and a repaint, and there is
+     still no price on the wire. `true` says this component owns the form, so
+     the register snippet's guard against cross-component retargets does not
+     apply to its own panel. */
+  function paintForm() {
+    if (!elForm || !state.row) { return; }
+    if (elBuyHd) {
+      elBuyHd.textContent = 'Registering for ' + state.row.getAttribute('data-range') +
+                            ' · ' + state.row.getAttribute('data-code');
+    }
+    if (typeof window.AA_REG_RETARGET === 'function') {
+      window.AA_REG_RETARGET(elForm, {
+        cohort: state.row.getAttribute('data-cohort'),
+        price:  parseInt(state.row.getAttribute('data-price'), 10) || 0
+      }, true);
+    }
   }
 
   function select(row) {
@@ -59,6 +86,7 @@
       r.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     paintCta();
+    paintForm();
   }
 
   function apply() {

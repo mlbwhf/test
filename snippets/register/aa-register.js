@@ -241,6 +241,18 @@
        fetch every month looking for it. */
     if (/^\d+$/.test(want)) { return; }
     adopt({ cohort: want });
+
+    /* ...and put the picker on screen. #enroll is the id of the whole
+       "Upcoming cohorts" SECTION, whose first screenful is a heading and the
+       what's-included cards -- so an anchor jump lands above the form and
+       reads as having gone nowhere. Someone who arrived from the home page
+       having already chosen a batch should be looking at that batch. Deferred
+       one frame so the browser's own jump to #enroll happens first and this
+       wins. */
+    requestAnimationFrame(function () {
+      try { root.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      catch (e) { root.scrollIntoView(); }
+    });
   })();
 
   /* one-way: the hero hands its pick down to this calendar and never listens back */
