@@ -742,7 +742,9 @@ function aa_reg_settings_page() {
 	   . '<p class="description">Starts <code>whsec_</code>. From the Stripe webhook you point at <code>' . esc_html( home_url( '/wp-json/aa/v1/stripe-webhook' ) ) . '</code> for <code>checkout.session.completed</code>.</p></td></tr>';
 	echo '<tr><th scope="row">Prices confirmed</th><td><label><input type="checkbox" name="aa_reg_prices_confirmed" value="yes"' . checked( get_option( 'aa_reg_prices_confirmed' ), 'yes', false ) . '> I have checked every price and currency in the snippet against what we actually charge.</label>'
 	   . '<p class="description">Until this is ticked nothing can be charged. The prices in the code were transcribed from the live course pages and never verified against finance.</p></td></tr>';
-	echo '<tr><th scope="row">Replace the hero and the Fluent Form</th><td><label><input type="checkbox" name="aa_reg_autoplace" value="yes"' . checked( get_option( 'aa_reg_autoplace' ), 'yes', false ) . '> On course pages, swap the old hero for the new one and the Fluent Form for the new registration.</label>'
+	echo '<tr><th scope="row">Replace the hero and the Fluent Form</th><td>'
+	   . '<input type="hidden" name="aa_reg_autoplace" value="no">'
+	   . '<label><input type="checkbox" name="aa_reg_autoplace" value="yes"' . checked( aa_reg_autoplace_on(), true, false ) . '> On course pages, swap the old hero for the new one and the Fluent Form for the new registration.</label>'
 	   . '<p class="description">No page edits either way &mdash; the swap happens as the page renders, and unticking this puts the old hero and form straight back. Applies only to pages whose slug has a row in <code>aa_reg_courses()</code>: <code>'
 	   . esc_html( implode( '</code>, <code>', array_keys( aa_reg_courses() ) ) ) . '</code>. Leave this off if you would rather place <code>[aa_course_hero]</code> and <code>[aa_course_register]</code> in the pages by hand.</p></td></tr>';
 	echo '</table>';
@@ -1262,9 +1264,22 @@ add_shortcode( 'aa_course_register', 'aa_reg_panel' );
    untick it to put the old pages straight back.
    ========================================================================== */
 
-/** True when the swap is switched on in settings. */
+/**
+ * True when the swap is switched on.
+ *
+ * ON BY DEFAULT, and off only when explicitly turned off. It used to default
+ * to off so the new hero could be looked at before it went live everywhere —
+ * but the cost of that was a silent one: install all three snippets correctly
+ * and the site looks exactly as it did, with nothing anywhere saying why. An
+ * unticked box is indistinguishable from a broken install, and it cost us
+ * several rounds of debugging.
+ *
+ * The settings form posts a hidden 'no' before the checkbox, so an unticked
+ * box stores 'no' rather than nothing — which is what lets "never configured"
+ * (default on) be told apart from "deliberately turned off".
+ */
 function aa_reg_autoplace_on() {
-	return get_option( 'aa_reg_autoplace' ) === 'yes';
+	return get_option( 'aa_reg_autoplace', 'yes' ) !== 'no';
 }
 
 /** Top-level section slugs that mean "this is a translated mirror". */
