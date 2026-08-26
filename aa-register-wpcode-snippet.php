@@ -222,7 +222,7 @@ function aa_reg_courses() {
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 2500,
-			'days'     => 3,
+			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 78,
 			'proof'    => array( 'In person', 'Exam fee included', 'AINF required' ),
@@ -242,7 +242,7 @@ function aa_reg_courses() {
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 1500,
-			'days'     => 2,
+			'days'     => 1,
 			'seats'    => 12,         // the page says "capped at 12 senior leaders"
 			'weeks'    => 78,
 			'proof'    => array( '12 seats max', 'Six months coaching', 'Exam fee included' ),
@@ -330,12 +330,27 @@ function aa_reg_is_holiday( $ymd ) {
 
 /** The next day that is neither a weekend nor a public holiday. */
 function aa_reg_next_working_day( $ymd ) {
+	return aa_reg_next_working_day_in( $ymd, 'na' );
+}
+
+/**
+ * The next working day in a given region.
+ *
+ * The plain version above is North American and stays that way for the
+ * live-online courses, which are sold on a North American calendar. It cannot
+ * be reused for a Gulf city: it skips Sunday, which is the first working day
+ * of the week in Saudi Arabia and the UAE, and it accepts Friday, which is
+ * not a working day there at all. Using it for Dubai would move a class off a
+ * perfectly good Sunday and onto a Friday.
+ */
+function aa_reg_next_working_day_in( $ymd, $region = 'na' ) {
+	$rest = $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );   // ISO-8601: Mon=1
 	$d = new DateTime( $ymd );
 	for ( $i = 0; $i < 10; $i++ ) {
 		$d->modify( '+1 day' );
-		$dow = (int) $d->format( 'N' );
-		if ( $dow >= 6 ) { continue; }
-		if ( aa_reg_is_holiday( $d->format( 'Y-m-d' ) ) ) { continue; }
+		if ( in_array( (int) $d->format( 'N' ), $rest, true ) ) { continue; }
+		// The holiday list is North American, so it only blocks NA dates.
+		if ( $region === 'na' && aa_reg_is_holiday( $d->format( 'Y-m-d' ) ) ) { continue; }
 		return $d->format( 'Y-m-d' );
 	}
 	return null;
@@ -460,32 +475,60 @@ function aa_reg_generate_places( $slug, $course, $today, $limit, $tz ) {
 
 			$start  = $d->format( 'Y-m-d' );
 			$reason = '';
-			/* Blocked outright, or on a public holiday: move forward to the
-			   first working day that fits, rather than running the venue on
-			   Christmas or asking people in on a stat.
 
-			   The holiday list is North American, so it only governs North
-			   American cities. Shifting a Riyadh class off Canadian
-			   Remembrance Day, or a Dubai class off US Thanksgiving, would be
-			   moving a date for a day nobody there is taking off. Gulf cities
-			   keep the blackout — running on Christmas Day or New Year's Day
-			   suits nobody's travelling trainer — but not the rest. Give me
-			   the local public holidays for Dubai and Riyadh and they become a
-			   region list of their own. */
-			$holiday = ( $region_of_place === 'na' ) && aa_reg_is_holiday( $start );
-			if ( ! aa_reg_span_ok( $start, $days ) || $holiday ) {
-				$moved = $start;
-				for ( $k = 0; $k < 10; $k++ ) {
-					$moved = aa_reg_next_working_day( $moved );
-					if ( ! $moved ) { break; }
-					$still = ( $region_of_place === 'na' ) && aa_reg_is_holiday( $moved );
-					if ( aa_reg_span_ok( $moved, $days ) && ! $still ) { break; }
-				}
-				if ( ! $moved || ! aa_reg_span_ok( $moved, $days ) ) { continue; }
-				if ( new DateTime( $moved, $tz ) > $limit ) { continue; }
-				$start  = $moved;
-				$reason = 'moved';
+			/* NO CLASSROOM COURSE RUNS INTO THE LOCAL WEEKEND.
+			   A venue class is booked around a working week, so a span that
+			   touches a rest day is pushed to the next start that does not.
+			   The rest days are regional — Saturday and Sunday in North
+			   America, Friday and Saturday in the Gulf — so this is one rule,
+			   not a hard-coded "not Saturday".
+
+			   This is enforced here rather than left to the anchor dates
+			   because durations change. A 2-day course anchored on a Thursday
+			   is clean; make it 3 days and every date silently runs into
+			   Saturday. That happened once already. */
+			/* THREE CONSTRAINTS, ONE LOOP — and it has to be one loop.
+
+			   A classroom date must clear all three: it must not touch the
+			   blackout, it must not sit on a public holiday, and its whole
+			   span must stay inside the local working week. Checking them in
+			   sequence does not work, because fixing the third can break the
+			   first: the first version tested the weekend, then moved off
+			   holidays, and the holiday move pushed a span straight back into
+			   Saturday. The test caught two such dates. So the date advances
+			   until it satisfies everything at once.
+
+			   The rest days are regional — Saturday and Sunday in North
+			   America, Friday and Saturday in the Gulf — so "no Saturday
+			   classes" is expressed as a rule about the local working week
+			   rather than hard-coded to one weekday.
+
+			   It is enforced here rather than left to well-chosen anchors
+			   because durations change. A 2-day course anchored on a Thursday
+			   is clean; make it 3 days and every date silently runs into the
+			   weekend. That is exactly what happened when Value Architect was
+			   3 days. */
+			$guard = 0;
+			while ( $guard < 20 ) {
+				$bad_span    = ! aa_reg_span_ok( $start, $days );
+				$bad_holiday = ( $region_of_place === 'na' ) && aa_reg_is_holiday( $start );
+				$bad_weekend = aa_reg_kind( $start, $days, $region_of_place ) === 'weekend';
+				if ( ! $bad_span && ! $bad_holiday && ! $bad_weekend ) { break; }
+				$next = aa_reg_next_working_day_in( $start, $region_of_place );
+				if ( ! $next ) { break; }
+				// Say why it moved, using the FIRST reason — a holiday is worth
+				// telling the buyer about, sliding off a weekend is not.
+				if ( $reason === '' && ( $bad_span || $bad_holiday ) ) { $reason = 'moved'; }
+				$start = $next;
+				$guard++;
 			}
+
+			// Anything still failing is dropped rather than published wrong.
+			if ( ! aa_reg_span_ok( $start, $days )
+				|| ( $region_of_place === 'na' && aa_reg_is_holiday( $start ) )
+				|| aa_reg_kind( $start, $days, $region_of_place ) === 'weekend' ) { continue; }
+			if ( new DateTime( $start, $tz ) > $limit ) { continue; }
+
 			$out[] = aa_reg_make( $slug, $course, $start, $slot, $reason, $place );
 		}
 	}

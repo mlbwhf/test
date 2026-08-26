@@ -235,15 +235,16 @@ Three courses, three cities, **90 cohorts generated**, no dates typed by hand:
 
 | Course | Page | Price | Days | Seats |
 |---|---|---|---|---|
-| AI-Native Foundations (AINF) | 11792 | $1,500 | 2 ⚠️ | 18 |
-| **AI-Native Value Architect** (AINCA) | 11818 | $2,500 | 3 | 18 |
-| Leading the AI-Native Organization (AINORG) | 23813 | $1,500 | 2 | 12 |
+| AI-Native Foundations (AINF) | 11792 | $1,500 | 2 | 18 |
+| **AI-Native Value Architect** (AINCA) | 11818 | $2,500 | 2 | 18 |
+| Leading the AI-Native Organization (AINORG) | 23813 | $1,500 | 1 | 12 |
 
-Every figure came off your own live pages. **The one exception is marked ⚠️:**
-AI-Native Foundations states its price but never its length. The 2 comes from
-`courses.json`, whose price for that same course ($1,150) is already known to be
-stale — so treat the duration as unverified too. It decides the end date printed
-on all 30 of its cohorts.
+Prices came off your own live pages; **durations are the ones you gave me**, and
+they override what those pages say. Worth knowing: the AINCA page states three
+days in four separate places (the chip, the curriculum heading, the FAQ, and
+`courseWorkload: P3D`), and the AINORG page states two the same way. The
+schedule now uses 2 and 1. **Those pages contradict the schedule until their
+copy is corrected.**
 
 **Cities.** Mississauga monthly, Dubai and Riyadh quarterly, for each course.
 Each course takes a different week so one trainer is never in two rooms at once
@@ -255,14 +256,11 @@ in Saudi Arabia and the UAE, so a Thursday start there is a weekend class;
 Sunday is the first working day. North American public holidays only move North
 American dates — a Riyadh class no longer shifts off Canadian Remembrance Day.
 
-### ⚠️ One thing to decide: Value Architect runs into Saturday
-
-It is 3 days and it starts Thursday, so all 18 Mississauga dates run
-**Thursday–Saturday** and are flagged as weekend batches. That follows directly
-from the 10 September anchor you gave. If you would rather it stayed inside the
-working week, change its Mississauga `first` to **Tuesday 8** or **Wednesday 9
-September** and the whole series follows. Foundations and Leading the Org are
-2-day and stay Thursday–Friday, so they are unaffected.
+**No class runs into the weekend, and that is now a rule rather than a lucky
+choice of dates.** A span that would touch the local rest days is pushed to the
+next start that does not. This matters because durations change: at 3 days,
+Value Architect ran Thursday–Saturday on all 18 Canadian dates. Verified across
+every duration from 1 to 5 days, in both regions: **zero weekend dates**.
 
 To change any date, change `first` on that city — the series is derived, not
 listed.
