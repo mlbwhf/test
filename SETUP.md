@@ -3,14 +3,41 @@
 Everything, in the order to do it. Each part works on its own, so you can stop
 after any of them.
 
-**Where you are:** Part 2 (calendar) is installed and working — it needs two
-snippet updates, not an install. Part 3 (course hero + registration) is the
-one that has never been installed; that is the "change of design list and hero
-in each course page" you were describing. Part 1 depends on whether the
-homepage cohorts snippet and `AA – Home JS` are the versions below.
+**Where you are, checked against the live site on 26 Aug:**
+
+| Part | State |
+|---|---|
+| 0 — cleanup | Nothing left to find. Done. |
+| 1 — homepage | **Done.** `/` updated 25 Aug 14:08, `/es/` 14:11, `/fr/` 14:11 — all three carry the v3 markup, and `/es/` and `/fr/` are down to a single block, so the old `aa-rd` Group is gone. |
+| 2 — calendar | Installed and working. Your `AA – Calendar PHP` already has the duplicate fix. Only `AA – Calendar JS` still needs re-pasting. |
+| 2.5 — claims | Not installed. One snippet, install it on its own. |
+| 3 — hero + registration | **Not installed. This is the outstanding work.** |
 
 **No file uploads anywhere.** Everything is a WPCode snippet, Additional CSS,
 or a page edit.
+
+### How to add any snippet below
+
+Same six steps every time. The **type** matters more than anything else — a CSS
+file pasted into a PHP snippet is what broke the site once already.
+
+1. **WPCode → + Add Snippet → Add Your Custom Code (New Snippet)**
+2. Name it exactly as the table says, e.g. `AA – Register PHP`
+3. **Code Type** dropdown → pick the type the table says: *PHP Snippet*,
+   *CSS Snippet*, or *JavaScript Snippet*
+4. Paste the **whole file**, top to bottom. For a PHP file, include the opening
+   `<?php` only if WPCode's editor is empty — if it pre-fills `<?php`, delete
+   yours so there is only one.
+5. **Insertion → Auto Insert**, then the **Location** the table gives:
+   *Run Everywhere* for PHP, *Site Wide Header* for CSS, *Site Wide Footer*
+   for JavaScript
+6. Toggle **Active** (top right) → **Save Snippet**
+
+Then purge your page cache before judging the result.
+
+**Updating an existing snippet is different:** open it, select all, replace,
+Update. Do not add a second snippet with the same code — you will get
+everything twice.
 
 **The golden rule, learned the hard way:** one snippet per *kind*. CSS goes in
 a CSS snippet, JavaScript in a JavaScript snippet, PHP in a PHP snippet. Never
@@ -36,7 +63,10 @@ snippet with the three split ones. This part only exists to catch leftovers.
 
 ---
 
-## Part 1 — Homepage (already built, not yet installed)
+## Part 1 — Homepage — **done, nothing to do**
+
+All three pages carry the v3 markup and were updated on 25 August. Kept below
+for reference only.
 
 | # | WPCode type | Name | Paste | Settings |
 |---|---|---|---|---|
@@ -81,7 +111,7 @@ the snippets you already have:
 
 | WPCode snippet | Re-paste | What it fixes |
 |---|---|---|
-| `AA – Calendar PHP` | `aa-mini-calendar-wpcode-snippet.php` | **"Aug 27 there are two running"** — the same class stored as two `wp_events` posts now collapses to one bar, keyed on course code + start + end. |
+| ~~`AA – Calendar PHP`~~ | — | **Already done.** The copy you sent me contains the duplicate-collapsing fix. Do not delete this snippet — it is the current one. |
 | `AA – Calendar JS` | `snippets/calendar/aa-calendar.js` | **RTE's Mon/Wed/Fri batches** all drew identical bars. A course appearing more than once in the visible month now labels its bars with the date range instead of the name. |
 
 `AA – Calendar CSS` is unchanged — leave it alone.
@@ -179,6 +209,27 @@ two shortcodes in the pages yourself:
 ```
 
 Step-by-step for that is in `course-page-shortcode-work-order.md`.
+
+### You already set Stripe up — what carries over
+
+Whatever you built stays where it is. This snippet does not touch your Stripe
+account, your products, or your Payment Links. What it needs from you is one
+thing: a **secret key**, in Settings → AA Registration (or as
+`AA_STRIPE_SECRET` in `wp-config.php`). Everything else it creates per click.
+
+- **Payment Links you already made** still work. If you want a specific course
+  to use one instead of a generated session, put
+  `'payment_link' => 'https://buy.stripe.com/…'` on that course's row in
+  `aa_reg_courses()` and it will use it.
+- **Products/prices you already made** are not read by this snippet — the
+  amount comes from the price in `aa_reg_courses()`, so the page and the charge
+  can never disagree. If your Stripe prices differ from that table, the table
+  is what gets charged. Check both before ticking "Prices confirmed".
+- **A webhook you already have** is fine; this adds its own endpoint at
+  `/wp-json/aa/v1/stripe-webhook` for `checkout.session.completed`. Two
+  endpoints on one account is normal.
+- **If you already built a working checkout you are happy with**, tell me and I
+  will wire the register block to it instead — the pay button is one function.
 
 ### Before it can charge anyone
 
