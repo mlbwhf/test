@@ -73,6 +73,24 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /* Double-load guard — see the calendar snippet for why the whole body is
    wrapped rather than guarded with an early return. */
+/* THE DOUBLE-LOAD GUARD BELOW HAS A SHARP EDGE. It stops a second copy of
+   this file from causing a redeclare fatal — but "second" means whichever
+   WPCode happens to run LATER, and the loser is skipped in its entirety. So
+   two active copies do not merge: the OLDER snippet can win outright and the
+   newer one becomes dead code, with no error anywhere to say so.
+
+   That is not hypothetical. It is what "the hero still looks the old way and
+   nothing else changed" means on a site with two active Register PHP
+   snippets: the older copy, from before automatic placement existed, is the
+   one running.
+
+   NEVER LEAVE TWO COPIES ACTIVE. [aa_reg_selftest] prints the build below, so
+   you can tell which copy is live — and if the shortcode prints nothing at
+   all, an older copy without it is the one running. */
+if ( ! defined( 'AA_REG_BUILD' ) ) {
+	define( 'AA_REG_BUILD', '2026-08-26 · autoplace + AI-Native + lazy months' );
+}
+
 if ( ! function_exists( 'aa_reg_courses' ) ) :
 
 /**
@@ -1324,6 +1342,95 @@ function aa_reg_autoplace( $html, $block ) {
 	return $html;
 }
 add_filter( 'render_block', 'aa_reg_autoplace', 10, 2 );
+
+/* ============================================================================
+   [aa_reg_selftest]  —  why is this page not doing what I expect?
+   ----------------------------------------------------------------------------
+   Put it on any page and view it as an administrator; it prints nothing for
+   anyone else, so it is safe to leave in place. It answers, in one look, every
+   question that otherwise takes a round of screenshots:
+
+     - is the snippet running at all
+     - is the swap switched on
+     - did this page resolve to a course, and if not, why not
+     - does this page actually CONTAIN the two blocks the swap looks for
+     - how many batches the schedule generates for it
+
+   That last pair is the one that matters. The hero and the registration are
+   swapped by the same filter, so "the hero changed but the list did not" can
+   only mean the page has an aa-hero block and no aa-reg block — which this
+   prints, instead of leaving it to be guessed at.
+   ========================================================================== */
+function aa_reg_find_classes( $blocks, &$found ) {
+	foreach ( (array) $blocks as $b ) {
+		if ( ! empty( $b['attrs']['className'] ) ) {
+			foreach ( preg_split( '/\s+/', $b['attrs']['className'] ) as $c ) {
+				if ( $c !== '' ) {
+					$key = $b['blockName'] . ' .' . $c;
+					$found[ $key ] = isset( $found[ $key ] ) ? $found[ $key ] + 1 : 1;
+				}
+			}
+		}
+		if ( ! empty( $b['innerBlocks'] ) ) { aa_reg_find_classes( $b['innerBlocks'], $found ); }
+	}
+}
+
+add_shortcode( 'aa_reg_selftest', function () {
+	if ( ! current_user_can( 'manage_options' ) ) { return ''; }
+
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+
+	$courses = aa_reg_courses();
+	$slug    = $obj instanceof WP_Post ? $obj->post_name : '(no post)';
+	$course  = aa_reg_page_course();
+
+	$why = '';
+	if ( $course === '' && $obj instanceof WP_Post ) {
+		if ( ! isset( $courses[ $obj->post_name ] ) ) {
+			$why = ' — no row in aa_reg_courses() for this slug';
+		} else {
+			$anc  = get_post_ancestors( $obj->ID );
+			$root = $anc ? get_post( end( $anc ) ) : null;
+			$why  = $root && in_array( $root->post_name, aa_reg_lang_roots(), true )
+				? ' — under the /' . $root->post_name . '/ language root, English pages only'
+				: ' — slug matches but the page did not resolve';
+		}
+	}
+
+	$found = array();
+	if ( $obj instanceof WP_Post && function_exists( 'parse_blocks' ) ) {
+		aa_reg_find_classes( parse_blocks( $obj->post_content ), $found );
+	}
+	$hero = isset( $found['core/group .aa-hero'] ) ? $found['core/group .aa-hero'] : 0;
+	$reg  = isset( $found['core/group .aa-reg'] )  ? $found['core/group .aa-reg']  : 0;
+
+	$lines = array(
+		'build              : ' . AA_REG_BUILD,
+		'snippet            : loaded (this box proves it)',
+		'swap switched on   : ' . ( aa_reg_autoplace_on() ? 'YES' : 'NO  <- Settings > AA Registration' ),
+		'checkout live      : ' . ( aa_reg_is_live() ? 'YES' : 'no (prices unconfirmed or no key)' ),
+		'this page slug     : ' . $slug,
+		'resolved course    : ' . ( $course !== '' ? $course : 'NONE' . $why ),
+		'',
+		'blocks this page has, that the swap looks for:',
+		'  core/group .aa-hero : ' . ( $hero ? $hero . '  -> hero will be replaced' : '0  <- NOT ON THIS PAGE' ),
+		'  core/group .aa-reg  : ' . ( $reg  ? $reg  . '  -> registration will be replaced' : '0  <- NOT ON THIS PAGE' ),
+	);
+	if ( $course !== '' ) {
+		$c  = $courses[ $course ];
+		$up = aa_reg_upcoming( $course, $c );
+		$lines[] = '';
+		$lines[] = 'schedule for ' . $course . ' : ' . count( $up ) . ' batches, '
+		         . $c['days'] . ' day(s), ' . strtoupper( $c['currency'] ) . ' ' . number_format_i18n( $c['price'] );
+		if ( $up ) { $lines[] = 'first batch        : ' . $up[0]['start'] . ' (' . $up[0]['id'] . ')'; }
+	}
+	$lines[] = '';
+	$lines[] = 'courses configured : ' . implode( ', ', array_keys( $courses ) );
+
+	return '<pre style="font:12px/1.5 monospace;background:#F5FAFA;border:1px solid #CFE3E3;padding:12px;white-space:pre-wrap">'
+		. esc_html( implode( "\n", $lines ) ) . '</pre>';
+} );
 
 /* ============================================================================
    CHECKOUT  —  POST /wp-json/aa/v1/checkout
