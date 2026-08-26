@@ -66,8 +66,11 @@ Two provable problems in the sheet you pasted:
    through `END — Y. home page`, appears verbatim twice at the end. That is
    **~28KB served twice**, on every page of the site. Deleting the second copy
    changes nothing visually.
-2. **The Space Grotesk `@import` is in twice** — once at the top, once indented
-   just below it. A duplicate `@import` is a second render-blocking request.
+2. ~~The Space Grotesk `@import` is in twice.~~ **Wrong — corrected 26 Aug.**
+   The two `@import` lines load *different* families: Newsreader, and Space
+   Grotesk + Instrument Serif. Both are needed. The only real saving here is
+   moving both to Customizer → Typography, which Astra loads with preconnect
+   and `display=swap` instead of render-blocking.
 
 And one to decide:
 
@@ -78,6 +81,13 @@ And one to decide:
    the reverse. Never both, or they drift.
 
 **Sheet size after the dedupe:** roughly 28KB smaller with no visual change.
+
+4. **Ten sections lived only in the Customizer** and had never been exported
+   back to the repo — N7b, N8, N6.1, the curriculum grid, N6.2, the
+   rendering/motion block, W2, X, AA1 and W.1. They are now in
+   `snippets/additional-css-late-sections.css`, and the assembled sheet is
+   `snippets/aa-additional-css-FULL.css`. Regenerating without them would have
+   silently removed all ten.
 
 ---
 

@@ -1,0 +1,242 @@
+/* ============================================================================
+   AA — HOME PAGE HERO (1A)                                    [aa_home_hero]
+   ----------------------------------------------------------------------------
+   WPCode -> CSS Snippet, "AA – Home Hero CSS", Site Wide Header.
+
+   NAMESPACE. Every selector is under .aa-hh. The design handoff used .aa-hero,
+   .aa-hero__grid and .aa-hero__badge -- names the home page's section Y in
+   Additional CSS already defines. Two definitions of one selector in one sheet
+   is decided by load order, not by intent, so nothing here reuses a name that
+   already exists. The old .aa-hero rules simply stop matching once the section
+   is swapped, and can be deleted from section Y whenever you like.
+
+   TOKENS are the handoff's, and they already agree with the site: teal
+   #0E8074, terracotta #D34B2A, panel #FBFAF7 and line #E9E5DB are the same
+   values the course calendar and the register block use.
+   ============================================================================ */
+
+.aa-hh{
+  --ink:#101C33; --teal:#0E8074; --terra:#D34B2A; --terra-dk:#B93E20;
+  --body:#4E4A40; --muted:#6B6455; --muted2:#8A8375; --panel:#FBFAF7;
+  --line:#E9E5DB; --line2:#F1EDE3; --alert:#B0413E; --alert-bg:#FBE9E3;
+  --wrap:1340px;
+  --pad-x:clamp(16px,3vw,40px);
+  background:#fff; color:var(--ink);
+  font-family:'Space Grotesk','Instrument Sans',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.aa-hh *,.aa-hh *::before,.aa-hh *::after{box-sizing:border-box}
+.aa-hh a{color:var(--ink);text-decoration:none}
+.aa-hh a:hover{color:var(--teal)}
+.aa-hh h1,.aa-hh h2{margin:0;font-weight:600;letter-spacing:-.03em}
+.aa-hh p{margin:0}
+
+/* ---------- layout ---------- */
+.aa-hh-grid{
+  display:grid; grid-template-columns:1.02fr .98fr;
+  gap:clamp(28px,3.4vw,56px);
+  padding:clamp(30px,3.4vw,52px) var(--pad-x) clamp(26px,3vw,40px);
+  align-items:start; max-width:var(--wrap); margin:0 auto;
+}
+/* A grid item defaults to min-width:auto, i.e. its MIN-CONTENT width, and a
+   track sized in fr cannot shrink below that. One long unbreakable child is
+   therefore enough to push the whole grid past the viewport — which is exactly
+   what the eyebrow pill did at 390px: 529px of inline-flex content inside a
+   390px column, and the page scrolled sideways. */
+.aa-hh-grid > *{min-width:0}
+
+/* ---------- left column ---------- */
+.aa-hh-badge{
+  display:inline-flex; align-items:center; gap:10px;
+  /* wrap + max-width, or an inline-flex row sizes to max-content and never
+     breaks: this line is 60 characters and the phone is 390px wide */
+  flex-wrap:wrap; max-width:100%;
+  font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:600;
+  line-height:1.5;
+  color:var(--muted); border:1px solid #E2DCCE; border-radius:100px; padding:8px 15px;
+  animation:aa-hh-up .7s ease both;
+}
+.aa-hh-dot{
+  width:7px; height:7px; border-radius:50%; background:var(--teal); flex:0 0 auto;
+  animation:aa-hh-pulse 1.8s ease-in-out infinite;
+}
+.aa-hh-dot--warm{background:var(--terra);animation-duration:1.5s}
+
+.aa-hh-title{
+  font-size:clamp(38px,4.4vw,66px); line-height:1.03; letter-spacing:-.036em;
+  margin:24px 0 0; text-wrap:pretty;
+}
+/* balance, not pretty: each line of the headline is its own block, so the
+   browser is balancing ONE line at a time and "pretty" only protects the last
+   line from an orphan. balance evens the break, which is what stops
+   "Get certified by the / people". */
+.aa-hh-title span{display:block;text-wrap:balance;animation:aa-hh-up .7s .1s ease both}
+.aa-hh-title span + span{animation-delay:.22s}
+.aa-hh-title em{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-weight:400; font-style:italic; color:var(--teal);
+}
+
+.aa-hh-sub{
+  font-size:16.5px; line-height:1.62; color:var(--body);
+  max-width:490px; margin:22px 0 0; animation:aa-hh-up .7s .34s ease both;
+}
+.aa-hh-actions{margin-top:30px;animation:aa-hh-up .7s .46s ease both}
+
+.aa-hh-cta{
+  display:inline-flex; align-items:center; gap:12px; max-width:100%;
+  background:var(--terra); color:#fff !important;
+  padding:16px 26px; border-radius:100px;
+  font-weight:600; font-size:15.5px; min-height:44px;
+  box-shadow:0 12px 26px rgba(211,75,42,.26);
+  transition:background .15s ease;
+}
+.aa-hh-cta:hover{background:var(--terra-dk);color:#fff !important}
+.aa-hh-cta i{font-style:normal;opacity:.75}
+
+.aa-hh-meta{
+  display:flex; align-items:center; gap:12px; margin-top:16px;
+  font-size:13.5px; color:var(--muted); flex-wrap:wrap;
+}
+.aa-hh-meta strong{color:var(--ink)}
+.aa-hh-meta a{color:var(--teal);font-weight:600;border-bottom:1px solid var(--teal)}
+
+/* ---------- right column: the picker ---------- */
+.aa-hh-pick{
+  border:1px solid var(--line); background:var(--panel);
+  border-radius:20px; padding:20px 20px 16px;
+  animation:aa-hh-up .8s .3s ease both;
+}
+.aa-hh-pickhead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.aa-hh-pickhead > *{min-width:0}
+.aa-hh-eyebrow{
+  margin:0; flex-wrap:wrap; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:700; color:var(--muted); display:flex; align-items:center; gap:8px;
+}
+.aa-hh-season{margin:7px 0 0;font-size:19px;font-weight:600;letter-spacing:-.015em}
+.aa-hh-count{margin:0;font-size:12.5px;color:var(--muted);white-space:nowrap}
+
+.aa-hh-chips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 4px}
+.aa-hh-chip{
+  font:inherit; cursor:pointer; min-height:44px; padding:8px 14px; border-radius:100px;
+  font-size:12.5px; font-weight:600; background:#fff; color:var(--body);
+  border:1px solid #DCD7CB;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.aa-hh-chip:hover{border-color:var(--teal)}
+.aa-hh-chip.is-on{background:var(--ink);color:#F7F5F0;border-color:var(--ink)}
+
+/* The list scrolls inside the panel rather than growing the hero. Same
+   decision as the course-page picker: the fold matters more than showing
+   every batch at once, and the count in the header says how many there are. */
+.aa-hh-list{
+  max-height:min(52vh,340px); overflow-y:auto; margin-top:10px; padding-right:6px;
+  display:flex; flex-direction:column; gap:14px;
+  scrollbar-width:thin;
+}
+.aa-hh-weekhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 2px 8px}
+.aa-hh-weekhead h2{margin:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted2)}
+.aa-hh-weekhead p{margin:0;font-size:11.5px;color:var(--muted2)}
+.aa-hh-rows{display:flex;flex-direction:column;gap:7px}
+
+.aa-hh-row{
+  font:inherit; color:inherit; cursor:pointer; width:100%; min-height:56px;
+  display:flex; align-items:center; gap:12px; padding:10px 13px;
+  border-radius:13px; text-align:left; background:#fff; border:1px solid var(--line);
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.aa-hh-row:hover{border-color:#CFC9BA}
+.aa-hh-row.is-on{border:1.5px solid var(--teal);box-shadow:0 0 0 3px rgba(14,128,116,.12)}
+
+.aa-hh-date{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:42px; flex:0 0 auto; border-right:1px solid var(--line); padding-right:10px;
+}
+.aa-hh-day{font-size:18px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.aa-hh-mon{font-size:9.5px;letter-spacing:.1em;font-weight:600;color:var(--muted2);margin-top:2px}
+
+.aa-hh-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
+.aa-hh-top{display:flex;align-items:center;gap:8px;min-width:0}
+.aa-hh-name{
+  font-size:14.5px; font-weight:600; letter-spacing:-.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.aa-hh-flag{
+  font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--teal); background:#F4FAF9; border:1px solid #D6EBE8;
+  padding:3px 8px; border-radius:100px; white-space:nowrap; flex:none;
+}
+.aa-hh-rowmeta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.aa-hh-status{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.aa-hh-status.is-low{
+  font-weight:700; color:var(--alert); background:var(--alert-bg);
+  padding:2px 8px; border-radius:100px;
+}
+
+.aa-hh-end{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.aa-hh-price{font-size:13px;font-weight:600;white-space:nowrap}
+.aa-hh-check{
+  width:22px; height:22px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; flex:0 0 auto;
+  background:#F4F2ED; color:#C9C3B4;
+}
+.aa-hh-row.is-on .aa-hh-check{background:var(--teal);color:#fff}
+
+.aa-hh-nomatch{margin:8px 2px;font-size:13px;color:var(--muted)}
+.aa-hh-foot{margin:14px 0 0;font-size:12px;color:var(--muted2);border-top:1px solid #EDE9DF;padding-top:12px}
+.aa-hh-foot a{color:var(--teal);font-weight:600}
+
+/* The currency note. Deliberately quiet but not hidden: same screen as the
+   price, above the fold of the panel, and readable -- 11px at this contrast
+   passes, 9px grey would not. */
+.aa-hh-legal{
+  margin:10px 0 0; font-size:11px; line-height:1.5; color:var(--muted2);
+}
+
+.aa-hh-empty{
+  display:block; padding:20px; border-radius:13px; background:#fff;
+  border:1px solid var(--line); font-size:15px; font-weight:600; color:var(--teal);
+}
+
+/* ---------- trust row ---------- */
+.aa-hh-trust{
+  border-top:1px solid var(--line2); background:var(--panel);
+  padding:16px var(--pad-x);
+  display:flex; align-items:center; gap:clamp(18px,3vw,44px); flex-wrap:wrap;
+}
+.aa-hh-trust-label{
+  font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:700; color:var(--muted2);
+}
+.aa-hh-trust-item{font-size:14.5px;font-weight:600;color:var(--body);letter-spacing:-.01em}
+
+/* ---------- motion ---------- */
+@keyframes aa-hh-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes aa-hh-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .aa-hh-grid{grid-template-columns:1fr;gap:28px}
+  .aa-hh-title{font-size:clamp(32px,8vw,46px)}
+  /* On one column the panel is not competing with anything for height, so the
+     list runs full length instead of scrolling inside a short box. */
+  .aa-hh-list{max-height:none;overflow:visible;padding-right:0}
+}
+@media (max-width:520px){
+  .aa-hh-row{flex-wrap:wrap}
+  .aa-hh-end{width:100%;justify-content:space-between;padding-left:54px}
+}
+
+/* Astra and the site sheet style content links with !important, which
+   specificity cannot beat. These two properties -- and only these two -- are
+   re-asserted the same way, or the terracotta CTA renders with #0E3A44 text
+   and every link in the hero is underlined. */
+.aa-hh a[href],.aa-hh a:hover,.aa-hh a:focus,.aa-hh a:visited{text-decoration:none !important}
+.aa-hh .aa-hh-cta,.aa-hh .aa-hh-cta:hover{color:#fff !important}
+.aa-hh .aa-hh-meta a,.aa-hh .aa-hh-foot a,.aa-hh .aa-hh-empty{color:var(--teal) !important}
+
+@media (prefers-reduced-motion:reduce){
+  .aa-hh *,.aa-hh *::before,.aa-hh *::after{animation:none !important;transition:none !important}
+}
+.aa-hh :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:8px}

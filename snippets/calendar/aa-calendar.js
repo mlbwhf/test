@@ -38,9 +38,32 @@
     var view = new Date(today.getFullYear(), today.getMonth(), 1);
     var last = new Date(today.getFullYear(), today.getMonth() + (cfg.months - 1), 1);
     var sel = null, hov = null;
-    // Open on the soonest upcoming cohort so the panel is never empty on load.
-    for (var k = 0; k < ev.length; k++) { if (!ev[k].past) { sel = ev[k].i; break; } }
-    if (sel === null && ev.length) { sel = ev[0].i; }
+
+    /* OPEN ON A DATE SOMEONE CAN ACTUALLY BUY.
+       Nobody should have to hunt for the first date that works. The panel
+       opens on the soonest upcoming cohort that the registration can sell,
+       so the checkout form is there and filled in on arrival and clicking a
+       bar is only for choosing a DIFFERENT date.
+
+       Two fallbacks, in order: the soonest upcoming cohort even if it is not
+       on sale (better to show it with a link to the course page than to open
+       on nothing), then the first cohort at all, so a page whose classes have
+       all finished still describes something.
+
+       Sorted by date rather than trusting array order — the events arrive
+       start_ts ascending today, but a panel that silently opens on the wrong
+       cohort if that ever changes is not worth the saved line. */
+    var sellableNow = window.AA_REG && window.AA_REG.dates;
+    var upcoming = ev.filter(function (o) { return !o.past; })
+                     .sort(function (a, b) { return a.s - b.s; });
+
+    var firstSellable = upcoming.filter(function (o) {
+      return !sellableNow || sellableNow.indexOf(o.iso) !== -1;
+    })[0];
+
+    if (firstSellable)     { sel = firstSellable.i; }
+    else if (upcoming[0])  { sel = upcoming[0].i; }
+    else if (ev.length)    { sel = ev[0].i; }
     // ...and open the GRID on that cohort's month, not on today's. A course
     // page whose next class is two months out would otherwise load showing an
     // empty current month while the panel described a cohort not on screen.

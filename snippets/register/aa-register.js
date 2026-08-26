@@ -225,6 +225,24 @@
 
   rescan();
 
+  /* ?cohort=<id> — the batch someone arrived intending to buy.
+     The home page hero and the hub calendar both deep-link this way, and
+     without a reader they land on the course page's DEFAULT batch, silently
+     losing the date the visitor actually picked. adopt() handles a batch whose
+     month has not been fetched yet, so a link to a batch four months out
+     works the same as one to next week. */
+  (function () {
+    var want;
+    try { want = new URLSearchParams(window.location.search).get('cohort'); }
+    catch (e) { return; }
+    if (!want) { return; }
+    /* A wp_events post id is all digits; our batch ids are "<slug>-<date>".
+       A bare number can never match a batch, and passing it to adopt() would
+       fetch every month looking for it. */
+    if (/^\d+$/.test(want)) { return; }
+    adopt({ cohort: want });
+  })();
+
   /* one-way: the hero hands its pick down to this calendar and never listens back */
   document.addEventListener('aa:cohort-select', function (e) {
     if (!e.detail) return;
