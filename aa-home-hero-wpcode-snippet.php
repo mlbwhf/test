@@ -375,6 +375,11 @@ function aa_hh_config_script() {
 
 	return '<script>window.AA_REG=window.AA_REG||' . wp_json_encode( array(
 		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
+		/* Stripe opens in a NEW TAB from here. The home page is not a checkout
+		   page -- someone reading it has usually not finished reading it -- and
+		   replacing it with a card form ends the visit whether or not they buy.
+		   Course pages keep the same tab: there, buying is the errand. */
+		'target'         => '_blank',
 		'symbol'         => '$',
 		'locale'         => 'en-US',
 		'nonce'          => wp_create_nonce( 'wp_rest' ),

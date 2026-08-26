@@ -139,6 +139,34 @@
     r.addEventListener('click', function () { select(r); });
   });
 
+  /* RESERVE. The form is already on screen and already pointed at the right
+     batch, so scrolling to it achieved nothing a buyer could see -- the button
+     looked broken. It now does the next actual step instead:
+
+       no email yet  -> put the cursor in the email field
+       email present -> submit, which is the same path the Pay button takes
+
+     Not a second checkout, and not a link away: one button, one flow, and the
+     batch it names is the batch that gets bought. */
+  if (elForm && elCta) {
+    elCta.addEventListener('click', function (e) {
+      var email = elForm.querySelector('[name="email"]');
+      if (!email) { return; }               // no form to drive; follow the href
+      e.preventDefault();
+
+      var ok = /.+@.+\..+/.test((email.value || '').trim());
+      if (ok) {
+        if (typeof elForm.requestSubmit === 'function') { elForm.requestSubmit(); }
+        else { elForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); }
+        return;
+      }
+
+      try { elForm.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      catch (err) { elForm.scrollIntoView(); }
+      email.focus({ preventScroll: true });
+    });
+  }
+
   select(state.row);
   apply();
 })();

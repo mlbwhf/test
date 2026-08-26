@@ -3,6 +3,37 @@
    real Stripe Checkout redirect. Hero half unchanged and deliberately so.
    Load order: calendar first (it owns the selection), hero second. */
 
+/* ============================================================================
+   WHERE STRIPE OPENS
+   ----------------------------------------------------------------------------
+   Same tab on a course page: the buyer came to buy that course, and Stripe's
+   own back link returns them to it.
+
+   A NEW TAB where the page says so (AA_REG.target === '_blank') — the home
+   page, which is not a checkout page and which someone is usually still
+   reading. Closing it to show a card form loses the rest of the visit.
+
+   The tab is opened SYNCHRONOUSLY inside the click, before the fetch, and its
+   location is set when the URL arrives. Opening it in the fetch callback is
+   what popup blockers exist to stop: by then the click is over and the call
+   is not user-initiated any more, so the browser silently drops it and the
+   buyer sees a spinner that never resolves. If the blocker refuses even the
+   synchronous open, win is null and we fall back to this tab rather than
+   stranding the purchase.
+   ========================================================================== */
+function aaRegOpener() {
+  var cfg = window.AA_REG || {};
+  if (cfg.target !== '_blank') { return null; }
+  try { return window.open('', '_blank'); } catch (e) { return null; }
+}
+function aaRegGo(win, url) {
+  if (win && !win.closed) {
+    try { win.location.replace(url); return; } catch (e) { /* fall through */ }
+  }
+  if (win && !win.closed) { try { win.close(); } catch (e) {} }
+  window.location.assign(url);
+}
+
 /* Agile Agilist — Course Calendar (2B shell + 4D dense picker). Vanilla, IIFE, no deps.
    Progressive enhancement: the markup already lists every batch with the next available one
    selected; this file adds month tabs, filtering, seats and the two-step wizard.
@@ -352,6 +383,8 @@
     var wasLabel = btnPay ? btnPay.textContent : '';
     if (btnPay) { btnPay.disabled = true; btnPay.textContent = CFG.msgSending || 'Taking you to checkout…'; }
 
+    var win = aaRegOpener();
+
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': CFG.nonce || '' },
@@ -360,11 +393,12 @@
       return r.json().then(function (j) { return { ok: r.ok, body: j }; });
     }).then(function (res) {
       if (res.ok && res.body && res.body.url) {
-        window.location.assign(res.body.url);   // Stripe hosts the card form
+        aaRegGo(win, res.body.url);   // Stripe hosts the card form
         return;
       }
       throw new Error((res.body && res.body.message) || 'checkout failed');
     }).catch(function (err) {
+      if (win && !win.closed) { try { win.close(); } catch (e) {} }
       if (btnPay) { btnPay.disabled = false; btnPay.textContent = wasLabel; }
       txt(elHint2 || elHint, (err && err.message) || CFG.msgError ||
         'We could not start checkout. Please try again, or email us and we will register you by hand.');
@@ -621,6 +655,8 @@
     var was = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = CFG.msgSending || 'Taking you to Stripe…'; }
 
+    var win = aaRegOpener();
+
     fetch(CFG.checkout, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': CFG.nonce || '' },
@@ -628,9 +664,10 @@
     }).then(function (r) {
       return r.json().then(function (j) { return { ok: r.ok, body: j }; });
     }).then(function (res) {
-      if (res.ok && res.body && res.body.url) { window.location.assign(res.body.url); return; }
+      if (res.ok && res.body && res.body.url) { aaRegGo(win, res.body.url); return; }
       throw new Error((res.body && res.body.message) || 'checkout failed');
     }).catch(function (err) {
+      if (win && !win.closed) { try { win.close(); } catch (e) {} }
       if (btn) { btn.disabled = false; btn.textContent = was; }
       if (note) note.textContent = (err && err.message) || CFG.msgError || 'We could not start checkout.';
     });

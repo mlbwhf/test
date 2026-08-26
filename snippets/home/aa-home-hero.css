@@ -28,8 +28,15 @@
 .aa-hh *,.aa-hh *::before,.aa-hh *::after{box-sizing:border-box}
 .aa-hh a{color:var(--ink);text-decoration:none}
 .aa-hh a:hover{color:var(--teal)}
-.aa-hh h1,.aa-hh h2{margin:0;font-weight:600;letter-spacing:-.03em}
-.aa-hh p{margin:0}
+/* SPECIFICITY, and it bit: ".aa-hh p" is (0,1,1) and ".aa-hh-sub" is (0,1,0),
+   so a blanket reset written to tame theme margins silently beat every margin
+   this file sets on its own elements — the badge, the headline, the sub and
+   the meta line all rendered flush against each other. Every p and heading
+   here carries a class, so the reset is scoped to the ones that do not: it
+   still catches anything the theme or an editor drops in, and stops
+   outranking the component. */
+.aa-hh h1:not([class]),.aa-hh h2:not([class]),.aa-hh p:not([class]){margin:0}
+.aa-hh h1,.aa-hh h2{font-weight:600;letter-spacing:-.03em}
 
 /* ---------- layout ---------- */
 .aa-hh-grid{
@@ -44,6 +51,10 @@
    what the eyebrow pill did at 390px: 529px of inline-flex content inside a
    390px column, and the page scrolled sideways. */
 .aa-hh-grid > *{min-width:0}
+/* Keep the prose off the gutter: the sub-paragraph is already capped at
+   490px, but the headline is not, and at 1100px it ran right up to the
+   picker. */
+.aa-hh-pitch{padding-right:clamp(0px,1.5vw,24px)}
 
 /* ---------- left column ---------- */
 .aa-hh-badge{
@@ -62,9 +73,16 @@
 }
 .aa-hh-dot--warm{background:var(--terra);animation-duration:1.5s}
 
+/* Sized for the COLUMN, not the viewport.
+   The handoff's clamp(40px,4.4vw,68px) is written for a headline that owns
+   the page width; here it sits in a ~590px column beside the picker, and at
+   4.4vw it ran to four lines at every desktop width — measured 1440/1280/
+   1100/1000, all four. 2.9vw with a 42px ceiling holds the intended two lines
+   across the same range. If the picker ever moves below the headline, this
+   goes back up. */
 .aa-hh-title{
-  font-size:clamp(38px,4.4vw,66px); line-height:1.03; letter-spacing:-.036em;
-  margin:24px 0 0; text-wrap:pretty;
+  font-size:clamp(30px,2.8vw,40px); line-height:1.06; letter-spacing:-.032em;
+  margin:26px 0 0; text-wrap:pretty;
 }
 /* balance, not pretty: each line of the headline is its own block, so the
    browser is balancing ONE line at a time and "pretty" only protects the last
@@ -79,9 +97,11 @@
 
 .aa-hh-sub{
   font-size:16.5px; line-height:1.62; color:var(--body);
-  max-width:490px; margin:22px 0 0; animation:aa-hh-up .7s .34s ease both;
+  /* 26px, not 22: the headline's last line ends in a descender-heavy italic
+     ("transformations.") and 22px read as touching it. */
+  max-width:490px; margin:24px 0 0; animation:aa-hh-up .7s .34s ease both;
 }
-.aa-hh-actions{margin-top:30px;animation:aa-hh-up .7s .46s ease both}
+.aa-hh-actions{margin-top:32px;animation:aa-hh-up .7s .46s ease both}
 
 .aa-hh-cta{
   display:inline-flex; align-items:center; gap:12px; max-width:100%;
@@ -95,7 +115,7 @@
 .aa-hh-cta i{font-style:normal;opacity:.75}
 
 .aa-hh-meta{
-  display:flex; align-items:center; gap:12px; margin-top:16px;
+  display:flex; align-items:center; gap:12px; margin-top:20px;
   font-size:13.5px; color:var(--muted); flex-wrap:wrap;
 }
 .aa-hh-meta strong{color:var(--ink)}
@@ -231,7 +251,9 @@
 /* ---------- responsive ---------- */
 @media (max-width:900px){
   .aa-hh-grid{grid-template-columns:1fr;gap:28px}
-  .aa-hh-title{font-size:clamp(32px,8vw,46px)}
+  /* Single column, so the headline has the full width back — but 8vw put it
+     at 46px in a 564px column at 600px wide, which is three lines again. */
+  .aa-hh-title{font-size:clamp(29px,6.4vw,40px)}
   /* On one column the panel is not competing with anything for height, so the
      list runs full length instead of scrolling inside a short box. */
   .aa-hh-list{max-height:none;overflow:visible;padding-right:0}

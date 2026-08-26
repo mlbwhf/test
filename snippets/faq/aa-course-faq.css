@@ -21,8 +21,11 @@
   -webkit-font-smoothing:antialiased;
 }
 .aa-fq *,.aa-fq *::before,.aa-fq *::after{box-sizing:border-box}
-.aa-fq p{margin:0}
-.aa-fq h2,.aa-fq h3{margin:0;font-weight:600}
+/* Scoped to unclassed elements only — ".aa-fq p" is (0,1,1) and would
+   outrank every ".aa-fq-*" margin this file sets. See the note in the home
+   hero's stylesheet; same trap, same fix. */
+.aa-fq p:not([class]),.aa-fq h2:not([class]),.aa-fq h3:not([class]){margin:0}
+.aa-fq h2,.aa-fq h3{font-weight:600}
 
 .aa-fq-grid{
   display:grid; grid-template-columns:auto 1fr; gap:clamp(24px,3vw,48px);
