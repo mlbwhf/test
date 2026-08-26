@@ -267,13 +267,45 @@
         '<ul class="aa-mcal-inc">' +
           bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>';
 
+      /* CHECKOUT IN THE PANEL, when this page can actually take the money.
+         That means two things being true: the registration snippet is running
+         (window.AA_REG exists, with a checkout URL) AND this calendar is the
+         per-course mini rather than a hub-page calendar covering every track,
+         where "which course" is not yet decided. Otherwise the panel keeps
+         its link to the course page, which is where the buying happens.
+
+         The form carries the START DATE, not this bar's id: the bar is a
+         wp_events post and the batches on sale are generated, so the server
+         resolves the two by date. See aa_reg_find_by_date(). */
+      var canBuy = !!(window.AA_REG && window.AA_REG.checkout &&
+                      window.AA_REG.course && cfg.link === 'enroll');
+
       h += '<div class="aa-mcal-reg">' +
         (o.price ? '<div class="aa-mcal-price">' + esc(money(o.price)) +
-          '<small>' + esc(S.exam_incl) + '</small></div>' : '') +
-        '<a class="aa-mcal-cta" href="' + esc(regHref(o)) + '" data-reg="' + o.i + '">' +
-          esc(S.register) + '</a>' +
-        '<p class="aa-mcal-note">' + esc(S.reassure) + '</p>' +
-        '<a class="aa-mcal-more" href="' + esc(m.url) + '">' + esc(S.course_page) + '</a>' +
+          '<small>' + esc(S.exam_incl) + '</small></div>' : '');
+
+      if (canBuy) {
+        h += '<form class="aareg-inline aa-mcal-inline" data-aa-inline novalidate' +
+               ' data-start="' + esc(o.s) + '">' +
+             '<label class="aareg-inline-field"><span class="aacal-sr">Work email</span>' +
+             '<input name="email" type="email" autocomplete="email" inputmode="email"' +
+             ' placeholder="Work email" required></label>' +
+             '<div class="aareg-inline-row"><div class="aareg-inline-stepper">' +
+             '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>' +
+             '<span data-inline-seats-value aria-live="polite">1</span>' +
+             '<button type="button" data-inline-seats="1" aria-label="More seats">+</button></div>' +
+             '<p class="aareg-inline-total" data-inline-total></p></div>' +
+             '<button type="submit" class="aareg-inline-pay" data-inline-pay>' +
+               esc(S.register) + '</button>' +
+             '<p class="aareg-inline-note" data-inline-note>' + esc(S.reassure) + '</p>' +
+             '</form>';
+      } else {
+        h += '<a class="aa-mcal-cta" href="' + esc(regHref(o)) + '" data-reg="' + o.i + '">' +
+               esc(S.register) + '</a>' +
+             '<p class="aa-mcal-note">' + esc(S.reassure) + '</p>';
+      }
+
+      h += '<a class="aa-mcal-more" href="' + esc(m.url) + '">' + esc(S.course_page) + '</a>' +
         '</div>';
       el.innerHTML = h;
     }

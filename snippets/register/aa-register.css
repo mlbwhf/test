@@ -340,3 +340,32 @@
   margin-top:44px !important;
   margin-bottom:6px !important;
 }
+
+/* ---------------------------------------------------------------------------
+   IN-PLACE CHECKOUT — the compact form that appears wherever a batch is chosen
+   (hero picker, month calendar panel). The two-step wizard in the schedule
+   keeps its own styling; this is the small sibling.
+   ------------------------------------------------------------------------- */
+.aareg-inline{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.aareg-inline-field input{width:100%;min-height:46px;padding:12px 14px;border-radius:12px;
+  border:1px solid var(--line3);background:var(--paper);color:var(--ink);
+  font:inherit;font-size:15px}
+.aareg-inline-field input:focus-visible{outline:2px solid var(--teal-b);outline-offset:1px;border-color:var(--teal-b)}
+.aareg-inline-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.aareg-inline-stepper{display:flex;align-items:center;gap:2px;border:1px solid var(--line3);
+  border-radius:100px;background:var(--paper);padding:3px}
+.aareg-inline-stepper button{width:34px;height:34px;border:0;border-radius:50%;background:transparent;
+  color:var(--ink);font-size:17px;line-height:1;cursor:pointer;font-family:inherit}
+.aareg-inline-stepper button:hover{background:var(--chip)}
+.aareg-inline-stepper span{min-width:26px;text-align:center;font-size:15px;font-weight:600}
+.aareg-inline-total{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:0}
+.aareg-inline-pay{min-height:50px;border:0;border-radius:100px;background:var(--ink);color:#F7F5F0;
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;padding:14px 20px}
+.aareg-inline-pay:hover:not(:disabled){background:var(--teal-b)}
+.aareg-inline-pay:disabled{opacity:.55;cursor:not-allowed}
+.aareg-inline-pay:focus-visible{outline:2px solid var(--teal-b);outline-offset:2px}
+.aareg-inline-note{font-size:11.5px;line-height:1.5;color:var(--faint);text-align:center;margin:0}
+
+/* In the calendar's panel the form sits on a tinted surface, so the input
+   needs to stay white rather than inheriting it. */
+.aa-mcal .aareg-inline-field input{background:#fff}

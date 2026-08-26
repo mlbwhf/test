@@ -723,6 +723,98 @@ function aa_reg_find( $cohort_id ) {
 }
 
 /**
+ * The same lookup, by course and start date.
+ *
+ * For anything holding a date rather than one of our generated ids — the
+ * calendar, whose bars are wp_events posts. Resolving here rather than
+ * trusting a client-supplied id keeps one rule intact: the price and the seat
+ * count come from the generated schedule, never from the request.
+ */
+function aa_reg_find_by_date( $course_key, $start ) {
+	$courses = aa_reg_courses();
+	if ( ! isset( $courses[ $course_key ] ) ) { return null; }
+	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start ) ) { return null; }
+
+	$course = $courses[ $course_key ];
+	foreach ( aa_reg_generate( $course_key, $course ) as $c ) {
+		if ( $c['start'] === $start ) {
+			return array( 'slug' => $course_key, 'course' => $course, 'cohort' => $c );
+		}
+	}
+	return null;
+}
+
+/**
+ * The compact in-place checkout.
+ *
+ * One email field, a seat stepper, a total and a pay button — the smallest
+ * thing that can take money. It goes wherever a batch can be chosen, so a
+ * buyer who has already decided never has to travel to a form further down
+ * the page to say so.
+ *
+ * It is NOT the two-step wizard. That one stays in the registration block,
+ * where the review screen has room to restate what is being bought. Repeating
+ * a 30KB wizard three times on one page would be three times the markup for
+ * the same purchase.
+ *
+ * $prefix namespaces the classes so the hero, the calendar panel and the
+ * schedule can each hold one without their JS or CSS colliding.
+ */
+/**
+ * The JS config, emitted once per page.
+ *
+ * The hero and the registration each need it, and a page carries both, so it
+ * is emitted by whichever renders first and skipped by the other. Two copies
+ * would be harmless but the second would silently overwrite the first, which
+ * is the kind of thing that only shows up when the two disagree.
+ */
+function aa_reg_config_script( $course_key, $course, $cur ) {
+	static $done = false;
+	if ( $done ) { return ''; }
+	$done = true;
+	$live = aa_reg_is_live();
+
+	return '<script>window.AA_REG=' . wp_json_encode( array(
+		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
+		'batches'        => esc_url_raw( rest_url( 'aa/v1/batches' ) ),
+		'course'         => $course_key,
+		// The authoritative price, for anything rendering a total without a
+		// batch of its own to read it from — the calendar's panel form.
+		'price'          => (int) $course['price'],
+		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '\u20ac' : '$' ),
+		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
+		'nonce'          => wp_create_nonce( 'wp_rest' ),
+		'msgUnavailable' => 'Online payment is switched off right now \u2014 please contact us and we will register you.',
+		'msgSending'     => 'Taking you to Stripe\u2026',
+		'msgError'       => 'We could not start checkout. Please try again, or email us and we will register you by hand.',
+	) ) . ';</script>';
+}
+
+function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg' ) {
+	$live = aa_reg_is_live();
+	return '<form class="aareg-inline ' . esc_attr( $prefix ) . '-inline" data-aa-inline novalidate'
+	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
+	     . ' data-price="' . (int) $course['price'] . '">'
+	     . '<label class="aareg-inline-field"><span class="aacal-sr">Work email</span>'
+	     . '<input name="email" type="email" autocomplete="email" inputmode="email"'
+	     . ' placeholder="Work email" required></label>'
+	     . '<div class="aareg-inline-row">'
+	     . '<div class="aareg-inline-stepper">'
+	     . '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>'
+	     . '<span data-inline-seats-value aria-live="polite">1</span>'
+	     . '<button type="button" data-inline-seats="1" aria-label="More seats">+</button></div>'
+	     . '<p class="aareg-inline-total" data-inline-total>'
+	     . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</p></div>'
+	     . '<button type="submit" class="aareg-inline-pay" data-inline-pay' . ( $live ? '' : ' disabled' ) . '>'
+	     . esc_html( $live ? 'Pay securely with Stripe' : 'Registration temporarily unavailable' ) . '</button>'
+	     . '<p class="aareg-inline-note" data-inline-note>'
+	     . esc_html( $live
+	         ? 'Exam fee included. You will be taken to Stripe to pay.'
+	         : 'Online payment is switched off right now — please contact us.' )
+	     . '</p></form>';
+}
+
+/**
  * Stripe credentials. Constants win over options so wp-config.php can hold
  * them; the options exist because this site installs code by pasting, not by
  * editing files.
@@ -1045,9 +1137,16 @@ function aa_reg_hero( $atts ) {
 		$i++;
 	}
 
-	$h .= '<a class="aahero-cta" href="#aacal-form" data-hero-cta>Reserve <span data-hero-short>'
-	    . esc_html( aa_reg_range( $first['start'], $first['end'], true ) ) . '</span> &#10230;</a>';
-	$h .= '<p class="aahero-hint">Takes you to the form below</p>';
+	/* The hero takes the money itself. It used to carry a "Reserve <dates>"
+	   button that scrolled to the form at the bottom of the page — which is a
+	   round trip and a re-pick for someone who has already chosen up here. The
+	   compact checkout below is the whole purchase.
+
+	   The link to the full schedule stays, because the hero shows one course's
+	   next few months and someone may genuinely want the rest. */
+	$h .= aa_reg_config_script( $a['course'], $course, $cur );
+	$h .= aa_reg_inline( $course, $first, $cur, 'aahero' );
+	$h .= '<p class="aahero-hint"><a href="#aacal" data-hero-cta>See the full schedule &#10230;</a></p>';
 	$h .= '<p class="aahero-private">Dates don\'t work? <a href="/contact/">Ask for a private cohort</a></p>';
 	$h .= '</div></div>';
 
@@ -1246,19 +1345,7 @@ function aa_reg_panel( $atts ) {
 
 	$h .= '</section>';
 
-	/* Config for the JS: the REST route it should post to and a nonce. Emitted
-	   next to the markup so it cannot drift from what was registered. */
-	$h .= '<script>window.AA_REG=' . wp_json_encode( array(
-		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
-		'batches'        => esc_url_raw( rest_url( 'aa/v1/batches' ) ),
-		'course'         => $a['course'],
-		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '€' : '$' ),
-		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
-		'nonce'          => wp_create_nonce( 'wp_rest' ),
-		'msgUnavailable' => 'Online payment is switched off right now — please contact us and we will register you.',
-		'msgSending'     => 'Taking you to Stripe…',
-		'msgError'       => 'We could not start checkout. Please try again, or email us and we will register you by hand.',
-	) ) . ';</script>';
+	$h .= aa_reg_config_script( $a['course'], $course, $cur );
 	return $h;
 }
 add_shortcode( 'aa_course_register', 'aa_reg_panel' );
@@ -1545,6 +1632,17 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	$d = (array) $req->get_json_params();
 
 	$found = aa_reg_find( isset( $d['cohort'] ) ? (string) $d['cohort'] : '' );
+
+	/* SECOND WAY IN: course + start date.
+	   The calendar's bars are wp_events posts, so the id it holds belongs to a
+	   different space than the generated batch ids — it can never satisfy the
+	   lookup above. It sends the start date instead, and the batch is resolved
+	   HERE, against the same generated schedule, so the price still comes from
+	   the table and not from anything the browser said. */
+	if ( ! $found && ! empty( $d['course'] ) && ! empty( $d['start'] ) ) {
+		$found = aa_reg_find_by_date( (string) $d['course'], (string) $d['start'] );
+	}
+
 	if ( ! $found ) {
 		return new WP_Error( 'aa_cohort', 'That cohort is not available.', array( 'status' => 400 ) );
 	}

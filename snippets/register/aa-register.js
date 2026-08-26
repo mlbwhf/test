@@ -443,11 +443,25 @@
       c.classList.toggle('is-on', on);
       c.querySelector('.aahero-cardbtn').setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    elRange.textContent = card.getAttribute('data-range');
-    elShort.textContent = card.getAttribute('data-short');
+    /* Both are optional. [data-hero-short] lived inside the old "Reserve
+       <dates>" button, which the in-place checkout replaced — writing to it
+       unguarded threw on every hero pick, and because the throw happened
+       during parse it took the in-place checkout's own listeners down with
+       it. A hero element this code does not own is an element it must test
+       for. */
+    if (elRange) elRange.textContent = card.getAttribute('data-range');
+    if (elShort) elShort.textContent = card.getAttribute('data-short');
     if (emit !== false) {
+      /* start and price travel with the pick so the in-place checkout can
+         retarget itself without re-reading the DOM — and so a listener that
+         only understands dates (the calendar) can follow along too. */
       document.dispatchEvent(new CustomEvent('aa:cohort-select', {
-        detail: { cohort: card.getAttribute('data-cohort'), source: 'hero' }
+        detail: {
+          cohort: card.getAttribute('data-cohort'),
+          start:  card.getAttribute('data-start'),
+          price:  parseInt(card.getAttribute('data-price'), 10) || 0,
+          source: 'hero'
+        }
       }));
     }
   }
@@ -467,4 +481,124 @@
   });
 
   select(cards[0], false); // next available — default, never empty
+})();
+
+
+/* ============================================================================
+   IN-PLACE CHECKOUT — every [data-aa-inline] form on the page
+   ----------------------------------------------------------------------------
+   A batch can be chosen in three places: the hero picker, the schedule below,
+   and the month calendar. Each of them now takes the money where it stands,
+   instead of sending someone to a form elsewhere on the page to choose the
+   same batch a second time.
+
+   One handler for all of them, delegated from the document, so a form that
+   arrives later — the calendar builds its panel in JS — is wired without
+   anything having to re-run.
+
+   WHAT IS SENT, AND WHAT IS NOT. The form posts a cohort id (or a course and
+   a start date, which is all the calendar has), a seat count and an email.
+   It does NOT post a price. data-price is on the form so the total can be
+   shown while typing; the amount charged is looked up on the server from the
+   same generated schedule. Editing data-price in devtools changes the number
+   on screen and nothing about the charge.
+   ========================================================================== */
+(function () {
+  var CFG = window.AA_REG || {};
+  var MAX = 12;
+
+  function money(n) {
+    return (CFG.symbol || '$') + n.toLocaleString(CFG.locale || 'en-US');
+  }
+  function seatsOf(form) {
+    return parseInt(form.getAttribute('data-seats') || '1', 10) || 1;
+  }
+  function paint(form) {
+    // A form built by the calendar has no price of its own — the course price
+    // from the config is the same number the server will charge.
+    var price = parseInt(form.getAttribute('data-price'), 10) || CFG.price || 0;
+    var n = seatsOf(form);
+    var v = form.querySelector('[data-inline-seats-value]');
+    var t = form.querySelector('[data-inline-total]');
+    if (v) v.textContent = String(n);
+    if (t) t.textContent = money(price * n);
+  }
+
+  /* Keep a form pointed at whatever its own component currently has selected.
+     Exported so the pickers can call it; also driven by the shared
+     aa:cohort-select event so a pick made anywhere updates every form. */
+  function retarget(form, detail) {
+    if (!form || !detail) return;
+    if (detail.cohort) form.setAttribute('data-cohort', detail.cohort);
+    if (detail.start) form.setAttribute('data-start', detail.start);
+    if (detail.price) form.setAttribute('data-price', String(detail.price));
+    paint(form);
+  }
+  window.AA_REG_RETARGET = retarget;
+
+  document.addEventListener('click', function (e) {
+    var step = e.target.closest && e.target.closest('[data-inline-seats]');
+    if (!step) return;
+    var form = step.closest('[data-aa-inline]');
+    if (!form) return;
+    var left = parseInt(form.getAttribute('data-seats-left'), 10);
+    var cap = Math.min(MAX, isNaN(left) ? MAX : left);
+    var n = seatsOf(form) + parseInt(step.getAttribute('data-inline-seats'), 10);
+    form.setAttribute('data-seats', String(Math.min(cap, Math.max(1, n))));
+    paint(form);
+  });
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target.closest && e.target.closest('[data-aa-inline]');
+    if (!form) return;
+    e.preventDefault();
+
+    var note = form.querySelector('[data-inline-note]');
+    var btn = form.querySelector('[data-inline-pay]');
+    var email = (form.querySelector('[name="email"]') || {}).value || '';
+    if (!/.+@.+\..+/.test(email.trim())) {
+      if (note) note.textContent = 'Please enter a valid work email.';
+      return;
+    }
+    if (!CFG.checkout) {
+      if (note) note.textContent = CFG.msgUnavailable || 'Registration is not available right now.';
+      return;
+    }
+
+    var payload = { seats: seatsOf(form), email: email.trim() };
+    var cohort = form.getAttribute('data-cohort');
+    if (cohort) payload.cohort = cohort;
+    // The calendar has a date, not one of our ids — the server resolves it.
+    if (form.getAttribute('data-start')) {
+      payload.course = CFG.course;
+      payload.start = form.getAttribute('data-start');
+    }
+
+    var was = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = CFG.msgSending || 'Taking you to Stripe…'; }
+
+    fetch(CFG.checkout, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': CFG.nonce || '' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, body: j }; });
+    }).then(function (res) {
+      if (res.ok && res.body && res.body.url) { window.location.assign(res.body.url); return; }
+      throw new Error((res.body && res.body.message) || 'checkout failed');
+    }).catch(function (err) {
+      if (btn) { btn.disabled = false; btn.textContent = was; }
+      if (note) note.textContent = (err && err.message) || CFG.msgError || 'We could not start checkout.';
+    });
+  });
+
+  // A pick made anywhere retargets every in-place form on the page.
+  document.addEventListener('aa:cohort-select', function (e) {
+    if (!e.detail) return;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aa-inline]'), function (f) {
+      retarget(f, e.detail);
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-aa-inline]'), paint);
 })();
