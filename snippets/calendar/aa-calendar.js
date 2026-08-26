@@ -277,19 +277,31 @@
          The form carries the START DATE, not this bar's id: the bar is a
          wp_events post and the batches on sale are generated, so the server
          resolves the two by date. See aa_reg_find_by_date(). */
+      /* AND a third thing: the date has to be one the registration can
+         actually sell. The bars come from wp_events; the batches on sale are
+         generated from the cadence, and the two only mostly overlap. A past
+         class, an import that never matched the cadence, a sold-out batch or
+         anything past the generated window is on this calendar and is not on
+         sale — offering checkout there ends in "no batch on that date" after
+         the buyer has typed their email, which is the worst possible place to
+         fail. AA_REG.dates is the sellable list; if it is absent (an older
+         register snippet) the check stands down rather than blocking every
+         date. */
+      var sellable = window.AA_REG && window.AA_REG.dates;
       var canBuy = !!(window.AA_REG && window.AA_REG.checkout &&
-                      window.AA_REG.course && cfg.link === 'enroll');
+                      window.AA_REG.course && cfg.link === 'enroll' &&
+                      (!sellable || sellable.indexOf(o.s) !== -1));
 
       h += '<div class="aa-mcal-reg">' +
         (o.price ? '<div class="aa-mcal-price">' + esc(money(o.price)) +
           '<small>' + esc(S.exam_incl) + '</small></div>' : '');
 
       if (canBuy) {
-        h += '<form class="aareg-inline aa-mcal-inline" data-aa-inline novalidate' +
+        h += '<form class="aareg-inline aa-mcal-inline" data-aa-inline data-aa-inline-fixed novalidate' +
                ' data-start="' + esc(o.s) + '">' +
-             '<label class="aareg-inline-field"><span class="aacal-sr">Work email</span>' +
+             '<label class="aareg-inline-field"><span class="aacal-sr">Your email</span>' +
              '<input name="email" type="email" autocomplete="email" inputmode="email"' +
-             ' placeholder="Work email" required></label>' +
+             ' placeholder="Your email" required></label>' +
              '<div class="aareg-inline-row"><div class="aareg-inline-stepper">' +
              '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>' +
              '<span data-inline-seats-value aria-live="polite">1</span>' +
@@ -350,8 +362,13 @@
            so a page that has not switched over still works. */
         var handled = false;
         try {
+          /* No `cohort` in the detail, deliberately. o.id is a wp_events post
+             id and the register block's `cohort` means one of its generated
+             batch ids — putting one in the other's field would have every
+             in-place form post a batch id the server cannot resolve. It
+             travels as eventId for anything that wants the source post. */
           document.dispatchEvent(new CustomEvent('aa:cohort-select', {
-            detail: { start: o.s, end: o.e, cohort: o.id, source: 'calendar' }
+            detail: { start: o.s, end: o.e, eventId: o.id, source: 'calendar' }
           }));
           handled = !!document.getElementById('aacal');
         } catch (err) {}

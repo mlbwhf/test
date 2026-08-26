@@ -68,7 +68,7 @@
     var f = form1 && form1.querySelector('[name="' + name + '"]');
     return f ? (f.value || '').trim() : '';
   }
-  /* One field gates the flow: a work email. Stripe collects the cardholder
+  /* One field gates the flow: an email. Stripe collects the cardholder
      name, billing details and the card itself on its own page, and asking for
      them here first means typing the same things twice. The email is worth
      keeping — it prefills Stripe, and it is the only trace of someone who
@@ -386,7 +386,7 @@
 
     var ok = detailsOk();
     if (btnNext) btnNext.disabled = !ok;
-    txt(elHint, ok ? 'One more screen — then you\u2019re done.' : 'Name and work email to continue.');
+    txt(elHint, ok ? 'One more screen — then you\u2019re done.' : 'Name and email to continue.');
 
     txt(root.querySelector('[data-rev-dates]'), c.getAttribute('data-range'));
     txt(root.querySelector('[data-rev-email]'), val('email') || '—');
@@ -529,7 +529,21 @@
      aa:cohort-select event so a pick made anywhere updates every form. */
   function retarget(form, detail) {
     if (!form || !detail) return;
-    if (detail.cohort) form.setAttribute('data-cohort', detail.cohort);
+    /* A form whose component sets its own batch — the calendar panel, which
+       rebuilds itself for whatever bar is selected — opts out. Otherwise a
+       pick made elsewhere would silently repoint it at a different date than
+       the one printed above it. */
+    if (form.hasAttribute('data-aa-inline-fixed')) return;
+
+    if (detail.cohort) {
+      form.setAttribute('data-cohort', detail.cohort);
+    } else if (detail.start) {
+      /* A sender that knows only a date (the calendar) must CLEAR any batch id
+         left by an earlier pick. The server resolves `cohort` before it looks
+         at `start`, so a stale id would win and charge for the old batch while
+         the form shows the new date. */
+      form.removeAttribute('data-cohort');
+    }
     if (detail.start) form.setAttribute('data-start', detail.start);
     if (detail.price) form.setAttribute('data-price', String(detail.price));
     paint(form);
@@ -557,7 +571,7 @@
     var btn = form.querySelector('[data-inline-pay]');
     var email = (form.querySelector('[name="email"]') || {}).value || '';
     if (!/.+@.+\..+/.test(email.trim())) {
-      if (note) note.textContent = 'Please enter a valid work email.';
+      if (note) note.textContent = 'Please enter a valid email address.';
       return;
     }
     if (!CFG.checkout) {

@@ -710,12 +710,171 @@ function aa_reg_seats_left( $course, $cohort ) {
 /** Hard ceiling on one order, so a typo in the stepper cannot buy the room. */
 function aa_reg_max_seats() { return 12; }
 
+/* ---------------------------------------------------------------------------
+   COURSES THE TABLE DOES NOT LIST
+   ---------------------------------------------------------------------------
+   aa_reg_courses() is a hand-written table of six courses. The site sells
+   about twenty. The other fourteen used to get their hero from the old
+   "AA - Course JS" snippet, which read its per-course settings from a hidden
+   element the page itself carries:
+
+     <div id="aa-cohorts" data-title="SAFe ARCH" data-price="2,200"
+          data-strike="" data-days="1,2,4" data-length="3"></div>
+
+   So the data has been on the page the whole time. Reading it here means
+   every course page gets the new hero and the new registration without
+   fourteen more rows of hand-transcribed prices and durations -- and, more to
+   the point, without me inventing a course length or a price for a credential
+   whose specifics are Scaled Agile's to state, not ours to guess.
+
+   The table still wins wherever it has a row: those six are hand-tuned
+   (regional cities, explicit schedules, proof lines) in ways the page element
+   cannot express.
+
+   Resolution is by SLUG, not by "the page being rendered", because checkout
+   arrives as a REST request with no page context at all and still has to
+   price the batch from the server side. */
+
+function aa_reg_derived_days( $spec ) {
+	/* data-days uses JavaScript's getDay(): 0 = Sunday .. 6 = Saturday. The
+	   cadence here names the weekday, because that is what PHP's relative
+	   date parser takes. Saturday and Sunday are dropped rather than
+	   translated -- no course starts on a rest day. */
+	$names = array( 1 => 'Mon', 2 => 'Tue', 3 => 'Wed', 4 => 'Thu', 5 => 'Fri' );
+	$out   = array();
+	$seen  = array();
+	foreach ( explode( ',', (string) $spec ) as $d ) {
+		$d = (int) trim( $d );
+		if ( $d < 1 || $d > 5 ) { continue; }   // weekend starts are not offered
+		if ( isset( $seen[ $d ] ) ) { continue; }
+		$seen[ $d ] = true;
+		$out[] = array( 'dow' => $names[ $d ], 'slot' => $d === 5 ? 'afternoon' : 'morning' );
+	}
+	return $out;
+}
+
+function aa_reg_parse_cohorts_el( $content ) {
+	if ( strpos( $content, 'aa-cohorts' ) === false ) { return null; }
+	if ( ! preg_match( '/<[a-z]+[^>]*id=["\']aa-cohorts["\'][^>]*>/i', $content, $m ) ) { return null; }
+	$tag = $m[0];
+
+	$attr = function ( $name ) use ( $tag ) {
+		/* FIRST match, deliberately. Several pages carry data-length twice
+		   (ASE, ARCH and SP all read data-length="3" data-length="4"), and an
+		   HTML parser keeps the first and drops the rest. Matching the browser
+		   here means the new hero shows the same number the old one did
+		   instead of quietly changing a published course length. */
+		if ( preg_match( '/\sdata-' . $name . '=["\']([^"\']*)["\']/i', $tag, $mm ) ) {
+			return $mm[1];
+		}
+		return '';
+	};
+
+	$price = (int) preg_replace( '/[^0-9]/', '', $attr( 'price' ) );
+	$len   = (int) $attr( 'length' );
+	if ( $price < 1 || $len < 1 ) { return null; }   // no price, no sale
+
+	return array(
+		'title'  => trim( $attr( 'title' ) ),
+		'price'  => $price,
+		'days'   => min( 5, $len ),
+		'dows'   => aa_reg_derived_days( $attr( 'days' ) ),
+	);
+}
+
+/** Build a course row from a published page that carries #aa-cohorts. */
+function aa_reg_derived_course( $slug ) {
+	static $cache = array();
+	if ( array_key_exists( $slug, $cache ) ) { return $cache[ $slug ]; }
+	$cache[ $slug ] = null;
+
+	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) ) { return null; }
+	if ( ! function_exists( 'get_posts' ) ) { return null; }
+
+	$pages = get_posts( array(
+		'post_type'        => 'page',
+		'name'             => $slug,
+		'post_status'      => 'publish',
+		'numberposts'      => 5,
+		'suppress_filters' => true,
+	) );
+
+	foreach ( $pages as $p ) {
+		// Same rule as autoplace: the /es/, /fr/ and /ar/ mirrors reuse the
+		// English slug, and an English hero on a French page is worse than none.
+		$anc  = get_post_ancestors( $p->ID );
+		$root = $anc ? get_post( end( $anc ) ) : null;
+		if ( $root && in_array( $root->post_name, aa_reg_lang_roots(), true ) ) { continue; }
+
+		$cfg = aa_reg_parse_cohorts_el( $p->post_content );
+		if ( ! $cfg ) { continue; }
+
+		$crumb = 'Training';
+		if ( $anc ) {
+			$parent = get_post( $anc[0] );
+			if ( $parent ) { $crumb = $parent->post_title; }
+		}
+
+		$title = $cfg['title'] !== '' ? $cfg['title'] : $p->post_title;
+		$code  = strtoupper( preg_replace( '/^SAFe\s*/i', '', $title ) );
+
+		$cache[ $slug ] = array(
+			'code'     => $code !== '' ? $code : strtoupper( $slug ),
+			'name'     => $p->post_title,
+			'eyebrow'  => 'Live online · ' . $title,
+			'h1'       => $p->post_title,
+			/* No invented selling copy. The page's own excerpt is what its
+			   author wrote about it; an empty lede renders nothing. */
+			'lede'     => trim( wp_strip_all_tags( $p->post_excerpt ) ),
+			'url'      => wp_make_link_relative( get_permalink( $p ) ),
+			'crumb'    => $crumb,
+			'currency' => 'usd',
+			'price'    => $cfg['price'],
+			'days'     => $cfg['days'],
+			'seats'    => 18,
+			'weeks'    => 26,
+				'cadence'  => $cfg['dows'] ? $cfg['dows'] : array( array( 'dow' => 'Mon', 'slot' => 'morning' ) ),
+			'proof'    => array( 'Live online', 'Exam fee included' ),
+		);
+		break;
+	}
+
+	return $cache[ $slug ];
+}
+
+/**
+ * ONE course by slug: the hand-written table first, the page element second.
+ *
+ * Every lookup goes through here so the two sources can never disagree about
+ * which course a slug means.
+ */
+function aa_reg_course( $slug ) {
+	$courses = aa_reg_courses();
+	if ( isset( $courses[ $slug ] ) ) { return $courses[ $slug ]; }
+	return aa_reg_derived_course( $slug );
+}
+
 /** One cohort by id, with its course. Returns null for anything unrecognised. */
 function aa_reg_find( $cohort_id ) {
 	foreach ( aa_reg_courses() as $slug => $course ) {
 		foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 			if ( $c['id'] === $cohort_id ) {
 				return array( 'slug' => $slug, 'course' => $course, 'cohort' => $c );
+			}
+		}
+	}
+
+	/* A course that lives on its page rather than in the table is not in that
+	   loop -- there is no list of them to walk. Its id still names it: the
+	   generated form is "<slug>-<start>", so the slug is everything before the
+	   date. Resolve that one page and check its schedule. */
+	if ( preg_match( '/^([a-z0-9-]+)-(\d{4}-\d{2}-\d{2})$/', $cohort_id, $m ) ) {
+		$course = aa_reg_derived_course( $m[1] );
+		if ( $course ) {
+			foreach ( aa_reg_generate( $m[1], $course ) as $c ) {
+				if ( $c['id'] === $cohort_id ) {
+					return array( 'slug' => $m[1], 'course' => $course, 'cohort' => $c );
+				}
 			}
 		}
 	}
@@ -731,11 +890,10 @@ function aa_reg_find( $cohort_id ) {
  * count come from the generated schedule, never from the request.
  */
 function aa_reg_find_by_date( $course_key, $start ) {
-	$courses = aa_reg_courses();
-	if ( ! isset( $courses[ $course_key ] ) ) { return null; }
+	$course = aa_reg_course( $course_key );
+	if ( ! $course ) { return null; }
 	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start ) ) { return null; }
 
-	$course = $courses[ $course_key ];
 	foreach ( aa_reg_generate( $course_key, $course ) as $c ) {
 		if ( $c['start'] === $start ) {
 			return array( 'slug' => $course_key, 'course' => $course, 'cohort' => $c );
@@ -781,6 +939,19 @@ function aa_reg_config_script( $course_key, $course, $cur ) {
 		// The authoritative price, for anything rendering a total without a
 		// batch of its own to read it from — the calendar's panel form.
 		'price'          => (int) $course['price'],
+		/* EVERY DATE THIS COURSE CAN ACTUALLY BE BOUGHT ON.
+		   The calendar draws wp_events posts; the registration sells batches
+		   generated from a cadence. Those are two different sets of dates and
+		   they only mostly overlap — a past event, an import that never
+		   matched the cadence, or anything beyond the generated window exists
+		   on the calendar and is not on sale. Offering checkout on one of
+		   those and letting the server refuse is a dead end at the last step,
+		   which is exactly where a buyer will not try again. So the calendar
+		   asks first. ~90 dates, under a kilobyte. */
+		'dates'          => array_values( array_map(
+			function ( $c ) { return $c['start']; },
+			aa_reg_upcoming( $course_key, $course )
+		) ),
 		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '\u20ac' : '$' ),
 		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
 		'nonce'          => wp_create_nonce( 'wp_rest' ),
@@ -795,9 +966,9 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg' ) {
 	return '<form class="aareg-inline ' . esc_attr( $prefix ) . '-inline" data-aa-inline novalidate'
 	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
 	     . ' data-price="' . (int) $course['price'] . '">'
-	     . '<label class="aareg-inline-field"><span class="aacal-sr">Work email</span>'
+	     . '<label class="aareg-inline-field"><span class="aacal-sr">Your email</span>'
 	     . '<input name="email" type="email" autocomplete="email" inputmode="email"'
-	     . ' placeholder="Work email" required></label>'
+	     . ' placeholder="Your email" required></label>'
 	     . '<div class="aareg-inline-row">'
 	     . '<div class="aareg-inline-stepper">'
 	     . '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>'
@@ -1085,9 +1256,8 @@ function aa_reg_month_html( $course, $m, $first_id, $cur ) {
 
 function aa_reg_hero( $atts ) {
 	$a       = shortcode_atts( array( 'course' => 'spc' ), $atts, 'aa_course_hero' );
-	$courses = aa_reg_courses();
-	if ( ! isset( $courses[ $a['course'] ] ) ) { return ''; }
-	$course  = $courses[ $a['course'] ];
+	$course  = aa_reg_course( $a['course'] );
+	if ( ! $course ) { return ''; }
 	$cohorts = aa_reg_upcoming( $a['course'], $course );
 	if ( ! $cohorts ) { return ''; }
 	$months  = aa_reg_months( $cohorts );
@@ -1166,9 +1336,8 @@ add_shortcode( 'aa_course_hero', 'aa_reg_hero' );
 
 function aa_reg_panel( $atts ) {
 	$a       = shortcode_atts( array( 'course' => 'spc' ), $atts, 'aa_course_register' );
-	$courses = aa_reg_courses();
-	if ( ! isset( $courses[ $a['course'] ] ) ) { return ''; }
-	$course  = $courses[ $a['course'] ];
+	$course  = aa_reg_course( $a['course'] );
+	if ( ! $course ) { return ''; }
 	$cohorts = aa_reg_upcoming( $a['course'], $course );
 	if ( ! $cohorts ) { return ''; }
 	$months  = aa_reg_months( $cohorts );
@@ -1274,9 +1443,9 @@ function aa_reg_panel( $atts ) {
 	   twice. The email stays because it prefills Stripe and because it is the
 	   only record of someone who abandons at the payment step. */
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
-	    . '<label class="aacal-field"><span class="aacal-sr">Work email</span>'
+	    . '<label class="aacal-field"><span class="aacal-sr">Your email</span>'
 	    . '<input name="email" type="email" autocomplete="email" inputmode="email"'
-	    . ' placeholder="Work email" required></label>'
+	    . ' placeholder="Your email" required></label>'
 	    . '<div class="aacal-seatsrow"><div><p class="aacal-minilabel">Seats</p>'
 	    . '<div class="aacal-stepper"><button type="button" data-seats="-1" aria-label="Fewer seats">&minus;</button>'
 	    . '<span data-seats-value aria-live="polite">1</span>'
@@ -1284,7 +1453,7 @@ function aa_reg_panel( $atts ) {
 	    . '<div class="aacal-totalbox"><p class="aacal-minilabel">Total</p>'
 	    . '<p class="aacal-total" data-total>' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</p></div></div>'
 	    . '<button type="submit" class="aacal-cta" data-next disabled>Continue to review</button>'
-	    . '<p class="aacal-hint" data-hint>Enter your work email to continue.</p>'
+	    . '<p class="aacal-hint" data-hint>Enter your email to continue.</p>'
 	    . '</form>';
 
 	$h .= '<form class="aacal-panel" data-panel="2" hidden novalidate>'
@@ -1429,8 +1598,7 @@ function aa_reg_page_course() {
 	if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
 	if ( ! ( $obj instanceof WP_Post ) || $obj->post_type !== 'page' ) { return $key; }
 
-	$courses = aa_reg_courses();
-	if ( ! isset( $courses[ $obj->post_name ] ) ) { return $key; }
+	if ( ! aa_reg_course( $obj->post_name ) ) { return $key; }
 
 	// Walk to the top-level ancestor and refuse if it is a language section.
 	$ancestors = get_post_ancestors( $obj->ID );
@@ -1517,8 +1685,8 @@ add_shortcode( 'aa_reg_selftest', function () {
 
 	$why = '';
 	if ( $course === '' && $obj instanceof WP_Post ) {
-		if ( ! isset( $courses[ $obj->post_name ] ) ) {
-			$why = ' — no row in aa_reg_courses() for this slug';
+		if ( ! aa_reg_course( $obj->post_name ) ) {
+			$why = ' — no row in aa_reg_courses(), and no #aa-cohorts element on the page';
 		} else {
 			$anc  = get_post_ancestors( $obj->ID );
 			$root = $anc ? get_post( end( $anc ) ) : null;
@@ -1548,9 +1716,10 @@ add_shortcode( 'aa_reg_selftest', function () {
 		'  core/group .aa-reg  : ' . ( $reg  ? $reg  . '  -> registration will be replaced' : '0  <- NOT ON THIS PAGE' ),
 	);
 	if ( $course !== '' ) {
-		$c  = $courses[ $course ];
+		$c  = aa_reg_course( $course );
 		$up = aa_reg_upcoming( $course, $c );
 		$lines[] = '';
+		$lines[] = 'source             : ' . ( isset( $courses[ $course ] ) ? 'aa_reg_courses() table' : '#aa-cohorts element on the page' );
 		$lines[] = 'schedule for ' . $course . ' : ' . count( $up ) . ' batches, '
 		         . $c['days'] . ' day(s), ' . strtoupper( $c['currency'] ) . ' ' . number_format_i18n( $c['price'] );
 		if ( $up ) { $lines[] = 'first batch        : ' . $up[0]['start'] . ' (' . $up[0]['id'] . ')'; }
@@ -1593,11 +1762,11 @@ add_action( 'rest_api_init', function () {
  * than trusted.
  */
 function aa_reg_batches( WP_REST_Request $req ) {
-	$courses = aa_reg_courses();
 	$key     = (string) $req->get_param( 'course' );
 	$month   = (string) $req->get_param( 'month' );
 
-	if ( ! isset( $courses[ $key ] ) ) {
+	$course_row = aa_reg_course( $key );
+	if ( ! $course_row ) {
 		return new WP_Error( 'aa_course', 'Unknown course.', array( 'status' => 404 ) );
 	}
 	/* The key aa_reg_months() builds, which is month-then-year ("9-2026"), not
@@ -1608,7 +1777,7 @@ function aa_reg_batches( WP_REST_Request $req ) {
 		return new WP_Error( 'aa_month', 'Bad month.', array( 'status' => 400 ) );
 	}
 
-	$course  = $courses[ $key ];
+	$course  = $course_row;
 	$cohorts = aa_reg_upcoming( $key, $course );
 	if ( ! $cohorts ) {
 		return new WP_Error( 'aa_month', 'No batches.', array( 'status' => 404 ) );
@@ -1644,7 +1813,10 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	}
 
 	if ( ! $found ) {
-		return new WP_Error( 'aa_cohort', 'That cohort is not available.', array( 'status' => 400 ) );
+		$msg = ! empty( $d['start'] )
+			? 'There is no batch of this course on that date. Pick one from the schedule.'
+			: 'That batch is not available. Please pick another date.';
+		return new WP_Error( 'aa_cohort', $msg, array( 'status' => 400 ) );
 	}
 	$course = $found['course'];
 	$cohort = $found['cohort'];
