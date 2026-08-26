@@ -1480,7 +1480,10 @@ function aa_reg_panel( $atts ) {
 	    . '<p class="aacal-done-p"><span data-done-summary></span>. Your receipt and joining details are on the way to <span data-done-email>your inbox</span>.</p>'
 	    . '<button type="button" class="aacal-link" data-reset>Book another seat</button></div>';
 
-	$h .= '<p class="aacal-fine">Free reschedule up to 10 days before the batch starts. The exam fee is included in the price.</p>';
+	/* No fixed reschedule window. Rescheduling carries no fee, but "up to 10
+	   days before the batch starts" is a deadline nobody agreed to and one a
+	   buyer could hold us to. State the fee and not the window. */
+	$h .= '<p class="aacal-fine">Need to move dates? Rescheduling carries no fee. The exam fee is included in the price.</p>';
 	$h .= '</div></div>';
 
 	/* Offers describe what is actually purchasable: price, currency, and

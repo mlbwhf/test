@@ -369,3 +369,30 @@
 /* In the calendar's panel the form sits on a tinted surface, so the input
    needs to stay white rather than inheriting it. */
 .aa-mcal .aareg-inline-field input{background:#fff}
+
+/* ============================================================================
+   ON A COURSE PAGE, WEAR THE COURSE PAGE'S PALETTE
+   ----------------------------------------------------------------------------
+   This site runs two design systems. The home page (section Y) is on the newer
+   one -- teal #0E8074, Space Grotesk, Instrument Serif -- and so are these
+   components, by design. The course template (.aa-rd) is on the older one:
+   teal #127E88, Newsreader italic.
+
+   Put one inside the other and the seam shows. Measured on the rendered RTE
+   page: 50 elements painted #127E88 and 13 painted #0E8074, and two serif
+   families in the same column. Four points of hue apart is the worst distance
+   -- far enough to notice, close enough to read as a mistake rather than a
+   choice.
+
+   So inside .aa-rd these components adopt the page's own tokens. Everywhere
+   else -- the home page, where the surrounding palette is already this one --
+   they keep theirs. One rule, no duplicated component CSS, and it reverses
+   itself automatically when the course template is eventually migrated.
+   ========================================================================== */
+.aa-rd .aacal,.aa-rd .aahero{ --teal:#127E88; --teal-b:#127E88; --teal-d:#0B2E35; --ink:#0E3A44; }
+.aa-rd .aahero-title em,.aa-rd .aacal-title em{ font-family:'Newsreader',Georgia,serif; }
+/* Two links and the selected-card chrome were written as literal #0E8074
+   rather than var(--teal), so the token override alone could not reach them. */
+.aa-rd .aahero-card.is-on .aahero-check{ background:#127E88; border-color:#127E88; }
+.aa-rd .aahero-card.is-on{ border-color:#127E88; }
+.aa-rd .aacal a,.aa-rd .aahero a{ color:#127E88; }

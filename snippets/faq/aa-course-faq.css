@@ -223,3 +223,29 @@
   .aa-fb2 *,.aa-fb2 *::before,.aa-fb2 *::after{animation:none!important;transition:none!important}
 }
 .aa-fq :focus-visible,.aa-fb2 :focus-visible{outline:2px solid var(--teal,#0E8074);outline-offset:3px;border-radius:8px}
+
+/* ============================================================================
+   ON A COURSE PAGE, WEAR THE COURSE PAGE'S PALETTE
+   ----------------------------------------------------------------------------
+   This site runs two design systems. The home page (section Y) is on the newer
+   one -- teal #0E8074, Space Grotesk, Instrument Serif -- and so are these
+   components, by design. The course template (.aa-rd) is on the older one:
+   teal #127E88, Newsreader italic.
+
+   Put one inside the other and the seam shows. Measured on the rendered RTE
+   page: 50 elements painted #127E88 and 13 painted #0E8074, and two serif
+   families in the same column. Four points of hue apart is the worst distance
+   -- far enough to notice, close enough to read as a mistake rather than a
+   choice.
+
+   So inside .aa-rd these components adopt the page's own tokens. Everywhere
+   else -- the home page, where the surrounding palette is already this one --
+   they keep theirs. One rule, no duplicated component CSS, and it reverses
+   itself automatically when the course template is eventually migrated.
+   ========================================================================== */
+.aa-rd .aa-fq{ --teal:#127E88; --teal-deep:#0B2E35; --ink:#0E3A44; --body:#3C565E; --muted:#5E7378; --muted2:#88A0A4; --hair:#DCEAEA; }
+.aa-rd .aa-fq-h em{ font-family:'Newsreader',Georgia,serif; }
+.aa-rd .aa-fb2{ background:#0B2E35; }
+.aa-rd .aa-fb2-h em{ font-family:'Newsreader',Georgia,serif; color:#8FCFCF; }
+.aa-rd .aa-fb2-facts i,.aa-rd .aa-fb2-scarce{ color:#8FCFCF; }
+.aa-rd .aa-fb2-facts i{ background:#8FCFCF; }
