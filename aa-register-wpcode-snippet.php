@@ -1030,15 +1030,15 @@ function aa_reg_hero( $atts ) {
 		$h .= '<div class="aahero-list" role="tabpanel" id="aahero-panel-' . esc_attr( $k ) . '"'
 		    . ' aria-labelledby="aahero-tab-' . esc_attr( $k ) . '" data-month="' . esc_attr( $k ) . '"'
 		    . ( $i === 0 ? '' : ' hidden' ) . '>';
-		/* The hero lists the nearest few per month, not the whole cadence: at
-		   two starts a week that is nine cards in a month tab, which is a
-		   scrolling list where a glanceable picker should be. The complete
-		   schedule is the panel below. */
-		/* Same row renderer as the schedule below, in the hero's namespace. The
-		   compact row fits more dates in the picker's fixed height than a card
-		   did, and the hero and the list now say the same thing about a batch
-		   because one function decides it. */
-		foreach ( array_slice( $m['items'], 0, 4 ) as $c ) {
+		/* The whole month, in a list the CSS caps and scrolls after about five
+		   rows. It used to be cut to the nearest four with no way to reach the
+		   rest — on a course running twice a week that hid two thirds of the
+		   month behind nothing at all, and the month tab said "14 batches"
+		   above four of them. Capped and scrollable keeps the hero glanceable
+		   without lying about what is in the month. */
+		/* Same row renderer as the schedule below, in the hero's namespace, so
+		   the hero and the list say the same thing about a batch. */
+		foreach ( $m['items'] as $c ) {
 			$h .= aa_reg_row( $course, $c, $c['id'] === $first['id'], $cur, 'aahero' );
 		}
 		$h .= '</div>';

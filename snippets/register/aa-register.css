@@ -55,7 +55,17 @@
 .aahero-tab.is-on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(16,28,51,.10)}
 .aahero-tab:focus-visible,.aahero-cardbtn:focus-visible,.aahero-cta:focus-visible{outline:2px solid var(--teal-b);outline-offset:2px}
 
-.aahero-list{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+/* The hero picker holds a whole month, so it scrolls after roughly five rows
+   rather than being truncated. overscroll-behavior keeps a flick at the end of
+   the list from scrolling the page behind it, and the scrollbar is left
+   visible on purpose: a list that scrolls with no indication that it scrolls
+   is a list whose remaining dates nobody finds. */
+.aahero-list{display:flex;flex-direction:column;gap:9px;margin-top:14px;
+  max-height:min(52vh,430px);overflow-y:auto;overscroll-behavior:contain;
+  padding-right:4px;scrollbar-width:thin}
+.aahero-list::-webkit-scrollbar{width:6px}
+.aahero-list::-webkit-scrollbar-thumb{background:var(--line3);border-radius:100px}
+.aahero-list::-webkit-scrollbar-track{background:transparent}
 .aahero-cardbtn{display:block;width:100%;text-align:left;padding:14px 15px;border-radius:13px;cursor:pointer;
   font-family:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line3);
   transition:border-color .15s ease,box-shadow .15s ease}
@@ -312,3 +322,21 @@
   color: transparent; flex: none; }
 .aahero-card.is-on .aahero-check { background: #0E8074; border-color: #0E8074; color: #fff; }
 .aahero-card.is-on { background: #F4FAF9; border-color: #0E8074; }
+
+
+/* ---------------------------------------------------------------------------
+   The page's own lead-in above the registration.
+
+   "Select your class, then your registration opens below" is in the page
+   markup, not in this block, and it carries an inline font-size:26px — so
+   nothing but !important can change it. It is the sentence that tells a
+   visitor the two halves are connected, and at 26px it read as a caption
+   rather than an instruction.
+   ------------------------------------------------------------------------- */
+.aa-rd #enroll h3.nr{
+  font-size:clamp(26px,3.2vw,38px) !important;
+  line-height:1.15 !important;
+  max-width:22ch;
+  margin-top:44px !important;
+  margin-bottom:6px !important;
+}

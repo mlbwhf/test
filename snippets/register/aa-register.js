@@ -227,21 +227,37 @@
 
   /* one-way: the hero hands its pick down to this calendar and never listens back */
   document.addEventListener('aa:cohort-select', function (e) {
-    if (!e.detail || e.detail.source === 'calendar') return;
-    adopt(e.detail.cohort);
+    if (!e.detail) return;
+    // Our own echo, not someone else's pick.
+    if (e.detail.source === 'aacal') return;
+    adopt(e.detail);
   });
 
-  /* The hero and the month calendar both hand a cohort id down, and either can
+  /* The hero and the month calendar both hand a batch down, and either can
      name one in a month whose rows have not been fetched. So: try, and if it
-     is not here yet, fetch the rest and try once more. */
-  function adopt(cohort) {
-    var match = cards.filter(function (c) { return c.getAttribute('data-cohort') === cohort; })[0];
-    if (!match) { ensureAll().then(function () { land(cohort); }); return; }
-    land(cohort, match);
+     is not here yet, fetch the rest and try once more.
+
+     Two ways in, because the two senders know different things:
+       cohort  the hero, which renders the same batches as this list
+       start   the calendar, whose bars are wp_events posts with ids from a
+               different space entirely — the start date is the only field
+               both sides agree on, so that is what it matches. */
+  function find(detail) {
+    return cards.filter(function (c) {
+      if (detail.cohort && c.getAttribute('data-cohort') === detail.cohort) { return true; }
+      return !!detail.start && c.getAttribute('data-start') === detail.start;
+    })[0];
   }
 
-  function land(cohort, match) {
-    match = match || cards.filter(function (c) { return c.getAttribute('data-cohort') === cohort; })[0];
+  function adopt(detail) {
+    if (typeof detail === 'string') { detail = { cohort: detail }; }
+    var match = find(detail);
+    if (!match) { ensureAll().then(function () { land(detail); }); return; }
+    land(detail, match);
+  }
+
+  function land(detail, match) {
+    match = match || find(detail);
     if (!match || match === state.card) return;
     state.month = match.closest('.aacal-panel-month').getAttribute('data-month');
     if (!matches(match)) state.filter = 'all';

@@ -301,13 +301,35 @@
       }
       var reg = e.target.closest('[data-reg]');
       if (reg && cfg.link === 'enroll') {
-        // Same page: hand the cohort to the enrol form rather than navigating.
+        // Same page: hand the cohort to the registration rather than navigating.
         e.preventDefault();
         var o = ev[+reg.getAttribute('data-reg')];
-        if (typeof window.AA_PICK === 'function') {
-          try { window.AA_PICK(fmtRange(o), o.id); } catch (err) {}
+
+        /* Two registrations can be below us, and which one is present depends
+           on whether the new block is switched on.
+
+           The new one keys on the START DATE, not on the id: its batches are
+           generated from a cadence and carry ids like "spc-2026-09-03", while
+           a calendar bar carries a wp_events post id. The two id spaces have
+           nothing in common, so matching on id would silently never match.
+           The date is the one thing both sides agree on.
+
+           AA_PICK is the older enrol form's bridge and stays as the fallback,
+           so a page that has not switched over still works. */
+        var handled = false;
+        try {
+          document.dispatchEvent(new CustomEvent('aa:cohort-select', {
+            detail: { start: o.s, end: o.e, cohort: o.id, source: 'calendar' }
+          }));
+          handled = !!document.getElementById('aacal');
+        } catch (err) {}
+
+        if (!handled && typeof window.AA_PICK === 'function') {
+          try { window.AA_PICK(fmtRange(o), o.id); } catch (err2) {}
         }
-        var target = document.getElementById('enroll');
+
+        // Scroll to whichever is actually on the page.
+        var target = document.getElementById('aacal') || document.getElementById('enroll');
         if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
         return;
       }
