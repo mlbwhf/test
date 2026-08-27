@@ -449,8 +449,9 @@ function aa_reg_span_ok( $start, $days ) {
 }
 
 function aa_reg_slot_label( $slot ) {
-	return $slot === 'afternoon' ? 'Weekday afternoon batch'
-	     : ( $slot === 'evening' ? 'Evening batch' : 'Weekday morning batch' );
+	return $slot === 'afternoon' ? aa_reg_t( 'batch_after', 'Weekday afternoon batch' )
+	     : ( $slot === 'evening' ? aa_reg_t( 'batch_evening', 'Evening batch' )
+	                             : aa_reg_t( 'batch_morning', 'Weekday morning batch' ) );
 }
 function aa_reg_slot_hours( $slot ) {
 	return $slot === 'afternoon' ? '1–9 ET' : ( $slot === 'evening' ? '6–10 ET' : '9–5 ET' );
@@ -683,7 +684,7 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 		'slot'  => $slot,
 		'kind'  => $kind,
 		'seats' => (int) ( isset( $course['seats'] ) ? $course['seats'] : 18 ),
-		'batch' => ( $kind === 'weekend' ? 'Weekend batch' : aa_reg_slot_label( $slot ) ) . $note,
+		'batch' => ( $kind === 'weekend' ? aa_reg_t( 'batch_weekend', 'Weekend batch' ) : aa_reg_slot_label( $slot ) ) . $note,
 		'hours' => aa_reg_slot_hours( $slot ),
 	);
 
@@ -784,9 +785,16 @@ function aa_reg_parse_cohorts_el( $content ) {
 
 /** Build a course row from a published page that carries #aa-cohorts. */
 function aa_reg_derived_course( $slug ) {
+	/* Keyed by language as well as slug: "rte" resolves to a different page,
+	   with different copy, on /fr/ than it does in English, and a cache that
+	   forgot that would serve whichever mirror was rendered first this request
+	   to every later one. */
+	$want_lang = aa_reg_lang();
+	$key       = $want_lang . '|' . $slug;
+
 	static $cache = array();
-	if ( array_key_exists( $slug, $cache ) ) { return $cache[ $slug ]; }
-	$cache[ $slug ] = null;
+	if ( array_key_exists( $key, $cache ) ) { return $cache[ $key ]; }
+	$cache[ $key ] = null;
 
 	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) ) { return null; }
 	if ( ! function_exists( 'get_posts' ) ) { return null; }
@@ -800,16 +808,20 @@ function aa_reg_derived_course( $slug ) {
 	) );
 
 	foreach ( $pages as $p ) {
-		// Same rule as autoplace: the /es/, /fr/ and /ar/ mirrors reuse the
-		// English slug, and an English hero on a French page is worse than none.
-		$anc  = get_post_ancestors( $p->ID );
-		$root = $anc ? get_post( end( $anc ) ) : null;
-		if ( $root && in_array( $root->post_name, aa_reg_lang_roots(), true ) ) { continue; }
+		/* THE MIRROR IN THE READER'S LANGUAGE, NOT THE FIRST ONE FOUND. The
+		   /es/, /fr/ and /ar/ mirrors reuse the English slug, so this query
+		   returns up to four pages for "rte" and they differ only in ancestry.
+		   Picking the wrong one puts an English h1 on a French page, which is
+		   why they were all skipped before. Matching the language instead is
+		   what lets a mirror build a hero out of its own translated title,
+		   excerpt and breadcrumb. */
+		if ( aa_reg_lang( $p ) !== $want_lang ) { continue; }
 
+		$anc = get_post_ancestors( $p->ID );
 		$cfg = aa_reg_parse_cohorts_el( $p->post_content );
 		if ( ! $cfg ) { continue; }
 
-		$crumb = 'Training';
+		$crumb = aa_reg_t( 'training', 'Training' );
 		if ( $anc ) {
 			$parent = get_post( $anc[0] );
 			if ( $parent ) { $crumb = $parent->post_title; }
@@ -818,7 +830,7 @@ function aa_reg_derived_course( $slug ) {
 		$title = $cfg['title'] !== '' ? $cfg['title'] : $p->post_title;
 		$code  = strtoupper( preg_replace( '/^SAFe\s*/i', '', $title ) );
 
-		$cache[ $slug ] = array(
+		$cache[ $key ] = array(
 			'code'     => $code !== '' ? $code : strtoupper( $slug ),
 			'name'     => $p->post_title,
 			'eyebrow'  => 'Live online · ' . $title,
@@ -839,7 +851,7 @@ function aa_reg_derived_course( $slug ) {
 		break;
 	}
 
-	return $cache[ $slug ];
+	return $cache[ $key ];
 }
 
 /**
@@ -849,6 +861,17 @@ function aa_reg_derived_course( $slug ) {
  * which course a slug means.
  */
 function aa_reg_course( $slug ) {
+	/* ON A MIRROR, THE PAGE WINS. aa_reg_courses() is the hand-written English
+	   table and it is keyed on the bare slug -- "rte" is in it, and /fr/rte/ is
+	   also post_name "rte". Consulting the table first would hand a French page
+	   an English h1, lede and proof list, which is exactly the failure the old
+	   blanket refusal was avoiding. Off English, the page's own content is the
+	   only source that is already in the right language, so it is asked first
+	   and the table is the fallback. */
+	if ( aa_reg_lang() !== 'en' ) {
+		$derived = aa_reg_derived_course( $slug );
+		if ( $derived ) { return $derived; }
+	}
 	$courses = aa_reg_courses();
 	if ( isset( $courses[ $slug ] ) ) { return $courses[ $slug ]; }
 	return aa_reg_derived_course( $slug );
@@ -966,7 +989,7 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg' ) {
 	return '<form class="aareg-inline ' . esc_attr( $prefix ) . '-inline" data-aa-inline novalidate'
 	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
 	     . ' data-price="' . (int) $course['price'] . '">'
-	     . '<label class="aareg-inline-field"><span class="aacal-sr">Your email</span>'
+	     . '<label class="aareg-inline-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	     . '<input name="email" type="email" autocomplete="email" inputmode="email"'
 	     . ' placeholder="Your email" required></label>'
 	     . '<div class="aareg-inline-row">'
@@ -977,7 +1000,7 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg' ) {
 	     . '<p class="aareg-inline-total" data-inline-total>'
 	     . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</p></div>'
 	     . '<button type="submit" class="aareg-inline-pay" data-inline-pay' . ( $live ? '' : ' disabled' ) . '>'
-	     . esc_html( $live ? 'Pay securely with Stripe' : 'Registration temporarily unavailable' ) . '</button>'
+	     . esc_html( $live ? aa_reg_t( 'pay', 'Pay securely with Stripe' ) : aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ) ) . '</button>'
 	     . '<p class="aareg-inline-note" data-inline-note>'
 	     . esc_html( $live
 	         ? 'Exam fee included. You will be taken to Stripe to pay.'
@@ -1199,11 +1222,11 @@ function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	     . '<span class="' . $prefix . '-body">'
 	     . '<span class="' . $prefix . '-line"><span class="' . $prefix . '-range">'
 	     . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
-	     . ( $is_first ? '<span class="' . $prefix . '-flag">Next available</span>' : '' ) . '</span>'
+	     . ( $is_first ? '<span class="' . $prefix . '-flag">' . esc_html( aa_reg_t( 'next_avail', 'Next available' ) ) . '</span>' : '' ) . '</span>'
 	     . '<span class="' . $prefix . '-line2"><span class="' . $prefix . '-kind">'
 	     . esc_html( ucfirst( $kind ) . ' · ' . $c['hours'] ) . '</span>'
 	     . '<span class="' . $prefix . '-status' . ( $hot ? ' is-hot' : '' ) . '">'
-	     . esc_html( $hot ? sprintf( '%d seats left', $left ) : 'Seats open' ) . '</span></span>'
+	     . esc_html( $hot ? sprintf( aa_reg_t( 'seats_left', '%d seats left' ), $left ) : aa_reg_t( 'seats_open', 'Seats open' ) ) . '</span></span>'
 	     . '</span>'
 	     . '<span class="' . $prefix . '-price">' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</span>'
 	     . '<span class="' . $prefix . '-check" aria-hidden="true">&#10003;</span>'
@@ -1228,7 +1251,7 @@ function aa_reg_crumb( $course ) {
 	if ( empty( $course['crumb'] ) || empty( $course['url'] ) ) { return ''; }
 	$parent = trailingslashit( dirname( untrailingslashit( $course['url'] ) ) );
 	return '<nav aria-label="Breadcrumb" class="mono aa-rte-crumb">'
-	     . '<a href="' . esc_url( $parent ) . '">&larr; Back to ' . esc_html( $course['crumb'] ) . '</a>'
+	     . '<a href="' . esc_url( $parent ) . '">&larr; ' . esc_html( aa_reg_t( 'back_to', 'Back to' ) . ' ' . $course['crumb'] ) . '</a>'
 	     . '<span>' . esc_html( $course['code'] ) . '</span></nav>';
 }
 
@@ -1243,7 +1266,7 @@ function aa_reg_month_html( $course, $m, $first_id, $cur ) {
 	// Week groups turn one long month into three or four short lists.
 	foreach ( aa_reg_by_week( $m['items'] ) as $week ) {
 		$h .= '<section class="aacal-week" data-week><div class="aacal-weekhead">'
-		    . '<h3>' . esc_html( 'Week of ' . ( new DateTime( $week['monday'] ) )->format( 'M j' ) ) . '</h3>'
+		    . '<h3>' . esc_html( aa_reg_t( 'week_of', 'Week of' ) . ' ' . ( new DateTime( $week['monday'] ) )->format( 'M j' ) ) . '</h3>'
 		    . '<p data-week-count>' . esc_html( aa_reg_batches_label( count( $week['items'] ) ) ) . '</p>'
 		    . '</div><div class="aacal-rows">';
 		foreach ( $week['items'] as $c ) {
@@ -1264,7 +1287,8 @@ function aa_reg_hero( $atts ) {
 	$first   = $cohorts[0];
 	$cur     = $course['currency'];
 
-	$h  = '<section class="aahero" id="aahero" aria-labelledby="aahero-title"><div class="aahero-shell">';
+	$h  = '<section class="aahero' . aa_reg_dir_class() . '" id="aahero"' . aa_reg_dir_attr()
+	    . ' aria-labelledby="aahero-title"><div class="aahero-shell">';
 	$h .= '<div class="aahero-copy">';
 	$h .= aa_reg_crumb( $course );
 	$h .= '<p class="aahero-eyebrow">' . esc_html( $course['eyebrow'] ) . '</p>';
@@ -1273,17 +1297,17 @@ function aa_reg_hero( $atts ) {
 	$h .= '<ul class="aahero-proof">';
 	foreach ( $course['proof'] as $p ) { $h .= '<li>' . esc_html( $p ) . '</li>'; }
 	$h .= '</ul>';
-	$h .= '<div class="aahero-facts"><div><p class="aahero-minilabel">Next batch</p>'
+	$h .= '<div class="aahero-facts"><div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'next_batch', 'Next batch' ) ) . '</p>'
 	    . '<p class="aahero-fact" data-hero-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p></div>'
 	    . '<span class="aahero-rule" aria-hidden="true"></span>'
-	    . '<div><p class="aahero-minilabel">Investment</p><p class="aahero-fact">'
+	    . '<div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</p><p class="aahero-fact">'
 	    . esc_html( aa_reg_money( $course['price'], $course['currency'] ) )
-	    . ' <span class="aahero-factnote">exam included</span></p></div></div>';
+	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . '</span></p></div></div>';
 	$h .= '</div>';
 
 	$h .= '<div class="aahero-picker"><div class="aahero-pickhead">'
-	    . '<p class="aahero-picktitle">Pick your dates</p>'
-	    . '<p class="aahero-picknote">' . esc_html( sprintf( _n( '%d batch scheduled', '%d batches scheduled', count( $cohorts ) ), count( $cohorts ) ) ) . '</p></div>';
+	    . '<p class="aahero-picktitle">' . esc_html( aa_reg_t( 'pick_dates', 'Pick your dates' ) ) . '</p>'
+	    . '<p class="aahero-picknote">' . esc_html( sprintf( count( $cohorts ) === 1 ? aa_reg_t( 'batch_1', '%d batch scheduled' ) : aa_reg_t( 'batch_n', '%d batches scheduled' ), count( $cohorts ) ) ) . '</p></div>';
 
 	$h .= aa_reg_tabs( 'aahero', $months );
 
@@ -1316,8 +1340,9 @@ function aa_reg_hero( $atts ) {
 	   next few months and someone may genuinely want the rest. */
 	$h .= aa_reg_config_script( $a['course'], $course, $cur );
 	$h .= aa_reg_inline( $course, $first, $cur, 'aahero' );
-	$h .= '<p class="aahero-hint"><a href="#aacal" data-hero-cta>See the full schedule &#10230;</a></p>';
-	$h .= '<p class="aahero-private">Dates don\'t work? <a href="/contact/">Ask for a private cohort</a></p>';
+	$h .= '<p class="aahero-hint"><a href="#aacal" data-hero-cta>' . esc_html( aa_reg_t( 'full_schedule', 'See the full schedule' ) ) . ' &#10230;</a></p>';
+	$h .= '<p class="aahero-private">' . esc_html( aa_reg_t( 'no_dates', 'Dates don\'t work?' ) )
+	    . ' <a href="/contact/">' . esc_html( aa_reg_t( 'private', 'Ask for a private cohort' ) ) . '</a></p>';
 	$h .= '</div></div>';
 
 	/* The stats bar carries only figures already published elsewhere on the
@@ -1325,10 +1350,10 @@ function aa_reg_hero( $atts ) {
 	   first-attempt pass" — are deliberately not here: a visible star rating
 	   is the aggregateRating claim that was stripped from 23 pages, and a
 	   pass-rate figure is the pass-guarantee wording the copy rule forbids. */
-	$h .= '<div class="aahero-bar"><p class="aahero-scroll">Scroll for the full schedule and registration &#8595;</p>'
-	    . '<ul class="aahero-stats"><li><strong>2,500+</strong> trained</li>'
-	    . '<li><strong>80+</strong> ARTs launched</li>'
-	    . '<li><strong>Exam fee</strong> included</li></ul></div>';
+	$h .= '<div class="aahero-bar"><p class="aahero-scroll">' . esc_html( aa_reg_t( 'scroll', 'Scroll for the full schedule and registration' ) ) . ' &#8595;</p>'
+	    . '<ul class="aahero-stats"><li><strong>2,500+</strong> ' . esc_html( aa_reg_t( 'trained', 'trained' ) ) . '</li>'
+	    . '<li><strong>80+</strong> ' . esc_html( aa_reg_t( 'arts', 'ARTs launched' ) ) . '</li>'
+	    . '<li><strong>' . esc_html( aa_reg_t( 'exam_fee', 'Exam fee' ) ) . '</strong> ' . esc_html( aa_reg_t( 'included', 'included' ) ) . '</li></ul></div>';
 	$h .= '</section>';
 	return $h;
 }
@@ -1345,8 +1370,9 @@ function aa_reg_panel( $atts ) {
 	$live    = aa_reg_is_live();
 	$cur     = $course['currency'];
 
-	$h  = '<section class="aacal" id="aacal" aria-labelledby="aacal-title">';
-	$h .= '<a class="aacal-skip" href="#aacal-form">Skip to the registration form</a>';
+	$h  = '<section class="aacal' . aa_reg_dir_class() . '" id="aacal"' . aa_reg_dir_attr()
+	    . ' aria-labelledby="aacal-title">';
+	$h .= '<a class="aacal-skip" href="#aacal-form">' . esc_html( aa_reg_t( 'skip_form', 'Skip to the registration form' ) ) . '</a>';
 	$h .= '<div class="aacal-shell"><div class="aacal-left">';
 
 	$first_month = key( $months );
@@ -1380,12 +1406,12 @@ function aa_reg_panel( $atts ) {
 	if ( $dense_anywhere && count( $kinds ) > 1 ) {
 		$h .= '<div class="aacal-filters" role="group" aria-label="Filter batches">'
 		    . '<span class="aacal-filterlabel">Show</span>'
-		    . '<button type="button" class="aacal-chip is-on" data-filter="all" aria-pressed="true">All batches</button>';
+		    . '<button type="button" class="aacal-chip is-on" data-filter="all" aria-pressed="true">' . esc_html( aa_reg_t( 'all_batches', 'All batches' ) ) . '</button>';
 		if ( isset( $kinds['weekday'] ) ) {
-			$h .= '<button type="button" class="aacal-chip" data-filter="weekday" aria-pressed="false">Weekday</button>';
+			$h .= '<button type="button" class="aacal-chip" data-filter="weekday" aria-pressed="false">' . esc_html( aa_reg_t( 'weekday', 'Weekday' ) ) . '</button>';
 		}
 		if ( isset( $kinds['weekend'] ) ) {
-			$h .= '<button type="button" class="aacal-chip" data-filter="weekend" aria-pressed="false">Weekend</button>';
+			$h .= '<button type="button" class="aacal-chip" data-filter="weekend" aria-pressed="false">' . esc_html( aa_reg_t( 'weekend', 'Weekend' ) ) . '</button>';
 		}
 		$h .= '</div>';
 	}
@@ -1422,19 +1448,26 @@ function aa_reg_panel( $atts ) {
 		$i++;
 	}
 
-	$h .= '<p class="aacal-empty" data-empty hidden>No batches match that filter this month · '
-	    . '<button type="button" class="aacal-link" data-filter="all">Show all batches</button></p>';
-	$h .= '<p class="aacal-note">All batches run live online in English. <a href="/contact/">Need private dates?</a></p>';
+	$h .= '<p class="aacal-empty" data-empty hidden>' . esc_html( aa_reg_t( 'no_match', 'No batches match that filter this month' ) ) . ' · '
+	    . '<button type="button" class="aacal-link" data-filter="all">' . esc_html( aa_reg_t( 'show_all', 'Show all batches' ) ) . '</button></p>';
+	/* THE LANGUAGES ARE A SELLING POINT, NOT A DISCLAIMER. The old line said
+	   only "All batches run live online in English", which reads as a limit and
+	   hides that we teach the same courses in four languages. What is on the
+	   schedule below is still the English cohorts, so the sentence keeps saying
+	   so plainly rather than implying a Spanish batch can be booked from this
+	   list -- it points at the conversation instead. */
+	$h .= '<p class="aacal-note">' . esc_html( aa_reg_t( 'languages', 'Live online in English. Also delivered in Spanish, French and Arabic — ' ) )
+	    . '<a href="/contact/">' . esc_html( aa_reg_t( 'languages_cta', 'ask about a cohort in your language, or private dates' ) ) . '</a>.</p>';
 	$h .= '</div>';
 
 	/* ---- right: two-step form ---- */
 	$h .= '<div class="aacal-right" id="aacal-form">';
 	// .aacal-num is not decoration: goStep() swaps its text to a tick as the
 	// wizard advances, and a bare <span> makes that a null dereference.
-	$h .= '<ol class="aacal-steps"><li class="aacal-step is-on" data-step="1"><span class="aacal-num">1</span> Your details</li>'
-	    . '<li class="aacal-step" data-step="2"><span class="aacal-num">2</span> Review &amp; pay</li></ol>';
+	$h .= '<ol class="aacal-steps"><li class="aacal-step is-on" data-step="1"><span class="aacal-num">1</span> ' . esc_html( aa_reg_t( 'step_details', 'Your details' ) ) . '</li>'
+	    . '<li class="aacal-step" data-step="2"><span class="aacal-num">2</span> ' . esc_html( aa_reg_t( 'step_pay', 'Review & pay' ) ) . '</li></ol>';
 	$h .= '<div class="aacal-selected" aria-live="polite">'
-	    . '<p class="aacal-sel-label" data-sel-label>Selected · next available</p>'
+	    . '<p class="aacal-sel-label" data-sel-label>' . esc_html( aa_reg_t( 'selected', 'Selected · next available' ) ) . '</p>'
 	    . '<p class="aacal-sel-range" data-sel-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p>'
 	    . '<p class="aacal-sel-batch" data-sel-batch>' . esc_html( $first['batch'] ) . '</p></div>';
 
@@ -1443,31 +1476,31 @@ function aa_reg_panel( $atts ) {
 	   twice. The email stays because it prefills Stripe and because it is the
 	   only record of someone who abandons at the payment step. */
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
-	    . '<label class="aacal-field"><span class="aacal-sr">Your email</span>'
+	    . '<label class="aacal-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	    . '<input name="email" type="email" autocomplete="email" inputmode="email"'
 	    . ' placeholder="Your email" required></label>'
-	    . '<div class="aacal-seatsrow"><div><p class="aacal-minilabel">Seats</p>'
+	    . '<div class="aacal-seatsrow"><div><p class="aacal-minilabel">' . esc_html( aa_reg_t( 'seats', 'Seats' ) ) . '</p>'
 	    . '<div class="aacal-stepper"><button type="button" data-seats="-1" aria-label="Fewer seats">&minus;</button>'
 	    . '<span data-seats-value aria-live="polite">1</span>'
 	    . '<button type="button" data-seats="1" aria-label="More seats">+</button></div></div>'
-	    . '<div class="aacal-totalbox"><p class="aacal-minilabel">Total</p>'
+	    . '<div class="aacal-totalbox"><p class="aacal-minilabel">' . esc_html( aa_reg_t( 'total', 'Total' ) ) . '</p>'
 	    . '<p class="aacal-total" data-total>' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</p></div></div>'
-	    . '<button type="submit" class="aacal-cta" data-next disabled>Continue to review</button>'
-	    . '<p class="aacal-hint" data-hint>Enter your email to continue.</p>'
+	    . '<button type="submit" class="aacal-cta" data-next disabled>' . esc_html( aa_reg_t( 'continue', 'Continue to review' ) ) . '</button>'
+	    . '<p class="aacal-hint" data-hint>' . esc_html( aa_reg_t( 'enter_email', 'Enter your email to continue.' ) ) . '</p>'
 	    . '</form>';
 
 	$h .= '<form class="aacal-panel" data-panel="2" hidden novalidate>'
 	    . '<dl class="aacal-review">'
-	    . '<div><dt>Course</dt><dd>' . esc_html( $course['name'] ) . '</dd></div>'
-	    . '<div><dt>Dates</dt><dd data-rev-dates></dd></div>'
-	    . '<div><dt>Email</dt><dd data-rev-email>&mdash;</dd></div>'
-	    . '<div><dt>Seats</dt><dd data-rev-seats>1</dd></div>'
-	    . '<div class="aacal-review-total"><dt>Total &middot; exam fee included</dt>'
+	    . '<div><dt>' . esc_html( aa_reg_t( 'course', 'Course' ) ) . '</dt><dd>' . esc_html( $course['name'] ) . '</dd></div>'
+	    . '<div><dt>' . esc_html( aa_reg_t( 'dates', 'Dates' ) ) . '</dt><dd data-rev-dates></dd></div>'
+	    . '<div><dt>' . esc_html( aa_reg_t( 'email', 'Email' ) ) . '</dt><dd data-rev-email>&mdash;</dd></div>'
+	    . '<div><dt>' . esc_html( aa_reg_t( 'seats', 'Seats' ) ) . '</dt><dd data-rev-seats>1</dd></div>'
+	    . '<div class="aacal-review-total"><dt>' . esc_html( aa_reg_t( 'total_exam', 'Total · exam fee included' ) ) . '</dt>'
 	    . '<dd data-rev-total>' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</dd></div></dl>'
 	    . '<label class="aacal-consent"><input type="checkbox" name="consent" required>'
 	    . '<span>I agree to the <a href="/terms/">booking terms</a> and to processing my details for this registration.</span></label>'
 	    . '<button type="submit" class="aacal-cta" data-pay disabled>'
-	    . esc_html( $live ? 'Pay securely with Stripe' : 'Registration temporarily unavailable' ) . '</button>'
+	    . esc_html( $live ? aa_reg_t( 'pay', 'Pay securely with Stripe' ) : aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ) ) . '</button>'
 	    . '<div class="aacal-backrow"><button type="button" class="aacal-link" data-back>&larr; Edit details</button></div>'
 	    . '<p class="aacal-hint" data-hint2>'
 	    . esc_html( $live
@@ -1478,12 +1511,12 @@ function aa_reg_panel( $atts ) {
 	$h .= '<div class="aacal-done" data-panel="done" hidden role="status">'
 	    . '<p class="aacal-done-h">You\'re in, <span data-done-name>there</span>.</p>'
 	    . '<p class="aacal-done-p"><span data-done-summary></span>. Your receipt and joining details are on the way to <span data-done-email>your inbox</span>.</p>'
-	    . '<button type="button" class="aacal-link" data-reset>Book another seat</button></div>';
+	    . '<button type="button" class="aacal-link" data-reset>' . esc_html( aa_reg_t( 'book_another', 'Book another seat' ) ) . '</button></div>';
 
 	/* No fixed reschedule window. Rescheduling carries no fee, but "up to 10
 	   days before the batch starts" is a deadline nobody agreed to and one a
 	   buyer could hold us to. State the fee and not the window. */
-	$h .= '<p class="aacal-fine">Need to move dates? Rescheduling carries no fee. The exam fee is included in the price.</p>';
+	$h .= '<p class="aacal-fine">' . esc_html( aa_reg_t( 'fine', 'Need to move dates? Rescheduling carries no fee. The exam fee is included in the price.' ) ) . '</p>';
 	$h .= '</div></div>';
 
 	/* Offers describe what is actually purchasable: price, currency, and
@@ -1569,6 +1602,247 @@ function aa_reg_autoplace_on() {
 	return get_option( 'aa_reg_autoplace', 'yes' ) !== 'no';
 }
 
+/* ============================================================================
+   LANGUAGE
+   ----------------------------------------------------------------------------
+   The mirrors under /es/, /fr/ and /ar/ used to be refused outright: the swap
+   checked the page's top-level ancestor and left translated pages on the old
+   hero rather than give a French page an English one. That was the right call
+   while the copy lived only in aa_reg_courses(), and it is why Arabic was
+   still showing the old format long after every English page had moved.
+
+   It is no longer necessary, because aa_reg_derived_course() builds a course
+   out of the page it is standing on -- title, lede, breadcrumb and cohort
+   config all come from that page's own post_title, post_excerpt, parent and
+   #aa-cohorts element. On a Spanish page those are already Spanish. The only
+   English left was this file's own chrome, and that is what the table below
+   translates. So the rule flips: the mirrors are not skipped, they are read.
+
+   English is the fallback for every key. A missing translation renders the
+   English word rather than an empty element or a raw key.
+   ========================================================================== */
+
+/** 'en' | 'es' | 'fr' | 'ar' for a post, or for the current page if omitted. */
+function aa_reg_lang( $post = null ) {
+	if ( $post === null ) {
+		static $cur = null;
+		if ( $cur !== null ) { return $cur; }
+		$obj = get_queried_object();
+		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
+		$cur = ( $obj instanceof WP_Post ) ? aa_reg_lang( $obj ) : 'en';
+		return $cur;
+	}
+	if ( ! ( $post instanceof WP_Post ) ) { return 'en'; }
+	$anc  = get_post_ancestors( $post->ID );
+	$root = $anc ? get_post( end( $anc ) ) : $post;
+	if ( ! $root ) { return 'en'; }
+	return in_array( $root->post_name, aa_reg_lang_roots(), true ) ? $root->post_name : 'en';
+}
+
+/** Arabic is the only right-to-left language we publish in. */
+function aa_reg_is_rtl( $lang = null ) {
+	return ( $lang === null ? aa_reg_lang() : $lang ) === 'ar';
+}
+
+/**
+ * lang and dir for the two section roots.
+ *
+ * Set on the section rather than left to the theme because these two sections
+ * are swapped into pages whose <html dir> we do not control, and a mirrored
+ * grid with a left-to-right price column reads as a rendering fault. dir is an
+ * HTML attribute, not styling, so it also fixes the things CSS cannot: where
+ * the caret sits in the email field, which way the date range reads, and how a
+ * screen reader announces the row.
+ */
+function aa_reg_dir_attr() {
+	$lang = aa_reg_lang();
+	if ( $lang === 'en' ) { return ''; }
+	return ' lang="' . esc_attr( $lang ) . '"' . ( aa_reg_is_rtl( $lang ) ? ' dir="rtl"' : '' );
+}
+
+/** ' is-rtl' when the page is Arabic, for the handful of rules dir cannot reach. */
+function aa_reg_dir_class() {
+	return aa_reg_is_rtl() ? ' is-rtl' : '';
+}
+
+/**
+ * The chrome, in four languages.
+ *
+ * Only strings this file renders itself. Anything that belongs to the course
+ * -- its name, its lede, its breadcrumb -- comes from the page and is already
+ * in the right language, so it is deliberately absent here.
+ */
+function aa_reg_strings() {
+	return array(
+		'es' => array(
+			'next_batch'    => 'Próxima convocatoria',
+			'investment'    => 'Inversión',
+			'exam_included' => 'examen incluido',
+			'pick_dates'    => 'Elige tus fechas',
+			'batch_1'       => '%d convocatoria programada',
+			'batch_n'       => '%d convocatorias programadas',
+			'full_schedule' => 'Ver el calendario completo',
+			'no_dates'      => '¿No te encajan las fechas?',
+			'private'       => 'Solicita una convocatoria privada',
+			'scroll'        => 'Desplázate para ver el calendario y la inscripción',
+			'trained'       => 'formados',
+			'arts'          => 'ART lanzados',
+			'exam_fee'      => 'Tasa de examen',
+			'included'      => 'incluida',
+			'skip_form'     => 'Ir al formulario de inscripción',
+			'all_batches'   => 'Todas las convocatorias',
+			'weekday'       => 'Entre semana',
+			'weekend'       => 'Fin de semana',
+			'show_all'      => 'Mostrar todas las convocatorias',
+			'no_match'      => 'Ninguna convocatoria coincide con ese filtro este mes',
+			'languages'     => 'En directo en línea, en inglés. También impartimos en español, francés y árabe — ',
+			'languages_cta' => 'consulta por una convocatoria en tu idioma o fechas privadas',
+			'selected'      => 'Seleccionada · próxima disponible',
+			'your_email'    => 'Tu correo electrónico',
+			'seats'         => 'Plazas',
+			'total'         => 'Total',
+			'continue'      => 'Continuar a la revisión',
+			'enter_email'   => 'Introduce tu correo para continuar.',
+			'course'        => 'Curso',
+			'dates'         => 'Fechas',
+			'email'         => 'Correo electrónico',
+			'total_exam'    => 'Total · tasa de examen incluida',
+			'pay'           => 'Paga de forma segura con Stripe',
+			'pay_off'       => 'Inscripción no disponible temporalmente',
+			'book_another'  => 'Reservar otra plaza',
+			'fine'          => '¿Necesitas cambiar de fechas? El cambio no tiene coste. La tasa de examen está incluida en el precio.',
+			'step_details'  => 'Tus datos',
+			'step_pay'      => 'Revisar y pagar',
+			'next_avail'    => 'Próxima disponible',
+			'seats_left'    => 'quedan %d plazas',
+			'seats_open'    => 'Plazas disponibles',
+			'week_of'       => 'Semana del',
+			'batch_weekend' => 'Convocatoria de fin de semana',
+			'batch_morning' => 'Convocatoria entre semana, mañanas',
+			'batch_after'   => 'Convocatoria entre semana, tardes',
+			'batch_evening' => 'Convocatoria de tarde-noche',
+			'back_to'       => 'Volver a',
+			'training'      => 'Formación',
+			'live_online'   => 'En directo en línea',
+			'exam_inc_full' => 'Tasa de examen incluida',
+		),
+		'fr' => array(
+			'next_batch'    => 'Prochaine session',
+			'investment'    => 'Investissement',
+			'exam_included' => 'examen inclus',
+			'pick_dates'    => 'Choisissez vos dates',
+			'batch_1'       => '%d session programmée',
+			'batch_n'       => '%d sessions programmées',
+			'full_schedule' => 'Voir le calendrier complet',
+			'no_dates'      => 'Les dates ne conviennent pas ?',
+			'private'       => 'Demandez une session privée',
+			'scroll'        => 'Faites défiler pour le calendrier et l\'inscription',
+			'trained'       => 'formés',
+			'arts'          => 'ART lancés',
+			'exam_fee'      => 'Frais d\'examen',
+			'included'      => 'inclus',
+			'skip_form'     => 'Aller au formulaire d\'inscription',
+			'all_batches'   => 'Toutes les sessions',
+			'weekday'       => 'En semaine',
+			'weekend'       => 'Week-end',
+			'show_all'      => 'Afficher toutes les sessions',
+			'no_match'      => 'Aucune session ne correspond à ce filtre ce mois-ci',
+			'languages'     => 'En direct en ligne, en anglais. Également dispensé en espagnol, français et arabe — ',
+			'languages_cta' => 'demandez une session dans votre langue, ou des dates privées',
+			'selected'      => 'Sélectionnée · prochaine disponible',
+			'your_email'    => 'Votre e-mail',
+			'seats'         => 'Places',
+			'total'         => 'Total',
+			'continue'      => 'Continuer vers la récapitulation',
+			'enter_email'   => 'Saisissez votre e-mail pour continuer.',
+			'course'        => 'Formation',
+			'dates'         => 'Dates',
+			'email'         => 'E-mail',
+			'total_exam'    => 'Total · frais d\'examen inclus',
+			'pay'           => 'Payer en toute sécurité avec Stripe',
+			'pay_off'       => 'Inscription temporairement indisponible',
+			'book_another'  => 'Réserver une autre place',
+			'fine'          => 'Besoin de changer de dates ? Le report est sans frais. Les frais d\'examen sont compris dans le prix.',
+			'step_details'  => 'Vos coordonnées',
+			'step_pay'      => 'Vérifier et payer',
+			'next_avail'    => 'Prochaine disponible',
+			'seats_left'    => 'il reste %d places',
+			'seats_open'    => 'Places disponibles',
+			'week_of'       => 'Semaine du',
+			'batch_weekend' => 'Session de week-end',
+			'batch_morning' => 'Session en semaine, le matin',
+			'batch_after'   => 'Session en semaine, l\'après-midi',
+			'batch_evening' => 'Session en soirée',
+			'back_to'       => 'Retour à',
+			'training'      => 'Formations',
+			'live_online'   => 'En direct en ligne',
+			'exam_inc_full' => 'Frais d\'examen inclus',
+		),
+		'ar' => array(
+			'next_batch'    => 'الدورة القادمة',
+			'investment'    => 'الاستثمار',
+			'exam_included' => 'الامتحان مشمول',
+			'pick_dates'    => 'اختر التواريخ المناسبة لك',
+			'batch_1'       => 'دورة واحدة مجدولة',
+			'batch_n'       => '%d دورات مجدولة',
+			'full_schedule' => 'عرض الجدول الكامل',
+			'no_dates'      => 'التواريخ لا تناسبك؟',
+			'private'       => 'اطلب دورة خاصة',
+			'scroll'        => 'مرّر لأسفل لعرض الجدول الكامل والتسجيل',
+			'trained'       => 'متدرب',
+			'arts'          => 'قطار إصدار رشيق تم إطلاقه',
+			'exam_fee'      => 'رسوم الامتحان',
+			'included'      => 'مشمولة',
+			'skip_form'     => 'الانتقال إلى نموذج التسجيل',
+			'all_batches'   => 'كل الدورات',
+			'weekday'       => 'أيام الأسبوع',
+			'weekend'       => 'عطلة نهاية الأسبوع',
+			'show_all'      => 'عرض كل الدورات',
+			'no_match'      => 'لا توجد دورات تطابق هذا التصفية هذا الشهر',
+			'languages'     => 'مباشر عبر الإنترنت بالإنجليزية. نقدّمها أيضًا بالإسبانية والفرنسية والعربية — ',
+			'languages_cta' => 'اسأل عن دورة بلغتك أو عن مواعيد خاصة',
+			'selected'      => 'المحددة · الأقرب المتاحة',
+			'your_email'    => 'بريدك الإلكتروني',
+			'seats'         => 'المقاعد',
+			'total'         => 'الإجمالي',
+			'continue'      => 'المتابعة إلى المراجعة',
+			'enter_email'   => 'أدخل بريدك الإلكتروني للمتابعة.',
+			'course'        => 'الدورة',
+			'dates'         => 'التواريخ',
+			'email'         => 'البريد الإلكتروني',
+			'total_exam'    => 'الإجمالي · رسوم الامتحان مشمولة',
+			'pay'           => 'ادفع بأمان عبر Stripe',
+			'pay_off'       => 'التسجيل غير متاح مؤقتًا',
+			'book_another'  => 'حجز مقعد آخر',
+			'fine'          => 'تحتاج إلى تغيير التواريخ؟ إعادة الجدولة بدون رسوم. رسوم الامتحان مشمولة في السعر.',
+			'step_details'  => 'بياناتك',
+			'step_pay'      => 'المراجعة والدفع',
+			'next_avail'    => 'الأقرب المتاحة',
+			'seats_left'    => 'بقي %d مقاعد',
+			'seats_open'    => 'مقاعد متاحة',
+			'week_of'       => 'أسبوع',
+			'batch_weekend' => 'دورة عطلة نهاية الأسبوع',
+			'batch_morning' => 'دورة صباحية في أيام الأسبوع',
+			'batch_after'   => 'دورة بعد الظهر في أيام الأسبوع',
+			'batch_evening' => 'دورة مسائية',
+			'back_to'       => 'العودة إلى',
+			'training'      => 'التدريب',
+			'live_online'   => 'مباشر عبر الإنترنت',
+			'exam_inc_full' => 'رسوم الامتحان مشمولة',
+		),
+	);
+}
+
+/** One chrome string in the current page's language, English if untranslated. */
+function aa_reg_t( $key, $en ) {
+	$lang = aa_reg_lang();
+	if ( $lang === 'en' ) { return $en; }
+	$all = aa_reg_strings();
+	return isset( $all[ $lang ][ $key ] ) && $all[ $lang ][ $key ] !== ''
+		? $all[ $lang ][ $key ]
+		: $en;
+}
+
 /** Top-level section slugs that mean "this is a translated mirror". */
 function aa_reg_lang_roots() {
 	return array( 'es', 'fr', 'ar' );
@@ -1601,15 +1875,11 @@ function aa_reg_page_course() {
 	if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
 	if ( ! ( $obj instanceof WP_Post ) || $obj->post_type !== 'page' ) { return $key; }
 
+	/* The language sections are no longer refused here. aa_reg_course() now
+	   resolves a mirror from its own page, and every string this file renders
+	   goes through aa_reg_t(), so /es/, /fr/ and /ar/ get the same design in
+	   their own words instead of being left behind on the old hero. */
 	if ( ! aa_reg_course( $obj->post_name ) ) { return $key; }
-
-	// Walk to the top-level ancestor and refuse if it is a language section.
-	$ancestors = get_post_ancestors( $obj->ID );
-	$root      = $ancestors ? end( $ancestors ) : $obj->ID;
-	$root_post = get_post( $root );
-	if ( $root_post && in_array( $root_post->post_name, aa_reg_lang_roots(), true ) ) {
-		return $key;
-	}
 
 	$key = $obj->post_name;
 	return $key;

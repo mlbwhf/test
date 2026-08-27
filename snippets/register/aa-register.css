@@ -396,3 +396,42 @@
 .aa-rd .aahero-card.is-on .aahero-check{ background:#127E88; border-color:#127E88; }
 .aa-rd .aahero-card.is-on{ border-color:#127E88; }
 .aa-rd .aacal a,.aa-rd .aahero a{ color:#127E88; }
+
+/* ============================================================================
+   ARABIC — RIGHT TO LEFT
+   ----------------------------------------------------------------------------
+   Scoped to [dir="rtl"], which the snippet sets on the two section roots, so
+   none of the left-to-right rules above are touched. The layout itself needs
+   almost nothing: the grids and flex rows mirror themselves off the dir
+   attribute. What does not mirror is anything that named a physical side, and
+   that is the whole of this block -- nine declarations, listed here rather
+   than rewritten above so an English page cannot regress on an Arabic fix.
+
+   The arrows are the other half. "&#10230;" points right, which in Arabic
+   points backwards, so the two that mean "forward" are flipped by transform
+   rather than by swapping the character: the glyph stays one string in the
+   PHP and only its rendering changes.
+   ========================================================================== */
+[dir="rtl"].aahero .aahero-cardbtn,
+[dir="rtl"].aacal .aacal-cardbtn,
+[dir="rtl"].aacal .aacal-chip { text-align: right; }
+
+[dir="rtl"].aacal .aacal-left { border-right: 0; border-left: 1px solid var(--line); }
+
+[dir="rtl"].aahero .aahero-list,
+[dir="rtl"].aacal .aacal-panel-month { padding-right: 0; padding-left: 14px; }
+
+[dir="rtl"].aahero .aahero-scroller { padding-right: 0; padding-left: 4px; }
+
+[dir="rtl"].aacal .aacal-skip { left: auto; right: -9999px; }
+
+/* Forward-pointing arrows, mirrored. inline-block because a bare glyph has no
+   box to transform. */
+[dir="rtl"].aahero .aahero-hint a::after,
+[dir="rtl"].aacal .aacal-cta::after { display: inline-block; transform: scaleX(-1); }
+
+/* Arabic has no italic tradition and the serif face has no Arabic cut, so the
+   display type falls back to the UI stack upright rather than rendering a
+   synthesised oblique of a substituted font. */
+[dir="rtl"].aahero .aahero-h1,
+[dir="rtl"].aacal .aacal-title { font-style: normal; }
