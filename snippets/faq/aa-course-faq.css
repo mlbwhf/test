@@ -121,6 +121,11 @@
 
 /* ---------- closing band ---------- */
 .aa-fb2{
+  /* Same two values as the home hero's --terra / --terra-dk. Named here so the
+     accent is declared once per component instead of being a hex that happens
+     to match: if the home page's terracotta ever moves, this is the line that
+     moves with it. */
+  --terra:#D34B2A; --terra-dk:#B93E20;
   background:#0E4A47; color:#F3F7F6;
   padding:clamp(30px,3.2vw,46px) clamp(22px,3vw,44px);
   font-family:'Instrument Sans','Space Grotesk',system-ui,-apple-system,sans-serif;
@@ -173,11 +178,11 @@
   text-decoration:none!important;
 }
 .aa-fb2-primary{
-  background:#D34B2A; color:#fff!important; border:0;
+  background:var(--terra); color:#fff!important; border:0;
   box-shadow:0 12px 26px rgba(0,0,0,.24);
   transition:background .15s ease;
 }
-.aa-fb2-primary:hover{background:#B93E20;color:#fff!important}
+.aa-fb2-primary:hover{background:var(--terra-dk);color:#fff!important}
 .aa-fb2-primary i{font-style:normal;opacity:.75}
 .aa-fb2-secondary{
   background:transparent; color:#F3F7F6!important;
@@ -268,22 +273,15 @@
 .aa-rd .aa-fb2-facts li{ color:inherit; }
 .aa-rd .aa-fb2-copy p{ color:inherit; }
 
-/* THE PRIMARY CTA, IN THE PAGE'S PALETTE.
-   #D34B2A is the home page's accent and it belongs there -- on the 1A palette
-   it is the one warm note against a cool ground. On a course page it is the
-   only warm thing within several screens of teal, and it read as an error
-   rather than emphasis.
+/* THE PRIMARY CTA KEEPS THE TERRACOTTA, ON PURPOSE.
+   It is deliberately NOT re-themed to teal here. The band is the last thing on
+   the page and the enrol button is the one place a warm accent earns its keep:
+   against #0B2E35 it is the only element that does not recede, and it is the
+   same terracotta the home page uses, so a visitor arriving from there meets a
+   CTA they already recognise. Everything else in this block adopts the course
+   palette; this one thing stays.
 
-   The course template already has a treatment for a primary button on this
-   exact dark band: .btn-white, white fill with dark teal text. Reusing it
-   keeps the band consistent with the sticky bar and the hero, and white on
-   #0B2E35 carries far more contrast than any teal would. The pill radius and
-   sizing of the new design are kept. */
-.aa-rd .aa-fb2-primary{
-  background:#FFFFFF; color:#0B2E35!important;
-  box-shadow:0 10px 24px rgba(0,0,0,.28);
-}
-.aa-rd .aa-fb2-primary:hover{ background:#DCEAEA; color:#0B2E35!important; }
-.aa-rd .aa-fb2-primary i{ opacity:.6; }
+   The secondary is nudged up from .35 to .4 alpha because .aa-rd darkens the
+   band from #0E4A47 to #0B2E35, and the ghost border went faint against it. */
 .aa-rd .aa-fb2-secondary{ border-color:rgba(243,247,246,.4); color:#F3F7F6!important; }
 .aa-rd .aa-fb2-secondary:hover{ border-color:#FFFFFF; color:#FFFFFF!important; }
