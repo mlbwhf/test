@@ -200,8 +200,8 @@ function aa_faq_extra( $slug ) {
 				'Both are common. Some SPCs move into a dedicated transformation or Agile CoE post; many others keep the job they have — Scrum Master, Product Manager, engineering lead — and use the credential to lead change from inside the team they already work with. The course is built for either, because the hard part is the same: getting an organisation to adopt something it did not ask for.' ),
 			array( 'career', 'Which roles do employers usually fill with an SPC?',
 				'Most often Enterprise or Transformation Agile Coach, Agile CoE Lead, Release Train Engineer, and internal consultant posts inside a transformation office. On the supplier side it is the standard entry requirement for delivery consultants at firms running SAFe engagements — for many of those postings SPC is a screening filter rather than a nice-to-have.' ),
-			array( 'career', 'Does SPC let me earn as a licensed instructor alongside my main job?',
-				'Yes — SPC is the credential that carries teaching rights, which is what separates it from every other SAFe certification and why people treat it as a second income stream as much as a job title. Which courses you are licensed to deliver, and on what terms, is set by Scaled Agile and does change: check the current list in SAFe Studio once your credential is active. Running your first class is part of the post-course coaching session.' ),
+			array( 'career', 'Can I build a side practice teaching, alongside my main job?',
+				'Plenty of SPCs do, and it is the usual reason people pick this credential over a cheaper one. The practical questions are not about the licence but about demand: who your first clients are, whether you teach public or in-house, and how much delivery you can carry around a full-time job. That is what the post-course coaching session is for — the licensing itself is covered separately above.' ),
 			array( 'career', 'How quickly does SPC pay off in career terms?',
 				'That depends far more on your situation than on the credential. People already inside a SAFe adoption tend to use it immediately and see it recognised at the next review; people using it to change employer are running a job search, which takes as long as a job search takes. The market figures above are role compensation, not a promise about your outcome — we would rather set that expectation now than sell you a number.' ),
 		),
@@ -217,12 +217,12 @@ function aa_faq_extra( $slug ) {
 				'Advising at portfolio and executive level: designing an operating model rather than installing a framework, coaching leaders through the decisions that stall adoptions, and diagnosing why a transformation that looks correct on paper is producing nothing. You also take away the facilitation material for the workshops that get those conversations to a decision.' ),
 			array( 'ai', 'How is AI changing what a senior SAFe consultant is expected to bring?',
 				'The questions arriving from executives have shifted. Where the brief used to be “help us scale delivery”, it is increasingly “we have AI pilots everywhere and nothing in production — what is wrong with how we work?” That is an operating-model question, and answering it is the part of the consultant’s job that has changed most.' ),
-			array( 'ai', 'Does this course cover AI-Native ways of working?',
-				'Yes. We cover where AI genuinely accelerates the flow of value, where it quietly adds rework, and how to keep people accountable for the decisions that matter. If you want to go further, our AI-Native track treats this as its whole subject rather than one module.' ),
-			array( 'ai', 'What does it mean that SAFe is now “AI-empowered”?',
-				'It means role-based AI assistance is treated as part of how the work gets done rather than a separate initiative — using AI to move faster while keeping people in the loop on the decisions. At your level it is less about the tools than about governance: who is accountable when the assistant is wrong.' ),
-			array( 'ai', 'What did SAFe 6.0 change for consultants?',
-				'The centre of gravity moved from delivery scaling to business agility — flow measurement, Value Stream Management, and clearer enterprise roles. For a consultant that changes the opening conversation: the sponsor is now more often a business leader asking about the flow of value than an engineering leader asking about release cadence.' ),
+			array( 'ai', 'How do I advise a client whose AI pilots never reach production?',
+				'Start by naming what is actually blocking them, because it is rarely the model. It is usually that nobody owns the decision the pilot was meant to support, the data crosses three teams with different priorities, or the path to production was never designed. We work this as a diagnosis, not a tooling exercise — it is the single most common brief arriving at senior consultants right now.' ),
+			array( 'ai', 'Should an AI initiative run as its own programme, or inside the existing operating model?',
+				'Its own programme buys focus and almost always builds a second organisation that the first one later rejects. Inside the operating model is slower to start and is the only version that survives. The course covers how to make that argument to a sponsor who has already been sold the standalone version, which is the harder half.' ),
+			array( 'ai', 'How do I set AI governance that does not simply stall delivery?',
+				'By deciding in advance which classes of decision need a human and which do not, rather than reviewing everything and calling it control. Governance that inspects every output becomes the bottleneck it was meant to prevent — and teams route around it. We work through where the line sits and how to move it as confidence grows.' ),
 		),
 
 		'rte' => array(
@@ -283,6 +283,39 @@ function aa_faq_merge_extra( $items, $slug ) {
 		$items[]    = $e;
 	}
 	return $items;
+}
+
+/**
+ * Every extra question, across every course, checked for repeats.
+ *
+ * A landing page earns nothing from an FAQ that its sibling pages also carry:
+ * to a reader it is filler, and to a search engine twenty pages answering
+ * "What does it mean that SAFe is AI-empowered?" in identical words is twenty
+ * pages competing with each other. Three of the first drafts here did exactly
+ * that -- they restated questions the RTE and SPC pages already ask.
+ *
+ * The render path cannot catch it, because it only ever sees one course. So
+ * the check lives here and is surfaced by [aa_faq_selftest]: it reports any
+ * question written for two courses at once, and any extra suppressed because
+ * the page already asks it. Both are signals to rewrite, not to shrug at.
+ *
+ * Returns array( 'cross' => array of "question -> slug, slug", 'total' => n ).
+ */
+function aa_faq_uniqueness_report() {
+	$seen  = array();
+	$total = 0;
+	foreach ( array( 'spc', 'aspc', 'rte', 'ai-native-change-agent' ) as $slug ) {
+		foreach ( aa_faq_extra( $slug ) as $e ) {
+			$k = aa_faq_qkey( $e['q'] );
+			$seen[ $k ][] = $slug;
+			$total++;
+		}
+	}
+	$cross = array();
+	foreach ( $seen as $k => $slugs ) {
+		if ( count( $slugs ) > 1 ) { $cross[] = $k . ' -> ' . implode( ', ', $slugs ); }
+	}
+	return array( 'cross' => $cross, 'total' => $total );
 }
 
 /* =============================================================================
@@ -586,9 +619,30 @@ add_shortcode( 'aa_faq_selftest', function () {
 	}
 
 	$found = aa_faq_course();
+
+	/* Extras for THIS page, and how many of them the page already asks. A
+	   suppressed extra is not an error -- the page wins on purpose -- but it
+	   does mean two people wrote the same question, and one of them should
+	   write a different one instead of leaving a silent no-op in the table. */
+	$slug       = $found ? $found['slug'] : '';
+	$extra      = aa_faq_extra( $slug );
+	$uniq       = aa_faq_uniqueness_report();
+	$suppressed = 0;
+	if ( $extra && $obj instanceof WP_Post ) {
+		$page_keys = array();
+		foreach ( aa_faq_extract( $obj->post_content ) as $i ) { $page_keys[ aa_faq_qkey( $i['q'] ) ] = true; }
+		foreach ( $extra as $e ) { if ( isset( $page_keys[ aa_faq_qkey( $e['q'] ) ] ) ) { $suppressed++; } }
+	}
+
 	$lines = array(
 		'snippet            : loaded (this box proves it)',
 		'swap switched on   : ' . ( aa_faq_autoplace_on() ? 'YES' : 'NO  <- Settings > AA Course FAQ' ),
+		'extras for ' . str_pad( $slug !== '' ? $slug : '(no course)', 8 ) . ': ' . count( $extra )
+			. ( $suppressed ? '  (' . $suppressed . ' suppressed: the page already asks them)' : '' ),
+		'extras site-wide   : ' . $uniq['total'] . ' across 4 courses',
+		'repeated questions : ' . ( $uniq['cross']
+			? count( $uniq['cross'] ) . '  <- REWRITE: ' . implode( ' | ', $uniq['cross'] )
+			: 'none - every question belongs to one page only' ),
 		'this page slug     : ' . ( $obj instanceof WP_Post ? $obj->post_name : '(no post)' ),
 		'resolved course    : ' . ( $found ? $found['slug'] . ' (' . $found['course']['code'] . ')' : 'NONE — the closing band needs this; the FAQ does not' ),
 		'',
