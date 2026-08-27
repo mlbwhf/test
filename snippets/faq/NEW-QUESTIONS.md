@@ -121,6 +121,45 @@ the current list instead of naming courses we would then have to keep in sync.
 
 ---
 
+## AI-Native Value Architect — Before you book
+
+**This course was called AI-Native Change Agent.** The URL still is
+(`/training/ai-native/ai-native-change-agent/`), the menu still says the old
+name, and anyone who saw it under the old name — a colleague's recommendation,
+a bookmark, a search result — arrives at a page whose title does not match what
+they were looking for and assumes they are on the wrong course.
+
+The first question below exists to answer that in the one place they will look.
+It is forced to **Before you book** with `aa-faq--before`: it contains "AI-" so
+the keyword matcher would otherwise file it under AI &amp; SAFe 6.0, which is
+where nobody checking they are on the right page would think to look.
+
+```html
+<!-- wp:details {"className":"aa-faq aa-faq--before"} -->
+<details class="wp-block-details aa-faq aa-faq--before"><summary>Is this the same course as the AI-Native Change Agent?</summary><!-- wp:paragraph -->
+<p>Yes. AI-Native Change Agent was renamed AI-Native Value Architect — same course, same three days, same certification. The web address still carries the old name, so a bookmark or an older link will bring you to exactly the right place. If you were recommended the Change Agent course, this is it.</p>
+<!-- /wp:paragraph --></details>
+<!-- /wp:details -->
+
+<!-- wp:details {"className":"aa-faq aa-faq--before"} -->
+<details class="wp-block-details aa-faq aa-faq--before"><summary>Why was the name changed?</summary><!-- wp:paragraph -->
+<p>"Change Agent" described how the work feels from the inside; "Value Architect" describes what you are actually accountable for — designing where AI creates value across the organisation and proving it did. The second is what people found themselves explaining to their sponsors anyway, so the title now matches the conversation.</p>
+<!-- /wp:paragraph --></details>
+<!-- /wp:details -->
+```
+
+### Also carrying the old name
+
+- **Menu item 27524**, under Training → AI-Native, still reads "AI-Native Change
+  Agent". Retitle it to "AI-Native Value Architect" — the URL does not need to
+  change, and should not.
+- The register snippet is already correct (`AI-Native Value Architect
+  Certification`), so the hero and checkout use the new name today. That is the
+  mismatch a visitor currently sees: new name on the page, old name in the menu
+  that got them there.
+
+---
+
 ## RTE — Career impact (has 2)
 
 ```html
