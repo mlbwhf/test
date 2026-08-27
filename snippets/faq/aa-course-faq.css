@@ -249,3 +249,41 @@
 .aa-rd .aa-fb2-h em{ font-family:'Newsreader',Georgia,serif; color:#8FCFCF; }
 .aa-rd .aa-fb2-facts i,.aa-rd .aa-fb2-scarce{ color:#8FCFCF; }
 .aa-rd .aa-fb2-facts i{ background:#8FCFCF; }
+
+/* THE BAND'S OWN TEXT COLOURS, RESTATED AT TWO CLASSES.
+   The course template sets `.aa-rd h1,.aa-rd h2,...{color:var(--aa-text)}` and
+   `.aa-rd p{color:var(--aa-body)}`. Both are (0,1,1). The band's own rules are
+   single classes, (0,1,0), so the template won every one of them and painted
+   #0E3A44 headings and #3C565E prices onto a #0B2E35 background -- dark on
+   dark, legible only where an <em> happened to carry its own colour.
+
+   Restated here as `.aa-rd .aa-fb2-x`, which is (0,2,0) and outranks the
+   element rules without a single !important. Same values as the component
+   defaults; the only job of these six lines is to win. Any new text element in
+   this band needs a line here too, for exactly this reason. */
+.aa-rd .aa-fb2-h{ color:#F3F7F6; }
+.aa-rd .aa-fb2-price{ color:#F3F7F6; }
+.aa-rd .aa-fb2-cohort{ color:rgba(243,247,246,.62); }
+.aa-rd .aa-fb2-facts{ color:rgba(243,247,246,.78); }
+.aa-rd .aa-fb2-facts li{ color:inherit; }
+.aa-rd .aa-fb2-copy p{ color:inherit; }
+
+/* THE PRIMARY CTA, IN THE PAGE'S PALETTE.
+   #D34B2A is the home page's accent and it belongs there -- on the 1A palette
+   it is the one warm note against a cool ground. On a course page it is the
+   only warm thing within several screens of teal, and it read as an error
+   rather than emphasis.
+
+   The course template already has a treatment for a primary button on this
+   exact dark band: .btn-white, white fill with dark teal text. Reusing it
+   keeps the band consistent with the sticky bar and the hero, and white on
+   #0B2E35 carries far more contrast than any teal would. The pill radius and
+   sizing of the new design are kept. */
+.aa-rd .aa-fb2-primary{
+  background:#FFFFFF; color:#0B2E35!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.28);
+}
+.aa-rd .aa-fb2-primary:hover{ background:#DCEAEA; color:#0B2E35!important; }
+.aa-rd .aa-fb2-primary i{ opacity:.6; }
+.aa-rd .aa-fb2-secondary{ border-color:rgba(243,247,246,.4); color:#F3F7F6!important; }
+.aa-rd .aa-fb2-secondary:hover{ border-color:#FFFFFF; color:#FFFFFF!important; }
