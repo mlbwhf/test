@@ -109,10 +109,25 @@ function aa_claims_card_headings() {
  *   <div ...><span ...>&#10038;</span>HEADING</div><p ...>BODY</p>
  * The other half of that card — "Instant confirmation" — is a different pair
  * and is left alone, so the card keeps its shape instead of emptying out.
+ *
+ * THE INNER DIV, AND ONLY THE INNER DIV. The guard between the opening tag and
+ * the heading is `(?!</?div\b)` — it forbids an opening <div as well as a
+ * closing one. With only `(?!</div>)` the leftmost match started one level too
+ * high, on the enclosing <div class="aa-enr-card soft">, because nothing
+ * between that tag and the heading text is a </div>. The replacement then ate
+ * two opening tags and one closing tag, and the card's own </div> was left
+ * orphaned immediately after the "Instant confirmation" paragraph.
+ *
+ * That single surplus </div> closed the .aa-rd wrapper early. Every rule in
+ * the course template is scoped `.aa-rd .x`, so the FAQ, the calendar and the
+ * closing band stopped matching any rule at all and rendered as bare HTML —
+ * on every course page, in every language, while the block editor kept showing
+ * them correctly because it renders each block in its own isolated subtree.
+ * Balance the tags you delete.
  */
 function aa_claims_drop_card( $html ) {
 	foreach ( aa_claims_card_headings() as $heading ) {
-		$pat = '#<div\b[^>]*>(?:(?!</div>).)*?' . preg_quote( $heading, '#' )
+		$pat = '#<div\b[^>]*>(?:(?!</?div\b).)*?' . preg_quote( $heading, '#' )
 		     . '\s*</div>\s*<p\b[^>]*>(?:(?!</p>).)*?</p>#isu';
 		$out = preg_replace( $pat, '', $html );
 		if ( $out !== null ) { $html = $out; }
@@ -300,13 +315,47 @@ function aa_claims_page_fixes( $html ) {
 	return $html;
 }
 
+/**
+ * Container tags opened minus container tags closed.
+ *
+ * Every rule in this file deletes markup, and deleting markup is how you lose a
+ * closing tag without noticing: the page still renders, so nothing errors and
+ * nothing looks wrong until a wrapper several screens further up closes early
+ * and takes a whole design system's worth of scoped selectors with it. This
+ * counts what went in and what came out, and any rule that changes the balance
+ * is discarded rather than shipped. A rule that cannot delete cleanly should
+ * delete nothing.
+ */
+function aa_claims_tag_balance( $html ) {
+	$n = 0;
+	foreach ( array( 'div', 'section', 'p' ) as $tag ) {
+		$n += preg_match_all( '#<' . $tag . '\b#i', $html )
+		    - preg_match_all( '#</' . $tag . '\s*>#i', $html );
+	}
+	return $n;
+}
+
+/** Apply $fn, but keep the result only if it left the tag balance untouched. */
+function aa_claims_safely( $html, $fn, $label ) {
+	$before = aa_claims_tag_balance( $html );
+	$out    = call_user_func( $fn, $html );
+	if ( ! is_string( $out ) ) { return $html; }
+	if ( aa_claims_tag_balance( $out ) !== $before ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( 'aa-claims: "' . $label . '" unbalanced the markup; skipped.' );
+		}
+		return $html;
+	}
+	return $out;
+}
+
 function aa_claims_filter( $html ) {
 	if ( ! is_string( $html ) || $html === '' ) { return $html; }
 	// Page fixes run FIRST: they match the stored JSON-LD text, which the
 	// rating strip below re-encodes into a different shape.
 	$html = aa_claims_page_fixes( $html );
 	$html = aa_claims_strip_rating( $html );
-	$html = aa_claims_drop_card( $html );
+	$html = aa_claims_safely( $html, 'aa_claims_drop_card', 'drop_card' );
 	foreach ( aa_claims_rules() as $rule ) {
 		$out = preg_replace( $rule[0], $rule[1], $html );
 		if ( $out !== null ) { $html = $out; }   // a failed pattern changes nothing
