@@ -130,23 +130,26 @@ function aa_faq_extract( $html ) {
 }
 
 /**
- * The category named by an aa-faq--* class on the <details>, or '' for none.
+ * Short key -> category label. The one place the four labels are spelled.
  *
- * Reads the whole matched element rather than a parsed attribute because the
- * extractor is deliberately regex-only -- see aa_faq_extract(). An unknown
- * suffix returns '' and the keywords take over, so a typo degrades to the old
- * behaviour instead of dropping the question into a bucket that does not exist.
+ * Shared by the aa-faq--* class reader below and by aa_faq_extra(), so a
+ * question written in this file and a question written on a page cannot end up
+ * in two differently-spelled versions of the same bucket.
  */
-function aa_faq_forced_cat( $element ) {
-	if ( ! preg_match( '/\baa-faq--([a-z0-9]+)\b/i', $element, $m ) ) { return ''; }
+function aa_faq_cat_label( $key ) {
 	$map = array(
 		'before' => 'Before you book',
 		'exam'   => 'Exam &amp; certification',
 		'career' => 'Career impact',
 		'ai'     => 'AI &amp; SAFe 6.0',
 	);
-	$key = strtolower( $m[1] );
+	$key = strtolower( $key );
 	return isset( $map[ $key ] ) ? $map[ $key ] : '';
+}
+
+function aa_faq_forced_cat( $element ) {
+	if ( ! preg_match( '/\baa-faq--([a-z0-9]+)\b/i', $element, $m ) ) { return ''; }
+	return aa_faq_cat_label( $m[1] );
 }
 
 function aa_faq_categorise( $text ) {
@@ -169,6 +172,117 @@ function aa_faq_course() {
 	if ( ! $course ) { return null; }
 	$c = array( 'slug' => $slug, 'course' => $course );
 	return $c;
+}
+
+/* =============================================================================
+   EXTRA QUESTIONS — added here rather than to the page
+   -----------------------------------------------------------------------------
+   These live in the snippet because this filter already rewrites the whole FAQ
+   section on every course page: putting them here ships them to all four
+   courses at once, with nothing to paste into Gutenberg and nothing to keep in
+   sync across pages. The trade is that changing a question means editing this
+   file rather than the page. If any of these should become editable content,
+   move it onto the page as a <details class="aa-faq aa-faq--career"> and delete
+   it here -- the merge below drops anything the page already asks, so the two
+   cannot both appear.
+
+   WHAT IS DELIBERATELY NOT HERE. No salary figures and no placement claims:
+   each page's demand section already carries numbers you have sourced, and a
+   second set in the FAQ would be a second set to defend. Nothing names which
+   courses an SPC may teach -- that is Scaled Agile's licensing to define and it
+   moves; the answer points at SAFe Studio for the current list.
+   ========================================================================== */
+function aa_faq_extra( $slug ) {
+	$q = array(
+
+		'spc' => array(
+			array( 'career', 'Is SPC a full-time role, or something I add to my current job?',
+				'Both are common. Some SPCs move into a dedicated transformation or Agile CoE post; many others keep the job they have — Scrum Master, Product Manager, engineering lead — and use the credential to lead change from inside the team they already work with. The course is built for either, because the hard part is the same: getting an organisation to adopt something it did not ask for.' ),
+			array( 'career', 'Which roles do employers usually fill with an SPC?',
+				'Most often Enterprise or Transformation Agile Coach, Agile CoE Lead, Release Train Engineer, and internal consultant posts inside a transformation office. On the supplier side it is the standard entry requirement for delivery consultants at firms running SAFe engagements — for many of those postings SPC is a screening filter rather than a nice-to-have.' ),
+			array( 'career', 'Does SPC let me earn as a licensed instructor alongside my main job?',
+				'Yes — SPC is the credential that carries teaching rights, which is what separates it from every other SAFe certification and why people treat it as a second income stream as much as a job title. Which courses you are licensed to deliver, and on what terms, is set by Scaled Agile and does change: check the current list in SAFe Studio once your credential is active. Running your first class is part of the post-course coaching session.' ),
+			array( 'career', 'How quickly does SPC pay off in career terms?',
+				'That depends far more on your situation than on the credential. People already inside a SAFe adoption tend to use it immediately and see it recognised at the next review; people using it to change employer are running a job search, which takes as long as a job search takes. The market figures above are role compensation, not a promise about your outcome — we would rather set that expectation now than sell you a number.' ),
+		),
+
+		'aspc' => array(
+			array( 'career', 'What roles does ASPC open that SPC does not?',
+				'ASPC is for people already doing the work who now want to lead it: Principal or Lead Agile Consultant, Transformation Director, and portfolio-level advisory work. Where SPC establishes that you can run an adoption, ASPC is aimed at what comes after — multiple trains, competing portfolios, and executives who have already sat through one failed change programme.' ),
+			array( 'career', 'Is ASPC worth it if I am already in an SPC role?',
+				'If your engagements are getting larger or more political, yes — that is the gap it addresses. If you are still delivering your first few trains, the honest answer is to spend another cycle doing that first. ASPC assumes real transformation experience to argue with, and the cohort discussion is most of its value.' ),
+			array( 'career', 'Do employers and clients recognise ASPC when hiring for senior roles?',
+				'Inside organisations already invested in SAFe, yes — it reads as “has done this at scale, more than once”. Outside that world it needs the same explanation any framework credential needs, so treat it as evidence supporting your track record rather than a substitute for one. It carries most weight in consultancy selection and in internal promotion to lead-coach positions.' ),
+			array( 'career', 'What kind of work will I be able to do after ASPC?',
+				'Advising at portfolio and executive level: designing an operating model rather than installing a framework, coaching leaders through the decisions that stall adoptions, and diagnosing why a transformation that looks correct on paper is producing nothing. You also take away the facilitation material for the workshops that get those conversations to a decision.' ),
+			array( 'ai', 'How is AI changing what a senior SAFe consultant is expected to bring?',
+				'The questions arriving from executives have shifted. Where the brief used to be “help us scale delivery”, it is increasingly “we have AI pilots everywhere and nothing in production — what is wrong with how we work?” That is an operating-model question, and answering it is the part of the consultant’s job that has changed most.' ),
+			array( 'ai', 'Does this course cover AI-Native ways of working?',
+				'Yes. We cover where AI genuinely accelerates the flow of value, where it quietly adds rework, and how to keep people accountable for the decisions that matter. If you want to go further, our AI-Native track treats this as its whole subject rather than one module.' ),
+			array( 'ai', 'What does it mean that SAFe is now “AI-empowered”?',
+				'It means role-based AI assistance is treated as part of how the work gets done rather than a separate initiative — using AI to move faster while keeping people in the loop on the decisions. At your level it is less about the tools than about governance: who is accountable when the assistant is wrong.' ),
+			array( 'ai', 'What did SAFe 6.0 change for consultants?',
+				'The centre of gravity moved from delivery scaling to business agility — flow measurement, Value Stream Management, and clearer enterprise roles. For a consultant that changes the opening conversation: the sponsor is now more often a business leader asking about the flow of value than an engineering leader asking about release cadence.' ),
+		),
+
+		'rte' => array(
+			array( 'career', 'Is RTE a promotion from Scrum Master, or a different role entirely?',
+				'Different, though it is the usual next step. A Scrum Master serves one team; an RTE serves the train — a dozen teams, their dependencies, and the leaders who fund them. The facilitation instinct carries over; influencing without authority is genuinely new, and it is what the course spends most of its time on.' ),
+			array( 'career', 'Which job titles will this credential actually match?',
+				'Release Train Engineer most directly, plus Senior Scrum Master, Program or Delivery Manager, and Agile Program Coach. Postings vary in what they call it — “ART Lead” and “Programme Delivery Lead” are the same job — so search on the responsibilities as well as the title.' ),
+			array( 'career', 'Do I need to be in an RTE role already for this to be worth taking?',
+				'No, and a good share of each cohort is not. Two groups get the most from it: people about to take on an ART who want to arrive credible, and Scrum Masters or Product Owners who keep hitting problems that live above their team. If your organisation runs no trains at all, Leading SAFe is the better starting point.' ),
+		),
+
+		/* THE RENAME. This course was AI-Native Change Agent and the URL still
+		   is, so anyone arriving from a bookmark, a colleague or an older search
+		   result lands on a page whose title does not match what they were sent
+		   to find. Forced to "before" because the keyword matcher would file it
+		   under AI & SAFe 6.0 -- the last place someone checking they are on the
+		   right page would look. */
+		'ai-native-change-agent' => array(
+			array( 'before', 'Is this the same course as the AI-Native Change Agent?',
+				'Yes. AI-Native Change Agent was renamed AI-Native Value Architect — same course, same three days, same certification. The web address still carries the old name, so a bookmark or an older link brings you to exactly the right place. If someone recommended the Change Agent course, this is it.' ),
+			array( 'before', 'Why was the name changed?',
+				'“Change Agent” described how the work feels from the inside; “Value Architect” describes what you are accountable for — designing where AI creates value across the organisation, and proving that it did. The second is what people found themselves explaining to their sponsors anyway, so the title now matches the conversation.' ),
+		),
+	);
+
+	if ( $slug === '' || ! isset( $q[ $slug ] ) ) { return array(); }
+
+	$out = array();
+	foreach ( $q[ $slug ] as $row ) {
+		$out[] = array( 'q' => $row[1], 'a' => '<p>' . $row[2] . '</p>', 'cat' => aa_faq_cat_label( $row[0] ) );
+	}
+	return $out;
+}
+
+/** Question text reduced to what makes two questions the same question. */
+function aa_faq_qkey( $q ) {
+	return preg_replace( '/[^a-z0-9]+/', '', strtolower( wp_strip_all_tags( $q ) ) );
+}
+
+/**
+ * Page questions first, then any extras the page does not already ask.
+ *
+ * The page always wins: if someone writes a better version of one of these
+ * onto the page, the page's copy is what renders and the duplicate here goes
+ * quiet on its own rather than appearing twice.
+ */
+function aa_faq_merge_extra( $items, $slug ) {
+	$extra = aa_faq_extra( $slug );
+	if ( ! $extra ) { return $items; }
+
+	$seen = array();
+	foreach ( $items as $i ) { $seen[ aa_faq_qkey( $i['q'] ) ] = true; }
+
+	foreach ( $extra as $e ) {
+		$k = aa_faq_qkey( $e['q'] );
+		if ( isset( $seen[ $k ] ) ) { continue; }
+		$seen[ $k ] = true;
+		$items[]    = $e;
+	}
+	return $items;
 }
 
 /* =============================================================================
@@ -412,6 +526,7 @@ function aa_faq_swap( $html, $block ) {
 		if ( ! $items ) { return $html; }   // nothing to re-render; leave it alone
 
 		$found = aa_faq_course();
+		$items = aa_faq_merge_extra( $items, $found ? $found['slug'] : '' );
 		$name  = $found ? $found['course']['code'] : 'this course';
 		$new   = aa_faq_render( $items, $name );
 		return $new !== '' ? $new : $html;
