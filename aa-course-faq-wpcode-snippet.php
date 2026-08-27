@@ -112,9 +112,41 @@ function aa_faq_extract( $html ) {
 		   impact of SAFe 6.0?" landed under Career because its answer says
 		   "roles". The question is the part a buyer scans, and it is the part
 		   that actually says what the question is about. */
-		$out[] = array( 'q' => $q, 'a' => $a, 'cat' => aa_faq_categorise( wp_strip_all_tags( $q ) ) );
+		/* AN EXPLICIT CLASS BEATS THE KEYWORDS. Matching on wording is a good
+		   default and a bad contract: "Does SPC let me earn as a licensed
+		   instructor?" is plainly a career question and contains none of the
+		   career words, so it silently filed itself under "Before you book".
+		   Whoever writes the next question should not have to reverse-engineer
+		   a regex to place it. Put aa-faq--career (or --exam, --ai, --before)
+		   on the <details> and it goes there; leave it off and the keywords
+		   decide, exactly as they did before. */
+		$out[] = array(
+			'q'   => $q,
+			'a'   => $a,
+			'cat' => aa_faq_forced_cat( $one[0] ) ?: aa_faq_categorise( wp_strip_all_tags( $q ) ),
+		);
 	}
 	return $out;
+}
+
+/**
+ * The category named by an aa-faq--* class on the <details>, or '' for none.
+ *
+ * Reads the whole matched element rather than a parsed attribute because the
+ * extractor is deliberately regex-only -- see aa_faq_extract(). An unknown
+ * suffix returns '' and the keywords take over, so a typo degrades to the old
+ * behaviour instead of dropping the question into a bucket that does not exist.
+ */
+function aa_faq_forced_cat( $element ) {
+	if ( ! preg_match( '/\baa-faq--([a-z0-9]+)\b/i', $element, $m ) ) { return ''; }
+	$map = array(
+		'before' => 'Before you book',
+		'exam'   => 'Exam &amp; certification',
+		'career' => 'Career impact',
+		'ai'     => 'AI &amp; SAFe 6.0',
+	);
+	$key = strtolower( $m[1] );
+	return isset( $map[ $key ] ) ? $map[ $key ] : '';
 }
 
 function aa_faq_categorise( $text ) {
