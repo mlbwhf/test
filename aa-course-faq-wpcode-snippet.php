@@ -248,6 +248,16 @@ function aa_faq_extra( $slug ) {
 		),
 	);
 
+	/* ENGLISH ONLY, AND THIS IS THE ARGUMENT FOR PUTTING THEM ON THE PAGE.
+	   The mirrors under /es/, /fr/ and /ar/ reuse the English slug, so once the
+	   register snippet stopped refusing them, aa_reg_page_course() started
+	   returning "rte" on /fr/rte/ too -- and this table would have poured three
+	   English questions into a French page. Content held in code cannot follow
+	   the page it lands on; content held on the page is already in the right
+	   language because it was written there. Gated here so the leak cannot
+	   happen while the questions live in this file. */
+	if ( function_exists( 'aa_reg_lang' ) && aa_reg_lang() !== 'en' ) { return array(); }
+
 	if ( $slug === '' || ! isset( $q[ $slug ] ) ) { return array(); }
 
 	$out = array();
