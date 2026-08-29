@@ -64,10 +64,22 @@ if ( ! function_exists( 'aa_hh_courses' ) ) :
  */
 function aa_hh_courses() {
 	return apply_filters( 'aa_hh_courses', array(
-		'spc', 'aspc', 'rte',
-		'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2',
-		'lpm', 'apm', 'sa', 'popm', 'scrum-master', 'arch', 'ase', 'devops', 'asm',
-		'team-practitioner',
+		/* ADVANCED SAFe */
+		'aspc',                             // Advanced Practice Consultant
+		'spc',                              // Implementing SAFe
+		'rte',                              // Release Train Engineer
+		'lpm',                              // Lean Portfolio Management
+		'apm',                              // Agile Product Management
+
+		/* FOUNDATIONAL */
+		'sa',                               // Leading SAFe
+		'scrum-master',                     // SAFe Scrum Master (SSM)
+		'popm',                             // Product Owner / Product Manager
+
+		/* AI-NATIVE */
+		'ai-native-foundations',
+		'ai-native-change-agent',           // AI-Native Value Architect
+		'ai-native-ready-certification-2',  // Leading the AI-Native Organization
 	) );
 }
 
@@ -172,8 +184,15 @@ function aa_hh_limit() { return 14; }
  * Within a track the order is aa_hh_courses(), which is a curated priority
  * list, NOT the date -- the dates tie, so sorting by them picked essentially at
  * random. Reorder that list to change which courses lead a track.
+ *
+ * 6, not 4: aa_hh_courses() is now itself the curation -- eleven named courses
+ * rather than everything we run -- so this no longer decides what appears, it
+ * only stops one track swamping the panel if that list grows. Advanced SAFe
+ * currently holds five, so a cap of 4 would have quietly dropped APM: the same
+ * failure as the old global slice, one level down. Keep this above the largest
+ * track.
  */
-function aa_hh_per_track() { return 4; }
+function aa_hh_per_track() { return 6; }
 
 /**
  * Every upcoming batch across the priority courses, soonest first.
