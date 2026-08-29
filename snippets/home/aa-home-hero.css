@@ -36,6 +36,17 @@
    still catches anything the theme or an editor drops in, and stops
    outranking the component. */
 .aa-hh h1:not([class]),.aa-hh h2:not([class]),.aa-hh p:not([class]){margin:0}
+
+/* THE FILTER NEVER HID ANYTHING. The browser hides [hidden] with
+   `[hidden]{display:none}` in its own stylesheet, which any author rule that
+   sets `display` outranks -- and every row here is `display:flex`, every week
+   group `display:block`. So row.hidden = true set the attribute, the count
+   said "5 of 11", the selection moved to the first "visible" row, and all
+   eleven stayed on screen. The chips looked broken because they were.
+
+   Scoped to this component and !important on purpose: it has to beat every
+   display declaration in this file, including ones added later. */
+.aa-hh [hidden]{display:none !important}
 .aa-hh h1,.aa-hh h2{font-weight:600;letter-spacing:-.03em}
 
 /* ---------- layout ---------- */
@@ -43,10 +54,10 @@
   display:grid; grid-template-columns:1.02fr .98fr;
   gap:clamp(28px,3.4vw,56px);
   padding:clamp(30px,3.4vw,52px) var(--pad-x) clamp(26px,3vw,40px);
-  /* BACK TO START, because the gap is now filled rather than closed. Centring
-     was the fix while the pitch was ~300px against a ~740px card; the course
-     brief below the CTA uses that space instead, which is the better answer --
-     it balances the columns AND tells the visitor what they have selected. */
+  /* The gap is filled rather than closed: the brief below the CTA uses that
+     space, which balances the columns AND says what is selected. The pitch
+     column stretches (below) so the brief can sit against the bottom of the
+     cohort card instead of leaving a tail of white under it. */
   align-items:start; max-width:var(--wrap); margin:0 auto;
 }
 /* A grid item defaults to min-width:auto, i.e. its MIN-CONTENT width, and a
@@ -370,3 +381,16 @@
 /* A little more air under the whole panel so the column does not end abruptly
    above the trust row. */
 .aa-hh-brief{padding-bottom:6px}
+
+/* Pin the brief to the bottom of the row. The pitch column is the shorter of
+   the two by design -- a headline and a button against a card with a whole
+   checkout in it -- so whatever height is left over collects between the CTA
+   and the brief rather than below everything, and the two columns finish
+   level. margin-top keeps its floor, so on a narrow viewport where the pitch
+   is the taller column this is simply a 34px gap. */
+.aa-hh-pitch{align-self:stretch;display:flex;flex-direction:column}
+.aa-hh-brief{margin-top:auto}
+@media (max-width:900px){
+  .aa-hh-pitch{display:block}
+  .aa-hh-brief{margin-top:34px}
+}

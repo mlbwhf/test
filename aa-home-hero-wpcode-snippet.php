@@ -419,7 +419,7 @@ function aa_hh_page_bits( $slug ) {
 	$hit  = function_exists( 'get_transient' ) ? get_transient( $tkey ) : false;
 	if ( is_array( $hit ) ) { return $memo[ $key ] = $hit; }
 
-	$out = array( 'career' => '', 'learn' => '', 'salary' => '', 'next' => array() );
+	$out = array( 'career' => '', 'learn' => '', 'salary' => '', 'next' => array(), 'lede' => '' );
 
 	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) || ! function_exists( 'get_posts' ) ) {
 		return $memo[ $key ] = $out;
@@ -459,6 +459,13 @@ function aa_hh_page_bits( $slug ) {
 			$out['learn'] = trim( wp_strip_all_tags( $m2[2] ) );
 		} elseif ( preg_match( '#<h3\b[^>]*class="[^"]*aa-mod-h[^"]*"[^>]*>(.*?)</h3>#is', $c, $m3 ) ) {
 			$out['learn'] = trim( wp_strip_all_tags( $m3[1] ) );
+		}
+
+		/* LEDE — the page's own hero paragraph, for the courses whose excerpt
+		   is empty. Already written and already approved; the alternative was
+		   a blank panel. */
+		if ( preg_match( '#<p\b[^>]*class="[^"]*aa-lead[^"]*"[^>]*>(.*?)</p>#is', $c, $ld ) ) {
+			$out['lede'] = trim( wp_strip_all_tags( $ld[1] ) );
 		}
 
 		/* SALARY — the page's own demand figure, with the page's own wording.
@@ -528,13 +535,24 @@ function aa_hh_brief( $r, $str ) {
 	if ( empty( $r['course'] ) ) { return null; }
 	$c = $r['course'];
 
-	$desc = isset( $c['lede'] ) ? trim( (string) $c['lede'] ) : '';
-	if ( $desc === '' ) { return null; }   // nothing to say; the panel hides
-
 	$days = isset( $c['days'] ) ? (int) $c['days'] : 0;
 	$all  = aa_hh_outcomes();
 	$slug = $r['slug'];
 	$bits = aa_hh_page_bits( $slug );
+
+	/* THE DESCRIPTION IS OPTIONAL, AND THAT IS THE FIX FOR THE EMPTY COLUMN.
+	   A course from the hand-written table carries a lede; a course resolved
+	   from its own page takes post_excerpt, and most pages have none. This
+	   used to return null for those, they were left out of AA_HH_BRIEFS, and
+	   selecting POPM or Leading SAFe hid the panel outright -- the visitor
+	   clicked a course and the left half of the hero went blank.
+
+	   So: fall back to the page's own hero lede, and if there is still no
+	   description, render the panel without one. A title, four pills, the
+	   career line and the progression chips are a complete brief; the
+	   paragraph is the part we can do without. */
+	$desc = isset( $c['lede'] ) ? trim( (string) $c['lede'] ) : '';
+	if ( $desc === '' && ! empty( $bits['lede'] ) ) { $desc = $bits['lede']; }
 
 	return array(
 		'track'    => aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
@@ -563,7 +581,9 @@ function aa_hh_brief_html( $b, $str ) {
 	    . '<span class="aa-hh-brief-track">' . esc_html( $b['track'] ) . '</span></div>';
 
 	$h .= '<h2 class="aa-hh-brief-title">' . esc_html( $b['name'] ) . '</h2>';
-	$h .= '<p class="aa-hh-brief-desc">' . esc_html( $b['desc'] ) . '</p>';
+	if ( $b['desc'] !== '' ) {
+		$h .= '<p class="aa-hh-brief-desc">' . esc_html( $b['desc'] ) . '</p>';
+	}
 
 	if ( $b['meta'] ) {
 		$h .= '<ul class="aa-hh-brief-meta">';
