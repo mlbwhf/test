@@ -332,3 +332,13 @@
   .aa-hh *,.aa-hh *::before,.aa-hh *::after{animation:none !important;transition:none !important}
 }
 .aa-hh :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:8px}
+
+/* The career and curriculum lines. Stacked, not the outcomes grid: these two
+   run to a dozen words each, and auto-fit would put them side by side in
+   150px columns where they would wrap to four lines apiece. */
+.aa-hh-brief-points{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.aa-hh-brief-point{
+  display:flex;gap:9px;align-items:flex-start;
+  font-size:13.5px;line-height:1.5;color:var(--body);
+}
+.aa-hh-brief-point strong{color:var(--ink);font-weight:600}

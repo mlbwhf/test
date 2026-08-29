@@ -302,6 +302,8 @@ function aa_hh_strings( $lang ) {
 			'brief_day'   => '%d day',
 			'brief_days'  => '%d days',
 			'brief_exam'  => 'Exam fee included',
+			'brief_leads' => 'Leads to',
+			'brief_learn' => 'You\'ll learn',
 			'season'     => 'Live online · next %d weeks',
 			'season_one' => 'Live online · next week',
 			'count_all'  => '%d upcoming batches',
@@ -387,7 +389,112 @@ function aa_hh_outcomes() {
 	) );
 }
 
+/**
+ * The career line and the curriculum line, read off the course's own page.
+ *
+ * A hand-kept table was the obvious way and the wrong one: eleven courses of
+ * copy maintained in a snippet, drifting from the pages it describes the first
+ * time anyone edits a curriculum. These two lines already exist, written and
+ * approved, in every course page -- the "Roles you'll qualify for" grid and the
+ * first curriculum module. So they are read from there, and the home page says
+ * what the course page says because it is literally the same sentence.
+ *
+ * Cached for twelve hours. Eleven page reads on the home page would otherwise
+ * be eleven queries per uncached view; curriculum copy changes a few times a
+ * year. Bump the key's version suffix to force a refresh.
+ *
+ * Anything it cannot find is simply absent -- a course whose page does not use
+ * this template renders the brief without these lines rather than with empty
+ * ones.
+ */
+function aa_hh_page_bits( $slug ) {
+	static $memo = array();
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	$key  = $lang . '|' . $slug;
+	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
+
+	$tkey = 'aa_hh_bits_v1_' . $lang . '_' . $slug;
+	$hit  = function_exists( 'get_transient' ) ? get_transient( $tkey ) : false;
+	if ( is_array( $hit ) ) { return $memo[ $key ] = $hit; }
+
+	$out = array( 'career' => '', 'learn' => '' );
+
+	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) || ! function_exists( 'get_posts' ) ) {
+		return $memo[ $key ] = $out;
+	}
+
+	$pages = get_posts( array(
+		'post_type'        => 'page',
+		'name'             => $slug,
+		'post_status'      => 'publish',
+		'numberposts'      => 5,
+		'suppress_filters' => true,
+	) );
+
+	foreach ( $pages as $pg ) {
+		if ( function_exists( 'aa_reg_lang' ) && aa_reg_lang( $pg ) !== $lang ) { continue; }
+		$c = $pg->post_content;
+
+		/* CAREER — the role names under "Roles you'll qualify for". Matched from
+		   that caption forward so the h3s of other sections cannot be mistaken
+		   for roles. Three is what fits the measure. */
+		if ( preg_match( '/aa-cap[^>]*>\s*Roles[^<]*<\/div>(.*)$/is', $c, $m )
+			&& preg_match_all( '/<h3\b[^>]*>(.*?)<\/h3>/is', $m[1], $r ) ) {
+			$roles = array();
+			foreach ( $r[1] as $one ) {
+				$one = trim( wp_strip_all_tags( $one ) );
+				if ( $one !== '' ) { $roles[] = $one; }
+				if ( count( $roles ) === 3 ) { break; }
+			}
+			if ( $roles ) { $out['career'] = implode( ', ', $roles ); }
+		}
+
+		/* LEARN — the first curriculum module's own one-liner, or its heading
+		   when the page writes no description under it. */
+		if ( preg_match(
+			'#<h3\b[^>]*class="[^"]*aa-mod-h[^"]*"[^>]*>(.*?)</h3>\s*<p\b[^>]*class="[^"]*aa-mod-p[^"]*"[^>]*>(.*?)</p>#is',
+			$c, $m2 ) ) {
+			$out['learn'] = trim( wp_strip_all_tags( $m2[2] ) );
+		} elseif ( preg_match( '#<h3\b[^>]*class="[^"]*aa-mod-h[^"]*"[^>]*>(.*?)</h3>#is', $c, $m3 ) ) {
+			$out['learn'] = trim( wp_strip_all_tags( $m3[1] ) );
+		}
+		break;
+	}
+
+	if ( function_exists( 'set_transient' ) ) {
+		set_transient( $tkey, $out, 12 * HOUR_IN_SECONDS );
+	}
+	return $memo[ $key ] = $out;
+}
+
 /** The brief for one row, or null when the course cannot supply one. */
+/**
+ * The course preselected when the page loads.
+ *
+ * NOT simply the first row. The panel is ordered by date, so whichever course
+ * happens to run soonest would take the CTA, the brief and the tick -- and that
+ * changes week to week for reasons nobody chose. Reordering aa_hh_courses() to
+ * put ASPC first moved the preselection off SPC without anyone asking it to,
+ * which is exactly the accident this prevents.
+ *
+ * SPC is the flagship and the anchor date, so it is what the button offers to
+ * reserve unless it has no upcoming batch, in which case the soonest row takes
+ * over rather than leaving the hero with nothing selected.
+ */
+function aa_hh_anchor() {
+	return apply_filters( 'aa_hh_anchor', 'spc' );
+}
+
+/** The row the hero opens on: the anchor course if it is running, else soonest. */
+function aa_hh_selected( $rows ) {
+	if ( ! $rows ) { return null; }
+	$anchor = aa_hh_anchor();
+	foreach ( $rows as $r ) {
+		if ( $r['slug'] === $anchor ) { return $r; }
+	}
+	return $rows[0];
+}
+
 function aa_hh_brief( $r, $str ) {
 	if ( empty( $r['course'] ) ) { return null; }
 	$c = $r['course'];
@@ -409,6 +516,7 @@ function aa_hh_brief( $r, $str ) {
 			aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
 		) ) ),
 		'outcomes' => isset( $all[ $slug ] ) ? array_slice( (array) $all[ $slug ], 0, 3 ) : array(),
+		'points'   => aa_hh_page_bits( $slug ),
 	);
 }
 
@@ -432,6 +540,21 @@ function aa_hh_brief_html( $b, $str ) {
 			$h .= '<li class="aa-hh-brief-pill"><span class="aa-hh-brief-icon" aria-hidden="true">'
 			    . ( isset( $glyphs[ $i ] ) ? $glyphs[ $i ] : $glyphs[0] ) . '</span>'
 			    . esc_html( $m ) . '</li>';
+		}
+		$h .= '</ul>';
+	}
+
+	/* The two lines that answer "where does this take me" and "what will I
+	   actually do in the room". Rendered before the outcomes grid, which stays
+	   empty until someone writes real ones. */
+	$pts = isset( $b['points'] ) ? $b['points'] : array();
+	if ( ! empty( $pts['career'] ) || ! empty( $pts['learn'] ) ) {
+		$h .= '<ul class="aa-hh-brief-points">';
+		foreach ( array( 'career' => $str['brief_leads'], 'learn' => $str['brief_learn'] ) as $k => $label ) {
+			if ( empty( $pts[ $k ] ) ) { continue; }
+			$h .= '<li class="aa-hh-brief-point">'
+			    . '<span class="aa-hh-brief-tick" aria-hidden="true">&#10003;</span>'
+			    . '<span><strong>' . esc_html( $label ) . '</strong> ' . esc_html( $pts[ $k ] ) . '</span></li>';
 		}
 		$h .= '</ul>';
 	}
@@ -467,7 +590,8 @@ function aa_hh_render( $atts ) {
 	   sync by JS as the selection changes. A JS-only label would be an empty
 	   button for anything that does not run scripts, and this is the primary
 	   call to action on the site's most-linked page. */
-	$first = $rows ? $rows[0] : null;
+	/* The anchor course, not the soonest row -- see aa_hh_selected(). */
+	$first = aa_hh_selected( $rows );
 	$cta_href = $first
 		? aa_hh_enrol_url( $first )
 		: '/training/';
@@ -560,7 +684,11 @@ function aa_hh_render( $atts ) {
 		    . '<p data-hh-weekcount>' . esc_html( count( $group ) === 1 ? $str['batch_one'] : sprintf( $str['batches'], count( $group ) ) )
 		    . '</p></div><div class="aa-hh-rows">';
 		foreach ( $group as $r ) {
-			$h .= aa_hh_row( $r, $str, $n === 0 );
+			/* Selected, not first: the tick has to land on the same row the
+			   button names, or the hero says SPC and highlights whatever runs
+			   soonest. "NEXT AVAILABLE" stays on row zero, because that is a
+			   fact about dates rather than about the selection. */
+			$h .= aa_hh_row( $r, $str, $n === 0, $first && $r['slug'] === $first['slug'] );
 			$n++;
 		}
 		$h .= '</div></section>';
@@ -663,7 +791,7 @@ function aa_hh_enrol_url( $r ) {
 	     . 'cohort=' . rawurlencode( $r['cohort']['id'] ) . '#enroll';
 }
 
-function aa_hh_row( $r, $str, $is_first ) {
+function aa_hh_row( $r, $str, $is_first, $is_on = null ) {
 	$c     = $r['course'];
 	$co    = $r['cohort'];
 	$start = new DateTime( $co['start'] );
@@ -680,7 +808,13 @@ function aa_hh_row( $r, $str, $is_first ) {
 
 	$aria = $c['name'] . ', ' . $range . ', ' . $kind . ', $' . number_format_i18n( $c['price'] );
 
-	return '<button type="button" class="aa-hh-row' . ( $is_first ? ' is-on' : '' ) . '"'
+	/* Two different ideas that used to share one flag: is_first is "soonest",
+	   which earns the NEXT AVAILABLE badge; is_on is "selected", which earns
+	   the tick and drives the CTA. They coincided while the anchor happened to
+	   sort first and diverged the moment it did not. */
+	if ( $is_on === null ) { $is_on = $is_first; }
+
+	return '<button type="button" class="aa-hh-row' . ( $is_on ? ' is-on' : '' ) . '"'
 	     . ' data-hh-row'
 	     . ' data-cohort="' . esc_attr( $co['id'] ) . '"'
 	     . ' data-start="' . esc_attr( $co['start'] ) . '"'
@@ -690,7 +824,7 @@ function aa_hh_row( $r, $str, $is_first ) {
 	     . ' data-range="' . esc_attr( $range ) . '"'
 	     . ' data-price="' . (int) $c['price'] . '"'
 	     . ' data-href="' . esc_attr( aa_hh_enrol_url( $r ) ) . '"'
-	     . ' aria-pressed="' . ( $is_first ? 'true' : 'false' ) . '"'
+	     . ' aria-pressed="' . ( $is_on ? 'true' : 'false' ) . '"'
 	     . ' aria-label="' . esc_attr( $aria ) . '">'
 	     . '<span class="aa-hh-date"><span class="aa-hh-day">' . esc_html( $start->format( 'j' ) ) . '</span>'
 	     . '<span class="aa-hh-mon">' . esc_html( strtoupper( $str['mon_short'][ (int) $start->format( 'n' ) - 1 ] ) ) . '</span></span>'
