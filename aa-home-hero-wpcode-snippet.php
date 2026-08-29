@@ -415,11 +415,24 @@ function aa_hh_page_bits( $slug ) {
 	$key  = $lang . '|' . $slug;
 	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
 
-	$tkey = 'aa_hh_bits_v1_' . $lang . '_' . $slug;
-	$hit  = function_exists( 'get_transient' ) ? get_transient( $tkey ) : false;
-	if ( is_array( $hit ) ) { return $memo[ $key ] = $hit; }
+	/* THE SHAPE IS DECLARED ONCE AND MERGED OVER WHATEVER COMES BACK.
+	   A cached value is a value written by an OLDER COPY OF THIS FUNCTION, and
+	   it has that older copy's keys. Adding 'salary', 'next' and 'lede' without
+	   bumping the key below meant live requests got a two-key array back from
+	   the cache and $bits['salary'] threw "Undefined array key" on the home
+	   page -- the exact trap the version note warns about, walked straight
+	   into. The version bump fixes it once; merging over the defaults means the
+	   next field added cannot repeat it, whether or not anyone remembers.
 
-	$out = array( 'career' => '', 'learn' => '', 'salary' => '', 'next' => array(), 'lede' => '' );
+	   Bump the version anyway when the MEANING of a field changes, since a
+	   merge cannot detect that. */
+	$defaults = array( 'career' => '', 'learn' => '', 'salary' => '', 'next' => array(), 'lede' => '' );
+
+	$tkey = 'aa_hh_bits_v2_' . $lang . '_' . $slug;
+	$hit  = function_exists( 'get_transient' ) ? get_transient( $tkey ) : false;
+	if ( is_array( $hit ) ) { return $memo[ $key ] = array_merge( $defaults, $hit ); }
+
+	$out = $defaults;
 
 	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) || ! function_exists( 'get_posts' ) ) {
 		return $memo[ $key ] = $out;
@@ -497,6 +510,7 @@ function aa_hh_page_bits( $slug ) {
 		break;
 	}
 
+	$out = array_merge( $defaults, $out );
 	if ( function_exists( 'set_transient' ) ) {
 		set_transient( $tkey, $out, 12 * HOUR_IN_SECONDS );
 	}
