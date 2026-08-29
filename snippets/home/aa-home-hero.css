@@ -154,7 +154,7 @@
 }
 .aa-hh-brief-desc{margin:9px 0 0;font-size:15px;line-height:1.6;color:var(--body);text-wrap:pretty}
 
-.aa-hh-brief-meta{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.aa-hh-brief-meta{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .aa-hh-brief-pill{
   display:inline-flex;align-items:center;gap:7px;
   font-size:12px;font-weight:600;color:var(--body);
@@ -336,9 +336,37 @@
 /* The career and curriculum lines. Stacked, not the outcomes grid: these two
    run to a dozen words each, and auto-fit would put them side by side in
    150px columns where they would wrap to four lines apiece. */
-.aa-hh-brief-points{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.aa-hh-brief-points{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:11px}
 .aa-hh-brief-point{
   display:flex;gap:9px;align-items:flex-start;
   font-size:13.5px;line-height:1.5;color:var(--body);
 }
 .aa-hh-brief-point strong{color:var(--ink);font-weight:600}
+
+/* Career progression: where the credential leads next. A rule and a caption
+   rather than another tick list, so it reads as a separate thought from the
+   two lines above it instead of a fourth bullet. */
+.aa-hh-brief-next{
+  margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+}
+.aa-hh-brief-nextcap{
+  display:block; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:700; color:var(--muted); margin-bottom:10px;
+}
+.aa-hh-brief-nextlist{
+  list-style:none; margin:0; padding:0;
+  display:flex; flex-wrap:wrap; gap:8px;
+}
+/* Chips, not a bulleted list: three course names stacked read as a menu the
+   visitor is meant to choose from, and there is nothing to click here -- the
+   point is only that the path continues. Flat, no border, so they cannot be
+   mistaken for the meta pills above, which state facts about THIS course. */
+.aa-hh-brief-nextlist li{
+  font-size:12.5px; line-height:1.3; color:var(--body);
+  background:var(--panel); border-radius:100px; padding:6px 12px;
+}
+.aa-hh-brief-nextlist li::before{content:'→ ';color:var(--teal);font-weight:600}
+
+/* A little more air under the whole panel so the column does not end abruptly
+   above the trust row. */
+.aa-hh-brief{padding-bottom:6px}

@@ -304,6 +304,7 @@ function aa_hh_strings( $lang ) {
 			'brief_exam'  => 'Exam fee included',
 			'brief_leads' => 'Leads to',
 			'brief_learn' => 'You\'ll learn',
+			'brief_next'  => 'Progress to',
 			'season'     => 'Live online · next %d weeks',
 			'season_one' => 'Live online · next week',
 			'count_all'  => '%d upcoming batches',
@@ -324,6 +325,7 @@ function aa_hh_strings( $lang ) {
 			'foot_link'  => 'Full calendar',
 			'empty'      => 'See all upcoming cohorts',
 			'trust'      => 'Trusted by',
+			'currency_short' => 'Prices in USD.',
 			'currency'   => 'Prices shown in USD. Cards are charged in USD; if your card is issued in another currency your bank sets the exchange rate and may add its own fee, so the amount on your statement can differ. The exact amount is shown before you pay.',
 			'mon_short'  => array( 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec' ),
 		),
@@ -417,7 +419,7 @@ function aa_hh_page_bits( $slug ) {
 	$hit  = function_exists( 'get_transient' ) ? get_transient( $tkey ) : false;
 	if ( is_array( $hit ) ) { return $memo[ $key ] = $hit; }
 
-	$out = array( 'career' => '', 'learn' => '' );
+	$out = array( 'career' => '', 'learn' => '', 'salary' => '', 'next' => array() );
 
 	if ( ! preg_match( '/^[a-z0-9-]{2,80}$/', $slug ) || ! function_exists( 'get_posts' ) ) {
 		return $memo[ $key ] = $out;
@@ -457,6 +459,33 @@ function aa_hh_page_bits( $slug ) {
 			$out['learn'] = trim( wp_strip_all_tags( $m2[2] ) );
 		} elseif ( preg_match( '#<h3\b[^>]*class="[^"]*aa-mod-h[^"]*"[^>]*>(.*?)</h3>#is', $c, $m3 ) ) {
 			$out['learn'] = trim( wp_strip_all_tags( $m3[1] ) );
+		}
+
+		/* SALARY — the page's own demand figure, with the page's own wording.
+		   The label is taken whole rather than rebuilt from the number,
+		   because it carries the qualifiers that make the figure honest
+		   ("Median salary · $135K-$185K US"). A number lifted out of that
+		   sentence would read as what a graduate earns, which is not what the
+		   page claims and not something we can claim. */
+		if ( preg_match(
+			'#aa-dn"[^>]*>(.*?)</div>\s*<div[^>]*class="[^"]*aa-dl[^"]*"[^>]*>([^<]*salary[^<]*)</div>#is',
+			$c, $sal ) ) {
+			$label = trim( wp_strip_all_tags( $sal[2] ) );
+			$num   = trim( wp_strip_all_tags( $sal[1] ) );
+			$out['salary'] = ( $label !== '' && mb_strlen( $label ) <= 44 )
+				? $label
+				: trim( $num . ' median salary' );
+		}
+
+		/* CAREER PROGRESSION — the credentials the page itself points at under
+		   "Advance your career". Real cross-sell, already curated per course. */
+		if ( preg_match( '/aa-pathcap[^>]*>\s*Advance[^<]*<\/div>(.*)$/is', $c, $adv )
+			&& preg_match_all( '#class="[^"]*aa-pcard-h[^"]*"[^>]*>(.*?)</h3>#is', $adv[1], $nx ) ) {
+			foreach ( $nx[1] as $one ) {
+				$one = trim( wp_strip_all_tags( $one ) );
+				if ( $one !== '' ) { $out['next'][] = $one; }
+				if ( count( $out['next'] ) === 3 ) { break; }
+			}
 		}
 		break;
 	}
@@ -505,6 +534,7 @@ function aa_hh_brief( $r, $str ) {
 	$days = isset( $c['days'] ) ? (int) $c['days'] : 0;
 	$all  = aa_hh_outcomes();
 	$slug = $r['slug'];
+	$bits = aa_hh_page_bits( $slug );
 
 	return array(
 		'track'    => aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
@@ -514,9 +544,10 @@ function aa_hh_brief( $r, $str ) {
 			$days > 0 ? sprintf( $days === 1 ? $str['brief_day'] : $str['brief_days'], $days ) : '',
 			$str['brief_exam'],
 			aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
+			$bits['salary'],
 		) ) ),
 		'outcomes' => isset( $all[ $slug ] ) ? array_slice( (array) $all[ $slug ], 0, 3 ) : array(),
-		'points'   => aa_hh_page_bits( $slug ),
+		'points'   => $bits,
 	);
 }
 
@@ -524,7 +555,7 @@ function aa_hh_brief( $r, $str ) {
 function aa_hh_brief_html( $b, $str ) {
 	if ( ! $b ) { return ''; }
 
-	$glyphs = array( '&#9727;', '&#9670;', '&#9650;' );   // duration, exam, level
+	$glyphs = array( '&#9727;', '&#9670;', '&#9650;', '&#9632;' );   // duration, exam, level, pay
 
 	$h  = '<div class="aa-hh-brief-eyebrow">'
 	    . '<span class="aa-hh-brief-label">' . esc_html( $str['brief_label'] ) . '</span>'
@@ -557,6 +588,18 @@ function aa_hh_brief_html( $b, $str ) {
 			    . '<span><strong>' . esc_html( $label ) . '</strong> ' . esc_html( $pts[ $k ] ) . '</span></li>';
 		}
 		$h .= '</ul>';
+	}
+
+	/* Where this credential leads next, from the course page's own
+	   "Advance your career" cross-sell. */
+	if ( ! empty( $pts['next'] ) ) {
+		$h .= '<div class="aa-hh-brief-next">'
+		    . '<span class="aa-hh-brief-nextcap">' . esc_html( $str['brief_next'] ) . '</span>'
+		    . '<ul class="aa-hh-brief-nextlist">';
+		foreach ( $pts['next'] as $n ) {
+			$h .= '<li>' . esc_html( $n ) . '</li>';
+		}
+		$h .= '</ul></div>';
 	}
 
 	if ( $b['outcomes'] ) {
@@ -715,13 +758,13 @@ function aa_hh_render( $atts ) {
 		$h .= aa_hh_config_script();
 	}
 
-	$h .= '<p class="aa-hh-foot">' . esc_html( $str['foot'] )
+	/* The long currency notice is gone -- four lines of small print under a
+	   card someone is about to buy from was more wall than warning. What is
+	   left is the one fact an international buyer needs before clicking, in
+	   three words, next to the calendar link. The full explanation still runs
+	   at the checkout step, which is where it does its work. */
+	$h .= '<p class="aa-hh-foot">' . esc_html( $str['currency_short'] )
 	    . ' <a href="/training/">' . esc_html( $str['foot_link'] ) . ' &#10230;</a></p>';
-
-	/* The currency disclaimer sits with the prices it qualifies, not in a
-	   footer nobody reads. Small, but present on the same screen as the
-	   number and before anything is clicked. */
-	$h .= '<p class="aa-hh-legal">' . esc_html( $str['currency'] ) . '</p>';
 
 	$h .= '</div></div>';
 
