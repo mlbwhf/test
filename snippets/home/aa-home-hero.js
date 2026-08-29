@@ -32,6 +32,7 @@
   var elLabel = root.querySelector('[data-hh-cta-label]');
   var elForm  = root.querySelector('[data-aa-inline]');
   var elBuyHd = root.querySelector('[data-hh-buyhead]');
+  var elBrief = root.querySelector('[data-hh-brief]');
 
   if (!rows.length) { return; }
 
@@ -77,6 +78,39 @@
     }
   }
 
+  /* THE BRIEF. Fills the space under the CTA with whatever is selected, so the
+     left column answers "what is this course" while the right answers "when".
+
+     Keyed by course slug, not cohort: three RTE dates share one brief, and
+     re-rendering identical markup would replay the fade for no reason and
+     interrupt a screen reader mid-announcement for a change that did not
+     happen. So it returns early when the slug has not moved.
+
+     The markup comes from the server (window.AA_HH_BRIEFS), already escaped by
+     PHP -- this file never builds copy, it only swaps which block is showing. */
+  function paintBrief() {
+    if (!elBrief || !state.row) { return; }
+    var briefs = window.AA_HH_BRIEFS;
+    if (!briefs) { return; }
+
+    var slug = state.row.getAttribute('data-slug');
+    if (!slug || slug === elBrief.getAttribute('data-slug')) { return; }
+
+    var html = briefs[slug];
+    if (!html) { elBrief.hidden = true; return; }   // no brief: hide, never an empty shell
+
+    elBrief.hidden = false;
+    elBrief.setAttribute('data-slug', slug);
+    elBrief.innerHTML = html;
+
+    /* Replay the fade-up. Removing the class and reading offsetWidth forces the
+       style recalculation that lets re-adding it restart the animation --
+       without the read the browser coalesces both changes and nothing moves. */
+    elBrief.classList.remove('aa-hh-brief');
+    void elBrief.offsetWidth;
+    elBrief.classList.add('aa-hh-brief');
+  }
+
   function select(row) {
     if (!row) { return; }
     state.row = row;
@@ -87,6 +121,7 @@
     });
     paintCta();
     paintForm();
+    paintBrief();
   }
 
   function apply() {

@@ -43,17 +43,11 @@
   display:grid; grid-template-columns:1.02fr .98fr;
   gap:clamp(28px,3.4vw,56px);
   padding:clamp(30px,3.4vw,52px) var(--pad-x) clamp(26px,3vw,40px);
-  /* CENTRED, NOT TOP-ALIGNED. The picker is a card with a schedule, a filter
-     row and a whole checkout in it -- around 740px tall -- while the pitch is
-     an eyebrow, two lines of headline, three of prose and a button, about 300.
-     Aligned to the start, the copy sat in the top third with roughly 400px of
-     empty column under it, and the two halves read as unrelated. The internal
-     margins were never the problem; the row was.
-
-     Centred, the pitch sits against the middle of the card. If the pitch ever
-     grows past the card this still behaves -- the taller one sets the row
-     height either way. */
-  align-items:center; max-width:var(--wrap); margin:0 auto;
+  /* BACK TO START, because the gap is now filled rather than closed. Centring
+     was the fix while the pitch was ~300px against a ~740px card; the course
+     brief below the CTA uses that space instead, which is the better answer --
+     it balances the columns AND tells the visitor what they have selected. */
+  align-items:start; max-width:var(--wrap); margin:0 auto;
 }
 /* A grid item defaults to min-width:auto, i.e. its MIN-CONTENT width, and a
    track sized in fr cannot shrink below that. One long unbreakable child is
@@ -130,6 +124,59 @@
 }
 .aa-hh-meta strong{color:var(--ink)}
 .aa-hh-meta a{color:var(--teal);font-weight:600;border-bottom:1px solid var(--teal)}
+
+/* ---------- left column: the course brief ---------- */
+/* Fills the space under the CTA with the selected course, swapped as the
+   visitor clicks the picker. Deliberately NOT a card: the cohort card on the
+   right is the focal point, and a second panel with its own background would
+   compete with it. A hairline and a measure are enough. */
+.aa-hh-brief{
+  margin-top:34px; max-width:520px;
+  border-top:1px solid var(--line); padding-top:22px;
+  animation:aa-hh-up .5s ease both;
+}
+.aa-hh-brief-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.aa-hh-brief-label{
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted);
+  flex:0 0 auto;
+}
+/* Flexible spacer, so the track name is always flush to the 520px measure
+   however long the course name beneath it runs. */
+.aa-hh-brief-rule{height:1px;flex:1 1 auto;background:var(--line);min-width:12px}
+.aa-hh-brief-track{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--teal);
+  flex:0 0 auto;
+}
+/* Body font, not the serif accent: the italic serif is the h1's voice and
+   reusing it here would read as a second headline rather than a label. */
+.aa-hh-brief-title{
+  margin:0;font-size:23px;font-weight:600;letter-spacing:-.022em;line-height:1.2;color:var(--ink);
+}
+.aa-hh-brief-desc{margin:9px 0 0;font-size:15px;line-height:1.6;color:var(--body);text-wrap:pretty}
+
+.aa-hh-brief-meta{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.aa-hh-brief-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12px;font-weight:600;color:var(--body);
+  background:var(--panel);border:1px solid var(--line);border-radius:100px;padding:7px 13px;
+}
+.aa-hh-brief-icon{color:var(--teal);line-height:1}
+
+.aa-hh-brief-outcomes{
+  list-style:none;margin:18px 0 0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 20px;
+}
+.aa-hh-brief-outcome{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--body)}
+.aa-hh-brief-tick{
+  flex:0 0 auto;width:16px;height:16px;margin-top:2px;border-radius:50%;
+  background:#F4FAF9;border:1px solid #D6EBE8;color:var(--teal);
+  font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+/* The panel is the one thing here that re-animates on every click, so it is
+   also the one that most needs to stop when asked. */
+@media (prefers-reduced-motion:reduce){
+  .aa-hh-brief{animation:none}
+}
 
 /* ---------- right column: the picker ---------- */
 .aa-hh-pick{

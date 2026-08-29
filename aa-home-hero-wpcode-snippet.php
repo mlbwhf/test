@@ -298,6 +298,10 @@ function aa_hh_strings( $lang ) {
 			'eyebrow'    => 'Next cohorts',
 			/* Two forms, because the first cohort is often days away and
 			   "next 1 weeks" is the sort of thing a buyer reads as neglect. */
+			'brief_label' => 'You\'re looking at',
+			'brief_day'   => '%d day',
+			'brief_days'  => '%d days',
+			'brief_exam'  => 'Exam fee included',
 			'season'     => 'Live online · next %d weeks',
 			'season_one' => 'Live online · next week',
 			'count_all'  => '%d upcoming batches',
@@ -340,6 +344,110 @@ function aa_hh_trust() {
 	) );
 }
 
+/* =============================================================================
+   COURSE BRIEF — the left column's empty space, filled by the selection
+   -----------------------------------------------------------------------------
+   The pitch column is about 300px of copy beside a 740px card, and the handoff
+   proposes using that gap rather than closing it: show the selected course's
+   brief under the CTA, swapped as the visitor clicks rows.
+
+   THE CONTENT COMES FROM THE CATALOGUE, NOT THE HANDOFF'S JSON. That file says
+   of itself that it is "inferred, not supplied by the client" and asks for
+   validation before launch -- and it is wrong in the ways that matter: it
+   invents contact hours ("4 days - 32 hrs"), and it asserts what an SPC is
+   licensed to teach, which is Scaled Agile's to define and not ours to claim
+   on a home page. Every field below is instead read from aa_reg_course(), the
+   same record the course page and the checkout use, so the hero cannot say
+   something the course page contradicts.
+
+     title  <- the course's own name
+     desc   <- its published lede
+     days   <- its real duration
+     exam   <- "Exam fee included", true of every course we sell
+     level  <- the track, from aa_hh_track()
+
+   OUTCOMES ARE DELIBERATELY EMPTY. The design calls for three verb-first
+   outcomes per course and the catalogue has nothing that honestly fills that
+   shape -- 'proof' is a facts list ("Live online", "Exam fee included") and
+   would just restate the pills. Rather than ship invented ones, the block
+   renders only for courses with real entries in aa_hh_outcomes(). Fill that in
+   from each course page's own curriculum section and the block appears.
+   ========================================================================== */
+
+/**
+ * Three verb-first outcomes per course slug. Empty by default -- see above.
+ *
+ * Six words or fewer, and true of the course as published. A course with no
+ * entry renders the brief without the outcomes grid, which is a complete panel,
+ * not a broken one.
+ */
+function aa_hh_outcomes() {
+	return apply_filters( 'aa_hh_outcomes', array(
+		/* 'rte' => array( 'Facilitate PI Planning', 'Run System Demos and I&A', 'Coach the ART' ), */
+	) );
+}
+
+/** The brief for one row, or null when the course cannot supply one. */
+function aa_hh_brief( $r, $str ) {
+	if ( empty( $r['course'] ) ) { return null; }
+	$c = $r['course'];
+
+	$desc = isset( $c['lede'] ) ? trim( (string) $c['lede'] ) : '';
+	if ( $desc === '' ) { return null; }   // nothing to say; the panel hides
+
+	$days = isset( $c['days'] ) ? (int) $c['days'] : 0;
+	$all  = aa_hh_outcomes();
+	$slug = $r['slug'];
+
+	return array(
+		'track'    => aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
+		'name'     => isset( $c['name'] ) ? $c['name'] : $c['code'],
+		'desc'     => $desc,
+		'meta'     => array_values( array_filter( array(
+			$days > 0 ? sprintf( $days === 1 ? $str['brief_day'] : $str['brief_days'], $days ) : '',
+			$str['brief_exam'],
+			aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
+		) ) ),
+		'outcomes' => isset( $all[ $slug ] ) ? array_slice( (array) $all[ $slug ], 0, 3 ) : array(),
+	);
+}
+
+/** The panel's markup for one brief. Shared by the server render and the JS swap. */
+function aa_hh_brief_html( $b, $str ) {
+	if ( ! $b ) { return ''; }
+
+	$glyphs = array( '&#9727;', '&#9670;', '&#9650;' );   // duration, exam, level
+
+	$h  = '<div class="aa-hh-brief-eyebrow">'
+	    . '<span class="aa-hh-brief-label">' . esc_html( $str['brief_label'] ) . '</span>'
+	    . '<span class="aa-hh-brief-rule" aria-hidden="true"></span>'
+	    . '<span class="aa-hh-brief-track">' . esc_html( $b['track'] ) . '</span></div>';
+
+	$h .= '<h2 class="aa-hh-brief-title">' . esc_html( $b['name'] ) . '</h2>';
+	$h .= '<p class="aa-hh-brief-desc">' . esc_html( $b['desc'] ) . '</p>';
+
+	if ( $b['meta'] ) {
+		$h .= '<ul class="aa-hh-brief-meta">';
+		foreach ( array_values( $b['meta'] ) as $i => $m ) {
+			$h .= '<li class="aa-hh-brief-pill"><span class="aa-hh-brief-icon" aria-hidden="true">'
+			    . ( isset( $glyphs[ $i ] ) ? $glyphs[ $i ] : $glyphs[0] ) . '</span>'
+			    . esc_html( $m ) . '</li>';
+		}
+		$h .= '</ul>';
+	}
+
+	if ( $b['outcomes'] ) {
+		$h .= '<ul class="aa-hh-brief-outcomes">';
+		foreach ( $b['outcomes'] as $o ) {
+			$h .= '<li class="aa-hh-brief-outcome">'
+			    . '<span class="aa-hh-brief-tick" aria-hidden="true">&#10003;</span>'
+			    . '<span>' . esc_html( $o ) . '</span></li>';
+		}
+		$h .= '</ul>';
+	}
+	return $h;
+}
+
 function aa_hh_render( $atts ) {
 	$a = shortcode_atts( array( 'lang' => 'en' ), $atts, 'aa_home_hero' );
 	$str  = aa_hh_strings( $a['lang'] );
@@ -376,7 +484,22 @@ function aa_hh_render( $atts ) {
 	    . '<p class="aa-hh-meta"><strong>' . esc_html( $str['certified'] ) . '</strong>'
 	    . '<span aria-hidden="true">·</span>'
 	    . '<a href="/customers/">' . esc_html( $str['results'] ) . ' &#10230;</a></p>'
-	    . '</div></div>';
+	    . '</div>';
+
+	/* The brief for whatever is selected on load, server-rendered so it is
+	   present without JS and indexable, then swapped by the picker. */
+	$brief = $first ? aa_hh_brief( $first, $str ) : null;
+	if ( $brief ) {
+		/* data-slug matches what the JS compares against, so the first
+		   select() on load sees no change and leaves the server's markup
+		   alone -- without it the panel re-rendered and replayed its fade
+		   immediately, for a selection that had not moved. */
+		$h .= '<section class="aa-hh-brief" data-hh-brief aria-live="polite"'
+		    . ' data-slug="' . esc_attr( $first['slug'] ) . '">'
+		    . aa_hh_brief_html( $brief, $str ) . '</section>';
+	}
+
+	$h .= '</div>';
 
 	/* ---------- right column: the picker ---------- */
 	$h .= '<div class="aa-hh-pick" id="aa-cohorts">';
@@ -482,6 +605,20 @@ function aa_hh_render( $atts ) {
 	$h .= '</div>';
 
 	$h .= '</section>';
+
+	/* Every brief, keyed by course slug, so the picker can swap without a
+	   round trip. Keyed by COURSE and not cohort, as the handoff asks: several
+	   cohorts of one course share a brief, and only the dates differ. */
+	$briefs = array();
+	foreach ( $rows as $r ) {
+		if ( isset( $briefs[ $r['slug'] ] ) ) { continue; }
+		$b = aa_hh_brief( $r, $str );
+		if ( $b ) { $briefs[ $r['slug'] ] = aa_hh_brief_html( $b, $str ); }
+	}
+	if ( $briefs ) {
+		$h .= '<script>window.AA_HH_BRIEFS=' . wp_json_encode( $briefs ) . ';</script>';
+	}
+
 	$h .= aa_hh_schema( $rows );
 	return $h;
 }
@@ -547,7 +684,8 @@ function aa_hh_row( $r, $str, $is_first ) {
 	     . ' data-hh-row'
 	     . ' data-cohort="' . esc_attr( $co['id'] ) . '"'
 	     . ' data-start="' . esc_attr( $co['start'] ) . '"'
-	     . ' data-track="' . esc_attr( aa_hh_track( $c['crumb'] ) ) . '"'
+	     . ' data-track="' . esc_attr( aa_hh_track( $c['crumb'], $r['slug'] ) ) . '"'
+	     . ' data-slug="' . esc_attr( $r['slug'] ) . '"'
 	     . ' data-code="' . esc_attr( $c['code'] ) . '"'
 	     . ' data-range="' . esc_attr( $range ) . '"'
 	     . ' data-price="' . (int) $c['price'] . '"'
