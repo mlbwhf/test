@@ -382,15 +382,14 @@
    above the trust row. */
 .aa-hh-brief{padding-bottom:6px}
 
-/* Pin the brief to the bottom of the row. The pitch column is the shorter of
-   the two by design -- a headline and a button against a card with a whole
-   checkout in it -- so whatever height is left over collects between the CTA
-   and the brief rather than below everything, and the two columns finish
-   level. margin-top keeps its floor, so on a narrow viewport where the pitch
-   is the taller column this is simply a 34px gap. */
-.aa-hh-pitch{align-self:stretch;display:flex;flex-direction:column}
-.aa-hh-brief{margin-top:auto}
-@media (max-width:900px){
-  .aa-hh-pitch{display:block}
-  .aa-hh-brief{margin-top:34px}
-}
+/* NOT margin-top:auto. Pinning the brief to the bottom of the row did close
+   the tail under the column -- by opening a 200px hole between the CTA and the
+   brief instead, which reads as a bug rather than as breathing room. Moving a
+   gap is not filling it. The brief follows the CTA at a fixed distance and any
+   remaining difference in column height is left where it is least visible, at
+   the bottom of the shorter column.
+
+   The honest fix for the rest is content, not spacing: the salary pill and the
+   progression chips are about 110px, and both were absent while the stale
+   transient was being read. */
+.aa-hh-pitch{align-self:start}
