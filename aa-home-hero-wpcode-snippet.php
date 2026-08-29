@@ -80,23 +80,100 @@ function aa_hh_courses() {
  * chips for one track, each filtering to half of it. Anything not listed keeps
  * its own name, so a new section appears as itself rather than vanishing.
  */
-function aa_hh_track( $crumb ) {
+function aa_hh_track( $crumb, $slug = '' ) {
+	/* BY COURSE FIRST, BECAUSE THE PARENT PAGE IS NOT A CATEGORY.
+	   The track used to come only from the course's parent page title, which
+	   grouped by where a page lives rather than what the course is: everything
+	   under /training/safe/ became "SAFe Roles" whether it was Leading SAFe or
+	   Lean Portfolio Management, and ARCH and ASE became "SAFe by Industry"
+	   because of the folder they sit in, not because they are industry courses.
+
+	   Scaled Agile's own split is foundational versus advanced, so that is what
+	   this maps to. Assignment is per course and editable in one place. The two
+	   worth arguing about are SPC and ASPC -- consultant credentials rather than
+	   role credentials -- which sit under Advanced here because that is where a
+	   buyer would look for them. */
+	$by_slug = array(
+		// Foundational — the entry courses, no prerequisites.
+		'sa'                => 'Foundational',   // Leading SAFe
+		'team-practitioner' => 'Foundational',   // SAFe for Teams
+		'scrum-master'      => 'Foundational',   // SAFe Scrum Master
+		'popm'              => 'Foundational',   // Product Owner / Product Manager
+		'devops'            => 'Foundational',   // SAFe DevOps
+
+		// Advanced — role and specialist credentials, most assuming a prerequisite.
+		'asm'               => 'Advanced SAFe',  // Advanced Scrum Master
+		'rte'               => 'Advanced SAFe',
+		'lpm'               => 'Advanced SAFe',
+		'apm'               => 'Advanced SAFe',
+		'arch'              => 'Advanced SAFe',  // was "SAFe by Industry"
+		'ase'               => 'Advanced SAFe',  // was "SAFe by Industry"
+		'spc'               => 'Advanced SAFe',
+		'aspc'              => 'Advanced SAFe',
+
+		// AI-Native — its own track, and the reason the industry chip went.
+		'ai-native-foundations'           => 'AI-Native',
+		'ai-native-change-agent'          => 'AI-Native',
+		'ai-native-ready-certification-2' => 'AI-Native',
+	);
+	$slug = trim( (string) $slug );
+	if ( $slug !== '' && isset( $by_slug[ $slug ] ) ) { return $by_slug[ $slug ]; }
+
+	/* Fallback for a course not listed above -- a new page, or one resolved
+	   from its own #aa-cohorts element. It keeps the old crumb behaviour so a
+	   new course appears as itself rather than vanishing from every chip. */
 	$map = array(
 		'Advanced SAFe'    => 'Advanced SAFe',
 		'SAFe Advanced'    => 'Advanced SAFe',
-		'SAFe Roles'       => 'SAFe Roles',
-		'SAFe by Industry' => 'SAFe by Industry',
+		'SAFe Roles'       => 'Foundational',
+		'SAFe by Industry' => 'Advanced SAFe',
 		'AI-Native'        => 'AI-Native',
 	);
 	$crumb = trim( (string) $crumb );
 	return isset( $map[ $crumb ] ) ? $map[ $crumb ] : $crumb;
 }
 
+/** Display order for the chips: where a buyer starts, then depth, then AI. */
+function aa_hh_track_order() {
+	return array( 'Foundational', 'Advanced SAFe', 'AI-Native' );
+}
+
 /** Seat count at or below which the row shows a scarcity chip instead of "Seats open". */
 function aa_hh_seat_threshold() { return 6; }
 
-/** How many batches the picker lists. Enough to fill the panel, not so many it scrolls forever. */
-function aa_hh_limit() { return 12; }
+/**
+ * How many batches the picker lists.
+ *
+ * WAS 12, AGAINST A CATALOGUE OF 16. One row per course, sorted by date, then
+ * sliced -- and the SAFe courses run two or three times a week while the
+ * AI-Native ones are monthly, so every SAFe course had a date in the next three
+ * days and all three AI-Native courses sat at Sep 3, 10 and 17. Sorting by date
+ * put them last and the slice removed them: the home page showed twelve SAFe
+ * courses all starting the same Monday, no AI-Native track at all, and nothing
+ * dated past August. The newest and most strategic track was the one the cap
+ * silently deleted.
+ *
+ * A GLOBAL CAP IS THE WRONG SHAPE. Raising it to fit all sixteen only turned a
+ * truncated list into a long one -- thirteen courses sharing one Monday under a
+ * single week heading, which tells a visitor nothing about what we teach. The
+ * cap that matters is per track, below. This one is the ceiling for the panel
+ * as a whole and should sit above what the per-track caps can produce.
+ */
+function aa_hh_limit() { return 14; }
+
+/**
+ * How many courses each track may show.
+ *
+ * The panel is a catalogue, so its job is to show the SHAPE of what we teach --
+ * three tracks, a few courses each -- not to list every date we run. Thirteen
+ * SAFe courses and three AI-Native ones, sorted by a date they mostly share,
+ * reads as a scheduling dump; four per track reads as a menu.
+ *
+ * Within a track the order is aa_hh_courses(), which is a curated priority
+ * list, NOT the date -- the dates tie, so sorting by them picked essentially at
+ * random. Reorder that list to change which courses lead a track.
+ */
+function aa_hh_per_track() { return 4; }
 
 /**
  * Every upcoming batch across the priority courses, soonest first.
@@ -122,18 +199,49 @@ function aa_hh_rows() {
 	   whose track chips are missing the tracks with less frequent classes.
 	   Someone choosing a course wants to see the courses; the date they can
 	   change on the course page. */
+	$priority = 0;
 	foreach ( aa_hh_courses() as $slug ) {
 		$course = aa_reg_course( $slug );
 		if ( ! $course ) { continue; }
 		$next = aa_reg_upcoming( $slug, $course );
 		if ( ! $next ) { continue; }
-		$rows[] = array( 'slug' => $slug, 'course' => $course, 'cohort' => $next[0] );
+		$rows[] = array(
+			'slug'     => $slug,
+			'course'   => $course,
+			'cohort'   => $next[0],
+			/* Position in aa_hh_courses(), kept so the curated order survives
+			   the sort. Every SAFe course starts the same Monday, so date alone
+			   leaves the tie to be broken by whatever order they came back in. */
+			'priority' => $priority++,
+		);
 	}
 
+	/* Curated order within a track; date only decides between tracks, below.
+	   A plain sort by date was what deleted the AI-Native track: "soonest" and
+	   "most frequent" are the same thing, so the monthly courses sorted last
+	   and the cap removed them -- the track a visitor is least likely to
+	   stumble on was the one guaranteed to be dropped. */
 	usort( $rows, function ( $a, $b ) {
-		return strcmp( $a['cohort']['start'], $b['cohort']['start'] );
+		return $a['priority'] <=> $b['priority'];
 	} );
-	return $rows = array_slice( $rows, 0, aa_hh_limit() );
+
+	$kept    = array();
+	$per     = array();
+	foreach ( $rows as $r ) {
+		if ( count( $kept ) >= aa_hh_limit() ) { break; }
+		$t = aa_hh_track( isset( $r['course']['crumb'] ) ? $r['course']['crumb'] : '', $r['slug'] );
+		$n = isset( $per[ $t ] ) ? $per[ $t ] : 0;
+		if ( $n >= aa_hh_per_track() ) { continue; }
+		$per[ $t ] = $n + 1;
+		$kept[]    = $r;
+	}
+
+	/* Back into date order for display: the panel still reads soonest first,
+	   it is just no longer the thing that decides membership. */
+	usort( $kept, function ( $a, $b ) {
+		return strcmp( $a['cohort']['start'], $b['cohort']['start'] ) ?: ( $a['priority'] <=> $b['priority'] );
+	} );
+	return $rows = $kept;
 }
 
 /** "Week of Sep 14" — the group heading, and the key rows are grouped on. */
@@ -169,7 +277,10 @@ function aa_hh_strings( $lang ) {
 			'results'    => 'See client results',
 			'certified'  => '2,500+ certified',
 			'eyebrow'    => 'Next cohorts',
+			/* Two forms, because the first cohort is often days away and
+			   "next 1 weeks" is the sort of thing a buyer reads as neglect. */
 			'season'     => 'Live online · next %d weeks',
+			'season_one' => 'Live online · next week',
 			'count_all'  => '%d upcoming batches',
 			'count_one'  => '1 upcoming batch',
 			'count_filt' => '%1$d of %2$d batches',
@@ -261,7 +372,7 @@ function aa_hh_render( $atts ) {
 
 	$tracks = array();
 	foreach ( $rows as $r ) {
-		$t = aa_hh_track( $r['course']['crumb'] );
+		$t = aa_hh_track( $r['course']['crumb'], $r['slug'] );
 		if ( $t !== '' && ! in_array( $t, $tracks, true ) ) { $tracks[] = $t; }
 	}
 
@@ -276,7 +387,7 @@ function aa_hh_render( $atts ) {
 	$h .= '<div class="aa-hh-pickhead"><div>'
 	    . '<p class="aa-hh-eyebrow"><span class="aa-hh-dot aa-hh-dot--warm" aria-hidden="true"></span>'
 	    . esc_html( $str['eyebrow'] ) . '</p>'
-	    . '<p class="aa-hh-season">' . esc_html( sprintf( $str['season'], max( 1, $weeks_ahead ) ) ) . '</p></div>'
+	    . '<p class="aa-hh-season">' . esc_html( ( max( 1, $weeks_ahead ) === 1 ? $str['season_one'] : sprintf( $str['season'], $weeks_ahead ) ) ) . '</p></div>'
 	    . '<p class="aa-hh-count" data-hh-count aria-live="polite">'
 	    . esc_html( count( $rows ) === 1 ? $str['count_one'] : sprintf( $str['count_all'], count( $rows ) ) )
 	    . '</p></div>';
