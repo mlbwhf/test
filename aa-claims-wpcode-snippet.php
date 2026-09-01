@@ -224,6 +224,45 @@ function aa_claims_unset_rating( $node ) {
 /** Page slug => ordered list of exact [find, replace] pairs. */
 function aa_claims_page_rules() {
 	return array(
+		/* ------------------------------------------------------------------
+		   /services/operating-model/ — three of the five layer buttons pointed
+		   away from the operating model. 01 and 02 go to their service pages;
+		   03 sent a reader of the operating model into the training catalogue,
+		   and 05 opened the Mutation Readiness ASSESSMENT rather than the
+		   Mutation service page. Both destinations exist and are published
+		   (28869 and 28870), and both describe themselves as "Service ·
+		   Operating Model · Layer".
+
+		   Done here rather than on the page because that page is a single
+		   core/html block: any write replaces all 34KB of it, and this is two
+		   attributes. The page edit is still the permanent fix and these rules
+		   should be deleted when it happens -- a no-op either way, since
+		   str_replace on an absent string changes nothing.
+
+		   Scoped by the button class so they cannot touch any other link to
+		   the same URLs elsewhere on the page.
+
+		   Layer 04 is deliberately absent: there is no /services/ai-automation/
+		   page, so its link to digital-transformation is the closest thing that
+		   exists rather than a mistake. That one needs a decision, not a patch.
+		   ------------------------------------------------------------------ */
+		'operating-model' => array(
+			array( 'class="op-btn-c" href="/assessments/mutation-readiness/"',
+			       'class="op-btn-c" href="/services/mutation/"' ),
+			array( '>Mutation Readiness &#10230;</a>', '>Mutation &#10230;</a>' ),
+
+			array( 'class="op-btn-c" href="/training/ai-native/"',
+			       'class="op-btn-c" href="/services/ai-native-operating-model/"' ),
+			array( '>AI-Native training &#10230;</a>', '>AI-Native Operating Model &#10230;</a>' ),
+
+			/* The button WAS the assessment link, so repointing it would drop
+			   that route entirely. The panel copy already names Mutation
+			   Readiness, so the mention carries it instead. Runs after the
+			   href swap above, so it is not caught by it. */
+			array( 'The layer that makes change permanent. Mutation Readiness is the discipline',
+			       'The layer that makes change permanent. <a href="/assessments/mutation-readiness/" style="color:#8FCFCF;text-decoration:underline">Mutation Readiness</a> is the discipline' ),
+		),
+
 		'ai-native-change-agent' => array(
 			/* ---- facts the page got wrong about itself ---- */
 			array( '"courseWorkload": "P3D"', '"courseWorkload": "P2D"' ),
