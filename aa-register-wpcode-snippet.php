@@ -231,7 +231,16 @@ function aa_reg_courses() {
 		   The Gulf cities run on SUNDAYS, not Thursdays. Thursday-plus-Friday
 		   straddles the Gulf weekend, so every class there would be a weekend
 		   class; Sunday is the first working day of the week in both.
-		   Quarterly, staggered a week apart for the same trainer reason.
+
+		   Quarterly, and the two cities are a MONTH apart, not a week: Dubai
+		   opens in September, Riyadh in October, then Dec/Jan, Mar/Apr and so
+		   on. Both were originally later -- Dubai October, Riyadh November --
+		   which is why the home page showed no Gulf date in September at all.
+		   They cannot both sit in September: three courses take three of the
+		   month's four Sundays per city, so a shared month would put two
+		   classes in different countries on the same day. A month apart keeps
+		   each city's three courses in their own weeks and one trainer able to
+		   fly to both.
 
 		   Change any of it by changing 'first' — the whole series follows.
 		   ------------------------------------------------------------------ */
@@ -251,8 +260,8 @@ function aa_reg_courses() {
 			'proof'    => array( 'In person', 'Exam fee included', 'No prerequisites' ),
 			'schedule' => array(
 				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-03' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-04' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-01' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-06' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-04' ),
 			),
 		),
 		'ai-native-change-agent' => array(
@@ -274,8 +283,8 @@ function aa_reg_courses() {
 			'proof'    => array( 'In person', 'Exam fee included', 'AINF required' ),
 			'schedule' => array(
 				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-10' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-11' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-08' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-13' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-11' ),
 			),
 		),
 		'ai-native-ready-certification-2' => array(
@@ -294,8 +303,8 @@ function aa_reg_courses() {
 			'proof'    => array( '12 seats max', 'Six months coaching', 'Exam fee included' ),
 			'schedule' => array(
 				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-17' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-10-18' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-11-15' ),
+				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-20' ),
+				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-18' ),
 			),
 		),
 	);
