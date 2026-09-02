@@ -2192,6 +2192,11 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		'metadata[cohort]'  => $cohort['id'],
 		'metadata[course]'  => $found['slug'],
 		'metadata[seats]'   => $seats,
+		/* The page they bought from, so the confirmation can be written in the
+		   language they have been reading. aa_reg_lang() cannot help here --
+		   this runs as a REST request with no queried object, so it always
+		   reports English. */
+		'metadata[lang]'    => aa_reg_lang_of( array(), (string) $req->get_header( 'referer' ) ),
 	);
 
 	$res = wp_remote_post( 'https://api.stripe.com/v1/checkout/sessions', array(
@@ -2217,6 +2222,183 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		return new WP_Error( 'aa_stripe', 'Could not start checkout. Please try again.', array( 'status' => 502 ) );
 	}
 	return array( 'url' => $json['url'] );
+}
+
+/* ============================================================================
+   CONFIRMATION EMAIL
+   ----------------------------------------------------------------------------
+   Sent from the WEBHOOK, never from the browser. The success_url is just where
+   Stripe sends someone afterwards -- it can be opened by hand, closed before it
+   loads, or hit twice, and none of that is evidence that money moved. The
+   webhook is the only place the site learns a payment actually succeeded, and
+   it is already the place that records the registration and the seat count.
+
+   Idempotency comes free: the duplicate-event guard above returns before this
+   runs, so a Stripe retry cannot send a second copy.
+
+   A failure here must not fail the request. Stripe retries any non-2xx, and
+   retrying a webhook whose only fault was a mail server timeout would
+   double-book seats to fix an email. The outcome is recorded on the
+   registration instead, so a failure is visible without being destructive.
+   ========================================================================== */
+
+/**
+ * Which language to write the confirmation in.
+ *
+ * Read from the checkout metadata when present, else from the path of the page
+ * the buyer checked out on. A French buyer who has read a French page and paid
+ * on a French page should not get an English receipt; getting this wrong is
+ * small, but it is the first email after taking their money.
+ */
+function aa_reg_lang_of( $meta, $fallback_url = '' ) {
+	if ( ! empty( $meta['lang'] ) && in_array( $meta['lang'], aa_reg_lang_roots(), true ) ) {
+		return $meta['lang'];
+	}
+	$path = $fallback_url ? (string) parse_url( $fallback_url, PHP_URL_PATH ) : '';
+	foreach ( aa_reg_lang_roots() as $code ) {
+		if ( strpos( $path, '/' . $code . '/' ) === 0 ) { return $code; }
+	}
+	return 'en';
+}
+
+/** The confirmation copy, per language. English is the fallback for each key. */
+function aa_reg_confirm_strings( $lang ) {
+	$all = array(
+		'en' => array(
+			'subject'  => 'You are registered — %1$s, %2$s',
+			'hi'       => 'Hi %s,',
+			'hi_plain' => 'Hi,',
+			'lede'     => 'Your place is confirmed. Here are the details.',
+			'course'   => 'Course', 'dates' => 'Dates', 'seats' => 'Seats', 'paid' => 'Paid',
+			'next_h'   => 'What happens next',
+			'next_p'   => 'Your joining link and any pre-course material will be sent to this address before the class starts.',
+			'move_h'   => 'Need to move dates?',
+			'move_p'   => 'Reply to this email and we will move you to another cohort. Rescheduling carries no fee.',
+			'receipt'  => 'Stripe has emailed your payment receipt separately.',
+			'sign'     => 'Agile Agilist',
+		),
+		'es' => array(
+			'subject'  => 'Inscripción confirmada — %1$s, %2$s',
+			'hi'       => 'Hola %s:',
+			'hi_plain' => 'Hola:',
+			'lede'     => 'Tu plaza está confirmada. Estos son los detalles.',
+			'course'   => 'Curso', 'dates' => 'Fechas', 'seats' => 'Plazas', 'paid' => 'Importe',
+			'next_h'   => 'Qué ocurre ahora',
+			'next_p'   => 'Te enviaremos a esta dirección el enlace de acceso y el material previo antes de que empiece la clase.',
+			'move_h'   => '¿Necesitas cambiar de fechas?',
+			'move_p'   => 'Responde a este correo y te cambiamos a otra convocatoria. El cambio no tiene coste.',
+			'receipt'  => 'Stripe te ha enviado el recibo del pago por separado.',
+			'sign'     => 'Agile Agilist',
+		),
+		'fr' => array(
+			'subject'  => 'Inscription confirmée — %1$s, %2$s',
+			'hi'       => 'Bonjour %s,',
+			'hi_plain' => 'Bonjour,',
+			'lede'     => 'Votre place est confirmée. Voici les détails.',
+			'course'   => 'Formation', 'dates' => 'Dates', 'seats' => 'Places', 'paid' => 'Montant',
+			'next_h'   => 'La suite',
+			'next_p'   => 'Votre lien de connexion et les éventuels supports préparatoires seront envoyés à cette adresse avant le début de la session.',
+			'move_h'   => 'Besoin de changer de dates ?',
+			'move_p'   => 'Répondez à cet e-mail et nous vous placerons sur une autre session. Le report est sans frais.',
+			'receipt'  => 'Stripe vous a envoyé le reçu de paiement séparément.',
+			'sign'     => 'Agile Agilist',
+		),
+		'ar' => array(
+			'subject'  => 'تم تأكيد تسجيلك — %1$s، %2$s',
+			'hi'       => 'مرحبًا %s،',
+			'hi_plain' => 'مرحبًا،',
+			'lede'     => 'تم تأكيد مقعدك. إليك التفاصيل.',
+			'course'   => 'الدورة', 'dates' => 'التواريخ', 'seats' => 'المقاعد', 'paid' => 'المبلغ المدفوع',
+			'next_h'   => 'الخطوات التالية',
+			'next_p'   => 'سنرسل إلى هذا البريد رابط الحضور وأي مواد تحضيرية قبل بداية الدورة.',
+			'move_h'   => 'تحتاج إلى تغيير التواريخ؟',
+			'move_p'   => 'ردّ على هذه الرسالة وسننقلك إلى دورة أخرى. إعادة الجدولة بدون رسوم.',
+			'receipt'  => 'أرسلت Stripe إيصال الدفع إليك في رسالة منفصلة.',
+			'sign'     => 'Agile Agilist',
+		),
+	);
+	$en = $all['en'];
+	return isset( $all[ $lang ] ) ? array_merge( $en, $all[ $lang ] ) : $en;
+}
+
+/**
+ * Build and send the buyer's confirmation. Returns true when wp_mail accepted it.
+ *
+ * Everything stated here is something we can actually do: the dates that were
+ * bought, the amount that was charged, joining details before the class, and a
+ * reschedule at no fee. No pass promise, no refund promise, and no claim about
+ * course materials that varies between the SAFe and AI-Native catalogues.
+ */
+function aa_reg_send_confirmation( $args ) {
+	$email = isset( $args['email'] ) ? $args['email'] : '';
+	if ( ! $email || ! is_email( $email ) ) { return false; }
+
+	$lang  = isset( $args['lang'] ) ? $args['lang'] : 'en';
+	$t     = aa_reg_confirm_strings( $lang );
+	$rtl   = aa_reg_is_rtl( $lang );
+
+	/* Resolve the cohort back to a course and a date range. A cohort id we
+	   cannot resolve still gets an email -- it just names the id rather than
+	   inventing a course, because the buyer has paid either way. */
+	$found  = isset( $args['cohort'] ) ? aa_reg_find( $args['cohort'] ) : null;
+	$course = $found ? $found['course']['name'] : ( isset( $args['course'] ) ? $args['course'] : '' );
+	$range  = $found ? aa_reg_range( $found['cohort']['start'], $found['cohort']['end'] ) : '';
+	if ( $course === '' ) { $course = isset( $args['cohort'] ) ? $args['cohort'] : ''; }
+
+	$seats  = max( 1, (int) ( isset( $args['seats'] ) ? $args['seats'] : 1 ) );
+	$paid   = '';
+	if ( ! empty( $args['amount'] ) ) {
+		$paid = strtoupper( (string) $args['amount_currency'] ) . ' '
+		      . number_format( (int) $args['amount'] / 100, 2 );
+	}
+
+	$name    = isset( $args['name'] ) ? trim( (string) $args['name'] ) : '';
+	$greet   = $name !== '' ? sprintf( $t['hi'], $name ) : $t['hi_plain'];
+	$subject = sprintf( $t['subject'], $course, $range );
+
+	/* Inline styles and a table, because an email client is not a browser: no
+	   stylesheet, no web font, nothing that depends on CSS the recipient's
+	   client may strip. dir is set for Arabic. */
+	$row = function ( $k, $v ) {
+		return $v === '' ? '' :
+			'<tr><td style="padding:6px 14px 6px 0;color:#5E7378;font-size:14px;white-space:nowrap">'
+			. esc_html( $k ) . '</td>'
+			. '<td style="padding:6px 0;color:#0E3A44;font-size:14px;font-weight:600">'
+			. esc_html( $v ) . '</td></tr>';
+	};
+
+	$html  = '<div dir="' . ( $rtl ? 'rtl' : 'ltr' ) . '" style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'
+	       . 'color:#0E3A44;font-size:15px;line-height:1.6;max-width:560px">';
+	$html .= '<p>' . esc_html( $greet ) . '</p>';
+	$html .= '<p>' . esc_html( $t['lede'] ) . '</p>';
+	$html .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0;border-collapse:collapse">'
+	       . $row( $t['course'], $course )
+	       . $row( $t['dates'], $range )
+	       . $row( $t['seats'], (string) $seats )
+	       . $row( $t['paid'], $paid )
+	       . '</table>';
+	$html .= '<p style="margin:18px 0 4px;font-weight:600">' . esc_html( $t['next_h'] ) . '</p>';
+	$html .= '<p style="margin:0">' . esc_html( $t['next_p'] ) . '</p>';
+	$html .= '<p style="margin:18px 0 4px;font-weight:600">' . esc_html( $t['move_h'] ) . '</p>';
+	$html .= '<p style="margin:0">' . esc_html( $t['move_p'] ) . '</p>';
+	$html .= '<p style="margin:22px 0 0;color:#5E7378;font-size:13px">' . esc_html( $t['receipt'] ) . '</p>';
+	$html .= '<p style="margin:22px 0 0">' . esc_html( $t['sign'] ) . '</p></div>';
+
+	$reply   = apply_filters( 'aa_reg_confirmation_reply_to', get_option( 'admin_email' ) );
+	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	if ( $reply && is_email( $reply ) ) { $headers[] = 'Reply-To: ' . $reply; }
+
+	/* One filter over the finished message, so the wording, the recipient or
+	   the headers can be changed without editing this function. */
+	$mail = apply_filters( 'aa_reg_confirmation', array(
+		'to'      => $email,
+		'subject' => $subject,
+		'body'    => $html,
+		'headers' => $headers,
+	), $args );
+
+	if ( empty( $mail['to'] ) ) { return false; }
+	return (bool) wp_mail( $mail['to'], $mail['subject'], $mail['body'], $mail['headers'] );
 }
 
 /* ============================================================================
@@ -2315,9 +2497,28 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 		update_option( 'aa_reg_sold', $sold, false );
 	}
 
+	/* The buyer's confirmation. After the record and the seat count, so a mail
+	   failure cannot cost us the registration, and its outcome is stored on the
+	   registration rather than thrown away -- an unsent confirmation is
+	   something someone has to act on, and it should not need log archaeology
+	   to find. */
+	$sent = aa_reg_send_confirmation( array(
+		'email'           => $email,
+		'name'            => $name,
+		'cohort'          => $cohort,
+		'course'          => isset( $meta['course'] ) ? $meta['course'] : '',
+		'seats'           => $seats,
+		'amount'          => isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0,
+		'amount_currency' => isset( $s['currency'] ) ? $s['currency'] : '',
+		'lang'            => aa_reg_lang_of( $meta ),
+	) );
+	if ( $post_id && ! is_wp_error( $post_id ) ) {
+		update_post_meta( $post_id, 'confirmation_sent', $sent ? 1 : 0 );
+	}
+
 	wp_mail(
 		get_option( 'admin_email' ),
-		'Paid registration — ' . $cohort,
+		( $sent ? 'Paid registration — ' : 'Paid registration (CONFIRMATION EMAIL FAILED) — ' ) . $cohort,
 		sprintf( "%s (%s)\nCohort: %s\nSeats: %d\nPaid: %s %s\nSession: %s",
 			$name, $email, $cohort, $seats,
 			isset( $s['currency'] ) ? strtoupper( $s['currency'] ) : '',
