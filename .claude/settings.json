@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__WordPress_com__wpcom-mcp-content-authoring",
+      "mcp__WordPress_com__wpcom-mcp-site-editing",
+      "mcp__WordPress_com__wpcom-mcp-plugin-management",
+      "mcp__WordPress_com__wpcom-mcp-site",
+      "mcp__WordPress_com__wpcom-mcp-site-editor-context",
+      "mcp__WordPress_com__wpcom-user-sites",
+      "mcp__WordPress_com__wpcom-mcp-send-feedback",
+      "Agent",
+      "Task",
+      "ToolSearch",
+      "WebSearch",
+      "WebFetch",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "SendUserFile",
+      "Bash(git *)"
+    ]
+  }
+}

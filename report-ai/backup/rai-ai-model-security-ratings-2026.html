@@ -1,0 +1,69 @@
+<!-- wp:html -->
+<style>
+.rai{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:1080px;margin:0 auto;padding:0 20px;line-height:1.6;}
+.rai *{box-sizing:border-box;}
+.rai .eb{font-family:ui-monospace,monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin:0 0 6px;}
+.rai .cr{font-family:ui-monospace,monospace;font-size:12px;color:#9a9aa2;text-transform:uppercase;margin:0 0 20px;}
+.rai .cr a{color:#9a9aa2;text-decoration:none;}
+.rai h1{font-weight:900;font-size:clamp(32px,5.5vw,54px);line-height:1.03;letter-spacing:-.03em;margin:6px 0 18px;}
+.rai .in{font-size:19px;color:#3a3a42;max-width:820px;margin:0 0 10px;}
+.rai .up{font-family:ui-monospace,monospace;font-size:12.5px;color:#9a9aa2;text-transform:uppercase;margin:0 0 26px;}
+.rai a{color:#2545f5;}
+.rai h2{font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-.02em;margin:50px 0 8px;padding-top:18px;border-top:2px solid #111114;}
+.rai p,.rai li{font-size:16px;}
+.rai .tw{overflow-x:auto;margin:22px 0 16px;}
+.rai table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px;}
+.rai th{text-align:center;font-family:ui-monospace,monospace;font-size:11px;text-transform:uppercase;padding:10px 8px;border-bottom:2px solid #111114;background:#fafafb;}
+.rai th:first-child{text-align:left;}
+.rai td{padding:10px 8px;border-bottom:1px solid #ececef;text-align:center;font-family:ui-monospace,monospace;font-weight:700;}
+.rai td:first-child{text-align:left;font-family:inherit;}
+.rai td small{display:block;font-weight:400;color:#9a9aa2;font-size:11px;font-family:ui-monospace,monospace;}
+.rai .A{color:#1c7a43;background:#e7f0ea;} .rai .B{color:#2545f5;background:#e8ecfd;} .rai .C{color:#b5701a;background:#fdf1e3;} .rai .D{color:#c0392b;background:#fbe9e7;}
+.rai .note{background:#f5f5f7;border-left:4px solid #2545f5;padding:16px 20px;margin:22px 0;font-size:15px;}
+.rai .lg{font-family:ui-monospace,monospace;font-size:12px;color:#6e6e76;margin:0 0 28px;}
+.rai .rel{border-left:3px solid #2545f5;background:#f6f6f9;margin-top:44px;padding:20px 24px;}
+.rai .src{font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.75;color:#3a3a42;}
+</style>
+<div class="rai">
+<p class="eb">Regulating AI &middot; Rating System</p>
+<p class="cr"><a href="/">Home</a> / <a href="/indexes/">Indexes</a> / <a href="/indexes/regulating-ai/">Regulating AI</a> / Model Security Ratings</p>
+<h1>AI Model Security Ratings 2026</h1>
+<p class="in">"Best model" leaderboards rank capability. This one ranks something else: how much <strong>security and control</strong> a frontier lab has built around its model &mdash; the framework, the testing, the weight protection, and the transparency. It is a separate scorecard, graded on what each developer publicly discloses, not on how smart the model is.</p>
+<p class="up"><strong>Ratings dated July 2026.</strong> The AI Index's disclosure-based assessment &mdash; an editorial scorecard, not a certification.</p>
+<div class="note"><strong>What these grades mean.</strong> We rate the published security posture of each developer as of mid-2026: does it have a real safety framework, does it submit to dangerous-capability testing, how controllable is the model after release, and how transparent is it. A high grade means strong, verifiable controls &mdash; not a guarantee against breach. A lower grade often reflects an open-weights philosophy (a legitimate, pro-competition choice) that deliberately gives up control levers, not carelessness.</div>
+<h2>The scorecard</h2>
+<p>Six security dimensions, letter-graded, plus an overall. Grades reflect public frameworks, system cards, third-party testing participation, and release model.</p>
+<div class="tw"><table><thead><tr><th>Developer / model</th><th>Safety framework</th><th>Capability testing</th><th>Weight security</th><th>Transparency</th><th>Oversight</th><th>Overall</th></tr></thead><tbody>
+<tr><td>Anthropic<small>Claude</small></td><td class="A">A</td><td class="A">A</td><td class="A">A-</td><td class="A">A</td><td class="A">A-</td><td class="A">A</td></tr>
+<tr><td>OpenAI<small>GPT</small></td><td class="A">A-</td><td class="A">A-</td><td class="B">B+</td><td class="A">A-</td><td class="B">B</td><td class="A">A-</td></tr>
+<tr><td>Google DeepMind<small>Gemini</small></td><td class="A">A-</td><td class="B">B+</td><td class="A">A-</td><td class="B">B+</td><td class="B">B</td><td class="B">B+</td></tr>
+<tr><td>Microsoft<small>Copilot</small></td><td class="B">B</td><td class="B">B</td><td class="B">B+</td><td class="B">B</td><td class="B">B-</td><td class="B">B</td></tr>
+<tr><td>Meta<small>Llama (open)</small></td><td class="B">B-</td><td class="C">C+</td><td class="D">D</td><td class="B">B</td><td class="C">C+</td><td class="C">C+</td></tr>
+<tr><td>xAI<small>Grok</small></td><td class="C">C</td><td class="C">C</td><td class="B">B-</td><td class="C">C+</td><td class="C">C-</td><td class="C">C</td></tr>
+<tr><td>Mistral<small>(open)</small></td><td class="C">C+</td><td class="C">C</td><td class="D">D+</td><td class="C">C</td><td class="C">C-</td><td class="C">C</td></tr>
+<tr><td>DeepSeek<small>(open)</small></td><td class="D">D+</td><td class="D">D</td><td class="D">D</td><td class="C">C-</td><td class="D">D</td><td class="D">D+</td></tr>
+</tbody></table></div>
+<p class="lg">Key: A = strong, verifiable controls &middot; B = solid, some gaps &middot; C = partial / limited disclosure &middot; D = minimal published control. Open-weight developers are capped on weight security by design.</p>
+<h2>How we grade</h2>
+<ul>
+<li><strong>Safety framework</strong> &mdash; a published, capability-triggered policy (RSP / Preparedness / FSF), and whether it has ever been activated.</li>
+<li><strong>Capability testing</strong> &mdash; internal dangerous-capability evals plus independent pre-deployment testing (METR, Apollo, government institutes).</li>
+<li><strong>Weight security</strong> &mdash; closed/structured access (revocable, monitorable) vs open weights (no post-release control); hardening toward RAND security levels.</li>
+<li><strong>Transparency</strong> &mdash; system cards, safety cases, and honest capability/risk disclosures per model.</li>
+<li><strong>Oversight</strong> &mdash; external audit participation, whistleblower protections, researcher safe-harbor posture.</li>
+</ul>
+<h2>The read on each tier</h2>
+<p><strong>Top tier &mdash; Anthropic, OpenAI, Google DeepMind.</strong> All three publish activated capability frameworks, run internal and third-party evals, keep weights closed, and ship detailed system cards. Anthropic edges ahead on having activated a higher safety tier (ASL-3, May 2025) precautionarily and on whistleblower/transparency posture; OpenAI and DeepMind are close behind with mature Preparedness and Frontier Safety frameworks.</p>
+<p><strong>Middle &mdash; Microsoft.</strong> As a deployer of frontier models (and its own), it inherits strong closed-access controls and enterprise security, but publishes less standalone frontier-safety framework detail than the three labs above.</p>
+<p><strong>Open-weight tier &mdash; Meta, Mistral, DeepSeek.</strong> These score lower on control for a structural reason: once weights are released, revocation, monitoring, and shutdown no longer apply, and safety fine-tuning can be stripped. Meta rates highest here for responsible-use documentation and some evals; DeepSeek lowest for minimal published safety framework or third-party testing. This is a security-posture judgment, not a verdict on model quality &mdash; open weights carry real benefits for transparency and competition.</p>
+<p><strong>xAI</strong> sits mid-low: closed access helps its weight-security grade, but its published safety framework and third-party-testing participation are less developed than the top tier.</p>
+<div class="note"><strong>Methodology &amp; limits.</strong> Grades are assigned by The AI Index from public disclosures as of July 2026 and are a snapshot &mdash; frameworks change fast. They measure disclosed control and transparency, not audited breach-resistance, and are not a security certification.</div>
+<h2>FAQ</h2>
+<p><strong>Which AI model is the most secure?</strong><br>By published control and transparency, Anthropic's Claude rates highest in our 2026 scorecard, followed closely by OpenAI's GPT and Google DeepMind's Gemini &mdash; all closed-access models with activated safety frameworks and third-party testing.</p>
+<p><strong>Are open-source AI models less secure?</strong><br>From a control standpoint, yes &mdash; once weights are public, they can't be recalled, monitored, or shut off, and safety guardrails can be removed. That's a deliberate trade-off for openness, not necessarily a sign of a worse model.</p>
+<p><strong>Is this the same as a best AI model ranking?</strong><br>No. This rates security posture and control, not capability. A model can be highly capable and still score lower here if its developer discloses less or releases open weights.</p>
+<div class="rel"><h3>Related</h3><p><a href="/indexes/regulating-ai/controlling-ai-research-best-practices/">Controlling AI Research</a> &middot; <a href="/indexes/regulating-ai/">Regulating AI &mdash; the pillar</a> &middot; <a href="/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/">The AI Kill-Switch Bill</a> &middot; <a href="/indexes/compare/">Compare AI</a></p></div>
+<h2>Sources</h2>
+<div class="src">Anthropic RSP &amp; ASL-3 &mdash; anthropic.com/news/activating-asl3-protections<br>OpenAI Preparedness Framework &mdash; openai.com<br>Google DeepMind Frontier Safety Framework &mdash; deepmind.google<br>AI Seoul Summit, Frontier AI Safety Commitments &mdash; gov.uk<br>RAND, Securing AI Model Weights &mdash; rand.org<br>METR model evaluations &mdash; metr.org<br>California SB 53 &mdash; leginfo.legislature.ca.gov</div>
+</div>
+<!-- /wp:html -->
