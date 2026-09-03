@@ -15,7 +15,7 @@ against its primary source in this workstream.
 | Page | Key figures to re-check | Source & why it moves | Last reviewed | Status |
 |---|---|---|---|---|
 | `/indexes/technical-benchmarks/best-ai-models-2026/` | Intelligence Index composite (58.9), SWE-bench Pro (69.2%), all 9-criteria ratings. **Now stale: missing Kimi K3 (57.1), Qwen3.8-Max (58), Qwen3.8-27B (52) — two of these would enter the top four** | Artificial Analysis / LMArena / SWE-bench — leaderboards shift weekly; the page itself says so | 2026-07 | ⚠️ **stale** |
-| `/indexes/technical-benchmarks/chinese-ai-models-2026/` *(new, drafted 2026-09-03)* | Kimi K3 57.1, Qwen3.8-Max 58 (volatile: 53→56→58), Qwen3.8-27B 52, SWE-bench Pro 61.7 | Artificial Analysis; Chinese labs ship fast and scores get revised | 2026-09-03 | ✅ |
+| `/indexes/technical-benchmarks/chinese-ai-models-2026/` **PUBLISHED 2026-09-03** | Kimi K3 57.1, Qwen3.8-Max 58 (volatile: 53→56→58), Qwen3.8-27B 52, SWE-bench Pro 61.7 | Artificial Analysis; Chinese labs ship fast and scores get revised | 2026-09-03 | ✅ |
 | `/indexes/ai-economics/llm-token-price-index/` | ~280× drop, ~10×/yr rate, per-model $/M tokens | Provider price lists — change without notice | 2026-08-05 | ⏳ |
 | `/reports/ai-data-center-cost/` | ~~$250B~~ **$105B** guarantee (phase one only), ~$350B chip financing, $30–40B phase one | **Deal terms under active negotiation** — page states they may change | **2026-08-24 — UPDATED** | ✅ |
 | `/reports/meta-blackrock-off-balance-sheet-ai-financing/` | 80/20 split, $14.3B, $12.5B notes, lease terms | Transaction documents may be amended; watch for deal #3 | 2026-08-24 (Nvidia comparison figure updated; Meta terms unchanged) | ✅ |
