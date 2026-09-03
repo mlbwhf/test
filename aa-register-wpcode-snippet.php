@@ -2225,6 +2225,222 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 }
 
 /* ============================================================================
+   INVOICE  —  the buyer's receipt, in the format you already issue
+   ----------------------------------------------------------------------------
+   Modelled on your own invoice document, NOT on the Eventbrite samples. Those
+   are 2019 Canadian events: an "HST Invoice" from Digital Tango ltee carrying
+   its HST registration number and 13% tax. Reproducing that shape would put a
+   tax line and a registration number on a document that is a tax record, for
+   sales that are priced in USD with no tax collected. Your own format states
+   "Sales Tax $0" and "All prices are in USD", which is what the checkout
+   actually does, so that is what this issues.
+
+   If you do start collecting tax, this needs revisiting properly -- with the
+   real registrant details and rates -- rather than by adding a line here.
+
+   Delivered two ways, because they fail differently: inline in the
+   confirmation email, which needs no attachment and no PDF library; and as a
+   permanent page the buyer can return to and print, since email gets deleted.
+   ========================================================================== */
+
+/** A stable, human order number. Derived, so it never needs its own counter. */
+function aa_reg_order_no( $post_id ) {
+	return 'AA-' . str_pad( (string) (int) $post_id, 6, '0', STR_PAD_LEFT );
+}
+
+/**
+ * Card brand and last four, asked of Stripe.
+ *
+ * The checkout.session object does not carry them, so this is one extra call
+ * per sale. It is best-effort by design: a failure returns '' and the invoice
+ * simply omits the payment line rather than guessing at how someone paid.
+ */
+function aa_reg_card_line( $payment_intent ) {
+	if ( ! $payment_intent || ! aa_reg_key( 'secret' ) ) { return ''; }
+	$res = wp_remote_get(
+		'https://api.stripe.com/v1/payment_intents/' . rawurlencode( $payment_intent )
+			. '?expand[]=payment_method',
+		array(
+			'timeout' => 15,
+			'headers' => array( 'Authorization' => 'Basic ' . base64_encode( aa_reg_key( 'secret' ) . ':' ) ),
+		)
+	);
+	if ( is_wp_error( $res ) || wp_remote_retrieve_response_code( $res ) !== 200 ) { return ''; }
+	$pi = json_decode( wp_remote_retrieve_body( $res ), true );
+	$card = isset( $pi['payment_method']['card'] ) ? $pi['payment_method']['card'] : null;
+	if ( ! $card ) { return ''; }
+	$brand = isset( $card['brand'] ) ? ucfirst( (string) $card['brand'] ) : '';
+	$last4 = isset( $card['last4'] ) ? (string) $card['last4'] : '';
+	return trim( $brand . ( $last4 ? ' &middot; ' . $last4 : '' ) );
+}
+
+/** Invoice fields for one registration, or null. */
+function aa_reg_invoice_data( $post_id ) {
+	$post = get_post( $post_id );
+	if ( ! $post || $post->post_type !== 'aa_registration' ) { return null; }
+
+	$cohort = (string) get_post_meta( $post_id, 'cohort', true );
+	$found  = $cohort ? aa_reg_find( $cohort ) : null;
+	$cur    = strtoupper( (string) get_post_meta( $post_id, 'currency', true ) );
+	$total  = (int) get_post_meta( $post_id, 'amount_total', true );
+	$seats  = max( 1, (int) get_post_meta( $post_id, 'seats', true ) );
+
+	return array(
+		'order_no'  => aa_reg_order_no( $post_id ),
+		'date'      => get_the_date( 'j F Y', $post ),
+		'status'    => 'Completed',
+		'card'      => (string) get_post_meta( $post_id, 'card', true ),
+		'name'      => trim( str_replace( ' — ' . $cohort, '', $post->post_title ) ),
+		'email'     => (string) get_post_meta( $post_id, 'email', true ),
+		'desc'      => $found ? $found['course']['name'] : $cohort,
+		'range'     => $found ? aa_reg_range( $found['cohort']['start'], $found['cohort']['end'] ) : '',
+		'seats'     => $seats,
+		/* Unit price from the total, not from the course table: the table is
+		   today's price and this is a record of what was actually charged. */
+		'unit'      => $seats > 0 ? $total / $seats : $total,
+		'total'     => $total,
+		'currency'  => $cur ? $cur : 'USD',
+	);
+}
+
+/** The invoice, as HTML. Used by the email and by the printable page. */
+function aa_reg_invoice_html( $d, $lang = 'en' ) {
+	if ( ! $d ) { return ''; }
+	$t   = aa_reg_confirm_strings( $lang );
+	$rtl = aa_reg_is_rtl( $lang );
+	$m   = function ( $cents ) use ( $d ) {
+		return $d['currency'] . ' ' . number_format( $cents / 100, 2 );
+	};
+
+	$cell = 'padding:9px 12px;border-bottom:1px solid #E4EFEF;font-size:13.5px;color:#0E3A44';
+	$head = 'padding:9px 12px;background:#F3FAFA;border-bottom:1px solid #CDE6E6;font-size:11px;'
+	      . 'letter-spacing:.06em;text-transform:uppercase;color:#5E7378;text-align:left';
+	$tot  = 'padding:6px 12px;font-size:13.5px;color:#0E3A44';
+
+	$h  = '<div dir="' . ( $rtl ? 'rtl' : 'ltr' ) . '" style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'
+	    . 'color:#0E3A44;max-width:640px;border:1px solid #E4EFEF;border-radius:8px;padding:22px">';
+
+	$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
+	    . '<td style="font-size:19px;font-weight:700;letter-spacing:.02em">' . esc_html( $t['invoice'] ) . '</td>'
+	    . '<td style="text-align:' . ( $rtl ? 'left' : 'right' ) . ';font-size:13px;color:#5E7378">'
+	    . esc_html( $t['order_no'] ) . ' ' . esc_html( $d['order_no'] ) . '</td></tr></table>';
+
+	$meta = array(
+		$t['order_date'] => $d['date'],
+		$t['status_l']   => ( $d['status'] === 'Completed' ? $t['completed'] : $d['status'] ),
+		$t['delivery']   => $t['eticket'],
+		$t['paid_by']    => $d['card'],
+	);
+	$h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:14px 0 18px">';
+	foreach ( $meta as $k => $v ) {
+		if ( $v === '' ) { continue; }
+		$h .= '<tr><td style="padding:3px 14px 3px 0;font-size:12.5px;color:#5E7378">' . esc_html( $k ) . '</td>'
+		    . '<td style="padding:3px 0;font-size:12.5px;color:#0E3A44;font-weight:600">' . wp_kses_post( $v ) . '</td></tr>';
+	}
+	$h .= '</table>';
+
+	$h .= '<p style="margin:0 0 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#5E7378">'
+	    . esc_html( $t['invoice_to'] ) . '</p>'
+	    . '<p style="margin:0 0 18px;font-size:13.5px;line-height:1.5">'
+	    . esc_html( $d['name'] ) . '<br>' . esc_html( $d['email'] ) . '</p>';
+
+	$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">'
+	    . '<tr><th style="' . $head . '">' . esc_html( $t['qty'] ) . '</th>'
+	    . '<th style="' . $head . '">' . esc_html( $t['description'] ) . '</th>'
+	    . '<th style="' . $head . ';text-align:right">' . esc_html( $t['unit_price'] ) . '</th>'
+	    . '<th style="' . $head . ';text-align:right">' . esc_html( $t['line_total'] ) . '</th></tr>'
+	    . '<tr><td style="' . $cell . '">' . (int) $d['seats'] . '</td>'
+	    . '<td style="' . $cell . '">' . esc_html( $d['desc'] )
+	    . ( $d['range'] ? '<br><span style="color:#5E7378;font-size:12px">' . esc_html( $d['range'] ) . '</span>' : '' )
+	    . '</td>'
+	    . '<td style="' . $cell . ';text-align:right;white-space:nowrap">' . esc_html( $m( $d['unit'] ) ) . '</td>'
+	    . '<td style="' . $cell . ';text-align:right;white-space:nowrap">' . esc_html( $m( $d['total'] ) ) . '</td></tr>'
+	    . '</table>';
+
+	$h .= '<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:12px;'
+	    . ( $rtl ? 'margin-right:auto' : 'margin-left:auto' ) . '">'
+	    . '<tr><td style="' . $tot . ';color:#5E7378">' . esc_html( $t['subtotal'] ) . '</td>'
+	    . '<td style="' . $tot . ';text-align:right;white-space:nowrap">' . esc_html( $m( $d['total'] ) ) . '</td></tr>'
+	    . '<tr><td style="' . $tot . ';color:#5E7378">' . esc_html( $t['sales_tax'] ) . '</td>'
+	    . '<td style="' . $tot . ';text-align:right">' . esc_html( $m( 0 ) ) . '</td></tr>'
+	    . '<tr><td style="' . $tot . ';font-weight:700;border-top:1px solid #CDE6E6">' . esc_html( $t['total_l'] ) . '</td>'
+	    . '<td style="' . $tot . ';font-weight:700;text-align:right;white-space:nowrap;border-top:1px solid #CDE6E6">'
+	    . esc_html( $m( $d['total'] ) ) . '</td></tr></table>';
+
+	$h .= '<p style="margin:16px 0 0;font-size:12px;color:#5E7378">'
+	    . esc_html( sprintf( $t['currency_note'], $d['currency'] ) ) . '</p>';
+
+	return $h . '</div>';
+}
+
+/**
+ * Where the printable invoice lives.
+ *
+ * Points at whichever published page carries [aa_reg_invoice]; /payment-receipt/
+ * already exists, so that is the default. Returns '' when no such page is
+ * published, and the email then simply omits the link rather than sending
+ * people to a 404.
+ */
+function aa_reg_invoice_page() {
+	$slug = apply_filters( 'aa_reg_invoice_page_slug', 'payment-receipt' );
+	$page = get_page_by_path( $slug );
+	return $page ? get_permalink( $page ) : '';
+}
+
+/** The buyer's own invoice URL, token included. */
+function aa_reg_invoice_url( $post_id ) {
+	$base  = aa_reg_invoice_page();
+	$token = get_post_meta( $post_id, 'invoice_token', true );
+	if ( ! $base || ! $token ) { return ''; }
+	return add_query_arg( array( 'order' => $token ), $base );
+}
+
+/**
+ * [aa_reg_invoice] — the printable copy. Put it on /payment-receipt/.
+ *
+ * The token IS the authorisation: it is 32 random characters, it is only ever
+ * sent to the address that paid, and it is compared in constant time so the
+ * page cannot be used as an oracle for guessing one. No login, because asking
+ * someone to create an account to see the receipt for something they already
+ * bought is how receipts go unread.
+ */
+function aa_reg_invoice_shortcode() {
+	$token = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : '';
+	if ( $token === '' || strlen( $token ) > 64 ) {
+		return '<p>' . esc_html__( 'This invoice link is not valid.', 'default' ) . '</p>';
+	}
+
+	$hits = get_posts( array(
+		'post_type'      => 'aa_registration',
+		'post_status'    => 'any',
+		'posts_per_page' => 1,
+		'no_found_rows'  => true,
+		'meta_key'       => 'invoice_token',
+		'meta_value'     => $token,
+	) );
+	$post = $hits ? $hits[0] : null;
+
+	// Constant-time compare, so response timing cannot leak a partial match.
+	if ( ! $post || ! hash_equals( (string) get_post_meta( $post->ID, 'invoice_token', true ), $token ) ) {
+		return '<p>' . esc_html__( 'This invoice link is not valid.', 'default' ) . '</p>';
+	}
+
+	$data = aa_reg_invoice_data( $post->ID );
+	if ( ! $data ) { return '<p>' . esc_html__( 'This invoice link is not valid.', 'default' ) . '</p>'; }
+
+	$lang = (string) get_post_meta( $post->ID, 'lang', true );
+	return '<div class="aa-invoice">' . aa_reg_invoice_html( $data, $lang ? $lang : 'en' ) . '</div>';
+}
+add_shortcode( 'aa_reg_invoice', 'aa_reg_invoice_shortcode' );
+
+/** Noindex the receipt page: it is a private document with a public URL. */
+function aa_reg_invoice_noindex() {
+	if ( ! is_page() || ! isset( $_GET['order'] ) ) { return; }
+	echo '<meta name="robots" content="noindex,nofollow">' . "\n";
+}
+add_action( 'wp_head', 'aa_reg_invoice_noindex', 1 );
+
+/* ============================================================================
    CONFIRMATION EMAIL
    ----------------------------------------------------------------------------
    Sent from the WEBHOOK, never from the browser. The success_url is just where
@@ -2275,6 +2491,11 @@ function aa_reg_confirm_strings( $lang ) {
 			'move_h'   => 'Need to move dates?',
 			'move_p'   => 'Reply to this email and we will move you to another cohort. Rescheduling carries no fee.',
 			'receipt'  => 'Stripe has emailed your payment receipt separately.',
+			'invoice'=>'Invoice','order_no'=>'Order','order_date'=>'Order date','status_l'=>'Status',
+			'delivery'=>'Delivery method','eticket'=>'eTicket','paid_by'=>'Paid by','invoice_to'=>'Invoice to',
+			'qty'=>'Qty','description'=>'Description','unit_price'=>'Unit price','line_total'=>'Line total',
+			'subtotal'=>'Subtotal','sales_tax'=>'Sales tax','total_l'=>'Total',
+			'completed'=>'Completed','currency_note'=>'All prices are in %s.','view_invoice'=>'View or print your invoice',
 			'sign'     => 'Agile Agilist',
 		),
 		'es' => array(
@@ -2288,6 +2509,11 @@ function aa_reg_confirm_strings( $lang ) {
 			'move_h'   => '¿Necesitas cambiar de fechas?',
 			'move_p'   => 'Responde a este correo y te cambiamos a otra convocatoria. El cambio no tiene coste.',
 			'receipt'  => 'Stripe te ha enviado el recibo del pago por separado.',
+			'invoice'=>'Factura','order_no'=>'Pedido','order_date'=>'Fecha del pedido','status_l'=>'Estado',
+			'delivery'=>'Método de entrega','eticket'=>'Entrada electrónica','paid_by'=>'Pagado con','invoice_to'=>'Facturar a',
+			'qty'=>'Cant.','description'=>'Descripción','unit_price'=>'Precio unitario','line_total'=>'Total línea',
+			'subtotal'=>'Subtotal','sales_tax'=>'Impuestos','total_l'=>'Total',
+			'completed'=>'Completado','currency_note'=>'Todos los precios están en %s.','view_invoice'=>'Ver o imprimir tu factura',
 			'sign'     => 'Agile Agilist',
 		),
 		'fr' => array(
@@ -2301,6 +2527,11 @@ function aa_reg_confirm_strings( $lang ) {
 			'move_h'   => 'Besoin de changer de dates ?',
 			'move_p'   => 'Répondez à cet e-mail et nous vous placerons sur une autre session. Le report est sans frais.',
 			'receipt'  => 'Stripe vous a envoyé le reçu de paiement séparément.',
+			'invoice'=>'Facture','order_no'=>'Commande','order_date'=>'Date de commande','status_l'=>'Statut',
+			'delivery'=>'Mode de livraison','eticket'=>'Billet électronique','paid_by'=>'Payé par','invoice_to'=>'Facturer à',
+			'qty'=>'Qté','description'=>'Description','unit_price'=>'Prix unitaire','line_total'=>'Total ligne',
+			'subtotal'=>'Sous-total','sales_tax'=>'Taxes','total_l'=>'Total',
+			'completed'=>'Terminée','currency_note'=>'Tous les prix sont en %s.','view_invoice'=>'Voir ou imprimer votre facture',
 			'sign'     => 'Agile Agilist',
 		),
 		'ar' => array(
@@ -2314,6 +2545,11 @@ function aa_reg_confirm_strings( $lang ) {
 			'move_h'   => 'تحتاج إلى تغيير التواريخ؟',
 			'move_p'   => 'ردّ على هذه الرسالة وسننقلك إلى دورة أخرى. إعادة الجدولة بدون رسوم.',
 			'receipt'  => 'أرسلت Stripe إيصال الدفع إليك في رسالة منفصلة.',
+			'invoice'=>'فاتورة','order_no'=>'الطلب','order_date'=>'تاريخ الطلب','status_l'=>'الحالة',
+			'delivery'=>'طريقة التسليم','eticket'=>'تذكرة إلكترونية','paid_by'=>'طريقة الدفع','invoice_to'=>'الفاتورة إلى',
+			'qty'=>'الكمية','description'=>'الوصف','unit_price'=>'سعر الوحدة','line_total'=>'إجمالي البند',
+			'subtotal'=>'المجموع الفرعي','sales_tax'=>'الضريبة','total_l'=>'الإجمالي',
+			'completed'=>'مكتمل','currency_note'=>'جميع الأسعار بعملة %s.','view_invoice'=>'عرض الفاتورة أو طباعتها',
 			'sign'     => 'Agile Agilist',
 		),
 	);
@@ -2382,6 +2618,23 @@ function aa_reg_send_confirmation( $args ) {
 	$html .= '<p style="margin:18px 0 4px;font-weight:600">' . esc_html( $t['move_h'] ) . '</p>';
 	$html .= '<p style="margin:0">' . esc_html( $t['move_p'] ) . '</p>';
 	$html .= '<p style="margin:22px 0 0;color:#5E7378;font-size:13px">' . esc_html( $t['receipt'] ) . '</p>';
+
+	/* The invoice, in the format you already issue, inline rather than
+	   attached: no PDF library to install, and nothing for a mail client to
+	   refuse to open. The link below it is the copy that outlives the email. */
+	if ( ! empty( $args['post_id'] ) ) {
+		$data = aa_reg_invoice_data( (int) $args['post_id'] );
+		if ( $data ) {
+			$html .= '<div style="margin:26px 0 0">' . aa_reg_invoice_html( $data, $lang ) . '</div>';
+			$url = aa_reg_invoice_url( (int) $args['post_id'] );
+			if ( $url ) {
+				$html .= '<p style="margin:14px 0 0;font-size:13px">'
+				       . '<a href="' . esc_url( $url ) . '" style="color:#127E88">'
+				       . esc_html( $t['view_invoice'] ) . '</a></p>';
+			}
+		}
+	}
+
 	$html .= '<p style="margin:22px 0 0">' . esc_html( $t['sign'] ) . '</p></div>';
 
 	$reply   = apply_filters( 'aa_reg_confirmation_reply_to', get_option( 'admin_email' ) );
@@ -2488,6 +2741,14 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 			'phone'          => isset( $s['customer_details']['phone'] ) ? sanitize_text_field( $s['customer_details']['phone'] ) : '',
 			'amount_total'   => isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0,
 			'currency'       => isset( $s['currency'] ) ? sanitize_text_field( $s['currency'] ) : '',
+			/* How they paid, for the invoice. Best-effort: an empty value drops
+			   the line rather than guessing. */
+			'card'           => aa_reg_card_line( isset( $s['payment_intent'] ) ? (string) $s['payment_intent'] : '' ),
+			/* The key to the printable copy. Random, because an invoice carries
+			   a name, an email and an amount -- a sequential id would let anyone
+			   walk the list. */
+			'invoice_token'  => wp_generate_password( 32, false, false ),
+			'lang'           => aa_reg_lang_of( $meta ),
 		),
 	) );
 
@@ -2511,6 +2772,7 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 		'amount'          => isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0,
 		'amount_currency' => isset( $s['currency'] ) ? $s['currency'] : '',
 		'lang'            => aa_reg_lang_of( $meta ),
+		'post_id'         => $post_id && ! is_wp_error( $post_id ) ? $post_id : 0,
 	) );
 	if ( $post_id && ! is_wp_error( $post_id ) ) {
 		update_post_meta( $post_id, 'confirmation_sent', $sent ? 1 : 0 );
