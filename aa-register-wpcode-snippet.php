@@ -2178,9 +2178,18 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	}
 
 	$return = home_url( $course['url'] );
+	/* One token, used three times: the success URL, the registration record,
+	   and the link to the invoice in the confirmation email. */
+	$token = wp_generate_password( 32, false, false );
 	$body = array(
 		'mode'                 => 'payment',
-		'success_url'          => add_query_arg( array( 'aa_paid' => $cohort['id'], 'aa_seats' => $seats ), $return ) . '#aacal',
+		/* THE CONFIRMATION PAGE, NOT THE COURSE PAGE. Sending a buyer back to
+		   the page they just bought from shows them the thing they have
+		   already done. The token is minted HERE rather than in the webhook so
+		   it can be in this URL: Stripe redirects the moment the payment
+		   clears, which is usually before the webhook has finished writing the
+		   registration. The page holds until the record appears. */
+		'success_url'          => aa_reg_confirm_url( $token ),
 		'cancel_url'           => $return . '#aacal-form',
 		'customer_email'       => $email,
 		'client_reference_id'  => $cohort['id'],
@@ -2192,6 +2201,7 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		'metadata[cohort]'  => $cohort['id'],
 		'metadata[course]'  => $found['slug'],
 		'metadata[seats]'   => $seats,
+		'metadata[token]'   => $token,
 		/* The page they bought from, so the confirmation can be written in the
 		   language they have been reading. aa_reg_lang() cannot help here --
 		   this runs as a REST request with no queried object, so it always
@@ -2223,6 +2233,118 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	}
 	return array( 'url' => $json['url'] );
 }
+
+/* ============================================================================
+   CONFIRMATION PAGE  —  [aa_reg_confirmation] on /registration-confirmed/
+   ----------------------------------------------------------------------------
+   Reachable only with a token. Not linked from anywhere, not in the sitemap,
+   noindexed, and blank without a valid token -- so it is private without being
+   behind a login, which matters because the person reading it has just paid
+   and should not be asked to invent a password to see what they bought.
+
+   AGILE AGILIST ONLY. No processor name, no ticketing platform, no partner
+   mark, here or in the email or on the invoice. Someone who has just paid
+   should see one company, not the plumbing behind it.
+
+   THE RACE IS REAL. Stripe redirects the moment the card clears, which is
+   routinely before the webhook has finished writing the registration. So a
+   token that resolves to nothing yet is the NORMAL first state, not an error:
+   the page says the payment went through and waits, rather than telling
+   someone their money has vanished.
+   ========================================================================== */
+
+/** The confirmation page URL for a token, or the home page if the page is gone. */
+function aa_reg_confirm_url( $token ) {
+	$slug = apply_filters( 'aa_reg_confirm_page_slug', 'registration-confirmed' );
+	$page = get_page_by_path( $slug );
+	$base = $page ? get_permalink( $page ) : home_url( '/' );
+	return add_query_arg( array( 'order' => $token ), $base );
+}
+
+/** The registration for a token, or null. Constant-time compare. */
+function aa_reg_by_token( $token ) {
+	if ( $token === '' || strlen( $token ) > 64 ) { return null; }
+	$hits = get_posts( array(
+		'post_type'      => 'aa_registration',
+		'post_status'    => 'any',
+		'posts_per_page' => 1,
+		'no_found_rows'  => true,
+		'meta_key'       => 'invoice_token',
+		'meta_value'     => $token,
+	) );
+	if ( ! $hits ) { return null; }
+	return hash_equals( (string) get_post_meta( $hits[0]->ID, 'invoice_token', true ), $token )
+		? $hits[0] : null;
+}
+
+function aa_reg_confirmation_shortcode() {
+	$token = isset( $_GET['order'] ) ? sanitize_text_field( wp_unslash( $_GET['order'] ) ) : '';
+	if ( $token === '' ) { return ''; }   // no token, nothing to show: the page is blank
+
+	$post = aa_reg_by_token( $token );
+	$lang = $post ? (string) get_post_meta( $post->ID, 'lang', true ) : aa_reg_lang();
+	$t    = aa_reg_confirm_strings( $lang ? $lang : 'en' );
+	$rtl  = aa_reg_is_rtl( $lang ? $lang : 'en' );
+	$dir  = ' dir="' . ( $rtl ? 'rtl' : 'ltr' ) . '"';
+
+	/* WAITING, NOT FAILING. Reloads a few times, then stops and says the email
+	   is coming -- an endless spinner is worse than a sentence, and the
+	   registration is safe either way because the webhook owns it. */
+	if ( ! $post ) {
+		$try = isset( $_GET['t'] ) ? (int) $_GET['t'] : 0;
+		$h   = '<div class="aa-conf"' . $dir . '><h2 class="aa-conf-h">' . esc_html( $t['paid_h'] ) . '</h2>'
+		     . '<p class="aa-conf-p">' . esc_html( $try < 4 ? $t['pending'] : $t['pending_slow'] ) . '</p></div>';
+		if ( $try < 4 ) {
+			$next = esc_url( add_query_arg( array( 'order' => $token, 't' => $try + 1 ) ) );
+			$h   .= '<script>setTimeout(function(){location.href=' . wp_json_encode( $next ) . ';},4000);</script>';
+		}
+		return $h;
+	}
+
+	$data = aa_reg_invoice_data( $post->ID );
+	$name = $data ? $data['name'] : '';
+
+	$h  = '<div class="aa-conf"' . $dir . '>';
+	$h .= '<p class="aa-conf-eyebrow">' . esc_html( $t['confirmed_eyebrow'] ) . '</p>';
+	$h .= '<h2 class="aa-conf-h">' . esc_html( $name !== '' ? sprintf( $t['confirmed_h'], $name ) : $t['paid_h'] ) . '</h2>';
+	$h .= '<p class="aa-conf-p">' . esc_html( sprintf( $t['confirmed_p'], (string) get_post_meta( $post->ID, 'email', true ) ) ) . '</p>';
+	$h .= '<p class="aa-conf-p">' . esc_html( $t['next_p'] ) . '</p>';
+	if ( $data ) {
+		$h .= '<div class="aa-conf-inv">' . aa_reg_invoice_html( $data, $lang ? $lang : 'en' ) . '</div>';
+	}
+	$h .= '<p class="aa-conf-print"><button type="button" onclick="window.print()">' . esc_html( $t['print'] ) . '</button></p>';
+	return $h . '</div>';
+}
+add_shortcode( 'aa_reg_confirmation', 'aa_reg_confirmation_shortcode' );
+
+/**
+ * Keep both token pages out of search results and out of the sitemap.
+ *
+ * noindex alone stops them being listed; the sitemap filter stops them being
+ * offered up in the first place. Neither is the security boundary -- the token
+ * is -- but a receipt with someone's name and what they paid has no business
+ * being crawlable.
+ */
+function aa_reg_private_pages_noindex() {
+	if ( isset( $_GET['order'] ) ) {
+		echo '<meta name="robots" content="noindex,nofollow,noarchive">' . "\n";
+	}
+}
+add_action( 'wp_head', 'aa_reg_private_pages_noindex', 1 );
+
+function aa_reg_exclude_from_sitemap( $args, $post_type ) {
+	if ( $post_type !== 'page' ) { return $args; }
+	$out = array();
+	foreach ( array( 'registration-confirmed', 'payment-receipt' ) as $slug ) {
+		$p = get_page_by_path( $slug );
+		if ( $p ) { $out[] = $p->ID; }
+	}
+	if ( $out ) {
+		$args['post__not_in'] = array_merge( isset( $args['post__not_in'] ) ? (array) $args['post__not_in'] : array(), $out );
+	}
+	return $args;
+}
+add_filter( 'wp_sitemaps_posts_query_args', 'aa_reg_exclude_from_sitemap', 10, 2 );
 
 /* ============================================================================
    INVOICE  —  the buyer's receipt, in the format you already issue
@@ -2490,12 +2612,13 @@ function aa_reg_confirm_strings( $lang ) {
 			'next_p'   => 'Your joining link and any pre-course material will be sent to this address before the class starts.',
 			'move_h'   => 'Need to move dates?',
 			'move_p'   => 'Reply to this email and we will move you to another cohort. Rescheduling carries no fee.',
-			'receipt'  => 'Stripe has emailed your payment receipt separately.',
+			'receipt'  => 'A payment receipt has been emailed to you separately.',
 			'invoice'=>'Invoice','order_no'=>'Order','order_date'=>'Order date','status_l'=>'Status',
 			'delivery'=>'Delivery method','eticket'=>'eTicket','paid_by'=>'Paid by','invoice_to'=>'Invoice to',
 			'qty'=>'Qty','description'=>'Description','unit_price'=>'Unit price','line_total'=>'Line total',
 			'subtotal'=>'Subtotal','sales_tax'=>'Sales tax','total_l'=>'Total',
 			'completed'=>'Completed','currency_note'=>'All prices are in %s.','view_invoice'=>'View or print your invoice',
+			'paid_h'=>'Payment received','pending'=>'We are confirming your registration. This takes a few seconds.','pending_slow'=>'Your payment went through. Your confirmation is on its way by email — you can close this page.','confirmed_eyebrow'=>'Registration confirmed','confirmed_h'=>'You are registered, %s.','confirmed_p'=>'We have emailed the details and your invoice to %s.','print'=>'Print this page',
 			'sign'     => 'Agile Agilist',
 		),
 		'es' => array(
@@ -2508,12 +2631,13 @@ function aa_reg_confirm_strings( $lang ) {
 			'next_p'   => 'Te enviaremos a esta dirección el enlace de acceso y el material previo antes de que empiece la clase.',
 			'move_h'   => '¿Necesitas cambiar de fechas?',
 			'move_p'   => 'Responde a este correo y te cambiamos a otra convocatoria. El cambio no tiene coste.',
-			'receipt'  => 'Stripe te ha enviado el recibo del pago por separado.',
+			'receipt'  => 'Te hemos enviado el recibo del pago por separado.',
 			'invoice'=>'Factura','order_no'=>'Pedido','order_date'=>'Fecha del pedido','status_l'=>'Estado',
 			'delivery'=>'Método de entrega','eticket'=>'Entrada electrónica','paid_by'=>'Pagado con','invoice_to'=>'Facturar a',
 			'qty'=>'Cant.','description'=>'Descripción','unit_price'=>'Precio unitario','line_total'=>'Total línea',
 			'subtotal'=>'Subtotal','sales_tax'=>'Impuestos','total_l'=>'Total',
 			'completed'=>'Completado','currency_note'=>'Todos los precios están en %s.','view_invoice'=>'Ver o imprimir tu factura',
+			'paid_h'=>'Pago recibido','pending'=>'Estamos confirmando tu inscripción. Tardará unos segundos.','pending_slow'=>'Tu pago se ha realizado. La confirmación llegará por correo — puedes cerrar esta página.','confirmed_eyebrow'=>'Inscripción confirmada','confirmed_h'=>'Ya estás inscrito, %s.','confirmed_p'=>'Hemos enviado los detalles y tu factura a %s.','print'=>'Imprimir esta página',
 			'sign'     => 'Agile Agilist',
 		),
 		'fr' => array(
@@ -2526,12 +2650,13 @@ function aa_reg_confirm_strings( $lang ) {
 			'next_p'   => 'Votre lien de connexion et les éventuels supports préparatoires seront envoyés à cette adresse avant le début de la session.',
 			'move_h'   => 'Besoin de changer de dates ?',
 			'move_p'   => 'Répondez à cet e-mail et nous vous placerons sur une autre session. Le report est sans frais.',
-			'receipt'  => 'Stripe vous a envoyé le reçu de paiement séparément.',
+			'receipt'  => 'Un reçu de paiement vous a été envoyé séparément.',
 			'invoice'=>'Facture','order_no'=>'Commande','order_date'=>'Date de commande','status_l'=>'Statut',
 			'delivery'=>'Mode de livraison','eticket'=>'Billet électronique','paid_by'=>'Payé par','invoice_to'=>'Facturer à',
 			'qty'=>'Qté','description'=>'Description','unit_price'=>'Prix unitaire','line_total'=>'Total ligne',
 			'subtotal'=>'Sous-total','sales_tax'=>'Taxes','total_l'=>'Total',
 			'completed'=>'Terminée','currency_note'=>'Tous les prix sont en %s.','view_invoice'=>'Voir ou imprimer votre facture',
+			'paid_h'=>'Paiement reçu','pending'=>'Nous confirmons votre inscription. Cela prend quelques secondes.','pending_slow'=>'Votre paiement est passé. Votre confirmation arrive par e-mail — vous pouvez fermer cette page.','confirmed_eyebrow'=>'Inscription confirmée','confirmed_h'=>'Vous êtes inscrit, %s.','confirmed_p'=>'Nous avons envoyé les détails et votre facture à %s.','print'=>'Imprimer cette page',
 			'sign'     => 'Agile Agilist',
 		),
 		'ar' => array(
@@ -2544,12 +2669,13 @@ function aa_reg_confirm_strings( $lang ) {
 			'next_p'   => 'سنرسل إلى هذا البريد رابط الحضور وأي مواد تحضيرية قبل بداية الدورة.',
 			'move_h'   => 'تحتاج إلى تغيير التواريخ؟',
 			'move_p'   => 'ردّ على هذه الرسالة وسننقلك إلى دورة أخرى. إعادة الجدولة بدون رسوم.',
-			'receipt'  => 'أرسلت Stripe إيصال الدفع إليك في رسالة منفصلة.',
+			'receipt'  => 'تم إرسال إيصال الدفع إليك في رسالة منفصلة.',
 			'invoice'=>'فاتورة','order_no'=>'الطلب','order_date'=>'تاريخ الطلب','status_l'=>'الحالة',
 			'delivery'=>'طريقة التسليم','eticket'=>'تذكرة إلكترونية','paid_by'=>'طريقة الدفع','invoice_to'=>'الفاتورة إلى',
 			'qty'=>'الكمية','description'=>'الوصف','unit_price'=>'سعر الوحدة','line_total'=>'إجمالي البند',
 			'subtotal'=>'المجموع الفرعي','sales_tax'=>'الضريبة','total_l'=>'الإجمالي',
 			'completed'=>'مكتمل','currency_note'=>'جميع الأسعار بعملة %s.','view_invoice'=>'عرض الفاتورة أو طباعتها',
+			'paid_h'=>'تم استلام الدفعة','pending'=>'نؤكّد تسجيلك الآن. يستغرق ذلك بضع ثوانٍ.','pending_slow'=>'تمت عملية الدفع بنجاح. سيصلك التأكيد بالبريد الإلكتروني — يمكنك إغلاق هذه الصفحة.','confirmed_eyebrow'=>'تم تأكيد التسجيل','confirmed_h'=>'تم تسجيلك، %s.','confirmed_p'=>'أرسلنا التفاصيل والفاتورة إلى %s.','print'=>'طباعة هذه الصفحة',
 			'sign'     => 'Agile Agilist',
 		),
 	);
@@ -2747,7 +2873,12 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 			/* The key to the printable copy. Random, because an invoice carries
 			   a name, an email and an amount -- a sequential id would let anyone
 			   walk the list. */
-			'invoice_token'  => wp_generate_password( 32, false, false ),
+			/* The token from the checkout, so the confirmation page the buyer is
+			   already looking at resolves to this record. Only minted here if
+			   the sale came in some other way -- a Payment Link, say -- which
+			   carries no metadata of ours. */
+			'invoice_token'  => ! empty( $meta['token'] ) ? sanitize_text_field( $meta['token'] )
+			                                              : wp_generate_password( 32, false, false ),
 			'lang'           => aa_reg_lang_of( $meta ),
 		),
 	) );
