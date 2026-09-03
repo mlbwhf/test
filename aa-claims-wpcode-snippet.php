@@ -61,6 +61,32 @@ if ( ! function_exists( 'aa_claims_rules' ) ) :
  */
 function aa_claims_rules() {
 	return array(
+		/* ------------------------------------------------------------------
+		   BOOK CANON — the vocabulary the manuscripts settled on.
+		   ------------------------------------------------------------------
+		   The pages were written before the books were finished and still use
+		   the placeholder names. These run site-wide on purpose: the same
+		   placeholders sit on /services/mutation/, the two assessment pages and
+		   the innovation page, and a term that means one thing in the book and
+		   another on three pages is worse than either name alone.
+
+		   Order matters. The longer phrases run first, or the general "5
+		   pillars" rule rewrites half of "5 pillars deep-dive" and leaves the
+		   rest reading oddly.
+
+		   Content only. The meta description and og:image the handoff also
+		   asks for live in AIOSEO, not in the_content, and this filter cannot
+		   reach them -- they need editing in the SEO panel. */
+		array( '/\b5\s*pillars\s+deep[-\s]?dive/iu', 'Six Practices deep-dive' ),
+		array( '/\bFailure\s+Forum\s+sponsorship/iu', 'Failure Harvest sponsorship' ),
+		array( '/\bFailure\s+Forums\b/u', 'Failure Harvests' ),
+		array( '/\bFailure\s+Forum\b/u', 'Failure Harvest' ),
+		array( '/\bfailure\s+forums\b/u', 'failure harvests' ),
+		array( '/\bfailure\s+forum\b/u', 'failure harvest' ),
+		/* "5 pillars" and "five pillars", but never a bare "pillars" -- the
+		   word is used legitimately elsewhere on the site. */
+		array( '/\b(?:5|five)\s+pillars\b/iu', 'the Six Practices' ),
+
 		/* ---- English ---- */
 		// "Exam included, money-back pass guarantee, and a career-coaching session."
 		array( '/,\s*money[-\s]?back pass guarantee,\s*and\s+/iu', ' and ' ),
@@ -246,6 +272,21 @@ function aa_claims_page_rules() {
 		   page, so its link to digital-transformation is the closest thing that
 		   exists rather than a mistake. That one needs a decision, not a patch.
 		   ------------------------------------------------------------------ */
+		/* ------------------------------------------------------------------
+		   /services/innovation-culture/ — the two copy additions from §2 of the
+		   book-canon handoff. String insertions, so they can be done here; the
+		   rest of that handoff (the Six Practices cards, the SignalNet
+		   ceremony, the books section, the 4x4 matrix) adds and replaces whole
+		   sections, which this filter cannot do and the page cannot take
+		   safely — see the note in the reply.
+		   ------------------------------------------------------------------ */
+		'innovation-culture' => array(
+			array( 'so innovation becomes a muscle, not a side project.',
+			       'so innovation becomes a muscle, not a side project. It&rsquo;s the thesis of our founder&rsquo;s business novel, <em>The Innovation Playground</em>: the moment a company decides it has finished transforming is the moment it stops transforming.' ),
+			array( 'if it&rsquo;s embedded in the operating cadence, not bolted on. That&rsquo;s what we build.',
+			       'if it&rsquo;s embedded in the operating cadence, not bolted on. That&rsquo;s what we build. In the book&rsquo;s language: practice over pages.' ),
+		),
+
 		'operating-model' => array(
 			array( 'class="op-btn-c" href="/assessments/mutation-readiness/"',
 			       'class="op-btn-c" href="/services/mutation/"' ),
