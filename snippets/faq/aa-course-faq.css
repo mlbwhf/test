@@ -285,3 +285,43 @@
    band from #0E4A47 to #0B2E35, and the ghost border went faint against it. */
 .aa-rd .aa-fb2-secondary{ border-color:rgba(243,247,246,.4); color:#F3F7F6!important; }
 .aa-rd .aa-fb2-secondary:hover{ border-color:#FFFFFF; color:#FFFFFF!important; }
+
+/* THE ACCORDION'S OWN BACKGROUND AND HOVER, RESTATED AT THREE CLASSES.
+   Same problem as the band above, one component further down. Something on the
+   course template paints an accordion row dark on hover -- the row keeps our
+   `--ink` question colour, so the text disappears into the fill and the
+   question is unreadable exactly when someone is pointing at it.
+
+   Our component rules are single classes, (0,1,0), and lose. These are
+   `.aa-rd .aa-fq .aa-fq-card`, (0,3,0), which wins without !important and
+   without needing to know which selector is doing it. Two jobs:
+
+     1. pin the resting background and the question colour, so a row can never
+        go dark-on-dark whatever else is in the cascade;
+     2. give hover a highlight of our own -- a pale teal wash rather than a
+        dark fill, so the text stays the colour it already is and contrast is
+        never in question.
+
+   Keyboard focus gets the same treatment as hover; it is the same state to a
+   person who cannot use a mouse. */
+.aa-rd .aa-fq .aa-fq-card{ background:#FFFFFF; }
+.aa-rd .aa-fq .aa-fq-qt{ color:#0E3A44; }
+
+.aa-rd .aa-fq .aa-fq-card:hover,
+.aa-rd .aa-fq .aa-fq-card:focus-within{
+  background:#F1F8F8;
+  border-color:#127E88;
+}
+.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-qt,
+.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-qt{ color:#0E3A44; }
+.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-n,
+.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-n{ color:#127E88; }
+.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-chev,
+.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-chev{ background:#D9EDED; color:#0E3A44; }
+
+/* The open row keeps its white card and teal outline, and must not pick up the
+   hover wash on top of it -- pointing at an open question should not change it. */
+.aa-rd .aa-fq .aa-fq-card.is-open,
+.aa-rd .aa-fq .aa-fq-card.is-open:hover{ background:#FFFFFF; border-color:#127E88; }
+.aa-rd .aa-fq .aa-fq-card.is-open .aa-fq-chev,
+.aa-rd .aa-fq .aa-fq-card.is-open:hover .aa-fq-chev{ background:#127E88; color:#FFFFFF; }
