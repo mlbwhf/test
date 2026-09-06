@@ -163,6 +163,33 @@
 .aa-hh-brief-title{
   margin:0;font-size:23px;font-weight:600;letter-spacing:-.022em;line-height:1.2;color:var(--ink);
 }
+/* The title links to the course page. Underlined on hover only: at 23px a
+   permanent underline reads as a button and competes with the enrol CTA, but
+   with no affordance at all nobody discovers it. The arrow is the standing
+   hint -- the same one the rows use, so it is already learned.
+
+   SPECIFICITY, and it would have bitten again: line 29 sets `.aa-hh a` at
+   (0,1,1) and line 30 `.aa-hh a:hover` at (0,2,1). A bare
+   `.aa-hh-brief-titlelink` is (0,1,0) and loses both. It happens to resolve to
+   the same colour today, which is exactly how this kind of bug hides until
+   someone changes one of the two. Prefixed with .aa-hh so the component wins
+   on its own terms. */
+.aa-hh .aa-hh-brief-titlelink{
+  color:inherit;text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:border-color .15s ease,color .15s ease;
+}
+.aa-hh .aa-hh-brief-titlelink::after{
+  content:'\2192';margin-left:.34em;font-size:.8em;line-height:1;
+  display:inline-block;vertical-align:baseline;
+  transform:translateX(0);transition:transform .15s ease;
+}
+.aa-hh .aa-hh-brief-titlelink:hover,
+.aa-hh .aa-hh-brief-titlelink:focus-visible{
+  color:var(--teal);border-bottom-color:currentColor;
+}
+.aa-hh .aa-hh-brief-titlelink:hover::after,
+.aa-hh .aa-hh-brief-titlelink:focus-visible::after{ transform:translateX(3px); }
 .aa-hh-brief-desc{margin:9px 0 0;font-size:15px;line-height:1.6;color:var(--body);text-wrap:pretty}
 
 .aa-hh-brief-meta{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}

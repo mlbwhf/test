@@ -571,6 +571,11 @@ function aa_hh_brief( $r, $str ) {
 	return array(
 		'track'    => aa_hh_track( isset( $c['crumb'] ) ? $c['crumb'] : '', $slug ),
 		'name'     => isset( $c['name'] ) ? $c['name'] : $c['code'],
+		/* The course page, so the title can be the way in. Guarded rather than
+		   assumed: a course resolved from its own page may not carry one, and a
+		   title that is plain text reads fine -- an anchor with an empty href
+		   does not. */
+		'url'      => isset( $c['url'] ) ? (string) $c['url'] : '',
 		'desc'     => $desc,
 		'meta'     => array_values( array_filter( array(
 			$days > 0 ? sprintf( $days === 1 ? $str['brief_day'] : $str['brief_days'], $days ) : '',
@@ -594,7 +599,21 @@ function aa_hh_brief_html( $b, $str ) {
 	    . '<span class="aa-hh-brief-rule" aria-hidden="true"></span>'
 	    . '<span class="aa-hh-brief-track">' . esc_html( $b['track'] ) . '</span></div>';
 
-	$h .= '<h2 class="aa-hh-brief-title">' . esc_html( $b['name'] ) . '</h2>';
+	/* THE TITLE IS THE WAY TO THE COURSE PAGE.
+	   The panel describes a course and, until now, offered no way to read more
+	   about it -- the only link out of the hero was the row's enrol CTA, which
+	   asks for a decision before the visitor has the detail to make one. The
+	   title is the obvious target and the one people try first.
+
+	   Rendered as a heading containing a link, not a linked heading: the
+	   heading stays a heading for a screen reader, and the anchor is what gets
+	   announced as a link. */
+	$title = esc_html( $b['name'] );
+	if ( ! empty( $b['url'] ) ) {
+		$title = '<a class="aa-hh-brief-titlelink" href="' . esc_url( $b['url'] ) . '">'
+		       . $title . '</a>';
+	}
+	$h .= '<h2 class="aa-hh-brief-title">' . $title . '</h2>';
 	if ( $b['desc'] !== '' ) {
 		$h .= '<p class="aa-hh-brief-desc">' . esc_html( $b['desc'] ) . '</p>';
 	}
