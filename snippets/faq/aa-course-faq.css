@@ -307,6 +307,34 @@
 .aa-rd .aa-fq .aa-fq-card{ background:#FFFFFF; }
 .aa-rd .aa-fq .aa-fq-qt{ color:#0E3A44; }
 
+/* IT IS THE BUTTON, NOT THE CARD.
+   First attempt at this pinned the card and missed: the dark fill lands on
+   .aa-fq-q, the <button> that is the question header. An open row shows it
+   plainly -- the header strip goes dark while the answer body beneath it stays
+   white, so the card is not what is being painted.
+
+   Two states trigger it, which is why it looks intermittent: :hover, and
+   :focus after a click. Our own rule is `.aa-fq-q{background:transparent}` at
+   (0,1,0), and a theme rule of the shape `.aa-rd button:hover` is (0,2,1) and
+   beats it.
+
+   !important here, and only on these two properties. The site is not reachable
+   from where this was written, so the offending selector cannot be read off
+   the live cascade -- and the failure mode is a question that is invisible
+   exactly while someone points at it. A rule that merely probably wins is not
+   good enough for that. The button carries no colour of its own by design; the
+   card behind it draws every state. */
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q,
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q:hover,
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q:focus,
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q:focus-visible,
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q:active{
+  background:transparent !important;
+  color:#0E3A44 !important;
+  box-shadow:none;
+}
+.aa-rd .aa-fq .aa-fq-card .aa-fq-q .aa-fq-qt{ color:#0E3A44; }
+
 .aa-rd .aa-fq .aa-fq-card:hover,
 .aa-rd .aa-fq .aa-fq-card:focus-within{
   background:#F1F8F8;
