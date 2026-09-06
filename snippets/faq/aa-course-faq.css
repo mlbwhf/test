@@ -286,44 +286,23 @@
 .aa-rd .aa-fb2-secondary{ border-color:rgba(243,247,246,.4); color:#F3F7F6!important; }
 .aa-rd .aa-fb2-secondary:hover{ border-color:#FFFFFF; color:#FFFFFF!important; }
 
-/* THE ACCORDION'S OWN BACKGROUND AND HOVER, RESTATED AT THREE CLASSES.
-   Same problem as the band above, one component further down. Something on the
-   course template paints an accordion row dark on hover -- the row keeps our
-   `--ink` question colour, so the text disappears into the fill and the
-   question is unreadable exactly when someone is pointing at it.
-
-   Our component rules are single classes, (0,1,0), and lose. These are
-   `.aa-rd .aa-fq .aa-fq-card`, (0,3,0), which wins without !important and
-   without needing to know which selector is doing it. Two jobs:
-
-     1. pin the resting background and the question colour, so a row can never
-        go dark-on-dark whatever else is in the cascade;
-     2. give hover a highlight of our own -- a pale teal wash rather than a
-        dark fill, so the text stays the colour it already is and contrast is
-        never in question.
-
-   Keyboard focus gets the same treatment as hover; it is the same state to a
-   person who cannot use a mouse. */
-.aa-rd .aa-fq .aa-fq-card{ background:#FFFFFF; }
-.aa-rd .aa-fq .aa-fq-qt{ color:#0E3A44; }
-
-/* IT IS THE BUTTON, NOT THE CARD.
-   First attempt at this pinned the card and missed: the dark fill lands on
-   .aa-fq-q, the <button> that is the question header. An open row shows it
-   plainly -- the header strip goes dark while the answer body beneath it stays
+/* THE DARK FILL IS ON THE BUTTON, NOT THE CARD.
+   .aa-fq-q is the <button> that forms a question header. Something on the
+   course template paints it on :hover, and on :focus left behind by a click --
+   two triggers, which is why it reads as intermittent. An open row shows where
+   it lands: the header strip goes dark while the answer body beneath it stays
    white, so the card is not what is being painted.
 
-   Two states trigger it, which is why it looks intermittent: :hover, and
-   :focus after a click. Our own rule is `.aa-fq-q{background:transparent}` at
-   (0,1,0), and a theme rule of the shape `.aa-rd button:hover` is (0,2,1) and
-   beats it.
+   Our own rule is `.aa-fq-q{background:transparent}` at (0,1,0). A theme rule
+   shaped like `.aa-rd button:hover` is (0,2,1) and beats it, and the question
+   keeps --ink, so the text disappears into the fill exactly while someone is
+   pointing at the question they want to read.
 
-   !important here, and only on these two properties. The site is not reachable
-   from where this was written, so the offending selector cannot be read off
-   the live cascade -- and the failure mode is a question that is invisible
-   exactly while someone points at it. A rule that merely probably wins is not
-   good enough for that. The button carries no colour of its own by design; the
-   card behind it draws every state. */
+   !important, on these two properties only. The site is not reachable from
+   where this was written, so the offending selector cannot be read off the
+   live cascade; for a control that goes invisible under the pointer, a rule
+   that merely probably wins is not good enough. The button carries no colour
+   of its own -- the card behind it draws every state. */
 .aa-rd .aa-fq .aa-fq-card .aa-fq-q,
 .aa-rd .aa-fq .aa-fq-card .aa-fq-q:hover,
 .aa-rd .aa-fq .aa-fq-card .aa-fq-q:focus,
@@ -331,25 +310,15 @@
 .aa-rd .aa-fq .aa-fq-card .aa-fq-q:active{
   background:transparent !important;
   color:#0E3A44 !important;
-  box-shadow:none;
 }
-.aa-rd .aa-fq .aa-fq-card .aa-fq-q .aa-fq-qt{ color:#0E3A44; }
 
-.aa-rd .aa-fq .aa-fq-card:hover,
-.aa-rd .aa-fq .aa-fq-card:focus-within{
+/* The highlight itself: a pale teal wash instead of a dark fill, so legibility
+   never depends on the text colour flipping too. :not(.is-open) because an
+   open row already has its own white card and teal outline (line 89) and
+   pointing at it should not change it. Keyboard focus is the same state as
+   hover to anyone tabbing through. */
+.aa-rd .aa-fq .aa-fq-card:not(.is-open):hover,
+.aa-rd .aa-fq .aa-fq-card:not(.is-open):focus-within{
   background:#F1F8F8;
   border-color:#127E88;
 }
-.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-qt,
-.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-qt{ color:#0E3A44; }
-.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-n,
-.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-n{ color:#127E88; }
-.aa-rd .aa-fq .aa-fq-card:hover .aa-fq-chev,
-.aa-rd .aa-fq .aa-fq-card:focus-within .aa-fq-chev{ background:#D9EDED; color:#0E3A44; }
-
-/* The open row keeps its white card and teal outline, and must not pick up the
-   hover wash on top of it -- pointing at an open question should not change it. */
-.aa-rd .aa-fq .aa-fq-card.is-open,
-.aa-rd .aa-fq .aa-fq-card.is-open:hover{ background:#FFFFFF; border-color:#127E88; }
-.aa-rd .aa-fq .aa-fq-card.is-open .aa-fq-chev,
-.aa-rd .aa-fq .aa-fq-card.is-open:hover .aa-fq-chev{ background:#127E88; color:#FFFFFF; }
