@@ -1286,6 +1286,88 @@ function aa_reg_month_html( $course, $m, $first_id, $cur ) {
 	return $h;
 }
 
+/**
+ * HOW MUCH ROOM THE PICKER LEAVES THE COPY COLUMN, IN BLOCKS.
+ *
+ * The two columns are centred against each other, so whatever the copy column
+ * does not fill shows up as dead space above AND below it. How much there is
+ * depends entirely on the course: SPC renders six rows plus a month tab strip
+ * and runs ~620px, while AI-Native Foundations has one cohort in its first
+ * month, no scroll, and runs ~390px -- where the two columns already balance.
+ *
+ * So this cannot be a fixed block of extra copy. Written for SPC it would
+ * overflow AI-Native; written for AI-Native it would leave SPC as it is now.
+ *
+ * The picker's height is driven by the FIRST month's panel -- the others are
+ * rendered hidden -- capped by the CSS at about six rows, plus the tab strip
+ * when there is more than one month. One row is roughly the copy column's
+ * natural height, so anything above that is room to fill -- which leaves a
+ * course showing a single cohort in its first month with exactly one extra
+ * line rather than none.
+ *
+ * Returns 0..3. At 0 the hero renders exactly as it does today.
+ */
+function aa_reg_hero_room( $months ) {
+	if ( ! $months ) { return 0; }
+	$first  = reset( $months );
+	$rows   = min( 6, count( $first['items'] ) );
+	$blocks = $rows - 1;
+	if ( count( $months ) > 1 ) { $blocks++; }   // the tab strip is worth about a row
+	return max( 0, min( 3, $blocks ) );
+}
+
+/**
+ * The optional copy that fills that room, most useful first.
+ *
+ * Every line here is read back off the course's own published page by
+ * aa_hh_page_bits() -- the same source the home page's course brief uses, so
+ * the two say the same thing and nothing new is claimed anywhere. That
+ * function lives in the Home Hero snippet, hence the guard: with it inactive
+ * this returns nothing and the hero is exactly what it is today.
+ */
+function aa_reg_hero_more( $slug, $room ) {
+	if ( $room < 1 || ! function_exists( 'aa_hh_page_bits' ) ) { return ''; }
+
+	$bits = aa_hh_page_bits( $slug );
+	$rows = array();
+
+	if ( ! empty( $bits['learn'] ) ) {
+		$rows[] = array( aa_reg_t( 'youll_learn', 'You will learn' ), $bits['learn'] );
+	}
+	if ( ! empty( $bits['career'] ) ) {
+		$rows[] = array( aa_reg_t( 'leads_to', 'Leads to' ), $bits['career'] );
+	}
+	if ( ! $rows && empty( $bits['next'] ) ) { return ''; }
+
+	$h = '<div class="aahero-more">';
+
+	foreach ( array_slice( $rows, 0, $room ) as $r ) {
+		$h .= '<div class="aahero-morerow">'
+		    . '<p class="aahero-minilabel">' . esc_html( $r[0] ) . '</p>'
+		    . '<p class="aahero-moretext">' . esc_html( $r[1] ) . '</p></div>';
+	}
+
+	/* The progression chips are last because they are the least specific: they
+	   answer "and then what", which only matters once the first two have
+	   landed. Only shown when there is room left over after them. */
+	if ( $room >= 3 && ! empty( $bits['next'] ) ) {
+		$h .= '<div class="aahero-morerow">'
+		    . '<p class="aahero-minilabel">' . esc_html( aa_reg_t( 'progress_to', 'Progress to' ) ) . '</p>'
+		    . '<ul class="aahero-next">';
+		foreach ( array_slice( (array) $bits['next'], 0, 3 ) as $n ) {
+			$label = is_array( $n ) ? ( isset( $n['label'] ) ? $n['label'] : '' ) : (string) $n;
+			$url   = is_array( $n ) && isset( $n['url'] ) ? $n['url'] : '';
+			if ( $label === '' ) { continue; }
+			$h .= '<li>' . ( $url
+				? '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>'
+				: esc_html( $label ) ) . '</li>';
+		}
+		$h .= '</ul></div>';
+	}
+
+	return $h . '</div>';
+}
+
 function aa_reg_hero( $atts ) {
 	$a       = shortcode_atts( array( 'course' => 'spc' ), $atts, 'aa_course_hero' );
 	$course  = aa_reg_course( $a['course'] );
@@ -1305,6 +1387,16 @@ function aa_reg_hero( $atts ) {
 	$h .= '<p class="aahero-lede">' . esc_html( $course['lede'] ) . '</p>';
 	$h .= '<ul class="aahero-proof">';
 	foreach ( $course['proof'] as $p ) { $h .= '<li>' . esc_html( $p ) . '</li>'; }
+	/* The salary sits with the proof pills rather than in its own row: it is
+	   the same kind of claim as "exam fee included" -- one short fact about
+	   what the course is worth -- and it costs no vertical space here. Only
+	   when the course page publishes one. */
+	if ( function_exists( 'aa_hh_page_bits' ) ) {
+		$sal = aa_hh_page_bits( $a['course'] );
+		if ( ! empty( $sal['salary'] ) ) {
+			$h .= '<li class="aahero-proof-pay">' . esc_html( $sal['salary'] ) . '</li>';
+		}
+	}
 	$h .= '</ul>';
 	$h .= '<div class="aahero-facts"><div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'next_batch', 'Next batch' ) ) . '</p>'
 	    . '<p class="aahero-fact" data-hero-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p></div>'
@@ -1312,6 +1404,7 @@ function aa_reg_hero( $atts ) {
 	    . '<div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</p><p class="aahero-fact">'
 	    . esc_html( aa_reg_money( $course['price'], $course['currency'] ) )
 	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . '</span></p></div></div>';
+	$h .= aa_reg_hero_more( $a['course'], aa_reg_hero_room( $months ) );
 	$h .= '</div>';
 
 	$h .= '<div class="aahero-picker"><div class="aahero-pickhead">'

@@ -39,6 +39,26 @@
 .aahero-fact span{font-size:12.5px;font-weight:500;color:var(--faint)}
 .aahero-rule{width:1px;height:34px;background:var(--line)}
 
+/* THE COPY COLUMN'S OPTIONAL LOWER HALF.
+   Rendered only as far as the picker is tall -- see aa_reg_hero_room(). It has
+   to read as a continuation of the facts row above it, not a new section, so
+   it borrows that row's mini-label and takes no rule of its own: one hairline
+   under the lede is the whole structure of this column. */
+.aahero-more{margin-top:22px;display:flex;flex-direction:column;gap:16px;max-width:46ch}
+.aahero-moretext{margin-top:5px;font-size:14.5px;line-height:1.55;color:var(--teal);text-wrap:pretty}
+/* The salary pill is the one proof pill carrying a number, so it is given the
+   quieter treatment -- the others are claims about the course, this is context
+   about the role, and it should not out-shout "Exam fee included". */
+.aahero-proof li.aahero-proof-pay{background:transparent;border-color:var(--line);color:var(--faint)}
+.aahero-next{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;list-style:none;padding:0}
+.aahero-next li{font-size:12.5px;font-weight:600;color:var(--teal-d);
+  background:var(--tint);border:1px solid var(--line3);border-radius:100px;padding:6px 12px}
+.aahero-next li a{color:inherit;text-decoration:none}
+.aahero-next li a:hover{text-decoration:underline}
+/* Stacked on a phone the columns no longer sit side by side, so there is no
+   dead space to fill and this is just more to scroll past before the dates. */
+@media (max-width:899px){.aahero-more{display:none}}
+
 /* picker */
 .aahero-picker{min-width:0;background:var(--tint);border:1px solid var(--line3);border-radius:18px;
   padding:22px 18px 20px;box-shadow:0 16px 40px rgba(16,28,51,.07)}
