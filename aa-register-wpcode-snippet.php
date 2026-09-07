@@ -1317,6 +1317,71 @@ function aa_reg_hero_room( $months ) {
 }
 
 /**
+ * WHERE A COURSE LEADS, ASSERTED RATHER THAN SCRAPED.
+ *
+ * aa_hh_page_bits() reads "next steps" off the course page's own markup, and
+ * on SPC that produced SASM -- a sideways move at best, and for someone who
+ * has just qualified to teach SAFe it reads as a step down. A page's own
+ * cross-sell links are not a progression ladder, and treating them as one is
+ * what put it there.
+ *
+ * So the ladder is stated here. Labels and URLs are looked up in
+ * aa_reg_courses() rather than typed, so a chip can only ever name a course
+ * that actually exists and its link can only ever be that course's real URL --
+ * a renamed or retired course drops out of the list instead of 404ing.
+ *
+ * 'caption' is the line above the chips: a direction, not a credential. "an
+ * AI-Native Trainer" is where the track leads, and is deliberately phrased as
+ * an ambition rather than as a named certification we award.
+ *
+ * A course with no entry here falls back to whatever its page says, unchanged.
+ */
+function aa_reg_hero_next( $slug ) {
+	$map = array(
+		/* Implementing SAFe. The consultant ladder continues to Advanced SPC,
+		   and widens into AI-Native and the two portfolio/product courses --
+		   APM and LPM are not "after" SPC so much as alongside it, which is why
+		   they belong on the same row rather than further down it. */
+		'spc' => array(
+			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
+			'courses' => array( 'aspc', 'ai-native-foundations', 'apm', 'lpm' ),
+		),
+		/* Leading SAFe. The usual next step is Lean Portfolio Management --
+		   the same audience, one level up the funding and strategy stack. */
+		'sa' => array(
+			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
+			'courses' => array( 'lpm' ),
+		),
+		/* Advanced SPC. Someone already qualified to teach SAFe does not
+		   progress to another SAFe role course; the track that is still ahead
+		   of them is AI-Native. */
+		'aspc' => array(
+			'caption' => aa_reg_t( 'next_ainative', 'Become an AI-Native Trainer' ),
+			'courses' => array(
+				'ai-native-foundations',
+				'ai-native-change-agent',
+				'ai-native-ready-certification-2',
+			),
+		),
+	);
+
+	if ( ! isset( $map[ $slug ] ) ) { return null; }
+
+	$items = array();
+	foreach ( $map[ $slug ]['courses'] as $k ) {
+		/* aa_reg_course(), not aa_reg_courses(): APM and LPM are not in the
+		   hand-written table and resolve from their own pages. A slug that
+		   resolves to nothing is skipped, so a chip can never be a dead link. */
+		$c = aa_reg_course( $k );
+		if ( ! $c || empty( $c['url'] ) || empty( $c['name'] ) ) { continue; }
+		$items[] = array( 'label' => $c['name'], 'url' => $c['url'] );
+	}
+	if ( ! $items ) { return null; }
+
+	return array( 'caption' => $map[ $slug ]['caption'], 'items' => $items );
+}
+
+/**
  * The optional copy that fills that room, most useful first.
  *
  * Every line here is read back off the course's own published page by
@@ -1350,17 +1415,28 @@ function aa_reg_hero_more( $slug, $room ) {
 	/* The progression chips are last because they are the least specific: they
 	   answer "and then what", which only matters once the first two have
 	   landed. Only shown when there is room left over after them. */
-	if ( $room >= 3 && ! empty( $bits['next'] ) ) {
+	$next = aa_reg_hero_next( $slug );
+	if ( ! $next && ! empty( $bits['next'] ) ) {
+		$next = array(
+			'caption' => aa_reg_t( 'progress_to', 'Progress to' ),
+			'items'   => array_map( function ( $n ) {
+				return is_array( $n )
+					? array( 'label' => isset( $n['label'] ) ? $n['label'] : '',
+					         'url'   => isset( $n['url'] ) ? $n['url'] : '' )
+					: array( 'label' => (string) $n, 'url' => '' );
+			}, (array) $bits['next'] ),
+		);
+	}
+
+	if ( $room >= 3 && $next ) {
 		$h .= '<div class="aahero-morerow">'
-		    . '<p class="aahero-minilabel">' . esc_html( aa_reg_t( 'progress_to', 'Progress to' ) ) . '</p>'
+		    . '<p class="aahero-minilabel">' . esc_html( $next['caption'] ) . '</p>'
 		    . '<ul class="aahero-next">';
-		foreach ( array_slice( (array) $bits['next'], 0, 3 ) as $n ) {
-			$label = is_array( $n ) ? ( isset( $n['label'] ) ? $n['label'] : '' ) : (string) $n;
-			$url   = is_array( $n ) && isset( $n['url'] ) ? $n['url'] : '';
-			if ( $label === '' ) { continue; }
-			$h .= '<li>' . ( $url
-				? '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>'
-				: esc_html( $label ) ) . '</li>';
+		foreach ( array_slice( $next['items'], 0, 4 ) as $n ) {
+			if ( $n['label'] === '' ) { continue; }
+			$h .= '<li>' . ( $n['url']
+				? '<a href="' . esc_url( $n['url'] ) . '">' . esc_html( $n['label'] ) . '</a>'
+				: esc_html( $n['label'] ) ) . '</li>';
 		}
 		$h .= '</ul></div>';
 	}
