@@ -1114,6 +1114,12 @@ function aa_reg_range( $start, $end, $short = false ) {
 	$s  = new DateTime( $start, $tz );
 	$e  = new DateTime( $end, $tz );
 	$y  = $short ? '' : ', ' . $e->format( 'Y' );
+	/* A one-day course starts and ends on the same date, and the range form
+	   rendered that as "Sep 17-17". Leading the AI-Native Organization is one
+	   day, so this was on every surface that course appears on. */
+	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) {
+		return $s->format( 'M j' ) . $y;
+	}
 	if ( $s->format( 'Y-m' ) === $e->format( 'Y-m' ) ) {
 		return $s->format( 'M j' ) . '–' . $e->format( 'j' ) . $y;
 	}
@@ -1536,6 +1542,114 @@ function aa_reg_hero( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_course_hero', 'aa_reg_hero' );
+
+/* ============================================================================
+   TRACK CALENDAR  —  [aa_track_calendar]
+   ----------------------------------------------------------------------------
+   For a TRACK landing page, which lists several courses, where [aa_course_hero]
+   and [aa_course_register] each speak for exactly one.
+
+   WHY THIS EXISTS. /training/ai-native/ was showing an empty calendar because
+   the shortcode there, [aa_cohorts], renders wp_events posts filtered by an
+   event_category term -- and no AI-Native dates were ever entered as events.
+   Meanwhile the three AI-Native courses have ninety upcoming cohorts between
+   them, generated from the cadence rules in aa_reg_courses(). The dates were
+   never missing; the page was reading the wrong source.
+
+   So this reads the same generated source the course heroes read. Nothing to
+   enter, nothing to keep in sync, and a cohort cannot appear here and be
+   missing from the course page.
+
+   DELIBERATELY NOT INTERACTIVE. The hero's picker is a checkout: it needs one
+   course, one price and one currency to post to Stripe. A track page has three
+   of each, so every row here is a LINK to that course's own enrol section with
+   the cohort preselected. The purchase happens in one place, on the course
+   page, which is also the only place seat counts and prices are authoritative.
+
+   USE:  [aa_track_calendar courses="ai-native-foundations,ai-native-change-agent,ai-native-ready-certification-2"]
+         [aa_track_calendar courses="..." months="3" limit="24"]
+   ========================================================================== */
+function aa_reg_track_calendar( $atts ) {
+	$a = shortcode_atts( array(
+		'courses' => '',
+		'months'  => 4,      // how many month groups to show
+		'limit'   => 30,     // hard ceiling on rows, so a wide track cannot run away
+		'heading' => '',
+	), $atts, 'aa_track_calendar' );
+
+	$slugs = array_filter( array_map( 'trim', explode( ',', (string) $a['courses'] ) ) );
+	if ( ! $slugs ) { return ''; }
+
+	/* Gather every course's cohorts into one list, each row remembering which
+	   course it came from -- on a mixed calendar the course name is the most
+	   important thing on the row, and it is the one thing a per-course list
+	   never has to carry. */
+	$rows = array();
+	foreach ( $slugs as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! $course ) { continue; }
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			$rows[] = array( 'slug' => $slug, 'course' => $course, 'cohort' => $c );
+		}
+	}
+	if ( ! $rows ) { return ''; }
+
+	usort( $rows, function ( $x, $y ) {
+		return strcmp( $x['cohort']['start'], $y['cohort']['start'] );
+	} );
+	$rows = array_slice( $rows, 0, max( 1, (int) $a['limit'] ) );
+
+	/* Group by month, then cut to whole months: a half-rendered month reads as
+	   "these are all the September dates" when it is not. */
+	$by = array();
+	foreach ( $rows as $r ) {
+		$k = substr( $r['cohort']['start'], 0, 7 );
+		if ( ! isset( $by[ $k ] ) ) {
+			$by[ $k ] = array( 'long' => ( new DateTime( $r['cohort']['start'] ) )->format( 'F Y' ), 'items' => array() );
+		}
+		$by[ $k ]['items'][] = $r;
+	}
+	$by = array_slice( $by, 0, max( 1, (int) $a['months'] ), true );
+
+	$h = '<section class="aatc' . aa_reg_dir_class() . '"' . aa_reg_dir_attr() . '>';
+	if ( $a['heading'] !== '' ) {
+		$h .= '<h2 class="aatc-h">' . esc_html( $a['heading'] ) . '</h2>';
+	}
+
+	foreach ( $by as $m ) {
+		$h .= '<div class="aatc-month"><p class="aatc-monthlabel">' . esc_html( $m['long'] ) . '</p><ul class="aatc-list">';
+		foreach ( $m['items'] as $r ) {
+			$c     = $r['cohort'];
+			$co    = $r['course'];
+			$start = new DateTime( $c['start'] );
+			$left  = aa_reg_seats_left( $co, $c );
+			/* Straight to that course's enrol section with the cohort chosen,
+			   the same handoff the home page's picker uses. */
+			$url   = $co['url'] . ( strpos( $co['url'], '?' ) === false ? '?' : '&' )
+			       . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+
+			$h .= '<li class="aatc-row"><a class="aatc-link" href="' . esc_url( $url ) . '">'
+			    . '<span class="aatc-date"><span class="aatc-day">' . esc_html( $start->format( 'j' ) ) . '</span>'
+			    . '<span class="aatc-mon">' . esc_html( strtoupper( $start->format( 'M' ) ) ) . '</span></span>'
+			    . '<span class="aatc-main">'
+			    . '<span class="aatc-course">' . esc_html( $co['name'] ) . '</span>'
+			    . '<span class="aatc-meta">' . esc_html( aa_reg_range( $c['start'], $c['end'], true ) )
+			    . ( ! empty( $c['place'] ) ? ' &middot; ' . esc_html( $c['place'] ) : '' )
+			    . ( ! empty( $c['hours'] ) ? ' &middot; ' . esc_html( $c['hours'] ) : '' )
+			    . '</span></span>'
+			    . '<span class="aatc-right">'
+			    . '<span class="aatc-price">' . esc_html( aa_reg_money( $co['price'], $co['currency'] ) ) . '</span>'
+			    . ( $left <= 6
+					? '<span class="aatc-seats">' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) . '</span>'
+					: '<span class="aatc-seats aatc-open">' . esc_html( aa_reg_t( 'seats_open', 'Seats open' ) ) . '</span>' )
+			    . '</span></a></li>';
+		}
+		$h .= '</ul></div>';
+	}
+
+	return $h . '</section>';
+}
+add_shortcode( 'aa_track_calendar', 'aa_reg_track_calendar' );
 
 function aa_reg_panel( $atts ) {
 	$a       = shortcode_atts( array( 'course' => 'spc' ), $atts, 'aa_course_register' );
