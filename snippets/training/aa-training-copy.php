@@ -3,29 +3,54 @@
  * AA – Training category pages: EDITORIAL COPY
  * -----------------------------------------------------------------------------
  * The five track landing pages, in the design from the training-category
- * handoff. This file is the copy layer only -- courses, prices, durations and
- * cohorts all come from aa_reg_course(), so nothing here can disagree with what
- * the checkout charges.
+ * handoff. Copy layer only -- courses, prices, durations and cohorts come from
+ * aa_reg_course(), so nothing here can contradict what the checkout charges.
  *
- * WHAT CHANGED AND WHY. The handoff's hero copy describes the catalogue:
- * "The senior SAFe credentials: RTE, LPM, APM, SPC, ASPC. For change agents
- * driving enterprise-scale transformations." That is accurate and it is also
- * an answer to a question nobody asked. Someone landing here is deciding
- * whether this changes their job and their pay, so the opening says that
- * first and names the credentials second.
+ * ---------------------------------------------------------------------------
+ * WHY THIS COPY IS SHAPED THE WAY IT IS
  *
- * COPY RULES BAKED IN HERE, all previously ruled on:
- *   - no pass guarantee and no money-back-if-you-fail; we say exam prep and
- *     support, which is what we actually do
- *   - rescheduling is free and not tied to a notice window
- *   - no star ratings or aggregate review claims
- *   - salary figures are role context, never a course outcome -- salaryNote
- *     states that in prose on every page, because that is the sentence a
- *     retrieval system will quote back
+ * The hero sits directly beside the registration card, which makes it the most
+ * expensive text on the site: it is read by a person deciding whether to spend
+ * $2,875, by a search engine deciding what the page is about, and by an
+ * assistant deciding what to quote. Those three want different things, and the
+ * first draft of this file served only the first.
  *
- * 'accent' is the italic serif tail of the headline and carries its own full
- * stop. 'sub' is the opening paragraph. 'comp' is the quiet line under the
- * buttons.
+ * 1. SEARCH. "The credentials that move you into the senior seat." is a good
+ *    line containing no term anyone searches. People type "Advanced SAFe
+ *    certification", "SPC certification", "RTE course". The keyword now sits
+ *    in the h1 -- which is the h1 for the page -- and the benefit moved into
+ *    'accent', the italic tail, where it still lands emotionally.
+ *
+ * 2. ASSISTANTS AND ANSWER ENGINES quote sentences, not fragments, and they
+ *    cannot quote a number whose caveat is elsewhere on the page. So 'sub' is
+ *    two complete sentences carrying the entities that identify this page --
+ *    course names, duration, format, what is included -- and every figure is
+ *    stated with its qualifier attached. Nothing here needs the rest of the
+ *    page to be true.
+ *
+ * 3. MOBILE. The h1 renders up to 52px. At 390px a nine-word headline is four
+ *    or five lines and pushes the register card below the fold, on the one
+ *    page where the card is the point. Headlines are held to six words or
+ *    fewer, with 'accent' able to wrap onto its own line without stranding a
+ *    single word.
+ *
+ * 'points' is new: three short factual chips beside the CTA. They repeat the
+ * facts a buyer scans for -- duration, what is included, what happens if the
+ * date stops working -- in a form that survives being read on a phone at a
+ * glance, and that an answer engine can lift as a list.
+ *
+ * ---------------------------------------------------------------------------
+ * COPY RULES BAKED IN, all previously ruled on:
+ *   - exam prep and support; never a pass guarantee, never money back on a
+ *     failed exam
+ *   - rescheduling is free and carries no notice window
+ *   - no star ratings, no aggregate review claims
+ *   - salary is role context and never a course outcome, and the caveat is a
+ *     sentence rather than a footnote so it travels with the number
+ *   - nothing asserted about Scaled Agile credentials that our own pages do
+ *     not already say
+ *
+ * 'accent' is the italic serif tail and carries its own full stop.
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -34,91 +59,93 @@ function aa_training_copy() {
 	return array(
 
 		/* ---------------------------------------------------------------
-		   ADVANCED SAFe -- SPC, ASPC, RTE, APM, LPM, ARCH
-		   The audience is already certified and already working in SAFe.
-		   What they are buying is seniority, so the opening is about the
-		   seat they move into, not the syllabus.
+		   ADVANCED SAFe -- SPC, ASPC, RTE, APM, LPM, ARCH, Large Solution
+		   Audience is already certified and already working in SAFe. They
+		   are buying seniority, so the keyword carries the benefit.
 		   --------------------------------------------------------------- */
 		'adv-safe' => array(
 			'label'   => 'Advanced SAFe',
 			'kicker'  => 'Senior roles',
-			'title'   => 'The credentials that move you',
-			'accent'  => 'into the senior seat.',
-			'sub'     => 'These are the certifications enterprises screen for when they are hiring '
-			           . 'someone to lead a transformation rather than take part in one — SPC, ASPC, '
-			           . 'RTE, LPM, APM and Architect. Taught live by a Gold SPCT, exam fee included, '
-			           . 'with exam prep and support throughout.',
+			'title'   => 'Advanced SAFe certification',
+			'accent'  => 'for the senior seat.',
+			'sub'     => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect and Implementing Large Solution SAFe, '
+			           . 'taught live online by a Gold SPCT with the exam fee included. These are the '
+			           . 'credentials enterprises screen for when they are hiring someone to lead a '
+			           . 'transformation rather than take part in one.',
 			'comp'    => 'Live online · exam fee included · reschedule at no fee.',
+			'points'  => array( '2–4 days', 'Exam fee included', 'Reschedule at no fee' ),
 		),
 
 		/* ---------------------------------------------------------------
 		   CORE SAFe ROLES
 		   First certification for most buyers. The decision is "will this
-		   get me screened in", so that is the promise -- and the barrier
-		   worth removing is how long it takes.
+		   get me screened in", and the objection is how long it takes.
 		   --------------------------------------------------------------- */
 		'safe-roles' => array(
 			'label'   => 'Core SAFe Roles',
 			'kicker'  => 'Start here',
-			'title'   => 'Your first SAFe certification',
-			'accent'  => 'and the role it opens.',
-			'sub'     => 'Leading SAFe, Scrum Master, Product Owner and DevOps — the credentials that '
-			           . 'get a CV past the first screen for agile roles. Most are two days, live '
-			           . 'online, exam fee included, so you can be certified by the end of the week.',
+			'title'   => 'SAFe certification',
+			'accent'  => 'by role.',
+			'sub'     => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, Advanced '
+			           . 'Scrum Master, DevOps, SAFe for Teams and Business Owner. Most run two days '
+			           . 'live online with the exam fee included, so you can sit the exam and be '
+			           . 'certified inside the same week.',
 			'comp'    => 'Two days · exam fee included · reschedule at no fee.',
+			'points'  => array( 'Two days', 'Exam fee included', 'Certified this week' ),
 		),
 
 		/* ---------------------------------------------------------------
 		   AI-NATIVE
-		   Newest track and the one with the widest pay gap, so the opening
-		   leads on the roles rather than the technology. "No coding
-		   required" is the objection this audience actually raises.
+		   Newest track. Leads on the roles rather than the technology, and
+		   answers the objection this audience actually raises out loud.
 		   --------------------------------------------------------------- */
 		'ai-native' => array(
 			'label'   => 'AI-Native',
 			'kicker'  => 'New for 2026',
-			'title'   => 'The AI skills employers are',
-			'accent'  => 'hiring for right now.',
-			'sub'     => 'From personal AI fluency to leading an AI-Native organisation. Three '
-			           . 'certifications built for roles that did not exist two years ago and are on '
-			           . 'job boards today — designed for the people who lead the work, so no coding '
-			           . 'is required.',
+			'title'   => 'AI-Native certification',
+			'accent'  => 'for the roles being hired now.',
+			'sub'     => 'AI-Native Foundations, AI-Native Value Architect and Leading the AI-Native '
+			           . 'Organization — three certifications for roles that did not exist two years '
+			           . 'ago and are on job boards today. Built for the people who lead the work, so '
+			           . 'no coding is required.',
 			'comp'    => 'In person and live online · exam fee included.',
+			'points'  => array( '1–2 days', 'No coding required', 'In person or live online' ),
 		),
 
 		/* ---------------------------------------------------------------
 		   MICRO-CREDENTIALS
-		   Not a career change -- a top-up between certifications. The
-		   opening sells the low cost of taking one, which is the actual
-		   reason someone books.
+		   Not a career change, a top-up. Sells the low cost of taking one,
+		   which is the actual reason someone books.
 		   --------------------------------------------------------------- */
 		'safe-found' => array(
 			'label'   => 'Micro-credentials',
 			'kicker'  => 'One day, one skill',
-			'title'   => 'Add a specialisation without',
-			'accent'  => 'pausing your career.',
-			'sub'     => 'One-day credentials that sit between the full certifications — go deep on a '
-			           . 'single skill, earn a digital badge issued by Scaled Agile, and be back at '
-			           . 'your desk tomorrow.',
+			'title'   => 'SAFe micro-credentials',
+			'accent'  => 'in a single day.',
+			'sub'     => 'One-day credentials that sit between the full certifications, each going '
+			           . 'deep on one skill and carrying a digital badge issued by Scaled Agile. '
+			           . 'Book one, add the specialisation, and be back at your desk tomorrow.',
 			'comp'    => 'One day · digital badge issued by Scaled Agile.',
+			'points'  => array( 'One day', 'Digital badge', 'No exam to revise for' ),
 		),
 
 		/* ---------------------------------------------------------------
 		   SAFe BY INDUSTRY
-		   Same certifications, different constraints. The buyer here has
-		   already been told generic agile does not survive their contract
-		   or their regulator, so the opening answers that objection.
+		   Same certifications, different constraints. This buyer has been
+		   told generic agile does not survive their contract or regulator,
+		   so the opening answers that before anything else.
 		   --------------------------------------------------------------- */
 		'safe-industry' => array(
 			'label'   => 'SAFe by Industry',
 			'kicker'  => 'Your sector',
-			'title'   => 'SAFe taught in the language',
-			'accent'  => 'of your industry.',
-			'sub'     => 'Government, defence, hardware and regulated delivery — the same '
-			           . 'certifications, taught against the contracts, compliance and approval '
-			           . 'gates your sector actually works under, by instructors who have delivered '
-			           . 'inside them.',
+			'title'   => 'SAFe training',
+			'accent'  => 'for your industry.',
+			'sub'     => 'Government, defence, hardware and regulated delivery — the same SAFe '
+			           . 'certifications, taught against the contracts, compliance and approval gates '
+			           . 'your sector works under. Delivered by instructors who have run these '
+			           . 'programmes inside them.',
 			'comp'    => 'Live online and in person · exam fee included.',
+			'points'  => array( 'Sector-specific', 'Exam fee included', 'In person available' ),
 		),
 	);
 }
@@ -126,9 +153,9 @@ function aa_training_copy() {
 /**
  * The salary caveat, one sentence, on every page.
  *
- * Deliberately prose and not a footnote: it is the sentence that has to travel
- * if a search engine or an assistant quotes the salary band, and a number
- * quoted without it reads as a promise about what this course pays.
+ * Prose and not a footnote on purpose: this is the sentence that has to travel
+ * if a search engine or an assistant quotes the band, and a figure quoted
+ * without it reads as a promise about what the course pays.
  */
 function aa_training_salary_note() {
 	return 'Figures are median total compensation for the role, from Scaled Agile, LinkedIn '
