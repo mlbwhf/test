@@ -207,13 +207,15 @@ function aa_reg_courses() {
 		   from the supplied outline; the objectives belong on the course page,
 		   not here.
 
-		   DAYS confirmed at 2. PRICE IS STILL A PLACEHOLDER copied from RTE, and
-		   "Prices confirmed" is already ticked in Settings -- so the moment this
-		   course's page is published it takes money at $2,150. Check that figure
-		   before the page goes live. Note the cadence still runs Mon/Wed/Fri like
-		   RTE, but a 2-day class on that cadence produces overlapping starts;
-		   the blackout rule handles the overlap, the frequency is a business
-		   choice worth a second look.
+		   Confirmed: 2 days, RTE's price, RTE's cadence, first date 21 Sep 2026.
+		   'from' is what holds the launch date -- without it the cadence would
+		   offer a start next week, because the rule says Monday and Monday is
+		   next week.
+
+		   The cadence runs Mon/Wed/Fri as RTE does, which for a 2-day class means
+		   starts every other day. The blackout rule keeps them from colliding,
+		   but the frequency is a business choice rather than a technical one and
+		   is worth a look once the page is live.
 
 		   The page at 'url' does not exist yet. Until it is published, the
 		   calendar rows and progression chips that point here resolve to nothing
@@ -228,8 +230,9 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,   // PLACEHOLDER, copied from RTE -- still unverified
+			'price'    => 2150,   // confirmed: same as RTE
 			'days'     => 2,      // confirmed 2 days
+			'from'     => '2026-09-21',   // first date offered
 			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
@@ -640,21 +643,34 @@ function aa_reg_generate( $slug, $course ) {
 
 	$days  = max( 1, (int) $course['days'] );
 	$weeks = max( 1, (int) ( isset( $course['weeks'] ) ? $course['weeks'] : 26 ) );
-	$limit = ( clone $today )->modify( '+' . $weeks . ' weeks' );
+	/* EARLIEST DATE THIS COURSE IS OFFERED, if it is not simply "today".
+	   A newly announced course has a launch date -- the cadence is right, but
+	   nobody should be able to book it next Tuesday because the rule says
+	   Tuesday. 'from' moves the floor; everything downstream, including the
+	   publishing window, measures from there so a launch still gets a full
+	   window of dates rather than a stub. Absent, the floor is today and
+	   nothing changes for the courses that already run. */
+	$floor = clone $today;
+	if ( ! empty( $course['from'] ) ) {
+		$f = new DateTime( $course['from'], $tz );
+		$f->setTime( 0, 0, 0 );
+		if ( $f > $floor ) { $floor = $f; }
+	}
+	$limit = ( clone $floor )->modify( '+' . $weeks . ' weeks' );
 
 	// A course with cities is scheduled per city, not on a weekly cadence.
 	if ( ! empty( $course['schedule'] ) ) {
-		return $memo[ $key ] = aa_reg_generate_places( $slug, $course, $today, $limit, $tz );
+		return $memo[ $key ] = aa_reg_generate_places( $slug, $course, $floor, $limit, $tz );
 	}
 
 	$taken   = array();   // start date => true, so backfill cannot collide
 	$planned = array();   // every cadence start in the window, valid or not
 
 	foreach ( (array) $course['cadence'] as $rule ) {
-		$d = clone $today;
-		// first occurrence of this weekday on or after today
+		$d = clone $floor;
+		// first occurrence of this weekday on or after the floor
 		$d->modify( 'this week ' . $rule['dow'] );
-		if ( $d < $today ) { $d->modify( '+1 week' ); }
+		if ( $d < $floor ) { $d->modify( '+1 week' ); }
 		while ( $d <= $limit ) {
 			$planned[] = array( 'start' => $d->format( 'Y-m-d' ), 'slot' => $rule['slot'] );
 			$d->modify( '+1 week' );
