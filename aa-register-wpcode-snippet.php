@@ -207,11 +207,13 @@ function aa_reg_courses() {
 		   from the supplied outline; the objectives belong on the course page,
 		   not here.
 
-		   PRICE AND DAYS ARE PLACEHOLDERS TAKEN FROM RTE. Neither was given, and
-		   I have not guessed figures of my own. But "Prices confirmed" is already
-		   ticked in Settings, so the moment this course's page is published it
-		   will take money at $2,150 for a 3-day class. Check both against what
-		   this course actually is before that page goes live.
+		   DAYS confirmed at 2. PRICE IS STILL A PLACEHOLDER copied from RTE, and
+		   "Prices confirmed" is already ticked in Settings -- so the moment this
+		   course's page is published it takes money at $2,150. Check that figure
+		   before the page goes live. Note the cadence still runs Mon/Wed/Fri like
+		   RTE, but a 2-day class on that cadence produces overlapping starts;
+		   the blackout rule handles the overlap, the frequency is a business
+		   choice worth a second look.
 
 		   The page at 'url' does not exist yet. Until it is published, the
 		   calendar rows and progression chips that point here resolve to nothing
@@ -226,8 +228,8 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,   // PLACEHOLDER, copied from RTE -- unverified
-			'days'     => 3,      // PLACEHOLDER, copied from RTE -- unverified
+			'price'    => 2150,   // PLACEHOLDER, copied from RTE -- still unverified
+			'days'     => 2,      // confirmed 2 days
 			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
