@@ -202,6 +202,42 @@ function aa_reg_courses() {
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
 
+		/* IMPLEMENTING LARGE SOLUTION SAFe -- NEW COURSE, NUMBERS UNVERIFIED.
+		   On RTE's cadence as asked: Mon and Wed morning, Fri afternoon. Copy is
+		   from the supplied outline; the objectives belong on the course page,
+		   not here.
+
+		   PRICE AND DAYS ARE PLACEHOLDERS TAKEN FROM RTE. Neither was given, and
+		   I have not guessed figures of my own. But "Prices confirmed" is already
+		   ticked in Settings, so the moment this course's page is published it
+		   will take money at $2,150 for a 3-day class. Check both against what
+		   this course actually is before that page goes live.
+
+		   The page at 'url' does not exist yet. Until it is published, the
+		   calendar rows and progression chips that point here resolve to nothing
+		   rather than 404 -- aa_reg_hero_next() and aa_reg_track_calendar() both
+		   skip a course that will not resolve. */
+		'large-solution' => array(
+			'code'     => 'LSS',
+			'name'     => 'Implementing Large Solution SAFe®',
+			'eyebrow'  => 'Live online · Large Solution certification',
+			'h1'       => 'Implementing Large Solution SAFe®.',
+			'lede'     => 'For those building complex, large-scale systems. Scale Lean-Agile practice through the Large Solution Delivery discipline — coordinating multiple ARTs, Solution Trains and strategic suppliers across the wider solution ecosystem.',
+			'url'      => '/training/adv-safe/large-solution/',
+			'crumb'    => 'Advanced SAFe',
+			'currency' => 'usd',
+			'price'    => 2150,   // PLACEHOLDER, copied from RTE -- unverified
+			'days'     => 3,      // PLACEHOLDER, copied from RTE -- unverified
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Wed', 'slot' => 'morning' ),
+				array( 'dow' => 'Fri', 'slot' => 'afternoon' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+
 		/* ------------------------------------------------------------------
 		   THE AI-NATIVE SUITE — classroom courses, one date a month per city.
 		   Keys are page slugs, because that is what auto-placement matches on.
