@@ -1,8 +1,28 @@
 # Why report-ai.org is being blocked by corporate networks
 
 Diagnosis, 3 September 2026. Evidence gathered from the site itself.
+**Executed 8 September 2026 — see "What was actually done" at the end.**
 
 ---
+
+## Correction to this diagnosis (8 September 2026)
+
+Two claims below were wrong or overstated, and the record should say so:
+
+1. **"Verbatim copies of full articles" overstated the WPCode aggregator.** Reading
+   the snippet's source (archived at `archive/427-news-aggregator-DISABLED.php`)
+   shows it published a **45-word excerpt** plus a source link and an
+   "automatically aggregated summary" disclaimer, with `rel=canonical` pointing at
+   the original. That is thin duplicate content and a textbook scraper signature —
+   it is still the reason for the blocking — but it is **not** the wholesale
+   copyright infringement I described. The urgency was right; the legal
+   characterisation was not.
+2. **The scale of the problem was understated in a different direction.** A
+   *second* importer was missed entirely: the **Feedzy** plugin, which pulled
+   **full articles from `agile-agilist.com`** into Report AI, each ending
+   "The post … first appeared on Agile Agilist", with backlinks. Those are full
+   copies, and they are an **independence-firewall breach** — the parent company's
+   marketing copy republished on the measurement site.
 
 ## The finding
 
@@ -124,3 +144,69 @@ is almost certainly why enterprises are blocking the domain. For a site whose en
 positioning is independent, credible measurement — and which is being submitted to a
 funding body on that basis — hosting hundreds of scraped articles from MIT Technology
 Review and OpenAI is the single biggest risk on the site.
+
+---
+
+## What was actually done — 8 September 2026
+
+### Both importers stopped
+
+| Source | Object | Action |
+|---|---|---|
+| WPCode snippet 427, "AI News Aggregator (cron)" | post 427 | set to **draft**; body replaced with a one-shot cleanup routine, then re-drafted. Original code archived at `archive/427-news-aggregator-DISABLED.php` |
+| Feedzy import job "Setup Wizard" (`feedzy_job` 216) | post 216 | set to **draft** |
+| Cron event `rai_pull_ai_news` | — | no longer registered (the snippet that scheduled it is gone) |
+
+### 583 posts removed
+
+Selector used: the exact sentence the aggregator stamped into every post it
+created — `"Automatically aggregated summary"` — cross-checked against the meta
+fingerprints `_rai_aggregated = 1` and `_rai_source_url`.
+
+Validated before deleting: **none** of 23 known-original post IDs (20, 217–221,
+807–811, 986, 1096–1099, 1166, 1609–1613, 1627) appeared in the match set.
+
+| | Before | After |
+|---|---|---|
+| Published posts | 619 | **36** |
+| In trash | 0 | **583** |
+| Posts still matching the scraper selector | 589 | **0** |
+
+Everything was **trashed, not permanently deleted** — all 583 are restorable from
+WP Admin → Posts → Trash. WordPress empties trash automatically after 30 days, so
+that is the window to reverse this.
+
+The 36 survivors were each checked by hand and are all genuine Report AI work:
+the stat pages, the index/report pages, the essays (217–221, 807–811), and the
+Agile Agilist syndications.
+
+### Slug fixed
+
+Page 541: `/reports/dark-side-of-ai/ai-deepfake-porn-nudify-apps-statistics/`
+→ `/reports/dark-side-of-ai/ai-deepfake-image-abuse-statistics/`
+
+`_wp_old_slug` was set manually so the old URL 301s rather than 404s (WordPress
+did not create it automatically for this edit). The old path was also hard-coded
+in 8 places inside the page — the JSON-LD `@id` and `mainEntityOfPage`, the "cite
+this page" line, and the X/LinkedIn/email share links — all replaced.
+
+### Still open
+
+1. **The Feedzy cross-posts from agile-agilist.com are still published** — posts
+   1096, 1097, 1098, 1099, 1166, 1609, 1610, 1611, 1612, 1613, 1627. These are
+   full copies of the parent company's articles with no disclosure. Posts 106 and
+   107 do the same thing but *are* labelled "Syndicated from Agile Agilist", which
+   is the pattern that satisfies the firewall. **Decision needed:** add the same
+   visible disclosure line to the eleven, or remove them.
+2. **Deactivate the Feedzy and WP RSS Aggregator plugins outright.** Drafting the
+   import job stops it; removing the plugins removes the possibility of it
+   restarting. This needs WP Admin — the MCP connector cannot toggle plugins.
+3. **Jetpack Publicize was auto-broadcasting the scraped posts** to LinkedIn,
+   Threads and Facebook under the name "The AI Index". Those social posts still
+   exist and still link to URLs that now 404. Worth a pass.
+4. **Named editorial identity** — still outstanding, still blocked on a name.
+5. **Vendor recategorisation requests** — now worth submitting; the site no longer
+   looks like a scraper. Use the vendor table above.
+6. **The page title of 541 still reads "Deepfake Porn and Nudify Apps."** The URL
+   was the main filter trigger and that is fixed. Whether to soften the title is
+   an editorial call, not a technical one.
