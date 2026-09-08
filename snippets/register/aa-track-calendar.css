@@ -1,0 +1,99 @@
+.aat-cal { display:grid; grid-template-columns:repeat(auto-fit,minmax(560px,1fr)); gap:36px; margin-top:26px; align-items:start; }
+.aat-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:32px; }
+.aat-chip { display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; padding:9px 15px; border-radius:100px; cursor:pointer; background:#FFFFFF; color:#4E4A40; border:1px solid #E9E5DB; transition:background .18s ease, border-color .18s ease; }
+.aat-chip[aria-pressed="true"] { background:#101C33; color:#FFFFFF; border-color:#101C33; }
+
+.aat-calcard { border:1px solid #E9E5DB; border-radius:18px; background:#FFFFFF; overflow:hidden; }
+.aat-calcard__head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 22px; border-bottom:1px solid #EDE9DF; background:#FBFAF7; }
+.aat-calcard__nav { display:flex; align-items:center; gap:12px; }
+.aat-calcard__nav strong { font-size:17px; font-weight:600; letter-spacing:-.02em; }
+.aat-navbtn { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; background:#FFFFFF; border:1px solid #E9E5DB; color:#101C33; cursor:pointer; }
+.aat-navbtn[disabled] { color:#CFC9BB; cursor:default; }
+.aat-calcard__count { font-size:12px; font-weight:600; color:#8A8375; }
+.aat-calscroll { overflow-x:auto; }
+.aat-calinner { min-width:700px; }
+.aat-dows { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); padding:0 10px; border-bottom:1px solid #EDE9DF; }
+.aat-dows span { padding:11px 4px; text-align:center; font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:#8A8375; }
+.aat-grid { padding:10px; }
+.aat-week { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; margin-bottom:6px; }
+.aat-day { display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-height:82px; padding:8px 6px; border-radius:11px; background:#FFFFFF; border:1px solid transparent; text-align:left; overflow:hidden; cursor:default; }
+.aat-day__num { font-size:12.5px; font-weight:500; line-height:1; }
+.aat-day__chips { display:flex; flex-direction:column; gap:3px; width:100%; }
+.aat-day__chip { display:flex; align-items:center; justify-content:space-between; gap:4px; width:100%; font-size:9.5px; font-weight:700; letter-spacing:.02em; padding:3px 5px; border-radius:5px; }
+.aat-day__chip span:first-child { flex:0 0 auto; }
+.aat-day__chip span:last-child { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-align:right; font-size:9px; letter-spacing:0; opacity:.72; }
+.aat-day__more { font-size:9px; font-weight:600; color:#8A8375; }
+.aat-day--out { color:#D8D2C5; }
+.aat-day--has { border-color:#CFE4E1; cursor:pointer; }
+.aat-day--has .aat-day__num { font-weight:700; }
+.aat-day--run { background:#F4FAF9; border-color:#E4EFED; }
+.aat-day--on { background:#0E8074; border-color:#0E8074; color:#FFFFFF; cursor:pointer; }
+.aat-day--on .aat-day__num { font-weight:700; }
+.aat-day--on .aat-day__chip { background:rgba(255,255,255,.22) !important; color:#FFFFFF !important; }
+.aat-day--on .aat-day__more { color:rgba(255,255,255,.8); }
+.aat-legend { display:flex; flex-wrap:wrap; align-items:center; gap:16px; padding:14px 22px; border-top:1px solid #EDE9DF; background:#FBFAF7; font-size:11.5px; color:#8A8375; }
+.aat-legend span { display:inline-flex; align-items:center; gap:7px; }
+.aat-legend i { width:14px; height:14px; border-radius:5px; display:block; }
+.aat-legend i.k1 { background:#FFFFFF; border:1px solid #CFE4E1; }
+.aat-legend i.k2 { background:#F4FAF9; border:1px solid #E4EFED; }
+.aat-legend i.k3 { background:#0E8074; }
+
+.aat-side { position:sticky; top:24px; animation:aatFadeUp .45s ease both; }
+.aat-side__head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; }
+.aat-side__head strong { font-size:19px; font-weight:600; letter-spacing:-.024em; }
+.aat-side__head span { font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:#8A8375; }
+.aat-side__list { display:flex; flex-direction:column; gap:12px; }
+.aat-cohort { border:1px solid #E9E5DB; border-radius:16px; padding:18px; background:#FFFFFF; }
+.aat-cohort__top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+.aat-cohort h3 { margin:11px 0 0; font-size:17.5px; font-weight:600; letter-spacing:-.022em; line-height:1.25; }
+.aat-cohort p { margin:7px 0 0; font-size:13.5px; color:#4E4A40; line-height:1.55; text-wrap:pretty; }
+.aat-cohort__when { display:flex; align-items:center; gap:9px; margin-top:14px; padding:11px 13px; border-radius:11px; background:#FBFAF7; border:1px solid #EDE9DF; }
+.aat-cohort__when i { color:#0E8074; font-size:12px; font-style:normal; }
+.aat-cohort__when b { font-size:13px; font-weight:600; }
+.aat-cohort__when span { margin-left:auto; font-size:12px; color:#8A8375; }
+.aat-cohort__pay { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:16px; padding-top:15px; border-top:1px solid #EDE9DF; }
+.aat-cohort__price { font-size:22px; font-weight:600; letter-spacing:-.026em; }
+.aat-cohort__incl { font-size:11.5px; color:#8A8375; margin-top:3px; }
+.aat-cohort__eb { display:block; margin-top:11px; text-align:center; font-size:12.5px; font-weight:600; color:#8A8375; text-decoration:underline; text-underline-offset:3px; }
+.aat-private { margin-top:14px; border:1px dashed #E9E5DB; border-radius:14px; padding:15px 17px; background:#FBFAF7; }
+.aat-private p { margin:0; font-size:13px; line-height:1.55; color:#4E4A40; }
+.aat-private a { color:#0E8074; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+
+/* ---------- mobile cohort list (replaces the month grid below 760px) ---------- */
+.aat-callist { display:none; }
+.aat-calday { display:flex; align-items:center; gap:12px; width:100%; padding:14px 18px; border:0; border-bottom:1px solid #F3F0E9; background:#FFFFFF; text-align:left; cursor:pointer; min-height:56px; }
+.aat-calday[aria-pressed="true"] { background:#F4FAF9; box-shadow:inset 3px 0 0 #0E8074; }
+.aat-calday__date { display:flex; flex-direction:column; gap:2px; min-width:74px; }
+.aat-calday__date b { font-size:16px; font-weight:600; letter-spacing:-.022em; }
+.aat-calday__date span { font-size:11.5px; color:#8A8375; }
+.aat-calday__codes { display:flex; flex-wrap:wrap; gap:5px; }
+.aat-calday__code { font-size:10px; font-weight:700; letter-spacing:.04em; padding:4px 8px; border-radius:5px; }
+.aat-calday__n { margin-left:auto; font-size:11.5px; font-weight:600; color:#8A8375; }
+.aat-calmonth { padding:11px 18px; background:#FBFAF7; border-bottom:1px solid #EDE9DF; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; font-weight:700; color:#8A8375; }
+/* ---------- track calendar: additions over the handoff ---------- */
+.aatc{max-width:1240px;margin:0 auto}
+.aatc-h{font-size:clamp(24px,2.2vw,32px);line-height:1.15;letter-spacing:-.028em;margin:0 0 18px}
+.aat-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.aat-badge{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:100px}
+.aat-cohort__dur{font-size:11.5px;color:#8A8375;font-weight:600}
+.aat-cta{display:inline-flex;align-items:center;gap:9px;background:#D34B2A;color:#fff!important;
+  padding:11px 18px;border-radius:100px;font-weight:600;font-size:14px;text-decoration:none;min-height:44px}
+.aat-cta:hover{background:#B93E20;color:#fff!important}
+.aat-calmonth{padding:14px 18px 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:#8A8375}
+.aat-calday__codes{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 auto;min-width:0}
+.aat-calday__code{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.aat-calday__n{font-size:12px;font-weight:700;color:#8A8375;flex:none}
+/* A chip filtered out is dimmed rather than removed: the month keeps its shape,
+   so filtering does not make the grid jump under the pointer. */
+.aat-day__chip[data-aatc-hide]{opacity:.16}
+.aat-day--dim{opacity:.4}
+@media (max-width:760px){
+  .aat-calscroll{display:none}
+  .aat-callist{display:block}
+  .aat-legend{display:none}
+}
+@media (max-width:900px){
+  .aat-side{position:static}
+  .aat-chip,.aat-navbtn,.aat-calday{min-height:44px}
+}
