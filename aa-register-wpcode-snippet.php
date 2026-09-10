@@ -1668,8 +1668,14 @@ function aa_reg_track_calendar( $atts ) {
 
 		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
 			$byday[ $c['start'] ][] = array( 'c' => $c, 'code' => $code, 'course' => $course, 'slug' => $slug );
+			/* Every day AFTER the start is a continuation, and remembers which
+			   course is running. The start day already shows a chip; these are
+			   what let the class be drawn as a run across the week instead of a
+			   mark on one day and silence either side. */
+			$first = true;
 			for ( $d = strtotime( $c['start'] ); $d <= strtotime( $c['end'] ); $d = strtotime( '+1 day', $d ) ) {
-				$busy[ date( 'Y-m-d', $d ) ] = true;
+				if ( ! $first ) { $busy[ date( 'Y-m-d', $d ) ][] = $code; }
+				$first = false;
 			}
 		}
 	}
@@ -1738,7 +1744,8 @@ function aa_reg_track_calendar( $atts ) {
 				$in    = ( (int) date( 'n', $ts ) === $m );
 				$list  = ( $in && isset( $byday[ $k ] ) ) ? $byday[ $k ] : array();
 				$on    = ( $k === $sel && $list );
-				$run   = ( $in && isset( $busy[ $k ] ) && ! $list );
+				$runs  = ( $in && ! empty( $busy[ $k ] ) ) ? array_unique( $busy[ $k ] ) : array();
+				$run   = ( $runs && ! $list );
 
 				$cls = 'aat-day';
 				if ( ! $in )      { $cls .= ' aat-day--out'; }
@@ -1757,9 +1764,25 @@ function aa_reg_track_calendar( $atts ) {
 						        . '<span>' . esc_html( $row['code'] ) . '</span><span>' . esc_html( $mm['short'] ) . '</span></span>';
 					}
 				}
+				/* A bar per class still running on this day, in that course's
+				   colour. This is what makes a four-day course read as four
+				   days -- and what shows that a class runs straight through
+				   Saturday and Sunday rather than stopping at the weekend. */
+				$bars = '';
+				if ( $runs ) {
+					$bars = '<span class="aat-day__runs">';
+					foreach ( $runs as $rc ) {
+						if ( ! isset( $meta[ $rc ] ) ) { continue; }
+						$bars .= '<span class="aat-day__bar" data-aatc-chip="' . esc_attr( $rc ) . '"'
+						       . ' style="background:' . esc_attr( $meta[ $rc ]['color'] ) . '"'
+						       . ' title="' . esc_attr( $rc . ' ' . aa_reg_t( 'in_session', 'in session' ) ) . '"></span>';
+					}
+					$bars .= '</span>';
+				}
+
 				$aria = date( 'F j', $ts ) . ( $list
 					? ', ' . count( $list ) . ' cohort' . ( count( $list ) > 1 ? 's' : '' ) . ' start'
-					: ', no cohorts' );
+					: ( $runs ? ', ' . implode( ', ', $runs ) . ' in session' : ', no cohorts' ) );
 
 				$h .= '<button type="button" class="' . $cls . '" data-aatc-day="' . esc_attr( $k ) . '"'
 				    . ' data-aatc-codes="' . esc_attr( implode( ',', array_unique( $codes ) ) ) . '"'
@@ -1768,6 +1791,7 @@ function aa_reg_track_calendar( $atts ) {
 				    . '<span class="aat-day__num">' . (int) date( 'j', $ts ) . '</span>'
 				    . '<span class="aat-day__chips">' . $chips . '</span>'
 				    . ( count( $codes ) > 2 ? '<span class="aat-day__more">+' . ( count( $codes ) - 2 ) . ' more</span>' : '' )
+				    . $bars
 				    . '</button>';
 			}
 			$h .= '</div>';
