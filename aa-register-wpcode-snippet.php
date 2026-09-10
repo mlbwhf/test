@@ -2782,6 +2782,88 @@ function aa_reg_checkout( WP_REST_Request $req ) {
  * Idempotent twice over: it returns early if the token already resolves, and
  * aa_reg_record_sale() refuses an id it has already written.
  */
+/**
+ * THE SWEEP — every paid session, whether or not anything told us about it.
+ *
+ * There are now three ways a sale gets recorded, deliberately, because each
+ * one fails differently:
+ *
+ *   1. the webhook          fastest, and the only one that needs Stripe to
+ *                           reach us. Spent three years pointed at the wrong
+ *                           event, then failed to deliver again after that was
+ *                           fixed.
+ *   2. the confirmation page catches what the webhook missed, but only if the
+ *                           buyer actually lands back on the site. Close the
+ *                           tab on Stripe's page and it never runs.
+ *   3. this sweep            needs nothing. It asks Stripe hourly what it has
+ *                           been paid and records anything we have not.
+ *
+ * A single failure can no longer lose a sale, which is the whole point: two
+ * buyers paid and got silence, and both times we found out because a person
+ * complained rather than because a system noticed.
+ *
+ * ONLY OUR OWN SESSIONS. A session is skipped unless it carries a cohort we
+ * recognise, in our metadata or as a client_reference_id. This account also
+ * takes payments through other tools, and none of them should ever be turned
+ * into a training registration by this.
+ *
+ * Deduplication is aa_reg_record_sale()'s job -- it refuses a session id it
+ * has already written, so the sweep and the other two paths cannot double up.
+ */
+function aa_reg_sweep() {
+	if ( ! aa_reg_key( 'secret' ) || ! function_exists( 'aa_reg_record_sale' ) ) { return; }
+
+	/* Three days back. Long enough to cover an outage over a weekend, short
+	   enough that the sweep stays one cheap request. */
+	$since = time() - ( 3 * DAY_IN_SECONDS );
+	$res   = wp_remote_get(
+		'https://api.stripe.com/v1/checkout/sessions?limit=100&created[gte]=' . $since,
+		array(
+			'timeout' => 20,
+			'headers' => array( 'Authorization' => 'Basic ' . base64_encode( aa_reg_key( 'secret' ) . ':' ) ),
+		)
+	);
+	if ( is_wp_error( $res ) || (int) wp_remote_retrieve_response_code( $res ) !== 200 ) { return; }
+
+	$body = json_decode( wp_remote_retrieve_body( $res ), true );
+	if ( empty( $body['data'] ) || ! is_array( $body['data'] ) ) { return; }
+
+	$recovered = 0;
+	foreach ( $body['data'] as $sess ) {
+		if ( ! is_array( $sess ) ) { continue; }
+		if ( ! isset( $sess['payment_status'] ) || $sess['payment_status'] !== 'paid' ) { continue; }
+
+		$meta   = isset( $sess['metadata'] ) ? (array) $sess['metadata'] : array();
+		$cohort = isset( $meta['cohort'] ) ? $meta['cohort']
+		        : ( isset( $sess['client_reference_id'] ) ? $sess['client_reference_id'] : '' );
+		if ( $cohort === '' || ! aa_reg_find( $cohort ) ) { continue; }   // not ours
+
+		if ( aa_reg_record_sale( $sess, 'sweep:' . $sess['id'] ) ) { $recovered++; }
+	}
+
+	if ( $recovered ) {
+		wp_mail(
+			get_option( 'admin_email' ),
+			sprintf( 'Sweep recovered %d registration%s - the Stripe webhook is not working',
+				$recovered, $recovered === 1 ? '' : 's' ),
+			"The hourly sweep found paid checkout sessions that no webhook had recorded.\n\n"
+			. "Those buyers now have their registrations and confirmations, so nothing is owed\n"
+			. "to them. But the webhook is still not delivering, and every sale is arriving up\n"
+			. "to an hour late because of it.\n\n"
+			. "Check the endpoint's recent deliveries for the response code."
+		);
+	}
+}
+add_action( 'aa_reg_sweep_event', 'aa_reg_sweep' );
+
+/* Self-scheduling: no activation hook to forget, and re-arms itself if the
+   schedule is ever cleared. */
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'aa_reg_sweep_event' ) ) {
+		wp_schedule_event( time() + 300, 'hourly', 'aa_reg_sweep_event' );
+	}
+} );
+
 function aa_reg_reconcile( $token ) {
 	if ( $token === '' || aa_reg_by_token( $token ) ) { return null; }
 
