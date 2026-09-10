@@ -526,6 +526,13 @@
 .aat-day--has { border-color:#CFE4E1; cursor:pointer; }
 .aat-day--has .aat-day__num { font-weight:700; }
 .aat-day--run { background:#F4FAF9; border-color:#E4EFED; }
+/* The course-run stripe: one bar per class in session on this day, pushed to
+   the foot of the cell so consecutive days read as a continuous band across
+   the week -- including Saturday and Sunday, which classes run straight
+   through. */
+.aat-day__runs { display:flex; gap:3px; width:100%; margin-top:auto; }
+.aat-day__bar { flex:1 1 auto; height:4px; border-radius:2px; opacity:.55; }
+.aat-day--on .aat-day__bar { opacity:1; }
 .aat-day--on { background:#0E8074; border-color:#0E8074; color:#FFFFFF; cursor:pointer; }
 .aat-day--on .aat-day__num { font-weight:700; }
 .aat-day--on .aat-day__chip { background:rgba(255,255,255,.22) !important; color:#FFFFFF !important; }

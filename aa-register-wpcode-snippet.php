@@ -1747,6 +1747,22 @@ function aa_reg_track_calendar( $atts ) {
 				$runs  = ( $in && ! empty( $busy[ $k ] ) ) ? array_unique( $busy[ $k ] ) : array();
 				$run   = ( $runs && ! $list );
 
+				/* A bar per class still running on this day, in that course's
+				   colour. This is what makes a four-day course read as four
+				   days -- and what shows that a class runs straight through
+				   Saturday and Sunday rather than stopping at the weekend. */
+				$bars = '';
+				if ( $runs ) {
+					$bars = '<span class="aat-day__runs">';
+					foreach ( $runs as $rc ) {
+						if ( ! isset( $meta[ $rc ] ) ) { continue; }
+						$bars .= '<span class="aat-day__bar" data-aatc-chip="' . esc_attr( $rc ) . '"'
+						       . ' style="background:' . esc_attr( $meta[ $rc ]['color'] ) . '"'
+						       . ' title="' . esc_attr( $rc . ' ' . aa_reg_t( 'in_session', 'in session' ) ) . '"></span>';
+					}
+					$bars .= '</span>';
+				}
+
 				$cls = 'aat-day';
 				if ( ! $in )      { $cls .= ' aat-day--out'; }
 				if ( $on )        { $cls .= ' aat-day--on'; }
@@ -1764,22 +1780,6 @@ function aa_reg_track_calendar( $atts ) {
 						        . '<span>' . esc_html( $row['code'] ) . '</span><span>' . esc_html( $mm['short'] ) . '</span></span>';
 					}
 				}
-				/* A bar per class still running on this day, in that course's
-				   colour. This is what makes a four-day course read as four
-				   days -- and what shows that a class runs straight through
-				   Saturday and Sunday rather than stopping at the weekend. */
-				$bars = '';
-				if ( $runs ) {
-					$bars = '<span class="aat-day__runs">';
-					foreach ( $runs as $rc ) {
-						if ( ! isset( $meta[ $rc ] ) ) { continue; }
-						$bars .= '<span class="aat-day__bar" data-aatc-chip="' . esc_attr( $rc ) . '"'
-						       . ' style="background:' . esc_attr( $meta[ $rc ]['color'] ) . '"'
-						       . ' title="' . esc_attr( $rc . ' ' . aa_reg_t( 'in_session', 'in session' ) ) . '"></span>';
-					}
-					$bars .= '</span>';
-				}
-
 				$aria = date( 'F j', $ts ) . ( $list
 					? ', ' . count( $list ) . ' cohort' . ( count( $list ) > 1 ? 's' : '' ) . ' start'
 					: ( $runs ? ', ' . implode( ', ', $runs ) . ' in session' : ', no cohorts' ) );
