@@ -2746,7 +2746,81 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		error_log( 'AA checkout: Stripe said ' . wp_remote_retrieve_body( $res ) );
 		return new WP_Error( 'aa_stripe', 'Could not start checkout. Please try again.', array( 'status' => 502 ) );
 	}
+	/* REMEMBER WHICH SESSION THIS TOKEN BELONGS TO.
+	   The token travels back on the success URL; the session id is what Stripe
+	   can be asked about. Holding the pair for a fortnight is what lets the
+	   confirmation page reconcile a sale the webhook never delivered -- see
+	   aa_reg_reconcile(). Stored, not derived, because Stripe cannot look a
+	   session up by our metadata. */
+	if ( ! empty( $json['id'] ) ) {
+		set_transient( 'aa_reg_tok_' . $token, $json['id'], 14 * DAY_IN_SECONDS );
+	}
+
 	return array( 'url' => $json['url'] );
+}
+
+/**
+ * RECOVER A SALE THE WEBHOOK NEVER DELIVERED.
+ *
+ * The confirmation page used to say "the registration is safe either way
+ * because the webhook owns it." That was the assumption, and it was wrong
+ * twice: the endpoint spent three years subscribed to charge.captured, and
+ * after that was fixed a delivery still failed to land. Both times a buyer
+ * paid, got nothing, and nobody knew until they wrote in.
+ *
+ * So the webhook is no longer the only path. When someone lands on the
+ * confirmation page with a token that has no registration behind it, we ask
+ * Stripe about their session directly and record the sale ourselves.
+ *
+ * THIS DOES NOT TRUST THE BROWSER. The browser supplies an opaque token and
+ * nothing else -- no amount, no cohort, no claim of having paid. The token is
+ * exchanged server-side for a session id we stored at checkout, that session
+ * is fetched from Stripe with our own secret key, and the sale is recorded
+ * only if STRIPE says payment_status is paid. The browser cannot manufacture a
+ * registration; it can only prompt us to go and ask.
+ *
+ * Idempotent twice over: it returns early if the token already resolves, and
+ * aa_reg_record_sale() refuses an id it has already written.
+ */
+function aa_reg_reconcile( $token ) {
+	if ( $token === '' || aa_reg_by_token( $token ) ) { return null; }
+
+	$sid = get_transient( 'aa_reg_tok_' . $token );
+	if ( ! $sid || ! aa_reg_key( 'secret' ) ) { return null; }
+
+	$res = wp_remote_get(
+		'https://api.stripe.com/v1/checkout/sessions/' . rawurlencode( $sid ),
+		array(
+			'timeout' => 15,
+			'headers' => array( 'Authorization' => 'Basic ' . base64_encode( aa_reg_key( 'secret' ) . ':' ) ),
+		)
+	);
+	if ( is_wp_error( $res ) || (int) wp_remote_retrieve_response_code( $res ) !== 200 ) { return null; }
+
+	$sess = json_decode( wp_remote_retrieve_body( $res ), true );
+	if ( ! is_array( $sess ) || ! isset( $sess['payment_status'] ) || $sess['payment_status'] !== 'paid' ) {
+		return null;
+	}
+
+	/* Keyed on the session id rather than an event id, so a webhook that
+	   arrives late cannot record the same sale a second time. */
+	$post_id = aa_reg_record_sale( $sess, 'reconciled:' . $sid );
+	if ( ! $post_id ) { return null; }
+
+	/* This firing means the webhook is not working. The buyer is now served,
+	   but somebody has to know the plumbing is broken -- silence is what let
+	   this run for three years. */
+	wp_mail(
+		get_option( 'admin_email' ),
+		'Registration recovered without the webhook — check the Stripe endpoint',
+		"A buyer reached the confirmation page with a paid session that no webhook had recorded.\n\n"
+		. "Their registration has been created and their confirmation sent, so nothing is owed to them.\n"
+		. "But the Stripe webhook did not deliver, and the next buyer will hit the same gap.\n\n"
+		. "Session: " . $sid . "\n"
+		. "Check the endpoint's recent deliveries for the response code."
+	);
+
+	return $post_id;
 }
 
 /* ============================================================================
@@ -2797,6 +2871,18 @@ function aa_reg_confirmation_shortcode() {
 	if ( $token === '' ) { return ''; }   // no token, nothing to show: the page is blank
 
 	$post = aa_reg_by_token( $token );
+
+	/* THE WEBHOOK IS NOT THE ONLY PATH ANY MORE.
+	   One reload's grace for the ordinary race -- Stripe redirects the moment
+	   the card clears, often before the webhook has finished writing -- and
+	   then we stop waiting and go and ask Stripe ourselves. Waiting longer only
+	   helps when a webhook is late; it never helps when one is broken, and
+	   broken is what it has actually been. */
+	if ( ! $post && ( isset( $_GET['t'] ) ? (int) $_GET['t'] : 0 ) >= 1 ) {
+		$recovered = aa_reg_reconcile( $token );
+		if ( $recovered ) { $post = get_post( $recovered ); }
+	}
+
 	$lang = $post ? (string) get_post_meta( $post->ID, 'lang', true ) : aa_reg_lang();
 	$t    = aa_reg_confirm_strings( $lang ? $lang : 'en' );
 	$rtl  = aa_reg_is_rtl( $lang ? $lang : 'en' );
@@ -3342,13 +3428,29 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 		return array( 'ok' => true, 'unpaid' => true );
 	}
 
-	// Stripe retries until it gets a 2xx, so the same event can arrive more
-	// than once. Recording it twice would double-count seats sold.
+	/* The sale is recorded by a function rather than inline, because the webhook
+	   is no longer the only thing that can record one. See aa_reg_reconcile(). */
 	$eid = isset( $event['id'] ) ? $event['id'] : '';
+	$post_id = aa_reg_record_sale( $s, $eid );
+	if ( $post_id === null ) { return array( 'ok' => true, 'duplicate' => true ); }
+	return array( 'ok' => true, 'id' => $post_id );
+}
+
+
+/**
+ * RECORD ONE PAID SALE. Idempotent on the Stripe id it is given.
+ *
+ * Extracted from the webhook so that the confirmation page can call it too.
+ * Returns the new post id, or null when this sale is already recorded.
+ */
+function aa_reg_record_sale( $s, $eid ) {
+	/* Idempotent on $eid. Stripe retries until it gets a 2xx, so the same event
+	   can arrive more than once, and the reconciler may race the webhook --
+	   recording twice would double-count a seat and mail the buyer twice. */
 	if ( $eid && get_posts( array( 'post_type' => 'aa_registration', 'post_status' => 'any',
 		'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true,
 		'meta_key' => 'stripe_event', 'meta_value' => $eid ) ) ) {
-		return array( 'ok' => true, 'duplicate' => true );
+		return null;
 	}
 
 	$meta   = isset( $s['metadata'] ) ? (array) $s['metadata'] : array();
@@ -3434,7 +3536,7 @@ function aa_reg_webhook( WP_REST_Request $req ) {
 			isset( $s['id'] ) ? $s['id'] : '' )
 	);
 
-	return array( 'ok' => true, 'id' => $post_id );
+	return $post_id;
 }
 
 endif; // double-load guard
