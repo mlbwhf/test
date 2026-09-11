@@ -727,7 +727,41 @@ function aa_reg_generate( $slug, $course ) {
 	return $memo[ $key ] = $out;
 }
 
+/**
+ * ONE-OFF MOVES — a single run that does not sit on its course's cadence.
+ *
+ * Keyed by course slug and the date the CADENCE produced, because that date is
+ * the thing being excepted. The cadence itself is untouched: every other run of
+ * the course is generated exactly as before, which is what makes this an
+ * exception rather than a new rule.
+ *
+ * THE COHORT KEEPS THE ID THE CADENCE GAVE IT. The id is how Stripe metadata,
+ * the seat ledger and every ?cohort= link already issued refer to this run, and
+ * none of them should stop resolving because the class moved by a day. It is
+ * the same run on a different date, not a different run. Nothing shows the id
+ * to a buyer; the dates they see come from 'start' and 'end', which do move.
+ *
+ * An entry here is deliberate, so it is applied after the blackout and span
+ * checks a generated date goes through rather than being subject to them.
+ * Check the new date yourself before adding one.
+ */
+function aa_reg_moves() {
+	return array(
+		/* Asked for on 11 Sep 2026: these two both ran Monday the 14th on their
+		   cadence and run Tuesday the 15th instead. One-off, both courses. */
+		'spc'  => array( '2026-09-14' => '2026-09-15' ),
+		'aspc' => array( '2026-09-14' => '2026-09-15' ),
+	);
+}
+
 function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null ) {
+	/* Applied before anything is derived from the date: the end date, the
+	   weekday/weekend kind and the holiday note all have to describe where the
+	   class actually runs. Only the id keeps the cadence date. */
+	$cadence_start = $start;
+	$moves         = aa_reg_moves();
+	if ( isset( $moves[ $slug ][ $start ] ) ) { $start = $moves[ $slug ][ $start ]; }
+
 	$days   = max( 1, (int) $course['days'] );
 	$region = is_array( $place ) && ! empty( $place['region'] ) ? $place['region'] : 'na';
 	$end    = ( new DateTime( $start ) )->modify( '+' . ( $days - 1 ) . ' day' );
@@ -744,7 +778,7 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 	elseif ( $reason === 'backfill' )    { $note = ' · added date'; }
 	elseif ( $reason === 'moved' )       { $note = ' · moved off a holiday'; }
 	$c = array(
-		'id'    => $slug . '-' . $start,
+		'id'    => $slug . '-' . $cadence_start,
 		'start' => $start,
 		'end'   => $end->format( 'Y-m-d' ),
 		'slot'  => $slot,
@@ -758,7 +792,7 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 	   two cities can hold the same course on the same day, and the id is what
 	   Stripe, the seat ledger and the ?cohort= deep link all key on. */
 	if ( is_array( $place ) ) {
-		$c['id']       = $slug . '-' . $place['key'] . '-' . $start;
+		$c['id']       = $slug . '-' . $place['key'] . '-' . $cadence_start;
 		$c['place']    = $place['label'];
 		$c['placeKey'] = $place['key'];
 		$c['batch']    = $place['label'] . ' · ' . $c['batch'];
