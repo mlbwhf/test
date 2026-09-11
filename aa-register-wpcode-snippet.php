@@ -3219,6 +3219,41 @@ function aa_reg_reconcile( $token ) {
    ========================================================================== */
 
 /** The confirmation page URL for a token, or the home page if the page is gone. */
+/**
+ * THE CONFIRMATION PAGE MUST NEVER BE CACHED. THIS IS THE LOOP.
+ *
+ * /registration-confirmed/?order=TOKEN is different for every buyer and
+ * different on every load -- it holds one person's name, course and dates, and
+ * it reloads itself while it waits for the sale to be recorded. A full-page
+ * cache in front of it breaks it in two ways, and this site runs SiteGround's:
+ *
+ *   1. THE LOOP. The waiting page carries a script that sends the browser to
+ *      the same URL with t+1. If the cache ignores the query string, every
+ *      reload is served the same cached copy -- which still says t=0 and still
+ *      points at t=1. The counter never advances, the four-try ceiling is never
+ *      reached, and the buyer watches the page bounce forever instead of ever
+ *      reaching the "your email is on its way" message.
+ *
+ *   2. WORSE THAN THE LOOP. One buyer's confirmation, cached, is served to the
+ *      next -- someone else's name, course and dates, on a page that says
+ *      "thank you" to them by name.
+ *
+ * DONOTCACHEPAGE is the flag SiteGround Optimizer, WP Rocket, W3TC and
+ * LiteSpeed all honour; nocache_headers() covers proxies and the browser.
+ */
+add_action( 'template_redirect', function () {
+	if ( is_admin() ) { return; }
+
+	$has_token = ! empty( $_GET['order'] );
+	$slug      = apply_filters( 'aa_reg_confirm_page_slug', 'registration-confirmed' );
+	if ( ! $has_token && ! is_page( $slug ) ) { return; }
+
+	foreach ( array( 'DONOTCACHEPAGE', 'DONOTCACHEOBJECT', 'DONOTCACHEDB' ) as $flag ) {
+		if ( ! defined( $flag ) ) { define( $flag, true ); }
+	}
+	nocache_headers();
+}, 0 );
+
 function aa_reg_confirm_url( $token ) {
 	$slug = apply_filters( 'aa_reg_confirm_page_slug', 'registration-confirmed' );
 	$page = get_page_by_path( $slug );
@@ -3248,13 +3283,17 @@ function aa_reg_confirmation_shortcode() {
 
 	$post = aa_reg_by_token( $token );
 
-	/* THE WEBHOOK IS NOT THE ONLY PATH ANY MORE.
-	   One reload's grace for the ordinary race -- Stripe redirects the moment
-	   the card clears, often before the webhook has finished writing -- and
-	   then we stop waiting and go and ask Stripe ourselves. Waiting longer only
-	   helps when a webhook is late; it never helps when one is broken, and
-	   broken is what it has actually been. */
-	if ( ! $post && ( isset( $_GET['t'] ) ? (int) $_GET['t'] : 0 ) >= 1 ) {
+	/* ASK STRIPE ON THE FIRST LOAD, NOT THE SECOND.
+	   This used to give the webhook one reload's grace before going and asking
+	   Stripe itself -- reasonable when a webhook is merely late, and useless
+	   when it is broken. Broken is what it has actually been, so every single
+	   buyer was paying for that grace with a reload they did not need, and
+	   watching the page bounce while they waited for it.
+
+	   Racing the webhook is safe now: aa_reg_record_sale() is idempotent on the
+	   session id, so the webhook, this and the sweep can all describe the same
+	   sale and only the first one through records it. */
+	if ( ! $post ) {
 		$recovered = aa_reg_reconcile( $token );
 		if ( $recovered ) { $post = get_post( $recovered ); }
 	}
