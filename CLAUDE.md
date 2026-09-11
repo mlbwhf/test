@@ -37,6 +37,16 @@ session drops — the current hypothesis is an idle timeout on the long-lived co
 connection is live. The payload guidance below remains sensible practice for individual
 requests, but must not be cited as the cause of disconnects.
 
+**`wp_create_post` silently ignores `post_parent` (confirmed 2026-09-11).** Pages
+created with a parent land at the site root (`/customer-support/`) instead of nested
+(`/indexes/workforce-labor/will-ai-replace-my-job/customer-support/`). No error is
+returned — `post_parent` just does not stick. `wp_update_post` DOES apply it.
+
+So for any nested page: create it, then **immediately `wp_update_post` the
+`post_parent`, then verify the permalink** with `wp_get_posts` before writing or
+publishing anything that links to it. Hard-coded internal links will otherwise 404
+the moment the page goes live. Set parents top-down (pillar before children).
+
 The site's firewall (WAF) has previously 403-blocked large POST payloads and content containing JSON-like `{"..."}` sequences:
 - Prefer `wp_alter_post` (small search/replace edits) over full-content `wp_update_post` for published pages.
 - For JSON-LD edits, use regex mode and/or split into multiple small replacements.

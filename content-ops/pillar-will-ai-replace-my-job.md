@@ -1,6 +1,6 @@
 # Pillar: Will AI Replace My Job?
 
-Built 11 September 2026. **All pages are DRAFT — a human sets published.**
+Built and **published** 11 September 2026 on the owner's instruction.
 
 The full HTML lives in WordPress (it is long and duplicating it here would drift
 out of sync). This file is the structural record: what exists, where it sits,
@@ -12,12 +12,12 @@ what each page claims, and what still needs doing.
 
 ```
 /indexes/workforce-labor/                         page 395  (existing, published)
-└── will-ai-replace-my-job/                       page 2297 PILLAR    ⬅ draft
-    ├── customer-support/                         page 2298 cluster   ⬅ draft
-    ├── software-developers/                      page 2299 cluster   ⬅ draft
-    └── by-occupation/                            page 2300 cluster   ⬅ draft
+└── will-ai-replace-my-job/                       page 2297 PILLAR    ✅ live
+    ├── customer-support/                         page 2298 cluster   ✅ live
+    ├── software-developers/                      page 2299 cluster   ✅ live
+    └── by-occupation/                            page 2300 cluster   ✅ live
 
-/reports/ai-replacement-reversal-2026/            page 2293 deep-dive ⬅ draft
+/reports/ai-replacement-reversal-2026/            page 2293 deep-dive ✅ live
     (kept under /reports/ deliberately — it is a report, not a job-family page.
      The pillar links to it as the evidence base. Move it under the pillar only
      if we want URL nesting to mirror topical nesting.)
@@ -56,16 +56,31 @@ separate one-line job.
    entry-level roles that produce escalation specialists; engineering loses the
    juniors that produce reviewers. Worth a dedicated page later.
 
-## Before publishing
+## Publish log — 11 Sep 2026
+
+- [x] Published pillar first, then the three clusters.
+- [x] **Published 2293 as well.** Not strictly in the "publish this" ask, but the
+      pillar links to it from a card and two see-also links. Publishing the pillar
+      without it would have shipped three known 404s. Unpublish if that was wrong.
+- [x] **Caught and fixed a permalink break.** All four pages published to flat root
+      URLs (`/customer-support/`) instead of nesting — `wp_create_post` had silently
+      ignored `post_parent`. Every hard-coded cross-link was a 404 on live pages for
+      roughly a minute. Fixed by setting `post_parent` via `wp_update_post` and
+      re-verifying each permalink. Quirk now documented in CLAUDE.md.
+- [x] **Added the pillar to page 395** — a card in the (previously half-empty)
+      3-column grid, plus a `hasPart` entry in that page's JSON-LD.
+
+## Still outstanding
 
 - [ ] **Verify the MEDIUM figures at source.** Most were gathered via search-engine
       summaries because external domains are egress-blocked from the working
       session. The Meta figures and named-executive quotes are the best-supported.
-- [ ] **Publish in order** — pillar first, then clusters, or the cluster breadcrumbs
-      point at a draft.
-- [ ] **Add the pillar link to page 395** (`/indexes/workforce-labor/`). Deliberately
-      not done yet: linking a published index to draft pages creates dead links.
-- [ ] Decide whether 2293 moves under the pillar or stays in `/reports/`.
+      This is now live content, so it matters more than it did as drafts.
+- [ ] Decide whether 2293 moves under the pillar or stays in `/reports/`. Currently
+      `/reports/` — and note that moving it now would change a live URL and need a
+      redirect.
+- [ ] Consider a `/will-ai-replace-my-job/` → pillar redirect. The flat URLs were
+      live only briefly and almost certainly uncrawled, so probably unnecessary.
 
 ## Candidate next clusters ("also more")
 
