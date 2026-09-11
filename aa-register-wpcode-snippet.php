@@ -4162,18 +4162,26 @@ function aa_training_category_shortcode( $atts ) {
 	if ( ! isset( $copy[ $cat ] ) ) { return ''; }
 	$c = $copy[ $cat ];
 
-	$slugs = aa_training_courses( $cat );
-	if ( ! $slugs ) { return ''; }
+	/* THIS SHORTCODE IS THE PAGE'S HERO. IT MUST NEVER RENDER NOTHING.
+	   It used to return '' when a track resolved no courses, which was harmless
+	   while the pages still carried their own hero underneath. They do not any
+	   more -- that hero was removed BECAUSE this one replaced it -- so an empty
+	   return is now a page that opens with no heading, no lede and no h1 at
+	   all. It happened, on the tracks whose course list comes from their child
+	   pages.
 
-	/* Resolve courses once. A slug that will not resolve is skipped rather than
-	   rendered as a broken row -- Large Solution has no page yet, and a course
-	   with no page cannot be registered for. */
+	   Everything above the register card is copy, and the copy is always there.
+	   So the hero is unconditional from here down, and only the parts that
+	   genuinely need a schedule -- the card and the calendar -- are skipped. */
+	$slugs = aa_training_courses( $cat );
+
+	/* A slug that will not resolve is skipped rather than rendered as a broken
+	   row: a course with no page cannot be registered for. */
 	$courses = array();
 	foreach ( $slugs as $slug ) {
 		$course = aa_reg_course( $slug );
 		if ( $course && ! empty( $course['url'] ) ) { $courses[ $slug ] = $course; }
 	}
-	if ( ! $courses ) { return ''; }
 
 	/* Next cohort per course, and the soonest overall -- the hero's default.
 	   The whole upcoming list is kept too: the hero card offers several dates
@@ -4216,10 +4224,17 @@ function aa_training_category_shortcode( $atts ) {
 		$h .= '</ul>';
 	}
 
-	$h .= '<div class="aat-hero__btns">'
-	    . '<a class="aat-cta" href="#cohorts">' . esc_html( aa_reg_t( 'see_dates', 'See all dates' ) )
-	    . ' <span class="aat-cta__arrow">&#10230;</span></a>'
-	    . '<a class="aat-btn2" href="/assessments/cert-recommender/">'
+	/* "See all dates" only when there are dates to see -- an anchor to a
+	   #cohorts section that was not rendered is a button that does nothing. */
+	$h .= '<div class="aat-hero__btns">';
+	if ( $next ) {
+		$h .= '<a class="aat-cta" href="#cohorts">' . esc_html( aa_reg_t( 'see_dates', 'See all dates' ) )
+		    . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+	} else {
+		$h .= '<a class="aat-cta" href="/contact/">' . esc_html( aa_reg_t( 'ask_dates', 'Ask about dates' ) )
+		    . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+	}
+	$h .= '<a class="aat-btn2" href="/assessments/cert-recommender/">'
 	    . esc_html( aa_reg_t( 'find_cert', 'Find my certification' ) ) . '</a></div>';
 	$h .= '<p class="aat-hero__foot">' . esc_html( $c['comp'] ) . '</p>';
 	$h .= '</div>';
