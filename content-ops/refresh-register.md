@@ -35,6 +35,7 @@ against its primary source in this workstream.
 | `/indexes/technical-benchmarks/` + infrastructure/compute | Compute trends, ~945 TWh by 2030 | IEA, vendor disclosures | 2026-08-18 | ✅ |
 | `/indexes/workforce-labor/` + `ai-jobs-statistics-2026` | 92M jobs displaced by 2030, skills premium | WEF Future of Jobs, ILO | unknown | ⚠️ |
 | `/indexes/ai-dark-side-statistics/` + 5 sub-indexes | Deepfake fraud, surveillance, misinformation series | Multiple; annual reports with interim incidents | 2026-08 | ⏳ |
+| `/reports/ai-replacement-reversal-2026/` (page 2293, **DRAFT**) | Meta Project OT figures (+220%/+36%/+40%/+70%), 55% regret, 32% refilled, 30.9%/42.4% cost split, 20–35% premium, 11.4h vs 9.8h review time, +441% PR review, −67% entry-level postings | Reuters + Forrester/Robert Half/DORA/GitClear/Faros/Sonar — vendor research refreshes a few times a year; the Meta figures are fixed history | 2026-09-11 | 🟡 **draft, MEDIUM figures unverified at source** |
 | `/reports/dark-side-of-ai/ai-workslop-statistics/` | 40%, 1h56m, $186/worker/month | BetterUp/Stanford study is fixed — re-check for replication or newer studies | 2026-08-18 | ✅ |
 | `/reports/dark-side-of-ai/ai-hidden-debt-financing-risk/` | ~$1.7T off-balance-sheet obligations | Nikkei analysis; hyperscaler filings quarterly | 2026-08 | ⏳ |
 | `/reports/eu-ai-act-fully-applicable-august-2026/` | Obligation timeline, May 2026 amendments | Regulatory — check for delegated acts and guidance | 2026-08-02 | ✅ |
