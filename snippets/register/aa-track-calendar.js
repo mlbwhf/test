@@ -77,25 +77,56 @@
     });
   }
 
-  /* The card, kept in step with aa_reg_track_panel() on the server. */
+  /* The card, kept in step with aa_reg_track_panel() on the server -- including
+     the in-place checkout form, which is the whole point of the panel: the
+     purchase happens here, on whatever page the calendar is on, for whichever
+     of the track's courses is selected. The form posts a cohort id and the
+     server resolves it, so one form sells seven courses -- and sells a course
+     that has no page of its own to send anyone to. */
+  function form(c) {
+    var live = D.live;
+    return '<form class="aareg-inline aatco-inline" data-aa-inline data-aa-inline-fixed novalidate'
+      + ' data-cohort="' + esc(c.id) + '" data-price="' + esc(c.raw) + '"'
+      + ' data-seats-left="' + esc(c.left) + '">'
+      + '<label class="aareg-inline-field"><span class="aacal-sr">' + esc(D.labels.email) + '</span>'
+      + '<input name="email" type="email" autocomplete="email" inputmode="email"'
+      + ' placeholder="' + esc(D.labels.email) + '" required></label>'
+      + '<div class="aareg-inline-row"><div class="aareg-inline-stepper">'
+      + '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>'
+      + '<span data-inline-seats-value aria-live="polite">1</span>'
+      + '<button type="button" data-inline-seats="1" aria-label="More seats">+</button></div>'
+      + '<p class="aareg-inline-total" data-inline-total>' + esc(c.price) + '</p></div>'
+      + '<button type="submit" class="aareg-inline-pay" data-inline-pay' + (live ? '' : ' disabled') + '>'
+      + esc(live ? D.labels.pay : D.labels.payOff) + '</button>'
+      + '<p class="aareg-inline-note" data-inline-note>'
+      + esc(live ? D.labels.payNote : D.labels.payOffNote) + '</p></form>';
+  }
+
   function card(c) {
     var seats = (c.left <= 6)
       ? ' &middot; ' + esc(String(D.labels.seatsLeft).replace('%d', c.left))
       : '';
     var where = [c.place, c.hours].filter(Boolean).join(' · ');
-    return '<article class="aat-co">'
-      + '<span class="aat-badge" style="background:' + esc(c.tint) + ';color:' + esc(c.color)
-      + ';border:1px solid ' + esc(c.bd) + '">' + esc(c.code) + '</span>'
+    return '<article class="aat-co" style="--bar:' + esc(c.color) + '">'
+      + '<p class="aat-co__eyebrow">' + esc(D.label || c.code) + '</p>'
       + '<h3 class="aat-co__h">' + esc(c.name) + '</h3>'
+      + (c.blurb ? '<p class="aat-co__blurb">' + esc(c.blurb) + '</p>' : '')
       + '<dl class="aat-co__facts">'
       + '<div><dt>' + esc(D.labels.dates) + '</dt><dd>' + esc(c.range) + '</dd></div>'
       + '<div><dt>' + esc(D.labels.schedule) + '</dt><dd>' + esc(c.days) + ' ' + esc(D.labels.daysL) + '</dd></div>'
+      + (where ? '<div class="aat-co__facts-wide"><dt>Format</dt><dd>' + esc(where) + '</dd></div>' : '')
       + '</dl>'
-      + (where ? '<p class="aat-co__where">' + esc(where) + '</p>' : '')
+      + ((c.proof && c.proof.length)
+          ? '<ul class="aat-co__proof">' + c.proof.map(function (p) {
+              return '<li>' + esc(p) + '</li>';
+            }).join('') + '</ul>'
+          : '')
       + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
       + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
-      + '<a class="aat-cta aat-co__go" href="' + esc(c.url) + '">' + esc(D.labels.register)
-      + ' <span class="aat-cta__arrow">&#10230;</span></a>'
+      + form(c)
+      + (c.url
+          ? '<a class="aat-co__more" href="' + esc(c.url) + '">' + esc(D.labels.details) + ' &#10230;</a>'
+          : '')
       + '</article>';
   }
 
@@ -109,7 +140,18 @@
         el.setAttribute('aria-pressed', on ? 'true' : 'false');
       }
     });
-    if (panel) { panel.innerHTML = card(c); }
+    if (!panel) { return; }
+    /* The payload is keyed by cohort id, so the card needs the key put back on
+       the record before it can name itself in the form. */
+    c.id = id;
+    panel.innerHTML = card(c);
+    /* The in-place checkout paints its total from the form's own attributes.
+       `true` marks this as the owning component talking about its own form, so
+       the retarget is not refused by data-aa-inline-fixed. */
+    var f = panel.querySelector('[data-aa-inline]');
+    if (f && window.AA_REG_RETARGET) {
+      window.AA_REG_RETARGET(f, { cohort: id, price: c.raw }, true);
+    }
   }
 
   root.addEventListener('click', function (e) {

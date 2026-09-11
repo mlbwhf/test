@@ -1012,7 +1012,37 @@ function aa_reg_find_by_date( $course_key, $start ) {
  * would be harmless but the second would silently overwrite the first, which
  * is the kind of thing that only shows up when the two disagree.
  */
-function aa_reg_config_script( $course_key, $course, $cur ) {
+/**
+ * Does this course URL actually resolve to a published page?
+ *
+ * Large Solution is sold from the schedule but has no page of its own yet, so
+ * every link to it was a 404 at the end of a registration journey. Rather than
+ * hide the course -- it is a real course on the real schedule -- the calendar
+ * asks this and then does not link: the bar becomes a button, the panel drops
+ * its "full course details" link, and the in-place form takes the money where
+ * it stands. Nothing else has to know which courses have pages.
+ */
+function aa_reg_page_exists( $url ) {
+	static $seen = array();
+	$path = trim( (string) parse_url( (string) $url, PHP_URL_PATH ), '/' );
+	if ( $path === '' ) { return false; }
+	if ( isset( $seen[ $path ] ) ) { return $seen[ $path ]; }
+	$seen[ $path ] = false;
+	/* FAILS OPEN. A course page that cannot be looked up is assumed to exist:
+	   the cost of a wrong "yes" is one broken link, and the cost of a wrong
+	   "no" is unlinking every course on the page -- which would strip the
+	   calendar of exactly the internal links it exists to provide. */
+	if ( ! function_exists( 'get_page_by_path' ) ) { $seen[ $path ] = true; return true; }
+	$p = get_page_by_path( $path );
+	$seen[ $path ] = ( $p && ( ! isset( $p->post_status ) || $p->post_status === 'publish' ) );
+	return $seen[ $path ];
+}
+
+/**
+ * @param string     $course_key  '' on a track page, which sells several courses.
+ * @param array|null $course      null with it: there is no single price or date set.
+ */
+function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) {
 	static $done = false;
 	if ( $done ) { return ''; }
 	$done = true;
@@ -1024,7 +1054,7 @@ function aa_reg_config_script( $course_key, $course, $cur ) {
 		'course'         => $course_key,
 		// The authoritative price, for anything rendering a total without a
 		// batch of its own to read it from — the calendar's panel form.
-		'price'          => (int) $course['price'],
+		'price'          => $course ? (int) $course['price'] : 0,
 		/* EVERY DATE THIS COURSE CAN ACTUALLY BE BOUGHT ON.
 		   The calendar draws wp_events posts; the registration sells batches
 		   generated from a cadence. Those are two different sets of dates and
@@ -1034,10 +1064,10 @@ function aa_reg_config_script( $course_key, $course, $cur ) {
 		   those and letting the server refuse is a dead end at the last step,
 		   which is exactly where a buyer will not try again. So the calendar
 		   asks first. ~90 dates, under a kilobyte. */
-		'dates'          => array_values( array_map(
+		'dates'          => ( $course_key && $course ) ? array_values( array_map(
 			function ( $c ) { return $c['start']; },
 			aa_reg_upcoming( $course_key, $course )
-		) ),
+		) ) : array(),
 		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '\u20ac' : '$' ),
 		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
 		'nonce'          => wp_create_nonce( 'wp_rest' ),
@@ -1047,9 +1077,17 @@ function aa_reg_config_script( $course_key, $course, $cur ) {
 	) ) . ';</script>';
 }
 
-function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg' ) {
+/**
+ * @param bool $fixed The component owning this form sets its own batch, so a
+ *                    pick made elsewhere on the page must not retarget it.
+ *                    The track calendar rebuilds its panel per bar; without
+ *                    this, choosing a bar and then a course in the hero card
+ *                    would leave the form pointed at the wrong cohort.
+ */
+function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = false ) {
 	$live = aa_reg_is_live();
 	return '<form class="aareg-inline ' . esc_attr( $prefix ) . '-inline" data-aa-inline novalidate'
+	     . ( $fixed ? ' data-aa-inline-fixed' : '' )
 	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
 	     . ' data-price="' . (int) $course['price'] . '">'
 	     . '<label class="aareg-inline-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
@@ -1623,11 +1661,23 @@ add_shortcode( 'aa_course_hero', 'aa_reg_hero' );
    USE:  [aa_track_calendar courses="ai-native-foundations,ai-native-change-agent,ai-native-ready-certification-2"]
          [aa_track_calendar courses="..." months="3" limit="24"]
    ========================================================================== */
+/** One sentence of course copy, short enough to sit in a panel. */
+function aa_reg_blurb( $course, $max = 165 ) {
+	$s = trim( wp_strip_all_tags( isset( $course['lede'] ) ? $course['lede'] : '' ) );
+	if ( $s === '' ) { return ''; }
+	if ( function_exists( 'mb_strlen' ) ? mb_strlen( $s ) <= $max : strlen( $s ) <= $max ) { return $s; }
+	$cut = function_exists( 'mb_substr' ) ? mb_substr( $s, 0, $max ) : substr( $s, 0, $max );
+	$sp  = strrpos( $cut, ' ' );
+	if ( $sp > 40 ) { $cut = substr( $cut, 0, $sp ); }
+	return rtrim( $cut, " ,.;:-" ) . '…';
+}
+
 function aa_reg_track_calendar( $atts ) {
 	$a = shortcode_atts( array(
 		'courses' => '',
 		'months'  => 6,
 		'heading' => '',
+		'label'   => '',
 	), $atts, 'aa_track_calendar' );
 
 	$slugs = array_filter( array_map( 'trim', explode( ',', (string) $a['courses'] ) ) );
@@ -1659,6 +1709,9 @@ function aa_reg_track_calendar( $atts ) {
 		$meta[ $code ] = array(
 			'name'  => $course['name'],
 			'url'   => $course['url'],
+			'page'  => aa_reg_page_exists( $course['url'] ),
+			'blurb' => aa_reg_blurb( $course ),
+			'proof' => isset( $course['proof'] ) && is_array( $course['proof'] ) ? $course['proof'] : array(),
 			'price' => $course['price'],
 			'cur'   => $course['currency'],
 			'days'  => $days,
@@ -1689,10 +1742,10 @@ function aa_reg_track_calendar( $atts ) {
 	}
 	$months = array_slice( $months, 0, max( 1, (int) $a['months'] ), true );
 
-	/* The selection is now A COHORT, not a day. A day can hold five starts, and
-	   a panel that answered "what is on the 14th" had to list all five -- which
-	   is what made the register block taller than the calendar beside it. A bar
-	   is one cohort, so clicking one has exactly one answer. */
+	/* The selection is A COHORT, not a day. A day can hold five starts, and a
+	   panel answering "what is on the 14th" had to list all five -- which is
+	   what made the register block taller than the calendar beside it. A bar is
+	   one cohort, so clicking one has exactly one answer. */
 	$sel    = $all[0];
 	$sel_id = $sel['c']['id'];
 
@@ -1700,19 +1753,25 @@ function aa_reg_track_calendar( $atts ) {
 	$h   = '<section class="aatc"' . $dir . ' data-aatc>';
 	if ( $a['heading'] !== '' ) { $h .= '<h2 class="aatc-h">' . esc_html( $a['heading'] ) . '</h2>'; }
 
-	/* Certification filter */
-	$h .= '<div class="aat-chips" role="group" aria-label="' . esc_attr( aa_reg_t( 'filter_cert', 'Filter by certification' ) ) . '">'
-	    . '<button type="button" class="aat-chip" data-aatc-code="All" aria-pressed="true">'
-	    . '<span class="aat-dot" style="background:#101C33"></span>' . esc_html( aa_reg_t( 'all_certs', 'All certifications' ) ) . '</button>';
-	foreach ( $meta as $code => $m ) {
-		$h .= '<button type="button" class="aat-chip" data-aatc-code="' . esc_attr( $code ) . '" aria-pressed="false">'
-		    . '<span class="aat-dot" style="background:' . esc_attr( $m['color'] ) . '"></span>' . esc_html( $code ) . '</button>';
+	/* Certification filter. This is also the colour key -- each chip carries
+	   its course's dot -- so the calendar needs no second legend. */
+	if ( count( $meta ) > 1 ) {
+		$h .= '<div class="aat-chips" role="group" aria-label="' . esc_attr( aa_reg_t( 'filter_cert', 'Filter by certification' ) ) . '">'
+		    . '<button type="button" class="aat-chip" data-aatc-code="All" aria-pressed="true">'
+		    . '<span class="aat-dot" style="background:#101C33"></span>' . esc_html( aa_reg_t( 'all_certs', 'All certifications' ) ) . '</button>';
+		foreach ( $meta as $code => $m ) {
+			$h .= '<button type="button" class="aat-chip" data-aatc-code="' . esc_attr( $code ) . '" aria-pressed="false"'
+			    . ' title="' . esc_attr( $m['name'] ) . '">'
+			    . '<span class="aat-dot" style="background:' . esc_attr( $m['color'] ) . '"></span>' . esc_html( $code ) . '</button>';
+		}
+		$h .= '</div>';
 	}
-	$h .= '</div>';
 
-	$h .= '<div class="aat-cal"><div class="aat-calcard">';
+	/* ONE CARD, two columns. The calendar and the cohort it has selected are
+	   halves of the same object, so they share a border rather than floating as
+	   two cards with a gap between them. */
+	$h .= '<div class="aat-cal"><div class="aat-calmain">';
 
-	/* Month header + nav */
 	$mkeys = array_keys( $months );
 	$h .= '<div class="aat-calcard__head"><div>'
 	    . '<p class="aat-calcard__eyebrow">' . esc_html( aa_reg_t( 'upcoming_cohorts', 'Upcoming cohorts' ) ) . '</p>'
@@ -1724,7 +1783,7 @@ function aa_reg_track_calendar( $atts ) {
 
 	$h .= '<div class="aat-calscroll"><div class="aat-calinner">'
 	    . '<div class="aat-dows">';
-	foreach ( array( 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ) as $d ) { $h .= '<span>' . $d . '</span>'; }
+	foreach ( array( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ) as $d ) { $h .= '<span>' . $d . '</span>'; }
 	$h .= '</div>';
 
 	$mi = 0;
@@ -1732,7 +1791,7 @@ function aa_reg_track_calendar( $atts ) {
 		$y = (int) substr( $mk, 0, 4 );
 		$m = (int) substr( $mk, 5, 2 );
 		$firstts = mktime( 0, 0, 0, $m, 1, $y );
-		$lead    = ( (int) date( 'w', $firstts ) + 6 ) % 7;   // Monday-first
+		$lead    = (int) date( 'w', $firstts );   // Sunday-first, as the course pages are
 		$rows    = (int) ceil( ( $lead + (int) date( 't', $firstts ) ) / 7 );
 
 		$h .= '<div class="aat-grid" data-aatc-month="' . esc_attr( $mk ) . '"' . ( $mi === 0 ? '' : ' hidden' ) . '>';
@@ -1742,11 +1801,10 @@ function aa_reg_track_calendar( $atts ) {
 
 			/* EVERY COHORT THAT TOUCHES THIS WEEK, clipped to it. A class that
 			   starts on Monday and ends on Thursday is one bar four columns
-			   wide; one that runs Sep 28 to Oct 1 is drawn in both weeks, with
-			   the cut end flagged so it reads as continuing rather than
-			   stopping. This is what makes the length of a course visible --
-			   and what shows a class running straight through Saturday and
-			   Sunday, which is what the day-chip grid could never say. */
+			   wide; one that runs Thursday to Sunday is drawn in both week rows.
+			   This is what makes the length of a course visible -- and what
+			   shows a class running straight through Saturday and Sunday, which
+			   is what the day-chip grid could never say. */
 			$bars = array();
 			foreach ( $all as $row ) {
 				$cs = strtotime( $row['c']['start'] );
@@ -1801,25 +1859,44 @@ function aa_reg_track_calendar( $atts ) {
 				$row = $b['row'];
 				$mm  = $meta[ $row['code'] ];
 				$c   = $row['c'];
-				$url = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
-				     . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+				$on  = ( $c['id'] === $sel_id );
 				$cls = 'aat-bar'
 				     . ( $b['open'] ? ' aat-bar--from' : '' )
 				     . ( $b['more'] ? ' aat-bar--to' : '' )
-				     . ( $c['id'] === $sel_id ? ' aat-bar--on' : '' );
+				     . ( $on ? ' aat-bar--on' : '' );
 
-				$h .= '<a class="' . $cls . '" href="' . esc_url( $url ) . '"'
+				/* A COURSE WITHOUT A PAGE IS STILL A COURSE.
+				   Large Solution sells from the schedule and has no page yet, so
+				   linking its bar was a 404 at the end of the journey. It gets a
+				   button instead; the panel beside the calendar takes the money
+				   either way. */
+				$link = $mm['page'];
+				$url  = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
+				      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+
+				$style = 'grid-column:' . (int) $b['col'] . '/span ' . (int) $b['span']
+				       . ';grid-row:' . ( (int) $b['lane'] + 1 )
+				       . ';--bar:' . esc_attr( $mm['color'] )
+				       . ';--bar-tint:' . esc_attr( $mm['tint'] )
+				       . ';--bar-bd:' . esc_attr( $mm['bd'] );
+
+				$h .= '<' . ( $link ? 'a' : 'button' ) . ' class="' . $cls . '"'
+				    . ( $link ? ' href="' . esc_url( $url ) . '"' : ' type="button"' )
 				    . ' data-aatc-co="' . esc_attr( $c['id'] ) . '"'
 				    . ' data-aatc-c="' . esc_attr( $row['code'] ) . '"'
-				    . ' style="grid-column:' . (int) $b['col'] . '/span ' . (int) $b['span']
-				    . ';grid-row:' . ( (int) $b['lane'] + 1 )
-				    . ';background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] )
-				    . ';border-color:' . esc_attr( $mm['bd'] ) . '"'
+				    . ' style="' . $style . '"'
 				    . ' aria-label="' . esc_attr( $mm['name'] . ' · ' . aa_reg_range( $c['start'], $c['end'] )
 				        . ' · ' . $mm['days'] . ' ' . aa_reg_t( 'days_l', 'days' ) ) . '">'
-				    . '<b class="aat-bar__code">' . esc_html( $row['code'] ) . '</b>'
-				    . '<span class="aat-bar__range">' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</span>'
-				    . '<span class="aat-bar__d">' . esc_html( $mm['short'] ) . '</span></a>';
+				    . '<b class="aat-bar__code">' . esc_html( $row['code'] ) . '</b>';
+				/* The tail of a run that began in the previous week is one or
+				   two columns wide. A range and a length do not fit and are
+				   already stated on the head of the same run, so it carries the
+				   code alone. */
+				if ( ! $b['open'] ) {
+					$h .= '<span class="aat-bar__range">' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</span>'
+					    . '<span class="aat-bar__d">' . esc_html( $mm['short'] ) . '</span>';
+				}
+				$h .= '</' . ( $link ? 'a' : 'button' ) . '>';
 			}
 			$h .= '</div>';
 			if ( $nlanes > $cap ) {
@@ -1861,19 +1938,24 @@ function aa_reg_track_calendar( $atts ) {
 	}
 	$h .= '</div>';
 
-	/* The bar already says how long a course is, so the legend no longer has to.
-	   What it says instead is the thing a buyer gets wrong: a four-day class
-	   does not pause for the weekend. */
+	/* The bar already says how long a course is, so the note says the thing a
+	   buyer gets wrong instead: a four-day class does not pause for the
+	   weekend. */
 	$h .= '<p class="aat-legend">' . esc_html( aa_reg_t( 'bar_note',
 		'Each bar covers the full length of the course, weekends included. Pick one to see the details.' ) ) . '</p>';
 	$h .= '</div>';
 
-	/* The register panel. Server-rendered for the first cohort, so the page is
-	   complete without scripts; the JS only repaints it on a click. */
+	/* THE REGISTER PANEL, and it registers. Server-rendered for the first
+	   cohort so the page is complete without scripts; the JS only repaints it
+	   on a click. The form posts a cohort id, which the checkout resolves
+	   across every course -- so this works on a track page that sells seven
+	   courses exactly as it does on a course page that sells one, and it works
+	   for a course with no page of its own at all. */
 	$h .= '<aside class="aat-side"><div class="aat-side__head">'
 	    . '<span class="aat-side__dot"></span>'
 	    . esc_html( aa_reg_t( 'selected_cohort', 'Selected cohort' ) ) . '</div>'
-	    . '<div class="aat-side__body" data-aatc-panel>' . aa_reg_track_panel( $sel, $meta ) . '</div>'
+	    . '<div class="aat-side__body" data-aatc-panel>'
+	    . aa_reg_track_panel( $sel, $meta, $a['label'] ) . '</div>'
 	    . '<p class="aat-private">' . esc_html( aa_reg_t( 'no_dates', "Dates don't work?" ) ) . ' '
 	    . '<a href="/contact/">' . esc_html( aa_reg_t( 'private', 'Ask for a private cohort' ) ) . '</a></p>'
 	    . '</aside>';
@@ -1888,29 +1970,44 @@ function aa_reg_track_calendar( $atts ) {
 		$payload[ $c['id'] ] = array(
 			'code'  => $row['code'],
 			'name'  => $mm['name'],
+			'blurb' => $mm['blurb'],
+			'proof' => array_values( $mm['proof'] ),
 			'range' => aa_reg_range( $c['start'], $c['end'] ),
 			'days'  => $mm['days'],
 			'place' => isset( $c['place'] ) ? $c['place'] : '',
 			'hours' => isset( $c['hours'] ) ? $c['hours'] : '',
 			'price' => aa_reg_money( $mm['price'], $mm['cur'] ),
+			'raw'   => (int) $mm['price'],
 			'left'  => aa_reg_seats_left( $row['course'], $c ),
-			'url'   => $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' ) . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll',
+			'url'   => $mm['page'] ? $mm['url'] : '',
 			'color' => $mm['color'], 'tint' => $mm['tint'], 'bd' => $mm['bd'],
-			'month' => substr( $c['start'], 0, 7 ),
 		);
 	}
 	$h .= '<script>window.AA_TC=' . wp_json_encode( array(
 		'cohorts' => $payload,
 		'months'  => array_keys( $months ),
+		'label'   => $a['label'],
+		'live'    => aa_reg_is_live(),
 		'labels'  => array(
 			'seatsLeft' => aa_reg_t( 'seats_left_n', '%d seats left' ),
-			'register'  => aa_reg_t( 'register_now', 'Register' ),
 			'incl'      => aa_reg_t( 'exam_included', 'exam included' ),
 			'dates'     => aa_reg_t( 'dates', 'Dates' ),
 			'schedule'  => aa_reg_t( 'duration', 'Duration' ),
 			'daysL'     => aa_reg_t( 'days_l', 'days' ),
+			'email'     => aa_reg_t( 'your_email', 'Your email' ),
+			'seats'     => aa_reg_t( 'seats', 'Seats' ),
+			'pay'       => aa_reg_t( 'pay', 'Pay securely with Stripe' ),
+			'payOff'    => aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ),
+			'payNote'   => 'Exam fee included. You will be taken to Stripe to pay.',
+			'payOffNote'=> 'Online payment is switched off right now — please contact us.',
+			'details'   => aa_reg_t( 'full_details', 'Full course details' ),
 		),
 	) ) . ';</script>';
+
+	/* The checkout endpoint and nonce. On a course page aa_reg_panel() emits
+	   this with a course attached; here there is no single course, and none is
+	   needed -- the form sends a cohort id and the server resolves it. */
+	$h .= aa_reg_config_script();
 
 	return $h . '</section>';
 }
@@ -1923,31 +2020,52 @@ function aa_reg_track_calendar( $atts ) {
  * -- taller than the calendar it sat beside, and the reason the whole block
  * fell below the calendar instead of next to it.
  */
-function aa_reg_track_panel( $row, $meta ) {
+function aa_reg_track_panel( $row, $meta, $label = '' ) {
 	if ( ! $row || ! isset( $meta[ $row['code'] ] ) ) { return ''; }
-	$mm   = $meta[ $row['code'] ];
-	$c    = $row['c'];
-	$left = aa_reg_seats_left( $row['course'], $c );
-	$url  = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
-	      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+	$mm    = $meta[ $row['code'] ];
+	$c     = $row['c'];
+	$left  = aa_reg_seats_left( $row['course'], $c );
 	$where = trim( ( ! empty( $c['place'] ) ? $c['place'] . ' · ' : '' ) . ( isset( $c['hours'] ) ? $c['hours'] : '' ), ' ·' );
 
-	$out  = '<article class="aat-co">';
-	$out .= '<span class="aat-badge" style="background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] )
-	     . ';border:1px solid ' . esc_attr( $mm['bd'] ) . '">' . esc_html( $row['code'] ) . '</span>';
+	$out  = '<article class="aat-co" style="--bar:' . esc_attr( $mm['color'] ) . '">';
+	$out .= '<p class="aat-co__eyebrow">' . esc_html( $label !== '' ? $label : $row['code'] ) . '</p>';
 	$out .= '<h3 class="aat-co__h">' . esc_html( $mm['name'] ) . '</h3>';
+	if ( $mm['blurb'] !== '' ) {
+		$out .= '<p class="aat-co__blurb">' . esc_html( $mm['blurb'] ) . '</p>';
+	}
 	$out .= '<dl class="aat-co__facts">'
 	     . '<div><dt>' . esc_html( aa_reg_t( 'dates', 'Dates' ) ) . '</dt>'
 	     . '<dd>' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</dd></div>'
 	     . '<div><dt>' . esc_html( aa_reg_t( 'duration', 'Duration' ) ) . '</dt>'
-	     . '<dd>' . (int) $mm['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</dd></div>'
-	     . '</dl>';
-	if ( $where !== '' ) { $out .= '<p class="aat-co__where">' . esc_html( $where ) . '</p>'; }
+	     . '<dd>' . (int) $mm['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</dd></div>';
+	if ( $where !== '' ) {
+		$out .= '<div class="aat-co__facts-wide"><dt>' . esc_html( aa_reg_t( 'format', 'Format' ) ) . '</dt>'
+		     . '<dd>' . esc_html( $where ) . '</dd></div>';
+	}
+	$out .= '</dl>';
+
+	if ( $mm['proof'] ) {
+		$out .= '<ul class="aat-co__proof">';
+		foreach ( $mm['proof'] as $p ) { $out .= '<li>' . esc_html( $p ) . '</li>'; }
+		$out .= '</ul>';
+	}
+
 	$out .= '<div class="aat-co__pay"><div class="aat-co__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
 	     . '<div class="aat-co__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
 	     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>';
-	$out .= '<a class="aat-cta aat-co__go" href="' . esc_url( $url ) . '">'
-	     . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+
+	$out .= aa_reg_inline(
+		array( 'price' => $mm['price'] ),
+		$c,
+		$mm['cur'],
+		'aatco',
+		true
+	);
+
+	if ( $mm['page'] ) {
+		$out .= '<a class="aat-co__more" href="' . esc_url( $mm['url'] ) . '">'
+		     . esc_html( aa_reg_t( 'full_details', 'Full course details' ) ) . ' &#10230;</a>';
+	}
 	$out .= '</article>';
 	return $out;
 }
@@ -4042,7 +4160,11 @@ function aa_training_category_shortcode( $atts ) {
 	/* The calendar, already built and already sourced from the same cohorts. */
 	if ( $next ) {
 		$h .= '<section id="cohorts" class="aat-cohorts-sec">'
-		    . aa_reg_track_calendar( array( 'courses' => implode( ',', array_keys( $courses ) ), 'months' => 6 ) )
+		    . aa_reg_track_calendar( array(
+			'courses' => implode( ',', array_keys( $courses ) ),
+			'months'  => 6,
+			'label'   => $c['label'],
+		) )
 		    . '</section>';
 	}
 
