@@ -3896,10 +3896,39 @@ function aa_training_courses( $cat ) {
 		'adv-safe'      => array( 'spc', 'aspc', 'rte', 'apm', 'lpm', 'arch', 'large-solution' ),
 		'safe-roles'    => array( 'sa', 'scrum-master', 'popm', 'asm', 'devops', 'team-practitioner', 'bo' ),
 		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2' ),
+		/* Micro-credentials and the industry tracks take their course list from
+		   the page itself -- see below. */
 		'safe-found'    => array(),
 		'safe-industry' => array(),
 	);
-	return isset( $map[ $cat ] ) ? $map[ $cat ] : array();
+	if ( ! empty( $map[ $cat ] ) ) { return $map[ $cat ]; }
+
+	/* NO HAND LIST: USE THE PAGE'S OWN CHILDREN.
+	   A track page is the parent of its course pages, so the hub already knows
+	   what is in it and there is nothing to keep in step -- a course added or
+	   retired later shows up without an edit here. The three tracks above keep
+	   their hand lists because they pull in courses that do not sit under them
+	   (Large Solution, for one), which children alone would miss.
+	   A child that is not a course resolves to nothing in aa_reg_course() and
+	   is skipped, so an SEO landing page filed under a track cannot smuggle
+	   itself into the calendar. */
+	if ( ! function_exists( 'get_queried_object_id' ) ) { return array(); }
+	$id = get_queried_object_id();
+	if ( ! $id ) { return array(); }
+
+	$kids = get_posts( array(
+		'post_type'        => 'page',
+		'post_parent'      => $id,
+		'post_status'      => 'publish',
+		'numberposts'      => 40,
+		'orderby'          => 'menu_order title',
+		'order'            => 'ASC',
+		'suppress_filters' => true,
+	) );
+
+	$out = array();
+	foreach ( $kids as $k ) { $out[] = $k->post_name; }
+	return $out;
 }
 
 function aa_training_category_shortcode( $atts ) {
