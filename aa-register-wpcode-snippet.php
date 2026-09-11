@@ -217,10 +217,13 @@ function aa_reg_courses() {
 		   but the frequency is a business choice rather than a technical one and
 		   is worth a look once the page is live.
 
-		   The page at 'url' does not exist yet. Until it is published, the
-		   calendar rows and progression chips that point here resolve to nothing
-		   rather than 404 -- aa_reg_hero_next() and aa_reg_track_calendar() both
-		   skip a course that will not resolve. */
+		   The page at 'url' is published (33677, child of Advanced SAFe) and
+		   built from this row: [aa_course_hero] and [aa_course_register] both
+		   read it, so the price, the length and the first date on the page are
+		   these values and cannot drift from them. Before it existed the bars
+		   pointing here were dead links, which is what aa_reg_page_exists() was
+		   written for -- it stays, because it is the general answer for any
+		   course sold from the schedule ahead of its page. */
 		'large-solution' => array(
 			'code'     => 'LSS',
 			'name'     => 'Implementing Large Solution SAFe®',
