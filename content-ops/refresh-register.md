@@ -158,3 +158,59 @@ A visible correction note was added to both pages rather than a silent fix.
 **Still unverified:** Klarna 853 FTE-equivalent / $60M; CSAT 4.10 vs 4.30; re-contact
 11.3% vs 8.7%; the occupation exposure percentages on 2300; the Forrester and Robert
 Half reversal figures. All remain MEDIUM.
+
+## Primary-source pass — run 2026-09-11 (GitClear + Faros, owner-supplied)
+
+Both domains are egress-blocked here; the owner pasted raw text from the public
+research, signal-graph and methodology pages. GitClear's full whitepaper is behind
+an email-capture form, **which we deliberately did not submit** — the public pages
+carried every figure we cite, so handing a vendor a business email bought nothing.
+
+**A third error found and corrected (page 2299).** The page attributed "up to 9x
+higher code churn" to GitClear. Mis-sourced on two counts:
+
+- GitClear's churn figure in this paper is **+15%** (share of authored lines
+  rewritten or removed within two weeks).
+- The ~9x number is **Faros's +861%** — and Faros defines churn as the ratio of
+  lines deleted to lines added per quarter. Same word, incompatible constructs.
+  Both now appear on the page, labelled, with an explicit "not comparable" note.
+
+**Two caveats now carried on 2299 and 2293, because they qualify every figure:**
+
+1. **Faros is not a before-and-after study.** Every "+X%" compares each team's two
+   quarters of *lowest* AI adoption against its two quarters of *highest*. No control
+   group, no clean pre-AI baseline. Associations under rising adoption, not effects.
+2. **GitClear's "moved code" contradicts GitClear's own product.** The paper calls
+   moved lines "a proxy for refactoring activity"; their Diff Delta scoring gives
+   moved code a value of **zero** — "high line counts, little real work". Anyone
+   citing "refactoring down 70%" cites a proxy the same firm treats as valueless
+   elsewhere. We now print the figure and the tension together.
+
+**Figures added or sharpened on 2299:**
+
+| Item | Detail |
+|---|---|
+| Bugs, both metrics | +54% per developer (headline, uncontrolled) **and +28.7% per PR** (PDF-only, controls for volume — roughly half the headline) |
+| Three review metrics | median in review +441.5%, *average* in review +199.6%, median to *first* review +156.6% — routinely conflated |
+| Incidents | +242.7% per PR and +57.9% monthly, carrying Faros's own "this is a ratio, not a probability" caveat, which their headline drops |
+| Churn | both definitions, labelled non-comparable |
+
+**Source-hygiene notes for future citations:**
+
+- GitClear's unit is **"analyzed changes"**, not lines. Their earlier papers counted
+  changed lines (211M, 153M) and are **not** comparable. Same page also shows
+  "600M+ commits" and "987.2M code lines" — three different units, don't mix.
+- GitClear baselines: the summary says "vs 2022", the per-signal paragraphs say
+  **2023**. Use 2023 — it's the one the numbers support.
+- Mixed windows: copy/paste 15.7% is "first half of 2026"; moved 3.8% is
+  "year-to-date". Not the same window.
+- It is **"error-masking constructs"** (+47%), not "catch blocks" — rescue,
+  safe-navigation, null checks, mock guards. GitClear's own tooltip hedges it as
+  "generally signals more cautious code", i.e. they do not call it bad.
+- Zero-review merges (+31.3%) means no review **human or agentic** — not bots
+  displacing reviewers.
+- **Faros explicitly contests DORA.** Where both are cited, present them as two
+  readings, not one consensus.
+
+Confidence stays **MEDIUM**: the quotations are now verified at source, but the
+underlying research is still vendor research with the design limits above.
