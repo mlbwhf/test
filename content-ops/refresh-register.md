@@ -214,3 +214,50 @@ higher code churn" to GitClear. Mis-sourced on two counts:
 
 Confidence stays **MEDIUM**: the quotations are now verified at source, but the
 underlying research is still vendor research with the design limits above.
+
+## Third pass — run 2026-09-11 (September CRITICAL, resumed)
+
+**Blocker re-tested and it has NOT lifted.** All primary sources still unreachable:
+`artificialanalysis.ai`, `openai.com`, `anthropic.com`, `lmarena.ai`, `reuters.com`,
+`forrester.com`, and also `sec.gov` and `investor.atmeta.com` — every one returns 000
+at the egress proxy. The §4.1 refusal from 10 Sep therefore **still stands**: no
+externally-sourced figure was changed against a secondary source.
+
+**What did change:** WebSearch works. That does not make a search summary a primary
+source, but it does answer *existence* questions — "has a third JV been announced?" —
+where convergent reporting across independent outlets is legitimate evidence and a
+precise number is not. Two CRITICAL rows moved from "not attempted" to "reviewed".
+
+**1. `/reports/meta-blackrock-off-balance-sheet-ai-financing/` — REVIEWED, NO CHANGE.**
+No third Meta/BlackRock JV exists. Only the El Paso deal (announced 28 Jul 2026) is
+reported. Terms corroborated across Bloomberg, Yahoo Finance, Quartz and Meta's own
+investor release: 80/20 split, ~$14B total, $12.5B debt financing, ~$2.3B Meta land +
+CIP contribution, ~$4.9B BlackRock cash, ~$1B rebalancing distribution to Meta, lease
+four-year initial term with four extension options toward a 20-year total, online 2028.
+All consistent with what the page says. **Watch item:** closing was expected in Q3 2026,
+which ends this month — re-check in October.
+
+**2. `/reports/ai-data-center-cost/` — REVIEWED, figure holds, ONE DISCREPANCY OPEN.**
+The $105B guarantee is confirmed and stable: WSJ reported the cut to "less than $120B"
+on 14 Aug, and the deal was signed at **$105B on 17 Aug 2026**. Our page is current.
+
+⚠️ **But secondary reporting says the Ohio site's total capacity is "as much as 8
+gigawatts", with the first 800MW online in 2028. Our page says 10GW, phase one ~5GW.**
+That is a material discrepancy on a CRITICAL page and it cannot be settled from here —
+sec.gov is blocked. **Flagged as OPEN; needs one primary-source check.** Also newly
+surfaced and not yet on the page: Nvidia additionally invests $1.5B in SB Energy; OpenAI
+leases the site for 20 years; the developer is SoftBank-owned SB Energy in Pike County,
+Ohio.
+
+**3. Homepage "Figure of the week" (page 6) — UPDATED.** Was W34, three weeks stale on a
+weekly cadence. Now W37, swapped to Meta's Project OT series: code changes +220%,
+features shipped +36%, incidents +40%, firefighting time +70%. HIGH confidence (Meta CTO
+on the record via Reuters), and it surfaces the pillar published today. Source line and
+"Full figure" link repointed to `/reports/ai-replacement-reversal-2026/`.
+*Note:* done as six surgical `wp_alter_post` swaps against exact anchors, not a
+full-content write, so no `backups/6-*.html` snapshot was taken; WordPress revisions
+cover rollback.
+
+**Still blocked, unchanged from 10 Sep:** `best-ai-models-2026` US-frontier composites,
+`llm-token-price-index` (the 280x figure anchoring three surfaces), and the
+`ai-bubble-tracker` baseline. All need a machine with normal internet access.
