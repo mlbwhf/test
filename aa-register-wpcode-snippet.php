@@ -4218,17 +4218,72 @@ function aa_training_category_shortcode( $atts ) {
 	    . ' <em>' . esc_html( $c['accent'] ) . '</em></' . $H . '>';
 	$h .= '<p class="aat-hero__sub">' . esc_html( $c['sub'] ) . '</p>';
 
-	if ( ! empty( $c['points'] ) ) {
-		$h .= '<ul class="aat-hero__points">';
-		foreach ( $c['points'] as $p ) { $h .= '<li>' . esc_html( $p ) . '</li>'; }
-		$h .= '</ul>';
+	/* THE STAT RAIL.
+	   Four numbers, every one of them read off the schedule rather than written
+	   down anywhere: how many certifications this track holds, when the next
+	   class of any of them starts, the lowest price in the track, and the
+	   spread of course lengths. Nothing here can go stale, and nothing here is
+	   a claim -- they are the four things a buyer weighs before deciding to
+	   read further.
+
+	   It replaces the chip row, which said "2-4 days / Exam fee included /
+	   Reschedule at no fee". The last two of those the line under the buttons
+	   already says word for word, and the first is now a stat. */
+	$stats = array();
+	if ( $courses ) {
+		$stats[] = array(
+			(string) count( $courses ),
+			aa_reg_t( 'certifications', 'certifications' ),
+		);
+	}
+	if ( $first ) {
+		$d_min = null; $d_max = null; $p_min = null; $p_cur = 'usd';
+		foreach ( $courses as $slug => $course ) {
+			if ( ! isset( $next[ $slug ] ) ) { continue; }
+			$d     = max( 1, (int) $course['days'] );
+			$d_min = ( $d_min === null ) ? $d : min( $d_min, $d );
+			$d_max = ( $d_max === null ) ? $d : max( $d_max, $d );
+			if ( $p_min === null || $course['price'] < $p_min ) {
+				$p_min = $course['price'];
+				$p_cur = $course['currency'];
+			}
+		}
+		$stats[] = array(
+			aa_reg_range( $first['start'], $first['end'], true ),
+			aa_reg_t( 'next_start', 'next start' ),
+		);
+		if ( $p_min !== null ) {
+			$stats[] = array(
+				aa_reg_money( $p_min, $p_cur ),
+				aa_reg_t( 'from_price', 'from' ),
+			);
+		}
+		if ( $d_min !== null ) {
+			$stats[] = array(
+				( $d_min === $d_max ) ? (string) $d_min : $d_min . '–' . $d_max,
+				aa_reg_t( 'days_l', 'days' ),
+			);
+		}
+	}
+	if ( $stats ) {
+		$h .= '<div class="aat-hero__stats">';
+		foreach ( $stats as $s ) {
+			$h .= '<div><span class="aat-hero__statv">' . esc_html( $s[0] ) . '</span>'
+			    . '<span class="aat-hero__statl">' . esc_html( $s[1] ) . '</span></div>';
+		}
+		$h .= '</div>';
 	}
 
-	/* "See all dates" only when there are dates to see -- an anchor to a
-	   #cohorts section that was not rendered is a button that does nothing. */
+	/* ONE CTA, THE SAME ON EVERY TRACK. "Register" is what the page is for and
+	   it says so in the same words on all five, rather than each track wording
+	   its own invitation. It lands on the calendar, which is where every date
+	   and the form that takes the money both are.
+
+	   Where there is no schedule there is no #cohorts section to land on, so
+	   the button changes rather than pointing at an anchor that is not there. */
 	$h .= '<div class="aat-hero__btns">';
 	if ( $next ) {
-		$h .= '<a class="aat-cta" href="#cohorts">' . esc_html( aa_reg_t( 'see_dates', 'See all dates' ) )
+		$h .= '<a class="aat-cta" href="#cohorts">' . esc_html( aa_reg_t( 'register_now', 'Register' ) )
 		    . ' <span class="aat-cta__arrow">&#10230;</span></a>';
 	} else {
 		$h .= '<a class="aat-cta" href="/contact/">' . esc_html( aa_reg_t( 'ask_dates', 'Ask about dates' ) )
