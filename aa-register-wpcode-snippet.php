@@ -4211,7 +4211,11 @@ function aa_training_category_shortcode( $atts ) {
 	   cases, so h="h2" demotes this rather than shipping a second one. */
 	$H = ( $a['h'] === 'h2' ) ? 'h2' : 'h1';
 
-	$h  = '<section class="aat-hero"' . aa_reg_dir_attr() . '><div class="aat-hero__grid"><div>';
+	/* No schedule, no register column -- and a two-column grid with one child
+	   is a card half of which is empty. It stays one column in that case. */
+	$h  = '<section class="aat-hero"' . aa_reg_dir_attr() . '>'
+	    . '<div class="aat-hero__grid' . ( $first ? '' : ' aat-hero__grid--solo' ) . '">'
+	    . '<div class="aat-hero__copy">';
 	$h .= '<div class="aat-hero__kicker"><b>' . esc_html( $c['label'] ) . '</b><i></i><span>'
 	    . esc_html( $c['kicker'] ) . '</span></div>';
 	$h .= '<' . $H . ' class="aat-hero__h">' . esc_html( $c['title'] )

@@ -675,9 +675,26 @@
    ========================================================================== */
 .aat-hero { max-width:1240px; margin:0 auto; padding:clamp(28px,3vw,52px) clamp(16px,3vw,40px) 0;
   font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif; color:#101C33; }
-.aat-hero__grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
-  gap:clamp(24px,3vw,48px); align-items:start; }
+/* THE HERO IS THE SAME OBJECT AS THE CALENDAR BELOW IT.
+   It used to be two loose columns with a gap between them and the register
+   card floating on the right with its own border, radius and drop shadow --
+   which on a wide screen left a band of empty page between the two and made
+   the card read as something that had landed on the page rather than part of
+   it. It is one card now, in the calendar's shape: copy on the left, register
+   on a tinted right column, sharing a border. Same grammar, one after the
+   other, and the width is actually used.
+
+   Stacked below 1040px, where there is no landscape to use. */
+.aat-hero__grid { display:grid; grid-template-columns:1fr; align-items:stretch;
+  border:1px solid #E4E0D6; border-radius:20px; background:#FFFFFF; overflow:hidden; }
 .aat-hero__grid > * { min-width:0; }
+@media (min-width:1040px){
+  .aat-hero__grid:not(.aat-hero__grid--solo) { grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr); }
+}
+/* A track with nothing on the schedule has no register column, so the copy
+   gets the whole card rather than half of it and an empty half. */
+.aat-hero__grid--solo .aat-hero__copy { max-width:74ch; }
+.aat-hero__copy { padding:clamp(24px,2.6vw,38px); }
 .aat-hero__kicker { display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;
   font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#6B6455;
   border:1px solid #E2DCCE; border-radius:100px; padding:8px 15px; }
@@ -717,8 +734,14 @@
    certification?) and one answer (the next date and what it costs). The
    calendar below now carries the detail, so this keeps the choice, one line of
    facts, and the button. */
-.aat-reg { border:1px solid #E9E5DB; border-radius:18px; background:#FFFFFF; padding:18px;
-  box-shadow:0 14px 34px rgba(16,28,51,.06); }
+/* The right column of that card, not a card of its own: no border of its own,
+   no radius, no shadow -- it is held by the grid it sits in, exactly as the
+   calendar's selected-cohort panel is. */
+.aat-reg { padding:clamp(22px,2.4vw,32px); background:#FBFAF7;
+  border:0; border-top:1px solid #EDE9DF; border-radius:0; box-shadow:none; }
+@media (min-width:1040px){
+  .aat-reg { border-top:0; border-left:1px solid #EDE9DF; }
+}
 .aat-field { display:block; }
 .aat-field > span:first-child { display:block; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
   font-weight:700; color:#8A8375; margin-bottom:7px; }
