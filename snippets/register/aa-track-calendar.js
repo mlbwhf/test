@@ -3,29 +3,33 @@
    ----------------------------------------------------------------------------
    WPCode -> JavaScript Snippet, Site Wide Footer.
 
-   PROGRESSIVE ENHANCEMENT, deliberately. Every month, every day cell and the
-   register panel for the first available date are already in the HTML the
-   server sent. Six months of dates are in the source whether or not this file
-   runs -- which is the point, because those dates are what a crawler or an
-   assistant comes for. This adds three things and nothing else:
+   PROGRESSIVE ENHANCEMENT, deliberately. Every month, every cohort bar and the
+   register panel for the first cohort are already in the HTML the server sent.
+   Six months of dates are in the source whether or not this file runs -- which
+   is the point, because those dates are what a crawler or an assistant comes
+   for. Every bar is a real <a> to that cohort's enrolment, so with scripts off
+   the calendar is still a working index of the whole schedule.
 
-     month nav      show one month's grid, hide the rest
+   This adds three things and nothing else:
+
+     month nav      show one month, hide the rest
      chip filter    dim the courses you did not ask for
-     day click      repaint the register panel from window.AA_TC
+     bar click      repaint the panel instead of navigating
 
-   The filter DIMS rather than removes. Removing day chips reflows the grid
-   under the pointer, so the cell you were about to click moves as you click.
+   The filter DIMS rather than removes. Removing bars reflows the week under
+   the pointer, so the bar you were about to click moves as you click.
    ========================================================================== */
 (function () {
   var root = document.querySelector('[data-aatc]');
   if (!root || !window.AA_TC) { return; }
 
-  var D      = window.AA_TC;
-  var months = D.months || [];
-  var idx    = 0;
-  var filter = 'All';
+  var D       = window.AA_TC;
+  var months  = D.months || [];
+  var cohorts = D.cohorts || {};
+  var idx     = 0;
+  var filter  = 'All';
 
-  function q(sel, ctx) { return (ctx || root).querySelector(sel); }
+  function q(sel) { return root.querySelector(sel); }
   function all(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -36,7 +40,6 @@
   var prev  = q('[data-aatc-prev]');
   var next  = q('[data-aatc-next]');
   var panel = q('[data-aatc-panel]');
-  var selEl = q('[data-aatc-selday]');
 
   function monthName(mk) {
     var p = mk.split('-');
@@ -59,64 +62,73 @@
   }
 
   function applyFilter() {
-    all('.aat-day').forEach(function (d) {
-      var codes = (d.getAttribute('data-aatc-codes') || '').split(',').filter(Boolean);
-      var match = (filter === 'All') || codes.indexOf(filter) !== -1;
-      d.classList.toggle('aat-day--dim', !match && codes.length > 0);
-      all('[data-aatc-chip]', d).forEach(function (chip) {
-        var on = (filter === 'All') || chip.getAttribute('data-aatc-chip') === filter;
-        if (on) { chip.removeAttribute('data-aatc-hide'); }
-        else { chip.setAttribute('data-aatc-hide', '1'); }
-      });
-    });
-    all('.aat-calday').forEach(function (r) {
-      var codes = all('.aat-calday__code', r).map(function (c) {
-        return (c.textContent || '').trim().split(' ')[0];
-      });
-      r.style.display = (filter === 'All' || codes.indexOf(filter) !== -1) ? '' : 'none';
+    /* A capped week hides its sixth lane onward. Asking for one certification
+       is a request to see it wherever it falls, so a filter opens them all. */
+    root.classList.toggle('is-filtered', filter !== 'All');
+    all('[data-aatc-c]').forEach(function (el) {
+      var on = (filter === 'All') || el.getAttribute('data-aatc-c') === filter;
+      if (el.classList.contains('aat-calday')) {
+        el.style.display = on ? '' : 'none';
+      } else if (on) {
+        el.removeAttribute('data-aatc-hide');
+      } else {
+        el.setAttribute('data-aatc-hide', '1');
+      }
     });
   }
 
+  /* The card, kept in step with aa_reg_track_panel() on the server. */
   function card(c) {
-    var left = (c.left <= 6)
+    var seats = (c.left <= 6)
       ? ' &middot; ' + esc(String(D.labels.seatsLeft).replace('%d', c.left))
       : '';
     var where = [c.place, c.hours].filter(Boolean).join(' · ');
-    return '<article class="aat-cohort"><div class="aat-cohort__top">'
+    return '<article class="aat-co">'
       + '<span class="aat-badge" style="background:' + esc(c.tint) + ';color:' + esc(c.color)
-      + ';border:1px solid ' + esc(c.bd) + '">' + esc(c.code) + '</span></div>'
-      + '<h3>' + esc(c.name) + '</h3>'
-      + '<div class="aat-cohort__when"><i>&#9679;</i><b>' + esc(c.range) + '</b>'
-      + '<span>' + esc(where) + '</span></div>'
-      + '<div class="aat-cohort__pay"><div>'
-      + '<div class="aat-cohort__price">' + esc(c.price) + '</div>'
-      + '<div class="aat-cohort__incl">' + esc(D.labels.incl) + left + '</div></div>'
-      + '<a class="aat-cta" href="' + esc(c.url) + '">' + esc(D.labels.register)
+      + ';border:1px solid ' + esc(c.bd) + '">' + esc(c.code) + '</span>'
+      + '<h3 class="aat-co__h">' + esc(c.name) + '</h3>'
+      + '<dl class="aat-co__facts">'
+      + '<div><dt>' + esc(D.labels.dates) + '</dt><dd>' + esc(c.range) + '</dd></div>'
+      + '<div><dt>' + esc(D.labels.schedule) + '</dt><dd>' + esc(c.days) + ' ' + esc(D.labels.daysL) + '</dd></div>'
+      + '</dl>'
+      + (where ? '<p class="aat-co__where">' + esc(where) + '</p>' : '')
+      + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
+      + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
+      + '<a class="aat-cta aat-co__go" href="' + esc(c.url) + '">' + esc(D.labels.register)
       + ' <span class="aat-cta__arrow">&#10230;</span></a>'
-      + '</div></article>';
+      + '</article>';
   }
 
-  function select(key) {
-    var rows = D.days[key];
-    if (!rows) { return; }
-    all('[data-aatc-day]').forEach(function (b) {
-      var on = b.getAttribute('data-aatc-day') === key;
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      b.classList.toggle('aat-day--on', on && b.classList.contains('aat-day'));
-      if (on && b.classList.contains('aat-day')) { b.classList.remove('aat-day--has'); }
-      else if (b.classList.contains('aat-day') && !b.disabled) { b.classList.add('aat-day--has'); }
+  function select(id) {
+    var c = cohorts[id];
+    if (!c) { return; }
+    all('[data-aatc-co]').forEach(function (el) {
+      var on = el.getAttribute('data-aatc-co') === id;
+      el.classList.toggle('aat-bar--on', on && el.classList.contains('aat-bar'));
+      if (el.classList.contains('aat-calday')) {
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
     });
-    if (panel) { panel.innerHTML = rows.map(card).join(''); }
-    if (selEl) {
-      var p = key.split('-');
-      selEl.textContent = new Date(+p[0], +p[1] - 1, +p[2])
-        .toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
-    }
+    if (panel) { panel.innerHTML = card(c); }
   }
 
   root.addEventListener('click', function (e) {
-    var day = e.target.closest('[data-aatc-day]');
-    if (day && !day.disabled) { select(day.getAttribute('data-aatc-day')); return; }
+    var co = e.target.closest('[data-aatc-co]');
+    if (co) {
+      /* The bar is a real link so it works without this file. With it, the
+         click selects instead -- the panel's own button is what navigates. */
+      e.preventDefault();
+      select(co.getAttribute('data-aatc-co'));
+      return;
+    }
+
+    var more = e.target.closest('[data-aatc-more]');
+    if (more) {
+      var week = more.closest('.aat-week');
+      var open = week.classList.toggle('is-open');
+      more.setAttribute('aria-expanded', open ? 'true' : 'false');
+      return;
+    }
 
     var chip = e.target.closest('[data-aatc-code]');
     if (chip) {

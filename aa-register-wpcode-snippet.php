@@ -1645,9 +1645,9 @@ function aa_reg_track_calendar( $atts ) {
 		array( '#7A5B8F', '#F8F5FA', '#E5DCEC' ),
 	);
 
-	$meta = array();     // code => course + colour
-	$byday = array();    // Y-m-d => list of cohorts
-	$busy  = array();    // every in-session day, for the "running" state
+	$meta  = array();     // code => course + colour
+	$byday = array();     // Y-m-d => list of cohorts, for the month index
+	$all   = array();     // every cohort, flat -- what the bars are drawn from
 	$i = 0;
 
 	foreach ( $slugs as $slug ) {
@@ -1661,26 +1661,21 @@ function aa_reg_track_calendar( $atts ) {
 			'url'   => $course['url'],
 			'price' => $course['price'],
 			'cur'   => $course['currency'],
+			'days'  => $days,
 			'short' => $days . 'd',
 			'color' => $c3[0], 'tint' => $c3[1], 'bd' => $c3[2],
 		);
 		$i++;
 
 		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
-			$byday[ $c['start'] ][] = array( 'c' => $c, 'code' => $code, 'course' => $course, 'slug' => $slug );
-			/* Every day AFTER the start is a continuation, and remembers which
-			   course is running. The start day already shows a chip; these are
-			   what let the class be drawn as a run across the week instead of a
-			   mark on one day and silence either side. */
-			$first = true;
-			for ( $d = strtotime( $c['start'] ); $d <= strtotime( $c['end'] ); $d = strtotime( '+1 day', $d ) ) {
-				if ( ! $first ) { $busy[ date( 'Y-m-d', $d ) ][] = $code; }
-				$first = false;
-			}
+			$row = array( 'c' => $c, 'code' => $code, 'course' => $course, 'slug' => $slug );
+			$byday[ $c['start'] ][] = $row;
+			$all[] = $row;
 		}
 	}
-	if ( ! $byday ) { return ''; }
+	if ( ! $all ) { return ''; }
 	ksort( $byday );
+	usort( $all, function ( $x, $y ) { return strcmp( $x['c']['start'], $y['c']['start'] ); } );
 
 	/* Months to render. Every one goes into the HTML and all but the first are
 	   hidden, rather than being built by JS on demand: the dates are the reason
@@ -1694,8 +1689,12 @@ function aa_reg_track_calendar( $atts ) {
 	}
 	$months = array_slice( $months, 0, max( 1, (int) $a['months'] ), true );
 
-	$first_day = reset( $months );
-	$sel       = $first_day[0];
+	/* The selection is now A COHORT, not a day. A day can hold five starts, and
+	   a panel that answered "what is on the 14th" had to list all five -- which
+	   is what made the register block taller than the calendar beside it. A bar
+	   is one cohort, so clicking one has exactly one answer. */
+	$sel    = $all[0];
+	$sel_id = $sel['c']['id'];
 
 	$dir = aa_reg_dir_attr();
 	$h   = '<section class="aatc"' . $dir . ' data-aatc>';
@@ -1715,12 +1714,13 @@ function aa_reg_track_calendar( $atts ) {
 
 	/* Month header + nav */
 	$mkeys = array_keys( $months );
-	$h .= '<div class="aat-calcard__head"><div class="aat-calcard__nav">'
+	$h .= '<div class="aat-calcard__head"><div>'
+	    . '<p class="aat-calcard__eyebrow">' . esc_html( aa_reg_t( 'upcoming_cohorts', 'Upcoming cohorts' ) ) . '</p>'
+	    . '<strong class="aat-calcard__month" data-aatc-monthlabel>' . esc_html( ( new DateTime( $mkeys[0] . '-01' ) )->format( 'F Y' ) ) . '</strong>'
+	    . '</div><div class="aat-calcard__nav">'
 	    . '<button type="button" class="aat-navbtn" data-aatc-prev aria-label="' . esc_attr( aa_reg_t( 'prev_month', 'Previous month' ) ) . '" disabled>&#8249;</button>'
-	    . '<strong data-aatc-monthlabel>' . esc_html( ( new DateTime( $mkeys[0] . '-01' ) )->format( 'F Y' ) ) . '</strong>'
 	    . '<button type="button" class="aat-navbtn" data-aatc-next aria-label="' . esc_attr( aa_reg_t( 'next_month', 'Next month' ) ) . '"' . ( count( $mkeys ) > 1 ? '' : ' disabled' ) . '>&#8250;</button>'
-	    . '</div><span class="aat-calcard__count" data-aatc-count>'
-	    . esc_html( sprintf( aa_reg_t( 'n_starts', '%d start dates' ), count( $byday ) ) ) . '</span></div>';
+	    . '</div></div>';
 
 	$h .= '<div class="aat-calscroll"><div class="aat-calinner">'
 	    . '<div class="aat-dows">';
@@ -1737,62 +1737,95 @@ function aa_reg_track_calendar( $atts ) {
 
 		$h .= '<div class="aat-grid" data-aatc-month="' . esc_attr( $mk ) . '"' . ( $mi === 0 ? '' : ' hidden' ) . '>';
 		for ( $w = 0; $w < $rows; $w++ ) {
-			$h .= '<div class="aat-week">';
+			$w0 = mktime( 0, 0, 0, $m, 1 - $lead + $w * 7, $y );
+			$w6 = mktime( 0, 0, 0, $m, 1 - $lead + $w * 7 + 6, $y );
+
+			/* EVERY COHORT THAT TOUCHES THIS WEEK, clipped to it. A class that
+			   starts on Monday and ends on Thursday is one bar four columns
+			   wide; one that runs Sep 28 to Oct 1 is drawn in both weeks, with
+			   the cut end flagged so it reads as continuing rather than
+			   stopping. This is what makes the length of a course visible --
+			   and what shows a class running straight through Saturday and
+			   Sunday, which is what the day-chip grid could never say. */
+			$bars = array();
+			foreach ( $all as $row ) {
+				$cs = strtotime( $row['c']['start'] );
+				$ce = strtotime( $row['c']['end'] );
+				if ( $ce < $w0 || $cs > $w6 ) { continue; }
+				$from = max( $cs, $w0 );
+				$to   = min( $ce, $w6 );
+				$bars[] = array(
+					'row'  => $row,
+					'col'  => (int) round( ( $from - $w0 ) / 86400 ) + 1,
+					'span' => (int) round( ( $to - $from ) / 86400 ) + 1,
+					'open' => ( $cs < $w0 ),
+					'more' => ( $ce > $w6 ),
+					'sort' => $cs,
+				);
+			}
+
+			/* Lanes. First-fit by start date, so bars never overlap and the
+			   week is as short as it can be. */
+			usort( $bars, function ( $x, $y ) {
+				if ( $x['sort'] === $y['sort'] ) { return $x['col'] - $y['col']; }
+				return ( $x['sort'] < $y['sort'] ) ? -1 : 1;
+			} );
+			$lanes = array();
+			foreach ( $bars as $bi => $b ) {
+				$li = 0;
+				while ( isset( $lanes[ $li ] ) && $lanes[ $li ] > $b['col'] ) { $li++; }
+				$lanes[ $li ] = $b['col'] + $b['span'];
+				$bars[ $bi ]['lane'] = $li;
+			}
+
+			/* SEVEN COURSES RUNNING TWICE A WEEK IS TEN CLASSES IN SESSION AT
+			   ONCE, and ten stacked bars make a week row taller than a phone.
+			   The week is capped at five lanes and opens on demand -- but every
+			   bar is still in the HTML, hidden by CSS rather than dropped, so
+			   the whole schedule remains in the page for a crawler and for
+			   anyone reading with styles off. */
+			$nlanes = count( $lanes );
+			$cap    = 5;
+
+			$h .= '<div class="aat-week' . ( $nlanes > $cap ? ' aat-week--over' : '' ) . '">'
+			    . '<div class="aat-week__days">';
 			for ( $col = 0; $col < 7; $col++ ) {
-				$ts    = mktime( 0, 0, 0, $m, 1 - $lead + $w * 7 + $col, $y );
-				$k     = date( 'Y-m-d', $ts );
-				$in    = ( (int) date( 'n', $ts ) === $m );
-				$list  = ( $in && isset( $byday[ $k ] ) ) ? $byday[ $k ] : array();
-				$on    = ( $k === $sel && $list );
-				$runs  = ( $in && ! empty( $busy[ $k ] ) ) ? array_unique( $busy[ $k ] ) : array();
-				$run   = ( $runs && ! $list );
+				$ts = mktime( 0, 0, 0, $m, 1 - $lead + $w * 7 + $col, $y );
+				$h .= '<span class="aat-dnum' . ( (int) date( 'n', $ts ) === $m ? '' : ' aat-dnum--out' ) . '">'
+				    . (int) date( 'j', $ts ) . '</span>';
+			}
+			$h .= '</div>';
 
-				/* A bar per class still running on this day, in that course's
-				   colour. This is what makes a four-day course read as four
-				   days -- and what shows that a class runs straight through
-				   Saturday and Sunday rather than stopping at the weekend. */
-				$bars = '';
-				if ( $runs ) {
-					$bars = '<span class="aat-day__runs">';
-					foreach ( $runs as $rc ) {
-						if ( ! isset( $meta[ $rc ] ) ) { continue; }
-						$bars .= '<span class="aat-day__bar" data-aatc-chip="' . esc_attr( $rc ) . '"'
-						       . ' style="background:' . esc_attr( $meta[ $rc ]['color'] ) . '"'
-						       . ' title="' . esc_attr( $rc . ' ' . aa_reg_t( 'in_session', 'in session' ) ) . '"></span>';
-					}
-					$bars .= '</span>';
-				}
+			$h .= '<div class="aat-week__lanes"' . ( $bars ? '' : ' data-aatc-empty="1"' ) . '>';
+			foreach ( $bars as $b ) {
+				$row = $b['row'];
+				$mm  = $meta[ $row['code'] ];
+				$c   = $row['c'];
+				$url = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
+				     . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+				$cls = 'aat-bar'
+				     . ( $b['open'] ? ' aat-bar--from' : '' )
+				     . ( $b['more'] ? ' aat-bar--to' : '' )
+				     . ( $c['id'] === $sel_id ? ' aat-bar--on' : '' );
 
-				$cls = 'aat-day';
-				if ( ! $in )      { $cls .= ' aat-day--out'; }
-				if ( $on )        { $cls .= ' aat-day--on'; }
-				elseif ( $list )  { $cls .= ' aat-day--has'; }
-				elseif ( $run )   { $cls .= ' aat-day--run'; }
-
-				$codes = array();
-				$chips = '';
-				foreach ( $list as $row ) {
-					$mm = $meta[ $row['code'] ];
-					$codes[] = $row['code'];
-					if ( count( $codes ) <= 2 ) {
-						$chips .= '<span class="aat-day__chip" data-aatc-chip="' . esc_attr( $row['code'] ) . '"'
-						        . ' style="background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] ) . '">'
-						        . '<span>' . esc_html( $row['code'] ) . '</span><span>' . esc_html( $mm['short'] ) . '</span></span>';
-					}
-				}
-				$aria = date( 'F j', $ts ) . ( $list
-					? ', ' . count( $list ) . ' cohort' . ( count( $list ) > 1 ? 's' : '' ) . ' start'
-					: ( $runs ? ', ' . implode( ', ', $runs ) . ' in session' : ', no cohorts' ) );
-
-				$h .= '<button type="button" class="' . $cls . '" data-aatc-day="' . esc_attr( $k ) . '"'
-				    . ' data-aatc-codes="' . esc_attr( implode( ',', array_unique( $codes ) ) ) . '"'
-				    . ( $list ? '' : ' disabled' ) . ' aria-pressed="' . ( $on ? 'true' : 'false' ) . '"'
-				    . ' aria-label="' . esc_attr( $aria ) . '">'
-				    . '<span class="aat-day__num">' . (int) date( 'j', $ts ) . '</span>'
-				    . '<span class="aat-day__chips">' . $chips . '</span>'
-				    . ( count( $codes ) > 2 ? '<span class="aat-day__more">+' . ( count( $codes ) - 2 ) . ' more</span>' : '' )
-				    . $bars
-				    . '</button>';
+				$h .= '<a class="' . $cls . '" href="' . esc_url( $url ) . '"'
+				    . ' data-aatc-co="' . esc_attr( $c['id'] ) . '"'
+				    . ' data-aatc-c="' . esc_attr( $row['code'] ) . '"'
+				    . ' style="grid-column:' . (int) $b['col'] . '/span ' . (int) $b['span']
+				    . ';grid-row:' . ( (int) $b['lane'] + 1 )
+				    . ';background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] )
+				    . ';border-color:' . esc_attr( $mm['bd'] ) . '"'
+				    . ' aria-label="' . esc_attr( $mm['name'] . ' · ' . aa_reg_range( $c['start'], $c['end'] )
+				        . ' · ' . $mm['days'] . ' ' . aa_reg_t( 'days_l', 'days' ) ) . '">'
+				    . '<b class="aat-bar__code">' . esc_html( $row['code'] ) . '</b>'
+				    . '<span class="aat-bar__range">' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</span>'
+				    . '<span class="aat-bar__d">' . esc_html( $mm['short'] ) . '</span></a>';
+			}
+			$h .= '</div>';
+			if ( $nlanes > $cap ) {
+				$h .= '<button type="button" class="aat-week__more" data-aatc-more'
+				    . ' aria-expanded="false">' . esc_html( sprintf(
+					aa_reg_t( 'n_more_classes', '+%d more this week' ), $nlanes - $cap ) ) . '</button>';
 			}
 			$h .= '</div>';
 		}
@@ -1801,107 +1834,121 @@ function aa_reg_track_calendar( $atts ) {
 	}
 	$h .= '</div></div>';
 
-	/* Mobile list -- same data, no sideways scroll. Which one shows is purely a
-	   media query; both are in the HTML and both drive the same panel. */
+	/* Mobile list -- same cohorts, no sideways scroll. Which one shows is purely
+	   a media query; both are in the HTML and both drive the same panel. */
 	$h .= '<div class="aat-callist">';
 	$mi = 0;
 	foreach ( $months as $mk => $days_in ) {
 		$h .= '<div data-aatc-mob="' . esc_attr( $mk ) . '"' . ( $mi === 0 ? '' : ' hidden' ) . '>';
 		$h .= '<div class="aat-calmonth">' . esc_html( ( new DateTime( $mk . '-01' ) )->format( 'F Y' ) ) . '</div>';
-		foreach ( $days_in as $k ) {
-			$codes = '';
-			foreach ( $byday[ $k ] as $row ) {
-				$mm = $meta[ $row['code'] ];
-				$codes .= '<span class="aat-calday__code" style="background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] ) . '">'
-				        . esc_html( $row['code'] . ' ' . $mm['short'] ) . '</span>';
-			}
-			$ts = strtotime( $k );
-			$h .= '<button type="button" class="aat-calday" data-aatc-day="' . esc_attr( $k ) . '"'
-			    . ' aria-pressed="' . ( $k === $sel ? 'true' : 'false' ) . '">'
-			    . '<span class="aat-calday__date"><b><time datetime="' . esc_attr( $k ) . '">' . esc_html( date( 'M j', $ts ) ) . '</time></b>'
-			    . '<span>' . esc_html( date( 'D', $ts ) ) . '</span></span>'
-			    . '<span class="aat-calday__codes">' . $codes . '</span>'
-			    . '<span class="aat-calday__n">' . count( $byday[ $k ] ) . '</span></button>';
+		foreach ( $all as $row ) {
+			if ( substr( $row['c']['start'], 0, 7 ) !== $mk ) { continue; }
+			$mm = $meta[ $row['code'] ];
+			$c  = $row['c'];
+			$h .= '<button type="button" class="aat-calday" data-aatc-co="' . esc_attr( $c['id'] ) . '"'
+			    . ' data-aatc-c="' . esc_attr( $row['code'] ) . '"'
+			    . ' aria-pressed="' . ( $c['id'] === $sel_id ? 'true' : 'false' ) . '">'
+			    . '<span class="aat-calday__date"><b><time datetime="' . esc_attr( $c['start'] ) . '">'
+			    . esc_html( date( 'M j', strtotime( $c['start'] ) ) ) . '</time></b>'
+			    . '<span>' . esc_html( date( 'D', strtotime( $c['start'] ) ) ) . '</span></span>'
+			    . '<span class="aat-calday__codes"><span class="aat-calday__code" style="background:' . esc_attr( $mm['tint'] )
+			    . ';color:' . esc_attr( $mm['color'] ) . '">' . esc_html( $row['code'] ) . '</span>'
+			    . '<span class="aat-calday__rng">' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</span></span>'
+			    . '<span class="aat-calday__n">' . esc_html( $mm['short'] ) . '</span></button>';
 		}
 		$h .= '</div>';
 		$mi++;
 	}
 	$h .= '</div>';
 
-	$h .= '<div class="aat-legend">'
-	    . '<span><i class="k1"></i>' . esc_html( aa_reg_t( 'lg_start', 'Cohort starts' ) ) . '</span>'
-	    . '<span><i class="k2"></i>' . esc_html( aa_reg_t( 'lg_run', 'In session' ) ) . '</span>'
-	    . '<span><i class="k3"></i>' . esc_html( aa_reg_t( 'lg_sel', 'Selected' ) ) . '</span>'
-	    . '</div></div>';
+	/* The bar already says how long a course is, so the legend no longer has to.
+	   What it says instead is the thing a buyer gets wrong: a four-day class
+	   does not pause for the weekend. */
+	$h .= '<p class="aat-legend">' . esc_html( aa_reg_t( 'bar_note',
+		'Each bar covers the full length of the course, weekends included. Pick one to see the details.' ) ) . '</p>';
+	$h .= '</div>';
 
-	/* The register panel. Server-rendered for the first available date, so the
-	   page is complete without scripts; the JS only repaints it on a click. */
-	$h .= '<aside class="aat-side"><div class="aat-side__head"><strong>'
-	    . esc_html( aa_reg_t( 'register', 'Register' ) ) . '</strong><span data-aatc-selday>'
-	    . esc_html( date( 'D j M', strtotime( $sel ) ) ) . '</span></div>'
-	    . '<div class="aat-side__list" data-aatc-panel>' . aa_reg_track_panel( $byday[ $sel ], $meta ) . '</div>'
-	    . '<div class="aat-private"><p>' . esc_html( aa_reg_t( 'no_dates', "Dates don't work?" ) ) . ' '
-	    . '<a href="/contact/">' . esc_html( aa_reg_t( 'private', 'Ask for a private cohort' ) ) . '</a></p></div>'
+	/* The register panel. Server-rendered for the first cohort, so the page is
+	   complete without scripts; the JS only repaints it on a click. */
+	$h .= '<aside class="aat-side"><div class="aat-side__head">'
+	    . '<span class="aat-side__dot"></span>'
+	    . esc_html( aa_reg_t( 'selected_cohort', 'Selected cohort' ) ) . '</div>'
+	    . '<div class="aat-side__body" data-aatc-panel>' . aa_reg_track_panel( $sel, $meta ) . '</div>'
+	    . '<p class="aat-private">' . esc_html( aa_reg_t( 'no_dates', "Dates don't work?" ) ) . ' '
+	    . '<a href="/contact/">' . esc_html( aa_reg_t( 'private', 'Ask for a private cohort' ) ) . '</a></p>'
 	    . '</aside>';
 
 	$h .= '</div>';
 
-	/* Everything the panel needs, so a day click does not re-query the server. */
+	/* Everything the panel needs, so a bar click does not re-query the server. */
 	$payload = array();
-	foreach ( $byday as $k => $rows ) {
-		$payload[ $k ] = array();
-		foreach ( $rows as $row ) {
-			$mm = $meta[ $row['code'] ];
-			$payload[ $k ][] = array(
-				'code'  => $row['code'],
-				'name'  => $mm['name'],
-				'range' => aa_reg_range( $row['c']['start'], $row['c']['end'] ),
-				'place' => isset( $row['c']['place'] ) ? $row['c']['place'] : '',
-				'hours' => isset( $row['c']['hours'] ) ? $row['c']['hours'] : '',
-				'price' => aa_reg_money( $mm['price'], $mm['cur'] ),
-				'left'  => aa_reg_seats_left( $row['course'], $row['c'] ),
-				'url'   => $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' ) . 'cohort=' . rawurlencode( $row['c']['id'] ) . '#enroll',
-				'color' => $mm['color'], 'tint' => $mm['tint'], 'bd' => $mm['bd'],
-			);
-		}
+	foreach ( $all as $row ) {
+		$mm = $meta[ $row['code'] ];
+		$c  = $row['c'];
+		$payload[ $c['id'] ] = array(
+			'code'  => $row['code'],
+			'name'  => $mm['name'],
+			'range' => aa_reg_range( $c['start'], $c['end'] ),
+			'days'  => $mm['days'],
+			'place' => isset( $c['place'] ) ? $c['place'] : '',
+			'hours' => isset( $c['hours'] ) ? $c['hours'] : '',
+			'price' => aa_reg_money( $mm['price'], $mm['cur'] ),
+			'left'  => aa_reg_seats_left( $row['course'], $c ),
+			'url'   => $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' ) . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll',
+			'color' => $mm['color'], 'tint' => $mm['tint'], 'bd' => $mm['bd'],
+			'month' => substr( $c['start'], 0, 7 ),
+		);
 	}
 	$h .= '<script>window.AA_TC=' . wp_json_encode( array(
-		'days'   => $payload,
-		'months' => array_keys( $months ),
-		'labels' => array(
-			'seatsOpen' => aa_reg_t( 'seats_open', 'Seats open' ),
+		'cohorts' => $payload,
+		'months'  => array_keys( $months ),
+		'labels'  => array(
 			'seatsLeft' => aa_reg_t( 'seats_left_n', '%d seats left' ),
 			'register'  => aa_reg_t( 'register_now', 'Register' ),
 			'incl'      => aa_reg_t( 'exam_included', 'exam included' ),
+			'dates'     => aa_reg_t( 'dates', 'Dates' ),
+			'schedule'  => aa_reg_t( 'duration', 'Duration' ),
+			'daysL'     => aa_reg_t( 'days_l', 'days' ),
 		),
 	) ) . ';</script>';
 
 	return $h . '</section>';
 }
 
-/** One day's cohorts as register cards. Shared by the server render and the JS. */
-function aa_reg_track_panel( $rows, $meta ) {
-	$out = '';
-	foreach ( $rows as $row ) {
-		$mm   = $meta[ $row['code'] ];
-		$c    = $row['c'];
-		$left = aa_reg_seats_left( $row['course'], $c );
-		$url  = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
-		      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+/**
+ * ONE cohort as the register card. Shared by the server render and the JS.
+ *
+ * Deliberately small. The old panel listed every cohort starting on the chosen
+ * day, which on a seven-course track meant five cards stacked under a heading
+ * -- taller than the calendar it sat beside, and the reason the whole block
+ * fell below the calendar instead of next to it.
+ */
+function aa_reg_track_panel( $row, $meta ) {
+	if ( ! $row || ! isset( $meta[ $row['code'] ] ) ) { return ''; }
+	$mm   = $meta[ $row['code'] ];
+	$c    = $row['c'];
+	$left = aa_reg_seats_left( $row['course'], $c );
+	$url  = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
+	      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+	$where = trim( ( ! empty( $c['place'] ) ? $c['place'] . ' · ' : '' ) . ( isset( $c['hours'] ) ? $c['hours'] : '' ), ' ·' );
 
-		$out .= '<article class="aat-cohort"><div class="aat-cohort__top">'
-		     . '<span class="aat-badge" style="background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] )
-		     . ';border:1px solid ' . esc_attr( $mm['bd'] ) . '">' . esc_html( $row['code'] ) . '</span>'
-		     . '<span class="aat-cohort__dur">' . esc_html( $mm['short'] ) . '</span></div>'
-		     . '<h3>' . esc_html( $mm['name'] ) . '</h3>'
-		     . '<div class="aat-cohort__when"><i>&#9679;</i><b>' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</b>'
-		     . '<span>' . esc_html( trim( ( ! empty( $c['place'] ) ? $c['place'] . ' · ' : '' ) . ( isset( $c['hours'] ) ? $c['hours'] : '' ), ' ·' ) ) . '</span></div>'
-		     . '<div class="aat-cohort__pay"><div><div class="aat-cohort__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
-		     . '<div class="aat-cohort__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
-		     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>'
-		     . '<a class="aat-cta" href="' . esc_url( $url ) . '">' . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>'
-		     . '</div></article>';
-	}
+	$out  = '<article class="aat-co">';
+	$out .= '<span class="aat-badge" style="background:' . esc_attr( $mm['tint'] ) . ';color:' . esc_attr( $mm['color'] )
+	     . ';border:1px solid ' . esc_attr( $mm['bd'] ) . '">' . esc_html( $row['code'] ) . '</span>';
+	$out .= '<h3 class="aat-co__h">' . esc_html( $mm['name'] ) . '</h3>';
+	$out .= '<dl class="aat-co__facts">'
+	     . '<div><dt>' . esc_html( aa_reg_t( 'dates', 'Dates' ) ) . '</dt>'
+	     . '<dd>' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</dd></div>'
+	     . '<div><dt>' . esc_html( aa_reg_t( 'duration', 'Duration' ) ) . '</dt>'
+	     . '<dd>' . (int) $mm['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</dd></div>'
+	     . '</dl>';
+	if ( $where !== '' ) { $out .= '<p class="aat-co__where">' . esc_html( $where ) . '</p>'; }
+	$out .= '<div class="aat-co__pay"><div class="aat-co__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
+	     . '<div class="aat-co__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
+	     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>';
+	$out .= '<a class="aat-cta aat-co__go" href="' . esc_url( $url ) . '">'
+	     . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+	$out .= '</article>';
 	return $out;
 }
 
@@ -3882,11 +3929,20 @@ function aa_training_category_shortcode( $atts ) {
 		$up = aa_reg_upcoming( $slug, $course );
 		if ( $up ) { $next[ $slug ] = $up[0]; }
 	}
-	if ( ! $next ) { return ''; }
-	uasort( $next, function ( $x, $y ) { return strcmp( $x['start'], $y['start'] ); } );
-	$first_slug = key( $next );
-	$first      = $next[ $first_slug ];
-	$fc         = $courses[ $first_slug ];
+	/* A TRACK WITH NOTHING ON THE SCHEDULE STILL HAS A PAGE. Micro-credentials
+	   are blended e-learning with no cohort to pick, and returning nothing here
+	   left those pages with no heading at all. The hero is built from copy and
+	   course names; only the register card and the calendar need dates, and
+	   both are skipped rather than faked. */
+	$first_slug = '';
+	$first      = null;
+	$fc         = null;
+	if ( $next ) {
+		uasort( $next, function ( $x, $y ) { return strcmp( $x['start'], $y['start'] ); } );
+		$first_slug = key( $next );
+		$first      = $next[ $first_slug ];
+		$fc         = $courses[ $first_slug ];
+	}
 
 	/* One <h1> per page. The pages already carry their own heading in some
 	   cases, so h="h2" demotes this rather than shipping a second one. */
@@ -3913,53 +3969,53 @@ function aa_training_category_shortcode( $atts ) {
 	$h .= '<p class="aat-hero__foot">' . esc_html( $c['comp'] ) . '</p>';
 	$h .= '</div>';
 
-	/* The registration card. Every option is a real cohort at a real price, and
-	   choosing one goes to that course's own enrol section with it preselected
-	   -- the same contract the home page picker uses. The purchase happens in
-	   one place, which is also the only place seats and price are
-	   authoritative. */
-	$h .= '<div class="aat-reg"><div class="aat-reg__head"><strong>'
-	    . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . '</strong><span>'
-	    . esc_html( sprintf( aa_reg_t( 'n_courses', '%d certifications' ), count( $courses ) ) )
-	    . '</span></div><div class="aat-reg__body">';
+	/* The registration card, deliberately small. It used to be a titled box with
+	   a three-cell facts grid and its own header bar -- five stacked blocks for
+	   what is really one question (which certification?) and one answer (the
+	   next date and what it costs). The calendar below now carries the detail,
+	   so this keeps the choice, one line of facts, and the button. Every option
+	   is a real cohort at a real price, and choosing one goes to that course's
+	   own enrol section with it preselected, which is the only place seats and
+	   price are authoritative. */
+	if ( $first ) {
+		$h .= '<div class="aat-reg">';
+		$h .= '<label class="aat-field"><span>' . esc_html( aa_reg_t( 'certification', 'Certification' ) ) . '</span>'
+		    . '<span class="aat-select"><select data-aatr-course>';
+		foreach ( $courses as $slug => $course ) {
+			if ( ! isset( $next[ $slug ] ) ) { continue; }
+			$n = $next[ $slug ];
+			$h .= '<option value="' . esc_attr( $slug ) . '"' . ( $slug === $first_slug ? ' selected' : '' )
+			    . ' data-url="' . esc_attr( $course['url'] . ( strpos( $course['url'], '?' ) === false ? '?' : '&' )
+			      . 'cohort=' . rawurlencode( $n['id'] ) . '#enroll' ) . '"'
+			    . ' data-price="' . esc_attr( aa_reg_money( $course['price'], $course['currency'] ) ) . '"'
+			    . ' data-days="' . (int) $course['days'] . '"'
+			    . ' data-range="' . esc_attr( aa_reg_range( $n['start'], $n['end'] ) ) . '">'
+			    . esc_html( $course['name'] ) . '</option>';
+		}
+		$h .= '</select></span></label>';
 
-	$h .= '<label class="aat-field"><span>' . esc_html( aa_reg_t( 'certification', 'Certification' ) ) . '</span>'
-	    . '<span class="aat-select"><select data-aatr-course>';
-	foreach ( $courses as $slug => $course ) {
-		if ( ! isset( $next[ $slug ] ) ) { continue; }
-		$n = $next[ $slug ];
-		$h .= '<option value="' . esc_attr( $slug ) . '"' . ( $slug === $first_slug ? ' selected' : '' )
-		    . ' data-url="' . esc_attr( $course['url'] . ( strpos( $course['url'], '?' ) === false ? '?' : '&' )
-		      . 'cohort=' . rawurlencode( $n['id'] ) . '#enroll' ) . '"'
-		    . ' data-price="' . esc_attr( aa_reg_money( $course['price'], $course['currency'] ) ) . '"'
-		    . ' data-days="' . (int) $course['days'] . '"'
-		    . ' data-range="' . esc_attr( aa_reg_range( $n['start'], $n['end'] ) ) . '">'
-		    . esc_html( $course['name'] ) . '</option>';
+		$h .= '<p class="aat-reg__line">'
+		    . '<b data-aatr-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</b>'
+		    . '<span data-aatr-days>' . (int) $fc['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
+		    . '<b data-aatr-price>' . esc_html( aa_reg_money( $fc['price'], $fc['currency'] ) ) . '</b></p>';
+
+		$h .= '<a class="aat-cta aat-reg__go" data-aatr-go href="'
+		    . esc_url( $fc['url'] . ( strpos( $fc['url'], '?' ) === false ? '?' : '&' )
+		      . 'cohort=' . rawurlencode( $first['id'] ) . '#enroll' ) . '">'
+		    . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
+		    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
+		$h .= '</div>';
 	}
-	$h .= '</select></span></label>';
 
-	$h .= '<div class="aat-reg__facts">'
-	    . '<div><span>' . esc_html( aa_reg_t( 'next_batch', 'Next batch' ) ) . '</span>'
-	    . '<b data-aatr-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</b></div>'
-	    . '<div><span>' . esc_html( aa_reg_t( 'duration', 'Duration' ) ) . '</span>'
-	    . '<b data-aatr-days>' . (int) $fc['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</b></div>'
-	    . '<div><span>' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</span>'
-	    . '<b data-aatr-price>' . esc_html( aa_reg_money( $fc['price'], $fc['currency'] ) ) . '</b></div>'
-	    . '</div>';
-
-	$h .= '<a class="aat-cta aat-reg__go" data-aatr-go href="'
-	    . esc_url( $fc['url'] . ( strpos( $fc['url'], '?' ) === false ? '?' : '&' )
-	      . 'cohort=' . rawurlencode( $first['id'] ) . '#enroll' ) . '">'
-	    . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>';
-	$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
-	    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
-
-	$h .= '</div></div></div></section>';
+	$h .= '</div></section>';
 
 	/* The calendar, already built and already sourced from the same cohorts. */
-	$h .= '<section id="cohorts" class="aat-cohorts-sec">'
-	    . aa_reg_track_calendar( array( 'courses' => implode( ',', array_keys( $courses ) ), 'months' => 6 ) )
-	    . '</section>';
+	if ( $next ) {
+		$h .= '<section id="cohorts" class="aat-cohorts-sec">'
+		    . aa_reg_track_calendar( array( 'courses' => implode( ',', array_keys( $courses ) ), 'months' => 6 ) )
+		    . '</section>';
+	}
 
 	return $h;
 }

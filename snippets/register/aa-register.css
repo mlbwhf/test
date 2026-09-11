@@ -497,109 +497,228 @@
   .aatc-right{width:100%;flex-direction:row;align-items:center;justify-content:space-between;
     padding-left:60px}
 }
-.aat-cal { display:grid; grid-template-columns:repeat(auto-fit,minmax(560px,1fr)); gap:36px; margin-top:26px; align-items:start; }
-.aat-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:32px; }
-.aat-chip { display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; padding:9px 15px; border-radius:100px; cursor:pointer; background:#FFFFFF; color:#4E4A40; border:1px solid #E9E5DB; transition:background .18s ease, border-color .18s ease; }
+
+/* ============================================================================
+   TRACK CALENDAR  [aa_track_calendar]
+   ----------------------------------------------------------------------------
+   A COURSE IS A RUN, NOT A MARK ON A DAY.
+
+   The first version of this grid put a chip on the start day and left the rest
+   of the course blank, so a four-day class looked like a one-day one and the
+   weekend looked blocked. The second version tinted the following days, which
+   said "something is happening" without saying what or for how long.
+
+   This draws each cohort as ONE BAR spanning its own days, the way the course
+   pages already do it: the bar starts on the start date, ends on the end date,
+   carries the code, the range and the length, and runs straight through
+   Saturday and Sunday because the class does. A cohort crossing a week or a
+   month boundary is drawn in both weeks with the cut end flagged.
+
+   The bars are <a>, not <button>: without scripts every one is a working link
+   to that cohort's enrolment. The JS only intercepts the click to repaint the
+   panel beside the calendar.
+   ========================================================================== */
+.aatc { max-width:1240px; margin:0 auto; }
+.aatc-h { font-size:clamp(24px,2.2vw,32px); line-height:1.15; letter-spacing:-.028em; margin:0 0 18px; }
+
+.aat-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+.aat-chip { display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;
+  padding:9px 15px; border-radius:100px; cursor:pointer; background:#FFFFFF; color:#4E4A40;
+  border:1px solid #E9E5DB; transition:background .18s ease, border-color .18s ease; }
 .aat-chip[aria-pressed="true"] { background:#101C33; color:#FFFFFF; border-color:#101C33; }
+.aat-dot { width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; }
+
+/* THE SPLIT. The old rule was repeat(auto-fit,minmax(560px,1fr)), which needed
+   1156px of container before it would make two columns -- and the content well
+   on these pages is about 1080px. It never made two, so the register panel
+   dropped below the calendar at full width, which is exactly the "registration
+   is taking large space" complaint. Now the calendar column is allowed to
+   shrink (minmax(0,...)) and the split is declared against the viewport. */
+.aat-cal { display:grid; grid-template-columns:1fr; gap:24px; margin-top:20px; align-items:start; }
+@media (min-width:1040px){
+  .aat-cal { grid-template-columns:minmax(0,1.6fr) minmax(250px,.78fr); gap:26px; }
+}
 
 .aat-calcard { border:1px solid #E9E5DB; border-radius:18px; background:#FFFFFF; overflow:hidden; }
-.aat-calcard__head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 22px; border-bottom:1px solid #EDE9DF; background:#FBFAF7; }
-.aat-calcard__nav { display:flex; align-items:center; gap:12px; }
-.aat-calcard__nav strong { font-size:17px; font-weight:600; letter-spacing:-.02em; }
-.aat-navbtn { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; background:#FFFFFF; border:1px solid #E9E5DB; color:#101C33; cursor:pointer; }
+.aat-calcard__head { display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:15px 20px; border-bottom:1px solid #EDE9DF; background:#FBFAF7; }
+.aat-calcard__eyebrow { margin:0 0 3px; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:700; color:#8A8375; }
+.aat-calcard__month { font-size:19px; font-weight:600; letter-spacing:-.024em; }
+.aat-calcard__nav { display:flex; align-items:center; gap:8px; flex:none; }
+.aat-navbtn { width:34px; height:34px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-size:17px; background:#FFFFFF; border:1px solid #E9E5DB;
+  color:#101C33; cursor:pointer; }
 .aat-navbtn[disabled] { color:#CFC9BB; cursor:default; }
-.aat-calcard__count { font-size:12px; font-weight:600; color:#8A8375; }
-.aat-calscroll { overflow-x:auto; }
-.aat-calinner { min-width:700px; }
-.aat-dows { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); padding:0 10px; border-bottom:1px solid #EDE9DF; }
-.aat-dows span { padding:11px 4px; text-align:center; font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:#8A8375; }
-.aat-grid { padding:10px; }
-.aat-week { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; margin-bottom:6px; }
-.aat-day { display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-height:82px; padding:8px 6px; border-radius:11px; background:#FFFFFF; border:1px solid transparent; text-align:left; overflow:hidden; cursor:default; }
-.aat-day__num { font-size:12.5px; font-weight:500; line-height:1; }
-.aat-day__chips { display:flex; flex-direction:column; gap:3px; width:100%; }
-.aat-day__chip { display:flex; align-items:center; justify-content:space-between; gap:4px; width:100%; font-size:9.5px; font-weight:700; letter-spacing:.02em; padding:3px 5px; border-radius:5px; }
-.aat-day__chip span:first-child { flex:0 0 auto; }
-.aat-day__chip span:last-child { flex:1 1 auto; min-width:0; overflow:hidden; white-space:nowrap; text-align:right; font-size:9px; letter-spacing:0; opacity:.72; }
-.aat-day__more { font-size:9px; font-weight:600; color:#8A8375; }
-.aat-day--out { color:#D8D2C5; }
-.aat-day--has { border-color:#CFE4E1; cursor:pointer; }
-.aat-day--has .aat-day__num { font-weight:700; }
-.aat-day--run { background:#F4FAF9; border-color:#E4EFED; }
-/* The course-run stripe: one bar per class in session on this day, pushed to
-   the foot of the cell so consecutive days read as a continuous band across
-   the week -- including Saturday and Sunday, which classes run straight
-   through. */
-.aat-day__runs { display:flex; gap:3px; width:100%; margin-top:auto; }
-.aat-day__bar { flex:1 1 auto; height:4px; border-radius:2px; opacity:.55; }
-.aat-day--on .aat-day__bar { opacity:1; }
-.aat-day--on { background:#0E8074; border-color:#0E8074; color:#FFFFFF; cursor:pointer; }
-.aat-day--on .aat-day__num { font-weight:700; }
-.aat-day--on .aat-day__chip { background:rgba(255,255,255,.22) !important; color:#FFFFFF !important; }
-.aat-day--on .aat-day__more { color:rgba(255,255,255,.8); }
-.aat-legend { display:flex; flex-wrap:wrap; align-items:center; gap:16px; padding:14px 22px; border-top:1px solid #EDE9DF; background:#FBFAF7; font-size:11.5px; color:#8A8375; }
-.aat-legend span { display:inline-flex; align-items:center; gap:7px; }
-.aat-legend i { width:14px; height:14px; border-radius:5px; display:block; }
-.aat-legend i.k1 { background:#FFFFFF; border:1px solid #CFE4E1; }
-.aat-legend i.k2 { background:#F4FAF9; border:1px solid #E4EFED; }
-.aat-legend i.k3 { background:#0E8074; }
 
-.aat-side { position:sticky; top:24px; animation:aatFadeUp .45s ease both; }
-.aat-side__head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; }
-.aat-side__head strong { font-size:19px; font-weight:600; letter-spacing:-.024em; }
-.aat-side__head span { font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:#8A8375; }
-.aat-side__list { display:flex; flex-direction:column; gap:12px; }
-.aat-cohort { border:1px solid #E9E5DB; border-radius:16px; padding:18px; background:#FFFFFF; }
-.aat-cohort__top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
-.aat-cohort h3 { margin:11px 0 0; font-size:17.5px; font-weight:600; letter-spacing:-.022em; line-height:1.25; }
-.aat-cohort p { margin:7px 0 0; font-size:13.5px; color:#4E4A40; line-height:1.55; text-wrap:pretty; }
-.aat-cohort__when { display:flex; align-items:center; gap:9px; margin-top:14px; padding:11px 13px; border-radius:11px; background:#FBFAF7; border:1px solid #EDE9DF; }
-.aat-cohort__when i { color:#0E8074; font-size:12px; font-style:normal; }
-.aat-cohort__when b { font-size:13px; font-weight:600; }
-.aat-cohort__when span { margin-left:auto; font-size:12px; color:#8A8375; }
-.aat-cohort__pay { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-top:16px; padding-top:15px; border-top:1px solid #EDE9DF; }
-.aat-cohort__price { font-size:22px; font-weight:600; letter-spacing:-.026em; }
-.aat-cohort__incl { font-size:11.5px; color:#8A8375; margin-top:3px; }
-.aat-cohort__eb { display:block; margin-top:11px; text-align:center; font-size:12.5px; font-weight:600; color:#8A8375; text-decoration:underline; text-underline-offset:3px; }
-.aat-private { margin-top:14px; border:1px dashed #E9E5DB; border-radius:14px; padding:15px 17px; background:#FBFAF7; }
-.aat-private p { margin:0; font-size:13px; line-height:1.55; color:#4E4A40; }
+.aat-calscroll { overflow-x:auto; }
+/* Bars need seven readable columns and nothing more; the day-cell grid needed
+   700px because each cell carried stacked chips. */
+.aat-calinner { min-width:560px; }
+.aat-dows { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); padding:0 10px;
+  border-bottom:1px solid #EDE9DF; }
+.aat-dows span { padding:10px 4px; text-align:center; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; font-weight:700; color:#8A8375; }
+.aat-grid { padding:6px 10px 10px; }
+
+.aat-week { padding:2px 0 7px; border-bottom:1px solid #F5F2EB; }
+.aat-week:last-child { border-bottom:0; }
+.aat-week__days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
+.aat-dnum { padding:7px 6px 4px; font-size:12px; font-weight:600; color:#4E4A40; }
+.aat-dnum--out { color:#D8D2C5; font-weight:500; }
+/* Lanes are grid rows; the bar itself sets grid-column / grid-row inline, which
+   is the only per-cohort value the server has to compute. */
+/* Fixed row height so the five-lane cap below is an exact pixel number rather
+   than an estimate of how tall a bar happens to be. */
+.aat-week__lanes { display:grid; grid-template-columns:repeat(7,minmax(0,1fr));
+  grid-auto-rows:26px; gap:3px; min-height:6px; }
+
+/* SEVEN COURSES RUNNING TWICE A WEEK IS TEN CLASSES AT ONCE. Ten stacked bars
+   make one week taller than a phone, so a week is capped at five lanes and
+   opens on demand. The bars beyond the cap are hidden, never dropped: the
+   whole schedule stays in the page for a crawler and for styles-off reading.
+   5 rows x 26px + 4 gaps x 3px = 142. */
+.aat-week--over .aat-week__lanes { max-height:142px; overflow:hidden; }
+.aat-week--over.is-open .aat-week__lanes { max-height:none; }
+/* Asking for one certification is a request to see it wherever it falls, so a
+   filter opens every capped week. */
+.aatc.is-filtered .aat-week--over .aat-week__lanes { max-height:none; }
+.aat-week__more { display:block; margin:5px 0 0; padding:3px 6px; border:0; background:none;
+  font:inherit; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+  color:#8A8375; cursor:pointer; }
+.aat-week__more:hover { color:#101C33; }
+
+.aat-bar { display:flex; align-items:center; gap:7px; min-width:0; overflow:hidden; white-space:nowrap;
+  padding:4px 9px; border-radius:7px; border:1px solid transparent; font-size:11.5px; line-height:1.25;
+  text-decoration:none; cursor:pointer; transition:box-shadow .15s ease, filter .15s ease; }
+.aat-bar__code { font-weight:800; letter-spacing:.03em; flex:none; }
+.aat-bar__range { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis;
+  font-weight:500; opacity:.82; }
+.aat-bar__d { flex:none; font-size:10.5px; font-weight:700; opacity:.7; }
+/* A cohort clipped by the week edge keeps a flat, dashed end so it reads as
+   continuing into the next row rather than finishing on Sunday. */
+.aat-bar--from { border-top-left-radius:0; border-bottom-left-radius:0; border-left-style:dashed; }
+.aat-bar--to { border-top-right-radius:0; border-bottom-right-radius:0; border-right-style:dashed; }
+.aat-bar--on { box-shadow:inset 0 0 0 2px currentColor; }
+.aat-bar:hover { filter:brightness(.965); text-decoration:none; }
+/* Filtering dims rather than removes: the month keeps its shape, so the bar you
+   were about to click does not move as you click it. */
+.aat-bar[data-aatc-hide] { opacity:.16; }
+
+.aat-legend { margin:0; padding:12px 20px; border-top:1px solid #EDE9DF; background:#FBFAF7;
+  font-size:11.5px; line-height:1.5; color:#8A8375; }
+
+/* ---------- the selected cohort ---------- */
+.aat-side { position:sticky; top:24px; }
+.aat-side__head { display:flex; align-items:center; gap:8px; margin-bottom:10px; font-size:10.5px;
+  letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#8A8375; }
+.aat-side__dot { width:8px; height:8px; border-radius:50%; background:#D34B2A; flex:none; }
+.aat-co { border:1px solid #E9E5DB; border-radius:16px; padding:18px; background:#FFFFFF; }
+.aat-badge { display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em;
+  padding:4px 9px; border-radius:100px; }
+.aat-co__h { margin:11px 0 0; font-size:19px; font-weight:600; letter-spacing:-.024em; line-height:1.22; }
+.aat-co__facts { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin:15px 0 0;
+  background:#EDE9DF; border:1px solid #EDE9DF; border-radius:11px; overflow:hidden; }
+.aat-co__facts > div { background:#FBFAF7; padding:11px 12px; min-width:0; }
+.aat-co__facts dt { margin:0; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:700; color:#8A8375; }
+.aat-co__facts dd { margin:4px 0 0; font-size:14px; font-weight:600; letter-spacing:-.012em; }
+.aat-co__where { margin:10px 0 0; font-size:12.5px; color:#8A8375; }
+.aat-co__pay { margin-top:15px; padding-top:14px; border-top:1px solid #EDE9DF; }
+.aat-co__price { font-size:24px; font-weight:600; letter-spacing:-.028em; }
+.aat-co__incl { font-size:11.5px; color:#8A8375; margin-top:2px; }
+.aat-co__go { display:flex; justify-content:center; margin-top:14px; }
+.aat-private { margin:12px 0 0; font-size:12.5px; line-height:1.55; color:#8A8375; }
 .aat-private a { color:#0E8074; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
 
-/* ---------- mobile cohort list (replaces the month grid below 760px) ---------- */
+.aat-cta { display:inline-flex; align-items:center; gap:9px; background:#D34B2A; color:#fff!important;
+  padding:11px 18px; border-radius:100px; font-weight:600; font-size:14px; text-decoration:none;
+  min-height:44px; }
+.aat-cta:hover { background:#B93E20; color:#fff!important; text-decoration:none; }
+
+/* ---------- mobile cohort list (replaces the grid below 760px) ---------- */
 .aat-callist { display:none; }
-.aat-calday { display:flex; align-items:center; gap:12px; width:100%; padding:14px 18px; border:0; border-bottom:1px solid #F3F0E9; background:#FFFFFF; text-align:left; cursor:pointer; min-height:56px; }
+.aat-calmonth { padding:13px 18px 7px; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase;
+  font-weight:700; color:#8A8375; }
+.aat-calday { display:flex; align-items:center; gap:12px; width:100%; padding:13px 18px; border:0;
+  border-bottom:1px solid #F3F0E9; background:#FFFFFF; text-align:left; cursor:pointer; min-height:56px; }
 .aat-calday[aria-pressed="true"] { background:#F4FAF9; box-shadow:inset 3px 0 0 #0E8074; }
-.aat-calday__date { display:flex; flex-direction:column; gap:2px; min-width:74px; }
-.aat-calday__date b { font-size:16px; font-weight:600; letter-spacing:-.022em; }
-.aat-calday__date span { font-size:11.5px; color:#8A8375; }
-.aat-calday__codes { display:flex; flex-wrap:wrap; gap:5px; }
-.aat-calday__code { font-size:10px; font-weight:700; letter-spacing:.04em; padding:4px 8px; border-radius:5px; }
-.aat-calday__n { margin-left:auto; font-size:11.5px; font-weight:600; color:#8A8375; }
-.aat-calmonth { padding:11px 18px; background:#FBFAF7; border-bottom:1px solid #EDE9DF; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; font-weight:700; color:#8A8375; }
-/* ---------- track calendar: additions over the handoff ---------- */
-.aatc{max-width:1240px;margin:0 auto}
-.aatc-h{font-size:clamp(24px,2.2vw,32px);line-height:1.15;letter-spacing:-.028em;margin:0 0 18px}
-.aat-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-.aat-badge{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:100px}
-.aat-cohort__dur{font-size:11.5px;color:#8A8375;font-weight:600}
-.aat-cta{display:inline-flex;align-items:center;gap:9px;background:#D34B2A;color:#fff!important;
-  padding:11px 18px;border-radius:100px;font-weight:600;font-size:14px;text-decoration:none;min-height:44px}
-.aat-cta:hover{background:#B93E20;color:#fff!important}
-.aat-calmonth{padding:14px 18px 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  font-weight:700;color:#8A8375}
-.aat-calday__codes{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 auto;min-width:0}
-.aat-calday__code{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;white-space:nowrap}
-.aat-calday__n{font-size:12px;font-weight:700;color:#8A8375;flex:none}
-/* A chip filtered out is dimmed rather than removed: the month keeps its shape,
-   so filtering does not make the grid jump under the pointer. */
-.aat-day__chip[data-aatc-hide]{opacity:.16}
-.aat-day--dim{opacity:.4}
+.aat-calday__date { display:flex; flex-direction:column; gap:2px; min-width:66px; flex:none; }
+.aat-calday__date b { font-size:15.5px; font-weight:600; letter-spacing:-.022em; }
+.aat-calday__date span { font-size:11px; color:#8A8375; }
+.aat-calday__codes { display:flex; align-items:center; flex-wrap:wrap; gap:6px; flex:1 1 auto; min-width:0; }
+.aat-calday__code { font-size:10px; font-weight:700; padding:3px 7px; border-radius:5px; white-space:nowrap; }
+.aat-calday__rng { font-size:12px; color:#8A8375; }
+.aat-calday__n { font-size:12px; font-weight:700; color:#8A8375; flex:none; }
+
 @media (max-width:760px){
-  .aat-calscroll{display:none}
-  .aat-callist{display:block}
-  .aat-legend{display:none}
+  .aat-calscroll { display:none; }
+  .aat-callist { display:block; }
+  .aat-legend { display:none; }
+}
+@media (max-width:1039px){
+  .aat-side { position:static; }
 }
 @media (max-width:900px){
-  .aat-side{position:static}
-  .aat-chip,.aat-navbtn,.aat-calday{min-height:44px}
+  .aat-chip, .aat-navbtn, .aat-calday { min-height:44px; }
+}
+
+/* ============================================================================
+   TRACK LANDING PAGE HERO  [aa_training_category]
+   ========================================================================== */
+.aat-hero { max-width:1240px; margin:0 auto; padding:clamp(28px,3vw,52px) clamp(16px,3vw,40px) 0;
+  font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif; color:#101C33; }
+.aat-hero__grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:clamp(24px,3vw,48px); align-items:start; }
+.aat-hero__grid > * { min-width:0; }
+.aat-hero__kicker { display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;
+  font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#6B6455;
+  border:1px solid #E2DCCE; border-radius:100px; padding:8px 15px; }
+.aat-hero__kicker b { color:#101C33; }
+.aat-hero__kicker i { width:5px; height:5px; border-radius:50%; background:#0E8074; display:block; }
+.aat-hero__h { font-size:clamp(30px,4.2vw,50px); line-height:1.06; letter-spacing:-.032em;
+  font-weight:600; margin:22px 0 0; text-wrap:balance; }
+.aat-hero__h em { font-family:'Instrument Serif',Georgia,serif; font-weight:400; font-style:italic; color:#0E8074; }
+.aat-hero__sub { font-size:16.5px; line-height:1.62; color:#4E4A40; max-width:52ch; margin:18px 0 0; text-wrap:pretty; }
+.aat-hero__points { list-style:none; margin:22px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+.aat-hero__points li { font-size:12.5px; font-weight:600; color:#1E5E56; background:#F1F7F5;
+  border:1px solid #D9E7E3; border-radius:100px; padding:8px 14px; }
+.aat-hero__btns { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.aat-btn2 { display:inline-flex; align-items:center; min-height:44px; padding:11px 20px; border-radius:100px;
+  border:1px solid #E9E5DB; background:#fff; color:#101C33!important; font-weight:600; font-size:14px; text-decoration:none; }
+.aat-btn2:hover { border-color:#101C33; }
+.aat-hero__foot { margin:16px 0 0; font-size:13px; color:#8A8375; }
+
+/* THE COMPACT REGISTER CARD.
+   It used to be a titled box with a three-cell facts grid and its own header
+   bar -- five stacked blocks for what is really one question (which
+   certification?) and one answer (the next date and what it costs). The
+   calendar below now carries the detail, so this keeps the choice, one line of
+   facts, and the button. */
+.aat-reg { border:1px solid #E9E5DB; border-radius:18px; background:#FFFFFF; padding:18px;
+  box-shadow:0 14px 34px rgba(16,28,51,.06); }
+.aat-field { display:block; }
+.aat-field > span:first-child { display:block; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:700; color:#8A8375; margin-bottom:7px; }
+.aat-select { display:block; position:relative; }
+/* 16px minimum, or iOS zooms the page when the select takes focus. */
+.aat-select select { width:100%; font:inherit; font-size:16px; padding:13px 40px 13px 14px; min-height:48px;
+  border:1px solid #E9E5DB; border-radius:12px; background:#fff; color:#101C33; appearance:none; cursor:pointer; }
+/* This was content:'BE' -- a CSS escape for the chevron that lost its
+   backslash somewhere between here and the snippet, so the card rendered the
+   literal letters "BE" beside the course name. The character itself is written
+   out rather than escaped, which cannot lose a backslash it does not have. */
+.aat-select::after { content:'▾'; position:absolute; right:15px; top:50%; transform:translateY(-50%);
+  pointer-events:none; color:#8A8375; font-size:12px; }
+.aat-reg__line { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 12px; margin:14px 0 0;
+  padding-top:13px; border-top:1px solid #EDE9DF; font-size:14px; }
+.aat-reg__line b { font-weight:600; letter-spacing:-.015em; }
+.aat-reg__line span { font-size:12.5px; color:#8A8375; }
+.aat-reg__line b:last-child { margin-left:auto; font-size:17px; }
+.aat-reg__go { display:flex; justify-content:center; margin-top:14px; }
+.aat-reg__note { margin:10px 0 0; text-align:center; font-size:12px; color:#8A8375; }
+.aat-cohorts-sec { max-width:1240px; margin:0 auto; padding:clamp(30px,3.4vw,56px) clamp(16px,3vw,40px); }
+@media (max-width:600px){
+  .aat-reg__line b:last-child { margin-left:0; }
+  .aat-hero__btns .aat-cta, .aat-hero__btns .aat-btn2 { width:100%; justify-content:center; }
 }
