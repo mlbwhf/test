@@ -593,6 +593,30 @@
 .aat-co__facts dt { margin:0; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase;
   font-weight:700; color:#9A9384; }
 .aat-co__facts dd { margin:5px 0 0; font-size:15px; font-weight:600; letter-spacing:-.014em; }
+/* OTHER DATES, in the panel and in the hero card -- one shared chip. A panel
+   that answers one cohort is an answer, not a schedule; these are the next few
+   starts of the same course, so a date that does not work is one click from
+   one that does. */
+.aat-co__dates { margin-top:16px; }
+.aat-co__dateslabel, .aat-dates__label { margin:0 0 8px; font-size:9.5px; letter-spacing:.13em;
+  text-transform:uppercase; font-weight:700; color:#9A9384; }
+.aat-co__datelist, .aat-dates__list { display:flex; flex-wrap:wrap; gap:6px; }
+.aat-dateopt { font:inherit; font-size:12px; font-weight:600; color:#3C4A52; cursor:pointer;
+  background:#FFFFFF; border:1px solid #E4E0D6; border-radius:8px; padding:7px 11px; text-align:left;
+  min-height:36px; transition:border-color .15s ease, background .15s ease; }
+.aat-dateopt:hover { border-color:#0E8074; }
+.aat-dateopt.is-on { background:#101C33; border-color:#101C33; color:#FFFFFF; }
+.aat-dateopt b { font-weight:700; display:block; }
+.aat-dateopt span { display:block; margin-top:2px; font-size:10.5px; font-weight:600; opacity:.62; }
+
+/* The hero card's picker: a column of dates rather than a wrapped row, capped
+   and scrollable so six dates cannot push the calendar below the fold. */
+.aat-dates { margin-top:16px; }
+.aat-dates__list { flex-direction:column; flex-wrap:nowrap; gap:6px;
+  max-height:196px; overflow-y:auto; overscroll-behavior:contain; padding-right:4px; }
+.aat-dates__list .aat-dateopt { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.aat-dates__list .aat-dateopt b, .aat-dates__list .aat-dateopt span { display:inline; margin:0; }
+
 .aat-co__proof { list-style:none; margin:16px 0 0; padding:0; display:flex; flex-direction:column; gap:9px; }
 .aat-co__proof li { position:relative; padding-left:24px; font-size:13.5px; line-height:1.45; color:#3C4A52; }
 /* The character itself, not a CSS escape -- an escape is what lost its
@@ -612,15 +636,15 @@
    var(--ink) etc, which resolve inside .aacal and .aahero and resolve to
    NOTHING here -- a transparent pay button on a white card. The tokens are
    given values for this panel rather than the component being forked. */
-.aat-side .aareg-inline { margin-top:16px; }
-.aat-side .aareg-inline-field input { background:#FFFFFF; border-color:#E4E0D6; color:#101C33; }
-.aat-side .aareg-inline-stepper { background:#FFFFFF; border-color:#E4E0D6; }
-.aat-side .aareg-inline-stepper button { color:#101C33; }
-.aat-side .aareg-inline-stepper button:hover { background:#F4F2ED; }
-.aat-side .aareg-inline-total { color:#101C33; }
-.aat-side .aareg-inline-pay { width:100%; background:#101C33; color:#F7F5F0; }
-.aat-side .aareg-inline-pay:hover:not(:disabled) { background:#0E8074; }
-.aat-side .aareg-inline-note { color:#9A9384; }
+.aat-side .aareg-inline, .aat-reg .aareg-inline { margin-top:16px; }
+.aat-side .aareg-inline-field input, .aat-reg .aareg-inline-field input { background:#FFFFFF; border-color:#E4E0D6; color:#101C33; }
+.aat-side .aareg-inline-stepper, .aat-reg .aareg-inline-stepper { background:#FFFFFF; border-color:#E4E0D6; }
+.aat-side .aareg-inline-stepper button, .aat-reg .aareg-inline-stepper button { color:#101C33; }
+.aat-side .aareg-inline-stepper button:hover, .aat-reg .aareg-inline-stepper button:hover { background:#F4F2ED; }
+.aat-side .aareg-inline-total, .aat-reg .aareg-inline-total { color:#101C33; }
+.aat-side .aareg-inline-pay, .aat-reg .aareg-inline-pay { width:100%; background:#101C33; color:#F7F5F0; }
+.aat-side .aareg-inline-pay:hover:not(:disabled), .aat-reg .aareg-inline-pay:hover:not(:disabled) { background:#0E8074; }
+.aat-side .aareg-inline-note, .aat-reg .aareg-inline-note { color:#9A9384; }
 
 /* ---------- mobile cohort list (replaces the grid below 760px) ---------- */
 .aat-callist { display:none; }

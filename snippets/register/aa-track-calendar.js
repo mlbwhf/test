@@ -102,6 +102,23 @@
       + esc(live ? D.labels.payNote : D.labels.payOffNote) + '</p></form>';
   }
 
+  /* The rest of this course's schedule, right where the decision is made. One
+     cohort is an answer; it is not a schedule, and a visitor for whom this date
+     does not work should not have to go back and hunt the grid for the next. */
+  function dates(c) {
+    var list = (D.dates && D.dates[c.code]) || [];
+    var out = '', n = 0;
+    for (var i = 0; i < list.length && n < 6; i++) {
+      if (list[i].id === c.id) { continue; }
+      n++;
+      out += '<button type="button" class="aat-dateopt" data-aatc-co="'
+           + esc(list[i].id) + '">' + esc(list[i].label) + '</button>';
+    }
+    if (!out) { return ''; }
+    return '<div class="aat-co__dates"><p class="aat-co__dateslabel">'
+      + esc(D.labels.otherDates) + '</p><div class="aat-co__datelist">' + out + '</div></div>';
+  }
+
   function card(c) {
     var seats = (c.left <= 6)
       ? ' &middot; ' + esc(String(D.labels.seatsLeft).replace('%d', c.left))
@@ -121,6 +138,7 @@
               return '<li>' + esc(p) + '</li>';
             }).join('') + '</ul>'
           : '')
+      + dates(c)
       + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
       + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
       + form(c)
@@ -187,4 +205,65 @@
   });
 
   showMonth(0);
+})();
+
+/* ============================================================================
+   AA — TRACK LANDING HERO picker                      [aa_training_category]
+   ----------------------------------------------------------------------------
+   The hero card used to offer one date for the chosen certification and a link
+   to go and pick it again on the course page. It offers several now and takes
+   the money itself, which is the same shape the home page and the course pages
+   already use.
+
+   Every course's dates are already in the HTML with all but one hidden, so the
+   whole set is in the page for a crawler; this only switches which block shows
+   and points the in-place form at whichever date is chosen.
+   ========================================================================== */
+(function () {
+  var card = document.querySelector('[data-aah]');
+  if (!card) { return; }
+
+  var sel  = card.querySelector('[data-aah-course]');
+  var form = card.querySelector('[data-aa-inline]');
+
+  function blocks() {
+    return Array.prototype.slice.call(card.querySelectorAll('[data-aah-dates]'));
+  }
+
+  function point(btn) {
+    if (!btn || !form) { return; }
+    blocks().forEach(function (b) {
+      Array.prototype.forEach.call(b.querySelectorAll('[data-aah-pick]'), function (o) {
+        var on = (o === btn);
+        o.classList.toggle('is-on', on);
+        o.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    });
+    if (window.AA_REG_RETARGET) {
+      window.AA_REG_RETARGET(form, {
+        cohort: btn.getAttribute('data-aah-pick'),
+        price: parseInt(btn.getAttribute('data-price'), 10) || 0
+      }, true);
+    }
+  }
+
+  if (sel) {
+    sel.addEventListener('change', function () {
+      var want = sel.value, first = null;
+      blocks().forEach(function (b) {
+        var on = (b.getAttribute('data-aah-dates') === want);
+        b.hidden = !on;
+        if (on && !first) { first = b.querySelector('[data-aah-pick]'); }
+      });
+      /* A course change is a new schedule, so the form must follow it to that
+         course's first date -- leaving it on the old cohort would charge for a
+         course the card is no longer showing. */
+      point(first);
+    });
+  }
+
+  card.addEventListener('click', function (e) {
+    var pick = e.target.closest('[data-aah-pick]');
+    if (pick) { point(pick); }
+  });
 })();

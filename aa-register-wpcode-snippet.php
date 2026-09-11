@@ -1752,6 +1752,24 @@ function aa_reg_track_calendar( $atts ) {
 	$sel    = $all[0];
 	$sel_id = $sel['c']['id'];
 
+	/* THE PANEL SHOWS ONE COHORT, AND ONE COHORT IS NOT A SCHEDULE.
+	   Selecting a bar answers "this date", but a visitor for whom that date
+	   does not work then has to go back and hunt the grid for the next one. So
+	   the panel also carries the next few starts OF THE SAME COURSE as pickable
+	   chips -- the schedule in the place where the decision is being made.
+	   Eight is enough to cover a month of a twice-weekly course without turning
+	   the panel back into the list it replaced. */
+	$dates = array();
+	foreach ( $all as $row ) {
+		$code = $row['code'];
+		if ( ! isset( $dates[ $code ] ) ) { $dates[ $code ] = array(); }
+		if ( count( $dates[ $code ] ) >= 8 ) { continue; }
+		$dates[ $code ][] = array(
+			'id'    => $row['c']['id'],
+			'label' => aa_reg_range( $row['c']['start'], $row['c']['end'], true ),
+		);
+	}
+
 	$dir = aa_reg_dir_attr();
 	$h   = '<section class="aatc"' . $dir . ' data-aatc>';
 	if ( $a['heading'] !== '' ) { $h .= '<h2 class="aatc-h">' . esc_html( $a['heading'] ) . '</h2>'; }
@@ -1958,7 +1976,7 @@ function aa_reg_track_calendar( $atts ) {
 	    . '<span class="aat-side__dot"></span>'
 	    . esc_html( aa_reg_t( 'selected_cohort', 'Selected cohort' ) ) . '</div>'
 	    . '<div class="aat-side__body" data-aatc-panel>'
-	    . aa_reg_track_panel( $sel, $meta, $a['label'] ) . '</div>'
+	    . aa_reg_track_panel( $sel, $meta, $a['label'], $dates ) . '</div>'
 	    . '<p class="aat-private">' . esc_html( aa_reg_t( 'no_dates', "Dates don't work?" ) ) . ' '
 	    . '<a href="/contact/">' . esc_html( aa_reg_t( 'private', 'Ask for a private cohort' ) ) . '</a></p>'
 	    . '</aside>';
@@ -1988,6 +2006,7 @@ function aa_reg_track_calendar( $atts ) {
 	}
 	$h .= '<script>window.AA_TC=' . wp_json_encode( array(
 		'cohorts' => $payload,
+		'dates'   => $dates,
 		'months'  => array_keys( $months ),
 		'label'   => $a['label'],
 		'live'    => aa_reg_is_live(),
@@ -2003,7 +2022,8 @@ function aa_reg_track_calendar( $atts ) {
 			'payOff'    => aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ),
 			'payNote'   => 'Exam fee included. You will be taken to Stripe to pay.',
 			'payOffNote'=> 'Online payment is switched off right now — please contact us.',
-			'details'   => aa_reg_t( 'full_details', 'Full course details' ),
+			'details'    => aa_reg_t( 'full_details', 'Full course details' ),
+			'otherDates' => aa_reg_t( 'other_dates', 'Other dates' ),
 		),
 	) ) . ';</script>';
 
@@ -2023,7 +2043,7 @@ function aa_reg_track_calendar( $atts ) {
  * -- taller than the calendar it sat beside, and the reason the whole block
  * fell below the calendar instead of next to it.
  */
-function aa_reg_track_panel( $row, $meta, $label = '' ) {
+function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 	if ( ! $row || ! isset( $meta[ $row['code'] ] ) ) { return ''; }
 	$mm    = $meta[ $row['code'] ];
 	$c     = $row['c'];
@@ -2046,6 +2066,21 @@ function aa_reg_track_panel( $row, $meta, $label = '' ) {
 		     . '<dd>' . esc_html( $where ) . '</dd></div>';
 	}
 	$out .= '</dl>';
+
+	/* The rest of this course's schedule, right where the decision is made. */
+	$others = isset( $dates[ $row['code'] ] ) ? $dates[ $row['code'] ] : array();
+	if ( count( $others ) > 1 ) {
+		$out .= '<div class="aat-co__dates"><p class="aat-co__dateslabel">'
+		     . esc_html( aa_reg_t( 'other_dates', 'Other dates' ) ) . '</p><div class="aat-co__datelist">';
+		$n = 0;
+		foreach ( $others as $d ) {
+			if ( $d['id'] === $c['id'] ) { continue; }
+			if ( ++$n > 6 ) { break; }
+			$out .= '<button type="button" class="aat-dateopt" data-aatc-co="' . esc_attr( $d['id'] ) . '">'
+			     . esc_html( $d['label'] ) . '</button>';
+		}
+		$out .= '</div></div>';
+	}
 
 	if ( $mm['proof'] ) {
 		$out .= '<ul class="aat-co__proof">';
@@ -2317,6 +2352,39 @@ add_shortcode( 'aa_course_register', 'aa_reg_panel' );
 function aa_reg_autoplace_on() {
 	return get_option( 'aa_reg_autoplace', 'yes' ) !== 'no';
 }
+
+/**
+ * A COURSE PAGE GETS THE SAME CALENDAR AS ITS TRACK PAGE.
+ *
+ * The per-course calendar on a course page comes from [easy_event_calendar_mini],
+ * which the mini-calendar snippet already takes over at priority 10. This takes
+ * it one step earlier, so the bar calendar a visitor meets on /training/adv-safe/
+ * is the same object they meet on /training/adv-safe/aspc/ -- same bars, same
+ * week shape, and the same panel beside it that registers where it stands
+ * instead of sending them somewhere else to do it.
+ *
+ * Returning $short (false) leaves the tag alone, so anything this cannot build
+ * -- a page with no course, a course with no schedule -- falls through to the
+ * mini calendar exactly as before. Switching this snippet off does the same.
+ * It is gated on the same setting as the hero and form swap, because it is the
+ * same decision: use the new components, or do not.
+ */
+add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
+	if ( $tag !== 'easy_event_calendar_mini' ) { return $short; }
+	if ( ! aa_reg_autoplace_on() ) { return $short; }
+
+	$slug = aa_reg_page_course();
+	if ( $slug === '' ) { return $short; }
+	$course = aa_reg_course( $slug );
+	if ( ! $course ) { return $short; }
+
+	$out = aa_reg_track_calendar( array(
+		'courses' => $slug,
+		'months'  => 6,
+		'label'   => isset( $course['crumb'] ) ? $course['crumb'] : '',
+	) );
+	return ( $out !== '' ) ? $out : $short;
+}, 9, 3 );
 
 /* ============================================================================
    LANGUAGE
@@ -4073,11 +4141,14 @@ function aa_training_category_shortcode( $atts ) {
 	}
 	if ( ! $courses ) { return ''; }
 
-	/* Next cohort per course, and the soonest overall -- the hero's default. */
+	/* Next cohort per course, and the soonest overall -- the hero's default.
+	   The whole upcoming list is kept too: the hero card offers several dates
+	   per course, not just the next one. */
 	$next = array();
+	$ups  = array();
 	foreach ( $courses as $slug => $course ) {
 		$up = aa_reg_upcoming( $slug, $course );
-		if ( $up ) { $next[ $slug ] = $up[0]; }
+		if ( $up ) { $next[ $slug ] = $up[0]; $ups[ $slug ] = $up; }
 	}
 	/* A TRACK WITH NOTHING ON THE SCHEDULE STILL HAS A PAGE. Micro-credentials
 	   are blended e-learning with no cohort to pick, and returning nothing here
@@ -4119,40 +4190,57 @@ function aa_training_category_shortcode( $atts ) {
 	$h .= '<p class="aat-hero__foot">' . esc_html( $c['comp'] ) . '</p>';
 	$h .= '</div>';
 
-	/* The registration card, deliberately small. It used to be a titled box with
-	   a three-cell facts grid and its own header bar -- five stacked blocks for
-	   what is really one question (which certification?) and one answer (the
-	   next date and what it costs). The calendar below now carries the detail,
-	   so this keeps the choice, one line of facts, and the button. Every option
-	   is a real cohort at a real price, and choosing one goes to that course's
-	   own enrol section with it preselected, which is the only place seats and
-	   price are authoritative. */
+	/* THE REGISTRATION CARD, AND IT REGISTERS.
+	   It used to show the next date for the chosen certification and a button
+	   that sent you to the course page to pick it a second time -- one date,
+	   and a round trip to buy it. It is a picker now, in the shape the home
+	   page and the course pages already use: choose the certification, choose
+	   from its next few dates, pay where you stand. Every option is a real
+	   cohort at a real price, and the form posts a cohort id which the server
+	   resolves -- so this sells any course on the track, including one with no
+	   page of its own to send anyone to. */
 	if ( $first ) {
-		$h .= '<div class="aat-reg">';
+		$h .= '<div class="aat-reg" data-aah>';
 		$h .= '<label class="aat-field"><span>' . esc_html( aa_reg_t( 'certification', 'Certification' ) ) . '</span>'
-		    . '<span class="aat-select"><select data-aatr-course>';
+		    . '<span class="aat-select"><select data-aah-course>';
 		foreach ( $courses as $slug => $course ) {
 			if ( ! isset( $next[ $slug ] ) ) { continue; }
-			$n = $next[ $slug ];
-			$h .= '<option value="' . esc_attr( $slug ) . '"' . ( $slug === $first_slug ? ' selected' : '' )
-			    . ' data-url="' . esc_attr( $course['url'] . ( strpos( $course['url'], '?' ) === false ? '?' : '&' )
-			      . 'cohort=' . rawurlencode( $n['id'] ) . '#enroll' ) . '"'
-			    . ' data-price="' . esc_attr( aa_reg_money( $course['price'], $course['currency'] ) ) . '"'
-			    . ' data-days="' . (int) $course['days'] . '"'
-			    . ' data-range="' . esc_attr( aa_reg_range( $n['start'], $n['end'] ) ) . '">'
+			$h .= '<option value="' . esc_attr( $slug ) . '"' . ( $slug === $first_slug ? ' selected' : '' ) . '>'
 			    . esc_html( $course['name'] ) . '</option>';
 		}
 		$h .= '</select></span></label>';
 
-		$h .= '<p class="aat-reg__line">'
-		    . '<b data-aatr-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</b>'
-		    . '<span data-aatr-days>' . (int) $fc['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
-		    . '<b data-aatr-price>' . esc_html( aa_reg_money( $fc['price'], $fc['currency'] ) ) . '</b></p>';
+		/* Every course's dates are in the page and all but one are hidden --
+		   the same contract the calendar keeps, for the same reason: the
+		   schedule is what a crawler comes for, and it should not need a
+		   change event to exist. */
+		foreach ( $courses as $slug => $course ) {
+			if ( empty( $ups[ $slug ] ) ) { continue; }
+			$h .= '<div class="aat-dates" data-aah-dates="' . esc_attr( $slug ) . '"'
+			    . ( $slug === $first_slug ? '' : ' hidden' ) . '>'
+			    . '<p class="aat-dates__label">' . esc_html( aa_reg_t( 'pick_dates', 'Pick your dates' ) ) . '</p>'
+			    . '<div class="aat-dates__list">';
+			$j = 0;
+			foreach ( $ups[ $slug ] as $n ) {
+				if ( $j >= 6 ) { break; }
+				$h .= '<button type="button" class="aat-dateopt' . ( $j === 0 ? ' is-on' : '' ) . '"'
+				    . ' data-aah-pick="' . esc_attr( $n['id'] ) . '"'
+				    . ' data-price="' . (int) $course['price'] . '"'
+				    . ' aria-pressed="' . ( $j === 0 ? 'true' : 'false' ) . '">'
+				    . '<b>' . esc_html( aa_reg_range( $n['start'], $n['end'] ) ) . '</b>'
+				    . '<span>' . (int) $course['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
+				    . '</button>';
+				$j++;
+			}
+			$h .= '</div></div>';
+		}
 
-		$h .= '<a class="aat-cta aat-reg__go" data-aatr-go href="'
-		    . esc_url( $fc['url'] . ( strpos( $fc['url'], '?' ) === false ? '?' : '&' )
-		      . 'cohort=' . rawurlencode( $first['id'] ) . '#enroll' ) . '">'
-		    . esc_html( aa_reg_t( 'register_now', 'Register' ) ) . ' <span class="aat-cta__arrow">&#10230;</span></a>';
+		/* The endpoint and the nonce. The calendar below emits these too and
+		   the call is single-shot, but a track whose courses have no schedule
+		   renders no calendar -- and this card would then have a pay button
+		   wired to nothing. */
+		$h .= aa_reg_config_script();
+		$h .= aa_reg_inline( $fc, $first, $fc['currency'], 'aahreg', true );
 		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
 		    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
 		$h .= '</div>';
