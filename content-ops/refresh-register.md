@@ -36,10 +36,10 @@ against its primary source in this workstream.
 | `/indexes/workforce-labor/` + `ai-jobs-statistics-2026` | 92M jobs displaced by 2030, skills premium | WEF Future of Jobs, ILO | unknown | ⚠️ |
 | **PILLAR** `/indexes/workforce-labor/will-ai-replace-my-job/` (page 2297) | WEF +78M net, AI as #1 stated layoff reason (25% of Mar 2026 cuts), 55% regret, ~50% reversal forecast | WEF, Forrester, Robert Half — annual with interim cuts | 2026-09-11 | ✅ live |
 | ├ `…/customer-support/` (page 2298) | Deflection 41.2% median / 58.7% top quartile, <25% on complaints, CSAT 4.10 vs 4.30, re-contact 11.3% vs 8.7%, Klarna 700→853 FTE-equivalent | Enterprise CX benchmarking + Klarna disclosures — vendor data revises often | 2026-09-11 | ✅ live |
-| ├ `…/software-developers/` (page 2299) | 11.4h vs 9.8h, +441% PR review, +54% bugs/PR, +31% unreviewed merges, GitClear 9.4%→15.7%, −67% entry-level | DORA, GitClear, Faros, Sonar — annual reports | 2026-09-11 | ✅ live |
+| ├ `…/software-developers/` (page 2299) | 11.4h vs 9.8h, +441% PR review, +54% bugs/dev, +31% unreviewed merges, GitClear 9.4%→15.7%, −67% entry-level | DORA, GitClear, Faros, Sonar — annual reports | 2026-09-11 | ✅ live |
 | └ `…/by-occupation/` (page 2300) | Translators 98%+, office/admin 46%, legal 44%, paralegals 80%, writing −33%, bookkeeping −35–50%, HR 30–40% | Mixed methodologies; presented as a ranking, not a forecast | 2026-09-11 | ✅ live |
 | `/indexes/ai-dark-side-statistics/` + 5 sub-indexes | Deepfake fraud, surveillance, misinformation series | Multiple; annual reports with interim incidents | 2026-08 | ⏳ |
-| `/reports/ai-replacement-reversal-2026/` (page 2293) | Meta Project OT figures (+220%/+36%/+40%/+70%), 55% regret, 32% refilled, 30.9%/42.4% cost split, 20–35% premium, 11.4h vs 9.8h review time, +441% PR review, −67% entry-level postings | Reuters + Forrester/Robert Half/DORA/GitClear/Faros/Sonar — vendor research refreshes a few times a year; the Meta figures are fixed history | 2026-09-11 | 🟡 live — MEDIUM figures unverified at source |
+| `/reports/ai-replacement-reversal-2026/` (page 2293) | Meta Project OT figures (+220%/+36%/+40%/+70%), 55% regret, 32% refilled, 30.9%/42.4% cost split, 20–35% premium, 11.4h vs 9.8h review time, +441% PR review, −67% entry-level postings | Reuters + Forrester/Robert Half/DORA/GitClear/Faros/Sonar — vendor research refreshes a few times a year; the Meta figures are fixed history | 2026-09-11 | ✅ live — key figures verified 2026-09-11 |
 | `/reports/dark-side-of-ai/ai-workslop-statistics/` | 40%, 1h56m, $186/worker/month | BetterUp/Stanford study is fixed — re-check for replication or newer studies | 2026-08-18 | ✅ |
 | `/reports/dark-side-of-ai/ai-hidden-debt-financing-risk/` | ~$1.7T off-balance-sheet obligations | Nikkei analysis; hyperscaler filings quarterly | 2026-08 | ⏳ |
 | `/reports/eu-ai-act-fully-applicable-august-2026/` | Obligation timeline, May 2026 amendments | Regulatory — check for delegated acts and guidance | 2026-08-02 | ✅ |
@@ -122,3 +122,39 @@ Ordered by risk — highest first:
    homepage and the sidebar; if it moved, three surfaces are wrong at once.
 5. **`⚠️ unknown` rows above** — pages I have not verified in this workstream. First
    quarterly run should establish their baseline rather than assume they're current.
+
+---
+
+## Verification pass — run 2026-09-11 (pillar + clusters, post-publish)
+
+WebSearch works in this environment even though direct fetches to `faros.ai` and
+`gitclear.com` are egress-blocked. Figures below were confirmed against multiple
+independent secondary reports rather than opened at source; they stay MEDIUM.
+
+**Three errors found and corrected the same day** (pages 2299 and 2293):
+
+| Was | Should be | Why it mattered |
+|---|---|---|
+| "Bugs per **pull request** +54%" | "Bugs per **developer** +54%" | Different claim. Per-developer means each dev ships more bugs; per-PR would mean each PR is buggier. Faros's metric is per developer, up from 9% in their 2025 report. |
+| GitClear sample "211M lines" | **623M code changes, 2023–2026** | Wrong study. 211M belongs to an older GitClear dataset; the 21%→3.8% and 9.4%→15.7% figures come from *The Maintainability Gap* (June 2026). |
+| "**Refactored** code 21% → 3.8%" | "**Moved** code — GitClear's proxy for refactoring — as a share of changed lines" | GitClear explicitly distinguishes "moved" from "refactored". The percentages were right; the label was not. |
+
+A visible correction note was added to both pages rather than a silent fix.
+
+**Confirmed correct, and now better sourced:**
+
+- **11.4h reviewing vs 9.8h writing** ✓ — plus newly added: a reversal from Q4 2024
+  when writing held a four-hour lead; heavy agentic users at 14–16h; and independent
+  corroboration from Harness *State of Engineering Excellence 2026* (700 practitioners:
+  81% spend more time in review, 28% by 30%+).
+- **Faros +441% median review time, +51% PR size, +31% zero-review merges** ✓ —
+  sample now stated: 22,000 developers across 4,000+ teams. Added incidents-to-PR
+  ratio "more than tripled".
+- **Deflection 41.2% median / 58.7% top quartile** ✓ — now attributed to ClarityArc
+  2026 production benchmarks and Zendesk CX Trends 2026, with bottom quartile 22.4%
+  added. Lookup-based intents refined 70%+ → **65–80%**; "70–90% at maturity" corrected
+  to **70–87% best-in-class agentic**, after heavy KB investment.
+
+**Still unverified:** Klarna 853 FTE-equivalent / $60M; CSAT 4.10 vs 4.30; re-contact
+11.3% vs 8.7%; the occupation exposure percentages on 2300; the Forrester and Robert
+Half reversal figures. All remain MEDIUM.

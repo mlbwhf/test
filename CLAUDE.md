@@ -20,6 +20,27 @@ If an existing index/report is found to be thin (mostly links, no analysis, no t
 3. **Maximize internal links** — every index/report should link generously to related indexes, reports, and glossary terms. When citing a topic an on-site page covers, always link the on-site page, not the external source.
 4. **Localize external reports/news** — when an external report, study, or news item is worth referencing, REWRITE it in our own voice as an on-site /reports/ page, index section, or dashboard entry (original summary + analysis + data tables, with attribution — never a copied full text; the auto-republished RSS posts are the anti-pattern and should be noindexed/pruned or replaced with rewritten briefs). Then link the on-site version everywhere; the external source remains a citation on that one page.
 
+## ⚠️ Two WordPress sites are connected — check the prefix before every write
+
+Two separate Meow/AI Engine MCP servers are registered, one per site. Both are
+normally live at the same time (confirmed 2026-09-11, both pinged in the same
+second). This is the correct setup — **one MCP server config per site**; they do
+not conflict and neither needs disconnecting to use the other.
+
+| Tool prefix | Site | What it is |
+|---|---|---|
+| `mcp__set_up_the_agent__*` | **report-ai.org** (The AI Index) | Everything in this repo |
+| `mcp__agile-agilist_com__*` | **agile-agilist.com** (Agile Agilist, SAFe training) | Unrelated business |
+
+**The hazard:** the tool names are identical apart from the prefix, so nothing
+stops a page intended for one site being written to the other. Before any create,
+update, alter or delete, confirm the prefix matches the site you mean. `mcp_ping`
+returns the site name (`Report AI` vs `Agile Agilist`) and is the cheapest way to
+be sure which endpoint you are holding.
+
+Unless a task explicitly says otherwise, **all work in this repo is report-ai.org
+(`set_up_the_agent`)**.
+
 ## Site facts
 
 - Site: https://report-ai.org (self-hosted WordPress on Hostinger; managed via the "set_up_the_agent" WordPress MCP server).
