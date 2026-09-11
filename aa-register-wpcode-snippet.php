@@ -3820,13 +3820,27 @@ function aa_reg_webhook( WP_REST_Request $req ) {
  * Returns the new post id, or null when this sale is already recorded.
  */
 function aa_reg_record_sale( $s, $eid ) {
-	/* Idempotent on $eid. Stripe retries until it gets a 2xx, so the same event
-	   can arrive more than once, and the reconciler may race the webhook --
-	   recording twice would double-count a seat and mail the buyer twice. */
-	if ( $eid && get_posts( array( 'post_type' => 'aa_registration', 'post_status' => 'any',
-		'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true,
-		'meta_key' => 'stripe_event', 'meta_value' => $eid ) ) ) {
-		return null;
+	/* IDEMPOTENT ON THE EVENT ID **AND** ON THE SESSION ID.
+	   Stripe retries until it gets a 2xx, so the same event can arrive more than
+	   once -- that is what the event check is for. But the event id is not the
+	   only way one sale reaches here twice: the webhook records with Stripe's
+	   event id and the sweep with "sweep:<session id>", so a session that both
+	   routes see passes the event check on each, and the buyer gets a second
+	   registration, a second seat off the count and a second confirmation in
+	   their inbox. Stripe retries a failed webhook for up to three days, which
+	   is exactly the sweep's own window -- so the two overlapping is the normal
+	   case, not the edge one.
+
+	   The session id is the thing that is actually one sale. It was already
+	   being stored; it was simply never checked. */
+	$sid = isset( $s['id'] ) ? (string) $s['id'] : '';
+	foreach ( array( array( 'stripe_event', (string) $eid ), array( 'stripe_session', $sid ) ) as $probe ) {
+		if ( $probe[1] === '' ) { continue; }
+		if ( get_posts( array( 'post_type' => 'aa_registration', 'post_status' => 'any',
+			'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true,
+			'meta_key' => $probe[0], 'meta_value' => $probe[1] ) ) ) {
+			return null;
+		}
 	}
 
 	$meta   = isset( $s['metadata'] ) ? (array) $s['metadata'] : array();
