@@ -1712,7 +1712,12 @@ function aa_reg_blurb( $course, $max = 165 ) {
 function aa_reg_track_calendar( $atts ) {
 	$a = shortcode_atts( array(
 		'courses' => '',
-		'months'  => 6,
+		/* Three, not six. Every month is rendered into the HTML and all but the
+		   first hidden, so the schedule is crawlable without scripts -- but six
+		   months of a seven-course track is 1,386 bars and 446KB of page, and
+		   the hosting provider noticed. Three is still ~140 dates in the
+		   source. */
+		'months'  => 3,
 		'heading' => '',
 		'label'   => '',
 	), $atts, 'aa_track_calendar' );
@@ -2017,28 +2022,47 @@ function aa_reg_track_calendar( $atts ) {
 
 	$h .= '</div>';
 
-	/* Everything the panel needs, so a bar click does not re-query the server. */
-	$payload = array();
-	foreach ( $all as $row ) {
-		$mm = $meta[ $row['code'] ];
-		$c  = $row['c'];
-		$payload[ $c['id'] ] = array(
-			'code'  => $row['code'],
+	/* Everything the panel needs, so a bar click does not re-query the server.
+
+	   SPLIT BY WHAT ACTUALLY VARIES. This used to write one flat record per
+	   cohort carrying fifteen fields -- of which ten (name, blurb, proof, days,
+	   price, url and three colours) are properties of the COURSE and identical
+	   across every one of its cohorts. On Advanced SAFe that meant 283 copies
+	   of the same 165-character blurb, the same proof list and the same URL:
+	   147KB of JSON, a third of the page, nearly all of it the same sentences
+	   over and over.
+
+	   Seven course records and 283 slim cohort records say the same thing. The
+	   JS merges the two when it paints a card. Empty fields are dropped rather
+	   than written as "", because most cohorts are online and carry no place. */
+	$coursemeta = array();
+	foreach ( $meta as $code => $mm ) {
+		$coursemeta[ $code ] = array(
 			'name'  => $mm['name'],
 			'blurb' => $mm['blurb'],
 			'proof' => array_values( $mm['proof'] ),
-			'range' => aa_reg_range( $c['start'], $c['end'] ),
 			'days'  => $mm['days'],
-			'place' => isset( $c['place'] ) ? $c['place'] : '',
-			'hours' => isset( $c['hours'] ) ? $c['hours'] : '',
 			'price' => aa_reg_money( $mm['price'], $mm['cur'] ),
 			'raw'   => (int) $mm['price'],
-			'left'  => aa_reg_seats_left( $row['course'], $c ),
 			'url'   => $mm['page'] ? $mm['url'] : '',
 			'color' => $mm['color'], 'tint' => $mm['tint'], 'bd' => $mm['bd'],
 		);
 	}
+
+	$payload = array();
+	foreach ( $all as $row ) {
+		$c   = $row['c'];
+		$rec = array(
+			'code'  => $row['code'],
+			'range' => aa_reg_range( $c['start'], $c['end'] ),
+			'left'  => aa_reg_seats_left( $row['course'], $c ),
+		);
+		if ( ! empty( $c['place'] ) ) { $rec['place'] = $c['place']; }
+		if ( ! empty( $c['hours'] ) ) { $rec['hours'] = $c['hours']; }
+		$payload[ $c['id'] ] = $rec;
+	}
 	$h .= '<script>window.AA_TC=' . wp_json_encode( array(
+		'courses' => $coursemeta,
 		'cohorts' => $payload,
 		'dates'   => $dates,
 		'months'  => array_keys( $months ),
@@ -2414,7 +2438,7 @@ add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
 
 	$out = aa_reg_track_calendar( array(
 		'courses' => $slug,
-		'months'  => 6,
+		'months'  => 3,
 		'label'   => isset( $course['crumb'] ) ? $course['crumb'] : '',
 	) );
 	return ( $out !== '' ) ? $out : $short;
@@ -4414,7 +4438,13 @@ function aa_training_category_shortcode( $atts ) {
 		$h .= '<section id="cohorts" class="aat-cohorts-sec">'
 		    . aa_reg_track_calendar( array(
 			'courses' => implode( ',', array_keys( $courses ) ),
-			'months'  => 6,
+			/* THREE MONTHS, NOT SIX. Every month is rendered into the HTML and
+			   all but the first hidden, so the crawler sees the schedule without
+			   running scripts -- but six months of a seven-course track is 1,386
+			   bars and 283 cohorts, and the hosting provider noticed. Three is
+			   still ~140 dates in the source, which is more than enough to be
+			   the answer to "when does SPC run"; the rest are one click away. */
+			'months'  => 3,
 			'label'   => $c['label'],
 		) )
 		    . '</section>';

@@ -5,15 +5,17 @@
 
    PROGRESSIVE ENHANCEMENT, deliberately. Every month, every cohort bar and the
    register panel for the first cohort are already in the HTML the server sent.
-   Six months of dates are in the source whether or not this file runs -- which
-   is the point, because those dates are what a crawler or an assistant comes
-   for. Every bar is a real <a> to that cohort's enrolment, so with scripts off
+   Three months of dates are in the source whether or not this file runs --
+   which is the point, because those dates are what a crawler or an assistant
+   comes for. Three rather than six because six was 1,386 bars on a
+   seven-course track and the hosting provider noticed. Every bar is a real <a> to that cohort's enrolment, so with scripts off
    the calendar is still a working index of the whole schedule.
 
-   This adds three things and nothing else:
+   This adds four things and nothing else:
 
      month nav      show one month, hide the rest
      chip filter    dim the courses you did not ask for
+     week expand    open a week capped at five lanes
      bar click      repaint the panel instead of navigating
 
    The filter DIMS rather than removes. Removing bars reflows the week under
@@ -148,8 +150,22 @@
       + '</article>';
   }
 
-  function select(id) {
+  /* One cohort record, merged with its course's.
+     The payload stores the ten fields that belong to a COURSE once per course
+     rather than once per cohort -- 283 copies of the same blurb, proof list and
+     URL was a third of the page. This puts the two halves back together. */
+  function cohort(id) {
     var c = cohorts[id];
+    if (!c) { return null; }
+    var m = (D.courses && D.courses[c.code]) || {};
+    var o = { id: id }, k;
+    for (k in m) { if (Object.prototype.hasOwnProperty.call(m, k)) { o[k] = m[k]; } }
+    for (k in c) { if (Object.prototype.hasOwnProperty.call(c, k)) { o[k] = c[k]; } }
+    return o;
+  }
+
+  function select(id) {
+    var c = cohort(id);
     if (!c) { return; }
     all('[data-aatc-co]').forEach(function (el) {
       var on = el.getAttribute('data-aatc-co') === id;
@@ -159,9 +175,6 @@
       }
     });
     if (!panel) { return; }
-    /* The payload is keyed by cohort id, so the card needs the key put back on
-       the record before it can name itself in the form. */
-    c.id = id;
     panel.innerHTML = card(c);
     /* The in-place checkout paints its total from the form's own attributes.
        `true` marks this as the owning component talking about its own form, so
