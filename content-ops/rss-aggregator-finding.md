@@ -64,3 +64,46 @@ Exactly what task #4 describes.
 3. Note that trashing the posts does **not** retract the LinkedIn/Threads/Facebook
    shares. Those need removing by hand if they matter.
 4. Decide whether Jetpack Publicize should be gated so nothing auto-shares without review.
+
+---
+
+## Update 2026-09-12 — ruled out, and where it actually points
+
+Owner supplied the WPCode snippets. **Neither is the aggregator:**
+- "Report AI — nav support v2" — nav CSS/PHP/JS
+- "Links in new windows" — the external-link `target="_blank"` rule
+
+Further checks this session:
+
+| Candidate | Verdict | Evidence |
+|---|---|---|
+| WPCode Lite | **Ruled out** | Both active snippets inspected; neither touches feeds |
+| Feedzy RSS Feeds Lite | **Ruled out** | `feedzy_imports` holds exactly one item: an unconfigured "Setup Wizard" draft (ID 216). Zero real jobs, published or otherwise. |
+| WP RSS Aggregator | **Ruled out (inactive)** | Registers no `wprss_feed` post type, so it is not running |
+| A dedicated bot/API user | **Ruled out** | `wp_get_users` returns one user only — the admin |
+
+So the importer authenticates **as the admin** and is not any installed feed plugin.
+
+### Two remaining candidates
+
+**1. External service writing over the REST API — currently the stronger theory.**
+An **n8n** MCP server is configured for this account (it failed to connect on 11 and 12
+Sep with a 404, so it could not be inspected from here). An RSS → WordPress workflow is
+a textbook n8n job, and writing custom `_rai_source_url` / `_rai_aggregated` meta fits a
+hand-built workflow far better than it fits any plugin's schema. Zapier or Make would
+look identical from inside WordPress.
+
+**2. Code Snippets 3.9.6** — the second snippet manager, not yet inspected. Its snippets
+live in the `wp_snippets` table, which is not a post type and is unreachable via the
+WordPress MCP tools.
+
+### The decisive test (fast)
+
+**wp-admin → Users → Profile → Application Passwords.** If a token exists with a recent
+"Last Used" date, an **external service** is writing the posts and no amount of plugin
+or snippet hunting inside WordPress will find it — the fix is to revoke that token or
+disable the workflow at its source. If there is no such token, the code is inside
+WordPress and Code Snippets is the place to look.
+
+Cross-check: posts 2307–2310 were created around 11 Sep 2026. Matching that timestamp
+against n8n execution history would settle it outright.
