@@ -4748,7 +4748,7 @@ function aa_salary_insights_shortcode( $atts ) {
 			$h .= '<span class="aas__path-p">' . esc_html( $path['blurb'] ) . '</span>';
 
 			$h .= '<span class="aas__steps">';
-			foreach ( $steps as $sn => $s ) {
+			foreach ( $steps as $s ) {
 				$c   = isset( $colour[ $s['code'] ] ) ? $colour[ $s['code'] ] : '#0E8074';
 				$url = aa_salary_url( $s['code'] );
 				$h  .= '<span class="aas__stepwrap">';
