@@ -1,0 +1,263 @@
+# Refresh register
+
+Work list for the cadence defined in `refresh-policy.md`. Tier logic: CRITICAL = could be
+wrong within 30 days; STANDARD = source refreshes a few times a year; STABLE = settled.
+
+**Status key:** ⏳ due at next run · ✅ reviewed, current · ⚠️ known stale · 🟡 partially
+updated, one or more figures open pending primary-source access
+
+Baseline established 2026-08-22. "Last reviewed" = when the figure was last verified
+against its primary source in this workstream.
+
+---
+
+## CRITICAL — monthly (1st of each month)
+
+| Page | Key figures to re-check | Source & why it moves | Last reviewed | Status |
+|---|---|---|---|---|
+| `/indexes/technical-benchmarks/best-ai-models-2026/` (page 964) | Intelligence Index composite (58.9), SWE-bench Pro (69.2%), all 9-criteria ratings | Artificial Analysis / LMArena / SWE-bench — leaderboards shift weekly; the page itself says so | **2026-09-10 — PARTIALLY UPDATED** | 🟡 **partial** |
+| `/indexes/technical-benchmarks/chinese-ai-models-2026/` **PUBLISHED 2026-09-03** | Kimi K3 57.1, Qwen3.8-Max 58 (volatile: 53→56→58), Qwen3.8-27B 52, SWE-bench Pro 61.7 | Artificial Analysis; Chinese labs ship fast and scores get revised | 2026-09-03 | ✅ |
+| `/indexes/ai-economics/llm-token-price-index/` | ~280× drop, ~10×/yr rate, per-model $/M tokens | Provider price lists — change without notice | 2026-08-05 | ⏳ |
+| `/reports/ai-data-center-cost/` | ~~$250B~~ **$105B** guarantee (phase one only), ~$350B chip financing, $30–40B phase one | **Deal terms under active negotiation** — page states they may change | **2026-08-24 — UPDATED** | ✅ |
+| `/reports/meta-blackrock-off-balance-sheet-ai-financing/` | 80/20 split, $14.3B, $12.5B notes, lease terms | Transaction documents may be amended; watch for deal #3 | 2026-08-24 (Nvidia comparison figure updated; Meta terms unchanged) | ✅ |
+| `/indexes/ai-economics/ai-bubble-tracker/` | Valuation and capex markers | Market-sensitive by definition | unknown | ⚠️ |
+| Homepage "Figure of the week" (page 6) | Featured figure + 4-year series | Weekly by design — swap the WEEKLY-EDIT lines | 2026-08-22 | ✅ |
+
+## STANDARD — quarterly (1 Jan / 1 Apr / 1 Jul / 1 Oct)
+
+| Page | Key figures to re-check | Source & rhythm | Last reviewed | Status |
+|---|---|---|---|---|
+| `/indexes/enterprise-ai/` + `enterprise-ai-statistics-2026` | 88% orgs using AI, 72% gen-AI, ~95% no measurable return | McKinsey State of AI / State of Organizations — annual with interim cuts | 2026-08-07 | ✅ |
+| `/indexes/ai-economics/` | $2.59T worldwide spend, +47% YoY, ~41% of IT spend | Gartner — forecasts revised ~quarterly (Jan/May/Aug/Nov) | 2026-08-07 | ✅ |
+| `/indexes/ai-economics/llm-market-statistics-2026/` | Provider share, revenue run-rates | Company disclosures, quarterly earnings | 2026-08 | ⏳ |
+| `/indexes/ai-economics/ai-investment-funding-statistics-2026/` | $581.7B corporate AI investment, round sizes | Stanford HAI + funding trackers | 2026-08 | ⏳ |
+| `/indexes/geography-of-ai/popular-ai-models-by-country/` | Doubao 382M MAU, ChatGPT 61.7% US / 70.8% EU, Perplexity ~48% RU | QuestMobile / Similarweb — monthly data, but our framing is structural | 2026-08 | ✅ |
+| `/indexes/technical-benchmarks/` + infrastructure/compute | Compute trends, ~945 TWh by 2030 | IEA, vendor disclosures | 2026-08-18 | ✅ |
+| `/indexes/workforce-labor/` + `ai-jobs-statistics-2026` | 92M jobs displaced by 2030, skills premium | WEF Future of Jobs, ILO | unknown | ⚠️ |
+| **PILLAR** `/indexes/workforce-labor/will-ai-replace-my-job/` (page 2297) | WEF +78M net, AI as #1 stated layoff reason (25% of Mar 2026 cuts), 55% regret, ~50% reversal forecast | WEF, Forrester, Robert Half — annual with interim cuts | 2026-09-11 | ✅ live |
+| ├ `…/customer-support/` (page 2298) | Deflection 41.2% median / 58.7% top quartile, <25% on complaints, CSAT 4.10 vs 4.30, re-contact 11.3% vs 8.7%, Klarna 700→853 FTE-equivalent | Enterprise CX benchmarking + Klarna disclosures — vendor data revises often | 2026-09-11 | ✅ live |
+| ├ `…/software-developers/` (page 2299) | 11.4h vs 9.8h, +441% PR review, +54% bugs/dev, +31% unreviewed merges, GitClear 9.4%→15.7%, −67% entry-level | DORA, GitClear, Faros, Sonar — annual reports | 2026-09-11 | ✅ live |
+| └ `…/by-occupation/` (page 2300) | Translators 98%+, office/admin 46%, legal 44%, paralegals 80%, writing −33%, bookkeeping −35–50%, HR 30–40% | Mixed methodologies; presented as a ranking, not a forecast | 2026-09-11 | ✅ live |
+| `/indexes/ai-dark-side-statistics/` + 5 sub-indexes | Deepfake fraud, surveillance, misinformation series | Multiple; annual reports with interim incidents | 2026-08 | ⏳ |
+| `/reports/ai-replacement-reversal-2026/` (page 2293) | Meta Project OT figures (+220%/+36%/+40%/+70%), 55% regret, 32% refilled, 30.9%/42.4% cost split, 20–35% premium, 11.4h vs 9.8h review time, +441% PR review, −67% entry-level postings | Reuters + Forrester/Robert Half/DORA/GitClear/Faros/Sonar — vendor research refreshes a few times a year; the Meta figures are fixed history | 2026-09-11 | ✅ live — key figures verified 2026-09-11 |
+| `/reports/dark-side-of-ai/ai-workslop-statistics/` | 40%, 1h56m, $186/worker/month | BetterUp/Stanford study is fixed — re-check for replication or newer studies | 2026-08-18 | ✅ |
+| `/reports/dark-side-of-ai/ai-hidden-debt-financing-risk/` | ~$1.7T off-balance-sheet obligations | Nikkei analysis; hyperscaler filings quarterly | 2026-08 | ⏳ |
+| `/reports/eu-ai-act-fully-applicable-august-2026/` | Obligation timeline, May 2026 amendments | Regulatory — check for delegated acts and guidance | 2026-08-02 | ✅ |
+| `/indexes/compare/` (10 comparison threads) | Every paired figure | Inherits the cadence of whichever series it compares | 2026-08 | ⏳ |
+| `/indexes/enterprise-ai/ai-search-statistics-2026/` | AI Overviews ~50% of queries, CTR −34.5%, referrals +527% | Fast-moving SEO/GEO data | 2026-08 | ✅ |
+| `/indexes/enterprise-ai/ai-video-generation-statistics-2026/` + market-size report | 124M users, Kling ~$500M ARR, $47.8B by 2034 | Vendor disclosures + forecasters | 2026-08 | ✅ |
+| `/indexes/state-of-ai/` (2022–2026 series) | Year snapshots | Historical, but the current year keeps moving | 2026-08 | ⏳ |
+| `/indexes/ai-by-industry/` | Sector adoption rates | Sector surveys, annual | unknown | ⚠️ |
+
+## STABLE — semi-annual (1 Jan / 1 Jul)
+
+| Page | What to re-check | Last reviewed | Status |
+|---|---|---|---|
+| `/glossary/` (all terms) | Definitions still standard; add terms that entered common use | unknown | ⚠️ |
+| `/about/` methodology & corrections policy | Confidence definitions match what the pages actually do | 2026-08 | ✅ |
+| `/reports/real-world-ai/` (8-part series) | Case studies still accurate; outcomes updated | unknown | ⚠️ |
+| Historical `state-of-ai` years 2022–2025 | Only if a source restates history | 2026-08 | ✅ |
+
+---
+
+## First pass — run 2026-08-24
+
+**1. `/reports/ai-data-center-cost/` — UPDATED. Material change found.**
+The Nvidia guarantee was cut from ~$250B to **up to $105B**, and now covers only the
+project's first phase (~5GW of 10GW), after investors raised concerns about Nvidia's
+risk exposure. Reported by WSJ 14 Aug, corroborated by Reuters and Fortune (18 Aug).
+Actions taken: stat tile, intro, Analysis, financing-loop section, methodology note and
+JSON-LD `dateModified` all updated; "What changed" block added with the previous value
+retained; visible stamp now "Published 18 Aug · Updated 24 Aug". The same figure was
+corrected in the Meta/BlackRock report, which cited it as a comparison.
+*Editorial note:* the cut strengthens the report's thesis — Nvidia pulled back precisely
+because the circular-financing risk the piece describes was questioned by its investors.
+
+**2. `/reports/meta-blackrock-off-balance-sheet-ai-financing/`** — Meta/BlackRock terms
+unchanged; no third JV found. Nvidia comparison figure corrected. Still watch for deal #3.
+
+## Second pass — run 2026-09-10 (September CRITICAL)
+
+**Blocker found, and it governs the whole pass.** Every external domain is unreachable
+from the session running these reviews — `artificialanalysis.ai`, and equally every news
+and primary source tried. The only external signal available was search-engine result
+summaries. Under §4.1 of the policy a figure changes only against its primary source,
+so **no externally-sourced figure was updated in this pass.** That is a deliberate
+refusal, not an oversight: the three secondary trackers checked for the Intelligence
+Index disagreed with one another by up to **12 index points** (Fable 5.1 quoted at 56.8,
+53.7 and 66 by different aggregators on the same week). Publishing any of those would
+have put invented precision on our most benchmark-dependent page.
+
+**1. `/indexes/technical-benchmarks/best-ai-models-2026/` (page 964) — PARTIALLY UPDATED.**
+The page contradicted our own `chinese-ai-models-2026` (published 3 Sep, verified). Fixed
+using our own verified figures only — no external source needed:
+- "What changed" block added above the methodology box: three rows, previous → new →
+  source, including an explicit **open row** for the US-frontier composites.
+- `Qwen3.7-Max` → **`Qwen3.8-Max`** in the comparison matrix and the model card
+  (supersession we verified on 3 Sep). Old figures retained in the card for comparison,
+  per §3 "never overwrite silently".
+- Lede, methodology stamp, visible FAQ and JSON-LD FAQ all updated together so no
+  surface disagrees with another (§2.2).
+- Cadence and **next review (October 2026)** now stated on the page.
+- Internal link added to `chinese-ai-models-2026`.
+- Nine-criteria dot ratings for the Alibaba row are **inherited from the 3.7 assessment**
+  and labelled as due for re-rating — they were not silently transferred.
+
+*Still open on this page:* GPT-5.6 Sol 58.9, Claude Opus 4.8 55.7, GPT-5.6 Terra 55.0,
+Gemini 3.1 Pro, SWE-bench Pro 69.2%, and the Opus 4.8 → Opus 5 / Fable 5.1 generational
+question. Search results also surfaced a model (`GPT-6 Astra`) that appears nowhere on
+the site. All of it needs one pass from a machine with normal internet access.
+
+**2. Remaining CRITICAL rows not attempted** — `llm-token-price-index`,
+`ai-bubble-tracker`, `ai-data-center-cost`, `meta-blackrock`, homepage figure of the week.
+Each is gated on the same blocker: every figure on them is externally sourced.
+
+## Remaining queue
+
+Ordered by risk — highest first:
+3. **`/indexes/technical-benchmarks/best-ai-models-2026/`** — ratings are stamped
+   July 2026 and the page admits leaderboards shift weekly. Currently our most
+   visibly-dated page.
+4. **`/indexes/ai-economics/llm-token-price-index/`** — the 280× figure anchors the
+   homepage and the sidebar; if it moved, three surfaces are wrong at once.
+5. **`⚠️ unknown` rows above** — pages I have not verified in this workstream. First
+   quarterly run should establish their baseline rather than assume they're current.
+
+---
+
+## Verification pass — run 2026-09-11 (pillar + clusters, post-publish)
+
+WebSearch works in this environment even though direct fetches to `faros.ai` and
+`gitclear.com` are egress-blocked. Figures below were confirmed against multiple
+independent secondary reports rather than opened at source; they stay MEDIUM.
+
+**Three errors found and corrected the same day** (pages 2299 and 2293):
+
+| Was | Should be | Why it mattered |
+|---|---|---|
+| "Bugs per **pull request** +54%" | "Bugs per **developer** +54%" | Different claim. Per-developer means each dev ships more bugs; per-PR would mean each PR is buggier. Faros's metric is per developer, up from 9% in their 2025 report. |
+| GitClear sample "211M lines" | **623M code changes, 2023–2026** | Wrong study. 211M belongs to an older GitClear dataset; the 21%→3.8% and 9.4%→15.7% figures come from *The Maintainability Gap* (June 2026). |
+| "**Refactored** code 21% → 3.8%" | "**Moved** code — GitClear's proxy for refactoring — as a share of changed lines" | GitClear explicitly distinguishes "moved" from "refactored". The percentages were right; the label was not. |
+
+A visible correction note was added to both pages rather than a silent fix.
+
+**Confirmed correct, and now better sourced:**
+
+- **11.4h reviewing vs 9.8h writing** ✓ — plus newly added: a reversal from Q4 2024
+  when writing held a four-hour lead; heavy agentic users at 14–16h; and independent
+  corroboration from Harness *State of Engineering Excellence 2026* (700 practitioners:
+  81% spend more time in review, 28% by 30%+).
+- **Faros +441% median review time, +51% PR size, +31% zero-review merges** ✓ —
+  sample now stated: 22,000 developers across 4,000+ teams. Added incidents-to-PR
+  ratio "more than tripled".
+- **Deflection 41.2% median / 58.7% top quartile** ✓ — now attributed to ClarityArc
+  2026 production benchmarks and Zendesk CX Trends 2026, with bottom quartile 22.4%
+  added. Lookup-based intents refined 70%+ → **65–80%**; "70–90% at maturity" corrected
+  to **70–87% best-in-class agentic**, after heavy KB investment.
+
+**Still unverified:** Klarna 853 FTE-equivalent / $60M; CSAT 4.10 vs 4.30; re-contact
+11.3% vs 8.7%; the occupation exposure percentages on 2300; the Forrester and Robert
+Half reversal figures. All remain MEDIUM.
+
+## Primary-source pass — run 2026-09-11 (GitClear + Faros, owner-supplied)
+
+Both domains are egress-blocked here; the owner pasted raw text from the public
+research, signal-graph and methodology pages. GitClear's full whitepaper is behind
+an email-capture form, **which we deliberately did not submit** — the public pages
+carried every figure we cite, so handing a vendor a business email bought nothing.
+
+**A third error found and corrected (page 2299).** The page attributed "up to 9x
+higher code churn" to GitClear. Mis-sourced on two counts:
+
+- GitClear's churn figure in this paper is **+15%** (share of authored lines
+  rewritten or removed within two weeks).
+- The ~9x number is **Faros's +861%** — and Faros defines churn as the ratio of
+  lines deleted to lines added per quarter. Same word, incompatible constructs.
+  Both now appear on the page, labelled, with an explicit "not comparable" note.
+
+**Two caveats now carried on 2299 and 2293, because they qualify every figure:**
+
+1. **Faros is not a before-and-after study.** Every "+X%" compares each team's two
+   quarters of *lowest* AI adoption against its two quarters of *highest*. No control
+   group, no clean pre-AI baseline. Associations under rising adoption, not effects.
+2. **GitClear's "moved code" contradicts GitClear's own product.** The paper calls
+   moved lines "a proxy for refactoring activity"; their Diff Delta scoring gives
+   moved code a value of **zero** — "high line counts, little real work". Anyone
+   citing "refactoring down 70%" cites a proxy the same firm treats as valueless
+   elsewhere. We now print the figure and the tension together.
+
+**Figures added or sharpened on 2299:**
+
+| Item | Detail |
+|---|---|
+| Bugs, both metrics | +54% per developer (headline, uncontrolled) **and +28.7% per PR** (PDF-only, controls for volume — roughly half the headline) |
+| Three review metrics | median in review +441.5%, *average* in review +199.6%, median to *first* review +156.6% — routinely conflated |
+| Incidents | +242.7% per PR and +57.9% monthly, carrying Faros's own "this is a ratio, not a probability" caveat, which their headline drops |
+| Churn | both definitions, labelled non-comparable |
+
+**Source-hygiene notes for future citations:**
+
+- GitClear's unit is **"analyzed changes"**, not lines. Their earlier papers counted
+  changed lines (211M, 153M) and are **not** comparable. Same page also shows
+  "600M+ commits" and "987.2M code lines" — three different units, don't mix.
+- GitClear baselines: the summary says "vs 2022", the per-signal paragraphs say
+  **2023**. Use 2023 — it's the one the numbers support.
+- Mixed windows: copy/paste 15.7% is "first half of 2026"; moved 3.8% is
+  "year-to-date". Not the same window.
+- It is **"error-masking constructs"** (+47%), not "catch blocks" — rescue,
+  safe-navigation, null checks, mock guards. GitClear's own tooltip hedges it as
+  "generally signals more cautious code", i.e. they do not call it bad.
+- Zero-review merges (+31.3%) means no review **human or agentic** — not bots
+  displacing reviewers.
+- **Faros explicitly contests DORA.** Where both are cited, present them as two
+  readings, not one consensus.
+
+Confidence stays **MEDIUM**: the quotations are now verified at source, but the
+underlying research is still vendor research with the design limits above.
+
+## Third pass — run 2026-09-11 (September CRITICAL, resumed)
+
+**Blocker re-tested and it has NOT lifted.** All primary sources still unreachable:
+`artificialanalysis.ai`, `openai.com`, `anthropic.com`, `lmarena.ai`, `reuters.com`,
+`forrester.com`, and also `sec.gov` and `investor.atmeta.com` — every one returns 000
+at the egress proxy. The §4.1 refusal from 10 Sep therefore **still stands**: no
+externally-sourced figure was changed against a secondary source.
+
+**What did change:** WebSearch works. That does not make a search summary a primary
+source, but it does answer *existence* questions — "has a third JV been announced?" —
+where convergent reporting across independent outlets is legitimate evidence and a
+precise number is not. Two CRITICAL rows moved from "not attempted" to "reviewed".
+
+**1. `/reports/meta-blackrock-off-balance-sheet-ai-financing/` — REVIEWED, NO CHANGE.**
+No third Meta/BlackRock JV exists. Only the El Paso deal (announced 28 Jul 2026) is
+reported. Terms corroborated across Bloomberg, Yahoo Finance, Quartz and Meta's own
+investor release: 80/20 split, ~$14B total, $12.5B debt financing, ~$2.3B Meta land +
+CIP contribution, ~$4.9B BlackRock cash, ~$1B rebalancing distribution to Meta, lease
+four-year initial term with four extension options toward a 20-year total, online 2028.
+All consistent with what the page says. **Watch item:** closing was expected in Q3 2026,
+which ends this month — re-check in October.
+
+**2. `/reports/ai-data-center-cost/` — REVIEWED, figure holds, ONE DISCREPANCY OPEN.**
+The $105B guarantee is confirmed and stable: WSJ reported the cut to "less than $120B"
+on 14 Aug, and the deal was signed at **$105B on 17 Aug 2026**. Our page is current.
+
+⚠️ **But secondary reporting says the Ohio site's total capacity is "as much as 8
+gigawatts", with the first 800MW online in 2028. Our page says 10GW, phase one ~5GW.**
+That is a material discrepancy on a CRITICAL page and it cannot be settled from here —
+sec.gov is blocked. **Flagged as OPEN; needs one primary-source check.** Also newly
+surfaced and not yet on the page: Nvidia additionally invests $1.5B in SB Energy; OpenAI
+leases the site for 20 years; the developer is SoftBank-owned SB Energy in Pike County,
+Ohio.
+
+**3. Homepage "Figure of the week" (page 6) — UPDATED.** Was W34, three weeks stale on a
+weekly cadence. Now W37, swapped to Meta's Project OT series: code changes +220%,
+features shipped +36%, incidents +40%, firefighting time +70%. HIGH confidence (Meta CTO
+on the record via Reuters), and it surfaces the pillar published today. Source line and
+"Full figure" link repointed to `/reports/ai-replacement-reversal-2026/`.
+*Note:* done as six surgical `wp_alter_post` swaps against exact anchors, not a
+full-content write, so no `backups/6-*.html` snapshot was taken; WordPress revisions
+cover rollback.
+
+**Still blocked, unchanged from 10 Sep:** `best-ai-models-2026` US-frontier composites,
+`llm-token-price-index` (the 280x figure anchoring three surfaces), and the
+`ai-bubble-tracker` baseline. All need a machine with normal internet access.

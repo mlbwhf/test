@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f5f5f7; }
+    @keyframes drawerIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    a { color:#2545f5; text-decoration:none; }
+    a:hover { color:#111114; }
+  </style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; background:#f5f5f7; min-height:100vh; padding:56px 24px 100px; box-sizing:border-box;">
+
+  <!-- demo-only view toggle -->
+  <div style="max-width:1180px; margin:0 auto 28px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:#77777f;">Prototype — Global Nav — Report AI</div>
+    <div style="display:flex; gap:12px;">
+      <div style="display:flex; border:1px solid #e6e6ea; background:#fff;">
+        <button onClick="{{ setOption_a }}" style="{{ optionBtnStyleA }}">Option A — Index Panel</button>
+        <button onClick="{{ setOption_b }}" style="{{ optionBtnStyleB }}">Option B — Jump Palette</button>
+      </div>
+      <div style="display:flex; border:1px solid #e6e6ea; background:#fff;">
+        <button onClick="{{ setPreview_desktop }}" style="{{ previewBtnStyleDesktop }}">Desktop</button>
+        <button onClick="{{ setPreview_mobile }}" style="{{ previewBtnStyleMobile }}">Mobile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DESKTOP ===================== -->
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:1180px; margin:0 auto; background:#fff; border:1px solid #e6e6ea;">
+
+      <!-- utility strip -->
+      <div style="display:flex; justify-content:flex-end; gap:24px; padding:8px 32px; border-bottom:1px solid #e6e6ea; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.04em; text-transform:uppercase;">
+        <a href="#" style="color:#77777f;">Subscribe</a>
+        <a href="#" style="color:#77777f;">Contact</a>
+        <a href="#" style="color:#111114;">Log in</a>
+      </div>
+
+      <!-- primary nav -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 32px;">
+        <div style="font-family:'Archivo',sans-serif; font-weight:900; font-size:20px; letter-spacing:-0.02em; color:#111114;">REPORT&nbsp;AI</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="position:relative;">
+            <button onClick="{{ toggleDesktopPanel_indexes }}" style="{{ navItemStyle_indexes }}">Indexes<span style="font-family:'IBM Plex Mono',monospace; font-size:10px; margin-left:6px;">{{ chevron_indexes }}</span></button>
+            <sc-if value="{{ panelIsIndexes }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ optionIsB }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; top:calc(100% + 8px); right:0; width:360px; background:#111114; z-index:10; border:1px solid #111114;">
+                  <div style="padding:12px 16px; border-bottom:1px solid #333336; display:flex; align-items:center; gap:8px;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#77777f;">⌕</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#77777f;">Jump to a section…</span>
+                  </div>
+                  <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+                    <a href="#" style="display:flex; align-items:center; justify-content:space-between; padding:11px 16px; border-bottom:1px solid #26262a;">
+                      <span style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2545f5;">{{ s.num }}</span>
+                        <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:14px; color:#fff;">{{ s.name }}</span>
+                      </span>
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#55555c;">→</span>
+                    </a>
+                  </sc-for>
+                  <a href="#" style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#77777f; text-transform:uppercase;">Compare Tool</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">→</span>
+                  </a>
+                  <a href="#" style="display:block; padding:12px 16px; border-top:1px solid #333336; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#2545f5;">View full Index Library →</a>
+                </div>
+              </sc-if>
+            </sc-if>
+          </div>
+          <div style="position:relative;">
+            <button onClick="{{ toggleDesktopPanel_reports }}" style="{{ navItemStyle_reports }}">Reports<span style="font-family:'IBM Plex Mono',monospace; font-size:10px; margin-left:6px;">{{ chevron_reports }}</span></button>
+            <sc-if value="{{ panelIsReports }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ optionIsB }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; top:calc(100% + 8px); right:0; width:300px; background:#111114; z-index:10; border:1px solid #111114;">
+                  <sc-for list="{{ reportItems }}" as="r" hint-placeholder-count="3">
+                    <a href="#" style="display:flex; flex-direction:column; gap:3px; padding:12px 16px; border-bottom:1px solid #26262a;">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                      <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:14px; color:#fff;">{{ r.name }}</span>
+                    </a>
+                  </sc-for>
+                  <a href="#" style="display:block; padding:12px 16px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#2545f5;">All Reports →</a>
+                </div>
+              </sc-if>
+            </sc-if>
+          </div>
+          <a href="#" style="{{ navLinkStyle }}">Glossary</a>
+          <a href="#" style="{{ navLinkStyle }}">About</a>
+        </div>
+      </div>
+
+      <!-- INDEXES PANEL — Option A -->
+      <sc-if value="{{ panelIsIndexesA }}" hint-placeholder-val="{{ false }}">
+        <div style="border-top:1px solid #111114; padding:36px 32px 32px; background:#f5f5f7;">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#77777f;">09 Sections — every published index lives beneath one of these</div>
+            <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.02em; text-transform:uppercase;">Compare Tool →</a>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border-top:1px solid #e6e6ea; border-left:1px solid #e6e6ea;">
+            <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+              <a href="#" style="display:flex; align-items:baseline; gap:14px; padding:16px 18px; border-right:1px solid #e6e6ea; border-bottom:1px solid #e6e6ea; background:#fff;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5; flex-shrink:0;">{{ s.num }}</span>
+                <span style="font-family:'Archivo',sans-serif; font-weight:600; font-size:15px; color:#111114; letter-spacing:-0.01em;">{{ s.name }}</span>
+              </a>
+            </sc-for>
+          </div>
+          <div style="margin-top:20px; text-align:right;">
+            <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.02em;">View full Index Library →</a>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- REPORTS PANEL — Option A -->
+      <sc-if value="{{ panelIsReportsA }}" hint-placeholder-val="{{ false }}">
+        <div style="border-top:1px solid #111114; padding:32px; background:#f5f5f7;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#77777f; margin-bottom:20px;">Report Collections</div>
+          <div style="display:flex; gap:0; border-top:1px solid #e6e6ea; border-left:1px solid #e6e6ea; max-width:640px;">
+            <sc-for list="{{ reportItems }}" as="r" hint-placeholder-count="3">
+              <a href="#" style="flex:1; padding:18px 20px; background:#fff; border-right:1px solid #e6e6ea; border-bottom:1px solid #e6e6ea; display:flex; flex-direction:column; gap:6px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                <span style="font-family:'Archivo',sans-serif; font-weight:600; font-size:15px; color:#111114;">{{ r.name }}</span>
+              </a>
+            </sc-for>
+          </div>
+          <div style="margin-top:20px;"><a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase;">All Reports →</a></div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===================== MOBILE ===================== -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="width:390px; margin:0 auto; background:#fff; border:1px solid #e6e6ea; overflow:hidden; position:relative; min-height:640px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid #e6e6ea;">
+        <div style="font-family:'Archivo',sans-serif; font-weight:900; font-size:17px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+        <button onClick="{{ toggleDrawer }}" aria-label="Menu" style="width:44px; height:44px; border:1px solid #e6e6ea; background:#fff; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px;"
+          <span style="width:18px; height:1.5px; background:#111114;"></span>
+          <span style="width:18px; height:1.5px; background:#111114;"></span>
+          <span style="width:18px; height:1.5px; background:#111114;"></span>
+        </button>
+      </div>
+
+      <div style="padding:60px 24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf; text-transform:uppercase; letter-spacing:0.06em;">Page content</div>
+
+      <sc-if value="{{ drawerOpenA }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute; inset:0; background:#fff; animation:drawerIn 0.22s ease; display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid #e6e6ea;">
+            <div style="font-family:'Archivo',sans-serif; font-weight:900; font-size:17px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+            <button onClick="{{ toggleDrawer }}" aria-label="Close" style="width:44px; height:44px; border:1px solid #e6e6ea; background:#fff; font-size:20px; line-height:1; color:#111114;">×</button>
+          </div>
+
+          <div style="flex:1; overflow-y:auto;">
+            <!-- Indexes accordion -->
+            <div style="border-bottom:1px solid #e6e6ea;">
+              <button onClick="{{ toggleMobileSection_indexes }}" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 18px; background:none; border:none; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; color:#111114; min-height:44px;">
+                Indexes <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#77777f;">{{ chevronM_indexes }}</span>
+              </button>
+              <sc-if value="{{ mobileIsIndexes }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 18px 12px;">
+                  <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+                    <a href="#" style="display:flex; align-items:center; gap:12px; padding:12px 4px; border-bottom:1px solid #f0f0f2; min-height:44px;">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">{{ s.num }}</span>
+                      <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:15px; color:#111114;">{{ s.name }}</span>
+                    </a>
+                  </sc-for>
+                  <a href="#" style="display:block; padding:14px 4px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; color:#2545f5;">View full Index Library →</a>
+                </div>
+              </sc-if>
+            </div>
+
+            <!-- Reports accordion -->
+            <div style="border-bottom:1px solid #e6e6ea;">
+              <button onClick="{{ toggleMobileSection_reports }}" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:18px 18px; background:none; border:none; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; color:#111114; min-height:44px;">
+                Reports <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#77777f;">{{ chevronM_reports }}</span>
+              </button>
+              <sc-if value="{{ mobileIsReports }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 18px 12px;">
+                  <sc-for list="{{ reportItems }}" as="r" hint-placeholder-count="3">
+                    <a href="#" style="display:flex; flex-direction:column; gap:2px; padding:12px 4px; border-bottom:1px solid #f0f0f2; min-height:44px; justify-content:center;">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                      <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:15px; color:#111114;">{{ r.name }}</span>
+                    </a>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+
+            <a href="#" style="display:flex; align-items:center; padding:18px 18px; border-bottom:1px solid #e6e6ea; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; color:#111114; min-height:44px;">Glossary</a>
+            <a href="#" style="display:flex; align-items:center; padding:18px 18px; border-bottom:1px solid #e6e6ea; font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; color:#111114; min-height:44px;">About</a>
+          </div>
+
+          <div style="display:flex; gap:20px; padding:18px; border-top:1px solid #e6e6ea; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">
+            <a href="#" style="color:#77777f;">Subscribe</a>
+            <a href="#" style="color:#77777f;">Contact</a>
+            <a href="#" style="color:#111114; margin-left:auto;">Log in</a>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Option B: bottom sheet -->
+      <sc-if value="{{ drawerOpenB }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute; inset:0; background:rgba(17,17,20,0.4);" onClick="{{ toggleDrawer }}"></div>
+        <div style="position:absolute; left:0; right:0; bottom:0; height:72%; background:#111114; border-radius:3px 3px 0 0; display:flex; flex-direction:column; animation:drawerIn 0.22s ease;">
+          <div style="display:flex; justify-content:center; padding:10px 0 4px;"><span style="width:36px; height:3px; background:#444;"></span></div>
+          <div style="display:flex; border-bottom:1px solid #26262a;">
+            <button onClick="{{ setSheetTab_indexes }}" style="{{ sheetTabStyle_indexes }}">Indexes</button>
+            <button onClick="{{ setSheetTab_reports }}" style="{{ sheetTabStyle_reports }}">Reports</button>
+            <button onClick="{{ setSheetTab_more }}" style="{{ sheetTabStyle_more }}">More</button>
+          </div>
+          <div style="flex:1; overflow-y:auto;">
+            <sc-if value="{{ sheetIsIndexes }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+                <a href="#" style="display:flex; align-items:center; gap:12px; padding:14px 20px; border-bottom:1px solid #26262a; min-height:44px;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">{{ s.num }}</span>
+                  <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:15px; color:#fff;">{{ s.name }}</span>
+                </a>
+              </sc-for>
+              <a href="#" style="display:block; padding:16px 20px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; color:#2545f5;">View full Index Library →</a>
+            </sc-if>
+            <sc-if value="{{ sheetIsReports }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ reportItems }}" as="r" hint-placeholder-count="3">
+                <a href="#" style="display:flex; flex-direction:column; gap:3px; padding:14px 20px; border-bottom:1px solid #26262a; min-height:44px; justify-content:center;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; color:#77777f;">{{ r.tag }}</span>
+                  <span style="font-family:'Archivo',sans-serif; font-weight:500; font-size:15px; color:#fff;">{{ r.name }}</span>
+                </a>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{ sheetIsMore }}" hint-placeholder-val="{{ false }}">
+              <a href="#" style="display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid #26262a; font-family:'Archivo',sans-serif; font-weight:600; font-size:15px; color:#fff; min-height:44px;">Glossary</a>
+              <a href="#" style="display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid #26262a; font-family:'Archivo',sans-serif; font-weight:600; font-size:15px; color:#fff; min-height:44px;">About</a>
+              <a href="#" style="display:flex; align-items:center; padding:16px 20px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#77777f; min-height:44px;">Subscribe</a>
+              <a href="#" style="display:flex; align-items:center; padding:0 20px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#77777f; min-height:44px;">Contact</a>
+              <a href="#" style="display:flex; align-items:center; padding:0 20px 16px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#fff; min-height:44px;">Log in</a>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===================== ANNOTATION ===================== -->
+  <div style="max-width:1180px; margin:56px auto 0; border-top:1px solid #e6e6ea; padding-top:36px; display:grid; grid-template-columns:1fr 1fr; gap:40px;">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">Recommended IA</div>
+      <div style="font-family:'Archivo',sans-serif; font-size:14px; line-height:1.6; color:#111114;">
+        <p style="margin:0 0 12px;"><strong>Top level (4):</strong> Indexes · Reports · Glossary · About. Subscribe/Contact demoted to a thin utility strip above the bar — visible, never first.</p>
+        <p style="margin:0 0 12px;"><strong>Indexes → 9 sections + Compare</strong> is the entire second level. The dropdown is styled as a miniature index page itself — numbered rows, mono eyebrow — rather than a generic list, so the credibility signal lands before a click. It links to section hubs only; individual index pages live on those hub cards, so publishing a new index never touches the nav.</p>
+        <p style="margin:0 0 12px;"><strong>Reports → 3 items:</strong> the two collections (Dark Side, Real-World AI) plus "Latest Reports," with an "All Reports" escape hatch. Same logic: standalone news reports never get their own menu entry.</p>
+        <p style="margin:0;"><strong>Glossary, About:</strong> flat links, no second level — they don't need one and a fake dropdown would dilute the pattern.</p>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#2545f5; margin-bottom:10px;">Flags</div>
+      <div style="font-family:'Archivo',sans-serif; font-size:14px; line-height:1.6; color:#111114;">
+        <p style="margin:0 0 12px;">Fully expressible as a nested WP <code>&lt;ul&gt;</code> — the panel is just an unusually-styled <code>.sub-menu</code> (CSS grid instead of a vertical list). No custom framework needed.</p>
+        <p style="margin:0 0 12px;">Hover-only dropdowns break on touch: nav items with children need click/tap-to-toggle (GeneratePress's built-in submenu-toggle arrow covers this) — not pure <code>:hover</code> CSS.</p>
+        <p style="margin:0 0 12px;">LLM/crawler-friendliness: keep every link a real <code>&lt;a href&gt;</code> present in server-rendered markup at all times — panels should hide via CSS/ARIA (<code>aria-expanded</code>), never by omitting the markup or lazy-loading it on click.</p>
+        <p style="margin:0;">"Compare" is a tool, not a content section — kept visually distinct (right-aligned, no number) inside the Indexes panel rather than filed as a 10th section.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    previewMode: 'desktop',
+    optionMode: 'a',
+    desktopPanel: null,
+    drawerOpen: false,
+    mobileSection: null,
+    sheetTab: 'indexes',
+  };
+
+  sections = [
+    { num: '01', name: 'Enterprise AI Adoption' },
+    { num: '02', name: 'AI Business & Economics' },
+    { num: '03', name: 'Technical Performance' },
+    { num: '04', name: 'Workforce & Labor' },
+    { num: '05', name: 'The Dark Side of AI' },
+    { num: '06', name: 'State of AI' },
+    { num: '07', name: 'Regulating AI' },
+    { num: '08', name: 'The Geography of AI' },
+    { num: '09', name: 'AI by Industry' },
+  ];
+
+  reportItems = [
+    { tag: 'Collection', name: 'The Dark Side of AI' },
+    { tag: 'Collection', name: 'Real-World AI' },
+    { tag: 'News', name: 'Latest Reports' },
+  ];
+
+  sheetTabStyle_(s, key) {
+    const active = s.sheetTab === key;
+    return { flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.04em', color: active ? '#2545f5' : '#77777f', borderBottom: active ? '2px solid #2545f5' : '2px solid transparent' };
+  }
+
+  navItemStyle(active) {
+    return {
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: "'Archivo',sans-serif", fontWeight: 600, fontSize: '14px',
+      letterSpacing: '-0.01em', color: active ? '#2545f5' : '#111114',
+      padding: '10px 14px', display: 'flex', alignItems: 'center',
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    return {
+      isDesktop: s.previewMode === 'desktop',
+      isMobile: s.previewMode === 'mobile',
+      previewBtnStyleDesktop: { padding: '8px 16px', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', textTransform: 'uppercase', background: s.previewMode === 'desktop' ? '#111114' : '#fff', color: s.previewMode === 'desktop' ? '#fff' : '#111114' },
+      previewBtnStyleMobile: { padding: '8px 16px', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', textTransform: 'uppercase', background: s.previewMode === 'mobile' ? '#111114' : '#fff', color: s.previewMode === 'mobile' ? '#fff' : '#111114' },
+      setPreview_desktop: () => this.setState({ previewMode: 'desktop' }),
+      setPreview_mobile: () => this.setState({ previewMode: 'mobile' }),
+
+      optionIsA: s.optionMode === 'a',
+      optionIsB: s.optionMode === 'b',
+      optionBtnStyleA: { padding: '8px 16px', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', textTransform: 'uppercase', background: s.optionMode === 'a' ? '#111114' : '#fff', color: s.optionMode === 'a' ? '#fff' : '#111114' },
+      optionBtnStyleB: { padding: '8px 16px', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono',monospace", fontSize: '11px', textTransform: 'uppercase', background: s.optionMode === 'b' ? '#111114' : '#fff', color: s.optionMode === 'b' ? '#fff' : '#111114' },
+      setOption_a: () => this.setState({ optionMode: 'a', desktopPanel: null, drawerOpen: false }),
+      setOption_b: () => this.setState({ optionMode: 'b', desktopPanel: null, drawerOpen: false }),
+
+      sections: this.sections,
+      reportItems: this.reportItems,
+
+      panelIsIndexes: s.desktopPanel === 'indexes',
+      panelIsReports: s.desktopPanel === 'reports',
+      panelIsIndexesA: s.desktopPanel === 'indexes' && s.optionMode === 'a',
+      panelIsReportsA: s.desktopPanel === 'reports' && s.optionMode === 'a',
+      navItemStyle_indexes: this.navItemStyle(s.desktopPanel === 'indexes'),
+      navItemStyle_reports: this.navItemStyle(s.desktopPanel === 'reports'),
+      navLinkStyle: { fontFamily: "'Archivo',sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '-0.01em', color: '#111114', padding: '10px 14px' },
+      chevron_indexes: s.desktopPanel === 'indexes' ? '▲' : '▼',
+      chevron_reports: s.desktopPanel === 'reports' ? '▲' : '▼',
+      toggleDesktopPanel_indexes: () => this.setState(st => ({ desktopPanel: st.desktopPanel === 'indexes' ? null : 'indexes' })),
+      toggleDesktopPanel_reports: () => this.setState(st => ({ desktopPanel: st.desktopPanel === 'reports' ? null : 'reports' })),
+
+      drawerOpen: s.drawerOpen,
+      drawerOpenA: s.drawerOpen && s.optionMode === 'a',
+      drawerOpenB: s.drawerOpen && s.optionMode === 'b',
+      toggleDrawer: () => this.setState(st => ({ drawerOpen: !st.drawerOpen, mobileSection: null, sheetTab: 'indexes' })),
+      mobileIsIndexes: s.mobileSection === 'indexes',
+      mobileIsReports: s.mobileSection === 'reports',
+      chevronM_indexes: s.mobileSection === 'indexes' ? '−' : '+',
+      chevronM_reports: s.mobileSection === 'reports' ? '−' : '+',
+      toggleMobileSection_indexes: () => this.setState(st => ({ mobileSection: st.mobileSection === 'indexes' ? null : 'indexes' })),
+      toggleMobileSection_reports: () => this.setState(st => ({ mobileSection: st.mobileSection === 'reports' ? null : 'reports' })),
+
+      sheetIsIndexes: s.sheetTab === 'indexes',
+      sheetIsReports: s.sheetTab === 'reports',
+      sheetIsMore: s.sheetTab === 'more',
+      setSheetTab_indexes: () => this.setState({ sheetTab: 'indexes' }),
+      setSheetTab_reports: () => this.setState({ sheetTab: 'reports' }),
+      setSheetTab_more: () => this.setState({ sheetTab: 'more' }),
+      sheetTabStyle_indexes: this.sheetTabStyle_(s, 'indexes'),
+      sheetTabStyle_reports: this.sheetTabStyle_(s, 'reports'),
+      sheetTabStyle_more: this.sheetTabStyle_(s, 'more'),
+    };
+  }
+}
+</script>
+</body>
+</html>

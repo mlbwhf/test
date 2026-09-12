@@ -1,0 +1,265 @@
+<!-- wp:html -->
+<style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:920px;margin:0 auto;line-height:1.6;font-size:17px;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap h2{font-size:27px;font-weight:800;letter-spacing:-0.015em;margin:38px 0 14px;}
+.tai-wrap h3{font-size:19px;font-weight:800;letter-spacing:-0.01em;margin:26px 0 10px;}
+.tai-wrap p{margin:0 0 16px;color:#2a2a32;}
+.tai-wrap a{color:#2545f5;}
+.tai-chip{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;padding:2px 6px;border-radius:3px;vertical-align:middle;font-weight:600;}
+.tai-hi{background:#e8f0e9;color:#1f6b33;}
+.tai-med{background:#fdf1dd;color:#96590a;}
+.tai-der{background:#eceaf6;color:#4b3c8f;}
+.tai-tbl{width:100%;border-collapse:collapse;font-size:14.5px;margin:0 0 10px;}
+.tai-tbl th{text-align:left;font-weight:700;padding:11px 10px;border-bottom:2px solid #111114;vertical-align:bottom;}
+.tai-tbl td{padding:12px 10px;border-bottom:1px solid #e6e6ea;vertical-align:top;color:#2a2a32;}
+.tai-scroll{overflow-x:auto;margin:0 0 26px;}
+.tai-tbl-min{min-width:680px;}
+@media(max-width:760px){.tai-wrap{font-size:16px;}.tai-wrap h2{font-size:23px;}.tai-tiles{grid-template-columns:1fr 1fr!important;}}
+@media(max-width:460px){.tai-tiles{grid-template-columns:1fr!important;}}
+</style>
+
+<div class="tai-wrap">
+
+<nav class="tai-mono" aria-label="Breadcrumb" style="font-size:11.5px;letter-spacing:0.02em;color:#8a8a98;margin-bottom:24px;">
+<a href="https://report-ai.org/" style="color:#8a8a98;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="https://report-ai.org/reports/" style="color:#8a8a98;text-decoration:none;">Reports</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">The AI Replacement Reversal</span>
+</nav>
+
+<div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;font-weight:600;">Workforce &middot; Report</div>
+
+<h1 style="font-weight:900;font-size:clamp(34px,6vw,48px);line-height:1.02;letter-spacing:-0.035em;margin:0 0 18px;">The AI replacement reversal: what the 2026 evidence actually shows</h1>
+
+<p style="font-size:20px;line-height:1.5;color:#55555e;margin:0 0 24px;">Through 2025 and early 2026, a series of large employers replaced human workers with AI systems and then reversed the decision. Meta abandoned the most aggressive half of a plan to cut some teams by up to 60%. Klarna rehired customer service staff its CEO said it had cut too far. Duolingo walked back an "AI-first" memo inside a year. This report assembles the documented cases and the aggregate data, and argues that the common failure was not the technology — it was pricing a decision without pricing its reversal.</p>
+
+<div class="tai-mono" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:11.5px;color:#6e6e76;padding:14px 0;border-top:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;margin-bottom:30px;">
+<span>By <b style="color:#111114;">Report AI</b></span><span style="color:#d3d3da;">&middot;</span>
+<span>Published <time datetime="2026-09-11">11 Sep 2026</time></span><span style="color:#d3d3da;">&middot;</span>
+<span>Cadence: quarterly</span><span style="color:#d3d3da;">&middot;</span>
+<span>9 min read</span>
+</div>
+
+<section aria-labelledby="kt-h" style="background:#f0f3ff;border:1px solid #d4ddff;border-radius:4px;padding:26px 28px;margin-bottom:34px;">
+<h2 id="kt-h" class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin:0 0 16px;font-weight:600;">Key takeaways</h2>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:13px;">
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>The reversals are documented, not anecdotal.</b> Meta, Klarna, IBM, Duolingo and Salesforce have each publicly scaled back, reversed or rehired against an AI-replacement decision.</span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>Reversal is expensive enough to erase the savings.</b> Around 31% of organisations spent more rehiring than automation saved them, and a further 42% roughly broke even. <span class="tai-chip tai-med">MEDIUM</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>Quality failures showed up before savings did.</b> At Meta, AI-assisted code changes rose 220% year on year while major technical and security incidents rose 40% and time spent firefighting them rose 70%. <span class="tai-chip tai-hi">HIGH</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>The residual is the hard part.</b> IBM automated roughly 94% of routine HR tasks and found the remaining 6% &mdash; ethical judgement and edge cases &mdash; resistant, then moved to triple US entry-level hiring in 2026. <span class="tai-chip tai-med">MEDIUM</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>Verification became the bottleneck.</b> In Q1 2026 reviewing AI-generated code overtook writing it &mdash; 11.4 hours a week against 9.8 &mdash; while median pull-request review time rose 441% and 31% more pull requests were merged with no review at all. <span class="tai-chip tai-med">MEDIUM</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>The cost is invisible in the metrics.</b> 94% of teams do not measure validation time, tech debt or burnout &mdash; so the productivity gain shows up and the verification tax does not. <span class="tai-chip tai-med">MEDIUM</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>The expertise pipeline is being cut at the source.</b> Entry-level developer postings fell 67% between 2022 and 2026, and 54% of companies stopped hiring juniors because of AI &mdash; removing the route by which today's reviewers get replaced. <span class="tai-chip tai-med">MEDIUM</span></span></li>
+<li style="display:flex;gap:12px;font-size:15.5px;line-height:1.5;"><span style="color:#2545f5;font-weight:800;">&rarr;</span><span><b>But "AI failed" is the wrong reading.</b> The same period shows real capability gains. What failed was a staffing decision taken at a speed the evidence could not support.</span></li>
+</ul>
+</section>
+
+<div class="tai-tiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:38px;">
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:38px;line-height:1;letter-spacing:-0.04em;">60<span style="font-size:22px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">largest team cut explored under Meta's Project OT</div></div>
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:38px;line-height:1;letter-spacing:-0.04em;">55<span style="font-size:22px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">of employers regret laying off workers for AI</div></div>
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:38px;line-height:1;letter-spacing:-0.04em;">+70<span style="font-size:22px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">rise in time Meta staff spent firefighting incidents</div></div>
+<div style="background:#111114;color:#fff;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:38px;line-height:1;letter-spacing:-0.04em;">32<span style="font-size:22px;color:#5a78ff;">%</span></div><div style="font-size:12.5px;color:#bdbdc6;margin-top:8px;font-weight:600;line-height:1.35;">of roles cut "because of AI" already refilled</div></div>
+</div>
+
+<h2 id="meta">The case that broke the pattern open: Meta's Project OT</h2>
+
+<p>In January 2026, Mark Zuckerberg and Meta's senior leadership met at his Hawaii compound and designed a restructuring programme code-named <b>Project OT</b>, for Organization Transformation. The premise was that AI agents would absorb much of the daily work of thousands of employees, supervised by smaller, "talent-dense" groups of humans. Two waves of cuts were scheduled, for May and November 2026. In the most aggressive scenarios modelled, some teams would shrink by <b>as much as 60%</b>.</p>
+
+<p>The first wave went ahead. The second never happened. According to Reuters' investigation, published 26 August 2026, Meta abandoned the most aggressive part of the plan when the technology did not deliver &mdash; and Zuckerberg himself conceded in July that agent capability was progressing considerably more slowly than he had expected.</p>
+
+<p>What makes the Meta case unusually useful is that the company partly measured its own failure. In a June post, CTO Andrew Bosworth reported the internal numbers:</p>
+
+<div class="tai-scroll">
+<table class="tai-tbl tai-tbl-min">
+<thead><tr><th style="width:38%;">Measured at Meta, 2026 vs 2025</th><th style="width:16%;">Change</th><th>What it means</th></tr></thead>
+<tbody>
+<tr><td>Code changes to internal platforms and infrastructure</td><td><b style="color:#1f6b33;">+220%</b></td><td>Raw output rose steeply &mdash; the thing the plan was designed to produce</td></tr>
+<tr><td>Changes reaching users as new or upgraded features</td><td><b>+36%</b></td><td>Only a fraction of that output converted into shipped product</td></tr>
+<tr><td>Major technical and security incidents, including service disruptions and possible data leaks</td><td><b style="color:#b45309;">+40%</b></td><td>The failure rate rose alongside the output</td></tr>
+<tr><td>Time spent firefighting those incidents</td><td><b style="color:#b45309;">+70%</b></td><td>Engineering capacity was consumed by remediation, not freed</td></tr>
+</tbody>
+</table>
+</div>
+<p class="tai-mono" style="font-size:11.5px;color:#8a8a98;margin:0 0 30px;">Source: Andrew Bosworth internal post, June 2026, as reported by Reuters, 26 Aug 2026 <span class="tai-chip tai-hi">HIGH</span></p>
+
+<p>Read together, those four rows describe a specific trap. Output multiplied by more than three. Shipped value grew by roughly a third. Incidents and the labour needed to clean them up grew faster than the shipped value did. A programme intended to free human capacity ended up spending it on remediation.</p>
+
+<p>The most visible consequence arrived in June, when attackers exploited Meta's AI-powered customer support bot to reach high-profile Instagram accounts, including the dormant Obama White House account. That is the shape of the risk this report is about: the automated system did not merely underperform, it opened a new attack surface where a human process had been.</p>
+
+<h2 id="cases">The reversal is not confined to one company</h2>
+
+<p>Meta is the largest documented case, but it is not isolated. Four other named employers have publicly reversed, scaled back or rehired against an AI-replacement decision.</p>
+
+<div class="tai-scroll">
+<table class="tai-tbl tai-tbl-min">
+<thead><tr><th style="width:15%;">Company</th><th style="width:30%;">What was replaced</th><th>What happened next</th><th style="width:12%;">Confidence</th></tr></thead>
+<tbody>
+<tr><td><b>Meta</b></td><td>Project OT: AI agents to absorb the work of thousands; teams cut by up to 60% in the most aggressive scenarios</td><td>Second wave of cuts cancelled. Incidents +40%, firefighting time +70%. CEO conceded agent progress was slower than expected.</td><td><span class="tai-chip tai-hi">HIGH</span></td></tr>
+<tr><td><b>Klarna</b></td><td>An AI agent said to handle the workload of ~700 customer service representatives</td><td>Rehiring human agents into a hybrid model. CEO Sebastian Siemiatkowski said the company "went too far" and that "lower quality" followed from prioritising efficiency over service.</td><td><span class="tai-chip tai-hi">HIGH</span></td></tr>
+<tr><td><b>Duolingo</b></td><td>A 2025 company-wide "AI-first" operating memo</td><td>Walked back within a year. CEO Luis von Ahn: "I did not give enough context," and on edge cases, "the unhappy path makes it so that you end up spending more effort on that than the time you saved."</td><td><span class="tai-chip tai-hi">HIGH</span></td></tr>
+<tr><td><b>IBM</b></td><td>Routine HR workflows &mdash; roughly 94% of tasks automated successfully</td><td>The residual 6%, requiring ethical judgement and situational handling, resisted automation. IBM moved to triple US entry-level hiring in 2026.</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td><b>Salesforce</b></td><td>Customer support roles cut following AI deployment announcements</td><td>Added workers back in redefined roles from late 2025 onward.</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="tai-mono" style="font-size:11.5px;color:#8a8a98;margin:0 0 30px;">Sources: Reuters investigation (26 Aug 2026); Bloomberg; company statements. Confidence is HIGH where a named executive is on the record.</p>
+
+<h2 id="economics">Why replacement was mispriced</h2>
+
+<p>The aggregate data explains why these are corrections rather than coincidences. The business case for replacement was built on a saving that turned out to be partly refundable.</p>
+
+<div class="tai-scroll">
+<table class="tai-tbl tai-tbl-min">
+<thead><tr><th style="width:46%;">Finding</th><th style="width:14%;">Figure</th><th style="width:22%;">Source</th><th style="width:12%;">Confidence</th></tr></thead>
+<tbody>
+<tr><td>Employers who regret laying off workers for AI-related reasons</td><td><b>55%</b></td><td>Forrester, <i>Future of Work</i> 2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>US hiring managers who cut a role "because of AI" and have already refilled it, or one like it</td><td><b>32%</b></td><td>Robert Half</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Organisations that spent <i>more</i> on rehiring than automation saved them</td><td><b>30.9%</b></td><td>Forrester-linked survey data</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Organisations where savings and restaffing costs roughly cancelled out</td><td><b>42.4%</b></td><td>Forrester-linked survey data</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td><b>Organisations that reversed and ended up no better off than if they had never cut</b></td><td><b>~73%</b></td><td>Report AI, summing the two rows above</td><td><span class="tai-chip tai-der">DERIVED</span></td></tr>
+<tr><td>Salary premium commanded by rehired staff in hybrid roles requiring data literacy and change-management skills</td><td><b>20&ndash;35%</b></td><td>Robert Half</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Share of AI-attributed layoffs forecast to be reversed in some form by end-2026</td><td><b>~50%</b></td><td>Forrester (forecast)</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="tai-mono" style="font-size:11.5px;color:#8a8a98;margin:0 0 30px;">The ~73% figure is our own arithmetic (30.9 + 42.4) and is labelled DERIVED. It assumes the two survey groups do not overlap, which the published summaries imply but do not state explicitly.</p>
+
+<p>Three costs were routinely left out of the model. The first is <b>recruitment and onboarding</b> &mdash; reversing a redundancy means paying again to find, hire and train a replacement. The second is the <b>salary premium</b>: roles are rarely restored as they were. They come back as hybrid positions demanding both domain knowledge and AI tool fluency, and they cost 20&ndash;35% more than the jobs they replace. The third is the hardest to price &mdash; the <b>institutional knowledge</b> that leaves with the people. A rehired team is not the team that was let go.</p>
+
+<h2 id="verification">The verification tax: reviewing AI code now costs more than writing it</h2>
+
+<p>Meta's incident numbers are not a Meta problem. They are the visible edge of a measured, industry-wide shift in where engineering time goes. The single most important statistic in this report is this one: <b>in Q1 2026, reviewing AI-generated code overtook writing code as the largest single consumer of developer time.</b></p>
+
+<div class="tai-tiles" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 26px;">
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:34px;line-height:1;letter-spacing:-0.04em;">11.4<span style="font-size:18px;color:#2545f5;">h</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">per week reviewing AI code, vs 9.8h writing it</div></div>
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:34px;line-height:1;letter-spacing:-0.04em;">+441<span style="font-size:18px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">median time a pull request sits in review</div></div>
+<div style="background:#f5f5f7;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:34px;line-height:1;letter-spacing:-0.04em;">+54<span style="font-size:18px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;line-height:1.35;">bugs per pull request</div></div>
+<div style="background:#111114;color:#fff;border-radius:4px;padding:20px;"><div style="font-weight:900;font-size:34px;line-height:1;letter-spacing:-0.04em;">+31<span style="font-size:18px;color:#5a78ff;">%</span></div><div style="font-size:12.5px;color:#bdbdc6;margin-top:8px;font-weight:600;line-height:1.35;">more pull requests merged with <i>no review at all</i></div></div>
+</div>
+
+<div class="tai-scroll">
+<table class="tai-tbl tai-tbl-min">
+<thead><tr><th style="width:44%;">Measure</th><th style="width:16%;">Finding</th><th style="width:22%;">Source</th><th style="width:12%;">Confidence</th></tr></thead>
+<tbody>
+<tr><td>Weekly hours reviewing AI-generated code vs writing new code</td><td><b>11.4h vs 9.8h</b></td><td>Developer survey data, Q1 2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Median time a pull request spends in review</td><td><b>+441%</b></td><td>Faros AI</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Pull request size</td><td><b>+51%</b></td><td>Faros AI</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Bugs per pull request</td><td><b>+54%</b></td><td>Faros AI</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Pull requests merged with no review at all</td><td><b>+31%</b></td><td>Faros AI</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Copy-pasted code as a share of all new code</td><td><b>9.4% &rarr; 15.7%</b><br><span style="font-size:12px;color:#8a8a98;">2022 to early 2026</span></td><td>GitClear, 211M lines analysed</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Refactored code as a share of all new code</td><td><b>21% &rarr; 3.8%</b></td><td>GitClear</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Change-failure-rate stability, per 25 percentage points of AI code adoption</td><td><b>&minus;7.2%</b></td><td>DORA, <i>State of DevOps</i> 2025</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Developers saying AI output is "almost correct" but still flawed</td><td><b>66%</b></td><td>Developer survey data</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Average developer burnout rating, clustering 7&ndash;9; ~75% sustained 6+ months</td><td><b>7.4 / 10</b></td><td>Developer survey data, 2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Teams whose metrics omit tech debt, validation time and burnout entirely</td><td><b>94%</b></td><td>Sonar, <i>State of Code</i> 2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<p>DORA's 2026 finding states the mechanism plainly: higher AI adoption correlates with <i>higher throughput and higher instability at the same time</i>, because the time saved generating code is re-spent auditing it. The bottleneck did not disappear. It moved &mdash; from writing to verifying.</p>
+
+<p>Two numbers in that table deserve to be read together, because they describe how the tax gets paid. Median review time is up <b>441%</b>, and <b>31% more pull requests are now merged with no review at all</b>. When verification becomes the bottleneck and nobody resources it, the queue does not get shorter. It gets skipped. That is the mechanical path from "we shipped 220% more code changes" to "major incidents rose 40%," and it is why Meta's engineers ended up spending 70% more time firefighting.</p>
+
+<p>The last row is the one that lets this happen quietly. <b>94% of teams do not measure validation time, tech debt or burnout at all.</b> The productivity gain appears in the metrics; the verification cost does not. An organisation running these numbers would see only the upside &mdash; which is precisely the reporting condition under which a company decides it can safely cut 60% of a team.</p>
+
+<h2 id="pipeline">The pipeline: cutting juniors removes the seniors of 2032</h2>
+
+<p>The verification tax lands on senior engineers specifically, because they are the ones qualified to catch what the model got wrong. At the same time, the entry-level roles that produce future senior engineers have been cut harder than any other category.</p>
+
+<div class="tai-scroll">
+<table class="tai-tbl tai-tbl-min">
+<thead><tr><th style="width:50%;">Measure</th><th style="width:18%;">Figure</th><th style="width:20%;">Period</th><th style="width:12%;">Confidence</th></tr></thead>
+<tbody>
+<tr><td>Fall in entry-level developer job postings</td><td><b>&minus;67%</b></td><td>2022&ndash;2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Entry-level postings up, while actual entry-level hiring fell &mdash; roles filled with senior staff instead</td><td><b>+47% / &minus;73%</b></td><td>2023&ndash;2024</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Companies that stopped hiring junior developers because of AI</td><td><b>54%</b></td><td>2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Senior developers reporting burnout</td><td><b>68%</b></td><td>2024</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Jobs attributed to AI in US layoffs &mdash; 4.5% of all US layoffs that year</td><td><b>~55,000</b></td><td>2025</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+<tr><td>Jobs cut at Oracle in a single year, tied to AI</td><td><b>21,000</b></td><td>2026</td><td><span class="tai-chip tai-med">MEDIUM</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The arithmetic here is simple and slow. A 67% collapse in entry-level hiring across 2024&ndash;2026 produces, mechanically, a comparable shortfall in mid-level engineers around 2030&ndash;2032 and in senior engineers by the mid-2030s. Nobody arrives at senior without passing through junior. The saving is booked this year; the shortage arrives in a decade, on someone else's watch.</p>
+
+<p>What makes this worse than an ordinary hiring cycle is <i>which</i> work was removed. Junior engineers historically built judgement by doing the routine, low-stakes tasks &mdash; exactly the tasks AI now absorbs. The training ground and the automation target are the same ground. Senior engineers largely acquired their expertise through hands-on repetition and error, not formal instruction, which means the industry has removed the mechanism by which it reproduces the very skill it now depends on more than ever. AWS CEO Matt Garman put it bluntly, calling the idea of replacing junior developers with AI <b>"one of the dumbest things I've ever heard."</b></p>
+
+<p>So the two halves of this report meet here. Verification is now the binding constraint, and only experienced engineers can do it. The supply of future experienced engineers has been cut by two-thirds. And 68% of the seniors currently absorbing that load already report burnout. That is not a labour-market forecast; it is a description of a system consuming its own capacity to check itself.</p>
+
+<h2 id="analysis">Analysis: the pace problem is real, but it is not the one usually described</h2>
+
+<p>The standard account of AI's labour risk says capability is advancing faster than workers can retrain, so displacement outruns adaptation. The 2026 evidence complicates that. Capability did advance quickly &mdash; and organisations still could not absorb it, because the binding constraint was not worker skill. It was institutional.</p>
+
+<p>Meta did not fail because its engineers could not use AI tools. Output rose 220%. It failed because the surrounding system &mdash; code review, security, incident response, accountability for what shipped &mdash; was sized for the old volume. Automating production without resizing verification produced more of everything, defects included. That is a design error, and it is the same error in kind that the OECD identifies in public policy, where the data used to shape labour-market interventions lags the labour market itself. The problem is not that humans learn slowly. It is that the checking layer is treated as overhead and cut first, precisely when more output makes it matter more.</p>
+
+<p>That reframing matters for what you do about it. If the constraint were worker skill, retraining would be the answer. The OECD's finding points elsewhere: programmes that build on existing occupational knowledge produce faster, higher-retention transitions than programmes that retrain people into unrelated technical roles. The people best placed to supervise an automated process are usually the ones who ran it manually &mdash; which is an argument against making them redundant in the first place, and an uncomfortable one for the sequencing most companies chose.</p>
+
+<p>There is also a timing asymmetry that most workforce policy gets backwards. Transition support delivered <i>before</i> displacement is materially more effective than support delivered after a redundancy notice has been filed &mdash; yet most workforce development programmes are reactive by design, triggered by the notice. The support arrives at the point where it is least useful, to people who have already lost the income it was meant to protect.</p>
+
+<h2 id="counter">What this evidence does not show</h2>
+
+<p>A measurement publication has to state the limits of its own case, so here are four.</p>
+
+<p><b>The headline failure statistic is contested.</b> MIT's <i>The GenAI Divide: State of AI in Business 2025</i> &mdash; drawing on 52 executive interviews, 153 leader surveys and 300 public deployments &mdash; reported that 95% of enterprise AI pilots produced no measurable P&amp;L impact. That figure has been widely cited, including by us. It has also been fairly criticised: it defined success as measurable P&amp;L movement within roughly six months of a pilot, a window most infrastructure investments would also fail. The study's own diagnosis was misallocated budget, not weak technology &mdash; more than half of enterprise AI spend went to visible sales and marketing tools while back-office automation, where measurable returns were strongest, stayed underfunded. <span class="tai-chip tai-med">MEDIUM</span></p>
+
+<p><b>Reversal is not the same as failure.</b> Klarna did not return to its pre-AI staffing. It moved to a hybrid split in which AI handles routine high-volume queries and humans take everything requiring judgement. IBM kept the 94% it automated. The corrections are re-scopings, and treating them as proof that automation does not work would overstate the evidence considerably.</p>
+
+<p><b>Aggregate displacement has not yet appeared in the macro data.</b> The 2026 NBER executive survey reports limited realised employment and productivity effects over the preceding three years, even at high stated adoption rates, with larger effects expected ahead. The dramatic company-level stories and the economy-wide numbers do not yet agree.</p>
+
+<p><b>Most of the reversal data is vendor research.</b> Forrester and Robert Half both sell services into the hiring market this data describes. The figures are directionally consistent with the named cases, which is why we publish them &mdash; but they are rated MEDIUM, not HIGH, and should not be treated as neutral national statistics.</p>
+
+<h2 id="what">What would have to change</h2>
+
+<h3>For companies</h3>
+<p>Price the reversal before making the cut. If an automation business case does not include the cost of unwinding it &mdash; recruitment, the 20&ndash;35% premium, lost institutional knowledge &mdash; it is not a business case, it is a forecast of the good outcome. Scale the verification layer with the output layer: Meta's numbers show what happens when review capacity stays fixed while production triples. And run the residual honestly, because IBM's 6% is the general shape of this problem. The last fraction of a workflow is where judgement, exceptions and liability concentrate, and it is systematically the part pilots do not test.</p>
+
+<h3>For regulators</h3>
+<p>The EU AI Act phases GPAI obligations through 2027, and major labs have adopted voluntary frontier-risk frameworks &mdash; partial coverage, not comprehensive rules. Almost none of it addresses employment displacement directly. The gap that matters here is not model safety but the absence of any obligation to disclose, assess or stage workforce automation at scale.</p>
+
+<h3>For workers and public policy</h3>
+<p>Move support ahead of the notice rather than after it, and build retraining on existing occupational knowledge instead of routing everyone toward software engineering &mdash; the reinstated roles in this data do not require coding, they require domain expertise plus AI fluency. And close the measurement lag: policy built on data from late 2024 cannot govern deployment decisions being taken in 2026.</p>
+
+<h2 id="faq">Frequently asked</h2>
+<div style="border-top:2px solid #111114;margin-bottom:34px;">
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">Did Meta cancel its plan to replace staff with AI?</h3><p style="font-size:15px;margin:0;color:#55555e;">It cancelled the most aggressive part. Project OT scheduled two waves of cuts for May and November 2026, with some teams shrinking by up to 60% in the scenarios modelled. The first wave proceeded; the second was abandoned after the technology underdelivered, and Zuckerberg conceded in July 2026 that agent progress was slower than expected.</p></div>
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">Which companies have rehired after replacing staff with AI?</h3><p style="font-size:15px;margin:0;color:#55555e;">Klarna is the clearest case, rehiring customer service agents after its CEO said the company "went too far." IBM is tripling US entry-level hiring after finding the residual 6% of HR tasks resistant to automation. Salesforce has added workers back in redefined roles, and Duolingo reversed its "AI-first" memo within a year.</p></div>
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">Does rehiring cost more than the automation saved?</h3><p style="font-size:15px;margin:0;color:#55555e;">Frequently. Around 30.9% of organisations spent more on rehiring than they saved, and a further 42.4% roughly broke even &mdash; meaning roughly three-quarters of reversing organisations ended up no better off. Rehired staff also command a 20&ndash;35% salary premium, because roles return as hybrid positions requiring both domain expertise and AI tool fluency.</p></div>
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">Does this mean AI cannot replace jobs?</h3><p style="font-size:15px;margin:0;color:#55555e;">No, and the evidence does not support that reading. IBM automated roughly 94% of routine HR tasks and kept those gains. What the 2026 record shows is that the last fraction of a workflow &mdash; judgement, exceptions, liability &mdash; resists automation, and that organisations which cut staff before proving they had solved it had to buy the capability back at a premium.</p></div>
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">Why did quality problems appear before cost savings?</h3><p style="font-size:15px;margin:0;color:#55555e;">Because verification was cut alongside production. At Meta, AI-assisted code changes rose 220% year on year while shipped features rose only 36%, major technical and security incidents rose 40%, and time spent firefighting them rose 70%. Output scaled; the review and incident-response capacity sized for the old volume did not.</p></div>
+<div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">How much time do developers spend reviewing AI-generated code?</h3><p style="font-size:15px;margin:0;color:#55555e;">More than they spend writing it. Survey data puts review of AI-generated code at 11.4 hours per week against 9.8 hours writing new code, with review overtaking writing as the largest AI-assisted time sink in Q1 2026. Median time a pull request spends in review is up 441%, pull requests are 51% larger, and bugs per pull request are up 54% &mdash; while 31% more pull requests are merged with no review at all.</p></div>
+<div style="padding:18px 0;"><h3 style="font-size:16px;font-weight:700;margin:0 0 6px;">What happens to the supply of senior developers?</h3><p style="font-size:15px;margin:0;color:#55555e;">It shrinks, with a lag. Entry-level developer postings fell 67% between 2022 and 2026 and 54% of companies stopped hiring juniors because of AI. Since nobody becomes a senior engineer without first being a junior one, a hiring collapse now produces a mid-level shortage around 2030&ndash;2032 and a senior shortage by the mid-2030s &mdash; at the same time as AI-generated code makes experienced reviewers more necessary, not less. 68% of senior developers already reported burnout in 2024.</p></div>
+</div>
+
+<h2 id="method">Methodology &amp; sources</h2>
+<p style="font-size:15px;color:#3a3a44;">Every figure is attributed to a named source and dated. Confidence chips follow our standard scale: <span class="tai-chip tai-hi">HIGH</span> a primary source or a named executive on the record; <span class="tai-chip tai-med">MEDIUM</span> credible secondary reporting or vendor research; <span class="tai-chip tai-der">DERIVED</span> computed by Report AI from stated inputs, with the arithmetic shown. The ~73% figure is derived by summing two survey groups and assumes they do not overlap. Meta's internal metrics originate in a June 2026 post by CTO Andrew Bosworth, reported by Reuters on 26 August 2026; we have not independently verified the underlying internal data. Reversal statistics from Forrester and Robert Half are vendor research produced by firms commercially active in the hiring market, and are rated accordingly. This page is on a <b>quarterly</b> cadence. Next review: December 2026.</p>
+
+<h2 id="related">Related on Report AI</h2>
+<ul style="margin:0 0 20px;padding-left:20px;font-size:15.5px;">
+<li><a href="https://report-ai.org/indexes/workforce-labor/">Workforce &amp; Labour index</a> &mdash; displacement and skills data</li>
+<li><a href="https://report-ai.org/reports/dark-side-of-ai/ai-workslop-statistics/">AI workslop statistics</a> &mdash; the quality cost of AI-generated output</li>
+<li><a href="https://report-ai.org/indexes/enterprise-ai/">Enterprise AI index</a> &mdash; adoption against measurable return</li>
+<li><a href="https://report-ai.org/indexes/regulating-ai/">Regulating AI</a> &mdash; where the rules currently stop</li>
+</ul>
+
+<h2 id="sources">Sources</h2>
+<ul class="tai-mono" style="font-size:12.5px;line-height:1.8;color:#3a3a44;margin:0;padding-left:20px;">
+<li>Reuters, "Mark Zuckerberg had a bold plan to replace Meta staff with AI. Here's how it imploded," 26 Aug 2026</li>
+<li>Andrew Bosworth (Meta CTO), internal post, June 2026, as reported by Reuters</li>
+<li>Bloomberg &mdash; Sebastian Siemiatkowski (Klarna) interview</li>
+<li>Luis von Ahn (Duolingo), public statements on the 2025 "AI-first" memo</li>
+<li>Forrester, <i>Future of Work</i> 2026 &mdash; employer regret and reversal forecast</li>
+<li>Robert Half &mdash; refilled roles and rehire salary premium</li>
+<li>MIT, <i>The GenAI Divide: State of AI in Business 2025</i></li>
+<li>OECD, <i>Skills in the AI age</i>, July 2026</li>
+<li>NBER executive survey, 2026 &mdash; realised employment and productivity effects</li>
+<li>DORA, <i>State of DevOps</i> 2025 and 2026 &mdash; AI adoption against delivery stability</li>
+<li>GitClear, <i>The Maintainability Gap</i> 2026 &mdash; 211M lines of code analysed</li>
+<li>Faros AI &mdash; pull request size, review time, defect rate and unreviewed merges</li>
+<li>Sonar, <i>State of Code Developer Survey</i> 2026 &mdash; metrics coverage and burnout</li>
+<li>Matt Garman (AWS CEO), public remarks on replacing junior developers</li>
+<li>Challenger, Gray &amp; Christmas-style layoff attribution data, 2025&ndash;2026</li>
+</ul>
+
+<p class="tai-mono" style="font-size:11.5px;line-height:1.7;color:#8a8a98;margin:22px 0 0;">Verification note: several figures in this report were gathered through search-engine result summaries rather than by opening the primary documents directly, because of network restrictions in the research environment. Figures sourced this way are rated MEDIUM and should be confirmed against the underlying reports before being cited externally. The Meta figures, and any quotation attributed to a named executive, are the best-supported material here.</p>
+
+</div>
+<!-- /wp:html -->

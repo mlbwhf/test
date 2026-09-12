@@ -1,0 +1,76 @@
+/* ============================================================
+   report-ai.org — Single-rail report layout
+   Paste into Appearance → Customize → Additional CSS
+   (or a WPCode "CSS Snippet", Run Everywhere).
+
+   Fixes the "two level" squeeze: removes the low-value LEFT sidebar
+   (Archives + Categories) and turns the RIGHT sidebar into one sticky
+   288px rail with a 760px article column. Scoped to pages that have a
+   sidebar, so full-width pages are untouched. Colours unchanged.
+   ============================================================ */
+
+/* Desktop: one right rail, no left */
+@media (min-width: 769px) {
+
+  /* 1. Remove the left sidebar (Archives / Categories) — the second panel */
+  #left-sidebar.widget-area { display: none !important; }
+
+  /* 2. Make the content row a clean 2-column flex on sidebar'd pages */
+  body.both-sidebars  #content.site-content,
+  body.both-right     #content.site-content,
+  body.both-left      #content.site-content,
+  body.right-sidebar  #content.site-content {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+  }
+
+  /* 3. Right rail = fixed 288px */
+  body.both-sidebars  #right-sidebar.widget-area,
+  body.both-right     #right-sidebar.widget-area,
+  body.both-left      #right-sidebar.widget-area,
+  body.right-sidebar  #right-sidebar.widget-area {
+    width: 288px !important;
+    flex: 0 0 288px !important;
+    float: none !important;
+  }
+
+  /* 4. Article column grows to fill the rest, never pinched */
+  body.both-sidebars  #primary.content-area,
+  body.both-right     #primary.content-area,
+  body.both-left      #primary.content-area,
+  body.right-sidebar  #primary.content-area {
+    width: auto !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    float: none !important;
+  }
+
+  /* 5. Sticky, self-scrolling rail (never forces the page taller than the article) */
+  body:is(.both-sidebars, .both-right, .both-left, .right-sidebar)
+    #right-sidebar .inside-right-sidebar {
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* 6. Article measure — cap long lines at 760px (per the design) */
+  body:is(.both-sidebars, .both-right, .both-left, .right-sidebar)
+    #primary .inside-article,
+  body:is(.both-sidebars, .both-right, .both-left, .right-sidebar)
+    #primary .entry-content {
+    max-width: 760px;
+  }
+}
+
+/* Mobile (<769px): single column, rail below the article, no sticky/overflow */
+@media (max-width: 768px) {
+  #left-sidebar.widget-area { display: none !important; }
+  #right-sidebar .inside-right-sidebar {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
