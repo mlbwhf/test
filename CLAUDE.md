@@ -38,8 +38,21 @@ update, alter or delete, confirm the prefix matches the site you mean. `mcp_ping
 returns the site name (`Report AI` vs `Agile Agilist`) and is the cheapest way to
 be sure which endpoint you are holding.
 
-Unless a task explicitly says otherwise, **all work in this repo is report-ai.org
-(`set_up_the_agent`)**.
+**This repo is report-ai.org only. Do not touch `agile-agilist_com` at all** — not
+writes, not reads, not `mcp_ping`. agile-agilist.com is handled by a different agent
+in a different session; querying it from here duplicates that agent's work and risks
+two sessions acting on one site. It appears in this session's tool list only because
+both servers are configured in the same environment, which is not permission to use it.
+
+If a task here sounds like it might concern agile-agilist, **ask the owner first** —
+do not go and look. (Learned 2026-09-12: task "kill the second copy of the aggregator"
+was assumed to mean agile-agilist's WP Event Aggregator, because the only "aggregator"
+matches in this repo are agile-agilist notes. It actually meant a custom RSS importer
+on report-ai.org. The detour cost time and touched the wrong site.)
+
+The stale agile-agilist notes still in this repo — `agile-agilist-plugin-audit.md`,
+`onsite-registration-solution.md`, `events-and-safe-calendar-workflow.md` — are what
+caused that misdirection. They belong to the other agent's repo; consider removing them.
 
 ## Site facts
 
