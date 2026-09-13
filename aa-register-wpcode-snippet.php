@@ -5361,3 +5361,120 @@ function aa_reg_track_courses( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_track_courses', 'aa_reg_track_courses' );
+
+/* ============================================================================
+   AA — TRACK ACCORDION                                  [aa_track_accordion]
+   ----------------------------------------------------------------------------
+   Section 01 of the hub. Five tracks side by side; four collapse to vertical
+   spines and the open one takes the rest of the width.
+
+   WHY AN ACCORDION AND NOT FIVE STACKED LISTS. Twenty-five certifications laid
+   out flat is a page nobody reads to the bottom -- and the brief that produced
+   this design rejected list-shaped layouts three times for exactly that. The
+   spines keep all five tracks on one screen, so the shape of the catalogue is
+   visible before anything is opened, and choosing one costs a click rather
+   than a scroll.
+
+   Every track's cards are in the HTML whether or not its panel is open -- the
+   closed ones are hidden with CSS, not omitted. So a crawler and an assistant
+   read all twenty-five credentials, their prices and their next dates, which
+   is the whole SEO payload of this page. Opening a panel moves space; it does
+   not fetch anything.
+
+   Cards come from aa_reg_course_card(), the same function the track pages use,
+   so a credential looks identical wherever it appears.
+   ========================================================================== */
+
+function aa_reg_track_accordion( $atts ) {
+	$a = shortcode_atts( array(
+		/* Order is deliberate: AI-Native first because it is the new thing and
+		   the reason a lot of this traffic arrives. */
+		'tracks'  => 'ai-native,adv-safe,safe-roles,safe-industry,safe-found',
+		'open'    => '',
+		'heading' => '',
+	), $atts, 'aa_track_accordion' );
+
+	$copy = function_exists( 'aa_training_copy' ) ? aa_training_copy() : array();
+	$want = array_filter( array_map( 'trim', explode( ',', (string) $a['tracks'] ) ) );
+	if ( ! $want ) { return ''; }
+
+	/* One colour per track, so a spine, its cards and the calendar chips for
+	   the same certifications read as one family. */
+	$pal = array( '#0E8074', '#101C33', '#D34B2A', '#B3702A', '#3E6B5C' );
+
+	$built = array();
+	$i     = 0;
+	foreach ( $want as $cat ) {
+		$slugs = aa_training_courses( $cat );
+		if ( ! $slugs ) { $slugs = aa_reg_track_children( $cat ); }
+		$slugs = array_values( array_filter( $slugs, function ( $s ) { return (bool) aa_reg_course( $s ); } ) );
+		if ( ! $slugs ) { continue; }
+
+		$built[] = array(
+			'cat'   => $cat,
+			'label' => isset( $copy[ $cat ]['label'] ) ? $copy[ $cat ]['label'] : ucwords( str_replace( '-', ' ', $cat ) ),
+			'desc'  => isset( $copy[ $cat ]['accent'] ) ? ucfirst( trim( $copy[ $cat ]['accent'], '.' ) ) . '.' : '',
+			'href'  => '/training/' . $cat . '/',
+			'slugs' => $slugs,
+			'color' => $pal[ $i % count( $pal ) ],
+		);
+		$i++;
+	}
+	if ( ! $built ) { return ''; }
+
+	$open = $a['open'] !== '' ? $a['open'] : $built[0]['cat'];
+	$tot  = 0;
+	foreach ( $built as $b ) { $tot += count( $b['slugs'] ); }
+
+	$h  = '<section class="aaa" id="certifications" data-aaa>';
+	$h .= '<div class="aaa__head">';
+	$h .= '<span class="aaa__kicker">01 &middot; The catalogue</span>';
+	$h .= '<h2 class="aaa__h2">' . ( $a['heading'] !== ''
+		? esc_html( $a['heading'] )
+		: count( $built ) . ' tracks, <em>one at a time.</em>' ) . '</h2>';
+	$h .= '<p class="aaa__lede">' . (int) $tot . ' certifications. Each track opens with its '
+	    . 'starting credential; every card links to the course page and its next published date.</p>';
+	$h .= '</div>';
+
+	$h .= '<div class="aaa__row">';
+	foreach ( $built as $n => $b ) {
+		$is = ( $b['cat'] === $open );
+		$h .= '<div class="aaa__track' . ( $is ? ' is-open' : '' ) . '"'
+		    . ' data-aaa-track="' . esc_attr( $b['cat'] ) . '"'
+		    . ' style="--aaa-c:' . esc_attr( $b['color'] ) . '">';
+
+		/* The spine is the control, and it stays a button in the open panel too
+		   -- otherwise the only way back out of a track is to open another. */
+		$h .= '<button type="button" class="aaa__spine" data-aaa-open="' . esc_attr( $b['cat'] ) . '"'
+		    . ' aria-expanded="' . ( $is ? 'true' : 'false' ) . '">'
+		    . '<span class="aaa__num">' . sprintf( '%02d', $n + 1 ) . '</span>'
+		    . '<span class="aaa__name">' . esc_html( $b['label'] ) . '</span>'
+		    . '<span class="aaa__count">' . count( $b['slugs'] ) . '</span>'
+		    . '</button>';
+
+		$h .= '<div class="aaa__body">';
+		$h .= '<div class="aaa__bar">'
+		    . '<h3 class="aaa__h3">' . esc_html( $b['label'] ) . '</h3>'
+		    . ( $b['desc'] !== '' ? '<p class="aaa__desc">' . esc_html( $b['desc'] ) . '</p>' : '' )
+		    . '<a class="aaa__more" href="' . esc_url( $b['href'] ) . '">Category page &#10230;</a>'
+		    . '</div>';
+
+		$slugs = $b['slugs'];
+		$lead  = array_shift( $slugs );
+		$cnt   = count( $slugs );
+		$h .= '<div class="aac__grid aaa__grid">';
+		$h .= aa_reg_course_card( $lead, true );
+		$wide = ( $cnt % 2 === 1 );
+		foreach ( $slugs as $k => $slug ) {
+			$h .= aa_reg_course_card( $slug, false, ( $wide && $k === 0 ) );
+		}
+		$h .= '</div>';
+
+		$h .= '</div></div>';
+	}
+	$h .= '</div>';
+
+	$h .= '</section>';
+	return $h;
+}
+add_shortcode( 'aa_track_accordion', 'aa_reg_track_accordion' );

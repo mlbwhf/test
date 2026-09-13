@@ -450,3 +450,28 @@
 
   showAll();
 })();
+
+/* ============================================================================
+   AA — TRACK ACCORDION behaviour                        [aa_track_accordion]
+   ----------------------------------------------------------------------------
+   Opening a track moves space. Nothing is fetched and nothing is built: all
+   five panels are already in the page, which is why the catalogue is readable
+   with scripts off and why a crawler sees all twenty-five credentials.
+   ========================================================================== */
+(function () {
+  var root = document.querySelector('[data-aaa]');
+  if (!root) { return; }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-aaa-open]');
+    if (!btn) { return; }
+    var want = btn.getAttribute('data-aaa-open');
+
+    Array.prototype.forEach.call(root.querySelectorAll('[data-aaa-track]'), function (t) {
+      var on = (t.getAttribute('data-aaa-track') === want);
+      t.classList.toggle('is-open', on);
+      var s = t.querySelector('[data-aaa-open]');
+      if (s) { s.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    });
+  });
+})();

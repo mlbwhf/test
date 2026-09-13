@@ -1095,3 +1095,97 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 @media (prefers-reduced-motion: reduce) {
 	.aac__card { transition: none; }
 }
+
+/* ============================================================================
+   AA — TRACK ACCORDION                                  [aa_track_accordion]
+   ----------------------------------------------------------------------------
+   Four spines and one open panel. The transition is on flex, so the space
+   moves rather than the content jumping -- and only the open panel's body is
+   displayed, so five tracks of cards do not all have to be laid out at once.
+   ========================================================================== */
+
+.aaa {
+	--aaa-ink:   #101C33;
+	--aaa-body:  #4E4A40;
+	--aaa-muted: #8A8375;
+	--aaa-teal:  #0E8074;
+	--aaa-line:  #EDE9DF;
+	--aaa-line2: #E9E5DB;
+	--aaa-warm:  #FBFAF7;
+
+	color: var(--aaa-ink);
+	padding: clamp(44px, 6vw, 88px) clamp(16px, 5vw, 64px);
+	background: #FFFFFF;
+}
+.aaa *, .aaa *::before, .aaa *::after { box-sizing: border-box; }
+
+.aaa__head { max-width: 1240px; margin: 0 auto; }
+.aaa__kicker {
+	display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+	font-weight: 700; color: var(--aaa-muted);
+}
+.aaa__h2 {
+	margin: 14px 0 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.05;
+	letter-spacing: -.032em; font-weight: 600;
+}
+.aaa__h2 em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; color: var(--aaa-teal); }
+.aaa__lede { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: var(--aaa-body); max-width: 58ch; }
+
+.aaa__row {
+	max-width: 1240px; margin: 32px auto 0;
+	display: flex; align-items: stretch; gap: 8px;
+}
+
+.aaa__track {
+	flex: 0 0 66px; min-width: 0; display: flex; align-items: stretch;
+	border: 1px solid var(--aaa-line2); border-radius: 18px; overflow: hidden;
+	background: var(--aaa-warm);
+	transition: flex .5s cubic-bezier(.2,.7,.2,1);
+}
+.aaa__track.is-open { flex: 1 1 auto; background: #FFFFFF; }
+
+/* The spine stays a button in the open panel too, or the only way out of a
+   track is to open a different one. */
+.aaa__spine {
+	flex: 0 0 64px; display: flex; flex-direction: column; align-items: center;
+	gap: 14px; padding: 16px 0; border: 0; background: transparent;
+	font: inherit; cursor: pointer; color: var(--aaa-c, var(--aaa-teal));
+}
+.aaa__spine:focus-visible { outline: 2px solid var(--aaa-teal); outline-offset: -3px; }
+.aaa__num {
+	font-family: 'Instrument Serif', Georgia, serif; font-size: 26px;
+	font-weight: 400; line-height: 1; color: var(--aaa-c, var(--aaa-teal));
+}
+.aaa__name {
+	writing-mode: vertical-rl; text-orientation: mixed;
+	font-size: 13px; font-weight: 600; letter-spacing: -.01em;
+	color: var(--aaa-ink); white-space: nowrap;
+}
+.aaa__count { margin-top: auto; font-size: 12px; font-weight: 600; color: var(--aaa-muted); }
+
+.aaa__body { display: none; min-width: 0; flex: 1 1 auto; padding: 18px 18px 18px 0; }
+.aaa__track.is-open .aaa__body { display: block; animation: aaaIn .45s ease both; }
+@keyframes aaaIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.aaa__bar { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.aaa__h3 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.026em; }
+.aaa__desc { margin: 0; font-size: 13.5px; color: var(--aaa-muted); }
+.aaa__more { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--aaa-teal); }
+
+/* The cards are aa_reg_course_card(), so they arrive already styled -- only the
+   grid's own margin needs resetting inside a panel. */
+.aaa__grid { margin-top: 0; }
+
+/* Below 900px the row becomes a stack and the spines turn horizontal. Five
+   vertical spines on a phone leaves ~50px for the open panel. */
+@media (max-width: 900px) {
+	.aaa__row { flex-direction: column; gap: 10px; }
+	.aaa__track { flex: 0 0 auto; display: block; }
+	.aaa__spine {
+		flex-direction: row; width: 100%; gap: 12px; padding: 15px 18px;
+		min-height: 56px; text-align: left;
+	}
+	.aaa__name { writing-mode: horizontal-tb; font-size: 15px; }
+	.aaa__count { margin-top: 0; margin-left: auto; }
+	.aaa__body { padding: 0 16px 16px; }
+}
