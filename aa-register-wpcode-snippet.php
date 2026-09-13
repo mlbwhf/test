@@ -4767,12 +4767,12 @@ function aa_salary_insights_shortcode( $atts ) {
 			foreach ( $steps as $s ) {
 				$c  = isset( $colour[ $s['code'] ] ) ? $colour[ $s['code'] ] : '#0E8074';
 				$h .= '<span class="aas__stepwrap">';
-				$h  .= '<span class="aas__chip">'
-				     . '<span class="aas__dot" style="background:' . esc_attr( $c ) . '"></span>'
-				     . esc_html( $s['code'] )
-				     . ' <em>' . esc_html( $money( $s['median'] ) ) . '</em></span>';
-				$h  .= '<span class="aas__arrow" aria-hidden="true">&rarr;</span>';
-				$h  .= '</span>';
+				$h .= '<span class="aas__chip">'
+				    . '<span class="aas__dot" style="background:' . esc_attr( $c ) . '"></span>'
+				    . esc_html( $s['code'] )
+				    . ' <em>' . esc_html( $money( $s['median'] ) ) . '</em></span>';
+				$h .= '<span class="aas__arrow" aria-hidden="true">&rarr;</span>';
+				$h .= '</span>';
 			}
 
 			/* A DESTINATION ROLE, not a credential. It gets a chip so the ladder
