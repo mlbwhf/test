@@ -1199,3 +1199,103 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 	.aaa__count { margin-top: 0; margin-left: auto; }
 	.aaa__body { padding: 0 16px 16px; }
 }
+
+/* ============================================================================
+   AA — COHORT TIMELINE BOARD                                [aa_track_board]
+   ----------------------------------------------------------------------------
+   Geometry is set in PHP -- 27px per day, 34px per sub-lane, a 186px label
+   column -- because the bars have to be positioned server-side to exist
+   without scripts. Only chrome lives here.
+
+   There is no list fallback at any width. The label column is sticky and the
+   board scrolls under it, so a phone gets the same object as a desktop, just
+   narrower. That is the whole point: the flat list this replaced was
+   unreadable with our cadence.
+   ========================================================================== */
+
+.aab {
+	--aab-ink:   #101C33;
+	--aab-body:  #4E4A40;
+	--aab-muted: #8A8375;
+	--aab-deco:  #B5AE9E;
+	--aab-teal:  #0E8074;
+	--aab-today: #D34B2A;
+	--aab-line:  #EDE9DF;
+	--aab-line2: #E9E5DB;
+	--aab-warm:  #FBFAF7;
+
+	position: relative; margin-top: 14px; color: var(--aab-ink);
+	border: 1px solid var(--aab-line2); border-radius: 18px;
+	background: #FFFFFF; overflow: hidden;
+}
+.aab *, .aab *::before, .aab *::after { box-sizing: border-box; }
+
+.aab__head, .aab__foot {
+	display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+	padding: 13px 18px; background: var(--aab-warm);
+}
+.aab__head { border-bottom: 1px solid var(--aab-line); }
+.aab__foot { border-top: 1px solid var(--aab-line); font-size: 12.5px; color: var(--aab-body); }
+
+.aab__kicker {
+	font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+	font-weight: 700; color: var(--aab-muted);
+}
+.aab__key { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600; color: var(--aab-muted); }
+.aab__keybar { width: 16px; height: 9px; border-radius: 3px; background: #F4FAF9; border: 1px solid var(--aab-teal); }
+.aab__keytoday { width: 2px; height: 12px; background: var(--aab-today); }
+.aab__hint { margin-left: auto; font-size: 11.5px; font-weight: 600; color: var(--aab-deco); }
+
+.aab__scroll { overflow-x: auto; overflow-y: hidden; }
+.aab__in { position: relative; }
+
+.aab__lane { display: flex; align-items: stretch; border-bottom: 1px solid var(--aab-line); }
+.aab__lane:last-of-type { border-bottom: 0; }
+
+/* Sticky, so the certification you are reading stays named while the quarter
+   scrolls under it. */
+.aab__label {
+	position: sticky; left: 0; z-index: 2; flex: 0 0 186px;
+	display: flex; align-items: center; gap: 9px; padding: 0 16px;
+	background: #FFFFFF; border-right: 1px solid var(--aab-line);
+	font-size: 12.5px; font-weight: 600; letter-spacing: -.012em;
+}
+.aab__label > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aab__label--head {
+	z-index: 3; padding: 11px 16px; background: var(--aab-warm);
+	font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+	font-weight: 700; color: var(--aab-muted);
+}
+.aab__lane--head { background: var(--aab-warm); }
+.aab__code { padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+
+.aab__track { position: relative; flex: 0 0 auto; display: block; }
+
+.aab__band {
+	position: absolute; top: 0; bottom: 0; display: flex; align-items: center;
+	padding: 11px 14px; white-space: nowrap; border-left: 1px solid var(--aab-line2);
+	font-size: 13px; font-weight: 600; letter-spacing: -.014em;
+}
+.aab__band span { font-weight: 500; color: var(--aab-deco); margin-left: 8px; }
+
+.aab__bar {
+	position: absolute; display: flex; align-items: center; gap: 7px;
+	height: 26px; padding: 0 7px; border-radius: 7px;
+	overflow: hidden; white-space: nowrap; font-size: 11px; text-decoration: none;
+}
+.aab__bar b { font-weight: 700; letter-spacing: .04em; }
+.aab__bar i { font-style: normal; font-weight: 500; opacity: .75; }
+/* Below 150px a range does not fit; the code never drops. */
+.aab__bar--tight i { display: none; }
+a.aab__bar:hover { filter: brightness(.96); }
+a.aab__bar:focus-visible { outline: 2px solid var(--aab-teal); outline-offset: 1px; }
+
+.aab__today {
+	position: absolute; top: 0; bottom: 0; width: 2px;
+	background: var(--aab-today); z-index: 1; pointer-events: none;
+}
+
+@media (max-width: 720px) {
+	.aab__label { flex-basis: 132px; padding: 0 12px; font-size: 12px; }
+	.aab__hint { margin-left: 0; }
+}
