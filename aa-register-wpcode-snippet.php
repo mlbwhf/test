@@ -5220,3 +5220,138 @@ function aa_reg_board( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_track_board', 'aa_reg_board' );
+
+/* ============================================================================
+   AA — CERTIFICATIONS                                     [aa_track_courses]
+   ----------------------------------------------------------------------------
+   A track's credentials as cards: the first as a lead panel, the rest two-up.
+   Code, name, what it covers, how long, how much, and when it next runs.
+
+   THIS IS THE SECTION THAT SELLS. Price, duration, description and the link to
+   the course page exist nowhere else on the page -- the calendar has dates, the
+   salary block has pay, and neither of them tells you what the thing is or what
+   it costs. So this goes first: a grid of dates means nothing until you have
+   picked a credential.
+
+   It replaces a hand-written card grid, and its own inline <style>, on each of
+   the five track pages. One block, six pages, one place to change.
+
+   Everything comes from aa_reg_courses() and the track's child pages -- the
+   same source the calendar reads -- so a card and a bar cannot disagree about
+   when SPC next runs. The salary chip and the next-date the old cards carried
+   are gone from here: pay belongs to the salary block, and the full schedule
+   belongs to the calendar. Only the next date survives, because "when does this
+   start" is part of deciding, not part of browsing.
+   ========================================================================== */
+
+function aa_reg_course_card( $slug, $lead = false, $wide = false ) {
+	$course = aa_reg_course( $slug );
+	if ( ! $course ) { return ''; }
+
+	$code  = isset( $course['code'] ) ? $course['code'] : strtoupper( $slug );
+	$url   = isset( $course['url'] ) ? $course['url'] : '';
+	$page  = aa_reg_page_exists( $url );
+	$days  = max( 1, (int) $course['days'] );
+	$blurb = function_exists( 'aa_reg_blurb' ) ? aa_reg_blurb( $course, $lead ? 200 : 130 ) : '';
+
+	/* The next published date, from the same generator the calendar uses. */
+	$next = '';
+	$href = $url;
+	foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+		$next = aa_reg_range( $c['start'], $c['end'], true );
+		$href = $url . ( strpos( $url, '?' ) === false ? '?' : '&' )
+		      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+		break;
+	}
+
+	$cls = 'aac__card' . ( $lead ? ' aac__card--lead' : '' ) . ( $wide ? ' aac__card--wide' : '' );
+	$tag = $page ? 'a' : 'div';
+
+	$h  = '<' . $tag . ' class="' . $cls . '"' . ( $page ? ' href="' . esc_url( $href ) . '"' : '' ) . '>';
+
+	$h .= '<div class="aac__top">';
+	$h .= '<span class="aac__code">' . esc_html( $code ) . '</span>';
+	if ( $lead ) {
+		$h .= '<span class="aac__lede">Start here</span>';
+	}
+	$h .= '<span class="aac__facts">'
+	    . '<span class="aac__days">' . (int) $days . ' ' . esc_html( $days === 1 ? 'day' : 'days' ) . '</span>'
+	    . '<span class="aac__price">' . esc_html( aa_reg_money( $course['price'], $course['currency'] ) ) . '</span>'
+	    . '</span>';
+	$h .= '</div>';
+
+	$h .= '<h3 class="aac__h">' . esc_html( aa_salary_label( $code ) ) . '</h3>';
+	if ( $blurb !== '' ) {
+		$h .= '<p class="aac__p">' . esc_html( $blurb ) . '</p>';
+	}
+
+	$h .= '<div class="aac__foot">';
+	$h .= '<span class="aac__next">' . ( $next !== ''
+		? esc_html( 'Next ' . $next )
+		: esc_html( 'Dates on request' ) ) . '</span>';
+	$h .= '<span class="aac__go" aria-hidden="true">&#10230;</span>';
+	$h .= '</div>';
+
+	$h .= '</' . $tag . '>';
+	return $h;
+}
+
+/**
+ * [aa_track_courses category="adv-safe"]
+ *
+ * category   which track. Defaults to the page's own, so a track page needs
+ *            no attribute at all.
+ * heading    override the H2.
+ */
+function aa_reg_track_courses( $atts ) {
+	$a = shortcode_atts( array(
+		'category' => '',
+		'heading'  => '',
+		'kicker'   => 'Certifications',
+	), $atts, 'aa_track_courses' );
+
+	$cat = $a['category'];
+	if ( $cat === '' ) {
+		/* The page's own slug, so the shortcode can be dropped on a track page
+		   bare and still know which track it is standing in. */
+		$obj = function_exists( 'get_queried_object' ) ? get_queried_object() : null;
+		$cat = ( $obj && isset( $obj->post_name ) ) ? $obj->post_name : '';
+	}
+	if ( $cat === '' ) { return ''; }
+
+	$slugs = aa_training_courses( $cat );
+	if ( ! $slugs ) { $slugs = aa_reg_track_children( $cat ); }
+
+	/* Drop anything that is not a course before counting, or the lead/wide
+	   arithmetic is done against pages that will not render. */
+	$slugs = array_values( array_filter( $slugs, function ( $s ) { return (bool) aa_reg_course( $s ); } ) );
+	if ( ! $slugs ) { return ''; }
+
+	$lead = array_shift( $slugs );
+	$n    = count( $slugs );
+
+	$h  = '<section class="aac" id="certifications">';
+	$h .= '<div class="aac__head">';
+	$h .= '<span class="aac__kicker">' . esc_html( $a['kicker'] ) . '</span>';
+	$h .= '<h2 class="aac__h2">' . ( $a['heading'] !== ''
+		? esc_html( $a['heading'] )
+		: 'Every credential in this track, <em>one at a time.</em>' ) . '</h2>';
+	$h .= '<p class="aac__sub">' . ( $n + 1 ) . ' certifications. Each card links to the course '
+	    . 'and its next published date. Exam voucher included.</p>';
+	$h .= '</div>';
+
+	$h .= '<div class="aac__grid">';
+	$h .= aa_reg_course_card( $lead, true );
+
+	/* An odd number left over would leave a hole in a two-up grid, so the first
+	   of them takes the full width instead. */
+	$wide = ( $n % 2 === 1 );
+	foreach ( $slugs as $i => $slug ) {
+		$h .= aa_reg_course_card( $slug, false, ( $wide && $i === 0 ) );
+	}
+	$h .= '</div>';
+
+	$h .= '</section>';
+	return $h;
+}
+add_shortcode( 'aa_track_courses', 'aa_reg_track_courses' );

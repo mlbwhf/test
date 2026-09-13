@@ -978,3 +978,106 @@
 	display: block; margin-top: 14px; padding-top: 12px;
 	border-top: 1px solid #F2EFE8; font-size: 12px; line-height: 1.5; color: var(--aas-muted);
 }
+
+/* ============================================================================
+   AA — CERTIFICATIONS                                     [aa_track_courses]
+   ----------------------------------------------------------------------------
+   The lead panel is the track's starting credential and is deliberately larger:
+   on a page selling seven things, the one to buy first should not be the same
+   size as the other six. The rest are two-up, with one full-width when an odd
+   number would otherwise leave a hole.
+
+   Tokens are re-declared rather than inherited so this block can stand on a
+   page carrying none of the other new styling.
+   ========================================================================== */
+
+.aac {
+	--aac-ink:    #101C33;
+	--aac-body:   #4E4A40;
+	--aac-muted:  #8A8375;
+	--aac-deco:   #B5AE9E;
+	--aac-teal:   #0E8074;
+	--aac-line:   #EDE9DF;
+	--aac-line2:  #E9E5DB;
+	--aac-ground: #FBFAF7;
+
+	color: var(--aac-ink);
+	padding: clamp(44px, 6vw, 88px) clamp(16px, 5vw, 64px);
+	background: #FFFFFF;
+	border-top: 1px solid var(--aac-line);
+}
+.aac *, .aac *::before, .aac *::after { box-sizing: border-box; }
+
+.aac__head { max-width: 1240px; margin: 0 auto; }
+.aac__kicker {
+	display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+	font-weight: 700; color: var(--aac-muted);
+}
+.aac__h2 {
+	margin: 14px 0 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.05;
+	letter-spacing: -.032em; font-weight: 600; text-wrap: pretty;
+}
+.aac__h2 em { font-family: 'Instrument Serif', Georgia, serif; font-style: italic; font-weight: 400; color: var(--aac-teal); }
+.aac__sub { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: var(--aac-body); max-width: 58ch; }
+
+.aac__grid {
+	max-width: 1240px; margin: 32px auto 0;
+	display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;
+}
+
+.aac__card {
+	display: flex; flex-direction: column; gap: 11px;
+	padding: 22px; border-radius: 18px; background: #FFFFFF;
+	border: 1px solid var(--aac-line2); text-decoration: none; color: inherit;
+	transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+a.aac__card:hover {
+	border-color: var(--aac-teal); transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(14,128,116,.10);
+}
+a.aac__card:focus-visible { outline: 2px solid var(--aac-teal); outline-offset: 2px; }
+
+/* The starting credential, across both columns and set larger. */
+.aac__card--lead { grid-column: 1 / -1; background: var(--aac-ground); padding: 28px; gap: 13px; }
+.aac__card--wide { grid-column: 1 / -1; }
+
+.aac__top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.aac__code {
+	font-size: 11px; font-weight: 700; letter-spacing: .08em;
+	padding: 5px 10px; border-radius: 6px;
+	background: #F4FAF9; color: var(--aac-teal); border: 1px solid #D6EBE8;
+}
+.aac__lede {
+	font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+	font-weight: 700; color: var(--aac-muted);
+}
+.aac__facts { margin-left: auto; display: flex; align-items: baseline; gap: 14px; }
+.aac__days { font-size: 12.5px; color: var(--aac-muted); font-variant-numeric: tabular-nums; }
+.aac__price {
+	font-size: 19px; font-weight: 600; letter-spacing: -.024em;
+	font-variant-numeric: tabular-nums;
+}
+.aac__card--lead .aac__price { font-size: 26px; letter-spacing: -.028em; }
+
+.aac__h { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -.024em; line-height: 1.2; text-wrap: pretty; }
+.aac__card--lead .aac__h { font-size: clamp(24px, 2.6vw, 32px); letter-spacing: -.03em; }
+.aac__p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--aac-body); text-wrap: pretty; }
+.aac__card--lead .aac__p { font-size: 15px; max-width: 60ch; }
+
+.aac__foot {
+	display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 13px;
+	border-top: 1px solid var(--aac-line);
+}
+.aac__next { font-size: 12.5px; font-weight: 600; color: var(--aac-teal); }
+.aac__go { margin-left: auto; font-size: 14px; color: var(--aac-deco); }
+a.aac__card:hover .aac__go { color: var(--aac-teal); }
+
+@media (max-width: 720px) {
+	.aac__grid { grid-template-columns: minmax(0, 1fr); }
+	.aac__card, .aac__card--lead { padding: 19px; }
+	.aac__facts { margin-left: 0; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.aac__card { transition: none; }
+}
