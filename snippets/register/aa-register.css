@@ -1005,7 +1005,12 @@
    page carrying none of the other new styling.
    ========================================================================== */
 
-.aac {
+/* THE CARD TOKENS ARE DECLARED ON BOTH BLOCKS.
+   aa_reg_course_card() is used by the certifications section AND by the
+   accordion, which renders the cards inside .aaa -- so tokens scoped to .aac
+   alone never reached them, every var() went unresolved, and the cards came
+   out with no border, no background and no card colour at all. */
+.aac, .aaa {
 	--aac-ink:    #101C33;
 	--aac-body:   #4E4A40;
 	--aac-muted:  #8A8375;
@@ -1014,7 +1019,11 @@
 	--aac-line:   #EDE9DF;
 	--aac-line2:  #E9E5DB;
 	--aac-ground: #FBFAF7;
+}
 
+/* Section chrome, for the standalone block only -- the accordion supplies its
+   own padding and ground. */
+.aac {
 	color: var(--aac-ink);
 	padding: clamp(44px, 6vw, 88px) clamp(16px, 5vw, 64px);
 	background: #FFFFFF;
@@ -1041,6 +1050,7 @@
 
 .aac__card {
 	display: flex; flex-direction: column; gap: 11px;
+	text-decoration: none;
 	padding: 22px; border-radius: 18px; background: #FFFFFF;
 	border: 1px solid var(--aac-line2); text-decoration: none; color: inherit;
 	transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;

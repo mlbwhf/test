@@ -5325,12 +5325,9 @@ function aa_reg_track_courses( $atts ) {
 	}
 	if ( $cat === '' ) { return ''; }
 
-	$slugs = aa_training_courses( $cat );
-	if ( ! $slugs ) { $slugs = aa_reg_track_children( $cat ); }
-
-	/* Drop anything that is not a course before counting, or the lead/wide
-	   arithmetic is done against pages that will not render. */
-	$slugs = array_values( array_filter( $slugs, function ( $s ) { return (bool) aa_reg_course( $s ); } ) );
+	/* Filtered to real courses before counting, or the lead/wide arithmetic is
+	   done against pages that will not render. */
+	$slugs = aa_reg_track_course_slugs( $cat );
 	if ( ! $slugs ) { return ''; }
 
 	$lead = array_shift( $slugs );
@@ -5385,6 +5382,26 @@ add_shortcode( 'aa_track_courses', 'aa_reg_track_courses' );
    so a credential looks identical wherever it appears.
    ========================================================================== */
 
+/**
+ * A TRACK'S REAL COURSE SLUGS.
+ *
+ * aa_training_courses() falls back to the QUERIED page's children when a track
+ * has no hand list -- correct on a track page, wrong on the hub, where the
+ * queried page is /training/ and its children are the five tracks themselves.
+ * That is why safe-industry and safe-found rendered as empty and the accordion
+ * showed three tracks instead of five.
+ *
+ * Merging the hand list with the track's own children fixes both directions: a
+ * hand-listed course that lives outside its track survives, and a track with no
+ * hand list gets its children. Filtering through aa_reg_course() then drops
+ * anything that is not a course -- including those five track pages.
+ */
+function aa_reg_track_course_slugs( $cat ) {
+	$all = array_merge( (array) aa_training_courses( $cat ), aa_reg_track_children( $cat ) );
+	$all = array_values( array_unique( $all ) );
+	return array_values( array_filter( $all, function ( $s ) { return (bool) aa_reg_course( $s ); } ) );
+}
+
 function aa_reg_track_accordion( $atts ) {
 	$a = shortcode_atts( array(
 		/* Order is deliberate: AI-Native first because it is the new thing and
@@ -5405,9 +5422,7 @@ function aa_reg_track_accordion( $atts ) {
 	$built = array();
 	$i     = 0;
 	foreach ( $want as $cat ) {
-		$slugs = aa_training_courses( $cat );
-		if ( ! $slugs ) { $slugs = aa_reg_track_children( $cat ); }
-		$slugs = array_values( array_filter( $slugs, function ( $s ) { return (bool) aa_reg_course( $s ); } ) );
+		$slugs = aa_reg_track_course_slugs( $cat );
 		if ( ! $slugs ) { continue; }
 
 		$built[] = array(
