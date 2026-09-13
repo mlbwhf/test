@@ -4979,3 +4979,222 @@ function aa_salary_insights_shortcode( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_salary_insights', 'aa_salary_insights_shortcode' );
+
+/* ============================================================================
+   AA — COHORT TIMELINE BOARD                                [aa_track_board]
+   ----------------------------------------------------------------------------
+   One lane per certification, one bar per cohort, weeks running left to right.
+   BAR WIDTH IS DAYS OUT OF THE OFFICE -- that is the argument of this view and
+   the reason it beats a list: a four-day SPC and a one-day micro-credential do
+   not look alike.
+
+   IT DOES NOT REPLACE THE CALENDAR. The board answers "when can I fit this in",
+   which is what someone holding their own calendar is asking. The month grid
+   answers "what is on in November". Landing pages carry both.
+
+   NO LIST FALLBACK, ANYWHERE. The month grid used to collapse to a flat date
+   list on a phone, and with our cadence -- a start every Monday, Wednesday and
+   Thursday -- that was a wall of near-identical rows. This scrolls sideways
+   with the certification names pinned instead, and keeps its shape at any
+   width.
+
+   Rendered entirely on the server. Every bar is a real link to that cohort's
+   enrolment, so with scripts off it is still a working index of the quarter.
+   ========================================================================== */
+
+function aa_reg_board( $atts ) {
+	$a = shortcode_atts( array(
+		'courses' => 'all',
+		'months'  => 3,
+		/* Dates per course. The board stays readable only while the bar count
+		   stays low -- the same reasoning as the month grid's cap. */
+		'per'     => 3,
+	), $atts, 'aa_track_board' );
+
+	$slugs = ( strtolower( trim( (string) $a['courses'] ) ) === 'all' )
+		? aa_reg_all_course_slugs()
+		: array_filter( array_map( 'trim', explode( ',', (string) $a['courses'] ) ) );
+	if ( ! $slugs ) { return ''; }
+
+	$per    = max( 0, (int) $a['per'] );
+	$months = max( 1, min( 6, (int) $a['months'] ) );
+
+	/* One day in pixels, and the height of one sub-lane. */
+	$PXD   = 27;
+	$LANEH = 34;
+	$LABEL = 186;
+
+	$tz    = new DateTimeZone( 'America/New_York' );
+	$today = new DateTime( 'now', $tz );
+	$from  = new DateTime( $today->format( 'Y-m-01' ), $tz );
+	$to    = ( clone $from )->modify( '+' . $months . ' months' )->modify( '-1 day' );
+	$toymd = $to->format( 'Y-m-d' );
+
+	$off = function ( $ymd ) use ( $from, $tz ) {
+		$d = DateTime::createFromFormat( 'Y-m-d', $ymd, $tz );
+		if ( ! $d ) { return null; }
+		$d->setTime( 0, 0 );
+		$f = clone $from; $f->setTime( 0, 0 );
+		return (int) $f->diff( $d )->format( '%r%a' );
+	};
+
+	$total = $off( $toymd ) + 1;
+	if ( $total < 1 ) { return ''; }
+	$boardw = $total * $PXD;
+
+	/* The same seven colours the month grid uses, assigned by course order, so
+	   a code is the same colour wherever it appears on the site. */
+	$pal = array(
+		array( '#0E8074', '#F4FAF9', '#D6EBE8' ),
+		array( '#101C33', '#F5F6F8', '#DDE1E8' ),
+		array( '#D34B2A', '#FDF5F2', '#F2DAD1' ),
+		array( '#B3702A', '#FCF7F0', '#EEE0CC' ),
+		array( '#3E6B5C', '#F4F8F6', '#D9E5DF' ),
+		array( '#4A5E86', '#F5F7FB', '#DCE2EE' ),
+		array( '#7A5B8F', '#F8F5FA', '#E5DCEC' ),
+	);
+
+	$lanes = array();
+	$i     = 0;
+	$count = 0;
+
+	foreach ( $slugs as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! $course ) { continue; }
+		$code = isset( $course['code'] ) ? $course['code'] : strtoupper( $slug );
+		if ( isset( $lanes[ $code ] ) ) { continue; }
+		$c3 = $pal[ $i % count( $pal ) ];
+		$i++;
+
+		$taken = 0;
+		$rows  = array();
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			if ( $c['start'] > $toymd ) { break; }
+			if ( $per && $taken >= $per ) { break; }
+			$taken++;
+			$rows[] = $c;
+			$count++;
+		}
+		if ( ! $rows ) { continue; }
+
+		$lanes[ $code ] = array(
+			'name'  => isset( $course['name'] ) ? $course['name'] : $code,
+			'url'   => isset( $course['url'] ) ? $course['url'] : '',
+			'page'  => aa_reg_page_exists( isset( $course['url'] ) ? $course['url'] : '' ),
+			'color' => $c3[0], 'tint' => $c3[1], 'bd' => $c3[2],
+			'rows'  => $rows,
+			'first' => $rows[0]['start'],
+		);
+	}
+	if ( ! $lanes ) { return ''; }
+
+	/* Soonest first. A lane whose next date is in November has nothing to say
+	   to someone looking at September, so it belongs further down. */
+	uasort( $lanes, function ( $x, $y ) { return strcmp( $x['first'], $y['first'] ); } );
+
+	$permonth = array();
+	foreach ( $lanes as $L ) {
+		foreach ( $L['rows'] as $c ) {
+			$k = substr( $c['start'], 0, 7 );
+			$permonth[ $k ] = isset( $permonth[ $k ] ) ? $permonth[ $k ] + 1 : 1;
+		}
+	}
+
+	$h  = '<div class="aab" data-aab>';
+	$h .= '<div class="aab__head">'
+	    . '<span class="aab__kicker">' . esc_html( aa_reg_t( 'weeks_ltr', 'Weeks run left to right' ) ) . '</span>'
+	    . '<span class="aab__key"><i class="aab__keybar"></i>' . esc_html( aa_reg_t( 'one_cohort', 'one cohort' ) ) . '</span>'
+	    . '<span class="aab__key"><i class="aab__keytoday"></i>' . esc_html( aa_reg_t( 'today', 'today' ) ) . '</span>'
+	    . '<span class="aab__hint">' . esc_html( aa_reg_t( 'scroll', 'scroll' ) ) . ' &#8596;</span>'
+	    . '</div>';
+
+	$h .= '<div class="aab__scroll"><div class="aab__in" style="width:' . ( $LABEL + $boardw ) . 'px">';
+
+	/* Month bands across the top. */
+	$h .= '<div class="aab__lane aab__lane--head">';
+	$h .= '<div class="aab__label aab__label--head">' . esc_html( aa_reg_t( 'certification', 'Certification' ) ) . '</div>';
+	$h .= '<div class="aab__track" style="width:' . $boardw . 'px">';
+	$cur = clone $from;
+	while ( $cur <= $to ) {
+		$mk = $cur->format( 'Y-m' );
+		$s  = max( 0, $off( $cur->format( 'Y-m-01' ) ) );
+		$e  = min( $total, $off( ( clone $cur )->modify( 'last day of this month' )->format( 'Y-m-d' ) ) + 1 );
+		$n  = isset( $permonth[ $mk ] ) ? (int) $permonth[ $mk ] : 0;
+		$h .= '<span class="aab__band" style="left:' . ( $s * $PXD ) . 'px;width:' . ( ( $e - $s ) * $PXD ) . 'px">'
+		    . esc_html( $cur->format( 'M ' ) . "'" . $cur->format( 'y' ) )
+		    . '<span>' . $n . ' ' . esc_html( $n === 1 ? aa_reg_t( 'date', 'date' ) : aa_reg_t( 'dates', 'dates' ) ) . '</span></span>';
+		$cur->modify( 'first day of next month' );
+	}
+	$h .= '</div></div>';
+
+	foreach ( $lanes as $code => $L ) {
+		$subend = array();
+		$bars   = '';
+
+		foreach ( $L['rows'] as $c ) {
+			$a0 = $off( $c['start'] );
+			$b0 = $off( $c['end'] );
+			if ( $a0 === null || $b0 === null || $b0 < 0 ) { continue; }
+
+			/* A one-day credential is 27px wide, which cannot hold its own code.
+			   The bar widens to fit the label -- and the packing below uses that
+			   widened footprint rather than the real end date, or a short bar
+			   overlaps the next one's text. */
+			$w = max( ( $b0 - $a0 + 1 ) * $PXD - 5, strlen( $code ) * 7.2 + 18 );
+
+			$sub = -1;
+			foreach ( $subend as $k => $endpx ) {
+				if ( $endpx < $a0 - 0.5 ) { $sub = $k; break; }
+			}
+			if ( $sub < 0 ) { $sub = count( $subend ); }
+			$subend[ $sub ] = $a0 + $w / $PXD;
+
+			$rng = aa_reg_range( $c['start'], $c['end'] );
+			$url = $L['url'] . ( strpos( $L['url'], '?' ) === false ? '?' : '&' )
+			     . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+
+			$style = 'left:' . ( $a0 * $PXD + 2 ) . 'px;width:' . round( $w ) . 'px;top:'
+			       . ( $sub * $LANEH + 4 ) . 'px;background:' . esc_attr( $L['tint'] )
+			       . ';border:1px solid ' . esc_attr( $L['bd'] ) . ';color:' . esc_attr( $L['color'] );
+
+			/* A course with no page of its own -- Large Solution sells from the
+			   schedule -- gets a span rather than a link to a 404. */
+			$tag  = $L['page'] ? 'a' : 'span';
+			$bars .= '<' . $tag . ' class="aab__bar' . ( $w < 150 ? ' aab__bar--tight' : '' ) . '"'
+			      . ( $L['page'] ? ' href="' . esc_url( $url ) . '"' : '' )
+			      . ' style="' . $style . '"'
+			      . ' aria-label="' . esc_attr( $L['name'] . ' · ' . $rng ) . '">'
+			      . '<b>' . esc_html( $code ) . '</b><i>' . esc_html( $rng ) . '</i>'
+			      . '</' . $tag . '>';
+		}
+		if ( $bars === '' ) { continue; }
+
+		$h .= '<div class="aab__lane" style="height:' . ( max( 1, count( $subend ) ) * $LANEH ) . 'px">';
+		$h .= '<div class="aab__label">'
+		    . '<span class="aab__code" style="background:' . esc_attr( $L['tint'] ) . ';color:'
+		    . esc_attr( $L['color'] ) . '">' . esc_html( $code ) . '</span>'
+		    . '<span>' . esc_html( aa_salary_label( $code ) ) . '</span></div>';
+		$h .= '<div class="aab__track" style="width:' . $boardw . 'px;background-image:'
+		    . 'repeating-linear-gradient(90deg,#EFEBE2 0 1px,transparent 1px ' . ( 7 * $PXD ) . 'px)">'
+		    . $bars . '</div></div>';
+	}
+
+	/* Today, drawn once across the whole board rather than once per lane. */
+	$t = $off( $today->format( 'Y-m-d' ) );
+	if ( $t !== null && $t >= 0 && $t < $total ) {
+		$h .= '<span class="aab__today" style="left:' . ( $LABEL + $t * $PXD + 1 ) . 'px"></span>';
+	}
+
+	$h .= '</div></div>';
+
+	$h .= '<div class="aab__foot"><span>'
+	    . sprintf(
+			esc_html( aa_reg_t( 'board_foot', '%1$d dates across %2$d certifications. Bar width is days out of the office.' ) ),
+			(int) $count, count( $lanes ) )
+	    . '</span></div>';
+
+	$h .= '</div>';
+
+	return $h;
+}
+add_shortcode( 'aa_track_board', 'aa_reg_board' );
