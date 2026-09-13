@@ -4538,6 +4538,22 @@ function aa_salary_data() {
 				'blurb'  => 'Foundational AI literacy through to leading an AI-Native enterprise. No coding required.',
 				'steps'  => array( 'AINF', 'AINCA', 'AINORG' ),
 			),
+			/* AI-GUIDED ARCHITECTURE. The destination here is a role, not a
+			   credential we sell -- which is why `dest` exists and why it
+			   carries no salary figure. See the note on `dest` below. */
+			array(
+				'kicker' => 'AI-guided architecture · Emerging',
+				'title'  => 'From the train to',
+				'accent' => 'AI-guided architecture.',
+				'blurb'  => 'Some RTEs and team coaches are moving toward architecting value with AI in the loop. '
+				          . 'It is one route on from the train, not the only one, and not a replacement for the RTE role.',
+				'steps'  => array( 'RTE', 'AINCA' ),
+				'dest'   => array(
+					'label' => 'AI-Native Value Architect',
+					'note'  => 'An emerging role, not a certification we offer. Scaled Agile has described it '
+					         . 'as one path on for some Scrum Masters, coaches and RTEs — not a conversion of the role.',
+				),
+			),
 		),
 		'sources' => 'Sources: Scaled Agile, LinkedIn Salary, Payscale · 2026.',
 	);
@@ -4749,9 +4765,8 @@ function aa_salary_insights_shortcode( $atts ) {
 
 			$h .= '<span class="aas__steps">';
 			foreach ( $steps as $s ) {
-				$c   = isset( $colour[ $s['code'] ] ) ? $colour[ $s['code'] ] : '#0E8074';
-				$url = aa_salary_url( $s['code'] );
-				$h  .= '<span class="aas__stepwrap">';
+				$c  = isset( $colour[ $s['code'] ] ) ? $colour[ $s['code'] ] : '#0E8074';
+				$h .= '<span class="aas__stepwrap">';
 				$h  .= '<span class="aas__chip">'
 				     . '<span class="aas__dot" style="background:' . esc_attr( $c ) . '"></span>'
 				     . esc_html( $s['code'] )
@@ -4759,10 +4774,31 @@ function aa_salary_insights_shortcode( $atts ) {
 				$h  .= '<span class="aas__arrow" aria-hidden="true">&rarr;</span>';
 				$h  .= '</span>';
 			}
+
+			/* A DESTINATION ROLE, not a credential. It gets a chip so the ladder
+			   ends somewhere, and no money, because no salary source exists for
+			   a title this new. An invented figure here would be the worst one
+			   on the page: newest role, thinnest evidence, most prominent spot. */
+			$dest = ! empty( $path['dest'] ) ? $path['dest'] : null;
+			if ( $dest ) {
+				$h .= '<span class="aas__stepwrap">'
+				    . '<span class="aas__chip aas__chip--dest">'
+				    . '<span class="aas__dot aas__dot--open"></span>'
+				    . esc_html( $dest['label'] ) . '</span>'
+				    . '<span class="aas__arrow" aria-hidden="true">&rarr;</span>'
+				    . '</span>';
+			}
 			$h .= '</span>';
 
-			if ( $lift > 0 ) {
+			/* The lift is suppressed on a path whose destination has no figure.
+			   Quoting the climb between the two credentials before it puts a
+			   small number under a card whose whole argument is the step that
+			   number does not cover. */
+			if ( $lift > 0 && ! $dest ) {
 				$h .= '<span class="aas__lift">+' . $lift . '% from first step to last</span>';
+			}
+			if ( $dest && ! empty( $dest['note'] ) ) {
+				$h .= '<span class="aas__destnote">' . esc_html( $dest['note'] ) . '</span>';
 			}
 			$h .= '</button>';
 

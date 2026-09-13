@@ -952,3 +952,13 @@
 @media (prefers-reduced-motion: reduce) {
 	.aas__bar, .aas__mark, .aas__path { transition: none !important; }
 }
+
+/* A destination role rather than a credential we sell: outlined, not filled,
+   and carrying no figure. The open dot is the tell that this step is not a
+   course -- there is nothing to buy and nowhere to click. */
+.aas__chip--dest { border-style: dashed; color: var(--aas-body); }
+.aas__dot--open { border: 1.5px solid var(--aas-deco); background: transparent; }
+.aas__destnote {
+	display: block; margin-top: 14px; padding-top: 12px;
+	border-top: 1px solid #F2EFE8; font-size: 12px; line-height: 1.5; color: var(--aas-muted);
+}
