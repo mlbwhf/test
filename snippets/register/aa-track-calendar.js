@@ -135,14 +135,18 @@
       + '<div><dt>' + esc(D.labels.schedule) + '</dt><dd>' + esc(c.days) + ' ' + esc(D.labels.daysL) + '</dd></div>'
       + (where ? '<div class="aat-co__facts-wide"><dt>Format</dt><dd>' + esc(where) + '</dd></div>' : '')
       + '</dl>'
+      /* Price sits with the facts, matching aa_reg_track_panel(). It used to
+         come after the other-dates list, four blocks down and usually below
+         the fold -- so the panel said when and how long, and made you scroll
+         past alternative dates to find what it costs. */
+      + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
+      + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
       + ((c.proof && c.proof.length)
           ? '<ul class="aat-co__proof">' + c.proof.map(function (p) {
               return '<li>' + esc(p) + '</li>';
             }).join('') + '</ul>'
           : '')
       + dates(c)
-      + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
-      + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
       + form(c)
       + (c.url
           ? '<a class="aat-co__more" href="' + esc(c.url) + '">' + esc(D.labels.details) + ' &#10230;</a>'

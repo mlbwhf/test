@@ -2168,6 +2168,16 @@ function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 	}
 	$out .= '</dl>';
 
+	/* PRICE SITS WITH THE FACTS, not below them.
+	   It used to come after the other-dates list and the inclusions, four
+	   blocks down and usually below the fold -- so the panel answered when and
+	   how long, and made you scroll past a list of alternative dates to find
+	   out what it costs. Dates, duration, format, price: that is the set
+	   somebody is deciding on, and it belongs together. */
+	$out .= '<div class="aat-co__pay"><div class="aat-co__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
+	     . '<div class="aat-co__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
+	     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>';
+
 	/* The rest of this course's schedule, right where the decision is made. */
 	$others = isset( $dates[ $row['code'] ] ) ? $dates[ $row['code'] ] : array();
 	if ( count( $others ) > 1 ) {
@@ -2188,10 +2198,6 @@ function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 		foreach ( $mm['proof'] as $p ) { $out .= '<li>' . esc_html( $p ) . '</li>'; }
 		$out .= '</ul>';
 	}
-
-	$out .= '<div class="aat-co__pay"><div class="aat-co__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
-	     . '<div class="aat-co__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
-	     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>';
 
 	$out .= aa_reg_inline(
 		array( 'price' => $mm['price'] ),
