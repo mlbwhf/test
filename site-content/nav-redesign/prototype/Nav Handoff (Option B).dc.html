@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f5f5f7; }
+    a { color:#2545f5; text-decoration:none; }
+    a:hover { color:#111114; }
+  </style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; color:#111114; max-width:860px; margin:0 auto; padding:64px 32px 120px; background:#fff; border-left:1px solid #e6e6ea; border-right:1px solid #e6e6ea; min-height:100vh; box-sizing:border-box;">
+
+  <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#2545f5; margin-bottom:12px;">Handover — Global Nav, Option B "Jump Palette"</div>
+  <h1 style="font-weight:900; font-size:40px; letter-spacing:-0.03em; margin:0 0 8px;">report-ai.org navigation — WordPress implementation spec</h1>
+  <p style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#77777f; margin:0 0 48px;">GeneratePress · standard WP menu · no JS frameworks · Aug 2026</p>
+
+  <!-- 1. IA -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">1 · Menu structure (Appearance → Menus)</h2>
+  <p style="font-size:15px; line-height:1.65; margin:0 0 16px;">Exactly 4 top-level items + 3 utility links. Second level = section hubs and collections only — individual index pages and news reports are <strong>never</strong> menu items; they live on hub-page card grids. Publishing a new page never touches this menu.</p>
+  <pre style="font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.7; background:#f5f5f7; border:1px solid #e6e6ea; padding:20px 24px; overflow-x:auto; margin:0 0 16px;">Indexes                → /indexes/            (Index Library hub)
+  01 Enterprise AI Adoption   → /indexes/enterprise-adoption/
+  02 AI Business & Economics  → /indexes/business-economics/
+  03 Technical Performance    → /indexes/technical-performance/
+  04 Workforce & Labor        → /indexes/workforce-labor/
+  05 The Dark Side of AI      → /indexes/dark-side/
+  06 State of AI              → /indexes/state-of-ai/
+  07 Regulating AI            → /indexes/regulating-ai/
+  08 The Geography of AI      → /indexes/geography/
+  09 AI by Industry           → /indexes/by-industry/
+  Compare Tool                → /compare/
+Reports                → /reports/
+  The Dark Side of AI (collection) → /reports/dark-side/
+  Real-World AI (collection)       → /reports/real-world-ai/
+  Latest Reports                   → /reports/latest/
+Glossary               → /glossary/
+About                  → /about/
+— utility (secondary menu location) —
+Subscribe              → /subscribe/
+Contact                → /contact/
+Log in                 → /wp-login.php (or member area URL)</pre>
+  <p style="font-size:15px; line-height:1.65; margin:0 0 40px;">Slugs are illustrative — keep whatever exists; don't break URLs for the nav. Numbering (01–09) is rendered by CSS counters, not typed into menu labels, so reordering in the Menus screen stays correct automatically.</p>
+
+  <!-- 2. Markup -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">2 · Markup — what WordPress already outputs</h2>
+  <p style="font-size:15px; line-height:1.65; margin:0 0 16px;">The whole design is a restyled <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">wp_nav_menu()</code> nested list. No structural changes needed:</p>
+  <pre style="font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.7; background:#111114; color:#e8e8ec; padding:20px 24px; overflow-x:auto; margin:0 0 16px;">&lt;nav aria-label="Primary"&gt;
+  &lt;ul id="primary-menu"&gt;
+    &lt;li class="menu-item-has-children"&gt;
+      &lt;a href="/indexes/"&gt;Indexes&lt;/a&gt;
+      &lt;button class="dropdown-menu-toggle" aria-expanded="false"&gt;…&lt;/button&gt;
+      &lt;ul class="sub-menu"&gt;   ← this becomes the dark palette
+        &lt;li&gt;&lt;a href="/indexes/enterprise-adoption/"&gt;Enterprise AI Adoption&lt;/a&gt;&lt;/li&gt;
+        …
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    …
+  &lt;/ul&gt;
+&lt;/nav&gt;</pre>
+  <p style="font-size:15px; line-height:1.65; margin:0 0 40px;"><strong>Critical for LLM/crawler friendliness:</strong> every link stays in the server-rendered DOM at all times. Sub-menus hide with CSS (<code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">visibility/opacity</code>) + <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">aria-expanded</code> — never lazy-loaded, never <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">display:none</code>-until-fetch. GeneratePress does this by default.</p>
+
+  <!-- 3. GP settings -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">3 · GeneratePress settings</h2>
+  <ul style="font-size:15px; line-height:1.8; margin:0 0 40px; padding-left:22px;">
+    <li>Customizer → Layout → Primary Navigation → <strong>Dropdown behaviour: "Click – arrow"</strong>. Kills hover-only dropdowns; the arrow button toggles <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">aria-expanded</code>, the label itself still navigates to the hub page. Works identically on touch.</li>
+    <li>Mobile menu breakpoint: default 768px. Keep GP's off-canvas/overlay mobile menu — it renders the same nested list as accordions (Option B's bottom-sheet chrome is a nice-to-have, see §5).</li>
+    <li>Register a <strong>secondary menu</strong> location for Subscribe / Contact / Log in (top utility strip). Never place them in the primary menu. Log in sits last, ink-colored to separate it from the muted links; on mobile it lives in the drawer footer (Option A) / More tab (Option B sheet).</li>
+  </ul>
+
+  <!-- 4. CSS -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">4 · CSS (Customizer → Additional CSS)</h2>
+  <pre style="font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.65; background:#111114; color:#e8e8ec; padding:20px 24px; overflow-x:auto; margin:0 0 40px;">/* ---- Jump Palette sub-menu (desktop ≥769px) ---- */
+.main-navigation .sub-menu {
+  width: 360px;
+  background: #111114;
+  border: 1px solid #111114;
+  box-shadow: none;
+  right: 0; left: auto;           /* anchor to the right edge of the item */
+  margin-top: 8px;
+  counter-reset: idx;
+}
+.main-navigation .sub-menu li {
+  border-bottom: 1px solid #26262a;
+  counter-increment: idx;
+}
+.main-navigation .sub-menu a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  font-family: Archivo, sans-serif; font-weight: 500;
+  font-size: 14px; color: #fff; letter-spacing: -0.01em;
+}
+.main-navigation .sub-menu a::before {   /* 01–09 numbering */
+  content: counter(idx, decimal-leading-zero);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: #2545f5;
+}
+.main-navigation .sub-menu a::after {
+  content: "→"; margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; color: #55555c;
+}
+.main-navigation .sub-menu a:hover { background: #1a1a1f; color: #fff; }
+.main-navigation .sub-menu a:hover::after { color: #2545f5; }
+
+/* Compare Tool + escape-hatch rows: give those two menu items a
+   CSS class in the Menus screen (enable "CSS Classes" in Screen
+   Options), e.g. .nav-tool and .nav-all */
+.main-navigation .sub-menu .nav-tool a::before,
+.main-navigation .sub-menu .nav-all a::before { content: none; }
+.main-navigation .sub-menu .nav-tool a,
+.main-navigation .sub-menu .nav-all a {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #2545f5;
+}
+.main-navigation .sub-menu .nav-all { border-top: 1px solid #333336; }
+
+/* Reports sub-menu is narrower; add .menu-reports class to the
+   Reports item */
+.menu-reports .sub-menu { width: 300px; }</pre>
+
+  <!-- 5. Flags -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">5 · Flags / can't-do-in-plain-WP</h2>
+  <ul style="font-size:15px; line-height:1.8; margin:0 0 40px; padding-left:22px;">
+    <li><strong>Bottom sheet on mobile:</strong> not a native WP menu behaviour. Ship GP's standard off-canvas overlay first (same content, accordion sub-menus — fully acceptable). The sheet + tab chrome from the prototype needs ~30 lines of custom CSS/JS on top of the same markup; treat as phase 2.</li>
+    <li><strong>"Jump to a section…" search row:</strong> decorative in the prototype. A live filter requires JS; recommend dropping it or linking the row to /indexes/ until phase 2.</li>
+    <li><strong>Tag eyebrows ("Collection"/"News") in Reports:</strong> WP menu items are single labels. Use the menu item <em>Description</em> field + CSS (<code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">.menu-item-description</code>) — GP outputs it with a filter snippet.</li>
+    <li><strong>Right-anchored flyouts</strong> can overflow on narrow desktop widths; the CSS anchors them <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">right:0</code> which handles the last items — verify the Indexes item at 769–1100px.</li>
+  </ul>
+
+  <!-- 6. QA -->
+  <h2 style="font-weight:800; font-size:22px; letter-spacing:-0.02em; border-top:1px solid #111114; padding-top:20px; margin:0 0 16px;">6 · Acceptance checklist</h2>
+  <ul style="font-size:15px; line-height:1.8; margin:0; padding-left:22px;">
+    <li>All 9 sections + Compare visible in Indexes dropdown; numbering 01–09 renders via CSS, not labels.</li>
+    <li>Tap once on "Indexes" arrow on iPhone → palette opens; tap label → hub page. No dead first-tap.</li>
+    <li>View-source (JS off): every second-level link present as <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">&lt;a href&gt;</code>.</li>
+    <li>Keyboard: Tab reaches every item, Escape closes, <code style="font-family:'IBM Plex Mono',monospace; font-size:13px; background:#f5f5f7; padding:1px 5px;">aria-expanded</code> toggles.</li>
+    <li>Publish a test index page → confirm nav needs no edit.</li>
+  </ul>
+</div>
+
+</x-dc>
+</body>
+</html>
