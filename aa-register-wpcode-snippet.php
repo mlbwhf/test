@@ -4613,6 +4613,9 @@ function aa_salary_data() {
 	return array(
 		'bands' => array(
 			array( 'code' => 'SPC',  'median' => 195, 'lo' => 165, 'hi' => 240 ),
+			/* From the Advanced SAFe page, which carried a figure the shared set
+			   did not. Same provenance as the rest -- and the same caveat. */
+			array( 'code' => 'ASPC', 'median' => 210, 'lo' => 180, 'hi' => 280 ),
 			array( 'code' => 'ARCH', 'median' => 185, 'lo' => 160, 'hi' => 240 ),
 			array( 'code' => 'RTE',  'median' => 172, 'lo' => 135, 'hi' => 260 ),
 			array( 'code' => 'APM',  'median' => 170, 'lo' => 140, 'hi' => 220 ),
@@ -4635,6 +4638,23 @@ function aa_salary_data() {
 				'accent' => 'portfolio leader.',
 				'blurb'  => 'Start on the team, grow into ART leadership, then move into enterprise portfolio management.',
 				'steps'  => array( 'SSM', 'SASM', 'RTE', 'LPM', 'SPC' ),
+			),
+			/* The two journeys the Advanced SAFe page already published. They
+			   surface only on a page whose codes cover them -- see the filter
+			   in the shortcode. */
+			array(
+				'kicker' => 'Change agent track',
+				'title'  => 'From RTE to',
+				'accent' => 'SPC.',
+				'blurb'  => 'Progress from Release Train facilitation to enterprise-transformation consultancy.',
+				'steps'  => array( 'RTE', 'SPC', 'ASPC' ),
+			),
+			array(
+				'kicker' => 'Portfolio track',
+				'title'  => 'From APM to',
+				'accent' => 'LPM.',
+				'blurb'  => 'Advance from product-level strategy to portfolio-level Lean investment governance.',
+				'steps'  => array( 'APM', 'LPM' ),
 			),
 			array(
 				'kicker' => 'Product track',
@@ -4769,6 +4789,22 @@ function aa_salary_insights_shortcode( $atts ) {
 	$pal   = aa_salary_palette();
 	$extra = isset( $data['extra'] ) ? (array) $data['extra'] : array();
 	$paths = ( $a['paths'] === '1' && ! empty( $data['paths'] ) ) ? $data['paths'] : array();
+
+	/* A TRACK PAGE SHOWS ITS OWN JOURNEYS.
+	   With codes= set, a path survives only if every step it names is on the
+	   page. Otherwise the Advanced SAFe page would offer a ladder ending in a
+	   credential whose bar is not in the chart, and clicking it would redraw
+	   around a row that is not there. */
+	if ( $a['codes'] !== '' && $paths ) {
+		$have = array();
+		foreach ( $bands as $b ) { $have[ $b['code'] ] = true; }
+		$paths = array_values( array_filter( $paths, function ( $pp ) use ( $have ) {
+			foreach ( (array) $pp['steps'] as $st ) {
+				if ( empty( $have[ $st ] ) ) { return false; }
+			}
+			return true;
+		} ) );
+	}
 
 	/* The chart's scale. Rounded up to the next 25 so the axis is a round
 	   number and the widest bar does not touch the right edge. */
