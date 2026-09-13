@@ -1721,7 +1721,7 @@ function aa_reg_blurb( $course, $max = 165 ) {
  * into, not inherited by anyone who installs the snippet.
  */
 function aa_reg_calendar_mode() {
-	return (string) get_option( 'aa_reg_calendar', 'original' );
+	return (string) get_option( 'aa_reg_calendar', 'track' );
 }
 
 /** The shortcode to fall back to when the track calendar is switched off. */

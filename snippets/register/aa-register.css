@@ -661,9 +661,18 @@
 .aat-calday__rng { font-size:12px; color:#9A9384; }
 .aat-calday__n { font-size:12px; font-weight:700; color:#9A9384; flex:none; }
 
+/* NO LIST FALLBACK ON A PHONE.
+   The grid used to be swapped for .aat-callist below 760px, and with our
+   cadence -- a start every Monday, Wednesday and Thursday -- that was a wall
+   of near-identical full-width rows with nothing to tell one from the next.
+   The grid scrolls sideways instead and keeps its shape: a month still looks
+   like a month, and a four-day bar still looks longer than a two-day one,
+   which is the entire reason for drawing bars.
+
+   .aat-callist stays defined but unused, so a page that still renders it does
+   not lose its styling. */
 @media (max-width:760px){
-  .aat-calscroll { display:none; }
-  .aat-callist { display:block; }
+  .aat-calinner { min-width:700px; }
   .aat-legend { display:none; }
 }
 @media (max-width:900px){
