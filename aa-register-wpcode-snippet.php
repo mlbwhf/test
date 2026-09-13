@@ -4548,10 +4548,18 @@ function aa_salary_data() {
 				'blurb'  => 'Some RTEs and team coaches are moving toward architecting value with AI in the loop. '
 				          . 'It is one route on from the train, not the only one, and not a replacement for the RTE role.',
 				'steps'  => array( 'RTE', 'AINCA' ),
+				/* OUR VIEW, IN OUR VOICE. An earlier draft credited this reading
+				   to Scaled Agile. It came from a partner briefing in which the
+				   speaker was explicit that they did not want it taken to market
+				   as a definitive position -- so attributing it to them would put
+				   words in their mouth they had just declined to say, which is
+				   the one representation the courseware licence forbids.
+				   Saying it as ours is both accurate and permitted. */
 				'dest'   => array(
 					'label' => 'AI-Native Value Architect',
-					'note'  => 'An emerging role, not a certification we offer. Scaled Agile has described it '
-					         . 'as one path on for some Scrum Masters, coaches and RTEs — not a conversion of the role.',
+					'note'  => 'An emerging role, not a certification we offer, and not where every RTE '
+					         . 'or Scrum Master is headed. It is the direction we see some taking as AI '
+					         . 'moves into how value gets designed.',
 				),
 			),
 		),
