@@ -4772,6 +4772,7 @@ function aa_salary_insights_shortcode( $atts ) {
 		'paths'   => '1',
 		'codes'   => '',
 		'heading' => '',
+		'num'     => '',
 	), $atts, 'aa_salary_insights' );
 
 	$data = aa_salary_data();
@@ -4846,7 +4847,8 @@ function aa_salary_insights_shortcode( $atts ) {
 
 	$h  = '<section class="aas" data-aas>';
 	$h .= '<div class="aas__head">';
-	$h .= '<span class="aas__kicker">Salary insights</span>';
+	$h .= '<span class="aas__kicker">'
+	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' ) . 'Career and pay</span>';
 	$h .= '<h2 class="aas__h2">' . ( $a['heading'] !== ''
 		? esc_html( $a['heading'] )
 		: 'Pick a path. <em>Watch what it pays.</em>' ) . '</h2>';
@@ -5314,6 +5316,7 @@ function aa_reg_track_courses( $atts ) {
 		'category' => '',
 		'heading'  => '',
 		'kicker'   => 'Certifications',
+		'num'      => '',
 	), $atts, 'aa_track_courses' );
 
 	$cat = $a['category'];
@@ -5335,7 +5338,9 @@ function aa_reg_track_courses( $atts ) {
 
 	$h  = '<section class="aac" id="certifications">';
 	$h .= '<div class="aac__head">';
-	$h .= '<span class="aac__kicker">' . esc_html( $a['kicker'] ) . '</span>';
+	$h .= '<span class="aac__kicker">'
+	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' )
+	    . esc_html( $a['kicker'] ) . '</span>';
 	$h .= '<h2 class="aac__h2">' . ( $a['heading'] !== ''
 		? esc_html( $a['heading'] )
 		: 'Every credential in this track, <em>one at a time.</em>' ) . '</h2>';
@@ -5409,6 +5414,9 @@ function aa_reg_track_accordion( $atts ) {
 		'tracks'  => 'ai-native,adv-safe,safe-roles,safe-industry,safe-found',
 		'open'    => '',
 		'heading' => '',
+		/* The page owns the numbering, not the block -- a section that hardcodes
+		   its own number is wrong the moment it moves. */
+		'num'     => '01',
 	), $atts, 'aa_track_accordion' );
 
 	$copy = function_exists( 'aa_training_copy' ) ? aa_training_copy() : array();
@@ -5443,7 +5451,8 @@ function aa_reg_track_accordion( $atts ) {
 
 	$h  = '<section class="aaa" id="certifications" data-aaa>';
 	$h .= '<div class="aaa__head">';
-	$h .= '<span class="aaa__kicker">01 &middot; The catalogue</span>';
+	$h .= '<span class="aaa__kicker">'
+	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' ) . 'The catalogue</span>';
 	$h .= '<h2 class="aaa__h2">' . ( $a['heading'] !== ''
 		? esc_html( $a['heading'] )
 		: count( $built ) . ' tracks, <em>one at a time.</em>' ) . '</h2>';
@@ -5493,3 +5502,179 @@ function aa_reg_track_accordion( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_track_accordion', 'aa_reg_track_accordion' );
+
+/* ============================================================================
+   AA — HUB HERO AND PAGE NAV                                    [aa_hub_hero]
+   ----------------------------------------------------------------------------
+   The top of /training/: what this page is, the next few starts, and a sticky
+   numbered nav for the sections below it.
+
+   THE STARTS ARE READ, NOT TYPED. Whoever is nearest is whoever the cohort
+   generator says is nearest -- so the hero cannot go stale, and it cannot
+   disagree with the board twenty lines further down. A hand-written "next
+   course: 14 Sep" is wrong within a fortnight and nobody notices.
+
+   Eventbrite stays, as a secondary link that says SELECTED DATES. Not every
+   cohort is listed there, and a co-equal "Register via Eventbrite" button
+   implies the whole catalogue is.
+   ========================================================================== */
+
+/** The soonest N starts across every course, for the hero. */
+function aa_reg_soonest( $limit = 3 ) {
+	$out = array();
+	foreach ( aa_reg_all_course_slugs() as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! $course ) { continue; }
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			$out[] = array( 'slug' => $slug, 'course' => $course, 'c' => $c );
+			break;   /* one per course, or a single daily cadence fills the list */
+		}
+	}
+	usort( $out, function ( $x, $y ) { return strcmp( $x['c']['start'], $y['c']['start'] ); } );
+	return array_slice( $out, 0, max( 1, (int) $limit ) );
+}
+
+function aa_reg_hub_hero( $atts ) {
+	$a = shortcode_atts( array(
+		'nav'   => '01:Certifications:certifications,02:Upcoming cohorts:cohorts,'
+		         . '03:Career and pay:career,04:Coaching:coaching',
+		'count' => 3,
+	), $atts, 'aa_hub_hero' );
+
+	$total = count( aa_reg_all_course_slugs() );
+	$soon  = aa_reg_soonest( (int) $a['count'] );
+
+	$h  = '<section class="aah">';
+	$h .= '<div class="aah__grid">';
+
+	$h .= '<div class="aah__copy">';
+	$h .= '<span class="aah__kicker">Training &amp; certification</span>';
+	$h .= '<h1 class="aah__h1">' . (int) $total . ' certifications, '
+	    . '<em>for the people who lead the change.</em></h1>';
+	$h .= '<p class="aah__sub">Live-virtual cohorts taught by a Gold SPCT. Every course includes the '
+	    . 'exam voucher and the courseware, most run two to four days, and rescheduling is free '
+	    . 'with no deadline and no fee.</p>';
+	$h .= '<div class="aah__btns">'
+	    . '<a class="aah__cta" href="#cohorts">See all dates <span aria-hidden="true">&#10230;</span></a>'
+	    . '<a class="aah__btn2" href="#certifications">Browse certifications</a>'
+	    . '</div>';
+	/* Secondary, and honest about what is over there. */
+	$h .= '<p class="aah__eb"><a href="https://www.eventbrite.ca/o/agileagilist-56013628813"'
+	    . ' target="_blank" rel="noopener noreferrer">Selected dates are also on Eventbrite</a></p>';
+	$h .= '</div>';
+
+	if ( $soon ) {
+		$h .= '<aside class="aah__next"><header><span class="aah__kicker">Starting soonest</span></header>';
+		foreach ( $soon as $s ) {
+			$course = $s['course'];
+			$c      = $s['c'];
+			$code   = isset( $course['code'] ) ? $course['code'] : strtoupper( $s['slug'] );
+			$url    = isset( $course['url'] ) ? $course['url'] : '';
+			$link   = aa_reg_page_exists( $url );
+			$href   = $url . ( strpos( $url, '?' ) === false ? '?' : '&' )
+			        . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+			$tag    = $link ? 'a' : 'div';
+
+			$h .= '<' . $tag . ' class="aah__row"' . ( $link ? ' href="' . esc_url( $href ) . '"' : '' ) . '>'
+			    . '<span class="aah__rowcode">' . esc_html( $code ) . '</span>'
+			    . '<span class="aah__rowname">' . esc_html( aa_salary_label( $code ) ) . '</span>'
+			    . '<span class="aah__rowdate">' . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
+			    . '</' . $tag . '>';
+		}
+		$h .= '<a class="aah__all" href="#cohorts">See the whole quarter <span aria-hidden="true">&#10230;</span></a>';
+		$h .= '</aside>';
+	}
+
+	$h .= '</div></section>';
+
+	/* THE NAV IS PART OF THE HERO, not of each section.
+	   A section that renders its own nav entry cannot be reordered without
+	   editing it. This takes the running order as one attribute, so changing
+	   the page is a page edit. */
+	$items = array_filter( array_map( 'trim', explode( ',', (string) $a['nav'] ) ) );
+	if ( $items ) {
+		$h .= '<nav class="aahn" aria-label="On this page"><div class="aahn__in">';
+		$h .= '<div class="aahn__scroll">';
+		$h .= '<span class="aahn__label">On this page</span>';
+		foreach ( $items as $it ) {
+			$parts = explode( ':', $it );
+			if ( count( $parts ) < 3 ) { continue; }
+			$h .= '<a class="aahn__link" href="#' . esc_attr( trim( $parts[2] ) ) . '">'
+			    . '<span>' . esc_html( trim( $parts[0] ) ) . '</span>'
+			    . esc_html( trim( $parts[1] ) ) . '</a>';
+		}
+		$h .= '</div>';
+		/* Outside the scroller, or it scrolls off on a narrow desktop window
+		   and the nav loses its only call to action. */
+		$h .= '<a class="aahn__cta" href="#cohorts">See dates <span aria-hidden="true">&#10230;</span></a>';
+		$h .= '</div></nav>';
+	}
+
+	return $h;
+}
+add_shortcode( 'aa_hub_hero', 'aa_reg_hub_hero' );
+
+
+/* ============================================================================
+   AA — UPCOMING COHORTS                                        [aa_cohorts]
+   ----------------------------------------------------------------------------
+   Both views of the same quarter, with a toggle: the timeline board, and the
+   month calendar. Both are rendered server-side and one is hidden, so the
+   schedule is in the HTML twice over and neither view depends on the script.
+
+   TWO VIEWS BECAUSE THEY ANSWER DIFFERENT QUESTIONS. The board answers "when
+   can I fit this in" -- bar width is days out of the office, which is what
+   somebody holding their own calendar needs. The month grid answers "what is
+   on in November". Neither one replaces the other, and the calendar is not
+   optional: it is what people expect to find under a heading like this.
+   ========================================================================== */
+
+function aa_reg_cohorts_section( $atts ) {
+	$a = shortcode_atts( array(
+		'num'     => '02',
+		'courses' => 'all',
+		'months'  => 3,
+		'per'     => 3,
+		'view'    => 'board',
+	), $atts, 'aa_cohorts' );
+
+	$board = aa_reg_board( array(
+		'courses' => $a['courses'], 'months' => $a['months'], 'per' => $a['per'],
+	) );
+	$cal = aa_reg_track_calendar( array(
+		'courses' => $a['courses'], 'months' => $a['months'], 'per' => $a['per'],
+	) );
+	if ( $board === '' && $cal === '' ) { return ''; }
+
+	$boardon = ( $a['view'] !== 'calendar' );
+
+	$h  = '<section class="aaq" id="cohorts" data-aaq>';
+	$h .= '<div class="aaq__head">';
+	$h .= '<span class="aaq__kicker">'
+	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' ) . 'Upcoming cohorts</span>';
+	$h .= '<h2 class="aaq__h2">The next three months, <em>laid out in time.</em></h2>';
+	$h .= '<p class="aaq__lede">Every published date across every track. On the timeline, bar width '
+	    . 'is how many days you are out of the office; the calendar shows the same dates by month. '
+	    . 'Click any date to register.</p>';
+	$h .= '</div>';
+
+	if ( $board !== '' && $cal !== '' ) {
+		$h .= '<div class="aaq__bar"><span class="aaq__seg" role="group" aria-label="Calendar view">'
+		    . '<button type="button" class="aaq__segbtn" data-aaq-view="board" aria-pressed="'
+		    . ( $boardon ? 'true' : 'false' ) . '">Timeline</button>'
+		    . '<button type="button" class="aaq__segbtn" data-aaq-view="calendar" aria-pressed="'
+		    . ( $boardon ? 'false' : 'true' ) . '">Calendar</button>'
+		    . '</span></div>';
+	}
+
+	if ( $board !== '' ) {
+		$h .= '<div data-aaq-panel="board"' . ( $boardon ? '' : ' hidden' ) . '>' . $board . '</div>';
+	}
+	if ( $cal !== '' ) {
+		$h .= '<div data-aaq-panel="calendar"' . ( $boardon && $board !== '' ? ' hidden' : '' ) . '>' . $cal . '</div>';
+	}
+
+	$h .= '</section>';
+	return $h;
+}
+add_shortcode( 'aa_cohorts', 'aa_reg_cohorts_section' );

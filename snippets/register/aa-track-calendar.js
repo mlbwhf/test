@@ -475,3 +475,28 @@
     });
   });
 })();
+
+/* ============================================================================
+   AA — COHORTS VIEW TOGGLE                                      [aa_cohorts]
+   ----------------------------------------------------------------------------
+   Both views are already in the page. This only chooses which one is shown --
+   no fetching, no rebuilding, and the schedule is in the HTML twice whether
+   the script runs or not.
+   ========================================================================== */
+(function () {
+  var root = document.querySelector('[data-aaq]');
+  if (!root) { return; }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-aaq-view]');
+    if (!btn) { return; }
+    var want = btn.getAttribute('data-aaq-view');
+
+    Array.prototype.forEach.call(root.querySelectorAll('[data-aaq-panel]'), function (p) {
+      p.hidden = (p.getAttribute('data-aaq-panel') !== want);
+    });
+    Array.prototype.forEach.call(root.querySelectorAll('[data-aaq-view]'), function (b) {
+      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+    });
+  });
+})();
