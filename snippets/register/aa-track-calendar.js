@@ -311,8 +311,17 @@
   var SCALE = scaleEl ? parseInt(scaleEl.getAttribute('data-aas-scale'), 10) : 0;
   if (!SCALE) { return; }
 
-  var bands = Array.prototype.slice.call(bandsBox.querySelectorAll('[data-aas-band]'));
-  var paths = Array.prototype.slice.call(root.querySelectorAll('[data-aas-path]'));
+  var bands  = Array.prototype.slice.call(bandsBox.querySelectorAll('[data-aas-band]'));
+  var sel    = root.querySelector('[data-aas-select]');
+  var panels = Array.prototype.slice.call(root.querySelectorAll('[data-aas-panel]'));
+
+  /* One panel visible at a time; null shows none. Every panel stays in the DOM
+     either way, so what a crawler reads does not depend on the selection. */
+  function panel(key) {
+    panels.forEach(function (el) {
+      el.hidden = (key === null || el.getAttribute('data-aas-panel') !== key);
+    });
+  }
 
   /* The server's own numbers, read back off the elements rather than shipped a
      second time as a script payload. One copy of the data, in the markup. */
@@ -363,7 +372,8 @@
     if (titleEl) { titleEl.textContent = 'All credentials'; }
     if (subEl)   { subEl.textContent = ALL.length + ' roles · median and range'; }
     if (resetEl) { resetEl.hidden = true; }
-    paths.forEach(function (p) { p.setAttribute('aria-pressed', 'false'); });
+    panel(null);
+    if (sel && sel.value !== '') { sel.value = ''; }
   }
 
   /* One ladder. Bars run from zero to the median so the chart reads as a
@@ -420,22 +430,18 @@
     if (titleEl) { titleEl.textContent = L.label; }
     if (subEl)   { subEl.textContent = L.steps.length + ' steps · median at each'; }
     if (resetEl) { resetEl.hidden = false; }
+    panel(key);
+    if (sel && sel.value !== key) { sel.value = key; }
+  }
 
-    paths.forEach(function (p) {
-      p.setAttribute('aria-pressed', p.getAttribute('data-aas-path') === key ? 'true' : 'false');
+  if (sel) {
+    sel.addEventListener('change', function () {
+      if (sel.value === '') { showAll(); } else { showPath(sel.value); }
     });
   }
 
   root.addEventListener('click', function (e) {
-    if (e.target.closest('[data-aas-reset]')) { showAll(); return; }
-
-    var p = e.target.closest('[data-aas-path]');
-    if (!p) { return; }
-    var key = p.getAttribute('data-aas-path');
-    /* Clicking the chosen path again is a way back out, so the control does not
-       become a one-way door on touch, where there is no hover to hint at it. */
-    if (p.getAttribute('aria-pressed') === 'true') { showAll(); }
-    else { showPath(key); }
+    if (e.target.closest('[data-aas-reset]')) { showAll(); }
   });
 
   showAll();

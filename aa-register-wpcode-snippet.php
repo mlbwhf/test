@@ -4890,9 +4890,11 @@ function aa_salary_insights_shortcode( $atts ) {
 
 	/* ---- the paths ------------------------------------------------------ */
 	if ( $paths ) {
-		$h .= '<div class="aas__paths">';
-		$h .= '<span class="aas__kicker">Pick a path &mdash; the chart follows</span>';
-
+		/* PRE-RESOLVE, then render twice: once into the <select>, once into the
+		   panels. Building the ladders first means a path with fewer than two
+		   priced steps never reaches either, so the dropdown cannot offer a
+		   choice that has no panel behind it. */
+		$ready = array();
 		foreach ( $paths as $p => $path ) {
 			$steps = array();
 			foreach ( (array) $path['steps'] as $code ) {
@@ -4908,19 +4910,42 @@ function aa_salary_insights_shortcode( $atts ) {
 
 			$first = $steps[0]['median'];
 			$last  = $steps[ count( $steps ) - 1 ]['median'];
-			$lift  = $first > 0 ? (int) round( ( ( $last - $first ) / $first ) * 100 ) : 0;
+			$ready[ $p ] = array(
+				'path'  => $path,
+				'steps' => $steps,
+				'lift'  => $first > 0 ? (int) round( ( ( $last - $first ) / $first ) * 100 ) : 0,
+				'dest'  => ! empty( $path['dest'] ) ? $path['dest'] : null,
+			);
+		}
+	}
 
-			$h .= '<button type="button" class="aas__path" data-aas-path="' . esc_attr( $p ) . '"'
-			    . ' aria-pressed="false">';
-			$h .= '<span class="aas__path-top">'
-			    . '<span class="aas__path-kicker">' . esc_html( $path['kicker'] ) . '</span>'
-			    . '<span class="aas__path-pick">Select</span></span>';
-			$h .= '<span class="aas__path-h">' . esc_html( $path['title'] )
-			    . ' <em>' . esc_html( $path['accent'] ) . '</em></span>';
+	if ( ! empty( $ready ) ) {
+		$h .= '<div class="aas__paths">';
+
+		/* A DROPDOWN RATHER THAN A COLUMN OF CARDS.
+		   Only one path is ever active, so four cards spent a whole column
+		   showing three states nobody had chosen. The select states the choice
+		   in one line and gives the chart the room instead. Every panel is
+		   still in the HTML with all but the chosen one hidden, so a crawler
+		   reads all of them. */
+		$h .= '<label class="aas__field">'
+		    . '<span class="aas__kicker">Career path</span>'
+		    . '<span class="aas__select"><select data-aas-select>'
+		    . '<option value="">All credentials</option>';
+		foreach ( $ready as $p => $R ) {
+			$h .= '<option value="' . esc_attr( $p ) . '">'
+			    . esc_html( trim( $R['path']['title'] . ' ' . $R['path']['accent'] ) ) . '</option>';
+		}
+		$h .= '</select></span></label>';
+
+		foreach ( $ready as $p => $R ) {
+			$path = $R['path'];
+			$h .= '<div class="aas__panel" data-aas-panel="' . esc_attr( $p ) . '" hidden>';
+			$h .= '<span class="aas__path-kicker">' . esc_html( $path['kicker'] ) . '</span>';
 			$h .= '<span class="aas__path-p">' . esc_html( $path['blurb'] ) . '</span>';
 
 			$h .= '<span class="aas__steps">';
-			foreach ( $steps as $s ) {
+			foreach ( $R['steps'] as $s ) {
 				$c  = isset( $colour[ $s['code'] ] ) ? $colour[ $s['code'] ] : '#0E8074';
 				$h .= '<span class="aas__stepwrap">';
 				$h .= '<span class="aas__chip">'
@@ -4935,12 +4960,11 @@ function aa_salary_insights_shortcode( $atts ) {
 			   ends somewhere, and no money, because no salary source exists for
 			   a title this new. An invented figure here would be the worst one
 			   on the page: newest role, thinnest evidence, most prominent spot. */
-			$dest = ! empty( $path['dest'] ) ? $path['dest'] : null;
-			if ( $dest ) {
+			if ( $R['dest'] ) {
 				$h .= '<span class="aas__stepwrap">'
 				    . '<span class="aas__chip aas__chip--dest">'
 				    . '<span class="aas__dot aas__dot--open"></span>'
-				    . esc_html( $dest['label'] ) . '</span>'
+				    . esc_html( $R['dest']['label'] ) . '</span>'
 				    . '<span class="aas__arrow" aria-hidden="true">&rarr;</span>'
 				    . '</span>';
 			}
@@ -4948,23 +4972,21 @@ function aa_salary_insights_shortcode( $atts ) {
 
 			/* The lift is suppressed on a path whose destination has no figure.
 			   Quoting the climb between the two credentials before it puts a
-			   small number under a card whose whole argument is the step that
+			   small number under a panel whose whole argument is the step that
 			   number does not cover. */
-			if ( $lift > 0 && ! $dest ) {
-				$h .= '<span class="aas__lift">+' . $lift . '% from first step to last</span>';
+			if ( $R['lift'] > 0 && ! $R['dest'] ) {
+				$h .= '<span class="aas__lift">+' . $R['lift'] . '% from first step to last</span>';
 			}
-			if ( $dest && ! empty( $dest['note'] ) ) {
-				$h .= '<span class="aas__destnote">' . esc_html( $dest['note'] ) . '</span>';
+			if ( $R['dest'] && ! empty( $R['dest']['note'] ) ) {
+				$h .= '<span class="aas__destnote">' . esc_html( $R['dest']['note'] ) . '</span>';
 			}
-			$h .= '</button>';
 
-			/* The ladder, for the script. Server-rendered so the chips above are
-			   real content whether or not the script ever runs. */
 			$h .= '<script type="application/json" data-aas-ladder="' . esc_attr( $p ) . '">'
 			    . wp_json_encode( array(
 					'label' => trim( $path['title'] . ' ' . $path['accent'] ),
-					'steps' => $steps,
+					'steps' => $R['steps'],
 				) ) . '</script>';
+			$h .= '</div>';
 		}
 		$h .= '</div>';
 	}
