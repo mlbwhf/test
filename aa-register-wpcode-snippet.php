@@ -1709,6 +1709,26 @@ function aa_reg_blurb( $course, $max = 165 ) {
 	return rtrim( $cut, " ,.;:-" ) . '…';
 }
 
+/**
+ * WHICH CALENDAR RUNS.
+ *
+ * 'track'  -- the spanning-bar calendar built in this file.
+ * anything else (the default) -- the site's original calendar, untouched.
+ *
+ * An option rather than a code edit, because the choice is a judgement about
+ * how the schedule reads, and that should not need a deploy and a WPCode save
+ * to reverse. The default is the original: a swap this visible should be opted
+ * into, not inherited by anyone who installs the snippet.
+ */
+function aa_reg_calendar_mode() {
+	return (string) get_option( 'aa_reg_calendar', 'original' );
+}
+
+/** The shortcode to fall back to when the track calendar is switched off. */
+function aa_reg_calendar_fallback() {
+	return (string) get_option( 'aa_reg_calendar_fallback', '[easy_events_calendar]' );
+}
+
 function aa_reg_track_calendar( $atts ) {
 	$a = shortcode_atts( array(
 		'courses' => '',
@@ -2453,6 +2473,9 @@ function aa_reg_autoplace_on() {
 add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
 	if ( $tag !== 'easy_event_calendar_mini' ) { return $short; }
 	if ( ! aa_reg_autoplace_on() ) { return $short; }
+	/* Off by default -- the original calendar stays unless the track calendar
+	   is explicitly switched on. */
+	if ( aa_reg_calendar_mode() !== 'track' ) { return $short; }
 
 	$slug = aa_reg_page_course();
 	if ( $slug === '' ) { return $short; }
@@ -4516,8 +4539,14 @@ function aa_training_category_shortcode( $atts ) {
 
 	$h .= '</div></section>';
 
-	/* The calendar, already built and already sourced from the same cohorts. */
-	if ( $next ) {
+	/* The calendar. Which one is a setting -- see aa_reg_calendar_mode(). The
+	   section wrapper and its id are the same either way, so the page's own
+	   nav link lands in the same place whichever calendar is rendering. */
+	if ( $next && aa_reg_calendar_mode() !== 'track' ) {
+		$h .= '<section id="cohorts" class="aat-cohorts-sec">'
+		    . do_shortcode( aa_reg_calendar_fallback() )
+		    . '</section>';
+	} elseif ( $next ) {
 		$h .= '<section id="cohorts" class="aat-cohorts-sec">'
 		    . aa_reg_track_calendar( array(
 			'courses' => implode( ',', array_keys( $courses ) ),
