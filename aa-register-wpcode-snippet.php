@@ -1720,10 +1720,30 @@ function aa_reg_track_calendar( $atts ) {
 		'months'  => 3,
 		'heading' => '',
 		'label'   => '',
+		/* 0 = every published date. A positive number caps how many dates each
+		   course contributes -- see the note where it is read. */
+		'per'     => 0,
 	), $atts, 'aa_track_calendar' );
 
-	$slugs = array_filter( array_map( 'trim', explode( ',', (string) $a['courses'] ) ) );
+	/* courses="all" is the hub view: every certification across every track.
+	   See aa_reg_all_course_slugs() for how the list is assembled. */
+	$slugs = ( strtolower( trim( (string) $a['courses'] ) ) === 'all' )
+		? aa_reg_all_course_slugs()
+		: array_filter( array_map( 'trim', explode( ',', (string) $a['courses'] ) ) );
 	if ( ! $slugs ) { return ''; }
+
+	/* HOW MANY DATES PER COURSE.
+	   Our courses run on a cadence -- SPC is every Monday and Thursday for 26
+	   weeks -- so "every published cohort" is really "every possible start
+	   date", which is a large, low-information set. Seven courses over six
+	   months was 1,386 bars and 446KB, and the hosting provider noticed. All
+	   twenty-five over a quarter would be worse.
+
+	   A visitor asking "when can I take RTE" is answered by the next two or
+	   three dates, not the next forty. So the hub caps per course and says so;
+	   a single-track page leaves it at 0 and shows everything, because there
+	   the full cadence is the point. */
+	$per = max( 0, (int) $a['per'] );
 
 	/* The seven-colour palette from the handoff, assigned by course order, so a
 	   track with three courses and a track with seven both work untouched. */
@@ -1762,7 +1782,10 @@ function aa_reg_track_calendar( $atts ) {
 		);
 		$i++;
 
+		$taken = 0;
 		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			if ( $per && $taken >= $per ) { break; }
+			$taken++;
 			$row = array( 'c' => $c, 'code' => $code, 'course' => $course, 'slug' => $slug );
 			$byday[ $c['start'] ][] = $row;
 			$all[] = $row;
@@ -4229,6 +4252,66 @@ function aa_training_courses( $cat ) {
 	$out = array();
 	foreach ( $kids as $k ) { $out[] = $k->post_name; }
 	return $out;
+}
+
+/**
+ * EVERY COURSE SLUG ON THE SITE, for the hub calendar.
+ *
+ * Built from the same two sources aa_training_courses() uses, so the hub can
+ * never disagree with a track page about what is in that track:
+ *
+ *   - the hand lists, for the three tracks that pull in a course filed
+ *     somewhere else (Large Solution sits outside adv-safe, for one);
+ *   - the child pages of each track, for the two that have no hand list, and
+ *     as a safety net for the three that do -- a course added under a track
+ *     later appears here without an edit.
+ *
+ * aa_training_courses() reads get_queried_object_id() to find those children,
+ * which is right on a track page and wrong on the hub, where the queried page
+ * is /training/ itself. So the children are resolved by path here instead.
+ *
+ * A child that is not a course resolves to nothing in aa_reg_course() and is
+ * skipped downstream, so an SEO landing page filed under a track cannot get
+ * itself into the calendar.
+ */
+function aa_reg_track_children( $cat ) {
+	if ( ! function_exists( 'get_page_by_path' ) ) { return array(); }
+	$parent = get_page_by_path( 'training/' . $cat );
+	if ( ! $parent ) { return array(); }
+
+	$kids = get_posts( array(
+		'post_type'        => 'page',
+		'post_parent'      => $parent->ID,
+		'post_status'      => 'publish',
+		'numberposts'      => 60,
+		'orderby'          => 'menu_order title',
+		'order'            => 'ASC',
+		'suppress_filters' => true,
+	) );
+
+	$out = array();
+	foreach ( $kids as $k ) { $out[] = $k->post_name; }
+	return $out;
+}
+
+function aa_reg_all_course_slugs() {
+	static $cache = null;
+	if ( $cache !== null ) { return $cache; }
+
+	$tracks = array( 'adv-safe', 'safe-roles', 'ai-native', 'safe-industry', 'safe-found' );
+
+	/* Keyed rather than appended, so a course listed by hand AND present as a
+	   child -- which is most of them -- appears once. */
+	$seen = array();
+	foreach ( $tracks as $cat ) {
+		foreach ( aa_reg_track_children( $cat ) as $slug ) { $seen[ $slug ] = true; }
+	}
+	/* The hand lists last, so a course that sits outside every track is still
+	   in the hub. */
+	foreach ( array_keys( aa_reg_courses() ) as $slug ) { $seen[ $slug ] = true; }
+
+	$cache = array_keys( $seen );
+	return $cache;
 }
 
 function aa_training_category_shortcode( $atts ) {
