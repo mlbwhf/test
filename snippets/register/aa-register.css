@@ -1445,3 +1445,8 @@ a.aah__row:hover { background: var(--aah-warm); }
 	.aahn__label { display: none; }
 	.aah__btns .aah__cta, .aah__btns .aah__btn2 { flex: 1 1 auto; justify-content: center; }
 }
+
+/* The hub hero's registration card is .aat-reg, the same card the track pages
+   use -- so it needs no styles of its own. This only stops it stretching to the
+   full height of a tall hero column. */
+.aah__reg { align-self: start; }

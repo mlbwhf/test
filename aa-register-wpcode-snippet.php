@@ -5109,6 +5109,7 @@ function aa_reg_board( $atts ) {
 
 		$lanes[ $code ] = array(
 			'name'  => isset( $course['name'] ) ? $course['name'] : $code,
+			'label' => aa_reg_short_name( $course, $code ),
 			'url'   => isset( $course['url'] ) ? $course['url'] : '',
 			'page'  => aa_reg_page_exists( isset( $course['url'] ) ? $course['url'] : '' ),
 			'color' => $c3[0], 'tint' => $c3[1], 'bd' => $c3[2],
@@ -5203,7 +5204,7 @@ function aa_reg_board( $atts ) {
 		$h .= '<div class="aab__label">'
 		    . '<span class="aab__code" style="background:' . esc_attr( $L['tint'] ) . ';color:'
 		    . esc_attr( $L['color'] ) . '">' . esc_html( $code ) . '</span>'
-		    . '<span>' . esc_html( aa_salary_label( $code ) ) . '</span></div>';
+		    . '<span>' . esc_html( $L['label'] ) . '</span></div>';
 		$h .= '<div class="aab__track" style="width:' . $boardw . 'px;background-image:'
 		    . 'repeating-linear-gradient(90deg,#EFEBE2 0 1px,transparent 1px ' . ( 7 * $PXD ) . 'px)">'
 		    . $bars . '</div></div>';
@@ -5288,7 +5289,7 @@ function aa_reg_course_card( $slug, $lead = false, $wide = false ) {
 	    . '</span>';
 	$h .= '</div>';
 
-	$h .= '<h3 class="aac__h">' . esc_html( aa_salary_label( $code ) ) . '</h3>';
+	$h .= '<h3 class="aac__h">' . esc_html( aa_reg_short_name( $course, $code ) ) . '</h3>';
 	if ( $blurb !== '' ) {
 		$h .= '<p class="aac__p">' . esc_html( $blurb ) . '</p>';
 	}
@@ -5520,6 +5521,23 @@ add_shortcode( 'aa_track_accordion', 'aa_reg_track_accordion' );
    ========================================================================== */
 
 /** The soonest N starts across every course, for the hero. */
+/**
+ * A COURSE'S SHORT NAME.
+ *
+ * aa_salary_label() only searches the hand-written table, so a page-derived
+ * course fell through to its own code -- which is why the hero read "LPM  LPM"
+ * and "APM  APM". This takes the course array we already hold and only falls
+ * back to the code when there is genuinely no name.
+ */
+function aa_reg_short_name( $course, $code ) {
+	$name = ( is_array( $course ) && ! empty( $course['name'] ) ) ? $course['name'] : '';
+	if ( $name === '' ) { return $code; }
+	$name = preg_replace( '/^SAFe®?\s*/u', '', $name );
+	$name = preg_replace( '/\s*Certification$/u', '', $name );
+	$name = trim( $name );
+	return $name !== '' ? $name : $code;
+}
+
 function aa_reg_soonest( $limit = 3 ) {
 	$out = array();
 	foreach ( aa_reg_all_course_slugs() as $slug ) {
@@ -5536,61 +5554,49 @@ function aa_reg_soonest( $limit = 3 ) {
 
 function aa_reg_hub_hero( $atts ) {
 	$a = shortcode_atts( array(
-		'nav'   => '01:Certifications:certifications,02:Upcoming cohorts:cohorts,'
-		         . '03:Career and pay:career,04:Coaching:coaching',
-		'count' => 3,
+		'nav'   => '01:Certifications:certifications,02:Career and pay:career,'
+		         . '03:Upcoming cohorts:cohorts,04:Coaching:coaching,05:Contact:contact',
+		'count' => 6,
 	), $atts, 'aa_hub_hero' );
 
-	$total = count( aa_reg_all_course_slugs() );
-	$soon  = aa_reg_soonest( (int) $a['count'] );
+	$slugs = aa_reg_all_course_slugs();
+	$total = count( $slugs );
 
-	$h  = '<section class="aah">';
-	$h .= '<div class="aah__grid">';
-
-	$h .= '<div class="aah__copy">';
-	$h .= '<span class="aah__kicker">Training &amp; certification</span>';
-	$h .= '<h1 class="aah__h1">' . (int) $total . ' certifications, '
-	    . '<em>for the people who lead the change.</em></h1>';
-	$h .= '<p class="aah__sub">Live-virtual cohorts taught by a Gold SPCT. Every course includes the '
-	    . 'exam voucher and the courseware, most run two to four days, and rescheduling is free '
-	    . 'with no deadline and no fee.</p>';
-	$h .= '<div class="aah__btns">'
-	    . '<a class="aah__cta" href="#cohorts">See all dates <span aria-hidden="true">&#10230;</span></a>'
-	    . '<a class="aah__btn2" href="#certifications">Browse certifications</a>'
-	    . '</div>';
-	/* Secondary, and honest about what is over there. */
-	$h .= '<p class="aah__eb"><a href="https://www.eventbrite.ca/o/agileagilist-56013628813"'
-	    . ' target="_blank" rel="noopener noreferrer">Selected dates are also on Eventbrite</a></p>';
-	$h .= '</div>';
-
-	if ( $soon ) {
-		$h .= '<aside class="aah__next"><header><span class="aah__kicker">Starting soonest</span></header>';
-		foreach ( $soon as $s ) {
-			$course = $s['course'];
-			$c      = $s['c'];
-			$code   = isset( $course['code'] ) ? $course['code'] : strtoupper( $s['slug'] );
-			$url    = isset( $course['url'] ) ? $course['url'] : '';
-			$link   = aa_reg_page_exists( $url );
-			$href   = $url . ( strpos( $url, '?' ) === false ? '?' : '&' )
-			        . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
-			$tag    = $link ? 'a' : 'div';
-
-			$h .= '<' . $tag . ' class="aah__row"' . ( $link ? ' href="' . esc_url( $href ) . '"' : '' ) . '>'
-			    . '<span class="aah__rowcode">' . esc_html( $code ) . '</span>'
-			    . '<span class="aah__rowname">' . esc_html( aa_salary_label( $code ) ) . '</span>'
-			    . '<span class="aah__rowdate">' . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
-			    . '</' . $tag . '>';
+	/* Every course that has a schedule, with its next few dates. The card sells
+	   any of them, so the picker needs all of them -- not a shortlist. */
+	$courses = array();
+	$ups     = array();
+	foreach ( $slugs as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! $course ) { continue; }
+		$next = array();
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			$next[] = $c;
+			if ( count( $next ) >= (int) $a['count'] ) { break; }
 		}
-		$h .= '<a class="aah__all" href="#cohorts">See the whole quarter <span aria-hidden="true">&#10230;</span></a>';
-		$h .= '</aside>';
+		if ( ! $next ) { continue; }
+		$courses[ $slug ] = $course;
+		$ups[ $slug ]     = $next;
 	}
 
-	$h .= '</div></section>';
+	/* Whichever course starts soonest opens the card. Not the first
+	   alphabetically, and not a hand-picked favourite -- the one a visitor can
+	   actually join next. */
+	$first_slug = '';
+	$firstdate  = '';
+	foreach ( $ups as $slug => $list ) {
+		if ( $firstdate === '' || $list[0]['start'] < $firstdate ) {
+			$firstdate  = $list[0]['start'];
+			$first_slug = $slug;
+		}
+	}
 
-	/* THE NAV IS PART OF THE HERO, not of each section.
-	   A section that renders its own nav entry cannot be reordered without
-	   editing it. This takes the running order as one attribute, so changing
-	   the page is a page edit. */
+	$h = '';
+
+	/* THE NAV GOES ABOVE THE HERO.
+	   Below it, it only appears after a full screen of hero has been scrolled
+	   past -- so on arrival the page has no visible table of contents at all,
+	   which is the one job it has. */
 	$items = array_filter( array_map( 'trim', explode( ',', (string) $a['nav'] ) ) );
 	if ( $items ) {
 		$h .= '<nav class="aahn" aria-label="On this page"><div class="aahn__in">';
@@ -5604,11 +5610,78 @@ function aa_reg_hub_hero( $atts ) {
 			    . esc_html( trim( $parts[1] ) ) . '</a>';
 		}
 		$h .= '</div>';
-		/* Outside the scroller, or it scrolls off on a narrow desktop window
-		   and the nav loses its only call to action. */
+		/* Outside the scroller, or it scrolls out of reach on a narrow desktop
+		   window and the nav loses its only call to action. */
 		$h .= '<a class="aahn__cta" href="#cohorts">See dates <span aria-hidden="true">&#10230;</span></a>';
 		$h .= '</div></nav>';
 	}
+
+	$h .= '<section class="aah">';
+	$h .= '<div class="aah__grid">';
+
+	$h .= '<div class="aah__copy">';
+	$h .= '<span class="aah__kicker">Training &amp; certification</span>';
+	$h .= '<h1 class="aah__h1">' . (int) $total . ' certifications, '
+	    . '<em>for the people who lead the change.</em></h1>';
+	$h .= '<p class="aah__sub">Live-virtual cohorts taught by a Gold SPCT. Every course includes the '
+	    . 'exam voucher and the courseware, most run two to four days, and rescheduling is free '
+	    . 'with no deadline and no fee.</p>';
+	$h .= '<div class="aah__btns">'
+	    . '<a class="aah__cta" href="#cohorts">See all dates <span aria-hidden="true">&#10230;</span></a>'
+	    . '<a class="aah__btn2" href="#certifications">Browse certifications</a>'
+	    . '</div>';
+	$h .= '<p class="aah__eb"><a href="https://www.eventbrite.ca/o/agileagilist-56013628813"'
+	    . ' target="_blank" rel="noopener noreferrer">Selected dates are also on Eventbrite</a></p>';
+	$h .= '</div>';
+
+	/* THE REGISTRATION CARD, IN THE SHAPE THE TRACK PAGES ALREADY USE.
+	   Choose the certification, choose from its next dates, pay where you
+	   stand. It reuses the .aat-reg markup and the data-aah- contract the
+	   landing pages emit, so it needs no CSS and no script of its own -- and
+	   the two cards cannot drift apart, because they are the same card.
+
+	   Every course's dates are in the page with all but one hidden, the same
+	   contract the calendar keeps: the schedule is what a crawler comes for,
+	   and it should not need a change event to exist. */
+	if ( $first_slug !== '' ) {
+		$fc = $courses[ $first_slug ];
+		$h .= '<div class="aat-reg aah__reg" data-aah>';
+		$h .= '<label class="aat-field"><span>' . esc_html( aa_reg_t( 'certification', 'Certification' ) ) . '</span>'
+		    . '<span class="aat-select"><select data-aah-course>';
+		foreach ( $courses as $slug => $course ) {
+			$code = isset( $course['code'] ) ? $course['code'] : strtoupper( $slug );
+			$h .= '<option value="' . esc_attr( $slug ) . '"' . ( $slug === $first_slug ? ' selected' : '' ) . '>'
+			    . esc_html( $code . ' — ' . aa_reg_short_name( $course, $code ) ) . '</option>';
+		}
+		$h .= '</select></span></label>';
+
+		foreach ( $courses as $slug => $course ) {
+			$h .= '<div class="aat-dates" data-aah-dates="' . esc_attr( $slug ) . '"'
+			    . ( $slug === $first_slug ? '' : ' hidden' ) . '>'
+			    . '<p class="aat-dates__label">' . esc_html( aa_reg_t( 'pick_dates', 'Pick your dates' ) ) . '</p>'
+			    . '<div class="aat-dates__list">';
+			$j = 0;
+			foreach ( $ups[ $slug ] as $n ) {
+				$h .= '<button type="button" class="aat-dateopt' . ( $j === 0 ? ' is-on' : '' ) . '"'
+				    . ' data-aah-pick="' . esc_attr( $n['id'] ) . '"'
+				    . ' data-price="' . (int) $course['price'] . '"'
+				    . ' aria-pressed="' . ( $j === 0 ? 'true' : 'false' ) . '">'
+				    . '<b>' . esc_html( aa_reg_range( $n['start'], $n['end'] ) ) . '</b>'
+				    . '<span>' . (int) $course['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
+				    . '</button>';
+				$j++;
+			}
+			$h .= '</div></div>';
+		}
+
+		$h .= aa_reg_config_script();
+		$h .= aa_reg_inline( $fc, $ups[ $first_slug ][0], $fc['currency'], 'aahreg', true );
+		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
+		    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
+		$h .= '</div>';
+	}
+
+	$h .= '</div></section>';
 
 	return $h;
 }
