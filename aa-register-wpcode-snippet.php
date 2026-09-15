@@ -4091,6 +4091,100 @@ function aa_reg_record_sale( $s, $eid ) {
 
 endif; // double-load guard
 
+/* ============================================================================
+   ONE-SHOT — Thomas J Green Jr, SPC 12–15 Oct 2026, bought on Coursion.
+   ----------------------------------------------------------------------------
+   He is not in this system. He enrolled through Coursion, so no Stripe webhook
+   ever fired, there is no aa_registration for him, and our seat count for that
+   cohort still reads eighteen. This records the sale, takes the seat, and sends
+   him the Agile Agilist confirmation and invoice.
+
+   IT IS NOT A STRIPE SALE AND MUST NEVER LOOK LIKE ONE. The stripe_event and
+   stripe_session keys are left unset -- aa_reg_record_sale() skips empty probes,
+   so nothing here can collide with a real session id, and the source is written
+   down explicitly instead.
+
+   IT ABORTS RATHER THAN SEND SOMETHING WRONG. If the cohort id does not resolve
+   to a real generated cohort, the invoice would name a raw slug instead of the
+   course and the dates, so it stops and records why. Nothing is created, nothing
+   is sent, and the reason is in the aa_reg_coursion_tjg option.
+
+   DELETE THIS BLOCK once the option reads "sent". It is one customer, not a
+   feature; the general answer is to stop selling the same room in three places.
+   ========================================================================== */
+add_action( 'init', function () {
+	$done = get_option( 'aa_reg_coursion_tjg' );
+	if ( $done ) { return; }
+
+	$cohort = 'spc-2026-10-12';
+	$email  = 'thomas.j.green@questdiagnostics.com';
+	$name   = 'Thomas J Green Jr';
+	$cents  = 289900;          /* $2,899.00 — the price he was charged */
+
+	/* The cohort has to resolve, or the invoice says "spc-2026-10-12" where the
+	   course name and the dates belong. */
+	if ( ! function_exists( 'aa_reg_find' ) || ! aa_reg_find( $cohort ) ) {
+		update_option( 'aa_reg_coursion_tjg', 'aborted: cohort ' . $cohort . ' did not resolve', false );
+		return;
+	}
+
+	/* Claim the run before doing any of it, so a fatal halfway through cannot
+	   send this twice on the next page load. */
+	update_option( 'aa_reg_coursion_tjg', 'running', false );
+
+	$post_id = wp_insert_post( array(
+		'post_type'   => 'aa_registration',
+		'post_status' => 'private',
+		'post_title'  => $name . ' — ' . $cohort,
+		'meta_input'  => array(
+			'external_source' => 'coursion',
+			'external_ref'    => '6aa86648a5b08419407b75f0',
+			'cohort'          => $cohort,
+			'course'          => 'spc',
+			'seats'           => 1,
+			'email'           => $email,
+			'amount_total'    => $cents,
+			'currency'        => 'usd',
+			'invoice_token'   => wp_generate_password( 32, false, false ),
+			'lang'            => 'en',
+		),
+	) );
+
+	if ( ! $post_id || is_wp_error( $post_id ) ) {
+		update_option( 'aa_reg_coursion_tjg', 'aborted: could not create the registration', false );
+		return;
+	}
+
+	/* His seat. The only way this system can learn about a Coursion sale. */
+	$sold = (array) get_option( 'aa_reg_sold', array() );
+	$sold[ $cohort ] = ( isset( $sold[ $cohort ] ) ? (int) $sold[ $cohort ] : 0 ) + 1;
+	update_option( 'aa_reg_sold', $sold, false );
+
+	$sent = aa_reg_send_confirmation( array(
+		'email'           => $email,
+		'name'            => $name,
+		'cohort'          => $cohort,
+		'course'          => 'spc',
+		'seats'           => 1,
+		'amount'          => $cents,
+		'amount_currency' => 'usd',
+		'lang'            => 'en',
+		'post_id'         => (int) $post_id,
+	) );
+	update_post_meta( $post_id, 'confirmation_sent', $sent ? 1 : 0 );
+
+	wp_mail(
+		get_option( 'admin_email' ),
+		( $sent ? 'Coursion registration recorded — ' : 'Coursion registration recorded (EMAIL FAILED) — ' ) . $cohort,
+		sprintf( "%s (%s)\nCohort: %s\nSeats: 1\nPaid: USD %s\nSource: Coursion %s\nRecord: #%d",
+			$name, $email, $cohort, number_format( $cents / 100, 2 ),
+			'6aa86648a5b08419407b75f0', (int) $post_id )
+	);
+
+	update_option( 'aa_reg_coursion_tjg', $sent ? 'sent #' . (int) $post_id : 'record #' . (int) $post_id . ' created, EMAIL FAILED', false );
+}, 99 );
+
+
 /**
  * AA – Training category pages: EDITORIAL COPY
  * -----------------------------------------------------------------------------
