@@ -5505,6 +5505,205 @@ function aa_reg_track_accordion( $atts ) {
 add_shortcode( 'aa_track_accordion', 'aa_reg_track_accordion' );
 
 /* ============================================================================
+   AA — COURSE ACCORDION                                 [aa_course_accordion]
+   ----------------------------------------------------------------------------
+   The track-page counterpart of [aa_track_accordion]: same spines, same open
+   panel, but one row per CERTIFICATION rather than one per track.
+
+   WHAT IT REPLACES. Every track page carried a hand-written grid of course
+   cards -- the course name, a blurb, a code and a price, all typed into the
+   page. Three things were wrong with that beyond the shape of it:
+
+     - The prices were typed. A track page could say $850 while the register
+       card twenty lines above it charged something else, and nothing would
+       catch it. Everything here is read from aa_reg_course(), which is the
+       same source the checkout uses, so the page cannot quote a price the
+       cart will not honour.
+     - The dates were absent. A card that links to a course page is a card
+       that makes you load another page to find out when it runs. The panel
+       lists the next few cohorts and each one links straight to that cohort
+       preselected.
+     - The list went stale. A course added under a track appeared in the
+       calendar and the hub but not in the page's own grid, because the grid
+       was a separate hand list.
+
+   The whole catalogue is in the HTML whether or not a panel is open -- closed
+   panels are hidden with CSS, not omitted -- so a crawler and an assistant
+   read every credential, price and date on the track. Opening a panel moves
+   space; it does not fetch anything.
+   ========================================================================== */
+
+/**
+ * [aa_course_accordion category="adv-safe" num="03"]
+ *
+ * category  which track. Defaults to the page's own slug, so a track page can
+ *           drop the shortcode in bare.
+ * id        the section's anchor. Defaults to "courses", which is what the
+ *           track pages' own nav and final CTA already point at.
+ * open      slug of the course whose panel opens. Defaults to the first.
+ * dates     how many cohorts to list per course.
+ */
+function aa_reg_course_accordion( $atts ) {
+	$a = shortcode_atts( array(
+		'category' => '',
+		'id'       => 'courses',
+		'open'     => '',
+		'heading'  => '',
+		'kicker'   => 'Certifications',
+		'num'      => '',
+		'dates'    => 4,
+	), $atts, 'aa_course_accordion' );
+
+	$cat = trim( $a['category'] );
+	if ( $cat === '' ) {
+		$obj = function_exists( 'get_queried_object' ) ? get_queried_object() : null;
+		$cat = ( $obj && isset( $obj->post_name ) ) ? $obj->post_name : '';
+	}
+	if ( $cat === '' ) { return ''; }
+
+	$slugs = aa_reg_track_course_slugs( $cat );
+	if ( ! $slugs ) { return ''; }
+
+	/* Same palette as the track accordion, so a spine on a track page and the
+	   spine for that track on the hub read as one family. */
+	$pal = array( '#0E8074', '#101C33', '#D34B2A', '#B3702A', '#3E6B5C', '#2F5D8C', '#7A4E8C' );
+
+	$built = array();
+	foreach ( $slugs as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! $course ) { continue; }
+		$code = isset( $course['code'] ) ? $course['code'] : strtoupper( $slug );
+		$url  = isset( $course['url'] ) ? $course['url'] : '';
+
+		$dates = array();
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			$dates[] = $c;
+			if ( count( $dates ) >= max( 1, (int) $a['dates'] ) ) { break; }
+		}
+
+		$built[] = array(
+			'slug'   => $slug,
+			'course' => $course,
+			'code'   => $code,
+			'name'   => aa_reg_short_name( $course, $code ),
+			'url'    => $url,
+			'page'   => aa_reg_page_exists( $url ),
+			'dates'  => $dates,
+			'color'  => $pal[ count( $built ) % count( $pal ) ],
+		);
+	}
+	if ( ! $built ) { return ''; }
+
+	/* WHICHEVER STARTS SOONEST OPENS, not whichever is first in the list. The
+	   panel a visitor most likely wants open is the one they can actually join
+	   next; a track whose lead credential runs in March should not open on it
+	   in September. A hand-set open= still wins. */
+	$open = trim( $a['open'] );
+	if ( $open === '' ) {
+		$soonest = '';
+		foreach ( $built as $b ) {
+			if ( ! $b['dates'] ) { continue; }
+			if ( $soonest === '' || $b['dates'][0]['start'] < $soonest ) {
+				$soonest = $b['dates'][0]['start'];
+				$open    = $b['slug'];
+			}
+		}
+		if ( $open === '' ) { $open = $built[0]['slug']; }
+	}
+
+	$copy  = function_exists( 'aa_training_copy' ) ? aa_training_copy() : array();
+	$label = isset( $copy[ $cat ]['label'] ) ? $copy[ $cat ]['label'] : '';
+
+	$h  = '<section class="aaa aaa--courses" id="' . esc_attr( $a['id'] ) . '" data-aaa>';
+	$h .= '<div class="aaa__head">';
+	$h .= '<span class="aaa__kicker">'
+	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' )
+	    . esc_html( $a['kicker'] ) . '</span>';
+	$h .= '<h2 class="aaa__h2">' . ( $a['heading'] !== ''
+		? esc_html( $a['heading'] )
+		: count( $built ) . ' certifications, <em>one at a time.</em>' ) . '</h2>';
+	$h .= '<p class="aaa__lede">Open a credential for what it covers, what it costs and when it '
+	    . 'next runs. Every course is live-virtual with the exam voucher and the courseware '
+	    . 'included, and rescheduling is free &mdash; no deadline, no fee.</p>';
+	$h .= '</div>';
+
+	$h .= '<div class="aaa__row">';
+	foreach ( $built as $n => $b ) {
+		$is = ( $b['slug'] === $open );
+		$h .= '<div class="aaa__track' . ( $is ? ' is-open' : '' ) . '"'
+		    . ' data-aaa-track="' . esc_attr( $b['slug'] ) . '"'
+		    . ' style="--aaa-c:' . esc_attr( $b['color'] ) . '">';
+
+		$h .= '<button type="button" class="aaa__spine" data-aaa-open="' . esc_attr( $b['slug'] ) . '"'
+		    . ' aria-expanded="' . ( $is ? 'true' : 'false' ) . '">'
+		    . '<span class="aaa__num">' . sprintf( '%02d', $n + 1 ) . '</span>'
+		    . '<span class="aaa__name">' . esc_html( $b['code'] ) . '</span>'
+		    /* The code alone is all a 64px vertical spine can carry. Below
+		       900px the spines turn horizontal and there is room for the name,
+		       so it is in the markup and hidden by CSS until then. */
+		    . '<span class="aax__sname">' . esc_html( $b['name'] ) . '</span>'
+		    . '<span class="aaa__count">'
+		    . esc_html( aa_reg_money( $b['course']['price'], $b['course']['currency'] ) )
+		    . '</span>'
+		    . '</button>';
+
+		$h .= '<div class="aaa__body">';
+
+		$h .= '<div class="aaa__bar">'
+		    . '<h3 class="aaa__h3">' . esc_html( $b['name'] ) . '</h3>'
+		    . '<span class="aax__code">' . esc_html( $b['code'] ) . '</span>';
+		if ( $b['page'] ) {
+			$h .= '<a class="aaa__more" href="' . esc_url( $b['url'] ) . '">Course page &#10230;</a>';
+		}
+		$h .= '</div>';
+
+		$blurb = function_exists( 'aa_reg_blurb' ) ? aa_reg_blurb( $b['course'], 220 ) : '';
+		if ( $blurb !== '' ) {
+			$h .= '<p class="aax__p">' . esc_html( $blurb ) . '</p>';
+		}
+
+		$days = max( 1, (int) $b['course']['days'] );
+		$h .= '<div class="aax__facts">'
+		    . '<span><b>' . esc_html( aa_reg_money( $b['course']['price'], $b['course']['currency'] ) )
+		    . '</b><i>' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . '</i></span>'
+		    . '<span><b>' . (int) $days . ' ' . esc_html( $days === 1 ? 'day' : 'days' ) . '</b>'
+		    . '<i>live-virtual</i></span>'
+		    . '<span><b>' . count( $b['dates'] ) . '</b><i>'
+		    . esc_html( count( $b['dates'] ) === 1 ? 'published date' : 'published dates' ) . '</i></span>'
+		    . '</div>';
+
+		/* EACH DATE IS A LINK THAT ARRIVES WITH THAT COHORT CHOSEN. The old
+		   grid sent you to the course page to pick a date you had already
+		   picked; ?cohort=… #enroll lands on the form with it selected. */
+		if ( $b['dates'] ) {
+			$h .= '<p class="aax__dlabel">' . esc_html( aa_reg_t( 'pick_dates', 'Pick your dates' ) ) . '</p>';
+			$h .= '<div class="aax__dates">';
+			foreach ( $b['dates'] as $c ) {
+				$href = $b['url'] . ( strpos( $b['url'], '?' ) === false ? '?' : '&' )
+				      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+				$h .= '<a class="aax__date" href="' . esc_url( $href ) . '">'
+				    . '<b>' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</b>'
+				    . '<span>' . (int) $days . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
+				    . '</a>';
+			}
+			$h .= '</div>';
+			$h .= '<p class="aax__note"><a href="#cohorts">Every published date for'
+			    . ( $label !== '' ? ' ' . esc_html( $label ) : ' this track' ) . ' &#10230;</a></p>';
+		} else {
+			$h .= '<p class="aax__note">No published dates for this credential yet. '
+			    . '<a href="/about/contact/">Ask us about the next cohort</a> &mdash; it runs as a '
+			    . 'private class for six or more.</p>';
+		}
+
+		$h .= '</div></div>';
+	}
+	$h .= '</div>';
+	$h .= '</section>';
+	return $h;
+}
+add_shortcode( 'aa_course_accordion', 'aa_reg_course_accordion' );
+
+/* ============================================================================
    AA — HUB HERO AND PAGE NAV                                    [aa_hub_hero]
    ----------------------------------------------------------------------------
    The top of /training/: what this page is, the next few starts, and a sticky
@@ -5552,6 +5751,64 @@ function aa_reg_soonest( $limit = 3 ) {
 	return array_slice( $out, 0, max( 1, (int) $limit ) );
 }
 
+/**
+ * THE STICKY NUMBERED PAGE NAV.
+ *
+ * Pulled out of aa_reg_hub_hero() so the track pages can have the same one.
+ * They had no internal nav at all: six sections, no table of contents, and the
+ * only way to reach the coaching block at the bottom was to scroll past four
+ * screens of salary bars and role cards. The hub got a nav and they did not,
+ * purely because the nav happened to be written inside the hub's hero.
+ *
+ * $spec is a comma-separated list of "number:label:anchor" -- the same format
+ * the hub already uses, so the two cannot drift apart. An item whose anchor is
+ * not on the page is the page's problem, not this function's; it renders the
+ * link either way rather than silently dropping it, because a missing nav entry
+ * is much harder to notice than a link that does nothing.
+ */
+function aa_reg_nav_html( $spec, $cta_href = '#cohorts', $cta_label = 'See dates' ) {
+	$items = array_filter( array_map( 'trim', explode( ',', (string) $spec ) ) );
+	if ( ! $items ) { return ''; }
+
+	$h  = '<nav class="aahn" aria-label="On this page"><div class="aahn__in">';
+	$h .= '<div class="aahn__scroll">';
+	$h .= '<span class="aahn__label">On this page</span>';
+	foreach ( $items as $it ) {
+		$parts = explode( ':', $it );
+		if ( count( $parts ) < 3 ) { continue; }
+		$h .= '<a class="aahn__link" href="#' . esc_attr( trim( $parts[2] ) ) . '">'
+		    . '<span>' . esc_html( trim( $parts[0] ) ) . '</span>'
+		    . esc_html( trim( $parts[1] ) ) . '</a>';
+	}
+	$h .= '</div>';
+	/* Outside the scroller, or it scrolls out of reach on a narrow desktop
+	   window and the nav loses its only call to action. */
+	if ( $cta_href !== '' ) {
+		$h .= '<a class="aahn__cta" href="' . esc_url( $cta_href ) . '">'
+		    . esc_html( $cta_label ) . ' <span aria-hidden="true">&#10230;</span></a>';
+	}
+	$h .= '</div></nav>';
+	return $h;
+}
+
+/**
+ * [aa_page_nav items="01:Certifications:certifications,…" cta="#cohorts" cta_label="See dates"]
+ *
+ * Drop it at the top of any page that has numbered sections. The track pages
+ * use it; the hub renders the same markup from inside its hero.
+ */
+function aa_reg_page_nav_shortcode( $atts ) {
+	$a = shortcode_atts( array(
+		'items'     => '',
+		'cta'       => '#cohorts',
+		'cta_label' => 'See dates',
+	), $atts, 'aa_page_nav' );
+
+	if ( trim( $a['items'] ) === '' ) { return ''; }
+	return aa_reg_nav_html( $a['items'], $a['cta'], $a['cta_label'] );
+}
+add_shortcode( 'aa_page_nav', 'aa_reg_page_nav_shortcode' );
+
 function aa_reg_hub_hero( $atts ) {
 	$a = shortcode_atts( array(
 		'nav'   => '01:Certifications:certifications,02:Career and pay:career,'
@@ -5597,24 +5854,7 @@ function aa_reg_hub_hero( $atts ) {
 	   Below it, it only appears after a full screen of hero has been scrolled
 	   past -- so on arrival the page has no visible table of contents at all,
 	   which is the one job it has. */
-	$items = array_filter( array_map( 'trim', explode( ',', (string) $a['nav'] ) ) );
-	if ( $items ) {
-		$h .= '<nav class="aahn" aria-label="On this page"><div class="aahn__in">';
-		$h .= '<div class="aahn__scroll">';
-		$h .= '<span class="aahn__label">On this page</span>';
-		foreach ( $items as $it ) {
-			$parts = explode( ':', $it );
-			if ( count( $parts ) < 3 ) { continue; }
-			$h .= '<a class="aahn__link" href="#' . esc_attr( trim( $parts[2] ) ) . '">'
-			    . '<span>' . esc_html( trim( $parts[0] ) ) . '</span>'
-			    . esc_html( trim( $parts[1] ) ) . '</a>';
-		}
-		$h .= '</div>';
-		/* Outside the scroller, or it scrolls out of reach on a narrow desktop
-		   window and the nav loses its only call to action. */
-		$h .= '<a class="aahn__cta" href="#cohorts">See dates <span aria-hidden="true">&#10230;</span></a>';
-		$h .= '</div></nav>';
-	}
+	$h .= aa_reg_nav_html( $a['nav'] );
 
 	$h .= '<section class="aah">';
 	$h .= '<div class="aah__grid">';

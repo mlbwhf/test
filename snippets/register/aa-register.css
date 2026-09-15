@@ -1201,6 +1201,93 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 }
 
 /* ============================================================================
+   AA — COURSE ACCORDION                                 [aa_course_accordion]
+   ----------------------------------------------------------------------------
+   The same component as the track accordion -- it reuses .aaa wholesale -- with
+   one row per certification instead of one per track, and a panel that carries
+   the course rather than a grid of cards.
+
+   A TRACK CAN HOLD NINE CREDENTIALS, not five. Nine 64px spines eat 600px of a
+   1240px row, so the spines narrow and the panel keeps enough width to lay the
+   dates out two or three across. Below 900px the inherited rules take over and
+   the whole thing stacks, exactly as the track accordion does.
+   ========================================================================== */
+
+.aaa--courses .aaa__track { flex: 0 0 56px; }
+.aaa--courses .aaa__spine { flex: 0 0 54px; gap: 12px; }
+.aaa--courses .aaa__name { font-size: 12px; letter-spacing: .04em; font-weight: 700; }
+.aaa--courses .aaa__count { font-size: 11px; font-variant-numeric: tabular-nums; }
+
+/* The short name rides along in the spine for the stacked layout below 900px,
+   where there is room for it. A vertical spine has room for the code only. */
+.aax__sname { display: none; }
+
+.aax__code {
+	font-size: 11px; font-weight: 700; letter-spacing: .08em;
+	padding: 4px 9px; border-radius: 6px;
+	background: #F4FAF9; color: var(--aaa-teal); border: 1px solid #D6EBE8;
+}
+.aax__p {
+	margin: 0 0 16px; font-size: 14.5px; line-height: 1.6;
+	color: var(--aaa-body); max-width: 62ch; text-wrap: pretty;
+}
+
+.aax__facts {
+	display: flex; flex-wrap: wrap; gap: 10px;
+	padding: 14px 0; margin-bottom: 16px;
+	border-top: 1px solid var(--aaa-line); border-bottom: 1px solid var(--aaa-line);
+}
+.aax__facts span { display: flex; flex-direction: column; gap: 2px; min-width: 96px; }
+.aax__facts b {
+	font-size: 18px; font-weight: 600; letter-spacing: -.024em;
+	font-variant-numeric: tabular-nums; color: var(--aaa-ink);
+}
+.aax__facts i {
+	font-style: normal; font-size: 11px; letter-spacing: .1em;
+	text-transform: uppercase; font-weight: 600; color: var(--aaa-muted);
+}
+
+.aax__dlabel {
+	margin: 0 0 9px; font-size: 11px; letter-spacing: .14em;
+	text-transform: uppercase; font-weight: 700; color: var(--aaa-muted);
+}
+.aax__dates {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+	gap: 8px;
+}
+.aax__date {
+	display: flex; flex-direction: column; gap: 2px;
+	padding: 11px 13px; border-radius: 12px; text-decoration: none; color: inherit;
+	border: 1px solid var(--aaa-line2); background: var(--aaa-warm);
+	transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.aax__date:hover {
+	border-color: var(--aaa-teal); background: #FFFFFF; transform: translateY(-1px);
+}
+.aax__date:focus-visible { outline: 2px solid var(--aaa-teal); outline-offset: 2px; }
+.aax__date b { font-size: 14px; font-weight: 600; letter-spacing: -.016em; }
+.aax__date span { font-size: 11.5px; color: var(--aaa-muted); font-variant-numeric: tabular-nums; }
+
+.aax__note { margin: 14px 0 0; font-size: 13px; line-height: 1.55; color: var(--aaa-muted); }
+.aax__note a { color: var(--aaa-teal); font-weight: 600; }
+
+@media (max-width: 900px) {
+	.aaa--courses .aaa__track { flex: 0 0 auto; }
+	.aaa--courses .aaa__spine { flex: 0 0 auto; }
+	.aaa--courses .aaa__name { font-size: 13px; }
+	/* The spine is a full-width row now, so the name fits beside the code. */
+	.aax__sname {
+		display: block; font-size: 14px; font-weight: 600;
+		letter-spacing: -.016em; color: var(--aaa-ink);
+	}
+	.aax__facts span { min-width: 0; flex: 1 1 88px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.aax__date { transition: none; }
+}
+
+/* ============================================================================
    AA — COHORT TIMELINE BOARD                                [aa_track_board]
    ----------------------------------------------------------------------------
    Geometry is set in PHP -- 27px per day, 34px per sub-lane, a 186px label
@@ -1410,6 +1497,10 @@ a.aah__row:hover { background: var(--aah-warm); }
 
 /* The theme header is sticky too, so an anchor has to clear both. */
 .aaa, .aaq, .aas, .aac { scroll-margin-top: 120px; }
+/* The track pages' own section anchors, so the sticky nav does not land them
+   under itself. The sections are the page's, not this stylesheet's, so they
+   are named rather than reached through a shared class. */
+#salary, #path, #courses, #roles, #jobs, #coaching, #cohorts { scroll-margin-top: 120px; }
 
 /* ---------- cohorts section ---------------------------------------------- */
 .aaq {

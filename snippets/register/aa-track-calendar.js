@@ -458,20 +458,25 @@
    five panels are already in the page, which is why the catalogue is readable
    with scripts off and why a crawler sees all twenty-five credentials.
    ========================================================================== */
+/* EVERY ACCORDION ON THE PAGE, NOT THE FIRST ONE.
+   querySelector bound a single root, which was fine while the only accordion
+   was the hub's. The track pages now carry a course accordion of their own, and
+   a page could reasonably hold both -- with one root bound, the second one's
+   spines would be dead. Each root is scoped separately so opening a course does
+   not close a track. */
 (function () {
-  var root = document.querySelector('[data-aaa]');
-  if (!root) { return; }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-aaa]'), function (root) {
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-aaa-open]');
+      if (!btn || !root.contains(btn)) { return; }
+      var want = btn.getAttribute('data-aaa-open');
 
-  root.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-aaa-open]');
-    if (!btn) { return; }
-    var want = btn.getAttribute('data-aaa-open');
-
-    Array.prototype.forEach.call(root.querySelectorAll('[data-aaa-track]'), function (t) {
-      var on = (t.getAttribute('data-aaa-track') === want);
-      t.classList.toggle('is-open', on);
-      var s = t.querySelector('[data-aaa-open]');
-      if (s) { s.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      Array.prototype.forEach.call(root.querySelectorAll('[data-aaa-track]'), function (t) {
+        var on = (t.getAttribute('data-aaa-track') === want);
+        t.classList.toggle('is-open', on);
+        var s = t.querySelector('[data-aaa-open]');
+        if (s) { s.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      });
     });
   });
 })();
