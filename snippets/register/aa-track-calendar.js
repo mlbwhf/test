@@ -140,7 +140,9 @@
          the fold -- so the panel said when and how long, and made you scroll
          past alternative dates to find what it costs. */
       + '<div class="aat-co__pay"><div class="aat-co__price">' + esc(c.price) + '</div>'
-      + '<div class="aat-co__incl">' + esc(D.labels.incl) + seats + '</div></div>'
+      /* The course's own wording when it has one -- not every course's fee
+         carries an exam voucher, and the boilerplate must not assert one. */
+      + '<div class="aat-co__incl">' + esc(c.incl || D.labels.incl) + seats + '</div></div>'
       + ((c.proof && c.proof.length)
           ? '<ul class="aat-co__proof">' + c.proof.map(function (p) {
               return '<li>' + esc(p) + '</li>';

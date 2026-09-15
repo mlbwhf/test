@@ -202,40 +202,57 @@ function aa_reg_courses() {
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
 
-		/* IMPLEMENTING LARGE SOLUTION SAFe -- NEW COURSE, NUMBERS UNVERIFIED.
-		   On RTE's cadence as asked: Mon and Wed morning, Fri afternoon. Copy is
-		   from the supplied outline; the objectives belong on the course page,
-		   not here.
+		/* LARGE SOLUTION SAFe -- CORRECTED AGAINST SCALED AGILE'S OWN 26.9
+		   SESSION MATERIAL (the SPCT masterclass handout, Sep 2026).
 
-		   Confirmed: 2 days, RTE's price, RTE's cadence, first date 21 Sep 2026.
-		   'from' is what holds the launch date -- without it the cadence would
-		   offer a start next week, because the rule says Monday and Monday is
-		   next week.
+		   THREE THINGS IN THIS ROW WERE WRONG AND ARE NOW FIXED.
 
-		   The cadence runs Mon/Wed/Fri as RTE does, which for a 2-day class means
-		   starts every other day. The blackout rule keeps them from colliding,
-		   but the frequency is a business choice rather than a technical one and
-		   is worth a look once the page is live.
+		   1. THE EXAM. Every other row here says "Exam fee included", and it was
+		      copied onto this one. Scaled Agile's own material for this course
+		      describes it as giving attendees access to the course materials and
+		      says nothing whatsoever about an exam or a certification. We do not
+		      assert a credential we cannot verify, so 'incl' opts this row out
+		      of the site-wide "exam included" wording -- see aa_reg_incl() --
+		      and the proof list says what we can actually stand behind. If an
+		      exam does exist, put it back; do not put it back on an assumption.
+
+		   2. THE FIRST DATE was 21 Sep 2026. Scaled Agile's launch plan sets
+		      general availability at 22 Sep 2026 and says delivery begins then.
+		      A 21 Sep start would have run the class the day before we are
+		      permitted to. Moved to the first cadence day on the far side of
+		      that date.
+
+		   3. THE COURSE IS NOT WHAT THE ROW DESCRIBED. The lede was written for
+		      the older Large Solution configuration -- Solution Trains, solution
+		      intent, suppliers. The 26.9 course is built around seven
+		      competencies and introduces the value stream network as a loosely
+		      coupled alternative to the Solution Train, which is the substantive
+		      change and was missing entirely.
+
+		   Still from the supplied outline and unverified: the price and the
+		   cadence. Scaled Agile expects this class to run mostly as a private
+		   audience, so the public cadence below is worth a decision rather than
+		   an inheritance from RTE.
 
 		   The page at 'url' is published (33677, child of Advanced SAFe) and
 		   built from this row: [aa_course_hero] and [aa_course_register] both
 		   read it, so the price, the length and the first date on the page are
-		   these values and cannot drift from them. Before it existed the bars
-		   pointing here were dead links, which is what aa_reg_page_exists() was
-		   written for -- it stays, because it is the general answer for any
-		   course sold from the schedule ahead of its page. */
+		   these values and cannot drift from them. */
 		'large-solution' => array(
 			'code'     => 'LSS',
-			'name'     => 'Implementing Large Solution SAFe®',
-			'eyebrow'  => 'Live online · Large Solution certification',
-			'h1'       => 'Implementing Large Solution SAFe®.',
-			'lede'     => 'For those building complex, large-scale systems. Scale Lean-Agile practice through the Large Solution Delivery discipline — coordinating multiple ARTs, Solution Trains and strategic suppliers across the wider solution ecosystem.',
+			'name'     => 'Large Solution SAFe®',
+			'eyebrow'  => 'Live online · Large Solution SAFe® 26.9',
+			'h1'       => 'Large Solution SAFe®.',
+			'lede'     => 'For solutions that no single Agile Release Train can build. Structure and coordinate delivery across multiple ARTs, Solution Trains and value stream networks — with the roadmapping, architecture, compliance and supplier practices that only become necessary at that scale.',
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,   // confirmed: same as RTE
+			'price'    => 2150,   // from the supplied outline; same as RTE
 			'days'     => 2,      // confirmed 2 days
-			'from'     => '2026-09-21',   // first date offered
+			/* 22 Sep 2026 is Scaled Agile's GA date -- the first day the course
+			   may be delivered. Wednesday the 23rd is the first cadence day on
+			   or after it. */
+			'from'     => '2026-09-23',
 			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
@@ -243,7 +260,9 @@ function aa_reg_courses() {
 				array( 'dow' => 'Wed', 'slot' => 'morning' ),
 				array( 'dow' => 'Fri', 'slot' => 'afternoon' ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			/* NOT "exam fee included" -- see the note above this row. */
+			'incl'     => 'course materials included',
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Course materials included' ),
 		),
 
 		/* ------------------------------------------------------------------
@@ -1614,7 +1633,7 @@ function aa_reg_hero( $atts ) {
 	    . '<span class="aahero-rule" aria-hidden="true"></span>'
 	    . '<div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</p><p class="aahero-fact">'
 	    . esc_html( aa_reg_money( $course['price'], $course['currency'] ) )
-	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . '</span></p></div></div>';
+	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_incl( $course ) ) . '</span></p></div></div>';
 	$h .= aa_reg_hero_more( $a['course'], aa_reg_hero_room( $months ) );
 	$h .= '</div>';
 
@@ -1699,6 +1718,26 @@ add_shortcode( 'aa_course_hero', 'aa_reg_hero' );
          [aa_track_calendar courses="..." months="3" limit="24"]
    ========================================================================== */
 /** One sentence of course copy, short enough to sit in a panel. */
+/**
+ * WHAT THE PRICE INCLUDES, PER COURSE.
+ *
+ * "exam included" was hardcoded at six render sites and printed under every
+ * price on the site. That is true of the SAFe role and advanced courses, whose
+ * fee carries a Scaled Agile exam voucher. It is NOT true of everything we
+ * sell, and a course whose certification we cannot verify must not have one
+ * asserted for it by boilerplate.
+ *
+ * A course row can now set 'incl' to say what its own fee covers. Everything
+ * that does not set it keeps the old wording, so this changes nothing anywhere
+ * except where a row opts out on purpose.
+ */
+function aa_reg_incl( $course ) {
+	if ( is_array( $course ) && ! empty( $course['incl'] ) ) {
+		return (string) $course['incl'];
+	}
+	return aa_reg_t( 'exam_included', 'exam included' );
+}
+
 function aa_reg_blurb( $course, $max = 165 ) {
 	$s = trim( wp_strip_all_tags( isset( $course['lede'] ) ? $course['lede'] : '' ) );
 	if ( $s === '' ) { return ''; }
@@ -1794,6 +1833,7 @@ function aa_reg_track_calendar( $atts ) {
 			'page'  => aa_reg_page_exists( $course['url'] ),
 			'blurb' => aa_reg_blurb( $course ),
 			'proof' => isset( $course['proof'] ) && is_array( $course['proof'] ) ? $course['proof'] : array(),
+			'incl'  => aa_reg_incl( $course ),
 			'price' => $course['price'],
 			'cur'   => $course['currency'],
 			'days'  => $days,
@@ -2084,6 +2124,7 @@ function aa_reg_track_calendar( $atts ) {
 			'name'  => $mm['name'],
 			'blurb' => $mm['blurb'],
 			'proof' => array_values( $mm['proof'] ),
+			'incl'  => isset( $mm['incl'] ) ? $mm['incl'] : '',
 			'days'  => $mm['days'],
 			'price' => aa_reg_money( $mm['price'], $mm['cur'] ),
 			'raw'   => (int) $mm['price'],
@@ -2113,6 +2154,8 @@ function aa_reg_track_calendar( $atts ) {
 		'live'    => aa_reg_is_live(),
 		'labels'  => array(
 			'seatsLeft' => aa_reg_t( 'seats_left_n', '%d seats left' ),
+			/* Per-course now -- see aa_reg_incl(). This one is the fallback the
+			   script uses for a course whose row says nothing. */
 			'incl'      => aa_reg_t( 'exam_included', 'exam included' ),
 			'dates'     => aa_reg_t( 'dates', 'Dates' ),
 			'schedule'  => aa_reg_t( 'duration', 'Duration' ),
@@ -2175,7 +2218,7 @@ function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 	   out what it costs. Dates, duration, format, price: that is the set
 	   somebody is deciding on, and it belongs together. */
 	$out .= '<div class="aat-co__pay"><div class="aat-co__price">' . esc_html( aa_reg_money( $mm['price'], $mm['cur'] ) ) . '</div>'
-	     . '<div class="aat-co__incl">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) )
+	     . '<div class="aat-co__incl">' . esc_html( isset( $mm['incl'] ) ? $mm['incl'] : aa_reg_t( 'exam_included', 'exam included' ) )
 	     . ( $left <= 6 ? ' · ' . esc_html( sprintf( aa_reg_t( 'seats_left_n', '%d seats left' ), $left ) ) : '' ) . '</div></div>';
 
 	/* The rest of this course's schedule, right where the decision is made. */
@@ -4538,7 +4581,7 @@ function aa_training_category_shortcode( $atts ) {
 		   wired to nothing. */
 		$h .= aa_reg_config_script();
 		$h .= aa_reg_inline( $fc, $first, $fc['currency'], 'aahreg', true );
-		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
+		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_incl( $fc ) ) . ' &middot; '
 		    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
 		$h .= '</div>';
 	}
@@ -5665,7 +5708,7 @@ function aa_reg_course_accordion( $atts ) {
 		$days = max( 1, (int) $b['course']['days'] );
 		$h .= '<div class="aax__facts">'
 		    . '<span><b>' . esc_html( aa_reg_money( $b['course']['price'], $b['course']['currency'] ) )
-		    . '</b><i>' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . '</i></span>'
+		    . '</b><i>' . esc_html( aa_reg_incl( $b['course'] ) ) . '</i></span>'
 		    . '<span><b>' . (int) $days . ' ' . esc_html( $days === 1 ? 'day' : 'days' ) . '</b>'
 		    . '<i>live-virtual</i></span>'
 		    . '<span><b>' . count( $b['dates'] ) . '</b><i>'
@@ -5916,7 +5959,7 @@ function aa_reg_hub_hero( $atts ) {
 
 		$h .= aa_reg_config_script();
 		$h .= aa_reg_inline( $fc, $ups[ $first_slug ][0], $fc['currency'], 'aahreg', true );
-		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_t( 'exam_included', 'exam included' ) ) . ' &middot; '
+		$h .= '<p class="aat-reg__note">' . esc_html( aa_reg_incl( $fc ) ) . ' &middot; '
 		    . esc_html( aa_reg_t( 'resched', 'reschedule at no fee' ) ) . '</p>';
 		$h .= '</div>';
 	}
