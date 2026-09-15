@@ -151,7 +151,9 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/spc/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2875,
+			/* $2,899 -- matched to Coursion, which is the other place this same
+			   cohort is sold. The two were $24 apart and a buyer could see both. */
+			'price'    => 2899,
 			'days'     => 4,
 			'seats'    => 18,
 			'weeks'    => 26,
@@ -4101,7 +4103,7 @@ endif; // double-load guard
  *
  * The hero sits directly beside the registration card, which makes it the most
  * expensive text on the site: it is read by a person deciding whether to spend
- * $2,875, by a search engine deciding what the page is about, and by an
+ * $2,899, by a search engine deciding what the page is about, and by an
  * assistant deciding what to quote. Those three want different things, and the
  * first draft of this file served only the first.
  *
