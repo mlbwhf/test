@@ -4576,6 +4576,93 @@ add_shortcode( 'aa_lang_report', 'aa_reg_lang_report' );
 
 
 
+/**
+ * TRACK COPY IN THE READER'S LANGUAGE.
+ *
+ * aa_training_copy() is the English original and stays the source of truth for
+ * structure: every key a track has in English it has everywhere. This is the
+ * override layer -- a language supplies only the fields it has translated, and
+ * anything it omits falls through to English, exactly the way aa_reg_t() works.
+ *
+ * That is what makes a French track page cost a page with one shortcode on it
+ * rather than a rebuilt template: the design is in the snippet, the schedule
+ * and the prices are read live, and only the words live here.
+ *
+ * FRENCH IS COMPLETE. Spanish and Arabic are deliberately absent for now and
+ * fall through to English, which is what those pages already show -- so adding
+ * this changes nothing for them until their copy is written.
+ */
+function aa_training_copy_i18n() {
+	return array(
+		'fr' => array(
+			'adv-safe' => array(
+				'label'  => 'SAFe Avancé',
+				'kicker' => 'Postes seniors',
+				'title'  => 'Certification SAFe Avancé',
+				'accent' => 'pour le poste senior.',
+				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect et Large Solution SAFe, '
+				          . 'en direct virtuel avec un SPCT Gold, examen inclus. Ce sont les '
+				          . 'certifications que les grandes entreprises recherchent quand elles '
+				          . 'recrutent quelqu’un pour diriger une transformation, et non pour y '
+				          . 'participer.',
+				'comp'   => 'En direct virtuel · examen inclus · report sans frais.',
+				'points' => array( '2 à 4 jours', 'Examen inclus', 'Report sans frais' ),
+			),
+			'safe-roles' => array(
+				'label'  => 'Rôles SAFe essentiels',
+				'kicker' => 'Commencez ici',
+				'title'  => 'Certification SAFe',
+				'accent' => 'par rôle.',
+				'sub'    => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, '
+				          . 'Advanced Scrum Master, DevOps, SAFe for Teams et Business Owner. La '
+				          . 'plupart durent deux jours en direct virtuel, examen inclus : vous '
+				          . 'passez l’examen et repartez certifié dans la même semaine.',
+				'comp'   => 'Deux jours · examen inclus · report sans frais.',
+				'points' => array( 'Deux jours', 'Examen inclus', 'Certifié cette semaine' ),
+			),
+			'ai-native' => array(
+				'label'  => 'AI-Native',
+				'kicker' => 'Nouveau en 2026',
+				'title'  => 'Certification AI-Native',
+				'accent' => 'pour les rôles recrutés aujourd’hui.',
+				'sub'    => 'AI-Native Foundations, AI-Native Value Architect et Leading the '
+				          . 'AI-Native Organization — trois certifications pour des rôles qui '
+				          . 'n’existaient pas il y a deux ans et que l’on trouve aujourd’hui dans '
+				          . 'les offres d’emploi. Conçues pour celles et ceux qui dirigent le '
+				          . 'travail : aucune programmation requise.',
+				'comp'   => 'En présentiel et en direct virtuel · examen inclus.',
+				'points' => array( '1 à 2 jours', 'Aucune programmation requise', 'Présentiel ou virtuel' ),
+			),
+			'safe-found' => array(
+				'label'  => 'Micro-certifications',
+				'kicker' => 'Un jour, une compétence',
+				'title'  => 'Micro-certifications SAFe',
+				'accent' => 'en une seule journée.',
+				'sub'    => 'Des certifications d’une journée qui viennent compléter les '
+				          . 'certifications complètes : chacune approfondit une seule compétence '
+				          . 'et donne droit à un badge numérique émis par Scaled Agile. '
+				          . 'Réservez-en une, ajoutez la spécialisation, et vous êtes de retour à '
+				          . 'votre bureau dès le lendemain.',
+				'comp'   => 'Une journée · badge numérique émis par Scaled Agile.',
+				'points' => array( 'Une journée', 'Badge numérique', 'Aucun examen à réviser' ),
+			),
+			'safe-industry' => array(
+				'label'  => 'SAFe par secteur',
+				'kicker' => 'Votre secteur',
+				'title'  => 'Formation SAFe',
+				'accent' => 'pour votre secteur.',
+				'sub'    => 'Secteur public, défense, matériel et livraison réglementée — les '
+				          . 'mêmes certifications SAFe, enseignées au regard des contrats, de la '
+				          . 'conformité et des jalons d’approbation propres à votre secteur. '
+				          . 'Animées par des formateurs qui ont piloté ces programmes de '
+				          . 'l’intérieur.',
+				'comp'   => 'En direct virtuel et en présentiel · examen inclus.',
+				'points' => array( 'Spécifique au secteur', 'Examen inclus', 'Présentiel possible' ),
+			),
+		),
+	);
+}
+
 function aa_training_copy() {
 	return array(
 
@@ -4669,6 +4756,19 @@ function aa_training_copy() {
 			'points'  => array( 'Sector-specific', 'Exam fee included', 'In person available' ),
 		),
 	);
+}
+
+/** English base, with the reader's language laid over it where it exists. */
+function aa_training_copy_l10n() {
+	$base = aa_training_copy();
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	$over = aa_training_copy_i18n();
+	if ( $lang === 'en' || empty( $over[ $lang ] ) ) { return $base; }
+	foreach ( $over[ $lang ] as $slug => $fields ) {
+		if ( ! isset( $base[ $slug ] ) ) { continue; }
+		$base[ $slug ] = array_merge( $base[ $slug ], $fields );
+	}
+	return $base;
 }
 
 /**
@@ -4820,7 +4920,7 @@ function aa_reg_all_course_slugs() {
 function aa_training_category_shortcode( $atts ) {
 	$a = shortcode_atts( array( 'category' => 'adv-safe', 'h' => 'h1' ), $atts, 'aa_training_category' );
 
-	$copy = aa_training_copy();
+	$copy = aa_training_copy_l10n();
 	$cat  = $a['category'];
 	if ( ! isset( $copy[ $cat ] ) ) { return ''; }
 	$c = $copy[ $cat ];
@@ -5894,7 +5994,7 @@ function aa_reg_track_accordion( $atts ) {
 		'num'     => '01',
 	), $atts, 'aa_track_accordion' );
 
-	$copy = function_exists( 'aa_training_copy' ) ? aa_training_copy() : array();
+	$copy = function_exists( 'aa_training_copy_l10n' ) ? aa_training_copy_l10n() : array();
 	$want = array_filter( array_map( 'trim', explode( ',', (string) $a['tracks'] ) ) );
 	if ( ! $want ) { return ''; }
 
@@ -6085,7 +6185,7 @@ function aa_reg_course_accordion( $atts ) {
 		if ( $open === '' ) { $open = $built[0]['slug']; }
 	}
 
-	$copy  = function_exists( 'aa_training_copy' ) ? aa_training_copy() : array();
+	$copy  = function_exists( 'aa_training_copy_l10n' ) ? aa_training_copy_l10n() : array();
 	$label = isset( $copy[ $cat ]['label'] ) ? $copy[ $cat ]['label'] : '';
 
 	$h  = '<section class="aaa aaa--courses" id="' . esc_attr( $a['id'] ) . '" data-aaa>';
