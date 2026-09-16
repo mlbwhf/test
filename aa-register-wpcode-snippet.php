@@ -4296,6 +4296,223 @@ function aa_reg_record_sale( $s, $eid ) {
 endif; // double-load guard
 
 /* ============================================================================
+   AA — LANGUAGE SWITCHING, AND KNOWING WHAT IS TRANSLATED
+   ----------------------------------------------------------------------------
+   THE COMPLAINT: you click a language and land on the same English page.
+
+   THE CAUSE: most English pages have no mirror. There are 14 French course
+   pages, 13 Spanish and 5 Arabic against far more in English -- no homepage,
+   no track pages, no services or contact in any language. A switcher that
+   offers four languages on every page is offering something that mostly does
+   not exist, and what it does when the target is missing (stay put, or bounce
+   to the home page) is what you are seeing.
+
+   WHY NOT FIX POLYLANG. Polylang is installed but it is not what decides
+   language here -- aa_reg_lang() reads the page's root ancestor, so /fr/spc/ is
+   French because it sits under a page called "fr". Polylang's own default is
+   set to Arabic, which does not match the URLs at all. Linking 50-odd pages by
+   hand in a plugin that is not driving the behaviour is work that can silently
+   come undone the next time somebody edits a page.
+
+   THE CONVENTION INSTEAD. The mirrors already reuse the English slug and
+   differ only in ancestry -- aa_reg_derived_course() has relied on that for
+   months. A switcher built on the same rule cannot drift out of step, because
+   it reads the same thing the rest of the file reads: the page's own URL.
+
+   Three things come out of it:
+     [aa_lang_switch]   offers ONLY the languages this page actually exists in
+     [aa_lang_report]   the matrix -- which pages are translated, which are not
+     hreflang           emitted automatically, so Google stops treating the
+                        mirrors as unrelated near-duplicates
+   ========================================================================== */
+
+function aa_reg_lang_names() {
+	return array(
+		'en' => 'English',
+		'fr' => 'Français',
+		'es' => 'Español',
+		'ar' => 'العربية',
+	);
+}
+
+/**
+ * Mirrors whose slug is NOT the English one.
+ *
+ * Keyed on the English post_name. Most mirrors reuse the slug, so this stays
+ * short -- but Leading SAFe does not (/training/safe/sa/ against
+ * /fr/leading-safe-sa/) and a slug-only switcher would call it untranslated.
+ */
+function aa_reg_slug_map() {
+	return array(
+		'sa' => array( 'fr' => 'leading-safe-sa', 'es' => 'leading-safe-sa', 'ar' => 'leading-safe-sa' ),
+	);
+}
+
+/** The English slug for a page, whichever language it is in. */
+function aa_reg_en_slug( $slug, $lang ) {
+	if ( $lang === 'en' ) { return $slug; }
+	foreach ( aa_reg_slug_map() as $en => $per ) {
+		if ( isset( $per[ $lang ] ) && $per[ $lang ] === $slug ) { return $en; }
+	}
+	return $slug;
+}
+
+/** The slug this English page uses in $lang. */
+function aa_reg_slug_in( $en_slug, $lang ) {
+	$map = aa_reg_slug_map();
+	return isset( $map[ $en_slug ][ $lang ] ) ? $map[ $en_slug ][ $lang ] : $en_slug;
+}
+
+/**
+ * EVERY LANGUAGE THIS PAGE ACTUALLY EXISTS IN, as lang => permalink.
+ *
+ * A language that resolves to nothing is simply absent from the array. That is
+ * the whole fix: the switcher cannot offer a page that is not there.
+ */
+function aa_reg_translations( $post = null ) {
+	if ( $post === null ) { $post = get_queried_object(); }
+	if ( ! ( $post instanceof WP_Post ) ) { return array(); }
+
+	static $cache = array();
+	if ( isset( $cache[ $post->ID ] ) ) { return $cache[ $post->ID ]; }
+
+	$here    = aa_reg_lang( $post );
+	$en_slug = aa_reg_en_slug( $post->post_name, $here );
+	$out     = array();
+
+	foreach ( array_keys( aa_reg_lang_names() ) as $lang ) {
+		$slug  = aa_reg_slug_in( $en_slug, $lang );
+		$pages = get_posts( array(
+			'post_type'        => 'page',
+			'name'             => $slug,
+			'post_status'      => 'publish',
+			'numberposts'      => 6,
+			'suppress_filters' => true,
+		) );
+		foreach ( $pages as $p ) {
+			/* aa_reg_lang() answers this for both directions: an English page
+			   is one whose root ancestor is not a language root. */
+			if ( aa_reg_lang( $p ) !== $lang ) { continue; }
+			$out[ $lang ] = get_permalink( $p->ID );
+			break;
+		}
+	}
+
+	$cache[ $post->ID ] = $out;
+	return $out;
+}
+
+/**
+ * [aa_lang_switch]
+ *
+ * Renders nothing at all when the page exists in only one language -- a
+ * switcher with one option is furniture, not navigation.
+ */
+function aa_reg_lang_switch( $atts ) {
+	$a = shortcode_atts( array( 'class' => '' ), $atts, 'aa_lang_switch' );
+
+	$found = aa_reg_translations();
+	if ( count( $found ) < 2 ) { return ''; }
+
+	$here  = aa_reg_lang();
+	$names = aa_reg_lang_names();
+
+	$h = '<nav class="aalang ' . esc_attr( $a['class'] ) . '" aria-label="Language">';
+	foreach ( $names as $lang => $label ) {
+		if ( ! isset( $found[ $lang ] ) ) { continue; }
+		$on = ( $lang === $here );
+		$h .= '<a class="aalang__i' . ( $on ? ' is-on' : '' ) . '"'
+		    . ' href="' . esc_url( $found[ $lang ] ) . '"'
+		    . ' lang="' . esc_attr( $lang ) . '"'
+		    . ( $lang === 'ar' ? ' dir="rtl"' : '' )
+		    . ( $on ? ' aria-current="true"' : '' ) . '>'
+		    . esc_html( $label ) . '</a>';
+	}
+	$h .= '</nav>';
+	return $h;
+}
+add_shortcode( 'aa_lang_switch', 'aa_reg_lang_switch' );
+
+/**
+ * HREFLANG.
+ *
+ * Without this Google has no way to know /fr/spc/ and /training/adv-safe/spc/
+ * are the same page in two languages -- they are near-identical in structure,
+ * share a price block and a schedule, and the coverage report already shows 29
+ * URLs where Google picked a canonical we did not. Emitted only when there is
+ * more than one, and x-default points at English.
+ */
+function aa_reg_hreflang() {
+	if ( ! is_singular( 'page' ) ) { return; }
+	$found = aa_reg_translations();
+	if ( count( $found ) < 2 ) { return; }
+
+	foreach ( $found as $lang => $url ) {
+		echo "\n" . '<link rel="alternate" hreflang="' . esc_attr( $lang ) . '" href="' . esc_url( $url ) . '" />';
+	}
+	if ( isset( $found['en'] ) ) {
+		echo "\n" . '<link rel="alternate" hreflang="x-default" href="' . esc_url( $found['en'] ) . '" />';
+	}
+	echo "\n";
+}
+add_action( 'wp_head', 'aa_reg_hreflang', 8 );
+
+/**
+ * [aa_lang_report]
+ *
+ * The matrix: every published English page, and which languages it exists in.
+ * Put it on a private page. It answers "what is actually translated" without
+ * anyone clicking a switcher to find out.
+ */
+function aa_reg_lang_report() {
+	if ( ! current_user_can( 'edit_pages' ) ) {
+		return '<p>The translation report is for editors.</p>';
+	}
+
+	$pages = get_posts( array(
+		'post_type'        => 'page',
+		'post_status'      => 'publish',
+		'numberposts'      => 400,
+		'orderby'          => 'title',
+		'order'            => 'ASC',
+		'suppress_filters' => true,
+	) );
+
+	$names = aa_reg_lang_names();
+	$rows  = array();
+	$tally = array( 'fr' => 0, 'es' => 0, 'ar' => 0 );
+	$total = 0;
+
+	foreach ( $pages as $p ) {
+		if ( aa_reg_lang( $p ) !== 'en' ) { continue; }   // mirrors are columns, not rows
+		$found = aa_reg_translations( $p );
+		$total++;
+		foreach ( array( 'fr', 'es', 'ar' ) as $l ) {
+			if ( isset( $found[ $l ] ) ) { $tally[ $l ]++; }
+		}
+		$rows[] = array( 'post' => $p, 'found' => $found );
+	}
+
+	$h  = '<div class="aalangrep"><p class="aalangrep__sum">' . (int) $total . ' English pages &middot; '
+	    . 'French ' . $tally['fr'] . ' &middot; Spanish ' . $tally['es'] . ' &middot; Arabic ' . $tally['ar'] . '</p>';
+	$h .= '<table class="aalangrep__t"><thead><tr><th>Page</th><th>FR</th><th>ES</th><th>AR</th></tr></thead><tbody>';
+	foreach ( $rows as $r ) {
+		$h .= '<tr><td><a href="' . esc_url( get_permalink( $r['post']->ID ) ) . '">'
+		    . esc_html( $r['post']->post_title ) . '</a></td>';
+		foreach ( array( 'fr', 'es', 'ar' ) as $l ) {
+			$h .= isset( $r['found'][ $l ] )
+				? '<td class="is-yes"><a href="' . esc_url( $r['found'][ $l ] ) . '">&#10003;</a></td>'
+				: '<td class="is-no">&mdash;</td>';
+		}
+		$h .= '</tr>';
+	}
+	$h .= '</tbody></table></div>';
+	return $h;
+}
+add_shortcode( 'aa_lang_report', 'aa_reg_lang_report' );
+
+
+/* ============================================================================
    ONE-SHOT — Thomas J Green Jr, SPC 12–15 Oct 2026, bought on Corsizio.
    ----------------------------------------------------------------------------
    He is not in this system. He enrolled through Corsizio, so no Stripe webhook
