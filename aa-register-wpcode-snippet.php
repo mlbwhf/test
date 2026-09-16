@@ -2562,8 +2562,30 @@ add_filter( 'pre_do_shortcode_tag', function ( $short, $tag, $attr ) {
    ========================================================================== */
 
 /** 'en' | 'es' | 'fr' | 'ar' for a post, or for the current page if omitted. */
+/**
+ * FORCE THE LANGUAGE FOR ONE RESOLUTION.
+ *
+ * aa_reg_lang() reads the queried page, which is exactly right while a page is
+ * rendering and useless in a REST request -- there is no queried object, so it
+ * reports English and every price resolves to the English one. That was
+ * harmless while every mirror carried the same price. It stopped being harmless
+ * the moment French was priced differently: the French page showed one number
+ * and the checkout charged another.
+ *
+ * Set it, resolve the course, clear it. Never leave it set.
+ */
+function aa_reg_lang_override( $set = null ) {
+	static $override = null;
+	if ( $set !== null ) { $override = ( $set === '' ) ? null : (string) $set; }
+	return $override;
+}
+
 function aa_reg_lang( $post = null ) {
 	if ( $post === null ) {
+		/* Before the cache, not after -- the cache is per-request and an
+		   override is the one thing allowed to bypass it. */
+		$ov = aa_reg_lang_override();
+		if ( $ov !== null ) { return $ov; }
 		static $cur = null;
 		if ( $cur !== null ) { return $cur; }
 		$obj = get_queried_object();
@@ -3101,6 +3123,26 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		), $course['payment_link'] ) );
 	}
 
+	/* THE BUYER'S LANGUAGE, AND THEREFORE THE BUYER'S PRICE.
+	   The mirrors are not priced alike -- French SPC and ASPC are list price
+	   because we are the only partner running them in French, and that number
+	   lives on the French page. This request has no queried object, so without
+	   the override aa_reg_course() hands back the English row and we charge the
+	   English price for a French sale. Resolve it in their language, take the
+	   price from there, and fall back to the English row if the mirror has no
+	   usable price rather than failing the sale. */
+	$buyer_lang = aa_reg_lang_of( array(), (string) $req->get_header( 'referer' ) );
+	if ( $buyer_lang !== 'en' ) {
+		aa_reg_lang_override( $buyer_lang );
+		$mirror = aa_reg_course( $found['slug'] );
+		aa_reg_lang_override( '' );
+		if ( $mirror && ! empty( $mirror['price'] ) ) {
+			$course['price']    = $mirror['price'];
+			$course['currency'] = ! empty( $mirror['currency'] ) ? $mirror['currency'] : $course['currency'];
+			$course['name']     = ! empty( $mirror['name'] ) ? $mirror['name'] : $course['name'];
+		}
+	}
+
 	// THE amount. From the table, never from the request.
 	$unit = (int) round( $course['price'] * 100 );
 	if ( $unit < 100 ) {
@@ -3136,7 +3178,7 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		   language they have been reading. aa_reg_lang() cannot help here --
 		   this runs as a REST request with no queried object, so it always
 		   reports English. */
-		'metadata[lang]'    => aa_reg_lang_of( array(), (string) $req->get_header( 'referer' ) ),
+		'metadata[lang]'    => $buyer_lang,
 	);
 
 	$res = wp_remote_post( 'https://api.stripe.com/v1/checkout/sessions', array(
