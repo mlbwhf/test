@@ -672,7 +672,11 @@
    .aat-callist stays defined but unused, so a page that still renders it does
    not lose its styling. */
 @media (max-width:760px){
-  .aat-calinner { min-width:700px; }
+  /* 560px, not 700. The 700 was the old day-cell grid's requirement -- every
+     cell carried stacked chips. The bar grid needs seven readable columns and
+     nothing more, and 700 on a 390px phone is 310px of sideways scrolling
+     nobody asked for. */
+  .aat-calinner { min-width:560px; }
   .aat-legend { display:none; }
 }
 @media (max-width:900px){
@@ -1541,3 +1545,39 @@ a.aah__row:hover { background: var(--aah-warm); }
    use -- so it needs no styles of its own. This only stops it stretching to the
    full height of a tall hero column. */
 .aah__reg { align-self: start; }
+
+/* ============================================================================
+   AA — RENDERING COST OF THE SECTIONS BELOW THE FOLD
+   ----------------------------------------------------------------------------
+   Search Console has 73 mobile URLs failing LCP and CLS together, and desktop
+   passing. That shape -- one device fine, the other not -- is a rendering cost
+   problem, not a layout bug: the same markup, laid out by a phone.
+
+   These sections are the expensive ones. The cohorts block renders the board
+   AND the month calendar server-side and hides one; the accordion renders every
+   course card in every track whether its panel is open or not. That is
+   deliberate and it stays -- it is the entire SEO payload of those pages, and
+   a crawler must not need a click to read the schedule.
+
+   content-visibility lets both things be true. The markup is still in the
+   document and still crawled; the browser simply skips laying it out until it
+   comes near the viewport. contain-intrinsic-size is what makes it safe: it
+   reserves a plausible height so skipping does not collapse the page and cause
+   the very layout shift we are trying to remove. The 'auto' keyword means the
+   real height is remembered after the first render, so the reserve is only
+   ever wrong once.
+
+   Deliberately NOT on .aah or .aat-hero -- a hero is the LCP element, and
+   deferring it would make the number worse. */
+.aaq, .aab, .aaa, .aac, .aas, .aat-cohorts-sec {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 700px;
+}
+
+/* An image with no width and height is the classic shift: the browser reserves
+   nothing, then reflows the moment the bytes land. Any image inside these
+   blocks keeps its box. */
+.aaq img, .aab img, .aaa img, .aac img, .aas img, .aah img {
+	max-width: 100%;
+	height: auto;
+}
