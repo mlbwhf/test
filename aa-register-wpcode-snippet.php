@@ -4822,10 +4822,17 @@ function aa_training_courses( $cat ) {
 		'adv-safe'      => array( 'spc', 'aspc', 'rte', 'apm', 'lpm', 'arch', 'large-solution' ),
 		'safe-roles'    => array( 'sa', 'scrum-master', 'popm', 'asm', 'devops', 'team-practitioner', 'bo' ),
 		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2' ),
-		/* Micro-credentials and the industry tracks take their course list from
-		   the page itself -- see below. */
-		'safe-found'    => array(),
-		'safe-industry' => array(),
+		/* THESE TWO USED TO TAKE THEIR LIST FROM THE PAGE'S OWN CHILDREN.
+		   That works in English, where the queried page is the English track
+		   page and its children are the course pages. It fails everywhere else:
+		   a French track page has no children -- the French course pages are
+		   flat under /fr/ -- so the accordion came out empty. Hand lists are
+		   language-independent, because they are slugs and aa_reg_course()
+		   resolves each one in the reader's language. */
+		'safe-found'    => array( 'conflict-collaboration', 'value-stream-mapping',
+		                          'responsible-ai-safe', 'agile-contracting-government' ),
+		'safe-industry' => array( 'arch', 'ase', 'safe-for-hardware-teams',
+		                          'sa-gov', 'team-practitioner' ),
 	);
 	if ( ! empty( $map[ $cat ] ) ) { return $map[ $cat ]; }
 
