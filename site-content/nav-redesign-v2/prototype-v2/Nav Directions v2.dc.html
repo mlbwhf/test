@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#eceef0; }
+    a { color:#2545f5; text-decoration:none; }
+    a:hover { color:#111114; }
+  </style>
+</helmet>
+
+<section style="font-family:'Archivo',sans-serif; padding:48px; display:flex; gap:48px; align-items:flex-start; flex-wrap:wrap;">
+
+  <!-- ============ 1a: INDEX STRIP ============ -->
+  <div id="1a" style="width:1000px; flex-shrink:0;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; background:#111114; color:#fff; padding:4px 10px;">1a</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; color:#77777f;">Index Strip — no dropdown at all; sections always visible</span>
+    </div>
+    <div style="background:#fff; border:1px solid #e6e6ea;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 32px;">
+        <div style="font-weight:900; font-size:20px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+        <div style="display:flex; gap:28px; font-weight:600; font-size:14px;">
+          <a href="#" style="color:#2545f5;">Indexes</a>
+          <a href="#" style="color:#111114;">Reports</a>
+          <a href="#" style="color:#111114;">Glossary</a>
+          <a href="#" style="color:#111114;">About</a>
+        </div>
+      </div>
+      <div style="display:flex; border-top:1px solid #111114; overflow:hidden;">
+        <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+          <a href="#" style="flex:1; display:flex; flex-direction:column; gap:6px; padding:12px 14px; border-right:1px solid #e6e6ea; min-width:0;" style-hover="{{ stripHover }}">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#2545f5;">{{ s.num }}</span>
+            <span style="font-weight:600; font-size:12px; letter-spacing:-0.01em; color:#111114; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ s.short }}</span>
+          </a>
+        </sc-for>
+        <a href="#" style="display:flex; align-items:center; padding:0 18px; background:#111114; color:#fff; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; white-space:nowrap;">Compare →</a>
+      </div>
+    </div>
+    <p style="font-size:13px; line-height:1.6; color:#44444a; max-width:70ch; margin:14px 0 0;">The 9 sections live in a permanent rail under the bar — zero clicks, maximum "coherent library" signal, and the strongest LLM/crawler story (all links always in the page). WP: a second `wp_nav_menu` location styled as a flex row. Mobile: the rail becomes a horizontally scrollable chip row. Risk: ~110px of permanent header height.</p>
+  </div>
+
+  <!-- ============ 1b: TAKEOVER INDEX ============ -->
+  <div id="1b" style="width:1000px; flex-shrink:0;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; background:#111114; color:#fff; padding:4px 10px;">1b</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; color:#77777f;">Takeover — full-screen table of contents (shown open)</span>
+    </div>
+    <div style="background:#111114; border:1px solid #111114; position:relative;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 32px; border-bottom:1px solid #26262a;">
+        <div style="font-weight:900; font-size:20px; letter-spacing:-0.02em; color:#fff;">REPORT&nbsp;AI</div>
+        <div style="display:flex; align-items:center; gap:28px; font-weight:600; font-size:14px;">
+          <a href="#" style="color:#2545f5;">Indexes ✕</a>
+          <a href="#" style="color:#9a9aa2;">Reports</a>
+          <a href="#" style="color:#9a9aa2;">Glossary</a>
+          <a href="#" style="color:#9a9aa2;">About</a>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 64px; padding:48px 32px 40px;">
+        <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+          <a href="#" style="display:flex; align-items:baseline; gap:18px; padding:16px 8px; border-bottom:1px solid #26262a;" style-hover="{{ tocHover }}">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">{{ s.num }}</span>
+            <span style="font-weight:800; font-size:26px; letter-spacing:-0.03em; color:#fff;">{{ s.name }}</span>
+          </a>
+        </sc-for>
+        <a href="#" style="display:flex; align-items:baseline; gap:18px; padding:16px 8px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#55555c;">+</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; text-transform:uppercase; letter-spacing:0.04em; color:#2545f5;">Compare Tool →</span>
+        </a>
+      </div>
+      <div style="padding:0 32px 28px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#55555c;">Esc to close · <a href="#" style="color:#2545f5;">Full Index Library →</a></div>
+    </div>
+    <p style="font-size:13px; line-height:1.6; color:#44444a; max-width:70ch; margin:14px 0 0;">Clicking Indexes inks the whole viewport into an editorial table of contents — big Archivo names, numbered. Most dramatic credibility moment. Same nested `ul` + a fixed-position CSS class; mobile gets the identical overlay. Risk: heaviest interaction; needs the small toggle JS GP already ships.</p>
+  </div>
+
+  <!-- ============ 1c: LEDGER EXPAND ============ -->
+  <div id="1c" style="width:1000px; flex-shrink:0;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; background:#111114; color:#fff; padding:4px 10px;">1c</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; color:#77777f;">Ledger — white inline expand with live counts (shown open)</span>
+    </div>
+    <div style="background:#fff; border:1px solid #e6e6ea;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 32px;">
+        <div style="font-weight:900; font-size:20px; letter-spacing:-0.02em;">REPORT&nbsp;AI</div>
+        <div style="display:flex; gap:28px; font-weight:600; font-size:14px;">
+          <a href="#" style="color:#2545f5; border-bottom:2px solid #2545f5; padding-bottom:4px;">Indexes ▲</a>
+          <a href="#" style="color:#111114;">Reports</a>
+          <a href="#" style="color:#111114;">Glossary</a>
+          <a href="#" style="color:#111114;">About</a>
+        </div>
+      </div>
+      <div style="border-top:1px solid #111114; background:#fff;">
+        <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9">
+          <a href="#" style="display:grid; grid-template-columns:60px 1fr auto auto; align-items:center; gap:24px; padding:13px 32px; border-bottom:1px solid #e6e6ea;" style-hover="{{ ledgerHover }}">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#2545f5;">{{ s.num }}</span>
+            <span style="font-weight:700; font-size:17px; letter-spacing:-0.02em; color:#111114;">{{ s.name }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; color:#77777f;">{{ s.count }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#b8b8bf;">→</span>
+          </a>
+        </sc-for>
+        <div style="display:flex; justify-content:space-between; padding:14px 32px; background:#f5f5f7;">
+          <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Compare Tool →</a>
+          <a href="#" style="font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase;">Full Index Library →</a>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:13px; line-height:1.6; color:#44444a; max-width:70ch; margin:14px 0 0;">The menu reads like a ledger page: full-width white rows pushing content down, each with a live index count — the nav itself proves the library's depth. Counts come from WP term counts (small PHP filter), so they update themselves. Calmest of the three; closest to the current site. Mobile: same rows as the off-canvas accordion.</p>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  sections = [
+    { num: '01', name: 'Enterprise AI Adoption', short: 'Enterprise', count: '7 indexes' },
+    { num: '02', name: 'AI Business & Economics', short: 'Economics', count: '6 indexes' },
+    { num: '03', name: 'Technical Performance', short: 'Technical', count: '5 indexes' },
+    { num: '04', name: 'Workforce & Labor', short: 'Workforce', count: '4 indexes' },
+    { num: '05', name: 'The Dark Side of AI', short: 'Dark Side', count: '6 indexes' },
+    { num: '06', name: 'State of AI', short: 'State of AI', count: '3 indexes' },
+    { num: '07', name: 'Regulating AI', short: 'Regulation', count: '4 indexes' },
+    { num: '08', name: 'The Geography of AI', short: 'Geography', count: '2 indexes' },
+    { num: '09', name: 'AI by Industry', short: 'Industry', count: '5 indexes' },
+  ];
+  renderVals() {
+    return {
+      sections: this.sections,
+      stripHover: { background: '#f5f5f7' },
+      tocHover: { background: '#1a1a1f' },
+      ledgerHover: { background: '#f5f5f7' },
+    };
+  }
+}
+</script>
+</body>
+</html>

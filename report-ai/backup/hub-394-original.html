@@ -1,0 +1,74 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1180px;margin:0 auto;width:100%;line-height:1.4;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-cat a.tai-art:hover{color:#2545f5;}
+.tai-chip:hover{border-color:#2545f5;color:#2545f5;}
+.tai-btn-fill{display:inline-block;text-decoration:none;background:#2545f5;color:#fff;padding:14px 28px;border-radius:2px;font-size:15px;font-weight:700;transition:background .13s ease;}
+.tai-btn-fill:hover{background:#1d39c9;}
+@media(max-width:900px){
+.tai-h1{font-size:clamp(40px,12vw,64px)!important;}
+.tai-cited{grid-template-columns:1fr 1fr!important;}
+.tai-catgrid{grid-template-columns:1fr!important;}
+.tai-pad{padding:36px 22px!important;}
+.tai-cta{flex-direction:column;align-items:flex-start!important;gap:18px!important;}
+}
+</style>
+
+<div class="tai-wrap">
+
+  <div class="tai-pad" style="padding:52px 40px 40px;border-bottom:1px solid #e6e6ea;">
+    <div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:18px;letter-spacing:0.02em;">Home <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Technical Performance</span></div>
+    <h1 class="tai-h1" style="font-weight:900;font-size:64px;line-height:0.92;letter-spacing:-0.04em;margin:0 0 16px;">HOW GOOD AI<br>REALLY IS.</h1>
+    <p style="font-size:17px;line-height:1.5;color:#55555e;max-width:640px;margin:0;">How good AI models actually are &mdash; and what it takes to run them. Frontier-model benchmarks, the shift to test-time compute and reasoning, AI infrastructure and data-center energy demand, and AI safety, governance, and incidents. Every figure primary-sourced and dated.</p>
+  </div>
+
+  <div class="tai-cited" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;">
+    <div style="padding:24px;border-right:1px solid #e6e6ea;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">71.7%</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">SWE-bench, up from 4.4% in a year</div></div>
+    <div style="padding:24px;border-right:1px solid #e6e6ea;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">~945 TWh</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">data-center electricity by 2030 (IEA)</div></div>
+    <div style="padding:24px;border-right:1px solid #e6e6ea;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">26.6%</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">Deep Research on Humanity&rsquo;s Last Exam</div></div>
+    <div style="padding:24px;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">2.7%</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">US&ndash;China frontier benchmark gap</div></div>
+  </div>
+
+  <div class="tai-catgrid tai-cat" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;">
+
+    <div style="padding:32px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;">
+      <div style="display:flex;align-items:flex-end;gap:2.5px;height:18px;margin-bottom:14px;"><span style="width:5px;height:9px;background:#2545f5;"></span><span style="width:5px;height:14px;background:#2545f5;"></span><span style="width:5px;height:18px;background:#2545f5;"></span></div>
+      <h3 style="font-weight:800;font-size:17px;margin:0 0 6px;letter-spacing:-0.02em;"><a class="tai-art" href="/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/" style="color:#111114;text-decoration:none;">AI Model Benchmarks 2026</a></h3>
+      <p style="font-size:12.5px;line-height:1.45;color:#6e6e76;margin:0;">SWE-bench jumped from 4.4% to 71.7% in a year (Stanford HAI). MMLU saturated above 92%. US&ndash;China gap at 2.7%.</p>
+    </div>
+
+    <div style="padding:32px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;">
+      <div style="display:flex;align-items:flex-end;gap:2.5px;height:18px;margin-bottom:14px;"><span style="width:5px;height:14px;background:#2545f5;"></span><span style="width:5px;height:9px;background:#2545f5;"></span><span style="width:5px;height:18px;background:#2545f5;"></span></div>
+      <h3 style="font-weight:800;font-size:17px;margin:0 0 6px;letter-spacing:-0.02em;"><a class="tai-art" href="/indexes/technical-benchmarks/test-time-compute-reasoning-2026/" style="color:#111114;text-decoration:none;">Test-Time Compute &amp; Reasoning Models</a></h3>
+      <p style="font-size:12.5px;line-height:1.45;color:#6e6e76;margin:0;">Deep Research hit 26.6% on Humanity&rsquo;s Last Exam. Gemini Deep Think won IMO 2025 gold (35/42).</p>
+    </div>
+
+    <div style="padding:32px;border-bottom:1px solid #e6e6ea;">
+      <div style="display:flex;align-items:flex-end;gap:2.5px;height:18px;margin-bottom:14px;"><span style="width:5px;height:18px;background:#2545f5;"></span><span style="width:5px;height:11px;background:#2545f5;"></span><span style="width:5px;height:15px;background:#2545f5;"></span></div>
+      <h3 style="font-weight:800;font-size:17px;margin:0 0 6px;letter-spacing:-0.02em;"><a class="tai-art" href="/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/" style="color:#111114;text-decoration:none;">AI Infrastructure 2026</a></h3>
+      <p style="font-size:12.5px;line-height:1.45;color:#6e6e76;margin:0;">Data-center electricity: 415 TWh (2024) &rarr; ~945 TWh by 2030 (IEA). IDC: AI infra spend $487B in 2026, &gt;$1T by 2029.</p>
+    </div>
+
+    <div style="padding:32px;border-right:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;">
+      <div style="display:flex;align-items:flex-end;gap:2.5px;height:18px;margin-bottom:14px;"><span style="width:5px;height:11px;background:#2545f5;"></span><span style="width:5px;height:18px;background:#2545f5;"></span><span style="width:5px;height:9px;background:#2545f5;"></span></div>
+      <h3 style="font-weight:800;font-size:17px;margin:0 0 6px;letter-spacing:-0.02em;"><a class="tai-art" href="/indexes/technical-benchmarks/ai-safety-governance-statistics-2026/" style="color:#111114;text-decoration:none;">AI Safety &amp; Governance 2026</a></h3>
+      <p style="font-size:12.5px;line-height:1.45;color:#6e6e76;margin:0;">AI incidents, the EU AI Act, US regulation, and responsible-AI adoption &mdash; the policy and risk picture.</p>
+    </div>
+
+  </div>
+
+  <div class="tai-cta tai-pad" style="background:#111114;color:#fff;padding:40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e6e6ea;">
+    <div>
+      <h2 style="font-weight:800;font-size:24px;margin:0 0 6px;letter-spacing:-0.02em;color:#fff;">Compare AI statistics year over year</h2>
+      <p style="font-size:14px;color:#a8a8b0;margin:0;">Put any two figures side by side, 2022&ndash;2026, with sources attached.</p>
+    </div>
+    <a class="tai-btn-fill" href="/indexes/compare/" style="white-space:nowrap;">Open compare &rarr;</a>
+  </div>
+
+</div>
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://report-ai.org/#organization","name":"The AI Index","alternateName":"Report AI","url":"https://report-ai.org"},{"@type":"WebSite","@id":"https://report-ai.org/#website","url":"https://report-ai.org","name":"The AI Index","publisher":{"@id":"https://report-ai.org/#organization"}},{"@type":"CollectionPage","@id":"https://report-ai.org/indexes/technical-benchmarks/#webpage","url":"https://report-ai.org/indexes/technical-benchmarks/","name":"Technical Performance","isPartOf":{"@id":"https://report-ai.org/indexes/#webpage"},"description":"How good AI models actually are and what it takes to run them — frontier-model benchmarks, test-time compute, AI infrastructure and data-center energy, AI safety and governance.","hasPart":[{"@type":"CollectionPage","name":"AI Model Benchmarks 2026","url":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"},{"@type":"CollectionPage","name":"Test-Time Compute & Reasoning Models","url":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"},{"@type":"CollectionPage","name":"AI Infrastructure 2026","url":"https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/"},{"@type":"CollectionPage","name":"AI Safety & Governance 2026","url":"https://report-ai.org/indexes/technical-benchmarks/ai-safety-governance-statistics-2026/"}]}]}</script>
