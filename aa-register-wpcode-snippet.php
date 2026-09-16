@@ -151,7 +151,7 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/spc/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			/* $2,899 -- matched to Coursion, which is the other place this same
+			/* $2,899 -- matched to Corsizio, which is the other place this same
 			   cohort is sold. The two were $24 apart and a buyer could see both. */
 			'price'    => 2899,
 			'days'     => 4,
@@ -4092,9 +4092,9 @@ function aa_reg_record_sale( $s, $eid ) {
 endif; // double-load guard
 
 /* ============================================================================
-   ONE-SHOT — Thomas J Green Jr, SPC 12–15 Oct 2026, bought on Coursion.
+   ONE-SHOT — Thomas J Green Jr, SPC 12–15 Oct 2026, bought on Corsizio.
    ----------------------------------------------------------------------------
-   He is not in this system. He enrolled through Coursion, so no Stripe webhook
+   He is not in this system. He enrolled through Corsizio, so no Stripe webhook
    ever fired, there is no aa_registration for him, and our seat count for that
    cohort still reads eighteen. This records the sale, takes the seat, and sends
    him the Agile Agilist confirmation and invoice.
@@ -4107,13 +4107,13 @@ endif; // double-load guard
    IT ABORTS RATHER THAN SEND SOMETHING WRONG. If the cohort id does not resolve
    to a real generated cohort, the invoice would name a raw slug instead of the
    course and the dates, so it stops and records why. Nothing is created, nothing
-   is sent, and the reason is in the aa_reg_coursion_tjg option.
+   is sent, and the reason is in the aa_reg_corsizio_tjg option.
 
    DELETE THIS BLOCK once the option reads "sent". It is one customer, not a
    feature; the general answer is to stop selling the same room in three places.
    ========================================================================== */
 add_action( 'init', function () {
-	$done = get_option( 'aa_reg_coursion_tjg' );
+	$done = get_option( 'aa_reg_corsizio_tjg' );
 	if ( $done ) { return; }
 
 	$cohort = 'spc-2026-10-12';
@@ -4124,20 +4124,20 @@ add_action( 'init', function () {
 	/* The cohort has to resolve, or the invoice says "spc-2026-10-12" where the
 	   course name and the dates belong. */
 	if ( ! function_exists( 'aa_reg_find' ) || ! aa_reg_find( $cohort ) ) {
-		update_option( 'aa_reg_coursion_tjg', 'aborted: cohort ' . $cohort . ' did not resolve', false );
+		update_option( 'aa_reg_corsizio_tjg', 'aborted: cohort ' . $cohort . ' did not resolve', false );
 		return;
 	}
 
 	/* Claim the run before doing any of it, so a fatal halfway through cannot
 	   send this twice on the next page load. */
-	update_option( 'aa_reg_coursion_tjg', 'running', false );
+	update_option( 'aa_reg_corsizio_tjg', 'running', false );
 
 	$post_id = wp_insert_post( array(
 		'post_type'   => 'aa_registration',
 		'post_status' => 'private',
 		'post_title'  => $name . ' — ' . $cohort,
 		'meta_input'  => array(
-			'external_source' => 'coursion',
+			'external_source' => 'corsizio',
 			'external_ref'    => '6aa86648a5b08419407b75f0',
 			'cohort'          => $cohort,
 			'course'          => 'spc',
@@ -4151,11 +4151,11 @@ add_action( 'init', function () {
 	) );
 
 	if ( ! $post_id || is_wp_error( $post_id ) ) {
-		update_option( 'aa_reg_coursion_tjg', 'aborted: could not create the registration', false );
+		update_option( 'aa_reg_corsizio_tjg', 'aborted: could not create the registration', false );
 		return;
 	}
 
-	/* His seat. The only way this system can learn about a Coursion sale. */
+	/* His seat. The only way this system can learn about a Corsizio sale. */
 	$sold = (array) get_option( 'aa_reg_sold', array() );
 	$sold[ $cohort ] = ( isset( $sold[ $cohort ] ) ? (int) $sold[ $cohort ] : 0 ) + 1;
 	update_option( 'aa_reg_sold', $sold, false );
@@ -4175,13 +4175,13 @@ add_action( 'init', function () {
 
 	wp_mail(
 		get_option( 'admin_email' ),
-		( $sent ? 'Coursion registration recorded — ' : 'Coursion registration recorded (EMAIL FAILED) — ' ) . $cohort,
-		sprintf( "%s (%s)\nCohort: %s\nSeats: 1\nPaid: USD %s\nSource: Coursion %s\nRecord: #%d",
+		( $sent ? 'Corsizio registration recorded — ' : 'Corsizio registration recorded (EMAIL FAILED) — ' ) . $cohort,
+		sprintf( "%s (%s)\nCohort: %s\nSeats: 1\nPaid: USD %s\nSource: Corsizio %s\nRecord: #%d",
 			$name, $email, $cohort, number_format( $cents / 100, 2 ),
 			'6aa86648a5b08419407b75f0', (int) $post_id )
 	);
 
-	update_option( 'aa_reg_coursion_tjg', $sent ? 'sent #' . (int) $post_id : 'record #' . (int) $post_id . ' created, EMAIL FAILED', false );
+	update_option( 'aa_reg_corsizio_tjg', $sent ? 'sent #' . (int) $post_id : 'record #' . (int) $post_id . ' created, EMAIL FAILED', false );
 }, 99 );
 
 
