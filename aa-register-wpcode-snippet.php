@@ -657,12 +657,55 @@ function aa_reg_generate_places( $slug, $course, $today, $limit, $tz ) {
 	return $out;
 }
 
+/**
+ * HOW MANY STARTS A MONTH, IN THIS LANGUAGE.
+ *
+ * English runs on demand -- the weekly cadence stands, and load decides. The
+ * mirrors do not: we do not fill a French SPC every week, and publishing dates
+ * we will not run is worse than publishing fewer.
+ *
+ * Returns 0 for "no cap".
+ *
+ *   SPC, ASPC            fr 2   es 1   ar 1
+ *   SA, SSM, POPM        fr 2   es 2   ar 1
+ *   AI-Native            fr 1   es 1   ar 1
+ *   everything else      fr 2   es 2   ar 1
+ *
+ * The per-language defaults carry most of that; only the rows that disagree
+ * with their language's default are listed. A capped month keeps the FIRST N
+ * dates of the English schedule rather than inventing its own, so a French
+ * cohort id is always one English also offers -- which is what stops a French
+ * sale from resolving to nothing in the webhook, where there is no language.
+ */
+function aa_reg_per_month( $slug, $lang = null ) {
+	$lang = ( $lang === null ) ? aa_reg_lang() : $lang;
+	if ( $lang === 'en' ) { return 0; }
+
+	$defaults = array( 'fr' => 2, 'es' => 2, 'ar' => 1 );
+
+	$by_course = array(
+		/* The consultant credentials: French is the only place we run them
+		   twice, because we are the only partner running them in French. */
+		'spc'  => array( 'es' => 1, 'ar' => 1 ),
+		'aspc' => array( 'es' => 1, 'ar' => 1 ),
+		/* AI-Native is monthly everywhere. */
+		'ai-native-foundations'           => array( 'fr' => 1, 'es' => 1, 'ar' => 1 ),
+		'ai-native-change-agent'          => array( 'fr' => 1, 'es' => 1, 'ar' => 1 ),
+		'ai-native-ready-certification-2' => array( 'fr' => 1, 'es' => 1, 'ar' => 1 ),
+	);
+
+	if ( isset( $by_course[ $slug ][ $lang ] ) ) { return (int) $by_course[ $slug ][ $lang ]; }
+	return isset( $defaults[ $lang ] ) ? (int) $defaults[ $lang ] : 0;
+}
+
 function aa_reg_generate( $slug, $course ) {
 	static $memo = array();
 	$tz    = new DateTimeZone( 'America/New_York' );
 	$today = new DateTime( 'now', $tz );
 	$today->setTime( 0, 0, 0 );
-	$key   = $slug . '|' . $today->format( 'Y-m-d' );
+	/* THE LANGUAGE IS PART OF THE KEY. The list is capped per language, so a
+	   key without it serves whichever mirror rendered first to everyone. */
+	$key   = $slug . '|' . aa_reg_lang() . '|' . $today->format( 'Y-m-d' );
 	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
 
 	$days  = max( 1, (int) $course['days'] );
@@ -745,6 +788,23 @@ function aa_reg_generate( $slug, $course ) {
 		}
 	}
 	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
+
+	/* THE PER-LANGUAGE CAP, applied last and to the sorted list, so a capped
+	   month keeps the earliest dates rather than an arbitrary slice. */
+	$cap = aa_reg_per_month( $slug );
+	if ( $cap > 0 ) {
+		$per = array();
+		$kept = array();
+		foreach ( $out as $c ) {
+			$m = substr( $c['start'], 0, 7 );
+			if ( ! isset( $per[ $m ] ) ) { $per[ $m ] = 0; }
+			if ( $per[ $m ] >= $cap ) { continue; }
+			$per[ $m ]++;
+			$kept[] = $c;
+		}
+		$out = $kept;
+	}
+
 	return $memo[ $key ] = $out;
 }
 
