@@ -1027,7 +1027,7 @@ function aa_reg_derived_course( $slug ) {
 		$title = $cfg['title'] !== '' ? $cfg['title'] : $p->post_title;
 		$code  = strtoupper( preg_replace( '/^SAFe\s*/i', '', $title ) );
 
-		$cache[ $key ] = array(
+		$row = array(
 			'code'     => $code !== '' ? $code : strtoupper( $slug ),
 			'name'     => $p->post_title,
 			'eyebrow'  => aa_reg_t( 'live_online', 'Live online' ) . ' · ' . $title,
@@ -1053,6 +1053,23 @@ function aa_reg_derived_course( $slug ) {
 				$cfg['incl'] !== '' ? $cfg['incl'] : aa_reg_t( 'exam_included', 'exam included' ),
 			),
 		);
+
+		/* A MIRROR OVERRIDES THE TABLE; IT DOES NOT REPLACE IT.
+		   The AI-Native courses are scheduled per city, in 'schedule' -- a key
+		   no page can express. Returning the page's row on its own threw that
+		   away and silently re-scheduled them onto a weekly cadence, so a
+		   French visitor would have been offered dates that do not exist.
+
+		   Starting from the table row and laying the page's values over it
+		   means a mirror can say what it knows -- its own title, lede, price,
+		   what the price covers -- and inherit everything it has no way of
+		   stating. Empty values are dropped first, so a page that omits
+		   data-from or data-incl inherits those too instead of blanking them. */
+		$row  = array_filter( $row, function ( $v ) { return $v !== '' && $v !== null; } );
+		$base = aa_reg_courses();
+		$cache[ $key ] = isset( $base[ $slug ] )
+			? array_merge( $base[ $slug ], $row )
+			: $row;
 		break;
 	}
 
@@ -4719,7 +4736,27 @@ function aa_reg_lang_names() {
  */
 function aa_reg_slug_map() {
 	return array(
-		'sa' => array( 'fr' => 'leading-safe-sa', 'es' => 'leading-safe-sa', 'ar' => 'leading-safe-sa' ),
+		/* Spanish translated this one and the map did not know: the page is
+		   /es/liderando-safe-sa/, not /es/leading-safe-sa/. The switcher was
+		   looking for a slug that does not exist and concluding, correctly by
+		   its own rule, that there is no Spanish page. There is. */
+		'sa'       => array( 'fr' => 'leading-safe-sa', 'es' => 'liderando-safe-sa', 'ar' => 'leading-safe-sa' ),
+		'training' => array( 'es' => 'formacion', 'ar' => 'formation' ),
+
+		/* THE ASSESSMENTS. Every one of these exists in French and Spanish and
+		   not one of them was reachable from the switcher, because the mirrors
+		   translated the slug as well as the page -- /fr/evaluation-agile/ for
+		   /assessments/agile-assessment/. The convention the switcher relies on
+		   is "same slug, different ancestry", and these seven pairs quietly
+		   broke it. That is the "I click French and land on the same English
+		   page" complaint, in full: the page was always there. */
+		'assessments'                   => array( 'fr' => 'evaluations',                    'es' => 'evaluaciones' ),
+		'agile-assessment'              => array( 'fr' => 'evaluation-agile',               'es' => 'evaluacion-agile' ),
+		'ai-assessment'                 => array( 'fr' => 'evaluation-ia',                  'es' => 'evaluacion-ia' ),
+		'product-management-assessment' => array( 'fr' => 'evaluation-product-management',  'es' => 'evaluacion-product-management' ),
+		'innovation-framework'          => array( 'fr' => 'evaluation-innovation',          'es' => 'evaluacion-innovacion' ),
+		'mutation-readiness'            => array( 'fr' => 'evaluation-preparation-mutation','es' => 'evaluacion-preparacion-mutacion' ),
+		'agile-maturity'                => array( 'fr' => 'evaluation-maturite-agile',      'es' => 'evaluacion-madurez-agile' ),
 	);
 }
 
