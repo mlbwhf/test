@@ -1251,11 +1251,11 @@ function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) 
 			function ( $c ) { return $c['start']; },
 			aa_reg_upcoming( $course_key, $course )
 		) ) : array(),
-		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '\u20ac' : '$' ),
+		'symbol'         => strtolower( $cur ) === 'cad' ? 'C$' : ( strtolower( $cur ) === 'eur' ? '€' : '$' ),
 		'locale'         => strtolower( $cur ) === 'cad' ? 'en-CA' : ( strtolower( $cur ) === 'eur' ? 'de-DE' : 'en-US' ),
 		'nonce'          => wp_create_nonce( 'wp_rest' ),
-		'msgUnavailable' => 'Online payment is switched off right now \u2014 please contact us and we will register you.',
-		'msgSending'     => 'Taking you to Stripe\u2026',
+		'msgUnavailable' => 'Online payment is switched off right now — please contact us and we will register you.',
+		'msgSending'     => 'Taking you to Stripe…',
 		'msgError'       => 'We could not start checkout. Please try again, or email us and we will register you by hand.',
 	) ) . ';</script>';
 }
