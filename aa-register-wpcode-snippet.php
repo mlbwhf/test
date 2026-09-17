@@ -5005,6 +5005,106 @@ function aa_reg_attention_shortcode() {
 }
 add_shortcode( 'aa_reg_attention', 'aa_reg_attention_shortcode' );
 
+/**
+ * [aa_reg_send] — send (or resend) a confirmation and invoice, by hand.
+ *
+ * WHY THIS EXISTS. A sale that did not come through our checkout -- Corsizio,
+ * Eventbrite, a bank transfer -- never reaches aa_reg_record_sale(), so nothing
+ * ever sends the buyer anything. Thomas J Green paid for an October SPC on
+ * 14 September and was still waiting weeks later, because there was no way to
+ * send a confirmation except by writing one by hand.
+ *
+ * WHY IT IS A BUTTON AND NOT A HOOK. The previous attempt at this ran on init,
+ * on every page load, for every visitor, and took the site down. A shortcode
+ * that does nothing until an administrator posts a form has no such reach: no
+ * request without a valid nonce and manage_options does anything at all, and a
+ * logged-out visitor sees nothing, because the shortcode returns '' for them.
+ *
+ * Put it on a private page next to [aa_reg_attention].
+ */
+function aa_reg_send_shortcode() {
+	if ( ! current_user_can( 'manage_options' ) ) { return ''; }
+
+	$notice = '';
+
+	/* The only side effect in this file that a human triggers directly. Nonce
+	   first, capability already checked, and the id has to resolve to one of
+	   our own registrations -- a post id alone is not authorisation. */
+	if ( isset( $_POST['aa_send_id'], $_POST['aa_send_nonce'] )
+		&& wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['aa_send_nonce'] ) ), 'aa_reg_send' ) ) {
+
+		$id  = (int) $_POST['aa_send_id'];
+		$reg = get_post( $id );
+		if ( ! $reg || $reg->post_type !== 'aa_registration' ) {
+			$notice = '<p><strong>That is not a registration.</strong></p>';
+		} else {
+			/* A registration entered by hand has no token, and without one
+			   aa_reg_invoice_url() returns '' and the email quietly goes out
+			   with no invoice link -- which is most of what the buyer wanted.
+			   Mint it here, once, rather than anywhere it would have to be
+			   written down or passed around. */
+			if ( ! get_post_meta( $id, 'invoice_token', true ) ) {
+				update_post_meta( $id, 'invoice_token', wp_generate_password( 32, false, false ) );
+			}
+
+			$email = (string) get_post_meta( $id, 'email', true );
+			$sent  = aa_reg_send_confirmation( array(
+				'email'           => $email,
+				'name'            => trim( preg_replace( '/ — .*$/u', '', $reg->post_title ) ),
+				'cohort'          => (string) get_post_meta( $id, 'cohort', true ),
+				'course'          => (string) get_post_meta( $id, 'course', true ),
+				'seats'           => (int) get_post_meta( $id, 'seats', true ),
+				'amount'          => (int) get_post_meta( $id, 'amount_total', true ),
+				'amount_currency' => (string) get_post_meta( $id, 'currency', true ),
+				'lang'            => (string) get_post_meta( $id, 'lang', true ),
+				'post_id'         => $id,
+			) );
+			update_post_meta( $id, 'confirmation_sent', $sent ? 1 : 0 );
+			if ( $sent ) {
+				update_post_meta( $id, 'confirmation_sent_at', current_time( 'mysql' ) );
+				update_post_meta( $id, 'confirmation_sent_by', get_current_user_id() );
+			}
+			$notice = $sent
+				? '<p><strong>Sent to ' . esc_html( $email ) . '.</strong> The invoice link is in the email.</p>'
+				: '<p><strong>wp_mail() refused for ' . esc_html( $email ) . '.</strong> Nothing was sent; the mail transport is the thing to look at, not this page.</p>';
+		}
+	}
+
+	$rows = get_posts( array(
+		'post_type'        => 'aa_registration',
+		'post_status'      => 'any',
+		'numberposts'      => 100,
+		'suppress_filters' => true,
+	) );
+
+	$h = $notice . '<table class="aalangrep__t"><thead><tr><th>Buyer</th><th>Cohort</th>'
+	   . '<th>Paid</th><th>Confirmation</th><th></th></tr></thead><tbody>';
+
+	foreach ( $rows as $r ) {
+		$sent  = (int) get_post_meta( $r->ID, 'confirmation_sent', true );
+		$when  = (string) get_post_meta( $r->ID, 'confirmation_sent_at', true );
+		$cents = (int) get_post_meta( $r->ID, 'amount_total', true );
+		$cur   = strtoupper( (string) get_post_meta( $r->ID, 'currency', true ) );
+
+		$h .= '<tr>'
+		    . '<td>' . esc_html( (string) get_post_meta( $r->ID, 'email', true ) ) . '</td>'
+		    . '<td>' . esc_html( (string) get_post_meta( $r->ID, 'cohort', true ) ) . '</td>'
+		    . '<td>' . esc_html( $cur . ' ' . number_format( $cents / 100, 2 ) ) . '</td>'
+		    . '<td>' . ( $sent
+				? '<span class="is-yes">sent' . ( $when ? ' ' . esc_html( $when ) : '' ) . '</span>'
+				: '<strong style="color:#B3261E">never sent</strong>' ) . '</td>'
+		    . '<td><form method="post" style="margin:0">'
+		    . wp_nonce_field( 'aa_reg_send', 'aa_send_nonce', true, false )
+		    . '<input type="hidden" name="aa_send_id" value="' . (int) $r->ID . '">'
+		    . '<button type="submit">' . ( $sent ? 'Resend' : 'Send' ) . '</button>'
+		    . '</form></td>'
+		    . '</tr>';
+	}
+	$h .= '</tbody></table>';
+	return $h;
+}
+add_shortcode( 'aa_reg_send', 'aa_reg_send_shortcode' );
+
 
 
 /* The Corsizio one-shot for Thomas J Green Jr lived here and has been removed.
