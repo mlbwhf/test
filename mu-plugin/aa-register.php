@@ -1,5 +1,29 @@
 <?php
 /**
+ * Plugin Name: AA — Registration, Courses and Language
+ * Description: Course table, cohort generation, Stripe checkout and webhook, invoices,
+ *              confirmations, the course/track shortcodes, and site-wide language
+ *              switching. Formerly WPCode snippet 32391 "AA – Register PHP".
+ * Version:     2026-09-17
+ * Author:      Agile Agilist
+ *
+ * WHY THIS IS A FILE AND NOT A SNIPPET.
+ * This is 7,600 lines. Pasting it into WPCode's editor truncated it to the first
+ * 5KB -- the header comment and eight lines -- with no error and no warning, and
+ * the site lost every shortcode, the checkout and the Stripe webhook at once.
+ * A file cannot be half-saved by a browser.
+ *
+ * As an mu-plugin it loads automatically, before ordinary plugins, and cannot be
+ * deactivated by accident from wp-admin -- which also removes the other failure
+ * this code has had twice: a snippet toggled inactive, which looks identical to
+ * a snippet that is broken.
+ *
+ * KEEP WPCODE SNIPPET 32391 DEACTIVATED. Two live copies do not merge: the
+ * double-load guard below skips whichever loads second, silently. [aa_reg_selftest]
+ * prints which copy is running.
+ */
+
+/**
  * Agile Agilist — COURSE HERO + REGISTRATION  [aa_course_hero] [aa_course_register]
  * -----------------------------------------------------------------------------
  * Built to the course-page handoff (hero 3A + registration 2B), with the
