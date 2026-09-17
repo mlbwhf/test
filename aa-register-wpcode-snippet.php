@@ -4943,6 +4943,42 @@ function aa_reg_lang_report() {
 add_shortcode( 'aa_lang_report', 'aa_reg_lang_report' );
 
 /**
+ * SUPERSEDED MIRRORS, REDIRECTED RATHER THAN DELETED.
+ *
+ * /fr/formation/ was the French training hub before /fr/training/ replaced it.
+ * Both were live, both ranked, and a visitor could land on either -- one of
+ * them showing the old design and an older list of courses.
+ *
+ * Deleting the old one throws away whatever ranking it has and hands anyone
+ * holding the link a 404. A 301 moves both. The map is keyed on post id, not
+ * on a path, so it cannot fire on the wrong page if a slug is ever reused, and
+ * it only ever runs on a singular page request.
+ */
+function aa_reg_superseded() {
+	return array(
+		/* old page id => the page that replaced it */
+		29287 => '/fr/training/',
+	);
+}
+
+function aa_reg_redirect_superseded() {
+	if ( is_admin() || ! is_singular( 'page' ) ) { return; }
+
+	$id  = get_queried_object_id();
+	$map = aa_reg_superseded();
+	if ( ! isset( $map[ $id ] ) ) { return; }
+
+	$target = home_url( $map[ $id ] );
+	/* Never redirect a page to itself: that is an infinite loop served to
+	   every visitor, and it would be found by them rather than by us. */
+	if ( untrailingslashit( $target ) === untrailingslashit( get_permalink( $id ) ) ) { return; }
+
+	wp_safe_redirect( $target, 301 );
+	exit;
+}
+add_action( 'template_redirect', 'aa_reg_redirect_superseded' );
+
+/**
  * [aa_reg_attention] — paid registrations that a human still has to finish.
  *
  * Put it on a private admin page. Anything listed here is money we have taken
