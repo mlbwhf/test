@@ -192,7 +192,9 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/rte/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,
+			/* 2200, set apart from Large Solution deliberately: they are two
+			   different courses and were sharing one price. */
+			'price'    => 2200,
 			'days'     => 3,
 			'seats'    => 18,
 			'weeks'    => 26,
@@ -242,10 +244,10 @@ function aa_reg_courses() {
 		   these values and cannot drift from them. */
 		'large-solution' => array(
 			'code'     => 'LSS',
-			'name'     => 'Large Solution SAFe®',
-			'eyebrow'  => 'Live online · Large Solution SAFe® 26.9',
-			'h1'       => 'Large Solution SAFe®.',
-			'lede'     => 'For solutions that no single Agile Release Train can build. Structure and coordinate delivery across multiple ARTs, Solution Trains and value stream networks — with the roadmapping, architecture, compliance and supplier practices that only become necessary at that scale.',
+			'name'     => 'Implementing Large Solution SAFe®',
+			'eyebrow'  => 'Live online · Implementing Large Solution SAFe®',
+			'h1'       => 'Implementing Large Solution SAFe®.',
+			'lede'     => 'For people building complex, large-scale systems. Scale Lean-Agile practice through the updated Large Solution Delivery (LSD) discipline — cross-enterprise coordination with external partners and the wider solution ecosystem, for delivery that is faster, more predictable and higher quality.',
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
@@ -1028,7 +1030,7 @@ function aa_reg_derived_course( $slug ) {
 		$cache[ $key ] = array(
 			'code'     => $code !== '' ? $code : strtoupper( $slug ),
 			'name'     => $p->post_title,
-			'eyebrow'  => 'Live online · ' . $title,
+			'eyebrow'  => aa_reg_t( 'live_online', 'Live online' ) . ' · ' . $title,
 			'h1'       => $p->post_title,
 			/* No invented selling copy. The page's own excerpt is what its
 			   author wrote about it; an empty lede renders nothing. */
