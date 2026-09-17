@@ -7877,6 +7877,20 @@ function aa_home_track_count_shortcode() {
 }
 add_shortcode( 'aa_track_count', 'aa_home_track_count_shortcode' );
 
+/**
+ * Absolute form of a course or track URL, for JSON-LD.
+ *
+ * aa_reg_course() returns a hand-written relative path for the English table
+ * rows and a full permalink for anything derived from a page, so home_url()
+ * on its own would produce https://site/https://site/fr/spc/ off English.
+ */
+function aa_home_abs_url( $url ) {
+	$url = trim( (string) $url );
+	if ( $url === '' ) { return ''; }
+	if ( preg_match( '#^https?://#i', $url ) ) { return $url; }
+	return home_url( $url );
+}
+
 /** The permalink of the page being rendered, for absolute anchor URLs in JSON-LD. */
 function aa_home_self_url() {
 	if ( ! function_exists( 'get_queried_object' ) ) { return ''; }
@@ -8030,7 +8044,7 @@ function aa_home_tracks_shortcode( $atts ) {
 				'@type'    => 'ListItem',
 				'position' => $k + 1,
 				'name'     => ( $c['code'] !== '' ? $c['code'] . ' — ' : '' ) . $c['name'],
-				'url'      => $c['url'] !== '' ? home_url( $c['url'] ) : null,
+				'url'      => $c['url'] !== '' ? aa_home_abs_url( $c['url'] ) : null,
 			);
 		}
 		$sub = array_map( function ( $x ) {
@@ -8042,7 +8056,7 @@ function aa_home_tracks_shortcode( $atts ) {
 			'@type'    => 'ListItem',
 			'position' => $i + 1,
 			'name'     => $t['label'],
-			'url'      => home_url( $t['href'] ),
+			'url'      => aa_home_abs_url( $t['href'] ),
 			'item'     => array(
 				'@type'           => 'ItemList',
 				'name'            => $t['label'],
