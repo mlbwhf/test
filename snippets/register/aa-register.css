@@ -1606,3 +1606,89 @@ a.aah__row:hover { background: var(--aah-warm); }
 .aa-rd .aa-fx-facts div{background:#fff;padding:16px 18px}
 .aa-rd .aa-fx-facts dt{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#88A0A4;margin:0}
 .aa-rd .aa-fx-facts dd{font-size:16px;color:#0E3A44;margin:6px 0 0;font-weight:600}
+
+/* ===========================================================================
+   HOME PAGE ADDITIONS  —  .aaj (sticky jump menu) / .aat (track tab strip)
+   Markup comes from [aa_jump_menu] and [aa_home_tracks]; behaviour from
+   aa-home in the JS snippet. Namespaced, no global selectors.
+
+   STICKY NEEDS A NON-CLIPPING ANCESTOR. The home page wrapper is div.aa and
+   the hero's decorative blob was being clipped with overflow:hidden, which
+   silently turns every ancestor into a scroll container and kills
+   position:sticky. overflow-x:clip clips the blob without doing that;
+   overflow-y has to be restated as visible or the hidden value survives on
+   that axis and the scroll container comes back.
+   =========================================================================== */
+html{scroll-padding-top:76px}
+div.aa{overflow-x:clip;overflow-y:visible}
+div.aa > section{scroll-margin-top:68px}
+
+/* ---- A. sticky jump menu ------------------------------------------------- */
+/* --aa-sticky-top is the escape hatch: if the theme header is itself sticky,
+   set it to that header's height instead of editing this rule. */
+.aaj{position:sticky;top:var(--aa-sticky-top,0px);z-index:40;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--aa-line,#E2DCCE)}
+.aaj-row{display:flex;align-items:center;gap:8px;padding:9px clamp(14px,4vw,56px);overflow-x:auto;scrollbar-width:none}
+.aaj-row::-webkit-scrollbar{display:none}
+.aaj-eyebrow{flex-shrink:0;padding-right:6px;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--aa-deco,#8C8574)}
+.aaj-link{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;padding:8px 15px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;color:var(--aa-body,#4E4A40);background:transparent;border:1px solid var(--aa-line,#E2DCCE);transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.aaj-link:hover{border-color:var(--aa-teal,#0E8074);color:var(--aa-teal,#0E8074)}
+.aaj-link[aria-current="true"]{background:var(--aa-teal,#0E8074);border-color:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+.aaj-num{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;opacity:.55}
+.aaj-link[aria-current="true"] .aaj-num{opacity:.8}
+.aaj-cta{margin-left:auto;flex-shrink:0;padding:9px 18px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;background:var(--aa-ink,#101C33);color:var(--aa-cream,#F7F5F0);transition:background .3s}
+.aaj-cta:hover{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+
+/* ---- B. track tab strip -------------------------------------------------- */
+/* Closed panels collapse with minmax(0,0fr), not 0fr: an fr track's automatic
+   minimum is its content height, so plain 0fr leaves the whole panel height
+   reserved as blank space. They stay in the DOM — visibility:hidden, never
+   display:none — so every credential name is in the first fetch. */
+.aat-tabs{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:36px}
+.aat-tab{display:inline-flex;align-items:center;gap:10px;flex:0 1 auto;min-width:0;padding:13px 18px;border-radius:14px 14px 0 0;font:inherit;text-align:left;cursor:pointer;border:1.5px solid var(--aa-line,#E2DCCE);background:rgba(14,128,116,.045);color:var(--aa-ink,#101C33);transition:all .4s cubic-bezier(.2,.8,.2,1)}
+.aat-tab:hover{border-color:var(--aa-teal,#0E8074);color:var(--aa-teal,#0E8074)}
+.aat-tab[aria-selected="true"]{border-color:var(--aa-teal,#0E8074);border-bottom-color:#fff;margin-bottom:-1.5px;background:#fff;color:var(--aa-teal,#0E8074);cursor:default}
+.aat-num{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:22px;line-height:.9;flex-shrink:0;color:#CFC8B8;font-variant-numeric:tabular-nums;transition:color .4s}
+.aat-tab[aria-selected="true"] .aat-num{color:var(--aa-teal,#0E8074)}
+.aat-label{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.aat-count{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:21px;padding:0 7px;border-radius:100px;font-size:11.5px;font-weight:700;flex-shrink:0;font-variant-numeric:tabular-nums;background:rgba(14,128,116,.12);color:var(--aa-teal,#0E8074);transition:all .4s}
+.aat-tab[aria-selected="true"] .aat-count{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+.aat-body{display:grid;grid-template-rows:minmax(0,0fr);opacity:0;visibility:hidden;overflow:hidden;min-height:0;border:0;border-radius:0 18px 18px 18px;background:#fff;transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility .45s}
+.aat-body[data-open="true"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1.5px solid var(--aa-teal,#0E8074)}
+.aat-inner{display:flex;flex-direction:column;gap:13px;min-width:0;min-height:0;overflow:hidden;padding:0 clamp(22px,2.4vw,30px)}
+.aat-body[data-open="true"] .aat-inner{padding:clamp(22px,2.4vw,30px)}
+.aat-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.aat-head h3{font-size:clamp(21px,2.3vw,29px);font-weight:600;letter-spacing:-.025em;margin:0;line-height:1.15}
+.aat-bodycount{padding:4px 11px;border-radius:100px;white-space:nowrap;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(14,128,116,.1);color:var(--aa-teal,#0E8074)}
+.aat-desc{margin:0;font-size:14.5px;line-height:1.55;color:var(--aa-body,#4E4A40);max-width:760px}
+.aat-certs{display:flex;flex-wrap:wrap;gap:7px;list-style:none;margin:2px 0 0;padding:0}
+.aat-certs li{padding:5px 11px;border-radius:7px;font-size:12.5px;font-weight:600;letter-spacing:.01em;border:1px solid rgba(14,128,116,.3);background:rgba(14,128,116,.06);color:var(--aa-teal,#0E8074)}
+.aat-certs li a{color:inherit;text-decoration:none}
+.aat-certs li a:hover{text-decoration:underline}
+.aat-certs li b{font-weight:800;letter-spacing:.04em;opacity:.75;margin-right:2px}
+.aat-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:2px}
+.aat-for{font-size:12.5px;font-weight:500;color:var(--aa-deco,#8C8574)}
+.aat-cta{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:100px;text-decoration:none;font-size:13px;font-weight:600;background:var(--aa-ink,#101C33);color:var(--aa-cream,#F7F5F0);transition:background .3s}
+.aat-cta:hover{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+
+@media (max-width:720px){
+  .aat-tab{padding:11px 14px;flex:1 1 auto;min-height:46px}
+  .aat-num{font-size:19px}
+  .aat-label{font-size:13.5px;white-space:normal}
+  .aat-body,.aat-body[data-open="true"]{border-radius:18px}
+  .aat-actions{align-items:flex-start}
+  .aat-actions .aat-cta{width:100%;justify-content:center;min-height:46px}
+  .aaj-link,.aaj-cta{min-height:40px}
+}
+
+/* Scripts off: the shortcode ships an equivalent <noscript> block. */
+.aat-nojs .aat-tabs{display:none}
+.aat-nojs .aat-body,.aat-nojs .aat-body[data-open="false"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1.5px solid var(--aa-line,#E2DCCE);border-radius:18px;margin-bottom:10px}
+.aat-nojs .aat-inner{padding:clamp(22px,2.4vw,30px)}
+
+@media (prefers-reduced-motion:reduce){
+  .aat-tab,.aat-body,.aaj-link{transition:none}
+}
+
+/* RTL: the strip and the menu read right-to-left with no other change. */
+[dir="rtl"] .aat-body{border-radius:18px 0 18px 18px}
+[dir="rtl"] .aaj-cta{margin-left:0;margin-right:auto}

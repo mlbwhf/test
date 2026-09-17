@@ -819,3 +819,117 @@ function aaRegGo(win, url) {
 
   showMonth(0);
 })();
+
+/* ===========================================================================
+   HOME PAGE ADDITIONS — behaviour only.
+
+     A. jumpSpy()  sets aria-current on the menu entry whose section is in
+                   view. The entries are real #anchors and work without this.
+     B. tracks()   the ARIA tabs pattern for the certification strip: one
+                   panel open, arrow keys / Home / End move between tabs.
+
+   NEITHER FUNCTION BUILDS MARKUP. Both blocks are rendered server-side by
+   [aa_jump_menu] and [aa_home_tracks]; this only binds to what is already in
+   the source. Do not "optimise" the closed panels out of the DOM — they are
+   zero-height and visibility:hidden on purpose so every credential name is in
+   the first fetch.
+   =========================================================================== */
+(function () {
+  'use strict';
+
+  function jumpSpy() {
+    var host = document.querySelector('[data-aa="jump"]');
+    if (!host || host.getAttribute('data-aa-bound') === '1') return;
+
+    var links = Array.prototype.slice.call(host.querySelectorAll('[data-aaj]'));
+    var secs  = Array.prototype.slice.call(document.querySelectorAll('[data-aa-section]'));
+    if (!links.length || !secs.length || !('IntersectionObserver' in window)) return;
+    host.setAttribute('data-aa-bound', '1');
+
+    var obs = new IntersectionObserver(function (entries) {
+      var vis = entries
+        .filter(function (e) { return e.isIntersecting; })
+        .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; })[0];
+      if (!vis) return;
+      var id = vis.target.getAttribute('data-aa-section');
+      links.forEach(function (a) {
+        if (a.getAttribute('data-aaj') === id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    }, {
+      /* a section is "current" once it holds the middle band of the viewport —
+         tuned so the menu never flickers between two adjacent sections */
+      rootMargin: '-25% 0px -55% 0px',
+      threshold: [0, 0.15, 0.4, 0.75]
+    });
+
+    secs.forEach(function (s) { obs.observe(s); });
+  }
+
+  function tracks() {
+    var host = document.querySelector('[data-aa="tracks"]');
+    if (!host || host.getAttribute('data-aa-bound') === '1') return;
+
+    /* The server does not emit .aat-nojs — the <noscript> block covers the
+       scripts-off case without every panel painting open and then collapsing
+       in front of the reader. This stays for anyone who adds it by hand. */
+    host.classList.remove('aat-nojs');
+
+    var tabs   = Array.prototype.slice.call(host.querySelectorAll('.aat-tab'));
+    var panels = Array.prototype.slice.call(host.querySelectorAll('.aat-body'));
+    if (!tabs.length || tabs.length !== panels.length) return;
+    host.setAttribute('data-aa-bound', '1');
+
+    function select(index, focus) {
+      tabs.forEach(function (t, i) {
+        var on = i === index;
+        t.setAttribute('aria-selected', String(on));
+        t.setAttribute('tabindex', on ? '0' : '-1');
+        panels[i].setAttribute('data-open', String(on));
+        panels[i].setAttribute('aria-hidden', String(!on));
+      });
+      if (focus && tabs[index]) tabs[index].focus();
+    }
+
+    function current() {
+      for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].getAttribute('aria-selected') === 'true') return i;
+      }
+      return -1;
+    }
+
+    host.addEventListener('click', function (e) {
+      var tab = e.target && e.target.closest ? e.target.closest('.aat-tab') : null;
+      if (!tab) return;
+      var i = tabs.indexOf(tab);
+      /* Selecting MOVES the selection; clicking the open tab is a no-op, so
+         the section can never collapse to a bare row of labels. */
+      if (i >= 0) select(i, false);
+    });
+
+    host.addEventListener('keydown', function (e) {
+      var tab = e.target && e.target.closest ? e.target.closest('.aat-tab') : null;
+      if (!tab) return;
+      var i = tabs.indexOf(tab);
+      var rtl = document.documentElement.getAttribute('dir') === 'rtl';
+      var fwd = rtl ? 'ArrowLeft' : 'ArrowRight';
+      var back = rtl ? 'ArrowRight' : 'ArrowLeft';
+      var next = null;
+      if (e.key === fwd  || e.key === 'ArrowDown') next = (i + 1) % tabs.length;
+      if (e.key === back || e.key === 'ArrowUp')   next = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === 'Home') next = 0;
+      if (e.key === 'End')  next = tabs.length - 1;
+      if (next === null) return;
+      e.preventDefault();
+      select(next, true);
+    });
+
+    if (current() < 0) select(0, false);
+    else select(current(), false);
+  }
+
+  function init() { jumpSpy(); tracks(); }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();

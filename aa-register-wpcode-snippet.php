@@ -7619,3 +7619,441 @@ function aa_reg_cohorts_section( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_cohorts', 'aa_reg_cohorts_section' );
+
+/* ============================================================================
+   AA — HOME PAGE ADDITIONS        [aa_jump_menu] [aa_home_tracks] [aa_cert_count]
+   ----------------------------------------------------------------------------
+   Two blocks from the home-page design handoff, rebuilt on our own data.
+
+   A. [aa_jump_menu]   sticky in-page section menu, sits right after the hero.
+   B. [aa_home_tracks] the certification tracks as a horizontal tab strip,
+                       replacing the five hand-typed cards in section 02.
+
+   WHY THIS IS NOT THE HANDOFF'S PHP. The handoff ships aa_home_tracks() and
+   aa_home_jump_items() as hardcoded arrays, and every figure in them is wrong
+   for us: Micro-credentials "18 = 7 SAFe + 11 ICAgile" where we run four,
+   SAFe by Role "6" where we run seven, Advanced "5" where we run seven,
+   AI-Native "4" where we run three -- and two of its five hrefs
+   (/training/micro-credentials/, /training/safe-by-industry/) are not pages on
+   this site. Those are the same five numbers that were already typed into the
+   home page and had drifted from the catalogue.
+
+   So nothing here is typed. Track membership comes from
+   aa_reg_track_course_slugs(), the credential names and URLs from
+   aa_reg_course() -- the same table the checkout reads -- and the labels and
+   descriptions from aa_training_copy_l10n(), which is already translated. Add
+   a course and the count on the home page moves on its own.
+
+   THE TOTAL IS DISTINCT, NOT A SUM. ARCH sits in both Advanced SAFe and SAFe
+   by Industry, and SAFe Practitioner in both Core Roles and SAFe by Industry.
+   Adding the five track counts would claim credentials we do not have, so the
+   headline figure counts distinct slugs.
+
+   KEPT FROM THE HANDOFF, deliberately:
+     - every panel body is in the HTML at all times. Closed panels are
+       zero-height + visibility:hidden, never display:none and never removed,
+       so all ~26 credential names and five track descriptions are in the
+       first fetch;
+     - the menu entries are real #anchors, not JS scrolling;
+     - the ARIA tabs pattern, including roving tabindex and arrow keys.
+
+   ONE THING CHANGED. The handoff renders the strip with .aat-nojs on the host
+   and has the JS strip it on boot, which means every panel paints open and
+   then collapses in front of the reader on every load. The <noscript> block
+   alone does the same job without the flash, so the class is not emitted and
+   the JS's removeClass is simply a no-op.
+   ============================================================================ */
+
+/** Small label table for the two blocks. English base, laid over per language. */
+function aa_home_copy_l10n() {
+	$en = array(
+		'eyebrow'     => 'On this page',
+		'nav_cta'     => 'Browse certifications',
+		'training'    => 'Training',
+		'assessments' => 'Assessments',
+		'why'         => 'Why us',
+		'methodology' => 'Methodology',
+		'consulting'  => 'Consulting',
+		'results'     => 'Results',
+		'path'        => 'Your path',
+		'coaching'    => 'Coaching',
+		'tablist'     => 'Certification tracks',
+		/* %d is the number of certifications in the open track. */
+		'count'       => '%d certifications',
+		'track_cta'   => 'View the track',
+	);
+
+	$over = array(
+		'fr' => array(
+			'eyebrow'     => 'Sur cette page',
+			'nav_cta'     => 'Voir les certifications',
+			'training'    => 'Formations',
+			'assessments' => 'Évaluations',
+			'why'         => 'Pourquoi nous',
+			'methodology' => 'Méthodologie',
+			'consulting'  => 'Conseil',
+			'results'     => 'Résultats',
+			'path'        => 'Votre parcours',
+			'coaching'    => 'Coaching',
+			'tablist'     => 'Parcours de certification',
+			'count'       => '%d certifications',
+			'track_cta'   => 'Voir le parcours',
+		),
+		'es' => array(
+			'eyebrow'     => 'En esta página',
+			'nav_cta'     => 'Ver las certificaciones',
+			'training'    => 'Formación',
+			'assessments' => 'Evaluaciones',
+			'why'         => 'Por qué nosotros',
+			'methodology' => 'Metodología',
+			'consulting'  => 'Consultoría',
+			'results'     => 'Resultados',
+			'path'        => 'Tu itinerario',
+			'coaching'    => 'Coaching',
+			'tablist'     => 'Itinerarios de certificación',
+			'count'       => '%d certificaciones',
+			'track_cta'   => 'Ver el itinerario',
+		),
+		'ar' => array(
+			'eyebrow'     => 'في هذه الصفحة',
+			'nav_cta'     => 'استعرض الشهادات',
+			'training'    => 'التدريب',
+			'assessments' => 'التقييمات',
+			'why'         => 'لماذا نحن',
+			'methodology' => 'المنهجية',
+			'consulting'  => 'الاستشارات',
+			'results'     => 'النتائج',
+			'path'        => 'مسارك',
+			'coaching'    => 'الإرشاد المهني',
+			'tablist'     => 'مسارات الشهادات',
+			'count'       => '%d شهادات',
+			'track_cta'   => 'عرض المسار',
+		),
+	);
+
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	return isset( $over[ $lang ] ) ? array_merge( $en, $over[ $lang ] ) : $en;
+}
+
+/**
+ * THE JUMP-MENU ENTRIES.
+ *
+ * The numerals are the section numbers the page already prints in its own
+ * kickers -- "( 02 ) — All training" -- and not a second 01..08 scheme of the
+ * menu's own. Two numbering systems on one screen is how a menu starts lying
+ * about which section it points at.
+ */
+function aa_home_jump_items() {
+	$L = aa_home_copy_l10n();
+
+	$ids = array(
+		'training'    => '02',
+		'assessments' => '03',
+		'why'         => '04',
+		'methodology' => '05',
+		'consulting'  => '06',
+		'results'     => '07',
+		'path'        => '08',
+		'coaching'    => '09',
+	);
+
+	$out = array();
+	foreach ( $ids as $id => $num ) {
+		$out[] = array(
+			'id'    => $id,
+			'num'   => $num,
+			'label' => isset( $L[ $id ] ) ? $L[ $id ] : ucfirst( $id ),
+		);
+	}
+	return apply_filters( 'aa_home_jump_items', $out );
+}
+
+/**
+ * THE FIVE TRACKS, READ RATHER THAN TYPED.
+ *
+ * Order is the order they already read in on the page: the one-day credentials
+ * first, the AI-Native track last because it is the newest and the reader is
+ * least likely to be looking for it by name.
+ */
+function aa_home_track_data( $order = '' ) {
+	static $cache = array();
+
+	if ( $order === '' ) {
+		$order = 'safe-found,safe-roles,adv-safe,safe-industry,ai-native';
+	}
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	$key  = $lang . '|' . $order;
+	if ( isset( $cache[ $key ] ) ) { return $cache[ $key ]; }
+
+	if ( ! function_exists( 'aa_reg_track_course_slugs' ) || ! function_exists( 'aa_reg_course' ) ) {
+		$cache[ $key ] = array();
+		return $cache[ $key ];
+	}
+
+	$copy = function_exists( 'aa_training_copy_l10n' ) ? aa_training_copy_l10n() : array();
+	$cats = array_filter( array_map( 'trim', explode( ',', (string) $order ) ) );
+
+	$out = array();
+	foreach ( $cats as $cat ) {
+		$slugs = aa_reg_track_course_slugs( $cat );
+		if ( ! $slugs ) { continue; }
+
+		$certs = array();
+		foreach ( $slugs as $slug ) {
+			$c = aa_reg_course( $slug );
+			if ( ! $c ) { continue; }
+
+			/* "SAFe® Release Train Engineer Certification" is the catalogue
+			   name; on a chip the trailing word is noise on all five of them. */
+			$name = isset( $c['name'] ) ? trim( (string) $c['name'] ) : '';
+			$name = trim( preg_replace( '/\s+Certification$/u', '', $name ) );
+			if ( $name === '' ) {
+				$name = ! empty( $c['code'] ) ? (string) $c['code'] : $slug;
+			}
+
+			$certs[] = array(
+				'slug' => $slug,
+				'code' => ! empty( $c['code'] ) ? (string) $c['code'] : '',
+				'name' => $name,
+				'url'  => ! empty( $c['url'] ) ? (string) $c['url'] : '',
+			);
+		}
+		if ( ! $certs ) { continue; }
+
+		$out[] = array(
+			'cat'   => $cat,
+			'label' => isset( $copy[ $cat ]['label'] ) ? (string) $copy[ $cat ]['label'] : ucwords( str_replace( '-', ' ', $cat ) ),
+			'desc'  => isset( $copy[ $cat ]['sub'] )   ? (string) $copy[ $cat ]['sub'] : '',
+			'for'   => isset( $copy[ $cat ]['comp'] )  ? (string) $copy[ $cat ]['comp'] : '',
+			'href'  => '/training/' . $cat . '/',
+			'certs' => $certs,
+		);
+	}
+
+	$cache[ $key ] = $out;
+	return $out;
+}
+
+/** Distinct certifications across the tracks -- see the note on double-counting. */
+function aa_home_cert_total() {
+	$seen = array();
+	foreach ( aa_home_track_data() as $t ) {
+		foreach ( $t['certs'] as $c ) { $seen[ $c['slug'] ] = 1; }
+	}
+	return count( $seen );
+}
+
+function aa_home_cert_count_shortcode() {
+	$n = aa_home_cert_total();
+	return $n > 0 ? (string) $n : '';
+}
+add_shortcode( 'aa_cert_count', 'aa_home_cert_count_shortcode' );
+
+function aa_home_track_count_shortcode() {
+	$n = count( aa_home_track_data() );
+	return $n > 0 ? (string) $n : '';
+}
+add_shortcode( 'aa_track_count', 'aa_home_track_count_shortcode' );
+
+/**
+ * Absolute form of a course or track URL, for JSON-LD.
+ *
+ * aa_reg_course() returns a hand-written relative path for the English table
+ * rows and a full permalink for anything derived from a page, so home_url()
+ * on its own would produce https://site/https://site/fr/spc/ off English.
+ */
+function aa_home_abs_url( $url ) {
+	$url = trim( (string) $url );
+	if ( $url === '' ) { return ''; }
+	if ( preg_match( '#^https?://#i', $url ) ) { return $url; }
+	return home_url( $url );
+}
+
+/** The permalink of the page being rendered, for absolute anchor URLs in JSON-LD. */
+function aa_home_self_url() {
+	if ( ! function_exists( 'get_queried_object' ) ) { return ''; }
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) ) { return ''; }
+	$url = get_permalink( $obj );
+	return is_string( $url ) ? $url : '';
+}
+
+/* ---------------------------------------------------------------------------
+   A. STICKY IN-PAGE MENU                                        [aa_jump_menu]
+   Real anchors, so the entries are shareable URLs and candidate sitelinks.
+   The scrollspy in the JS only decorates them; with scripts off the menu is a
+   plain list of working links.
+   --------------------------------------------------------------------------- */
+function aa_home_jump_shortcode( $atts ) {
+	$a = shortcode_atts( array( 'cta' => '/training/' ), $atts, 'aa_jump_menu' );
+
+	$items = aa_home_jump_items();
+	if ( ! $items ) { return ''; }
+	$L = aa_home_copy_l10n();
+
+	$h  = '<nav class="aaj" data-aa="jump" aria-label="' . esc_attr( $L['eyebrow'] ) . '">';
+	$h .= '<div class="aaj-row">';
+	$h .= '<span class="aaj-eyebrow">' . esc_html( $L['eyebrow'] ) . '</span>';
+	foreach ( $items as $it ) {
+		$h .= '<a class="aaj-link" href="#' . esc_attr( $it['id'] ) . '"'
+		    . ' data-aaj="' . esc_attr( $it['id'] ) . '">'
+		    . '<span class="aaj-num" aria-hidden="true">' . esc_html( $it['num'] ) . '</span>'
+		    . esc_html( $it['label'] ) . '</a>';
+	}
+	if ( $a['cta'] !== '' ) {
+		$h .= '<a class="aaj-cta" href="' . esc_url( $a['cta'] ) . '">'
+		    . esc_html( $L['nav_cta'] ) . ' &#10230;</a>';
+	}
+	$h .= '</div></nav>';
+
+	/* SiteNavigationElement, so the sections are candidates for sitelinks. */
+	$base = aa_home_self_url();
+	if ( $base !== '' ) {
+		$el = array();
+		foreach ( $items as $n => $it ) {
+			$el[] = array(
+				'@type'    => 'SiteNavigationElement',
+				'position' => $n + 1,
+				'name'     => $it['label'],
+				'url'      => $base . '#' . $it['id'],
+			);
+		}
+		$h .= '<script type="application/ld+json">'
+		    . wp_json_encode( array(
+				'@context'        => 'https://schema.org',
+				'@type'           => 'ItemList',
+				'name'            => $L['eyebrow'],
+				'itemListElement' => $el,
+			), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE )
+		    . '</script>';
+	}
+
+	return $h;
+}
+add_shortcode( 'aa_jump_menu', 'aa_home_jump_shortcode' );
+
+/* ---------------------------------------------------------------------------
+   B. THE TRACK TAB STRIP                                      [aa_home_tracks]
+   --------------------------------------------------------------------------- */
+function aa_home_tracks_shortcode( $atts ) {
+	$a = shortcode_atts( array(
+		'tracks' => '',
+		'open'   => '',
+	), $atts, 'aa_home_tracks' );
+
+	$tr = aa_home_track_data( $a['tracks'] );
+	if ( ! $tr ) { return ''; }
+	$L = aa_home_copy_l10n();
+
+	$open = 0;
+	if ( $a['open'] !== '' ) {
+		foreach ( $tr as $i => $t ) {
+			if ( $t['cat'] === $a['open'] ) { $open = $i; break; }
+		}
+	}
+
+	$h  = '<div class="aat" data-aa="tracks">';
+	$h .= '<div class="aat-tabs" role="tablist" aria-label="' . esc_attr( $L['tablist'] ) . '">';
+	foreach ( $tr as $i => $t ) {
+		$on = ( $i === $open );
+		$h .= '<button type="button" class="aat-tab" role="tab"'
+		    . ' id="aat-tab-' . esc_attr( $t['cat'] ) . '"'
+		    . ' aria-controls="aat-panel-' . esc_attr( $t['cat'] ) . '"'
+		    . ' aria-selected="' . ( $on ? 'true' : 'false' ) . '"'
+		    . ' tabindex="' . ( $on ? '0' : '-1' ) . '">'
+		    . '<span class="aat-num" aria-hidden="true">' . sprintf( '%02d', $i + 1 ) . '</span>'
+		    . '<span class="aat-label">' . esc_html( $t['label'] ) . '</span>'
+		    . '<span class="aat-count" aria-hidden="true">' . count( $t['certs'] ) . '</span>'
+		    . '</button>';
+	}
+	$h .= '</div>';
+
+	foreach ( $tr as $i => $t ) {
+		$on = ( $i === $open );
+		$h .= '<div class="aat-body" role="tabpanel"'
+		    . ' id="aat-panel-' . esc_attr( $t['cat'] ) . '"'
+		    . ' aria-labelledby="aat-tab-' . esc_attr( $t['cat'] ) . '"'
+		    . ' data-open="' . ( $on ? 'true' : 'false' ) . '"'
+		    . ' aria-hidden="' . ( $on ? 'false' : 'true' ) . '">';
+		$h .= '<div class="aat-inner">';
+		$h .= '<div class="aat-head"><h3>' . esc_html( $t['label'] ) . '</h3>'
+		    . '<span class="aat-bodycount">'
+		    . esc_html( sprintf( $L['count'], count( $t['certs'] ) ) )
+		    . '</span></div>';
+		if ( $t['desc'] !== '' ) {
+			$h .= '<p class="aat-desc">' . esc_html( $t['desc'] ) . '</p>';
+		}
+		$h .= '<ul class="aat-certs">';
+		foreach ( $t['certs'] as $c ) {
+			$li = ( $c['code'] !== '' ? '<b>' . esc_html( $c['code'] ) . '</b> ' : '' ) . esc_html( $c['name'] );
+			$h .= '<li>' . ( $c['url'] !== ''
+				? '<a href="' . esc_url( $c['url'] ) . '">' . $li . '</a>'
+				: $li ) . '</li>';
+		}
+		$h .= '</ul>';
+		$h .= '<div class="aat-actions">';
+		if ( $t['for'] !== '' ) {
+			$h .= '<span class="aat-for">' . esc_html( $t['for'] ) . '</span>';
+		}
+		$h .= '<a class="aat-cta" href="' . esc_url( $t['href'] ) . '">'
+		    . esc_html( $L['track_cta'] ) . ' &#10230;</a>';
+		$h .= '</div>';
+		$h .= '</div></div>';
+	}
+	$h .= '</div>';
+
+	/* Scripts off: no tab can be switched, so every panel opens and the strip
+	   becomes a plain index. Keep in step with the .aat-nojs rules in the CSS. */
+	$h .= '<noscript><style>'
+	    . '.aat .aat-tabs{display:none}'
+	    . '.aat .aat-body{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;'
+	    . 'border:1.5px solid var(--aa-line);border-radius:18px;margin-bottom:10px}'
+	    . '.aat .aat-inner{padding:clamp(22px,2.4vw,30px)}'
+	    . '</style></noscript>';
+
+	/* The same content as structured data: a list of tracks, each with the
+	   credentials inside it. Emitted here rather than in wp_head so it cannot
+	   describe a strip the page did not render. */
+	$el = array();
+	foreach ( $tr as $i => $t ) {
+		$sub = array();
+		foreach ( $t['certs'] as $k => $c ) {
+			$sub[] = array(
+				'@type'    => 'ListItem',
+				'position' => $k + 1,
+				'name'     => ( $c['code'] !== '' ? $c['code'] . ' — ' : '' ) . $c['name'],
+				'url'      => $c['url'] !== '' ? aa_home_abs_url( $c['url'] ) : null,
+			);
+		}
+		$sub = array_map( function ( $x ) {
+			if ( $x['url'] === null ) { unset( $x['url'] ); }
+			return $x;
+		}, $sub );
+
+		$el[] = array(
+			'@type'    => 'ListItem',
+			'position' => $i + 1,
+			'name'     => $t['label'],
+			'url'      => aa_home_abs_url( $t['href'] ),
+			'item'     => array(
+				'@type'           => 'ItemList',
+				'name'            => $t['label'],
+				'description'     => $t['desc'],
+				'numberOfItems'   => count( $t['certs'] ),
+				'itemListElement' => $sub,
+			),
+		);
+	}
+	$h .= '<script type="application/ld+json">'
+	    . wp_json_encode( array(
+			'@context'        => 'https://schema.org',
+			'@type'           => 'ItemList',
+			'name'            => $L['tablist'],
+			'numberOfItems'   => count( $tr ),
+			'itemListElement' => $el,
+		), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE )
+	    . '</script>';
+
+	return $h;
+}
+add_shortcode( 'aa_home_tracks', 'aa_home_tracks_shortcode' );
