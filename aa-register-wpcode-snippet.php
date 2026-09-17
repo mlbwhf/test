@@ -4978,6 +4978,220 @@ function aa_reg_redirect_superseded() {
 }
 add_action( 'template_redirect', 'aa_reg_redirect_superseded' );
 
+/* ============================================================================
+   AA — THE SITE IS IN A LANGUAGE, NOT THE PAGE
+   ----------------------------------------------------------------------------
+   THE COMPLAINT: you switch to French, and the page is French -- but the menu
+   is still English, and the first link you click puts you back on the English
+   site. The switch worked; it just only ever switched one page.
+
+   THE CAUSE: the language lives in the URL and aa_reg_lang() reads it off the
+   page. Nothing else knew. The theme renders one menu, built once, pointing at
+   English pages, and it renders that same menu on /fr/spc/ as on /spc/.
+
+   WHY NOT A SECOND MENU. Duplicating the menu per language means four menus to
+   keep in step by hand, and they drift the moment somebody adds a course. The
+   mirrors already follow a rule -- same slug, different ancestry -- and that
+   rule is enough to rewrite the menu we already have, item by item, at render.
+   A course added in French appears in the French menu because the page exists,
+   not because anyone remembered to add it twice.
+
+   WHAT IS REWRITTEN: menu links and labels, links inside page content, and the
+   logo's link home. An item with no mirror keeps its English URL rather than
+   disappearing -- a visitor who can reach a page in the wrong language is
+   better served than one who cannot reach it at all.
+   ========================================================================= */
+
+/**
+ * This page's mirror in $lang, or '' — one query, memoised.
+ *
+ * aa_reg_translations() answers the same question for every language at once,
+ * which is right for the switcher and wasteful here: the menu asks about one
+ * language, forty times a page.
+ */
+function aa_reg_mirror_of( $post, $lang ) {
+	if ( ! ( $post instanceof WP_Post ) ) { return ''; }
+
+	static $memo = array();
+	$key = $post->ID . '|' . $lang;
+	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
+	$memo[ $key ] = '';
+
+	$here = aa_reg_lang( $post );
+	if ( $here === $lang ) { return ''; }
+
+	$slug  = aa_reg_slug_in( aa_reg_en_slug( $post->post_name, $here ), $lang );
+	$pages = get_posts( array(
+		'post_type'        => 'page',
+		'name'             => $slug,
+		'post_status'      => 'publish',
+		'numberposts'      => 6,
+		'suppress_filters' => true,
+	) );
+	foreach ( $pages as $p ) {
+		if ( aa_reg_lang( $p ) !== $lang ) { continue; }
+		$memo[ $key ] = get_permalink( $p->ID );
+		break;
+	}
+	return $memo[ $key ];
+}
+
+/** The same, from a URL rather than a post. '' when there is nothing to swap. */
+function aa_reg_mirror_url( $url, $lang ) {
+	$url = trim( (string) $url );
+	if ( $url === '' || $url[0] === '#' ) { return ''; }
+	if ( preg_match( '#^(mailto:|tel:|javascript:)#i', $url ) ) { return ''; }
+
+	/* Only our own pages. An absolute URL elsewhere is somebody else's site and
+	   rewriting it would be both wrong and rude. */
+	$host = wp_parse_url( $url, PHP_URL_HOST );
+	if ( $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ) { return ''; }
+
+	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+	if ( $path === '' ) { return ''; }
+
+	/* Already under a language root: either it is the right one, in which case
+	   there is nothing to do, or it is a deliberate cross-language link. */
+	foreach ( aa_reg_lang_roots() as $root ) {
+		if ( strpos( $path, '/' . $root . '/' ) === 0 ) { return ''; }
+	}
+
+	static $memo = array();
+	$key = $path . '|' . $lang;
+	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
+
+	$id = url_to_postid( $url );
+	$memo[ $key ] = $id ? aa_reg_mirror_of( get_post( $id ), $lang ) : '';
+	return $memo[ $key ];
+}
+
+/**
+ * Menu labels that are not simply the page's title.
+ *
+ * Where a menu item carries the page title unchanged, swapping the URL swaps
+ * the label with it and nothing is needed here. This is for the ones somebody
+ * shortened by hand -- "Lean Portfolio Mgmt (LPM)" is not what the page is
+ * called, so following the page would change the label as well as translate it.
+ */
+function aa_reg_menu_labels() {
+	return array(
+		'Home'         => array( 'fr' => 'Accueil',      'es' => 'Inicio',        'ar' => 'الرئيسية' ),
+		'Training'     => array( 'fr' => 'Formations',   'es' => 'Formación',     'ar' => 'التدريب' ),
+		'Courses'      => array( 'fr' => 'Formations',   'es' => 'Cursos',        'ar' => 'الدورات' ),
+		'Services'     => array( 'fr' => 'Services',     'es' => 'Servicios',     'ar' => 'الخدمات' ),
+		'Assessments'  => array( 'fr' => 'Évaluations',  'es' => 'Evaluaciones',  'ar' => 'التقييمات' ),
+		'About'        => array( 'fr' => 'À propos',     'es' => 'Acerca de',     'ar' => 'من نحن' ),
+		'Contact'      => array( 'fr' => 'Contact',      'es' => 'Contacto',      'ar' => 'اتصل بنا' ),
+		'Customers'    => array( 'fr' => 'Nos clients',  'es' => 'Clientes',      'ar' => 'عملاؤنا' ),
+		'Blog'         => array( 'fr' => 'Blog',         'es' => 'Blog',          'ar' => 'المدونة' ),
+		'FAQ'          => array( 'fr' => 'FAQ',          'es' => 'Preguntas frecuentes', 'ar' => 'الأسئلة الشائعة' ),
+		'Global Offices'    => array( 'fr' => 'Nos bureaux',        'es' => 'Oficinas' ),
+		'Send us a message' => array( 'fr' => 'Nous écrire',        'es' => 'Escríbenos' ),
+		'Agile Career Selector' => array( 'fr' => 'Sélecteur de parcours', 'es' => 'Selector de carrera' ),
+		'Lean Portfolio Mgmt (LPM)' => array( 'fr' => 'Lean Portfolio Mgmt (LPM)', 'es' => 'Lean Portfolio Mgmt (LPM)' ),
+		'Agile Product Mgmt (APM)'  => array( 'fr' => 'Agile Product Mgmt (APM)',  'es' => 'Agile Product Mgmt (APM)' ),
+		'Digital Transformation'    => array( 'fr' => 'Transformation numérique',  'es' => 'Transformación digital' ),
+		'Innovation Culture'        => array( 'fr' => 'Culture d’innovation',      'es' => 'Cultura de innovación' ),
+		'Product Operating Model'   => array( 'fr' => 'Modèle opérationnel produit','es' => 'Modelo operativo de producto' ),
+		'Operating Model in the Age of AI' => array( 'fr' => 'Le modèle opérationnel à l’ère de l’IA', 'es' => 'Modelo operativo en la era de la IA' ),
+		'Value Stream Mapping'      => array( 'fr' => 'Value Stream Mapping',      'es' => 'Value Stream Mapping' ),
+		'Conflict & Collaboration'  => array( 'fr' => 'Conflit et collaboration',  'es' => 'Conflicto y colaboración' ),
+		'Achieving Responsible AI'  => array( 'fr' => 'Une IA responsable',        'es' => 'IA responsable' ),
+		'Agile Maturity'            => array( 'fr' => 'Maturité Agile',            'es' => 'Madurez Agile' ),
+		'Innovation Framework'      => array( 'fr' => 'Innovation Framework',      'es' => 'Innovation Framework' ),
+		'AI-Native'                 => array( 'fr' => 'AI-Native',                 'es' => 'AI-Native' ),
+		'AI Automation'             => array( 'fr' => 'Automatisation par l’IA',   'es' => 'Automatización con IA' ),
+		'Mutation'                  => array( 'fr' => 'Mutation',                  'es' => 'Mutación' ),
+	);
+}
+
+function aa_reg_localise_menu( $items ) {
+	$lang = aa_reg_lang();
+	if ( $lang === 'en' || ! is_array( $items ) ) { return $items; }
+
+	$labels = aa_reg_menu_labels();
+	$home   = untrailingslashit( home_url( '/' ) );
+
+	foreach ( $items as $item ) {
+		if ( ! isset( $item->url ) ) { continue; }
+
+		/* The home link, which resolves to no page and so would never match. */
+		if ( untrailingslashit( $item->url ) === $home ) {
+			$item->url = home_url( '/' . $lang . '/' );
+			$plain     = html_entity_decode( (string) $item->title, ENT_QUOTES, 'UTF-8' );
+			if ( isset( $labels[ $plain ][ $lang ] ) ) { $item->title = $labels[ $plain ][ $lang ]; }
+			continue;
+		}
+
+		$id = ( isset( $item->object ) && $item->object === 'page' && ! empty( $item->object_id ) )
+			? (int) $item->object_id
+			: url_to_postid( $item->url );
+		if ( ! $id ) { continue; }
+
+		$src = get_post( $id );
+		$url = aa_reg_mirror_of( $src, $lang );
+		if ( $url === '' ) { continue; }   // no mirror: leave it in English rather than hide it
+
+		$item->url = $url;
+
+		/* THE LABEL, and three rules in order of confidence.
+		   A hand-written label gets its hand-written translation. A label that
+		   is simply the page's title follows the page, which is why most items
+		   need no entry at all. Anything else keeps the English it had -- a
+		   wrong translation in a menu is worse than an untranslated one. */
+		$plain = html_entity_decode( (string) $item->title, ENT_QUOTES, 'UTF-8' );
+		if ( isset( $labels[ $plain ][ $lang ] ) ) {
+			$item->title = $labels[ $plain ][ $lang ];
+		} elseif ( $plain === html_entity_decode( get_the_title( $id ), ENT_QUOTES, 'UTF-8' ) ) {
+			$mirror_id = url_to_postid( $url );
+			if ( $mirror_id ) { $item->title = get_the_title( $mirror_id ); }
+		}
+	}
+	return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'aa_reg_localise_menu', 20 );
+
+/**
+ * Links inside the page, same rule.
+ *
+ * The French course pages carry English links in their "career path" sections
+ * -- /training/safe/asm/ and the like -- written before the mirrors existed.
+ * Rewriting at render means they follow the mirrors as those appear, instead of
+ * needing every page edited again.
+ */
+function aa_reg_localise_links( $html ) {
+	$lang = aa_reg_lang();
+	if ( $lang === 'en' || is_admin() || ! is_string( $html ) || $html === '' ) { return $html; }
+	if ( strpos( $html, 'href=' ) === false ) { return $html; }
+
+	$out = preg_replace_callback(
+		'#href=(["\'])([^"\']+)\1#i',
+		function ( $m ) use ( $lang ) {
+			$url = aa_reg_mirror_url( $m[2], $lang );
+			return $url === '' ? $m[0] : 'href=' . $m[1] . esc_url( $url ) . $m[1];
+		},
+		$html
+	);
+
+	/* preg_replace_callback returns null on failure -- backtrack limit, bad
+	   UTF-8 -- and returning that would blank the page body. Keep the original
+	   rather than serve nothing. */
+	return ( $out === null ) ? $html : $out;
+}
+add_filter( 'the_content', 'aa_reg_localise_links', 20 );
+
+/** The logo links home; on a mirror, home is that language's home. */
+function aa_reg_localise_logo( $html ) {
+	$lang = aa_reg_lang();
+	if ( $lang === 'en' || ! is_string( $html ) || $html === '' ) { return $html; }
+	return str_replace(
+		array( 'href="' . home_url( '/' ) . '"', 'href="' . untrailingslashit( home_url( '/' ) ) . '"' ),
+		'href="' . home_url( '/' . $lang . '/' ) . '"',
+		$html
+	);
+}
+add_filter( 'get_custom_logo', 'aa_reg_localise_logo', 20 );
+
 /**
  * [aa_reg_attention] — paid registrations that a human still has to finish.
  *
