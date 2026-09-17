@@ -2693,9 +2693,26 @@ function aa_reg_lang( $post = null ) {
 		if ( $ov !== null ) { return $ov; }
 		static $cur = null;
 		if ( $cur !== null ) { return $cur; }
+
 		$obj = get_queried_object();
 		if ( ! ( $obj instanceof WP_Post ) && isset( $GLOBALS['post'] ) ) { $obj = $GLOBALS['post']; }
-		$cur = ( $obj instanceof WP_Post ) ? aa_reg_lang( $obj ) : 'en';
+
+		/* DO NOT CACHE A GUESS.
+		   This used to store 'en' when there was no post to read, and 'en' is
+		   not an answer here -- it is "asked too early". Anything that reaches
+		   aa_reg_lang() before the main query is set up (a meta-description
+		   builder on wp_head, a widget, a plugin applying the_content to make
+		   an excerpt) poisoned the cache for the whole request. The page body
+		   still rendered French, because that comes from the page's own
+		   content, while every filter that asks "what language is this?"
+		   answered English -- so the menu kept its English links under French
+		   labels, and the first click left the French site.
+
+		   Answering 'en' uncached is the same behaviour for a genuinely
+		   English request and self-corrects the moment there is a post. */
+		if ( ! ( $obj instanceof WP_Post ) ) { return 'en'; }
+
+		$cur = aa_reg_lang( $obj );
 		return $cur;
 	}
 	if ( ! ( $post instanceof WP_Post ) ) { return 'en'; }
@@ -5224,6 +5241,66 @@ function aa_reg_localise_logo( $html ) {
 	);
 }
 add_filter( 'get_custom_logo', 'aa_reg_localise_logo', 20 );
+
+/**
+ * [aa_lang_debug] — why is this page's navigation in the language it is in?
+ *
+ * Put it on any page, in any language, and read it while logged in. It answers
+ * the three questions that decide everything above, in order, so a wrong answer
+ * names its own cause rather than needing the whole chain re-derived:
+ *
+ *   what aa_reg_lang() says       -- 'en' on a /fr/ page means it was asked
+ *                                    before the query was ready, and every
+ *                                    filter below it will do nothing
+ *   whether the filters are on    -- a snippet saved inactive looks identical
+ *                                    to a snippet with a bug
+ *   what each menu item resolves  -- a blank mirror is a missing page, which
+ *                                    is content, not code
+ */
+function aa_reg_lang_debug_shortcode() {
+	if ( ! current_user_can( 'edit_pages' ) ) { return ''; }
+
+	$lang = aa_reg_lang();
+	$id   = get_queried_object_id();
+	$post = $id ? get_post( $id ) : null;
+	$anc  = $post ? get_post_ancestors( $post->ID ) : array();
+	$root = $anc ? get_post( end( $anc ) ) : $post;
+
+	$l   = array();
+	$l[] = 'aa_reg_lang()      : ' . $lang . ( $lang === 'en' ? '   <-- English; everything below is a no-op' : '' );
+	$l[] = 'this page          : #' . (int) $id . '  ' . ( $post ? $post->post_name : '(none)' );
+	$l[] = 'root ancestor slug : ' . ( $root ? $root->post_name : '(none)' )
+	     . ( $root && in_array( $root->post_name, aa_reg_lang_roots(), true ) ? '   (a language root)' : '   (not a language root -> English)' );
+	$l[] = '';
+	$l[] = 'menu filter   : ' . ( has_filter( 'wp_nav_menu_objects', 'aa_reg_localise_menu' ) ? 'attached' : 'NOT ATTACHED' );
+	$l[] = 'content filter: ' . ( has_filter( 'the_content', 'aa_reg_localise_links' ) ? 'attached' : 'NOT ATTACHED' );
+	$l[] = 'logo filter   : ' . ( has_filter( 'get_custom_logo', 'aa_reg_localise_logo' ) ? 'attached' : 'NOT ATTACHED' );
+	$l[] = 'content rewrite enabled: ' . ( apply_filters( 'aa_reg_rewrite_content_links', true ) ? 'yes' : 'no (switched off)' );
+	$l[] = '';
+
+	$locs = get_nav_menu_locations();
+	$term = isset( $locs['primary'] ) ? (int) $locs['primary'] : 0;
+	$l[]  = 'primary menu  : ' . ( $term ? '#' . $term : 'NONE ASSIGNED' );
+
+	if ( $term ) {
+		$items = wp_get_nav_menu_items( $term );
+		if ( $items ) {
+			$l[] = str_pad( 'LABEL', 34 ) . str_pad( 'POINTS AT', 40 ) . 'MIRROR IN ' . strtoupper( $lang );
+			foreach ( array_slice( $items, 0, 40 ) as $it ) {
+				$oid = ( $it->object === 'page' && $it->object_id ) ? (int) $it->object_id : url_to_postid( $it->url );
+				$src = $oid ? get_post( $oid ) : null;
+				$mir = $src ? aa_reg_mirror_of( $src, $lang ) : '';
+				$l[] = str_pad( mb_substr( wp_strip_all_tags( $it->title ), 0, 32 ), 34 )
+				     . str_pad( mb_substr( (string) wp_make_link_relative( $it->url ), 0, 38 ), 40 )
+				     . ( $mir !== '' ? wp_make_link_relative( $mir ) : '— none —' );
+			}
+		}
+	}
+
+	return '<pre style="font-size:12px;line-height:1.5;overflow-x:auto;background:#F8FCFC;'
+	     . 'border:1px solid #DCEAEA;padding:16px">' . esc_html( implode( "\n", $l ) ) . '</pre>';
+}
+add_shortcode( 'aa_lang_debug', 'aa_reg_lang_debug_shortcode' );
 
 /**
  * [aa_reg_attention] — paid registrations that a human still has to finish.
