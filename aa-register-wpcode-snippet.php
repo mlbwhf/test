@@ -5047,7 +5047,8 @@ function aa_reg_mirror_url( $url, $lang ) {
 	$host = wp_parse_url( $url, PHP_URL_HOST );
 	if ( $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ) { return ''; }
 
-	$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+	$parts = wp_parse_url( $url );
+	$path  = isset( $parts['path'] ) ? (string) $parts['path'] : '';
 	if ( $path === '' ) { return ''; }
 
 	/* Already under a language root: either it is the right one, in which case
@@ -5056,13 +5057,30 @@ function aa_reg_mirror_url( $url, $lang ) {
 		if ( strpos( $path, '/' . $root . '/' ) === 0 ) { return ''; }
 	}
 
+	/* THE PATH IS WHAT MOVES; THE QUERY AND THE FRAGMENT COME ALONG.
+	   get_permalink() returns a bare page URL, so the first version of this
+	   dropped everything after the path -- and on a course page almost every
+	   link has something after the path. "?cohort=spc-2026-10-12#enroll"
+	   became the top of the page with no cohort selected, and a section link
+	   like "#salary" on a full path stopped jumping anywhere. The page still
+	   loaded, which is why it read as navigation breaking rather than as an
+	   error. Memoise the base by path; re-attach the rest per link. */
 	static $memo = array();
 	$key = $path . '|' . $lang;
-	if ( isset( $memo[ $key ] ) ) { return $memo[ $key ]; }
+	if ( ! isset( $memo[ $key ] ) ) {
+		$id = url_to_postid( $path );
+		$memo[ $key ] = $id ? aa_reg_mirror_of( get_post( $id ), $lang ) : '';
+	}
+	$base = $memo[ $key ];
+	if ( $base === '' ) { return ''; }
 
-	$id = url_to_postid( $url );
-	$memo[ $key ] = $id ? aa_reg_mirror_of( get_post( $id ), $lang ) : '';
-	return $memo[ $key ];
+	if ( ! empty( $parts['query'] ) ) {
+		$base .= ( strpos( $base, '?' ) === false ? '?' : '&' ) . $parts['query'];
+	}
+	if ( ! empty( $parts['fragment'] ) ) {
+		$base .= '#' . $parts['fragment'];
+	}
+	return $base;
 }
 
 /**
@@ -5132,6 +5150,17 @@ function aa_reg_localise_menu( $items ) {
 		$url = aa_reg_mirror_of( $src, $lang );
 		if ( $url === '' ) { continue; }   // no mirror: leave it in English rather than hide it
 
+		/* A menu item can carry an anchor -- "Cohorts" pointing at
+		   /training/#cohorts -- and the mirror is a bare page URL. Same trap
+		   as the content links; same fix. */
+		$was = wp_parse_url( $item->url );
+		if ( ! empty( $was['query'] ) ) {
+			$url .= ( strpos( $url, '?' ) === false ? '?' : '&' ) . $was['query'];
+		}
+		if ( ! empty( $was['fragment'] ) ) {
+			$url .= '#' . $was['fragment'];
+		}
+
 		$item->url = $url;
 
 		/* THE LABEL, and three rules in order of confidence.
@@ -5163,6 +5192,10 @@ function aa_reg_localise_links( $html ) {
 	$lang = aa_reg_lang();
 	if ( $lang === 'en' || is_admin() || ! is_string( $html ) || $html === '' ) { return $html; }
 	if ( strpos( $html, 'href=' ) === false ) { return $html; }
+	/* An off switch that does not need this 300KB file edited to reach. Drop
+	   add_filter( 'aa_reg_rewrite_content_links', '__return_false' ); in any
+	   other snippet and the body is served exactly as stored. */
+	if ( ! apply_filters( 'aa_reg_rewrite_content_links', true ) ) { return $html; }
 
 	$out = preg_replace_callback(
 		'#href=(["\'])([^"\']+)\1#i',
