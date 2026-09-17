@@ -7679,7 +7679,7 @@ add_shortcode( 'aa_cohorts', 'aa_reg_cohorts_section' );
      - the menu entries are real #anchors, not JS scrolling;
      - the ARIA tabs pattern, including roving tabindex and arrow keys.
 
-   ONE THING CHANGED. The handoff renders the strip with .aat-nojs on the host
+   ONE THING CHANGED. The handoff renders the strip with .aahs-nojs on the host
    and has the JS strip it on boot, which means every panel paints open and
    then collapses in front of the reader on every load. The <noscript> block
    alone does the same job without the flash, so the class is not emitted and
@@ -7833,9 +7833,28 @@ function aa_home_track_data( $order = '' ) {
 				$name = ! empty( $c['code'] ) ? (string) $c['code'] : $slug;
 			}
 
+			/* THE CODE IS ONLY WORTH PRINTING WHEN IT IS A REAL CODE.
+			   aa_reg_courses() carries proper credential codes -- SPC, RTE,
+			   POPM. A course DERIVED from its page has no such field, so
+			   aa_reg_derived_course() manufactures one by upper-casing the
+			   page's own title: the four micro-credentials came out as
+			   "AF: CONFLICT & COLLABORATION", and the chip then printed that
+			   immediately followed by "Advanced Facilitator: Conflict &
+			   Collaboration" -- the same words twice, once shouted.
+
+			   So a code has to look like a code to be shown: letters, digits
+			   and hyphens, two to eight characters. Anything with a space, a
+			   colon or more than eight characters is a title wearing capitals
+			   and the chip carries the name alone. */
+			$code = ! empty( $c['code'] ) ? trim( (string) $c['code'] ) : '';
+			if ( ! preg_match( '/^[A-Z0-9][A-Z0-9-]{1,7}$/', $code )
+				|| strcasecmp( $code, $name ) === 0 ) {
+				$code = '';
+			}
+
 			$certs[] = array(
 				'slug' => $slug,
-				'code' => ! empty( $c['code'] ) ? (string) $c['code'] : '',
+				'code' => $code,
 				'name' => $name,
 				'url'  => ! empty( $c['url'] ) ? (string) $c['url'] : '',
 			);
@@ -7900,6 +7919,102 @@ function aa_home_self_url() {
 	return is_string( $url ) ? $url : '';
 }
 
+/**
+ * THE BEHAVIOUR, INLINE, ONCE PER PAGE.
+ *
+ * WHY NOT IN THE SHARED JS SNIPPET. It was, at the bottom of "AA - Register
+ * JS". That file is one <script>: an uncaught error in any earlier block in it
+ * stops every later block from running, silently and with nothing on the page
+ * to say so. This site has lost a working feature to that exact failure more
+ * than once, and a home page whose tabs do not respond is indistinguishable
+ * from a home page whose tabs were never wired.
+ *
+ * Emitting it beside the markup makes the block self-contained: it cannot be
+ * killed by code it has nothing to do with, and it cannot be half-installed.
+ *
+ * IT BUILDS NO MARKUP. Both blocks are complete HTML from the shortcodes; this
+ * only binds behaviour. Do not "optimise" the closed panels out of the DOM --
+ * they are zero-height and visibility:hidden on purpose, so every credential
+ * name is in the first fetch.
+ */
+function aa_home_behaviour_script() {
+	static $done = false;
+	if ( $done ) { return ''; }
+	$done = true;
+
+	$js = <<<'AAJS'
+(function(){
+'use strict';
+function spy(){
+  var host=document.querySelector('[data-aa="jump"]');
+  if(!host||host.getAttribute('data-aa-bound')==='1')return;
+  var links=[].slice.call(host.querySelectorAll('[data-aaj]'));
+  var secs=[].slice.call(document.querySelectorAll('[data-aa-section]'));
+  if(!links.length||!secs.length||!('IntersectionObserver' in window))return;
+  host.setAttribute('data-aa-bound','1');
+  var obs=new IntersectionObserver(function(es){
+    var v=es.filter(function(e){return e.isIntersecting;})
+           .sort(function(a,b){return b.intersectionRatio-a.intersectionRatio;})[0];
+    if(!v)return;
+    var id=v.target.getAttribute('data-aa-section');
+    links.forEach(function(a){
+      if(a.getAttribute('data-aaj')===id)a.setAttribute('aria-current','true');
+      else a.removeAttribute('aria-current');
+    });
+  },{rootMargin:'-25% 0px -55% 0px',threshold:[0,0.15,0.4,0.75]});
+  secs.forEach(function(s){obs.observe(s);});
+}
+function tabs(){
+  var host=document.querySelector('[data-aa="tracks"]');
+  if(!host||host.getAttribute('data-aa-bound')==='1')return;
+  host.classList.remove('aahs-nojs');
+  var T=[].slice.call(host.querySelectorAll('.aahs-tab'));
+  var P=[].slice.call(host.querySelectorAll('.aahs-body'));
+  if(!T.length||T.length!==P.length)return;
+  host.setAttribute('data-aa-bound','1');
+  function sel(i,focus){
+    T.forEach(function(t,k){
+      var on=k===i;
+      t.setAttribute('aria-selected',String(on));
+      t.setAttribute('tabindex',on?'0':'-1');
+      P[k].setAttribute('data-open',String(on));
+      P[k].setAttribute('aria-hidden',String(!on));
+    });
+    if(focus&&T[i])T[i].focus();
+  }
+  function cur(){for(var i=0;i<T.length;i++){if(T[i].getAttribute('aria-selected')==='true')return i;}return -1;}
+  host.addEventListener('click',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('.aahs-tab'):null;
+    if(!t)return;
+    var i=T.indexOf(t);
+    /* selecting MOVES the selection; clicking the open tab is a no-op, so the
+       section can never collapse to a bare row of labels */
+    if(i>=0)sel(i,false);
+  });
+  host.addEventListener('keydown',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('.aahs-tab'):null;
+    if(!t)return;
+    var i=T.indexOf(t),n=null;
+    var rtl=document.documentElement.getAttribute('dir')==='rtl';
+    var fwd=rtl?'ArrowLeft':'ArrowRight', back=rtl?'ArrowRight':'ArrowLeft';
+    if(e.key===fwd||e.key==='ArrowDown')n=(i+1)%T.length;
+    if(e.key===back||e.key==='ArrowUp')n=(i-1+T.length)%T.length;
+    if(e.key==='Home')n=0;
+    if(e.key==='End')n=T.length-1;
+    if(n===null)return;
+    e.preventDefault();sel(n,true);
+  });
+  sel(cur()<0?0:cur(),false);
+}
+function init(){try{spy();}catch(e){}try{tabs();}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+AAJS;
+
+	return '<script>' . $js . '</script>';
+}
+
 /* ---------------------------------------------------------------------------
    A. STICKY IN-PAGE MENU                                        [aa_jump_menu]
    Real anchors, so the entries are shareable URLs and candidate sitelinks.
@@ -7927,6 +8042,7 @@ function aa_home_jump_shortcode( $atts ) {
 		    . esc_html( $L['nav_cta'] ) . ' &#10230;</a>';
 	}
 	$h .= '</div></nav>';
+	$h .= aa_home_behaviour_script();
 
 	/* SiteNavigationElement, so the sections are candidates for sitelinks. */
 	$base = aa_home_self_url();
@@ -7974,38 +8090,38 @@ function aa_home_tracks_shortcode( $atts ) {
 		}
 	}
 
-	$h  = '<div class="aat" data-aa="tracks">';
-	$h .= '<div class="aat-tabs" role="tablist" aria-label="' . esc_attr( $L['tablist'] ) . '">';
+	$h  = '<div class="aahs" data-aa="tracks">';
+	$h .= '<div class="aahs-tabs" role="tablist" aria-label="' . esc_attr( $L['tablist'] ) . '">';
 	foreach ( $tr as $i => $t ) {
 		$on = ( $i === $open );
-		$h .= '<button type="button" class="aat-tab" role="tab"'
-		    . ' id="aat-tab-' . esc_attr( $t['cat'] ) . '"'
-		    . ' aria-controls="aat-panel-' . esc_attr( $t['cat'] ) . '"'
+		$h .= '<button type="button" class="aahs-tab" role="tab"'
+		    . ' id="aahs-tab-' . esc_attr( $t['cat'] ) . '"'
+		    . ' aria-controls="aahs-panel-' . esc_attr( $t['cat'] ) . '"'
 		    . ' aria-selected="' . ( $on ? 'true' : 'false' ) . '"'
 		    . ' tabindex="' . ( $on ? '0' : '-1' ) . '">'
-		    . '<span class="aat-num" aria-hidden="true">' . sprintf( '%02d', $i + 1 ) . '</span>'
-		    . '<span class="aat-label">' . esc_html( $t['label'] ) . '</span>'
-		    . '<span class="aat-count" aria-hidden="true">' . count( $t['certs'] ) . '</span>'
+		    . '<span class="aahs-num" aria-hidden="true">' . sprintf( '%02d', $i + 1 ) . '</span>'
+		    . '<span class="aahs-label">' . esc_html( $t['label'] ) . '</span>'
+		    . '<span class="aahs-count" aria-hidden="true">' . count( $t['certs'] ) . '</span>'
 		    . '</button>';
 	}
 	$h .= '</div>';
 
 	foreach ( $tr as $i => $t ) {
 		$on = ( $i === $open );
-		$h .= '<div class="aat-body" role="tabpanel"'
-		    . ' id="aat-panel-' . esc_attr( $t['cat'] ) . '"'
-		    . ' aria-labelledby="aat-tab-' . esc_attr( $t['cat'] ) . '"'
+		$h .= '<div class="aahs-body" role="tabpanel"'
+		    . ' id="aahs-panel-' . esc_attr( $t['cat'] ) . '"'
+		    . ' aria-labelledby="aahs-tab-' . esc_attr( $t['cat'] ) . '"'
 		    . ' data-open="' . ( $on ? 'true' : 'false' ) . '"'
 		    . ' aria-hidden="' . ( $on ? 'false' : 'true' ) . '">';
-		$h .= '<div class="aat-inner">';
-		$h .= '<div class="aat-head"><h3>' . esc_html( $t['label'] ) . '</h3>'
-		    . '<span class="aat-bodycount">'
+		$h .= '<div class="aahs-inner">';
+		$h .= '<div class="aahs-head"><h3>' . esc_html( $t['label'] ) . '</h3>'
+		    . '<span class="aahs-bodycount">'
 		    . esc_html( sprintf( $L['count'], count( $t['certs'] ) ) )
 		    . '</span></div>';
 		if ( $t['desc'] !== '' ) {
-			$h .= '<p class="aat-desc">' . esc_html( $t['desc'] ) . '</p>';
+			$h .= '<p class="aahs-desc">' . esc_html( $t['desc'] ) . '</p>';
 		}
-		$h .= '<ul class="aat-certs">';
+		$h .= '<ul class="aahs-certs">';
 		foreach ( $t['certs'] as $c ) {
 			$li = ( $c['code'] !== '' ? '<b>' . esc_html( $c['code'] ) . '</b> ' : '' ) . esc_html( $c['name'] );
 			$h .= '<li>' . ( $c['url'] !== ''
@@ -8013,24 +8129,25 @@ function aa_home_tracks_shortcode( $atts ) {
 				: $li ) . '</li>';
 		}
 		$h .= '</ul>';
-		$h .= '<div class="aat-actions">';
+		$h .= '<div class="aahs-actions">';
 		if ( $t['for'] !== '' ) {
-			$h .= '<span class="aat-for">' . esc_html( $t['for'] ) . '</span>';
+			$h .= '<span class="aahs-for">' . esc_html( $t['for'] ) . '</span>';
 		}
-		$h .= '<a class="aat-cta" href="' . esc_url( $t['href'] ) . '">'
+		$h .= '<a class="aahs-cta" href="' . esc_url( $t['href'] ) . '">'
 		    . esc_html( $L['track_cta'] ) . ' &#10230;</a>';
 		$h .= '</div>';
 		$h .= '</div></div>';
 	}
 	$h .= '</div>';
+	$h .= aa_home_behaviour_script();
 
 	/* Scripts off: no tab can be switched, so every panel opens and the strip
-	   becomes a plain index. Keep in step with the .aat-nojs rules in the CSS. */
+	   becomes a plain index. Keep in step with the .aahs-nojs rules in the CSS. */
 	$h .= '<noscript><style>'
-	    . '.aat .aat-tabs{display:none}'
-	    . '.aat .aat-body{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;'
-	    . 'border:1.5px solid var(--aa-line);border-radius:18px;margin-bottom:10px}'
-	    . '.aat .aat-inner{padding:clamp(22px,2.4vw,30px)}'
+	    . '.aahs .aahs-tabs{display:none}'
+	    . '.aahs .aahs-body{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;'
+	    . 'border:1px solid var(--hs-line);margin-bottom:10px}'
+	    . '.aahs .aahs-inner{padding:clamp(22px,2.4vw,30px)}'
 	    . '</style></noscript>';
 
 	/* The same content as structured data: a list of tracks, each with the
@@ -8079,3 +8196,17 @@ function aa_home_tracks_shortcode( $atts ) {
 	return $h;
 }
 add_shortcode( 'aa_home_tracks', 'aa_home_tracks_shortcode' );
+
+/**
+ * THE SECTOR BAR UNDER THE HERO, OFF.
+ *
+ * "Trusted by · Banking · Government · Telecom · Healthcare · Insurance ·
+ * Retail" sat between the hero and the in-page menu, pushing the menu a full
+ * band further down the page and saying nothing a reader could act on -- six
+ * sector nouns are not evidence, and the section names below them are.
+ *
+ * Switched off through the Home Hero snippet's own filter rather than by
+ * deleting its markup, so it comes back in one line the day there are client
+ * logos with permission behind it.
+ */
+add_filter( 'aa_hh_trust', '__return_empty_array' );

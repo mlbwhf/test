@@ -1607,88 +1607,120 @@ a.aah__row:hover { background: var(--aah-warm); }
 .aa-rd .aa-fx-facts dt{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#88A0A4;margin:0}
 .aa-rd .aa-fx-facts dd{font-size:16px;color:#0E3A44;margin:6px 0 0;font-weight:600}
 
-/* ===========================================================================
-   HOME PAGE ADDITIONS  —  .aaj (sticky jump menu) / .aat (track tab strip)
-   Markup comes from [aa_jump_menu] and [aa_home_tracks]; behaviour from
-   aa-home in the JS snippet. Namespaced, no global selectors.
 
-   STICKY NEEDS A NON-CLIPPING ANCESTOR. The home page wrapper is div.aa and
-   the hero's decorative blob was being clipped with overflow:hidden, which
-   silently turns every ancestor into a scroll container and kills
-   position:sticky. overflow-x:clip clips the blob without doing that;
-   overflow-y has to be restated as visible or the hidden value survives on
-   that axis and the scroll container comes back.
+/* ===========================================================================
+   HOME PAGE ADDITIONS  —  .aaj (sticky jump menu) / .aahs (track tab strip)
+   Markup from [aa_jump_menu] and [aa_home_tracks]; behaviour is inlined by
+   the shortcode itself.
+
+   TWO NAMING MISTAKES ARE FIXED HERE, both of which shipped visibly broken.
+
+   1. THE NAMESPACE. This block used .aat-* — which is the TRACK CALENDAR's
+      namespace, not a free one. .aat-cta already exists in the track-calendar
+      stylesheet as an orange button with color:#fff!important, so the home
+      page's "View the track" button was being styled by a rule written for a
+      different component on a different page.
+
+   2. THE TOKENS. It also read var(--aa-ink), var(--aa-cream) and friends with
+      hex fallbacks. Those fallbacks never applied: the home page ships its own
+      --aa-* design tokens, so the names resolved to ITS palette instead of the
+      one these rules were written against, and both CTA buttons rendered as a
+      solid pill with text the same colour as its background. A var() fallback
+      only helps when nobody else defines the name — which is exactly the case
+      you cannot assume for a name as generic as --aa-ink.
+
+   So the palette below is private (--hs-*), declared on these two roots, and
+   nothing here inherits a colour it does not own.
    =========================================================================== */
+.aaj,.aahs{
+  --hs-ink:#101C33; --hs-body:#4E4A40; --hs-deco:#8C8574;
+  --hs-line:#E2DCCE; --hs-teal:#0E8074; --hs-cream:#F7F5F0;
+}
+
+/* Sticky needs a non-clipping ancestor. The home wrapper is div.aa and it
+   clipped the hero blob with overflow:hidden, which silently makes it a scroll
+   container and kills position:sticky. overflow-x:clip clips the blob without
+   doing that; overflow-y has to be restated or hidden survives on that axis. */
 html{scroll-padding-top:76px}
 div.aa{overflow-x:clip;overflow-y:visible}
-div.aa > section{scroll-margin-top:68px}
+div.aa > section{scroll-margin-top:72px}
 
 /* ---- A. sticky jump menu ------------------------------------------------- */
-/* --aa-sticky-top is the escape hatch: if the theme header is itself sticky,
-   set it to that header's height instead of editing this rule. */
-.aaj{position:sticky;top:var(--aa-sticky-top,0px);z-index:40;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--aa-line,#E2DCCE)}
+/* --aa-sticky-top is the escape hatch if the theme header is itself sticky. */
+.aaj{position:sticky;top:var(--aa-sticky-top,0px);z-index:40;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--hs-line)}
 .aaj-row{display:flex;align-items:center;gap:8px;padding:9px clamp(14px,4vw,56px);overflow-x:auto;scrollbar-width:none}
 .aaj-row::-webkit-scrollbar{display:none}
-.aaj-eyebrow{flex-shrink:0;padding-right:6px;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--aa-deco,#8C8574)}
-.aaj-link{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;padding:8px 15px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;color:var(--aa-body,#4E4A40);background:transparent;border:1px solid var(--aa-line,#E2DCCE);transition:all .35s cubic-bezier(.2,.8,.2,1)}
-.aaj-link:hover{border-color:var(--aa-teal,#0E8074);color:var(--aa-teal,#0E8074)}
-.aaj-link[aria-current="true"]{background:var(--aa-teal,#0E8074);border-color:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+.aaj-eyebrow{flex-shrink:0;padding-right:6px;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--hs-deco)}
+.aaj .aaj-link{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;padding:8px 15px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;color:var(--hs-body);background:#fff;border:1px solid var(--hs-line);transition:all .35s cubic-bezier(.2,.8,.2,1)}
+.aaj .aaj-link:hover{border-color:var(--hs-teal);color:var(--hs-teal);background:#fff}
+.aaj .aaj-link[aria-current="true"]{background:var(--hs-teal);border-color:var(--hs-teal);color:var(--hs-cream)}
 .aaj-num{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;opacity:.55}
-.aaj-link[aria-current="true"] .aaj-num{opacity:.8}
-.aaj-cta{margin-left:auto;flex-shrink:0;padding:9px 18px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;background:var(--aa-ink,#101C33);color:var(--aa-cream,#F7F5F0);transition:background .3s}
-.aaj-cta:hover{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+.aaj .aaj-link[aria-current="true"] .aaj-num{opacity:.85}
+/* color is stated on the anchor AND repeated here: a theme that styles `a`
+   generically beats a single declaration and the label goes invisible, which
+   is precisely what happened to this button. */
+.aaj .aaj-cta{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:100px;white-space:nowrap;font-size:12.5px;font-weight:600;text-decoration:none;background:var(--hs-ink);color:var(--hs-cream);border:1px solid var(--hs-ink);transition:background .3s,border-color .3s}
+.aaj .aaj-cta:hover,.aaj .aaj-cta:focus{background:var(--hs-teal);border-color:var(--hs-teal);color:var(--hs-cream)}
 
 /* ---- B. track tab strip -------------------------------------------------- */
+/* The tabs are PILLS, not tabs joined to the panel. Joined tabs need a
+   negative bottom margin to meet the panel border, and the moment five of them
+   wrap onto a second row that join lands in mid-air and the whole strip reads
+   as a rendering fault -- which is what it did. Pills wrap without looking
+   broken at any width, and they match the jump menu directly above them. */
+.aahs-tabs{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:32px}
+.aahs .aahs-tab{display:inline-flex;align-items:center;gap:9px;flex:0 1 auto;min-width:0;padding:11px 16px;border-radius:100px;font:inherit;font-size:14px;text-align:left;cursor:pointer;border:1px solid var(--hs-line);background:#fff;color:var(--hs-ink);transition:all .3s cubic-bezier(.2,.8,.2,1)}
+.aahs .aahs-tab:hover{border-color:var(--hs-teal);color:var(--hs-teal);background:#fff}
+.aahs .aahs-tab[aria-selected="true"]{background:var(--hs-teal);border-color:var(--hs-teal);color:var(--hs-cream);cursor:default}
+.aahs-num{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:19px;line-height:.9;flex-shrink:0;color:#C4BCA9;font-variant-numeric:tabular-nums;transition:color .3s}
+.aahs .aahs-tab[aria-selected="true"] .aahs-num{color:rgba(255,255,255,.85)}
+.aahs-label{font-weight:600;letter-spacing:-.01em}
+.aahs-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 7px;border-radius:100px;font-size:11.5px;font-weight:700;flex-shrink:0;font-variant-numeric:tabular-nums;background:rgba(14,128,116,.12);color:var(--hs-teal);transition:all .3s}
+.aahs .aahs-tab[aria-selected="true"] .aahs-count{background:rgba(255,255,255,.22);color:var(--hs-cream)}
+
 /* Closed panels collapse with minmax(0,0fr), not 0fr: an fr track's automatic
-   minimum is its content height, so plain 0fr leaves the whole panel height
-   reserved as blank space. They stay in the DOM — visibility:hidden, never
-   display:none — so every credential name is in the first fetch. */
-.aat-tabs{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:36px}
-.aat-tab{display:inline-flex;align-items:center;gap:10px;flex:0 1 auto;min-width:0;padding:13px 18px;border-radius:14px 14px 0 0;font:inherit;text-align:left;cursor:pointer;border:1.5px solid var(--aa-line,#E2DCCE);background:rgba(14,128,116,.045);color:var(--aa-ink,#101C33);transition:all .4s cubic-bezier(.2,.8,.2,1)}
-.aat-tab:hover{border-color:var(--aa-teal,#0E8074);color:var(--aa-teal,#0E8074)}
-.aat-tab[aria-selected="true"]{border-color:var(--aa-teal,#0E8074);border-bottom-color:#fff;margin-bottom:-1.5px;background:#fff;color:var(--aa-teal,#0E8074);cursor:default}
-.aat-num{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:22px;line-height:.9;flex-shrink:0;color:#CFC8B8;font-variant-numeric:tabular-nums;transition:color .4s}
-.aat-tab[aria-selected="true"] .aat-num{color:var(--aa-teal,#0E8074)}
-.aat-label{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
-.aat-count{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:21px;padding:0 7px;border-radius:100px;font-size:11.5px;font-weight:700;flex-shrink:0;font-variant-numeric:tabular-nums;background:rgba(14,128,116,.12);color:var(--aa-teal,#0E8074);transition:all .4s}
-.aat-tab[aria-selected="true"] .aat-count{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
-.aat-body{display:grid;grid-template-rows:minmax(0,0fr);opacity:0;visibility:hidden;overflow:hidden;min-height:0;border:0;border-radius:0 18px 18px 18px;background:#fff;transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility .45s}
-.aat-body[data-open="true"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1.5px solid var(--aa-teal,#0E8074)}
-.aat-inner{display:flex;flex-direction:column;gap:13px;min-width:0;min-height:0;overflow:hidden;padding:0 clamp(22px,2.4vw,30px)}
-.aat-body[data-open="true"] .aat-inner{padding:clamp(22px,2.4vw,30px)}
-.aat-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.aat-head h3{font-size:clamp(21px,2.3vw,29px);font-weight:600;letter-spacing:-.025em;margin:0;line-height:1.15}
-.aat-bodycount{padding:4px 11px;border-radius:100px;white-space:nowrap;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(14,128,116,.1);color:var(--aa-teal,#0E8074)}
-.aat-desc{margin:0;font-size:14.5px;line-height:1.55;color:var(--aa-body,#4E4A40);max-width:760px}
-.aat-certs{display:flex;flex-wrap:wrap;gap:7px;list-style:none;margin:2px 0 0;padding:0}
-.aat-certs li{padding:5px 11px;border-radius:7px;font-size:12.5px;font-weight:600;letter-spacing:.01em;border:1px solid rgba(14,128,116,.3);background:rgba(14,128,116,.06);color:var(--aa-teal,#0E8074)}
-.aat-certs li a{color:inherit;text-decoration:none}
-.aat-certs li a:hover{text-decoration:underline}
-.aat-certs li b{font-weight:800;letter-spacing:.04em;opacity:.75;margin-right:2px}
-.aat-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:2px}
-.aat-for{font-size:12.5px;font-weight:500;color:var(--aa-deco,#8C8574)}
-.aat-cta{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:100px;text-decoration:none;font-size:13px;font-weight:600;background:var(--aa-ink,#101C33);color:var(--aa-cream,#F7F5F0);transition:background .3s}
-.aat-cta:hover{background:var(--aa-teal,#0E8074);color:var(--aa-cream,#F7F5F0)}
+   minimum is its content height, so plain 0fr reserves the full panel height
+   as blank space. They stay in the DOM -- visibility:hidden, never
+   display:none -- so every credential name is in the first fetch. */
+.aahs-body{display:grid;grid-template-rows:minmax(0,0fr);opacity:0;visibility:hidden;overflow:hidden;min-height:0;border:0;border-radius:18px;background:#fff;margin-top:14px;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1),opacity .35s ease,visibility .4s}
+.aahs-body[data-open="true"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1px solid var(--hs-line)}
+.aahs-inner{display:flex;flex-direction:column;gap:13px;min-width:0;min-height:0;overflow:hidden;padding:0 clamp(22px,2.4vw,30px)}
+.aahs-body[data-open="true"] .aahs-inner{padding:clamp(22px,2.4vw,30px)}
+.aahs-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.aahs-head h3{font-size:clamp(21px,2.3vw,29px);font-weight:600;letter-spacing:-.025em;margin:0;line-height:1.15;color:var(--hs-ink)}
+.aahs-bodycount{padding:4px 11px;border-radius:100px;white-space:nowrap;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(14,128,116,.10);color:var(--hs-teal)}
+.aahs-desc{margin:0;font-size:14.5px;line-height:1.55;color:var(--hs-body);max-width:760px}
+.aahs-certs{display:flex;flex-wrap:wrap;gap:7px;list-style:none;margin:2px 0 0;padding:0}
+.aahs-certs li{padding:5px 11px;border-radius:7px;font-size:12.5px;font-weight:600;letter-spacing:.01em;border:1px solid rgba(14,128,116,.28);background:rgba(14,128,116,.05);color:var(--hs-teal)}
+.aahs-certs li a{color:inherit;text-decoration:none}
+.aahs-certs li a:hover{text-decoration:underline}
+.aahs-certs li b{font-weight:800;letter-spacing:.04em;opacity:.7;margin-right:3px}
+.aahs-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:4px}
+.aahs-for{font-size:12.5px;font-weight:500;color:var(--hs-deco)}
+.aahs .aahs-cta{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:100px;text-decoration:none;font-size:13px;font-weight:600;background:var(--hs-ink);color:var(--hs-cream);border:1px solid var(--hs-ink);transition:background .3s,border-color .3s}
+.aahs .aahs-cta:hover,.aahs .aahs-cta:focus{background:var(--hs-teal);border-color:var(--hs-teal);color:var(--hs-cream)}
 
 @media (max-width:720px){
-  .aat-tab{padding:11px 14px;flex:1 1 auto;min-height:46px}
-  .aat-num{font-size:19px}
-  .aat-label{font-size:13.5px;white-space:normal}
-  .aat-body,.aat-body[data-open="true"]{border-radius:18px}
-  .aat-actions{align-items:flex-start}
-  .aat-actions .aat-cta{width:100%;justify-content:center;min-height:46px}
-  .aaj-link,.aaj-cta{min-height:40px}
+  .aahs .aahs-tab{flex:1 1 auto;justify-content:flex-start;min-height:46px}
+  .aahs-label{font-size:13.5px}
+  .aahs-actions{align-items:flex-start}
+  .aahs .aahs-cta{width:100%;justify-content:center;min-height:46px}
+  .aaj .aaj-link,.aaj .aaj-cta{min-height:40px}
+  /* the eyebrow is the first thing to go on a phone: it costs ~90px of a
+     scrollable row and the numbered links already say what the row is */
+  .aaj-eyebrow{display:none}
+  .aaj-row{padding:7px 14px;gap:6px}
+  .aaj .aaj-cta{margin-left:6px}
 }
 
 /* Scripts off: the shortcode ships an equivalent <noscript> block. */
-.aat-nojs .aat-tabs{display:none}
-.aat-nojs .aat-body,.aat-nojs .aat-body[data-open="false"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1.5px solid var(--aa-line,#E2DCCE);border-radius:18px;margin-bottom:10px}
-.aat-nojs .aat-inner{padding:clamp(22px,2.4vw,30px)}
+.aahs-nojs .aahs-tabs{display:none}
+.aahs-nojs .aahs-body,.aahs-nojs .aahs-body[data-open="false"]{grid-template-rows:minmax(0,1fr);opacity:1;visibility:visible;border:1px solid var(--hs-line);margin-bottom:10px}
+.aahs-nojs .aahs-inner{padding:clamp(22px,2.4vw,30px)}
 
 @media (prefers-reduced-motion:reduce){
-  .aat-tab,.aat-body,.aaj-link{transition:none}
+  .aahs .aahs-tab,.aahs-body,.aaj .aaj-link{transition:none}
 }
 
-/* RTL: the strip and the menu read right-to-left with no other change. */
-[dir="rtl"] .aat-body{border-radius:18px 0 18px 18px}
-[dir="rtl"] .aaj-cta{margin-left:0;margin-right:auto}
+/* RTL: both strips read right-to-left with no other change. */
+[dir="rtl"] .aaj .aaj-cta{margin-left:0;margin-right:auto}
