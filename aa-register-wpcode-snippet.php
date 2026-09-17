@@ -4218,6 +4218,101 @@ function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
 }
 
 /**
+ * THE SOONEST COHORT THIS COURSE STILL HAS.
+ *
+ * Used when a payment arrives naming a course but no date. It is the same list
+ * the course page offers, in the same order, so the date a buyer is put on is
+ * one they could have chosen themselves a minute earlier -- not an invention.
+ */
+function aa_reg_next_cohort_for( $slug ) {
+	$course = aa_reg_course( $slug );
+	if ( ! $course ) { return null; }
+	foreach ( aa_reg_upcoming( $slug, $course ) as $c ) { return $c; }
+	return null;
+}
+
+/**
+ * EVERY COURSE, AND WHETHER IT CAN ACTUALLY BE SOLD.  [aa_reg_wiring]
+ *
+ * A course is "wired" when all four of these hold. Any one missing is a way for
+ * a sale to arrive that we cannot complete:
+ *
+ *   price      nothing to charge, so the checkout refuses with aa_price
+ *   page       aa_reg_page_exists(), or the calendar links into a 404
+ *   cohorts    an upcoming date, or there is nothing to buy
+ *   unique     no other course shares its price, so a payment that arrives
+ *              with no cohort can still be traced back to it by amount
+ *
+ * The last one is the one nobody thinks about. Two courses at one price are
+ * fine until a Payment Link fires without a cohort, and then neither can be
+ * identified from the money alone.
+ */
+function aa_reg_wiring_shortcode() {
+	if ( ! current_user_can( 'edit_pages' ) ) { return ''; }
+
+	$slugs  = aa_reg_all_course_slugs();
+	$byprice = array();
+	$rows    = array();
+
+	foreach ( $slugs as $slug ) {
+		$c = aa_reg_course( $slug );
+		if ( ! $c ) {
+			$rows[] = array( 'slug' => $slug, 'name' => $slug, 'price' => 0, 'cur' => '',
+			                 'page' => false, 'next' => null, 'dead' => true );
+			continue;
+		}
+		$cents = (int) round( $c['price'] * 100 );
+		$key   = strtolower( $c['currency'] ) . ':' . $cents;
+		if ( $cents > 0 ) {
+			if ( ! isset( $byprice[ $key ] ) ) { $byprice[ $key ] = array(); }
+			$byprice[ $key ][] = $slug;
+		}
+		$rows[] = array(
+			'slug'  => $slug,
+			'name'  => ! empty( $c['name'] ) ? $c['name'] : $slug,
+			'price' => $c['price'],
+			'cur'   => $c['currency'],
+			'key'   => $key,
+			'page'  => aa_reg_page_exists( isset( $c['url'] ) ? $c['url'] : '' ),
+			'next'  => aa_reg_next_cohort_for( $slug ),
+			'dead'  => false,
+		);
+	}
+
+	$bad = 0;
+	$h   = '<table class="aalangrep__t"><thead><tr><th>Course</th><th>Price</th><th>Page</th>'
+	     . '<th>Next cohort</th><th>Price unique</th></tr></thead><tbody>';
+	foreach ( $rows as $r ) {
+		$okprice = ! $r['dead'] && $r['price'] > 0;
+		$okpage  = ! empty( $r['page'] );
+		$oknext  = ! empty( $r['next'] );
+		$okuniq  = ! $r['dead'] && isset( $byprice[ $r['key'] ] ) && count( $byprice[ $r['key'] ] ) === 1;
+		if ( ! ( $okprice && $okpage && $oknext && $okuniq ) ) { $bad++; }
+
+		$yes = '<td class="is-yes">&#10003;</td>';
+		$no  = '<td class="is-no">&mdash;</td>';
+		$h .= '<tr><td>' . esc_html( $r['name'] ) . ' <small style="color:#8A8375">'
+		    . esc_html( $r['slug'] ) . '</small></td>'
+		    . ( $okprice ? '<td>' . esc_html( aa_reg_money( $r['price'], $r['cur'] ) ) . '</td>' : $no )
+		    . ( $okpage ? $yes : $no )
+		    . ( $oknext ? '<td>' . esc_html( aa_reg_range( $r['next']['start'], $r['next']['end'], true ) ) . '</td>' : $no )
+		    . ( $okuniq ? $yes : '<td class="is-no">shared</td>' )
+		    . '</tr>';
+	}
+	$h .= '</tbody></table>';
+
+	$head = $bad === 0
+		? '<p><strong>All ' . count( $rows ) . ' courses are wired.</strong> Every one has a price, a page, an upcoming cohort, and a price no other course shares.</p>'
+		: '<p><strong>' . (int) $bad . ' of ' . count( $rows ) . ' courses are not fully wired.</strong> '
+		  . 'A course missing a price cannot be charged for; missing a page gives the calendar a dead link; '
+		  . 'missing a cohort means there is nothing to buy; a shared price means a payment arriving without '
+		  . 'a cohort cannot be traced back to it.</p>';
+
+	return $head . $h;
+}
+add_shortcode( 'aa_reg_wiring', 'aa_reg_wiring_shortcode' );
+
+/**
  * THE BUYER HAS PAID AND WE DO NOT KNOW WHICH DATE THEY BOUGHT.
  *
  * What used to happen: aa_reg_send_confirmation() ran anyway, resolved the
@@ -4246,11 +4341,19 @@ function aa_reg_send_pending_notice( $args ) {
 			'lede'    => 'Your payment has gone through and we have it safely. One thing is outstanding: we need to confirm which cohort dates you are booked on.',
 			'what'    => 'What we have',
 			'course'  => 'Course',
+			'dates'   => 'Dates',
 			'paid'    => 'Paid',
 			'next_h'  => 'What happens next',
 			'next_p'  => 'A member of the team will email you within one working day with your dates, your joining link and your invoice. If you already know which dates you want, reply to this email and tell us — that is the fastest route.',
 			'sorry'   => 'Apologies for the extra step.',
 			'sign'    => 'Agile Agilist',
+			/* The provisional variant: we know the course and have put them on
+			   the next running class. Say which one, and say plainly that they
+			   can change it -- moving cohorts costs nothing. */
+			'p_subject' => 'Your payment is confirmed — you are on the %s cohort',
+			'p_what'    => 'Your registration',
+			'p_lede'    => 'Your payment has gone through, thank you. We have placed you on the next cohort we are running:',
+			'p_next_p'  => 'You will receive your joining link and your invoice within one working day. If these dates do not suit you, reply to this email and we will move you to another cohort — there is no fee for changing.',
 		),
 		'fr' => array(
 			'subject' => 'Votre paiement est bien reçu — confirmation des dates en cours',
@@ -4259,20 +4362,42 @@ function aa_reg_send_pending_notice( $args ) {
 			'lede'    => 'Votre paiement est bien passé et nous l’avons enregistré. Il reste un point à confirmer : les dates de la session sur laquelle vous êtes inscrit.',
 			'what'    => 'Ce que nous avons',
 			'course'  => 'Formation',
+			'dates'   => 'Dates',
 			'paid'    => 'Montant réglé',
 			'next_h'  => 'La suite',
 			'next_p'  => 'Un membre de l’équipe vous écrira sous un jour ouvré avec vos dates, votre lien de connexion et votre facture. Si vous savez déjà quelles dates vous souhaitez, répondez simplement à ce message — c’est le plus rapide.',
 			'sorry'   => 'Merci de votre patience pour cette étape supplémentaire.',
 			'sign'    => 'Agile Agilist',
+			'p_subject' => 'Paiement confirmé — vous êtes inscrit à la session du %s',
+			'p_what'    => 'Votre inscription',
+			'p_lede'    => 'Votre paiement est bien passé, merci. Nous vous avons placé sur la prochaine session que nous animons :',
+			'p_next_p'  => 'Vous recevrez votre lien de connexion et votre facture sous un jour ouvré. Si ces dates ne vous conviennent pas, répondez à ce message et nous vous déplacerons sur une autre session — le changement est sans frais.',
 		),
 	);
 	$x = isset( $t[ $lang ] ) ? $t[ $lang ] : $t['en'];
 
+	/* A provisional cohort is one we chose, not one they picked. It changes the
+	   whole shape of the message: with dates we can confirm rather than
+	   apologise, so the copy switches and the apology line drops. */
+	$found = ! empty( $args['cohort'] ) ? aa_reg_find( (string) $args['cohort'] ) : null;
+	$range = $found ? aa_reg_range( $found['cohort']['start'], $found['cohort']['end'] ) : '';
+
 	$course = '';
-	if ( ! empty( $args['course'] ) ) {
+	if ( $found ) {
+		$course = $found['course']['name'];
+	} elseif ( ! empty( $args['course'] ) ) {
 		$c = aa_reg_course( $args['course'] );
 		if ( $c && ! empty( $c['name'] ) ) { $course = $c['name']; }
 	}
+
+	if ( $range !== '' ) {
+		$x['subject'] = sprintf( $x['p_subject'], $range );
+		$x['lede']    = $x['p_lede'];
+		$x['next_p']  = $x['p_next_p'];
+		$x['what']    = $x['p_what'];
+		$x['sorry']   = '';
+	}
+
 	$paid = '';
 	if ( ! empty( $args['amount'] ) ) {
 		$paid = strtoupper( (string) $args['amount_currency'] ) . ' '
@@ -4291,6 +4416,10 @@ function aa_reg_send_pending_notice( $args ) {
 		$h .= '<tr><td style="padding:4px 18px 4px 0;color:#5E7378">' . esc_html( $x['course'] )
 		    . '</td><td style="padding:4px 0;font-weight:600">' . esc_html( $course ) . '</td></tr>';
 	}
+	if ( $range !== '' ) {
+		$h .= '<tr><td style="padding:4px 18px 4px 0;color:#5E7378">' . esc_html( $x['dates'] )
+		    . '</td><td style="padding:4px 0;font-weight:600">' . esc_html( $range ) . '</td></tr>';
+	}
 	if ( $paid !== '' ) {
 		$h .= '<tr><td style="padding:4px 18px 4px 0;color:#5E7378">' . esc_html( $x['paid'] )
 		    . '</td><td style="padding:4px 0;font-weight:600">' . esc_html( $paid ) . '</td></tr>';
@@ -4298,7 +4427,9 @@ function aa_reg_send_pending_notice( $args ) {
 	$h .= '</table>';
 	$h .= '<p style="margin:22px 0 4px;font-weight:600">' . esc_html( $x['next_h'] ) . '</p>';
 	$h .= '<p style="margin:0">' . esc_html( $x['next_p'] ) . '</p>';
-	$h .= '<p style="margin:18px 0 0;color:#5E7378;font-size:13px">' . esc_html( $x['sorry'] ) . '</p>';
+	if ( $x['sorry'] !== '' ) {
+		$h .= '<p style="margin:18px 0 0;color:#5E7378;font-size:13px">' . esc_html( $x['sorry'] ) . '</p>';
+	}
 	$h .= '<p style="margin:22px 0 0">' . esc_html( $x['sign'] ) . '</p></div>';
 
 	$reply   = apply_filters( 'aa_reg_confirmation_reply_to', get_option( 'admin_email' ) );
@@ -4362,17 +4493,41 @@ function aa_reg_record_sale( $s, $eid ) {
 		$course_slug = aa_reg_course_by_amount( $amount_cents, $currency_in );
 	}
 
+	/* AN EMPTY COHORT MUST NOT SURVIVE THIS FUNCTION.
+	   Knowing the course but not the date, the honest default is not "blank" --
+	   it is the next class we are actually running. We put them on it, mark the
+	   assignment provisional, and tell them the dates in the email with an
+	   explicit invitation to reply if they wanted different ones. Worst case
+	   somebody moves them, which we do without a fee anyway; best case, and it
+	   is the common case, they bought the next one and are simply registered.
+
+	   needs_cohort stays 1 either way -- a human still confirms it. What changes
+	   is that the buyer is never left holding a receipt for nothing, and the
+	   class list is never short a name nobody knew about. */
+	$provisional = 0;
+	if ( $cohort === '' && $course_slug !== '' ) {
+		$next = aa_reg_next_cohort_for( $course_slug );
+		if ( $next && ! empty( $next['id'] ) ) {
+			$cohort      = sanitize_text_field( $next['id'] );
+			$provisional = 1;
+		}
+	}
+
 	$post_id = wp_insert_post( array(
 		'post_type'   => 'aa_registration',
 		'post_status' => 'private',
-		'post_title'  => trim( $name . ' — ' . ( $cohort !== '' ? $cohort : 'COHORT UNKNOWN' ) ),
+		'post_title'  => trim( $name . ' — ' . ( $cohort !== '' ? $cohort : 'COHORT UNKNOWN' )
+		                       . ( $provisional ? ' (provisional)' : '' ) ),
 		'meta_input'  => array(
 			'stripe_event'   => $eid,
 			'stripe_session' => isset( $s['id'] ) ? sanitize_text_field( $s['id'] ) : '',
 			'cohort'         => $cohort,
 			'course'         => $course_slug,
-			/* The flag a human acts on. [aa_reg_attention] lists them. */
-			'needs_cohort'   => ( $cohort === '' ) ? 1 : 0,
+			/* The flag a human acts on. [aa_reg_attention] lists them. A
+			   provisional cohort still needs confirming -- it is a good guess,
+			   not the buyer telling us. */
+			'needs_cohort'   => ( $cohort === '' || $provisional ) ? 1 : 0,
+			'cohort_provisional' => $provisional,
 			'seats'          => $seats,
 			'email'          => $email,
 			'phone'          => isset( $s['customer_details']['phone'] ) ? sanitize_text_field( $s['customer_details']['phone'] ) : '',
@@ -4412,11 +4567,12 @@ function aa_reg_record_sale( $s, $eid ) {
 	   date, the buyer gets a short note saying the payment landed and a human is
 	   confirming their dates -- true, useful, and it invents nothing. */
 	$buyer_lang = aa_reg_lang_of( $meta );
-	if ( $cohort === '' ) {
+	if ( $cohort === '' || $provisional ) {
 		$sent = aa_reg_send_pending_notice( array(
 			'email'           => $email,
 			'name'            => $name,
 			'course'          => $course_slug,
+			'cohort'          => $provisional ? $cohort : '',
 			'amount'          => $amount_cents,
 			'amount_currency' => $currency_in,
 			'lang'            => $buyer_lang,
@@ -4441,7 +4597,10 @@ function aa_reg_record_sale( $s, $eid ) {
 	/* THE ADMIN MAIL SAYS WHICH OF THE TWO HAPPENED, IN THE SUBJECT.
 	   A cohort-less sale is something a person has to finish by hand, and it
 	   should not need anyone to read the body to notice. */
-	if ( $cohort === '' ) {
+	if ( $provisional ) {
+		$subject = 'CONFIRM COHORT — paid registration placed provisionally on ' . $cohort
+		         . ( $sent ? '' : ' (BUYER EMAIL FAILED)' );
+	} elseif ( $cohort === '' ) {
 		$subject = 'ACTION NEEDED — paid registration with NO COHORT'
 		         . ( $sent ? '' : ' (BUYER EMAIL FAILED)' );
 	} else {
@@ -4453,14 +4612,17 @@ function aa_reg_record_sale( $s, $eid ) {
 		sprintf(
 			"%s (%s)\nCohort: %s\nCourse: %s\nSeats: %d\nPaid: %s %s\nSession: %s\nRecord: %d%s",
 			$name, $email,
-			$cohort !== '' ? $cohort : '(none — sale did not come through our checkout)',
+			$cohort !== '' ? $cohort . ( $provisional ? '  ** PROVISIONAL — we chose this, the buyer did not **' : '' )
+			               : '(none — sale did not come through our checkout)',
 			$course_slug !== '' ? $course_slug : '(unknown)',
 			$seats,
 			strtoupper( $currency_in ),
 			number_format( $amount_cents / 100, 2 ),
 			isset( $s['id'] ) ? $s['id'] : '',
 			(int) $post_id,
-			$cohort === '' ? "\n\nSet the cohort on this registration, then resend the confirmation.\nUntil then the buyer has been told only that their payment landed." : ''
+			$provisional
+				? "\n\nThe sale carried no cohort, so it was placed on the next upcoming " . $course_slug . " cohort and the seat was counted.\nThe buyer has been told these dates and invited to reply if they wanted different ones.\nConfirm or move them, then clear needs_cohort."
+				: ( $cohort === '' ? "\n\nSet the cohort on this registration, then resend the confirmation.\nUntil then the buyer has been told only that their payment landed." : '' )
 		)
 	);
 
@@ -4709,16 +4871,34 @@ function aa_reg_attention_shortcode() {
 		return '<p><strong>Nothing needs attention.</strong> Every paid registration has a cohort.</p>';
 	}
 
-	$h = '<table class="aalangrep__t"><thead><tr><th>Buyer</th><th>Course</th><th>Paid</th>'
-	   . '<th>Stripe session</th><th>Record</th></tr></thead><tbody>';
+	$h = '<table class="aalangrep__t"><thead><tr><th>Buyer</th><th>Course</th><th>Cohort</th>'
+	   . '<th>Paid</th><th>Stripe session</th><th>Record</th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
 		$course = (string) get_post_meta( $r->ID, 'course', true );
 		$c      = $course ? aa_reg_course( $course ) : null;
 		$cents  = (int) get_post_meta( $r->ID, 'amount_total', true );
 		$cur    = strtoupper( (string) get_post_meta( $r->ID, 'currency', true ) );
+
+		/* Two different jobs share this list and they are not the same urgency.
+		   A blank cohort is a buyer with no dates at all. A provisional one is a
+		   buyer who has dates and a seat -- somebody just has to agree with the
+		   guess. Say which is which rather than making the reader open each. */
+		$coh  = (string) get_post_meta( $r->ID, 'cohort', true );
+		$prov = (int) get_post_meta( $r->ID, 'cohort_provisional', true );
+		if ( $coh === '' ) {
+			$cell = '<strong style="color:#B3261E">none — pick one</strong>';
+		} elseif ( $prov ) {
+			$pf   = aa_reg_find( $coh );
+			$cell = esc_html( $pf ? aa_reg_range( $pf['cohort']['start'], $pf['cohort']['end'] ) : $coh )
+			      . '<br><span style="color:#8A6D00;font-size:12px">provisional — confirm or move</span>';
+		} else {
+			$cell = esc_html( $coh );
+		}
+
 		$h .= '<tr>'
 		    . '<td>' . esc_html( (string) get_post_meta( $r->ID, 'email', true ) ) . '</td>'
 		    . '<td>' . esc_html( $c && ! empty( $c['name'] ) ? $c['name'] : ( $course !== '' ? $course : 'unknown' ) ) . '</td>'
+		    . '<td>' . $cell . '</td>'
 		    . '<td>' . esc_html( $cur . ' ' . number_format( $cents / 100, 2 ) ) . '</td>'
 		    . '<td style="font-family:ui-monospace,monospace;font-size:11px">'
 		    . esc_html( (string) get_post_meta( $r->ID, 'stripe_session', true ) ) . '</td>'
