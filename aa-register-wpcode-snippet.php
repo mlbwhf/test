@@ -961,6 +961,20 @@ function aa_reg_parse_cohorts_el( $content ) {
 		'price'  => $price,
 		'days'   => min( 5, $len ),
 		'dows'   => aa_reg_derived_days( $attr( 'days' ) ),
+		/* WHAT THE PRICE COVERS, IN THE PAGE'S OWN WORDS.
+		   The builder below used to hard-code "Exam fee included" for every
+		   derived course. Most of them do include it, so nobody noticed -- but
+		   Large Solution has no exam at all, and a page that says the fee is
+		   included is not a wording problem, it is a false claim about what
+		   somebody is buying. A page that knows better says so in data-incl;
+		   one that says nothing keeps the old default. */
+		'incl'   => trim( $attr( 'incl' ) ),
+		/* THE EARLIEST DATE THIS COURSE MAY RUN, same meaning as 'from' in the
+		   hand table. Without it a mirror generates from today, and Large
+		   Solution -- which Scaled Agile did not release until 22 Sep 2026 --
+		   would have offered French buyers a start date before the course was
+		   allowed to be delivered at all. */
+		'from'   => preg_match( '/^\d{4}-\d{2}-\d{2}$/', $attr( 'from' ) ) ? $attr( 'from' ) : '',
 	);
 }
 
@@ -1026,8 +1040,16 @@ function aa_reg_derived_course( $slug ) {
 			'days'     => $cfg['days'],
 			'seats'    => 18,
 			'weeks'    => 26,
-				'cadence'  => $cfg['dows'] ? $cfg['dows'] : array( array( 'dow' => 'Mon', 'slot' => 'morning' ) ),
-			'proof'    => array( 'Live online', 'Exam fee included' ),
+			'cadence'  => $cfg['dows'] ? $cfg['dows'] : array( array( 'dow' => 'Mon', 'slot' => 'morning' ) ),
+			/* aa_reg_t() rather than literals: these render on the /fr/, /es/
+			   and /ar/ mirrors too, where two English words in the proof row
+			   were the last untranslated thing in the hero. */
+			'from'     => $cfg['from'],
+			'incl'     => $cfg['incl'],
+			'proof'    => array(
+				aa_reg_t( 'live_online', 'Live online' ),
+				$cfg['incl'] !== '' ? $cfg['incl'] : aa_reg_t( 'exam_included', 'exam included' ),
+			),
 		);
 		break;
 	}
@@ -4207,14 +4229,29 @@ function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
 	if ( $cents < 100 ) { return ''; }
 	$cur = strtolower( (string) $currency );
 
+	/* EVERY LANGUAGE, NOT JUST ENGLISH. Prices differ per language on purpose
+	   -- French RTE is 2450 where English is 2150 -- and this runs from the
+	   Stripe webhook, where aa_reg_lang() has no queried page and answers
+	   'en'. Checking only the English table meant a French sale matched
+	   nothing at all, which is the one case this function exists for.
+
+	   Keyed by slug, so a course that matches in two languages still counts
+	   once: we are identifying the COURSE, and the language it was sold in
+	   does not change which one it is. */
 	$hits = array();
-	foreach ( aa_reg_all_course_slugs() as $slug ) {
-		$c = aa_reg_course( $slug );
-		if ( ! $c || empty( $c['price'] ) ) { continue; }
-		if ( strtolower( (string) $c['currency'] ) !== $cur ) { continue; }
-		if ( (int) round( $c['price'] * 100 ) === $cents ) { $hits[] = $slug; }
+	foreach ( array( 'en', 'fr', 'es', 'ar' ) as $lang ) {
+		aa_reg_lang_override( $lang );
+		foreach ( aa_reg_all_course_slugs() as $slug ) {
+			$c = aa_reg_course( $slug );
+			if ( ! $c || empty( $c['price'] ) ) { continue; }
+			if ( strtolower( (string) $c['currency'] ) !== $cur ) { continue; }
+			if ( (int) round( $c['price'] * 100 ) === $cents ) { $hits[ $slug ] = true; }
+		}
+		aa_reg_lang_override( '' );
 	}
-	return ( count( $hits ) === 1 ) ? $hits[0] : '';
+	if ( count( $hits ) !== 1 ) { return ''; }
+	$only = array_keys( $hits );
+	return (string) $only[0];
 }
 
 /**
