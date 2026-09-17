@@ -683,6 +683,10 @@ function aa_reg_per_month( $slug, $lang = null ) {
 	$lang = ( $lang === null ) ? aa_reg_lang() : $lang;
 	if ( $lang === 'en' ) { return 0; }
 
+	/* A language with no entry here gets one a month rather than "uncapped".
+	   0 means no cap, which is right for English and wrong for a language we
+	   have just started publishing in -- the schedule would fill with dates
+	   nobody is staffed to teach. */
 	$defaults = array( 'fr' => 2, 'es' => 2, 'ar' => 1 );
 
 	$by_course = array(
@@ -697,7 +701,7 @@ function aa_reg_per_month( $slug, $lang = null ) {
 	);
 
 	if ( isset( $by_course[ $slug ][ $lang ] ) ) { return (int) $by_course[ $slug ][ $lang ]; }
-	return isset( $defaults[ $lang ] ) ? (int) $defaults[ $lang ] : 0;
+	return isset( $defaults[ $lang ] ) ? (int) $defaults[ $lang ] : 1;
 }
 
 function aa_reg_generate( $slug, $course ) {
@@ -2701,9 +2705,14 @@ function aa_reg_lang( $post = null ) {
 	return in_array( $root->post_name, aa_reg_lang_roots(), true ) ? $root->post_name : 'en';
 }
 
-/** Arabic is the only right-to-left language we publish in. */
+/** The right-to-left languages, as a list rather than one hard-coded code. */
+function aa_reg_rtl_langs() {
+	return array( 'ar', 'he', 'fa', 'ur' );
+}
+
 function aa_reg_is_rtl( $lang = null ) {
-	return ( $lang === null ? aa_reg_lang() : $lang ) === 'ar';
+	$lang = ( $lang === null ) ? aa_reg_lang() : $lang;
+	return in_array( $lang, aa_reg_rtl_langs(), true );
 }
 
 /**
@@ -4258,7 +4267,7 @@ function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
 	   once: we are identifying the COURSE, and the language it was sold in
 	   does not change which one it is. */
 	$hits = array();
-	foreach ( array( 'en', 'fr', 'es', 'ar' ) as $lang ) {
+	foreach ( array_merge( array( 'en' ), aa_reg_lang_roots() ) as $lang ) {
 		aa_reg_lang_override( $lang );
 		foreach ( aa_reg_all_course_slugs() as $slug ) {
 			$c = aa_reg_course( $slug );
@@ -4890,28 +4899,38 @@ function aa_reg_lang_report() {
 		'suppress_filters' => true,
 	) );
 
+	/* THE COLUMNS ARE WHATEVER LANGUAGES WE PUBLISH IN, not three names typed
+	   into this function. A report that has to be edited before it can show a
+	   new language is a report that will quietly keep showing the old three. */
 	$names = aa_reg_lang_names();
+	$langs = aa_reg_lang_roots();
 	$rows  = array();
-	$tally = array( 'fr' => 0, 'es' => 0, 'ar' => 0 );
+	$tally = array_fill_keys( $langs, 0 );
 	$total = 0;
 
 	foreach ( $pages as $p ) {
 		if ( aa_reg_lang( $p ) !== 'en' ) { continue; }   // mirrors are columns, not rows
 		$found = aa_reg_translations( $p );
 		$total++;
-		foreach ( array( 'fr', 'es', 'ar' ) as $l ) {
+		foreach ( $langs as $l ) {
 			if ( isset( $found[ $l ] ) ) { $tally[ $l ]++; }
 		}
 		$rows[] = array( 'post' => $p, 'found' => $found );
 	}
 
+	$sum = array();
+	foreach ( $langs as $l ) {
+		$sum[] = ( isset( $names[ $l ] ) ? $names[ $l ] : strtoupper( $l ) ) . ' ' . $tally[ $l ];
+	}
 	$h  = '<div class="aalangrep"><p class="aalangrep__sum">' . (int) $total . ' English pages &middot; '
-	    . 'French ' . $tally['fr'] . ' &middot; Spanish ' . $tally['es'] . ' &middot; Arabic ' . $tally['ar'] . '</p>';
-	$h .= '<table class="aalangrep__t"><thead><tr><th>Page</th><th>FR</th><th>ES</th><th>AR</th></tr></thead><tbody>';
+	    . esc_html( implode( ' · ', $sum ) ) . '</p>';
+	$h .= '<table class="aalangrep__t"><thead><tr><th>Page</th>';
+	foreach ( $langs as $l ) { $h .= '<th>' . esc_html( strtoupper( $l ) ) . '</th>'; }
+	$h .= '</tr></thead><tbody>';
 	foreach ( $rows as $r ) {
 		$h .= '<tr><td><a href="' . esc_url( get_permalink( $r['post']->ID ) ) . '">'
 		    . esc_html( $r['post']->post_title ) . '</a></td>';
-		foreach ( array( 'fr', 'es', 'ar' ) as $l ) {
+		foreach ( $langs as $l ) {
 			$h .= isset( $r['found'][ $l ] )
 				? '<td class="is-yes"><a href="' . esc_url( $r['found'][ $l ] ) . '">&#10003;</a></td>'
 				: '<td class="is-no">&mdash;</td>';
