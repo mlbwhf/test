@@ -1069,11 +1069,31 @@ function aa_reg_derived_course( $slug ) {
 		   what the price covers -- and inherit everything it has no way of
 		   stating. Empty values are dropped first, so a page that omits
 		   data-from or data-incl inherits those too instead of blanking them. */
-		$row  = array_filter( $row, function ( $v ) { return $v !== '' && $v !== null; } );
-		$base = aa_reg_courses();
-		$cache[ $key ] = isset( $base[ $slug ] )
-			? array_merge( $base[ $slug ], $row )
-			: $row;
+		$row    = array_filter( $row, function ( $v ) { return $v !== '' && $v !== null; } );
+		$base   = aa_reg_courses();
+		$merged = isset( $base[ $slug ] ) ? array_merge( $base[ $slug ], $row ) : $row;
+
+		/* THE FILTER ABOVE DROPS A KEY; THE READERS STILL EXPECT IT.
+		   Dropping empties is what lets a page inherit 'from' and 'incl' from
+		   the table instead of blanking them -- but a course with NO table row
+		   inherits nothing, so a mirror whose post_excerpt is empty came back
+		   with no 'lede' key at all. aa_reg_hero() reads $course['lede']
+		   directly, so every such hero raised "Undefined array key" on render,
+		   WPCode logged it, and the snippet was switched off. The whole file
+		   went dark because one page had no excerpt.
+
+		   So the shape is guaranteed rather than assumed. Absent is the same
+		   as empty to every reader here; the difference only ever mattered to
+		   the merge, and the merge has already happened. */
+		foreach ( array( 'code', 'name', 'eyebrow', 'h1', 'lede', 'url',
+		                 'crumb', 'currency', 'incl', 'from' ) as $k ) {
+			if ( ! isset( $merged[ $k ] ) ) { $merged[ $k ] = ''; }
+		}
+		if ( empty( $merged['proof'] ) || ! is_array( $merged['proof'] ) ) {
+			$merged['proof'] = array();
+		}
+
+		$cache[ $key ] = $merged;
 		break;
 	}
 
@@ -1721,7 +1741,12 @@ function aa_reg_hero( $atts ) {
 	$h .= aa_reg_crumb( $course );
 	$h .= '<p class="aahero-eyebrow">' . esc_html( $course['eyebrow'] ) . '</p>';
 	$h .= '<h1 class="aahero-h1" id="aahero-title">' . esc_html( $course['h1'] ) . '</h1>';
-	$h .= '<p class="aahero-lede">' . esc_html( $course['lede'] ) . '</p>';
+	/* Guarded because this one line, unguarded, is what a missing key turned
+	   into a site-wide outage. A hero with no lede renders without one. */
+	$lede = isset( $course['lede'] ) ? (string) $course['lede'] : '';
+	if ( $lede !== '' ) {
+		$h .= '<p class="aahero-lede">' . esc_html( $lede ) . '</p>';
+	}
 	$h .= '<ul class="aahero-proof">';
 	foreach ( $course['proof'] as $p ) { $h .= '<li>' . esc_html( $p ) . '</li>'; }
 	/* The salary sits with the proof pills rather than in its own row: it is
