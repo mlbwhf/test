@@ -4183,6 +4183,131 @@ function aa_reg_webhook( WP_REST_Request $req ) {
  * Extracted from the webhook so that the confirmation page can call it too.
  * Returns the new post id, or null when this sale is already recorded.
  */
+/**
+ * WHICH COURSE COSTS THIS, IN THIS CURRENCY.
+ *
+ * The cohort is the thing a sale is supposed to carry, and our own checkout
+ * always carries it -- in metadata and again in client_reference_id. A payment
+ * that arrives with NEITHER did not come through our checkout: a Stripe Payment
+ * Link used directly, a link shared by hand, a dashboard-created payment. Those
+ * are real sales and the money is real, so they are recorded either way.
+ *
+ * The amount is then the only thing left that identifies anything. It cannot
+ * give us the DATE -- a course runs many cohorts at one price -- but it can
+ * usually give us the COURSE, which is the difference between an invoice that
+ * says "Lean Portfolio Management" and one that says nothing at all.
+ *
+ * AMBIGUITY RETURNS NOTHING. Two courses at the same price make the amount
+ * useless as an identifier, and a wrong course name on an invoice is worse than
+ * a missing one. Prices here are read from the same table the checkout charges
+ * from, so this cannot drift from what was actually billed.
+ */
+function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
+	$cents = (int) $cents;
+	if ( $cents < 100 ) { return ''; }
+	$cur = strtolower( (string) $currency );
+
+	$hits = array();
+	foreach ( aa_reg_all_course_slugs() as $slug ) {
+		$c = aa_reg_course( $slug );
+		if ( ! $c || empty( $c['price'] ) ) { continue; }
+		if ( strtolower( (string) $c['currency'] ) !== $cur ) { continue; }
+		if ( (int) round( $c['price'] * 100 ) === $cents ) { $hits[] = $slug; }
+	}
+	return ( count( $hits ) === 1 ) ? $hits[0] : '';
+}
+
+/**
+ * THE BUYER HAS PAID AND WE DO NOT KNOW WHICH DATE THEY BOUGHT.
+ *
+ * What used to happen: aa_reg_send_confirmation() ran anyway, resolved the
+ * empty cohort to nothing, and sent "You are registered — , " with an empty
+ * course, empty dates and an invoice describing nothing. A real buyer received
+ * exactly that. Silence would have been better, and this is better than both.
+ *
+ * It states only what is true -- the amount, the card, the course where the
+ * amount identifies one -- and says a human is confirming the date. No invented
+ * cohort, no invented dates, and no claim that they are registered, because
+ * until somebody picks the cohort they are not on a class list.
+ */
+function aa_reg_send_pending_notice( $args ) {
+	$email = isset( $args['email'] ) ? $args['email'] : '';
+	if ( ! $email || ! is_email( $email ) ) { return false; }
+
+	$lang = isset( $args['lang'] ) ? $args['lang'] : 'en';
+	$rtl  = aa_reg_is_rtl( $lang );
+	$name = isset( $args['name'] ) ? trim( (string) $args['name'] ) : '';
+
+	$t = array(
+		'en' => array(
+			'subject' => 'We have your payment — confirming your dates',
+			'hi'      => 'Hi %s,',
+			'hi_p'    => 'Hi,',
+			'lede'    => 'Your payment has gone through and we have it safely. One thing is outstanding: we need to confirm which cohort dates you are booked on.',
+			'what'    => 'What we have',
+			'course'  => 'Course',
+			'paid'    => 'Paid',
+			'next_h'  => 'What happens next',
+			'next_p'  => 'A member of the team will email you within one working day with your dates, your joining link and your invoice. If you already know which dates you want, reply to this email and tell us — that is the fastest route.',
+			'sorry'   => 'Apologies for the extra step.',
+			'sign'    => 'Agile Agilist',
+		),
+		'fr' => array(
+			'subject' => 'Votre paiement est bien reçu — confirmation des dates en cours',
+			'hi'      => 'Bonjour %s,',
+			'hi_p'    => 'Bonjour,',
+			'lede'    => 'Votre paiement est bien passé et nous l’avons enregistré. Il reste un point à confirmer : les dates de la session sur laquelle vous êtes inscrit.',
+			'what'    => 'Ce que nous avons',
+			'course'  => 'Formation',
+			'paid'    => 'Montant réglé',
+			'next_h'  => 'La suite',
+			'next_p'  => 'Un membre de l’équipe vous écrira sous un jour ouvré avec vos dates, votre lien de connexion et votre facture. Si vous savez déjà quelles dates vous souhaitez, répondez simplement à ce message — c’est le plus rapide.',
+			'sorry'   => 'Merci de votre patience pour cette étape supplémentaire.',
+			'sign'    => 'Agile Agilist',
+		),
+	);
+	$x = isset( $t[ $lang ] ) ? $t[ $lang ] : $t['en'];
+
+	$course = '';
+	if ( ! empty( $args['course'] ) ) {
+		$c = aa_reg_course( $args['course'] );
+		if ( $c && ! empty( $c['name'] ) ) { $course = $c['name']; }
+	}
+	$paid = '';
+	if ( ! empty( $args['amount'] ) ) {
+		$paid = strtoupper( (string) $args['amount_currency'] ) . ' '
+		      . number_format( (int) $args['amount'] / 100, 2 );
+	}
+
+	$greet = $name !== '' ? sprintf( $x['hi'], $name ) : $x['hi_p'];
+
+	$h  = '<div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;'
+	    . 'line-height:1.6;color:#101C33;max-width:560px"' . ( $rtl ? ' dir="rtl"' : '' ) . '>';
+	$h .= '<p>' . esc_html( $greet ) . '</p>';
+	$h .= '<p>' . esc_html( $x['lede'] ) . '</p>';
+	$h .= '<p style="margin:22px 0 6px;font-weight:600">' . esc_html( $x['what'] ) . '</p>';
+	$h .= '<table style="border-collapse:collapse;font-size:14px">';
+	if ( $course !== '' ) {
+		$h .= '<tr><td style="padding:4px 18px 4px 0;color:#5E7378">' . esc_html( $x['course'] )
+		    . '</td><td style="padding:4px 0;font-weight:600">' . esc_html( $course ) . '</td></tr>';
+	}
+	if ( $paid !== '' ) {
+		$h .= '<tr><td style="padding:4px 18px 4px 0;color:#5E7378">' . esc_html( $x['paid'] )
+		    . '</td><td style="padding:4px 0;font-weight:600">' . esc_html( $paid ) . '</td></tr>';
+	}
+	$h .= '</table>';
+	$h .= '<p style="margin:22px 0 4px;font-weight:600">' . esc_html( $x['next_h'] ) . '</p>';
+	$h .= '<p style="margin:0">' . esc_html( $x['next_p'] ) . '</p>';
+	$h .= '<p style="margin:18px 0 0;color:#5E7378;font-size:13px">' . esc_html( $x['sorry'] ) . '</p>';
+	$h .= '<p style="margin:22px 0 0">' . esc_html( $x['sign'] ) . '</p></div>';
+
+	$reply   = apply_filters( 'aa_reg_confirmation_reply_to', get_option( 'admin_email' ) );
+	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	if ( $reply && is_email( $reply ) ) { $headers[] = 'Reply-To: ' . $reply; }
+
+	return (bool) wp_mail( $email, $x['subject'], $h, $headers );
+}
+
 function aa_reg_record_sale( $s, $eid ) {
 	/* IDEMPOTENT ON THE EVENT ID **AND** ON THE SESSION ID.
 	   Stripe retries until it gets a 2xx, so the same event can arrive more than
@@ -4224,15 +4349,30 @@ function aa_reg_record_sale( $s, $eid ) {
 	$email  = isset( $s['customer_details']['email'] ) ? sanitize_email( $s['customer_details']['email'] )
 	        : ( isset( $s['customer_email'] ) ? sanitize_email( $s['customer_email'] ) : '' );
 
+	/* NO COHORT MEANS THIS DID NOT COME THROUGH OUR CHECKOUT.
+	   Both of our routes carry it -- a session in metadata, a Payment Link in
+	   client_reference_id -- so an empty one is a payment made some other way.
+	   The money is real and gets recorded regardless; what changes is that we
+	   stop pretending we know what was bought. The amount can usually name the
+	   course even when nothing names the date. */
+	$amount_cents = isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0;
+	$currency_in  = isset( $s['currency'] ) ? sanitize_text_field( $s['currency'] ) : 'usd';
+	$course_slug  = isset( $meta['course'] ) ? sanitize_text_field( $meta['course'] ) : '';
+	if ( $cohort === '' && $course_slug === '' ) {
+		$course_slug = aa_reg_course_by_amount( $amount_cents, $currency_in );
+	}
+
 	$post_id = wp_insert_post( array(
 		'post_type'   => 'aa_registration',
 		'post_status' => 'private',
-		'post_title'  => trim( $name . ' — ' . $cohort ),
+		'post_title'  => trim( $name . ' — ' . ( $cohort !== '' ? $cohort : 'COHORT UNKNOWN' ) ),
 		'meta_input'  => array(
 			'stripe_event'   => $eid,
 			'stripe_session' => isset( $s['id'] ) ? sanitize_text_field( $s['id'] ) : '',
 			'cohort'         => $cohort,
-			'course'         => isset( $meta['course'] ) ? sanitize_text_field( $meta['course'] ) : '',
+			'course'         => $course_slug,
+			/* The flag a human acts on. aa_reg_needs_cohort() lists them. */
+			'needs_cohort'   => ( $cohort === '' ) ? 1 : 0,
 			'seats'          => $seats,
 			'email'          => $email,
 			'phone'          => isset( $s['customer_details']['phone'] ) ? sanitize_text_field( $s['customer_details']['phone'] ) : '',
@@ -4265,29 +4405,63 @@ function aa_reg_record_sale( $s, $eid ) {
 	   registration rather than thrown away -- an unsent confirmation is
 	   something someone has to act on, and it should not need log archaeology
 	   to find. */
-	$sent = aa_reg_send_confirmation( array(
-		'email'           => $email,
-		'name'            => $name,
-		'cohort'          => $cohort,
-		'course'          => isset( $meta['course'] ) ? $meta['course'] : '',
-		'seats'           => $seats,
-		'amount'          => isset( $s['amount_total'] ) ? (int) $s['amount_total'] : 0,
-		'amount_currency' => isset( $s['currency'] ) ? $s['currency'] : '',
-		'lang'            => aa_reg_lang_of( $meta ),
-		'post_id'         => $post_id && ! is_wp_error( $post_id ) ? $post_id : 0,
-	) );
+	/* A CONFIRMATION THAT CONFIRMS NOTHING IS WORSE THAN NO CONFIRMATION.
+	   With an empty cohort the template resolved the course to '' and the dates
+	   to '', and sent "You are registered — , " with an invoice describing
+	   nothing. A paying customer received exactly that. When we cannot name the
+	   date, the buyer gets a short note saying the payment landed and a human is
+	   confirming their dates -- true, useful, and it invents nothing. */
+	$buyer_lang = aa_reg_lang_of( $meta );
+	if ( $cohort === '' ) {
+		$sent = aa_reg_send_pending_notice( array(
+			'email'           => $email,
+			'name'            => $name,
+			'course'          => $course_slug,
+			'amount'          => $amount_cents,
+			'amount_currency' => $currency_in,
+			'lang'            => $buyer_lang,
+		) );
+	} else {
+		$sent = aa_reg_send_confirmation( array(
+			'email'           => $email,
+			'name'            => $name,
+			'cohort'          => $cohort,
+			'course'          => $course_slug,
+			'seats'           => $seats,
+			'amount'          => $amount_cents,
+			'amount_currency' => $currency_in,
+			'lang'            => $buyer_lang,
+			'post_id'         => $post_id && ! is_wp_error( $post_id ) ? $post_id : 0,
+		) );
+	}
 	if ( $post_id && ! is_wp_error( $post_id ) ) {
 		update_post_meta( $post_id, 'confirmation_sent', $sent ? 1 : 0 );
 	}
 
+	/* THE ADMIN MAIL SAYS WHICH OF THE TWO HAPPENED, IN THE SUBJECT.
+	   A cohort-less sale is something a person has to finish by hand, and it
+	   should not need anyone to read the body to notice. */
+	if ( $cohort === '' ) {
+		$subject = 'ACTION NEEDED — paid registration with NO COHORT'
+		         . ( $sent ? '' : ' (BUYER EMAIL FAILED)' );
+	} else {
+		$subject = ( $sent ? 'Paid registration — ' : 'Paid registration (CONFIRMATION EMAIL FAILED) — ' ) . $cohort;
+	}
 	wp_mail(
 		get_option( 'admin_email' ),
-		( $sent ? 'Paid registration — ' : 'Paid registration (CONFIRMATION EMAIL FAILED) — ' ) . $cohort,
-		sprintf( "%s (%s)\nCohort: %s\nSeats: %d\nPaid: %s %s\nSession: %s",
-			$name, $email, $cohort, $seats,
-			isset( $s['currency'] ) ? strtoupper( $s['currency'] ) : '',
-			isset( $s['amount_total'] ) ? number_format( $s['amount_total'] / 100, 2 ) : '',
-			isset( $s['id'] ) ? $s['id'] : '' )
+		$subject,
+		sprintf(
+			"%s (%s)\nCohort: %s\nCourse: %s\nSeats: %d\nPaid: %s %s\nSession: %s\nRecord: %d%s",
+			$name, $email,
+			$cohort !== '' ? $cohort : '(none — sale did not come through our checkout)',
+			$course_slug !== '' ? $course_slug : '(unknown)',
+			$seats,
+			strtoupper( $currency_in ),
+			number_format( $amount_cents / 100, 2 ),
+			isset( $s['id'] ) ? $s['id'] : '',
+			(int) $post_id,
+			$cohort === '' ? "\n\nSet the cohort on this registration, then resend the confirmation.\nUntil then the buyer has been told only that their payment landed." : ''
+		)
 	);
 
 	return $post_id;
@@ -4510,6 +4684,52 @@ function aa_reg_lang_report() {
 	return $h;
 }
 add_shortcode( 'aa_lang_report', 'aa_reg_lang_report' );
+
+/**
+ * [aa_reg_attention] — paid registrations that a human still has to finish.
+ *
+ * Put it on a private admin page. Anything listed here is money we have taken
+ * where nobody has picked the cohort yet, which means the buyer is holding a
+ * "we are confirming your dates" note and is not on any class list. It should
+ * normally be empty.
+ */
+function aa_reg_attention_shortcode() {
+	if ( ! current_user_can( 'edit_pages' ) ) { return ''; }
+
+	$rows = get_posts( array(
+		'post_type'        => 'aa_registration',
+		'post_status'      => 'any',
+		'numberposts'      => 200,
+		'meta_key'         => 'needs_cohort',
+		'meta_value'       => '1',
+		'suppress_filters' => true,
+	) );
+
+	if ( ! $rows ) {
+		return '<p><strong>Nothing needs attention.</strong> Every paid registration has a cohort.</p>';
+	}
+
+	$h = '<table class="aalangrep__t"><thead><tr><th>Buyer</th><th>Course</th><th>Paid</th>'
+	   . '<th>Stripe session</th><th>Record</th></tr></thead><tbody>';
+	foreach ( $rows as $r ) {
+		$course = (string) get_post_meta( $r->ID, 'course', true );
+		$c      = $course ? aa_reg_course( $course ) : null;
+		$cents  = (int) get_post_meta( $r->ID, 'amount_total', true );
+		$cur    = strtoupper( (string) get_post_meta( $r->ID, 'currency', true ) );
+		$h .= '<tr>'
+		    . '<td>' . esc_html( (string) get_post_meta( $r->ID, 'email', true ) ) . '</td>'
+		    . '<td>' . esc_html( $c && ! empty( $c['name'] ) ? $c['name'] : ( $course !== '' ? $course : 'unknown' ) ) . '</td>'
+		    . '<td>' . esc_html( $cur . ' ' . number_format( $cents / 100, 2 ) ) . '</td>'
+		    . '<td style="font-family:ui-monospace,monospace;font-size:11px">'
+		    . esc_html( (string) get_post_meta( $r->ID, 'stripe_session', true ) ) . '</td>'
+		    . '<td><a href="' . esc_url( get_edit_post_link( $r->ID ) ) . '">#' . (int) $r->ID . '</a></td>'
+		    . '</tr>';
+	}
+	$h .= '</tbody></table>';
+	return $h;
+}
+add_shortcode( 'aa_reg_attention', 'aa_reg_attention_shortcode' );
+
 
 
 /* The Corsizio one-shot for Thomas J Green Jr lived here and has been removed.
