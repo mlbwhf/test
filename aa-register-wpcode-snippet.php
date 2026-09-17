@@ -4371,7 +4371,7 @@ function aa_reg_record_sale( $s, $eid ) {
 			'stripe_session' => isset( $s['id'] ) ? sanitize_text_field( $s['id'] ) : '',
 			'cohort'         => $cohort,
 			'course'         => $course_slug,
-			/* The flag a human acts on. aa_reg_needs_cohort() lists them. */
+			/* The flag a human acts on. [aa_reg_attention] lists them. */
 			'needs_cohort'   => ( $cohort === '' ) ? 1 : 0,
 			'seats'          => $seats,
 			'email'          => $email,
