@@ -1498,6 +1498,23 @@ function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	$hot   = $left <= 6;
 	$kind  = isset( $c['kind'] ) ? $c['kind'] : aa_reg_kind( $c['start'], $course['days'] );
 	$start = new DateTime( $c['start'] );
+
+	/* A CLASSROOM COHORT SAYS WHERE, NOT WHEN-IN-EASTERN.
+	   This line read "Weekday · 9–5 ET" for every cohort, which on a course
+	   scheduled per city is wrong twice over. Three cities interleave in one
+	   list with nothing to tell them apart -- so AI-Native Foundations offered
+	   1 Oct, 4 Oct and 5 Nov as though they were the same class in the same
+	   room. And the Eastern-time hours belong to the live-online courses; a
+	   class in Riyadh does not run 9-5 ET.
+
+	   The consequence was not cosmetic. A Riyadh cohort starting on a Sunday
+	   reads as a scheduling fault to anyone who cannot see that it is Riyadh
+	   -- Sunday is the first working day of the Saudi week -- and that is
+	   exactly how it was reported. The city was in data-batch, where only the
+	   JavaScript could see it. */
+	$where = ! empty( $c['place'] )
+		? $c['place']
+		: ucfirst( $kind ) . ' · ' . $c['hours'];
 	return '<article class="' . $prefix . '-card' . ( $is_first ? ' is-on' : '' ) . '"'
 	     . ' data-cohort="' . esc_attr( $c['id'] ) . '" data-kind="' . esc_attr( $kind ) . '"'
 	     . ' data-start="' . esc_attr( $c['start'] ) . '" data-end="' . esc_attr( $c['end'] ) . '"'
@@ -1514,7 +1531,7 @@ function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	     . esc_html( aa_reg_range( $c['start'], $c['end'], true ) ) . '</span>'
 	     . ( $is_first ? '<span class="' . $prefix . '-flag">' . esc_html( aa_reg_t( 'next_avail', 'Next available' ) ) . '</span>' : '' ) . '</span>'
 	     . '<span class="' . $prefix . '-line2"><span class="' . $prefix . '-kind">'
-	     . esc_html( ucfirst( $kind ) . ' · ' . $c['hours'] ) . '</span>'
+	     . esc_html( $where ) . '</span>'
 	     . '<span class="' . $prefix . '-status' . ( $hot ? ' is-hot' : '' ) . '">'
 	     . esc_html( $hot ? sprintf( aa_reg_t( 'seats_left', '%d seats left' ), $left ) : aa_reg_t( 'seats_open', 'Seats open' ) ) . '</span></span>'
 	     . '</span>'
