@@ -5707,6 +5707,135 @@ function aa_training_copy_i18n() {
 				'points' => array( 'Spécifique au secteur', 'Examen inclus', 'Présentiel possible' ),
 			),
 		),
+
+		'es' => array(
+			'adv-safe' => array(
+				'label'  => 'SAFe Avanzado',
+				'kicker' => 'Puestos sénior',
+				'title'  => 'Certificación SAFe Avanzado',
+				'accent' => 'para el puesto sénior.',
+				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect e Implementing Large '
+				          . 'Solution SAFe, impartidos en vivo online por un Gold SPCT con el examen '
+				          . 'incluido. Son las credenciales que buscan las grandes empresas cuando '
+				          . 'contratan a alguien para dirigir una transformación, no para participar '
+				          . 'en ella.',
+				'comp'   => 'En vivo online · examen incluido · cambio de fecha sin coste.',
+				'points' => array( '2–4 días', 'Examen incluido', 'Cambio de fecha sin coste' ),
+			),
+			'safe-roles' => array(
+				'label'  => 'Roles principales de SAFe',
+				'kicker' => 'Empieza aquí',
+				'title'  => 'Certificación SAFe',
+				'accent' => 'por rol.',
+				'sub'    => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, '
+				          . 'Advanced Scrum Master, DevOps, SAFe for Teams y Business Owner. La '
+				          . 'mayoría dura dos días en vivo online con el examen incluido, así que '
+				          . 'puedes presentarte al examen y certificarte en la misma semana.',
+				'comp'   => 'Dos días · examen incluido · cambio de fecha sin coste.',
+				'points' => array( 'Dos días', 'Examen incluido', 'Certificado esta semana' ),
+			),
+			'ai-native' => array(
+				'label'  => 'AI-Native',
+				'kicker' => 'Nuevo en 2026',
+				'title'  => 'Certificación AI-Native',
+				'accent' => 'para los puestos que se contratan ahora.',
+				'sub'    => 'AI-Native Foundations, AI-Native Value Architect y Leading the '
+				          . 'AI-Native Organization: tres certificaciones para puestos que no '
+				          . 'existían hace dos años y que hoy están en las ofertas de empleo. '
+				          . 'Diseñadas para quienes dirigen el trabajo, así que no hace falta '
+				          . 'programar.',
+				'comp'   => 'Presencial y en vivo online · examen incluido.',
+				'points' => array( '1–2 días', 'Sin programación', 'Presencial o en vivo online' ),
+			),
+			'safe-found' => array(
+				'label'  => 'Microcredenciales',
+				'kicker' => 'Un día, una habilidad',
+				'title'  => 'Microcredenciales SAFe',
+				'accent' => 'en un solo día.',
+				'sub'    => 'Credenciales de un día que se sitúan entre las certificaciones '
+				          . 'completas: cada una profundiza en una sola habilidad y otorga una '
+				          . 'insignia digital emitida por Scaled Agile. Reserva una, añade la '
+				          . 'especialización y vuelve a tu mesa al día siguiente.',
+				'comp'   => 'Un día · insignia digital emitida por Scaled Agile.',
+				'points' => array( 'Un día', 'Insignia digital', 'Sin examen que preparar' ),
+			),
+			'safe-industry' => array(
+				'label'  => 'SAFe por sector',
+				'kicker' => 'Tu sector',
+				'title'  => 'Formación SAFe',
+				'accent' => 'para tu sector.',
+				'sub'    => 'Administración pública, defensa, hardware y entrega regulada: las '
+				          . 'mismas certificaciones SAFe, impartidas frente a los contratos, el '
+				          . 'cumplimiento normativo y los hitos de aprobación con los que trabaja tu '
+				          . 'sector. Impartidas por instructores que han dirigido estos programas '
+				          . 'desde dentro.',
+				'comp'   => 'En vivo online y presencial · examen incluido.',
+				'points' => array( 'Específico del sector', 'Examen incluido', 'Presencial disponible' ),
+			),
+		),
+
+		/* Arabic. The credential names stay in Latin script on purpose -- they are
+		   what a candidate searches for and what an employer screens on, and the
+		   Arabic course pages already present them that way. */
+		'ar' => array(
+			'adv-safe' => array(
+				'label'  => 'SAFe المتقدّم',
+				'kicker' => 'الأدوار القيادية',
+				'title'  => 'شهادات SAFe المتقدّمة',
+				'accent' => 'للمقعد القيادي.',
+				'sub'    => 'SPC وASPC وRTE وLPM وAPM وSAFe Architect وImplementing Large Solution '
+				          . 'SAFe، تُدرَّس مباشرة عبر الإنترنت على يد مدرّب Gold SPCT مع رسوم الامتحان '
+				          . 'مشمولة. هذه هي الشهادات التي تبحث عنها المؤسسات الكبرى حين توظّف شخصًا '
+				          . 'ليقود تحوّلًا لا ليشارك فيه.',
+				'comp'   => 'مباشر عبر الإنترنت · الامتحان مشمول · تغيير الموعد بدون رسوم.',
+				'points' => array( '2–4 أيام', 'الامتحان مشمول', 'تغيير الموعد بدون رسوم' ),
+			),
+			'safe-roles' => array(
+				'label'  => 'أدوار SAFe الأساسية',
+				'kicker' => 'ابدأ من هنا',
+				'title'  => 'شهادات SAFe',
+				'accent' => 'حسب الدور.',
+				'sub'    => 'Leading SAFe وSAFe Scrum Master وProduct Owner / Product Manager '
+				          . 'وAdvanced Scrum Master وDevOps وSAFe for Teams وBusiness Owner. معظمها '
+				          . 'يومان مباشرة عبر الإنترنت مع رسوم الامتحان مشمولة، فتتقدّم للامتحان '
+				          . 'وتحصل على الشهادة في الأسبوع نفسه.',
+				'comp'   => 'يومان · الامتحان مشمول · تغيير الموعد بدون رسوم.',
+				'points' => array( 'يومان', 'الامتحان مشمول', 'شهادتك هذا الأسبوع' ),
+			),
+			'ai-native' => array(
+				'label'  => 'AI-Native',
+				'kicker' => 'جديد لعام 2026',
+				'title'  => 'شهادات AI-Native',
+				'accent' => 'للأدوار التي يجري توظيفها الآن.',
+				'sub'    => 'AI-Native Foundations وAI-Native Value Architect وLeading the AI-Native '
+				          . 'Organization — ثلاث شهادات لأدوار لم تكن موجودة قبل عامين وهي اليوم في '
+				          . 'إعلانات التوظيف. مصمّمة لمن يقودون العمل، فلا حاجة إلى البرمجة.',
+				'comp'   => 'حضوريًا ومباشرة عبر الإنترنت · الامتحان مشمول.',
+				'points' => array( 'يوم إلى يومين', 'لا حاجة للبرمجة', 'حضوريًا أو عبر الإنترنت' ),
+			),
+			'safe-found' => array(
+				'label'  => 'الشهادات المصغّرة',
+				'kicker' => 'يوم واحد، مهارة واحدة',
+				'title'  => 'شهادات SAFe المصغّرة',
+				'accent' => 'في يوم واحد.',
+				'sub'    => 'شهادات من يوم واحد تقع بين الشهادات الكاملة، تتعمّق كل منها في مهارة '
+				          . 'واحدة وتمنح شارة رقمية صادرة عن Scaled Agile. احجز واحدة، أضف التخصّص، '
+				          . 'وعُد إلى مكتبك في اليوم التالي.',
+				'comp'   => 'يوم واحد · شارة رقمية صادرة عن Scaled Agile.',
+				'points' => array( 'يوم واحد', 'شارة رقمية', 'بلا امتحان للمراجعة' ),
+			),
+			'safe-industry' => array(
+				'label'  => 'SAFe حسب القطاع',
+				'kicker' => 'قطاعك',
+				'title'  => 'تدريب SAFe',
+				'accent' => 'لقطاعك.',
+				'sub'    => 'القطاع الحكومي والدفاع والأجهزة والتسليم الخاضع للتنظيم — الشهادات '
+				          . 'نفسها، لكن تُدرَّس في ضوء العقود ومتطلبات الامتثال وبوابات الاعتماد التي '
+				          . 'يعمل بها قطاعك. يقدّمها مدرّبون أداروا هذه البرامج من الداخل.',
+				'comp'   => 'مباشر عبر الإنترنت وحضوريًا · الامتحان مشمول.',
+				'points' => array( 'مخصّص للقطاع', 'الامتحان مشمول', 'الحضور متاح' ),
+			),
+		),
 	);
 }
 
