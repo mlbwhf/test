@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Mutation">
+  <rect width="32" height="32" fill="#101418"/>
+  <circle cx="16" cy="16" r="11" fill="none" stroke="#3C4E63" stroke-width="2"/>
+  <circle cx="16" cy="16" r="6.5" fill="none" stroke="#F0A93C" stroke-width="2"/>
+  <circle cx="16" cy="16" r="2.5" fill="#F0A93C"/>
+</svg>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which Wave Are You In? — Five-Layer Operating Model Assessment</title>
+<meta name="description" content="Place your organization on the five layers of an AI-era operating model — and find out which layer is quietly holding you back. Fifteen statements, about four minutes.">
+<link rel="canonical" href="https://mutation.agile-agilist.com/assess/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Which wave are you in? — Mutation">
+<meta property="og:description" content="Fifteen statements across five layers. Your layer-by-layer reading and the gap to close next.">
+<meta property="og:url" content="https://mutation.agile-agilist.com/assess/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/assess.js" defer></script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="/">Mutation</a>
+    <nav>
+      <a href="/">Framework</a>
+      <a href="/assess/" aria-current="page">Assess</a>
+      <a href="/workshops/">Workshops</a>
+      <a href="/cast/">Cast</a>
+      <a href="/books/">Books</a>
+      <a href="https://agile-agilist.com">agile-agilist.com&nbsp;&#8599;</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap assess">
+
+  <!-- 1. intro ------------------------------------------------------------ -->
+  <section class="stage is-on hero" id="intro" style="padding-inline:0;">
+    <span class="kicker">Five-layer operating model &middot; 15 items &middot; &asymp;4 min</span>
+    <h1 style="max-width:12ch;">Which wave are <span class="amber">you in?</span></h1>
+    <p class="lead">An operating model is not an org chart. It is the set of rules for how work is funded, decided, produced and measured. We read it in five layers &mdash; and the layer you have climbed past without governing is usually the one costing you.</p>
+
+    <div class="layers" style="margin-top:28px;">
+      <div class="layer"><span class="layer__n">01</span><div class="layer__body"><span class="layer__t">Iterative delivery at scale</span></div></div>
+      <div class="layer"><span class="layer__n">02</span><div class="layer__body"><span class="layer__t">Innovation in cadence</span></div></div>
+      <div class="layer"><span class="layer__n">03</span><div class="layer__body"><span class="layer__t">AI-Native</span></div></div>
+      <div class="layer"><span class="layer__n">04</span><div class="layer__body"><span class="layer__t">AI automation</span></div></div>
+      <div class="layer"><span class="layer__n">05</span><div class="layer__body"><span class="layer__t">Mutation</span></div></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" id="startBtn">Start the assessment</button>
+      <a class="btn-text" href="/">The framework &rarr;</a>
+    </div>
+  </section>
+
+  <!-- 2. the fifteen statements -------------------------------------------- -->
+  <section class="stage" id="quiz" style="padding-block:clamp(36px,6vw,64px) 56px;">
+    <div class="qhead">
+      <div class="label" id="dimTag"></div>
+      <p id="dimDef"></p>
+    </div>
+    <div class="qnum" id="qNum"></div>
+    <div class="qtext" id="qText"></div>
+    <div class="opts" id="opts"></div>
+    <div class="prog"><i id="progBar" style="width:0%"></i></div>
+    <div class="actions" style="margin-top:20px;">
+      <button class="btn-text" type="button" id="backBtn" hidden style="background:none; border:0; border-bottom:1px solid var(--amber); cursor:pointer;">&larr; Previous statement</button>
+    </div>
+  </section>
+
+  <!-- 3. the gate ---------------------------------------------------------- -->
+  <section class="stage" id="gate" style="padding-block:clamp(36px,6vw,64px) 56px;">
+    <div class="gate">
+      <div class="label">Your reading is ready</div>
+      <h2>Fifteen answers in.</h2>
+      <p>Enter your work email to see which layer you are operating at, where the model is quietly unsupported, and the one thing to build next. We will send the first chapter of <em>The Mutation Age</em> when it releases.</p>
+      <input class="field" type="text" id="nameIn" placeholder="Name" autocomplete="name">
+      <input class="field" type="email" id="emailIn" placeholder="Work email" autocomplete="email">
+      <button class="btn" type="button" id="gateBtn">Show my reading</button>
+      <p class="fine">One email per launch update. Unsubscribe anytime. &mdash; Agile Agilist Inc.</p>
+    </div>
+  </section>
+
+  <!-- 4. the reading -------------------------------------------------------- -->
+  <section class="stage" id="results" style="padding-block:clamp(36px,6vw,64px) 56px;">
+    <div class="label">Your operating model reading</div>
+    <div class="verdict" id="waveName"></div>
+    <div class="verdict-sub" id="scoreLine"></div>
+    <div class="bars" id="layerBars"></div>
+    <p class="readout" id="readout"></p>
+    <div class="actions" style="margin-top:0;">
+      <a class="btn" href="/workshops/">See the workshops</a>
+      <a class="btn-text" href="https://agile-agilist.com/assessments/mutation-readiness/">Next: Mutation Readiness &rarr;</a>
+    </div>
+    <p class="fine" style="margin-top:26px; max-width:58ch;">This is a directional reading. A facilitated assessment scores each layer against its measurable maturity signals with your leadership team.</p>
+  </section>
+
+</main>
+
+<footer class="colophon wrap">
+  Five-Layer Operating Model &middot; &copy; Agile Agilist Inc.<br>
+  From <em>The Mutation Age</em> and <em>The Innovation Playground</em> by Mark Saymen.
+</footer>
+</body>
+</html>
