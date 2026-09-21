@@ -1,0 +1,7 @@
+# leads.csv holds personal data — never serve it over the web.
+# lead.php recreates this file if it is missing, but shipping it means the
+# protection is in place before the very first submission is written.
+<FilesMatch "\.csv$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

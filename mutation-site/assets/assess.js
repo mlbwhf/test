@@ -17,12 +17,34 @@
   'use strict';
 
   /* ---------------------------------------------------------------------
-     CONFIG — paste the n8n production Webhook URL here before launch.
-     Until it starts with http the page simply skips the POST, so the
-     assessment stays fully usable while the automation is being wired.
-     Payload: {name,email,layers:{"01".."05"},wave,weakest,utm_*,ts}
+     WHERE THE LEAD GOES — two destinations, both free, both optional.
+
+     1. LEAD_ENDPOINT — assess/lead.php, sitting on this same host. Logs the
+        row to a CSV and emails info@agile-agilist.com. Works the moment you
+        upload it: no account, no key, no monthly fee. This is the safety net
+        that stops the page collecting an email and discarding it.
+
+     2. HUBSPOT — your existing portal. Free HubSpot includes forms, and the
+        Forms submission API is designed to be called from a browser, so the
+        portal ID and form GUID below are public values, not secrets. Nothing
+        confidential belongs in this file.
+        To turn it on: HubSpot → Marketing → Forms → create an embedded form
+        with Email and First name, then paste its GUID here.
+
+     Set either, both, or neither. Each is tried independently and a failure
+     in one never blocks the other or the person's reading. There is no
+     server to pay for on either path.
+
+     Optional: HUBSPOT_SCORE_FIELD is the internal name of a single-line text
+     property on the contact — create it in HubSpot and add it to the form,
+     then put its name here and the whole reading rides along. LEAVE IT BLANK
+     unless the property really exists: HubSpot rejects the entire submission
+     if a field on it is unknown, and you would lose the email with it.
      --------------------------------------------------------------------- */
-  var WEBHOOK_URL = 'PASTE_N8N_WEBHOOK_URL_HERE';
+  var LEAD_ENDPOINT       = '/assess/lead.php';
+  var HUBSPOT_PORTAL      = '46316757';
+  var HUBSPOT_FORM_GUID   = '';
+  var HUBSPOT_SCORE_FIELD = '';
 
   var LAYERS = [
     { n: '01', name: 'Iterative delivery at scale', def: 'Delivery works beyond a few teams: dependencies, alignment, a shared cadence. Without this, nothing above it has a floor.' },
@@ -111,6 +133,54 @@
     progress();
   }
 
+  /* Fire the lead at whichever destinations are configured. Every call is
+     fire-and-forget: the person's reading is already computed and must render
+     whether or not the network cooperates. Never await these, never gate the
+     results screen on them. */
+  function sendLead(payload) {
+    if (LEAD_ENDPOINT) {
+      try {
+        fetch(LEAD_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
+    if (HUBSPOT_PORTAL && HUBSPOT_FORM_GUID) {
+      var fields = [
+        { name: 'email', value: payload.email }
+      ];
+      if (payload.name) fields.push({ name: 'firstname', value: payload.name });
+      if (HUBSPOT_SCORE_FIELD) {
+        fields.push({
+          name: HUBSPOT_SCORE_FIELD,
+          value: 'wave ' + payload.wave + ' · weakest ' + payload.weakest + ' · '
+               + ['01', '02', '03', '04', '05'].map(function (k) {
+                   return k + ':' + payload.layers[k];
+                 }).join(' ')
+        });
+      }
+      try {
+        fetch('https://api.hsforms.com/submissions/v3/integration/submit/'
+              + HUBSPOT_PORTAL + '/' + HUBSPOT_FORM_GUID, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields: fields,
+            context: {
+              pageUri: location.href,
+              pageName: document.title
+            }
+          }),
+          keepalive: true
+        }).catch(function () {});
+      } catch (e) {}
+    }
+  }
+
   function layerScores() {
     var s = [0, 0, 0, 0, 0];
     Q.forEach(function (q, i) { s[q.l] += ans[i] || 0; });
@@ -157,13 +227,7 @@
       ts: new Date().toISOString()
     };
 
-    if (WEBHOOK_URL.indexOf('http') === 0) {
-      fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(function () {});
-    }
+    sendLead(payload);
 
     $('waveName').textContent = wave === 0
       ? 'Before the first wave'
