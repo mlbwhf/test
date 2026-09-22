@@ -263,23 +263,45 @@ function aa_hh_rows() {
 	return $rows = $kept;
 }
 
+/**
+ * One date, with the month on the side the locale puts it.
+ *
+ * "Sep 14" in English, "14 sept." in French and Spanish. Month-first is not a
+ * neutral default -- printed on the French page it reads as an untranslated
+ * string, which is exactly the thing this hero was reported for. The same
+ * day_first / first_ordinal convention is already used by aa_home_cohorts, and
+ * both panels sit on the same page, so they have to agree.
+ */
+function aa_hh_one_date( $d, $str ) {
+	$mon = $str['mon_short'][ (int) $d->format( 'n' ) - 1 ];
+	$day = $d->format( 'j' );
+	// "1er octobre" in French; plain "1" everywhere else.
+	if ( $day === '1' && ! empty( $str['first_ordinal'] ) ) { $day .= $str['first_ordinal']; }
+	return empty( $str['day_first'] ) ? $mon . ' ' . $day : $day . ' ' . $mon;
+}
+
 /** "Week of Sep 14" — the group heading, and the key rows are grouped on. */
 function aa_hh_week_label( $iso, $str ) {
 	$d = new DateTime( $iso );
 	$d->modify( 'monday this week' );
-	return sprintf( $str['week_of'], $str['mon_short'][ (int) $d->format( 'n' ) - 1 ] . ' ' . $d->format( 'j' ) );
+	return sprintf( $str['week_of'], aa_hh_one_date( $d, $str ) );
 }
 
 /** "Sep 14–17", or "Sep 30–Oct 2" across a month boundary. */
 function aa_hh_range( $start, $end, $str ) {
 	$s = new DateTime( $start );
 	$e = new DateTime( $end );
-	$m = function ( $d ) use ( $str ) { return $str['mon_short'][ (int) $d->format( 'n' ) - 1 ]; };
-	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return $m( $s ) . ' ' . $s->format( 'j' ); }
-	if ( $s->format( 'Y-m' ) === $e->format( 'Y-m' ) ) {
-		return $m( $s ) . ' ' . $s->format( 'j' ) . '–' . $e->format( 'j' );
+	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return aa_hh_one_date( $s, $str ); }
+	if ( $s->format( 'Y-m' ) !== $e->format( 'Y-m' ) ) {
+		return aa_hh_one_date( $s, $str ) . '–' . aa_hh_one_date( $e, $str );
 	}
-	return $m( $s ) . ' ' . $s->format( 'j' ) . '–' . $m( $e ) . ' ' . $e->format( 'j' );
+	/* Same month: print it once, on the side the locale puts it. */
+	$mon = $str['mon_short'][ (int) $s->format( 'n' ) - 1 ];
+	$ds  = $s->format( 'j' );
+	$de  = $e->format( 'j' );
+	if ( $ds === '1' && ! empty( $str['first_ordinal'] ) ) { $ds .= $str['first_ordinal']; }
+	return empty( $str['day_first'] ) ? $mon . ' ' . $ds . '–' . $de
+	                                  : $ds . '–' . $de . ' ' . $mon;
 }
 
 /** Chrome copy. Certification names are proper nouns and are never translated. */
@@ -328,6 +350,126 @@ function aa_hh_strings( $lang ) {
 			'currency_short' => 'Prices in USD.',
 			'currency'   => 'Prices shown in USD. Cards are charged in USD; if your card is issued in another currency your bank sets the exchange rate and may add its own fee, so the amount on your statement can differ. The exact amount is shown before you pay.',
 			'mon_short'  => array( 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec' ),
+			'day_first'  => false,
+		),
+
+		/* ---------------------------------------------------------------
+		   FRENCH
+
+		   The badge and the sub-head are the wording already published on
+		   /fr/ -- taken from that page rather than translated afresh, so the
+		   hero does not quietly restate the pitch in different words from the
+		   rest of the page.
+
+		   The exam line is the approved phrasing from the claims snippet:
+		   "préparation à l'examen", never "garantie de réussite". Do not
+		   reintroduce a pass or refund guarantee here in any language.
+
+		   'session' is the house word for a cohort in French, matching the
+		   confirmation email and aa_home_cohorts. Certification names (SAFe,
+		   RTE, SPC, AI-Native) are proper nouns and stay as they are.
+		   --------------------------------------------------------------- */
+		'fr' => array(
+			'badge'      => 'Décrochez le poste, dirigez l’équipe, transformez l’entreprise',
+			'h1a'        => 'Certifiez-vous auprès de ceux',
+			'h1b'        => 'qui',
+			'h1em'       => 'mènent les transformations.',
+			'sub'        => 'Formations certifiantes SAFe® et AI-Native en direct avec instructeur, qui permettent aux professionnels d’être recrutés et promus. Frais d’examen inclus, avec préparation à l’examen et accompagnement tout au long.',
+			'cta_browse' => 'Voir toutes les sessions',
+			'cta_dated'  => 'Réserver %s · %s',
+			'results'    => 'Voir les résultats clients',
+			'certified'  => '2 500+ certifiés',
+			'eyebrow'    => 'Prochaines sessions',
+			'brief_label' => 'Vous consultez',
+			'brief_day'   => '%d jour',
+			'brief_days'  => '%d jours',
+			'brief_exam'  => 'Frais d’examen inclus',
+			'brief_leads' => 'Mène à',
+			'brief_learn' => 'Vous apprendrez',
+			'brief_next'  => 'Poursuivre avec',
+			'season'     => 'En ligne en direct · %d prochaines semaines',
+			'season_one' => 'En ligne en direct · la semaine prochaine',
+			'count_all'  => '%d sessions à venir',
+			'count_one'  => '1 session à venir',
+			'count_filt' => '%1$d sessions sur %2$d',
+			'all_tracks' => 'Tous les parcours',
+			'week_of'    => 'Semaine du %s',
+			'batches'    => '%d sessions',
+			'batch_one'  => '1 session',
+			'next_avail' => 'Prochaine disponible',
+			'seats_open' => 'Places disponibles',
+			'seats_left' => '%d places restantes',
+			'weekday'    => 'Semaine',
+			'weekend'    => 'Week-end',
+			'no_match'   => 'Aucune session ne correspond à ce parcours.',
+			'buy_for'    => 'Inscription pour %1$s · %2$s',
+			/* The English table says "run live in English", which is the one
+			   line that must NOT be translated literally: the French cohorts
+			   are the reason this page exists. Stating the delivery language
+			   here would need a per-course answer, so it states only what is
+			   true of every row. */
+			'foot'       => 'Toutes les sessions se déroulent en direct.',
+			'foot_link'  => 'Calendrier complet',
+			'empty'      => 'Voir toutes les sessions à venir',
+			'trust'      => 'Ils nous font confiance',
+			'currency_short' => 'Prix en USD.',
+			'currency'   => 'Prix affichés en USD. Les cartes sont débitées en USD ; si votre carte est émise dans une autre devise, votre banque fixe le taux de change et peut ajouter ses propres frais, de sorte que le montant figurant sur votre relevé peut différer. Le montant exact est affiché avant le paiement.',
+			'mon_short'  => array( 'janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.' ),
+			'day_first'  => true,
+			'first_ordinal' => 'er',
+		),
+
+		/* ---------------------------------------------------------------
+		   SPANISH
+
+		   Same sources as the French block: the badge and sub-head come from
+		   the published /es/ page, the exam line from the claims snippet.
+		   'convocatoria' is the house word for a cohort, matching the
+		   confirmation email and aa_home_cohorts. Tuteo throughout, as the
+		   rest of the Spanish site already uses.
+		   --------------------------------------------------------------- */
+		'es' => array(
+			'badge'      => 'Consigue el puesto, lidera el equipo, transforma la empresa',
+			'h1a'        => 'Certifícate con quienes',
+			'h1b'        => 'dirigen',
+			'h1em'       => 'las transformaciones.',
+			'sub'        => 'Formación en vivo con instructor para certificaciones SAFe® y AI-Native que consigue que los profesionales sean contratados y promocionados. Tasa de examen incluida, con preparación para el examen y acompañamiento durante todo el curso.',
+			'cta_browse' => 'Ver todas las convocatorias',
+			'cta_dated'  => 'Reservar %s · %s',
+			'results'    => 'Ver resultados de clientes',
+			'certified'  => '2500+ certificados',
+			'eyebrow'    => 'Próximas convocatorias',
+			'brief_label' => 'Estás viendo',
+			'brief_day'   => '%d día',
+			'brief_days'  => '%d días',
+			'brief_exam'  => 'Tasa de examen incluida',
+			'brief_leads' => 'Lleva a',
+			'brief_learn' => 'Aprenderás',
+			'brief_next'  => 'Continúa con',
+			'season'     => 'En vivo online · próximas %d semanas',
+			'season_one' => 'En vivo online · la próxima semana',
+			'count_all'  => '%d convocatorias próximas',
+			'count_one'  => '1 convocatoria próxima',
+			'count_filt' => '%1$d de %2$d convocatorias',
+			'all_tracks' => 'Todos los itinerarios',
+			'week_of'    => 'Semana del %s',
+			'batches'    => '%d convocatorias',
+			'batch_one'  => '1 convocatoria',
+			'next_avail' => 'Próxima disponible',
+			'seats_open' => 'Plazas disponibles',
+			'seats_left' => 'quedan %d plazas',
+			'weekday'    => 'Entre semana',
+			'weekend'    => 'Fin de semana',
+			'no_match'   => 'Ninguna convocatoria coincide con este itinerario.',
+			'buy_for'    => 'Inscripción para %1$s · %2$s',
+			'foot'       => 'Todas las convocatorias se imparten en vivo.',
+			'foot_link'  => 'Calendario completo',
+			'empty'      => 'Ver todas las convocatorias próximas',
+			'trust'      => 'Confían en nosotros',
+			'currency_short' => 'Precios en USD.',
+			'currency'   => 'Precios mostrados en USD. Las tarjetas se cobran en USD; si tu tarjeta se emitió en otra moneda, tu banco fija el tipo de cambio y puede añadir su propia comisión, por lo que el importe de tu extracto puede variar. El importe exacto se muestra antes de pagar.',
+			'mon_short'  => array( 'ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic' ),
+			'day_first'  => true,
 		),
 	);
 	return isset( $all[ $lang ] ) ? $all[ $lang ] : $all['en'];
@@ -808,7 +950,7 @@ function aa_hh_render( $atts ) {
 		    . '</p>'
 		    . aa_reg_inline( $first['course'], $first['cohort'], $first['course']['currency'], 'aahh' )
 		    . '</div>';
-		$h .= aa_hh_config_script();
+		$h .= aa_hh_config_script( $a['lang'] );
 	}
 
 	/* The long currency notice is gone -- four lines of small print under a
@@ -860,9 +1002,45 @@ function aa_hh_render( $atts ) {
  * Guarded on the client rather than the server: if a course page ever includes
  * this hero, the register block's config is the fuller one and must win.
  */
-function aa_hh_config_script() {
+/**
+ * The three status messages and the number locale, per language.
+ *
+ * These are the strings the checkout handler shows while it is working, so on
+ * the French page they were the last English left in an otherwise French hero.
+ *
+ * The French and Spanish "sending" messages name secure payment rather than
+ * the processor, which is the rule already applied to the confirmation page,
+ * the email and the invoice. The English one still names it -- see the note in
+ * the header block; changing published English copy was not part of this fix.
+ */
+function aa_hh_config_strings( $lang ) {
+	$all = array(
+		'en' => array(
+			'locale'         => 'en-US',
+			'msgSending'     => 'Taking you to Stripe…',
+			'msgError'       => 'We could not start checkout. Please try again.',
+			'msgUnavailable' => 'Registration is not available right now.',
+		),
+		'fr' => array(
+			'locale'         => 'fr-FR',
+			'msgSending'     => 'Redirection vers le paiement sécurisé…',
+			'msgError'       => 'Nous n’avons pas pu démarrer le paiement. Veuillez réessayer.',
+			'msgUnavailable' => 'L’inscription n’est pas disponible pour le moment.',
+		),
+		'es' => array(
+			'locale'         => 'es-ES',
+			'msgSending'     => 'Te llevamos al pago seguro…',
+			'msgError'       => 'No hemos podido iniciar el pago. Inténtalo de nuevo.',
+			'msgUnavailable' => 'La inscripción no está disponible en este momento.',
+		),
+	);
+	return isset( $all[ $lang ] ) ? $all[ $lang ] : $all['en'];
+}
+
+function aa_hh_config_script( $lang = 'en' ) {
 	if ( ! function_exists( 'aa_reg_is_live' ) ) { return ''; }
 	$live = aa_reg_is_live();
+	$cfg  = aa_hh_config_strings( $lang );
 
 	return '<script>window.AA_REG=window.AA_REG||' . wp_json_encode( array(
 		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
@@ -871,12 +1049,14 @@ function aa_hh_config_script() {
 		   replacing it with a card form ends the visit whether or not they buy.
 		   Course pages keep the same tab: there, buying is the errand. */
 		'target'         => '_blank',
+		/* Still '$' in every language: every course in aa_hh_courses() is priced
+		   in USD, so a euro sign here would be a false price, not a translation. */
 		'symbol'         => '$',
-		'locale'         => 'en-US',
+		'locale'         => $cfg['locale'],
 		'nonce'          => wp_create_nonce( 'wp_rest' ),
-		'msgSending'     => 'Taking you to Stripe…',
-		'msgError'       => 'We could not start checkout. Please try again.',
-		'msgUnavailable' => 'Registration is not available right now.',
+		'msgSending'     => $cfg['msgSending'],
+		'msgError'       => $cfg['msgError'],
+		'msgUnavailable' => $cfg['msgUnavailable'],
 	) ) . ';</script>';
 }
 
@@ -996,8 +1176,40 @@ function aa_hh_autoplace_on() {
 	return get_option( 'aa_hh_autoplace', 'yes' ) !== 'no';
 }
 
+/**
+ * Is this one of the home pages? Front page, /fr/ or /es/.
+ *
+ * WHY THIS IS NOT JUST is_front_page().
+ * Only the English home is WordPress's front page (page_on_front = 961). The
+ * translated sites are ordinary top-level page trees whose root slug is the
+ * language code -- which is the same convention aa_reg_lang() reads to decide
+ * what language a page is in. So is_front_page() is false on /fr/ and /es/,
+ * the swap below never ran there, and those two pages kept the OLD hero while
+ * the English one got this one. That is the mismatch this function fixes; it
+ * is not a Polylang problem and there is nothing to configure in Polylang.
+ *
+ * ARABIC IS DELIBERATELY NOT INCLUDED. aa_reg_lang_roots() also lists 'ar',
+ * but there is no Arabic table in aa_hh_strings() and Arabic copy on this site
+ * comes from the client's own translator, never from a translation written
+ * here. Adding 'ar' to this list without that copy would render the whole
+ * Arabic hero in English, which is worse than leaving it on the old one. Add
+ * the 'ar' table first, then add it here.
+ */
+function aa_hh_home_langs() {
+	return array( 'fr', 'es' );
+}
+
+function aa_hh_is_home() {
+	if ( is_front_page() ) { return true; }
+	if ( ! is_page() ) { return false; }
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) ) { return false; }
+	if ( (int) $obj->post_parent !== 0 ) { return false; }   // a child page is not a home
+	return in_array( $obj->post_name, aa_hh_home_langs(), true );
+}
+
 function aa_hh_swap( $content ) {
-	if ( is_admin() || ! is_front_page() || ! aa_hh_autoplace_on() ) { return $content; }
+	if ( is_admin() || ! aa_hh_is_home() || ! aa_hh_autoplace_on() ) { return $content; }
 	if ( strpos( $content, 'aa-hh' ) !== false ) { return $content; }   // already ours
 	if ( strpos( $content, 'aa-hero' ) === false ) { return $content; }
 
@@ -1030,7 +1242,13 @@ function aa_hh_swap( $content ) {
 	}
 	if ( $end === false ) { return $content; }
 
-	return substr( $content, 0, $i ) . aa_hh_render( array() ) . substr( $content, $end );
+	/* Pass the language explicitly. aa_hh_render() defaults to 'en', so without
+	   this the French page would get this hero with every chrome string in
+	   English -- the design would match and the copy would not, which is only
+	   half the bug. aa_reg_lang() reads the page's own root-ancestor slug. */
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+
+	return substr( $content, 0, $i ) . aa_hh_render( array( 'lang' => $lang ) ) . substr( $content, $end );
 }
 add_filter( 'the_content', 'aa_hh_swap', 8 );
 
