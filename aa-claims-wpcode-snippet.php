@@ -107,27 +107,41 @@ function aa_claims_rules() {
 		   word is used legitimately elsewhere on the site. */
 		array( '/\b(?:5|five)\s+pillars\b/iu', 'the Six Practices' ),
 
-		/* ---- English ---- */
+		/* ---- English ----
+		   These REPLACE rather than delete. Removing the guarantee left the
+		   sentence shorter but said nothing in its place; the instruction is to
+		   promise exam preparation where we used to promise a refund.
+
+		   "exam preparation" rather than "exam preparation included" in the list
+		   forms below, because they already begin "Exam included" and "Exam
+		   included, exam preparation included, and ..." reads badly. The
+		   standalone forms — the card heading, the closing band — carry the full
+		   "Exam preparation included". Say the word and both become identical. */
 		// "Exam included, money-back pass guarantee, and a career-coaching session."
-		array( '/,\s*money[-\s]?back pass guarantee,\s*and\s+/iu', ' and ' ),
+		array( '/,\s*money[-\s]?back pass guarantee,\s*and\s+/iu', ', exam preparation, and ' ),
 		// "<em>Exam included</em> and a money-back pass guarantee."
-		array( '/\s+and\s+a\s+money[-\s]?back pass guarantee/iu', '' ),
-		array( '/,\s*(?:and\s+a\s+)?money[-\s]?back pass guarantee/iu', '' ),
-		array( '/\s*money[-\s]?back pass guarantee/iu', '' ),
+		array( '/\s+and\s+a\s+money[-\s]?back pass guarantee/iu', ' and exam preparation' ),
+		array( '/,\s*(?:and\s+a\s+)?money[-\s]?back pass guarantee/iu', ', exam preparation' ),
+		array( '/\bmoney[-\s]?back pass guarantee/iu', 'exam preparation included' ),
 		// the card body, whichever way it is punctuated
-		array( '/Don(?:\'|&#8217;|\x{2019})t pass on your first attempt\?\s*Retake the next cohort free\s*(?:&mdash;|\x{2014}|-)?\s*or get a full refund\.\s*No questions\.?/iu', '' ),
+		array( '/Don(?:\'|&#8217;|\x{2019})t pass on your first attempt\?\s*Retake the next cohort free\s*(?:&mdash;|\x{2014}|-)?\s*or get a full refund\.\s*No questions\.?/iu',
+		       'Exam preparation and support are included with every cohort.' ),
 
 		/* ---- French ---- */
-		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement\s+et\s+/iu', ' et ' ),
-		array( '/\s+et\s+(?:une\s+)?garantie de r\x{00E9}ussite ou remboursement/iu', '' ),
-		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement/iu', '' ),
-		array( '/Vous ne r\x{00E9}ussissez pas du premier coup\s*\?\s*Refaites la cohorte suivante gratuitement ou recevez un remboursement int\x{00E9}gral\.\s*Sans condition\.?/iu', '' ),
+		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement\s+et\s+/iu', ", pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen et " ),
+		array( '/\s+et\s+(?:une\s+)?garantie de r\x{00E9}ussite ou remboursement/iu', " et la pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen" ),
+		array( '/,\s*garantie de r\x{00E9}ussite ou remboursement/iu', ", pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen" ),
+		array( '/\bgarantie de r\x{00E9}ussite ou remboursement/iu', "pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen incluse" ),
+		array( '/Vous ne r\x{00E9}ussissez pas du premier coup\s*\?\s*Refaites la cohorte suivante gratuitement ou recevez un remboursement int\x{00E9}gral\.\s*Sans condition\.?/iu',
+		       "La pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen et l\xE2\x80\x99accompagnement sont inclus dans chaque session." ),
 
 		/* ---- Spanish ---- */
-		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso\s+y\s+/iu', ' y ' ),
-		array( '/\s+y\s+(?:una\s+)?garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', '' ),
-		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', '' ),
-		array( '/\x{00BF}No apruebas al primer intento\?\s*Repite la siguiente cohorte gratis o recibe un reembolso completo\.\s*Sin preguntas\.?/iu', '' ),
+		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso\s+y\s+/iu', ", preparaci\xC3\xB3n para el examen y " ),
+		array( '/\s+y\s+(?:una\s+)?garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', " y la preparaci\xC3\xB3n para el examen" ),
+		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', ", preparaci\xC3\xB3n para el examen" ),
+		array( '/\bgarant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', "preparaci\xC3\xB3n para el examen incluida" ),
+		array( '/\x{00BF}No apruebas al primer intento\?\s*Repite la siguiente cohorte gratis o recibe un reembolso completo\.\s*Sin preguntas\.?/iu',
+		       "La preparaci\xC3\xB3n para el examen y el acompa\xC3\xB1amiento est\xC3\xA1n incluidos en cada cohorte." ),
 
 		/* ---- Arabic ----
 		   The replacement is a literal Arabic comma (U+060C in UTF-8 bytes), not
@@ -148,55 +162,83 @@ function aa_claims_rules() {
 		   Arabic course page. It is handled here, anchored on the whole claim,
 		   rather than by a general punctuation sweep: see the note further down
 		   about what a general tidy pass did to the stylesheets. */
-		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\s*\./u', '.' ),
-		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\x{060C}\s*/u', "\xD8\x8C " ),
-		array( '/\s*' . AA_CLAIMS_AR_GUARANTEE . '/u', '' ),
-	);
-}
+		/* The Arabic replacement is "والإعداد للامتحان" — "and preparation for
+		   the exam". Spelled out rather than the shorter "والإعداد له" ("and
+		   preparation for it"), because in the JSON-LD the claim follows
+		   "عند النجاح" and "له" would attach itself to النجاح rather than to the
+		   exam. The explicit noun is right in all three places the claim
+		   appears, at the cost of repeating الامتحان once. */
+		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\s*\./u', "\xD8\x8C \xD9\x88\xD8\xA7\xD9\x84\xD8\xA5\xD8\xB9\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x84\xD9\x84\xD8\xA7\xD9\x85\xD8\xAA\xD8\xAD\xD8\xA7\xD9\x86." ),
+		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\x{060C}\s*/u', "\xD8\x8C \xD9\x88\xD8\xA7\xD9\x84\xD8\xA5\xD8\xB9\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x84\xD9\x84\xD8\xA7\xD9\x85\xD8\xAA\xD8\xAD\xD8\xA7\xD9\x86\xD8\x8C " ),
+		array( '/\s*' . AA_CLAIMS_AR_GUARANTEE . '/u', " \xD9\x88\xD8\xA7\xD9\x84\xD8\xA5\xD8\xB9\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x84\xD9\x84\xD8\xA7\xD9\x85\xD8\xAA\xD8\xAD\xD8\xA7\xD9\x86" ),
 
-/** The guarantee card heading, per language — used to remove the whole card. */
-function aa_claims_card_headings() {
-	return array(
-		'Money-back pass guarantee',
-		'Garantie de r' . "\xC3\xA9" . 'ussite ou remboursement',
-		'Garant' . "\xC3\xAD" . 'a de aprobaci' . "\xC3\xB3" . 'n o reembolso',
-		"\xD8\xB6\xD9\x85\xD8\xA7\xD9\x86 \xD8\xA7\xD9\x84\xD9\x86\xD8\xAC\xD8\xA7\xD8\xAD \xD8\xA3\xD9\x88 \xD8\xA7\xD8\xB3\xD8\xAA\xD8\xB1\xD8\xAF\xD8\xA7\xD8\xAF \xD8\xA7\xD9\x84\xD8\xA3\xD9\x85\xD9\x88\xD8\xA7\xD9\x84",
+		/* The Arabic card body. Matched as a literal rather than a pattern —
+		   nothing in it varies. */
+		array( '/' . preg_quote( "\xD9\x84\xD9\x85\x20\xD8\xAA\xD9\x86\xD8\xAC\xD8\xAD\x20\xD9\x85\xD9\x86\x20\xD8\xA7\xD9\x84\xD9\x85\xD8\xAD\xD8\xA7\xD9\x88\xD9\x84\xD8\xA9\x20\xD8\xA7\xD9\x84\xD8\xA3\xD9\x88\xD9\x84\xD9\x89\xD8\x9F\x20\xD8\xA3\xD8\xB9\xD8\xAF\x20\xD8\xA7\xD9\x84\xD9\x85\xD8\xAC\xD9\x85\xD9\x88\xD8\xB9\xD8\xA9\x20\xD8\xA7\xD9\x84\xD8\xAA\xD8\xA7\xD9\x84\xD9\x8A\xD8\xA9\x20\xD9\x85\xD8\xAC\xD8\xA7\xD9\x86\xD9\x8B\xD8\xA7\x20\xD8\xA3\xD9\x88\x20\xD8\xA7\xD8\xAD\xD8\xB5\xD9\x84\x20\xD8\xB9\xD9\x84\xD9\x89\x20\xD8\xA7\xD8\xB3\xD8\xAA\xD8\xB1\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x83\xD8\xA7\xD9\x85\xD9\x84\x2E\x20\xD8\xAF\xD9\x88\xD9\x86\x20\xD8\xA3\xD8\xB3\xD8\xA6\xD9\x84\xD8\xA9\x2E", '/' ) . '/u',
+		       "\xD8\xA7\xD9\x84\xD8\xA5\xD8\xB9\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x84\xD9\x84\xD8\xA7\xD9\x85\xD8\xAA\xD8\xAD\xD8\xA7\xD9\x86\x20\xD9\x88\xD8\xA7\xD9\x84\xD8\xAF\xD8\xB9\xD9\x85\x20\xD9\x85\xD8\xB4\xD9\x85\xD9\x88\xD9\x84\xD8\xA7\xD9\x86\x20\xD9\x85\xD8\xB9\x20\xD9\x83\xD9\x84\x20\xD8\xAF\xD9\x81\xD8\xB9\xD8\xA9\x2E" ),
 	);
 }
 
 /**
- * Drop the whole guarantee half of the "what's included" card.
+ * The guarantee card heading, per language: old text => new text.
  *
- * The card is one heading div followed by one paragraph, identical in every
- * language:
- *   <div ...><span ...>&#10038;</span>HEADING</div><p ...>BODY</p>
- * The other half of that card — "Instant confirmation" — is a different pair
- * and is left alone, so the card keeps its shape instead of emptying out.
- *
- * THE INNER DIV, AND ONLY THE INNER DIV. The guard between the opening tag and
- * the heading is `(?!</?div\b)` — it forbids an opening <div as well as a
- * closing one. With only `(?!</div>)` the leftmost match started one level too
- * high, on the enclosing <div class="aa-enr-card soft">, because nothing
- * between that tag and the heading text is a </div>. The replacement then ate
- * two opening tags and one closing tag, and the card's own </div> was left
- * orphaned immediately after the "Instant confirmation" paragraph.
- *
- * That single surplus </div> closed the .aa-rd wrapper early. Every rule in
- * the course template is scoped `.aa-rd .x`, so the FAQ, the calendar and the
- * closing band stopped matching any rule at all and rendered as bare HTML —
- * on every course page, in every language, while the block editor kept showing
- * them correctly because it renders each block in its own isolated subtree.
- * Balance the tags you delete.
+ * Title case, because these are headings. The lower-case forms in the rules
+ * above are for mid-sentence use, and this runs BEFORE them so a heading is
+ * never caught by the sentence rule and lower-cased.
  */
-function aa_claims_drop_card( $html ) {
-	foreach ( aa_claims_card_headings() as $heading ) {
-		$pat = '#<div\b[^>]*>(?:(?!</?div\b).)*?' . preg_quote( $heading, '#' )
-		     . '\s*</div>\s*<p\b[^>]*>(?:(?!</p>).)*?</p>#isu';
-		$out = preg_replace( $pat, '', $html );
-		if ( $out !== null ) { $html = $out; }
-	}
-	return $html;
+function aa_claims_heading_swaps() {
+	return array(
+		'Money-back pass guarantee'
+			=> 'Exam preparation included',
+		'Garantie de r' . "\xC3\xA9" . 'ussite ou remboursement'
+			=> "Pr\xC3\xA9paration \xC3\xA0 l\xE2\x80\x99examen incluse",
+		'Garant' . "\xC3\xAD" . 'a de aprobaci' . "\xC3\xB3" . 'n o reembolso'
+			=> "Preparaci\xC3\xB3n para el examen incluida",
+		"\xD8\xB6\xD9\x85\xD8\xA7\xD9\x86 \xD8\xA7\xD9\x84\xD9\x86\xD8\xAC\xD8\xA7\xD8\xAD \xD8\xA3\xD9\x88 \xD8\xA7\xD8\xB3\xD8\xAA\xD8\xB1\xD8\xAF\xD8\xA7\xD8\xAF \xD8\xA7\xD9\x84\xD8\xA3\xD9\x85\xD9\x88\xD8\xA7\xD9\x84"
+			=> "\xD8\xA7\xD9\x84\xD8\xA5\xD8\xB9\xD8\xAF\xD8\xA7\xD8\xAF\x20\xD9\x84\xD9\x84\xD8\xA7\xD9\x85\xD8\xAA\xD8\xAD\xD8\xA7\xD9\x86\x20\xD9\x85\xD8\xB4\xD9\x85\xD9\x88\xD9\x84",
+	);
 }
+
+/**
+ * Retitle the guarantee half of the "what's included" card.
+ *
+ * ANCHORED ON THE MARKUP, not on the words alone. The Arabic heading
+ * ("ضمان النجاح أو استرداد الأموال") is a substring of the Arabic sentence
+ * claim ("وضمان النجاح ..."), so a bare str_replace on the heading text also
+ * fired inside every sentence and left "والإعداد للامتحان مشمول" — the heading
+ * wording, complete with "included", stranded mid-paragraph. The card is
+ * `<span ...>✦</span>HEADING</div>` in all four languages, so matching the
+ * closing span and div makes the heading unambiguous and leaves prose alone.
+ */
+function aa_claims_swap_headings( $html ) {
+	$find = array();
+	$repl = array();
+	foreach ( aa_claims_heading_swaps() as $old => $new ) {
+		$find[] = '</span>' . $old . '</div>';
+		$repl[] = '</span>' . $new . '</div>';
+	}
+	return str_replace( $find, $repl, $html );
+}
+
+/* THE CARD IS NO LONGER DELETED, and that is the safer change.
+ *
+ * This file used to remove the guarantee half of the "what's included" card
+ * outright — a regex that ate one heading div plus the paragraph after it. It
+ * worked, eventually, but only after a version of it matched one level too high
+ * and swallowed two opening tags against one closing tag. The surplus </div>
+ * closed the .aa-rd wrapper early, and since every rule in the course template
+ * is scoped `.aa-rd .x`, the FAQ, the calendar and the closing band silently
+ * lost their styling on every course page in every language — while the block
+ * editor kept rendering them correctly, because it renders each block in its
+ * own isolated subtree.
+ *
+ * Now that the card says something true instead of nothing, there is no reason
+ * to delete markup at all: the heading and the body are swapped for new text
+ * and every tag stays exactly where it was. No balance to get wrong.
+ *
+ * The other half of the card — "Instant confirmation" — was never touched and
+ * still is not.
+ */
 
 /**
  * Remove aggregateRating from every JSON-LD block on the page.
@@ -472,7 +514,9 @@ function aa_claims_filter( $html ) {
 	// rating strip below re-encodes into a different shape.
 	$html = aa_claims_page_fixes( $html );
 	$html = aa_claims_strip_rating( $html );
-	$html = aa_claims_safely( $html, 'aa_claims_drop_card', 'drop_card' );
+	// Headings first: they are Title case, and the sentence rules below match
+	// the same words in lower case.
+	$html = aa_claims_safely( $html, 'aa_claims_swap_headings', 'swap_headings' );
 	foreach ( aa_claims_rules() as $rule ) {
 		$out = preg_replace( $rule[0], $rule[1], $html );
 		if ( $out !== null ) { $html = $out; }   // a failed pattern changes nothing
