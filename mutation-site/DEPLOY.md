@@ -28,21 +28,21 @@ Hostinger runs PHP on the subdomain by default, so there is nothing to enable.
    document root, not in a subfolder.
 3. **SSL** — hPanel → Security → SSL → free certificate for the subdomain, then
    force HTTPS.
-4. **Check the lead capture works** — take the assessment once on the live
+4. **Check the lead capture works.** Take the assessment once on the live
    site, then confirm three things: a row in `assess/leads.csv`, a mail to
-   info@agile-agilist.com, and a new contact in HubSpot. The HubSpot leg is
-   wired but has never been fired for real — it is a cross-origin POST, so the
-   browser sends a CORS preflight first, and a preflight failure would drop the
-   submission silently (the call is deliberately fire-and-forget so it can
-   never block the reading). The CSV is the backstop if it does.
+   info@agile-agilist.com, and a new contact in HubSpot.
 
-   `assess/lead.php` needs nothing
-   configured and runs the moment it is uploaded: it appends each reading to
-   `assess/leads.csv` and emails `info@agile-agilist.com`. Take the assessment
-   once on the live site and confirm both. If the mail does not arrive, your
-   host may require the `From:` address to exist as a real mailbox — create
-   `no-reply@agile-agilist.com` in hPanel, or change `$FROM` to a mailbox that
-   does exist. The CSV is the record either way.
+   `assess/lead.php` needs nothing configured and runs the moment it is
+   uploaded. If the mail does not arrive, your host may require the `From:`
+   address to exist as a real mailbox — create `no-reply@agile-agilist.com` in
+   hPanel, or point `$FROM` at a mailbox that does exist. The CSV is the record
+   either way.
+
+   The HubSpot leg is wired but has never been fired for real. It is a
+   cross-origin POST, so the browser sends a CORS preflight first, and a
+   preflight failure would drop the submission silently — the call is
+   deliberately fire-and-forget so it can never block someone's reading. The
+   CSV is the backstop if that happens.
 5. **HubSpot — already wired.** Portal `46316757`, form
    `c6f0d4c1-d233-4875-9b0c-4528cda02237` ("Mutation Readiness Assessment":
    Email required, First name optional, no reCAPTCHA, GDPR consent off, and
