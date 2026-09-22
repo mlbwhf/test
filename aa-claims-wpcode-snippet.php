@@ -53,6 +53,26 @@
 if ( ! function_exists( 'aa_claims_rules' ) ) :
 
 /**
+ * The Arabic pass-guarantee claim, as a pattern fragment.
+ *
+ * "وضمان النجاح أو استرداد الأموال" / "... المبلغ" — written as \x{} escapes so
+ * the snippet body stays ASCII and survives being pasted through editors that
+ * mangle RTL text. Defined once because three rules need it and a copy that
+ * drifts from the other two is how the /ar/ home page went uncovered.
+ */
+if ( ! defined( 'AA_CLAIMS_AR_GUARANTEE' ) ) {
+	define(
+		'AA_CLAIMS_AR_GUARANTEE',
+		'\x{0648}\x{0636}\x{0645}\x{0627}\x{0646} '            // وضمان
+		. '\x{0627}\x{0644}\x{0646}\x{062C}\x{0627}\x{062D} '  // النجاح
+		. '\x{0623}\x{0648} '                                  // أو
+		. '\x{0627}\x{0633}\x{062A}\x{0631}\x{062F}\x{0627}\x{062F} ' // استرداد
+		. '(?:\x{0627}\x{0644}\x{0623}\x{0645}\x{0648}\x{0627}\x{0644}' // الأموال
+		. '|\x{0627}\x{0644}\x{0645}\x{0628}\x{0644}\x{063A})'          // المبلغ
+	);
+}
+
+/**
  * Ordered claim rules, most specific first.
  *
  * Each is [pattern, replacement]. Order matters: the mid-sentence form has to
@@ -109,11 +129,28 @@ function aa_claims_rules() {
 		array( '/,\s*garant\x{00ED}a de aprobaci\x{00F3}n o reembolso/iu', '' ),
 		array( '/\x{00BF}No apruebas al primer intento\?\s*Repite la siguiente cohorte gratis o recibe un reembolso completo\.\s*Sin preguntas\.?/iu', '' ),
 
-		/* ---- Arabic ---- */
-		// The replacement is a literal Arabic comma (U+060C in UTF-8 bytes), not
-		// an \x{} escape — those are pattern syntax and would be emitted verbatim.
-		array( '/\x{060C}\s*\x{0648}\x{0636}\x{0645}\x{0627}\x{0646} \x{0627}\x{0644}\x{0646}\x{062C}\x{0627}\x{062D} \x{0623}\x{0648} \x{0627}\x{0633}\x{062A}\x{0631}\x{062F}\x{0627}\x{062F} \x{0627}\x{0644}\x{0623}\x{0645}\x{0648}\x{0627}\x{0644}\x{060C}\s*/u', "\xD8\x8C " ),
-		array( '/\s*\x{0648}\x{0636}\x{0645}\x{0627}\x{0646} \x{0627}\x{0644}\x{0646}\x{062C}\x{0627}\x{062D} \x{0623}\x{0648} \x{0627}\x{0633}\x{062A}\x{0631}\x{062F}\x{0627}\x{062F} \x{0627}\x{0644}\x{0623}\x{0645}\x{0648}\x{0627}\x{0644}/u', '' ),
+		/* ---- Arabic ----
+		   The replacement is a literal Arabic comma (U+060C in UTF-8 bytes), not
+		   an \x{} escape — those are pattern syntax and would be emitted verbatim.
+
+		   THE REFUND NOUN HAS TWO FORMS and the first version of these rules only
+		   knew one. The course pages say "استرداد الأموال"; the Arabic home page
+		   (/ar/, post 29280) says "استرداد المبلغ". Anchoring on الأموال alone
+		   meant /ar/ published the money-back guarantee, in the first paragraph
+		   under the H1, for as long as these rules have been live — the one
+		   Arabic page most likely to be read first was the one page not covered.
+		   The tail is an alternation now, so a third wording is one more branch.
+
+		   The period rule runs FIRST. The claim often follows an Arabic comma and
+		   ends a sentence ("...عند النجاح، وضمان النجاح أو استرداد الأموال.") and
+		   removing only the claim leaves "،." — a comma against a full stop, which
+		   is wrong in Arabic and was going out inside the Course JSON-LD on every
+		   Arabic course page. It is handled here, anchored on the whole claim,
+		   rather than by a general punctuation sweep: see the note further down
+		   about what a general tidy pass did to the stylesheets. */
+		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\s*\./u', '.' ),
+		array( '/\x{060C}\s*' . AA_CLAIMS_AR_GUARANTEE . '\x{060C}\s*/u', "\xD8\x8C " ),
+		array( '/\s*' . AA_CLAIMS_AR_GUARANTEE . '/u', '' ),
 	);
 }
 

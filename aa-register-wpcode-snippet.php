@@ -5162,22 +5162,37 @@ function aa_reg_menu_labels() {
 		'Customers'    => array( 'fr' => 'Nos clients',  'es' => 'Clientes',      'ar' => 'عملاؤنا' ),
 		'Blog'         => array( 'fr' => 'Blog',         'es' => 'Blog',          'ar' => 'المدونة' ),
 		'FAQ'          => array( 'fr' => 'FAQ',          'es' => 'Preguntas frecuentes', 'ar' => 'الأسئلة الشائعة' ),
-		'Global Offices'    => array( 'fr' => 'Nos bureaux',        'es' => 'Oficinas' ),
-		'Send us a message' => array( 'fr' => 'Nous écrire',        'es' => 'Escríbenos' ),
-		'Agile Career Selector' => array( 'fr' => 'Sélecteur de parcours', 'es' => 'Selector de carrera' ),
+		/* The ten labels above have always had Arabic. These seventeen did not,
+		   so an Arabic visitor got a right-to-left menu with English words in
+		   it — the untranslated label falls back to the English string. The
+		   ones that carry real Arabic below now do.
+
+		   WHERE THERE IS NO 'ar', THAT IS THE ANSWER, not an omission. French
+		   and Spanish both keep "Lean Portfolio Mgmt (LPM)", "Agile Product
+		   Mgmt (APM)", "Value Stream Mapping", "Innovation Framework" and
+		   "AI-Native" in English because they are product names, and the
+		   Arabic pages already carry SAFe, Agile and the credential codes in
+		   Latin script throughout. Translating them only here would make the
+		   menu disagree with every page it links to. Same reasoning for
+		   Mutation, which is a service name and now a subdomain; if you want
+		   it in Arabic, الطفرة is the word I would use — say so and it is one
+		   line. */
+		'Global Offices'    => array( 'fr' => 'Nos bureaux',        'es' => 'Oficinas',   'ar' => 'مكاتبنا' ),
+		'Send us a message' => array( 'fr' => 'Nous écrire',        'es' => 'Escríbenos', 'ar' => 'راسلنا' ),
+		'Agile Career Selector' => array( 'fr' => 'Sélecteur de parcours', 'es' => 'Selector de carrera', 'ar' => 'مُحدِّد المسار المهني' ),
 		'Lean Portfolio Mgmt (LPM)' => array( 'fr' => 'Lean Portfolio Mgmt (LPM)', 'es' => 'Lean Portfolio Mgmt (LPM)' ),
 		'Agile Product Mgmt (APM)'  => array( 'fr' => 'Agile Product Mgmt (APM)',  'es' => 'Agile Product Mgmt (APM)' ),
-		'Digital Transformation'    => array( 'fr' => 'Transformation numérique',  'es' => 'Transformación digital' ),
-		'Innovation Culture'        => array( 'fr' => 'Culture d’innovation',      'es' => 'Cultura de innovación' ),
-		'Product Operating Model'   => array( 'fr' => 'Modèle opérationnel produit','es' => 'Modelo operativo de producto' ),
-		'Operating Model in the Age of AI' => array( 'fr' => 'Le modèle opérationnel à l’ère de l’IA', 'es' => 'Modelo operativo en la era de la IA' ),
+		'Digital Transformation'    => array( 'fr' => 'Transformation numérique',  'es' => 'Transformación digital',    'ar' => 'التحول الرقمي' ),
+		'Innovation Culture'        => array( 'fr' => 'Culture d’innovation',      'es' => 'Cultura de innovación',     'ar' => 'ثقافة الابتكار' ),
+		'Product Operating Model'   => array( 'fr' => 'Modèle opérationnel produit','es' => 'Modelo operativo de producto', 'ar' => 'نموذج تشغيل المنتج' ),
+		'Operating Model in the Age of AI' => array( 'fr' => 'Le modèle opérationnel à l’ère de l’IA', 'es' => 'Modelo operativo en la era de la IA', 'ar' => 'نموذج التشغيل في عصر الذكاء الاصطناعي' ),
 		'Value Stream Mapping'      => array( 'fr' => 'Value Stream Mapping',      'es' => 'Value Stream Mapping' ),
-		'Conflict & Collaboration'  => array( 'fr' => 'Conflit et collaboration',  'es' => 'Conflicto y colaboración' ),
-		'Achieving Responsible AI'  => array( 'fr' => 'Une IA responsable',        'es' => 'IA responsable' ),
-		'Agile Maturity'            => array( 'fr' => 'Maturité Agile',            'es' => 'Madurez Agile' ),
+		'Conflict & Collaboration'  => array( 'fr' => 'Conflit et collaboration',  'es' => 'Conflicto y colaboración',  'ar' => 'الصراع والتعاون' ),
+		'Achieving Responsible AI'  => array( 'fr' => 'Une IA responsable',        'es' => 'IA responsable',            'ar' => 'الذكاء الاصطناعي المسؤول' ),
+		'Agile Maturity'            => array( 'fr' => 'Maturité Agile',            'es' => 'Madurez Agile',             'ar' => 'نضج Agile' ),
 		'Innovation Framework'      => array( 'fr' => 'Innovation Framework',      'es' => 'Innovation Framework' ),
 		'AI-Native'                 => array( 'fr' => 'AI-Native',                 'es' => 'AI-Native' ),
-		'AI Automation'             => array( 'fr' => 'Automatisation par l’IA',   'es' => 'Automatización con IA' ),
+		'AI Automation'             => array( 'fr' => 'Automatisation par l’IA',   'es' => 'Automatización con IA',     'ar' => 'الأتمتة بالذكاء الاصطناعي' ),
 		'Mutation'                  => array( 'fr' => 'Mutation',                  'es' => 'Mutación' ),
 	);
 }
