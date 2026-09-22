@@ -28,22 +28,38 @@ Hostinger runs PHP on the subdomain by default, so there is nothing to enable.
    document root, not in a subfolder.
 3. **SSL** — hPanel → Security → SSL → free certificate for the subdomain, then
    force HTTPS.
-4. **Check the lead capture works** — `assess/lead.php` needs nothing
+4. **Check the lead capture works** — take the assessment once on the live
+   site, then confirm three things: a row in `assess/leads.csv`, a mail to
+   info@agile-agilist.com, and a new contact in HubSpot. The HubSpot leg is
+   wired but has never been fired for real — it is a cross-origin POST, so the
+   browser sends a CORS preflight first, and a preflight failure would drop the
+   submission silently (the call is deliberately fire-and-forget so it can
+   never block the reading). The CSV is the backstop if it does.
+
+   `assess/lead.php` needs nothing
    configured and runs the moment it is uploaded: it appends each reading to
    `assess/leads.csv` and emails `info@agile-agilist.com`. Take the assessment
    once on the live site and confirm both. If the mail does not arrive, your
    host may require the `From:` address to exist as a real mailbox — create
    `no-reply@agile-agilist.com` in hPanel, or change `$FROM` to a mailbox that
    does exist. The CSV is the record either way.
-5. **HubSpot (optional, free)** — HubSpot → Marketing → Forms → create an
-   embedded form with Email and First name, then paste its GUID into
-   `HUBSPOT_FORM_GUID` in `assets/assess.js`. The portal ID is already filled
-   in. Both values are public by design — the Forms API is meant to be called
-   from a browser — so nothing secret lives in that file. To carry the scores
-   across as well, create a single-line text property on the contact, add it to
-   the form, and put its internal name in `HUBSPOT_SCORE_FIELD`. Leave that
-   blank until the property really exists: HubSpot rejects the whole submission
-   if a field on it is unknown, and the email would go down with it.
+5. **HubSpot — already wired.** Portal `46316757`, form
+   `c6f0d4c1-d233-4875-9b0c-4528cda02237` ("Mutation Readiness Assessment":
+   Email required, First name optional, no reCAPTCHA, GDPR consent off, and
+   "automatically create new contacts from unknown email addresses" ON — that
+   last one matters, because without it a submission records but no contact
+   appears). Both IDs are public by design; nothing secret is in that file.
+
+   The portal is region `na1`, which is what `api.hsforms.com` resolves to by
+   default. An eu1 portal would need `api-eu1.hsforms.com`.
+
+   **HubSpot receives the contact only — not the scores.** The form carries
+   just email and firstname, and HubSpot rejects an entire submission that
+   names a field the form does not have, which would lose the email with it.
+   The layer scores, weakest layer and UTMs go to `lead.php` (CSV + email). To
+   get the reading into the CRM as well: create a single-line text property on
+   the contact, add it to that form, then put its internal name in
+   `HUBSPOT_SCORE_FIELD`.
 6. **Analytics** — add the same GA4 / conversion snippet the main site uses so
    assessment completions register as real events.
 

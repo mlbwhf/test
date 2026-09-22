@@ -43,8 +43,22 @@
      --------------------------------------------------------------------- */
   var LEAD_ENDPOINT       = '/assess/lead.php';
   var HUBSPOT_PORTAL      = '46316757';
-  var HUBSPOT_FORM_GUID   = '';
+  var HUBSPOT_FORM_GUID   = 'c6f0d4c1-d233-4875-9b0c-4528cda02237';
   var HUBSPOT_SCORE_FIELD = '';
+
+  /* The form is "Mutation Readiness Assessment" in HubSpot: Email required,
+     First name optional, nothing else, no reCAPTCHA, GDPR consent off — so no
+     legalConsentOptions block is needed, and adding one would be rejected.
+     Portal region is na1, which is what api.hsforms.com resolves to by
+     default; an eu1 portal would need api-eu1.hsforms.com instead.
+
+     HUBSPOT_SCORE_FIELD stays empty ON PURPOSE. The form carries only email
+     and firstname, and HubSpot rejects a whole submission that names a field
+     the form does not have — the email would be lost with it. So HubSpot gets
+     the contact; the layer scores, the weakest layer and the UTMs go to
+     lead.php's CSV and notification email only. To put the reading in the CRM
+     too: create a single-line text property on the contact, add it to this
+     form, then put its internal name here. */
 
   var LAYERS = [
     { n: '01', name: 'Iterative delivery at scale', def: 'Delivery works beyond a few teams: dependencies, alignment, a shared cadence. Without this, nothing above it has a floor.' },
