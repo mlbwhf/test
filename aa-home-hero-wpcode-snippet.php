@@ -287,21 +287,25 @@ function aa_hh_week_label( $iso, $str ) {
 	return sprintf( $str['week_of'], aa_hh_one_date( $d, $str ) );
 }
 
-/** "Sep 14–17", or "Sep 30–Oct 2" across a month boundary. */
-function aa_hh_range( $start, $end, $str ) {
-	$s = new DateTime( $start );
-	$e = new DateTime( $end );
-	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return aa_hh_one_date( $s, $str ); }
-	if ( $s->format( 'Y-m' ) !== $e->format( 'Y-m' ) ) {
-		return aa_hh_one_date( $s, $str ) . '–' . aa_hh_one_date( $e, $str );
-	}
-	/* Same month: print it once, on the side the locale puts it. */
+/** "Sep 14–17" — one month, so print it once, on the side the locale puts it. */
+function aa_hh_same_month_range( $s, $e, $str ) {
 	$mon = $str['mon_short'][ (int) $s->format( 'n' ) - 1 ];
 	$ds  = $s->format( 'j' );
 	$de  = $e->format( 'j' );
 	if ( $ds === '1' && ! empty( $str['first_ordinal'] ) ) { $ds .= $str['first_ordinal']; }
-	return empty( $str['day_first'] ) ? $mon . ' ' . $ds . '–' . $de
-	                                  : $ds . '–' . $de . ' ' . $mon;
+	return empty( $str['day_first'] ) ? $mon . ' ' . $ds . '–' . $de : $ds . '–' . $de . ' ' . $mon;
+}
+
+/** "Sep 14–17", or "Sep 30–Oct 2" across a month boundary. */
+function aa_hh_range( $start, $end, $str ) {
+	$s = new DateTime( $start );
+	$e = new DateTime( $end );
+	$one = function ( $d ) use ( $str ) { return aa_hh_one_date( $d, $str ); };
+	if ( $s->format( 'Y-m-d' ) === $e->format( 'Y-m-d' ) ) { return $one( $s ); }
+	if ( $s->format( 'Y-m' ) !== $e->format( 'Y-m' ) ) {
+		return $one( $s ) . '–' . $one( $e );
+	}
+	return aa_hh_same_month_range( $s, $e, $str );
 }
 
 /** Chrome copy. Certification names are proper nouns and are never translated. */
