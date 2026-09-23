@@ -219,19 +219,29 @@ function aa_reg_courses() {
 		      a credential we cannot verify. The note ended "if an exam does
 		      exist, put it back; do not put it back on an assumption."
 
-		      It does exist. The credential is the Certified Large Solution SAFe
-		      Practitioner (LSSP) -- confirmed from the Scaled Agile badge, and
-		      confirmed by the client that the exam fee is inside our price. So
+		      It does exist. The credential is the Large Solution SAFe
+		      Practitioner (LSSP), and Scaled Agile's certification page states
+		      the exam: 90 minutes, 45 questions, 80% to pass, accreditation on
+		      passing. The client confirmed the exam fee is inside our price. So
 		      the opt-out is gone: 'incl' is no longer set, which means
 		      aa_reg_incl() falls through to aa_reg_t('exam_included'), and this
 		      row now says "exam included" in all four languages instead of the
 		      English-only literal it would have carried. The proof list matches
 		      the other Advanced SAFe rows again.
 
-		      STILL UNVERIFIED, and deliberately not stated anywhere: the exam
-		      format, its length, the passing score and the number of retakes.
-		      Do not write those from memory -- the badge proves the credential
-		      exists and nothing more.
+		      LEVEL. That same page says "Foundational level" and "No
+		      prerequisites required". We shelve the course under Advanced SAFe
+		      anyway -- a commercial placement, and a defensible one: it is
+		      SPCT-led, capped at 18, priced at $2,150 against $997 for a core
+		      role course, and the audience Scaled Agile names is senior. What
+		      we must NOT do is state a prerequisite or a level Scaled Agile
+		      contradicts. The course page carried "Implementing SAFe with SPC
+		      is the natural course before it"; that has been removed.
+
+		      STILL UNVERIFIED, and deliberately not stated anywhere: the retake
+		      policy, and whether Scaled Agile charges separately for a resit.
+		      Everything else above is quoted from their certification page. Do
+		      not fill that last gap from memory.
 
 		   2. THE FIRST DATE was 21 Sep 2026. Scaled Agile's launch plan sets
 		      general availability at 22 Sep 2026 and says delivery begins then.
@@ -259,10 +269,21 @@ function aa_reg_courses() {
 			/* LSSP, not LSS: the code prints on the calendar bars, the hero chip
 			   and the CTA, and it is the credential's own acronym on the badge. */
 			'code'     => 'LSSP',
-			'name'     => 'Implementing Large Solution SAFe®',
-			'eyebrow'  => 'Live online · Implementing Large Solution SAFe®',
-			'h1'       => 'Implementing Large Solution SAFe®.',
-			'lede'     => 'For people building complex, large-scale systems. Scale Lean-Agile practice through the updated Large Solution Delivery (LSD) discipline — cross-enterprise coordination with external partners and the wider solution ecosystem, for delivery that is faster, more predictable and higher quality.',
+			/* THE COURSE IS CALLED "Large Solution SAFe", NOT "Implementing
+			   Large Solution SAFe".
+			   The row was built from the SPCT masterclass handout and carried
+			   the longer name. Scaled Agile's public certification page never
+			   uses it: the title, the class-finder dropdown and the finder URL
+			   (?courseType=Large+Solution+SAFe) all say "Large Solution SAFe",
+			   and "Implementing SAFe" is a DIFFERENT course in that same
+			   dropdown -- so the old name welded two of their course names
+			   together. It printed in the h1, the eyebrow, the Course JSON-LD
+			   and the Stripe line item a buyer reads at checkout, and it is
+			   also the phrase people search for. */
+			'name'     => 'Large Solution SAFe®',
+			'eyebrow'  => 'Live online · Large Solution SAFe®',
+			'h1'       => 'Large Solution SAFe®.',
+			'lede'     => 'For people building complex, large-scale systems. Scale Lean-Agile practice through the updated Large Solution Delivery (LSD) discipline — cross-enterprise coordination with external partners and the wider solution ecosystem, for delivery that is faster, more predictable and higher quality. No prerequisites.',
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
@@ -987,11 +1008,16 @@ function aa_reg_parse_cohorts_el( $content ) {
 		'dows'   => aa_reg_derived_days( $attr( 'days' ) ),
 		/* WHAT THE PRICE COVERS, IN THE PAGE'S OWN WORDS.
 		   The builder below used to hard-code "Exam fee included" for every
-		   derived course. Most of them do include it, so nobody noticed -- but
-		   Large Solution has no exam at all, and a page that says the fee is
-		   included is not a wording problem, it is a false claim about what
-		   somebody is buying. A page that knows better says so in data-incl;
-		   one that says nothing keeps the old default. */
+		   derived course, which is a false claim about what somebody is buying
+		   the moment one of them does not include it. A page that knows better
+		   says so in data-incl; one that says nothing keeps the old default.
+
+		   The example this was written for was Large Solution, which we then
+		   believed had no exam. It does -- 90 minutes, 45 questions, 80% to
+		   pass -- and its data-incl override has been removed, so it inherits
+		   the translated "exam included" like every other course. The mechanism
+		   stays, because the next course that genuinely differs should not need
+		   this discovered a second time. */
 		'incl'   => trim( $attr( 'incl' ) ),
 		/* THE EARLIEST DATE THIS COURSE MAY RUN, same meaning as 'from' in the
 		   hand table. Without it a mirror generates from today, and Large
@@ -1665,13 +1691,31 @@ function aa_reg_hero_next( $slug ) {
 		   they belong on the same row rather than further down it. */
 		'spc' => array(
 			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
-			'courses' => array( 'aspc', 'ai-native-foundations', 'apm', 'lpm' ),
+			'courses' => array( 'aspc', 'large-solution', 'ai-native-foundations', 'apm', 'lpm' ),
 		),
 		/* Leading SAFe. The usual next step is Lean Portfolio Management --
 		   the same audience, one level up the funding and strategy stack. */
 		'sa' => array(
 			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
 			'courses' => array( 'lpm' ),
+		),
+		/* RELEASE TRAIN ENGINEER. Scaled Agile names Solution Train Engineers
+		   as an audience for Large Solution, and an RTE already running one
+		   train is the person a second and third train lands on -- so it is
+		   the step that follows the work rather than the credential. SPC and
+		   Architect sit alongside it: the same seniority, different direction. */
+		'rte' => array(
+			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
+			'courses' => array( 'large-solution', 'spc', 'arch' ),
+		),
+		/* LARGE SOLUTION. Foundational level with no prerequisites, so it is
+		   not the end of a ladder -- people arrive at it from several places
+		   and leave in several directions. Consulting is the common one (SPC,
+		   then ASPC); the AI-Native track is the other, because the course now
+		   teaches AI in systems engineering and this is where that continues. */
+		'large-solution' => array(
+			'caption' => aa_reg_t( 'next_progress', 'Progress to' ),
+			'courses' => array( 'spc', 'aspc', 'arch', 'ai-native-change-agent' ),
 		),
 		/* Advanced SPC. Someone already qualified to teach SAFe does not
 		   progress to another SAFe role course; the track that is still ahead
@@ -5772,7 +5816,7 @@ function aa_training_copy_i18n() {
 				'kicker' => 'Puestos sénior',
 				'title'  => 'Certificación SAFe Avanzado',
 				'accent' => 'para el puesto sénior.',
-				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect e Implementing Large '
+				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect y Large '
 				          . 'Solution SAFe, impartidos en vivo online por un Gold SPCT con el examen '
 				          . 'incluido. Son las credenciales que buscan las grandes empresas cuando '
 				          . 'contratan a alguien para dirigir una transformación, no para participar '
@@ -5841,7 +5885,7 @@ function aa_training_copy_i18n() {
 				'kicker' => 'الأدوار القيادية',
 				'title'  => 'شهادات SAFe المتقدّمة',
 				'accent' => 'للمقعد القيادي.',
-				'sub'    => 'SPC وASPC وRTE وLPM وAPM وSAFe Architect وImplementing Large Solution '
+				'sub'    => 'SPC وASPC وRTE وLPM وAPM وSAFe Architect وLarge Solution '
 				          . 'SAFe، تُدرَّس مباشرة عبر الإنترنت على يد مدرّب Gold SPCT مع رسوم الامتحان '
 				          . 'مشمولة. هذه هي الشهادات التي تبحث عنها المؤسسات الكبرى حين توظّف شخصًا '
 				          . 'ليقود تحوّلًا لا ليشارك فيه.',
@@ -5910,7 +5954,7 @@ function aa_training_copy() {
 			'kicker'  => 'Senior roles',
 			'title'   => 'Advanced SAFe certification',
 			'accent'  => 'for the senior seat.',
-			'sub'     => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect and Implementing Large Solution SAFe, '
+			'sub'     => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect and Large Solution SAFe, '
 			           . 'taught live online by a Gold SPCT with the exam fee included. These are the '
 			           . 'credentials enterprises screen for when they are hiring someone to lead a '
 			           . 'transformation rather than take part in one.',
@@ -6469,6 +6513,31 @@ function aa_salary_data() {
 				'accent' => 'SPC.',
 				'blurb'  => 'Progress from Release Train facilitation to enterprise-transformation consultancy.',
 				'steps'  => array( 'RTE', 'SPC', 'ASPC' ),
+			),
+			/* LARGE SOLUTION. The destination carries no figure on purpose.
+			   LSSP is a 2026 credential and no salary source publishes a median
+			   for it, so it uses the same `dest` shape as the AI-guided
+			   architecture path -- a chip that ends the ladder, and a note
+			   saying why there is no number. Inventing one here would put the
+			   least-evidenced figure on the page in the most prominent place.
+
+			   RTE and SPC are the priced steps because they are where this
+			   audience actually comes from, NOT because either is required:
+			   Scaled Agile lists the course as Foundational with no
+			   prerequisites, and the note says so. */
+			array(
+				'kicker' => 'Large solution track',
+				'title'  => 'From one train to',
+				'accent' => 'many.',
+				'blurb'  => 'Run one Agile Release Train, then coordinate several — Solution Trains, '
+				          . 'value stream networks, suppliers and compliance across a system of systems.',
+				'steps'  => array( 'RTE', 'SPC' ),
+				'dest'   => array(
+					'label' => 'Large Solution SAFe Practitioner (LSSP)',
+					'note'  => 'Foundational level with no prerequisites, so it can be taken at any '
+					         . 'point on this path rather than only at the end. No salary source '
+					         . 'publishes a median for this credential yet, so none is shown.',
+				),
 			),
 			array(
 				'kicker' => 'Portfolio track',
