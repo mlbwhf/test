@@ -2993,6 +2993,7 @@ function aa_reg_strings() {
 			'no_dates'      => '¿No te encajan las fechas?',
 			'private'       => 'Solicita una convocatoria privada',
 			'scroll'        => 'Desplázate para ver el calendario y la inscripción',
+			'scroll_x'      => 'Desplázate horizontalmente',
 			'trained'       => 'formados',
 			'arts'          => 'ART lanzados',
 			'exam_fee'      => 'Tasa de examen',
@@ -3083,6 +3084,7 @@ function aa_reg_strings() {
 			'no_dates'      => 'Les dates ne conviennent pas ?',
 			'private'       => 'Demandez une session privée',
 			'scroll'        => 'Faites défiler pour le calendrier et l\'inscription',
+			'scroll_x'      => 'Faites défiler horizontalement',
 			'trained'       => 'formés',
 			'arts'          => 'ART lancés',
 			'exam_fee'      => 'Frais d\'examen',
@@ -3173,7 +3175,8 @@ function aa_reg_strings() {
 			'full_schedule' => 'عرض الجدول الكامل',
 			'no_dates'      => 'التواريخ لا تناسبك؟',
 			'private'       => 'اطلب دورة خاصة',
-			'scroll'        => 'مرّر لأسفل لعرض الجدول الكامل والتسجيل',
+			'scroll'        => 'اضغط هنا لعرض جدول التواريخ بالكامل',
+			'scroll_x'      => 'مرّر لأسفل لعرض الجدول الكامل والتسجيل',
 			'trained'       => 'متدرب',
 			'arts'          => 'قطار إصدار رشيق تم إطلاقه',
 			'exam_fee'      => 'رسوم الامتحان',
@@ -7109,7 +7112,7 @@ function aa_reg_board( $atts ) {
 	    . '<span class="aab__kicker">' . esc_html( aa_reg_t( 'weeks_ltr', 'Weeks run left to right' ) ) . '</span>'
 	    . '<span class="aab__key"><i class="aab__keybar"></i>' . esc_html( aa_reg_t( 'one_cohort', 'one cohort' ) ) . '</span>'
 	    . '<span class="aab__key"><i class="aab__keytoday"></i>' . esc_html( aa_reg_t( 'today', 'today' ) ) . '</span>'
-	    . '<span class="aab__hint">' . esc_html( aa_reg_t( 'scroll', 'scroll' ) ) . ' &#8596;</span>'
+	    . '<span class="aab__hint">' . esc_html( aa_reg_t( 'scroll_x', 'scroll' ) ) . ' &#8596;</span>'
 	    . '</div>';
 
 	$h .= '<div class="aab__scroll"><div class="aab__in" style="width:' . ( $LABEL + $boardw ) . 'px">';
