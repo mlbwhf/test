@@ -153,7 +153,11 @@ if ( ! function_exists( 'aa_reg_courses' ) ) :
  * the holiday rule. The rule is the maintainable artefact; the dates fall out
  * of it.
  *
- *   cadence  one entry per weekly start: day of week + time slot
+ *   cadence  one entry per weekly start: day of week + time slot, and an
+ *            optional 'week' (1-5) pinning that entry to one week of the
+ *            month. Without 'week' the entry means "every <dow>", which is
+ *            what the twice- and thrice-weekly courses use. With it, a course
+ *            can run once a week on a different day each week.
  *   days     class length, which is also what the blackout rule tests against
  *   weeks    how far ahead to publish
  *   seats    room size (sold seats are tracked separately and subtracted)
@@ -278,10 +282,13 @@ function aa_reg_courses() {
 		      coupled alternative to the Solution Train, which is the substantive
 		      change and was missing entirely.
 
-		   Still from the supplied outline and unverified: the price and the
-		   cadence. Scaled Agile expects this class to run mostly as a private
-		   audience, so the public cadence below is worth a decision rather than
-		   an inheritance from RTE.
+		   THE CADENCE IS NOW A DECISION, not an inheritance. It used to be
+		   RTE's Mon/Wed/Fri, which was three classes a week for a course
+		   Scaled Agile expects to run mostly as a private audience. The client
+		   set the pattern below: once a week, on a different day each week,
+		   with a weekend option in week 2. See the note on 'cadence'.
+
+		   Still from the supplied outline and unverified: the price.
 
 		   The page at 'url' is published (33677, child of Advanced SAFe) and
 		   built from this row: [aa_course_hero] and [aa_course_register] both
@@ -312,15 +319,35 @@ function aa_reg_courses() {
 			'price'    => 2150,   // from the supplied outline; same as RTE
 			'days'     => 2,      // confirmed 2 days
 			/* 22 Sep 2026 is Scaled Agile's GA date -- the first day the course
-			   may be delivered. Wednesday the 23rd is the first cadence day on
-			   or after it. */
+			   may be delivered, so nothing generates before it. */
 			'from'     => '2026-09-23',
 			'seats'    => 18,
 			'weeks'    => 26,
+			/* ONCE A WEEK, ON A DIFFERENT DAY EACH WEEK.
+			   Set by the client, replacing the Mon/Wed/Fri pattern this row
+			   inherited from RTE -- which was three classes a week and was
+			   flagged in the note above as a decision waiting to be made.
+
+			   Four starts a month, each pinned to its week by the 'week' key
+			   (see aa_reg_generate()):
+
+			     week 1   Thursday   -> Thu + Fri
+			     week 2   Saturday   -> Sat + Sun, the weekend option
+			     week 3   Monday     -> Mon + Tue
+			     week 4   Monday     -> Mon + Tue
+
+			   The weekend start is the reason this course now shows the
+			   Weekday/Weekend filter chips at all: aa_reg_kind() classifies a
+			   span, not a start day, so Sat+Sun comes back 'weekend' and the
+			   batch label reads "Weekend batch" instead of a slot name.
+
+			   No week-5 rule, so a month with a 29th-31st simply has four
+			   starts. Add array( 'dow' => ..., 'week' => 5 ) if that changes. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning' ),
-				array( 'dow' => 'Wed', 'slot' => 'morning' ),
-				array( 'dow' => 'Fri', 'slot' => 'afternoon' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
 			),
 			/* No 'incl' key on purpose. aa_reg_incl() then returns the
 			   translated aa_reg_t('exam_included'), exactly as every other
@@ -801,12 +828,32 @@ function aa_reg_generate( $slug, $course ) {
 	$planned = array();   // every cadence start in the window, valid or not
 
 	foreach ( (array) $course['cadence'] as $rule ) {
+		/* OPTIONAL: PIN A RULE TO ONE WEEK OF THE MONTH.
+		   Without it a rule means "every <dow>", which is what the twice- and
+		   thrice-weekly courses want and what every existing row relies on.
+		   With it the rule fires only in that week, which is how a course can
+		   run once a week on a DIFFERENT day each week -- Thursday, then a
+		   weekend, then two Mondays -- without listing 48 dates a year by hand.
+
+		   The week is ceil(day / 7), the same definition aa_reg_generate_places()
+		   already uses to turn an anchor date into "the second Thursday": days
+		   1-7 are week 1, 8-14 week 2, and so on. It is NOT the ISO week, and
+		   it deliberately does not care which weekday the month starts on --
+		   "the second week" has to mean the same thing to the person reading
+		   the schedule as it does to the person who wrote the rule.
+
+		   Days 29-31 are week 5. A rule pinned to weeks 1-4 simply does not
+		   fire there, which is why a long month has four starts and not five. */
+		$want_week = isset( $rule['week'] ) ? (int) $rule['week'] : 0;
+
 		$d = clone $floor;
 		// first occurrence of this weekday on or after the floor
 		$d->modify( 'this week ' . $rule['dow'] );
 		if ( $d < $floor ) { $d->modify( '+1 week' ); }
 		while ( $d <= $limit ) {
-			$planned[] = array( 'start' => $d->format( 'Y-m-d' ), 'slot' => $rule['slot'] );
+			if ( ! $want_week || (int) ceil( (int) $d->format( 'j' ) / 7 ) === $want_week ) {
+				$planned[] = array( 'start' => $d->format( 'Y-m-d' ), 'slot' => $rule['slot'] );
+			}
 			$d->modify( '+1 week' );
 		}
 	}
