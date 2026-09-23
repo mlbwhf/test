@@ -233,14 +233,27 @@ function aa_reg_courses() {
 
 		   THREE THINGS IN THIS ROW WERE WRONG AND ARE NOW FIXED.
 
-		   1. THE EXAM. Every other row here says "Exam fee included", and it was
-		      copied onto this one. Scaled Agile's own material for this course
-		      describes it as giving attendees access to the course materials and
-		      says nothing whatsoever about an exam or a certification. We do not
-		      assert a credential we cannot verify, so 'incl' opts this row out
-		      of the site-wide "exam included" wording -- see aa_reg_incl() --
-		      and the proof list says what we can actually stand behind. If an
-		      exam does exist, put it back; do not put it back on an assumption.
+		   1. THE EXAM -- RESOLVED 23 Sep 2026, SEE BELOW.
+		      This row used to opt out of the site-wide "exam included" wording.
+		      The reason was that Scaled Agile's 26.9 session material describes
+		      the course as giving attendees access to the course materials and
+		      said nothing about an exam or a certification, and we do not assert
+		      a credential we cannot verify. The note ended "if an exam does
+		      exist, put it back; do not put it back on an assumption."
+
+		      It does exist. The credential is the Certified Large Solution SAFe
+		      Practitioner (LSSP) -- confirmed from the Scaled Agile badge, and
+		      confirmed by the client that the exam fee is inside our price. So
+		      the opt-out is gone: 'incl' is no longer set, which means
+		      aa_reg_incl() falls through to aa_reg_t('exam_included'), and this
+		      row now says "exam included" in all four languages instead of the
+		      English-only literal it would have carried. The proof list matches
+		      the other Advanced SAFe rows again.
+
+		      STILL UNVERIFIED, and deliberately not stated anywhere: the exam
+		      format, its length, the passing score and the number of retakes.
+		      Do not write those from memory -- the badge proves the credential
+		      exists and nothing more.
 
 		   2. THE FIRST DATE was 21 Sep 2026. Scaled Agile's launch plan sets
 		      general availability at 22 Sep 2026 and says delivery begins then.
@@ -265,7 +278,9 @@ function aa_reg_courses() {
 		   read it, so the price, the length and the first date on the page are
 		   these values and cannot drift from them. */
 		'large-solution' => array(
-			'code'     => 'LSS',
+			/* LSSP, not LSS: the code prints on the calendar bars, the hero chip
+			   and the CTA, and it is the credential's own acronym on the badge. */
+			'code'     => 'LSSP',
 			'name'     => 'Implementing Large Solution SAFe®',
 			'eyebrow'  => 'Live online · Implementing Large Solution SAFe®',
 			'h1'       => 'Implementing Large Solution SAFe®.',
@@ -286,9 +301,12 @@ function aa_reg_courses() {
 				array( 'dow' => 'Wed', 'slot' => 'morning' ),
 				array( 'dow' => 'Fri', 'slot' => 'afternoon' ),
 			),
-			/* NOT "exam fee included" -- see the note above this row. */
-			'incl'     => 'course materials included',
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Course materials included' ),
+			/* No 'incl' key on purpose. aa_reg_incl() then returns the
+			   translated aa_reg_t('exam_included'), exactly as every other
+			   Advanced SAFe row does. Setting it to an English literal here
+			   would put two English words back into the /fr/, /es/ and /ar/
+			   heroes -- which is the bug the mirror builder's note warns about. */
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
 
 		/* ------------------------------------------------------------------
@@ -1220,12 +1238,17 @@ function aa_reg_find_by_date( $course_key, $start ) {
 /**
  * Does this course URL actually resolve to a published page?
  *
- * Large Solution is sold from the schedule but has no page of its own yet, so
- * every link to it was a 404 at the end of a registration journey. Rather than
- * hide the course -- it is a real course on the real schedule -- the calendar
- * asks this and then does not link: the bar becomes a button, the panel drops
- * its "full course details" link, and the in-place form takes the money where
- * it stands. Nothing else has to know which courses have pages.
+ * Large Solution was sold from the schedule before it had a page of its own,
+ * so every link to it was a 404 at the end of a registration journey. Rather
+ * than hide the course -- it is a real course on the real schedule -- the
+ * calendar asks this and then does not link: the bar becomes a button, the
+ * panel drops its "full course details" link, and the in-place form takes the
+ * money where it stands. Nothing else has to know which courses have pages.
+ *
+ * That page now exists (33677, published 11 Sep 2026), so Large Solution links
+ * again on its own. This check stays because it is answered at runtime, not
+ * from a list: it is what lets a course be sold the day before its page is
+ * written, and it costs one cached lookup per URL.
  */
 function aa_reg_page_exists( $url ) {
 	static $seen = array();
@@ -2180,10 +2203,13 @@ function aa_reg_track_calendar( $atts ) {
 				     . ( $on ? ' aat-bar--on' : '' );
 
 				/* A COURSE WITHOUT A PAGE IS STILL A COURSE.
-				   Large Solution sells from the schedule and has no page yet, so
-				   linking its bar was a 404 at the end of the journey. It gets a
-				   button instead; the panel beside the calendar takes the money
-				   either way. */
+				   Large Solution sold from the schedule before it had a page, so
+				   linking its bar was a 404 at the end of the journey. Such a
+				   course gets a button instead; the panel beside the calendar
+				   takes the money either way. $mm['page'] is answered per render
+				   by aa_reg_page_exists(), so a course starts linking the moment
+				   its page is published -- Large Solution's went live on 11 Sep
+				   2026 and needed no edit here. */
 				$link = $mm['page'];
 				$url  = $mm['url'] . ( strpos( $mm['url'], '?' ) === false ? '?' : '&' )
 				      . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
