@@ -1,0 +1,38 @@
+<!--
+  Home (page 961) — SECTION 02, ALL TRAINING.
+
+  This file is a RECONSTRUCTION. On 2026-09-23 a probe against page 961 used a
+  regex replacement ending in "$1", which expands to nothing — the section was
+  deleted from the live page and no revision or repo copy held the current
+  version (revision 34798 carries the same damage; the repo copies under
+  snippets/pages/ and redesign-build/ predate [aa_cert_count] and
+  [aa_home_tracks]).
+
+  What was recovered, and from where:
+    - Structure, kicker, head/lede/foot pattern  -> snippets/pages/home-961-v3-markup-only.html
+    - id / data-aa-section / [aa_home_tracks]    -> the jump menu + shortcode contract
+    - h2 type scale (clamp)                      -> the v3 markup
+  Anything the live section carried beyond this is gone.
+
+  NEVER use "$1" at the end of a wp_alter_post replacement. Prefer literal
+  (non-regex) single-line search/replace on this page.
+
+  Shortcodes used (all in aa-register-wpcode-snippet.php / mu-plugin/aa-register.php):
+    [aa_cert_count]   -> aa_home_cert_count_shortcode()
+    [aa_track_count]  -> aa_home_track_count_shortcode()
+    [aa_home_tracks]  -> aa_home_tracks_shortcode(), emits the whole .aahs tab component
+-->
+<!-- ==================== SECTION 02 — ALL TRAINING ==================== -->
+<section class="aa__section aa-training" id="training" data-aa-section="training" aria-labelledby="aa-training-h2">
+  <div class="aa__head">
+    <div>
+      <p class="aa__kicker"><span class="aa__dot" aria-hidden="true"></span>( 02 ) &mdash; All training</p>
+      <h2 class="aa__h2" id="aa-training-h2" style="font-size:clamp(30px,4.2vw,50px);line-height:1.06;max-width:760px;">[aa_cert_count] SAFe&reg; and AI-Native certifications, <em class="aa__serif" style="color:#0E8074;">mapped to your career.</em></h2>
+    </div>
+    <p class="aa__lede">Live virtual cohorts across [aa_track_count] tracks &mdash; SAFe by role, Advanced SAFe, AI-Native, micro-credentials, and industry programmes. Led by SPCTs and certified SAFe instructors. Exam fee included, recordings forever, 1:1 career coaching after class.</p>
+  </div>
+
+  [aa_home_tracks]
+
+  <p class="aa__foot">Every track maps to a role, a salary band, and a cohort date &mdash; <a class="aa__link" href="https://agile-agilist.com/training/">see all [aa_cert_count] certifications &#10230;</a></p>
+</section>
