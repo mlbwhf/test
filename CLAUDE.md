@@ -29,7 +29,7 @@ not conflict and neither needs disconnecting to use the other.
 
 | Tool prefix | Site | What it is |
 |---|---|---|
-| `mcp__set_up_the_agent__*` | **report-ai.org** (The AI Index) | Everything in this repo |
+| `mcp__report-ai_org__*` | **report-ai.org** (The AI Index) | Everything in this repo |
 | `mcp__agile-agilist_com__*` | **agile-agilist.com** (Agile Agilist, SAFe training) | Unrelated business |
 
 **The hazard:** the tool names are identical apart from the prefix, so nothing
@@ -56,7 +56,7 @@ caused that misdirection. They belong to the other agent's repo; consider removi
 
 ## Site facts
 
-- Site: https://report-ai.org (self-hosted WordPress on Hostinger; managed via the "set_up_the_agent" WordPress MCP server).
+- Site: https://report-ai.org (self-hosted WordPress on Hostinger; managed via the "report-ai_org" WordPress MCP server (bearer-token mode; renamed from "set_up_the_agent" on 2026-09-23)).
 - House style: inline-styled HTML using Archivo + IBM Plex Mono, `.tai-*` class system, #2545f5 accent, stat-tile strips, confidence chips.
 - Section hubs live under /indexes/ (9 sections); deep-dives under /reports/; definitions under /glossary/.
 - Main Indexes hub is page ID 39; Enterprise AI hub is ID 393.
