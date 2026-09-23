@@ -331,8 +331,14 @@ function aa_reg_courses() {
 			   translated aa_reg_t('exam_included'), exactly as every other
 			   Advanced SAFe row does. Setting it to an English literal here
 			   would put two English words back into the /fr/, /es/ and /ar/
-			   heroes -- which is the bug the mirror builder's note warns about. */
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			   heroes -- which is the bug the mirror builder's note warns about.
+
+			   "AI-empowered" is Scaled Agile's own phrase for this credential,
+			   not ours -- their certification page calls it an "industry-leading
+			   AI-Empowered SAFe certification". It earns a pill because the AI
+			   material is a third of what is new in 26.9, and the course page no
+			   longer gives it a section of its own. */
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included', 'AI-empowered' ),
 		),
 
 		/* ------------------------------------------------------------------
