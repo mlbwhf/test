@@ -5252,6 +5252,12 @@ function aa_reg_menu_labels() {
 		'Agile Career Selector' => array( 'fr' => 'Sélecteur de parcours', 'es' => 'Selector de carrera', 'ar' => 'مُحدِّد المسار المهني' ),
 		'Lean Portfolio Mgmt (LPM)' => array( 'fr' => 'Lean Portfolio Mgmt (LPM)', 'es' => 'Lean Portfolio Mgmt (LPM)' ),
 		'Agile Product Mgmt (APM)'  => array( 'fr' => 'Agile Product Mgmt (APM)',  'es' => 'Agile Product Mgmt (APM)' ),
+		/* Same reasoning as LPM and APM above: the credential name and its
+		   acronym are what a candidate searches for and what an employer
+		   screens on, so they stay in Latin script in every language. The URL
+		   still swaps to the mirror -- /fr/large-solution/ -- because that is
+		   handled by aa_reg_mirror_of(), not by this table. */
+		'Large Solution SAFe (LSSP)' => array( 'fr' => 'Large Solution SAFe (LSSP)', 'es' => 'Large Solution SAFe (LSSP)' ),
 		'Digital Transformation'    => array( 'fr' => 'Transformation numérique',  'es' => 'Transformación digital',    'ar' => 'التحول الرقمي' ),
 		'Innovation Culture'        => array( 'fr' => 'Culture d’innovation',      'es' => 'Cultura de innovación',     'ar' => 'ثقافة الابتكار' ),
 		'Product Operating Model'   => array( 'fr' => 'Modèle opérationnel produit','es' => 'Modelo operativo de producto', 'ar' => 'نموذج تشغيل المنتج' ),
