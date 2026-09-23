@@ -1377,7 +1377,7 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = fals
 	     . ' data-price="' . (int) $course['price'] . '">'
 	     . '<label class="aareg-inline-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	     . '<input name="email" type="email" autocomplete="email" inputmode="email"'
-	     . ' placeholder="Your email" required></label>'
+	     . ' placeholder="' . esc_attr( aa_reg_t( 'your_email', 'Your email' ) ) . '" required></label>'
 	     . '<div class="aareg-inline-row">'
 	     . '<div class="aareg-inline-stepper">'
 	     . '<button type="button" data-inline-seats="-1" aria-label="Fewer seats">&minus;</button>'
@@ -1389,8 +1389,8 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = fals
 	     . esc_html( $live ? aa_reg_t( 'pay', 'Pay securely with Stripe' ) : aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ) ) . '</button>'
 	     . '<p class="aareg-inline-note" data-inline-note>'
 	     . esc_html( $live
-	         ? 'Exam fee included. You will be taken to Stripe to pay.'
-	         : 'Online payment is switched off right now — please contact us.' )
+	         ? aa_reg_t( 'pay_note', 'Exam fee included. You will be taken to Stripe to pay.' )
+	         : aa_reg_t( 'pay_note_off', 'Online payment is switched off right now — please contact us.' ) )
 	     . '</p></form>';
 }
 
@@ -2436,7 +2436,7 @@ function aa_reg_track_calendar( $atts ) {
 			'seats'     => aa_reg_t( 'seats', 'Seats' ),
 			'pay'       => aa_reg_t( 'pay', 'Pay securely with Stripe' ),
 			'payOff'    => aa_reg_t( 'pay_off', 'Registration temporarily unavailable' ),
-			'payNote'   => 'Exam fee included. You will be taken to Stripe to pay.',
+			'payNote'   => aa_reg_t( 'pay_note', 'Exam fee included. You will be taken to Stripe to pay.' ),
 			'payOffNote'=> 'Online payment is switched off right now — please contact us.',
 			'details'    => aa_reg_t( 'full_details', 'Full course details' ),
 			'otherDates' => aa_reg_t( 'other_dates', 'Other dates' ),
@@ -2651,7 +2651,7 @@ function aa_reg_panel( $atts ) {
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
 	    . '<label class="aacal-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	    . '<input name="email" type="email" autocomplete="email" inputmode="email"'
-	    . ' placeholder="Your email" required></label>'
+	    . ' placeholder="' . esc_attr( aa_reg_t( 'your_email', 'Your email' ) ) . '" required></label>'
 	    . '<div class="aacal-seatsrow"><div><p class="aacal-minilabel">' . esc_html( aa_reg_t( 'seats', 'Seats' ) ) . '</p>'
 	    . '<div class="aacal-stepper"><button type="button" data-seats="-1" aria-label="Fewer seats">&minus;</button>'
 	    . '<span data-seats-value aria-live="polite">1</span>'
@@ -2677,8 +2677,8 @@ function aa_reg_panel( $atts ) {
 	    . '<div class="aacal-backrow"><button type="button" class="aacal-link" data-back>&larr; Edit details</button></div>'
 	    . '<p class="aacal-hint" data-hint2>'
 	    . esc_html( $live
-	        ? 'You will be taken to Stripe to pay. We never see your card details.'
-	        : 'Online payment is switched off right now — please contact us and we will register you.' )
+	        ? aa_reg_t( 'pay_note_long', 'You will be taken to Stripe to pay. We never see your card details.' )
+	        : aa_reg_t( 'pay_note_off_long', 'Online payment is switched off right now — please contact us and we will register you.' ) )
 	    . '</p></form>';
 
 	$h .= '<div class="aacal-done" data-panel="done" hidden role="status">'
@@ -2995,6 +2995,10 @@ function aa_reg_strings() {
 			'total_exam'    => 'Total · tasa de examen incluida',
 			'pay'           => 'Paga de forma segura con Stripe',
 			'pay_off'       => 'Inscripción no disponible temporalmente',
+			'pay_note'          => 'Tasa de examen incluida. Te llevaremos a Stripe para pagar.',
+			'pay_note_off'      => 'El pago en línea está desactivado en este momento — escríbenos.',
+			'pay_note_long'     => 'Te llevaremos a Stripe para pagar. Nunca vemos los datos de tu tarjeta.',
+			'pay_note_off_long' => 'El pago en línea está desactivado en este momento — escríbenos y te inscribimos nosotros.',
 			'book_another'  => 'Reservar otra plaza',
 			'fine'          => '¿Necesitas cambiar de fechas? El cambio no tiene coste. La tasa de examen está incluida en el precio.',
 			'step_details'  => 'Tus datos',
@@ -3081,6 +3085,10 @@ function aa_reg_strings() {
 			'total_exam'    => 'Total · frais d\'examen inclus',
 			'pay'           => 'Payer en toute sécurité avec Stripe',
 			'pay_off'       => 'Inscription temporairement indisponible',
+			'pay_note'          => 'Frais d’examen inclus. Vous serez redirigé vers Stripe pour le paiement.',
+			'pay_note_off'      => 'Le paiement en ligne est désactivé pour le moment — contactez-nous.',
+			'pay_note_long'     => 'Vous serez redirigé vers Stripe pour le paiement. Nous ne voyons jamais les données de votre carte.',
+			'pay_note_off_long' => 'Le paiement en ligne est désactivé pour le moment — contactez-nous et nous procéderons à votre inscription.',
 			'book_another'  => 'Réserver une autre place',
 			'fine'          => 'Besoin de changer de dates ? Le report est sans frais. Les frais d\'examen sont compris dans le prix.',
 			'step_details'  => 'Vos coordonnées',
