@@ -107,3 +107,54 @@ WordPress and Code Snippets is the place to look.
 
 Cross-check: posts 2307–2310 were created around 11 Sep 2026. Matching that timestamp
 against n8n execution history would settle it outright.
+
+---
+
+## Purge executed 2026-09-23
+
+**91 published News posts moved to Trash.** Verified exact, no collateral:
+
+| | Before | After |
+|---|---|---|
+| Published | 127 | **36** (−91) |
+| Trash | 583 | **674** (+91) |
+| News term count | 91 | **0** |
+
+IDs 2307–2472. Titles confirmed as scraped throughout: MIT Lincoln Laboratory,
+MIT Technology Review (*The Download*, the virtual-border-wall investigation),
+OpenAI's blog (*Introducing GPT-6 Sol and Luna*, *Better prompt caching for GPT-6*,
+*Parallel cut research time and cost in half with GPT-6 Astra*), and arXiv abstracts.
+
+All **trashed, not force-deleted** — fully restorable from Trash. Confirmed by
+watching the counts move together (publish −1 / trash +1) on the first deletion
+before running the rest.
+
+The 36 survivors are the owner's own writing, matching the partition verified
+earlier: Blog (14), Uncategorized (12), ~10 stats posts in topical categories.
+
+### Expect the GSC 404 bucket to jump by ~91
+
+That is the intended outcome, not a regression. Do not chase it.
+
+### The publisher is still live — this is a first pass, not a fix
+
+- **Bearer-token rotation did NOT stop it.** Posts 2466–2472 landed after the
+  rotation, and 2472 arrived during this session. That **eliminates the AI Engine
+  MCP credential** as its authentication route — a real suspect removed.
+- Ruled out to date: Feedzy · Code Snippets · WPCode · WP RSS Aggregator ·
+  a dedicated API user · Application Passwords · Claude Routines · the AI Engine
+  bearer token.
+- Still the best lead: **Hostinger access logs**, filtered for `POST /wp-json/wp/v2/posts`
+  on the hour. Posts land exactly at :00, which means an external scheduler.
+- `n8n` has failed to connect on every session since 11 Sep (404 at the config
+  layer, not auth) — worth removing and re-adding rather than waiting on it.
+
+### Still outstanding on this thread
+
+- **44 drafts** remain, almost certainly aggregated. Not public, so no SEO or
+  copyright exposure — deliberately left alone.
+- **674 trashed posts.** Worth emptying eventually, but not while they may still
+  be needed as evidence of what was published and when.
+- Social syndication is **not** stopped: Jetpack Publicize is the one actually
+  succeeding (LinkedIn, Threads, Facebook); WP to Buffer is failing on X. Neither
+  can be reached with the available MCP tools — no plugin-management surface.
