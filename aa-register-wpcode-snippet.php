@@ -178,7 +178,13 @@ function aa_reg_courses() {
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
 			'price'    => 2899,
-			'days'     => 3,
+			/* FOUR, NOT THREE. Scaled Agile rebuilt ASPC as a four-day course
+			   (AI adoption, Customizing SAFe, the Learning Lab capstone) and
+			   every ASPC page already says so -- English, Spanish, French and
+			   Arabic. Only this table still said three, and on English it is
+			   this table, not the page, that generates the cohorts: the page
+			   read "4 days" while the dates under it were three days long. */
+			'days'     => 4,
 			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
