@@ -558,6 +558,20 @@ function aa_claims_report() {
 		'garantie de r' . "\xC3\xA9" . 'ussite ou remboursement' => 'guarantee (FR)',
 		'garant' . "\xC3\xAD" . 'a de aprobaci' . "\xC3\xB3" . 'n o reembolso' => 'guarantee (ES)',
 		"\xD8\xB6\xD9\x85\xD8\xA7\xD9\x86 \xD8\xA7\xD9\x84\xD9\x86\xD8\xAC\xD8\xA7\xD8\xAD" => 'guarantee (AR)',
+		/* THE PASS-RATE FIGURE. "98%" over a first-attempt pass label, in the
+		   hero stat row. The ruling is the same one that removed the guarantee:
+		   say highest pass rate, never a number we would have to substantiate.
+		   Fourteen pages carried it -- five Arabic, five Spanish, three French,
+		   one English -- and their stored content has been cleaned, so this is
+		   a tripwire for the next page built from an old copy of the template,
+		   not a backlog. It is language-neutral because the markup is: the
+		   number sits in the same div in all four.
+		   There is deliberately NO rewrite rule for this above. A rewrite would
+		   have to know the page's language to choose between Highest, La más
+		   alta, La plus élevée and الأعلى, and a filter that silently rewrites
+		   a number into the wrong language is worse than a report that names
+		   the page. */
+		'<div class="aa-stat-n">98%</div>' => 'pass-rate figure',
 	);
 
 	$rows = array();
