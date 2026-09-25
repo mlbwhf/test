@@ -3006,6 +3006,11 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'El pago en línea está desactivado en este momento — escríbenos.',
 			'pay_note_long'     => 'Te llevaremos a Stripe para pagar. Nunca vemos los datos de tu tarjeta.',
 			'pay_note_off_long' => 'El pago en línea está desactivado en este momento — escríbenos y te inscribimos nosotros.',
+			'jobs_kicker'  => 'Puestos en vivo',
+			'jobs_h'       => 'Dónde se contratan estos roles.',
+			'jobs_lede'    => 'Lo que suele pagar cada rol, y una búsqueda en vivo en los mercados donde impartimos. No gestionamos una bolsa de empleo: las ofertas vienen de la búsqueda, no de nosotros.',
+			'jobs_markets' => 'Buscar ofertas en vivo en',
+			'jobs_src'     => 'Rangos típicos de EE. UU., aproximadamente del percentil 25 al 75, consultados en Glassdoor y ZipRecruiter en septiembre de 2026. Las cifras están en USD en todos los idiomas y son lo que pagan los roles, no lo que cuestan nuestros cursos. La retribución depende mucho más del mercado, el sector y la empresa que de cualquier certificación.',
 			'book_another'  => 'Reservar otra plaza',
 			'fine'          => '¿Necesitas cambiar de fechas? El cambio no tiene coste. La tasa de examen está incluida en el precio.',
 			'step_details'  => 'Tus datos',
@@ -3097,6 +3102,11 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'Le paiement en ligne est désactivé pour le moment — contactez-nous.',
 			'pay_note_long'     => 'Vous serez redirigé vers Stripe pour le paiement. Nous ne voyons jamais les données de votre carte.',
 			'pay_note_off_long' => 'Le paiement en ligne est désactivé pour le moment — contactez-nous et nous procéderons à votre inscription.',
+			'jobs_kicker'  => 'Postes en direct',
+			'jobs_h'       => 'Où ces rôles recrutent.',
+			'jobs_lede'    => 'Ce que chaque rôle rémunère habituellement, et une recherche en direct dans les marchés où nous enseignons. Nous ne gérons pas de site d\'emploi : les offres viennent de la recherche, pas de nous.',
+			'jobs_markets' => 'Rechercher des offres en direct en',
+			'jobs_src'     => 'Fourchettes américaines typiques, environ du 25e au 75e centile, relevées sur Glassdoor et ZipRecruiter en septembre 2026. Les montants sont en USD dans toutes les langues et correspondent à ce que paient les rôles, pas au prix de nos formations. La rémunération dépend bien plus du marché, du secteur et de l\'employeur que d\'une certification.',
 			'book_another'  => 'Réserver une autre place',
 			'fine'          => 'Besoin de changer de dates ? Le report est sans frais. Les frais d\'examen sont compris dans le prix.',
 			'step_details'  => 'Vos coordonnées',
@@ -8728,5 +8738,111 @@ function aa_reg_coaching_second( $content ) {
 	return substr( $content, 0, $nav_a ) . $rebuilt . substr( $content, $nav_b );
 }
 add_filter( 'the_content', 'aa_reg_coaching_second', 13 );
+
+/* ============================================================================
+   LIVE ROLES  —  replaces the "Live signals" cards
+   ----------------------------------------------------------------------------
+   WHAT WAS THERE. Three hard-coded cards on every track page, headed "SAFe role
+   openings right now -- recent postings from the last 60 days", naming Block /
+   Cash App, Shopify and TD Bank, each with a salary and a freshness stamp:
+   "Posted today", "Posted 4 days ago". None of it moves. "Posted today" has
+   said today every day since the page was written, and the page attaches pay
+   figures to named openings at three real employers it has no feed from. That
+   is the same shape of claim as the aggregateRating and the pass guarantee.
+
+   WHAT REPLACES IT. Pay the roles actually carry, sourced and dated, plus links
+   that run a real search in the markets each language sells into. The page
+   stops asserting what is open today and starts pointing at what is.
+
+   PAY STAYS IN USD IN EVERY LANGUAGE, by the client's decision, so the label
+   says US benchmark rather than leaving a French reader to assume the figure
+   is local. The markets localise; the money does not.
+
+   ARABIC LABELS ARE NOT WRITTEN HERE. The keys fall back to English until the
+   client's translator supplies them -- the country names included. Arabic copy
+   on this site is theirs.
+   ========================================================================== */
+
+/** Markets to offer a live search in, per language. */
+function aa_reg_job_markets() {
+	$m = array(
+		'en' => array( 'United States', 'Canada', 'United Kingdom', 'Australia' ),
+		'fr' => array( 'France', 'Suisse', 'Belgique', 'Luxembourg', 'Québec' ),
+		'es' => array( 'España', 'México', 'Colombia', 'Chile', 'Argentina' ),
+		'ar' => array( 'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Egypt', 'Jordan' ),
+	);
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	return isset( $m[ $lang ] ) ? $m[ $lang ] : $m['en'];
+}
+
+/** The four roles the search is offered for, with typical US ranges. */
+function aa_reg_job_roles() {
+	return array(
+		array( 'SAFe Scrum Master',              'SSM',  '$103K – $138K' ),
+		array( 'Product Owner / Product Manager','POPM', '$94K – $130K'  ),
+		array( 'Release Train Engineer',         'RTE',  '$108K – $175K' ),
+		array( 'Agile Coach',                    'SPC',  '$156K – $231K' ),
+	);
+}
+
+function aa_reg_job_signals( $num = '' ) {
+	$h  = '<div class="aa-sechead">';
+	$h .= '<p class="aa-eyebrow">' . ( $num !== '' ? '( ' . esc_html( $num ) . ' ) &mdash; ' : '' )
+	    . esc_html( aa_reg_t( 'jobs_kicker', 'Live roles' ) ) . '</p>';
+	$h .= '<h2 class="aa-h2">' . esc_html( aa_reg_t( 'jobs_h', 'Where these roles are hiring.' ) ) . '</h2>';
+	$h .= '<p class="aa-sub">' . esc_html( aa_reg_t( 'jobs_lede',
+		'What each role typically pays, and a live search in the markets we teach in. '
+		. 'We do not run a job board, so the openings come from the search, not from us.' ) ) . '</p>';
+	$h .= '</div>';
+
+	$h .= '<div class="aajs__roles">';
+	foreach ( aa_reg_job_roles() as $r ) {
+		$h .= '<div class="aajs__role">'
+		    . '<span class="aajs__code">' . esc_html( $r[1] ) . '</span>'
+		    . '<span class="aajs__name">' . esc_html( $r[0] ) . '</span>'
+		    . '<span class="aajs__pay">' . esc_html( $r[2] ) . '</span>'
+		    . '</div>';
+	}
+	$h .= '</div>';
+
+	$h .= '<p class="aajs__cap">' . esc_html( aa_reg_t( 'jobs_markets', 'Search live openings in' ) ) . '</p>';
+	$h .= '<div class="aajs__markets">';
+	foreach ( aa_reg_job_markets() as $place ) {
+		$url = 'https://www.linkedin.com/jobs/search/?keywords=SAFe&location=' . rawurlencode( $place );
+		$h .= '<a class="aajs__market" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">'
+		    . esc_html( $place ) . ' <span aria-hidden="true">&#8599;</span></a>';
+	}
+	$h .= '</div>';
+
+	$h .= '<p class="aajs__src">' . esc_html( aa_reg_t( 'jobs_src',
+		'Typical US ranges, roughly the 25th to 75th percentile, read from Glassdoor and '
+		. 'ZipRecruiter in September 2026. Figures are in USD in every language and are what '
+		. 'the roles pay, not what our courses cost. Pay moves with market, industry and '
+		. 'employer far more than with any certificate.' ) ) . '</p>';
+
+	return $h;
+}
+
+/** Swap the body of <section id="jobs"> for the real thing. */
+function aa_reg_job_signals_swap( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'id="jobs"' ) === false ) { return $content; }
+
+	$span = aa_reg_section_span( $content, 'jobs' );
+	if ( ! $span ) { return $content; }
+
+	$open = substr( $content, $span[0], strpos( $content, '>', $span[0] ) - $span[0] + 1 );
+
+	/* Keep whatever number the section already carries, so the renumbering
+	   filter downstream has something to rewrite. */
+	$num = '';
+	$head = substr( $content, $span[0], min( 600, $span[1] - $span[0] ) );
+	if ( preg_match( '#\(\s*(\d{2})\s*\)#', $head, $m ) ) { $num = $m[1]; }
+
+	return substr( $content, 0, $span[0] )
+	     . $open . aa_reg_job_signals( $num ) . '</section>'
+	     . substr( $content, $span[1] );
+}
+add_filter( 'the_content', 'aa_reg_job_signals_swap', 12 );
 
 endif;
