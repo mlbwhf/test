@@ -8542,3 +8542,99 @@ add_shortcode( 'aa_home_tracks', 'aa_home_tracks_shortcode' );
  * logos with permission behind it.
  */
 add_filter( 'aa_hh_trust', '__return_empty_array' );
+
+/* ============================================================================
+   CAREER BEFORE THE SELL, ON COURSE PAGES ONLY
+   ----------------------------------------------------------------------------
+   A course page was ordered hero -> trainers -> what's included -> curriculum
+   -> CAREER -> register -> path -> reviews -> enrol. Two sections about what
+   you get and what you study stand between the hero and the one section that
+   answers "what is this worth to me", and registration brackets it on both
+   sides. The page sells the transaction before it has made the case.
+
+   Career moves to the first body section, immediately after the hero block, so
+   the order reads: hero -> career -> what's included -> curriculum -> the rest.
+   The sticky course bar is reordered to match, or the menu and the page would
+   disagree about what comes first.
+
+   NOT THE HOME PAGE, AND IT CANNOT BECOME THE HOME PAGE. The home page has its
+   own section order and its own numbering, decided separately; it carries
+   id="training" and id="assessments", never id="demand" and id="included". The
+   front-page guard is belt and braces on top of that, because the cost of this
+   filter reaching 961 is a silently reordered home page and the cost of the
+   guard is one function call.
+
+   DOM ORDER ONLY, NOTHING IS STORED. Every page keeps its own markup, so this
+   is one line to switch off, and a page rebuilt from the template is covered
+   without being touched. If the order is settled, the durable version is to
+   rewrite the stored content and delete this.
+   ========================================================================== */
+if ( ! function_exists( 'aa_reg_section_span' ) ) :
+
+/** Byte offsets of <section id="$id"> and the matching close, or null. */
+function aa_reg_section_span( $html, $id ) {
+	$pos = 0;
+	$len = strlen( $html );
+	while ( ( $i = strpos( $html, '<section', $pos ) ) !== false ) {
+		$gt = strpos( $html, '>', $i );
+		if ( $gt === false ) { return null; }
+		if ( strpos( substr( $html, $i, $gt - $i + 1 ), 'id="' . $id . '"' ) === false ) {
+			$pos = $gt + 1;
+			continue;
+		}
+		/* Counted rather than "the next </section>": these sections do not
+		   nest today, and a count costs nothing if one ever does. */
+		$depth = 0;
+		$j     = $i;
+		while ( $j < $len ) {
+			$o = strpos( $html, '<section', $j );
+			$c = strpos( $html, '</section>', $j );
+			if ( $c === false ) { return null; }
+			if ( $o !== false && $o < $c ) { $depth++; $j = $o + 8; continue; }
+			$depth--;
+			if ( $depth <= 0 ) { return array( $i, $c + 10 ); }
+			$j = $c + 10;
+		}
+		return null;
+	}
+	return null;
+}
+
+function aa_reg_career_first( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'id="demand"' ) === false )   { return $content; }
+	if ( strpos( $content, 'id="included"' ) === false ) { return $content; }
+
+	$demand = aa_reg_section_span( $content, 'demand' );
+	$incl   = aa_reg_section_span( $content, 'included' );
+	if ( ! $demand || ! $incl ) { return $content; }
+	if ( $demand[0] < $incl[0] ) { return $content; }   // already first
+
+	/* Includes opens before Career, so cutting Career leaves its offset alone. */
+	$block   = substr( $content, $demand[0], $demand[1] - $demand[0] );
+	$content = substr( $content, 0, $demand[0] ) . substr( $content, $demand[1] );
+	$content = substr( $content, 0, $incl[0] ) . $block . substr( $content, $incl[0] );
+
+	/* The sticky bar, same move. Built by hand rather than with a backreference
+	   replacement: a $1 that expands to nothing has cost this project a live
+	   section once already. */
+	$i = strpos( $content, '<div class="aa-bar-nav' );
+	if ( $i !== false ) {
+		$gt  = strpos( $content, '>', $i );
+		$end = ( $gt !== false ) ? strpos( $content, '</div>', $gt ) : false;
+		if ( $gt !== false && $end !== false ) {
+			$inner = substr( $content, $gt + 1, $end - $gt - 1 );
+			if ( preg_match( '#<a[^>]*href="\#demand"[^>]*>.*?</a>#s', $inner, $m ) ) {
+				$moved = $m[0] . str_replace( $m[0], '', $inner );
+				if ( $moved !== $inner ) {
+					$content = substr( $content, 0, $gt + 1 ) . $moved . substr( $content, $end );
+				}
+			}
+		}
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'aa_reg_career_first', 12 );
+
+endif;
