@@ -3032,6 +3032,9 @@ function aa_reg_strings() {
 			'jobs_h'       => 'Dónde se contratan estos roles.',
 			'jobs_lede'    => 'Lo que suele pagar cada rol, y una búsqueda en vivo en los mercados donde impartimos. No gestionamos una bolsa de empleo: las ofertas vienen de la búsqueda, no de nosotros.',
 			'jobs_markets' => 'Buscar ofertas en vivo en',
+			'gap_cap'      => 'Adónde te lleva esto',
+			'gap_next'     => 'Próxima',
+			'gap_note'     => 'El precio y las fechas son nuestros. La retribución es la del puesto en el mercado: no es una oferta ni algo a lo que este curso te dé derecho.',
 			'jobs_us'      => 'Estados Unidos',
 			'jobs_eu'      => 'Zona euro',
 			'jobs_src'     => 'Rangos típicos, aproximadamente del percentil 25 al 75, consultados en septiembre de 2026: Estados Unidos en Glassdoor y ZipRecruiter, zona euro en Glassdoor y PayScale en España, Francia, Alemania y Países Bajos. Las cifras en euros son lo que pagan esos mercados, no las cifras estadounidenses convertidas: convertirlas casi las duplicaría. Son retribuciones de los puestos, no lo que cuestan nuestros cursos, y dependen mucho más del mercado, el sector y la empresa que de cualquier certificación.',
@@ -3130,6 +3133,9 @@ function aa_reg_strings() {
 			'jobs_h'       => 'Où ces rôles recrutent.',
 			'jobs_lede'    => 'Ce que chaque rôle rémunère habituellement, et une recherche en direct dans les marchés où nous enseignons. Nous ne gérons pas de site d\'emploi : les offres viennent de la recherche, pas de nous.',
 			'jobs_markets' => 'Rechercher des offres en direct en',
+			'gap_cap'      => 'La suite de votre parcours',
+			'gap_next'     => 'Prochaine',
+			'gap_note'     => 'Le prix et les dates sont les nôtres. La rémunération est celle du poste sur le marché : ce n\'est ni une offre ni une garantie liée à cette formation.',
 			'jobs_us'      => 'États-Unis',
 			'jobs_eu'      => 'Zone euro',
 			'jobs_src'     => 'Fourchettes typiques, environ du 25e au 75e centile, relevées en septembre 2026 : États-Unis sur Glassdoor et ZipRecruiter, zone euro sur Glassdoor et PayScale en France, en Espagne, en Allemagne et aux Pays-Bas. Les montants en euros correspondent à ce que paient ces marchés, et non aux montants américains convertis — une conversion les doublerait presque. Ce sont les rémunérations des postes, pas le prix de nos formations, et elles dépendent bien plus du marché, du secteur et de l\'employeur que d\'une certification.',
@@ -8892,5 +8898,133 @@ function aa_reg_job_signals_swap( $content ) {
 	     . substr( $content, $span[1] );
 }
 add_filter( 'the_content', 'aa_reg_job_signals_swap', 12 );
+
+/* ============================================================================
+   PRICE THE GAP, NOT THE COURSE
+   ----------------------------------------------------------------------------
+   A course page tells you what this course costs. It has never told you what
+   the NEXT one costs, or what the role on the other side of it pays -- so the
+   page argues for a purchase while the reader is deciding about a career.
+
+   This appends one row per next step to the career section:
+
+       RTE   Release Train Engineer   +3 days  $2,150   Next: Oct 14
+             $108K - $175K  ·  EUR 58K - 78K
+
+   Everything in it already existed and none of it is new data: the ladder is
+   aa_reg_hero_next(), the price and duration are the course record, the date
+   is the generated schedule, and the pay is the table the Live roles section
+   uses. The only new thing is putting them in one row, which is the whole
+   point -- a reader can see the distance and what it buys at the same time.
+
+   PAY IS SHOWN ONLY WHERE IT IS SOURCED. Seven courses have a researched
+   range; the rest render the row without one rather than carry a number
+   nobody checked. Adding a course here means finding the figure first.
+   ========================================================================== */
+
+/** Course slug => role it leads to, typical US range, typical euro-zone range. */
+function aa_reg_role_pay() {
+	return array(
+		'scrum-master'   => array( 'SAFe Scrum Master',                  '$103K – $138K', '€42K – €65K' ),
+		'popm'           => array( 'Product Owner / Product Manager',    '$94K – $130K',  '€45K – €75K' ),
+		'rte'            => array( 'Release Train Engineer',             '$108K – $175K', '€58K – €78K' ),
+		/* SPC and Agile Coach are the same hire in most markets, and the euro
+		   figure is the Agile Coach band -- there is no separate euro-zone
+		   series for the credential itself. */
+		'spc'            => array( 'SAFe Practice Consultant / Agile Coach', '$134K – $207K', '€67K – €95K' ),
+		'large-solution' => array( 'Solution Train Engineer',            '$102K – $141K', '' ),
+		'lpm'            => array( 'Lean Portfolio Manager',             '$186K – $300K', '' ),
+		'aspc'           => array( 'Enterprise Agile Coach',             '$184K – $276K', '' ),
+	);
+}
+
+/** Last path segment of a course URL, which is its slug. */
+function aa_reg_slug_from_url( $url ) {
+	$path = trim( (string) parse_url( $url, PHP_URL_PATH ), '/' );
+	if ( $path === '' ) { return ''; }
+	$parts = explode( '/', $path );
+	return end( $parts );
+}
+
+function aa_reg_gap_block( $slug ) {
+	if ( ! function_exists( 'aa_reg_hero_next' ) ) { return ''; }
+	$next = aa_reg_hero_next( $slug );
+	if ( ! $next || empty( $next['items'] ) ) { return ''; }
+
+	$pay  = aa_reg_role_pay();
+	$rows = '';
+	foreach ( array_slice( $next['items'], 0, 4 ) as $item ) {
+		$to = aa_reg_slug_from_url( isset( $item['url'] ) ? $item['url'] : '' );
+		if ( $to === '' || $to === $slug ) { continue; }
+		$course = aa_reg_course( $to );
+		if ( ! $course ) { continue; }
+
+		$code  = isset( $course['code'] ) ? $course['code'] : strtoupper( $to );
+		$days  = isset( $course['days'] ) ? (int) $course['days'] : 0;
+		$price = isset( $course['price'] ) ? $course['price'] : 0;
+		$cur   = isset( $course['currency'] ) ? $course['currency'] : 'usd';
+
+		$meta = array();
+		if ( $days )  { $meta[] = '+' . $days . ' ' . aa_reg_t( 'days_l', 'days' ); }
+		if ( $price ) { $meta[] = aa_reg_money( $price, $cur ); }
+
+		$when = '';
+		$up   = aa_reg_upcoming( $to, $course );
+		if ( $up ) {
+			$when = aa_reg_t( 'gap_next', 'Next' ) . ': '
+			      . aa_reg_range( $up[0]['start'], $up[0]['end'], true );
+		}
+
+		$money = '';
+		if ( isset( $pay[ $to ] ) ) {
+			$money = '<span class="aagap__role">' . esc_html( $pay[ $to ][0] ) . '</span>'
+			       . '<span class="aagap__pay">' . esc_html( $pay[ $to ][1] )
+			       . ( $pay[ $to ][2] !== '' ? ' &middot; ' . esc_html( $pay[ $to ][2] ) : '' )
+			       . '</span>';
+		}
+
+		$rows .= '<a class="aagap__row" href="' . esc_url( $item['url'] ) . '">'
+		      .  '<span class="aagap__code">' . esc_html( $code ) . '</span>'
+		      .  '<span class="aagap__body">'
+		      .  '<span class="aagap__name">' . esc_html( $item['label'] ) . '</span>'
+		      .  ( $money !== '' ? '<span class="aagap__money">' . $money . '</span>' : '' )
+		      .  '</span>'
+		      .  '<span class="aagap__meta">'
+		      .  ( $meta ? '<span class="aagap__cost">' . esc_html( implode( ' · ', $meta ) ) . '</span>' : '' )
+		      .  ( $when !== '' ? '<span class="aagap__when">' . esc_html( $when ) . '</span>' : '' )
+		      .  '</span>'
+		      .  '<span class="aagap__go" aria-hidden="true">&#10230;</span>'
+		      .  '</a>';
+	}
+	if ( $rows === '' ) { return ''; }
+
+	return '<div class="aagap">'
+	     . '<p class="aagap__cap">' . esc_html( aa_reg_t( 'gap_cap', 'Where this takes you next' ) ) . '</p>'
+	     . '<div class="aagap__rows">' . $rows . '</div>'
+	     . '<p class="aagap__note">' . esc_html( aa_reg_t( 'gap_note',
+			'The cost and the dates are ours. The pay is what the role earns in the market, '
+			. 'not an offer and not something this course entitles you to.' ) ) . '</p>'
+	     . '</div>';
+}
+
+/** Append it to the career section on a course page. */
+function aa_reg_gap_append( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'id="demand"' ) === false ) { return $content; }
+	if ( strpos( $content, 'class="aagap"' ) !== false ) { return $content; }
+
+	$obj = get_queried_object();
+	if ( ! ( $obj instanceof WP_Post ) ) { return $content; }
+
+	$block = aa_reg_gap_block( $obj->post_name );
+	if ( $block === '' ) { return $content; }
+
+	$span = aa_reg_section_span( $content, 'demand' );
+	if ( ! $span ) { return $content; }
+
+	$close = $span[1] - strlen( '</section>' );
+	return substr( $content, 0, $close ) . $block . substr( $content, $close );
+}
+add_filter( 'the_content', 'aa_reg_gap_append', 12 );
 
 endif;

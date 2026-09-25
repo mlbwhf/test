@@ -1286,6 +1286,50 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 .aajs__market:hover { background: #0E3A44; color: #fff; }
 .aajs__src { max-width: 1240px; margin: 18px auto 0; font-size: 12.5px; line-height: 1.6; color: #8A8375; }
 
+/* ============================================================================
+   AA — GAP PRICING                         appended to the career section
+   ----------------------------------------------------------------------------
+   One row per next step: credential, the role it leads to and its pay, then
+   what the step costs in days and money and when it next runs. The pay sits
+   with the role and the cost sits on the right, so the two are read as the
+   two sides they are rather than as one price tag.
+   ========================================================================== */
+.aagap { margin-top: 38px; border-top: 1px solid #E9E5DB; padding-top: 22px; }
+.aagap__cap {
+	margin: 0 0 14px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+	font-weight: 700; color: #88A0A4;
+}
+.aagap__rows { display: grid; gap: 8px; }
+.aagap__row {
+	display: grid; grid-template-columns: 62px minmax(0,1fr) auto 22px; align-items: center;
+	gap: 16px; padding: 15px 18px; border: 1px solid #E9E5DB; border-radius: 12px;
+	background: #fff; text-decoration: none; color: inherit;
+}
+.aagap__row:hover { border-color: #0E8074; box-shadow: 0 2px 10px rgba(14,58,68,.06); }
+.aagap__code {
+	font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-align: center;
+	padding: 4px 0; border-radius: 5px; background: #F4FAF9; color: #0E8074;
+	border: 1px solid #D6EBE8;
+}
+.aagap__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.aagap__name { font-size: 15.5px; font-weight: 600; color: #0E3A44; }
+.aagap__money { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; }
+.aagap__role { color: #8A8375; }
+.aagap__pay  { color: #0E8074; font-weight: 600; font-variant-numeric: tabular-nums; }
+.aagap__meta { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; text-align: right; }
+.aagap__cost { font-size: 14px; font-weight: 600; color: #0E3A44; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.aagap__when { font-size: 12px; color: #8A8375; white-space: nowrap; }
+.aagap__go   { font-size: 17px; color: #0E8074; text-align: right; }
+.aagap__note { margin: 14px 0 0; font-size: 12.5px; line-height: 1.6; color: #8A8375; }
+
+@media (max-width: 640px) {
+	/* The arrow goes first, because at this width the whole row is the tap
+	   target and the glyph is only costing a column. */
+	.aagap__row { grid-template-columns: 54px minmax(0,1fr); gap: 4px 12px; }
+	.aagap__go { display: none; }
+	.aagap__meta { grid-column: 2; align-items: flex-start; text-align: left; flex-direction: row; gap: 10px; }
+}
+
 @media (max-width: 640px) {
 	.aajs__role { grid-template-columns: 56px minmax(0,1fr); gap: 4px 10px; }
 	.aajs__pay { grid-column: 2; }
