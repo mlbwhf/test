@@ -1217,8 +1217,31 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
    the whole thing stacks, exactly as the track accordion does.
    ========================================================================== */
 
-.aaa--courses .aaa__track { flex: 0 0 56px; }
-.aaa--courses .aaa__spine { flex: 0 0 54px; gap: 12px; }
+/* SCOPED TO THE ROW LAYOUT, AND THE OPEN PANEL RE-STATED.
+   Two bugs lived in the two lines this replaces, both from one mistake:
+   `.aaa--courses .aaa__track` and `.aaa__track.is-open` have the SAME
+   specificity (0,2,0), and this block comes later in the file, so it won.
+
+   1. Desktop. `.aaa__track.is-open { flex: 1 1 auto }` never applied here, so
+      the open certification stayed 56px wide like the closed ones. Its panel
+      was not hidden -- it was laid out in the ~2px left over beside the spine,
+      which wrapped the text into a column thousands of pixels tall. That is
+      the "renders long and does not open" report: the class was toggling and
+      the panel was rendering, in a column too narrow to show anything.
+
+   2. Stacked layout. Below 900px .aaa__row turns into a COLUMN, where
+      flex-basis is height, not width. This rule overrode the media query's
+      `flex: 0 0 auto` and pinned every track to 56px tall against
+      `overflow: hidden`, clipping the open panel on phones.
+
+   Both are sizing rules for the horizontal row, so they belong in a query that
+   cannot reach the stacked layout. Keep the is-open line next to the width it
+   overrides; separated, the next edit re-creates bug 1. */
+@media (min-width: 901px) {
+	.aaa--courses .aaa__track { flex: 0 0 56px; }
+	.aaa--courses .aaa__track.is-open { flex: 1 1 auto; }
+	.aaa--courses .aaa__spine { flex: 0 0 54px; gap: 12px; }
+}
 .aaa--courses .aaa__name { font-size: 12px; letter-spacing: .04em; font-weight: 700; }
 .aaa--courses .aaa__count { font-size: 11px; font-variant-numeric: tabular-nums; }
 
