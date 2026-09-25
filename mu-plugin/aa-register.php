@@ -6755,6 +6755,14 @@ function aa_salary_insights_shortcode( $atts ) {
 		'codes'   => '',
 		'heading' => '',
 		'num'     => '',
+		/* THE SECTION HAD NO id AND THE MENU LINKED TO ONE. The hub hero's
+		   in-page nav ships "02:Career and pay:career", and the track pages
+		   ship "01:Salary insights:salary" -- both anchors pointed at nothing,
+		   because this section rendered as a bare <section class="aas">. On
+		   /training/ that meant the one menu entry promising a career answer
+		   went nowhere. Default 'career'; a page whose menu says salary passes
+		   id="salary". */
+		'id'      => 'career',
 	), $atts, 'aa_salary_insights' );
 
 	$data = aa_salary_data();
@@ -6827,7 +6835,7 @@ function aa_salary_insights_shortcode( $atts ) {
 		return '$' . number_format( (int) $k ) . 'K';
 	};
 
-	$h  = '<section class="aas" data-aas>';
+	$h  = '<section class="aas"' . ( $a['id'] !== '' ? ' id="' . esc_attr( $a['id'] ) . '"' : '' ) . ' data-aas>';
 	$h .= '<div class="aas__head">';
 	$h .= '<span class="aas__kicker">'
 	    . ( $a['num'] !== '' ? esc_html( $a['num'] ) . ' &middot; ' : '' ) . 'Career and pay</span>';
