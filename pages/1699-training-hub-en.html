@@ -1,0 +1,209 @@
+<!--
+  /training/ (page 1699) -- the training hub.
+
+  SECTION ORDER IS DELIBERATE: career, coaching, then the catalogue.
+    01 Career and pay   [aa_salary_insights]  salary bands + career ladders
+    02 Coaching         this file             the largest section on the page
+    03 Certifications   [aa_track_accordion]
+    04 Upcoming cohorts [aa_cohorts]
+    05 Contact          this file
+
+  The hub used to open with the catalogue, with career at 02 and coaching at
+  04. It listed what it sells before saying what any of it is worth.
+
+  The pay figures in section 02 are typical US ranges (~25th-75th percentile)
+  read from Glassdoor and ZipRecruiter in September 2026, plus Scaled Agile's
+  2024 SAFe Careers Snapshot for the product-owner certification figures. They
+  are role compensation, NOT course prices, and the caveat paragraph saying so
+  is not decoration -- sources disagree by up to $50K on one job title. If the
+  numbers are refreshed, refresh the date in that paragraph with them.
+-->
+<!-- wp:shortcode -->
+[aa_hub_hero nav="01:Career and pay:career,02:Coaching:coaching,03:Certifications:certifications,04:Upcoming cohorts:cohorts,05:Contact:contact"]
+<!-- /wp:shortcode -->
+
+<!-- wp:shortcode -->
+[aa_salary_insights num="01"]
+<!-- /wp:shortcode -->
+
+<!-- wp:html -->
+<style>
+/* Coaching band. The only page-level CSS left on /training/ -- everything else
+   now comes from the register stylesheet. It stays here until the block that
+   replaces it exists, rather than leaving the section unstyled in the meantime. */
+.aacoach{padding:clamp(44px,6vw,88px) clamp(16px,5vw,64px);background:#0C2A28;color:#fff}
+.aacoach *,.aacoach *::before,.aacoach *::after{box-sizing:border-box}
+.aacoach__head{max-width:1240px;margin:0 auto}
+.aacoach__kicker{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#6FA6A0}
+.aacoach__h2{margin:14px 0 0;font-size:clamp(28px,3.4vw,46px);line-height:1.05;letter-spacing:-.032em;font-weight:600;color:#fff}
+.aacoach__h2 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;color:#7FD9CE}
+.aacoach__lede{margin:14px 0 0;font-size:15px;line-height:1.6;color:#B9D3D0;max-width:58ch}
+.aacoach__grid{max-width:1240px;margin:22px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+/* Career block. Section 02 carries the roles these credentials lead to, the
+   ladder between them, and only then the coaching offers -- the offers are
+   the answer, so they come after the question. */
+.aacoach__cap{max-width:1240px;margin:44px auto 0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#6FA6A0;border-top:1px solid rgba(255,255,255,.12);padding-top:18px}
+.aacoach__roles{max-width:1240px;margin:20px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.aacoach__role{display:flex;flex-direction:column;gap:9px;padding:22px;border-radius:16px;background:#12362F;border:1px solid rgba(255,255,255,.10)}
+.aacoach__rc{align-self:flex-start;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#0C2A28;background:#7FD9CE;border-radius:5px;padding:3px 8px}
+.aacoach__rt{margin:0;font-size:19px;font-weight:600;letter-spacing:-.024em;line-height:1.2;color:#fff}
+.aacoach__rt em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;color:#7FD9CE}
+.aacoach__rd{margin:0;font-size:13.5px;line-height:1.6;color:#B9D3D0;flex:1}
+.aacoach__rp{font-size:17px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
+.aacoach__src{max-width:1240px;margin:16px auto 0;font-size:12.5px;line-height:1.6;color:#8FB3AE}
+.aacoach__rungs{max-width:1240px;margin:20px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.aacoach__rung{padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,.10)}
+.aacoach__rung span{font-family:'Instrument Serif',Georgia,serif;font-size:26px;color:#7FD9CE}
+.aacoach__rung h4{margin:6px 0 0;font-size:17px;font-weight:600;color:#fff}
+.aacoach__rung p{margin:8px 0 0;font-size:13.5px;line-height:1.6;color:#B9D3D0}
+.aacoach__card{display:flex;flex-direction:column;gap:11px;padding:24px;border-radius:18px;background:#12362F;border:1px solid rgba(255,255,255,.10)}
+.aacoach__card > span{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:#6FA6A0}
+.aacoach__card h3{margin:0;font-size:21px;font-weight:600;letter-spacing:-.026em;line-height:1.2;color:#fff}
+.aacoach__card h3 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;color:#7FD9CE}
+.aacoach__card p{margin:0;font-size:14px;line-height:1.6;color:#B9D3D0;flex:1}
+.aacoach__card a{margin-top:auto;padding-top:8px;font-size:14px;font-weight:600;color:#7FD9CE;text-decoration:none}
+.aacoach__card a:hover{color:#fff}
+.aacontact{padding:clamp(44px,6vw,88px) clamp(16px,5vw,64px);background:#FBFAF7;border-top:1px solid #EDE9DF;color:#101C33}
+.aacontact *,.aacontact *::before,.aacontact *::after{box-sizing:border-box}
+.aacontact__grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,3.5vw,56px);align-items:start}
+@media(max-width:860px){.aacontact__grid{grid-template-columns:minmax(0,1fr)}}
+.aacontact__kicker{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#8A8375}
+.aacontact__h2{margin:14px 0 0;font-size:clamp(28px,3.4vw,42px);line-height:1.05;letter-spacing:-.032em;font-weight:600}
+.aacontact__h2 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;color:#0E8074}
+.aacontact__lede{margin:14px 0 0;font-size:15px;line-height:1.6;color:#4E4A40;max-width:52ch}
+.aacontact__list{margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.aacontact__list li{position:relative;padding-left:22px;font-size:14px;color:#4E4A40}
+.aacontact__list li::before{content:'✓';position:absolute;left:0;color:#0E8074;font-weight:700}
+.aacontact__alt{margin:20px 0 0;font-size:13.5px;color:#8A8375}
+.aacontact__alt a{color:#0E8074;font-weight:600}
+.aacontact__form{background:#fff;border:1px solid #E9E5DB;border-radius:18px;padding:clamp(20px,2.4vw,28px)}
+.aacontact__soon{margin:0;font-size:15px;line-height:1.6;color:#4E4A40}
+.aacontact__soon a{color:#0E8074}
+</style>
+
+<section class="aacoach" id="coaching">
+  <div class="aacoach__head">
+    <span class="aacoach__kicker">02 &middot; Coaching</span>
+    <h2 class="aacoach__h2">Certified is not hired. <em>We coach you to the role.</em></h2>
+    <p class="aacoach__lede">A certificate is a keyword filter you get past, not a job you get offered. This section is the part most training pages leave out: which roles these credentials actually open, what those roles pay, and the coaching that turns the badge into the offer.</p>
+  </div>
+
+  <div class="aacoach__cap">Where these certifications lead</div>
+  <div class="aacoach__roles">
+    <div class="aacoach__role">
+      <span class="aacoach__rc">SA &middot; SSM</span>
+      <h3 class="aacoach__rt">Delivery Manager <em>/ Agile Delivery Manager</em></h3>
+      <p class="aacoach__rd">Owns delivery across teams &mdash; people, process, dependencies and the blockers in between. In US postings a SAFe credential is one of the signals that gets a CV past the filter; senior listings ask for RTE or SPC outright.</p>
+      <span class="aacoach__rp">$140K &ndash; $235K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">SSM</span>
+      <h3 class="aacoach__rt">SAFe <em>Scrum Master</em></h3>
+      <p class="aacoach__rd">The first rung most people climb. Runs the team's events and flow inside a train, rather than a single Scrum team in isolation.</p>
+      <span class="aacoach__rp">$103K &ndash; $138K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">POPM</span>
+      <h3 class="aacoach__rt">Product Owner <em>/ Product Manager</em></h3>
+      <p class="aacoach__rd">Owns the backlog and the value it delivers. The role where the certification evidence is strongest: in Scaled Agile's 2024 Careers Snapshot, 42% of product-owner postings asked for SAFe experience and 40% required or preferred the certification.</p>
+      <span class="aacoach__rp">$94K &ndash; $130K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">RTE</span>
+      <h3 class="aacoach__rt">Release Train <em>Engineer</em></h3>
+      <p class="aacoach__rd">Chief of staff to an Agile Release Train &mdash; five to twelve teams, one cadence. The step where pay stops tracking the team role and starts tracking the programme.</p>
+      <span class="aacoach__rp">$108K &ndash; $175K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">LSSP &middot; RTE</span>
+      <h3 class="aacoach__rt">Solution Train <em>Engineer</em></h3>
+      <p class="aacoach__rd">The same job one level up: several trains building one integrated solution, usually with suppliers and regulation in the mix.</p>
+      <span class="aacoach__rp">$102K &ndash; $141K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">SPC</span>
+      <h3 class="aacoach__rt">SAFe Practice <em>Consultant</em></h3>
+      <p class="aacoach__rd">Licensed to teach SAFe and to launch trains. This is the credential that turns a practitioner into someone an enterprise hires to run the change, internally or as a consultant.</p>
+      <span class="aacoach__rp">$134K &ndash; $207K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">SPC</span>
+      <h3 class="aacoach__rt">Agile <em>Coach</em></h3>
+      <p class="aacoach__rd">Coaches teams, leaders and trains rather than running one. Telecommunications, financial services and aerospace pay this role the most.</p>
+      <span class="aacoach__rp">$156K &ndash; $231K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">SPC &rarr; ASPC</span>
+      <h3 class="aacoach__rt">Enterprise <em>Agile Coach</em></h3>
+      <p class="aacoach__rd">Works across portfolios and with the executive layer. ASPC is the credential that separates this from a team-level coaching title.</p>
+      <span class="aacoach__rp">$184K &ndash; $276K</span>
+    </div>
+    <div class="aacoach__role">
+      <span class="aacoach__rc">LPM</span>
+      <h3 class="aacoach__rt">Lean Portfolio <em>Manager</em></h3>
+      <p class="aacoach__rd">Funding, governance and strategy rather than delivery. The highest-paying destination on this list, and the one furthest from where most people start.</p>
+      <span class="aacoach__rp">$186K &ndash; $300K</span>
+    </div>
+  </div>
+  <p class="aacoach__src">Typical US ranges &mdash; roughly the 25th to 75th percentile &mdash; read from Glassdoor and ZipRecruiter in September 2026. Treat them as a shape, not a quote: the sources disagree by as much as $50,000 on the same job title, and pay moves with industry, location and employer far more than with any certificate. These are what the <em>roles</em> pay. They are not what our courses cost, and they are not a promise about your next offer.</p>
+
+  <div class="aacoach__cap">How the ladder actually works</div>
+  <div class="aacoach__rungs">
+    <div class="aacoach__rung"><span>01</span><h4>Inside a team</h4><p>SSM or POPM. You are certified for the role you already do, and the badge clears the filter on the next application.</p></div>
+    <div class="aacoach__rung"><span>02</span><h4>Across a train</h4><p>RTE, or Large Solution if your programme spans several trains. Pay moves with scope, and this is where the biggest single step usually happens.</p></div>
+    <div class="aacoach__rung"><span>03</span><h4>Across the enterprise</h4><p>SPC, then ASPC or LPM. You are no longer running delivery &mdash; you are teaching, funding or redesigning it.</p></div>
+  </div>
+
+  <div class="aacoach__cap">And the coaching that gets you there</div>
+  <div class="aacoach__grid">
+    <div class="aacoach__card">
+      <span>60 minutes &middot; 1:1</span>
+      <h3>Career <em>roadmap.</em></h3>
+      <p>One session with a senior SPC to map your 12-month plan. Which certification, which role to target, which employers to approach.</p>
+      <a href="mailto:info@agile-agilist.com?subject=Career%20Roadmap%20Coaching">Book roadmap &#10230;</a>
+    </div>
+    <div class="aacoach__card">
+      <span>45 minutes &middot; Interview prep</span>
+      <h3>Interview <em>rehearsal.</em></h3>
+      <p>Live mock interview and feedback, using the questions hiring managers actually ask for RTE, SPC, LPM and Agile Coach roles.</p>
+      <a href="mailto:info@agile-agilist.com?subject=Interview%20Prep%20Coaching">Book prep &#10230;</a>
+    </div>
+    <div class="aacoach__card">
+      <span>3 months &middot; Bi-weekly</span>
+      <h3>Quarterly career <em>sprint.</em></h3>
+      <p>Six sessions across twelve weeks: roadmap, interview cycles and salary negotiation. For people actively changing roles.</p>
+      <a href="mailto:info@agile-agilist.com?subject=Quarterly%20Career%20Sprint">Book sprint &#10230;</a>
+    </div>
+  </div>
+</section>
+<!-- /wp:html -->
+
+<!-- wp:shortcode -->
+[aa_track_accordion num="03"]
+<!-- /wp:shortcode -->
+
+<!-- wp:shortcode -->
+[aa_cohorts num="04"]
+<!-- /wp:shortcode -->
+
+<!-- wp:html -->
+<section class="aacontact" id="contact">
+  <div class="aacontact__grid">
+    <div>
+      <span class="aacontact__kicker">05 &middot; Contact</span>
+      <h2 class="aacontact__h2">Training a team, or not sure which course? <em>Ask us.</em></h2>
+      <p class="aacontact__lede">Group pricing starts at six people, and a private cohort runs on your calendar rather than ours. If you are choosing between two credentials, say so &mdash; that is the question we answer most often.</p>
+      <ul class="aacontact__list">
+        <li>Private cohorts scheduled around your PI boundaries</li>
+        <li>Group pricing for six or more</li>
+        <li>Reschedule at no fee, with no deadline</li>
+      </ul>
+      <p class="aacontact__alt">Prefer email? <a href="mailto:info@agile-agilist.com">info@agile-agilist.com</a></p>
+    </div>
+    <div class="aacontact__form">
+      <p class="aacontact__soon"><strong>Write to us at <a href="mailto:info@agile-agilist.com">info@agile-agilist.com</a></strong><br>
+      Tell us the certification, roughly when, and how many people. We answer the same day.</p>
+    </div>
+  </div>
+</section>
+<!-- /wp:html -->
