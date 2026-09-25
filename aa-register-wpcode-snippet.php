@@ -3010,7 +3010,9 @@ function aa_reg_strings() {
 			'jobs_h'       => 'Dónde se contratan estos roles.',
 			'jobs_lede'    => 'Lo que suele pagar cada rol, y una búsqueda en vivo en los mercados donde impartimos. No gestionamos una bolsa de empleo: las ofertas vienen de la búsqueda, no de nosotros.',
 			'jobs_markets' => 'Buscar ofertas en vivo en',
-			'jobs_src'     => 'Rangos típicos de EE. UU., aproximadamente del percentil 25 al 75, consultados en Glassdoor y ZipRecruiter en septiembre de 2026. Las cifras están en USD en todos los idiomas y son lo que pagan los roles, no lo que cuestan nuestros cursos. La retribución depende mucho más del mercado, el sector y la empresa que de cualquier certificación.',
+			'jobs_us'      => 'Estados Unidos',
+			'jobs_eu'      => 'Zona euro',
+			'jobs_src'     => 'Rangos típicos, aproximadamente del percentil 25 al 75, consultados en septiembre de 2026: Estados Unidos en Glassdoor y ZipRecruiter, zona euro en Glassdoor y PayScale en España, Francia, Alemania y Países Bajos. Las cifras en euros son lo que pagan esos mercados, no las cifras estadounidenses convertidas: convertirlas casi las duplicaría. Son retribuciones de los puestos, no lo que cuestan nuestros cursos, y dependen mucho más del mercado, el sector y la empresa que de cualquier certificación.',
 			'book_another'  => 'Reservar otra plaza',
 			'fine'          => '¿Necesitas cambiar de fechas? El cambio no tiene coste. La tasa de examen está incluida en el precio.',
 			'step_details'  => 'Tus datos',
@@ -3106,7 +3108,9 @@ function aa_reg_strings() {
 			'jobs_h'       => 'Où ces rôles recrutent.',
 			'jobs_lede'    => 'Ce que chaque rôle rémunère habituellement, et une recherche en direct dans les marchés où nous enseignons. Nous ne gérons pas de site d\'emploi : les offres viennent de la recherche, pas de nous.',
 			'jobs_markets' => 'Rechercher des offres en direct en',
-			'jobs_src'     => 'Fourchettes américaines typiques, environ du 25e au 75e centile, relevées sur Glassdoor et ZipRecruiter en septembre 2026. Les montants sont en USD dans toutes les langues et correspondent à ce que paient les rôles, pas au prix de nos formations. La rémunération dépend bien plus du marché, du secteur et de l\'employeur que d\'une certification.',
+			'jobs_us'      => 'États-Unis',
+			'jobs_eu'      => 'Zone euro',
+			'jobs_src'     => 'Fourchettes typiques, environ du 25e au 75e centile, relevées en septembre 2026 : États-Unis sur Glassdoor et ZipRecruiter, zone euro sur Glassdoor et PayScale en France, en Espagne, en Allemagne et aux Pays-Bas. Les montants en euros correspondent à ce que paient ces marchés, et non aux montants américains convertis — une conversion les doublerait presque. Ce sont les rémunérations des postes, pas le prix de nos formations, et elles dépendent bien plus du marché, du secteur et de l\'employeur que d\'une certification.',
 			'book_another'  => 'Réserver une autre place',
 			'fine'          => 'Besoin de changer de dates ? Le report est sans frais. Les frais d\'examen sont compris dans le prix.',
 			'step_details'  => 'Vos coordonnées',
@@ -8775,13 +8779,27 @@ function aa_reg_job_markets() {
 	return isset( $m[ $lang ] ) ? $m[ $lang ] : $m['en'];
 }
 
-/** The four roles the search is offered for, with typical US ranges. */
+/**
+ * The four roles, with typical US and euro-zone ranges.
+ *
+ * THE EURO COLUMN IS NOT A CONVERSION, and it must never become one. Convert
+ * the Agile Coach row and you get about EUR 145-215K; the euro-zone market
+ * actually pays EUR 67-95K. A conversion would overstate European pay by
+ * roughly double and the page would be selling a number no French or Spanish
+ * reader could find. Both columns are market data for their own market.
+ *
+ * US    Glassdoor and ZipRecruiter, 25th-75th percentile.
+ * EUR   Glassdoor FR/ES/DE and PayScale FR/NL, read the same week. The band is
+ *       wider because it spans several countries -- France, Spain, Germany and
+ *       the Netherlands do not pay the same, and Switzerland is not in it at
+ *       all because it is not a euro market.
+ */
 function aa_reg_job_roles() {
 	return array(
-		array( 'SAFe Scrum Master',              'SSM',  '$103K – $138K' ),
-		array( 'Product Owner / Product Manager','POPM', '$94K – $130K'  ),
-		array( 'Release Train Engineer',         'RTE',  '$108K – $175K' ),
-		array( 'Agile Coach',                    'SPC',  '$156K – $231K' ),
+		array( 'SAFe Scrum Master',              'SSM',  '$103K – $138K', '€42K – €65K' ),
+		array( 'Product Owner / Product Manager','POPM', '$94K – $130K',  '€45K – €75K' ),
+		array( 'Release Train Engineer',         'RTE',  '$108K – $175K', '€58K – €78K' ),
+		array( 'Agile Coach',                    'SPC',  '$156K – $231K', '€67K – €95K' ),
 	);
 }
 
@@ -8796,11 +8814,17 @@ function aa_reg_job_signals( $num = '' ) {
 	$h .= '</div>';
 
 	$h .= '<div class="aajs__roles">';
+	$h .= '<div class="aajs__role aajs__role--head">'
+	    . '<span></span><span></span>'
+	    . '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_us', 'United States' ) ) . '</span>'
+	    . '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_eu', 'Euro zone' ) ) . '</span>'
+	    . '</div>';
 	foreach ( aa_reg_job_roles() as $r ) {
 		$h .= '<div class="aajs__role">'
 		    . '<span class="aajs__code">' . esc_html( $r[1] ) . '</span>'
 		    . '<span class="aajs__name">' . esc_html( $r[0] ) . '</span>'
 		    . '<span class="aajs__pay">' . esc_html( $r[2] ) . '</span>'
+		    . '<span class="aajs__pay aajs__pay--eur">' . esc_html( $r[3] ) . '</span>'
 		    . '</div>';
 	}
 	$h .= '</div>';
@@ -8815,10 +8839,12 @@ function aa_reg_job_signals( $num = '' ) {
 	$h .= '</div>';
 
 	$h .= '<p class="aajs__src">' . esc_html( aa_reg_t( 'jobs_src',
-		'Typical US ranges, roughly the 25th to 75th percentile, read from Glassdoor and '
-		. 'ZipRecruiter in September 2026. Figures are in USD in every language and are what '
-		. 'the roles pay, not what our courses cost. Pay moves with market, industry and '
-		. 'employer far more than with any certificate.' ) ) . '</p>';
+		'Typical ranges, roughly the 25th to 75th percentile, read in September 2026: '
+		. 'United States from Glassdoor and ZipRecruiter, euro zone from Glassdoor and '
+		. 'PayScale in France, Spain, Germany and the Netherlands. The euro figures are '
+		. 'what those markets pay, not the US figures converted -- converting would roughly '
+		. 'double them. These are what the roles pay, not what our courses cost, and pay '
+		. 'moves with market, industry and employer far more than with any certificate.' ) ) . '</p>';
 
 	return $h;
 }
