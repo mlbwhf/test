@@ -8645,4 +8645,110 @@ function aa_reg_career_first( $content ) {
 }
 add_filter( 'the_content', 'aa_reg_career_first', 12 );
 
+/* ============================================================================
+   COACHING SECOND ON A TRACK PAGE
+   ----------------------------------------------------------------------------
+   A track page ran 01 salary, 02 career journey, 03 certifications, 04 roles,
+   05 live signals, 06 coaching. Coaching -- the one section that offers a
+   person actual help deciding -- was last, below the catalogue and the job
+   board. It is now second, directly under the pay section:
+
+       01 salary  02 coaching  03 career journey  04 certifications  ...
+
+   WHY A FILTER AND NOT TEN PAGE EDITS. The numbered sections are a mix: most
+   are stored HTML in the page, but Certifications is rendered by
+   [aa_course_accordion] with its own kicker, so the numbering a reader sees is
+   only assembled at render. Ten pages in two languages, each needing a section
+   moved plus six numbers rewritten, is sixty chances to typo a French eyebrow.
+   This reorders the rendered page once and renumbers from the nav, which is
+   the only place the intended order is written down.
+
+   NUMBERING IS DERIVED, NEVER PARSED. Each section's number is its position in
+   the nav after the move -- the stored "( 04 )" is overwritten, not read. So a
+   page whose stored numbers were already wrong comes out right, and a page
+   that gains a section needs no edit here.
+   ========================================================================== */
+/** Rewrite the first two-digit eyebrow number inside a section's opening. */
+function aa_reg_renumber_section( $html, $span, $n ) {
+	$head = substr( $html, $span[0], min( 700, $span[1] - $span[0] ) );
+	$num  = sprintf( '%02d', $n );
+	/* "( 04 ) &mdash; Roles in demand" and "04 &middot; Certifications" are the
+	   two shapes on these pages. Anchored on the punctuation either side so a
+	   two-digit number in body copy cannot be hit. */
+	foreach ( array(
+		'#(\(\s*)\d{2}(\s*\))#',
+		'#(>)\d{2}(\s*&middot;)#',
+	) as $re ) {
+		$new = preg_replace_callback( $re, function ( $m ) use ( $num ) {
+			return $m[1] . $num . $m[2];
+		}, $head, 1, $hits );
+		if ( $hits ) {
+			return substr( $html, 0, $span[0] ) . $new
+			     . substr( $html, $span[0] + strlen( $head ) );
+		}
+	}
+	return $html;
+}
+
+function aa_reg_coaching_second( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'class="aahn"' ) === false )  { return $content; }
+	if ( strpos( $content, 'id="coaching"' ) === false ) { return $content; }
+
+	/* The nav is where the intended order lives. */
+	$nav_a = strpos( $content, '<div class="aahn__scroll">' );
+	$nav_b = ( $nav_a !== false ) ? strpos( $content, '</div>', $nav_a ) : false;
+	if ( $nav_a === false || $nav_b === false ) { return $content; }
+	$nav = substr( $content, $nav_a, $nav_b - $nav_a );
+
+	if ( ! preg_match_all( '#<a class="aahn__link" href="\#([a-z-]+)">.*?</a>#s', $nav, $m, PREG_SET_ORDER ) ) {
+		return $content;
+	}
+	$order = array();
+	foreach ( $m as $one ) { $order[] = $one[1]; }
+	if ( count( $order ) < 3 ) { return $content; }
+	if ( ! in_array( 'coaching', $order, true ) ) { return $content; }
+	if ( $order[1] === 'coaching' ) { return $content; }   // already second
+
+	/* First stays first; coaching becomes second; the rest keep their order. */
+	$new_order = array( $order[0], 'coaching' );
+	foreach ( $order as $i => $slug ) {
+		if ( $i === 0 || $slug === 'coaching' ) { continue; }
+		$new_order[] = $slug;
+	}
+
+	/* ---- move the section ---- */
+	$co    = aa_reg_section_span( $content, 'coaching' );
+	$first = aa_reg_section_span( $content, $order[0] );
+	if ( ! $co || ! $first || $co[0] < $first[1] ) { return $content; }
+
+	$block   = substr( $content, $co[0], $co[1] - $co[0] );
+	$content = substr( $content, 0, $co[0] ) . substr( $content, $co[1] );
+	$content = substr( $content, 0, $first[1] ) . $block . substr( $content, $first[1] );
+
+	/* ---- renumber the sections, from the new order ---- */
+	foreach ( $new_order as $i => $slug ) {
+		$span = aa_reg_section_span( $content, $slug );
+		if ( $span ) { $content = aa_reg_renumber_section( $content, $span, $i + 1 ); }
+	}
+
+	/* ---- rebuild the nav in the same order, renumbered ---- */
+	$nav_a = strpos( $content, '<div class="aahn__scroll">' );
+	$nav_b = ( $nav_a !== false ) ? strpos( $content, '</div>', $nav_a ) : false;
+	if ( $nav_a === false || $nav_b === false ) { return $content; }
+	$nav   = substr( $content, $nav_a, $nav_b - $nav_a );
+	$links = array();
+	foreach ( $m as $one ) { $links[ $one[1] ] = $one[0]; }
+
+	$rebuilt = $nav;
+	foreach ( $m as $one ) { $rebuilt = str_replace( $one[0], '', $rebuilt ); }
+	foreach ( $new_order as $i => $slug ) {
+		if ( ! isset( $links[ $slug ] ) ) { continue; }
+		$rebuilt .= preg_replace( '#<span>\d{2}</span>#', '<span>' . sprintf( '%02d', $i + 1 ) . '</span>', $links[ $slug ], 1 );
+	}
+
+	return substr( $content, 0, $nav_a ) . $rebuilt . substr( $content, $nav_b );
+}
+add_filter( 'the_content', 'aa_reg_coaching_second', 13 );
+
 endif;
