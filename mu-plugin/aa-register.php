@@ -6780,9 +6780,13 @@ function aa_salary_insights_shortcode( $atts ) {
 		   ship "01:Salary insights:salary" -- both anchors pointed at nothing,
 		   because this section rendered as a bare <section class="aas">. On
 		   /training/ that meant the one menu entry promising a career answer
-		   went nowhere. Default 'career'; a page whose menu says salary passes
+		   went nowhere. THE DEFAULT IS 'salary' BECAUSE TEN PAGES SAY SO:
+		   every track page ships "01:Salary insights:salary" in its menu and
+		   only the hub says career, and the hub is one page whose menu is
+		   ours to change. An unresolvable first anchor used to make
+		   aa_reg_coaching_second() bail out, leaving coaching last. Was
 		   id="salary". */
-		'id'      => 'career',
+		'id'      => 'salary',
 	), $atts, 'aa_salary_insights' );
 
 	$data = aa_salary_data();
@@ -8739,7 +8743,15 @@ function aa_reg_coaching_second( $content ) {
 
 	/* ---- move the section ---- */
 	$co    = aa_reg_section_span( $content, 'coaching' );
-	$first = aa_reg_section_span( $content, $order[0] );
+	$first = null;
+	/* The first menu entry whose section actually exists. A menu can name an
+	   anchor nothing answers to, and one stale entry should not be able to
+	   switch the whole reorder off. */
+	foreach ( $order as $aa_s ) {
+		if ( $aa_s === 'coaching' ) { continue; }
+		$aa_f = aa_reg_section_span( $content, $aa_s );
+		if ( $aa_f ) { $first = $aa_f; break; }
+	}
 	if ( ! $co || ! $first || $co[0] < $first[1] ) { return $content; }
 
 	$block   = substr( $content, $co[0], $co[1] - $co[0] );
