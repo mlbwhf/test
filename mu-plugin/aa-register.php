@@ -6662,9 +6662,6 @@ function aa_salary_data() {
 					         . 'publishes a median for this credential yet, so none is shown.',
 				),
 			),
-			/* The two journeys the Advanced SAFe page already published. They
-			   surface only on a page whose codes cover them -- see the filter
-			   in the shortcode. */
 			/* COACHING. The branch off delivery, not its continuation: at SPC
 			   you stop running the train and start teaching the people who do. */
 			array(
@@ -8840,8 +8837,8 @@ add_filter( 'the_content', 'aa_reg_coaching_second', 13 );
 
    2. THE PAY DID NOT MATCH THE CHART ABOVE IT. Three tables in this file
       carried three different figures for the same credential. On the advanced
-      page the salary chart said an RTE earns $135-260K while this section,
-      further down the same page, said $108-175K. aa_salary_data() is now the
+      page the salary chart said an RTE earns USD 135-260K while this section,
+      further down the same page, said USD 108-175K. aa_salary_data() is now the
       single US source -- it is the one the chart renders, and it is stored in
       an option so the figures can be corrected without touching code. The euro
       column keeps its own table because aa_salary_data() has no euro series.
@@ -9093,15 +9090,6 @@ function aa_reg_page_role_codes() {
 }
 
 /**
- * The US band for a credential, from the same dataset the salary chart draws.
- *
- * ONE SOURCE, NOT THREE. Before this, aa_salary_data(), aa_reg_job_roles() and
- * aa_reg_role_pay() each carried their own figure for SPC, RTE and the rest,
- * and no two agreed. A reader on the advanced page could see two different RTE
- * bands without scrolling. Everything reads from aa_salary_data() now, which
- * is also the one the client can edit from an option.
- */
-/**
  * The five industry credentials, which aa_salary_data() does not carry.
  *
  * THESE ARE NOT NEW NUMBERS. Every one is already published, in these words, on
@@ -9125,6 +9113,15 @@ function aa_reg_industry_bands() {
 	);
 }
 
+/**
+ * The US band for a credential, from the same dataset the salary chart draws.
+ *
+ * ONE SOURCE, NOT THREE. Before this, aa_salary_data(), aa_reg_job_roles() and
+ * aa_reg_role_pay() each carried their own figure for SPC, RTE and the rest,
+ * and no two agreed. A reader on the advanced page could see two different RTE
+ * bands without scrolling. Everything reads from aa_salary_data() now, which
+ * is also the one the client can edit from an option.
+ */
 function aa_reg_us_band( $code ) {
 	$d = aa_salary_data();
 	foreach ( (array) $d['bands'] as $b ) {
@@ -9539,20 +9536,42 @@ add_filter( 'the_content', 'aa_reg_job_signals_swap', 12 );
    nobody checked. Adding a course here means finding the figure first.
    ========================================================================== */
 
-/** Course slug => role it leads to, typical US range, typical euro-zone range. */
+/**
+ * Course slug => role it leads to, typical US range, typical euro-zone range.
+ *
+ * DERIVED NOW, NOT TYPED. This used to be a fourth hand-written pay table, and
+ * it disagreed with the other three: it put an RTE at $108-175K while the
+ * salary chart on the same page said $135-260K, and a reader could see the gap
+ * block and the Live roles section without scrolling between them. It reads
+ * from the same helpers the Live roles section does, so there is one set of
+ * figures on the site and correcting aa_salary_data() corrects all of them.
+ *
+ * THE SLUG MAP IS NOT COSMETIC. This block works in course slugs and the rest
+ * of the file works in credential codes, and a derived course's code is not
+ * reliably its slug uppercased -- scrum-master is SSM, not SCRUM-MASTER.
+ */
 function aa_reg_role_pay() {
-	return array(
-		'scrum-master'   => array( 'SAFe Scrum Master',                  '$103K – $138K', '€42K – €65K' ),
-		'popm'           => array( 'Product Owner / Product Manager',    '$94K – $130K',  '€45K – €75K' ),
-		'rte'            => array( 'Release Train Engineer',             '$108K – $175K', '€58K – €78K' ),
-		/* SPC and Agile Coach are the same hire in most markets, and the euro
-		   figure is the Agile Coach band -- there is no separate euro-zone
-		   series for the credential itself. */
-		'spc'            => array( 'SAFe Practice Consultant / Agile Coach', '$134K – $207K', '€67K – €95K' ),
-		'large-solution' => array( 'Solution Train Engineer',            '$102K – $141K', '' ),
-		'lpm'            => array( 'Lean Portfolio Manager',             '$186K – $300K', '' ),
-		'aspc'           => array( 'Enterprise Agile Coach',             '$184K – $276K', '' ),
+	$slug_code = array(
+		'scrum-master'   => 'SSM',
+		'popm'           => 'POPM',
+		'rte'            => 'RTE',
+		'spc'            => 'SPC',
+		'large-solution' => 'LSSP',
+		'lpm'            => 'LPM',
+		'aspc'           => 'ASPC',
 	);
+	$map = aa_reg_role_map();
+	$out = array();
+	foreach ( $slug_code as $slug => $code ) {
+		$us = aa_reg_us_band( $code );
+		if ( $us === '' ) { continue; }   /* no sourced figure, no row */
+		$out[ $slug ] = array(
+			isset( $map[ $code ]['role'] ) ? $map[ $code ]['role'] : $code,
+			$us,
+			aa_reg_eur_band( $code ),
+		);
+	}
+	return $out;
 }
 
 /** Last path segment of a course URL, which is its slug. */
