@@ -1248,31 +1248,56 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 /* ============================================================================
    AA — LIVE ROLES                              (replaces the "Live signals" cards)
    ----------------------------------------------------------------------------
-   Four roles with a pay range, then one button per market that runs a real
-   search. The markets change with the page language; the money does not, and
-   the caption under it says so.
+   One card per role, and which roles appear depends on the track the page sits
+   in -- the advanced page no longer opens with Scrum Master. Each card carries
+   the titles the job is really advertised under, the pay, the next credential
+   on this page's ladder, and an opening count where we have one.
+
+   WAS A FOUR-COLUMN GRID. Six things per role will not sit in a row on a
+   phone, and the old layout already had to hide its own header below 640px to
+   cope with four. A card stacks by construction, so there is one layout rather
+   than a desktop one and a mobile apology for it.
    ========================================================================== */
-.aajs__roles { max-width: 1240px; margin: 26px auto 0; display: grid; gap: 8px; }
-.aajs__role {
-	display: grid; grid-template-columns: 64px minmax(0,1fr) 130px 120px; align-items: center;
-	gap: 16px; padding: 16px 18px; border: 1px solid #E9E5DB; border-radius: 12px;
-	background: #FBFAF7;
+.aajs { max-width: 1240px; margin: 26px auto 0; display: grid; gap: 10px; }
+.aajs__row {
+	padding: 16px 18px; border: 1px solid #E9E5DB; border-radius: 12px; background: #FBFAF7;
 }
-/* The column header. No border or fill -- it labels the two money columns and
-   should not read as another role. */
-.aajs__role--head {
-	padding: 0 18px 4px; border: 0; background: none;
-	font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #88A0A4;
-}
-.aajs__role--head .aajs__pay { font-size: 10.5px; font-weight: 700; color: #88A0A4; }
-.aajs__pay--eur { color: #0E8074; }
+.aajs__top { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .aajs__code {
-	font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-align: center;
-	padding: 4px 0; border-radius: 5px; background: #F4FAF9; color: #0E8074;
+	flex: none; min-width: 64px; text-align: center;
+	font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+	padding: 4px 8px; border-radius: 5px; background: #F4FAF9; color: #0E8074;
 	border: 1px solid #D6EBE8;
 }
-.aajs__name { font-size: 15px; font-weight: 600; color: #0E3A44; }
-.aajs__pay  { font-size: 15px; font-weight: 600; color: #0E3A44; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aajs__name { font-size: 16px; font-weight: 600; color: #0E3A44; }
+/* The count sits hard right on a wide card and simply follows the name on a
+   narrow one -- margin-left:auto does both without a media query. */
+.aajs__n {
+	margin-left: auto; font-size: 13px; color: #5E7378; white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+.aajs__n b { font-size: 17px; font-weight: 700; color: #0E8074; }
+.aajs__n--link {
+	text-decoration: none; font-weight: 600; color: #0E3A44;
+	border-bottom: 1px solid #C7DEDE; padding-bottom: 1px;
+}
+.aajs__n--link:hover { color: #0E8074; border-bottom-color: #0E8074; }
+.aajs__also { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; color: #5E7378; }
+.aajs__also span {
+	font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+	color: #A08B5A; margin-right: 6px;
+}
+.aajs__meta {
+	display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px;
+	margin-top: 12px; padding-top: 11px; border-top: 1px solid #EFEADF;
+	font-size: 13px; color: #88A0A4;
+}
+.aajs__pay { font-variant-numeric: tabular-nums; }
+.aajs__pay b { font-weight: 700; color: #0E3A44; margin-left: 4px; }
+.aajs__next { margin-left: auto; }
+.aajs__next a, .aajs__next b { font-weight: 700; color: #0E8074; text-decoration: none; }
+.aajs__next a { border-bottom: 1px solid #BEE0DB; padding-bottom: 1px; }
+.aajs__next a:hover { border-bottom-color: #0E8074; }
 .aajs__cap {
 	max-width: 1240px; margin: 28px auto 0; font-size: 11px; letter-spacing: .12em;
 	text-transform: uppercase; font-weight: 700; color: #88A0A4;
@@ -1285,6 +1310,14 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 }
 .aajs__market:hover { background: #0E3A44; color: #fff; }
 .aajs__src { max-width: 1240px; margin: 18px auto 0; font-size: 12.5px; line-height: 1.6; color: #8A8375; }
+
+@media (max-width: 720px) {
+	/* Let the count and the next step start their own line rather than being
+	   squeezed against the right edge. */
+	.aajs__n, .aajs__next { margin-left: 0; }
+	.aajs__top { gap: 8px; }
+	.aajs__meta { gap: 6px 18px; }
+}
 
 /* ============================================================================
    AA — GAP PRICING                         appended to the career section
@@ -1328,14 +1361,6 @@ a.aac__card:hover .aac__go { color: var(--aac-teal); }
 	.aagap__row { grid-template-columns: 54px minmax(0,1fr); gap: 4px 12px; }
 	.aagap__go { display: none; }
 	.aagap__meta { grid-column: 2; align-items: flex-start; text-align: left; flex-direction: row; gap: 10px; }
-}
-
-@media (max-width: 640px) {
-	.aajs__role { grid-template-columns: 56px minmax(0,1fr); gap: 4px 10px; }
-	.aajs__pay { grid-column: 2; }
-	/* Two money columns will not fit beside the name on a phone, so the header
-	   row is dropped and each figure gets its own line under the role. */
-	.aajs__role--head { display: none; }
 }
 
 /* The short name rides along in the spine for the stacked layout below 900px,

@@ -1432,6 +1432,8 @@ add_action( 'admin_init', function () {
 	register_setting( 'aa_reg', 'aa_reg_stripe_webhook', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	register_setting( 'aa_reg', 'aa_reg_prices_confirmed', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	register_setting( 'aa_reg', 'aa_reg_autoplace', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+	register_setting( 'aa_reg', 'aa_jobs_adzuna_id', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+	register_setting( 'aa_reg', 'aa_jobs_adzuna_key', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 } );
 
 function aa_reg_settings_page() {
@@ -1453,9 +1455,27 @@ function aa_reg_settings_page() {
 	   . '<label><input type="checkbox" name="aa_reg_autoplace" value="yes"' . checked( aa_reg_autoplace_on(), true, false ) . '> On course pages, swap the old hero for the new one and the Fluent Form for the new registration.</label>'
 	   . '<p class="description">No page edits either way &mdash; the swap happens as the page renders, and unticking this puts the old hero and form straight back. Applies only to pages whose slug has a row in <code>aa_reg_courses()</code>: <code>'
 	   . esc_html( implode( '</code>, <code>', array_keys( aa_reg_courses() ) ) ) . '</code>. Leave this off if you would rather place <code>[aa_course_hero]</code> and <code>[aa_course_register]</code> in the pages by hand.</p></td></tr>';
+	echo '<tr><th scope="row">Adzuna app ID</th><td><input type="text" name="aa_jobs_adzuna_id" value="' . esc_attr( get_option( 'aa_jobs_adzuna_id', '' ) ) . '" class="regular-text" autocomplete="off">'
+	   . '<p class="description">Free from <code>developer.adzuna.com</code>. With both fields filled, &ldquo;Where these roles are hiring&rdquo; shows a real opening count per role, refreshed twice a day by cron. Leave either blank and every row falls back to a search link &mdash; nothing breaks.</p></td></tr>';
+	echo '<tr><th scope="row">Adzuna app key</th><td><input type="password" name="aa_jobs_adzuna_key" value="' . esc_attr( get_option( 'aa_jobs_adzuna_key', '' ) ) . '" class="regular-text" autocomplete="off">'
+	   . '<p class="description">Counts are fetched for the United States, France and Spain &mdash; one market per language, which keeps a twice-daily refresh well under a hundred calls a day.</p></td></tr>';
 	echo '</table>';
 	submit_button();
 	echo '</form>';
+
+	$jc = (array) get_option( 'aa_jobs_counts', array() );
+	if ( $jc ) {
+		echo '<h2>Opening counts last fetched</h2><table class="widefat striped" style="max-width:680px"><thead><tr><th>Market</th><th>Role</th><th>Openings</th><th>Source</th><th>Fetched</th></tr></thead><tbody>';
+		foreach ( $jc as $country => $rows ) {
+			foreach ( (array) $rows as $code => $row ) {
+				echo '<tr><td><code>' . esc_html( $country ) . '</code></td><td>' . esc_html( $code ) . '</td>'
+				   . '<td>' . esc_html( number_format_i18n( (int) $row['n'] ) ) . '</td>'
+				   . '<td>' . esc_html( implode( ', ', (array) $row['src'] ) ) . '</td>'
+				   . '<td>' . esc_html( human_time_diff( (int) $row['at'] ) ) . ' ago</td></tr>';
+			}
+		}
+		echo '</tbody></table>';
+	}
 
 	echo '<h2>Seats sold</h2><table class="widefat striped" style="max-width:640px"><thead><tr><th>Cohort</th><th>Price</th><th>Capacity</th><th>Sold</th><th>Left</th></tr></thead><tbody>';
 	foreach ( aa_reg_courses() as $slug => $course ) {
@@ -6593,47 +6613,45 @@ function aa_salary_data() {
 			'AINORG' => 280,
 		),
 		'paths' => array(
+			/* DELIVERY. This ladder used to run SSM, SASM, RTE, LPM, SPC, which
+			   made a portfolio-funding credential the step after running a
+			   train and a coaching credential the step after that. Neither
+			   follows. Lean Portfolio Management is a different job from
+			   delivery -- it governs the money -- and coaching is a different
+			   job again. Delivery now ends where delivery actually ends: more
+			   trains than one. LPM keeps its own ladder below, and coaching
+			   keeps a third. */
 			array(
-				'kicker' => 'Team & delivery track',
+				'kicker' => 'Delivery track',
 				'title'  => 'From Scrum Master to',
-				'accent' => 'portfolio leader.',
-				'blurb'  => 'Start on the team, grow into ART leadership, then move into enterprise portfolio management.',
-				'steps'  => array( 'SSM', 'SASM', 'RTE', 'LPM', 'SPC' ),
-			),
-			/* The two journeys the Advanced SAFe page already published. They
-			   surface only on a page whose codes cover them -- see the filter
-			   in the shortcode. */
-			array(
-				'kicker' => 'Change agent track',
-				'title'  => 'From RTE to',
-				'accent' => 'SPC.',
-				'blurb'  => 'Progress from Release Train facilitation to enterprise-transformation consultancy.',
-				'steps'  => array( 'RTE', 'SPC', 'ASPC' ),
-			),
-			/* LARGE SOLUTION. The destination carries no figure on purpose.
-			   LSSP is a 2026 credential and no salary source publishes a median
-			   for it, so it uses the same `dest` shape as the AI-guided
-			   architecture path -- a chip that ends the ladder, and a note
-			   saying why there is no number. Inventing one here would put the
-			   least-evidenced figure on the page in the most prominent place.
-
-			   RTE and SPC are the priced steps because they are where this
-			   audience actually comes from, NOT because either is required:
-			   Scaled Agile lists the course as Foundational with no
-			   prerequisites, and the note says so. */
-			array(
-				'kicker' => 'Large solution track',
-				'title'  => 'From one train to',
-				'accent' => 'many.',
-				'blurb'  => 'Run one Agile Release Train, then coordinate several — Solution Trains, '
-				          . 'value stream networks, suppliers and compliance across a system of systems.',
-				'steps'  => array( 'RTE', 'SPC' ),
+				'accent' => 'solution train.',
+				'blurb'  => 'Start on one team, grow into team-of-teams, then run an Agile Release Train '
+				          . '— and from there coordinate several at once: Solution Trains, supplier and '
+				          . 'compliance coordination across a system of systems.',
+				'steps'  => array( 'SSM', 'SASM', 'RTE' ),
 				'dest'   => array(
 					'label' => 'Large Solution SAFe Practitioner (LSSP)',
+					/* A destination we actually sell, so it carries a code and gets
+					   a link. The AI-guided architecture path below deliberately
+					   has neither -- that destination is a role, not a course. */
+					'code'  => 'LSSP',
 					'note'  => 'Foundational level with no prerequisites, so it can be taken at any '
 					         . 'point on this path rather than only at the end. No salary source '
 					         . 'publishes a median for this credential yet, so none is shown.',
 				),
+			),
+			/* The two journeys the Advanced SAFe page already published. They
+			   surface only on a page whose codes cover them -- see the filter
+			   in the shortcode. */
+			/* COACHING. The branch off delivery, not its continuation: at SPC
+			   you stop running the train and start teaching the people who do. */
+			array(
+				'kicker' => 'Coaching track',
+				'title'  => 'From running the train to',
+				'accent' => 'coaching the enterprise.',
+				'blurb'  => 'Progress from Release Train facilitation to enterprise-transformation consultancy '
+				          . '— teaching, launching and coaching trains that are not your own.',
+				'steps'  => array( 'RTE', 'SPC', 'ASPC' ),
 			),
 			array(
 				'kicker' => 'Portfolio track',
@@ -8786,6 +8804,42 @@ add_filter( 'the_content', 'aa_reg_coaching_second', 13 );
    ========================================================================== */
 
 /** Markets to offer a live search in, per language. */
+/* ============================================================================
+   WHERE THESE ROLES ARE HIRING
+   ----------------------------------------------------------------------------
+   THREE THINGS WERE WRONG WITH THE OLD VERSION.
+
+   1. IT SHOWED THE SAME FOUR ROLES ON EVERY PAGE. Scrum Master, POPM, RTE and
+      Agile Coach appeared on the core track, the advanced track and the
+      industry track alike, so the advanced page -- whose whole audience is
+      already past Scrum Master -- led with a role they left years ago. The
+      role set is now derived from the track the page sits in, so each page
+      argues for its own credentials and nothing else.
+
+   2. THE PAY DID NOT MATCH THE CHART ABOVE IT. Three tables in this file
+      carried three different figures for the same credential. On the advanced
+      page the salary chart said an RTE earns $135-260K while this section,
+      further down the same page, said $108-175K. aa_salary_data() is now the
+      single US source -- it is the one the chart renders, and it is stored in
+      an option so the figures can be corrected without touching code. The euro
+      column keeps its own table because aa_salary_data() has no euro series.
+
+   3. IT LINKED TO A LINKEDIN SEARCH INSTEAD OF SAYING A NUMBER. The links stay
+      as a way to check us, but the headline is now a real count. See the
+      provider notes below for where it comes from and why it is a floor
+      rather than a total.
+
+   ALSO POSTED AS. The four titles everyone knows -- Scrum Master, Agile Coach,
+   RTE, Product Owner -- are a small fraction of the jobs that actually want
+   this. One North American bank was posting the same work as Delivery
+   Director, Technology Delivery Lead, Manager Tech Delivery, Head of
+   Transformation and several VP titles, none of which a candidate searching
+   "Release Train Engineer" would ever see. That is what the "also posted as"
+   line is for. The employer is deliberately not named: we have no relationship
+   to state, and specific requisitions close within weeks.
+   ========================================================================== */
+
+/** Markets to offer a live search in, per language. */
 function aa_reg_job_markets() {
 	$m = array(
 		'en' => array( 'United States', 'Canada', 'United Kingdom', 'Australia' ),
@@ -8798,52 +8852,584 @@ function aa_reg_job_markets() {
 }
 
 /**
- * The four roles, with typical US and euro-zone ranges.
+ * The one country we fetch a live count for, per language, and its label.
  *
- * THE EURO COLUMN IS NOT A CONVERSION, and it must never become one. Convert
- * the Agile Coach row and you get about EUR 145-215K; the euro-zone market
- * actually pays EUR 67-95K. A conversion would overstate European pay by
- * roughly double and the page would be selling a number no French or Spanish
- * reader could find. Both columns are market data for their own market.
- *
- * US    Glassdoor and ZipRecruiter, 25th-75th percentile.
- * EUR   Glassdoor FR/ES/DE and PayScale FR/NL, read the same week. The band is
- *       wider because it spans several countries -- France, Spain, Germany and
- *       the Netherlands do not pay the same, and Switzerland is not in it at
- *       all because it is not a euro market.
+ * ONE COUNTRY PER LANGUAGE, NOT ALL OF THEM. Every extra country multiplies the
+ * number of API calls per refresh by the number of roles, and the free tier we
+ * are sized for is a few hundred calls a day. One country per language keeps a
+ * twice-daily refresh at well under a hundred calls and still answers the
+ * question the reader is asking. Arabic has no entry because no aggregator we
+ * use covers the Gulf markets -- those readers get the search links, which is
+ * honest, rather than a number quietly taken from somewhere else.
  */
-function aa_reg_job_roles() {
+function aa_reg_jobs_country() {
+	$c = array(
+		'en' => array( 'us', 'the United States' ),
+		'fr' => array( 'fr', 'France' ),
+		'es' => array( 'es', 'Spain' ),
+	);
+	$lang = function_exists( 'aa_reg_lang' ) ? aa_reg_lang() : 'en';
+	return isset( $c[ $lang ] ) ? $c[ $lang ] : $c['en'];
+}
+
+/**
+ * Credential code -> the role it hires into, the other titles it is posted
+ * under, and the phrase to count openings for.
+ *
+ * `query` is deliberately not always the role name. Counting "Agile Coach"
+ * finds the market; counting "SAFe Practice Consultant" finds almost nothing,
+ * because employers hire coaches and ask for the credential in the body text.
+ */
+function aa_reg_role_map() {
 	return array(
-		array( 'SAFe Scrum Master',              'SSM',  '$103K – $138K', '€42K – €65K' ),
-		array( 'Product Owner / Product Manager','POPM', '$94K – $130K',  '€45K – €75K' ),
-		array( 'Release Train Engineer',         'RTE',  '$108K – $175K', '€58K – €78K' ),
-		array( 'Agile Coach',                    'SPC',  '$156K – $231K', '€67K – €95K' ),
+		'SA'   => array(
+			'role'  => 'SAFe Agilist / Transformation Lead',
+			'also'  => array( 'Agile Transformation Lead', 'Ways of Working Lead' ),
+			'query' => 'SAFe Agilist',
+		),
+		'SSM'  => array(
+			'role'  => 'Scrum Master',
+			'also'  => array( 'Agile Team Coach', 'Iteration Manager', 'Agile Delivery Lead' ),
+			'query' => 'Scrum Master',
+		),
+		'SASM' => array(
+			'role'  => 'Advanced Scrum Master',
+			'also'  => array( 'Senior Scrum Master', 'Agile Delivery Lead', 'Team of Teams Coach' ),
+			'query' => 'Senior Scrum Master',
+		),
+		'POPM' => array(
+			'role'  => 'Product Owner / Product Manager',
+			'also'  => array( 'Business Product Owner', 'Digital Product Manager' ),
+			'query' => 'Product Owner',
+		),
+		'SP'   => array(
+			'role'  => 'Agile Practitioner',
+			'also'  => array( 'Agile Team Member', 'Delivery Analyst' ),
+			'query' => 'Agile Practitioner',
+		),
+		'SDP'  => array(
+			'role'  => 'DevOps Practitioner',
+			'also'  => array( 'Platform Engineer', 'Release Engineer', 'DevOps Lead' ),
+			'query' => 'DevOps Engineer',
+		),
+		'BO'   => array(
+			'role'  => 'Business Owner / Sponsor',
+			'also'  => array( 'Business Line Lead', 'Head of Business Transformation' ),
+			'query' => 'Business Transformation Lead',
+		),
+		/* ---- advanced ---- */
+		'RTE'  => array(
+			'role'  => 'Release Train Engineer',
+			'also'  => array( 'Agile Delivery Manager', 'Technology Delivery Lead', 'Manager, Tech Delivery', 'Delivery Director' ),
+			'query' => 'Release Train Engineer',
+		),
+		'LSSP' => array(
+			'role'  => 'Solution Train Engineer',
+			/* Employers that grade the RTE role by level post the solution-train
+			   job as the top grade rather than under a different name, which is
+			   why "Release Train Engineer III" belongs here and not under RTE. */
+			'also'  => array( 'Release Train Engineer III', 'Programme Delivery Director', 'Head of Delivery' ),
+			'query' => 'Solution Train Engineer',
+		),
+		'SPC'  => array(
+			'role'  => 'Agile Coach / SAFe Practice Consultant',
+			'also'  => array( 'Transformation Lead', 'Agile Practice Lead', 'Ways of Working Coach' ),
+			'query' => 'Agile Coach',
+		),
+		'ASPC' => array(
+			'role'  => 'Enterprise Agile Coach',
+			'also'  => array( 'Head of Transformation', 'AVP, Agile Transformation', 'Director, Agile Practice' ),
+			'query' => 'Enterprise Agile Coach',
+		),
+		'APM'  => array(
+			'role'  => 'Agile Product Manager',
+			'also'  => array( 'Senior Product Manager', 'Head of Product' ),
+			'query' => 'Agile Product Manager',
+		),
+		'LPM'  => array(
+			'role'  => 'Lean Portfolio Manager',
+			'also'  => array( 'Director, Portfolio Management', 'VP, Portfolio Delivery', 'Head of PMO' ),
+			'query' => 'Portfolio Manager Agile',
+		),
+		'ARCH' => array(
+			'role'  => 'Solution / Enterprise Architect',
+			'also'  => array( 'Solution Architect', 'Enterprise Architect', 'Principal Architect' ),
+			'query' => 'Solution Architect Agile',
+		),
+		/* ---- industry ---- */
+		'ASE'  => array(
+			'role'  => 'Agile Software Engineer',
+			'also'  => array( 'Senior Software Engineer', 'Engineering Lead' ),
+			'query' => 'Agile Software Engineer',
+		),
+		'SHWA' => array(
+			'role'  => 'Hardware Agilist',
+			'also'  => array( 'Systems Engineering Lead', 'Hardware Programme Manager' ),
+			'query' => 'Systems Engineering Manager Agile',
+		),
+		'SHWP' => array(
+			'role'  => 'Hardware Practitioner',
+			'also'  => array( 'Systems Engineer', 'Hardware Engineer' ),
+			'query' => 'Systems Engineer Agile',
+		),
+		'SA-Gov' => array(
+			'role'  => 'SAFe Agilist, Public Sector',
+			'also'  => array( 'Agile Coach, Government', 'Digital Delivery Manager' ),
+			'query' => 'Agile Delivery Manager Government',
+		),
+		/* ---- AI-Native ---- */
+		'AINF'   => array(
+			'role'  => 'AI-Native Practitioner',
+			'also'  => array( 'AI Enablement Lead', 'AI Adoption Specialist' ),
+			'query' => 'AI Enablement',
+		),
+		'AINCA'  => array(
+			'role'  => 'AI-Native Change Agent',
+			'also'  => array( 'AI Transformation Lead', 'Head of AI Enablement' ),
+			'query' => 'AI Transformation Lead',
+		),
+		'AINORG' => array(
+			'role'  => 'AI-Native Executive',
+			'also'  => array( 'Chief AI Officer', 'VP, AI Strategy' ),
+			'query' => 'VP AI Strategy',
+		),
 	);
 }
 
+/**
+ * The credential codes a page should argue for, by the track it sits in.
+ *
+ * A COURSE PAGE RESOLVES THROUGH ITS CANONICAL URL, not through the slug of
+ * the page being viewed, because the /fr/, /es/ and /ar/ mirrors sit directly
+ * under the language root -- /fr/rte/ carries no "adv-safe" segment at all, so
+ * reading the request path alone would give every mirrored course page the
+ * default set.
+ */
+function aa_reg_track_codes() {
+	return array(
+		'safe'          => array( 'SA', 'SSM', 'POPM', 'SASM', 'SDP', 'SP', 'BO' ),
+		'adv-safe'      => array( 'RTE', 'LSSP', 'SPC', 'ASPC', 'APM', 'LPM', 'ARCH' ),
+		'safe-industry' => array( 'ARCH', 'ASE', 'SHWA', 'SHWP', 'SA-Gov' ),
+		'ai-native'     => array( 'AINF', 'AINCA', 'AINORG' ),
+	);
+}
+
+/** Which track the page being rendered belongs to, or '' when it is the hub. */
+function aa_reg_page_track() {
+	$path = '';
+
+	$obj = function_exists( 'get_queried_object' ) ? get_queried_object() : null;
+	if ( $obj instanceof WP_Post ) {
+		$courses = aa_reg_courses();
+		$slug    = $obj->post_name;
+		/* A mirror carries the English slug, so this resolves for /fr/rte/ too. */
+		if ( isset( $courses[ $slug ]['url'] ) ) {
+			$path = (string) $courses[ $slug ]['url'];
+		} else {
+			$path = (string) parse_url( get_permalink( $obj ), PHP_URL_PATH );
+		}
+	}
+	if ( $path === '' && isset( $_SERVER['REQUEST_URI'] ) ) {
+		$path = (string) parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH );
+	}
+
+	/* adv-safe and safe-industry are tested first: neither contains "/safe/",
+	   but the order costs nothing and survives a future slug that does. */
+	foreach ( array( 'adv-safe', 'safe-industry', 'ai-native', 'safe' ) as $t ) {
+		if ( strpos( $path, '/' . $t . '/' ) !== false ) { return $t; }
+	}
+	return '';
+}
+
+/**
+ * The roles this page shows.
+ *
+ * On a course page its own credential leads, then the rest of its track, so
+ * the reader sees the role they came for first and the ladder around it
+ * second. On the hub, where no track applies, the four best-known roles are
+ * the set -- the hub is the one page whose audience really is everybody.
+ */
+function aa_reg_page_role_codes() {
+	$track = aa_reg_page_track();
+	$all   = aa_reg_track_codes();
+	$codes = isset( $all[ $track ] ) ? $all[ $track ] : array( 'SSM', 'POPM', 'RTE', 'SPC' );
+
+	$obj = function_exists( 'get_queried_object' ) ? get_queried_object() : null;
+	if ( $obj instanceof WP_Post ) {
+		$courses = aa_reg_courses();
+		if ( isset( $courses[ $obj->post_name ]['code'] ) ) {
+			$own = $courses[ $obj->post_name ]['code'];
+			$codes = array_values( array_diff( $codes, array( $own ) ) );
+			array_unshift( $codes, $own );
+		}
+	}
+
+	$map = aa_reg_role_map();
+	return array_values( array_filter( $codes, function ( $c ) use ( $map ) {
+		return isset( $map[ $c ] );
+	} ) );
+}
+
+/**
+ * The US band for a credential, from the same dataset the salary chart draws.
+ *
+ * ONE SOURCE, NOT THREE. Before this, aa_salary_data(), aa_reg_job_roles() and
+ * aa_reg_role_pay() each carried their own figure for SPC, RTE and the rest,
+ * and no two agreed. A reader on the advanced page could see two different RTE
+ * bands without scrolling. Everything reads from aa_salary_data() now, which
+ * is also the one the client can edit from an option.
+ */
+/**
+ * The five industry credentials, which aa_salary_data() does not carry.
+ *
+ * THESE ARE NOT NEW NUMBERS. Every one is already published, in these words, on
+ * /training/safe-industry/ -- that page writes its own salary section rather
+ * than calling the shared block, which is why the shared dataset never grew
+ * them. They are repeated here rather than added to aa_salary_data() because
+ * adding them there would put four more bars on the salary chart of every
+ * track page, including the ones these credentials have nothing to do with.
+ *
+ * The real fix is for each track page to pass codes= to [aa_salary_insights]
+ * so its chart shows its own credentials and no others -- at which point these
+ * move into aa_salary_data() and this function goes away. That is a change to
+ * a block on ten live pages, so it is not being made in passing.
+ */
+function aa_reg_industry_bands() {
+	return array(
+		'ASE'    => array( 125, 210 ),
+		'SHWA'   => array( 120, 195 ),
+		'SHWP'   => array( 105, 170 ),
+		'SA-Gov' => array( 115, 200 ),
+	);
+}
+
+function aa_reg_us_band( $code ) {
+	$d = aa_salary_data();
+	foreach ( (array) $d['bands'] as $b ) {
+		if ( $b['code'] === $code ) {
+			return '$' . (int) $b['lo'] . 'K – $' . (int) $b['hi'] . 'K';
+		}
+	}
+	$ind = aa_reg_industry_bands();
+	if ( isset( $ind[ $code ] ) ) {
+		return '$' . (int) $ind[ $code ][0] . 'K – $' . (int) $ind[ $code ][1] . 'K';
+	}
+	/* `extra` holds a single median for codes with no band of their own. */
+	if ( isset( $d['extra'][ $code ] ) ) {
+		return '~$' . (int) $d['extra'][ $code ] . 'K';
+	}
+	return '';
+}
+
+/**
+ * Euro-zone bands. Its own table because aa_salary_data() has no euro series.
+ *
+ * THESE ARE NOT CONVERSIONS AND MUST NEVER BECOME ONE. Converting the US Agile
+ * Coach band gives roughly EUR 145-215K; the euro-zone market pays EUR 67-95K.
+ * A conversion would overstate European pay by about double and sell a number
+ * no French or Spanish reader could find. Codes absent here have no euro
+ * series we trust, and render as a dash rather than a guess.
+ */
+function aa_reg_eur_band( $code ) {
+	$e = array(
+		'SSM'  => '€42K – €65K',
+		'POPM' => '€45K – €75K',
+		'RTE'  => '€58K – €78K',
+		'SPC'  => '€67K – €95K',
+	);
+	return isset( $e[ $code ] ) ? $e[ $code ] : '';
+}
+
+/**
+ * The next credential after $code on a career path, from aa_salary_data().
+ *
+ * Driven off the same `paths` the career-journey block renders, so the two can
+ * never recommend different next steps. Returns array( code, label, url ) or
+ * null. A path that ends at `dest` -- a role we do not certify, such as
+ * AI-Native Value Architect -- returns the destination with no code and no
+ * link, because there is nothing to sell there and pretending otherwise would
+ * be the one dishonest cell on the page.
+ */
+function aa_reg_next_cert( $code, $scope = array() ) {
+	$d = aa_salary_data();
+
+	/* THE PAGE'S OWN LADDER WINS. A code can sit on more than one path -- RTE is
+	   on delivery, on coaching and on AI-guided architecture -- and taking
+	   whichever comes first in the dataset gave every RTE the delivery answer,
+	   including on the advanced page whose readers are already past it. A path
+	   whose every step is a credential this page argues for is the one this
+	   page should recommend; only if none qualifies do we fall back to the
+	   first match. This is the same containment rule aa_salary_insights_shortcode()
+	   uses to decide which journeys a track page may show. */
+	$ordered = array();
+	if ( $scope ) {
+		foreach ( (array) $d['paths'] as $p ) {
+			$in = true;
+			foreach ( (array) $p['steps'] as $st ) {
+				if ( ! in_array( $st, $scope, true ) ) { $in = false; break; }
+			}
+			if ( $in ) { $ordered[] = $p; }
+		}
+	}
+	foreach ( (array) $d['paths'] as $p ) { $ordered[] = $p; }
+
+	foreach ( $ordered as $p ) {
+		$steps = (array) $p['steps'];
+		$i     = array_search( $code, $steps, true );
+		if ( $i === false ) { continue; }
+		if ( isset( $steps[ $i + 1 ] ) ) {
+			$next = $steps[ $i + 1 ];
+			return array(
+				'code'  => $next,
+				'label' => aa_reg_cert_label( $next ),
+				'url'   => aa_reg_code_url( $next ),
+			);
+		}
+		if ( ! empty( $p['dest']['label'] ) ) {
+			$dc = isset( $p['dest']['code'] ) ? $p['dest']['code'] : '';
+			return array(
+				'code'  => $dc,
+				'label' => $dc !== '' ? aa_reg_cert_label( $dc ) : $p['dest']['label'],
+				'url'   => $dc !== '' ? aa_reg_code_url( $dc ) : '',
+			);
+		}
+	}
+	return null;
+}
+
+/**
+ * The course page and display name for a credential code.
+ *
+ * aa_reg_courses() CARRIES ONLY SEVEN ROWS. The rest of the catalogue is built
+ * per page by aa_reg_derived_course(), so looking a code up in aa_reg_courses()
+ * alone finds SPC, ASPC, RTE, LSSP and the three AI-Native courses and nothing
+ * else -- which is why an earlier draft of this rendered "Next on this path:
+ * SASM" as dead text with no link. The table below fills the gap. Every URL in
+ * it was read from the live permalink, not guessed from the slug.
+ */
+function aa_reg_cert_table() {
+	return array(
+		'SSM'  => array( 'SAFe Scrum Master',              '/training/safe/scrum-master/' ),
+		'SASM' => array( 'SAFe Advanced Scrum Master',     '/training/safe/asm/' ),
+		'POPM' => array( 'SAFe Product Owner / Manager',   '/training/safe/popm/' ),
+		'SDP'  => array( 'SAFe DevOps',                    '/training/safe/devops/' ),
+		'BO'   => array( 'SAFe Business Owner',            '/training/safe/bo/' ),
+		'SP'   => array( 'SAFe for Teams',                 '/training/safe-industry/team-practitioner/' ),
+		'APM'  => array( 'SAFe Agile Product Management',  '/training/adv-safe/apm/' ),
+		'LPM'  => array( 'SAFe Lean Portfolio Management', '/training/adv-safe/lpm/' ),
+		'SHWA' => array( 'SAFe Hardware Agilist',          '/training/safe-industry/safe-for-hardware-teams/' ),
+		'SHWP' => array( 'SAFe for Hardware',              '/training/safe-industry/safe-for-hardware/' ),
+		'SA-Gov' => array( 'Leading SAFe for Government',  '/training/safe-industry/sa-gov/' ),
+		/* The seven rows aa_reg_courses() does carry are listed here too, for the
+		   label only. Their course names are sales titles -- "Implementing SAFe(R)
+		   with SPC Certification" -- and "Next on this path: SPC - Implementing
+		   SAFe with SPC" says the code twice and the credential once. The URL still
+		   comes from aa_reg_courses() first, so a course that moves stays correct. */
+		'SPC'  => array( 'SAFe Practice Consultant',          '/training/adv-safe/spc/' ),
+		'ASPC' => array( 'Advanced SAFe Practice Consultant', '/training/adv-safe/aspc/' ),
+		'RTE'  => array( 'SAFe Release Train Engineer',       '/training/adv-safe/rte/' ),
+		'LSSP' => array( 'Large Solution SAFe Practitioner',  '/training/adv-safe/large-solution/' ),
+		'AINF' => array( 'AI-Native Foundations',             '/training/ai-native/ai-native-foundations/' ),
+		'AINCA'=> array( 'AI-Native Value Architect',         '/training/ai-native/ai-native-change-agent/' ),
+		'AINORG'=>array( 'Leading the AI-Native Organization','/training/ai-native/ai-native-ready-certification-2/' ),
+	);
+}
+
+/** The course page for a credential code, or '' when we do not sell one. */
+function aa_reg_code_url( $code ) {
+	foreach ( aa_reg_courses() as $c ) {
+		if ( isset( $c['code'] ) && $c['code'] === $code && ! empty( $c['url'] ) ) {
+			return $c['url'];
+		}
+	}
+	$t = aa_reg_cert_table();
+	return isset( $t[ $code ] ) ? $t[ $code ][1] : '';
+}
+
+/** The name behind a credential code, falling back to the code itself. */
+function aa_reg_cert_label( $code ) {
+	$t = aa_reg_cert_table();
+	if ( isset( $t[ $code ] ) ) { return $t[ $code ][0]; }
+	$l = function_exists( 'aa_salary_label' ) ? aa_salary_label( $code ) : $code;
+	return $l !== '' ? $l : $code;
+}
+
+/* ----------------------------------------------------------------------------
+   LIVE COUNTS
+   ----------------------------------------------------------------------------
+   NOTHING HERE RUNS DURING A PAGE REQUEST. The render reads one option and
+   nothing else; a cron job does the fetching. A job board having a slow
+   afternoon must never be able to slow this site down, and an outage must
+   never be able to blank the section -- without a fresh count the row falls
+   back to the search link, which is what the section did before any of this
+   existed.
+
+   COUNTS ARE COMBINED BY TAKING THE HIGHEST, NOT BY ADDING UP. Aggregators
+   index the same postings from the same employers, so summing two of them
+   roughly doubles a number that is already only an indication. The highest
+   single source is a figure we can defend as a floor, which is why the label
+   says "at least". Change this to a sum and the page starts overstating.
+   -------------------------------------------------------------------------- */
+
+/** name => callable( $query, $country ) : int|null */
+function aa_jobs_providers() {
+	$p   = array();
+	$id  = trim( (string) get_option( 'aa_jobs_adzuna_id', '' ) );
+	$key = trim( (string) get_option( 'aa_jobs_adzuna_key', '' ) );
+	if ( $id !== '' && $key !== '' ) {
+		$p['Adzuna'] = 'aa_jobs_count_adzuna';
+	}
+	/* Add a source by filtering this. The contract is the whole integration:
+	   return an integer for a country you cover, or null for one you do not. */
+	return apply_filters( 'aa_jobs_providers', $p );
+}
+
+function aa_jobs_count_adzuna( $query, $country ) {
+	$covered = array( 'at','au','be','br','ca','ch','de','es','fr','gb','in','it','mx','nl','nz','pl','sg','us','za' );
+	if ( ! in_array( $country, $covered, true ) ) { return null; }
+
+	$url = add_query_arg( array(
+		'app_id'           => rawurlencode( trim( (string) get_option( 'aa_jobs_adzuna_id', '' ) ) ),
+		'app_key'          => rawurlencode( trim( (string) get_option( 'aa_jobs_adzuna_key', '' ) ) ),
+		'what_phrase'      => rawurlencode( $query ),
+		'results_per_page' => 1,
+		'content-type'     => 'application/json',
+	), 'https://api.adzuna.com/v1/api/jobs/' . $country . '/search/1' );
+
+	$res = wp_remote_get( $url, array( 'timeout' => 12 ) );
+	if ( is_wp_error( $res ) || wp_remote_retrieve_response_code( $res ) !== 200 ) { return null; }
+	$body = json_decode( wp_remote_retrieve_body( $res ), true );
+	return isset( $body['count'] ) ? (int) $body['count'] : null;
+}
+
+/** Refill the cache. Cron only -- never called from a page request. */
+function aa_jobs_refresh_run() {
+	$providers = aa_jobs_providers();
+	if ( ! $providers ) { return; }
+
+	$map   = aa_reg_role_map();
+	$out   = (array) get_option( 'aa_jobs_counts', array() );
+	$langs = array( 'en' => 'us', 'fr' => 'fr', 'es' => 'es' );
+
+	foreach ( $langs as $country ) {
+		foreach ( $map as $code => $r ) {
+			$best = null; $src = array();
+			foreach ( $providers as $name => $fn ) {
+				$n = call_user_func( $fn, $r['query'], $country );
+				if ( ! is_int( $n ) || $n <= 0 ) { continue; }
+				$src[] = $name;
+				if ( $best === null || $n > $best ) { $best = $n; }
+			}
+			if ( $best === null ) {
+				unset( $out[ $country ][ $code ] );
+				continue;
+			}
+			$out[ $country ][ $code ] = array( 'n' => $best, 'src' => $src, 'at' => time() );
+		}
+	}
+	update_option( 'aa_jobs_counts', $out, false );
+}
+add_action( 'aa_jobs_refresh', 'aa_jobs_refresh_run' );
+
+add_action( 'init', function () {
+	if ( aa_jobs_providers() && ! wp_next_scheduled( 'aa_jobs_refresh' ) ) {
+		wp_schedule_event( time() + 300, 'twicedaily', 'aa_jobs_refresh' );
+	}
+} );
+
+/** The cached count for a code in this page's market, or null. */
+function aa_jobs_count( $code ) {
+	$c   = aa_reg_jobs_country();
+	$all = (array) get_option( 'aa_jobs_counts', array() );
+	if ( empty( $all[ $c[0] ][ $code ]['n'] ) ) { return null; }
+	$row = $all[ $c[0] ][ $code ];
+	/* Older than a week is not a live number any more. */
+	if ( empty( $row['at'] ) || ( time() - (int) $row['at'] ) > WEEK_IN_SECONDS ) { return null; }
+	return $row;
+}
+
+/** Every source that contributed any current figure, for the note. */
+function aa_jobs_sources() {
+	$c = aa_reg_jobs_country();
+	$all = (array) get_option( 'aa_jobs_counts', array() );
+	$names = array();
+	if ( ! empty( $all[ $c[0] ] ) ) {
+		foreach ( (array) $all[ $c[0] ] as $row ) {
+			foreach ( (array) ( isset( $row['src'] ) ? $row['src'] : array() ) as $s ) { $names[ $s ] = true; }
+		}
+	}
+	return array_keys( $names );
+}
+
 function aa_reg_job_signals( $num = '' ) {
+	$codes = aa_reg_page_role_codes();
+	if ( ! $codes ) { return ''; }
+
+	$map     = aa_reg_role_map();
+	$country = aa_reg_jobs_country();
+
 	$h  = '<div class="aa-sechead">';
 	$h .= '<p class="aa-eyebrow">' . ( $num !== '' ? '( ' . esc_html( $num ) . ' ) &mdash; ' : '' )
 	    . esc_html( aa_reg_t( 'jobs_kicker', 'Live roles' ) ) . '</p>';
 	$h .= '<h2 class="aa-h2">' . esc_html( aa_reg_t( 'jobs_h', 'Where these roles are hiring.' ) ) . '</h2>';
 	$h .= '<p class="aa-sub">' . esc_html( aa_reg_t( 'jobs_lede',
-		'What each role typically pays, and a live search in the markets we teach in. '
-		. 'We do not run a job board, so the openings come from the search, not from us.' ) ) . '</p>';
+		'The roles these credentials hire into, what they pay, and what to take next. '
+		. 'Most of these jobs are not advertised under the title you would search for, '
+		. 'so each row also lists what employers actually call it.' ) ) . '</p>';
 	$h .= '</div>';
 
-	$h .= '<div class="aajs__roles">';
-	$h .= '<div class="aajs__role aajs__role--head">'
-	    . '<span></span><span></span>'
-	    . '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_us', 'United States' ) ) . '</span>'
-	    . '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_eu', 'Euro zone' ) ) . '</span>'
-	    . '</div>';
-	foreach ( aa_reg_job_roles() as $r ) {
-		$h .= '<div class="aajs__role">'
-		    . '<span class="aajs__code">' . esc_html( $r[1] ) . '</span>'
-		    . '<span class="aajs__name">' . esc_html( $r[0] ) . '</span>'
-		    . '<span class="aajs__pay">' . esc_html( $r[2] ) . '</span>'
-		    . '<span class="aajs__pay aajs__pay--eur">' . esc_html( $r[3] ) . '</span>'
-		    . '</div>';
+	$h .= '<div class="aajs">';
+	foreach ( $codes as $code ) {
+		$r    = $map[ $code ];
+		$us   = aa_reg_us_band( $code );
+		$eu   = aa_reg_eur_band( $code );
+		$next = aa_reg_next_cert( $code, $codes );
+		$cnt  = aa_jobs_count( $code );
+
+		$h .= '<div class="aajs__row">';
+
+		$h .= '<div class="aajs__top">';
+		$h .= '<span class="aajs__code">' . esc_html( $code ) . '</span>';
+		$h .= '<span class="aajs__name">' . esc_html( $r['role'] ) . '</span>';
+		if ( $cnt ) {
+			$h .= '<span class="aajs__n"><b>' . esc_html( number_format_i18n( $cnt['n'] ) ) . '</b> '
+			    . esc_html( aa_reg_t( 'jobs_open', 'openings' ) ) . '</span>';
+		} else {
+			$url = 'https://www.linkedin.com/jobs/search/?keywords=' . rawurlencode( $r['query'] );
+			$h  .= '<a class="aajs__n aajs__n--link" href="' . esc_url( $url ) . '" target="_blank" rel="noopener">'
+			     . esc_html( aa_reg_t( 'jobs_search', 'Search openings' ) ) . ' <span aria-hidden="true">&#8599;</span></a>';
+		}
+		$h .= '</div>';
+
+		$h .= '<p class="aajs__also"><span>' . esc_html( aa_reg_t( 'jobs_also', 'Also posted as' ) ) . '</span> '
+		    . esc_html( implode( ' · ', $r['also'] ) ) . '</p>';
+
+		/* SOME CREDENTIALS HAVE NOTHING FOR THIS ROW. SAFe for Teams, Business
+		   Owner and Large Solution carry no published band and sit on no path,
+		   and an empty <div class="aajs__meta"> rendered as a bare bordered
+		   strip under the card -- which reads as a bug, not as an absence. */
+		if ( $us !== '' || $eu !== '' || $next ) {
+		$h .= '<div class="aajs__meta">';
+		if ( $us !== '' ) {
+			$h .= '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_us', 'United States' ) )
+			    . ' <b>' . esc_html( $us ) . '</b></span>';
+		}
+		if ( $eu !== '' ) {
+			$h .= '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_eu', 'Euro zone' ) )
+			    . ' <b>' . esc_html( $eu ) . '</b></span>';
+		}
+		if ( $next ) {
+			$label = ( $next['code'] !== '' ? $next['code'] . ' — ' : '' ) . $next['label'];
+			$h .= '<span class="aajs__next">' . esc_html( aa_reg_t( 'jobs_next', 'Next on this path' ) ) . ' ';
+			$h .= $next['url'] !== ''
+				? '<a href="' . esc_url( $next['url'] ) . '">' . esc_html( $label ) . ' &#10230;</a>'
+				: '<b>' . esc_html( $label ) . '</b>';
+			$h .= '</span>';
+		}
+		$h .= '</div>';
+		}
+
+		$h .= '</div>';
 	}
 	$h .= '</div>';
 
@@ -8856,13 +9442,29 @@ function aa_reg_job_signals( $num = '' ) {
 	}
 	$h .= '</div>';
 
-	$h .= '<p class="aajs__src">' . esc_html( aa_reg_t( 'jobs_src',
-		'Typical ranges, roughly the 25th to 75th percentile, read in September 2026: '
-		. 'United States from Glassdoor and ZipRecruiter, euro zone from Glassdoor and '
-		. 'PayScale in France, Spain, Germany and the Netherlands. The euro figures are '
-		. 'what those markets pay, not the US figures converted -- converting would roughly '
-		. 'double them. These are what the roles pay, not what our courses cost, and pay '
-		. 'moves with market, industry and employer far more than with any certificate.' ) ) . '</p>';
+	$src = aa_jobs_sources();
+	$h  .= '<p class="aajs__src">';
+	if ( $src ) {
+		$h .= esc_html( sprintf(
+			/* translators: 1: market, 2: source names */
+			aa_reg_t( 'jobs_count_note',
+				'Opening counts are for %1$s, refreshed twice a day from %2$s. Where two sources '
+				. 'both carry a role we show the higher of the two rather than adding them up, '
+				. 'because they index many of the same postings — so treat every figure as a '
+				. 'floor, not a total. Rows with no count are ones our sources do not cover; '
+				. 'those link to a search instead. We do not run a job board and none of these '
+				. 'openings are ours.' ),
+			$country[1],
+			implode( ' and ', $src )
+		) ) . ' ';
+	}
+	$h .= esc_html( aa_reg_t( 'jobs_src',
+		'Pay is the same dataset as the salary chart above, roughly the 25th to 75th '
+		. 'percentile. The euro figures are what those markets pay, not the US figures '
+		. 'converted — converting would roughly double them. These are what the roles pay, '
+		. 'not what our courses cost, and pay moves with market, industry and employer far '
+		. 'more than with any certificate.' ) );
+	$h .= '</p>';
 
 	return $h;
 }
@@ -8874,6 +9476,9 @@ function aa_reg_job_signals_swap( $content ) {
 
 	$span = aa_reg_section_span( $content, 'jobs' );
 	if ( ! $span ) { return $content; }
+
+	$body = aa_reg_job_signals( '' );
+	if ( $body === '' ) { return $content; }
 
 	$open = substr( $content, $span[0], strpos( $content, '>', $span[0] ) - $span[0] + 1 );
 
