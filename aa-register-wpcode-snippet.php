@@ -3026,6 +3026,7 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'El pago en línea está desactivado en este momento — escríbenos.',
 			'pay_note_long'     => 'Te llevaremos a Stripe para pagar. Nunca vemos los datos de tu tarjeta.',
 			'pay_note_off_long' => 'El pago en línea está desactivado en este momento — escríbenos y te inscribimos nosotros.',
+			'enrol_ours'   => 'Inscríbete con Agile Agilist',
 			'jobs_kicker'  => 'Puestos en vivo',
 			'jobs_h'       => 'Dónde se contratan estos roles.',
 			'jobs_lede'    => 'Lo que suele pagar cada rol, y una búsqueda en vivo en los mercados donde impartimos. No gestionamos una bolsa de empleo: las ofertas vienen de la búsqueda, no de nosotros.',
@@ -3127,6 +3128,7 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'Le paiement en ligne est désactivé pour le moment — contactez-nous.',
 			'pay_note_long'     => 'Vous serez redirigé vers Stripe pour le paiement. Nous ne voyons jamais les données de votre carte.',
 			'pay_note_off_long' => 'Le paiement en ligne est désactivé pour le moment — contactez-nous et nous procéderons à votre inscription.',
+			'enrol_ours'   => 'S’inscrire avec Agile Agilist',
 			'jobs_kicker'  => 'Postes en direct',
 			'jobs_h'       => 'Où ces rôles recrutent.',
 			'jobs_lede'    => 'Ce que chaque rôle rémunère habituellement, et une recherche en direct dans les marchés où nous enseignons. Nous ne gérons pas de site d\'emploi : les offres viennent de la recherche, pas de nous.',
@@ -9483,6 +9485,44 @@ function aa_reg_job_signals( $num = '' ) {
 
 	return $h;
 }
+
+/* ============================================================================
+   "COMPLETE YOUR ENROLLMENT" OFFERED ONLY EVENTBRITE
+   ----------------------------------------------------------------------------
+   Every course page carries a section headed "Complete your enrollment" whose
+   copy says "Register two ways: complete checkout right here, or use our
+   Eventbrite registration" -- and then gives exactly one button, which goes to
+   Eventbrite. Our own registration is real and is on the same page, but it is
+   in a later section, so the section that says "complete your enrollment"
+   hands the reader to a third party and nothing else. The sentence promising
+   two ways was true about the page and false about the paragraph under it.
+
+   This puts our registration back beside it, and first: a filled primary
+   button to the enrolment section, then the Eventbrite button as the
+   alternative it was described as. Nothing is removed -- Eventbrite stays a
+   way to book, which is what it is meant to be.
+
+   AT RENDER, NOT IN THE PAGES. The block is the same on around twenty English
+   course pages plus their mirrors, and editing each one leaves the next course
+   page to be added with the old version.
+   ========================================================================== */
+
+function aa_reg_enrol_both( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'id="eb-trigger-2"' ) === false ) { return $content; }
+	if ( strpos( $content, 'id="enroll"' ) === false )       { return $content; }
+	if ( strpos( $content, 'aa-enrol-ours' ) !== false )     { return $content; }   /* already done */
+
+	$needle = '<button type="button" id="eb-trigger-2"';
+	$at     = strpos( $content, $needle );
+	if ( $at === false ) { return $content; }
+
+	$ours = '<a class="btn-teal aa-enrol-ours" href="#enroll" style="margin-right:10px">'
+	      . esc_html( aa_reg_t( 'enrol_ours', 'Register with Agile Agilist' ) ) . ' &#10230;</a>';
+
+	return substr( $content, 0, $at ) . $ours . substr( $content, $at );
+}
+add_filter( 'the_content', 'aa_reg_enrol_both', 12 );
 
 /** Swap the body of <section id="jobs"> for the real thing. */
 function aa_reg_job_signals_swap( $content ) {
