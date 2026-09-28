@@ -88,6 +88,30 @@ function aacp_roles() {
 	);
 }
 
+/**
+ * What a credential licenses you to TEACH, where teaching is the point of it.
+ *
+ * Only two credentials are bought for this reason, and the coaching ladder ends
+ * on both of them. A reader looking at the ASPC step sees the pay and the role
+ * it hires into and still cannot see the thing they are actually buying: the
+ * right to deliver the advanced courses. The ASPC course page says it in full,
+ * in its own "( 04 ) — What you can teach" section; this is the same statement
+ * made where the decision is, on the ladder.
+ *
+ * WORDED FROM THE COURSE PAGE, NOT FROM MEMORY. Scaled Agile maintains the
+ * authoritative list and changes it, so this names the courses the page already
+ * names and carries the exception the page already carries, rather than
+ * asserting a catalogue of our own.
+ */
+function aacp_teaches() {
+	return array(
+		'SPC'  => 'Leading SAFe, SAFe for Teams, SAFe Scrum Master and SAFe Product Owner / Product Manager.',
+		'ASPC' => 'Everything an SPC teaches, plus the advanced courses — RTE, LPM, APM, '
+		        . 'SAFe for Architects and Agile Software Engineering. Implementing SAFe and '
+		        . 'the ASPC course itself stay SPCT-only.',
+	);
+}
+
 /** The ladders, as codes. Names, URLs and pay are resolved in aacp_data(). */
 function aacp_ladders() {
 	return array(
@@ -457,6 +481,7 @@ function aacp_render( $atts = array() ) {
 		$o .= '</div>';
 	}
 
+	$teaches  = aacp_teaches();
 	$ld_paths = array();
 	foreach ( $paths as $i => $p ) {
 		$n    = count( $p['steps'] );
@@ -497,6 +522,7 @@ function aacp_render( $atts = array() ) {
 				. '<p class="aacp-pay"><b>' . aacp_money( $s['pay'] ) . '</b><span>median total comp</span></p>'
 				. '<h5><a href="' . esc_url( $s['url'] ) . '">' . esc_html( $s['name'] ) . '</a> <abbr title="' . esc_attr( $s['name'] ) . '">(' . esc_html( $s['code'] ) . ')</abbr></h5>'
 				. '<p class="aacp-role">Unlocks — ' . esc_html( $s['role'] ) . '</p>'
+				. ( isset( $teaches[ $s['code'] ] ) ? '<p class="aacp-teach">Licensed to teach — ' . esc_html( $teaches[ $s['code'] ] ) . '</p>' : '' )
 				. '<div class="aacp-sfoot"><span class="aacp-next">Next cohort · '
 				. ( $c ? '<time datetime="' . esc_attr( $c['start'] ) . '">' . esc_html( aacp_range( $c['start'], $c['end'] ) ) . '</time>' : '<strong>New dates soon</strong>' ) . '</span>'
 				. '<a class="aacp-reg" href="' . esc_url( $c ? $c['url'] : $d['calendarUrl'] ) . '" aria-label="' . esc_attr( 'Register for ' . $s['name'] ) . '">' . ( $is_here && 'course' === $mode ? 'Register now' : 'Register' ) . ' <span aria-hidden="true">⟶</span></a></div></li>';

@@ -3060,6 +3060,7 @@ function aa_reg_strings() {
 			'gap_cap'      => 'Adónde te lleva esto',
 			'gap_next'     => 'Próxima',
 			'gap_note'     => 'El precio y las fechas son nuestros. La retribución es la del puesto en el mercado: no es una oferta ni algo a lo que este curso te dé derecho.',
+			'jobs_adv'     => 'Salario medio anunciado',
 			'jobs_us'      => 'Estados Unidos',
 			'jobs_eu'      => 'Zona euro',
 			'jobs_src'     => 'Rangos típicos, aproximadamente del percentil 25 al 75, consultados en septiembre de 2026: Estados Unidos en Glassdoor y ZipRecruiter, zona euro en Glassdoor y PayScale en España, Francia, Alemania y Países Bajos. Las cifras en euros son lo que pagan esos mercados, no las cifras estadounidenses convertidas: convertirlas casi las duplicaría. Son retribuciones de los puestos, no lo que cuestan nuestros cursos, y dependen mucho más del mercado, el sector y la empresa que de cualquier certificación.',
@@ -3166,6 +3167,7 @@ function aa_reg_strings() {
 			'gap_cap'      => 'La suite de votre parcours',
 			'gap_next'     => 'Prochaine',
 			'gap_note'     => 'Le prix et les dates sont les nôtres. La rémunération est celle du poste sur le marché : ce n\'est ni une offre ni une garantie liée à cette formation.',
+			'jobs_adv'     => 'Salaire moyen annoncé',
 			'jobs_us'      => 'États-Unis',
 			'jobs_eu'      => 'Zone euro',
 			'jobs_src'     => 'Fourchettes typiques, environ du 25e au 75e centile, relevées en septembre 2026 : États-Unis sur Glassdoor et ZipRecruiter, zone euro sur Glassdoor et PayScale en France, en Espagne, en Allemagne et aux Pays-Bas. Les montants en euros correspondent à ce que paient ces marchés, et non aux montants américains convertis — une conversion les doublerait presque. Ce sont les rémunérations des postes, pas le prix de nos formations, et elles dépendent bien plus du marché, du secteur et de l\'employeur que d\'une certification.',
@@ -9022,33 +9024,72 @@ function aa_reg_role_map() {
 		'LPM'  => array(
 			'role'  => 'Lean Portfolio Manager',
 			'also'  => array( 'Director, Portfolio Management', 'VP, Portfolio Delivery', 'Head of PMO' ),
-			'query' => 'Portfolio Manager Agile',
+			/* WAS 'Portfolio Manager Agile', which the phrase search could never
+			   match -- no advertisement puts Agile after the noun. A bare
+			   "Portfolio Manager" would match, and would return investment
+			   management: a big number for the wrong job. The real title is
+			   narrow, and a small honest count beats a large wrong one. */
+			'query' => 'Lean Portfolio Manager',
 		),
 		'ARCH' => array(
 			'role'  => 'Solution / Enterprise Architect',
-			'also'  => array( 'Solution Architect', 'Enterprise Architect', 'Principal Architect' ),
-			'query' => 'Solution Architect Agile',
+			'also'  => array( 'Solution Architect', 'Enterprise Architect', 'System Architect', 'Principal Engineer' ),
+			'query' => 'Solution Architect',
 		),
-		/* ---- industry ---- */
+		/* ------------------------------------------------------------------
+		   INDUSTRY. Researched Sep 2026 against live postings and the salary
+		   aggregators, because these five rows had the two faults the client
+		   already called out on the other tracks.
+
+		   1. THE ROLE WAS THE CREDENTIAL'S NAME. "Hardware Agilist",
+		      "Hardware Practitioner", "Agile Software Engineer" and "SAFe
+		      Agilist, Public Sector" are what Scaled Agile calls the badge.
+		      Nobody advertises a job under any of them. What defence,
+		      aerospace, automotive and medical-device employers actually post
+		      is Systems Engineer, Systems Engineering Manager, Technical
+		      Program Manager, Senior Software Engineer -- and, at Bosch,
+		      literally "Agile Master". The role is now the hiring title and
+		      the credential name stays where it belongs, on the badge.
+
+		   2. THE QUERY COULD NOT MATCH. Adzuna's what_phrase wants the words
+		      in the order given, and "Systems Engineering Manager Agile",
+		      "Systems Engineer Agile", "Solution Architect Agile" and "Agile
+		      Delivery Manager Government" are phrases no advertisement
+		      contains -- the word Agile does not come last in a job title. So
+		      every industry row was guaranteed to return nothing and fall
+		      through to the search link, which is what the page shows today.
+		      Each query is now one real title.
+
+		   Sources: live Booz Allen and Leidos postings for cleared Agile roles
+		   (an Agile Coach / RTE range of USD 86.8K-198K, posted Sep 2026),
+		   Bosch Agile Master and Engineering Project Manager (Hardware/Software)
+		   postings, Medtronic's Sr. Scrum Master -- Medical Device Software and
+		   Sr. Software Systems Engineer, and Payscale / Glassdoor / ZipRecruiter
+		   for the titles' own medians. Those medians support the figures this
+		   site already publishes, so no salary row changed.
+		   ------------------------------------------------------------------ */
 		'ASE'  => array(
-			'role'  => 'Agile Software Engineer',
-			'also'  => array( 'Senior Software Engineer', 'Engineering Lead' ),
-			'query' => 'Agile Software Engineer',
+			'role'  => 'Senior Software Engineer',
+			'also'  => array( 'Software Engineering Lead', 'Staff Engineer', 'Embedded Software Engineer', 'Software Systems Engineer' ),
+			'query' => 'Senior Software Engineer',
 		),
 		'SHWA' => array(
-			'role'  => 'Hardware Agilist',
-			'also'  => array( 'Systems Engineering Lead', 'Hardware Programme Manager' ),
-			'query' => 'Systems Engineering Manager Agile',
+			'role'  => 'Systems Engineering Manager',
+			'also'  => array( 'Technical Program Manager', 'Hardware Program Manager', 'Engineering Project Manager', 'Agile Master' ),
+			'query' => 'Systems Engineering Manager',
 		),
 		'SHWP' => array(
-			'role'  => 'Hardware Practitioner',
-			'also'  => array( 'Systems Engineer', 'Hardware Engineer' ),
-			'query' => 'Systems Engineer Agile',
+			'role'  => 'Systems Engineer',
+			'also'  => array( 'Hardware Engineer', 'Electrical Engineer', 'Embedded Systems Engineer', 'Design Engineer' ),
+			'query' => 'Systems Engineer',
 		),
 		'SA-Gov' => array(
-			'role'  => 'SAFe Agilist, Public Sector',
-			'also'  => array( 'Agile Coach, Government', 'Digital Delivery Manager' ),
-			'query' => 'Agile Delivery Manager Government',
+			'role'  => 'Agile Delivery Manager, Public Sector',
+			/* Federal work grades the same job differently: the cleared
+			   postings combine two roles in one title, and the coaching title
+			   is the one that carries the clearance requirement. */
+			'also'  => array( 'Product Owner / Scrum Master', 'Agile Coach, Federal IT', 'Scrum Master (cleared)', 'Digital Delivery Manager' ),
+			'query' => 'Agile Delivery Manager',
 		),
 		/* ---- AI-Native ---- */
 		'AINF'   => array(
@@ -9380,7 +9421,23 @@ function aa_jobs_count_adzuna( $query, $country ) {
 	$res = wp_remote_get( $url, array( 'timeout' => 12 ) );
 	if ( is_wp_error( $res ) || wp_remote_retrieve_response_code( $res ) !== 200 ) { return null; }
 	$body = json_decode( wp_remote_retrieve_body( $res ), true );
-	return isset( $body['count'] ) ? (int) $body['count'] : null;
+	if ( ! isset( $body['count'] ) ) { return null; }
+
+	/* THE SAME RESPONSE ALREADY CARRIES THE AVERAGE. `mean` is the average
+	   advertised salary across the ads that matched, in the currency of the
+	   country queried, so the wage costs no extra request and no extra rate
+	   limit -- which matters on a free key. It is only ever advertised pay from
+	   the ads that publish a figure, never an outcome of taking a course, and
+	   the section says so.
+
+	   GUARDED, BECAUSE IT CANNOT BE TESTED FROM HERE. A response without a
+	   usable mean, or one outside a plausible annual salary, contributes no
+	   figure rather than an odd one -- the row then shows the dataset band
+	   alone, which is what it showed before any of this. */
+	$mean = isset( $body['mean'] ) ? (float) $body['mean'] : 0;
+	if ( $mean < 20000 || $mean > 1000000 ) { $mean = 0; }
+
+	return array( 'n' => (int) $body['count'], 'pay' => $mean ? (int) round( $mean ) : null );
 }
 
 /** Refill the cache. Cron only -- never called from a page request. */
@@ -9394,18 +9451,29 @@ function aa_jobs_refresh_run() {
 
 	foreach ( $langs as $country ) {
 		foreach ( $map as $code => $r ) {
-			$best = null; $src = array();
+			$best = null; $pay = null; $src = array();
 			foreach ( $providers as $name => $fn ) {
-				$n = call_user_func( $fn, $r['query'], $country );
+				/* A PROVIDER MAY RETURN A COUNT OR A COUNT AND A WAGE. The
+				   original contract was a bare integer and a filtered-in source
+				   may still use it, so both shapes are accepted and the old one
+				   simply contributes no wage. */
+				$got = call_user_func( $fn, $r['query'], $country );
+				$n   = is_array( $got ) ? ( isset( $got['n'] ) ? (int) $got['n'] : 0 ) : (int) $got;
 				if ( ! is_int( $n ) || $n <= 0 ) { continue; }
 				$src[] = $name;
-				if ( $best === null || $n > $best ) { $best = $n; }
+				if ( $best === null || $n > $best ) {
+					$best = $n;
+					/* The wage comes from whichever source won the count, so the
+					   two figures on the row describe the same set of ads
+					   instead of being spliced from two different indexes. */
+					$pay = ( is_array( $got ) && ! empty( $got['pay'] ) ) ? (int) $got['pay'] : null;
+				}
 			}
 			if ( $best === null ) {
 				unset( $out[ $country ][ $code ] );
 				continue;
 			}
-			$out[ $country ][ $code ] = array( 'n' => $best, 'src' => $src, 'at' => time() );
+			$out[ $country ][ $code ] = array( 'n' => $best, 'pay' => $pay, 'src' => $src, 'at' => time() );
 		}
 	}
 	update_option( 'aa_jobs_counts', $out, false );
@@ -9427,6 +9495,20 @@ function aa_jobs_count( $code ) {
 	/* Older than a week is not a live number any more. */
 	if ( empty( $row['at'] ) || ( time() - (int) $row['at'] ) > WEEK_IN_SECONDS ) { return null; }
 	return $row;
+}
+
+/**
+ * An advertised average, in the currency of the market it was measured in.
+ *
+ * Rounded to the nearest thousand and printed as "K", because the salary chart
+ * and the bands beside it are all in K and a bare 147,382 next to "$135K – $175K"
+ * reads as a different kind of number rather than the same kind measured
+ * differently.
+ */
+function aa_jobs_money( $n, $country ) {
+	$sym = array( 'us' => '$', 'ca' => '$', 'au' => '$', 'nz' => '$', 'gb' => '£', 'in' => '₹' );
+	$s   = isset( $sym[ $country ] ) ? $sym[ $country ] : '€';
+	return $s . round( (int) $n / 1000 ) . 'K';
 }
 
 /** Every source that contributed any current figure, for the note. */
@@ -9489,8 +9571,18 @@ function aa_reg_job_signals( $num = '' ) {
 		   Owner and Large Solution carry no published band and sit on no path,
 		   and an empty <div class="aajs__meta"> rendered as a bare bordered
 		   strip under the card -- which reads as a bug, not as an absence. */
-		if ( $us !== '' || $eu !== '' || $next ) {
+		$adv = ( $cnt && ! empty( $cnt['pay'] ) ) ? aa_jobs_money( $cnt['pay'], $country[0] ) : '';
+
+		if ( $us !== '' || $eu !== '' || $next || $adv !== '' ) {
 		$h .= '<div class="aajs__meta">';
+		/* FIRST, BECAUSE IT IS THE ONLY LIVE FIGURE ON THE ROW. The two bands
+		   after it are our published dataset; this one is what the ads counted
+		   above are actually advertising this week, in that market's currency. */
+		if ( $adv !== '' ) {
+			$h .= '<span class="aajs__pay aajs__pay--live">'
+			    . esc_html( aa_reg_t( 'jobs_adv', 'Advertised average' ) )
+			    . ' <b>' . esc_html( $adv ) . '</b></span>';
+		}
 		if ( $us !== '' ) {
 			$h .= '<span class="aajs__pay">' . esc_html( aa_reg_t( 'jobs_us', 'United States' ) )
 			    . ' <b>' . esc_html( $us ) . '</b></span>';
@@ -9532,7 +9624,11 @@ function aa_reg_job_signals( $num = '' ) {
 				'Opening counts are for %1$s, refreshed twice a day from %2$s. Where two sources '
 				. 'both carry a role we show the higher of the two rather than adding them up, '
 				. 'because they index many of the same postings — so treat every figure as a '
-				. 'floor, not a total. Rows with no count are ones our sources do not cover; '
+				. 'floor, not a total. "Advertised average" is the average salary stated in '
+				. 'those same postings, in that market\'s own currency; most ads publish no '
+				. 'figure at all, so it describes the ones that do rather than the whole '
+				. 'market, and it is what employers are offering, not what our course pays. '
+				. 'Rows with no count are ones our sources do not cover; '
 				. 'those link to a search instead. We do not run a job board and none of these '
 				. 'openings are ours.' ),
 			$country[1],
@@ -9886,6 +9982,30 @@ function aacp_roles() {
 		'SHWP'   => 'Hardware Engineer on a SAFe team',
 		'SHWA'   => 'Hardware Engineering Lead',
 		'SA-Gov' => 'Public-Sector Delivery Lead',
+	);
+}
+
+/**
+ * What a credential licenses you to TEACH, where teaching is the point of it.
+ *
+ * Only two credentials are bought for this reason, and the coaching ladder ends
+ * on both of them. A reader looking at the ASPC step sees the pay and the role
+ * it hires into and still cannot see the thing they are actually buying: the
+ * right to deliver the advanced courses. The ASPC course page says it in full,
+ * in its own "( 04 ) — What you can teach" section; this is the same statement
+ * made where the decision is, on the ladder.
+ *
+ * WORDED FROM THE COURSE PAGE, NOT FROM MEMORY. Scaled Agile maintains the
+ * authoritative list and changes it, so this names the courses the page already
+ * names and carries the exception the page already carries, rather than
+ * asserting a catalogue of our own.
+ */
+function aacp_teaches() {
+	return array(
+		'SPC'  => 'Leading SAFe, SAFe for Teams, SAFe Scrum Master and SAFe Product Owner / Product Manager.',
+		'ASPC' => 'Everything an SPC teaches, plus the advanced courses — RTE, LPM, APM, '
+		        . 'SAFe for Architects and Agile Software Engineering. Implementing SAFe and '
+		        . 'the ASPC course itself stay SPCT-only.',
 	);
 }
 
@@ -10258,6 +10378,7 @@ function aacp_render( $atts = array() ) {
 		$o .= '</div>';
 	}
 
+	$teaches  = aacp_teaches();
 	$ld_paths = array();
 	foreach ( $paths as $i => $p ) {
 		$n    = count( $p['steps'] );
@@ -10298,6 +10419,7 @@ function aacp_render( $atts = array() ) {
 				. '<p class="aacp-pay"><b>' . aacp_money( $s['pay'] ) . '</b><span>median total comp</span></p>'
 				. '<h5><a href="' . esc_url( $s['url'] ) . '">' . esc_html( $s['name'] ) . '</a> <abbr title="' . esc_attr( $s['name'] ) . '">(' . esc_html( $s['code'] ) . ')</abbr></h5>'
 				. '<p class="aacp-role">Unlocks — ' . esc_html( $s['role'] ) . '</p>'
+				. ( isset( $teaches[ $s['code'] ] ) ? '<p class="aacp-teach">Licensed to teach — ' . esc_html( $teaches[ $s['code'] ] ) . '</p>' : '' )
 				. '<div class="aacp-sfoot"><span class="aacp-next">Next cohort · '
 				. ( $c ? '<time datetime="' . esc_attr( $c['start'] ) . '">' . esc_html( aacp_range( $c['start'], $c['end'] ) ) . '</time>' : '<strong>New dates soon</strong>' ) . '</span>'
 				. '<a class="aacp-reg" href="' . esc_url( $c ? $c['url'] : $d['calendarUrl'] ) . '" aria-label="' . esc_attr( 'Register for ' . $s['name'] ) . '">' . ( $is_here && 'course' === $mode ? 'Register now' : 'Register' ) . ' <span aria-hidden="true">⟶</span></a></div></li>';
