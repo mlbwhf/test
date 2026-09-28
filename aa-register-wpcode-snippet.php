@@ -1456,7 +1456,7 @@ function aa_reg_settings_page() {
 	   . '<p class="description">No page edits either way &mdash; the swap happens as the page renders, and unticking this puts the old hero and form straight back. Applies only to pages whose slug has a row in <code>aa_reg_courses()</code>: <code>'
 	   . esc_html( implode( '</code>, <code>', array_keys( aa_reg_courses() ) ) ) . '</code>. Leave this off if you would rather place <code>[aa_course_hero]</code> and <code>[aa_course_register]</code> in the pages by hand.</p></td></tr>';
 	echo '<tr><th scope="row">Adzuna app ID</th><td><input type="text" name="aa_jobs_adzuna_id" value="' . esc_attr( get_option( 'aa_jobs_adzuna_id', '' ) ) . '" class="regular-text" autocomplete="off">'
-	   . '<p class="description">Free from <code>developer.adzuna.com</code>. With both fields filled, &ldquo;Where these roles are hiring&rdquo; shows a real opening count per role, refreshed twice a day by cron. Leave either blank and every row falls back to a search link &mdash; nothing breaks.</p></td></tr>';
+	   . '<p class="description">Free from <code>developer.adzuna.com</code>. With both fields filled, &ldquo;Where these roles are hiring&rdquo; shows a real opening count per role and the average salary those same advertisements quote, refreshed twice a day by cron. Leave either blank and every row falls back to a search link &mdash; nothing breaks.</p></td></tr>';
 	echo '<tr><th scope="row">Adzuna app key</th><td><input type="password" name="aa_jobs_adzuna_key" value="' . esc_attr( get_option( 'aa_jobs_adzuna_key', '' ) ) . '" class="regular-text" autocomplete="off">'
 	   . '<p class="description">Counts are fetched for the United States, France and Spain &mdash; one market per language, which keeps a twice-daily refresh well under a hundred calls a day.</p></td></tr>';
 	echo '</table>';
@@ -1465,11 +1465,15 @@ function aa_reg_settings_page() {
 
 	$jc = (array) get_option( 'aa_jobs_counts', array() );
 	if ( $jc ) {
-		echo '<h2>Opening counts last fetched</h2><table class="widefat striped" style="max-width:680px"><thead><tr><th>Market</th><th>Role</th><th>Openings</th><th>Source</th><th>Fetched</th></tr></thead><tbody>';
+		echo '<h2>Opening counts last fetched</h2><table class="widefat striped" style="max-width:760px"><thead><tr><th>Market</th><th>Role</th><th>Openings</th><th>Advertised avg</th><th>Source</th><th>Fetched</th></tr></thead><tbody>';
 		foreach ( $jc as $country => $rows ) {
 			foreach ( (array) $rows as $code => $row ) {
 				echo '<tr><td><code>' . esc_html( $country ) . '</code></td><td>' . esc_html( $code ) . '</td>'
 				   . '<td>' . esc_html( number_format_i18n( (int) $row['n'] ) ) . '</td>'
+				   /* Blank is normal: most advertisements publish no salary, so a
+				      market can return a solid count and no usable average. */
+				   . '<td>' . ( empty( $row['pay'] ) ? '<span style="color:#888">&mdash;</span>'
+				       : esc_html( aa_jobs_money( $row['pay'], $country ) ) ) . '</td>'
 				   . '<td>' . esc_html( implode( ', ', (array) $row['src'] ) ) . '</td>'
 				   . '<td>' . esc_html( human_time_diff( (int) $row['at'] ) ) . ' ago</td></tr>';
 			}
