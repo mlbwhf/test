@@ -376,3 +376,67 @@ Five dated, falsifiable claims now sit on it: whether the safe harbour passes, w
 whether OpenAI names a second withheld run, and whether SpaceXAI commits to anything.
 Good first entries alongside the Forrester reversal call and Gartner's "40%+ of agentic
 projects cancelled by 2027".
+
+## PUBLISHED 2026-09-28 — AI user numbers, US vs China (page 2589)
+
+`/reports/ai-user-numbers-us-china-compared/` — parent 40, permalink verified,
+Article + FAQPage schema added by alter. Quarterly cadence.
+
+Brief was "how different LLMs reached 1 million users, and compare user numbers
+US vs China." The research turned up something better than a league table: **the
+league tables are not reliable enough to publish.** So the report gives the figures
+with ranges and a new **CONTESTED** chip, and explains why the published rankings
+disagree.
+
+### The three structural findings
+
+1. **Time-to-1M only means anything for cold starts.** ChatGPT (5 days) and DeepSeek
+   (14 days) launched with no user base. Gemini, Copilot, Meta AI and Threads were
+   *switched on* inside products with hundreds of millions of existing accounts —
+   that measures rollout speed, not demand. Claude, Grok and Llama never announced
+   a figure at all. **The only clean AI-to-AI comparison in the dataset is ChatGPT
+   vs DeepSeek.**
+2. **Chinese app MAUs cannot be summed.** QuestMobile's national total of **499M**
+   (May 2026, +85.4% YoY) is deduplicated; the per-app figures are not. Doubao 382M
+   + Qwen 167M + DeepSeek 130M = **679M against a 499M national total**. Both from
+   the same tracker, both correct. Any chart adding Chinese app MAUs double-counts
+   by roughly 30–40%.
+3. **US and Chinese figures are different kinds of number.** US leaders disclose
+   their own (OpenAI's 900M+ WAU); Chinese rankings come from QuestMobile device
+   panels — a legitimate method with an error band, but not an audited count.
+   Ranking them in one column implies precision neither supports.
+
+### Contested figures published as ranges, not picks
+
+- **Claude: 56M … 245M MAU**, same period — a 4.4× spread
+- **Gemini: 750M–900M MAU**
+- **Doubao: 382M / 345M / "240–260M"** for overlapping 2026 periods
+- **ERNIE: 200–300M claimed**, inflated by default placement in Baidu Search/Maps
+- One roundup put ChatGPT at **2.8 billion MAU** — a third of humanity
+- One outlet published **"Doubao 3.8 Billion Users"** — a mistranslation of 3.8亿
+  (3.8 hundred-million = 382M). A published factor-of-ten error, now citable.
+
+### ⚠️ Third cross-page contradiction found on our own site
+
+- **969 `chatgpt-statistics-2026`** says ChatGPT has **800M** weekly active users
+- **970 `ai-chatbot-market-share-2026`** says **900M**
+- The new report says **900M+** and explicitly calls 800M "an older weekly figure
+  still being quoted"
+
+We are quoting the stale figure on our own site. **Fix 969 against OpenAI's current
+disclosure, with a "What changed" block per §2.**
+
+### This is now a pattern, not three incidents
+
+| Contradiction | Found |
+|---|---|
+| `best-ai-models-2026` vs `chinese-ai-models-2026` | 10 Sep |
+| `ai-autonomous-cyberattacks-defense` vs the slowdown report | 24 Sep |
+| `chatgpt-statistics-2026` (800M) vs `ai-chatbot-market-share-2026` (900M) | 28 Sep |
+
+Three in three weeks, all the same shape: a figure updated on one page and left
+stale on another. **Worth a standing cross-page consistency sweep** — pick the
+site's ~20 most-repeated figures (ChatGPT WAU, worldwide AI spend, WEF jobs,
+inference cost, deepfake losses) and check every page that states them. That is a
+systemic gap the current register does not catch, because the register tracks
+pages against sources, not pages against each other.
