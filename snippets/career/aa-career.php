@@ -550,10 +550,81 @@ function aacp_course_swap( $content ) {
 	$body = aacp_render( array( 'mode' => 'course', 'course' => $code, 'id' => 'career', 'schema' => '0' ) );
 	if ( $body === '' ) { return $content; }
 
-	$open = substr( $content, $span[0], strpos( $content, '>', $span[0] ) - $span[0] + 1 );
-	return substr( $content, 0, $span[0] ) . $open . $body . '</section>' . substr( $content, $span[1] );
+	$open    = substr( $content, $span[0], strpos( $content, '>', $span[0] ) - $span[0] + 1 );
+	$content = substr( $content, 0, $span[0] ) . $open . $body . '</section>' . substr( $content, $span[1] );
+
+	return aacp_move_second( $content, 'path' );
 }
 add_filter( 'the_content', 'aacp_course_swap', 12 );
+
+/**
+ * Move a section to second place, and its nav link with it.
+ *
+ * REGISTRATION FIRST, CAREER SECOND -- that is the order the client asked for,
+ * and on a course page the number a reader counts is the position in the
+ * sticky bar nav, not a printed "( 0N )": those sections carry an eyebrow, not
+ * a number. So this moves the section in the document and moves its link to
+ * the second slot in .aa-bar-nav, and the two stay in step.
+ *
+ * The nav is the source of the intended order, the same way
+ * aa_reg_coaching_second() reads .aahn__scroll on a track page. A link whose
+ * section does not exist is skipped rather than allowed to abort the move --
+ * one stale menu entry should not decide the layout of the page.
+ */
+function aacp_move_second( $content, $id ) {
+	$nav_a = strpos( $content, '<div class="aa-bar-nav' );
+	if ( $nav_a === false ) { return $content; }
+	$nav_b = strpos( $content, '</div>', $nav_a );
+	if ( $nav_b === false ) { return $content; }
+	$nav = substr( $content, $nav_a, $nav_b - $nav_a );
+
+	if ( ! preg_match_all( '#<a href="\#([a-z-]+)"[^>]*>.*?</a>#s', $nav, $m, PREG_SET_ORDER ) ) {
+		return $content;
+	}
+	$order = array();
+	foreach ( $m as $one ) { $order[] = $one[1]; }
+	if ( count( $order ) < 3 || ! in_array( $id, $order, true ) ) { return $content; }
+	if ( isset( $order[1] ) && $order[1] === $id ) { return $content; }   /* already second */
+
+	$mine  = aa_reg_section_span( $content, $id );
+	$first = null;
+	foreach ( $order as $slug ) {
+		if ( $slug === $id ) { continue; }
+		$f = aa_reg_section_span( $content, $slug );
+		if ( $f ) { $first = $f; break; }
+	}
+	/* Nothing to do if it is already ahead of the first section. */
+	if ( ! $mine || ! $first || $mine[0] < $first[1] ) { return $content; }
+
+	$block   = substr( $content, $mine[0], $mine[1] - $mine[0] );
+	$content = substr( $content, 0, $mine[0] ) . substr( $content, $mine[1] );
+	$content = substr( $content, 0, $first[1] ) . $block . substr( $content, $first[1] );
+
+	/* ---- the nav, rebuilt in the new order ---- */
+	$nav_a = strpos( $content, '<div class="aa-bar-nav' );
+	if ( $nav_a === false ) { return $content; }
+	$nav_b = strpos( $content, '</div>', $nav_a );
+	if ( $nav_b === false ) { return $content; }
+
+	$new_order = array( $order[0], $id );
+	foreach ( $order as $i => $slug ) {
+		if ( 0 === $i || $slug === $id ) { continue; }
+		$new_order[] = $slug;
+	}
+	$links = array();
+	foreach ( $m as $one ) { $links[ $one[1] ] = $one[0]; }
+
+	$old_nav = substr( $content, $nav_a, $nav_b - $nav_a );
+	$rebuilt = $old_nav;
+	foreach ( $m as $one ) { $rebuilt = str_replace( $one[0], '', $rebuilt ); }
+	$html = '';
+	foreach ( $new_order as $slug ) {
+		if ( isset( $links[ $slug ] ) ) { $html .= $links[ $slug ]; }
+	}
+	$rebuilt = rtrim( $rebuilt ) . $html;
+
+	return substr( $content, 0, $nav_a ) . $rebuilt . substr( $content, $nav_b );
+}
 
 /**
  * /career-paths.txt — a plain-text map of every ladder, for LLM crawlers.
