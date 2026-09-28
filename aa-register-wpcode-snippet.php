@@ -6638,6 +6638,22 @@ function aa_salary_data() {
 			'AINF'   => 140,
 			'AINCA'  => 180,
 			'AINORG' => 280,
+			/* The industry medians, from the figures /training/safe-industry/
+			   already publishes in its own salary section. aa_reg_industry_bands()
+			   held the low-high range for these four but no median, so an
+			   industry ladder could not draw a single bar. ARCH is not here --
+			   it has a full band row above.
+
+			   ACG IS DELIBERATELY ABSENT. The stored government path listed the
+			   Agile Contracting micro-credential at USD 165K between SA-Gov
+			   and LPM, which reads as a six-hour badge worth USD 20K of
+			   salary. That figure is a public-sector role range, not what the
+			   badge pays, so the ladder names ACG in its blurb and does not
+			   draw it as a step. */
+			'ASE'    => 165,
+			'SHWA'   => 155,
+			'SHWP'   => 135,
+			'SA-Gov' => 145,
 		),
 		'paths' => array(
 			/* DELIVERY. This ladder used to run SSM, SASM, RTE, LPM, SPC, which
@@ -6804,7 +6820,7 @@ function aa_salary_insights_shortcode( $atts ) {
 		   every track page ships "01:Salary insights:salary" in its menu and
 		   only the hub says career, and the hub is one page whose menu is
 		   ours to change. An unresolvable first anchor used to make
-		   aa_reg_coaching_second() bail out, leaving coaching last. Was
+		   aa_reg_career_second() bail out, leaving the stored order alone. Was
 		   id="salary". */
 		'id'      => 'salary',
 	), $atts, 'aa_salary_insights' );
@@ -8690,14 +8706,25 @@ function aa_reg_career_first( $content ) {
 add_filter( 'the_content', 'aa_reg_career_first', 12 );
 
 /* ============================================================================
-   COACHING SECOND ON A TRACK PAGE
+   CAREER SECOND ON A TRACK PAGE
    ----------------------------------------------------------------------------
-   A track page ran 01 salary, 02 career journey, 03 certifications, 04 roles,
-   05 live signals, 06 coaching. Coaching -- the one section that offers a
-   person actual help deciding -- was last, below the catalogue and the job
-   board. It is now second, directly under the pay section:
+   THIS USED TO PROMOTE COACHING. A track page ran 01 salary, 02 career journey,
+   03 certifications, 04 roles, 05 live signals, 06 coaching, and coaching --
+   the one section offering a person actual help deciding -- was last. So it was
+   moved to second, which pushed career journey down to third.
 
-       01 salary  02 coaching  03 career journey  04 certifications  ...
+   The client has since set the order of importance for every page: the call to
+   register first, career second. On a track page the register card is inside
+   the hero, above all the numbered sections, so second belongs to career
+   journey -- which is where the pages stored it in the first place. Coaching
+   goes back to where the page puts it.
+
+       01 salary  02 career journey  03 certifications  ...  06 coaching
+
+   The machinery is kept rather than deleted, retargeted at "path": it also
+   renumbers from the nav, so a page whose stored numbers are wrong comes out
+   right, and a page that stores career journey somewhere other than second is
+   corrected without an edit.
 
    WHY A FILTER AND NOT TEN PAGE EDITS. The numbered sections are a mix: most
    are stored HTML in the page, but Certifications is rendered by
@@ -8734,10 +8761,10 @@ function aa_reg_renumber_section( $html, $span, $n ) {
 	return $html;
 }
 
-function aa_reg_coaching_second( $content ) {
+function aa_reg_career_second( $content ) {
 	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
 	if ( strpos( $content, 'class="aahn"' ) === false )  { return $content; }
-	if ( strpos( $content, 'id="coaching"' ) === false ) { return $content; }
+	if ( strpos( $content, 'id="path"' ) === false )     { return $content; }
 
 	/* The nav is where the intended order lives. */
 	$nav_a = strpos( $content, '<div class="aahn__scroll">' );
@@ -8751,24 +8778,24 @@ function aa_reg_coaching_second( $content ) {
 	$order = array();
 	foreach ( $m as $one ) { $order[] = $one[1]; }
 	if ( count( $order ) < 3 ) { return $content; }
-	if ( ! in_array( 'coaching', $order, true ) ) { return $content; }
-	if ( $order[1] === 'coaching' ) { return $content; }   // already second
+	if ( ! in_array( 'path', $order, true ) ) { return $content; }
+	if ( $order[1] === 'path' ) { return $content; }   // already second
 
-	/* First stays first; coaching becomes second; the rest keep their order. */
-	$new_order = array( $order[0], 'coaching' );
+	/* First stays first; career journey becomes second; the rest keep their order. */
+	$new_order = array( $order[0], 'path' );
 	foreach ( $order as $i => $slug ) {
-		if ( $i === 0 || $slug === 'coaching' ) { continue; }
+		if ( $i === 0 || $slug === 'path' ) { continue; }
 		$new_order[] = $slug;
 	}
 
 	/* ---- move the section ---- */
-	$co    = aa_reg_section_span( $content, 'coaching' );
+	$co    = aa_reg_section_span( $content, 'path' );
 	$first = null;
 	/* The first menu entry whose section actually exists. A menu can name an
 	   anchor nothing answers to, and one stale entry should not be able to
 	   switch the whole reorder off. */
 	foreach ( $order as $aa_s ) {
-		if ( $aa_s === 'coaching' ) { continue; }
+		if ( $aa_s === 'path' ) { continue; }
 		$aa_f = aa_reg_section_span( $content, $aa_s );
 		if ( $aa_f ) { $first = $aa_f; break; }
 	}
@@ -8801,7 +8828,7 @@ function aa_reg_coaching_second( $content ) {
 
 	return substr( $content, 0, $nav_a ) . $rebuilt . substr( $content, $nav_b );
 }
-add_filter( 'the_content', 'aa_reg_coaching_second', 13 );
+add_filter( 'the_content', 'aa_reg_career_second', 13 );
 
 /* ============================================================================
    LIVE ROLES  —  replaces the "Live signals" cards
@@ -9245,6 +9272,13 @@ function aa_reg_cert_table() {
 		'SHWA' => array( 'SAFe Hardware Agilist',          '/training/safe-industry/safe-for-hardware-teams/' ),
 		'SHWP' => array( 'SAFe for Hardware',              '/training/safe-industry/safe-for-hardware/' ),
 		'SA-Gov' => array( 'Leading SAFe for Government',  '/training/safe-industry/sa-gov/' ),
+		/* The three the industry ladders need and this table did not carry.
+		   Their absence was invisible while nothing walked an industry path:
+		   aacp_code_for_slug() matches a course page's slug against this table,
+		   so /training/safe-industry/arch/ resolved to no code at all. */
+		'ARCH' => array( 'SAFe for Architects',            '/training/safe-industry/arch/' ),
+		'ASE'  => array( 'SAFe Agile Software Engineering','/training/safe-industry/ase/' ),
+		'ACG'  => array( 'SAFe Agile Contracting for Government', '/training/safe-found/agile-contracting-government/' ),
 		/* The seven rows aa_reg_courses() does carry are listed here too, for the
 		   label only. Their course names are sales titles -- "Implementing SAFe(R)
 		   with SPC Certification" -- and "Next on this path: SPC - Implementing

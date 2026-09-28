@@ -76,6 +76,15 @@ function aacp_roles() {
 		'AINF'   => 'AI-literate manager, team lead',
 		'AINCA'  => 'AI Transformation Lead',
 		'AINORG' => 'VP AI, Chief AI Officer track',
+		/* The industry ladders. Roles as /training/safe-industry/ already names
+		   them in its own "Roles in demand" cards, so the two agree. */
+		'SP'     => 'SAFe Practitioner, team member',
+		'SDP'    => 'DevOps Engineer, Release Manager',
+		'ASE'    => 'Senior Software Engineer, engineering lead',
+		'ARCH'   => 'Enterprise Architect, Systems Architect',
+		'SHWP'   => 'Hardware Engineer on a SAFe team',
+		'SHWA'   => 'Hardware Engineering Lead',
+		'SA-Gov' => 'Public-Sector Delivery Lead',
 	);
 }
 
@@ -83,7 +92,7 @@ function aacp_roles() {
 function aacp_ladders() {
 	return array(
 		array(
-			'slug' => 'delivery', 'cats' => array( 'safe', 'adv-safe' ), 'advOrder' => 1, 'advEntry' => 'RTE',
+			'slug' => 'delivery', 'cats' => array( 'safe-roles', 'adv-safe' ), 'advOrder' => 1, 'advEntry' => 'RTE',
 			'kicker' => 'Team & delivery', 'from' => 'Scrum Master', 'to' => 'release train leadership',
 			'months' => '18–24', 'trackName' => 'SAFe by Role', 'trackUrl' => '/training/safe/',
 			'blurb'  => 'Start on one team, grow into team-of-teams, then run an Agile Release Train. '
@@ -92,7 +101,7 @@ function aacp_ladders() {
 			'codes'  => array( 'SSM', 'SASM', 'RTE' ),
 		),
 		array(
-			'slug' => 'product', 'cats' => array( 'safe', 'adv-safe' ), 'advOrder' => 2, 'advEntry' => 'APM',
+			'slug' => 'product', 'cats' => array( 'safe-roles', 'adv-safe' ), 'advOrder' => 2, 'advEntry' => 'APM',
 			'kicker' => 'Product & portfolio', 'from' => 'Product Owner', 'to' => 'portfolio leader',
 			'months' => '12–18', 'trackName' => 'Advanced SAFe', 'trackUrl' => '/training/adv-safe/',
 			'blurb'  => 'Own the team backlog, then the ART roadmap, then the portfolio — where the funding '
@@ -100,7 +109,7 @@ function aacp_ladders() {
 			'codes'  => array( 'POPM', 'APM', 'LPM' ),
 		),
 		array(
-			'slug' => 'coaching', 'cats' => array( 'safe', 'adv-safe' ), 'advOrder' => 0, 'advEntry' => 'SPC',
+			'slug' => 'coaching', 'cats' => array( 'safe-roles', 'adv-safe' ), 'advOrder' => 0, 'advEntry' => 'SPC',
 			'kicker' => 'Coaching', 'from' => 'team lead', 'to' => 'enterprise coach',
 			'months' => '12–24', 'trackName' => 'Advanced SAFe', 'trackUrl' => '/training/adv-safe/',
 			'blurb'  => 'Lead the change, get licensed to teach and launch trains, then coach whole '
@@ -114,6 +123,52 @@ function aacp_ladders() {
 			'blurb'  => 'Foundational AI literacy through to redesigning how an enterprise works with AI. '
 			          . 'No coding required.',
 			'codes'  => array( 'AINF', 'AINCA', 'AINORG' ),
+		),
+		/* ------------------------------------------------------------------
+		   THE INDUSTRY LADDERS.
+
+		   Without these, a category render for safe-industry matched no ladder
+		   and fell back to showing all of them -- delivery, product, coaching
+		   and AI-Native on the hardware and government page, which is the exact
+		   complaint the client raised about the roles block: "same roles in
+		   every page which do not make sense".
+
+		   The three are the ones /training/safe-industry/ already tells, with
+		   its own figures: architect, hardware, government. Its two extra cards
+		   ("From developer to senior engineer", "From developer to enterprise
+		   architect") are the same climb as the architect ladder starting one
+		   step lower, so they are not repeated as ladders of their own.
+		   ------------------------------------------------------------------ */
+		array(
+			'slug' => 'architecture', 'cats' => array( 'safe-industry' ),
+			'kicker' => 'Architecture', 'from' => 'developer', 'to' => 'enterprise architect',
+			'months' => '18–30', 'trackName' => 'SAFe by Industry', 'trackUrl' => '/training/safe-industry/',
+			'blurb'  => 'Build DevOps and engineering depth first, then architect across software, '
+			          . 'hardware and cloud. The ladder the client asked to keep for specialised '
+			          . 'roles: it starts where a developer already is.',
+			'codes'  => array( 'SA', 'SDP', 'ASE', 'ARCH' ),
+		),
+		array(
+			'slug' => 'hardware', 'cats' => array( 'safe-industry' ),
+			'kicker' => 'Hardware & systems', 'from' => 'SAFe Practitioner', 'to' => 'systems architect',
+			'months' => '18–30', 'trackName' => 'SAFe by Industry', 'trackUrl' => '/training/safe-industry/',
+			'blurb'  => 'For teams building physical products — automotive, aerospace, medical, '
+			          . 'semiconductors. Hardware work is on cadence too, and the credentials that '
+			          . 'say so are separate from the software ones.',
+			'codes'  => array( 'SP', 'SHWP', 'SHWA', 'ARCH' ),
+		),
+		array(
+			'slug' => 'government', 'cats' => array( 'safe-industry' ),
+			'kicker' => 'Public sector', 'from' => 'Leading SAFe for Government', 'to' => 'portfolio governance',
+			'months' => '12–24', 'trackName' => 'SAFe by Industry', 'trackUrl' => '/training/safe-industry/',
+			/* ACG is named here and is NOT a step. It is a six-hour badge; the
+			   USD 165K the track page prints beside it is a public-sector role
+			   range, not what the badge pays, and a ladder draws pay. */
+			'blurb'  => 'Federal, state and municipal delivery — procurement, contracts and '
+			          . 'audit-defensible cadence. Most public-sector buyers add the Agile '
+			          . 'Contracting for Government (ACG) micro-credential alongside; it is a '
+			          . 'one-day badge rather than a rung on the pay ladder.',
+			'codes'  => array( 'SA-Gov', 'LPM' ),
 		),
 	);
 }
@@ -157,6 +212,36 @@ function aacp_tracks() {
 	return $out;
 }
 
+/**
+ * One canonical spelling for a track.
+ *
+ * THE SLUG AND THE URL SEGMENT DISAGREE FOR ONE TRACK. /training/safe/ is the
+ * "safe-roles" track: its own page says so, in
+ * [aa_training_category category="safe-roles"], but aa_reg_page_track() reads
+ * the URL and calls it "safe". Both spellings arrive here -- the shortcode
+ * default is still "safe" -- so both have to mean the same set of ladders.
+ */
+function aacp_cat( $cat ) {
+	$alias = array( 'safe' => 'safe-roles', 'safe-roles' => 'safe-roles' );
+	$cat   = sanitize_key( (string) $cat );
+	return isset( $alias[ $cat ] ) ? $alias[ $cat ] : $cat;
+}
+
+/** Track labels for the category headings, from the picker where it has them. */
+function aacp_category_names( $tracks ) {
+	$names = array(
+		'safe-roles'    => 'SAFe by Role',
+		'adv-safe'      => 'Advanced SAFe',
+		'ai-native'     => 'AI-Native',
+		'safe-industry' => 'SAFe by Industry',
+		'safe-found'    => 'Micro-credentials',
+	);
+	foreach ( (array) $tracks as $t ) {
+		if ( ! empty( $t['cat'] ) && ! empty( $t['name'] ) ) { $names[ $t['cat'] ] = $t['name']; }
+	}
+	return $names;
+}
+
 function aacp_data() {
 	static $data = null;
 	if ( null !== $data ) { return $data; }
@@ -192,7 +277,13 @@ function aacp_data() {
 		'roadmapUrl'  => '/cert-recommender/',
 		'calendarUrl' => '/training/',
 		'catalogueUrl'=> '/training/',
-		'categories'  => array( 'safe' => 'SAFe by Role', 'adv-safe' => 'Advanced SAFe', 'ai-native' => 'AI-Native' ),
+		/* NAMED BY THE TRACK PICKER, NOT BY HAND. These labels head the
+		   category copy ("Career paths · Advanced SAFe"), and aa_home_track_data()
+		   already carries each track's label in the reader's language -- so a
+		   French track page gets "Parcours de carrière · SAFe Avancé" instead of
+		   an English name in a French heading. The literals stay as the fallback
+		   for the two the picker cannot resolve. */
+		'categories'  => aacp_category_names( $tracks ),
 		'paths'       => $paths,
 		'tracks'      => $tracks,
 		'homeCopy'    => array(
@@ -286,7 +377,7 @@ function aacp_render( $atts = array() ) {
 	$GLOBALS['aacp_used'] = true;
 
 	$mode   = in_array( $a['mode'], array( 'home', 'category', 'course' ), true ) ? $a['mode'] : 'home';
-	$cat    = sanitize_key( $a['category'] );
+	$cat    = aacp_cat( $a['category'] );
 	$course = strtoupper( sanitize_text_field( $a['course'] ) );
 	$view   = 'auto' === $a['view'] ? ( 'course' === $mode ? 'paths' : 'both' ) : ( 'both' === $a['view'] ? 'both' : 'paths' );
 	$bare   = '1' === (string) $a['bare'];
@@ -558,6 +649,102 @@ function aacp_course_swap( $content ) {
 add_filter( 'the_content', 'aacp_course_swap', 12 );
 
 /**
+ * Which track a landing page is, in the spelling aa_home_track_data() uses.
+ *
+ * THE PAGE SAYS SO ITSELF. Every track landing page carries
+ * [aa_training_category category="safe-roles"] as its hero, and that attribute
+ * is the authoritative name -- the page slug is not, because /training/safe/ is
+ * the safe-roles track. Read from the STORED content, so it does not matter
+ * that do_shortcode() has already expanded the hero by the time this runs.
+ *
+ * The URL is the fallback, which is what makes this work on a page whose hero
+ * was replaced or whose shortcode is written with single quotes.
+ */
+function aacp_page_cat() {
+	$obj = function_exists( 'get_queried_object' ) ? get_queried_object() : null;
+	if ( $obj instanceof WP_Post
+		&& preg_match( '/\[aa_training_category[^\]]*category=[\'"]([a-z0-9_-]+)[\'"]/i',
+			(string) $obj->post_content, $m ) ) {
+		return aacp_cat( $m[1] );
+	}
+	return function_exists( 'aa_reg_page_track' ) ? aacp_cat( aa_reg_page_track() ) : '';
+}
+
+/**
+ * On a track landing page, the "Career journey" cards become the career block.
+ *
+ * WHY THE SECTION HEAD SURVIVES. Only the body is replaced: the page keeps its
+ * own "( 02 ) — Career journey" eyebrow and its own h2, which is what makes this
+ * safe to run on the French mirrors -- their heads are already translated and
+ * the block would otherwise print an English one over them. It is also what
+ * keeps the numbering the page's own business, the same rule the rest of these
+ * sections follow.
+ *
+ * WHY NOT TEN PAGE EDITS. Four track pages in each language, each holding three
+ * to five hand-written ladders with hand-written salaries. Those salaries were
+ * already drifting from aa_salary_data() -- the industry page printed LPM at
+ * USD 180K while the dataset says USD 185K -- and every one of them is a second
+ * place to update when a figure moves. The block reads the dataset.
+ *
+ * A TRACK WITH NO LADDER IS LEFT ALONE. safe-found is micro-credentials: one-day
+ * badges that sit beside a career path rather than forming one, and its stored
+ * section says so in its own terms. Rendering the delivery and coaching ladders
+ * there would be the "same content on every page" complaint all over again.
+ */
+function aacp_track_swap( $content ) {
+	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
+	if ( strpos( $content, 'class="aahn"' ) === false ) { return $content; }
+	if ( strpos( $content, 'id="path"' ) === false )    { return $content; }
+	if ( strpos( $content, 'class="aacp"' ) !== false ) { return $content; }
+	if ( ! function_exists( 'aa_reg_section_span' ) )   { return $content; }
+
+	$cat = aacp_page_cat();
+	if ( $cat === '' ) { return $content; }
+
+	$mine = 0;
+	foreach ( aacp_data()['paths'] as $p ) {
+		if ( in_array( $cat, $p['cats'], true ) ) { $mine++; }
+	}
+	if ( ! $mine ) { return $content; }
+
+	$span = aa_reg_section_span( $content, 'path' );
+	if ( ! $span ) { return $content; }
+	$body = aacp_render( array(
+		'mode' => 'category', 'category' => $cat, 'view' => 'both',
+		'bare' => '1', 'schema' => '0',
+	) );
+	if ( $body === '' ) { return $content; }
+
+	$sec   = substr( $content, $span[0], $span[1] - $span[0] );
+	$close = strrpos( $sec, '</section>' );
+	if ( false === $close ) { return $content; }
+
+	/* Everything from the end of the section head to the closing tag is the
+	   body. .aa-sechead holds paragraphs and a heading and never a nested div on
+	   any of these pages, so its first </div> is its own; the block comment that
+	   follows belongs to the head too. Without a head, the body starts straight
+	   after the opening tag. */
+	$hd = strpos( $sec, 'aa-sechead' );
+	if ( false === $hd ) {
+		$cut = strpos( $sec, '>' );
+		if ( false === $cut ) { return $content; }
+		$cut++;
+	} else {
+		$cut = strpos( $sec, '</div>', $hd );
+		if ( false === $cut || $cut > $close ) { return $content; }
+		$cut += strlen( '</div>' );
+		if ( preg_match( '#^\s*<!-- /wp:group -->#', substr( $sec, $cut, 40 ), $g ) ) {
+			$cut += strlen( $g[0] );
+		}
+	}
+
+	$sec = substr( $sec, 0, $cut ) . "\n" . $body . "\n" . substr( $sec, $close );
+
+	return substr( $content, 0, $span[0] ) . $sec . substr( $content, $span[1] );
+}
+add_filter( 'the_content', 'aacp_track_swap', 12 );
+
+/**
  * Move a section to second place, and its nav link with it.
  *
  * REGISTRATION FIRST, CAREER SECOND -- that is the order the client asked for,
@@ -567,7 +754,7 @@ add_filter( 'the_content', 'aacp_course_swap', 12 );
  * the second slot in .aa-bar-nav, and the two stay in step.
  *
  * The nav is the source of the intended order, the same way
- * aa_reg_coaching_second() reads .aahn__scroll on a track page. A link whose
+ * aa_reg_career_second() reads .aahn__scroll on a track page. A link whose
  * section does not exist is skipped rather than allowed to abort the move --
  * one stale menu entry should not decide the layout of the page.
  */
