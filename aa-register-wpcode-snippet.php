@@ -6600,14 +6600,31 @@ function aa_salary_data() {
 			array( 'code' => 'ARCH', 'median' => 185, 'lo' => 160, 'hi' => 240 ),
 			array( 'code' => 'RTE',  'median' => 172, 'lo' => 135, 'hi' => 260 ),
 			array( 'code' => 'APM',  'median' => 170, 'lo' => 140, 'hi' => 220 ),
-			array( 'code' => 'LPM',  'median' => 165, 'lo' => 145, 'hi' => 210 ),
+			/* LPM WAS BELOW APM, WHICH CANNOT BE RIGHT. This row said median 165
+			   while APM says 170, so every product ladder that ends at portfolio
+			   level finished on a lower number than the step before it. Two other
+			   sources disagreed with the 165: the pay table this file used to carry
+			   put LPM at USD 186-300K, and the career-path design handoff put the
+			   median at 185 independently. Confirmed with the client at 185. The
+			   range is widened to match -- a median of 185 inside 145-210 sits at
+			   the top of its own band -- and the whole row still wants the same
+			   re-check as the rest of this dataset. */
+			array( 'code' => 'LPM',  'median' => 185, 'lo' => 155, 'hi' => 240 ),
 			array( 'code' => 'SDP',  'median' => 140, 'lo' => 115, 'hi' => 175 ),
 			array( 'code' => 'POPM', 'median' => 135, 'lo' => 110, 'hi' => 170 ),
 			array( 'code' => 'SSM',  'median' => 110, 'lo' =>  92, 'hi' => 135 ),
 		),
-		/* Codes used by a path ladder that have no band row of their own. */
+		/* Codes used by a path ladder that have no band row of their own.
+		   SA, BO and SP are the medians /training/safe/ already publishes in
+		   its own salary section; they are repeated here rather than added to
+		   `bands` so the shared chart does not grow three bars on every track
+		   page. Without SA the coaching ladder lost its entry step, because a
+		   step with no median cannot be drawn as a salary bar. */
 		'extra' => array(
 			'SASM'   => 130,
+			'SA'     => 120,
+			'BO'     => 145,
+			'SP'     => 95,
 			'AINF'   => 140,
 			'AINCA'  => 180,
 			'AINORG' => 280,
@@ -9206,6 +9223,7 @@ function aa_reg_next_cert( $code, $scope = array() ) {
  */
 function aa_reg_cert_table() {
 	return array(
+		'SA'   => array( 'Leading SAFe',                   '/training/safe/sa/' ),
 		'SSM'  => array( 'SAFe Scrum Master',              '/training/safe/scrum-master/' ),
 		'SASM' => array( 'SAFe Advanced Scrum Master',     '/training/safe/asm/' ),
 		'POPM' => array( 'SAFe Product Owner / Manager',   '/training/safe/popm/' ),
