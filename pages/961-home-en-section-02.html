@@ -20,7 +20,14 @@
   Shortcodes used (all in aa-register-wpcode-snippet.php / mu-plugin/aa-register.php):
     [aa_cert_count]   -> aa_home_cert_count_shortcode()
     [aa_track_count]  -> aa_home_track_count_shortcode()
-    [aa_home_tracks]  -> aa_home_tracks_shortcode(), emits the whole .aahs tab component
+    [aa_career_paths] -> aacp_render() in snippets/career/aa-career.php
+
+  WAS [aa_home_tracks], the five-track accordion. The career-path block from
+  the v2 design handoff merges that picker into itself as its second tab, so
+  the accordion is not lost -- it is the "By track" half of a two-tab section
+  whose first half is the career ladders. bare="1" keeps this page's own
+  ( 02 ) kicker, h2, lede and the #training jump anchor; without it the block
+  would print a second heading under the first.
 -->
 <!-- ==================== SECTION 02 — ALL TRAINING ==================== -->
 <section class="aa__section aa-training" id="training" data-aa-section="training" aria-labelledby="aa-training-h2">
@@ -32,7 +39,7 @@
     <p class="aa__lede">Live virtual cohorts across [aa_track_count] tracks &mdash; SAFe by role, Advanced SAFe, AI-Native, micro-credentials, and industry programmes. Led by SPCTs and certified SAFe instructors. Exam fee included, recordings forever, 1:1 career coaching after class.</p>
   </div>
 
-  [aa_home_tracks]
+  [aa_career_paths view="both" bare="1"]
 
   <p class="aa__foot">Every track maps to a role, a salary band, and a cohort date &mdash; <a class="aa__link" href="https://agile-agilist.com/training/">see all [aa_cert_count] certifications &#10230;</a></p>
 </section>
