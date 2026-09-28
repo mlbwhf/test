@@ -3026,6 +3026,10 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'El pago en línea está desactivado en este momento — escríbenos.',
 			'pay_note_long'     => 'Te llevaremos a Stripe para pagar. Nunca vemos los datos de tu tarjeta.',
 			'pay_note_off_long' => 'El pago en línea está desactivado en este momento — escríbenos y te inscribimos nosotros.',
+			'enrol_k1'     => 'Resérvalo aquí',
+			'enrol_d1'     => 'Elige tu fecha abajo y paga con tarjeta. La confirmación, la factura y los datos de acceso te llegan de inmediato.',
+			'enrol_k2'     => 'O resérvalo en Eventbrite',
+			'enrol_d2'     => 'La misma plaza en la misma cohorte, reservada y pagada en Eventbrite.',
 			'enrol_ours'   => 'Inscríbete con Agile Agilist',
 			'jobs_kicker'  => 'Puestos en vivo',
 			'jobs_h'       => 'Dónde se contratan estos roles.',
@@ -3128,6 +3132,10 @@ function aa_reg_strings() {
 			'pay_note_off'      => 'Le paiement en ligne est désactivé pour le moment — contactez-nous.',
 			'pay_note_long'     => 'Vous serez redirigé vers Stripe pour le paiement. Nous ne voyons jamais les données de votre carte.',
 			'pay_note_off_long' => 'Le paiement en ligne est désactivé pour le moment — contactez-nous et nous procéderons à votre inscription.',
+			'enrol_k1'     => 'Réservez ici',
+			'enrol_d1'     => 'Choisissez votre date ci-dessous et payez par carte. Confirmation, facture et informations de connexion vous parviennent aussitôt.',
+			'enrol_k2'     => 'Ou réservez via Eventbrite',
+			'enrol_d2'     => 'La même place dans la même session, réservée et payée sur Eventbrite.',
 			'enrol_ours'   => 'S’inscrire avec Agile Agilist',
 			'jobs_kicker'  => 'Postes en direct',
 			'jobs_h'       => 'Où ces rôles recrutent.',
@@ -9490,17 +9498,23 @@ function aa_reg_job_signals( $num = '' ) {
    "COMPLETE YOUR ENROLLMENT" OFFERED ONLY EVENTBRITE
    ----------------------------------------------------------------------------
    Every course page carries a section headed "Complete your enrollment" whose
-   copy says "Register two ways: complete checkout right here, or use our
-   Eventbrite registration" -- and then gives exactly one button, which goes to
-   Eventbrite. Our own registration is real and is on the same page, but it is
-   in a later section, so the section that says "complete your enrollment"
-   hands the reader to a third party and nothing else. The sentence promising
-   two ways was true about the page and false about the paragraph under it.
+   copy reads "Register two ways: complete checkout right here, or use our
+   Eventbrite registration" -- and then gave one button, to Eventbrite. Our own
+   registration is real and sits on the same page, in a later section, so the
+   section that said "complete your enrollment" handed the reader to a third
+   party and nothing else.
 
-   This puts our registration back beside it, and first: a filled primary
-   button to the enrolment section, then the Eventbrite button as the
-   alternative it was described as. Nothing is removed -- Eventbrite stays a
-   way to book, which is what it is meant to be.
+   A BUTTON BESIDE IT WAS NOT ENOUGH. The first pass put our CTA next to the
+   Eventbrite one, which fixed the omission but not the framing: two bare
+   buttons in a row say nothing about what either one does, and the promise of
+   "two ways" still had to be taken on trust. This renders the choice as two
+   cards that say what each route gives you, ours first and filled, Eventbrite
+   second and outlined -- the CTA hierarchy the rest of the site uses.
+
+   THE EVENTBRITE BUTTON IS MOVED, NOT REBUILT. Its id is what the page's own
+   script binds the checkout widget to, so the element is lifted out of the old
+   row and dropped into the second card exactly as it was found. Rebuilding it
+   would have quietly detached the widget.
 
    AT RENDER, NOT IN THE PAGES. The block is the same on around twenty English
    course pages plus their mirrors, and editing each one leaves the next course
@@ -9511,16 +9525,44 @@ function aa_reg_enrol_both( $content ) {
 	if ( is_admin() || ! is_page() || is_front_page() ) { return $content; }
 	if ( strpos( $content, 'id="eb-trigger-2"' ) === false ) { return $content; }
 	if ( strpos( $content, 'id="enroll"' ) === false )       { return $content; }
-	if ( strpos( $content, 'aa-enrol-ours' ) !== false )     { return $content; }   /* already done */
+	if ( strpos( $content, 'aa-enrol2' ) !== false )         { return $content; }   /* already done */
 
-	$needle = '<button type="button" id="eb-trigger-2"';
-	$at     = strpos( $content, $needle );
-	if ( $at === false ) { return $content; }
+	/* The row holding the Eventbrite button, from its opening div to the
+	   </div> that closes it. Located rather than matched as a literal, because
+	   the button carries an <img> whose URL is not the same on every page. */
+	$btn = strpos( $content, '<button type="button" id="eb-trigger-2"' );
+	if ( $btn === false ) { return $content; }
+	$row_a = strrpos( substr( $content, 0, $btn ), '<div' );
+	if ( $row_a === false ) { return $content; }
+	$btn_end = strpos( $content, '</button>', $btn );
+	if ( $btn_end === false ) { return $content; }
+	$btn_end += strlen( '</button>' );
+	$row_b = strpos( $content, '</div>', $btn_end );
+	if ( $row_b === false ) { return $content; }
+	$row_b += strlen( '</div>' );
 
-	$ours = '<a class="btn-teal aa-enrol-ours" href="#enroll" style="margin-right:10px">'
-	      . esc_html( aa_reg_t( 'enrol_ours', 'Register with Agile Agilist' ) ) . ' &#10230;</a>';
+	$eb_button = substr( $content, $btn, $btn_end - $btn );
 
-	return substr( $content, 0, $at ) . $ours . substr( $content, $at );
+	$h  = '<div class="aa-enrol2">';
+
+	$h .= '<div class="aa-enrol-opt aa-enrol-opt--main">';
+	$h .= '<span class="aa-enrol-k">' . esc_html( aa_reg_t( 'enrol_k1', 'Book it here' ) ) . '</span>';
+	$h .= '<p class="aa-enrol-d">' . esc_html( aa_reg_t( 'enrol_d1',
+		'Pick your date below and pay by card. Confirmation, invoice and joining details reach you straight away.' ) ) . '</p>';
+	$h .= '<a class="btn-teal aa-enrol-go" href="#enroll">'
+	    . esc_html( aa_reg_t( 'enrol_ours', 'Register with Agile Agilist' ) ) . ' &#10230;</a>';
+	$h .= '</div>';
+
+	$h .= '<div class="aa-enrol-opt">';
+	$h .= '<span class="aa-enrol-k">' . esc_html( aa_reg_t( 'enrol_k2', 'Or book through Eventbrite' ) ) . '</span>';
+	$h .= '<p class="aa-enrol-d">' . esc_html( aa_reg_t( 'enrol_d2',
+		'The same seat in the same cohort, booked and paid for on Eventbrite instead.' ) ) . '</p>';
+	$h .= '<span class="aa-enrol-go">' . $eb_button . '</span>';
+	$h .= '</div>';
+
+	$h .= '</div>';
+
+	return substr( $content, 0, $row_a ) . $h . substr( $content, $row_b );
 }
 add_filter( 'the_content', 'aa_reg_enrol_both', 12 );
 

@@ -1865,3 +1865,25 @@ div.aa > section{scroll-margin-top:72px}
 
 /* RTL: both strips read right-to-left with no other change. */
 [dir="rtl"] .aaj .aaj-cta{margin-left:0;margin-right:auto}
+
+/* ============================================================================
+   AA — ENROL: TWO WAYS TO BOOK      (course pages, section "Complete your enrollment")
+   ----------------------------------------------------------------------------
+   The section promised "register two ways" and offered one button, to
+   Eventbrite. Two bare buttons in a row would have fixed the omission without
+   fixing the framing, so the choice is two cards that each say what they give
+   you. Ours is filled and first; Eventbrite is outlined and second, which is
+   the CTA hierarchy used everywhere else on the site.
+   ========================================================================== */
+.aa-enrol2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 20px; max-width: 860px; }
+.aa-enrol-opt { display: flex; flex-direction: column; gap: 9px; padding: 20px 22px; border: 1px solid #DCEAEA; border-radius: 14px; background: #fff; }
+.aa-enrol-opt--main { border-color: #0E3A44; background: #F7FBFB; }
+.aa-enrol-k { font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #127E88; }
+.aa-enrol-d { margin: 0; font-size: 13.5px; line-height: 1.55; color: #5E7378; flex: 1; }
+.aa-enrol-go { display: block; margin-top: 4px; }
+.aa-enrol-go > .btn-ghost, .aa-enrol-go > button { width: 100%; }
+.aa-enrol-opt .btn-teal, .aa-enrol-opt .btn-ghost,
+.aa-enrol-opt button { box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
+	width: 100%; min-height: 46px; text-align: center; }
+/* The buttons are full-width inside a padded card, so they have to include
+   their own padding in that width -- content-box pushes them past the card. */
