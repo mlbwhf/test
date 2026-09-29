@@ -512,7 +512,19 @@ function aa_reg_holidays( $year ) {
 		$d( 'first monday of september' )          => 'Labour Day',
 		$d( 'second monday of october' )           => 'Thanksgiving (CA) / Indigenous Peoples Day',
 		$y . '-11-11'                              => 'Remembrance Day / Veterans Day',
-		$d( 'fourth thursday of november' )        => 'Thanksgiving (US)',
+		/* US THANKSGIVING IS NOT IN THIS LIST, DELIBERATELY. The two countries
+		   keep Thanksgiving on different days -- the fourth Thursday of
+		   November in the United States, the second Monday of October in
+		   Canada -- and this audience spans both. Treating the November
+		   Thursday as a holiday added a duplicate class on the Friday for
+		   everyone, including the half of the audience working normally that
+		   week. The class now simply runs on its cadence day.
+
+		   THE OCTOBER MONDAY STAYS, and it is not an exception to that. It is
+		   a holiday in both countries on the same date, for different reasons:
+		   Thanksgiving in Canada, Indigenous Peoples Day in the United States.
+		   The long weekend it makes is real on both sides of the border, which
+		   is the whole basis of the twin rule. */
 		$y . '-12-25'                              => 'Christmas Day',
 		$y . '-12-26'                              => 'Boxing Day',
 	);
@@ -6059,8 +6071,13 @@ function aa_training_copy_i18n() {
 				'sub'    => 'AI-Native Foundations وAI-Native Value Architect وLeading the AI-Native '
 				          . 'Organization — ثلاث شهادات لأدوار لم تكن موجودة قبل عامين وهي اليوم في '
 				          . 'إعلانات التوظيف. مصمّمة لمن يقودون العمل، فلا حاجة إلى البرمجة.',
-				'comp'   => 'حضوريًا ومباشرة عبر الإنترنت · الامتحان مشمول.',
-				'points' => array( 'يوم إلى يومين', 'لا حاجة للبرمجة', 'حضوريًا أو عبر الإنترنت' ),
+				/* ONLINE ONLY since Sep 2026, on the client's instruction. The two
+				   halves that offered a classroom are removed and nothing new is
+				   written: both replacements are phrases this file already uses
+				   in Arabic elsewhere. safe-industry below still offers in-person
+				   and is deliberately untouched. */
+				'comp'   => 'مباشر عبر الإنترنت · الامتحان مشمول.',
+				'points' => array( 'يوم إلى يومين', 'لا حاجة للبرمجة', 'مباشر عبر الإنترنت' ),
 			),
 			'safe-found' => array(
 				'label'  => 'الشهادات المصغّرة',
