@@ -1403,6 +1403,9 @@ function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) 
 		'checkout'       => $live ? esc_url_raw( rest_url( 'aa/v1/checkout' ) ) : null,
 		'batches'        => esc_url_raw( rest_url( 'aa/v1/batches' ) ),
 		'course'         => $course_key,
+		/* The readable name, so a lead captured from the form carries
+		   "Implementing SAFe(R) with SPC Certification" rather than "spc". */
+		'courseName'     => $course && ! empty( $course['name'] ) ? $course['name'] : $course_key,
 		// The authoritative price, for anything rendering a total without a
 		// batch of its own to read it from — the calendar's panel form.
 		'price'          => $course ? (int) $course['price'] : 0,

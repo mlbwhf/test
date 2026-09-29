@@ -545,6 +545,32 @@ function aaRegGuard(scope, fn) {
     txt(root.querySelector('[data-rev-seats]'), String(state.seats));
     txt(root.querySelector('[data-rev-total]'), money(total()));
     if (btnPay) btnPay.disabled = !consent || !consent.checked;
+
+    /* Same reason as the inline form: the two-step panel's chosen date has to
+       be readable by anything that reads the form on submit, or a buyer who
+       never reaches Stripe becomes a lead with an email and no course date. */
+    stamp(form1, c);
+    stamp(form2, c);
+  }
+
+  function stamp(form, card) {
+    if (!form || !card) { return; }
+    var pairs = {
+      cohort_date: card.getAttribute('data-start') || card.getAttribute('data-range') || '',
+      cohort_id:   card.getAttribute('data-cohort') || '',
+      course_name: (CFG.courseName || CFG.course || ''),
+      seats:       String(state.seats)
+    };
+    Object.keys(pairs).forEach(function (name) {
+      var el = form.querySelector('input[type="hidden"][name="' + name + '"]');
+      if (!el) {
+        el = document.createElement('input');
+        el.type = 'hidden';
+        el.name = name;
+        form.appendChild(el);
+      }
+      el.value = pairs[name];
+    });
   }
 
   applyVisibility();
@@ -667,6 +693,38 @@ function aaRegGuard(scope, fn) {
   function seatsOf(form) {
     return parseInt(form.getAttribute('data-seats') || '1', 10) || 1;
   }
+  /* THE CHOSEN DATE HAS TO BE A REAL FORM FIELD, not just a data- attribute.
+     A buyer picked a date, typed an email, pressed Pay, and checkout failed.
+     The lead reached the CRM — because the CRM reads the form on submit — but
+     it arrived with the email alone, since the cohort lived in data-cohort and
+     data-start where no form reader can see it. Nobody could tell which class
+     he had wanted, so nobody could follow up properly.
+
+     Mirroring the selection into hidden inputs means the date survives every
+     failure after this point: a dead network, a 503, a declined card, or a
+     buyer who simply closes the Stripe tab. The server still reads the data-
+     attributes, so nothing about what we charge depends on these. */
+  function syncFields(form) {
+    var pairs = {
+      cohort_date: form.getAttribute('data-start') || '',
+      cohort_id:   form.getAttribute('data-cohort') || '',
+      course_name: (CFG.courseName || CFG.course || ''),
+      seats:       String(seatsOf(form))
+    };
+    Object.keys(pairs).forEach(function (name) {
+      var el = form.querySelector('input[type="hidden"][name="' + name + '"]');
+      if (!el) {
+        /* Built here when the markup predates this change, so a form from any
+           of the three builders ends up carrying the same fields. */
+        el = document.createElement('input');
+        el.type = 'hidden';
+        el.name = name;
+        form.appendChild(el);
+      }
+      el.value = pairs[name];
+    });
+  }
+
   function paint(form) {
     // A form built by the calendar has no price of its own — the course price
     // from the config is the same number the server will charge.
@@ -676,6 +734,7 @@ function aaRegGuard(scope, fn) {
     var t = form.querySelector('[data-inline-total]');
     if (v) v.textContent = String(n);
     if (t) t.textContent = money(price * n);
+    syncFields(form);
   }
 
   /* Keep a form pointed at whatever its own component currently has selected.
