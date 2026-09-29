@@ -254,11 +254,19 @@
         leg += '<span class="aa-mcal-key" style="--c:' + m.color + '"><i></i>' + esc(m.track || m.code) + '</span>';
       });
       if (leg) { h += '<div class="aa-mcal-legend">' + leg + '</div>'; }
-      root.querySelector('.aa-mcal__cal').innerHTML = h;
+      /* Guarded: an unguarded lookup here throws if the shell ever renders
+         without its grid, and the throw takes the whole mini calendar down
+         -- including the registration forms it builds. */
+      var grid = root.querySelector('.aa-mcal__cal');
+      if (grid) { grid.innerHTML = h; }
     }
 
     function renderPanel() {
+      /* Guarded for the same reason as the grid above: a shell without its
+         panel used to throw here, and the throw killed the whole calendar --
+         taking the registration form this function builds with it. */
       var el = root.querySelector('.aa-mcal__panel');
+      if (!el) { return; }
       if (sel === null) {
         el.innerHTML = '<p class="aa-mcal-hint">' + esc(S.pick_hint) + '</p>';
         return;
@@ -427,7 +435,8 @@
         hov = null;
         render();
         if (window.matchMedia && window.matchMedia('(max-width:1023px)').matches) {
-          root.querySelector('.aa-mcal__panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          var pan = root.querySelector('.aa-mcal__panel');
+          if (pan) { pan.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
         }
       }
     });

@@ -34,6 +34,60 @@ function aaRegGo(win, url) {
   window.location.assign(url);
 }
 
+/* ============================================================================
+   A REFUSAL THAT CANNOT GO NOWHERE
+   ----------------------------------------------------------------------------
+   Every "we cannot proceed" path below used to write into an element found
+   with querySelector and then guarded with `if (node)`. When the element was
+   missing -- a form built by another component, a template that dropped the
+   note, a consent box that is not in this markup -- the guard turned a refusal
+   into SILENCE. The buyer typed an email, pressed Pay, and nothing whatsoever
+   happened: no redirect, no message, no change of any kind. On a payment path
+   that is the worst failure of the set, because it is indistinguishable from a
+   dead page and it costs a sale without leaving a trace.
+
+   aaRegSay writes to the best surface it can find inside the scope it is given
+   and BUILDS one when there is none, so the refusal is always visible. It is
+   also announced: role="alert" makes a screen reader read it out, which the
+   silent branches obviously never did.
+   ========================================================================== */
+function aaRegSay(scope, msg, focusEl) {
+  if (!msg) { return null; }
+  var node = null;
+  if (scope && scope.querySelector) {
+    node = scope.querySelector('[data-inline-note]')
+        || scope.querySelector('[data-hint2]')
+        || scope.querySelector('[data-hint]');
+  }
+  if (!node && scope && scope.appendChild) {
+    node = document.createElement('p');
+    node.className = 'aareg-inline-note';
+    node.setAttribute('data-inline-note', '');
+    scope.appendChild(node);
+  }
+  if (!node) {
+    /* No scope at all to hang it on. An alert is ugly; being ignored is worse. */
+    try { window.alert(msg); } catch (e) {}
+    return null;
+  }
+  node.setAttribute('role', 'alert');
+  node.setAttribute('aria-live', 'assertive');
+  node.textContent = msg;
+  if (focusEl && focusEl.focus) { try { focusEl.focus({ preventScroll: false }); } catch (e) { focusEl.focus(); } }
+  return node;
+}
+
+/* The same idea for a handler as a whole: if anything in a submit path throws,
+   the browser swallows it and the click looks like it did nothing. */
+function aaRegGuard(scope, fn) {
+  try { return fn(); }
+  catch (err) {
+    aaRegSay(scope, (window.AA_REG && window.AA_REG.msgError)
+      || 'Something went wrong starting checkout. Please try again, or email us and we will register you by hand.');
+    if (window.console && console.error) { console.error('[aa-reg]', err); }
+  }
+}
+
 /* Agile Agilist — Course Calendar (2B shell + 4D dense picker). Vanilla, IIFE, no deps.
    Progressive enhancement: the markup already lists every batch with the next available one
    selected; this file adds month tabs, filtering, seats and the two-step wizard.
@@ -175,7 +229,14 @@ function aaRegGo(win, url) {
     cards.forEach(function (c) {
       if (c.getAttribute('data-bound')) return;
       c.setAttribute('data-bound', '1');
-      c.querySelector('.aacal-cardbtn').addEventListener('click', function () {
+      /* GUARDED, AND THE GUARD IS THE POINT. An unguarded querySelector here
+         threw on the first card that had no button, and the throw took the
+         whole calendar script down with it -- including the Pay handler at the
+         bottom of this file. The symptom was a Pay button that did nothing at
+         all, with no message, which is the hardest failure on this path to
+         diagnose and the most expensive to leave running. */
+      var cardBtn = c.querySelector('.aacal-cardbtn');
+      if (cardBtn) cardBtn.addEventListener('click', function () {
         goStep(1, false);
         selectCard(c);
       });
@@ -227,7 +288,8 @@ function aaRegGo(win, url) {
     cards.forEach(function (c) {
       var on = c === card;
       c.classList.toggle('is-on', on);
-      c.querySelector('.aacal-cardbtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+      var cb = c.querySelector('.aacal-cardbtn');
+      if (cb) cb.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     var left = parseInt(card.getAttribute('data-seats-left'), 10) || MAX_SEATS;
     if (state.seats > left) state.seats = left;
@@ -346,7 +408,8 @@ function aaRegGo(win, url) {
       var i = parseInt(s.getAttribute('data-step'), 10);
       s.classList.toggle('is-on', n === i);
       s.classList.toggle('is-past', typeof n === 'number' && n > i);
-      s.querySelector('.aacal-num').textContent = (typeof n === 'number' && n > i) ? '✓' : String(i);
+      var num = s.querySelector('.aacal-num');
+      if (num) num.textContent = (typeof n === 'number' && n > i) ? '✓' : String(i);
     });
     if (focus !== false) {
       var target = (n === 2 ? form2 : n === 'done' ? done : form1) || root;
@@ -363,7 +426,31 @@ function aaRegGo(win, url) {
 
   on(form2, 'submit', function (e) {
     e.preventDefault();
-    if (!consent || !consent.checked) { return; }
+    aaRegGuard(form2, function () {
+    /* WAS A BARE `return`. No consent box in the markup, or one left unticked,
+       and the Pay button did nothing at all -- no message, no focus, nothing.
+       render() also disables the button in that state, so this only fires when
+       the two disagree, which is exactly when a silent refusal is hardest to
+       understand. */
+    if (!consent) {
+      aaRegSay(form2, 'We cannot take this registration here. Please email us and we will register you by hand.');
+      return;
+    }
+    if (!consent.checked) {
+      aaRegSay(form2, CFG.msgConsent || 'Please tick the box to agree before paying.', consent);
+      return;
+    }
+    /* The email lives on step 1 and gates the Next button, but a form can be
+       submitted with Enter from step 2 after the field is cleared. */
+    if (!detailsOk()) {
+      aaRegSay(form2, CFG.msgEmail || 'Please enter a valid email address.');
+      goStep(1);
+      return;
+    }
+    if (!state.card) {
+      aaRegSay(form2, 'Please choose a date first.');
+      return;
+    }
 
     /* Note what is NOT sent: price, total, currency. data-price is in the
        markup so the page can show a running total, and devtools can rewrite
@@ -376,7 +463,7 @@ function aaRegGo(win, url) {
     };
 
     if (!ENDPOINT) {
-      txt(elHint2 || elHint, CFG.msgUnavailable || 'Registration is not available right now.');
+      aaRegSay(form2, CFG.msgUnavailable || 'Registration is not available right now.');
       return;
     }
 
@@ -400,8 +487,9 @@ function aaRegGo(win, url) {
     }).catch(function (err) {
       if (win && !win.closed) { try { win.close(); } catch (e) {} }
       if (btnPay) { btnPay.disabled = false; btnPay.textContent = wasLabel; }
-      txt(elHint2 || elHint, (err && err.message) || CFG.msgError ||
+      aaRegSay(form2, (err && err.message) || CFG.msgError ||
         'We could not start checkout. Please try again, or email us and we will register you by hand.');
+    });
     });
   });
 
@@ -505,7 +593,8 @@ function aaRegGo(win, url) {
     cards.forEach(function (c) {
       var on = c === card;
       c.classList.toggle('is-on', on);
-      c.querySelector('.aahero-cardbtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+      var hb = c.querySelector('.aahero-cardbtn');
+      if (hb) hb.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     /* Both are optional. [data-hero-short] lived inside the old "Reserve
        <dates>" button, which the in-place checkout replaced — writing to it
@@ -531,7 +620,8 @@ function aaRegGo(win, url) {
   }
 
   cards.forEach(function (c) {
-    c.querySelector('.aahero-cardbtn').addEventListener('click', function () { select(c, true); });
+    var hbtn = c.querySelector('.aahero-cardbtn');
+    if (hbtn) hbtn.addEventListener('click', function () { select(c, true); });
   });
 
   /* keep the hero in sync when the user changes their mind in the calendar below */
@@ -630,16 +720,20 @@ function aaRegGo(win, url) {
     var form = e.target.closest && e.target.closest('[data-aa-inline]');
     if (!form) return;
     e.preventDefault();
+    aaRegGuard(form, function () {
 
-    var note = form.querySelector('[data-inline-note]');
     var btn = form.querySelector('[data-inline-pay]');
-    var email = (form.querySelector('[name="email"]') || {}).value || '';
+    var field = form.querySelector('[name="email"]');
+    var email = (field || {}).value || '';
+    /* WAS `if (note) note.textContent = ...`. A form built somewhere without a
+       [data-inline-note] -- and one of the three builders could always drift --
+       refused the click and said nothing. aaRegSay makes the note if it has to. */
     if (!/.+@.+\..+/.test(email.trim())) {
-      if (note) note.textContent = 'Please enter a valid email address.';
+      aaRegSay(form, CFG.msgEmail || 'Please enter a valid email address.', field);
       return;
     }
     if (!CFG.checkout) {
-      if (note) note.textContent = CFG.msgUnavailable || 'Registration is not available right now.';
+      aaRegSay(form, CFG.msgUnavailable || 'Registration is not available right now.');
       return;
     }
 
@@ -669,7 +763,9 @@ function aaRegGo(win, url) {
     }).catch(function (err) {
       if (win && !win.closed) { try { win.close(); } catch (e) {} }
       if (btn) { btn.disabled = false; btn.textContent = was; }
-      if (note) note.textContent = (err && err.message) || CFG.msgError || 'We could not start checkout.';
+      aaRegSay(form, (err && err.message) || CFG.msgError ||
+        'We could not start checkout. Please try again, or email us and we will register you by hand.');
+    });
     });
   });
 
