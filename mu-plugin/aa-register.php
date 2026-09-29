@@ -370,7 +370,9 @@ function aa_reg_courses() {
 		),
 
 		/* ------------------------------------------------------------------
-		   THE AI-NATIVE SUITE — classroom courses, one date a month per city.
+		   THE AI-NATIVE SUITE — one date a month per city, and live online.
+		   The schedule below is the IN-PERSON calendar; every course can also
+		   be attended remotely on the same dates.
 		   Keys are page slugs, because that is what auto-placement matches on.
 
 		   Everything below was read off your own live pages, not invented:
@@ -414,7 +416,13 @@ function aa_reg_courses() {
 		'ai-native-foundations' => array(
 			'code'     => 'AINF',
 			'name'     => 'AI-Native Foundations Certification',
-			'eyebrow'  => 'In person · AINF certification',
+			/* REMOTE DELIVERY, Sep 2026. Every AI-Native course can now be
+			   attended live online as well as in the room. The city schedule
+			   below is unchanged -- those are the in-person dates -- and the
+			   page copy, the JSON-LD and the FAQ already said live-virtual, so
+			   this is the chip catching up with the rest of the page rather
+			   than a new claim. */
+			'eyebrow'  => 'Live online or in person · AINF certification',
 			'h1'       => 'AI-Native Foundations.',
 			'lede'     => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track, and the prerequisite for Value Architect.',
 			'url'      => '/training/ai-native/ai-native-foundations/',
@@ -424,7 +432,7 @@ function aa_reg_courses() {
 			'days'     => 2,          // UNCONFIRMED — see the note above
 			'seats'    => 18,
 			'weeks'    => 78,         // 18 months: a monthly course needs a longer window
-			'proof'    => array( 'In person', 'Exam fee included', 'No prerequisites' ),
+			'proof'    => array( 'Live online or in person', 'Exam fee included', 'No prerequisites' ),
 			'schedule' => array(
 				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-03' ),
 				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-06' ),
@@ -437,7 +445,7 @@ function aa_reg_courses() {
 			// says change-agent: renaming the slug would need a 301 and would
 			// reset the page's search history for no gain.
 			'name'     => 'AI-Native Value Architect Certification',
-			'eyebrow'  => 'In person · AI-Native Value Architect',
+			'eyebrow'  => 'Live online or in person · AI-Native Value Architect',
 			'h1'       => 'AI-Native Value Architect.',
 			'lede'     => 'Lead enterprise AI adoption — diagnose readiness, build the roadmap, drive the habits, govern the risk, and measure sustained change. Requires AI-Native Foundations first.',
 			'url'      => '/training/ai-native/ai-native-change-agent/',
@@ -447,7 +455,7 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 78,
-			'proof'    => array( 'In person', 'Exam fee included', 'AINF required' ),
+			'proof'    => array( 'Live online or in person', 'Exam fee included', 'AINF required' ),
 			'schedule' => array(
 				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-10' ),
 				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-13' ),
@@ -457,7 +465,7 @@ function aa_reg_courses() {
 		'ai-native-ready-certification-2' => array(
 			'code'     => 'AINORG',
 			'name'     => 'Leading the AI-Native Organization',
-			'eyebrow'  => 'In person · Executive workshop',
+			'eyebrow'  => 'Live online or in person · Executive workshop',
 			'h1'       => 'Leading the AI-Native Organization.',
 			'lede'     => 'A two-day executive cohort capped at twelve senior leaders — CEOs, COOs, CTOs, CAIOs — designing the AI-Native operating model, with six months of follow-up coaching included.',
 			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
@@ -6665,7 +6673,14 @@ function aa_salary_data() {
 			'SP'     => 95,
 			'AINF'   => 140,
 			'AINCA'  => 180,
-			'AINORG' => 280,
+			/* WAS 280, WHICH IS THE CHIEF AI OFFICER FIGURE, NOT THIS ONE.
+			   /training/ai-native/ publishes four bars -- CAIO 280K, AINORG
+			   220K, AINCA 180K, AINF 140K -- and the top one was copied onto
+			   the credential below it. The visible symptom was the AI-Native
+			   ladder drawing its final step 60K above the salary chart on the
+			   same page. Chief AI Officer is a role this catalogue does not
+			   sell a course for, which is why it has no row of its own. */
+			'AINORG' => 220,
 			/* The industry medians, from the figures /training/safe-industry/
 			   already publishes in its own salary section. aa_reg_industry_bands()
 			   held the low-high range for these four but no median, so an
@@ -8961,10 +8976,22 @@ function aa_reg_jobs_country() {
  */
 function aa_reg_role_map() {
 	return array(
+		/* ------------------------------------------------------------------
+		   CORE ROLES. Researched Sep 2026, the same way the industry rows
+		   were, and with the same test: is this what a job advertisement
+		   actually says?
+
+		   "SAFe Agilist" fails that test in a particular way. It is the
+		   credential employers NAME MOST OFTEN in the requirements -- held by
+		   Scrum Masters, managers, RTEs and transformation leads alike -- and
+		   almost never the title at the top of the advertisement. So the role
+		   is the title that gets advertised and the credential stays in the
+		   "also posted as" line where it belongs.
+		   ------------------------------------------------------------------ */
 		'SA'   => array(
-			'role'  => 'SAFe Agilist / Transformation Lead',
-			'also'  => array( 'Agile Transformation Lead', 'Ways of Working Lead' ),
-			'query' => 'SAFe Agilist',
+			'role'  => 'Agile Transformation Lead',
+			'also'  => array( 'Agile Coach', 'Lead Agilist', 'Ways of Working Lead', 'Delivery Lead' ),
+			'query' => 'Agile Transformation Lead',
 		),
 		'SSM'  => array(
 			'role'  => 'Scrum Master',
@@ -8981,20 +9008,30 @@ function aa_reg_role_map() {
 			'also'  => array( 'Business Product Owner', 'Digital Product Manager' ),
 			'query' => 'Product Owner',
 		),
+		/* SAFe for Teams is the one credential with no hiring title of its
+		   own: Scaled Agile's own audience for it is "software developers,
+		   testers, DBAs, application architects and other team members". So
+		   the row names the seat rather than inventing a job, and the titles
+		   underneath are the jobs those people already hold. */
 		'SP'   => array(
-			'role'  => 'Agile Practitioner',
-			'also'  => array( 'Agile Team Member', 'Delivery Analyst' ),
-			'query' => 'Agile Practitioner',
+			'role'  => 'Agile team member',
+			'also'  => array( 'Software Engineer', 'QA Engineer', 'Business Analyst', 'UX Designer' ),
+			'query' => 'Agile Team Member',
 		),
 		'SDP'  => array(
-			'role'  => 'DevOps Practitioner',
-			'also'  => array( 'Platform Engineer', 'Release Engineer', 'DevOps Lead' ),
+			'role'  => 'DevOps Engineer',
+			'also'  => array( 'Platform Engineer', 'Release Engineer', 'Site Reliability Engineer', 'DevOps Lead' ),
 			'query' => 'DevOps Engineer',
 		),
+		/* Scaled Agile names the seats itself -- "general or line of business
+		   managers, Product or Solution Management, Enterprise Architects,
+		   C-level executives, Operations executives, Senior engineering
+		   leaders" -- so the "also" line is their list, not a guess. There is
+		   no job advertised as "SAFe Business Owner" anywhere. */
 		'BO'   => array(
-			'role'  => 'Business Owner / Sponsor',
-			'also'  => array( 'Business Line Lead', 'Head of Business Transformation' ),
-			'query' => 'Business Transformation Lead',
+			'role'  => 'Line-of-business executive',
+			'also'  => array( 'Head of Business Transformation', 'Director of Operations', 'Line of Business Manager', 'Head of Product Management' ),
+			'query' => 'Business Transformation',
 		),
 		/* ---- advanced ---- */
 		'RTE'  => array(
@@ -9096,20 +9133,57 @@ function aa_reg_role_map() {
 			'query' => 'Agile Delivery Manager',
 		),
 		/* ---- AI-Native ---- */
+		/* ------------------------------------------------------------------
+		   AI-NATIVE. All three roles were the credential's own name, which is
+		   the fault already fixed on the industry rows. The market has settled
+		   on its own vocabulary in the last two years and it is not ours:
+		   the same job is advertised as AI Enablement Lead, AI Integration
+		   Manager, AI Adoption Manager or AI Workflow Lead, reporting into a
+		   transformation office, IT, operations or a Chief AI Officer.
+
+		   The queries follow the titles rather than the badges. "AI
+		   Enablement" is left deliberately short: as an ordered phrase it
+		   matches Lead, Manager and Specialist in one query instead of missing
+		   two of the three. "Head of AI" does the same job at the top end,
+		   catching Head of AI, Head of AI Strategy and Head of AI Governance
+		   where "VP AI Strategy" caught none of them.
+		   ------------------------------------------------------------------ */
 		'AINF'   => array(
-			'role'  => 'AI-Native Practitioner',
-			'also'  => array( 'AI Enablement Lead', 'AI Adoption Specialist' ),
+			'role'  => 'AI Adoption Manager',
+			'also'  => array( 'AI Enablement Specialist', 'AI Workflow Lead', 'AI Champion' ),
 			'query' => 'AI Enablement',
 		),
 		'AINCA'  => array(
-			'role'  => 'AI-Native Change Agent',
-			'also'  => array( 'AI Transformation Lead', 'Head of AI Enablement' ),
+			'role'  => 'AI Transformation Lead',
+			'also'  => array( 'AI Enablement Lead', 'AI Integration Manager', 'Head of AI Enablement' ),
 			'query' => 'AI Transformation Lead',
 		),
 		'AINORG' => array(
-			'role'  => 'AI-Native Executive',
-			'also'  => array( 'Chief AI Officer', 'VP, AI Strategy' ),
-			'query' => 'VP AI Strategy',
+			'role'  => 'Chief AI Officer',
+			'also'  => array( 'VP, AI', 'Head of AI Strategy', 'Director of AI Governance' ),
+			'query' => 'Head of AI',
+		),
+		/* ---- micro-credentials ----
+		   Two of the four badges buy their way into a job market of their own.
+		   Responsible AI lands in AI governance, the fastest-growing specialism
+		   on any of these pages, and Agile Contracting lands in public-sector
+		   acquisition. The two Advanced Facilitator badges do not: they sharpen
+		   a Scrum Master or a coach, which is why /training/safe-found/ shows
+		   those two roles alongside these rather than inventing two more.
+
+		   NEITHER CARRIES A PAY BAND. A six-hour badge does not move a salary
+		   on its own, and the figures the micro-credential page prints beside
+		   them are role ranges. The live count and the advertised average are
+		   the honest numbers on these two rows. */
+		'RAI'    => array(
+			'role'  => 'AI Governance Lead',
+			'also'  => array( 'Responsible AI Lead', 'AI Risk Manager', 'AI Ethics Officer', 'Director of AI Governance' ),
+			'query' => 'AI Governance',
+		),
+		'ACG'    => array(
+			'role'  => 'Agile acquisition specialist',
+			'also'  => array( 'Contracting Officer', 'Procurement Analyst', 'Acquisition Specialist' ),
+			'query' => 'Agile Acquisition',
 		),
 	);
 }
@@ -9129,6 +9203,14 @@ function aa_reg_track_codes() {
 		'adv-safe'      => array( 'RTE', 'LSSP', 'SPC', 'ASPC', 'APM', 'LPM', 'ARCH' ),
 		'safe-industry' => array( 'ARCH', 'ASE', 'SHWA', 'SHWP', 'SA-Gov' ),
 		'ai-native'     => array( 'AINF', 'AINCA', 'AINORG' ),
+		/* THE MICRO-CREDENTIAL PAGE HAD NO SET AND FELL BACK TO THE HUB'S
+		   DEFAULT -- Scrum Master, Product Owner, RTE, Agile Coach, the same
+		   four the hub shows everybody. Its own four badges split two ways:
+		   Responsible AI and Agile Contracting open doors of their own, and
+		   the two Advanced Facilitator badges sharpen a Scrum Master or a
+		   coach rather than replacing them. So the page argues all four, in
+		   that order. */
+		'safe-found'    => array( 'RAI', 'ACG', 'SSM', 'SPC' ),
 	);
 }
 
@@ -9153,7 +9235,9 @@ function aa_reg_page_track() {
 
 	/* adv-safe and safe-industry are tested first: neither contains "/safe/",
 	   but the order costs nothing and survives a future slug that does. */
-	foreach ( array( 'adv-safe', 'safe-industry', 'ai-native', 'safe' ) as $t ) {
+	/* safe-found before safe for the same reason adv-safe is first: the more
+	   specific segment has to be tested before the one it contains. */
+	foreach ( array( 'adv-safe', 'safe-industry', 'safe-found', 'ai-native', 'safe' ) as $t ) {
 		if ( strpos( $path, '/' . $t . '/' ) !== false ) { return $t; }
 	}
 	return '';
