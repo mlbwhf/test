@@ -370,73 +370,69 @@ function aa_reg_courses() {
 		),
 
 		/* ------------------------------------------------------------------
-		   THE AI-NATIVE SUITE — one date a month per city, and live online.
-		   The schedule below is the IN-PERSON calendar; every course can also
-		   be attended remotely on the same dates.
+		   THE AI-NATIVE SUITE — LIVE ONLINE, TWICE A MONTH.
 		   Keys are page slugs, because that is what auto-placement matches on.
 
-		   Everything below was read off your own live pages, not invented:
+		   THIS USED TO BE A CLASSROOM CALENDAR. Each course ran once a month
+		   in Mississauga and once a quarter in Dubai and Riyadh, scheduled
+		   through 'schedule' -- the per-city path in aa_reg_generate(), with
+		   its own regional weekend rule because Friday and Saturday are the
+		   rest days in the Gulf. Delivery is now online everywhere, so there
+		   are no cities to schedule around and no second weekend rule to
+		   apply. The three rows use 'cadence' like every other course on the
+		   site, which also gives them the holiday handling and the backfill
+		   that the per-city path never had.
 
-		     AINF   11792  $1,500  ai-native-foundations
-		     AINCA  11818  $2,500  ai-native-change-agent          3 days
-		     AINORG 23813  $1,500  ai-native-ready-certification-2 2 days, cohort of 12
+		   TWICE A MONTH, AND NEVER TWO ON THE SAME DAY. One trainer cannot
+		   run two classes at once, so the weeks interleave and the two courses
+		   that share weeks 1 and 3 sit on different weekdays:
 
-		   ONE DURATION IS UNCONFIRMED. AINCA states three days in four places
-		   (the chip, the curriculum heading, the FAQ, and courseWorkload P3D)
-		   and AINORG states two the same way. AI-Native Foundations states its
-		   price but not its length anywhere I can read; the 2 comes from
-		   redesign-build/courses.json, whose price for that course ($1,150) is
-		   already known to be stale. Confirm it before going live — it decides
-		   the end date printed on every generated cohort.
+		     Foundations           Thursday, weeks 1 and 3   (1 day)
+		     Value Architect       Thursday, weeks 2 and 4   (2 days, Thu-Fri)
+		     Leading the Org       Tuesday,  weeks 1 and 3   (2 days, Tue-Wed)
 
-		   DATES. You gave one: the first AI-Native Value Architect in
-		   Mississauga is Thursday 10 September, the second Thursday. The rest
-		   follow one rule rather than a list — each course takes its own week
-		   of the month so one trainer is never in two rooms at once:
+		   Change any of it by changing 'cadence' — the dates follow.
 
-		     Foundations      1st Thursday     Value Architect  2nd Thursday
-		     Leading the Org  3rd Thursday
+		   THE PAGE IDs, PRICES AND LENGTHS, read off the live pages:
 
-		   The Gulf cities run on SUNDAYS, not Thursdays. Thursday-plus-Friday
-		   straddles the Gulf weekend, so every class there would be a weekend
-		   class; Sunday is the first working day of the week in both.
+		     AINF   11792  USD 1,500  ai-native-foundations            1 day
+		     AINCA  11818  USD 2,500  ai-native-change-agent           2 days
+		     AINORG 23813  USD 1,500  ai-native-ready-certification-2  2 days, cohort of 12
 
-		   Quarterly, and the two cities are a MONTH apart, not a week: Dubai
-		   opens in September, Riyadh in October, then Dec/Jan, Mar/Apr and so
-		   on. Both were originally later -- Dubai October, Riyadh November --
-		   which is why the home page showed no Gulf date in September at all.
-		   They cannot both sit in September: three courses take three of the
-		   month's four Sundays per city, so a shared month would put two
-		   classes in different countries on the same day. A month apart keeps
-		   each city's three courses in their own weeks and one trainer able to
-		   fly to both.
+		   ALL THREE LENGTHS WERE WRONG IN THIS TABLE AND ARE NOW CONFIRMED.
+		   AINF said 2 and the page says one day in four places. AINORG said 1
+		   and the page calls it a two-day executive cohort. AINCA said 2 while
+		   the page said three in five places — and two is right, confirmed with
+		   the client alongside the rename. The length decides the end date
+		   printed on every generated cohort, which is why it was flagged as
+		   unconfirmed here for as long as it was.
 
-		   Change any of it by changing 'first' — the whole series follows.
+		   THE COURSE IS NAMED AI-NATIVE VALUE ARCHITECT. The code stays AINCA
+		   and the slug stays ai-native-change-agent: renaming the slug would
+		   need a 301 and would reset the page's search history for no gain.
 		   ------------------------------------------------------------------ */
 		'ai-native-foundations' => array(
 			'code'     => 'AINF',
 			'name'     => 'AI-Native Foundations Certification',
-			/* REMOTE DELIVERY, Sep 2026. Every AI-Native course can now be
-			   attended live online as well as in the room. The city schedule
-			   below is unchanged -- those are the in-person dates -- and the
-			   page copy, the JSON-LD and the FAQ already said live-virtual, so
-			   this is the chip catching up with the rest of the page rather
-			   than a new claim. */
-			'eyebrow'  => 'Live online or in person · AINF certification',
+			'eyebrow'  => 'Live online · AINF certification',
 			'h1'       => 'AI-Native Foundations.',
 			'lede'     => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track, and the prerequisite for Value Architect.',
 			'url'      => '/training/ai-native/ai-native-foundations/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 1500,
-			'days'     => 2,          // UNCONFIRMED — see the note above
+			/* WAS 2, AND UNCONFIRMED. The page states one day in four places --
+			   the chip, the curriculum heading, courseWorkload P1D, and "Live
+			   1-day course" in the includes panel. The 2 came from
+			   redesign-build/courses.json, whose price for this course was
+			   already known to be stale. */
+			'days'     => 1,
 			'seats'    => 18,
-			'weeks'    => 78,         // 18 months: a monthly course needs a longer window
-			'proof'    => array( 'Live online or in person', 'Exam fee included', 'No prerequisites' ),
-			'schedule' => array(
-				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-03' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-06' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-04' ),
+			'weeks'    => 52,         // twice a month over a year: ~24 dates
+			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
+			'cadence'  => array(
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 3 ),
 			),
 		),
 		'ai-native-change-agent' => array(
@@ -445,41 +441,48 @@ function aa_reg_courses() {
 			// says change-agent: renaming the slug would need a 301 and would
 			// reset the page's search history for no gain.
 			'name'     => 'AI-Native Value Architect Certification',
-			'eyebrow'  => 'Live online or in person · AI-Native Value Architect',
+			'eyebrow'  => 'Live online · AI-Native Value Architect',
 			'h1'       => 'AI-Native Value Architect.',
 			'lede'     => 'Lead enterprise AI adoption — diagnose readiness, build the roadmap, drive the habits, govern the risk, and measure sustained change. Requires AI-Native Foundations first.',
 			'url'      => '/training/ai-native/ai-native-change-agent/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 2500,
+			/* Two days, confirmed with the client Sep 2026 alongside the
+			   rename. The page still said three in five places and is being
+			   corrected to match. */
 			'days'     => 2,
 			'seats'    => 18,
-			'weeks'    => 78,
-			'proof'    => array( 'Live online or in person', 'Exam fee included', 'AINF required' ),
-			'schedule' => array(
-				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-10' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-13' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-11' ),
+			'weeks'    => 52,
+			'proof'    => array( 'Live online', 'Exam fee included', 'AINF required' ),
+			'cadence'  => array(
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 4 ),
 			),
 		),
 		'ai-native-ready-certification-2' => array(
 			'code'     => 'AINORG',
 			'name'     => 'Leading the AI-Native Organization',
-			'eyebrow'  => 'Live online or in person · Executive workshop',
+			'eyebrow'  => 'Live online · Executive workshop',
 			'h1'       => 'Leading the AI-Native Organization.',
 			'lede'     => 'A two-day executive cohort capped at twelve senior leaders — CEOs, COOs, CTOs, CAIOs — designing the AI-Native operating model, with six months of follow-up coaching included.',
 			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 1500,
-			'days'     => 1,
+			/* WAS 1. The page calls it a two-day executive cohort in its own
+			   lede and its chip, and the note at the top of this block says the
+			   same. */
+			'days'     => 2,
 			'seats'    => 12,         // the page says "capped at 12 senior leaders"
-			'weeks'    => 78,
+			'weeks'    => 52,
 			'proof'    => array( '12 seats max', 'Six months coaching', 'Exam fee included' ),
-			'schedule' => array(
-				array( 'key' => 'mississauga', 'label' => 'Mississauga, Canada',  'region' => 'na',   'every' => 1, 'first' => '2026-09-17' ),
-				array( 'key' => 'dubai',       'label' => 'Dubai, UAE',           'region' => 'gulf', 'every' => 3, 'first' => '2026-09-20' ),
-				array( 'key' => 'riyadh',      'label' => 'Riyadh, Saudi Arabia', 'region' => 'gulf', 'every' => 3, 'first' => '2026-10-18' ),
+			/* TUESDAY, NOT THURSDAY. This course shares weeks 1 and 3 with
+			   Foundations, and two classes cannot run on one day. Tuesday keeps
+			   the two-day span inside the same working week. */
+			'cadence'  => array(
+				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 3 ),
 			),
 		),
 	);
@@ -1192,10 +1195,14 @@ function aa_reg_derived_course( $slug ) {
 		);
 
 		/* A MIRROR OVERRIDES THE TABLE; IT DOES NOT REPLACE IT.
-		   The AI-Native courses are scheduled per city, in 'schedule' -- a key
-		   no page can express. Returning the page's row on its own threw that
-		   away and silently re-scheduled them onto a weekly cadence, so a
-		   French visitor would have been offered dates that do not exist.
+		   The AI-Native courses used to be scheduled per city, in 'schedule' --
+		   a key no page can express. Returning the page's row on its own threw
+		   that away and silently re-scheduled them onto a weekly cadence, so a
+		   French visitor would have been offered dates that do not exist. Those
+		   three rows now carry an ordinary 'cadence' like everything else, so
+		   that particular trap is gone; the merge still matters for every other
+		   key a page cannot state, and 'schedule' still works if a classroom
+		   course is ever added back.
 
 		   Starting from the table row and laying the page's values over it
 		   means a mirror can say what it knows -- its own title, lede, price,
@@ -5941,8 +5948,8 @@ function aa_training_copy_i18n() {
 				          . 'n’existaient pas il y a deux ans et que l’on trouve aujourd’hui dans '
 				          . 'les offres d’emploi. Conçues pour celles et ceux qui dirigent le '
 				          . 'travail : aucune programmation requise.',
-				'comp'   => 'En présentiel et en direct virtuel · examen inclus.',
-				'points' => array( '1 à 2 jours', 'Aucune programmation requise', 'Présentiel ou virtuel' ),
+				'comp'   => 'En direct virtuel · examen inclus.',
+				'points' => array( '1 à 2 jours', 'Aucune programmation requise', 'En direct virtuel' ),
 			),
 			'safe-found' => array(
 				'label'  => 'Micro-certifications',
@@ -6008,8 +6015,8 @@ function aa_training_copy_i18n() {
 				          . 'existían hace dos años y que hoy están en las ofertas de empleo. '
 				          . 'Diseñadas para quienes dirigen el trabajo, así que no hace falta '
 				          . 'programar.',
-				'comp'   => 'Presencial y en vivo online · examen incluido.',
-				'points' => array( '1–2 días', 'Sin programación', 'Presencial o en vivo online' ),
+				'comp'   => 'En vivo online · examen incluido.',
+				'points' => array( '1–2 días', 'Sin programación', 'En vivo online' ),
 			),
 			'safe-found' => array(
 				'label'  => 'Microcredenciales',
@@ -6156,8 +6163,11 @@ function aa_training_copy() {
 			           . 'Organization — three certifications for roles that did not exist two years '
 			           . 'ago and are on job boards today. Built for the people who lead the work, so '
 			           . 'no coding is required.',
-			'comp'    => 'In person and live online · exam fee included.',
-			'points'  => array( '1–2 days', 'No coding required', 'In person or live online' ),
+			/* ONLINE EVERYWHERE since Sep 2026. The suite used to run in a room
+			   in Mississauga, Dubai and Riyadh; it now runs live online twice a
+			   month, so neither line offers a classroom any more. */
+			'comp'    => 'Live online · exam fee included.',
+			'points'  => array( '1–2 days', 'No coding required', 'Live online' ),
 		),
 
 		/* ---------------------------------------------------------------
