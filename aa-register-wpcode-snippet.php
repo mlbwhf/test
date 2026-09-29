@@ -607,6 +607,33 @@ function aa_reg_kind( $start, $days, $region = 'na' ) {
 	return 'weekday';
 }
 
+/**
+ * Does the span cover BOTH working days and rest days?
+ *
+ * aa_reg_kind() answers a scheduling question -- "does this span touch the
+ * weekend at all" -- and the generator uses it to reject or move a start. That
+ * is the right test there and it must not change.
+ *
+ * It is the wrong test for a LABEL. SPC runs four days from a Monday or a
+ * Thursday, so a Thursday cohort is Thu-Fri-Sat-Sun: it touches the weekend,
+ * so aa_reg_kind() says 'weekend', and the card said "Weekend batch". A buyer
+ * reads that, books Saturday and Sunday, and loses two working days they had
+ * not planned for. The error is expensive and entirely in the wording.
+ *
+ * So the label asks a second, narrower question, and kind is left alone.
+ */
+function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
+	$rest = $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );   // ISO-8601: Mon=1
+	$d = new DateTime( $start );
+	$has_rest = false;
+	$has_work = false;
+	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
+		if ( in_array( (int) $d->format( 'N' ), $rest, true ) ) { $has_rest = true; } else { $has_work = true; }
+		$d->modify( '+1 day' );
+	}
+	return $has_rest && $has_work;
+}
+
 /** How many replacement starts to offer when the rule drops a scheduled one. */
 function aa_reg_backfill() { return 2; }
 
@@ -992,7 +1019,13 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 		'slot'  => $slot,
 		'kind'  => $kind,
 		'seats' => (int) ( isset( $course['seats'] ) ? $course['seats'] : 18 ),
-		'batch' => ( $kind === 'weekend' ? aa_reg_t( 'batch_weekend', 'Weekend batch' ) : aa_reg_slot_label( $slot ) ) . $note,
+		/* Three labels, not two. A span that is ALL rest days is a weekend
+		   batch; one that mixes the two has to say so, or the buyer books the
+		   wrong leave. The date range sits beside this on the card, so the
+		   label only has to describe the character of the batch. */
+		'batch' => ( aa_reg_kind_mixed( $start, $days, $region )
+			? aa_reg_t( 'batch_mixed', 'Weekday + weekend batch' )
+			: ( $kind === 'weekend' ? aa_reg_t( 'batch_weekend', 'Weekend batch' ) : aa_reg_slot_label( $slot ) ) ) . $note,
 		'hours' => aa_reg_slot_hours( $slot ),
 	);
 
@@ -3082,6 +3115,7 @@ function aa_reg_strings() {
 			'seats_open'    => 'Plazas disponibles',
 			'week_of'       => 'Semana del',
 			'batch_weekend' => 'Convocatoria de fin de semana',
+			'batch_mixed'   => 'Entre semana y fin de semana',
 			'batch_morning' => 'Convocatoria entre semana, mañanas',
 			'batch_after'   => 'Convocatoria entre semana, tardes',
 			'batch_evening' => 'Convocatoria de tarde-noche',
@@ -3189,6 +3223,7 @@ function aa_reg_strings() {
 			'seats_open'    => 'Places disponibles',
 			'week_of'       => 'Semaine du',
 			'batch_weekend' => 'Session de week-end',
+			'batch_mixed'   => 'Semaine et week-end',
 			'batch_morning' => 'Session en semaine, le matin',
 			'batch_after'   => 'Session en semaine, l\'après-midi',
 			'batch_evening' => 'Session en soirée',
