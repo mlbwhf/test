@@ -644,8 +644,23 @@ function aa_reg_is_blacked( $ymd ) {
 
 /** True when no day of the span touches a blackout date. */
 function aa_reg_span_ok( $start, $days ) {
+	$days = max( 1, (int) $days );
+
+	/* NO TWO-DAY CLASS STARTS ON A FRIDAY.
+	   Friday-Saturday was a Gulf working week, and it made sense while these
+	   ran in Riyadh. Everything is delivered remotely now, so a Fri-Sat class
+	   asks a North American or European buyer to give up their Saturday for
+	   the back half of a course -- and it reads on the card as a weekday batch
+	   that quietly eats the weekend. A two-day weekend class is Saturday and
+	   Sunday, and the generator simply moves a Friday start on rather than
+	   publishing one. Longer courses are unaffected: a four-day span crosses
+	   the weekend whatever day it opens on, and its label now says so. */
+	if ( $days === 2 && (int) ( new DateTime( $start ) )->format( 'N' ) === 5 ) {
+		return false;
+	}
+
 	$d = new DateTime( $start );
-	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
+	for ( $i = 0; $i < $days; $i++ ) {
 		if ( aa_reg_is_blacked( $d->format( 'Y-m-d' ) ) ) { return false; }
 		$d->modify( '+1 day' );
 	}
