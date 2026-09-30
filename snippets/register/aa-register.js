@@ -26,9 +26,34 @@ function aaRegOpener() {
   if (cfg.target !== '_blank') { return null; }
   try { return window.open('', '_blank'); } catch (e) { return null; }
 }
+/* A NEW TAB THAT NEVER ARRIVED USED TO END THE SALE IN SILENCE.
+   The home page opens checkout in a second tab, so it pre-opens a blank one
+   during the click and points it at Stripe when the session comes back. When
+   a phone browser suppresses that tab it does not always return null: it can
+   hand back a window whose `closed` is still false and which never navigates.
+   replace() then quietly does nothing, we returned, and the fallback below
+   never ran. Four attempts on a phone, four form submissions recorded, no
+   error and no Stripe -- indistinguishable from a dead button.
+
+   So the navigation is now VERIFIED rather than assumed. A popup that really
+   went to Stripe is cross-origin, and reading its href throws; one still
+   sitting on about:blank reads back cleanly, which is the tell. Only that
+   case falls back, so a tab that worked is never duplicated in this one. */
 function aaRegGo(win, url) {
   if (win && !win.closed) {
-    try { win.location.replace(url); return; } catch (e) { /* fall through */ }
+    try {
+      win.location.replace(url);
+      setTimeout(function () {
+        var stuck;
+        try { stuck = win.closed || win.location.href === 'about:blank'; }
+        catch (e) { stuck = false; }   // cross-origin: it arrived
+        if (stuck) {
+          if (!win.closed) { try { win.close(); } catch (e2) {} }
+          window.location.assign(url);
+        }
+      }, 700);
+      return;
+    } catch (e) { /* fall through */ }
   }
   if (win && !win.closed) { try { win.close(); } catch (e) {} }
   window.location.assign(url);

@@ -1094,8 +1094,22 @@ function aa_hh_row( $r, $str, $is_first, $is_on = null ) {
 	   sort first and diverged the moment it did not. */
 	if ( $is_on === null ) { $is_on = $is_first; }
 
+	/* CAN CHECKOUT ACTUALLY RESOLVE THIS?
+	   The home page resolves a course through aa_reg_course(), which falls
+	   back to deriving it from its own page -- so it can show eleven courses.
+	   aa_reg_find(), which turns a posted cohort id back into a course at
+	   checkout, loops aa_reg_courses() ONLY. Five of the eleven therefore
+	   rendered a buy form, took an email, and then failed with a 400 the
+	   buyer could do nothing about.
+
+	   The row now says which it is, and the panel follows. It is derived, not
+	   listed: add a course to aa_reg_courses() and it becomes buyable here
+	   with no further change. */
+	$sellable = function_exists( 'aa_reg_courses' ) && isset( aa_reg_courses()[ $r['slug'] ] );
+
 	return '<button type="button" class="aa-hh-row' . ( $is_on ? ' is-on' : '' ) . '"'
 	     . ' data-hh-row'
+	     . ' data-sellable="' . ( $sellable ? '1' : '0' ) . '"'
 	     . ' data-cohort="' . esc_attr( $co['id'] ) . '"'
 	     . ' data-start="' . esc_attr( $co['start'] ) . '"'
 	     . ' data-track="' . esc_attr( aa_hh_track( $c['crumb'], $r['slug'] ) ) . '"'

@@ -32,6 +32,14 @@
   var elLabel = root.querySelector('[data-hh-cta-label]');
   var elForm  = root.querySelector('[data-aa-inline]');
   var elBuyHd = root.querySelector('[data-hh-buyhead]');
+  var elBuy   = root.querySelector('#aa-hh-buy');
+
+  /* Can this row actually be bought here? The server marks each row, so
+     adding a course to aa_reg_courses() flips it with no change to this
+     file. A row with no flag is treated as sellable, which is what the
+     page did before the flag existed -- an un-updated template must not
+     lose its checkout. */
+  function sellable(row) { return !row || row.getAttribute('data-sellable') !== '0'; }
   var elBrief = root.querySelector('[data-hh-brief]');
 
   if (!rows.length) { return; }
@@ -50,7 +58,13 @@
        moves the buyer to the form rather than to another page that would ask
        the same question again. Without one (register snippet inactive) it
        keeps the real course-page link the server rendered. */
-    if (elForm && elCta) { elCta.setAttribute('href', '#aa-hh-buy'); }
+    /* An unsellable course has no checkout to move to, so the button keeps
+       the real course-page link the server rendered. Same button, same label
+       -- the difference is where it lands, not what it promises. */
+    if (elForm && elCta) {
+      elCta.setAttribute('href', sellable(state.row) ? '#aa-hh-buy'
+                                                     : state.row.getAttribute('data-href'));
+    }
     if (elLabel) {
       elLabel.textContent = 'Reserve ' + state.row.getAttribute('data-range') +
                             ' · ' + state.row.getAttribute('data-code');
@@ -66,6 +80,16 @@
      apply to its own panel. */
   function paintForm() {
     if (!elForm || !state.row) { return; }
+
+    /* NO FORM FOR A COURSE THAT CANNOT BE BOUGHT. Showing one took the
+       buyer's email and answered with a 400 they could do nothing about --
+       a dead end dressed as a checkout. */
+    if (!sellable(state.row)) {
+      if (elBuy) { elBuy.hidden = true; }
+      return;
+    }
+    if (elBuy) { elBuy.hidden = false; }
+
     if (elBuyHd) {
       elBuyHd.textContent = 'Registering for ' + state.row.getAttribute('data-range') +
                             ' · ' + state.row.getAttribute('data-code');
@@ -187,6 +211,7 @@
     elCta.addEventListener('click', function (e) {
       var email = elForm.querySelector('[name="email"]');
       if (!email) { return; }               // no form to drive; follow the href
+      if (!sellable(state.row)) { return; } // not sold here; follow the href
       e.preventDefault();
 
       var ok = /.+@.+\..+/.test((email.value || '').trim());
