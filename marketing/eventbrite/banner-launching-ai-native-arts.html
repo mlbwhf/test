@@ -1,0 +1,80 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:2160px; height:1080px; }
+  body {
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(1100px 760px at 78% 14%, rgba(143,207,207,.20) 0%, rgba(143,207,207,0) 62%),
+      radial-gradient(900px 700px at 8% 92%, rgba(18,126,136,.28) 0%, rgba(18,126,136,0) 60%),
+      linear-gradient(142deg, #0B2E35 0%, #0E3A44 48%, #08242A 100%);
+    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:#fff;
+  }
+  /* faint grid, keeps a flat gradient from looking empty at 2160px */
+  .grid { position:absolute; inset:0; opacity:.055;
+    background-image:linear-gradient(#8FCFCF 1px, transparent 1px), linear-gradient(90deg, #8FCFCF 1px, transparent 1px);
+    background-size:120px 120px; }
+  .edge { position:absolute; left:0; top:0; bottom:0; width:14px;
+    background:linear-gradient(180deg,#8FCFCF 0%, #127E88 55%, #0E8074 100%); }
+
+  .wrap { position:absolute; inset:0; display:flex; align-items:center;
+          padding:0 130px 0 182px; gap:90px; }
+  .left { flex:1 1 auto; min-width:0; }
+
+  .eyebrow { font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size:27px; letter-spacing:.30em; text-transform:uppercase; color:#8FCFCF; }
+
+  h1 { font-family:"Newsreader", Georgia, "Times New Roman", serif;
+       font-weight:400; font-size:150px; line-height:.98; letter-spacing:-.018em;
+       margin-top:34px; color:#fff; }
+  h1 em { display:block; font-style:italic; color:#9FE0DE; }
+
+  .rule { width:188px; height:5px; margin:46px 0 34px;
+          background:linear-gradient(90deg,#8FCFCF,#0E8074); border-radius:3px; }
+
+  .sub { font-size:40px; font-weight:500; color:#D6E7E7; letter-spacing:-.005em; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:16px; margin-top:44px; }
+  .chip { font-size:25px; font-weight:500; color:#CFE8E8;
+    border:1.5px solid rgba(143,207,207,.46); border-radius:999px; padding:14px 30px;
+    background:rgba(143,207,207,.085); white-space:nowrap; }
+  .chip.on { background:#8FCFCF; border-color:#8FCFCF; color:#0B2E35; font-weight:700; }
+
+  .right { flex:0 0 560px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .glow { position:absolute; width:620px; height:620px; border-radius:50%;
+          background:radial-gradient(circle, rgba(143,207,207,.34) 0%, rgba(143,207,207,0) 66%); }
+  .right img { position:relative; width:472px; height:auto; display:block;
+               filter:drop-shadow(0 34px 70px rgba(0,0,0,.52)); }
+
+  .foot { position:absolute; left:182px; right:130px; bottom:60px;
+          display:flex; align-items:baseline; justify-content:space-between;
+          font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+          font-size:25px; letter-spacing:.16em; text-transform:uppercase; color:#88A0A4; }
+  .foot b { color:#8FCFCF; font-weight:600; }
+</style>
+
+<div class="grid"></div>
+<div class="edge"></div>
+
+<div class="wrap">
+  <div class="left">
+    <div class="eyebrow">AI-Native SAFe<sup>&reg;</sup> &middot; 2 Days &middot; Live Online</div>
+    <h1>Launching<em>AI-Native ARTs</em></h1>
+    <div class="rule"></div>
+    <div class="sub">SAFe<sup>&reg;</sup> ART Leader Certification</div>
+    <div class="chips">
+      <span class="chip on">Exam included</span>
+      <span class="chip">15 PDUs</span>
+      <span class="chip">SPCT-led</span>
+      <span class="chip">09:00&ndash;17:00 ET</span>
+    </div>
+  </div>
+  <div class="right">
+    <div class="glow"></div>
+    <img id="badge" alt="SAFe ART Leader badge">
+  </div>
+</div>
+
+<div class="foot"><span><b>Agile Agilist</b> &nbsp;&middot;&nbsp; agile-agilist.com</span><span>Scaled Agile Partner</span></div>
