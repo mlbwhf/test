@@ -6,57 +6,125 @@
   body {
     position:relative; overflow:hidden;
     background:
-      radial-gradient(1100px 760px at 78% 14%, rgba(143,207,207,.20) 0%, rgba(143,207,207,0) 62%),
-      radial-gradient(900px 700px at 8% 92%, rgba(18,126,136,.28) 0%, rgba(18,126,136,0) 60%),
-      linear-gradient(142deg, #0B2E35 0%, #0E3A44 48%, #08242A 100%);
+      radial-gradient(1200px 820px at 74% 10%, rgba(143,207,207,.22) 0%, rgba(143,207,207,0) 60%),
+      radial-gradient(980px 760px at 4% 96%, rgba(96,78,214,.26) 0%, rgba(96,78,214,0) 58%),
+      radial-gradient(760px 620px at 44% 52%, rgba(18,126,136,.22) 0%, rgba(18,126,136,0) 62%),
+      linear-gradient(140deg, #0B2E35 0%, #0F3C47 44%, #071F25 100%);
     font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color:#fff;
   }
-  /* faint grid, keeps a flat gradient from looking empty at 2160px */
-  .grid { position:absolute; inset:0; opacity:.055;
-    background-image:linear-gradient(#8FCFCF 1px, transparent 1px), linear-gradient(90deg, #8FCFCF 1px, transparent 1px);
+  .grid { position:absolute; inset:0; opacity:.05;
+    background-image:linear-gradient(#8FCFCF 1px, transparent 1px), linear-gradient(90deg,#8FCFCF 1px, transparent 1px);
     background-size:120px 120px; }
-  .edge { position:absolute; left:0; top:0; bottom:0; width:14px;
-    background:linear-gradient(180deg,#8FCFCF 0%, #127E88 55%, #0E8074 100%); }
 
-  .wrap { position:absolute; inset:0; display:flex; align-items:center;
-          padding:0 130px 0 182px; gap:90px; }
+  /* FLOW. Three sweeping arcs for the train of value moving left to right.
+     Low opacity on purpose: at thumbnail size this reads as depth, not as
+     decoration competing with the headline. */
+  .flow { position:absolute; inset:0; }
+  .flow svg { width:100%; height:100%; display:block; }
+
+  .edge { position:absolute; left:0; top:0; bottom:0; width:14px;
+    background:linear-gradient(180deg,#8FCFCF 0%, #127E88 50%, #6B5CE7 100%); }
+
+  /* SPARKS echo the four-pointed stars on the badge, so the left half and the
+     right half look like one piece of artwork rather than a layout plus a logo. */
+  .spark { position:absolute; opacity:.5; }
+  .spark svg { display:block; }
+
+  .brand { position:absolute; left:182px; top:84px; display:flex; align-items:center; gap:26px; }
+  .brand .mark { width:74px; height:74px; border-radius:17px; flex:0 0 auto;
+    background:linear-gradient(145deg,#8FCFCF 0%, #15919B 52%, #6B5CE7 100%);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Newsreader", Georgia, serif; font-size:42px; font-style:italic;
+    color:#07222A; box-shadow:0 12px 34px rgba(0,0,0,.42); }
+  .brand .wm { line-height:1.12; }
+  .brand .wm b { display:block; font-size:34px; font-weight:700; letter-spacing:-.012em; color:#fff; }
+  .brand .wm span { display:block; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:19px; letter-spacing:.20em; text-transform:uppercase; color:#8FCFCF; margin-top:5px; }
+
+  .wrap { position:absolute; left:0; right:0; top:210px; bottom:236px;
+          display:flex; align-items:center; padding:0 130px 0 182px; gap:70px; }
   .left { flex:1 1 auto; min-width:0; }
 
-  .eyebrow { font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size:27px; letter-spacing:.30em; text-transform:uppercase; color:#8FCFCF; }
+  .eyebrow { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:26px; letter-spacing:.28em; text-transform:uppercase; color:#8FCFCF; }
 
   h1 { font-family:"Newsreader", Georgia, "Times New Roman", serif;
-       font-weight:400; font-size:150px; line-height:.98; letter-spacing:-.018em;
-       margin-top:34px; color:#fff; }
-  h1 em { display:block; font-style:italic; color:#9FE0DE; }
+       font-weight:400; font-size:146px; line-height:.97; letter-spacing:-.02em;
+       margin-top:28px; }
+  h1 em { display:block; font-style:italic;
+          background:linear-gradient(92deg,#9FE0DE 0%, #BFC4FF 92%);
+          -webkit-background-clip:text; background-clip:text; color:transparent; }
 
-  .rule { width:188px; height:5px; margin:46px 0 34px;
-          background:linear-gradient(90deg,#8FCFCF,#0E8074); border-radius:3px; }
+  .rule { width:180px; height:5px; margin:40px 0 30px;
+          background:linear-gradient(90deg,#8FCFCF,#6B5CE7); border-radius:3px; }
+  .sub { font-size:39px; font-weight:500; color:#D6E7E7; }
 
-  .sub { font-size:40px; font-weight:500; color:#D6E7E7; letter-spacing:-.005em; }
-
-  .chips { display:flex; flex-wrap:wrap; gap:16px; margin-top:44px; }
-  .chip { font-size:25px; font-weight:500; color:#CFE8E8;
-    border:1.5px solid rgba(143,207,207,.46); border-radius:999px; padding:14px 30px;
-    background:rgba(143,207,207,.085); white-space:nowrap; }
+  .chips { display:flex; flex-wrap:wrap; gap:15px; margin-top:38px; }
+  .chip { font-size:24px; font-weight:500; color:#CFE8E8;
+    border:1.5px solid rgba(143,207,207,.44); border-radius:999px; padding:13px 28px;
+    background:rgba(143,207,207,.08); white-space:nowrap; }
   .chip.on { background:#8FCFCF; border-color:#8FCFCF; color:#0B2E35; font-weight:700; }
 
-  .right { flex:0 0 560px; display:flex; align-items:center; justify-content:center; position:relative; }
-  .glow { position:absolute; width:620px; height:620px; border-radius:50%;
-          background:radial-gradient(circle, rgba(143,207,207,.34) 0%, rgba(143,207,207,0) 66%); }
-  .right img { position:relative; width:472px; height:auto; display:block;
-               filter:drop-shadow(0 34px 70px rgba(0,0,0,.52)); }
+  .right { flex:0 0 520px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .glow { position:absolute; width:650px; height:650px; border-radius:50%;
+          background:radial-gradient(circle, rgba(143,207,207,.32) 0%, rgba(107,92,231,.14) 44%, rgba(0,0,0,0) 68%); }
+  .right img { position:relative; width:452px; height:auto; display:block;
+               filter:drop-shadow(0 34px 72px rgba(0,0,0,.55)); }
 
-  .foot { position:absolute; left:182px; right:130px; bottom:60px;
+  /* THE COMMITMENT BAND. Given its own rule and its own space rather than
+     being dropped in as a footnote -- a line about who belongs in the room
+     should not look like small print. */
+  .band { position:absolute; left:182px; right:130px; bottom:128px;
+          display:flex; align-items:center; gap:24px;
+          border-top:1.5px solid rgba(143,207,207,.26); padding-top:30px; }
+  .band .ico { flex:0 0 auto; width:46px; height:46px; border-radius:50%;
+    background:linear-gradient(145deg,#8FCFCF,#6B5CE7); display:flex; align-items:center;
+    justify-content:center; box-shadow:0 8px 22px rgba(107,92,231,.4); }
+  .band p { font-size:28px; line-height:1.3; color:#E4F1F1; font-weight:500; }
+  .band p b { color:#9FE0DE; font-weight:700; }
+
+  .foot { position:absolute; left:182px; right:130px; bottom:56px;
           display:flex; align-items:baseline; justify-content:space-between;
-          font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-          font-size:25px; letter-spacing:.16em; text-transform:uppercase; color:#88A0A4; }
+          font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+          font-size:24px; letter-spacing:.16em; text-transform:uppercase; color:#88A0A4; }
   .foot b { color:#8FCFCF; font-weight:600; }
 </style>
 
 <div class="grid"></div>
+
+<div class="flow">
+  <svg viewBox="0 0 2160 1080" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="fl" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#8FCFCF" stop-opacity="0"/>
+        <stop offset="38%" stop-color="#8FCFCF" stop-opacity=".40"/>
+        <stop offset="78%" stop-color="#6B5CE7" stop-opacity=".34"/>
+        <stop offset="100%" stop-color="#6B5CE7" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M-100,870 C 520,700 1180,980 2300,620" fill="none" stroke="url(#fl)" stroke-width="2.5"/>
+    <path d="M-100,935 C 560,790 1220,1040 2300,700" fill="none" stroke="url(#fl)" stroke-width="1.6" opacity=".6"/>
+    <path d="M-100,215 C 620,70 1260,330 2300,-40" fill="none" stroke="url(#fl)" stroke-width="1.6" opacity=".45"/>
+  </svg>
+</div>
+
 <div class="edge"></div>
+
+<div class="spark" style="left:1180px; top:150px;">
+  <svg width="54" height="54" viewBox="0 0 24 24"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" fill="#8FCFCF"/></svg>
+</div>
+<div class="spark" style="left:1095px; top:258px; opacity:.32;">
+  <svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" fill="#BFC4FF"/></svg>
+</div>
+<div class="spark" style="left:1990px; top:742px; opacity:.28;">
+  <svg width="38" height="38" viewBox="0 0 24 24"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" fill="#8FCFCF"/></svg>
+</div>
+
+<div class="brand">
+  <div class="mark">A</div>
+  <div class="wm"><b>Agile Agilist</b><span>SAFe&reg; Gold Partner</span></div>
+</div>
 
 <div class="wrap">
   <div class="left">
@@ -77,4 +145,11 @@
   </div>
 </div>
 
-<div class="foot"><span><b>Agile Agilist</b> &nbsp;&middot;&nbsp; agile-agilist.com</span><span>Scaled Agile Partner</span></div>
+<div class="band">
+  <span class="ico">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#07222A" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="8" r="4.2"/><path d="M12 12.6V21M8.4 17.6h7.2"/></svg>
+  </span>
+  <p><b>Women belong at the front of the train.</b> We actively encourage women moving into ART leadership &mdash; talk to us about a seat.</p>
+</div>
+
+<div class="foot"><span><b>Agile Agilist</b> &nbsp;&middot;&nbsp; agile-agilist.com</span><span>SPCT-Led &middot; Live Online</span></div>
