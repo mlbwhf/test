@@ -72,22 +72,27 @@
   .right img { position:relative; width:452px; height:auto; display:block;
                filter:drop-shadow(0 34px 72px rgba(0,0,0,.55)); }
 
-  /* THE COMMITMENT BAND. Given its own rule and its own space rather than
-     being dropped in as a footnote -- a line about who belongs in the room
-     should not look like small print. */
-  .band { position:absolute; left:182px; right:130px; bottom:128px;
-          display:flex; align-items:center; gap:24px;
-          border-top:1.5px solid rgba(143,207,207,.26); padding-top:30px; }
-  .band .ico { flex:0 0 auto; width:46px; height:46px; border-radius:50%;
-    background:linear-gradient(145deg,#8FCFCF,#6B5CE7); display:flex; align-items:center;
-    justify-content:center; box-shadow:0 8px 22px rgba(107,92,231,.4); }
-  .band p { font-size:28px; line-height:1.3; color:#E4F1F1; font-weight:500; }
-  .band p b { color:#9FE0DE; font-weight:700; }
+  /* WOMEN IN ART LEADERSHIP, AS A MARK RATHER THAN A SENTENCE.
+     A line of prose about who belongs in the room reads as a claim the
+     reader has to take on trust, and at thumbnail size it is the first thing
+     that becomes unreadable. A seal survives the crop and carries meaning
+     without arguing. The glyph is the Venus symbol with its circle replaced
+     by the four-pointed spark used on the badge and across this artwork --
+     women and AI-Native in one mark, drawn from the house motif rather than
+     borrowed from a stock icon set. */
+  .btm { position:absolute; left:182px; right:130px; bottom:68px;
+         display:flex; align-items:center; justify-content:space-between; gap:40px; }
+  .seal { display:flex; align-items:center; gap:22px; }
+  .seal .ring { position:relative; width:126px; height:126px; flex:0 0 auto; }
+  .seal .ring svg { display:block; }
+  .seal .cap { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:22px; line-height:1.42; letter-spacing:.17em; text-transform:uppercase; }
+  .seal .cap b { display:block; color:#9FE0DE; font-weight:700; }
+  .seal .cap span { display:block; color:#88A0A4; }
 
-  .foot { position:absolute; left:182px; right:130px; bottom:56px;
-          display:flex; align-items:baseline; justify-content:space-between;
-          font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-          font-size:24px; letter-spacing:.16em; text-transform:uppercase; color:#88A0A4; }
+  .foot { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+          font-size:24px; letter-spacing:.16em; text-transform:uppercase;
+          color:#88A0A4; text-align:right; }
   .foot b { color:#8FCFCF; font-weight:600; }
 </style>
 
@@ -145,11 +150,26 @@
   </div>
 </div>
 
-<div class="band">
-  <span class="ico">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#07222A" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="8" r="4.2"/><path d="M12 12.6V21M8.4 17.6h7.2"/></svg>
-  </span>
-  <p><b>Women belong at the front of the train.</b> We actively encourage women moving into ART leadership &mdash; talk to us about a seat.</p>
+<div class="btm">
+  <div class="seal">
+    <span class="ring">
+      <svg width="126" height="126" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#A9EAE8"/><stop offset="100%" stop-color="#C6C9FF"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="55" fill="rgba(143,207,207,.10)"
+                stroke="url(#sg)" stroke-width="2.4" stroke-dasharray="3 7" opacity=".85"/>
+        <circle cx="60" cy="60" r="47" fill="none" stroke="url(#sg)" stroke-width="3" opacity=".9"/>
+        <g transform="translate(34.8,19.8) scale(2.1)">
+          <path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" fill="url(#sg)"/>
+        </g>
+        <path d="M60 70 V100 M45 89 H75" stroke="url(#sg)" stroke-width="8.2"
+              stroke-linecap="round" fill="none"/>
+      </svg>
+    </span>
+    <span class="cap"><b>Women in</b><span>ART leadership</span></span>
+  </div>
+  <div class="foot"><b>Agile Agilist</b> &middot; agile-agilist.com<br>SPCT-Led &middot; Live Online</div>
 </div>
-
-<div class="foot"><span><b>Agile Agilist</b> &nbsp;&middot;&nbsp; agile-agilist.com</span><span>SPCT-Led &middot; Live Online</span></div>
