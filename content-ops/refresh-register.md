@@ -440,3 +440,83 @@ site's ~20 most-repeated figures (ChatGPT WAU, worldwide AI spend, WEF jobs,
 inference cost, deepfake losses) and check every page that states them. That is a
 systemic gap the current register does not catch, because the register tracks
 pages against sources, not pages against each other.
+
+---
+
+# OCTOBER 2026 PASS — started 1 Oct (CRITICAL monthly + STANDARD quarterly both due)
+
+1 October is the heaviest date in the calendar: the monthly CRITICAL pass and the
+quarterly STANDARD pass fall on the same day, plus the Meta/BlackRock Q3 closing
+check diarised in September.
+
+## ⭐ Egress partially opened — anthropic.com / claude.com now reachable
+
+First primary source to open since 11 Sep. Still blocked: `artificialanalysis.ai`,
+`openai.com`, `reuters.com`, `sec.gov`, `investor.atmeta.com`, `questmobile.com.cn`.
+
+**This gives HIGH-confidence Anthropic data at source for the first time:**
+
+| Model | Released | Anthropic's own words |
+|---|---|---|
+| Fable 5.1 + **Mythos 5.1** | 1 Sep 2026 | "Our most advanced models for coding and knowledge work" |
+| Opus 5.5 | 22 Sep 2026 | "performs at the level of Fable 5.1 on most work and costs **40% less to run** than Opus 5" |
+| Sonnet 5.5 | 28 Sep 2026 | "**30% faster** and costs up to **30% less**" |
+
+API pricing, $/MTok (claude.com/pricing, 1 Oct 2026) — **HIGH**:
+Fable 5.1 $10/$50 · Opus 5.5 $4/$20 · Sonnet 5.5 $2/$10 · Haiku 4.5 $1/$5.
+Cached reads $0.10–$0.25. Batch −50%. US-only inference 1.1×. Opus 5.5 fast mode 2×.
+Consumer: Pro $17 annual/$20 monthly; Team $20–25/seat; Team Premium $100–125/seat.
+⚠️ The page rendered **both** Max 5x and Max 20x as "from $100/month" — likely a
+rendering artefact; do not publish the Max tiers without re-checking.
+
+## Done today
+
+**1. Homepage (page 6) — stale model name corrected.** Model Watch had
+**"Claude Opus 4.8"**, two generations behind. Now "Claude Opus 5.5" carrying a
+**RE-RATE DUE** marker — the September nine-criteria rating was for 4.8 and has
+**not** been silently transferred, same discipline applied to the Alibaba row on
+10 Sep. The "rated — Sept 2026" stamp was deliberately **not** bumped, because no
+re-rating was performed (§2: an update is never a date bump).
+
+**2. Homepage figure of the week — W37 → W40.** Three weeks stale on a weekly
+cadence. Now Claude API input price per million tokens: Fable $10, Opus $4,
+Sonnet $2, Haiku $1 — a 10× spread inside one vendor's lineup, **primary-sourced
+and HIGH confidence**, which the previous rotations were not. Links to the token
+price index.
+
+**3. `/reports/meta-blackrock-off-balance-sheet-ai-financing/` — REVIEWED, NO CHANGE.**
+No report of the El Paso JV actually closing. Coverage still reads "expected to
+close in Q3 2026". sec.gov and investor.atmeta.com both blocked, so **Meta's Q3
+10-Q (due late Oct/early Nov) is what will settle it.** Watch item rolled forward.
+
+**4. `chatgpt-statistics-2026` (969) — FIXED, resolving contradiction #3.**
+Carried **800M** WAU against 970's **900M**. The subtlety: 800M was never wrong —
+it is correctly the October 2025 DevDay milestone — it was being presented as the
+*current* figure, seven weeks stale. Fixed as a **series extension, not an
+overwrite**: 400M (Feb 2025) → ~700M (Jul 2025) → 800M (Oct 2025) → **900M+ (2026)**.
+Updated in the stat tile, intro, body, visible FAQ, FAQ JSON-LD and excerpt — all
+six surfaces, per §3. **"What changed" block added** per §2, retaining the previous
+value and stating why. Also clarified that the ~1B figure in circulation is
+*monthly* app users, not weekly, with a link to the new user-numbers report.
+
+## Still outstanding for this pass
+
+**CRITICAL:** `best-ai-models-2026` (Anthropic rows now verifiable, US-frontier
+composites still not — artificialanalysis.ai blocked) · `chinese-ai-models-2026`
+(last verified 3 Sep) · `llm-token-price-index` (**now partially unblockable** —
+Anthropic's "40% less" and "30% less" are primary-sourced price-decline datapoints)
+· `ai-data-center-cost` (8GW vs 10GW discrepancy still open, sec.gov blocked) ·
+`ai-bubble-tracker` (baseline still never established).
+
+**STANDARD quarterly:** ~20 pages, none yet attempted this quarter.
+
+**Contradictions #1 and #2 still unfixed:** `best-ai-models-2026` vs
+`chinese-ai-models-2026`; `ai-autonomous-cyberattacks-defense` ("two OpenAI models…
+stole the benchmark answers") vs the METR findings on page 2553.
+
+**Not yet reflected anywhere: Meta killed Llama.** The open Llama line was
+discontinued April 2026; Meta's flagship is now the closed **Muse Spark**, with
+**Muse Glimmer 30B** (Apache 2.0, 10 Aug 2026) as an open distillation beneath it.
+The homepage still asserts **"The US frontier ships no weights at all"** — as
+written that is now false, and it sits in the same block praising Qwen3.8-27B for
+fitting a consumer GPU, which Glimmer also does.
