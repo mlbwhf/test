@@ -520,3 +520,63 @@ discontinued April 2026; Meta's flagship is now the closed **Muse Spark**, with
 The homepage still asserts **"The US frontier ships no weights at all"** — as
 written that is now false, and it sits in the same block praising Qwen3.8-27B for
 fitting a consumer GPU, which Glimmer also does.
+
+## `/indexes/ai-economics/llm-token-price-index/` (421) — UPDATED 1 Oct 2026
+
+CRITICAL row, overdue since 5 Aug. Owner supplied six sources; **all six domains are
+egress-blocked** (qz.com, ft.com, linkedin.com, finance.biggo.com, slash-digital.io,
+alicantetechvibes.com), so the substance was recovered via search and rated MEDIUM.
+
+### The real finding: the page was wrong where it claimed to be most certain
+
+The Anthropic pricing table was **marked "High" confidence on prices that had moved**:
+
+| Was (verified Jul 2026) | Now (verified at source, 1 Oct 2026) |
+|---|---|
+| Claude Opus **4.8** — $5.00 / $25.00 | Claude Opus **5.5** — **$4.00 / $20.00** |
+| Claude Sonnet **4.6** — $3.00 / $15.00 | Claude Sonnet **5.5** — **$2.00 / $10.00** |
+| — | **Claude Fable 5.1 — $10.00 / $50.00** (was missing) |
+| Claude Haiku 4.5 — $1.00 / $5.00 | unchanged ✓ |
+
+Cause: Opus 5.5 shipped 22 Sep and Sonnet 5.5 on 28 Sep, both **below** the models
+they replace. A High-confidence provider-pricing table is exactly the kind of figure
+that looks safe and rots quietly.
+
+### Added: a 2026 section — the page previously ended its series at Oct 2024
+
+- **Silicon Data LLM Token Expenditure Index: $0.97 / 1M tokens** (1 Sep 2026) —
+  record low since the index launched late 2025, **less than half its summer peak**
+- **Frontier token prices −81.3% vs March 2023**
+- Drivers named consistently: open-weight Chinese models (**Kimi K3**), **OpenAI's
+  late-July cuts on two GPT-5.6 models**, dynamic pricing
+- Anthropic's own primary-sourced declines: **Opus 5.5 −40% cost to run vs Opus 5**;
+  **Sonnet 5.5 up to −30% and 30% faster**
+
+### The distinction the page now makes, which most coverage misses
+
+The index is **usage-weighted** — list pricing blended with real consumption volumes.
+So **$0.97 is what the market pays on average**, dominated by cheap and mid-tier
+models. **Fable 5.1 is $10/$50 on the same date.** Both correct, different things.
+Same metric-soup failure as the user-numbers report.
+
+Also recorded the counter-current: **unit prices fall while total bills rise**, because
+agentic and test-time-compute workloads consume orders of magnitude more tokens per
+task. Token *management*, not token price, is the competitive variable.
+
+### The 280× anchor is safe
+
+The register warned that "the 280× figure anchors the homepage and the sidebar; if it
+moved, three surfaces are wrong at once." **It has not moved and cannot.** The 280×,
+the $20.00 → $0.07 series and the ~10×/yr rate are dated *historical* readings from
+Stanford HAI and a16z/Epoch, not current-state figures. No cross-surface risk here.
+
+### Not used
+
+The **"43%" decline** in the Alicante source could not be corroborated by any other
+source and is **not published**. If the owner can open that page, worth checking what
+period and basis it refers to.
+
+Updated across: pricing table, numbers-in-full table, new section, sidebar sources,
+on-this-page nav, visible date stamp, Article `dateModified`, Dataset `dateModified`
++ `temporalCoverage` + `citation`. **"What changed" block added** per §2, retaining
+previous values and stating why.
