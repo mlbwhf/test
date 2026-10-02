@@ -463,6 +463,147 @@ function aa_reg_courses() {
 				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 3 ),
 			),
 		),
+
+		/* ====================================================================
+		   THE FIVE THAT COULD BE SEEN BUT NOT BOUGHT
+		   --------------------------------------------------------------------
+		   The home page resolves a course through aa_reg_course(), which falls
+		   back to deriving one from its own page, so it could show these five.
+		   aa_reg_find(), which turns a posted cohort id back into a course at
+		   checkout, loops THIS TABLE only. So Leading SAFe, Scrum Master,
+		   POPM, LPM and APM rendered a buy form, took an email, and answered
+		   with a 400 the buyer could do nothing about -- on two of the highest
+		   volume SAFe courses in the catalogue.
+
+		   Cadence is lifted from each page's own data-days, which is "1,2,4"
+		   (Mon, Tue, Thu) on all of them, so nothing about WHEN these classes
+		   run changes by adding them here. Prices are the English discount
+		   prices; the strike-through figure lives on the page, not here --
+		   this table carries only what Stripe charges.
+		   ================================================================== */
+
+		'sa' => array(
+			'code'     => 'SA',
+			'name'     => 'Leading SAFe® (SA) Certification',
+			'eyebrow'  => 'Live online · SAFe Agilist certification',
+			'h1'       => 'Leading SAFe® in two days.',
+			'lede'     => 'Lead a Lean-Agile transformation by applying SAFe® and its principles of Lean, systems thinking and Agile development. Exam included, and exam prep and support.',
+			'url'      => '/training/safe/sa/',
+			'crumb'    => 'Core SAFe Roles',
+			'currency' => 'usd',
+			'price'    => 850,
+			'days'     => 2,
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Tue', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+		'scrum-master' => array(
+			'code'     => 'SSM',
+			'name'     => 'SAFe® Scrum Master (SSM) Certification',
+			'eyebrow'  => 'Live online · SSM certification',
+			'h1'       => 'SAFe® Scrum Master in two days.',
+			'lede'     => 'Lead teams in a SAFe enterprise — facilitate the events, coach the team through PI Planning, and keep the flow of value moving. Exam included.',
+			'url'      => '/training/safe/scrum-master/',
+			'crumb'    => 'Core SAFe Roles',
+			'currency' => 'usd',
+			'price'    => 850,
+			'days'     => 2,
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Tue', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+		'popm' => array(
+			'code'     => 'POPM',
+			'name'     => 'SAFe® Product Owner / Product Manager (POPM) Certification',
+			'eyebrow'  => 'Live online · POPM certification',
+			'h1'       => 'Product Owner / Product Manager in two days.',
+			'lede'     => 'Write and split the work, run the backlog, and connect what a team builds to what the customer actually needed. Exam included.',
+			'url'      => '/training/safe/popm/',
+			'crumb'    => 'Core SAFe Roles',
+			'currency' => 'usd',
+			'price'    => 850,
+			'days'     => 2,
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Tue', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+		'lpm' => array(
+			'code'     => 'LPM',
+			'name'     => 'SAFe® Lean Portfolio Management (LPM) Certification',
+			'eyebrow'  => 'Live online · LPM certification',
+			'h1'       => 'Lean Portfolio Management in two days.',
+			'lede'     => 'Connect strategy to execution — portfolio flow, Lean budgets and guardrails, and funding value streams instead of projects. Exam included.',
+			'url'      => '/training/adv-safe/lpm/',
+			'crumb'    => 'Advanced SAFe',
+			'currency' => 'usd',
+			'price'    => 1799,
+			'days'     => 2,
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Tue', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+		'apm' => array(
+			'code'     => 'APM',
+			'name'     => 'SAFe® Agile Product Management (APM) Certification',
+			'eyebrow'  => 'Live online · APM certification',
+			'h1'       => 'Agile Product Management in three days.',
+			'lede'     => 'Design and deliver products customers want — continuous exploration, product strategy, and pricing that holds up outside the building. Exam included.',
+			'url'      => '/training/adv-safe/apm/',
+			'crumb'    => 'Advanced SAFe',
+			'currency' => 'usd',
+			'price'    => 1799,
+			'days'     => 3,
+			'seats'    => 18,
+			'weeks'    => 26,
+			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Tue', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+		),
+
+		/* New for this launch. Its page is /training/ai-native/launching-ai-native-arts/
+		   and Wednesday is the only weekday no other AI-Native course opens on,
+		   so it never collides with Foundations, Value Architect or AINORG. */
+		'launching-ai-native-arts' => array(
+			'code'     => 'ARTL',
+			'name'     => 'Launching AI-Native ARTs',
+			'eyebrow'  => 'Live online · SAFe ART Leader certification',
+			'h1'       => 'Launching AI-Native ARTs.',
+			'lede'     => 'Become an ART Leader as you turn your Lean-Agile foundation into an engine for AI-driven execution. Two days, live online, exam included.',
+			'url'      => '/training/ai-native/launching-ai-native-arts/',
+			'crumb'    => 'AI-Native',
+			'currency' => 'usd',
+			'price'    => 999,
+			'days'     => 2,
+			'seats'    => 18,
+			'weeks'    => 52,
+			'cadence'  => array(
+				array( 'dow' => 'Wed', 'slot' => 'morning' ),
+			),
+			'proof'    => array( 'Live online', 'Exam fee included', '15 PDUs' ),
+		),
 	);
 }
 
@@ -632,6 +773,51 @@ function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
 		$d->modify( '+1 day' );
 	}
 	return $has_rest && $has_work;
+}
+
+/**
+ * December, for two-day courses only.
+ *
+ * Asked for explicitly: in December every two-day course runs 21-22, 26-27,
+ * 27-28 and 29-30 rather than whatever its weekly cadence would produce. The
+ * list is the whole December offering for those courses, not an addition to
+ * it, so the cadence's own December starts are dropped first.
+ *
+ * Longer courses are untouched -- a three- or four-day span cannot be fitted
+ * into these gaps without crossing the blackout.
+ *
+ * NOTE THE OVERLAP: 26-27 and 27-28 share Sunday the 27th, so one course
+ * cannot run both. They are generated as asked; whether a single course keeps
+ * both, or the two spans are split across different courses, is a scheduling
+ * decision rather than a code one.
+ */
+function aa_reg_december_two_day( $slug, $course, $out ) {
+	if ( (int) $course['days'] !== 2 ) { return $out; }
+
+	$year   = (int) ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y' );
+	$starts = array( '-12-21', '-12-26', '-12-27', '-12-29' );
+
+	/* Only the years the generated window actually reaches, so a 52-week
+	   course gets next December too and a 26-week one does not invent it. */
+	$years = array();
+	foreach ( $out as $c ) { $years[ substr( $c['start'], 0, 4 ) ] = true; }
+	$years[ (string) $year ] = true;
+
+	$kept = array();
+	foreach ( $out as $c ) {
+		if ( substr( $c['start'], 5, 2 ) !== '12' ) { $kept[] = $c; }
+	}
+
+	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
+	foreach ( array_keys( $years ) as $y ) {
+		foreach ( $starts as $tail ) {
+			$d = $y . $tail;
+			if ( $d < $today ) { continue; }
+			if ( ! aa_reg_span_ok( $d, 2 ) ) { continue; }   // never across the blackout
+			$kept[] = aa_reg_make( $slug, $course, $d, 'morning' );
+		}
+	}
+	return $kept;
 }
 
 /** How many replacement starts to offer when the rule drops a scheduled one. */
@@ -956,6 +1142,15 @@ function aa_reg_generate( $slug, $course ) {
 			$added++;
 		}
 	}
+	/* DECEMBER IS SET BY HAND FOR EVERY TWO-DAY COURSE.
+	   The cadence is built for an ordinary working month and the week between
+	   Christmas and New Year is not one. These four spans are the ones asked
+	   for, and they replace whatever the cadence would otherwise have put in
+	   December -- so a buyer sees the dates we will actually run rather than
+	   a Monday nobody is going to teach on. Applied before the per-month cap,
+	   so the cap still governs how many of them show. */
+	$out = aa_reg_december_two_day( $slug, $course, $out );
+
 	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
 
 	/* THE PER-LANGUAGE CAP, applied last and to the sorted list, so a capped
