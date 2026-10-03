@@ -23,5 +23,5 @@ Deviation from the design: "Signal sensing" → "Signal Sensing" (handover §1, 
 - `/assess` (page 13, draft): relabel layers to the five states, result copy "You are in X; Y is not holding",
   restyle to v2; publish with slug `assess`. Design says /assess is "not yet designed".
 - `/workshops`, `/cast`, `/books` pages don't exist on WP yet → nav links 404 until created.
-- Favicon / site icon, site title (blogname is still the Hostinger hostname).
+- Favicon / site icon (site title + tagline were set: "The Two Chasms Framework" / "Sense the shift before your dashboard does").
 - M1/M2 workshop guides need Mark's scope approval.
