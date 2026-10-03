@@ -495,10 +495,21 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 26,
+			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
+			   They shared one Mon/Tue/Thu cadence, so they generated the same
+			   dates and the training hub showed "Oct 5-6" four times for four
+			   different courses -- a menu, not a timetable. A week holds
+			   exactly two non-overlapping two-day spans (Mon-Tue, Wed-Thu;
+			   Friday starts are barred), so the four take one slot each across
+			   a fortnight and never collide.
+
+			     Week 1 & 3   Mon-Tue  Leading SAFe     Wed-Thu  Scrum Master
+			     Week 2 & 4   Mon-Tue  POPM             Wed-Thu  LPM
+
+			   Leading SAFe takes the first half of weeks 1 and 3. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning' ),
-				array( 'dow' => 'Tue', 'slot' => 'morning' ),
-				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
@@ -515,10 +526,21 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 26,
+			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
+			   They shared one Mon/Tue/Thu cadence, so they generated the same
+			   dates and the training hub showed "Oct 5-6" four times for four
+			   different courses -- a menu, not a timetable. A week holds
+			   exactly two non-overlapping two-day spans (Mon-Tue, Wed-Thu;
+			   Friday starts are barred), so the four take one slot each across
+			   a fortnight and never collide.
+
+			     Week 1 & 3   Mon-Tue  Leading SAFe     Wed-Thu  Scrum Master
+			     Week 2 & 4   Mon-Tue  POPM             Wed-Thu  LPM
+
+			   Scrum Master takes the second half of the same weeks. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning' ),
-				array( 'dow' => 'Tue', 'slot' => 'morning' ),
-				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 3 ),
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
@@ -535,10 +557,21 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 26,
+			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
+			   They shared one Mon/Tue/Thu cadence, so they generated the same
+			   dates and the training hub showed "Oct 5-6" four times for four
+			   different courses -- a menu, not a timetable. A week holds
+			   exactly two non-overlapping two-day spans (Mon-Tue, Wed-Thu;
+			   Friday starts are barred), so the four take one slot each across
+			   a fortnight and never collide.
+
+			     Week 1 & 3   Mon-Tue  Leading SAFe     Wed-Thu  Scrum Master
+			     Week 2 & 4   Mon-Tue  POPM             Wed-Thu  LPM
+
+			   POPM takes the first half of weeks 2 and 4. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning' ),
-				array( 'dow' => 'Tue', 'slot' => 'morning' ),
-				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
@@ -555,10 +588,21 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'seats'    => 18,
 			'weeks'    => 26,
+			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
+			   They shared one Mon/Tue/Thu cadence, so they generated the same
+			   dates and the training hub showed "Oct 5-6" four times for four
+			   different courses -- a menu, not a timetable. A week holds
+			   exactly two non-overlapping two-day spans (Mon-Tue, Wed-Thu;
+			   Friday starts are barred), so the four take one slot each across
+			   a fortnight and never collide.
+
+			     Week 1 & 3   Mon-Tue  Leading SAFe     Wed-Thu  Scrum Master
+			     Week 2 & 4   Mon-Tue  POPM             Wed-Thu  LPM
+
+			   LPM takes the second half of those weeks. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning' ),
-				array( 'dow' => 'Tue', 'slot' => 'morning' ),
-				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 4 ),
 			),
 			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
 		),
