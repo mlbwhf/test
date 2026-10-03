@@ -776,6 +776,33 @@ function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
 }
 
 /**
+ * A course cannot be in two places at once.
+ *
+ * The cadence says which WEEKDAYS a course may open on. It never said anything
+ * about how long the class then runs, so a two-day course on a Mon/Tue/Thu
+ * cadence opened on Monday, ran into Tuesday, and opened again on Tuesday --
+ * two cohorts of the same course sharing a day. Four-day SPC was worse: Monday
+ * to Thursday, then another start on the Thursday.
+ *
+ * Nobody can teach both, so one of them was always going to be cancelled on a
+ * buyer who had already paid. This is the rule the cadence was missing: a start
+ * is kept only once the previous cohort has finished.
+ *
+ * Greedy and in date order, so the EARLIEST start of any clash survives -- the
+ * date a buyer saw first is the one that stays on sale.
+ */
+function aa_reg_no_self_overlap( $out, $course ) {
+	$kept = array();
+	$free = '';   // the first date this course is free again
+	foreach ( $out as $c ) {
+		if ( $free !== '' && $c['start'] < $free ) { continue; }
+		$kept[] = $c;
+		$free = ( new DateTime( $c['end'] ) )->modify( '+1 day' )->format( 'Y-m-d' );
+	}
+	return $kept;
+}
+
+/**
  * December, for two-day courses only.
  *
  * Asked for explicitly: in December every two-day course runs 21-22, 26-27,
@@ -1142,6 +1169,11 @@ function aa_reg_generate( $slug, $course ) {
 			$added++;
 		}
 	}
+	/* Sorted first, because the overlap rule below walks the list in date
+	   order and keeps the earliest start of any clash. */
+	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
+	$out = aa_reg_no_self_overlap( $out, $course );
+
 	/* DECEMBER IS SET BY HAND FOR EVERY TWO-DAY COURSE.
 	   The cadence is built for an ordinary working month and the week between
 	   Christmas and New Year is not one. These four spans are the ones asked
