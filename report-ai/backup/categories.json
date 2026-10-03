@@ -1,0 +1,122 @@
+[
+  {
+    "id": 35,
+    "name": "Agentic AI",
+    "slug": "agentic-ai",
+    "count": 1
+  },
+  {
+    "id": 5,
+    "name": "AI & Jobs",
+    "slug": "ai-jobs",
+    "count": 0
+  },
+  {
+    "id": 2,
+    "name": "AI Adoption & Usage",
+    "slug": "ai-adoption-usage",
+    "count": 3
+  },
+  {
+    "id": 37,
+    "name": "AI in Education",
+    "slug": "ai-in-education",
+    "count": 0
+  },
+  {
+    "id": 36,
+    "name": "AI in Healthcare",
+    "slug": "ai-in-healthcare",
+    "count": 0
+  },
+  {
+    "id": 39,
+    "name": "AI Incidents & Misuse",
+    "slug": "ai-incidents-misuse",
+    "count": 0
+  },
+  {
+    "id": 9,
+    "name": "AI Infrastructure",
+    "slug": "ai-infrastructure",
+    "count": 1
+  },
+  {
+    "id": 4,
+    "name": "AI Investment & Funding",
+    "slug": "ai-investment-funding",
+    "count": 1
+  },
+  {
+    "id": 38,
+    "name": "AI Policy & Regulation",
+    "slug": "ai-policy-regulation",
+    "count": 0
+  },
+  {
+    "id": 7,
+    "name": "AI Safety & Governance",
+    "slug": "ai-safety-governance",
+    "count": 0
+  },
+  {
+    "id": 23,
+    "name": "AI Use Cases",
+    "slug": "ai-use-cases",
+    "count": 1
+  },
+  {
+    "id": 11,
+    "name": "Blog",
+    "slug": "blog",
+    "count": 14
+  },
+  {
+    "id": 3,
+    "name": "Enterprise AI",
+    "slug": "enterprise-ai",
+    "count": 5
+  },
+  {
+    "id": 8,
+    "name": "Generative AI",
+    "slug": "generative-ai",
+    "count": 2
+  },
+  {
+    "id": 21,
+    "name": "LLM Market",
+    "slug": "llm-market",
+    "count": 0
+  },
+  {
+    "id": 6,
+    "name": "Models & Benchmarks",
+    "slug": "models-benchmarks",
+    "count": 1
+  },
+  {
+    "id": 10,
+    "name": "News",
+    "slug": "news",
+    "count": 207
+  },
+  {
+    "id": 40,
+    "name": "Open-Source AI",
+    "slug": "open-source-ai",
+    "count": 0
+  },
+  {
+    "id": 1,
+    "name": "Uncategorized",
+    "slug": "uncategorized",
+    "count": 0
+  },
+  {
+    "id": 22,
+    "name": "Writing & Content Creation",
+    "slug": "writing-content-creation",
+    "count": 0
+  }
+]

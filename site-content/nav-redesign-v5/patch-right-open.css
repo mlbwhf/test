@@ -1,0 +1,59 @@
+/* ============ NAV v5 PATCH (2026-08-22b) ============
+   Append at the very END of Additional CSS, after the v5 ledger block.
+   Two fixes:
+   1. Panels open to the RIGHT — left edge anchored to the menu's left edge
+      instead of centre-anchored (centring made them extend leftward).
+   2. Reports pane forced into the right column with the same rules as
+      Indexes, hardened with !important so no earlier rule can pull it
+      back into document flow.
+   ==================================================== */
+
+@media(min-width:769px){
+
+  /* 1 — open to the right, flush under the nav row */
+  .main-navigation .main-nav > ul > li.tai-open > .sub-menu,
+  .main-navigation .main-nav > ul > li.sfHover > .sub-menu,
+  .main-navigation .main-nav > ul > li:hover > .sub-menu{
+    left:0!important;
+    right:auto!important;
+    transform:none!important;
+    top:100%!important;
+    max-width:calc(100vw - 40px);
+  }
+
+  /* 2 — both panels: explicit containing block + fixed left rail */
+  .main-navigation .menu-indexes > .sub-menu,
+  .main-navigation .menu-reports > .sub-menu{ position:absolute!important; }
+
+  .main-navigation .menu-indexes > .sub-menu{ width:min(760px,calc(100vw - 80px))!important; }
+  .main-navigation .menu-reports > .sub-menu{ width:min(680px,calc(100vw - 80px))!important; }
+
+  .main-navigation .menu-indexes > .sub-menu > li,
+  .main-navigation .menu-reports > .sub-menu > li{
+    position:static!important; float:none!important; display:block!important;
+  }
+  .main-navigation .menu-indexes > .sub-menu > li{ width:300px!important; }
+  .main-navigation .menu-reports > .sub-menu > li{ width:280px!important; }
+
+  /* 3 — the right pane, identical treatment for both menus */
+  .main-navigation .menu-indexes > .sub-menu > li > .sub-menu,
+  .main-navigation .menu-reports > .sub-menu > li > .sub-menu{
+    display:none!important;
+    position:absolute!important;
+    top:0!important; right:0!important; bottom:0!important; left:auto!important;
+    transform:none!important;
+    margin:0!important;
+    border:none!important; border-left:1px solid #e6e6ea!important;
+    background:#fff!important;
+    overflow:auto!important;
+    padding:20px 22px!important;
+  }
+  .main-navigation .menu-indexes > .sub-menu > li > .sub-menu{ width:calc(100% - 300px)!important; }
+  .main-navigation .menu-reports  > .sub-menu > li > .sub-menu{ width:calc(100% - 280px)!important; }
+
+  .main-navigation .menu-indexes > .sub-menu > li.tai-pane-active > .sub-menu,
+  .main-navigation .menu-reports  > .sub-menu > li.tai-pane-active > .sub-menu{
+    display:flex!important; flex-direction:column!important;
+    visibility:visible!important; opacity:1!important; height:auto!important;
+  }
+}

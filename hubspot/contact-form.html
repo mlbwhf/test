@@ -1,0 +1,136 @@
+<!-- Report AI — contact form (HubSpot Forms API, native markup, house style)
+     For /about/contact/. Replace FORM_GUID_CONTACT before use.
+     Deliberately does NOT subscribe anyone to the newsletter: contacting a
+     publication is not consent to be emailed by it, and certainly not consent
+     to be marketed to by Agile Agilist. Separate opt-in checkbox provided. -->
+
+<style>
+.tai-hscontact{font-family:'Archivo',sans-serif;max-width:620px;}
+.tai-hscontact .tai-hsmono{font-family:'IBM Plex Mono',monospace;}
+.tai-hscontact label.tai-fl{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;font-weight:600;margin:16px 0 5px;}
+.tai-hscontact input[type=text],.tai-hscontact input[type=email],.tai-hscontact select,.tai-hscontact textarea{width:100%;padding:11px 12px;border:1px solid #d8d8de;background:#fff;color:#111114;font-family:'Archivo',sans-serif;font-size:14px;box-sizing:border-box;}
+.tai-hscontact textarea{min-height:140px;resize:vertical;line-height:1.5;}
+.tai-hscontact input:focus,.tai-hscontact select:focus,.tai-hscontact textarea:focus{outline:none;border-color:#2545f5;}
+.tai-hscontact button{margin-top:18px;padding:13px 28px;background:#2545f5;color:#fff;border:none;border-radius:0;font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .13s ease;}
+.tai-hscontact button:hover{background:#111114;}
+.tai-hscontact button[disabled]{opacity:.5;cursor:default;}
+.tai-hscontact .tai-consent{display:flex;gap:9px;align-items:flex-start;margin-top:16px;font-size:12.5px;line-height:1.5;color:#55555e;}
+.tai-hscontact .tai-consent input{margin-top:3px;flex:none;}
+.tai-hscontact .tai-msg{font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-top:14px;display:none;}
+.tai-hscontact .tai-msg.err{color:#9a6a00;display:block;}
+.tai-hscontact .tai-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+.tai-hscontact .tai-note{font-size:12.5px;line-height:1.55;color:#6e6e76;border-left:2px solid #e6e6ea;padding-left:14px;margin-top:22px;}
+</style>
+
+<div class="tai-hscontact">
+  <form class="tai-hsc" novalidate>
+
+    <label class="tai-fl" for="tai-c-name">Name</label>
+    <input id="tai-c-name" type="text" name="firstname" required autocomplete="name">
+
+    <label class="tai-fl" for="tai-c-email">Email</label>
+    <input id="tai-c-email" type="email" name="email" required autocomplete="email">
+
+    <label class="tai-fl" for="tai-c-org">Organisation <span style="text-transform:none;letter-spacing:0;color:#b8b8bf;">(optional)</span></label>
+    <input id="tai-c-org" type="text" name="company" autocomplete="organization">
+
+    <label class="tai-fl" for="tai-c-topic">What is this about?</label>
+    <select id="tai-c-topic" name="ra_enquiry_type" required>
+      <option value="">Choose one…</option>
+      <option value="correction">A correction to a figure</option>
+      <option value="licensing">Licensing or republishing</option>
+      <option value="press">Press or interview</option>
+      <option value="data">Data or methodology question</option>
+      <option value="other">Something else</option>
+    </select>
+
+    <label class="tai-fl" for="tai-c-msg">Message</label>
+    <textarea id="tai-c-msg" name="message" required></textarea>
+
+    <div class="tai-hp" aria-hidden="true"><label>Company website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+    <label class="tai-consent">
+      <input type="checkbox" name="optin">
+      <span>Also send me Report AI&rsquo;s newsletter &mdash; one sourced figure a week. <strong>Optional</strong>; leaving this unticked means we only reply to your message.</span>
+    </label>
+
+    <button type="submit">Send message</button>
+    <div class="tai-msg" role="status" aria-live="polite"></div>
+
+    <p class="tai-note">
+      <strong>Corrections are welcome and taken seriously.</strong> If you believe a figure
+      on this site is wrong, tell us what and why &mdash; we publish corrections with the
+      previous value visible rather than editing silently. See our
+      <a href="/about/" style="color:#2545f5;">methodology and corrections policy</a>.
+    </p>
+  </form>
+</div>
+
+<script>
+(function(){
+  var PORTAL = '46316757';
+  var FORM   = 'FORM_GUID_CONTACT';   // <-- replace
+  var ENDPOINT = 'https://api.hsforms.com/submissions/v3/integration/submit/' + PORTAL + '/' + FORM;
+
+  document.querySelectorAll('form.tai-hsc').forEach(function(form){
+    var msg = form.querySelector('.tai-msg');
+    var btn = form.querySelector('button');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      msg.className = 'tai-msg';
+      var get = function(n){ var el = form.querySelector('[name=' + n + ']'); return el ? el.value.trim() : ''; };
+      var trap = get('website');
+      if (trap) { return; }
+
+      var email = get('email');
+      if (!get('firstname') || !email || email.indexOf('@') < 1 || !get('ra_enquiry_type') || !get('message')) {
+        msg.textContent = 'Please complete every field.'; msg.className = 'tai-msg err'; return;
+      }
+
+      var optin = form.querySelector('[name=optin]').checked;
+      var today = new Date().toISOString().slice(0,10);
+      var fields = [
+        { name: 'firstname',        value: get('firstname') },
+        { name: 'email',            value: email },
+        { name: 'company',          value: get('company') },
+        { name: 'ra_enquiry_type',  value: get('ra_enquiry_type') },
+        { name: 'message',          value: get('message') },
+        { name: 'ra_source',        value: 'report-ai.org' },
+        { name: 'ra_consent_basis', value: (optin ? 'contact+newsletter' : 'contact-only') + ':report-ai:' + today }
+      ];
+
+      btn.disabled = true; btn.textContent = 'Sending…';
+
+      fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields: fields,
+          context: { pageUri: location.href, pageName: document.title },
+          legalConsentOptions: {
+            consent: {
+              consentToProcess: true,
+              text: 'I agree that Report AI may store and use my details to respond to this enquiry.',
+              communications: [{
+                value: optin,
+                subscriptionTypeId: 0,   // <-- replace with the "Report AI — The Weekly Figure" subscription type ID
+                text: 'Report AI — The Weekly Figure'
+              }]
+            }
+          }
+        })
+      })
+      .then(function(r){ return r.ok ? r.json() : r.json().then(function(j){ throw new Error(j.message || 'submit failed'); }); })
+      .then(function(){
+        form.innerHTML = '<div class="tai-hsmono" style="font-size:13px;color:#177245;line-height:1.6;">Message sent. We read everything and reply to most things within a couple of days.<br>Corrections are prioritised.</div>';
+      })
+      .catch(function(){
+        btn.disabled = false; btn.textContent = 'Send message';
+        msg.textContent = 'Something went wrong. Please try again, or email info@report-ai.org directly.';
+        msg.className = 'tai-msg err';
+      });
+    });
+  });
+})();
+</script>

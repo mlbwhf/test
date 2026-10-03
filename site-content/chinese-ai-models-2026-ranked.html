@@ -1,0 +1,134 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1080px;margin:0 auto;width:100%;line-height:1.5;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap a{color:#2545f5;}
+.tai-stat{padding:24px;border-right:1px solid #e6e6ea;}
+.tai-conf{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border-radius:2px;vertical-align:middle;margin-left:6px;}
+.tai-conf-hi{background:#e7f5ec;color:#177245;}
+.tai-conf-med{background:#fdf3e3;color:#9a6a00;}
+.tai-conf-der{background:#eef1ff;color:#2545f5;}
+.tai-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tai-table th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e76;text-align:left;padding:10px 12px;border-bottom:2px solid #111114;}
+.tai-table td{padding:11px 12px;border-bottom:1px solid #ececf0;vertical-align:top;color:#33333a;}
+.tai-tablewrap{overflow-x:auto;}
+.tai-cn{background:#eef1fd;}
+@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:32px 20px!important;}}
+</style>
+
+<div class="tai-wrap">
+
+  <div class="tai-padx" style="padding:48px 36px 36px;border-bottom:1px solid #e6e6ea;">
+    <div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;">Home <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/technical-benchmarks/" style="color:#9a9aa2;text-decoration:none;">Technical Performance</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Chinese AI Models 2026</span></div>
+    <div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Technical Performance &middot; Report AI</div>
+    <h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">Chinese AI Models 2026, Ranked</h1>
+    <p style="font-size:17px;color:#55555e;max-width:680px;margin:0 0 14px;">Two Chinese models now sit inside the global top four. But the release that matters most is the smallest one: on <strong>14 August 2026</strong> Alibaba shipped a <strong>27.8-billion-parameter</strong> model, under Apache 2.0, that runs on a single consumer graphics card &mdash; and scores within <strong>seven points</strong> of the best model in the world. Every figure below is attributed, dated, and rated for confidence.</p>
+    <div class="tai-mono" style="font-size:12px;color:#9a9aa2;">By Report AI &middot; Published 3 September 2026</div>
+  </div>
+
+  <div class="tai-statgrid" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;">
+    <div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">52</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">Intelligence Index of a model that fits a 24GB GPU</div></div>
+    <div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">~100&times;</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">smaller than Kimi K3, five points behind it</div></div>
+    <div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">2</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">Chinese models in the global top four</div></div>
+    <div class="tai-stat" style="border-right:none;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">3B</div><div style="font-size:11.5px;line-height:1.35;color:#6e6e76;margin-top:8px;">Alibaba model downloads &mdash; past Meta and Google</div></div>
+  </div>
+
+  <div class="tai-padx" style="background:#f5f5f7;padding:44px 36px;border-bottom:1px solid #e6e6ea;">
+    <div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">Analysis</div>
+    <h2 style="font-weight:900;font-size:32px;line-height:1.03;letter-spacing:-0.03em;margin:0 0 20px;max-width:840px;">The frontier stopped being the interesting part</h2>
+    <p style="font-size:16px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 16px;">The headline reading of 2026 is that China caught up. On the Artificial Analysis Intelligence Index, Alibaba's <strong>Qwen3.8-Max</strong> scores 58 and Moonshot's <strong>Kimi K3</strong> scores 57.1, against 58.9 for OpenAI's GPT-5.6 Sol. Two Chinese systems sit inside the global top four, and one of them ships its weights. That is a real change from eighteen months ago, and it is also the least interesting thing in the data.</p>
+    <p style="font-size:16px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 16px;">The more consequential release came on <strong>14 August 2026</strong>, and it is small. <strong>Qwen3.8-27B</strong> is a 27.8-billion-parameter dense model published under Apache 2.0. Quantised to four bits it occupies about 17GB &mdash; it runs on a single RTX 3090 or 4090, hardware that sells second-hand for a few hundred dollars. It scores <strong>52</strong>. That is 6.9 points below the best model anyone has tested, from a model roughly <strong>86&times; smaller</strong> than its own lab's flagship and about <strong>100&times; smaller</strong> than Kimi K3.</p>
+    <p style="font-size:16px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 24px;">The competitive question has therefore moved. It is no longer "can Chinese labs reach the frontier" &mdash; they have, at least on composite benchmarks. It is "what is the frontier worth when 90% of its capability runs on a gaming GPU for free?" A closed model priced per token competes not only against other closed models but against a free artefact that a company can run inside its own firewall with no per-call cost and no vendor dependency at all. On agentic coding the gap is narrower still: Qwen3.8-27B posts <strong>61.7 on SWE-bench Pro</strong>, against 64.7 for xAI's Grok 4.5 &mdash; three points, between a downloadable 27B model and a frontier proprietary system.</p>
+    <div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e76;margin-bottom:12px;">Key takeaways</div>
+    <ul style="list-style:none;margin:0;padding:0;max-width:840px;">
+      <li style="position:relative;padding-left:20px;font-size:15px;line-height:1.5;color:#33333a;margin-bottom:12px;"><span style="position:absolute;left:0;top:7px;width:8px;height:8px;background:#2545f5;"></span><strong style="color:#111114;">Parity at the top is real but narrow.</strong> Two Chinese models in the top four, both within two points of the leader &mdash; on one composite index.</li>
+      <li style="position:relative;padding-left:20px;font-size:15px;line-height:1.5;color:#33333a;margin-bottom:12px;"><span style="position:absolute;left:0;top:7px;width:8px;height:8px;background:#2545f5;"></span><strong style="color:#111114;">The efficiency release matters more than the flagship.</strong> 52 points on a 24GB consumer card changes who can deploy frontier-adjacent AI, and at what cost.</li>
+      <li style="position:relative;padding-left:20px;font-size:15px;line-height:1.5;color:#33333a;margin-bottom:0;"><span style="position:absolute;left:0;top:7px;width:8px;height:8px;background:#2545f5;"></span><strong style="color:#111114;">Open weights are the strategic difference.</strong> Kimi K3 and Qwen3.8-27B ship downloadable weights; the US frontier does not. Alibaba's models have passed <strong>3 billion downloads</strong>, ahead of Meta and Google.</li>
+    </ul>
+  </div>
+
+  <div class="tai-padx" style="padding:40px 36px;border-bottom:1px solid #e6e6ea;">
+    <h2 style="font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0 0 12px;">The ranking</h2>
+    <p style="font-size:15px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 20px;">Artificial Analysis Intelligence Index, a composite across reasoning, knowledge, mathematics and coding. Chinese models shaded. One index, one moment in time &mdash; read the caveats below before quoting any of it.</p>
+    <div class="tai-tablewrap"><table class="tai-table">
+      <tr><th>#</th><th>Model</th><th>Lab &middot; Country</th><th>Index</th><th>Parameters</th><th>Weights</th><th>Confidence</th></tr>
+      <tr><td>1</td><td><strong>Claude Fable 5</strong> <span class="tai-mono" style="font-size:10px;color:#9a6a00;">see caveat</span></td><td>Anthropic &middot; US</td><td class="tai-mono" style="font-weight:600;">59.9</td><td>undisclosed</td><td>Closed</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+      <tr><td>2</td><td><strong>GPT-5.6 Sol</strong></td><td>OpenAI &middot; US</td><td class="tai-mono" style="font-weight:600;">58.9</td><td>undisclosed</td><td>Closed</td><td><span class="tai-conf tai-conf-hi">HIGH</span></td></tr>
+      <tr class="tai-cn"><td>3</td><td><strong>Qwen3.8-Max</strong></td><td>Alibaba &middot; China</td><td class="tai-mono" style="font-weight:600;">58</td><td>2.4T total / 95B active (MoE)</td><td>Closed</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+      <tr class="tai-cn"><td>4</td><td><strong>Kimi K3</strong></td><td>Moonshot &middot; China</td><td class="tai-mono" style="font-weight:600;">57.1</td><td>2.8T (MoE)</td><td><strong>Open</strong> (MIT-based)</td><td><span class="tai-conf tai-conf-hi">HIGH</span></td></tr>
+      <tr><td>5</td><td><strong>Claude Opus 4.8</strong></td><td>Anthropic &middot; US</td><td class="tai-mono" style="font-weight:600;">55.7</td><td>undisclosed</td><td>Closed</td><td><span class="tai-conf tai-conf-hi">HIGH</span></td></tr>
+      <tr class="tai-cn"><td>6</td><td><strong>Qwen3.8-27B</strong></td><td>Alibaba &middot; China</td><td class="tai-mono" style="font-weight:600;">52</td><td><strong>27.8B dense</strong></td><td><strong>Apache 2.0</strong></td><td><span class="tai-conf tai-conf-hi">HIGH</span></td></tr>
+    </table></div>
+    <p style="font-size:13.5px;line-height:1.55;color:#6e6e76;max-width:840px;margin:12px 0 0;">
+      <strong>Two caveats that matter more than the ordering.</strong>
+      <br><br><strong>Qwen3.8-Max's score has moved three times.</strong> Artificial Analysis first published <strong>53</strong>, then re-ran after reporting intermittent problems with the endpoint under test and got <strong>56</strong>, and currently lists <strong>58</strong>. We publish the current figure and the range, and rate it MEDIUM. A number that has moved five points in weeks is not a number to build an argument on.
+      <br><br><strong>Claude Fable 5 at the top requires explanation.</strong> Fable 5 was <a href="/reports/claude-fable-5-mythos-5-capabilities-removal/">withdrawn within a week of launch in June 2026</a> under US export controls. Artificial Analysis lists the score with an Opus 4.8 fallback, which may mean the measurement partly reflects the fallback rather than Fable 5 itself. Until that is clarified we treat the top position as unsettled and rate it MEDIUM &mdash; a model you cannot use is a strange thing to call the best.
+    </p>
+  </div>
+
+  <div class="tai-padx" style="padding:40px 36px;border-bottom:1px solid #e6e6ea;">
+    <h2 style="font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0 0 12px;">The Aug 14 release, in detail</h2>
+    <p style="font-size:15px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 20px;">Qwen3.8-27B is the model that changes the deployment maths. Its benchmark profile against models it has no business competing with:</p>
+    <div class="tai-tablewrap"><table class="tai-table">
+      <tr><th>Benchmark</th><th>Qwen3.8-27B</th><th>Compared with</th><th>Confidence</th></tr>
+      <tr><td>Artificial Analysis Intelligence Index</td><td class="tai-mono" style="font-weight:600;">52</td><td>GPT-5.6 Sol 58.9 &middot; Kimi K3 57.1</td><td><span class="tai-conf tai-conf-hi">HIGH</span></td></tr>
+      <tr><td>SWE-bench Pro (agentic coding)</td><td class="tai-mono" style="font-weight:600;">61.7</td><td>Grok 4.5 64.7 &middot; Claude Opus 4.8 69.2</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+      <tr><td>Terminal-Bench 2.1</td><td class="tai-mono" style="font-weight:600;">73.0</td><td>Grok 4.5 83.3</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+      <tr><td>LiveCodeBench v6</td><td class="tai-mono" style="font-weight:600;">90.3</td><td>&mdash;</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+      <tr><td>OSWorld-Verified</td><td class="tai-mono" style="font-weight:600;">84.3</td><td>GPT-5.6 Sol 62.6 (OSWorld 2.0)</td><td><span class="tai-conf tai-conf-med">MEDIUM</span></td></tr>
+    </table></div>
+    <p style="font-size:15px;line-height:1.6;color:#33333a;max-width:840px;margin:18px 0 0;">Specifications: <strong>27.8B dense parameters</strong>, <strong>Apache 2.0</strong>, native context <strong>262,144 tokens</strong> (extensible to ~1M via YaRN scaling), native image and video input. BF16 weights are ~55.6GB; at Q4_K_M quantisation it is <strong>17.1GB</strong>, or 18.0GB with the vision tower loaded &mdash; inside a 24GB card at 64K context. <span class="tai-conf tai-conf-med">MEDIUM</span></p>
+    <p style="font-size:15px;line-height:1.6;color:#33333a;max-width:840px;margin:14px 0 0;"><strong>Read the OSWorld row carefully.</strong> The 84.3 and GPT-5.6's 62.6 are different benchmark versions (OSWorld-Verified vs OSWorld 2.0) and are <em>not</em> directly comparable. We include both because the gap is the sort of thing that gets quoted out of context, and it should not be.</p>
+  </div>
+
+  <div class="tai-padx" style="padding:40px 36px;border-bottom:1px solid #e6e6ea;">
+    <h2 style="font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0 0 12px;">Capability per parameter</h2>
+    <p style="font-size:15px;line-height:1.6;color:#33333a;max-width:840px;margin:0 0 20px;">The same ranking, reordered by what it costs to get the score. This is where the Chinese open-weight strategy shows its shape.</p>
+    <div class="tai-tablewrap"><table class="tai-table">
+      <tr><th>Model</th><th>Index</th><th>Total params</th><th>Index points per 100B params</th><th>Runs on</th></tr>
+      <tr class="tai-cn"><td><strong>Qwen3.8-27B</strong></td><td class="tai-mono">52</td><td class="tai-mono">0.0278T</td><td class="tai-mono" style="font-weight:600;color:#2545f5;">187.1</td><td>One 24GB consumer GPU</td></tr>
+      <tr class="tai-cn"><td>Qwen3.8-Max</td><td class="tai-mono">58</td><td class="tai-mono">2.4T</td><td class="tai-mono">2.4</td><td>Datacentre / API only</td></tr>
+      <tr class="tai-cn"><td>Kimi K3</td><td class="tai-mono">57.1</td><td class="tai-mono">2.8T</td><td class="tai-mono">2.0</td><td>Multi-GPU cluster</td></tr>
+      <tr><td>GPT-5.6 Sol &middot; Claude Opus 4.8</td><td class="tai-mono">58.9 &middot; 55.7</td><td class="tai-mono">undisclosed</td><td class="tai-mono">&mdash;</td><td>API only</td></tr>
+    </table></div>
+    <p style="font-size:13.5px;line-height:1.55;color:#6e6e76;max-width:840px;margin:12px 0 0;">The points-per-parameter column is <span class="tai-conf tai-conf-der">DERIVED</span> &mdash; index score divided by total parameters, computed by Report AI. Treat it as an illustration of the gap in deployment economics, not as a performance metric: dense and mixture-of-experts architectures are not comparable on total parameter count, since MoE models activate only a fraction per token (Qwen3.8-Max activates 95B of its 2.4T). Measured on <em>active</em> parameters the flagship gap narrows considerably. US models publish no parameter counts at all, so they cannot be placed in this column.</p>
+  </div>
+
+  <div class="tai-padx" style="padding:40px 36px;border-bottom:1px solid #e6e6ea;">
+    <h2 style="font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0 0 12px;">The rest of the Chinese field</h2>
+    <div class="tai-tablewrap"><table class="tai-table">
+      <tr><th>Model</th><th>Lab</th><th>Known for</th><th>Weights</th></tr>
+      <tr><td><strong>DeepSeek V4-Pro</strong></td><td>DeepSeek</td><td>Price-to-capability leader: MMLU-Pro 87.5, GPQA Diamond 90.1, SWE-bench Verified 80.6 at roughly $0.87 per million output tokens</td><td>MIT</td></tr>
+      <tr><td><strong>GLM-5 / 5.2</strong></td><td>Zhipu AI</td><td>Agentic and tool-use workflows; 77.8% SWE-bench Verified; reliable function calling and structured output</td><td>Open</td></tr>
+      <tr><td><strong>MiniMax</strong></td><td>MiniMax</td><td>Very long context and mixed-media input &mdash; long documents, audio, video</td><td>Open</td></tr>
+      <tr><td><strong>Doubao</strong></td><td>ByteDance</td><td>Not a benchmark contender but China's consumer default, at <a href="/indexes/geography-of-ai/popular-ai-models-by-country/">382M monthly users</a></td><td>Closed</td></tr>
+    </table></div>
+    <p style="font-size:13.5px;line-height:1.55;color:#6e6e76;max-width:840px;margin:12px 0 0;">Sub-benchmark figures in this table are single-sourced and rated <span class="tai-conf tai-conf-med">MEDIUM</span>. Third-party leaderboards disagree materially about the ordering below the top four &mdash; one September 2026 board places MiniMax, GLM-5.3 and DeepSeek V4-Pro at ranks 16, 17 and 21 on a different composite entirely. We do not rank this group.</p>
+  </div>
+
+  <div class="tai-padx" style="padding:40px 36px;border-bottom:1px solid #e6e6ea;">
+    <h2 style="font-weight:800;font-size:24px;letter-spacing:-0.02em;margin:0 0 18px;">FAQ</h2>
+    <p style="font-size:15px;margin:0 0 6px;"><strong>Which Chinese AI model is best in 2026?</strong></p>
+    <p style="font-size:14.5px;color:#55555e;max-width:840px;margin:0 0 18px;">On the Artificial Analysis Intelligence Index, Alibaba's Qwen3.8-Max at 58, just ahead of Moonshot's Kimi K3 at 57.1. If you need downloadable weights, Kimi K3 is the strongest open model; if you need to self-host on modest hardware, Qwen3.8-27B.</p>
+    <p style="font-size:15px;margin:0 0 6px;"><strong>What is the Alibaba model released on 14 August 2026?</strong></p>
+    <p style="font-size:14.5px;color:#55555e;max-width:840px;margin:0 0 18px;">Qwen3.8-27B &mdash; a 27.8-billion-parameter dense model under Apache 2.0, with 262K native context and image and video input. Quantised to four bits it is about 17GB and runs on a single 24GB consumer GPU, while scoring 52 on the Intelligence Index.</p>
+    <p style="font-size:15px;margin:0 0 6px;"><strong>Can a 27B model really compete with frontier models?</strong></p>
+    <p style="font-size:14.5px;color:#55555e;max-width:840px;margin:0 0 18px;">On composite benchmarks it comes close &mdash; 52 against 58.9 for the leader. On agentic coding it is closer still: SWE-bench Pro 61.7 against 64.7 for Grok 4.5. It will not match frontier systems on the hardest reasoning, long-horizon agentic work, or reliability. What changed is the ratio: most of the capability, on hardware you own.</p>
+    <p style="font-size:15px;margin:0 0 6px;"><strong>Have Chinese models overtaken US models?</strong></p>
+    <p style="font-size:14.5px;color:#55555e;max-width:840px;margin:0 0 18px;">Not on this index &mdash; the top two remain US systems. But the margin is under two points, and the strategic difference has moved elsewhere: China's leading labs publish weights, and the US frontier labs do not.</p>
+    <p style="font-size:15px;margin:0 0 6px;"><strong>Are these benchmark scores reliable?</strong></p>
+    <p style="font-size:14.5px;color:#55555e;max-width:840px;margin:0;">Treat them as directional. Qwen3.8-Max's index score moved 53 &rarr; 56 &rarr; 58 in weeks after endpoint problems and re-runs. Leaderboards disagree on ordering below the top four. Benchmark contamination is an open question across the field. We publish the numbers with their provenance so you can discount them yourself.</p>
+  </div>
+
+  <div class="tai-padx" style="padding:28px 36px;border-bottom:1px solid #e6e6ea;">
+    <div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:10px;">Methodology &amp; sources</div>
+    <p style="font-size:13.5px;line-height:1.6;color:#6e6e76;max-width:840px;margin:0;">Index scores from <a href="https://artificialanalysis.ai/" target="_blank" rel="nofollow noopener">Artificial Analysis</a> model pages, read September 2026. Kimi K3 specifications and release dates from Moonshot AI's announcement and coverage in <a href="https://venturebeat.com/technology/chinas-moonshot-ai-releases-kimi-k3-the-largest-open-source-model-ever-rivaling-top-u-s-systems" target="_blank" rel="nofollow noopener">VentureBeat</a>, <a href="https://www.axios.com/2026/07/16/moonshot-kimi-ai-china-model-openai-anthropic" target="_blank" rel="nofollow noopener">Axios</a> and <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3" target="_blank" rel="nofollow noopener">Tom's Hardware</a>. Qwen3.8-27B and Qwen3.8-Max specifications from Alibaba Cloud's release materials and Artificial Analysis model pages; download milestone from <a href="https://www.bloomberg.com/news/articles/2026-08-15/alibaba-ai-models-hit-3-billion-downloads-passing-meta-google" target="_blank" rel="nofollow noopener">Bloomberg</a>, 15 August 2026. Comparison figures for GPT-5.6 Sol, Claude Opus 4.8 and Grok 4.5 from our own <a href="/indexes/technical-benchmarks/best-ai-models-2026/">model ratings</a>, July 2026. HIGH marks figures corroborated across two or more independent sources; MEDIUM marks single-sourced values, self-reported benchmarks, and any figure that has been revised; DERIVED marks the points-per-parameter column, which Report AI computes. Quantisation sizes vary by build and quantisation method &mdash; treat the 17.1GB figure as approximate. Corrections: see our <a href="/about/">methodology and corrections policy</a>.</p>
+  </div>
+
+  <div class="tai-padx" style="padding:28px 36px;">
+    <div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:10px;">Related on Report AI</div>
+    <p style="font-size:14px;margin:0;"><a href="/indexes/technical-benchmarks/best-ai-models-2026/">Best AI Models 2026 &mdash; rated by task</a> &middot; <a href="/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/">Open vs Closed AI Models</a> &middot; <a href="/indexes/geography-of-ai/popular-ai-models-by-country/">Popular AI Models by Country</a> &middot; <a href="/indexes/ai-economics/llm-token-price-index/">LLM Token Price Index</a> &middot; <a href="/indexes/geography-of-ai/">The Geography of AI</a></p>
+  </div>
+
+</div>
