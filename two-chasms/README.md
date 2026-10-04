@@ -31,3 +31,22 @@ Template 7's "WordPress port" CSS hid `.wp-site-blocks > header` / `> footer` to
 own header. Our masthead and colophon are raw `wp:html` output, so they are direct children of
 `.wp-site-blocks` too and were hidden by the same rule. Rule now excludes `.masthead` / `.colophon`
 and forces them visible. `test/wp_sim.html` now wraps the page in `.wp-site-blocks` to catch this.
+
+## 2026-10-04 — inner pages live
+| Page | ID | Source |
+|---|---|---|
+| /assess "Where's your team?" (was draft 13) | 13 | `build_assess.py` → `out/assess.html` |
+| /workshops | 27 | `build_pages.py` → `out/workshops.html` |
+| /cast | 28 | `build_pages.py` → `out/cast.html` |
+| /books | 29 | `build_pages.py` → `out/books.html` |
+All use template `page-mutation`. Page CSS (`out/pages_css.css` + `out/assess_css.css`) was appended to template 7.
+Guides + Exhibit 2.1 uploaded to media (`/wp-content/uploads/2026/10/*.docx`, sourced from `assets/`).
+
+**Assessment:** instrument (15 statements) and scoring carried over unchanged from "Which wave are you in?";
+flow follows the agile-agilist.com QBank engine (WPCode snippet 30856): perspective step, probe line,
+1–5 Never→Always + N/A, email gate, HubSpot form 46316757 / c6f0d4c1-… (email + firstname; the reading is sent in
+`context.pageName`). Result: "You're in X; Y is not holding" / stuck-in-chasm variants → Y's flagship workshop;
+dynamic 1080 share card. Mutation/Immune readers are pointed at the live MRX on agile-agilist.com.
+
+**Open:** pre-order URL (Books + Pre-order button use a mailto "notify me" for now) · M1/M2 guides (shown "In development")
+· cast quotes outside HANDOVER §6 carried over from the earlier cast page (Oliver, Daniel, Terry) — confirm verbatim.
