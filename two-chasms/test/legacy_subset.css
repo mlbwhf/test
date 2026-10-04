@@ -38,3 +38,7 @@ p{line-height:1.65;color:var(--ink-2)}
 .assess{max-width:720px}
 .workshop{transition:border-color .18s ease, transform .18s ease}
 .workshop:hover{border-color:var(--line-2);transform:translateY(-2px)}
+
+.wp-site-blocks > header:not(.masthead),.wp-site-blocks > footer:not(.colophon),.wp-site-blocks > .wp-block-template-part{display:none}
+.wp-site-blocks > header.masthead{display:block}
+.wp-site-blocks > footer.colophon{display:flex}

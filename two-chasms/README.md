@@ -25,3 +25,9 @@ Deviation from the design: "Signal sensing" → "Signal Sensing" (handover §1, 
 - `/workshops`, `/cast`, `/books` pages don't exist on WP yet → nav links 404 until created.
 - Favicon / site icon (site title + tagline were set: "The Two Chasms Framework" / "Sense the shift before your dashboard does").
 - M1/M2 workshop guides need Mark's scope approval.
+
+## Fix 2026-10-04 — masthead not showing
+Template 7's "WordPress port" CSS hid `.wp-site-blocks > header` / `> footer` to suppress the theme's
+own header. Our masthead and colophon are raw `wp:html` output, so they are direct children of
+`.wp-site-blocks` too and were hidden by the same rule. Rule now excludes `.masthead` / `.colophon`
+and forces them visible. `test/wp_sim.html` now wraps the page in `.wp-site-blocks` to catch this.
