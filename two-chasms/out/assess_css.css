@@ -38,4 +38,11 @@
 .tc .as__bar.is-weak .as__track>i{background:var(--amber)}
 .tc .as__card{margin:0;display:flex;flex-direction:column;gap:10px;align-items:center}
 .tc .as__card .share{max-width:360px}
+.tc .as__head.is-red{border-left-color:var(--ink)}
+.tc .as__red:empty{display:none}
+.tc .as__red{background:var(--wash-2);border-left:4px solid var(--ink);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.tc .as__red .as__track>i{background:var(--amber)}
+.tc .as__redband{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.tc .as__lit{display:flex;flex-wrap:wrap;gap:6px}
+.tc .as__lit span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border:1px solid var(--line-2);background:#fff;padding:4px 7px}
 @media (max-width:860px){.tc .as__result{grid-template-columns:1fr}}

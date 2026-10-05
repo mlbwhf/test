@@ -50,3 +50,13 @@ dynamic 1080 share card. Mutation/Immune readers are pointed at the live MRX on 
 
 **Open:** pre-order URL (Books + Pre-order button use a mailto "notify me" for now) · M1/M2 guides (shown "In development")
 · cast quotes outside HANDOVER §6 carried over from the earlier cast page (Oliver, Daniel, Terry) — confirm verbatim.
+
+## 2026-10-05 — red panel + quote fix (from the author)
+- /assess: after the 15 state statements, the **Seven Stagnation Signals** (one statement per signal, written by the
+  author from the book's symptom bullets; 0–4 "Not true of us" → "Consistently true", N/A allowed). Reverse-scored,
+  total /28 → Listening (0–7) · Early entropy (8–14) · A slow bleed disguised as momentum (15–21) · Reflex — the red
+  panel is lit (22–28). Placement is unchanged; a lit panel with wave ≥ 1 adds the "textbook Reflex" line and routes the
+  primary CTA to S1. Red-panel total + band travel to HubSpot in `context.pageName`.
+- /cast: Daniel's line corrected to the manuscript — “No. We built one. And gave her five worlds to adapt to.”
+  (the first sentence of the old line is Layla's). Oliver and Terry confirmed verbatim.
+- Pre-order: still the mailto "notify me" until the author chooses KDP (ebook-only pre-order) or an own page.

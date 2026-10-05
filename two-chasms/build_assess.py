@@ -9,6 +9,8 @@ one statement per screen with a probe line, a 1–5 Never→Always scale plus N/
 before results, fire-and-forget HubSpot capture to the same portal/form, per-dimension bars.
 Scale mapping: engine 1..5 -> instrument 0..4; N/A answers are excluded from the state's mean.
 
+Red panel (added 2026-10-05, from the author): seven Stagnation Signal statements, 0-4 agreement,
+reverse-scored, total /28; bands Listening / Early entropy / A slow bleed disguised as momentum / Reflex.
 Result logic (unchanged from page 13):
   state score     = mean answer / 4, as a percentage
   holding through = highest state >= 60 with every state below it also >= 60   (wave)
@@ -26,9 +28,9 @@ SCENES = re.findall(r'<div class="state__icon">(<svg.*?</svg>)</div>', SRC_HTML,
 
 body = r"""
 <section class="wrap hero" id="as-intro">
-  <span class="kicker">The assessment · 15 statements · about 12 minutes as a team</span>
+  <span class="kicker">The assessment · 22 statements · about 12 minutes as a team</span>
   <h1>Where's your team? <em>Find the ball.</em></h1>
-  <p class="lead">Answer as a team. Fifteen statements, three for each state. You get the state you're operating in, the one beneath you that isn't holding, and the workshop that gets you across.</p>
+  <p class="lead">Answer as a team. Fifteen statements, three for each state, then the red panel: the Seven Stagnation Signals from <i>The Mutation Age</i>. You get the state you're operating in, the one beneath you that isn't holding, how loudly the red panel is lit, and the workshop that gets you across.</p>
   <div class="actions"><button class="btn btn--amber" type="button" data-as-start>Start the assessment →</button><a class="link-mono" href="/workshops/">The workshops →</a></div>
 </section>
 <section class="wrap section section--tight" data-as-intro-states>
@@ -56,7 +58,7 @@ body = r"""
   <div class="as__stage" data-stage="gate">
     <div class="as__gate">
       <span class="kicker">Your reading is ready</span>
-      <h2>Fifteen answers in. <em>One email away.</em></h2>
+      <h2>Twenty-two answers in. <em>One email away.</em></h2>
       <p>Enter your work email to see the state you're in, the leap in front of you, and the workshop that gets you across. We'll also send the first chapter of <i>The Mutation Age</i> when it releases.</p>
       <input class="as__field" type="text" data-gate-name placeholder="First name" autocomplete="given-name">
       <input class="as__field" type="email" data-gate-email placeholder="Work email" autocomplete="email">
@@ -72,6 +74,7 @@ body = r"""
         <h2 data-r-head></h2>
         <p class="lead lead--wide" data-r-read></p>
         <div class="as__bars" data-r-bars></div>
+        <div class="as__red" data-r-stag></div>
         <div class="actions"><a class="btn btn--amber" data-r-ws href="/workshops/"></a><a class="link-mono" data-r-next href="/workshops/"></a></div>
         <p class="as__fine">A directional reading. A facilitated assessment scores each state against its measurable signals with your leadership team. <button type="button" class="as__redo" data-r-redo>Retake</button></p>
       </div>
@@ -143,10 +146,26 @@ body = r"""
   ];
 
   var SCALE = [[1, 'Never'], [2, 'Rarely'], [3, 'Sometimes'], [4, 'Often'], [5, 'Always'], [null, 'N/A']];
+  /* The red panel: the Seven Stagnation Signals (The Mutation Age, Part II, closing chapter).
+     One statement per signal, written from the book's symptom bullets. REVERSE-SCORED: a high
+     total means Reflex. 0-4 agreement scale; N/A excluded and the total rescaled to /28. */
+  var STAG = [
+    { s: 'R&D Translation Gap', t: 'We research and prototype far more than we ship — labs and pilots rarely reach the customer.' },
+    { s: 'Platform Dilution', t: 'Our tools are built for internal use; there is no API, SDK or developer program that others build on.' },
+    { s: 'Ecosystem Disengagement', t: 'Fewer third parties integrate with us than two years ago, and top AI or engineering talent is choosing startups or rivals.' },
+    { s: 'Consulting-to-Product Imbalance', t: 'Headcount grows while product revenue stays flat; we solve with people what competitors solve with platforms.' },
+    { s: 'Talent Flight from Core Teams', t: 'Our strongest builders and product leaders have quietly moved to edge roles, competitors or their own startups.' },
+    { s: 'Brand Perception Lag', t: 'Customers, analysts and journalists still describe us by a product or era we are trying to move past.' },
+    { s: 'Absence of Anomaly Listening', t: '“That’s just noise” is a common response to odd data, user pushback or internal dissent, and there is no route to escalate it.' }
+  ];
+  var AGREE = [[0, 'Not true of us'], [1, 'Rarely true'], [2, 'Sometimes true'], [3, 'Mostly true'], [4, 'Consistently true'], [null, 'N/A']];
+  /* Read-out bands; the phrases are the book's own. */
+  var STAG_BANDS = [[7, 'Listening'], [14, 'Early entropy'], [21, 'A slow bleed disguised as momentum'], [28, 'Reflex — the red panel is lit']];
+  var TOTAL = 15 + 7;
   var PERSP = [['self', 'Myself'], ['team', 'My team (under 30)'], ['unit', 'A business unit'], ['org', 'The whole organization']];
 
   var $ = function (sel) { return root.querySelector(sel); };
-  var idx = 0, ans = [], persp = '';
+  var idx = 0, ans = [], sans = [], persp = '';
   var intro = document.getElementById('as-intro'), introStates = document.querySelector('[data-as-intro-states]');
 
   function stage(name) {
@@ -174,26 +193,49 @@ body = r"""
   }
 
   function render() {
-    var q = Q[idx], S = STATES[q.s];
-    var st = $('[data-q-state]');
-    st.textContent = 'State 0' + (q.s + 1) + ' · ' + S.name + ' — ' + S.wave;
-    st.classList.toggle('is-amber', S.amber);
-    $('[data-q-def]').textContent = S.def;
-    $('[data-q-num]').textContent = 'Statement ' + (idx + 1) + ' of ' + Q.length;
-    $('[data-q-text]').textContent = q.t;
-    $('[data-q-probe]').textContent = q.p;
-    var box = $('[data-q-opts]'); box.innerHTML = '';
-    SCALE.forEach(function (sc) {
+    var red = idx >= Q.length, st = $('[data-q-state]'), box = $('[data-q-opts]');
+    if (!red) {
+      var q = Q[idx], S = STATES[q.s];
+      st.textContent = 'State 0' + (q.s + 1) + ' · ' + S.name + ' — ' + S.wave;
+      st.classList.toggle('is-amber', S.amber);
+      $('[data-q-def]').textContent = S.def;
+      $('[data-q-text]').textContent = q.t;
+      $('[data-q-probe]').textContent = q.p;
+    } else {
+      var k = idx - Q.length, G = STAG[k];
+      st.textContent = 'The red panel · Stagnation signal ' + (k + 1) + ' of 7 — ' + G.s;
+      st.classList.add('is-amber');
+      $('[data-q-def]').textContent = 'The Seven Stagnation Signals are the fingerprint of Reflex. Here, agreeing is the warning sign.';
+      $('[data-q-text]').textContent = G.t;
+      $('[data-q-probe]').textContent = 'How true is this of your organization today?';
+    }
+    root.querySelector('.as__head').classList.toggle('is-red', red);
+    $('[data-q-num]').textContent = 'Statement ' + (idx + 1) + ' of ' + TOTAL;
+    box.innerHTML = '';
+    (red ? AGREE : SCALE).forEach(function (sc) {
+      /* main scale is 1..5 (engine) -> 0..4 (instrument); the red panel is 0..4 directly */
+      var val = sc[0] === null ? null : (red ? sc[0] : sc[0] - 1);
+      var cur = red ? sans[idx - Q.length] : ans[idx];
       var b = opt(sc[1], function () {
-        ans[idx] = sc[0] === null ? null : sc[0] - 1;   /* engine 1..5 -> instrument 0..4 */
+        if (red) sans[idx - Q.length] = val; else ans[idx] = val;
         idx++;
-        if (idx < Q.length) render(); else stage('gate');
+        if (idx < TOTAL) render(); else stage('gate');
       }, sc[0] === null ? '–' : String(sc[0]));
-      if (ans[idx] !== undefined && ((ans[idx] === null && sc[0] === null) || ans[idx] === sc[0] - 1)) b.classList.add('is-picked');
+      if (cur !== undefined && cur === val) b.classList.add('is-picked');
       box.appendChild(b);
     });
     $('[data-q-back]').hidden = idx === 0;
-    $('[data-q-prog]').style.width = (idx / Q.length * 100) + '%';
+    $('[data-q-prog]').style.width = (idx / TOTAL * 100) + '%';
+  }
+
+  /* Red panel total, rescaled to /28 over answered items; null when every item was N/A. */
+  function stagnation() {
+    var sum = 0, n = 0;
+    sans.forEach(function (v) { if (v !== null && v !== undefined) { sum += v; n++; } });
+    if (!n) return null;
+    var total = Math.round(sum / n * 7), band = STAG_BANDS[STAG_BANDS.length - 1][1];
+    for (var i = 0; i < STAG_BANDS.length; i++) { if (total <= STAG_BANDS[i][0]) { band = STAG_BANDS[i][1]; break; } }
+    return { total: total, band: band, lit: STAG.filter(function (g, i) { return sans[i] >= 3; }).map(function (g) { return g.s; }) };
   }
 
   function scores() {
@@ -263,7 +305,8 @@ body = r"""
   }
 
   function sendLead(name, email, r) {
-    var label = r.head.join(' ') + ' | ' + STATES.map(function (s, i) { return s.name + ' ' + r.ls[i]; }).join(' · ') + ' | perspective ' + persp;
+    var label = r.head.join(' ') + ' | ' + STATES.map(function (s, i) { return s.name + ' ' + r.ls[i]; }).join(' · ')
+      + ' | red panel ' + (r.stag ? r.stag.total + '/28 ' + r.stag.band : 'n/a') + ' | perspective ' + persp;
     var fields = [{ name: 'email', value: email }];
     if (name) fields.push({ name: 'firstname', value: name });
     try {
@@ -279,11 +322,20 @@ body = r"""
     $('[data-r-head]').appendChild(document.createTextNode(r.head[0] + ' '));
     var em = document.createElement('em'); em.textContent = r.head[1]; $('[data-r-head]').appendChild(em);
     $('[data-r-read]').textContent = r.read;
+    var red = $('[data-r-stag]'), g = r.stag;
+    red.innerHTML = '';
+    if (g) {
+      red.innerHTML = '<div class="as__barlab"><span><b>The red panel</b> <i>Seven Stagnation Signals · high = Reflex</i></span><span>' + g.total + ' / 28</span></div>'
+        + '<div class="as__track"><i style="width:' + Math.round(g.total / 28 * 100) + '%"></i></div>'
+        + '<p class="as__redband">' + g.band + '</p>'
+        + (g.lit.length ? '<div class="as__lit">' + g.lit.map(function (n) { return '<span>' + n + '</span>'; }).join('') + '</div>' : '');
+    }
     $('[data-r-bars]').innerHTML = STATES.map(function (s, i) {
       var cls = 'as__bar' + (i === r.weak ? ' is-weak' : '') + (i < r.wave ? ' is-hold' : '');
       return '<div class="' + cls + '"><div class="as__barlab"><span><b>0' + (i + 1) + '</b> ' + s.name + ' <i>' + s.wave + '</i></span><span>' + r.ls[i] + '</span></div><div class="as__track"><i style="width:' + r.ls[i] + '%"></i></div></div>';
     }).join('');
     var target = r.wave === 5 ? STATES[4] : STATES[r.weak];
+    if (r.stag && r.stag.total >= 22 && r.wave >= 1) target = STATES[0];   /* lit red panel: the exit door first */
     var ws = $('[data-r-ws]'); ws.textContent = target.ws[0] + ' →'; ws.href = target.ws[1];
     var nx = $('[data-r-next]');
     if (r.wave >= 3) { nx.textContent = 'Deep dive: Mutation Readiness Index ↗'; nx.href = 'https://agile-agilist.com/assessments/mutation-readiness/'; }
@@ -301,15 +353,21 @@ body = r"""
     }
     mailEl.classList.remove('is-bad');
     var r = reading(scores());
+    r.stag = stagnation();
+    /* Framework map: wave 01 holding with a lit red panel is textbook Reflex. Placement is
+       unchanged; the reading says so and points at the exit door. */
+    if (r.stag && r.stag.total >= 22 && r.wave >= 1) {
+      r.read += ' The red panel disagrees, though: delivery holds, but the Seven Stagnation Signals read Reflex. That is the scoreboard being wrong — start with S1 Signal Mapping.';
+    }
     sendLead(nameEl.value.trim(), email, r);   /* fire-and-forget: the reading never waits on the network */
     show(r);
   }
 
-  document.querySelector('[data-as-start]').addEventListener('click', function () { ans = []; renderPersp(); stage('perspective'); });
+  document.querySelector('[data-as-start]').addEventListener('click', function () { ans = []; sans = []; renderPersp(); stage('perspective'); });
   $('[data-q-back]').addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
   $('[data-gate-go]').addEventListener('click', gate);
   $('[data-gate-email]').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); gate(); } });
-  $('[data-r-redo]').addEventListener('click', function () { ans = []; idx = 0; renderPersp(); stage('perspective'); });
+  $('[data-r-redo]').addEventListener('click', function () { ans = []; sans = []; idx = 0; renderPersp(); stage('perspective'); });
 })();
 </script>
 """
@@ -366,6 +424,13 @@ CSS = """/* ----- /assess ----- */
 .tc .as__bar.is-weak .as__track>i{background:var(--amber)}
 .tc .as__card{margin:0;display:flex;flex-direction:column;gap:10px;align-items:center}
 .tc .as__card .share{max-width:360px}
+.tc .as__head.is-red{border-left-color:var(--ink)}
+.tc .as__red:empty{display:none}
+.tc .as__red{background:var(--wash-2);border-left:4px solid var(--ink);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.tc .as__red .as__track>i{background:var(--amber)}
+.tc .as__redband{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.tc .as__lit{display:flex;flex-wrap:wrap;gap:6px}
+.tc .as__lit span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border:1px solid var(--line-2);background:#fff;padding:4px 7px}
 @media (max-width:860px){.tc .as__result{grid-template-columns:1fr}}
 """
 (OUT / "assess_css.css").write_text(CSS)

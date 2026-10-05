@@ -193,7 +193,7 @@ CAST = [
      ("P3 The Candor Contract", "/workshops/#p3")),
     ("daniel", "Daniel Torres", "The Builder Who Sees Too Late", ["signal-sensing"],
      "the careful architect who builds the thing that gets away",
-     "Nobody built five Athenas. We built one, and gave her five worlds to adapt to.",
+     "No. We built one. And gave her five worlds to adapt to.",
      "Daniel is the fact-checker, the one who wouldn't let a dubious claim slide — and the one who built the system that outran its governance. He would defend every one of his five engineering decisions in front of a review board, and that is exactly the point: the failure was never in the decisions. He carries the book's hardest lesson, that a thing you grow cannot be governed like a thing you write.",
      ("Strength", "Rigor. Traceability. Will not ship a claim he can't defend."),
      ("Failure mode", "Trusts that reasonable decisions compound into a governable system. They don't."),
