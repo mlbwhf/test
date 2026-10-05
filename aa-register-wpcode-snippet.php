@@ -820,22 +820,39 @@ function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
 }
 
 /**
- * A course cannot be in two places at once.
+ * Courses that are allowed to overlap themselves.
+ *
+ * SPC IS DELIBERATE, ON THE CLIENT'S INSTRUCTION. It runs back-to-back and
+ * concurrent cohorts, so the overlap below is a real schedule rather than the
+ * cadence bug the rest of this rule exists to fix. Removing its overlapping
+ * starts would take dates off sale that the business actually intends to run.
+ *
+ * Anything listed here keeps every start its cadence generates, so a slug only
+ * belongs here when the business can genuinely teach two at once. Everything
+ * else goes through the rule: a cohort that cannot be taught is a cohort that
+ * gets cancelled on somebody who has already paid.
+ */
+function aa_reg_self_overlap_ok( $slug ) {
+	return in_array( (string) $slug, array( 'spc' ), true );
+}
+
+/**
+ * A course cannot be in two places at once -- unless it is one of the courses
+ * above, which can.
  *
  * The cadence says which WEEKDAYS a course may open on. It never said anything
  * about how long the class then runs, so a two-day course on a Mon/Tue/Thu
  * cadence opened on Monday, ran into Tuesday, and opened again on Tuesday --
- * two cohorts of the same course sharing a day. Four-day SPC was worse: Monday
- * to Thursday, then another start on the Thursday.
- *
- * Nobody can teach both, so one of them was always going to be cancelled on a
- * buyer who had already paid. This is the rule the cadence was missing: a start
- * is kept only once the previous cohort has finished.
+ * two cohorts of the same course sharing a day, with nobody able to teach both.
+ * This is the rule the cadence was missing: a start is kept only once the
+ * previous cohort has finished.
  *
  * Greedy and in date order, so the EARLIEST start of any clash survives -- the
  * date a buyer saw first is the one that stays on sale.
  */
-function aa_reg_no_self_overlap( $out, $course ) {
+function aa_reg_no_self_overlap( $out, $course, $slug = '' ) {
+	if ( aa_reg_self_overlap_ok( $slug ) ) { return $out; }
+
 	$kept = array();
 	$free = '';   // the first date this course is free again
 	foreach ( $out as $c ) {
@@ -1216,7 +1233,7 @@ function aa_reg_generate( $slug, $course ) {
 	/* Sorted first, because the overlap rule below walks the list in date
 	   order and keeps the earliest start of any clash. */
 	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
-	$out = aa_reg_no_self_overlap( $out, $course );
+	$out = aa_reg_no_self_overlap( $out, $course, $slug );
 
 	/* DECEMBER IS SET BY HAND FOR EVERY TWO-DAY COURSE.
 	   The cadence is built for an ordinary working month and the week between
