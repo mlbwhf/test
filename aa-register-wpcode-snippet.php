@@ -820,20 +820,26 @@ function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
 }
 
 /**
- * Courses that are allowed to overlap themselves.
+ * Courses that are allowed to overlap themselves -- currently all of them.
  *
- * SPC IS DELIBERATE, ON THE CLIENT'S INSTRUCTION. It runs back-to-back and
- * concurrent cohorts, so the overlap below is a real schedule rather than the
- * cadence bug the rest of this rule exists to fix. Removing its overlapping
- * starts would take dates off sale that the business actually intends to run.
+ * DISABLED ON THE CLIENT'S INSTRUCTION. The rule below was written for a single
+ * trainer, where two cohorts of the same course on the same day means one of
+ * them gets cancelled. Agile Agilist has several trainers, so that is a real
+ * schedule rather than a double booking. SPC and ASPC in particular run
+ * back-to-back and concurrent cohorts on identical Mon/Thu cadence, and RTE the
+ * same.
  *
- * Anything listed here keeps every start its cadence generates, so a slug only
- * belongs here when the business can genuinely teach two at once. Everything
- * else goes through the rule: a cohort that cannot be taught is a cohort that
- * gets cancelled on somebody who has already paid.
+ * It was removing 94 intended start dates across eight courses: 32 from RTE,
+ * 29 from ASPC, 29 from APM and one each from large-solution, sa, popm, lpm and
+ * launching-ai-native-arts.
+ *
+ * Kept as a function rather than deleted, so the call site stays unchanged and
+ * the rule can be re-enabled for named courses by returning a list again --
+ * `return ! in_array( (string) $slug, array( 'spc', 'aspc', 'rte' ), true );`
+ * would restore it for everything except those three.
  */
 function aa_reg_self_overlap_ok( $slug ) {
-	return in_array( (string) $slug, array( 'spc' ), true );
+	return true;
 }
 
 /**
