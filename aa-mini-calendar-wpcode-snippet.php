@@ -129,6 +129,53 @@ function aa_mcal_catalog() {
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
 			'url' => '/training/ai-native/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
 			'desc' => 'Extend SAFe into the AI age — AI-Native ways of working, an AI Enablement layer, and Innovation Culture baked into delivery…' ),
+		/* AI-NATIVE. These were missing entirely, so every AI-Native term fell
+		   through to strtoupper($slug) and the calendar labelled the Value
+		   Architect bars "AI-CHAN" -- the term slug is still the one minted for
+		   the old "AI-Native Change Agent" name. Both the live term slugs and
+		   the aa_reg course slugs are listed, because a row can now arrive
+		   from either source. */
+		'ainf'             => array( 'code' => 'AINF',    'name' => 'AI-Native Foundations Certification',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-foundations/', 'days' => 1, 'pdus' => 8, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track.' ),
+		'ai-native-foundations' => array( 'code' => 'AINF', 'name' => 'AI-Native Foundations Certification',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-foundations/', 'days' => 1, 'pdus' => 8, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track.' ),
+		'ai-chan'          => array( 'code' => 'AINCA',   'name' => 'AI-Native Value Architect Certification',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-change-agent/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Lead enterprise AI adoption — diagnose readiness, build the roadmap, drive the habits, govern the risk, and measure sustained change.' ),
+		'ai-native-change-agent' => array( 'code' => 'AINCA', 'name' => 'AI-Native Value Architect Certification',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-change-agent/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Lead enterprise AI adoption — diagnose readiness, build the roadmap, drive the habits, govern the risk, and measure sustained change.' ),
+		'ainorg'           => array( 'code' => 'AINORG',  'name' => 'Leading the AI-Native Organization',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-ready-certification-2/', 'days' => 2, 'pdus' => 16, 'exam_q' => 0, 'exam_m' => 0,
+			'desc' => 'A two-day executive cohort capped at twelve senior leaders, designing the AI-Native operating model.' ),
+		'ai-native-ready-certification-2' => array( 'code' => 'AINORG', 'name' => 'Leading the AI-Native Organization',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-ready-certification-2/', 'days' => 2, 'pdus' => 16, 'exam_q' => 0, 'exam_m' => 0,
+			'desc' => 'A two-day executive cohort capped at twelve senior leaders, designing the AI-Native operating model.' ),
+		'artl'             => array( 'code' => 'ARTL',    'name' => 'Launching AI-Native ARTs',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/launching-ai-native-arts/', 'days' => 2, 'pdus' => 15, 'exam_q' => 0, 'exam_m' => 0,
+			'desc' => 'Become an ART Leader as you turn your Lean-Agile foundation into an engine for AI-driven execution. Exam included.' ),
+		'launching-ai-native-arts' => array( 'code' => 'ARTL', 'name' => 'Launching AI-Native ARTs',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/launching-ai-native-arts/', 'days' => 2, 'pdus' => 15, 'exam_q' => 0, 'exam_m' => 0,
+			'desc' => 'Become an ART Leader as you turn your Lean-Agile foundation into an engine for AI-driven execution. Exam included.' ),
+		'scrum-master'     => array( 'code' => 'SSM',     'name' => 'SAFe Scrum Master Certification',
+			'track' => 'SAFe by Role', 'color' => '#0E8074', 'tint' => '#E7F2F0', 'tint_border' => '#C6E1DC',
+			'url' => '/training/safe/scrum-master/', 'days' => 2, 'pdus' => 16, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'Lead high-performing Agile teams and facilitate the SAFe events that keep an Agile Release Train moving.' ),
+		'large-solution'   => array( 'code' => 'LSSP',    'name' => 'Large Solution SAFe',
+			'track' => 'Advanced SAFe', 'color' => '#1F6FB2', 'tint' => '#E8F1F9', 'tint_border' => '#C7DEEF',
+			'url' => '/training/adv-safe/large-solution/', 'days' => 2, 'pdus' => 16, 'exam_q' => 0, 'exam_m' => 0,
+			'desc' => 'Scale Lean-Agile practices through the Large Solution Delivery discipline and cross-enterprise coordination.' ),
+
 		'micro-conflict'   => array( 'code' => 'CONFLICT', 'name' => 'Advanced Facilitator: Conflict & Collaboration',
 			'track' => 'Micro-Credentials', 'color' => '#2E7D5B', 'tint' => '#E7F3ED', 'tint_border' => '#C6E3D5',
 			'url' => '/training/safe-found/conflict-collaboration/', 'days' => 0, 'pdus' => 0, 'exam_q' => 0, 'exam_m' => 0,
@@ -213,6 +260,114 @@ function aa_mcal_strings( $lang ) {
 		),
 	);
 	return isset( $all[ $lang ] ) ? $all[ $lang ] : $all['en'];
+}
+
+/**
+ * Calendar category slug => the aa_reg course it corresponds to.
+ *
+ * The two naming schemes grew separately and do not line up: the taxonomy says
+ * "ssm" where aa_reg says "scrum-master", and "ai-chan" where aa_reg says
+ * "ai-native-change-agent" -- that term slug was minted for the old "AI-Native
+ * Change Agent" name and never renamed. Aliases are listed in both directions
+ * so a category works whichever scheme the page was written in.
+ */
+function aa_mcal_reg_map() {
+	return array(
+		'spc'                             => 'spc',
+		'aspc'                            => 'aspc',
+		'rte'                             => 'rte',
+		'apm'                             => 'apm',
+		'lpm'                             => 'lpm',
+		'sa'                              => 'sa',
+		'ssm'                             => 'scrum-master',
+		'scrum-master'                    => 'scrum-master',
+		'popm'                            => 'popm',
+		'large-solution'                  => 'large-solution',
+		'lssp'                            => 'large-solution',
+		'ainf'                            => 'ai-native-foundations',
+		'ai-native'                       => 'ai-native-foundations',
+		'ai-native-foundations'           => 'ai-native-foundations',
+		'ai-chan'                         => 'ai-native-change-agent',
+		'ainca'                           => 'ai-native-change-agent',
+		'ai-native-change-agent'          => 'ai-native-change-agent',
+		'ainorg'                          => 'ai-native-ready-certification-2',
+		'ai-native-ready-certification-2' => 'ai-native-ready-certification-2',
+		'artl'                            => 'launching-ai-native-arts',
+		'launching-ai-native-arts'        => 'launching-ai-native-arts',
+	);
+}
+
+/** One display slug per aa_reg course, for the all-courses calendar. */
+function aa_mcal_reg_canonical() {
+	return array( 'spc', 'aspc', 'rte', 'apm', 'lpm', 'sa', 'ssm', 'popm',
+	              'large-solution', 'ainf', 'ai-chan', 'ainorg', 'artl' );
+}
+
+/**
+ * COHORTS FROM THE GENERATOR, SO THE CALENDAR DOES NOT DEPEND ON EVENTBRITE.
+ *
+ * Every date on this calendar used to come from a wp_events post imported from
+ * Eventbrite. When an import was missing the calendar was simply empty, and it
+ * was empty on a lot of pages: AI-Native Foundations, Leading the AI-Native
+ * Organization, Launching AI-Native ARTs, APM, Advanced Scrum Master, SAFe for
+ * Architects, Business Owner, SAFe for Teams, DevOps and every
+ * micro-credential. A page that sells a course and shows no dates is worse
+ * than one that shows none at all.
+ *
+ * These are the same cohorts aa_reg generates and sells through checkout, so
+ * the calendar and the registration panel can no longer disagree -- which they
+ * could before, since one read Eventbrite and the other read the generator.
+ *
+ * MERGED, NOT SUBSTITUTED. Imported events carry facts a generated cohort does
+ * not -- seats_left, a per-cohort price, a named instructor -- and the real
+ * Eventbrite listings for SPC, ASPC, SA and RTE have them. The merge is keyed
+ * on course code plus both dates by the caller, so an imported cohort always
+ * wins over the generated one for the same class and nothing real is lost.
+ *
+ * No seats figure is attached. aa_reg knows a course's capacity but not how
+ * many are left, and a calendar that prints capacity as though it were
+ * availability would be lying; the panel omits a fact it has no value for.
+ */
+function aa_mcal_reg_rows( $cats, $from, $to ) {
+	if ( ! function_exists( 'aa_reg_courses' ) || ! function_exists( 'aa_reg_generate' ) ) {
+		return array();
+	}
+	$map     = aa_mcal_reg_map();
+	$courses = aa_reg_courses();
+	$pairs   = array();
+
+	if ( $cats ) {
+		foreach ( $cats as $cat ) {
+			if ( isset( $map[ $cat ] ) ) { $pairs[ $cat ] = $map[ $cat ]; }
+		}
+	} else {
+		foreach ( aa_mcal_reg_canonical() as $cat ) {
+			if ( isset( $map[ $cat ] ) ) { $pairs[ $cat ] = $map[ $cat ]; }
+		}
+	}
+
+	$lo   = $from->format( 'Y-m-d' );
+	$hi   = $to->format( 'Y-m-d' );
+	$rows = array();
+
+	foreach ( $pairs as $cat => $slug ) {
+		if ( ! isset( $courses[ $slug ] ) ) { continue; }
+		$course = $courses[ $slug ];
+		foreach ( aa_reg_generate( $slug, $course ) as $c ) {
+			if ( $c['start'] < $lo || $c['start'] >= $hi ) { continue; }
+			$row = array(
+				's'  => $c['start'],
+				'e'  => isset( $c['end'] ) ? $c['end'] : $c['start'],
+				'c'  => $cat,
+				'id' => 0,          // generated: there is no wp_events post
+			);
+			if ( ! empty( $course['price'] ) ) {
+				$row['price'] = '$' . number_format( (float) $course['price'] );
+			}
+			$rows[] = $row;
+		}
+	}
+	return $rows;
 }
 
 /**
@@ -318,6 +473,27 @@ function aa_mcal_events( $cats, $months, &$dbg ) {
 		        . ( isset( $row['seats'] ) ? ' seats=' . $row['seats'] : ' seats=?' )
 		        . ( isset( $row['price'] ) ? ' price=' . $row['price'] : '' );
 	}
+	/* Generated cohorts fill whatever Eventbrite did not supply. Keyed the same
+	   way as the imports above, so an imported cohort for the same course and
+	   dates always wins and keeps its seats_left / price / instructor. */
+	$gen = 0;
+	foreach ( aa_mcal_reg_rows( $cats, $from, $to ) as $row ) {
+		$slug = $row['c'];
+		$code = isset( $catalog[ $slug ] ) ? $catalog[ $slug ]['code'] : strtoupper( $slug );
+		$dkey = $code . '|' . $row['s'] . '|' . $row['e'];
+		if ( isset( $seen[ $dkey ] ) ) { continue; }
+		$seen[ $dkey ] = count( $rows );
+		$rows[]        = $row;
+		$gen++;
+	}
+	if ( $gen ) { $dbg[] = $gen . ' generated cohort(s) merged in from aa_reg'; }
+
+	/* The imports arrived ordered by start_ts; the generated rows were appended
+	   after them, so the whole set has to be put back in date order. */
+	usort( $rows, function ( $a, $b ) {
+		return $a['s'] === $b['s'] ? strcmp( $a['c'], $b['c'] ) : strcmp( $a['s'], $b['s'] );
+	} );
+
 	set_transient( $key, $rows, 10 * MINUTE_IN_SECONDS );
 	return $memo[ $key ] = $rows;
 }
@@ -372,7 +548,12 @@ function aa_mcal_render( $atts ) {
 	// anything that does not run scripts.
 	foreach ( array_slice( $rows, 0, 12 ) as $r ) {
 		$m   = $meta[ $r['c'] ];
-		$url = $m['url'] . ( strpos( $m['url'], '?' ) === false ? '?' : '&' ) . 'cohort=' . (int) $r['id'] . '#enroll';
+		/* A generated cohort has no wp_events post, so there is no id to deep
+		   link to -- ?cohort=0 would send the course page looking for post 0.
+		   It still gets a real dated link, just to the enrol section. */
+		$url = $m['url'] . ( (int) $r['id']
+			? ( strpos( $m['url'], '?' ) === false ? '?' : '&' ) . 'cohort=' . (int) $r['id']
+			: '' ) . '#enroll';
 		$html .= '<a href="' . esc_url( $url ) . '">'
 		       . esc_html( $m['code'] . ' · ' . $m['name'] . ' · ' . $r['s'] . ' – ' . $r['e'] ) . '</a><br>';
 	}
