@@ -9554,7 +9554,12 @@ function aa_reg_track_codes() {
 		'safe'          => array( 'SA', 'SSM', 'POPM', 'SASM', 'SDP', 'SP', 'BO' ),
 		'adv-safe'      => array( 'RTE', 'LSSP', 'SPC', 'ASPC', 'APM', 'LPM', 'ARCH' ),
 		'safe-industry' => array( 'ARCH', 'ASE', 'SHWA', 'SHWP', 'SA-Gov' ),
-		'ai-native'     => array( 'AINF', 'AINCA', 'AINORG' ),
+		/* ARTL WAS MISSING HERE, which is why Launching AI-Native ARTs appeared
+		   under no category anywhere on the site. It was added to
+		   aa_reg_courses() for the launch -- so it generated cohorts, priced
+		   correctly and sold -- but a course only shows up in a track listing
+		   if its code is in this array, and nothing cross-checks the two. */
+		'ai-native'     => array( 'AINF', 'AINCA', 'AINORG', 'ARTL' ),
 		/* THE MICRO-CREDENTIAL PAGE HAD NO SET AND FELL BACK TO THE HUB'S
 		   DEFAULT -- Scrum Master, Product Owner, RTE, Agile Coach, the same
 		   four the hub shows everybody. Its own four badges split two ways:
@@ -9794,6 +9799,7 @@ function aa_reg_cert_table() {
 		'AINF' => array( 'AI-Native Foundations',             '/training/ai-native/ai-native-foundations/' ),
 		'AINCA'=> array( 'AI-Native Value Architect',         '/training/ai-native/ai-native-change-agent/' ),
 		'AINORG'=>array( 'Leading the AI-Native Organization','/training/ai-native/ai-native-ready-certification-2/' ),
+		'ARTL' => array( 'Launching AI-Native ARTs',          '/training/ai-native/launching-ai-native-arts/' ),
 	);
 }
 
