@@ -461,7 +461,7 @@ function aa_claims_rename_va( $html ) {
 	$parked = array();
 	$html = preg_replace_callback( '#<b\b[^>]*>AINCA</b>#i', function ( $m ) use ( &$parked ) {
 		$token = '@@AA_BADGE_' . count( $parked ) . '@@';
-		$parked[ $token ] = $m[0];
+		$parked[ $token ] = str_ireplace( 'AINCA', 'AINVA', $m[0] );   /* code confirmed by the client */
 		return $token;
 	}, $html );
 
