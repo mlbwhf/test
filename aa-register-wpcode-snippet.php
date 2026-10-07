@@ -385,9 +385,12 @@ function aa_reg_courses() {
 		   printed on every generated cohort, which is why it was flagged as
 		   unconfirmed here for as long as it was.
 
-		   THE COURSE IS NAMED AI-NATIVE VALUE ARCHITECT. The code stays AINCA
-		   and the slug stays ai-native-change-agent: renaming the slug would
-		   need a 301 and would reset the page's search history for no gain.
+		   THE COURSE IS NAMED AI-NATIVE VALUE ARCHITECT, code AINVA, confirmed
+		   by the client. It read AINCA until then -- an abbreviation of the old
+		   "AI-Native Change Agent" name -- and was left alone only because a
+		   credential code is not something to guess at. The slug stays
+		   ai-native-change-agent: renaming it would need a 301 and would reset
+		   the page's search history for no gain.
 		   ------------------------------------------------------------------ */
 		'ai-native-foundations' => array(
 			'code'     => 'AINF',
@@ -414,7 +417,7 @@ function aa_reg_courses() {
 			),
 		),
 		'ai-native-change-agent' => array(
-			'code'     => 'AINCA',
+			'code'     => 'AINVA',
 			// Renamed from "AI-Native Change Agent". The URL deliberately still
 			// says change-agent: renaming the slug would need a 301 and would
 			// reset the page's search history for no gain.
@@ -1268,6 +1271,11 @@ function aa_reg_generate( $slug, $course ) {
 		$out = $kept;
 	}
 
+	/* Hand-set cohorts go in after the cap, so an explicitly requested date is
+	   never dropped by a limit sized for the cadence. */
+	$out = aa_reg_extra_cohorts( $slug, $course, $out );
+	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
+
 	return $memo[ $key ] = $out;
 }
 
@@ -1296,6 +1304,50 @@ function aa_reg_moves() {
 		'spc'  => array( '2026-09-14' => '2026-09-15' ),
 		'aspc' => array( '2026-09-14' => '2026-09-15' ),
 	);
+}
+
+/**
+ * Cohorts the cadence cannot express, set by hand.
+ *
+ * A cadence places a course on the Nth weekday of a month, so it can say
+ * "second Thursday" but never "the fifth Thursday" -- a date that exists in
+ * only some months. Oct 29 2026 is one of those: the fifth Thursday, asked for
+ * by the client, and unreachable from any week-N rule.
+ *
+ * Dates here are start dates; the length comes from the course as usual, so a
+ * two-day course listed on 2026-10-29 runs 29-30 October.
+ *
+ * A date in the past is ignored rather than removed, so the list can be left
+ * alone once a cohort has run.
+ */
+function aa_reg_extra_dates() {
+	return array(
+		'ai-native-change-agent' => array( '2026-10-29' ),
+	);
+}
+
+/**
+ * Append the hand-set cohorts.
+ *
+ * Runs AFTER the per-month cap, deliberately. A date in aa_reg_extra_dates()
+ * is an explicit decision about a class that will be taught; the cap exists to
+ * stop a cadence flooding a month, and it has no business silently dropping
+ * one of these. The cadence dates still compete for the cap among themselves.
+ */
+function aa_reg_extra_cohorts( $slug, $course, $out ) {
+	$map = aa_reg_extra_dates();
+	if ( empty( $map[ $slug ] ) ) { return $out; }
+
+	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
+	$have  = array();
+	foreach ( $out as $c ) { $have[ $c['start'] ] = true; }
+
+	foreach ( $map[ $slug ] as $start ) {
+		if ( $start < $today || isset( $have[ $start ] ) ) { continue; }
+		$out[]          = aa_reg_make( $slug, $course, $start, 'morning', 'hand-set' );
+		$have[ $start ] = true;
+	}
+	return $out;
 }
 
 function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null ) {
@@ -7024,7 +7076,7 @@ function aa_salary_data() {
 			'BO'     => 145,
 			'SP'     => 95,
 			'AINF'   => 140,
-			'AINCA'  => 180,
+			'AINVA'  => 180,
 			/* WAS 280, WHICH IS THE CHIEF AI OFFICER FIGURE, NOT THIS ONE.
 			   /training/ai-native/ publishes four bars -- CAIO 280K, AINORG
 			   220K, AINCA 180K, AINF 140K -- and the top one was copied onto
@@ -7107,7 +7159,7 @@ function aa_salary_data() {
 				'title'  => 'From AI-curious to',
 				'accent' => 'AI-Native executive.',
 				'blurb'  => 'Foundational AI literacy through to leading an AI-Native enterprise. No coding required.',
-				'steps'  => array( 'AINF', 'AINCA', 'AINORG' ),
+				'steps'  => array( 'AINF', 'AINVA', 'AINORG' ),
 			),
 			/* AI-GUIDED ARCHITECTURE. The destination here is a role, not a
 			   credential we sell -- which is why `dest` exists and why it
@@ -7118,7 +7170,7 @@ function aa_salary_data() {
 				'accent' => 'AI-guided architecture.',
 				'blurb'  => 'Some RTEs and team coaches are moving toward architecting value with AI in the loop. '
 				          . 'It is one route on from the train, not the only one, and not a replacement for the RTE role.',
-				'steps'  => array( 'RTE', 'AINCA' ),
+				'steps'  => array( 'RTE', 'AINVA' ),
 				/* OUR VIEW, IN OUR VOICE. An earlier draft credited this reading
 				   to Scaled Agile. It came from a partner briefing in which the
 				   speaker was explicit that they did not want it taken to market
@@ -9505,7 +9557,7 @@ function aa_reg_role_map() {
 			'also'  => array( 'AI Enablement Specialist', 'AI Workflow Lead', 'AI Champion' ),
 			'query' => 'AI Enablement',
 		),
-		'AINCA'  => array(
+		'AINVA'  => array(
 			'role'  => 'AI Transformation Lead',
 			'also'  => array( 'AI Enablement Lead', 'AI Integration Manager', 'Head of AI Enablement' ),
 			'query' => 'AI Transformation Lead',
@@ -9559,7 +9611,7 @@ function aa_reg_track_codes() {
 		   aa_reg_courses() for the launch -- so it generated cohorts, priced
 		   correctly and sold -- but a course only shows up in a track listing
 		   if its code is in this array, and nothing cross-checks the two. */
-		'ai-native'     => array( 'AINF', 'AINCA', 'AINORG', 'ARTL' ),
+		'ai-native'     => array( 'AINF', 'AINVA', 'AINORG', 'ARTL' ),
 		/* THE MICRO-CREDENTIAL PAGE HAD NO SET AND FELL BACK TO THE HUB'S
 		   DEFAULT -- Scrum Master, Product Owner, RTE, Agile Coach, the same
 		   four the hub shows everybody. Its own four badges split two ways:
@@ -9797,7 +9849,7 @@ function aa_reg_cert_table() {
 		'RTE'  => array( 'SAFe Release Train Engineer',       '/training/adv-safe/rte/' ),
 		'LSSP' => array( 'Large Solution SAFe Practitioner',  '/training/adv-safe/large-solution/' ),
 		'AINF' => array( 'AI-Native Foundations',             '/training/ai-native/ai-native-foundations/' ),
-		'AINCA'=> array( 'AI-Native Value Architect',         '/training/ai-native/ai-native-change-agent/' ),
+		'AINVA'=> array( 'AI-Native Value Architect',         '/training/ai-native/ai-native-change-agent/' ),
 		'AINORG'=>array( 'Leading the AI-Native Organization','/training/ai-native/ai-native-ready-certification-2/' ),
 		'ARTL' => array( 'Launching AI-Native ARTs',          '/training/ai-native/launching-ai-native-arts/' ),
 	);
