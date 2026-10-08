@@ -1681,6 +1681,82 @@ function aa_reg_derived_course( $slug ) {
  * Every lookup goes through here so the two sources can never disagree about
  * which course a slug means.
  */
+/**
+ * PRICES SUPPLIED FOR COURSES THAT LIVE ON THEIR PAGE.
+ *
+ * aa_reg_derived_course() reads price, length and cadence out of the page's own
+ * #aa-cohorts element, which is how fourteen courses work without a table row.
+ * That element carries whatever was typed into it years ago. These four were
+ * given to us directly, so they win over the page.
+ *
+ * KEYED ON THE REAL SLUG, which is not always the credential code: SAFe
+ * Advanced Scrum Master is code SASM and slug 'asm'. Every key below was taken
+ * from aa_reg_cert_table(), whose URLs were read off live permalinks -- a key
+ * that matches no page is not an error anywhere, it just silently never fires.
+ *
+ * PRICE ONLY. Course length, cadence and room size still come from the page,
+ * because those are the course's own specifics and we do not invent them.
+ */
+function aa_reg_price_overrides() {
+	return array(
+		'asm'  => 1100,   /* SASM -- slug is 'asm', /training/safe/asm/ */
+		'arch' => 1799,   /* "same as APM, LPM", both of which are 1799 */
+		'ase'  => 1799,
+		'bo'   => 850,
+	);
+}
+
+/**
+ * THE NON-ENGLISH LIST IS THE PREMIUM ONE. English is the discount.
+ *
+ * We are the only partner delivering several of these languages, so French,
+ * Spanish and Arabic carry a premium and English is the cheap seat. The figures
+ * are given by duration, with RTE named outright because it sits above the
+ * three-day line.
+ *
+ * APPLIED AS A FLOOR, NOT A REPLACEMENT -- aa_reg_price() takes the HIGHER of
+ * the English price and the premium. The duration bands were given for the core
+ * catalogue, where a two-day course is 850 in English, and read literally they
+ * would cut Large Solution from 2150 to 999 and AI-Native Value Architect from
+ * 2500 to 999 in every language but English. That is the opposite of a premium,
+ * so the floor refuses it: a premium can only ever raise a price here.
+ *
+ * ONLY THE DURATIONS WE WERE GIVEN. A one-day course has no premium figure yet,
+ * so it stays at its English price rather than being assigned a guess.
+ */
+function aa_reg_lang_premium( $slug, $days ) {
+	if ( (string) $slug === 'rte' ) { return 2450; }
+	$by_days = array(
+		2 => 999,
+		3 => 2200,
+		4 => 3150,   /* SPC and ASPC */
+	);
+	$d = (int) $days;
+	return isset( $by_days[ $d ] ) ? (int) $by_days[ $d ] : 0;
+}
+
+/**
+ * The supplied price and the language premium, in that order.
+ *
+ * Every consumer -- the hero, the registration panel, the calendar, the Stripe
+ * checkout and aa_reg_course_by_amount() -- reaches a course through
+ * aa_reg_course(), so this is the one place either adjustment has to happen for
+ * all of them to agree. A price that is right on the card and wrong at the
+ * checkout is the failure being avoided.
+ */
+function aa_reg_price( $slug, $course ) {
+	if ( ! is_array( $course ) ) { return $course; }
+
+	$over = aa_reg_price_overrides();
+	if ( isset( $over[ (string) $slug ] ) ) { $course['price'] = (int) $over[ (string) $slug ]; }
+
+	if ( aa_reg_lang() !== 'en' && ! empty( $course['price'] ) && ! empty( $course['days'] ) ) {
+		$prem = aa_reg_lang_premium( $slug, $course['days'] );
+		if ( $prem > 0 ) { $course['price'] = max( (int) $course['price'], $prem ); }
+	}
+	return $course;
+}
+
 function aa_reg_course( $slug ) {
 	/* ON A MIRROR, THE PAGE WINS. aa_reg_courses() is the hand-written English
 	   table and it is keyed on the bare slug -- "rte" is in it, and /fr/rte/ is
@@ -1691,11 +1767,11 @@ function aa_reg_course( $slug ) {
 	   and the table is the fallback. */
 	if ( aa_reg_lang() !== 'en' ) {
 		$derived = aa_reg_derived_course( $slug );
-		if ( $derived ) { return $derived; }
+		if ( $derived ) { return aa_reg_price( $slug, $derived ); }
 	}
 	$courses = aa_reg_courses();
-	if ( isset( $courses[ $slug ] ) ) { return $courses[ $slug ]; }
-	return aa_reg_derived_course( $slug );
+	if ( isset( $courses[ $slug ] ) ) { return aa_reg_price( $slug, $courses[ $slug ] ); }
+	return aa_reg_price( $slug, aa_reg_derived_course( $slug ) );
 }
 
 /** One cohort by id, with its course. Returns null for anything unrecognised. */

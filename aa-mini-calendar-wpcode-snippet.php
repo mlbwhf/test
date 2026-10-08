@@ -351,8 +351,17 @@ function aa_mcal_reg_rows( $cats, $from, $to ) {
 	$rows = array();
 
 	foreach ( $pairs as $cat => $slug ) {
-		if ( ! isset( $courses[ $slug ] ) ) { continue; }
-		$course = $courses[ $slug ];
+		/* THROUGH aa_reg_course(), NOT THE RAW TABLE. That function is where the
+		   supplied price overrides and the non-English premium are applied, so
+		   reading aa_reg_courses() directly showed an English price on a French
+		   calendar while the checkout charged the French one. The raw table stays
+		   as the fallback for the case where the register snippet is loaded but
+		   that function is not. */
+		$course = function_exists( 'aa_reg_course' ) ? aa_reg_course( $slug ) : null;
+		if ( ! is_array( $course ) || empty( $course['days'] ) ) {
+			if ( ! isset( $courses[ $slug ] ) ) { continue; }
+			$course = $courses[ $slug ];
+		}
 		foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 			if ( $c['start'] < $lo || $c['start'] >= $hi ) { continue; }
 			$row = array(
