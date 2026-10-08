@@ -300,7 +300,7 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,   // from the supplied outline; same as RTE
+			'price'    => 2150,   // from the supplied outline. Shared this with RTE once; RTE is 2200 now.
 			'days'     => 2,      // confirmed 2 days
 			/* 22 Sep 2026 is Scaled Agile's GA date -- the first day the course
 			   may be delivered, so nothing generates before it. */
@@ -785,12 +785,61 @@ function aa_reg_next_working_day_in( $ymd, $region = 'na' ) {
  * would be wrong in the label, wrong in the filter, and wrong to a buyer
  * booking leave around it.
  */
-function aa_reg_kind( $start, $days, $region = 'na' ) {
-	$rest = $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );   // ISO-8601: Mon=1
-	$d = new DateTime( $start );
-	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
-		if ( in_array( (int) $d->format( 'N' ), $rest, true ) ) { return 'weekend'; }
+/** Which weekdays are rest days where the class runs. ISO-8601: Mon=1. */
+function aa_reg_rest_dows( $region = 'na' ) {
+	return $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );
+}
+
+/**
+ * THE DAYS A COHORT IS ACTUALLY TAUGHT ON -- the one place that answers it.
+ *
+ * Everything that describes a cohort to a buyer derives from this: the end
+ * date, the weekday/weekend kind, the batch label and the blackout check. They
+ * used to each walk start+days in consecutive calendar days, which meant four
+ * copies of the same rule and four chances for them to disagree.
+ *
+ * A WEEKDAY START SKIPS THE WEEKEND. A four-day course opening on a Thursday
+ * runs Thu, Fri, Mon, Tue -- not Thu, Fri, Sat, Sun. We do not teach on a
+ * Saturday unless the batch was sold as a weekend batch, and a buyer booking
+ * leave off the end date needs that date to be the last day they are in class.
+ *
+ * A REST-DAY START KEEPS CONSECUTIVE DAYS, because that is a DELIBERATE
+ * weekend batch and skipping the weekend would be skipping the whole course.
+ * A two-day class opening on a Saturday is Saturday and Sunday, which is the
+ * point of it. The start day is what distinguishes the two cases: nothing else
+ * has to be passed in, and no caller has to know which kind it is holding.
+ *
+ * Region-aware, because the Gulf rests Friday and Saturday. A Sunday class in
+ * Riyadh is a weekday class and its span skips Fri/Sat, not Sat/Sun.
+ */
+function aa_reg_span_dates( $start, $days, $region = 'na' ) {
+	$days = max( 1, (int) $days );
+	$rest = aa_reg_rest_dows( $region );
+	$d    = new DateTime( $start );
+	/* Decided once, from the start day, before the walk begins. */
+	$weekend_batch = in_array( (int) $d->format( 'N' ), $rest, true );
+	$out   = array();
+	$guard = 0;
+	while ( count( $out ) < $days && $guard < 60 ) {
+		$guard++;
+		if ( $weekend_batch || ! in_array( (int) $d->format( 'N' ), $rest, true ) ) {
+			$out[] = $d->format( 'Y-m-d' );
+		}
 		$d->modify( '+1 day' );
+	}
+	return $out;
+}
+
+/** Last teaching day of the span -- the date a buyer books leave up to. */
+function aa_reg_span_end( $start, $days, $region = 'na' ) {
+	$span = aa_reg_span_dates( $start, $days, $region );
+	return empty( $span ) ? $start : $span[ count( $span ) - 1 ];
+}
+
+function aa_reg_kind( $start, $days, $region = 'na' ) {
+	$rest = aa_reg_rest_dows( $region );
+	foreach ( aa_reg_span_dates( $start, $days, $region ) as $ymd ) {
+		if ( in_array( (int) ( new DateTime( $ymd ) )->format( 'N' ), $rest, true ) ) { return 'weekend'; }
 	}
 	return 'weekday';
 }
@@ -811,13 +860,12 @@ function aa_reg_kind( $start, $days, $region = 'na' ) {
  * So the label asks a second, narrower question, and kind is left alone.
  */
 function aa_reg_kind_mixed( $start, $days, $region = 'na' ) {
-	$rest = $region === 'gulf' ? array( 5, 6 ) : array( 6, 7 );   // ISO-8601: Mon=1
-	$d = new DateTime( $start );
+	$rest     = aa_reg_rest_dows( $region );
 	$has_rest = false;
 	$has_work = false;
-	for ( $i = 0; $i < max( 1, (int) $days ); $i++ ) {
-		if ( in_array( (int) $d->format( 'N' ), $rest, true ) ) { $has_rest = true; } else { $has_work = true; }
-		$d->modify( '+1 day' );
+	foreach ( aa_reg_span_dates( $start, $days, $region ) as $ymd ) {
+		if ( in_array( (int) ( new DateTime( $ymd ) )->format( 'N' ), $rest, true ) ) { $has_rest = true; }
+		else { $has_work = true; }
 	}
 	return $has_rest && $has_work;
 }
@@ -942,10 +990,11 @@ function aa_reg_span_ok( $start, $days ) {
 		return false;
 	}
 
-	$d = new DateTime( $start );
-	for ( $i = 0; $i < $days; $i++ ) {
-		if ( aa_reg_is_blacked( $d->format( 'Y-m-d' ) ) ) { return false; }
-		$d->modify( '+1 day' );
+	/* Only the days the class is TAUGHT on. A span that steps over a weekend
+	   is not blocked by a blackout falling on the Saturday it steps over --
+	   nobody was going to be in class that day. */
+	foreach ( aa_reg_span_dates( $start, $days ) as $ymd ) {
+		if ( aa_reg_is_blacked( $ymd ) ) { return false; }
 	}
 	return true;
 }
@@ -1360,7 +1409,9 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 
 	$days   = max( 1, (int) $course['days'] );
 	$region = is_array( $place ) && ! empty( $place['region'] ) ? $place['region'] : 'na';
-	$end    = ( new DateTime( $start ) )->modify( '+' . ( $days - 1 ) . ' day' );
+	/* The last day the class is TAUGHT, which is not start+days when the span
+	   steps over a weekend. aa_reg_span_dates() is the only thing that knows. */
+	$end    = aa_reg_span_end( $start, $days, $region );
 	$kind   = aa_reg_kind( $start, $days, $region );
 	// Say WHY an off-cadence date exists. "added date" on the Tuesday after
 	// Labour Day reads like padding; "after the holiday" tells the buyer it is
@@ -1376,7 +1427,7 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 	$c = array(
 		'id'    => $slug . '-' . $cadence_start,
 		'start' => $start,
-		'end'   => $end->format( 'Y-m-d' ),
+		'end'   => $end,
 		'slot'  => $slot,
 		'kind'  => $kind,
 		'seats' => (int) ( isset( $course['seats'] ) ? $course['seats'] : 18 ),
@@ -4938,11 +4989,17 @@ function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
 	if ( $cents < 100 ) { return ''; }
 	$cur = strtolower( (string) $currency );
 
-	/* EVERY LANGUAGE, NOT JUST ENGLISH. Prices differ per language on purpose
-	   -- French RTE is 2450 where English is 2150 -- and this runs from the
-	   Stripe webhook, where aa_reg_lang() has no queried page and answers
-	   'en'. Checking only the English table meant a French sale matched
-	   nothing at all, which is the one case this function exists for.
+	/* EVERY LANGUAGE, NOT JUST ENGLISH. Prices are ALLOWED to differ per
+	   language -- a language we are the only partner delivering in can carry a
+	   premium -- and this runs from the Stripe webhook, where aa_reg_lang() has
+	   no queried page and answers 'en'. Checking only the English table would
+	   miss a sale made in any language priced differently, which is the one
+	   case this function exists for.
+
+	   AS OF THIS WRITING NOTHING DIVERGES: every language holds the same figure
+	   for every course, so the loop finds the same price four times. That is
+	   the current state of the table, not a guarantee -- the loop is what stops
+	   it becoming an assumption the day a per-language price does land.
 
 	   Keyed by slug, so a course that matches in two languages still counts
 	   once: we are identifying the COURSE, and the language it was sold in
