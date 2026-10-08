@@ -1829,8 +1829,45 @@ function aa_reg_apply_alias( $slug, $course ) {
  * ONLY THE DURATIONS WE WERE GIVEN. A one-day course has no premium figure yet,
  * so it stays at its English price rather than being assigned a guess.
  */
+/**
+ * COURSES THE DURATION BANDS DO NOT APPLY TO AT ALL.
+ *
+ * The AI-Native courses are a different proposition from the SAFe catalogue and
+ * are licensed differently, so pricing them by "how many days is it" is wrong
+ * at the root -- a two-day AI-Native course is not a two-day Leading SAFe with
+ * different slides. They keep their own price in every language until a
+ * per-language figure is given for each one specifically.
+ *
+ * This is an exemption from the BANDS, not a statement that they never carry a
+ * premium. Give me a figure per course and it goes in aa_reg_lang_premium().
+ */
+function aa_reg_lang_premium_exempt( $slug ) {
+	return in_array( (string) $slug, array(
+		'ai-native-foundations',
+		'ai-native-change-agent',
+		'ai-native-ready-certification-2',
+		'launching-ai-native-arts',
+	), true );
+}
+
+/**
+ * COURSES WHERE THE BAND MAY LOWER THE PRICE, NOT ONLY RAISE IT.
+ *
+ * The premium is a floor everywhere else, so it can never cut a price. Large
+ * Solution is the one course cleared to take the band outright. Its 2150 is a
+ * leftover from when it shared a single price with RTE, which was separated
+ * deliberately; the band is the figure that replaces it.
+ *
+ * NOTE THE CONSEQUENCE, which is live until the English price is settled: Large
+ * Solution is the only course where a non-English price is LOWER than the
+ * English one. That inverts "English is the discount" for this one row.
+ */
+function aa_reg_lang_premium_may_lower( $slug ) {
+	return in_array( (string) $slug, array( 'large-solution' ), true );
+}
+
 function aa_reg_lang_premium( $slug, $days ) {
-	if ( (string) $slug === 'rte' ) { return 2450; }
+	if ( (string) $slug === 'rte' ) { return 2450; }   /* confirmed 2450, not 2650 */
 	$by_days = array(
 		2 => 999,
 		3 => 2200,
@@ -1855,9 +1892,14 @@ function aa_reg_price( $slug, $course ) {
 	$over = aa_reg_price_overrides();
 	if ( isset( $over[ (string) $slug ] ) ) { $course['price'] = (int) $over[ (string) $slug ]; }
 
-	if ( aa_reg_lang() !== 'en' && ! empty( $course['price'] ) && ! empty( $course['days'] ) ) {
+	if ( aa_reg_lang() !== 'en' && ! empty( $course['price'] ) && ! empty( $course['days'] )
+		&& ! aa_reg_lang_premium_exempt( $slug ) ) {
 		$prem = aa_reg_lang_premium( $slug, $course['days'] );
-		if ( $prem > 0 ) { $course['price'] = max( (int) $course['price'], $prem ); }
+		if ( $prem > 0 ) {
+			$course['price'] = aa_reg_lang_premium_may_lower( $slug )
+				? $prem
+				: max( (int) $course['price'], $prem );
+		}
 	}
 	return $course;
 }
