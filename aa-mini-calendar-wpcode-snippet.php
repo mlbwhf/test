@@ -294,13 +294,49 @@ function aa_mcal_reg_map() {
 		'ai-native-ready-certification-2' => 'ai-native-ready-certification-2',
 		'artl'                            => 'launching-ai-native-arts',
 		'launching-ai-native-arts'        => 'launching-ai-native-arts',
+
+		/* THE REST OF THE CATALOGUE. These were absent, and absence from this
+		   map is why their calendars were empty: aa_mcal_reg_rows() walks the
+		   map and silently skips any category it does not find, so a course
+		   page asking for its own dates got nothing back and rendered a blank
+		   month. Nothing warned about it.
+		   Slugs taken from aa_reg_cert_table() and aa_training_courses(), whose
+		   URLs were read off live permalinks -- note 'asm', not 'sasm'. */
+		'asm'                             => 'asm',
+		'sasm'                            => 'asm',
+		'arch'                            => 'arch',
+		'ase'                             => 'ase',
+		'bo'                              => 'bo',
+		'sa-gov'                          => 'sa-gov',
+		'devops'                          => 'devops',
+		'sdp'                             => 'devops',
+		'team-practitioner'               => 'team-practitioner',
+		'sp'                              => 'team-practitioner',
+		'safe-for-hardware'               => 'safe-for-hardware',
+		'shwp'                            => 'safe-for-hardware',
+		'safe-for-hardware-teams'         => 'safe-for-hardware-teams',
+		'shwa'                            => 'safe-for-hardware-teams',
+
+		/* Micro-credentials. */
+		'conflict-collaboration'          => 'conflict-collaboration',
+		'value-stream-mapping'            => 'value-stream-mapping',
+		'responsible-ai-safe'             => 'responsible-ai-safe',
+		'agile-contracting-government'    => 'agile-contracting-government',
+		'acg'                             => 'agile-contracting-government',
 	);
 }
 
 /** One display slug per aa_reg course, for the all-courses calendar. */
 function aa_mcal_reg_canonical() {
 	return array( 'spc', 'aspc', 'rte', 'apm', 'lpm', 'sa', 'ssm', 'popm',
-	              'large-solution', 'ainf', 'ai-chan', 'ainorg', 'artl' );
+	              'large-solution', 'ainf', 'ai-chan', 'ainorg', 'artl',
+	              /* One entry per course, no synonyms: this list is walked when
+	                 the calendar is asked for EVERYTHING, so a slug appearing
+	                 twice would render every one of its cohorts twice. */
+	              'asm', 'arch', 'ase', 'bo', 'sa-gov', 'devops',
+	              'team-practitioner', 'safe-for-hardware', 'safe-for-hardware-teams',
+	              'conflict-collaboration', 'value-stream-mapping',
+	              'responsible-ai-safe', 'agile-contracting-government' );
 }
 
 /**

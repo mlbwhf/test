@@ -151,7 +151,7 @@ function aa_reg_courses() {
 			'name'     => 'Implementing SAFe® with SPC Certification',
 			'eyebrow'  => 'Live online · SPC certification',
 			'h1'       => 'Implementing SAFe® in four days.',
-			'lede'     => 'Taught by practising SPCTs, capped at 18 seats, exam fee included. Leave with the toolkit to launch your first train — not a certificate you file away.',
+			'lede'     => 'Taught by practising SPCTs, exam fee included. Leave with the toolkit to launch your first train — not a certificate you file away.',
 			'url'      => '/training/adv-safe/spc/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
@@ -159,13 +159,12 @@ function aa_reg_courses() {
 			   cohort is sold. The two were $24 apart and a buyer could see both. */
 			'price'    => 2899,
 			'days'     => 4,
-			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
 				array( 'dow' => 'Mon', 'slot' => 'morning' ),
 				array( 'dow' => 'Thu', 'slot' => 'morning' ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 			// 'payment_link' => 'https://buy.stripe.com/xxxx',  // see PAYMENT LINKS below
 		),
 		'aspc' => array(
@@ -185,13 +184,12 @@ function aa_reg_courses() {
 			   this table, not the page, that generates the cohorts: the page
 			   read "4 days" while the dates under it were three days long. */
 			'days'     => 4,
-			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
 				array( 'dow' => 'Mon', 'slot' => 'morning' ),
 				array( 'dow' => 'Thu', 'slot' => 'morning' ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 		'rte' => array(
 			'code'     => 'RTE',
@@ -206,14 +204,13 @@ function aa_reg_courses() {
 			   different courses and were sharing one price. */
 			'price'    => 2200,
 			'days'     => 3,
-			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
 				array( 'dow' => 'Mon', 'slot' => 'morning' ),
 				array( 'dow' => 'Wed', 'slot' => 'morning' ),
 				array( 'dow' => 'Fri', 'slot' => 'afternoon' ),   // Friday always afternoon
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 
 		/* LARGE SOLUTION SAFe -- CORRECTED AGAINST SCALED AGILE'S OWN 26.9
@@ -242,7 +239,7 @@ function aa_reg_courses() {
 		      LEVEL. That same page says "Foundational level" and "No
 		      prerequisites required". We shelve the course under Advanced SAFe
 		      anyway -- a commercial placement, and a defensible one: it is
-		      SPCT-led, capped at 18, priced at $2,150 against $997 for a core
+		      SPCT-led, priced at $2,150 against $997 for a core
 		      role course, and the audience Scaled Agile names is senior. What
 		      we must NOT do is state a prerequisite or a level Scaled Agile
 		      contradicts. The course page carried "Implementing SAFe with SPC
@@ -305,7 +302,6 @@ function aa_reg_courses() {
 			/* 22 Sep 2026 is Scaled Agile's GA date -- the first day the course
 			   may be delivered, so nothing generates before it. */
 			'from'     => '2026-09-23',
-			'seats'    => 18,
 			'weeks'    => 26,
 			/* ONCE A WEEK, ON A DIFFERENT DAY EACH WEEK.
 			   Set by the client, replacing the Mon/Wed/Fri pattern this row
@@ -344,7 +340,7 @@ function aa_reg_courses() {
 			   AI-Empowered SAFe certification". It earns a pill because the AI
 			   material is a third of what is new in 26.9, and the course page no
 			   longer gives it a section of its own. */
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included', 'AI-empowered' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included', 'AI-empowered' ),
 		),
 
 		/* ------------------------------------------------------------------
@@ -408,7 +404,6 @@ function aa_reg_courses() {
 			   redesign-build/courses.json, whose price for this course was
 			   already known to be stale. */
 			'days'     => 1,
-			'seats'    => 18,
 			'weeks'    => 52,         // twice a month over a year: ~24 dates
 			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
 			'cadence'  => array(
@@ -433,7 +428,6 @@ function aa_reg_courses() {
 			   rename. The page still said three in five places and is being
 			   corrected to match. */
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 52,
 			'proof'    => array( 'Live online', 'Exam fee included', 'AINF required' ),
 			'cadence'  => array(
@@ -455,9 +449,8 @@ function aa_reg_courses() {
 			   lede and its chip, and the note at the top of this block says the
 			   same. */
 			'days'     => 2,
-			'seats'    => 12,         // the page says "capped at 12 senior leaders"
 			'weeks'    => 52,
-			'proof'    => array( '12 seats max', 'Six months coaching', 'Exam fee included' ),
+			'proof'    => array( 'Six months coaching', 'Exam fee included' ),
 			/* TUESDAY, NOT THURSDAY. This course shares weeks 1 and 3 with
 			   Foundations, and two classes cannot run on one day. Tuesday keeps
 			   the two-day span inside the same working week. */
@@ -496,7 +489,6 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 850,
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 26,
 			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
 			   They shared one Mon/Tue/Thu cadence, so they generated the same
@@ -514,7 +506,7 @@ function aa_reg_courses() {
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 		'scrum-master' => array(
 			'code'     => 'SSM',
@@ -527,7 +519,6 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 850,
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 26,
 			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
 			   They shared one Mon/Tue/Thu cadence, so they generated the same
@@ -545,7 +536,7 @@ function aa_reg_courses() {
 				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 1 ),
 				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 3 ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 		'popm' => array(
 			'code'     => 'POPM',
@@ -558,7 +549,6 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 850,
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 26,
 			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
 			   They shared one Mon/Tue/Thu cadence, so they generated the same
@@ -576,7 +566,7 @@ function aa_reg_courses() {
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 2 ),
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 		'lpm' => array(
 			'code'     => 'LPM',
@@ -589,7 +579,6 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 1799,
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 26,
 			/* THE FOUR TWO-DAY CORE COURSES ROTATE RATHER THAN STACK.
 			   They shared one Mon/Tue/Thu cadence, so they generated the same
@@ -607,7 +596,7 @@ function aa_reg_courses() {
 				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 2 ),
 				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 4 ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 		'apm' => array(
 			'code'     => 'APM',
@@ -620,14 +609,13 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 1799,
 			'days'     => 3,
-			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => array(
 				array( 'dow' => 'Mon', 'slot' => 'morning' ),
 				array( 'dow' => 'Tue', 'slot' => 'morning' ),
 				array( 'dow' => 'Thu', 'slot' => 'morning' ),
 			),
-			'proof'    => array( 'SPCT-led', '18 seats max', 'Exam fee included' ),
+			'proof'    => array( 'SPCT-led', 'Exam fee included' ),
 		),
 
 		/* New for this launch. Its page is /training/ai-native/launching-ai-native-arts/
@@ -644,7 +632,6 @@ function aa_reg_courses() {
 			'currency' => 'usd',
 			'price'    => 999,
 			'days'     => 2,
-			'seats'    => 18,
 			'weeks'    => 52,
 			'cadence'  => array(
 				array( 'dow' => 'Wed', 'slot' => 'morning' ),
@@ -1483,7 +1470,13 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 		'end'   => $end,
 		'slot'  => $slot,
 		'kind'  => $kind,
-		'seats' => (int) ( isset( $course['seats'] ) ? $course['seats'] : 18 ),
+		/* 0 means "no room size", which is every course while capacity is off.
+		   The old fallback was 18, so a course record with no seats key still
+		   claimed an 18-seat room -- removing the keys alone would not have
+		   removed the cap. */
+		'seats' => aa_reg_capacity_enabled()
+			? (int) ( isset( $course['seats'] ) ? $course['seats'] : 0 )
+			: 0,
 		/* Three labels, not two. A span that is ALL rest days is a weekend
 		   batch; one that mixes the two has to say so, or the buyer books the
 		   wrong leave. The date range sits beside this on the card, so the
@@ -1507,10 +1500,39 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 	return $c;
 }
 
+/**
+ * ROOM SIZE IS OFF. EVERY COURSE IS DELIVERED REMOTELY.
+ *
+ * A seat cap is a property of a room, and there is no room: a live-online
+ * cohort does not run out of chairs. The caps were inherited from classroom
+ * delivery and were doing three things, all of them wrong now -- advertising a
+ * limit we do not have ("18 seats max"), showing scarcity text that was not
+ * true ("4 seats left"), and marking a cohort sold out so it VANISHED from the
+ * schedule and could not be booked at all.
+ *
+ * TURNED OFF BY A SWITCH, NOT TORN OUT. The seat LEDGER still records what was
+ * sold, because that is real and the business needs it; what is gone is the
+ * ceiling it was being compared against. Flip this to true and capacity comes
+ * back exactly as it was, so a classroom course can have a room size again
+ * without any of this being rebuilt.
+ *
+ * NOT TO BE CONFUSED WITH ORDER QUANTITY. aa_reg_max_seats() caps how many
+ * seats ONE order may buy, which is a typo guard on the stepper and has nothing
+ * to do with the size of the class. That stays.
+ */
+function aa_reg_capacity_enabled() { return false; }
+
 /** Room size minus seats already sold. Never trusts a client-supplied count. */
 function aa_reg_seats_left( $course, $cohort ) {
+	/* No cap: report the per-order ceiling. Every caller either compares this
+	   against a requested quantity -- which can never exceed that ceiling -- or
+	   tests it for scarcity at six or fewer, which this clears. So no cohort is
+	   ever sold out and no scarcity line is ever printed. */
+	if ( ! aa_reg_capacity_enabled() ) { return aa_reg_max_seats(); }
+
 	$sold = (array) get_option( 'aa_reg_sold', array() );
-	$n    = (int) $cohort['seats'] - ( isset( $sold[ $cohort['id'] ] ) ? (int) $sold[ $cohort['id'] ] : 0 );
+	$cap  = (int) ( isset( $cohort['seats'] ) ? $cohort['seats'] : 0 );
+	$n    = $cap - ( isset( $sold[ $cohort['id'] ] ) ? (int) $sold[ $cohort['id'] ] : 0 );
 	return max( 0, $n );
 }
 
@@ -1668,7 +1690,6 @@ function aa_reg_derived_course( $slug ) {
 			'currency' => 'usd',
 			'price'    => $cfg['price'],
 			'days'     => $cfg['days'],
-			'seats'    => 18,
 			'weeks'    => 26,
 			'cadence'  => $cfg['dows'] ? $cfg['dows'] : array( array( 'dow' => 'Mon', 'slot' => 'morning' ) ),
 			/* aa_reg_t() rather than literals: these render on the /fr/, /es/
@@ -1757,12 +1778,11 @@ function aa_reg_price_overrides() {
 		'ase'                      => 1799,
 		'bo'                       => 850,
 		'sa-gov'                   => 999,    /* Leading SAFe for Government */
-		/* "SAFe for hardware same" -- 999. There are TWO hardware courses and
-		   the instruction named one, so both are set: SHWA (Hardware Agilist,
-		   /safe-for-hardware-teams/) and SHWP (/safe-for-hardware/). If only
-		   one was meant, remove the other line. */
-		'safe-for-hardware-teams'  => 999,
-		'safe-for-hardware'        => 999,
+		/* THE TWO HARDWARE COURSES ARE NOT PRICED HERE. They are each a
+		   hardware edition of an existing course, so they take that course's
+		   price and schedule through aa_reg_course_aliases() instead. Setting a
+		   figure here would defeat that -- the override runs after the alias
+		   and would overwrite it. */
 	);
 }
 
@@ -1787,6 +1807,19 @@ function aa_reg_price_overrides() {
 function aa_reg_course_aliases() {
 	return array(
 		'devops' => 'team-practitioner',
+
+		/* THE TWO HARDWARE COURSES ARE EDITIONS OF EXISTING COURSES.
+		   "one is version of leading SAFe the other is version of SAFe for
+		   team -- treat them same as the original course."
+
+		   Which is which comes from the credential and the permalink, not a
+		   guess: SHWP "SAFe for Hardware" at /safe-for-hardware/ is the
+		   leadership course, and SHWA "SAFe Hardware Agilist" at
+		   /safe-for-hardware-teams/ is the team course -- its own URL says
+		   "teams". If that mapping is the wrong way round, swap these two
+		   lines and nothing else needs to change. */
+		'safe-for-hardware'       => 'sa',                  /* Leading SAFe edition */
+		'safe-for-hardware-teams' => 'team-practitioner',   /* SAFe for Teams edition */
 	);
 }
 
