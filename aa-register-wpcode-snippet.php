@@ -699,7 +699,12 @@ function aa_reg_holidays( $year ) {
 		$d( 'first monday of august' )             => 'Civic Holiday',
 		$d( 'first monday of september' )          => 'Labour Day',
 		$d( 'second monday of october' )           => 'Thanksgiving (CA) / Indigenous Peoples Day',
-		$y . '-11-11'                              => 'Remembrance Day / Veterans Day',
+		/* REMEMBRANCE DAY / VETERANS DAY IS NOT HERE. It moved to
+		   aa_reg_gov_holidays(): banks and government close, almost nobody
+		   else does, so the people buying these courses are at their desks.
+		   Treating it as a general holiday put a "long weekend" label on a
+		   Wednesday and added a duplicate class the day after, for an audience
+		   that was working normally. See that function. */
 		/* US THANKSGIVING IS NOT IN THIS LIST, DELIBERATELY. The two countries
 		   keep Thanksgiving on different days -- the fourth Thursday of
 		   November in the United States, the second Monday of October in
@@ -731,12 +736,59 @@ function aa_reg_holidays( $year ) {
 	return $out;
 }
 
+/**
+ * DAYS WHEN THE BANKS AND THE GOVERNMENT CLOSE AND NOBODY ELSE DOES.
+ *
+ * These are not in aa_reg_holidays() and must not be. That list drives two
+ * things -- the "long weekend" label and the twin class offered the next
+ * working day -- and both are about an audience that has the day off. On these
+ * days a private-sector learner is at work as usual, so a long-weekend label is
+ * simply false and a duplicate class is a class nobody asked for.
+ *
+ *   30 September -- National Day for Truth and Reconciliation
+ *   11 November  -- Remembrance Day (Canada) / Veterans Day (United States)
+ *
+ * They are still worth knowing. A government client books against the
+ * government calendar, which is exactly the audience for SAFe for Government,
+ * and a wire does not clear on a day the banks are shut. Kept as their own list
+ * so that can be asked without pretending the whole country is off.
+ */
+function aa_reg_gov_holidays( $year ) {
+	$y = (int) $year;
+	return array(
+		$y . '-09-30' => 'National Day for Truth and Reconciliation',
+		$y . '-11-11' => 'Remembrance Day / Veterans Day',
+	);
+}
+
+/** True when the banks and government are shut but most workplaces are not. */
+function aa_reg_is_gov_holiday( $ymd ) {
+	static $cache = array();
+	$y = substr( $ymd, 0, 4 );
+	if ( ! isset( $cache[ $y ] ) ) { $cache[ $y ] = aa_reg_gov_holidays( $y ); }
+	return isset( $cache[ $y ][ $ymd ] );
+}
+
 /** True when this date is a public holiday in either country. */
 function aa_reg_is_holiday( $ymd ) {
 	static $cache = array();
 	$y = substr( $ymd, 0, 4 );
 	if ( ! isset( $cache[ $y ] ) ) { $cache[ $y ] = aa_reg_holidays( $y ); }
 	return isset( $cache[ $y ][ $ymd ] );
+}
+
+/**
+ * Does this holiday actually make a long weekend?
+ *
+ * Only a Monday or a Friday does. The label claimed one for any holiday on any
+ * day, so a Wednesday holiday -- and there are several -- advertised a long
+ * weekend that did not exist. A mid-week holiday is still a holiday and the
+ * class still runs; it just gets described accurately.
+ */
+function aa_reg_is_long_weekend( $ymd ) {
+	if ( ! aa_reg_is_holiday( $ymd ) ) { return false; }
+	$n = (int) ( new DateTime( $ymd ) )->format( 'N' );
+	return $n === 1 || $n === 5;
 }
 
 /** The next day that is neither a weekend nor a public holiday. */
@@ -1420,7 +1472,8 @@ function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null
 	// The holiday list is North American, so the long-weekend framing only
 	// makes sense for a North American city. Nobody in Riyadh has Canadian
 	// Remembrance Day off.
-	if ( $region === 'na' && aa_reg_is_holiday( $start ) ) { $note = ' · long weekend'; }
+	if ( $region === 'na' && aa_reg_is_long_weekend( $start ) ) { $note = ' · long weekend'; }
+	elseif ( $region === 'na' && aa_reg_is_holiday( $start ) ) { $note = ' · public holiday'; }
 	elseif ( $reason === 'twin' )        { $note = ' · after the holiday'; }
 	elseif ( $reason === 'backfill' )    { $note = ' · added date'; }
 	elseif ( $reason === 'moved' )       { $note = ' · moved off a holiday'; }
@@ -1699,11 +1752,63 @@ function aa_reg_derived_course( $slug ) {
  */
 function aa_reg_price_overrides() {
 	return array(
-		'asm'  => 1100,   /* SASM -- slug is 'asm', /training/safe/asm/ */
-		'arch' => 1799,   /* "same as APM, LPM", both of which are 1799 */
-		'ase'  => 1799,
-		'bo'   => 850,
+		'asm'                      => 1100,   /* SASM -- slug is 'asm', /training/safe/asm/ */
+		'arch'                     => 1799,   /* "same as APM, LPM", both of which are 1799 */
+		'ase'                      => 1799,
+		'bo'                       => 850,
+		'sa-gov'                   => 999,    /* Leading SAFe for Government */
+		/* "SAFe for hardware same" -- 999. There are TWO hardware courses and
+		   the instruction named one, so both are set: SHWA (Hardware Agilist,
+		   /safe-for-hardware-teams/) and SHWP (/safe-for-hardware/). If only
+		   one was meant, remove the other line. */
+		'safe-for-hardware-teams'  => 999,
+		'safe-for-hardware'        => 999,
 	);
+}
+
+/**
+ * COURSES PRICED AND SCHEDULED OFF ANOTHER COURSE.
+ *
+ * "DevOps similar to SAFe for Teams, price and schedule." Taken as a reference
+ * rather than a copied number on purpose: SAFe for Teams lives on its page
+ * like DevOps does, so hardcoding its figure here would mean transcribing a
+ * number that can be edited on the page tomorrow and silently diverging from
+ * it. Pointing at the course keeps the two together by construction.
+ *
+ * ONE HOP, NO CHAINS. An alias resolves its target through aa_reg_course()
+ * once and is not itself followed further, so a loop in this table cannot hang
+ * a page render.
+ *
+ * ONLY PRICE AND SCHEDULE TRAVEL. The name, h1, lede, URL and proof lines stay
+ * the course's own -- DevOps is not SAFe for Teams, it is merely sold on the
+ * same terms, and the page a buyer lands on has to describe the course they
+ * are buying.
+ */
+function aa_reg_course_aliases() {
+	return array(
+		'devops' => 'team-practitioner',
+	);
+}
+
+function aa_reg_apply_alias( $slug, $course ) {
+	$aliases = aa_reg_course_aliases();
+	if ( ! isset( $aliases[ (string) $slug ] ) ) { return $course; }
+
+	/* Reentrancy guard, so "one hop" is enforced rather than just intended: a
+	   cycle in the table returns the course untouched instead of recursing. */
+	static $resolving = array();
+	if ( isset( $resolving[ (string) $slug ] ) ) { return $course; }
+	$resolving[ (string) $slug ] = true;
+	$target = aa_reg_course( $aliases[ (string) $slug ] );
+	unset( $resolving[ (string) $slug ] );
+
+	if ( ! is_array( $target ) ) { return $course; }
+
+	if ( ! is_array( $course ) ) { $course = array(); }
+	foreach ( array( 'price', 'currency', 'days', 'weeks', 'seats', 'cadence' ) as $k ) {
+		if ( isset( $target[ $k ] ) ) { $course[ $k ] = $target[ $k ]; }
+	}
+	return $course;
 }
 
 /**
@@ -1767,11 +1872,26 @@ function aa_reg_course( $slug ) {
 	   and the table is the fallback. */
 	if ( aa_reg_lang() !== 'en' ) {
 		$derived = aa_reg_derived_course( $slug );
-		if ( $derived ) { return aa_reg_price( $slug, $derived ); }
+		if ( $derived ) { return aa_reg_finish( $slug, $derived ); }
 	}
 	$courses = aa_reg_courses();
-	if ( isset( $courses[ $slug ] ) ) { return aa_reg_price( $slug, $courses[ $slug ] ); }
-	return aa_reg_price( $slug, aa_reg_derived_course( $slug ) );
+	if ( isset( $courses[ $slug ] ) ) { return aa_reg_finish( $slug, $courses[ $slug ] ); }
+	return aa_reg_finish( $slug, aa_reg_derived_course( $slug ) );
+}
+
+/**
+ * The three adjustments every resolved course goes through, in order.
+ *
+ * Alias first, because a course priced off another one should then be subject
+ * to the same overrides and the same premium as anything else. Supplied price
+ * second, because it is the figure we were given and it beats both the page and
+ * the alias. Language premium last, because it is a floor over whatever the
+ * price ended up being.
+ */
+function aa_reg_finish( $slug, $course ) {
+	if ( ! is_array( $course ) ) { return $course; }
+	$course = aa_reg_apply_alias( $slug, $course );
+	return aa_reg_price( $slug, $course );
 }
 
 /** One cohort by id, with its course. Returns null for anything unrecognised. */
