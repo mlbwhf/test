@@ -39,6 +39,14 @@
 .tc .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
 .tc .person{background:var(--wash-2);border-top:4px solid var(--slate);padding:22px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
 .tc .person[hidden]{display:none}
+.tc .person__head{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
+.tc .person__id{display:flex;flex-direction:column;gap:8px;min-width:0}
+.tc .person__pic{margin:0;width:112px;aspect-ratio:4/5;background:#E7ECF1;overflow:hidden}
+.tc .person__pic img{display:block;width:100%;height:100%;object-fit:cover}
+.tc .person__pic--mono{display:flex;align-items:flex-end;padding:10px;border-top:3px solid var(--slate)}
+.tc .person__pic--mono span{font-weight:900;font-size:34px;letter-spacing:-.04em;line-height:1;color:var(--slate)}
+.tc .person__pic--mono.is-system{background:var(--ink);border-top-color:var(--amber)}
+.tc .person__pic--mono.is-system span{color:var(--amber-lt)}
 .tc .person h3{font-size:26px}
 .tc .person__tags{display:flex;gap:6px;flex-wrap:wrap}
 .tc .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);border:1px solid var(--line-2);padding:4px 7px;background:#fff}

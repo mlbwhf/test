@@ -222,13 +222,29 @@ CAST = [
 ]
 
 
+# Persona portraits (supplied by the author, matched to the cast bible in Snap_Videos_ACTED_3D_Cast).
+# Characters without a portrait get a typographic monogram; Athena is a system, never a face.
+PORTRAITS = {"terry", "maya", "oliver", "daniel", "max"}
+PORTRAIT_URL = "/wp-content/uploads/2026/10/cast-{}.jpg"
+
+
+def portrait(slug, name):
+    if slug in PORTRAITS:
+        return (f'<figure class="person__pic"><img src="{PORTRAIT_URL.format(slug)}" width="720" height="900" '
+                f'loading="lazy" decoding="async" alt="{name}, from The Innovation Playground"></figure>')
+    initials = "".join(w[0] for w in name.split()[:2])
+    cls = " is-system" if slug == "athena" else ""
+    return f'<figure class="person__pic person__pic--mono{cls}" aria-hidden="true"><span>{initials}</span></figure>'
+
+
 def person(slug, name, role, states, arch, line, body, good, bad, ws):
     tags = "".join(f'<span class="tag{" is-amber" if k in ("playground", "immune", "mutation") else ""}">{NAME[k]}</span>' for k in states)
     q = f'<blockquote class="pq">“{html.escape(line, quote=False)}”</blockquote>' if line else ""
     return (f'<article class="person" id="{slug}" data-states="{" ".join(states)}">'
+            f'<header class="person__head">{portrait(slug, name)}<div class="person__id">'
             f'<div class="person__tags">{tags}</div>'
             f'<h3>{name}</h3><div class="person__role">{role}</div>'
-            f'<div class="person__arch">Real-world role: {arch}</div>{q}<p>{body}</p>'
+            f'<div class="person__arch">Real-world role: {arch}</div></div></header>{q}<p>{body}</p>'
             f'<div class="boxes"><div class="box"><div class="box__k">{good[0]}</div><p>{good[1]}</p></div>'
             f'<div class="box is-fail"><div class="box__k">{bad[0]}</div><p>{bad[1]}</p></div></div>'
             f'<div class="person__ws">If this is you → <a href="{ws[1]}">{ws[0]}</a></div></article>')
@@ -383,6 +399,14 @@ CSS = """/* ===== TWO CHASMS v2 — inner pages (workshops, cast, books, assess)
 .tc .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
 .tc .person{background:var(--wash-2);border-top:4px solid var(--slate);padding:22px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
 .tc .person[hidden]{display:none}
+.tc .person__head{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
+.tc .person__id{display:flex;flex-direction:column;gap:8px;min-width:0}
+.tc .person__pic{margin:0;width:112px;aspect-ratio:4/5;background:#E7ECF1;overflow:hidden}
+.tc .person__pic img{display:block;width:100%;height:100%;object-fit:cover}
+.tc .person__pic--mono{display:flex;align-items:flex-end;padding:10px;border-top:3px solid var(--slate)}
+.tc .person__pic--mono span{font-weight:900;font-size:34px;letter-spacing:-.04em;line-height:1;color:var(--slate)}
+.tc .person__pic--mono.is-system{background:var(--ink);border-top-color:var(--amber)}
+.tc .person__pic--mono.is-system span{color:var(--amber-lt)}
 .tc .person h3{font-size:26px}
 .tc .person__tags{display:flex;gap:6px;flex-wrap:wrap}
 .tc .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);border:1px solid var(--line-2);padding:4px 7px;background:#fff}
