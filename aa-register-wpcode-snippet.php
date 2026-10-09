@@ -297,7 +297,12 @@ function aa_reg_courses() {
 			'url'      => '/training/adv-safe/large-solution/',
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
-			'price'    => 2150,   // from the supplied outline. Shared this with RTE once; RTE is 2200 now.
+			/* 988 IN EVERY LANGUAGE. Confirmed outright, which settles the
+			   inversion the duration band had created here: the band would have
+			   put this at 999 off English and 2150 in English, making the
+			   premium list cheaper than the discount one for this single row.
+			   One figure everywhere, and the course is exempt from the band. */
+			'price'    => 988,
 			'days'     => 2,      // confirmed 2 days
 			/* 22 Sep 2026 is Scaled Agile's GA date -- the first day the course
 			   may be delivered, so nothing generates before it. */
@@ -1812,6 +1817,80 @@ function aa_reg_price_overrides() {
  * same terms, and the page a buyer lands on has to describe the course they
  * are buying.
  */
+/**
+ * SCHEDULES FOR THE COURSES THAT LIVE ON THEIR PAGE.
+ *
+ * These courses have no row in aa_reg_courses(), so they take price, length and
+ * cadence from their page's #aa-cohorts element. The lengths there are right;
+ * the cadences were not, because that element predates this schedule. Only the
+ * CADENCE is overridden here -- the day count still comes from the page, which
+ * is the course's own specific and not ours to invent.
+ *
+ * APPLIED LAST in aa_reg_finish(), AFTER the alias. DevOps and the two hardware
+ * editions take their PRICE from another course by alias, and the alias copies
+ * cadence across with it; these entries then put the right cadence back. Order
+ * is load-bearing both ways: price before cadence.
+ *
+ * The 'week' key pins a rule to one week of the month, where the week is
+ * ceil(day / 7) -- days 1-7 are week 1, 8-14 week 2, and so on. That is how a
+ * course runs "first week of the month" without listing twelve dates a year.
+ *
+ * WEEK 5 IS NEVER USED. Only a long month has days 29-31, so a rule pinned
+ * there would fire some months and not others.
+ */
+function aa_reg_cadence_overrides() {
+	$at = function ( $dow, $week, $slot = 'morning' ) {
+		return array( 'dow' => $dow, 'slot' => $slot, 'week' => $week );
+	};
+
+	return array(
+		/* ONE A MONTH EACH, STAGGERED ACROSS THE MONTH so the three never
+		   compete: Teams opens the month, DevOps sits in the middle, hardware
+		   closes it. */
+		'team-practitioner'            => array( $at( 'Mon', 1 ) ),
+		'devops'                       => array( $at( 'Mon', 3 ) ),
+		/* Both hardware editions are end of month. They are given different
+		   weekdays rather than the same one: two courses starting the same
+		   morning is a menu nobody can choose from. */
+		'safe-for-hardware'            => array( $at( 'Mon', 4 ) ),
+		'safe-for-hardware-teams'      => array( $at( 'Wed', 4 ) ),
+
+		/* TWICE A MONTH -- weeks 1 and 3, each on its own weekday. */
+		'asm'                          => array( $at( 'Mon', 1 ), $at( 'Mon', 3 ) ),
+		'arch'                         => array( $at( 'Tue', 1 ), $at( 'Tue', 3 ) ),
+		'ase'                          => array( $at( 'Wed', 1 ), $at( 'Wed', 3 ) ),
+
+		/* THREE A MONTH, ON THE ALTERNATE DAY TO LEADING SAFE.
+		   Leading SAFe runs Monday in weeks 1 and 3, so these take Thursday and
+		   Tuesday instead -- "if SA starts on Mon first week, start BO on
+		   Thursday". Weeks 1, 3 and 4: three starts that stay spread, where
+		   1-2-3 would bunch them all into the first fortnight. */
+		'bo'                           => array( $at( 'Thu', 1 ), $at( 'Thu', 3 ), $at( 'Thu', 4 ) ),
+		'sa-gov'                       => array( $at( 'Tue', 1 ), $at( 'Tue', 3 ), $at( 'Tue', 4 ) ),
+
+		/* THE FOUR MICRO-CREDENTIALS -- one a month each, one per week, so
+		   there is a micro-credential running every week of the month and never
+		   two in the same one. The order between them is arbitrary and safe to
+		   reshuffle; what matters is that the four weeks are taken exactly
+		   once. */
+		'conflict-collaboration'       => array( $at( 'Wed', 1 ) ),
+		'value-stream-mapping'         => array( $at( 'Wed', 2 ) ),
+		'responsible-ai-safe'          => array( $at( 'Wed', 3 ) ),
+		'agile-contracting-government' => array( $at( 'Wed', 4 ) ),
+	);
+}
+
+function aa_reg_apply_cadence( $slug, $course ) {
+	$over = aa_reg_cadence_overrides();
+	if ( ! is_array( $course ) || ! isset( $over[ (string) $slug ] ) ) { return $course; }
+	$course['cadence'] = $over[ (string) $slug ];
+	/* A page-derived course carries no publishing window, and the default of 26
+	   weeks is measured per course rather than assumed downstream. Set it here
+	   so a monthly course still shows half a year of dates rather than one. */
+	if ( empty( $course['weeks'] ) ) { $course['weeks'] = 26; }
+	return $course;
+}
+
 function aa_reg_course_aliases() {
 	return array(
 		'devops' => 'team-practitioner',
@@ -1888,6 +1967,14 @@ function aa_reg_lang_premium_exempt( $slug ) {
 		'ai-native-change-agent',
 		'ai-native-ready-certification-2',
 		'launching-ai-native-arts',
+
+		/* These two carry ONE confirmed figure in every language, so the band
+		   must not touch them in either direction. Large Solution is 988 and
+		   LPM is 1799. Without the exemption the 999 two-day band would raise
+		   Large Solution to 999 off English and leave LPM untouched only by
+		   accident, because the floor happens to sit above the band. */
+		'large-solution',
+		'lpm',
 	), true );
 }
 
@@ -1904,7 +1991,11 @@ function aa_reg_lang_premium_exempt( $slug ) {
  * English one. That inverts "English is the discount" for this one row.
  */
 function aa_reg_lang_premium_may_lower( $slug ) {
-	return in_array( (string) $slug, array( 'large-solution' ), true );
+	/* Empty now that Large Solution has one confirmed figure in every language
+	   and is exempt outright. Kept because the question it answers is real: a
+	   course can be cleared to take its band as a replacement rather than a
+	   floor, and that is a different decision from being exempt. */
+	return in_array( (string) $slug, array(), true );
 }
 
 function aa_reg_lang_premium( $slug, $days ) {
@@ -1974,7 +2065,9 @@ function aa_reg_course( $slug ) {
 function aa_reg_finish( $slug, $course ) {
 	if ( ! is_array( $course ) ) { return $course; }
 	$course = aa_reg_apply_alias( $slug, $course );
-	return aa_reg_price( $slug, $course );
+	$course = aa_reg_price( $slug, $course );
+	/* Last, so it overrides the cadence the alias copied in. */
+	return aa_reg_apply_cadence( $slug, $course );
 }
 
 /** One cohort by id, with its course. Returns null for anything unrecognised. */
