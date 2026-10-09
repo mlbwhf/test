@@ -60,3 +60,9 @@ dynamic 1080 share card. Mutation/Immune readers are pointed at the live MRX on 
 - /cast: Daniel's line corrected to the manuscript — “No. We built one. And gave her five worlds to adapt to.”
   (the first sentence of the old line is Layla's). Oliver and Terry confirmed verbatim.
 - Pre-order: still the mailto "notify me" until the author chooses KDP (ebook-only pre-order) or an own page.
+
+## 2026-10-09 — persona portraits on /cast
+Author-supplied portraits matched to the cast bible (Snap_Videos_ACTED_3D_Cast): Oliver, Maya, Max, Daniel, Terry →
+`assets/cast/cast-*.jpg` (720×900, metadata stripped) → media `/wp-content/uploads/2026/10/cast-*.jpg`.
+Layla and Rhea show a monogram until portraits exist; Athena stays a system mark (ink + amber "A"), never a face.
+Page 28 patched in place (8 card headers); portrait CSS appended to template 7.
