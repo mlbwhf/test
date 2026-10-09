@@ -1778,11 +1778,19 @@ function aa_reg_price_overrides() {
 		'ase'                      => 1799,
 		'bo'                       => 850,
 		'sa-gov'                   => 999,    /* Leading SAFe for Government */
-		/* THE TWO HARDWARE COURSES ARE NOT PRICED HERE. They are each a
-		   hardware edition of an existing course, so they take that course's
-		   price and schedule through aa_reg_course_aliases() instead. Setting a
-		   figure here would defeat that -- the override runs after the alias
-		   and would overwrite it. */
+
+		/* BOTH HARDWARE COURSES ARE 999, CONFIRMED, AND THAT IS DELIBERATELY
+		   NOT THE PRICE OF THE COURSE THEY ARE AN EDITION OF.
+		   They each take their SCHEDULE from an original through
+		   aa_reg_course_aliases() -- SHWP off Leading SAFe, SHWA off SAFe for
+		   Teams -- and the order in aa_reg_finish() is what makes that work:
+		   the alias copies price and schedule across, then these two lines put
+		   the price back. So the hardware editions run on their original's
+		   cadence while costing 999 rather than Leading SAFe's 850.
+		   Remove a line here and that course silently inherits its original's
+		   price instead. */
+		'safe-for-hardware'        => 999,   /* SHWP -- schedule off Leading SAFe */
+		'safe-for-hardware-teams'  => 999,   /* SHWA -- schedule off SAFe for Teams */
 	);
 }
 
