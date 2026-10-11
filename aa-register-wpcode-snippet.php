@@ -403,12 +403,16 @@ function aa_reg_courses() {
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 1500,
-			/* WAS 2, AND UNCONFIRMED. The page states one day in four places --
-			   the chip, the curriculum heading, courseWorkload P1D, and "Live
-			   1-day course" in the includes panel. The 2 came from
-			   redesign-build/courses.json, whose price for this course was
-			   already known to be stale. */
-			'days'     => 1,
+			/* TWO DAYS, CONFIRMED BY THE CLIENT 11 Oct 2026.
+			   This was 2, was changed to 1 because the page said one day in
+			   four places, and is now 2 again on the client's word. The four
+			   page locations -- the chip, the curriculum heading, the
+			   courseWorkload in the JSON-LD, and the includes panel -- are
+			   corrected alongside this, in English and in French. Changing the
+			   number here without them simply recreates the same contradiction
+			   pointing the other way, which is how it got to 1 in the first
+			   place. */
+			'days'     => 2,
 			'weeks'    => 52,         // twice a month over a year: ~24 dates
 			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
 			'cadence'  => array(
