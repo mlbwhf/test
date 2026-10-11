@@ -1394,7 +1394,21 @@ function aa_reg_moves() {
 	return array(
 		/* Asked for on 11 Sep 2026: these two both ran Monday the 14th on their
 		   cadence and run Tuesday the 15th instead. One-off, both courses. */
-		'spc'  => array( '2026-09-14' => '2026-09-15' ),
+		'spc'  => array(
+			'2026-09-14' => '2026-09-15',
+			/* Asked for on 11 Oct 2026: the Monday 19 October SPC starts
+			   Tuesday 20 October instead, so it runs 20-23 October.
+
+			   TWO PEOPLE ARE ALREADY BOOKED ON THIS RUN and both were told the
+			   old dates -- one of them holds a paid invoice naming 19-22
+			   October. Moving the date here does NOT tell them; that is a
+			   separate conversation and it has to happen.
+
+			   The id stays spc-2026-10-19, which is the point of this table:
+			   the Stripe metadata, the seat ledger and every ?cohort= link
+			   already issued keep resolving. Only the dates a buyer sees move. */
+			'2026-10-19' => '2026-10-20',
+		),
 		'aspc' => array( '2026-09-14' => '2026-09-15' ),
 	);
 }
