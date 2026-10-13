@@ -1434,6 +1434,16 @@ function aa_reg_moves() {
 function aa_reg_extra_dates() {
 	return array(
 		'ai-native-change-agent' => array( '2026-10-29' ),
+
+		/* RTE ON TUESDAY 27 OCTOBER 2026, asked for on 13 Oct.
+		   The cadence runs RTE on Mondays, Wednesdays and Fridays, so a Tuesday
+		   start is unreachable from any rule -- which is what this table is for.
+		   Three days from the 27th gives 27-29 October.
+
+		   A BUYER HAS ALREADY BEEN CONFIRMED ONTO THIS DATE IN WRITING. Without
+		   this entry the site offers no RTE starting the 27th at all, so her
+		   confirmation names a cohort the schedule does not show. */
+		'rte'                    => array( '2026-10-27' ),
 	);
 }
 
