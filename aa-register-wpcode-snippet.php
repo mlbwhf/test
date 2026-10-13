@@ -453,7 +453,7 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 1500,
+			'price'    => 999,    /* early bird; 1500 is the strike figure, which lives on the page */
 			/* WAS 1. The page calls it a two-day executive cohort in its own
 			   lede and its chip, and the note at the top of this block says the
 			   same. */
