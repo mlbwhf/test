@@ -158,3 +158,43 @@ That is the intended outcome, not a regression. Do not chase it.
 - Social syndication is **not** stopped: Jetpack Publicize is the one actually
   succeeding (LinkedIn, Threads, Facebook); WP to Buffer is failing on X. Neither
   can be reached with the available MCP tools — no plugin-management surface.
+
+---
+
+## Status check 13 Oct 2026 — the importer has stopped
+
+**No post has been created since 3 October**, in any status. Verified two ways: the
+newest post is still **2694** (3 Oct, 06:05 UTC), and a query for anything created
+after 3 Oct returns **empty** across all statuses. The previous rate was ~8.5/day,
+so ten quiet days is not a lull.
+
+Current state: **130 published** (94 scraped in News + 36 genuine), 44 drafts,
+**91 in trash** — down from 674, so someone emptied the older trashed posts.
+
+### ⚠️ We do not know why it stopped, and that matters
+
+Nothing done on 3–4 Oct should have stopped an *importer*:
+
+- the noindex snippet only affects what Google sees
+- disconnecting Jetpack Social only affects what is syndicated
+- deactivating WP to Buffer only affects publishing to Buffer
+
+None of those touch whatever was creating the posts. So either the owner killed the
+source without telling this session, or it broke / expired / was rate-limited on its
+own. **An unexplained stop is not a fix** — if nobody deliberately turned it off, it
+can resume without warning.
+
+**Ask the owner directly: did you turn something off around 3–4 October?**
+
+### What this unblocks
+
+The **final purge of the 94 is now safe**. The reason for holding it — that trashing
+just resets a counter which refills in days — no longer applies while the source is
+quiet. Expect the GSC 404 bucket to rise by ~94; that is intended.
+
+### What it does not unblock
+
+The **Hostinger access logs are now forensic rather than firefighting**, but they are
+*more* time-critical, not less: once they rotate we lose the only cheap record of what
+was publishing and from where. Without that, a restart would begin the whole
+investigation again from zero.
