@@ -402,7 +402,7 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-foundations/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 1500,
+			'price'    => 1350,   /* early bird; 1500 is the strike figure, which lives on the page */
 			/* TWO DAYS, CONFIRMED BY THE CLIENT 11 Oct 2026.
 			   This was 2, was changed to 1 because the page said one day in
 			   four places, and is now 2 again on the client's word. The four
@@ -432,7 +432,7 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-change-agent/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 2500,
+			'price'    => 2250,   /* early bird; 2500 is the strike figure, which lives on the page */
 			/* Two days, confirmed with the client Sep 2026 alongside the
 			   rename. The page still said three in five places and is being
 			   corrected to match. */
@@ -457,7 +457,7 @@ function aa_reg_courses() {
 			/* WAS 1. The page calls it a two-day executive cohort in its own
 			   lede and its chip, and the note at the top of this block says the
 			   same. */
-			'days'     => 2,
+			'days'     => 1,
 			'weeks'    => 52,
 			'proof'    => array( 'Six months coaching', 'Exam fee included' ),
 			/* TUESDAY, NOT THURSDAY. This course shares weeks 1 and 3 with
