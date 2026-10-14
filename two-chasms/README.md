@@ -66,3 +66,14 @@ Author-supplied portraits matched to the cast bible (Snap_Videos_ACTED_3D_Cast):
 `assets/cast/cast-*.jpg` (720×900, metadata stripped) → media `/wp-content/uploads/2026/10/cast-*.jpg`.
 Layla and Rhea show a monogram until portraits exist; Athena stays a system mark (ink + amber "A"), never a face.
 Page 28 patched in place (8 card headers); portrait CSS appended to template 7.
+
+## 2026-10-14 — assessment engine + maturity assessment
+One data-driven engine (`engine/tc-engine.js`, inlined in template 7) now runs both assessments; pages carry only
+a config block and a strings block (every visible string keyed — see `i18n/README.md`, catalogue `i18n/en.json`).
+| Page | ID | Reader |
+|---|---|---|
+| /assess "Where's your team?" (rebuilt on the engine) | 13 | `placement`: 15 state items + red panel; result logic unchanged |
+| /maturity "How mature is each state?" (new) | 52 | `levels`: 25 items (5 per state, practices from Framework_Map §2); each state 0–100 → Blind · Aware but slow · Reactive · Proactive and embedded · Self-mutating (the book's MRS scale); overall = mean; weakest state → its flagship workshop |
+`build_engine.py` emits both pages + `i18n/en.json`; `build_assess.py` is retired. `assess_css.css` folded into the template earlier; `engine_css.css` appended.
+Verified: live engine byte-identical to repo; both pages' content length equals the build; end-to-end runs (placement with lit red panel,
+maturity mixed, maturity all-max with N/A) and a French override block pass in the local simulation.
