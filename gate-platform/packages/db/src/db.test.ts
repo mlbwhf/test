@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -108,6 +108,32 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await core.listSeats(org.id, { orderId: a.order.id })).every((s) => s.status === "confirmed")).toBe(true);
     expect((await core.receivablesAgeing(org.id)).items.map((i) => i.invoiceId)).toEqual([b.invoice.id]);
     await ledger.assertBalanced();
+  });
+
+  it("seat transfer and waitlist on Postgres", async () => {
+    const repos = createPgRepos(pool);
+    const payments = new FakePaymentsAdapter();
+    const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments });
+    const { organization: org } = await core.createOrganization({ name: "Self Org", country: "CA", currency: "CAD" });
+    const course = await core.createCourse(org.id, { slug: "ls", name: "LS" });
+    const nov = await core.createEvent(org.id, { courseId: course.id, name: "Nov", startsAt: new Date(Date.now() + 40 * 86_400_000) });
+    const dec = await core.createEvent(org.id, { courseId: course.id, name: "Dec", startsAt: new Date(Date.now() + 70 * 86_400_000) });
+    const novTt = await core.createTicketType(org.id, nov.id, { name: "Std", priceMinor: 50_000, quantity: 1 });
+    await core.createTicketType(org.id, dec.id, { name: "Std", priceMinor: 50_000, quantity: 5 });
+    const { order } = await core.createOrder(org.id, { ticketTypeId: novTt.id, quantity: 1, buyerEmail: "a@b.co", attendees: [{ email: "a@b.co", name: "A" }] });
+    await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "CAD"));
+    const seat = (await core.listSeats(org.id, { orderId: order.id }))[0]!;
+    const wl = await core.joinWaitlist(org.id, { eventId: nov.id, email: "w@b.co", quantity: 1 });
+    expect(wl.entry.status).toBe("waiting");
+    await core.setChangePolicy(org.id, { ...(await core.policyFor(org.id, undefined)), transferFreeUntilDays: 1 });
+    const r = await core.transferSeat(seat.id, dec.id, { attendeeEmail: "a@b.co" });
+    expect(r.transfer.status).toBe("completed");
+    expect(r.seat?.transferredFromSeatId).toBe(seat.id);
+    expect((await repos.seats.get(seat.id))?.transferredToSeatId).toBe(r.seat?.id);
+    expect((await repos.waitlist.get(wl.entry.id))?.status).toBe("offered");
+    expect((await repos.ticketTypes.get(novTt.id))?.sold).toBe(1); // held for the offer
+    const sub = await core.substituteSeat(r.seat!.id, { email: "c@b.co", name: "C" }, { organizationId: org.id });
+    expect((await repos.seats.get(sub.id))?.substitutions?.[0]?.from.email).toBe("a@b.co");
   });
 
   it("reserve is atomic under concurrency", async () => {

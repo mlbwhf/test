@@ -32,13 +32,15 @@ single element programmatically.
 | `data-gate-org`        | yes      | Organization id (`org_...`).                                                                        |
 | `data-gate-course`     | yes      | Course slug as shown in the dashboard, e.g. `leading-safe`.                                         |
 | `data-gate-currency`   | no       | Preferred display/checkout currency (ISO 4217). Used when at least one ticket type is priced in it; otherwise the organization's currency, then the first available one. |
+| `data-gate-waitlist`   | no       | Waitlist entry id (`wl_...`) to claim. Puts the widget in **claim mode** (see *Waitlist* below). Also read from the page URL's `gate_waitlist` query parameter, so the offer email can simply link to `https://your-site/course-page?gate_waitlist=wl_123`. The attribute wins when both are present. |
 | `data-gate-stripe-pk`  | no       | Stripe publishable key. When set, payment is taken with a Stripe Payment Element (Stripe.js is loaded from `https://js.stripe.com/v3/` on demand). When omitted and the API returns a client secret, the widget shows a **Simulate payment (test mode)** button that calls the dev-only `POST /public/v1/dev/payments/{paymentRef}/succeed` endpoint. Never omit it on a production page. |
 
 ### What the visitor sees
 
 1. **Schedule** – course name, one card per cohort (date range in the cohort's own time zone with the zone
    abbreviation, format badge, session count) and one row per ticket type with the price in the selected
-   currency, an "Early bird until …" badge, "N left" when 5 or fewer remain and a disabled "Sold out" state.
+   currency, an "Early bird until …" badge, "N left" when 5 or fewer remain and a "Sold out" badge with a
+   **Join waitlist** button instead of Register when no seats remain.
    A currency selector lists the union of all currencies the ticket types are priced in.
 2. **Checkout** – seats (1 to `min(10, remaining)`), buyer email, one attendee block per seat (email required,
    name and company optional; the first attendee follows the buyer email while "Same as buyer" is ticked)
@@ -52,6 +54,36 @@ single element programmatically.
 
 API errors (`{ error: { code, message, hint } }`) are rendered inline with the hint when present; a network
 failure shows "Can't reach the registration service".
+
+### Waitlist
+
+When a ticket type has `remaining: 0` the row shows a "Sold out" badge and a **Join waitlist** button in
+place of Register. Clicking it opens a small form: email (required), name (optional) and seats (1–5,
+default 1), with **Join waitlist** and **Back** buttons. Submitting calls
+
+```
+POST {api}/public/v1/organizations/{org}/waitlist
+content-type: application/json
+
+{ "eventId": "evt_...", "ticketTypeId": "tt_...", "email": "...", "name": "...", "quantity": 1 }
+```
+
+(`name` is omitted when left blank) and expects `201 { "entry": { "id": "wl_...", "status": "waiting", "position": 3 } }`.
+The widget then shows "You're #3 on the waitlist. We'll email you when a seat opens; you'll have 24 hours
+to claim it." API errors are rendered inline exactly like checkout errors, so a `409 ALREADY_WAITLISTED`
+shows the API's message (and hint) above the form and lets the visitor correct it.
+
+**Claiming an offered seat.** The offer email links back to the course page with `?gate_waitlist=wl_...`.
+When the host element has `data-gate-waitlist="wl_..."`, or the page URL carries that `gate_waitlist`
+query parameter (programmatic mounts can pass `{ waitlist: "wl_..." }`), the widget runs in claim mode:
+
+- a "Claiming your waitlist seat" banner is shown above the schedule;
+- sold-out ticket types keep a normal **Register** button (the seat is held for the visitor) with a
+  "Seat held for you" badge, and no Join waitlist button is offered;
+- every `POST /public/v1/organizations/{org}/orders` body, both the `dryRun: true` pricing calls and the
+  real order, includes `"waitlistEntryId": "wl_..."` so the API can release the hold to this order.
+
+Everything else (checkout, payment, confirmation) is unchanged.
 
 ### Styling and accessibility
 
@@ -85,6 +117,6 @@ pnpm --filter @gate/widget test        # vitest + jsdom, mocked fetch
 pnpm --filter @gate/widget build       # esbuild -> dist/gate-widget.js (fails if > 40 KB)
 ```
 
-Source layout: `src/index.ts` (auto-mount), `src/widget.ts` (UI flow), `src/api.ts` (typed client),
+Source layout: `src/index.ts` (auto-mount), `src/widget.ts` (UI flow incl. waitlist), `src/api.ts` (typed client),
 `src/format.ts` (pure money/date/currency helpers), `src/styles.ts` (CSS). Serve `dist/gate-widget.js`
 from the API at `/widget/v1/gate-widget.js` with CORS enabled on `/public/v1/*`.

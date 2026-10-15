@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { BillingAddress, CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
+import type { BillingAddress, CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -111,6 +111,22 @@ export interface OrderRepo {
   getByIdempotencyKey(organizationId: string, key: string): Promise<Order | undefined>;
   listByOrganization(organizationId: string, limit?: number): Promise<Order[]>;
 }
+export interface SeatTransferRepo {
+  create(t: SeatTransfer): Promise<void>;
+  update(t: SeatTransfer): Promise<void>;
+  get(id: string): Promise<SeatTransfer | undefined>;
+  getByPaymentRef(ref: string): Promise<SeatTransfer | undefined>;
+  listBySeat(seatId: string): Promise<SeatTransfer[]>;
+}
+export interface WaitlistRepo {
+  create(e: WaitlistEntry): Promise<void>;
+  update(e: WaitlistEntry): Promise<void>;
+  get(id: string): Promise<WaitlistEntry | undefined>;
+  /** Waiting + offered entries for an event, oldest first. */
+  listOpenByEvent(eventId: string): Promise<WaitlistEntry[]>;
+  listOffered(): Promise<WaitlistEntry[]>;
+  findOpen(eventId: string, email: string): Promise<WaitlistEntry | undefined>;
+}
 export interface CorporateAccountRepo {
   create(a: CorporateAccount): Promise<void>;
   update(a: CorporateAccount): Promise<void>;
@@ -151,6 +167,8 @@ export interface Repos {
   orders: OrderRepo;
   corporateAccounts: CorporateAccountRepo;
   invoices: InvoiceRepo;
+  seatTransfers: SeatTransferRepo;
+  waitlist: WaitlistRepo;
   refunds: RefundRepo;
   processedEvents: ProcessedEventRepo;
 }

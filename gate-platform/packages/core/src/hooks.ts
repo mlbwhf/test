@@ -1,4 +1,4 @@
-import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Refund, Seat, TicketType } from "./types.js";
+import type { Attendee, CorporateAccount, Course, Event, Invoice, Order, Organization, Refund, Seat, TicketType, WaitlistEntry } from "./types.js";
 
 export interface OrderPaidContext {
   organization: Organization;
@@ -30,10 +30,23 @@ export interface InvoiceIssuedContext {
   event: Event;
 }
 
+export type SeatChangedContext =
+  | { kind: "substituted"; seat: Seat; previousAttendee: Attendee }
+  | { kind: "transferred"; seat: Seat; previousSeat: Seat }
+  | { kind: "cancelled"; seat: Seat; refund: Refund | null };
+
+export interface WaitlistOfferedContext {
+  entry: WaitlistEntry;
+  event: Event;
+  organization: Organization | null;
+}
+
 export interface CoreHooks {
   orderPaid?: ((ctx: OrderPaidContext) => Promise<void>) | undefined;
   orderRefunded?: ((ctx: OrderRefundedContext) => Promise<void>) | undefined;
   invoiceIssued?: ((ctx: InvoiceIssuedContext) => Promise<void>) | undefined;
+  seatChanged?: ((ctx: SeatChangedContext) => Promise<void>) | undefined;
+  waitlistOffered?: ((ctx: WaitlistOfferedContext) => Promise<void>) | undefined;
 }
 
 export interface HookFailure {

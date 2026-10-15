@@ -3,7 +3,7 @@
 import {
   ApiError, createApi, uuid,
   type Api, type Attendee, type Cohort, type CoursePayload, type Order, type OrderRequest,
-  type OrderResponse, type Pricing, type TicketType,
+  type OrderResponse, type Pricing, type TicketType, type WaitlistEntry, type WaitlistRequest,
 } from "./api.js";
 import {
   currencyUnion, formatDate, formatDateRange, formatLabel, formatMoney, pickCurrency,
@@ -17,6 +17,8 @@ export interface WidgetOptions {
   course: string;
   currency?: string;
   stripePk?: string;
+  /** Waitlist entry id to claim (overrides `data-gate-waitlist` and the `gate_waitlist` query param). */
+  waitlist?: string;
 }
 
 /** Timing knobs (mutable so tests can shorten them). */
@@ -101,6 +103,17 @@ function prefersDark(): boolean {
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PLACEHOLDER_EMAIL = "pending@example.com";
+const WAITLIST_MAX_SEATS = 5;
+const WAITLIST_PARAM = "gate_waitlist";
+
+/** Waitlist entry id from the page URL (`?gate_waitlist=wl_...`, the link in the offer email). */
+function waitlistFromLocation(): string | undefined {
+  try {
+    return new URLSearchParams(window.location.search).get(WAITLIST_PARAM) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 interface Draft { email: string; name: string; company: string }
 interface CheckoutContext { cohort: Cohort; ticket: TicketType; quantity: number; buyerEmail: string; attendees: Attendee[] }
@@ -129,11 +142,14 @@ export class Widget {
   private readonly body: HTMLElement;
   private data: CoursePayload | null = null;
   private currency = "";
+  /** Set when the visitor arrived to claim a seat offered from the waitlist. */
+  private readonly waitlistEntryId: string | undefined;
 
   constructor(host: HTMLElement, private readonly opts: WidgetOptions) {
     injectStyles(host.ownerDocument);
     this.api = createApi(opts.api, opts.org);
     this.id = `gw${++seq}`;
+    this.waitlistEntryId = (opts.waitlist ?? host.dataset.gateWaitlist ?? waitlistFromLocation())?.trim() || undefined;
     this.titleEl = h("h2", { class: "gw-title" }, "Loading…");
     this.metaEl = h("p", { class: "gw-muted" });
     this.statusEl = h("div", { class: "gw-status", role: "status", "aria-live": "polite" });
@@ -179,6 +195,11 @@ export class Widget {
     const data = this.data;
     if (!data) return;
     const frag = document.createDocumentFragment();
+    if (this.waitlistEntryId) {
+      frag.append(h("div", { class: "gw-banner", role: "status" },
+        h("strong", {}, "Claiming your waitlist seat"),
+        h("span", { class: "gw-banner-hint" }, "Your seat is held for you. Pick the cohort you were offered and register below.")));
+    }
     const available = currencyUnion(data.cohorts);
     if (available.length > 1) {
       const select = h("select", { id: `${this.id}-currency`, class: "gw-select" });
@@ -224,18 +245,101 @@ export class Widget {
     if (tt.earlyBirdUntil) {
       info.append(h("span", { class: "gw-badge gw-badge-early" }, `Early bird until ${formatDate(tt.earlyBirdUntil, cohort.event.timezone)}`));
     }
+    // In claim mode the seat is held for the visitor, so a sold-out row still registers.
+    const claiming = soldOut && this.waitlistEntryId !== undefined;
     const left = remainingLabel(tt.remaining);
-    if (left && !soldOut) info.append(h("span", { class: "gw-badge gw-badge-left" }, left));
+    if (claiming) info.append(h("span", { class: "gw-badge gw-badge-held" }, "Seat held for you"));
+    else if (left) info.append(h("span", { class: "gw-badge gw-badge-left" }, left));
     const priceEl = h("span", { class: "gw-price" },
       price === undefined ? `Not available in ${this.currency}` : formatMoney(price, this.currency));
-    const button = h("button", {
-      type: "button",
-      class: "gw-btn gw-btn-primary",
-      disabled: soldOut || price === undefined,
-      "aria-label": soldOut ? undefined : `Register for ${tt.name}, ${cohort.event.name}`,
-      onclick: () => this.renderCheckout(cohort, tt),
-    }, soldOut ? "Sold out" : "Register");
-    return h("li", { class: soldOut ? "gw-ticket gw-ticket-soldout" : "gw-ticket" }, info, priceEl, button);
+    const button = soldOut && !claiming
+      ? h("button", {
+        type: "button",
+        class: "gw-btn",
+        "aria-label": `Join waitlist for ${tt.name}, ${cohort.event.name}`,
+        onclick: () => this.renderWaitlist(cohort, tt),
+      }, "Join waitlist")
+      : h("button", {
+        type: "button",
+        class: "gw-btn gw-btn-primary",
+        disabled: price === undefined,
+        "aria-label": `Register for ${tt.name}, ${cohort.event.name}`,
+        onclick: () => this.renderCheckout(cohort, tt),
+      }, "Register");
+    return h("li", { class: soldOut && !claiming ? "gw-ticket gw-ticket-soldout" : "gw-ticket" }, info, priceEl, button);
+  }
+
+  /* ---------- Waitlist ---------- */
+  private renderWaitlist(cohort: Cohort, tt: TicketType): void {
+    const ev = cohort.event;
+    const uid = (s: string): string => `${this.id}-wl-${s}`;
+    const emailInput = h("input", {
+      id: uid("email"), type: "email", class: "gw-input", required: true, autocomplete: "email", placeholder: "you@example.com",
+    });
+    const nameInput = h("input", { id: uid("name"), type: "text", class: "gw-input", autocomplete: "name" });
+    const qtySelect = h("select", { id: uid("qty"), class: "gw-select", "aria-describedby": uid("qty-hint") });
+    for (let i = 1; i <= WAITLIST_MAX_SEATS; i++) qtySelect.append(h("option", { value: String(i) }, String(i)));
+    const errors = h("div", { class: "gw-errors" });
+    const submitButton = h("button", { type: "submit", class: "gw-btn gw-btn-primary" }, "Join waitlist");
+
+    const submit = async (): Promise<void> => {
+      errors.replaceChildren();
+      const email = emailInput.value.trim();
+      if (!EMAIL_RE.test(email)) {
+        errors.append(h("div", { class: "gw-error", role: "alert" }, "Enter a valid email address."));
+        emailInput.focus();
+        return;
+      }
+      const quantity = Math.min(WAITLIST_MAX_SEATS, Math.max(1, Number(qtySelect.value) || 1));
+      const body: WaitlistRequest = { eventId: ev.id, ticketTypeId: tt.id, email, quantity };
+      const name = nameInput.value.trim();
+      if (name) body.name = name;
+      submitButton.disabled = true;
+      this.setStatus("Joining the waitlist…");
+      try {
+        const res = await this.api.joinWaitlist(body);
+        this.renderWaitlisted(res.entry, cohort, tt);
+      } catch (err) {
+        this.setStatus("");
+        submitButton.disabled = false;
+        errors.replaceChildren(errorBlock(err));
+      }
+    };
+
+    const form = h("form", { class: "gw-form gw-waitlist", novalidate: true, onsubmit: (e: Event) => { e.preventDefault(); void submit(); } },
+      h("div", { class: "gw-field" }, h("label", { class: "gw-label", for: emailInput.id }, "Email"), emailInput),
+      h("div", { class: "gw-field" }, h("label", { class: "gw-label", for: nameInput.id }, "Name (optional)"), nameInput),
+      h("div", { class: "gw-field" },
+        h("label", { class: "gw-label", for: qtySelect.id }, "Seats"),
+        qtySelect,
+        h("span", { id: uid("qty-hint"), class: "gw-muted" }, `Up to ${WAITLIST_MAX_SEATS}`)),
+      errors,
+      h("div", { class: "gw-actions" },
+        submitButton,
+        h("button", { type: "button", class: "gw-btn", onclick: () => this.renderSchedule() }, "Back")),
+    );
+
+    this.setStatus("");
+    this.body.replaceChildren(
+      h("button", { type: "button", class: "gw-link gw-back", onclick: () => this.renderSchedule() }, "← Back to schedule"),
+      h("h3", { class: "gw-subtitle" }, `Join the waitlist · ${ev.name}`),
+      h("p", { class: "gw-muted" }, `${formatDateRange(ev.startsAt, ev.endsAt, ev.timezone)} · ${tt.name} is sold out. We'll email you if a seat opens up.`),
+      form,
+    );
+    emailInput.focus();
+  }
+
+  private renderWaitlisted(entry: WaitlistEntry, cohort: Cohort, tt: TicketType): void {
+    const ev = cohort.event;
+    this.setStatus("You're on the waitlist");
+    this.body.replaceChildren(
+      h("div", { class: "gw-success" },
+        h("h3", { class: "gw-subtitle" }, "You're on the waitlist"),
+        h("p", {}, `You're #${entry.position} on the waitlist. We'll email you when a seat opens; you'll have 24 hours to claim it.`),
+        h("p", { class: "gw-muted" }, `${ev.name} · ${formatDateRange(ev.startsAt, ev.endsAt, ev.timezone)} · ${tt.name}`),
+        h("div", { class: "gw-actions" },
+          h("button", { type: "button", class: "gw-btn", onclick: () => this.renderSchedule() }, "Back to schedule"))),
+    );
   }
 
   /* ---------- Checkout form ---------- */
@@ -404,7 +508,9 @@ export class Widget {
 
   private orderBody(tt: TicketType, currency: string, quantity: number, buyerEmail: string, drafts: readonly Draft[], dryRun: boolean): OrderRequest {
     const attendees = toAttendees(drafts).map((a) => (dryRun && !a.email ? { ...a, email: PLACEHOLDER_EMAIL } : a));
-    return { ticketTypeId: tt.id, quantity, currency, buyerEmail: buyerEmail || (dryRun ? PLACEHOLDER_EMAIL : ""), attendees, dryRun };
+    const body: OrderRequest = { ticketTypeId: tt.id, quantity, currency, buyerEmail: buyerEmail || (dryRun ? PLACEHOLDER_EMAIL : ""), attendees, dryRun };
+    if (this.waitlistEntryId) body.waitlistEntryId = this.waitlistEntryId;
+    return body;
   }
 
   /* ---------- After the order is created ---------- */

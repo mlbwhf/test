@@ -1,5 +1,6 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
 import type { PayoutDestination, Pricing, SplitResult, SplitRule } from "@gate/pricing";
+import type { ChangePolicy } from "./policy.js";
 
 export interface Organization {
   id: string;
@@ -13,6 +14,8 @@ export interface Organization {
   paymentsAccountRef?: string;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
+  /** Transfer / cancel / substitute rules; courses may override. */
+  changePolicy?: ChangePolicy;
   apiKeyHash: string;
   createdAt: Date;
 }
@@ -38,6 +41,7 @@ export interface Course {
   /** e.g. "Scaled Agile", "Scrum.org", "PMI". Drives roster export formats later. */
   certificationBody?: string;
   durationDays?: number;
+  changePolicy?: ChangePolicy;
   createdAt: Date;
 }
 
@@ -116,6 +120,46 @@ export interface Seat {
   status: SeatStatus;
   createdAt: Date;
   confirmedAt?: Date;
+  /** Set when this seat replaced one on another cohort. */
+  transferredFromSeatId?: string;
+  /** Set on the old seat after a transfer. */
+  transferredToSeatId?: string;
+  /** Previous attendees, most recent last. */
+  substitutions?: Array<{ from: Attendee; at: Date }>;
+  cancelledAt?: Date;
+}
+
+export type SeatTransferStatus = "pending_payment" | "completed" | "failed";
+export interface SeatTransfer {
+  id: string;
+  organizationId: string;
+  fromSeatId: string;
+  toEventId: string;
+  toTicketTypeId: string;
+  /** Policy fee plus any price difference, in the order's currency. */
+  feeMinor: MinorUnits;
+  currency: Currency;
+  status: SeatTransferStatus;
+  paymentRef?: string;
+  toSeatId?: string;
+  createdAt: Date;
+  completedAt?: Date;
+}
+
+export type WaitlistStatus = "waiting" | "offered" | "converted" | "expired" | "cancelled";
+export interface WaitlistEntry {
+  id: string;
+  organizationId: string;
+  eventId: string;
+  ticketTypeId: string;
+  email: string;
+  name?: string;
+  quantity: number;
+  status: WaitlistStatus;
+  createdAt: Date;
+  offeredAt?: Date;
+  offerExpiresAt?: Date;
+  convertedOrderId?: string;
 }
 
 export interface BillingAddress {

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,24 +7,13 @@ export const metadata: Metadata = {
   description: "Organizer dashboard for the Gate payments platform",
 };
 
+// Bare document shell. The organizer chrome (top bar + nav) lives in
+// app/(organizer)/layout.tsx; the learner self-service pages under /my get
+// their own header in app/my/layout.tsx and never render dashboard links.
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <header className="topbar">
-          <Link href="/dashboard" className="brand">
-            Gate
-          </Link>
-          <nav aria-label="Primary">
-            <Link href="/dashboard">Dashboard</Link>
-            <Link href="/events">Events</Link>
-            <Link href="/courses">Courses</Link>
-            <Link href="/instructors">Instructors</Link>
-            <Link href="/orders">Orders</Link>
-          </nav>
-        </header>
-        <main>{children}</main>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

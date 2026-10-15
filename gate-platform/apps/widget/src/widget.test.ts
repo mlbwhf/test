@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { CoursePayload, OrderRequest, OrderResponse } from "./api.js";
+import type { CoursePayload, OrderRequest, OrderResponse, WaitlistRequest } from "./api.js";
 import { config, mount, type StripeFactory } from "./widget.js";
 
 const API = "https://api.test";
@@ -145,9 +145,11 @@ describe("schedule", () => {
     expect(text(tickets[0])).not.toContain("left");
 
     const soldOut = tickets[2]!.querySelector("button")!;
-    expect(soldOut.disabled).toBe(true);
-    expect(soldOut.textContent).toBe("Sold out");
+    expect(soldOut.disabled).toBe(false);
+    expect(soldOut.textContent).toBe("Join waitlist");
+    expect(text(tickets[2])).toContain("Sold out");
     expect(tickets[0]!.querySelector("button")!.disabled).toBe(false);
+    expect(tickets[0]!.querySelector("button")!.textContent).toBe("Register");
 
     // currency selector = union of currencies, defaulting to data-gate-currency
     const select = host.querySelector<HTMLSelectElement>("select.gw-select")!;
@@ -384,6 +386,154 @@ describe("errors", () => {
     const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
     await widget.ready;
     expect(text(host)).toContain("returned an error (503)");
+  });
+});
+
+describe("waitlist", () => {
+  const WAITLIST_URL = `${API}/public/v1/organizations/org_1/waitlist`;
+
+  it("replaces the sold-out Register button with Join waitlist and posts the entry", async () => {
+    const posts: { body: WaitlistRequest; init: RequestInit | undefined }[] = [];
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url === WAITLIST_URL && init?.method === "POST") {
+        posts.push({ body: json as unknown as WaitlistRequest, init });
+        return { status: 201, body: { entry: { id: "wl_1", status: "waiting", position: 3 } } };
+      }
+      return undefined;
+    });
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "CAD" });
+    await widget.ready;
+    expect(host.querySelector(".gw-banner")).toBeNull();
+
+    const row = host.querySelectorAll(".gw-ticket")[2]!;
+    const join = row.querySelector("button")!;
+    expect(join.textContent).toBe("Join waitlist");
+    expect(join.disabled).toBe(false);
+    expect(row.querySelector("button[aria-label^='Register']")).toBeNull();
+    join.click();
+
+    const form = host.querySelector<HTMLFormElement>("form.gw-waitlist")!;
+    expect(form).toBeTruthy();
+    expect(text(host)).toContain("Alumni is sold out");
+    const qty = form.querySelector<HTMLSelectElement>("select")!;
+    expect(Array.from(qty.options).map((o) => o.value)).toEqual(["1", "2", "3", "4", "5"]);
+    expect(qty.value).toBe("1");
+
+    // Back returns to the schedule without posting
+    buttonByText(form, /^Back$/).click();
+    expect(host.querySelectorAll(".gw-cohort")).toHaveLength(2);
+    expect(posts).toHaveLength(0);
+
+    host.querySelectorAll<HTMLButtonElement>(".gw-ticket button")[2]!.click();
+    submitForm(host);
+    expect(text(host.querySelector(".gw-errors"))).toContain("valid email address");
+    expect(posts).toHaveLength(0);
+
+    setValue(host.querySelector<HTMLInputElement>("form.gw-waitlist input[type=email]")!, "wait@example.com");
+    setValue(host.querySelector<HTMLInputElement>("form.gw-waitlist input[type=text]")!, "Pat Doe");
+    setValue(host.querySelector<HTMLSelectElement>("form.gw-waitlist select")!, "2", "change");
+    submitForm(host);
+    await vi.waitFor(() => expect(text(host)).toContain("You're #3 on the waitlist."));
+    expect(text(host)).toContain("We'll email you when a seat opens; you'll have 24 hours to claim it.");
+    expect(posts).toHaveLength(1);
+    expect(posts[0]!.body).toEqual({ eventId: "evt_1", ticketTypeId: "tt_3", email: "wait@example.com", name: "Pat Doe", quantity: 2 });
+    expect(posts[0]!.init).toMatchObject({ method: "POST", headers: { "content-type": "application/json" } });
+    expect(text(host.querySelector(".gw-status"))).toBe("You're on the waitlist");
+    buttonByText(host, /Back to schedule/).click();
+    expect(host.querySelectorAll(".gw-cohort")).toHaveLength(2);
+  });
+
+  it("renders the API error inline (ALREADY_WAITLISTED) and keeps the form", async () => {
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url === WAITLIST_URL && init?.method === "POST") {
+        return { status: 409, body: { error: { code: "ALREADY_WAITLISTED", message: "You're already on this waitlist.", hint: "Check your inbox for the confirmation." } } };
+      }
+      return undefined;
+    });
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    host.querySelectorAll<HTMLButtonElement>(".gw-ticket button")[2]!.click();
+    setValue(host.querySelector<HTMLInputElement>("form.gw-waitlist input[type=email]")!, "wait@example.com");
+    submitForm(host);
+    await vi.waitFor(() => expect(text(host.querySelector(".gw-errors"))).toContain("You're already on this waitlist."));
+    expect(text(host.querySelector(".gw-error-hint"))).toBe("Check your inbox for the confirmation.");
+    expect(host.querySelector(".gw-error")?.getAttribute("role")).toBe("alert");
+    expect(host.querySelector("form.gw-waitlist")).toBeTruthy();
+    expect(host.querySelector<HTMLButtonElement>("button[type=submit]")!.disabled).toBe(false);
+    expect(text(host)).not.toContain("on the waitlist.");
+  });
+
+  it("claim mode (data-gate-waitlist): banner, Register on the sold-out row, waitlistEntryId in the order body", async () => {
+    const posts: OrderRequest[] = [];
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url === `${API}/public/v1/organizations/org_1/orders` && init?.method === "POST" && json) {
+        posts.push(json);
+        return { status: 201, body: orderResponse(json, "ord_wl") };
+      }
+      return undefined;
+    });
+    host.dataset.gateWaitlist = "wl_1";
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "CAD" });
+    await widget.ready;
+
+    expect(text(host.querySelector(".gw-banner"))).toContain("Claiming your waitlist seat");
+    expect(host.querySelector(".gw-banner")!.compareDocumentPosition(host.querySelector(".gw-cohorts")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const row = host.querySelectorAll(".gw-ticket")[2]!;
+    const register = row.querySelector("button")!;
+    expect(register.textContent).toBe("Register");
+    expect(register.disabled).toBe(false);
+    expect(row.classList.contains("gw-ticket-soldout")).toBe(false);
+    expect(text(row)).toContain("Seat held for you");
+    expect(text(row)).not.toContain("Join waitlist");
+    // other rows are unaffected
+    expect(host.querySelectorAll(".gw-ticket button")[0]!.textContent).toBe("Register");
+
+    await openCheckout(host, 2, "claim@example.com");
+    expect(posts[0]).toMatchObject({ dryRun: true, ticketTypeId: "tt_3", waitlistEntryId: "wl_1" });
+    submitForm(host);
+    await vi.waitFor(() => buttonByText(host, /Simulate payment/));
+    const real = posts.filter((p) => !p.dryRun);
+    expect(real).toHaveLength(1);
+    expect(real[0]).toEqual({
+      ticketTypeId: "tt_3", quantity: 1, currency: "CAD", buyerEmail: "claim@example.com",
+      attendees: [{ email: "claim@example.com" }], dryRun: false, waitlistEntryId: "wl_1",
+    });
+  });
+
+  it("claim mode is also enabled by the gate_waitlist query parameter", async () => {
+    const posts: OrderRequest[] = [];
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (json) { posts.push(json); return { status: 201, body: orderResponse(json) }; }
+      return undefined;
+    });
+    window.history.replaceState({}, "", "/course?gate_waitlist=wl_9&x=1");
+    try {
+      const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+      await widget.ready;
+      expect(text(host.querySelector(".gw-banner"))).toContain("Claiming your waitlist seat");
+      expect(host.querySelectorAll(".gw-ticket button")[2]!.textContent).toBe("Register");
+      await openCheckout(host, 2, "claim@example.com");
+      expect(posts[0]!.waitlistEntryId).toBe("wl_9");
+    } finally {
+      window.history.replaceState({}, "", "/");
+    }
+  });
+
+  it("does not include waitlistEntryId outside claim mode", async () => {
+    const posts: OrderRequest[] = [];
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (json) { posts.push(json); return { status: 201, body: orderResponse(json) }; }
+      return undefined;
+    });
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    await openCheckout(host, 0, "buyer@example.com");
+    expect("waitlistEntryId" in posts[0]!).toBe(false);
   });
 });
 

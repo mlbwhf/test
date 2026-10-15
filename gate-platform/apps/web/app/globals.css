@@ -416,3 +416,81 @@ select:focus {
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
+
+/* Learner self-service (/my) */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.actions-grid .action-form {
+  max-width: none;
+}
+.notice-ok {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.notice-info {
+  background: var(--live-bg);
+  color: var(--live-text);
+}
+.notice a {
+  color: inherit;
+  text-decoration: underline;
+}
+.kv {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+}
+.kv dt {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.kv dd {
+  margin: 0;
+}
+.label-check {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  color: var(--text);
+}
+.label-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  min-width: 0;
+  resize: vertical;
+}
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.fee-panel {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+}
+.fee-panel h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.fee-panel p {
+  margin: 0;
+}
+.payment-box {
+  display: grid;
+  gap: 12px;
+}

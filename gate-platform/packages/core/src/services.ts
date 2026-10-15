@@ -6,7 +6,8 @@ import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
 import type { Clock, IdGenerator, PaymentEvent, PaymentsPort, Repos, TaxPort } from "./ports.js";
 import { NO_TAX } from "./tax.js";
-import type { Attendee, BillingAddress, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, Session, TicketType } from "./types.js";
+import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
+import type { Attendee, BillingAddress, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, SeatTransfer, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -346,6 +347,8 @@ export class Core {
       attendees?: Attendee[] | undefined;
       /** Enables tax calculation; without it tax is not calculated. */
       billingAddress?: BillingAddress | undefined;
+      /** Claiming an offered waitlist seat: capacity is already held for this entry. */
+      waitlistEntryId?: string | undefined;
       idempotencyKey?: string | undefined;
       dryRun?: boolean | undefined;
     },
@@ -396,8 +399,21 @@ export class Core {
 
     if (input.dryRun) return { order, clientSecret: null, created: false };
 
-    const reserved = await this.repos.ticketTypes.reserve(ticketType.id, input.quantity);
-    if (!reserved) throw new DomainError("SOLD_OUT", `only ${ticketType.quantity - ticketType.sold} left`, "lower the quantity");
+    let claim: WaitlistEntry | undefined;
+    if (input.waitlistEntryId) {
+      claim = await this.repos.waitlist.get(input.waitlistEntryId);
+      if (!claim || claim.organizationId !== organizationId || claim.ticketTypeId !== ticketType.id) throw notFound("waitlistEntry", input.waitlistEntryId);
+      if (claim.status !== "offered") throw new DomainError("INVALID_STATE", `waitlist offer is ${claim.status}`, "join the waitlist again if the offer expired");
+      if (claim.offerExpiresAt && claim.offerExpiresAt < this.clock.now()) throw new DomainError("INVALID_STATE", "waitlist offer has expired");
+      if (claim.email !== input.buyerEmail.toLowerCase() && !input.attendees?.some((a) => a.email.toLowerCase() === claim!.email)) {
+        throw new DomainError("VALIDATION", "the offer belongs to a different email address");
+      }
+      if (input.quantity > claim.quantity) throw new DomainError("VALIDATION", `the offer holds ${claim.quantity} seat(s)`);
+    }
+    // Offers already hold their capacity; everyone else reserves now.
+    const reserved = claim ? true : await this.repos.ticketTypes.reserve(ticketType.id, input.quantity);
+    if (!reserved) throw new DomainError("SOLD_OUT", `only ${ticketType.quantity - ticketType.sold} left`, "join the waitlist");
+    if (claim && claim.quantity > input.quantity) await this.repos.ticketTypes.release(ticketType.id, claim.quantity - input.quantity);
 
     let paymentRef: string;
     let clientSecret: string | null;
@@ -431,6 +447,7 @@ export class Core {
       await this.repos.ticketTypes.release(ticketType.id, input.quantity);
       throw err;
     }
+    if (claim) await this.repos.waitlist.update({ ...claim, status: "converted", convertedOrderId: order.id });
     if (pricing.totalMinor === 0) await this.markPaid(order);
     return { order: (await this.repos.orders.get(order.id)) ?? order, clientSecret, created: true };
   }
@@ -452,6 +469,13 @@ export class Core {
     if (!fresh) return { handled: false, reason: "duplicate" };
     switch (event.type) {
       case "payment.succeeded": {
+        const transfer = await this.repos.seatTransfers.getByPaymentRef(event.paymentRef);
+        if (transfer) {
+          if (transfer.status !== "pending_payment") return { handled: false, reason: `transfer is ${transfer.status}` };
+          if (event.amountMinor !== transfer.feeMinor || event.currency !== transfer.currency) throw new DomainError("CONFLICT", `transfer fee mismatch on ${event.paymentRef}`);
+          await this.completeTransfer(transfer, { paid: true });
+          return { handled: true };
+        }
         const invoice = await this.repos.invoices.getByCardPaymentRef(event.paymentRef);
         if (invoice) {
           if (invoice.status === "paid" || invoice.status === "void") return { handled: false, reason: `invoice is ${invoice.status}` };
@@ -468,6 +492,15 @@ export class Core {
         return { handled: true };
       }
       case "payment.failed": {
+        const transfer = await this.repos.seatTransfers.getByPaymentRef(event.paymentRef);
+        if (transfer) {
+          if (transfer.status === "pending_payment") {
+            await this.repos.ticketTypes.release(transfer.toTicketTypeId, 1);
+            await this.repos.seatTransfers.update({ ...transfer, status: "failed" });
+            await this.offerWaitlist(transfer.toEventId);
+          }
+          return { handled: true };
+        }
         const invoice = await this.repos.invoices.getByCardPaymentRef(event.paymentRef);
         if (invoice) {
           const { cardPaymentRef: _drop, ...rest } = invoice;
@@ -478,6 +511,7 @@ export class Core {
         if (!order || order.status !== "pending") return { handled: false, reason: "no pending order" };
         await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
         await this.repos.orders.update({ ...order, status: "failed" });
+        await this.offerWaitlist(order.eventId);
         return { handled: true };
       }
       case "refund.succeeded": {
@@ -692,6 +726,7 @@ export class Core {
         if (seat.status === "confirmed" || seat.status === "reserved") await this.repos.seats.update({ ...seat, status: "cancelled" });
       }
       await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
+      await this.offerWaitlist(order.eventId);
     }
     const settled = (await this.repos.refunds.get(refund.id)) ?? refund;
     const event = await this.repos.events.get(order.eventId);
@@ -930,6 +965,217 @@ export class Core {
     return { asOf, byCurrency, items };
   }
 
+  // ---------- Change policy, seat self-service ----------
+
+  async policyFor(organizationId: string, courseId: string | undefined): Promise<ChangePolicy> {
+    const org = await this.getOrganization(organizationId);
+    const course = courseId ? await this.repos.courses.get(courseId) : undefined;
+    return course?.changePolicy ?? org.changePolicy ?? DEFAULT_CHANGE_POLICY;
+  }
+
+  async setChangePolicy(organizationId: string, policy: ChangePolicy, courseId?: string | undefined): Promise<ChangePolicy> {
+    validatePolicy(policy);
+    if (courseId) {
+      const course = await this.getCourse(organizationId, courseId);
+      await this.repos.courses.update({ ...course, changePolicy: policy });
+    } else {
+      const org = await this.getOrganization(organizationId);
+      await this.repos.organizations.update({ ...org, changePolicy: policy });
+    }
+    return policy;
+  }
+
+  private async loadSeat(seatId: string, organizationId?: string | undefined, attendeeEmail?: string | undefined) {
+    const seat = await this.repos.seats.get(seatId);
+    if (!seat || (organizationId && seat.organizationId !== organizationId)) throw notFound("seat", seatId);
+    if (attendeeEmail !== undefined && seat.attendee.email.toLowerCase() !== attendeeEmail.trim().toLowerCase()) throw notFound("seat", seatId);
+    const event = await this.repos.events.get(seat.eventId);
+    const order = await this.repos.orders.get(seat.orderId);
+    const ticketType = await this.repos.ticketTypes.get(seat.ticketTypeId);
+    if (!event || !order || !ticketType) throw notFound("seat", seatId);
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    const organization = await this.getOrganization(seat.organizationId);
+    const policy = course?.changePolicy ?? organization.changePolicy ?? DEFAULT_CHANGE_POLICY;
+    return { seat, event, order, ticketType, course, organization, policy };
+  }
+
+  /** The seat's share of what was paid: unit price plus its share of the attendee fee, net of refunds. */
+  private seatValue(order: Order): MinorUnits {
+    const gross = order.pricing.subtotalMinor + order.pricing.attendeeFeeMinor + order.pricing.taxMinor;
+    const perSeat = allocate(gross, Array.from({ length: order.quantity }, () => 1))[0] ?? 0;
+    return Math.max(0, Math.min(perSeat, order.pricing.totalMinor - order.refundedMinor));
+  }
+
+  /** What a learner can do with a seat right now, plus the cohorts they could move to. */
+  async seatOptions(seatId: string, opts: { organizationId?: string | undefined; attendeeEmail?: string | undefined }) {
+    const ctx = await this.loadSeat(seatId, opts.organizationId, opts.attendeeEmail);
+    const now = this.clock.now();
+    const ended = ctx.event.status === "ended" || ctx.event.status === "cancelled";
+    const active = ctx.seat.status === "confirmed";
+    const unit = ctx.order.pricing.unitPriceMinor;
+    const transfer = active ? transferTerms(ctx.policy, ctx.event.startsAt, now, unit, ended) : { allowed: false, feeMinor: 0, freeUntil: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
+    const cancel = active ? cancelTerms(ctx.policy, ctx.event.startsAt, now, this.seatValue(ctx.order), ended) : { allowed: false, refundBps: 0, refundMinor: 0, fullRefundUntil: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
+    const substitute = active ? substituteTerms(ctx.policy, ctx.event.startsAt, now, ended) : { allowed: false, until: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
+    const transferOptions = [];
+    if (transfer.allowed && ctx.event.courseId) {
+      for (const target of await this.repos.events.listByCourse(ctx.event.courseId)) {
+        if (target.id === ctx.event.id || target.status !== "live" || target.startsAt <= now) continue;
+        const types = await this.repos.ticketTypes.listByEvent(target.id);
+        const same = types.find((t) => t.name === ctx.ticketType.name) ?? types[0];
+        if (!same) continue;
+        let priceDelta = 0;
+        try { priceDelta = Math.max(0, this.resolveUnitPrice(same, target, ctx.order.currency, now) - unit); } catch { continue; }
+        transferOptions.push({ eventId: target.id, ticketTypeId: same.id, name: target.name, startsAt: target.startsAt, endsAt: target.endsAt, timezone: target.timezone, remaining: same.quantity - same.sold, priceDeltaMinor: priceDelta, feeMinor: transfer.feeMinor + priceDelta });
+      }
+    }
+    return { ...ctx, policyTerms: { transfer, cancel, substitute }, transferOptions };
+  }
+
+  async substituteSeat(seatId: string, attendee: Attendee, opts: { organizationId?: string | undefined; attendeeEmail?: string | undefined }): Promise<Seat> {
+    const { seat, policyTerms } = await this.seatOptions(seatId, opts);
+    if (!policyTerms.substitute.allowed) throw new DomainError("INVALID_STATE", policyTerms.substitute.reason ?? "substitution not allowed");
+    if (!isEmail(attendee.email)) throw new DomainError("VALIDATION", "attendee email is invalid");
+    const updated: Seat = { ...seat, attendee, substitutions: [...(seat.substitutions ?? []), { from: seat.attendee, at: this.clock.now() }] };
+    await this.repos.seats.update(updated);
+    await this.runHooks("seatChanged", seat.orderId, (hook) => hook({ kind: "substituted", seat: updated, previousAttendee: seat.attendee }));
+    return updated;
+  }
+
+  async transferSeat(seatId: string, toEventId: string, opts: { organizationId?: string | undefined; attendeeEmail?: string | undefined }): Promise<{ transfer: SeatTransfer; seat: Seat | null; clientSecret: string | null }> {
+    const ctx = await this.seatOptions(seatId, opts);
+    if (!ctx.policyTerms.transfer.allowed) throw new DomainError("INVALID_STATE", ctx.policyTerms.transfer.reason ?? "transfer not allowed");
+    const option = ctx.transferOptions.find((o) => o.eventId === toEventId);
+    if (!option) throw new DomainError("VALIDATION", `cohort ${toEventId} is not available for transfer`);
+    if (option.remaining <= 0) throw new DomainError("SOLD_OUT", `${option.name} is sold out`, "join its waitlist");
+    const reserved = await this.repos.ticketTypes.reserve(option.ticketTypeId, 1);
+    if (!reserved) throw new DomainError("SOLD_OUT", `${option.name} is sold out`);
+    const now = this.clock.now();
+    const transfer: SeatTransfer = {
+      id: this.ids.next("xfer"), organizationId: ctx.seat.organizationId, fromSeatId: ctx.seat.id, toEventId, toTicketTypeId: option.ticketTypeId,
+      feeMinor: option.feeMinor, currency: ctx.order.currency, status: option.feeMinor > 0 ? "pending_payment" : "completed", createdAt: now,
+    };
+    if (option.feeMinor === 0) {
+      await this.repos.seatTransfers.create(transfer);
+      const seat = await this.completeTransfer(transfer, { paid: false });
+      return { transfer: (await this.repos.seatTransfers.get(transfer.id)) ?? transfer, seat, clientSecret: null };
+    }
+    let p;
+    try {
+      p = await this.payments.createPayment({ orderId: `${ctx.order.id}:${transfer.id}`, amountMinor: option.feeMinor, currency: ctx.order.currency, transferGroup: ctx.order.id, buyerEmail: ctx.seat.attendee.email, metadata: { orderId: ctx.order.id, transferId: transfer.id, organizationId: ctx.seat.organizationId } });
+    } catch (err) {
+      await this.repos.ticketTypes.release(option.ticketTypeId, 1);
+      throw new DomainError("PAYMENTS_UPSTREAM", `payments provider error: ${(err as Error).message}`);
+    }
+    transfer.paymentRef = p.paymentRef;
+    await this.repos.seatTransfers.create(transfer);
+    return { transfer, seat: null, clientSecret: p.clientSecret };
+  }
+
+  /** Move the seat: new seat on the target cohort, old seat marked transferred, source capacity released, fee settled to the organizer. */
+  private async completeTransfer(transfer: SeatTransfer, opts: { paid: boolean }): Promise<Seat> {
+    const old = await this.repos.seats.get(transfer.fromSeatId);
+    if (!old) throw notFound("seat", transfer.fromSeatId);
+    const now = this.clock.now();
+    const seat: Seat = { id: this.ids.next("seat"), organizationId: old.organizationId, orderId: old.orderId, eventId: transfer.toEventId, ticketTypeId: transfer.toTicketTypeId, attendee: old.attendee, status: "confirmed", createdAt: now, confirmedAt: now, transferredFromSeatId: old.id };
+    await this.repos.seats.create(seat);
+    await this.repos.seats.update({ ...old, status: "transferred", transferredToSeatId: seat.id });
+    await this.repos.ticketTypes.release(old.ticketTypeId, 1);
+    await this.repos.seatTransfers.update({ ...transfer, status: "completed", toSeatId: seat.id, completedAt: now });
+    if (opts.paid && transfer.feeMinor > 0) {
+      const clearing = await this.accounts.clearing(transfer.currency);
+      const payable = await this.accounts.orgPayable(old.organizationId, transfer.currency);
+      await this.ledger.post({
+        idempotencyKey: `transfer:${transfer.id}:fee`, currency: transfer.currency, description: `Transfer fee for seat ${old.id}`,
+        postings: [{ accountId: clearing.id, amount: transfer.feeMinor }, { accountId: payable.id, amount: -transfer.feeMinor }],
+        metadata: { orderId: old.orderId, transferId: transfer.id, organizationId: old.organizationId },
+      });
+    }
+    await this.offerWaitlist(old.eventId);
+    await this.runHooks("seatChanged", old.orderId, (hook) => hook({ kind: "transferred", seat, previousSeat: old }));
+    return seat;
+  }
+
+  async cancelSeat(seatId: string, reason: string, opts: { organizationId?: string | undefined; attendeeEmail?: string | undefined }): Promise<{ seat: Seat; refund: Refund | null }> {
+    const ctx = await this.seatOptions(seatId, opts);
+    if (!ctx.policyTerms.cancel.allowed) throw new DomainError("INVALID_STATE", ctx.policyTerms.cancel.reason ?? "cancellation not allowed");
+    const now = this.clock.now();
+    const cancelled: Seat = { ...ctx.seat, status: "cancelled", cancelledAt: now };
+    await this.repos.seats.update(cancelled);
+    await this.repos.ticketTypes.release(ctx.seat.ticketTypeId, 1);
+    let refund: Refund | null = null;
+    const amount = ctx.policyTerms.cancel.refundMinor;
+    if (amount > 0) {
+      refund = await this.refundOrder(ctx.seat.organizationId, { orderId: ctx.order.id, amountMinor: amount, reason: `seat ${ctx.seat.id} cancelled: ${reason || "no reason given"}`, idempotencyKey: `refund:seat:${ctx.seat.id}` });
+    }
+    await this.offerWaitlist(ctx.seat.eventId);
+    await this.runHooks("seatChanged", ctx.seat.orderId, (hook) => hook({ kind: "cancelled", seat: cancelled, refund }));
+    return { seat: cancelled, refund };
+  }
+
+  // ---------- Waitlist ----------
+
+  async joinWaitlist(organizationId: string, input: { eventId: string; ticketTypeId?: string | undefined; email: string; name?: string | undefined; quantity?: number | undefined }): Promise<{ entry: WaitlistEntry; position: number }> {
+    const event = await this.getEvent(organizationId, input.eventId);
+    if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
+    if (!isEmail(input.email)) throw new DomainError("VALIDATION", "email is invalid");
+    const quantity = input.quantity ?? 1;
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 10) throw new DomainError("VALIDATION", "quantity must be between 1 and 10");
+    const types = await this.repos.ticketTypes.listByEvent(event.id);
+    const ticketType = input.ticketTypeId ? types.find((t) => t.id === input.ticketTypeId) : types[0];
+    if (!ticketType) throw notFound("ticketType", input.ticketTypeId ?? "(none)");
+    const email = input.email.toLowerCase();
+    const existing = await this.repos.waitlist.findOpen(event.id, email);
+    if (existing) throw new DomainError("CONFLICT", "you are already on this waitlist", "we will email you when a seat opens");
+    const entry: WaitlistEntry = { id: this.ids.next("wl"), organizationId, eventId: event.id, ticketTypeId: ticketType.id, email, ...(input.name ? { name: input.name } : {}), quantity, status: "waiting", createdAt: this.clock.now() };
+    await this.repos.waitlist.create(entry);
+    const open = await this.repos.waitlist.listOpenByEvent(event.id);
+    const position = open.findIndex((e) => e.id === entry.id) + 1;
+    // Seats may already be free (e.g. capacity raised): offer immediately.
+    await this.offerWaitlist(event.id);
+    const fresh = (await this.repos.waitlist.get(entry.id)) ?? entry;
+    return { entry: fresh, position };
+  }
+
+  /** Offer freed capacity to the oldest waiting entries; each offer holds its seats until it expires. */
+  async offerWaitlist(eventId: string): Promise<WaitlistEntry[]> {
+    const open = await this.repos.waitlist.listOpenByEvent(eventId);
+    const waiting = open.filter((e) => e.status === "waiting");
+    if (!waiting.length) return [];
+    const event = await this.repos.events.get(eventId);
+    if (!event || event.status !== "live") return [];
+    const policy = await this.policyFor(event.organizationId, event.courseId);
+    const offered: WaitlistEntry[] = [];
+    const now = this.clock.now();
+    for (const entry of waiting) {
+      const held = await this.repos.ticketTypes.reserve(entry.ticketTypeId, entry.quantity);
+      if (!held) continue;
+      const updated: WaitlistEntry = { ...entry, status: "offered", offeredAt: now, offerExpiresAt: new Date(now.getTime() + policy.waitlistOfferHours * 3_600_000) };
+      await this.repos.waitlist.update(updated);
+      offered.push(updated);
+      await this.runHooks("waitlistOffered", entry.id, (hook) => hook({ entry: updated, event, organization: null }));
+    }
+    return offered;
+  }
+
+  /** Release holds on offers nobody claimed; run from a scheduler. */
+  async expireWaitlistOffers(now = this.clock.now()): Promise<WaitlistEntry[]> {
+    const expired: WaitlistEntry[] = [];
+    for (const entry of await this.repos.waitlist.listOffered()) {
+      if (!entry.offerExpiresAt || entry.offerExpiresAt > now) continue;
+      await this.repos.ticketTypes.release(entry.ticketTypeId, entry.quantity);
+      const updated: WaitlistEntry = { ...entry, status: "expired" };
+      await this.repos.waitlist.update(updated);
+      expired.push(updated);
+      await this.offerWaitlist(entry.eventId);
+    }
+    return expired;
+  }
+
+  async listWaitlist(organizationId: string, eventId: string): Promise<WaitlistEntry[]> {
+    await this.getEvent(organizationId, eventId);
+    return this.repos.waitlist.listOpenByEvent(eventId);
+  }
+
   // ---------- Public (buyer-facing) reads ----------
 
   /** Order status for the buyer who placed it: id + buyer email act as the credential. */
@@ -987,4 +1233,13 @@ function validatePriceList(prices: Record<string, MinorUnits> | undefined): Reco
     out[ccy] = amount;
   }
   return Object.keys(out).length ? out : undefined;
+}
+
+function validatePolicy(p: ChangePolicy): void {
+  const nonNeg = (v: number, name: string) => { if (!Number.isFinite(v) || v < 0) throw new DomainError("VALIDATION", `${name} must be >= 0`); };
+  nonNeg(p.transferFreeUntilDays, "transferFreeUntilDays"); nonNeg(p.transferCutoffDays, "transferCutoffDays"); nonNeg(p.cancelFullRefundUntilDays, "cancelFullRefundUntilDays");
+  nonNeg(p.cancelNoRefundWithinDays, "cancelNoRefundWithinDays"); nonNeg(p.substituteCutoffHours, "substituteCutoffHours"); nonNeg(p.waitlistOfferHours, "waitlistOfferHours");
+  if (p.transferFeeBps < 0 || p.transferFeeBps > 10_000) throw new DomainError("VALIDATION", "transferFeeBps must be 0..10000");
+  if (p.cancelPartialRefundBps < 0 || p.cancelPartialRefundBps > 10_000) throw new DomainError("VALIDATION", "cancelPartialRefundBps must be 0..10000");
+  if (p.cancelNoRefundWithinDays > p.cancelFullRefundUntilDays) throw new DomainError("VALIDATION", "cancelNoRefundWithinDays must not exceed cancelFullRefundUntilDays");
 }

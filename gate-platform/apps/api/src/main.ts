@@ -1,5 +1,5 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, selfServiceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgRepos, type IdempotencyStore } from "@gate/db";
@@ -60,6 +60,14 @@ async function main() {
       pageUrl: (ctx) => (ctx.course && process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", ctx.course.slug) : undefined),
     }),
   ];
+  const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
+  hooks.push(selfServiceHooks(notifier, {
+    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    replyTo: process.env.EMAIL_REPLY_TO,
+    claimUrl: ({ entryId, courseSlug }) => (courseSlug && process.env.GATE_COURSE_PAGE_URL ? `${process.env.GATE_COURSE_PAGE_URL.replace("{slug}", courseSlug)}?gate_waitlist=${entryId}` : `${webUrl}/?gate_waitlist=${entryId}`),
+    seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
+    getCourseSlug: async (eventId) => { const e = await repos.events.get(eventId); return e?.courseId ? (await repos.courses.get(e.courseId))?.slug : undefined; },
+  }));
   if (process.env.HUBSPOT_ACCESS_TOKEN) {
     const sync = new CrmSync(new HubSpotCrm({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN }));
     hooks.push({

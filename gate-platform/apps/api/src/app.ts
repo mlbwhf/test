@@ -166,6 +166,35 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return reply.header("content-type", "text/calendar; charset=utf-8").header("content-disposition", `attachment; filename="${(course?.slug ?? "cohort")}.ics"`).send(ics);
     });
 
+    // ----- learner self-service: seat id + attendee email are the credential -----
+    const seatOptionsOut = async (seatId: string, email: string) => {
+      const o = await deps.core.seatOptions(seatId, { attendeeEmail: email });
+      return {
+        seat: S.toSeat(o.seat), event: S.toEvent(o.event), course: o.course ? S.toCourse(o.course) : null, organization: { id: o.organization.id, name: o.organization.name },
+        policy: {
+          transfer: { ...o.policyTerms.transfer, freeUntil: o.policyTerms.transfer.freeUntil.toISOString() },
+          cancel: { ...o.policyTerms.cancel, fullRefundUntil: o.policyTerms.cancel.fullRefundUntil.toISOString() },
+          substitute: { ...o.policyTerms.substitute, until: o.policyTerms.substitute.until.toISOString() },
+        },
+        transferOptions: o.transferOptions.map((t) => ({ ...t, startsAt: t.startsAt.toISOString(), endsAt: t.endsAt?.toISOString() ?? null })),
+        calendarUrl: `${deps.publicUrl ?? ""}/public/v1/seats/${o.seat.id}/calendar.ics`,
+      };
+    };
+    pub.get("/public/v1/seats/:seatId", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), querystring: z.object({ email: z.string().email() }), response: { 200: S.SeatOptionsSchema, 404: S.ErrorSchema } } }, async (req) => seatOptionsOut(req.params.seatId, req.query.email));
+    pub.post("/public/v1/seats/:seatId/substitute", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), attendee: S.AttendeeSchema }), response: { 200: z.object({ seat: S.SeatSchema }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => ({ seat: S.toSeat(await deps.core.substituteSeat(req.params.seatId, req.body.attendee, { attendeeEmail: req.body.email })) }));
+    pub.post("/public/v1/seats/:seatId/transfer", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => {
+      const r = await deps.core.transferSeat(req.params.seatId, req.body.toEventId, { attendeeEmail: req.body.email });
+      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret };
+    });
+    pub.post("/public/v1/seats/:seatId/cancel", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), reason: z.string().max(500).optional() }), response: { 200: z.object({ seat: S.SeatSchema, refund: z.object({ id: z.string(), amountMinor: z.number().int(), status: z.string() }).nullable() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => {
+      const r = await deps.core.cancelSeat(req.params.seatId, req.body.reason ?? "", { attendeeEmail: req.body.email });
+      return { seat: S.toSeat(r.seat), refund: r.refund ? { id: r.refund.id, amountMinor: r.refund.amountMinor, status: r.refund.status } : null };
+    });
+    pub.post("/public/v1/organizations/:orgId/waitlist", { schema: { tags: ["public"], security: [], params: z.object({ orgId: z.string() }), body: S.JoinWaitlistBody, response: { 201: z.object({ entry: S.WaitlistEntrySchema.extend({ position: z.number().int() }) }), 409: S.ErrorSchema } } }, async (req, reply) => {
+      const r = await deps.core.joinWaitlist(req.params.orgId, req.body);
+      return reply.code(201).send({ entry: { ...S.toWaitlist(r.entry), position: r.position } });
+    });
+
     pub.post("/public/v1/organizations/:orgId/orders", {
       schema: {
         tags: ["public"], security: [], params: z.object({ orgId: z.string() }), body: S.CreateOrderBody,
@@ -183,12 +212,33 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (env !== "production" && deps.core.payments instanceof FakePaymentsAdapter) {
       const fake = deps.core.payments;
       pub.post("/public/v1/dev/payments/:paymentRef/succeed", { schema: { tags: ["dev"], security: [], params: z.object({ paymentRef: z.string() }), response: { 200: z.object({ handled: z.boolean(), reason: z.string().optional() }) } } }, async (req) => {
-        const order = await deps.core.repos.orders.getByPaymentRef(req.params.paymentRef);
-        if (!order) throw new DomainError("NOT_FOUND", `payment ${req.params.paymentRef} not found`);
-        const r = await deps.core.handlePaymentEvent(fake.succeed(order.paymentRef!, order.pricing.totalMinor, order.currency));
+        const { amountMinor, currency } = await fakePaymentFor(req.params.paymentRef);
+        const r = await deps.core.handlePaymentEvent(fake.succeed(req.params.paymentRef, amountMinor, currency));
         return { handled: r.handled, ...(r.reason ? { reason: r.reason } : {}) };
       });
     }
+  });
+
+  /** Test mode only: what amount/currency a fake payment ref stands for (order, transfer fee or invoice card payment). */
+  const fakePaymentFor = async (paymentRef: string, organizationId?: string) => {
+    const order = await deps.core.repos.orders.getByPaymentRef(paymentRef);
+    if (order && (!organizationId || order.organizationId === organizationId)) return { amountMinor: order.pricing.totalMinor, currency: order.currency };
+    const transfer = await deps.core.repos.seatTransfers.getByPaymentRef(paymentRef);
+    if (transfer && (!organizationId || transfer.organizationId === organizationId)) return { amountMinor: transfer.feeMinor, currency: transfer.currency };
+    const invoice = await deps.core.repos.invoices.getByCardPaymentRef(paymentRef);
+    if (invoice && (!organizationId || invoice.organizationId === organizationId)) return { amountMinor: invoice.totalMinor - invoice.paidMinor, currency: invoice.currency };
+    throw new DomainError("NOT_FOUND", `payment ${paymentRef} not found`);
+  };
+
+  const seatOptionsOutFrom = (o: Awaited<ReturnType<Core["seatOptions"]>>) => ({
+    seat: S.toSeat(o.seat), event: S.toEvent(o.event), course: o.course ? S.toCourse(o.course) : null, organization: { id: o.organization.id, name: o.organization.name },
+    policy: {
+      transfer: { ...o.policyTerms.transfer, freeUntil: o.policyTerms.transfer.freeUntil.toISOString() },
+      cancel: { ...o.policyTerms.cancel, fullRefundUntil: o.policyTerms.cancel.fullRefundUntil.toISOString() },
+      substitute: { ...o.policyTerms.substitute, until: o.policyTerms.substitute.until.toISOString() },
+    },
+    transferOptions: o.transferOptions.map((t) => ({ ...t, startsAt: t.startsAt.toISOString(), endsAt: t.endsAt?.toISOString() ?? null })),
+    calendarUrl: `${deps.publicUrl ?? ""}/public/v1/seats/${o.seat.id}/calendar.ics`,
   });
 
   // ---------- authenticated tenant API ----------
@@ -254,6 +304,25 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return reply.code(201).send({ refund: S.toRefund(refund) });
     });
 
+    // ---------- change policy, seats, waitlist (organizer) ----------
+    api.get("/v1/policy", { schema: { tags: ["policy"], querystring: z.object({ courseId: z.string().optional() }), response: { 200: S.ChangePolicySchema } } }, async (req) => deps.core.policyFor(org(req).id, req.query.courseId));
+    api.put("/v1/policy", { schema: { tags: ["policy"], querystring: z.object({ courseId: z.string().optional() }), body: S.ChangePolicySchema, response: { 200: S.ChangePolicySchema } } }, async (req) => deps.core.setChangePolicy(org(req).id, req.body, req.query.courseId));
+    api.get("/v1/seats/:id/options", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), response: { 200: S.SeatOptionsSchema, 404: S.ErrorSchema } } }, async (req) => {
+      const o = await deps.core.seatOptions(req.params.id, { organizationId: org(req).id });
+      return seatOptionsOutFrom(o);
+    });
+    api.post("/v1/seats/:id/substitute", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ attendee: S.AttendeeSchema }), response: { 200: S.SeatSchema } } }, async (req) => S.toSeat(await deps.core.substituteSeat(req.params.id, req.body.attendee, { organizationId: org(req).id })));
+    api.post("/v1/seats/:id/transfer", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable() }) } } }, async (req) => {
+      const r = await deps.core.transferSeat(req.params.id, req.body.toEventId, { organizationId: org(req).id });
+      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret };
+    });
+    api.post("/v1/seats/:id/cancel", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ reason: z.string().max(500).optional() }), response: { 200: z.object({ seat: S.SeatSchema, refund: z.object({ id: z.string(), amountMinor: z.number().int(), status: z.string() }).nullable() }) } } }, async (req) => {
+      const r = await deps.core.cancelSeat(req.params.id, req.body.reason ?? "", { organizationId: org(req).id });
+      return { seat: S.toSeat(r.seat), refund: r.refund ? { id: r.refund.id, amountMinor: r.refund.amountMinor, status: r.refund.status } : null };
+    });
+    api.get("/v1/events/:id/waitlist", { schema: { tags: ["waitlist"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.WaitlistEntrySchema) }) } } }, async (req) => ({ items: (await deps.core.listWaitlist(org(req).id, req.params.id)).map(S.toWaitlist) }));
+    api.post("/v1/waitlist/expire", { schema: { tags: ["waitlist"], response: { 200: z.object({ expired: z.array(S.WaitlistEntrySchema) }) } } }, async () => ({ expired: (await deps.core.expireWaitlistOffers()).map(S.toWaitlist) }));
+
     // ---------- corporate billing ----------
     api.get("/v1/corporate-accounts", { schema: { tags: ["corporate"], response: { 200: z.object({ items: z.array(S.CorporateAccountSchema) }) } } }, async (req) => ({ items: (await deps.core.listCorporateAccounts(org(req).id)).map(S.toCorporateAccount) }));
     api.post("/v1/corporate-accounts", { schema: { tags: ["corporate"], body: S.CreateCorporateAccountBody, response: { 201: S.CorporateAccountSchema } } }, async (req, reply) => reply.code(201).send(S.toCorporateAccount(await deps.core.createCorporateAccount(org(req).id, req.body))));
@@ -316,15 +385,13 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (env !== "production" && deps.core.payments instanceof FakePaymentsAdapter) {
       const fake = deps.core.payments;
       api.post("/v1/dev/payments/:paymentRef/succeed", { schema: { tags: ["dev"], params: z.object({ paymentRef: z.string() }), response: { 200: z.object({ handled: z.boolean(), reason: z.string().optional() }) } } }, async (req) => {
-        const order = await deps.core.repos.orders.getByPaymentRef(req.params.paymentRef);
-        if (!order || order.organizationId !== org(req).id) throw new DomainError("NOT_FOUND", `payment ${req.params.paymentRef} not found`);
-        const r = await deps.core.handlePaymentEvent(fake.succeed(order.paymentRef!, order.pricing.totalMinor, order.currency));
+        const { amountMinor, currency } = await fakePaymentFor(req.params.paymentRef, org(req).id);
+        const r = await deps.core.handlePaymentEvent(fake.succeed(req.params.paymentRef, amountMinor, currency));
         return { handled: r.handled, ...(r.reason ? { reason: r.reason } : {}) };
       });
       api.post("/v1/dev/payments/:paymentRef/fail", { schema: { tags: ["dev"], params: z.object({ paymentRef: z.string() }), response: { 200: z.object({ handled: z.boolean(), reason: z.string().optional() }) } } }, async (req) => {
-        const order = await deps.core.repos.orders.getByPaymentRef(req.params.paymentRef);
-        if (!order || order.organizationId !== org(req).id) throw new DomainError("NOT_FOUND", `payment ${req.params.paymentRef} not found`);
-        const r = await deps.core.handlePaymentEvent(fake.fail(order.paymentRef!));
+        await fakePaymentFor(req.params.paymentRef, org(req).id);
+        const r = await deps.core.handlePaymentEvent(fake.fail(req.params.paymentRef));
         return { handled: r.handled, ...(r.reason ? { reason: r.reason } : {}) };
       });
     }

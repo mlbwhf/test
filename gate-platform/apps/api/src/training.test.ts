@@ -136,3 +136,67 @@ describe("corporate billing API", () => {
     expect((await app.inject({ url: `/v1/events/${cohort.id}/ticket-types`, headers: H() })).json().items[0].sold).toBe(1);
   });
 });
+
+describe("self-service and waitlist API", () => {
+  it("learner substitutes, transfers (with fee payment) and cancels with the attendee email as credential; waitlist offers and claim", async () => {
+    const course = (await app.inject({ method: "POST", url: "/v1/courses", headers: H(), payload: { slug: "popm2", name: "POPM" } })).json();
+    const nov = (await app.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: H(), payload: { name: "Nov", startsAt: "2026-11-20T14:00:00Z", timezone: "America/Toronto" } })).json();
+    const dec = (await app.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: H(), payload: { name: "Dec", startsAt: "2026-12-04T14:00:00Z", timezone: "America/Toronto" } })).json();
+    const novTt = (await app.inject({ method: "POST", url: `/v1/events/${nov.id}/ticket-types`, headers: H(), payload: { name: "Standard", priceMinor: 100_000, quantity: 2 } })).json();
+    await app.inject({ method: "POST", url: `/v1/events/${dec.id}/ticket-types`, headers: H(), payload: { name: "Standard", priceMinor: 120_000, quantity: 3 } });
+
+    const ord = (await app.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, headers: { "content-type": "application/json" }, payload: { ticketTypeId: novTt.id, quantity: 2, buyerEmail: "buyer@co.com", attendees: [{ email: "ada@co.com", name: "Ada" }, { email: "alan@co.com", name: "Alan" }] } })).json();
+    await app.inject({ method: "POST", url: `/public/v1/dev/payments/${ord.order.paymentRef}/succeed` });
+    const seats = (await app.inject({ url: `/v1/seats?eventId=${nov.id}`, headers: H() })).json().items;
+    const ada = seats[0].id, alan = seats[1].id;
+
+    // Options require the right email.
+    expect((await app.inject(`/public/v1/seats/${ada}?email=someone@else.com`)).statusCode).toBe(404);
+    const opts = (await app.inject(`/public/v1/seats/${ada}?email=ada@co.com`)).json();
+    expect(opts.policy.transfer).toMatchObject({ allowed: true, feeMinor: 0 });
+    expect(opts.policy.cancel).toMatchObject({ allowed: true, refundMinor: 100_000 });
+    expect(opts.transferOptions[0]).toMatchObject({ eventId: dec.id, priceDeltaMinor: 20_000, feeMinor: 20_000, remaining: 3 });
+    expect(opts.calendarUrl).toContain(`/public/v1/seats/${ada}/calendar.ics`);
+
+    // Waitlist fills while sold out.
+    const wl = await app.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/waitlist`, headers: { "content-type": "application/json" }, payload: { eventId: nov.id, email: "w1@x.com", name: "W1" } });
+    expect(wl.statusCode).toBe(201);
+    expect(wl.json().entry).toMatchObject({ status: "waiting", position: 1 });
+    expect((await app.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/waitlist`, headers: { "content-type": "application/json" }, payload: { eventId: nov.id, email: "w1@x.com" } })).statusCode).toBe(409);
+
+    // Substitute Alan -> Grace.
+    const sub = await app.inject({ method: "POST", url: `/public/v1/seats/${alan}/substitute`, headers: { "content-type": "application/json" }, payload: { email: "alan@co.com", attendee: { email: "grace@co.com", name: "Grace" } } });
+    expect(sub.json().seat.attendee.email).toBe("grace@co.com");
+    expect(sub.json().seat.substitutions).toHaveLength(1);
+
+    // Transfer Ada to Dec: $20 difference -> pending payment -> simulate -> moved; W1 gets the freed Nov seat.
+    const xfer = await app.inject({ method: "POST", url: `/public/v1/seats/${ada}/transfer`, headers: { "content-type": "application/json" }, payload: { email: "ada@co.com", toEventId: dec.id } });
+    expect(xfer.json().transfer).toMatchObject({ status: "pending_payment", feeMinor: 20_000 });
+    expect(xfer.json().seat).toBeNull();
+    await app.inject({ method: "POST", url: `/public/v1/dev/payments/${xfer.json().transfer.paymentRef}/succeed` });
+    const adaAfter = (await app.inject(`/public/v1/seats/${ada}?email=ada@co.com`)).json();
+    expect(adaAfter.seat.status).toBe("transferred");
+    expect(adaAfter.seat.transferredToSeatId).toBeTruthy();
+    const moved = (await app.inject(`/public/v1/seats/${adaAfter.seat.transferredToSeatId}?email=ada@co.com`)).json();
+    expect(moved.event.id).toBe(dec.id);
+    const waiting = (await app.inject({ url: `/v1/events/${nov.id}/waitlist`, headers: H() })).json().items;
+    expect(waiting[0]).toMatchObject({ email: "w1@x.com", status: "offered" });
+
+    // W1 claims the held seat.
+    const claim = await app.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, headers: { "content-type": "application/json" }, payload: { ticketTypeId: novTt.id, quantity: 1, buyerEmail: "w1@x.com", waitlistEntryId: waiting[0].id } });
+    expect(claim.statusCode).toBe(201);
+
+    // Grace cancels inside the 50% window.
+    const cancel = await app.inject({ method: "POST", url: `/public/v1/seats/${alan}/cancel`, headers: { "content-type": "application/json" }, payload: { email: "grace@co.com", reason: "conflict" } });
+    expect(cancel.json().seat.status).toBe("cancelled");
+    expect(cancel.json().refund.amountMinor).toBe(100_000);
+
+    // Organizer policy update and expire endpoint.
+    const policy = (await app.inject({ url: "/v1/policy", headers: H() })).json();
+    expect(policy.transferFreeUntilDays).toBe(7);
+    const put = await app.inject({ method: "PUT", url: `/v1/policy?courseId=${course.id}`, headers: H(), payload: { ...policy, transferFeeBps: 2_500 } });
+    expect(put.json().transferFeeBps).toBe(2_500);
+    expect((await app.inject({ url: `/v1/policy?courseId=${course.id}`, headers: H() })).json().transferFeeBps).toBe(2_500);
+    expect((await app.inject({ method: "POST", url: "/v1/waitlist/expire", headers: { "x-api-key": apiKey } })).json()).toEqual({ expired: [] });
+  });
+});

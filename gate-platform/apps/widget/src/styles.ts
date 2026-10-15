@@ -27,6 +27,9 @@ color-scheme:light;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helve
 .gw-badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--gw-border);background:var(--gw-bg);font-size:.78em;line-height:1.5;white-space:nowrap;color:var(--gw-muted)}
 .gw-badge-early{background:var(--gw-badge-bg);color:var(--gw-badge-fg);border-color:transparent}
 .gw-badge-left{color:var(--gw-danger);border-color:var(--gw-danger)}
+.gw-badge-held{color:var(--gw-success);border-color:var(--gw-success)}
+.gw-banner{margin:0 0 12px;padding:10px 14px;border:1px solid var(--gw-accent);border-radius:10px;background:var(--gw-surface)}
+.gw-banner-hint{display:block;margin-top:2px;font-size:.92em;color:var(--gw-muted)}
 .gw-btn{font:inherit;min-height:40px;padding:8px 16px;border-radius:8px;border:1px solid var(--gw-border);background:var(--gw-surface);color:var(--gw-fg);cursor:pointer;text-decoration:none}
 .gw-btn-primary{background:var(--gw-accent);border-color:var(--gw-accent);color:var(--gw-accent-fg)}
 .gw-btn:disabled{opacity:.55;cursor:not-allowed}
@@ -56,7 +59,7 @@ color-scheme:light;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helve
 .gw-spinner{display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:-2px;border:2px solid var(--gw-border);border-top-color:var(--gw-accent);border-radius:50%;animation:gw-spin .8s linear infinite}
 @keyframes gw-spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.gw-spinner{animation:none}}
-@media (max-width:480px){.gw-root{padding:14px;border-radius:8px}.gw-toolbar{justify-content:flex-start}.gw-ticket{flex-direction:column;align-items:stretch}.gw-price{min-width:0;text-align:left}.gw-ticket .gw-btn,.gw-form .gw-btn-primary{width:100%}.gw-grid{grid-template-columns:1fr}.gw-select{width:100%}}
+@media (max-width:480px){.gw-root{padding:14px;border-radius:8px}.gw-toolbar{justify-content:flex-start}.gw-ticket{flex-direction:column;align-items:stretch}.gw-price{min-width:0;text-align:left}.gw-ticket .gw-btn,.gw-form .gw-btn-primary,.gw-waitlist .gw-btn{width:100%}.gw-grid{grid-template-columns:1fr}.gw-select{width:100%}}
 `;
 
 export function injectStyles(doc: Document = document): void {

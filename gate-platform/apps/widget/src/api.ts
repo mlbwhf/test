@@ -21,6 +21,8 @@ export interface Attendee { email: string; name?: string; company?: string }
 export interface OrderRequest {
   ticketTypeId: string; quantity: number; buyerEmail: string; currency: string;
   attendees: Attendee[]; dryRun?: boolean;
+  /** Set when the buyer is claiming a seat offered from the waitlist. */
+  waitlistEntryId?: string;
 }
 export interface Pricing {
   subtotalMinor: number; platformFeeMinor: number; attendeeFeeMinor: number; totalMinor: number;
@@ -29,6 +31,11 @@ export interface Pricing {
 export type OrderStatus = "pending" | "paid" | "failed" | (string & {});
 export interface Order { id: string; status: OrderStatus; currency: string; paymentRef: string | null; pricing: Pricing }
 export interface OrderResponse { order: Order; clientSecret: string | null; dryRun: boolean }
+
+export interface WaitlistRequest { eventId: string; ticketTypeId: string; email: string; name?: string; quantity: number }
+export type WaitlistStatus = "waiting" | "offered" | "claimed" | "expired" | (string & {});
+export interface WaitlistEntry { id: string; status: WaitlistStatus; position: number }
+export interface WaitlistResponse { entry: WaitlistEntry }
 
 export const NETWORK_MESSAGE = "Can't reach the registration service";
 
@@ -74,6 +81,7 @@ export interface Api {
   createOrder(body: OrderRequest, idempotencyKey: string): Promise<OrderResponse>;
   getOrder(orderId: string, buyerEmail: string): Promise<{ order: Order }>;
   simulatePayment(paymentRef: string): Promise<{ handled: boolean }>;
+  joinWaitlist(body: WaitlistRequest): Promise<WaitlistResponse>;
 }
 
 export function createApi(baseUrl: string, org: string): Api {
@@ -91,6 +99,12 @@ export function createApi(baseUrl: string, org: string): Api {
       request(`${base}/public/v1/orders/${encodeURIComponent(orderId)}?buyerEmail=${encodeURIComponent(buyerEmail)}`),
     simulatePayment: (paymentRef) =>
       request(`${base}/public/v1/dev/payments/${encodeURIComponent(paymentRef)}/succeed`, { method: "POST" }),
+    joinWaitlist: (body) =>
+      request(`${orgPath}/waitlist`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      }),
   };
 }
 

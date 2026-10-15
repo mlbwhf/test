@@ -1,5 +1,7 @@
 import { buildIcs } from "./ics.js";
 import type { CoreHooks, OrderPaidContext } from "./hooks.js";
+import { buildIcs as _buildIcsAlias } from "./ics.js";
+void _buildIcsAlias;
 
 export interface EmailAttachment {
   filename: string;
@@ -151,4 +153,60 @@ function ticketHtml(i: { org: string; fromName: string; title: string; cohort: s
 </td></tr></table></td></tr>
 <tr><td style="padding:16px 30px 28px;font-size:14px;color:#475569;line-height:1.6">${i.calendarUrl ? `<a href="${esc(i.calendarUrl)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">Add to calendar</a><br><br>` : ""}The calendar invite is attached. Joining instructions and pre-work follow closer to the date.${i.url ? `<br><a href="${esc(i.url)}">Course page</a>` : ""}<br><br>— ${esc(i.fromName)}</td></tr>
 </table></td></tr></table></body></html>`;
+}
+
+export interface SelfServiceMailOptions {
+  fromName: string;
+  replyTo?: string | undefined;
+  /** URL where an offered learner can claim the seat, e.g. the course page with ?gate_waitlist=<id>. */
+  claimUrl: (ctx: { entryId: string; eventId: string; courseSlug?: string | undefined }) => string;
+  /** Learner portal URL for a seat. */
+  seatUrl?: ((seatId: string, email: string) => string) | undefined;
+  getCourseSlug?: ((eventId: string) => Promise<string | undefined>) | undefined;
+}
+
+/** Emails for waitlist offers and seat changes (transfer, substitution, cancellation). */
+export function selfServiceHooks(notifier: Notifier, opts: SelfServiceMailOptions): CoreHooks {
+  return {
+    waitlistOffered: async ({ entry, event }) => {
+      const slug = opts.getCourseSlug ? await opts.getCourseSlug(event.id) : undefined;
+      const url = opts.claimUrl({ entryId: entry.id, eventId: event.id, courseSlug: slug });
+      const until = entry.offerExpiresAt ? formatRange(entry.offerExpiresAt, entry.offerExpiresAt, event.timezone).split(" ").slice(0, 4).join(" ") : "soon";
+      await notifier.send({
+        key: `waitlist:${entry.id}:offer`,
+        to: entry.email,
+        subject: `A seat opened up — ${event.name}`,
+        text: `Good news${entry.name ? ` ${entry.name.split(" ")[0]}` : ""}: ${entry.quantity > 1 ? `${entry.quantity} seats are` : "a seat is"} now held for you on ${event.name}.\n\nClaim it here before ${until}: ${url}\n\nAfter that the seat goes to the next person on the list.\n\n— ${opts.fromName}`,
+        html: `<p>Good news${entry.name ? ` ${esc(entry.name.split(" ")[0] ?? "")}` : ""}: ${entry.quantity > 1 ? `${entry.quantity} seats are` : "a seat is"} now held for you on <strong>${esc(event.name)}</strong>.</p><p><a href="${esc(url)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">Claim your seat</a></p><p>The hold expires ${esc(until)}; after that the seat goes to the next person on the list.</p><p>— ${esc(opts.fromName)}</p>`,
+        replyTo: opts.replyTo,
+      });
+    },
+    seatChanged: async (ctx) => {
+      if (ctx.kind === "substituted") {
+        const link = opts.seatUrl?.(ctx.seat.id, ctx.seat.attendee.email);
+        await notifier.send({
+          key: `seat:${ctx.seat.id}:substituted:${ctx.seat.substitutions?.length ?? 0}`, to: ctx.seat.attendee.email, replyTo: opts.replyTo,
+          subject: `Your seat is confirmed (transferred from ${ctx.previousAttendee.name ?? ctx.previousAttendee.email})`,
+          text: `Hi${ctx.seat.attendee.name ? ` ${ctx.seat.attendee.name.split(" ")[0]}` : ""}, ${ctx.previousAttendee.name ?? ctx.previousAttendee.email} has passed their seat to you.${link ? ` Manage it here: ${link}` : ""}\n\n— ${opts.fromName}`,
+          html: `<p>Hi${ctx.seat.attendee.name ? ` ${esc(ctx.seat.attendee.name.split(" ")[0] ?? "")}` : ""}, ${esc(ctx.previousAttendee.name ?? ctx.previousAttendee.email)} has passed their seat to you.${link ? ` <a href="${esc(link)}">Manage your registration</a>.` : ""}</p><p>— ${esc(opts.fromName)}</p>`,
+        });
+      } else if (ctx.kind === "transferred") {
+        const link = opts.seatUrl?.(ctx.seat.id, ctx.seat.attendee.email);
+        await notifier.send({
+          key: `seat:${ctx.seat.id}:transferred`, to: ctx.seat.attendee.email, replyTo: opts.replyTo,
+          subject: `Your registration moved to a new cohort`,
+          text: `Your seat has been moved to a new cohort. A fresh calendar invite follows.${link ? ` Details: ${link}` : ""}\n\n— ${opts.fromName}`,
+          html: `<p>Your seat has been moved to a new cohort. A fresh calendar invite follows.${link ? ` <a href="${esc(link)}">Details</a>.` : ""}</p><p>— ${esc(opts.fromName)}</p>`,
+        });
+      } else {
+        const refund = ctx.refund ? ` A refund of ${money(ctx.refund.amountMinor, "CAD").replace("CA$", "")} (in your order currency) is on its way.` : " Per the cancellation policy no refund applies.";
+        await notifier.send({
+          key: `seat:${ctx.seat.id}:cancelled`, to: ctx.seat.attendee.email, replyTo: opts.replyTo,
+          subject: `Your registration was cancelled`,
+          text: `Your seat has been cancelled.${refund}\n\n— ${opts.fromName}`,
+          html: `<p>Your seat has been cancelled.${esc(refund)}</p><p>— ${esc(opts.fromName)}</p>`,
+        });
+      }
+    },
+  };
 }
