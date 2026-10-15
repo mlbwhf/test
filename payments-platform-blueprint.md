@@ -172,3 +172,27 @@ Parallel non-engineering track: Delaware C-corp, fintech counsel opinion on Phas
 2. Open a Stripe account for the platform entity and enable Connect in test mode.
 3. Authorize the Stripe connector in your Claude settings so the next session can prototype checkout and splits against a live test account.
 4. Write the ledger package first. Everything else is replaceable; the ledger is not.
+
+---
+
+## 7. Entity structure and jurisdictions
+
+Existing licences: Delaware, Canada, UAE. Preference: EU over Canada.
+
+| Entity | Role | Licence path |
+|---|---|---|
+| Delaware C-corp (parent) | IP holder, fundraising, US operations | Phase 1: Stripe Connect platform, no licence. Phase 3: state money transmitter licences |
+| Lithuanian UAB | EU operations, engineering hub, future Electronic Money Institution (EMI) | Phase 1: Stripe platform via Stripe Payments Europe. Phase 2: agent of a licensed EMI (Swan, Solaris, Treezor, Intergiro). Phase 3: own EMI licence from the Bank of Lithuania, passported to all 30 EEA states; UK licence afterwards |
+| UAE entity (ADGM preferred) | Gulf go-to-market, investor base, Dubai/Riyadh events market | Phase 2: UAE BaaS partners (NymCard, Zand). Own Retail Payment Services licence only if Gulf volume justifies it |
+| Canada | Dormant or payroll only | None |
+
+Why Lithuania: fastest EU EMI licence, full EEA passport, affordable fintech talent in Vilnius. Requirement: real local substance (management, compliance and risk heads in country); the regulator fines shells. Alternatives: Netherlands (predictable regulator, Adyen/Mollie ecosystem) if a Western HQ matters; Ireland is slow and costly; Estonia and Malta are fast but weaker on reputation.
+
+EU rules that help: Instant Payments Regulation (instant SEPA mandatory and cheap, 2025-2026) makes same-day payouts nearly free; MiCA gives a clear path for stablecoin payouts later.
+EU rules that cost: DORA (operational resilience audits from day one), GDPR (EU tenants pinned to an EU region).
+
+Changes to the build order:
+- Two AWS regions from day one (us-east-1, eu-central-1 or eu-west-1), tenant data pinned by region.
+- Stripe platform agreements under both the Delaware and Lithuanian entities.
+- Bank of Lithuania pre-application around month 9 once live volume exists; expect 6-12 months, ~EUR 350k regulatory capital plus comparable setup cost.
+- One law firm covering US, EU and UAE to confirm Phase 1 posture and handle transfer pricing and UAE corporate tax.
