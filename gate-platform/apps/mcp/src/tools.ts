@@ -36,6 +36,44 @@ export const tools = [
     run: (c, a) => c.createEvent(a),
   }),
   def({
+    name: "list_courses",
+    description: "List the organization's courses (the evergreen things it teaches). Cohorts are dated instances of a course.",
+    input: {},
+    run: (c) => c.listCourses(),
+  }),
+  def({
+    name: "create_course",
+    description: "Create a course. slug is lowercase-with-hyphens and becomes part of the public catalogue URL.",
+    input: { slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), name: z.string().min(1), certificationBody: z.string().optional(), durationDays: z.number().int().min(1).optional() },
+    run: (c, a) => c.createCourse(a),
+  }),
+  def({
+    name: "list_cohorts",
+    description: "Dated cohorts of a course with sessions, time zone, format, instructors and status.",
+    input: { courseId: z.string() },
+    run: (c, a) => c.listCohorts(a.courseId),
+  }),
+  def({
+    name: "create_cohort",
+    description: "Schedule a cohort of a course. Sessions are ISO 8601 with offsets; timezone is an IANA name like America/Toronto. Start and end derive from the sessions.",
+    input: {
+      courseId: z.string(), name: z.string().min(1), timezone: z.string(), format: z.enum(["live_virtual", "in_person", "hybrid", "self_paced"]).optional(),
+      sessions: z.array(z.object({ startsAt: z.string(), endsAt: z.string(), title: z.string().optional() })).min(1).max(60),
+      instructorIds: z.array(z.string()).optional(), minEnrollment: z.number().int().min(0).optional(), currency: z.string().regex(/^[A-Z]{3}$/).optional(),
+    },
+    run: (c, a) => { const { courseId, ...rest } = a; return c.createCohort(courseId, rest); },
+  }),
+  def({
+    name: "get_roster",
+    description: "Confirmed learners for a cohort (name, email, company, status, order), i.e. the roster to load into the certification body's system before class.",
+    input: { eventId: z.string() },
+    run: async (c, a) => {
+      const { items } = await c.listSeats(a.eventId);
+      const confirmed = items.filter((s) => s.status === "confirmed");
+      return { count: confirmed.length, roster: confirmed.map((s) => ({ name: s.attendee.name ?? "", email: s.attendee.email, company: s.attendee.company ?? "", orderId: s.orderId })), csv: ["name,email,company,orderId", ...confirmed.map((s) => [s.attendee.name ?? "", s.attendee.email, s.attendee.company ?? "", s.orderId].map((v) => `"${v.replace(/"/g, '""')}"`).join(","))].join("\n") };
+    },
+  }),
+  def({
     name: "list_ticket_types",
     description: "Ticket types for an event, with price in minor units, capacity and sold count.",
     input: { eventId: z.string() },

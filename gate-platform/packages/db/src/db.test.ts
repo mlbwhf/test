@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Ledger } from "@gate/ledger";
-import { Core, FakePaymentsAdapter, codes } from "@gate/core";
+import { Core, FakePaymentsAdapter, FlatRateTax, codes } from "@gate/core";
 import { createPool, type Pool } from "./pool.js";
 import { migrate } from "./migrate.js";
 import { PostgresLedgerStore } from "./pg-ledger-store.js";
@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -81,6 +81,32 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect(refund.status).toBe("succeeded");
     expect((await core.getOrder(org.id, order.id)).status).toBe("refunded");
     expect((await core.platformBalances()).find((b) => b.code === codes.clearing("USD"))?.balanceMinor).toBe(0);
+    await ledger.assertBalanced();
+  });
+
+  it("corporate invoice orders on Postgres: numbering, partial payments, settlement", async () => {
+    const repos = createPgRepos(pool);
+    const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
+    const core = new Core({ repos, ledger, payments: new FakePaymentsAdapter(), tax: new FlatRateTax() });
+    const { organization: org } = await core.createOrganization({ name: "Corp Org", country: "CA", currency: "CAD" });
+    const course = await core.createCourse(org.id, { slug: "spc", name: "SPC" });
+    const cohort = await core.createEvent(org.id, { courseId: course.id, name: "SPC", startsAt: new Date("2027-01-10T14:00:00Z"), timezone: "America/Toronto", sessions: [{ startsAt: new Date("2027-01-10T14:00:00Z"), endsAt: new Date("2027-01-10T22:00:00Z"), title: "Day 1" }] });
+    const tt = await core.createTicketType(org.id, cohort.id, { name: "Std", priceMinor: 100_000, quantity: 10, prices: { USD: 80_000 }, earlyBird: { until: new Date("2026-12-01T00:00:00Z"), priceMinor: 90_000 } });
+    const acct = await core.createCorporateAccount(org.id, { name: "Big Bank", billingEmail: "ap@bigbank.ca", address: { country: "CA", region: "ON" }, poRequired: true });
+    const a = await core.createInvoiceOrder(org.id, { corporateAccountId: acct.id, ticketTypeId: tt.id, quantity: 2, poNumber: "PO-1", idempotencyKey: "pg-inv-1" });
+    const b = await core.createInvoiceOrder(org.id, { corporateAccountId: acct.id, ticketTypeId: tt.id, quantity: 1, poNumber: "PO-2" });
+    expect([a.invoice.number, b.invoice.number]).toEqual(["INV-2026-0001", "INV-2026-0002"].map((n) => n.replace("2026", String(new Date().getUTCFullYear()))));
+    expect((await core.createInvoiceOrder(org.id, { corporateAccountId: acct.id, ticketTypeId: tt.id, quantity: 2, poNumber: "PO-1", idempotencyKey: "pg-inv-1" })).created).toBe(false);
+    const reloaded = await core.getEvent(org.id, cohort.id);
+    expect(reloaded.sessions[0]?.title).toBe("Day 1");
+    expect((await repos.ticketTypes.get(tt.id))?.earlyBird?.priceMinor).toBe(90_000);
+    await core.recordInvoicePayment(org.id, { invoiceId: a.invoice.id, amountMinor: 1_000, method: "wire", reference: "W1" });
+    const done = await core.recordInvoicePayment(org.id, { invoiceId: a.invoice.id, amountMinor: a.invoice.totalMinor - 1_000, method: "bank_transfer" });
+    expect(done.status).toBe("paid");
+    expect(done.payments.map((p) => p.reference ?? null)).toEqual(["W1", null]);
+    expect((await core.getOrder(org.id, a.order.id)).status).toBe("paid");
+    expect((await core.listSeats(org.id, { orderId: a.order.id })).every((s) => s.status === "confirmed")).toBe(true);
+    expect((await core.receivablesAgeing(org.id)).items.map((i) => i.invoiceId)).toEqual([b.invoice.id]);
     await ledger.assertBalanced();
   });
 

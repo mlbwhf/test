@@ -1,5 +1,7 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { Core, FakePaymentsAdapter, createInMemoryRepos, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ResendNotifier } from "./notifiers/resend.js";
+import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgRepos, type IdempotencyStore } from "@gate/db";
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
@@ -45,7 +47,39 @@ async function main() {
     console.log("[payments] fake adapter (set STRIPE_SECRET_KEY for stripe)");
   }
 
-  const core = new Core({ repos, ledger, payments });
+  // Notifications: Resend when configured, otherwise log to the console.
+  const notifier: Notifier = process.env.RESEND_API_KEY
+    ? new ResendNotifier({ apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM ?? "Gate <no-reply@example.com>" })
+    : new ConsoleNotifier();
+  console.log(`[email] ${notifier.provider}`);
+  const hooks: CoreHooks[] = [
+    confirmationHook(notifier, {
+      fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+      replyTo: process.env.EMAIL_REPLY_TO,
+      calendarUrl: (seatId) => `${publicUrl}/public/v1/seats/${seatId}/calendar.ics`,
+      pageUrl: (ctx) => (ctx.course && process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", ctx.course.slug) : undefined),
+    }),
+  ];
+  if (process.env.HUBSPOT_ACCESS_TOKEN) {
+    const sync = new CrmSync(new HubSpotCrm({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN }));
+    hooks.push({
+      orderPaid: async (ctx) => {
+        await sync.onOrderPaid({
+          orderId: ctx.order.id, buyerEmail: ctx.order.buyerEmail, attendees: ctx.order.attendees,
+          amountMinor: ctx.order.pricing.totalMinor, currency: ctx.order.currency,
+          courseName: ctx.course?.name ?? ctx.event.name, cohortName: ctx.event.name, cohortStartsAt: ctx.event.startsAt, organizationName: ctx.organization.name,
+        });
+      },
+      orderRefunded: async (ctx) => {
+        await sync.onOrderRefunded({
+          orderId: ctx.order.id, fully: ctx.fully, buyerEmail: ctx.order.buyerEmail, courseName: ctx.course?.name ?? ctx.event.name, cohortName: ctx.event.name,
+          amountMinor: ctx.order.pricing.totalMinor, refundedMinor: ctx.order.refundedMinor, currency: ctx.order.currency,
+        });
+      },
+    });
+    console.log("[crm] hubspot sync enabled");
+  }
+  const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
 
   // AI gateway: Anthropic first-party by default; tenants may bring their own provider.
   const ai = new AiGateway({
@@ -71,7 +105,8 @@ async function main() {
 
   const app = await buildApp({
     core, ...(stripe ? { stripe } : {}), ...(aiEnabled ? { ai } : {}), ...(idempotency ? { idempotency } : {}),
-    ...(process.env.GATE_ADMIN_KEY ? { adminKey: process.env.GATE_ADMIN_KEY } : {}), env, logger: true,
+    ...(process.env.GATE_ADMIN_KEY ? { adminKey: process.env.GATE_ADMIN_KEY } : {}), env, logger: true, publicUrl,
+    ...(process.env.GATE_COURSE_PAGE_URL ? { publicPageUrl: (_org: string, slug: string) => process.env.GATE_COURSE_PAGE_URL!.replace("{slug}", slug) } : {}),
   });
   await app.listen({ port, host: "0.0.0.0" });
   console.log(`[api] listening on ${publicUrl}  docs: ${publicUrl}/docs`);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Course, Event, Order, Organization, Party, Refund, Seat, TicketType } from "@gate/core";
+import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, TicketType } from "@gate/core";
 
 export const ErrorSchema = z.object({
   error: z.object({ code: z.string(), message: z.string(), hint: z.string().optional(), requestId: z.string().optional() }),
@@ -66,15 +66,25 @@ export const PublicCourseSchema = z.object({
 
 export const PricingSchema = z.object({
   currency: Currency, quantity: z.number().int(), unitPriceMinor: Minor, subtotalMinor: Minor, platformFeeMinor: Minor,
-  attendeeFeeMinor: Minor, totalMinor: Minor, organizerNetMinor: Minor, perTicketFeeMinor: Minor,
+  attendeeFeeMinor: Minor, taxMinor: Minor, totalMinor: Minor, organizerNetMinor: Minor, perTicketFeeMinor: Minor,
 });
+export const BillingAddressSchema = z.object({ country: z.string().length(2), region: z.string().max(10).optional(), postalCode: z.string().max(20).optional(), city: z.string().max(100).optional(), line1: z.string().max(200).optional(), taxId: z.string().max(40).optional() });
+export const CorporateAccountSchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), billingEmail: z.string(), address: BillingAddressSchema, poRequired: z.boolean(), netTermsDays: z.number().int(), currency: Currency, createdAt: z.string() });
+export const CreateCorporateAccountBody = z.object({ name: z.string().min(1), billingEmail: z.string().email(), address: BillingAddressSchema, poRequired: z.boolean().optional(), netTermsDays: z.number().int().min(0).max(180).optional(), currency: Currency.optional() });
+export const InvoicePaymentSchema = z.object({ id: z.string(), amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "ach", "card", "cheque", "other"]), reference: z.string().nullable(), receivedAt: z.string() });
+export const InvoiceSchema = z.object({
+  id: z.string(), organizationId: z.string(), orderId: z.string(), corporateAccountId: z.string().nullable(), number: z.string(), poNumber: z.string().nullable(), currency: Currency,
+  subtotalMinor: Minor, taxMinor: Minor, totalMinor: Minor, paidMinor: Minor, status: z.enum(["issued", "partially_paid", "paid", "void"]), issuedAt: z.string(), dueAt: z.string(), payments: z.array(InvoicePaymentSchema), createdAt: z.string(),
+});
+export const CreateInvoiceOrderBody = z.object({ corporateAccountId: z.string(), ticketTypeId: z.string(), quantity: z.number().int().min(1).max(500), attendees: z.array(z.object({ email: z.string().email(), name: z.string().max(200).optional(), company: z.string().max(200).optional() })).max(500).optional(), poNumber: z.string().max(80).optional(), currency: Currency.optional(), dueDays: z.number().int().min(0).max(180).optional(), dryRun: z.boolean().optional() });
+export const RecordInvoicePaymentBody = z.object({ amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "ach", "cheque", "other"]), reference: z.string().max(120).optional(), receivedAt: z.string().datetime({ offset: true }).optional() });
 export const OrderSchema = z.object({
   id: z.string(), organizationId: z.string(), eventId: z.string(), ticketTypeId: z.string(), quantity: z.number().int(), buyerEmail: z.string(),
-  attendees: z.array(AttendeeSchema), currency: Currency, status: z.enum(["pending", "paid", "refunded", "partially_refunded", "failed"]), pricing: PricingSchema,
+  attendees: z.array(AttendeeSchema), currency: Currency, status: z.enum(["pending", "paid", "refunded", "partially_refunded", "failed", "cancelled"]), paymentMethod: z.enum(["card", "invoice"]), corporateAccountId: z.string().nullable(), billingAddress: BillingAddressSchema.nullable(), pricing: PricingSchema,
   splits: z.object({ organizerMinor: Minor, lines: z.array(z.object({ partyId: z.string(), amountMinor: Minor, label: z.string().optional() })) }),
   paymentRef: z.string().nullable(), transferRefs: z.record(z.string(), z.string()), refundedMinor: Minor, createdAt: z.string(), paidAt: z.string().nullable(),
 });
-export const CreateOrderBody = z.object({ ticketTypeId: z.string(), quantity: z.number().int().min(1).max(100), buyerEmail: z.string().email(), currency: Currency.optional(), attendees: z.array(AttendeeSchema).max(100).optional(), dryRun: z.boolean().optional() });
+export const CreateOrderBody = z.object({ ticketTypeId: z.string(), quantity: z.number().int().min(1).max(100), buyerEmail: z.string().email(), currency: Currency.optional(), attendees: z.array(AttendeeSchema).max(100).optional(), billingAddress: BillingAddressSchema.optional(), dryRun: z.boolean().optional() });
 export const RefundSchema = z.object({ id: z.string(), orderId: z.string(), organizationId: z.string(), amountMinor: Minor, reason: z.string(), status: z.enum(["pending", "succeeded", "failed"]), paymentRefundRef: z.string().nullable(), createdAt: z.string() });
 export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.number().int().min(1).optional(), reason: z.string().min(1) });
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
@@ -90,5 +100,7 @@ export const toTicketType = (t: TicketType) => ({ ...t, prices: t.prices ?? null
 export const toSeat = (s: Seat) => ({ ...s, createdAt: s.createdAt.toISOString(), confirmedAt: s.confirmedAt?.toISOString() ?? null });
 export const parseSessions = (sessions: Array<{ startsAt: string; endsAt: string; title?: string | undefined }> | undefined) =>
   sessions?.map((s) => ({ startsAt: new Date(s.startsAt), endsAt: new Date(s.endsAt), ...(s.title ? { title: s.title } : {}) }));
-export const toOrder = (o: Order) => ({ ...o, paymentRef: o.paymentRef ?? null, createdAt: o.createdAt.toISOString(), paidAt: o.paidAt?.toISOString() ?? null });
+export const toOrder = (o: Order) => ({ ...o, paymentRef: o.paymentRef ?? null, corporateAccountId: o.corporateAccountId ?? null, billingAddress: o.billingAddress ?? null, createdAt: o.createdAt.toISOString(), paidAt: o.paidAt?.toISOString() ?? null });
+export const toCorporateAccount = (a: CorporateAccount) => ({ ...a, createdAt: a.createdAt.toISOString() });
+export const toInvoice = (i: Invoice) => ({ ...i, corporateAccountId: i.corporateAccountId ?? null, poNumber: i.poNumber ?? null, issuedAt: i.issuedAt.toISOString(), dueAt: i.dueAt.toISOString(), createdAt: i.createdAt.toISOString(), payments: i.payments.map((p) => ({ ...p, reference: p.reference ?? null, receivedAt: p.receivedAt.toISOString() })), cardPaymentRef: undefined });
 export const toRefund = (r: Refund) => ({ ...r, paymentRefundRef: r.paymentRefundRef ?? null, createdAt: r.createdAt.toISOString() });

@@ -1,5 +1,5 @@
 import type {
-  Course, CourseRepo, Event, EventRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, TicketType, TicketTypeRepo,
+  CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, TicketType, TicketTypeRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -60,6 +60,9 @@ function toOrder(r: Row): Order {
   return {
     id: str(r.id), organizationId: str(r.organization_id), eventId: str(r.event_id), ticketTypeId: str(r.ticket_type_id),
     quantity: num(r.quantity), buyerEmail: str(r.buyer_email), attendees: (r.attendees as Order["attendees"]) ?? [], currency: str(r.currency), status: r.status as Order["status"],
+    paymentMethod: (r.payment_method as Order["paymentMethod"]) ?? "card",
+    ...(opt<string>(r.corporate_account_id) ? { corporateAccountId: str(r.corporate_account_id) } : {}),
+    ...(opt<Order["billingAddress"]>(r.billing_address) ? { billingAddress: r.billing_address as NonNullable<Order["billingAddress"]> } : {}),
     pricing: r.pricing as Order["pricing"], splits: r.splits as Order["splits"],
     ...(paymentRef ? { paymentRef } : {}),
     transferRefs: (r.transfer_refs as Record<string, string>) ?? {},
@@ -67,6 +70,18 @@ function toOrder(r: Row): Order {
     ...(idem ? { idempotencyKey: idem } : {}),
     createdAt: date(r.created_at),
     ...(paidAt ? { paidAt } : {}),
+  };
+}
+function toCorporate(r: Row): CorporateAccount {
+  return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), billingEmail: str(r.billing_email), address: r.address as CorporateAccount["address"], poRequired: Boolean(r.po_required), netTermsDays: num(r.net_terms_days), currency: str(r.currency), createdAt: date(r.created_at) };
+}
+function toInvoice(r: Row): Invoice {
+  const corp = opt<string>(r.corporate_account_id), po = opt<string>(r.po_number), cardRef = opt<string>(r.card_payment_ref);
+  const payments = ((r.payments as Array<{ id: string; amountMinor: number; method: Invoice["payments"][number]["method"]; reference?: string; receivedAt: string }>) ?? []).map((p) => ({ id: p.id, amountMinor: p.amountMinor, method: p.method, ...(p.reference ? { reference: p.reference } : {}), receivedAt: new Date(p.receivedAt) }));
+  return {
+    id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), ...(corp ? { corporateAccountId: corp } : {}), number: str(r.number), ...(po ? { poNumber: po } : {}),
+    currency: str(r.currency), subtotalMinor: num(r.subtotal_minor), taxMinor: num(r.tax_minor), totalMinor: num(r.total_minor), paidMinor: num(r.paid_minor),
+    status: r.status as Invoice["status"], issuedAt: date(r.issued_at), dueAt: date(r.due_at), payments, ...(cardRef ? { cardPaymentRef: cardRef } : {}), createdAt: date(r.created_at),
   };
 }
 function toRefund(r: Row): Refund {
@@ -149,9 +164,9 @@ class PgOrders implements OrderRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Order) {
     await this.pool.query(
-      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
-      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null],
+      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at, payment_method, corporate_account_id, billing_address)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null, o.paymentMethod, o.corporateAccountId ?? null, o.billingAddress ? JSON.stringify(o.billingAddress) : null],
     );
   }
   async update(o: Order) {
@@ -164,6 +179,42 @@ class PgOrders implements OrderRepo {
   async getByPaymentRef(ref: string) { const r = await this.pool.query(`SELECT * FROM orders WHERE payment_ref=$1`, [ref]); return r.rows[0] ? toOrder(r.rows[0]) : undefined; }
   async getByIdempotencyKey(orgId: string, key: string) { const r = await this.pool.query(`SELECT * FROM orders WHERE organization_id=$1 AND idempotency_key=$2`, [orgId, key]); return r.rows[0] ? toOrder(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string, limit = 100) { const r = await this.pool.query(`SELECT * FROM orders WHERE organization_id=$1 ORDER BY created_at DESC LIMIT $2`, [orgId, limit]); return r.rows.map(toOrder); }
+}
+class PgCorporateAccounts implements CorporateAccountRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(a: CorporateAccount) { await this.pool.query(`INSERT INTO corporate_accounts (id, organization_id, name, billing_email, address, po_required, net_terms_days, currency, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [a.id, a.organizationId, a.name, a.billingEmail, JSON.stringify(a.address), a.poRequired, a.netTermsDays, a.currency, a.createdAt]); }
+  async update(a: CorporateAccount) { await this.pool.query(`UPDATE corporate_accounts SET name=$2, billing_email=$3, address=$4, po_required=$5, net_terms_days=$6, currency=$7 WHERE id=$1`, [a.id, a.name, a.billingEmail, JSON.stringify(a.address), a.poRequired, a.netTermsDays, a.currency]); }
+  async get(id: string) { const r = await this.pool.query(`SELECT * FROM corporate_accounts WHERE id=$1`, [id]); return r.rows[0] ? toCorporate(r.rows[0]) : undefined; }
+  async getByBillingEmail(orgId: string, email: string) { const r = await this.pool.query(`SELECT * FROM corporate_accounts WHERE organization_id=$1 AND lower(billing_email)=lower($2)`, [orgId, email]); return r.rows[0] ? toCorporate(r.rows[0]) : undefined; }
+  async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM corporate_accounts WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCorporate); }
+}
+const paymentsJson = (i: Invoice) => JSON.stringify(i.payments.map((p) => ({ ...p, receivedAt: p.receivedAt.toISOString() })));
+class PgInvoices implements InvoiceRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(i: Invoice) {
+    await this.pool.query(
+      `INSERT INTO invoices (id, organization_id, order_id, corporate_account_id, number, po_number, currency, subtotal_minor, tax_minor, total_minor, paid_minor, status, issued_at, due_at, payments, card_payment_ref, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+      [i.id, i.organizationId, i.orderId, i.corporateAccountId ?? null, i.number, i.poNumber ?? null, i.currency, i.subtotalMinor, i.taxMinor, i.totalMinor, i.paidMinor, i.status, i.issuedAt, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, i.createdAt],
+    );
+  }
+  async update(i: Invoice) { await this.pool.query(`UPDATE invoices SET po_number=$2, paid_minor=$3, status=$4, due_at=$5, payments=$6, card_payment_ref=$7 WHERE id=$1`, [i.id, i.poNumber ?? null, i.paidMinor, i.status, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null]); }
+  async get(id: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE id=$1`, [id]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }
+  async getByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE order_id=$1`, [orderId]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }
+  async getByCardPaymentRef(ref: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE card_payment_ref=$1`, [ref]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }
+  async listByOrganization(orgId: string, filter?: { status?: Invoice["status"][] | undefined }) {
+    const r = filter?.status
+      ? await this.pool.query(`SELECT * FROM invoices WHERE organization_id=$1 AND status = ANY($2) ORDER BY issued_at`, [orgId, filter.status])
+      : await this.pool.query(`SELECT * FROM invoices WHERE organization_id=$1 ORDER BY issued_at`, [orgId]);
+    return r.rows.map(toInvoice);
+  }
+  async nextNumber(orgId: string, year: number) {
+    const r = await this.pool.query<{ last_value: number }>(
+      `INSERT INTO invoice_sequences (organization_id, year, last_value) VALUES ($1,$2,1)
+       ON CONFLICT (organization_id, year) DO UPDATE SET last_value = invoice_sequences.last_value + 1 RETURNING last_value`,
+      [orgId, year],
+    );
+    return Number(r.rows[0]!.last_value);
+  }
 }
 class PgRefunds implements RefundRepo {
   constructor(private readonly pool: Pool) {}
@@ -190,6 +241,8 @@ export function createPgRepos(pool: Pool): Repos {
     seats: new PgSeats(pool),
     ticketTypes: new PgTicketTypes(pool),
     orders: new PgOrders(pool),
+    corporateAccounts: new PgCorporateAccounts(pool),
+    invoices: new PgInvoices(pool),
     refunds: new PgRefunds(pool),
     processedEvents: new PgProcessedEvents(pool),
   };

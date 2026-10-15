@@ -14,7 +14,9 @@ Events money OS: ticketing, split payments, payouts and a double-entry ledger to
 | `packages/ai-gateway` | `@gate/ai-gateway` | Every AI call goes through here: per-tenant model config (bring your own provider), budgets, feature flags, reversible PII redaction, audit. Providers: Anthropic first-party (default `claude-opus-5-5` / `claude-haiku-5-5`, structured outputs, prompt caching, server-side refusal fallbacks) and OpenAI-compatible endpoints. Copilot features: explain order, support triage | unit tests |
 | `apps/api` | `@gate/api` | Fastify 5 REST API with zod validation, OpenAPI 3.1 at `/docs`, API-key auth, `Idempotency-Key` replay/conflict, `dry_run` quotes, Stripe webhook, copilot routes, dev-only payment simulation | unit tests + live boot on Postgres |
 | `apps/mcp` | `@gate/mcp` | MCP server (stdio) exposing the platform to AI agents. Money movement is never executed by a tool: `propose_refund` returns a `requires_approval` proposal | unit tests |
-| `apps/web` | `@gate/web` | Next.js 16 organizer dashboard: cash position, events, ticket types, test sales, orders, refunds | typecheck + production build |
+| `apps/web` | `@gate/web` | Next.js 16 organizer dashboard: cash position, courses, cohorts with sessions, instructors, regional and early-bird pricing, roster with CSV export (the SAFe Studio file), test sales, orders, refunds | typecheck + production build |
+| `apps/widget` | `@gate/widget` | 22 KB embeddable schedule + on-page checkout widget (`<div data-gate-widget …>`): regional currency, early bird, Stripe Payment Element or test mode, served by the API at `/widget/v1/gate-widget.js` with a demo page at `/widget/v1/demo` | 23 jsdom tests + bundle size guard |
+| `packages/integrations-hubspot` | `@gate/integrations-hubspot` | CRM port with a HubSpot adapter: contacts and deals upserted on paid orders and refunds | 14 tests (offline) |
 
 ## Run it locally
 
@@ -66,13 +68,25 @@ CI (`.github/workflows/ci.yml`) runs typecheck, tests against a Postgres service
 - AI never moves money. Copilot routes are read-only; MCP money tools return proposals for human approval.
 - Tenants may bring their own model. The gateway owns redaction, budgets and audit regardless of provider.
 
-## Not built yet (next in the blueprint order)
+## Training vertical (see `../virtual-training-vertical-plan.md`)
 
-- Payout scheduling and same-day payout into the platform balance (Phase 1, weeks 6-7).
-- Expo mobile app with Tap to Pay point of sale and attendee wallet (weeks 8-9).
+| Sprint | Status | What landed |
+|---|---|---|
+| 1 | done | Courses, cohorts with sessions/time zone/format/instructors/minimum enrolment, seats per learner, regional price lists and early-bird tiers, public catalogue + JSON-LD |
+| 2 | done | Embeddable widget, confirmation ticket email with `.ics` per seat (`/public/v1/seats/:id/calendar.ics`), domain hooks, HubSpot sync, dashboard pages for courses/cohorts/roster |
+| 3 | done | Corporate accounts, invoice orders with PO and net terms, partial payments via customer deposits, card payment against an invoice, voiding, flat-rate tax engine (GST/HST, VAT, UAE VAT, reverse charge) behind a `TaxPort`, receivables ageing report |
+| 4 | next | Transfers, substitutes, cancellation policy engine, waitlist with auto-offer, learner portal |
+| 5 | | Zoom/Teams, email sequences, attendance, certificates, roster export for the certification body |
+| 6 | | Delivery-linked release, instructor payouts on delivery, minimum-enrolment protection, deferred revenue report |
+
+## Not built yet (platform backlog)
+
+- Payout scheduling and same-day payout into the platform balance.
+- Expo mobile app with Tap to Pay point of sale and attendee wallet.
 - Persistent AI audit log, tenant AI config and budget tables in Postgres (in-memory today).
 - Hash-chained audit log for admin actions, WORM export.
 - WorkOS/Clerk user auth and roles on top of the organization API keys.
+- Stripe Tax adapter behind `TaxPort` (flat-rate table today; counsel review required per corridor).
 - Terraform for AWS (two regions, US and EU) and the Phase 2 banking adapters (Unit / Treasury Prime / Stripe Treasury).
 
 ## Move to its own repository

@@ -23,6 +23,8 @@ type Props = {
   variant?: "primary" | "danger";
   /** Compact layout for buttons embedded in table rows. */
   inline?: boolean;
+  /** Wider layout for forms with repeated row groups (sessions, regional prices). */
+  wide?: boolean;
 };
 
 function SubmitButton({ label, pendingLabel, variant }: { label: string; pendingLabel: string; variant: string }) {
@@ -34,11 +36,22 @@ function SubmitButton({ label, pendingLabel, variant }: { label: string; pending
   );
 }
 
-export function ActionForm({ action, children, submitLabel, pendingLabel, variant = "primary", inline = false }: Props) {
+export function ActionForm({
+  action,
+  children,
+  submitLabel,
+  pendingLabel,
+  variant = "primary",
+  inline = false,
+  wide = false,
+}: Props) {
   const [state, formAction] = useActionState(action, idleState);
+  const className = ["action-form", inline && "action-form-inline", wide && "action-form-wide"]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <form action={formAction} className={inline ? "action-form action-form-inline" : "action-form"}>
+    <form action={formAction} className={className}>
       {children}
       <SubmitButton label={submitLabel} pendingLabel={pendingLabel ?? `${submitLabel}…`} variant={variant} />
       {state.status !== "idle" && (

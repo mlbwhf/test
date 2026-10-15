@@ -1,7 +1,7 @@
 import type {
-  CourseRepo, EventRepo, OrderRepo, OrganizationRepo, PartyRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, TicketTypeRepo,
+  CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, OrderRepo, OrganizationRepo, PartyRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, TicketTypeRepo,
 } from "./ports.js";
-import type { Course, Event, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
+import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
 
 class MemOrganizations implements OrganizationRepo {
   private readonly byId = new Map<string, Organization>();
@@ -72,6 +72,27 @@ class MemOrders implements OrderRepo {
     return [...this.byId.values()].filter((o) => o.organizationId === orgId).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, limit).map((o) => structuredClone(o));
   }
 }
+class MemCorporateAccounts implements CorporateAccountRepo {
+  private readonly byId = new Map<string, CorporateAccount>();
+  async create(a: CorporateAccount) { this.byId.set(a.id, structuredClone(a)); }
+  async update(a: CorporateAccount) { this.byId.set(a.id, structuredClone(a)); }
+  async get(id: string) { const a = this.byId.get(id); return a && structuredClone(a); }
+  async getByBillingEmail(orgId: string, email: string) { for (const a of this.byId.values()) if (a.organizationId === orgId && a.billingEmail.toLowerCase() === email.toLowerCase()) return structuredClone(a); return undefined; }
+  async listByOrganization(orgId: string) { return [...this.byId.values()].filter((a) => a.organizationId === orgId).map((a) => structuredClone(a)); }
+}
+class MemInvoices implements InvoiceRepo {
+  private readonly byId = new Map<string, Invoice>();
+  private readonly seq = new Map<string, number>();
+  async create(i: Invoice) { this.byId.set(i.id, structuredClone(i)); }
+  async update(i: Invoice) { this.byId.set(i.id, structuredClone(i)); }
+  async get(id: string) { const i = this.byId.get(id); return i && structuredClone(i); }
+  async getByOrder(orderId: string) { for (const i of this.byId.values()) if (i.orderId === orderId) return structuredClone(i); return undefined; }
+  async getByCardPaymentRef(ref: string) { for (const i of this.byId.values()) if (i.cardPaymentRef === ref) return structuredClone(i); return undefined; }
+  async listByOrganization(orgId: string, filter?: { status?: Invoice["status"][] | undefined }) {
+    return [...this.byId.values()].filter((i) => i.organizationId === orgId && (!filter?.status || filter.status.includes(i.status))).sort((a, b) => a.issuedAt.getTime() - b.issuedAt.getTime()).map((i) => structuredClone(i));
+  }
+  async nextNumber(orgId: string, year: number) { const k = `${orgId}:${year}`; const n = (this.seq.get(k) ?? 0) + 1; this.seq.set(k, n); return n; }
+}
 class MemRefunds implements RefundRepo {
   private readonly byId = new Map<string, Refund>();
   async create(r: Refund) { this.byId.set(r.id, structuredClone(r)); }
@@ -94,6 +115,8 @@ export function createInMemoryRepos(): Repos {
     seats: new MemSeats(),
     ticketTypes: new MemTicketTypes(),
     orders: new MemOrders(),
+    corporateAccounts: new MemCorporateAccounts(),
+    invoices: new MemInvoices(),
     refunds: new MemRefunds(),
     processedEvents: new MemProcessedEvents(),
   };

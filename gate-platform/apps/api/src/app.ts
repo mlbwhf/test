@@ -4,8 +4,11 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DomainError, FakePaymentsAdapter, courseJsonLd, type Organization } from "@gate/core";
+import { Core, DomainError, FakePaymentsAdapter, buildIcs, courseJsonLd, type Organization } from "@gate/core";
 import rateLimit from "@fastify/rate-limit";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { AiGatewayError, type AiGateway, Copilot } from "@gate/ai-gateway";
 import type { IdempotencyStore } from "@gate/db";
 import type { StripePaymentsAdapter } from "@gate/payments-stripe";
@@ -27,6 +30,10 @@ export interface AppDeps {
   logger?: boolean;
   /** Public URL of the organizer-facing pages, used in JSON-LD. */
   publicPageUrl?: (orgId: string, courseSlug: string) => string;
+  /** Path to the built embeddable widget bundle; defaults to apps/widget/dist/gate-widget.js in the monorepo. */
+  widgetBundlePath?: string;
+  /** Base URL this API is reachable at, for the widget demo page. */
+  publicUrl?: string;
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
@@ -93,6 +100,27 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     });
   });
 
+  // ---------- embeddable widget bundle + demo page ----------
+  const widgetPath = deps.widgetBundlePath ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../widget/dist/gate-widget.js");
+  let widgetCache: { body: string; etag: string } | undefined;
+  app.get("/widget/v1/gate-widget.js", { schema: { tags: ["widget"], security: [], response: { 200: z.string(), 304: z.string(), 404: S.ErrorSchema } } }, async (req, reply) => {
+    if (!widgetCache || env !== "production") {
+      try {
+        const body = await readFile(widgetPath, "utf8");
+        widgetCache = { body, etag: `"${Buffer.byteLength(body).toString(16)}-${body.length.toString(36)}"` };
+      } catch {
+        throw new DomainError("NOT_FOUND", "widget bundle is not built", "run `pnpm --filter @gate/widget build`");
+      }
+    }
+    if (req.headers["if-none-match"] === widgetCache.etag) return reply.code(304).send("");
+    return reply.header("content-type", "application/javascript; charset=utf-8").header("cache-control", "public, max-age=300").header("etag", widgetCache.etag).send(widgetCache.body);
+  });
+  app.get("/widget/v1/demo", { schema: { tags: ["widget"], security: [], querystring: z.object({ org: z.string(), course: z.string(), currency: z.string().optional(), stripePk: z.string().optional() }), response: { 200: z.string() } } }, async (req, reply) => {
+    const base = deps.publicUrl ?? "";
+    const attrs = [`data-gate-api="${base}"`, `data-gate-org="${req.query.org}"`, `data-gate-course="${req.query.course}"`, ...(req.query.currency ? [`data-gate-currency="${req.query.currency}"`] : []), ...(req.query.stripePk ? [`data-gate-stripe-pk="${req.query.stripePk}"`] : [])].join(" ");
+    return reply.header("content-type", "text/html; charset=utf-8").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gate widget demo</title></head><body style="font-family:system-ui;max-width:720px;margin:40px auto;padding:0 16px"><h1>Course page (demo)</h1><p>This is what an organizer's course page looks like with the widget embedded.</p><div data-gate-widget ${attrs}></div><script src="${base}/widget/v1/gate-widget.js" async></script></body></html>`);
+  });
+
   // ---------- public catalogue + checkout (no api key; rate limited) ----------
   await app.register(async (pubRaw) => {
     const pub = pubRaw.withTypeProvider<ZodTypeProvider>();
@@ -119,6 +147,23 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
         }),
       });
       return reply.header("content-type", "application/ld+json; charset=utf-8").send(doc);
+    });
+
+    pub.get("/public/v1/orders/:orderId", { schema: { tags: ["public"], security: [], params: z.object({ orderId: z.string() }), querystring: z.object({ buyerEmail: z.string().email() }), response: { 200: z.object({ order: S.OrderSchema }), 404: S.ErrorSchema } } }, async (req) => {
+      const o = await deps.core.publicOrder(req.params.orderId, req.query.buyerEmail);
+      return { order: { ...S.toOrder(o), splits: { organizerMinor: 0, lines: [] }, transferRefs: {} } };
+    });
+
+    pub.get("/public/v1/seats/:seatId/calendar.ics", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), response: { 200: z.string(), 404: S.ErrorSchema } } }, async (req, reply) => {
+      const { seat, event, course, organization } = await deps.core.publicSeat(req.params.seatId);
+      const ics = buildIcs({
+        uid: `seat-${seat.id}`, summary: course?.name ?? event.name,
+        description: `${event.name}\nOrganizer: ${organization.name}`,
+        attendeeEmail: seat.attendee.email, sessions: event.sessions,
+        fallback: { startsAt: event.startsAt, endsAt: event.endsAt ?? event.startsAt },
+        location: event.format === "in_person" ? undefined : "Online (joining link to follow)",
+      });
+      return reply.header("content-type", "text/calendar; charset=utf-8").header("content-disposition", `attachment; filename="${(course?.slug ?? "cohort")}.ics"`).send(ics);
     });
 
     pub.post("/public/v1/organizations/:orgId/orders", {
@@ -207,6 +252,31 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const idem = req.headers["idempotency-key"];
       const refund = await deps.core.refundOrder(org(req).id, { ...req.body, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
       return reply.code(201).send({ refund: S.toRefund(refund) });
+    });
+
+    // ---------- corporate billing ----------
+    api.get("/v1/corporate-accounts", { schema: { tags: ["corporate"], response: { 200: z.object({ items: z.array(S.CorporateAccountSchema) }) } } }, async (req) => ({ items: (await deps.core.listCorporateAccounts(org(req).id)).map(S.toCorporateAccount) }));
+    api.post("/v1/corporate-accounts", { schema: { tags: ["corporate"], body: S.CreateCorporateAccountBody, response: { 201: S.CorporateAccountSchema } } }, async (req, reply) => reply.code(201).send(S.toCorporateAccount(await deps.core.createCorporateAccount(org(req).id, req.body))));
+    api.post("/v1/invoice-orders", { schema: { tags: ["corporate"], body: S.CreateInvoiceOrderBody, response: { 201: z.object({ order: S.OrderSchema, invoice: S.InvoiceSchema, dryRun: z.boolean() }), 200: z.object({ order: S.OrderSchema, invoice: S.InvoiceSchema, dryRun: z.boolean() }), 409: S.ErrorSchema } } }, async (req, reply) => {
+      const idem = req.headers["idempotency-key"];
+      const dryRun = req.body.dryRun === true;
+      const res = await deps.core.createInvoiceOrder(org(req).id, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
+      return reply.code(res.created ? 201 : 200).send({ order: S.toOrder(res.order), invoice: S.toInvoice(res.invoice), dryRun });
+    });
+    api.get("/v1/invoices", { schema: { tags: ["corporate"], querystring: z.object({ status: z.enum(["issued", "partially_paid", "paid", "void"]).optional() }), response: { 200: z.object({ items: z.array(S.InvoiceSchema) }) } } }, async (req) => ({ items: (await deps.core.listInvoices(org(req).id, req.query.status ? { status: [req.query.status] } : undefined)).map(S.toInvoice) }));
+    api.get("/v1/invoices/:id", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), response: { 200: S.InvoiceSchema, 404: S.ErrorSchema } } }, async (req) => S.toInvoice(await deps.core.getInvoice(org(req).id, req.params.id)));
+    api.post("/v1/invoices/:id/payments", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), body: S.RecordInvoicePaymentBody, response: { 200: S.InvoiceSchema, 409: S.ErrorSchema } } }, async (req) => {
+      const { receivedAt, ...rest } = req.body;
+      return S.toInvoice(await deps.core.recordInvoicePayment(org(req).id, { invoiceId: req.params.id, ...rest, receivedAt: receivedAt ? new Date(receivedAt) : undefined }));
+    });
+    api.post("/v1/invoices/:id/card-payment", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), response: { 200: z.object({ invoice: S.InvoiceSchema, clientSecret: z.string().nullable(), paymentRef: z.string() }) } } }, async (req) => {
+      const r = await deps.core.createInvoiceCardPayment(org(req).id, req.params.id);
+      return { invoice: S.toInvoice(r.invoice), clientSecret: r.clientSecret, paymentRef: r.paymentRef };
+    });
+    api.post("/v1/invoices/:id/void", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), body: z.object({ reason: z.string().min(1) }), response: { 200: S.InvoiceSchema, 409: S.ErrorSchema } } }, async (req) => S.toInvoice(await deps.core.voidInvoice(org(req).id, req.params.id, req.body.reason)));
+    api.get("/v1/reports/receivables", { schema: { tags: ["reports"], querystring: z.object({ asOf: z.string().datetime({ offset: true }).optional() }), response: { 200: z.object({ asOf: z.string(), byCurrency: z.record(z.string(), z.object({ current: z.number().int(), d1_30: z.number().int(), d31_60: z.number().int(), d61_90: z.number().int(), d90_plus: z.number().int() })), items: z.array(z.object({ invoiceId: z.string(), number: z.string(), corporateAccountId: z.string().nullable(), currency: z.string(), outstandingMinor: z.number().int(), dueAt: z.string(), daysPastDue: z.number().int(), bucket: z.string() })) }) } } }, async (req) => {
+      const r = await deps.core.receivablesAgeing(org(req).id, req.query.asOf ? new Date(req.query.asOf) : undefined);
+      return { asOf: r.asOf.toISOString(), byCurrency: r.byCurrency, items: r.items.map((i) => ({ ...i, corporateAccountId: i.corporateAccountId ?? null, dueAt: i.dueAt.toISOString() })) };
     });
 
     api.get("/v1/ledger/balances", { schema: { tags: ["ledger"], response: { 200: z.object({ accounts: z.array(S.BalanceSchema) }) } } }, async (req) => ({ accounts: await deps.core.balancesFor(org(req).id) }));

@@ -1,13 +1,35 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { api, describeFailure } from "@/lib/api";
-import { formatMoney, parseMajorToMinor, truncate } from "@/lib/format";
+import {
+  api,
+  describeFailure,
+  EVENT_FORMATS,
+  PARTY_KINDS,
+  type Attendee,
+  type EventFormat,
+  type PartyKind,
+  type RegionalPrices,
+  type Session,
+} from "@/lib/api";
+import { formatMoney, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
+import { MAX_ATTENDEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import type { ActionState } from "@/components/action-form";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CURRENCY_RE = /^[A-Z]{3}$/;
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function fields(formData: FormData, name: string): string[] {
+  return formData
+    .getAll(name)
+    .filter((v): v is string => typeof v === "string")
+    .map((v) => v.trim())
+    .filter(Boolean);
 }
 
 function fail(message: string): ActionState {
@@ -20,6 +42,30 @@ function positiveInt(raw: string): number | null {
   return n > 0 && Number.isSafeInteger(n) ? n : null;
 }
 
+/**
+ * Reads up to `rows` optional (currency, price) pairs named `${prefix}_${i}_currency`
+ * / `${prefix}_${i}_price`. Returns the parsed map, `undefined` when every row is
+ * blank, or an error string.
+ */
+function regionalPrices(
+  formData: FormData,
+  prefix: string,
+  rows: number,
+): { prices?: RegionalPrices; error?: string } {
+  const prices: RegionalPrices = {};
+  for (let i = 0; i < rows; i++) {
+    const currency = field(formData, `${prefix}_${i}_currency`).toUpperCase();
+    const priceRaw = field(formData, `${prefix}_${i}_price`);
+    if (!currency && !priceRaw) continue;
+    if (!CURRENCY_RE.test(currency)) return { error: `Regional price row ${i + 1}: currency must be a 3-letter ISO code.` };
+    const minor = parseMajorToMinor(priceRaw, currency);
+    if (minor === null) return { error: `Regional price row ${i + 1}: price must be a non-negative amount in ${currency}.` };
+    if (currency in prices) return { error: `Regional price row ${i + 1}: ${currency} is listed twice.` };
+    prices[currency] = minor;
+  }
+  return Object.keys(prices).length > 0 ? { prices } : {};
+}
+
 export async function createEventAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const name = field(formData, "name");
   const startsAtRaw = field(formData, "startsAt");
@@ -27,7 +73,7 @@ export async function createEventAction(_prev: ActionState, formData: FormData):
 
   if (!name) return fail("Event name is required.");
   if (!startsAtRaw) return fail("Start date/time is required.");
-  if (!/^[A-Z]{3}$/.test(currency)) return fail("Currency must be a 3-letter ISO code (e.g. EUR).");
+  if (!CURRENCY_RE.test(currency)) return fail("Currency must be a 3-letter ISO code (e.g. EUR).");
 
   const startsAt = new Date(startsAtRaw);
   if (Number.isNaN(startsAt.getTime())) return fail("Start date/time is not a valid date.");
@@ -50,6 +96,7 @@ export async function createEventAction(_prev: ActionState, formData: FormData):
 export async function createTicketTypeAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const eventId = field(formData, "eventId");
   const currency = field(formData, "currency").toUpperCase();
+  const timezone = field(formData, "timezone") || "UTC";
   const name = field(formData, "name");
   const priceRaw = field(formData, "price");
   const quantityRaw = field(formData, "quantity");
@@ -63,19 +110,51 @@ export async function createTicketTypeAction(_prev: ActionState, formData: FormD
   const quantity = positiveInt(quantityRaw);
   if (quantity === null) return fail("Quantity must be a positive whole number.");
 
-  const result = await api.createTicketType(eventId, { name, priceMinor, quantity });
+  const regional = regionalPrices(formData, "regional", REGIONAL_PRICE_ROWS);
+  if (regional.error) return fail(regional.error);
+
+  // Optional early bird: present when an "until" date or a price was entered.
+  const ebUntilRaw = field(formData, "earlyBirdUntil");
+  const ebPriceRaw = field(formData, "earlyBirdPrice");
+  const ebRegional = regionalPrices(formData, "eb_regional", REGIONAL_PRICE_ROWS);
+  if (ebRegional.error) return fail(`Early bird: ${ebRegional.error}`);
+
+  let earlyBird: { until: string; priceMinor: number; prices?: RegionalPrices } | undefined;
+  if (ebUntilRaw || ebPriceRaw || ebRegional.prices) {
+    if (!ebUntilRaw) return fail("Early bird: an 'until' date is required.");
+    if (!ebPriceRaw) return fail("Early bird: a price is required.");
+    // The early-bird window closes at the end of that day in the event's time zone.
+    const until = zonedTimeToIso(ebUntilRaw, "23:59:59", isValidTimeZone(timezone) ? timezone : "UTC");
+    if (!until) return fail("Early bird: 'until' is not a valid date.");
+    const ebMinor = parseMajorToMinor(ebPriceRaw, currency || "USD");
+    if (ebMinor === null) return fail(`Early bird: price must be a non-negative amount in ${currency || "the event currency"}.`);
+    earlyBird = { until, priceMinor: ebMinor };
+    if (ebRegional.prices) earlyBird.prices = ebRegional.prices;
+  }
+
+  const result = await api.createTicketType(eventId, {
+    name,
+    priceMinor,
+    quantity,
+    ...(regional.prices ? { prices: regional.prices } : {}),
+    ...(earlyBird ? { earlyBird } : {}),
+  });
   if (!result.ok) return fail(describeFailure(result.error));
 
   revalidatePath(`/events/${eventId}`);
-  return {
-    status: "ok",
-    message: `Created ticket type "${result.data.name}".`,
-    details: [
-      { label: "Ticket type ID", value: result.data.id },
-      { label: "Price", value: formatMoney(result.data.priceMinor, currency || "USD") },
-      { label: "Quantity", value: String(result.data.quantity) },
-    ],
-  };
+  const details = [
+    { label: "Ticket type ID", value: result.data.id },
+    { label: "Price", value: formatMoney(result.data.priceMinor, currency || "USD") },
+    { label: "Quantity", value: String(result.data.quantity) },
+  ];
+  for (const [c, minor] of Object.entries(result.data.prices ?? {})) {
+    details.push({ label: `Price (${c})`, value: formatMoney(minor, c) });
+  }
+  if (result.data.earlyBird) {
+    details.push({ label: "Early bird", value: formatMoney(result.data.earlyBird.priceMinor, currency || "USD") });
+    details.push({ label: "Early bird until", value: result.data.earlyBird.until });
+  }
+  return { status: "ok", message: `Created ticket type "${result.data.name}".`, details };
 }
 
 export async function sellTestTicketAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -83,13 +162,34 @@ export async function sellTestTicketAction(_prev: ActionState, formData: FormDat
   const ticketTypeId = field(formData, "ticketTypeId");
   const quantityRaw = field(formData, "quantity");
   const buyerEmail = field(formData, "buyerEmail");
+  const currency = field(formData, "currency").toUpperCase();
 
   if (!ticketTypeId) return fail("Pick a ticket type.");
   const quantity = positiveInt(quantityRaw);
   if (quantity === null) return fail("Quantity must be a positive whole number.");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyerEmail)) return fail("Buyer email is not a valid email address.");
+  if (quantity > MAX_ATTENDEES) return fail(`Quantity must be at most ${MAX_ATTENDEES} for a test order.`);
+  if (!EMAIL_RE.test(buyerEmail)) return fail("Buyer email is not a valid email address.");
+  if (currency && !CURRENCY_RE.test(currency)) return fail("Currency must be a 3-letter ISO code.");
 
-  const result = await api.createOrder({ ticketTypeId, quantity, buyerEmail });
+  // Attendee rows: only the first `quantity` rows that have an email are sent.
+  const attendees: Attendee[] = [];
+  for (let i = 0; i < MAX_ATTENDEES && attendees.length < quantity; i++) {
+    const email = field(formData, `attendee_${i}_email`);
+    const name = field(formData, `attendee_${i}_name`);
+    if (!email && !name) continue;
+    if (!EMAIL_RE.test(email)) return fail(`Attendee ${i + 1}: email is not a valid email address.`);
+    const attendee: Attendee = { email };
+    if (name) attendee.name = name;
+    attendees.push(attendee);
+  }
+
+  const result = await api.createOrder({
+    ticketTypeId,
+    quantity,
+    buyerEmail,
+    ...(currency ? { currency } : {}),
+    ...(attendees.length > 0 ? { attendees } : {}),
+  });
   if (!result.ok) return fail(describeFailure(result.error));
 
   const { order, clientSecret } = result.data;
@@ -105,6 +205,8 @@ export async function sellTestTicketAction(_prev: ActionState, formData: FormDat
     details: [
       { label: "Buyer", value: order.buyerEmail },
       { label: "Quantity", value: String(order.quantity) },
+      { label: "Attendees", value: String((order.attendees ?? []).length) },
+      { label: "Currency", value: order.currency },
       { label: "Subtotal", value: money(order.pricing.subtotalMinor) },
       { label: "Platform fee", value: money(order.pricing.platformFeeMinor) },
       { label: "Attendee fee", value: money(order.pricing.attendeeFeeMinor) },
@@ -138,5 +240,131 @@ export async function refundOrderAction(_prev: ActionState, formData: FormData):
         value: currency ? formatMoney(refund.amountMinor, currency) : String(refund.amountMinor),
       },
     ],
+  };
+}
+
+export async function createCourseAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const slug = field(formData, "slug").toLowerCase();
+  const name = field(formData, "name");
+  const certificationBody = field(formData, "certificationBody");
+  const durationRaw = field(formData, "durationDays");
+
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return fail("Slug must be lowercase letters, digits and hyphens (e.g. safe-for-teams).");
+  if (!name) return fail("Course name is required.");
+
+  let durationDays: number | undefined;
+  if (durationRaw) {
+    const n = positiveInt(durationRaw);
+    if (n === null) return fail("Duration must be a positive whole number of days.");
+    durationDays = n;
+  }
+
+  const result = await api.createCourse({
+    slug,
+    name,
+    ...(certificationBody ? { certificationBody } : {}),
+    ...(durationDays !== undefined ? { durationDays } : {}),
+  });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath("/courses");
+  return {
+    status: "ok",
+    message: `Created course "${result.data.name}".`,
+    details: [
+      { label: "Course ID", value: result.data.id },
+      { label: "Slug", value: result.data.slug },
+    ],
+  };
+}
+
+export async function createCohortAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  const name = field(formData, "name");
+  const timezone = field(formData, "timezone");
+  const formatRaw = field(formData, "format");
+  const minEnrollmentRaw = field(formData, "minEnrollment");
+  const instructorIds = fields(formData, "instructorIds");
+  const currency = field(formData, "currency").toUpperCase();
+
+  if (!courseId) return fail("Missing course id.");
+  if (!name) return fail("Cohort name is required.");
+  if (!timezone) return fail("Time zone is required.");
+  if (!isValidTimeZone(timezone)) return fail(`"${timezone}" is not a known IANA time zone (e.g. America/Toronto).`);
+  if (!EVENT_FORMATS.includes(formatRaw as EventFormat)) return fail("Pick a cohort format.");
+  const format = formatRaw as EventFormat;
+  if (currency && !CURRENCY_RE.test(currency)) return fail("Currency must be a 3-letter ISO code (e.g. CAD).");
+
+  let minEnrollment: number | undefined;
+  if (minEnrollmentRaw) {
+    const n = positiveInt(minEnrollmentRaw);
+    if (n === null) return fail("Minimum enrollment must be a positive whole number.");
+    minEnrollment = n;
+  }
+
+  // Sessions: rows with no date are skipped; a row with a date needs both times.
+  const sessions: Session[] = [];
+  for (let i = 0; i < MAX_SESSIONS; i++) {
+    const date = field(formData, `session_${i}_date`);
+    const start = field(formData, `session_${i}_start`);
+    const end = field(formData, `session_${i}_end`);
+    const title = field(formData, `session_${i}_title`);
+    if (!date && !start && !end && !title) continue;
+    if (!date) return fail(`Session ${i + 1}: date is required.`);
+    if (!start || !end) return fail(`Session ${i + 1}: start and end times are required.`);
+    const startsAt = zonedTimeToIso(date, start, timezone);
+    const endsAt = zonedTimeToIso(date, end, timezone);
+    if (!startsAt) return fail(`Session ${i + 1}: ${date} ${start} does not exist in ${timezone} (check the date and DST).`);
+    if (!endsAt) return fail(`Session ${i + 1}: ${date} ${end} does not exist in ${timezone} (check the date and DST).`);
+    if (new Date(endsAt).getTime() <= new Date(startsAt).getTime()) return fail(`Session ${i + 1}: end time must be after start time.`);
+    const session: Session = { startsAt, endsAt };
+    if (title) session.title = title;
+    sessions.push(session);
+  }
+  if (sessions.length === 0) return fail("Add at least one session.");
+  sessions.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
+
+  const result = await api.createCohort(courseId, {
+    name,
+    timezone,
+    format,
+    sessions,
+    ...(minEnrollment !== undefined ? { minEnrollment } : {}),
+    ...(instructorIds.length > 0 ? { instructorIds } : {}),
+    ...(currency ? { currency } : {}),
+  });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/events");
+  return {
+    status: "ok",
+    message: `Created cohort "${result.data.name}".`,
+    details: [
+      { label: "Event ID", value: result.data.id },
+      { label: "Status", value: result.data.status },
+      { label: "Sessions", value: String(result.data.sessions.length) },
+      { label: "First session", value: sessions[0]?.startsAt ?? "" },
+    ],
+  };
+}
+
+export async function createPartyAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const name = field(formData, "name");
+  const kindRaw = field(formData, "kind") || "instructor";
+
+  if (!name) return fail("Name is required.");
+  if (!PARTY_KINDS.includes(kindRaw as PartyKind)) return fail("Pick a party kind.");
+  const kind = kindRaw as PartyKind;
+
+  const result = await api.createParty({ name, kind });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath("/instructors");
+  revalidatePath("/courses");
+  return {
+    status: "ok",
+    message: `Created ${kind.replace("_", " ")} "${result.data.name}".`,
+    details: [{ label: "Party ID", value: result.data.id }],
   };
 }

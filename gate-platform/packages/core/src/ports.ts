@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { Course, Event, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
+import type { BillingAddress, CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -39,6 +39,19 @@ export interface PaymentsPort {
     amountMinor: MinorUnits;
     reason: string;
   }): Promise<{ refundRef: string; status: "pending" | "succeeded" | "failed" }>;
+}
+
+/** Tax engine abstraction: flat-rate table in core, Stripe Tax or Avalara as adapters. */
+export interface TaxPort {
+  readonly provider: string;
+  calculate(input: {
+    currency: Currency;
+    amountMinor: MinorUnits;
+    sellerCountry: string;
+    buyer: BillingAddress;
+    /** True for B2B when a valid tax id is present and the seller accepts reverse charge. */
+    businessCustomer: boolean;
+  }): Promise<{ taxMinor: MinorUnits; rateBps: number; jurisdiction: string; reverseCharge: boolean }>;
 }
 
 /** Normalized provider webhook events. Adapters map provider payloads to these. */
@@ -98,6 +111,23 @@ export interface OrderRepo {
   getByIdempotencyKey(organizationId: string, key: string): Promise<Order | undefined>;
   listByOrganization(organizationId: string, limit?: number): Promise<Order[]>;
 }
+export interface CorporateAccountRepo {
+  create(a: CorporateAccount): Promise<void>;
+  update(a: CorporateAccount): Promise<void>;
+  get(id: string): Promise<CorporateAccount | undefined>;
+  getByBillingEmail(organizationId: string, email: string): Promise<CorporateAccount | undefined>;
+  listByOrganization(organizationId: string): Promise<CorporateAccount[]>;
+}
+export interface InvoiceRepo {
+  create(i: Invoice): Promise<void>;
+  update(i: Invoice): Promise<void>;
+  get(id: string): Promise<Invoice | undefined>;
+  getByOrder(orderId: string): Promise<Invoice | undefined>;
+  getByCardPaymentRef(ref: string): Promise<Invoice | undefined>;
+  listByOrganization(organizationId: string, filter?: { status?: Invoice["status"][] | undefined }): Promise<Invoice[]>;
+  /** Atomically allocate the next sequence number for the organization and year. */
+  nextNumber(organizationId: string, year: number): Promise<number>;
+}
 export interface RefundRepo {
   create(r: Refund): Promise<void>;
   update(r: Refund): Promise<void>;
@@ -119,6 +149,8 @@ export interface Repos {
   seats: SeatRepo;
   ticketTypes: TicketTypeRepo;
   orders: OrderRepo;
+  corporateAccounts: CorporateAccountRepo;
+  invoices: InvoiceRepo;
   refunds: RefundRepo;
   processedEvents: ProcessedEventRepo;
 }

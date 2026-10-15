@@ -1,0 +1,212 @@
+import Link from "next/link";
+import { api, EVENT_FORMATS, type Party } from "@/lib/api";
+import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
+import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
+import { ActionForm } from "@/components/action-form";
+import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
+import { createCohortAction } from "@/app/actions";
+
+export const dynamic = "force-dynamic";
+
+export default async function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [courseRes, cohortsRes, partiesRes, orgRes] = await Promise.all([
+    api.getCourse(id),
+    api.listCohorts(id),
+    api.listParties(),
+    api.getOrganization(),
+  ]);
+
+  if (!courseRes.ok) {
+    return (
+      <>
+        <div className="page-header">
+          <h1>Course</h1>
+          <Link href="/courses">← All courses</Link>
+        </div>
+        <ApiNotice failure={courseRes.error} />
+      </>
+    );
+  }
+
+  const course = courseRes.data;
+  const cohorts = cohortsRes.ok ? cohortsRes.data.items : [];
+  const instructors: Party[] = partiesRes.ok ? partiesRes.data.items.filter((p) => p.kind === "instructor") : [];
+  const defaultCurrency = orgRes.ok ? orgRes.data.currency : "USD";
+
+  return (
+    <>
+      <div className="page-header">
+        <h1>{course.name}</h1>
+        <span className="muted">
+          <code>{course.slug}</code>
+          {course.certificationBody ? ` · ${course.certificationBody}` : ""}
+          {course.durationDays !== null ? ` · ${course.durationDays} day${course.durationDays === 1 ? "" : "s"}` : ""}
+          {" · "}
+          <code>{course.id}</code>
+        </span>
+        <Link href="/courses">← All courses</Link>
+      </div>
+      {course.description && <p className="muted">{course.description}</p>}
+
+      <Section title="Cohorts">
+        {!cohortsRes.ok ? (
+          <ApiNotice failure={cohortsRes.error} />
+        ) : cohorts.length === 0 ? (
+          <Empty>No cohorts yet. Add one below.</Empty>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
+                  <th>Format</th>
+                  <th className="num">Sessions</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts.map((c) => (
+                  <tr key={c.id}>
+                    <td>
+                      <Link href={`/events/${encodeURIComponent(c.id)}`}>{c.name}</Link>
+                    </td>
+                    <td>
+                      {formatDateTimeInZone(c.startsAt, c.timezone)}
+                      <br />
+                      <span className="muted">{c.timezone}</span>
+                    </td>
+                    <td>{c.endsAt ? formatDateTimeInZone(c.endsAt, c.timezone) : <span className="muted">—</span>}</td>
+                    <td>{humanize(c.format)}</td>
+                    <td className="num">{c.sessions.length}</td>
+                    <td>
+                      <StatusBadge status={c.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Add cohort">
+        {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
+        <ActionForm action={createCohortAction} submitLabel="Add cohort" pendingLabel="Creating…" wide>
+          <input type="hidden" name="courseId" value={course.id} />
+          <div className="fields">
+            <label>
+              Name
+              <input name="name" required placeholder={`${course.name} — Spring 2027`} />
+            </label>
+            <label>
+              Time zone (IANA)
+              <input name="timezone" required defaultValue={DEFAULT_TIMEZONE} placeholder="America/Toronto" />
+            </label>
+            <label>
+              Format
+              <select name="format" required defaultValue="live_virtual">
+                {EVENT_FORMATS.map((f) => (
+                  <option key={f} value={f}>
+                    {humanize(f)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Minimum enrollment
+              <input name="minEnrollment" type="number" min={1} step={1} placeholder="6" />
+            </label>
+            <label>
+              Currency
+              <input
+                name="currency"
+                required
+                maxLength={3}
+                minLength={3}
+                pattern="[A-Za-z]{3}"
+                defaultValue={defaultCurrency}
+                style={{ textTransform: "uppercase" }}
+              />
+            </label>
+            <label>
+              Instructors
+              {instructors.length === 0 ? (
+                <span className="hint">
+                  No instructors yet. <Link href="/instructors">Add one</Link>.
+                </span>
+              ) : (
+                <select name="instructorIds" multiple size={Math.min(instructors.length, 5)}>
+                  {instructors.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </label>
+          </div>
+
+          <p className="hint">
+            Sessions are entered as local wall-clock times in the cohort&apos;s time zone. Fill in at least the first
+            row; leave unused rows blank.
+          </p>
+          {Array.from({ length: MAX_SESSIONS }, (_, i) => (
+            <fieldset key={i}>
+              <legend>Session {i + 1}</legend>
+              <div className="fields-row">
+                <label>
+                  Date
+                  <input name={`session_${i}_date`} type="date" required={i === 0} />
+                </label>
+                <label>
+                  Start time
+                  <input name={`session_${i}_start`} type="time" required={i === 0} defaultValue={i === 0 ? "09:00" : ""} />
+                </label>
+                <label>
+                  End time
+                  <input name={`session_${i}_end`} type="time" required={i === 0} defaultValue={i === 0 ? "17:00" : ""} />
+                </label>
+                <label>
+                  Title (optional)
+                  <input name={`session_${i}_title`} placeholder={`Day ${i + 1}`} />
+                </label>
+              </div>
+            </fieldset>
+          ))}
+        </ActionForm>
+      </Section>
+
+      {cohorts.length > 0 && (
+        <Section title="Session schedule">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cohort</th>
+                  <th>Session</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts.flatMap((c) =>
+                  c.sessions.map((s, i) => (
+                    <tr key={`${c.id}-${i}`}>
+                      <td>{i === 0 ? <Link href={`/events/${encodeURIComponent(c.id)}`}>{c.name}</Link> : ""}</td>
+                      <td>{s.title ?? `Session ${i + 1}`}</td>
+                      <td>{formatDateTimeInZone(s.startsAt, c.timezone)}</td>
+                      <td>{formatTimeInZone(s.endsAt, c.timezone)}</td>
+                    </tr>
+                  )),
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+      )}
+    </>
+  );
+}

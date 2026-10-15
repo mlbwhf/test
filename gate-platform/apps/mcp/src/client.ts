@@ -33,6 +33,11 @@ export class GateClient {
   }
 
   me() { return this.request<{ id: string; name: string; currency: string }>("GET", "/v1/organizations/me"); }
+  listCourses() { return this.request<{ items: unknown[] }>("GET", "/v1/courses"); }
+  createCourse(input: { slug: string; name: string; certificationBody?: string | undefined; durationDays?: number | undefined }) { return this.request("POST", "/v1/courses", input); }
+  listCohorts(courseId: string) { return this.request<{ items: unknown[] }>("GET", `/v1/courses/${encodeURIComponent(courseId)}/cohorts`); }
+  createCohort(courseId: string, input: Record<string, unknown>) { return this.request("POST", `/v1/courses/${encodeURIComponent(courseId)}/cohorts`, input); }
+  listSeats(eventId: string) { return this.request<{ items: Array<{ attendee: { email: string; name?: string; company?: string }; status: string; orderId: string }> }>("GET", `/v1/seats?eventId=${encodeURIComponent(eventId)}`); }
   listEvents() { return this.request<{ items: unknown[] }>("GET", "/v1/events"); }
   createEvent(input: { name: string; startsAt: string; currency?: string | undefined }) { return this.request("POST", "/v1/events", input); }
   listTicketTypes(eventId: string) { return this.request<{ items: unknown[] }>("GET", `/v1/events/${encodeURIComponent(eventId)}/ticket-types`); }

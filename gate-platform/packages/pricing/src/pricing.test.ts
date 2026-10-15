@@ -47,6 +47,15 @@ describe("priceOrder (USD launch schedule)", () => {
     expect(instantPayoutFee(1_000, "USD")).toBe(50);
     expect(instantPayoutFee(100_000, "USD")).toBe(1_000);
   });
+  it("applies tax on top of subtotal + attendee fee without touching organizer net", () => {
+    const p = priceOrder({ currency: "CAD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", taxRateBps: 1_300 });
+    expect(p.taxMinor).toBe(13_000);
+    expect(p.totalMinor).toBe(113_000);
+    expect(p.organizerNetMinor).toBe(100_000 - 650);
+    const q = priceOrder({ currency: "CAD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", passFeeToAttendee: true, taxMinor: 999 });
+    expect(q.taxMinor).toBe(999);
+    expect(q.totalMinor).toBe(100_650 + 999);
+  });
   it("invariant: total == organizerNet + platformFee, organizerNet >= subtotal - platformFee", () => {
     fc.assert(
       fc.property(
@@ -57,7 +66,7 @@ describe("priceOrder (USD launch schedule)", () => {
         fc.constantFrom("USD", "EUR", "AED"),
         (price, qty, dest, pass, ccy) => {
           const p = priceOrder({ currency: ccy, unitPriceMinor: price, quantity: qty, destination: dest, passFeeToAttendee: pass });
-          expect(p.totalMinor).toBe(p.organizerNetMinor + p.platformFeeMinor);
+          expect(p.totalMinor).toBe(p.organizerNetMinor + p.platformFeeMinor + p.taxMinor);
           expect(p.platformFeeMinor).toBeGreaterThanOrEqual(0);
           expect(p.organizerNetMinor).toBeGreaterThanOrEqual(0);
           if (pass) expect(p.organizerNetMinor).toBe(p.subtotalMinor);

@@ -3,8 +3,10 @@ import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } 
 import { computeSplits, priceOrder, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
-import type { Clock, IdGenerator, PaymentEvent, PaymentsPort, Repos } from "./ports.js";
-import type { Attendee, Course, DeliveryFormat, Event, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, Session, TicketType } from "./types.js";
+import type { CoreHooks, HookFailure } from "./hooks.js";
+import type { Clock, IdGenerator, PaymentEvent, PaymentsPort, Repos, TaxPort } from "./ports.js";
+import { NO_TAX } from "./tax.js";
+import type { Attendee, BillingAddress, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, Session, TicketType } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -12,6 +14,9 @@ export interface CoreDeps {
   payments: PaymentsPort;
   clock?: Clock;
   ids?: IdGenerator;
+  hooks?: CoreHooks[];
+  onHookFailure?: (failure: HookFailure) => void;
+  tax?: TaxPort;
 }
 
 export function hashApiKey(key: string): string {
@@ -27,17 +32,36 @@ export class Core {
   readonly repos: Repos;
   readonly ledger: Ledger;
   readonly payments: PaymentsPort;
+  readonly tax: TaxPort;
   readonly accounts: ChartOfAccounts;
   private readonly clock: Clock;
   private readonly ids: IdGenerator;
+  private readonly hooks: CoreHooks[];
+  private readonly onHookFailure: (failure: HookFailure) => void;
+  readonly hookFailures: HookFailure[] = [];
 
   constructor(deps: CoreDeps) {
     this.repos = deps.repos;
     this.ledger = deps.ledger;
     this.payments = deps.payments;
+    this.tax = deps.tax ?? NO_TAX;
     this.accounts = new ChartOfAccounts(deps.ledger);
     this.clock = deps.clock ?? defaultClock;
     this.ids = deps.ids ?? defaultIds;
+    this.hooks = deps.hooks ?? [];
+    this.onHookFailure = deps.onHookFailure ?? ((f) => { this.hookFailures.push(f); });
+  }
+
+  private async runHooks<K extends keyof CoreHooks>(name: K, orderId: string, run: (hook: NonNullable<CoreHooks[K]>) => Promise<void>): Promise<void> {
+    for (const h of this.hooks) {
+      const fn = h[name];
+      if (!fn) continue;
+      try {
+        await run(fn as NonNullable<CoreHooks[K]>);
+      } catch (err) {
+        this.onHookFailure({ hook: name, orderId, error: (err as Error).message, at: this.clock.now() });
+      }
+    }
   }
 
   // ---------- Organizations ----------
@@ -320,6 +344,8 @@ export class Core {
       currency?: string | undefined;
       /** One per seat, in order. Missing entries default to the buyer. */
       attendees?: Attendee[] | undefined;
+      /** Enables tax calculation; without it tax is not calculated. */
+      billingAddress?: BillingAddress | undefined;
       idempotencyKey?: string | undefined;
       dryRun?: boolean | undefined;
     },
@@ -344,13 +370,7 @@ export class Core {
 
     const currency = input.currency ?? event.currency;
     const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency);
-    const pricing = priceOrder({
-      currency,
-      unitPriceMinor,
-      quantity: input.quantity,
-      destination: org.payoutDestination,
-      passFeeToAttendee: org.passFeeToAttendee,
-    });
+    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
 
@@ -364,6 +384,8 @@ export class Core {
       attendees,
       currency,
       status: "pending",
+      paymentMethod: "card",
+      ...(input.billingAddress ? { billingAddress: input.billingAddress } : {}),
       pricing,
       splits,
       transferRefs: {},
@@ -430,6 +452,12 @@ export class Core {
     if (!fresh) return { handled: false, reason: "duplicate" };
     switch (event.type) {
       case "payment.succeeded": {
+        const invoice = await this.repos.invoices.getByCardPaymentRef(event.paymentRef);
+        if (invoice) {
+          if (invoice.status === "paid" || invoice.status === "void") return { handled: false, reason: `invoice is ${invoice.status}` };
+          await this.recordInvoicePayment(invoice.organizationId, { invoiceId: invoice.id, amountMinor: event.amountMinor, method: "card", reference: event.paymentRef, viaCardRef: event.paymentRef });
+          return { handled: true };
+        }
         const order = await this.repos.orders.getByPaymentRef(event.paymentRef);
         if (!order) return { handled: false, reason: "unknown payment" };
         if (order.status !== "pending") return { handled: false, reason: `order is ${order.status}` };
@@ -440,6 +468,12 @@ export class Core {
         return { handled: true };
       }
       case "payment.failed": {
+        const invoice = await this.repos.invoices.getByCardPaymentRef(event.paymentRef);
+        if (invoice) {
+          const { cardPaymentRef: _drop, ...rest } = invoice;
+          await this.repos.invoices.update(rest as Invoice);
+          return { handled: true };
+        }
         const order = await this.repos.orders.getByPaymentRef(event.paymentRef);
         if (!order || order.status !== "pending") return { handled: false, reason: "no pending order" };
         await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
@@ -464,14 +498,19 @@ export class Core {
     }
   }
 
-  private async markPaid(order: Order): Promise<void> {
+  /**
+   * Settle a paid order into the ledger. `cash` describes where the money
+   * sits: the card processor's clearing account by default, or a mix of bank
+   * clearing and previously held customer deposits for invoice payments.
+   */
+  private async markPaid(order: Order, cash?: Posting[]): Promise<void> {
     const ccy = order.currency;
     const org = await this.getOrganization(order.organizationId);
     const clearing = await this.accounts.clearing(ccy);
     const fees = await this.accounts.feeRevenue(ccy);
     const orgPayable = await this.accounts.orgPayable(org.id, ccy);
 
-    const postings: Posting[] = [{ accountId: clearing.id, amount: order.pricing.totalMinor }];
+    const postings: Posting[] = cash ?? [{ accountId: clearing.id, amount: order.pricing.totalMinor }];
     if (order.splits.organizerMinor > 0) postings.push({ accountId: orgPayable.id, amount: -order.splits.organizerMinor });
     for (const line of order.splits.lines) {
       if (line.amountMinor === 0) continue;
@@ -479,6 +518,7 @@ export class Core {
       postings.push({ accountId: acct.id, amount: -line.amountMinor });
     }
     if (order.pricing.platformFeeMinor > 0) postings.push({ accountId: fees.id, amount: -order.pricing.platformFeeMinor });
+    if (order.pricing.taxMinor > 0) postings.push({ accountId: (await this.accounts.taxPayable(org.id, ccy)).id, amount: -order.pricing.taxMinor });
 
     if (order.pricing.totalMinor > 0) {
       await this.ledger.post({
@@ -491,8 +531,9 @@ export class Core {
     }
 
     // Separate charges and transfers: move each party's share to its connected account.
+    // Invoice cash lives in the platform bank account, so it pays out through payouts (sprint 6), not transfers.
     const transferRefs: Record<string, string> = { ...order.transferRefs };
-    if (order.paymentRef && order.pricing.totalMinor > 0) {
+    if (order.paymentRef && order.pricing.totalMinor > 0 && order.paymentMethod === "card") {
       const targets: Array<{ key: string; accountRef: string | undefined; amount: number }> = [
         { key: org.id, accountRef: org.paymentsAccountRef, amount: order.splits.organizerMinor },
       ];
@@ -516,8 +557,16 @@ export class Core {
 
     await this.repos.orders.update({ ...order, status: "paid", paidAt: this.clock.now(), transferRefs });
 
-    // One confirmed seat per learner.
-    if ((await this.repos.seats.listByOrder(order.id)).length === 0) {
+    // One confirmed seat per learner (invoice orders reserved them at creation).
+    const seats: Seat[] = await this.repos.seats.listByOrder(order.id);
+    for (const [i, seat] of seats.entries()) {
+      if (seat.status === "reserved") {
+        const confirmed: Seat = { ...seat, status: "confirmed", confirmedAt: this.clock.now() };
+        await this.repos.seats.update(confirmed);
+        seats[i] = confirmed;
+      }
+    }
+    if (seats.length === 0) {
       for (const attendee of order.attendees) {
         const seat: Seat = {
           id: this.ids.next("seat"),
@@ -531,7 +580,16 @@ export class Core {
           confirmedAt: this.clock.now(),
         };
         await this.repos.seats.create(seat);
+        seats.push(seat);
       }
+    }
+
+    const paidOrder = (await this.repos.orders.get(order.id)) ?? order;
+    const event = await this.repos.events.get(order.eventId);
+    const ticketType = await this.repos.ticketTypes.get(order.ticketTypeId);
+    if (event && ticketType) {
+      const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+      await this.runHooks("orderPaid", order.id, (hook) => hook({ organization: org, order: paidOrder, event, course, ticketType, seats }));
     }
   }
 
@@ -571,7 +629,8 @@ export class Core {
     };
     await this.repos.refunds.create(refund);
 
-    if (!order.paymentRef || order.paymentRef.startsWith("free_")) {
+    if (!order.paymentRef || order.paymentRef.startsWith("free_") || order.paymentMethod === "invoice") {
+      // Free or invoice-paid: the organizer returns the money by bank transfer; the ledger records it now.
       await this.settleRefund(refund);
       return (await this.repos.refunds.get(refund.id)) ?? refund;
     }
@@ -606,10 +665,11 @@ export class Core {
       }
       const fees = await this.accounts.feeRevenue(ccy);
       buckets.push({ accountId: fees.id, paid: order.pricing.platformFeeMinor });
+      if (order.pricing.taxMinor > 0) buckets.push({ accountId: (await this.accounts.taxPayable(order.organizationId, ccy)).id, paid: order.pricing.taxMinor });
 
       const shares = allocate(refund.amountMinor, buckets.map((b) => b.paid));
-      const clearing = await this.accounts.clearing(ccy);
-      const postings: Posting[] = [{ accountId: clearing.id, amount: -refund.amountMinor }];
+      const cashAccount = order.paymentMethod === "invoice" ? await this.accounts.bankClearing(ccy) : await this.accounts.clearing(ccy);
+      const postings: Posting[] = [{ accountId: cashAccount.id, amount: -refund.amountMinor }];
       buckets.forEach((b, i) => {
         const amt = shares[i] ?? 0;
         if (amt !== 0) postings.push({ accountId: b.accountId, amount: amt });
@@ -633,6 +693,261 @@ export class Core {
       }
       await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
     }
+    const settled = (await this.repos.refunds.get(refund.id)) ?? refund;
+    const event = await this.repos.events.get(order.eventId);
+    if (event) {
+      const org = await this.getOrganization(order.organizationId);
+      const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+      const latest = (await this.repos.orders.get(order.id)) ?? order;
+      await this.runHooks("orderRefunded", order.id, (hook) => hook({ organization: org, order: latest, refund: settled, fully, event, course }));
+    }
+  }
+
+  // ---------- Tax ----------
+
+  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean }) {
+    const base = priceOrder({ currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee });
+    if (!input.billingAddress) return base;
+    const taxable = base.subtotalMinor + base.attendeeFeeMinor;
+    const tax = await this.tax.calculate({ currency: input.currency, amountMinor: taxable, sellerCountry: input.org.country, buyer: input.billingAddress, businessCustomer: input.businessCustomer });
+    return priceOrder({ currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, taxMinor: tax.taxMinor });
+  }
+
+  // ---------- Corporate accounts & invoices ----------
+
+  async createCorporateAccount(organizationId: string, input: { name: string; billingEmail: string; address: BillingAddress; poRequired?: boolean | undefined; netTermsDays?: number | undefined; currency?: string | undefined }): Promise<CorporateAccount> {
+    const org = await this.getOrganization(organizationId);
+    if (!input.name.trim()) throw new DomainError("VALIDATION", "name is required");
+    if (!isEmail(input.billingEmail)) throw new DomainError("VALIDATION", "billingEmail is invalid");
+    if (!/^[A-Z]{2}$/.test(input.address.country)) throw new DomainError("VALIDATION", "address.country must be ISO 3166-1 alpha-2");
+    const netTermsDays = input.netTermsDays ?? 30;
+    if (!Number.isSafeInteger(netTermsDays) || netTermsDays < 0 || netTermsDays > 180) throw new DomainError("VALIDATION", "netTermsDays must be between 0 and 180");
+    const currency = input.currency ?? org.currency;
+    assertCurrency(currency);
+    const account: CorporateAccount = {
+      id: this.ids.next("corp"), organizationId, name: input.name.trim(), billingEmail: input.billingEmail.toLowerCase(), address: input.address,
+      poRequired: input.poRequired ?? false, netTermsDays, currency, createdAt: this.clock.now(),
+    };
+    await this.repos.corporateAccounts.create(account);
+    return account;
+  }
+
+  async getCorporateAccount(organizationId: string, id: string): Promise<CorporateAccount> {
+    const a = await this.repos.corporateAccounts.get(id);
+    if (!a || a.organizationId !== organizationId) throw notFound("corporateAccount", id);
+    return a;
+  }
+
+  listCorporateAccounts(organizationId: string): Promise<CorporateAccount[]> {
+    return this.repos.corporateAccounts.listByOrganization(organizationId);
+  }
+
+  /**
+   * Quote-to-invoice in one step: seats are held, an invoice is issued with
+   * the account's net terms, and the order settles when the invoice is paid
+   * (bank transfer recorded by the organizer, or card against the invoice).
+   */
+  async createInvoiceOrder(
+    organizationId: string,
+    input: {
+      corporateAccountId: string;
+      ticketTypeId: string;
+      quantity: number;
+      attendees?: Attendee[] | undefined;
+      poNumber?: string | undefined;
+      currency?: string | undefined;
+      dueDays?: number | undefined;
+      idempotencyKey?: string | undefined;
+      dryRun?: boolean | undefined;
+    },
+  ): Promise<{ order: Order; invoice: Invoice; created: boolean }> {
+    const org = await this.getOrganization(organizationId);
+    const account = await this.getCorporateAccount(organizationId, input.corporateAccountId);
+    if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || input.quantity > 500) throw new DomainError("VALIDATION", "quantity must be an integer between 1 and 500");
+    if (account.poRequired && !input.poNumber?.trim()) throw new DomainError("VALIDATION", `${account.name} requires a PO number`, "ask the buyer for their purchase order number");
+    if (input.attendees && input.attendees.length > input.quantity) throw new DomainError("VALIDATION", "more attendees than seats");
+    for (const a of input.attendees ?? []) if (!isEmail(a.email)) throw new DomainError("VALIDATION", `attendee email ${a.email} is invalid`);
+
+    if (input.idempotencyKey) {
+      const prior = await this.repos.orders.getByIdempotencyKey(organizationId, input.idempotencyKey);
+      if (prior) {
+        const inv = await this.repos.invoices.getByOrder(prior.id);
+        if (inv) return { order: prior, invoice: inv, created: false };
+      }
+    }
+
+    const ticketType = await this.repos.ticketTypes.get(input.ticketTypeId);
+    if (!ticketType || ticketType.organizationId !== organizationId) throw notFound("ticketType", input.ticketTypeId);
+    const event = await this.getEvent(organizationId, ticketType.eventId);
+    if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
+
+    const currency = input.currency ?? account.currency;
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency);
+    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: account.address, businessCustomer: true });
+    const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
+    const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: account.billingEmail, company: account.name });
+    const now = this.clock.now();
+    const dueDays = input.dueDays ?? account.netTermsDays;
+    const dueAt = new Date(now.getTime() + dueDays * 86_400_000);
+
+    const order: Order = {
+      id: this.ids.next("ord"), organizationId, eventId: event.id, ticketTypeId: ticketType.id, quantity: input.quantity,
+      buyerEmail: account.billingEmail, attendees, currency, status: "pending", paymentMethod: "invoice", corporateAccountId: account.id,
+      billingAddress: account.address, pricing, splits, transferRefs: {}, refundedMinor: 0,
+      ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}), createdAt: now,
+    };
+    const invoiceId = this.ids.next("inv");
+    const invoice: Invoice = {
+      id: invoiceId, organizationId, orderId: order.id, corporateAccountId: account.id,
+      number: "", ...(input.poNumber?.trim() ? { poNumber: input.poNumber.trim() } : {}), currency,
+      subtotalMinor: pricing.subtotalMinor + pricing.attendeeFeeMinor, taxMinor: pricing.taxMinor, totalMinor: pricing.totalMinor, paidMinor: 0,
+      status: "issued", issuedAt: now, dueAt, payments: [], createdAt: now,
+    };
+    if (input.dryRun) return { order, invoice, created: false };
+
+    const reserved = await this.repos.ticketTypes.reserve(ticketType.id, input.quantity);
+    if (!reserved) throw new DomainError("SOLD_OUT", `only ${ticketType.quantity - ticketType.sold} left`, "lower the quantity");
+    order.paymentRef = `inv_${invoiceId}`;
+    try {
+      await this.repos.orders.create(order);
+      const seq = await this.repos.invoices.nextNumber(organizationId, now.getUTCFullYear());
+      invoice.number = `INV-${now.getUTCFullYear()}-${String(seq).padStart(4, "0")}`;
+      await this.repos.invoices.create(invoice);
+      for (const attendee of attendees) {
+        await this.repos.seats.create({ id: this.ids.next("seat"), organizationId, orderId: order.id, eventId: event.id, ticketTypeId: ticketType.id, attendee, status: "reserved", createdAt: now });
+      }
+    } catch (err) {
+      await this.repos.ticketTypes.release(ticketType.id, input.quantity);
+      throw err;
+    }
+    if (pricing.totalMinor === 0) await this.recordInvoicePayment(organizationId, { invoiceId, amountMinor: 0, method: "other", reference: "free" });
+    const finalInvoice = (await this.repos.invoices.get(invoiceId)) ?? invoice;
+    await this.runHooks("invoiceIssued", order.id, (hook) => hook({ organization: org, order, invoice: finalInvoice, account, event }));
+    return { order: (await this.repos.orders.get(order.id)) ?? order, invoice: finalInvoice, created: true };
+  }
+
+  async getInvoice(organizationId: string, invoiceId: string): Promise<Invoice> {
+    const i = await this.repos.invoices.get(invoiceId);
+    if (!i || i.organizationId !== organizationId) throw notFound("invoice", invoiceId);
+    return i;
+  }
+
+  listInvoices(organizationId: string, filter?: { status?: Invoice["status"][] | undefined }): Promise<Invoice[]> {
+    return this.repos.invoices.listByOrganization(organizationId, filter);
+  }
+
+  /** Cash against an invoice. Partial payments are held as customer deposits; the last one settles the order. */
+  async recordInvoicePayment(
+    organizationId: string,
+    input: { invoiceId: string; amountMinor: MinorUnits; method: InvoicePaymentMethod; reference?: string | undefined; receivedAt?: Date | undefined; viaCardRef?: string | undefined },
+  ): Promise<Invoice> {
+    const invoice = await this.getInvoice(organizationId, input.invoiceId);
+    if (invoice.status === "paid" || invoice.status === "void") throw new DomainError("INVALID_STATE", `invoice is ${invoice.status}`);
+    if (!Number.isSafeInteger(input.amountMinor) || input.amountMinor < 0) throw new DomainError("VALIDATION", "amountMinor must be a non-negative integer");
+    const outstanding = invoice.totalMinor - invoice.paidMinor;
+    if (input.amountMinor > outstanding) throw new DomainError("VALIDATION", `amount exceeds outstanding ${outstanding}`, "record the overpayment separately");
+    const order = await this.repos.orders.get(invoice.orderId);
+    if (!order) throw notFound("order", invoice.orderId);
+    const ccy = invoice.currency;
+    const receivedAt = input.receivedAt ?? this.clock.now();
+    const payment = { id: this.ids.next("ip"), amountMinor: input.amountMinor, method: input.method, ...(input.reference ? { reference: input.reference } : {}), receivedAt };
+    const paidMinor = invoice.paidMinor + input.amountMinor;
+    const complete = paidMinor >= invoice.totalMinor;
+    const cashAccount = input.method === "card" ? await this.accounts.clearing(ccy) : await this.accounts.bankClearing(ccy);
+
+    if (!complete) {
+      if (input.amountMinor > 0) {
+        const deposits = await this.accounts.customerDeposits(ccy);
+        await this.ledger.post({
+          idempotencyKey: `invoice:${invoice.id}:payment:${payment.id}`, currency: ccy, description: `Partial payment on ${invoice.number}`,
+          postings: [{ accountId: cashAccount.id, amount: input.amountMinor }, { accountId: deposits.id, amount: -input.amountMinor }],
+          metadata: { invoiceId: invoice.id, orderId: order.id, organizationId },
+        });
+      }
+      const { cardPaymentRef: _drop, ...rest } = invoice;
+      const updated: Invoice = { ...(rest as Invoice), paidMinor, status: "partially_paid", payments: [...invoice.payments, payment] };
+      await this.repos.invoices.update(updated);
+      return updated;
+    }
+
+    // Final payment: release held deposits and settle the order with the full cash picture.
+    const cash: Posting[] = [];
+    if (input.amountMinor > 0) cash.push({ accountId: cashAccount.id, amount: input.amountMinor });
+    if (invoice.paidMinor > 0) cash.push({ accountId: (await this.accounts.customerDeposits(ccy)).id, amount: invoice.paidMinor });
+    const { cardPaymentRef: _drop2, ...rest2 } = invoice;
+    const settled: Invoice = { ...(rest2 as Invoice), paidMinor, status: "paid", payments: [...invoice.payments, payment] };
+    await this.repos.invoices.update(settled);
+    if (order.status === "pending") await this.markPaid(order, cash.length ? cash : undefined);
+    return settled;
+  }
+
+  /** Let the buyer pay an open invoice by card: returns a client secret for the outstanding amount. */
+  async createInvoiceCardPayment(organizationId: string, invoiceId: string): Promise<{ invoice: Invoice; clientSecret: string | null; paymentRef: string }> {
+    const invoice = await this.getInvoice(organizationId, invoiceId);
+    if (invoice.status === "paid" || invoice.status === "void") throw new DomainError("INVALID_STATE", `invoice is ${invoice.status}`);
+    const order = await this.repos.orders.get(invoice.orderId);
+    if (!order) throw notFound("order", invoice.orderId);
+    const outstanding = invoice.totalMinor - invoice.paidMinor;
+    const p = await this.payments.createPayment({
+      orderId: `${order.id}:${invoice.id}:${invoice.payments.length}`, amountMinor: outstanding, currency: invoice.currency, transferGroup: order.id, buyerEmail: order.buyerEmail,
+      metadata: { orderId: order.id, invoiceId: invoice.id, organizationId },
+    });
+    const updated: Invoice = { ...invoice, cardPaymentRef: p.paymentRef };
+    await this.repos.invoices.update(updated);
+    return { invoice: updated, clientSecret: p.clientSecret, paymentRef: p.paymentRef };
+  }
+
+  async voidInvoice(organizationId: string, invoiceId: string, reason: string): Promise<Invoice> {
+    const invoice = await this.getInvoice(organizationId, invoiceId);
+    if (invoice.status === "paid") throw new DomainError("INVALID_STATE", "paid invoices are refunded, not voided");
+    if (invoice.status === "void") return invoice;
+    if (invoice.paidMinor > 0) throw new DomainError("INVALID_STATE", "invoice has partial payments; refund them first");
+    const order = await this.repos.orders.get(invoice.orderId);
+    if (order && order.status === "pending") {
+      await this.repos.orders.update({ ...order, status: "cancelled" });
+      await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
+      for (const seat of await this.repos.seats.listByOrder(order.id)) await this.repos.seats.update({ ...seat, status: "cancelled" });
+    }
+    const voided: Invoice = { ...invoice, status: "void" };
+    await this.repos.invoices.update(voided);
+    void reason;
+    return voided;
+  }
+
+  /** Receivables ageing as of a date: what corporate buyers still owe, bucketed by days past due. */
+  async receivablesAgeing(organizationId: string, asOf = this.clock.now()) {
+    const open = await this.repos.invoices.listByOrganization(organizationId, { status: ["issued", "partially_paid"] });
+    const buckets = { current: 0, d1_30: 0, d31_60: 0, d61_90: 0, d90_plus: 0 } as Record<"current" | "d1_30" | "d31_60" | "d61_90" | "d90_plus", number>;
+    const byCurrency: Record<string, typeof buckets> = {};
+    const items = open.map((i) => {
+      const outstanding = i.totalMinor - i.paidMinor;
+      const daysPastDue = Math.floor((asOf.getTime() - i.dueAt.getTime()) / 86_400_000);
+      const bucket = daysPastDue <= 0 ? "current" : daysPastDue <= 30 ? "d1_30" : daysPastDue <= 60 ? "d31_60" : daysPastDue <= 90 ? "d61_90" : "d90_plus";
+      byCurrency[i.currency] ??= { ...buckets };
+      byCurrency[i.currency]![bucket] += outstanding;
+      return { invoiceId: i.id, number: i.number, corporateAccountId: i.corporateAccountId, currency: i.currency, outstandingMinor: outstanding, dueAt: i.dueAt, daysPastDue: Math.max(0, daysPastDue), bucket };
+    });
+    return { asOf, byCurrency, items };
+  }
+
+  // ---------- Public (buyer-facing) reads ----------
+
+  /** Order status for the buyer who placed it: id + buyer email act as the credential. */
+  async publicOrder(orderId: string, buyerEmail: string): Promise<Order> {
+    const o = await this.repos.orders.get(orderId);
+    if (!o || o.buyerEmail.toLowerCase() !== buyerEmail.trim().toLowerCase()) throw notFound("order", orderId);
+    return o;
+  }
+
+  /** Everything needed to render a seat's calendar or ticket; seat ids are unguessable. */
+  async publicSeat(seatId: string): Promise<{ seat: Seat; event: Event; course?: Course | undefined; organization: Organization }> {
+    const seat = await this.repos.seats.get(seatId);
+    if (!seat) throw notFound("seat", seatId);
+    const event = await this.repos.events.get(seat.eventId);
+    if (!event) throw notFound("event", seat.eventId);
+    const organization = await this.getOrganization(seat.organizationId);
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    return { seat, event, course, organization };
   }
 
   // ---------- Reporting ----------

@@ -45,6 +45,13 @@ describe("MCP tools", () => {
     await expect(tool("list_ticket_types").run(client, { eventId: "nope" })).rejects.toMatchObject({ status: 404, code: "NOT_FOUND" });
   });
 
+  it("get_roster returns confirmed learners and a CSV", async () => {
+    const { client } = fakeApi({ "GET /v1/seats?eventId=evt_1": () => ({ json: { items: [{ attendee: { email: "a@b.co", name: "Ada \"L\"" }, status: "confirmed", orderId: "o1" }, { attendee: { email: "x@b.co" }, status: "cancelled", orderId: "o2" }] } }) });
+    const r = (await tool("get_roster").run(client, { eventId: "evt_1" })) as { count: number; csv: string };
+    expect(r.count).toBe(1);
+    expect(r.csv.split("\n")[1]).toBe('"Ada ""L""","a@b.co","","o1"');
+  });
+
   it("every tool has a description and a zod input shape", () => {
     for (const t of tools) {
       expect(t.description.length).toBeGreaterThan(20);

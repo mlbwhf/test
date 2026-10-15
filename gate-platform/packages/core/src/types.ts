@@ -118,7 +118,33 @@ export interface Seat {
   confirmedAt?: Date;
 }
 
-export type OrderStatus = "pending" | "paid" | "refunded" | "partially_refunded" | "failed";
+export interface BillingAddress {
+  /** ISO 3166-1 alpha-2. */
+  country: string;
+  /** Province / state code, e.g. "ON", "CA". */
+  region?: string | undefined;
+  postalCode?: string | undefined;
+  city?: string | undefined;
+  line1?: string | undefined;
+  /** VAT / GST / TRN number; enables B2B reverse charge where applicable. */
+  taxId?: string | undefined;
+}
+
+export interface CorporateAccount {
+  id: string;
+  organizationId: string;
+  name: string;
+  billingEmail: string;
+  address: BillingAddress;
+  /** Buyers that require a purchase order number on every invoice. */
+  poRequired: boolean;
+  netTermsDays: number;
+  currency: Currency;
+  createdAt: Date;
+}
+
+export type PaymentMethod = "card" | "invoice";
+export type OrderStatus = "pending" | "paid" | "refunded" | "partially_refunded" | "failed" | "cancelled";
 export interface Order {
   id: string;
   organizationId: string;
@@ -129,6 +155,9 @@ export interface Order {
   attendees: Attendee[];
   currency: Currency;
   status: OrderStatus;
+  paymentMethod: PaymentMethod;
+  corporateAccountId?: string;
+  billingAddress?: BillingAddress;
   pricing: Pricing;
   splits: SplitResult;
   paymentRef?: string;
@@ -137,6 +166,38 @@ export interface Order {
   idempotencyKey?: string;
   createdAt: Date;
   paidAt?: Date;
+}
+
+export type InvoiceStatus = "issued" | "partially_paid" | "paid" | "void";
+export type InvoicePaymentMethod = "bank_transfer" | "wire" | "ach" | "card" | "cheque" | "other";
+export interface InvoicePayment {
+  id: string;
+  amountMinor: MinorUnits;
+  method: InvoicePaymentMethod;
+  reference?: string | undefined;
+  receivedAt: Date;
+}
+/** A B2B invoice for one order. Cash is recognised in the ledger as it arrives. */
+export interface Invoice {
+  id: string;
+  organizationId: string;
+  orderId: string;
+  corporateAccountId?: string;
+  /** Human number, sequential per organization: INV-2026-0001. */
+  number: string;
+  poNumber?: string;
+  currency: Currency;
+  subtotalMinor: MinorUnits;
+  taxMinor: MinorUnits;
+  totalMinor: MinorUnits;
+  paidMinor: MinorUnits;
+  status: InvoiceStatus;
+  issuedAt: Date;
+  dueAt: Date;
+  payments: InvoicePayment[];
+  /** Card payment attempt in flight (provider ref), if any. */
+  cardPaymentRef?: string;
+  createdAt: Date;
 }
 
 export type RefundStatus = "pending" | "succeeded" | "failed";

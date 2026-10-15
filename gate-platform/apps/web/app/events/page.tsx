@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTimeInZone, humanize } from "@/lib/format";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import { createEventAction } from "@/app/actions";
@@ -31,6 +31,7 @@ export default async function EventsPage() {
                 <tr>
                   <th>Name</th>
                   <th>Starts</th>
+                  <th>Format</th>
                   <th>Currency</th>
                   <th>Status</th>
                 </tr>
@@ -41,7 +42,8 @@ export default async function EventsPage() {
                     <td>
                       <Link href={`/events/${encodeURIComponent(e.id)}`}>{e.name}</Link>
                     </td>
-                    <td>{formatDateTime(e.startsAt)}</td>
+                    <td>{formatDateTimeInZone(e.startsAt, e.timezone)}</td>
+                    <td>{humanize(e.format)}</td>
                     <td>{e.currency}</td>
                     <td>
                       <StatusBadge status={e.status} />

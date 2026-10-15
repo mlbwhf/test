@@ -6,3 +6,7 @@ export * from "./fake-payments.js";
 export * from "./accounts.js";
 export * from "./services.js";
 export * from "./jsonld.js";
+export * from "./hooks.js";
+export * from "./ics.js";
+export * from "./notifications.js";
+export * from "./tax.js";

@@ -34,7 +34,8 @@ export interface LedgerDeps {
 const CREDIT_NORMAL: ReadonlySet<AccountType> = new Set(["liability", "equity", "revenue"]);
 
 export function naturalBalance(type: AccountType, signed: MinorUnits): MinorUnits {
-  return CREDIT_NORMAL.has(type) ? -signed : signed;
+  const v = CREDIT_NORMAL.has(type) ? -signed : signed;
+  return v === 0 ? 0 : v; // normalise -0
 }
 
 /** Stable fingerprint so idempotent replays with different bodies are rejected. */

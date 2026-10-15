@@ -9,6 +9,10 @@ export interface PricingInput {
   channel?: Channel;
   /** When true the fee is added on top and paid by the attendee. */
   passFeeToAttendee?: boolean;
+  /** Tax already calculated by a tax engine, in minor units. Wins over taxRateBps. */
+  taxMinor?: MinorUnits | undefined;
+  /** Flat tax rate to apply to subtotal + attendee fee (e.g. 1300 for 13% HST). */
+  taxRateBps?: number | undefined;
   schedules?: Partial<Record<string, FeeSchedule>>;
 }
 
@@ -22,7 +26,9 @@ export interface Pricing {
   platformFeeMinor: MinorUnits;
   /** Portion of the platform fee charged to the attendee (0 or == platformFeeMinor). */
   attendeeFeeMinor: MinorUnits;
-  /** What the card is charged. */
+  /** Sales tax / VAT / GST collected on behalf of the organizer (0 when not calculated). */
+  taxMinor: MinorUnits;
+  /** What the buyer pays: subtotal + attendee fee + tax. */
   totalMinor: MinorUnits;
   /** What the organizer side (organizer + venue + vendors) receives before splits. */
   organizerNetMinor: MinorUnits;
@@ -53,8 +59,12 @@ export function priceOrder(input: PricingInput): Pricing {
   const subtotal = input.unitPriceMinor * input.quantity;
   const platformFee = perTicketFee * input.quantity;
   const attendeeFee = input.passFeeToAttendee ? platformFee : 0;
-  const total = subtotal + attendeeFee;
-  const organizerNet = total - platformFee;
+  const taxable = subtotal + attendeeFee;
+  const tax = input.taxMinor ?? (input.taxRateBps !== undefined ? bps(taxable, input.taxRateBps) : 0);
+  assertMinorUnits(tax, "taxMinor");
+  if (tax < 0) throw new Error("taxMinor must be >= 0");
+  const total = taxable + tax;
+  const organizerNet = taxable - platformFee;
 
   return {
     currency: input.currency,
@@ -63,6 +73,7 @@ export function priceOrder(input: PricingInput): Pricing {
     subtotalMinor: subtotal,
     platformFeeMinor: platformFee,
     attendeeFeeMinor: attendeeFee,
+    taxMinor: tax,
     totalMinor: total,
     organizerNetMinor: organizerNet,
     perTicketFeeMinor: perTicketFee,
