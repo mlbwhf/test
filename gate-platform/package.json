@@ -1,0 +1,24 @@
+{
+  "name": "gate-platform",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "dev:api": "pnpm --filter @gate/api dev",
+    "dev:web": "pnpm --filter @gate/web dev",
+    "dev:mcp": "pnpm --filter @gate/mcp dev",
+    "db:migrate": "pnpm --filter @gate/db migrate"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.8",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0",
+    "tsx": "^4.23.0",
+    "@types/node": "^22.19.0"
+  }
+}

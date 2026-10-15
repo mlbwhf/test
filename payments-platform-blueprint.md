@@ -196,3 +196,9 @@ Changes to the build order:
 - Stripe platform agreements under both the Delaware and Lithuanian entities.
 - Bank of Lithuania pre-application around month 9 once live volume exists; expect 6-12 months, ~EUR 350k regulatory capital plus comparable setup cost.
 - One law firm covering US, EU and UAE to confirm Phase 1 posture and handle transfer pricing and UAE corporate tax.
+
+---
+
+## 8. Build status
+
+Code lives in `gate-platform/` (pnpm + Turborepo monorepo, TypeScript). Built and verified so far: ledger, pricing and split engine, core domain with checkout/settlement/refunds, Stripe Connect adapter, Postgres schema with database-enforced ledger invariants, AI gateway with bring-your-own-LLM, REST API with OpenAPI and idempotency, MCP server with approval-gated money actions, and the Next.js organizer dashboard. See `gate-platform/README.md` for how to run it and what is next.

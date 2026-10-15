@@ -1,0 +1,32 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: gate, POSTGRES_PASSWORD: gate, POSTGRES_DB: gate }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gate" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://gate:gate@localhost:5432/gate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - name: PAN guard (no card-number-shaped strings in source or fixtures)
+        run: |
+          if grep -rEn --include='*.ts' --include='*.tsx' --include='*.json' --include='*.sql' -v 'node_modules' . \
+             | grep -E '\b(4[0-9]{12}([0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})\b' \
+             | grep -v 'pan-guard-allow'; then
+            echo 'Card-number-shaped string found'; exit 1; fi
