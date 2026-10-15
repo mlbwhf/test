@@ -4,7 +4,8 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DomainError, FakePaymentsAdapter, type Organization } from "@gate/core";
+import { Core, DomainError, FakePaymentsAdapter, courseJsonLd, type Organization } from "@gate/core";
+import rateLimit from "@fastify/rate-limit";
 import { AiGatewayError, type AiGateway, Copilot } from "@gate/ai-gateway";
 import type { IdempotencyStore } from "@gate/db";
 import type { StripePaymentsAdapter } from "@gate/payments-stripe";
@@ -24,6 +25,8 @@ export interface AppDeps {
   adminKey?: string;
   env?: "development" | "test" | "production";
   logger?: boolean;
+  /** Public URL of the organizer-facing pages, used in JSON-LD. */
+  publicPageUrl?: (orgId: string, courseSlug: string) => string;
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
@@ -90,6 +93,59 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     });
   });
 
+  // ---------- public catalogue + checkout (no api key; rate limited) ----------
+  await app.register(async (pubRaw) => {
+    const pub = pubRaw.withTypeProvider<ZodTypeProvider>();
+    await pub.register(rateLimit, { max: 120, timeWindow: "1 minute" });
+    const OrgCourseParams = z.object({ orgId: z.string(), slug: z.string() });
+
+    pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
+      const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
+      return {
+        organization: res.organization,
+        course: S.toCourse(res.course),
+        cohorts: res.cohorts.map((c) => ({ event: S.toEvent(c.event), ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
+      };
+    });
+
+    pub.get("/public/v1/organizations/:orgId/courses/:slug/jsonld", { schema: { tags: ["public"], security: [], params: OrgCourseParams, querystring: z.object({ pageUrl: z.string().url().optional() }), response: { 200: z.record(z.string(), z.unknown()), 404: S.ErrorSchema } } }, async (req, reply) => {
+      const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
+      const pageUrl = req.query.pageUrl ?? deps.publicPageUrl?.(req.params.orgId, req.params.slug) ?? `urn:gate:course:${res.course.id}`;
+      const doc = courseJsonLd({
+        organization: res.organization, course: res.course, pageUrl,
+        cohorts: res.cohorts.map((c) => {
+          const cheapest = c.ticketTypes.map((t) => ({ p: t.prices[c.event.currency], r: t.remaining })).filter((x): x is { p: number; r: number } => x.p !== undefined).sort((a, b) => a.p - b.p)[0];
+          return { event: c.event, priceMinor: cheapest?.p, currency: c.event.currency, remaining: c.ticketTypes.reduce((a, t) => a + t.remaining, 0) };
+        }),
+      });
+      return reply.header("content-type", "application/ld+json; charset=utf-8").send(doc);
+    });
+
+    pub.post("/public/v1/organizations/:orgId/orders", {
+      schema: {
+        tags: ["public"], security: [], params: z.object({ orgId: z.string() }), body: S.CreateOrderBody,
+        response: { 201: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 200: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 409: S.ErrorSchema },
+      },
+    }, async (req, reply) => {
+      const idem = req.headers["idempotency-key"];
+      const dryRun = req.body.dryRun === true;
+      const res = await deps.core.createOrder(req.params.orgId, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
+      // Buyers never see split or transfer internals.
+      const order = S.toOrder(res.order);
+      return reply.code(res.created ? 201 : 200).send({ order: { ...order, splits: { organizerMinor: 0, lines: [] }, transferRefs: {} }, clientSecret: res.clientSecret, dryRun });
+    });
+
+    if (env !== "production" && deps.core.payments instanceof FakePaymentsAdapter) {
+      const fake = deps.core.payments;
+      pub.post("/public/v1/dev/payments/:paymentRef/succeed", { schema: { tags: ["dev"], security: [], params: z.object({ paymentRef: z.string() }), response: { 200: z.object({ handled: z.boolean(), reason: z.string().optional() }) } } }, async (req) => {
+        const order = await deps.core.repos.orders.getByPaymentRef(req.params.paymentRef);
+        if (!order) throw new DomainError("NOT_FOUND", `payment ${req.params.paymentRef} not found`);
+        const r = await deps.core.handlePaymentEvent(fake.succeed(order.paymentRef!, order.pricing.totalMinor, order.currency));
+        return { handled: r.handled, ...(r.reason ? { reason: r.reason } : {}) };
+      });
+    }
+  });
+
   // ---------- authenticated tenant API ----------
   await app.register(async (apiRaw) => {
     const api = apiRaw.withTypeProvider<ZodTypeProvider>();
@@ -110,14 +166,28 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     api.get("/v1/parties", { schema: { tags: ["parties"], response: { 200: z.object({ items: z.array(S.PartySchema) }) } } }, async (req) => ({ items: (await deps.core.listParties(org(req).id)).map(S.toParty) }));
     api.post("/v1/parties", { schema: { tags: ["parties"], body: S.CreatePartyBody, response: { 201: S.PartySchema } } }, async (req, reply) => reply.code(201).send(S.toParty(await deps.core.createParty(org(req).id, req.body))));
 
+    api.get("/v1/courses", { schema: { tags: ["courses"], response: { 200: z.object({ items: z.array(S.CourseSchema) }) } } }, async (req) => ({ items: (await deps.core.listCourses(org(req).id)).map(S.toCourse) }));
+    api.post("/v1/courses", { schema: { tags: ["courses"], body: S.CreateCourseBody, response: { 201: S.CourseSchema, 409: S.ErrorSchema } } }, async (req, reply) => reply.code(201).send(S.toCourse(await deps.core.createCourse(org(req).id, req.body))));
+    api.get("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: S.CourseSchema, 404: S.ErrorSchema } } }, async (req) => S.toCourse(await deps.core.getCourse(org(req).id, req.params.id)));
+    api.get("/v1/courses/:id/cohorts", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listCohorts(org(req).id, req.params.id)).map(S.toEvent) }));
+    api.post("/v1/courses/:id/cohorts", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.CreateEventBody.omit({ courseId: true }), response: { 201: S.EventSchema } } }, async (req, reply) => {
+      const { startsAt, sessions, ...rest } = req.body;
+      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, courseId: req.params.id, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
+    });
+
     api.get("/v1/events", { schema: { tags: ["events"], response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listEvents(org(req).id)).map(S.toEvent) }));
     api.post("/v1/events", { schema: { tags: ["events"], body: S.CreateEventBody, response: { 201: S.EventSchema } } }, async (req, reply) => {
-      const { startsAt, ...rest } = req.body;
-      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, startsAt: new Date(startsAt) })));
+      const { startsAt, sessions, ...rest } = req.body;
+      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
     });
     api.get("/v1/events/:id", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: S.EventSchema, 404: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.getEvent(org(req).id, req.params.id)));
-    api.get("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.TicketTypeSchema) }) } } }, async (req) => ({ items: await deps.core.listTicketTypes(org(req).id, req.params.id) }));
-    api.post("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: S.CreateTicketTypeBody, response: { 201: S.TicketTypeSchema } } }, async (req, reply) => reply.code(201).send(await deps.core.createTicketType(org(req).id, req.params.id, req.body)));
+    api.get("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.TicketTypeSchema) }) } } }, async (req) => ({ items: (await deps.core.listTicketTypes(org(req).id, req.params.id)).map(S.toTicketType) }));
+    api.post("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: S.CreateTicketTypeBody, response: { 201: S.TicketTypeSchema } } }, async (req, reply) => {
+      const { earlyBird, ...rest } = req.body;
+      const t = await deps.core.createTicketType(org(req).id, req.params.id, { ...rest, earlyBird: earlyBird ? { until: new Date(earlyBird.until), priceMinor: earlyBird.priceMinor, ...(earlyBird.prices ? { prices: earlyBird.prices } : {}) } : undefined });
+      return reply.code(201).send(S.toTicketType(t));
+    });
+    api.get("/v1/seats", { schema: { tags: ["seats"], querystring: z.object({ eventId: z.string().optional(), orderId: z.string().optional() }), response: { 200: z.object({ items: z.array(S.SeatSchema) }) } } }, async (req) => ({ items: (await deps.core.listSeats(org(req).id, req.query)).map(S.toSeat) }));
 
     api.get("/v1/orders", { schema: { tags: ["orders"], querystring: z.object({ limit: z.coerce.number().int().min(1).max(500).optional() }), response: { 200: z.object({ items: z.array(S.OrderSchema) }) } } }, async (req) => ({ items: (await deps.core.listOrders(org(req).id, req.query.limit)).map(S.toOrder) }));
     api.get("/v1/orders/:id", { schema: { tags: ["orders"], params: z.object({ id: z.string() }), response: { 200: S.OrderSchema, 404: S.ErrorSchema } } }, async (req) => S.toOrder(await deps.core.getOrder(org(req).id, req.params.id)));

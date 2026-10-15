@@ -4,7 +4,7 @@ import { computeSplits, priceOrder, type PayoutDestination, type SplitRule } fro
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { Clock, IdGenerator, PaymentEvent, PaymentsPort, Repos } from "./ports.js";
-import type { Event, Order, Organization, Party, PartyKind, Refund, TicketType } from "./types.js";
+import type { Attendee, Course, DeliveryFormat, Event, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, Session, TicketType } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -117,14 +117,87 @@ export class Core {
     return this.repos.parties.listByOrganization(organizationId);
   }
 
-  // ---------- Events & tickets ----------
+  // ---------- Courses ----------
 
-  async createEvent(organizationId: string, input: { name: string; startsAt: Date; currency?: string | undefined; splitRules?: SplitRule[] | undefined }): Promise<Event> {
+  async createCourse(organizationId: string, input: { slug: string; name: string; description?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined }): Promise<Course> {
+    await this.getOrganization(organizationId);
+    const slug = input.slug.trim().toLowerCase();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new DomainError("VALIDATION", "slug must be lowercase letters, digits and hyphens");
+    if (!input.name.trim()) throw new DomainError("VALIDATION", "name is required");
+    if (await this.repos.courses.getBySlug(organizationId, slug)) throw new DomainError("CONFLICT", `course slug ${slug} already exists`);
+    if (input.durationDays !== undefined && (!Number.isSafeInteger(input.durationDays) || input.durationDays <= 0)) throw new DomainError("VALIDATION", "durationDays must be a positive integer");
+    const course: Course = {
+      id: this.ids.next("crs"),
+      organizationId,
+      slug,
+      name: input.name.trim(),
+      ...(input.description ? { description: input.description } : {}),
+      ...(input.certificationBody ? { certificationBody: input.certificationBody } : {}),
+      ...(input.durationDays !== undefined ? { durationDays: input.durationDays } : {}),
+      createdAt: this.clock.now(),
+    };
+    await this.repos.courses.create(course);
+    return course;
+  }
+
+  async getCourse(organizationId: string, courseId: string): Promise<Course> {
+    const c = await this.repos.courses.get(courseId);
+    if (!c || c.organizationId !== organizationId) throw notFound("course", courseId);
+    return c;
+  }
+
+  async getCourseBySlug(organizationId: string, slug: string): Promise<Course> {
+    const c = await this.repos.courses.getBySlug(organizationId, slug);
+    if (!c) throw notFound("course", slug);
+    return c;
+  }
+
+  listCourses(organizationId: string): Promise<Course[]> {
+    return this.repos.courses.listByOrganization(organizationId);
+  }
+
+  async listCohorts(organizationId: string, courseId: string): Promise<Event[]> {
+    await this.getCourse(organizationId, courseId);
+    return this.repos.events.listByCourse(courseId);
+  }
+
+  // ---------- Events (cohorts) & tickets ----------
+
+  async createEvent(
+    organizationId: string,
+    input: {
+      name: string;
+      startsAt?: Date | undefined;
+      currency?: string | undefined;
+      splitRules?: SplitRule[] | undefined;
+      courseId?: string | undefined;
+      timezone?: string | undefined;
+      format?: DeliveryFormat | undefined;
+      sessions?: Session[] | undefined;
+      instructorIds?: string[] | undefined;
+      minEnrollment?: number | undefined;
+    },
+  ): Promise<Event> {
     const org = await this.getOrganization(organizationId);
     const currency = input.currency ?? org.currency;
     assertCurrency(currency);
     if (!input.name.trim()) throw new DomainError("VALIDATION", "name is required");
-    if (Number.isNaN(input.startsAt.getTime())) throw new DomainError("VALIDATION", "startsAt must be a valid date");
+    const sessions = [...(input.sessions ?? [])].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+    for (const s of sessions) {
+      if (Number.isNaN(s.startsAt.getTime()) || Number.isNaN(s.endsAt.getTime())) throw new DomainError("VALIDATION", "session dates must be valid");
+      if (s.endsAt <= s.startsAt) throw new DomainError("VALIDATION", "session endsAt must be after startsAt");
+    }
+    const startsAt = input.startsAt ?? sessions[0]?.startsAt;
+    if (!startsAt || Number.isNaN(startsAt.getTime())) throw new DomainError("VALIDATION", "startsAt or at least one session is required");
+    const endsAt = sessions.length ? sessions[sessions.length - 1]!.endsAt : undefined;
+    const timezone = input.timezone ?? "UTC";
+    if (!isValidTimeZone(timezone)) throw new DomainError("VALIDATION", `unknown time zone ${timezone}`);
+    if (input.courseId) await this.getCourse(organizationId, input.courseId);
+    if (input.minEnrollment !== undefined && (!Number.isSafeInteger(input.minEnrollment) || input.minEnrollment < 0)) throw new DomainError("VALIDATION", "minEnrollment must be a non-negative integer");
+    for (const id of input.instructorIds ?? []) {
+      const party = await this.repos.parties.get(id);
+      if (!party || party.organizationId !== organizationId || party.kind !== "instructor") throw new DomainError("VALIDATION", `unknown instructor ${id}`);
+    }
     if (input.splitRules) {
       for (const r of input.splitRules) {
         const party = await this.repos.parties.get(r.partyId);
@@ -134,8 +207,15 @@ export class Core {
     const event: Event = {
       id: this.ids.next("evt"),
       organizationId,
+      ...(input.courseId ? { courseId: input.courseId } : {}),
       name: input.name.trim(),
-      startsAt: input.startsAt,
+      startsAt,
+      ...(endsAt ? { endsAt } : {}),
+      timezone,
+      format: input.format ?? "live_virtual",
+      sessions,
+      instructorIds: input.instructorIds ?? [],
+      ...(input.minEnrollment !== undefined ? { minEnrollment: input.minEnrollment } : {}),
       currency,
       status: "live",
       ...(input.splitRules ? { splitRules: input.splitRules } : {}),
@@ -155,13 +235,72 @@ export class Core {
     return this.repos.events.listByOrganization(organizationId);
   }
 
-  async createTicketType(organizationId: string, eventId: string, input: { name: string; priceMinor: MinorUnits; quantity: number }): Promise<TicketType> {
+  async createTicketType(
+    organizationId: string,
+    eventId: string,
+    input: { name: string; priceMinor: MinorUnits; quantity: number; prices?: Record<string, MinorUnits> | undefined; earlyBird?: PriceTier | undefined },
+  ): Promise<TicketType> {
     await this.getEvent(organizationId, eventId);
     if (!Number.isSafeInteger(input.priceMinor) || input.priceMinor < 0) throw new DomainError("VALIDATION", "priceMinor must be a non-negative integer");
     if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0) throw new DomainError("VALIDATION", "quantity must be a positive integer");
-    const t: TicketType = { id: this.ids.next("tt"), eventId, organizationId, name: input.name, priceMinor: input.priceMinor, quantity: input.quantity, sold: 0 };
+    const prices = validatePriceList(input.prices);
+    const earlyBird = input.earlyBird
+      ? { until: input.earlyBird.until, priceMinor: input.earlyBird.priceMinor, ...(validatePriceList(input.earlyBird.prices) ? { prices: validatePriceList(input.earlyBird.prices)! } : {}) }
+      : undefined;
+    if (earlyBird) {
+      if (Number.isNaN(earlyBird.until.getTime())) throw new DomainError("VALIDATION", "earlyBird.until must be a valid date");
+      if (!Number.isSafeInteger(earlyBird.priceMinor) || earlyBird.priceMinor < 0) throw new DomainError("VALIDATION", "earlyBird.priceMinor must be a non-negative integer");
+    }
+    const t: TicketType = {
+      id: this.ids.next("tt"), eventId, organizationId, name: input.name, priceMinor: input.priceMinor,
+      ...(prices ? { prices } : {}), ...(earlyBird ? { earlyBird } : {}), quantity: input.quantity, sold: 0,
+    };
     await this.repos.ticketTypes.create(t);
     return t;
+  }
+
+  /**
+   * The unit price a buyer pays right now in a currency: early-bird tier while
+   * its window is open, else the list price. Base currency always resolves;
+   * other currencies only when the ticket lists them (no silent FX).
+   */
+  resolveUnitPrice(ticketType: TicketType, event: Event, currency: string, now = this.clock.now()): MinorUnits {
+    assertCurrency(currency);
+    const pick = (base: MinorUnits, prices?: Record<string, MinorUnits>): MinorUnits | undefined => {
+      if (currency === event.currency) return prices?.[currency] ?? base;
+      return prices?.[currency];
+    };
+    let price: MinorUnits | undefined;
+    if (ticketType.earlyBird && now < ticketType.earlyBird.until) price = pick(ticketType.earlyBird.priceMinor, ticketType.earlyBird.prices);
+    if (price === undefined) price = pick(ticketType.priceMinor, ticketType.prices);
+    if (price === undefined) {
+      throw new DomainError("VALIDATION", `ticket ${ticketType.id} is not sold in ${currency}`, `available: ${[event.currency, ...Object.keys(ticketType.prices ?? {})].join(", ")}`);
+    }
+    return price;
+  }
+
+  /** Public catalogue view of a course: cohorts with resolved prices per currency. */
+  async publicCourse(organizationId: string, slug: string) {
+    const org = await this.getOrganization(organizationId);
+    const course = await this.getCourseBySlug(organizationId, slug);
+    const now = this.clock.now();
+    const cohorts = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
+    const out = [];
+    for (const event of cohorts) {
+      const ticketTypes = await this.repos.ticketTypes.listByEvent(event.id);
+      out.push({
+        event,
+        ticketTypes: ticketTypes.map((t) => {
+          const currencies = [event.currency, ...Object.keys(t.prices ?? {}), ...Object.keys(t.earlyBird?.prices ?? {})];
+          const prices: Record<string, MinorUnits> = {};
+          for (const c of new Set(currencies)) {
+            try { prices[c] = this.resolveUnitPrice(t, event, c, now); } catch { /* not sold in c */ }
+          }
+          return { id: t.id, name: t.name, remaining: t.quantity - t.sold, prices, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
+        }),
+      });
+    }
+    return { organization: { id: org.id, name: org.name, country: org.country, currency: org.currency }, course, cohorts: out };
   }
 
   async listTicketTypes(organizationId: string, eventId: string): Promise<TicketType[]> {
@@ -173,13 +312,25 @@ export class Core {
 
   async createOrder(
     organizationId: string,
-    input: { ticketTypeId: string; quantity: number; buyerEmail: string; idempotencyKey?: string | undefined; dryRun?: boolean | undefined },
+    input: {
+      ticketTypeId: string;
+      quantity: number;
+      buyerEmail: string;
+      /** Currency the buyer pays in; defaults to the cohort's base currency. */
+      currency?: string | undefined;
+      /** One per seat, in order. Missing entries default to the buyer. */
+      attendees?: Attendee[] | undefined;
+      idempotencyKey?: string | undefined;
+      dryRun?: boolean | undefined;
+    },
   ): Promise<{ order: Order; clientSecret: string | null; created: boolean }> {
     const org = await this.getOrganization(organizationId);
     if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || input.quantity > 100) {
       throw new DomainError("VALIDATION", "quantity must be an integer between 1 and 100");
     }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.buyerEmail)) throw new DomainError("VALIDATION", "buyerEmail is invalid");
+    if (!isEmail(input.buyerEmail)) throw new DomainError("VALIDATION", "buyerEmail is invalid");
+    if (input.attendees && input.attendees.length > input.quantity) throw new DomainError("VALIDATION", "more attendees than seats");
+    for (const a of input.attendees ?? []) if (!isEmail(a.email)) throw new DomainError("VALIDATION", `attendee email ${a.email} is invalid`);
 
     if (input.idempotencyKey) {
       const prior = await this.repos.orders.getByIdempotencyKey(organizationId, input.idempotencyKey);
@@ -191,14 +342,17 @@ export class Core {
     const event = await this.getEvent(organizationId, ticketType.eventId);
     if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
 
+    const currency = input.currency ?? event.currency;
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency);
     const pricing = priceOrder({
-      currency: event.currency,
-      unitPriceMinor: ticketType.priceMinor,
+      currency,
+      unitPriceMinor,
       quantity: input.quantity,
       destination: org.payoutDestination,
       passFeeToAttendee: org.passFeeToAttendee,
     });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
+    const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
 
     const order: Order = {
       id: this.ids.next("ord"),
@@ -207,7 +361,8 @@ export class Core {
       ticketTypeId: ticketType.id,
       quantity: input.quantity,
       buyerEmail: input.buyerEmail,
-      currency: event.currency,
+      attendees,
+      currency,
       status: "pending",
       pricing,
       splits,
@@ -360,6 +515,36 @@ export class Core {
     }
 
     await this.repos.orders.update({ ...order, status: "paid", paidAt: this.clock.now(), transferRefs });
+
+    // One confirmed seat per learner.
+    if ((await this.repos.seats.listByOrder(order.id)).length === 0) {
+      for (const attendee of order.attendees) {
+        const seat: Seat = {
+          id: this.ids.next("seat"),
+          organizationId: order.organizationId,
+          orderId: order.id,
+          eventId: order.eventId,
+          ticketTypeId: order.ticketTypeId,
+          attendee,
+          status: "confirmed",
+          createdAt: this.clock.now(),
+          confirmedAt: this.clock.now(),
+        };
+        await this.repos.seats.create(seat);
+      }
+    }
+  }
+
+  async listSeats(organizationId: string, filter: { eventId?: string | undefined; orderId?: string | undefined }): Promise<Seat[]> {
+    if (filter.orderId) {
+      await this.getOrder(organizationId, filter.orderId);
+      return this.repos.seats.listByOrder(filter.orderId);
+    }
+    if (filter.eventId) {
+      await this.getEvent(organizationId, filter.eventId);
+      return this.repos.seats.listByEvent(filter.eventId);
+    }
+    throw new DomainError("VALIDATION", "eventId or orderId is required");
   }
 
   // ---------- Refunds ----------
@@ -439,8 +624,15 @@ export class Core {
     }
 
     const refunded = order.refundedMinor + refund.amountMinor;
-    await this.repos.orders.update({ ...order, refundedMinor: refunded, status: refunded >= total ? "refunded" : "partially_refunded" });
+    const fully = refunded >= total;
+    await this.repos.orders.update({ ...order, refundedMinor: refunded, status: fully ? "refunded" : "partially_refunded" });
     await this.repos.refunds.update({ ...refund, status: "succeeded" });
+    if (fully) {
+      for (const seat of await this.repos.seats.listByOrder(order.id)) {
+        if (seat.status === "confirmed" || seat.status === "reserved") await this.repos.seats.update({ ...seat, status: "cancelled" });
+      }
+      await this.repos.ticketTypes.release(order.ticketTypeId, order.quantity);
+    }
   }
 
   // ---------- Reporting ----------
@@ -456,4 +648,28 @@ export class Core {
     const all = await this.ledger.balances({ tenantId: "platform" });
     return all.map((b) => ({ code: b.account.code, name: b.account.name, type: b.account.type, currency: b.currency, balanceMinor: b.natural }));
   }
+}
+
+function isEmail(v: string): boolean {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+}
+
+function isValidTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validatePriceList(prices: Record<string, MinorUnits> | undefined): Record<string, MinorUnits> | undefined {
+  if (!prices) return undefined;
+  const out: Record<string, MinorUnits> = {};
+  for (const [ccy, amount] of Object.entries(prices)) {
+    assertCurrency(ccy, `price list currency ${ccy}`);
+    if (!Number.isSafeInteger(amount) || amount < 0) throw new DomainError("VALIDATION", `price for ${ccy} must be a non-negative integer`);
+    out[ccy] = amount;
+  }
+  return Object.keys(out).length ? out : undefined;
 }

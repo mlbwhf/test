@@ -1,5 +1,5 @@
 import type {
-  Event, EventRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, TicketType, TicketTypeRepo,
+  Course, CourseRepo, Event, EventRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, TicketType, TicketTypeRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -24,12 +24,34 @@ function toParty(r: Row): Party {
   const ref = opt<string>(r.payments_account_ref);
   return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), kind: r.kind as Party["kind"], ...(ref ? { paymentsAccountRef: ref } : {}), createdAt: date(r.created_at) };
 }
+function toCourse(r: Row): Course {
+  const description = opt<string>(r.description), body = opt<string>(r.certification_body), days = opt<number>(r.duration_days);
+  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), createdAt: date(r.created_at) };
+}
 function toEvent(r: Row): Event {
   const rules = opt<Event["splitRules"]>(r.split_rules);
-  return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), startsAt: date(r.starts_at), currency: str(r.currency), status: r.status as Event["status"], ...(rules ? { splitRules: rules } : {}), createdAt: date(r.created_at) };
+  const courseId = opt<string>(r.course_id), endsAt = opt<Date>(r.ends_at), minEnrollment = opt<number>(r.min_enrollment);
+  const sessions = ((r.sessions as Array<{ startsAt: string; endsAt: string; title?: string }>) ?? []).map((s) => ({ startsAt: new Date(s.startsAt), endsAt: new Date(s.endsAt), ...(s.title ? { title: s.title } : {}) }));
+  return {
+    id: str(r.id), organizationId: str(r.organization_id), ...(courseId ? { courseId } : {}), name: str(r.name), startsAt: date(r.starts_at), ...(endsAt ? { endsAt } : {}),
+    timezone: str(r.timezone), format: r.format as Event["format"], sessions, instructorIds: (r.instructor_ids as string[]) ?? [],
+    ...(minEnrollment !== undefined ? { minEnrollment: num(minEnrollment) } : {}),
+    currency: str(r.currency), status: r.status as Event["status"], ...(rules ? { splitRules: rules } : {}), createdAt: date(r.created_at),
+  };
 }
 function toTicketType(r: Row): TicketType {
-  return { id: str(r.id), eventId: str(r.event_id), organizationId: str(r.organization_id), name: str(r.name), priceMinor: num(r.price_minor), quantity: num(r.quantity), sold: num(r.sold) };
+  const prices = opt<Record<string, number>>(r.prices);
+  const eb = opt<{ until: string; priceMinor: number; prices?: Record<string, number> }>(r.early_bird);
+  return {
+    id: str(r.id), eventId: str(r.event_id), organizationId: str(r.organization_id), name: str(r.name), priceMinor: num(r.price_minor),
+    ...(prices ? { prices } : {}),
+    ...(eb ? { earlyBird: { until: new Date(eb.until), priceMinor: eb.priceMinor, ...(eb.prices ? { prices: eb.prices } : {}) } } : {}),
+    quantity: num(r.quantity), sold: num(r.sold),
+  };
+}
+function toSeat(r: Row): Seat {
+  const confirmedAt = opt<Date>(r.confirmed_at);
+  return { id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), eventId: str(r.event_id), ticketTypeId: str(r.ticket_type_id), attendee: r.attendee as Seat["attendee"], status: r.status as Seat["status"], createdAt: date(r.created_at), ...(confirmedAt ? { confirmedAt } : {}) };
 }
 function toOrder(r: Row): Order {
   const paymentRef = opt<string>(r.payment_ref);
@@ -37,7 +59,7 @@ function toOrder(r: Row): Order {
   const paidAt = opt<Date>(r.paid_at);
   return {
     id: str(r.id), organizationId: str(r.organization_id), eventId: str(r.event_id), ticketTypeId: str(r.ticket_type_id),
-    quantity: num(r.quantity), buyerEmail: str(r.buyer_email), currency: str(r.currency), status: r.status as Order["status"],
+    quantity: num(r.quantity), buyerEmail: str(r.buyer_email), attendees: (r.attendees as Order["attendees"]) ?? [], currency: str(r.currency), status: r.status as Order["status"],
     pricing: r.pricing as Order["pricing"], splits: r.splits as Order["splits"],
     ...(paymentRef ? { paymentRef } : {}),
     transferRefs: (r.transfer_refs as Record<string, string>) ?? {},
@@ -76,16 +98,45 @@ class PgParties implements PartyRepo {
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM parties WHERE id=$1`, [id]); return r.rows[0] ? toParty(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM parties WHERE organization_id=$1 ORDER BY created_at`, [orgId]); return r.rows.map(toParty); }
 }
+class PgCourses implements CourseRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt]); }
+  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null]); }
+  async get(id: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE id=$1`, [id]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
+  async getBySlug(orgId: string, slug: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 AND slug=$2`, [orgId, slug]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
+  async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCourse); }
+}
+const sessionsJson = (e: Event) => JSON.stringify(e.sessions.map((s) => ({ startsAt: s.startsAt.toISOString(), endsAt: s.endsAt.toISOString(), ...(s.title ? { title: s.title } : {}) })));
 class PgEvents implements EventRepo {
   constructor(private readonly pool: Pool) {}
-  async create(e: Event) { await this.pool.query(`INSERT INTO events (id, organization_id, name, starts_at, currency, status, split_rules, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [e.id, e.organizationId, e.name, e.startsAt, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null, e.createdAt]); }
-  async update(e: Event) { await this.pool.query(`UPDATE events SET name=$2, starts_at=$3, currency=$4, status=$5, split_rules=$6 WHERE id=$1`, [e.id, e.name, e.startsAt, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null]); }
+  async create(e: Event) {
+    await this.pool.query(
+      `INSERT INTO events (id, organization_id, course_id, name, starts_at, ends_at, timezone, format, sessions, instructor_ids, min_enrollment, currency, status, split_rules, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+      [e.id, e.organizationId, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null, e.createdAt],
+    );
+  }
+  async update(e: Event) {
+    await this.pool.query(
+      `UPDATE events SET course_id=$2, name=$3, starts_at=$4, ends_at=$5, timezone=$6, format=$7, sessions=$8, instructor_ids=$9, min_enrollment=$10, currency=$11, status=$12, split_rules=$13 WHERE id=$1`,
+      [e.id, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null],
+    );
+  }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM events WHERE id=$1`, [id]); return r.rows[0] ? toEvent(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM events WHERE organization_id=$1 ORDER BY starts_at`, [orgId]); return r.rows.map(toEvent); }
+  async listByCourse(courseId: string) { const r = await this.pool.query(`SELECT * FROM events WHERE course_id=$1 ORDER BY starts_at`, [courseId]); return r.rows.map(toEvent); }
 }
+class PgSeats implements SeatRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(s: Seat) { await this.pool.query(`INSERT INTO seats (id, organization_id, order_id, event_id, ticket_type_id, attendee, status, created_at, confirmed_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [s.id, s.organizationId, s.orderId, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.createdAt, s.confirmedAt ?? null]); }
+  async update(s: Seat) { await this.pool.query(`UPDATE seats SET event_id=$2, ticket_type_id=$3, attendee=$4, status=$5, confirmed_at=$6 WHERE id=$1`, [s.id, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.confirmedAt ?? null]); }
+  async get(id: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE id=$1`, [id]); return r.rows[0] ? toSeat(r.rows[0]) : undefined; }
+  async listByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE order_id=$1 ORDER BY created_at`, [orderId]); return r.rows.map(toSeat); }
+  async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE event_id=$1 ORDER BY created_at`, [eventId]); return r.rows.map(toSeat); }
+}
+const earlyBirdJson = (t: TicketType) => t.earlyBird ? JSON.stringify({ until: t.earlyBird.until.toISOString(), priceMinor: t.earlyBird.priceMinor, ...(t.earlyBird.prices ? { prices: t.earlyBird.prices } : {}) }) : null;
 class PgTicketTypes implements TicketTypeRepo {
   constructor(private readonly pool: Pool) {}
-  async create(t: TicketType) { await this.pool.query(`INSERT INTO ticket_types (id, event_id, organization_id, name, price_minor, quantity, sold) VALUES ($1,$2,$3,$4,$5,$6,$7)`, [t.id, t.eventId, t.organizationId, t.name, t.priceMinor, t.quantity, t.sold]); }
+  async create(t: TicketType) { await this.pool.query(`INSERT INTO ticket_types (id, event_id, organization_id, name, price_minor, prices, early_bird, quantity, sold) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [t.id, t.eventId, t.organizationId, t.name, t.priceMinor, t.prices ? JSON.stringify(t.prices) : null, earlyBirdJson(t), t.quantity, t.sold]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM ticket_types WHERE id=$1`, [id]); return r.rows[0] ? toTicketType(r.rows[0]) : undefined; }
   async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM ticket_types WHERE event_id=$1 ORDER BY price_minor, name`, [eventId]); return r.rows.map(toTicketType); }
   async reserve(id: string, qty: number) {
@@ -98,9 +149,9 @@ class PgOrders implements OrderRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Order) {
     await this.pool.query(
-      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
-      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null],
+      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null],
     );
   }
   async update(o: Order) {
@@ -134,7 +185,9 @@ export function createPgRepos(pool: Pool): Repos {
   return {
     organizations: new PgOrganizations(pool),
     parties: new PgParties(pool),
+    courses: new PgCourses(pool),
     events: new PgEvents(pool),
+    seats: new PgSeats(pool),
     ticketTypes: new PgTicketTypes(pool),
     orders: new PgOrders(pool),
     refunds: new PgRefunds(pool),

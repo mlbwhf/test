@@ -17,7 +17,7 @@ export interface Organization {
   createdAt: Date;
 }
 
-export type PartyKind = "venue" | "vendor" | "promoter" | "tax_reserve";
+export type PartyKind = "venue" | "vendor" | "promoter" | "tax_reserve" | "instructor";
 export interface Party {
   id: string;
   organizationId: string;
@@ -27,16 +27,61 @@ export interface Party {
   createdAt: Date;
 }
 
-export type EventStatus = "draft" | "live" | "ended";
+/** A course is the evergreen, canonical thing a provider teaches. Cohorts are its dated instances. */
+export interface Course {
+  id: string;
+  organizationId: string;
+  /** URL-safe, unique per organization, e.g. "leading-safe". */
+  slug: string;
+  name: string;
+  description?: string;
+  /** e.g. "Scaled Agile", "Scrum.org", "PMI". Drives roster export formats later. */
+  certificationBody?: string;
+  durationDays?: number;
+  createdAt: Date;
+}
+
+export type DeliveryFormat = "live_virtual" | "in_person" | "hybrid" | "self_paced";
+
+export interface Session {
+  startsAt: Date;
+  endsAt: Date;
+  title?: string;
+}
+
+export type EventStatus = "draft" | "live" | "ended" | "cancelled";
+/**
+ * An Event is a sellable dated thing. When `courseId` is set it is a cohort
+ * of that course (schema.org CourseInstance). Sessions carry the day-by-day
+ * schedule in the cohort's time zone.
+ */
 export interface Event {
   id: string;
   organizationId: string;
+  courseId?: string;
   name: string;
   startsAt: Date;
+  endsAt?: Date;
+  /** IANA time zone, e.g. "America/Toronto". */
+  timezone: string;
+  format: DeliveryFormat;
+  sessions: Session[];
+  /** Parties of kind "instructor" teaching this cohort. */
+  instructorIds: string[];
+  /** Below this, the cohort is at risk of cancellation (sprint 6 uses it). */
+  minEnrollment?: number;
   currency: Currency;
   status: EventStatus;
   splitRules?: SplitRule[];
   createdAt: Date;
+}
+
+/** Early-bird window: until `until`, the tier price applies. */
+export interface PriceTier {
+  until: Date;
+  priceMinor: MinorUnits;
+  /** Regional prices for the tier; falls back to priceMinor in the event currency. */
+  prices?: Record<string, MinorUnits>;
 }
 
 export interface TicketType {
@@ -44,9 +89,33 @@ export interface TicketType {
   eventId: string;
   organizationId: string;
   name: string;
+  /** Price in the event's base currency. */
   priceMinor: MinorUnits;
+  /** Regional price list: currency -> minor units. Buyers pay in a listed currency or the base currency. */
+  prices?: Record<string, MinorUnits>;
+  earlyBird?: PriceTier;
   quantity: number;
   sold: number;
+}
+
+export interface Attendee {
+  email: string;
+  name?: string | undefined;
+  company?: string | undefined;
+}
+
+export type SeatStatus = "reserved" | "confirmed" | "cancelled" | "transferred";
+/** One learner in one cohort. The unit that gets rostered, transferred, certified. */
+export interface Seat {
+  id: string;
+  organizationId: string;
+  orderId: string;
+  eventId: string;
+  ticketTypeId: string;
+  attendee: Attendee;
+  status: SeatStatus;
+  createdAt: Date;
+  confirmedAt?: Date;
 }
 
 export type OrderStatus = "pending" | "paid" | "refunded" | "partially_refunded" | "failed";
@@ -57,6 +126,7 @@ export interface Order {
   ticketTypeId: string;
   quantity: number;
   buyerEmail: string;
+  attendees: Attendee[];
   currency: Currency;
   status: OrderStatus;
   pricing: Pricing;

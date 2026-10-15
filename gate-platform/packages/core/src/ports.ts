@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { Event, Order, Organization, Party, Refund, TicketType } from "./types.js";
+import type { Course, Event, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -61,11 +61,26 @@ export interface PartyRepo {
   get(id: string): Promise<Party | undefined>;
   listByOrganization(organizationId: string): Promise<Party[]>;
 }
+export interface CourseRepo {
+  create(c: Course): Promise<void>;
+  update(c: Course): Promise<void>;
+  get(id: string): Promise<Course | undefined>;
+  getBySlug(organizationId: string, slug: string): Promise<Course | undefined>;
+  listByOrganization(organizationId: string): Promise<Course[]>;
+}
 export interface EventRepo {
   create(e: Event): Promise<void>;
   update(e: Event): Promise<void>;
   get(id: string): Promise<Event | undefined>;
   listByOrganization(organizationId: string): Promise<Event[]>;
+  listByCourse(courseId: string): Promise<Event[]>;
+}
+export interface SeatRepo {
+  create(s: Seat): Promise<void>;
+  update(s: Seat): Promise<void>;
+  get(id: string): Promise<Seat | undefined>;
+  listByOrder(orderId: string): Promise<Seat[]>;
+  listByEvent(eventId: string): Promise<Seat[]>;
 }
 export interface TicketTypeRepo {
   create(t: TicketType): Promise<void>;
@@ -99,7 +114,9 @@ export interface ProcessedEventRepo {
 export interface Repos {
   organizations: OrganizationRepo;
   parties: PartyRepo;
+  courses: CourseRepo;
   events: EventRepo;
+  seats: SeatRepo;
   ticketTypes: TicketTypeRepo;
   orders: OrderRepo;
   refunds: RefundRepo;

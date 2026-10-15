@@ -1,7 +1,7 @@
 import type {
-  EventRepo, OrderRepo, OrganizationRepo, PartyRepo, ProcessedEventRepo, RefundRepo, Repos, TicketTypeRepo,
+  CourseRepo, EventRepo, OrderRepo, OrganizationRepo, PartyRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, TicketTypeRepo,
 } from "./ports.js";
-import type { Event, Order, Organization, Party, Refund, TicketType } from "./types.js";
+import type { Course, Event, Order, Organization, Party, Refund, Seat, TicketType } from "./types.js";
 
 class MemOrganizations implements OrganizationRepo {
   private readonly byId = new Map<string, Organization>();
@@ -17,12 +17,29 @@ class MemParties implements PartyRepo {
   async get(id: string) { const p = this.byId.get(id); return p && structuredClone(p); }
   async listByOrganization(orgId: string) { return [...this.byId.values()].filter((p) => p.organizationId === orgId).map((p) => structuredClone(p)); }
 }
+class MemCourses implements CourseRepo {
+  private readonly byId = new Map<string, Course>();
+  async create(c: Course) { this.byId.set(c.id, structuredClone(c)); }
+  async update(c: Course) { this.byId.set(c.id, structuredClone(c)); }
+  async get(id: string) { const c = this.byId.get(id); return c && structuredClone(c); }
+  async getBySlug(orgId: string, slug: string) { for (const c of this.byId.values()) if (c.organizationId === orgId && c.slug === slug) return structuredClone(c); return undefined; }
+  async listByOrganization(orgId: string) { return [...this.byId.values()].filter((c) => c.organizationId === orgId).map((c) => structuredClone(c)); }
+}
 class MemEvents implements EventRepo {
   private readonly byId = new Map<string, Event>();
   async create(e: Event) { this.byId.set(e.id, structuredClone(e)); }
   async update(e: Event) { this.byId.set(e.id, structuredClone(e)); }
   async get(id: string) { const e = this.byId.get(id); return e && structuredClone(e); }
   async listByOrganization(orgId: string) { return [...this.byId.values()].filter((e) => e.organizationId === orgId).map((e) => structuredClone(e)); }
+  async listByCourse(courseId: string) { return [...this.byId.values()].filter((e) => e.courseId === courseId).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()).map((e) => structuredClone(e)); }
+}
+class MemSeats implements SeatRepo {
+  private readonly byId = new Map<string, Seat>();
+  async create(s: Seat) { this.byId.set(s.id, structuredClone(s)); }
+  async update(s: Seat) { this.byId.set(s.id, structuredClone(s)); }
+  async get(id: string) { const s = this.byId.get(id); return s && structuredClone(s); }
+  async listByOrder(orderId: string) { return [...this.byId.values()].filter((s) => s.orderId === orderId).map((s) => structuredClone(s)); }
+  async listByEvent(eventId: string) { return [...this.byId.values()].filter((s) => s.eventId === eventId).map((s) => structuredClone(s)); }
 }
 class MemTicketTypes implements TicketTypeRepo {
   private readonly byId = new Map<string, TicketType>();
@@ -72,7 +89,9 @@ export function createInMemoryRepos(): Repos {
   return {
     organizations: new MemOrganizations(),
     parties: new MemParties(),
+    courses: new MemCourses(),
     events: new MemEvents(),
+    seats: new MemSeats(),
     ticketTypes: new MemTicketTypes(),
     orders: new MemOrders(),
     refunds: new MemRefunds(),

@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toContain("0001_init.sql");
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });

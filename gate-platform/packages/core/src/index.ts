@@ -5,3 +5,4 @@ export * from "./memory-repos.js";
 export * from "./fake-payments.js";
 export * from "./accounts.js";
 export * from "./services.js";
+export * from "./jsonld.js";
