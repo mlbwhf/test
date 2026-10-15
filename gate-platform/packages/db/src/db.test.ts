@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -134,6 +134,32 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await repos.ticketTypes.get(novTt.id))?.sold).toBe(1); // held for the offer
     const sub = await core.substituteSeat(r.seat!.id, { email: "c@b.co", name: "C" }, { organizationId: org.id });
     expect((await repos.seats.get(sub.id))?.substitutions?.[0]?.from.email).toBe("a@b.co");
+  });
+
+  it("delivery on Postgres: manual meeting, attendance, certificates, message log", async () => {
+    const repos = createPgRepos(pool);
+    const payments = new FakePaymentsAdapter();
+    const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments, clock: { now: () => new Date("2026-11-22T12:00:00Z") } });
+    const { organization: org } = await core.createOrganization({ name: "Deliver Org", country: "CA", currency: "CAD" });
+    const course = await core.createCourse(org.id, { slug: "d", name: "Delivery Course" });
+    await core.updateCourse(org.id, course.id, { prework: "Read chapter 1", surveyUrl: "https://forms.example/s" });
+    const ev = await core.createEvent(org.id, { courseId: course.id, name: "Nov", sessions: [{ startsAt: new Date("2026-11-20T14:00:00Z"), endsAt: new Date("2026-11-20T22:00:00Z") }] });
+    const tt = await core.createTicketType(org.id, ev.id, { name: "Std", priceMinor: 1_000, quantity: 5 });
+    const { order } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "p@q.io", attendees: [{ email: "p@q.io", name: "Pat Quinn" }] });
+    await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "CAD"));
+    const withMeeting = await core.setMeeting(org.id, ev.id, { provider: "manual", joinUrl: "https://zoom.us/j/1", passcode: "abc" });
+    expect((await repos.events.get(ev.id))?.meeting).toEqual(withMeeting.meeting);
+    const seat = (await core.listSeats(org.id, { eventId: ev.id }))[0]!;
+    await core.setAttendance(org.id, ev.id, { seatId: seat.id, status: "present", minutes: 480 });
+    expect((await repos.seats.get(seat.id))?.attendance?.status).toBe("present");
+    const issued = await core.issueCertificates(org.id, ev.id, { onlyPresent: true });
+    expect(issued).toHaveLength(1);
+    expect((await core.verifyCertificate(issued[0]!.verifyCode)).valid).toBe(true);
+    expect(await core.issueCertificates(org.id, ev.id)).toEqual([]);
+    const run = await core.runSequences(new Date("2026-11-22T12:00:00Z"), org.id);
+    expect(run.details.map((d) => d.step).sort()).toEqual(["day_of", "prework_t14", "reminder_t1", "reminder_t7", "survey"]);
+    expect((await core.runSequences(new Date("2026-11-22T12:00:00Z"), org.id)).sent).toBe(0);
+    expect((await core.roster(org.id, ev.id, "safe_studio")).csv.split("\r\n")[1]).toBe('"Pat","Quinn","p@q.io",""');
   });
 
   it("reserve is atomic under concurrency", async () => {

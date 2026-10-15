@@ -494,3 +494,60 @@ textarea:focus {
   display: grid;
   gap: 12px;
 }
+
+/* Delivery (meeting, attendance, certificates, messages) */
+.subsection {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 12px;
+}
+.subsection:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.subsection > h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.subsection .section-actions {
+  margin-bottom: 0;
+}
+.label-inline {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+.badge-present,
+.badge-zoom {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.badge-partial,
+.badge-manual {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.badge-absent {
+  background: var(--err-bg);
+  color: var(--err-text);
+}
+.badge-teams {
+  background: var(--live-bg);
+  color: var(--live-text);
+}
+td .action-form-inline {
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: start;
+}
+td .action-form-inline select {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+}
+td .action-form-inline .result {
+  grid-column: 1 / -1;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}

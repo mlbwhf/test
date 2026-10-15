@@ -1,5 +1,5 @@
 import type {
-  CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
+  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -27,8 +27,8 @@ function toParty(r: Row): Party {
 }
 function toCourse(r: Row): Course {
   const description = opt<string>(r.description), body = opt<string>(r.certification_body), days = opt<number>(r.duration_days);
-  const policy = opt<Course["changePolicy"]>(r.change_policy);
-  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), createdAt: date(r.created_at) };
+  const policy = opt<Course["changePolicy"]>(r.change_policy), prework = opt<string>(r.prework), surveyUrl = opt<string>(r.survey_url);
+  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), createdAt: date(r.created_at) };
 }
 function toEvent(r: Row): Event {
   const rules = opt<Event["splitRules"]>(r.split_rules);
@@ -38,6 +38,7 @@ function toEvent(r: Row): Event {
     id: str(r.id), organizationId: str(r.organization_id), ...(courseId ? { courseId } : {}), name: str(r.name), startsAt: date(r.starts_at), ...(endsAt ? { endsAt } : {}),
     timezone: str(r.timezone), format: r.format as Event["format"], sessions, instructorIds: (r.instructor_ids as string[]) ?? [],
     ...(minEnrollment !== undefined ? { minEnrollment: num(minEnrollment) } : {}),
+    ...(opt<Event["meeting"]>(r.meeting) ? { meeting: r.meeting as NonNullable<Event["meeting"]> } : {}),
     currency: str(r.currency), status: r.status as Event["status"], ...(rules ? { splitRules: rules } : {}), createdAt: date(r.created_at),
   };
 }
@@ -53,11 +54,17 @@ function toTicketType(r: Row): TicketType {
 }
 function toSeat(r: Row): Seat {
   const confirmedAt = opt<Date>(r.confirmed_at), cancelledAt = opt<Date>(r.cancelled_at), from = opt<string>(r.transferred_from_seat_id), to = opt<string>(r.transferred_to_seat_id);
+  const att = opt<Omit<NonNullable<Seat["attendance"]>, "updatedAt"> & { updatedAt: string }>(r.attendance);
   const subs = ((r.substitutions as Array<{ from: Seat["attendee"]; at: string }>) ?? []).map((x) => ({ from: x.from, at: new Date(x.at) }));
   return {
     id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), eventId: str(r.event_id), ticketTypeId: str(r.ticket_type_id), attendee: r.attendee as Seat["attendee"], status: r.status as Seat["status"], createdAt: date(r.created_at),
     ...(confirmedAt ? { confirmedAt } : {}), ...(cancelledAt ? { cancelledAt } : {}), ...(from ? { transferredFromSeatId: from } : {}), ...(to ? { transferredToSeatId: to } : {}), ...(subs.length ? { substitutions: subs } : {}),
+    ...(att ? { attendance: { ...att, updatedAt: new Date(att.updatedAt) } } : {}),
   };
+}
+function toCertificate(r: Row): Certificate {
+  const revokedAt = opt<Date>(r.revoked_at);
+  return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}) };
 }
 function toTransfer(r: Row): SeatTransfer {
   const paymentRef = opt<string>(r.payment_ref), toSeatId = opt<string>(r.to_seat_id), completedAt = opt<Date>(r.completed_at);
@@ -130,7 +137,7 @@ class PgParties implements PartyRepo {
 class PgCourses implements CourseRepo {
   constructor(private readonly pool: Pool) {}
   async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt]); }
-  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null]); }
+  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE id=$1`, [id]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async getBySlug(orgId: string, slug: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 AND slug=$2`, [orgId, slug]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCourse); }
@@ -146,8 +153,8 @@ class PgEvents implements EventRepo {
   }
   async update(e: Event) {
     await this.pool.query(
-      `UPDATE events SET course_id=$2, name=$3, starts_at=$4, ends_at=$5, timezone=$6, format=$7, sessions=$8, instructor_ids=$9, min_enrollment=$10, currency=$11, status=$12, split_rules=$13 WHERE id=$1`,
-      [e.id, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null],
+      `UPDATE events SET course_id=$2, name=$3, starts_at=$4, ends_at=$5, timezone=$6, format=$7, sessions=$8, instructor_ids=$9, min_enrollment=$10, currency=$11, status=$12, split_rules=$13, meeting=$14 WHERE id=$1`,
+      [e.id, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null, e.meeting ? JSON.stringify(e.meeting) : null],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM events WHERE id=$1`, [id]); return r.rows[0] ? toEvent(r.rows[0]) : undefined; }
@@ -157,7 +164,7 @@ class PgEvents implements EventRepo {
 class PgSeats implements SeatRepo {
   constructor(private readonly pool: Pool) {}
   async create(s: Seat) { await this.pool.query(`INSERT INTO seats (id, organization_id, order_id, event_id, ticket_type_id, attendee, status, created_at, confirmed_at, transferred_from_seat_id, transferred_to_seat_id, substitutions, cancelled_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, [s.id, s.organizationId, s.orderId, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.createdAt, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null]); }
-  async update(s: Seat) { await this.pool.query(`UPDATE seats SET event_id=$2, ticket_type_id=$3, attendee=$4, status=$5, confirmed_at=$6, transferred_from_seat_id=$7, transferred_to_seat_id=$8, substitutions=$9, cancelled_at=$10 WHERE id=$1`, [s.id, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null]); }
+  async update(s: Seat) { await this.pool.query(`UPDATE seats SET event_id=$2, ticket_type_id=$3, attendee=$4, status=$5, confirmed_at=$6, transferred_from_seat_id=$7, transferred_to_seat_id=$8, substitutions=$9, cancelled_at=$10, attendance=$11 WHERE id=$1`, [s.id, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null, s.attendance ? JSON.stringify({ ...s.attendance, updatedAt: s.attendance.updatedAt.toISOString() }) : null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE id=$1`, [id]); return r.rows[0] ? toSeat(r.rows[0]) : undefined; }
   async listByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE order_id=$1 ORDER BY created_at`, [orderId]); return r.rows.map(toSeat); }
   async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE event_id=$1 ORDER BY created_at`, [eventId]); return r.rows.map(toSeat); }
@@ -247,6 +254,26 @@ class PgWaitlist implements WaitlistRepo {
   async listOffered() { const r = await this.pool.query(`SELECT * FROM waitlist_entries WHERE status='offered' ORDER BY offer_expires_at`); return r.rows.map(toWaitlist); }
   async findOpen(eventId: string, email: string) { const r = await this.pool.query(`SELECT * FROM waitlist_entries WHERE event_id=$1 AND lower(email)=lower($2) AND status IN ('waiting','offered') LIMIT 1`, [eventId, email]); return r.rows[0] ? toWaitlist(r.rows[0]) : undefined; }
 }
+class PgCertificates implements CertificateRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(c: Certificate) { await this.pool.query(`INSERT INTO certificates (id, organization_id, seat_id, event_id, course_name, attendee_name, attendee_email, issued_at, verify_code, revoked_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [c.id, c.organizationId, c.seatId, c.eventId, c.courseName, c.attendeeName, c.attendeeEmail, c.issuedAt, c.verifyCode, c.revokedAt ?? null]); }
+  async update(c: Certificate) { await this.pool.query(`UPDATE certificates SET revoked_at=$2 WHERE id=$1`, [c.id, c.revokedAt ?? null]); }
+  async get(id: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE id=$1`, [id]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
+  async getByCode(code: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE verify_code=$1`, [code]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
+  async getBySeat(seatId: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE seat_id=$1`, [seatId]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
+  async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE event_id=$1 ORDER BY issued_at`, [eventId]); return r.rows.map(toCertificate); }
+}
+class PgMessageLog implements MessageLogRepo {
+  constructor(private readonly pool: Pool) {}
+  async record(e: MessageLogEntry) {
+    const r = await this.pool.query(`INSERT INTO message_log (key, step, organization_id, event_id, seat_id, recipient, sent_at) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (key) DO NOTHING`, [e.key, e.step, e.organizationId, e.eventId, e.seatId ?? null, e.to, e.sentAt]);
+    return (r.rowCount ?? 0) > 0;
+  }
+  async listByEvent(eventId: string) {
+    const r = await this.pool.query(`SELECT * FROM message_log WHERE event_id=$1 ORDER BY sent_at`, [eventId]);
+    return r.rows.map((x) => ({ key: str(x.key), step: x.step as MessageLogEntry["step"], organizationId: str(x.organization_id), eventId: str(x.event_id), ...(opt<string>(x.seat_id) ? { seatId: str(x.seat_id) } : {}), to: str(x.recipient), sentAt: date(x.sent_at) }));
+  }
+}
 class PgRefunds implements RefundRepo {
   constructor(private readonly pool: Pool) {}
   async create(x: Refund) { await this.pool.query(`INSERT INTO refunds (id, order_id, organization_id, amount_minor, reason, status, payment_refund_ref, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [x.id, x.orderId, x.organizationId, x.amountMinor, x.reason, x.status, x.paymentRefundRef ?? null, x.createdAt]); }
@@ -276,6 +303,8 @@ export function createPgRepos(pool: Pool): Repos {
     invoices: new PgInvoices(pool),
     seatTransfers: new PgSeatTransfers(pool),
     waitlist: new PgWaitlist(pool),
+    certificates: new PgCertificates(pool),
+    messageLog: new PgMessageLog(pool),
     refunds: new PgRefunds(pool),
     processedEvents: new PgProcessedEvents(pool),
   };

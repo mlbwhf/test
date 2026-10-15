@@ -23,6 +23,24 @@ export const EVENT_FORMATS: EventFormat[] = ["live_virtual", "in_person", "hybri
 
 export type Session = { startsAt: string; endsAt: string; title?: string };
 
+export type MeetingProvider = "zoom" | "teams" | "manual";
+
+export const MEETING_PROVIDERS: MeetingProvider[] = ["zoom", "teams", "manual"];
+
+export const MEETING_PROVIDER_LABELS: Record<MeetingProvider, string> = {
+  zoom: "Zoom",
+  teams: "Microsoft Teams",
+  manual: "Manual link",
+};
+
+export type Meeting = {
+  provider: MeetingProvider;
+  meetingId: string;
+  joinUrl: string;
+  hostUrl: string | null;
+  passcode: string | null;
+};
+
 export type Event = {
   id: string;
   organizationId: string;
@@ -37,6 +55,7 @@ export type Event = {
   minEnrollment: number | null;
   currency: string;
   status: EventStatus;
+  meeting: Meeting | null;
 };
 
 export type Course = {
@@ -47,6 +66,8 @@ export type Course = {
   description: string | null;
   certificationBody: string | null;
   durationDays: number | null;
+  prework: string | null;
+  surveyUrl: string | null;
   createdAt: string;
 };
 
@@ -131,6 +152,58 @@ export type Refund = {
   status: string;
 };
 
+export type AttendanceStatus = "present" | "partial" | "absent" | "unknown";
+
+/** Statuses an organizer may set by hand ("unknown" is only ever reported by the API). */
+export const ATTENDANCE_STATUSES: Exclude<AttendanceStatus, "unknown">[] = ["present", "partial", "absent"];
+
+export type AttendanceSource = "provider" | "manual" | "none";
+
+export type Attendance = {
+  seatId: string;
+  email: string;
+  name: string | null;
+  minutes: number;
+  sessionsAttended: number;
+  status: AttendanceStatus;
+  source: AttendanceSource;
+};
+
+export type Certificate = {
+  id: string;
+  seatId: string;
+  attendeeName: string;
+  attendeeEmail: string;
+  courseName: string;
+  issuedAt: string;
+  verifyCode: string;
+  verifyUrl: string;
+  viewUrl: string;
+};
+
+export type SequenceStep = "prework_t14" | "reminder_t7" | "reminder_t1" | "day_of" | "survey" | "certificate";
+
+export const SEQUENCE_STEP_LABELS: Record<SequenceStep, string> = {
+  prework_t14: "Pre-work (T-14)",
+  reminder_t7: "Reminder (T-7)",
+  reminder_t1: "Reminder (T-1)",
+  day_of: "Day of",
+  survey: "Survey",
+  certificate: "Certificate",
+};
+
+export type SentMessage = { key: string; step: SequenceStep; to: string; sentAt: string };
+
+export type RosterFormat = "default" | "safe_studio" | "scrum_org";
+
+export const ROSTER_FORMATS: RosterFormat[] = ["default", "safe_studio", "scrum_org"];
+
+export const ROSTER_FORMAT_LABELS: Record<RosterFormat, string> = {
+  default: "Default",
+  safe_studio: "SAFe Studio",
+  scrum_org: "Scrum.org",
+};
+
 export type CreateEventInput = { name: string; startsAt: string; currency: string };
 export type CreateTicketTypeInput = {
   name: string;
@@ -166,6 +239,25 @@ export type CreateCohortInput = {
   currency?: string;
 };
 export type CreatePartyInput = { name: string; kind: PartyKind };
+export type CreateMeetingInput = {
+  provider: MeetingProvider;
+  joinUrl?: string;
+  hostUrl?: string;
+  passcode?: string;
+};
+export type RecordAttendanceInput = {
+  seatId: string;
+  status: Exclude<AttendanceStatus, "unknown">;
+  minutes?: number;
+};
+export type IssueCertificatesInput = { onlyPresent?: boolean };
+export type UpdateCourseInput = {
+  prework?: string | null;
+  surveyUrl?: string | null;
+  description?: string | null;
+};
+/** A text/csv payload proxied through to the browser by the roster route handler. */
+export type CsvDownload = { csv: string; contentType: string };
 
 /** The API answered with a 4xx/5xx and (usually) an `{ error }` envelope. */
 export type ApiErrorInfo = {
@@ -196,8 +288,16 @@ const apiKey = process.env.NEXT_PUBLIC_GATE_API_KEY ?? "";
 
 type ErrorEnvelope = { error?: { code?: string; message?: string; hint?: string } };
 
-async function request<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<ApiResult<T>> {
-  const headers: Record<string, string> = { accept: "application/json" };
+type Method = "GET" | "POST" | "PATCH";
+
+/** Issues the request and parses an error envelope; returns the raw Response on 2xx. */
+async function send(
+  method: Method,
+  path: string,
+  body: unknown,
+  accept: string,
+): Promise<{ ok: true; res: Response } | { ok: false; error: ApiFailure }> {
+  const headers: Record<string, string> = { accept };
   if (apiKey) headers["x-api-key"] = apiKey;
   if (body !== undefined) headers["content-type"] = "application/json";
 
@@ -220,17 +320,16 @@ async function request<T>(method: "GET" | "POST", path: string, body?: unknown):
     };
   }
 
-  const text = await res.text();
-  let json: unknown = null;
-  if (text) {
-    try {
-      json = JSON.parse(text);
-    } catch {
-      json = null;
-    }
-  }
-
   if (!res.ok) {
+    const text = await res.text();
+    let json: unknown = null;
+    if (text) {
+      try {
+        json = JSON.parse(text);
+      } catch {
+        json = null;
+      }
+    }
     const envelope = (json ?? {}) as ErrorEnvelope;
     const info: ApiErrorInfo = {
       kind: "api",
@@ -242,7 +341,36 @@ async function request<T>(method: "GET" | "POST", path: string, body?: unknown):
     return { ok: false, error: info };
   }
 
+  return { ok: true, res };
+}
+
+async function request<T>(method: Method, path: string, body?: unknown): Promise<ApiResult<T>> {
+  const sent = await send(method, path, body, "application/json");
+  if (!sent.ok) return sent;
+
+  const text = await sent.res.text();
+  let json: unknown = null;
+  if (text) {
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = null;
+    }
+  }
   return { ok: true, data: json as T };
+}
+
+/** Like `request`, for endpoints that answer with text/csv instead of JSON. */
+async function requestCsv(path: string): Promise<ApiResult<CsvDownload>> {
+  const sent = await send("GET", path, undefined, "text/csv, text/plain;q=0.9, */*;q=0.1");
+  if (!sent.ok) return sent;
+  return {
+    ok: true,
+    data: {
+      csv: await sent.res.text(),
+      contentType: sent.res.headers.get("content-type") ?? "text/csv; charset=utf-8",
+    },
+  };
 }
 
 const enc = encodeURIComponent;
@@ -254,6 +382,28 @@ export const api = {
   createEvent: (input: CreateEventInput) => request<Event>("POST", "/v1/events", input),
   getEvent: (id: string) => request<Event>("GET", `/v1/events/${enc(id)}`),
 
+  createMeeting: (eventId: string, input: CreateMeetingInput) =>
+    request<Event>("POST", `/v1/events/${enc(eventId)}/meeting`, input),
+
+  listAttendance: (eventId: string) =>
+    request<{ items: Attendance[] }>("GET", `/v1/events/${enc(eventId)}/attendance`),
+  syncAttendance: (eventId: string) =>
+    request<{ updated: number; items: Attendance[] }>("POST", `/v1/events/${enc(eventId)}/attendance/sync`),
+  recordAttendance: (eventId: string, input: RecordAttendanceInput) =>
+    request<Attendance>("POST", `/v1/events/${enc(eventId)}/attendance`, input),
+
+  listCertificates: (eventId: string) =>
+    request<{ items: Certificate[] }>("GET", `/v1/events/${enc(eventId)}/certificates`),
+  issueCertificates: (eventId: string, input: IssueCertificatesInput) =>
+    request<{ issued: Certificate[] }>("POST", `/v1/events/${enc(eventId)}/certificates`, input),
+
+  getRosterCsv: (eventId: string, format: RosterFormat) =>
+    requestCsv(`/v1/events/${enc(eventId)}/roster.csv?format=${enc(format)}`),
+
+  listMessages: (eventId: string) =>
+    request<{ items: SentMessage[] }>("GET", `/v1/events/${enc(eventId)}/messages`),
+  runSequences: () => request<{ sent: number }>("POST", "/v1/sequences/run"),
+
   listTicketTypes: (eventId: string) =>
     request<{ items: TicketType[] }>("GET", `/v1/events/${enc(eventId)}/ticket-types`),
   createTicketType: (eventId: string, input: CreateTicketTypeInput) =>
@@ -262,6 +412,7 @@ export const api = {
   listCourses: () => request<{ items: Course[] }>("GET", "/v1/courses"),
   createCourse: (input: CreateCourseInput) => request<Course>("POST", "/v1/courses", input),
   getCourse: (id: string) => request<Course>("GET", `/v1/courses/${enc(id)}`),
+  updateCourse: (id: string, input: UpdateCourseInput) => request<Course>("PATCH", `/v1/courses/${enc(id)}`, input),
   listCohorts: (courseId: string) => request<{ items: Event[] }>("GET", `/v1/courses/${enc(courseId)}/cohorts`),
   createCohort: (courseId: string, input: CreateCohortInput) =>
     request<Event>("POST", `/v1/courses/${enc(courseId)}/cohorts`, input),

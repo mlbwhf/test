@@ -1,4 +1,4 @@
-import type { Attendee, CorporateAccount, Course, Event, Invoice, Order, Organization, Refund, Seat, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendee, Certificate, CorporateAccount, Course, Event, Invoice, Order, Organization, Refund, Seat, SequenceStep, TicketType, WaitlistEntry } from "./types.js";
 
 export interface OrderPaidContext {
   organization: Organization;
@@ -47,6 +47,8 @@ export interface CoreHooks {
   invoiceIssued?: ((ctx: InvoiceIssuedContext) => Promise<void>) | undefined;
   seatChanged?: ((ctx: SeatChangedContext) => Promise<void>) | undefined;
   waitlistOffered?: ((ctx: WaitlistOfferedContext) => Promise<void>) | undefined;
+  sequenceStep?: ((ctx: { step: SequenceStep; seat: Seat; event: Event; course?: Course | undefined; organization: Organization }) => Promise<void>) | undefined;
+  certificateIssued?: ((ctx: { certificate: Certificate; seat: Seat; event: Event; course?: Course | undefined }) => Promise<void>) | undefined;
 }
 
 export interface HookFailure {

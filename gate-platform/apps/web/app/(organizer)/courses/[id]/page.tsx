@@ -4,7 +4,7 @@ import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { createCohortAction } from "@/app/actions";
+import { createCohortAction, updateCourseDeliveryAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +48,46 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         <Link href="/courses">← All courses</Link>
       </div>
       {course.description && <p className="muted">{course.description}</p>}
+
+      <Section title="Delivery settings">
+        <dl className="kv">
+          <dt>Pre-work</dt>
+          <dd>
+            {course.prework ? (
+              <span style={{ whiteSpace: "pre-wrap" }}>{course.prework}</span>
+            ) : (
+              <span className="muted">Not set — the pre-work email (T-14) goes out without instructions.</span>
+            )}
+          </dd>
+          <dt>Survey URL</dt>
+          <dd>
+            {course.surveyUrl ? (
+              <a href={course.surveyUrl} target="_blank" rel="noreferrer">
+                {course.surveyUrl}
+              </a>
+            ) : (
+              <span className="muted">Not set — the post-course survey email is skipped.</span>
+            )}
+          </dd>
+        </dl>
+        <ActionForm action={updateCourseDeliveryAction} submitLabel="Save delivery settings" pendingLabel="Saving…" wide>
+          <input type="hidden" name="courseId" value={course.id} />
+          <label>
+            Pre-work (sent to learners 14 days before the first session)
+            <textarea
+              name="prework"
+              rows={5}
+              defaultValue={course.prework ?? ""}
+              placeholder="Read chapters 1–3 of the handbook and complete the online primer."
+            />
+          </label>
+          <label>
+            Survey URL (sent after the last session)
+            <input name="surveyUrl" type="url" defaultValue={course.surveyUrl ?? ""} placeholder="https://forms.example.com/feedback" />
+          </label>
+          <p className="hint">Applies to every cohort of this course. Leave a field blank to clear it.</p>
+        </ActionForm>
+      </Section>
 
       <Section title="Cohorts">
         {!cohortsRes.ok ? (

@@ -4,10 +4,11 @@ import { computeSplits, priceOrder, type PayoutDestination, type SplitRule } fro
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
-import type { Clock, IdGenerator, PaymentEvent, PaymentsPort, Repos, TaxPort } from "./ports.js";
+import type { Clock, IdGenerator, MeetingProvider, PaymentEvent, PaymentsPort, Repos, TaxPort } from "./ports.js";
+import { ROSTER_FORMATS, SEQUENCE_STEPS, attendanceFromMinutes, overlapMinutes, rosterCsv, stepDueAt, type RosterFormat } from "./delivery.js";
 import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
-import type { Attendee, BillingAddress, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, SeatTransfer, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -18,6 +19,8 @@ export interface CoreDeps {
   hooks?: CoreHooks[];
   onHookFailure?: (failure: HookFailure) => void;
   tax?: TaxPort;
+  /** Meeting providers by name; absent providers make scheduling fail with PROVIDER_UNAVAILABLE. */
+  meetings?: Partial<Record<MeetingInfo["provider"], MeetingProvider>>;
 }
 
 export function hashApiKey(key: string): string {
@@ -34,6 +37,7 @@ export class Core {
   readonly ledger: Ledger;
   readonly payments: PaymentsPort;
   readonly tax: TaxPort;
+  readonly meetings: Partial<Record<MeetingInfo["provider"], MeetingProvider>>;
   readonly accounts: ChartOfAccounts;
   private readonly clock: Clock;
   private readonly ids: IdGenerator;
@@ -46,6 +50,7 @@ export class Core {
     this.ledger = deps.ledger;
     this.payments = deps.payments;
     this.tax = deps.tax ?? NO_TAX;
+    this.meetings = deps.meetings ?? {};
     this.accounts = new ChartOfAccounts(deps.ledger);
     this.clock = deps.clock ?? defaultClock;
     this.ids = deps.ids ?? defaultIds;
@@ -163,6 +168,16 @@ export class Core {
     };
     await this.repos.courses.create(course);
     return course;
+  }
+
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined }): Promise<Course> {
+    const course = await this.getCourse(organizationId, courseId);
+    if (patch.surveyUrl && !/^https?:\/\//.test(patch.surveyUrl)) throw new DomainError("VALIDATION", "surveyUrl must be an http(s) URL");
+    const next: Course = { ...course };
+    const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
+    set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays);
+    await this.repos.courses.update(next);
+    return next;
   }
 
   async getCourse(organizationId: string, courseId: string): Promise<Course> {
@@ -1174,6 +1189,162 @@ export class Core {
   async listWaitlist(organizationId: string, eventId: string): Promise<WaitlistEntry[]> {
     await this.getEvent(organizationId, eventId);
     return this.repos.waitlist.listOpenByEvent(eventId);
+  }
+
+  // ---------- Delivery: meetings, attendance, certificates, roster, sequences ----------
+
+  async setMeeting(organizationId: string, eventId: string, input: { provider: MeetingInfo["provider"]; joinUrl?: string | undefined; hostUrl?: string | undefined; passcode?: string | undefined }): Promise<Event> {
+    const event = await this.getEvent(organizationId, eventId);
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    let meeting: MeetingInfo;
+    if (input.provider === "manual") {
+      if (!input.joinUrl || !/^https?:\/\//.test(input.joinUrl)) throw new DomainError("VALIDATION", "joinUrl must be an http(s) URL");
+      meeting = { provider: "manual", meetingId: `manual_${event.id}`, joinUrl: input.joinUrl, hostUrl: input.hostUrl, passcode: input.passcode };
+    } else {
+      const provider = this.meetings[input.provider];
+      if (!provider) throw new DomainError("INVALID_STATE", `${input.provider} is not configured`, `set the ${input.provider.toUpperCase()}_* environment variables or use a manual link`);
+      const minutes = Math.max(30, Math.round(((event.endsAt ?? new Date(event.startsAt.getTime() + 8 * 3_600_000)).getTime() - event.startsAt.getTime()) / 60_000));
+      try {
+        meeting = await provider.createMeeting({ topic: course ? `${course.name} — ${event.name}` : event.name, startsAt: event.startsAt, durationMinutes: Math.min(minutes, 24 * 60), timezone: event.timezone, externalId: event.id, agenda: course?.description });
+      } catch (err) {
+        throw new DomainError("PAYMENTS_UPSTREAM", `${input.provider} error: ${(err as Error).message}`);
+      }
+    }
+    const updated: Event = { ...event, meeting };
+    await this.repos.events.update(updated);
+    return updated;
+  }
+
+  async listAttendance(organizationId: string, eventId: string) {
+    await this.getEvent(organizationId, eventId);
+    const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
+    return seats.map((s) => this.attendanceRow(s));
+  }
+
+  private attendanceRow(s: Seat) {
+    const a: Attendance = s.attendance ?? { status: "unknown", minutes: 0, sessionsAttended: 0, source: "none", updatedAt: s.createdAt };
+    return { seatId: s.id, email: s.attendee.email, name: s.attendee.name ?? null, ...a };
+  }
+
+  /** Pull the meeting participant report and mark each confirmed seat present / partial / absent. */
+  async syncAttendance(organizationId: string, eventId: string): Promise<{ updated: number; items: ReturnType<Core["attendanceRow"]>[] }> {
+    const event = await this.getEvent(organizationId, eventId);
+    if (!event.meeting || event.meeting.provider === "manual") throw new DomainError("INVALID_STATE", "no meeting provider to sync from", "create a Zoom or Teams meeting, or mark attendance manually");
+    const provider = this.meetings[event.meeting.provider];
+    if (!provider) throw new DomainError("INVALID_STATE", `${event.meeting.provider} is not configured`);
+    const records = await provider.getParticipants(event.meeting.meetingId);
+    const sessions = event.sessions.length ? event.sessions : [{ startsAt: event.startsAt, endsAt: event.endsAt ?? new Date(event.startsAt.getTime() + 8 * 3_600_000) }];
+    const scheduled = sessions.reduce((a, s) => a + (s.endsAt.getTime() - s.startsAt.getTime()) / 60_000, 0);
+    const byEmail = new Map<string, { minutes: number; touched: Set<number> }>();
+    for (const r of records) {
+      if (!r.email) continue;
+      const key = r.email.toLowerCase();
+      const o = overlapMinutes(r.joinedAt, r.leftAt, sessions);
+      const cur = byEmail.get(key) ?? { minutes: 0, touched: new Set<number>() };
+      cur.minutes += o.minutes;
+      for (const i of o.sessionsTouched) cur.touched.add(i);
+      byEmail.set(key, cur);
+    }
+    const now = this.clock.now();
+    let updated = 0;
+    const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
+    for (const seat of seats) {
+      if (seat.attendance?.source === "manual") continue;
+      const m = byEmail.get(seat.attendee.email.toLowerCase());
+      const attendance = m ? attendanceFromMinutes(m.minutes, scheduled, m.touched.size, now) : { status: "absent" as const, minutes: 0, sessionsAttended: 0, source: "provider" as const, updatedAt: now };
+      await this.repos.seats.update({ ...seat, attendance });
+      updated += 1;
+    }
+    return { updated, items: await this.listAttendance(organizationId, eventId) };
+  }
+
+  async setAttendance(organizationId: string, eventId: string, input: { seatId: string; status: AttendanceStatus; minutes?: number | undefined }) {
+    await this.getEvent(organizationId, eventId);
+    const seat = await this.repos.seats.get(input.seatId);
+    if (!seat || seat.eventId !== eventId) throw notFound("seat", input.seatId);
+    const attendance: Attendance = { status: input.status, minutes: input.minutes ?? seat.attendance?.minutes ?? 0, sessionsAttended: seat.attendance?.sessionsAttended ?? 0, source: "manual", updatedAt: this.clock.now() };
+    const updated: Seat = { ...seat, attendance };
+    await this.repos.seats.update(updated);
+    return this.attendanceRow(updated);
+  }
+
+  async issueCertificates(organizationId: string, eventId: string, opts: { onlyPresent?: boolean | undefined } = {}): Promise<Certificate[]> {
+    const event = await this.getEvent(organizationId, eventId);
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
+    const issued: Certificate[] = [];
+    for (const seat of seats) {
+      if (opts.onlyPresent && seat.attendance?.status !== "present") continue;
+      if (await this.repos.certificates.getBySeat(seat.id)) continue;
+      const cert: Certificate = {
+        id: this.ids.next("cert"), organizationId, seatId: seat.id, eventId, courseName: course?.name ?? event.name,
+        attendeeName: seat.attendee.name ?? seat.attendee.email, attendeeEmail: seat.attendee.email, issuedAt: this.clock.now(),
+        verifyCode: randomBytes(12).toString("base64url"),
+      };
+      await this.repos.certificates.create(cert);
+      issued.push(cert);
+      await this.runHooks("certificateIssued", seat.orderId, (hook) => hook({ certificate: cert, seat, event, course }));
+    }
+    return issued;
+  }
+
+  async listCertificates(organizationId: string, eventId: string): Promise<Certificate[]> {
+    await this.getEvent(organizationId, eventId);
+    return this.repos.certificates.listByEvent(eventId);
+  }
+
+  async verifyCertificate(code: string): Promise<{ valid: boolean; certificate?: Certificate | undefined; organizationName?: string | undefined; cohort?: Event | undefined }> {
+    const cert = await this.repos.certificates.getByCode(code);
+    if (!cert || cert.revokedAt) return { valid: false, ...(cert ? { certificate: cert } : {}) };
+    const org = await this.repos.organizations.get(cert.organizationId);
+    const cohort = await this.repos.events.get(cert.eventId);
+    return { valid: true, certificate: cert, organizationName: org?.name, ...(cohort ? { cohort } : {}) };
+  }
+
+  async roster(organizationId: string, eventId: string, format = "default"): Promise<{ csv: string; format: RosterFormat; count: number }> {
+    const event = await this.getEvent(organizationId, eventId);
+    const fmt = ROSTER_FORMATS[format];
+    if (!fmt) throw new DomainError("VALIDATION", `unknown roster format ${format}`, `one of: ${Object.keys(ROSTER_FORMATS).join(", ")}`);
+    const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
+    return { csv: rosterCsv(seats, event, fmt), format: fmt, count: seats.length };
+  }
+
+  listMessages(organizationId: string, eventId: string) {
+    return this.getEvent(organizationId, eventId).then(() => this.repos.messageLog.listByEvent(eventId));
+  }
+
+  /**
+   * Send every sequence step that is due and not yet sent, for every live or
+   * recently ended cohort. Idempotent through the message log; safe to run
+   * from a cron every few minutes.
+   */
+  async runSequences(now = this.clock.now(), organizationId?: string | undefined): Promise<{ sent: number; details: Array<{ step: SequenceStep; eventId: string; to: string }> }> {
+    const orgs = organizationId ? [await this.getOrganization(organizationId)] : await this.repos.organizations.list();
+    const details: Array<{ step: SequenceStep; eventId: string; to: string }> = [];
+    for (const org of orgs) {
+      for (const event of await this.repos.events.listByOrganization(org.id)) {
+        if (event.status !== "live" && event.status !== "ended") continue;
+        const end = (event.endsAt ?? event.startsAt).getTime();
+        if (end + 3 * 86_400_000 < now.getTime()) continue; // nothing left to send after 3 days
+        const seats = (await this.repos.seats.listByEvent(event.id)).filter((s) => s.status === "confirmed");
+        if (!seats.length) continue;
+        const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+        for (const step of SEQUENCE_STEPS) {
+          if (stepDueAt(step, event) > now) continue;
+          if (step === "certificate") continue; // certificates are issued explicitly; the hook emails them
+          if (step === "survey" && !course?.surveyUrl) continue;
+          if (step === "prework_t14" && !course?.prework) continue;
+          for (const seat of seats) {
+            const key = `seq:${step}:${seat.id}`;
+            const fresh = await this.repos.messageLog.record({ key, step, organizationId: org.id, eventId: event.id, seatId: seat.id, to: seat.attendee.email, sentAt: now });
+            if (!fresh) continue;
+            await this.runHooks("sequenceStep", seat.orderId, (hook) => hook({ step, seat, event, course, organization: org }));
+            details.push({ step, eventId: event.id, to: seat.attendee.email });
+          }
+        }
+      }
+    }
+    return { sent: details.length, details };
   }
 
   // ---------- Public (buyer-facing) reads ----------

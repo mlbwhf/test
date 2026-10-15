@@ -3,21 +3,37 @@
 import { revalidatePath } from "next/cache";
 import {
   api,
+  ATTENDANCE_STATUSES,
   describeFailure,
   EVENT_FORMATS,
+  MEETING_PROVIDER_LABELS,
+  MEETING_PROVIDERS,
   PARTY_KINDS,
   type Attendee,
+  type AttendanceStatus,
+  type CreateMeetingInput,
   type EventFormat,
+  type MeetingProvider,
   type PartyKind,
   type RegionalPrices,
   type Session,
 } from "@/lib/api";
-import { formatMoney, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
+import { formatDateTime, formatMoney, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
 import { MAX_ATTENDEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import type { ActionState } from "@/components/action-form";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CURRENCY_RE = /^[A-Z]{3}$/;
+
+/** True for an absolute http(s) URL. */
+function isHttpUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -366,5 +382,161 @@ export async function createPartyAction(_prev: ActionState, formData: FormData):
     status: "ok",
     message: `Created ${kind.replace("_", " ")} "${result.data.name}".`,
     details: [{ label: "Party ID", value: result.data.id }],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Delivery: meeting, attendance, certificates, message sequences.
+
+export async function createMeetingAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const providerRaw = field(formData, "provider");
+  const joinUrl = field(formData, "joinUrl");
+  const hostUrl = field(formData, "hostUrl");
+  const passcode = field(formData, "passcode");
+
+  if (!eventId) return fail("Missing event id.");
+  if (!MEETING_PROVIDERS.includes(providerRaw as MeetingProvider)) return fail("Pick a meeting provider.");
+  const provider = providerRaw as MeetingProvider;
+
+  if (provider === "manual" && !joinUrl) return fail("A join URL is required for a manual meeting link.");
+  if (joinUrl && !isHttpUrl(joinUrl)) return fail("Join URL must be an absolute http(s) URL.");
+  if (hostUrl && !isHttpUrl(hostUrl)) return fail("Host URL must be an absolute http(s) URL.");
+
+  const input: CreateMeetingInput = { provider };
+  if (joinUrl) input.joinUrl = joinUrl;
+  if (hostUrl) input.hostUrl = hostUrl;
+  if (passcode) input.passcode = passcode;
+
+  const result = await api.createMeeting(eventId, input);
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  const meeting = result.data.meeting;
+  return {
+    status: "ok",
+    message: meeting
+      ? `${MEETING_PROVIDER_LABELS[meeting.provider]} meeting created.`
+      : "Meeting created.",
+    details: meeting
+      ? [
+          { label: "Meeting ID", value: meeting.meetingId },
+          { label: "Join URL", value: meeting.joinUrl },
+        ]
+      : undefined,
+  };
+}
+
+export async function syncAttendanceAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  if (!eventId) return fail("Missing event id.");
+
+  const result = await api.syncAttendance(eventId);
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  const { updated, items } = result.data;
+  return {
+    status: "ok",
+    message: `Synced attendance from the meeting: ${updated} record${updated === 1 ? "" : "s"} updated.`,
+    details: [
+      { label: "Present", value: String(items.filter((a) => a.status === "present").length) },
+      { label: "Partial", value: String(items.filter((a) => a.status === "partial").length) },
+      { label: "Absent", value: String(items.filter((a) => a.status === "absent").length) },
+    ],
+  };
+}
+
+export async function recordAttendanceAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const seatId = field(formData, "seatId");
+  const statusRaw = field(formData, "status");
+  const minutesRaw = field(formData, "minutes");
+
+  if (!eventId) return fail("Missing event id.");
+  if (!seatId) return fail("Missing seat id.");
+  if (!ATTENDANCE_STATUSES.includes(statusRaw as Exclude<AttendanceStatus, "unknown">)) {
+    return fail("Pick an attendance status.");
+  }
+  const status = statusRaw as Exclude<AttendanceStatus, "unknown">;
+
+  let minutes: number | undefined;
+  if (minutesRaw) {
+    if (!/^\d+$/.test(minutesRaw)) return fail("Minutes must be a whole number.");
+    minutes = Number(minutesRaw);
+  }
+
+  const result = await api.recordAttendance(eventId, {
+    seatId,
+    status,
+    ...(minutes !== undefined ? { minutes } : {}),
+  });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  return { status: "ok", message: `Marked ${result.data.email} as ${result.data.status}.` };
+}
+
+export async function issueCertificatesAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const onlyPresent = formData.get("onlyPresent") === "on";
+
+  if (!eventId) return fail("Missing event id.");
+
+  const result = await api.issueCertificates(eventId, { onlyPresent });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  const issued = result.data.issued;
+  return {
+    status: "ok",
+    message:
+      issued.length === 0
+        ? onlyPresent
+          ? "No certificates issued: no learners marked present without one."
+          : "No certificates issued: every learner already has one."
+        : `Issued ${issued.length} certificate${issued.length === 1 ? "" : "s"}.`,
+    details: issued.slice(0, 10).map((c) => ({ label: c.attendeeName || c.attendeeEmail, value: c.verifyCode })),
+  };
+}
+
+export async function runSequencesAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+
+  const result = await api.runSequences();
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  if (eventId) revalidatePath(`/events/${eventId}`);
+  const { sent } = result.data;
+  return {
+    status: "ok",
+    message: sent === 0 ? "No messages were due." : `Sent ${sent} due message${sent === 1 ? "" : "s"}.`,
+    details: [{ label: "Run at", value: formatDateTime(new Date().toISOString()) }],
+  };
+}
+
+export async function updateCourseDeliveryAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  const prework = field(formData, "prework");
+  const surveyUrl = field(formData, "surveyUrl");
+
+  if (!courseId) return fail("Missing course id.");
+  if (surveyUrl && !isHttpUrl(surveyUrl)) return fail("Survey URL must be an absolute http(s) URL.");
+
+  // Blank fields clear the stored value.
+  const result = await api.updateCourse(courseId, {
+    prework: prework || null,
+    surveyUrl: surveyUrl || null,
+  });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/courses/${courseId}`);
+  return {
+    status: "ok",
+    message: `Saved delivery settings for "${result.data.name}".`,
+    details: [
+      { label: "Pre-work", value: result.data.prework ? `${result.data.prework.length} characters` : "none" },
+      { label: "Survey URL", value: result.data.surveyUrl ?? "none" },
+    ],
   };
 }

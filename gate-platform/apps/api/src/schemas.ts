@@ -26,7 +26,12 @@ const PartyKind = z.enum(["venue", "vendor", "promoter", "tax_reserve", "instruc
 export const PartySchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), kind: PartyKind, paymentsAccountRef: z.string().nullable(), createdAt: z.string() });
 export const CreatePartyBody = z.object({ name: z.string().min(1), kind: PartyKind, paymentsAccountRef: z.string().optional() });
 
-export const CourseSchema = z.object({ id: z.string(), organizationId: z.string(), slug: z.string(), name: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), durationDays: z.number().int().nullable(), createdAt: z.string() });
+export const CourseSchema = z.object({ id: z.string(), organizationId: z.string(), slug: z.string(), name: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), durationDays: z.number().int().nullable(), prework: z.string().nullable(), surveyUrl: z.string().nullable(), createdAt: z.string() });
+export const UpdateCourseBody = z.object({ description: z.string().max(5000).nullable().optional(), prework: z.string().max(20_000).nullable().optional(), surveyUrl: z.string().max(500).nullable().optional(), certificationBody: z.string().max(200).nullable().optional(), durationDays: z.number().int().min(1).nullable().optional() });
+export const MeetingSchema = z.object({ provider: z.enum(["zoom", "teams", "manual"]), meetingId: z.string(), joinUrl: z.string(), hostUrl: z.string().nullable(), passcode: z.string().nullable() });
+export const AttendanceRowSchema = z.object({ seatId: z.string(), email: z.string(), name: z.string().nullable(), status: z.enum(["present", "partial", "absent", "unknown"]), minutes: z.number(), sessionsAttended: z.number().int(), source: z.enum(["provider", "manual", "none"]), updatedAt: z.string() });
+export const CertificateSchema = z.object({ id: z.string(), seatId: z.string(), eventId: z.string(), attendeeName: z.string(), attendeeEmail: z.string(), courseName: z.string(), issuedAt: z.string(), verifyCode: z.string(), verifyUrl: z.string(), viewUrl: z.string() });
+export const MessageSchema = z.object({ key: z.string(), step: z.enum(["prework_t14", "reminder_t7", "reminder_t1", "day_of", "survey", "certificate"]), to: z.string(), sentAt: z.string() });
 export const CreateCourseBody = z.object({ slug: z.string().min(1).max(80), name: z.string().min(1), description: z.string().max(5000).optional(), certificationBody: z.string().max(200).optional(), durationDays: z.number().int().min(1).optional() });
 
 const DeliveryFormat = z.enum(["live_virtual", "in_person", "hybrid", "self_paced"]);
@@ -35,7 +40,7 @@ export const SessionSchema = z.object({ startsAt: z.string(), endsAt: z.string()
 export const SessionInput = z.object({ startsAt: IsoDate, endsAt: IsoDate, title: z.string().max(200).optional() });
 export const EventSchema = z.object({
   id: z.string(), organizationId: z.string(), courseId: z.string().nullable(), name: z.string(), startsAt: z.string(), endsAt: z.string().nullable(),
-  timezone: z.string(), format: DeliveryFormat, sessions: z.array(SessionSchema), instructorIds: z.array(z.string()), minEnrollment: z.number().int().nullable(),
+  timezone: z.string(), format: DeliveryFormat, sessions: z.array(SessionSchema), instructorIds: z.array(z.string()), minEnrollment: z.number().int().nullable(), meeting: MeetingSchema.nullable(),
   currency: Currency, status: z.enum(["draft", "live", "ended", "cancelled"]), splitRules: z.array(SplitRuleSchema).nullable(), createdAt: z.string(),
 });
 export const CreateEventBody = z.object({
@@ -112,10 +117,11 @@ export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type
 
 export const toOrganization = (o: Organization) => ({ ...o, paymentsAccountRef: o.paymentsAccountRef ?? null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
-export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, createdAt: c.createdAt.toISOString() });
+export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, createdAt: c.createdAt.toISOString() });
 export const toEvent = (e: Event) => ({
   ...e, courseId: e.courseId ?? null, splitRules: e.splitRules ?? null, startsAt: e.startsAt.toISOString(), endsAt: e.endsAt?.toISOString() ?? null,
   minEnrollment: e.minEnrollment ?? null, sessions: e.sessions.map((s) => ({ startsAt: s.startsAt.toISOString(), endsAt: s.endsAt.toISOString(), ...(s.title ? { title: s.title } : {}) })), createdAt: e.createdAt.toISOString(),
+  meeting: e.meeting ? { ...e.meeting, hostUrl: e.meeting.hostUrl ?? null, passcode: e.meeting.passcode ?? null } : null,
 });
 export const toTicketType = (t: TicketType) => ({ ...t, prices: t.prices ?? null, earlyBird: t.earlyBird ? { until: t.earlyBird.until.toISOString(), priceMinor: t.earlyBird.priceMinor, prices: t.earlyBird.prices ?? null } : null });
 export const toSeat = (s: Seat) => ({

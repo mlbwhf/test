@@ -62,6 +62,9 @@ importers:
       '@gate/ledger':
         specifier: workspace:*
         version: link:../../packages/ledger
+      '@gate/meetings':
+        specifier: workspace:*
+        version: link:../../packages/meetings
       '@gate/payments-stripe':
         specifier: workspace:*
         version: link:../../packages/payments-stripe
@@ -242,6 +245,18 @@ importers:
       fast-check:
         specifier: ^4.10.0
         version: 4.10.2
+      typescript:
+        specifier: ^5.9.0
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.7(@types/node@22.20.5)(jsdom@30.1.3)(tsx@4.23.15)(yaml@2.9.1)
+
+  packages/meetings:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.19.0
+        version: 22.20.5
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

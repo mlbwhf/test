@@ -42,7 +42,19 @@ export interface Course {
   certificationBody?: string;
   durationDays?: number;
   changePolicy?: ChangePolicy;
+  /** Pre-work text sent two weeks before each cohort. */
+  prework?: string;
+  /** Post-class survey link sent after the cohort ends. */
+  surveyUrl?: string;
   createdAt: Date;
+}
+
+export interface MeetingInfo {
+  provider: "zoom" | "teams" | "manual";
+  meetingId: string;
+  joinUrl: string;
+  hostUrl?: string | undefined;
+  passcode?: string | undefined;
 }
 
 export type DeliveryFormat = "live_virtual" | "in_person" | "hybrid" | "self_paced";
@@ -74,6 +86,7 @@ export interface Event {
   instructorIds: string[];
   /** Below this, the cohort is at risk of cancellation (sprint 6 uses it). */
   minEnrollment?: number;
+  meeting?: MeetingInfo;
   currency: Currency;
   status: EventStatus;
   splitRules?: SplitRule[];
@@ -127,6 +140,41 @@ export interface Seat {
   /** Previous attendees, most recent last. */
   substitutions?: Array<{ from: Attendee; at: Date }>;
   cancelledAt?: Date;
+  attendance?: Attendance;
+}
+
+export type AttendanceStatus = "present" | "partial" | "absent" | "unknown";
+export interface Attendance {
+  status: AttendanceStatus;
+  minutes: number;
+  sessionsAttended: number;
+  source: "provider" | "manual" | "none";
+  updatedAt: Date;
+}
+
+export interface Certificate {
+  id: string;
+  organizationId: string;
+  seatId: string;
+  eventId: string;
+  courseName: string;
+  attendeeName: string;
+  attendeeEmail: string;
+  issuedAt: Date;
+  /** Unguessable public verification code. */
+  verifyCode: string;
+  revokedAt?: Date;
+}
+
+export type SequenceStep = "prework_t14" | "reminder_t7" | "reminder_t1" | "day_of" | "survey" | "certificate";
+export interface MessageLogEntry {
+  key: string;
+  step: SequenceStep;
+  organizationId: string;
+  eventId: string;
+  seatId?: string;
+  to: string;
+  sentAt: Date;
 }
 
 export type SeatTransferStatus = "pending_payment" | "completed" | "failed";

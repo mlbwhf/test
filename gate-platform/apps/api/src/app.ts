@@ -190,6 +190,32 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const r = await deps.core.cancelSeat(req.params.seatId, req.body.reason ?? "", { attendeeEmail: req.body.email });
       return { seat: S.toSeat(r.seat), refund: r.refund ? { id: r.refund.id, amountMinor: r.refund.amountMinor, status: r.refund.status } : null };
     });
+    pub.get("/public/v1/certificates/:code", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.object({ valid: z.boolean(), attendeeName: z.string().optional(), courseName: z.string().optional(), cohort: z.string().optional(), issuedAt: z.string().optional(), organization: z.string().optional() }) } } }, async (req) => {
+      const v = await deps.core.verifyCertificate(req.params.code);
+      if (!v.valid || !v.certificate) return { valid: false };
+      return { valid: true, attendeeName: v.certificate.attendeeName, courseName: v.certificate.courseName, ...(v.cohort ? { cohort: v.cohort.name } : {}), issuedAt: v.certificate.issuedAt.toISOString(), ...(v.organizationName ? { organization: v.organizationName } : {}) };
+    });
+    pub.get("/public/v1/certificates/:code/view", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.string(), 404: z.string() } } }, async (req, reply) => {
+      const v = await deps.core.verifyCertificate(req.params.code);
+      reply.header("content-type", "text/html; charset=utf-8");
+      const esc = (x: string) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      if (!v.valid || !v.certificate) return reply.code(404).send(`<!doctype html><html><body style="font-family:system-ui;max-width:640px;margin:60px auto;text-align:center"><h1>Certificate not found</h1><p>This verification code is not valid.</p></body></html>`);
+      const c = v.certificate;
+      const date = new Intl.DateTimeFormat("en-CA", { dateStyle: "long", timeZone: v.cohort?.timezone ?? "UTC" }).format(c.issuedAt);
+      return reply.send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Certificate — ${esc(c.attendeeName)}</title></head>
+<body style="margin:0;background:#eef2f4;font-family:Georgia,serif"><div style="max-width:860px;margin:40px auto;background:#fff;border:12px double #053947;padding:56px 64px;text-align:center">
+<div style="font-family:system-ui;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#64748b">${esc(v.organizationName ?? "")}</div>
+<h1 style="font-size:40px;color:#053947;margin:24px 0 8px">Certificate of Completion</h1>
+<p style="font-size:18px;color:#475569;margin:0">This certifies that</p>
+<p style="font-size:34px;margin:18px 0;color:#0f172a">${esc(c.attendeeName)}</p>
+<p style="font-size:18px;color:#475569;margin:0">has completed</p>
+<p style="font-size:26px;margin:14px 0;color:#0f172a">${esc(c.courseName)}</p>
+${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.name)}</p>` : ""}
+<p style="font-family:system-ui;font-size:14px;color:#64748b;margin-top:40px">Issued ${esc(date)} · Verification code <code>${esc(c.verifyCode)}</code></p>
+<p style="font-family:system-ui;font-size:12px;color:#94a3b8">Verify at ${esc(deps.publicUrl ?? "")}/public/v1/certificates/${esc(c.verifyCode)}</p>
+</div></body></html>`);
+    });
+
     pub.post("/public/v1/organizations/:orgId/waitlist", { schema: { tags: ["public"], security: [], params: z.object({ orgId: z.string() }), body: S.JoinWaitlistBody, response: { 201: z.object({ entry: S.WaitlistEntrySchema.extend({ position: z.number().int() }) }), 409: S.ErrorSchema } } }, async (req, reply) => {
       const r = await deps.core.joinWaitlist(req.params.orgId, req.body);
       return reply.code(201).send({ entry: { ...S.toWaitlist(r.entry), position: r.position } });
@@ -303,6 +329,30 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const refund = await deps.core.refundOrder(org(req).id, { ...req.body, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
       return reply.code(201).send({ refund: S.toRefund(refund) });
     });
+
+    // ---------- delivery: meetings, attendance, certificates, roster, sequences ----------
+    const certOut = (c: { id: string; seatId: string; eventId: string; attendeeName: string; attendeeEmail: string; courseName: string; issuedAt: Date; verifyCode: string }) => ({
+      id: c.id, seatId: c.seatId, eventId: c.eventId, attendeeName: c.attendeeName, attendeeEmail: c.attendeeEmail, courseName: c.courseName, issuedAt: c.issuedAt.toISOString(), verifyCode: c.verifyCode,
+      verifyUrl: `${deps.publicUrl ?? ""}/public/v1/certificates/${c.verifyCode}`, viewUrl: `${deps.publicUrl ?? ""}/public/v1/certificates/${c.verifyCode}/view`,
+    });
+    const attendanceOut = (a: { seatId: string; email: string; name: string | null; status: "present" | "partial" | "absent" | "unknown"; minutes: number; sessionsAttended: number; source: "provider" | "manual" | "none"; updatedAt: Date }) => ({ ...a, updatedAt: a.updatedAt.toISOString() });
+    api.patch("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.UpdateCourseBody, response: { 200: S.CourseSchema } } }, async (req) => {
+      const b = req.body;
+      const clean = (v: string | number | null | undefined) => (v === null ? "" : v);
+      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays }));
+    });
+    api.post("/v1/events/:id/meeting", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ provider: z.enum(["zoom", "teams", "manual"]), joinUrl: z.string().optional(), hostUrl: z.string().optional(), passcode: z.string().optional() }), response: { 200: S.EventSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setMeeting(org(req).id, req.params.id, req.body)));
+    api.get("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.AttendanceRowSchema) }) } } }, async (req) => ({ items: (await deps.core.listAttendance(org(req).id, req.params.id)).map(attendanceOut) }));
+    api.post("/v1/events/:id/attendance/sync", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ updated: z.number().int(), items: z.array(S.AttendanceRowSchema) }), 409: S.ErrorSchema } } }, async (req) => { const r = await deps.core.syncAttendance(org(req).id, req.params.id); return { updated: r.updated, items: r.items.map(attendanceOut) }; });
+    api.post("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ seatId: z.string(), status: z.enum(["present", "partial", "absent", "unknown"]), minutes: z.number().min(0).optional() }), response: { 200: S.AttendanceRowSchema } } }, async (req) => attendanceOut(await deps.core.setAttendance(org(req).id, req.params.id, req.body)));
+    api.get("/v1/events/:id/certificates", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.CertificateSchema) }) } } }, async (req) => ({ items: (await deps.core.listCertificates(org(req).id, req.params.id)).map(certOut) }));
+    api.post("/v1/events/:id/certificates", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ onlyPresent: z.boolean().optional() }).optional(), response: { 200: z.object({ issued: z.array(S.CertificateSchema) }) } } }, async (req) => ({ issued: (await deps.core.issueCertificates(org(req).id, req.params.id, req.body ?? {})).map(certOut) }));
+    api.get("/v1/events/:id/roster.csv", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), querystring: z.object({ format: z.string().optional() }), response: { 200: z.string(), 400: S.ErrorSchema } } }, async (req, reply) => {
+      const r = await deps.core.roster(org(req).id, req.params.id, req.query.format ?? "default");
+      return reply.header("content-type", "text/csv; charset=utf-8").header("content-disposition", `attachment; filename="roster-${req.params.id}-${req.query.format ?? "default"}.csv"`).send(r.csv);
+    });
+    api.get("/v1/events/:id/messages", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.MessageSchema) }) } } }, async (req) => ({ items: (await deps.core.listMessages(org(req).id, req.params.id)).map((m) => ({ key: m.key, step: m.step, to: m.to, sentAt: m.sentAt.toISOString() })) }));
+    api.post("/v1/sequences/run", { schema: { tags: ["delivery"], response: { 200: z.object({ sent: z.number().int() }) } } }, async (req) => ({ sent: (await deps.core.runSequences(undefined, org(req).id)).sent }));
 
     // ---------- change policy, seats, waitlist (organizer) ----------
     api.get("/v1/policy", { schema: { tags: ["policy"], querystring: z.object({ courseId: z.string().optional() }), response: { 200: S.ChangePolicySchema } } }, async (req) => deps.core.policyFor(org(req).id, req.query.courseId));

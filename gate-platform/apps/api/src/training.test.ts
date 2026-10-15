@@ -200,3 +200,53 @@ describe("self-service and waitlist API", () => {
     expect((await app.inject({ method: "POST", url: "/v1/waitlist/expire", headers: { "x-api-key": apiKey } })).json()).toEqual({ expired: [] });
   });
 });
+
+describe("delivery API", () => {
+  it("course delivery settings, manual meeting, attendance, certificates with public verify/view, roster formats, messages, sequences", async () => {
+    const course = (await app.inject({ method: "POST", url: "/v1/courses", headers: H(), payload: { slug: "deliver", name: "Delivery 101" } })).json();
+    const patched = await app.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: H(), payload: { prework: "Read the guide", surveyUrl: "https://forms.example/x" } });
+    expect(patched.json()).toMatchObject({ prework: "Read the guide", surveyUrl: "https://forms.example/x" });
+    const cleared = await app.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: H(), payload: { surveyUrl: null } });
+    expect(cleared.json().surveyUrl).toBeNull();
+
+    const ev = (await app.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: H(), payload: { name: "Soon", timezone: "America/Toronto", sessions: [{ startsAt: "2026-10-20T13:00:00Z", endsAt: "2026-10-20T21:00:00Z" }] } })).json();
+    const tt = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: H(), payload: { name: "Std", priceMinor: 10_000, quantity: 5 } })).json();
+    const ord = (await app.inject({ method: "POST", url: "/v1/orders", headers: H(), payload: { ticketTypeId: tt.id, quantity: 2, buyerEmail: "b@co.com", attendees: [{ email: "ada@co.com", name: "Ada Lovelace" }, { email: "alan@co.com", name: "Alan Turing" }] } })).json();
+    await app.inject({ method: "POST", url: `/v1/dev/payments/${ord.order.paymentRef}/succeed`, headers: { "x-api-key": apiKey } });
+
+    expect((await app.inject({ method: "POST", url: `/v1/events/${ev.id}/meeting`, headers: H(), payload: { provider: "zoom" } })).statusCode).toBe(409);
+    const meeting = await app.inject({ method: "POST", url: `/v1/events/${ev.id}/meeting`, headers: H(), payload: { provider: "manual", joinUrl: "https://meet.example/abc", passcode: "123" } });
+    expect(meeting.json().meeting).toMatchObject({ provider: "manual", joinUrl: "https://meet.example/abc", passcode: "123", hostUrl: null });
+    expect((await app.inject({ method: "POST", url: `/v1/events/${ev.id}/attendance/sync`, headers: { "x-api-key": apiKey } })).statusCode).toBe(409);
+
+    const att = (await app.inject({ url: `/v1/events/${ev.id}/attendance`, headers: H() })).json().items;
+    expect(att).toHaveLength(2);
+    expect(att[0]).toMatchObject({ status: "unknown", source: "none" });
+    const marked = await app.inject({ method: "POST", url: `/v1/events/${ev.id}/attendance`, headers: H(), payload: { seatId: att[0].seatId, status: "present", minutes: 470 } });
+    expect(marked.json()).toMatchObject({ status: "present", minutes: 470, source: "manual" });
+
+    const issued = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/certificates`, headers: H(), payload: { onlyPresent: true } })).json().issued;
+    expect(issued).toHaveLength(1);
+    expect(issued[0].attendeeName).toBe("Ada Lovelace");
+    expect(issued[0].viewUrl).toContain("/view");
+    const verify = await app.inject(`/public/v1/certificates/${issued[0].verifyCode}`);
+    expect(verify.json()).toMatchObject({ valid: true, attendeeName: "Ada Lovelace", courseName: "Delivery 101", organization: "Agile Agilist" });
+    const view = await app.inject(`/public/v1/certificates/${issued[0].verifyCode}/view`);
+    expect(view.statusCode).toBe(200);
+    expect(view.body).toContain("Certificate of Completion");
+    expect((await app.inject(`/public/v1/certificates/bogus/view`)).statusCode).toBe(404);
+    expect((await app.inject({ url: `/v1/events/${ev.id}/certificates`, headers: H() })).json().items).toHaveLength(1);
+
+    const csv = await app.inject({ url: `/v1/events/${ev.id}/roster.csv?format=safe_studio`, headers: H() });
+    expect(csv.headers["content-type"]).toContain("text/csv");
+    expect(csv.body.split("\r\n")[0]).toBe('"First Name","Last Name","Email","Company"');
+    expect((await app.inject({ url: `/v1/events/${ev.id}/roster.csv?format=nope`, headers: H() })).statusCode).toBe(400);
+
+    // Clock is 2026-10-15 12:00; cohort on Oct 20: prework (T-14) and the T-7 reminder are due, T-1 is not.
+    const run = (await app.inject({ method: "POST", url: "/v1/sequences/run", headers: { "x-api-key": apiKey } })).json();
+    expect(run.sent).toBe(4);
+    const msgs = (await app.inject({ url: `/v1/events/${ev.id}/messages`, headers: H() })).json().items;
+    expect(msgs.map((m: { step: string }) => m.step)).toEqual(["prework_t14", "prework_t14", "reminder_t7", "reminder_t7"]);
+    expect((await app.inject({ method: "POST", url: "/v1/sequences/run", headers: { "x-api-key": apiKey } })).json().sent).toBe(0);
+  });
+});

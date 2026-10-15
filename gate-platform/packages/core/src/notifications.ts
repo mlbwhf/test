@@ -210,3 +210,53 @@ export function selfServiceHooks(notifier: Notifier, opts: SelfServiceMailOption
     },
   };
 }
+
+export interface SequenceMailOptions {
+  fromName: string;
+  replyTo?: string | undefined;
+  seatUrl?: ((seatId: string, email: string) => string) | undefined;
+  certificateUrl: (verifyCode: string) => string;
+}
+
+/** The pre-class / day-of / survey / certificate emails driven by the sequence scheduler and certificate issuance. */
+export function sequenceHooks(notifier: Notifier, opts: SequenceMailOptions): CoreHooks {
+  const sign = `— ${opts.fromName}`;
+  return {
+    sequenceStep: async ({ step, seat, event, course, organization }) => {
+      const title = course?.name ?? event.name;
+      const first = seat.attendee.name?.split(" ")[0];
+      const hi = `Hi${first ? ` ${first}` : ""},`;
+      const when = formatRange(event.startsAt, event.endsAt ?? event.startsAt, event.timezone);
+      const join = event.meeting ? `Join link: ${event.meeting.joinUrl}${event.meeting.passcode ? ` (passcode ${event.meeting.passcode})` : ""}` : "The joining link will be sent before class.";
+      const manage = opts.seatUrl ? `Manage your registration: ${opts.seatUrl(seat.id, seat.attendee.email)}` : "";
+      const send = (subject: string, body: string[]) => notifier.send({
+        key: `seq:${step}:${seat.id}`, to: seat.attendee.email, replyTo: opts.replyTo, subject,
+        text: [hi, "", ...body, "", manage, "", sign].filter((l) => l !== undefined).join("\n"),
+        html: `<p>${esc(hi)}</p>${body.map((l) => `<p>${esc(l)}</p>`).join("")}${manage ? `<p>${esc(manage)}</p>` : ""}<p>${esc(sign)}</p>`,
+      });
+      switch (step) {
+        case "prework_t14":
+          return send(`Pre-work for ${title} (${when})`, [`Your cohort starts ${when} (${event.timezone}). Here is what to prepare:`, course?.prework ?? ""]);
+        case "reminder_t7":
+          return send(`One week to go — ${title}`, [`${title} starts ${when} (${event.timezone}).`, join, `Please block the full sessions in your calendar; certification requires attendance.`]);
+        case "reminder_t1":
+          return send(`Tomorrow: ${title}`, [`${title} starts ${when} (${event.timezone}).`, join, `Test your audio and camera today; have your pre-work handy.`]);
+        case "day_of":
+          return send(`Today: ${title} — your join link`, [`We start at ${new Intl.DateTimeFormat("en-CA", { timeZone: event.timezone, timeStyle: "short" }).format(event.startsAt)} (${event.timezone}).`, join]);
+        case "survey":
+          return send(`How was ${title}?`, [`Thank you for attending ${organization.name}'s ${title}. Two minutes of feedback helps the next cohort:`, course?.surveyUrl ?? ""]);
+        case "certificate":
+          return; // handled by certificateIssued
+      }
+    },
+    certificateIssued: async ({ certificate, seat, course }) => {
+      const url = opts.certificateUrl(certificate.verifyCode);
+      await notifier.send({
+        key: `certificate:${certificate.id}`, to: seat.attendee.email, replyTo: opts.replyTo,
+        subject: `Your certificate of completion — ${course?.name ?? certificate.courseName}`,
+        text: `Congratulations ${certificate.attendeeName}. Your certificate of completion for ${certificate.courseName} is ready: ${url}\n\nShare the link; anyone can verify it.\n\n${sign}`,
+        html: `<p>Congratulations ${esc(certificate.attendeeName)}. Your certificate of completion for <strong>${esc(certificate.courseName)}</strong> is ready.</p><p><a href="${esc(url)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">View certificate</a></p><p>Share the link; anyone can verify it.</p><p>${esc(sign)}</p>`,
+      });
+    },
+  };
+}

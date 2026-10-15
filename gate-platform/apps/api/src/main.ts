@@ -1,7 +1,9 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, selfServiceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
+import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
+import type { MeetingProvider } from "@gate/core";
 import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgRepos, type IdempotencyStore } from "@gate/db";
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
@@ -68,6 +70,12 @@ async function main() {
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     getCourseSlug: async (eventId) => { const e = await repos.events.get(eventId); return e?.courseId ? (await repos.courses.get(e.courseId))?.slug : undefined; },
   }));
+  hooks.push(sequenceHooks(notifier, {
+    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    replyTo: process.env.EMAIL_REPLY_TO,
+    seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
+    certificateUrl: (code) => `${publicUrl}/public/v1/certificates/${code}/view`,
+  }));
   if (process.env.HUBSPOT_ACCESS_TOKEN) {
     const sync = new CrmSync(new HubSpotCrm({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN }));
     hooks.push({
@@ -87,7 +95,17 @@ async function main() {
     });
     console.log("[crm] hubspot sync enabled");
   }
-  const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
+  // Meeting providers from environment; absent ones leave the organizer with manual links.
+  const meetings: Partial<Record<"zoom" | "teams", MeetingProvider>> = {};
+  if (process.env.ZOOM_ACCOUNT_ID && process.env.ZOOM_CLIENT_ID && process.env.ZOOM_CLIENT_SECRET) {
+    meetings.zoom = new ZoomMeetings({ accountId: process.env.ZOOM_ACCOUNT_ID, clientId: process.env.ZOOM_CLIENT_ID, clientSecret: process.env.ZOOM_CLIENT_SECRET, ...(process.env.ZOOM_USER_ID ? { userId: process.env.ZOOM_USER_ID } : {}) });
+    console.log("[meetings] zoom enabled");
+  }
+  if (process.env.MS_TENANT_ID && process.env.MS_CLIENT_ID && process.env.MS_CLIENT_SECRET && process.env.MS_ORGANIZER_USER_ID) {
+    meetings.teams = new TeamsMeetings({ tenantId: process.env.MS_TENANT_ID, clientId: process.env.MS_CLIENT_ID, clientSecret: process.env.MS_CLIENT_SECRET, organizerUserId: process.env.MS_ORGANIZER_USER_ID });
+    console.log("[meetings] teams enabled");
+  }
+  const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), meetings, onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
 
   // AI gateway: Anthropic first-party by default; tenants may bring their own provider.
   const ai = new AiGateway({
@@ -109,6 +127,22 @@ async function main() {
     const { organization } = await core.createOrganization({ name: "Dev Organization", country: "US", currency: "USD", apiKey: process.env.GATE_BOOTSTRAP_API_KEY });
     await core.connectPayments(organization.id);
     console.log(`[bootstrap] created ${organization.id} with GATE_BOOTSTRAP_API_KEY`);
+  }
+
+  // Sequence scheduler: due emails and expired waitlist offers, every few minutes.
+  const everyMs = Number(process.env.GATE_SCHEDULER_INTERVAL_MS ?? 5 * 60_000);
+  if (everyMs > 0) {
+    const tick = async () => {
+      try {
+        const r = await core.runSequences();
+        const expired = await core.expireWaitlistOffers();
+        if (r.sent || expired.length) console.log(`[scheduler] sent ${r.sent} sequence emails, expired ${expired.length} waitlist offers`);
+      } catch (err) {
+        console.error("[scheduler]", err);
+      }
+    };
+    setInterval(tick, everyMs).unref();
+    setTimeout(tick, 5_000).unref();
   }
 
   const app = await buildApp({

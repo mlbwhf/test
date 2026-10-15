@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { BillingAddress, CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -39,6 +39,13 @@ export interface PaymentsPort {
     amountMinor: MinorUnits;
     reason: string;
   }): Promise<{ refundRef: string; status: "pending" | "succeeded" | "failed" }>;
+}
+
+/** Video meeting provider (Zoom, Teams). Adapters live in @gate/meetings; core only needs this surface. */
+export interface MeetingProvider {
+  readonly provider: MeetingInfo["provider"];
+  createMeeting(req: { topic: string; startsAt: Date; durationMinutes: number; timezone: string; externalId: string; agenda?: string | undefined }): Promise<MeetingInfo>;
+  getParticipants(meetingId: string): Promise<Array<{ email?: string | undefined; name?: string | undefined; joinedAt: Date; leftAt: Date; durationMinutes: number }>>;
 }
 
 /** Tax engine abstraction: flat-rate table in core, Stripe Tax or Avalara as adapters. */
@@ -127,6 +134,19 @@ export interface WaitlistRepo {
   listOffered(): Promise<WaitlistEntry[]>;
   findOpen(eventId: string, email: string): Promise<WaitlistEntry | undefined>;
 }
+export interface CertificateRepo {
+  create(c: Certificate): Promise<void>;
+  update(c: Certificate): Promise<void>;
+  get(id: string): Promise<Certificate | undefined>;
+  getByCode(code: string): Promise<Certificate | undefined>;
+  getBySeat(seatId: string): Promise<Certificate | undefined>;
+  listByEvent(eventId: string): Promise<Certificate[]>;
+}
+export interface MessageLogRepo {
+  /** Returns false when the key was already recorded (idempotent sends). */
+  record(entry: MessageLogEntry): Promise<boolean>;
+  listByEvent(eventId: string): Promise<MessageLogEntry[]>;
+}
 export interface CorporateAccountRepo {
   create(a: CorporateAccount): Promise<void>;
   update(a: CorporateAccount): Promise<void>;
@@ -169,6 +189,8 @@ export interface Repos {
   invoices: InvoiceRepo;
   seatTransfers: SeatTransferRepo;
   waitlist: WaitlistRepo;
+  certificates: CertificateRepo;
+  messageLog: MessageLogRepo;
   refunds: RefundRepo;
   processedEvents: ProcessedEventRepo;
 }

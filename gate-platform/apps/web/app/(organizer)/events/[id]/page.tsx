@@ -1,10 +1,31 @@
 import Link from "next/link";
-import { api, type Course, type RegionalPrices, type TicketType } from "@/lib/api";
+import {
+  api,
+  ATTENDANCE_STATUSES,
+  MEETING_PROVIDER_LABELS,
+  MEETING_PROVIDERS,
+  ROSTER_FORMAT_LABELS,
+  ROSTER_FORMATS,
+  SEQUENCE_STEP_LABELS,
+  type Course,
+  type Meeting,
+  type RegionalPrices,
+  type TicketType,
+} from "@/lib/api";
 import { formatDateTimeInZone, formatMoney, formatTimeInZone, humanize } from "@/lib/format";
 import { MAX_ATTENDEES, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
+import { RosterDownload } from "@/components/roster-download";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { createTicketTypeAction, sellTestTicketAction } from "@/app/actions";
+import {
+  createMeetingAction,
+  createTicketTypeAction,
+  issueCertificatesAction,
+  recordAttendanceAction,
+  runSequencesAction,
+  sellTestTicketAction,
+  syncAttendanceAction,
+} from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -58,12 +79,87 @@ function RegionalPriceRows({ prefix }: { prefix: string }) {
   );
 }
 
+function MeetingCard({ eventId, meeting }: { eventId: string; meeting: Meeting | null }) {
+  if (!meeting) {
+    return (
+      <ActionForm action={createMeetingAction} submitLabel="Create meeting" pendingLabel="Creating…">
+        <input type="hidden" name="eventId" value={eventId} />
+        <div className="fields">
+          <label>
+            Provider
+            <select name="provider" required defaultValue="zoom">
+              {MEETING_PROVIDERS.map((p) => (
+                <option key={p} value={p}>
+                  {MEETING_PROVIDER_LABELS[p]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Join URL (required for a manual link)
+            <input name="joinUrl" type="url" placeholder="https://…" />
+          </label>
+          <label>
+            Host URL (optional)
+            <input name="hostUrl" type="url" placeholder="https://…" />
+          </label>
+          <label>
+            Passcode (optional)
+            <input name="passcode" autoComplete="off" />
+          </label>
+        </div>
+        <p className="hint">
+          Zoom and Microsoft Teams meetings are created through the provider; leave the link fields blank for those.
+          Pick &ldquo;Manual link&rdquo; to paste a meeting you set up yourself.
+        </p>
+      </ActionForm>
+    );
+  }
+
+  return (
+    <>
+      <dl className="kv">
+        <dt>Provider</dt>
+        <dd>
+          <StatusBadge status={meeting.provider} /> <span className="muted">{MEETING_PROVIDER_LABELS[meeting.provider]}</span>
+        </dd>
+        <dt>Meeting ID</dt>
+        <dd>
+          <code>{meeting.meetingId}</code>
+        </dd>
+        <dt>Join link</dt>
+        <dd>
+          <a href={meeting.joinUrl} target="_blank" rel="noreferrer">
+            {meeting.joinUrl}
+          </a>
+        </dd>
+        <dt>Host link</dt>
+        <dd>
+          {meeting.hostUrl ? (
+            <a href={meeting.hostUrl} target="_blank" rel="noreferrer">
+              {meeting.hostUrl}
+            </a>
+          ) : (
+            <span className="muted">—</span>
+          )}
+        </dd>
+        <dt>Passcode</dt>
+        <dd>{meeting.passcode ? <code>{meeting.passcode}</code> : <span className="muted">—</span>}</dd>
+      </dl>
+      <p className="hint">Learners receive the link in the day-before and day-of emails.</p>
+    </>
+  );
+}
+
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [eventRes, ticketTypesRes, seatsRes] = await Promise.all([
+  const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes] = await Promise.all([
     api.getEvent(id),
     api.listTicketTypes(id),
     api.listSeats(id),
+    api.listAttendance(id),
+    api.listCertificates(id),
+    api.listMessages(id),
   ]);
 
   if (!eventRes.ok) {
@@ -84,6 +180,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   const timezone = event.timezone || "UTC";
   const currencies = sellableCurrencies(event.currency, ticketTypes);
   const rosterHref = `/events/${encodeURIComponent(event.id)}/roster.csv`;
+  const attendance = attendanceRes.ok ? attendanceRes.data.items : [];
+  const certificates = certificatesRes.ok ? certificatesRes.data.items : [];
+  const messages = messagesRes.ok ? messagesRes.data.items : [];
+  const meeting = event.meeting ?? null;
+  const canSync = meeting !== null && meeting.provider !== "manual";
 
   let course: Course | null = null;
   if (event.courseId) {
@@ -142,6 +243,174 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             </p>
           </>
         )}
+      </Section>
+
+      <Section title="Delivery">
+        <div className="subsection">
+          <h3>Meeting</h3>
+          <MeetingCard eventId={event.id} meeting={meeting} />
+        </div>
+
+        <div className="subsection">
+          <h3>Attendance</h3>
+          <div className="section-actions">
+            {canSync ? (
+              <ActionForm action={syncAttendanceAction} submitLabel="Sync from meeting" pendingLabel="Syncing…" inline>
+                <input type="hidden" name="eventId" value={event.id} />
+              </ActionForm>
+            ) : (
+              <>
+                <button type="button" className="btn btn-primary" disabled>
+                  Sync from meeting
+                </button>
+                <span className="hint">
+                  {meeting === null
+                    ? "Create a Zoom or Teams meeting first to pull attendance from the provider."
+                    : "Manual meeting links have no provider report; mark attendance by hand below."}
+                </span>
+              </>
+            )}
+          </div>
+          {!attendanceRes.ok ? (
+            <ApiNotice failure={attendanceRes.error} />
+          ) : attendance.length === 0 ? (
+            <Empty>No attendance records yet. Seats appear here once tickets are sold.</Empty>
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th className="num">Minutes</th>
+                    <th className="num">Sessions</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Override</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendance.map((a) => (
+                    <tr key={a.seatId}>
+                      <td>{a.name ?? <span className="muted">—</span>}</td>
+                      <td>{a.email}</td>
+                      <td className="num">{a.minutes}</td>
+                      <td className="num">{a.sessionsAttended}</td>
+                      <td>
+                        <StatusBadge status={a.status} />
+                      </td>
+                      <td>{a.source === "none" ? <span className="muted">—</span> : humanize(a.source)}</td>
+                      <td>
+                        <ActionForm action={recordAttendanceAction} submitLabel="Save" pendingLabel="Saving…" inline>
+                          <input type="hidden" name="eventId" value={event.id} />
+                          <input type="hidden" name="seatId" value={a.seatId} />
+                          <select
+                            name="status"
+                            aria-label={`Attendance status for ${a.email}`}
+                            defaultValue={a.status === "unknown" ? "present" : a.status}
+                          >
+                            {ATTENDANCE_STATUSES.map((st) => (
+                              <option key={st} value={st}>
+                                {humanize(st)}
+                              </option>
+                            ))}
+                          </select>
+                        </ActionForm>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="subsection">
+          <h3>Certificates</h3>
+          {!certificatesRes.ok ? (
+            <ApiNotice failure={certificatesRes.error} />
+          ) : certificates.length === 0 ? (
+            <Empty>No certificates issued yet.</Empty>
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Issued</th>
+                    <th>Verify code</th>
+                    <th>Links</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {certificates.map((c) => (
+                    <tr key={c.id}>
+                      <td>{c.attendeeName || <span className="muted">—</span>}</td>
+                      <td>{c.attendeeEmail}</td>
+                      <td>{formatDateTimeInZone(c.issuedAt, timezone)}</td>
+                      <td className="mono">{c.verifyCode}</td>
+                      <td>
+                        <a href={c.verifyUrl} target="_blank" rel="noreferrer">
+                          Verify
+                        </a>
+                        {" · "}
+                        <a href={c.viewUrl} target="_blank" rel="noreferrer">
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <ActionForm action={issueCertificatesAction} submitLabel="Issue certificates" pendingLabel="Issuing…">
+            <input type="hidden" name="eventId" value={event.id} />
+            <label className="label-check">
+              <input type="checkbox" name="onlyPresent" defaultChecked />
+              Only learners marked present
+            </label>
+            <p className="hint">
+              Learners who already hold a certificate for this cohort are skipped. Each certificate gets a verify
+              code and is emailed as the &ldquo;Certificate&rdquo; sequence step.
+            </p>
+          </ActionForm>
+        </div>
+
+        <div className="subsection">
+          <h3>Messages</h3>
+          {!messagesRes.ok ? (
+            <ApiNotice failure={messagesRes.error} />
+          ) : messages.length === 0 ? (
+            <Empty>No sequence emails sent yet. Steps: pre-work (T-14), reminders (T-7, T-1), day of, survey, certificate.</Empty>
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Step</th>
+                    <th>To</th>
+                    <th>Sent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {messages.map((m) => (
+                    <tr key={m.key}>
+                      <td>{SEQUENCE_STEP_LABELS[m.step] ?? humanize(m.step)}</td>
+                      <td>{m.to}</td>
+                      <td>{formatDateTimeInZone(m.sentAt, timezone)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <ActionForm action={runSequencesAction} submitLabel="Run due messages now" pendingLabel="Sending…">
+            <input type="hidden" name="eventId" value={event.id} />
+            <p className="hint">Sends every scheduled email that is due across all cohorts, instead of waiting for the next scheduled run.</p>
+          </ActionForm>
+        </div>
       </Section>
 
       <Section title="Ticket types">
@@ -256,10 +525,12 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               ? `${seats.length} seat${seats.length === 1 ? "" : "s"}`
               : "Seats unavailable"}
           </span>
-          <a href={rosterHref} download>
-            Download CSV
-          </a>
-          <span className="hint">(name,email,company,status,orderId — import into SAFe Studio)</span>
+          <RosterDownload
+            href={rosterHref}
+            defaultFormat="default"
+            formats={ROSTER_FORMATS.map((f) => ({ value: f, label: ROSTER_FORMAT_LABELS[f] }))}
+          />
+          <span className="hint">Column layout follows the chosen format (SAFe Studio and Scrum.org match their import templates).</span>
         </div>
         {!seatsRes.ok ? (
           <ApiNotice failure={seatsRes.error} />

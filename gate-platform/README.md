@@ -17,6 +17,7 @@ Events money OS: ticketing, split payments, payouts and a double-entry ledger to
 | `apps/web` | `@gate/web` | Next.js 16 organizer dashboard (cash position, courses, cohorts with sessions, instructors, regional and early-bird pricing, roster CSV, test sales, orders, refunds) plus the learner portal at `/my/seat/:id` | typecheck + production build |
 | `apps/widget` | `@gate/widget` | 22 KB embeddable schedule + on-page checkout widget (`<div data-gate-widget …>`): regional currency, early bird, Stripe Payment Element or test mode, served by the API at `/widget/v1/gate-widget.js` with a demo page at `/widget/v1/demo` | 23 jsdom tests + bundle size guard |
 | `packages/integrations-hubspot` | `@gate/integrations-hubspot` | CRM port with a HubSpot adapter: contacts and deals upserted on paid orders and refunds | 14 tests (offline) |
+| `packages/meetings` | `@gate/meetings` | Meeting port with Zoom and Microsoft Teams adapters (create, update, delete, participant reports with retries) and attendance summarisation | 24 tests (offline) |
 
 ## Run it locally
 
@@ -76,8 +77,8 @@ CI (`.github/workflows/ci.yml`) runs typecheck, tests against a Postgres service
 | 2 | done | Embeddable widget, confirmation ticket email with `.ics` per seat (`/public/v1/seats/:id/calendar.ics`), domain hooks, HubSpot sync, dashboard pages for courses/cohorts/roster |
 | 3 | done | Corporate accounts, invoice orders with PO and net terms, partial payments via customer deposits, card payment against an invoice, voiding, flat-rate tax engine (GST/HST, VAT, UAE VAT, reverse charge) behind a `TaxPort`, receivables ageing report |
 | 4 | done | Change policy engine (per organization or course), learner self-service with seat id + email as credential: substitute, transfer between cohorts (free window, fee + price difference charged by card), cancel with tiered refund; waitlist with held seats, 24-hour offers, claim through the widget, expiry; learner portal at `/my/seat/:id?email=` with no organizer chrome; offer and change emails |
-| 5 | next | Zoom/Teams, email sequences, attendance, certificates, roster export for the certification body |
-| 6 | | Delivery-linked release, instructor payouts on delivery, minimum-enrolment protection, deferred revenue report |
+| 5 | done | Zoom (server-to-server OAuth) and Microsoft Teams (Graph) meeting creation per cohort or a manual link; attendance synced from the provider's participant report and matched to seats, with manual overrides; certificates of completion with public verify JSON and a printable view page; roster export in certification-body formats (`default`, `safe_studio`, `scrum_org`); email sequence (pre-work T-14, reminders T-7 and T-1, day-of join link, post-class survey, certificate) driven by an idempotent in-process scheduler; course pre-work and survey settings; dashboard Delivery section |
+| 6 | next | Delivery-linked release, instructor payouts on delivery, minimum-enrolment protection, deferred revenue report |
 
 ## Not built yet (platform backlog)
 
