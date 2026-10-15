@@ -1,5 +1,5 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
@@ -76,6 +76,12 @@ async function main() {
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     certificateUrl: (code) => `${publicUrl}/public/v1/certificates/${code}/view`,
   }));
+  hooks.push(cohortHooks(notifier, {
+    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    organizerEmail: async () => process.env.EMAIL_REPLY_TO ?? process.env.GATE_ORGANIZER_EMAIL,
+    seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
+    listSeats: (eventId) => repos.seats.listByEvent(eventId),
+  }));
   if (process.env.HUBSPOT_ACCESS_TOKEN) {
     const sync = new CrmSync(new HubSpotCrm({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN }));
     hooks.push({
@@ -136,7 +142,9 @@ async function main() {
       try {
         const r = await core.runSequences();
         const expired = await core.expireWaitlistOffers();
-        if (r.sent || expired.length) console.log(`[scheduler] sent ${r.sent} sequence emails, expired ${expired.length} waitlist offers`);
+        const released = await core.releaseDelivered();
+        const flagged = await core.reviewMinEnrollment();
+        if (r.sent || expired.length || released.orders || flagged.length) console.log(`[scheduler] sent ${r.sent} emails, expired ${expired.length} offers, released ${released.orders} orders (${released.amountMinor}), flagged ${flagged.length} cohorts`);
       } catch (err) {
         console.error("[scheduler]", err);
       }

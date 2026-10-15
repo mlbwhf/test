@@ -78,11 +78,12 @@ CI (`.github/workflows/ci.yml`) runs typecheck, tests against a Postgres service
 | 3 | done | Corporate accounts, invoice orders with PO and net terms, partial payments via customer deposits, card payment against an invoice, voiding, flat-rate tax engine (GST/HST, VAT, UAE VAT, reverse charge) behind a `TaxPort`, receivables ageing report |
 | 4 | done | Change policy engine (per organization or course), learner self-service with seat id + email as credential: substitute, transfer between cohorts (free window, fee + price difference charged by card), cancel with tiered refund; waitlist with held seats, 24-hour offers, claim through the widget, expiry; learner portal at `/my/seat/:id?email=` with no organizer chrome; offer and change emails |
 | 5 | done | Zoom (server-to-server OAuth) and Microsoft Teams (Graph) meeting creation per cohort or a manual link; attendance synced from the provider's participant report and matched to seats, with manual overrides; certificates of completion with public verify JSON and a printable view page; roster export in certification-body formats (`default`, `safe_studio`, `scrum_org`); email sequence (pre-work T-14, reminders T-7 and T-1, day-of join link, post-class survey, certificate) driven by an idempotent in-process scheduler; course pre-work and survey settings; dashboard Delivery section |
-| 6 | next | Delivery-linked release, instructor payouts on delivery, minimum-enrolment protection, deferred revenue report |
+| 6 | done | Delivery-linked release: organizer-side funds held in a `held` liability until the cohort ends plus a grace period (or released early by the organizer), then released pro rata and transferred; flat instructor fees settled on delivery; payouts recorded against payables; minimum-enrolment review at the decision point with organizer alert; cohort cancellation with full refunds or bulk transfer to another cohort, invoice voiding and waitlist clearing; revenue recognised on delivery with deferred and refunded figures per currency and margin per cohort; dashboard Money page and cohort money controls |
 
 ## Not built yet (platform backlog)
 
-- Payout scheduling and same-day payout into the platform balance.
+- Automated payouts (Stripe payout schedules / bank rails) on top of the recorded-payout ledger; same-day payout into the platform balance.
+- Deposit-reserve early release (today early release moves the whole held amount).
 - Expo mobile app with Tap to Pay point of sale and attendee wallet.
 - Persistent AI audit log, tenant AI config and budget tables in Postgres (in-memory today).
 - Hash-chained audit log for admin actions, WORM export.

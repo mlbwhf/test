@@ -13,7 +13,7 @@ async function setup(opts: { passFee?: boolean; venueBps?: number } = {}) {
   payments = new FakePaymentsAdapter();
   ledger = new Ledger({ store: new InMemoryLedgerStore() });
   core = new Core({ repos: createInMemoryRepos(), ledger, payments });
-  const { organization, apiKey } = await core.createOrganization({
+  const { organization, apiKey } = await core.createOrganization({ releasePolicy: "immediate",
     name: "Agile Agilist", country: "US", currency: "USD", passFeeToAttendee: opts.passFee ?? false,
   });
   await core.connectPayments(organization.id);

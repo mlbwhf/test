@@ -551,3 +551,34 @@ td .action-form-inline .result {
   padding: 6px 8px;
   font-size: 0.8rem;
 }
+
+/* Money (release status, at-risk cohorts) */
+.badge-released {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+.badge-held,
+.badge-at_risk {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.badge-mixed {
+  background: var(--live-bg);
+  color: var(--live-text);
+}
+.badge-at_risk {
+  text-transform: none;
+}
+.range-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+.fees-list {
+  margin: 0;
+  padding-left: 18px;
+}
+.fees-list li {
+  margin: 2px 0;
+}

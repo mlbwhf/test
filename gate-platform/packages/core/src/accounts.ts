@@ -11,6 +11,8 @@ export const codes = {
   taxPayable: (orgId: string, ccy: Currency) => `org:${orgId}:tax_payable:${ccy}`,
   feeRevenue: (ccy: Currency) => `platform:revenue:fees:${ccy}`,
   orgPayable: (orgId: string, ccy: Currency) => `org:${orgId}:payable:${ccy}`,
+  /** Organizer-side funds held until the cohort is delivered. */
+  orgHeld: (orgId: string, ccy: Currency) => `org:${orgId}:held:${ccy}`,
   partyPayable: (partyId: string, ccy: Currency) => `party:${partyId}:payable:${ccy}`,
 };
 
@@ -34,6 +36,9 @@ export class ChartOfAccounts {
   }
   orgPayable(orgId: string, ccy: Currency): Promise<Account> {
     return this.ledger.ensureAccount({ code: codes.orgPayable(orgId, ccy), name: `Payable to organizer (${ccy})`, type: "liability", currency: ccy, tenantId: orgId });
+  }
+  orgHeld(orgId: string, ccy: Currency): Promise<Account> {
+    return this.ledger.ensureAccount({ code: codes.orgHeld(orgId, ccy), name: `Held pending delivery (${ccy})`, type: "liability", currency: ccy, tenantId: orgId });
   }
   partyPayable(orgId: string, partyId: string, ccy: Currency): Promise<Account> {
     return this.ledger.ensureAccount({ code: codes.partyPayable(partyId, ccy), name: `Payable to party ${partyId} (${ccy})`, type: "liability", currency: ccy, tenantId: orgId, metadata: { partyId } });

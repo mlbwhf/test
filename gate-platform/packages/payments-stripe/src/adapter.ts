@@ -82,9 +82,12 @@ export class StripePaymentsAdapter implements PaymentsPort {
     currency: string;
     transferGroup: string;
   }) {
-    // Tie the transfer to the charge so it follows the charge's funds availability.
-    const pi = await this.stripe.paymentIntents.retrieve(input.paymentRef);
-    const chargeId = typeof pi.latest_charge === "string" ? pi.latest_charge : pi.latest_charge?.id;
+    // Tie the transfer to the charge so it follows the charge's funds availability; fee transfers draw on the available balance.
+    let chargeId: string | undefined;
+    if (input.paymentRef) {
+      const pi = await this.stripe.paymentIntents.retrieve(input.paymentRef);
+      chargeId = typeof pi.latest_charge === "string" ? pi.latest_charge : pi.latest_charge?.id;
+    }
     const transfer = await this.stripe.transfers.create(
       {
         amount: input.amountMinor,

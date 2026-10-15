@@ -57,7 +57,7 @@ describe("confirmation hook through Core", () => {
   });
 
   async function paidOrder() {
-    const { organization: org } = await core.createOrganization({ name: "Agile Agilist", country: "CA", currency: "CAD" });
+    const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Agile Agilist", country: "CA", currency: "CAD" });
     const course = await core.createCourse(org.id, { slug: "leading-safe", name: "Leading SAFe" });
     const cohort = await core.createEvent(org.id, { courseId: course.id, name: "Nov cohort", timezone: "America/Toronto", sessions: [{ startsAt: new Date("2026-11-20T14:00:00Z"), endsAt: new Date("2026-11-20T22:00:00Z"), title: "Day 1" }, { startsAt: new Date("2026-11-21T14:00:00Z"), endsAt: new Date("2026-11-21T22:00:00Z"), title: "Day 2" }] });
     const tt = await core.createTicketType(org.id, cohort.id, { name: "Std", priceMinor: 100_000, quantity: 10 });

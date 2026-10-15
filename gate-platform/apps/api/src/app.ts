@@ -330,6 +330,24 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       return reply.code(201).send({ refund: S.toRefund(refund) });
     });
 
+    // ---------- money: release, instructor fees, payouts, reports, cohort cancellation ----------
+    api.patch("/v1/organizations/me", { schema: { tags: ["organizations"], body: S.UpdateOrganizationBody, response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateOrganization(org(req).id, req.body)));
+    api.put("/v1/events/:id/instructor-fees", { schema: { tags: ["money"], params: z.object({ id: z.string() }), body: z.object({ fees: z.array(S.InstructorFeeSchema).max(20) }), response: { 200: S.EventSchema } } }, async (req) => S.toEvent(await deps.core.setInstructorFees(org(req).id, req.params.id, req.body.fees)));
+    api.post("/v1/events/:id/release", { schema: { tags: ["money"], params: z.object({ id: z.string() }), response: { 200: z.object({ released: z.number().int(), amountMinor: z.number().int() }), 409: S.ErrorSchema } } }, async (req) => deps.core.releaseEvent(org(req).id, req.params.id));
+    api.post("/v1/events/:id/cancel", { schema: { tags: ["money"], params: z.object({ id: z.string() }), body: z.object({ reason: z.string().min(1).max(500), transferToEventId: z.string().optional() }), response: { 200: z.object({ event: S.EventSchema, refunded: z.number().int(), transferred: z.number().int(), voided: z.number().int() }), 409: S.ErrorSchema } } }, async (req) => {
+      const r = await deps.core.cancelCohort(org(req).id, req.params.id, req.body);
+      return { event: S.toEvent(r.event), refunded: r.refunded, transferred: r.transferred, voided: r.voided };
+    });
+    api.get("/v1/reports/revenue", { schema: { tags: ["reports"], querystring: z.object({ from: z.string().datetime({ offset: true }), to: z.string().datetime({ offset: true }) }), response: { 200: z.object({ from: z.string(), to: z.string(), byCurrency: z.record(z.string(), z.object({ recognizedMinor: z.number().int(), deferredMinor: z.number().int(), refundedMinor: z.number().int() })), cohorts: z.array(S.RevenueCohortSchema) }) } } }, async (req) => {
+      const r = await deps.core.revenueReport(org(req).id, { from: new Date(req.query.from), to: new Date(req.query.to) });
+      return { from: r.from.toISOString(), to: r.to.toISOString(), byCurrency: r.byCurrency, cohorts: r.cohorts.map((c) => ({ ...c, startsAt: c.startsAt.toISOString(), endsAt: c.endsAt?.toISOString() ?? null })) };
+    });
+    api.get("/v1/reports/payables", { schema: { tags: ["reports"], response: { 200: z.object({ items: z.array(S.PayableSchema) }) } } }, async (req) => ({ items: await deps.core.payables(org(req).id) }));
+    api.get("/v1/payouts", { schema: { tags: ["money"], response: { 200: z.object({ items: z.array(S.PayoutSchema) }) } } }, async (req) => ({ items: (await deps.core.listPayouts(org(req).id)).map(S.toPayout) }));
+    api.post("/v1/payouts", { schema: { tags: ["money"], body: S.CreatePayoutBody, response: { 201: z.object({ payout: S.PayoutSchema }), 400: S.ErrorSchema } } }, async (req, reply) => reply.code(201).send({ payout: S.toPayout(await deps.core.recordPayout(org(req).id, req.body)) }));
+    api.post("/v1/jobs/release", { schema: { tags: ["money"], response: { 200: z.object({ events: z.number().int(), orders: z.number().int(), amountMinor: z.number().int() }) } } }, async () => deps.core.releaseDelivered());
+    api.post("/v1/jobs/review-min-enrollment", { schema: { tags: ["money"], response: { 200: z.object({ flagged: z.array(S.EventSchema) }) } } }, async () => ({ flagged: (await deps.core.reviewMinEnrollment()).map(S.toEvent) }));
+
     // ---------- delivery: meetings, attendance, certificates, roster, sequences ----------
     const certOut = (c: { id: string; seatId: string; eventId: string; attendeeName: string; attendeeEmail: string; courseName: string; issuedAt: Date; verifyCode: string }) => ({
       id: c.id, seatId: c.seatId, eventId: c.eventId, attendeeName: c.attendeeName, attendeeEmail: c.attendeeEmail, courseName: c.courseName, issuedAt: c.issuedAt.toISOString(), verifyCode: c.verifyCode,

@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 async function leadingSafe() {
-  const { organization: org } = await core.createOrganization({ name: "Agile Agilist", country: "CA", currency: "CAD" });
+  const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Agile Agilist", country: "CA", currency: "CAD" });
   const instructor = await core.createParty(org.id, { name: "John", kind: "instructor" });
   const course = await core.createCourse(org.id, { slug: "leading-safe", name: "Leading SAFe (SAFe Agilist)", certificationBody: "Scaled Agile", durationDays: 2 });
   const cohort = await core.createEvent(org.id, {

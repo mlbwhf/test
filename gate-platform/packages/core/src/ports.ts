@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Payout, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -147,6 +147,10 @@ export interface MessageLogRepo {
   record(entry: MessageLogEntry): Promise<boolean>;
   listByEvent(eventId: string): Promise<MessageLogEntry[]>;
 }
+export interface PayoutRepo {
+  create(p: Payout): Promise<void>;
+  listByOrganization(organizationId: string, limit?: number): Promise<Payout[]>;
+}
 export interface CorporateAccountRepo {
   create(a: CorporateAccount): Promise<void>;
   update(a: CorporateAccount): Promise<void>;
@@ -191,6 +195,7 @@ export interface Repos {
   waitlist: WaitlistRepo;
   certificates: CertificateRepo;
   messageLog: MessageLogRepo;
+  payouts: PayoutRepo;
   refunds: RefundRepo;
   processedEvents: ProcessedEventRepo;
 }

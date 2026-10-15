@@ -10,3 +10,5 @@ export const REGIONAL_PRICE_ROWS = 3;
 export const MAX_ATTENDEES = 5;
 
 export const DEFAULT_TIMEZONE = "America/Toronto";
+/** Number of instructor-fee rows rendered on the cohort "Money" form. */
+export const MAX_INSTRUCTOR_FEES = 3;

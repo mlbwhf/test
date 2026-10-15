@@ -12,7 +12,7 @@ const H = () => ({ "x-api-key": apiKey, "content-type": "application/json" });
 beforeEach(async () => {
   const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter(), tax: new FlatRateTax(), clock: { now: () => new Date("2026-10-15T12:00:00Z") } });
   app = await buildApp({ core, adminKey: "admin", env: "test", publicPageUrl: (_o, slug) => `https://agile-agilist.com/training/${slug}/` });
-  const res = await app.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "CAD" } });
+  const res = await app.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "CAD", releasePolicy: "immediate" } });
   apiKey = res.json().apiKey;
   orgId = res.json().organization.id;
 });
@@ -248,5 +248,62 @@ describe("delivery API", () => {
     const msgs = (await app.inject({ url: `/v1/events/${ev.id}/messages`, headers: H() })).json().items;
     expect(msgs.map((m: { step: string }) => m.step)).toEqual(["prework_t14", "prework_t14", "reminder_t7", "reminder_t7"]);
     expect((await app.inject({ method: "POST", url: "/v1/sequences/run", headers: { "x-api-key": apiKey } })).json().sent).toBe(0);
+  });
+});
+
+describe("money API", () => {
+  it("on-delivery release, instructor fees, payables, payouts, revenue report, min-enrolment review and cancellation", async () => {
+    const orgRes = await app.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Hold Org", country: "CA", currency: "CAD" } });
+    const key = orgRes.json().apiKey;
+    const HH = { "x-api-key": key, "content-type": "application/json" };
+    expect(orgRes.json().organization.releasePolicy).toBe("on_delivery");
+    const instructor = (await app.inject({ method: "POST", url: "/v1/parties", headers: HH, payload: { name: "Jane", kind: "instructor" } })).json();
+    const course = (await app.inject({ method: "POST", url: "/v1/courses", headers: HH, payload: { slug: "ls", name: "LS" } })).json();
+    const ev = (await app.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: HH, payload: { name: "Oct 18", sessions: [{ startsAt: "2026-10-18T13:00:00Z", endsAt: "2026-10-18T21:00:00Z" }], minEnrollment: 5 } })).json();
+    const fees = await app.inject({ method: "PUT", url: `/v1/events/${ev.id}/instructor-fees`, headers: HH, payload: { fees: [{ partyId: instructor.id, amountMinor: 40_000 }] } });
+    expect(fees.json().instructorFees).toEqual([{ partyId: instructor.id, amountMinor: 40_000 }]);
+    const tt = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: HH, payload: { name: "Std", priceMinor: 100_000, quantity: 10 } })).json();
+    const ord = (await app.inject({ method: "POST", url: "/v1/orders", headers: HH, payload: { ticketTypeId: tt.id, quantity: 2, buyerEmail: "b@co.com" } })).json();
+    await app.inject({ method: "POST", url: `/v1/dev/payments/${ord.order.paymentRef}/succeed`, headers: { "x-api-key": key } });
+    const paid = (await app.inject({ url: `/v1/orders/${ord.order.id}`, headers: HH })).json();
+    expect(paid.fundsStatus).toBe("held");
+    expect(paid.heldMinor).toBe(200_000 - 1_300);
+
+    let payables = (await app.inject({ url: "/v1/reports/payables", headers: HH })).json().items;
+    expect(payables).toEqual([expect.objectContaining({ partyId: null, name: "Hold Org", payableMinor: 0, heldMinor: 200_000 - 1_300 })]);
+    expect((await app.inject({ method: "POST", url: "/v1/payouts", headers: HH, payload: { currency: "CAD", amountMinor: 100, method: "wire" } })).statusCode).toBe(400);
+
+    // Minimum-enrolment review: 2 of 5 seats, cohort in 3 days -> at risk.
+    const review = (await app.inject({ method: "POST", url: "/v1/jobs/review-min-enrollment", headers: { "x-api-key": key } })).json();
+    expect(review.flagged.map((e: { id: string }) => e.id)).toEqual([ev.id]);
+    expect((await app.inject({ url: `/v1/events/${ev.id}`, headers: HH })).json().atRiskAt).toBeTruthy();
+
+    // Organizer decides to run it anyway: release manually after delivery (clock is before the end, so the job releases nothing yet).
+    expect((await app.inject({ method: "POST", url: "/v1/jobs/release", headers: { "x-api-key": key } })).json().orders).toBe(0);
+    const released = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/release`, headers: { "x-api-key": key } })).json();
+    expect(released).toEqual({ released: 1, amountMinor: 200_000 - 1_300 });
+    payables = (await app.inject({ url: "/v1/reports/payables", headers: HH })).json().items;
+    expect(payables.find((p: { partyId: string | null }) => p.partyId === instructor.id)).toMatchObject({ name: "Jane", kind: "instructor", payableMinor: 40_000, heldMinor: 0 });
+    expect(payables.find((p: { partyId: string | null }) => p.partyId === null)).toMatchObject({ payableMinor: 200_000 - 1_300 - 40_000, heldMinor: 0 });
+
+    const payout = await app.inject({ method: "POST", url: "/v1/payouts", headers: HH, payload: { partyId: instructor.id, currency: "CAD", amountMinor: 40_000, method: "bank_transfer", reference: "ET-1" } });
+    expect(payout.statusCode).toBe(201);
+    expect((await app.inject({ url: "/v1/payouts", headers: HH })).json().items).toHaveLength(1);
+
+    const report = (await app.inject({ url: "/v1/reports/revenue?from=2026-10-01T00:00:00Z&to=2026-10-31T00:00:00Z", headers: HH })).json();
+    expect(report.cohorts[0]).toMatchObject({ eventId: ev.id, seats: 2, grossMinor: 200_000, instructorFeesMinor: 40_000, fundsStatus: "released", recognized: true });
+    expect(report.byCurrency.CAD.recognizedMinor).toBe(200_000 - 1_300 - 40_000);
+
+    // Settings and cancellation of a second cohort with refunds.
+    const settings = await app.inject({ method: "PATCH", url: "/v1/organizations/me", headers: HH, payload: { releaseGraceHours: 48, minEnrollmentDecisionDays: 10 } });
+    expect(settings.json()).toMatchObject({ releaseGraceHours: 48, minEnrollmentDecisionDays: 10 });
+    const ev2 = (await app.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: HH, payload: { name: "Nov", startsAt: "2026-11-20T14:00:00Z" } })).json();
+    const tt2 = (await app.inject({ method: "POST", url: `/v1/events/${ev2.id}/ticket-types`, headers: HH, payload: { name: "Std", priceMinor: 100_000, quantity: 10 } })).json();
+    const ord2 = (await app.inject({ method: "POST", url: "/v1/orders", headers: HH, payload: { ticketTypeId: tt2.id, quantity: 1, buyerEmail: "c@co.com" } })).json();
+    await app.inject({ method: "POST", url: `/v1/dev/payments/${ord2.order.paymentRef}/succeed`, headers: { "x-api-key": key } });
+    const cancel = await app.inject({ method: "POST", url: `/v1/events/${ev2.id}/cancel`, headers: HH, payload: { reason: "instructor unavailable" } });
+    expect(cancel.json()).toMatchObject({ refunded: 1, transferred: 0, voided: 0 });
+    expect(cancel.json().event).toMatchObject({ status: "cancelled", cancelReason: "instructor unavailable" });
+    expect((await app.inject({ url: `/v1/orders/${ord2.order.id}`, headers: HH })).json().status).toBe("refunded");
   });
 });

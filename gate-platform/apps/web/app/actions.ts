@@ -9,17 +9,25 @@ import {
   MEETING_PROVIDER_LABELS,
   MEETING_PROVIDERS,
   PARTY_KINDS,
+  PAYOUT_METHOD_LABELS,
+  PAYOUT_METHODS,
+  RELEASE_POLICIES,
   type Attendee,
   type AttendanceStatus,
+  type CancelEventInput,
   type CreateMeetingInput,
+  type CreatePayoutInput,
   type EventFormat,
+  type InstructorFee,
   type MeetingProvider,
   type PartyKind,
+  type PayoutMethod,
   type RegionalPrices,
+  type ReleasePolicy,
   type Session,
 } from "@/lib/api";
-import { formatDateTime, formatMoney, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
-import { MAX_ATTENDEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
+import { formatDateTime, formatMoney, humanize, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
+import { MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import type { ActionState } from "@/components/action-form";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,6 +64,12 @@ function positiveInt(raw: string): number | null {
   if (!/^\d+$/.test(raw)) return null;
   const n = Number(raw);
   return n > 0 && Number.isSafeInteger(n) ? n : null;
+}
+
+function nonNegativeInt(raw: string): number | null {
+  if (!/^\d+$/.test(raw)) return null;
+  const n = Number(raw);
+  return Number.isSafeInteger(n) ? n : null;
 }
 
 /**
@@ -537,6 +551,170 @@ export async function updateCourseDeliveryAction(_prev: ActionState, formData: F
     details: [
       { label: "Pre-work", value: result.data.prework ? `${result.data.prework.length} characters` : "none" },
       { label: "Survey URL", value: result.data.surveyUrl ?? "none" },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Money: release policy, instructor fees, cancellation, payouts.
+
+export async function updateOrganizationSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const releasePolicyRaw = field(formData, "releasePolicy");
+  const graceHoursRaw = field(formData, "releaseGraceHours");
+  const decisionDaysRaw = field(formData, "minEnrollmentDecisionDays");
+
+  if (!RELEASE_POLICIES.includes(releasePolicyRaw as ReleasePolicy)) return fail("Pick a release policy.");
+  const releasePolicy = releasePolicyRaw as ReleasePolicy;
+  const releaseGraceHours = nonNegativeInt(graceHoursRaw);
+  if (releaseGraceHours === null) return fail("Grace hours must be a whole number of hours (0 or more).");
+  const minEnrollmentDecisionDays = nonNegativeInt(decisionDaysRaw);
+  if (minEnrollmentDecisionDays === null) return fail("Decision days must be a whole number of days (0 or more).");
+
+  const result = await api.updateOrganization({ releasePolicy, releaseGraceHours, minEnrollmentDecisionDays });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath("/money");
+  revalidatePath("/dashboard");
+  return {
+    status: "ok",
+    message: `Saved money settings for "${result.data.name}".`,
+    details: [
+      { label: "Release policy", value: humanize(result.data.releasePolicy) },
+      { label: "Grace hours", value: String(result.data.releaseGraceHours) },
+      { label: "Decision days", value: String(result.data.minEnrollmentDecisionDays) },
+    ],
+  };
+}
+
+export async function releaseFundsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const currency = field(formData, "currency").toUpperCase();
+  if (!eventId) return fail("Missing event id.");
+
+  const result = await api.releaseFunds(eventId);
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath("/money");
+  revalidatePath(`/events/${eventId}`);
+  revalidatePath("/dashboard");
+  const { released, amountMinor } = result.data;
+  return {
+    status: "ok",
+    message: released === 0 ? "Nothing to release: no held funds for this cohort." : `Released ${released} held order${released === 1 ? "" : "s"}.`,
+    details: [
+      {
+        label: "Amount",
+        value: CURRENCY_RE.test(currency) ? formatMoney(amountMinor, currency) : String(amountMinor),
+      },
+    ],
+  };
+}
+
+export async function recordPayoutAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const partyId = field(formData, "partyId");
+  const currency = field(formData, "currency").toUpperCase();
+  const amountRaw = field(formData, "amount");
+  const methodRaw = field(formData, "method");
+  const reference = field(formData, "reference");
+
+  if (!CURRENCY_RE.test(currency)) return fail("Currency must be a 3-letter ISO code (e.g. EUR).");
+  const amountMinor = parseMajorToMinor(amountRaw, currency);
+  if (amountMinor === null || amountMinor <= 0) return fail(`Amount must be a positive amount in ${currency} (e.g. 250.00).`);
+  if (!PAYOUT_METHODS.includes(methodRaw as PayoutMethod)) return fail("Pick a payout method.");
+  const method = methodRaw as PayoutMethod;
+
+  const input: CreatePayoutInput = { currency, amountMinor, method };
+  if (partyId) input.partyId = partyId;
+  if (reference) input.reference = reference;
+
+  const result = await api.createPayout(input);
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath("/money");
+  revalidatePath("/dashboard");
+  const { payout } = result.data;
+  return {
+    status: "ok",
+    message: `Recorded payout ${payout.id}.`,
+    details: [
+      { label: "To", value: payout.partyId ?? "Organizer" },
+      { label: "Amount", value: formatMoney(payout.amountMinor, payout.currency) },
+      { label: "Method", value: PAYOUT_METHOD_LABELS[payout.method] ?? humanize(payout.method) },
+      { label: "Reference", value: payout.reference ?? "—" },
+    ],
+  };
+}
+
+export async function saveInstructorFeesAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const currency = field(formData, "currency").toUpperCase();
+
+  if (!eventId) return fail("Missing event id.");
+  if (!CURRENCY_RE.test(currency)) return fail("Missing cohort currency.");
+
+  // Rows with neither an instructor nor an amount are skipped; a row with one needs both.
+  const fees: InstructorFee[] = [];
+  for (let i = 0; i < MAX_INSTRUCTOR_FEES; i++) {
+    const partyId = field(formData, `fee_${i}_partyId`);
+    const amountRaw = field(formData, `fee_${i}_amount`);
+    if (!partyId && !amountRaw) continue;
+    if (!partyId) return fail(`Fee ${i + 1}: pick an instructor.`);
+    if (!amountRaw) return fail(`Fee ${i + 1}: an amount is required.`);
+    const amountMinor = parseMajorToMinor(amountRaw, currency);
+    if (amountMinor === null) return fail(`Fee ${i + 1}: amount must be a non-negative amount in ${currency} (e.g. 500.00).`);
+    if (fees.some((f) => f.partyId === partyId)) return fail(`Fee ${i + 1}: that instructor is listed twice.`);
+    fees.push({ partyId, amountMinor });
+  }
+
+  const result = await api.setInstructorFees(eventId, { fees });
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  revalidatePath("/money");
+  const saved = result.data.instructorFees ?? [];
+  const totalMinor = saved.reduce((sum, f) => sum + f.amountMinor, 0);
+  return {
+    status: "ok",
+    message: saved.length === 0 ? "Cleared instructor fees." : `Saved ${saved.length} instructor fee${saved.length === 1 ? "" : "s"}.`,
+    details: [{ label: "Total fees", value: formatMoney(totalMinor, result.data.currency || currency) }],
+  };
+}
+
+export async function cancelCohortAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  const courseId = field(formData, "courseId");
+  const reason = field(formData, "reason");
+  const transferToEventId = field(formData, "transferToEventId");
+  const confirmed = formData.get("confirm") === "on";
+
+  if (!eventId) return fail("Missing event id.");
+  if (!reason) return fail("A cancellation reason is required; it is shared with learners.");
+  if (transferToEventId === eventId) return fail("Pick a different cohort to transfer learners to.");
+  if (!confirmed) return fail("Tick the confirmation box to cancel this cohort.");
+
+  const input: CancelEventInput = { reason };
+  if (transferToEventId) input.transferToEventId = transferToEventId;
+
+  const result = await api.cancelEvent(eventId, input);
+  if (!result.ok) return fail(describeFailure(result.error));
+
+  revalidatePath(`/events/${eventId}`);
+  revalidatePath("/events");
+  if (courseId) revalidatePath(`/courses/${courseId}`);
+  if (transferToEventId) revalidatePath(`/events/${transferToEventId}`);
+  revalidatePath("/orders");
+  revalidatePath("/money");
+  revalidatePath("/dashboard");
+
+  const { event, refunded, transferred, voided } = result.data;
+  return {
+    status: "ok",
+    message: `Cancelled "${event.name}".`,
+    details: [
+      { label: "Learners transferred", value: String(transferred) },
+      { label: "Orders refunded", value: String(refunded) },
+      { label: "Seats voided", value: String(voided) },
+      { label: "Cancelled at", value: event.cancelledAt ? formatDateTime(event.cancelledAt) : formatDateTime(new Date().toISOString()) },
     ],
   };
 }

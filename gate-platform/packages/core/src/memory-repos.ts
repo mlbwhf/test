@@ -1,7 +1,7 @@
 import type {
-  CertificateRepo, CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, MessageLogRepo, OrderRepo, OrganizationRepo, PartyRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, SeatTransferRepo, TicketTypeRepo, WaitlistRepo,
+  CertificateRepo, CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, MessageLogRepo, OrderRepo, OrganizationRepo, PartyRepo, PayoutRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, SeatTransferRepo, TicketTypeRepo, WaitlistRepo,
 } from "./ports.js";
-import type { Certificate, CorporateAccount, Course, Event, Invoice, MessageLogEntry, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { Certificate, CorporateAccount, Course, Event, Invoice, MessageLogEntry, Order, Organization, Party, Payout, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 class MemOrganizations implements OrganizationRepo {
   private readonly byId = new Map<string, Organization>();
@@ -124,6 +124,11 @@ class MemMessageLog implements MessageLogRepo {
   async record(e: MessageLogEntry) { if (this.byKey.has(e.key)) return false; this.byKey.set(e.key, structuredClone(e)); return true; }
   async listByEvent(eventId: string) { return [...this.byKey.values()].filter((e) => e.eventId === eventId).sort((a, b) => a.sentAt.getTime() - b.sentAt.getTime()).map((e) => structuredClone(e)); }
 }
+class MemPayouts implements PayoutRepo {
+  private readonly items: Payout[] = [];
+  async create(p: Payout) { this.items.push(structuredClone(p)); }
+  async listByOrganization(orgId: string, limit = 100) { return this.items.filter((p) => p.organizationId === orgId).slice(-limit).reverse().map((p) => structuredClone(p)); }
+}
 class MemRefunds implements RefundRepo {
   private readonly byId = new Map<string, Refund>();
   async create(r: Refund) { this.byId.set(r.id, structuredClone(r)); }
@@ -152,6 +157,7 @@ export function createInMemoryRepos(): Repos {
     waitlist: new MemWaitlist(),
     certificates: new MemCertificates(),
     messageLog: new MemMessageLog(),
+    payouts: new MemPayouts(),
     refunds: new MemRefunds(),
     processedEvents: new MemProcessedEvents(),
   };

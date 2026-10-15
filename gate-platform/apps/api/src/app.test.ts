@@ -12,7 +12,7 @@ const A = () => ({ "x-api-key": apiKey });
 beforeEach(async () => {
   const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
   app = await buildApp({ core, adminKey: "admin", env: "test" });
-  const res = await app.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "US", currency: "USD" } });
+  const res = await app.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "US", currency: "USD", releasePolicy: "immediate" } });
   expect(res.statusCode).toBe(201);
   apiKey = res.json().apiKey;
 });

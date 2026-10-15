@@ -8,21 +8,25 @@ import {
   ROSTER_FORMATS,
   SEQUENCE_STEP_LABELS,
   type Course,
+  type Event,
   type Meeting,
+  type Party,
   type RegionalPrices,
   type TicketType,
 } from "@/lib/api";
-import { formatDateTimeInZone, formatMoney, formatTimeInZone, humanize } from "@/lib/format";
-import { MAX_ATTENDEES, REGIONAL_PRICE_ROWS } from "@/lib/forms";
+import { formatDateTimeInZone, formatMoney, formatTimeInZone, humanize, minorUnitDigits } from "@/lib/format";
+import { MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
 import { RosterDownload } from "@/components/roster-download";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import {
+  cancelCohortAction,
   createMeetingAction,
   createTicketTypeAction,
   issueCertificatesAction,
   recordAttendanceAction,
   runSequencesAction,
+  saveInstructorFeesAction,
   sellTestTicketAction,
   syncAttendanceAction,
 } from "@/app/actions";
@@ -42,6 +46,12 @@ function RegionalPriceList({ prices }: { prices: RegionalPrices | null }) {
       ))}
     </>
   );
+}
+
+/** Integer minor units as a plain major-unit form value, e.g. 50000 + "CAD" -> "500.00". */
+function formatMajor(minor: number, currency: string): string {
+  const digits = minorUnitDigits(currency);
+  return (minor / 10 ** digits).toFixed(digits);
 }
 
 /** Base currency first, then every regional currency across the given ticket types. */
@@ -153,14 +163,16 @@ function MeetingCard({ eventId, meeting }: { eventId: string; meeting: Meeting |
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes] = await Promise.all([
-    api.getEvent(id),
-    api.listTicketTypes(id),
-    api.listSeats(id),
-    api.listAttendance(id),
-    api.listCertificates(id),
-    api.listMessages(id),
-  ]);
+  const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes, partiesRes] =
+    await Promise.all([
+      api.getEvent(id),
+      api.listTicketTypes(id),
+      api.listSeats(id),
+      api.listAttendance(id),
+      api.listCertificates(id),
+      api.listMessages(id),
+      api.listParties(),
+    ]);
 
   if (!eventRes.ok) {
     return (
@@ -185,11 +197,18 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   const messages = messagesRes.ok ? messagesRes.data.items : [];
   const meeting = event.meeting ?? null;
   const canSync = meeting !== null && meeting.provider !== "manual";
+  const cancelled = event.status === "cancelled" || Boolean(event.cancelledAt);
+  const instructorFees = event.instructorFees ?? [];
+  const parties: Party[] = partiesRes.ok ? partiesRes.data.items : [];
+  const instructors = parties.filter((p) => p.kind === "instructor");
+  const partyNames = new Map(parties.map((p) => [p.id, p.name]));
 
   let course: Course | null = null;
+  let transferTargets: Event[] = [];
   if (event.courseId) {
-    const courseRes = await api.getCourse(event.courseId);
+    const [courseRes, cohortsRes] = await Promise.all([api.getCourse(event.courseId), api.listCohorts(event.courseId)]);
     if (courseRes.ok) course = courseRes.data;
+    if (cohortsRes.ok) transferTargets = cohortsRes.data.items.filter((c) => c.id !== event.id && c.status === "live");
   }
 
   return (
@@ -197,6 +216,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       <div className="page-header">
         <h1>{event.name}</h1>
         <StatusBadge status={event.status} />
+        {event.atRiskAt && !cancelled && (
+          <span className="badge badge-at_risk">At risk since {formatDateTimeInZone(event.atRiskAt, timezone)}</span>
+        )}
         <span className="muted">
           {formatDateTimeInZone(event.startsAt, timezone)}
           {event.endsAt ? ` – ${formatDateTimeInZone(event.endsAt, timezone)}` : ""} · {timezone} ·{" "}
@@ -209,6 +231,15 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
         )}
         <Link href="/events">← All events</Link>
       </div>
+
+      {cancelled && (
+        <div className="notice notice-error" role="alert">
+          <strong>
+            Cancelled{event.cancelledAt ? ` on ${formatDateTimeInZone(event.cancelledAt, timezone)}` : ""}.
+          </strong>
+          <span className="muted"> {event.cancelReason ? `Reason: ${event.cancelReason}` : "No reason recorded."}</span>
+        </div>
+      )}
 
       <Section title="Sessions">
         {event.sessions.length === 0 ? (
@@ -410,6 +441,102 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             <input type="hidden" name="eventId" value={event.id} />
             <p className="hint">Sends every scheduled email that is due across all cohorts, instead of waiting for the next scheduled run.</p>
           </ActionForm>
+        </div>
+
+        <div className="subsection">
+          <h3>Money</h3>
+          {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
+          <h4 className="hint">Instructor fees</h4>
+          {instructorFees.length === 0 ? (
+            <Empty>No instructor fees set. Fees count against this cohort&apos;s margin and become payable to the instructor.</Empty>
+          ) : (
+            <ul className="fees-list">
+              {instructorFees.map((f) => (
+                <li key={f.partyId}>
+                  {partyNames.get(f.partyId) ?? <code>{f.partyId}</code>}: {formatMoney(f.amountMinor, event.currency)}
+                </li>
+              ))}
+            </ul>
+          )}
+          {instructors.length === 0 ? (
+            <p className="hint">
+              No instructors yet. <Link href="/instructors">Add one</Link> to set fees.
+            </p>
+          ) : (
+            <ActionForm action={saveInstructorFeesAction} submitLabel="Save instructor fees" pendingLabel="Saving…" wide>
+              <input type="hidden" name="eventId" value={event.id} />
+              <input type="hidden" name="currency" value={event.currency} />
+              {Array.from({ length: MAX_INSTRUCTOR_FEES }, (_, i) => {
+                const existing = instructorFees[i];
+                return (
+                  <div key={i} className="fields-row">
+                    <label>
+                      Instructor {i + 1}
+                      <select name={`fee_${i}_partyId`} defaultValue={existing?.partyId ?? ""}>
+                        <option value="">— none —</option>
+                        {instructors.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Fee {i + 1} ({event.currency})
+                      <input
+                        name={`fee_${i}_amount`}
+                        inputMode="decimal"
+                        placeholder="500.00"
+                        defaultValue={existing ? formatMajor(existing.amountMinor, event.currency) : ""}
+                      />
+                    </label>
+                  </div>
+                );
+              })}
+              <p className="hint">Saving replaces the full list: leave a row blank to drop that fee.</p>
+            </ActionForm>
+          )}
+
+          <h4 className="hint">Cancel cohort</h4>
+          {cancelled ? (
+            <Empty>This cohort is cancelled.</Empty>
+          ) : (
+            <ActionForm action={cancelCohortAction} submitLabel="Cancel cohort" pendingLabel="Cancelling…" variant="danger" wide>
+              <input type="hidden" name="eventId" value={event.id} />
+              <input type="hidden" name="courseId" value={event.courseId ?? ""} />
+              <label>
+                Reason (shared with learners)
+                <textarea name="reason" rows={3} required placeholder="Instructor unavailable; the cohort will not run." />
+              </label>
+              <label>
+                Transfer learners to (optional)
+                {transferTargets.length === 0 ? (
+                  <span className="hint">
+                    {event.courseId
+                      ? "No other live cohort of this course; paid seats are refunded."
+                      : "Not linked to a course; paid seats are refunded."}
+                  </span>
+                ) : (
+                  <select name="transferToEventId" defaultValue="">
+                    <option value="">— refund instead —</option>
+                    {transferTargets.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} — {formatDateTimeInZone(c.startsAt, c.timezone)}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </label>
+              <label className="label-check">
+                <input type="checkbox" name="confirm" />I understand this cancels the cohort and refunds or moves every
+                paid seat.
+              </label>
+              <p className="hint">
+                Learners are moved to the chosen cohort when one is picked; otherwise their orders are refunded. Unpaid
+                seats are voided.
+              </p>
+            </ActionForm>
+          )}
         </div>
       </Section>
 

@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -54,7 +54,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     const payments = new FakePaymentsAdapter();
     const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
     const core = new Core({ repos: createPgRepos(pool), ledger, payments });
-    const { organization: org, apiKey } = await core.createOrganization({ name: "PG Org", country: "US", currency: "USD" });
+    const { organization: org, apiKey } = await core.createOrganization({ releasePolicy: "immediate", name: "PG Org", country: "US", currency: "USD" });
     expect((await core.authenticate(apiKey)).id).toBe(org.id);
     await core.connectPayments(org.id);
     const venue = await core.createParty(org.id, { name: "Hall", kind: "venue", paymentsAccountRef: "acct_hall" });
@@ -88,7 +88,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     const repos = createPgRepos(pool);
     const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
     const core = new Core({ repos, ledger, payments: new FakePaymentsAdapter(), tax: new FlatRateTax() });
-    const { organization: org } = await core.createOrganization({ name: "Corp Org", country: "CA", currency: "CAD" });
+    const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Corp Org", country: "CA", currency: "CAD" });
     const course = await core.createCourse(org.id, { slug: "spc", name: "SPC" });
     const cohort = await core.createEvent(org.id, { courseId: course.id, name: "SPC", startsAt: new Date("2027-01-10T14:00:00Z"), timezone: "America/Toronto", sessions: [{ startsAt: new Date("2027-01-10T14:00:00Z"), endsAt: new Date("2027-01-10T22:00:00Z"), title: "Day 1" }] });
     const tt = await core.createTicketType(org.id, cohort.id, { name: "Std", priceMinor: 100_000, quantity: 10, prices: { USD: 80_000 }, earlyBird: { until: new Date("2026-12-01T00:00:00Z"), priceMinor: 90_000 } });
@@ -114,7 +114,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     const repos = createPgRepos(pool);
     const payments = new FakePaymentsAdapter();
     const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments });
-    const { organization: org } = await core.createOrganization({ name: "Self Org", country: "CA", currency: "CAD" });
+    const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Self Org", country: "CA", currency: "CAD" });
     const course = await core.createCourse(org.id, { slug: "ls", name: "LS" });
     const nov = await core.createEvent(org.id, { courseId: course.id, name: "Nov", startsAt: new Date(Date.now() + 40 * 86_400_000) });
     const dec = await core.createEvent(org.id, { courseId: course.id, name: "Dec", startsAt: new Date(Date.now() + 70 * 86_400_000) });
@@ -140,7 +140,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     const repos = createPgRepos(pool);
     const payments = new FakePaymentsAdapter();
     const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments, clock: { now: () => new Date("2026-11-22T12:00:00Z") } });
-    const { organization: org } = await core.createOrganization({ name: "Deliver Org", country: "CA", currency: "CAD" });
+    const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Deliver Org", country: "CA", currency: "CAD" });
     const course = await core.createCourse(org.id, { slug: "d", name: "Delivery Course" });
     await core.updateCourse(org.id, course.id, { prework: "Read chapter 1", surveyUrl: "https://forms.example/s" });
     const ev = await core.createEvent(org.id, { courseId: course.id, name: "Nov", sessions: [{ startsAt: new Date("2026-11-20T14:00:00Z"), endsAt: new Date("2026-11-20T22:00:00Z") }] });
@@ -162,11 +162,34 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await core.roster(org.id, ev.id, "safe_studio")).csv.split("\r\n")[1]).toBe('"Pat","Quinn","p@q.io",""');
   });
 
+  it("release on Postgres: held funds, release after delivery, payouts", async () => {
+    const repos = createPgRepos(pool);
+    const payments = new FakePaymentsAdapter();
+    let now = new Date("2026-10-01T00:00:00Z");
+    const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
+    const core = new Core({ repos, ledger, payments, clock: { now: () => now } });
+    const { organization: org } = await core.createOrganization({ name: "Hold Org", country: "CA", currency: "CAD" });
+    const ev = await core.createEvent(org.id, { name: "Soon", sessions: [{ startsAt: new Date("2026-10-10T14:00:00Z"), endsAt: new Date("2026-10-10T22:00:00Z") }] });
+    const tt = await core.createTicketType(org.id, ev.id, { name: "Std", priceMinor: 50_000, quantity: 5 });
+    const { order } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "h@h.io" });
+    await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "CAD"));
+    expect((await repos.orders.get(order.id))?.fundsStatus).toBe("held");
+    expect((await core.payables(org.id))[0]?.heldMinor).toBe(50_000 - 650);
+    now = new Date("2026-10-12T00:00:00Z");
+    const r = await core.releaseDelivered(now);
+    expect(r.orders).toBe(1);
+    expect((await repos.orders.get(order.id))?.fundsStatus).toBe("released");
+    const payout = await core.recordPayout(org.id, { currency: "CAD", amountMinor: 10_000, method: "wire", reference: "W" });
+    expect((await repos.payouts.listByOrganization(org.id))[0]?.id).toBe(payout.id);
+    expect((await core.payables(org.id))[0]?.payableMinor).toBe(50_000 - 650 - 10_000);
+    await ledger.assertBalanced();
+  });
+
   it("reserve is atomic under concurrency", async () => {
     const repos = createPgRepos(pool);
     const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
     const core = new Core({ repos, ledger, payments: new FakePaymentsAdapter() });
-    const { organization: org } = await core.createOrganization({ name: "Race", country: "US", currency: "USD" });
+    const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Race", country: "US", currency: "USD" });
     const event = await core.createEvent(org.id, { name: "Race", startsAt: new Date() });
     const tt = await core.createTicketType(org.id, event.id, { name: "Only5", priceMinor: 100, quantity: 5 });
     const results = await Promise.allSettled(Array.from({ length: 20 }, () => core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "r@t.io" })));

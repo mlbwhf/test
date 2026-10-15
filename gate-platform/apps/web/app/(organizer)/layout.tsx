@@ -14,6 +14,7 @@ export default function OrganizerLayout({ children }: { children: ReactNode }) {
           <Link href="/courses">Courses</Link>
           <Link href="/instructors">Instructors</Link>
           <Link href="/orders">Orders</Link>
+          <Link href="/money">Money</Link>
         </nav>
       </header>
       <main>{children}</main>

@@ -8,7 +8,7 @@ import type { Clock, IdGenerator, MeetingProvider, PaymentEvent, PaymentsPort, R
 import { ROSTER_FORMATS, SEQUENCE_STEPS, attendanceFromMinutes, overlapMinutes, rosterCsv, stepDueAt, type RosterFormat } from "./delivery.js";
 import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PriceTier, Refund, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -79,6 +79,7 @@ export class Core {
     payoutDestination?: PayoutDestination | undefined;
     passFeeToAttendee?: boolean | undefined;
     splitRules?: SplitRule[] | undefined;
+    releasePolicy?: ReleasePolicy | undefined;
     /** Dev/bootstrap only: fix the API key instead of generating one. */
     apiKey?: string | undefined;
   }): Promise<{ organization: Organization; apiKey: string }> {
@@ -94,12 +95,31 @@ export class Core {
       payoutDestination: input.payoutDestination ?? "gate_account",
       passFeeToAttendee: input.passFeeToAttendee ?? false,
       splitRules: input.splitRules ?? [],
+      releasePolicy: input.releasePolicy ?? "on_delivery",
+      releaseGraceHours: 24,
+      minEnrollmentDecisionDays: 7,
       apiKeyHash: hashApiKey(apiKey),
       createdAt: this.clock.now(),
     };
     await this.repos.organizations.create(organization);
     await this.accounts.orgPayable(organization.id, organization.currency);
     return { organization, apiKey };
+  }
+
+  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined }): Promise<Organization> {
+    const org = await this.getOrganization(organizationId);
+    if (patch.releaseGraceHours !== undefined && (!Number.isFinite(patch.releaseGraceHours) || patch.releaseGraceHours < 0 || patch.releaseGraceHours > 24 * 30)) throw new DomainError("VALIDATION", "releaseGraceHours must be 0..720");
+    if (patch.minEnrollmentDecisionDays !== undefined && (!Number.isFinite(patch.minEnrollmentDecisionDays) || patch.minEnrollmentDecisionDays < 0 || patch.minEnrollmentDecisionDays > 90)) throw new DomainError("VALIDATION", "minEnrollmentDecisionDays must be 0..90");
+    const next: Organization = {
+      ...org,
+      ...(patch.releasePolicy !== undefined ? { releasePolicy: patch.releasePolicy } : {}),
+      ...(patch.releaseGraceHours !== undefined ? { releaseGraceHours: patch.releaseGraceHours } : {}),
+      ...(patch.minEnrollmentDecisionDays !== undefined ? { minEnrollmentDecisionDays: patch.minEnrollmentDecisionDays } : {}),
+      ...(patch.passFeeToAttendee !== undefined ? { passFeeToAttendee: patch.passFeeToAttendee } : {}),
+      ...(patch.name?.trim() ? { name: patch.name.trim() } : {}),
+    };
+    await this.repos.organizations.update(next);
+    return next;
   }
 
   async authenticate(apiKey: string | undefined): Promise<Organization> {
@@ -408,6 +428,8 @@ export class Core {
       splits,
       transferRefs: {},
       refundedMinor: 0,
+      heldMinor: 0,
+      fundsStatus: "none",
       ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
       createdAt: this.clock.now(),
     };
@@ -560,11 +582,17 @@ export class Core {
     const orgPayable = await this.accounts.orgPayable(org.id, ccy);
 
     const postings: Posting[] = cash ?? [{ accountId: clearing.id, amount: order.pricing.totalMinor }];
-    if (order.splits.organizerMinor > 0) postings.push({ accountId: orgPayable.id, amount: -order.splits.organizerMinor });
-    for (const line of order.splits.lines) {
-      if (line.amountMinor === 0) continue;
-      const acct = await this.accounts.partyPayable(org.id, line.partyId, ccy);
-      postings.push({ accountId: acct.id, amount: -line.amountMinor });
+    const organizerSide = order.splits.organizerMinor + order.splits.lines.reduce((a, l) => a + l.amountMinor, 0);
+    const hold = org.releasePolicy === "on_delivery" && organizerSide > 0;
+    if (hold) {
+      postings.push({ accountId: (await this.accounts.orgHeld(org.id, ccy)).id, amount: -organizerSide });
+    } else {
+      if (order.splits.organizerMinor > 0) postings.push({ accountId: orgPayable.id, amount: -order.splits.organizerMinor });
+      for (const line of order.splits.lines) {
+        if (line.amountMinor === 0) continue;
+        const acct = await this.accounts.partyPayable(org.id, line.partyId, ccy);
+        postings.push({ accountId: acct.id, amount: -line.amountMinor });
+      }
     }
     if (order.pricing.platformFeeMinor > 0) postings.push({ accountId: fees.id, amount: -order.pricing.platformFeeMinor });
     if (order.pricing.taxMinor > 0) postings.push({ accountId: (await this.accounts.taxPayable(org.id, ccy)).id, amount: -order.pricing.taxMinor });
@@ -579,32 +607,10 @@ export class Core {
       });
     }
 
-    // Separate charges and transfers: move each party's share to its connected account.
-    // Invoice cash lives in the platform bank account, so it pays out through payouts (sprint 6), not transfers.
-    const transferRefs: Record<string, string> = { ...order.transferRefs };
-    if (order.paymentRef && order.pricing.totalMinor > 0 && order.paymentMethod === "card") {
-      const targets: Array<{ key: string; accountRef: string | undefined; amount: number }> = [
-        { key: org.id, accountRef: org.paymentsAccountRef, amount: order.splits.organizerMinor },
-      ];
-      for (const line of order.splits.lines) {
-        const party = await this.repos.parties.get(line.partyId);
-        targets.push({ key: line.partyId, accountRef: party?.paymentsAccountRef, amount: line.amountMinor });
-      }
-      for (const t of targets) {
-        if (!t.accountRef || t.amount <= 0 || transferRefs[t.key]) continue;
-        const res = await this.payments.createTransfer({
-          idempotencyKey: `transfer:${order.id}:${t.key}`,
-          paymentRef: order.paymentRef,
-          destinationAccountRef: t.accountRef,
-          amountMinor: t.amount,
-          currency: ccy,
-          transferGroup: order.id,
-        });
-        transferRefs[t.key] = res.transferRef;
-      }
-    }
-
-    await this.repos.orders.update({ ...order, status: "paid", paidAt: this.clock.now(), transferRefs });
+    // Immediate policy: move each party's share to its connected account now. On-delivery: at release.
+    const transferRefs = hold ? { ...order.transferRefs } : await this.transferShares({ ...order, transferRefs: { ...order.transferRefs } }, org);
+    const fundsStatus = organizerSide > 0 ? (hold ? "held" : "released") : "none";
+    await this.repos.orders.update({ ...order, status: "paid", paidAt: this.clock.now(), transferRefs, heldMinor: hold ? organizerSide : 0, fundsStatus, ...(fundsStatus === "released" ? { releasedAt: this.clock.now() } : {}) });
 
     // One confirmed seat per learner (invoice orders reserved them at creation).
     const seats: Seat[] = await this.repos.seats.listByOrder(order.id);
@@ -640,6 +646,24 @@ export class Core {
       const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
       await this.runHooks("orderPaid", order.id, (hook) => hook({ organization: org, order: paidOrder, event, course, ticketType, seats }));
     }
+  }
+
+  /** Stripe separate charges and transfers for card-funded orders; invoice cash pays out by bank instead. */
+  private async transferShares(order: Order, org: Organization, shares?: { organizerMinor: number; lines: Array<{ partyId: string; amountMinor: number }> }): Promise<Record<string, string>> {
+    const transferRefs: Record<string, string> = { ...order.transferRefs };
+    if (!order.paymentRef || order.pricing.totalMinor <= 0 || order.paymentMethod !== "card") return transferRefs;
+    const split = shares ?? order.splits;
+    const targets: Array<{ key: string; accountRef: string | undefined; amount: number }> = [{ key: org.id, accountRef: org.paymentsAccountRef, amount: split.organizerMinor }];
+    for (const line of split.lines) {
+      const party = await this.repos.parties.get(line.partyId);
+      targets.push({ key: line.partyId, accountRef: party?.paymentsAccountRef, amount: line.amountMinor });
+    }
+    for (const t of targets) {
+      if (!t.accountRef || t.amount <= 0 || transferRefs[t.key]) continue;
+      const res = await this.payments.createTransfer({ idempotencyKey: `transfer:${order.id}:${t.key}`, paymentRef: order.paymentRef, destinationAccountRef: t.accountRef, amountMinor: t.amount, currency: order.currency, transferGroup: order.id });
+      transferRefs[t.key] = res.transferRef;
+    }
+    return transferRefs;
   }
 
   async listSeats(organizationId: string, filter: { eventId?: string | undefined; orderId?: string | undefined }): Promise<Seat[]> {
@@ -704,13 +728,18 @@ export class Core {
     const total = order.pricing.totalMinor;
 
     if (total > 0) {
-      // Buckets in the same order as the paid entry: organizer, parties..., platform fee.
+      // Buckets in the same order as the paid entry: organizer side (held or payable + parties), platform fee, tax.
       const buckets: Array<{ accountId: string; paid: number }> = [];
-      const orgPayable = await this.accounts.orgPayable(order.organizationId, ccy);
-      buckets.push({ accountId: orgPayable.id, paid: order.splits.organizerMinor });
-      for (const line of order.splits.lines) {
-        const acct = await this.accounts.partyPayable(order.organizationId, line.partyId, ccy);
-        buckets.push({ accountId: acct.id, paid: line.amountMinor });
+      const organizerSide = order.splits.organizerMinor + order.splits.lines.reduce((a, l) => a + l.amountMinor, 0);
+      if (order.fundsStatus === "held") {
+        buckets.push({ accountId: (await this.accounts.orgHeld(order.organizationId, ccy)).id, paid: organizerSide });
+      } else {
+        const orgPayable = await this.accounts.orgPayable(order.organizationId, ccy);
+        buckets.push({ accountId: orgPayable.id, paid: order.splits.organizerMinor });
+        for (const line of order.splits.lines) {
+          const acct = await this.accounts.partyPayable(order.organizationId, line.partyId, ccy);
+          buckets.push({ accountId: acct.id, paid: line.amountMinor });
+        }
       }
       const fees = await this.accounts.feeRevenue(ccy);
       buckets.push({ accountId: fees.id, paid: order.pricing.platformFeeMinor });
@@ -723,6 +752,7 @@ export class Core {
         const amt = shares[i] ?? 0;
         if (amt !== 0) postings.push({ accountId: b.accountId, amount: amt });
       });
+      if (order.fundsStatus === "held") order.heldMinor = Math.max(0, order.heldMinor - (shares[0] ?? 0));
       await this.ledger.post({
         idempotencyKey: `refund:${refund.id}:settled`,
         currency: ccy,
@@ -734,7 +764,7 @@ export class Core {
 
     const refunded = order.refundedMinor + refund.amountMinor;
     const fully = refunded >= total;
-    await this.repos.orders.update({ ...order, refundedMinor: refunded, status: fully ? "refunded" : "partially_refunded" });
+    await this.repos.orders.update({ ...order, refundedMinor: refunded, status: fully ? "refunded" : "partially_refunded", heldMinor: fully ? 0 : order.heldMinor });
     await this.repos.refunds.update({ ...refund, status: "succeeded" });
     if (fully) {
       for (const seat of await this.repos.seats.listByOrder(order.id)) {
@@ -843,7 +873,7 @@ export class Core {
     const order: Order = {
       id: this.ids.next("ord"), organizationId, eventId: event.id, ticketTypeId: ticketType.id, quantity: input.quantity,
       buyerEmail: account.billingEmail, attendees, currency, status: "pending", paymentMethod: "invoice", corporateAccountId: account.id,
-      billingAddress: account.address, pricing, splits, transferRefs: {}, refundedMinor: 0,
+      billingAddress: account.address, pricing, splits, transferRefs: {}, refundedMinor: 0, heldMinor: 0, fundsStatus: "none",
       ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}), createdAt: now,
     };
     const invoiceId = this.ids.next("inv");
@@ -1345,6 +1375,254 @@ export class Core {
       }
     }
     return { sent: details.length, details };
+  }
+
+  // ---------- Release, payouts, cohort economics ----------
+
+  /** Move an order's held organizer-side funds to payable accounts (pro rata to the original split) and run transfers. */
+  private async releaseOrder(order: Order, org: Organization): Promise<number> {
+    if (order.fundsStatus !== "held" || order.heldMinor <= 0) {
+      if (order.fundsStatus === "held") await this.repos.orders.update({ ...order, fundsStatus: "released", releasedAt: this.clock.now() });
+      return 0;
+    }
+    const ccy = order.currency;
+    const weights = [order.splits.organizerMinor, ...order.splits.lines.map((l) => l.amountMinor)];
+    const parts = weights.some((w) => w > 0) ? allocate(order.heldMinor, weights) : [order.heldMinor, ...order.splits.lines.map(() => 0)];
+    const shares = { organizerMinor: parts[0] ?? 0, lines: order.splits.lines.map((l, i) => ({ partyId: l.partyId, amountMinor: parts[i + 1] ?? 0 })) };
+    const postings: Posting[] = [{ accountId: (await this.accounts.orgHeld(org.id, ccy)).id, amount: order.heldMinor }];
+    if (shares.organizerMinor > 0) postings.push({ accountId: (await this.accounts.orgPayable(org.id, ccy)).id, amount: -shares.organizerMinor });
+    for (const l of shares.lines) if (l.amountMinor > 0) postings.push({ accountId: (await this.accounts.partyPayable(org.id, l.partyId, ccy)).id, amount: -l.amountMinor });
+    await this.ledger.post({ idempotencyKey: `order:${order.id}:release`, currency: ccy, description: `Release held funds for order ${order.id}`, postings, metadata: { orderId: order.id, organizationId: org.id, eventId: order.eventId } });
+    const transferRefs = await this.transferShares(order, org, shares);
+    await this.repos.orders.update({ ...order, fundsStatus: "released", releasedAt: this.clock.now(), transferRefs, heldMinor: 0 });
+    return order.heldMinor;
+  }
+
+  /** Pay the cohort's flat instructor fees out of the organizer's payable, once, and transfer where connected. */
+  private async settleInstructorFees(event: Event, org: Organization): Promise<number> {
+    const fees = (event.instructorFees ?? []).filter((f) => f.amountMinor > 0);
+    if (!fees.length) return 0;
+    const ccy = event.currency;
+    const total = fees.reduce((a, f) => a + f.amountMinor, 0);
+    const postings: Posting[] = [{ accountId: (await this.accounts.orgPayable(org.id, ccy)).id, amount: total }];
+    for (const f of fees) postings.push({ accountId: (await this.accounts.partyPayable(org.id, f.partyId, ccy)).id, amount: -f.amountMinor });
+    const res = await this.ledger.post({ idempotencyKey: `cohort:${event.id}:instructor_fees`, currency: ccy, description: `Instructor fees for ${event.name}`, postings, metadata: { eventId: event.id, organizationId: org.id } });
+    if (!res.created) return 0;
+    for (const f of fees) {
+      const party = await this.repos.parties.get(f.partyId);
+      if (!party?.paymentsAccountRef) continue;
+      try {
+        await this.payments.createTransfer({ idempotencyKey: `transfer:cohort:${event.id}:${f.partyId}`, paymentRef: "", destinationAccountRef: party.paymentsAccountRef, amountMinor: f.amountMinor, currency: ccy, transferGroup: event.id });
+      } catch (err) {
+        this.onHookFailure({ hook: "orderPaid", orderId: event.id, error: `instructor fee transfer failed: ${(err as Error).message}`, at: this.clock.now() });
+      }
+    }
+    return total;
+  }
+
+  /** Release every delivered cohort past its grace period; run from the scheduler. */
+  async releaseDelivered(now = this.clock.now()): Promise<{ events: number; orders: number; amountMinor: number }> {
+    let events = 0, orders = 0, amount = 0;
+    for (const org of await this.repos.organizations.list()) {
+      for (const event of await this.repos.events.listByOrganization(org.id)) {
+        if (event.status !== "live" && event.status !== "ended") continue;
+        const end = (event.endsAt ?? event.startsAt).getTime() + org.releaseGraceHours * 3_600_000;
+        if (end > now.getTime()) continue;
+        const r = await this.releaseEvent(org.id, event.id);
+        if (r.released || event.status === "live") events += 1;
+        orders += r.released;
+        amount += r.amountMinor;
+      }
+    }
+    return { events, orders, amountMinor: amount };
+  }
+
+  /** Release a specific cohort's held funds now (end of grace, or organizer-initiated early release). */
+  async releaseEvent(organizationId: string, eventId: string): Promise<{ released: number; amountMinor: number }> {
+    const org = await this.getOrganization(organizationId);
+    const event = await this.getEvent(organizationId, eventId);
+    if (event.status === "cancelled") throw new DomainError("INVALID_STATE", "cancelled cohorts refund instead of releasing");
+    let released = 0, amount = 0;
+    for (const order of await this.repos.orders.listByOrganization(organizationId, 10_000)) {
+      if (order.eventId !== eventId || order.fundsStatus !== "held") continue;
+      const fresh = (await this.repos.orders.get(order.id)) ?? order;
+      amount += await this.releaseOrder(fresh, org);
+      released += 1;
+    }
+    await this.settleInstructorFees(event, org);
+    if (event.status === "live" && (event.endsAt ?? event.startsAt) <= this.clock.now()) await this.repos.events.update({ ...event, status: "ended" });
+    return { released, amountMinor: amount };
+  }
+
+  async setInstructorFees(organizationId: string, eventId: string, fees: Array<{ partyId: string; amountMinor: MinorUnits }>): Promise<Event> {
+    const event = await this.getEvent(organizationId, eventId);
+    for (const f of fees) {
+      const party = await this.repos.parties.get(f.partyId);
+      if (!party || party.organizationId !== organizationId) throw new DomainError("VALIDATION", `unknown party ${f.partyId}`);
+      if (!Number.isSafeInteger(f.amountMinor) || f.amountMinor < 0) throw new DomainError("VALIDATION", "amountMinor must be a non-negative integer");
+    }
+    const updated: Event = { ...event, instructorFees: fees };
+    await this.repos.events.update(updated);
+    return updated;
+  }
+
+  async recordPayout(organizationId: string, input: { partyId?: string | undefined; currency: string; amountMinor: MinorUnits; method: PayoutMethod; reference?: string | undefined }): Promise<Payout> {
+    const org = await this.getOrganization(organizationId);
+    assertCurrency(input.currency);
+    if (!Number.isSafeInteger(input.amountMinor) || input.amountMinor <= 0) throw new DomainError("VALIDATION", "amountMinor must be a positive integer");
+    let payable;
+    if (input.partyId) {
+      const party = await this.repos.parties.get(input.partyId);
+      if (!party || party.organizationId !== organizationId) throw notFound("party", input.partyId);
+      payable = await this.accounts.partyPayable(org.id, party.id, input.currency);
+    } else {
+      payable = await this.accounts.orgPayable(org.id, input.currency);
+    }
+    const available = (await this.ledger.balance(payable.id)).natural;
+    if (input.amountMinor > available) throw new DomainError("VALIDATION", `only ${available} ${input.currency} is payable`, "held funds release after delivery");
+    const payout: Payout = { id: this.ids.next("po"), organizationId, ...(input.partyId ? { partyId: input.partyId } : {}), currency: input.currency, amountMinor: input.amountMinor, method: input.method, ...(input.reference ? { reference: input.reference } : {}), createdAt: this.clock.now() };
+    await this.ledger.post({
+      idempotencyKey: `payout:${payout.id}`, currency: input.currency, description: `Payout ${payout.id} (${input.method})`,
+      postings: [{ accountId: payable.id, amount: input.amountMinor }, { accountId: (await this.accounts.bankClearing(input.currency)).id, amount: -input.amountMinor }],
+      metadata: { payoutId: payout.id, organizationId, ...(input.partyId ? { partyId: input.partyId } : {}) },
+    });
+    await this.repos.payouts.create(payout);
+    return payout;
+  }
+
+  listPayouts(organizationId: string): Promise<Payout[]> {
+    return this.repos.payouts.listByOrganization(organizationId);
+  }
+
+  /** What is payable now and what is still held, for the organizer and each party. */
+  async payables(organizationId: string) {
+    const org = await this.getOrganization(organizationId);
+    const balances = await this.ledger.balances({ tenantId: organizationId });
+    const parties = new Map((await this.repos.parties.listByOrganization(organizationId)).map((p) => [p.id, p]));
+    const items = new Map<string, { partyId: string | null; name: string; kind: string | null; currency: string; payableMinor: number; heldMinor: number }>();
+    for (const b of balances) {
+      const code = b.account.code;
+      const m = code.match(/^(org|party):([^:]+):(payable|held):([A-Z]{3})$/);
+      if (!m) continue;
+      const [, scope, id, kind, ccy] = m as unknown as [string, string, string, string, string];
+      const partyId = scope === "party" ? id : null;
+      const key = `${partyId ?? "org"}:${ccy}`;
+      const cur = items.get(key) ?? { partyId, name: partyId ? parties.get(partyId)?.name ?? partyId : org.name, kind: partyId ? parties.get(partyId)?.kind ?? null : null, currency: ccy, payableMinor: 0, heldMinor: 0 };
+      if (kind === "payable") cur.payableMinor += b.natural; else cur.heldMinor += b.natural;
+      items.set(key, cur);
+    }
+    return [...items.values()];
+  }
+
+  // ---------- Minimum enrolment and cohort cancellation ----------
+
+  /** Flag cohorts below minimum enrolment at the decision point; run from the scheduler. */
+  async reviewMinEnrollment(now = this.clock.now()): Promise<Event[]> {
+    const flagged: Event[] = [];
+    for (const org of await this.repos.organizations.list()) {
+      for (const event of await this.repos.events.listByOrganization(org.id)) {
+        if (event.status !== "live" || !event.minEnrollment || event.atRiskAt) continue;
+        if (event.startsAt.getTime() - org.minEnrollmentDecisionDays * 86_400_000 > now.getTime()) continue;
+        const confirmed = (await this.repos.seats.listByEvent(event.id)).filter((s) => s.status === "confirmed" || s.status === "reserved").length;
+        if (confirmed >= event.minEnrollment) continue;
+        const updated: Event = { ...event, atRiskAt: now };
+        await this.repos.events.update(updated);
+        flagged.push(updated);
+        await this.runHooks("cohortAtRisk", event.id, (hook) => hook({ event: updated, organization: org, confirmed, minimum: event.minEnrollment! }));
+      }
+    }
+    return flagged;
+  }
+
+  /** Cancel a cohort: refund every paid order in full (or move its seats to another cohort), void open invoices, clear the waitlist. */
+  async cancelCohort(organizationId: string, eventId: string, input: { reason: string; transferToEventId?: string | undefined }): Promise<{ event: Event; refunded: number; transferred: number; voided: number }> {
+    const org = await this.getOrganization(organizationId);
+    const event = await this.getEvent(organizationId, eventId);
+    if (event.status === "cancelled") throw new DomainError("INVALID_STATE", "cohort is already cancelled");
+    if (!input.reason.trim()) throw new DomainError("VALIDATION", "reason is required");
+    let target: Event | undefined;
+    if (input.transferToEventId) {
+      target = await this.getEvent(organizationId, input.transferToEventId);
+      if (target.status !== "live" || target.courseId !== event.courseId || target.id === event.id) throw new DomainError("VALIDATION", "transfer target must be a live cohort of the same course");
+    }
+    let refunded = 0, transferred = 0, voided = 0;
+    for (const order of await this.repos.orders.listByOrganization(organizationId, 10_000)) {
+      if (order.eventId !== eventId) continue;
+      if (order.status === "pending" && order.paymentMethod === "invoice") {
+        const inv = await this.repos.invoices.getByOrder(order.id);
+        if (inv && (inv.status === "issued" || inv.status === "partially_paid") && inv.paidMinor === 0) { await this.voidInvoice(organizationId, inv.id, input.reason); voided += 1; }
+        continue;
+      }
+      if (order.status !== "paid" && order.status !== "partially_refunded") continue;
+      const seats = (await this.repos.seats.listByOrder(order.id)).filter((s) => s.eventId === eventId && s.status === "confirmed");
+      if (target) {
+        const types = await this.repos.ticketTypes.listByEvent(target.id);
+        const tt = types[0];
+        if (!tt) throw new DomainError("INVALID_STATE", "transfer target has no ticket type");
+        for (const seat of seats) {
+          if (!(await this.repos.ticketTypes.reserve(tt.id, 1))) throw new DomainError("SOLD_OUT", `${target.name} cannot take all learners`, "pick another cohort or refund");
+          const now = this.clock.now();
+          const moved: Seat = { id: this.ids.next("seat"), organizationId, orderId: order.id, eventId: target.id, ticketTypeId: tt.id, attendee: seat.attendee, status: "confirmed", createdAt: now, confirmedAt: now, transferredFromSeatId: seat.id };
+          await this.repos.seats.create(moved);
+          await this.repos.seats.update({ ...seat, status: "transferred", transferredToSeatId: moved.id });
+          transferred += 1;
+          await this.runHooks("seatChanged", order.id, (hook) => hook({ kind: "transferred", seat: moved, previousSeat: seat }));
+        }
+        // The money follows the learners: re-point the order at the new cohort.
+        await this.repos.orders.update({ ...((await this.repos.orders.get(order.id)) ?? order), eventId: target.id, ticketTypeId: tt.id });
+      } else {
+        const fresh = (await this.repos.orders.get(order.id)) ?? order;
+        const refundable = fresh.pricing.totalMinor - fresh.refundedMinor;
+        if (refundable > 0) { await this.refundOrder(organizationId, { orderId: order.id, amountMinor: refundable, reason: `cohort cancelled: ${input.reason}`, idempotencyKey: `refund:cohort:${eventId}:${order.id}` }); refunded += 1; }
+      }
+    }
+    for (const entry of await this.repos.waitlist.listOpenByEvent(eventId)) {
+      if (entry.status === "offered") await this.repos.ticketTypes.release(entry.ticketTypeId, entry.quantity);
+      await this.repos.waitlist.update({ ...entry, status: "cancelled" });
+    }
+    const cancelled: Event = { ...event, status: "cancelled", cancelledAt: this.clock.now(), cancelReason: input.reason.trim() };
+    await this.repos.events.update(cancelled);
+    await this.runHooks("cohortCancelled", event.id, (hook) => hook({ event: cancelled, organization: org, target, refunded, transferred }));
+    return { event: cancelled, refunded, transferred, voided };
+  }
+
+  // ---------- Revenue recognition ----------
+
+  /** Revenue recognised on delivery: cohorts ending in the window count; paid cohorts ending later are deferred. */
+  async revenueReport(organizationId: string, range: { from: Date; to: Date }) {
+    await this.getOrganization(organizationId);
+    const events = await this.repos.events.listByOrganization(organizationId);
+    const orders = (await this.repos.orders.listByOrganization(organizationId, 100_000)).filter((o) => o.status === "paid" || o.status === "partially_refunded" || o.status === "refunded");
+    const byEvent = new Map<string, Order[]>();
+    for (const o of orders) byEvent.set(o.eventId, [...(byEvent.get(o.eventId) ?? []), o]);
+    const byCurrency: Record<string, { recognizedMinor: number; deferredMinor: number; refundedMinor: number }> = {};
+    const cohorts = [];
+    for (const event of events) {
+      const list = byEvent.get(event.id) ?? [];
+      if (!list.length && event.status !== "cancelled") continue;
+      const end = event.endsAt ?? event.startsAt;
+      const recognized = event.status !== "cancelled" && end >= range.from && end <= range.to;
+      const deferred = event.status !== "cancelled" && end > range.to;
+      let gross = 0, fees = 0, tax = 0, net = 0, refunded = 0, seats = 0;
+      const statuses = new Set<string>();
+      for (const o of list) {
+        gross += o.pricing.totalMinor; fees += o.pricing.platformFeeMinor; tax += o.pricing.taxMinor; net += o.pricing.organizerNetMinor; refunded += o.refundedMinor; seats += o.quantity;
+        statuses.add(o.fundsStatus);
+      }
+      const instructorFees = (event.instructorFees ?? []).reduce((a, f) => a + f.amountMinor, 0);
+      const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+      const fundsStatus: "held" | "released" | "mixed" | "none" = statuses.size === 0 ? "none" : statuses.size > 1 ? "mixed" : (statuses.values().next().value as "held" | "released" | "none");
+      // Organizer net after refunds, pro rata to the organizer share of each refund.
+      const netAfterRefunds = list.reduce((a, o) => a + o.pricing.organizerNetMinor - (o.pricing.totalMinor > 0 ? Math.round((o.refundedMinor * o.pricing.organizerNetMinor) / o.pricing.totalMinor) : 0), 0);
+      const ccy = event.currency;
+      byCurrency[ccy] ??= { recognizedMinor: 0, deferredMinor: 0, refundedMinor: 0 };
+      if (recognized) byCurrency[ccy]!.recognizedMinor += netAfterRefunds - instructorFees;
+      if (deferred) byCurrency[ccy]!.deferredMinor += netAfterRefunds;
+      if (recognized || deferred) byCurrency[ccy]!.refundedMinor += refunded;
+      cohorts.push({ eventId: event.id, name: event.name, courseName: course?.name ?? null, startsAt: event.startsAt, endsAt: event.endsAt ?? null, currency: ccy, status: event.status, seats, grossMinor: gross, platformFeeMinor: fees, taxMinor: tax, organizerNetMinor: net, refundedMinor: refunded, instructorFeesMinor: instructorFees, marginMinor: netAfterRefunds - instructorFees, fundsStatus, recognized });
+    }
+    cohorts.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+    return { from: range.from, to: range.to, byCurrency, cohorts };
   }
 
   // ---------- Public (buyer-facing) reads ----------

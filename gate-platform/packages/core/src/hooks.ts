@@ -48,6 +48,8 @@ export interface CoreHooks {
   seatChanged?: ((ctx: SeatChangedContext) => Promise<void>) | undefined;
   waitlistOffered?: ((ctx: WaitlistOfferedContext) => Promise<void>) | undefined;
   sequenceStep?: ((ctx: { step: SequenceStep; seat: Seat; event: Event; course?: Course | undefined; organization: Organization }) => Promise<void>) | undefined;
+  cohortAtRisk?: ((ctx: { event: Event; organization: Organization; confirmed: number; minimum: number }) => Promise<void>) | undefined;
+  cohortCancelled?: ((ctx: { event: Event; organization: Organization; target?: Event | undefined; refunded: number; transferred: number }) => Promise<void>) | undefined;
   certificateIssued?: ((ctx: { certificate: Certificate; seat: Seat; event: Event; course?: Course | undefined }) => Promise<void>) | undefined;
 }
 

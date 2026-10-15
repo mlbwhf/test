@@ -1,5 +1,5 @@
 import type {
-  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
+  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -18,6 +18,7 @@ function toOrg(r: Row): Organization {
     ...(ref ? { paymentsAccountRef: ref } : {}),
     splitRules: (r.split_rules as Organization["splitRules"]) ?? [],
     ...(opt<Organization["changePolicy"]>(r.change_policy) ? { changePolicy: r.change_policy as NonNullable<Organization["changePolicy"]> } : {}),
+    releasePolicy: (r.release_policy as Organization["releasePolicy"]) ?? "on_delivery", releaseGraceHours: num(r.release_grace_hours ?? 24), minEnrollmentDecisionDays: num(r.min_enrollment_decision_days ?? 7),
     apiKeyHash: str(r.api_key_hash), createdAt: date(r.created_at),
   };
 }
@@ -39,6 +40,8 @@ function toEvent(r: Row): Event {
     timezone: str(r.timezone), format: r.format as Event["format"], sessions, instructorIds: (r.instructor_ids as string[]) ?? [],
     ...(minEnrollment !== undefined ? { minEnrollment: num(minEnrollment) } : {}),
     ...(opt<Event["meeting"]>(r.meeting) ? { meeting: r.meeting as NonNullable<Event["meeting"]> } : {}),
+    ...(((r.instructor_fees as Event["instructorFees"]) ?? []).length ? { instructorFees: r.instructor_fees as NonNullable<Event["instructorFees"]> } : {}),
+    ...(opt<Date>(r.at_risk_at) ? { atRiskAt: date(r.at_risk_at) } : {}), ...(opt<Date>(r.cancelled_at) ? { cancelledAt: date(r.cancelled_at) } : {}), ...(opt<string>(r.cancel_reason) ? { cancelReason: str(r.cancel_reason) } : {}),
     currency: str(r.currency), status: r.status as Event["status"], ...(rules ? { splitRules: rules } : {}), createdAt: date(r.created_at),
   };
 }
@@ -88,6 +91,7 @@ function toOrder(r: Row): Order {
     ...(paymentRef ? { paymentRef } : {}),
     transferRefs: (r.transfer_refs as Record<string, string>) ?? {},
     refundedMinor: num(r.refunded_minor),
+    heldMinor: num(r.held_minor ?? 0), fundsStatus: (r.funds_status as Order["fundsStatus"]) ?? "none", ...(opt<Date>(r.released_at) ? { releasedAt: date(r.released_at) } : {}),
     ...(idem ? { idempotencyKey: idem } : {}),
     createdAt: date(r.created_at),
     ...(paidAt ? { paidAt } : {}),
@@ -114,14 +118,14 @@ class PgOrganizations implements OrganizationRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Organization) {
     await this.pool.query(
-      `INSERT INTO organizations (id, name, country, currency, payout_destination, pass_fee_to_attendee, payments_account_ref, split_rules, api_key_hash, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.apiKeyHash, o.createdAt],
+      `INSERT INTO organizations (id, name, country, currency, payout_destination, pass_fee_to_attendee, payments_account_ref, split_rules, api_key_hash, created_at, release_policy, release_grace_hours, min_enrollment_decision_days) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.apiKeyHash, o.createdAt, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays],
     );
   }
   async update(o: Organization) {
     await this.pool.query(
-      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9 WHERE id=$1`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null],
+      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12 WHERE id=$1`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM organizations WHERE id=$1`, [id]); return r.rows[0] ? toOrg(r.rows[0]) : undefined; }
@@ -153,8 +157,8 @@ class PgEvents implements EventRepo {
   }
   async update(e: Event) {
     await this.pool.query(
-      `UPDATE events SET course_id=$2, name=$3, starts_at=$4, ends_at=$5, timezone=$6, format=$7, sessions=$8, instructor_ids=$9, min_enrollment=$10, currency=$11, status=$12, split_rules=$13, meeting=$14 WHERE id=$1`,
-      [e.id, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null, e.meeting ? JSON.stringify(e.meeting) : null],
+      `UPDATE events SET course_id=$2, name=$3, starts_at=$4, ends_at=$5, timezone=$6, format=$7, sessions=$8, instructor_ids=$9, min_enrollment=$10, currency=$11, status=$12, split_rules=$13, meeting=$14, instructor_fees=$15, at_risk_at=$16, cancelled_at=$17, cancel_reason=$18 WHERE id=$1`,
+      [e.id, e.courseId ?? null, e.name, e.startsAt, e.endsAt ?? null, e.timezone, e.format, sessionsJson(e), JSON.stringify(e.instructorIds), e.minEnrollment ?? null, e.currency, e.status, e.splitRules ? JSON.stringify(e.splitRules) : null, e.meeting ? JSON.stringify(e.meeting) : null, JSON.stringify(e.instructorFees ?? []), e.atRiskAt ?? null, e.cancelledAt ?? null, e.cancelReason ?? null],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM events WHERE id=$1`, [id]); return r.rows[0] ? toEvent(r.rows[0]) : undefined; }
@@ -185,15 +189,15 @@ class PgOrders implements OrderRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Order) {
     await this.pool.query(
-      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at, payment_method, corporate_account_id, billing_address)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
-      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null, o.paymentMethod, o.corporateAccountId ?? null, o.billingAddress ? JSON.stringify(o.billingAddress) : null],
+      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at, payment_method, corporate_account_id, billing_address, held_minor, funds_status, released_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,
+      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null, o.paymentMethod, o.corporateAccountId ?? null, o.billingAddress ? JSON.stringify(o.billingAddress) : null, o.heldMinor, o.fundsStatus, o.releasedAt ?? null],
     );
   }
   async update(o: Order) {
     await this.pool.query(
-      `UPDATE orders SET status=$2, payment_ref=$3, transfer_refs=$4, refunded_minor=$5, paid_at=$6 WHERE id=$1`,
-      [o.id, o.status, o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.paidAt ?? null],
+      `UPDATE orders SET status=$2, payment_ref=$3, transfer_refs=$4, refunded_minor=$5, paid_at=$6, held_minor=$7, funds_status=$8, released_at=$9, event_id=$10, ticket_type_id=$11 WHERE id=$1`,
+      [o.id, o.status, o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.paidAt ?? null, o.heldMinor, o.fundsStatus, o.releasedAt ?? null, o.eventId, o.ticketTypeId],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM orders WHERE id=$1`, [id]); return r.rows[0] ? toOrder(r.rows[0]) : undefined; }
@@ -274,6 +278,14 @@ class PgMessageLog implements MessageLogRepo {
     return r.rows.map((x) => ({ key: str(x.key), step: x.step as MessageLogEntry["step"], organizationId: str(x.organization_id), eventId: str(x.event_id), ...(opt<string>(x.seat_id) ? { seatId: str(x.seat_id) } : {}), to: str(x.recipient), sentAt: date(x.sent_at) }));
   }
 }
+class PgPayouts implements PayoutRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(p: Payout) { await this.pool.query(`INSERT INTO payouts (id, organization_id, party_id, currency, amount_minor, method, reference, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [p.id, p.organizationId, p.partyId ?? null, p.currency, p.amountMinor, p.method, p.reference ?? null, p.createdAt]); }
+  async listByOrganization(orgId: string, limit = 100) {
+    const r = await this.pool.query(`SELECT * FROM payouts WHERE organization_id=$1 ORDER BY created_at DESC LIMIT $2`, [orgId, limit]);
+    return r.rows.map((x) => ({ id: str(x.id), organizationId: str(x.organization_id), ...(opt<string>(x.party_id) ? { partyId: str(x.party_id) } : {}), currency: str(x.currency), amountMinor: num(x.amount_minor), method: x.method as Payout["method"], ...(opt<string>(x.reference) ? { reference: str(x.reference) } : {}), createdAt: date(x.created_at) }));
+  }
+}
 class PgRefunds implements RefundRepo {
   constructor(private readonly pool: Pool) {}
   async create(x: Refund) { await this.pool.query(`INSERT INTO refunds (id, order_id, organization_id, amount_minor, reason, status, payment_refund_ref, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [x.id, x.orderId, x.organizationId, x.amountMinor, x.reason, x.status, x.paymentRefundRef ?? null, x.createdAt]); }
@@ -305,6 +317,7 @@ export function createPgRepos(pool: Pool): Repos {
     waitlist: new PgWaitlist(pool),
     certificates: new PgCertificates(pool),
     messageLog: new PgMessageLog(pool),
+    payouts: new PgPayouts(pool),
     refunds: new PgRefunds(pool),
     processedEvents: new PgProcessedEvents(pool),
   };

@@ -31,7 +31,7 @@ beforeEach(() => {
 });
 
 async function cohort() {
-  const { organization: org } = await core.createOrganization({ name: "Agile Agilist", country: "CA", currency: "CAD" });
+  const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Agile Agilist", country: "CA", currency: "CAD" });
   const course = await core.createCourse(org.id, { slug: "leading-safe", name: "Leading SAFe" });
   await core.updateCourse(org.id, course.id, { prework: "Watch the 20-minute SAFe overview and read the exam guide.", surveyUrl: "https://forms.example/survey" });
   const ev = await core.createEvent(org.id, { courseId: course.id, name: "Nov 20-21", timezone: "America/Toronto", sessions: [

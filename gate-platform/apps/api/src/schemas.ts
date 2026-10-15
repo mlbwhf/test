@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "@gate/core";
+import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Payout, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "@gate/core";
 
 export const ErrorSchema = z.object({
   error: z.object({ code: z.string(), message: z.string(), hint: z.string().optional(), requestId: z.string().optional() }),
@@ -16,11 +16,18 @@ export const SplitRuleSchema = z.discriminatedUnion("kind", [
 export const OrganizationSchema = z.object({
   id: z.string(), name: z.string(), country: z.string(), currency: Currency,
   payoutDestination: z.enum(["gate_account", "external_bank"]), passFeeToAttendee: z.boolean(),
-  paymentsAccountRef: z.string().nullable(), splitRules: z.array(SplitRuleSchema), createdAt: z.string(),
+  paymentsAccountRef: z.string().nullable(), splitRules: z.array(SplitRuleSchema),
+  releasePolicy: z.enum(["immediate", "on_delivery"]), releaseGraceHours: z.number(), minEnrollmentDecisionDays: z.number(), createdAt: z.string(),
 });
+export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional() });
+export const InstructorFeeSchema = z.object({ partyId: z.string(), amountMinor: Minor });
+export const PayoutSchema = z.object({ id: z.string(), partyId: z.string().nullable(), currency: Currency, amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "other"]), reference: z.string().nullable(), createdAt: z.string() });
+export const CreatePayoutBody = z.object({ partyId: z.string().optional(), currency: Currency, amountMinor: z.number().int().min(1), method: z.enum(["bank_transfer", "wire", "other"]), reference: z.string().max(120).optional() });
+export const PayableSchema = z.object({ partyId: z.string().nullable(), name: z.string(), kind: z.string().nullable(), currency: Currency, payableMinor: z.number().int(), heldMinor: z.number().int() });
+export const RevenueCohortSchema = z.object({ eventId: z.string(), name: z.string(), courseName: z.string().nullable(), startsAt: z.string(), endsAt: z.string().nullable(), currency: Currency, status: z.string(), seats: z.number().int(), grossMinor: z.number().int(), platformFeeMinor: z.number().int(), taxMinor: z.number().int(), organizerNetMinor: z.number().int(), refundedMinor: z.number().int(), instructorFeesMinor: z.number().int(), marginMinor: z.number().int(), fundsStatus: z.enum(["held", "released", "mixed", "none"]), recognized: z.boolean() });
 export const CreateOrganizationBody = z.object({
   name: z.string().min(1), country: z.string().length(2), currency: Currency,
-  payoutDestination: z.enum(["gate_account", "external_bank"]).optional(), passFeeToAttendee: z.boolean().optional(),
+  payoutDestination: z.enum(["gate_account", "external_bank"]).optional(), passFeeToAttendee: z.boolean().optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(),
 });
 const PartyKind = z.enum(["venue", "vendor", "promoter", "tax_reserve", "instructor"]);
 export const PartySchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), kind: PartyKind, paymentsAccountRef: z.string().nullable(), createdAt: z.string() });
@@ -41,6 +48,7 @@ export const SessionInput = z.object({ startsAt: IsoDate, endsAt: IsoDate, title
 export const EventSchema = z.object({
   id: z.string(), organizationId: z.string(), courseId: z.string().nullable(), name: z.string(), startsAt: z.string(), endsAt: z.string().nullable(),
   timezone: z.string(), format: DeliveryFormat, sessions: z.array(SessionSchema), instructorIds: z.array(z.string()), minEnrollment: z.number().int().nullable(), meeting: MeetingSchema.nullable(),
+  instructorFees: z.array(InstructorFeeSchema), atRiskAt: z.string().nullable(), cancelledAt: z.string().nullable(), cancelReason: z.string().nullable(),
   currency: Currency, status: z.enum(["draft", "live", "ended", "cancelled"]), splitRules: z.array(SplitRuleSchema).nullable(), createdAt: z.string(),
 });
 export const CreateEventBody = z.object({
@@ -108,7 +116,7 @@ export const OrderSchema = z.object({
   id: z.string(), organizationId: z.string(), eventId: z.string(), ticketTypeId: z.string(), quantity: z.number().int(), buyerEmail: z.string(),
   attendees: z.array(AttendeeSchema), currency: Currency, status: z.enum(["pending", "paid", "refunded", "partially_refunded", "failed", "cancelled"]), paymentMethod: z.enum(["card", "invoice"]), corporateAccountId: z.string().nullable(), billingAddress: BillingAddressSchema.nullable(), pricing: PricingSchema,
   splits: z.object({ organizerMinor: Minor, lines: z.array(z.object({ partyId: z.string(), amountMinor: Minor, label: z.string().optional() })) }),
-  paymentRef: z.string().nullable(), transferRefs: z.record(z.string(), z.string()), refundedMinor: Minor, createdAt: z.string(), paidAt: z.string().nullable(),
+  paymentRef: z.string().nullable(), transferRefs: z.record(z.string(), z.string()), refundedMinor: Minor, heldMinor: Minor, fundsStatus: z.enum(["none", "held", "released"]), releasedAt: z.string().nullable(), createdAt: z.string(), paidAt: z.string().nullable(),
 });
 export const CreateOrderBody = z.object({ ticketTypeId: z.string(), quantity: z.number().int().min(1).max(100), buyerEmail: z.string().email(), currency: Currency.optional(), attendees: z.array(AttendeeSchema).max(100).optional(), billingAddress: BillingAddressSchema.optional(), waitlistEntryId: z.string().optional(), dryRun: z.boolean().optional() });
 export const RefundSchema = z.object({ id: z.string(), orderId: z.string(), organizationId: z.string(), amountMinor: Minor, reason: z.string(), status: z.enum(["pending", "succeeded", "failed"]), paymentRefundRef: z.string().nullable(), createdAt: z.string() });
@@ -122,7 +130,9 @@ export const toEvent = (e: Event) => ({
   ...e, courseId: e.courseId ?? null, splitRules: e.splitRules ?? null, startsAt: e.startsAt.toISOString(), endsAt: e.endsAt?.toISOString() ?? null,
   minEnrollment: e.minEnrollment ?? null, sessions: e.sessions.map((s) => ({ startsAt: s.startsAt.toISOString(), endsAt: s.endsAt.toISOString(), ...(s.title ? { title: s.title } : {}) })), createdAt: e.createdAt.toISOString(),
   meeting: e.meeting ? { ...e.meeting, hostUrl: e.meeting.hostUrl ?? null, passcode: e.meeting.passcode ?? null } : null,
+  instructorFees: e.instructorFees ?? [], atRiskAt: e.atRiskAt?.toISOString() ?? null, cancelledAt: e.cancelledAt?.toISOString() ?? null, cancelReason: e.cancelReason ?? null,
 });
+export const toPayout = (p: Payout) => ({ id: p.id, partyId: p.partyId ?? null, currency: p.currency, amountMinor: p.amountMinor, method: p.method, reference: p.reference ?? null, createdAt: p.createdAt.toISOString() });
 export const toTicketType = (t: TicketType) => ({ ...t, prices: t.prices ?? null, earlyBird: t.earlyBird ? { until: t.earlyBird.until.toISOString(), priceMinor: t.earlyBird.priceMinor, prices: t.earlyBird.prices ?? null } : null });
 export const toSeat = (s: Seat) => ({
   ...s, createdAt: s.createdAt.toISOString(), confirmedAt: s.confirmedAt?.toISOString() ?? null, cancelledAt: s.cancelledAt?.toISOString() ?? null,
@@ -132,7 +142,7 @@ export const toTransfer = (t: SeatTransfer) => ({ id: t.id, fromSeatId: t.fromSe
 export const toWaitlist = (e: WaitlistEntry) => ({ id: e.id, eventId: e.eventId, ticketTypeId: e.ticketTypeId, email: e.email, name: e.name ?? null, quantity: e.quantity, status: e.status, createdAt: e.createdAt.toISOString(), offeredAt: e.offeredAt?.toISOString() ?? null, offerExpiresAt: e.offerExpiresAt?.toISOString() ?? null });
 export const parseSessions = (sessions: Array<{ startsAt: string; endsAt: string; title?: string | undefined }> | undefined) =>
   sessions?.map((s) => ({ startsAt: new Date(s.startsAt), endsAt: new Date(s.endsAt), ...(s.title ? { title: s.title } : {}) }));
-export const toOrder = (o: Order) => ({ ...o, paymentRef: o.paymentRef ?? null, corporateAccountId: o.corporateAccountId ?? null, billingAddress: o.billingAddress ?? null, createdAt: o.createdAt.toISOString(), paidAt: o.paidAt?.toISOString() ?? null });
+export const toOrder = (o: Order) => ({ ...o, paymentRef: o.paymentRef ?? null, corporateAccountId: o.corporateAccountId ?? null, billingAddress: o.billingAddress ?? null, releasedAt: o.releasedAt?.toISOString() ?? null, createdAt: o.createdAt.toISOString(), paidAt: o.paidAt?.toISOString() ?? null });
 export const toCorporateAccount = (a: CorporateAccount) => ({ ...a, createdAt: a.createdAt.toISOString() });
 export const toInvoice = (i: Invoice) => ({ ...i, corporateAccountId: i.corporateAccountId ?? null, poNumber: i.poNumber ?? null, issuedAt: i.issuedAt.toISOString(), dueAt: i.dueAt.toISOString(), createdAt: i.createdAt.toISOString(), payments: i.payments.map((p) => ({ ...p, reference: p.reference ?? null, receivedAt: p.receivedAt.toISOString() })), cardPaymentRef: undefined });
 export const toRefund = (r: Refund) => ({ ...r, paymentRefundRef: r.paymentRefundRef ?? null, createdAt: r.createdAt.toISOString() });

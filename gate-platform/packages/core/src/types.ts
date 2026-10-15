@@ -16,10 +16,17 @@ export interface Organization {
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */
   changePolicy?: ChangePolicy;
+  /** When organizer-side funds become payable: immediately on payment, or after the cohort is delivered. */
+  releasePolicy: ReleasePolicy;
+  /** Hours after the cohort ends before held funds release. */
+  releaseGraceHours: number;
+  /** Days before start at which a cohort below its minimum enrolment is flagged at risk. */
+  minEnrollmentDecisionDays: number;
   apiKeyHash: string;
   createdAt: Date;
 }
 
+export type ReleasePolicy = "immediate" | "on_delivery";
 export type PartyKind = "venue" | "vendor" | "promoter" | "tax_reserve" | "instructor";
 export interface Party {
   id: string;
@@ -87,6 +94,11 @@ export interface Event {
   /** Below this, the cohort is at risk of cancellation (sprint 6 uses it). */
   minEnrollment?: number;
   meeting?: MeetingInfo;
+  /** Flat fees paid to instructors (or other parties) from the organizer's share when the cohort is delivered. */
+  instructorFees?: Array<{ partyId: string; amountMinor: MinorUnits }>;
+  atRiskAt?: Date;
+  cancelledAt?: Date;
+  cancelReason?: string;
   currency: Currency;
   status: EventStatus;
   splitRules?: SplitRule[];
@@ -255,9 +267,27 @@ export interface Order {
   paymentRef?: string;
   transferRefs: Record<string, string>;
   refundedMinor: MinorUnits;
+  /** Organizer-side money (organizer + split parties) still held pending delivery. */
+  heldMinor: MinorUnits;
+  fundsStatus: "none" | "held" | "released";
+  releasedAt?: Date;
   idempotencyKey?: string;
   createdAt: Date;
   paidAt?: Date;
+}
+
+export type PayoutMethod = "bank_transfer" | "wire" | "other";
+/** Money leaving the platform to the organizer or a party, recorded against their payable. */
+export interface Payout {
+  id: string;
+  organizationId: string;
+  /** Absent = the organizer itself. */
+  partyId?: string;
+  currency: Currency;
+  amountMinor: MinorUnits;
+  method: PayoutMethod;
+  reference?: string;
+  createdAt: Date;
 }
 
 export type InvoiceStatus = "issued" | "partially_paid" | "paid" | "void";

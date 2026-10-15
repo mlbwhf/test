@@ -201,4 +201,4 @@ Changes to the build order:
 
 ## 8. Build status
 
-Code lives in `gate-platform/` (pnpm + Turborepo monorepo, TypeScript). Built and verified so far: ledger, pricing and split engine, core domain with checkout/settlement/refunds, Stripe Connect adapter, Postgres schema with database-enforced ledger invariants, AI gateway with bring-your-own-LLM, REST API with OpenAPI and idempotency, MCP server with approval-gated money actions, and the Next.js organizer dashboard. See `gate-platform/README.md` for how to run it and what is next.
+Code lives in `gate-platform/` (pnpm + Turborepo monorepo, TypeScript). Built and verified: the Phase 1 foundation (ledger, pricing, checkout, Stripe Connect, Postgres with database-enforced ledger invariants, AI gateway, REST API, MCP server, dashboard) and all six sprints of the training vertical (courses and cohorts, widget and confirmations, corporate billing and tax, self-service and waitlist, meetings/attendance/certificates/sequences, delivery-linked release and revenue recognition). See `gate-platform/README.md` for how to run it and the remaining platform backlog.

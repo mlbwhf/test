@@ -7,12 +7,27 @@
 
 export type PayoutDestination = "gate_account" | "external_bank";
 
+/** When held cohort funds become payable: as soon as they are paid, or once the cohort is delivered. */
+export type ReleasePolicy = "immediate" | "on_delivery";
+
+export const RELEASE_POLICIES: ReleasePolicy[] = ["immediate", "on_delivery"];
+
+export const RELEASE_POLICY_LABELS: Record<ReleasePolicy, string> = {
+  immediate: "Immediate (release when paid)",
+  on_delivery: "On delivery (release after the cohort ends)",
+};
+
 export type Organization = {
   id: string;
   name: string;
   country: string;
   currency: string;
   payoutDestination: PayoutDestination;
+  releasePolicy: ReleasePolicy;
+  /** Hours after a cohort ends before held funds are released under "on_delivery". */
+  releaseGraceHours: number;
+  /** Days before the first session by which a cohort must reach its minimum enrollment. */
+  minEnrollmentDecisionDays: number;
 };
 
 export type EventStatus = "draft" | "live" | "ended" | "cancelled";
@@ -41,6 +56,9 @@ export type Meeting = {
   passcode: string | null;
 };
 
+/** A fixed fee owed to an instructor (party) for delivering a cohort, in the cohort's currency. */
+export type InstructorFee = { partyId: string; amountMinor: number };
+
 export type Event = {
   id: string;
   organizationId: string;
@@ -56,6 +74,11 @@ export type Event = {
   currency: string;
   status: EventStatus;
   meeting: Meeting | null;
+  instructorFees: InstructorFee[];
+  /** Set when the cohort is below its minimum enrollment past the decision deadline. */
+  atRiskAt: string | null;
+  cancelledAt: string | null;
+  cancelReason: string | null;
 };
 
 export type Course = {
@@ -259,6 +282,91 @@ export type UpdateCourseInput = {
 /** A text/csv payload proxied through to the browser by the roster route handler. */
 export type CsvDownload = { csv: string; contentType: string };
 
+// ---------------------------------------------------------------------------
+// Money: release policy, instructor fees, cancellation, reports and payouts.
+
+export type UpdateOrganizationInput = {
+  releasePolicy?: ReleasePolicy;
+  releaseGraceHours?: number;
+  minEnrollmentDecisionDays?: number;
+};
+export type SetInstructorFeesInput = { fees: InstructorFee[] };
+export type CancelEventInput = { reason: string; transferToEventId?: string };
+export type CancelEventResult = { event: Event; refunded: number; transferred: number; voided: number };
+export type ReleaseFundsResult = { released: number; amountMinor: number };
+
+/** Whether a cohort's organizer funds are still held, already released, or a mix of both. */
+export type FundsStatus = "held" | "released" | "mixed" | "none";
+
+export type RevenueTotals = { recognizedMinor: number; deferredMinor: number; refundedMinor: number };
+
+export type RevenueCohort = {
+  eventId: string;
+  name: string;
+  courseName: string | null;
+  startsAt: string;
+  endsAt: string | null;
+  currency: string;
+  status: EventStatus;
+  seats: number;
+  grossMinor: number;
+  platformFeeMinor: number;
+  taxMinor: number;
+  organizerNetMinor: number;
+  refundedMinor: number;
+  instructorFeesMinor: number;
+  marginMinor: number;
+  fundsStatus: FundsStatus;
+  /** True when the cohort ended inside the report range (revenue is recognized, not deferred). */
+  recognized: boolean;
+};
+
+export type RevenueReport = {
+  from: string;
+  to: string;
+  byCurrency: Record<string, RevenueTotals>;
+  cohorts: RevenueCohort[];
+};
+
+export type PayableItem = {
+  /** Null for the organizer itself. */
+  partyId: string | null;
+  name: string;
+  kind: string | null;
+  currency: string;
+  payableMinor: number;
+  heldMinor: number;
+};
+
+export type PayoutMethod = "bank_transfer" | "wire" | "other";
+
+export const PAYOUT_METHODS: PayoutMethod[] = ["bank_transfer", "wire", "other"];
+
+export const PAYOUT_METHOD_LABELS: Record<PayoutMethod, string> = {
+  bank_transfer: "Bank transfer",
+  wire: "Wire",
+  other: "Other",
+};
+
+export type Payout = {
+  id: string;
+  /** Null when the payout went to the organizer itself. */
+  partyId: string | null;
+  currency: string;
+  amountMinor: number;
+  method: PayoutMethod;
+  reference: string | null;
+  createdAt: string;
+};
+
+export type CreatePayoutInput = {
+  partyId?: string;
+  currency: string;
+  amountMinor: number;
+  method: PayoutMethod;
+  reference?: string;
+};
+
 /** The API answered with a 4xx/5xx and (usually) an `{ error }` envelope. */
 export type ApiErrorInfo = {
   kind: "api";
@@ -288,7 +396,7 @@ const apiKey = process.env.NEXT_PUBLIC_GATE_API_KEY ?? "";
 
 type ErrorEnvelope = { error?: { code?: string; message?: string; hint?: string } };
 
-type Method = "GET" | "POST" | "PATCH";
+type Method = "GET" | "POST" | "PATCH" | "PUT";
 
 /** Issues the request and parses an error envelope; returns the raw Response on 2xx. */
 async function send(
@@ -377,6 +485,8 @@ const enc = encodeURIComponent;
 
 export const api = {
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
+  updateOrganization: (input: UpdateOrganizationInput) =>
+    request<Organization>("PATCH", "/v1/organizations/me", input),
 
   listEvents: () => request<{ items: Event[] }>("GET", "/v1/events"),
   createEvent: (input: CreateEventInput) => request<Event>("POST", "/v1/events", input),
@@ -384,6 +494,12 @@ export const api = {
 
   createMeeting: (eventId: string, input: CreateMeetingInput) =>
     request<Event>("POST", `/v1/events/${enc(eventId)}/meeting`, input),
+
+  setInstructorFees: (eventId: string, input: SetInstructorFeesInput) =>
+    request<Event>("PUT", `/v1/events/${enc(eventId)}/instructor-fees`, input),
+  cancelEvent: (eventId: string, input: CancelEventInput) =>
+    request<CancelEventResult>("POST", `/v1/events/${enc(eventId)}/cancel`, input),
+  releaseFunds: (eventId: string) => request<ReleaseFundsResult>("POST", `/v1/events/${enc(eventId)}/release`),
 
   listAttendance: (eventId: string) =>
     request<{ items: Attendance[] }>("GET", `/v1/events/${enc(eventId)}/attendance`),
@@ -428,6 +544,14 @@ export const api = {
   getBalances: () => request<{ accounts: LedgerAccount[] }>("GET", "/v1/ledger/balances"),
 
   createRefund: (input: CreateRefundInput) => request<CreateRefundResult>("POST", "/v1/refunds", input),
+
+  /** Revenue report for cohorts overlapping [from, to]; both bounds are ISO timestamps. */
+  getRevenueReport: (from: string, to: string) =>
+    request<RevenueReport>("GET", `/v1/reports/revenue?from=${enc(from)}&to=${enc(to)}`),
+  listPayables: () => request<{ items: PayableItem[] }>("GET", "/v1/reports/payables"),
+
+  listPayouts: () => request<{ items: Payout[] }>("GET", "/v1/payouts"),
+  createPayout: (input: CreatePayoutInput) => request<{ payout: Payout }>("POST", "/v1/payouts", input),
 };
 
 /** Human-readable one-liner for any failure, used by inline error panels. */

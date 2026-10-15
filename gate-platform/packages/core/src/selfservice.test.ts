@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 async function setup(capacity = 10) {
-  const { organization: org } = await core.createOrganization({ name: "Agile Agilist", country: "CA", currency: "CAD" });
+  const { organization: org } = await core.createOrganization({ releasePolicy: "immediate", name: "Agile Agilist", country: "CA", currency: "CAD" });
   const course = await core.createCourse(org.id, { slug: "leading-safe", name: "Leading SAFe" });
   const nov = await core.createEvent(org.id, { courseId: course.id, name: "Nov", startsAt: new Date("2026-11-20T14:00:00Z"), timezone: "America/Toronto" });
   const dec = await core.createEvent(org.id, { courseId: course.id, name: "Dec", startsAt: new Date("2026-12-04T14:00:00Z"), timezone: "America/Toronto" });

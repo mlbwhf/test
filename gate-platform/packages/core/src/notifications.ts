@@ -260,3 +260,41 @@ export function sequenceHooks(notifier: Notifier, opts: SequenceMailOptions): Co
     },
   };
 }
+
+/** Organizer alerts for cohorts below minimum enrolment, and learner notices when a cohort is cancelled. */
+export function cohortHooks(notifier: Notifier, opts: { fromName: string; organizerEmail: (organizationId: string) => Promise<string | undefined>; seatUrl?: ((seatId: string, email: string) => string) | undefined; listSeats: (eventId: string) => Promise<Array<{ id: string; attendee: { email: string; name?: string | undefined }; status: string }>> }): CoreHooks {
+  return {
+    cohortAtRisk: async ({ event, organization, confirmed, minimum }) => {
+      const to = await opts.organizerEmail(organization.id);
+      if (!to) return;
+      const when = formatRange(event.startsAt, event.endsAt ?? event.startsAt, event.timezone);
+      await notifier.send({
+        key: `cohort:${event.id}:at-risk`, to,
+        subject: `Cohort below minimum: ${event.name} (${confirmed}/${minimum})`,
+        text: `${event.name} starts ${when} (${event.timezone}) with ${confirmed} of ${minimum} seats confirmed.\n\nDecide now: run it anyway, cancel it (every learner is refunded in full automatically), or move learners to another cohort from the dashboard.\n\n— ${opts.fromName}`,
+        html: `<p><strong>${esc(event.name)}</strong> starts ${esc(when)} (${esc(event.timezone)}) with <strong>${confirmed} of ${minimum}</strong> seats confirmed.</p><p>Decide now: run it anyway, cancel it (every learner is refunded in full automatically), or move learners to another cohort from the dashboard.</p><p>— ${esc(opts.fromName)}</p>`,
+      });
+    },
+    cohortCancelled: async ({ event, organization, target }) => {
+      // Learners were already refunded or moved by the time this fires; tell each of them.
+      const seats = await opts.listSeats(event.id);
+      const seen = new Set<string>();
+      for (const seat of seats) {
+        const to = seat.attendee.email.toLowerCase();
+        if (seen.has(to) || (seat.status !== "cancelled" && seat.status !== "transferred")) continue;
+        seen.add(to);
+        const moved = seat.status === "transferred" && target;
+        await notifier.send({
+          key: `cohort:${event.id}:cancelled:${seat.id}`, to,
+          subject: moved ? `Your cohort moved: now ${target!.name}` : `Cohort cancelled: ${event.name}`,
+          text: moved
+            ? `${event.name} will not run. Your seat has been moved to ${target!.name} (${formatRange(target!.startsAt, target!.endsAt ?? target!.startsAt, target!.timezone)} ${target!.timezone}). A new calendar invite follows.\n\n— ${organization.name}`
+            : `${event.name} will not run (${event.cancelReason ?? "cancelled by the organizer"}). Your payment has been refunded in full to the original payment method.\n\n— ${organization.name}`,
+          html: moved
+            ? `<p><strong>${esc(event.name)}</strong> will not run. Your seat has been moved to <strong>${esc(target!.name)}</strong> (${esc(formatRange(target!.startsAt, target!.endsAt ?? target!.startsAt, target!.timezone))} ${esc(target!.timezone)}). A new calendar invite follows.</p><p>— ${esc(organization.name)}</p>`
+            : `<p><strong>${esc(event.name)}</strong> will not run (${esc(event.cancelReason ?? "cancelled by the organizer")}). Your payment has been refunded in full to the original payment method.</p><p>— ${esc(organization.name)}</p>`,
+        });
+      }
+    },
+  };
+}
