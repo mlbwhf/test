@@ -1,0 +1,63 @@
+<!-- Report AI homepage hero — "Figure of the week"
+     Destination: TOP of page 6 content, as an HTML block, ABOVE the existing
+     sections (AI by the Numbers, Leading AI Assistants, Models by Country…),
+     which stay unchanged. Weekly update = swap the WEEKLY-EDIT lines only.
+     Data: McKinsey State of Organizations 2026 (AI use in ≥1 function series). -->
+
+<style>
+.tai-hero{display:grid;grid-template-columns:1.15fr 1fr;border-bottom:1px solid #111114;background:#fff;font-family:'Archivo',sans-serif;color:#111114;}
+.tai-hero .tai-mono{font-family:'IBM Plex Mono',monospace;}
+/* dynamic entrance — pure CSS, content fully server-rendered */
+@keyframes taiRise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes taiGrow{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+.tai-hero-stat,.tai-hero-l p{animation:taiRise .6s ease-out both;}
+.tai-hero-l p{animation-delay:.15s;}
+.tai-hero-bar{transform-origin:bottom;animation:taiGrow .7s cubic-bezier(.2,.7,.3,1) both;}
+.tai-hero-bar:nth-child(2){animation-delay:.1s;}
+.tai-herocol:nth-child(2) .tai-hero-bar{animation-delay:.2s;}
+.tai-herocol:nth-child(3) .tai-hero-bar{animation-delay:.3s;}
+.tai-herocol:nth-child(4) .tai-hero-bar{animation-delay:.4s;}
+@media(prefers-reduced-motion:reduce){.tai-hero *{animation:none!important;}}
+@media(max-width:900px){.tai-hero{grid-template-columns:1fr;}.tai-hero-l{border-right:none!important;border-bottom:1px solid #e6e6ea;padding:44px 22px 36px!important;}.tai-hero-r{padding:36px 22px 44px!important;}.tai-hero-stat{font-size:84px!important;}}
+</style>
+
+<div class="tai-hero">
+
+  <div class="tai-hero-l" style="padding:64px 48px 56px 40px;border-right:1px solid #e6e6ea;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:26px;">
+      <span class="tai-mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#2545f5;">Figure of the week</span>
+      <!-- WEEKLY-EDIT: week stamp -->
+      <span class="tai-mono" style="font-size:11px;color:#b8b8bf;">W34 &middot; 2026</span>
+    </div>
+    <!-- WEEKLY-EDIT: the figure -->
+    <div class="tai-hero-stat" style="font-weight:900;font-size:120px;line-height:0.9;letter-spacing:-0.05em;margin:0 0 22px;">88<span style="color:#2545f5;">%</span></div>
+    <!-- WEEKLY-EDIT: the statement -->
+    <p style="font-size:22px;line-height:1.4;max-width:26ch;margin:0 0 26px;">of organizations now use AI in at least one business function &mdash; up from 55% just three years ago.</p>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
+      <span class="tai-mono" style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;border:1px solid #111114;padding:5px 10px;">HIGH confidence</span>
+      <!-- WEEKLY-EDIT: source line -->
+      <span class="tai-mono" style="font-size:12px;color:#77777f;">Source: McKinsey, State of Organizations &middot; 2026</span>
+      <!-- WEEKLY-EDIT: full-figure link -->
+      <a class="tai-mono" href="/indexes/enterprise-ai/" style="font-size:12px;color:#2545f5;text-decoration:none;">Full figure &rarr;</a>
+    </div>
+  </div>
+
+  <div class="tai-hero-r" style="background:#f5f5f7;padding:64px 40px 56px 48px;">
+    <!-- WEEKLY-EDIT: chart title -->
+    <div class="tai-mono" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;margin-bottom:28px;">Organizations using AI, 2023&ndash;2026</div>
+    <!-- WEEKLY-EDIT: bars (height = value / max) -->
+    <div style="display:flex;align-items:flex-end;gap:40px;height:280px;border-bottom:1px solid #111114;">
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">55%</span><span class="tai-hero-bar" style="display:block;height:62.5%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">72%</span><span class="tai-hero-bar" style="display:block;height:81.8%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">78%</span><span class="tai-hero-bar" style="display:block;height:88.6%;background:#d8d8de;"></span></div>
+      <div class="tai-herocol" style="flex:1;max-width:72px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><span class="tai-mono" style="font-size:13px;color:#111114;text-align:center;margin-bottom:6px;">88%</span><span class="tai-hero-bar" style="display:block;height:100%;background:#2545f5;"></span></div>
+    </div>
+    <div style="display:flex;gap:40px;margin-top:8px;">
+      <span class="tai-mono" style="flex:1;max-width:72px;text-align:center;font-size:11px;color:#77777f;">2023</span>
+      <span class="tai-mono" style="flex:1;max-width:72px;text-align:center;font-size:11px;color:#77777f;">2024</span>
+      <span class="tai-mono" style="flex:1;max-width:72px;text-align:center;font-size:11px;color:#77777f;">2025</span>
+      <span class="tai-mono" style="flex:1;max-width:72px;text-align:center;font-size:11px;color:#77777f;">2026</span>
+    </div>
+  </div>
+
+</div>
