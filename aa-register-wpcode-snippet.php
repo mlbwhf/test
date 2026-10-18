@@ -3553,7 +3553,36 @@ function aa_reg_panel( $atts ) {
 	   Stripe collects on its own page, and asking for it here first is asking
 	   twice. The email stays because it prefills Stripe and because it is the
 	   only record of someone who abandons at the payment step. */
+	/* WHICH COHORT, CARRIED IN THE FORM ITSELF.
+	   Step one submits an email and nothing else, so every abandoned
+	   registration arrived as an address with no indication of which class the
+	   person was looking at -- unanswerable without guessing, and it happened
+	   repeatedly.
+	   The date lives in JavaScript state and in the ?cohort= query parameter
+	   the calendar links carry. This reads the query parameter, so the value
+	   travels with the submission to whatever is collecting it.
+	   VALIDATED AGAINST THIS COURSE'S OWN COHORTS, never echoed raw: the value
+	   reaches a CRM and an inbox, and an unchecked query parameter is an open
+	   door for anyone who can craft a link.
+	   EMPTY WHEN THE URL DOES NOT NAME ONE, deliberately. Defaulting to the
+	   first cohort would put a confident wrong answer on every submission
+	   where the visitor picked a different date in the UI, which is worse than
+	   no answer. The data-sel-* hooks let the calendar JS keep these in step
+	   once it is updated to do so; until then a known cohort is captured and
+	   an unknown one stays blank. */
+	$sel_id    = isset( $_GET['cohort'] ) ? sanitize_text_field( wp_unslash( $_GET['cohort'] ) ) : '';
+	$sel       = null;
+	foreach ( $cohorts as $cc ) {
+		if ( $cc['id'] === $sel_id ) { $sel = $cc; break; }
+	}
+
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
+	    . '<input type="hidden" name="cohort" data-sel-cohort value="'
+	    . esc_attr( $sel ? $sel['id'] : '' ) . '">'
+	    . '<input type="hidden" name="course" data-sel-course value="'
+	    . esc_attr( $course['name'] ) . '">'
+	    . '<input type="hidden" name="cohort_dates" data-sel-cohort-dates value="'
+	    . esc_attr( $sel ? aa_reg_range( $sel['start'], $sel['end'] ) : '' ) . '">'
 	    . '<label class="aacal-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	    . '<input name="email" type="email" autocomplete="email" inputmode="email"'
 	    . ' placeholder="' . esc_attr( aa_reg_t( 'your_email', 'Your email' ) ) . '" required></label>'
