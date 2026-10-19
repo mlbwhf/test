@@ -29,10 +29,14 @@ FROM deps AS build
 COPY apps/api apps/api
 COPY apps/widget apps/widget
 COPY packages packages
-RUN pnpm turbo run build --filter=@gate/api... --filter=@gate/widget \
- && pnpm prune --prod --no-optional \
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm turbo run build --filter=@gate/api... --filter=@gate/widget \
+ # Drop dev dependencies but keep the workspace links (pnpm prune rebuilds the tree from the
+ # root and loses apps/api/node_modules/@gate/*; a filtered prod install does not).
+ && pnpm install --prod --frozen-lockfile --prefer-offline --filter @gate/api... --filter @gate/widget... \
  && find apps packages -type d \( -name src -o -name test -o -name __tests__ \) -prune -exec rm -rf {} + \
- && rm -rf .turbo apps/*/.turbo packages/*/.turbo
+ && rm -rf .turbo apps/*/.turbo packages/*/.turbo \
+ && test -L apps/api/node_modules/@gate/ledger && test -f packages/ledger/dist/index.js
 
 # ---- runtime
 FROM node:22-alpine AS runtime
