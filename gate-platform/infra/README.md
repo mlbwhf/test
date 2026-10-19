@@ -120,6 +120,17 @@ Dumps are encrypted with `BACKUP_PASSPHRASE`; keep a copy of it outside the serv
 Restore test, quarterly: `docker compose exec backup sh restore.sh` restores the latest
 dump into the running database, so run it against a scratch Postgres, never production.
 
+## Deploying without GitHub Actions
+
+If Actions is backed up or unavailable, build on the server instead (as root, 5 to 10 minutes):
+
+```bash
+bash /root/gate-src/gate-platform/infra/scripts/build-local.sh
+```
+
+It updates the checkout, builds both images locally with the same Dockerfiles, and runs
+`deploy.sh` as the deploy user. The next Actions run replaces them with registry images.
+
 ## Day two
 
 | Task | Command (as deploy, in /opt/gate) |
