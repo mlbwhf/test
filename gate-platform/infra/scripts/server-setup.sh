@@ -65,14 +65,21 @@ if [ -f /root/.ssh/authorized_keys ] && [ ! -s /home/deploy/.ssh/authorized_keys
   chmod 600 /home/deploy/.ssh/authorized_keys
 fi
 
-echo "== ssh: keys only"
-mkdir -p /etc/ssh/sshd_config.d
-cat >/etc/ssh/sshd_config.d/60-gate.conf <<'SSH'
+echo "== ssh: keys only (only once a permanent key exists)"
+# Hostinger's web console installs a temporary key; count only keys that are not it.
+permanent_keys=$(cat /root/.ssh/authorized_keys /home/deploy/.ssh/authorized_keys 2>/dev/null | grep -E '^(ssh-|ecdsa-|sk-)' | grep -viE 'hostinger|temporary|browser' | wc -l)
+if [ "$permanent_keys" -gt 0 ]; then
+  mkdir -p /etc/ssh/sshd_config.d
+  cat >/etc/ssh/sshd_config.d/60-gate.conf <<'SSH'
 PasswordAuthentication no
 KbdInteractiveAuthentication no
 PermitRootLogin prohibit-password
 SSH
-sshd -t && systemctl reload ssh
+  sshd -t && systemctl reload ssh
+  echo "password logins disabled ($permanent_keys permanent key(s) present)"
+else
+  echo "WARNING: no permanent SSH key found; password logins stay ON. Add a key, then rerun this script."
+fi
 
 echo
 echo "Done. Next: copy docker-compose.prod.yml and .env to /opt/gate as the deploy user,"
