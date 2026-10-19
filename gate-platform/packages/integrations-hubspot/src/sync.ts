@@ -39,7 +39,7 @@ export function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Pushes Gate order lifecycle events into a CRM. Errors propagate; the caller decides. */
+/** Pushes EnrollClass order lifecycle events into a CRM. Errors propagate; the caller decides. */
 export class CrmSync {
   private readonly now: () => Date;
 

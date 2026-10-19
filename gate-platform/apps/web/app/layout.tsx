@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gate Dashboard",
-  description: "Organizer dashboard for the Gate payments platform",
+  title: "EnrollClass Dashboard",
+  description: "Organizer dashboard for EnrollClass, payments and enrollment for training businesses",
 };
 
 // Bare document shell. The organizer chrome (top bar + nav) lives in

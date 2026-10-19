@@ -1,4 +1,4 @@
-# Gate Platform
+# EnrollClass (gate-platform)
 
 Events money OS: ticketing, split payments, payouts and a double-entry ledger today; embedded business banking next. See `../payments-platform-blueprint.md` for the strategy, fee model, jurisdictions and phase plan.
 

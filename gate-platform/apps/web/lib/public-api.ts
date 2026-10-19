@@ -1,4 +1,4 @@
-// Typed HTTP client for the Gate platform's PUBLIC (learner-facing) API.
+// Typed HTTP client for the EnrollClass platform's PUBLIC (learner-facing) API.
 //
 // Separate from lib/api.ts on purpose: this client never sends the organizer
 // api key. The seat id plus the attendee's email are the only credential, so

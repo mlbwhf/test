@@ -15,7 +15,7 @@ function readOptions(el: HTMLElement): WidgetOptions | string {
     !gateCourse && "data-gate-course",
   ].filter((x): x is string => typeof x === "string");
   if (missing.length > 0 || !gateApi || !gateOrg || !gateCourse) {
-    return `Gate widget: missing required attribute(s) ${missing.join(", ")}.`;
+    return `EnrollClass widget: missing required attribute(s) ${missing.join(", ")}.`;
   }
   const options: WidgetOptions = { api: gateApi, org: gateOrg, course: gateCourse };
   if (gateCurrency) options.currency = gateCurrency.trim().toUpperCase();

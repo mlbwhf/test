@@ -11,7 +11,7 @@ export interface CrmContact {
 
 export type CrmDealStage = "registered" | "paid" | "refunded" | "cancelled";
 
-/** A deal (order) record in a CRM, keyed by an external id owned by Gate. */
+/** A deal (order) record in a CRM, keyed by an external id owned by EnrollClass. */
 export interface CrmDeal {
   externalId: string;
   name: string;

@@ -51,12 +51,12 @@ async function main() {
 
   // Notifications: Resend when configured, otherwise log to the console.
   const notifier: Notifier = process.env.RESEND_API_KEY
-    ? new ResendNotifier({ apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM ?? "Gate <no-reply@example.com>" })
+    ? new ResendNotifier({ apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM ?? "EnrollClass <no-reply@enrollclass.com>" })
     : new ConsoleNotifier();
   console.log(`[email] ${notifier.provider}`);
   const hooks: CoreHooks[] = [
     confirmationHook(notifier, {
-      fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+      fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
       replyTo: process.env.EMAIL_REPLY_TO,
       calendarUrl: (seatId) => `${publicUrl}/public/v1/seats/${seatId}/calendar.ics`,
       pageUrl: (ctx) => (ctx.course && process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", ctx.course.slug) : undefined),
@@ -64,20 +64,20 @@ async function main() {
   ];
   const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
   hooks.push(selfServiceHooks(notifier, {
-    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     replyTo: process.env.EMAIL_REPLY_TO,
     claimUrl: ({ entryId, courseSlug }) => (courseSlug && process.env.GATE_COURSE_PAGE_URL ? `${process.env.GATE_COURSE_PAGE_URL.replace("{slug}", courseSlug)}?gate_waitlist=${entryId}` : `${webUrl}/?gate_waitlist=${entryId}`),
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     getCourseSlug: async (eventId) => { const e = await repos.events.get(eventId); return e?.courseId ? (await repos.courses.get(e.courseId))?.slug : undefined; },
   }));
   hooks.push(sequenceHooks(notifier, {
-    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     replyTo: process.env.EMAIL_REPLY_TO,
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     certificateUrl: (code) => `${publicUrl}/public/v1/certificates/${code}/view`,
   }));
   hooks.push(cohortHooks(notifier, {
-    fromName: process.env.EMAIL_FROM_NAME ?? "Gate",
+    fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     organizerEmail: async () => process.env.EMAIL_REPLY_TO ?? process.env.GATE_ORGANIZER_EMAIL,
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     listSeats: (eventId) => repos.seats.listByEvent(eventId),

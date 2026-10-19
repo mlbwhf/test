@@ -45,7 +45,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   await app.register(swagger, {
     openapi: {
       openapi: "3.1.0",
-      info: { title: "Gate Platform API", version: "0.1.0", description: "Events money OS: ticketing, split payments, payouts, ledger. All amounts are integer minor units." },
+      info: { title: "EnrollClass API", version: "0.1.0", description: "Events money OS: ticketing, split payments, payouts, ledger. All amounts are integer minor units." },
       components: { securitySchemes: { apiKey: { type: "apiKey", in: "header", name: "x-api-key" }, adminKey: { type: "apiKey", in: "header", name: "x-admin-key" } } },
       security: [{ apiKey: [] }],
     },
@@ -118,7 +118,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   app.get("/widget/v1/demo", { schema: { tags: ["widget"], security: [], querystring: z.object({ org: z.string(), course: z.string(), currency: z.string().optional(), stripePk: z.string().optional() }), response: { 200: z.string() } } }, async (req, reply) => {
     const base = deps.publicUrl ?? "";
     const attrs = [`data-gate-api="${base}"`, `data-gate-org="${req.query.org}"`, `data-gate-course="${req.query.course}"`, ...(req.query.currency ? [`data-gate-currency="${req.query.currency}"`] : []), ...(req.query.stripePk ? [`data-gate-stripe-pk="${req.query.stripePk}"`] : [])].join(" ");
-    return reply.header("content-type", "text/html; charset=utf-8").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gate widget demo</title></head><body style="font-family:system-ui;max-width:720px;margin:40px auto;padding:0 16px"><h1>Course page (demo)</h1><p>This is what an organizer's course page looks like with the widget embedded.</p><div data-gate-widget ${attrs}></div><script src="${base}/widget/v1/gate-widget.js" async></script></body></html>`);
+    return reply.header("content-type", "text/html; charset=utf-8").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EnrollClass widget demo</title></head><body style="font-family:system-ui;max-width:720px;margin:40px auto;padding:0 16px"><h1>Course page (demo)</h1><p>This is what an organizer's course page looks like with the widget embedded.</p><div data-gate-widget ${attrs}></div><script src="${base}/widget/v1/gate-widget.js" async></script></body></html>`);
   });
 
   // ---------- public catalogue + checkout (no api key; rate limited) ----------

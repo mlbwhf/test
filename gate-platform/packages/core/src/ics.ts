@@ -27,7 +27,7 @@ export function buildIcs(input: IcsInput): string {
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Gate Platform//Training//EN",
+    "PRODID:-//EnrollClass//Training//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
   ];

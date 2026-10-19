@@ -1,4 +1,4 @@
-// Typed HTTP client for the Gate platform API.
+// Typed HTTP client for the EnrollClass platform API.
 //
 // Server-side only: import this from server components, route handlers or
 // server actions. It is never imported from a "use client" module, so the

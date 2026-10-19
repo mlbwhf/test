@@ -6,7 +6,7 @@ export default function OrganizerLayout({ children }: { children: ReactNode }) {
     <>
       <header className="topbar">
         <Link href="/dashboard" className="brand">
-          Gate
+          EnrollClass
         </Link>
         <nav aria-label="Primary">
           <Link href="/dashboard">Dashboard</Link>

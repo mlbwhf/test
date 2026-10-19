@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time hardening for the Gate VPS (Ubuntu 24.04, Hostinger "Docker and Traefik" template).
+# One-time hardening for the EnrollClass VPS (Ubuntu 24.04, Hostinger "Docker and Traefik" template).
 # Run as root once:  bash server-setup.sh
 set -euo pipefail
 

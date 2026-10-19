@@ -1,4 +1,4 @@
-# Gate for Training: production Compose for a single VPS behind an existing Traefik.
+# EnrollClass: production Compose for a single VPS behind an existing Traefik.
 #
 #   /opt/gate/docker-compose.yml  (this file)
 #   /opt/gate/.env                (from .env.production.example, never committed)

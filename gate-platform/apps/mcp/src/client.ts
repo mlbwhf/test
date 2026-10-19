@@ -1,4 +1,4 @@
-/** Thin typed client over the Gate REST API, used by the MCP tools. */
+/** Thin typed client over the EnrollClass REST API, used by the MCP tools. */
 export interface GateClientOptions {
   baseUrl: string;
   apiKey: string;

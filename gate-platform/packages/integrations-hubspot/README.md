@@ -1,6 +1,6 @@
 # @gate/integrations-hubspot
 
-CRM sync for the Gate payments platform. Exposes a provider-neutral `CrmPort`
+CRM sync for the EnrollClass payments platform. Exposes a provider-neutral `CrmPort`
 (`upsertContact`, `upsertDeal`), a `HubSpotCrm` implementation on the HubSpot
 CRM v3 REST API, an `InMemoryCrm` for tests, and `CrmSync`, which turns order
 lifecycle events (`onOrderPaid`, `onOrderRefunded`) into contact and deal upserts.
@@ -34,7 +34,7 @@ Create these custom properties in HubSpot before syncing (Settings → Propertie
 
 | Object  | Internal name            | Type                   | Purpose                                             |
 | ------- | ------------------------ | ---------------------- | --------------------------------------------------- |
-| Deal    | `gate_order_id`          | Single-line text       | Gate order id; used to find and update the deal     |
+| Deal    | `gate_order_id`          | Single-line text       | EnrollClass order id; used to find and update the deal     |
 | Deal    | `gate_refunded_minor`    | Single-line text       | Amount refunded, in minor units                     |
 | Contact | `gate_last_course`       | Single-line text       | Name of the last course the contact was booked on   |
 | Contact | `gate_last_cohort_start` | Single-line text       | Start date of that cohort, `YYYY-MM-DD`             |
