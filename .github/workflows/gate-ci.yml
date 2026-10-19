@@ -31,7 +31,8 @@ jobs:
       - run: pnpm build
       - name: PAN guard (no card-number-shaped strings in source or fixtures)
         run: |
-          if grep -rEn --include='*.ts' --include='*.tsx' --include='*.json' --include='*.sql' -v 'node_modules' . \
-             | grep -E '\b(4[0-9]{12}([0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})\b' \
+          if grep -rEn --include='*.ts' --include='*.tsx' --include='*.json' --include='*.sql' \
+             --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.next --exclude-dir=.turbo --exclude-dir=.vite \
+             -e '\b(4[0-9]{12}([0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})\b' . \
              | grep -v 'pan-guard-allow'; then
             echo 'Card-number-shaped string found'; exit 1; fi
