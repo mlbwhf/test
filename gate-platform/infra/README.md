@@ -34,7 +34,8 @@ SSH in as root and run the first-run script. It performs everything in this sect
 and prints what is left to fill in:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/scripts/first-run.sh | bash -s -- enrollclass.com "ssh-ed25519 AAAA... laptop" "ssh-ed25519 AAAA... gate-deploy"
+git clone --depth 1 -b claude/confident-cray-JTbgD https://github.com/mlbwhf/test.git /root/gate-src
+bash /root/gate-src/gate-platform/infra/scripts/first-run.sh enrollclass.com "ssh-ed25519 AAAA... laptop" "ssh-ed25519 AAAA... gate-deploy"
 ```
 
 The manual equivalent, if you prefer to see each step:

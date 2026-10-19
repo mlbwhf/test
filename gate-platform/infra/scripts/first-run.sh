@@ -3,20 +3,31 @@
 # deploy user, detects Traefik, writes .env with generated secrets, and prints what
 # is still missing. Safe to re-run: it never overwrites an existing .env.
 #
-#   curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/scripts/first-run.sh | bash -s -- enrollclass.com
+#   git clone --depth 1 -b claude/confident-cray-JTbgD https://github.com/mlbwhf/test.git /root/gate-src
+#   bash /root/gate-src/gate-platform/infra/scripts/first-run.sh enrollclass.com "ssh-ed25519 ... laptop" "ssh-ed25519 ... gate-deploy"
 set -euo pipefail
 domain=${1:?usage: first-run.sh <domain> [public-key ...]}
 shift || true
-base=https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra
-[ "$(id -u)" -eq 0 ] || { echo "run as root" >&2; exit 1; }
+[ "$(id -u)" -eq 0 ] || { echo "run as root, on the VPS (not on your laptop)" >&2; exit 1; }
 
+# Source files: the sibling files of this script when run from a checkout, otherwise a
+# shallow clone of the repository (one short URL, no per-file raw fetches).
 tmp=$(mktemp -d)
-curl -fsSL "$base/scripts/server-setup.sh" -o "$tmp/server-setup.sh"
-curl -fsSL "$base/scripts/detect-traefik.sh" -o "$tmp/detect-traefik.sh"
-curl -fsSL "$base/compose/.env.production.example" -o "$tmp/env.example"
-curl -fsSL "$base/compose/docker-compose.prod.yml" -o "$tmp/docker-compose.yml"
-curl -fsSL "$base/scripts/deploy.sh" -o "$tmp/deploy.sh"
-curl -fsSL "$base/scripts/bootstrap-tenant.sh" -o "$tmp/bootstrap-tenant.sh"
+here=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)
+if [ -n "$here" ] && [ -f "$here/server-setup.sh" ] && [ -f "$here/../compose/docker-compose.prod.yml" ]; then
+  src="$here/.."
+else
+  echo "== fetching deployment files"
+  command -v git >/dev/null || apt-get install -y -q git >/dev/null
+  git clone -q --depth 1 -b claude/confident-cray-JTbgD https://github.com/mlbwhf/test.git "$tmp/repo"
+  src="$tmp/repo/gate-platform/infra"
+fi
+cp "$src/scripts/server-setup.sh" "$tmp/server-setup.sh"
+cp "$src/scripts/detect-traefik.sh" "$tmp/detect-traefik.sh"
+cp "$src/compose/.env.production.example" "$tmp/env.example"
+cp "$src/compose/docker-compose.prod.yml" "$tmp/docker-compose.yml"
+cp "$src/scripts/deploy.sh" "$tmp/deploy.sh"
+cp "$src/scripts/bootstrap-tenant.sh" "$tmp/bootstrap-tenant.sh"
 
 # Any further arguments are SSH public keys ("ssh-ed25519 AAAA... comment"). Each is
 # installed for root and for deploy before hardening, so password logins can be turned
