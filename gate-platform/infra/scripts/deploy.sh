@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 
 [ -f .env ] || { echo ".env missing; copy env.production.example and fill it in" >&2; exit 1; }
 # Read single values without sourcing: values like "Name <email>" are not shell-safe.
-envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E 's/^[[:space:]]+|[[:space:]]+$//g; s/^"(.*)"$/\1/'; }
+envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E "s/^[[:space:]]+|[[:space:]]+\$//g; s/^\"(.*)\"\$/\1/; s/^'(.*)'\$/\1/"; }
 TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
 BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)
 
@@ -18,6 +18,8 @@ compose() { docker compose "${opts[@]}" "$@"; }
 
 missing=$(grep -E '^(STRIPE_SECRET_KEY|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=' .env | sed -E 's/#.*$//' | grep -E '=\s*$' | cut -d= -f1 || true)
 [ -z "$missing" ] || { echo "fill these in .env before deploying:"; echo "$missing" | sed 's/^/    /'; exit 1; }
+[ -n "$(envval DASHBOARD_BASIC_AUTH)" ] || { echo "no dashboard login yet: run ./set-dashboard-password.sh, then ./deploy.sh" >&2; exit 1; }
+[ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
 echo "== pulling images"
 compose pull --quiet || echo "pull failed; continuing with local images"

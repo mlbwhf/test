@@ -13,6 +13,8 @@ infra/scripts/server-setup.sh          one-time hardening (ufw, fail2ban, swap, 
 infra/scripts/detect-traefik.sh        prints the Traefik network/entrypoint/resolver names
 infra/scripts/deploy.sh                pull, roll, wait for /health (used by CI and by hand)
 infra/scripts/bootstrap-tenant.sh      create the first organization, print its API key
+infra/scripts/rotate-api-key.sh        replace an organization's API key
+infra/scripts/set-dashboard-password.sh set the login for app.<domain> (stored hashed)
 .github/workflows/gate-deploy.yml      test, build, push images, roll the VPS over SSH
 ```
 
@@ -93,6 +95,23 @@ curl -s https://api.enrollclass.com/health      # {"ok":true,"payments":"stripe"
 open https://api.enrollclass.com/docs
 ```
 
+## 4a. Dashboard login
+
+`app.<domain>` is protected at the edge by Traefik: every request except the learner
+portal (`/my/...`) and static assets needs a username and password. The deploy refuses
+to run until one is set. As `deploy`:
+
+```bash
+cd /opt/gate && ./set-dashboard-password.sh        # username "admin"; or ./set-dashboard-password.sh jane
+./deploy.sh
+```
+
+Only an apr1 hash is written to `.env` (`DASHBOARD_BASIC_AUTH='user:$apr1$...'`, single
+quotes on purpose). Re-run the script to change the password; run it with a second
+username and merge the two values with a comma for a second user. To confirm Traefik
+received the hash intact: `docker inspect gate-web-1 | grep basicauth.users` shows one
+`$` per segment, not two.
+
 ## 5. First tenant
 
 ```bash
@@ -145,6 +164,30 @@ It updates the checkout, builds both images locally with the same Dockerfiles, a
 Migrations run automatically when the API starts, inside a transaction per file, so a
 deploy that fails a migration leaves the previous schema intact and the old container
 keeps serving (Compose only replaces it after the new one is healthy).
+
+## Security posture
+
+What is in place, and what still depends on you:
+
+- **Transport.** Traefik terminates TLS with Let's Encrypt and sends HSTS; Postgres is
+  reachable only on the project's private Docker network, never on a host port.
+- **Dashboard.** Basic auth at the edge (section 4a); the API key never reaches the browser,
+  the web container calls the API over the private network with it.
+- **API.** Tenant API keys are stored as SHA-256 hashes; the admin key is compared in
+  constant time; public learner endpoints are rate limited; request logs drop query strings
+  (which carry learner emails) and credential headers; Postgres does not log query
+  parameters.
+- **Host.** Key-only SSH, ufw (22/80/443), fail2ban, unattended security updates, containers
+  run with `no-new-privileges`, `.env` is mode 600 and owned by `deploy`.
+- **Secrets.** Live only in `/opt/gate/.env` and GitHub repository secrets. Rotate a tenant
+  key with `./rotate-api-key.sh`, the dashboard password with `./set-dashboard-password.sh`,
+  Stripe/Resend/Anthropic keys in their dashboards, then `./deploy.sh`.
+- **Not covered by the VPS.** The disk is not encrypted at rest; card data never touches it
+  (Stripe holds it), but attendee names and emails do. Keep backups enabled and encrypted
+  (section 7, `BACKUP_PASSPHRASE`), and move Postgres to a managed, encrypted database before
+  volume justifies it.
+- **Your accounts.** Turn on two-factor authentication for GitHub, Stripe, Cloudflare,
+  Hostinger and Resend; the platform is only as safe as the accounts that can change it.
 
 ## Leaving the VPS later
 

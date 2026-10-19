@@ -21,6 +21,7 @@ services:
     command: >-
       postgres -c shared_buffers=1GB -c effective_cache_size=3GB -c work_mem=16MB
       -c maintenance_work_mem=128MB -c wal_compression=on -c log_min_duration_statement=500
+      -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks: [internal]
@@ -39,6 +40,7 @@ services:
     depends_on:
       postgres: { condition: service_healthy }
     env_file: [.env]
+    security_opt: [no-new-privileges:true]
     environment:
       GATE_ENV: production
       PORT: "4000"
@@ -67,6 +69,7 @@ services:
     image: ${GATE_WEB_IMAGE:-ghcr.io/mlbwhf/gate-web:latest}
     restart: unless-stopped
     depends_on: [api]
+    security_opt: [no-new-privileges:true]
     environment:
       PORT: "3000"
       HOSTNAME: 0.0.0.0
@@ -79,12 +82,26 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: gate_internal
+      # Organizer dashboard: everything on app.<domain> needs the dashboard password
+      # (HTTP basic auth at the edge, DASHBOARD_BASIC_AUTH in .env) ...
       traefik.http.routers.gate-web.rule: Host(`app.${GATE_DOMAIN}`)
+      traefik.http.routers.gate-web.priority: "10"
       traefik.http.routers.gate-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.gate-web.tls: "true"
       traefik.http.routers.gate-web.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
-      traefik.http.routers.gate-web.middlewares: gate-web-headers
+      traefik.http.routers.gate-web.middlewares: gate-web-headers,gate-dashboard-auth
+      # ... except the learner self-service portal and the static assets it needs.
+      traefik.http.routers.gate-web-public.rule: Host(`app.${GATE_DOMAIN}`) && (PathPrefix(`/my`) || PathPrefix(`/_next/`) || Path(`/favicon.ico`) || Path(`/robots.txt`))
+      traefik.http.routers.gate-web-public.priority: "20"
+      traefik.http.routers.gate-web-public.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.gate-web-public.tls: "true"
+      traefik.http.routers.gate-web-public.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.gate-web-public.middlewares: gate-web-headers
+      traefik.http.routers.gate-web-public.service: gate-web
       traefik.http.services.gate-web.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.gate-dashboard-auth.basicauth.users: ${DASHBOARD_BASIC_AUTH:?run ./set-dashboard-password.sh first}
+      traefik.http.middlewares.gate-dashboard-auth.basicauth.realm: EnrollClass dashboard
+      traefik.http.middlewares.gate-dashboard-auth.basicauth.removeheader: "true"
       traefik.http.middlewares.gate-web-headers.headers.stsSeconds: "31536000"
       traefik.http.middlewares.gate-web-headers.headers.stsIncludeSubdomains: "true"
       traefik.http.middlewares.gate-web-headers.headers.contentTypeNosniff: "true"

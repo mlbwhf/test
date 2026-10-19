@@ -1,4 +1,4 @@
-import Fastify, { type FastifyInstance } from "fastify";
+import Fastify, { type FastifyInstance, type FastifyServerOptions } from "fastify";
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
@@ -14,6 +14,24 @@ import type { IdempotencyStore } from "@gate/db";
 import type { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { InMemoryIdempotencyStore, registerIdempotency } from "./plugins/idempotency.js";
 import * as S from "./schemas.js";
+import { timingSafeEqual } from "node:crypto";
+
+/** Constant-time comparison of a presented secret against the configured one. */
+function secretMatches(presented: unknown, expected: string | undefined): boolean {
+  if (!expected || typeof presented !== "string") return false;
+  const a = Buffer.from(presented), b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/** Request logging without personal data: no query strings (they carry learner emails), no credentials. */
+const privacyLogger: Exclude<FastifyServerOptions["logger"], boolean | undefined> = {
+  redact: { paths: ["req.headers.x-api-key", "req.headers.x-admin-key", "req.headers.authorization", "req.headers.cookie", "req.headers['stripe-signature']"], censor: "[redacted]" },
+  serializers: {
+    req(req) {
+      return { id: req.id, method: req.method, url: req.url.split("?")[0] ?? "", remoteAddress: req.ip };
+    },
+  },
+};
 
 declare module "fastify" {
   interface FastifyRequest { org?: Organization }
@@ -38,7 +56,7 @@ export interface AppDeps {
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const env = deps.env ?? "development";
-  const app = Fastify({ logger: deps.logger ?? false, genReqId: () => `req_${Math.random().toString(36).slice(2, 12)}` }).withTypeProvider<ZodTypeProvider>();
+  const app = Fastify({ logger: deps.logger ? privacyLogger : false, genReqId: () => `req_${Math.random().toString(36).slice(2, 12)}` }).withTypeProvider<ZodTypeProvider>();
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   await app.register(cors, { origin: true, allowedHeaders: ["content-type", "x-api-key", "idempotency-key"] });
@@ -76,7 +94,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   app.post("/v1/organizations", {
     schema: { tags: ["organizations"], security: [{ adminKey: [] }], body: S.CreateOrganizationBody, response: { 201: z.object({ organization: S.OrganizationSchema, apiKey: z.string() }), 401: S.ErrorSchema } },
   }, async (req, reply) => {
-    if (!deps.adminKey || req.headers["x-admin-key"] !== deps.adminKey) throw new DomainError("UNAUTHORIZED", "x-admin-key required");
+    if (!secretMatches(req.headers["x-admin-key"], deps.adminKey)) throw new DomainError("UNAUTHORIZED", "x-admin-key required");
     const res = await deps.core.createOrganization(req.body);
     return reply.code(201).send({ organization: S.toOrganization(res.organization), apiKey: res.apiKey });
   });
@@ -84,7 +102,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   app.post("/v1/organizations/:id/api-key", {
     schema: { tags: ["organizations"], security: [{ adminKey: [] }], params: z.object({ id: z.string() }), response: { 200: z.object({ organization: S.OrganizationSchema, apiKey: z.string() }), 401: S.ErrorSchema, 404: S.ErrorSchema } },
   }, async (req) => {
-    if (!deps.adminKey || req.headers["x-admin-key"] !== deps.adminKey) throw new DomainError("UNAUTHORIZED", "x-admin-key required");
+    if (!secretMatches(req.headers["x-admin-key"], deps.adminKey)) throw new DomainError("UNAUTHORIZED", "x-admin-key required");
     const res = await deps.core.rotateApiKey(req.params.id);
     return { organization: S.toOrganization(res.organization), apiKey: res.apiKey };
   });
