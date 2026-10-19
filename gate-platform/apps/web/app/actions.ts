@@ -18,6 +18,8 @@ import {
   type CreateMeetingInput,
   type CreatePayoutInput,
   type EventFormat,
+  type FxRounding,
+  FX_ROUNDINGS,
   type InstructorFee,
   type MeetingProvider,
   type PartyKind,
@@ -778,4 +780,44 @@ export async function importCsvAction(_prev: ActionState, formData: FormData): P
     revalidatePath("/courses");
   }
   return summarizeImport(result.data);
+}
+
+// ---------- localized pricing ----------
+
+function pricingDetails(o: import("@/lib/api").Organization): { label: string; value: string }[] {
+  const p = o.pricing;
+  return [
+    { label: "Currencies", value: [o.currency, ...p.currencies].join(", ") },
+    { label: "Convert missing prices", value: p.fxFallback ? `yes, rounding: ${humanize(p.rounding)}` : "no (explicit prices only)" },
+    { label: "Rates", value: Object.keys(p.rates).length ? Object.entries(p.rates).map(([c, r]) => `1 ${o.currency} = ${r} ${c}`).join(" · ") : "none yet" },
+    { label: "Rates updated", value: p.ratesUpdatedAt ? `${formatDateTime(p.ratesUpdatedAt)} (${p.ratesSource === "ecb" ? "ECB reference" : "entered by hand"})` : "never" },
+  ];
+}
+
+export async function updatePricingAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const currencies = field(formData, "currencies").toUpperCase().split(/[\s,;]+/).filter(Boolean);
+  for (const c of currencies) if (!CURRENCY_RE.test(c)) return fail(`"${c}" is not a 3-letter currency code.`);
+  if (currencies.length > 12) return fail("At most 12 extra currencies.");
+  const roundingRaw = field(formData, "rounding");
+  if (!FX_ROUNDINGS.includes(roundingRaw as FxRounding)) return fail("Pick a rounding rule.");
+  const fxFallback = formData.get("fxFallback") === "on";
+  const rates: Record<string, number> = {};
+  for (const c of currencies) {
+    const raw = field(formData, `rate_${c}`);
+    if (!raw) continue;
+    const n = Number(raw.replace(",", "."));
+    if (!Number.isFinite(n) || n <= 0) return fail(`Rate for ${c} must be a positive number (units of ${c} per 1 unit of your base currency).`);
+    rates[c] = n;
+  }
+  const result = await api.updatePricing({ currencies, fxFallback, rounding: roundingRaw as FxRounding, ...(Object.keys(rates).length ? { rates } : {}) });
+  if (!result.ok) return fail(describeFailure(result.error));
+  revalidatePath("/money");
+  return { status: "ok", message: "Saved pricing settings.", details: pricingDetails(result.data) };
+}
+
+export async function refreshFxRatesAction(_prev: ActionState, _formData: FormData): Promise<ActionState> {
+  const result = await api.refreshFxRates();
+  if (!result.ok) return fail(describeFailure(result.error));
+  revalidatePath("/money");
+  return { status: "ok", message: "Fetched today's ECB reference rates.", details: pricingDetails(result.data) };
 }

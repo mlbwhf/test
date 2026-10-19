@@ -1,5 +1,5 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
@@ -111,7 +111,7 @@ async function main() {
     meetings.teams = new TeamsMeetings({ tenantId: process.env.MS_TENANT_ID, clientId: process.env.MS_CLIENT_ID, clientSecret: process.env.MS_CLIENT_SECRET, organizerUserId: process.env.MS_ORGANIZER_USER_ID });
     console.log("[meetings] teams enabled");
   }
-  const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), meetings, onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
+  const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), meetings, fx: new FrankfurterRates(), onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
 
   // AI gateway: Anthropic first-party by default; tenants may bring their own provider.
   const ai = new AiGateway({

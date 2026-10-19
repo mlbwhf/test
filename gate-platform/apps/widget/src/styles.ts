@@ -14,7 +14,8 @@ color-scheme:light;font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Sego
 .gw-muted{margin:0 0 12px;color:var(--gw-muted)}
 .gw-status{margin:0 0 12px;font-size:.9em;color:var(--gw-muted)}
 .gw-status:empty{display:none}
-.gw-toolbar{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-bottom:12px}
+.gw-toolbar{display:flex;gap:8px 12px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.gw-fx-note{flex-basis:100%;text-align:right;font-size:.8em;color:var(--gw-muted)}
 .gw-cohorts,.gw-tickets,.gw-seatlist{list-style:none;margin:0;padding:0}
 .gw-cohort{border:1px solid var(--gw-border);border-radius:16px;padding:16px;margin:0 0 12px;background:var(--gw-surface)}
 .gw-cohort-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}

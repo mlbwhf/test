@@ -6,7 +6,7 @@ import {
   type OrderResponse, type Pricing, type TicketType, type WaitlistEntry, type WaitlistRequest,
 } from "./api.js";
 import {
-  currencyUnion, formatDate, formatDateRange, formatLabel, formatMoney, pickCurrency,
+  currencyForLocale, currencyUnion, formatDate, formatDateRange, formatLabel, formatMoney, pickCurrency, rememberCurrency, rememberedCurrency,
   remainingLabel, sessionsLabel,
 } from "./format.js";
 import { injectStyles } from "./styles.js";
@@ -171,7 +171,9 @@ export class Widget {
       const data = await this.api.getCourse(this.opts.course);
       this.data = data;
       const available = currencyUnion(data.cohorts);
-      this.currency = pickCurrency(available, this.opts.currency, data.organization.currency) ?? data.organization.currency;
+      // Host page setting wins, then the visitor's last choice, then their browser locale, then the organizer's base currency.
+      const locale = typeof navigator === "undefined" ? undefined : navigator.language;
+      this.currency = pickCurrency(available, this.opts.currency, rememberedCurrency(), currencyForLocale(locale), data.organization.currency) ?? data.organization.currency;
       this.titleEl.textContent = data.course.name;
       this.metaEl.textContent = [
         data.course.certificationBody,
@@ -210,9 +212,15 @@ export class Widget {
       }
       select.addEventListener("change", () => {
         this.currency = select.value;
+        rememberCurrency(this.currency);
         this.renderSchedule();
       });
-      frag.append(h("div", { class: "gw-toolbar" }, h("label", { class: "gw-label", for: select.id }, "Currency"), select));
+      const toolbar = h("div", { class: "gw-toolbar" }, h("label", { class: "gw-label", for: select.id }, "Currency"), select);
+      const anyConverted = data.cohorts.some((c) => c.ticketTypes.some((t) => t.converted?.includes(this.currency)));
+      if (anyConverted) {
+        toolbar.append(h("span", { class: "gw-fx-note" }, `Converted from ${data.organization.currency}${data.organization.ratesUpdatedAt ? ` at the rate of ${formatDate(data.organization.ratesUpdatedAt, "UTC")}` : ""}; you are charged in ${this.currency}.`));
+      }
+      frag.append(toolbar);
     }
     if (data.cohorts.length === 0) {
       frag.append(h("p", { class: "gw-muted" }, "No upcoming dates are scheduled yet."));

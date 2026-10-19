@@ -13,11 +13,20 @@ export const SplitRuleSchema = z.discriminatedUnion("kind", [
   z.object({ partyId: z.string(), kind: z.literal("fixed"), amountMinor: Minor, label: z.string().optional() }),
 ]);
 
+export const PricingSettingsSchema = z.object({
+  currencies: z.array(Currency), fxFallback: z.boolean(), rounding: z.enum(["none", "whole", "nine", "five"]),
+  rates: z.record(z.string(), z.number()), ratesUpdatedAt: z.string().nullable(), ratesSource: z.enum(["manual", "ecb"]).nullable(),
+});
+export const UpdatePricingBody = z.object({
+  currencies: z.array(z.string().length(3)).max(12).optional(), fxFallback: z.boolean().optional(), rounding: z.enum(["none", "whole", "nine", "five"]).optional(),
+  rates: z.record(z.string(), z.number().positive()).optional(),
+});
 export const OrganizationSchema = z.object({
   id: z.string(), name: z.string(), country: z.string(), currency: Currency,
   payoutDestination: z.enum(["gate_account", "external_bank"]), passFeeToAttendee: z.boolean(),
   paymentsAccountRef: z.string().nullable(), splitRules: z.array(SplitRuleSchema),
-  releasePolicy: z.enum(["immediate", "on_delivery"]), releaseGraceHours: z.number(), minEnrollmentDecisionDays: z.number(), createdAt: z.string(),
+  releasePolicy: z.enum(["immediate", "on_delivery"]), releaseGraceHours: z.number(), minEnrollmentDecisionDays: z.number(),
+  pricing: PricingSettingsSchema, createdAt: z.string(),
 });
 export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional() });
 export const InstructorFeeSchema = z.object({ partyId: z.string(), amountMinor: Minor });
@@ -90,11 +99,11 @@ export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(
 export const JoinWaitlistBody = z.object({ eventId: z.string(), ticketTypeId: z.string().optional(), email: z.string().email(), name: z.string().max(200).optional(), quantity: z.number().int().min(1).max(10).optional() });
 
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable() }),
   course: CourseSchema,
   cohorts: z.array(z.object({
     event: EventSchema,
-    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), remaining: z.number().int(), prices: PriceList, earlyBirdUntil: z.string().nullable() })),
+    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
 });
 
@@ -123,7 +132,8 @@ export const RefundSchema = z.object({ id: z.string(), orderId: z.string(), orga
 export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.number().int().min(1).optional(), reason: z.string().min(1) });
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
-export const toOrganization = (o: Organization) => ({ ...o, paymentsAccountRef: o.paymentsAccountRef ?? null, createdAt: o.createdAt.toISOString() });
+export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
+export const toOrganization = (o: Organization) => ({ ...o, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, createdAt: c.createdAt.toISOString() });
 export const toEvent = (e: Event) => ({

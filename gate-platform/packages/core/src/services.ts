@@ -8,6 +8,7 @@ import type { Clock, IdGenerator, MeetingProvider, PaymentEvent, PaymentsPort, R
 import { ROSTER_FORMATS, SEQUENCE_STEPS, attendanceFromMinutes, overlapMinutes, rosterCsv, stepDueAt, type RosterFormat } from "./delivery.js";
 import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
+import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
@@ -21,6 +22,8 @@ export interface CoreDeps {
   tax?: TaxPort;
   /** Meeting providers by name; absent providers make scheduling fail with PROVIDER_UNAVAILABLE. */
   meetings?: Partial<Record<MeetingInfo["provider"], MeetingProvider>>;
+  /** Reference exchange rates for localized pricing; absent = rates are entered by hand. */
+  fx?: FxRateSource;
 }
 
 export function hashApiKey(key: string): string {
@@ -38,6 +41,7 @@ export class Core {
   readonly payments: PaymentsPort;
   readonly tax: TaxPort;
   readonly meetings: Partial<Record<MeetingInfo["provider"], MeetingProvider>>;
+  readonly fx: FxRateSource | undefined;
   readonly accounts: ChartOfAccounts;
   private readonly clock: Clock;
   private readonly ids: IdGenerator;
@@ -51,6 +55,7 @@ export class Core {
     this.payments = deps.payments;
     this.tax = deps.tax ?? NO_TAX;
     this.meetings = deps.meetings ?? {};
+    this.fx = deps.fx;
     this.accounts = new ChartOfAccounts(deps.ledger);
     this.clock = deps.clock ?? defaultClock;
     this.ids = deps.ids ?? defaultIds;
@@ -333,7 +338,7 @@ export class Core {
    * its window is open, else the list price. Base currency always resolves;
    * other currencies only when the ticket lists them (no silent FX).
    */
-  resolveUnitPrice(ticketType: TicketType, event: Event, currency: string, now = this.clock.now()): MinorUnits {
+  resolveUnitPrice(ticketType: TicketType, event: Event, currency: string, now = this.clock.now(), pricing?: PricingSettings): MinorUnits {
     assertCurrency(currency);
     const pick = (base: MinorUnits, prices?: Record<string, MinorUnits>): MinorUnits | undefined => {
       if (currency === event.currency) return prices?.[currency] ?? base;
@@ -343,14 +348,56 @@ export class Core {
     if (ticketType.earlyBird && now < ticketType.earlyBird.until) price = pick(ticketType.earlyBird.priceMinor, ticketType.earlyBird.prices);
     if (price === undefined) price = pick(ticketType.priceMinor, ticketType.prices);
     if (price === undefined) {
+      // Organizer-enabled currency without an explicit price: convert the base price with the stored rate.
+      const base = ticketType.earlyBird && now < ticketType.earlyBird.until ? ticketType.earlyBird.priceMinor : ticketType.priceMinor;
+      const rate = pricing?.rates[currency];
+      if (pricing?.fxFallback && pricing.currencies.includes(currency) && rate) return convertMinor(base, event.currency, currency, rate, pricing.rounding);
       throw new DomainError("VALIDATION", `ticket ${ticketType.id} is not sold in ${currency}`, `available: ${[event.currency, ...Object.keys(ticketType.prices ?? {})].join(", ")}`);
     }
     return price;
   }
 
+  /** True when the price shown in `currency` is a conversion rather than a listed price. */
+  isConvertedPrice(ticketType: TicketType, event: Event, currency: string, now = this.clock.now()): boolean {
+    if (currency === event.currency) return false;
+    const early = ticketType.earlyBird && now < ticketType.earlyBird.until;
+    return !(early ? ticketType.earlyBird!.prices?.[currency] : undefined) && !ticketType.prices?.[currency];
+  }
+
+  pricingOf(org: Organization): PricingSettings {
+    return org.pricing ?? DEFAULT_PRICING;
+  }
+
+  /** Replace the organization's localized-pricing settings (currencies, fallback, rounding, manual rates). */
+  async updatePricing(organizationId: string, input: { [K in keyof PricingSettings]?: PricingSettings[K] | undefined }): Promise<Organization> {
+    const org = await this.getOrganization(organizationId);
+    const current = this.pricingOf(org);
+    const patch = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined)) as Partial<PricingSettings>;
+    const merged = validatePricingSettings({ ...current, ...patch, rates: patch.rates ? { ...current.rates, ...patch.rates } : current.rates }, org.currency);
+    if (patch.rates) { merged.ratesUpdatedAt = this.clock.now(); merged.ratesSource = "manual"; }
+    const next: Organization = { ...org, pricing: merged };
+    await this.repos.organizations.update(next);
+    return next;
+  }
+
+  /** Pull reference rates for every enabled currency from the configured source. */
+  async refreshFxRates(organizationId: string): Promise<Organization> {
+    const org = await this.getOrganization(organizationId);
+    if (!this.fx) throw new DomainError("INVALID_STATE", "no exchange-rate source configured", "enter rates by hand in pricing settings");
+    const current = this.pricingOf(org);
+    if (current.currencies.length === 0) throw new DomainError("VALIDATION", "enable at least one presentment currency first");
+    const fetched = await this.fx.latest(org.currency, current.currencies);
+    const missing = current.currencies.filter((c) => !fetched[c]);
+    const next: Organization = { ...org, pricing: { ...current, rates: { ...current.rates, ...fetched }, ratesUpdatedAt: this.clock.now(), ratesSource: this.fx.name } };
+    await this.repos.organizations.update(next);
+    if (missing.length) throw new DomainError("VALIDATION", `no reference rate for ${missing.join(", ")}`, "enter those by hand; the others were updated");
+    return next;
+  }
+
   /** Public catalogue view of a course: cohorts with resolved prices per currency. */
   async publicCourse(organizationId: string, slug: string) {
     const org = await this.getOrganization(organizationId);
+    const pricing = this.pricingOf(org);
     const course = await this.getCourseBySlug(organizationId, slug);
     const now = this.clock.now();
     const cohorts = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
@@ -360,16 +407,23 @@ export class Core {
       out.push({
         event,
         ticketTypes: ticketTypes.map((t) => {
-          const currencies = [event.currency, ...Object.keys(t.prices ?? {}), ...Object.keys(t.earlyBird?.prices ?? {})];
+          const currencies = [event.currency, ...Object.keys(t.prices ?? {}), ...Object.keys(t.earlyBird?.prices ?? {}), ...(pricing.fxFallback ? pricing.currencies : [])];
           const prices: Record<string, MinorUnits> = {};
+          const converted: string[] = [];
           for (const c of new Set(currencies)) {
-            try { prices[c] = this.resolveUnitPrice(t, event, c, now); } catch { /* not sold in c */ }
+            try {
+              prices[c] = this.resolveUnitPrice(t, event, c, now, pricing);
+              if (this.isConvertedPrice(t, event, c, now)) converted.push(c);
+            } catch { /* not sold in c */ }
           }
-          return { id: t.id, name: t.name, remaining: t.quantity - t.sold, prices, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
+          return { id: t.id, name: t.name, remaining: t.quantity - t.sold, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
         }),
       });
     }
-    return { organization: { id: org.id, name: org.name, country: org.country, currency: org.currency }, course, cohorts: out };
+    return {
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null },
+      course, cohorts: out,
+    };
   }
 
   async listTicketTypes(organizationId: string, eventId: string): Promise<TicketType[]> {
@@ -416,7 +470,7 @@ export class Core {
     if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
 
     const currency = input.currency ?? event.currency;
-    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency);
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
     const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
@@ -871,7 +925,7 @@ export class Core {
     if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
 
     const currency = input.currency ?? account.currency;
-    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency);
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
     const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: account.address, businessCustomer: true });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: account.billingEmail, company: account.name });

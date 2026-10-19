@@ -28,7 +28,26 @@ export type Organization = {
   releaseGraceHours: number;
   /** Days before the first session by which a cohort must reach its minimum enrollment. */
   minEnrollmentDecisionDays: number;
+  pricing: PricingSettings;
 };
+
+export type FxRounding = "none" | "whole" | "nine" | "five";
+export const FX_ROUNDINGS: FxRounding[] = ["whole", "nine", "five", "none"];
+export const FX_ROUNDING_LABELS: Record<FxRounding, string> = {
+  whole: "Whole units (2,039)",
+  nine: "Ending in 9 (2,039 → 2,039, 2,046 → 2,049)",
+  five: "Multiples of 5 (2,040)",
+  none: "Exact to the cent",
+};
+export type PricingSettings = {
+  currencies: string[];
+  fxFallback: boolean;
+  rounding: FxRounding;
+  rates: Record<string, number>;
+  ratesUpdatedAt: string | null;
+  ratesSource: "manual" | "ecb" | null;
+};
+export type UpdatePricingInput = Partial<Pick<PricingSettings, "currencies" | "fxFallback" | "rounding" | "rates">>;
 
 export type EventStatus = "draft" | "live" | "ended" | "cancelled";
 
@@ -513,6 +532,8 @@ export const api = {
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),
+  updatePricing: (input: UpdatePricingInput) => request<Organization>("PATCH", "/v1/organizations/me/pricing", input),
+  refreshFxRates: () => request<Organization>("POST", "/v1/organizations/me/pricing/refresh-rates"),
 
   listEvents: () => request<{ items: Event[] }>("GET", "/v1/events"),
   createEvent: (input: CreateEventInput) => request<Event>("POST", "/v1/events", input),

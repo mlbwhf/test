@@ -159,7 +159,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
       const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
       return {
-        organization: res.organization,
+        organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null },
         course: S.toCourse(res.course),
         cohorts: res.cohorts.map((c) => ({ event: S.toEvent(c.event), ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
       };
@@ -308,6 +308,9 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     registerImports(api, { core: deps.core, ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}) }, org);
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
+
+    api.patch("/v1/organizations/me/pricing", { schema: { tags: ["organizations"], body: S.UpdatePricingBody, response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.updatePricing(org(req).id, req.body)));
+    api.post("/v1/organizations/me/pricing/refresh-rates", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema, 409: S.ErrorSchema, 502: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.refreshFxRates(org(req).id)));
 
     api.post("/v1/organizations/me/payments/connect", { schema: { tags: ["organizations"], body: z.object({ email: z.string().email().optional() }).optional(), response: { 200: z.object({ paymentsAccountRef: z.string(), onboardingUrl: z.string().nullable() }) } } }, async (req) => {
       const res = await deps.core.connectPayments(org(req).id, req.body?.email);

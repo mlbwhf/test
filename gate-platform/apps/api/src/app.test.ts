@@ -139,4 +139,36 @@ describe("API", () => {
     const tts = (await eb.inject({ url: `/v1/events/${res.json().results[0].eventId}/ticket-types`, headers: { "x-api-key": key } })).json().items;
     expect(tts[0]).toMatchObject({ name: "Standard", priceMinor: 99500, quantity: 16 });
   });
+
+  it("localizes prices: settings, converted public prices, orders in the chosen currency", async () => {
+    const fx = { name: "ecb" as const, latest: async (_b: string, q: string[]) => Object.fromEntries(q.map((c) => [c, c === "CAD" ? 1.36 : 0.92])) };
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter(), fx });
+    const fxApp = await buildApp({ core, adminKey: "admin", env: "test" });
+    const created = await fxApp.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } });
+    const key = created.json().apiKey as string;
+    const orgId = created.json().organization.id as string;
+    const h = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await fxApp.inject({ method: "POST", url: "/v1/courses", headers: h, payload: { slug: "pmp", name: "PMP" } })).json();
+    const event = (await fxApp.inject({ method: "POST", url: "/v1/events", headers: h, payload: { name: "PMP Nov", startsAt: "2099-11-12T14:00:00Z", courseId: course.id } })).json();
+    const tt = (await fxApp.inject({ method: "POST", url: `/v1/events/${event.id}/ticket-types`, headers: h, payload: { name: "Seat", priceMinor: 149500, quantity: 10 } })).json();
+
+    expect((await fxApp.inject({ url: "/v1/organizations/me", headers: h })).json().pricing).toEqual({ currencies: [], fxFallback: false, rounding: "whole", rates: {}, ratesUpdatedAt: null, ratesSource: null });
+    const patched = await fxApp.inject({ method: "PATCH", url: "/v1/organizations/me/pricing", headers: h, payload: { currencies: ["CAD", "EUR"], fxFallback: true, rounding: "nine" } });
+    expect([patched.statusCode, patched.json()]).toEqual([200, expect.anything()]);
+    const refreshed = await fxApp.inject({ method: "POST", url: "/v1/organizations/me/pricing/refresh-rates", headers: { "x-api-key": key } });
+    expect([refreshed.statusCode, refreshed.json()]).toEqual([200, expect.anything()]);
+    expect(refreshed.json().pricing).toMatchObject({ rates: { CAD: 1.36, EUR: 0.92 }, ratesSource: "ecb" });
+
+    const pub = (await fxApp.inject(`/public/v1/organizations/${orgId}/courses/pmp`)).json();
+    expect(pub.organization.currencies).toEqual(["USD", "CAD", "EUR"]);
+    expect(pub.cohorts[0].ticketTypes[0].prices).toEqual({ USD: 149500, CAD: 202900, EUR: 137900 });
+    expect(pub.cohorts[0].ticketTypes[0].converted).toEqual(["CAD", "EUR"]);
+
+    const order = await fxApp.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, headers: { "content-type": "application/json" }, payload: { eventId: event.id, ticketTypeId: tt.id, quantity: 1, currency: "EUR", buyerEmail: "a@b.co", attendees: [{ email: "a@b.co", name: "A" }] } });
+    expect(order.statusCode).toBe(201);
+    expect(order.json().order).toMatchObject({ currency: "EUR", pricing: { unitPriceMinor: 137900 } });
+
+    const manual = await fxApp.inject({ method: "PATCH", url: "/v1/organizations/me/pricing", headers: h, payload: { rates: { CAD: 1.4 } } });
+    expect(manual.json().pricing).toMatchObject({ rates: { CAD: 1.4, EUR: 0.92 }, ratesSource: "manual" });
+  });
 });

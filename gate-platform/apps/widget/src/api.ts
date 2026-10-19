@@ -1,6 +1,6 @@
 // Typed client for the public, unauthenticated registration API.
 
-export interface Organization { id: string; name: string; country: string; currency: string }
+export interface Organization { id: string; name: string; country: string; currency: string; currencies?: string[]; ratesUpdatedAt?: string | null }
 export interface Course {
   id: string; slug: string; name: string; description: string | null;
   certificationBody: string | null; durationDays: number | null;
@@ -13,6 +13,8 @@ export interface CohortEvent {
 export interface TicketType {
   id: string; name: string; remaining: number;
   prices: Record<string, number>; earlyBirdUntil: string | null;
+  /** Currencies whose price is converted from the base price at the organizer's rate. */
+  converted?: string[];
 }
 export interface Cohort { event: CohortEvent; ticketTypes: TicketType[] }
 export interface CoursePayload { organization: Organization; course: Course; cohorts: Cohort[] }

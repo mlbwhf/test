@@ -12,3 +12,4 @@ export * from "./notifications.js";
 export * from "./tax.js";
 export * from "./policy.js";
 export * from "./delivery.js";
+export * from "./fx.js";

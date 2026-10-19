@@ -109,6 +109,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  try { localStorage.clear(); } catch { /* no storage in this environment */ }
   document.body.innerHTML = "";
   document.getElementById("gate-widget-css")?.remove();
   delete window.Stripe;
@@ -163,11 +164,33 @@ describe("schedule", () => {
     expect(host.querySelectorAll<HTMLButtonElement>(".gw-ticket button")[1]!.disabled).toBe(true);
   });
 
-  it("falls back to the organization currency when data-gate-currency is unavailable", async () => {
+  it("falls back to the visitor's locale currency, then the organization's, when data-gate-currency is unavailable", async () => {
     stubFetch(courseRoute);
+    // jsdom reports navigator.language = "en-US" and USD is on sale.
     const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "JPY" });
     await widget.ready;
-    expect(host.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("CAD");
+    expect(host.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("USD");
+
+    vi.stubGlobal("navigator", { ...navigator, language: "fr-FR" });
+    const host2 = document.createElement("div");
+    document.body.append(host2);
+    const widget2 = mount(host2, { api: API, org: "org_1", course: "leading-safe", currency: "JPY" });
+    await widget2.ready;
+    expect(host2.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("CAD");
+  });
+
+  it("remembers the visitor's currency choice across mounts", async () => {
+    stubFetch(courseRoute);
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    const select = host.querySelector<HTMLSelectElement>("select.gw-select")!;
+    select.value = "GBP";
+    select.dispatchEvent(new Event("change"));
+    const host2 = document.createElement("div");
+    document.body.append(host2);
+    const widget2 = mount(host2, { api: API, org: "org_1", course: "leading-safe" });
+    await widget2.ready;
+    expect(host2.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("GBP");
   });
 
   it("shows a network message when the service is unreachable", async () => {

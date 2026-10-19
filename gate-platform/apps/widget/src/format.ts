@@ -100,3 +100,26 @@ export function sessionsLabel(count: number): string {
   if (count <= 0) return "Schedule to be announced";
   return count === 1 ? "1 session" : `${count} sessions`;
 }
+
+const EURO = ["AT", "BE", "CY", "DE", "EE", "ES", "FI", "FR", "GR", "HR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "SI", "SK"];
+const REGION_CURRENCY: Record<string, string> = {
+  US: "USD", CA: "CAD", GB: "GBP", AU: "AUD", NZ: "NZD", CH: "CHF", SE: "SEK", NO: "NOK", DK: "DKK", PL: "PLN", CZ: "CZK", HU: "HUF", RO: "RON", BG: "BGN",
+  IN: "INR", SG: "SGD", HK: "HKD", JP: "JPY", KR: "KRW", CN: "CNY", AE: "AED", SA: "SAR", ZA: "ZAR", BR: "BRL", MX: "MXN", IL: "ILS", TR: "TRY", TH: "THB", MY: "MYR", PH: "PHP", ID: "IDR",
+  ...Object.fromEntries(EURO.map((r) => [r, "EUR"])),
+};
+
+/** Currency a visitor most likely pays in, from a BCP 47 locale ("en-CA" -> CAD). */
+export function currencyForLocale(locale: string | null | undefined): string | undefined {
+  const region = locale?.split(/[-_]/)[1]?.toUpperCase();
+  return region && region.length === 2 ? REGION_CURRENCY[region] : undefined;
+}
+
+const CURRENCY_KEY = "gate-widget-currency";
+
+export function rememberedCurrency(): string | undefined {
+  try { return globalThis.localStorage?.getItem(CURRENCY_KEY) ?? undefined; } catch { return undefined; }
+}
+
+export function rememberCurrency(code: string): void {
+  try { globalThis.localStorage?.setItem(CURRENCY_KEY, code); } catch { /* private mode */ }
+}

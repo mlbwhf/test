@@ -1,3 +1,4 @@
+import type { PricingSettings } from "./fx.js";
 import type { Currency, MinorUnits } from "@gate/ledger";
 import type { PayoutDestination, Pricing, SplitResult, SplitRule } from "@gate/pricing";
 import type { ChangePolicy } from "./policy.js";
@@ -22,6 +23,8 @@ export interface Organization {
   releaseGraceHours: number;
   /** Days before start at which a cohort below its minimum enrolment is flagged at risk. */
   minEnrollmentDecisionDays: number;
+  /** Presentment currencies, FX fallback and stored rates; absent = base currency only. */
+  pricing?: PricingSettings;
   apiKeyHash: string;
   createdAt: Date;
 }

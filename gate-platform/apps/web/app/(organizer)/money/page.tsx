@@ -8,12 +8,11 @@ import {
   type ApiFailure,
   type Party,
   type RevenueCohort,
-  type RevenueTotals,
-} from "@/lib/api";
+  type RevenueTotals, FX_ROUNDINGS, FX_ROUNDING_LABELS } from "@/lib/api";
 import { formatDateTime, formatMoney, humanize } from "@/lib/format";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { recordPayoutAction, releaseFundsAction, updateOrganizationSettingsAction } from "@/app/actions";
+import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -403,6 +402,62 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
             </div>
           )}
         </div>
+      </Section>
+
+      <Section title="Currencies and localized pricing">
+        {!orgRes.ok || !org ? (
+          <Empty>Pricing settings unavailable.</Empty>
+        ) : (
+          <>
+            <p className="hint">
+              Your base currency is <strong>{org.currency}</strong>. Add the currencies learners may pay in. A ticket uses its explicit price in that currency when you set one; otherwise, with conversion on, the base price is converted at the stored rate and rounded. Buyers see which prices are converted, and are charged in the currency they chose.
+            </p>
+            <ActionForm action={updatePricingAction} submitLabel="Save pricing" pendingLabel="Saving…" wide>
+              <div className="fields-row">
+                <label>
+                  Extra currencies (codes, comma-separated)
+                  <input name="currencies" defaultValue={org.pricing.currencies.join(", ")} placeholder="CAD, EUR, GBP" />
+                </label>
+                <label>
+                  Rounding for converted prices
+                  <select name="rounding" defaultValue={org.pricing.rounding}>
+                    {FX_ROUNDINGS.map((r) => (
+                      <option key={r} value={r}>
+                        {FX_ROUNDING_LABELS[r]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <label className="label-check">
+                <input type="checkbox" name="fxFallback" defaultChecked={org.pricing.fxFallback} /> Convert the base price for currencies without an explicit price
+              </label>
+              {org.pricing.currencies.length > 0 && (
+                <fieldset>
+                  <legend>Rates (units per 1 {org.currency}); leave blank to keep the stored rate</legend>
+                  <div className="fields-row">
+                    {org.pricing.currencies.map((c) => (
+                      <label key={c}>
+                        {c}
+                        <input name={`rate_${c}`} inputMode="decimal" placeholder={org.pricing.rates[c] ? String(org.pricing.rates[c]) : "not set"} />
+                      </label>
+                    ))}
+                  </div>
+                  <p className="hint">
+                    {org.pricing.ratesUpdatedAt
+                      ? `Stored rates updated ${formatDateTime(org.pricing.ratesUpdatedAt)} (${org.pricing.ratesSource === "ecb" ? "ECB reference rates" : "entered by hand"}).`
+                      : "No rates stored yet: fetch ECB reference rates below or type them in."}
+                  </p>
+                </fieldset>
+              )}
+            </ActionForm>
+            {org.pricing.currencies.length > 0 && (
+              <ActionForm action={refreshFxRatesAction} submitLabel="Fetch today's ECB rates" pendingLabel="Fetching…" inline>
+                <span className="hint">European Central Bank reference rates via frankfurter.app; about 30 major currencies.</span>
+              </ActionForm>
+            )}
+          </>
+        )}
       </Section>
 
       <Section title="Settings">
