@@ -6,7 +6,12 @@ set -euo pipefail
 name=${1:?organization name}
 country=${2:?ISO country, e.g. CA}
 currency=${3:?settlement currency, e.g. CAD}
-: "${GATE_DOMAIN:?}" "${GATE_ADMIN_KEY:?}"
+# Defaults from /opt/gate/.env (or the .env beside this script) when not given in the environment.
+envfile=${GATE_ENV_FILE:-$(dirname "$0")/.env}
+envval() { sed -nE "s/^$1=([^#]*).*/\1/p" "$envfile" 2>/dev/null | head -n1 | sed -E 's/^[[:space:]]+|[[:space:]]+$//g'; }
+GATE_DOMAIN=${GATE_DOMAIN:-$(envval GATE_DOMAIN)}
+GATE_ADMIN_KEY=${GATE_ADMIN_KEY:-$(envval GATE_ADMIN_KEY)}
+: "${GATE_DOMAIN:?set GATE_DOMAIN}" "${GATE_ADMIN_KEY:?set GATE_ADMIN_KEY}"
 
 body=$(jq -n --arg n "$name" --arg c "$country" --arg cur "$currency" \
   '{name:$n, country:$c, currency:$cur, releasePolicy:"on_delivery", payoutDestination:"gate_account"}')

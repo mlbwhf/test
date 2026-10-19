@@ -96,8 +96,7 @@ open https://api.enrollclass.com/docs
 ## 5. First tenant
 
 ```bash
-cd /opt/gate && set -a && . ./.env && set +a
-./bootstrap-tenant.sh "Agile Agilist" CA CAD
+cd /opt/gate && ./bootstrap-tenant.sh "Agile Agilist" CA CAD
 ```
 
 Copy the printed API key into `.env` as `GATE_ORG_API_KEY`, then `./deploy.sh` so the

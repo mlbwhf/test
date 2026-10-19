@@ -6,7 +6,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 [ -f .env ] || { echo ".env missing; copy env.production.example and fill it in" >&2; exit 1; }
-set -a; . ./.env; set +a
+# Read single values without sourcing: values like "Name <email>" are not shell-safe.
+envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E 's/^[[:space:]]+|[[:space:]]+$//g; s/^"(.*)"$/\1/'; }
+TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
+BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)
 
 opts=(-f docker-compose.yml)
 case "${TRAEFIK_NETWORK:-host}" in host|"") ;; *) opts+=(-f docker-compose.traefik-bridge.yml);; esac
