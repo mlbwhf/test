@@ -95,7 +95,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: gate-platform/infra/compose/docker-compose.prod.yml,gate-platform/infra/scripts/deploy.sh,gate-platform/infra/scripts/detect-traefik.sh,gate-platform/infra/scripts/bootstrap-tenant.sh
+          source: gate-platform/infra/compose/docker-compose.prod.yml,gate-platform/infra/compose/docker-compose.traefik-bridge.yml,gate-platform/infra/scripts/deploy.sh,gate-platform/infra/scripts/detect-traefik.sh,gate-platform/infra/scripts/bootstrap-tenant.sh
           target: /opt/gate/incoming
           strip_components: 3
       - name: Roll the stack
@@ -115,6 +115,7 @@ jobs:
             set -euo pipefail
             cd /opt/gate
             mv -f incoming/compose/docker-compose.prod.yml docker-compose.yml
+            mv -f incoming/compose/docker-compose.traefik-bridge.yml docker-compose.traefik-bridge.yml
             mv -f incoming/scripts/*.sh . && chmod +x *.sh && rm -rf incoming
             [ -f .env ] || { echo "/opt/gate/.env is missing on the server"; exit 1; }
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin

@@ -4,8 +4,9 @@
 #   /opt/gate/.env                (from env.production.example, never committed)
 #
 # Traefik (Hostinger "Docker and Traefik" template) already owns ports 80/443 and
-# issues Let's Encrypt certificates. This project joins Traefik's network and
-# publishes no host ports of its own. Postgres is reachable only inside the project.
+# issues Let's Encrypt certificates. This project publishes no host ports of its own;
+# Traefik discovers api and web through Docker labels. Postgres is reachable only
+# inside the project.
 
 name: gate
 
@@ -44,10 +45,10 @@ services:
       DATABASE_URL: postgres://gate:${POSTGRES_PASSWORD}@postgres:5432/gate
       GATE_PUBLIC_URL: https://api.${GATE_DOMAIN:?set GATE_DOMAIN in .env}
       GATE_WEB_URL: https://app.${GATE_DOMAIN}
-    networks: [internal, traefik]
+    networks: [internal]
     labels:
       traefik.enable: "true"
-      traefik.docker.network: ${TRAEFIK_NETWORK:-traefik}
+      traefik.docker.network: gate_internal
       traefik.http.routers.gate-api.rule: Host(`api.${GATE_DOMAIN}`)
       traefik.http.routers.gate-api.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.gate-api.tls: "true"
@@ -74,10 +75,10 @@ services:
       GATE_API_KEY: ${GATE_ORG_API_KEY:-}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
       NEXT_PUBLIC_GATE_API_URL: https://api.${GATE_DOMAIN}
-    networks: [internal, traefik]
+    networks: [internal]
     labels:
       traefik.enable: "true"
-      traefik.docker.network: ${TRAEFIK_NETWORK:-traefik}
+      traefik.docker.network: gate_internal
       traefik.http.routers.gate-web.rule: Host(`app.${GATE_DOMAIN}`)
       traefik.http.routers.gate-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.gate-web.tls: "true"
@@ -121,8 +122,9 @@ volumes:
   pgdata:
 
 networks:
+  # Traefik in host network mode (Hostinger template) routes to container IPs on this
+  # bridge. If Traefik instead runs on its own bridge network, deploy.sh adds
+  # docker-compose.traefik-bridge.yml, which joins api and web to that network.
   internal:
+    name: gate_internal
     driver: bridge
-  traefik:
-    external: true
-    name: ${TRAEFIK_NETWORK:-traefik}

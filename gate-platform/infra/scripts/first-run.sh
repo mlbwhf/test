@@ -26,6 +26,7 @@ cp "$src/scripts/server-setup.sh" "$tmp/server-setup.sh"
 cp "$src/scripts/detect-traefik.sh" "$tmp/detect-traefik.sh"
 cp "$src/compose/env.production.example" "$tmp/env.example"
 cp "$src/compose/docker-compose.prod.yml" "$tmp/docker-compose.yml"
+cp "$src/compose/docker-compose.traefik-bridge.yml" "$tmp/docker-compose.traefik-bridge.yml"
 cp "$src/scripts/deploy.sh" "$tmp/deploy.sh"
 cp "$src/scripts/bootstrap-tenant.sh" "$tmp/bootstrap-tenant.sh"
 
@@ -55,6 +56,7 @@ if [ -f "$tmp/deploy-keys/authorized_keys" ]; then
 fi
 
 install -o deploy -g deploy -m 755 "$tmp/docker-compose.yml" /opt/gate/docker-compose.yml
+install -o deploy -g deploy -m 755 "$tmp/docker-compose.traefik-bridge.yml" /opt/gate/docker-compose.traefik-bridge.yml
 install -o deploy -g deploy -m 755 "$tmp/deploy.sh" /opt/gate/deploy.sh
 install -o deploy -g deploy -m 755 "$tmp/detect-traefik.sh" /opt/gate/detect-traefik.sh
 install -o deploy -g deploy -m 755 "$tmp/bootstrap-tenant.sh" /opt/gate/bootstrap-tenant.sh
@@ -87,6 +89,6 @@ echo "deploy: $(grep -cE '^(ssh-|ecdsa-|sk-)' /home/deploy/.ssh/authorized_keys 
 echo "Add more later with: echo 'ssh-ed25519 AAAA... comment' >> /home/deploy/.ssh/authorized_keys"
 echo
 echo "== still empty in /opt/gate/.env (edit as deploy: nano /opt/gate/.env)"
-grep -E '^(STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=\s*$' /opt/gate/.env | cut -d= -f1 | sed 's/^/    /' || true
+grep -E '^(STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=' /opt/gate/.env | sed -E 's/#.*$//' | grep -E '=\s*$' | cut -d= -f1 | sed 's/^/    /' || true
 echo
 echo "Then add DEPLOY_HOST, DEPLOY_USER=deploy and DEPLOY_SSH_KEY to GitHub secrets and run the gate-deploy workflow."
