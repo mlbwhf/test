@@ -1,0 +1,123 @@
+# Build the Gate API and web images, push them to GitHub Container Registry, and
+# roll them onto the VPS over SSH. Secrets required (Settings > Secrets > Actions):
+#   DEPLOY_HOST      VPS IP or hostname
+#   DEPLOY_USER      ssh user with docker access (server-setup.sh creates "deploy")
+#   DEPLOY_SSH_KEY   private key for that user, used only by this workflow
+# Everything the app needs at runtime lives in /opt/gate/.env on the server.
+name: gate-deploy
+on:
+  push:
+    branches: [main, claude/confident-cray-JTbgD]
+    paths: ["gate-platform/**", ".github/workflows/gate-deploy.yml"]
+  workflow_dispatch:
+    inputs:
+      ref_tag:
+        description: "Image tag to deploy (default: this commit)"
+        required: false
+
+concurrency:
+  group: gate-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE: ghcr.io/${{ github.repository_owner }}/gate-api
+  WEB_IMAGE: ghcr.io/${{ github.repository_owner }}/gate-web
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: gate-platform } }
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: gate, POSTGRES_PASSWORD: gate, POSTGRES_DB: gate }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gate" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://gate:gate@localhost:5432/gate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: gate-platform/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: api
+            dockerfile: infra/docker/Dockerfile.api
+            image: ghcr.io/${{ github.repository_owner }}/gate-api
+          - name: web
+            dockerfile: infra/docker/Dockerfile.web
+            image: ghcr.io/${{ github.repository_owner }}/gate-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: gate-platform
+          file: gate-platform/${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ matrix.image }}:${{ github.sha }}
+            ${{ matrix.image }}:latest
+          cache-from: type=gha,scope=gate-${{ matrix.name }}
+          cache-to: type=gha,scope=gate-${{ matrix.name }},mode=max
+          provenance: false
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy compose file and scripts to the server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: gate-platform/infra/compose/docker-compose.prod.yml,gate-platform/infra/scripts/deploy.sh,gate-platform/infra/scripts/detect-traefik.sh,gate-platform/infra/scripts/bootstrap-tenant.sh
+          target: /opt/gate/incoming
+          strip_components: 3
+      - name: Roll the stack
+        uses: appleboy/ssh-action@v1
+        env:
+          TAG: ${{ github.event.inputs.ref_tag || github.sha }}
+          API_IMAGE: ${{ env.API_IMAGE }}
+          WEB_IMAGE: ${{ env.WEB_IMAGE }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: TAG,API_IMAGE,WEB_IMAGE,GHCR_USER,GHCR_TOKEN
+          script: |
+            set -euo pipefail
+            cd /opt/gate
+            mv -f incoming/compose/docker-compose.prod.yml docker-compose.yml
+            mv -f incoming/scripts/*.sh . && chmod +x *.sh && rm -rf incoming
+            [ -f .env ] || { echo "/opt/gate/.env is missing on the server"; exit 1; }
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            export GATE_API_IMAGE="$API_IMAGE:$TAG" GATE_WEB_IMAGE="$WEB_IMAGE:$TAG"
+            ./deploy.sh
+            docker logout ghcr.io

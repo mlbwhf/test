@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1.7
+# Gate organizer dashboard + learner portal (Next.js, standalone output).
+# Build context is the gate-platform directory:
+#   docker build -f infra/docker/Dockerfile.web -t gate-web .
+# API URL and key are read at request time (GATE_API_URL, GATE_API_KEY), so the
+# same image serves any domain.
+
+FROM node:22-alpine AS base
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH CI=1 NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable && apk add --no-cache libc6-compat
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json tsconfig.base.json ./
+COPY apps/web/package.json apps/web/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --filter @gate/web...
+
+FROM deps AS build
+COPY apps/web apps/web
+RUN pnpm --filter @gate/web build
+
+FROM node:22-alpine AS runtime
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache curl tini && addgroup -S gate && adduser -S gate -G gate
+WORKDIR /app
+# Standalone output keeps the monorepo layout: server.js lives under apps/web.
+COPY --from=build --chown=gate:gate /app/apps/web/.next/standalone ./
+COPY --from=build --chown=gate:gate /app/apps/web/.next/static ./apps/web/.next/static
+USER gate
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:3000/ -o /dev/null || exit 1
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "apps/web/server.js"]

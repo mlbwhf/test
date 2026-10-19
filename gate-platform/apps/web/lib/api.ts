@@ -387,12 +387,14 @@ export type ApiFailure = ApiErrorInfo | UnreachableInfo;
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiFailure };
 
-export const apiBaseUrl = (process.env.NEXT_PUBLIC_GATE_API_URL ?? "http://localhost:4000").replace(
+// Server-only names (GATE_API_URL, GATE_API_KEY) are read at request time, so one
+// container image serves any domain. The NEXT_PUBLIC_ names remain for local dev.
+export const apiBaseUrl = (process.env.GATE_API_URL ?? process.env.NEXT_PUBLIC_GATE_API_URL ?? "http://localhost:4000").replace(
   /\/+$/,
   "",
 );
 
-const apiKey = process.env.NEXT_PUBLIC_GATE_API_KEY ?? "";
+const apiKey = process.env.GATE_API_KEY ?? process.env.NEXT_PUBLIC_GATE_API_KEY ?? "";
 
 type ErrorEnvelope = { error?: { code?: string; message?: string; hint?: string } };
 

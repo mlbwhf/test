@@ -1,0 +1,128 @@
+# Gate for Training: production Compose for a single VPS behind an existing Traefik.
+#
+#   /opt/gate/docker-compose.yml  (this file)
+#   /opt/gate/.env                (from .env.production.example, never committed)
+#
+# Traefik (Hostinger "Docker and Traefik" template) already owns ports 80/443 and
+# issues Let's Encrypt certificates. This project joins Traefik's network and
+# publishes no host ports of its own. Postgres is reachable only inside the project.
+
+name: gate
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gate
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: gate
+    command: >-
+      postgres -c shared_buffers=1GB -c effective_cache_size=3GB -c work_mem=16MB
+      -c maintenance_work_mem=128MB -c wal_compression=on -c log_min_duration_statement=500
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gate -d gate"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    deploy:
+      resources:
+        limits: { memory: 2g }
+
+  api:
+    image: ${GATE_API_IMAGE:-ghcr.io/mlbwhf/gate-api:latest}
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+    env_file: [.env]
+    environment:
+      GATE_ENV: production
+      PORT: "4000"
+      DATABASE_URL: postgres://gate:${POSTGRES_PASSWORD}@postgres:5432/gate
+      GATE_PUBLIC_URL: https://api.${GATE_DOMAIN:?set GATE_DOMAIN in .env}
+      GATE_WEB_URL: https://app.${GATE_DOMAIN}
+    networks: [internal, traefik]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK:-traefik}
+      traefik.http.routers.gate-api.rule: Host(`api.${GATE_DOMAIN}`)
+      traefik.http.routers.gate-api.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.gate-api.tls: "true"
+      traefik.http.routers.gate-api.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.gate-api.middlewares: gate-api-headers
+      traefik.http.services.gate-api.loadbalancer.server.port: "4000"
+      traefik.http.middlewares.gate-api-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.gate-api-headers.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.gate-api-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.gate-api-headers.headers.referrerPolicy: strict-origin-when-cross-origin
+    deploy:
+      resources:
+        limits: { memory: 768m }
+
+  web:
+    image: ${GATE_WEB_IMAGE:-ghcr.io/mlbwhf/gate-web:latest}
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      # Server-side calls stay on the private network; browser-facing links use the public host.
+      GATE_API_URL: http://api:4000
+      GATE_API_KEY: ${GATE_ORG_API_KEY:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      NEXT_PUBLIC_GATE_API_URL: https://api.${GATE_DOMAIN}
+    networks: [internal, traefik]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK:-traefik}
+      traefik.http.routers.gate-web.rule: Host(`app.${GATE_DOMAIN}`)
+      traefik.http.routers.gate-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.gate-web.tls: "true"
+      traefik.http.routers.gate-web.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.gate-web.middlewares: gate-web-headers
+      traefik.http.services.gate-web.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.gate-web-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.gate-web-headers.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.gate-web-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.gate-web-headers.headers.frameDeny: "true"
+      traefik.http.middlewares.gate-web-headers.headers.referrerPolicy: strict-origin-when-cross-origin
+    deploy:
+      resources:
+        limits: { memory: 768m }
+
+  # Nightly pg_dump to S3-compatible storage (Cloudflare R2, Backblaze B2, Hetzner, AWS).
+  # Disabled until BACKUP_S3_BUCKET is set; see .env.production.example.
+  backup:
+    image: eeshugerman/postgres-backup-s3:16
+    restart: unless-stopped
+    profiles: [backup]
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      SCHEDULE: ${BACKUP_SCHEDULE:-@daily}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-30}
+      PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      S3_REGION: ${BACKUP_S3_REGION:-auto}
+      S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
+      S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}
+      S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      S3_PREFIX: ${BACKUP_S3_PREFIX:-gate/postgres}
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: gate
+      POSTGRES_USER: gate
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks: [internal]
+
+volumes:
+  pgdata:
+
+networks:
+  internal:
+    driver: bridge
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik}

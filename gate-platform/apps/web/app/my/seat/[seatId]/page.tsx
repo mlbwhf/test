@@ -129,7 +129,7 @@ export default async function SeatPage({
   const timezone = event.timezone || "UTC";
   const currency = event.currency;
   const active = seat.status === "confirmed" || seat.status === "reserved";
-  const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null;
+  const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null;
   const choices = transferOptions.map((o) => transferChoice(o, currency));
   const canTransfer = policy.transfer.allowed && choices.some((c) => !c.disabled);
   const refundPct = (policy.cancel.refundBps / 100).toFixed(policy.cancel.refundBps % 100 === 0 ? 0 : 2);

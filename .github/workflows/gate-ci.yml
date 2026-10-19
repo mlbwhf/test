@@ -1,7 +1,12 @@
-name: ci
+name: gate-ci
 on:
   push:
+    paths: ["gate-platform/**", ".github/workflows/gate-ci.yml"]
   pull_request:
+    paths: ["gate-platform/**", ".github/workflows/gate-ci.yml"]
+defaults:
+  run:
+    working-directory: gate-platform
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -19,7 +24,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with: { version: 10 }
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: gate-platform/pnpm-lock.yaml }
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test

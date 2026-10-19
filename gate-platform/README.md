@@ -96,3 +96,9 @@ CI (`.github/workflows/ci.yml`) runs typecheck, tests against a Postgres service
 ```bash
 git subtree split --prefix=gate-platform -b gate-platform-main
 ```
+
+## Deploy
+
+Production runs as two container images (API, web) plus Postgres on a single VPS behind
+Traefik, built and rolled by the `gate-deploy` GitHub Actions workflow. The runbook, the
+Dockerfiles, the Compose file and the server scripts are in [`infra/`](infra/README.md).
