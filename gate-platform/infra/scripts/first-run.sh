@@ -24,7 +24,7 @@ else
 fi
 cp "$src/scripts/server-setup.sh" "$tmp/server-setup.sh"
 cp "$src/scripts/detect-traefik.sh" "$tmp/detect-traefik.sh"
-cp "$src/compose/.env.production.example" "$tmp/env.example"
+cp "$src/compose/env.production.example" "$tmp/env.example"
 cp "$src/compose/docker-compose.prod.yml" "$tmp/docker-compose.yml"
 cp "$src/scripts/deploy.sh" "$tmp/deploy.sh"
 cp "$src/scripts/bootstrap-tenant.sh" "$tmp/bootstrap-tenant.sh"

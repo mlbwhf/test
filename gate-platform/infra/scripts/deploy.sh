@@ -5,7 +5,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-[ -f .env ] || { echo ".env missing; copy .env.production.example and fill it in" >&2; exit 1; }
+[ -f .env ] || { echo ".env missing; copy env.production.example and fill it in" >&2; exit 1; }
 set -a; . ./.env; set +a
 
 profiles=()

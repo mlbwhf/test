@@ -1,7 +1,7 @@
 # EnrollClass: production Compose for a single VPS behind an existing Traefik.
 #
 #   /opt/gate/docker-compose.yml  (this file)
-#   /opt/gate/.env                (from .env.production.example, never committed)
+#   /opt/gate/.env                (from env.production.example, never committed)
 #
 # Traefik (Hostinger "Docker and Traefik" template) already owns ports 80/443 and
 # issues Let's Encrypt certificates. This project joins Traefik's network and
@@ -94,7 +94,7 @@ services:
         limits: { memory: 768m }
 
   # Nightly pg_dump to S3-compatible storage (Cloudflare R2, Backblaze B2, Hetzner, AWS).
-  # Disabled until BACKUP_S3_BUCKET is set; see .env.production.example.
+  # Disabled until BACKUP_S3_BUCKET is set; see env.production.example.
   backup:
     image: eeshugerman/postgres-backup-s3:16
     restart: unless-stopped

@@ -8,7 +8,7 @@ Images are built by GitHub Actions and pushed to GitHub Container Registry.
 infra/docker/Dockerfile.api            Fastify API + scheduler + widget bundle
 infra/docker/Dockerfile.web            Next.js dashboard and learner portal (standalone)
 infra/compose/docker-compose.prod.yml  postgres, api, web, optional nightly backup
-infra/compose/.env.production.example  every runtime variable, with which ones are secret
+infra/compose/env.production.example  every runtime variable, with which ones are secret
 infra/scripts/server-setup.sh          one-time hardening (ufw, fail2ban, swap, deploy user)
 infra/scripts/detect-traefik.sh        prints the Traefik network/entrypoint/resolver names
 infra/scripts/deploy.sh                pull, roll, wait for /health (used by CI and by hand)
@@ -53,7 +53,7 @@ Then, as `deploy`:
 
 ```bash
 mkdir -p /opt/gate && cd /opt/gate
-curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/compose/.env.production.example -o .env
+curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/compose/env.production.example -o .env
 curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/scripts/detect-traefik.sh | bash
 ```
 
