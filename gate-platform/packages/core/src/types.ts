@@ -276,7 +276,7 @@ export interface Order {
   paidAt?: Date;
 }
 
-export type PayoutMethod = "bank_transfer" | "wire" | "other";
+export type PayoutMethod = "bank_transfer" | "wire" | "cheque" | "other";
 /** Money leaving the platform to the organizer or a party, recorded against their payable. */
 export interface Payout {
   id: string;

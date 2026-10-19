@@ -26,8 +26,8 @@ import {
   type ReleasePolicy,
   type Session,
 } from "@/lib/api";
-import { formatDateTime, formatMoney, humanize, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
-import { MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
+import { formatDateTime, formatDateTimeInZone, formatMoney, humanize, isValidTimeZone, parseMajorToMinor, truncate, zonedTimeToIso } from "@/lib/format";
+import { DEFAULT_TIMEZONE, MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, MAX_SESSIONS, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import type { ActionState } from "@/components/action-form";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -717,4 +717,65 @@ export async function cancelCohortAction(_prev: ActionState, formData: FormData)
       { label: "Cancelled at", value: event.cancelledAt ? formatDateTime(event.cancelledAt) : formatDateTime(new Date().toISOString()) },
     ],
   };
+}
+
+// ---------- imports ----------
+
+function summarizeImport(res: import("@/lib/api").ImportResponse): ActionState {
+  const { plan, results, dryRun } = res;
+  const details: { label: string; value: string }[] = [];
+  if (res.eventbriteOrganization) details.push({ label: "Eventbrite organization", value: res.eventbriteOrganization.name });
+  for (const item of plan.items) {
+    const r = results.find((x) => x.sourceId === item.sourceId);
+    const tickets = item.ticketTypes.map((t) => `${t.name} ${formatMoney(t.priceMinor, item.event.currency)} × ${t.quantity}${t.sold !== undefined ? ` (${t.sold} sold)` : ""}`).join(", ");
+    const when = `${formatDateTimeInZone(item.event.startsAt, item.event.timezone)}${item.event.endsAt ? ` → ${formatDateTimeInZone(item.event.endsAt, item.event.timezone)}` : ""}`;
+    const outcome = r ? (r.status === "created" ? `imported${r.courseCreated ? ", new course" : ""}` : `${r.status}${r.reason ? `: ${r.reason}` : ""}`) : "";
+    const warn = item.warnings.length ? ` ⚠ ${item.warnings.join("; ")}` : "";
+    details.push({ label: item.event.name, value: `${when} · ${item.event.timezone} · course "${item.course.name}" · ${tickets}${outcome ? ` · ${outcome}` : ""}${warn}` });
+  }
+  for (const sk of plan.skipped) details.push({ label: `Skipped: ${sk.name}`, value: sk.reason });
+  if (res.unmatchedHeaders?.length) details.push({ label: "Unused columns", value: res.unmatchedHeaders.join(", ") });
+  const created = results.filter((r) => r.status === "created").length;
+  const message = dryRun
+    ? `Preview: ${plan.items.length} cohort${plan.items.length === 1 ? "" : "s"} across ${plan.courses.length} course${plan.courses.length === 1 ? "" : "s"} found, ${plan.skipped.length} skipped. Nothing was written; choose "Import" to create them.`
+    : `Imported ${created} cohort${created === 1 ? "" : "s"}; ${results.filter((r) => r.status === "exists").length} already existed, ${results.filter((r) => r.status === "skipped").length} skipped, ${results.filter((r) => r.status === "failed").length} failed.`;
+  return { status: "ok", message, details };
+}
+
+export async function importEventbriteAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const token = field(formData, "token");
+  if (token.length < 10) return fail("Paste your Eventbrite private token (Account settings → Developer links → API keys).");
+  const mode = field(formData, "mode");
+  const includePast = formData.get("includePast") === "on";
+  const eventbriteOrganizationId = field(formData, "eventbriteOrganizationId");
+  const result = await api.importEventbrite({ token, dryRun: mode !== "import", includePast, ...(eventbriteOrganizationId ? { eventbriteOrganizationId } : {}) });
+  if (!result.ok) return fail(describeFailure(result.error));
+  if (!result.data.dryRun) {
+    revalidatePath("/events");
+    revalidatePath("/courses");
+  }
+  return summarizeImport(result.data);
+}
+
+export async function importCsvAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const file = formData.get("file");
+  let csv = field(formData, "csv");
+  if (file instanceof File && file.size > 0) {
+    if (file.size > 2_000_000) return fail("The file is larger than 2 MB.");
+    csv = await file.text();
+  }
+  if (!csv.trim()) return fail("Paste CSV text or choose a file.");
+  const mode = field(formData, "mode");
+  const includePast = formData.get("includePast") === "on";
+  const timezone = field(formData, "timezone") || DEFAULT_TIMEZONE;
+  if (!isValidTimeZone(timezone)) return fail(`"${timezone}" is not a valid IANA time zone.`);
+  const currency = field(formData, "currency").toUpperCase();
+  if (currency && !CURRENCY_RE.test(currency)) return fail("Currency must be a 3-letter code.");
+  const result = await api.importCsv({ csv, dryRun: mode !== "import", includePast, timezone, ...(currency ? { currency } : {}) });
+  if (!result.ok) return fail(describeFailure(result.error));
+  if (!result.data.dryRun) {
+    revalidatePath("/events");
+    revalidatePath("/courses");
+  }
+  return summarizeImport(result.data);
 }

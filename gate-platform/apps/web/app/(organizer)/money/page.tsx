@@ -354,7 +354,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
               </label>
               <label>
                 Reference (optional)
-                <input name="reference" placeholder="Bank reference or invoice number" />
+                <input name="reference" placeholder="Bank reference, cheque number or invoice number" />
               </label>
             </div>
             <p className="hint">

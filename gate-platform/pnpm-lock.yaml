@@ -56,6 +56,9 @@ importers:
       '@gate/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@gate/importers':
+        specifier: workspace:*
+        version: link:../../packages/importers
       '@gate/integrations-hubspot':
         specifier: workspace:*
         version: link:../../packages/integrations-hubspot
@@ -221,6 +224,15 @@ importers:
       tsx:
         specifier: ^4.23.0
         version: 4.23.15
+      typescript:
+        specifier: ^5.9.0
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.7(@types/node@22.20.5)(jsdom@30.1.3)(tsx@4.23.15)(yaml@2.9.1)
+
+  packages/importers:
+    devDependencies:
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

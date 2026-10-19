@@ -87,4 +87,56 @@ describe("API", () => {
     const res = await app.inject({ method: "POST", url: "/v1/webhooks/stripe", headers: { "content-type": "application/json" }, payload: "{}" });
     expect(res.statusCode).toBe(409);
   });
+
+  it("previews and applies a CSV import of cohorts", async () => {
+    const csv = [
+      "name,course,start,end,timezone,currency,price,seats,format",
+      '"PMP Exam Prep - Nov 2099","PMP Exam Prep",2099-11-12 09:00,2099-11-14 17:00,America/Toronto,USD,1495.00,20,live_virtual',
+      '"PMP Exam Prep - Jan 2100","PMP Exam Prep",2100-01-20 09:00,2100-01-22 17:00,America/Toronto,USD,1495.00,20,live_virtual',
+      '"Old class",,2020-01-05 09:00,,UTC,USD,100,10,in_person',
+    ].join("\n");
+    const preview = await app.inject({ method: "POST", url: "/v1/imports/csv", headers: H(), payload: { csv } });
+    expect(preview.statusCode).toBe(200);
+    expect(preview.json().dryRun).toBe(true);
+    expect(preview.json().plan.items).toHaveLength(3);
+    expect(preview.json().plan.courses).toEqual([{ slug: "old-class", name: "Old class", cohorts: 1 }, { slug: "pmp-exam-prep", name: "PMP Exam Prep", cohorts: 2 }]);
+    expect(preview.json().results).toEqual([]);
+    expect((await app.inject({ url: "/v1/events", headers: A() })).json().items).toHaveLength(0);
+
+    const applied = await app.inject({ method: "POST", url: "/v1/imports/csv", headers: H(), payload: { csv, dryRun: false } });
+    expect(applied.statusCode).toBe(200);
+    const results = applied.json().results;
+    expect(results.map((r: { status: string }) => r.status)).toEqual(["skipped", "created", "created"]);
+    expect(results[1]).toMatchObject({ courseCreated: true, ticketTypes: 1 });
+    expect(results[2]).toMatchObject({ courseCreated: false });
+    expect(results[1].courseId).toBe(results[2].courseId);
+    const events = (await app.inject({ url: "/v1/events", headers: A() })).json().items;
+    expect(events).toHaveLength(2);
+    expect(events.map((e: { timezone: string; format: string; endsAt: string | null }) => [e.timezone, e.format, e.endsAt !== null])).toEqual([["America/Toronto", "live_virtual", true], ["America/Toronto", "live_virtual", true]]);
+
+    // Re-running does not duplicate.
+    const again = await app.inject({ method: "POST", url: "/v1/imports/csv", headers: H(), payload: { csv, dryRun: false } });
+    expect(again.json().results.map((r: { status: string }) => r.status)).toEqual(["skipped", "exists", "exists"]);
+  });
+
+  it("imports from Eventbrite through an injected fetch and rejects bad tokens", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const fetchImpl = (async (url: string, init?: RequestInit) => {
+      if ((init?.headers as Record<string, string>).authorization !== "Bearer good-token-123") return new Response("{}", { status: 401 });
+      if (url.endsWith("/users/me/organizations/")) return new Response(JSON.stringify({ organizations: [{ id: "eb1", name: "Agile Agilist" }] }));
+      return new Response(JSON.stringify({ events: [{ id: "e1", name: { text: "CSM Workshop - Dec 2099" }, start: { timezone: "America/Toronto", utc: "2099-12-03T14:00:00Z" }, end: { timezone: "America/Toronto", utc: "2099-12-04T22:00:00Z" }, currency: "CAD", online_event: true, status: "live", ticket_classes: [{ id: "t", name: "Standard", cost: { currency: "CAD", value: 99500 }, quantity_total: 16, quantity_sold: 3 }] }], pagination: { has_more_items: false } }));
+    }) as unknown as typeof fetch;
+    const eb = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl });
+    const created = await eb.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "CAD" } });
+    const key = created.json().apiKey as string;
+    const bad = await eb.inject({ method: "POST", url: "/v1/imports/eventbrite", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { token: "wrong-token-123" } });
+    expect(bad.statusCode).toBe(401);
+    const res = await eb.inject({ method: "POST", url: "/v1/imports/eventbrite", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { token: "good-token-123", dryRun: false } });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().eventbriteOrganization).toEqual({ id: "eb1", name: "Agile Agilist" });
+    expect(res.json().plan.items[0].course.slug).toBe("csm-workshop");
+    expect(res.json().results[0]).toMatchObject({ status: "created", ticketTypes: 1 });
+    const tts = (await eb.inject({ url: `/v1/events/${res.json().results[0].eventId}/ticket-types`, headers: { "x-api-key": key } })).json().items;
+    expect(tts[0]).toMatchObject({ name: "Standard", priceMinor: 99500, quantity: 16 });
+  });
 });

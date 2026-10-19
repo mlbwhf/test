@@ -18,6 +18,7 @@
     "@gate/ai-gateway": "workspace:*",
     "@gate/core": "workspace:*",
     "@gate/db": "workspace:*",
+    "@gate/importers": "workspace:*",
     "@gate/integrations-hubspot": "workspace:*",
     "@gate/ledger": "workspace:*",
     "@gate/meetings": "workspace:*",

@@ -5,7 +5,7 @@ export const ErrorSchema = z.object({
   error: z.object({ code: z.string(), message: z.string(), hint: z.string().optional(), requestId: z.string().optional() }),
 });
 
-const Currency = z.string().regex(/^[A-Z]{3}$/, "ISO 4217 code");
+export const Currency = z.string().regex(/^[A-Z]{3}$/, "ISO 4217 code");
 const Minor = z.number().int().min(0);
 
 export const SplitRuleSchema = z.discriminatedUnion("kind", [
@@ -21,8 +21,8 @@ export const OrganizationSchema = z.object({
 });
 export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional() });
 export const InstructorFeeSchema = z.object({ partyId: z.string(), amountMinor: Minor });
-export const PayoutSchema = z.object({ id: z.string(), partyId: z.string().nullable(), currency: Currency, amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "other"]), reference: z.string().nullable(), createdAt: z.string() });
-export const CreatePayoutBody = z.object({ partyId: z.string().optional(), currency: Currency, amountMinor: z.number().int().min(1), method: z.enum(["bank_transfer", "wire", "other"]), reference: z.string().max(120).optional() });
+export const PayoutSchema = z.object({ id: z.string(), partyId: z.string().nullable(), currency: Currency, amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().nullable(), createdAt: z.string() });
+export const CreatePayoutBody = z.object({ partyId: z.string().optional(), currency: Currency, amountMinor: z.number().int().min(1), method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().max(120).optional() });
 export const PayableSchema = z.object({ partyId: z.string().nullable(), name: z.string(), kind: z.string().nullable(), currency: Currency, payableMinor: z.number().int(), heldMinor: z.number().int() });
 export const RevenueCohortSchema = z.object({ eventId: z.string(), name: z.string(), courseName: z.string().nullable(), startsAt: z.string(), endsAt: z.string().nullable(), currency: Currency, status: z.string(), seats: z.number().int(), grossMinor: z.number().int(), platformFeeMinor: z.number().int(), taxMinor: z.number().int(), organizerNetMinor: z.number().int(), refundedMinor: z.number().int(), instructorFeesMinor: z.number().int(), marginMinor: z.number().int(), fundsStatus: z.enum(["held", "released", "mixed", "none"]), recognized: z.boolean() });
 export const CreateOrganizationBody = z.object({
@@ -41,7 +41,7 @@ export const CertificateSchema = z.object({ id: z.string(), seatId: z.string(), 
 export const MessageSchema = z.object({ key: z.string(), step: z.enum(["prework_t14", "reminder_t7", "reminder_t1", "day_of", "survey", "certificate"]), to: z.string(), sentAt: z.string() });
 export const CreateCourseBody = z.object({ slug: z.string().min(1).max(80), name: z.string().min(1), description: z.string().max(5000).optional(), certificationBody: z.string().max(200).optional(), durationDays: z.number().int().min(1).optional() });
 
-const DeliveryFormat = z.enum(["live_virtual", "in_person", "hybrid", "self_paced"]);
+export const DeliveryFormat = z.enum(["live_virtual", "in_person", "hybrid", "self_paced"]);
 const IsoDate = z.string().datetime({ offset: true });
 export const SessionSchema = z.object({ startsAt: z.string(), endsAt: z.string(), title: z.string().optional() });
 export const SessionInput = z.object({ startsAt: IsoDate, endsAt: IsoDate, title: z.string().max(200).optional() });

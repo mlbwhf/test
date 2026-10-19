@@ -14,6 +14,7 @@ import type { IdempotencyStore } from "@gate/db";
 import type { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { InMemoryIdempotencyStore, registerIdempotency } from "./plugins/idempotency.js";
 import * as S from "./schemas.js";
+import { registerImports } from "./imports.js";
 import { timingSafeEqual } from "node:crypto";
 
 /** Constant-time comparison of a presented secret against the configured one. */
@@ -52,6 +53,8 @@ export interface AppDeps {
   widgetBundlePath?: string;
   /** Base URL this API is reachable at, for the widget demo page. */
   publicUrl?: string;
+  /** Outbound HTTP for importers; tests inject a fake. */
+  fetchImpl?: typeof fetch;
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
@@ -302,6 +305,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     });
     registerIdempotency(api, deps.idempotency ?? new InMemoryIdempotencyStore());
     const org = (req: { org?: Organization }) => req.org!;
+    registerImports(api, { core: deps.core, ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}) }, org);
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
 

@@ -338,13 +338,14 @@ export type PayableItem = {
   heldMinor: number;
 };
 
-export type PayoutMethod = "bank_transfer" | "wire" | "other";
+export type PayoutMethod = "bank_transfer" | "wire" | "cheque" | "other";
 
-export const PAYOUT_METHODS: PayoutMethod[] = ["bank_transfer", "wire", "other"];
+export const PAYOUT_METHODS: PayoutMethod[] = ["bank_transfer", "wire", "cheque", "other"];
 
 export const PAYOUT_METHOD_LABELS: Record<PayoutMethod, string> = {
   bank_transfer: "Bank transfer",
   wire: "Wire",
+  cheque: "Cheque (mailed)",
   other: "Other",
 };
 
@@ -485,6 +486,29 @@ async function requestCsv(path: string): Promise<ApiResult<CsvDownload>> {
 
 const enc = encodeURIComponent;
 
+
+// ---- imports from other ticketing tools ----
+export type ImportSource = "eventbrite" | "csv";
+export type ImportItem = {
+  source: ImportSource;
+  sourceId: string;
+  sourceUrl?: string;
+  course: { slug: string; name: string; description?: string; durationDays?: number };
+  event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: EventFormat };
+  ticketTypes: { name: string; priceMinor: number; quantity: number; sold?: number }[];
+  sourceStatus?: string;
+  warnings: string[];
+};
+export type ImportResult = { sourceId: string; status: "created" | "exists" | "skipped" | "failed"; reason?: string; courseId?: string; courseCreated?: boolean; eventId?: string; ticketTypes?: number };
+export type ImportResponse = {
+  plan: { source: ImportSource; items: ImportItem[]; courses: { slug: string; name: string; cohorts: number }[]; skipped: { sourceId: string; name: string; reason: string }[] };
+  eventbriteOrganization?: { id: string; name: string } | null;
+  unmatchedHeaders?: string[];
+  dryRun: boolean;
+  results: ImportResult[];
+};
+export type ImportOptions = { dryRun: boolean; includePast?: boolean; sourceIds?: string[] };
+
 export const api = {
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
@@ -529,6 +553,8 @@ export const api = {
 
   listCourses: () => request<{ items: Course[] }>("GET", "/v1/courses"),
   createCourse: (input: CreateCourseInput) => request<Course>("POST", "/v1/courses", input),
+  importEventbrite: (input: ImportOptions & { token: string; eventbriteOrganizationId?: string }) => request<ImportResponse>("POST", "/v1/imports/eventbrite", input),
+  importCsv: (input: ImportOptions & { csv: string; timezone?: string; currency?: string }) => request<ImportResponse>("POST", "/v1/imports/csv", input),
   getCourse: (id: string) => request<Course>("GET", `/v1/courses/${enc(id)}`),
   updateCourse: (id: string, input: UpdateCourseInput) => request<Course>("PATCH", `/v1/courses/${enc(id)}`, input),
   listCohorts: (courseId: string) => request<{ items: Event[] }>("GET", `/v1/courses/${enc(courseId)}/cohorts`),
