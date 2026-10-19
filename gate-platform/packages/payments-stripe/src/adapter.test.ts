@@ -22,13 +22,20 @@ function fakeStripe() {
 const config = { onboardingReturnUrl: "https://app.test/return", onboardingRefreshUrl: "https://app.test/refresh", webhookSecret: "whsec_test" };
 
 describe("StripePaymentsAdapter", () => {
-  it("creates a custom connected account with an onboarding link", async () => {
+  it("creates an Express connected account with platform liability and an onboarding link", async () => {
     const { stripe, calls } = fakeStripe();
     const a = new StripePaymentsAdapter(stripe, config);
     const res = await a.createConnectedAccount({ organizationId: "org_1", country: "US", businessName: "Agile Agilist" });
     expect(res).toEqual({ accountRef: "acct_123", onboardingUrl: "https://connect.stripe.com/setup/x" });
     const [params, opts] = calls[0]!.args as [Record<string, unknown>, Record<string, unknown>];
-    expect(params.type).toBe("custom");
+    expect(params.type).toBeUndefined();
+    expect(params.controller).toEqual({
+      fees: { payer: "application" },
+      losses: { payments: "application" },
+      requirement_collection: "stripe",
+      stripe_dashboard: { type: "express" },
+    });
+    expect((params.business_profile as { mcc: string }).mcc).toBe("8299");
     expect(params.country).toBe("US");
     expect(opts.idempotencyKey).toBe("acct:org_1");
   });

@@ -23,17 +23,26 @@ export class StripePaymentsAdapter implements PaymentsPort {
   ) {}
 
   static fromSecretKey(secretKey: string, config: StripeAdapterConfig): StripePaymentsAdapter {
-    return new StripePaymentsAdapter(new Stripe(secretKey, { appInfo: { name: "gate-platform", version: "0.1.0" } }), config);
+    return new StripePaymentsAdapter(new Stripe(secretKey, { appInfo: { name: "EnrollClass", version: "0.1.0", url: "https://enrollclass.com" } }), config);
   }
 
   async createConnectedAccount(input: { organizationId: string; country: string; email?: string; businessName: string }) {
+    // Connected accounts use Stripe's controller model: the platform pays Stripe's fees and
+    // carries refund/dispute losses (funds are held until delivery, so the platform controls
+    // the money that would cover them), Stripe collects onboarding requirements through the
+    // hosted flow, and organizers get the Express dashboard for payouts and tax forms.
     const account = await this.stripe.accounts.create(
       {
-        type: "custom",
+        controller: {
+          fees: { payer: "application" },
+          losses: { payments: "application" },
+          requirement_collection: "stripe",
+          stripe_dashboard: { type: "express" },
+        },
         country: input.country,
         ...(input.email ? { email: input.email } : {}),
         business_type: "company",
-        business_profile: { name: input.businessName, mcc: "7922" }, // 7922: theatrical producers / ticket agencies
+        business_profile: { name: input.businessName, mcc: "8299" }, // 8299: schools and educational services
         capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
         metadata: { organizationId: input.organizationId },
       },
