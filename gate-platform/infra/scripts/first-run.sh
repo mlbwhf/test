@@ -29,6 +29,7 @@ cp "$src/compose/docker-compose.prod.yml" "$tmp/docker-compose.yml"
 cp "$src/compose/docker-compose.traefik-bridge.yml" "$tmp/docker-compose.traefik-bridge.yml"
 cp "$src/scripts/deploy.sh" "$tmp/deploy.sh"
 cp "$src/scripts/bootstrap-tenant.sh" "$tmp/bootstrap-tenant.sh"
+cp "$src/scripts/rotate-api-key.sh" "$tmp/rotate-api-key.sh"
 
 # Any further arguments are SSH public keys ("ssh-ed25519 AAAA... comment"). Each is
 # installed for root and for deploy before hardening, so password logins can be turned
@@ -60,6 +61,7 @@ install -o deploy -g deploy -m 755 "$tmp/docker-compose.traefik-bridge.yml" /opt
 install -o deploy -g deploy -m 755 "$tmp/deploy.sh" /opt/gate/deploy.sh
 install -o deploy -g deploy -m 755 "$tmp/detect-traefik.sh" /opt/gate/detect-traefik.sh
 install -o deploy -g deploy -m 755 "$tmp/bootstrap-tenant.sh" /opt/gate/bootstrap-tenant.sh
+install -o deploy -g deploy -m 755 "$tmp/rotate-api-key.sh" /opt/gate/rotate-api-key.sh
 
 if [ -f /opt/gate/.env ]; then
   echo "== /opt/gate/.env already exists; leaving it untouched"

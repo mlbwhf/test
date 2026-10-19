@@ -26,9 +26,11 @@ echo "== applying"
 compose up -d --remove-orphans --wait --wait-timeout 180
 
 echo "== health"
+health=$(mktemp)
+trap 'rm -f "$health"' EXIT
 for i in $(seq 1 30); do
-  if compose exec -T api curl -fsS http://127.0.0.1:4000/health >/tmp/gate-health 2>/dev/null; then
-    cat /tmp/gate-health; echo
+  if compose exec -T api curl -fsS http://127.0.0.1:4000/health >"$health" 2>/dev/null; then
+    cat "$health"; echo
     docker image prune -f >/dev/null
     echo "deployed $(compose images api --format '{{.Repository}}:{{.Tag}}' 2>/dev/null || true)"
     exit 0

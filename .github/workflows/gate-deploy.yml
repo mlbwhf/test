@@ -95,7 +95,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: gate-platform/infra/compose/docker-compose.prod.yml,gate-platform/infra/compose/docker-compose.traefik-bridge.yml,gate-platform/infra/scripts/deploy.sh,gate-platform/infra/scripts/detect-traefik.sh,gate-platform/infra/scripts/bootstrap-tenant.sh
+          source: gate-platform/infra/compose/docker-compose.prod.yml,gate-platform/infra/compose/docker-compose.traefik-bridge.yml,gate-platform/infra/scripts/deploy.sh,gate-platform/infra/scripts/detect-traefik.sh,gate-platform/infra/scripts/bootstrap-tenant.sh,gate-platform/infra/scripts/rotate-api-key.sh
           target: /opt/gate/incoming
           strip_components: 3
       - name: Roll the stack
@@ -115,7 +115,7 @@ jobs:
             set -euo pipefail
             cd /opt/gate
             pick() { find incoming -type f -name "$1" | head -n1; }
-            for f in docker-compose.prod.yml docker-compose.traefik-bridge.yml deploy.sh detect-traefik.sh bootstrap-tenant.sh; do
+            for f in docker-compose.prod.yml docker-compose.traefik-bridge.yml deploy.sh detect-traefik.sh bootstrap-tenant.sh rotate-api-key.sh; do
               src=$(pick "$f"); [ -n "$src" ] || { echo "missing $f in upload"; find incoming -type f; exit 1; }
               case "$f" in docker-compose.prod.yml) dst=docker-compose.yml;; *) dst=$f;; esac
               mv -f "$src" "$dst"

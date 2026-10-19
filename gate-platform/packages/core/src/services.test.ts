@@ -167,3 +167,15 @@ describe("auth", () => {
     await expect(core.authenticate(undefined)).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 });
+
+describe("api key rotation", () => {
+  it("invalidates the old key and accepts the new one", async () => {
+    const { org, apiKey } = await setup();
+    expect((await core.authenticate(apiKey)).id).toBe(org.id);
+    const rotated = await core.rotateApiKey(org.id);
+    expect(rotated.apiKey).not.toBe(apiKey);
+    expect(rotated.apiKey.startsWith("gk_us_")).toBe(true);
+    await expect(core.authenticate(apiKey)).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    expect((await core.authenticate(rotated.apiKey)).id).toBe(org.id);
+  });
+});

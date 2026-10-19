@@ -124,8 +124,8 @@ class PgOrganizations implements OrganizationRepo {
   }
   async update(o: Organization) {
     await this.pool.query(
-      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12 WHERE id=$1`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays],
+      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13 WHERE id=$1`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM organizations WHERE id=$1`, [id]); return r.rows[0] ? toOrg(r.rows[0]) : undefined; }

@@ -122,6 +122,15 @@ export class Core {
     return next;
   }
 
+  /** Replace an organization's API key. The old key stops working immediately. */
+  async rotateApiKey(organizationId: string): Promise<{ organization: Organization; apiKey: string }> {
+    const org = await this.getOrganization(organizationId);
+    const apiKey = `gk_${org.country === "US" ? "us" : "x"}_${randomBytes(24).toString("base64url")}`;
+    const next: Organization = { ...org, apiKeyHash: hashApiKey(apiKey) };
+    await this.repos.organizations.update(next);
+    return { organization: next, apiKey };
+  }
+
   async authenticate(apiKey: string | undefined): Promise<Organization> {
     if (!apiKey) throw new DomainError("UNAUTHORIZED", "missing x-api-key");
     const org = await this.repos.organizations.getByApiKeyHash(hashApiKey(apiKey));

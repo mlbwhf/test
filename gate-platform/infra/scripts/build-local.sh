@@ -16,7 +16,7 @@ echo "   at $sha"
 echo "== refreshing deploy files in /opt/gate"
 install -o deploy -g deploy -m 755 "$src/gate-platform/infra/compose/docker-compose.prod.yml" /opt/gate/docker-compose.yml
 install -o deploy -g deploy -m 755 "$src/gate-platform/infra/compose/docker-compose.traefik-bridge.yml" /opt/gate/docker-compose.traefik-bridge.yml
-for f in deploy.sh detect-traefik.sh bootstrap-tenant.sh; do install -o deploy -g deploy -m 755 "$src/gate-platform/infra/scripts/$f" "/opt/gate/$f"; done
+for f in deploy.sh detect-traefik.sh bootstrap-tenant.sh rotate-api-key.sh; do install -o deploy -g deploy -m 755 "$src/gate-platform/infra/scripts/$f" "/opt/gate/$f"; done
 
 echo "== building images (this is the slow part)"
 export DOCKER_BUILDKIT=1

@@ -81,6 +81,14 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return reply.code(201).send({ organization: S.toOrganization(res.organization), apiKey: res.apiKey });
   });
 
+  app.post("/v1/organizations/:id/api-key", {
+    schema: { tags: ["organizations"], security: [{ adminKey: [] }], params: z.object({ id: z.string() }), response: { 200: z.object({ organization: S.OrganizationSchema, apiKey: z.string() }), 401: S.ErrorSchema, 404: S.ErrorSchema } },
+  }, async (req) => {
+    if (!deps.adminKey || req.headers["x-admin-key"] !== deps.adminKey) throw new DomainError("UNAUTHORIZED", "x-admin-key required");
+    const res = await deps.core.rotateApiKey(req.params.id);
+    return { organization: S.toOrganization(res.organization), apiKey: res.apiKey };
+  });
+
   // ---------- webhooks (raw body, no api key) ----------
   await app.register(async (hooksRaw) => {
     const hooks = hooksRaw.withTypeProvider<ZodTypeProvider>();
