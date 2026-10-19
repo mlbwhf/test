@@ -30,7 +30,14 @@ must resolve before the first deploy. Check with `dig +short api.enrollclass.com
 
 ## 2. Server, once
 
-SSH in as root and run the hardening script:
+SSH in as root and run the first-run script. It performs everything in this section
+and prints what is left to fill in:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/scripts/first-run.sh | bash -s -- enrollclass.com
+```
+
+The manual equivalent, if you prefer to see each step:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/mlbwhf/test/claude/confident-cray-JTbgD/gate-platform/infra/scripts/server-setup.sh -o server-setup.sh
