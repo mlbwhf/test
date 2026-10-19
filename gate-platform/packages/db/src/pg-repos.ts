@@ -24,7 +24,7 @@ function toOrg(r: Row): Organization {
   };
 }
 function pricingFromRow(p: Record<string, unknown>): NonNullable<Organization["pricing"]> {
-  const { ratesUpdatedAt, ...rest } = p as NonNullable<Organization["pricing"]> & { ratesUpdatedAt?: string | Date };
+  const { ratesUpdatedAt, ...rest } = p as unknown as NonNullable<Organization["pricing"]> & { ratesUpdatedAt?: string | Date };
   return { ...rest, ...(ratesUpdatedAt ? { ratesUpdatedAt: new Date(ratesUpdatedAt) } : {}) };
 }
 function toParty(r: Row): Party {
