@@ -1,0 +1,16 @@
+# The Two Chasms Framework
+
+> A framework for organizations facing change faster than their habits can interpret, by Mark Saymen (Agile Agilist Inc., Toronto). Moore found one chasm; teams fall into a second. Five states: Reflex → Playground (chasm one: control → trust) → Signal Sensing → Immune (chasm two: metrics → signals) → Mutation.
+
+## Assess
+- [Where's your team?](https://twochasms.com/assess/): 15 statements place a team on one of the five states, plus the Seven Stagnation Signals (the red panel).
+- [How mature is each state?](https://twochasms.com/maturity/): 25 statements score each state from Blind to Self-mutating.
+- [Mutation Readiness Index](https://agile-agilist.com/assessments/mutation-readiness/): the six-dimension readiness deep dive, on agile-agilist.com.
+
+## Learn
+- [Workshops](https://twochasms.com/workshops/): fourteen workshops grouped by state; flagship guides P6 The Innovation Matrix, S1 Signal Mapping, S6 IMMUNE / SignalNet.
+- [The cast](https://twochasms.com/cast/): eight roles from The Innovation Playground, tagged by state.
+- [The books](https://twochasms.com/books/): The Innovation Playground (a business novel in two books) and The Mutation Age (the theory).
+
+## Organization
+- Publisher: Agile Agilist Inc., Toronto — Scaled Agile Gold Partner. https://agile-agilist.com
