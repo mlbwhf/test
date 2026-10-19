@@ -1,21 +1,13 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { Logo } from "@/components/brand";
+import { OrganizerNav } from "@/components/organizer-nav";
 
 export default function OrganizerLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <header className="topbar">
-        <Link href="/dashboard" className="brand">
-          EnrollClass
-        </Link>
-        <nav aria-label="Primary">
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/events">Events</Link>
-          <Link href="/courses">Courses</Link>
-          <Link href="/instructors">Instructors</Link>
-          <Link href="/orders">Orders</Link>
-          <Link href="/money">Money</Link>
-        </nav>
+        <Logo href="/dashboard" />
+        <OrganizerNav />
       </header>
       <main>{children}</main>
     </>

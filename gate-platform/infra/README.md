@@ -20,12 +20,14 @@ infra/scripts/set-dashboard-password.sh set the login for app.<domain> (stored h
 
 ## 1. DNS
 
-Create two A records at your DNS provider, both pointing at the VPS public IP:
+Create four A records at your DNS provider, all pointing at the VPS public IP:
 
 | Name | Serves |
 |---|---|
 | `api.enrollclass.com` | REST API, OpenAPI docs at `/docs`, Stripe webhook, embeddable widget |
-| `app.enrollclass.com` | organizer dashboard and learner self-service portal |
+| `app.enrollclass.com` | organizer dashboard (password protected) and learner self-service portal |
+| `enrollclass.com` | public marketing site with terms, privacy and refund pages |
+| `www.enrollclass.com` | redirects to `enrollclass.com` |
 
 Traefik requests the Let's Encrypt certificates on the first HTTPS hit, so the records
 must resolve before the first deploy. Check with `dig +short api.enrollclass.com`.
