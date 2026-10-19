@@ -114,9 +114,13 @@ jobs:
           script: |
             set -euo pipefail
             cd /opt/gate
-            mv -f incoming/compose/docker-compose.prod.yml docker-compose.yml
-            mv -f incoming/compose/docker-compose.traefik-bridge.yml docker-compose.traefik-bridge.yml
-            mv -f incoming/scripts/*.sh . && chmod +x *.sh && rm -rf incoming
+            pick() { find incoming -type f -name "$1" | head -n1; }
+            for f in docker-compose.prod.yml docker-compose.traefik-bridge.yml deploy.sh detect-traefik.sh bootstrap-tenant.sh; do
+              src=$(pick "$f"); [ -n "$src" ] || { echo "missing $f in upload"; find incoming -type f; exit 1; }
+              case "$f" in docker-compose.prod.yml) dst=docker-compose.yml;; *) dst=$f;; esac
+              mv -f "$src" "$dst"
+            done
+            chmod +x *.sh && rm -rf incoming
             [ -f .env ] || { echo "/opt/gate/.env is missing on the server"; exit 1; }
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             export GATE_API_IMAGE="$API_IMAGE:$TAG" GATE_WEB_IMAGE="$WEB_IMAGE:$TAG"
