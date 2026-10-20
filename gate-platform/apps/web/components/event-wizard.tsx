@@ -112,6 +112,9 @@ export function EventWizard({ courses, currency, instructors = [], viewer = "man
           × Cancel
         </Link>
         <h1>Create event</h1>
+        <Link className="help-link" href="/help/create-a-class" target="_blank" rel="noopener" aria-label="Help (opens in a new tab)" title="Help">
+          ?
+        </Link>
         <ol className="wiz-steps" aria-label="Steps">
           {STEPS.map((label, i) => (
             <li key={label} className={i < step || done ? "is-done" : i === step ? "is-current" : ""} aria-current={i === step ? "step" : undefined}>

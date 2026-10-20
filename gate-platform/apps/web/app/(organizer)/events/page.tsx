@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/copy-button";
 import { DuplicateDialog } from "@/components/duplicate-dialog";
 import { ActionForm } from "@/components/action-form";
 import { issuePaneCertificatesAction, publishEventAction, setInstructorsAction } from "@/app/instructor-actions";
+import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
 
@@ -115,7 +116,9 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
     <div className={`ev-split${explicit ? " has-sel" : ""}`}>
       <section className="ev-list" aria-label="Events">
         <div className="ev-list-head">
-          <h1>Events</h1>
+          <h1>
+            Events <HelpLink slug="events-list" />
+          </h1>
           {perms.includes("classes:write") && (
             <Link className="pill-btn" href="/import">
               Import

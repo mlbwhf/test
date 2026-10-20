@@ -7,6 +7,7 @@ import { AttentionList } from "@/components/attention-list";
 import { LocalDate } from "@/components/local-date";
 import { releaseFundsAction } from "@/app/actions";
 import { connectStripeAction } from "@/app/auth-actions";
+import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
 
@@ -151,7 +152,7 @@ export default async function TodayPage() {
     <div className="today">
       <div className="today-head">
         <h1>
-          Today <LocalDate />
+          Today <LocalDate /> <HelpLink slug="the-console" />
         </h1>
         {perms.includes("settings") && <SetupPill setup={home.setup} />}
       </div>

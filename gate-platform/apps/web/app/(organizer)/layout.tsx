@@ -84,6 +84,9 @@ function AccountMenu({ me, placement }: { me: Me & { organization: NonNullable<M
             Team
           </Link>
         )}
+        <Link href="/help" target="_blank" rel="noopener">
+          Help &amp; guides
+        </Link>
         <Link href="/onboarding?new=1">Create another organization</Link>
         <form action="/auth/signout" method="post">
           <button type="submit">Sign out</button>
@@ -129,6 +132,9 @@ export default async function OrganizerLayout({ children }: { children: ReactNod
         )}
         <ConsoleNav sections={sections} attentionIds={attentionIds} />
         <div className="console-spacer" />
+        <Link href="/help" className="console-help" target="_blank" rel="noopener">
+          <span aria-hidden="true">?</span> Help &amp; guides
+        </Link>
         <AccountMenu me={signedIn} placement="up" />
       </aside>
       <div className="console-main">

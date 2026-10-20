@@ -261,6 +261,10 @@ export default async function CoursePage({ params, searchParams }: { params: Par
           </section>
         )}
 
+        <p className="ep-helpline">
+          Questions about booking, changing dates or refunds? <a href="/help#learners">Learner help</a>
+        </p>
+
         <details className="ep-ai">
           <summary>Structured data for AI agents</summary>
           <pre>{JSON.stringify(jsonLd.find((j) => j.url.endsWith(sel.event.id)), null, 2)}</pre>

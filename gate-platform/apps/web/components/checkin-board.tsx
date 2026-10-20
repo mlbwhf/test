@@ -171,6 +171,9 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
         <Link href="/dashboard" className="ci-exit">
           × Exit check-in
         </Link>
+        <Link href="/help/check-in" className="ci-exit" target="_blank" rel="noopener">
+          ? How check-in works
+        </Link>
         <p className="ci-event">{event.name}</p>
         {event.day && (
           <p className="ci-day">

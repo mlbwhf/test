@@ -16,6 +16,7 @@ import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import { getMe } from "@/lib/console-data";
 import { MoneyKpis, OrdersTab, SettingsRows } from "./parts";
 import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
+import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
 
@@ -143,7 +144,9 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <div className="money-head">
-        <h1>Money</h1>
+        <h1>
+          Money <HelpLink slug="how-payments-work" />
+        </h1>
         <nav className="money-tabs" aria-label="Money">
           {TABS.map(([k, label]) => (
             <Link key={k} href={k === "orders" ? "/money" : `/money?tab=${k}`} aria-current={tab === k ? "page" : undefined}>

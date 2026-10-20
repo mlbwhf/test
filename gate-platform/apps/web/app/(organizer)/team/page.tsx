@@ -5,6 +5,7 @@ import { ApiNotice } from "@/components/ui";
 import { InvitePill } from "@/components/invite-pill";
 import { changeRoleAction, inviteAction, removeMemberAction, revokeInvitationAction } from "@/app/auth-actions";
 import { updateInstructorAccessAction } from "@/app/instructor-actions";
+import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,9 @@ export default async function TeamPage() {
   return (
     <div className="team">
       <div className="page-header">
-        <h1>Team</h1>
+        <h1>
+          Team <HelpLink slug="roles" />
+        </h1>
         <span className="today-date">Instructors, admins and finance in one place</span>
       </div>
 

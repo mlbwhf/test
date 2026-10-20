@@ -36,6 +36,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           <span className="wordmark">enrollclass</span>
         </div>
         <nav aria-label="Legal">
+          <Link href="/help">Help center</Link>
           <Link href="/terms">Terms of service</Link>
           <Link href="/privacy">Privacy policy</Link>
           <Link href="/refunds">Refunds and cancellations</Link>

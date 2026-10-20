@@ -32,4 +32,6 @@ expect "https://app.$d/money" 307 "/login?returnTo=" || fail=1
 expect "https://app.$d/my/seat/none?email=a@b.co" 200 '' || fail=1
 expect "https://app.$d/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1
 expect "https://api.$d/mcp" 405 'use POST' || fail=1
+expect "https://app.$d/help" 200 'How can we help' || fail=1
+expect "https://$d/help/quick-start" 200 'Quick start' || fail=1
 exit $fail

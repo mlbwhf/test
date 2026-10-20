@@ -33,7 +33,7 @@ export function proxy(request: NextRequest) {
 
   if (hosts.has(host)) {
     if (url.pathname === "/") return NextResponse.rewrite(new URL("/site", request.url));
-    if (url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || url.pathname === "/favicon.ico" || url.pathname === "/icon.svg" || url.pathname === "/robots.txt") {
+    if (url.pathname === "/help" || url.pathname.startsWith("/help/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || url.pathname === "/favicon.ico" || url.pathname === "/icon.svg" || url.pathname === "/robots.txt") {
       return NextResponse.next();
     }
     // Anything else on the marketing host belongs to the app host.
@@ -55,7 +55,7 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-const PUBLIC_APP = [/^\/c\//, /^\/cert\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
+const PUBLIC_APP = [/^\/help(\/|$)/, /^\/c\//, /^\/cert\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
 function isPublicAppPath(path: string): boolean {
   return PUBLIC_APP.some((re) => re.test(path));
 }

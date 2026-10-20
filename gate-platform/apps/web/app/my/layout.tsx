@@ -19,7 +19,7 @@ export default function LearnerLayout({ children }: { children: ReactNode }) {
       <footer className="learner-footer">
         <SeatMark size={8} />
         <span>
-          Registration and payments handled by <a href="https://enrollclass.com">EnrollClass</a> on behalf of your training provider.
+          Registration and payments handled by <a href="https://enrollclass.com">EnrollClass</a> on behalf of your training provider. <a href="/help#learners">Help</a>
         </span>
       </footer>
     </>

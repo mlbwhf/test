@@ -6,6 +6,7 @@ import { ActionForm } from "@/components/action-form";
 import { ApiNotice } from "@/components/ui";
 import { CopyButton } from "@/components/copy-button";
 import { createApiKeyAction, createWebhookAction, revokeApiKeyAction, testWebhookAction, toggleWebhookAction } from "@/app/integration-actions";
+import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,9 @@ export default async function IntegrationsPage() {
   return (
     <div className="ints">
       <div className="page-header">
-        <h1>Integrations</h1>
+        <h1>
+          Integrations <HelpLink slug="api-keys" />
+        </h1>
         <span className="today-date">Connect AI assistants, Zapier, Make, n8n or your own code</span>
       </div>
 
