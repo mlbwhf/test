@@ -172,4 +172,31 @@ describe("teams and roles", () => {
     expect(ex.returnTo).toBe("/dashboard");
     expect(ex.me).toMatchObject({ role: "owner", organization: { id: org.id, name: "Agile Agilist" } });
   });
+
+  it("Stripe counts as connected only once Stripe enables the account, and the button resumes setup", async () => {
+    const payments = new FakePaymentsAdapter();
+    payments.requireOnboarding = true;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments });
+    const mailer = new InMemoryNotifier();
+    const app = await buildApp({ core, env: "test", publicUrl: API, webUrl: WEB, mailer });
+    await app.inject({ method: "POST", url: "/auth/email", payload: { email: "solo@x.co" } });
+    const link = mailer.sent.at(-1)!.text.match(/https:\/\/api\.test\S+/)![0].replace(API, "");
+    const code = new URL((await app.inject(link)).headers.location as string).searchParams.get("code");
+    const token = (await app.inject({ method: "POST", url: "/auth/exchange", payload: { code } })).json().token as string;
+    await app.inject({ method: "POST", url: "/auth/organizations", headers: BJ(token), payload: { kind: "individual", country: "CA", currency: "CAD" } });
+    const me = async () => (await app.inject({ url: "/auth/me", headers: B(token) })).json().organization;
+    expect(await me()).toMatchObject({ paymentsConnected: false, paymentsSetup: "none" });
+
+    const c1 = (await app.inject({ method: "POST", url: "/v1/organizations/me/payments/connect", headers: BJ(token), payload: {} })).json();
+    expect(c1).toMatchObject({ ready: false });
+    expect(c1.onboardingUrl).toBeTruthy();
+    expect(await me()).toMatchObject({ paymentsConnected: false, paymentsSetup: "incomplete" });
+    const c2 = (await app.inject({ method: "POST", url: "/v1/organizations/me/payments/connect", headers: BJ(token), payload: {} })).json();
+    expect(c2.onboardingUrl).toContain("resume=1");
+
+    payments.completeOnboarding(c1.paymentsAccountRef);
+    const refreshed = (await app.inject({ url: "/v1/organizations/me/payments", headers: B(token) })).json();
+    expect(refreshed).toMatchObject({ setup: "ready", status: { ready: true } });
+    expect(await me()).toMatchObject({ paymentsConnected: true, paymentsSetup: "ready" });
+  });
 });

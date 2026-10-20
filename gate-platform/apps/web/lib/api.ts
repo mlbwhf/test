@@ -564,7 +564,7 @@ export const ROLE_HINTS: Record<Role, string> = {
 export type Permission = "team" | "settings" | "classes:write" | "classes:read" | "money:read" | "money:write";
 export type Me = {
   user: { id: string; email: string; name: string | null; avatarUrl: string | null };
-  organization: { id: string; name: string; kind: "company" | "individual" | null; currency: string; country: string; paymentsConnected: boolean } | null;
+  organization: { id: string; name: string; kind: "company" | "individual" | null; currency: string; country: string; paymentsConnected: boolean; paymentsSetup: "none" | "incomplete" | "ready" } | null;
   role: Role | null;
   permissions: Permission[];
   memberships: { organizationId: string; organizationName: string; kind: "company" | "individual" | null; role: Role }[];
@@ -587,7 +587,8 @@ export const api = {
   revokeInvitation: (id: string) => request<{ ok: boolean }>("DELETE", `/v1/invitations/${enc(id)}`),
   changeRole: (userId: string, role: Role) => request<{ userId: string; role: Role }>("PATCH", `/v1/members/${enc(userId)}`, { role }),
   removeMember: (userId: string) => request<{ ok: boolean }>("DELETE", `/v1/members/${enc(userId)}`),
-  connectPayments: () => request<{ paymentsAccountRef: string; onboardingUrl: string | null }>("POST", "/v1/organizations/me/payments/connect", {}),
+  connectPayments: () => request<{ paymentsAccountRef: string; onboardingUrl: string | null; ready: boolean; requirementsDue: string[] }>("POST", "/v1/organizations/me/payments/connect", {}),
+  refreshPayments: () => request<{ setup: "none" | "incomplete" | "ready"; status: { ready: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: string } | null }>("GET", "/v1/organizations/me/payments"),
 
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>

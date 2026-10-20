@@ -85,5 +85,7 @@ export async function connectStripeAction(_prev: ActionState, _data: FormData): 
   if (!r.ok) return fail(describeFailure(r.error));
   if (r.data.onboardingUrl) redirect(r.data.onboardingUrl);
   revalidatePath("/dashboard");
-  return { status: "ok", message: "Payments are connected." };
+  return r.data.ready
+    ? { status: "ok", message: "Stripe is connected: you can take payments and receive payouts." }
+    : { status: "error", message: "Stripe still needs information before payouts can start. Try again in a moment." };
 }

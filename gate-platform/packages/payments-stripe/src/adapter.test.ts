@@ -6,7 +6,10 @@ function fakeStripe() {
   const calls: Array<{ method: string; args: unknown[] }> = [];
   const rec = (method: string, ret: unknown) => async (...args: unknown[]) => { calls.push({ method, args }); return ret; };
   const stripe = {
-    accounts: { create: rec("accounts.create", { id: "acct_123" }) },
+    accounts: {
+      create: rec("accounts.create", { id: "acct_123" }),
+      retrieve: rec("accounts.retrieve", { id: "acct_123", charges_enabled: false, payouts_enabled: false, details_submitted: false, requirements: { currently_due: ["external_account", "individual.dob.day"], past_due: ["external_account"], disabled_reason: "requirements.past_due" } }),
+    },
     accountLinks: { create: rec("accountLinks.create", { url: "https://connect.stripe.com/setup/x" }) },
     paymentIntents: {
       create: rec("paymentIntents.create", { id: "pi_1", client_secret: "pi_1_secret_a", status: "requires_payment_method" }),
@@ -81,5 +84,20 @@ describe("StripePaymentsAdapter", () => {
     expect(refunded).toMatchObject({ type: "refund.succeeded", refundRef: "re_9", paymentRef: "pi_2", amountMinor: 100 });
     const other = mapStripeEvent({ id: "evt_4", type: "customer.created", data: { object: {} } } as unknown as Stripe.Event);
     expect(other).toMatchObject({ type: "ignored", providerType: "customer.created" });
+  });
+
+  it("reports an unfinished account as not ready, creates individuals for instructors, and resumes onboarding", async () => {
+    const { stripe, calls } = fakeStripe();
+    const a = new StripePaymentsAdapter(stripe, config);
+    await a.createConnectedAccount({ organizationId: "org_1", country: "CA", businessName: "Alex", businessType: "individual" });
+    expect((calls.find((c) => c.method === "accounts.create")!.args[0] as { business_type: string }).business_type).toBe("individual");
+    expect(await a.getAccountStatus("acct_123")).toEqual({ chargesEnabled: false, payoutsEnabled: false, detailsSubmitted: false, requirementsDue: ["external_account", "individual.dob.day"], disabledReason: "requirements.past_due" });
+    expect(await a.createOnboardingLink("acct_123")).toBe("https://connect.stripe.com/setup/x");
+    expect(calls.filter((c) => c.method === "accountLinks.create")).toHaveLength(2);
+  });
+
+  it("maps account.updated webhooks", () => {
+    const ev = mapStripeEvent({ id: "evt_a", type: "account.updated", data: { object: { id: "acct_9", charges_enabled: true, payouts_enabled: true, details_submitted: true, requirements: { currently_due: [], past_due: [] } } } } as unknown as Stripe.Event);
+    expect(ev).toEqual({ type: "account.updated", accountRef: "acct_9", providerEventId: "evt_a", status: { chargesEnabled: true, payoutsEnabled: true, detailsSubmitted: true, requirementsDue: [] } });
   });
 });

@@ -9,6 +9,19 @@ export interface IdGenerator {
 }
 
 /** Abstraction over Stripe Connect / Finix / Adyen. Everything is idempotent by key. */
+/** What the payments provider says about an organizer's account right now. */
+export interface PaymentsAccountStatus {
+  /** Learners can be charged on this account's behalf. */
+  chargesEnabled: boolean;
+  /** Money can be paid out to the organizer's bank. */
+  payoutsEnabled: boolean;
+  /** The organizer finished the provider's onboarding form. */
+  detailsSubmitted: boolean;
+  /** Fields the provider still needs, in its own words (e.g. "external_account"). */
+  requirementsDue: string[];
+  disabledReason?: string | undefined;
+}
+
 export interface PaymentsPort {
   readonly provider: string;
   createConnectedAccount(input: {
@@ -16,7 +29,13 @@ export interface PaymentsPort {
     country: string;
     email?: string;
     businessName: string;
+    /** Independent instructors onboard as individuals, organizations as companies. */
+    businessType?: "individual" | "company";
   }): Promise<{ accountRef: string; onboardingUrl?: string }>;
+  /** Live status of a connected account. */
+  getAccountStatus(accountRef: string): Promise<PaymentsAccountStatus>;
+  /** A fresh link to the provider's hosted onboarding, for resuming an unfinished setup. */
+  createOnboardingLink(accountRef: string): Promise<string | undefined>;
   createPayment(input: {
     orderId: string;
     amountMinor: MinorUnits;
@@ -67,6 +86,7 @@ export type PaymentEvent =
   | { type: "payment.failed"; paymentRef: string; reason: string; providerEventId: string }
   | { type: "refund.succeeded"; paymentRef: string; refundRef: string; amountMinor: MinorUnits; providerEventId: string }
   | { type: "refund.failed"; paymentRef: string; refundRef: string; reason: string; providerEventId: string }
+  | { type: "account.updated"; accountRef: string; status: PaymentsAccountStatus; providerEventId: string }
   | { type: "ignored"; providerEventId: string; providerType: string };
 
 export interface OrganizationRepo {

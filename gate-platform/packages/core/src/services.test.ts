@@ -206,3 +206,35 @@ describe("door check-in", () => {
     await expect(core.checkIn(stranger.organization.id, seat!.id)).rejects.toThrow(/not found/);
   });
 });
+
+describe("payments setup status", () => {
+  it("an account that exists is not 'connected' until the provider enables charges and payouts", async () => {
+    const payments = new FakePaymentsAdapter();
+    payments.requireOnboarding = true;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments });
+    const { organization } = await core.createOrganization({ name: "Alex", country: "CA", currency: "CAD", kind: "individual" });
+
+    // Click "Connect Stripe", then abandon Stripe's form.
+    const first = await core.connectPayments(organization.id);
+    expect(first.paymentsAccountRef).toBeDefined();
+    expect(first.onboardingUrl).toBeDefined();
+    expect(first.paymentsStatus?.ready).toBe(false);
+    expect(first.paymentsStatus?.requirementsDue).toContain("external_account");
+    expect(payments.calls.find((c) => c.method === "createConnectedAccount")?.input).toMatchObject({ businessType: "individual" });
+
+    // Click again later: same account, a fresh link to resume.
+    const again = await core.connectPayments(organization.id);
+    expect(again.paymentsAccountRef).toBe(first.paymentsAccountRef);
+    expect(again.onboardingUrl).toContain("resume=1");
+    expect(payments.calls.filter((c) => c.method === "createConnectedAccount")).toHaveLength(1);
+
+    // Stripe approves: the webhook marks it ready.
+    payments.completeOnboarding(first.paymentsAccountRef!);
+    await core.handlePaymentEvent({ type: "account.updated", accountRef: first.paymentsAccountRef!, status: await payments.getAccountStatus(first.paymentsAccountRef!), providerEventId: "evt_acct" });
+    expect((await core.getOrganization(organization.id)).paymentsStatus?.ready).toBe(true);
+    const done = await core.connectPayments(organization.id);
+    expect(done.onboardingUrl).toBeUndefined();
+    expect(await core.handlePaymentEvent({ type: "account.updated", accountRef: "acct_unknown", status: { chargesEnabled: true, payoutsEnabled: true, detailsSubmitted: true, requirementsDue: [] }, providerEventId: "evt_x" })).toEqual({ handled: false, reason: "unknown account" });
+  });
+});
+

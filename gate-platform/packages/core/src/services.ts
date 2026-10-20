@@ -4,7 +4,7 @@ import { computeSplits, priceOrder, type PayoutDestination, type SplitRule } fro
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
-import type { Clock, IdGenerator, MeetingProvider, PaymentEvent, PaymentsPort, Repos, TaxPort } from "./ports.js";
+import type { Clock, IdGenerator, MeetingProvider, PaymentEvent, PaymentsPort, Repos, TaxPort, PaymentsAccountStatus } from "./ports.js";
 import { ROSTER_FORMATS, SEQUENCE_STEPS, attendanceFromMinutes, overlapMinutes, rosterCsv, stepDueAt, type RosterFormat } from "./delivery.js";
 import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
@@ -151,18 +151,50 @@ export class Core {
     return org;
   }
 
+  /**
+   * Start or resume payments setup. Creates the connected account the first time; while
+   * the provider has not enabled charges and payouts, returns a fresh onboarding link so
+   * the organizer can finish where they left off.
+   */
   async connectPayments(organizationId: string, email?: string | undefined): Promise<Organization & { onboardingUrl?: string }> {
+    let org = await this.getOrganization(organizationId);
+    if (!org.paymentsAccountRef) {
+      const res = await this.payments.createConnectedAccount({
+        organizationId: org.id,
+        country: org.country,
+        businessName: org.name,
+        businessType: org.kind === "individual" ? "individual" : "company",
+        ...(email ? { email } : {}),
+      });
+      org = { ...org, paymentsAccountRef: res.accountRef };
+      await this.repos.organizations.update(org);
+      org = await this.refreshPaymentsStatus(org.id);
+      if (!org.paymentsStatus?.ready && res.onboardingUrl) return { ...org, onboardingUrl: res.onboardingUrl };
+      return org;
+    }
+    org = await this.refreshPaymentsStatus(org.id);
+    if (org.paymentsStatus?.ready) return org;
+    const link = await this.payments.createOnboardingLink(org.paymentsAccountRef!);
+    return { ...org, ...(link ? { onboardingUrl: link } : {}) };
+  }
+
+  /** Ask the provider for the account's current state and remember it. */
+  async refreshPaymentsStatus(organizationId: string): Promise<Organization> {
     const org = await this.getOrganization(organizationId);
-    if (org.paymentsAccountRef) return org;
-    const res = await this.payments.createConnectedAccount({
-      organizationId: org.id,
-      country: org.country,
-      businessName: org.name,
-      ...(email ? { email } : {}),
-    });
-    const updated: Organization = { ...org, paymentsAccountRef: res.accountRef };
-    await this.repos.organizations.update(updated);
-    return { ...updated, ...(res.onboardingUrl ? { onboardingUrl: res.onboardingUrl } : {}) };
+    if (!org.paymentsAccountRef) return org;
+    return this.applyPaymentsStatus(org, await this.payments.getAccountStatus(org.paymentsAccountRef));
+  }
+
+  private async applyPaymentsStatus(org: Organization, s: PaymentsAccountStatus): Promise<Organization> {
+    const next: Organization = {
+      ...org,
+      paymentsStatus: {
+        ready: s.chargesEnabled && s.payoutsEnabled, chargesEnabled: s.chargesEnabled, payoutsEnabled: s.payoutsEnabled, detailsSubmitted: s.detailsSubmitted,
+        requirementsDue: s.requirementsDue.slice(0, 20), ...(s.disabledReason ? { disabledReason: s.disabledReason } : {}), checkedAt: this.clock.now(),
+      },
+    };
+    await this.repos.organizations.update(next);
+    return next;
   }
 
   async createParty(organizationId: string, input: { name: string; kind: PartyKind; paymentsAccountRef?: string | undefined }): Promise<Party> {
@@ -568,6 +600,12 @@ export class Core {
   // ---------- Provider events (webhooks) ----------
 
   async handlePaymentEvent(event: PaymentEvent): Promise<{ handled: boolean; reason?: string }> {
+    if (event.type === "account.updated") {
+      const org = (await this.repos.organizations.list()).find((o) => o.paymentsAccountRef === event.accountRef);
+      if (!org) return { handled: false, reason: "unknown account" };
+      await this.applyPaymentsStatus(org, event.status);
+      return { handled: true };
+    }
     const fresh = await this.repos.processedEvents.record(event.providerEventId);
     if (!fresh) return { handled: false, reason: "duplicate" };
     switch (event.type) {

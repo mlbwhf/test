@@ -356,9 +356,14 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.patch("/v1/organizations/me/pricing", { schema: { tags: ["organizations"], body: S.UpdatePricingBody, response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.updatePricing(org(req).id, req.body)));
     api.post("/v1/organizations/me/pricing/refresh-rates", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema, 409: S.ErrorSchema, 502: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.refreshFxRates(org(req).id)));
 
-    api.post("/v1/organizations/me/payments/connect", { schema: { tags: ["organizations"], body: z.object({ email: z.string().email().optional() }).optional(), response: { 200: z.object({ paymentsAccountRef: z.string(), onboardingUrl: z.string().nullable() }) } } }, async (req) => {
+    // Re-reads the account from the provider (e.g. on return from Stripe's onboarding).
+    api.get("/v1/organizations/me/payments", { schema: { tags: ["organizations"], response: { 200: z.object({ setup: z.enum(["none", "incomplete", "ready"]), status: S.OrganizationSchema.shape.paymentsStatus }) } } }, async (req) => {
+      const o = await deps.core.refreshPaymentsStatus(org(req).id);
+      return { setup: !o.paymentsAccountRef ? "none" as const : o.paymentsStatus?.ready ? "ready" as const : "incomplete" as const, status: S.toOrganization(o).paymentsStatus };
+    });
+    api.post("/v1/organizations/me/payments/connect", { schema: { tags: ["organizations"], body: z.object({ email: z.string().email().optional() }).optional(), response: { 200: z.object({ paymentsAccountRef: z.string(), onboardingUrl: z.string().nullable(), ready: z.boolean(), requirementsDue: z.array(z.string()) }) } } }, async (req) => {
       const res = await deps.core.connectPayments(org(req).id, req.body?.email);
-      return { paymentsAccountRef: res.paymentsAccountRef!, onboardingUrl: res.onboardingUrl ?? null };
+      return { paymentsAccountRef: res.paymentsAccountRef!, onboardingUrl: res.onboardingUrl ?? null, ready: Boolean(res.paymentsStatus?.ready), requirementsDue: res.paymentsStatus?.requirementsDue ?? [] };
     });
 
     api.get("/v1/parties", { schema: { tags: ["parties"], response: { 200: z.object({ items: z.array(S.PartySchema) }) } } }, async (req) => ({ items: (await deps.core.listParties(org(req).id)).map(S.toParty) }));

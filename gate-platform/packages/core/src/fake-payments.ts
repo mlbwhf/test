@@ -11,9 +11,25 @@ export class FakePaymentsAdapter implements PaymentsPort {
   private seq = 0;
   private readonly run = Math.random().toString(36).slice(2, 8);
 
+  /** Accounts whose onboarding the test has not "completed" yet (see completeOnboarding). */
+  readonly pendingAccounts = new Set<string>();
+  /** When true, new accounts start unfinished, like a real provider. Off by default. */
+  requireOnboarding = false;
   async createConnectedAccount(input: { organizationId: string; country: string }) {
     this.calls.push({ method: "createConnectedAccount", input });
-    return { accountRef: `acct_fake_${input.organizationId}`, onboardingUrl: `https://fake.gate.local/onboard/${input.organizationId}` };
+    const accountRef = `acct_fake_${input.organizationId}`;
+    if (this.requireOnboarding) this.pendingAccounts.add(accountRef);
+    return { accountRef, onboardingUrl: `https://fake.gate.local/onboard/${input.organizationId}` };
+  }
+  async getAccountStatus(accountRef: string) {
+    const ready = !this.pendingAccounts.has(accountRef);
+    return { chargesEnabled: ready, payoutsEnabled: ready, detailsSubmitted: ready, requirementsDue: ready ? [] : ["external_account", "individual.verification.document"] };
+  }
+  async createOnboardingLink(accountRef: string) {
+    return this.pendingAccounts.has(accountRef) ? `https://fake.gate.local/onboard/${accountRef}?resume=1` : undefined;
+  }
+  completeOnboarding(accountRef: string) {
+    this.pendingAccounts.delete(accountRef);
   }
   async createPayment(input: { orderId: string }) {
     this.calls.push({ method: "createPayment", input });

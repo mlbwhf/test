@@ -1,11 +1,13 @@
 import Stripe from "stripe";
-import type { PaymentEvent, PaymentsPort } from "@gate/core";
+import type { PaymentEvent, PaymentsAccountStatus, PaymentsPort } from "@gate/core";
 
 export interface StripeAdapterConfig {
   /** Where Stripe sends the organizer after/if they abandon Connect onboarding. */
   onboardingReturnUrl: string;
   onboardingRefreshUrl: string;
   webhookSecret?: string;
+  /** Signing secret of the Connect webhook endpoint (events from organizers' accounts, e.g. account.updated). */
+  connectWebhookSecret?: string;
 }
 
 /**
@@ -26,7 +28,7 @@ export class StripePaymentsAdapter implements PaymentsPort {
     return new StripePaymentsAdapter(new Stripe(secretKey, { appInfo: { name: "EnrollClass", version: "0.1.0", url: "https://enrollclass.com" } }), config);
   }
 
-  async createConnectedAccount(input: { organizationId: string; country: string; email?: string; businessName: string }) {
+  async createConnectedAccount(input: { organizationId: string; country: string; email?: string; businessName: string; businessType?: "individual" | "company" }) {
     // Connected accounts use Stripe's controller model: the platform pays Stripe's fees and
     // carries refund/dispute losses (funds are held until delivery, so the platform controls
     // the money that would cover them), Stripe collects onboarding requirements through the
@@ -41,20 +43,29 @@ export class StripePaymentsAdapter implements PaymentsPort {
         },
         country: input.country,
         ...(input.email ? { email: input.email } : {}),
-        business_type: "company",
+        business_type: input.businessType ?? "company",
         business_profile: { name: input.businessName, mcc: "8299" }, // 8299: schools and educational services
         capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
         metadata: { organizationId: input.organizationId },
       },
       { idempotencyKey: `acct:${input.organizationId}` },
     );
+    return { accountRef: account.id, onboardingUrl: (await this.createOnboardingLink(account.id))! };
+  }
+
+  /** Hosted onboarding links are single-use and short-lived; make a new one per click. */
+  async createOnboardingLink(accountRef: string): Promise<string | undefined> {
     const link = await this.stripe.accountLinks.create({
-      account: account.id,
+      account: accountRef,
       type: "account_onboarding",
       return_url: this.config.onboardingReturnUrl,
       refresh_url: this.config.onboardingRefreshUrl,
     });
-    return { accountRef: account.id, onboardingUrl: link.url };
+    return link.url;
+  }
+
+  async getAccountStatus(accountRef: string): Promise<PaymentsAccountStatus> {
+    return accountStatus(await this.stripe.accounts.retrieve(accountRef));
   }
 
   async createPayment(input: {
@@ -127,9 +138,17 @@ export class StripePaymentsAdapter implements PaymentsPort {
 
   /** Verify the signature and normalize. Throws on a bad signature. */
   parseWebhook(rawBody: string | Buffer, signature: string): PaymentEvent {
-    if (!this.config.webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
-    const event = this.stripe.webhooks.constructEvent(rawBody, signature, this.config.webhookSecret);
-    return mapStripeEvent(event);
+    const secrets = [this.config.webhookSecret, this.config.connectWebhookSecret].filter((s): s is string => Boolean(s));
+    if (secrets.length === 0) throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
+    let lastError: unknown;
+    for (const secret of secrets) {
+      try {
+        return mapStripeEvent(this.stripe.webhooks.constructEvent(rawBody, signature, secret));
+      } catch (err) {
+        lastError = err;
+      }
+    }
+    throw lastError;
   }
 }
 
@@ -146,8 +165,24 @@ function mapRefundStatus(status: string | null): "pending" | "succeeded" | "fail
   return "pending";
 }
 
+/** Ready means Stripe lets the account take charges and receive payouts, nothing less. */
+export function accountStatus(a: Stripe.Account): PaymentsAccountStatus {
+  const due = [...(a.requirements?.currently_due ?? []), ...(a.requirements?.past_due ?? [])];
+  return {
+    chargesEnabled: Boolean(a.charges_enabled),
+    payoutsEnabled: Boolean(a.payouts_enabled),
+    detailsSubmitted: Boolean(a.details_submitted),
+    requirementsDue: [...new Set(due)],
+    ...(a.requirements?.disabled_reason ? { disabledReason: a.requirements.disabled_reason } : {}),
+  };
+}
+
 export function mapStripeEvent(event: Stripe.Event): PaymentEvent {
   switch (event.type) {
+    case "account.updated": {
+      const a = event.data.object as Stripe.Account;
+      return { type: "account.updated", accountRef: a.id, status: accountStatus(a), providerEventId: event.id };
+    }
     case "payment_intent.succeeded": {
       const pi = event.data.object;
       return {

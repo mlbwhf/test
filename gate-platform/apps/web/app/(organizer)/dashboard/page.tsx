@@ -57,7 +57,13 @@ const skipped = <T,>(): Promise<ApiResult<T>> => Promise.resolve({ ok: false, er
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams;
-  const meRes = await api.me();
+  let meRes = await api.me();
+  // Back from Stripe, or setup still open: ask Stripe for the account's real state.
+  if (meRes.ok && meRes.data.organization?.paymentsSetup === "incomplete") {
+    const refreshed = await api.refreshPayments();
+    if (refreshed.ok && refreshed.data.setup === "ready") meRes = await api.me();
+  }
+  const returnedFromStripe = sp.connect === "return" || sp.connect === "refresh";
   const perms = meRes.ok ? meRes.data.permissions : [];
   const seesMoney = perms.includes("money:read");
   const [orgRes, ordersRes, balancesRes, coursesRes, eventsRes] = await Promise.all([
@@ -98,6 +104,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           canSettings={perms.includes("settings")}
           canClasses={perms.includes("classes:write")}
           paymentsConnected={meRes.data.organization?.paymentsConnected ?? false}
+          paymentsSetup={meRes.data.organization?.paymentsSetup ?? "none"}
+          returnedFromStripe={returnedFromStripe}
           individual={meRes.data.organization?.kind === "individual"}
           courses={coursesRes.ok ? coursesRes.data.items.length : 0}
           cohorts={eventsRes.ok ? eventsRes.data.items.length : 0}
@@ -215,10 +223,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   );
 }
 
-function GettingStarted(p: { welcome: boolean; canSettings: boolean; canClasses: boolean; paymentsConnected: boolean; individual: boolean; courses: number; cohorts: number; paid: number; firstCourseId: string | undefined }) {
+function GettingStarted(p: { welcome: boolean; canSettings: boolean; canClasses: boolean; paymentsConnected: boolean; paymentsSetup: "none" | "incomplete" | "ready"; returnedFromStripe: boolean; individual: boolean; courses: number; cohorts: number; paid: number; firstCourseId: string | undefined }) {
   const steps = [
     { done: true, title: "Create your account", body: p.individual ? "Your practice is set up with you as its instructor." : "Invite instructors, admins and finance from Team." },
-    { done: p.paymentsConnected, title: "Connect Stripe to get paid", body: "Payments go to your own Stripe account; EnrollClass holds them until the course is delivered.", action: p.canSettings && !p.paymentsConnected ? "stripe" : undefined },
+    p.paymentsSetup === "incomplete"
+      ? { done: false, title: "Finish your Stripe setup", body: p.returnedFromStripe ? "Stripe hasn't enabled payouts yet. If you completed every step, approval can take a few minutes; otherwise continue where you left off." : "You started connecting Stripe but it still needs details before you can be paid.", action: p.canSettings ? "stripe" : undefined }
+      : { done: p.paymentsConnected, title: "Connect Stripe to get paid", body: "Payments go to your own Stripe account; EnrollClass holds them until the course is delivered.", action: p.canSettings && !p.paymentsConnected ? "stripe" : undefined },
     { done: p.courses > 0, title: "Add a course", body: "The course is what you teach: name, description, cover image.", href: "/courses" },
     { done: p.cohorts > 0, title: "Schedule a cohort and set ticket prices", body: "A cohort is one run of the course with dates, seats and prices.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
     { done: p.paid > 0, title: "Share it and take your first registration", body: "Embed the registration widget on your site or send the course link.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
@@ -245,7 +255,7 @@ function GettingStarted(p: { welcome: boolean; canSettings: boolean; canClasses:
               <div className="start-body">{s.body}</div>
             </div>
             {!s.done && s.action === "stripe" && (
-              <ActionForm action={connectStripeAction} submitLabel="Connect Stripe" pendingLabel="Opening Stripe…" inline>
+              <ActionForm action={connectStripeAction} submitLabel={p.paymentsSetup === "incomplete" ? "Continue on Stripe" : "Connect Stripe"} pendingLabel="Opening Stripe…" inline>
                 <span />
               </ActionForm>
             )}

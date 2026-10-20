@@ -25,7 +25,7 @@ Create four A records at your DNS provider, all pointing at the VPS public IP:
 | Name | Serves |
 |---|---|
 | `api.enrollclass.com` | REST API, OpenAPI docs at `/docs`, Stripe webhook, embeddable widget |
-| `app.enrollclass.com` | organizer dashboard (password protected) and learner self-service portal |
+| `app.enrollclass.com` | organizer dashboard (personal sign-in) and learner self-service portal |
 | `enrollclass.com` | public marketing site with terms, privacy and refund pages |
 | `www.enrollclass.com` | redirects to `enrollclass.com` |
 
@@ -134,9 +134,16 @@ dashboard picks it up. `https://app.enrollclass.com/dashboard` now shows the org
    events `payment_intent.succeeded`, `payment_intent.payment_failed`, `refund.updated` and
    `charge.refund.updated` (the adapter ignores anything else). Put the signing secret in
    `.env` as `STRIPE_WEBHOOK_SECRET` and run `./deploy.sh`.
-2. In the dashboard, Connect payments for the organization; Stripe redirects back to
+2. Add a second endpoint with the same URL, choosing **Events on Connected accounts**, event
+   `account.updated`. Put its signing secret in `.env` as `STRIPE_CONNECT_WEBHOOK_SECRET`.
+   It keeps each organizer's "Stripe connected" status current when Stripe approves or
+   restricts their account; without it the status still refreshes whenever they open the
+   dashboard.
+3. Organizers connect from the dashboard checklist. A Stripe account counts as connected
+   only when Stripe enables both charges and payouts; until then the checklist offers
+   "Finish Stripe setup" with a fresh link. Stripe redirects back to
    `https://app.enrollclass.com/dashboard?connect=return`.
-3. Stay on test keys until Connect platform review approves the live account.
+4. Stay on test keys until Connect platform review approves the live account.
 
 ## 7. Backups
 

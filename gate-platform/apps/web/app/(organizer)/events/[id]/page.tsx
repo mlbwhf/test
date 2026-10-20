@@ -163,6 +163,9 @@ function MeetingCard({ eventId, meeting }: { eventId: string; meeting: Meeting |
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const meRes = await api.me();
+  const canMoney = meRes.ok && meRes.data.permissions.includes("money:write");
+  const isTeam = meRes.ok && meRes.data.organization?.kind !== "individual";
   const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes, partiesRes] =
     await Promise.all([
       api.getEvent(id),
@@ -443,58 +446,60 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           </ActionForm>
         </div>
 
+        {canMoney && (
         <div className="subsection">
           <h3>Money</h3>
           {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
-          <h4 className="hint">Instructor fees</h4>
-          {instructorFees.length === 0 ? (
-            <Empty>No instructor fees set. Fees count against this cohort&apos;s margin and become payable to the instructor.</Empty>
-          ) : (
-            <ul className="fees-list">
-              {instructorFees.map((f) => (
-                <li key={f.partyId}>
-                  {partyNames.get(f.partyId) ?? <code>{f.partyId}</code>}: {formatMoney(f.amountMinor, event.currency)}
-                </li>
-              ))}
-            </ul>
-          )}
-          {instructors.length === 0 ? (
-            <p className="hint">
-              No instructors yet. <Link href="/instructors">Add one</Link> to set fees.
-            </p>
-          ) : (
-            <ActionForm action={saveInstructorFeesAction} submitLabel="Save instructor fees" pendingLabel="Saving…" wide>
-              <input type="hidden" name="eventId" value={event.id} />
-              <input type="hidden" name="currency" value={event.currency} />
-              {Array.from({ length: MAX_INSTRUCTOR_FEES }, (_, i) => {
-                const existing = instructorFees[i];
-                return (
-                  <div key={i} className="fields-row">
-                    <label>
-                      Instructor {i + 1}
-                      <select name={`fee_${i}_partyId`} defaultValue={existing?.partyId ?? ""}>
-                        <option value="">— none —</option>
-                        {instructors.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
-                      Fee {i + 1} ({event.currency})
-                      <input
-                        name={`fee_${i}_amount`}
-                        inputMode="decimal"
-                        placeholder="500.00"
-                        defaultValue={existing ? formatMajor(existing.amountMinor, event.currency) : ""}
-                      />
-                    </label>
-                  </div>
-                );
-              })}
-              <p className="hint">Saving replaces the full list: leave a row blank to drop that fee.</p>
-            </ActionForm>
+          {isTeam && (
+            <>
+              <h4 className="hint">Instructor pay</h4>
+              <p className="hint">
+                What you pay the instructors for teaching this cohort. It is subtracted from the cohort&apos;s profit on the Money page and recorded as owed to
+                them until you record the payout. Learners never see it and ticket prices don&apos;t change.
+              </p>
+              {instructorFees.length > 0 && (
+                <ul className="fees-list">
+                  {instructorFees.map((f) => (
+                    <li key={f.partyId}>
+                      {partyNames.get(f.partyId) ?? <code>{f.partyId}</code>}: {formatMoney(f.amountMinor, event.currency)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {instructors.length === 0 ? (
+                <p className="hint">
+                  No instructors yet. <Link href="/instructors">Add one</Link>, or invite them from <Link href="/team">Team</Link>.
+                </p>
+              ) : (
+                <ActionForm action={saveInstructorFeesAction} submitLabel="Save instructor pay" pendingLabel="Saving…" wide>
+                  <input type="hidden" name="eventId" value={event.id} />
+                  <input type="hidden" name="currency" value={event.currency} />
+                  {Array.from({ length: Math.min(instructorFees.length + 1, MAX_INSTRUCTOR_FEES) }, (_, i) => {
+                    const existing = instructorFees[i];
+                    return (
+                      <div key={i} className="fields-row">
+                        <label>
+                          Instructor
+                          <select name={`fee_${i}_partyId`} defaultValue={existing?.partyId ?? ""}>
+                            <option value="">Choose…</option>
+                            {instructors.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.name}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          Amount ({event.currency})
+                          <input name={`fee_${i}_amount`} inputMode="decimal" placeholder="e.g. 500" defaultValue={existing ? formatMajor(existing.amountMinor, event.currency) : ""} />
+                        </label>
+                      </div>
+                    );
+                  })}
+                  <p className="hint">To remove someone&apos;s pay, clear the amount and save. Up to {MAX_INSTRUCTOR_FEES} instructors per cohort.</p>
+                </ActionForm>
+              )}
+            </>
           )}
 
           <h4 className="hint">Cancel cohort</h4>
@@ -538,6 +543,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             </ActionForm>
           )}
         </div>
+        )}
       </Section>
 
       <Section title="Ticket types">

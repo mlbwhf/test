@@ -13,6 +13,11 @@ export interface Organization {
   passFeeToAttendee: boolean;
   /** Connected account at the payments provider (e.g. Stripe acct_...). */
   paymentsAccountRef?: string;
+  /**
+   * Last known state of that account. An account exists as soon as setup starts; it is
+   * only ready once the provider enables both charges and payouts.
+   */
+  paymentsStatus?: { ready: boolean; chargesEnabled: boolean; payoutsEnabled: boolean; detailsSubmitted: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: Date };
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */

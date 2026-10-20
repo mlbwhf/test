@@ -25,7 +25,13 @@ export const randomId = (prefix: string) => `${prefix}_${randomBytes(9).toString
 const RoleEnum = z.enum(ROLES as [Role, ...Role[]]);
 export const MeSchema = z.object({
   user: z.object({ id: z.string(), email: z.string(), name: z.string().nullable(), avatarUrl: z.string().nullable() }),
-  organization: z.object({ id: z.string(), name: z.string(), kind: z.enum(["company", "individual"]).nullable(), currency: z.string(), country: z.string(), paymentsConnected: z.boolean() }).nullable(),
+  organization: z.object({
+    id: z.string(), name: z.string(), kind: z.enum(["company", "individual"]).nullable(), currency: z.string(), country: z.string(),
+    /** True only once the provider enables charges and payouts. */
+    paymentsConnected: z.boolean(),
+    /** none: not started; incomplete: account exists, setup unfinished; ready. */
+    paymentsSetup: z.enum(["none", "incomplete", "ready"]),
+  }).nullable(),
   role: RoleEnum.nullable(),
   permissions: z.array(z.string()),
   memberships: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), kind: z.enum(["company", "individual"]).nullable(), role: RoleEnum })),
@@ -36,7 +42,7 @@ export function meOut(ctx: SessionContext) {
   const org = ctx.organization;
   return {
     user: { id: ctx.user.id, email: ctx.user.email, name: ctx.user.name ?? null, avatarUrl: ctx.user.avatarUrl ?? null },
-    organization: org ? { id: org.id, name: org.name, kind: org.kind ?? null, currency: org.currency, country: org.country, paymentsConnected: Boolean(org.paymentsAccountRef) } : null,
+    organization: org ? { id: org.id, name: org.name, kind: org.kind ?? null, currency: org.currency, country: org.country, paymentsConnected: Boolean(org.paymentsStatus?.ready), paymentsSetup: !org.paymentsAccountRef ? "none" as const : org.paymentsStatus?.ready ? "ready" as const : "incomplete" as const } : null,
     role: ctx.role ?? null,
     permissions: PERMS.filter((p) => can(ctx.role, p)),
     memberships: ctx.memberships.map((m) => ({ organizationId: m.organizationId, organizationName: m.organizationName, kind: m.organizationKind ?? null, role: m.role })),

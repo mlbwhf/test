@@ -47,6 +47,7 @@ async function main() {
       onboardingReturnUrl: `${process.env.GATE_WEB_URL ?? "http://localhost:3000"}/dashboard?connect=return`,
       onboardingRefreshUrl: `${process.env.GATE_WEB_URL ?? "http://localhost:3000"}/dashboard?connect=refresh`,
       ...(process.env.STRIPE_WEBHOOK_SECRET ? { webhookSecret: process.env.STRIPE_WEBHOOK_SECRET } : {}),
+      ...(process.env.STRIPE_CONNECT_WEBHOOK_SECRET ? { connectWebhookSecret: process.env.STRIPE_CONNECT_WEBHOOK_SECRET } : {}),
     });
     payments = stripe;
     console.log("[payments] stripe connect");
