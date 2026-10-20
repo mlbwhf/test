@@ -288,7 +288,9 @@ function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOvervie
           <p className="seat-count">
             <strong>{l.sold}</strong> of {l.capacity}
           </p>
-          {o.money && (
+          {l.free ? (
+            <p className="seat-free">Free class: no payments and no EnrollClass fees.</p>
+          ) : o.money && (
             <div className="seat-money">
               <div>
                 <span>HELD</span>

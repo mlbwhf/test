@@ -596,7 +596,7 @@ export type HomeAttention = {
   detail: string;
   action: { label: string; kind: "link"; href: string } | { label: string; kind: "release"; eventId: string } | { label: string; kind: "stripe" };
 };
-export type EventLine = HomeLine & { status: EventStatus; minEnrollment: number | null };
+export type EventLine = HomeLine & { status: EventStatus; minEnrollment: number | null; free: boolean };
 export type EventOverview = {
   line: EventLine;
   sessions: { startsAt: string; endsAt: string }[];

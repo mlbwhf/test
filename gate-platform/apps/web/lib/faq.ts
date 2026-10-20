@@ -11,13 +11,14 @@ export const FAQ_GROUPS: Array<{ title: string; items: Faq[] }> = [
       { q: "What is EnrollClass?", a: "EnrollClass is a registration and payments platform for professional training providers and independent instructors. You publish classes (cohorts), learners register and pay by card or invoice, and the money is held until the class is delivered and then released to your Stripe account." },
       { q: "Who is it for?", a: "Training companies with several instructors, and independent instructors who run live virtual, in-person or hybrid courses such as certification classes (SAFe, Scrum, PMP and similar), workshops and bootcamps." },
       { q: "Which countries does it work in?", a: "EnrollClass focuses on North America and Europe to start. Learners can pay in several currencies, and you are paid through Stripe in the countries Stripe supports for your business." },
-      { q: "How much does it cost?", a: "It is free to start: signing up, creating courses and publishing classes cost nothing. You pay only a per-seat fee on paid registrations; the rates are on the pricing section of the home page.", link: "/#pricing" },
+      { q: "How much does it cost?", a: "It is free to start: signing up, creating courses and publishing classes cost nothing, and free classes are always free. You pay only a per-seat fee on paid registrations; the rates are on the pricing section of the home page.", link: "/#pricing" },
+      { q: "Do you charge anything for free classes?", a: "No. When a ticket's price is 0 there is no EnrollClass fee, no card fee and no payment step: learners register and get their ticket, calendar invitation, reminders and certificate as usual. You don't even need to connect Stripe if all your classes are free.", link: "/help/free-classes" },
     ],
   },
   {
     title: "Classes and registration",
     items: [
-      { q: "How do I publish my first class?", a: "Sign up, connect Stripe, then click Create event: pick or create a course, set the dates, ticket price and seats, and publish. You get a public course page link and a code to embed registration on your own website.", link: "/help/quick-start" },
+      { q: "How do I publish my first class?", a: "Sign up, connect Stripe (only needed for paid classes), then click Create event: pick or create a course, set the dates, ticket price and seats, and publish. You get a public course page link and a code to embed registration on your own website.", link: "/help/quick-start" },
       { q: "Can I copy a class to new dates?", a: "Yes. Duplicate copies a class with its tickets, prices, minimum and instructors to the same dates, a new first day, or a weekly, every-two-weeks or monthly series of up to 12 classes.", link: "/help/duplicate-a-class" },
       { q: "Can learners register from my own website?", a: "Yes. Paste the embed code shown after publishing into any web page (WordPress, Squarespace, Webflow or plain HTML). It shows your dates and takes registration and payment on your page.", link: "/help/share-and-embed" },
       { q: "Can I import my events from Eventbrite?", a: "Yes. Paste an Eventbrite private token (used once, never stored) or upload a spreadsheet. You see a preview before anything is created, and Eventbrite images become course covers.", link: "/help/import" },

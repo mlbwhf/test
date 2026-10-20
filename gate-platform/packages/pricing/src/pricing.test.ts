@@ -31,6 +31,16 @@ describe("priceOrder (USD launch schedule)", () => {
     expect(p.platformFeeMinor).toBe(0);
     expect(p.totalMinor).toBe(0);
   });
+  it("free tickets stay free in every currency, channel and fee mode", () => {
+    for (const currency of ["USD", "EUR", "CAD", "GBP", "AED"]) {
+      for (const destination of ["gate_account", "external_bank"] as const) {
+        for (const channel of ["online", "pos"] as const) {
+          const p = priceOrder({ currency, unitPriceMinor: 0, quantity: 3, destination, channel, passFeeToAttendee: true, taxRateBps: 1300 });
+          expect(p).toMatchObject({ platformFeeMinor: 0, attendeeFeeMinor: 0, taxMinor: 0, totalMinor: 0, organizerNetMinor: 0, perTicketFeeMinor: 0 });
+        }
+      }
+    }
+  });
   it("an absorbed fee never exceeds the ticket price", () => {
     const p = priceOrder({ currency: "USD", unitPriceMinor: 25, quantity: 1, destination: "gate_account" });
     expect(p.platformFeeMinor).toBe(25);

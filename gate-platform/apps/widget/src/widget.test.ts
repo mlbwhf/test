@@ -265,7 +265,8 @@ describe("checkout", () => {
     await openCheckout(host, 3, "lead@example.com");
     summary = text(host.querySelector(".gw-summary"));
     expect(summary).not.toContain("Service fee");
-    expect(summary).toContain("0.00");
+    expect(summary).toContain("TotalFree");
+    expect(summary).not.toContain("0.00");
     expect(text(host.querySelector("button[type=submit]"))).toBe("Register");
     submitForm(host);
     await vi.waitFor(() => expect(text(host)).toContain("You're registered"));

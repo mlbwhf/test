@@ -1,5 +1,5 @@
 import type { Core } from "./services.js";
-import type { Course, Event, Order } from "./types.js";
+import type { Course, Event, Order, TicketType } from "./types.js";
 
 // The organizer's "Today" screen: what needs doing, what is running, what is next.
 // Everything is derived from orders, seats and cohorts at read time; nothing here is
@@ -42,7 +42,11 @@ const DAY = 86_400_000;
 export interface EventLine extends CohortLine {
   status: Event["status"];
   minEnrollment: number | null;
+  /** Every ticket costs nothing: no payment, no fees, no Stripe needed. */
+  free: boolean;
 }
+
+const isFreeTicket = (t: TicketType) => t.priceMinor === 0 && Object.values(t.prices ?? {}).every((v) => v === 0);
 
 /** One row per cohort with seats sold and capacity, for lists. Pass events/courses when already loaded. */
 export async function eventLines(core: Core, organizationId: string, events?: Event[], courses?: Course[]): Promise<EventLine[]> {
@@ -55,7 +59,7 @@ export async function eventLines(core: Core, organizationId: string, events?: Ev
       return {
         eventId: e.id, name: e.name, courseName: e.courseId ? courseName.get(e.courseId) ?? null : null, startsAt: e.startsAt, endsAt: e.endsAt ?? null,
         timezone: e.timezone, format: e.format, sold: tts.reduce((a, t) => a + t.sold, 0), capacity: tts.reduce((a, t) => a + t.quantity, 0),
-        status: e.status, minEnrollment: e.minEnrollment ?? null,
+        status: e.status, minEnrollment: e.minEnrollment ?? null, free: tts.length > 0 && tts.every(isFreeTicket),
       };
     }),
   );
@@ -127,16 +131,22 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
   const courses = await core.repos.courses.listByOrganization(organizationId);
   const courseById = new Map(courses.map((c) => [c.id, c]));
 
-  const lines = new Map((await eventLines(core, organizationId, events, courses)).map((l) => [l.eventId, l as CohortLine]));
+  const allLines = await eventLines(core, organizationId, events, courses);
+  const lines = new Map(allLines.map((l) => [l.eventId, l as CohortLine]));
+  // Free classes never touch Stripe, so an organizer who only runs free ones isn't blocked by it.
+  // Classes without tickets yet don't count either way.
+  const onlyFree = allLines.some((l) => l.free) && allLines.every((l) => l.free || l.capacity === 0);
   const live = events.filter((e) => e.status === "live");
   const attention: AttentionItem[] = [];
 
   // Payments first: nothing else matters if money can't flow.
   if (opts.settings && !org.paymentsStatus?.ready) {
     attention.push({
-      id: `payments:${org.paymentsAccountRef ? "incomplete" : "none"}`, kind: "payments_setup", tone: "red",
+      id: `payments:${org.paymentsAccountRef ? "incomplete" : "none"}`, kind: "payments_setup", tone: onlyFree ? "amber" : "red",
       title: org.paymentsAccountRef ? "Finish your Stripe setup" : "Connect Stripe to get paid",
-      detail: org.paymentsStatus?.requirementsDue.length ? `Stripe still needs ${org.paymentsStatus.requirementsDue.length} detail${org.paymentsStatus.requirementsDue.length === 1 ? "" : "s"}` : "Learners can't pay until it's connected",
+      detail: org.paymentsStatus?.requirementsDue.length
+        ? `Stripe still needs ${org.paymentsStatus.requirementsDue.length} detail${org.paymentsStatus.requirementsDue.length === 1 ? "" : "s"}`
+        : onlyFree ? "Only needed for paid classes. Free classes work without it" : "Learners can't pay until it's connected",
       action: { label: org.paymentsAccountRef ? "Continue" : "Connect", kind: "stripe" },
     });
   }
@@ -235,7 +245,7 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
 
   const steps: HomeSummary["setup"]["steps"] = [
     { key: "account", done: true },
-    { key: "payments", done: Boolean(org.paymentsStatus?.ready) },
+    { key: "payments", done: Boolean(org.paymentsStatus?.ready) || onlyFree },
     { key: "course", done: courses.length > 0 },
     { key: "cohort", done: events.length > 0 },
     { key: "registration", done: anyPaid },

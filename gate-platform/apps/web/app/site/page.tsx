@@ -15,7 +15,7 @@ const COHORTS = [
 ];
 
 // Questions shown on the home page; the full list is on /faq.
-const HOME_FAQ = ["What is EnrollClass?", "When do I get paid?", "How much does it cost?", "Can learners register from my own website?", "Can I use EnrollClass from Claude or another AI assistant?"];
+const HOME_FAQ = ["What is EnrollClass?", "When do I get paid?", "How much does it cost?", "Do you charge anything for free classes?", "Can learners register from my own website?", "Can I use EnrollClass from Claude or another AI assistant?"];
 
 export default function SiteHome() {
   const faq = HOME_FAQ.map((q) => ALL_FAQ.find((f) => f.q === q)!).filter(Boolean);
@@ -30,7 +30,7 @@ export default function SiteHome() {
       operatingSystem: "Web",
       url: appUrl(),
       description: "Registration and payments for training providers: publish cohorts, take card or invoice payments held until delivery, check-in with QR tickets, certificates, team roles, webhooks, API and an MCP server for AI assistants.",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start; a per-seat fee applies to paid registrations." },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start, and free classes are always free; a per-seat fee applies only to paid registrations." },
       publisher: { "@id": `${siteUrl()}/#organization` },
       sameAs: [`${apiUrl()}/docs`],
     },
@@ -147,7 +147,10 @@ export default function SiteHome() {
       </section>
 
       <section id="pricing" className="site-section sand">
-        <h2 className="site-h2">One fee per seat. Nothing monthly.</h2>
+        <h2 className="site-h2">One fee per paid seat. Nothing monthly.</h2>
+        <p className="pricing-free">
+          <strong>Free classes are free.</strong> No fee, no card and no Stripe account needed: learners register, get their ticket and check in like any other class.
+        </p>
         <div className="tiers">
           <article className="tier tier-paper">
             <p className="mono">PAY AS YOU GO</p>
@@ -201,7 +204,7 @@ export default function SiteHome() {
             Log in
           </a>
         </div>
-        <p className="start-note">Free to start. You pay only a per-seat fee on paid registrations.</p>
+        <p className="start-note">Free to start, and free classes are always free. You pay only a per-seat fee on paid registrations.</p>
       </section>
 
       <section id="faq" className="site-section home-faq" aria-labelledby="home-faq-title">

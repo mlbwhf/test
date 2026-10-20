@@ -56,7 +56,7 @@ function cheapest(c: Cohort): { minor: number; currency: string; tt: PublicTicke
   return best ? { minor: best.prices[cur]!, currency: cur, tt: best } : null;
 }
 
-const whole = (minor: number, currency: string) => formatMoney(minor, currency).replace(/[.,]00(?=\D*$)/, "");
+const whole = (minor: number, currency: string) => (minor === 0 ? "Free" : formatMoney(minor, currency).replace(/[.,]00(?=\D*$)/, ""));
 
 /** schema.org EducationEvent for one date: what search engines and AI agents read. */
 function educationEvent(data: PublicCoursePage, c: Cohort, url: string) {
@@ -133,6 +133,7 @@ export default async function CoursePage({ params, searchParams }: { params: Par
   const sold = Math.max(0, cap - left);
   const cells = Math.min(cap, 40);
   const price = cheapest(sel);
+  const free = price?.minor === 0;
   const ticker = cohorts.map((c) => `${range(c)} · ${cityOf(c.event.timezone)} · ${tzAbbr(c)} · ${seats(c).left} SEATS LEFT`).join("  ✦  ");
   const firstSession = sel.event.sessions[0] ?? { startsAt: sel.event.startsAt, endsAt: sel.event.endsAt ?? sel.event.startsAt };
   const hours = `${fmt(firstSession.startsAt, sel.event.timezone, { hour: "numeric", minute: "2-digit" })} – ${fmt(firstSession.endsAt, sel.event.timezone, { hour: "numeric", minute: "2-digit", timeZoneName: "short" })}`;
@@ -236,18 +237,33 @@ export default async function CoursePage({ params, searchParams }: { params: Par
               <strong>Survey email</strong>
               <em>Feedback form sent after the final session.</em>
             </li>
-            <li className="is-ink">
-              <span>AFTER DELIVERY</span>
-              <strong>Funds released</strong>
-              <em>Your payment goes to {data.organization.name} once the course is delivered.</em>
-            </li>
+            {free ? (
+              <li className="is-ink">
+                <span>AFTER DELIVERY</span>
+                <strong>Certificate</strong>
+                <em>{data.organization.name} can send you a certificate of attendance.</em>
+              </li>
+            ) : (
+              <li className="is-ink">
+                <span>AFTER DELIVERY</span>
+                <strong>Funds released</strong>
+                <em>Your payment goes to {data.organization.name} once the course is delivered.</em>
+              </li>
+            )}
           </ol>
         </section>
 
-        <section className="ep-held">
-          <h2>Your payment is held until delivery</h2>
-          <p>Pay by card{price ? ` in ${price.currency}` : ""}. EnrollClass holds the funds and releases them to {data.organization.name} after the course is delivered.</p>
-        </section>
+        {free ? (
+          <section className="ep-held">
+            <h2>Free to attend</h2>
+            <p>No payment and no card needed. Register to save your seat and get your ticket and calendar invitation.</p>
+          </section>
+        ) : (
+          <section className="ep-held">
+            <h2>Your payment is held until delivery</h2>
+            <p>Pay by card{price ? ` in ${price.currency}` : ""}. EnrollClass holds the funds and releases them to {data.organization.name} after the course is delivered.</p>
+          </section>
+        )}
 
         {data.course.badge && (
           <section className="ep-badge" aria-label="Digital badge">

@@ -74,7 +74,7 @@ export function EventWizard({ courses, currency, instructors = [], viewer = "man
   const title = newCourse ? newCourse.name || "New course" : picked?.name ?? "Pick a course";
   const dates = useMemo(() => sessionDates(startDate, days, weekdaysOnly), [startDate, days, weekdaysOnly]);
   const priceMinor = price ? parseMajorToMinor(price, cur) : null;
-  const priceLabel = priceMinor === null ? `${cur} —` : formatMoney(priceMinor, cur);
+  const priceLabel = priceMinor === null ? `${cur} —` : priceMinor === 0 ? "Free" : formatMoney(priceMinor, cur);
 
   const step1ok = Boolean(newCourse ? newCourse.name.trim() : picked);
   const step2ok = Boolean(startDate && startTime && endTime && endTime > startTime && priceMinor !== null && Number(seats) >= 1);
@@ -218,13 +218,16 @@ export function EventWizard({ courses, currency, instructors = [], viewer = "man
                 </label>
                 <label>
                   Price
-                  <input inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1295" />
+                  <input inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1295" aria-describedby="wiz-price-hint" />
                 </label>
                 <label>
                   Currency
                   <input value={cur} onChange={(e) => setCur(e.target.value.toUpperCase().slice(0, 3))} maxLength={3} />
                 </label>
               </div>
+              <p id="wiz-price-hint" className="wiz-hint">
+                {priceMinor === 0 ? "Free class: learners register without paying, and EnrollClass charges you nothing. Stripe isn't needed." : "Enter 0 for a free class. Free classes cost nothing."}
+              </p>
               <div className="wiz-row">
                 <label>
                   Seats

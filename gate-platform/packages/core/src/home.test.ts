@@ -86,4 +86,37 @@ describe("home summary", () => {
     expect(forInstructor.money).toBeNull();
     expect(forInstructor.attendees.every((a) => a.payment === null)).toBe(true);
   });
+
+  it("runs free classes with no Stripe, no fees and no payment", async () => {
+    const payments = new FakePaymentsAdapter();
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments, clock: { now: () => at("2026-10-01T12:00:00Z") } });
+    const { organization: org } = await core.createOrganization({ name: "Community Meetup", country: "CA", currency: "CAD" });
+    const ev = await core.createEvent(org.id, { name: "Intro night", timezone: "America/Toronto", sessions: [{ startsAt: at("2026-10-25T22:00:00Z"), endsAt: at("2026-10-26T00:00:00Z") }] });
+    const tt = await core.createTicketType(org.id, ev.id, { name: "Free seat", priceMinor: 0, quantity: 30 });
+    await core.createEvent(org.id, { name: "Not ticketed yet", startsAt: at("2026-11-01T22:00:00Z") });
+
+    const { order, clientSecret } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 2, buyerEmail: "lead@x.co", attendees: [{ email: "a@x.co" }, { email: "b@x.co" }] });
+    expect(clientSecret).toBeNull();
+    expect(order.status).toBe("paid");
+    expect(order.pricing).toMatchObject({ totalMinor: 0, platformFeeMinor: 0, attendeeFeeMinor: 0, taxMinor: 0 });
+    expect(payments.calls.filter((c) => c.method === "createPayment")).toHaveLength(0);
+    expect((await core.listSeats(org.id, { eventId: ev.id })).filter((x) => x.status === "confirmed")).toHaveLength(2);
+
+    const lines = await eventLines(core, org.id);
+    expect(lines.find((l) => l.eventId === ev.id)!.free).toBe(true);
+    expect(lines.find((l) => l.eventId !== ev.id)!.free).toBe(false);
+
+    // Stripe isn't connected, but nothing is for sale: a gentle reminder, and setup doesn't wait on it.
+    const h = await homeSummary(core, org.id, { money: true, settings: true, now: at("2026-10-02T12:00:00Z") });
+    const stripe = h.attention.find((a) => a.kind === "payments_setup")!;
+    expect(stripe.tone).toBe("amber");
+    expect(stripe.detail).toContain("Only needed for paid classes");
+    expect(h.setup.steps.find((x) => x.key === "payments")!.done).toBe(true);
+
+    // The first paid ticket makes Stripe urgent again.
+    const paid = await core.createEvent(org.id, { name: "Workshop", startsAt: at("2026-11-05T14:00:00Z") });
+    await core.createTicketType(org.id, paid.id, { name: "Seat", priceMinor: 25_000, quantity: 10 });
+    const after = await homeSummary(core, org.id, { money: true, settings: true, now: at("2026-10-02T12:00:00Z") });
+    expect(after.attention.find((a) => a.kind === "payments_setup")!.tone).toBe("red");
+  });
 });

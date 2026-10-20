@@ -1084,6 +1084,11 @@ td .action-form-inline .result {
   background: var(--green);
   color: var(--ink);
 }
+.pricing-free {
+  max-width: 720px;
+  margin: 0 0 24px;
+  font-size: 17px;
+}
 .footnote {
   margin: 24px 0 0;
   font-size: 14px;
@@ -3473,6 +3478,16 @@ a.chip:hover {
 }
 .wiz-wide {
   grid-column: span 2;
+}
+.seat-free {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.wiz-hint {
+  margin: -6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
 }
 .wiz-check {
   display: flex !important;

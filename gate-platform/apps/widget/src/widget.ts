@@ -266,7 +266,7 @@ export class Widget {
     if (claiming) info.append(h("span", { class: "gw-badge gw-badge-held" }, "Seat held for you"));
     else if (left) info.append(h("span", { class: "gw-badge gw-badge-left" }, left));
     const priceEl = h("span", { class: "gw-price" },
-      price === undefined ? `Not available in ${this.currency}` : formatMoney(price, this.currency));
+      price === undefined ? `Not available in ${this.currency}` : price === 0 ? "Free" : formatMoney(price, this.currency));
     const button = soldOut && !claiming
       ? h("button", {
         type: "button",
@@ -434,6 +434,10 @@ export class Widget {
     };
 
     const renderSummary = (p: Pricing, cur: string): void => {
+      if (p.totalMinor === 0) {
+        summary.replaceChildren(row(`Free seat × ${p.quantity}`, "No payment needed"), row("Total", "Free", true));
+        return;
+      }
       const rows = [row(`${formatMoney(p.unitPriceMinor, cur)} × ${p.quantity}`, formatMoney(p.subtotalMinor, cur))];
       if (p.attendeeFeeMinor > 0) rows.push(row("Service fee", formatMoney(p.attendeeFeeMinor, cur)));
       rows.push(row("Total", formatMoney(p.totalMinor, cur), true));
