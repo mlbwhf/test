@@ -34,6 +34,8 @@ export interface FeeSchedule {
   earlyRelease: { bps: number; minMinor: MinorUnits };
   /** Flexible ticket: learner add-on (bps of the ticket price) and EnrollClass's share of it (bps of the add-on). */
   flexible: { bps: number; platformShareBps: number };
+  /** Paid placement in EnrollClass's class finder, per week: first in its category, or in the Featured row at the top. */
+  promotion: { categoryWeekMinor: MinorUnits; topWeekMinor: MinorUnits };
   pos: FeeComponent;
   instantPayout: { bps: number; minMinor: MinorUnits };
   /** Tickets priced at or below this are free of platform fees. */
@@ -62,6 +64,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 50 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 2_900, topWeekMinor: 7_900 },
     freeTicketThresholdMinor: 0,
   },
   EUR: {
@@ -78,6 +81,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 40 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 2_700, topWeekMinor: 7_500 },
     freeTicketThresholdMinor: 0,
   },
   AED: {
@@ -94,6 +98,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 200 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 10_900, topWeekMinor: 29_900 },
     freeTicketThresholdMinor: 0,
   },
   CAD: {
@@ -110,6 +115,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 60 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 3_900, topWeekMinor: 10_900 },
     freeTicketThresholdMinor: 0,
   },
   GBP: {
@@ -126,6 +132,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 40 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 2_400, topWeekMinor: 6_500 },
     freeTicketThresholdMinor: 0,
   },
   ZAR: {
@@ -142,6 +149,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 900 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 49_900, topWeekMinor: 139_900 },
     freeTicketThresholdMinor: 0,
   },
   SAR: {
@@ -158,6 +166,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 200 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 10_900, topWeekMinor: 29_900 },
     freeTicketThresholdMinor: 0,
   },
   INR: {
@@ -174,6 +183,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     marketplaceBps: 500,
     earlyRelease: { bps: 200, minMinor: 4_000 },
     flexible: { bps: 800, platformShareBps: 2_500 },
+    promotion: { categoryWeekMinor: 199_900, topWeekMinor: 599_900 },
     freeTicketThresholdMinor: 0,
   },
 };

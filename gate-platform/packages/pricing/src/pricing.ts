@@ -119,3 +119,13 @@ export function earlyReleaseFee(amountMinor: MinorUnits, currency: Currency, sch
   const s = scheduleFor(currency, schedules).earlyRelease;
   return Math.min(amountMinor, Math.max(bps(amountMinor, s.bps), s.minMinor));
 }
+
+export const PROMOTION_WEEKS = [1, 2, 4] as const;
+
+/** Paid placement in the class finder; four weeks cost three. */
+export function promotionPrice(placement: "category" | "top", weeks: number, currency: Currency, schedules?: Partial<Record<string, FeeSchedule>>): MinorUnits {
+  if (!(PROMOTION_WEEKS as readonly number[]).includes(weeks)) throw new Error(`promotions run for ${PROMOTION_WEEKS.join(", ")} weeks`);
+  const s = scheduleFor(currency, schedules).promotion;
+  const week = placement === "top" ? s.topWeekMinor : s.categoryWeekMinor;
+  return week * (weeks === 4 ? 3 : weeks);
+}

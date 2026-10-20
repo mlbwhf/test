@@ -207,7 +207,7 @@ export type CredentialCheck = { valid: boolean; reason?: string; issuer?: string
 
 /** One fee component: basis points + fixed minor units per paid seat, optional cap. */
 export type Fee = { bps: number; fixedMinor: number; capMinor: number | null };
-export type FeeTable = { currencies: Record<string, { protected: Fee; direct: Fee; verifiedBadgeMinor: number; fxMarginBps: number; marketplaceBps: number; earlyRelease: { bps: number; minMinor: number }; flexible: { bps: number; platformShareBps: number } }> };
+export type FeeTable = { currencies: Record<string, { protected: Fee; direct: Fee; verifiedBadgeMinor: number; fxMarginBps: number; marketplaceBps: number; earlyRelease: { bps: number; minMinor: number }; flexible: { bps: number; platformShareBps: number }; promotion: { categoryWeekMinor: number; topWeekMinor: number } }> };
 
 export const publicApi = {
   /** EnrollClass's published fees per currency (protected: all-in; direct: our share only). */

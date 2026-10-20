@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { api, BADGE_PLATFORMS, EVENT_FORMATS, type Party } from "@/lib/api";
+import { api, BADGE_PLATFORMS, COURSE_CATEGORIES, EVENT_FORMATS, type Party } from "@/lib/api";
+import { PromoteCourse } from "@/components/promote-course";
+import { updateCourseCategoryAction } from "./promote-actions";
 import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
@@ -10,13 +12,15 @@ import { Disclosure } from "@/components/disclosure";
 
 export const dynamic = "force-dynamic";
 
-export default async function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CourseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ promoted?: string; redirect_status?: string }> }) {
   const { id } = await params;
-  const [courseRes, cohortsRes, partiesRes, orgRes] = await Promise.all([
+  const sp = await searchParams;
+  const [courseRes, cohortsRes, partiesRes, orgRes, promotionsRes] = await Promise.all([
     api.getCourse(id),
     api.listCohorts(id),
     api.listParties(),
     api.getOrganization(),
+    api.listPromotions(),
   ]);
 
   if (!courseRes.ok) {
@@ -35,6 +39,13 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
   const cohorts = cohortsRes.ok ? cohortsRes.data.items : [];
   const instructors: Party[] = partiesRes.ok ? partiesRes.data.items.filter((p) => p.kind === "instructor") : [];
   const defaultCurrency = orgRes.ok ? orgRes.data.currency : "USD";
+  const topicLabel = COURSE_CATEGORIES.find((c) => c.id === course.topic)?.label ?? "its topic";
+  const promotions = promotionsRes.ok ? promotionsRes.data.items.filter((p) => p.courseId === course.id && p.status !== "failed") : [];
+  const now = Date.now();
+  const running = promotions.filter((p) => p.status === "active" && p.endsAt && new Date(p.endsAt).getTime() > now);
+  const hasLiveDate = cohorts.some((c) => c.status === "live" && new Date(c.endsAt ?? c.startsAt).getTime() > now);
+  const listed = orgRes.ok ? orgRes.data.marketplaceListing !== false : true;
+  const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null;
 
   return (
     <>
@@ -169,6 +180,39 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
             <input type="hidden" name="courseId" value={course.id} />
             <input type="hidden" name="remove" value="1" />
           </ActionForm>
+        )}
+      </Section>
+
+      <Section title="Find a class" id="promote">
+        <ActionForm action={updateCourseCategoryAction} submitLabel="Save topic" pendingLabel="Saving…" inline>
+          <input type="hidden" name="courseId" value={course.id} />
+          <label>
+            Topic in Find a class
+            <select name="category" defaultValue={course.category ?? ""}>
+              <option value="">Automatic ({topicLabel})</option>
+              {COURSE_CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </ActionForm>
+        <h3>Promote this course</h3>
+        {sp.promoted && sp.redirect_status === "succeeded" && <p className="notice notice-info">Payment received. Your promotion starts within a minute.</p>}
+        {running.map((p) => (
+          <p key={p.id} className="notice notice-info">
+            {p.placement === "top" ? "Featured" : `First in ${topicLabel}`} until {formatDateTimeInZone(p.endsAt!, "UTC")}.
+          </p>
+        ))}
+        {!listed ? (
+          <Empty>Your classes are hidden from Find a class. Turn listing on in Money → Settings to promote them.</Empty>
+        ) : !hasLiveDate ? (
+          <Empty>Publish an upcoming date first; promotions only show courses learners can book.</Empty>
+        ) : promotionsRes.ok ? (
+          <PromoteCourse courseId={course.id} prices={promotionsRes.data.prices} publishableKey={publishableKey} topicLabel={topicLabel} />
+        ) : (
+          <ApiNotice failure={promotionsRes.error} />
         )}
       </Section>
 

@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } from "@gate/ledger";
-import { computeSplits, earlyReleaseFee, priceOrder, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
+import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
+import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -13,7 +14,7 @@ import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { InvoiceReminderStep } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -56,6 +57,12 @@ const defaultClock: Clock = { now: () => new Date() };
 const defaultIds: IdGenerator = {
   next: (prefix) => `${prefix}_${randomBytes(9).toString("base64url")}`,
 };
+
+/** One course in EnrollClass's class finder. */
+export interface CatalogEntry {
+  organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean;
+  category: CourseCategory; promoted: "top" | "category" | null; imageUrl?: string;
+}
 
 export class Core {
   readonly repos: Repos;
@@ -256,7 +263,7 @@ export class Core {
 
   // ---------- Courses ----------
 
-  async createCourse(organizationId: string, input: { slug: string; name: string; description?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined }): Promise<Course> {
+  async createCourse(organizationId: string, input: { slug: string; name: string; description?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; category?: string | undefined }): Promise<Course> {
     await this.getOrganization(organizationId);
     const slug = input.slug.trim().toLowerCase();
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new DomainError("VALIDATION", "slug must be lowercase letters, digits and hyphens");
@@ -271,13 +278,14 @@ export class Core {
       ...(input.description ? { description: input.description } : {}),
       ...(input.certificationBody ? { certificationBody: input.certificationBody } : {}),
       ...(input.durationDays !== undefined ? { durationDays: input.durationDays } : {}),
+      ...(input.category ? { category: this.checkCategory(input.category) } : {}),
       createdAt: this.clock.now(),
     };
     await this.repos.courses.create(course);
     return course;
   }
 
-  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined }): Promise<Course> {
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined; category?: string | null | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
     if (patch.badge) {
       if (!["credly", "accredible", "badgr", "certopus", "other", "own"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
@@ -290,10 +298,17 @@ export class Core {
     const next: Course = { ...course };
     const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
     set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays); set("imageUrl", patch.imageUrl);
+    if (patch.category === null || patch.category === "") delete next.category;
+    else if (patch.category !== undefined) next.category = this.checkCategory(patch.category);
     if (patch.badge === null) delete next.badge;
     else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), ...(patch.badge.url ? { url: patch.badge.url } : {}), ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
     await this.repos.courses.update(next);
     return next;
+  }
+
+  private checkCategory(v: string): CourseCategory {
+    if (!isCourseCategory(v)) throw new DomainError("VALIDATION", `category must be one of ${COURSE_CATEGORIES.map((c) => c.id).join(", ")}`);
+    return v;
   }
 
   async getCourse(organizationId: string, courseId: string): Promise<Course> {
@@ -556,19 +571,88 @@ export class Core {
    * crawlers. Only what the public course pages already show.
    */
   /** Courses with upcoming classes. `listed`: shown in EnrollClass's class finder (the organizer can opt out). */
-  async publicCatalog(limit = 5000): Promise<Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean }>> {
+  async publicCatalog(limit = 5000): Promise<CatalogEntry[]> {
     const now = this.clock.now();
-    const out: Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean }> = [];
+    const promoted = new Map<string, "top" | "category">();
+    for (const p of await this.repos.promotions.listActive(now)) if (promoted.get(p.courseId) !== "top") promoted.set(p.courseId, p.placement);
+    const out: CatalogEntry[] = [];
     for (const org of await this.repos.organizations.list()) {
+      const listed = org.marketplaceListing !== false;
       for (const course of await this.repos.courses.listByOrganization(org.id)) {
         const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
         if (!upcoming.length) continue;
         const next = upcoming.reduce((a, e) => (e.startsAt < a ? e.startsAt : a), upcoming[0]!.startsAt);
-        out.push({ organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length, listed: org.marketplaceListing !== false });
+        out.push({
+          organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length, listed,
+          category: course.category ?? inferCategory(course.name, course.certificationBody), promoted: listed ? promoted.get(course.id) ?? null : null,
+          ...(course.imageUrl ? { imageUrl: course.imageUrl } : {}),
+        });
         if (out.length >= limit) return out;
       }
     }
     return out.sort((a, b) => a.nextStartsAt.getTime() - b.nextStartsAt.getTime());
+  }
+
+  // ---------- Promotions (paid placement in the class finder) ----------
+
+  /** How many courses can hold each placement at once, so a paid spot stays visible. */
+  static readonly PROMOTION_SLOTS = { top: 6, category: 3 } as const;
+
+  promotionPrices(currency: string) {
+    return { currency, weeks: [...PROMOTION_WEEKS], category: PROMOTION_WEEKS.map((w: number) => promotionPrice("category", w, currency)), top: PROMOTION_WEEKS.map((w: number) => promotionPrice("top", w, currency)) };
+  }
+
+  async listPromotions(organizationId: string): Promise<Promotion[]> {
+    return this.repos.promotions.listByOrganization(organizationId);
+  }
+
+  /** Starts a paid placement for a course. It goes live when the card payment succeeds. */
+  async createPromotion(organizationId: string, input: { courseId: string; placement: "category" | "top"; weeks: number; payerEmail?: string | undefined }): Promise<{ promotion: Promotion; clientSecret: string | null }> {
+    const org = await this.getOrganization(organizationId);
+    const course = await this.getCourse(organizationId, input.courseId);
+    if (org.marketplaceListing === false) throw new DomainError("INVALID_STATE", "your classes are hidden from Find a class", "turn on listing in Money → Settings first");
+    if (input.placement !== "top" && input.placement !== "category") throw new DomainError("VALIDATION", "placement must be top or category");
+    if (!(PROMOTION_WEEKS as readonly number[]).includes(input.weeks)) throw new DomainError("VALIDATION", `promotions run for ${PROMOTION_WEEKS.join(", ")} weeks`);
+    const now = this.clock.now();
+    const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
+    if (!upcoming.length) throw new DomainError("INVALID_STATE", "this course has no upcoming published class to promote");
+    const active = await this.repos.promotions.listActive(now);
+    if (active.some((p) => p.courseId === course.id && p.placement === input.placement)) throw new DomainError("CONFLICT", "this course is already promoted there");
+    const category = course.category ?? inferCategory(course.name, course.certificationBody);
+    const courses = new Map<string, Course>();
+    const rivals = [];
+    for (const p of active.filter((x) => x.placement === input.placement)) {
+      const c = courses.get(p.courseId) ?? (await this.repos.courses.get(p.courseId));
+      if (c) courses.set(c.id, c);
+      if (input.placement === "top" || (c && (c.category ?? inferCategory(c.name, c.certificationBody)) === category)) rivals.push(p);
+    }
+    if (rivals.length >= Core.PROMOTION_SLOTS[input.placement]) {
+      const free = rivals.reduce((a, p) => (p.endsAt! < a ? p.endsAt! : a), rivals[0]!.endsAt!);
+      throw new DomainError("CONFLICT", `all ${input.placement === "top" ? "Featured" : "category"} spots are taken until ${free.toISOString().slice(0, 10)}`);
+    }
+    const currency = org.currency;
+    const amountMinor = promotionPrice(input.placement, input.weeks, currency);
+    const promotion: Promotion = { id: this.ids.next("prm"), organizationId, courseId: course.id, placement: input.placement, weeks: input.weeks, amountMinor, currency, status: "pending_payment", createdAt: now };
+    const p = await this.payments.createPayment({
+      orderId: promotion.id, amountMinor, currency, transferGroup: promotion.id, buyerEmail: input.payerEmail ?? "",
+      metadata: { promotionId: promotion.id, organizationId, courseId: course.id },
+    });
+    promotion.paymentRef = p.paymentRef;
+    await this.repos.promotions.create(promotion);
+    return { promotion, clientSecret: p.clientSecret };
+  }
+
+  private async activatePromotion(promotion: Promotion, amountMinor: number, currency: string): Promise<void> {
+    if (amountMinor !== promotion.amountMinor || currency !== promotion.currency) throw new DomainError("CONFLICT", `promotion payment mismatch on ${promotion.paymentRef}`);
+    const now = this.clock.now();
+    const active: Promotion = { ...promotion, status: "active", startsAt: now, endsAt: new Date(now.getTime() + promotion.weeks * 7 * 86_400_000) };
+    await this.ledger.post({
+      idempotencyKey: `promotion:${promotion.id}:paid`, currency,
+      description: `Find a class ${promotion.placement} promotion ${promotion.id} (${promotion.weeks} weeks)`,
+      postings: [{ accountId: (await this.accounts.clearing(currency)).id, amount: amountMinor }, { accountId: (await this.accounts.feeRevenue(currency)).id, amount: -amountMinor }],
+      metadata: { promotionId: promotion.id, organizationId: promotion.organizationId },
+    });
+    await this.repos.promotions.update(active);
   }
 
   /** Public catalogue view of a course: cohorts with resolved prices per currency. */
@@ -775,6 +859,12 @@ export class Core {
           await this.completeTransfer(transfer, { paid: true });
           return { handled: true };
         }
+        const promotion = await this.repos.promotions.getByPaymentRef(event.paymentRef);
+        if (promotion) {
+          if (promotion.status === "active") return { handled: false, reason: "promotion already active" };
+          await this.activatePromotion(promotion, event.amountMinor, event.currency);
+          return { handled: true };
+        }
         const invoice = await this.repos.invoices.getByCardPaymentRef(event.paymentRef);
         if (invoice) {
           if (invoice.status === "paid" || invoice.status === "void") return { handled: false, reason: `invoice is ${invoice.status}` };
@@ -791,6 +881,11 @@ export class Core {
         return { handled: true };
       }
       case "payment.failed": {
+        const failedPromotion = await this.repos.promotions.getByPaymentRef(event.paymentRef);
+        if (failedPromotion) {
+          if (failedPromotion.status === "pending_payment") await this.repos.promotions.update({ ...failedPromotion, status: "failed" });
+          return { handled: true };
+        }
         const transfer = await this.repos.seatTransfers.getByPaymentRef(event.paymentRef);
         if (transfer) {
           if (transfer.status === "pending_payment") {

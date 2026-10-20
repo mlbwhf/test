@@ -106,7 +106,7 @@ export class StripePaymentsAdapter implements PaymentsPort {
           {
             amount: input.amountMinor,
             currency: input.currency.toLowerCase(),
-            receipt_email: input.buyerEmail,
+            ...(input.buyerEmail ? { receipt_email: input.buyerEmail } : {}),
             automatic_payment_methods: { enabled: true },
             ...(input.direct.applicationFeeMinor > 0 ? { application_fee_amount: input.direct.applicationFeeMinor } : {}),
             metadata: { ...input.metadata, settlement: "direct" },
@@ -118,7 +118,7 @@ export class StripePaymentsAdapter implements PaymentsPort {
             amount: input.amountMinor,
             currency: input.currency.toLowerCase(),
             transfer_group: input.transferGroup,
-            receipt_email: input.buyerEmail,
+            ...(input.buyerEmail ? { receipt_email: input.buyerEmail } : {}),
             automatic_payment_methods: { enabled: true },
             metadata: input.metadata,
           },

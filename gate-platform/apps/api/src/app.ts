@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, CredentialSigner, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { COURSE_CATEGORIES, Core, CredentialSigner, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -48,6 +48,7 @@ declare module "fastify" {
     role?: Role;
     /** Set for people signed in with a session (not for API keys). */
     userId?: string;
+    userEmail?: string;
     /** Instructor profile (party) of the caller in req.org, when they have one. */
     partyId?: string;
     /** Instructors limited to the classes they are assigned to (organization setting). */
@@ -204,7 +205,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     // Sitemaps and AI crawlers: every course with upcoming classes and its public page.
     // EnrollClass's published fees, per currency: the pricing page and the console read them from here.
     const FeeOut = z.object({ bps: z.number().int(), fixedMinor: z.number().int(), capMinor: z.number().int().nullable() });
-    const Extras = { fxMarginBps: z.number().int(), marketplaceBps: z.number().int(), earlyRelease: z.object({ bps: z.number().int(), minMinor: z.number().int() }), flexible: z.object({ bps: z.number().int(), platformShareBps: z.number().int() }) };
+    const Extras = { fxMarginBps: z.number().int(), marketplaceBps: z.number().int(), earlyRelease: z.object({ bps: z.number().int(), minMinor: z.number().int() }), flexible: z.object({ bps: z.number().int(), platformShareBps: z.number().int() }), promotion: z.object({ categoryWeekMinor: z.number().int(), topWeekMinor: z.number().int() }) };
     // Corporate invoices: the billing contact's signed link shows the invoice and takes card payment.
     const InvoiceView = z.object({
       number: z.string(), status: z.enum(["issued", "partially_paid", "paid", "void"]), currency: z.string(), poNumber: z.string().nullable(),
@@ -235,12 +236,13 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     pub.get("/public/v1/fees", { schema: { tags: ["public"], security: [], description: "Per paid seat. protected: all-in (card processing included); direct: EnrollClass's application fee, the organizer's Stripe account pays processing. Free tickets never carry a fee.", response: { 200: z.object({ currencies: z.record(z.string(), z.object({ protected: FeeOut, direct: FeeOut, verifiedBadgeMinor: z.number().int(), ...Extras })) }) } } }, async (_req, reply) => {
       const fee = (c: { bps: number; fixedMinor: number; capMinor?: number }) => ({ bps: c.bps, fixedMinor: c.fixedMinor, capMinor: c.capMinor ?? null });
       reply.header("cache-control", "public, max-age=3600");
-      return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct), verifiedBadgeMinor: s.verifiedBadgeMinor, fxMarginBps: s.fxMarginBps, marketplaceBps: s.marketplaceBps, earlyRelease: s.earlyRelease, flexible: s.flexible }])) };
+      return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct), verifiedBadgeMinor: s.verifiedBadgeMinor, fxMarginBps: s.fxMarginBps, marketplaceBps: s.marketplaceBps, earlyRelease: s.earlyRelease, flexible: s.flexible, promotion: s.promotion }])) };
     });
-    pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable(), listed: z.boolean() })) }) } } }, async (_req, reply) => {
-      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null }));
-      reply.header("cache-control", "public, max-age=900");
-      return { items };
+    pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable(), listed: z.boolean(), category: z.string(), promoted: z.enum(["top", "category"]).nullable(), imageUrl: z.string().nullable() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
+      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null }));
+      // Short cache: a paid placement should show soon after payment.
+      reply.header("cache-control", "public, max-age=300");
+      return { items, categories: COURSE_CATEGORIES.map((c) => ({ id: c.id, label: c.label })) };
     });
     pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
       const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
@@ -377,6 +379,8 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     if (transfer && (!organizationId || transfer.organizationId === organizationId)) return { amountMinor: transfer.feeMinor, currency: transfer.currency };
     const invoice = await deps.core.repos.invoices.getByCardPaymentRef(paymentRef);
     if (invoice && (!organizationId || invoice.organizationId === organizationId)) return { amountMinor: invoice.totalMinor - invoice.paidMinor, currency: invoice.currency };
+    const promotion = await deps.core.repos.promotions.getByPaymentRef(paymentRef);
+    if (promotion && (!organizationId || promotion.organizationId === organizationId)) return { amountMinor: promotion.amountMinor, currency: promotion.currency };
     throw new DomainError("NOT_FOUND", `payment ${paymentRef} not found`);
   };
 
@@ -417,6 +421,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
         req.org = ctx.organization;
         req.role = ctx.role;
         req.userId = ctx.user.id;
+        req.userEmail = ctx.user.email;
         const partyId = ctx.memberships.find((m) => m.organizationId === ctx.organization!.id)?.partyId;
         if (partyId) req.partyId = partyId;
         req.ownClassesOnly = ctx.role === "instructor" && (ctx.organization.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS).scope === "own";
@@ -596,7 +601,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.patch("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.UpdateCourseBody, response: { 200: S.CourseSchema } } }, async (req) => {
       const b = req.body;
       const clean = (v: string | number | null | undefined) => (v === null ? "" : v);
-      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined, badge: b.badge === undefined ? undefined : b.badge === null ? null : { platform: b.badge.platform, name: b.badge.name, ...(b.badge.url ? { url: b.badge.url } : {}), ...(b.badge.imageUrl ? { imageUrl: b.badge.imageUrl } : {}) } }));
+      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined, category: b.category, badge: b.badge === undefined ? undefined : b.badge === null ? null : { platform: b.badge.platform, name: b.badge.name, ...(b.badge.url ? { url: b.badge.url } : {}), ...(b.badge.imageUrl ? { imageUrl: b.badge.imageUrl } : {}) } }));
     });
     api.post("/v1/events/:id/meeting", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ provider: z.enum(["zoom", "teams", "manual"]), joinUrl: z.string().optional(), hostUrl: z.string().optional(), passcode: z.string().optional() }), response: { 200: S.EventSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setMeeting(org(req).id, req.params.id, req.body)));
     api.get("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.AttendanceRowSchema) }) } } }, async (req) => ({ items: (await deps.core.listAttendance(org(req).id, req.params.id)).map(attendanceOut) }));
@@ -638,6 +643,13 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       const dryRun = req.body.dryRun === true;
       const res = await deps.core.createInvoiceOrder(org(req).id, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
       return reply.code(res.created ? 201 : 200).send({ order: S.toOrder(res.order), invoice: S.toInvoice(res.invoice), dryRun });
+    });
+    api.get("/v1/promotions", { schema: { tags: ["promotions"], response: { 200: z.object({ items: z.array(S.PromotionSchema), prices: z.object({ currency: z.string(), weeks: z.array(z.number().int()), category: z.array(z.number().int()), top: z.array(z.number().int()) }) }) } } }, async (req) => ({
+      items: (await deps.core.listPromotions(org(req).id)).map(S.toPromotion), prices: deps.core.promotionPrices(org(req).currency),
+    }));
+    api.post("/v1/promotions", { schema: { tags: ["promotions"], description: "Pay to feature a course in EnrollClass's class finder. Goes live when the card payment succeeds.", body: z.object({ courseId: z.string(), placement: z.enum(["category", "top"]), weeks: z.union([z.literal(1), z.literal(2), z.literal(4)]) }), response: { 201: z.object({ promotion: S.PromotionSchema, clientSecret: z.string().nullable() }), 409: S.ErrorSchema } } }, async (req, reply) => {
+      const r = await deps.core.createPromotion(org(req).id, { ...req.body, payerEmail: req.userEmail });
+      return reply.code(201).send({ promotion: S.toPromotion(r.promotion), clientSecret: r.clientSecret });
     });
     api.get("/v1/invoices", { schema: { tags: ["corporate"], querystring: z.object({ status: z.enum(["issued", "partially_paid", "paid", "void"]).optional() }), response: { 200: z.object({ items: z.array(S.InvoiceSchema) }) } } }, async (req) => ({ items: (await deps.core.listInvoices(org(req).id, req.query.status ? { status: [req.query.status] } : undefined)).map(S.toInvoice) }));
     api.get("/v1/invoices/:id", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), response: { 200: S.InvoiceSchema, 404: S.ErrorSchema } } }, async (req) => S.toInvoice(await deps.core.getInvoice(org(req).id, req.params.id)));

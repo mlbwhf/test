@@ -139,6 +139,10 @@ export type Course = {
   imageUrl: string | null;
   /** Digital badge on an outside platform (Credly, Accredible…). */
   badge: CourseBadge | null;
+  /** Topic in Find a class; null means EnrollClass guesses it from the name. */
+  category: string | null;
+  /** The topic it is listed under: the organizer's choice or EnrollClass's guess. */
+  topic: string;
   createdAt: string;
 };
 
@@ -337,6 +341,7 @@ export type RecordAttendanceInput = {
 };
 export type IssueCertificatesInput = { onlyPresent?: boolean; onlyCheckedIn?: boolean; kind?: "attendance" | "completion" };
 export type UpdateCourseInput = {
+  category?: string | null;
   prework?: string | null;
   surveyUrl?: string | null;
   description?: string | null;
@@ -646,6 +651,22 @@ export type WebhookDeliveryInfo = { id: string; type: string; status: "pending" 
 export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
 export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
 
+export type Promotion = { id: string; courseId: string; placement: "category" | "top"; weeks: number; amountMinor: number; currency: string; status: "pending_payment" | "active" | "failed"; startsAt: string | null; endsAt: string | null; createdAt: string };
+export type PromotionPrices = { currency: string; weeks: number[]; category: number[]; top: number[] };
+/** Topics in Find a class; mirrors the API's fixed list. */
+export const COURSE_CATEGORIES: { id: string; label: string }[] = [
+  { id: "agile", label: "Agile & Scrum" },
+  { id: "project-management", label: "Project management" },
+  { id: "product", label: "Product management" },
+  { id: "leadership", label: "Leadership & management" },
+  { id: "it-service", label: "IT service management" },
+  { id: "devops-cloud", label: "DevOps & cloud" },
+  { id: "security", label: "Security" },
+  { id: "data-ai", label: "Data & AI" },
+  { id: "quality", label: "Quality & Lean" },
+  { id: "business", label: "Business & finance" },
+  { id: "other", label: "Other" },
+];
 export type BillingAddress = { country: string; region?: string; postalCode?: string; city?: string; line1?: string; taxId?: string };
 export type CorporateAccount = { id: string; name: string; billingEmail: string; address: BillingAddress; poRequired: boolean; netTermsDays: number; currency: string; createdAt: string };
 export type InvoiceStatus = "issued" | "partially_paid" | "paid" | "void";
@@ -765,6 +786,8 @@ export const api = {
   checkIn: (input: { token?: string; code?: string; eventId?: string; undo?: boolean }) => request<CheckInResult>("POST", "/v1/checkins", input),
 
   listOrders: () => request<{ items: Order[] }>("GET", "/v1/orders"),
+  listPromotions: () => request<{ items: Promotion[]; prices: PromotionPrices }>("GET", "/v1/promotions"),
+  createPromotion: (input: { courseId: string; placement: "category" | "top"; weeks: 1 | 2 | 4 }) => request<{ promotion: Promotion; clientSecret: string | null }>("POST", "/v1/promotions", input),
   listCorporateAccounts: () => request<{ items: CorporateAccount[] }>("GET", "/v1/corporate-accounts"),
   createCorporateAccount: (input: { name: string; billingEmail: string; address: BillingAddress; poRequired?: boolean; netTermsDays?: number; currency?: string }) =>
     request<CorporateAccount>("POST", "/v1/corporate-accounts", input),

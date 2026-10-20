@@ -27,7 +27,7 @@ const pct = (bps: number) => `${(bps / 100).toFixed(bps % 100 === 0 ? 0 : 1)}%`;
 export default async function SiteHome() {
   const feesRes = await publicApi.getFees();
   const fees = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? FALLBACK_USD_FEES;
-  const extra = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? { verifiedBadgeMinor: 100, fxMarginBps: 150, marketplaceBps: 500, earlyRelease: { bps: 200, minMinor: 50 }, flexible: { bps: 800, platformShareBps: 2_500 } };
+  const extra = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? { verifiedBadgeMinor: 100, fxMarginBps: 150, marketplaceBps: 500, earlyRelease: { bps: 200, minMinor: 50 }, flexible: { bps: 800, platformShareBps: 2_500 }, promotion: { categoryWeekMinor: 2_900, topWeekMinor: 7_900 } };
   const protectedTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.protected);
   const directTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.direct) + feeOn(EXAMPLE_SEAT_MINOR, { ...STRIPE_US, capMinor: null });
   const faq = HOME_FAQ.map((q) => ALL_FAQ.find((f) => f.q === q)!).filter(Boolean);
@@ -205,6 +205,10 @@ export default async function SiteHome() {
           <li>
             <strong>Find a class</strong>
             <span>Listing is free. Bookings that come through enrollclass.com/classes carry a {pct(extra.marketplaceBps)} referral fee; bookings from your own links never do.</span>
+          </li>
+          <li>
+            <strong>Promote a course</strong>
+            <span>First in its topic for {money(extra.promotion.categoryWeekMinor)}/week, or a Featured card at the top of Find a class for {money(extra.promotion.topWeekMinor)}/week. Four weeks for the price of three; always labelled Sponsored.</span>
           </li>
           <li>
             <strong>Other currencies</strong>

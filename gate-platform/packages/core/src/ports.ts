@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Payout, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Payout, Promotion, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -205,6 +205,14 @@ export interface RefundRepo {
   getByProviderRef(ref: string): Promise<Refund | undefined>;
   listByOrder(orderId: string): Promise<Refund[]>;
 }
+export interface PromotionRepo {
+  create(p: Promotion): Promise<void>;
+  update(p: Promotion): Promise<void>;
+  getByPaymentRef(ref: string): Promise<Promotion | undefined>;
+  listByOrganization(orgId: string): Promise<Promotion[]>;
+  /** Paid promotions whose window contains `at`. */
+  listActive(at: Date): Promise<Promotion[]>;
+}
 /** Remembers provider event ids so webhooks replay safely. */
 export interface ProcessedEventRepo {
   /** Returns true if newly recorded, false if already seen. */
@@ -228,4 +236,5 @@ export interface Repos {
   payouts: PayoutRepo;
   refunds: RefundRepo;
   processedEvents: ProcessedEventRepo;
+  promotions: PromotionRepo;
 }

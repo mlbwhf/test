@@ -2,6 +2,7 @@ import type { PricingSettings } from "./fx.js";
 import type { Currency, MinorUnits } from "@gate/ledger";
 import type { PaymentMode, PayoutDestination, Pricing, SplitResult, SplitRule } from "@gate/pricing";
 import type { ChangePolicy } from "./policy.js";
+import type { CourseCategory } from "./categories.js";
 
 export interface Organization {
   id: string;
@@ -83,6 +84,27 @@ export interface Course {
   imageUrl?: string;
   /** Digital badge learners earn, issued on an outside platform. */
   badge?: CourseBadge;
+  /** Topic in EnrollClass's class finder; guessed from the name when not set. */
+  category?: CourseCategory;
+  createdAt: Date;
+}
+
+/**
+ * Paid placement in the class finder. "category": first in its topic; "top": the Featured row
+ * on every visit. Paid by card up front; runs for whole weeks from the moment it is paid.
+ */
+export interface Promotion {
+  id: string;
+  organizationId: string;
+  courseId: string;
+  placement: "category" | "top";
+  weeks: number;
+  amountMinor: MinorUnits;
+  currency: Currency;
+  status: "pending_payment" | "active" | "failed";
+  paymentRef?: string;
+  startsAt?: Date;
+  endsAt?: Date;
   createdAt: Date;
 }
 

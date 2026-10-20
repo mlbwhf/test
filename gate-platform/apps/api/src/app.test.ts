@@ -325,6 +325,38 @@ describe("API", () => {
     expect((await im.inject(`/public/v1/invoices/${encodeURIComponent(token)}`)).json().status).toBe("paid");
   });
 
+  it("categories and paid promotions in the class finder", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "pmp", name: "PMP Exam Prep" } })).json();
+    expect(course.category).toBeNull();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-20T14:00:00Z", endsAt: "2099-11-20T22:00:00Z" }] } })).json();
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 100_000, quantity: 5 } });
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/publish`, headers: J, payload: {} });
+    let catalog = (await im.inject("/public/v1/catalog")).json();
+    expect(catalog.categories.map((c: { id: string }) => c.id)).toContain("project-management");
+    expect(catalog.items[0]).toMatchObject({ slug: "pmp", category: "project-management", promoted: null });
+    expect((await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { category: "leadership" } })).json().category).toBe("leadership");
+    expect((await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { category: "cooking" } })).statusCode).toBe(400);
+
+    const list = (await im.inject({ url: "/v1/promotions", headers: J })).json();
+    expect(list).toMatchObject({ items: [], prices: { currency: "USD", weeks: [1, 2, 4], top: [7_900, 15_800, 23_700] } });
+    expect((await im.inject({ method: "POST", url: "/v1/promotions", headers: J, payload: { courseId: course.id, placement: "top", weeks: 3 } })).statusCode).toBe(400);
+    const created = await im.inject({ method: "POST", url: "/v1/promotions", headers: J, payload: { courseId: course.id, placement: "top", weeks: 1 } });
+    expect(created.statusCode).toBe(201);
+    const { promotion, clientSecret } = created.json();
+    expect(clientSecret).toBeTruthy();
+    expect(promotion).toMatchObject({ status: "pending_payment", amountMinor: 7_900 });
+    const ref = (await core.listPromotions((await core.authenticate(key)).id))[0]!.paymentRef!;
+    await im.inject({ method: "POST", url: `/v1/dev/payments/${ref}/succeed`, headers: { "x-api-key": key } });
+    catalog = (await im.inject("/public/v1/catalog")).json();
+    expect(catalog.items[0]).toMatchObject({ category: "leadership", promoted: "top" });
+    expect((await im.inject({ url: "/v1/promotions", headers: J })).json().items[0].status).toBe("active");
+    expect((await im.inject("/public/v1/fees")).json().currencies.USD.promotion).toEqual({ categoryWeekMinor: 2_900, topWeekMinor: 7_900 });
+  });
+
   it("moves badges from Credly to EnrollClass verified badges and awards them to past learners", async () => {
     const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
     const fetchImpl = (async (url: string) => (url.startsWith("https://images.credly.com/") ? new Response(png, { headers: { "content-type": "image/png" } }) : new Response("", { status: 404 }))) as unknown as typeof fetch;

@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql", "0020_categories_promotions.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -108,6 +108,29 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await core.getOrganization(org.id)).paymentMode).toBeUndefined();
     await core.updateOrganization(org.id, { marketplaceListing: false, flexibleTickets: true });
     expect(await core.getOrganization(org.id)).toMatchObject({ marketplaceListing: false, flexibleTickets: true });
+  });
+
+  it("course topics and paid promotions on Postgres", async () => {
+    const payments = new FakePaymentsAdapter();
+    const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
+    const core = new Core({ repos: createPgRepos(pool), ledger, payments });
+    const { organization: org } = await core.createOrganization({ name: "PG Promo", country: "US", currency: "USD" });
+    const course = await core.createCourse(org.id, { slug: "itil", name: "ITIL 4 Foundation", category: "it-service" });
+    expect((await core.getCourse(org.id, course.id)).category).toBe("it-service");
+    const ev = await core.createEvent(org.id, { name: "Dec", courseId: course.id, startsAt: new Date("2099-12-01T10:00:00Z") });
+    await core.createTicketType(org.id, ev.id, { name: "Seat", priceMinor: 50_000, quantity: 5 });
+    await core.publishEvent(org.id, ev.id);
+    const { promotion } = await core.createPromotion(org.id, { courseId: course.id, placement: "category", weeks: 4 });
+    expect(promotion.amountMinor).toBe(8_700);
+    await core.handlePaymentEvent(payments.succeed(promotion.paymentRef!, 8_700, "USD"));
+    const [stored] = await core.listPromotions(org.id);
+    expect(stored).toMatchObject({ status: "active", weeks: 4 });
+    expect(stored!.endsAt!.getTime() - stored!.startsAt!.getTime()).toBe(28 * 86_400_000);
+    const entry = (await core.publicCatalog()).find((c) => c.organizationId === org.id)!;
+    expect(entry).toMatchObject({ category: "it-service", promoted: "category" });
+    await core.updateCourse(org.id, course.id, { category: null });
+    expect((await core.getCourse(org.id, course.id)).category).toBeUndefined();
+    await ledger.assertBalanced();
   });
 
   it("corporate invoice orders on Postgres: numbering, partial payments, settlement", async () => {

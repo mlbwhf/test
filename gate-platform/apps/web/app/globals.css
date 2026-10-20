@@ -6312,3 +6312,133 @@ a.chip:hover {
 .row-details > summary { cursor: pointer; font-size: 0.875rem; color: var(--link); }
 .row-details[open] { flex-basis: 100%; }
 .invoice-companies { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+
+.classes-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 24px;
+}
+.classes-cats a {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.classes-cats a span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.classes-cats a[aria-current="page"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.classes-cats a[aria-current="page"] span {
+  color: inherit;
+  opacity: 0.7;
+}
+.classes-featured {
+  margin: 0 0 28px;
+}
+.classes-featured h2 {
+  font-size: 14px;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.classes-featured ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.classes-featured a {
+  display: grid;
+  gap: 4px;
+  padding: 0 0 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  overflow: hidden;
+}
+.classes-featured a:hover,
+.classes-featured a:focus-visible {
+  border-color: var(--green);
+}
+.classes-featured-pad {
+  height: 8px;
+}
+.classes-featured img {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  background: var(--sand);
+  margin-bottom: 8px;
+}
+.classes-featured a > :not(img):not(.classes-featured-pad) {
+  margin: 0 16px;
+}
+.classes-featured strong {
+  font-family: var(--display);
+  font-size: 18px;
+}
+.classes-featured .mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.classes-sponsored {
+  justify-self: start;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.promote {
+  display: grid;
+  gap: 12px;
+  max-width: 640px;
+}
+.promote-options {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.promote-options legend {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.promote-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.promote-option input {
+  grid-row: span 2;
+  margin-top: 3px;
+}
+.promote-option span {
+  color: var(--muted);
+  font-size: 14px;
+}
+.promote-option.is-on {
+  border-color: var(--green);
+}

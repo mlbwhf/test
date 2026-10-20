@@ -1,6 +1,6 @@
 import type { ApiKey, AuthSession, IdentityRepos, IntegrationRepos, WebhookDelivery, WebhookEndpoint, Invitation, Membership, Role, User } from "@gate/core";
 import type {
-  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
+  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Promotion, PromotionRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -46,7 +46,7 @@ function toParty(r: Row): Party {
 function toCourse(r: Row): Course {
   const description = opt<string>(r.description), body = opt<string>(r.certification_body), days = opt<number>(r.duration_days);
   const policy = opt<Course["changePolicy"]>(r.change_policy), prework = opt<string>(r.prework), surveyUrl = opt<string>(r.survey_url), imageUrl = opt<string>(r.image_url);
-  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), ...(opt<Course["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Course["badge"]> } : {}), createdAt: date(r.created_at) };
+  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), ...(opt<Course["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Course["badge"]> } : {}), ...(opt<string>(r.category) ? { category: r.category as NonNullable<Course["category"]> } : {}), createdAt: date(r.created_at) };
 }
 function toEvent(r: Row): Event {
   const rules = opt<Event["splitRules"]>(r.split_rules);
@@ -162,8 +162,8 @@ class PgParties implements PartyRepo {
 }
 class PgCourses implements CourseRepo {
   constructor(private readonly pool: Pool) {}
-  async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt]); }
-  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10, badge=$11 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null, c.badge ? JSON.stringify(c.badge) : null]); }
+  async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at, category) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt, c.category ?? null]); }
+  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10, badge=$11, category=$12 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null, c.badge ? JSON.stringify(c.badge) : null, c.category ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE id=$1`, [id]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async getBySlug(orgId: string, slug: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 AND slug=$2`, [orgId, slug]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCourse); }
@@ -316,6 +316,21 @@ class PgRefunds implements RefundRepo {
   async getByProviderRef(ref: string) { const r = await this.pool.query(`SELECT * FROM refunds WHERE payment_refund_ref=$1`, [ref]); return r.rows[0] ? toRefund(r.rows[0]) : undefined; }
   async listByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM refunds WHERE order_id=$1 ORDER BY created_at`, [orderId]); return r.rows.map(toRefund); }
 }
+function toPromotion(r: Row): Promotion {
+  return {
+    id: str(r.id), organizationId: str(r.organization_id), courseId: str(r.course_id), placement: r.placement as Promotion["placement"], weeks: num(r.weeks),
+    amountMinor: num(r.amount_minor), currency: str(r.currency), status: r.status as Promotion["status"], ...(opt<string>(r.payment_ref) ? { paymentRef: str(r.payment_ref) } : {}),
+    ...(opt<Date>(r.starts_at) ? { startsAt: date(r.starts_at) } : {}), ...(opt<Date>(r.ends_at) ? { endsAt: date(r.ends_at) } : {}), createdAt: date(r.created_at),
+  };
+}
+class PgPromotions implements PromotionRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(p: Promotion) { await this.pool.query(`INSERT INTO promotions (id, organization_id, course_id, placement, weeks, amount_minor, currency, status, payment_ref, starts_at, ends_at, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, [p.id, p.organizationId, p.courseId, p.placement, p.weeks, p.amountMinor, p.currency, p.status, p.paymentRef ?? null, p.startsAt ?? null, p.endsAt ?? null, p.createdAt]); }
+  async update(p: Promotion) { await this.pool.query(`UPDATE promotions SET status=$2, payment_ref=$3, starts_at=$4, ends_at=$5 WHERE id=$1`, [p.id, p.status, p.paymentRef ?? null, p.startsAt ?? null, p.endsAt ?? null]); }
+  async getByPaymentRef(ref: string) { const r = await this.pool.query(`SELECT * FROM promotions WHERE payment_ref=$1`, [ref]); return r.rows[0] ? toPromotion(r.rows[0]) : undefined; }
+  async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM promotions WHERE organization_id=$1 ORDER BY created_at DESC`, [orgId]); return r.rows.map(toPromotion); }
+  async listActive(at: Date) { const r = await this.pool.query(`SELECT * FROM promotions WHERE status='active' AND starts_at <= $1 AND ends_at > $1 ORDER BY starts_at`, [at]); return r.rows.map(toPromotion); }
+}
 class PgProcessedEvents implements ProcessedEventRepo {
   constructor(private readonly pool: Pool) {}
   async record(id: string) {
@@ -342,6 +357,7 @@ export function createPgRepos(pool: Pool): Repos {
     payouts: new PgPayouts(pool),
     refunds: new PgRefunds(pool),
     processedEvents: new PgProcessedEvents(pool),
+    promotions: new PgPromotions(pool),
   };
 }
 

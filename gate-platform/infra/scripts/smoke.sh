@@ -29,6 +29,7 @@ expect "https://www.$d/" 308 "https://$d/" || fail=1
 expect "https://app.$d/login" 200 'Sign in to EnrollClass' || fail=1
 expect "https://app.$d/login?mode=signup" 200 'Create your free EnrollClass account' || fail=1
 expect "https://$d/classes" 200 'Upcoming classes' || fail=1
+expect "https://app.$d/help/promote-a-class" 200 'Promote a course' || fail=1
 expect "https://app.$d/verify" 200 'Verify a badge' || fail=1
 expect "https://api.$d/issuers/none/did.json" 404 '' || fail=1
 expect "https://api.$d/public/v1/invoices/inv_none.bad" 404 '' || fail=1
