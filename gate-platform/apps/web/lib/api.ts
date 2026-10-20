@@ -139,7 +139,14 @@ export type Seat = {
   status: SeatStatus;
   createdAt: string;
   confirmedAt: string | null;
+  /** Door check-in time, null until the ticket is scanned or checked in by hand. */
+  checkedInAt: string | null;
+  ticketCode?: string;
+  ticketUrl?: string;
+  checkInUrl?: string;
 };
+
+export type CheckInResult = { seat: Seat; alreadyCheckedIn: boolean; code: string; event: { id: string; name: string } };
 
 export type RegionalPrices = Record<string, number>;
 
@@ -597,6 +604,7 @@ export const api = {
   createParty: (input: CreatePartyInput) => request<Party>("POST", "/v1/parties", input),
 
   listSeats: (eventId: string) => request<{ items: Seat[] }>("GET", `/v1/seats?eventId=${enc(eventId)}`),
+  checkIn: (input: { token?: string; code?: string; eventId?: string; undo?: boolean }) => request<CheckInResult>("POST", "/v1/checkins", input),
 
   listOrders: () => request<{ items: Order[] }>("GET", "/v1/orders"),
   createOrder: (input: CreateOrderInput) => request<CreateOrderResult>("POST", "/v1/orders", input),

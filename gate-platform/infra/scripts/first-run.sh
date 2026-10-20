@@ -78,6 +78,7 @@ else
       -e "s|^TRAEFIK_CERT_RESOLVER=.*|TRAEFIK_CERT_RESOLVER=$res|" \
       -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(openssl rand -hex 24)|" \
       -e "s|^GATE_ADMIN_KEY=.*|GATE_ADMIN_KEY=$(openssl rand -hex 32)|" \
+      -e "s|^GATE_TICKET_SECRET=.*|GATE_TICKET_SECRET=$(openssl rand -hex 32)|" \
       -e "s|^BACKUP_PASSPHRASE=.*|BACKUP_PASSPHRASE=$(openssl rand -hex 24)|" \
       "$tmp/env.example" >/opt/gate/.env
   chown deploy:deploy /opt/gate/.env

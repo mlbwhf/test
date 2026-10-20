@@ -70,6 +70,17 @@ export type SeatView = {
   policy: SeatPolicy;
   transferOptions: TransferOption[];
   calendarUrl: string;
+  /** Signed link to this seat's ticket page. */
+  ticketUrl: string;
+};
+
+export type TicketStatus = "valid" | "checked_in" | "pending" | "cancelled" | "transferred";
+export type TicketView = {
+  ticket: { seatId: string; code: string; status: TicketStatus; checkedInAt: string | null; attendee: Attendee; ticketTypeName: string; orderId: string };
+  event: PublicEvent;
+  course: (PublicCourse & { durationDays: number | null; imageUrl: string | null; description: string | null }) | null;
+  organization: PublicOrganization;
+  links: { ticket: string; checkIn: string; qrSvg: string; qrPng: string; calendar: string };
 };
 
 export type SubstituteInput = { email: string; attendee: Attendee };
@@ -143,7 +154,23 @@ async function request<T>(method: "GET" | "POST", path: string, body?: unknown):
 
 const enc = encodeURIComponent;
 
+/** The QR as inline SVG markup, fetched server-side from the API (same origin rules as JSON). */
+async function fetchSvg(path: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${apiBaseUrl}${path}`, { cache: "no-store" });
+    if (!res.ok || !(res.headers.get("content-type") ?? "").includes("image/svg+xml")) return null;
+    const svg = await res.text();
+    return svg.trimStart().startsWith("<svg") || svg.trimStart().startsWith("<?xml") ? svg : null;
+  } catch {
+    return null;
+  }
+}
+
 export const publicApi = {
+  /** Ticket view by its signed token; 404 for unknown or forged tokens. */
+  getTicket: (token: string) => request<TicketView>("GET", `/public/v1/tickets/${enc(token)}`),
+  getTicketQrSvg: (token: string) => fetchSvg(`/public/v1/tickets/${enc(token)}/qr.svg`),
+
   /** Seat + cohort + policy bundle; 404 when `email` does not match the seat's attendee. */
   getSeat: (seatId: string, email: string) =>
     request<SeatView>("GET", `/public/v1/seats/${enc(seatId)}?email=${enc(email)}`),

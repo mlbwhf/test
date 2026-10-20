@@ -852,3 +852,27 @@ export async function updateCourseImageAction(_prev: ActionState, formData: Form
   revalidatePath(`/courses/${courseId}`);
   return { status: "ok", message: result.data.imageUrl ? "Cover image saved." : "Cover image removed." };
 }
+
+// ---------- door check-in ----------
+
+export async function checkInAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const token = field(formData, "token");
+  const code = field(formData, "code");
+  const eventId = field(formData, "eventId");
+  const undo = field(formData, "undo") === "1";
+  if (!token && !code) return fail("Type the code under the attendee's QR, e.g. EC-7K2M-94QX.");
+  if (!token && !eventId) return fail("Pick the cohort first.");
+  const result = await api.checkIn(token ? { token, undo } : { code, eventId, undo });
+  if (!result.ok) return fail(describeFailure(result.error));
+  const r = result.data;
+  revalidatePath("/checkin");
+  if (token) revalidatePath(`/checkin/${token}`);
+  const who = r.seat.attendee.name ?? r.seat.attendee.email;
+  const message = undo
+    ? `Check-in undone for ${who}.`
+    : r.alreadyCheckedIn
+      ? `${who} was already checked in at ${new Date(r.seat.checkedInAt!).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}.`
+      : `Checked in: ${who}.`;
+  return { status: "ok", message, details: [{ label: "Cohort", value: r.event.name }, { label: "Code", value: r.code }] };
+}
+

@@ -1,4 +1,4 @@
-import { buildIcs } from "./ics.js";
+import { buildIcs, buildInvite } from "./ics.js";
 import type { CoreHooks, OrderPaidContext } from "./hooks.js";
 import { buildIcs as _buildIcsAlias } from "./ics.js";
 void _buildIcsAlias;
@@ -44,6 +44,15 @@ export interface ConfirmationOptions {
   calendarUrl?: ((seatId: string) => string) | undefined;
   /** Course page or joining-instructions URL. */
   pageUrl?: ((ctx: OrderPaidContext) => string | undefined) | undefined;
+  /** The attendee's ticket: page link, hosted QR image and door code. */
+  ticket?: ((seatId: string) => { url: string; qrUrl: string; code: string }) | undefined;
+  /** Seat self-service page (cancel, transfer, substitute). */
+  manageUrl?: ((seatId: string, email: string) => string) | undefined;
+  /**
+   * Who the calendar invitation is from. With an organizer the attachment is a real
+   * invitation (mail apps add it to the calendar); without one it is an importable file.
+   */
+  organizer?: ((ctx: OrderPaidContext) => { name: string; email: string } | undefined) | undefined;
   now?: (() => Date) | undefined;
 }
 
@@ -68,17 +77,20 @@ export function confirmationHook(notifier: Notifier, opts: ConfirmationOptions):
         if (sentTo.has(to)) continue;
         sentTo.add(to);
         const mine = seats.filter((s) => s.attendee.email.toLowerCase() === to);
-        const ics = buildIcs({
+        const ticket = opts.ticket?.(seat.id);
+        const organizer = opts.organizer?.(ctx);
+        const invite = buildInvite({
           uid: `seat-${seat.id}`,
           summary: title,
-          description: `${event.name}\nOrganizer: ${organization.name}\nOrder: ${order.id}`,
-          url, location: event.format === "in_person" ? undefined : "Online (joining link to follow)",
-          attendeeEmail: to,
+          description: [event.name, `Organizer: ${organization.name}`, `Order: ${order.id}`, ...(ticket ? [`Ticket: ${ticket.url}`] : [])].join("\n"),
+          url: ticket?.url ?? url, location: event.format === "in_person" ? undefined : "Online (joining link to follow)",
+          organizer, attendeeEmail: to, attendeeName: seat.attendee.name,
           sessions: event.sessions,
           fallback: { startsAt: event.startsAt, endsAt: event.endsAt ?? event.startsAt },
           now: opts.now?.(),
         });
         const name = seat.attendee.name ? seat.attendee.name.split(" ")[0] : undefined;
+        const manage = opts.manageUrl?.(seat.id, seat.attendee.email);
         const text = [
           `Hi${name ? ` ${name}` : ""},`,
           ``,
@@ -90,10 +102,12 @@ export function confirmationHook(notifier: Notifier, opts: ConfirmationOptions):
           `Format: ${formatLabel(event.format)}`,
           `Seats on this order for you: ${mine.length}`,
           `Order: ${order.id}`,
+          ...(ticket ? [``, `Your ticket: ${ticket.url}`, `Check-in code: ${ticket.code}`] : []),
           ...(opts.calendarUrl ? [``, `Add to calendar: ${opts.calendarUrl(seat.id)}`] : []),
+          ...(manage ? [`Change or cancel: ${manage}`] : []),
           ...(url ? [`Course page: ${url}`] : []),
           ``,
-          `The calendar invite is attached. Joining instructions and pre-work follow closer to the date.`,
+          `${invite.method === "REQUEST" ? "The calendar invitation is attached." : "The calendar file is attached."} Joining instructions and pre-work follow closer to the date.`,
           ``,
           `— ${organization.name}`,
         ].join("\n");
@@ -102,9 +116,9 @@ export function confirmationHook(notifier: Notifier, opts: ConfirmationOptions):
           to,
           subject: `You're confirmed — ${title} · ${dates}`,
           text,
-          html: ticketHtml({ org: organization.name, fromName: opts.fromName, title, cohort: event.name, name, sessionsText, format: formatLabel(event.format), orderId: order.id, seats: mine.length, calendarUrl: opts.calendarUrl?.(seat.id), url, timezone: event.timezone }),
+          html: ticketHtml({ org: organization.name, fromName: opts.fromName, title, cohort: event.name, name, sessionsText, format: formatLabel(event.format), durationDays: course?.durationDays, orderId: order.id, seats: mine.length, calendarUrl: opts.calendarUrl?.(seat.id), url, timezone: event.timezone, attendee: seat.attendee.name ?? seat.attendee.email, ticket, manage, dates }),
           replyTo: opts.replyTo,
-          attachments: [{ filename: "cohort.ics", contentType: "text/calendar; charset=utf-8; method=PUBLISH", content: ics, encoding: "utf8" }],
+          attachments: [{ filename: invite.method === "REQUEST" ? "invite.ics" : "cohort.ics", contentType: `text/calendar; charset=utf-8; method=${invite.method}`, content: invite.ics, encoding: "utf8" }],
         });
       }
 
@@ -139,19 +153,52 @@ export function money(minor: number, currency: string): string {
 function esc(v: string): string {
   return v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-function ticketHtml(i: { org: string; fromName: string; title: string; cohort: string; name?: string | undefined; sessionsText: string; format: string; orderId: string; seats: number; calendarUrl?: string | undefined; url?: string | undefined; timezone: string }): string {
-  return `<!doctype html><html><body style="margin:0;background:#eef2f4;font-family:Arial,Helvetica,sans-serif">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 0"><tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
-<tr><td style="background:#053947;padding:26px 30px"><span style="color:#fbbf24;font-size:12px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase">${esc(i.org)}</span><br><span style="color:#fff;font-size:22px;font-weight:bold">Registration confirmed</span></td></tr>
-<tr><td style="padding:24px 30px 8px;color:#0f172a;font-size:16px">Hi${i.name ? ` ${esc(i.name)}` : ""},<p style="color:#475569;font-size:14px;line-height:1.6">Your seat for <strong>${esc(i.title)}</strong> is confirmed.</p></td></tr>
-<tr><td style="padding:8px 30px"><table role="presentation" width="100%" style="border:2px dashed #0170B9;border-radius:12px"><tr><td style="padding:18px 22px;font-size:14px;color:#0f172a">
-<div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Cohort</div><div style="font-weight:bold;margin-bottom:10px">${esc(i.cohort)}</div>
-<div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Schedule (${esc(i.timezone)})</div><pre style="margin:0 0 10px;font-family:inherit;white-space:pre-wrap">${esc(i.sessionsText)}</pre>
-<div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Format</div><div style="margin-bottom:10px">${esc(i.format)}</div>
-<div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Order</div><div>${esc(i.orderId)} · ${i.seats} seat${i.seats === 1 ? "" : "s"}</div>
-</td></tr></table></td></tr>
-<tr><td style="padding:16px 30px 28px;font-size:14px;color:#475569;line-height:1.6">${i.calendarUrl ? `<a href="${esc(i.calendarUrl)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">Add to calendar</a><br><br>` : ""}The calendar invite is attached. Joining instructions and pre-work follow closer to the date.${i.url ? `<br><a href="${esc(i.url)}">Course page</a>` : ""}<br><br>— ${esc(i.fromName)}</td></tr>
+// Branded ticket email, after the ticket design: navy header, details, perforation, QR.
+// Table layout and inline styles only, since that is what mail clients render.
+const INK = "#14213d", PAPER = "#f7f6f2", SAND = "#eeebe2", GREEN = "#3fcb7e", GREEN_TEXT = "#2f7a52", CARD = "#fdfdfb";
+const MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+const SANS = "'Instrument Sans',Helvetica,Arial,sans-serif";
+const DISPLAY = "'Bricolage Grotesque','Instrument Sans',Helvetica,Arial,sans-serif";
+function ticketHtml(i: { org: string; fromName: string; title: string; cohort: string; name?: string | undefined; sessionsText: string; format: string; durationDays?: number | undefined; orderId: string; seats: number; calendarUrl?: string | undefined; url?: string | undefined; timezone: string; attendee: string; ticket?: { url: string; qrUrl: string; code: string } | undefined; manage?: string | undefined; dates: string }): string {
+  const label = (t: string) => `<div style="font-family:${MONO};font-size:11px;letter-spacing:.06em;color:#6b7280;text-transform:uppercase">${esc(t)}</div>`;
+  const cell = (l: string, v: string) => `<td valign="top" width="50%" style="padding:0 8px 16px 0">${label(l)}<div style="font-family:${SANS};font-weight:600;font-size:15px;color:${INK};margin-top:3px">${v}</div></td>`;
+  const eyebrow = [i.format.toUpperCase(), i.durationDays ? `${i.durationDays} DAY${i.durationDays === 1 ? "" : "S"}` : ""].filter(Boolean).join(" · ");
+  const btn = (href: string, text: string, primary: boolean) => `<a href="${esc(href)}" style="display:inline-block;padding:13px 22px;border-radius:999px;font-family:${SANS};font-weight:600;font-size:15px;text-decoration:none;${primary ? `background:${GREEN};color:${INK}` : `border:1.5px solid ${INK};color:${INK}`}">${esc(text)}</a>`;
+  return `<!doctype html><html><body style="margin:0;background:${SAND}">
+<div style="display:none;max-height:0;overflow:hidden">You're confirmed for ${esc(i.title)}, ${esc(i.dates)}. Your ticket and calendar invite are inside.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${SAND};padding:28px 12px"><tr><td align="center">
+<table role="presentation" width="440" cellpadding="0" cellspacing="0" style="max-width:440px;width:100%">
+<tr><td style="padding:0 4px 14px;font-family:${SANS};font-size:15px;color:${INK}">Hi${i.name ? ` ${esc(i.name)}` : ""}, you're confirmed. Show this ticket at check-in.</td></tr>
+<tr><td style="background:${INK};border-radius:24px 24px 0 0;padding:24px 26px 28px">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td style="font-family:${DISPLAY};font-weight:800;font-size:16px;letter-spacing:-.03em;color:${PAPER}"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${PAPER}"></span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${PAPER};margin-left:2px"></span><br><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${PAPER}"></span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GREEN};margin-left:2px"></span> &nbsp;enrollclass</td>
+    <td align="right"><span style="font-family:${MONO};font-size:11px;padding:5px 12px;border-radius:999px;background:${GREEN};color:${INK}">VALID</span></td>
+  </tr></table>
+  <div style="font-family:${MONO};font-size:12px;letter-spacing:.08em;color:#7fdcaa;margin-top:20px">${esc(eyebrow)}</div>
+  <div style="font-family:${DISPLAY};font-weight:800;font-size:28px;line-height:1.05;letter-spacing:-.035em;color:${PAPER};margin-top:8px">${esc(i.title)}</div>
+</td></tr>
+<tr><td style="background:${CARD};padding:22px 26px 6px">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    <tr>${cell("Attendee", esc(i.attendee))}${cell("Ticket", `${i.seats} seat${i.seats === 1 ? "" : "s"}`)}</tr>
+    <tr>${cell("Cohort", esc(i.cohort))}${cell("Order", `<span style="font-family:${MONO};font-size:13px">${esc(i.orderId)}</span>`)}</tr>
+    <tr><td colspan="2" style="padding:0 0 16px">${label(`Schedule (${i.timezone})`)}<div style="font-family:${SANS};font-size:14px;color:${INK};margin-top:3px;white-space:pre-line">${esc(i.sessionsText.replace(/^ +/gm, ""))}</div></td></tr>
+    <tr><td colspan="2" style="padding:0 0 16px">${label("Hosted by")}<div style="font-family:${SANS};font-weight:600;font-size:15px;color:${INK};margin-top:3px">${esc(i.org)}</div></td></tr>
+  </table>
+</td></tr>
+<tr><td style="background:${CARD};padding:0 22px"><div style="border-top:2px dashed #c9ccd4;height:0;line-height:0;font-size:0">&nbsp;</div></td></tr>
+${i.ticket ? `<tr><td align="center" style="background:${CARD};padding:26px 26px 8px">
+  <a href="${esc(i.ticket.url)}" style="display:inline-block;padding:12px;border:2px solid ${INK};border-radius:20px;background:#ffffff"><img src="${esc(i.ticket.qrUrl)}" width="200" height="200" alt="Check-in QR code" style="display:block;width:200px;height:200px;border:0"></a>
+  <div style="font-family:${MONO};font-size:15px;letter-spacing:.12em;color:${INK};margin-top:14px">${esc(i.ticket.code)}</div>
+  <div style="font-family:${SANS};font-size:13px;color:#6b7280;margin-top:4px">Scan at the door, or read out the code.</div>
+</td></tr>` : ""}
+<tr><td align="center" style="background:${CARD};border-radius:0 0 24px 24px;padding:18px 26px 26px">
+  ${i.ticket ? btn(i.ticket.url, "Open ticket", true) : ""}${i.calendarUrl ? ` &nbsp; ${btn(i.calendarUrl, "Add to calendar", !i.ticket)}` : ""}
+</td></tr>
+<tr><td style="padding:18px 6px 0;font-family:${SANS};font-size:13px;line-height:1.55;color:#4b5563">
+  The calendar invitation is attached. Joining instructions and pre-work follow closer to the date.${i.manage ? `<br><a href="${esc(i.manage)}" style="color:${GREEN_TEXT}">Change attendee, move date or cancel</a>` : ""}${i.url ? ` · <a href="${esc(i.url)}" style="color:${GREEN_TEXT}">Course page</a>` : ""}
+  <br><br>${esc(i.fromName)}
+  <div style="margin-top:18px;font-family:${MONO};font-size:11px;color:#9ca3af">Registration and payment by EnrollClass on behalf of ${esc(i.org)}. Your payment is held until the course is delivered.</div>
+</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

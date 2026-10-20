@@ -61,13 +61,14 @@ function toTicketType(r: Row): TicketType {
   };
 }
 function toSeat(r: Row): Seat {
-  const confirmedAt = opt<Date>(r.confirmed_at), cancelledAt = opt<Date>(r.cancelled_at), from = opt<string>(r.transferred_from_seat_id), to = opt<string>(r.transferred_to_seat_id);
+  const confirmedAt = opt<Date>(r.confirmed_at), cancelledAt = opt<Date>(r.cancelled_at), from = opt<string>(r.transferred_from_seat_id), to = opt<string>(r.transferred_to_seat_id), checkedInAt = opt<Date>(r.checked_in_at);
   const att = opt<Omit<NonNullable<Seat["attendance"]>, "updatedAt"> & { updatedAt: string }>(r.attendance);
   const subs = ((r.substitutions as Array<{ from: Seat["attendee"]; at: string }>) ?? []).map((x) => ({ from: x.from, at: new Date(x.at) }));
   return {
     id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), eventId: str(r.event_id), ticketTypeId: str(r.ticket_type_id), attendee: r.attendee as Seat["attendee"], status: r.status as Seat["status"], createdAt: date(r.created_at),
     ...(confirmedAt ? { confirmedAt } : {}), ...(cancelledAt ? { cancelledAt } : {}), ...(from ? { transferredFromSeatId: from } : {}), ...(to ? { transferredToSeatId: to } : {}), ...(subs.length ? { substitutions: subs } : {}),
     ...(att ? { attendance: { ...att, updatedAt: new Date(att.updatedAt) } } : {}),
+    ...(checkedInAt ? { checkedInAt: date(checkedInAt) } : {}),
   };
 }
 function toCertificate(r: Row): Certificate {
@@ -173,7 +174,7 @@ class PgEvents implements EventRepo {
 class PgSeats implements SeatRepo {
   constructor(private readonly pool: Pool) {}
   async create(s: Seat) { await this.pool.query(`INSERT INTO seats (id, organization_id, order_id, event_id, ticket_type_id, attendee, status, created_at, confirmed_at, transferred_from_seat_id, transferred_to_seat_id, substitutions, cancelled_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, [s.id, s.organizationId, s.orderId, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.createdAt, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null]); }
-  async update(s: Seat) { await this.pool.query(`UPDATE seats SET event_id=$2, ticket_type_id=$3, attendee=$4, status=$5, confirmed_at=$6, transferred_from_seat_id=$7, transferred_to_seat_id=$8, substitutions=$9, cancelled_at=$10, attendance=$11 WHERE id=$1`, [s.id, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null, s.attendance ? JSON.stringify({ ...s.attendance, updatedAt: s.attendance.updatedAt.toISOString() }) : null]); }
+  async update(s: Seat) { await this.pool.query(`UPDATE seats SET event_id=$2, ticket_type_id=$3, attendee=$4, status=$5, confirmed_at=$6, transferred_from_seat_id=$7, transferred_to_seat_id=$8, substitutions=$9, cancelled_at=$10, attendance=$11, checked_in_at=$12 WHERE id=$1`, [s.id, s.eventId, s.ticketTypeId, JSON.stringify(s.attendee), s.status, s.confirmedAt ?? null, s.transferredFromSeatId ?? null, s.transferredToSeatId ?? null, JSON.stringify((s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() }))), s.cancelledAt ?? null, s.attendance ? JSON.stringify({ ...s.attendance, updatedAt: s.attendance.updatedAt.toISOString() }) : null, s.checkedInAt ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE id=$1`, [id]); return r.rows[0] ? toSeat(r.rows[0]) : undefined; }
   async listByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE order_id=$1 ORDER BY created_at`, [orderId]); return r.rows.map(toSeat); }
   async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM seats WHERE event_id=$1 ORDER BY created_at`, [eventId]); return r.rows.map(toSeat); }

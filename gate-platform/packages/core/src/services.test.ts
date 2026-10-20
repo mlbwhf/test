@@ -179,3 +179,30 @@ describe("api key rotation", () => {
     expect((await core.authenticate(rotated.apiKey)).id).toBe(org.id);
   });
 });
+
+describe("door check-in", () => {
+  it("checks in confirmed seats once, can undo, and refuses cancelled seats and other organizations", async () => {
+    const repos = createInMemoryRepos();
+    const core = new Core({ repos, ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const { organization } = await core.createOrganization({ name: "AA", country: "US", currency: "USD" });
+    await core.connectPayments(organization.id);
+    const event = await core.createEvent(organization.id, { name: "RTE", startsAt: new Date(Date.now() + 86_400_000) });
+    const tt = await core.createTicketType(organization.id, event.id, { name: "Seat", priceMinor: 10000, quantity: 5 });
+    const res = await core.createOrder(organization.id, { eventId: event.id, ticketTypeId: tt.id, quantity: 2, buyerEmail: "a@b.co", attendees: [{ email: "a@b.co", name: "A" }, { email: "c@d.co", name: "C" }] });
+    const order = "order" in res ? res.order : res;
+    await core.handlePaymentEvent({ type: "payment.succeeded", paymentRef: order.paymentRef!, amountMinor: order.pricing.totalMinor, currency: "USD", providerEventId: "evt_1" });
+    const [seat, other] = await core.listSeats(organization.id, { orderId: order.id });
+    const first = await core.checkIn(organization.id, seat!.id);
+    expect(first.alreadyCheckedIn).toBe(false);
+    expect(first.seat.checkedInAt).toBeInstanceOf(Date);
+    const again = await core.checkIn(organization.id, seat!.id);
+    expect(again.alreadyCheckedIn).toBe(true);
+    expect(again.seat.checkedInAt!.getTime()).toBe(first.seat.checkedInAt!.getTime());
+    const undone = await core.checkIn(organization.id, seat!.id, { undo: true });
+    expect(undone.seat.checkedInAt).toBeUndefined();
+    await repos.seats.update({ ...other!, status: "cancelled", cancelledAt: new Date() });
+    await expect(core.checkIn(organization.id, other!.id)).rejects.toThrow(/was cancelled/);
+    const stranger = await core.createOrganization({ name: "BB", country: "US", currency: "USD" });
+    await expect(core.checkIn(stranger.organization.id, seat!.id)).rejects.toThrow(/not found/);
+  });
+});

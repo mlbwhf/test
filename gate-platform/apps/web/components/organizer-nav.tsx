@@ -10,6 +10,7 @@ const LINKS: Array<[href: string, label: string]> = [
   ["/instructors", "Instructors"],
   ["/orders", "Orders"],
   ["/money", "Money"],
+  ["/checkin", "Check-in"],
   ["/import", "Import"],
 ];
 

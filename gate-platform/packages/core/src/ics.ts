@@ -19,6 +19,38 @@ export interface IcsInput {
   now?: Date | undefined;
   /** Sequence bumps when the schedule changes so calendars update in place. */
   sequence?: number | undefined;
+  /**
+   * PUBLISH (default): a calendar file the reader may import.
+   * REQUEST: an invitation; mail apps show it as an event with RSVP and add it to the
+   * calendar. Needs an organizer, and the sessions must form one daily series (see
+   * dailySeries); buildInvite picks the right one.
+   */
+  method?: "PUBLISH" | "REQUEST" | undefined;
+  attendeeName?: string | undefined;
+}
+
+/** Sessions that repeat daily at the same time and length, e.g. a 3-day 9–5 bootcamp. */
+export function dailySeries(sessions: readonly Session[]): { startsAt: Date; endsAt: Date; count: number } | undefined {
+  if (sessions.length < 2) return undefined;
+  const sorted = [...sessions].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+  const len = sorted[0]!.endsAt.getTime() - sorted[0]!.startsAt.getTime();
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i]!.startsAt.getTime() - sorted[i - 1]!.startsAt.getTime() !== 86_400_000) return undefined;
+    if (sorted[i]!.endsAt.getTime() - sorted[i]!.startsAt.getTime() !== len) return undefined;
+  }
+  return { startsAt: sorted[0]!.startsAt, endsAt: sorted[0]!.endsAt, count: sorted.length };
+}
+
+/**
+ * The calendar part of a confirmation email: an invitation when it can be one (organizer
+ * known, single block or a daily series), otherwise a PUBLISH file with every session.
+ * iTIP allows one event per invitation, which is why irregular schedules fall back.
+ */
+export function buildInvite(input: Omit<IcsInput, "method">): { ics: string; method: "PUBLISH" | "REQUEST" } {
+  const single = input.sessions.length === 0 ? input.fallback : input.sessions.length === 1 ? input.sessions[0] : undefined;
+  const series = dailySeries(input.sessions);
+  if (!input.organizer || !input.attendeeEmail || (!single && !series)) return { ics: buildIcs({ ...input, method: "PUBLISH" }), method: "PUBLISH" };
+  return { ics: buildIcs({ ...input, method: "REQUEST" }), method: "REQUEST" };
 }
 
 export function buildIcs(input: IcsInput): string {
@@ -29,8 +61,32 @@ export function buildIcs(input: IcsInput): string {
     "VERSION:2.0",
     "PRODID:-//EnrollClass//Training//EN",
     "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
+    `METHOD:${input.method ?? "PUBLISH"}`,
   ];
+  if (input.method === "REQUEST") {
+    const single = blocks.length === 1 ? blocks[0]! : undefined;
+    const series = single ? undefined : dailySeries(input.sessions);
+    const first = single ?? series!;
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${escapeText(input.uid)}@gate`,
+      `DTSTAMP:${toUtc(now)}`,
+      `DTSTART:${toUtc(first.startsAt)}`,
+      `DTEND:${toUtc(first.endsAt)}`,
+      ...(series ? [`RRULE:FREQ=DAILY;COUNT=${series.count}`] : []),
+      `SUMMARY:${escapeText(input.summary)}`,
+      `SEQUENCE:${input.sequence ?? 0}`,
+      "STATUS:CONFIRMED",
+      "TRANSP:OPAQUE",
+    );
+    if (input.description) lines.push(`DESCRIPTION:${escapeText(input.description)}`);
+    if (input.url) lines.push(`URL:${input.url}`);
+    if (input.location) lines.push(`LOCATION:${escapeText(input.location)}`);
+    lines.push(`ORGANIZER;CN=${escapeParam(input.organizer!.name)}:mailto:${input.organizer!.email}`);
+    lines.push(`ATTENDEE;${input.attendeeName ? `CN=${escapeParam(input.attendeeName)};` : ""}CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=FALSE:mailto:${input.attendeeEmail}`);
+    lines.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Starts in 1 hour", "TRIGGER:-PT1H", "END:VALARM", "END:VEVENT", "END:VCALENDAR");
+    return lines.map(fold).join("\r\n") + "\r\n";
+  }
   blocks.forEach((s, i) => {
     const title = "title" in s && s.title ? `${input.summary} — ${s.title}` : blocks.length > 1 ? `${input.summary} (${i + 1}/${blocks.length})` : input.summary;
     lines.push(
@@ -59,7 +115,7 @@ export function toUtc(d: Date): string {
 }
 
 function escapeText(v: string): string {
-  return v.replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  return v.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 function escapeParam(v: string): string {
   return `"${v.replace(/"/g, "")}"`;

@@ -78,6 +78,9 @@ export const AttendeeSchema = z.object({ email: z.string().email(), name: z.stri
 export const SeatSchema = z.object({
   id: z.string(), organizationId: z.string(), orderId: z.string(), eventId: z.string(), ticketTypeId: z.string(), attendee: AttendeeSchema, status: z.enum(["reserved", "confirmed", "cancelled", "transferred"]), createdAt: z.string(), confirmedAt: z.string().nullable(),
   transferredFromSeatId: z.string().nullable(), transferredToSeatId: z.string().nullable(), cancelledAt: z.string().nullable(), substitutions: z.array(z.object({ from: AttendeeSchema, at: z.string() })),
+  checkedInAt: z.string().nullable(),
+  /** Organizer views only: door code, the attendee's ticket page and the check-in link. */
+  ticketCode: z.string().optional(), ticketUrl: z.string().optional(), checkInUrl: z.string().optional(),
 });
 export const ChangePolicySchema = z.object({
   transferFreeUntilDays: z.number().min(0), transferFeeBps: z.number().int().min(0).max(10_000), transferCutoffDays: z.number().min(0),
@@ -93,6 +96,7 @@ export const SeatOptionsSchema = z.object({
   }),
   transferOptions: z.array(z.object({ eventId: z.string(), ticketTypeId: z.string(), name: z.string(), startsAt: z.string(), endsAt: z.string().nullable(), timezone: z.string(), remaining: z.number().int(), priceDeltaMinor: Minor, feeMinor: Minor })),
   calendarUrl: z.string(),
+  ticketUrl: z.string(),
 });
 export const SeatTransferSchema = z.object({ id: z.string(), fromSeatId: z.string(), toEventId: z.string(), toTicketTypeId: z.string(), feeMinor: Minor, currency: Currency, status: z.enum(["pending_payment", "completed", "failed"]), paymentRef: z.string().nullable(), toSeatId: z.string().nullable(), createdAt: z.string() });
 export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(), ticketTypeId: z.string(), email: z.string(), name: z.string().nullable(), quantity: z.number().int(), status: z.enum(["waiting", "offered", "converted", "expired", "cancelled"]), createdAt: z.string(), offeredAt: z.string().nullable(), offerExpiresAt: z.string().nullable() });
@@ -145,7 +149,7 @@ export const toEvent = (e: Event) => ({
 export const toPayout = (p: Payout) => ({ id: p.id, partyId: p.partyId ?? null, currency: p.currency, amountMinor: p.amountMinor, method: p.method, reference: p.reference ?? null, createdAt: p.createdAt.toISOString() });
 export const toTicketType = (t: TicketType) => ({ ...t, prices: t.prices ?? null, earlyBird: t.earlyBird ? { until: t.earlyBird.until.toISOString(), priceMinor: t.earlyBird.priceMinor, prices: t.earlyBird.prices ?? null } : null });
 export const toSeat = (s: Seat) => ({
-  ...s, createdAt: s.createdAt.toISOString(), confirmedAt: s.confirmedAt?.toISOString() ?? null, cancelledAt: s.cancelledAt?.toISOString() ?? null,
+  ...s, createdAt: s.createdAt.toISOString(), confirmedAt: s.confirmedAt?.toISOString() ?? null, cancelledAt: s.cancelledAt?.toISOString() ?? null, checkedInAt: s.checkedInAt?.toISOString() ?? null,
   transferredFromSeatId: s.transferredFromSeatId ?? null, transferredToSeatId: s.transferredToSeatId ?? null, substitutions: (s.substitutions ?? []).map((x) => ({ from: x.from, at: x.at.toISOString() })),
 });
 export const toTransfer = (t: SeatTransfer) => ({ id: t.id, fromSeatId: t.fromSeatId, toEventId: t.toEventId, toTicketTypeId: t.toTicketTypeId, feeMinor: t.feeMinor, currency: t.currency, status: t.status, paymentRef: t.paymentRef ?? null, toSeatId: t.toSeatId ?? null, createdAt: t.createdAt.toISOString() });

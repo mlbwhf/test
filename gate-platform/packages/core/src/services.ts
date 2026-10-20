@@ -730,6 +730,30 @@ export class Core {
     return transferRefs;
   }
 
+  /**
+   * Door check-in for one seat. Idempotent: checking in twice keeps the first time and
+   * reports alreadyCheckedIn. `undo` clears it (a mistaken tap).
+   */
+  async checkIn(organizationId: string, seatId: string, opts: { undo?: boolean | undefined } = {}): Promise<{ seat: Seat; alreadyCheckedIn: boolean }> {
+    const seat = await this.repos.seats.get(seatId);
+    if (!seat || seat.organizationId !== organizationId) throw notFound("seat", seatId);
+    if (opts.undo) {
+      if (!seat.checkedInAt) return { seat, alreadyCheckedIn: false };
+      const next: Seat = { ...seat };
+      delete next.checkedInAt;
+      await this.repos.seats.update(next);
+      return { seat: next, alreadyCheckedIn: false };
+    }
+    if (seat.status !== "confirmed") {
+      const why = seat.status === "reserved" ? "is not paid yet" : seat.status === "transferred" ? "was moved to another cohort" : "was cancelled";
+      throw new DomainError("INVALID_STATE", `this ticket ${why}`, seat.status === "transferred" && seat.transferredToSeatId ? `the attendee's current seat is ${seat.transferredToSeatId}` : undefined);
+    }
+    if (seat.checkedInAt) return { seat, alreadyCheckedIn: true };
+    const next: Seat = { ...seat, checkedInAt: this.clock.now() };
+    await this.repos.seats.update(next);
+    return { seat: next, alreadyCheckedIn: false };
+  }
+
   async listSeats(organizationId: string, filter: { eventId?: string | undefined; orderId?: string | undefined }): Promise<Seat[]> {
     if (filter.orderId) {
       await this.getOrder(organizationId, filter.orderId);

@@ -158,6 +158,8 @@ export interface Seat {
   substitutions?: Array<{ from: Attendee; at: Date }>;
   cancelledAt?: Date;
   attendance?: Attendance;
+  /** Set when the attendee's ticket was scanned or checked in by hand at the door. */
+  checkedInAt?: Date;
 }
 
 export type AttendanceStatus = "present" | "partial" | "absent" | "unknown";

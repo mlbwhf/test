@@ -9,6 +9,7 @@ import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
 import { buildApp } from "./app.js";
 import { LocalMediaStore } from "./media.js";
+import { TicketSigner, ticketUrl } from "./tickets.js";
 
 async function main() {
   const env = (process.env.GATE_ENV as "development" | "test" | "production" | undefined) ?? "development";
@@ -55,15 +56,27 @@ async function main() {
     ? new ResendNotifier({ apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM ?? "EnrollClass <no-reply@enrollclass.com>" })
     : new ConsoleNotifier();
   console.log(`[email] ${notifier.provider}`);
+  const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
+  // Ticket links and QR codes are signed with this; changing it invalidates issued tickets.
+  const ticketSecret = process.env.GATE_TICKET_SECRET || (process.env.GATE_ADMIN_KEY ? `admin:${process.env.GATE_ADMIN_KEY}` : env === "production" ? "" : "development-ticket-secret");
+  if (!ticketSecret) throw new Error("set GATE_TICKET_SECRET (or GATE_ADMIN_KEY) in production");
+  const signer = new TicketSigner(ticketSecret);
+  const organizerEmail = process.env.GATE_ORGANIZER_EMAIL ?? process.env.EMAIL_REPLY_TO;
   const hooks: CoreHooks[] = [
     confirmationHook(notifier, {
       fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
       replyTo: process.env.EMAIL_REPLY_TO,
       calendarUrl: (seatId) => `${publicUrl}/public/v1/seats/${seatId}/calendar.ics`,
       pageUrl: (ctx) => (ctx.course && process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", ctx.course.slug) : undefined),
+      ticket: (seatId) => {
+        const token = signer.token(seatId);
+        return { url: ticketUrl({ webUrl }, token), qrUrl: `${publicUrl}/public/v1/tickets/${encodeURIComponent(token)}/qr.png`, code: signer.code(seatId) };
+      },
+      manageUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
+      // With an organizer address the attachment is a real calendar invitation.
+      organizer: (ctx) => (organizerEmail ? { name: process.env.EMAIL_FROM_NAME ?? ctx.organization.name, email: organizerEmail } : undefined),
     }),
   ];
-  const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
   hooks.push(selfServiceHooks(notifier, {
     fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     replyTo: process.env.EMAIL_REPLY_TO,
@@ -158,6 +171,8 @@ async function main() {
     core, ...(stripe ? { stripe } : {}), ...(aiEnabled ? { ai } : {}), ...(idempotency ? { idempotency } : {}),
     ...(process.env.GATE_ADMIN_KEY ? { adminKey: process.env.GATE_ADMIN_KEY } : {}), env, logger: true, publicUrl,
     media: new LocalMediaStore(process.env.GATE_MEDIA_DIR ?? "./data/media"),
+    webUrl,
+    ticketSecret,
     ...(process.env.GATE_COURSE_PAGE_URL ? { publicPageUrl: (_org: string, slug: string) => process.env.GATE_COURSE_PAGE_URL!.replace("{slug}", slug) } : {}),
   });
   await app.listen({ port, host: "0.0.0.0" });

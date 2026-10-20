@@ -16,6 +16,7 @@ import { InMemoryIdempotencyStore, registerIdempotency } from "./plugins/idempot
 import * as S from "./schemas.js";
 import { registerImports } from "./imports.js";
 import { InMemoryMediaStore, registerCourseImageRoutes, registerMediaRoutes, type MediaStore } from "./media.js";
+import { TicketSigner, registerCheckIns, registerPublicTickets, ticketUrl, withTicket } from "./tickets.js";
 import { timingSafeEqual } from "node:crypto";
 
 /** Constant-time comparison of a presented secret against the configured one. */
@@ -58,6 +59,10 @@ export interface AppDeps {
   fetchImpl?: typeof fetch;
   /** Where course images are kept; defaults to memory (tests, dev). */
   media?: MediaStore;
+  /** Signs ticket links and QR codes. Required in production. */
+  ticketSecret?: string;
+  /** Base URL of the web app (learner ticket pages, organizer check-in). */
+  webUrl?: string;
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
@@ -95,6 +100,8 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   });
 
   const media = deps.media ?? new InMemoryMediaStore();
+  if (env === "production" && !deps.ticketSecret) throw new Error("ticketSecret is required in production");
+  const tickets = { core: deps.core, signer: new TicketSigner(deps.ticketSecret ?? "development-ticket-secret"), publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000" };
   registerMediaRoutes(app, { store: media });
 
   app.get("/health", { schema: { tags: ["system"], security: [], response: { 200: z.object({ ok: z.boolean(), payments: z.string(), env: z.string() }) } } }, async () => ({ ok: true, payments: deps.core.payments.provider, env }));
@@ -160,6 +167,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   await app.register(async (pubRaw) => {
     const pub = pubRaw.withTypeProvider<ZodTypeProvider>();
     await pub.register(rateLimit, { max: 120, timeWindow: "1 minute" });
+    registerPublicTickets(pub, tickets);
     const OrgCourseParams = z.object({ orgId: z.string(), slug: z.string() });
 
     pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
@@ -213,6 +221,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
         },
         transferOptions: o.transferOptions.map((t) => ({ ...t, startsAt: t.startsAt.toISOString(), endsAt: t.endsAt?.toISOString() ?? null })),
         calendarUrl: `${deps.publicUrl ?? ""}/public/v1/seats/${o.seat.id}/calendar.ics`,
+        ticketUrl: ticketUrl(tickets, tickets.signer.token(o.seat.id)),
       };
     };
     pub.get("/public/v1/seats/:seatId", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), querystring: z.object({ email: z.string().email() }), response: { 200: S.SeatOptionsSchema, 404: S.ErrorSchema } } }, async (req) => seatOptionsOut(req.params.seatId, req.query.email));
@@ -300,6 +309,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     },
     transferOptions: o.transferOptions.map((t) => ({ ...t, startsAt: t.startsAt.toISOString(), endsAt: t.endsAt?.toISOString() ?? null })),
     calendarUrl: `${deps.publicUrl ?? ""}/public/v1/seats/${o.seat.id}/calendar.ics`,
+    ticketUrl: ticketUrl(tickets, tickets.signer.token(o.seat.id)),
   });
 
   // ---------- authenticated tenant API ----------
@@ -314,6 +324,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     const outbound = deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {};
     registerImports(api, { core: deps.core, media, publicUrl: deps.publicUrl ?? "", ...outbound }, org);
     registerCourseImageRoutes(api, { core: deps.core, store: media, publicUrl: deps.publicUrl ?? "", ...outbound }, org);
+    registerCheckIns(api, tickets, org);
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
 
@@ -349,7 +360,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       const t = await deps.core.createTicketType(org(req).id, req.params.id, { ...rest, earlyBird: earlyBird ? { until: new Date(earlyBird.until), priceMinor: earlyBird.priceMinor, ...(earlyBird.prices ? { prices: earlyBird.prices } : {}) } : undefined });
       return reply.code(201).send(S.toTicketType(t));
     });
-    api.get("/v1/seats", { schema: { tags: ["seats"], querystring: z.object({ eventId: z.string().optional(), orderId: z.string().optional() }), response: { 200: z.object({ items: z.array(S.SeatSchema) }) } } }, async (req) => ({ items: (await deps.core.listSeats(org(req).id, req.query)).map(S.toSeat) }));
+    api.get("/v1/seats", { schema: { tags: ["seats"], querystring: z.object({ eventId: z.string().optional(), orderId: z.string().optional() }), response: { 200: z.object({ items: z.array(S.SeatSchema) }) } } }, async (req) => ({ items: (await deps.core.listSeats(org(req).id, req.query)).map((s) => withTicket(tickets, s)) }));
 
     api.get("/v1/orders", { schema: { tags: ["orders"], querystring: z.object({ limit: z.coerce.number().int().min(1).max(500).optional() }), response: { 200: z.object({ items: z.array(S.OrderSchema) }) } } }, async (req) => ({ items: (await deps.core.listOrders(org(req).id, req.query.limit)).map(S.toOrder) }));
     api.get("/v1/orders/:id", { schema: { tags: ["orders"], params: z.object({ id: z.string() }), response: { 200: S.OrderSchema, 404: S.ErrorSchema } } }, async (req) => S.toOrder(await deps.core.getOrder(org(req).id, req.params.id)));

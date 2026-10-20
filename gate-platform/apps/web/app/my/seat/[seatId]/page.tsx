@@ -125,7 +125,7 @@ export default async function SeatPage({
   }
 
   const view: SeatView = result.data;
-  const { seat, event, course, organization, policy, transferOptions, calendarUrl } = view;
+  const { seat, event, course, organization, policy, transferOptions, calendarUrl, ticketUrl } = view;
   const timezone = event.timezone || "UTC";
   const currency = event.currency;
   const active = seat.status === "confirmed" || seat.status === "reserved";
@@ -185,6 +185,11 @@ export default async function SeatPage({
         </dl>
         {active && (
           <p className="section-actions" style={{ marginTop: 12, marginBottom: 0 }}>
+            {seat.status === "confirmed" && (
+              <a href={ticketUrl} className="btn btn-primary">
+                Show my ticket
+              </a>
+            )}
             <a href={calendarUrl}>Add to calendar</a>
             <span className="hint">(.ics file with every session, in {timezone})</span>
           </p>
