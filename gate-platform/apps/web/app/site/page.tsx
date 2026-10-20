@@ -182,7 +182,7 @@ export default async function SiteHome() {
             <p className="mono">INCLUDED IN BOTH</p>
             <p className="rate">$0</p>
             <p className="rate-sub">no setup, no monthly fee</p>
-            <p>Course pages and embeddable registration, early-bird and group pricing, waitlists, corporate invoices, QR tickets and check-in, certificates and digital badges, instructor roles, API, webhooks and AI assistants (MCP).</p>
+            <p>Course pages and embeddable registration, early-bird and group pricing, waitlists, corporate invoices, QR tickets and check-in, certificates, instructor roles, API, webhooks and AI assistants (MCP). Verified digital badges (Open Badges 3.0) with a badge designer: $1 per paid seat, no badge platform subscription.</p>
           </article>
         </div>
         <p className="footnote">You can pass the fee on to learners so you keep the full ticket price. Taxes you collect are passed through, never charged a fee. USD rates; other currencies have the same shape.</p>

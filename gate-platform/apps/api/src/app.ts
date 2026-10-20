@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, CredentialSigner, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -22,6 +22,7 @@ import { InMemoryMediaStore, registerCourseImageRoutes, registerMediaRoutes, typ
 import { TicketSigner, registerCheckIns, registerPublicTickets, ticketUrl, withTicket } from "./tickets.js";
 import { secretMatches } from "./secrets.js";
 import { presentedKey, registerIntegrationRoutes, registerMcpRoute } from "./integrations.js";
+import { registerCredentialRoutes } from "./credentials.js";
 
 /** Request logging without personal data: no query strings (they carry learner emails), no credentials. */
 const OrderCreated = z.object({
@@ -191,8 +192,11 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   });
 
   // ---------- public catalogue + checkout (no api key; rate limited) ----------
+  // Verified badges are signed with a key derived from the ticket secret (no extra configuration).
+  const credentialSigner = new CredentialSigner(`credentials:${deps.ticketSecret ?? "development-ticket-secret"}`);
   await app.register(async (pubRaw) => {
     const pub = pubRaw.withTypeProvider<ZodTypeProvider>();
+    registerCredentialRoutes(pubRaw, { core: deps.core, signer: credentialSigner, media, publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000", fetchImpl: deps.fetchImpl });
     await pub.register(rateLimit, { max: 120, timeWindow: "1 minute" });
     registerPublicTickets(pub, tickets);
     const OrgCourseParams = z.object({ orgId: z.string(), slug: z.string() });
@@ -200,10 +204,10 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     // Sitemaps and AI crawlers: every course with upcoming classes and its public page.
     // EnrollClass's published fees, per currency: the pricing page and the console read them from here.
     const FeeOut = z.object({ bps: z.number().int(), fixedMinor: z.number().int(), capMinor: z.number().int().nullable() });
-    pub.get("/public/v1/fees", { schema: { tags: ["public"], security: [], description: "Per paid seat. protected: all-in (card processing included); direct: EnrollClass's application fee, the organizer's Stripe account pays processing. Free tickets never carry a fee.", response: { 200: z.object({ currencies: z.record(z.string(), z.object({ protected: FeeOut, direct: FeeOut })) }) } } }, async (_req, reply) => {
+    pub.get("/public/v1/fees", { schema: { tags: ["public"], security: [], description: "Per paid seat. protected: all-in (card processing included); direct: EnrollClass's application fee, the organizer's Stripe account pays processing. Free tickets never carry a fee.", response: { 200: z.object({ currencies: z.record(z.string(), z.object({ protected: FeeOut, direct: FeeOut, verifiedBadgeMinor: z.number().int() })) }) } } }, async (_req, reply) => {
       const fee = (c: { bps: number; fixedMinor: number; capMinor?: number }) => ({ bps: c.bps, fixedMinor: c.fixedMinor, capMinor: c.capMinor ?? null });
       reply.header("cache-control", "public, max-age=3600");
-      return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct) }])) };
+      return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct), verifiedBadgeMinor: s.verifiedBadgeMinor }])) };
     });
     pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable() })) }) } } }, async (_req, reply) => {
       const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null }));
@@ -274,13 +278,17 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const r = await deps.core.cancelSeat(req.params.seatId, req.body.reason ?? "", { attendeeEmail: req.body.email });
       return { seat: S.toSeat(r.seat), refund: r.refund ? { id: r.refund.id, amountMinor: r.refund.amountMinor, status: r.refund.status } : null };
     });
-    pub.get("/public/v1/certificates/:code", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.object({ valid: z.boolean(), attendeeName: z.string().optional(), courseName: z.string().optional(), cohort: z.string().optional(), issuedAt: z.string().optional(), organization: z.string().optional(), kind: z.enum(["attendance", "completion"]).optional(), hours: z.number().nullable().optional(), startsAt: z.string().optional(), endsAt: z.string().nullable().optional(), timezone: z.string().optional(), format: z.string().optional(), instructors: z.array(z.string()).optional(), certificationBody: z.string().nullable().optional(), badge: S.CourseSchema.shape.badge.optional() }) } } }, async (req) => {
+    pub.get("/public/v1/certificates/:code", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.object({ valid: z.boolean(), attendeeName: z.string().optional(), courseName: z.string().optional(), cohort: z.string().optional(), issuedAt: z.string().optional(), organization: z.string().optional(), kind: z.enum(["attendance", "completion"]).optional(), hours: z.number().nullable().optional(), startsAt: z.string().optional(), endsAt: z.string().nullable().optional(), timezone: z.string().optional(), format: z.string().optional(), instructors: z.array(z.string()).optional(), certificationBody: z.string().nullable().optional(), badge: S.CourseSchema.shape.badge.optional(), verifiedBadge: z.object({ name: z.string(), imageUrl: z.string(), credentialUrl: z.string(), jwtUrl: z.string(), pngUrl: z.string() }).nullable().optional() }) } } }, async (req) => {
       const v = await deps.core.verifyCertificate(req.params.code);
       if (!v.valid || !v.certificate) return { valid: false };
       return {
         valid: true, attendeeName: v.certificate.attendeeName, courseName: v.certificate.courseName, ...(v.cohort ? { cohort: v.cohort.name, startsAt: v.cohort.startsAt.toISOString(), endsAt: v.cohort.endsAt?.toISOString() ?? null, timezone: v.cohort.timezone, format: v.cohort.format } : {}),
         issuedAt: v.certificate.issuedAt.toISOString(), ...(v.organizationName ? { organization: v.organizationName } : {}), kind: v.certificate.kind ?? "completion", hours: v.certificate.hours ?? null,
         instructors: v.instructors ?? [], certificationBody: v.course?.certificationBody ?? null, badge: v.course?.badge ?? null,
+        verifiedBadge: v.certificate.badge ? (() => {
+          const base = `${deps.publicUrl ?? ""}/public/v1/credentials/${encodeURIComponent(v.certificate.verifyCode)}`;
+          return { name: v.certificate.badge!.name, imageUrl: v.certificate.badge!.imageUrl, credentialUrl: base, jwtUrl: `${base}/jwt`, pngUrl: `${base}/badge.png` };
+        })() : null,
       };
     });
     pub.get("/public/v1/certificates/:code/view", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.string(), 404: z.string() } } }, async (req, reply) => {

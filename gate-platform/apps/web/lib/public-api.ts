@@ -193,15 +193,21 @@ export type CertificateView = {
   instructors?: string[];
   certificationBody?: string | null;
   badge?: { platform: string; name: string; url?: string; imageUrl?: string } | null;
+  /** The EnrollClass verified badge (Open Badges 3.0) issued with this certificate. */
+  verifiedBadge?: { name: string; imageUrl: string; credentialUrl: string; jwtUrl: string; pngUrl: string } | null;
 };
+
+export type CredentialCheck = { valid: boolean; reason?: string; issuer?: string; achievement?: string; learner?: string; issuedAt?: string; certificateUrl?: string };
 
 /** One fee component: basis points + fixed minor units per paid seat, optional cap. */
 export type Fee = { bps: number; fixedMinor: number; capMinor: number | null };
-export type FeeTable = { currencies: Record<string, { protected: Fee; direct: Fee }> };
+export type FeeTable = { currencies: Record<string, { protected: Fee; direct: Fee; verifiedBadgeMinor: number }> };
 
 export const publicApi = {
   /** EnrollClass's published fees per currency (protected: all-in; direct: our share only). */
   getFees: () => request<FeeTable>("GET", "/public/v1/fees"),
+  /** Checks a verified badge: its signed credential (vc+jwt) or a baked badge PNG (base64). */
+  verifyCredential: (input: { jwt?: string; png?: string }) => request<CredentialCheck>("POST", "/public/v1/credentials/verify", input),
   /** Public verification of a certificate by its code. */
   getCertificate: (code: string) => request<CertificateView>("GET", `/public/v1/certificates/${enc(code)}`),
   /** A course's public page data: upcoming live cohorts with seats left and prices. */

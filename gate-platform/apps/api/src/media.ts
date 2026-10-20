@@ -136,5 +136,38 @@ export function registerCourseImageRoutes(api: FastifyInstance, deps: { core: Co
     const badge = course.badge ? { ...course.badge, name, imageUrl } : { platform: "own" as const, name, imageUrl };
     return S.toCourse(await deps.core.updateCourse(o.id, req.params.id, { badge }));
   });
+  // Move a course's badge from Credly (or another platform) to an EnrollClass verified badge:
+  // same name, image copied into our media store. Fails when the badge has no image to copy.
+  async function migrateBadge(orgId: string, courseId: string): Promise<{ courseId: string; status: "moved" | "already" | "no_badge" | "no_image" | "failed"; reason?: string }> {
+    const course = await deps.core.getCourse(orgId, courseId);
+    const badge = course.badge;
+    if (!badge) return { courseId, status: "no_badge" };
+    if (badge.platform === "own") return { courseId, status: "already" };
+    if (!badge.imageUrl) return { courseId, status: "no_image", reason: "the badge has no image; upload or design one" };
+    try {
+      const imageUrl = badge.imageUrl.startsWith(`${deps.publicUrl}/public/v1/media/`) ? badge.imageUrl : await importImage(deps.store, deps.publicUrl, badge.imageUrl, deps.fetchImpl);
+      await deps.core.updateCourse(orgId, courseId, { badge: { platform: "own", name: badge.name, imageUrl } });
+      return { courseId, status: "moved" };
+    } catch (err) {
+      return { courseId, status: "failed", reason: err instanceof Error ? err.message : String(err) };
+    }
+  }
+  const MigrateResult = z.object({ courseId: z.string(), status: z.enum(["moved", "already", "no_badge", "no_image", "failed"]), reason: z.string().optional() });
+  typed.post("/v1/courses/:id/badge/migrate", { schema: { tags: ["badges"], params: z.object({ id: z.string() }), response: { 200: z.object({ result: MigrateResult, course: S.CourseSchema }), 404: S.ErrorSchema } } }, async (req) => {
+    const o = org(req);
+    const result = await migrateBadge(o.id, req.params.id);
+    return { result, course: S.toCourse(await deps.core.getCourse(o.id, req.params.id)) };
+  });
+  typed.post("/v1/badges/migrate", { schema: { tags: ["badges"], description: "Move every course badge hosted elsewhere (Credly, Accredible…) to EnrollClass verified badges.", body: z.object({ courseIds: z.array(z.string()).max(500).optional() }).optional(), response: { 200: z.object({ results: z.array(MigrateResult) }) } } }, async (req) => {
+    const o = org(req);
+    const ids = req.body?.courseIds ?? (await deps.core.repos.courses.listByOrganization(o.id)).filter((c) => c.badge && c.badge.platform !== "own").map((c) => c.id);
+    const results = [];
+    for (const id of ids) results.push(await migrateBadge(o.id, id));
+    return { results };
+  });
+  typed.post("/v1/courses/:id/badge/award", { schema: { tags: ["badges"], description: "Award the course's verified badge to learners who already hold a certificate for it.", params: z.object({ id: z.string() }), body: z.object({ notify: z.boolean().optional() }).optional(), response: { 200: z.object({ awarded: z.number().int() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => deps.core.awardBadgeToPastLearners(org(req).id, req.params.id, { notify: req.body?.notify ?? true }));
+  typed.get("/v1/badges", { schema: { tags: ["badges"], response: { 200: z.object({ items: z.array(z.object({ course: S.CourseSchema, verified: z.boolean(), issued: z.number().int(), awaiting: z.number().int() })) }) } } }, async (req) => ({
+    items: (await deps.core.badgeOverview(org(req).id)).map((b) => ({ ...b, course: S.toCourse(b.course) })),
+  }));
   typed.delete("/v1/courses/:id/image", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: S.CourseSchema, 404: S.ErrorSchema } } }, async (req) => S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { imageUrl: "" })));
 }

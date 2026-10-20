@@ -20,6 +20,7 @@ const AREAS: Array<{ key: string; label: string; pages: Array<[href: string, lab
     pages: [
       ["/events", "Events", "classes:read"],
       ["/courses", "Courses", "classes:read"],
+      ["/badges", "Badges", "classes:read"],
       ["/checkin", "Check-in", "classes:write"],
       ["/import", "Import", "classes:write"],
     ],

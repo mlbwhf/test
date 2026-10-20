@@ -83,7 +83,7 @@ function toSeat(r: Row): Seat {
 }
 function toCertificate(r: Row): Certificate {
   const revokedAt = opt<Date>(r.revoked_at);
-  return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}), kind: (opt<string>(r.kind) ?? "completion") as NonNullable<Certificate["kind"]>, ...(opt<unknown>(r.hours) !== undefined ? { hours: num(r.hours) } : {}) };
+  return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}), kind: (opt<string>(r.kind) ?? "completion") as NonNullable<Certificate["kind"]>, ...(opt<unknown>(r.hours) !== undefined ? { hours: num(r.hours) } : {}), ...(opt<Certificate["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Certificate["badge"]> } : {}) };
 }
 function toTransfer(r: Row): SeatTransfer {
   const paymentRef = opt<string>(r.payment_ref), toSeatId = opt<string>(r.to_seat_id), completedAt = opt<Date>(r.completed_at);
@@ -278,8 +278,8 @@ class PgWaitlist implements WaitlistRepo {
 }
 class PgCertificates implements CertificateRepo {
   constructor(private readonly pool: Pool) {}
-  async create(c: Certificate) { await this.pool.query(`INSERT INTO certificates (id, organization_id, seat_id, event_id, course_name, attendee_name, attendee_email, issued_at, verify_code, revoked_at, kind, hours) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, [c.id, c.organizationId, c.seatId, c.eventId, c.courseName, c.attendeeName, c.attendeeEmail, c.issuedAt, c.verifyCode, c.revokedAt ?? null, c.kind ?? "completion", c.hours ?? null]); }
-  async update(c: Certificate) { await this.pool.query(`UPDATE certificates SET revoked_at=$2 WHERE id=$1`, [c.id, c.revokedAt ?? null]); }
+  async create(c: Certificate) { await this.pool.query(`INSERT INTO certificates (id, organization_id, seat_id, event_id, course_name, attendee_name, attendee_email, issued_at, verify_code, revoked_at, kind, hours, badge) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, [c.id, c.organizationId, c.seatId, c.eventId, c.courseName, c.attendeeName, c.attendeeEmail, c.issuedAt, c.verifyCode, c.revokedAt ?? null, c.kind ?? "completion", c.hours ?? null, c.badge ? JSON.stringify(c.badge) : null]); }
+  async update(c: Certificate) { await this.pool.query(`UPDATE certificates SET revoked_at=$2, badge=$3 WHERE id=$1`, [c.id, c.revokedAt ?? null, c.badge ? JSON.stringify(c.badge) : null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE id=$1`, [id]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
   async getByCode(code: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE verify_code=$1`, [code]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
   async getBySeat(seatId: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE seat_id=$1`, [seatId]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }

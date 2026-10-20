@@ -218,6 +218,20 @@ export interface Certificate {
   kind?: "attendance" | "completion";
   /** Scheduled contact hours of the cohort, shown on the certificate. */
   hours?: number;
+  /**
+   * The EnrollClass verified badge awarded with this certificate, frozen at issue time so the
+   * signed credential never changes when the course or organization is edited later.
+   */
+  badge?: CertificateBadge;
+}
+
+export interface CertificateBadge {
+  courseId: string;
+  name: string;
+  imageUrl: string;
+  description: string;
+  criteria: string;
+  issuerName: string;
 }
 
 export type SequenceStep = "prework_t14" | "reminder_t7" | "reminder_t1" | "day_of" | "survey" | "certificate";

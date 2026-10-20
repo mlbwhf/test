@@ -10,6 +10,7 @@ import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
+import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
@@ -633,7 +634,8 @@ export class Core {
     const currency = input.currency ?? event.currency;
     const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
     const direct = org.paymentMode === "direct";
-    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false, direct });
+    const verifiedBadge = await this.issuesVerifiedBadge(event);
+    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false, direct, verifiedBadge });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
     // Direct: learners pay the organizer's own Stripe account, which must be able to take charges.
@@ -1070,13 +1072,18 @@ export class Core {
 
   // ---------- Tax ----------
 
-  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean; direct?: boolean | undefined }) {
-    const common = { currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, ...(input.direct ? { mode: "direct" as const } : {}) };
+  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean; direct?: boolean | undefined; verifiedBadge?: boolean | undefined }) {
+    const common = { currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, ...(input.direct ? { mode: "direct" as const } : {}), ...(input.verifiedBadge ? { verifiedBadge: true } : {}) };
     const base = priceOrder(common);
     if (!input.billingAddress) return base;
     const taxable = base.subtotalMinor + base.attendeeFeeMinor;
     const tax = await this.tax.calculate({ currency: input.currency, amountMinor: taxable, sellerCountry: input.org.country, buyer: input.billingAddress, businessCustomer: input.businessCustomer });
     return priceOrder({ ...common, taxMinor: tax.taxMinor });
+  }
+
+  /** Courses with an EnrollClass verified badge add its per-seat fee to paid seats. */
+  private async issuesVerifiedBadge(event: Event): Promise<boolean> {
+    return event.courseId ? issuesVerifiedBadge(await this.repos.courses.get(event.courseId)) : false;
   }
 
   /** The organizer's own Stripe account for a Direct charge; refuses until Stripe lets it take payments. */
@@ -1157,7 +1164,7 @@ export class Core {
 
     const currency = input.currency ?? account.currency;
     const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
-    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: account.address, businessCustomer: true });
+    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: account.address, businessCustomer: true, verifiedBadge: await this.issuesVerifiedBadge(event) });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: account.billingEmail, company: account.name });
     const now = this.clock.now();
@@ -1609,6 +1616,7 @@ export class Core {
     const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
     const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
     const hours = Math.round(event.sessions.reduce((a, x) => a + (x.endsAt.getTime() - x.startsAt.getTime()), 0) / 360_000) / 10;
+    const badge = course && issuesVerifiedBadge(course) ? badgeSnapshot(course, await this.getOrganization(organizationId)) : undefined;
     const issued: Certificate[] = [];
     for (const seat of seats) {
       if (opts.onlyPresent && seat.attendance?.status !== "present") continue;
@@ -1620,12 +1628,56 @@ export class Core {
         verifyCode: randomBytes(12).toString("base64url"),
         kind: opts.kind ?? "completion",
         ...(hours > 0 ? { hours } : {}),
+        ...(badge ? { badge } : {}),
       };
       await this.repos.certificates.create(cert);
       issued.push(cert);
       await this.runHooks("certificateIssued", seat.orderId, (hook) => hook({ certificate: cert, seat, event, course }));
     }
     return issued;
+  }
+
+  /**
+   * Awards the course's EnrollClass verified badge to learners who already hold a certificate
+   * for it (issued before the course had the badge, or while it used Credly or another
+   * platform). With notify, each learner gets the certificate email again, now with the badge.
+   */
+  async awardBadgeToPastLearners(organizationId: string, courseId: string, opts: { notify?: boolean | undefined } = {}): Promise<{ awarded: number }> {
+    const course = await this.getCourse(organizationId, courseId);
+    if (!issuesVerifiedBadge(course)) throw new DomainError("INVALID_STATE", "this course has no EnrollClass verified badge", "move its badge to EnrollClass or design one first");
+    const badge = badgeSnapshot(course, await this.getOrganization(organizationId));
+    let awarded = 0;
+    for (const event of await this.repos.events.listByCourse(courseId)) {
+      if (event.organizationId !== organizationId) continue;
+      for (const cert of await this.repos.certificates.listByEvent(event.id)) {
+        if (cert.badge || cert.revokedAt) continue;
+        const next: Certificate = { ...cert, badge };
+        await this.repos.certificates.update(next);
+        awarded += 1;
+        if (opts.notify) {
+          const seat = await this.repos.seats.get(cert.seatId);
+          if (seat) await this.runHooks("certificateIssued", seat.orderId, (hook) => hook({ certificate: next, seat, event, course }));
+        }
+      }
+    }
+    return { awarded };
+  }
+
+  /** Every course's badge: where it lives, and how many learners hold the verified one or could. */
+  async badgeOverview(organizationId: string): Promise<Array<{ course: Course; verified: boolean; issued: number; awaiting: number }>> {
+    const out = [];
+    for (const course of await this.repos.courses.listByOrganization(organizationId)) {
+      let issued = 0, awaiting = 0;
+      for (const event of await this.repos.events.listByCourse(course.id)) {
+        for (const cert of await this.repos.certificates.listByEvent(event.id)) {
+          if (cert.revokedAt) continue;
+          if (cert.badge) issued += 1;
+          else awaiting += 1;
+        }
+      }
+      out.push({ course, verified: issuesVerifiedBadge(course), issued, awaiting });
+    }
+    return out;
   }
 
   async listCertificates(organizationId: string, eventId: string): Promise<Certificate[]> {

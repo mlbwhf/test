@@ -58,7 +58,7 @@ export function proxy(request: NextRequest) {
 // Files for browsers, search engines and AI crawlers, answered on every host.
 const PUBLIC_FILES = new Set(["/favicon.ico", "/icon.svg", "/robots.txt", "/sitemap.xml", "/llms.txt", "/llms-full.txt", "/opengraph-image"]);
 
-const PUBLIC_APP = [/^\/(robots\.txt|sitemap\.xml|llms\.txt|llms-full\.txt|opengraph-image)$/, /^\/help(\/|$)/, /^\/c\//, /^\/cert\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
+const PUBLIC_APP = [/^\/(robots\.txt|sitemap\.xml|llms\.txt|llms-full\.txt|opengraph-image)$/, /^\/help(\/|$)/, /^\/c\//, /^\/cert\//, /^\/verify$/, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
 function isPublicAppPath(path: string): boolean {
   return PUBLIC_APP.some((re) => re.test(path));
 }

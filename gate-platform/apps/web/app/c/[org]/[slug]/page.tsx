@@ -279,7 +279,7 @@ export default async function CoursePage({ params, searchParams }: { params: Par
               <strong>{data.course.badge.name}</strong>
               <em>
                 {data.course.badge.platform === "own"
-                  ? `Earned on completion, issued by ${data.organization.name} with your certificate.`
+                  ? `Earned on completion: a verified digital badge (Open Badges 3.0) issued by ${data.organization.name} with your certificate, ready to share on LinkedIn or keep in any badge wallet.`
                   : `Earned on completion, issued through ${BADGE_LABEL[data.course.badge.platform] ?? "a badge platform"}.`}
               </em>
               {data.course.badge.url && (

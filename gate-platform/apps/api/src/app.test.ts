@@ -24,7 +24,7 @@ describe("API", () => {
     expect(spec.openapi).toBe("3.1.0");
     expect(Object.keys(spec.paths)).toEqual(expect.arrayContaining(["/v1/orders", "/v1/refunds", "/v1/ledger/balances", "/v1/webhooks/stripe"]));
     const fees = (await app.inject("/public/v1/fees")).json().currencies;
-    expect(fees.USD).toEqual({ protected: { bps: 490, fixedMinor: 80, capMinor: null }, direct: { bps: 150, fixedMinor: 50, capMinor: null } });
+    expect(fees.USD).toEqual({ protected: { bps: 490, fixedMinor: 80, capMinor: null }, direct: { bps: 150, fixedMinor: 50, capMinor: null }, verifiedBadgeMinor: 100 });
     expect(Object.keys(fees)).toEqual(expect.arrayContaining(["USD", "CAD", "EUR", "GBP"]));
   });
 
@@ -222,6 +222,100 @@ describe("API", () => {
 
     const pub = (await im.inject(`/public/v1/organizations/${course.organizationId}/courses/rte`)).json();
     expect(pub.course.imageUrl).toBeNull();
+  });
+
+  it("issues verified badges: Open Badges 3.0 credential, signed JWT, baked PNG, issuer DID and verification", async () => {
+    const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test", webUrl: "https://app.test", ticketSecret: "a-test-ticket-secret-123" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "US", currency: "USD" } })).json();
+    const key = created.apiKey as string;
+    const orgId = created.organization.id as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "safe", name: "Leading SAFe" } })).json();
+    await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/badge-image?name=SAFe%20Agilist`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png });
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-20T14:00:00Z", endsAt: "2099-11-20T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 100_000, quantity: 5 } })).json();
+    // The verified badge adds its $1 to the paid seat's fee.
+    const dry = (await im.inject({ method: "POST", url: "/v1/orders", headers: J, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "ada@example.com", dryRun: true } })).json();
+    expect(dry.order.pricing.perTicketFeeMinor).toBe(4_900 + 80 + 100);
+    const ord = (await im.inject({ method: "POST", url: "/v1/orders", headers: J, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "ada@example.com", attendees: [{ email: "ada@example.com", name: "Ada Lovelace" }] } })).json();
+    await im.inject({ method: "POST", url: `/v1/dev/payments/${ord.order.paymentRef}/succeed`, headers: { "x-api-key": key } });
+    const issued = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/certificates`, headers: J, payload: {} })).json().issued;
+    const code = issued[0].verifyCode as string;
+
+    const cert = (await im.inject(`/public/v1/certificates/${code}`)).json();
+    expect(cert.verifiedBadge).toMatchObject({ name: "SAFe Agilist", credentialUrl: `https://api.test/public/v1/credentials/${code}`, jwtUrl: `https://api.test/public/v1/credentials/${code}/jwt`, pngUrl: `https://api.test/public/v1/credentials/${code}/badge.png` });
+
+    const credential = await im.inject(`/public/v1/credentials/${code}`);
+    expect(credential.headers["content-type"]).toContain("application/vc+ld+json");
+    expect(credential.json()).toMatchObject({ type: ["VerifiableCredential", "OpenBadgeCredential"], issuer: { id: `did:web:api.test:issuers:${orgId}`, name: "Agile Agilist" }, credentialSubject: { achievement: { name: "SAFe Agilist" } } });
+    const did = (await im.inject(`/issuers/${orgId}/did.json`)).json();
+    expect(did.id).toBe(`did:web:api.test:issuers:${orgId}`);
+    expect((await im.inject("/issuers/org_nope/did.json")).statusCode).toBe(404);
+    expect((await im.inject(`/public/v1/achievements/${course.id}`)).json()).toMatchObject({ type: ["Achievement"], name: "SAFe Agilist" });
+
+    const jwt = (await im.inject(`/public/v1/credentials/${code}/jwt`)).body;
+    expect(JSON.parse(Buffer.from(jwt.split(".")[0]!, "base64url").toString())).toMatchObject({ alg: "EdDSA", kid: did.assertionMethod[0] });
+    const ok = (await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { jwt } })).json();
+    expect(ok).toMatchObject({ valid: true, issuer: "Agile Agilist", achievement: "SAFe Agilist", learner: "Ada Lovelace", certificateUrl: `https://app.test/cert/${code}` });
+    const [h, , sig] = jwt.split(".");
+    const forged = Buffer.from(JSON.stringify({ ...credential.json(), name: "Expert" })).toString("base64url");
+    expect((await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { jwt: `${h}.${forged}.${sig}` } })).json().valid).toBe(false);
+
+    const baked = await im.inject(`/public/v1/credentials/${code}/badge.png`);
+    expect(baked.headers["content-type"]).toBe("image/png");
+    expect((await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { png: baked.rawPayload.toString("base64") } })).json()).toMatchObject({ valid: true, learner: "Ada Lovelace" });
+    expect((await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { png: png.toString("base64") } })).json()).toMatchObject({ valid: false, reason: "this image has no baked credential" });
+
+    // Issued badges never change: editing the course afterwards leaves this credential valid.
+    await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { badge: { platform: "credly", name: "SAFe", url: "https://www.credly.com/org/x/badge/safe" } } });
+    expect((await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { jwt } })).json().valid).toBe(true);
+    expect((await im.inject(`/public/v1/achievements/${course.id}`)).statusCode).toBe(404);
+    expect((await im.inject("/public/v1/credentials/not-a-code")).statusCode).toBe(404);
+  });
+
+  it("moves badges from Credly to EnrollClass verified badges and awards them to past learners", async () => {
+    const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
+    const fetchImpl = (async (url: string) => (url.startsWith("https://images.credly.com/") ? new Response(png, { headers: { "content-type": "image/png" } }) : new Response("", { status: 404 }))) as unknown as typeof fetch;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl, publicUrl: "https://api.test", webUrl: "https://app.test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const mk = async (slug: string, badge: object | null) => {
+      const c = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug, name: slug.toUpperCase() } })).json();
+      if (badge) await im.inject({ method: "PATCH", url: `/v1/courses/${c.id}`, headers: J, payload: { badge } });
+      return c.id as string;
+    };
+    const safe = await mk("safe", { platform: "credly", name: "SAFe Agilist", url: "https://www.credly.com/org/aa/badge/safe", imageUrl: "https://images.credly.com/safe.png" });
+    const pmp = await mk("pmp", { platform: "accredible", name: "PMP Prep", url: "https://www.credential.net/pmp" });
+    await mk("none", null);
+
+    // A learner certified while the course still used Credly.
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${safe}/cohorts`, headers: J, payload: { name: "Oct", sessions: [{ startsAt: "2099-10-01T14:00:00Z", endsAt: "2099-10-01T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Free", priceMinor: 0, quantity: 5 } })).json();
+    await im.inject({ method: "POST", url: "/v1/orders", headers: J, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "ada@x.co" } });
+    const [old] = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/certificates`, headers: J, payload: {} })).json().issued;
+    expect((await im.inject(`/public/v1/certificates/${old.verifyCode}`)).json().verifiedBadge).toBeNull();
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${safe}/badge/award`, headers: J, payload: {} })).statusCode).toBe(409);
+
+    let overview = (await im.inject({ url: "/v1/badges", headers: J })).json().items;
+    expect(overview.find((b: { course: { id: string } }) => b.course.id === safe)).toMatchObject({ verified: false, issued: 0, awaiting: 1 });
+
+    const all = (await im.inject({ method: "POST", url: "/v1/badges/migrate", headers: J, payload: {} })).json().results;
+    expect(all).toEqual(expect.arrayContaining([{ courseId: safe, status: "moved" }, { courseId: pmp, status: "no_image", reason: expect.any(String) }]));
+    expect(all).toHaveLength(2);
+    const moved = (await im.inject({ url: `/v1/courses/${safe}`, headers: J })).json().badge;
+    expect(moved).toMatchObject({ platform: "own", name: "SAFe Agilist" });
+    expect(moved.imageUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\//);
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${safe}/badge/migrate`, headers: J, payload: {} })).json().result.status).toBe("already");
+
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${safe}/badge/award`, headers: J, payload: { notify: false } })).json()).toEqual({ awarded: 1 });
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${safe}/badge/award`, headers: J, payload: { notify: false } })).json()).toEqual({ awarded: 0 });
+    expect((await im.inject(`/public/v1/certificates/${old.verifyCode}`)).json().verifiedBadge).toMatchObject({ name: "SAFe Agilist" });
+    expect((await im.inject(`/public/v1/credentials/${old.verifyCode}`)).statusCode).toBe(200);
+    overview = (await im.inject({ url: "/v1/badges", headers: J })).json().items;
+    expect(overview.find((b: { course: { id: string } }) => b.course.id === safe)).toMatchObject({ verified: true, issued: 1, awaiting: 0 });
   });
 
   it("uploads the organizer's own badge image, and imports badges, instructors, minimum, meeting link and drafts", async () => {

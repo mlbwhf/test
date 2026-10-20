@@ -24,6 +24,8 @@ export interface FeeSchedule {
   online: Record<PayoutDestination, FeeComponent>;
   /** Application fee in Direct mode; the organizer pays the card processor on top. */
   direct: FeeComponent;
+  /** Added per paid seat when the course issues an EnrollClass verified badge (Open Badges 3.0). */
+  verifiedBadgeMinor: MinorUnits;
   pos: FeeComponent;
   instantPayout: { bps: number; minMinor: MinorUnits };
   /** Tickets priced at or below this are free of platform fees. */
@@ -45,6 +47,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 30 + 75 },
     },
     direct: { bps: 150, fixedMinor: 50 },
+    verifiedBadgeMinor: 100,
     pos: { bps: 240, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 50 },
     freeTicketThresholdMinor: 0,
@@ -56,6 +59,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 240, fixedMinor: 25 + 65 },
     },
     direct: { bps: 150, fixedMinor: 40 },
+    verifiedBadgeMinor: 100,
     pos: { bps: 190, fixedMinor: 10 },
     instantPayout: { bps: 50, minMinor: 40 },
     freeTicketThresholdMinor: 0,
@@ -67,6 +71,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 100 + 250 },
     },
     direct: { bps: 150, fixedMinor: 150 },
+    verifiedBadgeMinor: 400,
     pos: { bps: 240, fixedMinor: 50 },
     instantPayout: { bps: 100, minMinor: 200 },
     freeTicketThresholdMinor: 0,
@@ -78,6 +83,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 30 + 95 },
     },
     direct: { bps: 150, fixedMinor: 60 },
+    verifiedBadgeMinor: 130,
     pos: { bps: 240, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 60 },
     freeTicketThresholdMinor: 0,
@@ -89,6 +95,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 240, fixedMinor: 20 + 60 },
     },
     direct: { bps: 150, fixedMinor: 40 },
+    verifiedBadgeMinor: 100,
     pos: { bps: 190, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 40 },
     freeTicketThresholdMinor: 0,
@@ -100,6 +107,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 500 + 1_300 },
     },
     direct: { bps: 150, fixedMinor: 900 },
+    verifiedBadgeMinor: 1_800,
     pos: { bps: 240, fixedMinor: 200 },
     instantPayout: { bps: 100, minMinor: 900 },
     freeTicketThresholdMinor: 0,
@@ -111,6 +119,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 100 + 280 },
     },
     direct: { bps: 150, fixedMinor: 200 },
+    verifiedBadgeMinor: 400,
     pos: { bps: 240, fixedMinor: 50 },
     instantPayout: { bps: 100, minMinor: 200 },
     freeTicketThresholdMinor: 0,
@@ -122,6 +131,7 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
       external_bank: { bps: 290, fixedMinor: 2_500 + 6_000 },
     },
     direct: { bps: 150, fixedMinor: 4_000 },
+    verifiedBadgeMinor: 8_000,
     pos: { bps: 240, fixedMinor: 1_000 },
     instantPayout: { bps: 100, minMinor: 4_000 },
     freeTicketThresholdMinor: 0,

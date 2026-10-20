@@ -338,7 +338,9 @@ export type UpdateCourseInput = {
 };
 
 export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
-export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other platform", own: "Your own badge (upload an image)" };
+export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { own: "EnrollClass verified badge (Open Badges 3.0)", credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other platform" };
+export type BadgeMigration = { courseId: string; status: "moved" | "already" | "no_badge" | "no_image" | "failed"; reason?: string };
+export type BadgeOverviewItem = { course: Course; verified: boolean; issued: number; awaiting: number };
 /** "own" badges have an uploaded image and no outside link. */
 export type CourseBadge = { platform: BadgePlatform; name: string; url?: string; imageUrl?: string };
 /** A text/csv payload proxied through to the browser by the roster route handler. */
@@ -720,6 +722,10 @@ export const api = {
   uploadCourseImage: (id: string, bytes: ArrayBuffer, contentType: string) => request<Course>("PUT", `/v1/courses/${enc(id)}/image`, new RawBody(bytes, contentType)),
   importCourseImage: (id: string, url: string) => request<Course>("POST", `/v1/courses/${enc(id)}/image/from-url`, { url }),
   removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
+  listBadges: () => request<{ items: BadgeOverviewItem[] }>("GET", "/v1/badges"),
+  migrateBadge: (courseId: string) => request<{ result: BadgeMigration; course: Course }>("POST", `/v1/courses/${enc(courseId)}/badge/migrate`, {}),
+  migrateAllBadges: () => request<{ results: BadgeMigration[] }>("POST", "/v1/badges/migrate", {}),
+  awardBadge: (courseId: string, notify: boolean) => request<{ awarded: number }>("POST", `/v1/courses/${enc(courseId)}/badge/award`, { notify }),
   uploadBadgeImage: (id: string, bytes: ArrayBuffer, contentType: string, name?: string) =>
     request<Course>("PUT", `/v1/courses/${enc(id)}/badge-image${name ? `?name=${enc(name)}` : ""}`, new RawBody(bytes, contentType)),
   listCohorts: (courseId: string) => request<{ items: Event[] }>("GET", `/v1/courses/${enc(courseId)}/cohorts`),

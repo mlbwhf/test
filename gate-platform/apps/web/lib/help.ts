@@ -266,18 +266,24 @@ export const HELP: HelpArticle[] = [
   {
     slug: "badges",
     section: "day",
-    title: "Digital badges (Credly, Accredible, Badgr… or your own)",
-    summary: "Show the badge learners earn: on a badge platform, or your own badge image.",
-    for: ["Owners & admins"],
+    title: "Verified digital badges (and Credly, Accredible…)",
+    summary: "Design or upload a badge, issue it with every certificate, move badges from other platforms.",
+    for: ["Owners & admins", "Instructors", "Learners"],
     body: [
-      { steps: ["Open **Events → Courses** and choose the course.", "Under **Digital badge**, pick the platform (Credly, Accredible, Badgr / Canvas Credentials, Certopus or Other).", "Enter the badge name, the link to the badge page on that platform, and optionally upload its image or paste its image link.", "Click **Add badge**."] },
-      { h: "No badge platform? Use your own badge" },
-      { steps: ["Pick **Your own badge (upload an image)** as the platform.", "Enter the badge name and upload the image (PNG or JPEG; square works best).", "Click **Add badge**. No link is needed."] },
-      { p: "Your own badge is issued with EnrollClass certificates: it shows on the course page and on each certificate, and learners can download it from their certificate page." },
-      { p: "The badge then appears on the public course page, on certificates (with a **Claim your badge** button) and in the certificate email." },
-      { tip: "Badges are issued by the badge platform itself. Use a [webhook](/help/webhooks) on **certificate.issued** with Zapier or Make to issue badges automatically in Credly or Accredible." },
+      { p: "An **EnrollClass verified badge** is issued with each certificate of the course. It follows **Open Badges 3.0**, the standard Credly and other platforms use: the badge image carries a signed credential, so learners can add it to LinkedIn, keep it in any Open Badges wallet or backpack, and anyone can check it at [/verify](/verify), even years later and without EnrollClass." },
+      { h: "Create the badge" },
+      { steps: ["Open **Events → Courses** and choose the course (or **Events → Badges**).", "Under **Digital badge**, open **Design a badge**: pick a shape, colors and an icon, type the badge name and the top and bottom lines. The preview updates as you go.", "Click **Use this badge**. Or upload your own image under **Edit the badge by hand** and pick **EnrollClass verified badge**."] },
+      { p: "From then on, every certificate you issue for the course includes the badge. Learners find **Download your verified badge** on their certificate page and in the certificate email." },
+      { h: "Move badges from Credly, Accredible or another platform" },
+      { steps: ["Open **Events → Badges**. Courses whose badge lives elsewhere are listed at the top.", "Click **Move all** (or **Move to EnrollClass** on one course). We copy each badge's name and image.", "On the course, click **Award badge** to give it to everyone who already has a certificate, with an email (untick **Email them** to award quietly)."] },
+      { p: "Badges already issued on the other platform stay valid there; you can stop paying for new ones." },
+      { h: "Cost" },
+      { p: "$1 per paid seat on courses that issue a verified badge (same in EUR and GBP, local equivalents elsewhere), collected with the seat fee in both payment modes. Free classes stay free." },
+      { h: "Linking an outside badge instead" },
+      { steps: ["Under **Edit the badge by hand**, pick the platform (Credly, Accredible, Badgr / Canvas Credentials, Certopus or Other).", "Enter the badge name and the link to the badge page there, and optionally its image.", "Click **Update badge**. Learners see **Claim your badge** on their certificate."] },
+      { tip: "Issued badges never change: they keep the name, image and issuer they had when issued, even if you edit the course later. To issue badges automatically on another platform, use a [webhook](/help/webhooks) on **certificate.issued** with Zapier or Make." },
     ],
-    related: ["certificates", "zapier-make-n8n"],
+    related: ["certificates", "import", "learner-certificate"],
   },
 
   // ---------------------------------------------------------------- money
@@ -522,7 +528,7 @@ export const HELP: HelpArticle[] = [
     for: ["Learners"],
     body: [
       { p: "When the organizer issues certificates you get an email with your link. On the certificate page:" },
-      { list: ["**Download PDF** saves a one-page certificate.", "**Add to LinkedIn** fills in the certification on your profile.", "**Claim your badge** opens the badge platform (Credly, Accredible…) when the course offers one.", "Anyone with the link can verify the certificate."] },
+      { list: ["**Download PDF** saves a one-page certificate.", "**Add to LinkedIn** fills in the certification on your profile.", "**Download your verified badge** saves the badge image with its signed credential inside. Upload it to LinkedIn or any Open Badges wallet; anyone can check it at [/verify](/verify).", "**Claim your badge** opens the badge platform (Credly, Accredible…) when the course uses one instead.", "Anyone with the link can verify the certificate."] },
     ],
   },
 

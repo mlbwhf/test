@@ -189,6 +189,9 @@ describe("teams and roles", () => {
     expect(permissionFor("POST", "/v1/seats/s/cancel")).toBe("money:write");
     expect(permissionFor("GET", "/v1/ledger/balances?x")).toBe("money:read");
     expect(permissionFor("POST", "/v1/organizations/me/payments/connect")).toBe("settings");
+    expect(permissionFor("POST", "/v1/badges/migrate")).toBe("settings");
+    expect(permissionFor("POST", "/v1/courses/c1/badge/award")).toBe("settings");
+    expect(permissionFor("GET", "/v1/badges")).toBe("classes:read");
     expect(permissionFor("GET", "/v1/organizations/me")).toBe("classes:read");
     expect(permissionFor("DELETE", "/v1/members/u1")).toBe("team");
     expect(permissionFor("POST", "/v1/checkins")).toBe("classes:write");

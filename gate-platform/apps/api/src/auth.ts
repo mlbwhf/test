@@ -257,5 +257,7 @@ export function permissionFor(method: string, url: string): Permission {
   if (/^\/v1\/events\/[^/]+\/(publish|instructors)$/.test(path) && write) return "settings";
   if (/^\/v1\/seats\/[^/]+\/cancel$/.test(path)) return "money:write";
   if (path === "/v1/parties" && write) return "settings";
+  // Moving badges to EnrollClass changes what paid seats cost, and awarding emails past learners.
+  if ((/^\/v1\/badges(\/|$)/.test(path) || /^\/v1\/courses\/[^/]+\/badge\/(migrate|award)$/.test(path)) && write) return "settings";
   return write ? "classes:write" : "classes:read";
 }

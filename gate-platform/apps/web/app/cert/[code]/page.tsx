@@ -25,6 +25,7 @@ const BADGE_LABEL: Record<string, string> = { credly: "Credly", accredible: "Acc
 
 export default async function CertificatePage({ params }: { params: Params }) {
   const { code, c } = await load(params);
+  const vb = c.verifiedBadge ?? null;
   const tz = c.timezone ?? "UTC";
   const d = (iso: string) => new Intl.DateTimeFormat("en-US", { timeZone: tz, month: "long", day: "numeric", year: "numeric" }).format(new Date(iso));
   const dates = c.startsAt ? (c.endsAt && d(c.endsAt) !== d(c.startsAt) ? `${d(c.startsAt)} – ${d(c.endsAt)}` : d(c.startsAt)) : null;
@@ -48,15 +49,16 @@ export default async function CertificatePage({ params }: { params: Params }) {
         <a className="cert-btn" href={linkedIn} target="_blank" rel="noreferrer noopener">
           Add to LinkedIn
         </a>
-        {c.badge?.url && (
-          <a className="cert-btn" href={c.badge.url} target="_blank" rel="noreferrer noopener">
-            Claim your badge on {BADGE_LABEL[c.badge.platform] ?? "the badge platform"}
+        {vb ? (
+          <a className="cert-btn" href={vb.pngUrl} download>
+            Download your verified badge
           </a>
-        )}
-        {c.badge && !c.badge.url && c.badge.imageUrl && (
-          <a className="cert-btn" href={c.badge.imageUrl} download target="_blank" rel="noreferrer noopener">
-            Download your badge
-          </a>
+        ) : (
+          c.badge?.url && (
+            <a className="cert-btn" href={c.badge.url} target="_blank" rel="noreferrer noopener">
+              Claim your badge on {BADGE_LABEL[c.badge.platform] ?? "the badge platform"}
+            </a>
+          )
         )}
       </div>
 
@@ -78,7 +80,7 @@ export default async function CertificatePage({ params }: { params: Params }) {
             <span>{c.instructors?.length ? (c.instructors.length > 1 ? "Instructors" : "Instructor") : "Issued by"}</span>
             <strong>{c.instructors?.length ? c.instructors.join(", ") : c.organization}</strong>
           </div>
-          {c.badge?.imageUrl && <img className="cert-badge" src={c.badge.imageUrl} alt={c.badge.name} />}
+          {(vb?.imageUrl ?? c.badge?.imageUrl) && <img className="cert-badge" src={vb?.imageUrl ?? c.badge!.imageUrl} alt={vb?.name ?? c.badge!.name} />}
           <div>
             <span>Issued</span>
             <strong>{new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(issued)}</strong>
@@ -88,6 +90,28 @@ export default async function CertificatePage({ params }: { params: Params }) {
           Verify at {self.replace(/^https?:\/\//, "")} · ID {code}
         </p>
       </article>
+
+      {vb && (
+        <section className="cert-vb" aria-labelledby="vb-title">
+          <img src={vb.imageUrl} alt="" width={96} height={96} />
+          <div>
+            <p className="eyebrow-mono">VERIFIED DIGITAL BADGE · OPEN BADGES 3.0</p>
+            <h2 id="vb-title">{vb.name}</h2>
+            <p>
+              Issued by {c.organization} through EnrollClass. The badge image carries a signed credential that any Open Badges 3.0 wallet or backpack can import and anyone can check, even without this page.
+            </p>
+            <p className="cert-vb-links">
+              <a href={vb.pngUrl} download>
+                Badge image (PNG with credential)
+              </a>
+              <a href={vb.credentialUrl} target="_blank" rel="noopener">
+                Credential (JSON)
+              </a>
+              <a href="/verify">Verify a badge</a>
+            </p>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

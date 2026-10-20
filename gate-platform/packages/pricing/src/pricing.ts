@@ -9,6 +9,8 @@ export interface PricingInput {
   channel?: Channel;
   /** Direct: the organizer's own Stripe takes the payment and EnrollClass takes the direct fee. */
   mode?: PaymentMode;
+  /** The course issues an EnrollClass verified badge: its per-seat fee is added (paid seats only). */
+  verifiedBadge?: boolean;
   /** When true the fee is added on top and paid by the attendee. */
   passFeeToAttendee?: boolean;
   /** Tax already calculated by a tax engine, in minor units. Wins over taxRateBps. */
@@ -54,7 +56,7 @@ export function priceOrder(input: PricingInput): Pricing {
   const channel = input.channel ?? "online";
   const component = channel === "pos" ? schedule.pos : input.mode === "direct" ? schedule.direct : schedule.online[input.destination];
   const free = input.unitPriceMinor <= schedule.freeTicketThresholdMinor;
-  let perTicketFee = free ? 0 : feePerTicket(input.unitPriceMinor, component);
+  let perTicketFee = free ? 0 : feePerTicket(input.unitPriceMinor, component) + (input.verifiedBadge ? schedule.verifiedBadgeMinor : 0);
   // An absorbed fee can never exceed the ticket itself; the organizer net is floored at zero.
   if (!input.passFeeToAttendee) perTicketFee = Math.min(perTicketFee, input.unitPriceMinor);
 

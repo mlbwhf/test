@@ -4,7 +4,9 @@ import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { createCohortAction, updateCourseBadgeAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
+import { awardBadgeAction, createCohortAction, migrateBadgeAction, updateCourseBadgeAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
+import { BadgeDesigner } from "@/components/badge-designer";
+import { Disclosure } from "@/components/disclosure";
 
 export const dynamic = "force-dynamic";
 
@@ -83,8 +85,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         </div>
       </Section>
 
-      <Section title="Digital badge">
-        <p className="hint">Learners who finish this course earn a badge on Credly, Accredible, Badgr or another platform, or your own badge if you don&apos;t use one: upload its image and it is issued with EnrollClass certificates. It shows on the public course page, on certificates and in the certificate email.</p>
+      <Section title="Digital badge" id="badge">
+        <p className="hint">
+          Learners who finish this course earn a badge. With an <strong>EnrollClass verified badge</strong> (Open Badges 3.0) every certificate comes with a signed badge learners can download, share and have verified anywhere, with no Credly or other subscription: $1 per paid seat, free on free classes. You can also link a badge on Credly, Accredible, Badgr or another platform.
+        </p>
         {course.badge && (
           <div className="badge-preview">
             {course.badge.imageUrl && <img src={course.badge.imageUrl} alt="" width={72} height={72} />}
@@ -101,12 +105,39 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
             </div>
           </div>
         )}
+        {course.badge && course.badge.platform !== "own" && (
+          <div className="badge-move">
+            <p>
+              <strong>Move this badge to EnrollClass.</strong> We copy its name and image, so you can stop paying for {BADGE_PLATFORMS[course.badge.platform]}; past certificates can get it too.
+            </p>
+            <ActionForm action={migrateBadgeAction} submitLabel="Move to EnrollClass" pendingLabel="Moving…" inline>
+              <input type="hidden" name="courseId" value={course.id} />
+            </ActionForm>
+          </div>
+        )}
+        {course.badge?.platform === "own" && (
+          <div className="badge-move">
+            <p>
+              <strong>Award it to past learners.</strong> Everyone who already has a certificate for this course gets the verified badge.
+            </p>
+            <ActionForm action={awardBadgeAction} submitLabel="Award badge" pendingLabel="Awarding…" inline>
+              <input type="hidden" name="courseId" value={course.id} />
+              <label className="label-check">
+                <input type="checkbox" name="notify" defaultChecked /> Email them
+              </label>
+            </ActionForm>
+          </div>
+        )}
+        <Disclosure className="designer-wrap" defaultOpen={!course.badge} summary="Design a badge">
+          <BadgeDesigner courseId={course.id} courseName={course.name} action={updateCourseBadgeAction} />
+        </Disclosure>
+        <Disclosure className="designer-wrap" summary={course.badge ? "Edit the badge by hand" : "Upload a badge or link one from Credly, Accredible…"}>
         <ActionForm action={updateCourseBadgeAction} submitLabel={course.badge ? "Update badge" : "Add badge"} pendingLabel="Saving…" wide>
           <input type="hidden" name="courseId" value={course.id} />
           <div className="fields">
             <label>
               Platform
-              <select name="platform" defaultValue={course.badge?.platform ?? "credly"}>
+              <select name="platform" defaultValue={course.badge?.platform ?? "own"}>
                 {(Object.keys(BADGE_PLATFORMS) as Array<keyof typeof BADGE_PLATFORMS>).map((p) => (
                   <option key={p} value={p}>
                     {BADGE_PLATFORMS[p]}
@@ -132,6 +163,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
             </label>
           </div>
         </ActionForm>
+        </Disclosure>
         {course.badge && (
           <ActionForm action={updateCourseBadgeAction} submitLabel="Remove badge" pendingLabel="Removing…" variant="danger" inline>
             <input type="hidden" name="courseId" value={course.id} />

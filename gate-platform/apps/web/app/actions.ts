@@ -926,3 +926,48 @@ export async function updateCourseBadgeAction(_prev: ActionState, formData: Form
   revalidatePath(`/courses/${courseId}`);
   return { status: "ok", message: `Badge saved. It shows on the course page, on certificates and in certificate emails.` };
 }
+
+
+// ---------- verified badges: move from other platforms, award to past learners ----------
+
+const MIGRATE_NOTE: Record<string, string> = {
+  moved: "moved to EnrollClass",
+  already: "already an EnrollClass badge",
+  no_badge: "no badge",
+  no_image: "no image to copy: upload or design one on the course page",
+  failed: "couldn't copy the image",
+};
+
+export async function migrateBadgeAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  if (courseId) {
+    const r = await api.migrateBadge(courseId);
+    if (!r.ok) return fail(describeFailure(r.error));
+    revalidatePath(`/courses/${courseId}`);
+    revalidatePath("/badges");
+    return r.data.result.status === "moved"
+      ? { status: "ok", message: `"${r.data.course.badge?.name}" is now an EnrollClass verified badge. New certificates include it; award it to past learners below.` }
+      : { status: "error", message: `Not moved: ${MIGRATE_NOTE[r.data.result.status]}${r.data.result.reason ? ` (${r.data.result.reason})` : ""}.` };
+  }
+  const r = await api.migrateAllBadges();
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath("/badges");
+  const moved = r.data.results.filter((x) => x.status === "moved").length;
+  return {
+    status: moved || r.data.results.length === 0 ? "ok" : "error",
+    message: r.data.results.length === 0 ? "No badges on other platforms to move." : `Moved ${moved} of ${r.data.results.length} badge${r.data.results.length === 1 ? "" : "s"} to EnrollClass.`,
+    details: r.data.results.filter((x) => x.status !== "moved").map((x) => ({ label: x.courseId, value: `${MIGRATE_NOTE[x.status]}${x.reason ? ` (${x.reason})` : ""}` })),
+  };
+}
+
+export async function awardBadgeAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  if (!courseId) return fail("Missing course id.");
+  const notify = formData.get("notify") === "on";
+  const r = await api.awardBadge(courseId, notify);
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/badges");
+  const n = r.data.awarded;
+  return { status: "ok", message: n === 0 ? "Everyone with a certificate already has the badge." : `Awarded the badge to ${n} learner${n === 1 ? "" : "s"}${notify ? " and emailed them" : ""}.` };
+}
