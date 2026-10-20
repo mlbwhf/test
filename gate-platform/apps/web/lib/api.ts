@@ -569,6 +569,22 @@ export type Me = {
   permissions: Permission[];
   memberships: { organizationId: string; organizationName: string; kind: "company" | "individual" | null; role: Role }[];
 };
+export type HomeLine = { eventId: string; name: string; courseName: string | null; startsAt: string; endsAt: string | null; timezone: string; format: EventFormat; sold: number; capacity: number };
+export type HomeAttention = {
+  id: string;
+  kind: "payments_setup" | "release_ready" | "low_enrolment" | "unpaid_invoices" | "missing_prework" | "no_tickets";
+  tone: "green" | "amber" | "red";
+  title: string;
+  detail: string;
+  action: { label: string; kind: "link"; href: string } | { label: string; kind: "release"; eventId: string } | { label: string; kind: "stripe" };
+};
+export type Home = {
+  money: { currency: string; grossMinor: number; netMinor: number; feesMinor: number; heldMinor: number; paidOrders: number }[] | null;
+  attention: HomeAttention[];
+  live: (HomeLine & { day: number; days: number; confirmed: number; checkedIn: number }) | null;
+  week: HomeLine[];
+  setup: { done: number; total: number; steps: { key: "account" | "payments" | "course" | "cohort" | "registration"; done: boolean }[] };
+};
 export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
 export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
 
@@ -590,6 +606,7 @@ export const api = {
   connectPayments: () => request<{ paymentsAccountRef: string; onboardingUrl: string | null; ready: boolean; requirementsDue: string[] }>("POST", "/v1/organizations/me/payments/connect", {}),
   refreshPayments: () => request<{ setup: "none" | "incomplete" | "ready"; status: { ready: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: string } | null }>("GET", "/v1/organizations/me/payments"),
 
+  home: () => request<Home>("GET", "/v1/home"),
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),

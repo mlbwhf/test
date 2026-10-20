@@ -1,272 +1,177 @@
 import Link from "next/link";
-import { api, type ApiFailure, type ApiResult, type Order } from "@/lib/api";
+import { api, type Home, type HomeLine } from "@/lib/api";
+import { getHome, getMe } from "@/lib/console-data";
 import { formatMoney } from "@/lib/format";
-import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { ActionForm } from "@/components/action-form";
+import { ApiNotice } from "@/components/ui";
+import { AttentionList } from "@/components/attention-list";
+import { LocalDate } from "@/components/local-date";
+import { releaseFundsAction } from "@/app/actions";
 import { connectStripeAction } from "@/app/auth-actions";
 
 export const dynamic = "force-dynamic";
 
-type Totals = Record<string, { gross: number; net: number; fees: number; count: number }>;
+const STEP_CTA: Record<Home["setup"]["steps"][number]["key"], { label: string; href: string }> = {
+  account: { label: "Finish your account", href: "/onboarding" },
+  payments: { label: "Connect Stripe", href: "#attention-title" },
+  course: { label: "Add a course", href: "/courses" },
+  cohort: { label: "Schedule a cohort", href: "/events#create" },
+  registration: { label: "Share your first link", href: "/courses" },
+};
 
-function summarizePaid(orders: Order[]): Totals {
-  const totals: Totals = {};
-  for (const order of orders) {
-    if (order.status !== "paid") continue;
-    const t = (totals[order.currency] ??= { gross: 0, net: 0, fees: 0, count: 0 });
-    t.gross += order.pricing.totalMinor;
-    t.net += order.pricing.organizerNetMinor;
-    t.fees += order.pricing.platformFeeMinor + order.pricing.attendeeFeeMinor;
-    t.count += 1;
-  }
-  return totals;
+function when(line: HomeLine): string {
+  const d = new Date(line.startsAt);
+  const date = new Intl.DateTimeFormat("en-US", { timeZone: line.timezone, month: "short", day: "numeric" }).format(d);
+  const time = new Intl.DateTimeFormat("en-US", { timeZone: line.timezone, hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(d);
+  return `${date} · ${time}`;
 }
 
-function Tile({
-  label,
-  totals,
-  pick,
-  fallbackCurrency,
-  sub,
-}: {
-  label: string;
-  totals: Totals;
-  pick: (t: Totals[string]) => number;
-  fallbackCurrency: string;
-  sub: string;
-}) {
-  const currencies = Object.keys(totals);
+function Kpi({ label, rows, pick, sub, green }: { label: string; rows: NonNullable<Home["money"]>; pick: (r: NonNullable<Home["money"]>[number]) => number; sub: string; green?: boolean }) {
+  const [first, ...rest] = rows;
   return (
-    <div className="tile">
-      <p className="tile-label">{label}</p>
-      {currencies.length === 0 ? (
-        <p className="tile-value">{formatMoney(0, fallbackCurrency)}</p>
-      ) : (
-        currencies.map((c) => (
-          <p className="tile-value" key={c}>
-            {formatMoney(pick(totals[c]!), c)}
-          </p>
-        ))
-      )}
-      <p className="tile-sub">{sub}</p>
+    <div className="tkpi">
+      <p className="tkpi-label">{label}</p>
+      <p className={`tkpi-value${green ? " is-green" : ""}`}>{first ? formatMoney(pick(first), first.currency) : "—"}</p>
+      {rest.map((r) => (
+        <p key={r.currency} className="tkpi-more">
+          + {formatMoney(pick(r), r.currency)}
+        </p>
+      ))}
+      <p className="tkpi-sub">{sub}</p>
     </div>
   );
 }
 
-const skipped = <T,>(): Promise<ApiResult<T>> => Promise.resolve({ ok: false, error: { kind: "api", status: 403, code: "FORBIDDEN", message: "not shown for your role" } });
-
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const sp = await searchParams;
-  let meRes = await api.me();
-  // Back from Stripe, or setup still open: ask Stripe for the account's real state.
-  if (meRes.ok && meRes.data.organization?.paymentsSetup === "incomplete") {
-    const refreshed = await api.refreshPayments();
-    if (refreshed.ok && refreshed.data.setup === "ready") meRes = await api.me();
-  }
-  const returnedFromStripe = sp.connect === "return" || sp.connect === "refresh";
-  const perms = meRes.ok ? meRes.data.permissions : [];
-  const seesMoney = perms.includes("money:read");
-  const [orgRes, ordersRes, balancesRes, coursesRes, eventsRes] = await Promise.all([
-    api.getOrganization(),
-    seesMoney ? api.listOrders() : skipped<{ items: Order[] }>(),
-    seesMoney ? api.getBalances() : skipped<Awaited<ReturnType<typeof api.getBalances>> extends ApiResult<infer B> ? B : never>(),
-    api.listCourses(),
-    api.listEvents(),
-  ]);
-
-  const unreachable: ApiFailure | undefined = [orgRes, ordersRes, balancesRes]
-    .map((r) => (r.ok ? null : r.error))
-    .find((e): e is ApiFailure => e !== null && e.kind === "unreachable");
-
-  const org = orgRes.ok ? orgRes.data : null;
-  const orders = ordersRes.ok ? ordersRes.data.items : [];
-  const totals = summarizePaid(orders);
-  const fallbackCurrency = org?.currency ?? "USD";
-  const paidCount = Object.values(totals).reduce((n, t) => n + t.count, 0);
-
+function SetupPill({ setup }: { setup: Home["setup"] }) {
+  if (setup.done >= setup.total) return null;
+  const next = setup.steps.find((s) => !s.done);
+  const cta = next ? STEP_CTA[next.key] : null;
   return (
-    <>
-      <div className="page-header">
-        <h1>{org ? org.name : "Dashboard"}</h1>
-        {org && (
-          <span className="muted">
-            {org.country} · {org.currency} · payouts to {org.payoutDestination.replace("_", " ")}
-          </span>
-        )}
-      </div>
-
-      {unreachable && <ApiNotice failure={unreachable} />}
-      {!unreachable && !orgRes.ok && <ApiNotice failure={orgRes.error} />}
-
-      {meRes.ok && (
-        <GettingStarted
-          welcome={sp.welcome === "1"}
-          canSettings={perms.includes("settings")}
-          canClasses={perms.includes("classes:write")}
-          paymentsConnected={meRes.data.organization?.paymentsConnected ?? false}
-          paymentsSetup={meRes.data.organization?.paymentsSetup ?? "none"}
-          returnedFromStripe={returnedFromStripe}
-          individual={meRes.data.organization?.kind === "individual"}
-          courses={coursesRes.ok ? coursesRes.data.items.length : 0}
-          cohorts={eventsRes.ok ? eventsRes.data.items.length : 0}
-          paid={paidCount}
-          firstCourseId={coursesRes.ok ? coursesRes.data.items[0]?.id : undefined}
-        />
+    <div className="setup-pill">
+      <span className="setup-label">
+        SETUP {setup.done} / {setup.total}
+      </span>
+      <span className="setup-segs" role="img" aria-label={`${setup.done} of ${setup.total} setup steps done`}>
+        {setup.steps.map((s) => (
+          <span key={s.key} className={s.done ? "is-done" : ""} />
+        ))}
+      </span>
+      {cta && (
+        <Link className="setup-cta" href={cta.href}>
+          {cta.label}
+        </Link>
       )}
-
-      {seesMoney && (
-      <>
-      <div className="tiles">
-        <Tile
-          label="Gross sales"
-          totals={totals}
-          pick={(t) => t.gross}
-          fallbackCurrency={fallbackCurrency}
-          sub={`${paidCount} paid order${paidCount === 1 ? "" : "s"}`}
-        />
-        <Tile
-          label="Organizer net"
-          totals={totals}
-          pick={(t) => t.net}
-          fallbackCurrency={fallbackCurrency}
-          sub="after platform fees"
-        />
-        <Tile
-          label="Platform fees"
-          totals={totals}
-          pick={(t) => t.fees}
-          fallbackCurrency={fallbackCurrency}
-          sub="platform + attendee fees on paid orders"
-        />
-      </div>
-
-      <Section title="Ledger balances">
-        {!balancesRes.ok ? (
-          balancesRes.error.kind === "unreachable" ? (
-            <Empty>Balances unavailable while the API is unreachable.</Empty>
-          ) : (
-            <ApiNotice failure={balancesRes.error} />
-          )
-        ) : balancesRes.data.accounts.length === 0 ? (
-          <Empty>No ledger accounts yet.</Empty>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Account</th>
-                  <th>Type</th>
-                  <th>Currency</th>
-                  <th className="num">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {balancesRes.data.accounts.map((a) => (
-                  <tr key={`${a.code}-${a.currency}`}>
-                    <td className="mono">{a.code}</td>
-                    <td>{a.name}</td>
-                    <td>{a.type}</td>
-                    <td>{a.currency}</td>
-                    <td className="num">{formatMoney(a.balanceMinor, a.currency)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Section>
-
-      <Section title="Recent orders">
-        {!ordersRes.ok ? (
-          ordersRes.error.kind === "unreachable" ? (
-            <Empty>Orders unavailable while the API is unreachable.</Empty>
-          ) : (
-            <ApiNotice failure={ordersRes.error} />
-          )
-        ) : orders.length === 0 ? (
-          <Empty>No orders yet. Sell a test ticket from an event page.</Empty>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Buyer</th>
-                  <th className="num">Qty</th>
-                  <th className="num">Total</th>
-                  <th className="num">Organizer net</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.slice(0, 10).map((o) => (
-                  <tr key={o.id}>
-                    <td className="mono">{o.id}</td>
-                    <td>{o.buyerEmail}</td>
-                    <td className="num">{o.quantity}</td>
-                    <td className="num">{formatMoney(o.pricing.totalMinor, o.currency)}</td>
-                    <td className="num">{formatMoney(o.pricing.organizerNetMinor, o.currency)}</td>
-                    <td>
-                      <StatusBadge status={o.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Section>
-      </>
-      )}
-    </>
+    </div>
   );
 }
 
-function GettingStarted(p: { welcome: boolean; canSettings: boolean; canClasses: boolean; paymentsConnected: boolean; paymentsSetup: "none" | "incomplete" | "ready"; returnedFromStripe: boolean; individual: boolean; courses: number; cohorts: number; paid: number; firstCourseId: string | undefined }) {
-  const steps = [
-    { done: true, title: "Create your account", body: p.individual ? "Your practice is set up with you as its instructor." : "Invite instructors, admins and finance from Team." },
-    p.paymentsSetup === "incomplete"
-      ? { done: false, title: "Finish your Stripe setup", body: p.returnedFromStripe ? "Stripe hasn't enabled payouts yet. If you completed every step, approval can take a few minutes; otherwise continue where you left off." : "You started connecting Stripe but it still needs details before you can be paid.", action: p.canSettings ? "stripe" : undefined }
-      : { done: p.paymentsConnected, title: "Connect Stripe to get paid", body: "Payments go to your own Stripe account; EnrollClass holds them until the course is delivered.", action: p.canSettings && !p.paymentsConnected ? "stripe" : undefined },
-    { done: p.courses > 0, title: "Add a course", body: "The course is what you teach: name, description, cover image.", href: "/courses" },
-    { done: p.cohorts > 0, title: "Schedule a cohort and set ticket prices", body: "A cohort is one run of the course with dates, seats and prices.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
-    { done: p.paid > 0, title: "Share it and take your first registration", body: "Embed the registration widget on your site or send the course link.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
-  ];
-  const left = steps.filter((s) => !s.done).length;
-  if (left === 0 && !p.welcome) return null;
+function LiveCard({ live }: { live: NonNullable<Home["live"]> }) {
+  const shown = Math.min(live.confirmed, 60);
+  const time = new Intl.DateTimeFormat("en-US", { timeZone: live.timezone, hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(new Date(live.startsAt));
   return (
-    <section className="card start">
-      <div className="start-head">
-        <div>
-          <p className="eyebrow-mono">{left === 0 ? "ALL SET" : `GETTING STARTED · ${steps.length - left} OF ${steps.length}`}</p>
-          <h2>{left === 0 ? "You're live" : p.welcome ? "Welcome! Five steps to your first registration" : "Finish setting up"}</h2>
+    <section className="live-card" aria-label="Running today">
+      <div className="live-top">
+        <span className="live-chip">
+          <span className="live-dot" aria-hidden="true" /> LIVE · DAY {live.day} OF {live.days}
+        </span>
+        <span className="live-time">{time}</span>
+      </div>
+      <h2>{live.name}</h2>
+      {shown > 0 && (
+        <div className="seat-strip" role="img" aria-label={`${live.checkedIn} of ${live.confirmed} checked in`}>
+          {Array.from({ length: shown }, (_, i) => (
+            <span key={i} className={i < live.checkedIn ? "is-in" : ""} />
+          ))}
         </div>
-        <div className="start-bar" aria-hidden="true">
-          <div style={{ width: `${((steps.length - left) / steps.length) * 100}%` }} />
+      )}
+      <div className="live-foot">
+        <span>
+          <strong>{live.checkedIn}</strong> of {live.confirmed} checked in
+        </span>
+        <Link className="live-cta" href={`/checkin?event=${encodeURIComponent(live.eventId)}`}>
+          Open check-in
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function Week({ week, canCreate }: { week: HomeLine[]; canCreate: boolean }) {
+  return (
+    <section className="card today-week" aria-labelledby="week-title">
+      <h2 id="week-title">Starting this week</h2>
+      {week.length === 0 ? (
+        <p className="today-clear">
+          Nothing starts in the next 7 days.{" "}
+          {canCreate && <Link href="/events#create">Schedule a cohort</Link>}
+        </p>
+      ) : (
+        <ul className="week-rows">
+          {week.map((l) => (
+            <li key={l.eventId}>
+              <Link href={`/events/${encodeURIComponent(l.eventId)}`}>
+                <span className="week-name">{l.name}</span>
+                <span className="week-when">{when(l)}</span>
+              </Link>
+              <span className="fill" aria-hidden="true">
+                <span style={{ width: `${l.capacity ? Math.min(100, (l.sold / l.capacity) * 100) : 0}%` }} />
+              </span>
+              <span className="week-count">
+                {l.sold}/{l.capacity}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+export default async function TodayPage() {
+  const meRes = await getMe();
+  let homeRes = await getHome();
+  // Stripe setup still open (or just back from Stripe): ask Stripe for the account's real state.
+  if (meRes.ok && meRes.data.organization?.paymentsSetup === "incomplete") {
+    const refreshed = await api.refreshPayments();
+    if (refreshed.ok && refreshed.data.setup === "ready") homeRes = await api.home();
+  }
+  if (!homeRes.ok) {
+    return (
+      <>
+        <h1>Today</h1>
+        <ApiNotice failure={homeRes.error} />
+      </>
+    );
+  }
+  const home = homeRes.data;
+  const perms = meRes.ok ? meRes.data.permissions : [];
+  const money = home.money;
+  const paid = money?.reduce((n, r) => n + r.paidOrders, 0) ?? 0;
+
+  return (
+    <div className="today">
+      <div className="today-head">
+        <h1>
+          Today <LocalDate />
+        </h1>
+        {perms.includes("settings") && <SetupPill setup={home.setup} />}
+      </div>
+
+      {money && (
+        <div className="tkpis">
+          <Kpi label="Gross sales" rows={money} pick={(r) => r.grossMinor} sub={`${paid} paid order${paid === 1 ? "" : "s"}`} />
+          <Kpi label="Organizer net" rows={money} pick={(r) => r.netMinor} sub="after platform fees" />
+          <Kpi label="Platform fees" rows={money} pick={(r) => r.feesMinor} sub="on paid orders" />
+          <Kpi label="Held in ledger" rows={money} pick={(r) => r.heldMinor} sub="releases after delivery" green />
+        </div>
+      )}
+
+      <div className="today-cols">
+        <AttentionList items={home.attention} release={perms.includes("money:write") ? releaseFundsAction : null} connectStripe={perms.includes("settings") ? connectStripeAction : null} />
+        <div className="today-side">
+          {home.live && <LiveCard live={home.live} />}
+          <Week week={home.week} canCreate={perms.includes("classes:write")} />
         </div>
       </div>
-      <ol className="start-steps">
-        {steps.map((s, i) => (
-          <li key={s.title} className={s.done ? "is-done" : ""}>
-            <span className="start-dot" aria-hidden="true">{s.done ? "✓" : i + 1}</span>
-            <div>
-              <div className="start-title">{s.title}</div>
-              <div className="start-body">{s.body}</div>
-            </div>
-            {!s.done && s.action === "stripe" && (
-              <ActionForm action={connectStripeAction} submitLabel={p.paymentsSetup === "incomplete" ? "Continue on Stripe" : "Connect Stripe"} pendingLabel="Opening Stripe…" inline>
-                <span />
-              </ActionForm>
-            )}
-            {!s.done && s.href && p.canClasses && (
-              <Link className="btn" href={s.href}>
-                Open
-              </Link>
-            )}
-          </li>
-        ))}
-      </ol>
-    </section>
+    </div>
   );
 }

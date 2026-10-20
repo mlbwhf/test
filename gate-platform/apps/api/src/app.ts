@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -352,6 +352,12 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     registerTeam(api, authDeps, (req) => ({ org: req.org!, role: req.role!, userId: req.userId }));
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
+
+    // The console's "Today" screen. Money and setup items only appear for roles that can act on them.
+    api.get("/v1/home", { schema: { tags: ["organizations"] } }, async (req) => {
+      const h = await homeSummary(deps.core, org(req).id, { money: can(req.role!, "money:read"), settings: can(req.role!, "settings") });
+      return JSON.parse(JSON.stringify(h)) as unknown;
+    });
 
     api.patch("/v1/organizations/me/pricing", { schema: { tags: ["organizations"], body: S.UpdatePricingBody, response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.updatePricing(org(req).id, req.body)));
     api.post("/v1/organizations/me/pricing/refresh-rates", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema, 409: S.ErrorSchema, 502: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.refreshFxRates(org(req).id)));

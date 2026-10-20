@@ -146,6 +146,12 @@ describe("teams and roles", () => {
     const members = (await app.inject({ url: "/v1/members", headers: B(owner) })).json();
     expect(members.members.map((m: { role: string }) => m.role).sort()).toEqual(["finance", "instructor", "owner"]);
     expect(members.invitations).toEqual([]);
+
+    // Today: the instructor gets cohorts but no money and no setup chores; finance gets money.
+    const home = async (t: string) => (await app.inject({ url: "/v1/home", headers: B(t) })).json();
+    expect(await home(teacher)).toMatchObject({ money: null, attention: [] });
+    expect((await home(fin.token)).money).toEqual([{ currency: "USD", grossMinor: 0, netMinor: 0, feesMinor: 0, heldMinor: 0, paidOrders: 0 }]);
+    expect((await home(owner)).attention.map((a: { kind: string }) => a.kind)).toContain("payments_setup");
   });
 
   it("maps routes to permissions", () => {
