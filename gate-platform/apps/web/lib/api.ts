@@ -578,6 +578,15 @@ export type HomeAttention = {
   detail: string;
   action: { label: string; kind: "link"; href: string } | { label: string; kind: "release"; eventId: string } | { label: string; kind: "stripe" };
 };
+export type EventLine = HomeLine & { status: EventStatus; minEnrollment: number | null };
+export type EventOverview = {
+  line: EventLine;
+  sessions: { startsAt: string; endsAt: string }[];
+  attendees: { seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }[];
+  money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
+  course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
+  publicUrl: string | null;
+};
 export type Home = {
   money: { currency: string; grossMinor: number; netMinor: number; feesMinor: number; heldMinor: number; paidOrders: number }[] | null;
   attention: HomeAttention[];
@@ -607,6 +616,8 @@ export const api = {
   refreshPayments: () => request<{ setup: "none" | "incomplete" | "ready"; status: { ready: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: string } | null }>("GET", "/v1/organizations/me/payments"),
 
   home: () => request<Home>("GET", "/v1/home"),
+  eventLines: () => request<{ items: EventLine[] }>("GET", "/v1/events/overview"),
+  eventOverview: (id: string) => request<EventOverview>("GET", `/v1/events/${enc(id)}/overview`),
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),

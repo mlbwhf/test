@@ -1,5 +1,5 @@
 import type { Core } from "./services.js";
-import type { Event, Order } from "./types.js";
+import type { Course, Event, Order } from "./types.js";
 
 // The organizer's "Today" screen: what needs doing, what is running, what is next.
 // Everything is derived from orders, seats and cohorts at read time; nothing here is
@@ -38,6 +38,68 @@ export interface HomeSummary {
 }
 
 const DAY = 86_400_000;
+
+export interface EventLine extends CohortLine {
+  status: Event["status"];
+  minEnrollment: number | null;
+}
+
+/** One row per cohort with seats sold and capacity, for lists. Pass events/courses when already loaded. */
+export async function eventLines(core: Core, organizationId: string, events?: Event[], courses?: Course[]): Promise<EventLine[]> {
+  const evs = events ?? (await core.repos.events.listByOrganization(organizationId));
+  const cs = courses ?? (await core.repos.courses.listByOrganization(organizationId));
+  const courseName = new Map(cs.map((c) => [c.id, c.name]));
+  return Promise.all(
+    evs.map(async (e) => {
+      const tts = await core.repos.ticketTypes.listByEvent(e.id);
+      return {
+        eventId: e.id, name: e.name, courseName: e.courseId ? courseName.get(e.courseId) ?? null : null, startsAt: e.startsAt, endsAt: e.endsAt ?? null,
+        timezone: e.timezone, format: e.format, sold: tts.reduce((a, t) => a + t.sold, 0), capacity: tts.reduce((a, t) => a + t.quantity, 0),
+        status: e.status, minEnrollment: e.minEnrollment ?? null,
+      };
+    }),
+  );
+}
+
+export interface EventOverview {
+  line: EventLine;
+  sessions: Array<{ startsAt: Date; endsAt: Date }>;
+  /** Confirmed seats. `payment` is null for roles without money access. */
+  attendees: Array<{ seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }>;
+  money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
+  course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
+}
+
+/** Everything the Events detail pane shows for one cohort. */
+export async function eventOverview(core: Core, organizationId: string, eventId: string, opts: { money: boolean }): Promise<EventOverview> {
+  const event = await core.getEvent(organizationId, eventId);
+  const course = event.courseId ? await core.repos.courses.get(event.courseId) : undefined;
+  const [line] = await eventLines(core, organizationId, [event], course ? [course] : []);
+  const seats = (await core.repos.seats.listByEvent(event.id)).filter((s) => s.status === "confirmed");
+  const orders = opts.money ? (await core.repos.orders.listByOrganization(organizationId, 100_000)).filter((o) => o.eventId === event.id) : [];
+  const orderById = new Map(orders.map((o) => [o.id, o]));
+  const paid = orders.filter((o) => PAID.includes(o.status));
+  return {
+    line: line!,
+    sessions: event.sessions.length ? event.sessions.map((s) => ({ startsAt: s.startsAt, endsAt: s.endsAt })) : [{ startsAt: event.startsAt, endsAt: event.endsAt ?? event.startsAt }],
+    attendees: seats
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+      .map((s) => {
+        const o = orderById.get(s.orderId);
+        const payment = !opts.money ? null : o && PAID.includes(o.status) ? "paid" : o?.paymentMethod === "invoice" ? "invoice" : "pending";
+        return { seatId: s.id, name: s.attendee.name ?? null, email: s.attendee.email, checkedIn: Boolean(s.checkedInAt), payment };
+      }),
+    money: opts.money
+      ? {
+          currency: event.currency,
+          grossMinor: paid.reduce((a, o) => a + o.pricing.totalMinor - o.refundedMinor, 0),
+          netMinor: paid.reduce((a, o) => a + o.pricing.organizerNetMinor, 0),
+          heldMinor: paid.filter((o) => o.fundsStatus === "held").reduce((a, o) => a + o.pricing.organizerNetMinor, 0),
+        }
+      : null,
+    course: course ? { id: course.id, name: course.name, slug: course.slug, prework: Boolean(course.prework), survey: Boolean(course.surveyUrl) } : null,
+  };
+}
 const PAID: Order["status"][] = ["paid", "partially_refunded"];
 
 function dayKey(d: Date, tz: string): string {
@@ -61,14 +123,7 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
   const courses = await core.repos.courses.listByOrganization(organizationId);
   const courseById = new Map(courses.map((c) => [c.id, c]));
 
-  const lines = new Map<string, CohortLine>();
-  for (const e of events) {
-    const tts = await core.repos.ticketTypes.listByEvent(e.id);
-    lines.set(e.id, {
-      eventId: e.id, name: e.name, courseName: e.courseId ? courseById.get(e.courseId)?.name ?? null : null, startsAt: e.startsAt, endsAt: e.endsAt ?? null,
-      timezone: e.timezone, format: e.format, sold: tts.reduce((a, t) => a + t.sold, 0), capacity: tts.reduce((a, t) => a + t.quantity, 0),
-    });
-  }
+  const lines = new Map((await eventLines(core, organizationId, events, courses)).map((l) => [l.eventId, l as CohortLine]));
   const live = events.filter((e) => e.status === "live");
   const attention: AttentionItem[] = [];
 

@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -357,6 +357,12 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.get("/v1/home", { schema: { tags: ["organizations"] } }, async (req) => {
       const h = await homeSummary(deps.core, org(req).id, { money: can(req.role!, "money:read"), settings: can(req.role!, "settings") });
       return JSON.parse(JSON.stringify(h)) as unknown;
+    });
+    // Events screen: list rows with fill, and one cohort's detail pane.
+    api.get("/v1/events/overview", { schema: { tags: ["events"] } }, async (req) => ({ items: JSON.parse(JSON.stringify(await eventLines(deps.core, org(req).id))) as unknown }));
+    api.get("/v1/events/:id/overview", { schema: { tags: ["events"], params: z.object({ id: z.string() }) } }, async (req) => {
+      const o = await eventOverview(deps.core, org(req).id, req.params.id, { money: can(req.role!, "money:read") });
+      return { ...(JSON.parse(JSON.stringify(o)) as object), publicUrl: o.course && deps.publicPageUrl ? deps.publicPageUrl(org(req).id, o.course.slug) : null };
     });
 
     api.patch("/v1/organizations/me/pricing", { schema: { tags: ["organizations"], body: S.UpdatePricingBody, response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.updatePricing(org(req).id, req.body)));

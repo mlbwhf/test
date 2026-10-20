@@ -34,9 +34,9 @@ export function Empty({ children }: { children: ReactNode }) {
   return <p className="muted empty">{children}</p>;
 }
 
-export function Section({ title, children }: { title: string; children: ReactNode }) {
+export function Section({ title, children, id }: { title: string; children: ReactNode; id?: string }) {
   return (
-    <section className="card">
+    <section className="card" id={id}>
       <h2>{title}</h2>
       {children}
     </section>

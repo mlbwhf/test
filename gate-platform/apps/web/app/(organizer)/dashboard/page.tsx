@@ -14,7 +14,7 @@ const STEP_CTA: Record<Home["setup"]["steps"][number]["key"], { label: string; h
   account: { label: "Finish your account", href: "/onboarding" },
   payments: { label: "Connect Stripe", href: "#attention-title" },
   course: { label: "Add a course", href: "/courses" },
-  cohort: { label: "Schedule a cohort", href: "/events#create" },
+  cohort: { label: "Schedule a cohort", href: "/events/new" },
   registration: { label: "Share your first link", href: "/courses" },
 };
 
@@ -102,7 +102,7 @@ function Week({ week, canCreate }: { week: HomeLine[]; canCreate: boolean }) {
       {week.length === 0 ? (
         <p className="today-clear">
           Nothing starts in the next 7 days.{" "}
-          {canCreate && <Link href="/events#create">Schedule a cohort</Link>}
+          {canCreate && <Link href="/events/new">Schedule a cohort</Link>}
         </p>
       ) : (
         <ul className="week-rows">

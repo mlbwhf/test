@@ -58,6 +58,12 @@ describe("API", () => {
 
     const paid = await app.inject({ method: "POST", url: `/v1/dev/payments/${order.paymentRef}/succeed`, headers: A() });
     expect(paid.json()).toEqual({ handled: true });
+
+    const lines = await app.inject({ url: "/v1/events/overview", headers: A() });
+    expect(lines.json().items.find((l: { eventId: string }) => l.eventId === eventId)).toMatchObject({ sold: 2, capacity: 10 });
+    const detail = await app.inject({ url: `/v1/events/${eventId}/overview`, headers: A() });
+    expect(detail.json()).toMatchObject({ line: { eventId }, money: { grossMinor: 200_000 }, publicUrl: null });
+    expect(detail.json().attendees).toHaveLength(2);
     expect((await app.inject({ url: `/v1/orders/${order.id}`, headers: H() })).json().status).toBe("paid");
 
     const bal = (await app.inject({ url: "/v1/ledger/balances", headers: H() })).json().accounts;

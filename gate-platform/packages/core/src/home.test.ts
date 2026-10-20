@@ -3,7 +3,7 @@ import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
 import { FakePaymentsAdapter } from "./fake-payments.js";
 import { createInMemoryRepos } from "./memory-repos.js";
 import { Core } from "./services.js";
-import { homeSummary } from "./home.js";
+import { eventLines, eventOverview, homeSummary } from "./home.js";
 
 const NOW = new Date("2026-10-21T15:00:00Z"); // 11:00 in Toronto
 const at = (iso: string) => new Date(iso);
@@ -68,5 +68,22 @@ describe("home summary", () => {
     expect(h.money).toBeNull();
     expect(h.attention.map((a) => a.kind).sort()).toEqual(["low_enrolment", "missing_prework", "no_tickets"]);
     expect(h.setup.steps.find((s) => s.key === "registration")!.done).toBe(true);
+  });
+
+  it("lists cohorts with fill and details one with attendees, money and course flow", async () => {
+    const { core, org, liveEv, low } = await scenario();
+    const lines = await eventLines(core, org.id);
+    expect(lines.find((l) => l.eventId === low.id)).toMatchObject({ sold: 3, capacity: 12, minEnrollment: 8, status: "live", courseName: "RTE" });
+    const o = await eventOverview(core, org.id, liveEv.id, { money: true });
+    expect(o.sessions).toHaveLength(3);
+    expect(o.attendees).toHaveLength(3);
+    expect(o.attendees.filter((a) => a.checkedIn)).toHaveLength(2);
+    expect(o.attendees.every((a) => a.payment === "paid")).toBe(true);
+    expect(o.money).toMatchObject({ currency: "USD", grossMinor: 270_000 });
+    expect(o.money!.heldMinor).toBe(o.money!.netMinor);
+    expect(o.course).toMatchObject({ slug: "rte", prework: false, survey: false });
+    const forInstructor = await eventOverview(core, org.id, liveEv.id, { money: false });
+    expect(forInstructor.money).toBeNull();
+    expect(forInstructor.attendees.every((a) => a.payment === null)).toBe(true);
   });
 });

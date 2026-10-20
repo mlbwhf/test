@@ -111,7 +111,7 @@ export default async function OrganizerLayout({ children }: { children: ReactNod
   const can = (p: Permission) => me.permissions.includes(p);
 
   const sections: Section[] = AREAS.map((a) => ({ key: a.key, label: a.label, pages: a.pages.filter(([, , needs]) => can(needs)).map(([h, l]) => [h, l] as [string, string]) })).filter((s) => s.pages.length > 0);
-  const createHref = can("classes:write") ? "/events#create" : null;
+  const createHref = can("classes:write") ? "/events/new" : null;
   const attentionIds = homeRes.ok ? homeRes.data.attention.map((a) => a.id) : [];
   const mobileTabs = [
     { href: "/dashboard", label: "Home" },

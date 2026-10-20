@@ -546,7 +546,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
         )}
       </Section>
 
-      <Section title="Ticket types">
+      <Section title="Ticket types" id="tickets">
         {!ticketTypesRes.ok ? (
           <ApiNotice failure={ticketTypesRes.error} />
         ) : ticketTypes.length === 0 ? (
