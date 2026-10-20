@@ -12,11 +12,21 @@ import {
 import { formatDateTime, formatMoney, humanize } from "@/lib/format";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
+import { getMe } from "@/lib/console-data";
+import { MoneyKpis, OrdersTab, SettingsRows } from "./parts";
 import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { from?: string | string[]; to?: string | string[] };
+type SearchParams = { from?: string | string[]; to?: string | string[]; tab?: string | string[]; edit?: string | string[] };
+
+const TABS = [
+  ["orders", "Orders"],
+  ["payouts", "Payouts"],
+  ["revenue", "Revenue"],
+  ["settings", "Settings"],
+] as const;
+type Tab = (typeof TABS)[number][0];
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -97,6 +107,10 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
   const fromIso = `${from}T00:00:00.000Z`;
   const toIso = `${to}T23:59:59.999Z`;
 
+  const tabRaw = Array.isArray(query.tab) ? query.tab[0] : query.tab;
+  const tab: Tab = TABS.some(([k]) => k === tabRaw) ? (tabRaw as Tab) : "orders";
+  const [ordersRes, linesRes, meRes] = await Promise.all([api.listOrders(), api.eventLines(), getMe()]);
+  const perms = meRes.ok ? meRes.data.permissions : [];
   const [orgRes, reportRes, payablesRes, payoutsRes, partiesRes] = await Promise.all([
     api.getOrganization(),
     rangeInverted ? Promise.resolve(null) : api.getRevenueReport(fromIso, toIso),
@@ -118,22 +132,34 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
   const parties: Party[] = partiesRes.ok ? partiesRes.data.items : [];
   const partyNames = new Map(parties.map((p) => [p.id, p.name]));
   const now = Date.now();
+  const orders = ordersRes.ok ? ordersRes.data.items : [];
+  const lines = linesRes.ok ? linesRes.data.items : [];
 
   // Currencies offered on the payout form: the organization's, then every currency with a payable.
   const payoutCurrencies = [...new Set<string>([fallbackCurrency, ...payables.map((p) => p.currency)])];
 
   return (
     <>
-      <div className="page-header">
+      <div className="money-head">
         <h1>Money</h1>
-        <span className="muted">Revenue recognition, held funds, payables and payouts.</span>
+        <nav className="money-tabs" aria-label="Money">
+          {TABS.map(([k, label]) => (
+            <Link key={k} href={k === "orders" ? "/money" : `/money?tab=${k}`} aria-current={tab === k ? "page" : undefined}>
+              {label}
+            </Link>
+          ))}
+        </nav>
       </div>
+
+      <MoneyKpis orders={orders} currency={fallbackCurrency} />
 
       {unreachable && <ApiNotice failure={unreachable} />}
       {!unreachable && !orgRes.ok && <ApiNotice failure={orgRes.error} />}
 
+      {tab === "revenue" && (
       <Section title="Revenue">
         <form method="get" action="/money" className="range-form">
+          <input type="hidden" name="tab" value="revenue" />
           <label className="label-inline">
             From
             <input type="date" name="from" defaultValue={from} required />
@@ -274,7 +300,11 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
           </>
         )}
       </Section>
+      )}
 
+      {tab === "orders" && <OrdersTab orders={orders} lines={lines} canWrite={perms.includes("money:write")} now={now} />}
+
+      {tab === "payouts" && (
       <Section title="Payables">
         {!payablesRes.ok ? (
           payablesRes.error.kind === "unreachable" ? (
@@ -403,8 +433,13 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
           )}
         </div>
       </Section>
+      )}
 
-      <Section title="Currencies and localized pricing">
+      {tab === "settings" && org && <SettingsRows org={org} canEdit={perms.includes("settings")} paymentsSetup={meRes.ok ? meRes.data.organization?.paymentsSetup ?? null : null} />}
+
+      {tab === "settings" && perms.includes("settings") && (
+      <details className="card edit-block" id="pricing" open={query.edit === "pricing"}>
+        <summary>Edit currencies and localized pricing</summary>
         {!orgRes.ok || !org ? (
           <Empty>Pricing settings unavailable.</Empty>
         ) : (
@@ -458,9 +493,12 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
             )}
           </>
         )}
-      </Section>
+      </details>
+      )}
 
-      <Section title="Settings">
+      {tab === "settings" && perms.includes("settings") && (
+      <details className="card edit-block" id="rules" open={query.edit === "rules"}>
+        <summary>Edit release and enrolment rules</summary>
         {!orgRes.ok ? (
           <Empty>Organization settings unavailable.</Empty>
         ) : (
@@ -505,7 +543,8 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
             </p>
           </ActionForm>
         )}
-      </Section>
+      </details>
+      )}
     </>
   );
 }

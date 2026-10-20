@@ -27,10 +27,7 @@ const AREAS: Array<{ key: string; label: string; pages: Array<[href: string, lab
   {
     key: "money",
     label: "Money",
-    pages: [
-      ["/money", "Money", "money:read"],
-      ["/orders", "Orders", "money:read"],
-    ],
+    pages: [["/money", "Money", "money:read"]],
   },
   {
     key: "team",

@@ -1,10 +1,19 @@
 import { redirect } from "next/navigation";
 import { api, ROLE_HINTS, ROLE_LABELS, ROLES, type Role } from "@/lib/api";
 import { ActionForm } from "@/components/action-form";
-import { ApiNotice, Empty, Section } from "@/components/ui";
+import { ApiNotice } from "@/components/ui";
+import { InvitePill } from "@/components/invite-pill";
 import { changeRoleAction, inviteAction, removeMemberAction, revokeInvitationAction } from "@/app/auth-actions";
 
 export const dynamic = "force-dynamic";
+
+function initials(name: string | null, email: string): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) return (words[0]![0]! + words[words.length - 1]![0]!).toUpperCase();
+  return (words[0] ?? email).slice(0, 2).toUpperCase();
+}
+
+const since = (iso: string) => new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
 export default async function TeamPage() {
   const me = await api.me();
@@ -15,62 +24,42 @@ export default async function TeamPage() {
   const assignable: Role[] = isOwner ? ROLES : ROLES.filter((r) => r !== "owner");
 
   return (
-    <>
+    <div className="team">
       <div className="page-header">
         <h1>Team</h1>
-        <span className="muted">Who can sign in to {me.data.organization?.name}, and what each person can do.</span>
+        <span className="today-date">Instructors, admins and finance in one place</span>
       </div>
 
-      <Section title="Invite someone">
-        <ActionForm action={inviteAction} submitLabel="Send invitation" pendingLabel="Sending…" wide>
-          <div className="fields-row">
-            <label>
-              Email
-              <input name="email" type="email" required placeholder="name@company.com" />
-            </label>
-            <label>
-              Role
-              <select name="role" defaultValue="instructor">
-                {assignable.map((r) => (
-                  <option key={r} value={r}>
-                    {ROLE_LABELS[r]}: {ROLE_HINTS[r]}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <p className="hint">They sign in with Google, Microsoft, LinkedIn or a link to that email. Invitations expire after 14 days.</p>
-        </ActionForm>
-      </Section>
+      <InvitePill roles={assignable.map((r) => ({ value: r, label: ROLE_LABELS[r], hint: ROLE_HINTS[r] }))} action={inviteAction} />
 
       {!res.ok ? (
         <ApiNotice failure={res.error} />
       ) : (
-        <>
-          <Section title={`Members · ${res.data.members.length}`}>
-            <ul className="team-list">
-              {res.data.members.map((m) => {
-                const self = m.userId === me.data.user.id;
-                const locked = (m.role === "owner" && !isOwner) || self;
-                return (
-                  <li key={m.userId}>
-                    <div className="team-who">
-                      <span className="team-avatar" aria-hidden="true">
-                        {(m.name ?? m.email)[0]!.toUpperCase()}
-                      </span>
-                      <div>
-                        <div className="team-name">
-                          {m.name ?? m.email}
-                          {self && <span className="muted"> (you)</span>}
-                        </div>
-                        <div className="team-email">{m.email}</div>
-                      </div>
-                    </div>
-                    {locked ? (
-                      <span className="badge">{ROLE_LABELS[m.role]}</span>
-                    ) : (
-                      <div className="team-actions">
-                        <ActionForm action={changeRoleAction} submitLabel="Save" pendingLabel="…" inline>
+        <section className="card team-card" aria-label="Members">
+          <ul className="people">
+            {res.data.members.map((m) => {
+              const self = m.userId === me.data.user.id;
+              const locked = (m.role === "owner" && !isOwner) || self;
+              return (
+                <li key={m.userId}>
+                  <span className="person-avatar" aria-hidden="true">
+                    {initials(m.name, m.email)}
+                  </span>
+                  <div className="person-who">
+                    <strong>
+                      {m.name ?? m.email}
+                      {self && " (you)"}
+                    </strong>
+                    <span>{m.name ? m.email : `${ROLE_LABELS[m.role]} since ${since(m.joinedAt)}`}</span>
+                  </div>
+                  <span className={`chip role-${m.role}`}>{ROLE_LABELS[m.role]}</span>
+                  {locked ? (
+                    <span className="person-menu-spacer" />
+                  ) : (
+                    <details className="person-menu">
+                      <summary aria-label={`Change ${m.email}`}>⋯</summary>
+                      <div className="person-menu-body">
+                        <ActionForm action={changeRoleAction} submitLabel="Save role" pendingLabel="…" inline>
                           <input type="hidden" name="userId" value={m.userId} />
                           <select name="role" defaultValue={m.role} aria-label={`Role for ${m.email}`}>
                             {assignable.map((r) => (
@@ -80,51 +69,33 @@ export default async function TeamPage() {
                             ))}
                           </select>
                         </ActionForm>
-                        <ActionForm action={removeMemberAction} submitLabel="Remove" pendingLabel="…" variant="danger" inline>
+                        <ActionForm action={removeMemberAction} submitLabel="Remove from team" pendingLabel="…" variant="danger" inline>
                           <input type="hidden" name="userId" value={m.userId} />
                         </ActionForm>
                       </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </Section>
-
-          <Section title="Pending invitations">
-            {res.data.invitations.length === 0 ? (
-              <Empty>None.</Empty>
-            ) : (
-              <ul className="team-list">
-                {res.data.invitations.map((i) => (
-                  <li key={i.id}>
-                    <div>
-                      <div className="team-name">{i.email}</div>
-                      <div className="team-email">
-                        {ROLE_LABELS[i.role]} · expires {new Date(i.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </div>
-                    </div>
-                    <ActionForm action={revokeInvitationAction} submitLabel="Withdraw" pendingLabel="…" variant="danger" inline>
-                      <input type="hidden" name="id" value={i.id} />
-                    </ActionForm>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Section>
-
-          <Section title="What each role can do">
-            <dl className="kv">
-              {ROLES.map((r) => (
-                <div key={r} style={{ display: "contents" }}>
-                  <dt>{ROLE_LABELS[r]}</dt>
-                  <dd>{ROLE_HINTS[r]}</dd>
+                    </details>
+                  )}
+                </li>
+              );
+            })}
+            {res.data.invitations.map((i) => (
+              <li key={i.id} className="is-invited">
+                <span className="person-avatar" aria-hidden="true">
+                  {initials(null, i.email)}
+                </span>
+                <div className="person-who">
+                  <strong>{i.email}</strong>
+                  <span>Invited · expires {new Date(i.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                 </div>
-              ))}
-            </dl>
-          </Section>
-        </>
+                <span className={`chip role-${i.role}`}>{ROLE_LABELS[i.role]}</span>
+                <ActionForm action={revokeInvitationAction} submitLabel="Withdraw" pendingLabel="…" variant="danger" inline>
+                  <input type="hidden" name="id" value={i.id} />
+                </ActionForm>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
-    </>
+    </div>
   );
 }

@@ -180,7 +180,7 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
         id: `invoices:${soon.map((i) => i.id).sort().join(",")}`, kind: "unpaid_invoices", tone: overdue ? "red" : "amber",
         title: `${soon.length} unpaid invoice${soon.length === 1 ? "" : "s"}${overdue ? ` · ${overdue} overdue` : ""}`,
         detail: `${overdue ? "Oldest due" : "Next due"} ${shortDate(first.dueAt, "UTC")} · ${money(total, first.currency)}`,
-        action: { label: "Open", kind: "link", href: "/money?tab=invoices" },
+        action: { label: "Open", kind: "link", href: "/money" },
       });
     }
   } else {

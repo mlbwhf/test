@@ -168,7 +168,7 @@ export type TicketType = {
   sold: number;
 };
 
-export type OrderStatus = "pending" | "paid" | "refunded" | "failed";
+export type OrderStatus = "pending" | "paid" | "refunded" | "partially_refunded" | "failed" | "cancelled";
 
 export type OrderPricing = {
   subtotalMinor: number;
@@ -187,6 +187,13 @@ export type Order = {
   currency: string;
   pricing: OrderPricing;
   attendees: Attendee[];
+  paymentMethod: "card" | "invoice";
+  refundedMinor: number;
+  heldMinor: number;
+  fundsStatus: "none" | "held" | "released";
+  releasedAt: string | null;
+  createdAt: string;
+  paidAt: string | null;
 };
 
 export type LedgerAccount = {
