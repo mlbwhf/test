@@ -38,7 +38,7 @@ function toParty(r: Row): Party {
 function toCourse(r: Row): Course {
   const description = opt<string>(r.description), body = opt<string>(r.certification_body), days = opt<number>(r.duration_days);
   const policy = opt<Course["changePolicy"]>(r.change_policy), prework = opt<string>(r.prework), surveyUrl = opt<string>(r.survey_url), imageUrl = opt<string>(r.image_url);
-  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), createdAt: date(r.created_at) };
+  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), ...(opt<Course["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Course["badge"]> } : {}), createdAt: date(r.created_at) };
 }
 function toEvent(r: Row): Event {
   const rules = opt<Event["splitRules"]>(r.split_rules);
@@ -77,7 +77,7 @@ function toSeat(r: Row): Seat {
 }
 function toCertificate(r: Row): Certificate {
   const revokedAt = opt<Date>(r.revoked_at);
-  return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}) };
+  return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}), kind: (opt<string>(r.kind) ?? "completion") as NonNullable<Certificate["kind"]>, ...(opt<unknown>(r.hours) !== undefined ? { hours: num(r.hours) } : {}) };
 }
 function toTransfer(r: Row): SeatTransfer {
   const paymentRef = opt<string>(r.payment_ref), toSeatId = opt<string>(r.to_seat_id), completedAt = opt<Date>(r.completed_at);
@@ -151,7 +151,7 @@ class PgParties implements PartyRepo {
 class PgCourses implements CourseRepo {
   constructor(private readonly pool: Pool) {}
   async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt]); }
-  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null]); }
+  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10, badge=$11 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null, c.badge ? JSON.stringify(c.badge) : null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE id=$1`, [id]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async getBySlug(orgId: string, slug: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 AND slug=$2`, [orgId, slug]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCourse); }
@@ -270,7 +270,7 @@ class PgWaitlist implements WaitlistRepo {
 }
 class PgCertificates implements CertificateRepo {
   constructor(private readonly pool: Pool) {}
-  async create(c: Certificate) { await this.pool.query(`INSERT INTO certificates (id, organization_id, seat_id, event_id, course_name, attendee_name, attendee_email, issued_at, verify_code, revoked_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [c.id, c.organizationId, c.seatId, c.eventId, c.courseName, c.attendeeName, c.attendeeEmail, c.issuedAt, c.verifyCode, c.revokedAt ?? null]); }
+  async create(c: Certificate) { await this.pool.query(`INSERT INTO certificates (id, organization_id, seat_id, event_id, course_name, attendee_name, attendee_email, issued_at, verify_code, revoked_at, kind, hours) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, [c.id, c.organizationId, c.seatId, c.eventId, c.courseName, c.attendeeName, c.attendeeEmail, c.issuedAt, c.verifyCode, c.revokedAt ?? null, c.kind ?? "completion", c.hours ?? null]); }
   async update(c: Certificate) { await this.pool.query(`UPDATE certificates SET revoked_at=$2 WHERE id=$1`, [c.id, c.revokedAt ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE id=$1`, [id]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
   async getByCode(code: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE verify_code=$1`, [code]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }

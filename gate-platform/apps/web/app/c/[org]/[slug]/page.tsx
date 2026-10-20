@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publicApi, type PublicCoursePage, type PublicTicketType } from "@/lib/public-api";
 import { formatMoney } from "@/lib/format";
-import { publicApiUrl } from "@/lib/urls";
+import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { Logo } from "@/components/brand";
 import { RegisterSheet } from "@/components/register-sheet";
 
@@ -13,6 +13,7 @@ type Params = Promise<{ org: string; slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 type Cohort = PublicCoursePage["cohorts"][number];
 
+const BADGE_LABEL: Record<string, string> = { credly: "Credly", accredible: "Accredible", badgr: "Badgr", certopus: "Certopus" };
 const FORMAT: Record<string, string> = { live_virtual: "LIVE VIRTUAL", in_person: "IN PERSON", hybrid: "HYBRID", self_paced: "SELF-PACED" };
 const ATTENDANCE: Record<string, string> = {
   live_virtual: "https://schema.org/OnlineEventAttendanceMode",
@@ -105,7 +106,7 @@ export default async function CoursePage({ params, searchParams }: { params: Par
   const want = Array.isArray(sp.d) ? sp.d[0] : sp.d;
   const cohorts = [...data.cohorts].sort((a, b) => a.event.startsAt.localeCompare(b.event.startsAt));
   const sel = cohorts.find((c) => c.event.id === want) ?? cohorts.find((c) => seats(c).left > 0) ?? cohorts[0];
-  const webBase = (process.env.GATE_WEB_URL ?? "").replace(/\/+$/, "");
+  const webBase = await siteOrigin();
   const url = `${webBase}/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}`;
   const jsonLd = cohorts.map((c) => educationEvent(data, c, url));
   const words = data.course.name.split(/\s+/);
@@ -245,6 +246,20 @@ export default async function CoursePage({ params, searchParams }: { params: Par
           <h2>Your payment is held until delivery</h2>
           <p>Pay by card{price ? ` in ${price.currency}` : ""}. EnrollClass holds the funds and releases them to {data.organization.name} after the course is delivered.</p>
         </section>
+
+        {data.course.badge && (
+          <section className="ep-badge" aria-label="Digital badge">
+            {data.course.badge.imageUrl ? <img src={data.course.badge.imageUrl} alt="" width={84} height={84} /> : <span className="ep-badge-ph" aria-hidden="true" />}
+            <div>
+              <span>DIGITAL BADGE</span>
+              <strong>{data.course.badge.name}</strong>
+              <em>Earned on completion, issued through {BADGE_LABEL[data.course.badge.platform] ?? "a badge platform"}.</em>
+              <a href={data.course.badge.url} target="_blank" rel="noreferrer noopener">
+                View the badge →
+              </a>
+            </div>
+          </section>
+        )}
 
         <details className="ep-ai">
           <summary>Structured data for AI agents</summary>

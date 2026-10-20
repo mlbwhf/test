@@ -228,7 +228,8 @@ describe("delivery API", () => {
     const issued = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/certificates`, headers: H(), payload: { onlyPresent: true } })).json().issued;
     expect(issued).toHaveLength(1);
     expect(issued[0].attendeeName).toBe("Ada Lovelace");
-    expect(issued[0].viewUrl).toContain("/view");
+    expect(issued[0].viewUrl).toContain(`/cert/${issued[0].verifyCode}`);
+    expect(issued[0]).toMatchObject({ kind: "completion" });
     const verify = await app.inject(`/public/v1/certificates/${issued[0].verifyCode}`);
     expect(verify.json()).toMatchObject({ valid: true, attendeeName: "Ada Lovelace", courseName: "Delivery 101", organization: "Agile Agilist" });
     const view = await app.inject(`/public/v1/certificates/${issued[0].verifyCode}/view`);
@@ -236,6 +237,15 @@ describe("delivery API", () => {
     expect(view.body).toContain("Certificate of Completion");
     expect((await app.inject(`/public/v1/certificates/bogus/view`)).statusCode).toBe(404);
     expect((await app.inject({ url: `/v1/events/${ev.id}/certificates`, headers: H() })).json().items).toHaveLength(1);
+    // Attendance certificates for everyone else, and a Credly badge shown with them.
+    const attCerts = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/certificates`, headers: H(), payload: { kind: "attendance" } })).json().issued;
+    expect(attCerts.every((c: { kind: string }) => c.kind === "attendance")).toBe(true);
+    const badge = { platform: "credly", name: "Leading SAFe Agilist", url: "https://www.credly.com/org/scaled-agile/badge/x", imageUrl: "https://images.credly.com/x.png" };
+    const bad = await app.inject({ method: "PATCH", url: `/v1/courses/${ev.courseId}`, headers: H(), payload: { badge: { ...badge, url: "http://insecure" } } });
+    expect(bad.statusCode).toBe(400);
+    expect((await app.inject({ method: "PATCH", url: `/v1/courses/${ev.courseId}`, headers: H(), payload: { badge } })).json().badge).toEqual(badge);
+    expect((await app.inject(`/public/v1/certificates/${issued[0].verifyCode}`)).json()).toMatchObject({ valid: true, kind: "completion", badge });
+    expect((await app.inject({ method: "PATCH", url: `/v1/courses/${ev.courseId}`, headers: H(), payload: { badge: null } })).json().badge).toBeNull();
 
     const csv = await app.inject({ url: `/v1/events/${ev.id}/roster.csv?format=safe_studio`, headers: H() });
     expect(csv.headers["content-type"]).toContain("text/csv");

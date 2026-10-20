@@ -117,6 +117,8 @@ export type Course = {
   surveyUrl: string | null;
   /** Cover image (2:1 banner) for the public page and widget. */
   imageUrl: string | null;
+  /** Digital badge on an outside platform (Credly, Accredible…). */
+  badge: CourseBadge | null;
   createdAt: string;
 };
 
@@ -313,12 +315,17 @@ export type RecordAttendanceInput = {
   status: Exclude<AttendanceStatus, "unknown">;
   minutes?: number;
 };
-export type IssueCertificatesInput = { onlyPresent?: boolean };
+export type IssueCertificatesInput = { onlyPresent?: boolean; onlyCheckedIn?: boolean; kind?: "attendance" | "completion" };
 export type UpdateCourseInput = {
   prework?: string | null;
   surveyUrl?: string | null;
   description?: string | null;
+  badge?: CourseBadge | null;
 };
+
+export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other";
+export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other" };
+export type CourseBadge = { platform: BadgePlatform; name: string; url: string; imageUrl?: string };
 /** A text/csv payload proxied through to the browser by the roster route handler. */
 export type CsvDownload = { csv: string; contentType: string };
 
@@ -593,7 +600,7 @@ export type EventLine = HomeLine & { status: EventStatus; minEnrollment: number 
 export type EventOverview = {
   line: EventLine;
   sessions: { startsAt: string; endsAt: string }[];
-  attendees: { seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }[];
+  attendees: { seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null; certificate: { code: string; kind: "attendance" | "completion" } | null }[];
   money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
   course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
   instructors: { id: string; name: string }[];

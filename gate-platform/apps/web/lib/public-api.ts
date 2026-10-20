@@ -175,7 +175,27 @@ export type PublicCoursePage = {
   cohorts: { event: Event; ticketTypes: PublicTicketType[] }[];
 };
 
+export type CertificateView = {
+  valid: boolean;
+  attendeeName?: string;
+  courseName?: string;
+  cohort?: string;
+  issuedAt?: string;
+  organization?: string;
+  kind?: "attendance" | "completion";
+  hours?: number | null;
+  startsAt?: string;
+  endsAt?: string | null;
+  timezone?: string;
+  format?: string;
+  instructors?: string[];
+  certificationBody?: string | null;
+  badge?: { platform: string; name: string; url: string; imageUrl?: string } | null;
+};
+
 export const publicApi = {
+  /** Public verification of a certificate by its code. */
+  getCertificate: (code: string) => request<CertificateView>("GET", `/public/v1/certificates/${enc(code)}`),
   /** A course's public page data: upcoming live cohorts with seats left and prices. */
   getCourse: (orgId: string, slug: string) => request<PublicCoursePage>("GET", `/public/v1/organizations/${enc(orgId)}/courses/${enc(slug)}`),
 

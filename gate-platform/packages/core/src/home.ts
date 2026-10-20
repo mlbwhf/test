@@ -65,7 +65,7 @@ export interface EventOverview {
   line: EventLine;
   sessions: Array<{ startsAt: Date; endsAt: Date }>;
   /** Confirmed seats. `payment` is null for roles without money access. */
-  attendees: Array<{ seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }>;
+  attendees: Array<{ seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null; certificate: { code: string; kind: "attendance" | "completion" } | null }>;
   money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
   course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
   instructors: Array<{ id: string; name: string }>;
@@ -80,6 +80,7 @@ export async function eventOverview(core: Core, organizationId: string, eventId:
   const orders = opts.money ? (await core.repos.orders.listByOrganization(organizationId, 100_000)).filter((o) => o.eventId === event.id) : [];
   const orderById = new Map(orders.map((o) => [o.id, o]));
   const paid = orders.filter((o) => PAID.includes(o.status));
+  const certBySeat = new Map((await core.repos.certificates.listByEvent(event.id)).filter((c) => !c.revokedAt).map((c) => [c.seatId, c]));
   return {
     line: line!,
     sessions: event.sessions.length ? event.sessions.map((s) => ({ startsAt: s.startsAt, endsAt: s.endsAt })) : [{ startsAt: event.startsAt, endsAt: event.endsAt ?? event.startsAt }],
@@ -88,7 +89,8 @@ export async function eventOverview(core: Core, organizationId: string, eventId:
       .map((s) => {
         const o = orderById.get(s.orderId);
         const payment = !opts.money ? null : o && PAID.includes(o.status) ? "paid" : o?.paymentMethod === "invoice" ? "invoice" : "pending";
-        return { seatId: s.id, name: s.attendee.name ?? null, email: s.attendee.email, checkedIn: Boolean(s.checkedInAt), payment };
+        const cert = certBySeat.get(s.id);
+        return { seatId: s.id, name: s.attendee.name ?? null, email: s.attendee.email, checkedIn: Boolean(s.checkedInAt), payment, certificate: cert ? { code: cert.verifyCode, kind: cert.kind ?? "completion" } : null };
       }),
     money: opts.money
       ? {

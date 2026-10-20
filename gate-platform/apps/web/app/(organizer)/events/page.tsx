@@ -6,7 +6,7 @@ import { ApiNotice } from "@/components/ui";
 import { CopyButton } from "@/components/copy-button";
 import { DuplicateDialog } from "@/components/duplicate-dialog";
 import { ActionForm } from "@/components/action-form";
-import { publishEventAction, setInstructorsAction } from "@/app/instructor-actions";
+import { issuePaneCertificatesAction, publishEventAction, setInstructorsAction } from "@/app/instructor-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -316,6 +316,12 @@ function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOvervie
                   <span className="att-name" title={a.email}>
                     {a.name ?? a.email}
                     {a.checkedIn && <span className="att-in"> ✓ in</span>}
+                    {a.certificate && (
+                      <a className="att-cert" href={`/cert/${encodeURIComponent(a.certificate.code)}`} target="_blank" rel="noreferrer" title={`Certificate of ${a.certificate.kind}`}>
+                        {" "}
+                        · certificate
+                      </a>
+                    )}
                   </span>
                   {a.payment && <span className={`chip ${a.payment === "paid" ? "chip-ok" : "chip-warn"}`}>{a.payment === "paid" ? "Paid" : a.payment === "invoice" ? "Invoice" : "Pending"}</span>}
                 </li>
@@ -346,6 +352,30 @@ function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOvervie
               </li>
             </ol>
           </section>
+          {canWrite && (
+            <section className="card" aria-labelledby="certs-title">
+              <h3 id="certs-title">Certificates</h3>
+              <p className="muted cert-count">
+                {o.attendees.filter((a) => a.certificate).length} of {o.attendees.length} issued
+              </p>
+              {o.attendees.length > 0 && (
+                <ActionForm action={issuePaneCertificatesAction} submitLabel="Issue certificates" pendingLabel="Issuing…">
+                  <input type="hidden" name="eventId" value={l.eventId} />
+                  <div className="cert-opts">
+                    <label>
+                      <input type="radio" name="kind" value="attendance" defaultChecked /> Attendance
+                    </label>
+                    <label>
+                      <input type="radio" name="kind" value="completion" /> Completion
+                    </label>
+                    <label>
+                      <input type="checkbox" name="onlyCheckedIn" defaultChecked={o.attendees.some((a) => a.checkedIn)} /> Only people checked in
+                    </label>
+                  </div>
+                </ActionForm>
+              )}
+            </section>
+          )}
           <section className="card" aria-labelledby="emails-title">
             <h3 id="emails-title">Emails</h3>
             {o.course ? (

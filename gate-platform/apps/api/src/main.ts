@@ -96,7 +96,7 @@ async function main() {
     fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     replyTo: process.env.EMAIL_REPLY_TO,
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
-    certificateUrl: (code) => `${publicUrl}/public/v1/certificates/${code}/view`,
+    certificateUrl: (code) => `${webUrl}/cert/${encodeURIComponent(code)}`,
   }));
   hooks.push(cohortHooks(notifier, {
     fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",

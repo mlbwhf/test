@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -248,10 +248,14 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const r = await deps.core.cancelSeat(req.params.seatId, req.body.reason ?? "", { attendeeEmail: req.body.email });
       return { seat: S.toSeat(r.seat), refund: r.refund ? { id: r.refund.id, amountMinor: r.refund.amountMinor, status: r.refund.status } : null };
     });
-    pub.get("/public/v1/certificates/:code", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.object({ valid: z.boolean(), attendeeName: z.string().optional(), courseName: z.string().optional(), cohort: z.string().optional(), issuedAt: z.string().optional(), organization: z.string().optional() }) } } }, async (req) => {
+    pub.get("/public/v1/certificates/:code", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.object({ valid: z.boolean(), attendeeName: z.string().optional(), courseName: z.string().optional(), cohort: z.string().optional(), issuedAt: z.string().optional(), organization: z.string().optional(), kind: z.enum(["attendance", "completion"]).optional(), hours: z.number().nullable().optional(), startsAt: z.string().optional(), endsAt: z.string().nullable().optional(), timezone: z.string().optional(), format: z.string().optional(), instructors: z.array(z.string()).optional(), certificationBody: z.string().nullable().optional(), badge: S.CourseSchema.shape.badge.optional() }) } } }, async (req) => {
       const v = await deps.core.verifyCertificate(req.params.code);
       if (!v.valid || !v.certificate) return { valid: false };
-      return { valid: true, attendeeName: v.certificate.attendeeName, courseName: v.certificate.courseName, ...(v.cohort ? { cohort: v.cohort.name } : {}), issuedAt: v.certificate.issuedAt.toISOString(), ...(v.organizationName ? { organization: v.organizationName } : {}) };
+      return {
+        valid: true, attendeeName: v.certificate.attendeeName, courseName: v.certificate.courseName, ...(v.cohort ? { cohort: v.cohort.name, startsAt: v.cohort.startsAt.toISOString(), endsAt: v.cohort.endsAt?.toISOString() ?? null, timezone: v.cohort.timezone, format: v.cohort.format } : {}),
+        issuedAt: v.certificate.issuedAt.toISOString(), ...(v.organizationName ? { organization: v.organizationName } : {}), kind: v.certificate.kind ?? "completion", hours: v.certificate.hours ?? null,
+        instructors: v.instructors ?? [], certificationBody: v.course?.certificationBody ?? null, badge: v.course?.badge ?? null,
+      };
     });
     pub.get("/public/v1/certificates/:code/view", { schema: { tags: ["public"], security: [], params: z.object({ code: z.string() }), response: { 200: z.string(), 404: z.string() } } }, async (req, reply) => {
       const v = await deps.core.verifyCertificate(req.params.code);
@@ -497,22 +501,23 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.post("/v1/jobs/review-min-enrollment", { schema: { tags: ["money"], response: { 200: z.object({ flagged: z.array(S.EventSchema) }) } } }, async () => ({ flagged: (await deps.core.reviewMinEnrollment()).map(S.toEvent) }));
 
     // ---------- delivery: meetings, attendance, certificates, roster, sequences ----------
-    const certOut = (c: { id: string; seatId: string; eventId: string; attendeeName: string; attendeeEmail: string; courseName: string; issuedAt: Date; verifyCode: string }) => ({
+    const certOut = (c: Certificate) => ({
       id: c.id, seatId: c.seatId, eventId: c.eventId, attendeeName: c.attendeeName, attendeeEmail: c.attendeeEmail, courseName: c.courseName, issuedAt: c.issuedAt.toISOString(), verifyCode: c.verifyCode,
-      verifyUrl: `${deps.publicUrl ?? ""}/public/v1/certificates/${c.verifyCode}`, viewUrl: `${deps.publicUrl ?? ""}/public/v1/certificates/${c.verifyCode}/view`,
+      verifyUrl: `${deps.publicUrl ?? ""}/public/v1/certificates/${c.verifyCode}`, viewUrl: `${tickets.webUrl}/cert/${encodeURIComponent(c.verifyCode)}`,
+      kind: c.kind ?? "completion" as const, hours: c.hours ?? null,
     });
     const attendanceOut = (a: { seatId: string; email: string; name: string | null; status: "present" | "partial" | "absent" | "unknown"; minutes: number; sessionsAttended: number; source: "provider" | "manual" | "none"; updatedAt: Date }) => ({ ...a, updatedAt: a.updatedAt.toISOString() });
     api.patch("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.UpdateCourseBody, response: { 200: S.CourseSchema } } }, async (req) => {
       const b = req.body;
       const clean = (v: string | number | null | undefined) => (v === null ? "" : v);
-      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined }));
+      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined, badge: b.badge === undefined ? undefined : b.badge === null ? null : { platform: b.badge.platform, name: b.badge.name, url: b.badge.url, ...(b.badge.imageUrl ? { imageUrl: b.badge.imageUrl } : {}) } }));
     });
     api.post("/v1/events/:id/meeting", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ provider: z.enum(["zoom", "teams", "manual"]), joinUrl: z.string().optional(), hostUrl: z.string().optional(), passcode: z.string().optional() }), response: { 200: S.EventSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setMeeting(org(req).id, req.params.id, req.body)));
     api.get("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.AttendanceRowSchema) }) } } }, async (req) => ({ items: (await deps.core.listAttendance(org(req).id, req.params.id)).map(attendanceOut) }));
     api.post("/v1/events/:id/attendance/sync", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ updated: z.number().int(), items: z.array(S.AttendanceRowSchema) }), 409: S.ErrorSchema } } }, async (req) => { const r = await deps.core.syncAttendance(org(req).id, req.params.id); return { updated: r.updated, items: r.items.map(attendanceOut) }; });
     api.post("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ seatId: z.string(), status: z.enum(["present", "partial", "absent", "unknown"]), minutes: z.number().min(0).optional() }), response: { 200: S.AttendanceRowSchema } } }, async (req) => attendanceOut(await deps.core.setAttendance(org(req).id, req.params.id, req.body)));
     api.get("/v1/events/:id/certificates", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.CertificateSchema) }) } } }, async (req) => ({ items: (await deps.core.listCertificates(org(req).id, req.params.id)).map(certOut) }));
-    api.post("/v1/events/:id/certificates", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ onlyPresent: z.boolean().optional() }).optional(), response: { 200: z.object({ issued: z.array(S.CertificateSchema) }) } } }, async (req) => ({ issued: (await deps.core.issueCertificates(org(req).id, req.params.id, req.body ?? {})).map(certOut) }));
+    api.post("/v1/events/:id/certificates", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ onlyPresent: z.boolean().optional(), onlyCheckedIn: z.boolean().optional(), kind: z.enum(["attendance", "completion"]).optional() }).optional(), response: { 200: z.object({ issued: z.array(S.CertificateSchema) }) } } }, async (req) => ({ issued: (await deps.core.issueCertificates(org(req).id, req.params.id, req.body ?? {})).map(certOut) }));
     api.get("/v1/events/:id/roster.csv", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), querystring: z.object({ format: z.string().optional() }), response: { 200: z.string(), 400: S.ErrorSchema } } }, async (req, reply) => {
       const r = await deps.core.roster(org(req).id, req.params.id, req.query.format ?? "default");
       return reply.header("content-type", "text/csv; charset=utf-8").header("content-disposition", `attachment; filename="roster-${req.params.id}-${req.query.format ?? "default"}.csv"`).send(r.csv);

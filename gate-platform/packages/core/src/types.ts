@@ -67,7 +67,18 @@ export interface Course {
   surveyUrl?: string;
   /** Cover image (2:1 banner) shown on the public page, widget and JSON-LD. */
   imageUrl?: string;
+  /** Digital badge learners earn, issued on an outside platform. */
+  badge?: CourseBadge;
   createdAt: Date;
+}
+
+export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other";
+export interface CourseBadge {
+  platform: BadgePlatform;
+  name: string;
+  /** Public page of the badge (template) on the platform. */
+  url: string;
+  imageUrl?: string;
 }
 
 export interface MeetingInfo {
@@ -192,6 +203,10 @@ export interface Certificate {
   /** Unguessable public verification code. */
   verifyCode: string;
   revokedAt?: Date;
+  /** "attendance" (was there) or "completion" (default). */
+  kind?: "attendance" | "completion";
+  /** Scheduled contact hours of the cohort, shown on the certificate. */
+  hours?: number;
 }
 
 export type SequenceStep = "prework_t14" | "reminder_t7" | "reminder_t1" | "day_of" | "survey" | "certificate";

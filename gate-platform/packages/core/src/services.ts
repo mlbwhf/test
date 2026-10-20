@@ -11,7 +11,7 @@ import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, typ
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -240,13 +240,20 @@ export class Core {
     return course;
   }
 
-  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined }): Promise<Course> {
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
+    if (patch.badge) {
+      if (!["credly", "accredible", "badgr", "certopus", "other"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
+      if (!patch.badge.name.trim()) throw new DomainError("VALIDATION", "badge name is required");
+      if (!/^https:\/\//.test(patch.badge.url) || (patch.badge.imageUrl && !/^https:\/\//.test(patch.badge.imageUrl))) throw new DomainError("VALIDATION", "badge links must be https URLs");
+    }
     if (patch.surveyUrl && !/^https?:\/\//.test(patch.surveyUrl)) throw new DomainError("VALIDATION", "surveyUrl must be an http(s) URL");
     if (patch.imageUrl && !/^https?:\/\//.test(patch.imageUrl)) throw new DomainError("VALIDATION", "imageUrl must be an http(s) URL");
     const next: Course = { ...course };
     const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
     set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays); set("imageUrl", patch.imageUrl);
+    if (patch.badge === null) delete next.badge;
+    else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), url: patch.badge.url, ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
     await this.repos.courses.update(next);
     return next;
   }
@@ -1501,18 +1508,26 @@ export class Core {
     return this.attendanceRow(updated);
   }
 
-  async issueCertificates(organizationId: string, eventId: string, opts: { onlyPresent?: boolean | undefined } = {}): Promise<Certificate[]> {
+  /**
+   * Certificates for a cohort's confirmed seats (once per seat). `onlyPresent`: marked present in
+   * attendance; `onlyCheckedIn`: checked in at the door. Hours are the scheduled session time.
+   */
+  async issueCertificates(organizationId: string, eventId: string, opts: { onlyPresent?: boolean | undefined; onlyCheckedIn?: boolean | undefined; kind?: "attendance" | "completion" | undefined } = {}): Promise<Certificate[]> {
     const event = await this.getEvent(organizationId, eventId);
     const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
     const seats = (await this.repos.seats.listByEvent(eventId)).filter((s) => s.status === "confirmed");
+    const hours = Math.round(event.sessions.reduce((a, x) => a + (x.endsAt.getTime() - x.startsAt.getTime()), 0) / 360_000) / 10;
     const issued: Certificate[] = [];
     for (const seat of seats) {
       if (opts.onlyPresent && seat.attendance?.status !== "present") continue;
+      if (opts.onlyCheckedIn && !seat.checkedInAt) continue;
       if (await this.repos.certificates.getBySeat(seat.id)) continue;
       const cert: Certificate = {
         id: this.ids.next("cert"), organizationId, seatId: seat.id, eventId, courseName: course?.name ?? event.name,
         attendeeName: seat.attendee.name ?? seat.attendee.email, attendeeEmail: seat.attendee.email, issuedAt: this.clock.now(),
         verifyCode: randomBytes(12).toString("base64url"),
+        kind: opts.kind ?? "completion",
+        ...(hours > 0 ? { hours } : {}),
       };
       await this.repos.certificates.create(cert);
       issued.push(cert);
@@ -1526,12 +1541,14 @@ export class Core {
     return this.repos.certificates.listByEvent(eventId);
   }
 
-  async verifyCertificate(code: string): Promise<{ valid: boolean; certificate?: Certificate | undefined; organizationName?: string | undefined; cohort?: Event | undefined }> {
+  async verifyCertificate(code: string): Promise<{ valid: boolean; certificate?: Certificate | undefined; organizationName?: string | undefined; cohort?: Event | undefined; course?: Course | undefined; instructors?: string[] }> {
     const cert = await this.repos.certificates.getByCode(code);
     if (!cert || cert.revokedAt) return { valid: false, ...(cert ? { certificate: cert } : {}) };
     const org = await this.repos.organizations.get(cert.organizationId);
     const cohort = await this.repos.events.get(cert.eventId);
-    return { valid: true, certificate: cert, organizationName: org?.name, ...(cohort ? { cohort } : {}) };
+    const course = cohort?.courseId ? await this.repos.courses.get(cohort.courseId) : undefined;
+    const instructors = cohort ? (await Promise.all(cohort.instructorIds.map((id) => this.repos.parties.get(id)))).filter((p): p is Party => Boolean(p)).map((p) => p.name) : [];
+    return { valid: true, certificate: cert, organizationName: org?.name, ...(cohort ? { cohort } : {}), ...(course ? { course } : {}), instructors };
   }
 
   async roster(organizationId: string, eventId: string, format = "default"): Promise<{ csv: string; format: RosterFormat; count: number }> {

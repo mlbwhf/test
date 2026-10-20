@@ -4919,3 +4919,235 @@ a.chip:hover {
   gap: 8px;
   align-items: center;
 }
+.att-cert {
+  font-weight: 500;
+  font-size: 13px;
+}
+.cert-count {
+  margin: 6px 0 10px;
+  font-size: 14px;
+}
+.cert-opts {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.cert-opts label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.badge-preview {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 8px 0 14px;
+}
+.badge-preview img {
+  border-radius: 12px;
+  object-fit: contain;
+}
+.badge-preview div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.badge-preview a {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Certificate page (prints to one landscape page) ---------- */
+.cert-page {
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  background: var(--sand);
+}
+.cert-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.cert-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cert-btn:hover {
+  text-decoration: none;
+}
+.cert-btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.cert {
+  width: min(1000px, 100%);
+  aspect-ratio: 1.414;
+  background: #fffefb;
+  color: #14213d;
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(20, 33, 61, 0.18);
+  padding: clamp(24px, 5vw, 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  outline: 2px solid #14213d;
+  outline-offset: -16px;
+}
+.cert-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  --seat-ink: #14213d;
+}
+.cert-org {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.cert-eyebrow {
+  margin: auto 0 8px;
+  font-family: var(--mono);
+  letter-spacing: 0.16em;
+  font-size: clamp(11px, 1.4vw, 14px);
+  color: #2f7a52;
+}
+.cert-lead {
+  margin: 6px 0;
+  color: #5a627a;
+  font-size: clamp(13px, 1.6vw, 17px);
+}
+.cert-name {
+  font-size: clamp(30px, 5.4vw, 60px);
+  letter-spacing: -0.03em;
+  margin: 4px 0 8px;
+}
+.cert-course {
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 4px 0;
+  max-width: 80%;
+}
+.cert-meta {
+  margin: 6px 0 auto;
+  font-family: var(--mono);
+  font-size: clamp(10px, 1.3vw, 13px);
+  letter-spacing: 0.04em;
+  color: #5a627a;
+}
+.cert-foot {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 16px;
+}
+.cert-foot div {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  border-top: 1px solid #14213d;
+  padding-top: 6px;
+  min-width: 26%;
+}
+.cert-foot div:last-child {
+  text-align: right;
+}
+.cert-foot span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5a627a;
+}
+.cert-badge {
+  width: clamp(56px, 9vw, 96px);
+  height: auto;
+}
+.cert-verify {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #5a627a;
+}
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  .cert-page {
+    padding: 0;
+    background: none;
+  }
+  .cert-tools {
+    display: none;
+  }
+  .cert {
+    width: 297mm;
+    height: 210mm;
+    aspect-ratio: auto;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+.ep-badge {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.ep-badge img {
+  flex: none;
+  object-fit: contain;
+}
+.ep-badge-ph {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--green), var(--green-text));
+}
+.ep-badge div {
+  display: grid;
+  gap: 2px;
+}
+.ep-badge span {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--green-text);
+}
+.ep-badge strong {
+  font-size: 18px;
+}
+.ep-badge em {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--muted);
+}
+.ep-badge a {
+  font-weight: 600;
+  margin-top: 4px;
+}

@@ -33,3 +33,15 @@ export async function setInstructorsAction(_prev: ActionState, data: FormData): 
   revalidatePath("/events");
   return { status: "ok", message: ids.length ? "Instructors updated." : "No instructor assigned." };
 }
+
+/** Events pane: certificates for this class, from an organizer or its instructor. */
+export async function issuePaneCertificatesAction(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const id = String(data.get("eventId") ?? "");
+  const kind = data.get("kind") === "completion" ? "completion" : "attendance";
+  const onlyCheckedIn = data.get("onlyCheckedIn") === "on";
+  const r = await api.issueCertificates(id, { kind, ...(onlyCheckedIn ? { onlyCheckedIn } : {}) });
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath("/events");
+  const n = r.data.issued.length;
+  return { status: "ok", message: n ? `Issued ${n} certificate${n === 1 ? "" : "s"} and emailed each learner their link.` : "Nothing new to issue: everyone eligible already has one." };
+}

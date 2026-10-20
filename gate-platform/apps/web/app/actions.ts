@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import {
   api,
+  BADGE_PLATFORMS,
+  type CourseBadge,
   ATTENDANCE_STATUSES,
   describeFailure,
   EVENT_FORMATS,
@@ -876,3 +878,26 @@ export async function checkInAction(_prev: ActionState, formData: FormData): Pro
   return { status: "ok", message, details: [{ label: "Cohort", value: r.event.name }, { label: "Code", value: r.code }] };
 }
 
+
+export async function updateCourseBadgeAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  if (!courseId) return fail("Missing course id.");
+  if (field(formData, "remove") === "1") {
+    const r = await api.updateCourse(courseId, { badge: null });
+    if (!r.ok) return fail(describeFailure(r.error));
+    revalidatePath(`/courses/${courseId}`);
+    return { status: "ok", message: "Badge removed." };
+  }
+  const platform = field(formData, "platform") as CourseBadge["platform"];
+  const name = field(formData, "name");
+  const url = field(formData, "url");
+  const imageUrl = field(formData, "imageUrl");
+  if (!(platform in BADGE_PLATFORMS)) return fail("Pick the badge platform.");
+  if (!name) return fail("Give the badge a name.");
+  if (!/^https:\/\//.test(url)) return fail("The badge link must start with https://");
+  if (imageUrl && !/^https:\/\//.test(imageUrl)) return fail("The badge image link must start with https://");
+  const r = await api.updateCourse(courseId, { badge: { platform, name, url, ...(imageUrl ? { imageUrl } : {}) } });
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath(`/courses/${courseId}`);
+  return { status: "ok", message: `Badge saved. It shows on the course page and in certificate emails.` };
+}

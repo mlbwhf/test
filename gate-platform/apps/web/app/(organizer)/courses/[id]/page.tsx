@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { api, EVENT_FORMATS, type Party } from "@/lib/api";
+import { api, BADGE_PLATFORMS, EVENT_FORMATS, type Party } from "@/lib/api";
 import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { createCohortAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
+import { createCohortAction, updateCourseBadgeAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +81,55 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
             )}
           </div>
         </div>
+      </Section>
+
+      <Section title="Digital badge">
+        <p className="hint">Learners who finish this course earn a badge on Credly, Accredible, Badgr or another platform. It shows on the public course page, on certificates and in the certificate email.</p>
+        {course.badge && (
+          <div className="badge-preview">
+            {course.badge.imageUrl && <img src={course.badge.imageUrl} alt="" width={72} height={72} />}
+            <div>
+              <strong>{course.badge.name}</strong>
+              <span className="muted">{BADGE_PLATFORMS[course.badge.platform]}</span>
+              <a href={course.badge.url} target="_blank" rel="noreferrer noopener">
+                {course.badge.url}
+              </a>
+            </div>
+          </div>
+        )}
+        <ActionForm action={updateCourseBadgeAction} submitLabel={course.badge ? "Update badge" : "Add badge"} pendingLabel="Saving…" wide>
+          <input type="hidden" name="courseId" value={course.id} />
+          <div className="fields">
+            <label>
+              Platform
+              <select name="platform" defaultValue={course.badge?.platform ?? "credly"}>
+                {(Object.keys(BADGE_PLATFORMS) as Array<keyof typeof BADGE_PLATFORMS>).map((p) => (
+                  <option key={p} value={p}>
+                    {BADGE_PLATFORMS[p]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Badge name
+              <input name="name" defaultValue={course.badge?.name ?? ""} placeholder="e.g. Certified SAFe Agilist" required maxLength={200} />
+            </label>
+            <label>
+              Badge page link
+              <input name="url" type="url" defaultValue={course.badge?.url ?? ""} placeholder="https://www.credly.com/org/…/badge/…" required />
+            </label>
+            <label>
+              Badge image link (optional)
+              <input name="imageUrl" type="url" defaultValue={course.badge?.imageUrl ?? ""} placeholder="https://images.credly.com/…png" />
+            </label>
+          </div>
+        </ActionForm>
+        {course.badge && (
+          <ActionForm action={updateCourseBadgeAction} submitLabel="Remove badge" pendingLabel="Removing…" variant="danger" inline>
+            <input type="hidden" name="courseId" value={course.id} />
+            <input type="hidden" name="remove" value="1" />
+          </ActionForm>
+        )}
       </Section>
 
       <Section title="Delivery settings">
