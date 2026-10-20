@@ -27,6 +27,7 @@ WORKDIR /app
 # Standalone output keeps the monorepo layout: server.js lives under apps/web.
 COPY --from=build --chown=gate:gate /app/apps/web/.next/standalone ./
 COPY --from=build --chown=gate:gate /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=build --chown=gate:gate /app/apps/web/public ./apps/web/public
 USER gate
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

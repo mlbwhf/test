@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Bricolage_Grotesque, IBM_Plex_Mono, Instrument_Sans } from "next/font/google";
+import "./fonts.css";
 import "./globals.css";
 
-// Brand type: Bricolage Grotesque for display, Instrument Sans for body, IBM Plex Mono
-// for money, dates and labels. next/font self-hosts the files at build time.
-const display = Bricolage_Grotesque({ subsets: ["latin"], weight: ["500", "700", "800"], variable: "--font-display", display: "swap" });
-const body = Instrument_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-body", display: "swap" });
-const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
+// Brand type: Bricolage Grotesque for display, Instrument Sans for body, IBM Plex Mono for
+// money, dates and labels. Served from /fonts (app/fonts.css), so builds need no network.
 
 export const metadata: Metadata = {
   title: { default: "EnrollClass", template: "%s · EnrollClass" },
@@ -20,7 +17,7 @@ export const metadata: Metadata = {
 // the public marketing site lives under app/site and is reached through proxy.ts.
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
