@@ -51,7 +51,8 @@ export function ConsoleNav({ sections, attentionIds }: { sections: Section[]; at
 export function SectionTabs({ sections }: { sections: Section[] }) {
   const pathname = usePathname() ?? "";
   const current = sectionOf(sections, pathname);
-  if (!current || current.pages.length < 2) return null;
+  // Full-screen flows (Create event) bring their own header.
+  if (!current || current.pages.length < 2 || pathname === "/events/new") return null;
   return (
     <nav aria-label={current.label} className="section-tabs">
       {current.pages.map(([href, label]) => (
