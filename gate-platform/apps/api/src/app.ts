@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -20,6 +20,7 @@ import { registerImports } from "./imports.js";
 import { InMemoryMediaStore, registerCourseImageRoutes, registerMediaRoutes, type MediaStore } from "./media.js";
 import { TicketSigner, registerCheckIns, registerPublicTickets, ticketUrl, withTicket } from "./tickets.js";
 import { secretMatches } from "./secrets.js";
+import { presentedKey, registerIntegrationRoutes, registerMcpRoute } from "./integrations.js";
 
 /** Request logging without personal data: no query strings (they carry learner emails), no credentials. */
 const privacyLogger: Exclude<FastifyServerOptions["logger"], boolean | undefined> = {
@@ -70,6 +71,8 @@ export interface AppDeps {
   webUrl?: string;
   /** Accounts, sessions and teams; defaults to in-memory storage. */
   identities?: Identities;
+  /** API keys, webhooks and the hosted MCP endpoint; in-memory when not given. */
+  integrations?: Integrations;
   /** Enabled sign-in providers (see oauth.ts). */
   providers?: ProviderConfig[];
   /** Sends sign-in links and invitations; email sign-in is off without it. */
@@ -112,6 +115,8 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   const media = deps.media ?? new InMemoryMediaStore();
   const identities = deps.identities ?? new Identities(createInMemoryIdentityRepos(), deps.core, { now: () => new Date() }, { next: randomId });
+  const integrations = deps.integrations ?? new Integrations(createInMemoryIntegrationRepos(), { now: () => new Date() }, { next: randomId }, { allowPrivateUrls: env !== "production" });
+  registerMcpRoute(app, integrations);
   const authDeps = { core: deps.core, identities, providers: deps.providers ?? [], publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000", mailer: deps.mailer, fetchImpl: deps.fetchImpl, adminKey: deps.adminKey };
   await registerAuth(app, authDeps);
   if (env === "production" && !deps.ticketSecret) throw new Error("ticketSecret is required in production");
@@ -337,7 +342,15 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     // person's session (role from their membership). Every route then needs a permission.
     api.addHook("preHandler", async (req) => {
       const key = req.headers["x-api-key"];
-      if (typeof key === "string" && key) {
+      const issued = presentedKey(req);
+      if (issued) {
+        // A key the organizer created in Integrations: acts as an admin; read-only keys only read.
+        const k = await integrations.authenticateKey(issued);
+        if (!k) throw new DomainError("UNAUTHORIZED", "invalid or revoked api key", "create a new key in Team → Integrations");
+        req.org = await deps.core.getOrganization(k.organizationId);
+        req.role = "admin";
+        if (k.access === "read" && req.method !== "GET" && req.method !== "HEAD") throw new DomainError("FORBIDDEN", "this API key is read-only", "use a key with full access to make changes");
+      } else if (typeof key === "string" && key) {
         req.org = await deps.core.authenticate(key);
         req.role = "owner";
       } else {
@@ -396,6 +409,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     registerCourseImageRoutes(api, { core: deps.core, store: media, publicUrl: deps.publicUrl ?? "", ...outbound }, org);
     registerCheckIns(api, tickets, org);
     registerTeam(api, authDeps, (req) => ({ org: req.org!, role: req.role!, userId: req.userId }));
+    registerIntegrationRoutes(api, integrations, (req) => ({ org: req.org!, userId: req.userId }));
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
 

@@ -342,6 +342,7 @@ export class Core {
       createdAt: this.clock.now(),
     };
     await this.repos.events.create(event);
+    await this.runHooks("eventCreated", event.id, (hook) => hook({ event }));
     return event;
   }
 
@@ -400,6 +401,7 @@ export class Core {
     if (event.status !== "draft") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
     const next: Event = { ...event, status: "live" };
     await this.repos.events.update(next);
+    await this.runHooks("eventPublished", next.id, (hook) => hook({ event: next }));
     return next;
   }
 
@@ -873,6 +875,7 @@ export class Core {
     if (seat.checkedInAt) return { seat, alreadyCheckedIn: true };
     const next: Seat = { ...seat, checkedInAt: this.clock.now() };
     await this.repos.seats.update(next);
+    await this.runHooks("checkedIn", next.orderId, (hook) => hook({ seat: next }));
     return { seat: next, alreadyCheckedIn: false };
   }
 

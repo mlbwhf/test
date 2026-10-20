@@ -65,6 +65,9 @@ importers:
       '@gate/ledger':
         specifier: workspace:*
         version: link:../../packages/ledger
+      '@gate/mcp':
+        specifier: workspace:*
+        version: link:../mcp
       '@gate/meetings':
         specifier: workspace:*
         version: link:../../packages/meetings

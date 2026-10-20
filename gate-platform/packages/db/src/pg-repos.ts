@@ -1,4 +1,4 @@
-import type { AuthSession, IdentityRepos, Invitation, Membership, Role, User } from "@gate/core";
+import type { ApiKey, AuthSession, IdentityRepos, IntegrationRepos, WebhookDelivery, WebhookEndpoint, Invitation, Membership, Role, User } from "@gate/core";
 import type {
   Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
@@ -415,6 +415,42 @@ export function createPgIdentityRepos(pool: Pool): IdentityRepos {
         const row = r.rows[0];
         return row && date(row.expires_at) > now ? (row.payload as Record<string, unknown>) : undefined;
       },
+    },
+  };
+}
+
+function toApiKey(r: Row): ApiKey {
+  const by = opt<string>(r.created_by_user_id), used = opt<Date>(r.last_used_at), revoked = opt<Date>(r.revoked_at);
+  return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), prefix: str(r.prefix), hash: str(r.hash), access: r.access as ApiKey["access"], createdAt: date(r.created_at), ...(by ? { createdByUserId: by } : {}), ...(used ? { lastUsedAt: used } : {}), ...(revoked ? { revokedAt: revoked } : {}) };
+}
+function toWebhook(r: Row): WebhookEndpoint {
+  const description = opt<string>(r.description), disabled = opt<Date>(r.disabled_at);
+  return { id: str(r.id), organizationId: str(r.organization_id), url: str(r.url), secret: str(r.secret), events: r.events as WebhookEndpoint["events"], ...(description ? { description } : {}), createdAt: date(r.created_at), ...(disabled ? { disabledAt: disabled } : {}) };
+}
+function toDelivery(r: Row): WebhookDelivery {
+  const status = opt<number>(r.response_status), error = opt<string>(r.error);
+  return { id: str(r.id), endpointId: str(r.endpoint_id), organizationId: str(r.organization_id), type: r.type as WebhookDelivery["type"], body: str(r.body), status: r.status as WebhookDelivery["status"], attempts: num(r.attempts), ...(status !== undefined ? { responseStatus: num(status) } : {}), ...(error ? { error } : {}), createdAt: date(r.created_at), updatedAt: date(r.updated_at) };
+}
+
+export function createPgIntegrationRepos(pool: Pool): IntegrationRepos {
+  return {
+    apiKeys: {
+      async create(k) { await pool.query(`INSERT INTO api_keys (id, organization_id, name, prefix, hash, access, created_at, created_by_user_id, last_used_at, revoked_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [k.id, k.organizationId, k.name, k.prefix, k.hash, k.access, k.createdAt, k.createdByUserId ?? null, k.lastUsedAt ?? null, k.revokedAt ?? null]); },
+      async update(k) { await pool.query(`UPDATE api_keys SET name=$2, last_used_at=$3, revoked_at=$4 WHERE id=$1`, [k.id, k.name, k.lastUsedAt ?? null, k.revokedAt ?? null]); },
+      async getByHash(h) { const r = await pool.query(`SELECT * FROM api_keys WHERE hash=$1`, [h]); return r.rows[0] ? toApiKey(r.rows[0]) : undefined; },
+      async get(id) { const r = await pool.query(`SELECT * FROM api_keys WHERE id=$1`, [id]); return r.rows[0] ? toApiKey(r.rows[0]) : undefined; },
+      async listByOrganization(o) { const r = await pool.query(`SELECT * FROM api_keys WHERE organization_id=$1 ORDER BY created_at DESC`, [o]); return r.rows.map(toApiKey); },
+    },
+    webhooks: {
+      async create(w) { await pool.query(`INSERT INTO webhook_endpoints (id, organization_id, url, secret, events, description, created_at, disabled_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [w.id, w.organizationId, w.url, w.secret, JSON.stringify(w.events), w.description ?? null, w.createdAt, w.disabledAt ?? null]); },
+      async update(w) { await pool.query(`UPDATE webhook_endpoints SET url=$2, events=$3, description=$4, disabled_at=$5 WHERE id=$1`, [w.id, w.url, JSON.stringify(w.events), w.description ?? null, w.disabledAt ?? null]); },
+      async get(id) { const r = await pool.query(`SELECT * FROM webhook_endpoints WHERE id=$1`, [id]); return r.rows[0] ? toWebhook(r.rows[0]) : undefined; },
+      async listByOrganization(o) { const r = await pool.query(`SELECT * FROM webhook_endpoints WHERE organization_id=$1 ORDER BY created_at DESC`, [o]); return r.rows.map(toWebhook); },
+    },
+    deliveries: {
+      async create(d) { await pool.query(`INSERT INTO webhook_deliveries (id, endpoint_id, organization_id, type, body, status, attempts, response_status, error, created_at, updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, [d.id, d.endpointId, d.organizationId, d.type, d.body, d.status, d.attempts, d.responseStatus ?? null, d.error ?? null, d.createdAt, d.updatedAt]); },
+      async update(d) { await pool.query(`UPDATE webhook_deliveries SET status=$2, attempts=$3, response_status=$4, error=$5, updated_at=$6 WHERE id=$1`, [d.id, d.status, d.attempts, d.responseStatus ?? null, d.error ?? null, d.updatedAt]); },
+      async listByEndpoint(e, limit) { const r = await pool.query(`SELECT * FROM webhook_deliveries WHERE endpoint_id=$1 ORDER BY created_at DESC LIMIT $2`, [e, limit]); return r.rows.map(toDelivery); },
     },
   };
 }

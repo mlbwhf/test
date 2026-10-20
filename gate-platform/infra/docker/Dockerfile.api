@@ -12,6 +12,7 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json tsconfig.base.json ./
 COPY apps/api/package.json apps/api/
+COPY apps/mcp/package.json apps/mcp/
 COPY apps/widget/package.json apps/widget/
 COPY packages/ai-gateway/package.json packages/ai-gateway/
 COPY packages/core/package.json packages/core/
@@ -27,6 +28,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # ---- build: compile the API, its workspace packages and the widget bundle
 FROM deps AS build
 COPY apps/api apps/api
+COPY apps/mcp apps/mcp
 COPY apps/widget apps/widget
 COPY packages packages
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \

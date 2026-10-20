@@ -20,7 +20,7 @@ export class GateClient {
   async request<T>(method: string, path: string, body?: unknown, headers: Record<string, string> = {}): Promise<T> {
     const res = await this.f(`${this.opts.baseUrl.replace(/\/$/, "")}${path}`, {
       method,
-      headers: { "content-type": "application/json", "x-api-key": this.opts.apiKey, ...headers },
+      headers: { "content-type": "application/json", ...(this.opts.apiKey.startsWith("eck_") ? { authorization: `Bearer ${this.opts.apiKey}` } : { "x-api-key": this.opts.apiKey }), ...headers },
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
     const text = await res.text();

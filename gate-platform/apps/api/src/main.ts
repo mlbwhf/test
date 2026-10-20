@@ -1,10 +1,10 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, Identities, createInMemoryIdentityRepos, type IdentityRepos, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, Identities, Integrations, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, type IdentityRepos, type IntegrationRepos, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
 import type { MeetingProvider } from "@gate/core";
-import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgIdentityRepos, createPgRepos, type IdempotencyStore } from "@gate/db";
+import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgIdentityRepos, createPgIntegrationRepos, createPgRepos, type IdempotencyStore } from "@gate/db";
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
 import { buildApp } from "./app.js";
@@ -23,6 +23,7 @@ async function main() {
   let ledger: Ledger;
   let idempotency: IdempotencyStore | undefined;
   let identityRepos: IdentityRepos;
+  let integrationRepos: IntegrationRepos;
   if (process.env.DATABASE_URL) {
     const pool = createPool(process.env.DATABASE_URL);
     const ran = await migrate(pool);
@@ -31,11 +32,13 @@ async function main() {
     ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
     idempotency = new PgIdempotencyStore(pool);
     identityRepos = createPgIdentityRepos(pool);
+    integrationRepos = createPgIntegrationRepos(pool);
     console.log("[db] postgres");
   } else {
     repos = createInMemoryRepos();
     ledger = new Ledger({ store: new InMemoryLedgerStore() });
     identityRepos = createInMemoryIdentityRepos();
+    integrationRepos = createInMemoryIntegrationRepos();
     console.log("[db] in-memory (set DATABASE_URL for postgres)");
   }
 
@@ -133,6 +136,9 @@ async function main() {
     meetings.teams = new TeamsMeetings({ tenantId: process.env.MS_TENANT_ID, clientId: process.env.MS_CLIENT_ID, clientSecret: process.env.MS_CLIENT_SECRET, organizerUserId: process.env.MS_ORGANIZER_USER_ID });
     console.log("[meetings] teams enabled");
   }
+  // Outgoing webhooks for automation platforms; local development may target localhost receivers.
+  const integrations = new Integrations(integrationRepos, { now: () => new Date() }, { next: randomId }, { allowPrivateUrls: env !== "production" });
+  hooks.push(integrations.hooks());
   const core = new Core({ repos, ledger, payments, hooks, tax: new FlatRateTax(), meetings, fx: new FrankfurterRates(), onHookFailure: (f) => console.error(`[hook:${f.hook}] order ${f.orderId}: ${f.error}`) });
 
   // AI gateway: Anthropic first-party by default; tenants may bring their own provider.
@@ -185,6 +191,7 @@ async function main() {
     webUrl,
     ticketSecret,
     identities: new Identities(identityRepos, core, { now: () => new Date() }, { next: randomId }),
+    integrations,
     providers,
     ...(process.env.RESEND_API_KEY || env !== "production" ? { mailer: notifier } : {}),
     publicPageUrl: coursePageUrl,

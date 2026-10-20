@@ -21,6 +21,7 @@
     "@gate/importers": "workspace:*",
     "@gate/integrations-hubspot": "workspace:*",
     "@gate/ledger": "workspace:*",
+    "@gate/mcp": "workspace:*",
     "@gate/meetings": "workspace:*",
     "@gate/payments-stripe": "workspace:*",
     "@gate/pricing": "workspace:*",

@@ -30,4 +30,6 @@ expect "https://app.$d/login" 200 'Sign in to EnrollClass' || fail=1
 expect "https://app.$d/login?mode=signup" 200 'Create your EnrollClass account' || fail=1
 expect "https://app.$d/money" 307 "/login?returnTo=" || fail=1
 expect "https://app.$d/my/seat/none?email=a@b.co" 200 '' || fail=1
+expect "https://app.$d/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1
+expect "https://api.$d/mcp" 405 'use POST' || fail=1
 exit $fail

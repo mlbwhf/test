@@ -51,6 +51,11 @@ export interface CoreHooks {
   cohortAtRisk?: ((ctx: { event: Event; organization: Organization; confirmed: number; minimum: number }) => Promise<void>) | undefined;
   cohortCancelled?: ((ctx: { event: Event; organization: Organization; target?: Event | undefined; refunded: number; transferred: number }) => Promise<void>) | undefined;
   certificateIssued?: ((ctx: { certificate: Certificate; seat: Seat; event: Event; course?: Course | undefined }) => Promise<void>) | undefined;
+  /** A class was created (live or draft) or a draft was published. */
+  eventCreated?: ((ctx: { event: Event }) => Promise<void>) | undefined;
+  eventPublished?: ((ctx: { event: Event }) => Promise<void>) | undefined;
+  /** Someone was checked in at the door. */
+  checkedIn?: ((ctx: { seat: Seat }) => Promise<void>) | undefined;
 }
 
 export interface HookFailure {

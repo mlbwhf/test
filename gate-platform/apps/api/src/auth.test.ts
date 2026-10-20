@@ -234,3 +234,46 @@ describe("teams and roles", () => {
     expect(await me()).toMatchObject({ paymentsConnected: true, paymentsSetup: "ready" });
   });
 });
+
+describe("integrations", () => {
+  it("owner makes keys; keys work as header or Bearer, read-only keys only read; webhooks; hosted MCP", async () => {
+    const { app } = await setup({ o: { sub: "g-int", email: "owner@int.com", email_verified: true, name: "Ola" } });
+    const owner = (await googleLogin(app, "o")).token;
+    await app.inject({ method: "POST", url: "/auth/organizations", headers: BJ(owner), payload: { kind: "company", name: "Int Co", country: "CA", currency: "CAD" } });
+
+    const full = (await app.inject({ method: "POST", url: "/v1/api-keys", headers: BJ(owner), payload: { name: "Zapier", access: "full" } })).json();
+    expect(full.secret).toMatch(/^eck_/);
+    const read = (await app.inject({ method: "POST", url: "/v1/api-keys", headers: BJ(owner), payload: { name: "Reports", access: "read" } })).json();
+    expect((await app.inject({ url: "/v1/api-keys", headers: B(owner) })).json().items.map((k: { name: string }) => k.name).sort()).toEqual(["Reports", "Zapier"]);
+
+    expect((await app.inject({ url: "/v1/events", headers: { "x-api-key": full.secret } })).statusCode).toBe(200);
+    expect((await app.inject({ method: "POST", url: "/v1/events", headers: BJ(full.secret), payload: { name: "Via key", startsAt: "2026-11-02T14:00:00Z" } })).statusCode).toBe(201);
+    expect((await app.inject({ url: "/v1/events", headers: B(read.secret) })).json().items).toHaveLength(1);
+    expect((await app.inject({ method: "POST", url: "/v1/events", headers: BJ(read.secret), payload: { name: "Nope", startsAt: "2026-11-02T14:00:00Z" } })).statusCode).toBe(403);
+    // Keys can't mint keys.
+    expect((await app.inject({ method: "POST", url: "/v1/api-keys", headers: BJ(full.secret), payload: { name: "x", access: "full" } })).statusCode).toBe(403);
+
+    const hook = await app.inject({ method: "POST", url: "/v1/webhooks", headers: BJ(owner), payload: { url: "https://hooks.example.com/in", events: ["order.paid"], description: "Make" } });
+    expect(hook.statusCode).toBe(201);
+    expect(hook.json()).toMatchObject({ enabled: true, events: ["order.paid"], secret: expect.stringMatching(/^whsec_/) });
+    expect((await app.inject({ method: "POST", url: "/v1/webhooks", headers: BJ(owner), payload: { url: "https://x.example.com", events: ["nope"] } })).statusCode).toBe(400);
+    expect((await app.inject({ method: "PATCH", url: `/v1/webhooks/${hook.json().id}`, headers: BJ(owner), payload: { enabled: false } })).json().enabled).toBe(false);
+    expect((await app.inject({ url: "/v1/webhooks", headers: B(owner) })).json().events).toContain("checkin.created");
+
+    // Hosted MCP: initialize, list tools, call one, all with the key.
+    const mcp = (key: string | null, body: unknown) => app.inject({ method: "POST", url: "/mcp", headers: { "content-type": "application/json", accept: "application/json, text/event-stream", ...(key ? { authorization: `Bearer ${key}` } : {}) }, payload: body });
+    expect((await mcp(null, { jsonrpc: "2.0", id: 1, method: "initialize", params: {} })).statusCode).toBe(401);
+    const init = await mcp(full.secret, { jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "test", version: "1" } } });
+    expect(init.statusCode).toBe(200);
+    expect(init.json().result.serverInfo.name).toBe("gate-platform");
+    const list = await mcp(full.secret, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
+    expect(list.json().result.tools.map((t: { name: string }) => t.name)).toEqual(expect.arrayContaining(["today", "events_overview", "duplicate_event", "check_in", "issue_certificates"]));
+    const call = await mcp(full.secret, { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "events_overview", arguments: {} } });
+    expect(JSON.parse(call.json().result.content[0].text).items[0]).toMatchObject({ name: "Via key" });
+
+    await app.inject({ method: "DELETE", url: `/v1/api-keys/${full.key.id}`, headers: B(owner) });
+    expect((await app.inject({ url: "/v1/events", headers: B(full.secret) })).statusCode).toBe(401);
+    expect((await mcp(full.secret, { jsonrpc: "2.0", id: 4, method: "tools/list", params: {} })).statusCode).toBe(401);
+  });
+});
+

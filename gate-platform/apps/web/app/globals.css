@@ -5151,3 +5151,152 @@ a.chip:hover {
   font-weight: 600;
   margin-top: 4px;
 }
+
+/* ---------- Integrations ---------- */
+.ints {
+  display: grid;
+  gap: 14px;
+}
+.ints .card h2 {
+  margin-bottom: 6px;
+}
+.ints-access,
+.ints-events {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.ints-access {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+}
+.ints-access legend,
+.ints-events legend {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.ints-access label,
+.ints-events label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+.ints-events {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0 14px;
+  margin-top: 10px;
+}
+.ints-events .mono {
+  font-size: 11px;
+}
+.ints-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+.ints-list > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.ints-list > li > div:first-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.ints-list li.is-off {
+  opacity: 0.6;
+}
+.ints-url {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.ints-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.ints-snippet {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.ints-snippet span {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ints-snippet code {
+  padding: 8px 10px;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.ints-more {
+  margin-top: 8px;
+}
+.ints-more summary {
+  cursor: pointer;
+  color: var(--green-text);
+  font-weight: 500;
+  font-size: 14px;
+}
+.ints-more pre {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  overflow-x: auto;
+}
+.ints-log {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+.ints-log li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ints-recipes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.ints-recipes div {
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--sand);
+}
+.ints-recipes p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+@media (max-width: 760px) {
+  .ints-snippet {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .ints-snippet span {
+    grid-column: 1 / -1;
+  }
+  .ints-list > li {
+    flex-direction: column;
+  }
+}

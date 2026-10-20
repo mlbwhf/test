@@ -24,6 +24,48 @@ export const tools = [
     run: (c) => c.me(),
   }),
   def({
+    name: "today",
+    description: "The organizer's Today view: money totals, items that need attention (with suggested actions), the class running today with check-in counts, and classes starting this week.",
+    input: {},
+    run: (c) => c.request("GET", "/v1/home"),
+  }),
+  def({
+    name: "events_overview",
+    description: "Every class with seats sold and capacity, status (draft/live/ended/cancelled), course, dates and time zone. Use this to answer 'how full is…' or 'what's coming up'.",
+    input: {},
+    run: (c) => c.request("GET", "/v1/events/overview"),
+  }),
+  def({
+    name: "event_detail",
+    description: "One class in detail: seats, attendees with payment and check-in status, certificates, instructors, course emails, and the public registration link.",
+    input: { eventId: z.string() },
+    run: (c, a) => c.request("GET", `/v1/events/${encodeURIComponent(a.eventId)}/overview`),
+  }),
+  def({
+    name: "duplicate_event",
+    description: "Copy a class with its course, tickets, prices, minimum and instructors (nothing sold). startDate (YYYY-MM-DD, in the class's time zone) moves it; omit to keep the same dates.",
+    input: { eventId: z.string(), startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), name: z.string().min(1).optional() },
+    run: (c, a) => c.request("POST", `/v1/events/${encodeURIComponent(a.eventId)}/duplicate`, { ...(a.startDate ? { startDate: a.startDate } : {}), ...(a.name ? { name: a.name } : {}) }),
+  }),
+  def({
+    name: "publish_event",
+    description: "Publish a draft class (for example one an instructor created that waits for approval) so registration opens.",
+    input: { eventId: z.string() },
+    run: (c, a) => c.request("POST", `/v1/events/${encodeURIComponent(a.eventId)}/publish`, {}),
+  }),
+  def({
+    name: "check_in",
+    description: "Check an attendee in at the door with the code printed under their ticket QR (EC-XXXX-XXXX). undo=true reverses it.",
+    input: { eventId: z.string(), code: z.string().min(4), undo: z.boolean().optional() },
+    run: (c, a) => c.request("POST", "/v1/checkins", { eventId: a.eventId, code: a.code, ...(a.undo ? { undo: true } : {}) }),
+  }),
+  def({
+    name: "issue_certificates",
+    description: "Issue attendance or completion certificates to a class's confirmed attendees (once each) and email them. onlyCheckedIn limits it to people checked in.",
+    input: { eventId: z.string(), kind: z.enum(["attendance", "completion"]).optional(), onlyCheckedIn: z.boolean().optional() },
+    run: (c, a) => c.request("POST", `/v1/events/${encodeURIComponent(a.eventId)}/certificates`, { ...(a.kind ? { kind: a.kind } : {}), ...(a.onlyCheckedIn ? { onlyCheckedIn: true } : {}) }),
+  }),
+  def({
     name: "list_events",
     description: "List the organization's events with status and currency.",
     input: {},

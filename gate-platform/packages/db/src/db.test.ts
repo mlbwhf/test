@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Ledger } from "@gate/ledger";
-import { Core, FakePaymentsAdapter, FlatRateTax, Identities, codes } from "@gate/core";
+import { Core, FakePaymentsAdapter, FlatRateTax, Identities, Integrations, codes } from "@gate/core";
 import { createPool, type Pool } from "./pool.js";
 import { migrate } from "./migrate.js";
 import { PostgresLedgerStore } from "./pg-ledger-store.js";
-import { createPgIdentityRepos, createPgRepos } from "./pg-repos.js";
+import { createPgIdentityRepos, createPgIntegrationRepos, createPgRepos } from "./pg-repos.js";
 
 const url = process.env.DATABASE_URL;
 
@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -222,5 +222,23 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect(await ids.resolveSession(token)).toBeUndefined();
     const stored = await pool.query(`SELECT count(*)::int AS n FROM auth_sessions WHERE token_hash=$1`, [token]);
     expect(stored.rows[0].n).toBe(0);
+  });
+
+  it("integrations: API keys and webhooks with deliveries in Postgres", async () => {
+    const repos = createPgRepos(pool);
+    const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments: new FakePaymentsAdapter() });
+    const { organization: org } = await core.createOrganization({ name: "Int Co", country: "CA", currency: "CAD" });
+    const fetchImpl = (async () => new Response("ok", { status: 200 })) as unknown as typeof fetch;
+    const ints = new Integrations(createPgIntegrationRepos(pool), { now: () => new Date() }, { next: (p: string) => `${p}_${Math.random().toString(36).slice(2, 10)}` }, { fetch: fetchImpl });
+    const { key, secret } = await ints.createApiKey(org.id, { name: "Make", access: "full" });
+    expect((await ints.authenticateKey(secret))).toMatchObject({ id: key.id, access: "full" });
+    expect((await ints.listApiKeys(org.id))[0]!.lastUsedAt).toBeInstanceOf(Date);
+    await ints.revokeApiKey(org.id, key.id);
+    expect(await ints.authenticateKey(secret)).toBeUndefined();
+    const hook = await ints.createWebhook(org.id, { url: "https://hooks.example.com/x", events: ["order.paid", "checkin.created"], description: "n8n" });
+    expect((await ints.listWebhooks(org.id))[0]).toMatchObject({ id: hook.id, events: ["order.paid", "checkin.created"], description: "n8n" });
+    expect((await ints.testWebhook(org.id, hook.id))).toMatchObject({ status: "succeeded", attempts: 1, responseStatus: 200 });
+    expect((await ints.updateWebhook(org.id, hook.id, { enabled: false })).disabledAt).toBeInstanceOf(Date);
+    expect(await ints.listDeliveries(org.id, hook.id)).toHaveLength(1);
   });
 });

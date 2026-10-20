@@ -613,6 +613,9 @@ export type Home = {
   week: HomeLine[];
   setup: { done: number; total: number; steps: { key: "account" | "payments" | "course" | "cohort" | "registration"; done: boolean }[] };
 };
+export type ApiKeyInfo = { id: string; name: string; prefix: string; access: "full" | "read"; createdAt: string; lastUsedAt: string | null; revokedAt: string | null };
+export type WebhookInfo = { id: string; url: string; secret: string; events: string[]; description: string | null; enabled: boolean; createdAt: string };
+export type WebhookDeliveryInfo = { id: string; type: string; status: "pending" | "succeeded" | "failed"; attempts: number; responseStatus: number | null; error: string | null; createdAt: string; updatedAt: string; body: string };
 export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
 export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
 
@@ -637,6 +640,14 @@ export const api = {
   home: () => request<Home>("GET", "/v1/home"),
   eventLines: () => request<{ items: EventLine[] }>("GET", "/v1/events/overview"),
   eventOverview: (id: string) => request<EventOverview>("GET", `/v1/events/${enc(id)}/overview`),
+  listApiKeys: () => request<{ items: ApiKeyInfo[] }>("GET", "/v1/api-keys"),
+  createApiKey: (name: string, access: "full" | "read") => request<{ key: ApiKeyInfo; secret: string }>("POST", "/v1/api-keys", { name, access }),
+  revokeApiKey: (id: string) => request<{ ok: boolean }>("DELETE", `/v1/api-keys/${enc(id)}`),
+  listWebhooks: () => request<{ items: WebhookInfo[]; events: string[] }>("GET", "/v1/webhooks"),
+  createWebhook: (input: { url: string; events: string[]; description?: string }) => request<WebhookInfo>("POST", "/v1/webhooks", input),
+  updateWebhook: (id: string, input: { events?: string[]; enabled?: boolean }) => request<WebhookInfo>("PATCH", `/v1/webhooks/${enc(id)}`, input),
+  testWebhook: (id: string) => request<WebhookDeliveryInfo>("POST", `/v1/webhooks/${enc(id)}/test`, {}),
+  listDeliveries: (id: string) => request<{ items: WebhookDeliveryInfo[] }>("GET", `/v1/webhooks/${enc(id)}/deliveries`),
   publishEvent: (id: string) => request<Event>("POST", `/v1/events/${enc(id)}/publish`, {}),
   setEventInstructors: (id: string, instructorIds: string[]) => request<Event>("PUT", `/v1/events/${enc(id)}/instructors`, { instructorIds }),
   updateInstructorAccess: (input: Partial<InstructorAccess>) => request<Organization>("PATCH", "/v1/organizations/me/instructor-access", input),

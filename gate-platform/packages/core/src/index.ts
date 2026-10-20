@@ -16,3 +16,4 @@ export * from "./fx.js";
 export * from "./identity.js";
 export * from "./home.js";
 export * from "./zoned.js";
+export * from "./integrations.js";

@@ -3,7 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "bin": { "gate-mcp": "./dist/main.js" },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "gate-mcp": "./dist/main.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -11,6 +21,14 @@
     "dev": "tsx src/main.ts",
     "start": "node dist/main.js"
   },
-  "dependencies": { "@modelcontextprotocol/sdk": "^1.32.0", "zod": "^4.1.0" },
-  "devDependencies": { "typescript": "^5.9.0", "vitest": "^3.2.0", "tsx": "^4.23.0", "@types/node": "^22.19.0" }
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0",
+    "tsx": "^4.23.0",
+    "@types/node": "^22.19.0"
+  }
 }

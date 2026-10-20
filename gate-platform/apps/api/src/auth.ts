@@ -244,6 +244,7 @@ export function permissionFor(method: string, url: string): Permission {
   const path = url.split("?")[0]!;
   const write = method !== "GET" && method !== "HEAD";
   if (/^\/v1\/(members|invitations)(\/|$)/.test(path)) return "team";
+  if (/^\/v1\/(api-keys|webhooks)(\/|$)/.test(path)) return "settings";
   if (/^\/v1\/organizations\/me(\/|$)/.test(path) && write) return "settings";
   if (path === "/v1/policy" && write) return "settings";
   if (/^\/v1\/(sequences\/run|waitlist\/expire|jobs\/)/.test(path)) return "settings";
