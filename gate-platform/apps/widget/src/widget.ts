@@ -19,6 +19,8 @@ export interface WidgetOptions {
   stripePk?: string;
   /** Waitlist entry id to claim (overrides `data-gate-waitlist` and the `gate_waitlist` query param). */
   waitlist?: string;
+  /** Show only this cohort (event id), e.g. when the host page already let the visitor pick a date. */
+  event?: string;
 }
 
 /** Timing knobs (mutable so tests can shorten them). */
@@ -197,8 +199,10 @@ export class Widget {
 
   /* ---------- Schedule ---------- */
   private renderSchedule(): void {
-    const data = this.data;
-    if (!data) return;
+    const all = this.data;
+    if (!all) return;
+    const only = this.opts.event ? all.cohorts.filter((c) => c.event.id === this.opts.event) : [];
+    const data = only.length ? { ...all, cohorts: only } : all;
     const frag = document.createDocumentFragment();
     if (this.waitlistEntryId) {
       frag.append(h("div", { class: "gw-banner", role: "status" },

@@ -55,7 +55,7 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-const PUBLIC_APP = [/^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
+const PUBLIC_APP = [/^\/c\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
 function isPublicAppPath(path: string): boolean {
   return PUBLIC_APP.some((re) => re.test(path));
 }

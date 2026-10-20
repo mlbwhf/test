@@ -451,7 +451,7 @@ export class Core {
               if (this.isConvertedPrice(t, event, c, now)) converted.push(c);
             } catch { /* not sold in c */ }
           }
-          return { id: t.id, name: t.name, remaining: t.quantity - t.sold, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
+          return { id: t.id, name: t.name, quantity: t.quantity, remaining: t.quantity - t.sold, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
         }),
       });
     }

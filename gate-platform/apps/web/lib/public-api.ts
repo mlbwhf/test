@@ -10,6 +10,8 @@
 
 import {
   apiBaseUrl,
+  type Course,
+  type Event,
   type ApiErrorInfo,
   type ApiResult,
   type Attendee,
@@ -166,7 +168,17 @@ async function fetchSvg(path: string): Promise<string | null> {
   }
 }
 
+export type PublicTicketType = { id: string; name: string; quantity: number; remaining: number; prices: Record<string, number>; converted: string[]; earlyBirdUntil: string | null };
+export type PublicCoursePage = {
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null };
+  course: Course;
+  cohorts: { event: Event; ticketTypes: PublicTicketType[] }[];
+};
+
 export const publicApi = {
+  /** A course's public page data: upcoming live cohorts with seats left and prices. */
+  getCourse: (orgId: string, slug: string) => request<PublicCoursePage>("GET", `/public/v1/organizations/${enc(orgId)}/courses/${enc(slug)}`),
+
   /** Ticket view by its signed token; 404 for unknown or forged tokens. */
   getTicket: (token: string) => request<TicketView>("GET", `/public/v1/tickets/${enc(token)}`),
   getTicketQrSvg: (token: string) => fetchSvg(`/public/v1/tickets/${enc(token)}/qr.svg`),

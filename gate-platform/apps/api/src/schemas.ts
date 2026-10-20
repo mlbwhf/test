@@ -109,7 +109,7 @@ export const PublicCourseSchema = z.object({
   course: CourseSchema,
   cohorts: z.array(z.object({
     event: EventSchema,
-    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
+    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
 });
 

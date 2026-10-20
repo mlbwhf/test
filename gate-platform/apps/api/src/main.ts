@@ -63,6 +63,8 @@ async function main() {
     : new ConsoleNotifier({ printBody: env !== "production" });
   console.log(`[email] ${notifier.provider}`);
   const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
+  // The organizer's own course page when configured, else EnrollClass's public course page.
+  const coursePageUrl = (org: string, slug: string) => (process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", slug) : `${webUrl}/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}`);
   // Ticket links and QR codes are signed with this; changing it invalidates issued tickets.
   const ticketSecret = process.env.GATE_TICKET_SECRET || (process.env.GATE_ADMIN_KEY ? `admin:${process.env.GATE_ADMIN_KEY}` : env === "production" ? "" : "development-ticket-secret");
   if (!ticketSecret) throw new Error("set GATE_TICKET_SECRET (or GATE_ADMIN_KEY) in production");
@@ -73,7 +75,7 @@ async function main() {
       fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
       replyTo: process.env.EMAIL_REPLY_TO,
       calendarUrl: (seatId) => `${publicUrl}/public/v1/seats/${seatId}/calendar.ics`,
-      pageUrl: (ctx) => (ctx.course && process.env.GATE_COURSE_PAGE_URL ? process.env.GATE_COURSE_PAGE_URL.replace("{slug}", ctx.course.slug) : undefined),
+      pageUrl: (ctx) => (ctx.course ? coursePageUrl(ctx.organization.id, ctx.course.slug) : undefined),
       ticket: (seatId) => {
         const token = signer.token(seatId);
         return { url: ticketUrl({ webUrl }, token), qrUrl: `${publicUrl}/public/v1/tickets/${encodeURIComponent(token)}/qr.png`, code: signer.code(seatId) };
@@ -185,7 +187,7 @@ async function main() {
     identities: new Identities(identityRepos, core, { now: () => new Date() }, { next: randomId }),
     providers,
     ...(process.env.RESEND_API_KEY || env !== "production" ? { mailer: notifier } : {}),
-    ...(process.env.GATE_COURSE_PAGE_URL ? { publicPageUrl: (_org: string, slug: string) => process.env.GATE_COURSE_PAGE_URL!.replace("{slug}", slug) } : {}),
+    publicPageUrl: coursePageUrl,
   });
   await app.listen({ port, host: "0.0.0.0" });
   console.log(`[api] listening on ${publicUrl}  docs: ${publicUrl}/docs`);

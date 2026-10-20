@@ -179,6 +179,14 @@ describe("schedule", () => {
     expect(host2.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("CAD");
   });
 
+  it("shows only the chosen cohort when an event is given", async () => {
+    stubFetch(courseRoute);
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", event: "evt_2" });
+    await widget.ready;
+    const names = [...host.querySelectorAll(".gw-cohort-name")].map((n) => n.textContent);
+    expect(names).toEqual(["Community intro (free)"]);
+  });
+
   it("shows the course cover image when the course has one", async () => {
     stubFetch((url, init, json) => (url.includes("/courses/") ? { body: { ...course, course: { ...course.course, imageUrl: "https://api.test/public/v1/media/abc.jpg" } } } : courseRoute(url, init, json)));
     const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
