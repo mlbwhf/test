@@ -56,7 +56,8 @@ export default async function EventsPage() {
         )}
       </Section>
 
-      <Section title="Create event">
+      <section id="create" className="card">
+        <h2>Create event</h2>
         <ActionForm action={createEventAction} submitLabel="Create event" pendingLabel="Creating…">
           <div className="fields">
             <label>
@@ -81,7 +82,7 @@ export default async function EventsPage() {
             </label>
           </div>
         </ActionForm>
-      </Section>
+      </section>
     </>
   );
 }

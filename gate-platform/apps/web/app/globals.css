@@ -15,13 +15,13 @@
   --green-text: oklch(0.5 0.1 155);
 
   --bg: var(--paper);
-  --surface: #fdfdfb;
-  --surface: oklch(0.99 0.003 90);
+  --surface: #fefefd;
+  --surface: oklch(0.995 0.002 90);
   --surface-2: var(--sand);
   --text: var(--ink);
   --muted: #5a627a;
   --muted: oklch(0.48 0.03 260);
-  --border: rgba(20, 33, 61, 0.14);
+  --border: rgba(20, 33, 61, 0.15);
   --border-strong: rgba(20, 33, 61, 0.32);
   --accent: var(--green);
   --accent-text: var(--ink);
@@ -176,8 +176,23 @@ code {
   text-decoration: none;
 }
 .topbar nav a[aria-current="page"] {
-  color: var(--text);
-  background: var(--surface-2);
+  color: var(--paper);
+  background: var(--ink);
+}
+.topbar-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.topbar-cta:hover {
+  filter: brightness(0.94);
+  text-decoration: none;
 }
 
 main {
