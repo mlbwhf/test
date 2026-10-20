@@ -27,7 +27,8 @@ expect "https://$d/" 200 'Start with one cohort' || fail=1
 expect "https://$d/terms" 200 'Terms of service' || fail=1
 expect "https://www.$d/" 308 "https://$d/" || fail=1
 expect "https://app.$d/login" 200 'Sign in to EnrollClass' || fail=1
-expect "https://app.$d/login?mode=signup" 200 'Create your EnrollClass account' || fail=1
+expect "https://app.$d/login?mode=signup" 200 'Create your free EnrollClass account' || fail=1
+expect "https://$d/classes" 200 'Upcoming classes' || fail=1
 expect "https://app.$d/money" 307 "/login?returnTo=" || fail=1
 expect "https://app.$d/my/seat/none?email=a@b.co" 200 '' || fail=1
 expect "https://app.$d/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1

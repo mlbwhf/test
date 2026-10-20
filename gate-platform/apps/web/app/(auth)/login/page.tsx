@@ -30,11 +30,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <section className="auth-card">
-      <p className="eyebrow-mono">{invite ? "YOU'RE INVITED" : signup ? "START PUBLISHING" : "WELCOME BACK"}</p>
-      <h1>{invite ? "Sign in to accept your invitation" : signup ? "Create your EnrollClass account" : "Sign in to EnrollClass"}</h1>
+      <p className="eyebrow-mono">{invite ? "YOU'RE INVITED" : signup ? "SIGN UP FREE" : "WELCOME BACK"}</p>
+      <h1>{invite ? "Sign in to accept your invitation" : signup ? "Create your free EnrollClass account" : "Sign in to EnrollClass"}</h1>
       <p className="muted">
         {signup
-          ? "For training companies and independent instructors. Free to start; you pay a small fee only on paid registrations."
+          ? "For training companies and independent instructors who publish classes. Free to start, free classes stay free, and you pay a small fee only on paid registrations."
           : "Use the account you signed up with. New here? The same buttons create an account."}
       </p>
       {notice && (
@@ -79,10 +79,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         ) : (
           <>
             {" "}
-            New to EnrollClass? <a href="/login?mode=signup">Start publishing</a>.
+            New to EnrollClass? <a href="/login?mode=signup">Sign up free</a>.
           </>
         )}
       </p>
+      {!invite && (
+        <p className="auth-small auth-learner">
+          Here to attend a class? You don&apos;t need an account: register on the class page. Your ticket and booking link are in your confirmation email. <a href="/help/tickets">Learner help</a>
+        </p>
+      )}
     </section>
   );
 }

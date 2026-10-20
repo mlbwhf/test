@@ -56,12 +56,15 @@ export default async function SiteHome() {
           <p className="site-lede">Publish cohorts, take registrations by card or invoice, and receive funds in your Stripe account once the course is delivered.</p>
           <div className="site-cta">
             <a href={`${APP}/login?mode=signup`} className="pill pill-green">
-              Publish your first cohort
+              Sign up free
             </a>
             <Link href="/#pricing" className="pill pill-outline">
               See pricing
             </Link>
           </div>
+          <p className="hero-learner">
+            Signing up for a class? No account needed: <Link href="/classes">find your class</Link> and register on its page.
+          </p>
         </div>
         <div className="cohort-card" aria-label="Example cohort">
           <div>
@@ -265,7 +268,7 @@ export default async function SiteHome() {
         </div>
         <div className="site-cta">
           <a href={`${APP}/login?mode=signup`} className="pill pill-green">
-            Start publishing
+            Sign up free
           </a>
           <a href={`${APP}/login`} className="pill pill-outline-paper">
             Log in
