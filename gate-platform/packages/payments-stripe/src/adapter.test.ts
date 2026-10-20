@@ -65,6 +65,33 @@ describe("StripePaymentsAdapter", () => {
     expect(rp).toMatchObject({ payment_intent: "pi_1", amount: 500, reason: "requested_by_customer", reverse_transfer: true });
   });
 
+  it("Direct mode: the organizer's own full-dashboard account that pays its own fees and carries losses", async () => {
+    const { stripe, calls } = fakeStripe();
+    const a = new StripePaymentsAdapter(stripe, config);
+    await a.createConnectedAccount({ organizationId: "org_1", country: "US", businessName: "Agile Agilist", mode: "direct" });
+    const [params, opts] = calls[0]!.args as [Record<string, unknown>, Record<string, unknown>];
+    expect(params.controller).toEqual({ fees: { payer: "account" }, losses: { payments: "stripe" }, requirement_collection: "stripe", stripe_dashboard: { type: "full" } });
+    expect(opts.idempotencyKey).toBe("acct:direct:org_1");
+  });
+
+  it("Direct mode: charges on the organizer's account with an application fee and refunds there", async () => {
+    const { stripe, calls } = fakeStripe();
+    const a = new StripePaymentsAdapter(stripe, config);
+    await a.createPayment({ orderId: "ord_1", amountMinor: 129_500, currency: "USD", transferGroup: "ord_1", buyerEmail: "a@b.co", metadata: { orderId: "ord_1" }, direct: { accountRef: "acct_org", applicationFeeMinor: 1_993 } });
+    const [params, opts] = calls[0]!.args as [Record<string, unknown>, Record<string, unknown>];
+    expect(params).toMatchObject({ amount: 129_500, currency: "usd", application_fee_amount: 1_993 });
+    expect(params.transfer_group).toBeUndefined();
+    expect(opts).toEqual({ idempotencyKey: "pi:ord_1", stripeAccount: "acct_org" });
+    await a.createPayment({ orderId: "ord_2", amountMinor: 2_000, currency: "USD", transferGroup: "ord_2", buyerEmail: "a@b.co", metadata: {}, direct: { accountRef: "acct_org", applicationFeeMinor: 0 } });
+    expect((calls[1]!.args[0] as Record<string, unknown>).application_fee_amount).toBeUndefined();
+
+    await a.refund({ idempotencyKey: "r1", paymentRef: "pi_1", amountMinor: 500, reason: "customer asked", accountRef: "acct_org" });
+    const [rp, ro] = calls.find((c) => c.method === "refunds.create")!.args as [Record<string, unknown>, Record<string, unknown>];
+    expect(rp).toMatchObject({ payment_intent: "pi_1", amount: 500, refund_application_fee: true });
+    expect(rp.reverse_transfer).toBeUndefined();
+    expect(ro).toEqual({ idempotencyKey: "r1", stripeAccount: "acct_org" });
+  });
+
   it("verifies webhook signatures and maps events", () => {
     const { stripe } = fakeStripe();
     const a = new StripePaymentsAdapter(stripe, config);

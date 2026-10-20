@@ -39,4 +39,7 @@ expect "https://$d/robots.txt" 200 'Sitemap:' || fail=1
 expect "https://$d/sitemap.xml" 200 '<urlset' || fail=1
 expect "https://$d/llms.txt" 200 '# EnrollClass' || fail=1
 expect "https://app.$d/sitemap.xml" 200 '<urlset' || fail=1
+expect "https://api.$d/public/v1/fees" 200 '"direct"' || fail=1
+expect "https://$d/" 200 'certification seat costs you' || fail=1
+expect "https://$d/help/payment-modes" 200 'Protected or Direct' || fail=1
 exit $fail

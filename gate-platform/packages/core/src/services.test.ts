@@ -39,9 +39,9 @@ describe("checkout -> payment -> ledger", () => {
     expect(created).toBe(true);
     expect(clientSecret).toMatch(/_secret_/);
     expect(order.status).toBe("pending");
-    expect(order.pricing.perTicketFeeMinor).toBe(500); // capped
+    expect(order.pricing.perTicketFeeMinor).toBe(4_980); // 4.9% + $0.80, card processing included
     expect(order.pricing.totalMinor).toBe(200_000);
-    expect(order.pricing.organizerNetMinor).toBe(199_000);
+    expect(order.pricing.organizerNetMinor).toBe(190_040);
     expect((await core.listTicketTypes(org.id, ticket.eventId))[0]?.sold).toBe(2);
 
     const result = await core.handlePaymentEvent(payments.succeed(order.paymentRef!, 200_000, "USD"));
@@ -52,9 +52,9 @@ describe("checkout -> payment -> ledger", () => {
     expect(paid.transferRefs[org.id]).toBe(`tr_fake_transfer:${order.id}:${org.id}`);
 
     const bal = await core.balancesFor(org.id);
-    expect(bal.find((b) => b.code === codes.orgPayable(org.id, "USD"))?.balanceMinor).toBe(199_000);
+    expect(bal.find((b) => b.code === codes.orgPayable(org.id, "USD"))?.balanceMinor).toBe(190_040);
     const platform = await core.platformBalances();
-    expect(platform.find((b) => b.code === codes.feeRevenue("USD"))?.balanceMinor).toBe(1_000);
+    expect(platform.find((b) => b.code === codes.feeRevenue("USD"))?.balanceMinor).toBe(9_960);
     expect(platform.find((b) => b.code === codes.clearing("USD"))?.balanceMinor).toBe(200_000);
     await ledger.assertBalanced();
   });
@@ -94,20 +94,20 @@ describe("checkout -> payment -> ledger", () => {
   it("splits to a venue and transfers to its connected account", async () => {
     const { org, ticket, venueId } = await setup({ venueBps: 2_000 });
     const { order } = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
-    expect(order.splits.lines).toEqual([{ partyId: venueId, amountMinor: 19_900 }]);
-    expect(order.splits.organizerMinor).toBe(79_600);
+    expect(order.splits.lines).toEqual([{ partyId: venueId, amountMinor: 19_004 }]);
+    expect(order.splits.organizerMinor).toBe(76_016);
     await core.handlePaymentEvent(payments.succeed(order.paymentRef!, 100_000, "USD"));
     const paid = await core.getOrder(org.id, order.id);
     expect(Object.keys(paid.transferRefs).sort()).toEqual([org.id, venueId].sort());
     const bal = await core.balancesFor(org.id);
-    expect(bal.find((b) => b.code === codes.partyPayable(venueId!, "USD"))?.balanceMinor).toBe(19_900);
+    expect(bal.find((b) => b.code === codes.partyPayable(venueId!, "USD"))?.balanceMinor).toBe(19_004);
     await ledger.assertBalanced();
   });
 
   it("pass-fee-to-attendee charges the buyer the fee", async () => {
     const { org, ticket } = await setup({ passFee: true });
     const { order } = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
-    expect(order.pricing.totalMinor).toBe(100_500);
+    expect(order.pricing.totalMinor).toBe(104_980);
     expect(order.pricing.organizerNetMinor).toBe(100_000);
   });
 
@@ -138,9 +138,9 @@ describe("refunds", () => {
     const venueBal = bal.find((b) => b.code === codes.partyPayable(venueId!, "USD"))!.balanceMinor;
     const fees = (await core.platformBalances()).find((b) => b.code === codes.feeRevenue("USD"))!.balanceMinor;
     expect(orgBal + venueBal + fees).toBe(50_000);
-    expect(orgBal).toBe(39_800);
-    expect(venueBal).toBe(9_950);
-    expect(fees).toBe(250);
+    expect(orgBal).toBe(38_008);
+    expect(venueBal).toBe(9_502);
+    expect(fees).toBe(2_490);
     await ledger.assertBalanced();
 
     const rest = await core.refundOrder(org.id, { orderId: order.id, reason: "cancelled" });

@@ -77,12 +77,12 @@ describe("regional price lists and early bird", () => {
     expect(cad.order.pricing.totalMinor).toBe(109_900);
     expect(gbp.order.currency).toBe("GBP");
     expect(gbp.order.pricing.unitPriceMinor).toBe(69_900);
-    expect(gbp.order.pricing.perTicketFeeMinor).toBe(400); // GBP cap
+    expect(gbp.order.pricing.perTicketFeeMinor).toBe(2_726 + 50); // 3.9% + £0.50
     await core.handlePaymentEvent(payments.succeed(cad.order.paymentRef!, cad.order.pricing.totalMinor, "CAD"));
     await core.handlePaymentEvent(payments.succeed(gbp.order.paymentRef!, gbp.order.pricing.totalMinor, "GBP"));
     const bal = await core.balancesFor(org.id);
-    expect(bal.find((b) => b.currency === "CAD")?.balanceMinor).toBe(109_900 - 650);
-    expect(bal.find((b) => b.currency === "GBP")?.balanceMinor).toBe(139_800 - 800);
+    expect(bal.find((b) => b.currency === "CAD")?.balanceMinor).toBe(109_900 - 5_475);
+    expect(bal.find((b) => b.currency === "GBP")?.balanceMinor).toBe(139_800 - 2 * 2_776);
     await core.ledger.assertBalanced();
     expect((await core.listTicketTypes(org.id, ticket.eventId))[0]?.sold).toBe(3);
   });

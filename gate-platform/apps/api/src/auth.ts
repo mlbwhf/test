@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import rateLimit from "@fastify/rate-limit";
-import { DomainError, ROLES, can, type Core, type Identities, type Notifier, type Organization, type Permission, type Role, type SessionContext } from "@gate/core";
+import { DomainError, ROLES, activePayments, can, type Core, type Identities, type Notifier, type Organization, type Permission, type Role, type SessionContext } from "@gate/core";
 import { authorizeUrl, exchangeCode, pkcePair, safeReturnTo, type ProviderConfig } from "./oauth.js";
 import * as S from "./schemas.js";
 import { secretMatches } from "./secrets.js";
@@ -27,7 +27,9 @@ export const MeSchema = z.object({
   user: z.object({ id: z.string(), email: z.string(), name: z.string().nullable(), avatarUrl: z.string().nullable() }),
   organization: z.object({
     id: z.string(), name: z.string(), kind: z.enum(["company", "individual"]).nullable(), currency: z.string(), country: z.string(),
-    /** True only once the provider enables charges and payouts. */
+    /** protected: EnrollClass collects and holds until delivery; direct: the organizer's own Stripe account. */
+    paymentMode: z.enum(["protected", "direct"]),
+    /** True only once the provider enables charges and payouts (for the active mode's account). */
     paymentsConnected: z.boolean(),
     /** none: not started; incomplete: account exists, setup unfinished; ready. */
     paymentsSetup: z.enum(["none", "incomplete", "ready"]),
@@ -42,7 +44,7 @@ export function meOut(ctx: SessionContext) {
   const org = ctx.organization;
   return {
     user: { id: ctx.user.id, email: ctx.user.email, name: ctx.user.name ?? null, avatarUrl: ctx.user.avatarUrl ?? null },
-    organization: org ? { id: org.id, name: org.name, kind: org.kind ?? null, currency: org.currency, country: org.country, paymentsConnected: Boolean(org.paymentsStatus?.ready), paymentsSetup: !org.paymentsAccountRef ? "none" as const : org.paymentsStatus?.ready ? "ready" as const : "incomplete" as const } : null,
+    organization: org ? { id: org.id, name: org.name, kind: org.kind ?? null, currency: org.currency, country: org.country, paymentMode: activePayments(org).mode, paymentsConnected: Boolean(activePayments(org).status?.ready), paymentsSetup: !activePayments(org).accountRef ? "none" as const : activePayments(org).status?.ready ? "ready" as const : "incomplete" as const } : null,
     role: ctx.role ?? null,
     permissions: PERMS.filter((p) => can(ctx.role, p)),
     memberships: ctx.memberships.map((m) => ({ organizationId: m.organizationId, organizationName: m.organizationName, kind: m.organizationKind ?? null, role: m.role })),

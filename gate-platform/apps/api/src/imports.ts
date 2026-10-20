@@ -15,8 +15,15 @@ export const ImportItemSchema = z.object({
   source: z.enum(["eventbrite", "csv"]),
   sourceId: z.string(),
   sourceUrl: z.string().optional(),
-  course: z.object({ slug: z.string(), name: z.string(), description: z.string().optional(), durationDays: z.number().int().optional(), imageUrl: z.string().optional() }),
-  event: z.object({ name: z.string(), startsAt: z.string(), endsAt: z.string().optional(), timezone: z.string(), currency: z.string(), format: S.DeliveryFormat }),
+  course: z.object({
+    slug: z.string(), name: z.string(), description: z.string().optional(), durationDays: z.number().int().optional(), imageUrl: z.string().optional(),
+    badge: z.object({ platform: z.enum(["credly", "accredible", "badgr", "certopus", "other", "own"]), name: z.string(), url: z.string().optional(), imageUrl: z.string().optional() }).optional(),
+    certificationBody: z.string().optional(),
+  }),
+  event: z.object({
+    name: z.string(), startsAt: z.string(), endsAt: z.string().optional(), timezone: z.string(), currency: z.string(), format: S.DeliveryFormat,
+    instructors: z.array(z.string()).optional(), minEnrollment: z.number().int().optional(), meetingUrl: z.string().optional(), draft: z.boolean().optional(),
+  }),
   ticketTypes: z.array(ImportTicketTypeSchema),
   sourceStatus: z.string().optional(),
   warnings: z.array(z.string()),
@@ -31,6 +38,12 @@ const ImportResultSchema = z.object({
   ticketTypes: z.number().int().optional(),
   image: z.enum(["copied", "kept", "failed", "none"]).optional(),
   imageError: z.string().optional(),
+  /** set: the course got the source's badge; kept: the course already had one. */
+  badge: z.enum(["set", "kept", "failed", "none"]).optional(),
+  /** Instructors linked to the class; new names are created as instructors. */
+  instructors: z.number().int().optional(),
+  instructorsCreated: z.array(z.string()).optional(),
+  draft: z.boolean().optional(),
 });
 export const ImportResponseSchema = z.object({
   plan: z.object({
@@ -65,13 +78,15 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
   const existing = await core.listEvents(org.id);
   const existingKeys = new Set(existing.map((e) => `${e.name.trim().toLowerCase()}|${e.startsAt.toISOString()}`));
   const want = opts.sourceIds ? new Set(opts.sourceIds) : null;
+  // Instructors by lower-cased name, shared by every item so a new name is created once.
+  const instructors = new Map((await core.repos.parties.listByOrganization(org.id)).filter((p) => p.kind === "instructor").map((p) => [p.name.trim().toLowerCase(), p.id]));
   for (const item of plan.items) {
     if (want && !want.has(item.sourceId)) continue;
     const startsAt = new Date(item.event.startsAt);
     if (!opts.includePast && startsAt.getTime() < Date.now()) { results.push({ sourceId: item.sourceId, status: "skipped", reason: "starts in the past" }); continue; }
     if (existingKeys.has(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`)) { results.push({ sourceId: item.sourceId, status: "exists", reason: "a cohort with this name and start already exists" }); continue; }
     try {
-      results.push(await applyItem(core, org, item, startsAt, deps));
+      results.push(await applyItem(core, org, item, startsAt, deps, instructors));
       existingKeys.add(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`);
     } catch (err) {
       results.push({ sourceId: item.sourceId, status: "failed", reason: err instanceof Error ? err.message : String(err) });
@@ -80,19 +95,39 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
   return results;
 }
 
-async function applyItem(core: Core, org: Organization, item: ImportItem, startsAt: Date, deps: ApplyDeps): Promise<ImportResult> {
+async function applyItem(core: Core, org: Organization, item: ImportItem, startsAt: Date, deps: ApplyDeps, instructors: Map<string, string>): Promise<ImportResult> {
   let courseId: string;
   let courseCreated = false;
   let hasImage = false;
+  let hasBadge = false;
   try {
     const existing = await core.getCourseBySlug(org.id, item.course.slug);
     courseId = existing.id;
     hasImage = Boolean(existing.imageUrl);
+    hasBadge = Boolean(existing.badge);
+    if (item.course.certificationBody && !existing.certificationBody) await core.updateCourse(org.id, courseId, { certificationBody: item.course.certificationBody });
   } catch (err) {
     if (!(err instanceof DomainError) || err.code !== "NOT_FOUND") throw err;
-    const course = await core.createCourse(org.id, { slug: item.course.slug, name: item.course.name, description: item.course.description, durationDays: item.course.durationDays });
+    const course = await core.createCourse(org.id, { slug: item.course.slug, name: item.course.name, description: item.course.description, durationDays: item.course.durationDays, certificationBody: item.course.certificationBody });
     courseId = course.id;
     courseCreated = true;
+  }
+  // The course's digital badge: a platform link (Credly…) or the organizer's own badge image,
+  // copied into our media store like the cover so it keeps working at the source.
+  let badge: ImportResult["badge"] = "none";
+  const src = item.course.badge;
+  if (src) {
+    if (hasBadge) badge = "kept";
+    else {
+      try {
+        let imageUrl = src.imageUrl;
+        if (imageUrl && deps.media) imageUrl = await importImage(deps.media, deps.publicUrl ?? "", imageUrl, deps.fetchImpl);
+        await core.updateCourse(org.id, courseId, { badge: { platform: src.platform, name: src.name, ...(src.url ? { url: src.url } : {}), ...(imageUrl ? { imageUrl } : {}) } });
+        badge = "set";
+      } catch {
+        badge = "failed";
+      }
+    }
   }
   // Copy the source cover image into our own media store the first time the course gets one,
   // so the page keeps working if the event is later deleted at the source.
@@ -113,6 +148,18 @@ async function applyItem(core: Core, org: Organization, item: ImportItem, starts
     }
   }
   const endsAt = item.event.endsAt ? new Date(item.event.endsAt) : undefined;
+  const instructorIds: string[] = [];
+  const instructorsCreated: string[] = [];
+  for (const name of item.event.instructors ?? []) {
+    const key = name.trim().toLowerCase();
+    let id = instructors.get(key);
+    if (!id) {
+      id = (await core.createParty(org.id, { name: name.trim(), kind: "instructor" })).id;
+      instructors.set(key, id);
+      instructorsCreated.push(name.trim());
+    }
+    if (!instructorIds.includes(id)) instructorIds.push(id);
+  }
   const event = await core.createEvent(org.id, {
     name: item.event.name,
     startsAt,
@@ -121,9 +168,16 @@ async function applyItem(core: Core, org: Organization, item: ImportItem, starts
     timezone: item.event.timezone,
     format: item.event.format,
     ...(endsAt && endsAt > startsAt ? { sessions: [{ startsAt, endsAt }] } : {}),
+    ...(instructorIds.length ? { instructorIds } : {}),
+    ...(item.event.minEnrollment ? { minEnrollment: item.event.minEnrollment } : {}),
+    ...(item.event.draft ? { status: "draft" as const } : {}),
   });
   for (const t of item.ticketTypes) await core.createTicketType(org.id, event.id, { name: t.name, priceMinor: t.priceMinor, quantity: t.quantity });
-  return { sourceId: item.sourceId, status: "created", courseId, courseCreated, eventId: event.id, ticketTypes: item.ticketTypes.length, image, ...(imageError ? { imageError } : {}) };
+  if (item.event.meetingUrl) await core.setMeeting(org.id, event.id, { provider: "manual", joinUrl: item.event.meetingUrl });
+  return {
+    sourceId: item.sourceId, status: "created", courseId, courseCreated, eventId: event.id, ticketTypes: item.ticketTypes.length, image, ...(imageError ? { imageError } : {}),
+    badge, instructors: instructorIds.length, ...(instructorsCreated.length ? { instructorsCreated } : {}), ...(item.event.draft ? { draft: true } : {}),
+  };
 }
 
 export function registerImports(api: FastifyInstance, deps: { core: Core; fetchImpl?: typeof fetch; media?: MediaStore; publicUrl?: string }, org: (req: { org?: Organization }) => Organization) {

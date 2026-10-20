@@ -18,7 +18,7 @@ type StripeInstance = {
 
 declare global {
   interface Window {
-    Stripe?: (publishableKey: string) => StripeInstance;
+    Stripe?: (publishableKey: string, options?: { stripeAccount?: string }) => StripeInstance;
   }
 }
 
@@ -42,13 +42,15 @@ function loadStripeJs(): Promise<void> {
 type Props = {
   publishableKey: string;
   clientSecret: string;
+  /** Direct payments: the organizer's own Stripe account. */
+  stripeAccount?: string | null;
   /** Pre-formatted fee, e.g. "CA$50.00". */
   feeLabel: string;
   /** Path (on this site) Stripe sends the learner back to after payment. */
   returnPath: string;
 };
 
-export function StripeFeePayment({ publishableKey, clientSecret, feeLabel, returnPath }: Props) {
+export function StripeFeePayment({ publishableKey, clientSecret, stripeAccount, feeLabel, returnPath }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const stripeRef = useRef<StripeInstance | null>(null);
   const elementsRef = useRef<StripeElements | null>(null);
@@ -62,7 +64,7 @@ export function StripeFeePayment({ publishableKey, clientSecret, feeLabel, retur
     loadStripeJs()
       .then(() => {
         if (cancelled || !window.Stripe || !mountRef.current) return;
-        const stripe = window.Stripe(publishableKey);
+        const stripe = stripeAccount ? window.Stripe(publishableKey, { stripeAccount }) : window.Stripe(publishableKey);
         const elements = stripe.elements({ clientSecret });
         element = elements.create("payment");
         element.mount(mountRef.current);
@@ -77,7 +79,7 @@ export function StripeFeePayment({ publishableKey, clientSecret, feeLabel, retur
       cancelled = true;
       element?.unmount();
     };
-  }, [publishableKey, clientSecret]);
+  }, [publishableKey, clientSecret, stripeAccount]);
 
   async function pay() {
     const stripe = stripeRef.current;

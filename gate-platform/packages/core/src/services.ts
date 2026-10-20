@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } from "@gate/ledger";
-import { computeSplits, priceOrder, type PayoutDestination, type SplitRule } from "@gate/pricing";
+import { computeSplits, priceOrder, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -11,7 +11,7 @@ import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, typ
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -26,6 +26,13 @@ export interface CoreDeps {
   meetings?: Partial<Record<MeetingInfo["provider"], MeetingProvider>>;
   /** Reference exchange rates for localized pricing; absent = rates are entered by hand. */
   fx?: FxRateSource;
+}
+
+/** The organization's current payment mode and the Stripe account that serves it. */
+export function activePayments(org: Organization): { mode: PaymentMode; accountRef: string | undefined; status: PaymentsStatus | undefined } {
+  return org.paymentMode === "direct"
+    ? { mode: "direct", accountRef: org.directAccountRef, status: org.directStatus }
+    : { mode: "protected", accountRef: org.paymentsAccountRef, status: org.paymentsStatus };
 }
 
 export function hashApiKey(key: string): string {
@@ -160,41 +167,56 @@ export class Core {
    */
   async connectPayments(organizationId: string, email?: string | undefined): Promise<Organization & { onboardingUrl?: string }> {
     let org = await this.getOrganization(organizationId);
-    if (!org.paymentsAccountRef) {
+    const mode = org.paymentMode ?? "protected";
+    const refKey = mode === "direct" ? "directAccountRef" : "paymentsAccountRef";
+    if (!org[refKey]) {
       const res = await this.payments.createConnectedAccount({
         organizationId: org.id,
         country: org.country,
         businessName: org.name,
         businessType: org.kind === "individual" ? "individual" : "company",
         ...(email ? { email } : {}),
+        ...(mode === "direct" ? { mode } : {}),
       });
-      org = { ...org, paymentsAccountRef: res.accountRef };
+      org = { ...org, [refKey]: res.accountRef };
       await this.repos.organizations.update(org);
       org = await this.refreshPaymentsStatus(org.id);
-      if (!org.paymentsStatus?.ready && res.onboardingUrl) return { ...org, onboardingUrl: res.onboardingUrl };
+      if (!activePayments(org).status?.ready && res.onboardingUrl) return { ...org, onboardingUrl: res.onboardingUrl };
       return org;
     }
     org = await this.refreshPaymentsStatus(org.id);
-    if (org.paymentsStatus?.ready) return org;
-    const link = await this.payments.createOnboardingLink(org.paymentsAccountRef!);
+    if (activePayments(org).status?.ready) return org;
+    const link = await this.payments.createOnboardingLink(org[refKey]!);
     return { ...org, ...(link ? { onboardingUrl: link } : {}) };
   }
 
-  /** Ask the provider for the account's current state and remember it. */
-  async refreshPaymentsStatus(organizationId: string): Promise<Organization> {
+  /**
+   * Choose how card payments flow. Switching never touches money already taken: held
+   * Protected orders still release to the Protected account, and Direct charges stay on the
+   * organizer's account. Each mode has its own Stripe account, connected separately.
+   */
+  async setPaymentMode(organizationId: string, mode: PaymentMode): Promise<Organization> {
+    if (mode !== "protected" && mode !== "direct") throw new DomainError("VALIDATION", "mode must be protected or direct");
     const org = await this.getOrganization(organizationId);
-    if (!org.paymentsAccountRef) return org;
-    return this.applyPaymentsStatus(org, await this.payments.getAccountStatus(org.paymentsAccountRef));
+    const next: Organization = { ...org, paymentMode: mode };
+    await this.repos.organizations.update(next);
+    return this.refreshPaymentsStatus(organizationId);
   }
 
-  private async applyPaymentsStatus(org: Organization, s: PaymentsAccountStatus): Promise<Organization> {
-    const next: Organization = {
-      ...org,
-      paymentsStatus: {
-        ready: s.chargesEnabled && s.payoutsEnabled, chargesEnabled: s.chargesEnabled, payoutsEnabled: s.payoutsEnabled, detailsSubmitted: s.detailsSubmitted,
-        requirementsDue: s.requirementsDue.slice(0, 20), ...(s.disabledReason ? { disabledReason: s.disabledReason } : {}), checkedAt: this.clock.now(),
-      },
+  /** Ask the provider for the state of the organization's accounts and remember it. */
+  async refreshPaymentsStatus(organizationId: string): Promise<Organization> {
+    let org = await this.getOrganization(organizationId);
+    if (org.paymentsAccountRef) org = await this.applyPaymentsStatus(org, org.paymentsAccountRef, await this.payments.getAccountStatus(org.paymentsAccountRef));
+    if (org.directAccountRef) org = await this.applyPaymentsStatus(org, org.directAccountRef, await this.payments.getAccountStatus(org.directAccountRef));
+    return org;
+  }
+
+  private async applyPaymentsStatus(org: Organization, accountRef: string, s: PaymentsAccountStatus): Promise<Organization> {
+    const status: PaymentsStatus = {
+      ready: s.chargesEnabled && s.payoutsEnabled, chargesEnabled: s.chargesEnabled, payoutsEnabled: s.payoutsEnabled, detailsSubmitted: s.detailsSubmitted,
+      requirementsDue: s.requirementsDue.slice(0, 20), ...(s.disabledReason ? { disabledReason: s.disabledReason } : {}), checkedAt: this.clock.now(),
     };
+    const next: Organization = { ...org, ...(accountRef === org.directAccountRef ? { directStatus: status } : { paymentsStatus: status }) };
     await this.repos.organizations.update(next);
     return next;
   }
@@ -243,9 +265,10 @@ export class Core {
   async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
     if (patch.badge) {
-      if (!["credly", "accredible", "badgr", "certopus", "other"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
+      if (!["credly", "accredible", "badgr", "certopus", "other", "own"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
       if (!patch.badge.name.trim()) throw new DomainError("VALIDATION", "badge name is required");
-      if (!/^https:\/\//.test(patch.badge.url) || (patch.badge.imageUrl && !/^https:\/\//.test(patch.badge.imageUrl))) throw new DomainError("VALIDATION", "badge links must be https URLs");
+      if (patch.badge.platform === "own" ? !patch.badge.imageUrl : !patch.badge.url) throw new DomainError("VALIDATION", patch.badge.platform === "own" ? "upload the badge image" : "the badge page link is required");
+      if ((patch.badge.url && !/^https:\/\//.test(patch.badge.url)) || (patch.badge.imageUrl && !/^https?:\/\//.test(patch.badge.imageUrl))) throw new DomainError("VALIDATION", "badge links must be https URLs");
     }
     if (patch.surveyUrl && !/^https?:\/\//.test(patch.surveyUrl)) throw new DomainError("VALIDATION", "surveyUrl must be an http(s) URL");
     if (patch.imageUrl && !/^https?:\/\//.test(patch.imageUrl)) throw new DomainError("VALIDATION", "imageUrl must be an http(s) URL");
@@ -253,7 +276,7 @@ export class Core {
     const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
     set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays); set("imageUrl", patch.imageUrl);
     if (patch.badge === null) delete next.badge;
-    else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), url: patch.badge.url, ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
+    else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), ...(patch.badge.url ? { url: patch.badge.url } : {}), ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
     await this.repos.courses.update(next);
     return next;
   }
@@ -559,7 +582,7 @@ export class Core {
       });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected" },
       course, cohorts: out,
     };
   }
@@ -609,9 +632,12 @@ export class Core {
 
     const currency = input.currency ?? event.currency;
     const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
-    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false });
+    const direct = org.paymentMode === "direct";
+    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false, direct });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
+    // Direct: learners pay the organizer's own Stripe account, which must be able to take charges.
+    const chargeAccount = direct && pricing.totalMinor > 0 && !input.dryRun ? this.directChargeAccount(org) : undefined;
 
     const order: Order = {
       id: this.ids.next("ord"),
@@ -627,6 +653,7 @@ export class Core {
       ...(input.billingAddress ? { billingAddress: input.billingAddress } : {}),
       pricing,
       splits,
+      ...(chargeAccount ? { settlement: "direct" as const, chargeAccountRef: chargeAccount } : {}),
       transferRefs: {},
       refundedMinor: 0,
       heldMinor: 0,
@@ -668,6 +695,7 @@ export class Core {
           transferGroup: order.id,
           buyerEmail: input.buyerEmail,
           metadata: { orderId: order.id, organizationId, eventId: event.id },
+          ...(chargeAccount ? { direct: { accountRef: chargeAccount, applicationFeeMinor: pricing.platformFeeMinor } } : {}),
         });
         paymentRef = p.paymentRef;
         clientSecret = p.clientSecret;
@@ -704,9 +732,9 @@ export class Core {
 
   async handlePaymentEvent(event: PaymentEvent): Promise<{ handled: boolean; reason?: string }> {
     if (event.type === "account.updated") {
-      const org = (await this.repos.organizations.list()).find((o) => o.paymentsAccountRef === event.accountRef);
+      const org = (await this.repos.organizations.list()).find((o) => o.paymentsAccountRef === event.accountRef || o.directAccountRef === event.accountRef);
       if (!org) return { handled: false, reason: "unknown account" };
-      await this.applyPaymentsStatus(org, event.status);
+      await this.applyPaymentsStatus(org, event.accountRef, event.status);
       return { handled: true };
     }
     const fresh = await this.repos.processedEvents.record(event.providerEventId);
@@ -790,7 +818,9 @@ export class Core {
 
     const postings: Posting[] = cash ?? [{ accountId: clearing.id, amount: order.pricing.totalMinor }];
     const organizerSide = order.splits.organizerMinor + order.splits.lines.reduce((a, l) => a + l.amountMinor, 0);
-    const hold = org.releasePolicy === "on_delivery" && organizerSide > 0;
+    // Direct: the organizer's own Stripe account already has the money; only the application fee reaches the platform.
+    const direct = order.settlement === "direct";
+    const hold = !direct && org.releasePolicy === "on_delivery" && organizerSide > 0;
     if (hold) {
       postings.push({ accountId: (await this.accounts.orgHeld(org.id, ccy)).id, amount: -organizerSide });
     } else {
@@ -804,7 +834,17 @@ export class Core {
     if (order.pricing.platformFeeMinor > 0) postings.push({ accountId: fees.id, amount: -order.pricing.platformFeeMinor });
     if (order.pricing.taxMinor > 0) postings.push({ accountId: (await this.accounts.taxPayable(org.id, ccy)).id, amount: -order.pricing.taxMinor });
 
-    if (order.pricing.totalMinor > 0) {
+    if (direct) {
+      if (order.pricing.platformFeeMinor > 0) {
+        await this.ledger.post({
+          idempotencyKey: `order:${order.id}:paid`,
+          currency: ccy,
+          description: `Application fee on direct order ${order.id} (${order.quantity} x ${order.ticketTypeId})`,
+          postings: [{ accountId: clearing.id, amount: order.pricing.platformFeeMinor }, { accountId: fees.id, amount: -order.pricing.platformFeeMinor }],
+          metadata: { orderId: order.id, organizationId: org.id, eventId: order.eventId, paymentRef: order.paymentRef ?? "", settlement: "direct", grossMinor: String(order.pricing.totalMinor) },
+        });
+      }
+    } else if (order.pricing.totalMinor > 0) {
       await this.ledger.post({
         idempotencyKey: `order:${order.id}:paid`,
         currency: ccy,
@@ -815,7 +855,7 @@ export class Core {
     }
 
     // Immediate policy: move each party's share to its connected account now. On-delivery: at release.
-    const transferRefs = hold ? { ...order.transferRefs } : await this.transferShares({ ...order, transferRefs: { ...order.transferRefs } }, org);
+    const transferRefs = hold || direct ? { ...order.transferRefs } : await this.transferShares({ ...order, transferRefs: { ...order.transferRefs } }, org);
     const fundsStatus = organizerSide > 0 ? (hold ? "held" : "released") : "none";
     await this.repos.orders.update({ ...order, status: "paid", paidAt: this.clock.now(), transferRefs, heldMinor: hold ? organizerSide : 0, fundsStatus, ...(fundsStatus === "released" ? { releasedAt: this.clock.now() } : {}) });
 
@@ -944,6 +984,7 @@ export class Core {
       paymentRef: order.paymentRef,
       amountMinor: amount,
       reason: refund.reason,
+      ...(order.chargeAccountRef ? { accountRef: order.chargeAccountRef } : {}),
     });
     const withRef: Refund = { ...refund, paymentRefundRef: res.refundRef };
     await this.repos.refunds.update(withRef);
@@ -959,7 +1000,19 @@ export class Core {
     const ccy = order.currency;
     const total = order.pricing.totalMinor;
 
-    if (total > 0) {
+    if (total > 0 && order.settlement === "direct") {
+      // Stripe returns the application fee pro rata; the rest of the refund comes from the organizer's account.
+      const feeShare = allocate(refund.amountMinor, [total - order.pricing.platformFeeMinor, order.pricing.platformFeeMinor])[1] ?? 0;
+      if (feeShare > 0) {
+        await this.ledger.post({
+          idempotencyKey: `refund:${refund.id}:settled`,
+          currency: ccy,
+          description: `Application fee returned with refund ${refund.id} for direct order ${order.id}`,
+          postings: [{ accountId: (await this.accounts.clearing(ccy)).id, amount: -feeShare }, { accountId: (await this.accounts.feeRevenue(ccy)).id, amount: feeShare }],
+          metadata: { orderId: order.id, refundId: refund.id, organizationId: order.organizationId, settlement: "direct" },
+        });
+      }
+    } else if (total > 0) {
       // Buckets in the same order as the paid entry: organizer side (held or payable + parties), platform fee, tax.
       const buckets: Array<{ accountId: string; paid: number }> = [];
       const organizerSide = order.splits.organizerMinor + order.splits.lines.reduce((a, l) => a + l.amountMinor, 0);
@@ -1017,12 +1070,21 @@ export class Core {
 
   // ---------- Tax ----------
 
-  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean }) {
-    const base = priceOrder({ currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee });
+  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean; direct?: boolean | undefined }) {
+    const common = { currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, ...(input.direct ? { mode: "direct" as const } : {}) };
+    const base = priceOrder(common);
     if (!input.billingAddress) return base;
     const taxable = base.subtotalMinor + base.attendeeFeeMinor;
     const tax = await this.tax.calculate({ currency: input.currency, amountMinor: taxable, sellerCountry: input.org.country, buyer: input.billingAddress, businessCustomer: input.businessCustomer });
-    return priceOrder({ currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, taxMinor: tax.taxMinor });
+    return priceOrder({ ...common, taxMinor: tax.taxMinor });
+  }
+
+  /** The organizer's own Stripe account for a Direct charge; refuses until Stripe lets it take payments. */
+  private directChargeAccount(org: Organization): string {
+    if (!org.directAccountRef || !org.directStatus?.chargesEnabled) {
+      throw new DomainError("INVALID_STATE", `${org.name} can't take card payments yet`, "the organizer needs to finish connecting their Stripe account");
+    }
+    return org.directAccountRef;
   }
 
   // ---------- Corporate accounts & invoices ----------
@@ -1338,8 +1400,16 @@ export class Core {
     }
     let p;
     try {
-      p = await this.payments.createPayment({ orderId: `${ctx.order.id}:${transfer.id}`, amountMinor: option.feeMinor, currency: ctx.order.currency, transferGroup: ctx.order.id, buyerEmail: ctx.seat.attendee.email, metadata: { orderId: ctx.order.id, transferId: transfer.id, organizationId: ctx.seat.organizationId } });
+      // Direct mode: the change fee is the organizer's money, charged on their own account with no fee.
+      const org = await this.getOrganization(ctx.seat.organizationId);
+      const chargeAccount = org.paymentMode === "direct" ? this.directChargeAccount(org) : undefined;
+      if (chargeAccount) transfer.chargeAccountRef = chargeAccount;
+      p = await this.payments.createPayment({ orderId: `${ctx.order.id}:${transfer.id}`, amountMinor: option.feeMinor, currency: ctx.order.currency, transferGroup: ctx.order.id, buyerEmail: ctx.seat.attendee.email, metadata: { orderId: ctx.order.id, transferId: transfer.id, organizationId: ctx.seat.organizationId }, ...(chargeAccount ? { direct: { accountRef: chargeAccount, applicationFeeMinor: 0 } } : {}) });
     } catch (err) {
+      if (err instanceof DomainError) {
+        await this.repos.ticketTypes.release(option.ticketTypeId, 1);
+        throw err;
+      }
       await this.repos.ticketTypes.release(option.ticketTypeId, 1);
       throw new DomainError("PAYMENTS_UPSTREAM", `payments provider error: ${(err as Error).message}`);
     }
@@ -1358,7 +1428,7 @@ export class Core {
     await this.repos.seats.update({ ...old, status: "transferred", transferredToSeatId: seat.id });
     await this.repos.ticketTypes.release(old.ticketTypeId, 1);
     await this.repos.seatTransfers.update({ ...transfer, status: "completed", toSeatId: seat.id, completedAt: now });
-    if (opts.paid && transfer.feeMinor > 0) {
+    if (opts.paid && transfer.feeMinor > 0 && !transfer.chargeAccountRef) {
       const clearing = await this.accounts.clearing(transfer.currency);
       const payable = await this.accounts.orgPayable(old.organizationId, transfer.currency);
       await this.ledger.post({
@@ -1684,14 +1754,17 @@ export class Core {
     const org = await this.getOrganization(organizationId);
     const event = await this.getEvent(organizationId, eventId);
     if (event.status === "cancelled") throw new DomainError("INVALID_STATE", "cancelled cohorts refund instead of releasing");
-    let released = 0, amount = 0;
+    let released = 0, amount = 0, platformCollected = false;
     for (const order of await this.repos.orders.listByOrganization(organizationId, 10_000)) {
-      if (order.eventId !== eventId || order.fundsStatus !== "held") continue;
+      if (order.eventId !== eventId) continue;
+      if (order.settlement !== "direct" && order.pricing.totalMinor > 0 && order.status !== "pending" && order.status !== "failed") platformCollected = true;
+      if (order.fundsStatus !== "held") continue;
       const fresh = (await this.repos.orders.get(order.id)) ?? order;
       amount += await this.releaseOrder(fresh, org);
       released += 1;
     }
-    await this.settleInstructorFees(event, org);
+    // Instructor fees are paid from money the platform holds; with Direct payments the organizer pays instructors.
+    if (platformCollected || org.paymentMode !== "direct") await this.settleInstructorFees(event, org);
     if (event.status === "live" && (event.endsAt ?? event.startsAt) <= this.clock.now()) await this.repos.events.update({ ...event, status: "ended" });
     return { released, amountMinor: amount };
   }

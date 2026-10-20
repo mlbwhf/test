@@ -1,6 +1,6 @@
 import type { PricingSettings } from "./fx.js";
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { PayoutDestination, Pricing, SplitResult, SplitRule } from "@gate/pricing";
+import type { PaymentMode, PayoutDestination, Pricing, SplitResult, SplitRule } from "@gate/pricing";
 import type { ChangePolicy } from "./policy.js";
 
 export interface Organization {
@@ -17,9 +17,18 @@ export interface Organization {
    * Last known state of that account. An account exists as soon as setup starts; it is
    * only ready once the provider enables both charges and payouts.
    */
+  paymentsStatus?: PaymentsStatus;
+  /**
+   * How card payments flow; absent = protected. Protected: EnrollClass charges learners and
+   * holds the money until delivery (paymentsAccountRef receives transfers). Direct: learners
+   * pay the organizer's own Stripe account (directAccountRef) and EnrollClass takes a fee.
+   */
+  paymentMode?: PaymentMode;
+  /** The organizer's own Stripe account for Direct mode (a separate account: the organizer pays card fees and carries disputes). */
+  directAccountRef?: string;
+  directStatus?: PaymentsStatus;
   /** Instructor view and control; absent means DEFAULT_INSTRUCTOR_ACCESS. */
   instructorAccess?: InstructorAccess;
-  paymentsStatus?: { ready: boolean; chargesEnabled: boolean; payoutsEnabled: boolean; detailsSubmitted: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: Date };
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */
@@ -39,6 +48,7 @@ export interface Organization {
 }
 
 export type ReleasePolicy = "immediate" | "on_delivery";
+export type PaymentsStatus = { ready: boolean; chargesEnabled: boolean; payoutsEnabled: boolean; detailsSubmitted: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: Date };
 export type PartyKind = "venue" | "vendor" | "promoter" | "tax_reserve" | "instructor";
 export interface Party {
   id: string;
@@ -72,12 +82,13 @@ export interface Course {
   createdAt: Date;
 }
 
-export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other";
+/** "own": a badge image the organizer uploaded, issued with EnrollClass certificates (no outside platform). */
+export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
 export interface CourseBadge {
   platform: BadgePlatform;
   name: string;
-  /** Public page of the badge (template) on the platform. */
-  url: string;
+  /** Public page of the badge (template) on the platform; optional for "own" badges. */
+  url?: string;
   imageUrl?: string;
 }
 
@@ -232,6 +243,8 @@ export interface SeatTransfer {
   currency: Currency;
   status: SeatTransferStatus;
   paymentRef?: string;
+  /** Set when the fee was charged on the organizer's own Stripe account (Direct mode). */
+  chargeAccountRef?: string;
   toSeatId?: string;
   createdAt: Date;
   completedAt?: Date;
@@ -296,6 +309,10 @@ export interface Order {
   pricing: Pricing;
   splits: SplitResult;
   paymentRef?: string;
+  /** Direct: the card payment lives on the organizer's own Stripe account; nothing is held or transferred. */
+  settlement?: "direct";
+  /** The connected account that took the charge (Direct mode), for refunds. */
+  chargeAccountRef?: string;
   transferRefs: Record<string, string>;
   refundedMinor: MinorUnits;
   /** Organizer-side money (organizer + split parties) still held pending delivery. */

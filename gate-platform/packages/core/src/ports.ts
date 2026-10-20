@@ -31,6 +31,12 @@ export interface PaymentsPort {
     businessName: string;
     /** Independent instructors onboard as individuals, organizations as companies. */
     businessType?: "individual" | "company";
+    /**
+     * protected (default): the platform pays card fees and carries losses; funds arrive by transfer.
+     * direct: the organizer's own account with the full provider dashboard, which pays its own card
+     * fees and carries refunds and disputes.
+     */
+    mode?: "protected" | "direct";
   }): Promise<{ accountRef: string; onboardingUrl?: string }>;
   /** Live status of a connected account. */
   getAccountStatus(accountRef: string): Promise<PaymentsAccountStatus>;
@@ -43,6 +49,8 @@ export interface PaymentsPort {
     transferGroup: string;
     buyerEmail: string;
     metadata: Record<string, string>;
+    /** Charge on the organizer's own account (a direct charge) and keep this application fee. */
+    direct?: { accountRef: string; applicationFeeMinor: MinorUnits };
   }): Promise<{ paymentRef: string; clientSecret: string | null; status: "requires_payment" | "succeeded" }>;
   createTransfer(input: {
     idempotencyKey: string;
@@ -57,6 +65,8 @@ export interface PaymentsPort {
     paymentRef: string;
     amountMinor: MinorUnits;
     reason: string;
+    /** The organizer's account that took a direct charge; the application fee is returned pro rata. */
+    accountRef?: string | undefined;
   }): Promise<{ refundRef: string; status: "pending" | "succeeded" | "failed" }>;
 }
 

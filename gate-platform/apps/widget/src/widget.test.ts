@@ -396,6 +396,25 @@ describe("payment", () => {
     expect(confirmPayment).toHaveBeenCalledWith(expect.objectContaining({ redirect: "if_required" }));
     expect(polls).toBeGreaterThanOrEqual(2);
   });
+
+  it("points Stripe.js at the organizer's own account for Direct payments", async () => {
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url.endsWith("/orders") && json) return { status: 201, body: { ...orderResponse(json, "ord_d"), stripeAccount: json.dryRun ? null : "acct_org_own" } };
+      return undefined;
+    });
+    const stripeFactory = vi.fn<StripeFactory>(() => ({
+      elements() { return { create: () => ({ mount: vi.fn() }) }; },
+      confirmPayment: vi.fn(async () => ({ paymentIntent: { status: "succeeded" } })),
+    }));
+    window.Stripe = stripeFactory;
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "GBP", stripePk: "pk_test_123" });
+    await widget.ready;
+    await openCheckout(host, 0, "buyer@example.com");
+    submitForm(host);
+    await vi.waitFor(() => expect(buttonByText(host, /^Pay /).disabled).toBe(false));
+    expect(stripeFactory).toHaveBeenCalledWith("pk_test_123", { stripeAccount: "acct_org_own" });
+  });
 });
 
 describe("errors", () => {

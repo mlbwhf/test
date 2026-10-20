@@ -80,7 +80,7 @@ export async function transferSeatAction(_prev: TransferState, formData: FormDat
   const result = await publicApi.transfer(cred.seatId, { email: cred.email, toEventId });
   if (!result.ok) return fail(describeFailure(result.error));
 
-  const { seat, transfer, clientSecret } = result.data;
+  const { seat, transfer, clientSecret, stripeAccount } = result.data;
   revalidateSeat(cred.seatId);
   if (seat) revalidateSeat(seat.id);
 
@@ -103,6 +103,7 @@ export async function transferSeatAction(_prev: TransferState, formData: FormDat
       currency,
       paymentRef: transfer.paymentRef ?? null,
       clientSecret,
+      stripeAccount: stripeAccount ?? null,
       seatId: cred.seatId,
       newSeatId: seat ? seat.id : null,
       email: cred.email,

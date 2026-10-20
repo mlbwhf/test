@@ -17,6 +17,9 @@ import { getMe } from "@/lib/console-data";
 import { MoneyKpis, OrdersTab, SettingsRows } from "./parts";
 import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
 import { HelpLink } from "@/components/help-link";
+import { PaymentModeCard } from "@/components/payment-mode";
+import { publicApi } from "@/lib/public-api";
+import { FALLBACK_USD_FEES } from "@/lib/fees";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +131,10 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
 
   const org = orgRes.ok ? orgRes.data : null;
   const fallbackCurrency = org?.currency ?? "USD";
+  // How you get paid: the mode, each mode's Stripe account, and the published fees.
+  const [paymentsRes, feesRes] = tab === "settings" && perms.includes("settings") ? await Promise.all([api.refreshPayments(), publicApi.getFees()]) : [null, null];
+  const fees = (feesRes?.ok ? feesRes.data.currencies[fallbackCurrency] ?? feesRes.data.currencies.USD : undefined) ?? FALLBACK_USD_FEES;
+  const feeCurrency = feesRes?.ok && feesRes.data.currencies[fallbackCurrency] ? fallbackCurrency : "USD";
   const report = reportRes && reportRes.ok ? reportRes.data : null;
   const cohorts = report?.cohorts ?? [];
   const payables = payablesRes.ok ? payablesRes.data.items : [];
@@ -440,7 +447,8 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
       </Section>
       )}
 
-      {tab === "settings" && org && <SettingsRows org={org} canEdit={perms.includes("settings")} paymentsSetup={meRes.ok ? meRes.data.organization?.paymentsSetup ?? null : null} />}
+      {tab === "settings" && paymentsRes?.ok && <PaymentModeCard state={paymentsRes.data} fees={fees} currency={feeCurrency} canEdit={perms.includes("settings")} />}
+      {tab === "settings" && org && <SettingsRows org={org} canEdit={perms.includes("settings")} paymentsSetup={meRes.ok ? meRes.data.organization?.paymentsSetup ?? null : null} showPayments={!paymentsRes?.ok} />}
 
       {tab === "settings" && perms.includes("settings") && (
       <details className="card edit-block" id="pricing" open={query.edit === "pricing"}>

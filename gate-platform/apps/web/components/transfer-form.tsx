@@ -16,6 +16,8 @@ export type FeePayment = {
   paymentRef: string | null;
   /** Stripe PaymentIntent client secret, when the API created one. */
   clientSecret: string | null;
+  /** Direct payments: the organizer's own Stripe account. */
+  stripeAccount: string | null;
   /** Original seat id (the credential). */
   seatId: string;
   /** New seat id when the API already created it, else null. */
@@ -101,6 +103,7 @@ function FeePanel({ payment, stripePublishableKey }: { payment: FeePayment; stri
         <StripeFeePayment
           publishableKey={stripePublishableKey}
           clientSecret={payment.clientSecret}
+          stripeAccount={payment.stripeAccount}
           feeLabel={feeLabel}
           returnPath={returnPath}
         />

@@ -17,7 +17,7 @@ export default function ImportPage() {
 
       <Section title="From Eventbrite">
         <p className="hint">
-          Create a private token at Eventbrite: Account settings → Developer links → API keys → &quot;Private token&quot;. It is used for this request only and never stored. Each Eventbrite event becomes a cohort; events with the same title (ignoring dates) are grouped into one course.
+          Create a private token at Eventbrite: Account settings → Developer links → API keys → &quot;Private token&quot;. It is used for this request only and never stored. Each Eventbrite event becomes a cohort; events with the same title (ignoring dates) are grouped into one course. The event image becomes the course cover, a Credly or other badge link in the description becomes the course badge, free tickets stay free and Eventbrite drafts arrive as drafts.
         </p>
         <ActionForm action={importEventbriteAction} submitLabel="Run" pendingLabel="Talking to Eventbrite…">
             <label>
@@ -45,7 +45,7 @@ export default function ImportPage() {
 
       <Section title="From a CSV file (Corsizio, spreadsheets, other tools)">
         <p className="hint">
-          Export your events from Corsizio (Events → Export) or any tool and upload the CSV. Columns are matched by name: title/name, start, end, time zone, currency, price, seats or capacity, format or location, description, ticket type. Rows with the same name and start become one cohort with several ticket types.{" "}
+          Export your events from Corsizio (Events → Export) or any tool and upload the CSV. Columns are matched by name: title/name, start, end, time zone, currency, price (0 = free), seats or capacity, minimum, format or location, instructors or trainer, meeting or Zoom link, description, ticket type, cover image, badge (a Credly, Accredible, Badgr or Certopus link), badge image (your own badge when you don&apos;t use a platform) and certification body. Rows with the same name and start become one cohort with several ticket types; a draft status imports as a draft.{" "}
           <a href="/import/template.csv">Download the template</a> for the canonical column names.
         </p>
         <ActionForm action={importCsvAction} submitLabel="Run" pendingLabel="Reading the file…" wide>

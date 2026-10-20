@@ -44,7 +44,7 @@ describe("delivery-linked release", () => {
     const a = await sell(org.id, tt.id, 2, "a@co.com");
     const b = await sell(org.id, tt.id, 3, "b@co.com");
     expect(a.fundsStatus).toBe("held");
-    expect(a.heldMinor).toBe(200_000 - 1_300); // organizer + venue share, net of platform fee
+    expect(a.heldMinor).toBe(200_000 - 9_980); // organizer + venue share, net of platform fee
     expect(a.transferRefs).toEqual({}); // nothing moved to Stripe yet
     let bal = await core.balancesFor(org.id);
     expect(bal.find((x) => x.code === codes.orgHeld(org.id, "CAD"))?.balanceMinor).toBe(a.heldMinor + b.heldMinor);
@@ -95,7 +95,7 @@ describe("delivery-linked release", () => {
     const tt = await core.createTicketType(org.id, ev.id, { name: "s", priceMinor: 10_000, quantity: 5 });
     const o = await sell(org.id, tt.id, 1, "q@q.co");
     expect(o.fundsStatus).toBe("released");
-    expect((await core.payables(org.id))[0]).toMatchObject({ payableMinor: 10_000 - 300, heldMinor: 0 });
+    expect((await core.payables(org.id))[0]).toMatchObject({ payableMinor: 10_000 - 570, heldMinor: 0 });
     const updated = await core.updateOrganization(org.id, { releasePolicy: "on_delivery", releaseGraceHours: 48 });
     expect(updated).toMatchObject({ releasePolicy: "on_delivery", releaseGraceHours: 48 });
   });
@@ -151,7 +151,7 @@ describe("revenue recognition", () => {
     const novRow = nowReport.cohorts.find((c) => c.eventId === nov.id)!;
     expect(novRow).toMatchObject({ recognized: true, seats: 3, grossMinor: 300_000, refundedMinor: 100_000, instructorFeesMinor: 150_000, fundsStatus: "held" });
     expect(novRow.marginMinor).toBe(novRow.organizerNetMinor - Math.round((100_000 * novRow.organizerNetMinor) / 300_000) - 150_000);
-    expect(nowReport.byCurrency.CAD).toMatchObject({ recognizedMinor: novRow.marginMinor, deferredMinor: 100_000 - 650, refundedMinor: 100_000 });
+    expect(nowReport.byCurrency.CAD).toMatchObject({ recognizedMinor: novRow.marginMinor, deferredMinor: 100_000 - 4_990, refundedMinor: 100_000 });
     const janRow = nowReport.cohorts.find((c) => c.eventId === jan.id)!;
     expect(janRow.recognized).toBe(false);
   });

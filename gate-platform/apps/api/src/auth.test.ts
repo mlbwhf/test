@@ -230,8 +230,26 @@ describe("teams and roles", () => {
 
     payments.completeOnboarding(c1.paymentsAccountRef);
     const refreshed = (await app.inject({ url: "/v1/organizations/me/payments", headers: B(token) })).json();
-    expect(refreshed).toMatchObject({ setup: "ready", status: { ready: true } });
-    expect(await me()).toMatchObject({ paymentsConnected: true, paymentsSetup: "ready" });
+    expect(refreshed).toMatchObject({ mode: "protected", setup: "ready", status: { ready: true }, direct: { setup: "none" } });
+    expect(await me()).toMatchObject({ paymentMode: "protected", paymentsConnected: true, paymentsSetup: "ready" });
+
+    // Direct mode: the organizer's own Stripe account, connected separately; Protected stays connected.
+    const switched = await app.inject({ method: "PUT", url: "/v1/organizations/me/payments/mode", headers: BJ(token), payload: { mode: "direct" } });
+    expect(switched.json()).toMatchObject({ mode: "direct", setup: "none", protected: { setup: "ready" } });
+    expect(await me()).toMatchObject({ paymentMode: "direct", paymentsConnected: false, paymentsSetup: "none" });
+    const d = (await app.inject({ method: "POST", url: "/v1/organizations/me/payments/connect", headers: BJ(token), payload: {} })).json();
+    expect(d).toMatchObject({ mode: "direct", ready: false });
+    expect(d.paymentsAccountRef).toMatch(/^acct_fake_direct_/);
+    payments.completeOnboarding(d.paymentsAccountRef);
+    expect((await app.inject({ url: "/v1/organizations/me/payments", headers: B(token) })).json()).toMatchObject({ mode: "direct", setup: "ready" });
+    const orgOut = (await app.inject({ url: "/v1/organizations/me", headers: B(token) })).json();
+    expect(orgOut).toMatchObject({ paymentMode: "direct", directAccountRef: d.paymentsAccountRef, directStatus: { ready: true } });
+    expect((await app.inject({ method: "PUT", url: "/v1/organizations/me/payments/mode", headers: BJ(token), payload: { mode: "wire" } })).statusCode).toBe(400);
+    const ev = (await app.inject({ method: "POST", url: "/v1/events", headers: BJ(token), payload: { name: "Direct class", startsAt: "2027-01-10T14:00:00Z" } })).json();
+    const tt = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: BJ(token), payload: { name: "Seat", priceMinor: 100_000, quantity: 5 } })).json();
+    const bought = await app.inject({ method: "POST", url: `/public/v1/organizations/${orgOut.id}/orders`, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "learner@x.co" } });
+    expect(bought.statusCode).toBe(201);
+    expect(bought.json()).toMatchObject({ stripeAccount: d.paymentsAccountRef, order: { settlement: "direct", pricing: { platformFeeMinor: 1_500 + 60 } } });
   });
 });
 

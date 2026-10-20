@@ -13,13 +13,30 @@ export interface ImportTicketType {
   sold?: number;
 }
 
+export type ImportBadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
+/** A digital badge found at the source: a platform link, or just an image (the organizer's own badge). */
+export interface ImportBadge { platform: ImportBadgePlatform; name: string; url?: string; imageUrl?: string }
+
 export interface ImportItem {
   source: ImportSource;
   /** Identifier at the source (Eventbrite event id, CSV row number). */
   sourceId: string;
   sourceUrl?: string;
-  course: { slug: string; name: string; description?: string; durationDays?: number; /** Cover image at the source, copied into the media store on apply. */ imageUrl?: string };
-  event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: ImportFormat };
+  course: {
+    slug: string; name: string; description?: string; durationDays?: number;
+    /** Cover image at the source, copied into the media store on apply. */ imageUrl?: string;
+    badge?: ImportBadge; certificationBody?: string;
+  };
+  event: {
+    name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: ImportFormat;
+    /** Instructor names; matched to the organization's instructors on apply, created when new. */
+    instructors?: string[];
+    minEnrollment?: number;
+    /** Online class link (Zoom, Teams…), set as the joining link. */
+    meetingUrl?: string;
+    /** Not published at the source: imported as a draft. */
+    draft?: boolean;
+  };
   ticketTypes: ImportTicketType[];
   /** Status at the source, informational. */
   sourceStatus?: string;
@@ -59,6 +76,34 @@ export function courseNameFrom(eventName: string): string {
   if (parts.length < 2) return name.replace(/\s*\([^)]*\)\s*$/, "").trim() || name;
   const [head, ...rest] = parts;
   return rest.some((p) => DATEISH.test(p)) ? head!.trim() : name;
+}
+
+const BADGE_LINKS: Array<[RegExp, ImportBadgePlatform]> = [
+  [/https?:\/\/(?:www\.)?credly\.com\/(?:org\/[^\s"'<>()]+\/)?badge\/[^\s"'<>()]+/i, "credly"],
+  [/https?:\/\/(?:www\.)?(?:accredible\.com|credential\.net)\/[^\s"'<>()]+/i, "accredible"],
+  [/https?:\/\/(?:[a-z]+\.)?badgr\.(?:com|io)\/[^\s"'<>()]+/i, "badgr"],
+  [/https?:\/\/(?:[a-z]+\.)?certopus\.com\/[^\s"'<>()]+/i, "certopus"],
+];
+
+/** The badge platform a link belongs to ("other" for any other https link). */
+export function badgePlatformOf(url: string): ImportBadgePlatform {
+  return BADGE_LINKS.find(([re]) => re.test(url))?.[1] ?? "other";
+}
+
+/** Finds a Credly, Accredible, Badgr or Certopus badge link in free text (an event description). */
+export function detectBadge(text: string | undefined, name: string): ImportBadge | undefined {
+  if (!text) return undefined;
+  for (const [re, platform] of BADGE_LINKS) {
+    const m = text.match(re);
+    if (m) return { platform, name, url: m[0].replace(/^http:/i, "https:").replace(/[.,;:!?]+$/, "") };
+  }
+  return undefined;
+}
+
+/** Splits "Jane Doe; Ali Khan" or "Jane Doe, Ali Khan & Sam Lee" into names. */
+export function splitNames(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return [...new Set(raw.split(/\s*(?:;|,|\/|\band\b|&|\n)\s*/i).map((n) => n.trim()).filter((n) => n.length > 1 && n.length <= 120))].slice(0, 10);
 }
 
 export function durationDaysBetween(startsAt: string, endsAt?: string): number | undefined {

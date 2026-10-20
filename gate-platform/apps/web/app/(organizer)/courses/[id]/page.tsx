@@ -84,16 +84,20 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
       </Section>
 
       <Section title="Digital badge">
-        <p className="hint">Learners who finish this course earn a badge on Credly, Accredible, Badgr or another platform. It shows on the public course page, on certificates and in the certificate email.</p>
+        <p className="hint">Learners who finish this course earn a badge on Credly, Accredible, Badgr or another platform, or your own badge if you don&apos;t use one: upload its image and it is issued with EnrollClass certificates. It shows on the public course page, on certificates and in the certificate email.</p>
         {course.badge && (
           <div className="badge-preview">
             {course.badge.imageUrl && <img src={course.badge.imageUrl} alt="" width={72} height={72} />}
             <div>
               <strong>{course.badge.name}</strong>
               <span className="muted">{BADGE_PLATFORMS[course.badge.platform]}</span>
-              <a href={course.badge.url} target="_blank" rel="noreferrer noopener">
-                {course.badge.url}
-              </a>
+              {course.badge.url ? (
+                <a href={course.badge.url} target="_blank" rel="noreferrer noopener">
+                  {course.badge.url}
+                </a>
+              ) : (
+                <span className="muted">Issued with EnrollClass certificates</span>
+              )}
             </div>
           </div>
         )}
@@ -115,11 +119,15 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
               <input name="name" defaultValue={course.badge?.name ?? ""} placeholder="e.g. Certified SAFe Agilist" required maxLength={200} />
             </label>
             <label>
-              Badge page link
-              <input name="url" type="url" defaultValue={course.badge?.url ?? ""} placeholder="https://www.credly.com/org/…/badge/…" required />
+              Badge page link (not needed for your own badge)
+              <input name="url" type="url" defaultValue={course.badge?.url ?? ""} placeholder="https://www.credly.com/org/…/badge/…" />
             </label>
             <label>
-              Badge image link (optional)
+              Upload badge image (PNG, JPEG, WebP or GIF, up to 5 MB)
+              <input name="badgeImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+            </label>
+            <label>
+              Or badge image link
               <input name="imageUrl" type="url" defaultValue={course.badge?.imageUrl ?? ""} placeholder="https://images.credly.com/…png" />
             </label>
           </div>

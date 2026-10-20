@@ -23,6 +23,9 @@ describe("API", () => {
     const spec = (await app.inject("/docs/json")).json();
     expect(spec.openapi).toBe("3.1.0");
     expect(Object.keys(spec.paths)).toEqual(expect.arrayContaining(["/v1/orders", "/v1/refunds", "/v1/ledger/balances", "/v1/webhooks/stripe"]));
+    const fees = (await app.inject("/public/v1/fees")).json().currencies;
+    expect(fees.USD).toEqual({ protected: { bps: 490, fixedMinor: 80, capMinor: null }, direct: { bps: 150, fixedMinor: 50, capMinor: null } });
+    expect(Object.keys(fees)).toEqual(expect.arrayContaining(["USD", "CAD", "EUR", "GBP"]));
   });
 
   it("rejects missing/invalid api keys and admin keys", async () => {
@@ -73,7 +76,7 @@ describe("API", () => {
     expect((await app.inject({ url: `/v1/orders/${order.id}`, headers: H() })).json().status).toBe("paid");
 
     const bal = (await app.inject({ url: "/v1/ledger/balances", headers: H() })).json().accounts;
-    expect(bal.find((a: { code: string }) => a.code.endsWith(":payable:USD")).balanceMinor).toBe(199_000);
+    expect(bal.find((a: { code: string }) => a.code.endsWith(":payable:USD")).balanceMinor).toBe(190_040);
     const entries = (await app.inject({ url: "/v1/ledger/entries", headers: H() })).json().items;
     expect(entries).toHaveLength(1);
 
@@ -219,6 +222,49 @@ describe("API", () => {
 
     const pub = (await im.inject(`/public/v1/organizations/${course.organizationId}/courses/rte`)).json();
     expect(pub.course.imageUrl).toBeNull();
+  });
+
+  it("uploads the organizer's own badge image, and imports badges, instructors, minimum, meeting link and drafts", async () => {
+    const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
+    const fetchImpl = (async (url: string) => (url === "https://cdn.example.com/agile-badge.png" ? new Response(png, { headers: { "content-type": "image/png" } }) : new Response("", { status: 404 }))) as unknown as typeof fetch;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl, publicUrl: "https://api.test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+
+    // No Credly? Upload your own badge image: it becomes the course's own badge.
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "rte", name: "RTE" } })).json();
+    const own = await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/badge-image?name=${encodeURIComponent("RTE Practitioner")}`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png });
+    expect(own.statusCode).toBe(200);
+    expect(own.json().badge).toMatchObject({ platform: "own", name: "RTE Practitioner" });
+    expect(own.json().badge.imageUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\//);
+    expect(own.json().badge.url).toBeUndefined();
+    // With a Credly badge, the upload only replaces its image.
+    await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { badge: { platform: "credly", name: "RTE", url: "https://www.credly.com/org/aa/badge/rte" } } });
+    const img = (await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/badge-image`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();
+    expect(img.badge).toMatchObject({ platform: "credly", url: "https://www.credly.com/org/aa/badge/rte" });
+    expect((await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { badge: { platform: "own", name: "No image" } } })).statusCode).toBe(400);
+
+    const csv = [
+      "Event Name,Course,Start Date,Price,Capacity,Minimum,Trainer,Zoom Link,Credly Badge,Badge Image,Certification Body,Status",
+      '"PMP Prep - Dec 2099",PMP Prep,2099-12-01 09:00,1495,20,6,"Jane Doe; Ali Khan",https://zoom.us/j/1,https://www.credly.com/org/acme/badge/pmp,,PMI,active',
+      '"Agile Taster - Dec 2099",Agile Taster,2099-12-03 13:00,0,40,,Ali Khan,,,https://cdn.example.com/agile-badge.png,,draft',
+    ].join("\n");
+    const applied = (await im.inject({ method: "POST", url: "/v1/imports/csv", headers: J, payload: { csv, dryRun: false, timezone: "America/Toronto" } })).json();
+    expect(applied.results).toEqual([
+      expect.objectContaining({ status: "created", badge: "set", instructors: 2, instructorsCreated: ["Jane Doe", "Ali Khan"] }),
+      expect.objectContaining({ status: "created", badge: "set", instructors: 1, draft: true }),
+    ]);
+    expect(applied.results[1].instructorsCreated).toBeUndefined(); // Ali Khan reused
+    const pmp = (await im.inject({ url: `/v1/courses/${applied.results[0].courseId}`, headers: J })).json();
+    expect(pmp).toMatchObject({ certificationBody: "PMI", badge: { platform: "credly", url: "https://www.credly.com/org/acme/badge/pmp" } });
+    const agile = (await im.inject({ url: `/v1/courses/${applied.results[1].courseId}`, headers: J })).json();
+    expect(agile.badge).toMatchObject({ platform: "own", name: "Agile Taster" });
+    expect(agile.badge.imageUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\//);
+    const pmpEvent = (await im.inject({ url: `/v1/events/${applied.results[0].eventId}`, headers: J })).json();
+    expect(pmpEvent).toMatchObject({ minEnrollment: 6, status: "live", meeting: { provider: "manual", joinUrl: "https://zoom.us/j/1" } });
+    expect(pmpEvent.instructorIds).toHaveLength(2);
+    expect((await im.inject({ url: `/v1/events/${applied.results[1].eventId}`, headers: J })).json().status).toBe("draft");
   });
 
   it("copies the Eventbrite event image into the course when importing", async () => {

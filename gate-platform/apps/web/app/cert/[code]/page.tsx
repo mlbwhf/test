@@ -48,9 +48,14 @@ export default async function CertificatePage({ params }: { params: Params }) {
         <a className="cert-btn" href={linkedIn} target="_blank" rel="noreferrer noopener">
           Add to LinkedIn
         </a>
-        {c.badge && (
+        {c.badge?.url && (
           <a className="cert-btn" href={c.badge.url} target="_blank" rel="noreferrer noopener">
             Claim your badge on {BADGE_LABEL[c.badge.platform] ?? "the badge platform"}
+          </a>
+        )}
+        {c.badge && !c.badge.url && c.badge.imageUrl && (
+          <a className="cert-btn" href={c.badge.imageUrl} download target="_blank" rel="noreferrer noopener">
+            Download your badge
           </a>
         )}
       </div>

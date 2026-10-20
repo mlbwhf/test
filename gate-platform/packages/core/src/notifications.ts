@@ -119,7 +119,7 @@ export function confirmationHook(notifier: Notifier, opts: ConfirmationOptions):
           to,
           subject: `You're confirmed — ${title} · ${dates}`,
           text,
-          html: ticketHtml({ org: organization.name, fromName: opts.fromName, title, cohort: event.name, name, sessionsText, format: formatLabel(event.format), durationDays: course?.durationDays, orderId: order.id, seats: mine.length, calendarUrl: opts.calendarUrl?.(seat.id), url, timezone: event.timezone, attendee: seat.attendee.name ?? seat.attendee.email, ticket, manage, dates }),
+          html: ticketHtml({ org: organization.name, fromName: opts.fromName, title, cohort: event.name, name, sessionsText, format: formatLabel(event.format), durationDays: course?.durationDays, orderId: order.id, seats: mine.length, calendarUrl: opts.calendarUrl?.(seat.id), url, timezone: event.timezone, attendee: seat.attendee.name ?? seat.attendee.email, ticket, manage, dates, settlement: order.pricing.totalMinor === 0 ? "free" : order.settlement === "direct" ? "direct" : "held" }),
           replyTo: opts.replyTo,
           attachments: [{ filename: invite.method === "REQUEST" ? "invite.ics" : "cohort.ics", contentType: `text/calendar; charset=utf-8; method=${invite.method}`, content: invite.ics, encoding: "utf8" }],
         });
@@ -162,7 +162,7 @@ const INK = "#14213d", PAPER = "#f7f6f2", SAND = "#eeebe2", GREEN = "#3fcb7e", G
 const MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
 const SANS = "'Instrument Sans',Helvetica,Arial,sans-serif";
 const DISPLAY = "'Bricolage Grotesque','Instrument Sans',Helvetica,Arial,sans-serif";
-function ticketHtml(i: { org: string; fromName: string; title: string; cohort: string; name?: string | undefined; sessionsText: string; format: string; durationDays?: number | undefined; orderId: string; seats: number; calendarUrl?: string | undefined; url?: string | undefined; timezone: string; attendee: string; ticket?: { url: string; qrUrl: string; code: string } | undefined; manage?: string | undefined; dates: string }): string {
+function ticketHtml(i: { org: string; fromName: string; title: string; cohort: string; name?: string | undefined; sessionsText: string; format: string; durationDays?: number | undefined; orderId: string; seats: number; calendarUrl?: string | undefined; url?: string | undefined; timezone: string; attendee: string; ticket?: { url: string; qrUrl: string; code: string } | undefined; manage?: string | undefined; dates: string; settlement?: "held" | "direct" | "free" }): string {
   const label = (t: string) => `<div style="font-family:${MONO};font-size:11px;letter-spacing:.06em;color:#6b7280;text-transform:uppercase">${esc(t)}</div>`;
   const cell = (l: string, v: string) => `<td valign="top" width="50%" style="padding:0 8px 16px 0">${label(l)}<div style="font-family:${SANS};font-weight:600;font-size:15px;color:${INK};margin-top:3px">${v}</div></td>`;
   const eyebrow = [i.format.toUpperCase(), i.durationDays ? `${i.durationDays} DAY${i.durationDays === 1 ? "" : "S"}` : ""].filter(Boolean).join(" · ");
@@ -200,7 +200,7 @@ ${i.ticket ? `<tr><td align="center" style="background:${CARD};padding:26px 26px
 <tr><td style="padding:18px 6px 0;font-family:${SANS};font-size:13px;line-height:1.55;color:#4b5563">
   The calendar invitation is attached. Joining instructions and pre-work follow closer to the date.${i.manage ? `<br><a href="${esc(i.manage)}" style="color:${GREEN_TEXT}">Change attendee, move date or cancel</a>` : ""}${i.url ? ` · <a href="${esc(i.url)}" style="color:${GREEN_TEXT}">Course page</a>` : ""}
   <br><br>${esc(i.fromName)}
-  <div style="margin-top:18px;font-family:${MONO};font-size:11px;color:#9ca3af">Registration and payment by EnrollClass on behalf of ${esc(i.org)}. Your payment is held until the course is delivered.</div>
+  <div style="margin-top:18px;font-family:${MONO};font-size:11px;color:#9ca3af">${i.settlement === "free" ? `Registration by EnrollClass on behalf of ${esc(i.org)}.` : i.settlement === "direct" ? `Registration by EnrollClass on behalf of ${esc(i.org)}. Your payment went to ${esc(i.org)} through Stripe.` : `Registration and payment by EnrollClass on behalf of ${esc(i.org)}. Your payment is held until the course is delivered.`}</div>
 </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -304,7 +304,7 @@ export function sequenceHooks(notifier: Notifier, opts: SequenceMailOptions): Co
       await notifier.send({
         key: `certificate:${certificate.id}`, to: seat.attendee.email, replyTo: opts.replyTo,
         subject: `Your certificate of ${certificate.kind === "attendance" ? "attendance" : "completion"} — ${course?.name ?? certificate.courseName}`,
-        text: `Congratulations ${certificate.attendeeName}. Your certificate of ${certificate.kind === "attendance" ? "attendance" : "completion"} for ${certificate.courseName} is ready: ${url}\n\nShare the link or add it to LinkedIn from that page; anyone can verify it.${course?.badge ? `\n\nYou also earn the "${course.badge.name}" digital badge: ${course.badge.url}` : ""}\n\n${sign}`,
+        text: `Congratulations ${certificate.attendeeName}. Your certificate of ${certificate.kind === "attendance" ? "attendance" : "completion"} for ${certificate.courseName} is ready: ${url}\n\nShare the link or add it to LinkedIn from that page; anyone can verify it.${course?.badge ? `\n\nYou also earn the "${course.badge.name}" digital badge${course.badge.url ? `: ${course.badge.url}` : `, shown on your certificate page`}` : ""}\n\n${sign}`,
         html: `<p>Congratulations ${esc(certificate.attendeeName)}. Your certificate of completion for <strong>${esc(certificate.courseName)}</strong> is ready.</p><p><a href="${esc(url)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">View certificate</a></p><p>Share the link; anyone can verify it.</p><p>${esc(sign)}</p>`,
       });
     },

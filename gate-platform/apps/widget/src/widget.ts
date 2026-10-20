@@ -39,7 +39,8 @@ export interface StripeInstance {
   elements(options: { clientSecret: string; appearance?: { theme: string } }): StripeElements;
   confirmPayment(options: { elements: StripeElements; redirect: "if_required" }): Promise<StripeConfirmResult>;
 }
-export type StripeFactory = (publishableKey: string) => StripeInstance;
+/** `stripeAccount` points Stripe.js at the organizer's own account for Direct payments. */
+export type StripeFactory = (publishableKey: string, options?: { stripeAccount?: string }) => StripeInstance;
 declare global {
   interface Window { Stripe?: StripeFactory }
 }
@@ -562,7 +563,8 @@ export class Widget {
     );
     this.setStatus("Loading secure payment form…");
     try {
-      const stripe = (await loadStripe())(publishableKey);
+      const factory = await loadStripe();
+      const stripe = res.stripeAccount ? factory(publishableKey, { stripeAccount: res.stripeAccount }) : factory(publishableKey);
       const elements = stripe.elements({ clientSecret, appearance: { theme: prefersDark() ? "night" : "stripe" } });
       elements.create("payment").mount(container);
       this.setStatus("");

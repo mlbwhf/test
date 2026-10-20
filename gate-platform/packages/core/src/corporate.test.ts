@@ -50,7 +50,7 @@ describe("tax", () => {
     const taxed = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "a@b.ca", billingAddress: { country: "CA", region: "ON" } });
     expect(taxed.order.pricing.taxMinor).toBe(13_000);
     expect(taxed.order.pricing.totalMinor).toBe(113_000);
-    expect(taxed.order.pricing.organizerNetMinor).toBe(100_000 - 650);
+    expect(taxed.order.pricing.organizerNetMinor).toBe(100_000 - 4_990);
     await core.handlePaymentEvent(payments.succeed(taxed.order.paymentRef!, 113_000, "CAD"));
     const bal = await core.balancesFor(org.id);
     expect(bal.find((b) => b.code === codes.taxPayable(org.id, "CAD"))?.balanceMinor).toBe(13_000);
@@ -111,7 +111,7 @@ describe("corporate invoice orders", () => {
     expect(platform.find((b) => b.code === codes.bankClearing("CAD"))?.balanceMinor).toBe(invoice.totalMinor);
     expect(platform.find((b) => b.code === codes.customerDeposits("CAD"))?.balanceMinor).toBe(0);
     const bal = await core.balancesFor(org.id);
-    expect(bal.find((b) => b.code === codes.orgPayable(org.id, "CAD"))?.balanceMinor).toBe(200_000 - 1_300);
+    expect(bal.find((b) => b.code === codes.orgPayable(org.id, "CAD"))?.balanceMinor).toBe(200_000 - 9_980);
     expect(bal.find((b) => b.code === codes.taxPayable(org.id, "CAD"))?.balanceMinor).toBe(26_000);
     await ledger.assertBalanced();
     await expect(core.recordInvoicePayment(org.id, { invoiceId: invoice.id, amountMinor: 1, method: "wire" })).rejects.toMatchObject({ code: "INVALID_STATE" });

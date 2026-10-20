@@ -31,6 +31,20 @@ export type Organization = {
   minEnrollmentDecisionDays: number;
   pricing: PricingSettings;
   instructorAccess: InstructorAccess;
+  /** protected: EnrollClass collects and holds until delivery; direct: learners pay the organizer's own Stripe. */
+  paymentMode: PaymentMode;
+};
+
+export type PaymentMode = "protected" | "direct";
+export type PaymentsSetup = "none" | "incomplete" | "ready";
+type PaymentsAccountStatus = { ready: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: string } | null;
+/** setup/status describe the active mode's Stripe account; each mode has its own. */
+export type PaymentsState = {
+  mode: PaymentMode;
+  setup: PaymentsSetup;
+  status: PaymentsAccountStatus;
+  protected: { setup: PaymentsSetup; status: PaymentsAccountStatus };
+  direct: { setup: PaymentsSetup; status: PaymentsAccountStatus };
 };
 
 /** scope: what instructors see; publish: whether their new classes need an owner or admin to approve. */
@@ -323,9 +337,10 @@ export type UpdateCourseInput = {
   badge?: CourseBadge | null;
 };
 
-export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other";
-export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other" };
-export type CourseBadge = { platform: BadgePlatform; name: string; url: string; imageUrl?: string };
+export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
+export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other platform", own: "Your own badge (upload an image)" };
+/** "own" badges have an uploaded image and no outside link. */
+export type CourseBadge = { platform: BadgePlatform; name: string; url?: string; imageUrl?: string };
 /** A text/csv payload proxied through to the browser by the roster route handler. */
 export type CsvDownload = { csv: string; contentType: string };
 
@@ -548,13 +563,13 @@ export type ImportItem = {
   source: ImportSource;
   sourceId: string;
   sourceUrl?: string;
-  course: { slug: string; name: string; description?: string; durationDays?: number; imageUrl?: string };
-  event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: EventFormat };
+  course: { slug: string; name: string; description?: string; durationDays?: number; imageUrl?: string; badge?: CourseBadge; certificationBody?: string };
+  event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: EventFormat; instructors?: string[]; minEnrollment?: number; meetingUrl?: string; draft?: boolean };
   ticketTypes: { name: string; priceMinor: number; quantity: number; sold?: number }[];
   sourceStatus?: string;
   warnings: string[];
 };
-export type ImportResult = { sourceId: string; status: "created" | "exists" | "skipped" | "failed"; reason?: string; courseId?: string; courseCreated?: boolean; eventId?: string; ticketTypes?: number; image?: "copied" | "kept" | "failed" | "none"; imageError?: string };
+export type ImportResult = { sourceId: string; status: "created" | "exists" | "skipped" | "failed"; reason?: string; courseId?: string; courseCreated?: boolean; eventId?: string; ticketTypes?: number; image?: "copied" | "kept" | "failed" | "none"; imageError?: string; badge?: "set" | "kept" | "failed" | "none"; instructors?: number; instructorsCreated?: string[]; draft?: boolean };
 export type ImportResponse = {
   plan: { source: ImportSource; items: ImportItem[]; courses: { slug: string; name: string; cohorts: number }[]; skipped: { sourceId: string; name: string; reason: string }[] };
   eventbriteOrganization?: { id: string; name: string } | null;
@@ -582,7 +597,7 @@ export const ROLE_HINTS: Record<Role, string> = {
 export type Permission = "team" | "settings" | "classes:write" | "classes:read" | "money:read" | "money:write";
 export type Me = {
   user: { id: string; email: string; name: string | null; avatarUrl: string | null };
-  organization: { id: string; name: string; kind: "company" | "individual" | null; currency: string; country: string; paymentsConnected: boolean; paymentsSetup: "none" | "incomplete" | "ready" } | null;
+  organization: { id: string; name: string; kind: "company" | "individual" | null; currency: string; country: string; paymentMode: PaymentMode; paymentsConnected: boolean; paymentsSetup: "none" | "incomplete" | "ready" } | null;
   role: Role | null;
   permissions: Permission[];
   memberships: { organizationId: string; organizationName: string; kind: "company" | "individual" | null; role: Role }[];
@@ -634,8 +649,9 @@ export const api = {
   revokeInvitation: (id: string) => request<{ ok: boolean }>("DELETE", `/v1/invitations/${enc(id)}`),
   changeRole: (userId: string, role: Role) => request<{ userId: string; role: Role }>("PATCH", `/v1/members/${enc(userId)}`, { role }),
   removeMember: (userId: string) => request<{ ok: boolean }>("DELETE", `/v1/members/${enc(userId)}`),
-  connectPayments: () => request<{ paymentsAccountRef: string; onboardingUrl: string | null; ready: boolean; requirementsDue: string[] }>("POST", "/v1/organizations/me/payments/connect", {}),
-  refreshPayments: () => request<{ setup: "none" | "incomplete" | "ready"; status: { ready: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: string } | null }>("GET", "/v1/organizations/me/payments"),
+  connectPayments: () => request<{ mode: PaymentMode; paymentsAccountRef: string; onboardingUrl: string | null; ready: boolean; requirementsDue: string[] }>("POST", "/v1/organizations/me/payments/connect", {}),
+  refreshPayments: () => request<PaymentsState>("GET", "/v1/organizations/me/payments"),
+  setPaymentMode: (mode: PaymentMode) => request<PaymentsState>("PUT", "/v1/organizations/me/payments/mode", { mode }),
 
   home: () => request<Home>("GET", "/v1/home"),
   eventLines: () => request<{ items: EventLine[] }>("GET", "/v1/events/overview"),
@@ -704,6 +720,8 @@ export const api = {
   uploadCourseImage: (id: string, bytes: ArrayBuffer, contentType: string) => request<Course>("PUT", `/v1/courses/${enc(id)}/image`, new RawBody(bytes, contentType)),
   importCourseImage: (id: string, url: string) => request<Course>("POST", `/v1/courses/${enc(id)}/image/from-url`, { url }),
   removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
+  uploadBadgeImage: (id: string, bytes: ArrayBuffer, contentType: string, name?: string) =>
+    request<Course>("PUT", `/v1/courses/${enc(id)}/badge-image${name ? `?name=${enc(name)}` : ""}`, new RawBody(bytes, contentType)),
   listCohorts: (courseId: string) => request<{ items: Event[] }>("GET", `/v1/courses/${enc(courseId)}/cohorts`),
   createCohort: (courseId: string, input: CreateCohortInput) =>
     request<Event>("POST", `/v1/courses/${enc(courseId)}/cohorts`, input),

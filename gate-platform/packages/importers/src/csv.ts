@@ -1,4 +1,4 @@
-import { buildPlan, courseNameFrom, durationDaysBetween, slugify, type ImportFormat, type ImportItem, type ImportPlan } from "./plan.js";
+import { badgePlatformOf, buildPlan, courseNameFrom, detectBadge, durationDaysBetween, slugify, splitNames, type ImportBadge, type ImportFormat, type ImportItem, type ImportPlan } from "./plan.js";
 
 // CSV import for sources without an API (Corsizio exports, spreadsheets, Eventbrite CSV).
 // Headers are matched loosely: "Start Date", "starts_at", "Start" and "Begins" all map to
@@ -33,7 +33,8 @@ export function parseCsv(text: string): string[][] {
   return rows;
 }
 
-type Column = "name" | "course" | "startsAt" | "endsAt" | "startTime" | "endTime" | "timezone" | "currency" | "price" | "seats" | "sold" | "format" | "location" | "description" | "ticketName" | "status" | "url" | "image";
+type Column = "name" | "course" | "startsAt" | "endsAt" | "startTime" | "endTime" | "timezone" | "currency" | "price" | "seats" | "sold" | "format" | "location" | "description" | "ticketName" | "status" | "url" | "image"
+  | "badge" | "badgeName" | "badgeImage" | "certificationBody" | "instructors" | "minEnrollment" | "meetingUrl";
 
 const ALIASES: Record<Column, string[]> = {
   name: ["name", "event", "event name", "event title", "title", "cohort", "class", "class name", "session name", "course name"],
@@ -54,6 +55,13 @@ const ALIASES: Record<Column, string[]> = {
   status: ["status", "state"],
   url: ["url", "link", "event url", "page"],
   image: ["image", "image url", "banner", "banner url", "cover", "cover image", "logo", "photo", "picture"],
+  badge: ["badge", "badge url", "badge link", "digital badge", "credly", "credly badge", "credly url", "credly link", "credential", "credential url", "accredible", "badgr"],
+  badgeName: ["badge name", "badge title", "credential name"],
+  badgeImage: ["badge image", "badge image url", "badge logo", "badge picture"],
+  certificationBody: ["certification body", "certifying body", "certification", "accreditation", "accredited by", "accrediting body", "awarding body"],
+  instructors: ["instructor", "instructors", "trainer", "trainers", "facilitator", "facilitators", "teacher", "teachers", "coach", "presenter", "presenters", "speaker", "speakers", "taught by"],
+  minEnrollment: ["minimum", "min", "min seats", "minimum seats", "minimum enrollment", "minimum enrolment", "min attendees", "minimum attendees", "minimum to run"],
+  meetingUrl: ["meeting link", "meeting url", "zoom link", "zoom url", "teams link", "online link", "join link", "join url", "webinar link", "virtual link"],
 };
 
 function normalizeHeader(h: string): string {
@@ -225,12 +233,27 @@ export function planFromCsv(text: string, opts: CsvImportOptions = {}): ImportPl
     const url = cell(row, "url");
     const image = cell(row, "image");
     if (image && !/^https?:\/\//i.test(image)) warnings.push(`image "${image.slice(0, 40)}" is not an http(s) URL; ignored`);
+    const badge = badgeFrom(cell(row, "badge"), cell(row, "badgeName"), cell(row, "badgeImage"), description, courseName, warnings);
+    const certificationBody = cell(row, "certificationBody");
+    const instructors = splitNames(cell(row, "instructors"));
+    const minRaw = cell(row, "minEnrollment");
+    const minEnrollment = minRaw ? Number.parseInt(minRaw.replace(/[^\d]/g, ""), 10) : NaN;
+    const meeting = cell(row, "meetingUrl");
+    if (meeting && !/^https:\/\//i.test(meeting)) warnings.push(`meeting link "${meeting.slice(0, 40)}" is not an https URL; ignored`);
+    const draft = Boolean(status && /draft|unpublished|hidden|private/.test(status));
     const item: ImportItem = {
       source: "csv",
       sourceId,
       ...(url ? { sourceUrl: url } : {}),
-      course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}), ...(image && /^https?:\/\//i.test(image) ? { imageUrl: image } : {}) },
-      event: { name, startsAt, ...(endsAt ? { endsAt } : {}), timezone, currency, format: formatFrom(cell(row, "format"), cell(row, "location")) },
+      course: {
+        slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}),
+        ...(image && /^https?:\/\//i.test(image) ? { imageUrl: image } : {}), ...(badge ? { badge } : {}), ...(certificationBody ? { certificationBody: certificationBody.slice(0, 200) } : {}),
+      },
+      event: {
+        name, startsAt, ...(endsAt ? { endsAt } : {}), timezone, currency, format: formatFrom(cell(row, "format"), cell(row, "location")),
+        ...(instructors.length ? { instructors } : {}), ...(Number.isFinite(minEnrollment) && minEnrollment > 0 ? { minEnrollment } : {}),
+        ...(meeting && /^https:\/\//i.test(meeting) ? { meetingUrl: meeting } : {}), ...(draft ? { draft } : {}),
+      },
       ticketTypes: [ticket],
       ...(status ? { sourceStatus: status } : {}),
       warnings,
@@ -241,7 +264,26 @@ export function planFromCsv(text: string, opts: CsvImportOptions = {}): ImportPl
   return { ...buildPlan("csv", items, skipped), columns: Object.keys(cols), unmatchedHeaders };
 }
 
+/** A badge column holds a platform link; a badge image alone is the organizer's own badge. */
+function badgeFrom(link: string | undefined, name: string | undefined, image: string | undefined, description: string | undefined, courseName: string, warnings: string[]): ImportBadge | undefined {
+  const imageUrl = image && /^https?:\/\//i.test(image) ? image : undefined;
+  if (image && !imageUrl) warnings.push(`badge image "${image.slice(0, 40)}" is not an http(s) URL; ignored`);
+  const badgeName = name?.trim() || courseName;
+  if (link) {
+    if (!/^https?:\/\//i.test(link)) {
+      warnings.push(`badge link "${link.slice(0, 40)}" is not a URL; ignored`);
+    } else {
+      const url = link.replace(/^http:/i, "https:");
+      return { platform: badgePlatformOf(url), name: badgeName, url, ...(imageUrl ? { imageUrl } : {}) };
+    }
+  }
+  if (imageUrl) return { platform: "own", name: badgeName, imageUrl };
+  const found = detectBadge(description, badgeName);
+  return found;
+}
+
 /** Canonical header row plus one example, offered as a download in the dashboard. */
 export const CSV_TEMPLATE =
-  "name,course,start,end,timezone,currency,price,seats,format,location,description,image\n" +
-  '"PMP Exam Prep - Nov 2026","PMP Exam Prep",2026-11-12 09:00,2026-11-14 17:00,America/Toronto,USD,1495.00,20,live_virtual,,"Three-day live online bootcamp.",https://example.com/pmp-banner.jpg\n';
+  "name,course,start,end,timezone,currency,price,seats,minimum,format,location,instructors,meeting link,description,image,badge,badge image,certification body\n" +
+  '"PMP Exam Prep - Nov 2026","PMP Exam Prep",2026-11-12 09:00,2026-11-14 17:00,America/Toronto,USD,1495.00,20,6,live_virtual,,"Jane Doe; Ali Khan",https://zoom.us/j/123456789,"Three-day live online bootcamp.",https://example.com/pmp-banner.jpg,https://www.credly.com/org/acme/badge/pmp-prep,,PMI\n' +
+  '"Intro to Agile - Dec 2026","Intro to Agile",2026-12-03 13:00,2026-12-03 16:00,America/Toronto,USD,0,40,,live_virtual,,"Ali Khan",,"Free taster session.",,,https://example.com/agile-badge.png,\n';

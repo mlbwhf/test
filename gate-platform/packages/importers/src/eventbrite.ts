@@ -1,4 +1,4 @@
-import { buildPlan, courseNameFrom, durationDaysBetween, slugify, type ImportItem, type ImportPlan } from "./plan.js";
+import { buildPlan, courseNameFrom, detectBadge, durationDaysBetween, slugify, type ImportItem, type ImportPlan } from "./plan.js";
 
 // Eventbrite API v3. The organizer pastes a private token from
 // https://www.eventbrite.com/platform/api-keys ; it is used for one request cycle and
@@ -105,12 +105,14 @@ export function mapEventbriteEvent(ev: EventbriteEvent): ImportItem | { skip: st
   const description = ev.summary?.trim() || ev.description?.text?.trim() || undefined;
   const durationDays = durationDaysBetween(startsAt, endsAt);
   const imageUrl = ev.logo?.original?.url || ev.logo?.url || undefined;
+  // A Credly (or Accredible, Badgr, Certopus) link in the description becomes the course badge.
+  const badge = detectBadge([ev.summary, ev.description?.text].filter(Boolean).join("\n"), courseName);
   return {
     source: "eventbrite",
     sourceId: ev.id,
     ...(ev.url ? { sourceUrl: ev.url } : {}),
-    course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}), ...(imageUrl ? { imageUrl } : {}) },
-    event: { name, startsAt, ...(endsAt ? { endsAt } : {}), timezone: ev.start.timezone || "UTC", currency, format: ev.online_event ? "live_virtual" : "in_person" },
+    course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}), ...(imageUrl ? { imageUrl } : {}), ...(badge ? { badge } : {}) },
+    event: { name, startsAt, ...(endsAt ? { endsAt } : {}), timezone: ev.start.timezone || "UTC", currency, format: ev.online_event ? "live_virtual" : "in_person", ...(ev.status === "draft" ? { draft: true } : {}) },
     ticketTypes,
     sourceStatus: ev.status,
     warnings,

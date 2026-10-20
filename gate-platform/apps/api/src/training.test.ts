@@ -277,10 +277,10 @@ describe("money API", () => {
     await app.inject({ method: "POST", url: `/v1/dev/payments/${ord.order.paymentRef}/succeed`, headers: { "x-api-key": key } });
     const paid = (await app.inject({ url: `/v1/orders/${ord.order.id}`, headers: HH })).json();
     expect(paid.fundsStatus).toBe("held");
-    expect(paid.heldMinor).toBe(200_000 - 1_300);
+    expect(paid.heldMinor).toBe(200_000 - 9_980);
 
     let payables = (await app.inject({ url: "/v1/reports/payables", headers: HH })).json().items;
-    expect(payables).toEqual([expect.objectContaining({ partyId: null, name: "Hold Org", payableMinor: 0, heldMinor: 200_000 - 1_300 })]);
+    expect(payables).toEqual([expect.objectContaining({ partyId: null, name: "Hold Org", payableMinor: 0, heldMinor: 200_000 - 9_980 })]);
     expect((await app.inject({ method: "POST", url: "/v1/payouts", headers: HH, payload: { currency: "CAD", amountMinor: 100, method: "wire" } })).statusCode).toBe(400);
 
     // Minimum-enrolment review: 2 of 5 seats, cohort in 3 days -> at risk.
@@ -291,10 +291,10 @@ describe("money API", () => {
     // Organizer decides to run it anyway: release manually after delivery (clock is before the end, so the job releases nothing yet).
     expect((await app.inject({ method: "POST", url: "/v1/jobs/release", headers: { "x-api-key": key } })).json().orders).toBe(0);
     const released = (await app.inject({ method: "POST", url: `/v1/events/${ev.id}/release`, headers: { "x-api-key": key } })).json();
-    expect(released).toEqual({ released: 1, amountMinor: 200_000 - 1_300 });
+    expect(released).toEqual({ released: 1, amountMinor: 200_000 - 9_980 });
     payables = (await app.inject({ url: "/v1/reports/payables", headers: HH })).json().items;
     expect(payables.find((p: { partyId: string | null }) => p.partyId === instructor.id)).toMatchObject({ name: "Jane", kind: "instructor", payableMinor: 40_000, heldMinor: 0 });
-    expect(payables.find((p: { partyId: string | null }) => p.partyId === null)).toMatchObject({ payableMinor: 200_000 - 1_300 - 40_000, heldMinor: 0 });
+    expect(payables.find((p: { partyId: string | null }) => p.partyId === null)).toMatchObject({ payableMinor: 200_000 - 9_980 - 40_000, heldMinor: 0 });
 
     const payout = await app.inject({ method: "POST", url: "/v1/payouts", headers: HH, payload: { partyId: instructor.id, currency: "CAD", amountMinor: 40_000, method: "bank_transfer", reference: "ET-1" } });
     expect(payout.statusCode).toBe(201);
@@ -302,7 +302,7 @@ describe("money API", () => {
 
     const report = (await app.inject({ url: "/v1/reports/revenue?from=2026-10-01T00:00:00Z&to=2026-10-31T00:00:00Z", headers: HH })).json();
     expect(report.cohorts[0]).toMatchObject({ eventId: ev.id, seats: 2, grossMinor: 200_000, instructorFeesMinor: 40_000, fundsStatus: "released", recognized: true });
-    expect(report.byCurrency.CAD.recognizedMinor).toBe(200_000 - 1_300 - 40_000);
+    expect(report.byCurrency.CAD.recognizedMinor).toBe(200_000 - 9_980 - 40_000);
 
     // Settings and cancellation of a second cohort with refunds.
     const settings = await app.inject({ method: "PATCH", url: "/v1/organizations/me", headers: HH, payload: { releaseGraceHours: 48, minEnrollmentDecisionDays: 10 } });

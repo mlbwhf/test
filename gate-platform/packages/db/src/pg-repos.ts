@@ -22,10 +22,16 @@ function toOrg(r: Row): Organization {
     ...(opt<Record<string, unknown>>(r.pricing) ? { pricing: pricingFromRow(r.pricing as Record<string, unknown>) } : {}),
     ...(opt<string>(r.kind) ? { kind: r.kind as NonNullable<Organization["kind"]> } : {}),
     ...(opt<Record<string, unknown>>(r.instructor_access) ? { instructorAccess: r.instructor_access as NonNullable<Organization["instructorAccess"]> } : {}),
-    ...(opt<Record<string, unknown>>(r.payments_status) ? { paymentsStatus: { ...(r.payments_status as NonNullable<Organization["paymentsStatus"]>), checkedAt: new Date(String((r.payments_status as Record<string, unknown>).checkedAt)) } } : {}),
+    ...(opt<Record<string, unknown>>(r.payments_status) ? { paymentsStatus: statusFromRow(r.payments_status) } : {}),
+    ...(r.payment_mode === "direct" ? { paymentMode: "direct" as const } : {}),
+    ...(opt<string>(r.direct_account_ref) ? { directAccountRef: str(r.direct_account_ref) } : {}),
+    ...(opt<Record<string, unknown>>(r.direct_status) ? { directStatus: statusFromRow(r.direct_status) } : {}),
     releasePolicy: (r.release_policy as Organization["releasePolicy"]) ?? "on_delivery", releaseGraceHours: num(r.release_grace_hours ?? 24), minEnrollmentDecisionDays: num(r.min_enrollment_decision_days ?? 7),
     apiKeyHash: str(r.api_key_hash), createdAt: date(r.created_at),
   };
+}
+function statusFromRow(v: unknown): NonNullable<Organization["paymentsStatus"]> {
+  return { ...(v as NonNullable<Organization["paymentsStatus"]>), checkedAt: new Date(String((v as Record<string, unknown>).checkedAt)) };
 }
 function pricingFromRow(p: Record<string, unknown>): NonNullable<Organization["pricing"]> {
   const { ratesUpdatedAt, ...rest } = p as unknown as NonNullable<Organization["pricing"]> & { ratesUpdatedAt?: string | Date };
@@ -81,7 +87,7 @@ function toCertificate(r: Row): Certificate {
 }
 function toTransfer(r: Row): SeatTransfer {
   const paymentRef = opt<string>(r.payment_ref), toSeatId = opt<string>(r.to_seat_id), completedAt = opt<Date>(r.completed_at);
-  return { id: str(r.id), organizationId: str(r.organization_id), fromSeatId: str(r.from_seat_id), toEventId: str(r.to_event_id), toTicketTypeId: str(r.to_ticket_type_id), feeMinor: num(r.fee_minor), currency: str(r.currency), status: r.status as SeatTransfer["status"], ...(paymentRef ? { paymentRef } : {}), ...(toSeatId ? { toSeatId } : {}), createdAt: date(r.created_at), ...(completedAt ? { completedAt } : {}) };
+  return { id: str(r.id), organizationId: str(r.organization_id), fromSeatId: str(r.from_seat_id), toEventId: str(r.to_event_id), toTicketTypeId: str(r.to_ticket_type_id), feeMinor: num(r.fee_minor), currency: str(r.currency), status: r.status as SeatTransfer["status"], ...(paymentRef ? { paymentRef } : {}), ...(opt<string>(r.charge_account_ref) ? { chargeAccountRef: str(r.charge_account_ref) } : {}), ...(toSeatId ? { toSeatId } : {}), createdAt: date(r.created_at), ...(completedAt ? { completedAt } : {}) };
 }
 function toWaitlist(r: Row): WaitlistEntry {
   const name = opt<string>(r.name), offeredAt = opt<Date>(r.offered_at), exp = opt<Date>(r.offer_expires_at), conv = opt<string>(r.converted_order_id);
@@ -99,6 +105,8 @@ function toOrder(r: Row): Order {
     ...(opt<Order["billingAddress"]>(r.billing_address) ? { billingAddress: r.billing_address as NonNullable<Order["billingAddress"]> } : {}),
     pricing: r.pricing as Order["pricing"], splits: r.splits as Order["splits"],
     ...(paymentRef ? { paymentRef } : {}),
+    ...(r.settlement === "direct" ? { settlement: "direct" as const } : {}),
+    ...(opt<string>(r.charge_account_ref) ? { chargeAccountRef: str(r.charge_account_ref) } : {}),
     transferRefs: (r.transfer_refs as Record<string, string>) ?? {},
     refundedMinor: num(r.refunded_minor),
     heldMinor: num(r.held_minor ?? 0), fundsStatus: (r.funds_status as Order["fundsStatus"]) ?? "none", ...(opt<Date>(r.released_at) ? { releasedAt: date(r.released_at) } : {}),
@@ -134,8 +142,8 @@ class PgOrganizations implements OrganizationRepo {
   }
   async update(o: Organization) {
     await this.pool.query(
-      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15, instructor_access=$16 WHERE id=$1`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null, o.instructorAccess ? JSON.stringify(o.instructorAccess) : null],
+      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15, instructor_access=$16, payment_mode=$17, direct_account_ref=$18, direct_status=$19 WHERE id=$1`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null, o.instructorAccess ? JSON.stringify(o.instructorAccess) : null, o.paymentMode ?? "protected", o.directAccountRef ?? null, o.directStatus ? JSON.stringify(o.directStatus) : null],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM organizations WHERE id=$1`, [id]); return r.rows[0] ? toOrg(r.rows[0]) : undefined; }
@@ -199,9 +207,9 @@ class PgOrders implements OrderRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Order) {
     await this.pool.query(
-      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at, payment_method, corporate_account_id, billing_address, held_minor, funds_status, released_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,
-      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null, o.paymentMethod, o.corporateAccountId ?? null, o.billingAddress ? JSON.stringify(o.billingAddress) : null, o.heldMinor, o.fundsStatus, o.releasedAt ?? null],
+      `INSERT INTO orders (id, organization_id, event_id, ticket_type_id, quantity, buyer_email, attendees, currency, status, pricing, splits, payment_ref, transfer_refs, refunded_minor, idempotency_key, created_at, paid_at, payment_method, corporate_account_id, billing_address, held_minor, funds_status, released_at, settlement, charge_account_ref)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)`,
+      [o.id, o.organizationId, o.eventId, o.ticketTypeId, o.quantity, o.buyerEmail, JSON.stringify(o.attendees), o.currency, o.status, JSON.stringify(o.pricing), JSON.stringify(o.splits), o.paymentRef ?? null, JSON.stringify(o.transferRefs), o.refundedMinor, o.idempotencyKey ?? null, o.createdAt, o.paidAt ?? null, o.paymentMethod, o.corporateAccountId ?? null, o.billingAddress ? JSON.stringify(o.billingAddress) : null, o.heldMinor, o.fundsStatus, o.releasedAt ?? null, o.settlement ?? null, o.chargeAccountRef ?? null],
     );
   }
   async update(o: Order) {
@@ -253,7 +261,7 @@ class PgInvoices implements InvoiceRepo {
 }
 class PgSeatTransfers implements SeatTransferRepo {
   constructor(private readonly pool: Pool) {}
-  async create(t: SeatTransfer) { await this.pool.query(`INSERT INTO seat_transfers (id, organization_id, from_seat_id, to_event_id, to_ticket_type_id, fee_minor, currency, status, payment_ref, to_seat_id, created_at, completed_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, [t.id, t.organizationId, t.fromSeatId, t.toEventId, t.toTicketTypeId, t.feeMinor, t.currency, t.status, t.paymentRef ?? null, t.toSeatId ?? null, t.createdAt, t.completedAt ?? null]); }
+  async create(t: SeatTransfer) { await this.pool.query(`INSERT INTO seat_transfers (id, organization_id, from_seat_id, to_event_id, to_ticket_type_id, fee_minor, currency, status, payment_ref, to_seat_id, created_at, completed_at, charge_account_ref) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, [t.id, t.organizationId, t.fromSeatId, t.toEventId, t.toTicketTypeId, t.feeMinor, t.currency, t.status, t.paymentRef ?? null, t.toSeatId ?? null, t.createdAt, t.completedAt ?? null, t.chargeAccountRef ?? null]); }
   async update(t: SeatTransfer) { await this.pool.query(`UPDATE seat_transfers SET status=$2, payment_ref=$3, to_seat_id=$4, completed_at=$5 WHERE id=$1`, [t.id, t.status, t.paymentRef ?? null, t.toSeatId ?? null, t.completedAt ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM seat_transfers WHERE id=$1`, [id]); return r.rows[0] ? toTransfer(r.rows[0]) : undefined; }
   async getByPaymentRef(ref: string) { const r = await this.pool.query(`SELECT * FROM seat_transfers WHERE payment_ref=$1`, [ref]); return r.rows[0] ? toTransfer(r.rows[0]) : undefined; }

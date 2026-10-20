@@ -134,6 +134,7 @@ export default async function CoursePage({ params, searchParams }: { params: Par
   const cells = Math.min(cap, 40);
   const price = cheapest(sel);
   const free = price?.minor === 0;
+  const direct = data.organization.paymentMode === "direct";
   const ticker = cohorts.map((c) => `${range(c)} · ${cityOf(c.event.timezone)} · ${tzAbbr(c)} · ${seats(c).left} SEATS LEFT`).join("  ✦  ");
   const firstSession = sel.event.sessions[0] ?? { startsAt: sel.event.startsAt, endsAt: sel.event.endsAt ?? sel.event.startsAt };
   const hours = `${fmt(firstSession.startsAt, sel.event.timezone, { hour: "numeric", minute: "2-digit" })} – ${fmt(firstSession.endsAt, sel.event.timezone, { hour: "numeric", minute: "2-digit", timeZoneName: "short" })}`;
@@ -237,7 +238,7 @@ export default async function CoursePage({ params, searchParams }: { params: Par
               <strong>Survey email</strong>
               <em>Feedback form sent after the final session.</em>
             </li>
-            {free ? (
+            {free || direct ? (
               <li className="is-ink">
                 <span>AFTER DELIVERY</span>
                 <strong>Certificate</strong>
@@ -258,6 +259,11 @@ export default async function CoursePage({ params, searchParams }: { params: Par
             <h2>Free to attend</h2>
             <p>No payment and no card needed. Register to save your seat and get your ticket and calendar invitation.</p>
           </section>
+        ) : direct ? (
+          <section className="ep-held">
+            <h2>Secure card payment</h2>
+            <p>Pay by card{price ? ` in ${price.currency}` : ""}. Your payment goes to {data.organization.name} through Stripe. Changes and refunds follow {data.organization.name}&apos;s policy, shown in your confirmation email.</p>
+          </section>
         ) : (
           <section className="ep-held">
             <h2>Your payment is held until delivery</h2>
@@ -271,10 +277,16 @@ export default async function CoursePage({ params, searchParams }: { params: Par
             <div>
               <span>DIGITAL BADGE</span>
               <strong>{data.course.badge.name}</strong>
-              <em>Earned on completion, issued through {BADGE_LABEL[data.course.badge.platform] ?? "a badge platform"}.</em>
-              <a href={data.course.badge.url} target="_blank" rel="noreferrer noopener">
-                View the badge →
-              </a>
+              <em>
+                {data.course.badge.platform === "own"
+                  ? `Earned on completion, issued by ${data.organization.name} with your certificate.`
+                  : `Earned on completion, issued through ${BADGE_LABEL[data.course.badge.platform] ?? "a badge platform"}.`}
+              </em>
+              {data.course.badge.url && (
+                <a href={data.course.badge.url} target="_blank" rel="noreferrer noopener">
+                  View the badge →
+                </a>
+              )}
             </div>
           </section>
         )}

@@ -1,4 +1,4 @@
-import type { Core } from "./services.js";
+import { activePayments, type Core } from "./services.js";
 import type { Course, Event, Order, TicketType } from "./types.js";
 
 // The organizer's "Today" screen: what needs doing, what is running, what is next.
@@ -140,14 +140,15 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
   const attention: AttentionItem[] = [];
 
   // Payments first: nothing else matters if money can't flow.
-  if (opts.settings && !org.paymentsStatus?.ready) {
+  const pay = activePayments(org);
+  if (opts.settings && !pay.status?.ready) {
     attention.push({
-      id: `payments:${org.paymentsAccountRef ? "incomplete" : "none"}`, kind: "payments_setup", tone: onlyFree ? "amber" : "red",
-      title: org.paymentsAccountRef ? "Finish your Stripe setup" : "Connect Stripe to get paid",
-      detail: org.paymentsStatus?.requirementsDue.length
-        ? `Stripe still needs ${org.paymentsStatus.requirementsDue.length} detail${org.paymentsStatus.requirementsDue.length === 1 ? "" : "s"}`
+      id: `payments:${pay.mode}:${pay.accountRef ? "incomplete" : "none"}`, kind: "payments_setup", tone: onlyFree ? "amber" : "red",
+      title: pay.accountRef ? "Finish your Stripe setup" : pay.mode === "direct" ? "Connect your Stripe account" : "Connect Stripe to get paid",
+      detail: pay.status?.requirementsDue.length
+        ? `Stripe still needs ${pay.status.requirementsDue.length} detail${pay.status.requirementsDue.length === 1 ? "" : "s"}`
         : onlyFree ? "Only needed for paid classes. Free classes work without it" : "Learners can't pay until it's connected",
-      action: { label: org.paymentsAccountRef ? "Continue" : "Connect", kind: "stripe" },
+      action: { label: pay.accountRef ? "Continue" : "Connect", kind: "stripe" },
     });
   }
 
@@ -245,7 +246,7 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
 
   const steps: HomeSummary["setup"]["steps"] = [
     { key: "account", done: true },
-    { key: "payments", done: Boolean(org.paymentsStatus?.ready) || onlyFree },
+    { key: "payments", done: Boolean(pay.status?.ready) || onlyFree },
     { key: "course", done: courses.length > 0 },
     { key: "cohort", done: events.length > 0 },
     { key: "registration", done: anyPaid },

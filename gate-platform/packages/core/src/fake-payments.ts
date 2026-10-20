@@ -15,9 +15,9 @@ export class FakePaymentsAdapter implements PaymentsPort {
   readonly pendingAccounts = new Set<string>();
   /** When true, new accounts start unfinished, like a real provider. Off by default. */
   requireOnboarding = false;
-  async createConnectedAccount(input: { organizationId: string; country: string }) {
+  async createConnectedAccount(input: { organizationId: string; country: string; mode?: "protected" | "direct" }) {
     this.calls.push({ method: "createConnectedAccount", input });
-    const accountRef = `acct_fake_${input.organizationId}`;
+    const accountRef = input.mode === "direct" ? `acct_fake_direct_${input.organizationId}` : `acct_fake_${input.organizationId}`;
     if (this.requireOnboarding) this.pendingAccounts.add(accountRef);
     return { accountRef, onboardingUrl: `https://fake.gate.local/onboard/${input.organizationId}` };
   }
@@ -31,7 +31,7 @@ export class FakePaymentsAdapter implements PaymentsPort {
   completeOnboarding(accountRef: string) {
     this.pendingAccounts.delete(accountRef);
   }
-  async createPayment(input: { orderId: string }) {
+  async createPayment(input: { orderId: string; direct?: { accountRef: string; applicationFeeMinor: number } }) {
     this.calls.push({ method: "createPayment", input });
     const ref = `pi_fake_${this.run}_${++this.seq}`;
     return { paymentRef: ref, clientSecret: `${ref}_secret_${Math.random().toString(36).slice(2)}`, status: "requires_payment" as const };

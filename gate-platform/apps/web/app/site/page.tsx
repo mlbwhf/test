@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { ALL_FAQ } from "@/lib/faq";
+import { publicApi } from "@/lib/public-api";
+import { FALLBACK_USD_FEES, feeLabel, feeOn } from "@/lib/fees";
+import { formatMoney } from "@/lib/format";
+import { CHECKED_ON, COMPETITORS, EXAMPLE_SEAT_MINOR, STRIPE_US } from "@/lib/competitors";
 import { ORGANIZATION_LD, apiUrl, appUrl, jsonLd, siteUrl } from "@/lib/seo";
 
 const APP = `https://app.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`;
@@ -17,7 +21,14 @@ const COHORTS = [
 // Questions shown on the home page; the full list is on /faq.
 const HOME_FAQ = ["What is EnrollClass?", "When do I get paid?", "How much does it cost?", "Do you charge anything for free classes?", "Can learners register from my own website?", "Can I use EnrollClass from Claude or another AI assistant?"];
 
-export default function SiteHome() {
+const money = (minor: number) => formatMoney(minor, "USD").replace(/\.00$/, "");
+const pct = (bps: number) => `${(bps / 100).toFixed(bps % 100 === 0 ? 0 : 1)}%`;
+
+export default async function SiteHome() {
+  const feesRes = await publicApi.getFees();
+  const fees = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? FALLBACK_USD_FEES;
+  const protectedTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.protected);
+  const directTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.direct) + feeOn(EXAMPLE_SEAT_MINOR, { ...STRIPE_US, capMinor: null });
   const faq = HOME_FAQ.map((q) => ALL_FAQ.find((f) => f.q === q)!).filter(Boolean);
   const ld = [
     ORGANIZATION_LD(),
@@ -30,7 +41,7 @@ export default function SiteHome() {
       operatingSystem: "Web",
       url: appUrl(),
       description: "Registration and payments for training providers: publish cohorts, take card or invoice payments held until delivery, check-in with QR tickets, certificates, team roles, webhooks, API and an MCP server for AI assistants.",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start, and free classes are always free; a per-seat fee applies only to paid registrations." },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: `Free to start, and free classes are always free. Paid seats: ${feeLabel(fees.protected, "USD")} all-in (Protected, held until delivery) or ${feeLabel(fees.direct, "USD")} plus card processing (Direct, paid to your Stripe).` },
       publisher: { "@id": `${siteUrl()}/#organization` },
       sameAs: [`${apiUrl()}/docs`],
     },
@@ -146,32 +157,88 @@ export default function SiteHome() {
         </div>
       </section>
 
-      <section id="pricing" className="site-section sand">
-        <h2 className="site-h2">One fee per paid seat. Nothing monthly.</h2>
+      <section id="pricing" className="site-section sand" aria-labelledby="pricing-title">
+        <h2 className="site-h2" id="pricing-title">One fee per paid seat. Nothing monthly.</h2>
         <p className="pricing-free">
-          <strong>Free classes are free.</strong> No fee, no card and no Stripe account needed: learners register, get their ticket and check in like any other class.
+          <strong>Free classes are free.</strong> No fee, no card and no Stripe account needed. For paid classes, choose how the money flows:
         </p>
         <div className="tiers">
-          <article className="tier tier-paper">
-            <p className="mono">PAY AS YOU GO</p>
-            <p className="rate">2.5%</p>
-            <p className="rate-sub">+ $0.50 per seat, capped at $5.00</p>
-            <p>Charged only on paid registrations. Funds release to your Stripe account after delivery. No setup or monthly fee.</p>
-          </article>
           <article className="tier tier-ink">
-            <p className="mono">INCLUDED</p>
-            <p className="rate">$0</p>
-            <p className="rate-sub">for the parts that fill seats</p>
-            <p>Embeddable registration, early-bird and group pricing, waitlists, invoices for corporate buyers, self-service transfers and cancellations, certificates, calendar invites.</p>
+            <p className="mono">PROTECTED · HELD UNTIL DELIVERY</p>
+            <p className="rate">{pct(fees.protected.bps)}</p>
+            <p className="rate-sub">+ {money(fees.protected.fixedMinor)} per paid seat, card processing included</p>
+            <p>EnrollClass takes the payment, holds it until the class is delivered, then pays you. Learners get a refund guarantee if a class is cancelled, and we handle card fees and disputes.</p>
           </article>
           <article className="tier tier-green">
-            <p className="mono">YOUR OWN BANK</p>
-            <p className="rate">2.9%</p>
-            <p className="rate-sub">+ $1.05 per seat, no cap</p>
-            <p>If you would rather be paid to a bank account than a Stripe account. Same ledger, same release after delivery.</p>
+            <p className="mono">DIRECT · PAID TO YOUR STRIPE</p>
+            <p className="rate">{pct(fees.direct.bps)}</p>
+            <p className="rate-sub">+ {money(fees.direct.fixedMinor)} per paid seat, plus Stripe&apos;s card fee</p>
+            <p>Learners pay your own Stripe account and the money arrives on Stripe&apos;s schedule, before the class. You&apos;re the merchant: Stripe bills its fee to you and you handle refunds and disputes.</p>
+          </article>
+          <article className="tier tier-paper">
+            <p className="mono">INCLUDED IN BOTH</p>
+            <p className="rate">$0</p>
+            <p className="rate-sub">no setup, no monthly fee</p>
+            <p>Course pages and embeddable registration, early-bird and group pricing, waitlists, corporate invoices, QR tickets and check-in, certificates and digital badges, instructor roles, API, webhooks and AI assistants (MCP).</p>
           </article>
         </div>
-        <p className="footnote">USD rates. CAD, EUR and GBP schedules have the same shape with local caps. Taxes you collect are passed through, never charged a fee.</p>
+        <p className="footnote">You can pass the fee on to learners so you keep the full ticket price. Taxes you collect are passed through, never charged a fee. USD rates; other currencies have the same shape.</p>
+
+        <h3 className="compare-title">What a {money(EXAMPLE_SEAT_MINOR)} certification seat costs you</h3>
+        <div className="compare-wrap" role="region" aria-labelledby="compare-caption" tabIndex={0}>
+          <table className="compare">
+            <caption id="compare-caption">Fees on one {money(EXAMPLE_SEAT_MINOR)} seat when you absorb them, US card</caption>
+            <thead>
+              <tr>
+                <th scope="col">Platform</th>
+                <th scope="col">Platform fee</th>
+                <th scope="col">Card processing</th>
+                <th scope="col">Total on {money(EXAMPLE_SEAT_MINOR)}</th>
+                <th scope="col">Monthly</th>
+                <th scope="col">Who holds the money</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="is-us">
+                <th scope="row">EnrollClass Protected</th>
+                <td>{feeLabel(fees.protected, "USD")}</td>
+                <td>Included</td>
+                <td>
+                  <strong>{money(protectedTotal)}</strong>
+                </td>
+                <td>None</td>
+                <td>Held until the class is delivered, then paid to you</td>
+              </tr>
+              <tr className="is-us">
+                <th scope="row">EnrollClass Direct</th>
+                <td>{feeLabel(fees.direct, "USD")}</td>
+                <td>Your Stripe: 2.9% + $0.30</td>
+                <td>
+                  <strong>{money(directTotal)}</strong>
+                </td>
+                <td>None</td>
+                <td>Your Stripe account</td>
+              </tr>
+              {COMPETITORS.map((c) => (
+                <tr key={c.name}>
+                  <th scope="row">
+                    <a href={c.source} target="_blank" rel="noopener nofollow">
+                      {c.name}
+                    </a>
+                  </th>
+                  <td>{c.fee}</td>
+                  <td>{c.processing}</td>
+                  <td>{c.total}</td>
+                  <td>{c.monthly}</td>
+                  <td>{c.money}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="footnote">
+          Other platforms&apos; prices are from their published US pricing and help pages (linked), checked {CHECKED_ON}; they can change. Totals assume the organizer absorbs the fees and a US card at 2.9% + $0.30. Corsizio&apos;s $0.15 applies once you pass 30 registrations a month; Arlo also needs a monthly licence per administrator.
+        </p>
       </section>
 
       <section id="start" className="site-section ink">

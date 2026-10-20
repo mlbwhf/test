@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -82,6 +82,30 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await core.getOrder(org.id, order.id)).status).toBe("refunded");
     expect((await core.platformBalances()).find((b) => b.code === codes.clearing("USD"))?.balanceMinor).toBe(0);
     await ledger.assertBalanced();
+  });
+
+  it("Direct payment mode on Postgres: mode, own account, direct order and refund round-trip", async () => {
+    const payments = new FakePaymentsAdapter();
+    const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
+    const core = new Core({ repos: createPgRepos(pool), ledger, payments });
+    const { organization: org } = await core.createOrganization({ name: "PG Direct", country: "US", currency: "USD" });
+    await core.connectPayments(org.id);
+    await core.setPaymentMode(org.id, "direct");
+    await core.connectPayments(org.id);
+    const stored = await core.getOrganization(org.id);
+    expect(stored).toMatchObject({ paymentMode: "direct", paymentsAccountRef: `acct_fake_${org.id}`, directAccountRef: `acct_fake_direct_${org.id}`, directStatus: { ready: true }, paymentsStatus: { ready: true } });
+    expect(stored.directStatus!.checkedAt).toBeInstanceOf(Date);
+    const event = await core.createEvent(org.id, { name: "Direct class", startsAt: new Date("2026-12-01T10:00:00Z") });
+    const tt = await core.createTicketType(org.id, event.id, { name: "Seat", priceMinor: 100_000, quantity: 5 });
+    const { order } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "d@test.io" });
+    await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "USD"));
+    const paid = await core.getOrder(org.id, order.id);
+    expect(paid).toMatchObject({ status: "paid", settlement: "direct", chargeAccountRef: `acct_fake_direct_${org.id}`, fundsStatus: "released", heldMinor: 0 });
+    await core.refundOrder(org.id, { orderId: order.id, reason: "test" });
+    expect((await core.getOrder(org.id, order.id)).status).toBe("refunded");
+    await ledger.assertBalanced();
+    await core.setPaymentMode(org.id, "protected");
+    expect((await core.getOrganization(org.id)).paymentMode).toBeUndefined();
   });
 
   it("corporate invoice orders on Postgres: numbering, partial payments, settlement", async () => {
@@ -174,14 +198,14 @@ describe.skipIf(!url)("Postgres integration", () => {
     const { order } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "h@h.io" });
     await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "CAD"));
     expect((await repos.orders.get(order.id))?.fundsStatus).toBe("held");
-    expect((await core.payables(org.id))[0]?.heldMinor).toBe(50_000 - 650);
+    expect((await core.payables(org.id))[0]?.heldMinor).toBe(50_000 - 2_540);
     now = new Date("2026-10-12T00:00:00Z");
     const r = await core.releaseDelivered(now);
     expect(r.orders).toBe(1);
     expect((await repos.orders.get(order.id))?.fundsStatus).toBe("released");
     const payout = await core.recordPayout(org.id, { currency: "CAD", amountMinor: 10_000, method: "wire", reference: "W" });
     expect((await repos.payouts.listByOrganization(org.id))[0]?.id).toBe(payout.id);
-    expect((await core.payables(org.id))[0]?.payableMinor).toBe(50_000 - 650 - 10_000);
+    expect((await core.payables(org.id))[0]?.payableMinor).toBe(50_000 - 2_540 - 10_000);
     await ledger.assertBalanced();
   });
 

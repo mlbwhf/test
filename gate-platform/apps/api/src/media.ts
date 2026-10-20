@@ -124,5 +124,17 @@ export function registerCourseImageRoutes(api: FastifyInstance, deps: { core: Co
     const imageUrl = await importImage(deps.store, deps.publicUrl, req.body.url, deps.fetchImpl);
     return S.toCourse(await deps.core.updateCourse(o.id, req.params.id, { imageUrl }));
   });
+  // The course's badge image (raw bytes, as above). With no badge yet it becomes the
+  // organizer's own badge, issued with EnrollClass certificates.
+  typed.put("/v1/courses/:id/badge-image", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), querystring: z.object({ name: z.string().max(200).optional() }), response: { 200: S.CourseSchema, 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req) => {
+    const o = org(req);
+    const course = await deps.core.getCourse(o.id, req.params.id);
+    if (!Buffer.isBuffer(req.body)) throw new DomainError("VALIDATION", "send the image bytes with an image/* content type");
+    const { id } = await deps.store.put(req.body, (req.headers["content-type"] ?? "").split(";")[0]!.trim().toLowerCase());
+    const imageUrl = mediaUrl(deps.publicUrl, id);
+    const name = req.query.name?.trim() || course.badge?.name || course.name;
+    const badge = course.badge ? { ...course.badge, name, imageUrl } : { platform: "own" as const, name, imageUrl };
+    return S.toCourse(await deps.core.updateCourse(o.id, req.params.id, { badge }));
+  });
   typed.delete("/v1/courses/:id/image", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: S.CourseSchema, 404: S.ErrorSchema } } }, async (req) => S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { imageUrl: "" })));
 }

@@ -88,7 +88,7 @@ describe("seat self-service", () => {
     expect(moved.transferredFromSeatId).toBe(ada.id);
     expect(old.transferredToSeatId).toBe(moved.id);
     expect((await core.listTicketTypes(org.id, nov.id)).find((t) => t.id === novTt.id)?.sold).toBe(1);
-    expect((await core.balancesFor(org.id)).find((b) => b.code === codes.orgPayable(org.id, "CAD"))?.balanceMinor).toBe(200_000 - 1_300 + 20_000);
+    expect((await core.balancesFor(org.id)).find((b) => b.code === codes.orgPayable(org.id, "CAD"))?.balanceMinor).toBe(200_000 - 9_980 + 20_000);
     await ledger.assertBalanced();
     expect(changes.at(-1)).toMatchObject({ kind: "transferred" });
   });

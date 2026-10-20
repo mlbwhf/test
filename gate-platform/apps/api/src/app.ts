@@ -4,7 +4,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -16,6 +16,7 @@ import type { IdempotencyStore } from "@gate/db";
 import type { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { InMemoryIdempotencyStore, registerIdempotency } from "./plugins/idempotency.js";
 import * as S from "./schemas.js";
+import { DEFAULT_SCHEDULES } from "@gate/pricing";
 import { registerImports } from "./imports.js";
 import { InMemoryMediaStore, registerCourseImageRoutes, registerMediaRoutes, type MediaStore } from "./media.js";
 import { TicketSigner, registerCheckIns, registerPublicTickets, ticketUrl, withTicket } from "./tickets.js";
@@ -23,6 +24,13 @@ import { secretMatches } from "./secrets.js";
 import { presentedKey, registerIntegrationRoutes, registerMcpRoute } from "./integrations.js";
 
 /** Request logging without personal data: no query strings (they carry learner emails), no credentials. */
+const OrderCreated = z.object({
+  order: S.OrderSchema, clientSecret: z.string().nullable(),
+  /** Direct payments: the organizer's Stripe account, passed to Stripe.js as `stripeAccount`. */
+  stripeAccount: z.string().nullable(),
+  dryRun: z.boolean(),
+});
+
 const privacyLogger: Exclude<FastifyServerOptions["logger"], boolean | undefined> = {
   redact: { paths: ["req.headers.x-api-key", "req.headers.x-admin-key", "req.headers.authorization", "req.headers.cookie", "req.headers['stripe-signature']"], censor: "[redacted]" },
   serializers: {
@@ -190,6 +198,13 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     const OrgCourseParams = z.object({ orgId: z.string(), slug: z.string() });
 
     // Sitemaps and AI crawlers: every course with upcoming classes and its public page.
+    // EnrollClass's published fees, per currency: the pricing page and the console read them from here.
+    const FeeOut = z.object({ bps: z.number().int(), fixedMinor: z.number().int(), capMinor: z.number().int().nullable() });
+    pub.get("/public/v1/fees", { schema: { tags: ["public"], security: [], description: "Per paid seat. protected: all-in (card processing included); direct: EnrollClass's application fee, the organizer's Stripe account pays processing. Free tickets never carry a fee.", response: { 200: z.object({ currencies: z.record(z.string(), z.object({ protected: FeeOut, direct: FeeOut })) }) } } }, async (_req, reply) => {
+      const fee = (c: { bps: number; fixedMinor: number; capMinor?: number }) => ({ bps: c.bps, fixedMinor: c.fixedMinor, capMinor: c.capMinor ?? null });
+      reply.header("cache-control", "public, max-age=3600");
+      return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct) }])) };
+    });
     pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable() })) }) } } }, async (_req, reply) => {
       const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null }));
       reply.header("cache-control", "public, max-age=900");
@@ -251,9 +266,9 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     };
     pub.get("/public/v1/seats/:seatId", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), querystring: z.object({ email: z.string().email() }), response: { 200: S.SeatOptionsSchema, 404: S.ErrorSchema } } }, async (req) => seatOptionsOut(req.params.seatId, req.query.email));
     pub.post("/public/v1/seats/:seatId/substitute", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), attendee: S.AttendeeSchema }), response: { 200: z.object({ seat: S.SeatSchema }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => ({ seat: S.toSeat(await deps.core.substituteSeat(req.params.seatId, req.body.attendee, { attendeeEmail: req.body.email })) }));
-    pub.post("/public/v1/seats/:seatId/transfer", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => {
+    pub.post("/public/v1/seats/:seatId/transfer", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable(), stripeAccount: z.string().nullable() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => {
       const r = await deps.core.transferSeat(req.params.seatId, req.body.toEventId, { attendeeEmail: req.body.email });
-      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret };
+      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret, stripeAccount: r.transfer.chargeAccountRef ?? null };
     });
     pub.post("/public/v1/seats/:seatId/cancel", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), reason: z.string().max(500).optional() }), response: { 200: z.object({ seat: S.SeatSchema, refund: z.object({ id: z.string(), amountMinor: z.number().int(), status: z.string() }).nullable() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => {
       const r = await deps.core.cancelSeat(req.params.seatId, req.body.reason ?? "", { attendeeEmail: req.body.email });
@@ -297,7 +312,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     pub.post("/public/v1/organizations/:orgId/orders", {
       schema: {
         tags: ["public"], security: [], params: z.object({ orgId: z.string() }), body: S.CreateOrderBody,
-        response: { 201: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 200: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 409: S.ErrorSchema },
+        response: { 201: OrderCreated, 200: OrderCreated, 409: S.ErrorSchema },
       },
     }, async (req, reply) => {
       const idem = req.headers["idempotency-key"];
@@ -305,7 +320,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       const res = await deps.core.createOrder(req.params.orgId, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
       // Buyers never see split or transfer internals.
       const order = S.toOrder(res.order);
-      return reply.code(res.created ? 201 : 200).send({ order: { ...order, splits: { organizerMinor: 0, lines: [] }, transferRefs: {} }, clientSecret: res.clientSecret, dryRun });
+      return reply.code(res.created ? 201 : 200).send({ order: { ...order, splits: { organizerMinor: 0, lines: [] }, transferRefs: {} }, clientSecret: res.clientSecret, stripeAccount: res.order.chargeAccountRef ?? null, dryRun });
     });
 
     if (env !== "production" && deps.core.payments instanceof FakePaymentsAdapter) {
@@ -438,13 +453,26 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.post("/v1/organizations/me/pricing/refresh-rates", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema, 409: S.ErrorSchema, 502: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.refreshFxRates(org(req).id)));
 
     // Re-reads the account from the provider (e.g. on return from Stripe's onboarding).
-    api.get("/v1/organizations/me/payments", { schema: { tags: ["organizations"], response: { 200: z.object({ setup: z.enum(["none", "incomplete", "ready"]), status: S.OrganizationSchema.shape.paymentsStatus }) } } }, async (req) => {
-      const o = await deps.core.refreshPaymentsStatus(org(req).id);
-      return { setup: !o.paymentsAccountRef ? "none" as const : o.paymentsStatus?.ready ? "ready" as const : "incomplete" as const, status: S.toOrganization(o).paymentsStatus };
+    // Re-reads the accounts from the provider (e.g. on return from Stripe's onboarding). setup/status describe the active mode.
+    const PaymentsState = z.object({
+      mode: z.enum(["protected", "direct"]), setup: z.enum(["none", "incomplete", "ready"]), status: S.OrganizationSchema.shape.paymentsStatus,
+      protected: z.object({ setup: z.enum(["none", "incomplete", "ready"]), status: S.OrganizationSchema.shape.paymentsStatus }),
+      direct: z.object({ setup: z.enum(["none", "incomplete", "ready"]), status: S.OrganizationSchema.shape.paymentsStatus }),
     });
-    api.post("/v1/organizations/me/payments/connect", { schema: { tags: ["organizations"], body: z.object({ email: z.string().email().optional() }).optional(), response: { 200: z.object({ paymentsAccountRef: z.string(), onboardingUrl: z.string().nullable(), ready: z.boolean(), requirementsDue: z.array(z.string()) }) } } }, async (req) => {
+    const paymentsState = (o: Organization) => {
+      const out = S.toOrganization(o);
+      const setupOf = (ref: string | undefined, ready: boolean | undefined) => (!ref ? "none" as const : ready ? "ready" as const : "incomplete" as const);
+      const protectedState = { setup: setupOf(o.paymentsAccountRef, o.paymentsStatus?.ready), status: out.paymentsStatus };
+      const directState = { setup: setupOf(o.directAccountRef, o.directStatus?.ready), status: out.directStatus };
+      const active = out.paymentMode === "direct" ? directState : protectedState;
+      return { mode: out.paymentMode, ...active, protected: protectedState, direct: directState };
+    };
+    api.get("/v1/organizations/me/payments", { schema: { tags: ["organizations"], response: { 200: PaymentsState } } }, async (req) => paymentsState(await deps.core.refreshPaymentsStatus(org(req).id)));
+    api.put("/v1/organizations/me/payments/mode", { schema: { tags: ["organizations"], description: "Protected: EnrollClass takes payments and holds them until delivery. Direct: learners pay your own Stripe account and EnrollClass takes a fee. Only new payments are affected.", body: z.object({ mode: z.enum(["protected", "direct"]) }), response: { 200: PaymentsState } } }, async (req) => paymentsState(await deps.core.setPaymentMode(org(req).id, req.body.mode)));
+    api.post("/v1/organizations/me/payments/connect", { schema: { tags: ["organizations"], body: z.object({ email: z.string().email().optional() }).optional(), response: { 200: z.object({ mode: z.enum(["protected", "direct"]), paymentsAccountRef: z.string(), onboardingUrl: z.string().nullable(), ready: z.boolean(), requirementsDue: z.array(z.string()) }) } } }, async (req) => {
       const res = await deps.core.connectPayments(org(req).id, req.body?.email);
-      return { paymentsAccountRef: res.paymentsAccountRef!, onboardingUrl: res.onboardingUrl ?? null, ready: Boolean(res.paymentsStatus?.ready), requirementsDue: res.paymentsStatus?.requirementsDue ?? [] };
+      const active = activePayments(res);
+      return { mode: active.mode, paymentsAccountRef: active.accountRef!, onboardingUrl: res.onboardingUrl ?? null, ready: Boolean(active.status?.ready), requirementsDue: active.status?.requirementsDue ?? [] };
     });
 
     api.get("/v1/parties", { schema: { tags: ["parties"], response: { 200: z.object({ items: z.array(S.PartySchema) }) } } }, async (req) => ({ items: (await deps.core.listParties(org(req).id)).map(S.toParty) }));
@@ -487,13 +515,13 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.post("/v1/orders", {
       schema: {
         tags: ["orders"], body: S.CreateOrderBody, querystring: z.object({ dry_run: z.enum(["true", "false"]).optional() }),
-        response: { 200: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 201: z.object({ order: S.OrderSchema, clientSecret: z.string().nullable(), dryRun: z.boolean() }), 409: S.ErrorSchema },
+        response: { 200: OrderCreated, 201: OrderCreated, 409: S.ErrorSchema },
       },
     }, async (req, reply) => {
       const dryRun = req.body.dryRun === true || req.query.dry_run === "true";
       const idem = req.headers["idempotency-key"];
       const res = await deps.core.createOrder(org(req).id, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
-      return reply.code(res.created ? 201 : 200).send({ order: S.toOrder(res.order), clientSecret: res.clientSecret, dryRun });
+      return reply.code(res.created ? 201 : 200).send({ order: S.toOrder(res.order), clientSecret: res.clientSecret, stripeAccount: res.order.chargeAccountRef ?? null, dryRun });
     });
 
     api.post("/v1/refunds", { schema: { tags: ["refunds"], body: S.CreateRefundBody, response: { 201: z.object({ refund: S.RefundSchema }), 409: S.ErrorSchema } } }, async (req, reply) => {
@@ -530,7 +558,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.patch("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.UpdateCourseBody, response: { 200: S.CourseSchema } } }, async (req) => {
       const b = req.body;
       const clean = (v: string | number | null | undefined) => (v === null ? "" : v);
-      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined, badge: b.badge === undefined ? undefined : b.badge === null ? null : { platform: b.badge.platform, name: b.badge.name, url: b.badge.url, ...(b.badge.imageUrl ? { imageUrl: b.badge.imageUrl } : {}) } }));
+      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined, badge: b.badge === undefined ? undefined : b.badge === null ? null : { platform: b.badge.platform, name: b.badge.name, ...(b.badge.url ? { url: b.badge.url } : {}), ...(b.badge.imageUrl ? { imageUrl: b.badge.imageUrl } : {}) } }));
     });
     api.post("/v1/events/:id/meeting", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ provider: z.enum(["zoom", "teams", "manual"]), joinUrl: z.string().optional(), hostUrl: z.string().optional(), passcode: z.string().optional() }), response: { 200: S.EventSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setMeeting(org(req).id, req.params.id, req.body)));
     api.get("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.AttendanceRowSchema) }) } } }, async (req) => ({ items: (await deps.core.listAttendance(org(req).id, req.params.id)).map(attendanceOut) }));
@@ -553,9 +581,9 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       return seatOptionsOutFrom(o);
     });
     api.post("/v1/seats/:id/substitute", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ attendee: S.AttendeeSchema }), response: { 200: S.SeatSchema } } }, async (req) => S.toSeat(await deps.core.substituteSeat(req.params.id, req.body.attendee, { organizationId: org(req).id })));
-    api.post("/v1/seats/:id/transfer", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable() }) } } }, async (req) => {
+    api.post("/v1/seats/:id/transfer", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ toEventId: z.string() }), response: { 200: z.object({ seat: S.SeatSchema.nullable(), transfer: S.SeatTransferSchema, clientSecret: z.string().nullable(), stripeAccount: z.string().nullable() }) } } }, async (req) => {
       const r = await deps.core.transferSeat(req.params.id, req.body.toEventId, { organizationId: org(req).id });
-      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret };
+      return { seat: r.seat ? S.toSeat(r.seat) : null, transfer: S.toTransfer(r.transfer), clientSecret: r.clientSecret, stripeAccount: r.transfer.chargeAccountRef ?? null };
     });
     api.post("/v1/seats/:id/cancel", { schema: { tags: ["seats"], params: z.object({ id: z.string() }), body: z.object({ reason: z.string().max(500).optional() }), response: { 200: z.object({ seat: S.SeatSchema, refund: z.object({ id: z.string(), amountMinor: z.number().int(), status: z.string() }).nullable() }) } } }, async (req) => {
       const r = await deps.core.cancelSeat(req.params.id, req.body.reason ?? "", { organizationId: org(req).id });

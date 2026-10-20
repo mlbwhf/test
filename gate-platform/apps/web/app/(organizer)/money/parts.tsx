@@ -174,9 +174,16 @@ export function OrdersTab({ orders, lines, canWrite, now }: { orders: Order[]; l
 }
 
 /** Settings as rows: the value, and Edit to open the form below. */
-export function SettingsRows({ org, canEdit, paymentsSetup }: { org: Organization; canEdit: boolean; paymentsSetup: "none" | "incomplete" | "ready" | null }) {
+export function SettingsRows({ org, canEdit, paymentsSetup, showPayments = true }: { org: Organization; canEdit: boolean; paymentsSetup: "none" | "incomplete" | "ready" | null; showPayments?: boolean }) {
+  const direct = org.paymentMode === "direct";
   const rows: Array<{ label: string; value: string; edit?: string }> = [
-    { label: "Release policy", value: org.releasePolicy === "on_delivery" ? `${RELEASE_POLICY_LABELS[org.releasePolicy]} · ${org.releaseGraceHours}h after the last session` : RELEASE_POLICY_LABELS[org.releasePolicy], edit: "rules" },
+    {
+      label: "Release policy",
+      value: direct
+        ? "Not used: Direct payments go straight to your Stripe account"
+        : org.releasePolicy === "on_delivery" ? `${RELEASE_POLICY_LABELS[org.releasePolicy]} · ${org.releaseGraceHours}h after the last session` : RELEASE_POLICY_LABELS[org.releasePolicy],
+      edit: "rules",
+    },
     { label: "Minimum-enrolment decision", value: `${org.minEnrollmentDecisionDays} days before the first session`, edit: "rules" },
     { label: "Currencies", value: [org.currency, ...org.pricing.currencies].join(" · "), edit: "pricing" },
     { label: "Converted prices", value: org.pricing.fxFallback ? `On · ${FX_ROUNDING_LABELS[org.pricing.rounding]}` : "Off", edit: "pricing" },
@@ -184,8 +191,8 @@ export function SettingsRows({ org, canEdit, paymentsSetup }: { org: Organizatio
   return (
     <section className="card settings-rows" aria-label="Settings">
       <ul>
-        <li>
-          <span>Payments</span>
+        {showPayments && <li>
+          <span>Payments · {direct ? "Direct" : "Protected"}</span>
           <strong>{paymentsSetup === "ready" ? "Stripe connected" : paymentsSetup === "incomplete" ? "Stripe setup not finished" : "Stripe not connected"}</strong>
           {canEdit && paymentsSetup !== "ready" ? (
             <ActionForm action={connectStripeAction} submitLabel={paymentsSetup === "incomplete" ? "Continue" : "Connect"} pendingLabel="Opening Stripe…" inline>
@@ -194,7 +201,7 @@ export function SettingsRows({ org, canEdit, paymentsSetup }: { org: Organizatio
           ) : (
             <span className={`chip ${paymentsSetup === "ready" ? "chip-ok" : "chip-warn"}`}>{paymentsSetup === "ready" ? "Set" : "Not set"}</span>
           )}
-        </li>
+        </li>}
         {rows.map((r) => (
           <li key={r.label}>
             <span>{r.label}</span>

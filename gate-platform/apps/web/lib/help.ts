@@ -194,8 +194,19 @@ export const HELP: HelpArticle[] = [
     for: ["Owners & admins", "Instructors"],
     body: [
       { steps: ["Go to **Events → Import** (or the **Import** button on Events).", "For Eventbrite, paste a private token from your Eventbrite account settings. It's used for this import only and never stored.", "For a spreadsheet, upload a CSV with one row per class.", "Check the preview: courses, dates, tickets and anything skipped.", "Confirm to create the classes."] },
-      { tip: "Eventbrite event images are copied to the course cover automatically." },
+      { h: "What comes across" },
+      { table: { head: ["", "Eventbrite", "CSV (Corsizio, spreadsheets)"], rows: [
+        ["Dates, time zone, format", "Yes", "start, end, time zone, format or location columns"],
+        ["Tickets and prices (free stays free)", "Yes, with seats and sold counts", "price (0 = free), seats, ticket type"],
+        ["Course cover image", "The event image, copied to EnrollClass", "image column"],
+        ["Digital badge", "A Credly, Accredible, Badgr or Certopus link in the description", "badge column (link) or badge image column (your own badge)"],
+        ["Instructors", "No", "instructors or trainer column; new names are added as instructors"],
+        ["Minimum to run, joining link, certification body", "No", "minimum, meeting link, certification body columns"],
+        ["Drafts", "Eventbrite drafts arrive as drafts", "status column with draft"],
+      ] } },
+      { tip: "Download the template on the Import page for every column name. An existing course keeps its own cover and badge; the import only fills them in when missing." },
     ],
+    related: ["badges", "free-classes", "create-a-class"],
   },
   {
     slug: "course-emails",
@@ -255,11 +266,14 @@ export const HELP: HelpArticle[] = [
   {
     slug: "badges",
     section: "day",
-    title: "Digital badges (Credly, Accredible, Badgr…)",
-    summary: "Show the badge learners earn and link to where they claim it.",
+    title: "Digital badges (Credly, Accredible, Badgr… or your own)",
+    summary: "Show the badge learners earn: on a badge platform, or your own badge image.",
     for: ["Owners & admins"],
     body: [
-      { steps: ["Open **Events → Courses** and choose the course.", "Under **Digital badge**, pick the platform (Credly, Accredible, Badgr / Canvas Credentials, Certopus or Other).", "Enter the badge name, the link to the badge page on that platform, and optionally its image link.", "Click **Add badge**."] },
+      { steps: ["Open **Events → Courses** and choose the course.", "Under **Digital badge**, pick the platform (Credly, Accredible, Badgr / Canvas Credentials, Certopus or Other).", "Enter the badge name, the link to the badge page on that platform, and optionally upload its image or paste its image link.", "Click **Add badge**."] },
+      { h: "No badge platform? Use your own badge" },
+      { steps: ["Pick **Your own badge (upload an image)** as the platform.", "Enter the badge name and upload the image (PNG or JPEG; square works best).", "Click **Add badge**. No link is needed."] },
+      { p: "Your own badge is issued with EnrollClass certificates: it shows on the course page and on each certificate, and learners can download it from their certificate page." },
       { p: "The badge then appears on the public course page, on certificates (with a **Claim your badge** button) and in the certificate email." },
       { tip: "Badges are issued by the badge platform itself. Use a [webhook](/help/webhooks) on **certificate.issued** with Zapier or Make to issue badges automatically in Credly or Accredible." },
     ],
@@ -275,6 +289,7 @@ export const HELP: HelpArticle[] = [
     for: ["Owners & admins", "Finance"],
     body: [
       { p: "Free classes skip all of this: no payment, no fee and nothing to release. See [Free classes](/help/free-classes)." },
+      { p: "This article describes **Protected** payments, the default. With **Direct** payments learners pay your own Stripe account and nothing is held. See [Protected or Direct payments](/help/payment-modes)." },
       { p: "Learners pay by card when they register. With the default **On delivery** release policy, your share is **held** until the class has been delivered, then released to your Stripe account. This protects learners and is what lets you promise refunds if a class is cancelled." },
       { table: { head: ["Total", "Meaning"], rows: [
         ["Held", "Your net from paid orders whose class hasn't been released yet"],
@@ -285,7 +300,29 @@ export const HELP: HelpArticle[] = [
       { p: "Release happens automatically after the grace period (24 hours after the last session by default). You can release a delivered class sooner with **Release** on Home or in **Money → Orders**." },
       { tip: "Change the release policy and grace period in **Money → Settings → Release policy → Edit**." },
     ],
-    related: ["refunds", "payouts", "currencies"],
+    related: ["payment-modes", "refunds", "payouts", "currencies"],
+  },
+  {
+    slug: "payment-modes",
+    section: "money",
+    title: "Protected or Direct payments",
+    summary: "Hold learners' money until delivery, or have it paid straight to your own Stripe account.",
+    for: ["Owners & admins", "Finance"],
+    body: [
+      { table: { head: ["", "Protected", "Direct"], rows: [
+        ["Who takes the payment", "EnrollClass, on your behalf", "Your own Stripe account"],
+        ["When you get the money", "After the class is delivered (release policy)", "Stripe's payout schedule, before the class"],
+        ["EnrollClass fee per paid seat", "4.9% + $0.80, card processing included", "1.5% + $0.50, plus Stripe's card fee billed by Stripe"],
+        ["Refunds and disputes", "Handled from held funds; EnrollClass carries disputes", "From your Stripe balance; you handle disputes in Stripe"],
+        ["Learner promise", "Refund guaranteed if a class is cancelled", "Your own refund policy"],
+      ] } },
+      { h: "Switch modes" },
+      { steps: ["Open **Money → Settings**.", "Under **How you get paid**, click **Switch to Direct** (or **Switch to Protected**).", "Connect the Stripe account for that mode. Direct uses your own Stripe account with the full Stripe dashboard; Protected uses an Express account that EnrollClass pays out to."] },
+      { p: "Switching only affects new payments. Money already held keeps its release date and is paid to the Protected account; Direct payments already taken stay in your Stripe account." },
+      { tip: "Free classes cost nothing in either mode. You can also pass the fee on to learners so you keep the full ticket price." },
+      { p: "Corporate invoices are collected by EnrollClass in both modes and paid out to you when the invoice is settled." },
+    ],
+    related: ["how-payments-work", "connect-stripe", "refunds"],
   },
   {
     slug: "refunds",

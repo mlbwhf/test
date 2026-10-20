@@ -33,7 +33,13 @@ export interface Pricing {
 }
 export type OrderStatus = "pending" | "paid" | "failed" | (string & {});
 export interface Order { id: string; status: OrderStatus; currency: string; paymentRef: string | null; pricing: Pricing }
-export interface OrderResponse { order: Order; clientSecret: string | null; dryRun: boolean }
+export interface OrderResponse {
+  order: Order;
+  clientSecret: string | null;
+  /** Set for Direct payments: the organizer's own Stripe account that takes the charge. */
+  stripeAccount?: string | null;
+  dryRun: boolean;
+}
 
 export interface WaitlistRequest { eventId: string; ticketTypeId: string; email: string; name?: string; quantity: number }
 export type WaitlistStatus = "waiting" | "offered" | "claimed" | "expired" | (string & {});

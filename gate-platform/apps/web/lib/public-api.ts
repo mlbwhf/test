@@ -94,6 +94,8 @@ export type TransferResult = {
   seat: PublicSeat | null;
   transfer: { id: string; status: TransferStatus; feeMinor: number; paymentRef?: string | null };
   clientSecret: string | null;
+  /** Direct payments: the organizer's own Stripe account that takes the fee. */
+  stripeAccount?: string | null;
 };
 
 export type CancelInput = { email: string; reason?: string };
@@ -170,7 +172,7 @@ async function fetchSvg(path: string): Promise<string | null> {
 
 export type PublicTicketType = { id: string; name: string; quantity: number; remaining: number; prices: Record<string, number>; converted: string[]; earlyBirdUntil: string | null };
 export type PublicCoursePage = {
-  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null };
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct" };
   course: Course;
   cohorts: { event: Event; ticketTypes: PublicTicketType[] }[];
 };
@@ -190,10 +192,16 @@ export type CertificateView = {
   format?: string;
   instructors?: string[];
   certificationBody?: string | null;
-  badge?: { platform: string; name: string; url: string; imageUrl?: string } | null;
+  badge?: { platform: string; name: string; url?: string; imageUrl?: string } | null;
 };
 
+/** One fee component: basis points + fixed minor units per paid seat, optional cap. */
+export type Fee = { bps: number; fixedMinor: number; capMinor: number | null };
+export type FeeTable = { currencies: Record<string, { protected: Fee; direct: Fee }> };
+
 export const publicApi = {
+  /** EnrollClass's published fees per currency (protected: all-in; direct: our share only). */
+  getFees: () => request<FeeTable>("GET", "/public/v1/fees"),
   /** Public verification of a certificate by its code. */
   getCertificate: (code: string) => request<CertificateView>("GET", `/public/v1/certificates/${enc(code)}`),
   /** A course's public page data: upcoming live cohorts with seats left and prices. */

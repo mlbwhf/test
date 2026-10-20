@@ -731,11 +731,25 @@ function summarizeImport(res: import("@/lib/api").ImportResponse): ActionState {
   if (res.eventbriteOrganization) details.push({ label: "Eventbrite organization", value: res.eventbriteOrganization.name });
   for (const item of plan.items) {
     const r = results.find((x) => x.sourceId === item.sourceId);
-    const tickets = item.ticketTypes.map((t) => `${t.name} ${formatMoney(t.priceMinor, item.event.currency)} × ${t.quantity}${t.sold !== undefined ? ` (${t.sold} sold)` : ""}`).join(", ");
+    const tickets = item.ticketTypes.map((t) => `${t.name} ${t.priceMinor === 0 ? "Free" : formatMoney(t.priceMinor, item.event.currency)} × ${t.quantity}${t.sold !== undefined ? ` (${t.sold} sold)` : ""}`).join(", ");
     const when = `${formatDateTimeInZone(item.event.startsAt, item.event.timezone)}${item.event.endsAt ? ` → ${formatDateTimeInZone(item.event.endsAt, item.event.timezone)}` : ""}`;
-    const imageNote = r?.image === "copied" ? ", image copied" : r?.image === "failed" ? `, image not copied (${r.imageError ?? "download failed"})` : "";
+    const imageNote = (r?.image === "copied" ? ", image copied" : r?.image === "failed" ? `, image not copied (${r.imageError ?? "download failed"})` : "")
+      + (r?.badge === "set" ? ", badge added" : r?.badge === "failed" ? ", badge not added" : "")
+      + (r?.instructorsCreated?.length ? `, new instructor${r.instructorsCreated.length === 1 ? "" : "s"}: ${r.instructorsCreated.join(", ")}` : "")
+      + (r?.draft ? ", saved as a draft" : "");
     const outcome = r ? (r.status === "created" ? `imported${r.courseCreated ? ", new course" : ""}${imageNote}` : `${r.status}${r.reason ? `: ${r.reason}` : ""}`) : "";
-    const imageHint = !r && item.course.imageUrl ? " · has a cover image" : "";
+    const badge = item.course.badge;
+    const imageHint = !r
+      ? [
+          item.course.imageUrl ? " · cover image" : "",
+          badge ? ` · badge: ${badge.platform === "own" ? "own image" : badge.platform}` : "",
+          item.course.certificationBody ? ` · ${item.course.certificationBody}` : "",
+          item.event.instructors?.length ? ` · taught by ${item.event.instructors.join(", ")}` : "",
+          item.event.minEnrollment ? ` · runs with ${item.event.minEnrollment}+` : "",
+          item.event.meetingUrl ? " · joining link" : "",
+          item.event.draft ? " · draft" : "",
+        ].join("")
+      : "";
     const warn = item.warnings.length ? ` ⚠ ${item.warnings.join("; ")}` : "";
     details.push({ label: item.event.name, value: `${when} · ${item.event.timezone} · course "${item.course.name}"${imageHint} · ${tickets}${outcome ? ` · ${outcome}` : ""}${warn}` });
   }
@@ -891,13 +905,24 @@ export async function updateCourseBadgeAction(_prev: ActionState, formData: Form
   const platform = field(formData, "platform") as CourseBadge["platform"];
   const name = field(formData, "name");
   const url = field(formData, "url");
-  const imageUrl = field(formData, "imageUrl");
+  let imageUrl = field(formData, "imageUrl");
+  const file = formData.get("badgeImage");
   if (!(platform in BADGE_PLATFORMS)) return fail("Pick the badge platform.");
   if (!name) return fail("Give the badge a name.");
-  if (!/^https:\/\//.test(url)) return fail("The badge link must start with https://");
-  if (imageUrl && !/^https:\/\//.test(imageUrl)) return fail("The badge image link must start with https://");
-  const r = await api.updateCourse(courseId, { badge: { platform, name, url, ...(imageUrl ? { imageUrl } : {}) } });
+  if (platform !== "own" && !/^https:\/\//.test(url)) return fail("The badge link must start with https://");
+  if (url && !/^https:\/\//.test(url)) return fail("The badge link must start with https://");
+  if (imageUrl && !/^https?:\/\//.test(imageUrl)) return fail("The badge image link must be a web address.");
+  // Your own badge (or your own image for a platform badge): store the upload first.
+  if (file instanceof File && file.size > 0) {
+    if (!IMAGE_MIME.has(file.type)) return fail("Use a JPEG, PNG, WebP or GIF image for the badge.");
+    if (file.size > 5 * 1024 * 1024) return fail("The badge image is larger than 5 MB.");
+    const up = await api.uploadBadgeImage(courseId, await file.arrayBuffer(), file.type, name);
+    if (!up.ok) return fail(describeFailure(up.error));
+    imageUrl = up.data.badge?.imageUrl ?? imageUrl;
+  }
+  if (platform === "own" && !imageUrl) return fail("Upload the badge image (PNG or JPEG, square works best).");
+  const r = await api.updateCourse(courseId, { badge: { platform, name, ...(url && platform !== "own" ? { url } : {}), ...(imageUrl ? { imageUrl } : {}) } });
   if (!r.ok) return fail(describeFailure(r.error));
   revalidatePath(`/courses/${courseId}`);
-  return { status: "ok", message: `Badge saved. It shows on the course page and in certificate emails.` };
+  return { status: "ok", message: `Badge saved. It shows on the course page, on certificates and in certificate emails.` };
 }

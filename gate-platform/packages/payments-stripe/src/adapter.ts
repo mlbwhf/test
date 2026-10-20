@@ -11,10 +11,12 @@ export interface StripeAdapterConfig {
 }
 
 /**
- * Stripe Connect adapter using "separate charges and transfers":
- * the platform charges the buyer, then transfers each party's share to
- * its connected account, all tied together by transfer_group = orderId.
- * Platform fee = what is left on the platform balance.
+ * Stripe Connect adapter.
+ * Protected mode uses "separate charges and transfers": the platform charges the buyer,
+ * then transfers each party's share to its connected account, all tied together by
+ * transfer_group = orderId. Platform fee = what is left on the platform balance.
+ * Direct mode uses direct charges: the payment is created on the organizer's own account
+ * (Stripe-Account header) with an application fee, so the money never touches the platform.
  */
 export class StripePaymentsAdapter implements PaymentsPort {
   readonly provider = "stripe";
@@ -28,7 +30,29 @@ export class StripePaymentsAdapter implements PaymentsPort {
     return new StripePaymentsAdapter(new Stripe(secretKey, { appInfo: { name: "EnrollClass", version: "0.1.0", url: "https://enrollclass.com" } }), config);
   }
 
-  async createConnectedAccount(input: { organizationId: string; country: string; email?: string; businessName: string; businessType?: "individual" | "company" }) {
+  async createConnectedAccount(input: { organizationId: string; country: string; email?: string; businessName: string; businessType?: "individual" | "company"; mode?: "protected" | "direct" }) {
+    if (input.mode === "direct") {
+      // The organizer's own Stripe account: full dashboard, pays its own Stripe fees, and Stripe
+      // (not the platform) is liable for negative balances from refunds and disputes.
+      const account = await this.stripe.accounts.create(
+        {
+          controller: {
+            fees: { payer: "account" },
+            losses: { payments: "stripe" },
+            requirement_collection: "stripe",
+            stripe_dashboard: { type: "full" },
+          },
+          country: input.country,
+          ...(input.email ? { email: input.email } : {}),
+          business_type: input.businessType ?? "company",
+          business_profile: { name: input.businessName, mcc: "8299" },
+          capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
+          metadata: { organizationId: input.organizationId, mode: "direct" },
+        },
+        { idempotencyKey: `acct:direct:${input.organizationId}` },
+      );
+      return { accountRef: account.id, onboardingUrl: (await this.createOnboardingLink(account.id))! };
+    }
     // Connected accounts use Stripe's controller model: the platform pays Stripe's fees and
     // carries refund/dispute losses (funds are held until delivery, so the platform controls
     // the money that would cover them), Stripe collects onboarding requirements through the
@@ -75,18 +99,31 @@ export class StripePaymentsAdapter implements PaymentsPort {
     transferGroup: string;
     buyerEmail: string;
     metadata: Record<string, string>;
+    direct?: { accountRef: string; applicationFeeMinor: number };
   }) {
-    const pi = await this.stripe.paymentIntents.create(
-      {
-        amount: input.amountMinor,
-        currency: input.currency.toLowerCase(),
-        transfer_group: input.transferGroup,
-        receipt_email: input.buyerEmail,
-        automatic_payment_methods: { enabled: true },
-        metadata: input.metadata,
-      },
-      { idempotencyKey: `pi:${input.orderId}` },
-    );
+    const pi = input.direct
+      ? await this.stripe.paymentIntents.create(
+          {
+            amount: input.amountMinor,
+            currency: input.currency.toLowerCase(),
+            receipt_email: input.buyerEmail,
+            automatic_payment_methods: { enabled: true },
+            ...(input.direct.applicationFeeMinor > 0 ? { application_fee_amount: input.direct.applicationFeeMinor } : {}),
+            metadata: { ...input.metadata, settlement: "direct" },
+          },
+          { idempotencyKey: `pi:${input.orderId}`, stripeAccount: input.direct.accountRef },
+        )
+      : await this.stripe.paymentIntents.create(
+          {
+            amount: input.amountMinor,
+            currency: input.currency.toLowerCase(),
+            transfer_group: input.transferGroup,
+            receipt_email: input.buyerEmail,
+            automatic_payment_methods: { enabled: true },
+            metadata: input.metadata,
+          },
+          { idempotencyKey: `pi:${input.orderId}` },
+        );
     return {
       paymentRef: pi.id,
       clientSecret: pi.client_secret,
@@ -121,7 +158,21 @@ export class StripePaymentsAdapter implements PaymentsPort {
     return { transferRef: transfer.id };
   }
 
-  async refund(input: { idempotencyKey: string; paymentRef: string; amountMinor: number; reason: string }) {
+  async refund(input: { idempotencyKey: string; paymentRef: string; amountMinor: number; reason: string; accountRef?: string | undefined }) {
+    if (input.accountRef) {
+      // Direct charge: refund from the organizer's account; Stripe returns our application fee pro rata.
+      const refund = await this.stripe.refunds.create(
+        {
+          payment_intent: input.paymentRef,
+          amount: input.amountMinor,
+          reason: mapRefundReason(input.reason),
+          metadata: { reason: input.reason.slice(0, 500) },
+          refund_application_fee: true,
+        },
+        { idempotencyKey: input.idempotencyKey, stripeAccount: input.accountRef },
+      );
+      return { refundRef: refund.id, status: mapRefundStatus(refund.status) };
+    }
     const refund = await this.stripe.refunds.create(
       {
         payment_intent: input.paymentRef,

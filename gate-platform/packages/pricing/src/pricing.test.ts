@@ -4,16 +4,27 @@ import { instantPayoutFee, priceOrder } from "./pricing.js";
 import { computeSplits } from "./splits.js";
 
 describe("priceOrder (USD launch schedule)", () => {
-  it("$100 ticket to a gate account: 2.5% + $0.50 = $3.00", () => {
+  it("Protected $100 ticket: 4.9% + $0.80 = $5.70, card processing included", () => {
     const p = priceOrder({ currency: "USD", unitPriceMinor: 10_000, quantity: 1, destination: "gate_account" });
-    expect(p.platformFeeMinor).toBe(300);
+    expect(p.platformFeeMinor).toBe(570);
     expect(p.totalMinor).toBe(10_000);
-    expect(p.organizerNetMinor).toBe(9_700);
+    expect(p.organizerNetMinor).toBe(9_430);
   });
-  it("caps at $5 per ticket for expensive courses", () => {
-    const p = priceOrder({ currency: "USD", unitPriceMinor: 129_900, quantity: 2, destination: "gate_account" });
-    expect(p.perTicketFeeMinor).toBe(500);
-    expect(p.platformFeeMinor).toBe(1_000);
+  it("Protected never loses money on expensive courses: no cap, above US card processing", () => {
+    const p = priceOrder({ currency: "USD", unitPriceMinor: 129_500, quantity: 2, destination: "gate_account" });
+    expect(p.perTicketFeeMinor).toBe(6_346 + 80);
+    const stripe = Math.round(129_500 * 0.029) + 30;
+    expect(p.perTicketFeeMinor - stripe).toBeGreaterThan(2_500);
+  });
+  it("Direct is EnrollClass's share only: 1.5% + $0.50, the organizer's Stripe pays processing", () => {
+    const p = priceOrder({ currency: "USD", unitPriceMinor: 129_500, quantity: 1, destination: "gate_account", mode: "direct" });
+    expect(p.platformFeeMinor).toBe(1_943 + 50);
+    expect(p.totalMinor).toBe(129_500);
+    const passed = priceOrder({ currency: "USD", unitPriceMinor: 129_500, quantity: 1, destination: "gate_account", mode: "direct", passFeeToAttendee: true });
+    expect(passed.totalMinor).toBe(129_500 + 1_993);
+    expect(passed.organizerNetMinor).toBe(129_500);
+    const free = priceOrder({ currency: "USD", unitPriceMinor: 0, quantity: 1, destination: "gate_account", mode: "direct" });
+    expect(free.platformFeeMinor).toBe(0);
   });
   it("external bank payout is 2.9% + $0.30 + $0.75", () => {
     const p = priceOrder({ currency: "USD", unitPriceMinor: 10_000, quantity: 1, destination: "external_bank" });
@@ -21,9 +32,9 @@ describe("priceOrder (USD launch schedule)", () => {
   });
   it("pass-fee-to-attendee charges the buyer and keeps organizer whole", () => {
     const p = priceOrder({ currency: "USD", unitPriceMinor: 5_000, quantity: 3, destination: "gate_account", passFeeToAttendee: true });
-    expect(p.perTicketFeeMinor).toBe(125 + 50);
-    expect(p.attendeeFeeMinor).toBe(175 * 3);
-    expect(p.totalMinor).toBe(15_000 + 525);
+    expect(p.perTicketFeeMinor).toBe(245 + 80);
+    expect(p.attendeeFeeMinor).toBe(325 * 3);
+    expect(p.totalMinor).toBe(15_000 + 975);
     expect(p.organizerNetMinor).toBe(15_000);
   });
   it("free tickets carry no fee", () => {
@@ -46,7 +57,7 @@ describe("priceOrder (USD launch schedule)", () => {
     expect(p.platformFeeMinor).toBe(25);
     expect(p.organizerNetMinor).toBe(0);
     const passed = priceOrder({ currency: "USD", unitPriceMinor: 25, quantity: 1, destination: "gate_account", passFeeToAttendee: true });
-    expect(passed.platformFeeMinor).toBe(51);
+    expect(passed.platformFeeMinor).toBe(81);
     expect(passed.organizerNetMinor).toBe(25);
   });
   it("POS channel is 2.4% + $0.10", () => {
@@ -61,10 +72,10 @@ describe("priceOrder (USD launch schedule)", () => {
     const p = priceOrder({ currency: "CAD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", taxRateBps: 1_300 });
     expect(p.taxMinor).toBe(13_000);
     expect(p.totalMinor).toBe(113_000);
-    expect(p.organizerNetMinor).toBe(100_000 - 650);
+    expect(p.organizerNetMinor).toBe(100_000 - 4_990);
     const q = priceOrder({ currency: "CAD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", passFeeToAttendee: true, taxMinor: 999 });
     expect(q.taxMinor).toBe(999);
-    expect(q.totalMinor).toBe(100_650 + 999);
+    expect(q.totalMinor).toBe(104_990 + 999);
   });
   it("invariant: total == organizerNet + platformFee, organizerNet >= subtotal - platformFee", () => {
     fc.assert(

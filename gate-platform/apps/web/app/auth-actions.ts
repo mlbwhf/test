@@ -89,3 +89,14 @@ export async function connectStripeAction(_prev: ActionState, _data: FormData): 
     ? { status: "ok", message: "Stripe is connected: you can take payments and receive payouts." }
     : { status: "error", message: "Stripe still needs information before payouts can start. Try again in a moment." };
 }
+
+export async function setPaymentModeAction(_prev: ActionState, data: FormData): Promise<ActionState> {
+  const mode = String(data.get("mode") ?? "");
+  if (mode !== "protected" && mode !== "direct") return fail("Choose Protected or Direct.");
+  const r = await api.setPaymentMode(mode);
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath("/money");
+  revalidatePath("/dashboard");
+  const next = mode === "direct" ? "Direct: new payments go to your own Stripe account." : "Protected: new payments are held until each class is delivered.";
+  return { status: "ok", message: r.data.setup === "ready" ? next : `${next} Connect the Stripe account for this mode to take card payments.` };
+}

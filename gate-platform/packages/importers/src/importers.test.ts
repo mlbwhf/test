@@ -119,7 +119,7 @@ describe("csv parsing", () => {
   it("builds a plan from the template and merges ticket rows of one cohort", () => {
     const plan = planFromCsv(CSV_TEMPLATE);
     expect(plan.skipped).toEqual([]);
-    expect(plan.items).toHaveLength(1);
+    expect(plan.items).toHaveLength(2);
     expect(plan.items[0]!.event).toMatchObject({ name: "PMP Exam Prep - Nov 2026", startsAt: "2026-11-12T14:00:00.000Z", endsAt: "2026-11-14T22:00:00.000Z", timezone: "America/Toronto", currency: "USD", format: "live_virtual" });
     expect(plan.items[0]!.course).toMatchObject({ slug: "pmp-exam-prep", name: "PMP Exam Prep", durationDays: 3, imageUrl: "https://example.com/pmp-banner.jpg" });
     expect(plan.items[0]!.ticketTypes).toEqual([{ name: "Seat", priceMinor: 149500, quantity: 20 }]);
@@ -140,5 +140,47 @@ describe("csv parsing", () => {
     const p = planFromCsv("foo,bar\n1,2\n");
     expect(p.items).toEqual([]);
     expect(p.skipped[0]!.reason).toContain("need a name column");
+  });
+});
+
+describe("badges, instructors and other course details", () => {
+  it("finds a Credly badge in an Eventbrite description and keeps drafts as drafts", () => {
+    const r = mapEventbriteEvent(ebEvent({ status: "draft", description: { text: "Earn the PMP Prep badge on Credly: http://www.credly.com/org/acme/badge/pmp-prep." } }));
+    if ("skip" in r) throw new Error(r.skip);
+    expect(r.course.badge).toEqual({ platform: "credly", name: "PMP Bootcamp", url: "https://www.credly.com/org/acme/badge/pmp-prep" });
+    expect(r.event.draft).toBe(true);
+    const plain = mapEventbriteEvent(ebEvent());
+    if ("skip" in plain) throw new Error(plain.skip);
+    expect(plain.course.badge).toBeUndefined();
+    expect(plain.event.draft).toBeUndefined();
+  });
+
+  it("reads badge, badge image, instructors, minimum, meeting link and certification body from a CSV (Corsizio export)", () => {
+    const y = future.getUTCFullYear();
+    const csv = [
+      "Event Name,Course,Start Date,Price,Capacity,Minimum,Trainer,Zoom Link,Credly Badge,Badge Image,Certification Body,Status",
+      `"PMP Prep - Nov",PMP Prep,${y}-12-01 09:00,1495,20,6,"Jane Doe; Ali Khan",https://zoom.us/j/1,http://www.credly.com/org/acme/badge/pmp,,PMI,active`,
+      `"Agile Taster",Agile Taster,${y}-12-03 13:00,0,40,,Ali Khan,,,https://example.com/agile-badge.png,,draft`,
+      `"Scrum Day",Scrum Day,${y}-12-05 09:00,500,20,,,not-a-link,,,,`,
+    ].join("\n");
+    const plan = planFromCsv(csv, { defaultTimezone: "America/Toronto", defaultCurrency: "USD" });
+    const [pmp, agile, scrum] = plan.items;
+    expect(pmp!.course).toMatchObject({ certificationBody: "PMI", badge: { platform: "credly", name: "PMP Prep", url: "https://www.credly.com/org/acme/badge/pmp" } });
+    expect(pmp!.event).toMatchObject({ instructors: ["Jane Doe", "Ali Khan"], minEnrollment: 6, meetingUrl: "https://zoom.us/j/1" });
+    expect(pmp!.event.draft).toBeUndefined();
+    // A badge image with no platform link is the organizer's own badge.
+    expect(agile!.course.badge).toEqual({ platform: "own", name: "Agile Taster", imageUrl: "https://example.com/agile-badge.png" });
+    expect(agile!.event).toMatchObject({ draft: true, instructors: ["Ali Khan"] });
+    expect(agile!.ticketTypes[0]!.priceMinor).toBe(0);
+    expect(scrum!.course.badge).toBeUndefined();
+    expect(scrum!.event.meetingUrl).toBeUndefined();
+    expect(scrum!.warnings.some((w) => w.startsWith("meeting link"))).toBe(true);
+  });
+
+  it("the CSV template round-trips every column", () => {
+    const plan = planFromCsv(CSV_TEMPLATE, { defaultTimezone: "UTC" });
+    expect(plan.unmatchedHeaders).toEqual([]);
+    expect(plan.items[0]!.course.badge?.platform).toBe("credly");
+    expect(plan.items[1]!.course.badge?.platform).toBe("own");
   });
 });

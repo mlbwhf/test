@@ -1,5 +1,5 @@
 import { assertCurrency, assertMinorUnits, bps, type Currency, type MinorUnits } from "@gate/ledger";
-import { scheduleFor, type Channel, type FeeComponent, type FeeSchedule, type PayoutDestination } from "./schedule.js";
+import { scheduleFor, type Channel, type FeeComponent, type FeeSchedule, type PaymentMode, type PayoutDestination } from "./schedule.js";
 
 export interface PricingInput {
   currency: Currency;
@@ -7,6 +7,8 @@ export interface PricingInput {
   quantity: number;
   destination: PayoutDestination;
   channel?: Channel;
+  /** Direct: the organizer's own Stripe takes the payment and EnrollClass takes the direct fee. */
+  mode?: PaymentMode;
   /** When true the fee is added on top and paid by the attendee. */
   passFeeToAttendee?: boolean;
   /** Tax already calculated by a tax engine, in minor units. Wins over taxRateBps. */
@@ -50,7 +52,7 @@ export function priceOrder(input: PricingInput): Pricing {
 
   const schedule = scheduleFor(input.currency, input.schedules);
   const channel = input.channel ?? "online";
-  const component = channel === "pos" ? schedule.pos : schedule.online[input.destination];
+  const component = channel === "pos" ? schedule.pos : input.mode === "direct" ? schedule.direct : schedule.online[input.destination];
   const free = input.unitPriceMinor <= schedule.freeTicketThresholdMinor;
   let perTicketFee = free ? 0 : feePerTicket(input.unitPriceMinor, component);
   // An absorbed fee can never exceed the ticket itself; the organizer net is floored at zero.
