@@ -1,9 +1,10 @@
 // Typed HTTP client for the EnrollClass platform API.
 //
-// Server-side only: import this from server components, route handlers or
-// server actions. It is never imported from a "use client" module, so the
-// NEXT_PUBLIC_GATE_API_KEY value is read at request time on the server and
-// never inlined into a browser bundle.
+// Server-side only: import this from server components, route handlers or server
+// actions. Requests carry the signed-in person's session (from an httpOnly cookie), so
+// the API applies their organization and role.
+
+import { sessionToken } from "@/lib/session";
 
 export type PayoutDestination = "gate_account" | "external_bank";
 
@@ -416,14 +417,15 @@ export type ApiFailure = ApiErrorInfo | UnreachableInfo;
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiFailure };
 
-// Server-only names (GATE_API_URL, GATE_API_KEY) are read at request time, so one
+// Server-only names (GATE_API_URL) are read at request time, so one
 // container image serves any domain. The NEXT_PUBLIC_ names remain for local dev.
 export const apiBaseUrl = (process.env.GATE_API_URL ?? process.env.NEXT_PUBLIC_GATE_API_URL ?? "http://localhost:4000").replace(
   /\/+$/,
   "",
 );
 
-const apiKey = process.env.GATE_API_KEY ?? process.env.NEXT_PUBLIC_GATE_API_KEY ?? "";
+// Every dashboard request acts as the signed-in person (their session, their role).
+// There is deliberately no fallback to a shared organization key.
 
 type ErrorEnvelope = { error?: { code?: string; message?: string; hint?: string } };
 
@@ -442,7 +444,8 @@ async function send(
   accept: string,
 ): Promise<{ ok: true; res: Response } | { ok: false; error: ApiFailure }> {
   const headers: Record<string, string> = { accept };
-  if (apiKey) headers["x-api-key"] = apiKey;
+  const token = await sessionToken();
+  if (token) headers.authorization = `Bearer ${token}`;
   if (body instanceof RawBody) headers["content-type"] = body.contentType;
   else if (body !== undefined) headers["content-type"] = "application/json";
 
@@ -543,7 +546,49 @@ export type ImportResponse = {
 };
 export type ImportOptions = { dryRun: boolean; includePast?: boolean; sourceIds?: string[] };
 
+// ---- accounts ----
+export type Role = "owner" | "admin" | "instructor" | "finance";
+export const ROLES: Role[] = ["owner", "admin", "instructor", "finance"];
+export const ROLE_LABELS: Record<Role, string> = {
+  owner: "Owner",
+  admin: "Admin",
+  instructor: "Instructor",
+  finance: "Finance",
+};
+export const ROLE_HINTS: Record<Role, string> = {
+  owner: "Everything, including other owners",
+  admin: "Team, settings, classes and money",
+  instructor: "Courses, cohorts, imports and check-in",
+  finance: "Orders, payouts, refunds and reports",
+};
+export type Permission = "team" | "settings" | "classes:write" | "classes:read" | "money:read" | "money:write";
+export type Me = {
+  user: { id: string; email: string; name: string | null; avatarUrl: string | null };
+  organization: { id: string; name: string; kind: "company" | "individual" | null; currency: string; country: string; paymentsConnected: boolean } | null;
+  role: Role | null;
+  permissions: Permission[];
+  memberships: { organizationId: string; organizationName: string; kind: "company" | "individual" | null; role: Role }[];
+};
+export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
+export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
+
 export const api = {
+  // ---- accounts and team ----
+  providers: () => request<{ providers: { id: string; label: string }[]; email: boolean }>("GET", "/auth/providers"),
+  emailSignIn: (email: string, returnTo?: string) => request<{ sent: boolean }>("POST", "/auth/email", { email, ...(returnTo ? { returnTo } : {}) }),
+  exchange: (code: string) => request<{ token: string; returnTo: string | null; me: Me }>("POST", "/auth/exchange", { code }),
+  me: () => request<Me>("GET", "/auth/me"),
+  logout: () => request<{ ok: boolean }>("POST", "/auth/logout", {}),
+  switchOrganization: (organizationId: string) => request<Me>("POST", "/auth/switch", { organizationId }),
+  createOrganization: (input: { kind: "company" | "individual"; name?: string; country: string; currency: string }) => request<Me>("POST", "/auth/organizations", input),
+  acceptInvitation: (token: string) => request<Me>("POST", "/auth/invitations/accept", { token }),
+  listMembers: () => request<{ members: Member[]; invitations: Invitation[] }>("GET", "/v1/members"),
+  invite: (email: string, role: Role) => request<{ invitation: Invitation; emailed: boolean; acceptUrl: string }>("POST", "/v1/invitations", { email, role }),
+  revokeInvitation: (id: string) => request<{ ok: boolean }>("DELETE", `/v1/invitations/${enc(id)}`),
+  changeRole: (userId: string, role: Role) => request<{ userId: string; role: Role }>("PATCH", `/v1/members/${enc(userId)}`, { role }),
+  removeMember: (userId: string) => request<{ ok: boolean }>("DELETE", `/v1/members/${enc(userId)}`),
+  connectPayments: () => request<{ paymentsAccountRef: string; onboardingUrl: string | null }>("POST", "/v1/organizations/me/payments/connect", {}),
+
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),

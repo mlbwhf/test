@@ -18,13 +18,13 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         <nav aria-label="Site">
           <Link href="/#how">How it works</Link>
           <Link href="/#pricing">Pricing</Link>
-          <Link href="/#brand">Brand</Link>
+          <Link href="/#start">For instructors</Link>
         </nav>
         <div className="site-nav-actions">
-          <a href={`${APP}/dashboard`} className="site-link">
+          <a href={`${APP}/login`} className="site-link">
             Log in
           </a>
-          <a href="mailto:hello@enrollclass.com?subject=Start%20publishing%20on%20EnrollClass" className="pill pill-ink">
+          <a href={`${APP}/login?mode=signup`} className="pill pill-ink">
             Start publishing
           </a>
         </div>

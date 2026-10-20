@@ -18,7 +18,6 @@ compose() { docker compose "${opts[@]}" "$@"; }
 
 missing=$(grep -E '^(STRIPE_SECRET_KEY|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=' .env | sed -E 's/#.*$//' | grep -E '=\s*$' | cut -d= -f1 || true)
 [ -z "$missing" ] || { echo "fill these in .env before deploying:"; echo "$missing" | sed 's/^/    /'; exit 1; }
-[ -n "$(envval DASHBOARD_BASIC_AUTH)" ] || { echo "no dashboard login yet: run ./set-dashboard-password.sh, then ./deploy.sh" >&2; exit 1; }
 [ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
 echo "== pulling images"

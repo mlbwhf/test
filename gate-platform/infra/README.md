@@ -14,7 +14,7 @@ infra/scripts/detect-traefik.sh        prints the Traefik network/entrypoint/res
 infra/scripts/deploy.sh                pull, roll, wait for /health (used by CI and by hand)
 infra/scripts/bootstrap-tenant.sh      create the first organization, print its API key
 infra/scripts/rotate-api-key.sh        replace an organization's API key
-infra/scripts/set-dashboard-password.sh set the login for app.<domain> (stored hashed)
+infra/scripts/grant-owner.sh           one-time owner sign-in link for an existing organization
 .github/workflows/gate-deploy.yml      test, build, push images, roll the VPS over SSH
 ```
 
@@ -97,22 +97,27 @@ curl -s https://api.enrollclass.com/health      # {"ok":true,"payments":"stripe"
 open https://api.enrollclass.com/docs
 ```
 
-## 4a. Dashboard login
+## 4a. Sign-in and the first owner
 
-`app.<domain>` is protected at the edge by Traefik: every request except the learner
-portal (`/my/...`) and static assets needs a username and password. The deploy refuses
-to run until one is set. As `deploy`:
+Organizers sign in with their own accounts: Google, Microsoft, LinkedIn, Facebook or
+Eventbrite (each enabled by its `*_CLIENT_ID` and `*_CLIENT_SECRET` in `.env`), or an
+emailed sign-in link (on whenever `RESEND_API_KEY` is set). Register this redirect URI
+with each provider: `https://api.<domain>/auth/<provider>/callback`, for example
+`https://api.enrollclass.com/auth/google/callback`.
+
+Anyone can sign up at `https://app.<domain>/login?mode=signup` and create either a
+training organization or an independent-instructor practice. Owners and admins invite
+people from **Team** with one of four roles: owner, admin, instructor, finance.
+
+To take ownership of an organization that already exists (for example the one created by
+`bootstrap-tenant.sh`), as `deploy`:
 
 ```bash
-cd /opt/gate && ./set-dashboard-password.sh        # username "admin"; or ./set-dashboard-password.sh jane
-./deploy.sh
+cd /opt/gate && ./grant-owner.sh org_XXXX you@example.com
 ```
 
-Only an apr1 hash is written to `.env` (`DASHBOARD_BASIC_AUTH='user:$apr1$...'`, single
-quotes on purpose). Re-run the script to change the password; run it with a second
-username and merge the two values with a comma for a second user. To confirm Traefik
-received the hash intact: `docker inspect gate-web-1 | grep basicauth.users` shows one
-`$` per segment, not two.
+It prints a one-time sign-in link (20 minutes) that works even before any provider or
+email is configured; opening it signs you in as an owner.
 
 ## 5. First tenant
 
@@ -178,8 +183,8 @@ What is in place, and what still depends on you:
 
 - **Transport.** Traefik terminates TLS with Let's Encrypt and sends HSTS; Postgres is
   reachable only on the project's private Docker network, never on a host port.
-- **Dashboard.** Basic auth at the edge (section 4a); the API key never reaches the browser,
-  the web container calls the API over the private network with it.
+- **Dashboard.** Personal accounts (section 4a) with roles; sessions are httpOnly cookies
+  holding a random token the API stores only as a hash. No shared password or shared key.
 - **API.** Tenant API keys are stored as SHA-256 hashes; the admin key is compared in
   constant time; public learner endpoints are rate limited; request logs drop query strings
   (which carry learner emails) and credential headers; Postgres does not log query
@@ -187,8 +192,7 @@ What is in place, and what still depends on you:
 - **Host.** Key-only SSH, ufw (22/80/443), fail2ban, unattended security updates, containers
   run with `no-new-privileges`, `.env` is mode 600 and owned by `deploy`.
 - **Secrets.** Live only in `/opt/gate/.env` and GitHub repository secrets. Rotate a tenant
-  key with `./rotate-api-key.sh`, the dashboard password with `./set-dashboard-password.sh`,
-  Stripe/Resend/Anthropic keys in their dashboards, then `./deploy.sh`.
+  key with `./rotate-api-key.sh`, Stripe/Resend/Anthropic keys in their dashboards, then `./deploy.sh`.
 - **Not covered by the VPS.** The disk is not encrypted at rest; card data never touches it
   (Stripe holds it), but attendee names and emails do. Keep backups enabled and encrypted
   (section 7, `BACKUP_PASSPHRASE`), and move Postgres to a managed, encrypted database before

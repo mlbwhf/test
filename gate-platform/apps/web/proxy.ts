@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes the public marketing site. The same Next.js server answers three hosts:
-//   app.<domain>   organizer dashboard (behind Traefik basic auth) and learner portal (/my)
+//   app.<domain>   organizer dashboard (signed-in people only) and learner portal (/my)
 //   <domain>       marketing site, served from app/site
 //   www.<domain>   redirected to <domain>
 // Legal pages (/terms, /privacy, /refunds) resolve on every host so links from emails
@@ -44,7 +44,20 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(target, 307);
   }
 
+  // Organizer pages need a session cookie; the API checks it and the role on every call.
+  if (!isPublicAppPath(url.pathname) && !request.cookies.get("ec_session")?.value) {
+    const login = url.clone();
+    login.pathname = "/login";
+    login.search = url.pathname === "/" || url.pathname === "/dashboard" ? "" : `?returnTo=${encodeURIComponent(url.pathname + url.search)}`;
+    return NextResponse.redirect(login, 307);
+  }
+
   return NextResponse.next();
+}
+
+const PUBLIC_APP = [/^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
+function isPublicAppPath(path: string): boolean {
+  return PUBLIC_APP.some((re) => re.test(path));
 }
 
 export const config = {

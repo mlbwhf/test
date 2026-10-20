@@ -78,7 +78,7 @@ services:
       HOSTNAME: 0.0.0.0
       # Server-side calls stay on the private network; browser-facing links use the public host.
       GATE_API_URL: http://api:4000
-      GATE_API_KEY: ${GATE_ORG_API_KEY:-}
+      GATE_PUBLIC_API_URL: https://api.${GATE_DOMAIN}
       GATE_DOMAIN: ${GATE_DOMAIN}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
       NEXT_PUBLIC_GATE_API_URL: https://api.${GATE_DOMAIN}
@@ -86,22 +86,13 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: gate_internal
-      # Organizer dashboard: everything on app.<domain> needs the dashboard password
-      # (HTTP basic auth at the edge, DASHBOARD_BASIC_AUTH in .env) ...
+      # Organizer dashboard and learner portal. People sign in with their own account;
+      # the web app sends their session to the API, which checks their role on every call.
       traefik.http.routers.gate-web.rule: Host(`app.${GATE_DOMAIN}`)
-      traefik.http.routers.gate-web.priority: "10"
       traefik.http.routers.gate-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.gate-web.tls: "true"
       traefik.http.routers.gate-web.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
-      traefik.http.routers.gate-web.middlewares: gate-web-headers,gate-dashboard-auth
-      # ... except the learner self-service portal and the static assets it needs.
-      traefik.http.routers.gate-web-public.rule: Host(`app.${GATE_DOMAIN}`) && (PathPrefix(`/my`) || PathPrefix(`/_next/`) || Path(`/favicon.ico`) || Path(`/robots.txt`))
-      traefik.http.routers.gate-web-public.priority: "20"
-      traefik.http.routers.gate-web-public.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
-      traefik.http.routers.gate-web-public.tls: "true"
-      traefik.http.routers.gate-web-public.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
-      traefik.http.routers.gate-web-public.middlewares: gate-web-headers
-      traefik.http.routers.gate-web-public.service: gate-web
+      traefik.http.routers.gate-web.middlewares: gate-web-headers
       # Marketing site on the bare domain (and www, which the app redirects to bare): public.
       traefik.http.routers.gate-site.rule: Host(`${GATE_DOMAIN}`) || Host(`www.${GATE_DOMAIN}`)
       traefik.http.routers.gate-site.priority: "10"
@@ -111,9 +102,6 @@ services:
       traefik.http.routers.gate-site.middlewares: gate-web-headers
       traefik.http.routers.gate-site.service: gate-web
       traefik.http.services.gate-web.loadbalancer.server.port: "3000"
-      traefik.http.middlewares.gate-dashboard-auth.basicauth.users: ${DASHBOARD_BASIC_AUTH:?run ./set-dashboard-password.sh first}
-      traefik.http.middlewares.gate-dashboard-auth.basicauth.realm: EnrollClass dashboard
-      traefik.http.middlewares.gate-dashboard-auth.basicauth.removeheader: "true"
       traefik.http.middlewares.gate-web-headers.headers.stsSeconds: "31536000"
       traefik.http.middlewares.gate-web-headers.headers.stsIncludeSubdomains: "true"
       traefik.http.middlewares.gate-web-headers.headers.contentTypeNosniff: "true"

@@ -32,8 +32,11 @@ export class InMemoryNotifier implements Notifier {
 }
 export class ConsoleNotifier implements Notifier {
   readonly provider = "console";
+  /** printBody: development only; bodies carry sign-in links and personal data. */
+  constructor(private readonly opts: { printBody?: boolean } = {}) {}
   async send(m: EmailMessage) {
     console.log(`[email] to=${m.to} subject=${JSON.stringify(m.subject)} key=${m.key} attachments=${m.attachments?.map((a) => a.filename).join(",") ?? "-"}`);
+    if (this.opts.printBody) console.log(`[email body]\n${m.text}\n[/email body]`);
   }
 }
 

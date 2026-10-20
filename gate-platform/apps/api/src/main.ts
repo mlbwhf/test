@@ -1,13 +1,15 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, Identities, createInMemoryIdentityRepos, type IdentityRepos, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
 import type { MeetingProvider } from "@gate/core";
-import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgRepos, type IdempotencyStore } from "@gate/db";
+import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgIdentityRepos, createPgRepos, type IdempotencyStore } from "@gate/db";
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
 import { buildApp } from "./app.js";
+import { randomId } from "./auth.js";
+import { configuredProviders } from "./oauth.js";
 import { LocalMediaStore } from "./media.js";
 import { TicketSigner, ticketUrl } from "./tickets.js";
 
@@ -20,6 +22,7 @@ async function main() {
   let repos: Repos;
   let ledger: Ledger;
   let idempotency: IdempotencyStore | undefined;
+  let identityRepos: IdentityRepos;
   if (process.env.DATABASE_URL) {
     const pool = createPool(process.env.DATABASE_URL);
     const ran = await migrate(pool);
@@ -27,10 +30,12 @@ async function main() {
     repos = createPgRepos(pool);
     ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
     idempotency = new PgIdempotencyStore(pool);
+    identityRepos = createPgIdentityRepos(pool);
     console.log("[db] postgres");
   } else {
     repos = createInMemoryRepos();
     ledger = new Ledger({ store: new InMemoryLedgerStore() });
+    identityRepos = createInMemoryIdentityRepos();
     console.log("[db] in-memory (set DATABASE_URL for postgres)");
   }
 
@@ -54,7 +59,7 @@ async function main() {
   // Notifications: Resend when configured, otherwise log to the console.
   const notifier: Notifier = process.env.RESEND_API_KEY
     ? new ResendNotifier({ apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM ?? "EnrollClass <no-reply@enrollclass.com>" })
-    : new ConsoleNotifier();
+    : new ConsoleNotifier({ printBody: env !== "production" });
   console.log(`[email] ${notifier.provider}`);
   const webUrl = process.env.GATE_WEB_URL ?? "http://localhost:3000";
   // Ticket links and QR codes are signed with this; changing it invalidates issued tickets.
@@ -167,12 +172,18 @@ async function main() {
     setTimeout(tick, 5_000).unref();
   }
 
+  const providers = configuredProviders(process.env);
+  console.log(`[auth] sign-in: ${[...providers.map((p) => p.id), ...(process.env.RESEND_API_KEY || env !== "production" ? ["email link"] : [])].join(", ") || "none configured"}`);
+
   const app = await buildApp({
     core, ...(stripe ? { stripe } : {}), ...(aiEnabled ? { ai } : {}), ...(idempotency ? { idempotency } : {}),
     ...(process.env.GATE_ADMIN_KEY ? { adminKey: process.env.GATE_ADMIN_KEY } : {}), env, logger: true, publicUrl,
     media: new LocalMediaStore(process.env.GATE_MEDIA_DIR ?? "./data/media"),
     webUrl,
     ticketSecret,
+    identities: new Identities(identityRepos, core, { now: () => new Date() }, { next: randomId }),
+    providers,
+    ...(process.env.RESEND_API_KEY || env !== "production" ? { mailer: notifier } : {}),
     ...(process.env.GATE_COURSE_PAGE_URL ? { publicPageUrl: (_org: string, slug: string) => process.env.GATE_COURSE_PAGE_URL!.replace("{slug}", slug) } : {}),
   });
   await app.listen({ port, host: "0.0.0.0" });

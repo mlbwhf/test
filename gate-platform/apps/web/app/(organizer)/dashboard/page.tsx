@@ -1,6 +1,9 @@
-import { api, type ApiFailure, type Order } from "@/lib/api";
+import Link from "next/link";
+import { api, type ApiFailure, type ApiResult, type Order } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
+import { ActionForm } from "@/components/action-form";
+import { connectStripeAction } from "@/app/auth-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -50,11 +53,19 @@ function Tile({
   );
 }
 
-export default async function DashboardPage() {
-  const [orgRes, ordersRes, balancesRes] = await Promise.all([
+const skipped = <T,>(): Promise<ApiResult<T>> => Promise.resolve({ ok: false, error: { kind: "api", status: 403, code: "FORBIDDEN", message: "not shown for your role" } });
+
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const meRes = await api.me();
+  const perms = meRes.ok ? meRes.data.permissions : [];
+  const seesMoney = perms.includes("money:read");
+  const [orgRes, ordersRes, balancesRes, coursesRes, eventsRes] = await Promise.all([
     api.getOrganization(),
-    api.listOrders(),
-    api.getBalances(),
+    seesMoney ? api.listOrders() : skipped<{ items: Order[] }>(),
+    seesMoney ? api.getBalances() : skipped<Awaited<ReturnType<typeof api.getBalances>> extends ApiResult<infer B> ? B : never>(),
+    api.listCourses(),
+    api.listEvents(),
   ]);
 
   const unreachable: ApiFailure | undefined = [orgRes, ordersRes, balancesRes]
@@ -81,6 +92,22 @@ export default async function DashboardPage() {
       {unreachable && <ApiNotice failure={unreachable} />}
       {!unreachable && !orgRes.ok && <ApiNotice failure={orgRes.error} />}
 
+      {meRes.ok && (
+        <GettingStarted
+          welcome={sp.welcome === "1"}
+          canSettings={perms.includes("settings")}
+          canClasses={perms.includes("classes:write")}
+          paymentsConnected={meRes.data.organization?.paymentsConnected ?? false}
+          individual={meRes.data.organization?.kind === "individual"}
+          courses={coursesRes.ok ? coursesRes.data.items.length : 0}
+          cohorts={eventsRes.ok ? eventsRes.data.items.length : 0}
+          paid={paidCount}
+          firstCourseId={coursesRes.ok ? coursesRes.data.items[0]?.id : undefined}
+        />
+      )}
+
+      {seesMoney && (
+      <>
       <div className="tiles">
         <Tile
           label="Gross sales"
@@ -182,6 +209,54 @@ export default async function DashboardPage() {
           </div>
         )}
       </Section>
+      </>
+      )}
     </>
+  );
+}
+
+function GettingStarted(p: { welcome: boolean; canSettings: boolean; canClasses: boolean; paymentsConnected: boolean; individual: boolean; courses: number; cohorts: number; paid: number; firstCourseId: string | undefined }) {
+  const steps = [
+    { done: true, title: "Create your account", body: p.individual ? "Your practice is set up with you as its instructor." : "Invite instructors, admins and finance from Team." },
+    { done: p.paymentsConnected, title: "Connect Stripe to get paid", body: "Payments go to your own Stripe account; EnrollClass holds them until the course is delivered.", action: p.canSettings && !p.paymentsConnected ? "stripe" : undefined },
+    { done: p.courses > 0, title: "Add a course", body: "The course is what you teach: name, description, cover image.", href: "/courses" },
+    { done: p.cohorts > 0, title: "Schedule a cohort and set ticket prices", body: "A cohort is one run of the course with dates, seats and prices.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
+    { done: p.paid > 0, title: "Share it and take your first registration", body: "Embed the registration widget on your site or send the course link.", href: p.firstCourseId ? `/courses/${p.firstCourseId}` : "/courses" },
+  ];
+  const left = steps.filter((s) => !s.done).length;
+  if (left === 0 && !p.welcome) return null;
+  return (
+    <section className="card start">
+      <div className="start-head">
+        <div>
+          <p className="eyebrow-mono">{left === 0 ? "ALL SET" : `GETTING STARTED · ${steps.length - left} OF ${steps.length}`}</p>
+          <h2>{left === 0 ? "You're live" : p.welcome ? "Welcome! Five steps to your first registration" : "Finish setting up"}</h2>
+        </div>
+        <div className="start-bar" aria-hidden="true">
+          <div style={{ width: `${((steps.length - left) / steps.length) * 100}%` }} />
+        </div>
+      </div>
+      <ol className="start-steps">
+        {steps.map((s, i) => (
+          <li key={s.title} className={s.done ? "is-done" : ""}>
+            <span className="start-dot" aria-hidden="true">{s.done ? "✓" : i + 1}</span>
+            <div>
+              <div className="start-title">{s.title}</div>
+              <div className="start-body">{s.body}</div>
+            </div>
+            {!s.done && s.action === "stripe" && (
+              <ActionForm action={connectStripeAction} submitLabel="Connect Stripe" pendingLabel="Opening Stripe…" inline>
+                <span />
+              </ActionForm>
+            )}
+            {!s.done && s.href && p.canClasses && (
+              <Link className="btn" href={s.href}>
+                Open
+              </Link>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

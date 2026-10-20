@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SeatMark } from "@/components/brand";
 
 const APP = `https://app.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`;
 
@@ -22,7 +21,7 @@ export default function SiteHome() {
           <h1 className="site-h1">Fill every seat. Get paid when you teach.</h1>
           <p className="site-lede">Publish cohorts, take registrations by card or invoice, and receive funds in your Stripe account once the course is delivered.</p>
           <div className="site-cta">
-            <a href="mailto:hello@enrollclass.com?subject=Publish%20my%20first%20cohort" className="pill pill-green">
+            <a href={`${APP}/login?mode=signup`} className="pill pill-green">
               Publish your first cohort
             </a>
             <Link href="/#pricing" className="pill pill-outline">
@@ -149,44 +148,37 @@ export default function SiteHome() {
         <p className="footnote">USD rates. CAD, EUR and GBP schedules have the same shape with local caps. Taxes you collect are passed through, never charged a fee.</p>
       </section>
 
-      <section id="brand" className="site-section ink">
-        <h2 className="site-h2">A seat being filled</h2>
-        <div className="brand-grid">
-          <div className="brand-card">
-            <div className="brand-lockup">
-              <SeatMark size={28} ink="var(--paper)" />
-              <span className="wordmark wordmark-lg">enrollclass</span>
-            </div>
-            <p className="mono dim">Three seats taken, one being filled. The whole product in one mark.</p>
-          </div>
-          <div className="brand-card swatches">
-            <div className="swatch" style={{ background: "var(--ink)", color: "var(--paper)", border: "1px solid rgba(247,246,242,.2)" }}>
-              Ink
-            </div>
-            <div className="swatch" style={{ background: "var(--paper)", color: "var(--ink)" }}>
-              Paper
-            </div>
-            <div className="swatch" style={{ background: "var(--green)", color: "var(--ink)" }}>
-              Seat green
-            </div>
-            <div className="swatch" style={{ background: "var(--sand)", color: "var(--ink)" }}>
-              Sand
-            </div>
-          </div>
-          <div className="brand-card">
-            <p className="type-display">Bricolage Grotesque</p>
-            <p className="type-body">Instrument Sans for everything you read.</p>
-            <p className="mono">IBM PLEX MONO · $12,600 · 19 DEC</p>
-          </div>
+      <section id="start" className="site-section ink">
+        <h2 className="site-h2">Start with one cohort. Grow into a team.</h2>
+        <div className="audience">
+          <article className="audience-card">
+            <p className="mono green">INDEPENDENT INSTRUCTORS</p>
+            <h3>Teach under your own name</h3>
+            <ul>
+              <li>Sign in with Google, Microsoft or LinkedIn and publish the same day.</li>
+              <li>Card or invoice checkout, QR tickets, calendar invites and reminders.</li>
+              <li>Payouts to your Stripe account after each course is delivered.</li>
+            </ul>
+          </article>
+          <article className="audience-card">
+            <p className="mono green">TRAINING ORGANIZATIONS</p>
+            <h3>Run every instructor in one place</h3>
+            <ul>
+              <li>Invite instructors, admins and finance, each with the access they need.</li>
+              <li>Import your schedule from Eventbrite or a spreadsheet.</li>
+              <li>Seats, held funds and payouts per cohort, in one ledger.</li>
+            </ul>
+          </article>
         </div>
         <div className="site-cta">
-          <a href="mailto:hello@enrollclass.com?subject=Start%20publishing%20on%20EnrollClass" className="pill pill-green">
+          <a href={`${APP}/login?mode=signup`} className="pill pill-green">
             Start publishing
           </a>
-          <a href={`${APP}/dashboard`} className="pill pill-outline-paper">
+          <a href={`${APP}/login`} className="pill pill-outline-paper">
             Log in
           </a>
         </div>
+        <p className="start-note">Free to start. You pay only a per-seat fee on paid registrations.</p>
       </section>
     </>
   );

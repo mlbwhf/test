@@ -30,7 +30,7 @@ cp "$src/compose/docker-compose.traefik-bridge.yml" "$tmp/docker-compose.traefik
 cp "$src/scripts/deploy.sh" "$tmp/deploy.sh"
 cp "$src/scripts/bootstrap-tenant.sh" "$tmp/bootstrap-tenant.sh"
 cp "$src/scripts/rotate-api-key.sh" "$tmp/rotate-api-key.sh"
-cp "$src/scripts/set-dashboard-password.sh" "$tmp/set-dashboard-password.sh"
+cp "$src/scripts/grant-owner.sh" "$tmp/grant-owner.sh"
 
 # Any further arguments are SSH public keys ("ssh-ed25519 AAAA... comment"). Each is
 # installed for root and for deploy before hardening, so password logins can be turned
@@ -63,7 +63,7 @@ install -o deploy -g deploy -m 755 "$tmp/deploy.sh" /opt/gate/deploy.sh
 install -o deploy -g deploy -m 755 "$tmp/detect-traefik.sh" /opt/gate/detect-traefik.sh
 install -o deploy -g deploy -m 755 "$tmp/bootstrap-tenant.sh" /opt/gate/bootstrap-tenant.sh
 install -o deploy -g deploy -m 755 "$tmp/rotate-api-key.sh" /opt/gate/rotate-api-key.sh
-install -o deploy -g deploy -m 755 "$tmp/set-dashboard-password.sh" /opt/gate/set-dashboard-password.sh
+install -o deploy -g deploy -m 755 "$tmp/grant-owner.sh" /opt/gate/grant-owner.sh
 
 if [ -f /opt/gate/.env ]; then
   echo "== /opt/gate/.env already exists; leaving it untouched"
@@ -96,5 +96,5 @@ echo
 echo "== still empty in /opt/gate/.env (edit as deploy: nano /opt/gate/.env)"
 grep -E '^(STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=' /opt/gate/.env | sed -E 's/#.*$//' | grep -E '=\s*$' | cut -d= -f1 | sed 's/^/    /' || true
 echo
-echo "Set the dashboard login as deploy: cd /opt/gate && ./set-dashboard-password.sh"
+echo "After the first deploy, sign in as owner with: cd /opt/gate && ./grant-owner.sh <org_id> <your email>"
 echo "Then add DEPLOY_HOST, DEPLOY_USER=deploy and DEPLOY_SSH_KEY to GitHub secrets and run the gate-deploy workflow."
