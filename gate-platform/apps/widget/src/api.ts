@@ -4,6 +4,7 @@ export interface Organization { id: string; name: string; country: string; curre
 export interface Course {
   id: string; slug: string; name: string; description: string | null;
   certificationBody: string | null; durationDays: number | null;
+  imageUrl?: string | null;
 }
 export interface Session { startsAt: string; endsAt: string; title?: string | null }
 export interface CohortEvent {

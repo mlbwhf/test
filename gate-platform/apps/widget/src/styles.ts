@@ -9,6 +9,7 @@ export const CSS = `
 color-scheme:light;font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--gw-fg);background:var(--gw-bg);border:1px solid var(--gw-border);border-radius:20px;padding:24px;max-width:720px;box-sizing:border-box;text-align:left}
 @media (prefers-color-scheme:dark){.gw-root{--gw-bg:#14213d;--gw-fg:#f7f6f2;--gw-muted:#a7afc4;--gw-border:rgba(247,246,242,.16);--gw-surface:#253252;--gw-accent:#3fcb7e;--gw-accent-fg:#14213d;--gw-danger:#ff8a80;--gw-success:#7bd88f;--gw-badge-bg:rgba(63,203,126,.22);--gw-badge-fg:#f7f6f2;color-scheme:dark}}
 .gw-root *,.gw-root *::before,.gw-root *::after{box-sizing:border-box}
+.gw-cover{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:14px;margin:0 0 16px;background:var(--gw-surface)}
 .gw-title{margin:0 0 4px;font-family:"Bricolage Grotesque",inherit;font-size:1.5em;line-height:1.1;font-weight:800;letter-spacing:-.03em;color:var(--gw-fg)}
 .gw-subtitle{margin:0 0 8px;font-family:"Bricolage Grotesque",inherit;font-size:1.2em;font-weight:700;letter-spacing:-.02em;color:var(--gw-fg)}
 .gw-muted{margin:0 0 12px;color:var(--gw-muted)}

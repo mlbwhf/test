@@ -18,7 +18,7 @@ export interface ImportItem {
   /** Identifier at the source (Eventbrite event id, CSV row number). */
   sourceId: string;
   sourceUrl?: string;
-  course: { slug: string; name: string; description?: string; durationDays?: number };
+  course: { slug: string; name: string; description?: string; durationDays?: number; /** Cover image at the source, copied into the media store on apply. */ imageUrl?: string };
   event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: ImportFormat };
   ticketTypes: ImportTicketType[];
   /** Status at the source, informational. */

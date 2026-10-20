@@ -110,6 +110,8 @@ export type Course = {
   durationDays: number | null;
   prework: string | null;
   surveyUrl: string | null;
+  /** Cover image (2:1 banner) for the public page and widget. */
+  imageUrl: string | null;
   createdAt: string;
 };
 
@@ -418,9 +420,14 @@ const apiKey = process.env.GATE_API_KEY ?? process.env.NEXT_PUBLIC_GATE_API_KEY 
 
 type ErrorEnvelope = { error?: { code?: string; message?: string; hint?: string } };
 
-type Method = "GET" | "POST" | "PATCH" | "PUT";
+type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 /** Issues the request and parses an error envelope; returns the raw Response on 2xx. */
+/** A binary request body (an uploaded image) sent as-is with its own content type. */
+class RawBody {
+  constructor(readonly bytes: ArrayBuffer, readonly contentType: string) {}
+}
+
 async function send(
   method: Method,
   path: string,
@@ -429,14 +436,15 @@ async function send(
 ): Promise<{ ok: true; res: Response } | { ok: false; error: ApiFailure }> {
   const headers: Record<string, string> = { accept };
   if (apiKey) headers["x-api-key"] = apiKey;
-  if (body !== undefined) headers["content-type"] = "application/json";
+  if (body instanceof RawBody) headers["content-type"] = body.contentType;
+  else if (body !== undefined) headers["content-type"] = "application/json";
 
   let res: Response;
   try {
     res = await fetch(`${apiBaseUrl}${path}`, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : body instanceof RawBody ? body.bytes : JSON.stringify(body),
       cache: "no-store",
     });
   } catch (err) {
@@ -512,13 +520,13 @@ export type ImportItem = {
   source: ImportSource;
   sourceId: string;
   sourceUrl?: string;
-  course: { slug: string; name: string; description?: string; durationDays?: number };
+  course: { slug: string; name: string; description?: string; durationDays?: number; imageUrl?: string };
   event: { name: string; startsAt: string; endsAt?: string; timezone: string; currency: string; format: EventFormat };
   ticketTypes: { name: string; priceMinor: number; quantity: number; sold?: number }[];
   sourceStatus?: string;
   warnings: string[];
 };
-export type ImportResult = { sourceId: string; status: "created" | "exists" | "skipped" | "failed"; reason?: string; courseId?: string; courseCreated?: boolean; eventId?: string; ticketTypes?: number };
+export type ImportResult = { sourceId: string; status: "created" | "exists" | "skipped" | "failed"; reason?: string; courseId?: string; courseCreated?: boolean; eventId?: string; ticketTypes?: number; image?: "copied" | "kept" | "failed" | "none"; imageError?: string };
 export type ImportResponse = {
   plan: { source: ImportSource; items: ImportItem[]; courses: { slug: string; name: string; cohorts: number }[]; skipped: { sourceId: string; name: string; reason: string }[] };
   eventbriteOrganization?: { id: string; name: string } | null;
@@ -578,6 +586,9 @@ export const api = {
   importCsv: (input: ImportOptions & { csv: string; timezone?: string; currency?: string }) => request<ImportResponse>("POST", "/v1/imports/csv", input),
   getCourse: (id: string) => request<Course>("GET", `/v1/courses/${enc(id)}`),
   updateCourse: (id: string, input: UpdateCourseInput) => request<Course>("PATCH", `/v1/courses/${enc(id)}`, input),
+  uploadCourseImage: (id: string, bytes: ArrayBuffer, contentType: string) => request<Course>("PUT", `/v1/courses/${enc(id)}/image`, new RawBody(bytes, contentType)),
+  importCourseImage: (id: string, url: string) => request<Course>("POST", `/v1/courses/${enc(id)}/image/from-url`, { url }),
+  removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
   listCohorts: (courseId: string) => request<{ items: Event[] }>("GET", `/v1/courses/${enc(courseId)}/cohorts`),
   createCohort: (courseId: string, input: CreateCohortInput) =>
     request<Event>("POST", `/v1/courses/${enc(courseId)}/cohorts`, input),

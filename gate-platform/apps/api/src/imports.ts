@@ -4,6 +4,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { Core, DomainError, type Organization } from "@gate/core";
 import { EventbriteError, importFromEventbrite, planFromCsv, type ImportItem, type ImportPlan } from "@gate/importers";
 import * as S from "./schemas.js";
+import { importImage, type MediaStore } from "./media.js";
 
 // Import of courses and cohorts from other ticketing tools. Every call returns the plan;
 // nothing is written unless dryRun is false. Eventbrite tokens are used for the request
@@ -14,7 +15,7 @@ export const ImportItemSchema = z.object({
   source: z.enum(["eventbrite", "csv"]),
   sourceId: z.string(),
   sourceUrl: z.string().optional(),
-  course: z.object({ slug: z.string(), name: z.string(), description: z.string().optional(), durationDays: z.number().int().optional() }),
+  course: z.object({ slug: z.string(), name: z.string(), description: z.string().optional(), durationDays: z.number().int().optional(), imageUrl: z.string().optional() }),
   event: z.object({ name: z.string(), startsAt: z.string(), endsAt: z.string().optional(), timezone: z.string(), currency: z.string(), format: S.DeliveryFormat }),
   ticketTypes: z.array(ImportTicketTypeSchema),
   sourceStatus: z.string().optional(),
@@ -28,6 +29,8 @@ const ImportResultSchema = z.object({
   courseCreated: z.boolean().optional(),
   eventId: z.string().optional(),
   ticketTypes: z.number().int().optional(),
+  image: z.enum(["copied", "kept", "failed", "none"]).optional(),
+  imageError: z.string().optional(),
 });
 export const ImportResponseSchema = z.object({
   plan: z.object({
@@ -55,7 +58,9 @@ export const ImportCsvBody = z.object({ csv: z.string().min(1).max(2_000_000), t
 
 type ImportResult = z.infer<typeof ImportResultSchema>;
 
-export async function applyImportPlan(core: Core, org: Organization, plan: ImportPlan, opts: { includePast?: boolean | undefined; sourceIds?: string[] | undefined }): Promise<ImportResult[]> {
+export interface ApplyDeps { media?: MediaStore | undefined; publicUrl?: string | undefined; fetchImpl?: typeof fetch | undefined }
+
+export async function applyImportPlan(core: Core, org: Organization, plan: ImportPlan, opts: { includePast?: boolean | undefined; sourceIds?: string[] | undefined }, deps: ApplyDeps = {}): Promise<ImportResult[]> {
   const results: ImportResult[] = [];
   const existing = await core.listEvents(org.id);
   const existingKeys = new Set(existing.map((e) => `${e.name.trim().toLowerCase()}|${e.startsAt.toISOString()}`));
@@ -66,7 +71,7 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
     if (!opts.includePast && startsAt.getTime() < Date.now()) { results.push({ sourceId: item.sourceId, status: "skipped", reason: "starts in the past" }); continue; }
     if (existingKeys.has(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`)) { results.push({ sourceId: item.sourceId, status: "exists", reason: "a cohort with this name and start already exists" }); continue; }
     try {
-      results.push(await applyItem(core, org, item, startsAt));
+      results.push(await applyItem(core, org, item, startsAt, deps));
       existingKeys.add(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`);
     } catch (err) {
       results.push({ sourceId: item.sourceId, status: "failed", reason: err instanceof Error ? err.message : String(err) });
@@ -75,16 +80,37 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
   return results;
 }
 
-async function applyItem(core: Core, org: Organization, item: ImportItem, startsAt: Date): Promise<ImportResult> {
+async function applyItem(core: Core, org: Organization, item: ImportItem, startsAt: Date, deps: ApplyDeps): Promise<ImportResult> {
   let courseId: string;
   let courseCreated = false;
+  let hasImage = false;
   try {
-    courseId = (await core.getCourseBySlug(org.id, item.course.slug)).id;
+    const existing = await core.getCourseBySlug(org.id, item.course.slug);
+    courseId = existing.id;
+    hasImage = Boolean(existing.imageUrl);
   } catch (err) {
     if (!(err instanceof DomainError) || err.code !== "NOT_FOUND") throw err;
     const course = await core.createCourse(org.id, { slug: item.course.slug, name: item.course.name, description: item.course.description, durationDays: item.course.durationDays });
     courseId = course.id;
     courseCreated = true;
+  }
+  // Copy the source cover image into our own media store the first time the course gets one,
+  // so the page keeps working if the event is later deleted at the source.
+  let image: ImportResult["image"] = "none";
+  let imageError: string | undefined;
+  if (item.course.imageUrl) {
+    if (hasImage) image = "kept";
+    else if (deps.media) {
+      try {
+        const imageUrl = await importImage(deps.media, deps.publicUrl ?? "", item.course.imageUrl, deps.fetchImpl);
+        await core.updateCourse(org.id, courseId, { imageUrl });
+        hasImage = true;
+        image = "copied";
+      } catch (err) {
+        image = "failed";
+        imageError = err instanceof Error ? err.message : String(err);
+      }
+    }
   }
   const endsAt = item.event.endsAt ? new Date(item.event.endsAt) : undefined;
   const event = await core.createEvent(org.id, {
@@ -97,10 +123,10 @@ async function applyItem(core: Core, org: Organization, item: ImportItem, starts
     ...(endsAt && endsAt > startsAt ? { sessions: [{ startsAt, endsAt }] } : {}),
   });
   for (const t of item.ticketTypes) await core.createTicketType(org.id, event.id, { name: t.name, priceMinor: t.priceMinor, quantity: t.quantity });
-  return { sourceId: item.sourceId, status: "created", courseId, courseCreated, eventId: event.id, ticketTypes: item.ticketTypes.length };
+  return { sourceId: item.sourceId, status: "created", courseId, courseCreated, eventId: event.id, ticketTypes: item.ticketTypes.length, image, ...(imageError ? { imageError } : {}) };
 }
 
-export function registerImports(api: FastifyInstance, deps: { core: Core; fetchImpl?: typeof fetch }, org: (req: { org?: Organization }) => Organization) {
+export function registerImports(api: FastifyInstance, deps: { core: Core; fetchImpl?: typeof fetch; media?: MediaStore; publicUrl?: string }, org: (req: { org?: Organization }) => Organization) {
   const typed = api.withTypeProvider<ZodTypeProvider>();
   typed.post("/v1/imports/eventbrite", { schema: { tags: ["imports"], body: ImportEventbriteBody, response: { 200: ImportResponseSchema, 400: S.ErrorSchema, 401: S.ErrorSchema, 502: S.ErrorSchema } } }, async (req) => {
     const o = org(req);
@@ -112,7 +138,7 @@ export function registerImports(api: FastifyInstance, deps: { core: Core; fetchI
       throw err;
     }
     const dryRun = req.body.dryRun ?? true;
-    const results = dryRun ? [] : await applyImportPlan(deps.core, o, plan, req.body);
+    const results = dryRun ? [] : await applyImportPlan(deps.core, o, plan, req.body, deps);
     const { organization, ...rest } = plan;
     return { plan: rest, eventbriteOrganization: organization, dryRun, results };
   });
@@ -120,7 +146,7 @@ export function registerImports(api: FastifyInstance, deps: { core: Core; fetchI
     const o = org(req);
     const { columns: _c, unmatchedHeaders, ...plan } = planFromCsv(req.body.csv, { defaultTimezone: req.body.timezone ?? "UTC", defaultCurrency: req.body.currency ?? o.currency });
     const dryRun = req.body.dryRun ?? true;
-    const results = dryRun ? [] : await applyImportPlan(deps.core, o, plan, req.body);
+    const results = dryRun ? [] : await applyImportPlan(deps.core, o, plan, req.body, deps);
     return { plan, unmatchedHeaders, dryRun, results };
   });
 }

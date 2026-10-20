@@ -17,6 +17,7 @@ export function courseJsonLd(input: {
     "@context": "https://schema.org",
     "@type": "Course",
     name: input.course.name,
+    ...(input.course.imageUrl ? { image: input.course.imageUrl } : {}),
     ...(input.course.description ? { description: input.course.description } : {}),
     provider: { "@type": "Organization", name: input.organization.name, ...(input.organizationUrl ? { url: input.organizationUrl } : {}) },
     url: input.pageUrl,

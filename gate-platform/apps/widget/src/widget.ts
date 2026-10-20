@@ -138,6 +138,7 @@ export class Widget {
   private readonly id: string;
   private readonly titleEl: HTMLElement;
   private readonly metaEl: HTMLElement;
+  private readonly bannerEl: HTMLElement;
   private readonly statusEl: HTMLElement;
   private readonly body: HTMLElement;
   private data: CoursePayload | null = null;
@@ -150,12 +151,13 @@ export class Widget {
     this.api = createApi(opts.api, opts.org);
     this.id = `gw${++seq}`;
     this.waitlistEntryId = (opts.waitlist ?? host.dataset.gateWaitlist ?? waitlistFromLocation())?.trim() || undefined;
+    this.bannerEl = h("div", { class: "gw-banner-slot" });
     this.titleEl = h("h2", { class: "gw-title" }, "Loading…");
     this.metaEl = h("p", { class: "gw-muted" });
     this.statusEl = h("div", { class: "gw-status", role: "status", "aria-live": "polite" });
     this.body = h("div", { class: "gw-body" });
     host.replaceChildren(
-      h("div", { class: "gw-root" }, h("div", { class: "gw-header" }, this.titleEl, this.metaEl), this.statusEl, this.body),
+      h("div", { class: "gw-root" }, this.bannerEl, h("div", { class: "gw-header" }, this.titleEl, this.metaEl), this.statusEl, this.body),
     );
     this.ready = this.load();
   }
@@ -175,6 +177,7 @@ export class Widget {
       const locale = typeof navigator === "undefined" ? undefined : navigator.language;
       this.currency = pickCurrency(available, this.opts.currency, rememberedCurrency(), currencyForLocale(locale), data.organization.currency) ?? data.organization.currency;
       this.titleEl.textContent = data.course.name;
+      this.bannerEl.replaceChildren(...(data.course.imageUrl ? [h("img", { class: "gw-cover", src: data.course.imageUrl, alt: "", loading: "lazy", decoding: "async" })] : []));
       this.metaEl.textContent = [
         data.course.certificationBody,
         data.course.durationDays ? `${data.course.durationDays}-day course` : null,

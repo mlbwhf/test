@@ -135,6 +135,11 @@ dashboard picks it up. `https://app.enrollclass.com/dashboard` now shows the org
 
 ## 7. Backups
 
+State lives in two volumes: `gate_pgdata` (the database, covered by the nightly dump
+below) and `gate_media` (course images). Copy the images alongside the dumps:
+`docker run --rm -v gate_media:/m -v "$PWD":/out alpine tar czf /out/media.tgz -C /m .`
+
+
 Create a bucket on Cloudflare R2 or Backblaze B2, fill the `BACKUP_*` variables, and run
 `./deploy.sh`. The backup service starts automatically once `BACKUP_S3_BUCKET` is set.
 Dumps are encrypted with `BACKUP_PASSPHRASE`; keep a copy of it outside the server.

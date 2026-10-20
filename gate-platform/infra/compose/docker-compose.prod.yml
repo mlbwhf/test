@@ -47,6 +47,9 @@ services:
       DATABASE_URL: postgres://gate:${POSTGRES_PASSWORD}@postgres:5432/gate
       GATE_PUBLIC_URL: https://api.${GATE_DOMAIN:?set GATE_DOMAIN in .env}
       GATE_WEB_URL: https://app.${GATE_DOMAIN}
+      GATE_MEDIA_DIR: /data/media
+    volumes:
+      - media:/data/media
     networks: [internal]
     labels:
       traefik.enable: "true"
@@ -146,6 +149,8 @@ services:
 
 volumes:
   pgdata:
+  # Course cover images uploaded or imported by organizers.
+  media:
 
 networks:
   # Traefik in host network mode (Hostinger template) routes to container IPs on this

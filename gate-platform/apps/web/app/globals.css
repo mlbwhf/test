@@ -1174,3 +1174,35 @@ td .action-form-inline .result {
   color: var(--green-text);
   text-decoration: underline;
 }
+
+/* course cover image */
+.cover-row {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .cover-row {
+    grid-template-columns: 1fr;
+  }
+}
+.cover-preview {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.cover-empty {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  gap: 4px;
+  color: var(--muted);
+}
+.cover-forms {
+  display: grid;
+  gap: 12px;
+}

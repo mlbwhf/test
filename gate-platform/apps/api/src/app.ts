@@ -15,6 +15,7 @@ import type { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { InMemoryIdempotencyStore, registerIdempotency } from "./plugins/idempotency.js";
 import * as S from "./schemas.js";
 import { registerImports } from "./imports.js";
+import { InMemoryMediaStore, registerCourseImageRoutes, registerMediaRoutes, type MediaStore } from "./media.js";
 import { timingSafeEqual } from "node:crypto";
 
 /** Constant-time comparison of a presented secret against the configured one. */
@@ -55,6 +56,8 @@ export interface AppDeps {
   publicUrl?: string;
   /** Outbound HTTP for importers; tests inject a fake. */
   fetchImpl?: typeof fetch;
+  /** Where course images are kept; defaults to memory (tests, dev). */
+  media?: MediaStore;
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
@@ -90,6 +93,9 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (status >= 500) req.log.error(err);
     return reply.code(status).send({ error: { code: status >= 500 ? "INTERNAL" : "REQUEST", message: status >= 500 ? "internal error" : (err as Error).message, requestId: req.id } });
   });
+
+  const media = deps.media ?? new InMemoryMediaStore();
+  registerMediaRoutes(app, { store: media });
 
   app.get("/health", { schema: { tags: ["system"], security: [], response: { 200: z.object({ ok: z.boolean(), payments: z.string(), env: z.string() }) } } }, async () => ({ ok: true, payments: deps.core.payments.provider, env }));
 
@@ -305,7 +311,9 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     });
     registerIdempotency(api, deps.idempotency ?? new InMemoryIdempotencyStore());
     const org = (req: { org?: Organization }) => req.org!;
-    registerImports(api, { core: deps.core, ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}) }, org);
+    const outbound = deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {};
+    registerImports(api, { core: deps.core, media, publicUrl: deps.publicUrl ?? "", ...outbound }, org);
+    registerCourseImageRoutes(api, { core: deps.core, store: media, publicUrl: deps.publicUrl ?? "", ...outbound }, org);
 
     api.get("/v1/organizations/me", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(org(req)));
 
@@ -390,7 +398,7 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.patch("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.UpdateCourseBody, response: { 200: S.CourseSchema } } }, async (req) => {
       const b = req.body;
       const clean = (v: string | number | null | undefined) => (v === null ? "" : v);
-      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays }));
+      return S.toCourse(await deps.core.updateCourse(org(req).id, req.params.id, { description: clean(b.description) as string | undefined, prework: clean(b.prework) as string | undefined, surveyUrl: clean(b.surveyUrl) as string | undefined, certificationBody: clean(b.certificationBody) as string | undefined, durationDays: b.durationDays === null ? undefined : b.durationDays, imageUrl: clean(b.imageUrl) as string | undefined }));
     });
     api.post("/v1/events/:id/meeting", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), body: z.object({ provider: z.enum(["zoom", "teams", "manual"]), joinUrl: z.string().optional(), hostUrl: z.string().optional(), passcode: z.string().optional() }), response: { 200: S.EventSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setMeeting(org(req).id, req.params.id, req.body)));
     api.get("/v1/events/:id/attendance", { schema: { tags: ["delivery"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.AttendanceRowSchema) }) } } }, async (req) => ({ items: (await deps.core.listAttendance(org(req).id, req.params.id)).map(attendanceOut) }));

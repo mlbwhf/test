@@ -204,12 +204,13 @@ export class Core {
     return course;
   }
 
-  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined }): Promise<Course> {
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
     if (patch.surveyUrl && !/^https?:\/\//.test(patch.surveyUrl)) throw new DomainError("VALIDATION", "surveyUrl must be an http(s) URL");
+    if (patch.imageUrl && !/^https?:\/\//.test(patch.imageUrl)) throw new DomainError("VALIDATION", "imageUrl must be an http(s) URL");
     const next: Course = { ...course };
     const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
-    set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays);
+    set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays); set("imageUrl", patch.imageUrl);
     await this.repos.courses.update(next);
     return next;
   }

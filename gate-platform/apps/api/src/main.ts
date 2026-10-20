@@ -8,6 +8,7 @@ import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgR
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
 import { buildApp } from "./app.js";
+import { LocalMediaStore } from "./media.js";
 
 async function main() {
   const env = (process.env.GATE_ENV as "development" | "test" | "production" | undefined) ?? "development";
@@ -156,6 +157,7 @@ async function main() {
   const app = await buildApp({
     core, ...(stripe ? { stripe } : {}), ...(aiEnabled ? { ai } : {}), ...(idempotency ? { idempotency } : {}),
     ...(process.env.GATE_ADMIN_KEY ? { adminKey: process.env.GATE_ADMIN_KEY } : {}), env, logger: true, publicUrl,
+    media: new LocalMediaStore(process.env.GATE_MEDIA_DIR ?? "./data/media"),
     ...(process.env.GATE_COURSE_PAGE_URL ? { publicPageUrl: (_org: string, slug: string) => process.env.GATE_COURSE_PAGE_URL!.replace("{slug}", slug) } : {}),
   });
   await app.listen({ port, host: "0.0.0.0" });

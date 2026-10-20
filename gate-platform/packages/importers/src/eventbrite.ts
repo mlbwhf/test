@@ -28,6 +28,7 @@ export interface EventbriteEvent {
   capacity?: number | null;
   status: string;
   is_series_parent?: boolean;
+  logo?: { url?: string | null; original?: { url?: string | null } | null } | null;
   ticket_classes?: EventbriteTicketClass[];
 }
 
@@ -64,7 +65,7 @@ export async function listEventbriteEvents(token: string, organizationId: string
   const events: EventbriteEvent[] = [];
   let continuation: string | undefined;
   for (let page = 0; page < 50; page++) {
-    const qs = new URLSearchParams({ expand: "ticket_classes", status: "draft,live,started,ended,completed", order_by: "start_asc", page_size: "50" });
+    const qs = new URLSearchParams({ expand: "ticket_classes,logo", status: "draft,live,started,ended,completed", order_by: "start_asc", page_size: "50" });
     if (continuation) qs.set("continuation", continuation);
     const data = await get<{ events: EventbriteEvent[]; pagination?: { has_more_items?: boolean; continuation?: string } }>(fetchImpl, token, `/organizations/${organizationId}/events/?${qs}`);
     events.push(...(data.events ?? []));
@@ -103,11 +104,12 @@ export function mapEventbriteEvent(ev: EventbriteEvent): ImportItem | { skip: st
   const courseName = courseNameFrom(name);
   const description = ev.summary?.trim() || ev.description?.text?.trim() || undefined;
   const durationDays = durationDaysBetween(startsAt, endsAt);
+  const imageUrl = ev.logo?.original?.url || ev.logo?.url || undefined;
   return {
     source: "eventbrite",
     sourceId: ev.id,
     ...(ev.url ? { sourceUrl: ev.url } : {}),
-    course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}) },
+    course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}), ...(imageUrl ? { imageUrl } : {}) },
     event: { name, startsAt, ...(endsAt ? { endsAt } : {}), timezone: ev.start.timezone || "UTC", currency, format: ev.online_event ? "live_virtual" : "in_person" },
     ticketTypes,
     sourceStatus: ev.status,

@@ -171,4 +171,66 @@ describe("API", () => {
     const manual = await fxApp.inject({ method: "PATCH", url: "/v1/organizations/me/pricing", headers: h, payload: { rates: { CAD: 1.4 } } });
     expect(manual.json().pricing).toMatchObject({ rates: { CAD: 1.4, EUR: 0.92 }, ratesSource: "manual" });
   });
+
+  it("stores course images: raw upload, from URL, served with long cache, rejects non-images", async () => {
+    const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
+    const fetchImpl = (async (url: string) => {
+      if (url === "https://cdn.example.com/banner.png") return new Response(png, { headers: { "content-type": "application/octet-stream" } });
+      if (url === "https://cdn.example.com/page.html") return new Response("<html>", { headers: { "content-type": "text/html" } });
+      return new Response("", { status: 404 });
+    }) as unknown as typeof fetch;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl, publicUrl: "https://api.test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { slug: "rte", name: "RTE" } })).json();
+    expect(course.imageUrl).toBeNull();
+
+    const up = await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/image`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png });
+    expect(up.statusCode).toBe(200);
+    expect(up.json().imageUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\/[a-f0-9]{32}\.png$/);
+    const servedPath = new URL(up.json().imageUrl).pathname;
+    const served = await im.inject(servedPath);
+    expect(served.statusCode).toBe(200);
+    expect(served.headers["content-type"]).toBe("image/png");
+    expect(served.headers["cache-control"]).toContain("immutable");
+    expect(served.rawPayload.equals(png)).toBe(true);
+
+    const lie = await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/image`, headers: { "x-api-key": key, "content-type": "image/jpeg" }, payload: png });
+    expect(lie.statusCode).toBe(400);
+    const notImage = await im.inject({ method: "POST", url: `/v1/courses/${course.id}/image/from-url`, headers: { "x-api-key": key, "content-type": "application/json" }, payload: { url: "https://cdn.example.com/page.html" } });
+    expect(notImage.statusCode).toBe(400);
+    const fromUrl = await im.inject({ method: "POST", url: `/v1/courses/${course.id}/image/from-url`, headers: { "x-api-key": key, "content-type": "application/json" }, payload: { url: "https://cdn.example.com/banner.png" } });
+    expect(fromUrl.json().imageUrl).toBe(up.json().imageUrl);
+    const removed = await im.inject({ method: "DELETE", url: `/v1/courses/${course.id}/image`, headers: { "x-api-key": key } });
+    expect(removed.json().imageUrl).toBeNull();
+    expect((await im.inject("/public/v1/media/../../etc/passwd")).statusCode).toBe(404);
+
+    const pub = (await im.inject(`/public/v1/organizations/${course.organizationId}/courses/rte`)).json();
+    expect(pub.course.imageUrl).toBeNull();
+  });
+
+  it("copies the Eventbrite event image into the course when importing", async () => {
+    const jpg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(64, 1)]);
+    const fetchImpl = (async (url: string) => {
+      if (url.startsWith("https://img.evbuc.com/")) return new Response(jpg, { headers: { "content-type": "image/jpeg" } });
+      if (url.endsWith("/users/me/organizations/")) return new Response(JSON.stringify({ organizations: [{ id: "eb1", name: "AA" }] }));
+      expect(url).toContain("expand=ticket_classes%2Clogo");
+      return new Response(JSON.stringify({ events: [
+        { id: "e1", name: { text: "RTE - Dec 2099" }, logo: { url: "https://img.evbuc.com/small.jpg", original: { url: "https://img.evbuc.com/orig.jpg" } }, start: { timezone: "UTC", utc: "2099-12-03T14:00:00Z" }, end: null, currency: "USD", status: "live", ticket_classes: [{ id: "t", name: "Seat", cost: { currency: "USD", value: 90000 }, quantity_total: 20 }] },
+        { id: "e2", name: { text: "RTE - Jan 2100" }, logo: { url: "https://img.evbuc.com/other.jpg" }, start: { timezone: "UTC", utc: "2100-01-03T14:00:00Z" }, end: null, currency: "USD", status: "live", ticket_classes: [{ id: "t", name: "Seat", cost: { currency: "USD", value: 90000 }, quantity_total: 20 }] },
+      ], pagination: { has_more_items: false } }));
+    }) as unknown as typeof fetch;
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl, publicUrl: "https://api.test" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json();
+    const h = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const res = await im.inject({ method: "POST", url: "/v1/imports/eventbrite", headers: h, payload: { token: "good-token-123", dryRun: false } });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().plan.items[0].course.imageUrl).toBe("https://img.evbuc.com/orig.jpg");
+    expect(res.json().results.map((r: { image: string }) => r.image)).toEqual(["copied", "kept"]);
+    const course = (await im.inject({ url: `/v1/courses/${res.json().results[0].courseId}`, headers: h })).json();
+    expect(course.imageUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\/[a-f0-9]{32}\.jpg$/);
+    const served = await im.inject(new URL(course.imageUrl).pathname);
+    expect(served.rawPayload.equals(jpg)).toBe(true);
+  });
 });

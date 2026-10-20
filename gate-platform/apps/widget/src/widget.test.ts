@@ -179,6 +179,13 @@ describe("schedule", () => {
     expect(host2.querySelector<HTMLSelectElement>("select.gw-select")!.value).toBe("CAD");
   });
 
+  it("shows the course cover image when the course has one", async () => {
+    stubFetch((url, init, json) => (url.includes("/courses/") ? { body: { ...course, course: { ...course.course, imageUrl: "https://api.test/public/v1/media/abc.jpg" } } } : courseRoute(url, init, json)));
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    expect(host.querySelector<HTMLImageElement>("img.gw-cover")!.getAttribute("src")).toBe("https://api.test/public/v1/media/abc.jpg");
+  });
+
   it("remembers the visitor's currency choice across mounts", async () => {
     stubFetch(courseRoute);
     const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });

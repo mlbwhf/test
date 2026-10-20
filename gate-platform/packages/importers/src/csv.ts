@@ -33,7 +33,7 @@ export function parseCsv(text: string): string[][] {
   return rows;
 }
 
-type Column = "name" | "course" | "startsAt" | "endsAt" | "startTime" | "endTime" | "timezone" | "currency" | "price" | "seats" | "sold" | "format" | "location" | "description" | "ticketName" | "status" | "url";
+type Column = "name" | "course" | "startsAt" | "endsAt" | "startTime" | "endTime" | "timezone" | "currency" | "price" | "seats" | "sold" | "format" | "location" | "description" | "ticketName" | "status" | "url" | "image";
 
 const ALIASES: Record<Column, string[]> = {
   name: ["name", "event", "event name", "event title", "title", "cohort", "class", "class name", "session name", "course name"],
@@ -53,6 +53,7 @@ const ALIASES: Record<Column, string[]> = {
   ticketName: ["ticket", "ticket name", "ticket type", "ticket class", "ticket class name"],
   status: ["status", "state"],
   url: ["url", "link", "event url", "page"],
+  image: ["image", "image url", "banner", "banner url", "cover", "cover image", "logo", "photo", "picture"],
 };
 
 function normalizeHeader(h: string): string {
@@ -222,11 +223,13 @@ export function planFromCsv(text: string, opts: CsvImportOptions = {}): ImportPl
     const description = cell(row, "description");
     const durationDays = durationDaysBetween(startsAt, endsAt);
     const url = cell(row, "url");
+    const image = cell(row, "image");
+    if (image && !/^https?:\/\//i.test(image)) warnings.push(`image "${image.slice(0, 40)}" is not an http(s) URL; ignored`);
     const item: ImportItem = {
       source: "csv",
       sourceId,
       ...(url ? { sourceUrl: url } : {}),
-      course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}) },
+      course: { slug: slugify(courseName), name: courseName, ...(description ? { description: description.slice(0, 5000) } : {}), ...(durationDays ? { durationDays } : {}), ...(image && /^https?:\/\//i.test(image) ? { imageUrl: image } : {}) },
       event: { name, startsAt, ...(endsAt ? { endsAt } : {}), timezone, currency, format: formatFrom(cell(row, "format"), cell(row, "location")) },
       ticketTypes: [ticket],
       ...(status ? { sourceStatus: status } : {}),
@@ -240,5 +243,5 @@ export function planFromCsv(text: string, opts: CsvImportOptions = {}): ImportPl
 
 /** Canonical header row plus one example, offered as a download in the dashboard. */
 export const CSV_TEMPLATE =
-  "name,course,start,end,timezone,currency,price,seats,format,location,description\n" +
-  '"PMP Exam Prep - Nov 2026","PMP Exam Prep",2026-11-12 09:00,2026-11-14 17:00,America/Toronto,USD,1495.00,20,live_virtual,,"Three-day live online bootcamp."\n';
+  "name,course,start,end,timezone,currency,price,seats,format,location,description,image\n" +
+  '"PMP Exam Prep - Nov 2026","PMP Exam Prep",2026-11-12 09:00,2026-11-14 17:00,America/Toronto,USD,1495.00,20,live_virtual,,"Three-day live online bootcamp.",https://example.com/pmp-banner.jpg\n';

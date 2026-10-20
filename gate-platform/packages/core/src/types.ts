@@ -56,6 +56,8 @@ export interface Course {
   prework?: string;
   /** Post-class survey link sent after the cohort ends. */
   surveyUrl?: string;
+  /** Cover image (2:1 banner) shown on the public page, widget and JSON-LD. */
+  imageUrl?: string;
   createdAt: Date;
 }
 

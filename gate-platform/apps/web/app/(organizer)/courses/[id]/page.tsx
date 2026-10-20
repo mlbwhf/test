@@ -4,7 +4,7 @@ import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
-import { createCohortAction, updateCourseDeliveryAction } from "@/app/actions";
+import { createCohortAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +48,40 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         <Link href="/courses">← All courses</Link>
       </div>
       {course.description && <p className="muted">{course.description}</p>}
+
+      <Section title="Cover image">
+        <div className="cover-row">
+          {course.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="cover-preview" src={course.imageUrl} alt={`Cover image for ${course.name}`} />
+          ) : (
+            <div className="cover-preview cover-empty">
+              <span>No cover image</span>
+              <span className="hint">2:1, e.g. 2160×1080</span>
+            </div>
+          )}
+          <div className="cover-forms">
+            <ActionForm action={updateCourseImageAction} submitLabel={course.imageUrl ? "Replace image" : "Save image"} pendingLabel="Uploading…">
+              <input type="hidden" name="courseId" value={course.id} />
+              <label>
+                Upload an image (JPEG, PNG, WebP or GIF, up to 5 MB)
+                <input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+              </label>
+              <label>
+                …or copy it from a URL
+                <input name="imageUrl" type="url" placeholder="https://…/banner.jpg" />
+              </label>
+              <p className="hint">Shown at the top of the public course page and the registration widget, and in search results through the course&apos;s structured data. Imports from Eventbrite fill this automatically.</p>
+            </ActionForm>
+            {course.imageUrl && (
+              <ActionForm action={updateCourseImageAction} submitLabel="Remove image" pendingLabel="Removing…" variant="danger" inline>
+                <input type="hidden" name="courseId" value={course.id} />
+                <input type="hidden" name="mode" value="remove" />
+              </ActionForm>
+            )}
+          </div>
+        </div>
+      </Section>
 
       <Section title="Delivery settings">
         <dl className="kv">

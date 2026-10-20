@@ -12,6 +12,7 @@ function ebEvent(over: Partial<EventbriteEvent> = {}): EventbriteEvent {
     name: { text: "PMP Bootcamp - Nov 14-16, 2026" },
     summary: "Three days of exam prep.",
     url: "https://www.eventbrite.com/e/123",
+    logo: { url: "https://img.evbuc.com/small.jpg", original: { url: "https://img.evbuc.com/original.jpg" } },
     start: { timezone: "America/Toronto", utc: iso(future) },
     end: { timezone: "America/Toronto", utc: iso(new Date(future.getTime() + 2 * 86_400_000 + 8 * 3_600_000)) },
     currency: "USD",
@@ -45,7 +46,7 @@ describe("eventbrite mapping", () => {
   it("maps an event with ticket classes into a plan item", () => {
     const r = mapEventbriteEvent(ebEvent());
     if ("skip" in r) throw new Error(r.skip);
-    expect(r.course).toMatchObject({ slug: "pmp-bootcamp", name: "PMP Bootcamp", description: "Three days of exam prep.", durationDays: 3 });
+    expect(r.course).toMatchObject({ slug: "pmp-bootcamp", name: "PMP Bootcamp", description: "Three days of exam prep.", durationDays: 3, imageUrl: "https://img.evbuc.com/original.jpg" });
     expect(r.event).toMatchObject({ name: "PMP Bootcamp - Nov 14-16, 2026", timezone: "America/Toronto", currency: "USD", format: "live_virtual" });
     expect(r.ticketTypes).toEqual([
       { name: "Early bird", priceMinor: 129500, quantity: 10, sold: 10 },
@@ -120,7 +121,7 @@ describe("csv parsing", () => {
     expect(plan.skipped).toEqual([]);
     expect(plan.items).toHaveLength(1);
     expect(plan.items[0]!.event).toMatchObject({ name: "PMP Exam Prep - Nov 2026", startsAt: "2026-11-12T14:00:00.000Z", endsAt: "2026-11-14T22:00:00.000Z", timezone: "America/Toronto", currency: "USD", format: "live_virtual" });
-    expect(plan.items[0]!.course).toMatchObject({ slug: "pmp-exam-prep", name: "PMP Exam Prep", durationDays: 3 });
+    expect(plan.items[0]!.course).toMatchObject({ slug: "pmp-exam-prep", name: "PMP Exam Prep", durationDays: 3, imageUrl: "https://example.com/pmp-banner.jpg" });
     expect(plan.items[0]!.ticketTypes).toEqual([{ name: "Seat", priceMinor: 149500, quantity: 20 }]);
 
     const corsizio = [

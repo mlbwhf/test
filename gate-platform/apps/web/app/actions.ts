@@ -731,9 +731,11 @@ function summarizeImport(res: import("@/lib/api").ImportResponse): ActionState {
     const r = results.find((x) => x.sourceId === item.sourceId);
     const tickets = item.ticketTypes.map((t) => `${t.name} ${formatMoney(t.priceMinor, item.event.currency)} × ${t.quantity}${t.sold !== undefined ? ` (${t.sold} sold)` : ""}`).join(", ");
     const when = `${formatDateTimeInZone(item.event.startsAt, item.event.timezone)}${item.event.endsAt ? ` → ${formatDateTimeInZone(item.event.endsAt, item.event.timezone)}` : ""}`;
-    const outcome = r ? (r.status === "created" ? `imported${r.courseCreated ? ", new course" : ""}` : `${r.status}${r.reason ? `: ${r.reason}` : ""}`) : "";
+    const imageNote = r?.image === "copied" ? ", image copied" : r?.image === "failed" ? `, image not copied (${r.imageError ?? "download failed"})` : "";
+    const outcome = r ? (r.status === "created" ? `imported${r.courseCreated ? ", new course" : ""}${imageNote}` : `${r.status}${r.reason ? `: ${r.reason}` : ""}`) : "";
+    const imageHint = !r && item.course.imageUrl ? " · has a cover image" : "";
     const warn = item.warnings.length ? ` ⚠ ${item.warnings.join("; ")}` : "";
-    details.push({ label: item.event.name, value: `${when} · ${item.event.timezone} · course "${item.course.name}" · ${tickets}${outcome ? ` · ${outcome}` : ""}${warn}` });
+    details.push({ label: item.event.name, value: `${when} · ${item.event.timezone} · course "${item.course.name}"${imageHint} · ${tickets}${outcome ? ` · ${outcome}` : ""}${warn}` });
   }
   for (const sk of plan.skipped) details.push({ label: `Skipped: ${sk.name}`, value: sk.reason });
   if (res.unmatchedHeaders?.length) details.push({ label: "Unused columns", value: res.unmatchedHeaders.join(", ") });
@@ -820,4 +822,33 @@ export async function refreshFxRatesAction(_prev: ActionState, _formData: FormDa
   if (!result.ok) return fail(describeFailure(result.error));
   revalidatePath("/money");
   return { status: "ok", message: "Fetched today's ECB reference rates.", details: pricingDetails(result.data) };
+}
+
+// ---------- course cover image ----------
+
+const IMAGE_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
+export async function updateCourseImageAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const courseId = field(formData, "courseId");
+  if (!courseId) return fail("Missing course id.");
+  const mode = field(formData, "mode");
+  const file = formData.get("image");
+  const url = field(formData, "imageUrl");
+
+  let result;
+  if (mode === "remove") {
+    result = await api.removeCourseImage(courseId);
+  } else if (file instanceof File && file.size > 0) {
+    if (!IMAGE_MIME.has(file.type)) return fail("Use a JPEG, PNG, WebP or GIF image.");
+    if (file.size > 5 * 1024 * 1024) return fail("The image is larger than 5 MB. A 2160×1080 JPEG is usually under 500 KB.");
+    result = await api.uploadCourseImage(courseId, await file.arrayBuffer(), file.type);
+  } else if (url) {
+    if (!isHttpUrl(url)) return fail("Image URL must be an absolute http(s) URL.");
+    result = await api.importCourseImage(courseId, url);
+  } else {
+    return fail("Choose an image file or paste an image URL.");
+  }
+  if (!result.ok) return fail(describeFailure(result.error));
+  revalidatePath(`/courses/${courseId}`);
+  return { status: "ok", message: result.data.imageUrl ? "Cover image saved." : "Cover image removed." };
 }

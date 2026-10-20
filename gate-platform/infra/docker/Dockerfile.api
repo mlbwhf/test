@@ -44,6 +44,8 @@ ENV NODE_ENV=production GATE_ENV=production PORT=4000
 RUN apk add --no-cache curl tini && addgroup -S gate && adduser -S gate -G gate
 WORKDIR /app
 COPY --from=build --chown=gate:gate /app /app
+# Course images; mounted as the "media" volume in production so they survive redeploys.
+RUN mkdir -p /data/media && chown -R gate:gate /data
 USER gate
 EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
