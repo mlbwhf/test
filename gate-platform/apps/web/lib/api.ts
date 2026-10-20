@@ -625,6 +625,7 @@ export const api = {
   home: () => request<Home>("GET", "/v1/home"),
   eventLines: () => request<{ items: EventLine[] }>("GET", "/v1/events/overview"),
   eventOverview: (id: string) => request<EventOverview>("GET", `/v1/events/${enc(id)}/overview`),
+  duplicateEvent: (id: string, input: { startDate?: string; name?: string }) => request<{ event: Event; ticketTypes: TicketType[] }>("POST", `/v1/events/${enc(id)}/duplicate`, input),
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),

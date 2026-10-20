@@ -64,6 +64,10 @@ describe("API", () => {
     const detail = await app.inject({ url: `/v1/events/${eventId}/overview`, headers: A() });
     expect(detail.json()).toMatchObject({ line: { eventId }, money: { grossMinor: 200_000 }, publicUrl: null });
     expect(detail.json().attendees).toHaveLength(2);
+    const dup = await app.inject({ method: "POST", url: `/v1/events/${eventId}/duplicate`, headers: H(), payload: { startDate: "2026-11-08" } });
+    expect(dup.statusCode).toBe(201);
+    expect(dup.json().event.startsAt).toBe("2026-11-08T09:00:00.000Z");
+    expect(dup.json().ticketTypes[0]).toMatchObject({ name: "Standard", quantity: 10, sold: 0 });
     expect((await app.inject({ url: `/v1/orders/${order.id}`, headers: H() })).json().status).toBe("paid");
 
     const bal = (await app.inject({ url: "/v1/ledger/balances", headers: H() })).json().accounts;

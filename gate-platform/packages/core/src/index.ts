@@ -15,3 +15,4 @@ export * from "./delivery.js";
 export * from "./fx.js";
 export * from "./identity.js";
 export * from "./home.js";
+export * from "./zoned.js";

@@ -4,6 +4,7 @@ import { getMe } from "@/lib/console-data";
 import { formatMoney } from "@/lib/format";
 import { ApiNotice } from "@/components/ui";
 import { CopyButton } from "@/components/copy-button";
+import { DuplicateDialog } from "@/components/duplicate-dialog";
 
 export const dynamic = "force-dynamic";
 
@@ -217,6 +218,7 @@ function Detail({ o, canWrite }: { o: EventOverview; canWrite: boolean }) {
             {canWrite ? "Edit" : "Open"}
           </Link>
           {o.publicUrl && <CopyButton text={o.publicUrl} />}
+          {canWrite && <DuplicateDialog key={l.eventId} eventId={l.eventId} firstDay={fmt(l.startsAt, l.timezone, { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$1-$2")} />}
           {canWrite && (
             <Link className="live-cta" href={`/checkin?event=${encodeURIComponent(l.eventId)}`}>
               Check-in

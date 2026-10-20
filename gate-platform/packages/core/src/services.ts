@@ -9,6 +9,7 @@ import { ROSTER_FORMATS, SEQUENCE_STEPS, attendanceFromMinutes, overlapMinutes, 
 import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
+import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
@@ -342,6 +343,43 @@ export class Core {
 
   listEvents(organizationId: string): Promise<Event[]> {
     return this.repos.events.listByOrganization(organizationId);
+  }
+
+  /**
+   * Copy a cohort: same course, format, time zone, instructors, minimum, splits and ticket types
+   * (nothing sold). With `startDate` (YYYY-MM-DD in the cohort's zone) every session moves by the
+   * same number of days at the same local times; without it the copy keeps the dates.
+   */
+  async duplicateEvent(organizationId: string, eventId: string, opts: { startDate?: string | undefined; name?: string | undefined } = {}): Promise<{ event: Event; ticketTypes: TicketType[] }> {
+    const src = await this.getEvent(organizationId, eventId);
+    if (opts.startDate !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(opts.startDate)) throw new DomainError("VALIDATION", "startDate must be YYYY-MM-DD");
+    const offset = opts.startDate ? daysBetween(localDate(src.startsAt, src.timezone), opts.startDate) : 0;
+    const move = (d: Date) => (offset ? shiftDays(d, offset, src.timezone) : d);
+    const sessions = src.sessions.map((x) => ({ ...x, startsAt: move(x.startsAt), endsAt: move(x.endsAt) }));
+    const event = await this.createEvent(organizationId, {
+      name: opts.name?.trim() || src.name,
+      ...(sessions.length ? { sessions } : { startsAt: move(src.startsAt) }),
+      currency: src.currency,
+      ...(src.courseId ? { courseId: src.courseId } : {}),
+      timezone: src.timezone,
+      format: src.format,
+      instructorIds: src.instructorIds,
+      ...(src.minEnrollment !== undefined ? { minEnrollment: src.minEnrollment } : {}),
+      ...(src.splitRules ? { splitRules: src.splitRules } : {}),
+    });
+    const copy = src.instructorFees?.length ? { ...event, instructorFees: src.instructorFees } : event;
+    if (copy !== event) await this.repos.events.update(copy);
+    const now = this.clock.now();
+    const ticketTypes: TicketType[] = [];
+    for (const t of await this.repos.ticketTypes.listByEvent(src.id)) {
+      const until = t.earlyBird ? move(t.earlyBird.until) : undefined;
+      ticketTypes.push(await this.createTicketType(organizationId, event.id, {
+        name: t.name, priceMinor: t.priceMinor, quantity: t.quantity, prices: t.prices,
+        // An early-bird window that has already closed for the new dates is dropped.
+        ...(t.earlyBird && until && until > now ? { earlyBird: { ...t.earlyBird, until } } : {}),
+      }));
+    }
+    return { event: copy, ticketTypes };
   }
 
   async createTicketType(

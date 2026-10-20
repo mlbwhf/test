@@ -395,6 +395,10 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       const { startsAt, sessions, ...rest } = req.body;
       return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
     });
+    api.post("/v1/events/:id/duplicate", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: z.object({ startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), name: z.string().min(1).max(200).optional() }).optional(), response: { 201: z.object({ event: S.EventSchema, ticketTypes: z.array(S.TicketTypeSchema) }), 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req, reply) => {
+      const r = await deps.core.duplicateEvent(org(req).id, req.params.id, { startDate: req.body?.startDate, name: req.body?.name });
+      return reply.code(201).send({ event: S.toEvent(r.event), ticketTypes: r.ticketTypes.map(S.toTicketType) });
+    });
     api.get("/v1/events/:id", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: S.EventSchema, 404: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.getEvent(org(req).id, req.params.id)));
     api.get("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.TicketTypeSchema) }) } } }, async (req) => ({ items: (await deps.core.listTicketTypes(org(req).id, req.params.id)).map(S.toTicketType) }));
     api.post("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: S.CreateTicketTypeBody, response: { 201: S.TicketTypeSchema } } }, async (req, reply) => {

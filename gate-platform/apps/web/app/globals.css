@@ -4807,3 +4807,44 @@ a.chip:hover {
     animation: none;
   }
 }
+
+/* ---------- Duplicate dialog ---------- */
+.dup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(10, 16, 32, 0.5);
+}
+.dup-box {
+  width: min(560px, 100%);
+  display: grid;
+  gap: 12px;
+  padding: 22px;
+  border-radius: 24px;
+  background: var(--bg);
+  box-shadow: 0 24px 60px rgba(20, 33, 61, 0.3);
+}
+.dup-box h3 {
+  margin: 0;
+  font-size: 22px;
+}
+.dup-box .muted {
+  margin: 0;
+}
+.dup-box select {
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.dup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
