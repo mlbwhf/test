@@ -513,6 +513,25 @@ export class Core {
     return next;
   }
 
+  /**
+   * Every course with an upcoming live class, across organizations, for sitemaps and AI
+   * crawlers. Only what the public course pages already show.
+   */
+  async publicCatalog(limit = 5000): Promise<Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number }>> {
+    const now = this.clock.now();
+    const out: Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number }> = [];
+    for (const org of await this.repos.organizations.list()) {
+      for (const course of await this.repos.courses.listByOrganization(org.id)) {
+        const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
+        if (!upcoming.length) continue;
+        const next = upcoming.reduce((a, e) => (e.startsAt < a ? e.startsAt : a), upcoming[0]!.startsAt);
+        out.push({ organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length });
+        if (out.length >= limit) return out;
+      }
+    }
+    return out.sort((a, b) => a.nextStartsAt.getTime() - b.nextStartsAt.getTime());
+  }
+
   /** Public catalogue view of a course: cohorts with resolved prices per currency. */
   async publicCourse(organizationId: string, slug: string) {
     const org = await this.getOrganization(organizationId);

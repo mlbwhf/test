@@ -51,6 +51,13 @@ describe("duplicate event", () => {
     await expect(core.duplicateEvent(org.id, src.id, { startDate: "Nov 9" })).rejects.toThrow(/YYYY-MM-DD/);
   });
 
+  it("lists courses with upcoming classes in the public catalog", async () => {
+    const { core, org } = await setup();
+    const items = await core.publicCatalog();
+    expect(items).toEqual([expect.objectContaining({ organizationId: org.id, organizationName: "Agile Agilist", slug: "rte", classes: 1 })]);
+    expect(items[0]!.nextStartsAt.toISOString()).toBe("2026-10-26T13:00:00.000Z");
+  });
+
   it("shifts wall-clock time by calendar days", () => {
     expect(shiftDays(at("2026-03-07T14:00:00Z"), 1, "America/Toronto").toISOString()).toBe("2026-03-08T13:00:00.000Z");
   });

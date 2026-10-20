@@ -19,6 +19,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           <Link href="/#how">How it works</Link>
           <Link href="/#pricing">Pricing</Link>
           <Link href="/#start">For instructors</Link>
+          <Link href="/faq">FAQ</Link>
+          <Link href="/help">Help</Link>
         </nav>
         <div className="site-nav-actions">
           <a href={`${APP}/login`} className="site-link">
@@ -37,6 +39,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         </div>
         <nav aria-label="Legal">
           <Link href="/help">Help center</Link>
+          <Link href="/faq">FAQ</Link>
+          <a href={`${process.env.GATE_PUBLIC_API_URL ?? `https://api.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`}/docs`}>API reference</a>
           <Link href="/terms">Terms of service</Link>
           <Link href="/privacy">Privacy policy</Link>
           <Link href="/refunds">Refunds and cancellations</Link>

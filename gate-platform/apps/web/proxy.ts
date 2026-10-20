@@ -4,9 +4,9 @@ import { NextResponse, type NextRequest } from "next/server";
 //   app.<domain>   organizer dashboard (signed-in people only) and learner portal (/my)
 //   <domain>       marketing site, served from app/site
 //   www.<domain>   redirected to <domain>
-// Legal pages (/terms, /privacy, /refunds) resolve on every host so links from emails
+// Legal pages and the FAQ (/terms, /privacy, /refunds, /faq) resolve on every host so links from emails
 // and the learner portal work wherever they are opened.
-const LEGAL = new Set(["/terms", "/privacy", "/refunds"]);
+const LEGAL = new Set(["/terms", "/privacy", "/refunds", "/faq"]);
 
 function marketingHosts(): Set<string> {
   const domain = (process.env.GATE_DOMAIN ?? "enrollclass.com").toLowerCase();
@@ -33,7 +33,7 @@ export function proxy(request: NextRequest) {
 
   if (hosts.has(host)) {
     if (url.pathname === "/") return NextResponse.rewrite(new URL("/site", request.url));
-    if (url.pathname === "/help" || url.pathname.startsWith("/help/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || url.pathname === "/favicon.ico" || url.pathname === "/icon.svg" || url.pathname === "/robots.txt") {
+    if (url.pathname === "/help" || url.pathname.startsWith("/help/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || PUBLIC_FILES.has(url.pathname)) {
       return NextResponse.next();
     }
     // Anything else on the marketing host belongs to the app host.
@@ -55,7 +55,10 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-const PUBLIC_APP = [/^\/help(\/|$)/, /^\/c\//, /^\/cert\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
+// Files for browsers, search engines and AI crawlers, answered on every host.
+const PUBLIC_FILES = new Set(["/favicon.ico", "/icon.svg", "/robots.txt", "/sitemap.xml", "/llms.txt", "/llms-full.txt", "/opengraph-image"]);
+
+const PUBLIC_APP = [/^\/(robots\.txt|sitemap\.xml|llms\.txt|llms-full\.txt|opengraph-image)$/, /^\/help(\/|$)/, /^\/c\//, /^\/cert\//, /^\/my(\/|$)/, /^\/login$/, /^\/auth\//, /^\/invite\//, /^\/_next\//, /^\/favicon\.ico$/, /^\/icon\.svg$/, /^\/robots\.txt$/, /^\/site(\/|$)/];
 function isPublicAppPath(path: string): boolean {
   return PUBLIC_APP.some((re) => re.test(path));
 }

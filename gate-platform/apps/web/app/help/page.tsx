@@ -2,6 +2,8 @@ import Link from "next/link";
 import { HELP, HELP_SECTIONS, helpText } from "@/lib/help";
 import { HelpSearch } from "@/components/help-search";
 
+export const metadata = { alternates: { canonical: "/help" }, description: "Step-by-step guides for running classes with EnrollClass: setup, registration, check-in, certificates, payments, team roles and integrations." };
+
 export default function HelpHome() {
   const sectionTitle = Object.fromEntries(HELP_SECTIONS.map((s) => [s.key, s.title]));
   const entries = HELP.map((a) => ({ slug: a.slug, title: a.title, summary: a.summary, section: sectionTitle[a.section] ?? "", text: helpText(a) }));

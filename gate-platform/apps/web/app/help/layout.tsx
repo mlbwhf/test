@@ -13,6 +13,7 @@ export default async function HelpLayout({ children }: { children: ReactNode }) 
       <header className="help-top">
         <Logo href="/help" context="Help" />
         <nav>
+          <Link href="/faq">FAQ</Link>
           {signedIn ? (
             <Link className="pill-btn" href="/dashboard">
               Back to console
@@ -31,6 +32,7 @@ export default async function HelpLayout({ children }: { children: ReactNode }) 
       <footer className="help-foot">
         <span>EnrollClass</span>
         <Link href="/help">Help center</Link>
+        <Link href="/faq">FAQ</Link>
         <a href="https://api.enrollclass.com/docs" target="_blank" rel="noreferrer">
           API reference
         </a>

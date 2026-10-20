@@ -189,6 +189,12 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     registerPublicTickets(pub, tickets);
     const OrgCourseParams = z.object({ orgId: z.string(), slug: z.string() });
 
+    // Sitemaps and AI crawlers: every course with upcoming classes and its public page.
+    pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable() })) }) } } }, async (_req, reply) => {
+      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null }));
+      reply.header("cache-control", "public, max-age=900");
+      return { items };
+    });
     pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
       const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
       return {

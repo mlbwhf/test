@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HELP, HELP_SECTIONS, helpBySlug } from "@/lib/help";
 import { HelpBody } from "@/components/help-render";
+import { jsonLd, siteUrl } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -12,7 +13,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const a = helpBySlug((await params).slug);
-  return a ? { title: a.title, description: a.summary } : {};
+  return a ? { title: a.title, description: a.summary, alternates: { canonical: `/help/${a.slug}` }, openGraph: { title: a.title, description: a.summary, type: "article" } } : {};
 }
 
 export default async function HelpArticlePage({ params }: { params: Params }) {
@@ -24,8 +25,16 @@ export default async function HelpArticlePage({ params }: { params: Params }) {
   const i = HELP.indexOf(a);
   const next = HELP[i + 1];
 
+  const url = `${siteUrl()}/help/${a.slug}`;
+  const steps = a.body.flatMap((b) => ("steps" in b ? b.steps : []));
+  const ld = [
+    { "@context": "https://schema.org", "@type": "TechArticle", headline: a.title, description: a.summary, url, inLanguage: "en", audience: a.for.map((f) => ({ "@type": "Audience", audienceType: f })), publisher: { "@type": "Organization", name: "EnrollClass", url: siteUrl() } },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Help", item: `${siteUrl()}/help` }, { "@type": "ListItem", position: 2, name: section.title, item: `${siteUrl()}/help#${section.key}` }, { "@type": "ListItem", position: 3, name: a.title, item: url }] },
+    ...(steps.length >= 2 ? [{ "@context": "https://schema.org", "@type": "HowTo", name: a.title, description: a.summary, step: steps.map((t, n) => ({ "@type": "HowToStep", position: n + 1, text: t.replace(/\*\*|`|\[([^\]]+)\]\([^)]*\)/g, "$1") })) }] : []),
+  ];
   return (
     <main className="help-main help-article-wrap">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       <aside className="help-side" aria-label={section.title}>
         <Link href="/help" className="help-back">
           ← All help

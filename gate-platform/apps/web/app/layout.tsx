@@ -7,7 +7,11 @@ import "./globals.css";
 // money, dates and labels. Served from /fonts (app/fonts.css), so builds need no network.
 
 export const metadata: Metadata = {
+  // Absolute URLs (canonical links, share images) resolve against the marketing site.
+  metadataBase: new URL(`https://${process.env.GATE_DOMAIN ?? "enrollclass.com"}`),
   title: { default: "EnrollClass", template: "%s · EnrollClass" },
+  openGraph: { siteName: "EnrollClass", type: "website" },
+  twitter: { card: "summary_large_image" },
   description: "Payments and enrollment for professional training businesses",
 };
 

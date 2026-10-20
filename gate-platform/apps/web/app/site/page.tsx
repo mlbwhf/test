@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ALL_FAQ } from "@/lib/faq";
+import { ORGANIZATION_LD, apiUrl, appUrl, jsonLd, siteUrl } from "@/lib/seo";
 
 const APP = `https://app.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`;
 
@@ -12,9 +14,30 @@ const COHORTS = [
   { name: "Product Owner Foundations", dates: "8 – 9 Jan", filled: 10, cap: 20, held: "$5,200", status: "Enrolling", tone: "green" },
 ];
 
+// Questions shown on the home page; the full list is on /faq.
+const HOME_FAQ = ["What is EnrollClass?", "When do I get paid?", "How much does it cost?", "Can learners register from my own website?", "Can I use EnrollClass from Claude or another AI assistant?"];
+
 export default function SiteHome() {
+  const faq = HOME_FAQ.map((q) => ALL_FAQ.find((f) => f.q === q)!).filter(Boolean);
+  const ld = [
+    ORGANIZATION_LD(),
+    { "@context": "https://schema.org", "@type": "WebSite", "@id": `${siteUrl()}/#website`, name: "EnrollClass", url: siteUrl(), publisher: { "@id": `${siteUrl()}/#organization` } },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "EnrollClass",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: appUrl(),
+      description: "Registration and payments for training providers: publish cohorts, take card or invoice payments held until delivery, check-in with QR tickets, certificates, team roles, webhooks, API and an MCP server for AI assistants.",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: "Free to start; a per-seat fee applies to paid registrations." },
+      publisher: { "@id": `${siteUrl()}/#organization` },
+      sameAs: [`${apiUrl()}/docs`],
+    },
+  ];
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       <section className="site-hero">
         <div>
           <p className="eyebrow">Cohort registration &amp; payments</p>
@@ -179,6 +202,19 @@ export default function SiteHome() {
           </a>
         </div>
         <p className="start-note">Free to start. You pay only a per-seat fee on paid registrations.</p>
+      </section>
+
+      <section id="faq" className="site-section home-faq" aria-labelledby="home-faq-title">
+        <h2 id="home-faq-title">Questions</h2>
+        {faq.map((f) => (
+          <details key={f.q} className="faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+        <p className="faq-more">
+          <Link href="/faq">All questions</Link> · <Link href="/help">Help center</Link>
+        </p>
       </section>
     </>
   );

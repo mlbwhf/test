@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { publicApi, type PublicCoursePage, type PublicTicketType } from "@/lib/public-api";
 import { formatMoney } from "@/lib/format";
 import { publicApiUrl, siteOrigin } from "@/lib/urls";
+import { appUrl } from "@/lib/seo";
 import { Logo } from "@/components/brand";
 import { RegisterSheet } from "@/components/register-sheet";
 
@@ -96,6 +97,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: `${data.course.name} · ${data.organization.name}`,
     description,
+    alternates: { canonical: `${appUrl()}/c/${encodeURIComponent(data.organization.id)}/${encodeURIComponent(data.course.slug)}` },
     openGraph: { title: data.course.name, description, ...(data.course.imageUrl ? { images: [data.course.imageUrl] } : {}) },
   };
 }

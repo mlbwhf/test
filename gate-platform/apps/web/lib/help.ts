@@ -528,3 +528,19 @@ export function helpText(a: HelpArticle): string {
   }
   return parts.join(" ").replace(/\*\*|`|\[|\]\([^)]*\)/g, "");
 }
+
+/** An article as Markdown, for /llms-full.txt and AI assistants. Relative links become absolute. */
+export function helpMarkdown(a: HelpArticle, origin: string): string {
+  const abs = (t: string) => t.replace(/\]\((\/[^)]*)\)/g, (_m, p: string) => `](${origin}${p})`);
+  const out: string[] = [`## ${a.title}`, "", `${a.summary} (For: ${a.for.join(", ")}.) Source: ${origin}/help/${a.slug}`, ""];
+  for (const b of a.body) {
+    if ("h" in b) out.push(`### ${b.h}`, "");
+    else if ("p" in b) out.push(abs(b.p), "");
+    else if ("tip" in b) out.push(`Tip: ${abs(b.tip)}`, "");
+    else if ("steps" in b) out.push(...b.steps.map((x, i) => `${i + 1}. ${abs(x)}`), "");
+    else if ("list" in b) out.push(...b.list.map((x) => `- ${abs(x)}`), "");
+    else if ("code" in b) out.push("```", b.code, "```", "");
+    else if ("table" in b) out.push(`| ${b.table.head.join(" | ")} |`, `| ${b.table.head.map(() => "---").join(" | ")} |`, ...b.table.rows.map((r) => `| ${r.map(abs).join(" | ")} |`), "");
+  }
+  return out.join("\n");
+}
