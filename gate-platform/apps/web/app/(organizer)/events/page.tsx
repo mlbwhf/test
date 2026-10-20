@@ -5,6 +5,8 @@ import { formatMoney } from "@/lib/format";
 import { ApiNotice } from "@/components/ui";
 import { CopyButton } from "@/components/copy-button";
 import { DuplicateDialog } from "@/components/duplicate-dialog";
+import { ActionForm } from "@/components/action-form";
+import { publishEventAction, setInstructorsAction } from "@/app/instructor-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -105,7 +107,9 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
   const explicit = one(sp.sel);
   const selId = explicit && all.some((l) => l.eventId === explicit) ? explicit : (upcoming[0] ?? past[0])?.eventId;
-  const detailRes = selId ? await api.eventOverview(selId) : null;
+  const canManage = perms.includes("settings");
+  const [detailRes, partiesRes] = await Promise.all([selId ? api.eventOverview(selId) : Promise.resolve(null), canManage ? api.listParties() : Promise.resolve(null)]);
+  const instructorOptions = partiesRes?.ok ? partiesRes.data.items.filter((p) => p.kind === "instructor").map((p) => ({ id: p.id, name: p.name })) : [];
 
   return (
     <div className={`ev-split${explicit ? " has-sel" : ""}`}>
@@ -190,14 +194,14 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
         ) : !detailRes.ok ? (
           <ApiNotice failure={detailRes.error} />
         ) : (
-          <Detail o={detailRes.data} canWrite={perms.includes("classes:write")} />
+          <Detail o={detailRes.data} canWrite={perms.includes("classes:write")} canManage={canManage} instructorOptions={instructorOptions} />
         )}
       </section>
     </div>
   );
 }
 
-function Detail({ o, canWrite }: { o: EventOverview; canWrite: boolean }) {
+function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOverview; canWrite: boolean; canManage: boolean; instructorOptions: { id: string; name: string }[] }) {
   const l = o.line;
   const left = Math.max(0, l.capacity - l.sold);
   const cells = Math.min(l.capacity, 60);
@@ -213,6 +217,39 @@ function Detail({ o, canWrite }: { o: EventOverview; canWrite: boolean }) {
           </span>
         </p>
         <h2>{l.name}</h2>
+        {l.status === "draft" && (
+          <div className="ev-draft" role="status">
+            <span>
+              <strong>Draft.</strong> {canManage ? "An instructor created this class; it isn't on sale until you publish it." : "Waiting for an owner or admin to publish it."}
+            </span>
+            {canManage && (
+              <ActionForm action={publishEventAction} submitLabel="Publish" pendingLabel="Publishing…" inline>
+                <input type="hidden" name="eventId" value={l.eventId} />
+              </ActionForm>
+            )}
+          </div>
+        )}
+        <div className="ev-teachers">
+          <span className="muted">Taught by</span>
+          {o.instructors.length ? o.instructors.map((i) => <span key={i.id} className="chip role-instructor">{i.name}</span>) : <span className="muted">no one yet</span>}
+          {canManage && instructorOptions.length > 0 && (
+            <details className="person-menu">
+              <summary aria-label="Choose instructors">✎</summary>
+              <div className="person-menu-body">
+                <ActionForm action={setInstructorsAction} submitLabel="Save" pendingLabel="Saving…" inline>
+                  <input type="hidden" name="eventId" value={l.eventId} />
+                  <div className="teacher-picks">
+                    {instructorOptions.map((p) => (
+                      <label key={p.id}>
+                        <input type="checkbox" name="instructorIds" value={p.id} defaultChecked={o.instructors.some((i) => i.id === p.id)} /> {p.name}
+                      </label>
+                    ))}
+                  </div>
+                </ActionForm>
+              </div>
+            </details>
+          )}
+        </div>
         <div className="ev-actions">
           <Link className="pill-btn" href={`/events/${encodeURIComponent(l.eventId)}`}>
             {canWrite ? "Edit" : "Open"}

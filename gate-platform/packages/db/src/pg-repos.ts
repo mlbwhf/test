@@ -21,6 +21,7 @@ function toOrg(r: Row): Organization {
     ...(opt<Organization["changePolicy"]>(r.change_policy) ? { changePolicy: r.change_policy as NonNullable<Organization["changePolicy"]> } : {}),
     ...(opt<Record<string, unknown>>(r.pricing) ? { pricing: pricingFromRow(r.pricing as Record<string, unknown>) } : {}),
     ...(opt<string>(r.kind) ? { kind: r.kind as NonNullable<Organization["kind"]> } : {}),
+    ...(opt<Record<string, unknown>>(r.instructor_access) ? { instructorAccess: r.instructor_access as NonNullable<Organization["instructorAccess"]> } : {}),
     ...(opt<Record<string, unknown>>(r.payments_status) ? { paymentsStatus: { ...(r.payments_status as NonNullable<Organization["paymentsStatus"]>), checkedAt: new Date(String((r.payments_status as Record<string, unknown>).checkedAt)) } } : {}),
     releasePolicy: (r.release_policy as Organization["releasePolicy"]) ?? "on_delivery", releaseGraceHours: num(r.release_grace_hours ?? 24), minEnrollmentDecisionDays: num(r.min_enrollment_decision_days ?? 7),
     apiKeyHash: str(r.api_key_hash), createdAt: date(r.created_at),
@@ -133,8 +134,8 @@ class PgOrganizations implements OrganizationRepo {
   }
   async update(o: Organization) {
     await this.pool.query(
-      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15 WHERE id=$1`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null],
+      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15, instructor_access=$16 WHERE id=$1`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null, o.instructorAccess ? JSON.stringify(o.instructorAccess) : null],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM organizations WHERE id=$1`, [id]); return r.rows[0] ? toOrg(r.rows[0]) : undefined; }

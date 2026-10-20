@@ -4,6 +4,7 @@ import { ActionForm } from "@/components/action-form";
 import { ApiNotice } from "@/components/ui";
 import { InvitePill } from "@/components/invite-pill";
 import { changeRoleAction, inviteAction, removeMemberAction, revokeInvitationAction } from "@/app/auth-actions";
+import { updateInstructorAccessAction } from "@/app/instructor-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,8 @@ export default async function TeamPage() {
   const me = await api.me();
   if (!me.ok) redirect("/auth/signout?expired=1");
   if (!me.data.permissions.includes("team")) redirect("/dashboard");
-  const res = await api.listMembers();
+  const [res, orgRes] = await Promise.all([api.listMembers(), api.getOrganization()]);
+  const access = orgRes.ok ? orgRes.data.instructorAccess : null;
   const isOwner = me.data.role === "owner";
   const assignable: Role[] = isOwner ? ROLES : ROLES.filter((r) => r !== "owner");
 
@@ -31,6 +33,37 @@ export default async function TeamPage() {
       </div>
 
       <InvitePill roles={assignable.map((r) => ({ value: r, label: ROLE_LABELS[r], hint: ROLE_HINTS[r] }))} action={inviteAction} />
+
+      {access && me.data.permissions.includes("settings") && me.data.organization?.kind !== "individual" && (
+        <section className="card access-card" aria-labelledby="access-title">
+          <h2 id="access-title">Instructor access</h2>
+          <ActionForm action={updateInstructorAccessAction} submitLabel="Save" pendingLabel="Saving…" wide>
+            <fieldset className="access-row">
+              <legend>Instructors see</legend>
+              <label>
+                <input type="radio" name="scope" value="own" defaultChecked={access.scope === "own"} /> <strong>Only the classes they teach</strong>
+                <span>Their Home, Events, attendees and check-in show their own classes.</span>
+              </label>
+              <label>
+                <input type="radio" name="scope" value="all" defaultChecked={access.scope === "all"} /> <strong>All classes</strong>
+                <span>Useful when instructors cover for each other.</span>
+              </label>
+            </fieldset>
+            <fieldset className="access-row">
+              <legend>Classes an instructor creates</legend>
+              <label>
+                <input type="radio" name="publish" value="direct" defaultChecked={access.publish === "direct"} /> <strong>Go live right away</strong>
+                <span>Registration opens as soon as they publish.</span>
+              </label>
+              <label>
+                <input type="radio" name="publish" value="approval" defaultChecked={access.publish === "approval"} /> <strong>Wait for approval</strong>
+                <span>They stay drafts until an owner or admin publishes them from Home or Events.</span>
+              </label>
+            </fieldset>
+          </ActionForm>
+          <p className="hint">Instructors never see money, payouts or team settings. Owners and admins choose who teaches each class from Events.</p>
+        </section>
+      )}
 
       {!res.ok ? (
         <ApiNotice failure={res.error} />

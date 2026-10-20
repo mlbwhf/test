@@ -10,6 +10,7 @@ import { NO_TAX } from "./tax.js";
 import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, type ChangePolicy } from "./policy.js";
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
+import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
@@ -286,6 +287,8 @@ export class Core {
       sessions?: Session[] | undefined;
       instructorIds?: string[] | undefined;
       minEnrollment?: number | undefined;
+      /** "draft" keeps it off sale until published (instructor classes awaiting approval). */
+      status?: "draft" | "live" | undefined;
     },
   ): Promise<Event> {
     const org = await this.getOrganization(organizationId);
@@ -327,7 +330,7 @@ export class Core {
       instructorIds: input.instructorIds ?? [],
       ...(input.minEnrollment !== undefined ? { minEnrollment: input.minEnrollment } : {}),
       currency,
-      status: "live",
+      status: input.status ?? "live",
       ...(input.splitRules ? { splitRules: input.splitRules } : {}),
       createdAt: this.clock.now(),
     };
@@ -350,7 +353,7 @@ export class Core {
    * (nothing sold). With `startDate` (YYYY-MM-DD in the cohort's zone) every session moves by the
    * same number of days at the same local times; without it the copy keeps the dates.
    */
-  async duplicateEvent(organizationId: string, eventId: string, opts: { startDate?: string | undefined; name?: string | undefined } = {}): Promise<{ event: Event; ticketTypes: TicketType[] }> {
+  async duplicateEvent(organizationId: string, eventId: string, opts: { startDate?: string | undefined; name?: string | undefined; status?: "draft" | "live" | undefined } = {}): Promise<{ event: Event; ticketTypes: TicketType[] }> {
     const src = await this.getEvent(organizationId, eventId);
     if (opts.startDate !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(opts.startDate)) throw new DomainError("VALIDATION", "startDate must be YYYY-MM-DD");
     const offset = opts.startDate ? daysBetween(localDate(src.startsAt, src.timezone), opts.startDate) : 0;
@@ -366,6 +369,7 @@ export class Core {
       instructorIds: src.instructorIds,
       ...(src.minEnrollment !== undefined ? { minEnrollment: src.minEnrollment } : {}),
       ...(src.splitRules ? { splitRules: src.splitRules } : {}),
+      ...(opts.status ? { status: opts.status } : {}),
     });
     const copy = src.instructorFees?.length ? { ...event, instructorFees: src.instructorFees } : event;
     if (copy !== event) await this.repos.events.update(copy);
@@ -380,6 +384,39 @@ export class Core {
       }));
     }
     return { event: copy, ticketTypes };
+  }
+
+  /** A draft class goes on sale. */
+  async publishEvent(organizationId: string, eventId: string): Promise<Event> {
+    const event = await this.getEvent(organizationId, eventId);
+    if (event.status === "live") return event;
+    if (event.status !== "draft") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
+    const next: Event = { ...event, status: "live" };
+    await this.repos.events.update(next);
+    return next;
+  }
+
+  /** Who teaches a class (instructor parties). */
+  async setEventInstructors(organizationId: string, eventId: string, instructorIds: string[]): Promise<Event> {
+    const event = await this.getEvent(organizationId, eventId);
+    const ids = [...new Set(instructorIds)];
+    for (const id of ids) {
+      const party = await this.repos.parties.get(id);
+      if (!party || party.organizationId !== organizationId || party.kind !== "instructor") throw new DomainError("VALIDATION", `unknown instructor ${id}`);
+    }
+    const next: Event = { ...event, instructorIds: ids };
+    await this.repos.events.update(next);
+    return next;
+  }
+
+  async updateInstructorAccess(organizationId: string, input: { scope?: InstructorAccess["scope"] | undefined; publish?: InstructorAccess["publish"] | undefined }): Promise<Organization> {
+    const org = await this.getOrganization(organizationId);
+    const current = org.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS;
+    const next: InstructorAccess = { scope: input.scope ?? current.scope, publish: input.publish ?? current.publish };
+    if (!["own", "all"].includes(next.scope) || !["direct", "approval"].includes(next.publish)) throw new DomainError("VALIDATION", "unknown instructor access setting");
+    const updated: Organization = { ...org, instructorAccess: next };
+    await this.repos.organizations.update(updated);
+    return updated;
   }
 
   async createTicketType(

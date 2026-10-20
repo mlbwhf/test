@@ -17,6 +17,8 @@ export interface Organization {
    * Last known state of that account. An account exists as soon as setup starts; it is
    * only ready once the provider enables both charges and payouts.
    */
+  /** Instructor view and control; absent means DEFAULT_INSTRUCTOR_ACCESS. */
+  instructorAccess?: InstructorAccess;
   paymentsStatus?: { ready: boolean; chargesEnabled: boolean; payoutsEnabled: boolean; detailsSubmitted: boolean; requirementsDue: string[]; disabledReason?: string; checkedAt: Date };
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
@@ -347,3 +349,13 @@ export interface Refund {
   paymentRefundRef?: string;
   createdAt: Date;
 }
+
+/**
+ * scope "own": instructors see and run only the classes they are assigned to; "all": every class.
+ * publish "approval": classes an instructor creates start as drafts until an owner or admin publishes them.
+ */
+export interface InstructorAccess {
+  scope: "own" | "all";
+  publish: "direct" | "approval";
+}
+export const DEFAULT_INSTRUCTOR_ACCESS: InstructorAccess = { scope: "own", publish: "direct" };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   api,
   PAYOUT_METHOD_LABELS,
@@ -111,6 +112,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
   const tab: Tab = TABS.some(([k]) => k === tabRaw) ? (tabRaw as Tab) : "orders";
   const [ordersRes, linesRes, meRes] = await Promise.all([api.listOrders(), api.eventLines(), getMe()]);
   const perms = meRes.ok ? meRes.data.permissions : [];
+  if (!perms.includes("money:read")) redirect("/dashboard");
   const [orgRes, reportRes, payablesRes, payoutsRes, partiesRes] = await Promise.all([
     api.getOrganization(),
     rangeInverted ? Promise.resolve(null) : api.getRevenueReport(fromIso, toIso),

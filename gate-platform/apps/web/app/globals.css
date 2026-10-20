@@ -4848,3 +4848,74 @@ a.chip:hover {
   justify-content: flex-end;
   gap: 8px;
 }
+
+/* ---------- Team: instructor access ---------- */
+.access-card h2 {
+  margin-bottom: 6px;
+}
+.access-row {
+  border: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+}
+.access-row legend {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.access-row label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+}
+.access-row label:has(input:checked) {
+  border-color: var(--ink);
+  background: color-mix(in oklch, var(--green), var(--surface) 85%);
+}
+.access-row input {
+  margin-top: 4px;
+}
+.access-row span {
+  grid-column: 2;
+  font-size: 13px;
+  color: var(--muted);
+}
+.ev-draft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--warn-bg);
+  color: var(--warn-text);
+}
+.ev-teachers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+.teacher-picks {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.teacher-picks label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

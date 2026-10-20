@@ -152,6 +152,34 @@ describe("teams and roles", () => {
     expect(await home(teacher)).toMatchObject({ money: null, attention: [] });
     expect((await home(fin.token)).money).toEqual([{ currency: "USD", grossMinor: 0, netMinor: 0, feesMinor: 0, heldMinor: 0, paidOrders: 0 }]);
     expect((await home(owner)).attention.map((a: { kind: string }) => a.kind)).toContain("payments_setup");
+
+    // Instructor view and control.
+    const J = async (t: string, method: string, url: string, payload?: unknown) => app.inject({ method: method as "GET", url, headers: payload ? BJ(t) : B(t), ...(payload ? { payload } : {}) });
+    const mine = (await J(teacher, "POST", "/v1/events", { name: "Ivan's class", startsAt: "2026-11-02T14:00:00Z" })).json();
+    const ivanParty = mine.instructorIds[0];
+    expect(mine).toMatchObject({ status: "live", instructorIds: [expect.stringMatching(/^party_/)] });
+    const theirs = (await J(owner, "POST", "/v1/events", { name: "Olive's class", startsAt: "2026-11-03T14:00:00Z" })).json();
+    expect((await J(teacher, "GET", "/v1/events")).json().items.map((e: { name: string }) => e.name)).toEqual(["Ivan's class"]);
+    expect((await J(teacher, "GET", "/v1/events/overview")).json().items).toHaveLength(1);
+    expect((await J(teacher, "GET", `/v1/events/${theirs.id}`)).statusCode).toBe(404);
+    expect((await J(teacher, "GET", `/v1/seats`)).statusCode).toBe(403);
+    expect((await J(teacher, "GET", `/v1/seats?eventId=${theirs.id}`)).statusCode).toBe(404);
+    expect((await J(teacher, "POST", `/v1/checkins`, { code: "EC-AAAA-BBBB", eventId: theirs.id })).statusCode).toBe(404);
+    expect((await J(owner, "GET", "/v1/events")).json().items).toHaveLength(2);
+
+    expect((await J(owner, "PATCH", "/v1/organizations/me/instructor-access", { publish: "approval" })).json().instructorAccess).toEqual({ scope: "own", publish: "approval" });
+    expect((await J(teacher, "PATCH", "/v1/organizations/me/instructor-access", { scope: "all" })).statusCode).toBe(403);
+    const draft = (await J(teacher, "POST", "/v1/events", { name: "Needs approval", startsAt: "2026-11-09T14:00:00Z" })).json();
+    expect(draft.status).toBe("draft");
+    expect((await home(owner)).attention.map((a: { kind: string }) => a.kind)).toContain("approval");
+    expect((await J(teacher, "POST", `/v1/events/${draft.id}/publish`, {})).statusCode).toBe(403);
+    expect((await J(owner, "POST", `/v1/events/${draft.id}/publish`, {})).json().status).toBe("live");
+
+    expect((await J(owner, "PUT", `/v1/events/${theirs.id}/instructors`, { instructorIds: [ivanParty] })).json().instructorIds).toEqual([ivanParty]);
+    expect((await J(teacher, "GET", `/v1/events/${theirs.id}`)).statusCode).toBe(200);
+    await J(owner, "PATCH", "/v1/organizations/me/instructor-access", { scope: "all" });
+    expect((await J(owner, "POST", "/v1/events", { name: "Another", startsAt: "2026-11-10T14:00:00Z" })).statusCode).toBe(201);
+    expect((await J(teacher, "GET", "/v1/events")).json().items).toHaveLength(4);
   });
 
   it("maps routes to permissions", () => {

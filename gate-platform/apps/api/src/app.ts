@@ -1,10 +1,10 @@
-import Fastify, { type FastifyInstance, type FastifyServerOptions } from "fastify";
+import Fastify, { type FastifyInstance, type FastifyRequest, type FastifyServerOptions } from "fastify";
 import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { Core, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
+import { Core, DEFAULT_INSTRUCTOR_ACCESS, DomainError, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, homeSummary, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
@@ -38,6 +38,10 @@ declare module "fastify" {
     role?: Role;
     /** Set for people signed in with a session (not for API keys). */
     userId?: string;
+    /** Instructor profile (party) of the caller in req.org, when they have one. */
+    partyId?: string;
+    /** Instructors limited to the classes they are assigned to (organization setting). */
+    ownClassesOnly?: boolean;
   }
 }
 
@@ -339,10 +343,48 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
         req.org = ctx.organization;
         req.role = ctx.role;
         req.userId = ctx.user.id;
+        const partyId = ctx.memberships.find((m) => m.organizationId === ctx.organization!.id)?.partyId;
+        if (partyId) req.partyId = partyId;
+        req.ownClassesOnly = ctx.role === "instructor" && (ctx.organization.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS).scope === "own";
       }
       const need = permissionFor(req.method, req.url);
       if (!can(req.role, need)) throw new DomainError("FORBIDDEN", `your role (${req.role}) does not allow this`, need.startsWith("money") ? "ask an owner, admin or finance member" : "ask an owner or admin");
+      if (req.ownClassesOnly) await guardOwnClasses(req);
     });
+    // An instructor limited to their own classes gets "not found" for anyone else's, whichever route names it.
+    const teaches = (req: FastifyRequest, e: { instructorIds: string[] }) => !req.ownClassesOnly || (req.partyId !== undefined && e.instructorIds.includes(req.partyId));
+    const assertTeaches = async (req: FastifyRequest, eventId: string) => {
+      const event = await deps.core.getEvent(req.org!.id, eventId);
+      if (!teaches(req, event)) throw new DomainError("NOT_FOUND", "event not found", "you can only open classes you teach");
+    };
+    async function guardOwnClasses(req: FastifyRequest) {
+      const path = req.url.split("?")[0]!;
+      const ev = path.match(/^\/v1\/events\/([^/]+)/);
+      if (ev && ev[1] !== "overview") return assertTeaches(req, decodeURIComponent(ev[1]!));
+      const seat = path.match(/^\/v1\/seats\/([^/]+)/);
+      if (seat) {
+        const s = await deps.core.repos.seats.get(decodeURIComponent(seat[1]!));
+        if (!s || s.organizationId !== req.org!.id) throw new DomainError("NOT_FOUND", "seat not found");
+        return assertTeaches(req, s.eventId);
+      }
+      if (path === "/v1/seats") {
+        const eventId = (req.query as { eventId?: string }).eventId;
+        if (!eventId) throw new DomainError("FORBIDDEN", "pick a class", "list seats with ?eventId=");
+        return assertTeaches(req, eventId);
+      }
+      if (path === "/v1/checkins") {
+        const body = (req.body ?? {}) as { token?: string; eventId?: string };
+        const seatId = body.token ? tickets.signer.verify(body.token) : undefined;
+        const eventId = seatId ? (await deps.core.repos.seats.get(seatId))?.eventId : body.eventId;
+        if (eventId) return assertTeaches(req, eventId);
+      }
+    }
+    /** Classes an instructor creates include them, and wait for approval when the organization asks for it. */
+    const asCreator = (req: FastifyRequest, instructorIds: string[] | undefined): { instructorIds?: string[]; status?: "draft" } => {
+      if (req.role !== "instructor") return instructorIds ? { instructorIds } : {};
+      const ids = [...new Set([...(instructorIds ?? []), ...(req.partyId ? [req.partyId] : [])])];
+      return { instructorIds: ids, ...((req.org!.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS).publish === "approval" ? { status: "draft" as const } : {}) };
+    };
     registerIdempotency(api, deps.idempotency ?? new InMemoryIdempotencyStore());
     const org = (req: { org?: Organization }) => req.org!;
     const outbound = deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {};
@@ -355,11 +397,14 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
 
     // The console's "Today" screen. Money and setup items only appear for roles that can act on them.
     api.get("/v1/home", { schema: { tags: ["organizations"] } }, async (req) => {
-      const h = await homeSummary(deps.core, org(req).id, { money: can(req.role!, "money:read"), settings: can(req.role!, "settings") });
+      const h = await homeSummary(deps.core, org(req).id, { money: can(req.role!, "money:read"), settings: can(req.role!, "settings"), eventFilter: (e) => teaches(req, e) });
       return JSON.parse(JSON.stringify(h)) as unknown;
     });
     // Events screen: list rows with fill, and one cohort's detail pane.
-    api.get("/v1/events/overview", { schema: { tags: ["events"] } }, async (req) => ({ items: JSON.parse(JSON.stringify(await eventLines(deps.core, org(req).id))) as unknown }));
+    api.get("/v1/events/overview", { schema: { tags: ["events"] } }, async (req) => {
+      const events = (await deps.core.listEvents(org(req).id)).filter((e) => teaches(req, e));
+      return { items: JSON.parse(JSON.stringify(await eventLines(deps.core, org(req).id, events))) as unknown };
+    });
     api.get("/v1/events/:id/overview", { schema: { tags: ["events"], params: z.object({ id: z.string() }) } }, async (req) => {
       const o = await eventOverview(deps.core, org(req).id, req.params.id, { money: can(req.role!, "money:read") });
       return { ...(JSON.parse(JSON.stringify(o)) as object), publicUrl: o.course && deps.publicPageUrl ? deps.publicPageUrl(org(req).id, o.course.slug) : null };
@@ -384,21 +429,26 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.get("/v1/courses", { schema: { tags: ["courses"], response: { 200: z.object({ items: z.array(S.CourseSchema) }) } } }, async (req) => ({ items: (await deps.core.listCourses(org(req).id)).map(S.toCourse) }));
     api.post("/v1/courses", { schema: { tags: ["courses"], body: S.CreateCourseBody, response: { 201: S.CourseSchema, 409: S.ErrorSchema } } }, async (req, reply) => reply.code(201).send(S.toCourse(await deps.core.createCourse(org(req).id, req.body))));
     api.get("/v1/courses/:id", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: S.CourseSchema, 404: S.ErrorSchema } } }, async (req) => S.toCourse(await deps.core.getCourse(org(req).id, req.params.id)));
-    api.get("/v1/courses/:id/cohorts", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listCohorts(org(req).id, req.params.id)).map(S.toEvent) }));
+    api.get("/v1/courses/:id/cohorts", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listCohorts(org(req).id, req.params.id)).filter((e) => teaches(req, e)).map(S.toEvent) }));
     api.post("/v1/courses/:id/cohorts", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), body: S.CreateEventBody.omit({ courseId: true }), response: { 201: S.EventSchema } } }, async (req, reply) => {
       const { startsAt, sessions, ...rest } = req.body;
-      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, courseId: req.params.id, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
+      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, ...asCreator(req, rest.instructorIds), courseId: req.params.id, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
     });
 
-    api.get("/v1/events", { schema: { tags: ["events"], response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listEvents(org(req).id)).map(S.toEvent) }));
+    api.get("/v1/events", { schema: { tags: ["events"], response: { 200: z.object({ items: z.array(S.EventSchema) }) } } }, async (req) => ({ items: (await deps.core.listEvents(org(req).id)).filter((e) => teaches(req, e)).map(S.toEvent) }));
     api.post("/v1/events", { schema: { tags: ["events"], body: S.CreateEventBody, response: { 201: S.EventSchema } } }, async (req, reply) => {
       const { startsAt, sessions, ...rest } = req.body;
-      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
+      return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, ...asCreator(req, rest.instructorIds), startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
     });
     api.post("/v1/events/:id/duplicate", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: z.object({ startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), name: z.string().min(1).max(200).optional() }).optional(), response: { 201: z.object({ event: S.EventSchema, ticketTypes: z.array(S.TicketTypeSchema) }), 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req, reply) => {
-      const r = await deps.core.duplicateEvent(org(req).id, req.params.id, { startDate: req.body?.startDate, name: req.body?.name });
+      const r = await deps.core.duplicateEvent(org(req).id, req.params.id, { startDate: req.body?.startDate, name: req.body?.name, status: asCreator(req, undefined).status });
+      if (req.role === "instructor" && req.partyId && !r.event.instructorIds.includes(req.partyId)) r.event = await deps.core.setEventInstructors(org(req).id, r.event.id, [...r.event.instructorIds, req.partyId]);
       return reply.code(201).send({ event: S.toEvent(r.event), ticketTypes: r.ticketTypes.map(S.toTicketType) });
     });
+    // Owners and admins: approve an instructor's draft, and choose who teaches a class.
+    api.post("/v1/events/:id/publish", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: S.EventSchema, 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.publishEvent(org(req).id, req.params.id)));
+    api.put("/v1/events/:id/instructors", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: z.object({ instructorIds: z.array(z.string()).max(20) }), response: { 200: S.EventSchema, 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.setEventInstructors(org(req).id, req.params.id, req.body.instructorIds)));
+    api.patch("/v1/organizations/me/instructor-access", { schema: { tags: ["organizations"], body: z.object({ scope: z.enum(["own", "all"]).optional(), publish: z.enum(["direct", "approval"]).optional() }), response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateInstructorAccess(org(req).id, req.body)));
     api.get("/v1/events/:id", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: S.EventSchema, 404: S.ErrorSchema } } }, async (req) => S.toEvent(await deps.core.getEvent(org(req).id, req.params.id)));
     api.get("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), response: { 200: z.object({ items: z.array(S.TicketTypeSchema) }) } } }, async (req) => ({ items: (await deps.core.listTicketTypes(org(req).id, req.params.id)).map(S.toTicketType) }));
     api.post("/v1/events/:id/ticket-types", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: S.CreateTicketTypeBody, response: { 201: S.TicketTypeSchema } } }, async (req, reply) => {

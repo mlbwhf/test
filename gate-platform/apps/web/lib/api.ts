@@ -30,7 +30,11 @@ export type Organization = {
   /** Days before the first session by which a cohort must reach its minimum enrollment. */
   minEnrollmentDecisionDays: number;
   pricing: PricingSettings;
+  instructorAccess: InstructorAccess;
 };
+
+/** scope: what instructors see; publish: whether their new classes need an owner or admin to approve. */
+export type InstructorAccess = { scope: "own" | "all"; publish: "direct" | "approval" };
 
 export type FxRounding = "none" | "whole" | "nine" | "five";
 export const FX_ROUNDINGS: FxRounding[] = ["whole", "nine", "five", "none"];
@@ -592,6 +596,7 @@ export type EventOverview = {
   attendees: { seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }[];
   money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
   course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
+  instructors: { id: string; name: string }[];
   publicUrl: string | null;
 };
 export type Home = {
@@ -625,6 +630,9 @@ export const api = {
   home: () => request<Home>("GET", "/v1/home"),
   eventLines: () => request<{ items: EventLine[] }>("GET", "/v1/events/overview"),
   eventOverview: (id: string) => request<EventOverview>("GET", `/v1/events/${enc(id)}/overview`),
+  publishEvent: (id: string) => request<Event>("POST", `/v1/events/${enc(id)}/publish`, {}),
+  setEventInstructors: (id: string, instructorIds: string[]) => request<Event>("PUT", `/v1/events/${enc(id)}/instructors`, { instructorIds }),
+  updateInstructorAccess: (input: Partial<InstructorAccess>) => request<Organization>("PATCH", "/v1/organizations/me/instructor-access", input),
   duplicateEvent: (id: string, input: { startDate?: string; name?: string }) => request<{ event: Event; ticketTypes: TicketType[] }>("POST", `/v1/events/${enc(id)}/duplicate`, input),
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
   updateOrganization: (input: UpdateOrganizationInput) =>

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { CorporateAccount, Course, Event, Invoice, Order, Organization, Party, Payout, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "@gate/core";
+import { DEFAULT_INSTRUCTOR_ACCESS } from "@gate/core";
 
 export const ErrorSchema = z.object({
   error: z.object({ code: z.string(), message: z.string(), hint: z.string().optional(), requestId: z.string().optional() }),
@@ -26,6 +27,7 @@ export const OrganizationSchema = z.object({
   payoutDestination: z.enum(["gate_account", "external_bank"]), passFeeToAttendee: z.boolean(),
   paymentsAccountRef: z.string().nullable(), splitRules: z.array(SplitRuleSchema),
   releasePolicy: z.enum(["immediate", "on_delivery"]), releaseGraceHours: z.number(), minEnrollmentDecisionDays: z.number(),
+  instructorAccess: z.object({ scope: z.enum(["own", "all"]), publish: z.enum(["direct", "approval"]) }),
   pricing: PricingSettingsSchema,
   paymentsStatus: z.object({ ready: z.boolean(), chargesEnabled: z.boolean(), payoutsEnabled: z.boolean(), detailsSubmitted: z.boolean(), requirementsDue: z.array(z.string()), disabledReason: z.string().optional(), checkedAt: z.string() }).nullable(),
   createdAt: z.string(),
@@ -139,7 +141,7 @@ export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.n
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
 export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
-export const toOrganization = (o: Organization) => ({ ...o, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
+export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, createdAt: c.createdAt.toISOString() });
 export const toEvent = (e: Event) => ({

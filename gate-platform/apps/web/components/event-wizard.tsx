@@ -33,7 +33,9 @@ function rangeLabel(dates: string[]): string {
   return `${a.m} ${a.d} – ${b.d}, ${b.y}`;
 }
 
-export function EventWizard({ courses, currency }: { courses: Course[]; currency: string }) {
+type Viewer = "manager" | "instructor" | "instructor-approval";
+
+export function EventWizard({ courses, currency, instructors = [], viewer = "manager" }: { courses: Course[]; currency: string; instructors?: { id: string; name: string }[]; viewer?: Viewer }) {
   const [step, setStep] = useState(0);
   const [courseId, setCourseId] = useState<string | null>(courses[0]?.id ?? null);
   const [newCourse, setNewCourse] = useState<{ name: string; days: number } | null>(courses.length === 0 ? { name: "", days: 2 } : null);
@@ -51,6 +53,7 @@ export function EventWizard({ courses, currency }: { courses: Course[]; currency
   const [seats, setSeats] = useState("20");
   const [minEnrollment, setMinEnrollment] = useState("");
   const [cur, setCur] = useState(currency);
+  const [teachers, setTeachers] = useState<string[]>(instructors.length === 1 ? [instructors[0]!.id] : []);
 
   const [result, setResult] = useState<WizardResult | null>(null);
   const [pending, start] = useTransition();
@@ -94,6 +97,7 @@ export function EventWizard({ courses, currency }: { courses: Course[]; currency
           seats: Number(seats),
           minEnrollment: minEnrollment ? Number(minEnrollment) : null,
           currency: cur,
+          instructorIds: teachers,
         }),
       );
     });
@@ -228,13 +232,26 @@ export function EventWizard({ courses, currency }: { courses: Course[]; currency
                   <input type="number" min={1} value={minEnrollment} onChange={(e) => setMinEnrollment(e.target.value)} placeholder="Optional" />
                 </label>
               </div>
+              {viewer === "manager" && instructors.length > 0 && (
+                <fieldset>
+                  <legend>Taught by</legend>
+                  <div className="wiz-chips">
+                    {instructors.map((i) => (
+                      <button key={i.id} type="button" aria-pressed={teachers.includes(i.id)} onClick={() => setTeachers((t) => (t.includes(i.id) ? t.filter((x) => x !== i.id) : [...t, i.id]))}>
+                        {i.name}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+              {viewer !== "manager" && <p className="hint">You&apos;ll be the instructor for this class.{viewer === "instructor-approval" ? " An owner or admin publishes it before registration opens." : ""}</p>}
               <p className="hint">Pre-work and survey emails, refund rules and payouts come from the course and your settings; you can change them later on the event.</p>
             </div>
           )}
 
           {step === 2 && !done && (
             <div className="wiz-review">
-              <p className="wiz-lead">Check the details, then publish. Registration opens right away.</p>
+              <p className="wiz-lead">{viewer === "instructor-approval" ? "Check the details, then send it for approval. Registration opens once an owner or admin publishes it." : "Check the details, then publish. Registration opens right away."}</p>
               <dl>
                 <div>
                   <dt>Course</dt>
@@ -267,8 +284,8 @@ export function EventWizard({ courses, currency }: { courses: Course[]; currency
 
           {done && (
             <div className="wiz-done">
-              <p className="eyebrow-mono">PUBLISHED</p>
-              <h2>Your event is live. Share it.</h2>
+              <p className="eyebrow-mono">{viewer === "instructor-approval" ? "SENT FOR APPROVAL" : "PUBLISHED"}</p>
+              <h2>{viewer === "instructor-approval" ? "Saved as a draft. You can share it once it's approved." : "Your event is live. Share it."}</h2>
               {done.publicUrl ? (
                 <div className="wiz-share">
                   <code>{done.publicUrl}</code>
@@ -326,7 +343,7 @@ export function EventWizard({ courses, currency }: { courses: Course[]; currency
             </button>
           ) : (
             <button type="button" className="wiz-next" disabled={pending} aria-busy={pending} onClick={publish}>
-              {pending ? "Publishing…" : "Publish event"}
+              {pending ? "Publishing…" : viewer === "instructor-approval" ? "Send for approval" : "Publish event"}
             </button>
           )}
         </footer>

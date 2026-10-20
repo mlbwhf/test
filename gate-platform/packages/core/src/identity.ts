@@ -366,7 +366,13 @@ export class Identities {
     if (!m) throw new DomainError("NOT_FOUND", "member not found");
     if ((role === "owner" || m.role === "owner") && by !== "owner") throw new DomainError("FORBIDDEN", "only an owner can change an owner's role or make someone owner");
     if (m.role === "owner" && role !== "owner") await this.assertAnotherOwner(organizationId, userId);
-    const next = { ...m, role };
+    let partyId = m.partyId;
+    // Someone becoming an instructor gets an instructor profile so classes can be assigned to them.
+    if (!partyId && role === "instructor") {
+      const u = await this.repos.users.get(userId);
+      partyId = (await this.orgs.createParty(organizationId, { name: u?.name ?? u?.email ?? "Instructor", kind: "instructor" })).id;
+    }
+    const next = { ...m, role, ...(partyId ? { partyId } : {}) };
     await this.repos.memberships.upsert(next);
     return next;
   }

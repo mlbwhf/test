@@ -5,7 +5,7 @@ import type { Course, Event, Order } from "./types.js";
 // Everything is derived from orders, seats and cohorts at read time; nothing here is
 // stored separately, so the numbers can't drift from the ledger.
 
-export type AttentionKind = "payments_setup" | "release_ready" | "low_enrolment" | "unpaid_invoices" | "missing_prework" | "no_tickets";
+export type AttentionKind = "approval" | "payments_setup" | "release_ready" | "low_enrolment" | "unpaid_invoices" | "missing_prework" | "no_tickets";
 
 export interface AttentionItem {
   /** Stable per situation, so a dismissal sticks until the situation changes. */
@@ -68,6 +68,7 @@ export interface EventOverview {
   attendees: Array<{ seatId: string; name: string | null; email: string; checkedIn: boolean; payment: "paid" | "invoice" | "pending" | null }>;
   money: { currency: string; grossMinor: number; netMinor: number; heldMinor: number } | null;
   course: { id: string; name: string; slug: string; prework: boolean; survey: boolean } | null;
+  instructors: Array<{ id: string; name: string }>;
 }
 
 /** Everything the Events detail pane shows for one cohort. */
@@ -98,6 +99,7 @@ export async function eventOverview(core: Core, organizationId: string, eventId:
         }
       : null,
     course: course ? { id: course.id, name: course.name, slug: course.slug, prework: Boolean(course.prework), survey: Boolean(course.surveyUrl) } : null,
+    instructors: (await Promise.all(event.instructorIds.map((id) => core.repos.parties.get(id)))).filter((p): p is NonNullable<typeof p> => Boolean(p)).map((p) => ({ id: p.id, name: p.name })),
   };
 }
 const PAID: Order["status"][] = ["paid", "partially_refunded"];
@@ -116,10 +118,10 @@ function shortDate(d: Date, tz: string): string {
   return new Intl.DateTimeFormat("en-US", { timeZone: tz, month: "short", day: "numeric" }).format(d);
 }
 
-export async function homeSummary(core: Core, organizationId: string, opts: { money: boolean; settings: boolean; now?: Date }): Promise<HomeSummary> {
+export async function homeSummary(core: Core, organizationId: string, opts: { money: boolean; settings: boolean; now?: Date; eventFilter?: (e: Event) => boolean }): Promise<HomeSummary> {
   const now = opts.now ?? new Date();
   const org = await core.getOrganization(organizationId);
-  const events = (await core.repos.events.listByOrganization(organizationId)).filter((e) => e.status !== "cancelled");
+  const events = (await core.repos.events.listByOrganization(organizationId)).filter((e) => e.status !== "cancelled" && (!opts.eventFilter || opts.eventFilter(e)));
   const courses = await core.repos.courses.listByOrganization(organizationId);
   const courseById = new Map(courses.map((c) => [c.id, c]));
 
@@ -135,6 +137,13 @@ export async function homeSummary(core: Core, organizationId: string, opts: { mo
       detail: org.paymentsStatus?.requirementsDue.length ? `Stripe still needs ${org.paymentsStatus.requirementsDue.length} detail${org.paymentsStatus.requirementsDue.length === 1 ? "" : "s"}` : "Learners can't pay until it's connected",
       action: { label: org.paymentsAccountRef ? "Continue" : "Connect", kind: "stripe" },
     });
+  }
+
+  // Classes instructors created that wait for an owner or admin to publish them.
+  if (opts.settings) {
+    for (const e of events.filter((x) => x.status === "draft")) {
+      attention.push({ id: `approval:${e.id}`, kind: "approval", tone: "amber", title: `Approve · ${e.name}`, detail: `Draft for ${shortDate(e.startsAt, e.timezone)} · not on sale until published`, action: { label: "Review", kind: "link", href: `/events?sel=${encodeURIComponent(e.id)}` } });
+    }
   }
 
   let moneyOut: HomeSummary["money"] = null;

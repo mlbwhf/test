@@ -20,6 +20,8 @@ export type WizardInput = {
   seats: number;
   minEnrollment: number | null;
   currency: string;
+  /** Owners and admins choose who teaches; for an instructor the API adds them automatically. */
+  instructorIds?: string[];
 };
 
 export type WizardResult =
@@ -83,6 +85,7 @@ export async function createEventFromWizard(input: WizardInput): Promise<WizardR
     sessions,
     currency,
     ...(input.minEnrollment ? { minEnrollment: input.minEnrollment } : {}),
+    ...(input.instructorIds?.length ? { instructorIds: input.instructorIds } : {}),
   });
   if (!ev.ok) return fail(describeFailure(ev.error));
   const tt = await api.createTicketType(ev.data.id, { name: input.ticketName.trim() || "Standard", priceMinor, quantity: input.seats });
