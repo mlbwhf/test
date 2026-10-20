@@ -85,6 +85,7 @@ export class Core {
     passFeeToAttendee?: boolean | undefined;
     splitRules?: SplitRule[] | undefined;
     releasePolicy?: ReleasePolicy | undefined;
+    kind?: "company" | "individual" | undefined;
     /** Dev/bootstrap only: fix the API key instead of generating one. */
     apiKey?: string | undefined;
   }): Promise<{ organization: Organization; apiKey: string }> {
@@ -103,6 +104,7 @@ export class Core {
       releasePolicy: input.releasePolicy ?? "on_delivery",
       releaseGraceHours: 24,
       minEnrollmentDecisionDays: 7,
+      ...(input.kind ? { kind: input.kind } : {}),
       apiKeyHash: hashApiKey(apiKey),
       createdAt: this.clock.now(),
     };

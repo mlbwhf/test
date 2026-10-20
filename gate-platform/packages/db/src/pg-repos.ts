@@ -1,3 +1,4 @@
+import type { AuthSession, IdentityRepos, Invitation, Membership, Role, User } from "@gate/core";
 import type {
   Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
@@ -19,6 +20,7 @@ function toOrg(r: Row): Organization {
     splitRules: (r.split_rules as Organization["splitRules"]) ?? [],
     ...(opt<Organization["changePolicy"]>(r.change_policy) ? { changePolicy: r.change_policy as NonNullable<Organization["changePolicy"]> } : {}),
     ...(opt<Record<string, unknown>>(r.pricing) ? { pricing: pricingFromRow(r.pricing as Record<string, unknown>) } : {}),
+    ...(opt<string>(r.kind) ? { kind: r.kind as NonNullable<Organization["kind"]> } : {}),
     releasePolicy: (r.release_policy as Organization["releasePolicy"]) ?? "on_delivery", releaseGraceHours: num(r.release_grace_hours ?? 24), minEnrollmentDecisionDays: num(r.min_enrollment_decision_days ?? 7),
     apiKeyHash: str(r.api_key_hash), createdAt: date(r.created_at),
   };
@@ -124,8 +126,8 @@ class PgOrganizations implements OrganizationRepo {
   constructor(private readonly pool: Pool) {}
   async create(o: Organization) {
     await this.pool.query(
-      `INSERT INTO organizations (id, name, country, currency, payout_destination, pass_fee_to_attendee, payments_account_ref, split_rules, api_key_hash, created_at, release_policy, release_grace_hours, min_enrollment_decision_days) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.apiKeyHash, o.createdAt, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays],
+      `INSERT INTO organizations (id, name, country, currency, payout_destination, pass_fee_to_attendee, payments_account_ref, split_rules, api_key_hash, created_at, release_policy, release_grace_hours, min_enrollment_decision_days, kind) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.apiKeyHash, o.createdAt, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.kind ?? null],
     );
   }
   async update(o: Organization) {
@@ -345,4 +347,72 @@ export class PgIdempotencyStore implements IdempotencyStore {
   async put(orgId: string, key: string, rec: IdempotencyRecord) {
     await this.pool.query(`INSERT INTO api_idempotency (organization_id, key, request_hash, status_code, response) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`, [orgId, key, rec.requestHash, rec.statusCode, JSON.stringify(rec.response)]);
   }
+}
+
+
+// ---------- identity ----------
+
+function toUser(r: Row): User {
+  const name = opt<string>(r.name), avatar = opt<string>(r.avatar_url), last = opt<Date>(r.last_login_at);
+  return { id: str(r.id), email: str(r.email), emailVerified: Boolean(r.email_verified), ...(name ? { name } : {}), ...(avatar ? { avatarUrl: avatar } : {}), createdAt: date(r.created_at), ...(last ? { lastLoginAt: date(last) } : {}) };
+}
+function toMembership(r: Row): Membership {
+  const party = opt<string>(r.party_id);
+  return { organizationId: str(r.organization_id), userId: str(r.user_id), role: r.role as Role, ...(party ? { partyId: party } : {}), createdAt: date(r.created_at) };
+}
+function toInvitation(r: Row): Invitation {
+  const by = opt<string>(r.invited_by_user_id), acc = opt<Date>(r.accepted_at), accBy = opt<string>(r.accepted_by_user_id), rev = opt<Date>(r.revoked_at);
+  return { id: str(r.id), organizationId: str(r.organization_id), email: str(r.email), role: r.role as Role, tokenHash: str(r.token_hash), ...(by ? { invitedByUserId: by } : {}), createdAt: date(r.created_at), expiresAt: date(r.expires_at), ...(acc ? { acceptedAt: date(acc) } : {}), ...(accBy ? { acceptedByUserId: accBy } : {}), ...(rev ? { revokedAt: date(rev) } : {}) };
+}
+function toAuthSession(r: Row): AuthSession {
+  const org = opt<string>(r.organization_id);
+  return { id: str(r.id), tokenHash: str(r.token_hash), userId: str(r.user_id), ...(org ? { organizationId: org } : {}), createdAt: date(r.created_at), expiresAt: date(r.expires_at), lastSeenAt: date(r.last_seen_at) };
+}
+
+export function createPgIdentityRepos(pool: Pool): IdentityRepos {
+  return {
+    users: {
+      async create(u) { await pool.query(`INSERT INTO users (id, email, email_verified, name, avatar_url, created_at, last_login_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`, [u.id, u.email, u.emailVerified, u.name ?? null, u.avatarUrl ?? null, u.createdAt, u.lastLoginAt ?? null]); },
+      async update(u) { await pool.query(`UPDATE users SET email=$2, email_verified=$3, name=$4, avatar_url=$5, last_login_at=$6 WHERE id=$1`, [u.id, u.email, u.emailVerified, u.name ?? null, u.avatarUrl ?? null, u.lastLoginAt ?? null]); },
+      async get(id) { const r = await pool.query(`SELECT * FROM users WHERE id=$1`, [id]); return r.rows[0] ? toUser(r.rows[0]) : undefined; },
+      async getByEmail(email) { const r = await pool.query(`SELECT * FROM users WHERE email=$1`, [email.toLowerCase()]); return r.rows[0] ? toUser(r.rows[0]) : undefined; },
+    },
+    identities: {
+      async create(i) { await pool.query(`INSERT INTO identities (provider, subject, user_id, email, created_at) VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`, [i.provider, i.subject, i.userId, i.email ?? null, i.createdAt]); },
+      async get(provider, subject) { const r = await pool.query(`SELECT * FROM identities WHERE provider=$1 AND subject=$2`, [provider, subject]); const x = r.rows[0]; return x ? { provider: str(x.provider), subject: str(x.subject), userId: str(x.user_id), ...(opt<string>(x.email) ? { email: str(x.email) } : {}), createdAt: date(x.created_at) } : undefined; },
+      async listByUser(userId) { const r = await pool.query(`SELECT * FROM identities WHERE user_id=$1 ORDER BY created_at`, [userId]); return r.rows.map((x) => ({ provider: str(x.provider), subject: str(x.subject), userId: str(x.user_id), ...(opt<string>(x.email) ? { email: str(x.email) } : {}), createdAt: date(x.created_at) })); },
+    },
+    memberships: {
+      async upsert(m) { await pool.query(`INSERT INTO memberships (organization_id, user_id, role, party_id, created_at) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (organization_id, user_id) DO UPDATE SET role=EXCLUDED.role, party_id=EXCLUDED.party_id`, [m.organizationId, m.userId, m.role, m.partyId ?? null, m.createdAt]); },
+      async get(o, u) { const r = await pool.query(`SELECT * FROM memberships WHERE organization_id=$1 AND user_id=$2`, [o, u]); return r.rows[0] ? toMembership(r.rows[0]) : undefined; },
+      async listByUser(u) { const r = await pool.query(`SELECT * FROM memberships WHERE user_id=$1 ORDER BY created_at`, [u]); return r.rows.map(toMembership); },
+      async listByOrganization(o) { const r = await pool.query(`SELECT * FROM memberships WHERE organization_id=$1 ORDER BY created_at`, [o]); return r.rows.map(toMembership); },
+      async delete(o, u) { await pool.query(`DELETE FROM memberships WHERE organization_id=$1 AND user_id=$2`, [o, u]); },
+    },
+    invitations: {
+      async create(i) { await pool.query(`INSERT INTO invitations (id, organization_id, email, role, token_hash, invited_by_user_id, created_at, expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [i.id, i.organizationId, i.email, i.role, i.tokenHash, i.invitedByUserId ?? null, i.createdAt, i.expiresAt]); },
+      async update(i) { await pool.query(`UPDATE invitations SET role=$2, expires_at=$3, accepted_at=$4, accepted_by_user_id=$5, revoked_at=$6 WHERE id=$1`, [i.id, i.role, i.expiresAt, i.acceptedAt ?? null, i.acceptedByUserId ?? null, i.revokedAt ?? null]); },
+      async get(id) { const r = await pool.query(`SELECT * FROM invitations WHERE id=$1`, [id]); return r.rows[0] ? toInvitation(r.rows[0]) : undefined; },
+      async getByTokenHash(h) { const r = await pool.query(`SELECT * FROM invitations WHERE token_hash=$1`, [h]); return r.rows[0] ? toInvitation(r.rows[0]) : undefined; },
+      async listByOrganization(o) { const r = await pool.query(`SELECT * FROM invitations WHERE organization_id=$1 ORDER BY created_at`, [o]); return r.rows.map(toInvitation); },
+      async listOpenByEmail(email, now) { const r = await pool.query(`SELECT * FROM invitations WHERE email=$1 AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > $2`, [email, now]); return r.rows.map(toInvitation); },
+    },
+    sessions: {
+      async create(s) { await pool.query(`INSERT INTO auth_sessions (id, token_hash, user_id, organization_id, created_at, expires_at, last_seen_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`, [s.id, s.tokenHash, s.userId, s.organizationId ?? null, s.createdAt, s.expiresAt, s.lastSeenAt]); },
+      async update(s) { await pool.query(`UPDATE auth_sessions SET organization_id=$2, expires_at=$3, last_seen_at=$4 WHERE id=$1`, [s.id, s.organizationId ?? null, s.expiresAt, s.lastSeenAt]); },
+      async getByTokenHash(h) { const r = await pool.query(`SELECT * FROM auth_sessions WHERE token_hash=$1`, [h]); return r.rows[0] ? toAuthSession(r.rows[0]) : undefined; },
+      async delete(id) { await pool.query(`DELETE FROM auth_sessions WHERE id=$1`, [id]); },
+    },
+    tokens: {
+      async put(t) {
+        await pool.query(`DELETE FROM auth_tokens WHERE expires_at < now() - interval '1 day'`);
+        await pool.query(`INSERT INTO auth_tokens (hash, kind, payload, expires_at) VALUES ($1,$2,$3,$4)`, [t.hash, t.kind, JSON.stringify(t.payload), t.expiresAt]);
+      },
+      async consume(hash, kind, now) {
+        const r = await pool.query(`DELETE FROM auth_tokens WHERE hash=$1 AND kind=$2 RETURNING payload, expires_at`, [hash, kind]);
+        const row = r.rows[0];
+        return row && date(row.expires_at) > now ? (row.payload as Record<string, unknown>) : undefined;
+      },
+    },
+  };
 }

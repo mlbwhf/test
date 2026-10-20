@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Ledger } from "@gate/ledger";
-import { Core, FakePaymentsAdapter, FlatRateTax, codes } from "@gate/core";
+import { Core, FakePaymentsAdapter, FlatRateTax, Identities, codes } from "@gate/core";
 import { createPool, type Pool } from "./pool.js";
 import { migrate } from "./migrate.js";
 import { PostgresLedgerStore } from "./pg-ledger-store.js";
-import { createPgRepos } from "./pg-repos.js";
+import { createPgIdentityRepos, createPgRepos } from "./pg-repos.js";
 
 const url = process.env.DATABASE_URL;
 
@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -198,5 +198,29 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect(reasons.filter((r) => !r.startsWith("SOLD_OUT")), "unexpected failures").toEqual([]);
     expect(ok).toBe(5);
     expect((await repos.ticketTypes.get(tt.id))?.sold).toBe(5);
+  });
+
+  it("identity: sign-in, organization, invitation, sessions and single-use tokens in Postgres", async () => {
+    const repos = createPgRepos(pool);
+    const core = new Core({ repos, ledger: new Ledger({ store: new PostgresLedgerStore(pool) }), payments: new FakePaymentsAdapter() });
+    let n = 0;
+    const ids = new Identities(createPgIdentityRepos(pool), core, { now: () => new Date() }, { next: (p) => `${p}_pg${Date.now()}_${++n}` });
+    const owner = await ids.signIn({ provider: "google", subject: `g-${Date.now()}`, email: `owner+${Date.now()}@acme.com`, emailVerified: true, name: "Olive Owner" });
+    const { organization, membership } = await ids.createOrganizationFor(owner.id, { kind: "company", name: "Acme PG", country: "US", currency: "USD" });
+    expect((await repos.organizations.get(organization.id))?.kind).toBe("company");
+    expect(membership.role).toBe("owner");
+    const { token: invite } = await ids.invite(organization.id, { userId: owner.id, role: "owner" }, { email: `fin+${Date.now()}@acme.com`, role: "finance" });
+    const fin = await ids.signIn({ provider: "linkedin", subject: `l-${Date.now()}`, email: `other+${Date.now()}@x.com`, emailVerified: true });
+    expect((await ids.acceptInvitation(invite, fin.id)).role).toBe("finance");
+    const code = await ids.issueLoginCode(fin.id, "/money");
+    const { token, context, returnTo } = await ids.exchangeLoginCode(code);
+    expect(returnTo).toBe("/money");
+    expect(context.role).toBe("finance");
+    await expect(ids.exchangeLoginCode(code)).rejects.toThrow();
+    expect((await ids.resolveSession(token))?.organization?.id).toBe(organization.id);
+    await ids.signOut(token);
+    expect(await ids.resolveSession(token)).toBeUndefined();
+    const stored = await pool.query(`SELECT count(*)::int AS n FROM auth_sessions WHERE token_hash=$1`, [token]);
+    expect(stored.rows[0].n).toBe(0);
   });
 });

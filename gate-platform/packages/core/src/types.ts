@@ -25,6 +25,8 @@ export interface Organization {
   minEnrollmentDecisionDays: number;
   /** Presentment currencies, FX fallback and stored rates; absent = base currency only. */
   pricing?: PricingSettings;
+  /** A training company with a team, or an independent instructor (an organization of one). */
+  kind?: "company" | "individual";
   apiKeyHash: string;
   createdAt: Date;
 }

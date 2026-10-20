@@ -1,3 +1,4 @@
+import type { AuthSession, Identity, IdentityRepos, Invitation, Membership, OneTimeToken, TokenKind, User } from "./identity.js";
 import type {
   CertificateRepo, CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, MessageLogRepo, OrderRepo, OrganizationRepo, PartyRepo, PayoutRepo, ProcessedEventRepo, RefundRepo, Repos, SeatRepo, SeatTransferRepo, TicketTypeRepo, WaitlistRepo,
 } from "./ports.js";
@@ -161,4 +162,58 @@ export function createInMemoryRepos(): Repos {
     refunds: new MemRefunds(),
     processedEvents: new MemProcessedEvents(),
   };
+}
+
+// ---------- identity (users, sessions, invitations) ----------
+
+class MemUsers {
+  private readonly byId = new Map<string, User>();
+  async create(u: User) { this.byId.set(u.id, structuredClone(u)); }
+  async update(u: User) { this.byId.set(u.id, structuredClone(u)); }
+  async get(id: string) { const u = this.byId.get(id); return u && structuredClone(u); }
+  async getByEmail(email: string) { const u = [...this.byId.values()].find((x) => x.email === email.toLowerCase()); return u && structuredClone(u); }
+}
+class MemIdentities {
+  private readonly rows = new Map<string, Identity>();
+  async create(i: Identity) { this.rows.set(`${i.provider}:${i.subject}`, structuredClone(i)); }
+  async get(provider: string, subject: string) { const i = this.rows.get(`${provider}:${subject}`); return i && structuredClone(i); }
+  async listByUser(userId: string) { return [...this.rows.values()].filter((i) => i.userId === userId).map((i) => structuredClone(i)); }
+}
+class MemMemberships {
+  private readonly rows = new Map<string, Membership>();
+  async upsert(m: Membership) { this.rows.set(`${m.organizationId}:${m.userId}`, structuredClone(m)); }
+  async get(o: string, u: string) { const m = this.rows.get(`${o}:${u}`); return m && structuredClone(m); }
+  async listByUser(u: string) { return [...this.rows.values()].filter((m) => m.userId === u).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()).map((m) => structuredClone(m)); }
+  async listByOrganization(o: string) { return [...this.rows.values()].filter((m) => m.organizationId === o).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()).map((m) => structuredClone(m)); }
+  async delete(o: string, u: string) { this.rows.delete(`${o}:${u}`); }
+}
+class MemInvitations {
+  private readonly byId = new Map<string, Invitation>();
+  async create(i: Invitation) { this.byId.set(i.id, structuredClone(i)); }
+  async update(i: Invitation) { this.byId.set(i.id, structuredClone(i)); }
+  async get(id: string) { const i = this.byId.get(id); return i && structuredClone(i); }
+  async getByTokenHash(h: string) { const i = [...this.byId.values()].find((x) => x.tokenHash === h); return i && structuredClone(i); }
+  async listByOrganization(o: string) { return [...this.byId.values()].filter((i) => i.organizationId === o).map((i) => structuredClone(i)); }
+  async listOpenByEmail(email: string, now: Date) { return [...this.byId.values()].filter((i) => i.email === email && !i.acceptedAt && !i.revokedAt && i.expiresAt > now).map((i) => structuredClone(i)); }
+}
+class MemSessions {
+  private readonly byId = new Map<string, AuthSession>();
+  async create(s: AuthSession) { this.byId.set(s.id, structuredClone(s)); }
+  async update(s: AuthSession) { this.byId.set(s.id, structuredClone(s)); }
+  async getByTokenHash(h: string) { const s = [...this.byId.values()].find((x) => x.tokenHash === h); return s && structuredClone(s); }
+  async delete(id: string) { this.byId.delete(id); }
+}
+class MemTokens {
+  private readonly rows = new Map<string, OneTimeToken>();
+  async put(t: OneTimeToken) { this.rows.set(t.hash, structuredClone(t)); }
+  async consume(hash: string, kind: TokenKind, now: Date) {
+    const t = this.rows.get(hash);
+    if (!t || t.kind !== kind) return undefined;
+    this.rows.delete(hash);
+    return t.expiresAt > now ? structuredClone(t.payload) : undefined;
+  }
+}
+
+export function createInMemoryIdentityRepos(): IdentityRepos {
+  return { users: new MemUsers(), identities: new MemIdentities(), memberships: new MemMemberships(), invitations: new MemInvitations(), sessions: new MemSessions(), tokens: new MemTokens() };
 }

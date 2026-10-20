@@ -13,3 +13,4 @@ export * from "./tax.js";
 export * from "./policy.js";
 export * from "./delivery.js";
 export * from "./fx.js";
+export * from "./identity.js";

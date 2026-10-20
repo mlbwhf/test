@@ -5,6 +5,7 @@ export type DomainErrorCode =
   | "CONFLICT"
   | "INVALID_STATE"
   | "UNAUTHORIZED"
+  | "FORBIDDEN"
   | "PAYMENTS_UPSTREAM";
 
 const STATUS: Record<DomainErrorCode, number> = {
@@ -14,6 +15,7 @@ const STATUS: Record<DomainErrorCode, number> = {
   CONFLICT: 409,
   INVALID_STATE: 409,
   UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
   PAYMENTS_UPSTREAM: 502,
 };
 
