@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { api, type Event, type Seat } from "@/lib/api";
-import { ActionForm } from "@/components/action-form";
-import { ApiNotice, Empty, Section } from "@/components/ui";
-import { checkInAction } from "@/app/actions";
+import { api, type Event } from "@/lib/api";
+import { ApiNotice, Empty } from "@/components/ui";
+import { CheckInBoard } from "@/components/checkin-board";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +23,15 @@ function when(e: Event): string {
   return new Intl.DateTimeFormat("en-US", { timeZone: e.timezone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(e.startsAt));
 }
 
+/** Which session day it is today in the cohort's own time zone (null when none is today). */
+function dayOf(e: Event, now = new Date()): number | null {
+  const key = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: e.timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+  const today = key(now);
+  const sessions = e.sessions.length ? e.sessions : [{ startsAt: e.startsAt }];
+  const i = sessions.findIndex((s) => key(new Date(s.startsAt)) === today);
+  return i < 0 ? null : i + 1;
+}
+
 export default async function CheckInPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams;
   const eventsRes = await api.listEvents();
@@ -37,89 +44,27 @@ export default async function CheckInPage({ searchParams }: { searchParams: Prom
     );
   }
   const choices = relevant(eventsRes.data.items);
-  const selectedId = one(sp.event) || choices[0]?.id || "";
-  const selected = eventsRes.data.items.find((e) => e.id === selectedId);
-  const seatsRes = selected ? await api.listSeats(selected.id) : null;
-  const q = one(sp.q).trim().toLowerCase();
-  const seats: Seat[] = seatsRes?.ok ? seatsRes.data.items.filter((s) => s.status === "confirmed") : [];
-  const shown = q
-    ? seats.filter((s) => [s.attendee.name ?? "", s.attendee.email, s.attendee.company ?? "", s.ticketCode ?? ""].some((x) => x.toLowerCase().includes(q)))
-    : seats;
-  const inCount = seats.filter((s) => s.checkedInAt).length;
+  const selected = eventsRes.data.items.find((e) => e.id === one(sp.event)) ?? choices[0];
+  if (!selected) {
+    return (
+      <>
+        <h1>Check-in</h1>
+        <Empty>No cohorts are running or starting in the coming week.</Empty>
+      </>
+    );
+  }
+  const seatsRes = await api.listSeats(selected.id);
+  if (!seatsRes.ok) return <ApiNotice failure={seatsRes.error} />;
+  const seats = seatsRes.data.items
+    .filter((s) => s.status === "confirmed")
+    .map((s) => ({ id: s.id, name: s.attendee.name ?? null, email: s.attendee.email, company: s.attendee.company ?? null, code: s.ticketCode ?? "", checkedInAt: s.checkedInAt }))
+    .sort((a, b) => (a.name ?? a.email).localeCompare(b.name ?? b.email));
 
   return (
-    <>
-      <div className="page-header">
-        <h1>Check-in</h1>
-        <span className="muted">Scan a ticket with your phone camera: the QR opens that attendee here. Or type the code below.</span>
-      </div>
-
-      {choices.length === 0 ? (
-        <Empty>No live cohorts in the coming week.</Empty>
-      ) : (
-        <nav className="tabs" aria-label="Cohort">
-          {choices.map((e) => (
-            <Link key={e.id} href={`/checkin?event=${encodeURIComponent(e.id)}`} className="tab" aria-current={e.id === selectedId ? "page" : undefined}>
-              {e.name} <span className="mono">{when(e)}</span>
-            </Link>
-          ))}
-        </nav>
-      )}
-
-      {selected && (
-        <>
-          <div className="ci-hero">
-            <div>
-              <p className="ci-label">CHECKED IN</p>
-              <p className="ci-count">
-                {inCount} <span>/ {seats.length}</span>
-              </p>
-            </div>
-            <div className="ci-grid" aria-hidden="true">
-              {seats.slice(0, 60).map((s) => (
-                <span key={s.id} className={s.checkedInAt ? "on" : ""} />
-              ))}
-            </div>
-          </div>
-
-          <Section title="Check in by code">
-            <ActionForm action={checkInAction} submitLabel="Check in" pendingLabel="Checking…" inline>
-              <input type="hidden" name="eventId" value={selected.id} />
-              <input name="code" placeholder="EC-7K2M-94QX" autoComplete="off" autoCapitalize="characters" spellCheck={false} aria-label="Ticket code" className="ci-code-input" />
-            </ActionForm>
-          </Section>
-
-          <Section title={`Attendees · ${selected.name}`}>
-            <form className="ci-search" action="/checkin">
-              <input type="hidden" name="event" value={selected.id} />
-              <input name="q" defaultValue={one(sp.q)} placeholder="Search name, email, company or code" aria-label="Search attendees" />
-            </form>
-            {seatsRes && !seatsRes.ok ? (
-              <ApiNotice failure={seatsRes.error} />
-            ) : shown.length === 0 ? (
-              <Empty>{q ? "Nobody matches that search." : "No confirmed seats yet."}</Empty>
-            ) : (
-              <ul className="ci-list">
-                {shown.map((s) => (
-                  <li key={s.id} className={s.checkedInAt ? "is-in" : ""}>
-                    <div>
-                      <div className="ci-name">{s.attendee.name ?? s.attendee.email}</div>
-                      <div className="ci-sub mono">
-                        {s.ticketCode} · {s.attendee.company ?? s.attendee.email}
-                      </div>
-                    </div>
-                    <ActionForm action={checkInAction} submitLabel={s.checkedInAt ? "Undo" : "Check in"} pendingLabel="…" variant={s.checkedInAt ? "danger" : "primary"} inline>
-                      <input type="hidden" name="eventId" value={selected.id} />
-                      <input type="hidden" name="code" value={s.ticketCode ?? ""} />
-                      {s.checkedInAt && <input type="hidden" name="undo" value="1" />}
-                    </ActionForm>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Section>
-        </>
-      )}
-    </>
+    <CheckInBoard
+      event={{ id: selected.id, name: selected.name, day: dayOf(selected), days: Math.max(1, selected.sessions.length) }}
+      seats={seats}
+      choices={(choices.some((c) => c.id === selected.id) ? choices : [selected, ...choices]).map((e) => ({ id: e.id, name: e.name, when: when(e) }))}
+    />
   );
 }
