@@ -365,6 +365,28 @@ export const HELP: HelpArticle[] = [
     related: ["learner-change-or-cancel"],
   },
   {
+    slug: "corporate-invoices",
+    section: "money",
+    title: "Invoice a company",
+    summary: "Book seats for a company on an invoice, send a pay link, reminders and recording bank transfers.",
+    for: ["Owners & admins", "Finance"],
+    body: [
+      { steps: [
+        "Open **Money → Invoices** and click **Add a company**: name, billing email, country and payment terms (net 30 by default).",
+        "Open the class in **Events** and use **Invoice a company**: pick the company, the ticket and the number of seats. Attendee emails are optional; unnamed seats are held under the billing contact.",
+        "EnrollClass emails the invoice to the billing contact with a secure link to pay by card.",
+      ] },
+      { list: [
+        "**Reminders** go out automatically 3 days before the due date, on the day, and 7, 14 and 30 days late, until the invoice is paid or voided.",
+        "**Bank transfer, wire, ACH or cheque**: record it under **Record payment** on the invoice. Part payments are fine.",
+        "**Copy pay link** gives you the same card payment link to send yourself.",
+        "**Void** cancels an unpaid invoice and puts its seats back on sale.",
+      ] },
+      { p: "Corporate invoices are collected by EnrollClass in both payment modes and paid out to you once the invoice is settled, with the same fees as a card booking." },
+    ],
+    related: ["how-payments-work", "payouts"],
+  },
+  {
     slug: "payouts",
     section: "money",
     title: "Payouts, instructor pay and revenue",

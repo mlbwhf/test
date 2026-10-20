@@ -385,8 +385,13 @@ export interface Invoice {
   payments: InvoicePayment[];
   /** Card payment attempt in flight (provider ref), if any. */
   cardPaymentRef?: string;
+  /** Payment reminders already emailed to the billing contact. */
+  reminders?: Array<{ step: InvoiceReminderStep; sentAt: Date }>;
   createdAt: Date;
 }
+
+/** When EnrollClass chases an open invoice: 3 days before it's due, on the day, then 7, 14 and 30 days late. */
+export type InvoiceReminderStep = "due_soon" | "due" | "overdue_7" | "overdue_14" | "overdue_30";
 
 export type RefundStatus = "pending" | "succeeded" | "failed";
 export interface Refund {

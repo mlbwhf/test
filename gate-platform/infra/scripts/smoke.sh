@@ -31,6 +31,8 @@ expect "https://app.$d/login?mode=signup" 200 'Create your free EnrollClass acco
 expect "https://$d/classes" 200 'Upcoming classes' || fail=1
 expect "https://app.$d/verify" 200 'Verify a badge' || fail=1
 expect "https://api.$d/issuers/none/did.json" 404 '' || fail=1
+expect "https://api.$d/public/v1/invoices/inv_none.bad" 404 '' || fail=1
+expect "https://app.$d/help/corporate-invoices" 200 'Invoice a company' || fail=1
 expect "https://app.$d/money" 307 "/login?returnTo=" || fail=1
 expect "https://app.$d/my/seat/none?email=a@b.co" 200 '' || fail=1
 expect "https://app.$d/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1

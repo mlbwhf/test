@@ -35,6 +35,19 @@ export class TicketSigner {
     const want = this.mac("token", seatId).subarray(0, 16);
     return given.length === want.length && timingSafeEqual(given, want) ? seatId : undefined;
   }
+  /** "<id>.<signature>" for another purpose (e.g. "invoice"): a link only the holder can use. */
+  sign(purpose: string, id: string): string {
+    return `${id}.${this.mac(purpose, id).subarray(0, 16).toString("base64url")}`;
+  }
+  /** The id inside a token from sign(purpose, id), or undefined when forged. */
+  check(purpose: string, token: string): string | undefined {
+    const dot = token.lastIndexOf(".");
+    if (dot <= 0) return undefined;
+    const id = token.slice(0, dot);
+    const given = Buffer.from(token.slice(dot + 1), "base64url");
+    const want = this.mac(purpose, id).subarray(0, 16);
+    return given.length === want.length && timingSafeEqual(given, want) ? id : undefined;
+  }
   /** "EC-7K2M-94QX": 40 bits, Crockford base32 (no I, L, O, U), stable per seat. */
   code(seatId: string): string {
     const b = this.mac("code", seatId);

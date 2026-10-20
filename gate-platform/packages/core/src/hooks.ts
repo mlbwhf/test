@@ -1,4 +1,4 @@
-import type { Attendee, Certificate, CorporateAccount, Course, Event, Invoice, Order, Organization, Refund, Seat, SequenceStep, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendee, Certificate, CorporateAccount, Course, Event, Invoice, InvoiceReminderStep, Order, Organization, Refund, Seat, SequenceStep, TicketType, WaitlistEntry } from "./types.js";
 
 export interface OrderPaidContext {
   organization: Organization;
@@ -45,6 +45,8 @@ export interface CoreHooks {
   orderPaid?: ((ctx: OrderPaidContext) => Promise<void>) | undefined;
   orderRefunded?: ((ctx: OrderRefundedContext) => Promise<void>) | undefined;
   invoiceIssued?: ((ctx: InvoiceIssuedContext) => Promise<void>) | undefined;
+  /** An open invoice reached a reminder step (see Core.runInvoiceReminders). */
+  invoiceReminder?: ((ctx: InvoiceIssuedContext & { step: InvoiceReminderStep }) => Promise<void>) | undefined;
   seatChanged?: ((ctx: SeatChangedContext) => Promise<void>) | undefined;
   waitlistOffered?: ((ctx: WaitlistOfferedContext) => Promise<void>) | undefined;
   sequenceStep?: ((ctx: { step: SequenceStep; seat: Seat; event: Event; course?: Course | undefined; organization: Organization }) => Promise<void>) | undefined;

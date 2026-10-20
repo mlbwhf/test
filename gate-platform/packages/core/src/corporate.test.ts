@@ -168,3 +168,32 @@ describe("corporate invoice orders", () => {
     await expect(core.createCorporateAccount(org.id, { name: "X", billingEmail: "a@b.co", address: { country: "CA" }, netTermsDays: 365 })).rejects.toMatchObject({ code: "VALIDATION" });
   });
 });
+
+describe("invoice collection", () => {
+  it("emails the invoice and reminders on schedule until it's paid, each step once", async () => {
+    const { InMemoryNotifier, invoiceHooks } = await import("./notifications.js");
+    const notifier = new InMemoryNotifier();
+    core = new Core({ repos: createInMemoryRepos(), ledger, payments, tax: new FlatRateTax(), clock: { now: () => now }, hooks: [invoiceHooks(notifier, { fromName: "EnrollClass", payUrl: (id) => `https://app.test/pay/invoice/${id}.sig` })] });
+    const { org, tt, bank } = await setup();
+    const { invoice } = await core.createInvoiceOrder(org.id, { ticketTypeId: tt.id, quantity: 2, corporateAccountId: bank.id, poNumber: "PO-77", attendees: [{ email: "a@bigbank.ca" }, { email: "b@bigbank.ca" }] });
+    expect(notifier.sent.map((m) => [m.to, m.subject])).toEqual([["ap@bigbank.ca", `Invoice ${invoice.number} from Agile Agilist`]]);
+    expect(notifier.sent[0]!.text).toContain(`https://app.test/pay/invoice/${invoice.id}.sig`);
+    expect(notifier.sent[0]!.text).toContain("PO-77");
+
+    // Net 30: nothing until 3 days before.
+    expect(await core.runInvoiceReminders(new Date(invoice.dueAt.getTime() - 10 * 86_400_000))).toEqual({ sent: 0 });
+    expect(await core.runInvoiceReminders(new Date(invoice.dueAt.getTime() - 2 * 86_400_000))).toEqual({ sent: 1 });
+    expect(await core.runInvoiceReminders(new Date(invoice.dueAt.getTime() - 1 * 86_400_000))).toEqual({ sent: 0 }); // same step
+    expect(await core.runInvoiceReminders(new Date(invoice.dueAt.getTime() + 9 * 86_400_000))).toEqual({ sent: 1 }); // jumps to overdue_7
+    expect(notifier.sent.map((m) => m.subject).slice(1)).toEqual([`Invoice ${invoice.number} is due in 3 days`, `Invoice ${invoice.number} is overdue`]);
+    expect((await core.getInvoice(org.id, invoice.id)).reminders?.map((r) => r.step)).toEqual(["due_soon", "overdue_7"]);
+
+    // Paid: no more reminders.
+    await core.recordInvoicePayment(org.id, { invoiceId: invoice.id, amountMinor: invoice.totalMinor, method: "wire" });
+    expect(await core.runInvoiceReminders(new Date(invoice.dueAt.getTime() + 40 * 86_400_000))).toEqual({ sent: 0 });
+    const view = await core.invoiceForPayment(invoice.id);
+    expect(view).toMatchObject({ invoice: { status: "paid" }, organization: { name: "Agile Agilist" }, account: { name: "Big Bank" } });
+    expect(await core.invoiceForPayment("inv_nope")).toBeNull();
+  });
+});
+

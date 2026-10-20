@@ -6274,3 +6274,41 @@ a.chip:hover {
   height: 18px;
   min-height: 0;
 }
+.invoice-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 20px 72px;
+}
+.invoice-page h1 {
+  margin: 6px 0 8px;
+  font-size: clamp(30px, 6vw, 44px);
+}
+.invoice-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 18px;
+  margin: 20px 0;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.invoice-facts dt {
+  color: var(--muted);
+}
+.invoice-facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+.invoice-page .chip {
+  display: inline-block;
+}
+.invoice-pay h2 {
+  font-size: 22px;
+  margin: 0 0 10px;
+}
+
+.invoice-row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.row-details > summary { cursor: pointer; font-size: 0.875rem; color: var(--link); }
+.row-details[open] { flex-basis: 100%; }
+.invoice-companies { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }

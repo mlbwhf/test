@@ -205,6 +205,33 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     // EnrollClass's published fees, per currency: the pricing page and the console read them from here.
     const FeeOut = z.object({ bps: z.number().int(), fixedMinor: z.number().int(), capMinor: z.number().int().nullable() });
     const Extras = { fxMarginBps: z.number().int(), marketplaceBps: z.number().int(), earlyRelease: z.object({ bps: z.number().int(), minMinor: z.number().int() }), flexible: z.object({ bps: z.number().int(), platformShareBps: z.number().int() }) };
+    // Corporate invoices: the billing contact's signed link shows the invoice and takes card payment.
+    const InvoiceView = z.object({
+      number: z.string(), status: z.enum(["issued", "partially_paid", "paid", "void"]), currency: z.string(), poNumber: z.string().nullable(),
+      totalMinor: z.number().int(), paidMinor: z.number().int(), taxMinor: z.number().int(), dueAt: z.string(), issuedAt: z.string(),
+      organization: z.string(), account: z.string().nullable(), cohort: z.string(), course: z.string().nullable(), startsAt: z.string(), seats: z.number().int(),
+    });
+    const invoiceFromToken = async (token: string) => {
+      const id = tickets.signer.check("invoice", token);
+      return id ? deps.core.invoiceForPayment(id) : null;
+    };
+    pub.get("/public/v1/invoices/:token", { schema: { tags: ["public"], security: [], params: z.object({ token: z.string() }), response: { 200: InvoiceView, 404: S.ErrorSchema } } }, async (req, reply) => {
+      const v = await invoiceFromToken(req.params.token);
+      if (!v) return reply.code(404).send({ error: { code: "NOT_FOUND", message: "invoice not found" } });
+      const i = v.invoice;
+      return {
+        number: i.number, status: i.status, currency: i.currency, poNumber: i.poNumber ?? null, totalMinor: i.totalMinor, paidMinor: i.paidMinor, taxMinor: i.taxMinor,
+        dueAt: i.dueAt.toISOString(), issuedAt: i.issuedAt.toISOString(), organization: v.organization.name, account: v.account?.name ?? null,
+        cohort: v.event.name, course: v.course?.name ?? null, startsAt: v.event.startsAt.toISOString(), seats: v.order.quantity,
+      };
+    });
+    pub.post("/public/v1/invoices/:token/card-payment", { schema: { tags: ["public"], security: [], params: z.object({ token: z.string() }), response: { 200: z.object({ clientSecret: z.string().nullable(), paymentRef: z.string() }), 404: S.ErrorSchema, 409: S.ErrorSchema } } }, async (req, reply) => {
+      const v = await invoiceFromToken(req.params.token);
+      if (!v) return reply.code(404).send({ error: { code: "NOT_FOUND", message: "invoice not found" } });
+      const r = await deps.core.createInvoiceCardPayment(v.invoice.organizationId, v.invoice.id);
+      return { clientSecret: r.clientSecret, paymentRef: r.paymentRef };
+    });
+
     pub.get("/public/v1/fees", { schema: { tags: ["public"], security: [], description: "Per paid seat. protected: all-in (card processing included); direct: EnrollClass's application fee, the organizer's Stripe account pays processing. Free tickets never carry a fee.", response: { 200: z.object({ currencies: z.record(z.string(), z.object({ protected: FeeOut, direct: FeeOut, verifiedBadgeMinor: z.number().int(), ...Extras })) }) } } }, async (_req, reply) => {
       const fee = (c: { bps: number; fixedMinor: number; capMinor?: number }) => ({ bps: c.bps, fixedMinor: c.fixedMinor, capMinor: c.capMinor ?? null });
       reply.header("cache-control", "public, max-age=3600");
@@ -621,6 +648,10 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.post("/v1/invoices/:id/card-payment", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), response: { 200: z.object({ invoice: S.InvoiceSchema, clientSecret: z.string().nullable(), paymentRef: z.string() }) } } }, async (req) => {
       const r = await deps.core.createInvoiceCardPayment(org(req).id, req.params.id);
       return { invoice: S.toInvoice(r.invoice), clientSecret: r.clientSecret, paymentRef: r.paymentRef };
+    });
+    api.get("/v1/invoices/:id/pay-link", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), response: { 200: z.object({ url: z.string() }), 404: S.ErrorSchema } } }, async (req) => {
+      const inv = await deps.core.getInvoice(org(req).id, req.params.id);
+      return { url: `${deps.webUrl ?? "http://localhost:3000"}/pay/invoice/${encodeURIComponent(tickets.signer.sign("invoice", inv.id))}` };
     });
     api.post("/v1/invoices/:id/void", { schema: { tags: ["corporate"], params: z.object({ id: z.string() }), body: z.object({ reason: z.string().min(1) }), response: { 200: S.InvoiceSchema, 409: S.ErrorSchema } } }, async (req) => S.toInvoice(await deps.core.voidInvoice(org(req).id, req.params.id, req.body.reason)));
     api.get("/v1/reports/receivables", { schema: { tags: ["reports"], querystring: z.object({ asOf: z.string().datetime({ offset: true }).optional() }), response: { 200: z.object({ asOf: z.string(), byCurrency: z.record(z.string(), z.object({ current: z.number().int(), d1_30: z.number().int(), d31_60: z.number().int(), d61_90: z.number().int(), d90_plus: z.number().int() })), items: z.array(z.object({ invoiceId: z.string(), number: z.string(), corporateAccountId: z.string().nullable(), currency: z.string(), outstandingMinor: z.number().int(), dueAt: z.string(), daysPastDue: z.number().int(), bucket: z.string() })) }) } } }, async (req) => {

@@ -126,7 +126,9 @@ function toInvoice(r: Row): Invoice {
   return {
     id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), ...(corp ? { corporateAccountId: corp } : {}), number: str(r.number), ...(po ? { poNumber: po } : {}),
     currency: str(r.currency), subtotalMinor: num(r.subtotal_minor), taxMinor: num(r.tax_minor), totalMinor: num(r.total_minor), paidMinor: num(r.paid_minor),
-    status: r.status as Invoice["status"], issuedAt: date(r.issued_at), dueAt: date(r.due_at), payments, ...(cardRef ? { cardPaymentRef: cardRef } : {}), createdAt: date(r.created_at),
+    status: r.status as Invoice["status"], issuedAt: date(r.issued_at), dueAt: date(r.due_at), payments, ...(cardRef ? { cardPaymentRef: cardRef } : {}),
+    ...(((r.reminders as unknown[]) ?? []).length ? { reminders: (r.reminders as Array<{ step: NonNullable<Invoice["reminders"]>[number]["step"]; sentAt: string }>).map((x) => ({ step: x.step, sentAt: new Date(x.sentAt) })) } : {}),
+    createdAt: date(r.created_at),
   };
 }
 function toRefund(r: Row): Refund {
@@ -242,7 +244,7 @@ class PgInvoices implements InvoiceRepo {
       [i.id, i.organizationId, i.orderId, i.corporateAccountId ?? null, i.number, i.poNumber ?? null, i.currency, i.subtotalMinor, i.taxMinor, i.totalMinor, i.paidMinor, i.status, i.issuedAt, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, i.createdAt],
     );
   }
-  async update(i: Invoice) { await this.pool.query(`UPDATE invoices SET po_number=$2, paid_minor=$3, status=$4, due_at=$5, payments=$6, card_payment_ref=$7 WHERE id=$1`, [i.id, i.poNumber ?? null, i.paidMinor, i.status, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null]); }
+  async update(i: Invoice) { await this.pool.query(`UPDATE invoices SET po_number=$2, paid_minor=$3, status=$4, due_at=$5, payments=$6, card_payment_ref=$7, reminders=$8 WHERE id=$1`, [i.id, i.poNumber ?? null, i.paidMinor, i.status, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, JSON.stringify(i.reminders ?? [])]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE id=$1`, [id]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }
   async getByOrder(orderId: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE order_id=$1`, [orderId]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }
   async getByCardPaymentRef(ref: string) { const r = await this.pool.query(`SELECT * FROM invoices WHERE card_payment_ref=$1`, [ref]); return r.rows[0] ? toInvoice(r.rows[0]) : undefined; }

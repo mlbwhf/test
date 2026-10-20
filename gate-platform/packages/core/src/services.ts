@@ -12,6 +12,7 @@ import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSour
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
+import type { InvoiceReminderStep } from "./types.js";
 import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
@@ -34,6 +35,17 @@ export function activePayments(org: Organization): { mode: PaymentMode; accountR
   return org.paymentMode === "direct"
     ? { mode: "direct", accountRef: org.directAccountRef, status: org.directStatus }
     : { mode: "protected", accountRef: org.paymentsAccountRef, status: org.paymentsStatus };
+}
+
+/** The reminder an open invoice is due for at `now`, if any. */
+export function invoiceReminderStep(dueAt: Date, now: Date): InvoiceReminderStep | null {
+  const days = (now.getTime() - dueAt.getTime()) / 86_400_000;
+  if (days < -3) return null;
+  if (days < 0) return "due_soon";
+  if (days < 7) return "due";
+  if (days < 14) return "overdue_7";
+  if (days < 30) return "overdue_14";
+  return "overdue_30";
 }
 
 export function hashApiKey(key: string): string {
@@ -1293,6 +1305,42 @@ export class Core {
     const updated: Invoice = { ...invoice, cardPaymentRef: p.paymentRef };
     await this.repos.invoices.update(updated);
     return { invoice: updated, clientSecret: p.clientSecret, paymentRef: p.paymentRef };
+  }
+
+  /**
+   * Chase open invoices on the organizer's behalf: one email per reminder step (3 days before
+   * the due date, on it, then 7, 14 and 30 days late). Only the latest step that applies is
+   * sent, and never twice. Runs from the scheduler.
+   */
+  async runInvoiceReminders(now = this.clock.now()): Promise<{ sent: number }> {
+    let sent = 0;
+    for (const org of await this.repos.organizations.list()) {
+      for (const invoice of await this.repos.invoices.listByOrganization(org.id, { status: ["issued", "partially_paid"] })) {
+        const step = invoiceReminderStep(invoice.dueAt, now);
+        if (!step || invoice.reminders?.some((r) => r.step === step)) continue;
+        const order = await this.repos.orders.get(invoice.orderId);
+        const account = invoice.corporateAccountId ? await this.repos.corporateAccounts.get(invoice.corporateAccountId) : undefined;
+        const event = order ? await this.repos.events.get(order.eventId) : undefined;
+        if (!order || !account || !event) continue;
+        const next: Invoice = { ...invoice, reminders: [...(invoice.reminders ?? []), { step, sentAt: now }] };
+        await this.repos.invoices.update(next);
+        await this.runHooks("invoiceReminder", order.id, (hook) => hook({ organization: org, order, invoice: next, account, event, step }));
+        sent += 1;
+      }
+    }
+    return { sent };
+  }
+
+  /** An invoice by id, for its public payment page (the caller proves access with a signed link). */
+  async invoiceForPayment(invoiceId: string): Promise<{ invoice: Invoice; organization: Organization; account?: CorporateAccount | undefined; order: Order; event: Event; course?: Course | undefined } | null> {
+    const invoice = await this.repos.invoices.get(invoiceId);
+    if (!invoice) return null;
+    const order = await this.repos.orders.get(invoice.orderId);
+    const event = order ? await this.repos.events.get(order.eventId) : undefined;
+    if (!order || !event) return null;
+    const account = invoice.corporateAccountId ? await this.repos.corporateAccounts.get(invoice.corporateAccountId) : undefined;
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    return { invoice, organization: await this.getOrganization(invoice.organizationId), account, order, event, course };
   }
 
   async voidInvoice(organizationId: string, invoiceId: string, reason: string): Promise<Invoice> {

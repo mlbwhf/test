@@ -15,6 +15,7 @@ import { ActionForm } from "@/components/action-form";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import { getMe } from "@/lib/console-data";
 import { MoneyKpis, OrdersTab, SettingsRows } from "./parts";
+import { InvoicesTab } from "./invoices";
 import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
 import { HelpLink } from "@/components/help-link";
 import { PaymentModeCard } from "@/components/payment-mode";
@@ -29,6 +30,7 @@ type SearchParams = { from?: string | string[]; to?: string | string[]; tab?: st
 const TABS = [
   ["orders", "Orders"],
   ["payouts", "Payouts"],
+  ["invoices", "Invoices"],
   ["revenue", "Revenue"],
   ["settings", "Settings"],
 ] as const;
@@ -324,6 +326,8 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
       )}
 
       {tab === "orders" && <OrdersTab orders={orders} lines={lines} canWrite={perms.includes("money:write")} now={now} />}
+
+      {tab === "invoices" && <InvoicesTab canWrite={perms.includes("money:write")} now={now} />}
 
       {tab === "payouts" && (
       <Section title="Payables">

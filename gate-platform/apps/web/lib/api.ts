@@ -646,6 +646,20 @@ export type WebhookDeliveryInfo = { id: string; type: string; status: "pending" 
 export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
 export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
 
+export type BillingAddress = { country: string; region?: string; postalCode?: string; city?: string; line1?: string; taxId?: string };
+export type CorporateAccount = { id: string; name: string; billingEmail: string; address: BillingAddress; poRequired: boolean; netTermsDays: number; currency: string; createdAt: string };
+export type InvoiceStatus = "issued" | "partially_paid" | "paid" | "void";
+export type InvoicePaymentMethod = "bank_transfer" | "wire" | "ach" | "cheque" | "other";
+export type Invoice = {
+  id: string; orderId: string; corporateAccountId: string | null; number: string; poNumber: string | null; currency: string;
+  subtotalMinor: number; taxMinor: number; totalMinor: number; paidMinor: number; status: InvoiceStatus;
+  issuedAt: string; dueAt: string; createdAt: string;
+  payments: { id: string; amountMinor: number; method: InvoicePaymentMethod | "card"; reference: string | null; receivedAt: string }[];
+};
+export const INVOICE_PAYMENT_METHODS: InvoicePaymentMethod[] = ["bank_transfer", "wire", "ach", "cheque", "other"];
+export const INVOICE_PAYMENT_METHOD_LABELS: Record<string, string> = { bank_transfer: "Bank transfer", wire: "Wire", ach: "ACH", cheque: "Cheque", card: "Card", other: "Other" };
+export type CreateInvoiceOrderInput = { corporateAccountId: string; ticketTypeId: string; quantity: number; attendees?: { email: string; name?: string }[]; poNumber?: string; currency?: string; dueDays?: number };
+
 export const api = {
   // ---- accounts and team ----
   providers: () => request<{ providers: { id: string; label: string }[]; email: boolean }>("GET", "/auth/providers"),
@@ -751,6 +765,15 @@ export const api = {
   checkIn: (input: { token?: string; code?: string; eventId?: string; undo?: boolean }) => request<CheckInResult>("POST", "/v1/checkins", input),
 
   listOrders: () => request<{ items: Order[] }>("GET", "/v1/orders"),
+  listCorporateAccounts: () => request<{ items: CorporateAccount[] }>("GET", "/v1/corporate-accounts"),
+  createCorporateAccount: (input: { name: string; billingEmail: string; address: BillingAddress; poRequired?: boolean; netTermsDays?: number; currency?: string }) =>
+    request<CorporateAccount>("POST", "/v1/corporate-accounts", input),
+  listInvoices: () => request<{ items: Invoice[] }>("GET", "/v1/invoices"),
+  invoicePayLink: (id: string) => request<{ url: string }>("GET", `/v1/invoices/${enc(id)}/pay-link`),
+  recordInvoicePayment: (id: string, input: { amountMinor: number; method: InvoicePaymentMethod; reference?: string }) =>
+    request<Invoice>("POST", `/v1/invoices/${enc(id)}/payments`, input),
+  voidInvoice: (id: string, reason: string) => request<Invoice>("POST", `/v1/invoices/${enc(id)}/void`, { reason }),
+  createInvoiceOrder: (input: CreateInvoiceOrderInput) => request<{ order: Order; invoice: Invoice; dryRun: boolean }>("POST", "/v1/invoice-orders", input),
   createOrder: (input: CreateOrderInput) => request<CreateOrderResult>("POST", "/v1/orders", input),
 
   getBalances: () => request<{ accounts: LedgerAccount[] }>("GET", "/v1/ledger/balances"),

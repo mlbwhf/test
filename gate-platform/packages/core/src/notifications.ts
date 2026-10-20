@@ -1,5 +1,6 @@
 import { buildIcs, buildInvite } from "./ics.js";
-import type { CoreHooks, OrderPaidContext } from "./hooks.js";
+import type { CoreHooks, InvoiceIssuedContext, OrderPaidContext } from "./hooks.js";
+import type { InvoiceReminderStep } from "./types.js";
 import { buildIcs as _buildIcsAlias } from "./ics.js";
 void _buildIcsAlias;
 
@@ -345,6 +346,51 @@ export function cohortHooks(notifier: Notifier, opts: { fromName: string; organi
             : `<p><strong>${esc(event.name)}</strong> will not run (${esc(event.cancelReason ?? "cancelled by the organizer")}). Your payment has been refunded in full to the original payment method.</p><p>— ${esc(organization.name)}</p>`,
         });
       }
+    },
+  };
+}
+
+export interface InvoiceMailOptions {
+  fromName: string;
+  replyTo?: string | undefined;
+  /** Public page where the billing contact sees the invoice and pays by card (signed link). */
+  payUrl: (invoiceId: string) => string;
+}
+
+const REMINDER_SUBJECT: Record<InvoiceReminderStep, (n: string) => string> = {
+  due_soon: (n) => `Invoice ${n} is due in 3 days`,
+  due: (n) => `Invoice ${n} is due today`,
+  overdue_7: (n) => `Invoice ${n} is overdue`,
+  overdue_14: (n) => `Second reminder: invoice ${n} is overdue`,
+  overdue_30: (n) => `Final reminder: invoice ${n} is 30 days overdue`,
+};
+
+/** Corporate invoices: the invoice itself to the billing contact, then reminders until it's paid. */
+export function invoiceHooks(notifier: Notifier, opts: InvoiceMailOptions): CoreHooks {
+  const body = (ctx: InvoiceIssuedContext, intro: string) => {
+    const { invoice, organization, account, event } = ctx;
+    const due = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: event.timezone }).format(invoice.dueAt);
+    const outstanding = money(invoice.totalMinor - invoice.paidMinor, invoice.currency);
+    const url = opts.payUrl(invoice.id);
+    const lines = [
+      `Invoice ${invoice.number}${invoice.poNumber ? ` (PO ${invoice.poNumber})` : ""} for ${account.name}`,
+      `${event.name}: ${ctx.order.quantity} seat${ctx.order.quantity === 1 ? "" : "s"}`,
+      `Amount due: ${outstanding} by ${due}`,
+    ];
+    return {
+      text: `${intro}\n\n${lines.join("\n")}\n\nView and pay by card: ${url}\nOr pay by bank transfer quoting ${invoice.number}.\n\n${organization.name}, via ${opts.fromName}`,
+      html: `<p>${esc(intro)}</p><table style="border-collapse:collapse;margin:8px 0 16px">${lines.map((l) => `<tr><td style="padding:3px 0">${esc(l)}</td></tr>`).join("")}</table><p><a href="${esc(url)}" style="display:inline-block;background:#3fcb7e;color:#14213d;font-weight:700;padding:12px 22px;border-radius:999px;text-decoration:none">View and pay invoice</a></p><p style="color:#5a627a">Or pay by bank transfer quoting ${esc(invoice.number)}.</p><p>${esc(organization.name)}, via ${esc(opts.fromName)}</p>`,
+    };
+  };
+  return {
+    invoiceIssued: async (ctx) => {
+      const b = body(ctx, `${ctx.organization.name} has sent you invoice ${ctx.invoice.number}.`);
+      await notifier.send({ key: `invoice:${ctx.invoice.id}:issued`, to: ctx.account.billingEmail, replyTo: opts.replyTo, subject: `Invoice ${ctx.invoice.number} from ${ctx.organization.name}`, ...b });
+    },
+    invoiceReminder: async (ctx) => {
+      const intro = ctx.step === "due_soon" ? "A friendly reminder that this invoice is due soon." : ctx.step === "due" ? "This invoice is due today." : "This invoice is now overdue. If you've already paid, thank you, and please ignore this message.";
+      const b = body(ctx, intro);
+      await notifier.send({ key: `invoice:${ctx.invoice.id}:${ctx.step}`, to: ctx.account.billingEmail, replyTo: opts.replyTo, subject: REMINDER_SUBJECT[ctx.step](ctx.invoice.number), ...b });
     },
   };
 }

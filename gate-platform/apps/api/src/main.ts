@@ -1,5 +1,5 @@
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
-import { ConsoleNotifier, Core, Identities, Integrations, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, type IdentityRepos, type IntegrationRepos, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
+import { ConsoleNotifier, Core, Identities, invoiceHooks, Integrations, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, type IdentityRepos, type IntegrationRepos, FakePaymentsAdapter, FlatRateTax, FrankfurterRates, cohortHooks, confirmationHook, selfServiceHooks, sequenceHooks, createInMemoryRepos, type CoreHooks, type Notifier, type PaymentsPort, type Repos } from "@gate/core";
 import { ResendNotifier } from "./notifiers/resend.js";
 import { CrmSync, HubSpotCrm } from "@gate/integrations-hubspot";
 import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
@@ -101,6 +101,11 @@ async function main() {
     seatUrl: (seatId, email) => `${webUrl}/my/seat/${seatId}?email=${encodeURIComponent(email)}`,
     certificateUrl: (code) => `${webUrl}/cert/${encodeURIComponent(code)}`,
   }));
+  hooks.push(invoiceHooks(notifier, {
+    fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
+    replyTo: process.env.EMAIL_REPLY_TO,
+    payUrl: (invoiceId) => `${webUrl}/pay/invoice/${encodeURIComponent(signer.sign("invoice", invoiceId))}`,
+  }));
   hooks.push(cohortHooks(notifier, {
     fromName: process.env.EMAIL_FROM_NAME ?? "EnrollClass",
     organizerEmail: async () => process.env.EMAIL_REPLY_TO ?? process.env.GATE_ORGANIZER_EMAIL,
@@ -172,7 +177,8 @@ async function main() {
         const expired = await core.expireWaitlistOffers();
         const released = await core.releaseDelivered();
         const flagged = await core.reviewMinEnrollment();
-        if (r.sent || expired.length || released.orders || flagged.length) console.log(`[scheduler] sent ${r.sent} emails, expired ${expired.length} offers, released ${released.orders} orders (${released.amountMinor}), flagged ${flagged.length} cohorts`);
+        const reminders = await core.runInvoiceReminders();
+        if (r.sent || expired.length || released.orders || flagged.length || reminders.sent) console.log(`[scheduler] sent ${r.sent} emails, expired ${expired.length} offers, released ${released.orders} orders (${released.amountMinor}), flagged ${flagged.length} cohorts, ${reminders.sent} invoice reminders`);
       } catch (err) {
         console.error("[scheduler]", err);
       }

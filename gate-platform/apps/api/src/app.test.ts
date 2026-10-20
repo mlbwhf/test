@@ -300,6 +300,31 @@ describe("API", () => {
     expect((await im.inject({ method: "POST", url: `/v1/events/${ev.id}/release-early`, headers: J, payload: {} })).statusCode).toBe(409);
   });
 
+  it("invoices: signed pay link, public invoice page data, card payment to paid; forged links fail", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test", webUrl: "https://app.test", ticketSecret: "invoice-test-secret-123" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "CA", currency: "CAD" } })).json();
+    const key = created.apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "safe", name: "Leading SAFe" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-20T14:00:00Z", endsAt: "2099-11-20T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 100_000, quantity: 5 } })).json();
+    const acct = (await im.inject({ method: "POST", url: "/v1/corporate-accounts", headers: J, payload: { name: "Big Bank", billingEmail: "ap@bigbank.ca", address: { country: "CA", region: "ON" } } })).json();
+    const { invoice } = (await im.inject({ method: "POST", url: "/v1/invoice-orders", headers: J, payload: { corporateAccountId: acct.id, ticketTypeId: tt.id, quantity: 2 } })).json();
+
+    const { url } = (await im.inject({ url: `/v1/invoices/${invoice.id}/pay-link`, headers: J })).json();
+    expect(url).toMatch(/^https:\/\/app\.test\/pay\/invoice\//);
+    const token = decodeURIComponent(url.split("/pay/invoice/")[1]);
+    const view = (await im.inject(`/public/v1/invoices/${encodeURIComponent(token)}`)).json();
+    expect(view).toMatchObject({ number: invoice.number, status: "issued", organization: "AA", account: "Big Bank", cohort: "Nov", course: "Leading SAFe", seats: 2, totalMinor: invoice.totalMinor });
+    expect((await im.inject(`/public/v1/invoices/${encodeURIComponent(`${invoice.id}.forged`)}`)).statusCode).toBe(404);
+
+    const pay = (await im.inject({ method: "POST", url: `/public/v1/invoices/${encodeURIComponent(token)}/card-payment`, payload: {} })).json();
+    expect(pay.clientSecret).toBeTruthy();
+    await im.inject({ method: "POST", url: `/v1/dev/payments/${pay.paymentRef}/succeed`, headers: { "x-api-key": key } });
+    expect((await im.inject(`/public/v1/invoices/${encodeURIComponent(token)}`)).json().status).toBe("paid");
+  });
+
   it("moves badges from Credly to EnrollClass verified badges and awards them to past learners", async () => {
     const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
     const fetchImpl = (async (url: string) => (url.startsWith("https://images.credly.com/") ? new Response(png, { headers: { "content-type": "image/png" } }) : new Response("", { status: 404 }))) as unknown as typeof fetch;

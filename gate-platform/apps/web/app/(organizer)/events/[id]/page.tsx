@@ -17,6 +17,7 @@ import {
 import { formatDateTimeInZone, formatMoney, formatTimeInZone, humanize, minorUnitDigits } from "@/lib/format";
 import { MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, REGIONAL_PRICE_ROWS } from "@/lib/forms";
 import { ActionForm } from "@/components/action-form";
+import { createInvoiceOrderAction } from "@/app/(organizer)/money/invoice-actions";
 import { RosterDownload } from "@/components/roster-download";
 import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import {
@@ -166,7 +167,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   const meRes = await api.me();
   const canMoney = meRes.ok && meRes.data.permissions.includes("money:write");
   const isTeam = meRes.ok && meRes.data.organization?.kind !== "individual";
-  const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes, partiesRes] =
+  const [eventRes, ticketTypesRes, seatsRes, attendanceRes, certificatesRes, messagesRes, partiesRes, companiesRes] =
     await Promise.all([
       api.getEvent(id),
       api.listTicketTypes(id),
@@ -175,6 +176,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       api.listCertificates(id),
       api.listMessages(id),
       api.listParties(),
+      canMoney ? api.listCorporateAccounts() : Promise.resolve(null),
     ]);
 
   if (!eventRes.ok) {
@@ -205,6 +207,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
   const parties: Party[] = partiesRes.ok ? partiesRes.data.items : [];
   const instructors = parties.filter((p) => p.kind === "instructor");
   const partyNames = new Map(parties.map((p) => [p.id, p.name]));
+  const companies = companiesRes?.ok ? companiesRes.data.items : [];
 
   let course: Course | null = null;
   let transferTargets: Event[] = [];
@@ -698,6 +701,56 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           </div>
         )}
       </Section>
+
+      {canMoney && !cancelled && (
+        <Section title="Invoice a company">
+          {ticketTypes.length === 0 ? (
+            <Empty>Create a ticket type first.</Empty>
+          ) : companies.length === 0 ? (
+            <Empty>
+              Add the company in <Link href="/money?tab=invoices">Money → Invoices</Link> first.
+            </Empty>
+          ) : (
+            <ActionForm action={createInvoiceOrderAction} submitLabel="Issue invoice" pendingLabel="Issuing…" wide>
+              <div className="fields">
+                <label>
+                  Company
+                  <select name="corporateAccountId" required defaultValue={companies[0]?.id}>
+                    {companies.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} — net {c.netTermsDays} days{c.poRequired ? ", PO required" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Ticket type
+                  <select name="ticketTypeId" required defaultValue={ticketTypes[0]?.id}>
+                    {ticketTypes.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name} — {formatMoney(t.priceMinor, event.currency)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Seats
+                  <input name="quantity" type="number" min={1} max={500} step={1} required defaultValue={1} />
+                </label>
+                <label>
+                  PO number
+                  <input name="poNumber" maxLength={80} />
+                </label>
+              </div>
+              <label>
+                Attendee emails (optional)
+                <textarea name="attendees" rows={3} placeholder="one per line; unnamed seats go to the billing contact" />
+              </label>
+              <p className="hint">The seats are held now; the company gets the invoice by email with a card pay link and reminders.</p>
+            </ActionForm>
+          )}
+        </Section>
+      )}
 
       <Section title="Sell test ticket">
         {ticketTypes.length === 0 ? (
