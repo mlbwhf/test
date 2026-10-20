@@ -58,10 +58,16 @@ const defaultIds: IdGenerator = {
   next: (prefix) => `${prefix}_${randomBytes(9).toString("base64url")}`,
 };
 
-/** One course in EnrollClass's class finder. */
+/** One course in EnrollClass's class finder, described by its next upcoming date. */
 export interface CatalogEntry {
-  organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean;
+  organizationId: string; organizationName: string; courseId: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean;
   category: CourseCategory; promoted: "top" | "category" | null; imageUrl?: string;
+  description?: string; certificationBody?: string; format: DeliveryFormat; hours: number | null;
+  /** Lowest current price of the next date, in its currency; null when nothing is on sale. */
+  priceMinor: number | null; currency: string; capacity: number; seatsLeft: number;
+  /** One fact-based label: "selling_fast" (a quarter of seats or fewer left), "early_bird" (early price running), "accredited" (names a certification body), "new" (first listed in the last 30 days). */
+  badge: "selling_fast" | "early_bird" | "accredited" | "new" | null;
+  verifiedBadge: boolean;
 }
 
 export class Core {
@@ -578,14 +584,32 @@ export class Core {
     const out: CatalogEntry[] = [];
     for (const org of await this.repos.organizations.list()) {
       const listed = org.marketplaceListing !== false;
+      const pricing = this.pricingOf(org);
       for (const course of await this.repos.courses.listByOrganization(org.id)) {
-        const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
-        if (!upcoming.length) continue;
-        const next = upcoming.reduce((a, e) => (e.startsAt < a ? e.startsAt : a), upcoming[0]!.startsAt);
+        const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+        const next = upcoming[0];
+        if (!next) continue;
+        const tickets = await this.repos.ticketTypes.listByEvent(next.id);
+        const onSale = tickets.filter((t) => t.quantity > t.sold);
+        const prices = onSale.map((t) => { try { return this.resolveUnitPrice(t, next, next.currency, now, pricing); } catch { return null; } }).filter((x): x is number => x !== null);
+        const capacity = tickets.reduce((a, t) => a + t.quantity, 0);
+        const seatsLeft = tickets.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0);
+        const hoursMs = next.sessions.reduce((a, x) => a + (x.endsAt.getTime() - x.startsAt.getTime()), 0);
+        const badge: CatalogEntry["badge"] =
+          capacity > 0 && seatsLeft > 0 && seatsLeft <= capacity / 4 ? "selling_fast"
+          : onSale.some((t) => t.earlyBird && now < t.earlyBird.until) ? "early_bird"
+          : course.certificationBody ? "accredited"
+          : now.getTime() - course.createdAt.getTime() < 30 * 86_400_000 ? "new"
+          : null;
         out.push({
-          organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length, listed,
+          organizationId: org.id, organizationName: org.name, courseId: course.id, slug: course.slug, name: course.name, nextStartsAt: next.startsAt, classes: upcoming.length, listed,
           category: course.category ?? inferCategory(course.name, course.certificationBody), promoted: listed ? promoted.get(course.id) ?? null : null,
           ...(course.imageUrl ? { imageUrl: course.imageUrl } : {}),
+          ...(course.description ? { description: course.description } : {}),
+          ...(course.certificationBody ? { certificationBody: course.certificationBody } : {}),
+          format: next.format, hours: hoursMs > 0 ? Math.round(hoursMs / 3_600_000) : null,
+          priceMinor: prices.length ? Math.min(...prices) : null, currency: next.currency, capacity, seatsLeft, badge,
+          verifiedBadge: course.badge?.platform === "own",
         });
         if (out.length >= limit) return out;
       }

@@ -1,10 +1,8 @@
 import { apiBaseUrl } from "@/lib/api";
 
-export type CatalogItem = {
-  organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: string; classes: number; url?: string | null; listed?: boolean;
-  category?: string; promoted?: "top" | "category" | null; imageUrl?: string | null;
-};
-export type CatalogCategory = { id: string; label: string };
+import type { CatalogCategory, CatalogItem } from "@/lib/catalog-types";
+
+export { keyOf, type CatalogCategory, type CatalogItem } from "@/lib/catalog-types";
 
 /** Courses with upcoming classes (public data) and the finder's topics. Empty if the API is down. */
 export async function publicCatalogWithCategories(): Promise<{ items: CatalogItem[]; categories: CatalogCategory[] }> {

@@ -42,6 +42,9 @@ describe("categories", () => {
     expect(inferCategory("ITIL 4 Foundation")).toBe("it-service");
     expect(inferCategory("CISSP Boot Camp")).toBe("security");
     expect(inferCategory("Lean Six Sigma Green Belt")).toBe("quality");
+    expect(inferCategory("Certified Ethical Hacker Prep")).toBe("security");
+    expect(inferCategory("SOC Analyst Foundations")).toBe("security");
+    expect(inferCategory("AML & KYC Compliance Essentials")).toBe("business");
     expect(inferCategory("Pottery for beginners")).toBe("other");
   });
 
