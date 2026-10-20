@@ -47,6 +47,8 @@ color-scheme:light;font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Sego
 .gw-attendee{margin:0 0 12px;padding:8px 16px 4px;border:1px solid var(--gw-border);border-radius:10px;min-width:0}
 .gw-legend{padding:0 4px;font-weight:600}
 .gw-check{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:.95em;cursor:pointer}
+.gw-flex{align-items:flex-start;padding:10px 12px;border:1px solid var(--gw-border,#d6d9e0);border-radius:12px}
+.gw-flex input{margin-top:3px}
 .gw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
 .gw-summary{margin:16px 0;padding:12px 16px;border:1px solid var(--gw-border);border-radius:10px;background:var(--gw-surface)}
 .gw-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.95em;font-variant-numeric:tabular-nums}

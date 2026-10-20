@@ -24,7 +24,7 @@ describe("API", () => {
     expect(spec.openapi).toBe("3.1.0");
     expect(Object.keys(spec.paths)).toEqual(expect.arrayContaining(["/v1/orders", "/v1/refunds", "/v1/ledger/balances", "/v1/webhooks/stripe"]));
     const fees = (await app.inject("/public/v1/fees")).json().currencies;
-    expect(fees.USD).toEqual({ protected: { bps: 490, fixedMinor: 80, capMinor: null }, direct: { bps: 150, fixedMinor: 50, capMinor: null }, verifiedBadgeMinor: 100 });
+    expect(fees.USD).toMatchObject({ protected: { bps: 490, fixedMinor: 80, capMinor: null }, direct: { bps: 150, fixedMinor: 50, capMinor: null }, verifiedBadgeMinor: 100, fxMarginBps: 150, marketplaceBps: 500, earlyRelease: { bps: 200 }, flexible: { bps: 800, platformShareBps: 2_500 } });
     expect(Object.keys(fees)).toEqual(expect.arrayContaining(["USD", "CAD", "EUR", "GBP"]));
   });
 
@@ -273,6 +273,31 @@ describe("API", () => {
     expect((await im.inject({ method: "POST", url: "/public/v1/credentials/verify", payload: { jwt } })).json().valid).toBe(true);
     expect((await im.inject(`/public/v1/achievements/${course.id}`)).statusCode).toBe(404);
     expect((await im.inject("/public/v1/credentials/not-a-code")).statusCode).toBe(404);
+  });
+
+  it("class-finder referral fee, flexible tickets and the early-release quote over the API", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json();
+    const J = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const orgId = created.organization.id as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "safe", name: "SAFe" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-20T14:00:00Z", endsAt: "2099-11-20T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 100_000, quantity: 5 } })).json();
+    const order = (body: object) => im.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "l@x.co", dryRun: true, ...body } });
+
+    expect((await order({ source: "marketplace" })).json().order.pricing).toMatchObject({ referralFeeMinor: 5_000, totalMinor: 100_000 });
+    expect((await order({ flexible: true })).statusCode).toBe(400);
+    const patched = (await im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: J, payload: { flexibleTickets: true, marketplaceListing: false } })).json();
+    expect(patched).toMatchObject({ flexibleTickets: true, marketplaceListing: false });
+    expect((await order({ flexible: true })).json().order.pricing).toMatchObject({ flexibleMinor: 8_000, totalMinor: 108_000 });
+    expect((await order({ source: "marketplace" })).json().order.pricing.referralFeeMinor).toBeUndefined();
+    expect((await im.inject(`/public/v1/organizations/${orgId}/courses/safe`)).json().organization.flexibleTickets).toBe(true);
+    expect((await im.inject("/public/v1/catalog")).json().items[0]).toMatchObject({ slug: "safe", listed: false });
+
+    const quote = (await im.inject({ url: `/v1/events/${ev.id}/release-early`, headers: J })).json();
+    expect(quote).toMatchObject({ eligible: false, heldMinor: 0, currency: "USD" });
+    expect((await im.inject({ method: "POST", url: `/v1/events/${ev.id}/release-early`, headers: J, payload: {} })).statusCode).toBe(409);
   });
 
   it("moves badges from Credly to EnrollClass verified badges and awards them to past learners", async () => {

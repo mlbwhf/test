@@ -26,6 +26,14 @@ export interface FeeSchedule {
   direct: FeeComponent;
   /** Added per paid seat when the course issues an EnrollClass verified badge (Open Badges 3.0). */
   verifiedBadgeMinor: MinorUnits;
+  /** Paid by the learner when the price is converted into their currency (not a listed price). */
+  fxMarginBps: number;
+  /** Referral fee on bookings that came through EnrollClass's class finder; the organizer pays it. */
+  marketplaceBps: number;
+  /** Releasing held Protected funds before the class is delivered. */
+  earlyRelease: { bps: number; minMinor: MinorUnits };
+  /** Flexible ticket: learner add-on (bps of the ticket price) and EnrollClass's share of it (bps of the add-on). */
+  flexible: { bps: number; platformShareBps: number };
   pos: FeeComponent;
   instantPayout: { bps: number; minMinor: MinorUnits };
   /** Tickets priced at or below this are free of platform fees. */
@@ -50,6 +58,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 100,
     pos: { bps: 240, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 50 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 50 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   EUR: {
@@ -62,6 +74,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 100,
     pos: { bps: 190, fixedMinor: 10 },
     instantPayout: { bps: 50, minMinor: 40 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 40 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   AED: {
@@ -74,6 +90,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 400,
     pos: { bps: 240, fixedMinor: 50 },
     instantPayout: { bps: 100, minMinor: 200 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 200 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   CAD: {
@@ -86,6 +106,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 130,
     pos: { bps: 240, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 60 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 60 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   GBP: {
@@ -98,6 +122,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 100,
     pos: { bps: 190, fixedMinor: 10 },
     instantPayout: { bps: 100, minMinor: 40 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 40 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   ZAR: {
@@ -110,6 +138,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 1_800,
     pos: { bps: 240, fixedMinor: 200 },
     instantPayout: { bps: 100, minMinor: 900 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 900 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   SAR: {
@@ -122,6 +154,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 400,
     pos: { bps: 240, fixedMinor: 50 },
     instantPayout: { bps: 100, minMinor: 200 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 200 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
   INR: {
@@ -134,6 +170,10 @@ export const DEFAULT_SCHEDULES: Record<string, FeeSchedule> = {
     verifiedBadgeMinor: 8_000,
     pos: { bps: 240, fixedMinor: 1_000 },
     instantPayout: { bps: 100, minMinor: 4_000 },
+    fxMarginBps: 150,
+    marketplaceBps: 500,
+    earlyRelease: { bps: 200, minMinor: 4_000 },
+    flexible: { bps: 800, platformShareBps: 2_500 },
     freeTicketThresholdMinor: 0,
   },
 };

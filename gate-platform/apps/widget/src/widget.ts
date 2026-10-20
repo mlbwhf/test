@@ -21,6 +21,8 @@ export interface WidgetOptions {
   waitlist?: string;
   /** Show only this cohort (event id), e.g. when the host page already let the visitor pick a date. */
   event?: string;
+  /** "marketplace" when the visitor came through EnrollClass's class finder. */
+  source?: "marketplace";
 }
 
 /** Timing knobs (mutable so tests can shorten them). */
@@ -37,7 +39,7 @@ interface StripeElements { create(type: "payment", options?: Record<string, unkn
 interface StripeConfirmResult { error?: { message?: string }; paymentIntent?: { status: string } }
 export interface StripeInstance {
   elements(options: { clientSecret: string; appearance?: { theme: string } }): StripeElements;
-  confirmPayment(options: { elements: StripeElements; redirect: "if_required" }): Promise<StripeConfirmResult>;
+  confirmPayment(options: { elements: StripeElements; redirect: "if_required"; confirmParams?: { return_url: string } }): Promise<StripeConfirmResult>;
 }
 /** `stripeAccount` points Stripe.js at the organizer's own account for Direct payments. */
 export type StripeFactory = (publishableKey: string, options?: { stripeAccount?: string }) => StripeInstance;
@@ -119,6 +121,28 @@ function waitlistFromLocation(): string | undefined {
 }
 
 interface Draft { email: string; name: string; company: string }
+
+/** An order waiting on a redirect-based payment (Klarna, Affirm, bank redirects): picked up again on return. */
+interface PendingPayment { orderId: string; buyerEmail: string; eventId: string; ticketTypeId: string; quantity: number }
+const pendingKey = (course: string) => `gate-pending:${course}`;
+function savePending(course: string, p: PendingPayment): void {
+  try { window.sessionStorage.setItem(pendingKey(course), JSON.stringify(p)); } catch { /* private mode: the webhook still confirms the order */ }
+}
+function takePending(course: string): PendingPayment | null {
+  try {
+    const raw = window.sessionStorage.getItem(pendingKey(course));
+    window.sessionStorage.removeItem(pendingKey(course));
+    return raw ? (JSON.parse(raw) as PendingPayment) : null;
+  } catch {
+    return null;
+  }
+}
+/** Where the payment provider sends the buyer back: this page, minus any previous return parameters. */
+function returnUrl(): string {
+  const url = new URL(window.location.href);
+  for (const k of ["payment_intent", "payment_intent_client_secret", "redirect_status"]) url.searchParams.delete(k);
+  return url.toString();
+}
 interface CheckoutContext { cohort: Cohort; ticket: TicketType; quantity: number; buyerEmail: string; attendees: Attendee[] }
 
 function toAttendees(drafts: readonly Draft[]): Attendee[] {
@@ -188,6 +212,7 @@ export class Widget {
       ].filter(Boolean).join(" · ");
       this.setStatus("");
       this.renderSchedule();
+      await this.resumeRedirect();
     } catch (err) {
       this.titleEl.textContent = "Course schedule";
       this.setStatus("");
@@ -434,12 +459,24 @@ export class Widget {
       syncFirst();
     };
 
+    // Flexible ticket: offered by the organizer, only on paid seats.
+    let flexible = false;
+    const flexibleBox = this.data?.organization.flexibleTickets && unit > 0
+      ? (() => {
+          const box = h("input", { type: "checkbox", id: uid("flex") });
+          box.addEventListener("change", () => { flexible = box.checked; schedulePricing(); });
+          return h("label", { class: "gw-check gw-flex", for: box.id }, box,
+            h("span", {}, h("strong", {}, "Flexible ticket"), " · full refund if you cancel up to 24 hours before the start. The upgrade itself isn't refunded."));
+        })()
+      : null;
+
     const renderSummary = (p: Pricing, cur: string): void => {
       if (p.totalMinor === 0) {
         summary.replaceChildren(row(`Free seat × ${p.quantity}`, "No payment needed"), row("Total", "Free", true));
         return;
       }
       const rows = [row(`${formatMoney(p.unitPriceMinor, cur)} × ${p.quantity}`, formatMoney(p.subtotalMinor, cur))];
+      if (p.flexibleMinor) rows.push(row("Flexible ticket", formatMoney(p.flexibleMinor, cur)));
       if (p.attendeeFeeMinor > 0) rows.push(row("Service fee", formatMoney(p.attendeeFeeMinor, cur)));
       rows.push(row("Total", formatMoney(p.totalMinor, cur), true));
       summary.replaceChildren(...rows);
@@ -451,7 +488,7 @@ export class Widget {
       const mine = ++pricingSeq;
       summary.replaceChildren(h("p", { class: "gw-muted" }, "Calculating price…"));
       try {
-        const res = await this.api.createOrder(this.orderBody(tt, currency, quantity, buyerEmail, drafts, true), uuid());
+        const res = await this.api.createOrder(this.orderBody(tt, currency, quantity, buyerEmail, drafts, true, flexible), uuid());
         if (mine !== pricingSeq) return;
         renderSummary(res.order.pricing, res.order.currency);
       } catch (err) {
@@ -491,7 +528,7 @@ export class Widget {
       submitButton.disabled = true;
       this.setStatus("Creating your order…");
       try {
-        const res = await this.api.createOrder(this.orderBody(tt, currency, quantity, buyerEmail, drafts, false), idempotencyKey);
+        const res = await this.api.createOrder(this.orderBody(tt, currency, quantity, buyerEmail, drafts, false, flexible), idempotencyKey);
         await this.afterOrder(res, { cohort, ticket: tt, quantity, buyerEmail, attendees: toAttendees(drafts) });
       } catch (err) {
         this.setStatus("");
@@ -509,6 +546,7 @@ export class Widget {
         h("label", { class: "gw-label", for: buyerInput.id }, "Your email (receipt and confirmation)"),
         buyerInput),
       attendeesBox,
+      ...(flexibleBox ? [flexibleBox] : []),
       summary,
       errors,
       submitButton,
@@ -526,11 +564,35 @@ export class Widget {
     buyerInput.focus();
   }
 
-  private orderBody(tt: TicketType, currency: string, quantity: number, buyerEmail: string, drafts: readonly Draft[], dryRun: boolean): OrderRequest {
+  private orderBody(tt: TicketType, currency: string, quantity: number, buyerEmail: string, drafts: readonly Draft[], dryRun: boolean, flexible = false): OrderRequest {
     const attendees = toAttendees(drafts).map((a) => (dryRun && !a.email ? { ...a, email: PLACEHOLDER_EMAIL } : a));
     const body: OrderRequest = { ticketTypeId: tt.id, quantity, currency, buyerEmail: buyerEmail || (dryRun ? PLACEHOLDER_EMAIL : ""), attendees, dryRun };
     if (this.waitlistEntryId) body.waitlistEntryId = this.waitlistEntryId;
+    if (this.opts.source === "marketplace") body.source = "marketplace";
+    if (flexible) body.flexible = true;
     return body;
+  }
+
+  /** Back from a redirect-based payment (Klarna, Affirm…): show the outcome for the order that was in flight. */
+  private async resumeRedirect(): Promise<void> {
+    let status: string | null = null;
+    try { status = new URLSearchParams(window.location.search).get("redirect_status"); } catch { return; }
+    if (!status) return;
+    const pending = takePending(this.opts.course);
+    const cohort = pending && this.data?.cohorts.find((c) => c.event.id === pending.eventId);
+    const ticket = cohort?.ticketTypes.find((t) => t.id === pending!.ticketTypeId);
+    if (!pending || !cohort || !ticket) return;
+    const ctx: CheckoutContext = { cohort, ticket, quantity: pending.quantity, buyerEmail: pending.buyerEmail, attendees: [] };
+    if (status === "failed") {
+      this.renderOutcome("Payment not completed", "The payment wasn't authorized, so no seats were reserved. You can try again or choose another way to pay.", ctx);
+      return;
+    }
+    try {
+      const { order } = await this.api.getOrder(pending.orderId, pending.buyerEmail);
+      await this.confirm(order, ctx);
+    } catch (err) {
+      this.body.replaceChildren(errorBlock(err));
+    }
   }
 
   /* ---------- After the order is created ---------- */
@@ -574,7 +636,10 @@ export class Widget {
         payButton.disabled = true;
         this.setStatus("Processing payment…");
         try {
-          const result = await stripe.confirmPayment({ elements, redirect: "if_required" });
+          // Installment and bank methods (Klarna, Affirm…) leave the page and come back to return_url.
+          savePending(this.opts.course, { orderId: res.order.id, buyerEmail: ctx.buyerEmail, eventId: ctx.cohort.event.id, ticketTypeId: ctx.ticket.id, quantity: ctx.quantity });
+          const result = await stripe.confirmPayment({ elements, redirect: "if_required", confirmParams: { return_url: returnUrl() } });
+          takePending(this.opts.course);
           if (result.error) {
             errors.append(h("div", { class: "gw-error", role: "alert" }, result.error.message ?? "Payment was not completed."));
             payButton.disabled = false;

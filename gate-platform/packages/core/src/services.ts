@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } from "@gate/ledger";
-import { computeSplits, priceOrder, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
+import { computeSplits, earlyReleaseFee, priceOrder, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -123,7 +123,7 @@ export class Core {
     return { organization, apiKey };
   }
 
-  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined }): Promise<Organization> {
+  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined }): Promise<Organization> {
     const org = await this.getOrganization(organizationId);
     if (patch.releaseGraceHours !== undefined && (!Number.isFinite(patch.releaseGraceHours) || patch.releaseGraceHours < 0 || patch.releaseGraceHours > 24 * 30)) throw new DomainError("VALIDATION", "releaseGraceHours must be 0..720");
     if (patch.minEnrollmentDecisionDays !== undefined && (!Number.isFinite(patch.minEnrollmentDecisionDays) || patch.minEnrollmentDecisionDays < 0 || patch.minEnrollmentDecisionDays > 90)) throw new DomainError("VALIDATION", "minEnrollmentDecisionDays must be 0..90");
@@ -133,6 +133,8 @@ export class Core {
       ...(patch.releaseGraceHours !== undefined ? { releaseGraceHours: patch.releaseGraceHours } : {}),
       ...(patch.minEnrollmentDecisionDays !== undefined ? { minEnrollmentDecisionDays: patch.minEnrollmentDecisionDays } : {}),
       ...(patch.passFeeToAttendee !== undefined ? { passFeeToAttendee: patch.passFeeToAttendee } : {}),
+      ...(patch.marketplaceListing !== undefined ? { marketplaceListing: patch.marketplaceListing } : {}),
+      ...(patch.flexibleTickets !== undefined ? { flexibleTickets: patch.flexibleTickets } : {}),
       ...(patch.name?.trim() ? { name: patch.name.trim() } : {}),
     };
     await this.repos.organizations.update(next);
@@ -541,15 +543,16 @@ export class Core {
    * Every course with an upcoming live class, across organizations, for sitemaps and AI
    * crawlers. Only what the public course pages already show.
    */
-  async publicCatalog(limit = 5000): Promise<Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number }>> {
+  /** Courses with upcoming classes. `listed`: shown in EnrollClass's class finder (the organizer can opt out). */
+  async publicCatalog(limit = 5000): Promise<Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean }>> {
     const now = this.clock.now();
-    const out: Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number }> = [];
+    const out: Array<{ organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: Date; classes: number; listed: boolean }> = [];
     for (const org of await this.repos.organizations.list()) {
       for (const course of await this.repos.courses.listByOrganization(org.id)) {
         const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
         if (!upcoming.length) continue;
         const next = upcoming.reduce((a, e) => (e.startsAt < a ? e.startsAt : a), upcoming[0]!.startsAt);
-        out.push({ organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length });
+        out.push({ organizationId: org.id, organizationName: org.name, slug: course.slug, name: course.name, nextStartsAt: next, classes: upcoming.length, listed: org.marketplaceListing !== false });
         if (out.length >= limit) return out;
       }
     }
@@ -583,7 +586,7 @@ export class Core {
       });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected" },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true },
       course, cohorts: out,
     };
   }
@@ -611,6 +614,10 @@ export class Core {
       waitlistEntryId?: string | undefined;
       idempotencyKey?: string | undefined;
       dryRun?: boolean | undefined;
+      /** "marketplace": the learner came through EnrollClass's class finder (referral fee). */
+      source?: "marketplace" | undefined;
+      /** The flexible-ticket upgrade, when the organizer offers it. */
+      flexible?: boolean | undefined;
     },
   ): Promise<{ order: Order; clientSecret: string | null; created: boolean }> {
     const org = await this.getOrganization(organizationId);
@@ -635,7 +642,13 @@ export class Core {
     const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
     const direct = org.paymentMode === "direct";
     const verifiedBadge = await this.issuesVerifiedBadge(event);
-    const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false, direct, verifiedBadge });
+    if (input.flexible && org.flexibleTickets !== true) throw new DomainError("VALIDATION", "this organizer doesn't offer flexible tickets");
+    const pricing = await this.priceWithTax({
+      org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: input.billingAddress, businessCustomer: false, direct, verifiedBadge,
+      converted: this.isConvertedPrice(ticketType, event, currency, this.clock.now()),
+      marketplace: input.source === "marketplace" && org.marketplaceListing !== false,
+      flexible: input.flexible === true,
+    });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: input.buyerEmail });
     // Direct: learners pay the organizer's own Stripe account, which must be able to take charges.
@@ -1072,8 +1085,12 @@ export class Core {
 
   // ---------- Tax ----------
 
-  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean; direct?: boolean | undefined; verifiedBadge?: boolean | undefined }) {
-    const common = { currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee, ...(input.direct ? { mode: "direct" as const } : {}), ...(input.verifiedBadge ? { verifiedBadge: true } : {}) };
+  private async priceWithTax(input: { org: Organization; currency: string; unitPriceMinor: MinorUnits; quantity: number; billingAddress?: BillingAddress | undefined; businessCustomer: boolean; direct?: boolean | undefined; verifiedBadge?: boolean | undefined; converted?: boolean | undefined; marketplace?: boolean | undefined; flexible?: boolean | undefined }) {
+    const common = {
+      currency: input.currency, unitPriceMinor: input.unitPriceMinor, quantity: input.quantity, destination: input.org.payoutDestination, passFeeToAttendee: input.org.passFeeToAttendee,
+      ...(input.direct ? { mode: "direct" as const } : {}), ...(input.verifiedBadge ? { verifiedBadge: true } : {}),
+      ...(input.converted ? { converted: true } : {}), ...(input.marketplace ? { marketplace: true } : {}), ...(input.flexible ? { flexible: true } : {}),
+    };
     const base = priceOrder(common);
     if (!input.billingAddress) return base;
     const taxable = base.subtotalMinor + base.attendeeFeeMinor;
@@ -1360,7 +1377,12 @@ export class Core {
     const active = ctx.seat.status === "confirmed";
     const unit = ctx.order.pricing.unitPriceMinor;
     const transfer = active ? transferTerms(ctx.policy, ctx.event.startsAt, now, unit, ended) : { allowed: false, feeMinor: 0, freeUntil: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
-    const cancel = active ? cancelTerms(ctx.policy, ctx.event.startsAt, now, this.seatValue(ctx.order), ended) : { allowed: false, refundBps: 0, refundMinor: 0, fullRefundUntil: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
+    let cancel = active ? cancelTerms(ctx.policy, ctx.event.startsAt, now, this.seatValue(ctx.order), ended) : { allowed: false, refundBps: 0, refundMinor: 0, fullRefundUntil: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
+    // Flexible ticket: a full refund (of the seat, not the upgrade) until 24 hours before the start, whatever the policy says.
+    const flexibleUntil = new Date(ctx.event.startsAt.getTime() - 24 * 3_600_000);
+    if (active && (ctx.order.pricing.flexibleMinor ?? 0) > 0 && !ended && now < flexibleUntil && cancel.refundBps < 10_000) {
+      cancel = { allowed: true, refundBps: 10_000, refundMinor: this.seatValue(ctx.order), fullRefundUntil: flexibleUntil };
+    }
     const substitute = active ? substituteTerms(ctx.policy, ctx.event.startsAt, now, ended) : { allowed: false, until: ctx.event.startsAt, reason: `seat is ${ctx.seat.status}` };
     const transferOptions = [];
     if (transfer.allowed && ctx.event.courseId) {
@@ -1743,8 +1765,8 @@ export class Core {
 
   // ---------- Release, payouts, cohort economics ----------
 
-  /** Move an order's held organizer-side funds to payable accounts (pro rata to the original split) and run transfers. */
-  private async releaseOrder(order: Order, org: Organization): Promise<number> {
+  /** Move an order's held organizer-side funds to payable accounts (pro rata to the original split) and run transfers. An early-release fee comes out of the organizer's own share. */
+  private async releaseOrder(order: Order, org: Organization, earlyFeeMinor = 0): Promise<number> {
     if (order.fundsStatus !== "held" || order.heldMinor <= 0) {
       if (order.fundsStatus === "held") await this.repos.orders.update({ ...order, fundsStatus: "released", releasedAt: this.clock.now() });
       return 0;
@@ -1752,8 +1774,10 @@ export class Core {
     const ccy = order.currency;
     const weights = [order.splits.organizerMinor, ...order.splits.lines.map((l) => l.amountMinor)];
     const parts = weights.some((w) => w > 0) ? allocate(order.heldMinor, weights) : [order.heldMinor, ...order.splits.lines.map(() => 0)];
-    const shares = { organizerMinor: parts[0] ?? 0, lines: order.splits.lines.map((l, i) => ({ partyId: l.partyId, amountMinor: parts[i + 1] ?? 0 })) };
+    const fee = Math.min(earlyFeeMinor, parts[0] ?? 0);
+    const shares = { organizerMinor: (parts[0] ?? 0) - fee, lines: order.splits.lines.map((l, i) => ({ partyId: l.partyId, amountMinor: parts[i + 1] ?? 0 })) };
     const postings: Posting[] = [{ accountId: (await this.accounts.orgHeld(org.id, ccy)).id, amount: order.heldMinor }];
+    if (fee > 0) postings.push({ accountId: (await this.accounts.feeRevenue(ccy)).id, amount: -fee });
     if (shares.organizerMinor > 0) postings.push({ accountId: (await this.accounts.orgPayable(org.id, ccy)).id, amount: -shares.organizerMinor });
     for (const l of shares.lines) if (l.amountMinor > 0) postings.push({ accountId: (await this.accounts.partyPayable(org.id, l.partyId, ccy)).id, amount: -l.amountMinor });
     await this.ledger.post({ idempotencyKey: `order:${order.id}:release`, currency: ccy, description: `Release held funds for order ${order.id}`, postings, metadata: { orderId: order.id, organizationId: org.id, eventId: order.eventId } });
@@ -1782,6 +1806,39 @@ export class Core {
       }
     }
     return total;
+  }
+
+  /**
+   * Getting paid before delivery (Protected mode): the held organizer share of a class that
+   * hasn't ended, less the early-release fee. Offered once the organizer has delivered a class
+   * through EnrollClass, since EnrollClass then carries the refunds if the class is cancelled.
+   */
+  async earlyReleaseQuote(organizationId: string, eventId: string): Promise<{ eligible: boolean; reason?: string; currency: string; heldMinor: number; feeMinor: number; netMinor: number }> {
+    const org = await this.getOrganization(organizationId);
+    const event = await this.getEvent(organizationId, eventId);
+    const orders = (await this.repos.orders.listByOrganization(organizationId, 10_000)).filter((o) => o.eventId === eventId && o.fundsStatus === "held");
+    const held = orders.reduce((a, o) => a + o.heldMinor, 0);
+    const fee = earlyReleaseFee(held, event.currency);
+    const base = { currency: event.currency, heldMinor: held, feeMinor: fee, netMinor: held - fee };
+    if (event.status === "cancelled") return { ...base, eligible: false, reason: "the class was cancelled" };
+    if ((event.endsAt ?? event.startsAt) <= this.clock.now()) return { ...base, feeMinor: 0, netMinor: held, eligible: false, reason: "the class is over: release it for free" };
+    if (held <= 0) return { ...base, eligible: false, reason: "nothing is held for this class" };
+    const track = (await this.repos.orders.listByOrganization(organizationId, 10_000)).some((o) => o.fundsStatus === "released" && o.settlement !== "direct" && o.paidAt && o.releasedAt && o.releasedAt.getTime() - o.paidAt.getTime() > 0);
+    const delivered = track && (await this.repos.events.listByOrganization(organizationId)).some((e) => e.status === "ended");
+    if (!delivered) return { ...base, eligible: false, reason: `available once ${org.name} has delivered a class through EnrollClass` };
+    return { ...base, eligible: true };
+  }
+
+  async releaseEventEarly(organizationId: string, eventId: string): Promise<{ released: number; amountMinor: number; feeMinor: number }> {
+    const quote = await this.earlyReleaseQuote(organizationId, eventId);
+    if (!quote.eligible) throw new DomainError("INVALID_STATE", `early release isn't available: ${quote.reason}`);
+    const org = await this.getOrganization(organizationId);
+    const orders = (await this.repos.orders.listByOrganization(organizationId, 10_000)).filter((o) => o.eventId === eventId && o.fundsStatus === "held" && o.heldMinor > 0);
+    // Spread the fee over the orders by how much each holds.
+    const fees = allocate(quote.feeMinor, orders.map((o) => o.heldMinor));
+    let amount = 0;
+    for (const [i, order] of orders.entries()) amount += await this.releaseOrder(order, org, fees[i] ?? 0);
+    return { released: orders.length, amountMinor: amount - quote.feeMinor, feeMinor: quote.feeMinor };
   }
 
   /** Release every delivered cohort past its grace period; run from the scheduler. */

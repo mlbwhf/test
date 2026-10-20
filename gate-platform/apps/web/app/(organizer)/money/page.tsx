@@ -18,6 +18,7 @@ import { MoneyKpis, OrdersTab, SettingsRows } from "./parts";
 import { recordPayoutAction, refreshFxRatesAction, releaseFundsAction, updateOrganizationSettingsAction, updatePricingAction } from "@/app/actions";
 import { HelpLink } from "@/components/help-link";
 import { PaymentModeCard } from "@/components/payment-mode";
+import { FeesExtrasCard } from "@/components/fees-extras";
 import { publicApi } from "@/lib/public-api";
 import { FALLBACK_USD_FEES } from "@/lib/fees";
 
@@ -135,6 +136,14 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
   const [paymentsRes, feesRes] = tab === "settings" && perms.includes("settings") ? await Promise.all([api.refreshPayments(), publicApi.getFees()]) : [null, null];
   const fees = (feesRes?.ok ? feesRes.data.currencies[fallbackCurrency] ?? feesRes.data.currencies.USD : undefined) ?? FALLBACK_USD_FEES;
   const feeCurrency = feesRes?.ok && feesRes.data.currencies[fallbackCurrency] ? fallbackCurrency : "USD";
+  const extras = feesRes?.ok ? feesRes.data.currencies[feeCurrency] : undefined;
+  const pctOf = (bps: number) => `${(bps / 100).toFixed(bps % 100 === 0 ? 0 : 1)}%`;
+  const extraRates = {
+    marketplacePct: pctOf(extras?.marketplaceBps ?? 500),
+    flexiblePct: pctOf(extras?.flexible.bps ?? 800),
+    flexibleKeepPct: pctOf(10_000 - (extras?.flexible.platformShareBps ?? 2_500)),
+    fxPct: pctOf(extras?.fxMarginBps ?? 150),
+  };
   const report = reportRes && reportRes.ok ? reportRes.data : null;
   const cohorts = report?.cohorts ?? [];
   const payables = payablesRes.ok ? payablesRes.data.items : [];
@@ -448,6 +457,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
       )}
 
       {tab === "settings" && paymentsRes?.ok && <PaymentModeCard state={paymentsRes.data} fees={fees} currency={feeCurrency} canEdit={perms.includes("settings")} />}
+      {tab === "settings" && org && <FeesExtrasCard org={org} canEdit={perms.includes("settings")} rates={extraRates} />}
       {tab === "settings" && org && <SettingsRows org={org} canEdit={perms.includes("settings")} paymentsSetup={meRes.ok ? meRes.data.organization?.paymentsSetup ?? null : null} showPayments={!paymentsRes?.ok} />}
 
       {tab === "settings" && perms.includes("settings") && (

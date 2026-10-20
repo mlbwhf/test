@@ -1,6 +1,6 @@
 import { apiBaseUrl } from "@/lib/api";
 
-export type CatalogItem = { organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: string; classes: number; url?: string | null };
+export type CatalogItem = { organizationId: string; organizationName: string; slug: string; name: string; nextStartsAt: string; classes: number; url?: string | null; listed?: boolean };
 
 /** Courses with upcoming classes (public data), for the sitemap and llms.txt. Empty if the API is down. */
 export async function publicCatalog(): Promise<CatalogItem[]> {

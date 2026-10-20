@@ -253,7 +253,7 @@ export function permissionFor(method: string, url: string): Permission {
   if (/^\/v1\/(ledger|reports|payouts|refunds|invoices|invoice-orders|corporate-accounts)(\/|$)/.test(path)) return write ? "money:write" : "money:read";
   if (/^\/v1\/orders(\/|$)/.test(path)) return write ? "money:write" : "money:read";
   if (/^\/v1\/copilot\/explain-order$/.test(path)) return "money:read";
-  if (/^\/v1\/events\/[^/]+\/(release|cancel|instructor-fees)$/.test(path) && write) return "money:write";
+  if (/^\/v1\/events\/[^/]+\/(release|release-early|cancel|instructor-fees)$/.test(path)) return write ? "money:write" : "money:read";
   if (/^\/v1\/events\/[^/]+\/(publish|instructors)$/.test(path) && write) return "settings";
   if (/^\/v1\/seats\/[^/]+\/cancel$/.test(path)) return "money:write";
   if (path === "/v1/parties" && write) return "settings";

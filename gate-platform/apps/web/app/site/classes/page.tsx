@@ -17,10 +17,12 @@ const day = (iso: string) => new Intl.DateTimeFormat("en-US", { month: "short", 
 export default async function ClassesPage({ searchParams }: { searchParams: Promise<{ q?: string | string[] }> }) {
   const raw = (await searchParams).q;
   const q = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? "";
-  const all = (await publicCatalog()).sort((a, b) => a.nextStartsAt.localeCompare(b.nextStartsAt));
+  // Organizers can opt out of the class finder; bookings that come through it carry a referral fee.
+  const all = (await publicCatalog()).filter((c) => c.listed !== false).sort((a, b) => a.nextStartsAt.localeCompare(b.nextStartsAt));
   const needle = q.toLowerCase();
   const items = needle ? all.filter((c) => `${c.name} ${c.organizationName}`.toLowerCase().includes(needle)) : all;
   const page = (c: (typeof all)[number]) => `${appUrl()}/c/${encodeURIComponent(c.organizationId)}/${encodeURIComponent(c.slug)}`;
+  const visit = (c: (typeof all)[number]) => `${page(c)}?via=enrollclass`;
   const ld = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -53,7 +55,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Prom
         <ul className="classes-list">
           {items.map((c) => (
             <li key={`${c.organizationId}/${c.slug}`}>
-              <a href={page(c)}>
+              <a href={visit(c)}>
                 <strong>{c.name}</strong>
                 <span>{c.organizationName}</span>
                 <span className="mono">

@@ -32,11 +32,12 @@ export const OrganizationSchema = z.object({
   pricing: PricingSettingsSchema,
   paymentsStatus: PaymentsStatusSchema,
   paymentMode: z.enum(["protected", "direct"]),
+  marketplaceListing: z.boolean(), flexibleTickets: z.boolean(),
   directAccountRef: z.string().nullable(),
   directStatus: PaymentsStatusSchema,
   createdAt: z.string(),
 });
-export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional() });
+export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional(), marketplaceListing: z.boolean().optional(), flexibleTickets: z.boolean().optional() });
 export const InstructorFeeSchema = z.object({ partyId: z.string(), amountMinor: Minor });
 export const PayoutSchema = z.object({ id: z.string(), partyId: z.string().nullable(), currency: Currency, amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().nullable(), createdAt: z.string() });
 export const CreatePayoutBody = z.object({ partyId: z.string().optional(), currency: Currency, amountMinor: z.number().int().min(1), method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().max(120).optional() });
@@ -113,7 +114,7 @@ export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(
 export const JoinWaitlistBody = z.object({ eventId: z.string(), ticketTypeId: z.string().optional(), email: z.string().email(), name: z.string().max(200).optional(), quantity: z.number().int().min(1).max(10).optional() });
 
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]) }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean() }),
   course: CourseSchema,
   cohorts: z.array(z.object({
     event: EventSchema,
@@ -124,6 +125,7 @@ export const PublicCourseSchema = z.object({
 export const PricingSchema = z.object({
   currency: Currency, quantity: z.number().int(), unitPriceMinor: Minor, subtotalMinor: Minor, platformFeeMinor: Minor,
   attendeeFeeMinor: Minor, taxMinor: Minor, totalMinor: Minor, organizerNetMinor: Minor, perTicketFeeMinor: Minor,
+  fxFeeMinor: Minor.optional(), referralFeeMinor: Minor.optional(), flexibleMinor: Minor.optional(), flexibleFeeMinor: Minor.optional(),
 });
 export const BillingAddressSchema = z.object({ country: z.string().length(2), region: z.string().max(10).optional(), postalCode: z.string().max(20).optional(), city: z.string().max(100).optional(), line1: z.string().max(200).optional(), taxId: z.string().max(40).optional() });
 export const CorporateAccountSchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), billingEmail: z.string(), address: BillingAddressSchema, poRequired: z.boolean(), netTermsDays: z.number().int(), currency: Currency, createdAt: z.string() });
@@ -143,13 +145,19 @@ export const OrderSchema = z.object({
   /** "direct": paid to the organizer's own Stripe account (chargeAccountRef); null: collected by EnrollClass. */
   settlement: z.enum(["direct"]).nullable(), chargeAccountRef: z.string().nullable(),
 });
-export const CreateOrderBody = z.object({ ticketTypeId: z.string(), quantity: z.number().int().min(1).max(100), buyerEmail: z.string().email(), currency: Currency.optional(), attendees: z.array(AttendeeSchema).max(100).optional(), billingAddress: BillingAddressSchema.optional(), waitlistEntryId: z.string().optional(), dryRun: z.boolean().optional() });
+export const CreateOrderBody = z.object({
+  ticketTypeId: z.string(), quantity: z.number().int().min(1).max(100), buyerEmail: z.string().email(), currency: Currency.optional(), attendees: z.array(AttendeeSchema).max(100).optional(), billingAddress: BillingAddressSchema.optional(), waitlistEntryId: z.string().optional(), dryRun: z.boolean().optional(),
+  /** "marketplace": the learner came from EnrollClass's class finder. */
+  source: z.enum(["marketplace"]).optional(),
+  /** The flexible-ticket upgrade (when the organizer offers it). */
+  flexible: z.boolean().optional(),
+});
 export const RefundSchema = z.object({ id: z.string(), orderId: z.string(), organizationId: z.string(), amountMinor: Minor, reason: z.string(), status: z.enum(["pending", "succeeded", "failed"]), paymentRefundRef: z.string().nullable(), createdAt: z.string() });
 export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.number().int().min(1).optional(), reason: z.string().min(1) });
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
 export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
-export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
+export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, createdAt: c.createdAt.toISOString() });
 export const toEvent = (e: Event) => ({

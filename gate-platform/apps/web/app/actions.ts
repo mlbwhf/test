@@ -971,3 +971,30 @@ export async function awardBadgeAction(_prev: ActionState, formData: FormData): 
   const n = r.data.awarded;
   return { status: "ok", message: n === 0 ? "Everyone with a certificate already has the badge." : `Awarded the badge to ${n} learner${n === 1 ? "" : "s"}${notify ? " and emailed them" : ""}.` };
 }
+
+
+// ---------- fees and extras: booking fee, class finder, flexible tickets, early release ----------
+
+export async function updateRevenueSettingsAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const payer = field(formData, "feePayer");
+  if (payer !== "learner" && payer !== "organizer") return fail("Choose who pays the EnrollClass fee.");
+  const r = await api.updateOrganization({
+    passFeeToAttendee: payer === "learner",
+    marketplaceListing: formData.get("marketplaceListing") === "on",
+    flexibleTickets: formData.get("flexibleTickets") === "on",
+  });
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath("/money");
+  return { status: "ok", message: "Saved. New registrations use these settings." };
+}
+
+export async function earlyReleaseAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const eventId = field(formData, "eventId");
+  if (!eventId) return fail("Missing class.");
+  const r = await api.releaseEarly(eventId);
+  if (!r.ok) return fail(describeFailure(r.error));
+  revalidatePath("/events");
+  revalidatePath("/money");
+  revalidatePath("/dashboard");
+  return { status: "ok", message: `Released ${r.data.released} order${r.data.released === 1 ? "" : "s"}: the money is on its way to your Stripe account.` };
+}

@@ -24,14 +24,26 @@ declare global {
 export function RegisterSheet(p: Props) {
   const [open, setOpen] = useState(false);
   const [claiming, setClaiming] = useState(false);
+  const [fromFinder, setFromFinder] = useState(false);
 
-  // Waitlist offer links land here with ?gate_waitlist=…: open checkout straight away.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("gate_waitlist")) {
+    const q = new URLSearchParams(window.location.search);
+    // Waitlist offer links land here with ?gate_waitlist=…: open checkout straight away.
+    if (q.has("gate_waitlist")) {
       setClaiming(true);
       setOpen(true);
     }
-  }, []);
+    // Back from Klarna, Affirm or a bank redirect: reopen checkout so it can show the result.
+    if (q.has("redirect_status")) setOpen(true);
+    // Visitors from EnrollClass's class finder (?via=enrollclass), remembered while they browse dates.
+    const key = `ec-via:${p.org}/${p.course}`;
+    try {
+      if (q.get("via") === "enrollclass") window.sessionStorage.setItem(key, "marketplace");
+      setFromFinder(window.sessionStorage.getItem(key) === "marketplace");
+    } catch {
+      setFromFinder(q.get("via") === "enrollclass");
+    }
+  }, [p.org, p.course]);
 
   useEffect(() => {
     if (!open) return;
@@ -82,6 +94,7 @@ export function RegisterSheet(p: Props) {
               data-gate-currency={p.currency}
               {...(claiming ? {} : { "data-gate-event": p.event })}
               {...(p.stripePk ? { "data-gate-stripe-pk": p.stripePk } : {})}
+              {...(fromFinder ? { "data-gate-source": "marketplace" } : {})}
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
 // Typed client for the public, unauthenticated registration API.
 
-export interface Organization { id: string; name: string; country: string; currency: string; currencies?: string[]; ratesUpdatedAt?: string | null }
+export interface Organization { id: string; name: string; country: string; currency: string; currencies?: string[]; ratesUpdatedAt?: string | null; flexibleTickets?: boolean }
 export interface Course {
   id: string; slug: string; name: string; description: string | null;
   certificationBody: string | null; durationDays: number | null;
@@ -26,10 +26,16 @@ export interface OrderRequest {
   attendees: Attendee[]; dryRun?: boolean;
   /** Set when the buyer is claiming a seat offered from the waitlist. */
   waitlistEntryId?: string;
+  /** The learner came through EnrollClass's class finder. */
+  source?: "marketplace";
+  /** The flexible-ticket upgrade. */
+  flexible?: boolean;
 }
 export interface Pricing {
   subtotalMinor: number; platformFeeMinor: number; attendeeFeeMinor: number; totalMinor: number;
   organizerNetMinor: number; perTicketFeeMinor: number; unitPriceMinor: number; quantity: number;
+  /** Flexible-ticket upgrade the learner pays, when chosen. */
+  flexibleMinor?: number;
 }
 export type OrderStatus = "pending" | "paid" | "failed" | (string & {});
 export interface Order { id: string; status: OrderStatus; currency: string; paymentRef: string | null; pricing: Pricing }

@@ -27,6 +27,7 @@ const pct = (bps: number) => `${(bps / 100).toFixed(bps % 100 === 0 ? 0 : 1)}%`;
 export default async function SiteHome() {
   const feesRes = await publicApi.getFees();
   const fees = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? FALLBACK_USD_FEES;
+  const extra = (feesRes.ok ? feesRes.data.currencies.USD : undefined) ?? { verifiedBadgeMinor: 100, fxMarginBps: 150, marketplaceBps: 500, earlyRelease: { bps: 200, minMinor: 50 }, flexible: { bps: 800, platformShareBps: 2_500 } };
   const protectedTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.protected);
   const directTotal = feeOn(EXAMPLE_SEAT_MINOR, fees.direct) + feeOn(EXAMPLE_SEAT_MINOR, { ...STRIPE_US, capMinor: null });
   const faq = HOME_FAQ.map((q) => ALL_FAQ.find((f) => f.q === q)!).filter(Boolean);
@@ -185,7 +186,31 @@ export default async function SiteHome() {
             <p>Course pages and embeddable registration, early-bird and group pricing, waitlists, corporate invoices, QR tickets and check-in, certificates, instructor roles, API, webhooks and AI assistants (MCP). Verified digital badges (Open Badges 3.0) with a badge designer: $1 per paid seat, no badge platform subscription.</p>
           </article>
         </div>
-        <p className="footnote">You can pass the fee on to learners so you keep the full ticket price. Taxes you collect are passed through, never charged a fee. USD rates; other currencies have the same shape.</p>
+        <p className="footnote">By default learners pay the fee as a booking fee, so you keep the full ticket price; you can absorb it instead. Taxes you collect are passed through, never charged a fee. USD rates; other currencies have the same shape.</p>
+
+        <h3 className="compare-title">Optional extras</h3>
+        <ul className="extras">
+          <li>
+            <strong>Get paid now</strong>
+            <span>{pct(extra.earlyRelease.bps)} to receive held Protected payments before the class is delivered, once you&apos;ve delivered a first class.</span>
+          </li>
+          <li>
+            <strong>Flexible tickets</strong>
+            <span>Learners add {pct(extra.flexible.bps)} for a full refund up to 24 hours before the start. You keep {pct(10_000 - extra.flexible.platformShareBps)} of the upgrade.</span>
+          </li>
+          <li>
+            <strong>Verified digital badges</strong>
+            <span>{money(extra.verifiedBadgeMinor)} per paid seat for an Open Badges 3.0 badge with every certificate.</span>
+          </li>
+          <li>
+            <strong>Find a class</strong>
+            <span>Listing is free. Bookings that come through enrollclass.com/classes carry a {pct(extra.marketplaceBps)} referral fee; bookings from your own links never do.</span>
+          </li>
+          <li>
+            <strong>Other currencies</strong>
+            <span>Learners paying in a currency you haven&apos;t priced pay {pct(extra.fxMarginBps)} for the conversion.</span>
+          </li>
+        </ul>
 
         <h3 className="compare-title">What a {money(EXAMPLE_SEAT_MINOR)} certification seat costs you</h3>
         <div className="compare-wrap" role="region" aria-labelledby="compare-caption" tabIndex={0}>

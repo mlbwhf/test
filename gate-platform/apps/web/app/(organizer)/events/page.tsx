@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { api, type EventLine, type EventOverview } from "@/lib/api";
+import { api, type EarlyReleaseQuote, type EventLine, type EventOverview } from "@/lib/api";
 import { getMe } from "@/lib/console-data";
 import { formatMoney } from "@/lib/format";
 import { ApiNotice } from "@/components/ui";
@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/copy-button";
 import { DuplicateDialog } from "@/components/duplicate-dialog";
 import { ActionForm } from "@/components/action-form";
 import { issuePaneCertificatesAction, publishEventAction, setInstructorsAction } from "@/app/instructor-actions";
+import { earlyReleaseAction } from "@/app/actions";
 import { HelpLink } from "@/components/help-link";
 
 export const dynamic = "force-dynamic";
@@ -110,6 +111,10 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
   const selId = explicit && all.some((l) => l.eventId === explicit) ? explicit : (upcoming[0] ?? past[0])?.eventId;
   const canManage = perms.includes("settings");
   const [detailRes, partiesRes] = await Promise.all([selId ? api.eventOverview(selId) : Promise.resolve(null), canManage ? api.listParties() : Promise.resolve(null)]);
+  // Early payout for a class with held money that hasn't been delivered yet (money managers only).
+  const detailOk = detailRes && detailRes.ok ? detailRes.data : null;
+  const earlyRes = detailOk?.money && detailOk.money.heldMinor > 0 && perms.includes("money:write") ? await api.earlyReleaseQuote(detailOk.line.eventId) : null;
+  const earlyQuote = earlyRes?.ok ? earlyRes.data : null;
   const instructorOptions = partiesRes?.ok ? partiesRes.data.items.filter((p) => p.kind === "instructor").map((p) => ({ id: p.id, name: p.name })) : [];
 
   return (
@@ -197,14 +202,14 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
         ) : !detailRes.ok ? (
           <ApiNotice failure={detailRes.error} />
         ) : (
-          <Detail o={detailRes.data} canWrite={perms.includes("classes:write")} canManage={canManage} instructorOptions={instructorOptions} />
+          <Detail o={detailRes.data} canWrite={perms.includes("classes:write")} canManage={canManage} instructorOptions={instructorOptions} earlyQuote={earlyQuote} />
         )}
       </section>
     </div>
   );
 }
 
-function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOverview; canWrite: boolean; canManage: boolean; instructorOptions: { id: string; name: string }[] }) {
+function Detail({ o, canWrite, canManage, instructorOptions, earlyQuote }: { o: EventOverview; canWrite: boolean; canManage: boolean; instructorOptions: { id: string; name: string }[]; earlyQuote: EarlyReleaseQuote | null }) {
   const l = o.line;
   const left = Math.max(0, l.capacity - l.sold);
   const cells = Math.min(l.capacity, 60);
@@ -302,6 +307,18 @@ function Detail({ o, canWrite, canManage, instructorOptions }: { o: EventOvervie
               </div>
             </div>
           )}
+          {earlyQuote && earlyQuote.heldMinor > 0 && (earlyQuote.eligible ? (
+            <div className="early-release">
+              <p>
+                <strong>Get paid now</strong> instead of after the class: {formatMoney(earlyQuote.netMinor, earlyQuote.currency)} to your Stripe account ({formatMoney(earlyQuote.feeMinor, earlyQuote.currency)} early-payout fee).
+              </p>
+              <ActionForm action={earlyReleaseAction} submitLabel="Get paid now" pendingLabel="Releasing…" inline>
+                <input type="hidden" name="eventId" value={l.eventId} />
+              </ActionForm>
+            </div>
+          ) : (
+            <p className="seat-free">Early payout: {earlyQuote.reason}.</p>
+          ))}
         </section>
 
         <section className="card ev-attendees" aria-labelledby="att-title">

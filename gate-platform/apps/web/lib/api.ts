@@ -33,6 +33,12 @@ export type Organization = {
   instructorAccess: InstructorAccess;
   /** protected: EnrollClass collects and holds until delivery; direct: learners pay the organizer's own Stripe. */
   paymentMode: PaymentMode;
+  /** The learner pays the EnrollClass fee as a booking fee. */
+  passFeeToAttendee: boolean;
+  /** Listed in EnrollClass's class finder (bookings from it carry a referral fee). */
+  marketplaceListing: boolean;
+  /** Learners can buy the flexible-ticket upgrade. */
+  flexibleTickets: boolean;
 };
 
 export type PaymentMode = "protected" | "direct";
@@ -353,7 +359,11 @@ export type UpdateOrganizationInput = {
   releasePolicy?: ReleasePolicy;
   releaseGraceHours?: number;
   minEnrollmentDecisionDays?: number;
+  passFeeToAttendee?: boolean;
+  marketplaceListing?: boolean;
+  flexibleTickets?: boolean;
 };
+export type EarlyReleaseQuote = { eligible: boolean; reason?: string; currency: string; heldMinor: number; feeMinor: number; netMinor: number };
 export type SetInstructorFeesInput = { fees: InstructorFee[] };
 export type CancelEventInput = { reason: string; transferToEventId?: string };
 export type CancelEventResult = { event: Event; refunded: number; transferred: number; voided: number };
@@ -671,6 +681,8 @@ export const api = {
   updateInstructorAccess: (input: Partial<InstructorAccess>) => request<Organization>("PATCH", "/v1/organizations/me/instructor-access", input),
   duplicateEvent: (id: string, input: { startDate?: string; name?: string }) => request<{ event: Event; ticketTypes: TicketType[] }>("POST", `/v1/events/${enc(id)}/duplicate`, input),
   getOrganization: () => request<Organization>("GET", "/v1/organizations/me"),
+  earlyReleaseQuote: (eventId: string) => request<EarlyReleaseQuote>("GET", `/v1/events/${enc(eventId)}/release-early`),
+  releaseEarly: (eventId: string) => request<{ released: number; amountMinor: number; feeMinor: number }>("POST", `/v1/events/${enc(eventId)}/release-early`, {}),
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),
   updatePricing: (input: UpdatePricingInput) => request<Organization>("PATCH", "/v1/organizations/me/pricing", input),

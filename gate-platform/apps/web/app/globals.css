@@ -6211,3 +6211,66 @@ a.chip:hover {
 .badge-list a:not(.pill-btn) {
   font-weight: 600;
 }
+.fees-extras h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.fees-extras .label-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 8px 0;
+  line-height: 1.45;
+}
+.fees-extras .label-check input {
+  margin-top: 4px;
+}
+.fx-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 10px;
+}
+.fx-fieldset legend {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.early-release {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--ok-bg);
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.early-release p {
+  margin: 0;
+}
+.extras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.extras li {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+}
+.extras span {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.fees-extras input[type="radio"],
+.fees-extras input[type="checkbox"] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+}

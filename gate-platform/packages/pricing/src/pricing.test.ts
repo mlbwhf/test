@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import fc from "fast-check";
-import { instantPayoutFee, priceOrder } from "./pricing.js";
+import { earlyReleaseFee, instantPayoutFee, priceOrder } from "./pricing.js";
 import { computeSplits } from "./splits.js";
 
 describe("priceOrder (USD launch schedule)", () => {
@@ -59,6 +59,39 @@ describe("priceOrder (USD launch schedule)", () => {
     const passed = priceOrder({ currency: "USD", unitPriceMinor: 25, quantity: 1, destination: "gate_account", passFeeToAttendee: true });
     expect(passed.platformFeeMinor).toBe(81);
     expect(passed.organizerNetMinor).toBe(25);
+  });
+  it("conversion margin is paid by the learner, referral fee by the organizer", () => {
+    const fx = priceOrder({ currency: "EUR", unitPriceMinor: 100_000, quantity: 2, destination: "gate_account", converted: true });
+    expect(fx.fxFeeMinor).toBe(3_000); // 1.5% of 2,000
+    expect(fx.attendeeFeeMinor).toBe(3_000);
+    expect(fx.totalMinor).toBe(203_000);
+    expect(fx.organizerNetMinor).toBe(200_000 - 2 * (3_900 + 60));
+    const ref = priceOrder({ currency: "USD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", marketplace: true });
+    expect(ref.referralFeeMinor).toBe(5_000);
+    expect(ref.totalMinor).toBe(100_000);
+    expect(ref.organizerNetMinor).toBe(100_000 - 4_980 - 5_000);
+    const passed = priceOrder({ currency: "USD", unitPriceMinor: 100_000, quantity: 1, destination: "gate_account", marketplace: true, passFeeToAttendee: true });
+    expect(passed.totalMinor).toBe(104_980); // the learner never pays the referral fee
+    expect(passed.organizerNetMinor).toBe(95_000);
+    const free = priceOrder({ currency: "USD", unitPriceMinor: 0, quantity: 1, destination: "gate_account", marketplace: true, converted: true, flexible: true });
+    expect(free).toMatchObject({ platformFeeMinor: 0, totalMinor: 0 });
+    // Tiny tickets: the referral never takes the organizer below zero.
+    const tiny = priceOrder({ currency: "USD", unitPriceMinor: 100, quantity: 1, destination: "gate_account", marketplace: true });
+    expect(tiny.organizerNetMinor).toBeGreaterThanOrEqual(0);
+  });
+  it("flexible ticket: the learner pays 8% more, EnrollClass keeps a quarter of it", () => {
+    const p = priceOrder({ currency: "USD", unitPriceMinor: 100_000, quantity: 2, destination: "gate_account", flexible: true });
+    expect(p.flexibleMinor).toBe(16_000);
+    expect(p.flexibleFeeMinor).toBe(4_000);
+    expect(p.totalMinor).toBe(216_000);
+    expect(p.platformFeeMinor).toBe(2 * 4_980 + 4_000);
+    expect(p.organizerNetMinor).toBe(216_000 - p.platformFeeMinor);
+  });
+  it("early release costs 2%, at least the minimum, never more than the amount", () => {
+    expect(earlyReleaseFee(500_000, "USD")).toBe(10_000);
+    expect(earlyReleaseFee(1_000, "USD")).toBe(50);
+    expect(earlyReleaseFee(30, "USD")).toBe(30);
+    expect(earlyReleaseFee(0, "USD")).toBe(0);
   });
   it("POS channel is 2.4% + $0.10", () => {
     const p = priceOrder({ currency: "USD", unitPriceMinor: 1_000, quantity: 1, destination: "gate_account", channel: "pos" });

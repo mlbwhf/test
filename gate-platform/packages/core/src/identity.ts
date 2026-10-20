@@ -151,7 +151,7 @@ export interface VerifiedProfile {
 
 /** The slice of Core this module needs; keeps it testable without the whole engine. */
 export interface OrganizationsPort {
-  createOrganization(input: { name: string; country: string; currency: string; kind?: "company" | "individual" | undefined }): Promise<{ organization: Organization }>;
+  createOrganization(input: { name: string; country: string; currency: string; kind?: "company" | "individual" | undefined; passFeeToAttendee?: boolean | undefined }): Promise<{ organization: Organization }>;
   getOrganization(id: string): Promise<Organization>;
   createParty(organizationId: string, input: { name: string; kind: "instructor" }): Promise<{ id: string }>;
 }
@@ -302,7 +302,8 @@ export class Identities {
     if (!name) throw new DomainError("VALIDATION", "organization name is required");
     const owned = (await this.repos.memberships.listByUser(userId)).filter((m) => m.role === "owner").length;
     if (owned >= 5) throw new DomainError("CONFLICT", "you already own 5 organizations", "contact support to raise the limit");
-    const { organization: org } = await this.orgs.createOrganization({ name, country: input.country.toUpperCase(), currency: input.currency.toUpperCase(), kind: input.kind });
+    // Self-serve organizers start with the booking fee on the learner: they keep the full ticket price (they can switch in Money settings).
+    const { organization: org } = await this.orgs.createOrganization({ name, country: input.country.toUpperCase(), currency: input.currency.toUpperCase(), kind: input.kind, passFeeToAttendee: true });
     let partyId: string | undefined;
     if (input.kind === "individual") partyId = (await this.orgs.createParty(org.id, { name: user.name ?? name, kind: "instructor" })).id;
     const membership: Membership = { organizationId: org.id, userId, role: "owner", ...(partyId ? { partyId } : {}), createdAt: this.clock.now() };

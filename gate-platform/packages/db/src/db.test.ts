@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -106,6 +106,8 @@ describe.skipIf(!url)("Postgres integration", () => {
     await ledger.assertBalanced();
     await core.setPaymentMode(org.id, "protected");
     expect((await core.getOrganization(org.id)).paymentMode).toBeUndefined();
+    await core.updateOrganization(org.id, { marketplaceListing: false, flexibleTickets: true });
+    expect(await core.getOrganization(org.id)).toMatchObject({ marketplaceListing: false, flexibleTickets: true });
   });
 
   it("corporate invoice orders on Postgres: numbering, partial payments, settlement", async () => {

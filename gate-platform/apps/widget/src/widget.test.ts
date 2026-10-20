@@ -621,4 +621,51 @@ describe("auto-init", () => {
     expect(broken.textContent).toContain("data-gate-org");
     expect(broken.textContent).toContain("data-gate-course");
   });
+
+  it("sends the class-finder source and the flexible upgrade, and passes Stripe a return_url for redirect methods", async () => {
+    const posts: OrderRequest[] = [];
+    const flexCourse = { ...course, organization: { ...course.organization, flexibleTickets: true } };
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: flexCourse };
+      if (url.endsWith("/orders") && json) {
+        posts.push(json);
+        const res = orderResponse(json, "ord_f");
+        if (json.flexible) res.order.pricing.flexibleMinor = 6_800;
+        return { status: 201, body: res };
+      }
+      return undefined;
+    });
+    const confirmPayment = vi.fn(async () => ({ paymentIntent: { status: "succeeded" } }));
+    window.Stripe = vi.fn<StripeFactory>(() => ({ elements() { return { create: () => ({ mount: vi.fn() }) }; }, confirmPayment }));
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "GBP", stripePk: "pk_test_123", source: "marketplace" });
+    await widget.ready;
+    await openCheckout(host, 0, "buyer@example.com");
+    const box = host.querySelector<HTMLInputElement>(".gw-flex input")!;
+    expect(text(host.querySelector(".gw-flex"))).toContain("Flexible ticket");
+    box.checked = true;
+    box.dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(text(host.querySelector(".gw-summary"))).toContain("Flexible ticket"));
+    submitForm(host);
+    await vi.waitFor(() => expect(buttonByText(host, /^Pay /).disabled).toBe(false));
+    const real = posts.filter((p) => !p.dryRun);
+    expect(real[0]).toMatchObject({ source: "marketplace", flexible: true });
+    buttonByText(host, /^Pay /).click();
+    await vi.waitFor(() => expect(confirmPayment).toHaveBeenCalled());
+    expect(confirmPayment).toHaveBeenCalledWith(expect.objectContaining({ redirect: "if_required", confirmParams: { return_url: expect.stringMatching(/^http/) } }));
+  });
+
+  it("picks the order up again after a Klarna/Affirm redirect", async () => {
+    window.sessionStorage.setItem("gate-pending:leading-safe", JSON.stringify({ orderId: "ord_r", buyerEmail: "b@x.co", eventId: course.cohorts[0]!.event.id, ticketTypeId: "tt_1", quantity: 1 }));
+    window.history.replaceState(null, "", "/course?payment_intent=pi_9&redirect_status=succeeded");
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url.startsWith(`${API}/public/v1/orders/ord_r?`)) return { body: { order: { ...orderResponse({ ticketTypeId: "tt_1", quantity: 1, buyerEmail: "b@x.co", currency: "CAD", attendees: [] }, "ord_r").order, status: "paid" } } };
+      return undefined;
+    });
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    await vi.waitFor(() => expect(text(host)).toContain("You're registered"));
+    expect(window.sessionStorage.getItem("gate-pending:leading-safe")).toBeNull();
+    window.history.replaceState(null, "", "/");
+  });
 });

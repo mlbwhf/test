@@ -29,6 +29,10 @@ export interface Organization {
   directStatus?: PaymentsStatus;
   /** Instructor view and control; absent means DEFAULT_INSTRUCTOR_ACCESS. */
   instructorAccess?: InstructorAccess;
+  /** Listed on EnrollClass's class finder (absent = listed). Bookings that come through it carry the referral fee. */
+  marketplaceListing?: boolean;
+  /** Learners may buy the flexible-ticket upgrade (absent = off): full refund until 24 hours before the start, backed by the organizer. */
+  flexibleTickets?: boolean;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */

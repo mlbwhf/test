@@ -8,7 +8,7 @@ export type { Widget, WidgetOptions } from "./widget.js";
 const SELECTOR = "[data-gate-widget]";
 
 function readOptions(el: HTMLElement): WidgetOptions | string {
-  const { gateApi, gateOrg, gateCourse, gateCurrency, gateStripePk, gateWaitlist, gateEvent } = el.dataset;
+  const { gateApi, gateOrg, gateCourse, gateCurrency, gateStripePk, gateWaitlist, gateEvent, gateSource } = el.dataset;
   const missing = [
     !gateApi && "data-gate-api",
     !gateOrg && "data-gate-org",
@@ -22,6 +22,7 @@ function readOptions(el: HTMLElement): WidgetOptions | string {
   if (gateStripePk) options.stripePk = gateStripePk.trim();
   if (gateWaitlist) options.waitlist = gateWaitlist.trim();
   if (gateEvent) options.event = gateEvent.trim();
+  if (gateSource?.trim() === "marketplace") options.source = "marketplace";
   return options;
 }
 

@@ -223,6 +223,8 @@ describe("teams and roles", () => {
     await app.inject({ method: "POST", url: "/auth/organizations", headers: BJ(token), payload: { kind: "individual", country: "CA", currency: "CAD" } });
     const me = async () => (await app.inject({ url: "/auth/me", headers: B(token) })).json().organization;
     expect(await me()).toMatchObject({ paymentsConnected: false, paymentsSetup: "none" });
+    // Self-serve organizers start with the booking fee on the learner.
+    expect((await app.inject({ url: "/v1/organizations/me", headers: B(token) })).json()).toMatchObject({ passFeeToAttendee: true, marketplaceListing: true, flexibleTickets: false });
 
     const c1 = (await app.inject({ method: "POST", url: "/v1/organizations/me/payments/connect", headers: BJ(token), payload: {} })).json();
     expect(c1).toMatchObject({ ready: false });

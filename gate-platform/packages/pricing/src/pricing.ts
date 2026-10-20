@@ -11,6 +11,12 @@ export interface PricingInput {
   mode?: PaymentMode;
   /** The course issues an EnrollClass verified badge: its per-seat fee is added (paid seats only). */
   verifiedBadge?: boolean;
+  /** The unit price was converted into this currency: the learner pays the conversion margin. */
+  converted?: boolean;
+  /** The booking came through EnrollClass's class finder: the organizer pays the referral fee. */
+  marketplace?: boolean;
+  /** The learner bought the flexible-ticket upgrade. */
+  flexible?: boolean;
   /** When true the fee is added on top and paid by the attendee. */
   passFeeToAttendee?: boolean;
   /** Tax already calculated by a tax engine, in minor units. Wins over taxRateBps. */
@@ -32,6 +38,12 @@ export interface Pricing {
   attendeeFeeMinor: MinorUnits;
   /** Sales tax / VAT / GST collected on behalf of the organizer (0 when not calculated). */
   taxMinor: MinorUnits;
+  /** Parts of platformFeeMinor, present when non-zero: currency conversion (learner pays), referral (organizer pays), flexible-ticket share. */
+  fxFeeMinor?: MinorUnits;
+  referralFeeMinor?: MinorUnits;
+  /** Flexible-ticket add-on the learner paid (all of it; EnrollClass keeps flexibleFeeMinor of it). */
+  flexibleMinor?: MinorUnits;
+  flexibleFeeMinor?: MinorUnits;
   /** What the buyer pays: subtotal + attendee fee + tax. */
   totalMinor: MinorUnits;
   /** What the organizer side (organizer + venue + vendors) receives before splits. */
@@ -61,9 +73,16 @@ export function priceOrder(input: PricingInput): Pricing {
   if (!input.passFeeToAttendee) perTicketFee = Math.min(perTicketFee, input.unitPriceMinor);
 
   const subtotal = input.unitPriceMinor * input.quantity;
-  const platformFee = perTicketFee * input.quantity;
-  const attendeeFee = input.passFeeToAttendee ? platformFee : 0;
-  const taxable = subtotal + attendeeFee;
+  const seatFees = perTicketFee * input.quantity;
+  // Learner-paid conversion margin, organizer-paid referral fee (never more than what is left of the ticket).
+  const fx = !free && input.converted ? bps(subtotal, schedule.fxMarginBps) : 0;
+  const absorbed = input.passFeeToAttendee ? 0 : seatFees;
+  const referral = !free && input.marketplace ? Math.min(bps(input.unitPriceMinor, schedule.marketplaceBps) * input.quantity, Math.max(0, subtotal - absorbed)) : 0;
+  const flexibleAddOn = !free && input.flexible ? bps(input.unitPriceMinor, schedule.flexible.bps) * input.quantity : 0;
+  const flexibleFee = bps(flexibleAddOn, schedule.flexible.platformShareBps);
+  const platformFee = seatFees + fx + referral + flexibleFee;
+  const attendeeFee = (input.passFeeToAttendee ? seatFees : 0) + fx;
+  const taxable = subtotal + attendeeFee + flexibleAddOn;
   const tax = input.taxMinor ?? (input.taxRateBps !== undefined ? bps(taxable, input.taxRateBps) : 0);
   assertMinorUnits(tax, "taxMinor");
   if (tax < 0) throw new Error("taxMinor must be >= 0");
@@ -78,6 +97,9 @@ export function priceOrder(input: PricingInput): Pricing {
     platformFeeMinor: platformFee,
     attendeeFeeMinor: attendeeFee,
     taxMinor: tax,
+    ...(fx ? { fxFeeMinor: fx } : {}),
+    ...(referral ? { referralFeeMinor: referral } : {}),
+    ...(flexibleAddOn ? { flexibleMinor: flexibleAddOn, flexibleFeeMinor: flexibleFee } : {}),
     totalMinor: total,
     organizerNetMinor: organizerNet,
     perTicketFeeMinor: perTicketFee,
@@ -88,4 +110,12 @@ export function instantPayoutFee(amountMinor: MinorUnits, currency: Currency, sc
   assertMinorUnits(amountMinor);
   const s = scheduleFor(currency, schedules).instantPayout;
   return Math.max(bps(amountMinor, s.bps), s.minMinor);
+}
+
+/** Fee for releasing held Protected funds before the class is delivered (EnrollClass carries the cancellation risk). */
+export function earlyReleaseFee(amountMinor: MinorUnits, currency: Currency, schedules?: Partial<Record<string, FeeSchedule>>): MinorUnits {
+  assertMinorUnits(amountMinor);
+  if (amountMinor <= 0) return 0;
+  const s = scheduleFor(currency, schedules).earlyRelease;
+  return Math.min(amountMinor, Math.max(bps(amountMinor, s.bps), s.minMinor));
 }
