@@ -77,3 +77,8 @@ a config block and a strings block (every visible string keyed — see `i18n/REA
 `build_engine.py` emits both pages + `i18n/en.json`; `build_assess.py` is retired. `assess_css.css` folded into the template earlier; `engine_css.css` appended.
 Verified: live engine byte-identical to repo; both pages' content length equals the build; end-to-end runs (placement with lit red panel,
 maturity mixed, maturity all-max with N/A) and a French override block pass in the local simulation.
+
+## 404 page ("third chasm")
+- `build_404.py` → `out/404_template.html`: full contents of the TT5 **Page: 404** template (fonts, v2 CSS + `.nf` rules scoped to `.tc`, masthead, 404 body, colophon). From handoff 2 (`404.php` / `404.html`).
+- Install: Appearance → Editor → Templates → **Page: 404** → ⋮ → Code editor → select all → paste the file → Save.
+- WordPress already answers missing URLs with HTTP 404, so search engines won't index it; no separate noindex is needed.
