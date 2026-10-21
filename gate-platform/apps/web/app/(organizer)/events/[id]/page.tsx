@@ -19,7 +19,11 @@ import { MAX_ATTENDEES, MAX_INSTRUCTOR_FEES, REGIONAL_PRICE_ROWS } from "@/lib/f
 import { ActionForm } from "@/components/action-form";
 import { createInvoiceOrderAction } from "@/app/(organizer)/money/invoice-actions";
 import { RosterDownload } from "@/components/roster-download";
-import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
+import { ApiNotice, Empty, StatusBadge } from "@/components/ui";
+import { AccSection } from "@/components/accordion";
+import { AccControls } from "@/components/acc-controls";
+import { Tabs } from "@/components/tabs";
+import { CopyButton } from "@/components/copy-button";
 import {
   cancelCohortAction,
   createMeetingAction,
@@ -217,37 +221,93 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
     if (cohortsRes.ok) transferTargets = cohortsRes.data.items.filter((c) => c.id !== event.id && c.status === "live");
   }
 
+
+  const [overviewRes] = await Promise.all([api.eventOverview(event.id)]);
+  const overview = overviewRes.ok ? overviewRes.data : null;
+  const sold = ticketTypes.reduce((a, t) => a + t.sold, 0);
+  const capacity = ticketTypes.reduce((a, t) => a + t.quantity, 0);
+  const checkedIn = overview ? overview.attendees.filter((a) => a.checkedIn).length : 0;
+  const msToStart = new Date(event.startsAt).getTime() - Date.now();
+  const startsIn = cancelled ? "Cancelled" : msToStart <= 0 ? ((event.endsAt ? new Date(event.endsAt).getTime() : 0) > Date.now() ? "Running" : "Delivered") : msToStart < 86_400_000 ? `${Math.max(1, Math.round(msToStart / 3_600_000))} h` : `${Math.round(msToStart / 86_400_000)} days`;
+  const firstSession = event.sessions[0];
+  const cheapest = [...ticketTypes].sort((a, b) => a.priceMinor - b.priceMinor)[0];
+  const setup = [event.sessions.length > 0, ticketTypes.length > 0, meeting !== null || event.format === "in_person", event.status === "live", Boolean(course)];
+  const ready = setup.filter(Boolean).length;
+
   return (
-    <>
-      <div className="page-header">
-        <h1>{event.name}</h1>
-        <StatusBadge status={event.status} />
-        {event.atRiskAt && !cancelled && (
-          <span className="badge badge-at_risk">At risk since {formatDateTimeInZone(event.atRiskAt, timezone)}</span>
-        )}
-        <span className="muted">
-          {formatDateTimeInZone(event.startsAt, timezone)}
-          {event.endsAt ? ` – ${formatDateTimeInZone(event.endsAt, timezone)}` : ""} · {timezone} ·{" "}
-          {humanize(event.format)} · {event.currency} · <code>{event.id}</code>
-        </span>
-        {event.courseId && (
-          <Link href={`/courses/${encodeURIComponent(event.courseId)}`}>
-            ← Course{course ? `: ${course.name}` : ""}
-          </Link>
-        )}
-        <Link href="/events">← All events</Link>
-      </div>
-
-      {cancelled && (
-        <div className="notice notice-error" role="alert">
-          <strong>
-            Cancelled{event.cancelledAt ? ` on ${formatDateTimeInZone(event.cancelledAt, timezone)}` : ""}.
-          </strong>
-          <span className="muted"> {event.cancelReason ? `Reason: ${event.cancelReason}` : "No reason recorded."}</span>
+    <div className="manage" id="manage">
+      <header className="manage-head">
+        <nav className="crumbs" aria-label="Breadcrumb">
+          <Link href="/events">← All events</Link>
+          {event.courseId && <Link href={`/courses/${encodeURIComponent(event.courseId)}`}>← Course{course ? `: ${course.name}` : ""}</Link>}
+        </nav>
+        <div className="manage-title">
+          <h1>{event.name}</h1>
+          {event.status === "live" && !cancelled ? (
+            <span className="live-pill">
+              <span className="live-dot" aria-hidden="true" /> Live
+            </span>
+          ) : (
+            <StatusBadge status={event.status} />
+          )}
+          {event.atRiskAt && !cancelled && <span className="badge badge-at_risk">At risk since {formatDateTimeInZone(event.atRiskAt, timezone)}</span>}
+          <span className="manage-actions">
+            {overview?.publicUrl && (
+              <a className="m-btn" href={overview.publicUrl} target="_blank" rel="noreferrer">
+                Preview page ↗
+              </a>
+            )}
+            {overview?.publicUrl && <CopyButton text={overview.publicUrl} label="Share" className="m-btn m-btn-ink" />}
+          </span>
         </div>
-      )}
+        <p className="manage-meta">
+          {formatDateTimeInZone(event.startsAt, timezone)}
+          {event.endsAt ? ` → ${formatDateTimeInZone(event.endsAt, timezone)}` : ""} · {timezone} · {humanize(event.format)} · {event.currency} · {event.id}
+        </p>
+      </header>
 
-      <Section title="Sessions">
+      <div className="manage-body">
+        {cancelled && (
+          <div className="notice notice-error" role="alert">
+            <strong>Cancelled{event.cancelledAt ? ` on ${formatDateTimeInZone(event.cancelledAt, timezone)}` : ""}.</strong>
+            <span className="muted"> {event.cancelReason ? `Reason: ${event.cancelReason}` : "No reason recorded."}</span>
+          </div>
+        )}
+
+        <div className="stat-strip">
+          <div>
+            <span>SEATS SOLD</span>
+            <strong>
+              {sold} / {capacity}
+            </strong>
+          </div>
+          <div>
+            <span>REVENUE</span>
+            <strong>{overview?.money ? formatMoney(overview.money.grossMinor, overview.money.currency).replace(/\.00$/, "") : formatMoney(0, event.currency).replace(/\.00$/, "")}</strong>
+          </div>
+          <div>
+            <span>STARTS IN</span>
+            <strong>{startsIn}</strong>
+          </div>
+          <div>
+            <span>CHECKED IN</span>
+            <strong>{checkedIn > 0 || msToStart <= 0 ? `${checkedIn} / ${sold}` : "—"}</strong>
+          </div>
+        </div>
+
+        <div className="setup-row">
+          <span>SETUP · {ready} OF {setup.length} READY</span>
+          <AccControls scope="manage" />
+        </div>
+
+        <AccSection
+          id="sessions"
+          n={1}
+          title="Sessions"
+          summary={`${event.sessions.length} session${event.sessions.length === 1 ? "" : "s"}${firstSession ? ` · ${formatDateTimeInZone(firstSession.startsAt, timezone)}` : ""} · ${event.instructorIds.length} instructor${event.instructorIds.length === 1 ? "" : "s"}`}
+          chip={event.sessions.length ? "Ready" : "No sessions"}
+          tone={event.sessions.length ? "green" : "amber"}
+        >
         {event.sessions.length === 0 ? (
           <Empty>No sessions scheduled. Times shown in {timezone}.</Empty>
         ) : (
@@ -280,16 +340,217 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             </p>
           </>
         )}
-      </Section>
+        </AccSection>
 
-      <Section title="Delivery">
-        <div className="subsection">
-          <h3>Meeting</h3>
-          <MeetingCard eventId={event.id} meeting={meeting} />
+        <AccSection
+          id="tickets"
+          n={2}
+          title="Tickets"
+          summary={ticketTypes.length ? `${ticketTypes.length} type${ticketTypes.length === 1 ? "" : "s"}${cheapest ? ` · ${cheapest.name} ${formatMoney(cheapest.priceMinor, event.currency).replace(/\.00$/, "")}` : ""} · ${sold} of ${capacity} sold` : "No ticket types yet"}
+          chip={ticketTypes.length ? "Ready" : "Add tickets"}
+          tone={ticketTypes.length ? "green" : "amber"}
+          open
+        >
+          {ticketTypes.length > 0 && (
+            <ul className="ticket-rows">
+              {ticketTypes.map((t) => (
+                <li key={t.id}>
+                  <span>
+                    <strong>{t.name}</strong>
+                    <span className="mono">
+                      {formatMoney(t.priceMinor, event.currency).replace(/\.00$/, "")} · {t.sold} of {t.quantity} sold
+                    </span>
+                  </span>
+                  <span className="ticket-bar" aria-hidden="true">
+                    <span style={{ width: `${Math.max(2, Math.round((t.sold / Math.max(1, t.quantity)) * 100))}%` }} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <details className="more-table">
+            <summary>Prices, early bird and IDs</summary>
+        {!ticketTypesRes.ok ? (
+          <ApiNotice failure={ticketTypesRes.error} />
+        ) : ticketTypes.length === 0 ? (
+          <Empty>No ticket types yet. Add one below.</Empty>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th className="num">Base price</th>
+                  <th className="num">Regional</th>
+                  <th>Early bird</th>
+                  <th className="num">Quantity</th>
+                  <th className="num">Sold</th>
+                  <th className="num">Remaining</th>
+                  <th>ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ticketTypes.map((t) => (
+                  <tr key={t.id}>
+                    <td>{t.name}</td>
+                    <td className="num">{formatMoney(t.priceMinor, event.currency)}</td>
+                    <td className="num">
+                      <RegionalPriceList prices={t.prices} />
+                    </td>
+                    <td>
+                      {t.earlyBird ? (
+                        <>
+                          {formatMoney(t.earlyBird.priceMinor, event.currency)}
+                          {t.earlyBird.prices && Object.keys(t.earlyBird.prices).length > 0 && (
+                            <>
+                              {" "}
+                              (
+                              {Object.entries(t.earlyBird.prices)
+                                .map(([c, m]) => formatMoney(m, c))
+                                .join(", ")}
+                              )
+                            </>
+                          )}
+                          <br />
+                          <span className="muted">until {formatDateTimeInZone(t.earlyBird.until, timezone)}</span>
+                        </>
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
+                    </td>
+                    <td className="num">{t.quantity}</td>
+                    <td className="num">{t.sold}</td>
+                    <td className="num">{t.quantity - t.sold}</td>
+                    <td className="mono">{t.id}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+          </details>
+          <details className="inline-create">
+            <summary className="btn">+ New ticket type</summary>
+            <div className="inline-create-body">
+        <ActionForm action={createTicketTypeAction} submitLabel="Create ticket type" pendingLabel="Creating…" wide>
+          <input type="hidden" name="eventId" value={event.id} />
+          <input type="hidden" name="currency" value={event.currency} />
+          <input type="hidden" name="timezone" value={timezone} />
+          <div className="fields">
+            <label>
+              Name
+              <input name="name" required placeholder="General admission" />
+            </label>
+            <label>
+              Price ({event.currency})
+              <input name="price" required inputMode="decimal" placeholder="25.00" />
+            </label>
+            <label>
+              Quantity
+              <input name="quantity" type="number" min={1} step={1} required defaultValue={100} />
+            </label>
+          </div>
+
+          <details className="toggle-pill">
+            <summary>+ Regional prices</summary>
+          <fieldset>
+            <legend>Regional prices (optional)</legend>
+            <p className="hint">Fixed prices in other currencies, in major units. Leave blank to sell only in {event.currency}.</p>
+            <RegionalPriceRows prefix="regional" />
+          </fieldset>
+          </details>
+
+          <details className="toggle-pill">
+            <summary>+ Early bird</summary>
+          <fieldset>
+            <legend>Early bird (optional)</legend>
+            <div className="fields">
+              <label>
+                Until (end of day, {timezone})
+                <input name="earlyBirdUntil" type="date" />
+              </label>
+              <label>
+                Early-bird price ({event.currency})
+                <input name="earlyBirdPrice" inputMode="decimal" placeholder="19.00" />
+              </label>
+            </div>
+            <p className="hint">Optional early-bird regional prices:</p>
+            <RegionalPriceRows prefix="eb_regional" />
+          </fieldset>
+          </details>
+        </ActionForm>
+            </div>
+          </details>
+        </AccSection>
+
+        <AccSection
+          id="learners"
+          n={3}
+          title="Learners"
+          summary={`${seats.length} seat${seats.length === 1 ? "" : "s"} · roster export for SAFe Studio, Scrum.org and more`}
+          chip={seats.length ? `${seats.length} enrolled` : "None yet"}
+          tone={seats.length ? "green" : "amber"}
+        >
+        <div className="section-actions">
+          <span className="muted">
+            {seatsRes.ok
+              ? `${seats.length} seat${seats.length === 1 ? "" : "s"}`
+              : "Seats unavailable"}
+          </span>
+          <RosterDownload
+            href={rosterHref}
+            defaultFormat="default"
+            formats={ROSTER_FORMATS.map((f) => ({ value: f, label: ROSTER_FORMAT_LABELS[f] }))}
+          />
+          <span className="hint">Column layout follows the chosen format (SAFe Studio and Scrum.org match their import templates).</span>
         </div>
+        {!seatsRes.ok ? (
+          <ApiNotice failure={seatsRes.error} />
+        ) : seats.length === 0 ? (
+          <Empty>No seats yet. Sell a ticket below to add attendees to the roster.</Empty>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Company</th>
+                  <th>Status</th>
+                  <th>Order</th>
+                </tr>
+              </thead>
+              <tbody>
+                {seats.map((s) => (
+                  <tr key={s.id}>
+                    <td>{s.attendee.name ?? <span className="muted">—</span>}</td>
+                    <td>{s.attendee.email}</td>
+                    <td>{s.attendee.company ?? <span className="muted">—</span>}</td>
+                    <td>
+                      <StatusBadge status={s.status} />
+                    </td>
+                    <td className="mono">{s.orderId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        </AccSection>
 
-        <div className="subsection">
-          <h3>Attendance</h3>
+        <AccSection
+          id="delivery"
+          n={4}
+          title="Delivery"
+          summary="Meeting, attendance, certificates, messages"
+          chip={meeting ? "Meeting ready" : event.format === "in_person" ? "In person" : "No meeting yet"}
+          tone={meeting || event.format === "in_person" ? "green" : "amber"}
+        >
+          <Tabs
+            tabs={["Meeting", "Attendance", "Certificates", "Messages"]}
+            panels={[
+              <MeetingCard key="m" eventId={event.id} meeting={meeting} />,
+              <div key="a">
           <div className="section-actions">
             {canSync ? (
               <ActionForm action={syncAttendanceAction} submitLabel="Sync from meeting" pendingLabel="Syncing…" inline>
@@ -360,10 +621,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               </table>
             </div>
           )}
-        </div>
-
-        <div className="subsection">
-          <h3>Certificates</h3>
+              </div>,
+              <div key="c">
           {!certificatesRes.ok ? (
             <ApiNotice failure={certificatesRes.error} />
           ) : certificates.length === 0 ? (
@@ -413,10 +672,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               code and is emailed as the &ldquo;Certificate&rdquo; sequence step.
             </p>
           </ActionForm>
-        </div>
-
-        <div className="subsection">
-          <h3>Messages</h3>
+              </div>,
+              <div key="s">
+                <p className="step-chips">
+                  {["Pre-work T-14", "Reminder T-7", "Reminder T-1", "Day of", "Survey", "Certificate"].map((s) => (
+                    <span key={s}>{s}</span>
+                  ))}
+                </p>
           {!messagesRes.ok ? (
             <ApiNotice failure={messagesRes.error} />
           ) : messages.length === 0 ? (
@@ -447,15 +709,20 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             <input type="hidden" name="eventId" value={event.id} />
             <p className="hint">Sends every scheduled email that is due across all cohorts, instead of waiting for the next scheduled run.</p>
           </ActionForm>
-        </div>
+              </div>,
+            ]}
+          />
+        </AccSection>
 
-        {canMoney && (
-        <div className="subsection">
-          <h3>Money</h3>
-          {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
-          {isTeam && (
-            <>
-              <h4 className="hint">Instructor pay</h4>
+        {canMoney && isTeam && (
+          <AccSection
+            id="pay"
+            n={5}
+            title="Instructor pay"
+            summary={instructorFees.length ? instructorFees.map((f) => `${partyNames.get(f.partyId) ?? "Instructor"} ${formatMoney(f.amountMinor, event.currency).replace(/\.00$/, "")}`).join(" · ") : "No instructor pay set"}
+            chip="Optional"
+          >
+            {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
               <p className="hint">
                 What you pay the instructors for teaching this cohort. It is subtracted from the cohort&apos;s profit on the Money page and recorded as owed to
                 them until you record the payout. Learners never see it and ticket prices don&apos;t change.
@@ -502,208 +769,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                   <p className="hint">To remove someone&apos;s pay, clear the amount and save. Up to {MAX_INSTRUCTOR_FEES} instructors per cohort.</p>
                 </ActionForm>
               )}
-            </>
-          )}
-
-          <h4 className="hint">Cancel cohort</h4>
-          {cancelled ? (
-            <Empty>This cohort is cancelled.</Empty>
-          ) : (
-            <ActionForm action={cancelCohortAction} submitLabel="Cancel cohort" pendingLabel="Cancelling…" variant="danger" wide>
-              <input type="hidden" name="eventId" value={event.id} />
-              <input type="hidden" name="courseId" value={event.courseId ?? ""} />
-              <label>
-                Reason (shared with learners)
-                <textarea name="reason" rows={3} required placeholder="Instructor unavailable; the cohort will not run." />
-              </label>
-              <label>
-                Transfer learners to (optional)
-                {transferTargets.length === 0 ? (
-                  <span className="hint">
-                    {event.courseId
-                      ? "No other live cohort of this course; paid seats are refunded."
-                      : "Not linked to a course; paid seats are refunded."}
-                  </span>
-                ) : (
-                  <select name="transferToEventId" defaultValue="">
-                    <option value="">— refund instead —</option>
-                    {transferTargets.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} — {formatDateTimeInZone(c.startsAt, c.timezone)}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </label>
-              <label className="label-check">
-                <input type="checkbox" name="confirm" />I understand this cancels the cohort and refunds or moves every
-                paid seat.
-              </label>
-              <p className="hint">
-                Learners are moved to the chosen cohort when one is picked; otherwise their orders are refunded. Unpaid
-                seats are voided.
-              </p>
-            </ActionForm>
-          )}
-        </div>
+          </AccSection>
         )}
-      </Section>
 
-      <Section title="Ticket types" id="tickets">
-        {!ticketTypesRes.ok ? (
-          <ApiNotice failure={ticketTypesRes.error} />
-        ) : ticketTypes.length === 0 ? (
-          <Empty>No ticket types yet. Add one below.</Empty>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th className="num">Base price</th>
-                  <th className="num">Regional</th>
-                  <th>Early bird</th>
-                  <th className="num">Quantity</th>
-                  <th className="num">Sold</th>
-                  <th className="num">Remaining</th>
-                  <th>ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ticketTypes.map((t) => (
-                  <tr key={t.id}>
-                    <td>{t.name}</td>
-                    <td className="num">{formatMoney(t.priceMinor, event.currency)}</td>
-                    <td className="num">
-                      <RegionalPriceList prices={t.prices} />
-                    </td>
-                    <td>
-                      {t.earlyBird ? (
-                        <>
-                          {formatMoney(t.earlyBird.priceMinor, event.currency)}
-                          {t.earlyBird.prices && Object.keys(t.earlyBird.prices).length > 0 && (
-                            <>
-                              {" "}
-                              (
-                              {Object.entries(t.earlyBird.prices)
-                                .map(([c, m]) => formatMoney(m, c))
-                                .join(", ")}
-                              )
-                            </>
-                          )}
-                          <br />
-                          <span className="muted">until {formatDateTimeInZone(t.earlyBird.until, timezone)}</span>
-                        </>
-                      ) : (
-                        <span className="muted">—</span>
-                      )}
-                    </td>
-                    <td className="num">{t.quantity}</td>
-                    <td className="num">{t.sold}</td>
-                    <td className="num">{t.quantity - t.sold}</td>
-                    <td className="mono">{t.id}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Section>
-
-      <Section title="Create ticket type">
-        <ActionForm action={createTicketTypeAction} submitLabel="Create ticket type" pendingLabel="Creating…" wide>
-          <input type="hidden" name="eventId" value={event.id} />
-          <input type="hidden" name="currency" value={event.currency} />
-          <input type="hidden" name="timezone" value={timezone} />
-          <div className="fields">
-            <label>
-              Name
-              <input name="name" required placeholder="General admission" />
-            </label>
-            <label>
-              Price ({event.currency})
-              <input name="price" required inputMode="decimal" placeholder="25.00" />
-            </label>
-            <label>
-              Quantity
-              <input name="quantity" type="number" min={1} step={1} required defaultValue={100} />
-            </label>
-          </div>
-
-          <fieldset>
-            <legend>Regional prices (optional)</legend>
-            <p className="hint">Fixed prices in other currencies, in major units. Leave blank to sell only in {event.currency}.</p>
-            <RegionalPriceRows prefix="regional" />
-          </fieldset>
-
-          <fieldset>
-            <legend>Early bird (optional)</legend>
-            <div className="fields">
-              <label>
-                Until (end of day, {timezone})
-                <input name="earlyBirdUntil" type="date" />
-              </label>
-              <label>
-                Early-bird price ({event.currency})
-                <input name="earlyBirdPrice" inputMode="decimal" placeholder="19.00" />
-              </label>
-            </div>
-            <p className="hint">Optional early-bird regional prices:</p>
-            <RegionalPriceRows prefix="eb_regional" />
-          </fieldset>
-        </ActionForm>
-      </Section>
-
-      <Section title="Roster">
-        <div className="section-actions">
-          <span className="muted">
-            {seatsRes.ok
-              ? `${seats.length} seat${seats.length === 1 ? "" : "s"}`
-              : "Seats unavailable"}
-          </span>
-          <RosterDownload
-            href={rosterHref}
-            defaultFormat="default"
-            formats={ROSTER_FORMATS.map((f) => ({ value: f, label: ROSTER_FORMAT_LABELS[f] }))}
-          />
-          <span className="hint">Column layout follows the chosen format (SAFe Studio and Scrum.org match their import templates).</span>
-        </div>
-        {!seatsRes.ok ? (
-          <ApiNotice failure={seatsRes.error} />
-        ) : seats.length === 0 ? (
-          <Empty>No seats yet. Sell a ticket below to add attendees to the roster.</Empty>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Company</th>
-                  <th>Status</th>
-                  <th>Order</th>
-                </tr>
-              </thead>
-              <tbody>
-                {seats.map((s) => (
-                  <tr key={s.id}>
-                    <td>{s.attendee.name ?? <span className="muted">—</span>}</td>
-                    <td>{s.attendee.email}</td>
-                    <td>{s.attendee.company ?? <span className="muted">—</span>}</td>
-                    <td>
-                      <StatusBadge status={s.status} />
-                    </td>
-                    <td className="mono">{s.orderId}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Section>
-
-      {canMoney && !cancelled && (
-        <Section title="Invoice a company">
+        {canMoney && !cancelled && (
+          <AccSection id="invoice" n={6} title="Invoice a company" summary="Hold seats for a company and send an invoice with a card pay link" chip="Tool">
           {ticketTypes.length === 0 ? (
             <Empty>Create a ticket type first.</Empty>
           ) : companies.length === 0 ? (
@@ -749,10 +819,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               <p className="hint">The seats are held now; the company gets the invoice by email with a card pay link and reminders.</p>
             </ActionForm>
           )}
-        </Section>
-      )}
+          </AccSection>
+        )}
 
-      <Section title="Sell test ticket">
+        <AccSection id="test" n={7} title="Sell test ticket" summary="Create a manual order and send tickets" chip="Tool">
         {ticketTypes.length === 0 ? (
           <Empty>Create a ticket type first.</Empty>
         ) : (
@@ -791,6 +861,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               </label>
             </div>
 
+            <details className="toggle-pill">
+              <summary>+ Attendee details</summary>
             <fieldset>
               <legend>Attendees</legend>
               <p className="hint">
@@ -810,9 +882,57 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                 </div>
               ))}
             </fieldset>
+            </details>
           </ActionForm>
         )}
-      </Section>
-    </>
+        </AccSection>
+
+        {canMoney && (
+          <AccSection id="cancel" n={8} title="Cancel cohort" summary={cancelled ? "This cohort is cancelled" : "Refund or transfer every paid seat"} chip="Danger" tone="coral">
+          {cancelled ? (
+            <Empty>This cohort is cancelled.</Empty>
+          ) : (
+            <div className="confirm-gate">
+            <ActionForm action={cancelCohortAction} submitLabel="Cancel cohort" pendingLabel="Cancelling…" variant="danger" wide>
+              <input type="hidden" name="eventId" value={event.id} />
+              <input type="hidden" name="courseId" value={event.courseId ?? ""} />
+              <label>
+                Reason (shared with learners)
+                <textarea name="reason" rows={3} required placeholder="Instructor unavailable; the cohort will not run." />
+              </label>
+              <label>
+                Transfer learners to (optional)
+                {transferTargets.length === 0 ? (
+                  <span className="hint">
+                    {event.courseId
+                      ? "No other live cohort of this course; paid seats are refunded."
+                      : "Not linked to a course; paid seats are refunded."}
+                  </span>
+                ) : (
+                  <select name="transferToEventId" defaultValue="">
+                    <option value="">— refund instead —</option>
+                    {transferTargets.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} — {formatDateTimeInZone(c.startsAt, c.timezone)}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </label>
+              <label className="label-check">
+                <input type="checkbox" name="confirm" />I understand this cancels the cohort and refunds or moves every
+                paid seat.
+              </label>
+              <p className="hint">
+                Learners are moved to the chosen cohort when one is picked; otherwise their orders are refunded. Unpaid
+                seats are voided.
+              </p>
+            </ActionForm>
+            </div>
+          )}
+          </AccSection>
+        )}
+      </div>
+    </div>
   );
 }
