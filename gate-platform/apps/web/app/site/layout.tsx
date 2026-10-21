@@ -19,6 +19,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           <Link href="/how-it-works">How it works</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/instructors">For instructors</Link>
+          <Link href="/badges">Badges</Link>
           <Link href="/classes">Find a class</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/help">Help</Link>
@@ -40,6 +41,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         </div>
         <nav aria-label="Legal">
           <Link href="/classes">Find a class</Link>
+          <Link href="/badges">Badges</Link>
+          <a href={`${APP}/verify`}>Verify a badge</a>
           <Link href="/help">Help center</Link>
           <Link href="/faq">FAQ</Link>
           <a href={`${process.env.GATE_PUBLIC_API_URL ?? `https://api.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`}/docs`}>API reference</a>

@@ -51,6 +51,8 @@ expect "https://api.$d/public/v1/fees" 200 '"direct"' || fail=1
 expect "https://$d/pricing" 200 'certification seat costs you' || fail=1
 expect "https://$d/how-it-works" 200 'A course, step by step' || fail=1
 expect "https://$d/instructors" 200 'Schedule builder' || fail=1
+expect "https://$d/badges" 200 'Badges your learners are proud to share' || fail=1
+expect "https://app.$d/badges" 307 '/login' || fail=1
 expect "https://$d/" 200 'On this page' || fail=1
 expect "https://$d/help/payment-modes" 200 'Protected or Direct' || fail=1
 exit $fail

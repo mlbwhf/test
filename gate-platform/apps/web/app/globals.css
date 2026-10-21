@@ -8445,3 +8445,115 @@ a.chip:hover {
 @media (prefers-reduced-motion: reduce) {
   .ci-side .ci-scan { animation: none; }
 }
+
+/* Marketing: verified badges (home section and /badges). */
+.sb {
+  position: relative;
+  justify-self: center;
+  width: min(420px, 100%);
+  padding: 20px 0 60px;
+}
+.sb-art {
+  display: block;
+  width: 72%;
+  margin: 0 auto;
+  filter: drop-shadow(0 18px 30px rgba(20, 33, 61, 0.25));
+  animation: sb-float 6s ease-in-out infinite;
+}
+.sb-star {
+  transform-origin: 120px 96px;
+  animation: sb-spin 6s ease-in-out infinite;
+}
+.sb-card {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 240px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #fefefd;
+  color: var(--ink);
+  border: 1px solid rgba(20, 33, 61, 0.12);
+  box-shadow: 0 12px 30px rgba(20, 33, 61, 0.14);
+  animation: sb-pop 0.6s 0.4s ease both;
+}
+.sb-ok {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: var(--green-text);
+}
+.sb-check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--ink);
+  font-size: 12px;
+}
+.sb-card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 10px;
+  margin: 0;
+  font-size: 12px;
+}
+.sb-card dt {
+  color: var(--muted);
+}
+.sb-card dd {
+  margin: 0;
+  font-weight: 600;
+}
+@keyframes sb-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+@keyframes sb-spin {
+  0%, 70%, 100% { transform: rotate(0); }
+  80% { transform: rotate(72deg) scale(1.1); }
+}
+@keyframes sb-pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-art, .sb-star, .sb-card { animation: none; }
+}
+.badge-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 40px;
+  align-items: center;
+}
+.badge-band .site-lede {
+  max-width: 560px;
+}
+.badge-points {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.badge-points li::before {
+  content: "✓";
+  margin-right: 10px;
+  color: var(--green-text);
+  font-weight: 700;
+}
+.steps-4 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.badge-price .tiers {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+@media (max-width: 860px) {
+  .badge-band {
+    grid-template-columns: 1fr;
+  }
+}

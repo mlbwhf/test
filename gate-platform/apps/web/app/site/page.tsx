@@ -2,11 +2,13 @@ import Link from "next/link";
 import { feeLabel } from "@/lib/fees";
 import { ORGANIZATION_LD, apiUrl, appUrl, jsonLd, siteUrl } from "@/lib/seo";
 import { LiveCohort } from "@/components/live-cohort";
+import { SampleBadge } from "@/components/sample-badge";
 import { APP, DashboardSection, FaqSection, HOME_FAQ, HowSection, PricingSection, StartSection, feeData } from "./sections";
 
 const ON_THIS_PAGE = [
   ["#how", "How it works"],
   ["#dashboard", "Dashboard"],
+  ["#badges", "Badges"],
   ["#pricing", "Pricing"],
   ["#start", "Who it's for"],
   ["#faq", "Questions"],
@@ -64,6 +66,31 @@ export default async function SiteHome() {
 
       <HowSection />
       <DashboardSection />
+      <section id="badges" className="site-section badge-band" aria-labelledby="home-badges">
+        <div>
+          <p className="eyebrow">New · Verified digital badges</p>
+          <h2 className="site-h2" id="home-badges">
+            Every certificate comes with a badge learners share.
+          </h2>
+          <p className="site-lede">
+            Design a badge in minutes and issue it with each certificate. It&apos;s a signed Open Badges 3.0 credential: learners add it to LinkedIn, employers verify it in seconds. No badge platform subscription.
+          </p>
+          <ul className="badge-points">
+            <li>Badge designer, or upload your own artwork</li>
+            <li>Move your Credly or Accredible badges in one click</li>
+            <li>Award past learners with an email</li>
+          </ul>
+          <div className="site-cta">
+            <a href="/badges" className="pill pill-green">
+              Explore badges
+            </a>
+            <a href={`${APP}/verify`} className="pill pill-outline">
+              Verify a badge
+            </a>
+          </div>
+        </div>
+        <SampleBadge />
+      </section>
       <PricingSection data={data} />
       <StartSection />
       <FaqSection questions={HOME_FAQ} />

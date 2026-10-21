@@ -34,6 +34,8 @@ export function proxy(request: NextRequest) {
 
   if (hosts.has(host)) {
     if (url.pathname === "/") return NextResponse.rewrite(new URL("/site", request.url));
+    // The app host has its own /badges (the organizer page), so this one lives on the marketing host only.
+    if (url.pathname === "/badges") return NextResponse.rewrite(new URL("/site/badges", request.url));
     if (url.pathname === "/help" || url.pathname.startsWith("/help/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || PUBLIC_FILES.has(url.pathname)) {
       return NextResponse.next();
     }

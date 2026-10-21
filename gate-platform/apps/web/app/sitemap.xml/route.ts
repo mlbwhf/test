@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const urls: Array<{ loc: string; lastmod?: string; priority: string; freq: string }> = [];
   if (isMarketingHost(request)) {
     const s = siteUrl();
-    urls.push({ loc: `${s}/`, lastmod: today, priority: "1.0", freq: "weekly" }, { loc: `${s}/faq`, lastmod: today, priority: "0.8", freq: "monthly" }, { loc: `${s}/classes`, lastmod: today, priority: "0.9", freq: "daily" }, { loc: `${s}/how-it-works`, priority: "0.8", freq: "monthly" }, { loc: `${s}/pricing`, lastmod: today, priority: "0.9", freq: "weekly" }, { loc: `${s}/instructors`, priority: "0.8", freq: "monthly" }, { loc: `${s}/help`, lastmod: today, priority: "0.8", freq: "weekly" });
+    urls.push({ loc: `${s}/`, lastmod: today, priority: "1.0", freq: "weekly" }, { loc: `${s}/faq`, lastmod: today, priority: "0.8", freq: "monthly" }, { loc: `${s}/classes`, lastmod: today, priority: "0.9", freq: "daily" }, { loc: `${s}/how-it-works`, priority: "0.8", freq: "monthly" }, { loc: `${s}/pricing`, lastmod: today, priority: "0.9", freq: "weekly" }, { loc: `${s}/instructors`, priority: "0.8", freq: "monthly" }, { loc: `${s}/badges`, priority: "0.8", freq: "monthly" }, { loc: `${s}/help`, lastmod: today, priority: "0.8", freq: "weekly" });
     for (const a of HELP) urls.push({ loc: `${s}/help/${a.slug}`, priority: "0.6", freq: "monthly" });
     for (const p of ["terms", "privacy", "refunds"]) urls.push({ loc: `${s}/${p}`, priority: "0.2", freq: "yearly" });
   } else {
