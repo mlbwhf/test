@@ -23,6 +23,25 @@ for required in TRAINYARD_DOMAIN POSTGRES_PASSWORD TRAINYARD_ADMIN_KEY; do
 done
 [ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
+# This box also runs EnrollClass (gate). Never start the local model when it would push the
+# host into swap: that slows or kills gate's containers, not just ours.
+if [ "${LLM_PROFILE:-}" = "llm" ]; then
+  limit=$(envval OLLAMA_MEMORY_LIMIT); limit=${limit:-3g}
+  to_mb() { case "$1" in *g|*G) echo $(( ${1%?} * 1024 ));; *m|*M) echo ${1%?};; *) echo $(( $1 / 1048576 ));; esac; }
+  need=$(to_mb "$limit"); avail=$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo)
+  if [ "$avail" -lt $(( need + 1024 )) ]; then
+    echo "refusing to start Ollama: it may use ${need} MB but only ${avail} MB is available (keeping 1 GB headroom for gate)." >&2
+    echo "Set LLM_PROFILE= to deploy without the local model, use a smaller TRAINYARD_LLM_MODEL, or move to a bigger VPS." >&2
+    exit 1
+  fi
+fi
+
+# Gate's public health, before and after, so a routing problem shows up here and not from a customer.
+gate_domain=$(sed -nE 's/^GATE_DOMAIN=([^ #]*).*/\1/p' /opt/gate/.env 2>/dev/null | head -n1)
+gate_health() { [ -n "$gate_domain" ] && curl -fsS --max-time 10 "https://api.$gate_domain/health" >/dev/null 2>&1; }
+gate_before=skipped
+if [ -n "$gate_domain" ]; then gate_health && gate_before=ok || gate_before=down; echo "== gate (api.$gate_domain) before: $gate_before"; fi
+
 echo "== pulling images"
 compose pull --quiet || echo "pull failed; continuing with local images"
 
@@ -35,6 +54,11 @@ for i in $(seq 1 30); do
     echo "$out"
     docker image prune -f >/dev/null
     echo "deployed $(compose images api --format '{{.Repository}}:{{.Tag}}' 2>/dev/null || true)"
+    if [ "$gate_before" = ok ]; then
+      for n in 1 2 3 4 5 6; do gate_health && { echo "== gate after: ok"; exit 0; }; sleep 5; done
+      echo "== gate after: DOWN. EnrollClass was healthy before this deploy and is not now; check Traefik: docker logs \$(docker ps -q --filter ancestor=traefik) --tail 100" >&2
+      exit 2
+    fi
     exit 0
   fi
   sleep 3

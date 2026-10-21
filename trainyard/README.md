@@ -77,7 +77,7 @@ Steps:
 4. GitHub: the `DEPLOY_HOST`, `DEPLOY_USER` and `DEPLOY_SSH_KEY` secrets already exist for gate; add repository variables `TRAINYARD_WEB_HOST` and `TRAINYARD_API_HOST` if the hosts differ from the defaults. Push to the deploy branch and the workflow rolls it out; or run `cd /opt/trainyard && ./deploy.sh` by hand.
 5. Sign in at `https://plan.<domain>/login` with the admin key and create users.
 
-Memory on a KVM2 (8 GB): gate's limits add up to about 3.5 GB, Trainyard about 1.5 GB without Ollama, so both fit; with Ollama and a 3B model the box is near its limit, and a 7B model needs a KVM4.
+**Keeping EnrollClass safe.** The two stacks share nothing but the host and Traefik: separate Compose projects (`gate`, `trainyard`), networks, volumes, Postgres instances, router, middleware and service names, and hostnames; Trainyard publishes no host ports; its workflow only runs on changes under `trainyard/` and `gate-deploy` only on `gate-platform/`. `deploy.sh` checks gate's public `/health` before and after every roll and exits non-zero if gate was healthy before and is not after, so the GitHub run turns red instead of a customer noticing. Memory on a KVM2 (8 GB): gate's limits add up to about 3.5 GB and Trainyard to about 1.5 GB, so both fit. Ollama is capped at 3 GB and one CPU, and `deploy.sh` refuses to start it unless that much memory plus 1 GB of headroom is free; on a KVM2 beside gate, leave it off and use Claude or a bigger box.
 
 ## Configuration
 

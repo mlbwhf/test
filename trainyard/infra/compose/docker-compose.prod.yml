@@ -95,9 +95,10 @@ services:
         limits: { memory: 512m }
 
   # Free, local AI assistance: Ollama on the same box. Enabled by LLM_PROFILE=llm in .env
-  # (deploy.sh adds --profile llm) and TRAINYARD_LLM_URL=http://ollama:11434/v1. On a CPU
-  # VPS a 7B model needs about 6 GB of RAM and answers in 20–60 s; a 3B model is faster and
-  # fits a KVM2 next to gate, with rougher drafts. The model is pulled on first start.
+  # (deploy.sh adds --profile llm) and TRAINYARD_LLM_URL=http://ollama:11434/v1. Capped in
+  # memory and CPU so inference cannot starve gate; deploy.sh refuses to start it when the
+  # host lacks the memory. Not recommended beside gate on a KVM2: a 3B model wants ~3 GB
+  # and most of the CPU while answering. The model is pulled on first start.
   ollama:
     image: ollama/ollama:latest
     restart: unless-stopped
@@ -120,7 +121,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: ${OLLAMA_MEMORY_LIMIT:-5g}
+          memory: ${OLLAMA_MEMORY_LIMIT:-3g}
+          cpus: "${OLLAMA_CPUS:-1}"
 
   # Nightly pg_dump to S3-compatible storage. Disabled until BACKUP_S3_BUCKET is set.
   backup:
