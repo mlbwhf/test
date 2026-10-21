@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_TRAINYARD_API_URL ?? "http://localhost:4100";
-const KEY = process.env.NEXT_PUBLIC_TRAINYARD_API_KEY;
+const KEY_STORAGE = "trainyard.apiKey";
 
 export class ApiFailure extends Error {
   constructor(
@@ -16,12 +16,31 @@ export class ApiFailure extends Error {
   }
 }
 
+/** The API key for this browser. Kept in localStorage; never sent anywhere but the API. */
+export function getApiKey(): string | null {
+  try {
+    return localStorage.getItem(KEY_STORAGE) || process.env.NEXT_PUBLIC_TRAINYARD_API_KEY || null;
+  } catch {
+    return process.env.NEXT_PUBLIC_TRAINYARD_API_KEY ?? null;
+  }
+}
+
+export function setApiKey(key: string | null): void {
+  try {
+    if (key) localStorage.setItem(KEY_STORAGE, key);
+    else localStorage.removeItem(KEY_STORAGE);
+  } catch {
+    /* private window or blocked storage: the key lives for this page only */
+  }
+}
+
 export async function api<T>(method: string, path: string, body?: unknown): Promise<T> {
   let res: Response;
+  const key = getApiKey();
   try {
     res = await fetch(`${BASE}${path}`, {
       method,
-      headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(KEY ? { Authorization: `Bearer ${KEY}` } : {}) },
+      headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(key ? { Authorization: `Bearer ${key}` } : {}) },
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
   } catch {
@@ -29,6 +48,9 @@ export async function api<T>(method: string, path: string, body?: unknown): Prom
   }
   if (res.status === 204) return undefined as T;
   const json = await res.json().catch(() => ({}));
+  if (res.status === 401 && typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname)}`);
+  }
   if (!res.ok) throw new ApiFailure(res.status, json?.error?.code ?? "ERROR", json?.error?.message ?? res.statusText, json?.error?.details);
   return json as T;
 }
@@ -54,4 +76,15 @@ export function useApi<T>(path: string | null) {
     void reload();
   }, [reload]);
   return { data, error, loading, reload, setData };
+}
+
+export interface Me {
+  principal: { userId: string; name: string; role: string; personId?: string; anonymous: boolean };
+  open: boolean;
+  permissions: Record<string, boolean>;
+}
+
+/** Who the current key belongs to and what they may do. */
+export function useMe() {
+  return useApi<Me>("/v1/me");
 }

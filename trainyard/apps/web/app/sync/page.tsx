@@ -7,6 +7,9 @@ import { api, useApi, type ApiFailure } from "@/lib/api";
 interface SyncState {
   connectors: string[];
   pending: { itemId: string; fields: string[]; at: string }[];
+  last: Record<string, { finishedAt: string; added: string[]; updated: string[]; pushed: number; conflicts: unknown[]; error?: string }>;
+  schedule: number;
+  webhooks: boolean;
 }
 interface SyncResult {
   dryRun: boolean;
@@ -49,7 +52,10 @@ export default function SyncPage() {
 
   return (
     <>
-      <PageHead title="Jira & Azure DevOps" sub="Teams keep working in their own tracker. Trainyard reads their work, and plan changes made here are queued and written back on the next sync." />
+      <PageHead
+        title="Jira & Azure DevOps"
+        sub={`Teams keep working in their own tracker. Trainyard reads their work, and plan changes made here are queued and written back on the next sync. ${state.data.schedule ? `Scheduled every ${state.data.schedule} min.` : "No schedule set (TRAINYARD_SYNC_EVERY_MINUTES)."} ${state.data.webhooks ? "Webhooks on." : "Webhooks off (TRAINYARD_WEBHOOK_SECRET)."}`}
+      />
       <div className="grid-2">
         {TRACKERS.map((t) => {
           const connected = state.data!.connectors.includes(t.key);
@@ -62,6 +68,11 @@ export default function SyncPage() {
               </div>
               <div className="panel-body stack">
                 <p className="muted">{t.how}</p>
+                {state.data!.last[t.key] ? (
+                  <p className="faint" style={{ fontSize: "0.8rem" }}>
+                    Last sync {state.data!.last[t.key]!.finishedAt.slice(0, 16).replace("T", " ")}: {state.data!.last[t.key]!.error ? `failed (${state.data!.last[t.key]!.error})` : `${state.data!.last[t.key]!.added.length} new, ${state.data!.last[t.key]!.updated.length} changed, ${state.data!.last[t.key]!.pushed} written back`}
+                  </p>
+                ) : null}
                 {connected ? (
                   <div className="row">
                     <button className="btn" onClick={() => run(t.key, true)}>

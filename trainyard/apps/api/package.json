@@ -19,7 +19,9 @@
     "@trainyard/core": "workspace:*",
     "fastify": "^5.6.0",
     "fastify-type-provider-zod": "^7.0.0",
-    "zod": "^4.1.0"
+    "zod": "^4.1.0",
+    "@trainyard/db": "workspace:*",
+    "@trainyard/ai-assist": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",

@@ -1,3 +1,5 @@
+import type { Portfolio } from "./portfolio.js";
+
 // Domain types shared by every package. Nothing here knows about Jira, Azure DevOps or a
 // specific scaling framework: frameworks are data (see frameworks.ts) and trackers are
 // adapters (see @trainyard/connectors).
@@ -127,4 +129,6 @@ export interface Workspace {
   dependencies: Dependency[];
   risks: Risk[];
   objectives: Objective[];
+  /** Lean portfolio data; absent until a portfolio is set up. */
+  portfolio?: Portfolio;
 }

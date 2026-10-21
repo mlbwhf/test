@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Dependency, DependencyCheck, Increment, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
+import { AssistButton } from "@/components/assist";
 import { Loading, PageHead, SourceChip } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
 
@@ -167,6 +168,29 @@ export default function BoardPage() {
                 <span>{c.message}</span>
               </li>
             ))}
+            <li>
+              <AssistButton<{ verdict: string; briefing: string; actions: { action: string; ownerRole: string; before: string }[] }>
+                label="Draft the readiness briefing"
+                path="/v1/assist/readiness"
+                body={{ incrementId: b.increment.id }}
+                small
+                render={(d) => (
+                  <>
+                    <span className={`chip ${d.verdict === "go" ? "ok" : d.verdict === "not-ready" ? "crit" : "warn"}`}>{d.verdict}</span>
+                    <p>{d.briefing}</p>
+                    {d.actions.length ? (
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        {d.actions.map((a, n) => (
+                          <li key={n}>
+                            {a.action} <span className="faint">({a.ownerRole}, before {a.before})</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </>
+                )}
+              />
+            </li>
           </ul>
         </section>
 
@@ -174,6 +198,46 @@ export default function BoardPage() {
           <div className="panel-head">
             <h2>Risks</h2>
             <span className="faint">{b.risks.filter((r) => r.roam === "unroamed").length} not ROAMed</span>
+          </div>
+          <div className="panel-body" style={{ paddingBottom: 0 }}>
+            <AssistButton<{ summary: string; suggestions: { riskId: string; roam: Roam; reason: string; ownerRole?: string }[]; missingRisks: string[] }>
+              label="Suggest ROAM"
+              path="/v1/assist/risks"
+              small
+              render={(d) => (
+                <>
+                  <p>{d.summary}</p>
+                  {d.suggestions.map((sg) => {
+                    const risk = b.risks.find((r) => r.id === sg.riskId);
+                    if (!risk) return null;
+                    return (
+                      <div key={sg.riskId} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap", alignItems: "flex-start" }}>
+                        <span style={{ fontSize: "0.85rem" }}>
+                          <strong>{risk.title}</strong>: {sg.roam}
+                          {sg.ownerRole ? ` (${sg.ownerRole})` : ""}. <span className="faint">{sg.reason}</span>
+                        </span>
+                        <button className="btn small" disabled={risk.roam === sg.roam} onClick={() => setRoam(risk, sg.roam)}>
+                          Apply
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {d.missingRisks.length ? (
+                    <div>
+                      <span className="eyebrow">Risks nobody has raised</span>
+                      {d.missingRisks.map((m, n) => (
+                        <div key={n} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap" }}>
+                          <span style={{ fontSize: "0.85rem" }}>{m}</span>
+                          <button className="btn small" onClick={async () => (await api("POST", "/v1/risks", { title: m, groupId: "art-customer" }), void board.reload())}>
+                            Raise
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              )}
+            />
           </div>
           <table className="table">
             <tbody>
@@ -199,6 +263,9 @@ export default function BoardPage() {
           <div className="panel-head">
             <h2>Team objectives</h2>
             <span className="faint">{b.objectives.length}</span>
+          </div>
+          <div className="panel-body stack" style={{ paddingBottom: 0 }}>
+            <DraftObjectives teams={b.teams} incrementId={b.increment.id} onSaved={() => void board.reload()} />
           </div>
           <table className="table">
             <thead>
@@ -342,6 +409,45 @@ function LoadMeter({ cell }: { cell: LoadCell }) {
       </div>
       <div style={{ height: 4, background: "var(--sunken)", borderRadius: 2 }}>
         <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 2 }} />
+      </div>
+    </div>
+  );
+}
+
+function DraftObjectives({ teams, incrementId, onSaved }: { teams: Team[]; incrementId: string; onSaved: () => void }) {
+  const [teamId, setTeamId] = useState(teams[0]?.id ?? "");
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <div className="row">
+        <select id="draft-team" aria-label="Team to draft objectives for" className="select" value={teamId} onChange={(e) => setTeamId(e.target.value)}>
+          {teams.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
+        <AssistButton<{ objectives: { title: string; businessValue: number; committed: boolean; featureIds: string[]; rationale: string }[]; gaps: string }>
+          label="Draft objectives from planned features"
+          path="/v1/assist/objectives"
+          body={{ teamId, incrementId }}
+          small
+          render={(d) => (
+            <>
+              {d.objectives.map((o, n) => (
+                <div key={n} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap", alignItems: "flex-start" }}>
+                  <span style={{ fontSize: "0.85rem" }}>
+                    <strong>{o.title}</strong> · BV {o.businessValue} {o.committed ? "" : "· stretch"}
+                    <div className="faint">{o.rationale}</div>
+                  </span>
+                  <button className="btn small" onClick={async () => (await api("POST", "/v1/objectives", { incrementId, teamId, title: o.title, plannedValue: o.businessValue, committed: o.committed }), onSaved())}>
+                    Add
+                  </button>
+                </div>
+              ))}
+              {d.gaps ? <p className="faint">{d.gaps}</p> : null}
+            </>
+          )}
+        />
       </div>
     </div>
   );

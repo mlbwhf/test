@@ -1,0 +1,54 @@
+# Self-hosted Trainyard: Postgres, the API and the web app.
+#   TRAINYARD_ADMIN_KEY=$(openssl rand -hex 24) docker compose up -d --build
+# Then open http://localhost:3100/login and sign in with that key.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: trainyard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-trainyard}
+      POSTGRES_DB: trainyard
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trainyard"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://trainyard:${POSTGRES_PASSWORD:-trainyard}@postgres:5432/trainyard
+      TRAINYARD_ADMIN_KEY: ${TRAINYARD_ADMIN_KEY:?set TRAINYARD_ADMIN_KEY}
+      TRAINYARD_WEB_URL: ${TRAINYARD_WEB_URL:-http://localhost:3100}
+      TRAINYARD_DEMO_CLOCK: "0"
+      # Optional:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      TRAINYARD_SYNC_EVERY_MINUTES: ${TRAINYARD_SYNC_EVERY_MINUTES:-15}
+      TRAINYARD_WEBHOOK_SECRET: ${TRAINYARD_WEBHOOK_SECRET:-}
+      TRAINYARD_JIRA: ${TRAINYARD_JIRA:-}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN:-}
+      TRAINYARD_ADO: ${TRAINYARD_ADO:-}
+      ADO_PAT: ${ADO_PAT:-}
+    ports:
+      - "4100:4100"
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.web
+      args:
+        API_URL: ${TRAINYARD_API_URL:-http://localhost:4100}
+    depends_on:
+      - api
+    ports:
+      - "3100:3100"
+
+volumes:
+  pgdata:

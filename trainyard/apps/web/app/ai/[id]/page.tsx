@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useState } from "react";
 import { EVIDENCE_KINDS, EVIDENCE_LABELS, STAGES, STAGE_LABELS, type Agent, type EvalMetric, type EvidenceKind, type Stage } from "@trainyard/ai-portfolio";
 import type { Person, WorkItem } from "@trainyard/core";
+import { AssistButton } from "@/components/assist";
 import { formatValue } from "@/components/charts";
 import { ErrorList, Loading, PageHead, SourceChip } from "@/components/ui";
 import { TIER_CHIP, type InitiativeView } from "@/lib/ai";
@@ -131,6 +132,38 @@ export default function InitiativePage({ params }: { params: Promise<{ id: strin
             ) : (
               <p className="muted">This initiative is in {i.stageLabel.toLowerCase()}.</p>
             )}
+            {gate ? (
+              <AssistButton<{ assessment: string; actions: { action: string; ownerRole: string; closesBlocker?: string }[]; questionsForValueArchitect: string[] }>
+                label="Prepare the governance review"
+                path={`/v1/assist/gate/${i.id}`}
+                body={{ to: gate.to }}
+                small
+                render={(d) => (
+                  <>
+                    <p>{d.assessment}</p>
+                    {d.actions.length ? (
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        {d.actions.map((a, n) => (
+                          <li key={n}>
+                            {a.action} <span className="faint">({a.ownerRole})</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    {d.questionsForValueArchitect.length ? (
+                      <div>
+                        <span className="eyebrow">Questions for the AI value architect</span>
+                        <ul style={{ margin: 0, paddingLeft: 18 }}>
+                          {d.questionsForValueArchitect.map((q, n) => (
+                            <li key={n}>{q}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              />
+            ) : null}
             <div className="row" style={{ borderTop: "1px solid var(--line)", paddingTop: 10 }}>
               {STAGES.indexOf(i.stage) > 0 && i.stage !== "retired" ? (
                 <button className="btn small" onClick={() => moveTo(STAGES[STAGES.indexOf(i.stage) - 1]!)}>

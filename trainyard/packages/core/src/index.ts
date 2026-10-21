@@ -3,3 +3,5 @@ export * from "./frameworks.js";
 export * from "./planning.js";
 export * from "./metrics.js";
 export * from "./demo.js";
+export * from "./portfolio.js";
+export * from "./portfolio-metrics.js";

@@ -1,17 +1,24 @@
 import { describe, expect, it } from "vitest";
+import { FakeProvider } from "@trainyard/ai-assist";
 import type { PushChange, TrackerConnector } from "@trainyard/connectors";
 import type { WorkItem } from "@trainyard/core";
-import { buildApp } from "./app.js";
-import { Store } from "./store.js";
+import { MemoryPersistence } from "@trainyard/db";
+import { buildApp, type AppOptions } from "./app.js";
+import { Store, type StoreState } from "./store.js";
 
-async function setup(opts: { apiKey?: string } = {}) {
-  const store = new Store();
-  const app = await buildApp({ store, ...opts });
-  const call = async (method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", url: string, payload?: unknown) => {
-    const res = await app.inject({ method, url, ...(payload !== undefined ? { payload: payload as object } : {}), headers: opts.apiKey ? { authorization: `Bearer ${opts.apiKey}` } : {} });
-    return { status: res.statusCode, body: res.body ? JSON.parse(res.body) : undefined };
+type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+async function setup(opts: Omit<AppOptions, "store"> & { persistence?: MemoryPersistence<StoreState> } = {}) {
+  const persistence = opts.persistence ?? new MemoryPersistence<StoreState>();
+  const store = new Store({ persistence });
+  await store.open();
+  const { persistence: _p, ...rest } = opts;
+  const app = await buildApp({ store, ...rest });
+  const call = async (method: Method, url: string, payload?: unknown, key?: string) => {
+    const res = await app.inject({ method, url, ...(payload !== undefined ? { payload: payload as object } : {}), headers: key ? { authorization: `Bearer ${key}` } : {} });
+    return { status: res.statusCode, body: res.body ? JSON.parse(res.body) : undefined, headers: res.headers };
   };
-  return { app, store, call };
+  return { app, store, call, persistence };
 }
 
 describe("operating model", () => {
@@ -160,6 +167,29 @@ describe("sync", () => {
     expect((await call("POST", "/v1/sync/ado")).body.error.code).toBe("NOT_CONNECTED");
   });
 
+  it("queues a sync from a webhook and refuses a bad token", async () => {
+    const { call, store, app } = await setup({ webhookSecret: "hook" });
+    const remote = store.state.workspace.items.filter((i) => i.source.system === "jira").map((i) => structuredClone(i));
+    store.connectors.set("jira", new FakeJira(() => remote));
+    expect((await call("POST", "/v1/webhooks/jira?token=nope")).status).toBe(401);
+    expect((await call("POST", "/v1/webhooks/ado?token=hook")).status).toBe(409);
+    const ok = await call("POST", "/v1/webhooks/jira?token=hook");
+    expect(ok.status).toBe(202);
+    app.sync.stopSchedule();
+    const report = await app.sync.run("jira", { userId: "t", name: "t", role: "admin", anonymous: false });
+    expect(report.error).toBeUndefined();
+    expect((await call("GET", "/v1/sync")).body.last.jira.system).toBe("jira");
+  });
+
+  it("reports a failed pull without touching the workspace", async () => {
+    const { call, store } = await setup();
+    store.connectors.set("jira", { system: "jira", pull: async () => { throw new Error("401 from Jira"); }, push: async () => {} });
+    const res = await call("POST", "/v1/sync/jira");
+    expect(res.status).toBe(502);
+    expect(res.body.error.message).toContain("401 from Jira");
+    expect(store.state.workspace.items.length).toBeGreaterThan(0);
+  });
+
   it("pushes queued moves and clears the queue", async () => {
     const { call, store } = await setup();
     const remote = store.state.workspace.items.filter((i) => i.source.system === "jira").map((i) => structuredClone(i));
@@ -177,6 +207,148 @@ describe("sync", () => {
   });
 });
 
+describe("persistence and audit", () => {
+  it("commits every mutation with a version and an audit entry, and reloads it", async () => {
+    const { call, store, persistence } = await setup();
+    expect(store.version).toBe(1);
+    await call("PATCH", "/v1/risks/r-3", { roam: "owned" });
+    await call("PATCH", "/v1/items/f-1", { estimate: 21 });
+    expect(store.version).toBe(3);
+    const audit = await call("GET", "/v1/audit");
+    expect(audit.body.entries.map((e: { action: string }) => e.action)).toEqual(["item.update", "risk.update"]);
+    expect(audit.body.entries[0].actor).toBe("open-mode");
+    const again = new Store({ persistence });
+    expect(await again.open()).toBe("loaded");
+    expect(again.state.workspace.risks.find((r) => r.id === "r-3")!.roam).toBe("owned");
+    expect(again.state.workspace.items.find((i) => i.id === "f-1")!.estimate).toBe(21);
+  });
+
+  it("refuses a write when another instance saved first", async () => {
+    const persistence = new MemoryPersistence<StoreState>();
+    const a = await setup({ persistence });
+    const b = new Store({ persistence });
+    await b.open();
+    await b.commit({ userId: "x", name: "x", role: "admin", anonymous: false }, "test");
+    const res = await a.call("PATCH", "/v1/risks/r-3", { roam: "owned" });
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe("STALE_STATE");
+    expect(a.store.version).toBe(2);
+  });
+});
+
+describe("users and roles", () => {
+  it("runs open until the first user exists, then enforces keys and roles", async () => {
+    const { call } = await setup();
+    expect((await call("GET", "/v1/me")).headers["x-trainyard-auth"]).toBe("open");
+    const admin = await call("POST", "/v1/users", { name: "Amara", email: "amara@northwind.example", role: "admin", personId: "p-rte" });
+    expect(admin.status).toBe(201);
+    const adminKey = admin.body.apiKey as string;
+    expect(adminKey).toMatch(/^ty_/);
+    expect((await call("GET", "/v1/me")).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, "ty_wrong")).status).toBe(401);
+    const me = await call("GET", "/v1/me", undefined, adminKey);
+    expect(me.body.principal).toMatchObject({ role: "admin", personId: "p-rte", anonymous: false });
+
+    const viewer = await call("POST", "/v1/users", { name: "Vik", email: "vik@northwind.example", role: "viewer" }, adminKey);
+    const viewerKey = viewer.body.apiKey as string;
+    expect((await call("GET", "/v1/board", undefined, viewerKey)).status).toBe(200);
+    const denied = await call("PATCH", "/v1/risks/r-3", { roam: "owned" }, viewerKey);
+    expect(denied.status).toBe(403);
+    expect(denied.body.error.message).toMatch(/needs one of: admin, planner, architect/);
+    expect((await call("GET", "/v1/users", undefined, viewerKey)).status).toBe(403);
+    expect((await call("POST", "/v1/users", { name: "X", email: "x@example.com", role: "admin" }, viewerKey)).status).toBe(403);
+
+    const planner = await call("POST", "/v1/users", { name: "Pat", email: "pat@northwind.example", role: "planner" }, adminKey);
+    const plannerKey = planner.body.apiKey as string;
+    expect((await call("PATCH", "/v1/risks/r-3", { roam: "owned" }, plannerKey)).status).toBe(200);
+    expect((await call("POST", "/v1/ai/initiatives/ai-search/sign-off", { stage: "production", personId: "p-ava" }, plannerKey)).status).toBe(403);
+    expect((await call("POST", "/v1/model/fork", { templateId: "less", name: "x" }, plannerKey)).status).toBe(403);
+
+    const architect = await call("POST", "/v1/users", { name: "Lena", email: "lena@northwind.example", role: "architect", personId: "p-ava" }, adminKey);
+    const archKey = architect.body.apiKey as string;
+    expect((await call("POST", "/v1/ai/initiatives/ai-search/sign-off", { stage: "production", personId: "p-ava" }, archKey)).status).toBe(200);
+
+    const rotated = await call("POST", `/v1/users/${viewer.body.user.id}/rotate-key`, undefined, viewerKey);
+    expect(rotated.body.apiKey).not.toBe(viewerKey);
+    expect((await call("GET", "/v1/me", undefined, viewerKey)).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, rotated.body.apiKey)).status).toBe(200);
+
+    expect((await call("PATCH", `/v1/users/${admin.body.user.id}`, { role: "viewer" }, adminKey)).body.error.code).toBe("LAST_ADMIN");
+    expect((await call("PATCH", `/v1/users/${viewer.body.user.id}`, { disabled: true }, adminKey)).status).toBe(200);
+    expect((await call("GET", "/v1/me", undefined, rotated.body.apiKey)).status).toBe(401);
+    const list = await call("GET", "/v1/users", undefined, adminKey);
+    expect(list.body.users.every((u: Record<string, unknown>) => !("keyHash" in u))).toBe(true);
+  });
+
+  it("accepts the bootstrap admin key before any user exists", async () => {
+    const { call } = await setup({ bootstrapAdminKey: "boot" });
+    expect((await call("GET", "/v1/me")).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, "boot")).body.principal.userId).toBe("bootstrap");
+  });
+});
+
+describe("portfolio", () => {
+  it("serves ranked epics, budget lines, breaches and OKR progress", async () => {
+    const { call } = await setup();
+    const { status, body } = await call("GET", "/v1/portfolio?incrementId=pi-26-4");
+    expect(status).toBe(200);
+    expect(body.epics[0]).toMatchObject({ id: "pe-observability", score: 4.2 });
+    expect(body.budgets.find((b: { incrementId: string }) => b.incrementId === "pi-26-4").state).toBe("over");
+    const okr = body.okrs.find((o: { okr: { id: string } }) => o.okr.id === "okr-growth");
+    expect(okr.keyResults[1].current).toBe(3); // flow-time metric read live
+    expect(okr.percent).toBe(73);
+  });
+
+  it("creates and edits epics and OKRs with validation", async () => {
+    const { call } = await setup();
+    const bad = await call("POST", "/v1/portfolio/epics", { title: "X", valueStreamId: "nope", wsjf: { userBusinessValue: 1, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 1 }, spend: [] });
+    expect(bad.status).toBe(404);
+    const ok = await call("POST", "/v1/portfolio/epics", { title: "Loyalty points", valueStreamId: "vs-commerce", wsjf: { userBusinessValue: 8, timeCriticality: 3, riskReductionOpportunity: 1, jobSize: 3 }, spend: [{ incrementId: "pi-26-4", planned: 50000 }] });
+    expect(ok.status).toBe(201);
+    expect(ok.body.epic.score).toBe(4);
+    const moved = await call("PATCH", `/v1/portfolio/epics/${ok.body.epic.id}`, { state: "backlog", hypothesis: "Points lift repeat purchase 5%." });
+    expect(moved.body.epic.state).toBe("backlog");
+    const okr = await call("PUT", "/v1/portfolio/okrs/okr-new", { title: "Faster flow", level: "group", ownerGroupId: "art-customer", keyResults: [{ title: "WIP", baseline: 20, target: 10, metric: { key: "flow-load", filters: { level: "story" } } }] });
+    expect(okr.status).toBe(200);
+    expect(okr.body.okr.keyResults[0].current).toBe(11);
+    expect(okr.body.okr.percent).toBe(90);
+    expect((await call("PUT", "/v1/portfolio/okrs/okr-bad", { title: "x", level: "team", keyResults: [{ title: "k", baseline: 0, target: 1, metric: { key: "nope" } }] })).status).toBe(422);
+    expect((await call("DELETE", "/v1/portfolio/okrs/okr-new")).status).toBe(204);
+  });
+});
+
+describe("AI assistance", () => {
+  it("is off without a provider", async () => {
+    const { call } = await setup();
+    expect((await call("GET", "/v1/assist")).body).toEqual({ enabled: false, provider: null });
+    const res = await call("POST", "/v1/assist/risks");
+    expect(res.status).toBe(503);
+    expect(res.body.error.code).toBe("NO_PROVIDER");
+  });
+
+  it("drafts objectives, briefings and gate reviews through the provider", async () => {
+    const fake = new FakeProvider({
+      "draft-objectives": { objectives: [{ title: "Deflect routine tickets", businessValue: 8, committed: true, featureIds: ["f-11"], rationale: "r" }], gaps: "" },
+      "readiness-briefing": { verdict: "go-with-actions", briefing: "Mostly ready.", actions: [{ action: "Rebalance Payments", ownerRole: "RTE", before: "event" }] },
+      "gate-review": { assessment: "Not yet.", actions: [{ action: "Add the eval report", ownerRole: "PO", closesBlocker: "evidence" }], questionsForValueArchitect: ["Is 2.4 violations acceptable?"] },
+      narrative: { headline: "Steady.", paragraphs: ["p"], watch: ["Flow time"] },
+    });
+    const { call } = await setup({ assist: fake });
+    const obj = await call("POST", "/v1/assist/objectives", { teamId: "t-assist" });
+    expect(obj.status).toBe(200);
+    expect(obj.body.draft.objectives[0].featureIds).toEqual(["f-11"]);
+    expect(fake.calls[0]!.user).toContain("Support reply drafting agent");
+    expect((await call("POST", "/v1/assist/objectives", { teamId: "nope" })).status).toBe(404);
+    expect((await call("POST", "/v1/assist/readiness", {})).body.briefing.verdict).toBe("go-with-actions");
+    const gate = await call("POST", "/v1/assist/gate/ai-support", {});
+    expect(gate.body.gate.to).toBe("pilot");
+    expect(gate.body.review.actions[0].ownerRole).toBe("PO");
+    expect((await call("POST", "/v1/assist/narrative", { dashboardId: "art-overview" })).body.narrative.headline).toBe("Steady.");
+    const refused = await call("POST", "/v1/assist/risks");
+    expect(refused.status).toBe(502);
+  });
+});
+
 describe("cors", () => {
   it("allows the web app to PATCH and DELETE", async () => {
     const { app } = await setup();
@@ -187,8 +359,8 @@ describe("cors", () => {
 });
 
 describe("auth", () => {
-  it("requires the API key when configured", async () => {
-    const { app } = await setup({ apiKey: "k" });
+  it("keeps /health open and gates /v1 behind the bootstrap key", async () => {
+    const { app } = await setup({ bootstrapAdminKey: "k" });
     expect((await app.inject({ method: "GET", url: "/v1/model" })).statusCode).toBe(401);
     expect((await app.inject({ method: "GET", url: "/v1/model", headers: { authorization: "Bearer k" } })).statusCode).toBe(200);
     expect((await app.inject({ method: "GET", url: "/health" })).statusCode).toBe(200);

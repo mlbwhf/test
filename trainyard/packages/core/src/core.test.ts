@@ -3,6 +3,13 @@ import {
   DEMO_NOW,
   FLOW_METRICS,
   MetricRegistry,
+  PORTFOLIO_METRICS,
+  budgetLines,
+  checkGuardrails,
+  okrProgress,
+  rankEpics,
+  wsjf,
+  type Portfolio,
   TEMPLATES,
   buildIncrement,
   checkDependencies,
@@ -198,5 +205,72 @@ describe("metrics", () => {
     expect(percentile([], 50)).toBeNull();
     expect(percentile([1, 2, 3, 4], 50)).toBe(2.5);
     expect(percentile([5, 1, 3], 100)).toBe(5);
+  });
+});
+
+describe("lean portfolio", () => {
+  const ws = demoWorkspace();
+  const p = ws.portfolio!;
+
+  it("ranks epics by WSJF with smaller jobs first on ties", () => {
+    expect(wsjf({ userBusinessValue: 13, timeCriticality: 8, riskReductionOpportunity: 3, jobSize: 8 })).toBe(3);
+    expect(wsjf({ userBusinessValue: 1, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 0 })).toBe(0);
+    const ranked = rankEpics([
+      { ...p.epics[0]!, id: "a", wsjf: { userBusinessValue: 4, timeCriticality: 4, riskReductionOpportunity: 2, jobSize: 5 } },
+      { ...p.epics[0]!, id: "b", wsjf: { userBusinessValue: 8, timeCriticality: 8, riskReductionOpportunity: 4, jobSize: 10 } },
+      { ...p.epics[0]!, id: "done", state: "done" },
+    ]);
+    expect(ranked.map((e) => e.id)).toEqual(["a", "b"]);
+    expect(rankEpics(p.epics)[0]!.id).toBe("pe-observability");
+  });
+
+  it("computes budget lines per value stream and increment", () => {
+    const lines = budgetLines(p, ws.increments);
+    const curr = lines.find((l) => l.incrementId === "pi-26-4")!;
+    expect(curr).toMatchObject({ budget: 950_000, planned: 980_000, state: "over" });
+    expect(curr.plannedPercent).toBeCloseTo(103.2, 1);
+    const prev = lines.find((l) => l.incrementId === "pi-26-3")!;
+    expect(prev).toMatchObject({ planned: 680_000, actual: 680_000, state: "ok" });
+    const unfunded = budgetLines({ ...p, valueStreams: [{ ...p.valueStreams[0]!, budgets: {} }] }, ws.increments)[0]!;
+    expect(unfunded.state).toBe("unfunded");
+    expect(unfunded.plannedPercent).toBeNull();
+  });
+
+  it("flags guardrail breaches", () => {
+    const curr = ws.increments[1]!;
+    const breaches = checkGuardrails(p, curr, ws.items);
+    expect(breaches.map((b) => b.rule)).toEqual([]);
+    const strict: Portfolio = {
+      ...p,
+      valueStreams: [{ ...p.valueStreams[0]!, guardrails: { maxEpicBudgetPercent: 40, businessCaseAbove: 50_000, minEnablerPercent: 90 } }],
+    };
+    const rules = checkGuardrails(strict, curr, ws.items);
+    expect(rules.map((b) => b.rule)).toEqual(expect.arrayContaining(["maxEpicBudgetPercent", "minEnablerPercent", "businessCaseAbove"]));
+    expect(rules.find((b) => b.rule === "businessCaseAbove")?.epicId).toBe("pe-observability");
+    // The previous PI's stories are not parented under an epic, so the enabler floor has nothing to judge.
+    expect(checkGuardrails(strict, ws.increments[0]!, ws.items).map((b) => b.rule)).not.toContain("minEnablerPercent");
+  });
+
+  it("measures OKR progress from typed values and metrics", () => {
+    const okr = p.okrs[0]!;
+    const pr = okrProgress(okr, (key) => (key === "flow-time" ? 4.5 : null));
+    expect(pr.keyResults[0]!.percent).toBe(45);
+    expect(pr.keyResults[1]!.percent).toBe(50);
+    expect(pr.percent).toBe(48);
+    const none = okrProgress(okr, () => null);
+    expect(none.keyResults[1]!.percent).toBeNull();
+    expect(none.percent).toBe(45);
+    expect(okrProgress({ ...okr, keyResults: [{ id: "k", title: "k", baseline: 5, target: 5, current: 5 }] }, () => null).percent).toBeNull();
+  });
+
+  it("portfolio metrics run in the registry", () => {
+    const reg = new MetricRegistry([...FLOW_METRICS, ...PORTFOLIO_METRICS]);
+    const ctx = { workspace: ws, now: DEMO_NOW, extensions: {} };
+    for (const key of ["budget-used", "epic-wsjf", "okr-progress"]) {
+      const out = reg.run({ id: key, title: key, metric: key, viz: "bar" }, ctx);
+      expect("error" in out ? out.error : null).toBeNull();
+    }
+    const noPortfolio = reg.run({ id: "b", title: "b", metric: "budget-used", viz: "kpi" }, { ...ctx, workspace: { ...ws, portfolio: undefined } });
+    expect(noPortfolio).toMatchObject({ error: "This workspace has no portfolio yet." });
   });
 });

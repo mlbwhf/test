@@ -1,16 +1,39 @@
+import { ClaudeProvider } from "@trainyard/ai-assist";
 import { AdoConnector, JiraConnector, type AdoConfig, type JiraConfig } from "@trainyard/connectors";
+import { FilePersistence, MemoryPersistence, PgPersistence, createPool, migrate, type StatePersistence } from "@trainyard/db";
 import { buildApp } from "./app.js";
-import { Store } from "./store.js";
+import { Store, type StoreState } from "./store.js";
 
-// Tracker connections come from the environment. Mappings are JSON without secrets;
-// tokens are separate variables so they never end up in a config file.
-//   TRAINYARD_JIRA='{"baseUrl":"https://x.atlassian.net","email":"bot@x.com","jql":"project = CHK","mapping":{...},"fields":{...}}'
-//   JIRA_API_TOKEN=...
-//   TRAINYARD_ADO='{"organization":"x","project":"Customer","where":"[System.AreaPath] UNDER \'Customer\'","mapping":{...}}'
-//   ADO_PAT=...
+// Configuration is environment variables. Secrets are separate variables so they never
+// end up in a config file:
+//   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
+//   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
+//   ANTHROPIC_API_KEY            turns AI facilitation on (model: TRAINYARD_AI_MODEL)
+//   TRAINYARD_JIRA + JIRA_API_TOKEN, TRAINYARD_ADO + ADO_PAT   tracker connections (JSON + secret)
+//   TRAINYARD_SYNC_EVERY_MINUTES scheduled sync; TRAINYARD_WEBHOOK_SECRET enables /v1/webhooks/:system
+//   TRAINYARD_DEMO_CLOCK=0       use the real clock instead of the demo date
 async function main() {
+  const env = process.env.TRAINYARD_ENV ?? "development";
   const port = Number(process.env.PORT ?? 4100);
-  const store = new Store(undefined, process.env.TRAINYARD_DEMO_CLOCK === "0" ? () => new Date() : undefined);
+
+  let persistence: StatePersistence<StoreState>;
+  if (process.env.DATABASE_URL) {
+    const pool = createPool(process.env.DATABASE_URL);
+    const ran = await migrate(pool);
+    if (ran.length) console.log(`[db] applied migrations: ${ran.join(", ")}`);
+    persistence = new PgPersistence<StoreState>(pool);
+    console.log("[db] postgres");
+  } else if (process.env.TRAINYARD_DATA_DIR) {
+    persistence = new FilePersistence<StoreState>(process.env.TRAINYARD_DATA_DIR);
+    console.log(`[db] json files in ${process.env.TRAINYARD_DATA_DIR}`);
+  } else {
+    if (env === "production") throw new Error("set DATABASE_URL or TRAINYARD_DATA_DIR in production");
+    persistence = new MemoryPersistence<StoreState>();
+    console.log("[db] in-memory (set DATABASE_URL or TRAINYARD_DATA_DIR to keep data)");
+  }
+
+  const store = new Store({ persistence, ...(process.env.TRAINYARD_DEMO_CLOCK === "0" ? { now: () => new Date() } : {}) });
+  console.log(`[state] ${await store.open()} workspace ${store.workspaceId} (version ${store.version})`);
 
   if (process.env.TRAINYARD_JIRA && process.env.JIRA_API_TOKEN) {
     const cfg = JSON.parse(process.env.TRAINYARD_JIRA) as Omit<JiraConfig, "apiToken">;
@@ -24,12 +47,31 @@ async function main() {
   }
   if (store.connectors.size === 0) console.log("[trackers] none connected: serving the demo workspace");
 
+  const adminKey = process.env.TRAINYARD_ADMIN_KEY;
+  if (!adminKey && store.state.users.length === 0) {
+    if (env === "production") throw new Error("set TRAINYARD_ADMIN_KEY in production, or the API runs open");
+    console.log("[auth] open mode: no users and no TRAINYARD_ADMIN_KEY, every request acts as admin");
+  } else console.log(`[auth] on (${store.state.users.length} users${adminKey ? ", bootstrap admin key" : ""})`);
+
+  const assist = process.env.ANTHROPIC_API_KEY ? new ClaudeProvider({ ...(process.env.TRAINYARD_AI_MODEL ? { model: process.env.TRAINYARD_AI_MODEL } : {}) }) : undefined;
+  console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY)");
+
   const app = await buildApp({
     store,
-    ...(process.env.TRAINYARD_API_KEY ? { apiKey: process.env.TRAINYARD_API_KEY } : {}),
+    ...(adminKey ? { bootstrapAdminKey: adminKey } : {}),
+    ...(assist ? { assist } : {}),
+    ...(process.env.TRAINYARD_WEBHOOK_SECRET ? { webhookSecret: process.env.TRAINYARD_WEBHOOK_SECRET } : {}),
+    syncEveryMinutes: Number(process.env.TRAINYARD_SYNC_EVERY_MINUTES ?? 0),
     corsOrigin: process.env.TRAINYARD_WEB_URL ?? true,
     logger: true,
   });
+  const shutdown = async () => {
+    await app.close();
+    await persistence.close();
+    process.exit(0);
+  };
+  process.on("SIGTERM", () => void shutdown());
+  process.on("SIGINT", () => void shutdown());
   await app.listen({ port, host: process.env.HOST ?? "0.0.0.0" });
 }
 

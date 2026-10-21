@@ -5,6 +5,7 @@
 import { getTemplate } from "./frameworks.js";
 import { buildIncrement } from "./planning.js";
 import type { Dependency, FlowType, Increment, Objective, Risk, Team, WorkItem, Workspace } from "./model.js";
+import type { Portfolio } from "./portfolio.js";
 
 function rng(seed: number) {
   let a = seed >>> 0;
@@ -188,6 +189,90 @@ export function demoWorkspace(): Workspace {
     objectives.push({ id: `o-curr-${f.team}-${f.title.length}`, incrementId: curr.id, teamId: f.team, title: f.title, plannedValue: f.bv, committed: true });
   }
 
+  const portfolio: Portfolio = {
+    currency: "USD",
+    valueStreams: [
+      {
+        id: "vs-commerce",
+        name: "Commerce",
+        portfolioId: "pf-digital",
+        budgets: { [prev.id]: 900_000, [curr.id]: 950_000 },
+        guardrails: { minEnablerPercent: 20, maxEpicBudgetPercent: 60, businessCaseAbove: 300_000 },
+        groupIds: ["art-customer"],
+      },
+    ],
+    epics: [
+      {
+        id: "pe-conversion",
+        itemId: "e-conversion",
+        title: "Lift checkout conversion 3 points",
+        valueStreamId: "vs-commerce",
+        state: "implementing",
+        ownerId: "p-pm",
+        hypothesis: "If guest checkout and saved carts remove two steps, conversion rises from 2.1% to 5% within two PIs.",
+        wsjf: { userBusinessValue: 13, timeCriticality: 8, riskReductionOpportunity: 3, jobSize: 8 },
+        spend: [
+          { incrementId: prev.id, planned: 380_000, actual: 362_000 },
+          { incrementId: curr.id, planned: 420_000 },
+        ],
+      },
+      {
+        id: "pe-ai-service",
+        itemId: "e-ai-service",
+        title: "AI-assisted customer service",
+        valueStreamId: "vs-commerce",
+        state: "implementing",
+        ownerId: "p-ava",
+        hypothesis: "Drafting and triage agents cut handle time 30% without raising escalations.",
+        wsjf: { userBusinessValue: 8, timeCriticality: 5, riskReductionOpportunity: 8, jobSize: 13 },
+        spend: [
+          { incrementId: prev.id, planned: 300_000, actual: 318_000 },
+          { incrementId: curr.id, planned: 410_000 },
+        ],
+      },
+      {
+        id: "pe-marketplace",
+        title: "Third-party marketplace sellers",
+        valueStreamId: "vs-commerce",
+        state: "analyzing",
+        wsjf: { userBusinessValue: 20, timeCriticality: 3, riskReductionOpportunity: 2, jobSize: 20 },
+        spend: [{ incrementId: curr.id, planned: 60_000 }],
+      },
+      {
+        id: "pe-observability",
+        title: "Platform observability",
+        valueStreamId: "vs-commerce",
+        state: "backlog",
+        wsjf: { userBusinessValue: 3, timeCriticality: 5, riskReductionOpportunity: 13, jobSize: 5 },
+        spend: [{ incrementId: curr.id, planned: 90_000 }],
+      },
+    ],
+    okrs: [
+      {
+        id: "okr-growth",
+        title: "Make checkout the easiest in the category",
+        level: "portfolio",
+        ownerId: "p-pm",
+        keyResults: [
+          { id: "kr-conv", title: "Checkout conversion (%)", baseline: 2.1, target: 5, current: 3.4 },
+          { id: "kr-flow", title: "Median story flow time (days)", baseline: 6, target: 3, metric: { key: "flow-time", filters: { level: "story" } } },
+        ],
+      },
+      {
+        id: "okr-ai",
+        title: "Scale AI safely in customer service",
+        level: "group",
+        ownerGroupId: "art-customer",
+        ownerId: "p-ava",
+        incrementId: curr.id,
+        keyResults: [
+          { id: "kr-aht", title: "Average handle time (min)", baseline: 11, target: 7, current: 9.6 },
+          { id: "kr-esc", title: "Escalations per 1,000 tickets", baseline: 42, target: 40 },
+        ],
+      },
+    ],
+  };
+
   return {
     id: "ws-northwind",
     name: "Northwind Digital",
@@ -208,5 +293,6 @@ export function demoWorkspace(): Workspace {
     dependencies,
     risks,
     objectives,
+    portfolio,
   };
 }

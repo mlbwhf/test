@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Dashboard, GroupBy, MetricDef, Viz, Widget, WidgetOutput } from "@trainyard/core";
+import { AssistButton } from "@/components/assist";
 import { WidgetCard } from "@/components/charts";
 import { Loading, PageHead } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
@@ -117,6 +118,23 @@ export default function DashboardsPage() {
           ))}
         </div>
       )}
+      {!editing && active ? (
+        <AssistButton<{ headline: string; paragraphs: string[]; watch: string[] }>
+          label="Write the narrative"
+          path="/v1/assist/narrative"
+          body={{ dashboardId: active.id }}
+          small
+          render={(d) => (
+            <>
+              <strong>{d.headline}</strong>
+              {d.paragraphs.map((t, n) => (
+                <p key={n}>{t}</p>
+              ))}
+              {d.watch.length ? <p className="faint">Watch: {d.watch.join(" · ")}</p> : null}
+            </>
+          )}
+        />
+      ) : null}
       {outputs === null ? (
         <Loading error={null} />
       ) : outputs.length === 0 ? (
