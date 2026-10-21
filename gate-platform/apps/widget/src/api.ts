@@ -1,6 +1,6 @@
 // Typed client for the public, unauthenticated registration API.
 
-export interface Organization { id: string; name: string; country: string; currency: string; currencies?: string[]; ratesUpdatedAt?: string | null; flexibleTickets?: boolean }
+export interface Organization { id: string; name: string; country: string; currency: string; currencies?: string[]; ratesUpdatedAt?: string | null; flexibleTickets?: boolean; logoUrl?: string | null }
 export interface Course {
   id: string; slug: string; name: string; description: string | null;
   certificationBody: string | null; durationDays: number | null;
@@ -12,12 +12,12 @@ export interface CohortEvent {
   format: string; sessions: Session[]; currency: string; status: string;
 }
 export interface TicketType {
-  id: string; name: string; remaining: number;
+  id: string; name: string; remaining: number; quantity?: number;
   prices: Record<string, number>; earlyBirdUntil: string | null;
   /** Currencies whose price is converted from the base price at the organizer's rate. */
   converted?: string[];
 }
-export interface Cohort { event: CohortEvent; ticketTypes: TicketType[] }
+export interface Cohort { event: CohortEvent; ticketTypes: TicketType[]; /** The date's own page slug, e.g. "2026-11-20". */ dateSlug?: string }
 export interface CoursePayload { organization: Organization; course: Course; cohorts: Cohort[] }
 
 export interface Attendee { email: string; name?: string; company?: string }

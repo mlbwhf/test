@@ -2,6 +2,8 @@ import Link from "next/link";
 import { api, BADGE_PLATFORMS, COURSE_CATEGORIES, EVENT_FORMATS, type Party } from "@/lib/api";
 import { PromoteCourse } from "@/components/promote-course";
 import { ScheduleBuilder } from "@/components/schedule-builder";
+import { CopyButton } from "@/components/copy-button";
+import { publicApiUrl } from "@/lib/urls";
 import { updateCourseCategoryAction } from "./promote-actions";
 import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
@@ -272,6 +274,37 @@ export default async function CourseDetailPage({ params, searchParams }: { param
             })}
         />
       </Section>
+
+      {orgRes.ok && (
+        <Section title="Website widget" id="widget">
+          <p className="hint">
+            Paste this on your own website (WordPress, Webflow, Squarespace or plain HTML) to show every date of this course as a list and calendar with filters, times in
+            each visitor&apos;s time zone and registration that opens right under the chosen date. New dates you schedule appear automatically.
+          </p>
+          {(() => {
+            const pk = process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+            const code = [
+              "<div data-gate-schedule",
+              `     data-gate-api="${publicApiUrl()}"`,
+              `     data-gate-org="${orgRes.data.id}"`,
+              `     data-gate-course="${course.slug}"`,
+              ...(pk ? [`     data-gate-stripe-pk="${pk}"`] : []),
+              '     data-gate-ink="#0b1320" data-gate-accent="#16a34a"></div>',
+              `<script src="${publicApiUrl()}/widget/v1/gate-schedule.js" async></script>`,
+            ].join("\n");
+            return (
+              <>
+                <pre className="code-block">{code}</pre>
+                <CopyButton text={code} label="Copy widget code" />
+              </>
+            );
+          })()}
+          <p className="hint">
+            Change <code>data-gate-ink</code> and <code>data-gate-accent</code> to your brand colours, <code>data-gate-title</code> to rename the heading, and add{" "}
+            <code>data-gate-sidebar=&quot;off&quot;</code> to hide the next-date card. Link straight to a date with <code>?gate_date=2026-11-20</code> on your page&apos;s address.
+          </p>
+        </Section>
+      )}
 
       <Section title="Cohorts">
         {!cohortsRes.ok ? (

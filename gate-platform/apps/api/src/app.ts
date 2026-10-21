@@ -173,19 +173,25 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   // ---------- embeddable widget bundle + demo page ----------
   const widgetPath = deps.widgetBundlePath ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../widget/dist/gate-widget.js");
-  let widgetCache: { body: string; etag: string } | undefined;
-  app.get("/widget/v1/gate-widget.js", { schema: { tags: ["widget"], security: [], response: { 200: z.string(), 304: z.string(), 404: S.ErrorSchema } } }, async (req, reply) => {
-    if (!widgetCache || env !== "production") {
-      try {
-        const body = await readFile(widgetPath, "utf8");
-        widgetCache = { body, etag: `"${Buffer.byteLength(body).toString(16)}-${body.length.toString(36)}"` };
-      } catch {
-        throw new DomainError("NOT_FOUND", "widget bundle is not built", "run `pnpm --filter @gate/widget build`");
+  // gate-widget.js (registration) and gate-schedule.js (website schedule) are built side by side.
+  const bundles: Record<string, string> = { "gate-widget.js": widgetPath, "gate-schedule.js": path.join(path.dirname(widgetPath), "gate-schedule.js") };
+  const widgetCache = new Map<string, { body: string; etag: string }>();
+  for (const name of Object.keys(bundles)) {
+    app.get(`/widget/v1/${name}`, { schema: { tags: ["widget"], security: [], response: { 200: z.string(), 304: z.string(), 404: S.ErrorSchema } } }, async (req, reply) => {
+      let cached = widgetCache.get(name);
+      if (!cached || env !== "production") {
+        try {
+          const body = await readFile(bundles[name]!, "utf8");
+          cached = { body, etag: `"${Buffer.byteLength(body).toString(16)}-${body.length.toString(36)}"` };
+          widgetCache.set(name, cached);
+        } catch {
+          throw new DomainError("NOT_FOUND", "widget bundle is not built", "run `pnpm --filter @gate/widget build`");
+        }
       }
-    }
-    if (req.headers["if-none-match"] === widgetCache.etag) return reply.code(304).send("");
-    return reply.header("content-type", "application/javascript; charset=utf-8").header("cache-control", "public, max-age=300").header("etag", widgetCache.etag).send(widgetCache.body);
-  });
+      if (req.headers["if-none-match"] === cached.etag) return reply.code(304).send("");
+      return reply.header("content-type", "application/javascript; charset=utf-8").header("cache-control", "public, max-age=300").header("etag", cached.etag).send(cached.body);
+    });
+  }
   app.get("/widget/v1/demo", { schema: { tags: ["widget"], security: [], querystring: z.object({ org: z.string(), course: z.string(), currency: z.string().optional(), stripePk: z.string().optional() }), response: { 200: z.string() } } }, async (req, reply) => {
     const base = deps.publicUrl ?? "";
     const attrs = [`data-gate-api="${base}"`, `data-gate-org="${req.query.org}"`, `data-gate-course="${req.query.course}"`, ...(req.query.currency ? [`data-gate-currency="${req.query.currency}"`] : []), ...(req.query.stripePk ? [`data-gate-stripe-pk="${req.query.stripePk}"`] : [])].join(" ");

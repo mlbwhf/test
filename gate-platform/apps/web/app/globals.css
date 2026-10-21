@@ -7487,3 +7487,15 @@ a.chip:hover {
 .cta-band .site-cta {
   justify-content: center;
 }
+.code-block {
+  margin: 0 0 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}

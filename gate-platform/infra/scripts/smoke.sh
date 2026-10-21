@@ -33,6 +33,7 @@ expect "https://app.$d/help/promote-a-class" 200 'Promote a course' || fail=1
 expect "https://app.$d/help/schedule-builder" 200 'Schedule many dates at once' || fail=1
 expect "https://app.$d/verify" 200 'Verify a badge' || fail=1
 expect "https://api.$d/issuers/none/did.json" 404 '' || fail=1
+expect "https://api.$d/widget/v1/gate-schedule.js" 200 'GateSchedule' || fail=1
 expect "https://api.$d/public/v1/invoices/inv_none.bad" 404 '' || fail=1
 expect "https://app.$d/help/corporate-invoices" 200 'Invoice a company' || fail=1
 expect "https://app.$d/money" 307 "/login?returnTo=" || fail=1

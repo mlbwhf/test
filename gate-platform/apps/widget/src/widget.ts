@@ -23,6 +23,12 @@ export interface WidgetOptions {
   event?: string;
   /** "marketplace" when the visitor came through EnrollClass's class finder. */
   source?: "marketplace";
+  /** With `event`: open the checkout for that date straight away (the schedule widget's inline enroll). */
+  checkout?: boolean;
+  /** Seats to preselect in the checkout. */
+  quantity?: number;
+  /** Leave out the cover image and course header (the host already shows them). */
+  compact?: boolean;
 }
 
 /** Timing knobs (mutable so tests can shorten them). */
@@ -184,7 +190,9 @@ export class Widget {
     this.statusEl = h("div", { class: "gw-status", role: "status", "aria-live": "polite" });
     this.body = h("div", { class: "gw-body" });
     host.replaceChildren(
-      h("div", { class: "gw-root" }, this.bannerEl, h("div", { class: "gw-header" }, this.titleEl, this.metaEl), this.statusEl, this.body),
+      opts.compact
+        ? h("div", { class: "gw-root gw-compact" }, this.statusEl, this.body)
+        : h("div", { class: "gw-root" }, this.bannerEl, h("div", { class: "gw-header" }, this.titleEl, this.metaEl), this.statusEl, this.body),
     );
     this.ready = this.load();
   }
@@ -212,6 +220,7 @@ export class Widget {
       ].filter(Boolean).join(" · ");
       this.setStatus("");
       this.renderSchedule();
+      if (this.opts.checkout && this.opts.event) this.openCheckout(this.opts.event);
       await this.resumeRedirect();
     } catch (err) {
       this.titleEl.textContent = "Course schedule";
@@ -383,6 +392,16 @@ export class Widget {
     );
   }
 
+  /** Straight to the checkout of a date: the cheapest ticket on sale in the visitor's currency. */
+  private openCheckout(eventId: string): void {
+    const cohort = this.data?.cohorts.find((c) => c.event.id === eventId);
+    if (!cohort) return;
+    const onSale = cohort.ticketTypes.filter((t) => t.remaining > 0 && t.prices[this.currency] !== undefined);
+    const tt = onSale.sort((a, b) => a.prices[this.currency]! - b.prices[this.currency]!)[0];
+    // Sold out: stay on the schedule, which offers the waitlist.
+    if (tt) this.renderCheckout(cohort, tt);
+  }
+
   /* ---------- Checkout form ---------- */
   private renderCheckout(cohort: Cohort, tt: TicketType): void {
     const ev = cohort.event;
@@ -391,14 +410,15 @@ export class Widget {
     const max = Math.max(1, Math.min(10, tt.remaining));
     const idempotencyKey = uuid(); // one per checkout attempt
     const uid = (s: string): string => `${this.id}-${s}`;
-    const drafts: Draft[] = [{ email: "", name: "", company: "" }];
-    let quantity = 1;
+    let quantity = Math.min(max, Math.max(1, Math.floor(this.opts.quantity ?? 1)));
+    const drafts: Draft[] = Array.from({ length: quantity }, () => ({ email: "", name: "", company: "" }));
     let buyerEmail = "";
     let sameAsBuyer = true;
     let firstEmailInput: HTMLInputElement | null = null;
 
     const qtySelect = h("select", { id: uid("qty"), class: "gw-select", "aria-describedby": uid("qty-hint") });
     for (let i = 1; i <= max; i++) qtySelect.append(h("option", { value: String(i) }, String(i)));
+    qtySelect.value = String(quantity);
     const buyerInput = h("input", {
       id: uid("buyer"), type: "email", class: "gw-input", required: true, autocomplete: "email", placeholder: "you@example.com",
     });
