@@ -16,6 +16,10 @@ export type Competitor = {
   processing: string;
   /** Total fees on one $1,295 seat, organizer absorbs (platform + processing), as display text. */
   total: string;
+  /** The same total in cents, for the difference column; null when a licence makes it not comparable per seat. */
+  totalMinor: number | null;
+  /** Also charges a monthly licence, so the per-seat total understates its cost. */
+  licence?: boolean;
   monthly: string;
   /** Who takes the learner's money, and when the organizer gets it. */
   money: string;
@@ -28,6 +32,7 @@ export const COMPETITORS: Competitor[] = [
     fee: "3.7% + $1.79",
     processing: "2.9% of the order",
     total: "$87.26",
+    totalMinor: 8_726,
     monthly: "Optional paid plans",
     money: "Eventbrite collects; paid out after the event",
     source: "https://www.eventbrite.com/organizer/pricing/",
@@ -37,6 +42,7 @@ export const COMPETITORS: Competitor[] = [
     fee: "5% + $1.29",
     processing: "Included",
     total: "$66.04",
+    totalMinor: 6_604,
     monthly: "None",
     money: "Humanitix collects; paid out after the event",
     source: "https://help.humanitix.com/en/articles/12292391-what-are-the-humanitix-booking-fees",
@@ -46,6 +52,7 @@ export const COMPETITORS: Competitor[] = [
     fee: "5%",
     processing: "Your Stripe: 2.9% + $0.30",
     total: "$102.61",
+    totalMinor: 10_261,
     monthly: "None (Plus: $59/mo for 0%)",
     money: "Your Stripe account",
     source: "https://help.luma.com/p/luma-plus",
@@ -55,6 +62,7 @@ export const COMPETITORS: Competitor[] = [
     fee: "$1 + $0.15 per registration",
     processing: "Your Stripe: 2.9% + $0.30",
     total: "$39.01",
+    totalMinor: 3_901,
     monthly: "None",
     money: "Your Stripe account",
     source: "https://www.corsizio.com/pricing",
@@ -64,6 +72,7 @@ export const COMPETITORS: Competitor[] = [
     fee: "About $0.85",
     processing: "Your Stripe: 2.9% + $0.30",
     total: "About $38.71",
+    totalMinor: 3_871,
     monthly: "None",
     money: "Your Stripe, PayPal or Square",
     source: "https://www.tickettailor.com/en-us/pricing",
@@ -73,6 +82,8 @@ export const COMPETITORS: Competitor[] = [
     fee: "$1.80 to $2.15 per registration",
     processing: "Your payment gateway",
     total: "About $40 + licence",
+    totalMinor: 4_000,
+    licence: true,
     monthly: "From about $118/mo per admin",
     money: "Your payment gateway",
     source: "https://www.arlo.co/pricing",

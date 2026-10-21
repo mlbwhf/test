@@ -8557,3 +8557,86 @@ a.chip:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Pricing comparison: difference column, learner-pays note, "what the difference pays for" checklist. */
+.compare-lede {
+  max-width: 760px;
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+.diff {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.diff-base {
+  background: oklch(0.72 0.17 155 / 0.25);
+  white-space: normal;
+}
+.diff-less {
+  background: rgba(20, 33, 61, 0.08);
+}
+.diff-more {
+  background: oklch(0.8 0.14 80 / 0.35);
+}
+.diff-ours {
+  background: oklch(0.72 0.17 155 / 0.3);
+}
+.compare-note {
+  margin: 16px 0 0;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: oklch(0.72 0.17 155 / 0.14);
+  max-width: 900px;
+}
+.included {
+  margin-top: 28px;
+}
+.included-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 18px;
+}
+.included-cols section {
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: #fefefd;
+  border: 1px solid rgba(20, 33, 61, 0.12);
+}
+.included-cols h4 {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-size: 18px;
+}
+.included-cols h4 + .checklist {
+  margin-bottom: 16px;
+}
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.checklist li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 8px;
+  line-height: 1.45;
+}
+.checklist li::before {
+  content: "✓";
+  font-weight: 700;
+  color: var(--green-text);
+}
+.checklist-plus li::before {
+  content: "+";
+}
+@media (max-width: 860px) {
+  .included-cols {
+    grid-template-columns: 1fr;
+  }
+}

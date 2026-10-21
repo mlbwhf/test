@@ -178,6 +178,9 @@ export function PricingSection({ data, full }: { data: FeeData; full?: boolean }
         </ul>
 
         <h3 className="compare-title">What a {money(EXAMPLE_SEAT_MINOR)} certification seat costs you</h3>
+        <p className="compare-lede">
+          On an expensive seat, flat-fee tools like Corsizio, Ticket Tailor and Arlo cost less per registration than our percentage. The last column shows the gap in dollars against EnrollClass Direct, and the checklist below shows what it pays for.
+        </p>
         <div className="compare-wrap" role="region" aria-labelledby="compare-caption" tabIndex={0}>
           <table className="compare">
             <caption id="compare-caption">Fees on one {money(EXAMPLE_SEAT_MINOR)} seat when you absorb them, US card</caption>
@@ -189,19 +192,10 @@ export function PricingSection({ data, full }: { data: FeeData; full?: boolean }
                 <th scope="col">Total on {money(EXAMPLE_SEAT_MINOR)}</th>
                 <th scope="col">Monthly</th>
                 <th scope="col">Who holds the money</th>
+                <th scope="col">Compared with EnrollClass Direct</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="is-us">
-                <th scope="row">EnrollClass Protected</th>
-                <td>{feeLabel(fees.protected, "USD")}</td>
-                <td>Included</td>
-                <td>
-                  <strong>{money(protectedTotal)}</strong>
-                </td>
-                <td>None</td>
-                <td>Held until the class is delivered, then paid to you</td>
-              </tr>
               <tr className="is-us">
                 <th scope="row">EnrollClass Direct</th>
                 <td>{feeLabel(fees.direct, "USD")}</td>
@@ -211,24 +205,102 @@ export function PricingSection({ data, full }: { data: FeeData; full?: boolean }
                 </td>
                 <td>None</td>
                 <td>Your Stripe account</td>
+                <td>
+                  <span className="diff diff-base">Baseline · everything in the checklist below</span>
+                </td>
               </tr>
-              {COMPETITORS.map((c) => (
-                <tr key={c.name}>
-                  <th scope="row">
-                    <a href={c.source} target="_blank" rel="noopener nofollow">
-                      {c.name}
-                    </a>
-                  </th>
-                  <td>{c.fee}</td>
-                  <td>{c.processing}</td>
-                  <td>{c.total}</td>
-                  <td>{c.monthly}</td>
-                  <td>{c.money}</td>
-                </tr>
-              ))}
+              <tr className="is-us">
+                <th scope="row">EnrollClass Protected</th>
+                <td>{feeLabel(fees.protected, "USD")}</td>
+                <td>Included</td>
+                <td>
+                  <strong>{money(protectedTotal)}</strong>
+                </td>
+                <td>None</td>
+                <td>Held until the class is delivered, then paid to you</td>
+                <td>
+                  <span className="diff diff-more">{money(protectedTotal - directTotal)} more</span> for card fees, disputes and held funds handled for you
+                </td>
+              </tr>
+              {COMPETITORS.map((c) => {
+                const gap = c.totalMinor === null ? null : directTotal - c.totalMinor;
+                return (
+                  <tr key={c.name}>
+                    <th scope="row">
+                      <a href={c.source} target="_blank" rel="noopener nofollow">
+                        {c.name}
+                      </a>
+                    </th>
+                    <td>{c.fee}</td>
+                    <td>{c.processing}</td>
+                    <td>{c.total}</td>
+                    <td>{c.monthly}</td>
+                    <td>{c.money}</td>
+                    <td>
+                      {gap === null ? (
+                        "Not comparable per seat"
+                      ) : gap > 0 ? (
+                        <>
+                          <span className="diff diff-less">
+                            {c.licence ? "About " : ""}
+                            {money(gap)} less
+                          </span>{" "}
+                          per seat ({((gap / EXAMPLE_SEAT_MINOR) * 100).toFixed(1)}% of the price){c.licence ? ", plus its monthly licence" : ""}
+                        </>
+                      ) : (
+                        <span className="diff diff-ours">{money(-gap)} more than Direct</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+        <p className="compare-note">
+          <strong>Most organizers pay none of our fee.</strong> By default learners pay the EnrollClass fee as a booking fee at checkout, so you keep the full {money(EXAMPLE_SEAT_MINOR)}. With Protected that also covers card processing; with Direct you pay only Stripe&apos;s card fee. You can switch to absorbing it per organization.
+        </p>
+
+        <div className="included" aria-labelledby="included-title">
+          <h3 className="compare-title" id="included-title">
+            What the difference pays for
+          </h3>
+          <div className="included-cols">
+            <section>
+              <h4>Included in every paid seat</h4>
+              <ul className="checklist">
+                <li>Course page, plus a page and Google event listing for every date</li>
+                <li>Registration widget and a full schedule widget for your own website</li>
+                <li>Schedule builder: repeat a class monthly or weekly in one step</li>
+                <li>Early-bird, group and regional pricing, and waitlists</li>
+                <li>Corporate invoices with a card pay link and automatic reminders</li>
+                <li>QR tickets and check-in from your phone</li>
+                <li>Attendance from Zoom or Teams, certificates and course emails</li>
+                <li>Learners change dates or cancel themselves, within your policy</li>
+                <li>Listing in Find a class (a referral fee only on bookings it brings)</li>
+                <li>Instructor roles and instructor pay tracking</li>
+                <li>Import from Eventbrite or a spreadsheet; API, webhooks, Zapier, Make, n8n and AI assistants</li>
+                <li>No setup fee, no monthly plan, nothing on free classes</li>
+              </ul>
+            </section>
+            <section>
+              <h4>Protected adds</h4>
+              <ul className="checklist">
+                <li>Card processing included in the fee</li>
+                <li>Money held until the class is delivered, then paid to you</li>
+                <li>Learners refunded automatically if a class is cancelled</li>
+                <li>Chargebacks and disputes handled by EnrollClass</li>
+              </ul>
+              <h4>Optional, when you want them</h4>
+              <ul className="checklist checklist-plus">
+                <li>Verified digital badges: {money(extra.verifiedBadgeMinor)} per paid seat</li>
+                <li>Flexible tickets learners buy; you keep {pct(10_000 - extra.flexible.platformShareBps)} of the upgrade</li>
+                <li>Get paid early: {pct(extra.earlyRelease.bps)} of the released amount</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+
         <p className="footnote">
           Other platforms&apos; prices are from their published US pricing and help pages (linked), checked {CHECKED_ON}; they can change. Totals assume the organizer absorbs the fees and a US card at 2.9% + $0.30. Corsizio&apos;s $0.15 applies once you pass 30 registrations a month; Arlo also needs a monthly licence per administrator.
         </p>
