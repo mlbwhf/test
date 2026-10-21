@@ -1,0 +1,350 @@
+<title>Scaled Planning Opportunity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~72ch) with wide breakout tables; sticky-note colors used only as status chips. */
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --fg: #17212b;
+  --muted: #5a6875;
+  --line: #d9dee3;
+  --accent: #0b6e69;
+  --accent-soft: #e2f1ef;
+  --note: #f5c542;
+  --note-soft: #fdf3d3;
+  --risk: #b4442f;
+  --risk-soft: #f8e4df;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --surface: #182028; --fg: #e4e9ed; --muted: #9aa8b4; --line: #2b3640;
+    --accent: #4fc2b9; --accent-soft: #15302e; --note: #e9b93a; --note-soft: #33290f;
+    --risk: #ec8a74; --risk-soft: #3a201a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --surface: #182028; --fg: #e4e9ed; --muted: #9aa8b4; --line: #2b3640;
+  --accent: #4fc2b9; --accent-soft: #15302e; --note: #e9b93a; --note-soft: #33290f;
+  --risk: #ec8a74; --risk-soft: #3a201a; color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+}
+.wrap {
+  max-width: 960px; margin: 0 auto;
+  padding-block: 48px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.prose { max-width: 70ch; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; }
+h3 { font-size: 1.12rem; font-weight: 700; }
+p { margin: 0 0 14px; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+header { display: grid; gap: 14px; margin-bottom: 40px; }
+header .lede { font-size: 1.15rem; color: var(--muted); max-width: 62ch; margin: 0; }
+section { margin-top: 56px; }
+.verdict {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 24px; display: grid; gap: 12px;
+}
+.verdict p { margin: 0; }
+.verdict strong { color: var(--accent); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+.stat { border-top: 2px solid var(--fg); padding-top: 10px; display: grid; gap: 4px; }
+.stat b { font-family: var(--font-display); font-size: 1.7rem; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+.signals { display: grid; gap: 18px; margin-top: 8px; }
+.signal { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.signal:last-child { border-bottom: 0; }
+.signal .when { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); padding-top: 3px; }
+.signal div { min-width: 0; }
+.signal p { margin: 6px 0 0; color: var(--muted); }
+.table-scroll { overflow-x: auto; margin-top: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; min-width: 760px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--bg); }
+tbody tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+.matrix td:not(:first-child), .matrix th:not(:first-child) { text-align: center; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); }
+.dot.full { background: var(--accent); }
+.dot.half { background: linear-gradient(90deg, var(--accent) 50%, transparent 50%); }
+.dot.none { border-color: var(--line); }
+.matrix tr.us td { background: var(--accent-soft); }
+.legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.note { font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
+.gaps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; margin-top: 8px; }
+.gap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.gap p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.chip { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; justify-self: start; }
+.chip.high { background: var(--note-soft); color: var(--fg); border: 1px solid var(--note); }
+.chip.med { background: var(--accent-soft); color: var(--fg); border: 1px solid var(--accent); }
+ul.tight { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; }
+ul.tight li { padding-left: 2px; }
+.frameworks { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.frameworks span { font-size: 0.85rem; border: 1px solid var(--line); background: var(--surface); padding: 4px 10px; border-radius: 999px; }
+.phases { display: grid; gap: 0; margin-top: 12px; border-left: 2px solid var(--line); }
+.phase { padding: 0 0 26px 22px; position: relative; display: grid; gap: 8px; }
+.phase::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+.phase .when { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+.phase ul { color: var(--muted); }
+.risks { display: grid; gap: 12px; margin-top: 8px; }
+.risk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; padding: 14px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); }
+.risk b { display: block; }
+.risk .mit { color: var(--muted); font-size: 0.95rem; }
+.risk .lbl { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--risk); display: block; margin-bottom: 2px; }
+.risk .mit .lbl { color: var(--accent); }
+ol.steps { padding-left: 1.3rem; display: grid; gap: 10px; margin: 0; }
+.sources { font-size: 0.85rem; color: var(--muted); }
+.sources ul { padding-left: 1.1rem; display: grid; gap: 4px; }
+.sources a { word-break: break-word; }
+@media (max-width: 560px) {
+  .signal { grid-template-columns: 1fr; gap: 4px; }
+  .risk { grid-template-columns: 1fr; gap: 8px; }
+  .wrap { padding-block: 32px 64px; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Market research · October 2026</div>
+  <h1>A scaled-agile planning tool in the iObeya space: where's the opening?</h1>
+  <p class="lede">An opportunity assessment for a visual planning and reporting product that connects to Jira and Azure DevOps by default, supports SAFe and the other scaling models, and also runs on its own.</p>
+</header>
+
+<div class="verdict">
+  <div class="eyebrow">Bottom line</div>
+  <p><strong>The opportunity is real, but a straight iObeya clone is not the best way in.</strong> The opening is a <em>framework-neutral planning and insight layer</em> that treats Jira, Azure DevOps (and later GitHub) as equal sources. It should model any operating model (SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels or a homegrown hybrid) as configuration, not code, and put reporting first instead of adding it later.</p>
+  <p>The best first customers are companies with 300 to 5,000 people in delivery that find Jira Align too heavy or expensive, run mixed Jira and ADO estates, or are being pushed off Jira Data Center before it ends in 2029.</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>$1.7–3.4B</b><span>Estimated size of the enterprise agile planning tools market in 2025–26. Published estimates vary widely.</span></div>
+  <div class="stat"><b>13–28%</b><span>Forecast annual growth (CAGR). The low end is the safer number to plan on.</span></div>
+  <div class="stat"><b>Mar 2029</b><span>Atlassian Data Center end of life. New Data Center sales already stopped in March 2026.</span></div>
+  <div class="stat"><b>~26%</b><span>Share of State of Agile respondents naming SAFe, down from 53% in earlier editions.</span></div>
+</div>
+
+<section>
+  <h2>Why now: five market shifts</h2>
+  <div class="signals">
+    <div class="signal">
+      <div class="when">Atlassian</div>
+      <div>
+        <h3>Jira Data Center is ending</h3>
+        <p>Atlassian announced in September 2025 that Data Center products end on 28 March 2029. Regulated, defence and public-sector buyers who can't move to Atlassian Cloud need planning tools they can host themselves. A self-hostable or sovereign-cloud option is a real way to stand out here.</p>
+      </div>
+    </div>
+    <div class="signal">
+      <div class="when">Atlassian</div>
+      <div>
+        <h3>Jira Align is expensive and is being bundled</h3>
+        <p>Third-party pricing trackers list the Strategy Collection (Jira Align, Focus and Talent) at about $77,400 a year for its smallest tier. Reviewers mention six-month rollouts, consultants needed to keep it in use, and Jira data that doesn't map cleanly. Atlassian's new strategy products are Jira-first and cloud-only, which leaves ADO shops out.</p>
+      </div>
+    </div>
+    <div class="signal">
+      <div class="when">Microsoft</div>
+      <div>
+        <h3>Azure DevOps is in maintenance mode</h3>
+        <p>New Microsoft investment is going into GitHub, while Azure Boards gets mostly small fixes. The typical 2026 setup is code on GitHub with planning still in ADO Boards. A planning layer that spans ADO, Jira and GitHub Issues becomes the neutral place to plan.</p>
+      </div>
+    </div>
+    <div class="signal">
+      <div class="when">Frameworks</div>
+      <div>
+        <h3>Buyers are moving from SAFe-only to hybrid models</h3>
+        <p>SAFe's survey share has roughly halved. Scaled Agile's own 2025 report says customers adapt SAFe heavily and ask for simplification. A tool that hard-codes SAFe is aiming at a shrinking target. A tool that lets each company define its own model fits where the market is going.</p>
+      </div>
+    </div>
+    <div class="signal">
+      <div class="when">Whiteboards</div>
+      <div>
+        <h3>Miro and Mural run PI planning, but their sync is shallow</h3>
+        <p>Miro's Planner needs the Enterprise plan for ADO sync. Users report that story points and assignees don't sync back. Whiteboards made remote PI planning normal, but they give programme leaders no planning data model and no reporting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Competitive landscape</h2>
+  <div class="prose"><p>The market splits into four groups: visual boards (iObeya, Miro, Mural), PI-planning add-ons (Kendis, Easy Agile), heavy portfolio suites (Jira Align, Planview, Digital.ai, IBM Targetprocess) and the platform vendors' own tools (Atlassian Focus). No player combines all three of: equal Jira/ADO support, any framework, and strong analytics.</p></div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Product</th><th>Category</th><th>Integrations</th><th>Framework stance</th><th>Price signal</th><th>Main weakness to exploit</th></tr></thead>
+      <tbody>
+        <tr><td>iObeya</td><td>Visual management boards</td><td>Two-way Jira and ADO</td><td>Lean and SAFe board templates</td><td>Team+ about 4,200/yr (GetApp, currency not stated); Enterprise on quote</td><td>Built around boards. Reviewers ask for better API integration and admin tools. Reporting is not the core product.</td></tr>
+        <tr><td>Jira Align</td><td>Enterprise portfolio suite</td><td>Jira native; ADO via connector</td><td>SAFe-centred, full portfolio</td><td>About $77k/yr entry tier (aggregators); full-user licensing</td><td>Cost, rollout time, complexity, sync mismatch with Jira</td></tr>
+        <tr><td>Kendis</td><td>PI-planning layer</td><td>Two-way Jira (Cloud, DC) and ADO</td><td>SAFe-first</td><td>$10–25 per user per month (TrustRadius)</td><td>Small vendor, SAFe-shaped data model, limited portfolio depth</td></tr>
+        <tr><td>Easy Agile Programs</td><td>Jira Marketplace app</td><td>Jira only</td><td>SAFe-style program board</td><td>Marketplace per-user pricing</td><td>No ADO support, stays inside Jira's limits</td></tr>
+        <tr><td>Miro / Mural</td><td>Whiteboards</td><td>Jira and ADO (Miro's ADO sync needs Enterprise plan)</td><td>Templates only</td><td>Seat-based, already widely licensed</td><td>No planning data model, field-level sync gaps, no programme analytics</td></tr>
+        <tr><td>Planview, Digital.ai, IBM Targetprocess</td><td>Full agile platforms</td><td>Own backlog plus connectors</td><td>SAFe and portfolio governance</td><td>Enterprise quotes</td><td>Ask customers to replace their work tool. Long, consultant-led rollouts.</td></tr>
+        <tr><td>Atlassian Focus</td><td>Strategy and planning</td><td>Atlassian Cloud only</td><td>Strategy and OKRs; not team-of-teams planning</td><td>Strategy Collection bundle</td><td>Cloud-only, Jira-only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-top:32px">Capability fit</h3>
+  <div class="table-scroll">
+    <table class="matrix">
+      <thead><tr><th>Capability</th><th>iObeya</th><th>Jira Align</th><th>Kendis</th><th>Miro</th><th>Target product</th></tr></thead>
+      <tbody>
+        <tr><td>Equal Jira and ADO support</td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Mixed Jira and ADO teams in one train</td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Frameworks beyond SAFe</td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Works standalone (own backlog)</td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Custom dashboards and flow metrics</td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Self-hosted option</td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+        <tr><td>Affordable for mid-size companies</td><td><span class="dot half" aria-label="partial"></span></td><td><span class="dot none" aria-label="weak"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot full" aria-label="strong"></span></td><td><span class="dot full" aria-label="strong"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend"><span><i class="dot full"></i> Strong</span><span><i class="dot half"></i> Partial</span><span><i class="dot none"></i> Weak or absent</span></div>
+  <p class="note">The ratings are my own assessment from vendor pages, review sites and community posts. They are not hands-on tests. Check each one in a trial before using it in a pitch.</p>
+</section>
+
+<section>
+  <h2>White space: what to build that others don't</h2>
+  <div class="gaps">
+    <div class="gap">
+      <span class="chip high">Core differentiator</span>
+      <h3>Operating-model builder</h3>
+      <p>Frameworks are configuration: hierarchy levels, names for each level (Epic, Capability, Feature), cadences, ceremonies, roles, board layouts and default metrics. Ship ready-made templates and let coaches fork and mix them.</p>
+    </div>
+    <div class="gap">
+      <span class="chip high">Core differentiator</span>
+      <h3>One planning model across Jira, ADO and GitHub</h3>
+      <p>A shared data model with per-team field mapping, so one train can include Jira teams and ADO teams. Dependencies can cross tools. Changes on the board write back to each source.</p>
+    </div>
+    <div class="gap">
+      <span class="chip high">Core differentiator</span>
+      <h3>Reporting first</h3>
+      <p>Drag-and-drop dashboard builder over a curated metrics catalogue: the six flow metrics, PI predictability, objective achievement, dependency health, ROAM risk burn-down, capacity versus load, and DORA. Scheduled PDF and Slack/Teams digests, plus Power BI and Tableau connectors.</p>
+    </div>
+    <div class="gap">
+      <span class="chip med">Strong supporting feature</span>
+      <h3>Standalone mode</h3>
+      <p>A native backlog lets business, hardware or non-software teams plan without Jira or ADO. They can connect later without migrating. This also makes free trials possible with no setup.</p>
+    </div>
+    <div class="gap">
+      <span class="chip med">Strong supporting feature</span>
+      <h3>AI facilitation</h3>
+      <p>Spots hidden dependencies and overloaded teams, drafts PI objectives from features, summarises ROAM risks, checks readiness before an event, and writes the executive narrative for each dashboard.</p>
+    </div>
+    <div class="gap">
+      <span class="chip med">Strong supporting feature</span>
+      <h3>Hosting where the customer needs it</h3>
+      <p>Multi-tenant SaaS, a single-tenant EU or US region, and a self-hosted container build. This targets buyers affected by Data Center end of life and EU data-sovereignty rules.</p>
+    </div>
+  </div>
+
+  <div class="prose" style="margin-top:28px">
+    <h3>Framework templates to ship</h3>
+    <div class="frameworks">
+      <span>SAFe 6 Essential</span><span>SAFe Large Solution</span><span>SAFe Portfolio / Full</span><span>LeSS and LeSS Huge</span><span>Scrum@Scale</span><span>Nexus</span><span>Disciplined Agile</span><span>Flight Levels</span><span>Spotify-style tribes</span><span>Kanban at scale</span><span>Custom hybrid</span>
+    </div>
+    <p class="note">The name "SAFe" is a Scaled Agile, Inc. trademark. Check their partner program terms before marketing SAFe support.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Suggested phased roadmap</h2>
+  <div class="phases">
+    <div class="phase">
+      <div class="when">Months 0–6 · MVP</div>
+      <h3>Win PI planning for mixed Jira/ADO trains</h3>
+      <ul class="tight">
+        <li>Two-way connectors for Jira Cloud and Azure DevOps Services, with field mapping</li>
+        <li>Program board, team planning boards, dependency lines, ROAM risk board, PI objectives with business value</li>
+        <li>Templates: SAFe Essential and a generic "team of teams"</li>
+        <li>Ten standard reports, including predictability, load versus capacity and dependency health</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <div class="when">Months 6–12</div>
+      <h3>Flexibility and insight</h3>
+      <ul class="tight">
+        <li>Operating-model builder, plus LeSS, Scrum@Scale, Nexus and Flight Levels templates</li>
+        <li>Dashboard builder, scheduled digests, BI connectors</li>
+        <li>Jira Data Center, Azure DevOps Server and GitHub Issues connectors; standalone backlog</li>
+        <li>SOC 2 Type II</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <div class="when">Months 12–24</div>
+      <h3>Portfolio and AI</h3>
+      <ul class="tight">
+        <li>Lean portfolio: epics, guardrails, participatory budgeting, OKRs</li>
+        <li>AI facilitator and narrative reporting</li>
+        <li>Self-hosted edition, ISO 27001, sovereign-region hosting</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="prose">
+  <h2>Positioning and pricing</h2>
+  <p><strong>Positioning:</strong> "Plan at scale your way, across Jira and Azure DevOps, with reporting leadership actually uses." Sell on time to first PI (days, not months) and on fitting any model.</p>
+  <ul class="tight">
+    <li><strong>Price:</strong> between Kendis and Jira Align. For example, $12–20 per planner per month, with free view-only and team-member access. Charging only for active planners was one of Jira Align's better ideas.</li>
+    <li><strong>Channels:</strong> Atlassian Marketplace and Visual Studio Marketplace listings for discovery. SAFe and agile consultancies as resellers, since they run the PI events. Atlassian partners running Data Center to Cloud migrations.</li>
+    <li><strong>Way in:</strong> one Agile Release Train, one PI, run with a coach. Expand train by train, then to the portfolio.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Main risks</h2>
+  <div class="risks">
+    <div class="risk"><div><span class="lbl">Risk</span><b>Atlassian or Microsoft builds the same thing natively</b></div><div class="mit"><span class="lbl">Mitigation</span>Neither has a reason to support the other's tool. Being cross-vendor and framework-neutral is the defence.</div></div>
+    <div class="risk"><div><span class="lbl">Risk</span><b>Two-way sync is hard to get right</b></div><div class="mit"><span class="lbl">Mitigation</span>API rate limits, custom fields and workflow rules break naive sync. Invest early in a sync engine with conflict handling and a visible audit log. This is the moat if done well.</div></div>
+    <div class="risk"><div><span class="lbl">Risk</span><b>Crowded category, long enterprise sales cycles</b></div><div class="mit"><span class="lbl">Mitigation</span>Focus on one painful job (mixed-tool PI planning) and on channels that already sit in front of buyers.</div></div>
+    <div class="risk"><div><span class="lbl">Risk</span><b>Security reviews block deals</b></div><div class="mit"><span class="lbl">Mitigation</span>Plan for SSO/SCIM, SOC 2 and data residency from the first release, not as later add-ons.</div></div>
+    <div class="risk"><div><span class="lbl">Risk</span><b>Too much flexibility makes setup hard</b></div><div class="mit"><span class="lbl">Mitigation</span>Opinionated templates by default; the builder is an advanced option.</div></div>
+  </div>
+</section>
+
+<section class="prose">
+  <h2>Next steps to validate</h2>
+  <ol class="steps">
+    <li>Interview 15–20 Release Train Engineers, LACE leads and PMO heads, split across Jira-only, ADO-only and mixed estates. Ask what they use today, what they pay, and what their last PI planning event cost in prep time.</li>
+    <li>Get real quotes for iObeya, Jira Align and Kendis so price positioning is based on facts, not aggregator figures.</li>
+    <li>Build a sync prototype: one board with a Jira project and an ADO project, with one dependency across them, writing back to both.</li>
+    <li>Run a paid pilot with one consultancy at a real PI event before building the dashboard builder.</li>
+    <li>Contact Scaled Agile about their partner program before using SAFe branding.</li>
+  </ol>
+</section>
+
+<section class="sources">
+  <h2>Sources</h2>
+  <p>Market-size and pricing figures come from third-party aggregators and vendor material. They disagree with each other, so treat them as directional.</p>
+  <ul>
+    <li><a href="https://www.capterra.com/p/154147/iObeya/">Capterra: iObeya</a> · <a href="https://www.getapp.com/all-software/a/iobeya/">GetApp: iObeya pricing</a> · <a href="https://www.iobeya.com/product-news/whats-new-in-iobeya-4-26">iObeya 4.26 release notes</a> · <a href="https://g2.com/products/iobeya/reviews?page=4">G2: iObeya reviews</a> · <a href="https://www.trustradius.com/compare-products/iobeya">TrustRadius: iObeya</a></li>
+    <li><a href="https://www.tability.io/compare/pricing/jira-align">Tability: Jira Align pricing</a> · <a href="https://getpulsesignal.com/pricing/jira-align">PulseSignal: Jira Align</a> · <a href="https://origin.peerspot.com/products/jira-align-pros-and-cons">PeerSpot: Jira Align pros and cons</a> · <a href="https://www.schneider.im/atlassian-teamwork-collection-and-strategy-collection-available">Atlassian Strategy Collection overview</a></li>
+    <li><a href="https://www.trustradius.com/compare-products/kendis">TrustRadius: Kendis</a> · <a href="https://marketplace.atlassian.com/apps/1220739">Atlassian Marketplace: Kendis</a> · <a href="https://www.easyagile.com/llm-answer-cards/alternatives-to-jira-align-for-safe">Easy Agile: Jira Align alternatives</a></li>
+    <li><a href="https://www.adaptavist.com/blog/atlassian-data-center-end-of-life-march-2029">Adaptavist: Data Center end of life</a> · <a href="https://www.gliffy.com/blog/atlassian-data-center-end-of-life">Gliffy: Data Center milestones</a> · <a href="https://community.developer.atlassian.com/t/from-data-center-to-cloud-the-next-chapter-for-marketplace-apps/95173">Atlassian developer community</a></li>
+    <li><a href="https://www.directionsonmicrosoft.com/roadmaps/ref/azure-devops/">Directions on Microsoft: Azure DevOps roadmap</a> · <a href="https://devblogs.microsoft.com/devops/azure-devops-with-github-repositories-your-path-to-agentic-ai/">Microsoft DevOps blog</a></li>
+    <li><a href="https://help.miro.com/hc/articles/15280547945618">Miro: Planner for Azure DevOps</a> · <a href="https://miro.com/marketplace/planner/">Miro Planner</a> · <a href="https://community.miro.com/ideas/story-point-control-not-integrated-with-the-story-point-field-on-azure-devops-20546">Miro community: story point sync</a></li>
+    <li><a href="https://www.scrum.org/resources/blog/how-state-agile-has-evolved-over-17-reports">Scrum.org: State of Agile over 17 reports</a> · <a href="https://www.neteye-blog.com/blog/2026/03/31/when-agile-at-scale-meets-atlassian-choosing-the-right-scaling-model-for-global-it-organizations/">NetEye: scaling model adoption</a> · <a href="https://framework.scaledagile.com/blog/the-first-annual-state-of-safe-report-has-been-released">Scaled Agile: State of SAFe</a></li>
+    <li><a href="https://www.custommarketinsights.com/report/enterprise-agile-planning-market/">Custom Market Insights</a> · <a href="https://www.theinsightpartners.com/reports/enterprise-agile-planning-tools-market">The Insight Partners</a> · <a href="https://markwideresearch.com/global-enterprise-agile-planning-tools-market">MarkWide Research</a> · <a href="https://www.businessresearchinsights.com/market-reports/enterprise-agile-planning-tools-market-105771">Business Research Insights</a></li>
+    <li><a href="https://planisware.com/planisware-named-leader-2025-gartner-magic-quadrant-adaptive-project-management-reporting">Planisware: 2025 Gartner APMR</a> · <a href="https://www.apptio.com/blog/new-targetprocess-features-to-deploy-safe-6-0-and-advance-your-budgeting-process/">Apptio Targetprocess and SAFe 6.0</a> · <a href="https://inflectra.com/Tools/software-development/top-10-scaled-agile-framework-tools">Inflectra: SAFe tools 2026</a></li>
+  </ul>
+</section>
+
+</div>
