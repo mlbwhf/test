@@ -4,9 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 //   app.<domain>   organizer dashboard (signed-in people only) and learner portal (/my)
 //   <domain>       marketing site, served from app/site
 //   www.<domain>   redirected to <domain>
-// Legal pages, the FAQ and the class finder (/terms, /privacy, /refunds, /faq, /classes) resolve on
+// Legal pages, the FAQ, the class finder and the product pages (/terms, /privacy, /refunds, /faq,
+// /classes, /how-it-works, /pricing, /instructors) resolve on
 // every host so links from emails and the learner portal work wherever they are opened.
-const LEGAL = new Set(["/terms", "/privacy", "/refunds", "/faq", "/classes"]);
+const LEGAL = new Set(["/terms", "/privacy", "/refunds", "/faq", "/classes", "/how-it-works", "/pricing", "/instructors"]);
 
 function marketingHosts(): Set<string> {
   const domain = (process.env.GATE_DOMAIN ?? "enrollclass.com").toLowerCase();

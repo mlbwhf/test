@@ -16,9 +16,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <header className="site-nav">
         <Logo href="/" size={12} />
         <nav aria-label="Site">
-          <Link href="/#how">How it works</Link>
-          <Link href="/#pricing">Pricing</Link>
-          <Link href="/#start">For instructors</Link>
+          <Link href="/how-it-works">How it works</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link href="/instructors">For instructors</Link>
           <Link href="/classes">Find a class</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/help">Help</Link>

@@ -903,22 +903,20 @@ td .action-form-inline .result {
   grid-template-columns: repeat(10, 1fr);
   gap: 6px;
 }
-.seat {
+.cohort-card .seat {
   aspect-ratio: 1;
   border-radius: 20%;
   background: var(--paper);
   animation: seat-in 0.4s ease both;
+  transition: background 0.4s ease, border-radius 0.4s ease;
 }
-.seat-next {
+.cohort-card .seat-next {
   border-radius: 50%;
   background: var(--green);
 }
-.seat-empty {
+.cohort-card .seat-empty {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.14);
-}
-.seat:nth-child(n) {
-  animation-delay: calc(var(--i, 0) * 30ms);
 }
 @keyframes seat-in {
   from {
@@ -7356,4 +7354,136 @@ a.chip:hover {
   margin-left: 6px;
   font-style: normal;
   font-size: 11px;
+}
+
+/* Hero: the cohort keeps filling (see components/live-cohort.tsx). */
+.cohort-card .seat-next {
+  animation: seat-in 0.4s ease both, seat-pulse 1.6s ease-in-out 0.4s infinite;
+}
+.cohort-card .seat-just {
+  animation: seat-book 0.5s ease both;
+}
+@keyframes seat-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 oklch(0.72 0.17 155 / 0.6); }
+  50% { transform: scale(1.15); box-shadow: 0 0 0 6px oklch(0.72 0.17 155 / 0); }
+}
+@keyframes seat-book {
+  0% { transform: scale(0.5); background: var(--green); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.cohort-card .tick {
+  display: inline-block;
+  animation: tick-up 0.45s ease both;
+}
+@keyframes tick-up {
+  from { transform: translateY(6px); opacity: 0.2; }
+  to { transform: none; opacity: 1; }
+}
+.cohort-toast {
+  margin: 0;
+  min-height: 22px;
+  font-size: 13px;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cohort-toast.is-on {
+  animation: toast-in 1.6s ease both;
+}
+@keyframes toast-in {
+  0% { opacity: 0; transform: translateY(6px); }
+  15%, 80% { opacity: 1; transform: none; }
+  100% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cohort-card .seat, .cohort-card .seat-next, .cohort-card .seat-just, .cohort-card .tick, .cohort-toast.is-on { animation: none; }
+}
+
+/* In-page menu on the homepage; sticks under the top of the window while scrolling. */
+.page-menu {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 10px 16px;
+  background: color-mix(in oklch, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.page-menu a {
+  flex: none;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.page-menu a:hover {
+  background: rgba(20, 33, 61, 0.07);
+}
+.site section[id] {
+  scroll-margin-top: 64px;
+}
+.pricing-more {
+  margin: 28px 0 0;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .page-menu {
+    justify-content: flex-start;
+  }
+}
+
+/* Inner marketing pages (/how-it-works, /pricing, /instructors). */
+.page-head {
+  padding: 64px clamp(20px, 5vw, 64px) 24px;
+  max-width: 980px;
+}
+.page-head h1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(36px, 6vw, 60px);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  margin: 8px 0 14px;
+}
+.page-head p {
+  font-size: 18px;
+  max-width: 680px;
+  color: var(--muted);
+  margin: 0;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.feature {
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.feature h3 {
+  font-family: var(--display);
+  font-size: 20px;
+  margin: 8px 0 6px;
+}
+.feature p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.cta-band {
+  text-align: center;
+}
+.cta-band .site-cta {
+  justify-content: center;
 }
