@@ -39,6 +39,8 @@ export type Organization = {
   marketplaceListing: boolean;
   /** Learners can buy the flexible-ticket upgrade. */
   flexibleTickets: boolean;
+  /** Company logo shown in Find a class, on course pages and in the schedule widget. */
+  logoUrl: string | null;
 };
 
 export type PaymentMode = "protected" | "direct";
@@ -651,6 +653,12 @@ export type WebhookDeliveryInfo = { id: string; type: string; status: "pending" 
 export type Member = { userId: string; email: string; name: string | null; avatarUrl: string | null; role: Role; joinedAt: string };
 export type Invitation = { id: string; email: string; role: Role; createdAt: string; expiresAt: string };
 
+export type ScheduleRule =
+  | { repeat: "weekly"; everyWeeks: number; weekday?: number }
+  | { repeat: "monthly"; everyMonths: number; week: 1 | 2 | 3 | 4 | "last"; weekday: number }
+  | { repeat: "dates"; dates: string[] };
+export type ScheduleInput = { rule: ScheduleRule; from?: string; count?: number; until?: string; skip?: string[]; publish?: boolean; dryRun?: boolean };
+export type SchedulePlanRow = { startDate: string; endDate: string; conflict: boolean };
 export type Promotion = { id: string; courseId: string; placement: "category" | "top"; weeks: number; amountMinor: number; currency: string; status: "pending_payment" | "active" | "failed"; startsAt: string | null; endsAt: string | null; createdAt: string };
 export type PromotionPrices = { currency: string; weeks: number[]; category: number[]; top: number[] };
 /** Topics in Find a class; mirrors the API's fixed list. */
@@ -768,6 +776,9 @@ export const api = {
   updateCourse: (id: string, input: UpdateCourseInput) => request<Course>("PATCH", `/v1/courses/${enc(id)}`, input),
   uploadCourseImage: (id: string, bytes: ArrayBuffer, contentType: string) => request<Course>("PUT", `/v1/courses/${enc(id)}/image`, new RawBody(bytes, contentType)),
   importCourseImage: (id: string, url: string) => request<Course>("POST", `/v1/courses/${enc(id)}/image/from-url`, { url }),
+  uploadOrganizationLogo: (bytes: ArrayBuffer, contentType: string) => request<Organization>("PUT", "/v1/organizations/me/logo", new RawBody(bytes, contentType)),
+  removeOrganizationLogo: () => request<Organization>("DELETE", "/v1/organizations/me/logo"),
+  buildSchedule: (eventId: string, input: ScheduleInput) => request<{ plan: SchedulePlanRow[]; created: Event[] }>("POST", `/v1/events/${enc(eventId)}/schedule`, input),
   removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
   listBadges: () => request<{ items: BadgeOverviewItem[] }>("GET", "/v1/badges"),
   migrateBadge: (courseId: string) => request<{ result: BadgeMigration; course: Course }>("POST", `/v1/courses/${enc(courseId)}/badge/migrate`, {}),

@@ -240,8 +240,9 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     });
     pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable(), listed: z.boolean(), category: z.string(), promoted: z.enum(["top", "category"]).nullable(), imageUrl: z.string().nullable(),
       courseId: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), format: z.string(), hours: z.number().nullable(), priceMinor: z.number().int().nullable(), currency: z.string(), capacity: z.number().int(), seatsLeft: z.number().int(),
-      badge: z.enum(["selling_fast", "early_bird", "accredited", "new"]).nullable(), verifiedBadge: z.boolean() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
-      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null, description: c.description ?? null, certificationBody: c.certificationBody ?? null }));
+      badge: z.enum(["selling_fast", "early_bird", "accredited", "new"]).nullable(), verifiedBadge: z.boolean(),
+      logoUrl: z.string().nullable(), digitalBadge: z.object({ name: z.string(), platform: z.string(), imageUrl: z.string().nullable() }).nullable(), dates: z.array(z.object({ slug: z.string(), startsAt: z.string() })) })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
+      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null, description: c.description ?? null, certificationBody: c.certificationBody ?? null, logoUrl: c.logoUrl ?? null, digitalBadge: c.digitalBadge ? { ...c.digitalBadge, imageUrl: c.digitalBadge.imageUrl ?? null } : null, dates: c.dates.map((d) => ({ slug: d.slug, startsAt: d.startsAt.toISOString() })) }));
       // Short cache: a paid placement should show soon after payment.
       reply.header("cache-control", "public, max-age=300");
       return { items, categories: COURSE_CATEGORIES.map((c) => ({ id: c.id, label: c.label })) };
@@ -251,7 +252,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return {
         organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null },
         course: S.toCourse(res.course),
-        cohorts: res.cohorts.map((c) => ({ event: S.toEvent(c.event), ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
+        cohorts: res.cohorts.map((c) => ({ event: S.toEvent(c.event), dateSlug: c.dateSlug, ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
       };
     });
 
@@ -534,6 +535,25 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     api.post("/v1/events", { schema: { tags: ["events"], body: S.CreateEventBody, response: { 201: S.EventSchema } } }, async (req, reply) => {
       const { startsAt, sessions, ...rest } = req.body;
       return reply.code(201).send(S.toEvent(await deps.core.createEvent(org(req).id, { ...rest, ...asCreator(req, rest.instructorIds), startsAt: startsAt ? new Date(startsAt) : undefined, sessions: S.parseSessions(sessions) })));
+    });
+    const LocalDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+    const Weekday = z.number().int().min(0).max(6);
+    const ScheduleRuleSchema = z.discriminatedUnion("repeat", [
+      z.object({ repeat: z.literal("weekly"), everyWeeks: z.number().int().min(1).max(8), weekday: Weekday.optional() }),
+      z.object({ repeat: z.literal("monthly"), everyMonths: z.number().int().min(1).max(12), week: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal("last")]), weekday: Weekday }),
+      z.object({ repeat: z.literal("dates"), dates: z.array(LocalDate).min(1).max(52) }),
+    ]);
+    api.post("/v1/events/:id/schedule", {
+      schema: {
+        tags: ["events"],
+        description: "Schedule builder: copy this class (sessions, times, tickets, instructors) onto repeating dates. Dates where the course already has a class are skipped. dryRun returns the plan only.",
+        params: z.object({ id: z.string() }),
+        body: z.object({ rule: ScheduleRuleSchema, from: LocalDate.optional(), count: z.number().int().min(1).max(52).optional(), until: LocalDate.optional(), skip: z.array(LocalDate).max(100).optional(), publish: z.boolean().optional(), dryRun: z.boolean().optional() }),
+        response: { 200: z.object({ plan: z.array(z.object({ startDate: z.string(), endDate: z.string(), conflict: z.boolean() })), created: z.array(S.EventSchema) }), 400: S.ErrorSchema, 404: S.ErrorSchema },
+      },
+    }, async (req) => {
+      const r = await deps.core.buildSchedule(org(req).id, { templateEventId: req.params.id, ...req.body, rule: req.body.rule as Parameters<Core["buildSchedule"]>[1]["rule"] });
+      return { plan: r.plan, created: r.created.map(S.toEvent) };
     });
     api.post("/v1/events/:id/duplicate", { schema: { tags: ["events"], params: z.object({ id: z.string() }), body: z.object({ startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), name: z.string().min(1).max(200).optional() }).optional(), response: { 201: z.object({ event: S.EventSchema, ticketTypes: z.array(S.TicketTypeSchema) }), 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req, reply) => {
       const r = await deps.core.duplicateEvent(org(req).id, req.params.id, { startDate: req.body?.startDate, name: req.body?.name, status: asCreator(req, undefined).status });

@@ -124,6 +124,14 @@ export function registerCourseImageRoutes(api: FastifyInstance, deps: { core: Co
     const imageUrl = await importImage(deps.store, deps.publicUrl, req.body.url, deps.fetchImpl);
     return S.toCourse(await deps.core.updateCourse(o.id, req.params.id, { imageUrl }));
   });
+  // Company logo (raw bytes, as above): Find a class, course pages and the schedule widget.
+  typed.put("/v1/organizations/me/logo", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => {
+    const o = org(req);
+    if (!Buffer.isBuffer(req.body)) throw new DomainError("VALIDATION", "send the image bytes with an image/* content type");
+    const { id } = await deps.store.put(req.body, (req.headers["content-type"] ?? "").split(";")[0]!.trim().toLowerCase());
+    return S.toOrganization(await deps.core.updateOrganization(o.id, { logoUrl: mediaUrl(deps.publicUrl, id) }));
+  });
+  typed.delete("/v1/organizations/me/logo", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateOrganization(org(req).id, { logoUrl: null })));
   // The course's badge image (raw bytes, as above). With no badge yet it becomes the
   // organizer's own badge, issued with EnrollClass certificates.
   typed.put("/v1/courses/:id/badge-image", { schema: { tags: ["courses"], params: z.object({ id: z.string() }), querystring: z.object({ name: z.string().max(200).optional() }), response: { 200: S.CourseSchema, 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req) => {

@@ -325,6 +325,35 @@ describe("API", () => {
     expect((await im.inject(`/public/v1/invoices/${encodeURIComponent(token)}`)).json().status).toBe("paid");
   });
 
+  it("schedule builder, company logo, and logo plus badge in the class finder", async () => {
+    const png = Buffer.from("89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000201a5a1d2d10000000049454e44ae426082", "hex");
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "safe", name: "Leading SAFe" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "First", timezone: "America/New_York", sessions: [{ startsAt: "2099-01-05T14:00:00Z", endsAt: "2099-01-05T22:00:00Z" }] } })).json();
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 100_000, quantity: 10 } });
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/publish`, headers: J, payload: {} });
+
+    const rule = { repeat: "weekly", everyWeeks: 2 };
+    const preview = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/schedule`, headers: J, payload: { rule, from: "2099-01-05", count: 3, skip: ["2099-01-19"], dryRun: true } })).json();
+    expect(preview.plan.map((p: { startDate: string; conflict: boolean }) => [p.startDate, p.conflict])).toEqual([["2099-01-05", true], ["2099-02-02", false], ["2099-02-16", false]]);
+    expect(preview.created).toEqual([]);
+    const built = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/schedule`, headers: J, payload: { rule, from: "2099-01-05", count: 3, skip: ["2099-01-19"], publish: true } })).json();
+    expect(built.created.map((e: { status: string; startsAt: string }) => [e.status, e.startsAt])).toEqual([["live", "2099-02-02T14:00:00.000Z"], ["live", "2099-02-16T14:00:00.000Z"]]);
+    expect((await im.inject({ method: "POST", url: `/v1/events/${ev.id}/schedule`, headers: J, payload: { rule: { repeat: "weekly", everyWeeks: 9 }, count: 2 } })).statusCode).toBe(400);
+
+    const logo = (await im.inject({ method: "PUT", url: "/v1/organizations/me/logo", headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();
+    expect(logo.logoUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\//);
+    await im.inject({ method: "PUT", url: `/v1/courses/${course.id}/badge-image?name=SAFe%20Agilist`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png });
+    const [item] = (await im.inject("/public/v1/catalog")).json().items;
+    expect(item).toMatchObject({ logoUrl: logo.logoUrl, classes: 3, digitalBadge: { name: "SAFe Agilist", platform: "own" } });
+    expect(item.digitalBadge.imageUrl).toMatch(/\/media\//);
+    expect((await im.inject(`/public/v1/organizations/${logo.id}/courses/safe`)).json().organization.logoUrl).toBe(logo.logoUrl);
+    expect((await im.inject({ method: "DELETE", url: "/v1/organizations/me/logo", headers: { "x-api-key": key } })).json().logoUrl).toBeNull();
+  });
+
   it("categories and paid promotions in the class finder", async () => {
     const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
     const im = await buildApp({ core, adminKey: "admin", env: "test" });

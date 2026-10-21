@@ -34,6 +34,8 @@ export interface Organization {
   marketplaceListing?: boolean;
   /** Learners may buy the flexible-ticket upgrade (absent = off): full refund until 24 hours before the start, backed by the organizer. */
   flexibleTickets?: boolean;
+  /** Company logo (square works best) shown in Find a class, on course pages and in the schedule widget. */
+  logoUrl?: string;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */

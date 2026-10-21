@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { api, BADGE_PLATFORMS, COURSE_CATEGORIES, EVENT_FORMATS, type Party } from "@/lib/api";
 import { PromoteCourse } from "@/components/promote-course";
+import { ScheduleBuilder } from "@/components/schedule-builder";
 import { updateCourseCategoryAction } from "./promote-actions";
 import { formatDateTimeInZone, formatTimeInZone, humanize } from "@/lib/format";
 import { DEFAULT_TIMEZONE, MAX_SESSIONS } from "@/lib/forms";
@@ -254,6 +255,22 @@ export default async function CourseDetailPage({ params, searchParams }: { param
           </label>
           <p className="hint">Applies to every cohort of this course. Leave a field blank to clear it.</p>
         </ActionForm>
+      </Section>
+
+      <Section title="Schedule builder" id="schedule">
+        <ScheduleBuilder
+          courseId={course.id}
+          today={new Date().toISOString().slice(0, 10)}
+          templates={[...cohorts]
+            .filter((c) => c.status !== "cancelled")
+            .sort((a, b) => b.startsAt.localeCompare(a.startsAt))
+            .map((c) => {
+              const startDate = new Intl.DateTimeFormat("en-CA", { timeZone: c.timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(c.startsAt));
+              const weekday = new Date(`${startDate}T00:00:00Z`).getUTCDay();
+              const days = Math.max(1, new Set(c.sessions.map((x) => new Intl.DateTimeFormat("en-CA", { timeZone: c.timezone }).format(new Date(x.startsAt)))).size);
+              return { id: c.id, label: `${c.name} · ${formatDateTimeInZone(c.startsAt, c.timezone)}`, startDate, weekday, days };
+            })}
+        />
       </Section>
 
       <Section title="Cohorts">

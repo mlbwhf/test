@@ -149,6 +149,28 @@ export const HELP: HelpArticle[] = [
     related: ["create-a-class", "events-list"],
   },
   {
+    slug: "schedule-builder",
+    section: "classes",
+    title: "Schedule many dates at once",
+    summary: "Repeat a class every week, every other week, the first Monday of the month, or on dates you pick. Every date gets its own page.",
+    for: ["Owners & admins"],
+    body: [
+      { steps: [
+        "Open the course page and find **Schedule builder**.",
+        "Pick the class to copy: its days, times, time zone, tickets, prices, instructors and instructor pay are copied to every new date.",
+        "Choose how it repeats (monthly on a set weekday, every week, every 2 weeks, or dates you pick), where to start, and how many dates or an end date.",
+        "Add holidays to skip, if any, and click **Preview dates**.",
+        "Check the list and click **Create**. Leave **Put them on sale right away** ticked to publish them, or untick it to create drafts.",
+      ] },
+      { list: [
+        "Days that already have a class of this course are skipped, so running the builder twice never makes duplicates.",
+        "Up to 52 dates at a time.",
+        "Every date has its own page, for example /c/your-org/leading-safe/2026-11-20, with its own title and Google event listing. Share it in emails and ads; the course page stays the hub with every date.",
+      ] },
+    ],
+    related: ["create-a-class", "duplicate-a-class", "share-and-embed"],
+  },
+  {
     slug: "events-list",
     section: "classes",
     title: "The Events screen",

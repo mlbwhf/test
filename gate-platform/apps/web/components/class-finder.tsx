@@ -35,9 +35,35 @@ function ProviderLogo({ c, size }: { c: CatalogItem; size: number }) {
   const words = c.organizationName.replace(/[^\p{L}\p{N} ]/gu, "").split(/\s+/).filter(Boolean);
   const mono = (words.length > 1 ? words[0]![0]! + words[1]![0]! : (words[0] ?? "?").slice(0, 1)).toUpperCase();
   const h = hash(c.organizationId);
+  if (c.logoUrl) {
+    return (
+      <span className="fc-logo fc-logo-img" style={{ width: size, height: size }}>
+        <img src={c.logoUrl} alt={`${c.organizationName} logo`} loading="lazy" />
+      </span>
+    );
+  }
   return (
     <span className="fc-logo" aria-hidden="true" style={{ width: size, height: size, borderRadius: LOGO_SHAPES[h % LOGO_SHAPES.length], background: LOGO_TINTS[h % LOGO_TINTS.length], fontSize: Math.round(size * 0.38) }}>
       {mono}
+    </span>
+  );
+}
+
+const PLATFORM_LABELS: Record<string, string> = { own: "Verified badge", credly: "Credly badge", accredible: "Accredible badge", badgr: "Badgr badge", certopus: "Certopus badge", other: "Digital badge" };
+
+/** The digital badge learners earn: image when there is one, else a seat-green seal. */
+function DigitalBadge({ c, size, label }: { c: CatalogItem; size: number; label?: boolean }) {
+  const b = c.digitalBadge;
+  if (!b) return null;
+  return (
+    <span className="fc-dbadge" title={`Earns: ${b.name}`}>
+      {b.imageUrl ? <img src={b.imageUrl} alt="" width={size} height={size} loading="lazy" /> : <span className="fc-dbadge-seal" style={{ width: size, height: size }} aria-hidden="true">★</span>}
+      {label && (
+        <span className="fc-dbadge-text">
+          <span>{PLATFORM_LABELS[b.platform] ?? "Digital badge"}</span>
+          <strong>{b.name}</strong>
+        </span>
+      )}
     </span>
   );
 }
@@ -332,6 +358,14 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                       <p className="fc-when">
                         {dateOf(c)} · {formatOf(c)}
                       </p>
+                      {c.digitalBadge && (
+                        <div className="fc-earns">
+                          <DigitalBadge c={c} size={30} />
+                          <span>
+                            Earns <strong>{c.digitalBadge.name}</strong>
+                          </span>
+                        </div>
+                      )}
                       <div className="fc-card-foot">
                         <span className="fc-price">{money(c.priceMinor, c.currency)}</span>
                         <a
@@ -376,9 +410,12 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                           <ProviderLogo c={c} size={36} />
                         </td>
                         <td className="fc-t-title">
-                          <button type="button" onClick={() => set({ sel: k })}>
-                            {c.name}
-                          </button>
+                          <span className="fc-t-title-row">
+                            <button type="button" onClick={() => set({ sel: k })}>
+                              {c.name}
+                            </button>
+                            <DigitalBadge c={c} size={22} />
+                          </span>
                         </td>
                         <td>
                           <div className="fc-prov">
@@ -458,11 +495,16 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                   ))}
                 </div>
               ) : null}
+              {sel.digitalBadge && (
+                <div className="fc-preview-badge">
+                  <DigitalBadge c={sel} size={64} label />
+                </div>
+              )}
               <div>
                 <h3>What&apos;s included</h3>
                 <ul className="fc-learn">
                   {sel.certificationBody && <li>Certification course from {sel.certificationBody}</li>}
-                  {sel.verifiedBadge && <li>Verified digital badge you can share (Open Badges 3.0)</li>}
+                  {sel.digitalBadge && <li>{sel.verifiedBadge ? `Verified digital badge (Open Badges 3.0): ${sel.digitalBadge.name}` : `Digital badge: ${sel.digitalBadge.name}`}</li>}
                   <li>Ticket and calendar invitation by email</li>
                   <li>Change or cancel from your booking link, within the provider&apos;s policy</li>
                 </ul>
@@ -535,6 +577,7 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                   ["DATES", (c) => `${c.classes} upcoming`, () => false],
                   ["SEATS LEFT", (c) => (c.capacity ? `${c.seatsLeft} of ${c.capacity}` : "—"), () => false],
                   ["CATEGORY", (c) => catLabel(c.category), () => false],
+                  ["BADGE", (c) => c.digitalBadge?.name ?? "—", () => false],
                 ];
                 return rows.map(([label, value, win]) => [
                   <div key={label} className="fc-compare-label">

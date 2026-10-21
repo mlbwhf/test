@@ -254,7 +254,7 @@ export function permissionFor(method: string, url: string): Permission {
   if (/^\/v1\/orders(\/|$)/.test(path)) return write ? "money:write" : "money:read";
   if (/^\/v1\/copilot\/explain-order$/.test(path)) return "money:read";
   if (/^\/v1\/events\/[^/]+\/(release|release-early|cancel|instructor-fees)$/.test(path)) return write ? "money:write" : "money:read";
-  if (/^\/v1\/events\/[^/]+\/(publish|instructors)$/.test(path) && write) return "settings";
+  if (/^\/v1\/events\/[^/]+\/(publish|instructors|schedule)$/.test(path) && write) return "settings";
   if (/^\/v1\/seats\/[^/]+\/cancel$/.test(path)) return "money:write";
   if (path === "/v1/parties" && write) return "settings";
   // Moving badges to EnrollClass changes what paid seats cost, and awarding emails past learners.

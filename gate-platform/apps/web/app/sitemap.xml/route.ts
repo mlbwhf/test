@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Marketing host: home, FAQ, help and legal pages. App host: every public course page
-// with upcoming classes.
+// with upcoming classes, and a page for each upcoming date.
 export async function GET(request: Request) {
   const today = new Date().toISOString().slice(0, 10);
   const urls: Array<{ loc: string; lastmod?: string; priority: string; freq: string }> = [];
@@ -20,6 +20,8 @@ export async function GET(request: Request) {
   } else {
     for (const c of await publicCatalog()) {
       urls.push({ loc: `${appUrl()}/c/${encodeURIComponent(c.organizationId)}/${encodeURIComponent(c.slug)}`, lastmod: today, priority: "0.9", freq: "daily" });
+      // Each upcoming date has its own page, indexed on its own.
+      for (const d of c.dates ?? []) urls.push({ loc: `${appUrl()}/c/${encodeURIComponent(c.organizationId)}/${encodeURIComponent(c.slug)}/${d.slug}`, lastmod: today, priority: "0.8", freq: "daily" });
     }
   }
   const body = `<?xml version="1.0" encoding="UTF-8"?>

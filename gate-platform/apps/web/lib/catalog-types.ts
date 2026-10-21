@@ -5,6 +5,7 @@ export type CatalogItem = {
   courseId?: string; description?: string | null; certificationBody?: string | null; format?: string; hours?: number | null;
   priceMinor?: number | null; currency?: string; capacity?: number; seatsLeft?: number;
   badge?: "selling_fast" | "early_bird" | "accredited" | "new" | null; verifiedBadge?: boolean;
+  logoUrl?: string | null; dates?: { slug: string; startsAt: string }[]; digitalBadge?: { name: string; platform: string; imageUrl: string | null } | null;
 };
 export type CatalogCategory = { id: string; label: string };
 

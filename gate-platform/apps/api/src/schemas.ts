@@ -33,7 +33,7 @@ export const OrganizationSchema = z.object({
   pricing: PricingSettingsSchema,
   paymentsStatus: PaymentsStatusSchema,
   paymentMode: z.enum(["protected", "direct"]),
-  marketplaceListing: z.boolean(), flexibleTickets: z.boolean(),
+  marketplaceListing: z.boolean(), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(),
   directAccountRef: z.string().nullable(),
   directStatus: PaymentsStatusSchema,
   createdAt: z.string(),
@@ -115,10 +115,11 @@ export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(
 export const JoinWaitlistBody = z.object({ eventId: z.string(), ticketTypeId: z.string().optional(), email: z.string().email(), name: z.string().max(200).optional(), quantity: z.number().int().min(1).max(10).optional() });
 
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean() }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable() }),
   course: CourseSchema,
   cohorts: z.array(z.object({
     event: EventSchema,
+    dateSlug: z.string(),
     ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
 });
@@ -158,7 +159,7 @@ export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.n
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
 export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
-export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
+export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, category: c.category ?? null, topic: c.category ?? inferCategory(c.name, c.certificationBody), createdAt: c.createdAt.toISOString() });
 export const toEvent = (e: Event) => ({

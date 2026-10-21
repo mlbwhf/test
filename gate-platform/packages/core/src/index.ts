@@ -19,3 +19,4 @@ export * from "./zoned.js";
 export * from "./integrations.js";
 export * from "./credentials.js";
 export * from "./categories.js";
+export * from "./schedule.js";

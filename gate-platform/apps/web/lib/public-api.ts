@@ -172,9 +172,10 @@ async function fetchSvg(path: string): Promise<string | null> {
 
 export type PublicTicketType = { id: string; name: string; quantity: number; remaining: number; prices: Record<string, number>; converted: string[]; earlyBirdUntil: string | null };
 export type PublicCoursePage = {
-  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct" };
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; logoUrl?: string | null };
   course: Course;
-  cohorts: { event: Event; ticketTypes: PublicTicketType[] }[];
+  /** dateSlug: the date's own page, /c/:org/:course/:dateSlug. */
+  cohorts: { event: Event; dateSlug: string; ticketTypes: PublicTicketType[] }[];
 };
 
 export type CertificateView = {

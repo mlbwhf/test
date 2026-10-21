@@ -2,6 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } from "@gate/ledger";
 import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
+import { addDays, dateSlugs, planScheduleDates, type ScheduleRule } from "./schedule.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -68,6 +69,12 @@ export interface CatalogEntry {
   /** One fact-based label: "selling_fast" (a quarter of seats or fewer left), "early_bird" (early price running), "accredited" (names a certification body), "new" (first listed in the last 30 days). */
   badge: "selling_fast" | "early_bird" | "accredited" | "new" | null;
   verifiedBadge: boolean;
+  /** The provider's logo, when uploaded. */
+  logoUrl?: string;
+  /** Every upcoming date with its page slug (/c/:org/:course/:dateSlug). */
+  dates: { slug: string; startsAt: Date }[];
+  /** The digital badge learners earn (Credly, uploaded or EnrollClass verified). */
+  digitalBadge?: { name: string; imageUrl?: string; platform: string };
 }
 
 export class Core {
@@ -148,8 +155,9 @@ export class Core {
     return { organization, apiKey };
   }
 
-  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined }): Promise<Organization> {
+  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined; logoUrl?: string | null | undefined }): Promise<Organization> {
     const org = await this.getOrganization(organizationId);
+    if (patch.logoUrl && !/^https?:\/\//.test(patch.logoUrl)) throw new DomainError("VALIDATION", "logoUrl must be an http(s) URL");
     if (patch.releaseGraceHours !== undefined && (!Number.isFinite(patch.releaseGraceHours) || patch.releaseGraceHours < 0 || patch.releaseGraceHours > 24 * 30)) throw new DomainError("VALIDATION", "releaseGraceHours must be 0..720");
     if (patch.minEnrollmentDecisionDays !== undefined && (!Number.isFinite(patch.minEnrollmentDecisionDays) || patch.minEnrollmentDecisionDays < 0 || patch.minEnrollmentDecisionDays > 90)) throw new DomainError("VALIDATION", "minEnrollmentDecisionDays must be 0..90");
     const next: Organization = {
@@ -161,7 +169,9 @@ export class Core {
       ...(patch.marketplaceListing !== undefined ? { marketplaceListing: patch.marketplaceListing } : {}),
       ...(patch.flexibleTickets !== undefined ? { flexibleTickets: patch.flexibleTickets } : {}),
       ...(patch.name?.trim() ? { name: patch.name.trim() } : {}),
+      ...(patch.logoUrl ? { logoUrl: patch.logoUrl } : {}),
     };
+    if (patch.logoUrl === null || patch.logoUrl === "") delete next.logoUrl;
     await this.repos.organizations.update(next);
     return next;
   }
@@ -453,6 +463,36 @@ export class Core {
     return { event: copy, ticketTypes };
   }
 
+  /**
+   * Schedule builder: copies a template class (sessions, times, tickets, instructors) onto every
+   * date a repeat rule produces. Dates where the course already has a class are left out.
+   * With dryRun it only returns the plan.
+   */
+  async buildSchedule(organizationId: string, input: { templateEventId: string; rule: ScheduleRule; from?: string | undefined; count?: number | undefined; until?: string | undefined; skip?: string[] | undefined; publish?: boolean | undefined; dryRun?: boolean | undefined }): Promise<{ plan: { startDate: string; endDate: string; conflict: boolean }[]; created: Event[] }> {
+    const template = await this.getEvent(organizationId, input.templateEventId);
+    if (!template.courseId) throw new DomainError("VALIDATION", "the template class must belong to a course");
+    const tz = template.timezone;
+    const templateStart = localDate(template.startsAt, tz);
+    const span = daysBetween(templateStart, localDate(template.endsAt ?? template.startsAt, tz));
+    const from = input.from ?? addDays(localDate(this.clock.now(), tz), 1);
+    let dates: string[];
+    try {
+      dates = planScheduleDates({ rule: input.rule, from, count: input.count, until: input.until, skip: input.skip });
+    } catch (e) {
+      throw new DomainError("VALIDATION", e instanceof Error ? e.message : "invalid schedule");
+    }
+    const taken = new Set((await this.repos.events.listByCourse(template.courseId)).filter((e) => e.status !== "cancelled").map((e) => localDate(e.startsAt, e.timezone)));
+    const plan = dates.map((d) => ({ startDate: d, endDate: addDays(d, span), conflict: taken.has(d) }));
+    if (input.dryRun) return { plan, created: [] };
+    const created: Event[] = [];
+    for (const p of plan.filter((x) => !x.conflict)) {
+      const name = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${p.startDate}T00:00:00Z`));
+      const { event } = await this.duplicateEvent(organizationId, template.id, { startDate: p.startDate, name, status: "draft" });
+      created.push(input.publish ? await this.publishEvent(organizationId, event.id) : event);
+    }
+    return { plan, created };
+  }
+
   /** A draft class goes on sale. */
   async publishEvent(organizationId: string, eventId: string): Promise<Event> {
     const event = await this.getEvent(organizationId, eventId);
@@ -610,6 +650,9 @@ export class Core {
           format: next.format, hours: hoursMs > 0 ? Math.round(hoursMs / 3_600_000) : null,
           priceMinor: prices.length ? Math.min(...prices) : null, currency: next.currency, capacity, seatsLeft, badge,
           verifiedBadge: course.badge?.platform === "own",
+          ...(org.logoUrl ? { logoUrl: org.logoUrl } : {}),
+          dates: (() => { const sl = dateSlugs(upcoming, localDate); return upcoming.map((e) => ({ slug: sl.get(e.id)!, startsAt: e.startsAt })); })(),
+          ...(course.badge ? { digitalBadge: { name: course.badge.name, platform: course.badge.platform, ...(course.badge.imageUrl ? { imageUrl: course.badge.imageUrl } : {}) } } : {}),
         });
         if (out.length >= limit) return out;
       }
@@ -686,11 +729,13 @@ export class Core {
     const course = await this.getCourseBySlug(organizationId, slug);
     const now = this.clock.now();
     const cohorts = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
+    const slugs = dateSlugs(cohorts, localDate);
     const out = [];
     for (const event of cohorts) {
       const ticketTypes = await this.repos.ticketTypes.listByEvent(event.id);
       out.push({
         event,
+        dateSlug: slugs.get(event.id)!,
         ticketTypes: ticketTypes.map((t) => {
           const currencies = [event.currency, ...Object.keys(t.prices ?? {}), ...Object.keys(t.earlyBird?.prices ?? {}), ...(pricing.fxFallback ? pricing.currencies : [])];
           const prices: Record<string, MinorUnits> = {};
@@ -706,7 +751,7 @@ export class Core {
       });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null },
       course, cohorts: out,
     };
   }

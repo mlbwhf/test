@@ -7205,3 +7205,155 @@ a.chip:hover {
     padding: 12px;
   }
 }
+
+.logo-card .logo-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.logo-preview {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  object-fit: contain;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.logo-empty {
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  color: var(--muted);
+}
+.logo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.fc-logo-img {
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--fc-line, rgba(20, 33, 61, 0.12));
+  overflow: hidden;
+}
+.fc-logo-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+.fc-dbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.fc-dbadge img {
+  object-fit: contain;
+}
+.fc-dbadge-seal {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: oklch(0.72 0.17 155 / 0.3);
+  color: var(--green-text);
+  font-size: 13px;
+}
+.fc-dbadge-text {
+  display: flex;
+  flex-direction: column;
+}
+.fc-dbadge-text span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.fc-dbadge-text strong {
+  font-size: 15px;
+}
+.fc-earns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+.fc-t-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.fc-preview-badge {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px dashed oklch(0.72 0.17 155 / 0.6);
+}
+
+.ep-org {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.ep-org-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.sched {
+  display: grid;
+  gap: 14px;
+}
+.sched-limit select {
+  min-width: 0;
+}
+.sched-limit {
+  display: flex;
+  gap: 8px;
+}
+.sched-limit input[type="number"] {
+  width: 90px;
+}
+.sched-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.sched-plan {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.sched-plan ol {
+  margin: 0;
+  padding-left: 22px;
+  columns: 2 260px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.sched-plan li {
+  padding: 3px 0;
+  break-inside: avoid;
+}
+.sched-plan li.is-taken {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.sched-plan li em {
+  margin-left: 6px;
+  font-style: normal;
+  font-size: 11px;
+}
