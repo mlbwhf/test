@@ -2256,6 +2256,20 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = fals
 	     . ( $fixed ? ' data-aa-inline-fixed' : '' )
 	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
 	     . ' data-price="' . (int) $course['price'] . '">'
+	     /* THE COHORT AS A FIELD, NOT ONLY AS A DATA ATTRIBUTE.
+	        data-cohort above is read by our own JavaScript, which is why the
+	        checkout has always known which class was being bought. Anything
+	        that captures the form by reading its INPUTS -- the CRM among them
+	        -- sees a single email address and nothing else, so an abandoned
+	        registration arrives with no indication of the course or the date.
+	        That has now happened to three enquiries.
+	        Unlike the two-step panel, there is no doubt about the value here:
+	        the cohort is passed into this function, so it is always the one on
+	        screen and never needs a query parameter to recover it. */
+	     . '<input type="hidden" name="cohort" value="' . esc_attr( $cohort['id'] ) . '">'
+	     . '<input type="hidden" name="course" value="' . esc_attr( $course['name'] ) . '">'
+	     . '<input type="hidden" name="cohort_dates" value="'
+	     . esc_attr( aa_reg_range( $cohort['start'], $cohort['end'] ) ) . '">'
 	     . '<label class="aareg-inline-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
 	     . '<input name="email" type="email" autocomplete="email" inputmode="email"'
 	     . ' placeholder="' . esc_attr( aa_reg_t( 'your_email', 'Your email' ) ) . '" required></label>'
