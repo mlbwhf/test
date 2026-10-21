@@ -4,7 +4,7 @@
   <span class="kicker">The books · Mark Saymen</span>
   <h1>Written as a story first. <em>Then as a theory.</em></h1>
   <p class="lead">One framework, two books. The novel lets you live through both chasms with a cast you already work with. The theory book gives you the instruments to measure where you stand.</p>
-  <div class="actions"><a class="btn btn--amber" href="mailto:info@agile-agilist.com?subject=Notify%20me%20when%20pre-orders%20open%20%E2%80%94%20Two%20Chasms%20books">Notify me when pre-orders open →</a><a class="link-mono" href="/cast/">Meet the cast →</a></div>
+  <div class="actions"><a class="btn btn--amber" href="#notify">Notify me when pre-orders open →</a><a class="link-mono" href="/cast/">Meet the cast →</a></div>
 </section>
 <section class="wrap section section--tight">
   <div class="books">
@@ -26,7 +26,7 @@
           <div class="part"><div class="part__k">Book One · The Playground · Crossing one</div><p>Elevate Labs. Oliver's Task Force, the six practices, the Cultural Wall, the Candor Contract and the Innovation Matrix — the crossing from control to trust.</p></div>
           <div class="part is-amber"><div class="part__k">Book Two · SIGNAL · Crossing two</div><p>Deltacore. Layla Sharif, Athena, the Second Chasm — and IMMUNE, the counter-mutation that turns sensing into SignalNet. Signal Sensing → Immune → Mutation.</p></div>
         </div>
-        <div class="actions"><a class="btn btn--ink btn--sm" href="mailto:info@agile-agilist.com?subject=Notify%20me%20when%20pre-orders%20open%20%E2%80%94%20Two%20Chasms%20books">Notify me →</a><span class="label">Pre-order link coming soon</span></div>
+        <div class="actions"><a class="btn btn--ink btn--sm" href="#notify" data-book="The Innovation Playground">Notify me →</a><span class="label">Pre-order link coming soon</span></div>
       </div>
     </article>
     <article class="book">
@@ -47,11 +47,49 @@
           <div class="part"><div class="part__k">Part I · the Reflex diagnosis</div><p>The executive blind spot, lagging versus leading indicators, and the <b>Seven Stagnation Signals</b> — the fingerprint of an organization watching the wrong scoreboard.</p></div>
           <div class="part is-amber"><div class="part__k">Parts III–V · the Mutation state's textbook</div><p>The <b>Six Vitality Signals</b>, the <b>Five Levers of Reinvention</b>, the leadership playbook, and the field guide behind the <b>Mutation Readiness Index</b>.</p></div>
         </div>
-        <div class="actions"><a class="btn btn--ink btn--sm" href="mailto:info@agile-agilist.com?subject=Notify%20me%20when%20pre-orders%20open%20%E2%80%94%20Two%20Chasms%20books">Notify me →</a><a class="link-mono" href="https://agile-agilist.com/assessments/mutation-readiness/">Mutation Readiness Index ↗</a></div>
+        <div class="actions"><a class="btn btn--ink btn--sm" href="#notify" data-book="The Mutation Age">Notify me →</a><a class="link-mono" href="https://agile-agilist.com/assessments/mutation-readiness/">Mutation Readiness Index ↗</a></div>
       </div>
     </article>
   </div>
 </section>
+<section class="wrap section" id="notify">
+  <div class="notify">
+    <div class="stack stack--sm">
+      <span class="kicker">Pre-orders</span>
+      <h2>Pre-orders aren’t open yet. <em>Be first to know.</em></h2>
+      <p class="lead">One email when pre-orders open. Nothing else.</p>
+    </div>
+    <form class="notify__form" data-notify novalidate>
+      <fieldset class="notify__books"><legend class="label">Which book?</legend>
+        <label><input type="radio" name="book" value="Both books" checked> Both</label>
+        <label><input type="radio" name="book" value="The Innovation Playground"> The Innovation Playground</label>
+        <label><input type="radio" name="book" value="The Mutation Age"> The Mutation Age</label>
+      </fieldset>
+      <input class="as__field" type="text" name="firstname" placeholder="First name (optional)" autocomplete="given-name" aria-label="First name">
+      <input class="as__field" type="email" name="email" placeholder="Work email" autocomplete="email" aria-label="Email" required>
+      <button class="btn btn--amber" type="submit">Notify me →</button>
+      <p class="notify__msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<script>
+(function(){var f=document.querySelector('[data-notify]');if(!f)return;
+var msg=f.querySelector('.notify__msg'),btn=f.querySelector('button'),mail=f.elements.email;
+document.querySelectorAll('a[data-book]').forEach(function(a){a.addEventListener('click',function(){
+var r=f.querySelector('input[name="book"][value="'+a.getAttribute('data-book')+'"]');if(r)r.checked=true;});});
+f.addEventListener('submit',function(e){e.preventDefault();
+var email=mail.value.trim();
+if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){mail.classList.add('is-bad');msg.textContent='Enter a valid email address.';mail.focus();return;}
+mail.classList.remove('is-bad');btn.disabled=true;msg.textContent='Sending…';
+var book=(f.querySelector('input[name="book"]:checked')||{}).value||'Both books';
+var fields=[{name:'email',value:email}],fn=f.elements.firstname.value.trim();if(fn)fields.push({name:'firstname',value:fn});
+var hutk=(document.cookie.match(/(?:^|; )hubspotutk=([^;]+)/)||[])[1];
+var ctx={pageUri:location.href,pageName:'Two Chasms books - notify pre-order | '+book};if(hutk)ctx.hutk=hutk;
+fetch('https://api.hsforms.com/submissions/v3/integration/submit/46316757/c6f0d4c1-d233-4875-9b0c-4528cda02237',
+{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:fields,context:ctx})})
+.then(function(r){if(!r.ok)throw r;f.innerHTML='<p class="notify__done"><b>You’re on the list.</b> We’ll email '+email.replace(/[<>&"]/g,'')+' when pre-orders open.</p>';})
+.catch(function(){btn.disabled=false;msg.innerHTML='That didn’t go through. Try again, or email <a href="mailto:info@agile-agilist.com?subject=Notify%20me%20%E2%80%94%20Two%20Chasms%20books">info@agile-agilist.com</a>.';});});})();
+</script>
 <section class="band band--wash">
   <div class="wrap stack">
     <span class="kicker kicker--mute">From the books · one line per state</span>

@@ -82,3 +82,9 @@ maturity mixed, maturity all-max with N/A) and a French override block pass in t
 - `build_404.py` → `out/404_template.html`: full contents of the TT5 **Page: 404** template (fonts, v2 CSS + `.nf` rules scoped to `.tc`, masthead, 404 body, colophon). From handoff 2 (`404.php` / `404.html`).
 - Install: Appearance → Editor → Templates → **Page: 404** → ⋮ → Code editor → select all → paste the file → Save.
 - WordPress already answers missing URLs with HTTP 404, so search engines won't index it; no separate noindex is needed.
+
+## /books "Notify me" → form submission
+- The mailto links are replaced by a sign-up form (`#notify`) on /books: book choice (Both / The Innovation Playground / The Mutation Age), first name (optional), email.
+- Submits to the same HubSpot form as the assessments (portal 46316757, form c6f0d4c1…); the book choice is sent in `context.pageName` ("Two Chasms books - notify pre-order | <book>"), plus `hutk` when the HubSpot cookie exists.
+- Each book's "Notify me →" button scrolls to the form with that book preselected. On error the form stays and offers info@agile-agilist.com.
+- To deploy: replace page 29 with `out/books.html` and append the `.notify` rules from `out/pages_css.css` to template 7.

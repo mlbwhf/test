@@ -303,7 +303,49 @@ QUOTES = [
 quotes = "".join(
     f'<figure class="quote"><div class="quote__state">{NAME[s]}</div><blockquote>“{html.escape(q, quote=False)}”</blockquote>'
     f'<figcaption>— {"<i>" + a + "</i>" if a.startswith("The ") else a}</figcaption></figure>' for q, a, s in QUOTES)
-NOTIFY = "mailto:info@agile-agilist.com?subject=Notify%20me%20when%20pre-orders%20open%20%E2%80%94%20Two%20Chasms%20books"
+NOTIFY = "#notify"
+# Pre-order sign-up: same HubSpot portal/form as the assessments (email + firstname); the book chosen
+# rides in context.pageName so no extra HubSpot property is needed.
+NOTIFY_FORM = """
+<section class="wrap section" id="notify">
+  <div class="notify">
+    <div class="stack stack--sm">
+      <span class="kicker">Pre-orders</span>
+      <h2>Pre-orders aren’t open yet. <em>Be first to know.</em></h2>
+      <p class="lead">One email when pre-orders open. Nothing else.</p>
+    </div>
+    <form class="notify__form" data-notify novalidate>
+      <fieldset class="notify__books"><legend class="label">Which book?</legend>
+        <label><input type="radio" name="book" value="Both books" checked> Both</label>
+        <label><input type="radio" name="book" value="The Innovation Playground"> The Innovation Playground</label>
+        <label><input type="radio" name="book" value="The Mutation Age"> The Mutation Age</label>
+      </fieldset>
+      <input class="as__field" type="text" name="firstname" placeholder="First name (optional)" autocomplete="given-name" aria-label="First name">
+      <input class="as__field" type="email" name="email" placeholder="Work email" autocomplete="email" aria-label="Email" required>
+      <button class="btn btn--amber" type="submit">Notify me →</button>
+      <p class="notify__msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<script>
+(function(){var f=document.querySelector('[data-notify]');if(!f)return;
+var msg=f.querySelector('.notify__msg'),btn=f.querySelector('button'),mail=f.elements.email;
+document.querySelectorAll('a[data-book]').forEach(function(a){a.addEventListener('click',function(){
+var r=f.querySelector('input[name="book"][value="'+a.getAttribute('data-book')+'"]');if(r)r.checked=true;});});
+f.addEventListener('submit',function(e){e.preventDefault();
+var email=mail.value.trim();
+if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)){mail.classList.add('is-bad');msg.textContent='Enter a valid email address.';mail.focus();return;}
+mail.classList.remove('is-bad');btn.disabled=true;msg.textContent='Sending…';
+var book=(f.querySelector('input[name="book"]:checked')||{}).value||'Both books';
+var fields=[{name:'email',value:email}],fn=f.elements.firstname.value.trim();if(fn)fields.push({name:'firstname',value:fn});
+var hutk=(document.cookie.match(/(?:^|; )hubspotutk=([^;]+)/)||[])[1];
+var ctx={pageUri:location.href,pageName:'Two Chasms books - notify pre-order | '+book};if(hutk)ctx.hutk=hutk;
+fetch('https://api.hsforms.com/submissions/v3/integration/submit/46316757/c6f0d4c1-d233-4875-9b0c-4528cda02237',
+{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:fields,context:ctx})})
+.then(function(r){if(!r.ok)throw r;f.innerHTML='<p class="notify__done"><b>You\u2019re on the list.</b> We\u2019ll email '+email.replace(/[<>&"]/g,'')+' when pre-orders open.</p>';})
+.catch(function(){btn.disabled=false;msg.innerHTML='That didn\u2019t go through. Try again, or email <a href="mailto:info@agile-agilist.com?subject=Notify%20me%20%E2%80%94%20Two%20Chasms%20books">info@agile-agilist.com</a>.';});});})();
+</script>
+"""
 books_body = f"""
 <section class="wrap hero">
   <span class="kicker">The books · Mark Saymen</span>
@@ -323,7 +365,7 @@ books_body = f"""
           <div class="part"><div class="part__k">Book One · The Playground · Crossing one</div><p>Elevate Labs. Oliver's Task Force, the six practices, the Cultural Wall, the Candor Contract and the Innovation Matrix — the crossing from control to trust.</p></div>
           <div class="part is-amber"><div class="part__k">Book Two · SIGNAL · Crossing two</div><p>Deltacore. Layla Sharif, Athena, the Second Chasm — and IMMUNE, the counter-mutation that turns sensing into SignalNet. Signal Sensing → Immune → Mutation.</p></div>
         </div>
-        <div class="actions"><a class="btn btn--ink btn--sm" href="{NOTIFY}">Notify me →</a><span class="label">Pre-order link coming soon</span></div>
+        <div class="actions"><a class="btn btn--ink btn--sm" href="{NOTIFY}" data-book="The Innovation Playground">Notify me →</a><span class="label">Pre-order link coming soon</span></div>
       </div>
     </article>
     <article class="book">
@@ -336,11 +378,12 @@ books_body = f"""
           <div class="part"><div class="part__k">Part I · the Reflex diagnosis</div><p>The executive blind spot, lagging versus leading indicators, and the <b>Seven Stagnation Signals</b> — the fingerprint of an organization watching the wrong scoreboard.</p></div>
           <div class="part is-amber"><div class="part__k">Parts III–V · the Mutation state's textbook</div><p>The <b>Six Vitality Signals</b>, the <b>Five Levers of Reinvention</b>, the leadership playbook, and the field guide behind the <b>Mutation Readiness Index</b>.</p></div>
         </div>
-        <div class="actions"><a class="btn btn--ink btn--sm" href="{NOTIFY}">Notify me →</a><a class="link-mono" href="https://agile-agilist.com/assessments/mutation-readiness/">Mutation Readiness Index ↗</a></div>
+        <div class="actions"><a class="btn btn--ink btn--sm" href="{NOTIFY}" data-book="The Mutation Age">Notify me →</a><a class="link-mono" href="https://agile-agilist.com/assessments/mutation-readiness/">Mutation Readiness Index ↗</a></div>
       </div>
     </article>
   </div>
 </section>
+{NOTIFY_FORM}
 <section class="band band--wash">
   <div class="wrap stack">
     <span class="kicker kicker--mute">From the books · one line per state</span>
@@ -437,7 +480,19 @@ CSS = """/* ===== TWO CHASMS v2 — inner pages (workshops, cast, books, assess)
 .tc .quote blockquote{margin:0;font-weight:700;font-size:17px;line-height:1.35;color:var(--ink)}
 .tc .quote figcaption{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--mute)}
 .tc .quote figcaption i{font-style:italic}
+.tc .notify{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start;border:1px solid var(--line);border-top:4px solid var(--amber);padding:32px}
+.tc .notify__form{display:flex;flex-direction:column;gap:12px;margin:0}
+.tc .notify__form .as__field{box-sizing:border-box}
+.tc .notify__form .btn{align-self:flex-start;border:0;cursor:pointer}
+.tc .notify__form .btn:disabled{opacity:.6;cursor:default}
+.tc .notify__books{border:0;margin:0 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--ink-2)}
+.tc .notify__books legend{padding:0;margin-bottom:8px}
+.tc .notify__books input{accent-color:var(--amber);margin:0 6px 0 0}
+.tc .notify__msg{font-family:var(--mono);font-size:12px;color:var(--ink-2);min-height:1em}
+.tc .notify__done{font-size:16px;line-height:1.6;color:var(--ink-2)}
+.tc .notify__done b{color:var(--ink)}
 @media (max-width:720px){
+ .tc .notify{grid-template-columns:1fr;padding:20px;gap:24px}
  .tc .sg__head{grid-template-columns:1fr}
  .tc .sg__icon{justify-self:start}
  .tc .wk{grid-template-columns:44px minmax(0,1fr)}
