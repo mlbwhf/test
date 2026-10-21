@@ -88,6 +88,8 @@ export interface Course {
   badge?: CourseBadge;
   /** Topic in EnrollClass's class finder; guessed from the name when not set. */
   category?: CourseCategory;
+  /** Teaching language, ISO 639-1 ("en", "es", "fr"). */
+  language?: string;
   createdAt: Date;
 }
 

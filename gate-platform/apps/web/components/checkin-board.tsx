@@ -6,8 +6,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from
 import { checkInSeat, type CheckInOutcome } from "@/app/checkin-actions";
 
 export type BoardSeat = { id: string; name: string | null; email: string; company: string | null; code: string; checkedInAt: string | null };
-export type BoardEvent = { id: string; name: string; day: number | null; days: number };
-export type BoardChoice = { id: string; name: string; when: string };
+export type BoardEvent = { id: string; name: string; day: number | null; days: number; when?: string };
+export type BoardChoice = { id: string; name: string; when: string; seats?: number | null };
 
 type Flash = { tone: "ok" | "warn" | "err"; text: string } | null;
 
@@ -103,6 +103,7 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
   const router = useRouter();
   const [seats, setSeats] = useState(initial);
   const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<"all" | "in" | "waiting">("all");
   const [scanning, setScanning] = useState(false);
   const [flash, setFlash] = useState<Flash>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -123,8 +124,13 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
   const inCount = seats.filter((s) => s.checkedInAt).length;
   const needle = q.trim().toLowerCase();
   const shown = useMemo(
-    () => (needle ? seats.filter((s) => [s.name ?? "", s.email, s.company ?? "", s.code].some((x) => x.toLowerCase().includes(needle))) : seats),
-    [seats, needle],
+    () =>
+      seats.filter(
+        (s) =>
+          (filter === "all" || (filter === "in") === Boolean(s.checkedInAt)) &&
+          (!needle || [s.name ?? "", s.email, s.company ?? "", s.code].some((x) => x.toLowerCase().includes(needle))),
+      ),
+    [seats, needle, filter],
   );
 
   function apply(r: CheckInOutcome, undo: boolean) {
@@ -168,26 +174,25 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
   return (
     <div className="ci-mode">
       <aside className="ci-side">
-        <Link href="/dashboard" className="ci-exit">
-          × Exit check-in
-        </Link>
-        <Link href="/help/check-in" className="ci-exit" target="_blank" rel="noopener">
-          ? How check-in works
-        </Link>
+        <div className="ci-top">
+          <Link href="/dashboard" className="ci-exit">
+            ✕ Exit check-in
+          </Link>
+          <Link href="/help/check-in" className="ci-how" target="_blank" rel="noopener">
+            ? How it works
+          </Link>
+        </div>
         <p className="ci-event">{event.name}</p>
-        {event.day && (
-          <p className="ci-day">
-            DAY {event.day} OF {event.days}
-          </p>
-        )}
+        <p className="ci-day">
+          {event.day ? `DAY ${event.day} OF ${event.days}` : `${event.days} DAY${event.days === 1 ? "" : "S"}`}
+          {event.when ? ` · ${event.when}` : ""}
+        </p>
         <p className="ci-big" aria-live="polite">
           {inCount}
           <span> / {seats.length}</span>
         </p>
-        <div className="ci-seats" role="img" aria-label={`${inCount} of ${seats.length} checked in`}>
-          {seats.slice(0, 80).map((s) => (
-            <span key={s.id} className={s.checkedInAt ? "on" : ""} />
-          ))}
+        <div className="ci-progress" role="progressbar" aria-valuemin={0} aria-valuemax={seats.length} aria-valuenow={inCount} aria-label="Checked in">
+          <span style={{ width: `${seats.length ? Math.round((inCount / seats.length) * 100) : 0}%` }} />
         </div>
         <button type="button" className="ci-scan" onClick={() => setScanning(true)}>
           Scan next ticket
@@ -197,7 +202,10 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
             {choices.map((c) => (
               <Link key={c.id} href={`/checkin?event=${encodeURIComponent(c.id)}`} aria-current={c.id === event.id ? "page" : undefined}>
                 {c.name}
-                <span>{c.when}</span>
+                <span>
+                  {c.when}
+                  {c.seats !== null && c.seats !== undefined ? ` · ${c.seats} seat${c.seats === 1 ? "" : "s"}` : ""}
+                </span>
               </Link>
             ))}
           </nav>
@@ -205,26 +213,42 @@ export function CheckInBoard({ event, seats: initial, choices }: { event: BoardE
       </aside>
 
       <section className="ci-main" aria-label="Attendees">
-        <input className="ci-find" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, company or code" aria-label="Search attendees" />
+        <div className="ci-tools">
+          <input className="ci-find" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, company or code" aria-label="Search attendees" />
+          <div className="admin-seg" role="group" aria-label="Show">
+            {(
+              [
+                ["all", "All"],
+                ["in", "In"],
+                ["waiting", "Waiting"],
+              ] as const
+            ).map(([k, l]) => (
+              <button key={k} type="button" aria-pressed={filter === k} onClick={() => setFilter(k)}>
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
         {flash && (
           <p className={`ci-flash ci-flash-${flash.tone}`} role="status">
             {flash.text}
           </p>
         )}
         {shown.length === 0 ? (
-          <p className="today-clear">{needle ? "Nobody matches that search." : "No confirmed seats yet."}</p>
+          <p className="today-clear">{seats.length ? "No seats match." : "No confirmed seats yet."}</p>
         ) : (
-          <ul className="ci-cards">
+          <ul className="ci-rows">
             {shown.map((s) => (
-              <li key={s.id}>
-                <button type="button" className={`ci-card${s.checkedInAt ? " is-in" : ""}`} aria-pressed={Boolean(s.checkedInAt)} disabled={busy === s.id} onClick={() => toggle(s)}>
-                  <span className="ci-avatar" aria-hidden="true">
-                    {s.checkedInAt ? "✓" : initials(s.name, s.email)}
-                  </span>
-                  <span className="ci-who">
-                    <strong>{s.name ?? s.email}</strong>
-                    <span>{s.company ?? s.code}</span>
-                  </span>
+              <li key={s.id} className={s.checkedInAt ? "is-in" : undefined}>
+                <span className="ci-avatar" aria-hidden="true">
+                  {initials(s.name, s.email)}
+                </span>
+                <span className="ci-who">
+                  <strong>{s.name ?? s.email}</strong>
+                  <span>{[s.company, s.code].filter(Boolean).join(" · ")}</span>
+                </span>
+                <button type="button" className={`ci-btn${s.checkedInAt ? " is-in" : ""}`} aria-pressed={Boolean(s.checkedInAt)} disabled={busy === s.id} onClick={() => toggle(s)} title={s.checkedInAt ? "Click to undo" : undefined}>
+                  {s.checkedInAt ? "✓ Checked in" : "Check in"}
                 </button>
               </li>
             ))}

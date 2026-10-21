@@ -57,6 +57,10 @@ describe("categories", () => {
     expect(cat.find((x) => x.slug === "pmp")!.category).toBe("project-management");
     await expect(core.updateCourse(o.id, c.id, { category: "cooking" })).rejects.toMatchObject({ code: "VALIDATION" });
     expect((await core.updateCourse(o.id, c.id, { category: null })).category).toBeUndefined();
+    const es = await core.createCourse(o.id, { slug: "safe-es", name: "SAFe en Español", language: "ES" });
+    expect(es.language).toBe("es");
+    await expect(core.updateCourse(o.id, es.id, { language: "spanish" })).rejects.toMatchObject({ code: "VALIDATION" });
+    expect((await core.updateCourse(o.id, es.id, { language: null })).language).toBeUndefined();
   });
 });
 

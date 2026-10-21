@@ -279,7 +279,7 @@ export class Core {
 
   // ---------- Courses ----------
 
-  async createCourse(organizationId: string, input: { slug: string; name: string; description?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; category?: string | undefined }): Promise<Course> {
+  async createCourse(organizationId: string, input: { slug: string; name: string; description?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; category?: string | undefined; language?: string | undefined }): Promise<Course> {
     await this.getOrganization(organizationId);
     const slug = input.slug.trim().toLowerCase();
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new DomainError("VALIDATION", "slug must be lowercase letters, digits and hyphens");
@@ -295,13 +295,14 @@ export class Core {
       ...(input.certificationBody ? { certificationBody: input.certificationBody } : {}),
       ...(input.durationDays !== undefined ? { durationDays: input.durationDays } : {}),
       ...(input.category ? { category: this.checkCategory(input.category) } : {}),
+      ...(input.language ? { language: this.checkLanguage(input.language) } : {}),
       createdAt: this.clock.now(),
     };
     await this.repos.courses.create(course);
     return course;
   }
 
-  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined; category?: string | null | undefined }): Promise<Course> {
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined; category?: string | null | undefined; language?: string | null | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
     if (patch.badge) {
       if (!["credly", "accredible", "badgr", "certopus", "other", "own"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
@@ -314,12 +315,20 @@ export class Core {
     const next: Course = { ...course };
     const set = <K extends keyof Course>(k: K, v: Course[K] | undefined) => { if (v === undefined) return; if (v === "" || v === null) delete next[k]; else next[k] = v; };
     set("description", patch.description); set("prework", patch.prework); set("surveyUrl", patch.surveyUrl); set("certificationBody", patch.certificationBody); set("durationDays", patch.durationDays); set("imageUrl", patch.imageUrl);
+    if (patch.language === null || patch.language === "") delete next.language;
+    else if (patch.language !== undefined) next.language = this.checkLanguage(patch.language);
     if (patch.category === null || patch.category === "") delete next.category;
     else if (patch.category !== undefined) next.category = this.checkCategory(patch.category);
     if (patch.badge === null) delete next.badge;
     else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), ...(patch.badge.url ? { url: patch.badge.url } : {}), ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
     await this.repos.courses.update(next);
     return next;
+  }
+
+  private checkLanguage(v: string): string {
+    const lang = v.trim().toLowerCase();
+    if (!/^[a-z]{2}$/.test(lang)) throw new DomainError("VALIDATION", "language must be a two-letter code such as en, es or fr");
+    return lang;
   }
 
   private checkCategory(v: string): CourseCategory {

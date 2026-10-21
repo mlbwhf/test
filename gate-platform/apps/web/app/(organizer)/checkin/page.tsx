@@ -34,7 +34,8 @@ function dayOf(e: Event, now = new Date()): number | null {
 
 export default async function CheckInPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams;
-  const eventsRes = await api.listEvents();
+  const [eventsRes, linesRes] = await Promise.all([api.listEvents(), api.eventLines()]);
+  const sold = new Map((linesRes.ok ? linesRes.data.items : []).map((l) => [l.eventId, l.sold]));
   if (!eventsRes.ok) {
     return (
       <>
@@ -62,9 +63,9 @@ export default async function CheckInPage({ searchParams }: { searchParams: Prom
 
   return (
     <CheckInBoard
-      event={{ id: selected.id, name: selected.name, day: dayOf(selected), days: Math.max(1, selected.sessions.length) }}
+      event={{ id: selected.id, name: selected.name, day: dayOf(selected), days: Math.max(1, selected.sessions.length), when: when(selected) }}
       seats={seats}
-      choices={(choices.some((c) => c.id === selected.id) ? choices : [selected, ...choices]).map((e) => ({ id: e.id, name: e.name, when: when(e) }))}
+      choices={(choices.some((c) => c.id === selected.id) ? choices : [selected, ...choices]).map((e) => ({ id: e.id, name: e.name, when: when(e), seats: sold.get(e.id) ?? null }))}
     />
   );
 }

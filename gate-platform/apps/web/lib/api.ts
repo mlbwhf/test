@@ -145,6 +145,8 @@ export type Course = {
   category: string | null;
   /** The topic it is listed under: the organizer's choice or EnrollClass's guess. */
   topic: string;
+  /** Teaching language (ISO 639-1), when set. */
+  language: string | null;
   createdAt: string;
 };
 
@@ -319,6 +321,7 @@ export type CreateCourseInput = {
   description?: string;
   certificationBody?: string;
   durationDays?: number;
+  language?: string;
 };
 export type CreateCohortInput = {
   name: string;
@@ -344,6 +347,7 @@ export type RecordAttendanceInput = {
 export type IssueCertificatesInput = { onlyPresent?: boolean; onlyCheckedIn?: boolean; kind?: "attendance" | "completion" };
 export type UpdateCourseInput = {
   category?: string | null;
+  language?: string | null;
   prework?: string | null;
   surveyUrl?: string | null;
   description?: string | null;

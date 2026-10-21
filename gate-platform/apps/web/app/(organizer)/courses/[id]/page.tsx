@@ -2,6 +2,7 @@ import Link from "next/link";
 import { api, BADGE_PLATFORMS, COURSE_CATEGORIES, EVENT_FORMATS, type Party } from "@/lib/api";
 import { PromoteCourse } from "@/components/promote-course";
 import { ScheduleBuilder } from "@/components/schedule-builder";
+import { LANGUAGES, courseLanguage } from "@/lib/course-utils";
 import { CopyButton } from "@/components/copy-button";
 import { publicApiUrl } from "@/lib/urls";
 import { updateCourseCategoryAction } from "./promote-actions";
@@ -187,7 +188,7 @@ export default async function CourseDetailPage({ params, searchParams }: { param
       </Section>
 
       <Section title="Find a class" id="promote">
-        <ActionForm action={updateCourseCategoryAction} submitLabel="Save topic" pendingLabel="Saving…" inline>
+        <ActionForm action={updateCourseCategoryAction} submitLabel="Save" pendingLabel="Saving…" inline>
           <input type="hidden" name="courseId" value={course.id} />
           <label>
             Topic in Find a class
@@ -196,6 +197,17 @@ export default async function CourseDetailPage({ params, searchParams }: { param
               {COURSE_CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Language
+            <select name="language" defaultValue={course.language ?? ""}>
+              <option value="">Automatic ({LANGUAGES.find((l) => l.code === courseLanguage(course))?.label ?? "English"})</option>
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.label}
                 </option>
               ))}
             </select>
@@ -349,7 +361,7 @@ export default async function CourseDetailPage({ params, searchParams }: { param
         )}
       </Section>
 
-      <Section title="Add cohort">
+      <Section title="Add cohort" id="add-cohort">
         {!partiesRes.ok && <ApiNotice failure={partiesRes.error} />}
         <ActionForm action={createCohortAction} submitLabel="Add cohort" pendingLabel="Creating…" wide>
           <input type="hidden" name="courseId" value={course.id} />

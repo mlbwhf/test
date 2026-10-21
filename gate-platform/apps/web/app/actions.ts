@@ -282,6 +282,7 @@ export async function createCourseAction(_prev: ActionState, formData: FormData)
   const name = field(formData, "name");
   const certificationBody = field(formData, "certificationBody");
   const durationRaw = field(formData, "durationDays");
+  const language = field(formData, "language").toLowerCase();
 
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return fail("Slug must be lowercase letters, digits and hyphens (e.g. safe-for-teams).");
   if (!name) return fail("Course name is required.");
@@ -298,6 +299,7 @@ export async function createCourseAction(_prev: ActionState, formData: FormData)
     name,
     ...(certificationBody ? { certificationBody } : {}),
     ...(durationDays !== undefined ? { durationDays } : {}),
+    ...(/^[a-z]{2}$/.test(language) ? { language } : {}),
   });
   if (!result.ok) return fail(describeFailure(result.error));
 
@@ -900,6 +902,7 @@ export async function updateCourseBadgeAction(_prev: ActionState, formData: Form
     const r = await api.updateCourse(courseId, { badge: null });
     if (!r.ok) return fail(describeFailure(r.error));
     revalidatePath(`/courses/${courseId}`);
+    revalidatePath("/badges");
     return { status: "ok", message: "Badge removed." };
   }
   const platform = field(formData, "platform") as CourseBadge["platform"];
@@ -924,6 +927,7 @@ export async function updateCourseBadgeAction(_prev: ActionState, formData: Form
   const r = await api.updateCourse(courseId, { badge: { platform, name, ...(url && platform !== "own" ? { url } : {}), ...(imageUrl ? { imageUrl } : {}) } });
   if (!r.ok) return fail(describeFailure(r.error));
   revalidatePath(`/courses/${courseId}`);
+  revalidatePath("/badges");
   return { status: "ok", message: `Badge saved. It shows on the course page, on certificates and in certificate emails.` };
 }
 
