@@ -1,0 +1,158 @@
+# Trainyard: production Compose for a single VPS behind an existing Traefik, next to
+# EnrollClass (gate) on the same host.
+#
+#   /opt/trainyard/docker-compose.yml  (this file)
+#   /opt/trainyard/.env                (from env.production.example, never committed)
+#
+# Traefik (Hostinger "Docker and Traefik" template) already owns ports 80/443 and issues
+# Let's Encrypt certificates. This project publishes no host ports; Traefik discovers api
+# and web through Docker labels. Postgres and the optional local model are reachable only
+# inside the project.
+
+name: trainyard
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: trainyard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: trainyard
+    command: >-
+      postgres -c shared_buffers=256MB -c effective_cache_size=768MB -c work_mem=8MB
+      -c wal_compression=on -c log_min_duration_statement=500
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trainyard -d trainyard"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    deploy:
+      resources:
+        limits: { memory: 512m }
+
+  api:
+    image: ${TRAINYARD_API_IMAGE:-ghcr.io/mlbwhf/trainyard-api:latest}
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+    env_file: [.env]
+    security_opt: [no-new-privileges:true]
+    environment:
+      TRAINYARD_ENV: production
+      PORT: "4100"
+      DATABASE_URL: postgres://trainyard:${POSTGRES_PASSWORD}@postgres:5432/trainyard
+      TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}}
+      TRAINYARD_DEMO_CLOCK: "0"
+    networks: [internal]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: trainyard_internal
+      traefik.http.routers.trainyard-api.rule: Host(`${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}`)
+      traefik.http.routers.trainyard-api.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-api.tls: "true"
+      traefik.http.routers.trainyard-api.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-api.middlewares: trainyard-api-headers
+      traefik.http.services.trainyard-api.loadbalancer.server.port: "4100"
+      traefik.http.middlewares.trainyard-api-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.trainyard-api-headers.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.trainyard-api-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.trainyard-api-headers.headers.referrerPolicy: strict-origin-when-cross-origin
+    deploy:
+      resources:
+        limits: { memory: 512m }
+
+  web:
+    image: ${TRAINYARD_WEB_IMAGE:-ghcr.io/mlbwhf/trainyard-web:latest}
+    restart: unless-stopped
+    depends_on: [api]
+    security_opt: [no-new-privileges:true]
+    environment:
+      PORT: "3100"
+      HOSTNAME: 0.0.0.0
+      # Read when a page is served, so the same image works on any domain.
+      TRAINYARD_PUBLIC_API_URL: https://${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}
+    networks: [internal]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: trainyard_internal
+      traefik.http.routers.trainyard-web.rule: Host(`${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN}}`)
+      traefik.http.routers.trainyard-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-web.tls: "true"
+      traefik.http.routers.trainyard-web.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-web.middlewares: trainyard-web-headers
+      traefik.http.services.trainyard-web.loadbalancer.server.port: "3100"
+      traefik.http.middlewares.trainyard-web-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.trainyard-web-headers.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.trainyard-web-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.trainyard-web-headers.headers.frameDeny: "true"
+      traefik.http.middlewares.trainyard-web-headers.headers.referrerPolicy: strict-origin-when-cross-origin
+    deploy:
+      resources:
+        limits: { memory: 512m }
+
+  # Free, local AI assistance: Ollama on the same box. Enabled by LLM_PROFILE=llm in .env
+  # (deploy.sh adds --profile llm) and TRAINYARD_LLM_URL=http://ollama:11434/v1. On a CPU
+  # VPS a 7B model needs about 6 GB of RAM and answers in 20–60 s; a 3B model is faster and
+  # fits a KVM2 next to gate, with rougher drafts. The model is pulled on first start.
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    profiles: [llm]
+    environment:
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-30m}
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+    volumes:
+      - ollama:/root/.ollama
+    networks: [internal]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        pid=$$!
+        sleep 5
+        ollama pull "${TRAINYARD_LLM_MODEL:-qwen2.5:3b}" || true
+        wait $$pid
+    deploy:
+      resources:
+        limits:
+          memory: ${OLLAMA_MEMORY_LIMIT:-5g}
+
+  # Nightly pg_dump to S3-compatible storage. Disabled until BACKUP_S3_BUCKET is set.
+  backup:
+    image: eeshugerman/postgres-backup-s3:16
+    restart: unless-stopped
+    profiles: [backup]
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      SCHEDULE: ${BACKUP_SCHEDULE:-@daily}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-30}
+      PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      S3_REGION: ${BACKUP_S3_REGION:-auto}
+      S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
+      S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}
+      S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      S3_PREFIX: ${BACKUP_S3_PREFIX:-trainyard/postgres}
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: trainyard
+      POSTGRES_USER: trainyard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks: [internal]
+
+volumes:
+  pgdata:
+  ollama:
+
+networks:
+  # Traefik in host network mode (Hostinger template) routes to container IPs on this
+  # bridge. If Traefik runs on its own bridge network, deploy.sh adds
+  # docker-compose.traefik-bridge.yml, which joins api and web to that network.
+  internal:
+    name: trainyard_internal
+    driver: bridge

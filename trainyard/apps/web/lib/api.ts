@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const BASE = process.env.NEXT_PUBLIC_TRAINYARD_API_URL ?? "http://localhost:4100";
+declare global {
+  interface Window {
+    __TRAINYARD_API__?: string;
+  }
+}
+const BASE = (typeof window !== "undefined" && window.__TRAINYARD_API__) || process.env.NEXT_PUBLIC_TRAINYARD_API_URL || "http://localhost:4100";
 const KEY_STORAGE = "trainyard.apiKey";
 
 export class ApiFailure extends Error {

@@ -1,5 +1,5 @@
 # Trainyard API. Build from the trainyard/ directory:
-#   docker build -f infra/Dockerfile.api -t trainyard-api .
+#   docker build -f infra/docker/Dockerfile.api -t trainyard-api .
 FROM node:22-alpine AS build
 RUN corepack enable && corepack prepare pnpm@10.28.0 --activate
 WORKDIR /app

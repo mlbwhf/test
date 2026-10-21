@@ -1,4 +1,4 @@
-import { ClaudeProvider } from "@trainyard/ai-assist";
+import { ClaudeProvider, OpenAICompatibleProvider, type AssistProvider } from "@trainyard/ai-assist";
 import { AdoConnector, JiraConnector, type AdoConfig, type JiraConfig } from "@trainyard/connectors";
 import { FilePersistence, MemoryPersistence, PgPersistence, createPool, migrate, type StatePersistence } from "@trainyard/db";
 import { buildApp } from "./app.js";
@@ -8,7 +8,9 @@ import { Store, type StoreState } from "./store.js";
 // end up in a config file:
 //   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
 //   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
-//   ANTHROPIC_API_KEY            turns AI facilitation on (model: TRAINYARD_AI_MODEL)
+//   ANTHROPIC_API_KEY            AI facilitation through Claude (model: TRAINYARD_AI_MODEL)
+//   TRAINYARD_LLM_URL            or any OpenAI-compatible server, e.g. http://ollama:11434/v1
+//                                (TRAINYARD_LLM_MODEL, optional TRAINYARD_LLM_KEY); free and local
 //   TRAINYARD_JIRA + JIRA_API_TOKEN, TRAINYARD_ADO + ADO_PAT   tracker connections (JSON + secret)
 //   TRAINYARD_SYNC_EVERY_MINUTES scheduled sync; TRAINYARD_WEBHOOK_SECRET enables /v1/webhooks/:system
 //   TRAINYARD_DEMO_CLOCK=0       use the real clock instead of the demo date
@@ -53,8 +55,18 @@ async function main() {
     console.log("[auth] open mode: no users and no TRAINYARD_ADMIN_KEY, every request acts as admin");
   } else console.log(`[auth] on (${store.state.users.length} users${adminKey ? ", bootstrap admin key" : ""})`);
 
-  const assist = process.env.ANTHROPIC_API_KEY ? new ClaudeProvider({ ...(process.env.TRAINYARD_AI_MODEL ? { model: process.env.TRAINYARD_AI_MODEL } : {}) }) : undefined;
-  console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY)");
+  let assist: AssistProvider | undefined;
+  if (process.env.ANTHROPIC_API_KEY) {
+    assist = new ClaudeProvider({ ...(process.env.TRAINYARD_AI_MODEL ? { model: process.env.TRAINYARD_AI_MODEL } : {}) });
+  } else if (process.env.TRAINYARD_LLM_URL) {
+    assist = new OpenAICompatibleProvider({
+      baseUrl: process.env.TRAINYARD_LLM_URL,
+      model: process.env.TRAINYARD_LLM_MODEL ?? "qwen2.5:7b",
+      ...(process.env.TRAINYARD_LLM_KEY ? { apiKey: process.env.TRAINYARD_LLM_KEY } : {}),
+      ...(process.env.TRAINYARD_LLM_JSON_SCHEMA === "0" ? { jsonSchema: false } : {}),
+    });
+  }
+  console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY, or TRAINYARD_LLM_URL for a local model)");
 
   const app = await buildApp({
     store,

@@ -4,6 +4,12 @@ Scaled agile planning and AI portfolio management that runs on top of Jira and A
 
 Working name; rename freely.
 
+## Edition and license
+
+One edition, every module, free: planning board, operating-model builder, dashboards, Lean portfolio, AI portfolio with stage gates, agent registry, Jira and Azure DevOps sync, users and audit, AI facilitation. Licensed under **Apache-2.0** (see `LICENSE`), so anyone can self-host it, change it and use it commercially; the trademark attributions below still apply. Nothing is gated behind a paid tier. If a hosted or supported offering is added later, it should be the same code with operations and support on top, not features held back.
+
+AI assistance runs three ways, chosen by environment variables: Claude through the Anthropic API (best drafts, paid per use), **any OpenAI-compatible local model** such as Ollama, vLLM or LM Studio (free, runs on your own box, slower and rougher), or off.
+
 ## What is here
 
 | Path | Package | What it does | Verified by |
@@ -31,12 +37,47 @@ The demo runs on a fixed date (21 October 2026) so its numbers stay stable; set 
 
 ## Self-host
 
+Any box with Docker:
+
 ```bash
 TRAINYARD_ADMIN_KEY=$(openssl rand -hex 24) docker compose up -d --build
 # open http://localhost:3100/login and sign in with that key, then create users under Users
 ```
 
-The compose file runs Postgres, the API and the web app. For a single box without Postgres, run the API with `TRAINYARD_DATA_DIR=/var/lib/trainyard` instead of `DATABASE_URL`: state is a JSON file written atomically, the audit log a JSONL file next to it.
+For a single box without Postgres, run the API with `TRAINYARD_DATA_DIR=/var/lib/trainyard` instead of `DATABASE_URL`: state is a JSON file written atomically, the audit log a JSONL file next to it.
+
+### Local AI with Ollama
+
+```bash
+ollama pull qwen2.5:7b          # or qwen2.5:3b on a small machine
+TRAINYARD_LLM_URL=http://localhost:11434/v1 TRAINYARD_LLM_MODEL=qwen2.5:7b pnpm dev:api
+```
+
+Every assist feature then runs against the local model. Answers are validated against the same schemas as Claude's and retried once with the validation errors; expect 20–60 s per draft on a CPU and plainer wording.
+
+### On the EnrollClass VPS (same Hostinger box, same Traefik)
+
+Trainyard runs beside gate under `/opt/trainyard`, with its own Postgres, published by the Traefik the Hostinger template installed. Hosts default to `plan.<domain>` and `plan-api.<domain>`.
+
+```
+infra/docker/Dockerfile.api, Dockerfile.web   images built by GitHub Actions, pushed to ghcr.io/mlbwhf/trainyard-{api,web}
+infra/compose/docker-compose.prod.yml         postgres, api, web; optional ollama (--profile llm) and backup (--profile backup)
+infra/compose/env.production.example          every runtime variable
+infra/scripts/first-run.sh                    one-time: /opt/trainyard, .env with generated secrets, Traefik values copied from /opt/gate/.env
+infra/scripts/deploy.sh                       pull, roll, wait for /health (CI and by hand)
+infra/scripts/smoke.sh                        checks the live site from outside
+.github/workflows/trainyard-deploy.yml        test, build, push, roll the VPS over SSH with the DEPLOY_* secrets gate already uses
+```
+
+Steps:
+
+1. DNS: A records for `plan.<domain>` and `plan-api.<domain>` to the VPS.
+2. On the VPS, as root or `deploy`: `git clone --depth 1 -b claude/confident-cray-JTbgD https://github.com/mlbwhf/test.git /root/trainyard-src && bash /root/trainyard-src/trainyard/infra/scripts/first-run.sh <domain>`. It prints the admin key.
+3. Optional, in `/opt/trainyard/.env`: `ANTHROPIC_API_KEY`, or `LLM_PROFILE=llm` plus `TRAINYARD_LLM_URL=http://ollama:11434/v1` to run a free model on the box (a 3B model needs about 3 GB of RAM, a 7B about 6 GB; check `free -h` next to gate first).
+4. GitHub: the `DEPLOY_HOST`, `DEPLOY_USER` and `DEPLOY_SSH_KEY` secrets already exist for gate; add repository variables `TRAINYARD_WEB_HOST` and `TRAINYARD_API_HOST` if the hosts differ from the defaults. Push to the deploy branch and the workflow rolls it out; or run `cd /opt/trainyard && ./deploy.sh` by hand.
+5. Sign in at `https://plan.<domain>/login` with the admin key and create users.
+
+Memory on a KVM2 (8 GB): gate's limits add up to about 3.5 GB, Trainyard about 1.5 GB without Ollama, so both fit; with Ollama and a 3B model the box is near its limit, and a 7B model needs a KVM4.
 
 ## Configuration
 
@@ -44,7 +85,8 @@ The compose file runs Postgres, the API and the web app. For a single box withou
 |---|---|
 | `DATABASE_URL` | Postgres. Else `TRAINYARD_DATA_DIR` for JSON files, else memory (refused in production) |
 | `TRAINYARD_ADMIN_KEY` | Bootstrap admin key. Without it and with no users, the API runs **open**: everyone is an admin (refused in production) |
-| `ANTHROPIC_API_KEY` | Turns AI facilitation on. Model: `TRAINYARD_AI_MODEL` (default `claude-opus-5-5`) |
+| `ANTHROPIC_API_KEY` | AI facilitation through Claude. Model: `TRAINYARD_AI_MODEL` (default `claude-opus-5-5`) |
+| `TRAINYARD_LLM_URL` | AI facilitation through an OpenAI-compatible server instead, e.g. `http://localhost:11434/v1` (Ollama). `TRAINYARD_LLM_MODEL` (default `qwen2.5:7b`), optional `TRAINYARD_LLM_KEY`; `TRAINYARD_LLM_JSON_SCHEMA=0` for servers that reject `response_format`. Used only when no Anthropic key is set |
 | `TRAINYARD_JIRA` + `JIRA_API_TOKEN` | Jira connection: mapping JSON plus the token |
 | `TRAINYARD_ADO` + `ADO_PAT` | Azure DevOps connection: mapping JSON plus the PAT |
 | `TRAINYARD_SYNC_EVERY_MINUTES` | Scheduled sync of every connected tracker |

@@ -19,7 +19,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: infra/Dockerfile.api
+      dockerfile: infra/docker/Dockerfile.api
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,17 +36,21 @@ services:
       JIRA_API_TOKEN: ${JIRA_API_TOKEN:-}
       TRAINYARD_ADO: ${TRAINYARD_ADO:-}
       ADO_PAT: ${ADO_PAT:-}
+      TRAINYARD_LLM_URL: ${TRAINYARD_LLM_URL:-}
+      TRAINYARD_LLM_MODEL: ${TRAINYARD_LLM_MODEL:-qwen2.5:7b}
     ports:
       - "4100:4100"
 
   web:
     build:
       context: .
-      dockerfile: infra/Dockerfile.web
+      dockerfile: infra/docker/Dockerfile.web
       args:
         API_URL: ${TRAINYARD_API_URL:-http://localhost:4100}
     depends_on:
       - api
+    environment:
+      TRAINYARD_PUBLIC_API_URL: ${TRAINYARD_API_URL:-http://localhost:4100}
     ports:
       - "3100:3100"
 
