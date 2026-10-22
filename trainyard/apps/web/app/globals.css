@@ -288,3 +288,25 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .embed-bar .embed-brand { font-family: var(--font-display); margin-right: 10px; }
 .embed-bar .nav { padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 0.88rem; font-weight: 500; }
 .embed-bar .nav[aria-current="page"] { background: var(--glass-strong); color: var(--ink); box-shadow: 0 1px 2px rgba(var(--shadow-ink), 0.08); }
+
+/* ---- ART readiness checklist, laid out like SAFe's item / considerations tables ---- */
+.rc-table { border: 1px solid var(--line-strong); border-radius: 12px; overflow: hidden; background: var(--glass-card); }
+.rc-head { display: flex; align-items: baseline; gap: 12px; padding: 10px 14px; background: #3d7a80; color: #fff; font-weight: 700; }
+.rc-head .rc-hint { flex: 1; font-weight: 400; font-size: 0.8rem; opacity: 0.85; }
+.rc-cols, .rc-row { display: grid; grid-template-columns: 28px minmax(140px, 0.8fr) minmax(220px, 2fr) 170px 34px; gap: 8px; align-items: start; padding: 8px 12px; }
+.rc-cols { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--line); padding-top: 6px; padding-bottom: 4px; }
+.rc-row { border-bottom: 1px solid var(--line); transition: background 0.3s; }
+.rc-row:nth-child(odd) { background: var(--sunken); }
+.rc-row.done { background: var(--ok-soft); }
+.rc-row:last-child { border-bottom: 0; }
+.rc-row input[type="checkbox"] { width: 20px; height: 20px; margin-top: 6px; }
+.rc-row textarea { font: inherit; font-size: 0.9rem; line-height: 1.35; border: 0; background: transparent; resize: none; width: 100%; padding: 4px 6px; border-radius: 6px; color: var(--ink); field-sizing: content; min-height: 2.9em; overflow: hidden; }
+.rc-row textarea:focus { outline: 2px solid var(--line-strong); background: var(--glass-strong); }
+.rc-row .rc-item { font-weight: 600; }
+.rc-row.done .rc-item { text-decoration: line-through; }
+.rc-row .rc-q { color: var(--ink-2); }
+@media (max-width: 860px) {
+  .rc-cols { display: none; }
+  .rc-row { grid-template-columns: 28px minmax(0, 1fr) 34px; }
+  .rc-row .rc-q, .rc-row .select { grid-column: 2; }
+}

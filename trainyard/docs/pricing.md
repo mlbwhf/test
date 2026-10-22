@@ -20,7 +20,7 @@ Two patterns stand out. Jira plugins bill every user on the Jira site, so the pr
 
 Three plans, named as in the website design (Practice, Trainer, Academy), priced by the two units a buyer already thinks in:
 
-- **Practice, $0.** The open-source edition is the product, not a trial, so the free plan has to be honest about it: self-host with every feature and no limits, or one small hosted room. This is the acquisition channel for coaches and the evaluation path for enterprises.
+- **Practice, $0.** The open-source edition is the product, not a trial, so the free plan has to be honest about it: self-host with every feature and no limits, or one hosted room of up to 5 people; paid plans start from the sixth person. This is the acquisition channel for coaches and the evaluation path for enterprises.
 - **Trainer, $19 per trainer per month ($16 yearly).** The unit is the person running the room. Participants are free and unlimited, which is the opposite of per-member whiteboard pricing. The figure is the design's placeholder kept on purpose: it sits between Miro Starter and Business for one seat, and a trainer running a 30-person class pays $19 where a per-member tool would charge $240 to $750 a month.
 - **Academy, $249 per Agile Release Train per month ($199 yearly, so $2,388 a train a year).** The unit is the train: a thing an enterprise already counts, with a SAFe-defined size (50 to 125 people) that caps how much value one unit can absorb. Everyone on the train is included, as are the Jira app and the Azure DevOps extension, SSO and the option to run on their servers.
 

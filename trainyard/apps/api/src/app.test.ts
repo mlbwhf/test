@@ -664,7 +664,7 @@ describe("canvases", () => {
     const all = (await call("GET", "/v1/canvases")).body;
     expect(all.types.map((t: { id: string }) => t.id)).toEqual(expect.arrayContaining(["lace-mission", "portfolio-canvas", "swot", "tows", "portfolio-vision", "dvs-canvas", "art-canvas", "art-launch", "epic-hypothesis", "lean-business-case", "feature-canvas", "enabler-canvas"]));
     const launch = (await call("GET", "/v1/canvases/canvas-launch")).body.canvas;
-    expect(launch.derived.readiness).toMatchObject({ done: 6, total: 12 });
+    expect(launch.derived.readiness).toMatchObject({ done: 7, total: 15, needed: { done: 5, total: 9 } });
     const dvs = (await call("GET", "/v1/canvases/canvas-dvs-1")).body.canvas;
     expect(dvs.derived.chevrons.operational).toHaveLength(4);
 

@@ -28,8 +28,8 @@ export const PLANS: Plan[] = [
     monthly: null,
     yearly: null,
     unit: "/ forever",
-    blurb: "Self-host the whole product, or run one small room on ours.",
-    items: ["Every board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one room, up to 15 people", "Community support"],
+    blurb: "Self-host the whole product, or run one small room on ours. Free up to 5 people; paid plans start from the sixth.",
+    items: ["Every board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one room, up to 5 people", "Community support"],
     cta: "Start free",
     bg: "#fff",
     fg: "#14123a",
@@ -90,7 +90,7 @@ export const COMPARISON: { tool: string; hosting: string; pi: string; art: strin
 ];
 
 export const FAQ: { q: string; a: string }[] = [
-  { q: "Is it free for independent trainers?", a: "Yes. Practice is free for one hosted room, and the whole product is open source under Apache-2.0: self-host it with every feature and no limits." },
+  { q: "Is it free for independent trainers?", a: "Yes. Practice is free for one hosted room of up to 5 people, and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. From the sixth person, Trainer or Academy." },
   { q: "Do participants need accounts?", a: "They open the board in a browser from a link. On a free room anyone with the link can take part; once you turn authentication on, viewers read and planners move cards, each with a key you send. Nothing to install." },
   { q: "Which frameworks are supported?", a: "SAFe (Essential, Portfolio, Full), AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and tribe models, as editable operating models. Change the model and the boards and dashboards follow." },
   { q: "Can I use my own boards?", a: "Yes. Upload iObeya exports, connect Miro, Mural, monday.com or Trello, or drop a CSV. Boards arrive at their positions and colours, become templates, and map onto the plan only when you say so." },

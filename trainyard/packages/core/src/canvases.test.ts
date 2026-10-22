@@ -60,7 +60,8 @@ describe("canvases", () => {
     const start = (launch!.fields.timeline as { start: string }).start;
     expect(start).toBe("2025-12-08");
     const early = launchReadiness(launch!, start);
-    expect(early).toMatchObject({ done: 6, total: 12, weeksLeft: 9, verdict: "on-track" });
+    expect(early).toMatchObject({ done: 7, total: 15, needed: { done: 5, total: 9 }, desirable: { done: 2, total: 6 }, weeksLeft: 9, verdict: "on-track" });
+    expect(early.share).toBeCloseTo(5 / 9);
     const late = launchReadiness(launch!, "2026-02-02");
     expect(late.verdict).toBe("at-risk");
     expect(late.openByLane[0]!.name).toBe("Agile teams, system team and ART roles");

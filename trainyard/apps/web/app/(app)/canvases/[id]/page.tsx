@@ -421,50 +421,94 @@ function TimelineEdit({ value, onChange }: { value: Timeline; onChange: (v: Sect
 
 function Checklist({ doc, items, onChange }: { doc: Doc; items: CheckItem[]; onChange: (v: SectionValue) => void }) {
   const [draft, setDraft] = useState("");
+  const [draftTier, setDraftTier] = useState<"needed" | "desirable">("needed");
   const r = useMemo(() => launchReadiness({ ...doc, fields: { ...doc.fields, readiness: items } }, new Date().toISOString()), [doc, items]);
   const lanes = ((doc.fields.timeline as Timeline | undefined)?.lanes ?? []).map((l) => ({ id: l.id, name: l.name }));
   const C = 2 * Math.PI * 52;
   const color = r.verdict === "ready" ? "#32b58c" : r.verdict === "on-track" ? "#3d7a80" : "#d99400";
+  const patch = (id: string, p: Partial<CheckItem>) => onChange(items.map((x) => (x.id === id ? { ...x, ...p } : x)));
+  const setLane = (id: string, laneId: string) =>
+    onChange(
+      items.map((x) => {
+        if (x.id !== id) return x;
+        const { laneId: _old, ...rest } = x;
+        return laneId ? { ...rest, laneId } : rest;
+      }),
+    );
+  // SAFe's two tables: needed items, then desirable ones. Untiered items (older canvases) count as needed.
+  const groups: ["needed" | "desirable", string, string, CheckItem[]][] = [
+    ["needed", "Needed items", "Without these, PI planning does not happen on the date.", items.filter((i) => i.tier !== "desirable")],
+    ["desirable", "Desirable items", "Make the event better; they do not block it.", items.filter((i) => i.tier === "desirable")],
+  ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 240px", gap: 16 }}>
-      <div className="stack" style={{ gap: 6 }}>
-        {items.map((i) => (
-          <div key={i.id} className="row" style={{ gap: 8, padding: "6px 8px", borderRadius: 10, background: i.done ? "var(--ok-soft)" : "var(--sunken)", transition: "background .3s" }}>
-            <input type="checkbox" aria-label={i.text} checked={i.done} onChange={() => onChange(items.map((x) => (x.id === i.id ? { ...x, done: !x.done } : x)))} style={{ width: 20, height: 20 }} />
-            <input className="input" aria-label="Checklist item" value={i.text} onChange={(e) => onChange(items.map((x) => (x.id === i.id ? { ...x, text: e.target.value } : x)))} style={{ flex: 1, border: 0, background: "transparent", textDecoration: i.done ? "line-through" : "none" }} />
-            <select className="select" aria-label="Lane" value={i.laneId ?? ""} onChange={(e) => onChange(items.map((x) => (x.id === i.id ? (e.target.value ? { ...x, laneId: e.target.value } : { id: x.id, text: x.text, done: x.done }) : x)))} style={{ maxWidth: 200 }}>
-              <option value="">General</option>
-              {lanes.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.name}
-                </option>
+      <div className="stack" style={{ gap: 18 }}>
+        {groups.map(([tier, title, hint, list]) =>
+          list.length || tier === "needed" ? (
+            <div key={tier} className="rc-table">
+              <div className="rc-head">
+                <span>{title}</span>
+                <span className="rc-hint">{hint}</span>
+                <span>{list.filter((i) => i.done).length} / {list.length}</span>
+              </div>
+              <div className="rc-cols">
+                <span />
+                <span>Item</span>
+                <span>Considerations</span>
+                <span>Lane</span>
+                <span />
+              </div>
+              {list.map((i) => (
+                <div key={i.id} className={`rc-row${i.done ? " done" : ""}`}>
+                  <input type="checkbox" aria-label={i.text} checked={i.done} onChange={() => patch(i.id, { done: !i.done })} />
+                  <textarea className="rc-item" aria-label="Item" rows={3} value={i.text} onChange={(e) => patch(i.id, { text: e.target.value })} />
+                  <textarea className="rc-q" aria-label={`Considerations for ${i.text}`} rows={3} value={i.question ?? ""} placeholder="The question to answer before ticking this…" onChange={(e) => patch(i.id, { question: e.target.value })} />
+                  <select className="select" aria-label="Lane" value={i.laneId ?? ""} onChange={(e) => setLane(i.id, e.target.value)}>
+                    <option value="">General</option>
+                    {lanes.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="stack" style={{ gap: 2 }}>
+                    <button className="btn small ghost" title={tier === "needed" ? "Move to desirable" : "Move to needed"} aria-label={`Move ${i.text} to ${tier === "needed" ? "desirable" : "needed"}`} onClick={() => patch(i.id, { tier: tier === "needed" ? "desirable" : "needed" })}>
+                      {tier === "needed" ? "↓" : "↑"}
+                    </button>
+                    <button className="btn small ghost" aria-label={`Remove ${i.text}`} onClick={() => onChange(items.filter((x) => x.id !== i.id))}>
+                      ×
+                    </button>
+                  </div>
+                </div>
               ))}
-            </select>
-            <button className="btn small ghost" aria-label={`Remove ${i.text}`} onClick={() => onChange(items.filter((x) => x.id !== i.id))}>
-              ×
-            </button>
-          </div>
-        ))}
+            </div>
+          ) : null,
+        )}
         <form
           className="row"
           onSubmit={(e) => {
             e.preventDefault();
             if (!draft.trim()) return;
-            onChange([...items, { id: uid("chk"), text: draft.trim(), done: false }]);
+            onChange([...items, { id: uid("chk"), text: draft.trim(), done: false, tier: draftTier }]);
             setDraft("");
           }}
         >
           <input className="input" aria-label="New readiness item" placeholder="Add a readiness item…" value={draft} onChange={(e) => setDraft(e.target.value)} style={{ flex: 1 }} />
+          <select className="select" aria-label="Needed or desirable" value={draftTier} onChange={(e) => setDraftTier(e.target.value as "needed" | "desirable")}>
+            <option value="needed">Needed</option>
+            <option value="desirable">Desirable</option>
+          </select>
           <button className="btn small" type="submit" disabled={!draft.trim()}>
             Add
           </button>
         </form>
       </div>
       <div className="stack" style={{ alignItems: "center", gap: 8 }}>
-        <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label={`${Math.round(r.share * 100)}% ready`}>
+        <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label={`${Math.round(r.share * 100)}% of needed items ready`}>
           <circle cx="70" cy="70" r="52" fill="none" stroke="var(--sunken)" strokeWidth="14" />
           <circle cx="70" cy="70" r="52" fill="none" stroke={color} strokeWidth="14" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - r.share)} transform="rotate(-90 70 70)" style={{ transition: "stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1), stroke .4s" }} />
-          <text x="70" y="78" textAnchor="middle" fontSize="28" fontWeight="700" fill="currentColor" fontFamily="var(--font-display)">
+          {r.desirable.total ? <circle cx="70" cy="70" r="38" fill="none" stroke="#b9c6ff" strokeWidth="6" strokeLinecap="round" strokeDasharray={2 * Math.PI * 38} strokeDashoffset={2 * Math.PI * 38 * (1 - r.desirable.done / r.desirable.total)} transform="rotate(-90 70 70)" style={{ transition: "stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1)" }} /> : null}
+          <text x="70" y="78" textAnchor="middle" fontSize="26" fontWeight="700" fill="currentColor" fontFamily="var(--font-display)">
             {Math.round(r.share * 100)}%
           </text>
         </svg>
@@ -472,7 +516,9 @@ function Checklist({ doc, items, onChange }: { doc: Doc; items: CheckItem[]; onC
           {r.verdict === "ready" ? "Ready for PI planning" : r.verdict === "on-track" ? "On track" : "At risk for the date"}
         </span>
         <span className="faint" style={{ fontSize: "0.8rem", textAlign: "center" }}>
-          {r.done} of {r.total} done{r.weeksLeft !== null ? ` · ${r.weeksLeft >= 0 ? `${r.weeksLeft} weeks to go` : "date passed"}` : ""}
+          Needed {r.needed.done} of {r.needed.total}
+          {r.desirable.total ? ` · desirable ${r.desirable.done} of ${r.desirable.total}` : ""}
+          {r.weeksLeft !== null ? ` · ${r.weeksLeft >= 0 ? `${r.weeksLeft} weeks to go` : "date passed"}` : ""}
         </span>
         {r.openByLane.slice(0, 3).map((l) => (
           <span key={l.name} style={{ fontSize: "0.78rem" }}>

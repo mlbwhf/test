@@ -236,7 +236,7 @@ CI builds both on every push and keeps the VSIX and the Forge bundle as the `tra
 
 The public page at `/` is the "Session" design: a speech-bubble hero with a trainer/enterprise toggle, three rooms (planning, workshop, measuring), the kit, the comparison table, pricing, a chat-style FAQ and the sign-up. Copy describes what the app does today. Plans, the comparison and the FAQ live in `apps/web/lib/pricing.ts`, so the page, the structured data and `llms.txt` agree; the reasoning behind the prices is in `docs/pricing.md`.
 
-**Plans.** Practice (free: self-host everything, or one hosted room of up to 15 people), Trainer ($19 per trainer per month, $16 billed yearly, unlimited participants), Academy ($249 per Agile Release Train per month, $199 billed yearly, unlimited people per train, the Jira app and Azure DevOps extension, SSO). Participants are never the price unit.
+**Plans.** Practice (free: self-host everything, or one hosted room of up to 5 people, paid from the sixth), Trainer ($19 per trainer per month, $16 billed yearly, unlimited participants), Academy ($249 per Agile Release Train per month, $199 billed yearly, unlimited people per train, the Jira app and Azure DevOps extension, SSO). Participants are never the price unit.
 
 **Sign-up.** `POST /v1/signups` (public, 10 a minute per address, honeypot field, disposable domains refused) stores the request, audits it and forwards it to `TRAINYARD_SIGNUP_WEBHOOK` if set. Admins see the list under **Users**, create the user, send the key and mark the sign-up invited (`PATCH /v1/signups/:id`). A sign-up is a request, not an account: the server has one workspace, so a person hands out access.
 

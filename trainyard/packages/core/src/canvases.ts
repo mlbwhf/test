@@ -266,6 +266,10 @@ export interface CheckItem {
   done: boolean;
   /** Which lane of the timeline the item belongs to, if any. */
   laneId?: string;
+  /** SAFe's ART readiness checklist splits needed items from desirable ones; needed drive the verdict. */
+  tier?: "needed" | "desirable";
+  /** The consideration behind the item: the question to answer before ticking it. */
+  question?: string;
 }
 
 export type SectionValue = string | string[] | Record<string, string> | Pair[] | TableRow[] | Timeline | CheckItem[];
@@ -417,8 +421,10 @@ export function futureStateFrom(current: Canvas, tows: Canvas, ids: { canvas: st
 export interface LaunchReadiness {
   done: number;
   total: number;
-  /** 0–1 */
+  /** 0–1: the share of needed items done (every item counts as needed when none is tiered). */
   share: number;
+  needed: { done: number; total: number };
+  desirable: { done: number; total: number };
   /** Weeks from `today` to the date-certain quick-start; negative once past. */
   weeksLeft: number | null;
   /** Lanes with open checklist items, most open first. */
@@ -431,7 +437,10 @@ export function launchReadiness(c: Canvas, today: string): LaunchReadiness {
   const tl = c.fields.timeline as Timeline | undefined;
   const done = items.filter((i) => i.done).length;
   const total = items.length;
-  const share = total ? done / total : 0;
+  const count = (xs: CheckItem[]) => ({ done: xs.filter((i) => i.done).length, total: xs.length });
+  const desirable = count(items.filter((i) => i.tier === "desirable"));
+  const needed = count(items.filter((i) => i.tier !== "desirable"));
+  const share = needed.total ? needed.done / needed.total : 0;
   let weeksLeft: number | null = null;
   if (tl?.start) {
     const certain = new Date(`${tl.start}T00:00:00Z`).getTime() + tl.dateCertainWeek * 7 * 86_400_000;
@@ -447,7 +456,7 @@ export function launchReadiness(c: Canvas, today: string): LaunchReadiness {
   // Expect readiness to climb linearly to 100% by the date-certain week.
   const expected = tl && weeksLeft !== null ? Math.max(0, Math.min(1, 1 - weeksLeft / Math.max(1, tl.dateCertainWeek))) : 0;
   const verdict = share >= 1 ? "ready" : share + 0.1 >= expected ? "on-track" : "at-risk";
-  return { done, total, share, weeksLeft, openByLane: [...lanes.entries()].map(([laneId, v]) => ({ laneId, ...v })).sort((a, b) => b.open - a.open), verdict };
+  return { done, total, share, needed, desirable, weeksLeft, openByLane: [...lanes.entries()].map(([laneId, v]) => ({ laneId, ...v })).sort((a, b) => b.open - a.open), verdict };
 }
 
 // ---- starting content -----------------------------------------------------------------
@@ -487,13 +496,26 @@ export function demoCanvases(vsi: ValueStreamIdentification | undefined, now = "
   const day = new Date(now.slice(0, 10) + "T00:00:00Z");
   day.setUTCDate(day.getUTCDate() - ((day.getUTCDay() + 6) % 7) - 21);
   launch.fields.timeline = { start: day.toISOString().slice(0, 10), weeks: 10, dateCertainWeek: 9, dateCertainLabel: "Quick-start", lanes };
+  // SAFe's ART readiness checklist: the needed items and the desirable ones, each with the
+  // consideration behind it, placed on the launch lane that prepares it.
+  const N = "needed", D = "desirable";
   launch.fields.readiness = ([
-    ["Vision and top 10 features ready", "content", true], ["Architecture runway and enablers identified", "content", true], ["ART backlog prioritized with WSJF", "content", false],
-    ["PI calendar and cadence published", "cadence", true], ["Iteration length and IP iteration agreed", "cadence", true],
-    ["Agile teams formed, with Scrum Masters and Product Owners", "teams", false], ["System team in place", "teams", false], ["RTE, Product Manager and System Architect named", "teams", true],
-    ["Business owners confirmed and briefed", "leadership", false], ["Current commitments reviewed for flexibility", "leadership", true],
-    ["Facilities, tools and remote setup ready", undefined, false], ["Teams trained (SAFe for Teams)", undefined, false],
-  ] as [string, string | undefined, boolean][]).map(([text, laneId, done], i) => ({ id: rid("r", i), text, done, ...(laneId ? { laneId } : {}) }));
+    ["Planning scope and context", "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?", N, "content", true],
+    ["Release Train Engineer", "Have we identified the Release Train Engineer? Do they understand the scope of the role in preparing the organization and preparing for the PI Planning event?", N, "teams", true],
+    ["Planning timeframe, iteration and PI cadence", "Have we identified the PI Planning dates, the iteration cadence, and the PI cadence?", N, "cadence", true],
+    ["Agile Teams (SM/TCs, POs)", "Does each team have an identified Scrum Master/Team Coach and Product Owner?", N, "teams", false],
+    ["Team makeup/commitment", "Have we identified cross-functional Agile Teams? Are there dedicated team members on every team?", N, "teams", false],
+    ["Agile Team attendance", "Are all team members attending PI Planning, whether in person or involved remotely?", N, "teams", false],
+    ["Executive, Business Owner", "Do we know who will set and present the business context and strategy? Do we know who will assign business value and accept the plans?", N, "leadership", true],
+    ["Business alignment", "Is there reasonable agreement on priorities amongst the Business Owners and Product Management?", N, "content", false],
+    ["Architecture vision and development practices", "Do we know who will present the architecture vision and required development practices?", N, "content", true],
+    ["System Team", "Has the system team been identified and formed?", D, "teams", false],
+    ["Shared Services", "Have the shared services (User Experience, Architecture, etc.) been identified?", D, "teams", false],
+    ["Other Attendees", "Do we know what other key business and technology stakeholders should attend?", D, "leadership", true],
+    ["Agile Lifecycle Management (ALM) tooling", "Do we know how and where iterations, PIs, features, stories, measures, etc., will be maintained?", D, undefined, true],
+    ["Development infrastructure", "Do we have a strategy for using and improving the Continuous Delivery Pipeline?", D, undefined, false],
+    ["Quality practices", "Is there a strategy for applying built-in quality practices?", D, undefined, false],
+  ] as [string, string, "needed" | "desirable", string | undefined, boolean][]).map(([text, question, tier, laneId, done], i) => ({ id: rid("r", i), text, question, tier, done, ...(laneId ? { laneId } : {}) }));
 
   const out = [lace, launch];
   if (vsi) {
