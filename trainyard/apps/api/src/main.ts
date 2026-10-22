@@ -85,6 +85,7 @@ async function main() {
     // Behind Traefik in production the client address is in X-Forwarded-For.
     trustProxy: env === "production" || process.env.TRAINYARD_TRUST_PROXY === "1",
     rateLimitPerMinute: Number(process.env.TRAINYARD_RATE_LIMIT ?? 600),
+    ...(process.env.TRAINYARD_SIGNUP_WEBHOOK ? { signupWebhook: process.env.TRAINYARD_SIGNUP_WEBHOOK } : {}),
     logger: true,
   });
   const shutdown = async () => {

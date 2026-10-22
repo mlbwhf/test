@@ -47,6 +47,7 @@ import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
+import { registerSignupRoutes } from "./signups.js";
 import { Store } from "./store.js";
 import { SyncRunner } from "./sync.js";
 
@@ -69,6 +70,8 @@ export interface AppOptions extends AuthOptions {
   trustProxy?: boolean;
   /** Requests per minute per client before 429; 0 turns rate limiting off (tests). */
   rateLimitPerMinute?: number;
+  /** Every website sign-up is POSTed here as JSON (Slack, n8n, a CRM); unset means the list under Users only. */
+  signupWebhook?: string;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -578,6 +581,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);
+  registerSignupRoutes(app, store, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 

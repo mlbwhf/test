@@ -98,6 +98,7 @@ One canonical web host and one API host, plus optional aliases, all in `.env`: `
 | `TRAINYARD_SYNC_EVERY_MINUTES` | Scheduled sync of every connected tracker |
 | `TRAINYARD_WEBHOOK_SECRET` | Enables `POST /v1/webhooks/{jira\|ado}?token=…`; point Jira and ADO service hooks at it and a sync runs a few seconds after each burst of changes |
 | `TRAINYARD_WEB_URL` | CORS origin for the web app |
+| `TRAINYARD_SIGNUP_WEBHOOK` | Website sign-ups are POSTed here as JSON; they are always listed under Users |
 | `TRAINYARD_FRAME_ANCESTORS` | Web app: hosts allowed to frame `/embed/*` for the Jira app and Azure DevOps extension. Empty means the Atlassian and Azure DevOps defaults; `none` turns embedding off |
 | `TRAINYARD_ENV=production` | Refuses memory persistence and open mode |
 
@@ -231,12 +232,21 @@ npx tfx extension publish --vsix out/*.vsix --share-with <your-organization> --t
 
 CI builds both on every push and keeps the VSIX and the Forge bundle as the `trainyard-plugins` artifact.
 
+## Website, pricing and sign-up
+
+The public page at `/` is the "Session" design: a speech-bubble hero with a trainer/enterprise toggle, three rooms (planning, workshop, measuring), the kit, the comparison table, pricing, a chat-style FAQ and the sign-up. Copy describes what the app does today. Plans, the comparison and the FAQ live in `apps/web/lib/pricing.ts`, so the page, the structured data and `llms.txt` agree; the reasoning behind the prices is in `docs/pricing.md`.
+
+**Plans.** Practice (free: self-host everything, or one hosted room of up to 15 people), Trainer ($19 per trainer per month, $16 billed yearly, unlimited participants), Academy ($249 per Agile Release Train per month, $199 billed yearly, unlimited people per train, the Jira app and Azure DevOps extension, SSO). Participants are never the price unit.
+
+**Sign-up.** `POST /v1/signups` (public, 10 a minute per address, honeypot field, disposable domains refused) stores the request, audits it and forwards it to `TRAINYARD_SIGNUP_WEBHOOK` if set. Admins see the list under **Users**, create the user, send the key and mark the sign-up invited (`PATCH /v1/signups/:id`). A sign-up is a request, not an account: the server has one workspace, so a person hands out access.
+
 ## Still to do
 
 - Test the connectors against a real Jira and Azure DevOps account (only recorded responses so far)
 - SSO (OIDC/SAML): today users sign in with an API key
 - Multiple workspaces per server
 - GitHub Issues connector
+- Self-serve sign-up: create the workspace and send the key automatically (needs multiple workspaces per server and outbound email)
 - Publish the Jira app to the Atlassian Marketplace and the extension to the Visual Studio Marketplace (today: private install)
 - Pass the tracker project from the plugins into a filtered board (today it is shown, not applied)
 - A PI objectives screen with business value plan and actual (designed on the Claude Design canvas)

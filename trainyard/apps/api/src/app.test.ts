@@ -717,3 +717,33 @@ describe("value stream map from history", () => {
     expect((await call("POST", `/v1/value-streams/maps/${map.id}/derive`, { source: "jira" })).body.error.code).toBe("NOT_CONNECTED");
   });
 });
+
+describe("website sign-ups", () => {
+  it("records a sign-up, dedupes by email, forwards it and lists it for admins", async () => {
+    const posted: { url: string; body: string }[] = [];
+    const fake = (async (url: string | URL | Request, init?: RequestInit) => {
+      posted.push({ url: String(url), body: String(init?.body) });
+      return new Response("{}", { status: 200 });
+    }) as unknown as NonNullable<AppOptions["importFetch"]>;
+    const { call, app } = await setup({ importFetch: fake, signupWebhook: "https://hooks.example/signup" } as Omit<AppOptions, "store">);
+    const first = await call("POST", "/v1/signups", { name: "Ada", email: "Ada@Example.io", plan: "trainer", audience: "trainer", source: "/" });
+    expect(first.status).toBe(201);
+    expect(first.body.signup).toMatchObject({ email: "ada@example.io", plan: "trainer", status: "new" });
+    expect(first.body.signup.audience).toBeUndefined();
+    const again = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "academy", seats: 6 });
+    expect(again.status).toBe(200);
+    expect(again.body.repeated).toBe(true);
+    // Bots fill the hidden field; they get a quiet 202 and nothing is stored.
+    expect((await call("POST", "/v1/signups", { name: "x", email: "bot@bot.io", plan: "trainer", website: "http://spam" })).status).toBe(202);
+    expect((await call("POST", "/v1/signups", { name: "x", email: "nobody@example.com", plan: "trainer" })).body.error.code).toBe("BAD_EMAIL");
+    await new Promise((r) => setTimeout(r, 10));
+    expect(posted).toHaveLength(1);
+    expect(JSON.parse(posted[0]!.body).signup.email).toBe("ada@example.io");
+    const list = await call("GET", "/v1/signups");
+    expect(list.body.signups).toHaveLength(1);
+    expect(list.body.signups[0]).toMatchObject({ plan: "academy", seats: 6, source: "/" });
+    const done = await call("PATCH", `/v1/signups/${list.body.signups[0].id}`, { status: "invited" });
+    expect(done.body.signup.status).toBe("invited");
+    await app.close();
+  });
+});

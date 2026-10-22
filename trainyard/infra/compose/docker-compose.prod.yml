@@ -49,6 +49,8 @@ services:
       PORT: "4100"
       DATABASE_URL: postgres://trainyard:${POSTGRES_PASSWORD}@postgres:5432/trainyard
       # Allowed browser origins: the canonical web host plus its aliases (aliases redirect, but a cached page may still call)
+      # Website sign-ups are POSTed here as JSON (Slack, n8n, a CRM); they are always listed under Users.
+      TRAINYARD_SIGNUP_WEBHOOK: ${TRAINYARD_SIGNUP_WEBHOOK:-}
       TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}},https://${TRAINYARD_WEB_ALT:-_none_},https://${TRAINYARD_WEB_ALT2:-_none_}
       TRAINYARD_DEMO_CLOCK: "0"
     networks: [internal]

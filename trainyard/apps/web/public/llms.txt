@@ -41,3 +41,10 @@ Capabilities from a side-by-side evaluation of PI planning dashboard tools (prod
 ## Trademarks
 
 SAFe and Scaled Agile Framework are registered trademarks of Scaled Agile, Inc. Trainyard is independent of Scaled Agile, Atlassian and Microsoft.
+
+## Pricing
+
+Practice: free. Self-host the whole product (Apache-2.0) with no limits, or one hosted room of up to 15 people.
+Trainer: $19 per trainer per month ($16 billed yearly). Unlimited participants, Jira and Azure DevOps sync, AI co-trainer with your own key, board imports, email support.
+Academy: $249 per Agile Release Train per month ($199 billed yearly). Unlimited people per train, Jira app and Azure DevOps extension, SSO and audit trail, hosted or on your servers, named success lead. More than ten trains, on-premises support agreements: quote.
+Prices in USD before tax. The unit is the trainer or the train, never the person in the room.

@@ -15,6 +15,19 @@ interface User {
   disabled?: boolean;
   personId?: string;
 }
+interface Signup {
+  id: string;
+  name: string;
+  email: string;
+  plan: "practice" | "trainer" | "academy";
+  audience: "trainer" | "enterprise";
+  company?: string;
+  seats?: number;
+  note?: string;
+  source?: string;
+  createdAt: string;
+  status: "new" | "invited" | "declined";
+}
 interface AuditEntry {
   at: string;
   actor: string;
@@ -34,6 +47,7 @@ export default function UsersPage() {
   const users = useApi<{ users: User[] }>("/v1/users");
   const ws = useApi<{ workspace: { people: Person[] } }>("/v1/workspace");
   const audit = useApi<{ entries: AuditEntry[] }>("/v1/audit?limit=40");
+  const signups = useApi<{ signups: Signup[] }>("/v1/signups");
   const [issued, setIssued] = useState<{ name: string; key: string } | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -144,6 +158,70 @@ export default function UsersPage() {
           void audit.reload();
         }}
       />
+
+      <section className="panel">
+        <div className="panel-head">
+          <h2>Sign-ups from the website</h2>
+          <span className="faint">{(signups.data?.signups ?? []).filter((s) => s.status === "new").length} waiting</span>
+        </div>
+        <div className="scroll-x">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Who</th>
+                <th>Plan</th>
+                <th>Details</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(signups.data?.signups ?? []).map((s) => (
+                <tr key={s.id} style={s.status !== "new" ? { opacity: 0.6 } : undefined}>
+                  <td className="mono faint" style={{ whiteSpace: "nowrap" }}>{s.createdAt.slice(0, 16).replace("T", " ")}</td>
+                  <td>
+                    <strong>{s.name}</strong>
+                    <div className="faint" style={{ fontSize: "0.8rem" }}>
+                      <a href={`mailto:${s.email}`}>{s.email}</a>
+                      {s.company ? ` · ${s.company}` : ""}
+                    </div>
+                  </td>
+                  <td>
+                    <span className="chip">{s.plan}</span> <span className="faint" style={{ fontSize: "0.78rem" }}>{s.audience}{s.seats ? ` · ${s.seats} ${s.plan === "academy" ? "trains" : "trainers"}` : ""}</span>
+                  </td>
+                  <td style={{ fontSize: "0.84rem", maxWidth: 320 }}>
+                    {s.note ? <div>{s.note}</div> : null}
+                    {s.source ? <div className="faint mono" style={{ fontSize: "0.72rem" }}>from {s.source}</div> : null}
+                  </td>
+                  <td>
+                    <div className="row" style={{ gap: 6 }}>
+                      {s.status === "new" ? (
+                        <>
+                          <button className="btn small" onClick={() => void api("PATCH", `/v1/signups/${s.id}`, { status: "invited" }).then(() => signups.reload())} title="Create the user above, send them the key, then mark the sign-up invited">
+                            Invited
+                          </button>
+                          <button className="btn small ghost" onClick={() => void api("PATCH", `/v1/signups/${s.id}`, { status: "declined" }).then(() => signups.reload())}>
+                            Decline
+                          </button>
+                        </>
+                      ) : (
+                        <span className="chip">{s.status}</span>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {(signups.data?.signups ?? []).length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="faint">
+                    Nobody has signed up yet. Sign-ups arrive from the website form; set TRAINYARD_SIGNUP_WEBHOOK to be told elsewhere too.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <section className="panel">
         <div className="panel-head">
