@@ -41,6 +41,9 @@ services:
       postgres: { condition: service_healthy }
     env_file: [.env]
     security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    read_only: true
+    tmpfs: [/tmp]
     environment:
       TRAINYARD_ENV: production
       PORT: "4100"
@@ -70,11 +73,14 @@ services:
     restart: unless-stopped
     depends_on: [api]
     security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
     environment:
       PORT: "3100"
       HOSTNAME: 0.0.0.0
       # Read when a page is served, so the same image works on any domain.
       TRAINYARD_PUBLIC_API_URL: https://${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}
+      TRAINYARD_PUBLIC_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN}}
+      NODE_ENV: production
     networks: [internal]
     labels:
       traefik.enable: "true"

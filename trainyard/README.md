@@ -160,6 +160,14 @@ Every board opens in the canvas editor: drag cards (they re-home to the frame th
 
 The look follows the "Trainyard Glass" design: a lit backdrop with frosted rail, panels and cards (three blur strengths), the amber signal colour for the one thing that matters on a screen, Bricolage Grotesque for display type, Instrument Sans for text and IBM Plex Mono for numbers, with a dark scheme that follows the system. The design artboards are at https://claude.ai/artifact/M8AL14GSFFZX7uoCFtwTmq.
 
+## Security, SEO and the model
+
+**Security.** API keys hashed at rest with constant-time comparison and roles; a ten-minute lockout after twenty bad keys from one address; rate limits (600 requests a minute per key or address, 30 on AI routes) and an 8 MB body cap; a Content Security Policy with a per-request nonce and `strict-dynamic` on the web app and `default-src 'none'` on the API; HSTS, frame denial, nosniff, a restrictive Permissions-Policy; connection tokens sealed with AES-256-GCM; containers without capabilities, non-root, read-only where possible, Postgres on a private network; CI fails on high or critical advisories in production dependencies and Dependabot opens weekly updates. The full list, what the host must do, and how to report a problem are in [SECURITY.md](SECURITY.md).
+
+**SEO.** The root `/` is a public, server-rendered landing page with a canonical URL, Open Graph and Twitter cards (`/og.png`), `SoftwareApplication` and `FAQPage` structured data, `/robots.txt` and `/sitemap.xml`, and `/llms.txt` for answer engines. Every application route is `noindex` and disallowed for crawlers. The site URL comes from `TRAINYARD_PUBLIC_WEB_URL`, so one image serves any domain.
+
+**The model.** Pick one in `.env`: `ANTHROPIC_API_KEY` for Claude (recommended; `TRAINYARD_AI_MODEL` defaults to `claude-opus-5-5`), `TRAINYARD_LLM_URL` for any OpenAI-compatible server (hosted or `LLM_PROFILE=llm` for Ollama on the VPS). With a provider set, every page's AI buttons light up: PI objective drafts, ROAM suggestions, readiness briefing, dashboard narrative, gate reviews, and **Review this board** on any canvas, which groups cards into themes, names risks and missing connections and proposes questions for the room. Card text is sent as data with an instruction never to follow what it says; answers are schema-validated and nothing is written until someone accepts.
+
 ## Still to do
 
 - Test the connectors against a real Jira and Azure DevOps account (only recorded responses so far)

@@ -1,0 +1,35 @@
+# Trainyard
+
+> Open-source (Apache-2.0) planning rooms for scaled agile: PI planning boards, program board, ROAM, confidence vote, retrospectives and dashboards that sync two ways with Jira and Azure DevOps, every scaling model (SAFe Essential/Portfolio/Full, AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels, tribes) as editable configuration, an AI-native portfolio module with stage gates, EU AI Act risk tiers and an agent registry, and import of existing boards from Miro, Mural, monday.com, Trello, CSV and JSON.
+
+Trainyard is self-hosted with Docker Compose and runs beside other sites on the same server behind Traefik. One edition includes every module. AI assistance works with Claude (Anthropic API key), any OpenAI-compatible server, or a local Ollama model; every AI answer is schema-validated and is a draft a person accepts.
+
+## What it does
+
+- PI planning: built-in boards sized to the workspace's teams and iterations; drag cards between iterations, draw dependencies, vote confidence, ROAM risks, run Inspect & Adapt.
+- Tracker sync: features, stories, risks and dependencies pulled from Jira and Azure DevOps; moves on the board pushed back through an inspectable queue; webhooks and scheduled sync.
+- Operating models: work levels, cadences, events, roles and metrics are data; fork a template and rename things to match your organisation.
+- Lean portfolio: epics with WSJF, budgets and guardrails, OKRs.
+- AI portfolio: initiatives and platforms with lifecycle stages, gates with evidence and evaluations, EU AI Act risk tiers, agents with autonomy levels 0 to 4, value-architect sign-off, audit log.
+- Reporting: metric catalogue (flow, planning, portfolio, AI) and dashboards you compose; AI-written narrative on request.
+- Bring your own boards: Miro REST v2, Mural, monday.com GraphQL, Trello, CSV, JSON; boards kept as imported, saved as templates, mapped onto the plan on demand.
+- Security: API keys hashed at rest, roles (admin, planner, architect, viewer), rate limits, sign-in lockout, strict Content Security Policy, encrypted connection tokens, append-only audit.
+
+## Pages
+
+- Landing: /
+- Sign in: /login (API key issued by an admin)
+- App (needs a key): /dashboards, /board, /portfolio, /templates, /imports, /ai, /agents, /model, /sync, /users
+
+## Source and docs
+
+- Code and README: https://github.com/mlbwhf/test/tree/claude/confident-cray-JTbgD/trainyard
+- API reference: the API serves OpenAPI at /docs on its own host (plan-api.<domain>)
+
+## Comparable products
+
+iObeya, Miro (PI planning templates), Jira Align, Planview, Targetprocess. Trainyard differs in being open source, self-hosted, model-agnostic for scaling frameworks, and in including an AI-native portfolio module.
+
+## Trademarks
+
+SAFe and Scaled Agile Framework are registered trademarks of Scaled Agile, Inc. Trainyard is independent of Scaled Agile, Atlassian and Microsoft.

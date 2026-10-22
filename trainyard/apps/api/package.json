@@ -12,17 +12,19 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
-    "@fastify/swagger": "^9.5.0",
-    "@fastify/swagger-ui": "^5.2.0",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/swagger": "^9.9.2",
+    "@fastify/swagger-ui": "^6.1.2",
+    "@trainyard/ai-assist": "workspace:*",
     "@trainyard/ai-portfolio": "workspace:*",
     "@trainyard/connectors": "workspace:*",
     "@trainyard/core": "workspace:*",
+    "@trainyard/db": "workspace:*",
+    "@trainyard/importers": "workspace:*",
     "fastify": "^5.6.0",
     "fastify-type-provider-zod": "^7.0.0",
-    "zod": "^4.1.0",
-    "@trainyard/db": "workspace:*",
-    "@trainyard/ai-assist": "workspace:*",
-    "@trainyard/importers": "workspace:*"
+    "zod": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.19.0",

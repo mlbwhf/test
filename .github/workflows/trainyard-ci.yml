@@ -26,6 +26,9 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm, cache-dependency-path: trainyard/pnpm-lock.yaml }
       - run: pnpm install --frozen-lockfile
+      # Known vulnerabilities in what ships to production fail the build; dev tooling is reported only.
+      - run: pnpm audit --prod --audit-level high
+      - run: pnpm audit --audit-level critical || echo "::warning::dev dependencies have advisories; see pnpm audit"
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build

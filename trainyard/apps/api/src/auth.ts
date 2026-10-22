@@ -74,9 +74,26 @@ export interface AuthOptions {
   bootstrapAdminKey?: string;
 }
 
+/** Failed sign-ins per client before a 10-minute lockout. Keys are 192-bit random, so this only slows a guesser; it mostly keeps logs readable. */
+export const LOCKOUT_FAILURES = 20;
+const LOCKOUT_MS = 10 * 60 * 1000;
+
 export function registerAuth(app: App, store: Store, opts: AuthOptions = {}) {
   const bootstrapHash = opts.bootstrapAdminKey ? hashKey(opts.bootstrapAdminKey) : undefined;
   const open = () => store.state.users.length === 0 && !bootstrapHash;
+  const failures = new Map<string, { count: number; since: number }>();
+  const failed = (ip: string) => {
+    const now = Date.now();
+    const f = failures.get(ip);
+    const cur = f && now - f.since < LOCKOUT_MS ? { count: f.count + 1, since: f.since } : { count: 1, since: now };
+    failures.set(ip, cur);
+    if (failures.size > 10_000) for (const [k, v] of failures) if (now - v.since > LOCKOUT_MS) failures.delete(k);
+    return cur.count;
+  };
+  const lockedOut = (ip: string) => {
+    const f = failures.get(ip);
+    return !!f && f.count >= LOCKOUT_FAILURES && Date.now() - f.since < LOCKOUT_MS;
+  };
 
   app.decorateRequest("principal", null as unknown as Principal);
   app.addHook("onRequest", async (req, reply) => {
@@ -89,13 +106,18 @@ export function registerAuth(app: App, store: Store, opts: AuthOptions = {}) {
     const header = req.headers.authorization ?? "";
     const key = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
     if (!key) throw new ApiError(401, "UNAUTHORIZED", "Send Authorization: Bearer <api key>.");
+    if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const h = hashKey(key);
     if (bootstrapHash && sameHash(h, bootstrapHash)) {
       req.principal = { userId: "bootstrap", name: "Bootstrap admin", role: "admin", anonymous: false };
       return;
     }
     const user = store.state.users.find((u) => sameHash(u.keyHash, h));
-    if (!user || user.disabled) throw new ApiError(401, "UNAUTHORIZED", "This API key is not valid.");
+    if (!user || user.disabled) {
+      const n = failed(req.ip);
+      req.log.warn({ ip: req.ip, failures: n }, "invalid api key");
+      throw new ApiError(401, "UNAUTHORIZED", "This API key is not valid.");
+    }
     req.principal = { userId: user.id, name: user.name, role: user.role, anonymous: false, ...(user.personId ? { personId: user.personId } : {}) };
   });
 }

@@ -1,26 +1,38 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import "./fonts.css";
 import "./globals.css";
-import { Nav } from "@/components/nav";
+import { apiUrl, siteUrl } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: { default: "Trainyard", template: "%s · Trainyard" },
-  description: "Scaled agile planning and AI portfolio management across Jira and Azure DevOps",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const base = siteUrl();
+  return {
+    metadataBase: new URL(base),
+    title: { default: "Trainyard: scaled agile planning, PI planning boards and AI portfolio management", template: "%s · Trainyard" },
+    description:
+      "Open-source planning rooms for SAFe, LeSS, Scrum@Scale, Nexus and Flight Levels. PI planning boards, ROAM, program board and dashboards synced two ways with Jira and Azure DevOps, an AI-native portfolio module, and bring-your-own boards from Miro, Mural, monday.com and Trello.",
+    applicationName: "Trainyard",
+    keywords: ["PI planning", "SAFe", "scaled agile", "program board", "iObeya alternative", "Miro alternative for PI planning", "Jira", "Azure DevOps", "AI-native SAFe", "lean portfolio management", "open source"],
+    alternates: { canonical: "/" },
+    openGraph: { type: "website", siteName: "Trainyard", url: base, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Trainyard: a PI planning board in the glass theme" }] },
+    twitter: { card: "summary_large_image", images: ["/og.png"] },
+    icons: { icon: "/icon.svg" },
+    // App pages override this with noindex in their own layout.
+    robots: { index: true, follow: true },
+  };
+}
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  // The API URL is read when the page is served, not when the image is built, so one
-  // web image runs on any domain. Falls back to the build-time value, then localhost.
-  const apiUrl = process.env.TRAINYARD_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_TRAINYARD_API_URL ?? "";
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // The API URL is read when the page is served, not when the image is built, so one web
+  // image runs on any domain. The nonce comes from proxy.ts, which also sets the CSP.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const api = apiUrl();
   return (
     <html lang="en">
       <body>
-        {apiUrl ? <script dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(apiUrl)}` }} /> : null}
-        <div className="shell">
-          <Nav />
-          <main className="main">{children}</main>
-        </div>
+        {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(api)}` }} /> : null}
+        {children}
       </body>
     </html>
   );

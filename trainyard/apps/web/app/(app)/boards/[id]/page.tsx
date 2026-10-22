@@ -4,10 +4,19 @@ import Link from "next/link";
 import { use, useState } from "react";
 import type { Board, BoardMapping, MappingResult } from "@trainyard/core";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
+import { AssistButton } from "@/components/assist";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
 const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
+
+interface BoardReview {
+  summary: string;
+  themes: { name: string; cardIds: string[] }[];
+  risks: { title: string; why: string; cardIds: string[] }[];
+  dependencies: { fromCardId: string; toCardId: string; why: string }[];
+  questions: string[];
+}
 
 export default function BoardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -74,6 +83,57 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       />
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
+      {!board.isTemplate ? (
+        <AssistButton<BoardReview>
+          label="Review this board"
+          path={`/v1/assist/boards/${encodeURIComponent(board.id)}`}
+          small
+          render={(r) => (
+            <>
+              <p style={{ margin: 0 }}>{r.summary}</p>
+              {r.themes.length ? (
+                <div className="row" style={{ gap: 6 }}>
+                  {r.themes.map((t) => (
+                    <span key={t.name} className="chip" title={`${t.cardIds.length} cards`}>
+                      {t.name} · {t.cardIds.length}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              {r.risks.length ? (
+                <div className="stack" style={{ gap: 4 }}>
+                  <span className="eyebrow">Risks the cards suggest</span>
+                  {r.risks.map((k) => (
+                    <div key={k.title}>
+                      <strong>{k.title}</strong> <span className="muted">{k.why}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              {r.dependencies.length ? (
+                <div className="stack" style={{ gap: 4 }}>
+                  <span className="eyebrow">Connections not drawn yet</span>
+                  {r.dependencies.map((d) => (
+                    <div key={`${d.fromCardId}-${d.toCardId}`}>
+                      <span className="mono faint">{d.fromCardId} → {d.toCardId}</span> <span className="muted">{d.why}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              {r.questions.length ? (
+                <div className="stack" style={{ gap: 4 }}>
+                  <span className="eyebrow">Ask the room</span>
+                  <ol style={{ margin: 0, paddingLeft: 18 }}>
+                    {r.questions.map((q) => (
+                      <li key={q}>{q}</li>
+                    ))}
+                  </ol>
+                </div>
+              ) : null}
+            </>
+          )}
+        />
+      ) : null}
 
       <div className="tabs" role="tablist">
         <button role="tab" aria-selected={tab === "board"} onClick={() => setTab("board")}>

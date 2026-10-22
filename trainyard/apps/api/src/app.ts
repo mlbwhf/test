@@ -1,5 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler, type ZodTypeProvider } from "fastify-type-provider-zod";
@@ -61,6 +63,10 @@ export interface AppOptions extends AuthOptions {
   secret?: string;
   /** fetch used by board importers; tests inject a fake. */
   importFetch?: FetchLike;
+  /** Behind Traefik or another proxy: read the client IP from X-Forwarded-For for rate limits and logs. */
+  trustProxy?: boolean;
+  /** Requests per minute per client before 429; 0 turns rate limiting off (tests). */
+  rateLimitPerMinute?: number;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -120,10 +126,36 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   const metrics = new MetricRegistry();
   for (const m of [...PORTFOLIO_METRICS, ...AI_METRICS]) metrics.register(m);
 
-  const app = Fastify({ logger: opts.logger ?? false }).withTypeProvider<ZodTypeProvider>();
+  // Body limit: CSV and JSON board imports are the largest requests; 8 MB covers a big board.
+  const app = Fastify({ logger: opts.logger ?? false, trustProxy: opts.trustProxy ?? false, bodyLimit: 8 * 1024 * 1024 }).withTypeProvider<ZodTypeProvider>();
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   await app.register(cors, { origin: opts.corsOrigin ?? true, methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"] });
+  // Security headers. The API serves JSON, so the policy is "nothing may load"; the Swagger UI
+  // under /docs gets the relaxed policy it needs to render.
+  await app.register(helmet, {
+    contentSecurityPolicy: { directives: { defaultSrc: ["'none'"], frameAncestors: ["'none'"], baseUri: ["'none'"], formAction: ["'none'"] } },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    strictTransportSecurity: { maxAge: 31536000, includeSubDomains: true },
+  });
+  app.addHook("onRequest", async (req, reply) => {
+    if (req.url.startsWith("/docs")) {
+      reply.header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'");
+    }
+  });
+  const perMinute = opts.rateLimitPerMinute ?? 600;
+  if (perMinute > 0) {
+    await app.register(rateLimit, {
+      global: true,
+      max: perMinute,
+      timeWindow: "1 minute",
+      // Signed-in clients are limited per key, anonymous ones per IP.
+      keyGenerator: (req) => {
+        const auth = req.headers.authorization;
+        return auth && auth.startsWith("Bearer ") ? `key:${auth.slice(7, 27)}` : `ip:${req.ip}`;
+      },
+    });
+  }
   await app.register(swagger, { openapi: { info: { title: "Trainyard API", version: "0.2.0" } }, transform: jsonSchemaTransform });
   await app.register(swaggerUi, { routePrefix: "/docs" });
 
@@ -135,7 +167,8 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     }
     const status = (err as { statusCode?: number }).statusCode ?? 500;
     if (status >= 500) req.log.error(err);
-    return reply.code(status).send({ error: { code: status >= 500 ? "INTERNAL" : "REQUEST", message: status >= 500 ? "internal error" : (err as Error).message } });
+    const code = status >= 500 ? "INTERNAL" : status === 429 ? "RATE_LIMITED" : status === 413 ? "TOO_LARGE" : "REQUEST";
+    return reply.code(status).send({ error: { code, message: status >= 500 ? "internal error" : (err as Error).message } });
   });
 
   registerAuth(app, store, opts);

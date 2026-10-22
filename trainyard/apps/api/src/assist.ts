@@ -7,7 +7,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 import { z } from "zod";
 import { STAGES, evaluateGate, type Stage } from "@trainyard/ai-portfolio";
-import { AssistError, draftObjectives, narrateDashboard, readinessBriefing, reviewGate, reviewRisks, type AssistProvider } from "@trainyard/ai-assist";
+import { AssistError, draftObjectives, narrateDashboard, readinessBriefing, reviewBoard, reviewGate, reviewRisks, type AssistProvider } from "@trainyard/ai-assist";
 import { checkDependencies, planningReadiness, teamLoad, type MetricRegistry } from "@trainyard/core";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
@@ -32,7 +32,19 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
 
   app.get("/v1/assist", async () => ({ enabled: !!provider, provider: provider?.name ?? null }));
 
-  app.post("/v1/assist/objectives", { schema: { body: z.object({ teamId: Id, incrementId: Id.optional() }) } }, async (req) => {
+  // Model calls cost money or CPU: a tighter limit than the rest of the API, per key or address.
+  const limited = { config: { rateLimit: { max: 30, timeWindow: "1 minute" } } };
+
+  app.post("/v1/assist/boards/:id", { ...limited, schema: { params: z.object({ id: Id }) } }, async (req) => {
+    require(req, "assist");
+    const board = (s().workspace.boards ?? []).find((b) => b.id === req.params.id);
+    if (!board) throw notFound("Board");
+    if (board.nodes.filter((n) => n.text.trim()).length === 0) throw new ApiError(422, "EMPTY_BOARD", "There is nothing written on this board yet.");
+    const res = await wrap(() => reviewBoard(need(), board));
+    return { review: res.data, model: res.model, usage: { input: res.inputTokens, output: res.outputTokens } };
+  });
+
+  app.post("/v1/assist/objectives", { ...limited, schema: { body: z.object({ teamId: Id, incrementId: Id.optional() }) } }, async (req) => {
     require(req, "assist");
     const ws = s().workspace;
     const team = ws.teams.find((t) => t.id === req.body.teamId);
@@ -46,7 +58,7 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     return { draft: res.data, model: res.model, usage: { input: res.inputTokens, output: res.outputTokens } };
   });
 
-  app.post("/v1/assist/risks", async (req) => {
+  app.post("/v1/assist/risks", limited, async (req) => {
     require(req, "assist");
     const ws = s().workspace;
     const checks = checkDependencies(ws.dependencies, ws.items, ws.increments);
@@ -54,7 +66,7 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     return { review: res.data, model: res.model };
   });
 
-  app.post("/v1/assist/readiness", { schema: { body: z.object({ incrementId: Id.optional() }) } }, async (req) => {
+  app.post("/v1/assist/readiness", { ...limited, schema: { body: z.object({ incrementId: Id.optional() }) } }, async (req) => {
     require(req, "assist");
     const ws = s().workspace;
     const inc = req.body.incrementId ? ws.increments.find((i) => i.id === req.body.incrementId) : ws.increments[ws.increments.length - 1];
@@ -73,7 +85,7 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     return { briefing: res.data, model: res.model };
   });
 
-  app.post("/v1/assist/narrative", { schema: { body: z.object({ dashboardId: Id }) } }, async (req) => {
+  app.post("/v1/assist/narrative", { ...limited, schema: { body: z.object({ dashboardId: Id }) } }, async (req) => {
     require(req, "assist");
     const d = s().dashboards.find((x) => x.id === req.body.dashboardId);
     if (!d) throw notFound("Dashboard");
@@ -82,7 +94,7 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     return { narrative: res.data, model: res.model };
   });
 
-  app.post("/v1/assist/gate/:id", { schema: { params: z.object({ id: Id }), body: z.object({ to: z.enum(STAGES).optional() }) } }, async (req) => {
+  app.post("/v1/assist/gate/:id", { ...limited, schema: { params: z.object({ id: Id }), body: z.object({ to: z.enum(STAGES).optional() }) } }, async (req) => {
     require(req, "assist");
     const i = s().initiatives.find((x) => x.id === req.params.id);
     if (!i) throw notFound("AI initiative");

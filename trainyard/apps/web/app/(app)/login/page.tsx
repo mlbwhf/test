@@ -29,7 +29,7 @@ function LoginForm() {
           try {
             const me = await api<Me>("GET", "/v1/me");
             setError(null);
-            router.push(params.get("next") || "/");
+            router.push(params.get("next") || "/dashboards");
             void me;
           } catch (err) {
             setApiKey(null);

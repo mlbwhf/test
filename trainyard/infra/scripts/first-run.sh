@@ -33,6 +33,7 @@ else
   set_kv POSTGRES_PASSWORD "$(openssl rand -hex 24)"
   set_kv TRAINYARD_ADMIN_KEY "$(openssl rand -hex 32)"
   set_kv TRAINYARD_WEBHOOK_SECRET "$(openssl rand -hex 24)"
+  set_kv TRAINYARD_SECRET "$(openssl rand -hex 32)"
   # Same Traefik as gate: copy its detected values, else detect them now.
   if [ -f /opt/gate/.env ]; then
     for k in TRAEFIK_NETWORK TRAEFIK_ENTRYPOINT TRAEFIK_CERT_RESOLVER; do
