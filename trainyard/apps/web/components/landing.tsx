@@ -428,7 +428,9 @@ export function Landing() {
             <b>What about self-hosting?</b>The whole product is Apache-2.0. Practice is not a trial: run it yourself, with every feature, for as long as you like. Paid plans add hosting, the plugins, SSO and a person to call.
           </div>
         </div>
-        <p className="fine">Prices in USD, before tax. Yearly billing is ten months for twelve. Portfolios with more than ten trains, on-premises support agreements and public-sector terms: talk to us.</p>
+        <p className="fine">
+          Every paid plan starts with a <strong>free 14-day trial</strong>, then month by month: no card charge today, no yearly commitment to begin. Not satisfied in your first paid month? <strong>Money back</strong>, claimed by you from Plan &amp; billing, no questions asked. Yearly billing (ten months for twelve) is a switch you make after the first month. Prices in USD, before tax. Portfolios with more than ten trains, on-premises support agreements and public-sector terms: talk to us.
+        </p>
       </section>
 
       <section id="faq" className="ly-faq">
@@ -459,7 +461,7 @@ export function Landing() {
             <h2>
               Your class starts at <span className="chip">00:00</span>.
             </h2>
-            <p>Tell us who you are and which plan fits. Trainer and Academy pay by card through Stripe and get their sign-in straight away; Practice never asks for one.</p>
+            <p>Tell us who you are and which plan fits. Practice is ready at once. Trainer and Academy start with a free 14-day trial, month by month, with a money-back guarantee on the first paid month.</p>
           </div>
           <SignupForm plan={plan} setPlan={setPlan} audience={aud} yearly={yearly} />
         </div>
@@ -482,7 +484,7 @@ export function Landing() {
   );
 }
 
-type BillingConfig = { enabled: boolean; inPage: boolean; publishableKey?: string; plans: Record<string, boolean>; trialDays: number };
+type BillingConfig = { enabled: boolean; inPage: boolean; publishableKey?: string; plans: Record<string, boolean>; trialDays: number; guaranteeDays?: number };
 
 function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan: (p: PlanId) => void; audience: Audience; yearly: boolean }) {
   const [name, setName] = useState("");
@@ -500,8 +502,10 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
   useEffect(() => {
     api<BillingConfig>("GET", "/v1/billing/config").then(setBilling, () => setBilling(null));
   }, []);
-  const interval = yearly ? "yearly" : "monthly";
+  // Every paid plan starts month by month with a free trial; yearly is chosen later from Billing.
+  const interval = "monthly" as const;
   const canPay = plan !== "practice" && !!billing?.enabled && !!billing.plans[`${plan}-${interval}`];
+  void yearly;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -558,7 +562,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
           publishableKey={billing.publishableKey}
           sub={pay}
           email={email.trim()}
-          summary={`${def.name} · ${qty} ${unit}${qty > 1 ? "s" : ""} · ${interval === "yearly" ? "billed yearly" : "billed monthly"}`}
+          summary={`${def.name} · ${qty} ${unit}${qty > 1 ? "s" : ""} · month by month`}
           onPaid={(claim) => {
             setPay(null);
             setDone({ name: name.trim(), email: email.trim(), plan, claim });
@@ -700,7 +704,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         </label>
         {err ? <div className="err" role="alert">{err}</div> : null}
         <button type="submit" className="submit" disabled={busy}>
-          {busy ? "One moment…" : canPay && billing?.inPage ? `${def.cta}: ${money((yearly ? (def.yearly ?? 0) * 12 : def.monthly ?? 0) * 100 * (seats && Number(seats) > 0 ? Number(seats) : 1), "usd")} ${yearly ? "a year" : "a month"} →` : def.cta + " →"}
+          {busy ? "One moment…" : canPay && billing?.inPage ? (billing.trialDays ? `${def.cta}: free for ${billing.trialDays} days →` : `${def.cta}: ${money((def.monthly ?? 0) * 100 * (seats && Number(seats) > 0 ? Number(seats) : 1), "usd")} a month →`) : def.cta + " →"}
         </button>
         <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4 }}>We use your email to send the sign-in and nothing else. No newsletter, no resale.</p>
       </form>

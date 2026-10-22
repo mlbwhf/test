@@ -35,7 +35,7 @@ export interface BillingOptions {
   trialDays?: number;
 }
 
-export type PurchaseStatus = "open" | "paid" | "expired" | "past_due" | "cancelled";
+export type PurchaseStatus = "open" | "paid" | "expired" | "past_due" | "cancelled" | "refunded";
 
 export interface Purchase {
   id: string;
@@ -56,6 +56,12 @@ export interface Purchase {
   pendingKey?: string;
   createdAt: string;
   paidAt?: string;
+  /** When the free trial ends and the first charge happens. */
+  trialEndsAt?: string;
+  /** The first paid invoice's PaymentIntent, refundable under the first-month guarantee. */
+  firstPaymentIntent?: string;
+  firstPaidAt?: string;
+  refundedAt?: string;
   /** Last renewal invoice paid, or the last failure. */
   lastInvoiceAt?: string;
   lastFailureAt?: string;
@@ -86,6 +92,8 @@ export function verifyStripeSignature(payload: string, header: string | undefine
 
 type StripeObject = Record<string, unknown> & { id?: string };
 const requirePermissionQuiet = (p: Principal) => p.role === "admin" && !p.anonymous;
+/** Money back on the first paid month, claimed from Billing within this many days of the first charge. */
+export const GUARANTEE_DAYS = 30;
 
 export async function registerBillingRoutes(app: App, tenants: Tenants, opts: BillingOptions = {}) {
   const store = tenants.platform;
@@ -93,8 +101,8 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const f = opts.fetch ?? fetch;
   const purchases = () => (store.state.purchases ??= []);
   const signups = () => store.state.signups ?? [];
-  const stripe = async (path: string, body?: Record<string, string | number | undefined>): Promise<StripeObject> => {
-    const res = await f(`https://api.stripe.com/v1/${path}`, body ? { method: "POST", headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body) } : { method: "GET", headers: { authorization: `Bearer ${opts.secretKey}` } });
+  const stripe = async (path: string, body?: Record<string, string | number | undefined>, method: "GET" | "POST" | "DELETE" = body ? "POST" : "GET"): Promise<StripeObject> => {
+    const res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` } } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}) });
     const json = (await res.json()) as { error?: { message?: string } } & StripeObject;
     if (!res.ok) throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
     return json;
@@ -174,10 +182,21 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     ...(enabled && opts.publishableKey ? { publishableKey: opts.publishableKey } : {}),
     plans: enabled ? Object.fromEntries(Object.entries(opts.prices ?? {}).map(([k, v]) => [k, !!v])) : {},
     trialDays: opts.trialDays ?? 0,
+    guaranteeDays: GUARANTEE_DAYS,
   }));
 
   const StartBody = z.object({ signupId: z.string().min(1).max(80), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) });
-  const SubscribeBody = z.object({ signupId: z.string().min(1).max(80).optional(), plan: z.enum(["trainer", "academy"]).optional(), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) });
+  // Every paid plan starts the same way: a free trial, then month by month. Yearly is a switch
+  // made later from Billing, once the first month is behind. The interval here is accepted for
+  // compatibility and ignored.
+  const SubscribeBody = z.object({ signupId: z.string().min(1).max(80).optional(), plan: z.enum(["trainer", "academy"]).optional(), interval: z.enum(["monthly", "yearly"]).optional(), quantity: z.number().int().min(1).max(500).default(1) });
+  /** One trial per customer: none when this email or workspace has paid before. */
+  const trialFor = (who: { email: string; workspaceId?: string }) => {
+    const trial = opts.trialDays ?? 0;
+    if (!trial) return 0;
+    const before = purchases().some((p) => (p.status === "paid" || p.status === "past_due" || p.status === "cancelled" || p.status === "refunded") && ((who.workspaceId && p.workspaceId === who.workspaceId) || (p.userId && store.state.users.find((u) => u.id === p.userId)?.email.toLowerCase() === who.email.toLowerCase())));
+    return before ? 0 : trial;
+  };
   /** Who is paying: a sign-up from the website, or the signed-in owner of an existing workspace. */
   const payer = (req: { principal: Principal; body: { signupId?: string | undefined; plan?: "trainer" | "academy" | undefined } }) => {
     if (req.body.signupId) {
@@ -197,12 +216,13 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   app.post("/v1/billing/subscribe", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: SubscribeBody } }, async (req) => {
     if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server; the sign-up will be handled by hand.");
     const who = payer(req);
-    const price = priceFor(who.plan, req.body.interval);
+    const interval = "monthly" as const;
+    const price = priceFor(who.plan, interval);
     // One customer per sign-up or workspace; reuse it when the person retries.
     const existing = purchases().find((p) => p.customerId && ((who.signupId && p.signupId === who.signupId) || (who.workspaceId && p.workspaceId === who.workspaceId)));
     const customerId = existing?.customerId ?? String((await stripe("customers", { email: who.email, name: who.name, ...(who.signupId ? { "metadata[signupId]": who.signupId } : {}), ...(who.workspaceId ? { "metadata[workspaceId]": who.workspaceId } : {}), ...(who.company ? { description: who.company } : {}) })).id);
     const signup = { id: who.signupId ?? "", plan: who.plan };
-    const trial = opts.trialDays ?? 0;
+    const trial = trialFor(who);
     const sub = await stripe("subscriptions", {
       customer: customerId,
       "items[0][price]": price,
@@ -212,7 +232,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       ...(who.signupId ? { "metadata[signupId]": who.signupId } : {}),
       ...(who.workspaceId ? { "metadata[workspaceId]": who.workspaceId } : {}),
       "metadata[plan]": signup.plan,
-      ...(trial && !who.workspaceId ? { trial_period_days: trial } : {}),
+      ...(trial ? { trial_period_days: trial } : {}),
       "expand[0]": "latest_invoice.payment_intent",
       "expand[1]": "pending_setup_intent",
     });
@@ -220,7 +240,10 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const intent = (invoice?.payment_intent as StripeObject | null) ?? (sub.pending_setup_intent as StripeObject | null);
     const clientSecret = intent?.client_secret as string | undefined;
     if (!clientSecret) throw new ApiError(502, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
-    const p: Purchase = { id: newId("pur"), ...(who.signupId ? { signupId: who.signupId } : {}), ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}), plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString() };
+    const trialEnd = typeof sub.trial_end === "number" ? new Date(sub.trial_end * 1000).toISOString() : undefined;
+    const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
+    const unitAmount = Number((item?.price as StripeObject | undefined)?.unit_amount ?? 0);
+    const p: Purchase = { id: newId("pur"), ...(who.signupId ? { signupId: who.signupId } : {}), ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}), plan: signup.plan, interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString(), ...(trialEnd ? { trialEndsAt: trialEnd } : {}) };
     purchases().push(p);
     await store.commit(req.principal, "billing.subscribe", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}) });
     return {
@@ -229,8 +252,12 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       clientSecret,
       mode: invoice?.payment_intent ? "payment" : "setup",
       amountDue: Number(invoice?.amount_due ?? 0),
-      currency: String(invoice?.currency ?? "usd"),
-      trialDays: who.workspaceId ? 0 : trial,
+      /** What each month costs once the trial ends. */
+      recurringAmount: unitAmount * req.body.quantity,
+      currency: String(invoice?.currency ?? (item?.price as StripeObject | undefined)?.currency ?? "usd"),
+      trialDays: trial,
+      ...(trialEnd ? { trialEndsAt: trialEnd } : {}),
+      guaranteeDays: GUARANTEE_DAYS,
     };
   });
 
@@ -256,6 +283,53 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     return { seats: record.seats };
   });
 
+  // Yearly, once the first month is paid: the item moves to the yearly price, difference billed now.
+  app.post("/v1/billing/interval", { schema: { body: z.object({ interval: z.enum(["monthly", "yearly"]) }) } }, async (req) => {
+    if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
+    requirePermission(req, "users");
+    const record = tenants.record(req.principal.workspaceId) ?? (() => { throw new ApiError(409, "PLATFORM_WORKSPACE", "The platform workspace has no subscription."); })();
+    const p = purchases().filter((x) => x.workspaceId === record.id && x.status === "paid" && x.subscriptionId).at(-1);
+    if (!p) throw new ApiError(409, "NO_SUBSCRIPTION", "This workspace has no paid subscription yet.");
+    if (p.interval === req.body.interval) return { interval: p.interval };
+    if (req.body.interval === "yearly" && !p.firstPaidAt) throw new ApiError(409, "FIRST_MONTH", "Every plan starts month by month; yearly billing opens after the first paid month.");
+    const price = priceFor(record.plan, req.body.interval);
+    const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
+    const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
+    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][price]": price, "items[0][quantity]": p.quantity, proration_behavior: "always_invoice" });
+    p.interval = req.body.interval;
+    await store.commit(req.principal, "billing.interval", { purchase: p.id, workspaceId: record.id, interval: p.interval });
+    return { interval: p.interval };
+  });
+
+  // The guarantee: not satisfied in the first month? The first charge comes back, the
+  // subscription ends, the workspace drops to Practice with everything kept.
+  app.post("/v1/billing/refund", { schema: { body: z.object({ reason: z.string().trim().max(500).optional() }) } }, async (req) => {
+    if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
+    requirePermission(req, "users");
+    const record = tenants.record(req.principal.workspaceId) ?? (() => { throw new ApiError(409, "PLATFORM_WORKSPACE", "The platform workspace has no subscription."); })();
+    const p = purchases().filter((x) => x.workspaceId === record.id && (x.status === "paid" || x.status === "past_due") && x.subscriptionId).at(-1);
+    if (!p) throw new ApiError(409, "NO_SUBSCRIPTION", "This workspace has no paid subscription.");
+    const since = p.firstPaidAt ? (store.now().getTime() - Date.parse(p.firstPaidAt)) / 86_400_000 : null;
+    if (since !== null && since > GUARANTEE_DAYS) throw new ApiError(409, "GUARANTEE_OVER", `The money-back guarantee covers the first ${GUARANTEE_DAYS} days after the first charge; that was ${Math.floor(since)} days ago. You can still cancel from the portal.`);
+    let refunded = 0;
+    if (p.firstPaymentIntent) {
+      const r = await stripe("refunds", { payment_intent: p.firstPaymentIntent, reason: "requested_by_customer", "metadata[workspaceId]": record.id, ...(req.body.reason ? { "metadata[note]": req.body.reason.slice(0, 500) } : {}) });
+      refunded = Number(r.amount ?? 0);
+    }
+    await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, undefined, "DELETE");
+    p.status = "refunded";
+    p.refundedAt = store.now().toISOString();
+    record.plan = "practice";
+    record.seats = 1;
+    record.status = "active";
+    delete record.frozenAt;
+    delete record.frozenReason;
+    record.note = `${record.note ? record.note + " · " : ""}money-back claimed ${p.refundedAt.slice(0, 10)}${req.body.reason ? `: ${req.body.reason.slice(0, 120)}` : ""}`;
+    await store.commit(req.principal, "billing.refund", { purchase: p.id, workspaceId: record.id, refunded, reason: req.body.reason });
+    return { refunded, plan: record.plan };
+  });
+
   // What the Billing page shows: plan, limits, usage, the subscription and whether payments run.
   app.get("/v1/billing/workspace", async (req) => {
     const record = tenants.record(req.principal.workspaceId);
@@ -270,7 +344,9 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       workspace: record ?? null,
       limits: record ? limitsFor(record.plan, record.seats) : null,
       usage,
-      subscription: latest ? { id: latest.id, status: latest.status, plan: latest.plan, interval: latest.interval, quantity: latest.quantity, paidAt: latest.paidAt, lastInvoiceAt: latest.lastInvoiceAt, lastFailureAt: latest.lastFailureAt, cancelledAt: latest.cancelledAt, hasSubscription: !!latest.subscriptionId } : null,
+      subscription: latest ? { id: latest.id, status: latest.status, plan: latest.plan, interval: latest.interval, quantity: latest.quantity, paidAt: latest.paidAt, trialEndsAt: latest.trialEndsAt, firstPaidAt: latest.firstPaidAt, refundedAt: latest.refundedAt, lastInvoiceAt: latest.lastInvoiceAt, lastFailureAt: latest.lastFailureAt, cancelledAt: latest.cancelledAt, hasSubscription: !!latest.subscriptionId, guaranteeUntil: latest.firstPaidAt ? new Date(Date.parse(latest.firstPaidAt) + GUARANTEE_DAYS * 86_400_000).toISOString() : null, trialDays: opts.trialDays ?? 0 } : null,
+      trialDays: opts.trialDays ?? 0,
+      guaranteeDays: GUARANTEE_DAYS,
       canManage: requirePermissionQuiet(req.principal),
     };
   });
@@ -347,6 +423,10 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
           const subId = obj.subscription ?? details?.subscription;
           const p = bySubscription(subId);
           if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+          if (Number(obj.amount_paid ?? 0) > 0 && !p.firstPaymentIntent && obj.payment_intent) {
+            p.firstPaymentIntent = String(obj.payment_intent);
+            p.firstPaidAt = store.now().toISOString();
+          }
           if (p.status === "paid") {
             p.lastInvoiceAt = store.now().toISOString();
             delete p.lastFailureAt;
@@ -388,7 +468,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
         }
         case "customer.subscription.deleted": {
           const p = bySubscription(obj.id);
-          if (p && p.status !== "cancelled") {
+          if (p && p.status !== "cancelled" && p.status !== "refunded") {
             p.status = "cancelled";
             p.cancelledAt = store.now().toISOString();
             await freeze(p, "subscription cancelled");

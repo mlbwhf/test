@@ -98,7 +98,8 @@ async function main() {
       },
       // Stripe sends people back to the website: the first (canonical) origin.
       ...(process.env.TRAINYARD_WEB_URL ? { webUrl: process.env.TRAINYARD_WEB_URL.split(",")[0]!.trim() } : {}),
-      trialDays: Number(process.env.STRIPE_TRIAL_DAYS ?? 0),
+      // Every paid plan starts with a free trial; 0 turns it off.
+      trialDays: Number(process.env.STRIPE_TRIAL_DAYS ?? 14),
     },
     logger: true,
   });

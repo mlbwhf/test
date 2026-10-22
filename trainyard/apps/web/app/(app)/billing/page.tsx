@@ -20,8 +20,10 @@ type Summary = {
   workspace: { id: string; name: string; plan: PlanId; seats: number; status: "active" | "frozen"; frozenReason?: string; createdAt: string; note?: string } | null;
   limits: Limits | null;
   usage: Usage;
-  subscription: { id: string; status: string; plan: string; interval: string; quantity: number; paidAt?: string; lastInvoiceAt?: string; lastFailureAt?: string; cancelledAt?: string; hasSubscription: boolean } | null;
+  subscription: { id: string; status: string; plan: string; interval: string; quantity: number; paidAt?: string; trialEndsAt?: string; firstPaidAt?: string; refundedAt?: string; lastInvoiceAt?: string; lastFailureAt?: string; cancelledAt?: string; hasSubscription: boolean; guaranteeUntil: string | null } | null;
   canManage: boolean;
+  trialDays: number;
+  guaranteeDays: number;
 };
 
 const ROWS: { key: keyof Usage; label: string }[] = [
@@ -38,6 +40,8 @@ export default function BillingPage() {
   const [paid, setPaid] = useState<Claim | null>(null);
   const [choice, setChoice] = useState<{ plan: PlanId; interval: "monthly" | "yearly"; quantity: number }>({ plan: "trainer", interval: "monthly", quantity: 1 });
   const [seats, setSeats] = useState<string>("");
+  const [refundNote, setRefundNote] = useState("");
+  const [confirmRefund, setConfirmRefund] = useState(false);
   const [busy, setBusy] = useState(false);
   const data = summary.data;
   const ws = data?.workspace ?? null;
@@ -62,6 +66,31 @@ export default function BillingPage() {
     try {
       await api("POST", "/v1/billing/seats", { quantity: Number(seats) });
       setSeats("");
+      summary.reload();
+    } catch (x) {
+      setErr((x as ApiFailure).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const switchInterval = async (interval: "monthly" | "yearly") => {
+    setErr(null);
+    setBusy(true);
+    try {
+      await api("POST", "/v1/billing/interval", { interval });
+      summary.reload();
+    } catch (x) {
+      setErr((x as ApiFailure).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const refund = async () => {
+    setErr(null);
+    setBusy(true);
+    try {
+      await api("POST", "/v1/billing/refund", refundNote ? { reason: refundNote } : {});
+      setConfirmRefund(false);
       summary.reload();
     } catch (x) {
       setErr((x as ApiFailure).message);
@@ -136,6 +165,17 @@ export default function BillingPage() {
             </div>
           ) : null}
           {data.subscription?.status === "past_due" ? <div className="notice warn">The last payment failed. Update the card under “Card, invoices, cancel”; the workspace stays open while Stripe retries.</div> : null}
+          {data.subscription?.status === "paid" && data.subscription.trialEndsAt && Date.parse(data.subscription.trialEndsAt) > Date.now() ? (
+            <div className="notice ok">
+              <b>Free trial</b> until {new Date(data.subscription.trialEndsAt).toLocaleDateString()}. Nothing has been charged. Cancel before then under “Card, invoices, cancel” and nothing will be.
+            </div>
+          ) : null}
+          {data.subscription?.status === "paid" && data.subscription.guaranteeUntil && Date.parse(data.subscription.guaranteeUntil) > Date.now() ? (
+            <div className="notice">
+              <b>Money-back guarantee</b> until {new Date(data.subscription.guaranteeUntil).toLocaleDateString()}: not satisfied? One click below refunds your first month and keeps the workspace on the free plan.
+            </div>
+          ) : null}
+          {data.subscription?.status === "refunded" ? <div className="notice ok">Your first month was refunded on {new Date(data.subscription.refundedAt!).toLocaleDateString()}. The workspace is on the free plan with everything kept; pick a plan below whenever you like.</div> : null}
           <table className="table">
             <thead>
               <tr>
@@ -192,7 +232,7 @@ export default function BillingPage() {
               publishableKey={data.publishableKey}
               sub={pay.sub}
               email={email}
-              summary={`${PLANS.find((p) => p.id === pay.plan)!.name} · ${pay.quantity} ${pay.plan === "academy" ? "train" : "trainer"}${pay.quantity > 1 ? "s" : ""} · billed ${pay.interval}`}
+              summary={`${PLANS.find((p) => p.id === pay.plan)!.name} · ${pay.quantity} ${pay.plan === "academy" ? "train" : "trainer"}${pay.quantity > 1 ? "s" : ""} · month by month`}
               onPaid={(c) => {
                 setPay(null);
                 setPaid(c);
@@ -225,6 +265,56 @@ export default function BillingPage() {
               </div>
             </section>
           ) : null}
+          {ws.plan !== "practice" && ws.status === "active" && data.subscription?.status === "paid" && data.subscription.hasSubscription ? (
+            <section className="panel">
+              <div className="panel-head">
+                <h2>Billing period</h2>
+                <span className="faint">{data.subscription.interval === "yearly" ? "billed yearly, ten months for twelve" : "month by month"}</span>
+              </div>
+              <div className="panel-body row">
+                {data.subscription.interval === "monthly" ? (
+                  <>
+                    <button className="btn" disabled={busy || !data.subscription.firstPaidAt || !data.plans[`${ws.plan}-yearly`]} onClick={() => void switchInterval("yearly")}>
+                      Switch to yearly
+                    </button>
+                    <span className="faint">{data.subscription.firstPaidAt ? `${money(price(ws.plan, "yearly") * ws.seats * 100, "usd")} a year instead of ${money(price(ws.plan, "monthly") * 12 * ws.seats * 100, "usd")}; the difference for the current period is settled now.` : "Available after your first paid month."}</span>
+                  </>
+                ) : (
+                  <button className="btn ghost" disabled={busy} onClick={() => void switchInterval("monthly")}>
+                    Back to monthly
+                  </button>
+                )}
+              </div>
+            </section>
+          ) : null}
+          {ws.plan !== "practice" && data.subscription?.status === "paid" && data.subscription.guaranteeUntil && Date.parse(data.subscription.guaranteeUntil) > Date.now() ? (
+            <section className="panel">
+              <div className="panel-head">
+                <h2>Not satisfied? Money back</h2>
+                <span className="faint">first paid month, until {new Date(data.subscription.guaranteeUntil).toLocaleDateString()}</span>
+              </div>
+              <div className="panel-body stack">
+                {confirmRefund ? (
+                  <>
+                    <p>This refunds your first month to the card, ends the subscription today and moves {ws.name} to the free plan: one board, up to 5 people, everything kept. Tell us why, if you like.</p>
+                    <textarea className="input" rows={2} value={refundNote} onChange={(e) => setRefundNote(e.target.value)} placeholder="What did not work for you? (optional)" />
+                    <div className="row">
+                      <button className="btn primary" disabled={busy} onClick={() => void refund()}>
+                        {busy ? "One moment…" : "Refund my first month"}
+                      </button>
+                      <button className="btn ghost" onClick={() => setConfirmRefund(false)}>
+                        Keep my plan
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <button className="btn ghost" onClick={() => setConfirmRefund(true)}>
+                    Claim the money-back guarantee
+                  </button>
+                )}
+              </div>
+            </section>
+          ) : null}
           {ws.plan === "practice" || ws.status === "frozen" ? (
             <section className="panel">
               <div className="panel-head">
@@ -238,13 +328,6 @@ export default function BillingPage() {
                       {PLANS.find((x) => x.id === p)!.name}
                     </button>
                   ))}
-                  <span style={{ width: 16 }} />
-                  <button type="button" className={`btn small ${choice.interval === "monthly" ? "" : "ghost"}`} onClick={() => setChoice({ ...choice, interval: "monthly" })}>
-                    Monthly
-                  </button>
-                  <button type="button" className={`btn small ${choice.interval === "yearly" ? "" : "ghost"}`} onClick={() => setChoice({ ...choice, interval: "yearly" })}>
-                    Yearly (2 months free)
-                  </button>
                 </div>
                 <p className="muted">{PLANS.find((x) => x.id === choice.plan)!.blurb}</p>
                 <div className="row">
@@ -252,10 +335,13 @@ export default function BillingPage() {
                     {choice.plan === "academy" ? "Trains" : "Trainers"}
                     <input className="input" type="number" min={1} max={500} value={choice.quantity} onChange={(e) => setChoice({ ...choice, quantity: Math.max(1, Number(e.target.value) || 1) })} style={{ width: 80 }} />
                   </label>
-                  <button className="btn primary" disabled={busy || !data.plans[`${choice.plan}-${choice.interval}`]} onClick={() => void start()}>
-                    {busy ? "One moment…" : `Pay ${money(price(choice.plan, choice.interval) * choice.quantity * 100, "usd")} ${choice.interval === "yearly" ? "a year" : "a month"}`}
+                  <button className="btn primary" disabled={busy || !data.plans[`${choice.plan}-monthly`]} onClick={() => void start()}>
+                    {busy ? "One moment…" : data.trialDays && !data.subscription?.firstPaidAt && data.subscription?.status !== "refunded" ? `Start free ${data.trialDays}-day trial` : `Pay ${money(price(choice.plan, "monthly") * choice.quantity * 100, "usd")} a month`}
                   </button>
                 </div>
+                <p className="faint">
+                  Month by month, {money(price(choice.plan, "monthly") * choice.quantity * 100, "usd")} a month after the trial; switch to yearly later. Money back on the first paid month, claimed here, within {data.guaranteeDays} days.
+                </p>
                 {!data.inPage ? <p className="faint">In-page payment is not enabled on this server; ask the operator.</p> : null}
               </div>
             </section>

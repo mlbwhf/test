@@ -1125,3 +1125,76 @@ describe("workspaces", () => {
     expect(detail.body.audit[0].action).toBe("board.instantiate");
   });
 });
+
+describe("trial, monthly start and the money-back guarantee", () => {
+  it("starts every paid plan with one free trial, month by month, opens yearly after the first paid month, and refunds the first month on request", async () => {
+    const calls: { url: string; method: string; body: string }[] = [];
+    let subStatus = "trialing";
+    const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+      calls.push({ url: u, method, body: String(init?.body ?? "") });
+      if (u.endsWith("/customers")) return json({ id: "cus_t" });
+      if (u.endsWith("/subscriptions") && method === "POST") {
+        const trial = String(init?.body ?? "").includes("trial_period_days");
+        return json({ id: "sub_t", status: trial ? "trialing" : "incomplete", trial_end: trial ? 1_800_000_000 : null, items: { data: [{ id: "si_t", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: trial ? { amount_due: 0, currency: "usd", payment_intent: null } : { amount_due: 3800, currency: "usd", payment_intent: { client_secret: "pi_secret" } }, pending_setup_intent: trial ? { client_secret: "seti_secret" } : null });
+      }
+      if (u.endsWith("/subscriptions/sub_t") && method === "DELETE") { subStatus = "canceled"; return json({ id: "sub_t", status: "canceled" }); }
+      if (u.endsWith("/subscriptions/sub_t") && method === "POST") return json({ id: "sub_t", status: "active" });
+      if (u.endsWith("/subscriptions/sub_t")) return json({ id: "sub_t", status: subStatus, items: { data: [{ id: "si_t", price: { id: "price_tm" } }] } });
+      if (u.endsWith("/refunds")) return json({ id: "re_t", amount: 3800 });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 14, prices: { "trainer-monthly": "price_tm", "trainer-yearly": "price_ty" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
+    expect((await call("GET", "/v1/billing/config")).body).toMatchObject({ trialDays: 14, guaranteeDays: 30 });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer", seats: 2 });
+    // Yearly asked for: ignored, every plan starts monthly with the trial, nothing due today.
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id, interval: "yearly", quantity: 2 });
+    expect(sub.status).toBe(200);
+    expect(sub.body).toMatchObject({ mode: "setup", clientSecret: "seti_secret", amountDue: 0, recurringAmount: 3800, trialDays: 14, guaranteeDays: 30, trialEndsAt: new Date(1_800_000_000 * 1000).toISOString() });
+    const created = calls.find((c) => c.url.endsWith("/subscriptions") && c.method === "POST")!;
+    expect(created.body).toContain("trial_period_days=14");
+    expect(created.body).toContain("items%5B0%5D%5Bprice%5D=price_tm");
+    // Card saved: the subscription is trialing, which counts as paid for access.
+    const claim = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId });
+    expect(claim.body).toMatchObject({ status: "paid", workspace: { plan: "trainer", seats: 2 } });
+    const key = claim.body.apiKey as string;
+    const wsId = claim.body.workspace.id as string;
+    // No yearly before the first paid month.
+    expect((await call("POST", "/v1/billing/interval", { interval: "yearly" }, key)).body.error.code).toBe("FIRST_MONTH");
+    // The first charge arrives after the trial.
+    const t = Math.floor(store.now().getTime() / 1000);
+    const send = async (event: object) => {
+      const payload = JSON.stringify(event);
+      const sig = `t=${t},v1=${createHmac("sha256", "whsec_test").update(`${t}.${payload}`).digest("hex")}`;
+      return app.inject({ method: "POST", url: "/v1/webhooks/stripe", payload, headers: { "content-type": "application/json", "stripe-signature": sig } });
+    };
+    await send({ type: "invoice.paid", data: { object: { id: "in_first", subscription: "sub_t", amount_paid: 3800, payment_intent: "pi_first" } } });
+    const purchase = store.state.purchases!.find((p) => p.subscriptionId === "sub_t")!;
+    expect(purchase.firstPaymentIntent).toBe("pi_first");
+    const summary = await call("GET", "/v1/billing/workspace", undefined, key);
+    expect(summary.body.subscription.guaranteeUntil).toBeTruthy();
+    // Now yearly is allowed.
+    expect((await call("POST", "/v1/billing/interval", { interval: "yearly" }, key)).body).toEqual({ interval: "yearly" });
+    expect(calls.at(-1)!.body).toContain("items%5B0%5D%5Bprice%5D=price_ty");
+    // Not satisfied: money back, subscription ended, workspace on Practice with everything kept.
+    const refund = await call("POST", "/v1/billing/refund", { reason: "Not for us" }, key);
+    expect(refund.body).toEqual({ refunded: 3800, plan: "practice" });
+    expect(calls.some((c) => c.url.endsWith("/refunds") && c.body.includes("payment_intent=pi_first"))).toBe(true);
+    expect(calls.some((c) => c.url.endsWith("/subscriptions/sub_t") && c.method === "DELETE")).toBe(true);
+    expect(store.state.workspaces!.find((w) => w.id === wsId)).toMatchObject({ plan: "practice", seats: 1, status: "active" });
+    expect(store.state.workspaces!.find((w) => w.id === wsId)!.note).toContain("money-back claimed");
+    expect(purchase.status).toBe("refunded");
+    // Stripe's deletion event follows; it must not freeze the workspace.
+    await send({ type: "customer.subscription.deleted", data: { object: { id: "sub_t", status: "canceled" } } });
+    expect(store.state.workspaces!.find((w) => w.id === wsId)!.status).toBe("active");
+    expect((await call("GET", "/v1/me", undefined, key)).body.workspace.plan).toBe("practice");
+    // Coming back: no second trial for the same customer.
+    const again = await call("POST", "/v1/billing/subscribe", { plan: "trainer", quantity: 1 }, key);
+    expect(again.body).toMatchObject({ mode: "payment", trialDays: 0, amountDue: 3800 });
+    expect(calls.at(-1)!.body).not.toContain("trial_period_days");
+    // The guarantee has a window.
+    expect((await call("POST", "/v1/billing/refund", {}, key)).body.error.code).toBe("NO_SUBSCRIPTION");
+  });
+});

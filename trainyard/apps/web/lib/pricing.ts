@@ -42,7 +42,7 @@ export const PLANS: Plan[] = [
     yearly: 16,
     unit: "/ trainer / mo",
     blurb: "Everything a working coach or trainer needs, with unlimited people in the room.",
-    items: ["Unlimited participants, hosted", "Class boards: Leading SAFe, SPC, Advanced SPC, POPM, RTE", "Import your own Miro class boards", "Jira and Azure DevOps sync", "AI co-trainer with your own key", "Email support"],
+    items: ["Free 14-day trial, then month by month", "Money back on the first paid month", "Unlimited participants, hosted", "Class boards: Leading SAFe, SPC, Advanced SPC, POPM, RTE", "Import your own Miro class boards", "Jira and Azure DevOps sync", "AI co-trainer with your own key", "Email support"],
     cta: "Start Trainer",
     badge: "MOST PICKED",
     bg: "#4a5fe8",
@@ -56,7 +56,7 @@ export const PLANS: Plan[] = [
     yearly: 199,
     unit: "/ train / mo",
     blurb: "For Agile Release Trains and the academies that launch them. Priced per train, not per person.",
-    items: ["Unlimited people per train", "Jira app and Azure DevOps extension", "SSO and an audit trail", "Hosted by us or on your servers", "Named success lead"],
+    items: ["Free 14-day trial, then month by month", "Money back on the first paid month", "Unlimited people per train", "Jira app and Azure DevOps extension", "SSO and an audit trail", "Hosted by us or on your servers", "Named success lead"],
     cta: "Start Academy",
     bg: "#ffe27a",
     fg: "#14123a",
@@ -91,6 +91,7 @@ export const COMPARISON: { tool: string; hosting: string; pi: string; art: strin
 
 export const FAQ: { q: string; a: string }[] = [
   { q: "Is it free for independent trainers?", a: "Yes. Practice is free for one hosted room of up to 5 people, and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. From the sixth person, Trainer or Academy." },
+  { q: "How do the trial and the guarantee work?", a: "Trainer and Academy start with a free 14-day trial: you enter a card, nothing is charged, and you can cancel before the trial ends from Plan & billing. After the trial it is month by month. If the first paid month does not convince you, claim the money back yourself from Plan & billing within 30 days of that charge: the charge is refunded, the subscription ends, and your workspace stays on the free plan with everything kept. Yearly billing is a switch you can make after the first month." },
   { q: "Do participants need accounts?", a: "They open the board in a browser from a link. On a free room anyone with the link can take part; once you turn authentication on, viewers read and planners move cards, each with a key you send. Nothing to install." },
   { q: "Which frameworks are supported?", a: "SAFe (Essential, Portfolio, Full), AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and tribe models, as editable operating models. Change the model and the boards and dashboards follow." },
   { q: "Can I use my own boards?", a: "Yes. Upload iObeya exports, connect Miro, Mural, monday.com or Trello, or drop a CSV. Boards arrive at their positions and colours, become templates, and map onto the plan only when you say so." },
