@@ -4,7 +4,13 @@ import {
   FLOW_METRICS,
   MetricRegistry,
   PORTFOLIO_METRICS,
+  boardShape,
   budgetLines,
+  emptyBoard,
+  instantiate,
+  mapBoard,
+  templateFrom,
+  type Board,
   checkGuardrails,
   okrProgress,
   rankEpics,
@@ -272,5 +278,106 @@ describe("lean portfolio", () => {
     }
     const noPortfolio = reg.run({ id: "b", title: "b", metric: "budget-used", viz: "kpi" }, { ...ctx, workspace: { ...ws, portfolio: undefined } });
     expect(noPortfolio).toMatchObject({ error: "This workspace has no portfolio yet." });
+  });
+});
+
+describe("boards", () => {
+  const now = "2026-10-21T12:00:00.000Z";
+  const canvas: Board = {
+    ...emptyBoard("b-miro", "PI board", { system: "miro", externalId: "uXj", url: "https://miro.com/app/board/uXj", importedAt: now }),
+    frames: [
+      { id: "f-chk", title: "Checkout", x: 0, y: 0, width: 800, height: 400 },
+      { id: "f-pay", title: "Payments", x: 900, y: 0, width: 800, height: 400 },
+      { id: "f-risks", title: "Risks", x: 0, y: 500, width: 800, height: 300 },
+    ],
+    nodes: [
+      { id: "n1", kind: "sticky", text: "Guest checkout", x: 10, y: 10, color: "#fff9b1", frameId: "f-chk", tags: [], fields: {} },
+      { id: "n2", kind: "sticky", text: "Wallet tokens", x: 910, y: 10, color: "light_blue", frameId: "f-pay", tags: [], fields: {} },
+      { id: "n3", kind: "sticky", text: "Card network cert may slip", x: 10, y: 510, color: "#f24726", frameId: "f-risks", tags: [], fields: {} },
+      { id: "n4", kind: "sticky", text: "", x: 50, y: 50, frameId: "f-chk", tags: [], fields: {} },
+      { id: "n5", kind: "text", text: "Loose note", x: 2000, y: 2000, tags: [], fields: {} },
+    ],
+    edges: [
+      { id: "e1", fromId: "n2", toId: "n1", label: "needs tokens" },
+      { id: "e2", fromId: "n3", toId: "n1" },
+    ],
+  };
+  const table: Board = {
+    ...emptyBoard("b-monday", "Roadmap", { system: "monday", externalId: "123", importedAt: now }),
+    columns: [
+      { id: "name", title: "Item" },
+      { id: "c-team", title: "Team", type: "dropdown" },
+      { id: "c-status", title: "Status", type: "status" },
+      { id: "c-pts", title: "Points", type: "numbers" },
+      { id: "c-sprint", title: "Sprint", type: "text" },
+    ],
+    groups: [
+      { id: "g1", title: "PI 26.4" },
+      { id: "g2", title: "Later" },
+    ],
+    rows: [
+      { id: "r1", groupId: "g1", cells: { name: "Semantic search", "c-team": "Search & Discovery", "c-status": "Working on it", "c-pts": "13", "c-sprint": "PI 26.4.2" } },
+      { id: "r2", groupId: "g1", cells: { name: "Facet fix", "c-team": "Search & Discovery", "c-status": "Done", "c-pts": 3 } },
+      { id: "r3", groupId: "g2", cells: { name: "", "c-team": "Nobody" } },
+      { id: "r4", groupId: "g2", cells: { name: "New thing", "c-team": "Growth" } },
+    ],
+  };
+  const ws = demoWorkspace();
+  const ctx = { teams: ws.teams, iterations: ws.increments.flatMap((i) => i.iterations), groupId: "art-customer", now };
+
+  it("tells canvas from table boards", () => {
+    expect(boardShape(canvas)).toBe("canvas");
+    expect(boardShape(table)).toBe("table");
+    expect(boardShape(emptyBoard("x", "x", canvas.origin))).toBe("empty");
+  });
+
+  it("makes a template that keeps structure and drops content, then instantiates it with fresh ids", () => {
+    const t = templateFrom(canvas, "tpl-1", "PI board template", now);
+    expect(t.isTemplate).toBe(true);
+    expect(t.frames.map((f) => f.title)).toEqual(["Checkout", "Payments", "Risks"]);
+    expect(t.nodes).toHaveLength(3);
+    expect(t.nodes.every((n) => n.text === "" && n.fields.placeholder === true)).toBe(true);
+    expect(t.edges).toEqual([]);
+    const tt = templateFrom(table, "tpl-2", "Roadmap template", now);
+    expect(tt.columns).toHaveLength(5);
+    expect(tt.rows).toEqual([]);
+    const b = instantiate(t, "b-new", "PI 26.5 board", now);
+    expect(b.templateId).toBe("tpl-1");
+    expect(b.frames[0]!.id).toBe("b-new:f-chk");
+    expect(b.nodes[0]!.frameId).toBe("b-new:f-chk");
+    b.frames[0]!.title = "changed";
+    expect(t.frames[0]!.title).toBe("Checkout");
+  });
+
+  it("maps canvas cards to items, risks and dependencies by frame and colour", () => {
+    const r = mapBoard(canvas, { from: "nodes", level: "feature", team: { by: "frame" }, colorRules: [{ color: "f24726", as: "risk" }, { color: "light_blue", as: "enabler" }], edgesAsDependencies: true }, ctx);
+    expect(r.items.map((i) => [i.title, i.teamId, i.flowType])).toEqual([
+      ["Guest checkout", "t-checkout", "feature"],
+      ["Wallet tokens", "t-payments", "enabler"],
+      ["Loose note", undefined, "feature"],
+    ]);
+    expect(r.risks.map((x) => x.title)).toEqual(["Card network cert may slip"]);
+    expect(r.dependencies).toEqual([{ id: "b-miro:e1", providerId: "b-miro:n2", consumerId: "b-miro:n1", status: "open", note: "needs tokens" }]);
+    expect(r.skipped).toEqual([{ id: "n4", reason: "empty text" }, { id: "e2", reason: "connector between non-items" }]);
+    expect(r.warnings).toEqual([]);
+    const loose = mapBoard({ ...canvas, nodes: [{ id: "n9", kind: "sticky", text: "Orphan", x: 0, y: 0, frameId: "f-risks", tags: [], fields: {} }] }, { from: "nodes", level: "feature", team: { by: "frame" } }, ctx);
+    expect(loose.warnings.join(" ")).toContain('"Risks" matches no team');
+    expect(r.items[0]!.source.url).toBe("https://miro.com/app/board/uXj");
+  });
+
+  it("maps table rows with columns, groups, status words and missing teams", () => {
+    const r = mapBoard(table, { from: "rows", level: "feature", titleColumn: "Item", team: { by: "column", column: "Team" }, iteration: { by: "column", column: "Sprint" }, estimateColumn: "Points", statusColumn: "Status", createMissingTeams: true }, ctx);
+    expect(r.items.map((i) => [i.title, i.teamId, i.status, i.estimate, i.iterationId])).toEqual([
+      ["Semantic search", "t-search", "in_progress", 13, "pi-26-4.2"],
+      ["Facet fix", "t-search", "done", 3, undefined],
+      ["New thing", "t-growth", "todo", undefined, undefined],
+    ]);
+    expect(r.items[1]!.doneAt).toBe(now);
+    expect(r.newTeams.map((t) => t.name)).toEqual(["Growth"]);
+    expect(r.skipped).toEqual([{ id: "r3", reason: "empty title" }]);
+    const byGroup = mapBoard(table, { from: "rows", level: "story", iteration: { by: "group" } }, ctx);
+    expect(byGroup.items[0]!.iterationId).toBeUndefined();
+    expect(byGroup.items[0]!.level).toBe("story");
+    expect(mapBoard({ ...table, columns: [] }, { from: "rows", level: "x" }, ctx).warnings[0]).toMatch(/no columns/);
   });
 });

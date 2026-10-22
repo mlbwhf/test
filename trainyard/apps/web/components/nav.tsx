@@ -9,6 +9,7 @@ const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/", label: "Dashboards", section: "Plan" },
   { href: "/board", label: "Program board" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/imports", label: "Bring your own boards" },
   { href: "/ai", label: "AI portfolio", section: "AI" },
   { href: "/agents", label: "AI agents" },
   { href: "/model", label: "Operating model", section: "Setup" },
@@ -34,7 +35,7 @@ export function Nav() {
     void me.reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
-  const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+  const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
   return (
     <nav className="rail" aria-label="Main">
       <Link href="/" className="brand">

@@ -1,3 +1,4 @@
+import type { Board } from "./boards.js";
 import type { Portfolio } from "./portfolio.js";
 
 // Domain types shared by every package. Nothing here knows about Jira, Azure DevOps or a
@@ -131,4 +132,6 @@ export interface Workspace {
   objectives: Objective[];
   /** Lean portfolio data; absent until a portfolio is set up. */
   portfolio?: Portfolio;
+  /** Boards and templates brought in from other tools, kept as they came. */
+  boards?: Board[];
 }

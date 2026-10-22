@@ -8,6 +8,7 @@ import { Store, type StoreState } from "./store.js";
 // end up in a config file:
 //   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
 //   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
+//   TRAINYARD_SECRET             encrypts Miro/Mural/monday/Trello tokens at rest (falls back to the admin key)
 //   ANTHROPIC_API_KEY            AI facilitation through Claude (model: TRAINYARD_AI_MODEL)
 //   TRAINYARD_LLM_URL            or any OpenAI-compatible server, e.g. http://ollama:11434/v1
 //                                (TRAINYARD_LLM_MODEL, optional TRAINYARD_LLM_KEY); free and local
@@ -68,9 +69,13 @@ async function main() {
   }
   console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY, or TRAINYARD_LLM_URL for a local model)");
 
+  const secret = process.env.TRAINYARD_SECRET ?? adminKey;
+  if (!secret) console.log("[connections] no TRAINYARD_SECRET: board connections will not survive a restart");
+
   const app = await buildApp({
     store,
     ...(adminKey ? { bootstrapAdminKey: adminKey } : {}),
+    ...(secret ? { secret } : {}),
     ...(assist ? { assist } : {}),
     ...(process.env.TRAINYARD_WEBHOOK_SECRET ? { webhookSecret: process.env.TRAINYARD_WEBHOOK_SECRET } : {}),
     syncEveryMinutes: Number(process.env.TRAINYARD_SYNC_EVERY_MINUTES ?? 0),

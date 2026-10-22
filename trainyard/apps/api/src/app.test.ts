@@ -195,6 +195,8 @@ describe("sync", () => {
     const remote = store.state.workspace.items.filter((i) => i.source.system === "jira").map((i) => structuredClone(i));
     const fake = new FakeJira(() => remote);
     store.connectors.set("jira", fake);
+    expect((await call("POST", "/v1/sync/jira?dry_run=false")).body.dryRun).toBe(false);
+    expect(fake.pushed).toHaveLength(0);
     await call("PATCH", "/v1/items/f-1", { iterationId: "pi-26-4.5" });
     const dry = await call("POST", "/v1/sync/jira?dry_run=true");
     expect(dry.body).toMatchObject({ dryRun: true, pushed: 1, conflicts: [] });
@@ -346,6 +348,90 @@ describe("AI assistance", () => {
     expect((await call("POST", "/v1/assist/narrative", { dashboardId: "art-overview" })).body.narrative.headline).toBe("Steady.");
     const refused = await call("POST", "/v1/assist/risks");
     expect(refused.status).toBe(502);
+  });
+});
+
+describe("boards and imports", () => {
+  const miroFetch = (async (input: string | URL | Request) => {
+    const url = new URL(String(input));
+    const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status });
+    if (url.pathname === "/v2/users/me") return json({ id: "u", name: "Amara" });
+    if (url.pathname === "/v2/boards") return json({ data: [{ id: "uXj", name: "PI board", viewLink: "https://miro.com/app/board/uXj" }] });
+    if (url.pathname === "/v2/boards/uXj") return json({ id: "uXj", name: "PI board", viewLink: "https://miro.com/app/board/uXj" });
+    if (url.pathname === "/v2/boards/uXj/items")
+      return json({
+        data: [
+          { id: "f1", type: "frame", data: { title: "Checkout" }, position: { x: 500, y: 300 }, geometry: { width: 1000, height: 600 } },
+          { id: "s1", type: "sticky_note", data: { content: "Guest checkout" }, style: { fillColor: "light_yellow" }, position: { x: 100, y: 100 }, parent: { id: "f1" } },
+          { id: "s2", type: "sticky_note", data: { content: "Cert may slip" }, style: { fillColor: "red" }, position: { x: 400, y: 100 }, parent: { id: "f1" } },
+        ],
+      });
+    if (url.pathname === "/v2/boards/uXj/connectors") return json({ data: [] });
+    return json({}, 404);
+  }) as typeof fetch;
+
+  it("connects a tool, lists and imports a board as it is, templates it, and maps it on request", async () => {
+    const { call, store } = await setup({ importFetch: miroFetch, secret: "s" });
+    const bad = await call("POST", "/v1/connections", { system: "trello", token: "t" });
+    expect(bad.body.error.code).toBe("API_KEY_REQUIRED");
+    const conn = await call("POST", "/v1/connections", { system: "miro", token: "tok" });
+    expect(conn.status).toBe(201);
+    expect(conn.body.connection).toMatchObject({ system: "miro", account: "Amara" });
+    expect("sealed" in conn.body.connection).toBe(false);
+    expect(store.state.connections[0]!.sealed).not.toContain("tok");
+
+    const list = await call("GET", `/v1/connections/${conn.body.connection.id}/boards`);
+    expect(list.body.boards).toEqual([{ id: "uXj", name: "PI board", url: "https://miro.com/app/board/uXj", imported: false }]);
+
+    const imp = await call("POST", "/v1/imports", { connectionId: conn.body.connection.id, boardId: "uXj" });
+    expect(imp.status).toBe(201);
+    expect(imp.body.board).toMatchObject({ id: "miro-uXj", shape: "canvas", counts: { frames: 1, nodes: 2 } });
+    const full = await call("GET", "/v1/boards/miro-uXj");
+    expect(full.body.board.nodes[0]).toMatchObject({ text: "Guest checkout", color: "light_yellow", frameId: "f1", x: 100, y: 100 });
+    expect(full.body.board.origin.importedBy).toBe("anonymous");
+
+    const tpl = await call("POST", "/v1/boards/miro-uXj/template", {});
+    expect(tpl.body.board.isTemplate).toBe(true);
+    expect((await call("POST", "/v1/boards/miro-uXj/instantiate", { name: "x" })).body.error.code).toBe("NOT_A_TEMPLATE");
+    const inst = await call("POST", `/v1/boards/${tpl.body.board.id}/instantiate`, { name: "PI 26.5" });
+    expect(inst.status).toBe(201);
+    expect(inst.body.board.templateId).toBe(tpl.body.board.id);
+
+    const itemsBefore = store.state.workspace.items.length;
+    const preview = await call("POST", "/v1/boards/miro-uXj/map?dry_run=true", { from: "nodes", level: "feature", team: { by: "frame" }, colorRules: [{ color: "red", as: "risk" }] });
+    expect(preview.body.items.map((i: { title: string; teamId: string }) => [i.title, i.teamId])).toEqual([["Guest checkout", "t-checkout"]]);
+    expect(preview.body.risks).toHaveLength(1);
+    expect(store.state.workspace.items.length).toBe(itemsBefore);
+    expect((await call("POST", "/v1/boards/miro-uXj/map?dry_run=false", { from: "nodes", level: "nope" })).body.error.code).toBe("UNKNOWN_LEVEL");
+    const applied = await call("POST", "/v1/boards/miro-uXj/map?dry_run=false", { from: "nodes", level: "feature", team: { by: "frame" }, colorRules: [{ color: "red", as: "risk" }] });
+    expect(applied.body.dryRun).toBe(false);
+    expect(store.state.workspace.items.length).toBe(itemsBefore + 1);
+    expect(store.state.workspace.risks.some((r) => r.title === "Cert may slip")).toBe(true);
+    const again = await call("POST", "/v1/boards/miro-uXj/map?dry_run=true", { from: "nodes", level: "feature" });
+    expect(again.body.replaced).toBe(1);
+    expect((await call("DELETE", `/v1/connections/${conn.body.connection.id}`)).status).toBe(204);
+  });
+
+  it("imports CSV and JSON without any connection, and reports bad input", async () => {
+    const { call } = await setup();
+    const csv = await call("POST", "/v1/imports/csv", { name: "Backlog", csv: "Feature,Team,Points\nA,Checkout,5\nB,Payments,8\n", groupBy: "Team" });
+    expect(csv.status).toBe(201);
+    expect(csv.body.board).toMatchObject({ shape: "table", counts: { rows: 2, columns: 3 } });
+    const mapped = await call("POST", `/v1/boards/${csv.body.board.id}/map?dry_run=true`, { from: "rows", level: "feature", titleColumn: "Feature", team: { by: "group" }, estimateColumn: "Points" });
+    expect(mapped.body.items.map((i: { title: string; teamId: string; estimate: number }) => [i.title, i.teamId, i.estimate])).toEqual([["A", "t-checkout", 5], ["B", "t-payments", 8]]);
+    const json = await call("POST", "/v1/imports/json", { board: { name: "Script", columns: ["Title"], rows: [{ Title: "x" }] } });
+    expect(json.status).toBe(201);
+    expect((await call("POST", "/v1/imports/json", { board: { nope: 1 } })).body.error.code).toBe("BAD_BOARD_JSON");
+    expect((await call("GET", "/v1/boards")).body.boards).toHaveLength(2);
+    expect((await call("GET", "/v1/boards/missing")).status).toBe(404);
+  });
+
+  it("surfaces upstream auth failures when connecting", async () => {
+    const denied = (async () => new Response("{}", { status: 401 })) as typeof fetch;
+    const { call } = await setup({ importFetch: denied });
+    const res = await call("POST", "/v1/connections", { system: "monday", token: "bad" });
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe("IMPORT_AUTH");
   });
 });
 

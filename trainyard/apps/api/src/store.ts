@@ -7,6 +7,7 @@ import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
 import { DEMO_NOW, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
+import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
 
 export const DEFAULT_DASHBOARDS: Dashboard[] = [
@@ -61,6 +62,8 @@ export interface StoreState {
   dashboards: Dashboard[];
   pending: PendingChange[];
   users: User[];
+  /** Connections to Miro, Mural, monday.com and Trello, tokens sealed. */
+  connections: Connection[];
 }
 
 export function demoState(): StoreState {
@@ -73,6 +76,7 @@ export function demoState(): StoreState {
     dashboards: structuredClone(DEFAULT_DASHBOARDS),
     pending: [],
     users: [],
+    connections: [],
   };
 }
 

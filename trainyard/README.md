@@ -14,9 +14,10 @@ AI assistance runs three ways, chosen by environment variables: Claude through t
 
 | Path | Package | What it does | Verified by |
 |---|---|---|---|
-| `packages/core` | `@trainyard/core` | Domain model (work items, teams, groups, increments, dependencies, ROAM risks, objectives). **Operating models as data**: templates for SAFe Essential, Portfolio and Full, **AI-Native SAFe**, LeSS, LeSS Huge, Scrum@Scale, Nexus, Flight Levels and tribes/squads, plus fork and validation. Planning: increment layout, team load against capacity, dependency checks, planning readiness. **Lean portfolio**: value streams with budgets per PI, epics ranked by WSJF, guardrails (enabler floor, single-epic budget cap, business case above a threshold), OKRs with key results typed in or read from a metric. **Metric registry and dashboard engine** with flow, predictability, dependency, risk, capacity, budget, WSJF and OKR metrics. Deterministic demo workspace with mixed Jira and ADO teams | 33 unit tests |
+| `packages/core` | `@trainyard/core` | Domain model (work items, teams, groups, increments, dependencies, ROAM risks, objectives). **Operating models as data**: templates for SAFe Essential, Portfolio and Full, **AI-Native SAFe**, LeSS, LeSS Huge, Scrum@Scale, Nexus, Flight Levels and tribes/squads, plus fork and validation. Planning: increment layout, team load against capacity, dependency checks, planning readiness. **Lean portfolio**: value streams with budgets per PI, epics ranked by WSJF, guardrails (enabler floor, single-epic budget cap, business case above a threshold), OKRs with key results typed in or read from a metric. **Metric registry and dashboard engine** with flow, predictability, dependency, risk, capacity, budget, WSJF and OKR metrics. **Boards**: imported boards, templates (structure kept, content cleared) and a mapping that promotes cards or rows into items, risks, dependencies and teams. Deterministic demo workspace with mixed Jira and ADO teams | 33 unit tests |
 | `packages/ai-portfolio` | `@trainyard/ai-portfolio` | **AI project module**: lifecycle (idea → data readiness → experiment → evaluate → pilot → production → monitor → retired), evidence-based stage gates that tighten by EU AI Act risk tier, eval thresholds, curated-data and human-oversight checks, AI value architect sign-off at pilot and production, an **agent registry** (accountable human, autonomy levels 0–4, limits per model and risk tier), spend against budget with month-end forecast, value realised against KPIs, and six AI dashboard metrics | 16 unit tests |
 | `packages/ai-assist` | `@trainyard/ai-assist` | **AI facilitation** through the Anthropic SDK with schema-validated answers (`messages.parse` + zod): draft PI objectives from a team's planned features, suggest ROAM for risks and spot unraised ones, write the readiness briefing, narrate a dashboard, prepare an AI governance review. Prompts carry titles and numbers only, never people's names. A fake provider makes every feature testable offline | 7 tests |
+| `packages/importers` | `@trainyard/importers` | **Bring your own boards**: Miro (REST v2), Mural (public API), monday.com (GraphQL), Trello (REST), plus CSV and a documented JSON format for anything else. Each pulls a board as it is into a `Board` (frames, cards with text/colour/position, connectors, columns, groups, rows; unknown fields kept verbatim) | 11 offline tests with recorded responses |
 | `packages/connectors` | `@trainyard/connectors` | Jira Cloud adapter (enhanced JQL search with `nextPageToken`, field updates, sprint moves, Blocks links) and Azure DevOps adapter (WIQL, `workitemsbatch` in batches of 200, JSON Patch updates, Successor links). Retries on 429/5xx with `Retry-After`. **Two-way sync planner**: remote changes flow in, local plan changes flow out, a field changed on both sides becomes a conflict | 9 offline tests with a recorded fake `fetch` |
 | `packages/db` | `@trainyard/db` | Persistence port with optimistic versioning (a stale save is refused, never merged silently) and an append-only audit log. Three stores: memory, JSON files (single box) and **Postgres** (migrations, advisory-locked; the audit table rejects update and delete) | 9 tests; Postgres ones run when `DATABASE_URL` is set |
 | `apps/api` | `@trainyard/api` | Fastify 5 REST API with zod validation and OpenAPI at `/docs`. **Users, roles and API keys** (admin, planner, architect, viewer; keys hashed, shown once; open mode until the first user exists). Every mutation is committed and audited. Model, board, items, dependencies, risks, objectives, metrics, dashboards, portfolio, AI initiatives, agents, assist routes, tracker sync on request, **on a schedule or from a Jira/ADO webhook** | 24 tests via `inject` |
@@ -128,6 +129,28 @@ export TRAINYARD_ADO='{
 Custom field ids differ per Jira site. Jira's issue-link API does not fix which side "blocks", so create one test link on a sandbox and set `providerSide` if dependencies come out reversed.
 
 Trainyard writes back plan fields only (iteration, estimate, business value, title, dependency links). Status stays owned by the teams' own boards.
+
+## Bring your own boards
+
+Under **Bring your own boards**, connect Miro, Mural, monday.com or Trello with a token (stored encrypted under `TRAINYARD_SECRET`), browse and import boards, or upload a CSV from any tool with a header row, or post the JSON format below. Imports are kept exactly as they came and drawn at their original positions and colours (or as the original table with its groups). Any board can be saved as a template and new boards created from it. "Map onto the plan" previews, then on Apply creates work items, risks, dependencies and teams from cards or rows: team from the frame/group/column, iteration by name, estimate and status columns, colour rules for risks and enablers, connectors as dependencies. Nothing is written until Apply.
+
+Plan limits to know: Miro's REST API needs a Developer team app (free). Mural's API needs a registered app and an OAuth token. monday.com personal tokens work on every plan within its complexity limits. Trello needs an API key and token from a Power-Up admin page. All four have been tested against recorded responses only; the first live import may surface a field we map differently.
+
+Board JSON (`POST /v1/imports/json`, body `{ "board": ... }`):
+
+```json
+{
+  "name": "PI 26.5 board",
+  "url": "https://where.it.came.from/optional",
+  "frames": [{ "id": "f1", "title": "Checkout", "x": 0, "y": 0, "width": 1000, "height": 600 }],
+  "nodes": [{ "id": "n1", "kind": "sticky", "text": "Guest checkout", "x": 100, "y": 100, "color": "#fff9b1", "frameId": "f1", "tags": ["mvp"] }],
+  "edges": [{ "fromId": "n1", "toId": "n2", "label": "needs" }],
+  "columns": ["Title", { "id": "pts", "title": "Points", "type": "numbers" }],
+  "rows": [{ "Title": "Guest checkout", "Points": 13, "Team": "Checkout" }]
+}
+```
+
+Every key but `name` is optional; rows may be flat objects keyed by column title (new columns are added as needed) or `{ id, groupId, cells }`; unknown node keys are kept under `fields`.
 
 ## Still to do
 

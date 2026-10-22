@@ -23,6 +23,7 @@ import {
 } from "@trainyard/ai-portfolio";
 import type { AssistProvider } from "@trainyard/ai-assist";
 import type { PushField } from "@trainyard/connectors";
+import type { FetchLike } from "@trainyard/importers";
 import {
   MetricRegistry,
   PORTFOLIO_METRICS,
@@ -37,6 +38,8 @@ import {
   type WorkItem,
 } from "@trainyard/core";
 import { registerAssistRoutes } from "./assist.js";
+import { registerBoardRoutes } from "./boards.js";
+import { SecretBox } from "./secrets.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
@@ -54,6 +57,10 @@ export interface AppOptions extends AuthOptions {
   webhookSecret?: string;
   /** Minutes between scheduled syncs; 0 or unset turns the schedule off. */
   syncEveryMinutes?: number;
+  /** Encrypts connection tokens at rest; without it they last for this process only. */
+  secret?: string;
+  /** fetch used by board importers; tests inject a fake. */
+  importFetch?: FetchLike;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -512,7 +519,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     schedule: opts.syncEveryMinutes ?? 0,
     webhooks: !!opts.webhookSecret,
   }));
-  app.post("/v1/sync/:system", { schema: { params: z.object({ system: z.enum(["jira", "ado"]) }), querystring: z.object({ dry_run: z.coerce.boolean().default(false) }) } }, async (req) => {
+  app.post("/v1/sync/:system", { schema: { params: z.object({ system: z.enum(["jira", "ado"]) }), querystring: z.object({ dry_run: z.stringbool().default(false) }) } }, async (req) => {
     require(req, "sync");
     const report = await sync.run(req.params.system, req.principal, req.query.dry_run);
     if (report.error) throw new ApiError(502, "SYNC_FAILED", report.error);
@@ -535,6 +542,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerUserRoutes(app, store);
   registerPortfolioRoutes(app, store, metrics);
   registerAssistRoutes(app, store, metrics, opts.assist);
+  registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 
   return Object.assign(app, { sync });
 }
