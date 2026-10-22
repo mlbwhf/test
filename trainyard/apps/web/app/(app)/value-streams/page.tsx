@@ -105,6 +105,13 @@ export default function ValueStreamsPage() {
             setVsm(data.data!.maps.find((x) => x.id === vsm.id) ?? null);
             setDirty((d) => ({ ...d, vsm: false }));
           }}
+          onDerived={(m) => {
+            setVsm(m);
+            setDirty((d) => ({ ...d, vsm: false }));
+            setDone("Current state calculated from the status history and saved.");
+            setTimeout(() => setDone(null), 3500);
+            void data.reload();
+          }}
         />
       ) : null}
     </>
@@ -552,8 +559,9 @@ function Doc() {
 
 // ---- mapping ---------------------------------------------------------------------------
 
-function MapView({ vsm, dirty, onChange, onSave, onReset }: { vsm: Vsm; dirty: boolean; onChange: (m: Vsm) => void; onSave: () => void; onReset: () => void }) {
+function MapView({ vsm, dirty, onChange, onSave, onReset, onDerived }: { vsm: Vsm; dirty: boolean; onChange: (m: Vsm) => void; onSave: () => void; onReset: () => void; onDerived: (m: Vsm) => void }) {
   const [state, setState] = useState<"current" | "future">("current");
+  const [deriving, setDeriving] = useState(false);
   const [sel, setSel] = useState<string | null>(vsm.steps[0]?.id ?? null);
   const [editing, setEditing] = useState(false);
   const m = useMemo(() => mapMetrics(vsm, state), [vsm, state]);
@@ -582,6 +590,9 @@ function MapView({ vsm, dirty, onChange, onSave, onReset }: { vsm: Vsm; dirty: b
               Future state
             </button>
           </div>
+          <button className="btn" onClick={() => setDeriving((e) => !e)} aria-pressed={deriving}>
+            Calculate from data
+          </button>
           <button className="btn" onClick={() => setEditing((e) => !e)} aria-pressed={editing}>
             {editing ? "Close editor" : "Edit the map"}
           </button>
@@ -597,6 +608,8 @@ function MapView({ vsm, dirty, onChange, onSave, onReset }: { vsm: Vsm; dirty: b
           ) : null}
         </div>
       </section>
+
+      {deriving ? <DerivePanel vsm={vsm} dirty={dirty} onDerived={(m) => { setDeriving(false); onDerived(m); }} /> : null}
 
       <div className="row" style={{ alignItems: "flex-start", gap: 16 }}>
         <section className="panel panel-body stack" style={{ flex: "999 1 720px", minWidth: 0, gap: 16 }}>
@@ -795,6 +808,243 @@ function MapEditor({ vsm, onChange }: { vsm: Vsm; onChange: (m: Vsm) => void }) 
           Add a step
         </button>
       </div>
+    </section>
+  );
+}
+
+// ---- calculating the current state from status history ----------------------------------------
+
+interface Mapping {
+  name: string;
+  wait: string[];
+  active: string[];
+}
+interface Derived {
+  mapping: Mapping[];
+  statuses: string[];
+  items: number;
+  derived: {
+    steps: { name: string; measure: { wait: number | null; active: number; ca: number }; sample: { items: number; reworked: number; passed: number } }[];
+    items: number;
+    unmapped: { status: string; count: number }[];
+    period: { from: string | null; to: string | null };
+  };
+  map?: Vsm;
+}
+
+const SOURCES = [
+  ["csv", "CSV of status changes", "Any Kanban tool's transition export: one row per move, with item, status and timestamp columns."],
+  ["jira", "Jira", "Issue changelogs through the connected Jira site. Narrow it with JQL."],
+  ["ado", "Azure DevOps", "Work item revisions through the connected organization. Narrow it with WIQL."],
+] as const;
+
+const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
+
+function DerivePanel({ vsm, dirty, onDerived }: { vsm: Vsm; dirty: boolean; onDerived: (m: Vsm) => void }) {
+  const [source, setSource] = useState<"csv" | "jira" | "ado">("csv");
+  const [csv, setCsv] = useState<{ name: string; text: string } | null>(null);
+  const [query, setQuery] = useState("");
+  const [limit, setLimit] = useState(300);
+  const [stat, setStat] = useState<"median" | "mean" | "p85">("median");
+  const [since, setSince] = useState("");
+  const [until, setUntil] = useState("");
+  const [replace, setReplace] = useState(false);
+  const [mapping, setMapping] = useState<Mapping[] | null>(null);
+  const [result, setResult] = useState<Derived | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  // The status inputs are uncommitted until blur; remount them whenever the mapping is replaced.
+  const [ver, setVer] = useState(0);
+
+  const run = async (apply: boolean, withMapping: Mapping[] | null = mapping) => {
+    setErr(null);
+    setBusy(true);
+    try {
+      const body = {
+        source,
+        ...(source === "csv" && csv ? { csv: csv.text } : {}),
+        ...(source !== "csv" && query.trim() ? { query: query.trim() } : {}),
+        ...(source !== "csv" ? { limit } : {}),
+        ...(withMapping ? { mapping: withMapping.filter((m) => m.name.trim() && (m.wait.length || m.active.length)) } : {}),
+        stat,
+        ...(since ? { since } : {}),
+        ...(until ? { until } : {}),
+        apply,
+        ...(apply && replace ? { replace: true } : {}),
+      };
+      const r = await api<Derived>("POST", `/v1/value-streams/maps/${encodeURIComponent(vsm.id)}/derive`, body);
+      setResult(r);
+      setMapping(r.mapping);
+      setVer((v) => v + 1);
+      if (apply && r.map) onDerived(r.map);
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const setStep = (i: number, patch: Partial<Mapping>) => setMapping((ms) => (ms ?? []).map((m, k) => (k === i ? { ...m, ...patch } : m)));
+  const claimed = new Set((mapping ?? []).flatMap((m) => [...m.wait, ...m.active].map((s) => s.trim().toLowerCase())));
+  const unit = vsm.unit === "hours" ? "hrs." : "days";
+  const canRun = source !== "csv" || !!csv;
+
+  return (
+    <section className="panel panel-body stack" style={{ gap: 14 }} aria-label="Calculate the current state from data">
+      <div className="stack" style={{ gap: 4 }}>
+        <span className="eyebrow">Calculate the current state from data</span>
+        <span className="faint" style={{ fontSize: "0.88rem", lineHeight: 1.5 }}>
+          Every tracker records when work entered each status. Say which statuses mean waiting for a step and which mean working on it, and each step&apos;s wait time,
+          active time and %C&amp;A follow: time in status per item, then the {stat === "p85" ? "85th percentile" : stat}; %C&amp;A from how often work came back to a step after leaving it.
+        </span>
+      </div>
+
+      <div className="row" role="radiogroup" aria-label="Where the history comes from" style={{ gap: 8 }}>
+        {SOURCES.map(([id, label, hint]) => (
+          <button key={id} role="radio" aria-checked={source === id} className={`btn${source === id ? " primary" : ""}`} title={hint} onClick={() => { setSource(id); setResult(null); setMapping(null); }}>
+            {label}
+          </button>
+        ))}
+      </div>
+      <span className="faint" style={{ fontSize: "0.84rem" }}>{SOURCES.find((s) => s[0] === source)![2]}</span>
+
+      <div className="row" style={{ gap: 12, alignItems: "flex-end" }}>
+        {source === "csv" ? (
+          <label className="stack" style={{ gap: 4, flex: "1 1 280px" }}>
+            <span className="eyebrow">CSV file</span>
+            <input
+              className="input"
+              type="file"
+              accept=".csv,text/csv"
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                if (!f) return;
+                setCsv({ name: f.name, text: await f.text() });
+                setResult(null);
+                setMapping(null);
+              }}
+            />
+          </label>
+        ) : (
+          <>
+            <label className="stack" style={{ gap: 4, flex: "1 1 320px" }}>
+              <span className="eyebrow">{source === "jira" ? "JQL" : "WIQL WHERE clause"} (optional)</span>
+              <input className="input" value={query} placeholder={source === "jira" ? "project = LOAN AND resolved >= -90d" : "[System.TeamProject] = 'Loans' AND [System.State] = 'Closed'"} onChange={(e) => setQuery(e.target.value)} />
+            </label>
+            <label className="stack" style={{ gap: 4, width: 110 }}>
+              <span className="eyebrow">Items</span>
+              <input className="input" type="number" min={1} max={2000} value={limit} onChange={(e) => setLimit(Math.max(1, Math.min(2000, Number(e.target.value) || 1)))} />
+            </label>
+          </>
+        )}
+        <label className="stack" style={{ gap: 4 }}>
+          <span className="eyebrow">Statistic</span>
+          <select className="select" value={stat} onChange={(e) => setStat(e.target.value as typeof stat)}>
+            <option value="median">Median</option>
+            <option value="mean">Mean</option>
+            <option value="p85">85th percentile</option>
+          </select>
+        </label>
+        <label className="stack" style={{ gap: 4 }}>
+          <span className="eyebrow">From</span>
+          <input className="input" type="date" value={since} onChange={(e) => setSince(e.target.value)} />
+        </label>
+        <label className="stack" style={{ gap: 4 }}>
+          <span className="eyebrow">To</span>
+          <input className="input" type="date" value={until} onChange={(e) => setUntil(e.target.value)} />
+        </label>
+        <button className="btn primary" disabled={!canRun || busy} onClick={() => void run(false)}>
+          {busy ? "Reading…" : result ? "Recalculate" : "Read the history"}
+        </button>
+      </div>
+
+      {err ? <ErrorList title="Could not calculate" items={[{ message: err }]} /> : null}
+
+      {result && mapping ? (
+        <>
+          <div className="row" style={{ gap: 10 }}>
+            <span className="chip">{result.derived.items} of {result.items} items counted</span>
+            <span className="chip">{result.statuses.length} statuses</span>
+            {result.derived.period.from ? (
+              <span className="chip">
+                {result.derived.period.from.slice(0, 10)} to {result.derived.period.to?.slice(0, 10)}
+              </span>
+            ) : null}
+          </div>
+
+          <div className="scroll-x">
+            <table className="table" style={{ minWidth: 820 }}>
+              <thead>
+                <tr>
+                  <th>Step</th>
+                  <th>Waiting statuses</th>
+                  <th>Working statuses</th>
+                  <th style={{ textAlign: "right" }}>Wait</th>
+                  <th style={{ textAlign: "right" }}>Active</th>
+                  <th style={{ textAlign: "right" }}>%C&amp;A</th>
+                  <th style={{ textAlign: "right" }}>Items</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {mapping.map((m, i) => {
+                  const d = result.derived.steps.find((s) => s.name === m.name);
+                  return (
+                    <tr key={`${ver}-${i}`}>
+                      <td><input className="input" aria-label="Step name" value={m.name} onChange={(e) => setStep(i, { name: e.target.value })} /></td>
+                      <td><input className="input" aria-label={`Waiting statuses for ${m.name}`} defaultValue={m.wait.join(", ")} onBlur={(e) => setStep(i, { wait: list(e.target.value) })} /></td>
+                      <td><input className="input" aria-label={`Working statuses for ${m.name}`} defaultValue={m.active.join(", ")} onBlur={(e) => setStep(i, { active: list(e.target.value) })} /></td>
+                      <td style={{ textAlign: "right" }}>{d ? (d.measure.wait === null ? "n/a" : `${d.measure.wait} ${unit}`) : "…"}</td>
+                      <td style={{ textAlign: "right" }}>{d ? `${d.measure.active} ${unit}` : "…"}</td>
+                      <td style={{ textAlign: "right" }} title={d ? `${d.sample.reworked} of ${d.sample.passed} came back` : undefined}>{d ? `${d.measure.ca}%` : "…"}</td>
+                      <td style={{ textAlign: "right" }}>{d?.sample.items ?? "…"}</td>
+                      <td>
+                        <button className="btn small ghost" aria-label={`Remove ${m.name}`} onClick={() => { setMapping(mapping.filter((_, k) => k !== i)); setVer((v) => v + 1); }}>
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {result.statuses.some((s) => !claimed.has(s.trim().toLowerCase())) ? (
+            <div className="row" style={{ gap: 6 }}>
+              <span className="eyebrow">Not mapped</span>
+              {result.statuses
+                .filter((s) => !claimed.has(s.trim().toLowerCase()))
+                .map((s) => (
+                  <button key={s} className="chip" title="Add as a new step" onClick={() => setMapping([...mapping, { name: s, wait: [], active: [s] }])}>
+                    + {s}
+                  </button>
+                ))}
+            </div>
+          ) : null}
+
+          <div className="row" style={{ justifyContent: "space-between" }}>
+            <button className="btn small" onClick={() => setMapping([...mapping, { name: "New step", wait: [], active: [] }])}>
+              Add a step
+            </button>
+            <div className="row">
+              <label className="row" style={{ gap: 6, fontSize: "0.86rem" }}>
+                <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
+                Replace the map&apos;s steps
+              </label>
+              <button className="btn" disabled={busy} onClick={() => void run(false)}>
+                Recalculate with this mapping
+              </button>
+              <button className="btn primary" disabled={busy || dirty} title={dirty ? "Save or discard your edits first" : undefined} onClick={() => void run(true)}>
+                Use as the current state
+              </button>
+            </div>
+          </div>
+          <span className="faint" style={{ fontSize: "0.82rem" }}>
+            Steps matching an existing step by name take the calculated current state; new steps are added, with the future state starting equal to the current one. Steps not in the mapping keep their numbers, unless you replace the map&apos;s steps.
+          </span>
+        </>
+      ) : null}
     </section>
   );
 }

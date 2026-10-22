@@ -28,7 +28,15 @@ Trainyard is self-hosted with Docker Compose and runs beside other sites on the 
 
 ## Comparable products
 
-iObeya, Miro (PI planning templates), Jira Align, Planview, Targetprocess. Trainyard differs in being open source, self-hosted, model-agnostic for scaling frameworks, and in including an AI-native portfolio module.
+Capabilities from a side-by-side evaluation of PI planning dashboard tools (products change; check each vendor):
+
+- iObeya: on premises or separate server; integrated web interface; ART board, ROAM, WSJF, retrospectives; portfolio and more; integration through API and iFrame.
+- Easy Agile: Jira plugin; ART and team boards; Jira only.
+- Agile Hive: Jira plugin; ART board, ROAM, WSJF, team execution; portfolio Kanban, roadmap, reporting; Jira only.
+- BigPicture: Jira plugin; ART board, ROAM, WSJF, team execution; project planning and reporting with OKR and risk widgets; Jira only.
+- PIPlanning.io: on premises or separate server; ART and ROAM boards; Jira.
+- Miro: public cloud; PI planning templates, not integrated; limited ART board; no planning-data integration.
+- Trainyard: open source and self-hosted, also a Jira app (Forge) and an Azure DevOps extension; PI planning, ART and team boards, ROAM, WSJF; portfolio Kanban, roadmaps, SAFe canvases, value stream identification and mapping, AI portfolio; two-way Jira and Azure DevOps; imports boards from iObeya, Miro, Mural and monday.com.
 
 ## Trademarks
 

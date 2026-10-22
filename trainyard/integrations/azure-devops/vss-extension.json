@@ -1,0 +1,72 @@
+{
+  "manifestVersion": 1,
+  "id": "trainyard",
+  "publisher": "agileagilist",
+  "version": "0.1.0",
+  "name": "Trainyard",
+  "description": "Scaled agile planning inside Azure Boards: program board, PI planning, value stream identification and mapping, SAFe canvases and dashboards from your Trainyard server.",
+  "public": false,
+  "categories": [
+    "Azure Boards"
+  ],
+  "tags": [
+    "SAFe",
+    "PI planning",
+    "program board",
+    "value stream mapping",
+    "scaled agile"
+  ],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/logo.png"
+  },
+  "content": {
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "links": {
+    "home": {
+      "uri": "https://agileagilist.com"
+    },
+    "repository": {
+      "uri": "https://github.com/mlbwhf/test"
+    }
+  },
+  "scopes": [
+    "vso.work"
+  ],
+  "contributions": [
+    {
+      "id": "trainyard-hub",
+      "type": "ms.vss-web.hub",
+      "description": "Trainyard planning boards for this project.",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "Trainyard",
+        "order": 100,
+        "uri": "dist/hub.html",
+        "icon": {
+          "light": "images/icon.png",
+          "dark": "images/icon.png"
+        }
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ]
+}

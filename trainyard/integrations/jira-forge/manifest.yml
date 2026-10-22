@@ -1,0 +1,31 @@
+# Trainyard for Jira: a project page and a global page that show the Trainyard server in a frame.
+#
+# Before `forge deploy`:
+#   1. `forge register` replaces app.id below with your app's id.
+#   2. If you self-host, change the frames address to your Trainyard URL and build with
+#      TRAINYARD_URL set to the same value (see README.md). Atlassian only allows frames from
+#      addresses listed here.
+modules:
+  jira:projectPage:
+    - key: trainyard-project-page
+      resource: main
+      title: Trainyard
+      layout: basic
+  jira:globalPage:
+    - key: trainyard-global-page
+      resource: main
+      title: Trainyard
+resources:
+  - key: main
+    path: static
+app:
+  id: ari:cloud:ecosystem::app/00000000-0000-0000-0000-000000000000
+  runtime:
+    name: nodejs22.x
+permissions:
+  content:
+    styles:
+      - unsafe-inline
+  external:
+    frames:
+      - address: https://agileagilist.com

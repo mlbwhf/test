@@ -1,0 +1,19 @@
+{
+  "name": "trainyard-jira",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Trainyard as a Jira app (Atlassian Forge, Custom UI): boards, value streams and canvases inside Jira projects.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "node build.mjs && forge deploy",
+    "install-site": "forge install"
+  },
+  "dependencies": {
+    "@forge/bridge": "^5.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

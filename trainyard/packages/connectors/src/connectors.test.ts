@@ -228,3 +228,30 @@ describe("sync planning", () => {
     expect(plan.conflicts.map((c) => c.field)).toEqual(["estimate"]);
   });
 });
+
+describe("status history for value stream maps", () => {
+  it("reads Jira changelogs into ordered status changes", async () => {
+    const { fetch, calls } = fakeFetch([
+      {
+        body: {
+          isLast: true,
+          issues: [
+            {
+              key: "CHK-1",
+              fields: { summary: "Guest checkout", status: { name: "Done" }, created: "2026-01-05T08:00:00.000Z" },
+              changelog: {
+                histories: [
+                  { created: "2026-01-05T12:00:00.000Z", items: [{ field: "status", fromString: "In dev", toString: "Ready for test" }] },
+                  { created: "2026-01-05T10:00:00.000Z", items: [{ field: "status", fromString: "Ready for dev", toString: "In dev" }, { field: "assignee", fromString: null, toString: "x" }] },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    const hist = await jira(fetch).statusHistory({ query: "project = CHK", limit: 50 });
+    expect(hist).toEqual([{ itemId: "CHK-1", title: "Guest checkout", changes: [{ status: "Ready for dev", at: "2026-01-05T08:00:00.000Z" }, { status: "In dev", at: "2026-01-05T10:00:00.000Z" }, { status: "Ready for test", at: "2026-01-05T12:00:00.000Z" }] }]);
+    expect(calls[0]!.body).toMatchObject({ jql: "project = CHK", expand: "changelog", maxResults: 50 });
+  });
+});

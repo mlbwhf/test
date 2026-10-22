@@ -32,15 +32,47 @@ const FEATURES = [
     body: "A metric catalogue of flow, planning, portfolio and AI metrics. Compose dashboards by team, increment and work level, and ask the assistant to write the narrative for the readout.",
   },
   {
+    title: "SAFe's own artifacts, measured",
+    body: "Value stream identification as the workshop and value stream mapping as the measurement, with wait time, active time and %C&A calculated from Jira, Azure DevOps or any Kanban export. Portfolio canvas, SWOT and TOWS into a future state and vision, LACE mission, epic hypothesis, Lean business case, ART launch readiness, feature and enabler canvases.",
+  },
+  {
+    title: "Inside Jira and Azure DevOps too",
+    body: "Run it standalone, or install the Jira app and the Azure DevOps extension so the boards, value streams and canvases open as a project page or hub inside the tracker people already use.",
+  },
+  {
     title: "Bring your own boards",
     body: "Upload iObeya board exports, connect Miro, Mural, monday.com or Trello, or upload CSV and JSON. Boards arrive as they are, at their positions and colours, become templates, and map onto the plan only when you say so.",
   },
 ];
 
+// Capabilities only, from a side-by-side evaluation of dashboard tools for PI planning. Vendors
+// change their products; the note under the table says so.
+const COMPARISON: { tool: string; hosting: string; pi: string; art: string; beyond: string; integration: string; ours?: boolean }[] = [
+  {
+    tool: "Trainyard",
+    hosting: "Self-hosted, open source; also as a Jira app and an Azure DevOps extension",
+    pi: "Integrated: PI planning, team breakouts, PI objectives, confidence vote",
+    art: "ART and team boards, program board, ROAM, WSJF, retrospectives",
+    beyond: "Portfolio Kanban, roadmaps, SAFe canvases, value stream identification and mapping, AI portfolio, dashboards",
+    integration: "Jira and Azure DevOps, two ways; imports boards from iObeya, Miro, Mural, monday.com",
+    ours: true,
+  },
+  { tool: "iObeya", hosting: "On premises or separate server", pi: "Integrated web interface", art: "ART board, ROAM, WSJF, retrospectives", beyond: "Portfolio and more", integration: "Full integration through API and iFrame" },
+  { tool: "Easy Agile", hosting: "Jira plugin", pi: "Within Jira", art: "ART and team boards", beyond: "None", integration: "Jira only" },
+  { tool: "Agile Hive", hosting: "Jira plugin", pi: "Within Jira", art: "ART board, ROAM, WSJF, team execution", beyond: "Portfolio Kanban, roadmap, reporting", integration: "Jira only" },
+  { tool: "BigPicture", hosting: "Jira plugin", pi: "Within Jira", art: "ART board, ROAM, WSJF, team execution", beyond: "Project planning and reporting, OKR and risk widgets", integration: "Jira only" },
+  { tool: "PIPlanning.io", hosting: "On premises or separate server", pi: "Dedicated tool", art: "ART and ROAM boards", beyond: "None", integration: "Jira" },
+  { tool: "Miro", hosting: "Public cloud", pi: "Not integrated; templates", art: "Limited ART board", beyond: "None", integration: "None for planning data" },
+];
+
 const FAQ = [
   {
-    q: "Is Trainyard an iObeya alternative?",
-    a: "It covers the same ground for planning rooms: visual boards for PI planning, ROAM, program boards and obeya walls, synced with Jira and Azure DevOps. It imports iObeya board exports as they are, adds an AI portfolio module and configurable scaling models, and it is open source under Apache-2.0, so you can run it yourself.",
+    q: "Can it run inside Jira or Azure DevOps?",
+    a: "Yes. A Jira app (Atlassian Forge) and an Azure DevOps extension put the boards, value streams and canvases in a project page or hub, so people plan without leaving their tracker. The same server also runs standalone in the browser.",
+  },
+  {
+    q: "How does it compare with other PI planning tools?",
+    a: "See the comparison table above: hosting, how PI planning is supported, what exists at ART and portfolio level, and which trackers each tool integrates with. Trainyard is the only one in that set that is open source and integrates with both Jira and Azure DevOps.",
   },
   {
     q: "Which scaling frameworks are supported?",
@@ -99,6 +131,9 @@ export default function LandingPage() {
           </a>
           <a href="#models" className="site-link">
             Models
+          </a>
+          <a href="#compare" className="site-link">
+            Compare
           </a>
           <a href="#faq" className="site-link">
             FAQ
@@ -195,6 +230,41 @@ export default function LandingPage() {
             <p>Stage gates with evidence and evaluations, EU AI Act risk tiers, an agent registry with autonomy levels, value-architect sign-off and an audit trail. Built for AI-Native SAFe and usable with any model you run.</p>
           </article>
         </div>
+      </section>
+
+      <section id="compare" className="site-section">
+        <span className="eyebrow">Compared</span>
+        <h2>How the PI planning tools differ</h2>
+        <p className="site-lede">Where each tool runs, how it supports PI planning, what it offers at train and portfolio level, and which trackers it talks to.</p>
+        <div className="scroll-x card" style={{ padding: 0 }}>
+          <table className="table site-compare">
+            <thead>
+              <tr>
+                <th scope="col">Tool</th>
+                <th scope="col">Hosting</th>
+                <th scope="col">PI planning</th>
+                <th scope="col">ART level</th>
+                <th scope="col">Portfolio and beyond</th>
+                <th scope="col">Integration</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.map((c) => (
+                <tr key={c.tool} className={c.ours ? "ours" : undefined}>
+                  <th scope="row">{c.tool}</th>
+                  <td>{c.hosting}</td>
+                  <td>{c.pi}</td>
+                  <td>{c.art}</td>
+                  <td>{c.beyond}</td>
+                  <td>{c.integration}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="faint" style={{ fontSize: "0.78rem" }}>
+          From a side-by-side evaluation of the capabilities each product offered for PI planning dashboards. Products change; check each vendor for its current features. Product names are trademarks of their owners.
+        </p>
       </section>
 
       <section id="faq" className="site-section">

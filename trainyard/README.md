@@ -22,6 +22,7 @@ AI assistance runs three ways, chosen by environment variables: Claude through t
 | `packages/db` | `@trainyard/db` | Persistence port with optimistic versioning (a stale save is refused, never merged silently) and an append-only audit log. Three stores: memory, JSON files (single box) and **Postgres** (migrations, advisory-locked; the audit table rejects update and delete) | 9 tests; Postgres ones run when `DATABASE_URL` is set |
 | `apps/api` | `@trainyard/api` | Fastify 5 REST API with zod validation and OpenAPI at `/docs`. **Users, roles and API keys** (admin, planner, architect, viewer; keys hashed, shown once; open mode until the first user exists). Every mutation is committed and audited. Model, board, items, dependencies, risks, objectives, metrics, dashboards, portfolio, AI initiatives, agents, assist routes, tracker sync on request, **on a schedule or from a Jira/ADO webhook** | 24 tests via `inject` |
 | `apps/web` | `@trainyard/web` | Next.js 16 app: dashboard builder with narrative, drag-and-drop program board with objective drafting, ROAM suggestions and readiness briefing, portfolio page (budgets, WSJF, guardrails, OKRs), AI portfolio lifecycle and gate pages with governance review, agent registry, operating model editor, tracker connections, users and audit log, sign-in | typecheck, production build, browser run-through |
+| `integrations/` | | The Jira app (Forge Custom UI) and the Azure DevOps extension (hub), both showing `/embed/*` pages | build in CI; VSIX packaged with `tfx` |
 | `infra/`, `docker-compose.yml` | | Dockerfiles for the API and web app, and a compose file with Postgres for self-hosting | |
 
 ## Run it locally
@@ -97,6 +98,7 @@ One canonical web host and one API host, plus optional aliases, all in `.env`: `
 | `TRAINYARD_SYNC_EVERY_MINUTES` | Scheduled sync of every connected tracker |
 | `TRAINYARD_WEBHOOK_SECRET` | Enables `POST /v1/webhooks/{jira\|ado}?token=…`; point Jira and ADO service hooks at it and a sync runs a few seconds after each burst of changes |
 | `TRAINYARD_WEB_URL` | CORS origin for the web app |
+| `TRAINYARD_FRAME_ANCESTORS` | Web app: hosts allowed to frame `/embed/*` for the Jira app and Azure DevOps extension. Empty means the Atlassian and Azure DevOps defaults; `none` turns embedding off |
 | `TRAINYARD_ENV=production` | Refuses memory persistence and open mode |
 
 Roles: **admin** (everything), **planner** (board, dashboards, portfolio, AI initiatives, sync), **architect** (planner plus stage-gate sign-off, tied to a person with the AI value architect role), **viewer** (read only). A user may also be linked to a person in the workspace; a non-admin can only sign off as that person.
@@ -183,13 +185,60 @@ The look follows the "Trainyard Glass" design: a lit backdrop with frosted rail,
 
 API: `GET /v1/value-streams`, `PUT /v1/value-streams/identifications/:id`, `PUT /v1/value-streams/maps/:id`, `DELETE /v1/value-streams/:kind/:id`, and `GET /v1/value-streams/identifications/:id/steps/:stepId` for a step's impact. References inside a workshop are checked on save.
 
+### The current state from status history
+
+**Calculate from data** on a map reads status history instead of asking people to estimate: a CSV of status changes from any Kanban tool (columns named like item/key, status/to/column and date/timestamp/changed), Jira issue changelogs (with optional JQL) or Azure DevOps work item revisions (with an optional WIQL clause), through the connected tracker. A first mapping is suggested from the order statuses usually occur in: each "working" status becomes a step and the "waiting" statuses before it (Ready…, To do, Blocked, Awaiting…) its queue; Done and Closed are left out. Edit it, then per step:
+
+- **wait** and **active**: time per item in the waiting and working statuses, combined as the median, mean or 85th percentile, optionally within a date window;
+- **%C&A**: 1 − (items that came back to the step after moving past it ÷ items that moved past it).
+
+The preview shows each step's sample size and any statuses nothing claims. **Use as the current state** writes the numbers into the map: steps with the same name are updated, new steps added, and optionally the old steps replaced. `POST /v1/value-streams/maps/:id/derive` with `{source: "csv"|"jira"|"ado", csv?, query?, limit?, mapping?, stat?, since?, until?, apply?, replace?}`.
+
+## Canvases
+
+SAFe's working artifacts as structured, editable canvases, laid out like the originals: **Portfolio canvas** (value propositions per value stream, key partners, activities, resources, cost structure, revenue streams; current and future state), **SWOT**, **TOWS**, **Portfolio vision**, **LACE mission statement**, **Epic hypothesis statement** and **Lean business case** (with WSJF), **Development value stream canvas** and **ART canvas** (prefilled from a value stream identification), **ART launch timeline with PI planning readiness**, **Feature canvas** (benefit hypothesis, acceptance criteria, WSJF) and **Enabler canvas** (architectural runway).
+
+- **SWOT → TOWS → future state.** A SWOT pairs its internal and external factors into SO, ST, WO and WT strategy suggestions; pick the worthwhile ones into a TOWS canvas, rewrite them, then generate the future-state portfolio canvas (the current one with these strategies as planned changes) and a draft portfolio vision.
+- **PI planning readiness.** The launch timeline lays out weekly lanes (content, cadence, teams, leadership) up to the date-certain quick-start; the readiness checklist is scored against it: share done, weeks to go, open items per lane, and on track or at risk given how far along the launch is.
+
+API: `GET/POST /v1/canvases`, `GET/PUT/DELETE /v1/canvases/:id`, `POST /v1/canvases/from-identification`, `GET /v1/canvases/:id/tows-suggestions`, `POST /v1/canvases/future-state`.
+
+## Inside Jira and Azure DevOps
+
+The same server can run inside the trackers. Both plugins are thin: they read the context (site, organization, project) and open `/embed/<page>?source=…&project=…` in a frame, which serves the normal pages with a compact header instead of the side navigation. Navigating inside the frame stays embedded. Only `/embed/*` and documents loaded into a frame accept framing, and only from `TRAINYARD_FRAME_ANCESTORS` (by default Atlassian and Azure DevOps hosts; set your own sites in production). Every other page still sends `X-Frame-Options: DENY` and `frame-ancestors 'none'`. People sign in once inside the frame with their Trainyard key.
+
+**Jira (Atlassian Forge, Custom UI)** in `integrations/jira-forge`: a project page (opens the program board for the project) and a global page (dashboards).
+
+```bash
+cd integrations/jira-forge
+npm ci
+npm install -g @forge/cli && forge login
+forge register                      # writes your app id into manifest.yml
+# self-hosted? set the frames address in manifest.yml and build with TRAINYARD_URL=https://your-host
+npm run build && forge deploy
+forge install                       # pick your site and Jira
+```
+
+**Azure DevOps** in `integrations/azure-devops`: a **Trainyard** hub under Boards.
+
+```bash
+cd integrations/azure-devops
+npm ci
+TRAINYARD_URL=https://agileagilist.com npm run package    # out/agileagilist.trainyard-0.1.0.vsix
+# Change "publisher" in vss-extension.json to your Marketplace publisher, then:
+npx tfx extension publish --vsix out/*.vsix --share-with <your-organization> --token <PAT with Marketplace publish>
+```
+
+CI builds both on every push and keeps the VSIX and the Forge bundle as the `trainyard-plugins` artifact.
+
 ## Still to do
 
 - Test the connectors against a real Jira and Azure DevOps account (only recorded responses so far)
 - SSO (OIDC/SAML): today users sign in with an API key
 - Multiple workspaces per server
 - GitHub Issues connector
-- Fill a value stream map's current state from Jira or Azure DevOps status history
+- Publish the Jira app to the Atlassian Marketplace and the extension to the Visual Studio Marketplace (today: private install)
+- Pass the tracker project from the plugins into a filtered board (today it is shown, not applied)
 - A PI objectives screen with business value plan and actual (designed on the Claude Design canvas)
 - Live cursors and multi-user editing on the canvas (today edits are per request; reload shows other people's changes)
 - Jira Data Center and Azure DevOps Server have adapters by configuration (`host`, `baseUrl`) but no tests against them

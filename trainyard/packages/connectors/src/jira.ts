@@ -2,7 +2,7 @@
 // paged by nextPageToken), writes fields with PUT /rest/api/3/issue/{key}, moves issues
 // between sprints with the Agile API and creates "Blocks" links for dependencies.
 
-import type { StatusCategory, WorkItem } from "@trainyard/core";
+import type { ItemHistory, StatusCategory, WorkItem } from "@trainyard/core";
 import { TrackerHttp, basicAuth, type FetchLike } from "./http.js";
 import { defaultFlowType, invert, itemId, type CommonMapping, type PushChange, type TrackerConnector } from "./types.js";
 
@@ -87,6 +87,39 @@ export class JiraConnector implements TrackerConnector {
         if (item) out.push(item);
       }
       nextPageToken = res.isLast === false || (res.isLast === undefined && res.nextPageToken) ? res.nextPageToken : undefined;
+    } while (nextPageToken);
+    return out;
+  }
+
+  /**
+   * Status changes from each issue's changelog. The enhanced search returns up to 100 recent
+   * changelog entries per issue with expand=changelog, plenty for status history; the first
+   * status is the one before the first change, entered at creation.
+   */
+  async statusHistory(opts: { query?: string; limit?: number } = {}): Promise<ItemHistory[]> {
+    const limit = opts.limit ?? 500;
+    const out: ItemHistory[] = [];
+    let nextPageToken: string | undefined;
+    do {
+      const res: SearchResponse & { issues: (JiraIssue & { changelog?: { histories: { created: string; items: { field: string; fromString?: string | null; toString?: string | null }[] }[] } })[] } = await this.http.request("POST", `${this.base}/rest/api/3/search/jql`, {
+        jql: opts.query ?? this.cfg.jql,
+        fields: ["summary", "status", "created"],
+        expand: "changelog",
+        maxResults: Math.min(100, limit - out.length),
+        ...(nextPageToken ? { nextPageToken } : {}),
+      });
+      for (const issue of res.issues) {
+        const moves = (issue.changelog?.histories ?? [])
+          .flatMap((h) => h.items.filter((i) => i.field === "status").map((i) => ({ at: h.created, from: i.fromString ?? "", to: i.toString ?? "" })))
+          .sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+        const initial = moves[0]?.from || (issue.fields.status as unknown as { name?: string }).name || "";
+        out.push({
+          itemId: issue.key,
+          title: issue.fields.summary,
+          changes: [...(initial ? [{ status: initial, at: new Date(issue.fields.created).toISOString() }] : []), ...moves.map((m) => ({ status: m.to, at: new Date(m.at).toISOString() }))],
+        });
+      }
+      nextPageToken = out.length < limit && (res.isLast === false || (res.isLast === undefined && res.nextPageToken)) ? res.nextPageToken : undefined;
     } while (nextPageToken);
     return out;
   }

@@ -250,7 +250,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .site-hero { display: grid; gap: 18px; padding-top: 28px; max-width: 820px; }
 .site-hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
 .site-lede { font-size: 1.1rem; line-height: 1.55; color: var(--ink-2); max-width: 720px; margin: 0; }
-.site-section { display: grid; gap: 14px; }
+.site-section { display: grid; gap: 14px; scroll-margin-top: 96px; }
 .site-section h2 { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.1rem); letter-spacing: -0.015em; margin: 0; }
 .site-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 6px; }
 .site-grid.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
@@ -317,3 +317,13 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
   .vsm-big { color: #8fd0e6; }
 }
 @media (prefers-reduced-motion: reduce) { .vs-bar, .vs-traveller span { animation: none; } .vsm-lad, .vs-meter .mark { transition: none; } }
+.site-compare { min-width: 900px; }
+.site-compare th[scope="row"] { font-family: var(--font-display); font-size: 0.95rem; text-transform: none; letter-spacing: 0; color: var(--ink); font-weight: 600; white-space: nowrap; }
+.site-compare td { color: var(--ink-2); line-height: 1.45; }
+.site-compare tr.ours th, .site-compare tr.ours td { background: var(--signal-soft); color: var(--ink); }
+/* Embedded in Jira or Azure DevOps: one column, a compact bar instead of the rail. */
+.shell.embed { grid-template-columns: minmax(0, 1fr); }
+.embed-bar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; padding: 8px 16px; background: var(--glass-rail); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); border-bottom: 1px solid var(--line); min-height: 48px; }
+.embed-bar .embed-brand { font-family: var(--font-display); margin-right: 10px; }
+.embed-bar .nav { padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 0.88rem; font-weight: 500; }
+.embed-bar .nav[aria-current="page"] { background: var(--glass-strong); color: var(--ink); box-shadow: 0 1px 2px rgba(var(--shadow-ink), 0.08); }

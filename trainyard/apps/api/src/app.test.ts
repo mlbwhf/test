@@ -657,3 +657,63 @@ describe("value streams", () => {
     expect(res.status).toBe(403);
   });
 });
+
+describe("canvases", () => {
+  it("lists types, edits a canvas, and turns SWOT and TOWS into a future state and vision", async () => {
+    const { call } = await setup();
+    const all = (await call("GET", "/v1/canvases")).body;
+    expect(all.types.map((t: { id: string }) => t.id)).toEqual(expect.arrayContaining(["lace-mission", "portfolio-canvas", "swot", "tows", "portfolio-vision", "dvs-canvas", "art-canvas", "art-launch", "epic-hypothesis", "lean-business-case", "feature-canvas", "enabler-canvas"]));
+    const launch = (await call("GET", "/v1/canvases/canvas-launch")).body.canvas;
+    expect(launch.derived.readiness).toMatchObject({ done: 6, total: 12 });
+    const dvs = (await call("GET", "/v1/canvases/canvas-dvs-1")).body.canvas;
+    expect(dvs.derived.chevrons.operational).toHaveLength(4);
+
+    const swot = (await call("GET", "/v1/canvases/canvas-swot")).body.canvas;
+    swot.fields.strengths = ["Strong mobile channel"];
+    swot.fields.opportunities = ["Open banking APIs"];
+    expect((await call("PUT", "/v1/canvases/canvas-swot", { type: "swot", title: swot.title, fields: swot.fields })).status).toBe(200);
+    const sug = await call("GET", "/v1/canvases/canvas-swot/tows-suggestions");
+    expect(sug.body.suggestions[0].text).toBe("Use strong mobile channel to capture open banking APIs");
+
+    const tows = (await call("POST", "/v1/canvases", { type: "tows" })).body.canvas;
+    tows.fields.so = [sug.body.suggestions[0].text];
+    await call("PUT", `/v1/canvases/${tows.id}`, { type: "tows", title: "TOWS", fields: tows.fields });
+    const fut = await call("POST", "/v1/canvases/future-state", { currentId: "canvas-portfolio", towsId: tows.id });
+    expect(fut.status).toBe(201);
+    expect(fut.body.canvas.state).toBe("future");
+    expect(fut.body.vision.fields.themes).toEqual(["Use strong mobile channel to capture open banking APIs"]);
+
+    const feature = (await call("GET", "/v1/canvases/canvas-feature-mfa")).body.canvas;
+    feature.fields.wsjf = { "User / business value": "8", "Time criticality": "5", "Risk reduction / opportunity enablement": "3", "Job size": "4" };
+    const saved = await call("PUT", "/v1/canvases/canvas-feature-mfa", { type: "feature-canvas", title: feature.title, fields: feature.fields });
+    expect(saved.body.canvas.derived.wsjf.wsjf).toEqual({ cod: 16, size: 4, wsjf: 4 });
+    expect((await call("PUT", "/v1/canvases/canvas-feature-mfa", { type: "feature-canvas", title: "x", fields: { bogus: 1 } })).body.error.code).toBe("UNKNOWN_SECTIONS");
+
+    const art = await call("POST", "/v1/canvases/from-identification", { identificationId: "vsi-consumer-loan", kind: "art", refId: "art-core" });
+    expect(art.body.canvas.fields.people[0]).toBe("150 practitioners");
+  });
+});
+
+describe("value stream map from history", () => {
+  const csv = [
+    "Key,Status,Changed",
+    "A,Ready for dev,2026-01-05T08:00:00Z", "A,In dev,2026-01-05T10:00:00Z", "A,Ready for test,2026-01-05T18:00:00Z", "A,In test,2026-01-05T19:00:00Z", "A,Done,2026-01-05T23:00:00Z",
+    "B,Ready for dev,2026-01-05T08:00:00Z", "B,In dev,2026-01-05T12:00:00Z", "B,Ready for test,2026-01-05T18:00:00Z", "B,In test,2026-01-05T21:00:00Z", "B,Done,2026-01-05T23:00:00Z",
+  ].join("\n");
+
+  it("previews from a CSV, then applies to the map's current state", async () => {
+    const { call } = await setup();
+    const map = (await call("GET", "/v1/value-streams")).body.maps[0];
+    const prev = await call("POST", `/v1/value-streams/maps/${map.id}/derive`, { source: "csv", csv, stat: "mean" });
+    expect(prev.status).toBe(200);
+    expect(prev.body.mapping.map((m: { name: string }) => m.name)).toEqual(["Dev", "Test"]);
+    expect(prev.body.derived.steps[0].measure).toEqual({ wait: 3, active: 7, ca: 100 });
+    const applied = await call("POST", `/v1/value-streams/maps/${map.id}/derive`, { source: "csv", csv, stat: "mean", mapping: [{ name: "Code", wait: ["Ready for dev"], active: ["In dev"] }, { name: "Test", wait: ["Ready for test"], active: ["In test"] }], apply: true });
+    const steps = applied.body.map.steps as { name: string; current: { wait: number; active: number } }[];
+    expect(steps.find((s) => s.name === "Code")!.current).toMatchObject({ wait: 3, active: 7 });
+    expect(steps).toHaveLength(map.steps.length);
+    const replaced = await call("POST", `/v1/value-streams/maps/${map.id}/derive`, { source: "csv", csv, apply: true, replace: true });
+    expect(replaced.body.map.steps.map((s: { name: string }) => s.name)).toEqual(["Dev", "Test"]);
+    expect((await call("POST", `/v1/value-streams/maps/${map.id}/derive`, { source: "jira" })).body.error.code).toBe("NOT_CONNECTED");
+  });
+});

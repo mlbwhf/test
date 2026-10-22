@@ -7,7 +7,8 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { identificationIssues, mapMetrics, stepImpact, type ValueStreamIdentification, type ValueStreamMap } from "@trainyard/core";
+import { deriveMapFromHistory, historiesFromRows, identificationIssues, mapMetrics, stepImpact, suggestMapping, type ItemHistory, type MapStep, type StepStatusMapping, type ValueStreamIdentification, type ValueStreamMap } from "@trainyard/core";
+import { parseCsv } from "@trainyard/importers";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Store } from "./store.js";
@@ -31,7 +32,7 @@ const Identification = z.object({
 });
 
 const Measure = z.object({ wait: z.number().min(0).max(1_000_000).nullable(), active: z.number().min(0).max(1_000_000), ca: z.number().min(0).max(100) });
-const Map = z.object({
+const MapBody = z.object({
   id: Id,
   name: Name,
   identificationId: Id.optional(),
@@ -95,7 +96,7 @@ export function registerValueStreamRoutes(app: App, store: Store) {
     return { identification: withIssues(doc) };
   });
 
-  app.put("/v1/value-streams/maps/:id", { schema: { params: z.object({ id: Id }), body: Map } }, async (req) => {
+  app.put("/v1/value-streams/maps/:id", { schema: { params: z.object({ id: Id }), body: MapBody } }, async (req) => {
     require(req, "plan");
     if (req.body.id !== req.params.id) throw new ApiError(400, "ID_MISMATCH", "The id in the body must match the URL.");
     const ids = req.body.steps.map((s) => s.id);
@@ -107,6 +108,75 @@ export function registerValueStreamRoutes(app: App, store: Store) {
     await store.commit(req.principal, exists ? "value-stream.map.update" : "value-stream.map.create", { id: doc.id, steps: doc.steps.length });
     return { map: withMetrics(doc) };
   });
+
+  // Calculate a map's current state from status history: a CSV of (item, status, timestamp)
+  // rows from any Kanban tool, or Jira / Azure DevOps through the connected tracker.
+  const Mapping = z.array(z.object({ name: Name, wait: z.array(z.string().max(120)).max(30), active: z.array(z.string().max(120)).max(30) })).max(60);
+  app.post(
+    "/v1/value-streams/maps/:id/derive",
+    {
+      bodyLimit: 16 * 1024 * 1024,
+      schema: {
+        params: z.object({ id: Id }),
+        body: z.object({
+          source: z.enum(["csv", "jira", "ado"]),
+          csv: z.string().max(15_000_000).optional(),
+          query: z.string().max(2000).optional(),
+          limit: z.number().int().min(1).max(2000).optional(),
+          mapping: Mapping.optional(),
+          stat: z.enum(["median", "mean", "p85"]).optional(),
+          since: z.string().max(40).optional(),
+          until: z.string().max(40).optional(),
+          apply: z.boolean().optional(),
+          /** With apply: drop the map's steps the mapping does not cover. */
+          replace: z.boolean().optional(),
+        }),
+      },
+    },
+    async (req) => {
+      if (req.body.apply) require(req, "plan");
+      const map = vs().maps.find((m) => m.id === req.params.id) ?? (() => { throw notFound("Value stream map"); })();
+      let histories: ItemHistory[];
+      if (req.body.source === "csv") {
+        if (!req.body.csv) throw new ApiError(400, "NO_CSV", "Upload the CSV of status changes.");
+        const { headers, rows } = parseCsv(req.body.csv);
+        const col = (...names: string[]) => headers.findIndex((h) => names.includes(h.trim().toLowerCase()));
+        const item = col("item", "key", "id", "issue", "issue key", "work item", "card", "ticket");
+        const status = col("status", "to", "to status", "state", "new status", "column", "stage");
+        const at = col("at", "date", "timestamp", "time", "changed", "changed at", "created", "entered", "moved at");
+        const title = col("title", "summary", "name");
+        if (item < 0 || status < 0 || at < 0) throw new ApiError(422, "CSV_COLUMNS", `The CSV needs item, status and timestamp columns; found ${headers.join(", ")}.`);
+        histories = historiesFromRows(rows.map((r) => ({ item: r[item] ?? "", status: r[status] ?? "", at: r[at] ?? "", ...(title >= 0 && r[title] ? { title: r[title]! } : {}) })));
+      } else {
+        const conn = store.connectors.get(req.body.source);
+        if (!conn?.statusHistory) throw new ApiError(409, "NOT_CONNECTED", `${req.body.source === "jira" ? "Jira" : "Azure DevOps"} is not connected on this server. Set it up under Jira & Azure DevOps, or upload a CSV.`);
+        try {
+          histories = await conn.statusHistory({ ...(req.body.query ? { query: req.body.query } : {}), ...(req.body.limit ? { limit: req.body.limit } : {}) });
+        } catch (e) {
+          throw new ApiError(502, "TRACKER_FAILED", (e as Error).message);
+        }
+      }
+      if (!histories.length) throw new ApiError(422, "NO_HISTORY", "No status changes found.");
+      const mapping: StepStatusMapping[] = req.body.mapping ?? suggestMapping(histories);
+      const derived = deriveMapFromHistory(histories, mapping, { unit: map.unit, ...(req.body.stat ? { stat: req.body.stat } : {}), ...(req.body.since ? { since: req.body.since } : {}), ...(req.body.until ? { until: req.body.until } : {}) });
+      const statuses = [...new Set(histories.flatMap((h) => h.changes.map((c) => c.status)))];
+      if (!req.body.apply) return { mapping, derived, statuses, items: histories.length };
+
+      // Apply: matching steps (by name) take the derived current state; new steps are added
+      // with the same numbers as their future state until someone sets a target.
+      const key = (s: string) => s.trim().toLowerCase();
+      const byName = new Map(map.steps.map((s) => [key(s.name), s]));
+      const steps: MapStep[] = derived.steps.map((d, i) => {
+        const prev = byName.get(key(d.name));
+        return prev ? { ...prev, current: d.measure } : { id: `derived-${i + 1}-${key(d.name).replace(/[^a-z0-9]+/g, "-")}`, name: d.name, current: d.measure, future: { ...d.measure } };
+      });
+      const kept = req.body.replace ? [] : map.steps.filter((s) => !derived.steps.some((d) => key(d.name) === key(s.name)));
+      const next: ValueStreamMap = { ...map, steps: [...steps, ...kept], updatedAt: store.now().toISOString() };
+      vs().maps = vs().maps.map((m) => (m.id === map.id ? next : m));
+      await store.commit(req.principal, "value-stream.map.derive", { id: map.id, source: req.body.source, items: derived.items, steps: derived.steps.length });
+      return { mapping, derived, statuses, items: histories.length, map: withMetrics(next) };
+    },
+  );
 
   app.delete("/v1/value-streams/:kind/:id", { schema: { params: z.object({ kind: z.enum(["identifications", "maps"]), id: Id }) } }, async (req, reply) => {
     require(req, "plan");

@@ -2,7 +2,7 @@
 // workitemsbatch; writes with JSON Patch, and records dependencies as Successor links
 // (System.LinkTypes.Dependency-Forward) from the provider to the consumer.
 
-import type { StatusCategory, WorkItem } from "@trainyard/core";
+import type { ItemHistory, StatusCategory, WorkItem } from "@trainyard/core";
 import { TrackerHttp, basicAuth, type FetchLike } from "./http.js";
 import { defaultFlowType, invert, itemId, type CommonMapping, type PushChange, type TrackerConnector } from "./types.js";
 
@@ -87,6 +87,28 @@ export class AdoConnector implements TrackerConnector {
         const item = this.toItem(wi);
         if (item) out.push(item);
       }
+    }
+    return out;
+  }
+
+  /** State changes from each work item's update history. One request per item, so keep `limit` modest. */
+  async statusHistory(opts: { query?: string; limit?: number } = {}): Promise<ItemHistory[]> {
+    const limit = opts.limit ?? 200;
+    const query = `SELECT [System.Id] FROM WorkItems WHERE [System.TeamProject] = @project AND (${opts.query ?? this.cfg.where}) ORDER BY [System.ChangedDate] DESC`;
+    const wiql: { workItems: { id: number }[] } = await this.http.request("POST", `${this.root}/_apis/wit/wiql?$top=${limit}&${API}`, { query });
+    const out: ItemHistory[] = [];
+    for (const { id } of wiql.workItems.slice(0, limit)) {
+      const res: { value: { fields?: Record<string, { oldValue?: unknown; newValue?: unknown }> }[] } = await this.http.request("GET", `${this.root}/_apis/wit/workItems/${id}/updates?${API}`);
+      const changes: { status: string; at: string }[] = [];
+      let title: string | undefined;
+      for (const u of res.value) {
+        const f = u.fields ?? {};
+        if (typeof f["System.Title"]?.newValue === "string") title = f["System.Title"].newValue as string;
+        const state = f["System.State"]?.newValue;
+        const at = f["System.ChangedDate"]?.newValue;
+        if (typeof state === "string" && typeof at === "string") changes.push({ status: state, at: new Date(at).toISOString() });
+      }
+      out.push({ itemId: String(id), ...(title ? { title } : {}), changes });
     }
     return out;
   }

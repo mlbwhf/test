@@ -5,7 +5,7 @@
 import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@trainyard/ai-portfolio";
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
-import { DEMO_NOW, demoIdentification, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
+import { DEMO_NOW, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -66,6 +66,8 @@ export interface StoreState {
   connections: Connection[];
   /** Value stream identification workshops and value stream maps. */
   valueStreams: { identifications: ValueStreamIdentification[]; maps: ValueStreamMap[] };
+  /** SAFe canvases: LACE, portfolio, SWOT/TOWS, vision, DVS, ART, launch, epic, feature, enabler. */
+  canvases: Canvas[];
 }
 
 export function demoState(): StoreState {
@@ -80,6 +82,7 @@ export function demoState(): StoreState {
     users: [],
     connections: [],
     valueStreams: { identifications: [demoIdentification()], maps: [demoMap()] },
+    canvases: demoCanvases(demoIdentification(), DEMO_NOW.toISOString()),
   };
 }
 

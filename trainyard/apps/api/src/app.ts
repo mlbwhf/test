@@ -46,6 +46,7 @@ import { registerAuth, registerUserRoutes, require, type AuthOptions, type Princ
 import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
+import { registerCanvasRoutes } from "./canvases.js";
 import { Store } from "./store.js";
 import { SyncRunner } from "./sync.js";
 
@@ -576,6 +577,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerUserRoutes(app, store);
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
+  registerCanvasRoutes(app, store);
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 

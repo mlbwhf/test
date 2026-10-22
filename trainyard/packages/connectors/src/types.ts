@@ -1,4 +1,4 @@
-import type { FlowType, SourceSystem, StatusCategory, WorkItem } from "@trainyard/core";
+import type { FlowType, ItemHistory, SourceSystem, StatusCategory, WorkItem } from "@trainyard/core";
 
 /** Fields Trainyard writes back to a tracker. Status stays owned by the teams' own boards. */
 export type PushField = "title" | "iterationId" | "estimate" | "businessValue";
@@ -12,6 +12,11 @@ export interface TrackerConnector {
   /** Fetch every item in the connector's configured scope, normalised to Trainyard items. */
   pull(): Promise<WorkItem[]>;
   push(change: PushChange): Promise<void>;
+  /**
+   * Status changes for items in scope (or in `query`, a JQL or WIQL WHERE clause), oldest first,
+   * for value stream maps. At most `limit` items.
+   */
+  statusHistory?(opts?: { query?: string; limit?: number }): Promise<ItemHistory[]>;
 }
 
 /** Mappings shared by both adapters. Unmapped values fall back to sensible defaults. */

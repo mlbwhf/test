@@ -32,3 +32,22 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+  # The Jira app and the Azure DevOps extension: bundle both and keep the VSIX and the Forge
+  # static folder as downloadable artifacts. Publishing stays manual (forge deploy, tfx publish).
+  plugins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci && npm run build
+        working-directory: trainyard/integrations/jira-forge
+      - run: npm ci && npm run package
+        working-directory: trainyard/integrations/azure-devops
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trainyard-plugins
+          path: |
+            trainyard/integrations/azure-devops/out/*.vsix
+            trainyard/integrations/jira-forge/static/
+            trainyard/integrations/jira-forge/manifest.yml

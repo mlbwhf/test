@@ -83,6 +83,9 @@ services:
       # Read when a page is served, so the same image works on any domain.
       TRAINYARD_PUBLIC_API_URL: https://${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}
       TRAINYARD_PUBLIC_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN}}
+      # Hosts allowed to frame /embed/* (the Jira app, the Azure DevOps extension). Empty: the
+      # default Atlassian and Azure DevOps hosts; narrow it to your own sites.
+      TRAINYARD_FRAME_ANCESTORS: ${TRAINYARD_FRAME_ANCESTORS:-}
       NODE_ENV: production
     networks: [internal]
     labels:
