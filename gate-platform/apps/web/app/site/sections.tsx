@@ -11,11 +11,18 @@ export const APP = `https://app.${process.env.GATE_DOMAIN ?? "enrollclass.com"}`
 export const SEATS = [...Array<"filled">(14).fill("filled"), "next" as const, ...Array<"empty">(5).fill("empty")];
 
 const COHORTS = [
-  { name: "Project Management Certification", dates: "12 Nov – 14 Dec", filled: 14, cap: 20, held: "$12,600", status: "Enrolling", tone: "green" },
-  { name: "Scrum Master Intensive", dates: "3 – 5 Dec", filled: 18, cap: 20, held: "$9,900", status: "Almost full", tone: "green" },
-  { name: "Agile Leadership Workshop", dates: "20 – 21 Oct", filled: 20, cap: 20, held: "$8,450", status: "Released", tone: "ink" },
-  { name: "Product Owner Foundations", dates: "8 – 9 Jan", filled: 10, cap: 20, held: "$5,200", status: "Enrolling", tone: "green" },
+  { name: "Project Management Certification", dates: "12 Nov – 14 Dec", filled: 14, cap: 20, paid: 12, invoiced: 2, held: "$12,600", status: "Enrolling", tone: "green" },
+  { name: "Scrum Master Intensive", dates: "3 – 5 Dec", filled: 18, cap: 20, paid: 17, invoiced: 1, held: "$9,900", status: "Almost full", tone: "green" },
+  { name: "Agile Leadership Workshop", dates: "20 – 21 Oct", filled: 20, cap: 20, paid: 20, invoiced: 0, held: "$8,450", status: "Released", tone: "ink" },
+  { name: "Product Owner Foundations", dates: "8 – 9 Jan", filled: 10, cap: 20, paid: 7, invoiced: 3, held: "$5,200", status: "Enrolling", tone: "green" },
 ];
+
+// What the dashboard does, in the words people search for.
+const DASHBOARD_POINTS = [
+  ["Watch seats fill", "Live seat counts for every date, a waitlist that opens when a class sells out, and the roster as a CSV whenever you need it."],
+  ["Track every payment", "See who paid by card, who is on a corporate invoice and what is still due. Refunds and transfers show up on the same line."],
+  ["Know when you get paid", "Money held for each class, what has been released and what is on its way to your bank, without a spreadsheet."],
+] as const;
 
 // Questions shown on the home page; the full list is on /faq.
 export const HOME_FAQ = ["What is EnrollClass?", "When do I get paid?", "How much does it cost?", "Do you charge anything for free classes?", "Can learners register from my own website?", "Can I use EnrollClass from Claude or another AI assistant?"];
@@ -61,58 +68,82 @@ export function HowSection() {
 }
 
 export function DashboardSection() {
+  const filled = COHORTS.reduce((n, c) => n + c.filled, 0);
+  const cap = COHORTS.reduce((n, c) => n + c.cap, 0);
+  const invoiced = COHORTS.reduce((n, c) => n + c.invoiced, 0);
   return (
-<section id="dashboard" className="site-section">
-        <h2 className="site-h2">See seats and money in one view</h2>
-        <div className="preview">
-          <div className="kpis">
-            <div>
-              <p className="mono dim">HELD IN LEDGER</p>
-              <p className="kpi">$31,400</p>
-            </div>
-            <div>
-              <p className="mono dim">RELEASED THIS MONTH</p>
-              <p className="kpi green">$18,950</p>
-            </div>
-            <div>
-              <p className="mono dim">SEATS FILLED</p>
-              <p className="kpi">
-                62 <span className="dim">/ 80</span>
-              </p>
-            </div>
+    <section id="dashboard" className="site-section" aria-labelledby="dashboard-title">
+      <h2 className="site-h2" id="dashboard-title">See seats fill. Track every payment.</h2>
+      <p className="section-lede">
+        One registration dashboard for all your classes: how many seats are left on each date, who has paid and who is on invoice, and when the money reaches you.
+      </p>
+      <div className="dash-points">
+        {DASHBOARD_POINTS.map(([title, text]) => (
+          <article key={title}>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+      <figure className="preview" aria-label="Example EnrollClass dashboard with four upcoming classes">
+        <div className="kpis">
+          <div>
+            <p className="mono dim">SEATS FILLED</p>
+            <p className="kpi">
+              {filled} <span className="dim">/ {cap}</span>
+            </p>
           </div>
-          <div className="preview-table-wrap">
-            <div className="preview-table">
-              <div className="preview-head mono">
-                <span>COHORT</span>
-                <span>SEATS</span>
-                <span>HELD</span>
-                <span>STATUS</span>
-              </div>
-              {COHORTS.map((c) => (
-                <div className="preview-row" key={c.name}>
-                  <div>
-                    <div className="strong">{c.name}</div>
-                    <div className="mono dim small">{c.dates}</div>
-                  </div>
-                  <div>
-                    <div className="bar">
-                      <div style={{ width: `${Math.round((c.filled / c.cap) * 100)}%` }} />
-                    </div>
-                    <div className="mono small">
-                      {c.filled} / {c.cap}
-                    </div>
-                  </div>
-                  <div className="mono">{c.held}</div>
-                  <div>
-                    <span className={`pill-status pill-status-${c.tone}`}>{c.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div>
+            <p className="mono dim">INVOICES DUE</p>
+            <p className="kpi">{invoiced}</p>
+          </div>
+          <div>
+            <p className="mono dim">HELD UNTIL DELIVERY</p>
+            <p className="kpi">$27,700</p>
+          </div>
+          <div>
+            <p className="mono dim">RELEASED THIS MONTH</p>
+            <p className="kpi green">$8,450</p>
           </div>
         </div>
-      </section>
+        <div className="preview-table-wrap">
+          <div className="preview-table" role="table" aria-label="Seats and payments by class">
+            <div className="preview-head mono" role="row">
+              <span role="columnheader">CLASS</span>
+              <span role="columnheader">SEATS</span>
+              <span role="columnheader">PAYMENTS</span>
+              <span role="columnheader">HELD</span>
+              <span role="columnheader">STATUS</span>
+            </div>
+            {COHORTS.map((c) => (
+              <div className="preview-row" role="row" key={c.name}>
+                <div role="cell">
+                  <div className="strong">{c.name}</div>
+                  <div className="mono dim small">{c.dates}</div>
+                </div>
+                <div role="cell">
+                  <div className="bar">
+                    <div style={{ width: `${Math.round((c.filled / c.cap) * 100)}%` }} />
+                  </div>
+                  <div className="mono small">
+                    {c.filled} / {c.cap}
+                  </div>
+                </div>
+                <div role="cell" className="mono small pay-mix">
+                  <span className="pay-paid">{c.paid} paid</span>
+                  {c.invoiced > 0 && <span className="pay-due">{c.invoiced} invoiced</span>}
+                </div>
+                <div role="cell" className="mono">{c.held}</div>
+                <div role="cell">
+                  <span className={`pill-status pill-status-${c.tone}`}>{c.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <figcaption className="mono dim small">Example data. Your dashboard updates as learners register and pay.</figcaption>
+      </figure>
+    </section>
   );
 }
 

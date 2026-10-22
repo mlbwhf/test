@@ -997,12 +997,12 @@ td .action-form-inline .result {
   padding: 0 24px 8px;
 }
 .preview-table {
-  min-width: 560px;
+  min-width: 680px;
 }
 .preview-head,
 .preview-row {
   display: grid;
-  grid-template-columns: 2.2fr 1.4fr 1fr 1fr;
+  grid-template-columns: 2.1fr 1.3fr 1.2fr 0.9fr 1fr;
   gap: 12px;
   align-items: center;
 }
@@ -8638,5 +8638,103 @@ a.chip:hover {
 @media (max-width: 860px) {
   .included-cols {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Homepage dashboard: seats filling and payment tracking */
+.section-lede {
+  max-width: 720px;
+  margin: -8px 0 24px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.dash-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px 28px;
+  margin: 0 0 28px;
+}
+.dash-points h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+.dash-points p {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+figure.preview {
+  margin: 0;
+}
+.preview figcaption {
+  background: oklch(0.99 0.003 90);
+  padding: 10px 24px 16px;
+  border-top: 1px solid rgba(20, 33, 61, 0.08);
+}
+.pay-mix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.pay-paid::before,
+.pay-due::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+  background: var(--green);
+}
+.pay-due::before {
+  background: oklch(0.8 0.14 75);
+}
+/* Bars fill as the dashboard scrolls into view, where the browser supports it */
+@supports (animation-timeline: view()) {
+  #dashboard .bar > div {
+    transform-origin: left;
+    animation: grow linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #dashboard .bar > div {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  #dashboard .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #dashboard .kpis > div {
+    padding: 16px;
+  }
+  #dashboard .kpi {
+    font-size: 22px;
+  }
+  #dashboard .preview-table-wrap {
+    padding: 0 16px 4px;
+  }
+  #dashboard .preview-table {
+    min-width: 0;
+  }
+  #dashboard .preview-head {
+    display: none;
+  }
+  #dashboard .preview-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 12px;
+  }
+  #dashboard .preview-row > :first-child,
+  #dashboard .preview-row > :nth-child(2),
+  #dashboard .preview-row > :nth-child(3) {
+    grid-column: 1 / -1;
+  }
+  #dashboard .preview figcaption {
+    padding: 10px 16px 14px;
   }
 }
