@@ -49,6 +49,7 @@ import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
+import { registerAiNativeRoutes } from "./ainative.js";
 import { Store } from "./store.js";
 import { SyncRunner } from "./sync.js";
 
@@ -583,6 +584,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);
   registerOutcomeRoutes(app, store);
+  registerAiNativeRoutes(app, store);
   registerSignupRoutes(app, store, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);

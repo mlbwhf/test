@@ -374,3 +374,27 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .op-pad, :root:not([data-theme="light"]) .op-board, :root:not([data-theme="light"]) .op-slot { color: #17212b; }
 }
+
+/* ---- AI-Native ART: pipeline, records, capabilities, funnel, demos ------------------- */
+.an-board { display: grid; gap: 8px; min-width: 1200px; }
+.an-col { background: var(--sunken); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 240px; }
+.an-col.discarded { background: #f3e6e5; }
+.an-col.concluded { background: #e6eff3; }
+.an-col-head { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; }
+.an-card { background: var(--glass-strong); border: 1px solid var(--line); border-left: 4px solid; border-radius: 10px; padding: 8px 10px; display: grid; gap: 4px; cursor: pointer; }
+.an-card.sel { outline: 2px solid var(--signal); }
+.an-gate { margin: 0; padding-left: 16px; font-size: 0.72rem; color: var(--warn); }
+.an-three { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; align-items: start; }
+.an-h { margin: 0; font-family: var(--font-display); font-size: 1rem; }
+.an-rec { padding: 12px; display: grid; gap: 8px; font-size: 0.86rem; }
+.an-kv { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 4px 8px; font-size: 0.8rem; }
+.an-kv > span:nth-child(odd) { color: var(--ink-3); font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+.an-caps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.an-cap { background: var(--ok-soft); border-radius: 8px; padding: 6px 8px; display: grid; gap: 2px; font-size: 0.76rem; }
+.an-cap.gap { background: #fbd9d2; }
+.an-cap b { font-size: 0.78rem; }
+.an-funnel { display: grid; gap: 4px; justify-items: center; }
+.an-funnel > div { background: #3d7a80; color: #fff; text-align: center; padding: 8px; border-radius: 6px; font-size: 0.82rem; }
+.an-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.an-demo-cell { background: var(--sunken); border-radius: 10px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+.an-demo-cell b { width: 100%; font-size: 0.78rem; text-transform: capitalize; }

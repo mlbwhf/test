@@ -16,6 +16,7 @@ import {
   planningBoard,
   planningIssues,
   teamBoard,
+  type AiNativeArt,
   type Milestone,
   type MilestoneKind,
   type Outcome,
@@ -26,10 +27,11 @@ import {
   type WorkKind,
   type WorkSticky,
 } from "@trainyard/core";
+import { ART_TABS, AssessmentView, DataRegister, IntentView, Pipeline, SenseRespond, TeamCoverage, Views, type ArtDerived, type ArtTab } from "@/components/ainative";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
-type Tab = "outcomes" | "board" | "teams" | "review" | "agenda";
+type Tab = "outcomes" | "board" | "teams" | "review" | "agenda" | ArtTab;
 interface Summary {
   id: string;
   artName: string;
@@ -50,6 +52,8 @@ export default function OutcomePlanningPage() {
   const [tab, setTab] = useState<Tab>("outcomes");
   const [s, setS] = useState<PlanningSession | null>(null);
   const [saved, setSaved] = useState<PlanningSession | null>(null);
+  const [art, setArt] = useState<{ art: AiNativeArt; derived: ArtDerived } | null>(null);
+  const [artSaved, setArtSaved] = useState<AiNativeArt | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
@@ -62,16 +66,29 @@ export default function OutcomePlanningPage() {
       setS(r.session);
       setSaved(r.session);
     });
+    void api<{ art: AiNativeArt; derived: ArtDerived }>("GET", `/v1/outcome-planning/${encodeURIComponent(id)}/art`).then((r) => {
+      setArt(r);
+      setArtSaved(r.art);
+    });
   }, [id]);
 
-  const dirty = s && saved && JSON.stringify(strip(s)) !== JSON.stringify(strip(saved));
+  const artDirty = art && artSaved && JSON.stringify({ ...art.art, updatedAt: "" }) !== JSON.stringify({ ...artSaved, updatedAt: "" });
+  const dirty = (s && saved && JSON.stringify(strip(s)) !== JSON.stringify(strip(saved))) || artDirty;
   const save = async () => {
     if (!s) return;
     setErr(null);
     try {
-      const r = await api<{ session: PlanningSession }>("PUT", `/v1/outcome-planning/${encodeURIComponent(s.id)}`, strip(s));
-      setS(r.session);
-      setSaved(r.session);
+      if (saved && JSON.stringify(strip(s)) !== JSON.stringify(strip(saved))) {
+        const r = await api<{ session: PlanningSession }>("PUT", `/v1/outcome-planning/${encodeURIComponent(s.id)}`, strip(s));
+        setS(r.session);
+        setSaved(r.session);
+      }
+      if (artDirty && art) {
+        const { updatedAt: _u, ...body } = art.art;
+        const r = await api<{ art: AiNativeArt; derived: ArtDerived }>("PUT", `/v1/outcome-planning/${encodeURIComponent(s.id)}/art`, body);
+        setArt(r);
+        setArtSaved(r.art);
+      }
       setNote("Saved.");
       setTimeout(() => setNote(null), 2500);
       void list.reload();
@@ -99,7 +116,21 @@ export default function OutcomePlanningPage() {
     ["teams", "Team boards"],
     ["review", "Management review"],
     ["agenda", "Agenda & vote"],
+    ...ART_TABS,
   ];
+  const artProps = art
+    ? {
+        session: s,
+        art: art.art,
+        derived: art.derived,
+        onChange: (a: AiNativeArt) => setArt({ ...art, art: a }),
+        onServer: (a: AiNativeArt, d: ArtDerived) => {
+          setArt({ art: a, derived: d });
+          setArtSaved(a);
+        },
+        onError: setErr,
+      }
+    : null;
 
   return (
     <>
@@ -122,7 +153,7 @@ export default function OutcomePlanningPage() {
             </select>
             {dirty ? (
               <>
-                <button className="btn ghost" onClick={() => setS(saved)}>
+                <button className="btn ghost" onClick={() => (setS(saved), artSaved && art && setArt({ ...art, art: artSaved }))}>
                   Discard
                 </button>
                 <button className="btn primary" onClick={() => void save()}>
@@ -147,6 +178,23 @@ export default function OutcomePlanningPage() {
       {tab === "teams" ? <Teams s={s} onChange={setS} /> : null}
       {tab === "review" ? <Review s={s} onChange={setS} /> : null}
       {tab === "agenda" ? <Agenda s={s} onChange={setS} onVote={vote} /> : null}
+      {artProps && art!.derived.issues.length && ART_TABS.some(([k]) => k === tab) ? (
+        <div className="notice warn" style={{ fontSize: "0.84rem" }}>
+          <strong>Before the next event</strong>
+          <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>
+            {art!.derived.issues.slice(0, 6).map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {artProps && tab === "pipeline" ? <Pipeline {...artProps} /> : null}
+      {artProps && tab === "intent" ? <IntentView {...artProps} /> : null}
+      {artProps && tab === "sense" ? <SenseRespond {...artProps} /> : null}
+      {artProps && tab === "data" ? <DataRegister {...artProps} /> : null}
+      {artProps && tab === "capabilities" ? <TeamCoverage {...artProps} /> : null}
+      {artProps && tab === "assessment" ? <AssessmentView {...artProps} /> : null}
+      {artProps && tab === "views" ? <Views {...artProps} /> : null}
     </>
   );
 }
@@ -196,6 +244,25 @@ function OutcomeBlock({ o, i, s, onChange, onRemove }: { o: Outcome; i: number; 
           ×
         </button>
       </div>
+      {o.level !== "team" ? (
+        <div className="row" style={{ gap: 6, fontSize: "0.76rem", marginLeft: 4 }}>
+          <select className="select" aria-label="Ambition" value={o.ambition ?? ""} onChange={(e) => onChange({ ...o, ...(e.target.value ? { ambition: e.target.value as Outcome["ambition"] } : { ambition: undefined }) })}>
+            <option value="">ambition…</option>
+            <option value="moonshot">Moonshot</option>
+            <option value="roofshot">Roofshot</option>
+          </select>
+          <select className="select" aria-label="Status" value={o.status ?? ""} onChange={(e) => onChange({ ...o, ...(e.target.value ? { status: e.target.value as Outcome["status"] } : { status: undefined }) })}>
+            <option value="">status…</option>
+            {["draft", "committed", "active", "achieved", "missed", "retired"].map((x) => (
+              <option key={x} value={x}>
+                {x}
+              </option>
+            ))}
+          </select>
+          {o.owner ? <span className="faint">owner {o.owner}</span> : null}
+          {o.approver ? <span className="faint">· approver {o.approver}</span> : null}
+        </div>
+      ) : null}
       {o.keyResults.map((kr, k) => (
         <KrLine key={kr.id} kr={kr} i={k} stage={s.stage} onChange={(x) => onChange({ ...o, keyResults: o.keyResults.map((y) => (y.id === x.id ? x : y)) })} onRemove={() => onChange({ ...o, keyResults: o.keyResults.filter((y) => y.id !== kr.id) })} />
       ))}
@@ -218,6 +285,17 @@ function Outcomes({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningS
   const issues = planningIssues(s);
   return (
     <div className="stack" style={{ gap: 16 }}>
+      {tree.portfolio.length ? (
+        <div className="row" style={{ gap: 8, fontSize: "0.84rem" }}>
+          <span className="eyebrow">Portfolio outcomes</span>
+          {tree.portfolio.map((p) => (
+            <span key={p.id} className="chip" title={p.keyResults.map((k) => `${k.text} ${k.target}${k.current ? ` (now ${k.current})` : ""}`).join("; ")}>
+              {p.ambition === "moonshot" ? "🚀 " : ""}
+              {p.title}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <div className="op-tree">
         <div className="op-tree-col">
           <div className="op-arrow">Communicate purpose ↓</div>

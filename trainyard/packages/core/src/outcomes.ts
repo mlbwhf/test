@@ -6,7 +6,7 @@
 // Board (decisions needed, risks, decisions confirmed, actions), the agenda and the
 // confidence vote. Everything here is plain data plus the few derivations the pages show.
 
-export type OutcomeLevel = "art" | "pi" | "team";
+export type OutcomeLevel = "portfolio" | "art" | "pi" | "team";
 export type MilestoneKind = "fixed" | "learning" | "sync" | "release";
 export type WorkKind = "experiment" | "prototype" | "enabler" | "feature";
 export type ReviewKind = "decision-needed" | "risk" | "decision-confirmed" | "action";
@@ -20,6 +20,8 @@ export interface OutcomeKeyResult {
   target: string;
   /** What was first proposed, kept when the event changes the target so the adjustment shows. */
   draftTarget?: string;
+  /** Where it stood when the outcome was set. */
+  baseline?: string;
   /** Latest measured value, filled in during the PI by Sense and Respond. */
   current?: string;
 }
@@ -33,6 +35,11 @@ export interface Outcome {
   /** Team outcomes belong to a team. */
   teamId?: string;
   keyResults: OutcomeKeyResult[];
+  /** AI-Native SAFe: moonshot or roofshot, drives the roadmap and expectation setting. */
+  ambition?: "moonshot" | "roofshot";
+  status?: "draft" | "committed" | "active" | "achieved" | "missed" | "retired";
+  owner?: string;
+  approver?: string;
 }
 
 export interface Milestone {
@@ -148,6 +155,8 @@ export function defaultAgenda(): AgendaSlot[] {
 // ---- derivations -----------------------------------------------------------------------
 
 export interface OutcomeTree {
+  /** Portfolio outcomes the ART outcomes advance (extensible stub above the ART). */
+  portfolio: Outcome[];
   art: { outcome: Outcome; pis: { outcome: Outcome; teams: Outcome[] }[] }[];
   /** Team outcomes that trace to no PI outcome: the team's own commitments. */
   other: Outcome[];
@@ -161,7 +170,7 @@ export function outcomeTree(s: PlanningSession): OutcomeTree {
   // PI outcomes with no ART parent still belong on the board.
   const orphanPis = pis.filter((p) => !p.parentId || !s.outcomes.some((a) => a.id === p.parentId));
   if (orphanPis.length) art.push({ outcome: { id: "art-none", level: "art", title: "Not traced to an ART outcome", keyResults: [] }, pis: orphanPis.map((p) => ({ outcome: p, teams: teams.filter((t) => t.parentId === p.id) })) });
-  return { art, other: teams.filter((t) => !t.parentId || !pis.some((p) => p.id === t.parentId)) };
+  return { portfolio: by("portfolio"), art, other: teams.filter((t) => !t.parentId || !pis.some((p) => p.id === t.parentId)) };
 }
 
 export interface BoardRow {
@@ -275,11 +284,12 @@ export function demoPlanningSession(now = "2026-10-01T09:00:00.000Z"): PlanningS
   ];
   const outcomes: Outcome[] = [
     // ART outcomes: the year, with the state after the first PI as "current".
-    { id: "art-1", level: "art", title: "The household's trusted health partner", keyResults: [kr("art-1-1", "Increase health & specialized-diet line revenue by", "40%", undefined, "12% growth"), kr("art-1-2", "Increase active households completing a guided health journey from 12% to", "45%", undefined, "18%"), kr("art-1-3", "Increase diabetic/heart-health household diet-swap completion from 15% to", "60%", undefined, "34%")] },
-    { id: "art-2", level: "art", title: "Family health as a shared, sticky habit", keyResults: [kr("art-2-1", "Enroll households in shared health challenges throughout the year:", "350,000", undefined, "100,000"), kr("art-2-2", "Achieve weekly active challenge participation for enrolled households of", "60%", undefined, "55%"), kr("art-2-3", "Increase 12-month retention among engaged households from 68% to", "80%", undefined, "71%")] },
-    { id: "art-3", level: "art", title: "Profitable growth as AI reshapes the cost base", keyResults: [kr("art-3-1", "Increase blended gross margin from 22% to", "30%", undefined, "24%"), kr("art-3-2", "Reduce cost-to-serve per basket by", "25%", undefined, "8%"), kr("art-3-3", "Contain AI operating cost to at most", "3% of revenue", undefined, "3.4%")] },
+    { id: "pf-1", level: "portfolio", title: "Be the health partner of 5 million households", ambition: "moonshot", status: "active", owner: "Portfolio leadership", keyResults: [kr("pf-1-1", "Households with an active health relationship from 1.2M to", "5M", undefined, "1.4M")] },
+    { id: "art-1", level: "art", parentId: "pf-1", ambition: "moonshot", status: "active", owner: "Retail Pharmacy ART leadership", approver: "Portfolio leadership", title: "The household's trusted health partner", keyResults: [kr("art-1-1", "Increase health & specialized-diet line revenue by", "40%", undefined, "12% growth"), kr("art-1-2", "Increase active households completing a guided health journey from 12% to", "45%", undefined, "18%"), kr("art-1-3", "Increase diabetic/heart-health household diet-swap completion from 15% to", "60%", undefined, "34%")] },
+    { id: "art-2", level: "art", parentId: "pf-1", ambition: "roofshot", status: "active", owner: "Retail Pharmacy ART leadership", approver: "Portfolio leadership", title: "Family health as a shared, sticky habit", keyResults: [kr("art-2-1", "Enroll households in shared health challenges throughout the year:", "350,000", undefined, "100,000"), kr("art-2-2", "Achieve weekly active challenge participation for enrolled households of", "60%", undefined, "55%"), kr("art-2-3", "Increase 12-month retention among engaged households from 68% to", "80%", undefined, "71%")] },
+    { id: "art-3", level: "art", ambition: "roofshot", status: "active", owner: "Retail Pharmacy ART leadership", approver: "Portfolio leadership", title: "Profitable growth as AI reshapes the cost base", keyResults: [kr("art-3-1", "Increase blended gross margin from 22% to", "30%", undefined, "24%"), kr("art-3-2", "Reduce cost-to-serve per basket by", "25%", undefined, "8%"), kr("art-3-3", "Contain AI operating cost to at most", "3% of revenue", undefined, "3.4%")] },
     // PI outcomes: drafted by leadership, adjusted during the event (draftTarget → target).
-    { id: "pi-diets", level: "pi", parentId: "art-1", title: "Scale Specialized Diets", keyResults: [kr("pi-diets-1", "Increase quarterly revenue from specialized diet product lines by", "8%", "12%"), kr("pi-diets-2", "Diabetic-flagged households completing a guided diet-swap journey:", "35%", "40%")] },
+    { id: "pi-diets", level: "pi", parentId: "art-1", ambition: "roofshot", status: "committed", owner: "Product Management", approver: "Business Owners", title: "Scale Specialized Diets", keyResults: [kr("pi-diets-1", "Increase quarterly revenue from specialized diet product lines by", "8%", "12%"), kr("pi-diets-2", "Diabetic-flagged households completing a guided diet-swap journey:", "35%", "40%")] },
     { id: "pi-margins", level: "pi", parentId: "art-3", title: "Optimize Margins", keyResults: [kr("pi-margins-1", "Reduce cost-to-serve per basket by", "9%", "8%"), kr("pi-margins-2", "Increase blended gross margin on promoted baskets by", "4%", "5%")] },
     { id: "pi-game", level: "pi", parentId: "art-2", title: "Household Gamification", keyResults: [kr("pi-game-1", "Enroll multi-user households into shared health challenges:", "120,000", "100,000"), kr("pi-game-2", "Enrolled households completing at least one challenge weekly:", "55%")] },
     // Team outcomes.

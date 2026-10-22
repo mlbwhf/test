@@ -799,3 +799,43 @@ describe("PI outcome planning", () => {
     await app.close();
   });
 });
+
+describe("AI-Native ART", () => {
+  it("serves the ART record with gates, propagates intent edits, advances and discards outputs", async () => {
+    const { call, app } = await setup();
+    const base = "/v1/outcome-planning/retail-pharmacy-pi2/art";
+    const got = await call("GET", base);
+    expect(got.status).toBe(200);
+    expect(got.body.derived.gates["out-3"].ok).toBe(false);
+    expect(got.body.derived.funnel.discardRate).toBe(13);
+    expect(got.body.derived.coverage.find((c: { teamId: string }) => c.teamId === "marketing").uncovered).toEqual(["ai"]);
+    // A release without evidence is refused at the gate.
+    const blocked = await call("POST", `${base}/outputs/out-1/advance`);
+    expect(blocked.status).toBe(422);
+    expect(blocked.body.error.code).toBe("GATE");
+    // Clearing the reviews unblocks the feature held at Specify.
+    await call("POST", `${base}/reviews/spec-swap/clear`);
+    const cleared = await call("POST", `${base}/reviews/ctx-diabetic/clear`);
+    expect(cleared.body.art.intents.find((i: { id: string }) => i.id === "int-diets").propagationStatus).toBe("clean");
+    const adv = await call("POST", `${base}/outputs/out-3/advance`);
+    expect(adv.status).toBe(200);
+    expect(adv.body.output.stage).toBe("build");
+    // Discard from anywhere with a reason.
+    const d = await call("POST", `${base}/outputs/out-8/discard`, { reason: "Platform ships it next PI." });
+    expect(d.body.output.stage).toBe("discarded");
+    expect((await call("POST", `${base}/outputs/out-8/discard`, { reason: "" })).status).toBe(400);
+    // An intent edit flags downstream and is logged.
+    const edited = await call("POST", `${base}/intents/int-habit/edit`, { futureState: "400,000 households" });
+    expect(edited.body.art.specs.find((s: { id: string }) => s.id === "spec-nudge").reviewRequired).toBe(true);
+    expect(edited.body.art.evidence.at(-1).kind).toBe("intent-change");
+    const agenda = await call("GET", `${base}/sense-respond/3`);
+    expect(agenda.body.agenda.questions).toHaveLength(3);
+    expect(agenda.body.agenda.reviewQueue.length).toBeGreaterThan(0);
+    // Saving the whole record checks references.
+    const art = edited.body.art;
+    const bad = await call("PUT", base, { ...art, outputs: [...art.outputs, { ...art.outputs[0], id: "out-x", outcomeIds: ["nope"] }] });
+    expect(bad.status).toBe(422);
+    expect((await call("PUT", base, { ...art, costLimit: 5000 })).body.derived.cost.overLimit).toBe(true);
+    await app.close();
+  });
+});

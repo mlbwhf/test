@@ -14,8 +14,19 @@ type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify")
 
 const Id = z.string().min(1).max(120).regex(/^[A-Za-z0-9._:-]+$/, "letters, digits, . _ : - only");
 const Text = z.string().trim().max(600);
-const OutcomeKeyResult = z.object({ id: Id, text: Text, target: z.string().trim().max(60), draftTarget: z.string().trim().max(60).optional(), current: z.string().trim().max(60).optional() });
-const Outcome = z.object({ id: Id, level: z.enum(["art", "pi", "team"]), title: z.string().trim().min(1).max(200), parentId: Id.optional(), teamId: Id.optional(), keyResults: z.array(OutcomeKeyResult).max(12) });
+const OutcomeKeyResult = z.object({ id: Id, text: Text, target: z.string().trim().max(60), draftTarget: z.string().trim().max(60).optional(), baseline: z.string().trim().max(60).optional(), current: z.string().trim().max(60).optional() });
+const Outcome = z.object({
+  id: Id,
+  level: z.enum(["portfolio", "art", "pi", "team"]),
+  title: z.string().trim().min(1).max(200),
+  parentId: Id.optional(),
+  teamId: Id.optional(),
+  keyResults: z.array(OutcomeKeyResult).max(12),
+  ambition: z.enum(["moonshot", "roofshot"]).optional(),
+  status: z.enum(["draft", "committed", "active", "achieved", "missed", "retired"]).optional(),
+  owner: z.string().trim().max(120).optional(),
+  approver: z.string().trim().max(120).optional(),
+});
 const Milestone = z.object({ id: Id, kind: z.enum(["fixed", "learning", "sync", "release"]), label: z.string().trim().min(1).max(200), iteration: z.number().int().min(1).max(30), outcomeId: Id.optional(), teamIds: z.array(Id).max(40).optional() });
 const Work = z.object({ id: Id, teamId: Id, kind: z.enum(["experiment", "prototype", "enabler", "feature"]), label: z.string().trim().min(1).max(200), iteration: z.number().int().min(1).max(30), outcomeId: Id.optional() });
 const Review = z.object({ id: Id, kind: z.enum(["decision-needed", "risk", "decision-confirmed", "action"]), text: Text.min(1), owner: z.string().trim().max(120).optional(), teamId: Id.optional(), answers: Id.optional() });
@@ -49,6 +60,7 @@ function checkRefs(s: z.infer<typeof Session>): string[] {
     if (o.parentId) {
       const p = outcomes.get(o.parentId);
       if (!p) issues.push(`"${o.title}" points at unknown outcome "${o.parentId}"`);
+      else if (o.level === "art" && p.level !== "portfolio") issues.push(`ART outcome "${o.title}" must trace to a portfolio outcome`);
       else if (o.level === "pi" && p.level !== "art") issues.push(`PI outcome "${o.title}" must trace to an ART outcome`);
       else if (o.level === "team" && p.level !== "pi") issues.push(`team outcome "${o.title}" must trace to a PI outcome`);
     }

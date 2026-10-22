@@ -226,6 +226,21 @@ AI-Native SAFe replaced two-day PI Planning with a one-day **PI Outcome Planning
 
 The worked example is SAFe's Retail Pharmacy ART planning its second PI, including the Cart Team's capacity clash and the deferral of the diet-swap pilot. API: `GET/POST /v1/outcome-planning`, `GET/PUT/DELETE /v1/outcome-planning/:id` (references checked on save), `POST /v1/outcome-planning/:id/votes`.
 
+## AI-Native ART
+
+The PI Outcome Planning page carries the rest of the AI-Native ART, built to the change delta from classic SAFe:
+
+- **Outcome spine.** Portfolio → ART → PI → team outcomes as OKRs, each tagged moonshot or roofshot with status, owner and approver; wording that reads like a mechanism is flagged (a soft warning), and so is a key-result set outside two to five.
+- **Outputs and the pipeline.** Experiments and prototypes (learning) and features and enablers (value) move Discover → Specify → Build → Validate → Release, learning items concluding at Validate (A/B tests may release). Gates: an outcome link to leave Discover (and a hypothesis for learning items); a metric, a specification and a clean intent to leave Specify; a named verification owner to enter Validate; evidence to release, the uncertainty reduced to conclude. **Discard** is one reason from any stage, and the button sits next to Advance. Prioritisation is pluggable: WSJF for value items, information gain per unit cost for learning items.
+- **Intent, specifications, context.** Versioned records with dependency links. Editing an intent creates a new version, marks every specification and context under it for review, holds their outputs at Specify, and logs the propagation into insights and evidence; reviews are cleared one record at a time.
+- **Curated data register.** Assets that power development or power products, scored 0–5 on complete, accurate, securely accessed and maintained (with sub-qualities), visible wherever an output depends on them.
+- **Team capabilities.** Product, builder, domain expert and AI as capabilities people carry, the AI Value Architect as an assignment; uncovered capabilities and sizes outside 3–7 are flagged.
+- **Sense and Respond.** Two hours every iteration, with the agenda pulled from data: key-result deltas, what shipped and the customer demos, discard candidates (no metric, or no movement after N iterations), the review queue, AI cost variance and workflow friction by impact; decisions recorded per event.
+- **Assessment and launch plan.** The twelve success factors under the four shifts, rated individually in writing before discussion, splits detected by spread and kept as both positions, gaps sequenced before the first PI Outcome Planning, before the first Sense and Respond, or later, in a versioned launch plan.
+- **Views.** Exploration funnel with the discard rate, AI operating cost (fixed and variable, limit, variance attributed to workflow), verification capacity (queue depth, days in review, approver load), and the customer demo planner (purpose × reach, sixteen formats).
+
+API under `/v1/outcome-planning/:id/art`: GET/PUT the record (references checked), `outputs/:id/advance` and `outputs/:id/discard`, `outputs/:id/priority`, `intents/:id/edit`, `reviews/:id/clear`, `sense-respond/:iteration`. Items the framework has not confirmed (Scrum Master removal, the two other Sense and Respond purposes, the sub-quality mapping, the learning prioritisation rule, the 2–5 key-result range) are warnings or defaults, never hard blocks.
+
 ## Inside Jira and Azure DevOps
 
 The same server can run inside the trackers. Both plugins are thin: they read the context (site, organization, project) and open `/embed/<page>?source=…&project=…` in a frame, which serves the normal pages with a compact header instead of the side navigation. Navigating inside the frame stays embedded. Only `/embed/*` and documents loaded into a frame accept framing, and only from `TRAINYARD_FRAME_ANCESTORS` (by default Atlassian and Azure DevOps hosts; set your own sites in production). Every other page still sends `X-Frame-Options: DENY` and `frame-ancestors 'none'`. People sign in once inside the frame with their Trainyard key.
