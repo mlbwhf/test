@@ -24,13 +24,24 @@ if [ -z "${STRIPE_SECRET_KEY:-}" ]; then
 fi
 case "$STRIPE_SECRET_KEY" in sk_test_*|sk_live_*|rk_*) ;; *) echo "That does not look like a Stripe secret key (sk_test_... or sk_live_...)."; exit 1;; esac
 command -v jq >/dev/null || { echo "jq is required: sudo apt install -y jq"; exit 1; }
-echo "Setting up Stripe for $API_HOST …"
+echo "Setting up Stripe for $API_HOST ..."
+ACCOUNT=$(stripe account | jq -r '[(.settings.dashboard.display_name // .id), (if .livemode then "live mode" else "test mode" end)] | join(" · ")')
+echo "Stripe account: $ACCOUNT"
 
-stripe() { curl -sS -u "$STRIPE_SECRET_KEY:" "https://api.stripe.com/v1/$1" "${@:2}"; }
+# Every call stops the script with Stripe's own message when it fails (wrong key, no permission, ...).
+stripe() {
+  local out
+  out=$(curl -sS -u "$STRIPE_SECRET_KEY:" "https://api.stripe.com/v1/$1" "${@:2}") || { echo "Could not reach api.stripe.com"; exit 1; }
+  if echo "$out" | jq -e '.error' >/dev/null 2>&1; then
+    echo "Stripe refused $1: $(echo "$out" | jq -r '.error.message')" >&2
+    exit 1
+  fi
+  echo "$out"
+}
 
 product() { # name -> id (reuse by name)
   local id
-  id=$(stripe "products/search" --data-urlencode "query=name:'$1' AND active:'true'" -G | jq -r '.data[0].id // empty')
+  id=$(stripe products -G -d active=true -d limit=100 | jq -r --arg n "$1" '.data[] | select(.name==$n) | .id' | head -n1)
   [ -n "$id" ] || id=$(stripe products -d "name=$1" -d "description=$2" | jq -r .id)
   echo "$id"
 }
