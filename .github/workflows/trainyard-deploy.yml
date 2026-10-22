@@ -1,0 +1,131 @@
+# Build the Trainyard API and web images, push them to GitHub Container Registry, and
+# roll them onto the same VPS as EnrollClass over SSH. Uses the same repository secrets:
+#   DEPLOY_HOST      VPS IP or hostname
+#   DEPLOY_USER      ssh user with docker access ("deploy", created by gate's server-setup.sh)
+#   DEPLOY_SSH_KEY   private key for that user
+# and the repository variables TRAINYARD_WEB_HOST / TRAINYARD_API_HOST for the smoke test.
+# Everything the app needs at runtime lives in /opt/trainyard/.env on the server.
+name: trainyard-deploy
+on:
+  push:
+    branches: [main, claude/confident-cray-JTbgD]
+    paths: ["trainyard/**", ".github/workflows/trainyard-deploy.yml"]
+  workflow_dispatch:
+    inputs:
+      ref_tag:
+        description: "Image tag to deploy (default: this commit)"
+        required: false
+
+concurrency:
+  group: trainyard-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE: ghcr.io/${{ github.repository_owner }}/trainyard-api
+  WEB_IMAGE: ghcr.io/${{ github.repository_owner }}/trainyard-web
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: trainyard } }
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: trainyard, POSTGRES_PASSWORD: trainyard, POSTGRES_DB: trainyard }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U trainyard" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://trainyard:trainyard@localhost:5432/trainyard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: trainyard/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: api
+            dockerfile: infra/docker/Dockerfile.api
+            image: ghcr.io/${{ github.repository_owner }}/trainyard-api
+          - name: web
+            dockerfile: infra/docker/Dockerfile.web
+            image: ghcr.io/${{ github.repository_owner }}/trainyard-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: trainyard
+          file: trainyard/${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ matrix.image }}:${{ github.sha }}
+            ${{ matrix.image }}:latest
+          cache-from: type=gha,scope=trainyard-${{ matrix.name }}
+          cache-to: type=gha,scope=trainyard-${{ matrix.name }},mode=max
+          provenance: false
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy compose files and scripts to the server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: trainyard/infra/compose/docker-compose.prod.yml,trainyard/infra/compose/docker-compose.traefik-bridge.yml,trainyard/infra/scripts/deploy.sh,trainyard/infra/scripts/detect-traefik.sh,trainyard/infra/scripts/smoke.sh
+          target: /opt/trainyard/incoming
+          strip_components: 3
+      - name: Roll the stack
+        uses: appleboy/ssh-action@v1
+        env:
+          TAG: ${{ github.event.inputs.ref_tag || github.sha }}
+          API_IMAGE: ${{ env.API_IMAGE }}
+          WEB_IMAGE: ${{ env.WEB_IMAGE }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: TAG,API_IMAGE,WEB_IMAGE,GHCR_USER,GHCR_TOKEN
+          script: |
+            set -euo pipefail
+            cd /opt/trainyard
+            pick() { find incoming -type f -name "$1" | head -n1; }
+            for f in docker-compose.prod.yml docker-compose.traefik-bridge.yml deploy.sh detect-traefik.sh smoke.sh; do
+              src=$(pick "$f"); [ -n "$src" ] || { echo "missing $f in upload"; find incoming -type f; exit 1; }
+              case "$f" in docker-compose.prod.yml) dst=docker-compose.yml;; *) dst=$f;; esac
+              mv -f "$src" "$dst"
+            done
+            chmod +x *.sh && rm -rf incoming
+            [ -f .env ] || { echo "/opt/trainyard/.env is missing on the server; run infra/scripts/first-run.sh"; exit 1; }
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            export TRAINYARD_API_IMAGE="$API_IMAGE:$TAG" TRAINYARD_WEB_IMAGE="$WEB_IMAGE:$TAG"
+            ./deploy.sh
+            docker logout ghcr.io
+      - name: Smoke-test the live site
+        run: bash trainyard/infra/scripts/smoke.sh "${{ vars.TRAINYARD_WEB_HOST || 'plan.agile-agilist.com' }}" "${{ vars.TRAINYARD_API_HOST || 'plan-api.agile-agilist.com' }}"

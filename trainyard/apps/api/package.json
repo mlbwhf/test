@@ -1,0 +1,33 @@
+{
+  "name": "@trainyard/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "@fastify/swagger": "^9.5.0",
+    "@fastify/swagger-ui": "^5.2.0",
+    "@trainyard/ai-portfolio": "workspace:*",
+    "@trainyard/connectors": "workspace:*",
+    "@trainyard/core": "workspace:*",
+    "fastify": "^5.6.0",
+    "fastify-type-provider-zod": "^7.0.0",
+    "zod": "^4.1.0",
+    "@trainyard/db": "workspace:*",
+    "@trainyard/ai-assist": "workspace:*",
+    "@trainyard/importers": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

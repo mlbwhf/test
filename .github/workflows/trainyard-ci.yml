@@ -1,0 +1,31 @@
+name: trainyard-ci
+on:
+  push:
+    paths: ["trainyard/**", ".github/workflows/trainyard-ci.yml"]
+  pull_request:
+    paths: ["trainyard/**", ".github/workflows/trainyard-ci.yml"]
+defaults:
+  run:
+    working-directory: trainyard
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: trainyard, POSTGRES_PASSWORD: trainyard, POSTGRES_DB: trainyard }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U trainyard" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://trainyard:trainyard@localhost:5432/trainyard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: trainyard/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

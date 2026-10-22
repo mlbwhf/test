@@ -1,0 +1,15 @@
+# Overlay used only when Traefik runs on its own bridge network (TRAEFIK_NETWORK is a
+# network name, not "host"). Joins api and web to it so Traefik can reach them.
+services:
+  api:
+    networks: [internal, traefik]
+    labels:
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+  web:
+    networks: [internal, traefik]
+    labels:
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+networks:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK}
