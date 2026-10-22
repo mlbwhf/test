@@ -99,6 +99,12 @@ for i in $(seq 1 30); do
     echo "$out"
     docker image prune -f >/dev/null
     echo "deployed $(compose images api --format '{{.Repository}}:{{.Tag}}' 2>/dev/null || true)"
+    # Pin the deployed images in .env so a later manual `docker compose up -d` (after editing
+    # .env, say) restarts the same images instead of whatever :latest is cached on this box.
+    for var in TRAINYARD_API_IMAGE TRAINYARD_WEB_IMAGE; do
+      val=${!var:-}; [ -n "$val" ] || continue
+      if grep -qE "^$var=" .env; then sed -i -E "s|^$var=.*|$var=$val|" .env; else printf '\n%s=%s\n' "$var" "$val" >> .env; fi
+    done
     if [ "$gate_before" = ok ]; then
       for n in 1 2 3 4 5 6; do gate_health && { echo "== gate after: ok"; exit 0; }; sleep 5; done
       echo "== gate after: DOWN. EnrollClass was healthy before this deploy and is not now; check Traefik: docker logs \$(docker ps -q --filter ancestor=traefik) --tail 100" >&2
