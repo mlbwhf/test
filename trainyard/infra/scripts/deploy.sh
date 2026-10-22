@@ -16,6 +16,49 @@ opts=(-f docker-compose.yml)
 case "${TRAEFIK_NETWORK:-host}" in host|"") ;; *) opts+=(-f docker-compose.traefik-bridge.yml);; esac
 [ -n "${BACKUP_S3_BUCKET:-}" ] && opts+=(--profile backup)
 [ "${LLM_PROFILE:-}" = "llm" ] && opts+=(--profile llm)
+
+# Aliases: one router and certificate per name, so a name whose DNS is not ready cannot stop
+# Let's Encrypt from issuing the others. Only names that already resolve to this server are
+# added; the rest are listed and picked up by the next deploy.
+alias_file=docker-compose.aliases.yml
+rm -f "$alias_file"
+local_ips=" $(hostname -I 2>/dev/null) $(curl -4 -fsS --max-time 5 https://ifconfig.me 2>/dev/null || true) "
+points_here() { local ip; ip=$(getent ahostsv4 "$1" | awk 'NR==1{print $1}'); [ -n "$ip" ] && [[ "$local_ips" == *" $ip "* ]]; }
+web_labels=""; api_labels=""; n=0
+for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2); do
+  n=$((n + 1))
+  if points_here "$name"; then
+    echo "== alias $name -> redirects to the canonical web host"
+    web_labels+="      traefik.http.routers.trainyard-web-alias$n.rule: Host(\`$name\`)
+      traefik.http.routers.trainyard-web-alias$n.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-web-alias$n.tls: \"true\"
+      traefik.http.routers.trainyard-web-alias$n.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-web-alias$n.middlewares: trainyard-web-canonical
+      traefik.http.routers.trainyard-web-alias$n.service: trainyard-web
+"
+  else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
+done
+for name in $(envval TRAINYARD_API_ALT); do
+  if points_here "$name"; then
+    echo "== alias $name -> answers as the API"
+    api_labels+="      traefik.http.routers.trainyard-api-alias.rule: Host(\`$name\`)
+      traefik.http.routers.trainyard-api-alias.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-api-alias.tls: \"true\"
+      traefik.http.routers.trainyard-api-alias.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-api-alias.middlewares: trainyard-api-headers
+      traefik.http.routers.trainyard-api-alias.service: trainyard-api
+"
+  else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
+done
+if [ -n "$web_labels$api_labels" ]; then
+  {
+    echo "# Written by deploy.sh on every deploy; do not edit."
+    echo "services:"
+    [ -n "$api_labels" ] && printf '  api:\n    labels:\n%s' "$api_labels"
+    [ -n "$web_labels" ] && printf '  web:\n    labels:\n%s' "$web_labels"
+  } > "$alias_file"
+  opts+=(-f "$alias_file")
+fi
 compose() { docker compose "${opts[@]}" "$@"; }
 
 for required in TRAINYARD_DOMAIN POSTGRES_PASSWORD TRAINYARD_ADMIN_KEY; do

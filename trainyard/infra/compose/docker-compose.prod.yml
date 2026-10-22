@@ -55,9 +55,9 @@ services:
     labels:
       traefik.enable: "true"
       traefik.docker.network: trainyard_internal
-      # Primary API host plus an optional alternate (TRAINYARD_API_ALT); both answer directly,
-      # because a redirect would break browsers' CORS preflight requests.
-      traefik.http.routers.trainyard-api.rule: Host(`${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}`) || Host(`${TRAINYARD_API_ALT:-_none_}`)
+      # Aliases (TRAINYARD_API_ALT) get their own router and certificate from deploy.sh, which adds
+      # them only once their DNS points here; a name that fails validation must not block this one.
+      traefik.http.routers.trainyard-api.rule: Host(`${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}`)
       traefik.http.routers.trainyard-api.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.trainyard-api.tls: "true"
       traefik.http.routers.trainyard-api.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
@@ -93,14 +93,9 @@ services:
       traefik.http.routers.trainyard-web.tls: "true"
       traefik.http.routers.trainyard-web.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
       traefik.http.routers.trainyard-web.middlewares: trainyard-web-headers
-      # Aliases (TRAINYARD_WEB_ALT, TRAINYARD_WEB_ALT2, e.g. www.<domain> and the old plan.<domain>):
-      # own certificates, then a 308 to the canonical host so search engines index one site.
-      traefik.http.routers.trainyard-web-alias.rule: Host(`${TRAINYARD_WEB_ALT:-_none_}`) || Host(`${TRAINYARD_WEB_ALT2:-_none_}`)
-      traefik.http.routers.trainyard-web-alias.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
-      traefik.http.routers.trainyard-web-alias.tls: "true"
-      traefik.http.routers.trainyard-web-alias.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
-      traefik.http.routers.trainyard-web-alias.middlewares: trainyard-web-canonical
-      traefik.http.routers.trainyard-web-alias.service: trainyard-web
+      # Web aliases (TRAINYARD_WEB_ALT, TRAINYARD_WEB_ALT2, e.g. www.<domain> and the old plan.<domain>)
+      # get one router and certificate each from deploy.sh, once their DNS points here, and this
+      # 308 to the canonical host so search engines index one site.
       traefik.http.middlewares.trainyard-web-canonical.redirectregex.regex: ^https?://[^/]+/(.*)
       traefik.http.middlewares.trainyard-web-canonical.redirectregex.replacement: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN}}/$${1}
       traefik.http.middlewares.trainyard-web-canonical.redirectregex.permanent: "true"

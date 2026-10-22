@@ -33,6 +33,7 @@ expect "https://$web/" 200 'application/ld+json' || fail=1
 expect "https://$web/robots.txt" 200 'Sitemap' || fail=1
 shift 2
 for alias in "$@"; do
+  getent ahostsv4 "$alias" >/dev/null 2>&1 || { printf 'skip  %-50s DNS not resolving yet\n' "https://$alias/login"; continue; }
   loc=$(curl -sS --max-time 20 -o /dev/null -w '%{http_code} %{redirect_url}' "https://$alias/login" 2>/dev/null || echo "000")
   case "$loc" in 30[18]\ https://$web/login*) printf 'ok    %-50s %s\n' "https://$alias/login" "$loc";; *) printf 'FAIL  %-50s got %s (wanted 308 https://%s/login)\n' "https://$alias/login" "$loc" "$web"; fail=1;; esac
 done
