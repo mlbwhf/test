@@ -22,6 +22,7 @@ const FILTERS = [
   ["team", "Team"],
   ["portfolio", "Portfolio"],
   ["risk", "Risk"],
+  ["flow", "Flow / Kanban"],
   ["lean", "Lean / Obeya"],
   ["saved", "Saved from imports"],
 ] as const;

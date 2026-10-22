@@ -37,7 +37,7 @@ interface RemoteBoard {
   imported: boolean;
 }
 
-const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
+const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
 export default function ImportsPage() {
   const conns = useApi<{ connections: Connection[]; sources: Record<string, SourceInfo>; persistent: boolean }>("/v1/connections");
@@ -61,7 +61,7 @@ export default function ImportsPage() {
 
   return (
     <>
-      <PageHead title="Bring your own boards" sub="Connect Miro, Mural, monday.com or Trello and pull a board in exactly as it is, or upload a CSV or JSON from any other tool. Save any board as a template, and map its cards or rows onto the plan when you are ready." />
+      <PageHead title="Bring your own boards" sub="Connect Miro, Mural, monday.com or Trello and pull a board in exactly as it is, upload an iObeya board export, or a CSV or JSON from any other tool. Save any board as a template, and map its cards or rows onto the plan when you are ready." />
       {!conns.data.persistent ? <div className="notice warn">Connection tokens are encrypted with a key that lives only in this process. Set TRAINYARD_SECRET on the API server so connections survive a restart.</div> : null}
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
@@ -283,8 +283,63 @@ function ConnectForm({ sources, onConnected, onError }: { sources: Record<string
   );
 }
 
+function toBase64(buf: ArrayBuffer): string {
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+function IobeyaUpload({ onError }: { onError: (e: unknown) => void }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [name, setName] = useState("");
+  const [library, setLibrary] = useState(false);
+  const [busy, setBusy] = useState(false);
+  return (
+    <form
+      className="stack"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (!file) return;
+        setBusy(true);
+        try {
+          const contentBase64 = toBase64(await file.arrayBuffer());
+          const r = await api<{ board: { id: string } }>("POST", "/v1/imports/iobeya", { fileName: file.name, contentBase64, ...(library ? { includeLibrary: true } : {}), ...(name.trim() ? { name: name.trim() } : {}) });
+          window.location.assign(`/boards/${encodeURIComponent(r.board.id)}`);
+        } catch (x) {
+          onError(x);
+          setBusy(false);
+        }
+      }}
+    >
+      <div className="row" style={{ alignItems: "flex-end" }}>
+        <label className="field" style={{ flex: "1 1 200px" }}>
+          iObeya export (.zip or the .csv inside it)
+          <input id="iobeya-file" className="input" type="file" accept=".zip,.csv,application/zip,text/csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} required />
+        </label>
+        <label className="field" style={{ flex: "1 1 160px" }}>
+          Board name (optional)
+          <input id="iobeya-name" className="input" placeholder="Taken from the file" value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
+      </div>
+      <label className="row" style={{ gap: 8, fontSize: "0.88rem" }}>
+        <input id="iobeya-library" type="checkbox" checked={library} onChange={(e) => setLibrary(e.target.checked)} />
+        Also bring the card library (cards defined in the room but not placed on this board)
+      </label>
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <span className="faint" style={{ fontSize: "0.8rem" }}>
+          In iObeya, open the board menu and choose Export. Program boards, team boards, Kanban, roadmaps and free boards come in with their teams, iterations, stages, cards, notes, charts, images and dependencies.
+        </span>
+        <button className="btn primary" type="submit" disabled={!file || busy}>
+          {busy ? "Importing…" : "Import board"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function UploadForms({ onImported, onError }: { onImported: (name: string) => void; onError: (e: unknown) => void }) {
-  const [mode, setMode] = useState<"csv" | "json">("csv");
+  const [mode, setMode] = useState<"iobeya" | "csv" | "json">("iobeya");
   const [name, setName] = useState("");
   const [groupBy, setGroupBy] = useState("");
   const [text, setText] = useState("");
@@ -296,6 +351,26 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
     };
     r.readAsText(file);
   };
+  const tabs = (
+    <div className="tabs" role="tablist">
+      <button type="button" role="tab" aria-selected={mode === "iobeya"} onClick={() => setMode("iobeya")}>
+        iObeya board export
+      </button>
+      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("csv")}>
+        CSV / spreadsheet export
+      </button>
+      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("json")}>
+        Trainyard board JSON
+      </button>
+    </div>
+  );
+  if (mode === "iobeya")
+    return (
+      <div className="stack">
+        {tabs}
+        <IobeyaUpload onError={onError} />
+      </div>
+    );
   return (
     <form
       className="stack"
@@ -312,6 +387,9 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
       }}
     >
       <div className="tabs" role="tablist">
+        <button type="button" role="tab" aria-selected={false} onClick={() => setMode("iobeya")}>
+          iObeya board export
+        </button>
         <button type="button" role="tab" aria-selected={mode === "csv"} onClick={() => setMode("csv")}>
           CSV / spreadsheet export
         </button>

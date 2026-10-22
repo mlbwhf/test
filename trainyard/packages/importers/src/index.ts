@@ -4,6 +4,7 @@ export * from "./mural.js";
 export * from "./monday.js";
 export * from "./trello.js";
 export * from "./files.js";
+export * from "./iobeya.js";
 
 import type { BoardSource } from "@trainyard/core";
 import { MiroImporter } from "./miro.js";

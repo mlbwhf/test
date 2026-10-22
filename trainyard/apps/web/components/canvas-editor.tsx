@@ -19,6 +19,96 @@ const SWATCHES = [
 
 type Tool = "select" | "connect";
 
+/**
+ * Frame titles sit above the frame when there is room (built-in templates leave gaps) and
+ * inside its top edge when frames touch (imported program boards tile edge to edge).
+ */
+function frameTitlePos(f: Frame, all: Frame[]): { x: number; y: number; fontSize: number } {
+  const fontSize = Math.max(14, Math.min(96, f.width / 22, f.height / 6, (f.width * 0.95) / Math.max(1, f.title.length * 0.56)));
+  const crowded = all.some((o) => o !== f && o.x < f.x + f.width && o.x + o.width > f.x && o.y + o.height <= f.y + 1 && f.y - (o.y + o.height) < fontSize * 1.4);
+  return crowded ? { x: f.x + fontSize * 0.5, y: f.y + fontSize * 1.25, fontSize } : { x: f.x + 14, y: f.y - fontSize * 0.45, fontSize };
+}
+
+interface ChartData {
+  kind: string;
+  columns: string[];
+  series: { label: string; color?: string; values: (number | null)[] }[];
+}
+
+const CHART_COLORS = ["#4f7fc4", "#d4493a", "#e8b931", "#3aa57a", "#8c6bc8", "#e07b39", "#5aa9c9"];
+
+function isDark(color: string): boolean {
+  const m = /^#?([0-9a-f]{6})$/i.exec(color.trim());
+  if (!m) return false;
+  const v = parseInt(m[1]!, 16);
+  const [r, g, b] = [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 120;
+}
+
+/** Bars, stacked bars or lines from an imported chart's data, drawn inside its card. */
+function ChartView({ chart, title, x, y, w, h }: { chart: ChartData; title: string; x: number; y: number; w: number; h: number }) {
+  const fs = Math.max(16, Math.min(44, Math.round(w / 40)));
+  const pad = { l: fs * 2.6, r: fs * 1, t: fs * 2.4, b: fs * 3.2 };
+  const pw = Math.max(10, w - pad.l - pad.r - (chart.series.length > 1 ? w * 0.18 : 0));
+  const ph = Math.max(10, h - pad.t - pad.b);
+  const stacked = /stack|area/i.test(chart.kind);
+  const line = /line/i.test(chart.kind);
+  const n = Math.max(1, chart.columns.length);
+  const totals = chart.columns.map((_, ci) => chart.series.reduce((s, se) => s + (se.values[ci] ?? 0), 0));
+  const max = Math.max(1, ...(stacked ? totals : chart.series.flatMap((se) => se.values.map((v) => v ?? 0))));
+  const sx = (ci: number) => x + pad.l + (ci + 0.5) * (pw / n);
+  const sy = (v: number) => y + pad.t + ph - (v / max) * ph;
+  const bw = (pw / n) * 0.7;
+  const color = (si: number) => chart.series[si]?.color ?? CHART_COLORS[si % CHART_COLORS.length]!;
+  return (
+    <g aria-label={`Chart: ${title}`}>
+      <text x={x + w / 2} y={y + fs * 1.4} fontSize={fs} textAnchor="middle" fill="#17212b" fontFamily="var(--font-body)" fontWeight={600}>
+        {title}
+      </text>
+      <line x1={x + pad.l} y1={y + pad.t + ph} x2={x + pad.l + pw} y2={y + pad.t + ph} stroke="#9aa5b1" strokeWidth={2} />
+      {[0, 0.5, 1].map((t) => (
+        <text key={t} x={x + pad.l - fs * 0.4} y={sy(max * t) + fs * 0.3} fontSize={fs * 0.7} textAnchor="end" fill="#66727f" fontFamily="var(--font-mono)">
+          {Math.round(max * t)}
+        </text>
+      ))}
+      {line
+        ? chart.series.map((se, si) => (
+            <polyline key={si} fill="none" stroke={color(si)} strokeWidth={Math.max(2, fs / 6)} points={se.values.map((v, ci) => (v === null ? "" : `${sx(ci)},${sy(v)}`)).filter(Boolean).join(" ")} />
+          ))
+        : chart.columns.map((_, ci) => {
+            let base = 0;
+            return chart.series.map((se, si) => {
+              const v = se.values[ci] ?? 0;
+              if (stacked) {
+                const r = <rect key={`${ci}-${si}`} x={sx(ci) - bw / 2} y={sy(base + v)} width={bw} height={Math.max(0, sy(base) - sy(base + v))} fill={color(si)} />;
+                base += v;
+                return r;
+              }
+              const sw = bw / Math.max(1, chart.series.length);
+              return <rect key={`${ci}-${si}`} x={sx(ci) - bw / 2 + si * sw} y={sy(v)} width={sw} height={Math.max(0, sy(0) - sy(v))} fill={color(si)} />;
+            });
+          })}
+      {chart.columns.map((c, ci) =>
+        n <= 24 || ci % Math.ceil(n / 24) === 0 ? (
+          <text key={ci} x={sx(ci)} y={y + pad.t + ph + fs * 1.1} fontSize={fs * 0.62} textAnchor="middle" fill="#4a5663" fontFamily="var(--font-body)">
+            {c.length > 10 ? `${c.slice(0, 9)}…` : c}
+          </text>
+        ) : null,
+      )}
+      {chart.series.length > 1
+        ? chart.series.map((se, si) => (
+            <g key={si}>
+              <rect x={x + pad.l + pw + fs} y={y + pad.t + si * fs * 1.3} width={fs * 0.8} height={fs * 0.8} fill={color(si)} />
+              <text x={x + pad.l + pw + fs * 2.1} y={y + pad.t + si * fs * 1.3 + fs * 0.7} fontSize={fs * 0.7} fill="#4a5663" fontFamily="var(--font-body)">
+                {se.label}
+              </text>
+            </g>
+          ))
+        : null}
+    </g>
+  );
+}
+
 function wrap(text: string, width: number): string[] {
   const out: string[] = [];
   for (const para of text.split("\n")) {
@@ -206,11 +296,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
           )}
         </div>
         <div className="row">
-          <button className="btn small ghost" onClick={() => setZoom((z) => Math.max(0.4, z - 0.2))} aria-label="Zoom out">
+          <button className="btn small ghost" onClick={() => setZoom((z) => Math.max(0.5, +(z / 1.25).toFixed(3)))} aria-label="Zoom out">
             −
           </button>
           <span className="mono faint" style={{ fontSize: "0.78rem", width: 40, textAlign: "center" }}>{Math.round(zoom * 100)}%</span>
-          <button className="btn small ghost" onClick={() => setZoom((z) => Math.min(2.4, z + 0.2))} aria-label="Zoom in">
+          <button className="btn small ghost" onClick={() => setZoom((z) => Math.min(10, +(z * 1.25).toFixed(3)))} aria-label="Zoom in">
             +
           </button>
         </div>
@@ -221,9 +311,9 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
           <svg
             ref={svgRef}
             viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
-            width={Math.max(600, (box.w * zoom) / 2)}
-            height={Math.max(300, (box.h * zoom) / 2)}
-            style={{ display: "block", userSelect: "none", touchAction: "none" }}
+            // 100% fits the board to the panel width, whatever the board's own size (built-in
+            // templates are ~2,000 units wide, iObeya boards ~10,000); zoom scales from there.
+            style={{ display: "block", userSelect: "none", touchAction: "none", width: `${zoom * 100}%`, minWidth: 600, height: "auto" }}
             role="img"
             aria-label={`${board.name}${readOnly ? "" : ", editable"}`}
             onPointerMove={onMove}
@@ -242,7 +332,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
             {frames.map((f) => (
               <g key={f.id} onPointerDown={(e) => startDrag("frame", f.id, e)} style={{ cursor: readOnly ? "default" : "grab" }}>
                 <rect x={f.x} y={f.y} width={f.width} height={f.height} fill="rgba(255,255,255,0.55)" stroke={selected === f.id ? "var(--signal)" : "rgba(255,255,255,0.9)"} strokeWidth={selected === f.id ? 4 : 2} rx={18} />
-                <text x={f.x + 14} y={f.y - 12} fontSize={Math.max(18, Math.min(32, f.width / 24))} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
+                <text {...frameTitlePos(f, frames)} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
                   {f.title}
                 </text>
               </g>
@@ -267,9 +357,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
               const w = n.width ?? 180;
               const h = n.height ?? (n.kind === "text" ? 60 : 120);
               const placeholder = !!n.fields.placeholder && !n.text.trim();
-              const fill = n.kind === "text" ? "transparent" : cssColor(n.color);
-              const dark = /^#?(1|2|3|black)/i.test(n.color ?? "");
-              const lines = wrap(n.text || (placeholder ? "Add a card here" : ""), Math.max(8, Math.floor(w / 10)));
+              const src = typeof n.fields.src === "string" && n.fields.src.startsWith("data:image/") ? n.fields.src : undefined;
+              const chart = n.fields.chart as ChartData | undefined;
+              const fill = n.kind === "text" ? (n.color ? cssColor(n.color) : "transparent") : src ? "transparent" : chart ? "#ffffff" : cssColor(n.color);
+              const dark = n.kind !== "text" && !src && !chart && isDark(cssColor(n.color));
+              // Text scales with the card, so big imported boards stay readable when zoomed.
+              const fs = typeof n.fields.fontSize === "number" ? n.fields.fontSize : Math.max(16, Math.min(40, Math.round(Math.min(w, h * 1.3) / 9)));
+              const lh = Math.round(fs * 1.3);
+              const lines = chart || src ? [] : wrap(n.text || (placeholder ? "Add a card here" : ""), Math.max(6, Math.floor(w / (fs * 0.56))));
               const isSel = selected === n.id;
               const isFrom = connectFrom === n.id;
               return (
@@ -283,11 +378,18 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
                   filter={placeholder ? undefined : "url(#lift)"}
                 >
                   <rect x={n.x} y={n.y} width={w} height={h} fill={fill} fillOpacity={placeholder ? 0.5 : 1} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : placeholder ? "var(--line-strong)" : "rgba(255,255,255,0.6)"} strokeWidth={isSel || isFrom ? 4 : 1.5} strokeDasharray={placeholder ? "8 6" : undefined} rx={n.kind === "shape" ? 16 : 12} />
-                  {lines.slice(0, Math.max(1, Math.floor(h / 24))).map((line, i) => (
-                    <text key={i} x={n.x + 14} y={n.y + 28 + i * 24} fontSize={18} fill={placeholder ? "var(--ink-3)" : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 ? 600 : 400}>
+                  {src ? <image href={src} x={n.x} y={n.y} width={w} height={h} preserveAspectRatio="xMidYMid meet" /> : null}
+                  {chart ? <ChartView chart={chart} title={n.text} x={n.x} y={n.y} w={w} h={h} /> : null}
+                  {lines.slice(0, Math.max(1, Math.floor((h - fs * 0.4) / lh))).map((line, i) => (
+                    <text key={i} x={n.x + fs * 0.7} y={n.y + fs * 1.3 + i * lh} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
                       {line}
                     </text>
                   ))}
+                  {typeof n.fields.storyPoints === "number" && n.fields.storyPoints > 0 && !chart ? (
+                    <text x={n.x + w - fs * 0.6} y={n.y + h - fs * 0.5} fontSize={fs * 0.8} textAnchor="end" fill={dark ? "#fff" : "#17212b"} fontFamily="var(--font-mono)" opacity={0.75}>
+                      {n.fields.storyPoints} pts
+                    </text>
+                  ) : null}
                 </g>
               );
             })}

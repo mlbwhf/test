@@ -6,7 +6,8 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { TEMPLATE_CATALOG, boardShape, builtinTemplates, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
-import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromJson, createImporter, type ConnectableSource, type FetchLike, type Importer } from "@trainyard/importers";
+import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer } from "@trainyard/importers";
+import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
@@ -125,6 +126,40 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     await store.commit(req.principal, "board.import", { id: board.id, system: "csv", rows: board.rows.length });
     return reply.code(201).send({ board: summary(board) });
   });
+
+  // iObeya "export board" files: the .zip as exported, or the .csv inside it, sent as base64.
+  app.post(
+    "/v1/imports/iobeya",
+    { bodyLimit: 32 * 1024 * 1024, schema: { body: z.object({ fileName: z.string().min(1).max(300), contentBase64: z.string().min(8).max(32 * 1024 * 1024), includeLibrary: z.boolean().optional(), name: z.string().min(1).max(120).optional() }) } },
+    async (req, reply) => {
+      require(req, "plan");
+      const bytes = Buffer.from(req.body.contentBase64, "base64");
+      let text: string;
+      let fileName = req.body.fileName;
+      try {
+        if (isZip(bytes)) {
+          const entry = readZip(bytes).find((e) => /\.(csv|tsv|txt)$/i.test(e.name));
+          if (!entry) throw new Error("the zip holds no .csv board export");
+          fileName = entry.name.replace(/^.*\//, "") || fileName;
+          text = decodeText(entry.read());
+        } else text = decodeText(bytes);
+      } catch (e) {
+        throw new ApiError(422, "BAD_IOBEYA_FILE", `Could not read ${req.body.fileName}: ${(e as Error).message}.`);
+      }
+      if (!isIobeyaExport(text)) throw new ApiError(422, "NOT_IOBEYA", "This file is not an iObeya board export. In iObeya, open the board menu and choose Export, then upload the .zip.");
+      let board: Board;
+      try {
+        board = boardFromIobeya(text, { fileName, now: store.now().toISOString(), ...(req.body.includeLibrary ? { includeLibrary: true } : {}) });
+      } catch (e) {
+        throw new ApiError(422, "BAD_IOBEYA_FILE", (e as Error).message);
+      }
+      if (req.body.name) board.name = req.body.name;
+      board.origin.importedBy = req.principal.userId;
+      s().workspace.boards = [...boards().filter((b) => b.id !== board.id), board];
+      await store.commit(req.principal, "board.import", { id: board.id, system: "iobeya", nodes: board.nodes.length, edges: board.edges.length, type: board.fields?.iobeyaBoardType });
+      return reply.code(201).send({ board: summary(board), libraryCards: board.fields?.libraryCards ?? 0 });
+    },
+  );
 
   app.post("/v1/imports/json", { schema: { body: z.object({ board: z.unknown() }) } }, async (req, reply) => {
     require(req, "plan");

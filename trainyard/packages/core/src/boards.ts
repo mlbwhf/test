@@ -6,7 +6,7 @@
 
 import type { Dependency, FlowType, Risk, StatusCategory, Team, WorkItem } from "./model.js";
 
-export type BoardSource = "miro" | "mural" | "monday" | "trello" | "csv" | "json" | "trainyard";
+export type BoardSource = "miro" | "mural" | "monday" | "trello" | "iobeya" | "csv" | "json" | "trainyard";
 
 export interface BoardOrigin {
   system: BoardSource;
@@ -86,6 +86,8 @@ export interface Board {
   columns: Column[];
   groups: RowGroup[];
   rows: Row[];
+  /** Board-level facts from the source with no slot here (layout type, teams, stages…), kept verbatim. */
+  fields?: Record<string, unknown>;
 }
 
 export function emptyBoard(id: string, name: string, origin: BoardOrigin): Board {
@@ -256,16 +258,25 @@ export function mapBoard(board: Board, mapping: BoardMapping, ctx: MappingContex
         result.risks.push({ id: idFor(n.id), title: text, roam: "unroamed", itemIds: [], raisedAt: ctx.now });
         continue;
       }
-      const teamLabel = mapping.team?.by === "frame" ? frameTitle(n.frameId) : undefined;
+      // A card may carry its own team and iteration (iObeya program boards do); otherwise the
+      // frame decides, and a "Team · Iteration" frame title gives the team its first part.
+      const ownTeam = typeof n.fields.team === "string" && n.fields.team.trim() ? n.fields.team : undefined;
+      const ownIteration = typeof n.fields.iteration === "string" ? n.fields.iteration.replace(/\s*\(.*\)$/, "") : undefined;
+      const fTitle = frameTitle(n.frameId);
+      const teamLabel = mapping.team?.by === "frame" ? (ownTeam ?? (fTitle && !teamsByName.has(norm(fTitle)) && fTitle.includes(" · ") ? fTitle.split(" · ")[0] : fTitle)) : undefined;
       const teamId = resolveTeam(teamLabel, n.id);
       nodeTeam.set(n.id, teamId);
-      const iterationId = mapping.iteration?.by === "frame" ? resolveIteration(frameTitle(n.frameId)) : undefined;
+      const iterationId = mapping.iteration?.by === "frame" ? (resolveIteration(ownIteration) ?? resolveIteration(fTitle?.split(" · ").slice(1).join(" · ").replace(/\s*\(.*$/, "")) ?? resolveIteration(fTitle)) : undefined;
+      const estimate = typeof n.fields.storyPoints === "number" && n.fields.storyPoints > 0 ? n.fields.storyPoints : undefined;
+      const wsjf = n.fields.wsjf as { businessValue?: number } | undefined;
       result.items.push({
         id: idFor(n.id),
         title: text,
         level: mapping.level,
         ...(teamId ? { teamId } : {}),
         ...(iterationId ? { iterationId } : {}),
+        ...(estimate ? { estimate } : {}),
+        ...(wsjf?.businessValue ? { businessValue: wsjf.businessValue } : {}),
         status: "todo",
         flowType: rule ? rule.as : "feature",
         createdAt: ctx.now,

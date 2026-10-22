@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 };
 
 const MODELS = ["SAFe Essential", "SAFe Portfolio", "Full SAFe", "AI-Native SAFe", "LeSS", "Scrum@Scale", "Nexus", "Flight Levels", "Tribes & squads"];
-const SOURCES = ["Miro", "Mural", "monday.com", "Trello", "CSV", "JSON"];
+const SOURCES = ["iObeya", "Miro", "Mural", "monday.com", "Trello", "CSV", "JSON"];
 
 const FEATURES = [
   {
     title: "PI planning that already knows your teams",
-    body: "Twelve built-in boards sized to your Agile Release Train: teams by iterations, team breakouts, ROAM, confidence vote, program board, retrospective, Inspect & Adapt. Drag, write, connect, and every card is one API call.",
+    body: "Nineteen built-in boards sized to your Agile Release Train: PI planning, team breakouts, ROAM, program board, story map, value stream and ART identification, portfolio and ART Kanban, roadmaps, Inspect & Adapt. Drag, write, connect, and every card is one API call.",
   },
   {
     title: "Jira and Azure DevOps, two ways",
@@ -33,14 +33,14 @@ const FEATURES = [
   },
   {
     title: "Bring your own boards",
-    body: "Connect Miro, Mural, monday.com or Trello, or upload CSV and JSON. Boards arrive as they are, at their positions and colours, become templates, and map onto the plan only when you say so.",
+    body: "Upload iObeya board exports, connect Miro, Mural, monday.com or Trello, or upload CSV and JSON. Boards arrive as they are, at their positions and colours, become templates, and map onto the plan only when you say so.",
   },
 ];
 
 const FAQ = [
   {
     q: "Is Trainyard an iObeya alternative?",
-    a: "It covers the same ground for planning rooms: visual boards for PI planning, ROAM, program boards and obeya walls, synced with Jira and Azure DevOps. It adds an AI portfolio module, configurable scaling models, and it is open source under Apache-2.0, so you can run it yourself.",
+    a: "It covers the same ground for planning rooms: visual boards for PI planning, ROAM, program boards and obeya walls, synced with Jira and Azure DevOps. It imports iObeya board exports as they are, adds an AI portfolio module and configurable scaling models, and it is open source under Apache-2.0, so you can run it yourself.",
   },
   {
     q: "Which scaling frameworks are supported?",
