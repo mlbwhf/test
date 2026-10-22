@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { api, type ApiFailure } from "@/lib/api";
 
 export type Subscription = { purchaseId: string; subscriptionId: string; clientSecret: string; mode: "payment" | "setup"; amountDue: number; currency: string; trialDays: number };
-export type Claim = { status: string; plan?: string; interval?: string; quantity?: number; name?: string; email?: string; apiKey?: string; claimed?: boolean };
+export type Claim = { status: string; plan?: string; interval?: string; quantity?: number; name?: string; email?: string; apiKey?: string; claimed?: boolean; workspace?: { id: string; name: string; plan: string; seats: number } };
 
 const APPEARANCE: Appearance = {
   theme: "stripe",

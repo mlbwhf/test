@@ -9,6 +9,24 @@ declare global {
 }
 const BASE = (typeof window !== "undefined" && window.__TRAINYARD_API__) || process.env.NEXT_PUBLIC_TRAINYARD_API_URL || "http://localhost:4100";
 const KEY_STORAGE = "trainyard.apiKey";
+const WORKSPACE_STORAGE = "trainyard.workspace";
+
+/** Platform admins supporting a customer: the workspace every request is sent to. */
+export function getSupportWorkspace(): string | null {
+  try {
+    return localStorage.getItem(WORKSPACE_STORAGE);
+  } catch {
+    return null;
+  }
+}
+export function setSupportWorkspace(id: string | null): void {
+  try {
+    if (id) localStorage.setItem(WORKSPACE_STORAGE, id);
+    else localStorage.removeItem(WORKSPACE_STORAGE);
+  } catch {
+    /* storage blocked */
+  }
+}
 
 export class ApiFailure extends Error {
   constructor(
@@ -45,7 +63,7 @@ export async function api<T>(method: string, path: string, body?: unknown): Prom
   try {
     res = await fetch(`${BASE}${path}`, {
       method,
-      headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(key ? { Authorization: `Bearer ${key}` } : {}) },
+      headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(key ? { Authorization: `Bearer ${key}` } : {}), ...(getSupportWorkspace() ? { "x-trainyard-workspace": getSupportWorkspace()! } : {}) },
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
   } catch {
@@ -84,9 +102,10 @@ export function useApi<T>(path: string | null) {
 }
 
 export interface Me {
-  principal: { userId: string; name: string; role: string; personId?: string; anonymous: boolean };
+  principal: { userId: string; name: string; role: string; personId?: string; anonymous: boolean; workspaceId: string; platformAdmin: boolean; support?: boolean };
   open: boolean;
   permissions: Record<string, boolean>;
+  workspace: { id: string; name: string; plan: "practice" | "trainer" | "academy" | "platform"; seats: number; status: "active" | "frozen"; frozenReason?: string; platform: boolean };
 }
 
 /** Who the current key belongs to and what they may do. */

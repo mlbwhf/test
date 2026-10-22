@@ -48,6 +48,8 @@ import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
+import { registerAdminRoutes } from "./admin.js";
+import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
 import { registerAiNativeRoutes } from "./ainative.js";
@@ -129,10 +131,13 @@ const StageEnum = z.enum(STAGES);
 const Autonomy = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4)]);
 
 /** The actor used for syncs that no request started (timer, webhook). */
-export const SYSTEM_ACTOR: Principal = { userId: "system", name: "Scheduler", role: "admin", anonymous: false };
+export const SYSTEM_ACTOR: Principal = { userId: "system", name: "Scheduler", role: "admin", anonymous: false, workspaceId: "platform", platformAdmin: true };
 
 export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance & { sync: SyncRunner }> {
-  const store = opts.store ?? new Store();
+  // The platform store is the operator's own workspace plus everything that spans workspaces;
+  // `store` below is a proxy that resolves to the request's workspace (see tenants.ts).
+  const tenants = new Tenants(opts.store ?? new Store());
+  const store = tenants.handle;
   const metrics = new MetricRegistry();
   for (const m of [...PORTFOLIO_METRICS, ...AI_METRICS]) metrics.register(m);
 
@@ -181,9 +186,12 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     return reply.code(status).send({ error: { code, message: status >= 500 ? "internal error" : (err as Error).message } });
   });
 
-  registerAuth(app, store, opts);
+  registerAuth(app, tenants, opts);
   const sync = new SyncRunner(store, (m) => app.log.info(m));
-  app.addHook("onClose", async () => sync.stopSchedule());
+  app.addHook("onClose", async () => {
+    sync.stopSchedule();
+    await tenants.close();
+  });
 
   const s = () => store.state;
   const findItem = (id: string) => s().workspace.items.find((i) => i.id === id) ?? (() => { throw notFound("Item"); })();
@@ -209,7 +217,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     issues: checkAgent(a, s().model, a.initiativeId ? s().initiatives.find((i) => i.id === a.initiativeId) : undefined),
   });
 
-  app.get("/health", async () => ({ ok: true, persistence: store.persistence.kind, version: store.version }));
+  app.get("/health", async () => ({ ok: true, persistence: tenants.platform.persistence.kind, version: tenants.platform.version }));
 
   // ---- operating model ---------------------------------------------------------------
   app.get("/v1/templates", async () => ({ templates: TEMPLATES }));
@@ -582,14 +590,15 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   });
   if (opts.syncEveryMinutes) sync.startSchedule(opts.syncEveryMinutes, SYSTEM_ACTOR);
 
-  registerUserRoutes(app, store);
+  registerUserRoutes(app, tenants);
+  registerAdminRoutes(app, tenants);
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);
   registerOutcomeRoutes(app, store);
   registerAiNativeRoutes(app, store);
-  await registerBillingRoutes(app, store, { ...opts.billing, ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
-  registerSignupRoutes(app, store, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
+  await registerBillingRoutes(app, tenants, { ...opts.billing, ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
+  registerSignupRoutes(app, tenants, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 

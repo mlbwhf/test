@@ -508,7 +508,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
     setBusy(true);
     setErr(null);
     try {
-      const created = await api<{ signup: { id: string } }>("POST", "/v1/signups", {
+      const created = await api<{ signup: { id: string }; apiKey?: string; workspace?: { id: string; name: string; plan: string } }>("POST", "/v1/signups", {
         name: name.trim(),
         email: email.trim(),
         plan,
@@ -520,7 +520,10 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         source: typeof window !== "undefined" ? window.location.pathname : "/",
       });
       const quantity = seats && Number(seats) > 0 ? Number(seats) : 1;
-      if (canPay && billing?.inPage && billing.publishableKey && created.signup?.id) {
+      if (created.apiKey) {
+        // Practice: the workspace exists already; the key is shown once, right here.
+        setDone({ name: name.trim(), email: email.trim(), plan, claim: { status: "paid", plan: "practice", apiKey: created.apiKey, name: name.trim(), email: email.trim() } });
+      } else if (canPay && billing?.inPage && billing.publishableKey && created.signup?.id) {
         // Paid plan: the subscription is created now and paid right here, on this page.
         const sub = await api<Subscription>("POST", "/v1/billing/subscribe", { signupId: created.signup.id, interval, quantity });
         setPay(sub);
@@ -537,7 +540,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
       } else setDone({ name: name.trim(), email: email.trim(), plan });
     } catch (x) {
       const f = x as ApiFailure;
-      setErr(f.status === 429 ? "Too many sign-ups from this connection; try again in a minute." : f.message);
+      setErr(f.status === 429 ? "Too many sign-ups from this connection; try again in a minute." : f.code === "EMAIL_TAKEN" ? "There is already a sign-in for this email. Use Sign in at the top, or write to us for a new key." : f.message);
     } finally {
       setBusy(false);
     }
@@ -575,7 +578,15 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
           {c.status === "paid" && c.apiKey ? (
             <>
               <p>
-                Your <strong>{def.name}</strong> subscription is active. This is your sign-in key; it is shown once, so keep it in a password manager. A receipt from Stripe is on its way to {done.email}.
+                {c.plan === "practice" ? (
+                  <>
+                    Your <strong>Practice</strong> workspace is ready: one room, up to 5 people, free. This is your sign-in key; it is shown once, so keep it in a password manager.
+                  </>
+                ) : (
+                  <>
+                    Your <strong>{def.name}</strong> subscription is active. This is your sign-in key; it is shown once, so keep it in a password manager. A receipt from Stripe is on its way to {done.email}.
+                  </>
+                )}
               </p>
               <CopyKey value={c.apiKey} />
               <button

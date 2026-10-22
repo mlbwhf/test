@@ -8,7 +8,8 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { require } from "./auth.js";
 import { ApiError } from "./errors.js";
-import type { Store } from "./store.js";
+import { hashKey, newKey, type User } from "./auth.js";
+import type { Tenants } from "./tenants.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -54,7 +55,8 @@ const Body = z.object({
 
 const BLOCKED_DOMAINS = /@(example\.(com|org|net)|test\.com|mailinator\.com)$/i;
 
-export function registerSignupRoutes(app: App, store: Store, opts: SignupOptions = {}) {
+export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOptions = {}) {
+  const store = tenants.platform;
   const list = () => (store.state.signups ??= []);
   const notify = async (s: Signup) => {
     if (!opts.webhookUrl) return;
@@ -96,6 +98,19 @@ export function registerSignupRoutes(app: App, store: Store, opts: SignupOptions
     list().push(signup);
     await store.commit(req.principal, "signup.create", { id: signup.id, plan: signup.plan, audience: signup.audience });
     void notify(signup);
+    if (signup.plan === "practice") {
+      // Free plan: the workspace exists right away, with the key shown once on the website.
+      if (store.state.users.some((u) => u.email.toLowerCase() === email)) throw new ApiError(409, "EMAIL_TAKEN", "There is already a sign-in for this email. Sign in, or ask for a new key.");
+      const key = newKey();
+      const user: User = { id: `u-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: signup.name, email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString() };
+      store.state.users.push(user);
+      const ws = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: "practice", seats: 1, ownerUserId: user.id }, req.principal);
+      user.workspaceId = ws.id;
+      signup.status = "invited";
+      signup.userId = user.id;
+      await store.commit(req.principal, "signup.practice", { id: signup.id, userId: user.id, workspaceId: ws.id });
+      return reply.code(201).send({ signup: publicView(signup), apiKey: key, workspace: { id: ws.id, name: ws.name, plan: ws.plan } });
+    }
     return reply.code(201).send({ signup: publicView(signup) });
   });
 

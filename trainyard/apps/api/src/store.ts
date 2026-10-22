@@ -6,6 +6,7 @@ import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@train
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
 import type { Purchase } from "./billing.js";
+import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
 import { DEMO_NOW, demoArt, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
@@ -78,6 +79,8 @@ export interface StoreState {
   outcomePlanning?: PlanningSession[];
   /** AI-Native ART records extending a session: outputs, intent/spec/context, data, assessment. */
   aiNativeArts?: AiNativeArt[];
+  /** Platform store only: every customer workspace and its plan. */
+  workspaces?: WorkspaceRecord[];
 }
 
 export function demoState(): StoreState {
@@ -111,6 +114,8 @@ export class Store {
   readonly connectors = new Map<SourceSystem, TrackerConnector>();
   readonly persistence: StatePersistence<StoreState>;
   readonly now: () => Date;
+  /** Checked before every save: plan limits, frozen workspace. Throwing reloads the saved state. */
+  guard?: (action: string) => void;
 
   constructor(opts: StoreOptions = {}) {
     this.persistence = opts.persistence ?? new MemoryPersistence<StoreState>();
@@ -136,6 +141,16 @@ export class Store {
 
   /** Save the current state and record who changed what. Call after every successful mutation. */
   async commit(actor: Principal, action: string, detail?: unknown): Promise<void> {
+    if (this.guard) {
+      try {
+        this.guard(action);
+      } catch (e) {
+        // The mutation already happened in memory: drop it and take the saved state back.
+        const saved = await this.persistence.load(this.workspaceId);
+        if (saved) this.state = { ...demoState(), ...saved.state };
+        throw e;
+      }
+    }
     try {
       this.version = await this.persistence.save(this.workspaceId, this.state, this.version);
     } catch (e) {

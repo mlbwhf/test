@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { setApiKey, useMe } from "@/lib/api";
+import { setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
 
 const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/dashboards", label: "Dashboards", section: "Plan" },
@@ -19,6 +19,7 @@ const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/model", label: "Operating model", section: "Setup" },
   { href: "/sync", label: "Jira & Azure DevOps" },
   { href: "/users", label: "Users" },
+  { href: "/billing", label: "Plan & billing" },
 ];
 
 function Mark() {
@@ -46,7 +47,7 @@ export function Nav() {
         <Mark />
         Trainyard
       </Link>
-      {LINKS.map((l) => (
+      {LINKS.filter((l) => l.href !== "/billing" || (me.data && !me.data.workspace.platform)).map((l) => (
         <div key={l.href} style={{ display: "contents" }}>
           {l.section ? <div className="section">{l.section}</div> : null}
           <Link href={l.href} className="nav" aria-current={active(l.href) ? "page" : undefined}>
@@ -54,8 +55,21 @@ export function Nav() {
           </Link>
         </div>
       ))}
+      {me.data?.principal.platformAdmin ? (
+        <>
+          <div className="section">Platform</div>
+          <Link href="/admin" className="nav" aria-current={active("/admin") ? "page" : undefined}>
+            Support console
+          </Link>
+        </>
+      ) : null}
       <div className="foot stack" style={{ gap: 4 }}>
-        <span>Northwind Digital</span>
+        <span title={me.data?.workspace.id}>{me.data?.workspace.name ?? "Trainyard"}{me.data && !me.data.workspace.platform ? ` · ${me.data.workspace.plan}` : ""}</span>
+        {me.data?.principal.support ? (
+          <button className="btn small" onClick={() => (setSupportWorkspace(null), window.location.assign("/admin"))}>
+            Leave support view
+          </button>
+        ) : null}
         {me.data ? (
           <span className="row" style={{ gap: 6 }}>
             {me.data.open ? "Open mode" : `${me.data.principal.name} · ${me.data.principal.role}`}

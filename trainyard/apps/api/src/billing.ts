@@ -15,8 +15,9 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { hashKey, newKey, require as requirePermission, type Principal, type User } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
+import { limitsFor, usageOf } from "./plans.js";
 import type { Plan } from "./signups.js";
-import type { Store } from "./store.js";
+import type { Tenants } from "./tenants.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -38,7 +39,10 @@ export type PurchaseStatus = "open" | "paid" | "expired" | "past_due" | "cancell
 
 export interface Purchase {
   id: string;
-  signupId: string;
+  /** The sign-up it came from (new customer) ... */
+  signupId?: string;
+  /** ... or the existing workspace it upgrades or adds seats to. */
+  workspaceId?: string;
   plan: Plan;
   interval: "monthly" | "yearly";
   quantity: number;
@@ -58,7 +62,7 @@ export interface Purchase {
   cancelledAt?: string;
 }
 
-const STRIPE_ACTOR: Principal = { userId: "stripe", name: "Stripe", role: "admin", anonymous: false };
+const STRIPE_ACTOR: Principal = { userId: "stripe", name: "Stripe", role: "admin", anonymous: false, workspaceId: "platform", platformAdmin: true };
 
 const form = (o: Record<string, string | number | undefined>) =>
   Object.entries(o)
@@ -81,8 +85,10 @@ export function verifyStripeSignature(payload: string, header: string | undefine
 }
 
 type StripeObject = Record<string, unknown> & { id?: string };
+const requirePermissionQuiet = (p: Principal) => p.role === "admin" && !p.anonymous;
 
-export async function registerBillingRoutes(app: App, store: Store, opts: BillingOptions = {}) {
+export async function registerBillingRoutes(app: App, tenants: Tenants, opts: BillingOptions = {}) {
+  const store = tenants.platform;
   const enabled = !!opts.secretKey;
   const f = opts.fetch ?? fetch;
   const purchases = () => (store.state.purchases ??= []);
@@ -103,28 +109,63 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
   const findSignup = (id: string) => signups().find((s) => s.id === id) ?? (() => { throw notFound("Sign-up"); })();
   const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 
-  /** Payment is in: create the user (or rotate an existing one's key) and keep the key for one pickup. */
+  /** Payment is in. New customer: user + workspace, key kept for one pickup. Existing workspace: plan and seats applied. */
   const fulfil = async (purchase: Purchase, patch: Partial<Purchase> = {}) => {
+    if (purchase.workspaceId) {
+      const record = tenants.record(purchase.workspaceId);
+      if (!record) return purchase;
+      record.plan = purchase.plan;
+      record.seats = purchase.quantity;
+      if (record.status === "frozen" && (record.frozenReason ?? "").startsWith("subscription")) {
+        record.status = "active";
+        delete record.frozenAt;
+        delete record.frozenReason;
+      }
+      Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: record.ownerUserId });
+      await store.commit(STRIPE_ACTOR, "billing.paid", { purchase: purchase.id, workspaceId: record.id, plan: purchase.plan, quantity: purchase.quantity });
+      return purchase;
+    }
     const signup = signups().find((s) => s.id === purchase.signupId);
     if (!signup) return purchase;
     let user = store.state.users.find((u) => u.email.toLowerCase() === signup.email.toLowerCase());
     const key = newKey();
     if (!user) {
-      user = { id: newId("u"), name: signup.name, email: signup.email, role: "planner", keyHash: hashKey(key), createdAt: store.now().toISOString() } satisfies User;
+      user = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString() } satisfies User;
       store.state.users.push(user);
     } else {
       user.keyHash = hashKey(key);
       delete user.disabled;
     }
-    Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, pendingKey: key });
+    let record = user.workspaceId ? tenants.record(user.workspaceId) : undefined;
+    if (record) {
+      record.plan = purchase.plan;
+      record.seats = purchase.quantity;
+      record.status = "active";
+      delete record.frozenAt;
+      delete record.frozenReason;
+    } else {
+      record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
+      user.workspaceId = record.id;
+      user.role = "admin";
+    }
+    Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, workspaceId: record.id, pendingKey: key });
     signup.status = "invited";
     signup.userId = user.id;
-    await store.commit(STRIPE_ACTOR, "billing.paid", { purchase: purchase.id, plan: purchase.plan, interval: purchase.interval, quantity: purchase.quantity, userId: user.id });
+    await store.commit(STRIPE_ACTOR, "billing.paid", { purchase: purchase.id, plan: purchase.plan, interval: purchase.interval, quantity: purchase.quantity, userId: user.id, workspaceId: record.id });
     return purchase;
+  };
+  /** Subscription gone: the workspace stays, read-only, until it is paid again. */
+  const freeze = async (purchase: Purchase, reason: string) => {
+    const record = purchase.workspaceId ? tenants.record(purchase.workspaceId) : undefined;
+    if (!record || record.status === "frozen") return;
+    record.status = "frozen";
+    record.frozenAt = store.now().toISOString();
+    record.frozenReason = reason;
   };
   const claimView = (p: Purchase) => {
     const user = store.state.users.find((u) => u.id === p.userId);
-    return { status: p.status, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(user ? { name: user.name, email: user.email } : {}) };
+    const record = p.workspaceId ? tenants.record(p.workspaceId) : undefined;
+    return { status: p.status, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(user ? { name: user.name, email: user.email } : {}), ...(record ? { workspace: { id: record.id, name: record.name, plan: record.plan, seats: record.seats } } : {}) };
   };
 
   app.get("/v1/billing/config", async () => ({
@@ -136,15 +177,31 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
   }));
 
   const StartBody = z.object({ signupId: z.string().min(1).max(80), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) });
+  const SubscribeBody = z.object({ signupId: z.string().min(1).max(80).optional(), plan: z.enum(["trainer", "academy"]).optional(), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) });
+  /** Who is paying: a sign-up from the website, or the signed-in owner of an existing workspace. */
+  const payer = (req: { principal: Principal; body: { signupId?: string | undefined; plan?: "trainer" | "academy" | undefined } }) => {
+    if (req.body.signupId) {
+      const signup = findSignup(req.body.signupId);
+      return { email: signup.email, name: signup.name, plan: signup.plan, signupId: signup.id, company: signup.company };
+    }
+    if (req.principal.anonymous) throw new ApiError(401, "UNAUTHORIZED", "Sign in to change the plan of your workspace.");
+    requirePermission(req as never, "users");
+    const record = tenants.record(req.principal.workspaceId);
+    if (!record) throw new ApiError(409, "PLATFORM_WORKSPACE", "The platform workspace has no plan to pay for.");
+    if (!req.body.plan) throw new ApiError(422, "PLAN_REQUIRED", "Say which plan: trainer or academy.");
+    const owner = store.state.users.find((u) => u.id === req.principal.userId);
+    return { email: owner?.email ?? "", name: owner?.name ?? record.name, plan: req.body.plan as Plan, workspaceId: record.id, company: record.name };
+  };
 
   // In-page flow: a subscription that waits for its first payment, confirmed by the Payment Element.
-  app.post("/v1/billing/subscribe", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: StartBody } }, async (req) => {
+  app.post("/v1/billing/subscribe", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: SubscribeBody } }, async (req) => {
     if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server; the sign-up will be handled by hand.");
-    const signup = findSignup(req.body.signupId);
-    const price = priceFor(signup.plan, req.body.interval);
-    // One customer per sign-up; reuse it when the person retries.
-    const existing = purchases().find((p) => p.signupId === signup.id && p.customerId);
-    const customerId = existing?.customerId ?? String((await stripe("customers", { email: signup.email, name: signup.name, "metadata[signupId]": signup.id, ...(signup.company ? { description: signup.company } : {}) })).id);
+    const who = payer(req);
+    const price = priceFor(who.plan, req.body.interval);
+    // One customer per sign-up or workspace; reuse it when the person retries.
+    const existing = purchases().find((p) => p.customerId && ((who.signupId && p.signupId === who.signupId) || (who.workspaceId && p.workspaceId === who.workspaceId)));
+    const customerId = existing?.customerId ?? String((await stripe("customers", { email: who.email, name: who.name, ...(who.signupId ? { "metadata[signupId]": who.signupId } : {}), ...(who.workspaceId ? { "metadata[workspaceId]": who.workspaceId } : {}), ...(who.company ? { description: who.company } : {}) })).id);
+    const signup = { id: who.signupId ?? "", plan: who.plan };
     const trial = opts.trialDays ?? 0;
     const sub = await stripe("subscriptions", {
       customer: customerId,
@@ -152,9 +209,10 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
       "items[0][quantity]": req.body.quantity,
       payment_behavior: "default_incomplete",
       "payment_settings[save_default_payment_method]": "on_subscription",
-      "metadata[signupId]": signup.id,
+      ...(who.signupId ? { "metadata[signupId]": who.signupId } : {}),
+      ...(who.workspaceId ? { "metadata[workspaceId]": who.workspaceId } : {}),
       "metadata[plan]": signup.plan,
-      ...(trial ? { trial_period_days: trial } : {}),
+      ...(trial && !who.workspaceId ? { trial_period_days: trial } : {}),
       "expand[0]": "latest_invoice.payment_intent",
       "expand[1]": "pending_setup_intent",
     });
@@ -162,9 +220,9 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
     const intent = (invoice?.payment_intent as StripeObject | null) ?? (sub.pending_setup_intent as StripeObject | null);
     const clientSecret = intent?.client_secret as string | undefined;
     if (!clientSecret) throw new ApiError(502, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
-    const p: Purchase = { id: newId("pur"), signupId: signup.id, plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString() };
+    const p: Purchase = { id: newId("pur"), ...(who.signupId ? { signupId: who.signupId } : {}), ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}), plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString() };
     purchases().push(p);
-    await store.commit(req.principal, "billing.subscribe", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity });
+    await store.commit(req.principal, "billing.subscribe", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}) });
     return {
       purchaseId: p.id,
       subscriptionId: p.subscriptionId,
@@ -172,7 +230,48 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
       mode: invoice?.payment_intent ? "payment" : "setup",
       amountDue: Number(invoice?.amount_due ?? 0),
       currency: String(invoice?.currency ?? "usd"),
-      trialDays: trial,
+      trialDays: who.workspaceId ? 0 : trial,
+    };
+  });
+
+  // Seats: more trainers or trains on a running subscription, billed now, pro rata.
+  app.post("/v1/billing/seats", { schema: { body: z.object({ quantity: z.number().int().min(1).max(500) }) } }, async (req) => {
+    if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
+    requirePermission(req, "users");
+    const record = tenants.record(req.principal.workspaceId) ?? (() => { throw new ApiError(409, "PLATFORM_WORKSPACE", "The platform workspace has no subscription."); })();
+    const p = purchases().filter((x) => x.workspaceId === record.id && x.status === "paid" && x.subscriptionId).at(-1);
+    if (!p) throw new ApiError(409, "NO_SUBSCRIPTION", "This workspace has no paid subscription yet; choose a plan first.");
+    if (req.body.quantity === p.quantity) return { seats: p.quantity };
+    // Never below what is in use.
+    const usage = usageOf(tenants.handle.state, tenants.members(record.id));
+    const inUse = record.plan === "academy" ? usage.trains : usage.staff;
+    if (req.body.quantity < inUse) throw new ApiError(422, "SEATS_IN_USE", `${inUse} ${record.plan === "academy" ? "trains" : "trainers"} are in use; remove some before going below that.`);
+    const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
+    const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
+    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][quantity]": req.body.quantity, proration_behavior: "always_invoice" });
+    p.quantity = req.body.quantity;
+    record.seats = req.body.quantity;
+    await store.commit(req.principal, "billing.seats", { purchase: p.id, workspaceId: record.id, seats: record.seats });
+    return { seats: record.seats };
+  });
+
+  // What the Billing page shows: plan, limits, usage, the subscription and whether payments run.
+  app.get("/v1/billing/workspace", async (req) => {
+    const record = tenants.record(req.principal.workspaceId);
+    const members = tenants.members(req.principal.workspaceId);
+    const usage = usageOf(tenants.handle.state, members);
+    const latest = record ? purchases().filter((x) => x.workspaceId === record.id || (x.userId && x.userId === record.ownerUserId)).at(-1) : undefined;
+    return {
+      enabled,
+      inPage: enabled && !!opts.publishableKey,
+      ...(enabled && opts.publishableKey ? { publishableKey: opts.publishableKey } : {}),
+      plans: enabled ? Object.fromEntries(Object.entries(opts.prices ?? {}).map(([k, v]) => [k, !!v])) : {},
+      workspace: record ?? null,
+      limits: record ? limitsFor(record.plan, record.seats) : null,
+      usage,
+      subscription: latest ? { id: latest.id, status: latest.status, plan: latest.plan, interval: latest.interval, quantity: latest.quantity, paidAt: latest.paidAt, lastInvoiceAt: latest.lastInvoiceAt, lastFailureAt: latest.lastFailureAt, cancelledAt: latest.cancelledAt, hasSubscription: !!latest.subscriptionId } : null,
+      canManage: requirePermissionQuiet(req.principal),
     };
   });
 
@@ -267,11 +366,13 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
           else if (status === "past_due" || status === "unpaid") {
             p.status = status === "unpaid" ? "cancelled" : "past_due";
             p.lastFailureAt = store.now().toISOString();
-            if (status === "unpaid") { const u = store.state.users.find((x) => x.id === p.userId); if (u) u.disabled = true; }
+            if (status === "unpaid") await freeze(p, "subscription unpaid");
             await store.commit(STRIPE_ACTOR, "billing.past-due", { purchase: p.id, status });
           } else if (status === "active" && p.status === "past_due") {
             p.status = "paid";
             delete p.lastFailureAt;
+            const record = p.workspaceId ? tenants.record(p.workspaceId) : undefined;
+            if (record?.status === "frozen" && (record.frozenReason ?? "").startsWith("subscription")) { record.status = "active"; delete record.frozenAt; delete record.frozenReason; }
             await store.commit(STRIPE_ACTOR, "billing.recovered", { purchase: p.id });
           }
           return reply.code(200).send({ ok: true });
@@ -290,9 +391,8 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
           if (p && p.status !== "cancelled") {
             p.status = "cancelled";
             p.cancelledAt = store.now().toISOString();
-            const u = store.state.users.find((x) => x.id === p.userId);
-            if (u) u.disabled = true;
-            await store.commit(STRIPE_ACTOR, "billing.cancelled", { purchase: p.id, userId: p.userId });
+            await freeze(p, "subscription cancelled");
+            await store.commit(STRIPE_ACTOR, "billing.cancelled", { purchase: p.id, workspaceId: p.workspaceId });
           }
           return reply.code(200).send({ ok: true });
         }
@@ -316,7 +416,7 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
     if (p.status !== "paid") return { status: p.status };
     const key = p.pendingKey;
     delete p.pendingKey;
-    if (key) await store.commit({ userId: p.userId ?? "stripe", name: claimView(p).name ?? "Stripe", role: "planner", anonymous: false }, "billing.key-claimed", { purchase: p.id });
+    if (key) await store.commit({ userId: p.userId ?? "stripe", name: claimView(p).name ?? "Stripe", role: "admin", anonymous: false, workspaceId: p.workspaceId ?? tenants.platformId, platformAdmin: false }, "billing.key-claimed", { purchase: p.id });
     return { ...claimView(p), ...(key ? { apiKey: key } : { claimed: true }) };
   });
 
@@ -325,7 +425,7 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
     const me = req.principal;
     if (me.anonymous) throw new ApiError(401, "UNAUTHORIZED", "Sign in to manage your subscription.");
     if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
-    const p = purchases().filter((x) => x.userId === me.userId && x.customerId).at(-1);
+    const p = purchases().filter((x) => x.customerId && (x.workspaceId === me.workspaceId || x.userId === me.userId)).at(-1);
     if (!p) throw notFound("Subscription");
     const session = await stripe("billing_portal/sessions", { customer: p.customerId!, return_url: `${web()}/users` });
     return { url: session.url };
@@ -334,6 +434,7 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
   // Admins see who pays for what.
   app.get("/v1/billing/purchases", async (req) => {
     requirePermission(req, "users");
-    return { purchases: purchases().map(({ pendingKey: _k, ...p }) => ({ ...p, hasPendingKey: !!_k })) };
+    const all = req.principal.platformAdmin && req.principal.workspaceId === tenants.platformId;
+    return { purchases: purchases().filter((p) => all || p.workspaceId === req.principal.workspaceId).map(({ pendingKey: _k, ...p }) => ({ ...p, hasPendingKey: !!_k })) };
   });
 }

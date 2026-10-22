@@ -16,8 +16,8 @@ async function setup(opts: Omit<AppOptions, "store"> & { persistence?: MemoryPer
   await store.open();
   const { persistence: _p, ...rest } = opts;
   const app = await buildApp({ store, ...rest });
-  const call = async (method: Method, url: string, payload?: unknown, key?: string) => {
-    const res = await app.inject({ method, url, ...(payload !== undefined ? { payload: payload as object } : {}), headers: key ? { authorization: `Bearer ${key}` } : {} });
+  const call = async (method: Method, url: string, payload?: unknown, key?: string, headers: Record<string, string> = {}) => {
+    const res = await app.inject({ method, url, ...(payload !== undefined ? { payload: payload as object } : {}), headers: { ...(key ? { authorization: `Bearer ${key}` } : {}), ...headers } });
     return { status: res.statusCode, body: res.body ? JSON.parse(res.body) : undefined, headers: res.headers };
   };
   return { app, store, call, persistence };
@@ -907,8 +907,10 @@ describe("billing", () => {
     expect(typeof first.body.apiKey).toBe("string");
     expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body.claimed).toBe(true);
     const user = store.state.users.find((u) => u.email === "ada@example.io")!;
-    expect(user.role).toBe("planner");
-    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).body.principal).toMatchObject({ name: "Ada" });
+    expect(user.role).toBe("admin"); // owner of their own workspace
+    expect(user.workspaceId).toMatch(/^ws-/);
+    expect(first.body.workspace).toMatchObject({ plan: "trainer", seats: 2 });
+    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).body).toMatchObject({ principal: { name: "Ada", workspaceId: user.workspaceId, platformAdmin: false }, workspace: { plan: "trainer", seats: 2, status: "active" } });
 
     // Webhooks: the late first invoice is idempotent, a renewal is recorded, a failure and a cancellation disable the key.
     const t = Math.floor(store.now().getTime() / 1000);
@@ -928,11 +930,18 @@ describe("billing", () => {
     const portal = await call("POST", "/v1/billing/portal", undefined, first.body.apiKey);
     expect(portal.body, JSON.stringify(portal.body)).toMatchObject({ url: expect.stringContaining("billing.stripe.com") });
     expect((await call("POST", "/v1/billing/portal")).status).toBe(401);
-    expect((await call("GET", "/v1/billing/purchases", undefined, first.body.apiKey)).status).toBe(403);
+    // The owner sees their own workspace's purchases only.
+    expect((await call("GET", "/v1/billing/purchases", undefined, first.body.apiKey)).body.purchases).toHaveLength(1);
     expect((await send({ type: "customer.subscription.deleted", data: { object: { id: "sub_1", status: "canceled" } } })).status).toBe(200);
     expect(store.state.purchases![0]).toMatchObject({ status: "cancelled" });
-    expect(store.state.users.find((u) => u.id === user.id)!.disabled).toBe(true);
-    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).status).toBe(401);
+    // The workspace freezes: still readable, exportable, nothing new saved until it is paid again.
+    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).body.workspace).toMatchObject({ status: "frozen", frozenReason: "subscription cancelled" });
+    expect((await call("GET", "/v1/workspace/export", undefined, first.body.apiKey)).body.state.workspace.id).toBe(user.workspaceId);
+    const blocked = await call("POST", "/v1/boards/x/frames", { title: "t", x: 0, y: 0, width: 100, height: 100 }, first.body.apiKey);
+    expect([404, 423]).toContain(blocked.status);
+    const frozenWrite = await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "Class" }, first.body.apiKey);
+    expect(frozenWrite.status).toBe(423);
+    expect(frozenWrite.body.error.code).toBe("WORKSPACE_FROZEN");
     expect((await send({ type: "invoice.paid", data: { object: { id: "in_9", subscription: "sub_unknown" } } })).body).toMatchObject({ ignored: "unknown subscription" });
   });
 
@@ -968,7 +977,7 @@ describe("billing", () => {
     expect(JSON.parse((await webhook(event, sign(event))).body)).toMatchObject({ ok: true, already: true });
 
     const user = store.state.users.find((u) => u.email === "ada@example.io");
-    expect(user).toMatchObject({ name: "Ada", role: "planner" });
+    expect(user).toMatchObject({ name: "Ada", role: "admin" });
     expect(store.state.signups!.find((x) => x.id === s.body.signup.id)).toMatchObject({ status: "invited", userId: user!.id });
     expect(store.state.purchases![0]).toMatchObject({ status: "paid", customerId: "cus_1", subscriptionId: "sub_1", quantity: 2 });
 
@@ -981,6 +990,138 @@ describe("billing", () => {
     expect(store.state.purchases![0]!.pendingKey).toBeUndefined();
     // The key signs in.
     const me = await call("GET", "/v1/me", undefined, first.body.apiKey);
-    expect(me.body.principal).toMatchObject({ name: "Ada", role: "planner" });
+    expect(me.body.principal).toMatchObject({ name: "Ada", role: "admin" });
+  });
+});
+
+describe("workspaces", () => {
+  it("gives a Practice sign-up its own workspace and key, isolated from the platform and from other customers", async () => {
+    const { call, store } = await setup();
+    const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", company: "Ada Co" });
+    expect(ada.status).toBe(201);
+    expect(ada.body.apiKey).toMatch(/^ty_/);
+    expect(ada.body.workspace).toMatchObject({ name: "Ada Co", plan: "practice" });
+    const bo = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "practice" });
+    expect(bo.body.workspace.name).toBe("Bo's workspace");
+    // Each sees their own workspace; the platform admin sees the platform's.
+    const adaMe = await call("GET", "/v1/me", undefined, ada.body.apiKey);
+    expect(adaMe.body).toMatchObject({ principal: { role: "admin", platformAdmin: false, workspaceId: ada.body.workspace.id }, workspace: { plan: "practice", status: "active", platform: false } });
+    expect((await call("GET", "/v1/me", undefined, root.body.apiKey)).body.workspace.platform).toBe(true);
+    // A board made in Ada's workspace does not exist in Bo's or the platform's.
+    const made = await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "Ada's class" }, ada.body.apiKey);
+    expect(made.status).toBe(201);
+    const adaBoards = await call("GET", "/v1/boards", undefined, ada.body.apiKey);
+    expect(adaBoards.body.boards.some((b: { name: string }) => b.name === "Ada's class")).toBe(true);
+    expect((await call("GET", "/v1/boards", undefined, bo.body.apiKey)).body.boards.some((b: { name: string }) => b.name === "Ada's class")).toBe(false);
+    expect((await call("GET", "/v1/boards", undefined, root.body.apiKey)).body.boards.some((b: { name: string }) => b.name === "Ada's class")).toBe(false);
+    // Users are per workspace too.
+    expect((await call("GET", "/v1/users", undefined, ada.body.apiKey)).body.users.map((u: { email: string }) => u.email)).toEqual(["ada@example.io"]);
+    expect((await call("GET", "/v1/users", undefined, root.body.apiKey)).body.users.map((u: { email: string }) => u.email)).toEqual(["root@example.io"]);
+    // Same email again: told to sign in instead.
+    expect((await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice" })).body.error.code).toBe("EMAIL_TAKEN");
+    expect(store.state.workspaces).toHaveLength(2);
+  });
+
+  it("enforces the Practice limits and points at Billing", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice" });
+    const key = ada.body.apiKey;
+    // One board of their own on Practice.
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "One" }, key)).status).toBe(201);
+    const two = await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "Two" }, key);
+    expect(two.status).toBe(402);
+    expect(two.body.error).toMatchObject({ code: "PLAN_LIMIT", details: { kind: "boards", limit: 1, current: 2, upgrade: "/billing" } });
+    // The refused board is not kept.
+    expect((await call("GET", "/v1/boards", undefined, key)).body.boards.filter((b: { name: string }) => b.name === "Two")).toHaveLength(0);
+    // Five people, then 402.
+    for (const n of [2, 3, 4, 5]) expect((await call("POST", "/v1/users", { name: `P${n}`, email: `p${n}@example.io`, role: "viewer" }, key)).status).toBe(201);
+    const sixth = await call("POST", "/v1/users", { name: "P6", email: "p6@example.io", role: "viewer" }, key);
+    expect(sixth.status).toBe(402);
+    expect(sixth.body.error.details).toMatchObject({ kind: "members", limit: 5, current: 5 });
+    const billing = await call("GET", "/v1/billing/workspace", undefined, key);
+    expect(billing.body).toMatchObject({ workspace: { plan: "practice" }, limits: { members: 5, boards: 1 }, usage: { members: 5, boards: 1 }, canManage: true });
+  });
+
+  it("lets the owner upgrade in page and buy more seats, and a Trainer plan counts trainers not participants", async () => {
+    let subStatus = "active";
+    let quantity = 1;
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+      if (u.endsWith("/customers")) return json({ id: "cus_9" });
+      if (u.endsWith("/subscriptions")) return json({ id: "sub_9", status: "incomplete", latest_invoice: { amount_due: 1900, currency: "usd", payment_intent: { client_secret: "pi_9_secret" } } });
+      if (u.endsWith("/subscriptions/sub_9") && init?.method === "POST") { quantity = Number(new URLSearchParams(String(init.body)).get("items[0][quantity]")); return json({ id: "sub_9", status: "active" }); }
+      if (u.endsWith("/subscriptions/sub_9")) return json({ id: "sub_9", status: subStatus, items: { data: [{ id: "si_9", quantity }] } });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice" });
+    const key = ada.body.apiKey;
+    // Upgrade from inside the workspace: no sign-up id, the signed-in owner pays.
+    expect((await call("POST", "/v1/billing/subscribe", { plan: "trainer", interval: "monthly", quantity: 1 })).status).toBe(401);
+    const sub = await call("POST", "/v1/billing/subscribe", { plan: "trainer", interval: "monthly", quantity: 1 }, key);
+    expect(sub.status).toBe(200);
+    expect(sub.body).toMatchObject({ clientSecret: "pi_9_secret", mode: "payment", amountDue: 1900 });
+    const claim = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId }, key);
+    expect(claim.body).toMatchObject({ status: "paid", plan: "trainer", workspace: { plan: "trainer", seats: 1 } });
+    expect(claim.body.apiKey).toBeUndefined(); // same login, no new key
+    expect(store.state.workspaces![0]).toMatchObject({ plan: "trainer", seats: 1 });
+    // Trainer: participants (viewers) unlimited, trainers limited to the seats.
+    for (const n of [1, 2, 3, 4, 5, 6]) expect((await call("POST", "/v1/users", { name: `V${n}`, email: `v${n}@example.io`, role: "viewer" }, key)).status).toBe(201);
+    const second = await call("POST", "/v1/users", { name: "T2", email: "t2@example.io", role: "planner" }, key);
+    expect(second.status).toBe(402);
+    expect(second.body.error.details).toMatchObject({ kind: "staff", limit: 1 });
+    // Buy a seat, billed pro rata, then the second trainer fits.
+    expect((await call("POST", "/v1/billing/seats", { quantity: 3 }, key)).body).toEqual({ seats: 3 });
+    expect(quantity).toBe(3);
+    expect((await call("POST", "/v1/users", { name: "T2", email: "t2@example.io", role: "planner" }, key)).status).toBe(201);
+    expect((await call("POST", "/v1/billing/seats", { quantity: 1 }, key)).body.error.code).toBe("SEATS_IN_USE");
+    // Boards are unlimited on Trainer.
+    for (const n of [1, 2, 3]) expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: `Class ${n}` }, key)).status).toBe(201);
+  });
+
+  it("gives platform admins a support console: list, enter a workspace, change the plan, freeze, new owner key, export", async () => {
+    const { call, store } = await setup();
+    const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const rk = root.body.apiKey;
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", company: "Ada Co" });
+    const wsId = ada.body.workspace.id as string;
+    await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "Ada's class" }, ada.body.apiKey);
+    // Customers cannot use the console or enter other workspaces.
+    expect((await call("GET", "/v1/admin/workspaces", undefined, ada.body.apiKey)).status).toBe(403);
+    const list = await call("GET", "/v1/admin/workspaces", undefined, rk);
+    expect(list.status).toBe(200);
+    expect(list.body.workspaces).toHaveLength(1);
+    expect(list.body.workspaces[0]).toMatchObject({ id: wsId, name: "Ada Co", plan: "practice", members: 1, owner: { email: "ada@example.io" }, usage: { boards: 1 }, lastAction: "board.instantiate" });
+    // Enter as support: sees Ada's boards; the visit is recorded. Customers cannot use the header.
+    const ws = { "x-trainyard-workspace": wsId };
+    expect((await call("GET", "/v1/boards", undefined, ada.body.apiKey, { "x-trainyard-workspace": store.workspaceId })).status).toBe(403);
+    const inside = await call("GET", "/v1/boards", undefined, rk, ws);
+    expect(inside.body.boards.some((b: { name: string }) => b.name === "Ada's class")).toBe(true);
+    expect((await call("GET", "/v1/me", undefined, rk, ws)).body.principal).toMatchObject({ support: true, workspaceId: wsId, platformAdmin: true });
+    expect(store.state.workspaces![0]!.supportVisitBy).toBe("Root");
+    expect((await call("GET", "/v1/boards", undefined, rk)).body.boards.some((b: { name: string }) => b.name === "Ada's class")).toBe(false);
+    // Comp the plan, freeze, thaw.
+    const comped = await call("PATCH", `/v1/admin/workspaces/${wsId}`, { plan: "trainer", seats: 2, note: "comped for the March class" }, rk);
+    expect(comped.body.workspace).toMatchObject({ plan: "trainer", seats: 2, note: "comped for the March class", limits: { staff: 2, boards: null } });
+    expect((await call("PATCH", `/v1/admin/workspaces/${wsId}`, { status: "frozen", frozenReason: "payment dispute" }, rk)).body.workspace.status).toBe("frozen");
+    const frozen = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "No" }, ada.body.apiKey);
+    expect(frozen.status).toBe(423);
+    expect(frozen.body.error.message).toContain("payment dispute");
+    expect((await call("PATCH", `/v1/admin/workspaces/${wsId}`, { status: "active" }, rk)).body.workspace.status).toBe("active");
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "Yes" }, ada.body.apiKey)).status).toBe(201);
+    // New owner key: the old one stops working.
+    const rotated = await call("POST", `/v1/admin/workspaces/${wsId}/owner-key`, undefined, rk);
+    expect(rotated.body.apiKey).toMatch(/^ty_/);
+    expect((await call("GET", "/v1/me", undefined, ada.body.apiKey)).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, rotated.body.apiKey)).body.principal.name).toBe("Ada");
+    // Export, from support and from the owner.
+    expect((await call("GET", `/v1/admin/workspaces/${wsId}/export`, undefined, rk)).body.state.workspace.boards).toHaveLength(2);
+    expect((await call("GET", "/v1/workspace/export", undefined, rotated.body.apiKey)).body.members).toHaveLength(1);
+    const detail = await call("GET", `/v1/admin/workspaces/${wsId}`, undefined, rk);
+    expect(detail.body.audit[0].action).toBe("board.instantiate");
   });
 });
