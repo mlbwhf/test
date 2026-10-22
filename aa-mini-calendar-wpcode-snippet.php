@@ -310,6 +310,12 @@ function aa_mcal_reg_map() {
 		'sa-gov'                          => 'sa-gov',
 		'devops'                          => 'devops',
 		'sdp'                             => 'devops',
+		/* The two term slugs the PAGES actually carry. Read off the live
+		   event_category list, which has "safe-devops" and "teams" -- neither
+		   of which is what aa_reg calls them, and neither of which was here,
+		   so both resolved to nothing. */
+		'safe-devops'                     => 'devops',
+		'teams'                           => 'team-practitioner',
 		'team-practitioner'               => 'team-practitioner',
 		'sp'                              => 'team-practitioner',
 		'safe-for-hardware'               => 'safe-for-hardware',
@@ -669,6 +675,114 @@ add_action( 'init', function () {
 		return aa_mcal_takeover( 'easy_event_calendar_mini', $atts );
 	} );
 }, 99 );
+
+/**
+ * THE OTHER EMPTY PANEL: [wp_events].
+ *
+ * The course pages carry TWO date surfaces from the old design, not one:
+ *
+ *   [easy_events_calendar category="…"]     taken over above
+ *   [wp_events category="…" events_list …]  the plugin's own list — untouched
+ *
+ * The second one reads the same place the first one used to: wp_events posts
+ * filtered by an event_category term. Most of those terms hold nothing. The
+ * live taxonomy has ainf, apm, bo, asm, arch, safe-devops, teams and micro all
+ * sitting at a count of ZERO, and for Leading the AI-Native Organization the
+ * term the page asks for -- "ainorg" -- does not exist at all.
+ *
+ * A term with no posts does not make the block disappear. It renders the list
+ * wrapper with nothing in it, under a heading that has just promised dates, so
+ * the page shows a framed, empty panel. That is what it looks like on the
+ * AINORG page today, and the same hole is on every page in the list above.
+ *
+ * SO THE EMPTY RENDER IS FILLED FROM THE GENERATOR, the same cohorts the
+ * calendar above it draws and the registration below it sells -- which is the
+ * whole argument for aa_mcal_reg_rows(), applied to the one shortcode it was
+ * never wired into.
+ *
+ * TWO RULES, AND THERE IS NO THIRD OUTCOME:
+ *   - a category that has real events keeps the plugin's own list, byte for
+ *     byte. Only an EMPTY render is replaced, so nothing that works today
+ *     changes;
+ *   - a category we cannot resolve to a course collapses to nothing, rather
+ *     than leaving the empty wrapper behind. An empty panel is worse than no
+ *     panel.
+ *
+ * Self-styled on purpose, for the same reason aa_reg_fill_cohort_picker() is:
+ * the stylesheet that dressed this block belongs to a plugin, and colours are
+ * inherited so it reads correctly on whatever it lands in.
+ */
+function aa_mcal_feed_enabled() { return true; }
+
+/** The aa_reg courses a [wp_events category="…"] attribute resolves to. */
+function aa_mcal_feed_slugs( $attr ) {
+	$cat = ( is_array( $attr ) && isset( $attr['category'] ) ) ? (string) $attr['category'] : '';
+	$cats = array_filter( array_map( 'trim', explode( ',', strtolower( $cat ) ) ) );
+	if ( ! $cats ) { return array(); }
+
+	$map   = aa_mcal_reg_map();
+	$slugs = array();
+	foreach ( $cats as $c ) {
+		if ( isset( $map[ $c ] ) && ! in_array( $map[ $c ], $slugs, true ) ) {
+			$slugs[] = $map[ $c ];
+		}
+	}
+	return $slugs;
+}
+
+function aa_mcal_feed_fill( $output, $tag, $attr ) {
+	if ( $tag !== 'wp_events' || ! aa_mcal_feed_enabled() || is_admin() ) { return $output; }
+
+	/* Whitespace and empty wrappers only. Text of any kind means the plugin
+	   found events and is doing its job. */
+	if ( trim( wp_strip_all_tags( (string) $output ) ) !== '' ) { return $output; }
+
+	if ( ! function_exists( 'aa_reg_course' ) || ! function_exists( 'aa_reg_upcoming' )
+	  || ! function_exists( 'aa_reg_range' ) ) {
+		return '';
+	}
+
+	$slugs = aa_mcal_feed_slugs( $attr );
+	$rows  = array();
+	foreach ( $slugs as $slug ) {
+		$course = aa_reg_course( $slug );
+		if ( ! is_array( $course ) || empty( $course['name'] ) ) { continue; }
+		$taken = 0;
+		foreach ( aa_reg_upcoming( $slug, $course ) as $c ) {
+			if ( $taken >= 6 ) { break; }
+			$taken++;
+			$rows[] = array( 'c' => $c, 'course' => $course );
+		}
+	}
+	if ( ! $rows ) { return ''; }
+
+	usort( $rows, function ( $a, $b ) { return strcmp( $a['c']['start'], $b['c']['start'] ); } );
+	$rows = array_slice( $rows, 0, 12 );
+
+	/* The course name is only worth a column when the block covers more than
+	   one course. On a single course page it is the twelve-times-repeated name
+	   of the page you are already on. */
+	$named = count( $slugs ) > 1;
+
+	$h = '<ul class="aa-mcal-feed" style="list-style:none;margin:0;padding:0;display:grid;'
+	   . 'grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">';
+	foreach ( $rows as $r ) {
+		$c   = $r['c'];
+		$url = $r['course']['url'] . ( strpos( $r['course']['url'], '?' ) === false ? '?' : '&' )
+		     . 'cohort=' . rawurlencode( $c['id'] ) . '#enroll';
+		$h .= '<li><a href="' . esc_url( $url ) . '" style="display:flex;'
+		    . 'justify-content:space-between;align-items:baseline;gap:10px;padding:11px 14px;'
+		    . 'border:1px solid currentColor;border-radius:8px;text-decoration:none;'
+		    . 'color:inherit;font-size:14px;opacity:.92">'
+		    . '<span>' . esc_html( aa_reg_range( $c['start'], $c['end'] ) ) . '</span>'
+		    . '<span style="font-size:11.5px;opacity:.7">'
+		    . esc_html( $named ? $r['course']['name'] : $c['batch'] ) . '</span>'
+		    . '</a></li>';
+	}
+	return $h . '</ul>';
+}
+
+add_filter( 'do_shortcode_tag', 'aa_mcal_feed_fill', 10, 3 );
 
 /**
  * "Is this snippet actually running?" — [aa_mcal_selftest]
