@@ -7,7 +7,7 @@ import { APP, DashboardSection, FaqSection, HOME_FAQ, HowSection, PricingSection
 
 const ON_THIS_PAGE = [
   ["#how", "How it works"],
-  ["#dashboard", "Dashboard"],
+  ["#dashboard", "Seats & payments"],
   ["#badges", "Badges"],
   ["#pricing", "Pricing"],
   ["#start", "Who it's for"],
@@ -27,8 +27,9 @@ export default async function SiteHome() {
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       url: appUrl(),
-      description: "Registration and payments for training providers: publish cohorts, take card or invoice payments held until delivery, check-in with QR tickets, certificates, team roles, webhooks, API and an MCP server for AI assistants.",
+      description: "Registration and payments for training providers: publish cohorts, take card or invoice payments held until delivery, watch seats fill and track every payment in one dashboard, check-in with QR tickets, certificates, team roles, webhooks, API and an MCP server for AI assistants.",
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: `Free to start, and free classes are always free. Paid seats: ${feeLabel(fees.protected, "USD")} all-in (Protected, held until delivery) or ${feeLabel(fees.direct, "USD")} plus card processing (Direct, paid to your Stripe).` },
+      featureList: ["Course and class registration pages", "Live seat counts for every date", "Waitlists", "Card and corporate invoice payments", "Payment tracking", "Payouts after delivery", "QR tickets and check-in", "Certificates and verified badges"],
       publisher: { "@id": `${siteUrl()}/#organization` },
       sameAs: [`${apiUrl()}/docs`],
     },
