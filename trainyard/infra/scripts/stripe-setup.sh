@@ -2,14 +2,29 @@
 # Creates Trainyard's Stripe products, prices and webhook endpoint, and prints the lines to put
 # in /opt/trainyard/.env. Safe to run again: prices are found by lookup key, the endpoint by URL.
 #
+#   ./stripe-setup.sh            (asks for the secret key; the API host comes from .env)
 #   STRIPE_SECRET_KEY=sk_test_... ./stripe-setup.sh https://api.agileagilist.com
 #
 # Run it once with the test key and once with the live key. Prices are per seat (per trainer,
 # per Agile Release Train), in USD: Trainer 19/month or 192/year, Academy 249/month or 2388/year.
 set -euo pipefail
-API_HOST=${1:?usage: STRIPE_SECRET_KEY=sk_... $0 https://api.<your domain>}
-: "${STRIPE_SECRET_KEY:?set STRIPE_SECRET_KEY}"
-command -v jq >/dev/null || { echo "jq is required (apt install jq)"; exit 1; }
+cd "$(dirname "$0")"
+envval() { grep -E "^$1=" .env 2>/dev/null | head -n1 | cut -d= -f2- | tr -d '"' | tr -d "'"; }
+if [ -n "${1:-}" ]; then
+  API_HOST=$1
+else
+  HOST=$(envval TRAINYARD_API_HOST)
+  [ -n "$HOST" ] || HOST="api.$(envval TRAINYARD_DOMAIN)"
+  [ "$HOST" != "api." ] || { echo "usage: $0 https://api.<your domain>"; exit 1; }
+  API_HOST="https://$HOST"
+fi
+if [ -z "${STRIPE_SECRET_KEY:-}" ]; then
+  read -r -s -p "Stripe secret key (sk_test_... or sk_live_..., from Developers > API keys): " STRIPE_SECRET_KEY
+  echo
+fi
+case "$STRIPE_SECRET_KEY" in sk_test_*|sk_live_*|rk_*) ;; *) echo "That does not look like a Stripe secret key (sk_test_... or sk_live_...)."; exit 1;; esac
+command -v jq >/dev/null || { echo "jq is required: sudo apt install -y jq"; exit 1; }
+echo "Setting up Stripe for $API_HOST …"
 
 stripe() { curl -sS -u "$STRIPE_SECRET_KEY:" "https://api.stripe.com/v1/$1" "${@:2}"; }
 
