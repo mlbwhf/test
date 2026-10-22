@@ -16,5 +16,6 @@ WORKDIR /app
 COPY --from=build /out .
 USER node
 EXPOSE 4100
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:4100/health || exit 1
+# 127.0.0.1, not localhost: Alpine resolves localhost to ::1 first and the API listens on IPv4.
+HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=4 CMD wget -qO- http://127.0.0.1:4100/health || exit 1
 CMD ["node", "dist/main.js"]

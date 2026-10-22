@@ -26,7 +26,7 @@ if [ -f "$dest/.env" ]; then
   echo "$dest/.env exists; leaving it alone"
 else
   cp "$src/compose/env.production.example" "$dest/.env"
-  set_kv() { sed -i -E "s|^$1=[^#]*|$1=$2 |" "$dest/.env"; }
+  set_kv() { sed -i -E "s|^$1=[^#]*|$1=$2|" "$dest/.env"; }
   set_kv TRAINYARD_DOMAIN "$domain"
   set_kv TRAINYARD_WEB_HOST "$web_host"
   set_kv TRAINYARD_API_HOST "$api_host"

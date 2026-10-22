@@ -46,7 +46,9 @@ echo "== pulling images"
 compose pull --quiet || echo "pull failed; continuing with local images"
 
 echo "== applying"
-compose up -d --remove-orphans --wait --wait-timeout 180
+# Do not stop here if a container is slow to report healthy: the loop below checks the API
+# itself and prints its logs when it is really down.
+compose up -d --remove-orphans --wait --wait-timeout 180 || echo "compose reported an unhealthy container; checking the API directly"
 
 echo "== health"
 for i in $(seq 1 30); do
@@ -63,6 +65,7 @@ for i in $(seq 1 30); do
   fi
   sleep 3
 done
-echo "API did not become healthy; recent logs:" >&2
+echo "API did not become healthy; container state and recent logs:" >&2
+compose ps >&2
 compose logs --tail=80 api >&2
 exit 1
