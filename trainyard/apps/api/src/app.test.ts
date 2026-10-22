@@ -435,6 +435,49 @@ describe("boards and imports", () => {
   });
 });
 
+describe("built-in templates and board editing", () => {
+  it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
+    const { call, store } = await setup();
+    const list = await call("GET", "/v1/templates/boards");
+    expect(list.body.builtin.length).toBe(12);
+    const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
+    expect(pi.info.event).toBe("PI Planning");
+    // 4 teams × 6 working iterations, plus milestones, uncommitted and risks strips.
+    expect(pi.counts.frames).toBe(4 * 6 + 3);
+    const full = await call("GET", "/v1/templates/boards/tpl-builtin-pi-planning");
+    expect(full.body.board.frames.some((f: { title: string }) => f.title === "Checkout · PI 26.4.1")).toBe(true);
+    expect((await call("PATCH", "/v1/boards/tpl-builtin-pi-planning/nodes/x", { text: "no" })).status).toBe(404);
+
+    const created = await call("POST", "/v1/templates/boards/tpl-builtin-roam/create", { name: "ROAM PI 26.4" });
+    expect(created.status).toBe(201);
+    const id = created.body.board.id as string;
+    expect(created.body.board.templateId).toBe("tpl-builtin-roam");
+    expect(store.state.workspace.boards!.find((b) => b.id === id)!.frames.map((f) => f.title)).toEqual(["Inbox", "Resolved", "Owned", "Accepted", "Mitigated"]);
+
+    const board = (await call("GET", `/v1/boards/${id}`)).body.board;
+    const owned = board.frames.find((f: { title: string }) => f.title === "Owned");
+    const added = await call("POST", `/v1/boards/${id}/nodes`, { text: "Cert may slip", x: owned.x + 30, y: owned.y + 40, color: "#fbd9d2" });
+    expect(added.status).toBe(201);
+    expect(added.body.node.frameId).toBe(owned.id);
+    const accepted = board.frames.find((f: { title: string }) => f.title === "Accepted");
+    const moved = await call("PATCH", `/v1/boards/${id}/nodes/${added.body.node.id}`, { x: accepted.x + 10, y: accepted.y + 10 });
+    expect(moved.body.node.frameId).toBe(accepted.id);
+    const second = await call("POST", `/v1/boards/${id}/nodes`, { text: "Other", x: accepted.x + 10, y: accepted.y + 200 });
+    const edge = await call("POST", `/v1/boards/${id}/edges`, { fromId: added.body.node.id, toId: second.body.node.id, label: "blocks" });
+    expect(edge.status).toBe(201);
+    expect((await call("POST", `/v1/boards/${id}/edges`, { fromId: added.body.node.id, toId: added.body.node.id })).status).toBe(422);
+    const frame = await call("PATCH", `/v1/boards/${id}/frames/${accepted.id}`, { x: accepted.x + 100 });
+    expect(frame.status).toBe(200);
+    const after = (await call("GET", `/v1/boards/${id}`)).body.board;
+    expect(after.nodes.find((n: { id: string }) => n.id === second.body.node.id).x).toBe(accepted.x + 110);
+    expect((await call("DELETE", `/v1/boards/${id}/nodes/${added.body.node.id}`)).status).toBe(204);
+    expect((await call("GET", `/v1/boards/${id}`)).body.board.edges).toEqual([]);
+    const mapped = await call("POST", `/v1/boards/${id}/map?dry_run=true`, { from: "nodes", level: "feature" });
+    expect(mapped.body.items.map((i: { title: string }) => i.title)).toEqual(["Other"]);
+    expect((await call("POST", `/v1/boards/${id}/frames`, { title: "Parked", x: 0, y: 900, width: 400, height: 200 })).status).toBe(201);
+  });
+});
+
 describe("cors", () => {
   it("allows the web app to PATCH and DELETE", async () => {
     const { app } = await setup();

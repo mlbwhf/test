@@ -152,12 +152,22 @@ Board JSON (`POST /v1/imports/json`, body `{ "board": ... }`):
 
 Every key but `name` is optional; rows may be flat objects keyed by column title (new columns are added as needed) or `{ id, groupId, cells }`; unknown node keys are kept under `fields`.
 
+## Templates and the board editor
+
+**Templates** lists twelve built-in boards, each sized to the workspace's teams and iterations when it is created: PI Planning board, Team breakout, ROAM risk board, Program board, Confidence vote, Retrospective, Team Kanban, Inspect & Adapt, Epic / Lean business case, OKR tree, Dependency map and Obeya wall. Boards you imported and saved as templates sit beside them. Filter by SAFe, Team, Portfolio, Risk or Lean / Obeya, read what each one is used for and how it maps onto the plan, name the board and create it. Built-in templates are read only; the boards made from them are yours.
+
+Every board opens in the canvas editor: drag cards (they re-home to the frame they land in, so a risk dragged from Inbox to Resolved is resolved), drag whole frames with their cards, add cards, double-click to write, recolour, connect two cards with the Connect tool, delete connectors, zoom. Each change is one API call (`/v1/boards/:id/nodes`, `/edges`, `/frames`) so the same editor works for imported boards, and "Map onto the plan" sees the edits.
+
+The look follows the "Trainyard Glass" design: a lit backdrop with frosted rail, panels and cards (three blur strengths), the amber signal colour for the one thing that matters on a screen, Bricolage Grotesque for display type, Instrument Sans for text and IBM Plex Mono for numbers, with a dark scheme that follows the system. The design artboards are at https://claude.ai/artifact/M8AL14GSFFZX7uoCFtwTmq.
+
 ## Still to do
 
 - Test the connectors against a real Jira and Azure DevOps account (only recorded responses so far)
 - SSO (OIDC/SAML): today users sign in with an API key
 - Multiple workspaces per server
 - GitHub Issues connector
+- More built-in templates recreated from customer boards (iObeya, Miro) as references arrive
+- Live cursors and multi-user editing on the canvas (today edits are per request; reload shows other people's changes)
 - Jira Data Center and Azure DevOps Server have adapters by configuration (`host`, `baseUrl`) but no tests against them
 
 SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Other framework names belong to their owners. Templates are summaries for configuration, not copies of framework materials. The EU AI Act gate policy is a starting point for a governance board, not legal advice.

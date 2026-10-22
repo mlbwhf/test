@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 import type { Board, BoardMapping, MappingResult } from "@trainyard/core";
+import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
@@ -85,7 +86,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {shape === "canvas" || shape === "mixed" ? <Canvas board={board} /> : null}
+          {shape === "canvas" || shape === "mixed" ? <CanvasEditor board={board} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
           {shape === "empty" ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
@@ -94,101 +95,6 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       )}
     </>
   );
-}
-
-const PALETTE: Record<string, string> = {
-  light_yellow: "#fff9b1", yellow: "#f5d128", light_green: "#d5f692", green: "#c9df56", dark_green: "#93d275", cyan: "#67c6c0", light_pink: "#ffcee0", pink: "#ea94bb", violet: "#be88c7", red: "#f24726", light_blue: "#a6ccf5", blue: "#6cd8fa", dark_blue: "#9ea9ff", black: "#1a1a1a", gray: "#e6e6e6", orange: "#ff9d48", white: "#ffffff",
-};
-const cssColor = (c?: string) => (!c ? "var(--panel)" : PALETTE[c] ?? (c.startsWith("#") && c.length === 9 ? c.slice(0, 7) : c));
-
-function Canvas({ board }: { board: Board }) {
-  const box = useMemo(() => {
-    const xs: number[] = [];
-    const ys: number[] = [];
-    for (const f of board.frames) xs.push(f.x, f.x + f.width), ys.push(f.y, f.y + f.height);
-    for (const n of board.nodes) xs.push(n.x, n.x + (n.width ?? 200)), ys.push(n.y, n.y + (n.height ?? 200));
-    if (!xs.length) return { x: 0, y: 0, w: 1000, h: 600 };
-    const pad = 80;
-    const x = Math.min(...xs) - pad;
-    const y = Math.min(...ys) - pad;
-    return { x, y, w: Math.max(...xs) + pad - x, h: Math.max(...ys) + pad - y };
-  }, [board]);
-  const center = (id: string) => {
-    const n = board.nodes.find((x) => x.id === id);
-    if (n) return [n.x + (n.width ?? 200) / 2, n.y + (n.height ?? 200) / 2] as const;
-    const f = board.frames.find((x) => x.id === id);
-    return f ? ([f.x + f.width / 2, f.y + f.height / 2] as const) : null;
-  };
-  return (
-    <section className="panel" style={{ overflow: "auto", maxHeight: "75vh", background: "var(--sunken)" }}>
-      <svg viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} style={{ width: "100%", minWidth: Math.min(2400, box.w / 2), height: "auto", display: "block" }} role="img" aria-label={`${board.name} as imported`}>
-        <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-            <path d="M0 0L10 5L0 10z" fill="var(--ink-3)" />
-          </marker>
-        </defs>
-        {board.frames.map((f) => (
-          <g key={f.id}>
-            <rect x={f.x} y={f.y} width={f.width} height={f.height} fill="var(--panel)" stroke="var(--line-strong)" strokeWidth={2} rx={6} />
-            <text x={f.x + 12} y={f.y - 10} fontSize={Math.max(18, Math.min(36, f.width / 30))} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
-              {f.title}
-            </text>
-          </g>
-        ))}
-        {board.edges.map((e) => {
-          const a = center(e.fromId);
-          const b = center(e.toId);
-          if (!a || !b) return null;
-          return (
-            <g key={e.id}>
-              <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />
-              {e.label ? (
-                <text x={(a[0] + b[0]) / 2} y={(a[1] + b[1]) / 2 - 8} fontSize={16} textAnchor="middle" fill="var(--ink-2)">
-                  {e.label}
-                </text>
-              ) : null}
-            </g>
-          );
-        })}
-        {board.nodes.map((n) => {
-          const w = n.width ?? 200;
-          const h = n.height ?? (n.kind === "sticky" ? 200 : 60);
-          const fill = n.kind === "text" ? "transparent" : cssColor(n.color);
-          const dark = /^#?(1|2|3|black)/i.test(n.color ?? "");
-          const lines = wrap(n.text, Math.max(8, Math.floor(w / 11)));
-          return (
-            <g key={n.id}>
-              <rect x={n.x} y={n.y} width={w} height={h} fill={fill} stroke={n.kind === "text" ? "none" : "rgba(0,0,0,0.12)"} rx={n.kind === "shape" ? 10 : 3} />
-              {lines.slice(0, Math.max(1, Math.floor(h / 22))).map((line, i) => (
-                <text key={i} x={n.x + 12} y={n.y + 26 + i * 22} fontSize={18} fill={dark ? "#fff" : "#1a1a1a"} fontFamily="var(--font-body)">
-                  {line}
-                </text>
-              ))}
-            </g>
-          );
-        })}
-      </svg>
-      <p className="faint" style={{ padding: "6px 12px", fontSize: "0.78rem" }}>
-        {board.frames.length} frames · {board.nodes.length} cards · {board.edges.length} connectors, drawn at the positions and colours they had in {SOURCE_LABEL[board.origin.system] ?? "the source"}.
-      </p>
-    </section>
-  );
-}
-
-function wrap(text: string, width: number): string[] {
-  const out: string[] = [];
-  for (const para of text.split("\n")) {
-    let line = "";
-    for (const word of para.split(/\s+/)) {
-      if (!word) continue;
-      if ((line + " " + word).trim().length > width && line) {
-        out.push(line);
-        line = word;
-      } else line = (line + " " + word).trim();
-    }
-    out.push(line);
-  }
-  return out;
 }
 
 function Table({ board }: { board: Board }) {

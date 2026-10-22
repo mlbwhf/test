@@ -5,7 +5,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { boardShape, instantiate, mapBoard, templateFrom, type Board, type BoardMapping } from "@trainyard/core";
+import { TEMPLATE_CATALOG, boardShape, builtinTemplates, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromJson, createImporter, type ConnectableSource, type FetchLike, type Importer } from "@trainyard/importers";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -175,6 +175,153 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
     return reply.code(201).send({ board: summary(b) });
+  });
+
+  // ---- built-in templates and editing -------------------------------------------------
+  /** Built-in templates are generated for this workspace's teams and iterations, never stored. */
+  const builtins = () => {
+    const ws = s().workspace;
+    const inc = ws.increments[ws.increments.length - 1];
+    return builtinTemplates(ws.teams.map((t) => t.name), inc ? inc.iterations.filter((i) => !i.isIP).map((i) => i.name) : undefined);
+  };
+  const findTemplate = (id: string): Board => builtins().find((b) => b.id === id) ?? boards().find((b) => b.id === id && b.isTemplate) ?? (() => { throw notFound("Template"); })();
+
+  app.get("/v1/templates/boards", async () => ({
+    builtin: builtins().map((b) => ({ ...summary(b), info: b.info })),
+    saved: boards().filter((b) => b.isTemplate).map(summary),
+    catalog: TEMPLATE_CATALOG,
+  }));
+  app.get("/v1/templates/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ board: findTemplate(req.params.id) }));
+  app.post("/v1/templates/boards/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
+    require(req, "plan");
+    const t = findTemplate(req.params.id);
+    const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
+    boards().push(b);
+    await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
+    return reply.code(201).send({ board: summary(b) });
+  });
+
+  const editable = (id: string) => {
+    const b = findBoard(id);
+    if (b.isTemplate) throw new ApiError(422, "TEMPLATE_READ_ONLY", "Templates are not edited in place. Create a board from it first.");
+    return b;
+  };
+  const NodeBody = z.object({
+    text: z.string().max(4000).optional(),
+    x: z.number().optional(),
+    y: z.number().optional(),
+    width: z.number().min(10).max(5000).optional(),
+    height: z.number().min(10).max(5000).optional(),
+    color: z.string().max(40).nullable().optional(),
+    frameId: z.string().nullable().optional(),
+    kind: z.enum(["sticky", "card", "text", "shape", "image", "other"]).optional(),
+    tags: z.array(z.string().max(60)).max(20).optional(),
+  });
+  const frameFor = (b: Board, n: { x: number; y: number }) =>
+    b.frames.find((f) => n.x >= f.x && n.x <= f.x + f.width && n.y >= f.y && n.y <= f.y + f.height)?.id;
+
+  app.post("/v1/boards/:id/nodes", { schema: { params: z.object({ id: Id }), body: NodeBody.extend({ x: z.number(), y: z.number() }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const { frameId, color, ...rest } = req.body;
+    const frame = frameId === null ? undefined : (frameId ?? frameFor(b, req.body));
+    if (frame && !b.frames.some((f) => f.id === frame)) throw notFound("Frame");
+    const node: BoardNode = {
+      id: `n-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`,
+      kind: rest.kind ?? "sticky",
+      text: rest.text ?? "",
+      x: rest.x,
+      y: rest.y,
+      width: rest.width ?? 180,
+      height: rest.height ?? 120,
+      ...(color ? { color } : { color: "#fff6c2" }),
+      ...(frame ? { frameId: frame } : {}),
+      tags: rest.tags ?? [],
+      fields: { createdBy: req.principal.userId },
+    };
+    b.nodes.push(node);
+    await store.commit(req.principal, "board.node.create", { board: b.id, node: node.id });
+    return reply.code(201).send({ node });
+  });
+
+  app.patch("/v1/boards/:id/nodes/:nodeId", { schema: { params: z.object({ id: Id, nodeId: Id }), body: NodeBody } }, async (req) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const n = b.nodes.find((x) => x.id === req.params.nodeId);
+    if (!n) throw notFound("Card");
+    const { frameId, color, ...rest } = req.body;
+    Object.assign(n, defined(rest));
+    if (color === null) delete n.color;
+    else if (color) n.color = color;
+    if (frameId === null) delete n.frameId;
+    else if (frameId) {
+      if (!b.frames.some((f) => f.id === frameId)) throw notFound("Frame");
+      n.frameId = frameId;
+    } else if (rest.x !== undefined || rest.y !== undefined) {
+      // Moved: the frame follows the new position.
+      const f = frameFor(b, n);
+      if (f) n.frameId = f;
+      else delete n.frameId;
+    }
+    if (n.fields.placeholder && n.text.trim()) delete n.fields.placeholder;
+    await store.commit(req.principal, "board.node.update", { board: b.id, node: n.id, ...defined(req.body) });
+    return { node: n };
+  });
+
+  app.delete("/v1/boards/:id/nodes/:nodeId", { schema: { params: z.object({ id: Id, nodeId: Id }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const before = b.nodes.length;
+    b.nodes = b.nodes.filter((x) => x.id !== req.params.nodeId);
+    if (b.nodes.length === before) throw notFound("Card");
+    b.edges = b.edges.filter((e) => e.fromId !== req.params.nodeId && e.toId !== req.params.nodeId);
+    await store.commit(req.principal, "board.node.delete", { board: b.id, node: req.params.nodeId });
+    return reply.code(204).send();
+  });
+
+  app.post("/v1/boards/:id/edges", { schema: { params: z.object({ id: Id }), body: z.object({ fromId: Id, toId: Id, label: z.string().max(200).optional() }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const ids = new Set([...b.nodes.map((n) => n.id), ...b.frames.map((f) => f.id)]);
+    if (!ids.has(req.body.fromId) || !ids.has(req.body.toId)) throw notFound("Card");
+    if (req.body.fromId === req.body.toId) throw new ApiError(422, "SELF_EDGE", "A connector needs two different cards.");
+    const edge = { id: `e-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, fromId: req.body.fromId, toId: req.body.toId, ...(req.body.label ? { label: req.body.label } : {}) };
+    b.edges.push(edge);
+    await store.commit(req.principal, "board.edge.create", { board: b.id, edge: edge.id });
+    return reply.code(201).send({ edge });
+  });
+
+  app.delete("/v1/boards/:id/edges/:edgeId", { schema: { params: z.object({ id: Id, edgeId: Id }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const before = b.edges.length;
+    b.edges = b.edges.filter((e) => e.id !== req.params.edgeId);
+    if (b.edges.length === before) throw notFound("Connector");
+    await store.commit(req.principal, "board.edge.delete", { board: b.id, edge: req.params.edgeId });
+    return reply.code(204).send();
+  });
+
+  app.patch("/v1/boards/:id/frames/:frameId", { schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional() }) } }, async (req) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const f = b.frames.find((x) => x.id === req.params.frameId);
+    if (!f) throw notFound("Frame");
+    const dx = (req.body.x ?? f.x) - f.x;
+    const dy = (req.body.y ?? f.y) - f.y;
+    Object.assign(f, defined(req.body));
+    // Cards travel with their frame.
+    if (dx || dy) for (const n of b.nodes) if (n.frameId === f.id) (n.x += dx), (n.y += dy);
+    await store.commit(req.principal, "board.frame.update", { board: b.id, frame: f.id, ...defined(req.body) });
+    return { frame: f };
+  });
+
+  app.post("/v1/boards/:id/frames", { schema: { params: z.object({ id: Id }), body: z.object({ title: z.string().min(1).max(200), x: z.number(), y: z.number(), width: z.number().min(40), height: z.number().min(40) }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const frame = { id: `f-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, ...req.body };
+    b.frames.push(frame);
+    await store.commit(req.principal, "board.frame.create", { board: b.id, frame: frame.id });
+    return reply.code(201).send({ frame });
   });
 
   // ---- mapping -----------------------------------------------------------------------
