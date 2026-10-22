@@ -1,0 +1,1855 @@
+[
+  {
+    "id": 14,
+    "slug": "state-of-enterprise-ai-2026",
+    "title": "The State of Enterprise AI in 2026",
+    "categories": [
+      3
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "ai-adoption-88-percent-2025",
+    "title": "88% of Organizations Now Use AI in at Least One Business Function",
+    "categories": [
+      2,
+      3
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "corporate-ai-investment-252-billion-2024",
+    "title": "Corporate AI Investment Reached $252.3 Billion in 2024",
+    "categories": [
+      4
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "agentic-ai-scaling-23-percent-2025",
+    "title": "23% of Organizations Are Already Scaling Agentic AI",
+    "categories": [
+      3,
+      8
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "ai-inference-cost-280x-decline",
+    "title": "AI Inference Costs Fell Roughly 280-Fold in Under Two Years",
+    "categories": [
+      9,
+      6
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "ai-adoption-statistics-2026",
+    "title": "AI Adoption Statistics 2026: How Fast Is AI Being Adopted?",
+    "categories": [
+      2
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "enterprise-ai-statistics-2026",
+    "title": "Enterprise AI Statistics 2026: ROI, Spending &#038; AI Agents",
+    "categories": [
+      3
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "generative-ai-statistics-2026",
+    "title": "Generative AI Statistics 2026: Users, Revenue &#038; Business Use",
+    "categories": [
+      8
+    ]
+  },
+  {
+    "id": 103,
+    "slug": "ai-in-2026-by-the-numbers",
+    "title": "AI in 2026, by the Numbers: 8 Statistics That Define the Year",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 106,
+    "slug": "state-of-ai-2025-key-statistics",
+    "title": "State of AI 2025 \u2013 Key Statistics",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 107,
+    "slug": "ai-in-2026-explosive-growth-delayed-value",
+    "title": "AI in 2026: Explosive Growth, Delayed Value \u2014 and a Narrowing Gap",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 217,
+    "slug": "success-in-the-age-of-ai-isnt-a-technology-story",
+    "title": "Success in the Age of AI Isn\u2019t a Technology Story.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 218,
+    "slug": "its-impossible-said-pride-its-risky-said-experience",
+    "title": "\u201cIt\u2019s impossible,\u201d said pride.\u201cIt\u2019s risky,\u201d said experience.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 219,
+    "slug": "there-are-six-kinds-of-mvp",
+    "title": "There Are Six Kinds of MVP",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 220,
+    "slug": "why-the-best-ai-features-will-come-from-the-most-annoying-constraints",
+    "title": "Why the Best AI Features Will Come From the Most Annoying Constraints",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 221,
+    "slug": "everyone-is-a-genius",
+    "title": "Everyone Is a Genius",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 382,
+    "slug": "after-the-agent-next-ai-paradigm",
+    "title": "After the Agent: Multiagent Systems, World Models &#038; the Next AI Paradigm",
+    "categories": [
+      35,
+      11
+    ]
+  },
+  {
+    "id": 433,
+    "slug": "ai-adoption-statistics-2026-report",
+    "title": "AI Adoption Statistics 2026: How Fast Is AI Being Adopted?",
+    "categories": [
+      2,
+      3
+    ]
+  },
+  {
+    "id": 436,
+    "slug": "ai-in-sport-decision-making",
+    "title": "AI in Sport: How Artificial Intelligence Supports Decision-Making (2026)",
+    "categories": [
+      23
+    ]
+  },
+  {
+    "id": 476,
+    "slug": "jinhua-zhao-named-head-of-the-department-of-urban-studies-and-planning",
+    "title": "Jinhua Zhao named head of the Department of Urban Studies and Planning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 477,
+    "slug": "when-it-comes-to-predicting-peoples-preferences-it-pays-to-consider-the-power-of-three",
+    "title": "When it comes to predicting people\u2019s preferences, it pays to consider \u201cthe power of three\u201d",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 478,
+    "slug": "mit-affiliates-win-2026-hertz-foundation-fellowships",
+    "title": "MIT affiliates win 2026 Hertz Foundation Fellowships",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 479,
+    "slug": "adaptive-parallel-reasoning-the-next-paradigm-in-efficient-inference-scaling",
+    "title": "Adaptive Parallel Reasoning: The Next Paradigm in Efficient Inference Scaling",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 480,
+    "slug": "gradient-based-planning-for-world-models-at-longer-horizons",
+    "title": "Gradient-based Planning for World Models at Longer Horizons",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 481,
+    "slug": "identifying-interactions-at-scale-for-llms",
+    "title": "Identifying Interactions at Scale for LLMs",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 482,
+    "slug": "visual-language-models-train-robots-to-read-human-emotions",
+    "title": "Visual Language Models Train Robots to Read Human Emotions",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 483,
+    "slug": "how-a-google-deepmind-spin-off-hunts-hidden-drug-targets",
+    "title": "How a Google DeepMind Spin-off Hunts Hidden Drug Targets",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 484,
+    "slug": "timing-trick-cuts-energy-used-in-llm-training-by-up-to-14-percent",
+    "title": "Timing Trick Cuts Energy Used in LLM Training by Up to 14 Percent",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 485,
+    "slug": "s-sppo-semantic-calibrated-self-play-preference-optimization",
+    "title": "S-SPPO: Semantic-Calibrated Self-Play Preference Optimization",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 486,
+    "slug": "impacteen-intentions-manipulation-persuasion-annotations-and-consequences-in-teen-communication-dataset",
+    "title": "IMPACTeen: Intentions, Manipulation, Persuasion, Annotations, and Consequences in Teen Communication Dataset",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 487,
+    "slug": "dynadebate-breaking-homogeneity-in-multi-agent-debate-with-dynamic-path-generation",
+    "title": "DynaDebate: Breaking Homogeneity in Multi-Agent Debate with Dynamic Path Generation",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 488,
+    "slug": "the-download-the-first-brain-implant-power-user-and-south-koreas-ai-obsession",
+    "title": "The Download: the first brain implant power user and South Korea\u2019s AI obsession",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 489,
+    "slug": "want-to-get-a-data-center-online-quickly-give-it-some-flex",
+    "title": "Want to get a data center online quickly? Give it some flex.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 490,
+    "slug": "why-do-south-koreans-love-ai-so-much",
+    "title": "Why do South Koreans love AI so much?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 491,
+    "slug": "were-strengthening-our-presence-in-alabama-through-new-investments-and-community-support",
+    "title": "We\u2019re strengthening our presence in Alabama through new investments and community support.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 492,
+    "slug": "our-new-community-investments-in-virginia-support-local-jobs-and-expand-energy-affordability",
+    "title": "Our new community investments in Virginia support local jobs and expand energy affordability.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 493,
+    "slug": "the-latest-ai-news-we-announced-in-may-2026",
+    "title": "The latest AI news we announced in May 2026",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 494,
+    "slug": "introducing-the-openai-partner-network",
+    "title": "Introducing the OpenAI Partner Network",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 495,
+    "slug": "new-openai-academy-courses-for-the-next-era-of-work",
+    "title": "New OpenAI Academy courses for the next era of work",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 496,
+    "slug": "how-preply-combines-ai-and-human-tutors-to-personalize-learning",
+    "title": "How Preply combines AI and human tutors to personalize learning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 529,
+    "slug": "could-ai-tell-you-where-you-left-your-keys",
+    "title": "Could AI tell you where you left your keys?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 530,
+    "slug": "mits-initiative-for-new-manufacturing-builds-momentum",
+    "title": "MIT\u2019s Initiative for New Manufacturing builds momentum",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 531,
+    "slug": "kairos-a-native-world-model-stack-for-physical-ai",
+    "title": "Kairos: A Native World Model Stack for Physical AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 532,
+    "slug": "a-red-team-study-of-anthropic-fable-5-opus-4-8-models",
+    "title": "A Red-Team Study of Anthropic Fable 5 &amp; Opus 4.8 Models",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 533,
+    "slug": "agentic-world-modeling-foundations-capabilities-laws-and-beyond",
+    "title": "Agentic World Modeling: Foundations, Capabilities, Laws, and Beyond",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 534,
+    "slug": "exclusive-ebook-how-ai-is-becoming-the-next-military-advisor",
+    "title": "Exclusive eBook: How AI is becoming the next military advisor",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 535,
+    "slug": "predicting-model-behavior-before-release-by-simulating-deployment",
+    "title": "Predicting model behavior before release by simulating deployment",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 554,
+    "slug": "in-game-theory-generalists-sometimes-win-out-over-specialists",
+    "title": "In game theory, generalists sometimes win out over specialists",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 555,
+    "slug": "how-musicians-can-get-paid-for-training-ai",
+    "title": "How Musicians Can Get Paid for Training AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 556,
+    "slug": "general-motors-is-cutting-its-development-cycles-in-half",
+    "title": "General Motors Is Cutting Its Development Cycles in Half",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 557,
+    "slug": "deepinflation-an-ai-agent-for-research-and-model-discovery-of-inflation",
+    "title": "DeepInflation: an AI agent for research and model discovery of inflation",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 558,
+    "slug": "a-cefr-inspired-classification-framework-with-fuzzy-c-means-to-automate-assessment-of-programming-skills-in-scratch",
+    "title": "A CEFR-Inspired Classification Framework with Fuzzy C-Means To Automate Assessment of Programming Skills in Scratch",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 559,
+    "slug": "dissecting-model-behavior-through-agent-trajectories",
+    "title": "Dissecting model behavior through agent trajectories",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 560,
+    "slug": "the-download-a-reality-check-for-geoengineering-and-the-science-of-interoception",
+    "title": "The Download: a reality check for geoengineering and the science of interoception",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 561,
+    "slug": "hacking-the-atmosphere-geoengineering-gets-a-reality-check",
+    "title": "Hacking the atmosphere: Geoengineering gets a reality check",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 562,
+    "slug": "entrepreneurs-in-nairobi-make-the-case-for-going-solar",
+    "title": "Entrepreneurs in Nairobi make the case for going solar",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 563,
+    "slug": "new-research-shows-how-amie-our-medical-ai-could-help-manage-health-conditions",
+    "title": "New research shows how AMIE, our medical AI, could help manage health conditions.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 564,
+    "slug": "a-near-autonomous-ai-chemist-improves-a-challenging-reaction-in-medicinal-chemistry",
+    "title": "A near-autonomous AI chemist improves a challenging reaction in medicinal chemistry",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 565,
+    "slug": "introducing-lifescibench",
+    "title": "Introducing LifeSciBench",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 581,
+    "slug": "mit-in-the-media-for-the-future-of-tech-massachusetts-can-absolutely-lead",
+    "title": "MIT in the media: For the future of tech, &quot;Massachusetts can absolutely lead&quot;",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 582,
+    "slug": "sound-waves-give-neuromorphic-chips-a-brain-simulating-edge",
+    "title": "Sound Waves Give Neuromorphic Chips a Brain-Simulating Edge",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 583,
+    "slug": "learning-what-to-remember-observability-safe-memory-retention-via-constrained-optimization-for-long-horizon-language-agents",
+    "title": "Learning What to Remember: Observability-Safe Memory Retention via Constrained Optimization for Long-Horizon Language Agents",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 584,
+    "slug": "repurposing-a-speech-classifier-for-guided-diffusion-based-speech-generation",
+    "title": "Repurposing a Speech Classifier for Guided Diffusion-Based Speech Generation",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 585,
+    "slug": "sigma-search-augmented-on-demand-knowledge-integration-for-agentic-mathematical-reasoning",
+    "title": "SIGMA: Search-Augmented On-Demand Knowledge Integration for Agentic Mathematical Reasoning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 586,
+    "slug": "the-download-a-new-hunt-for-dark-matter-and-kenyas-case-for-going-solar",
+    "title": "The Download: a new hunt for dark matter and Kenya\u2019s case for going solar",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 587,
+    "slug": "geoengineering-still-faces-major-practical-challenges",
+    "title": "Geoengineering still faces major practical challenges",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 588,
+    "slug": "the-search-for-dark-matter-has-been-blown-wide-open",
+    "title": "The search for dark matter has been blown wide open",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 589,
+    "slug": "new-usage-analytics-and-updated-spend-controls-for-enterprises",
+    "title": "New usage analytics and updated spend controls for enterprises",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 590,
+    "slug": "improving-health-intelligence-in-chatgpt",
+    "title": "Improving health intelligence in ChatGPT",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 591,
+    "slug": "using-ai-to-help-physicians-diagnose-rare-genetic-diseases-affecting-children",
+    "title": "Using AI to help physicians diagnose rare genetic diseases affecting children",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 592,
+    "slug": "a-better-way-to-model-the-behavior-of-metal-alloys",
+    "title": "A better way to model the behavior of metal alloys",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 593,
+    "slug": "ieee-rolls-out-large-language-models-virtual-training-course",
+    "title": "IEEE Rolls Out Large Language Models Virtual Training Course",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 594,
+    "slug": "the-download-ai-bottleneck-debates-and-bci-trials-take-off",
+    "title": "The Download: AI bottleneck debates, and BCI trials take off",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 595,
+    "slug": "a-startup-claims-it-broke-through-a-bottleneck-thats-holding-back-llms",
+    "title": "A startup claims it broke through a bottleneck that\u2019s holding back LLMs",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 596,
+    "slug": "brain-computer-interface-trials-are-taking-off",
+    "title": "Brain-computer interface trials are taking off",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 700,
+    "slug": "samsung-electronics-brings-chatgpt-and-codex-to-employees",
+    "title": "Samsung Electronics brings ChatGPT and Codex to employees",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 701,
+    "slug": "new-chip-could-help-tiny-robots-traverse-complex-environments",
+    "title": "New chip could help tiny robots traverse complex environments",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 702,
+    "slug": "commemorating-70-years-of-artificial-intelligence",
+    "title": "Commemorating 70 Years of Artificial Intelligence",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 703,
+    "slug": "three-things-to-watch-amid-anthropics-latest-feud-with-the-government",
+    "title": "Three things to watch amid Anthropic\u2019s latest feud with the government",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 704,
+    "slug": "the-download-record-breaking-subsea-tunnels-and-flexible-data-centers",
+    "title": "The Download: record-breaking subsea tunnels and flexible data centers",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 705,
+    "slug": "inside-the-worlds-deepest-and-longest-subsea-road-tunnel",
+    "title": "Inside the world\u2019s deepest and longest subsea road tunnel",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 706,
+    "slug": "patch-the-planet-a-daybreak-initiative-to-support-open-source-maintainers",
+    "title": "Patch the Planet: a Daybreak initiative to support open source maintainers",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 707,
+    "slug": "daybreak-tools-for-securing-every-organization-in-the-world",
+    "title": "Daybreak: Tools for securing every organization in the world",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 708,
+    "slug": "codex-maxxing-for-long-running-work",
+    "title": "Codex-maxxing for long-running work",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 709,
+    "slug": "ai-is-learning-to-read-the-room",
+    "title": "AI Is Learning to Read the Room",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 710,
+    "slug": "the-download-the-future-of-chipmaking-and-anthropics-government-clash",
+    "title": "The Download: the future of chipmaking and Anthropic\u2019s government clash",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 711,
+    "slug": "the-400-million-machine-powering-the-future-of-chipmaking",
+    "title": "The $400 million machine powering the future of chipmaking",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 712,
+    "slug": "elephant-alert-ai-warning-systems-aim-to-avoid-deadly-clashes",
+    "title": "Elephant alert! AI warning systems aim to avoid deadly clashes",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 713,
+    "slug": "how-gpt-5-helped-immunologist-derya-unutmaz-solve-a-3-year-old-mystery",
+    "title": "How GPT-5 helped immunologist Derya Unutmaz solve a 3-year-old mystery",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 714,
+    "slug": "how-omio-is-building-the-future-of-conversational-travel",
+    "title": "How Omio is building the future of conversational travel",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 720,
+    "slug": "exploring-the-societal-impacts-of-ai",
+    "title": "Exploring the societal impacts of AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 721,
+    "slug": "ai-is-designing-radio-chips-that-humans-couldnt-even-imagine",
+    "title": "AI Is Designing Radio Chips That Humans Couldn\u2019t Even Imagine",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 722,
+    "slug": "variational-model-merging-for-pareto-front-estimation-in-multitask-finetuning",
+    "title": "Variational Model Merging for Pareto Front Estimation in Multitask Finetuning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 723,
+    "slug": "breaking-the-mirror-activation-based-mitigation-of-self-preference-in-llm-evaluators",
+    "title": "Breaking the Mirror: Activation-Based Mitigation of Self-Preference in LLM Evaluators",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 724,
+    "slug": "eg-vqa-benchmarking-verifiable-video-question-answering-with-grounded-temporal-evidence",
+    "title": "EG-VQA: Benchmarking Verifiable Video Question Answering with Grounded Temporal Evidence",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 725,
+    "slug": "europes-extreme-heat-is-shutting-down-power-plants",
+    "title": "Europe\u2019s extreme heat is shutting down power plants",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 726,
+    "slug": "the-download-introducing-the-engineering-issue",
+    "title": "The Download: introducing the Engineering issue",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 727,
+    "slug": "stripe-anthropic-and-openai-are-backing-an-effort-to-stop-respiratory-infections",
+    "title": "Stripe, Anthropic, and OpenAI are backing an effort to stop respiratory infections",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 728,
+    "slug": "openai-and-broadcom-unveil-llm-optimized-inference-chip",
+    "title": "OpenAI and Broadcom unveil LLM-optimized inference chip",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 729,
+    "slug": "helping-build-shared-standards-for-advanced-ai",
+    "title": "Helping build shared standards for advanced AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 767,
+    "slug": "improving-the-speed-and-energy-efficiency-of-ai-agents",
+    "title": "Improving the speed and energy-efficiency of AI agents",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 768,
+    "slug": "why-does-a-bank-need-a-chief-scientist",
+    "title": "Why Does a Bank Need a Chief Scientist?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 769,
+    "slug": "what-it-means-to-be-a-mathematician-when-ai-does-the-math",
+    "title": "What it Means to Be a Mathematician When AI Does the Math",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 770,
+    "slug": "repositioning-retail-for-the-ai-era",
+    "title": "Repositioning retail for the AI era",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 771,
+    "slug": "the-download-europes-heat-wave-hits-the-grid-and-ibms-chip-targets-moores-law",
+    "title": "The Download: Europe\u2019s heat wave hits the grid, and IBM\u2019s chip targets Moore\u2019s Law",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 772,
+    "slug": "ibm-has-unveiled-chip-technology-that-could-help-extend-moores-law-another-decade",
+    "title": "IBM has unveiled chip technology that could help extend Moore\u2019s Law another decade",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 773,
+    "slug": "our-latest-google-finance-upgrades-including-a-new-app",
+    "title": "Our latest Google Finance upgrades, including a new app",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 774,
+    "slug": "how-agents-are-transforming-work",
+    "title": "How agents are transforming work",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 776,
+    "slug": "david-autor-named-head-of-the-department-of-economics",
+    "title": "David Autor named head of the Department of Economics",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 777,
+    "slug": "llms-help-robots-understand-vague-instructions-and-focus-on-key-details",
+    "title": "LLMs help robots understand vague instructions and focus on key details",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 778,
+    "slug": "mit-in-the-media-exploring-how-curiosity-driven-science-is-an-essential-ingredient-in-americas-success",
+    "title": "MIT in the media: Exploring how curiosity-driven science is an essential ingredient in America\u2019s success",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 779,
+    "slug": "tuning-language-models-by-mixture-of-depths-ensemble",
+    "title": "Tuning Language Models by Mixture-of-Depths Ensemble",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 780,
+    "slug": "dual-prototype-disentanglement-a-context-aware-enhancement-framework-for-time-series-forecasting",
+    "title": "Dual-Prototype Disentanglement: A Context-Aware Enhancement Framework for Time Series Forecasting",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 781,
+    "slug": "efficient-foundation-decoders-for-fault-tolerant-quantum-computing",
+    "title": "Efficient foundation decoders for fault-tolerant quantum computing",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 782,
+    "slug": "the-download-brain-melting-heatwaves-and-unprecedented-openai-restrictions",
+    "title": "The Download: brain-melting heatwaves and unprecedented OpenAI restrictions",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 783,
+    "slug": "heat-waves-mess-with-your-brain-scientists-are-trying-to-figure-out-why",
+    "title": "Heat waves mess with your brain. Scientists are trying to figure out why.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 784,
+    "slug": "previewing-gpt-5-6-sol-a-next-generation-model",
+    "title": "Previewing GPT-5.6 Sol: a next-generation model",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 790,
+    "slug": "conlangcrafter-turns-ai-to-imagining-languages",
+    "title": "ConlangCrafter Turns AI to Imagining Languages",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 791,
+    "slug": "on-the-position-bias-of-on-policy-distillation",
+    "title": "On the Position Bias of On-Policy Distillation",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 792,
+    "slug": "the-remittance-blueprint-data-driven-intelligence-for-sri-lanka",
+    "title": "The Remittance Blueprint: Data-driven Intelligence for Sri Lanka",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 793,
+    "slug": "spectral-text-fusion-a-frequency-aware-approach-to-multimodal-time-series-forecasting",
+    "title": "Spectral Text Fusion: A Frequency-Aware Approach to Multimodal Time-Series Forecasting",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 794,
+    "slug": "hp-inc-launches-frontier-strategic-partnership-with-openai",
+    "title": "HP Inc. launches Frontier strategic partnership with OpenAI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 795,
+    "slug": "the-lab-mistake-that-might-revolutionize-computing",
+    "title": "The Lab Mistake That Might Revolutionize Computing",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 796,
+    "slug": "agent-confidence-on-the-technical-frontier",
+    "title": "Agent confidence on the technical frontier",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 797,
+    "slug": "the-download-metric-weaknesses-and-ai-elephant-warnings",
+    "title": "The Download: metric weaknesses and AI elephant warnings",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 798,
+    "slug": "ask-an-ai-expert-what-exactly-is-the-full-stack",
+    "title": "Ask an AI expert: What exactly is the full stack?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 799,
+    "slug": "mapping-europes-ai-workforce-opportunity",
+    "title": "Mapping Europe\u2019s AI Workforce Opportunity",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 800,
+    "slug": "inaugural-music-technology-research-showcase-celebrates-work-of-new-graduate-programs-initial-students",
+    "title": "Inaugural Music Technology Research Showcase celebrates work of new graduate program\u2019s initial students",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 801,
+    "slug": "3-questions-beyond-data-driven-aesthetics",
+    "title": "3 Questions: Beyond data-driven aesthetics",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 802,
+    "slug": "when-web-agents-finish-but-still-fail-reproducible-triggers-and-trace-diagnostics-for-parallel-web-exploration",
+    "title": "When Web Agents Finish but Still Fail: Reproducible Triggers and Trace Diagnostics for Parallel Web Exploration",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 803,
+    "slug": "field-order-should-not-matter-permutation-invariant-embedding-model-fine-tuning-for-structured-metadata-retrieval",
+    "title": "Field Order Should Not Matter: Permutation-Invariant Embedding Model Fine-Tuning for Structured Metadata Retrieval",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 804,
+    "slug": "learning-how-to-use-tools-not-just-when-pattern-aware-tool-integrated-reasoning",
+    "title": "Learning How to Use Tools, Not Just When: Pattern-Aware Tool-Integrated Reasoning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 805,
+    "slug": "ai-agents-are-not-your-coworkers",
+    "title": "AI agents are not your \u201ccoworkers\u201d",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 806,
+    "slug": "unlocking-britains-next-era-of-productivity-building-a-nation-of-ai-trailblazers",
+    "title": "Unlocking Britain\u2019s next era of productivity: Building a nation of AI trailblazers",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 807,
+    "slug": "framework-for-ai-transformation-in-2026",
+    "title": "Framework for AI Transformation in 2026.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 808,
+    "slug": "carry-into-the-age-of-ai",
+    "title": "Carry Into the Age of AI.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 809,
+    "slug": "the-most-precise-metaphor-we-have-for-what-ai-transformation-actually-demands-and-why-the-discomfort-youre-feeling-is-biological-not-a-failure",
+    "title": "The Most Precise Metaphor We Have for What AI Transformation Actually Demands \u2014 and Why the Discomfort You\u2019re Feeling Is Biological, Not a Failure.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 810,
+    "slug": "career-advice-for-the-ai-transformation",
+    "title": "Career Advice for the AI Transformation.",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 811,
+    "slug": "charlie-mungers-can-carry-into-the-age-of-ai",
+    "title": "Charlie Munger\u2019s Can Carry Into the Age of AI",
+    "categories": [
+      11
+    ]
+  },
+  {
+    "id": 812,
+    "slug": "qa-what-is-agentic-ai-today-and-what-do-we-want-it-to-be",
+    "title": "Q&amp;A: What is agentic AI today, and what do we want it to be?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 813,
+    "slug": "emily-bender-sets-the-record-straight-on-stochastic-parrots",
+    "title": "Emily Bender Sets the Record Straight on \u201cStochastic Parrots\u201d",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 814,
+    "slug": "poetry-for-engineers-nine-lives-of-nikola-tesla",
+    "title": "Poetry for Engineers: Nine Lives of Nikola Tesla",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 815,
+    "slug": "replicatorbench-benchmarking-llm-agents-for-replicability-in-social-and-behavioral-sciences",
+    "title": "ReplicatorBench: Benchmarking LLM Agents for Replicability in Social and Behavioral Sciences",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 816,
+    "slug": "a-technical-typology-of-ai-systems-in-public-administration",
+    "title": "A Technical Typology of AI Systems in Public Administration",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 817,
+    "slug": "amplifying-membership-signal-through-chained-regeneration",
+    "title": "Amplifying Membership Signal Through Chained Regeneration",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 818,
+    "slug": "claude-science-is-anthropics-newest-flagship-product",
+    "title": "Claude Science is Anthropic\u2019s newest flagship product",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 819,
+    "slug": "roundtables-longevitys-next-frontier-reprogramming-your-body",
+    "title": "Roundtables: Longevity\u2019s Next Frontier: \u201cReprogramming\u201d Your Body",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 820,
+    "slug": "the-download-ai-coworkers-and-stratospheric-internet",
+    "title": "The Download: AI \u201ccoworkers\u201d and stratospheric internet",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 821,
+    "slug": "how-chatgpt-adoption-has-expanded",
+    "title": "How ChatGPT adoption has expanded",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 822,
+    "slug": "inside-genebench-pro",
+    "title": "Inside Genebench-Pro",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 823,
+    "slug": "core-dump-epidemiology-fixing-an-18-year-old-bug",
+    "title": "Core dump epidemiology: fixing an 18-year-old bug",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 825,
+    "slug": "mit-in-the-media-innovating-and-educating-for-the-next-250-years-of-america",
+    "title": "MIT in the media: Innovating and educating for the next 250 years of America",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 826,
+    "slug": "2026-bair-graduate-showcase",
+    "title": "2026 BAIR Graduate Showcase",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 827,
+    "slug": "as-ai-reshapes-global-energy-systems-melbourne-leads-through-engineering-collaboration",
+    "title": "As AI Reshapes Global Energy Systems, Melbourne Leads Through Engineering Collaboration",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 828,
+    "slug": "the-orbital-data-center-hype-machine-is-already-in-orbit",
+    "title": "The Orbital Data Center Hype Machine Is Already in Orbit",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 829,
+    "slug": "flow-through-tensors-a-unified-computational-graph-architecture-for-multi-layer-transportation-network-optimization",
+    "title": "Flow-Through Tensors: A Unified Computational Graph Architecture for Multi-Layer Transportation Network Optimization",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 830,
+    "slug": "when-less-is-more-8-bit-quantization-improves-continual-learning-in-large-language-models",
+    "title": "When Less is More: 8-bit Quantization Improves Continual Learning in Large Language Models",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 831,
+    "slug": "evaluating-implicit-biases-in-llm-reasoning-through-logic-grid-puzzles",
+    "title": "Evaluating Implicit Biases in LLM Reasoning through Logic Grid Puzzles",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 832,
+    "slug": "llms-are-stuck-in-a-groupthink-groove-this-startup-is-trying-to-get-them-out",
+    "title": "LLMs are stuck in a groupthink groove. This startup is trying to get them out.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 833,
+    "slug": "the-download-anthropic-launches-claude-science-and-californias-carbon-manure-math",
+    "title": "The Download: Anthropic launches Claude Science, and California\u2019s carbon manure math",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 834,
+    "slug": "the-latest-ai-news-we-announced-in-june-2026",
+    "title": "The latest AI news we announced in June 2026",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 835,
+    "slug": "new-york-city-educators-and-industry-leaders-gathered-at-googles-offices-to-shape-the-future-of-ai-in-classrooms",
+    "title": "New York City educators and industry leaders gathered at Google\u2019s offices to shape the future of AI in classrooms.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 836,
+    "slug": "introducing-genebench-pro",
+    "title": "Introducing GeneBench-Pro",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 837,
+    "slug": "beyond-adam-soap-and-muon-for-faster-label-efficient-training-of-machine-learning-interatomic-potentials",
+    "title": "Beyond Adam: SOAP and Muon for Faster, Label-Efficient Training of Machine Learning Interatomic Potentials",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 838,
+    "slug": "bridge-predicting-human-task-completion-time-from-model-performance",
+    "title": "BRIDGE: Predicting Human Task Completion Time From Model Performance",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 839,
+    "slug": "predicting-early-stages-of-alzheimers-disease-and-identifying-key-biomarkers-using-deep-artificial-neural-network-and-ensemble-of-machine-learning-methodologies",
+    "title": "Predicting Early Stages Of Alzheimer&#039;s Disease And Identifying Key Biomarkers Using Deep Artificial Neural Network And Ensemble Of Machine Learning Methodologies",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 840,
+    "slug": "achieving-operational-excellence-with-ai",
+    "title": "Achieving operational excellence with AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 841,
+    "slug": "teaching-ai-to-run-with-the-turbines",
+    "title": "Teaching AI to run with the turbines",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 842,
+    "slug": "the-download-a-startup-has-a-solution-for-ais-groupthink-problem",
+    "title": "The Download: a startup has a solution for AI\u2019s groupthink problem",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 843,
+    "slug": "ais-volatile-power-use-quietly-tests-grid-limits",
+    "title": "AI\u2019s Volatile Power Use Quietly Tests Grid Limits",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 844,
+    "slug": "a-device-that-revives-eyeballs-from-dead-donors-could-make-eye-transplants-possible",
+    "title": "\u00a0A device that revives eyeballs from dead donors could make eye transplants possible",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 845,
+    "slug": "the-download-a-smoking-endgame-and-a-new-elizabeth-bear-story",
+    "title": "The Download: a smoking \u201cendgame\u201d and a new Elizabeth Bear story",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 846,
+    "slug": "the-uks-generational-tobacco-ban-might-not-work-im-supporting-it-anyway",
+    "title": "The UK\u2019s generational tobacco ban might not work. I\u2019m supporting it anyway.",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 868,
+    "slug": "small-ai-models-gain-traction-around-the-world",
+    "title": "Small-AI Models Gain Traction Around the World",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 869,
+    "slug": "your-familys-300-stake-in-openai",
+    "title": "Your family\u2019s $300 stake in OpenAI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 870,
+    "slug": "the-download-south-koreas-hottest-bachelors-and-advancing-eye-transplants",
+    "title": "The Download: South Korea\u2019s hottest bachelors, and advancing eye transplants",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 871,
+    "slug": "south-koreas-hottest-new-bachelors-are-chip-workers",
+    "title": "South Korea\u2019s hottest new bachelors are chip workers",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 872,
+    "slug": "how-novice-coders-can-develop-ai-programs-for-military-applications",
+    "title": "How novice coders can develop AI programs for military applications",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 873,
+    "slug": "jesse-thaler-named-director-of-the-laboratory-for-nuclear-science",
+    "title": "Jesse Thaler named director of the Laboratory for Nuclear Science",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 874,
+    "slug": "toward-a-future-that-preserves-benefits-of-neurotechnology-for-all",
+    "title": "Toward a future that preserves benefits of neurotechnology for all",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 875,
+    "slug": "intelligence-is-free-now-what-br-data-systems-for-of-and-by-agents",
+    "title": "Intelligence is Free, Now What? &lt;br&gt; Data Systems for, of, and by Agents",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 876,
+    "slug": "what-makes-ai-art-worth-collecting",
+    "title": "What Makes AI Art Worth Collecting?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 877,
+    "slug": "search-beyond-what-can-be-taught-evolving-the-knowledge-boundary-in-agentic-visual-generation",
+    "title": "Search Beyond What Can Be Taught: Evolving the Knowledge Boundary in Agentic Visual Generation",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 878,
+    "slug": "mecha-nudges-for-machines",
+    "title": "Mecha-nudges for Machines",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 879,
+    "slug": "learning-cardiac-motion-priors-for-implicit-neural-representations",
+    "title": "Learning Cardiac Motion Priors for Implicit Neural Representations",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 880,
+    "slug": "the-download-your-stake-in-openai-and-the-treasurys-ai-warning",
+    "title": "The Download: your stake in OpenAI, and the Treasury\u2019s AI warning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 881,
+    "slug": "the-foundational-elements-of-ai-architecture-that-it-leaders-need-to-scale",
+    "title": "The foundational elements of AI architecture that IT leaders need to scale",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 882,
+    "slug": "why-worms-and-microbes-are-catching-on-as-a-manure-pollution-solution",
+    "title": "Why worms (and microbes) are catching on as a manure pollution solution",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 883,
+    "slug": "expanding-managed-agents-in-gemini-api-background-tasks-remote-mcp-and-more",
+    "title": "Expanding Managed Agents in Gemini API: background tasks, remote MCP and more",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 884,
+    "slug": "perceptually-aligning-representations-of-music-via-noise-augmented-autoencoders",
+    "title": "Perceptually Aligning Representations of Music via Noise-Augmented Autoencoders",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 885,
+    "slug": "decepgpt-schema-driven-deception-detection-with-multicultural-datasets-and-robust-multimodal-learning",
+    "title": "DecepGPT: Schema-Driven Deception Detection with Multicultural Datasets and Robust Multimodal Learning",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 886,
+    "slug": "agentic-ai-for-commercial-insurance-underwriting-with-adversarial-self-critique",
+    "title": "Agentic AI for Commercial Insurance Underwriting with Adversarial Self-Critique",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 887,
+    "slug": "mufg-aims-to-become-ai-native-with-openai",
+    "title": "MUFG aims to become AI-native with OpenAI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 888,
+    "slug": "australian-payments-plus-moves-faster-with-chatgpt-and-codex",
+    "title": "Australian Payments Plus moves faster with ChatGPT and Codex",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 889,
+    "slug": "ai-models-overthink-problems-and-its-a-security-risk",
+    "title": "AI Models Overthink Problems\u2014and It\u2019s a Security Risk",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 890,
+    "slug": "emtech-ai-2026-the-rise-of-the-ai-platform",
+    "title": "EmTech AI 2026: The Rise of the AI Platform",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 891,
+    "slug": "the-download-worms-fight-pollution-and-geoengineering-faces-reality",
+    "title": "The Download: worms fight pollution, and geoengineering faces reality",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 892,
+    "slug": "helping-k-12-educators-build-practical-ai-skills",
+    "title": "Helping K\u201312 educators build practical AI skills",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 893,
+    "slug": "introducing-gpt-live",
+    "title": "Introducing GPT-Live",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 894,
+    "slug": "tiny-robot-boats-build-floating-structures",
+    "title": "Tiny robot boats build floating structures",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 895,
+    "slug": "large-tabular-models-excel-where-llms-fail",
+    "title": "Large Tabular Models Excel Where LLMs Fail",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 896,
+    "slug": "robodojo-a-unified-sim-and-real-benchmark-for-comprehensive-evaluation-of-generalist-robot-manipulation-policies",
+    "title": "RoboDojo: A Unified Sim-and-Real Benchmark for Comprehensive Evaluation of Generalist Robot Manipulation Policies",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 897,
+    "slug": "behavior-foundations-for-quadruped-robots-abot-c0-technical-report",
+    "title": "Behavior Foundations for Quadruped Robots: ABot-C0 Technical Report",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 898,
+    "slug": "dash-dynamic-audio-driven-semantic-chunking-for-efficient-omnimodal-token-compression",
+    "title": "DASH: Dynamic Audio-Driven Semantic Chunking for Efficient Omnimodal Token Compression",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 899,
+    "slug": "the-download-a-nuclear-landmark-and-china-eyes-nvidia-chips",
+    "title": "The Download: a nuclear landmark, and China eyes Nvidia chips",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 900,
+    "slug": "four-nuclear-reactors-hit-a-big-milestone-in-the-us",
+    "title": "Four nuclear reactors hit a big milestone in the US",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 901,
+    "slug": "gpt-5-6-frontier-intelligence-that-scales-with-your-ambition",
+    "title": "GPT-5.6: Frontier intelligence that scales with your ambition",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 902,
+    "slug": "gpt-5-5-bio-bug-bounty",
+    "title": "GPT-5.5 Bio Bug Bounty",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 903,
+    "slug": "chatgpt-is-now-a-partner-for-your-most-ambitious-work",
+    "title": "ChatGPT is now a partner for your most ambitious work",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 904,
+    "slug": "criteralign-criterion-centric-rationale-alignment-for-code-preference-judging",
+    "title": "CriterAlign: Criterion-Centric Rationale Alignment for Code Preference Judging",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 905,
+    "slug": "how-to-leverage-synthetic-speech-for-llm-based-asr-systems",
+    "title": "How to Leverage Synthetic Speech for LLM-Based ASR Systems?",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 906,
+    "slug": "oren-octree-residual-network-for-real-time-euclidean-signed-distance-mapping",
+    "title": "OREN: Octree Residual Network for Real-Time Euclidean Signed Distance Mapping",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 907,
+    "slug": "anthropic-found-a-hidden-space-where-claude-puzzles-over-concepts",
+    "title": "Anthropic found a hidden space where Claude puzzles over concepts",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 908,
+    "slug": "gpt-5-6-is-now-the-preferred-model-in-microsoft-365-copilot",
+    "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 911,
+    "slug": "the-download-claudes-inner-workings-and-openais-super-app",
+    "title": "The Download: Claude's inner workings and OpenAI's \"super app\"",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 912,
+    "slug": "sperm-donors-need-limits-says-a-european-fertility-group",
+    "title": "Sperm donors need limits, says a European fertility group",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 913,
+    "slug": "how-deutsche-telekom-is-rewiring-telecommunications-with-ai",
+    "title": "How Deutsche Telekom is rewiring telecommunications with AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 914,
+    "slug": "new-method-aims-to-keep-kids-safe-from-illegal-ai-generated-content",
+    "title": "New method aims to keep kids safe from illegal AI-generated content",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 915,
+    "slug": "semantic-pareto-dqn-a-multi-objective-reinforcement-learning-framework-for-financial-anomaly-detection",
+    "title": "Semantic Pareto-DQN: A Multi-Objective Reinforcement Learning Framework for Financial Anomaly Detection",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 916,
+    "slug": "qagent-an-llm-based-multi-agent-system-for-autonomous-openqasm-programming",
+    "title": "QAgent: An LLM-based Multi-Agent System for Autonomous OpenQASM programming",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 917,
+    "slug": "test-time-scaling-for-small-vlms-on-multilingual-visual-mcq",
+    "title": "Test-Time Scaling for Small VLMs on Multilingual Visual MCQ",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 919,
+    "slug": "how-mit-students-are-helping-to-prevent-cyberattacks",
+    "title": "How MIT students are helping to prevent cyberattacks",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 920,
+    "slug": "ai-agents-create-virtual-playgrounds-to-help-robots-get-crucial-training-data",
+    "title": "AI agents create virtual playgrounds to help robots get crucial training data",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 921,
+    "slug": "the-ai-arms-race-in-technical-interviews-is-escalating",
+    "title": "The AI Arms Race in Technical Interviews Is Escalating",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 922,
+    "slug": "building-a-foundation-stack-for-general-purpose-robots",
+    "title": "Building a Foundation Stack for General-Purpose Robots",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 923,
+    "slug": "graph-construction-and-matching-for-imperative-programs-using-neural-and-structural-methods",
+    "title": "Graph Construction and Matching for Imperative Programs using Neural and Structural Methods",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 924,
+    "slug": "liebn-batch-normalization-over-lie-groups",
+    "title": "LieBN: Batch Normalization over Lie Groups",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 925,
+    "slug": "disentangling-feature-structure-a-mathematically-provable-two-stage-training-dynamics-in-transformers",
+    "title": "Disentangling Feature Structure: A Mathematically Provable Two-Stage Training Dynamics in Transformers",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 926,
+    "slug": "what-anthropics-latest-ai-discovery-does-and-doesnt-show",
+    "title": "What Anthropic's latest AI discovery does-and doesn't-show",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 927,
+    "slug": "the-download-a-donor-conception-cap-and-world-models-for-ai",
+    "title": "The Download: a donor conception cap and world models for AI",
+    "categories": [
+      10
+    ]
+  },
+  {
+    "id": 928,
+    "slug": "getting-started-with-chatgpt",
+    "title": "Getting started with ChatGPT",
+    "categories": [
+      10
+    ]
+  }
+]

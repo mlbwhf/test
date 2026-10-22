@@ -1,0 +1,129 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.rai-wrap{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:1080px;margin:0 auto;padding:0 20px;line-height:1.55;}
+.rai-wrap *{box-sizing:border-box;}
+.rai-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#2545f5;font-weight:500;margin:0 0 6px;}
+.rai-crumb{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.05em;color:#9a9aa2;text-transform:uppercase;margin:0 0 20px;}
+.rai-crumb a{color:#9a9aa2;text-decoration:none;}
+.rai-crumb a:hover{color:#2545f5;}
+.rai-h1{font-weight:900;font-size:clamp(34px,6vw,58px);line-height:1.0;letter-spacing:-0.03em;margin:6px 0 18px;}
+.rai-intro{font-size:19px;line-height:1.55;color:#3a3a42;max-width:820px;margin:0 0 10px;}
+.rai-updated{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9a9aa2;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 26px;}
+.rai-updated strong{color:#111114;font-weight:600;}
+.rai-wrap a{color:#2545f5;}
+.rai-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#e6e6ea;border:1px solid #e6e6ea;margin:30px 0;}
+.rai-stat{background:#fff;padding:22px 18px;}
+.rai-stat .n{font-weight:900;font-size:clamp(24px,3.4vw,38px);line-height:1;letter-spacing:-0.02em;}
+.rai-stat .n span{color:#2545f5;}
+.rai-stat .l{font-size:12.5px;line-height:1.35;color:#55555e;margin-top:9px;}
+.rai-stat .s{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#9a9aa2;margin-top:6px;}
+.rai-wrap h2{font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;margin:52px 0 8px;padding-top:18px;border-top:2px solid #111114;}
+.rai-wrap h3{font-weight:800;font-size:19px;margin:28px 0 6px;letter-spacing:-0.01em;}
+.rai-wrap h3 .np{font-family:'IBM Plex Mono',monospace;color:#2545f5;margin-right:8px;}
+.rai-wrap p{font-size:16px;line-height:1.65;}
+.rai-wrap ul li{font-size:16px;line-height:1.6;margin-bottom:6px;}
+.rai-tbl{overflow-x:auto;margin:22px 0 36px;}
+.rai-tbl table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:680px;}
+.rai-tbl thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:#111114;font-weight:600;padding:11px 12px;border-bottom:2px solid #111114;background:#fafafb;}
+.rai-tbl tbody td{padding:11px 12px;border-bottom:1px solid #ececef;vertical-align:top;}
+.rai-note{background:#f5f5f7;border-left:4px solid #2545f5;border-radius:3px;padding:18px 22px;margin:22px 0;font-size:15px;line-height:1.6;}
+.rai-related{border-left:3px solid #2545f5;background:#f6f6f9;margin-top:44px;padding:22px 24px;border-radius:3px;}
+.rai-related h3{margin-top:0;}
+.rai-src{font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.75;color:#3a3a42;}
+.rai-src a{word-break:break-word;}
+@media(max-width:820px){.rai-stats{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.rai-stats{grid-template-columns:1fr;}}
+</style>
+
+<div class="rai-wrap">
+  <p class="rai-eyebrow">Regulating AI · Playbook</p>
+  <p class="rai-crumb"><a href="/">Home</a> / <a href="/indexes/">Indexes</a> / <a href="/indexes/regulating-ai/">Regulating AI</a> / Controlling AI Research</p>
+  <h1 class="rai-h1">Controlling AI Research: A Best-Practices Playbook</h1>
+  <p class="rai-intro">If a law can't reliably switch a model off, the real controls have to live upstream &mdash; in how frontier AI is researched, tested, and released. Seven mechanisms now do most of that work. This is the sourced playbook: what each one is, who actually does it, and where it's strong or leaky &mdash; plus an honest look at the tensions no framework has solved.</p>
+  <p class="rai-updated"><strong>Last updated: July 2026.</strong> Every mechanism links to a primary framework or authoritative source.</p>
+
+  <div class="rai-stats">
+    <div class="rai-stat"><div class="n">16</div><div class="l">Companies signed the Seoul Frontier AI Safety Commitments</div><div class="s">May 2024</div></div>
+    <div class="rai-stat"><div class="n">ASL-3</div><div class="l">Anthropic's safety tier, first activated with Claude Opus 4</div><div class="s">May 2025</div></div>
+    <div class="rai-stat"><div class="n">SL1&ndash;5</div><div class="l">RAND weight-security levels, amateur to nation-state</div><div class="s">RAND, 2024</div></div>
+    <div class="rai-stat"><div class="n">10</div><div class="l">Founding members of the AI Safety Institute network</div><div class="s">Nov 2024</div></div>
+  </div>
+
+  <h2>The playbook at a glance</h2>
+  <p>These seven mechanisms are what "controlling AI research" actually means in practice today. Most are voluntary and lab-authored; the leftmost column below is our read on how binding each one really is.</p>
+  <div class="rai-tbl">
+    <table>
+      <thead><tr><th>#</th><th>Mechanism</th><th>What it controls</th><th>How binding today</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Responsible scaling / frontier safety frameworks</td><td>Ties safeguards to capability thresholds</td><td>Voluntary, self-authored</td></tr>
+        <tr><td>2</td><td>Dangerous-capability evals &amp; red-teaming</td><td>Detects CBRN, cyber, autonomy risk pre-launch</td><td>Voluntary, contractual access</td></tr>
+        <tr><td>3</td><td>Compute governance</td><td>Reporting thresholds + chip export controls</td><td>Partly binding (EU); US rolled back</td></tr>
+        <tr><td>4</td><td>Model-weight security</td><td>Stops theft/exfiltration of the model</td><td>Voluntary; RAND SL framework</td></tr>
+        <tr><td>5</td><td>Incident reporting &amp; transparency</td><td>Discloses capabilities, safeguards, failures</td><td>Binding for EU systemic-risk models</td></tr>
+        <tr><td>6</td><td>Independent oversight &amp; whistleblowers</td><td>Checks the labs from outside</td><td>Weakest leg; CA SB 53 a start</td></tr>
+        <tr><td>7</td><td>International coordination</td><td>Shared testing, evidence, and norms</td><td>Diplomatic, non-binding</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="np">01</span> Tie safeguards to capability thresholds</h2>
+  <p>The foundational practice: define capability levels, and commit to specific safeguards &mdash; and to <em>not</em> deploying &mdash; until each level's protections are in place. Every major lab now publishes one. <strong>Anthropic's Responsible Scaling Policy</strong> uses AI Safety Levels (ASL) modeled on biosafety; in May 2025 it activated <strong>ASL-3</strong> protections alongside Claude Opus 4 &mdash; notably as a precaution, before it had confirmed the model crossed the CBRN threshold. <strong>OpenAI's Preparedness Framework v2</strong> (April 2025) gates on "High" and "Critical" capability in biology/chemistry, cyber, and AI self-improvement. <strong>Google DeepMind's Frontier Safety Framework</strong> uses "Critical Capability Levels." The shared template comes from the <strong>Seoul Frontier AI Safety Commitments</strong>, which 16 companies signed in May 2024.</p>
+  <p><strong>Best practice:</strong> publish the thresholds in advance, specify who decides one has been crossed, and default to caution when uncertain.</p>
+
+  <h2><span class="np">02</span> Test for dangerous capabilities before release</h2>
+  <p>Frameworks are only as good as the evaluations that trigger them. Best practice is structured, adversarial testing for uplift in <strong>CBRN/bio, offensive cyber, and autonomy/self-replication</strong> &mdash; done internally <em>and</em> by independent third parties, pre-deployment. <strong>METR</strong> measures how long a horizon of tasks a model can complete autonomously (a loss-of-control proxy); <strong>Apollo Research</strong> probes for deceptive "scheming"; the <strong>UK AI Security Institute</strong> and US counterpart run pre-deployment testing of frontier models.</p>
+  <div class="rai-note"><strong>The catch:</strong> third-party access is voluntary and contractual. Evaluators routinely report limited time, API-only access (not weights), and no legal guarantee they can test at all. A best-practice regime gives external testers guaranteed, weights-level, pre-deployment access.</div>
+
+  <h2><span class="np">03</span> Govern compute</h2>
+  <p>Compute is the one input that's measurable and chokeable, which makes it the favorite lever of hard regulation. The <strong>EU AI Act</strong> presumes "systemic risk" above <strong>10<sup>25</sup> FLOP</strong> and requires notifying the AI Office within two weeks. The former US <strong>Executive Order 14110</strong> set a <strong>10<sup>26</sup> FLOP</strong> federal reporting line &mdash; but it was <strong>rescinded in January 2025</strong>, so that mandate no longer binds. On the hardware side, chip <strong>export controls</strong> and "know-your-customer" certification for large compute buyers are the enforcement teeth &mdash; though 2025 saw significant US rollback, showing how quickly the geopolitics can override the safety rationale.</p>
+
+  <h2><span class="np">04</span> Secure the model weights</h2>
+  <p>Every other control assumes the developer still holds the weights. If they're stolen, the full capability leaks with none of the guardrails. <strong>RAND's five security levels (SL1&ndash;SL5)</strong> &mdash; from defending against amateurs to withstanding top-tier nation-state operations &mdash; are the reference framework, and labs now map their hardened "security standards" toward it. Best practice pairs weight security with a deliberate release decision: <strong>structured (API-only) access</strong> keeps monitoring, usage policies, and revocation on the table; <strong>open-weight release</strong> is legitimate and pro-competition but forecloses all of them, because safety fine-tuning can be cheaply stripped once weights are public.</p>
+
+  <h2><span class="np">05</span> Report incidents and publish safety cases</h2>
+  <p>Transparency is where voluntary practice is becoming hard law. Labs publish <strong>system cards</strong> (per-model capability and safeguard documentation) and increasingly <strong>safety cases</strong> (structured arguments that a model won't cause a specific catastrophe). The <strong>EU AI Act GPAI Code of Practice</strong> (final July 2025) makes serious-incident reporting mandatory for systemic-risk models &mdash; with deadlines as tight as <strong>two days</strong> for incidents hitting critical infrastructure &mdash; and full fines from August 2026. California's SB 53 adds a US state-level critical-incident channel.</p>
+
+  <h2><span class="np">06</span> Build real outside oversight</h2>
+  <p>This is the weakest leg &mdash; and the most important, precisely because it's the one labs don't control. Today's governance is largely voluntary and self-authored: the labs write their own thresholds and decide when they're crossed. Strengthening independent oversight means three things: <strong>whistleblower protection</strong> (California's SB 53 now shields employees raising catastrophic-risk concerns), a <strong>safe harbor for good-faith safety researchers</strong> (proposed by Longpre et al. and 350+ signatories, after labs suspended researchers' accounts), and <strong>accredited third-party audits</strong> &mdash; which barely exist yet compared to financial auditing.</p>
+
+  <h2><span class="np">07</span> Coordinate internationally</h2>
+  <p>No single country can govern a global technology. The scaffolding: the summit series (Bletchley 2023 &rarr; Seoul 2024 &rarr; Paris 2025 &rarr; India 2026), the <strong>International Network of AI Safety Institutes</strong> (launched November 2024 with 10 founding members), and the Bengio-chaired <strong>International AI Safety Report</strong> (first published January 2025, ~96 experts) that gives everyone a shared evidence base. Best practice is joint pre-deployment testing and shared incident data &mdash; but coordination is fraying: the US and UK declined to sign the Paris statement, and China sits outside the institute network entirely.</p>
+
+  <h2>The tensions no playbook resolves</h2>
+  <ul>
+    <li><strong>Innovation vs. precaution.</strong> The summits literally renamed themselves from "Safety" to "Action"; California's sweeping SB 1047 was vetoed and replaced by the narrower SB 53. These controls are real but politically reversible.</li>
+    <li><strong>Open weights vs. control.</strong> Mechanisms 1&ndash;6 all assume the developer keeps the weights. Open release is genuinely good for competition and scrutiny &mdash; and forecloses those levers. There is no clean answer.</li>
+    <li><strong>US&ndash;China competition.</strong> Compute governance is simultaneously a safety tool and an industrial weapon; when they conflict, safety tends to lose.</li>
+    <li><strong>Who writes the rules.</strong> Most frontier governance is voluntary and lab-authored. That's why the independent-oversight leg (practice 6) is the least developed &mdash; it's the one the labs don't get to write.</li>
+  </ul>
+
+  <h2>Frequently asked questions</h2>
+  <p><strong>How is frontier AI research actually controlled today?</strong><br>Mostly through voluntary, lab-authored frameworks: responsible scaling policies, dangerous-capability evaluations, weight security, and transparency reporting &mdash; supplemented by binding EU compute and incident rules and a thin layer of international coordination.</p>
+  <p><strong>What's the single biggest gap in AI governance?</strong><br>Independent oversight. Today the labs largely set their own safety thresholds and judge when they're crossed. Accredited third-party audits barely exist, and researcher safe harbors remain proposals, not law.</p>
+  <p><strong>Do safety rules stop open-source AI?</strong><br>Largely no. Once model weights are released publicly, most control mechanisms &mdash; revocation, monitoring, shutdown &mdash; no longer apply, because the model can be copied and its safety fine-tuning removed. That is the central unresolved tension in AI governance.</p>
+
+  <div class="rai-related">
+    <h3>Related</h3>
+    <p><a href="/indexes/regulating-ai/">Regulating AI &mdash; the pillar</a> · <a href="/indexes/regulating-ai/ai-regulation-by-country-2026/">AI Regulation by Country</a> · <a href="/indexes/regulating-ai/ai-laws-compared-2026/">AI Laws Compared</a> · <a href="/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/">The AI Kill-Switch Bill</a></p>
+  </div>
+
+  <h2>Sources</h2>
+  <div class="rai-src">
+    &bull; Anthropic, Responsible Scaling Policy &mdash; <a href="https://www.anthropic.com/responsible-scaling-policy">anthropic.com</a><br>
+    &bull; Anthropic, Activating ASL-3 Protections (May 2025) &mdash; <a href="https://www.anthropic.com/news/activating-asl3-protections">anthropic.com</a><br>
+    &bull; OpenAI, Preparedness Framework v2 &mdash; <a href="https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf">openai.com</a><br>
+    &bull; Google DeepMind, Frontier Safety Framework &mdash; <a href="https://deepmind.google/blog/strengthening-our-frontier-safety-framework/">deepmind.google</a><br>
+    &bull; AI Seoul Summit, Frontier AI Safety Commitments &mdash; <a href="https://www.gov.uk/government/publications/frontier-ai-safety-commitments-ai-seoul-summit-2024">gov.uk</a><br>
+    &bull; METR (autonomy evaluations) &mdash; <a href="https://metr.org/">metr.org</a><br>
+    &bull; EU AI Act, GPAI systemic-risk threshold (Art. 51) &mdash; <a href="https://artificialintelligenceact.eu/article/51/">artificialintelligenceact.eu</a><br>
+    &bull; Federal Register, rescission of EO 14110 (Jan 2025) &mdash; <a href="https://www.federalregister.gov/documents/2025/01/28/2025-01901/initial-rescissions-of-harmful-executive-orders-and-actions">federalregister.gov</a><br>
+    &bull; RAND, Securing AI Model Weights (SL1&ndash;SL5) &mdash; <a href="https://www.rand.org/pubs/research_reports/RRA2849-1.html">rand.org</a><br>
+    &bull; EU AI Act GPAI Code of Practice (incident reporting) &mdash; <a href="https://artificialintelligenceact.eu/code-of-practice-overview/">artificialintelligenceact.eu</a><br>
+    &bull; Longpre et al., "A Safe Harbor for AI Evaluation and Red Teaming" &mdash; <a href="https://arxiv.org/abs/2403.04893">arxiv.org/abs/2403.04893</a><br>
+    &bull; NIST, International Network of AI Safety Institutes &mdash; <a href="https://www.nist.gov/aisi">nist.gov/aisi</a><br>
+    &bull; International AI Safety Report (Bengio, 2025) &mdash; <a href="https://internationalaisafetyreport.org/publication/international-ai-safety-report-2025">internationalaisafetyreport.org</a>
+  </div>
+</div>
+<!-- /wp:html -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is frontier AI research actually controlled today?","acceptedAnswer":{"@type":"Answer","text":"Mostly through voluntary, lab-authored frameworks: responsible scaling policies, dangerous-capability evaluations, weight security, and transparency reporting, supplemented by binding EU compute and incident rules and a thin layer of international coordination."}},{"@type":"Question","name":"What is the single biggest gap in AI governance?","acceptedAnswer":{"@type":"Answer","text":"Independent oversight. Today the labs largely set their own safety thresholds and judge when they are crossed. Accredited third-party audits barely exist, and researcher safe harbors remain proposals, not law."}},{"@type":"Question","name":"Do safety rules stop open-source AI?","acceptedAnswer":{"@type":"Answer","text":"Largely no. Once model weights are released publicly, most control mechanisms such as revocation, monitoring and shutdown no longer apply, because the model can be copied and its safety fine-tuning removed. That is the central unresolved tension in AI governance."}}]}</script>

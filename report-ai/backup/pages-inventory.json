@@ -1,0 +1,866 @@
+[
+  {
+    "id": 3,
+    "slug": "privacy-policy",
+    "title": "Privacy Policy",
+    "status": "private",
+    "parent": 0,
+    "link": "https://report-ai.org/privacy-policy/"
+  },
+  {
+    "id": 6,
+    "slug": "home",
+    "title": "Home",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/"
+  },
+  {
+    "id": 7,
+    "slug": "about",
+    "title": "About The AI Index",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/about/"
+  },
+  {
+    "id": 39,
+    "slug": "indexes",
+    "title": "Indexes",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/indexes/"
+  },
+  {
+    "id": 40,
+    "slug": "reports",
+    "title": "Reports",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/reports/"
+  },
+  {
+    "id": 41,
+    "slug": "glossary",
+    "title": "Glossary",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/glossary/"
+  },
+  {
+    "id": 43,
+    "slug": "ai-adoption-statistics-2026",
+    "title": "AI Adoption Statistics 2026: Organizations, Workforce &#038; Consumers",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/ai-adoption-statistics-2026/"
+  },
+  {
+    "id": 46,
+    "slug": "enterprise-ai-statistics-2026",
+    "title": "Enterprise AI Statistics 2026: ROI, AI Agents &#038; Spending",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/enterprise-ai-statistics-2026/"
+  },
+  {
+    "id": 47,
+    "slug": "generative-ai-statistics-2026",
+    "title": "Generative AI Statistics 2026: Users, Revenue &#038; Adoption",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/generative-ai-statistics-2026/"
+  },
+  {
+    "id": 62,
+    "slug": "large-language-model",
+    "title": "Large Language Model (LLM)",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/large-language-model/"
+  },
+  {
+    "id": 63,
+    "slug": "generative-ai",
+    "title": "Generative AI",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/generative-ai/"
+  },
+  {
+    "id": 64,
+    "slug": "agentic-ai",
+    "title": "Agentic AI",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/agentic-ai/"
+  },
+  {
+    "id": 65,
+    "slug": "ai-inference",
+    "title": "AI Inference",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/ai-inference/"
+  },
+  {
+    "id": 66,
+    "slug": "retrieval-augmented-generation",
+    "title": "Retrieval-Augmented Generation (RAG)",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/retrieval-augmented-generation/"
+  },
+  {
+    "id": 67,
+    "slug": "foundation-model",
+    "title": "Foundation Model",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/foundation-model/"
+  },
+  {
+    "id": 73,
+    "slug": "ai-investment-funding-statistics-2026",
+    "title": "AI Investment &#038; Funding 2026: VC, Valuations &#038; Hyperscaler Capex",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/ai-investment-funding-statistics-2026/"
+  },
+  {
+    "id": 75,
+    "slug": "privacy",
+    "title": "Privacy Policy",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/privacy/"
+  },
+  {
+    "id": 88,
+    "slug": "ai-jobs-statistics-2026",
+    "title": "AI Jobs Report 2026: Creation, Displacement &#038; Skills Premium",
+    "status": "publish",
+    "parent": 395,
+    "link": "https://report-ai.org/indexes/workforce-labor/ai-jobs-statistics-2026/"
+  },
+  {
+    "id": 89,
+    "slug": "ai-models-benchmarks-statistics-2026",
+    "title": "AI Model Benchmarks 2026: SWE-bench, MMLU &#038; Frontier Models",
+    "status": "publish",
+    "parent": 394,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"
+  },
+  {
+    "id": 92,
+    "slug": "ai-safety-governance-statistics-2026",
+    "title": "AI Safety &#038; Governance 2026: Incidents, EU AI Act &#038; Regulation",
+    "status": "publish",
+    "parent": 394,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/ai-safety-governance-statistics-2026/"
+  },
+  {
+    "id": 93,
+    "slug": "ai-infrastructure-compute-statistics-2026",
+    "title": "AI Infrastructure 2026: Data-Center Energy, Compute &#038; Spending",
+    "status": "publish",
+    "parent": 394,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/"
+  },
+  {
+    "id": 98,
+    "slug": "fine-tuning",
+    "title": "Fine-Tuning",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/fine-tuning/"
+  },
+  {
+    "id": 99,
+    "slug": "context-window",
+    "title": "Context Window",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/context-window/"
+  },
+  {
+    "id": 100,
+    "slug": "tokens",
+    "title": "Tokens",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/tokens/"
+  },
+  {
+    "id": 101,
+    "slug": "mlops",
+    "title": "MLOps",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/mlops/"
+  },
+  {
+    "id": 102,
+    "slug": "multimodal-ai",
+    "title": "Multimodal AI",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/multimodal-ai/"
+  },
+  {
+    "id": 317,
+    "slug": "ai-use-patterns-statistics-2026",
+    "title": "How People Use AI in 2026: Use Patterns &#038; Top Use Cases",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/ai-use-patterns-statistics-2026/"
+  },
+  {
+    "id": 318,
+    "slug": "state-of-ai-2022-2026",
+    "title": "State of AI: A Year-by-Year Timeline (2022–2026)",
+    "status": "publish",
+    "parent": 362,
+    "link": "https://report-ai.org/indexes/state-of-ai/state-of-ai-2022-2026/"
+  },
+  {
+    "id": 320,
+    "slug": "ai-prediction-forecasts-2026-2030",
+    "title": "AI Market Forecast 2026–2030: Spending, Jobs &#038; Growth Predictions",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/ai-prediction-forecasts-2026-2030/"
+  },
+  {
+    "id": 321,
+    "slug": "llm-market-statistics-2026",
+    "title": "LLM Market Report 2026: Anthropic vs. OpenAI vs. Google",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/llm-market-statistics-2026/"
+  },
+  {
+    "id": 322,
+    "slug": "state-of-ai-2024",
+    "title": "State of AI in 2024 — The Inflection Year",
+    "status": "publish",
+    "parent": 362,
+    "link": "https://report-ai.org/indexes/state-of-ai/state-of-ai-2024/"
+  },
+  {
+    "id": 348,
+    "slug": "ai-agent",
+    "title": "AI Agent",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/ai-agent/"
+  },
+  {
+    "id": 349,
+    "slug": "hyperscaler",
+    "title": "Hyperscaler",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/hyperscaler/"
+  },
+  {
+    "id": 350,
+    "slug": "frontier-model",
+    "title": "Frontier Model",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/frontier-model/"
+  },
+  {
+    "id": 351,
+    "slug": "benchmark",
+    "title": "Benchmark",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/benchmark/"
+  },
+  {
+    "id": 352,
+    "slug": "gpu",
+    "title": "GPU (Graphics Processing Unit)",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/gpu/"
+  },
+  {
+    "id": 353,
+    "slug": "eu-ai-act",
+    "title": "EU AI Act",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/eu-ai-act/"
+  },
+  {
+    "id": 354,
+    "slug": "capex",
+    "title": "Capex (Capital Expenditure)",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/capex/"
+  },
+  {
+    "id": 356,
+    "slug": "state-of-ai-2022",
+    "title": "State of AI in 2022 — The Year ChatGPT Arrived",
+    "status": "publish",
+    "parent": 362,
+    "link": "https://report-ai.org/indexes/state-of-ai/state-of-ai-2022/"
+  },
+  {
+    "id": 357,
+    "slug": "state-of-ai-2023",
+    "title": "State of AI in 2023 — Generative AI&#8217;s Breakout Year",
+    "status": "publish",
+    "parent": 362,
+    "link": "https://report-ai.org/indexes/state-of-ai/state-of-ai-2023/"
+  },
+  {
+    "id": 358,
+    "slug": "state-of-ai-2025",
+    "title": "State of AI in 2025 — Near-Universal Adoption, Concentrated Value",
+    "status": "publish",
+    "parent": 362,
+    "link": "https://report-ai.org/indexes/state-of-ai/state-of-ai-2025/"
+  },
+  {
+    "id": 360,
+    "slug": "compare",
+    "title": "Compare AI Statistics",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/compare/"
+  },
+  {
+    "id": 362,
+    "slug": "state-of-ai",
+    "title": "State of AI",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/state-of-ai/"
+  },
+  {
+    "id": 374,
+    "slug": "ai-government-spending-2026",
+    "title": "AI Government Spending 2026: Public Investment by Country",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/ai-government-spending-2026/"
+  },
+  {
+    "id": 375,
+    "slug": "sovereign-ai",
+    "title": "Sovereign AI",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/sovereign-ai/"
+  },
+  {
+    "id": 376,
+    "slug": "ai-spending-by-industry-2026",
+    "title": "AI Spending by Industry 2026: Banking, Software &#038; Retail Lead",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/ai-spending-by-industry-2026/"
+  },
+  {
+    "id": 377,
+    "slug": "multiagent-system",
+    "title": "Multiagent System",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/multiagent-system/"
+  },
+  {
+    "id": 378,
+    "slug": "world-model",
+    "title": "World Model",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/world-model/"
+  },
+  {
+    "id": 379,
+    "slug": "embodied-ai",
+    "title": "Embodied AI",
+    "status": "publish",
+    "parent": 41,
+    "link": "https://report-ai.org/glossary/embodied-ai/"
+  },
+  {
+    "id": 381,
+    "slug": "ai-native-companies-2026",
+    "title": "AI-Native Companies 2026: Definition, Revenue &#038; Valuation Tracker",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/ai-native-companies-2026/"
+  },
+  {
+    "id": 386,
+    "slug": "test-time-compute-reasoning-2026",
+    "title": "Test-Time Compute &#038; Reasoning Models 2026: The Inference-Scaling Shift",
+    "status": "publish",
+    "parent": 394,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"
+  },
+  {
+    "id": 387,
+    "slug": "algorithmic-management-ai-workforce-2026",
+    "title": "Algorithmic Management &#038; the AI Workforce Shift 2026",
+    "status": "publish",
+    "parent": 395,
+    "link": "https://report-ai.org/indexes/workforce-labor/algorithmic-management-ai-workforce-2026/"
+  },
+  {
+    "id": 388,
+    "slug": "transformation-as-a-service-ai-workflows-2026",
+    "title": "Transformation-as-a-Service (TaaS) &#038; AI-Native Workflows 2026",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/transformation-as-a-service-ai-workflows-2026/"
+  },
+  {
+    "id": 392,
+    "slug": "ai-economics",
+    "title": "AI Business &#038; Economics",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/ai-economics/"
+  },
+  {
+    "id": 393,
+    "slug": "enterprise-ai",
+    "title": "Enterprise AI Adoption",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/enterprise-ai/"
+  },
+  {
+    "id": 394,
+    "slug": "technical-benchmarks",
+    "title": "Technical Performance",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/"
+  },
+  {
+    "id": 395,
+    "slug": "workforce-labor",
+    "title": "Workforce &#038; Labor Impacts",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/workforce-labor/"
+  },
+  {
+    "id": 411,
+    "slug": "ai-native-certification",
+    "title": "AI-Native Organization Certification",
+    "status": "draft",
+    "parent": 0,
+    "link": "https://report-ai.org/?page_id=411"
+  },
+  {
+    "id": 413,
+    "slug": "ai-generated-content-statistics-2026",
+    "title": "AI-Generated Content Statistics 2026: Text, Code, Image, Audio &#038; Video",
+    "status": "publish",
+    "parent": 393,
+    "link": "https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics-2026/"
+  },
+  {
+    "id": 416,
+    "slug": "contact",
+    "title": "Contact",
+    "status": "publish",
+    "parent": 7,
+    "link": "https://report-ai.org/about/contact/"
+  },
+  {
+    "id": 417,
+    "slug": "terms-of-use",
+    "title": "Terms of Use &#038; Republishing Policy",
+    "status": "publish",
+    "parent": 75,
+    "link": "https://report-ai.org/privacy/terms-of-use/"
+  },
+  {
+    "id": 421,
+    "slug": "llm-token-price-index",
+    "title": "LLM Token Price Index 2026: How Fast AI Inference Costs Are Falling",
+    "status": "publish",
+    "parent": 392,
+    "link": "https://report-ai.org/indexes/ai-economics/llm-token-price-index/"
+  },
+  {
+    "id": 428,
+    "slug": "ai-energy-water-per-query",
+    "title": "AI Energy &#038; Water Use per Query (2026): What One AI Prompt Actually Costs",
+    "status": "publish",
+    "parent": 394,
+    "link": "https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/"
+  },
+  {
+    "id": 446,
+    "slug": "real-world-ai",
+    "title": "Real-World Use Cases",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/real-world-ai/"
+  },
+  {
+    "id": 450,
+    "slug": "faq",
+    "title": "FAQ",
+    "status": "publish",
+    "parent": 7,
+    "link": "https://report-ai.org/about/faq/"
+  },
+  {
+    "id": 463,
+    "slug": "ai-medical-diagnosis-voice-retinal-scans",
+    "title": "AI That Diagnoses From Your Voice and Eyes (2026)",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-medical-diagnosis-voice-retinal-scans/"
+  },
+  {
+    "id": 466,
+    "slug": "ai-wildfire-disaster-prediction-response",
+    "title": "AI for Wildfire &#038; Disaster Prediction: Who Makes the Call?",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-wildfire-disaster-prediction-response/"
+  },
+  {
+    "id": 467,
+    "slug": "ai-vesuvius-challenge-herculaneum-scrolls",
+    "title": "AI Reads the Burnt Vesuvius Scrolls: Decision Support, Not Magic",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-vesuvius-challenge-herculaneum-scrolls/"
+  },
+  {
+    "id": 468,
+    "slug": "ai-fraud-financial-crime-detection-decision-support",
+    "title": "AI vs. Fraud: How Banks Score Risk in Milliseconds",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-fraud-financial-crime-detection-decision-support/"
+  },
+  {
+    "id": 469,
+    "slug": "ai-decoding-animal-communication-whales-dolphins",
+    "title": "Can AI Decode Whale and Dolphin Speech? What the Data Shows",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-decoding-animal-communication-whales-dolphins/"
+  },
+  {
+    "id": 470,
+    "slug": "ai-protein-structure-drug-discovery-decision-support",
+    "title": "AlphaFold and Beyond: AI That Proposes, Scientists Decide",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-protein-structure-drug-discovery-decision-support/"
+  },
+  {
+    "id": 471,
+    "slug": "ai-controlling-nuclear-fusion-plasma-tokamak",
+    "title": "AI Now Steers Fusion Plasma: Decision Support, Not Replacement",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-controlling-nuclear-fusion-plasma-tokamak/"
+  },
+  {
+    "id": 472,
+    "slug": "ai-legal-research-precedent-contract-review",
+    "title": "AI in Legal Research: Powerful Aide, Imperfect Authority",
+    "status": "publish",
+    "parent": 446,
+    "link": "https://report-ai.org/reports/real-world-ai/ai-legal-research-precedent-contract-review/"
+  },
+  {
+    "id": 497,
+    "slug": "diagnostic",
+    "title": "Enterprise AI Readiness Diagnostic",
+    "status": "draft",
+    "parent": 0,
+    "link": "https://report-ai.org/?page_id=497"
+  },
+  {
+    "id": 498,
+    "slug": "dark-side-of-ai",
+    "title": "The Dark Side of AI",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/"
+  },
+  {
+    "id": 499,
+    "slug": "ai-dark-side-statistics-trends-2030-forecast",
+    "title": "The Dark Side of AI in Numbers: 2019–2025 Trends and the 2030 Forecast",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-dark-side-statistics-trends-2030-forecast/"
+  },
+  {
+    "id": 500,
+    "slug": "ai-deepfake-fraud-statistics",
+    "title": "Deepfake Fraud: The $25-Million Heist Era",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-deepfake-fraud-statistics/"
+  },
+  {
+    "id": 501,
+    "slug": "ai-cybercrime-phishing-wormgpt",
+    "title": "AI in Cybercrime: From WormGPT to Machine-Written Phishing",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-cybercrime-phishing-wormgpt/"
+  },
+  {
+    "id": 502,
+    "slug": "ai-chatbot-failures-liability",
+    "title": "When Chatbots Fail: Liability and the Limits of AI Customer Service",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-chatbot-failures-liability/"
+  },
+  {
+    "id": 503,
+    "slug": "ai-deepfake-disinformation-voice-scams",
+    "title": "Synthetic Deception: Deepfakes in Elections, Voice Scams, and Image Abuse",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-deepfake-disinformation-voice-scams/"
+  },
+  {
+    "id": 541,
+    "slug": "ai-deepfake-porn-nudify-apps-statistics",
+    "title": "AI-Generated Sexual Abuse: Deepfake Porn and Nudify Apps",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-deepfake-porn-nudify-apps-statistics/"
+  },
+  {
+    "id": 543,
+    "slug": "ai-companion-chatbots-mental-health-harms",
+    "title": "AI Companions and the Mental-Health Reckoning",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-companion-chatbots-mental-health-harms/"
+  },
+  {
+    "id": 544,
+    "slug": "ai-algorithmic-bias-discrimination",
+    "title": "Algorithmic Bias: When AI Discriminates at Scale",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-algorithmic-bias-discrimination/"
+  },
+  {
+    "id": 545,
+    "slug": "ai-slop-content-pollution-internet",
+    "title": "AI Slop: The Synthetic Flood Polluting the Internet",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-slop-content-pollution-internet/"
+  },
+  {
+    "id": 546,
+    "slug": "ai-copyright-who-owns-the-rights",
+    "title": "Copyright and AI: Who Owns the Rights?",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-copyright-who-owns-the-rights/"
+  },
+  {
+    "id": 547,
+    "slug": "ai-surveillance-authoritarian-toolkit",
+    "title": "AI Surveillance: Facial Recognition and the Algorithmic Panopticon",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-surveillance-authoritarian-toolkit/"
+  },
+  {
+    "id": 548,
+    "slug": "ai-deepfake-market-manipulation",
+    "title": "AI Market Manipulation: When a Fake Image Moves Billions",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-deepfake-market-manipulation/"
+  },
+  {
+    "id": 549,
+    "slug": "ai-frontier-dual-use-risks",
+    "title": "Frontier Risks: Can AI Help Build a Bioweapon?",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-frontier-dual-use-risks/"
+  },
+  {
+    "id": 552,
+    "slug": "ai-llm-agent-dark-side-risks",
+    "title": "The Dark Side of LLMs and AI Agents: Hallucination, Injection &#038; the Autonomy Gap",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/ai-llm-agent-dark-side-risks/"
+  },
+  {
+    "id": 566,
+    "slug": "claude-fable-5-mythos-5-capabilities-removal",
+    "title": "Claude Fable 5: State-of-the-Art Capabilities, Pulled in Under a Week",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/claude-fable-5-mythos-5-capabilities-removal/"
+  },
+  {
+    "id": 571,
+    "slug": "florida-openai-lawsuit-chatgpt-safety",
+    "title": "Florida Sues OpenAI and Sam Altman: The First State Case Over ChatGPT Safety",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/florida-openai-lawsuit-chatgpt-safety/"
+  },
+  {
+    "id": 572,
+    "slug": "anthropic-ipo-s1-filing-965-billion-valuation",
+    "title": "Anthropic Files Confidentially for an IPO at a Reported $965B Valuation",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/anthropic-ipo-s1-filing-965-billion-valuation/"
+  },
+  {
+    "id": 573,
+    "slug": "eu-ai-act-fully-applicable-august-2026",
+    "title": "The EU AI Act Goes Fully Live: What Changes on August 2, 2026",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/eu-ai-act-fully-applicable-august-2026/"
+  },
+  {
+    "id": 576,
+    "slug": "ai-dark-side-statistics",
+    "title": "The Dark Side of AI — Statistics Index",
+    "status": "publish",
+    "parent": 39,
+    "link": "https://report-ai.org/indexes/ai-dark-side-statistics/"
+  },
+  {
+    "id": 715,
+    "slug": "gemini-3-5-flash-microsoft-mai-frontier-model-race-2026",
+    "title": "The Frontier Reshuffle: Gemini 3.5 Flash and Microsoft&#8217;s In-House MAI Models",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/gemini-3-5-flash-microsoft-mai-frontier-model-race-2026/"
+  },
+  {
+    "id": 716,
+    "slug": "openai-122-billion-funding-round-852-billion-valuation",
+    "title": "OpenAI Raises $122B at an $852B Valuation — Silicon Valley&#8217;s Largest Round",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/openai-122-billion-funding-round-852-billion-valuation/"
+  },
+  {
+    "id": 717,
+    "slug": "us-federal-ai-policy-executive-order-great-american-ai-act-2026",
+    "title": "Washington&#8217;s AI Turn: Executive Order 14409 and the Great American AI Act",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/us-federal-ai-policy-executive-order-great-american-ai-act-2026/"
+  },
+  {
+    "id": 718,
+    "slug": "deloitte-state-of-ai-enterprise-2026-agents-governance-gap",
+    "title": "Deloitte&#8217;s State of AI 2026: Agents Are Scaling Faster Than the Guardrails",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/deloitte-state-of-ai-enterprise-2026-agents-governance-gap/"
+  },
+  {
+    "id": 861,
+    "slug": "open-vs-closed-ai-models-2026",
+    "title": "Open vs Closed AI Models 2026",
+    "status": "future",
+    "parent": 40,
+    "link": "https://report-ai.org/?page_id=861"
+  },
+  {
+    "id": 862,
+    "slug": "agentic-ai-statistics-2026",
+    "title": "AI Agent Statistics 2026: Adoption, Market &#038; Reliability",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/agentic-ai-statistics-2026/"
+  },
+  {
+    "id": 863,
+    "slug": "ai-healthcare-statistics-2026",
+    "title": "AI in Healthcare: Adoption &#038; Outcomes 2026",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/ai-healthcare-statistics-2026/"
+  },
+  {
+    "id": 864,
+    "slug": "global-ai-regulation-tracker",
+    "title": "The Global AI Regulation Tracker",
+    "status": "future",
+    "parent": 40,
+    "link": "https://report-ai.org/?page_id=864"
+  },
+  {
+    "id": 865,
+    "slug": "ai-education-statistics-2026",
+    "title": "AI in Education Statistics 2026",
+    "status": "future",
+    "parent": 40,
+    "link": "https://report-ai.org/?page_id=865"
+  },
+  {
+    "id": 866,
+    "slug": "ai-deepfakes-fraud-statistics",
+    "title": "AI Deepfakes & Fraud by the Numbers",
+    "status": "future",
+    "parent": 40,
+    "link": "https://report-ai.org/?page_id=866"
+  },
+  {
+    "id": 930,
+    "slug": "geography-of-ai",
+    "title": "AI-Geo",
+    "status": "publish",
+    "parent": 0,
+    "link": "https://report-ai.org/geography-of-ai/"
+  },
+  {
+    "id": 931,
+    "slug": "daniel-kokotajlo-ai-risk-predictions",
+    "title": "Daniel Kokotajlo: AI Risk Predictions, Tracked",
+    "status": "publish",
+    "parent": 498,
+    "link": "https://report-ai.org/reports/dark-side-of-ai/daniel-kokotajlo-ai-risk-predictions/"
+  },
+  {
+    "id": 934,
+    "slug": "sovereign-ai-index-2026",
+    "title": "Sovereign AI Index 2026: National AI Statistics &#038; Strategies",
+    "status": "publish",
+    "parent": 40,
+    "link": "https://report-ai.org/reports/sovereign-ai-index-2026/"
+  },
+  {
+    "id": 935,
+    "slug": "ai-revenue-per-employee-2026",
+    "title": "AI Revenue Per Employee 2026: Cursor, OpenAI & the Tiny-Team Era",
+    "status": "future",
+    "parent": 40,
+    "link": "https://report-ai.org/?page_id=935"
+  }
+]

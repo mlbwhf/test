@@ -1,0 +1,155 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-art-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1180px;margin:0 auto;width:100%;line-height:1.4;}
+.tai-art-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-art-grid{display:grid;grid-template-columns:1fr 320px;gap:0;}
+.tai-art-main{padding:44px 44px 56px;border-right:1px solid #e6e6ea;min-width:0;}
+.tai-art-main p{font-size:16px;line-height:1.65;color:#33333a;}
+.tai-art-main a{color:#2545f5;}
+.tai-art-main h2{font-weight:800;font-size:27px;letter-spacing:-0.02em;margin:34px 0 14px;scroll-margin-top:90px;}
+.tai-art-main h3{font-weight:800;font-size:19px;letter-spacing:-0.01em;margin:24px 0 10px;}
+.tai-rail{padding:44px 30px 56px;background:#fafafb;}
+.tai-tbl{width:100%;border-collapse:collapse;font-size:14px;}
+.tai-tbl th{font-weight:800;padding:11px 8px;}
+.tai-tbl td{padding:11px 8px;}
+@media(max-width:900px){
+.tai-art-grid{grid-template-columns:1fr;}
+.tai-art-main{padding:32px 22px;border-right:none;}
+.tai-rail{padding:28px 22px 40px;}
+.tai-h1{font-size:clamp(34px,9vw,46px)!important;}
+.tai-stat3{grid-template-columns:1fr!important;}
+}
+</style>
+
+<div class="tai-art-wrap">
+  <div class="tai-art-grid">
+
+    <article class="tai-art-main">
+      <nav aria-label="Breadcrumb" class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:24px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/technical-benchmarks/" style="color:#9a9aa2;text-decoration:none;">Technical Performance</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Test-Time Compute 2026</span></nav>
+
+      <div class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin-bottom:16px;font-weight:500;">Technical Performance · Index</div>
+      <h1 class="tai-h1" style="font-weight:900;font-size:46px;line-height:0.98;letter-spacing:-0.035em;margin:0 0 18px;">TEST-TIME COMPUTE &amp; REASONING MODELS 2026</h1>
+      <p style="font-size:17px;line-height:1.5;color:#55555e;margin:0 0 22px;max-width:600px;">The AI frontier has shifted from making models bigger in training to giving them more compute to “think” at inference. The most important primary-sourced test-time-compute statistics for 2026 — every figure linked to its source and dated.</p>
+
+      <div class="tai-mono" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:11.5px;color:#6e6e76;padding:15px 0;border-top:1px solid #e6e6ea;border-bottom:1px solid #e6e6ea;margin-bottom:30px;">
+        <span>By <b style="color:#111114;">The AI Index</b></span><span style="color:#d3d3da;">·</span>
+        <span>Updated <time datetime="2026-06-20">Jun 20, 2026</time></span><span style="color:#d3d3da;">·</span>
+        <span>7 min read</span><span style="color:#d3d3da;">·</span><span style="color:#2545f5;">8 sourced figures</span>
+      </div>
+
+      <section aria-labelledby="kt-h" id="kt" style="background:#f0f3ff;border:1px solid #d4ddff;border-radius:3px;padding:26px 28px;margin-bottom:36px;">
+        <h2 id="kt-h" class="tai-mono" style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#2545f5;margin:0 0 16px;font-weight:600;">Key takeaways</h2>
+        <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;gap:12px;font-size:15px;line-height:1.5;color:#33333a;"><span style="color:#2545f5;font-weight:800;">→</span><span>OpenAI's Deep Research scored <b>26.6% on Humanity's Last Exam</b> — roughly triple the prior generation (~9%). <span class="tai-mono" style="font-size:11px;color:#8a8a98;">(OpenAI)</span></span></li>
+          <li style="display:flex;gap:12px;font-size:15px;line-height:1.5;color:#33333a;"><span style="color:#2545f5;font-weight:800;">→</span><span>Gemini Deep Think reached <b>gold-medal standard at IMO 2025</b> (35/42, 5 of 6 problems), the first official gold. <span class="tai-mono" style="font-size:11px;color:#8a8a98;">(Google DeepMind)</span></span></li>
+          <li style="display:flex;gap:12px;font-size:15px;line-height:1.5;color:#33333a;"><span style="color:#2545f5;font-weight:800;">→</span><span>Frontier models gained about <b>+30 percentage points on HLE in one year</b> — on a test built to be hard for AI. <span class="tai-mono" style="font-size:11px;color:#8a8a98;">(Stanford HAI 2026)</span></span></li>
+          <li style="display:flex;gap:12px;font-size:15px;line-height:1.5;color:#33333a;"><span style="color:#2545f5;font-weight:800;">→</span><span>The trade-off is cost and latency: reasoning runs spend far more tokens per query, even as per-token inference cost fell <b>~280-fold</b> in two years. <span class="tai-mono" style="font-size:11px;color:#8a8a98;">(Stanford HAI)</span></span></li>
+        </ul>
+      </section>
+
+      <div class="tai-stat3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;">
+        <div style="background:#f5f5f7;border-radius:3px;padding:22px;"><div style="font-weight:900;font-size:46px;line-height:1;letter-spacing:-0.04em;">26.6<span style="font-size:24px;color:#2545f5;">%</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;">Deep Research on HLE (~3× prior)</div></div>
+        <div style="background:#f5f5f7;border-radius:3px;padding:22px;"><div style="font-weight:900;font-size:46px;line-height:1;letter-spacing:-0.04em;">35<span style="font-size:24px;color:#2545f5;">/42</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;">Gemini Deep Think, IMO 2025 gold</div></div>
+        <div style="background:#f5f5f7;border-radius:3px;padding:22px;"><div style="font-weight:900;font-size:46px;line-height:1;letter-spacing:-0.04em;">+30<span style="font-size:24px;color:#2545f5;">pp</span></div><div style="font-size:12.5px;color:#55555e;margin-top:8px;font-weight:600;">HLE one-year frontier gain</div></div>
+      </div>
+
+      <h2 id="what">What test-time compute is</h2>
+      <p>For most of the deep-learning era, capability came from <em>training</em> scale — bigger models, more data, more pre-training compute. <b>Test-time compute</b> (also “inference-time” or “reasoning” compute) is a different axis: let the model spend more compute <em>at the moment of answering</em> — generating a long chain of thought, exploring multiple solution paths, and verifying its own work before responding. Reinforcement learning trains the model to use that thinking time well. The result trades latency and cost for accuracy, which pays off most in high-stakes domains like math, code, science, law, and medicine. So-called reasoning models — OpenAI's o-series, Gemini Deep Think, DeepSeek-R1, Claude's extended thinking — are built on this idea.</p>
+
+      <h2 id="milestones">Data lineage: the milestones</h2>
+      <p>OpenAI's Deep Research scored <b>26.6% on Humanity's Last Exam</b> (Feb 2025), roughly triple the ~9% of o1/DeepSeek-R1, using agentic multi-step reasoning with web tools. In July 2025, <b>Gemini Deep Think</b> reached official gold-medal standard at the International Mathematical Olympiad — 35/42 points, solving 5 of 6 problems (<a href="https://deepmind.google/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/" target="_blank" rel="noreferrer noopener">Google DeepMind</a>). Across 2025–2026, frontier models gained about <b>+30 percentage points on HLE</b>, a benchmark designed to be hard for AI (<a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">Stanford HAI 2026</a>).</p>
+
+      <figure style="margin:0 0 30px;border:1px solid #e6e6ea;border-radius:3px;overflow:hidden;">
+        <figcaption style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;background:#f5f5f7;border-bottom:1px solid #e6e6ea;">
+          <span style="font-weight:700;font-size:13.5px;">SWE-bench coding solve rate, 2023–2024</span>
+          <span class="tai-mono" style="font-size:10.5px;color:#9a9aa2;">Source: Stanford HAI · % solved</span>
+        </figcaption>
+        <div style="padding:22px 18px;display:flex;flex-direction:column;gap:13px;">
+          <div style="display:flex;align-items:center;gap:14px;"><span class="tai-mono" style="font-size:12px;width:34px;color:#6e6e76;">2023</span><span style="height:22px;width:6%;background:#c8d0f5;border-radius:1px;"></span><span class="tai-mono" style="font-size:13px;">4.4%</span></div>
+          <div style="display:flex;align-items:center;gap:14px;"><span class="tai-mono" style="font-size:12px;width:34px;color:#6e6e76;">2024</span><span style="height:22px;width:100%;background:#2545f5;border-radius:1px;"></span><span class="tai-mono" style="font-size:13px;font-weight:700;">71.7%</span></div>
+        </div>
+      </figure>
+
+      <h2 id="matters">Why it matters for high-stakes work</h2>
+      <p>The practical thesis is that allowing a model to think longer raises accuracy enough to clear the bar in domains where mistakes are expensive. The evidence is in the benchmark jumps: SWE-bench coding solve rates rose from <b>4.4% to 71.7% in a single year</b>, MMLU is now saturated above 92%, and reasoning systems drove the gold-medal IMO result and the Deep Research HLE leap (<a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">Stanford HAI 2026</a>). The trade-off is cost and latency: reasoning runs consume far more <a href="/glossary/tokens/">tokens</a> per query, which is part of why total <a href="/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/">inference compute and energy demand</a> are climbing even as per-token prices fall.</p>
+
+      <blockquote style="margin:0 0 30px;padding:4px 0 4px 22px;border-left:3px solid #2545f5;">
+        <p style="font-weight:800;font-size:23px;line-height:1.25;letter-spacing:-0.02em;margin:0;color:#111114;">"Benchmark scores are the fastest-decaying metric we track — treat every figure here as a dated snapshot, not a standing record."</p>
+      </blockquote>
+
+      <h2 id="economics">The economics: a new scaling axis</h2>
+      <p>Test-time compute reframes the cost curve. Per-token <a href="/glossary/ai-inference/">inference</a> costs fell roughly <b>280-fold</b> between late 2022 and late 2024 (<a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noreferrer noopener">Stanford HAI</a>), but reasoning models spend many more tokens per answer — so the <em>per-query</em> cost of a hard task can rise even as the unit price drops. For enterprises, the question becomes which tasks justify paying for more thinking. See the spend picture in <a href="/indexes/technical-benchmarks/enterprise-ai-statistics-2026/">Enterprise AI Statistics 2026</a>.</p>
+
+      <h2 id="numbers">The numbers in full</h2>
+      <table class="tai-tbl" style="margin-bottom:12px;">
+        <thead><tr style="border-top:2px solid #111114;border-bottom:1px solid #111114;">
+          <th style="text-align:left;">Metric</th><th style="text-align:right;">Figure</th><th style="text-align:right;" class="tai-mono">Source</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>Deep Research on Humanity's Last Exam</td><td style="text-align:right;font-weight:700;">26.6%</td><td style="text-align:right;" class="tai-mono">OpenAI</td></tr>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>Gemini Deep Think, IMO 2025</td><td style="text-align:right;font-weight:700;">35/42 (gold)</td><td style="text-align:right;" class="tai-mono">Google DeepMind</td></tr>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>Frontier HLE one-year gain</td><td style="text-align:right;font-weight:700;">+30pp</td><td style="text-align:right;" class="tai-mono">Stanford HAI</td></tr>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>SWE-bench solve rate (2023→2024)</td><td style="text-align:right;font-weight:700;">4.4% → 71.7%</td><td style="text-align:right;" class="tai-mono">Stanford HAI</td></tr>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>MMLU saturation</td><td style="text-align:right;font-weight:700;">&gt;92%</td><td style="text-align:right;" class="tai-mono">Stanford HAI</td></tr>
+          <tr style="border-bottom:1px solid #e6e6ea;"><td>Inference cost decline (2022→2024)</td><td style="text-align:right;font-weight:700;">~280×</td><td style="text-align:right;" class="tai-mono">Stanford HAI</td></tr>
+        </tbody>
+      </table>
+      <p class="tai-mono" style="font-size:11px;color:#9a9aa2;margin:0 0 36px;">Benchmark results are dated snapshots; a newer state of the art may already exist. See sources below.</p>
+
+      <section aria-labelledby="faq" id="faq">
+        <h2 style="margin-top:0;">Frequently asked</h2>
+        <div style="border-top:2px solid #111114;">
+          <div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:15.5px;font-weight:700;margin:0 0 6px;">What is test-time compute?</h3><p style="font-size:14px;line-height:1.55;color:#55555e;margin:0;">Test-time compute is the compute a model spends at the moment of answering — generating chain-of-thought reasoning, exploring multiple paths, and verifying its work — rather than during training. It is the basis of “reasoning models” like OpenAI's o-series and Gemini Deep Think.</p></div>
+          <div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:15.5px;font-weight:700;margin:0 0 6px;">Do reasoning models actually perform better?</h3><p style="font-size:14px;line-height:1.55;color:#55555e;margin:0;">In hard, verifiable domains, yes. Gemini Deep Think reached gold-medal standard at the 2025 IMO (35/42), and OpenAI's Deep Research scored <b>26.6%</b> on Humanity's Last Exam — about triple the prior generation. The gains are largest in math, code, and science. <span class="tai-mono" style="font-size:11px;color:#9a9aa2;">(Google DeepMind / OpenAI)</span></p></div>
+          <div style="padding:18px 0;border-bottom:1px solid #e6e6ea;"><h3 style="font-size:15.5px;font-weight:700;margin:0 0 6px;">What's the downside?</h3><p style="font-size:14px;line-height:1.55;color:#55555e;margin:0;">Cost and latency. Reasoning runs consume far more tokens and time per query, so they are best reserved for high-value tasks. This is a key driver of rising total inference compute and data-center energy demand.</p></div>
+        </div>
+      </section>
+
+      <section id="cite" style="background:#f5f5f7;border-radius:3px;padding:20px 22px;margin-top:30px;">
+        <div class="tai-mono" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:9px;">Cite this page</div>
+        <p class="tai-mono" style="font-size:12px;line-height:1.6;color:#33333a;margin:0;">The AI Index (2026). <i>Test-Time Compute &amp; Reasoning Models 2026: The Inference-Scaling Shift.</i> Retrieved Jun 20, 2026, from report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/</p>
+      </section>
+
+      <div style="margin-top:30px;padding-top:22px;border-top:1px solid #e6e6ea;font-size:13px;color:#6e6e76;line-height:1.6;">
+        <b style="color:#111114;">Related:</b> <a href="/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/" style="color:#2545f5;">AI Model Benchmarks 2026</a> · <a href="/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/" style="color:#2545f5;">AI Infrastructure 2026</a> · <a href="/indexes/compare/" style="color:#2545f5;">Compare year over year</a> · <a href="/glossary/ai-inference/" style="color:#2545f5;">AI Inference</a>
+      </div>
+    </article>
+
+    <aside class="tai-rail">
+      <div class="tai-mono" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:14px;">On this page</div>
+      <nav style="display:flex;flex-direction:column;gap:9px;font-size:13.5px;margin-bottom:32px;border-left:1px solid #e6e6ea;padding-left:14px;">
+        <a href="#kt" style="color:#2545f5;font-weight:700;border-left:2px solid #2545f5;margin-left:-15px;padding-left:13px;text-decoration:none;">Key takeaways</a>
+        <a href="#what" style="color:#55555e;text-decoration:none;">What test-time compute is</a>
+        <a href="#milestones" style="color:#55555e;text-decoration:none;">Data lineage: the milestones</a>
+        <a href="#matters" style="color:#55555e;text-decoration:none;">Why it matters</a>
+        <a href="#economics" style="color:#55555e;text-decoration:none;">The economics</a>
+        <a href="#numbers" style="color:#55555e;text-decoration:none;">The numbers in full</a>
+        <a href="#faq" style="color:#55555e;text-decoration:none;">Frequently asked</a>
+        <a href="#cite" style="color:#55555e;text-decoration:none;">Cite this page</a>
+      </nav>
+      <div class="tai-mono" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:14px;">Primary sources</div>
+      <ul style="list-style:none;margin:0 0 32px;padding:0;display:flex;flex-direction:column;gap:12px;">
+        <li style="font-size:13px;line-height:1.4;color:#33333a;"><b style="font-weight:700;">Google DeepMind</b> — Gemini Deep Think, IMO 2025<br><span class="tai-mono" style="font-size:10.5px;color:#9a9aa2;">35/42 gold-medal standard</span></li>
+        <li style="font-size:13px;line-height:1.4;color:#33333a;"><b style="font-weight:700;">OpenAI</b> — Deep Research<br><span class="tai-mono" style="font-size:10.5px;color:#9a9aa2;">26.6% on Humanity's Last Exam, Feb 2025</span></li>
+        <li style="font-size:13px;line-height:1.4;color:#33333a;"><b style="font-weight:700;">Stanford HAI</b> — AI Index 2025 &amp; 2026<br><span class="tai-mono" style="font-size:10.5px;color:#9a9aa2;">SWE-bench · MMLU · +30pp HLE · ~280× cost</span></li>
+      </ul>
+      <div style="background:#111114;color:#fff;border-radius:3px;padding:22px;margin-bottom:28px;">
+        <div style="font-weight:900;font-size:42px;line-height:0.9;letter-spacing:-0.04em;">71.7<span style="color:#5a78ff;">%</span></div>
+        <p style="font-size:12.5px;line-height:1.5;color:#bdbdc6;margin:10px 0 0;">SWE-bench coding solve rate in 2024 — up from just 4.4% a year earlier, driven by reasoning models.</p>
+      </div>
+      <div class="tai-mono" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:12px;">Share</div>
+      <div style="display:flex;gap:8px;">
+        <a href="https://twitter.com/intent/tweet?text=Test-Time%20Compute%20%26%20Reasoning%20Models%202026&url=https%3A%2F%2Freport-ai.org%2Findexes%2Ftechnical-benchmarks%2Ftest-time-compute-reasoning-2026%2F" target="_blank" rel="noopener" style="flex:1;text-align:center;border:1.5px solid #111114;border-radius:2px;padding:8px 0;font-size:12px;font-weight:700;color:#111114;text-decoration:none;">X</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Freport-ai.org%2Findexes%2Ftechnical-benchmarks%2Ftest-time-compute-reasoning-2026%2F" target="_blank" rel="noopener" style="flex:1;text-align:center;border:1.5px solid #111114;border-radius:2px;padding:8px 0;font-size:12px;font-weight:700;color:#111114;text-decoration:none;">LinkedIn</a>
+        <a href="mailto:?subject=Test-Time%20Compute%20%26%20Reasoning%20Models%202026&body=https%3A%2F%2Freport-ai.org%2Findexes%2Ftechnical-benchmarks%2Ftest-time-compute-reasoning-2026%2F" style="flex:1;text-align:center;border:1.5px solid #111114;border-radius:2px;padding:8px 0;font-size:12px;font-weight:700;color:#111114;text-decoration:none;">Email</a>
+      </div>
+    </aside>
+
+  </div>
+</div>
+<!-- /wp:html -->
+<!-- wp:html -->
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","@id":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://report-ai.org/"},{"@type":"ListItem","position":2,"name":"Indexes","item":"https://report-ai.org/indexes/"},{"@type":"ListItem","position":3,"name":"Technical Performance","item":"https://report-ai.org/indexes/technical-benchmarks/"},{"@type":"ListItem","position":4,"name":"Test-Time Compute & Reasoning Models 2026"}]},{"@type":"Article","@id":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/#article","headline":"Test-Time Compute & Reasoning Models 2026: The Inference-Scaling Shift","description":"Sourced 2026 statistics on test-time compute and reasoning models: Deep Research at 26.6% on Humanity's Last Exam, Gemini Deep Think IMO gold (35/42), and +30pp frontier HLE gains.","datePublished":"2026-06-07","dateModified":"2026-06-20","author":{"@type":"Organization","name":"The AI Index","url":"https://report-ai.org"},"publisher":{"@id":"https://report-ai.org/#organization"},"mainEntityOfPage":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"},{"@type":"Dataset","name":"Test-Time Compute & Reasoning Models 2026","description":"Sourced 2026 statistics on test-time compute and reasoning models: Deep Research on Humanity's Last Exam, Gemini Deep Think IMO gold, frontier benchmark gains, and the inference-scaling shift.","keywords":["test-time compute","reasoning models","inference scaling","chain of thought","Humanity's Last Exam","Gemini Deep Think"],"creator":{"@type":"Organization","name":"The AI Index","url":"https://report-ai.org"},"publisher":{"@id":"https://report-ai.org/#organization"},"url":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/","datePublished":"2026-06-07","dateModified":"2026-06-20","temporalCoverage":"2024/2026","isAccessibleForFree":true,"variableMeasured":[{"@type":"PropertyValue","name":"Deep Research on Humanity's Last Exam","value":"26.6","unitText":"percent","measurementTechnique":"Agentic reasoning benchmark (OpenAI)"},{"@type":"PropertyValue","name":"Gemini Deep Think IMO 2025 score","value":"35","unitText":"points of 42","measurementTechnique":"IMO-certified (Google DeepMind)"},{"@type":"PropertyValue","name":"Frontier HLE one-year gain","value":"30","unitText":"percentage points","measurementTechnique":"Stanford HAI AI Index 2026"}],"citation":["Google DeepMind, Gemini Deep Think IMO 2025","OpenAI, Deep Research (HLE 26.6%)","Stanford HAI, AI Index 2025 and 2026 Technical Performance"]},{"@type":"FAQPage","@id":"https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/#faq","mainEntity":[{"@type":"Question","name":"What is test-time compute?","acceptedAnswer":{"@type":"Answer","text":"Test-time compute is the compute a model spends at the moment of answering — generating chain-of-thought reasoning, exploring multiple paths, and verifying its work — rather than during training. It is the basis of reasoning models like OpenAI's o-series and Gemini Deep Think."}},{"@type":"Question","name":"Do reasoning models actually perform better?","acceptedAnswer":{"@type":"Answer","text":"In hard, verifiable domains, yes. Gemini Deep Think reached gold-medal standard at the 2025 IMO (35/42), and OpenAI's Deep Research scored 26.6% on Humanity's Last Exam — about triple the prior generation."}},{"@type":"Question","name":"What's the downside?","acceptedAnswer":{"@type":"Answer","text":"Cost and latency. Reasoning runs consume far more tokens and time per query, so they are best reserved for high-value tasks. This is a key driver of rising total inference compute and data-center energy demand."}}]}]}</script>
+<!-- /wp:html -->
