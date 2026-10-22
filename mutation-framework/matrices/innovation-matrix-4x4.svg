@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 866" font-family="Helvetica, Arial, sans-serif">
+<rect width="1080" height="866" fill="#ffffff"/>
+<text x="620" y="38" text-anchor="middle" font-size="26" font-weight="bold" fill="#1a2a3a">The Innovation Matrix — Four Types × Four Patterns</text>
+<text x="620" y="62" text-anchor="middle" font-size="13" fill="#5a6b7c">The Innovation Playground, Chapter 6 · v1.0 · CC BY-SA 4.0</text>
+<text x="620" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a4a5a" letter-spacing="2">PATTERNS — HOW MUCH CHANGES, AND HOW THE MARKET REACTS →</text>
+<text x="297.5" y="110" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a2a3a">Incremental</text>
+<text x="512.5" y="110" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a2a3a">Architectural</text>
+<text x="727.5" y="110" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a2a3a">Radical</text>
+<text x="942.5" y="110" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a2a3a">Disruptive</text>
+<text x="26" y="400" text-anchor="middle" font-size="13" font-weight="bold" fill="#3a4a5a" letter-spacing="2" transform="rotate(-90 26 400)">TYPES — WHAT CHANGES →</text>
+<text x="176" y="195.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">Product</text>
+<text x="176" y="335.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">Process</text>
+<text x="176" y="462.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">Business</text>
+<text x="176" y="479.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">model</text>
+<text x="176" y="602.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">Customer</text>
+<text x="176" y="619.0" text-anchor="end" font-size="14" font-weight="bold" fill="#1a2a3a">experience</text>
+<rect x="190" y="120" width="215" height="140" fill="#eef2f7" stroke="#ffffff" stroke-width="3"/>
+<text x="297.5" y="168.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Apple iPhone yearly camera and</text>
+<text x="297.5" y="185.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">chip upgrades</text>
+<text x="297.5" y="202.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Annual feature upgrades on a</text>
+<text x="297.5" y="219.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">known platform.</text>
+<rect x="405" y="120" width="215" height="140" fill="#dce8f5" stroke="#ffffff" stroke-width="3"/>
+<text x="512.5" y="151.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Boeing 787 Dreamliner —</text>
+<text x="512.5" y="168.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">composite materials, modular</text>
+<text x="512.5" y="185.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">global supply chain</text>
+<text x="512.5" y="202.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Same product category,</text>
+<text x="512.5" y="219.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">fundamentally re-architected</text>
+<text x="512.5" y="236.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">materials and supply chain.</text>
+<rect x="620" y="120" width="215" height="140" fill="#c7d9ee" stroke="#ffffff" stroke-width="3"/>
+<text x="727.5" y="168.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">CRISPR-Cas9 gene editing</text>
+<text x="727.5" y="185.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Long timelines; defended budget.</text>
+<text x="727.5" y="202.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">The capability did not exist</text>
+<text x="727.5" y="219.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">before.</text>
+<rect x="835" y="120" width="215" height="140" fill="#aec5e4" stroke="#ffffff" stroke-width="3"/>
+<text x="942.5" y="160.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">The first iPhone (2007),</text>
+<text x="942.5" y="177.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">abstracting away feature</text>
+<text x="942.5" y="194.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">phones</text>
+<text x="942.5" y="211.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Bottom-of-market entrant moves</text>
+<text x="942.5" y="228.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">up, displaces incumbent.</text>
+<rect x="190" y="260" width="215" height="140" fill="#eef2f7" stroke="#ffffff" stroke-width="3"/>
+<text x="297.5" y="308.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Toyota Production System</text>
+<text x="297.5" y="325.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">refinements</text>
+<text x="297.5" y="342.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Continuous improvement within an</text>
+<text x="297.5" y="359.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">established methodology.</text>
+<rect x="405" y="260" width="215" height="140" fill="#dce8f5" stroke="#ffffff" stroke-width="3"/>
+<text x="512.5" y="300.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">BMW&#x27;s industrial-</text>
+<text x="512.5" y="317.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">metaverse digital-twin</text>
+<text x="512.5" y="334.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">factories — simulate the</text>
+<text x="512.5" y="351.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Same output, re-architected</text>
+<text x="512.5" y="368.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">sequence of operations.</text>
+<rect x="620" y="260" width="215" height="140" fill="#c7d9ee" stroke="#ffffff" stroke-width="3"/>
+<text x="727.5" y="291.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Tesla&#x27;s Giga Press —</text>
+<text x="727.5" y="308.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">single-cast rear underbody</text>
+<text x="727.5" y="325.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">replacing 70+ welded parts</text>
+<text x="727.5" y="342.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Manufacturing or operations</text>
+<text x="727.5" y="359.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">methods that did not exist</text>
+<text x="727.5" y="376.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">before.</text>
+<rect x="835" y="260" width="215" height="140" fill="#aec5e4" stroke="#ffffff" stroke-width="3"/>
+<text x="942.5" y="308.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">SpaceX reusable rockets</text>
+<text x="942.5" y="325.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Changed who could enter the</text>
+<text x="942.5" y="342.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">launch market by changing the</text>
+<text x="942.5" y="359.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">economics of who can build one.</text>
+<rect x="190" y="400" width="215" height="140" fill="#eef2f7" stroke="#ffffff" stroke-width="3"/>
+<text x="297.5" y="440.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Amazon Prime annual benefit</text>
+<text x="297.5" y="457.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">expansion</text>
+<text x="297.5" y="474.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Refinements to an established</text>
+<text x="297.5" y="491.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">subscription or transaction</text>
+<text x="297.5" y="508.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">model.</text>
+<rect x="405" y="400" width="215" height="140" fill="#dce8f5" stroke="#ffffff" stroke-width="3"/>
+<text x="512.5" y="440.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Netflix DVD -&gt; streaming</text>
+<text x="512.5" y="457.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">-&gt; original content. Same</text>
+<text x="512.5" y="474.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">customer relationship,</text>
+<text x="512.5" y="491.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Same product, completely re-</text>
+<text x="512.5" y="508.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">arranged how money flows.</text>
+<rect x="620" y="400" width="215" height="140" fill="#c7d9ee" stroke="#ffffff" stroke-width="3"/>
+<text x="727.5" y="431.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Spotify replacing music</text>
+<text x="727.5" y="448.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">ownership with subscription</text>
+<text x="727.5" y="465.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">streams</text>
+<text x="727.5" y="482.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">New economic primitives that did</text>
+<text x="727.5" y="499.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">not previously exist as a</text>
+<text x="727.5" y="516.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">category.</text>
+<rect x="835" y="400" width="215" height="140" fill="#aec5e4" stroke="#ffffff" stroke-width="3"/>
+<text x="942.5" y="448.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Klarna&#x27;s buy-now-pay-</text>
+<text x="942.5" y="465.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">later threatening credit cards</text>
+<text x="942.5" y="482.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Entrant model attacks incumbent</text>
+<text x="942.5" y="499.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">from an underserved segment.</text>
+<rect x="190" y="540" width="215" height="140" fill="#eef2f7" stroke="#ffffff" stroke-width="3"/>
+<text x="297.5" y="580.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Apple retail-store layout</text>
+<text x="297.5" y="597.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">refinements</text>
+<text x="297.5" y="614.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Continuous experience</text>
+<text x="297.5" y="631.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">improvement within the existing</text>
+<text x="297.5" y="648.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">model.</text>
+<rect x="405" y="540" width="215" height="140" fill="#dce8f5" stroke="#ffffff" stroke-width="3"/>
+<text x="512.5" y="571.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Disney MagicBand re-</text>
+<text x="512.5" y="588.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">architecting the park visit</text>
+<text x="512.5" y="605.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">around a single wearable</text>
+<text x="512.5" y="622.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Same rides, completely re-</text>
+<text x="512.5" y="639.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">arranged experience</text>
+<text x="512.5" y="656.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">architecture. Profit per visitor</text>
+<rect x="620" y="540" width="215" height="140" fill="#c7d9ee" stroke="#ffffff" stroke-width="3"/>
+<text x="727.5" y="588.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">ChatGPT&#x27;s conversational</text>
+<text x="727.5" y="605.5" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">interface as a category</text>
+<text x="727.5" y="622.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">New experience primitive that</text>
+<text x="727.5" y="639.5" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">did not exist before.</text>
+<rect x="835" y="540" width="215" height="140" fill="#aec5e4" stroke="#ffffff" stroke-width="3"/>
+<text x="942.5" y="580.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">Airbnb attacking hotels from</text>
+<text x="942.5" y="597.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a3a">below</text>
+<text x="942.5" y="614.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">Replacing the incumbent</text>
+<text x="942.5" y="631.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">experience model with one priced</text>
+<text x="942.5" y="648.0" text-anchor="middle" font-size="11.5" font-weight="400" fill="#44566a">for a segment the incumbent</text>
+<text x="190" y="710" font-size="12.5" font-weight="bold" fill="#3a4a5a">The Christensen caveat (preserved verbatim from the novel):</text>
+<text x="190" y="728" font-size="11.5" fill="#5a6b7c" font-style="italic">&quot;Disruptive&quot; is included on the patterns axis because customers recognize the word.</text>
+<text x="190" y="744" font-size="11.5" fill="#5a6b7c" font-style="italic">But disruption is about who wins and who loses in a market, not about how dramatic</text>
+<text x="190" y="760" font-size="11.5" fill="#5a6b7c" font-style="italic">the change is. Conflating &quot;disruptive&quot; with &quot;radical&quot; is a category error that</text>
+<text x="190" y="776" font-size="11.5" fill="#5a6b7c" font-style="italic">Christensen himself pushed back against. The matrix uses &quot;disruptive&quot; with the</text>
+<text x="190" y="792" font-size="11.5" fill="#5a6b7c" font-style="italic">caveat preserved — the framework owes the reader the precision, even when the</text>
+<text x="190" y="808" font-size="11.5" fill="#5a6b7c" font-style="italic">vocabulary is shared with the loose popular usage.</text>
