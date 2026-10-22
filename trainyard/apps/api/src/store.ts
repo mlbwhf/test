@@ -5,7 +5,7 @@
 import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@trainyard/ai-portfolio";
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
-import { DEMO_NOW, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type Workspace } from "@trainyard/core";
+import { DEMO_NOW, demoIdentification, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -64,6 +64,8 @@ export interface StoreState {
   users: User[];
   /** Connections to Miro, Mural, monday.com and Trello, tokens sealed. */
   connections: Connection[];
+  /** Value stream identification workshops and value stream maps. */
+  valueStreams: { identifications: ValueStreamIdentification[]; maps: ValueStreamMap[] };
 }
 
 export function demoState(): StoreState {
@@ -77,6 +79,7 @@ export function demoState(): StoreState {
     pending: [],
     users: [],
     connections: [],
+    valueStreams: { identifications: [demoIdentification()], maps: [demoMap()] },
   };
 }
 

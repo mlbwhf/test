@@ -174,13 +174,23 @@ The look follows the "Trainyard Glass" design: a lit backdrop with frosted rail,
 
 **The model.** Pick one in `.env`: `ANTHROPIC_API_KEY` for Claude (recommended; `TRAINYARD_AI_MODEL` defaults to `claude-opus-5-5`), `TRAINYARD_LLM_URL` for any OpenAI-compatible server (hosted or `LLM_PROFILE=llm` for Ollama on the VPS). With a provider set, every page's AI buttons light up: PI objective drafts, ROAM suggestions, readiness briefing, dashboard narrative, gate reviews, and **Review this board** on any canvas, which groups cards into themes, names risks and missing connections and proposes questions for the room. Card text is sent as data with an instruction never to follow what it says; answers are schema-validated and nothing is written until someone accepts.
 
+## Value streams
+
+**Value streams** has two views, because SAFe uses value streams in two ways.
+
+- **Identification** is the workshop. Start from the operational value stream (trigger, the customer's and staff's steps, the value at the end), add the systems behind each step, the people who build and run them and where they sit, group them into development value streams, then cut trains. Click a step to see which systems, people and trains a change to it touches, and whether one train can change it alone. Each train is checked against 50 to 125 people, and the facilitator's flags list steps without a system, systems no one builds or owns, and trains outside the band. Everything is editable and saved.
+- **Mapping** is the measurement. Each step carries its active time, the wait in front of it and its percent complete and accurate, for a current and a future state. The totals are SAFe's: total active time, total wait time, flow efficiency (process time over lead time) and total %C&A (the product of every step's), plus the longest queue to attack first and a to-scale lead-time ladder. The starting map is SAFe's feature-to-production example and reproduces its published figures: 98 hours active, 1,796 hours waiting, 5% flow efficiency, 35% complete and accurate.
+
+API: `GET /v1/value-streams`, `PUT /v1/value-streams/identifications/:id`, `PUT /v1/value-streams/maps/:id`, `DELETE /v1/value-streams/:kind/:id`, and `GET /v1/value-streams/identifications/:id/steps/:stepId` for a step's impact. References inside a workshop are checked on save.
+
 ## Still to do
 
 - Test the connectors against a real Jira and Azure DevOps account (only recorded responses so far)
 - SSO (OIDC/SAML): today users sign in with an API key
 - Multiple workspaces per server
 - GitHub Issues connector
-- More built-in templates recreated from customer boards (iObeya, Miro) as references arrive
+- Fill a value stream map's current state from Jira or Azure DevOps status history
+- A PI objectives screen with business value plan and actual (designed on the Claude Design canvas)
 - Live cursors and multi-user editing on the canvas (today edits are per request; reload shows other people's changes)
 - Jira Data Center and Azure DevOps Server have adapters by configuration (`host`, `baseUrl`) but no tests against them
 

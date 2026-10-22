@@ -45,6 +45,7 @@ import { SecretBox } from "./secrets.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
+import { registerValueStreamRoutes } from "./valuestreams.js";
 import { Store } from "./store.js";
 import { SyncRunner } from "./sync.js";
 
@@ -574,6 +575,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
 
   registerUserRoutes(app, store);
   registerPortfolioRoutes(app, store, metrics);
+  registerValueStreamRoutes(app, store);
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 

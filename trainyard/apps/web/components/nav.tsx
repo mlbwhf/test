@@ -9,6 +9,7 @@ const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/dashboards", label: "Dashboards", section: "Plan" },
   { href: "/board", label: "Program board" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/value-streams", label: "Value streams" },
   { href: "/templates", label: "Templates" },
   { href: "/imports", label: "Bring your own boards" },
   { href: "/ai", label: "AI portfolio", section: "AI" },

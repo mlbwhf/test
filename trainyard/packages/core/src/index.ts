@@ -7,3 +7,4 @@ export * from "./portfolio.js";
 export * from "./portfolio-metrics.js";
 export * from "./boards.js";
 export * from "./templates.js";
+export * from "./valuestreams.js";

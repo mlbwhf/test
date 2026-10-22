@@ -615,3 +615,45 @@ describe("iObeya import", () => {
     expect(bad.body.error.code).toBe("NOT_IOBEYA");
   });
 });
+
+describe("value streams", () => {
+  it("serves the demo workshop and map with SAFe's totals, and checks references on save", async () => {
+    const { call } = await setup();
+    const all = (await call("GET", "/v1/value-streams")).body;
+    const map = all.maps[0];
+    expect(map.metrics.current).toMatchObject({ totalActive: 98, totalWait: 1796 });
+    expect(Math.round(map.metrics.current.flowEfficiency * 100)).toBe(5);
+    const vsi = all.identifications[0];
+    expect(vsi.issues.map((i: { kind: string }) => i.kind)).toEqual(["art-size"]);
+    const impact = await call("GET", `/v1/value-streams/identifications/${vsi.id}/steps/eligibility`);
+    expect(impact.body.impact.arts.map((a: { name: string }) => a.name)).toEqual(["Credit"]);
+
+    // Split Core Banking into two trains: the size warning goes away.
+    const { issues: _i, updatedAt: _u, ...doc } = vsi;
+    doc.arts = doc.arts.filter((a: { id: string }) => a.id !== "art-core").concat([
+      { id: "art-core-a", name: "Core Banking: lending", people: 75, locations: "Chicago", systemIds: ["core"], devStreamId: "dvs-servicing" },
+      { id: "art-core-b", name: "Core Banking: payments", people: 75, locations: "Chicago", systemIds: ["core"], devStreamId: "dvs-servicing" },
+    ]);
+    const saved = await call("PUT", `/v1/value-streams/identifications/${vsi.id}`, doc);
+    expect(saved.status).toBe(200);
+    expect(saved.body.identification.issues).toEqual([]);
+
+    const broken = await call("PUT", `/v1/value-streams/identifications/${vsi.id}`, { ...doc, systems: [...doc.systems, { id: "ghost", name: "Ghost", stepIds: ["nope"] }] });
+    expect(broken.status).toBe(422);
+    expect(broken.body.error.code).toBe("BAD_REFERENCES");
+
+    // A new map, then its deletion.
+    const created = await call("PUT", "/v1/value-streams/maps/vsm-new", { id: "vsm-new", name: "Bug fix", unit: "days", trigger: "Defect reported", steps: [{ id: "a", name: "Fix", current: { wait: 2, active: 1, ca: 90 }, future: { wait: 0.5, active: 1, ca: 95 } }] });
+    expect(created.body.map.metrics.current.leadTime).toBe(3);
+    expect((await call("DELETE", "/v1/value-streams/maps/vsm-new")).status).toBe(204);
+    expect((await call("GET", "/v1/value-streams")).body.maps).toHaveLength(1);
+  });
+
+  it("needs the plan permission to change a value stream", async () => {
+    const { call, store } = await setup({ bootstrapAdminKey: "adm" });
+    const viewer = await call("POST", "/v1/users", { name: "Vera", email: "vera@example.com", role: "viewer" }, "adm");
+    const doc = store.state.valueStreams.maps[0]!;
+    const res = await call("PUT", `/v1/value-streams/maps/${doc.id}`, { ...doc, updatedAt: undefined }, viewer.body.apiKey);
+    expect(res.status).toBe(403);
+  });
+});
