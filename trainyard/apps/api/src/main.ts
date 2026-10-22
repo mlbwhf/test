@@ -88,6 +88,7 @@ async function main() {
     ...(process.env.TRAINYARD_SIGNUP_WEBHOOK ? { signupWebhook: process.env.TRAINYARD_SIGNUP_WEBHOOK } : {}),
     billing: {
       ...(process.env.STRIPE_SECRET_KEY ? { secretKey: process.env.STRIPE_SECRET_KEY } : {}),
+      ...(process.env.STRIPE_PUBLISHABLE_KEY ? { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } : {}),
       ...(process.env.STRIPE_WEBHOOK_SECRET ? { webhookSecret: process.env.STRIPE_WEBHOOK_SECRET } : {}),
       prices: {
         ...(process.env.STRIPE_PRICE_TRAINER_MONTHLY ? { "trainer-monthly": process.env.STRIPE_PRICE_TRAINER_MONTHLY } : {}),
@@ -101,7 +102,7 @@ async function main() {
     },
     logger: true,
   });
-  console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on${process.env.STRIPE_WEBHOOK_SECRET ? "" : " (no STRIPE_WEBHOOK_SECRET: paid sessions will not create users)"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
+  console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {
     await app.close();
     await persistence.close();

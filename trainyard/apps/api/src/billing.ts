@@ -1,14 +1,19 @@
-// Payment through Stripe Checkout for the Trainer and Academy plans. The API talks to
-// Stripe's REST API directly (no SDK): a Checkout Session per sign-up, and a webhook that,
-// once the session is paid, creates the user and keeps the key for one pickup from the
-// welcome page. Without STRIPE_SECRET_KEY the routes report billing as off and the sign-up
-// stays a request an admin fulfils by hand.
+// Subscriptions through Stripe, paid without leaving the website. The API talks to Stripe's
+// REST API directly (no SDK). The website creates a sign-up, then asks for a subscription:
+// the server makes a Stripe Customer and a Subscription that is incomplete until its first
+// invoice is paid, and hands the website the client secret of that invoice's PaymentIntent
+// (or of a SetupIntent when a trial defers the first charge). The website's Payment Element
+// confirms it in place. Payment confirmed, the server creates the user and keeps the key for
+// one pickup. Renewals, failures and cancellations arrive on the webhook; a cancelled or
+// unpaid subscription disables the user. Stripe Checkout remains as a hosted fallback.
+// Without STRIPE_SECRET_KEY the routes report billing as off and the sign-up stays a request
+// an admin fulfils by hand.
 
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { hashKey, newKey, type User } from "./auth.js";
+import { hashKey, newKey, require as requirePermission, type Principal, type User } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Plan } from "./signups.js";
 import type { Store } from "./store.js";
@@ -17,6 +22,8 @@ type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify")
 
 export interface BillingOptions {
   secretKey?: string;
+  /** Shown to the browser for Stripe.js; required for in-page payment. */
+  publishableKey?: string;
   webhookSecret?: string;
   /** Stripe price ids per plan and interval. */
   prices?: Partial<Record<`${"trainer" | "academy"}-${"monthly" | "yearly"}`, string>>;
@@ -27,22 +34,31 @@ export interface BillingOptions {
   trialDays?: number;
 }
 
+export type PurchaseStatus = "open" | "paid" | "expired" | "past_due" | "cancelled";
+
 export interface Purchase {
   id: string;
   signupId: string;
   plan: Plan;
   interval: "monthly" | "yearly";
   quantity: number;
-  checkoutSessionId: string;
-  status: "open" | "paid" | "expired";
-  customerId?: string;
+  /** In-page flow: the subscription; hosted flow: the Checkout session. */
+  checkoutSessionId?: string;
   subscriptionId?: string;
+  customerId?: string;
+  status: PurchaseStatus;
   userId?: string;
-  /** The API key, kept until the welcome page picks it up once. */
+  /** The API key, kept until the welcome step picks it up once. */
   pendingKey?: string;
   createdAt: string;
   paidAt?: string;
+  /** Last renewal invoice paid, or the last failure. */
+  lastInvoiceAt?: string;
+  lastFailureAt?: string;
+  cancelledAt?: string;
 }
+
+const STRIPE_ACTOR: Principal = { userId: "stripe", name: "Stripe", role: "admin", anonymous: false };
 
 const form = (o: Record<string, string | number | undefined>) =>
   Object.entries(o)
@@ -64,32 +80,108 @@ export function verifyStripeSignature(payload: string, header: string | undefine
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+type StripeObject = Record<string, unknown> & { id?: string };
+
 export async function registerBillingRoutes(app: App, store: Store, opts: BillingOptions = {}) {
   const enabled = !!opts.secretKey;
   const f = opts.fetch ?? fetch;
   const purchases = () => (store.state.purchases ??= []);
-  const stripe = async (path: string, body: Record<string, string | number | undefined>) => {
-    const res = await f(`https://api.stripe.com/v1/${path}`, { method: "POST", headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body) });
-    const json = (await res.json()) as { error?: { message?: string } } & Record<string, unknown>;
+  const signups = () => store.state.signups ?? [];
+  const stripe = async (path: string, body?: Record<string, string | number | undefined>): Promise<StripeObject> => {
+    const res = await f(`https://api.stripe.com/v1/${path}`, body ? { method: "POST", headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body) } : { method: "GET", headers: { authorization: `Bearer ${opts.secretKey}` } });
+    const json = (await res.json()) as { error?: { message?: string } } & StripeObject;
     if (!res.ok) throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
     return json;
+  };
+  const web = () => (opts.webUrl ?? "").replace(/\/$/, "");
+  const priceFor = (plan: Plan, interval: "monthly" | "yearly") => {
+    if (plan === "practice") throw new ApiError(422, "FREE_PLAN", "Practice is free; nothing to pay.");
+    const price = opts.prices?.[`${plan}-${interval}`];
+    if (!price) throw new ApiError(409, "NO_PRICE", `No Stripe price is configured for ${plan} ${interval}.`);
+    return price;
+  };
+  const findSignup = (id: string) => signups().find((s) => s.id === id) ?? (() => { throw notFound("Sign-up"); })();
+  const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+
+  /** Payment is in: create the user (or rotate an existing one's key) and keep the key for one pickup. */
+  const fulfil = async (purchase: Purchase, patch: Partial<Purchase> = {}) => {
+    const signup = signups().find((s) => s.id === purchase.signupId);
+    if (!signup) return purchase;
+    let user = store.state.users.find((u) => u.email.toLowerCase() === signup.email.toLowerCase());
+    const key = newKey();
+    if (!user) {
+      user = { id: newId("u"), name: signup.name, email: signup.email, role: "planner", keyHash: hashKey(key), createdAt: store.now().toISOString() } satisfies User;
+      store.state.users.push(user);
+    } else {
+      user.keyHash = hashKey(key);
+      delete user.disabled;
+    }
+    Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, pendingKey: key });
+    signup.status = "invited";
+    signup.userId = user.id;
+    await store.commit(STRIPE_ACTOR, "billing.paid", { purchase: purchase.id, plan: purchase.plan, interval: purchase.interval, quantity: purchase.quantity, userId: user.id });
+    return purchase;
+  };
+  const claimView = (p: Purchase) => {
+    const user = store.state.users.find((u) => u.id === p.userId);
+    return { status: p.status, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(user ? { name: user.name, email: user.email } : {}) };
   };
 
   app.get("/v1/billing/config", async () => ({
     enabled,
+    inPage: enabled && !!opts.publishableKey,
+    ...(enabled && opts.publishableKey ? { publishableKey: opts.publishableKey } : {}),
     plans: enabled ? Object.fromEntries(Object.entries(opts.prices ?? {}).map(([k, v]) => [k, !!v])) : {},
     trialDays: opts.trialDays ?? 0,
   }));
 
-  // Start Checkout for a sign-up. Public: the sign-up id is the handle, the email on it is
-  // what Stripe shows; nothing about other people is exposed.
-  app.post("/v1/billing/checkout", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: z.object({ signupId: z.string().min(1).max(80), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) }) } }, async (req) => {
+  const StartBody = z.object({ signupId: z.string().min(1).max(80), interval: z.enum(["monthly", "yearly"]).default("monthly"), quantity: z.number().int().min(1).max(500).default(1) });
+
+  // In-page flow: a subscription that waits for its first payment, confirmed by the Payment Element.
+  app.post("/v1/billing/subscribe", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: StartBody } }, async (req) => {
     if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server; the sign-up will be handled by hand.");
-    const signup = (store.state.signups ?? []).find((s) => s.id === req.body.signupId) ?? (() => { throw notFound("Sign-up"); })();
-    if (signup.plan === "practice") throw new ApiError(422, "FREE_PLAN", "Practice is free; nothing to pay.");
-    const price = opts.prices?.[`${signup.plan}-${req.body.interval}`];
-    if (!price) throw new ApiError(409, "NO_PRICE", `No Stripe price is configured for ${signup.plan} ${req.body.interval}.`);
-    const web = (opts.webUrl ?? "").replace(/\/$/, "");
+    const signup = findSignup(req.body.signupId);
+    const price = priceFor(signup.plan, req.body.interval);
+    // One customer per sign-up; reuse it when the person retries.
+    const existing = purchases().find((p) => p.signupId === signup.id && p.customerId);
+    const customerId = existing?.customerId ?? String((await stripe("customers", { email: signup.email, name: signup.name, "metadata[signupId]": signup.id, ...(signup.company ? { description: signup.company } : {}) })).id);
+    const trial = opts.trialDays ?? 0;
+    const sub = await stripe("subscriptions", {
+      customer: customerId,
+      "items[0][price]": price,
+      "items[0][quantity]": req.body.quantity,
+      payment_behavior: "default_incomplete",
+      "payment_settings[save_default_payment_method]": "on_subscription",
+      "metadata[signupId]": signup.id,
+      "metadata[plan]": signup.plan,
+      ...(trial ? { trial_period_days: trial } : {}),
+      "expand[0]": "latest_invoice.payment_intent",
+      "expand[1]": "pending_setup_intent",
+    });
+    const invoice = sub.latest_invoice as StripeObject | null;
+    const intent = (invoice?.payment_intent as StripeObject | null) ?? (sub.pending_setup_intent as StripeObject | null);
+    const clientSecret = intent?.client_secret as string | undefined;
+    if (!clientSecret) throw new ApiError(502, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
+    const p: Purchase = { id: newId("pur"), signupId: signup.id, plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString() };
+    purchases().push(p);
+    await store.commit(req.principal, "billing.subscribe", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity });
+    return {
+      purchaseId: p.id,
+      subscriptionId: p.subscriptionId,
+      clientSecret,
+      mode: invoice?.payment_intent ? "payment" : "setup",
+      amountDue: Number(invoice?.amount_due ?? 0),
+      currency: String(invoice?.currency ?? "usd"),
+      trialDays: trial,
+    };
+  });
+
+  // Hosted fallback: Stripe Checkout. Public: the sign-up id is the handle, the email on it is
+  // what Stripe shows; nothing about other people is exposed.
+  app.post("/v1/billing/checkout", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: StartBody } }, async (req) => {
+    if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server; the sign-up will be handled by hand.");
+    const signup = findSignup(req.body.signupId);
+    const price = priceFor(signup.plan, req.body.interval);
     const session = await stripe("checkout/sessions", {
       mode: "subscription",
       "line_items[0][price]": price,
@@ -101,10 +193,10 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
       "subscription_data[metadata][signupId]": signup.id,
       ...(opts.trialDays ? { "subscription_data[trial_period_days]": opts.trialDays } : {}),
       allow_promotion_codes: "true",
-      success_url: `${web}/welcome?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${web}/#pricing`,
+      success_url: `${web()}/welcome?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${web()}/#pricing`,
     });
-    const p: Purchase = { id: `pur-${store.now().getTime().toString(36)}`, signupId: signup.id, plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, checkoutSessionId: String(session.id), status: "open", createdAt: store.now().toISOString() };
+    const p: Purchase = { id: newId("pur"), signupId: signup.id, plan: signup.plan, interval: req.body.interval, quantity: req.body.quantity, checkoutSessionId: String(session.id), status: "open", createdAt: store.now().toISOString() };
     purchases().push(p);
     await store.commit(req.principal, "billing.checkout", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity });
     return { url: session.url, purchaseId: p.id };
@@ -118,54 +210,130 @@ export async function registerBillingRoutes(app: App, store: Store, opts: Billin
       if (!enabled || !opts.webhookSecret) throw new ApiError(404, "BILLING_OFF", "Payments are not set up.");
       const raw = typeof req.body === "string" ? req.body : JSON.stringify(req.body ?? {});
       if (!verifyStripeSignature(raw, req.headers["stripe-signature"] as string | undefined, opts.webhookSecret, store.now().getTime())) throw new ApiError(400, "BAD_SIGNATURE", "Stripe signature does not verify.");
-      let event: { type: string; data: { object: Record<string, unknown> } };
+      let event: { type: string; data: { object: StripeObject } };
       try {
         event = JSON.parse(raw) as typeof event;
       } catch {
         throw new ApiError(400, "BAD_JSON", "The webhook body is not JSON.");
       }
-      if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
-        const obj = event.data.object;
-        const purchase = purchases().find((p) => p.checkoutSessionId === obj.id);
-        const signupId = String((obj.metadata as Record<string, string> | undefined)?.signupId ?? obj.client_reference_id ?? purchase?.signupId ?? "");
-        const signup = (store.state.signups ?? []).find((s) => s.id === signupId);
-        if (!signup) return reply.code(200).send({ ignored: "unknown sign-up" });
-        if (purchase?.status === "paid") return reply.code(200).send({ ok: true, already: true });
-        if (String(obj.payment_status ?? "paid") !== "paid") return reply.code(200).send({ ok: true, pending: true });
-        // Create the user, or reuse one with that email, and keep the key for the welcome page.
-        let user = store.state.users.find((u) => u.email.toLowerCase() === signup.email);
-        const key = newKey();
-        if (!user) {
-          user = { id: `u-${store.now().getTime().toString(36)}`, name: signup.name, email: signup.email, role: "planner", keyHash: hashKey(key), createdAt: store.now().toISOString() } satisfies User;
-          store.state.users.push(user);
-        } else user.keyHash = hashKey(key);
-        const paid: Purchase = { ...(purchase ?? { id: `pur-${store.now().getTime().toString(36)}`, signupId: signup.id, plan: signup.plan, interval: "monthly", quantity: 1, checkoutSessionId: String(obj.id), createdAt: store.now().toISOString() }), status: "paid", paidAt: store.now().toISOString(), userId: user.id, pendingKey: key, ...(obj.customer ? { customerId: String(obj.customer) } : {}), ...(obj.subscription ? { subscriptionId: String(obj.subscription) } : {}) };
-        store.state.purchases = [...purchases().filter((p) => p.id !== paid.id), paid];
-        signup.status = "invited";
-        signup.userId = user.id;
-        await store.commit({ userId: "stripe", name: "Stripe", role: "admin", anonymous: false }, "billing.paid", { purchase: paid.id, plan: paid.plan, userId: user.id });
-        return reply.code(200).send({ ok: true });
-      }
-      if (event.type === "checkout.session.expired") {
-        const p = purchases().find((x) => x.checkoutSessionId === event.data.object.id);
-        if (p) {
-          p.status = "expired";
-          await store.commit({ userId: "stripe", name: "Stripe", role: "admin", anonymous: false }, "billing.expired", { purchase: p.id });
+      const obj = event.data.object;
+      const bySubscription = (id: unknown) => (id ? purchases().find((p) => p.subscriptionId === id) : undefined);
+
+      switch (event.type) {
+        // Hosted Checkout paid.
+        case "checkout.session.completed":
+        case "checkout.session.async_payment_succeeded": {
+          const purchase = purchases().find((p) => p.checkoutSessionId === obj.id);
+          const signupId = String((obj.metadata as Record<string, string> | undefined)?.signupId ?? obj.client_reference_id ?? purchase?.signupId ?? "");
+          if (!signups().some((s) => s.id === signupId)) return reply.code(200).send({ ignored: "unknown sign-up" });
+          if (purchase?.status === "paid") return reply.code(200).send({ ok: true, already: true });
+          if (String(obj.payment_status ?? "paid") !== "paid") return reply.code(200).send({ ok: true, pending: true });
+          const p = purchase ?? (() => { const n: Purchase = { id: newId("pur"), signupId, plan: (signups().find((s) => s.id === signupId)!.plan), interval: "monthly", quantity: 1, checkoutSessionId: String(obj.id), status: "open", createdAt: store.now().toISOString() }; purchases().push(n); return n; })();
+          await fulfil(p, { ...(obj.customer ? { customerId: String(obj.customer) } : {}), ...(obj.subscription ? { subscriptionId: String(obj.subscription) } : {}) });
+          return reply.code(200).send({ ok: true });
         }
+        case "checkout.session.expired": {
+          const p = purchases().find((x) => x.checkoutSessionId === obj.id);
+          if (p && p.status === "open") {
+            p.status = "expired";
+            await store.commit(STRIPE_ACTOR, "billing.expired", { purchase: p.id });
+          }
+          return reply.code(200).send({ ok: true });
+        }
+        // In-page flow: the first invoice paid (or any renewal).
+        case "invoice.paid":
+        case "invoice.payment_succeeded": {
+          // Newer API versions put the subscription under parent.subscription_details.
+          const details = (obj.parent as StripeObject | undefined)?.subscription_details as StripeObject | undefined;
+          const subId = obj.subscription ?? details?.subscription;
+          const p = bySubscription(subId);
+          if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+          if (p.status === "paid") {
+            p.lastInvoiceAt = store.now().toISOString();
+            delete p.lastFailureAt;
+            await store.commit(STRIPE_ACTOR, "billing.renewed", { purchase: p.id });
+            return reply.code(200).send({ ok: true, renewed: true });
+          }
+          await fulfil(p, { lastInvoiceAt: store.now().toISOString(), ...(obj.customer ? { customerId: String(obj.customer) } : {}) });
+          return reply.code(200).send({ ok: true });
+        }
+        // A trial starts without a charge: the subscription is live as soon as it exists.
+        case "customer.subscription.created":
+        case "customer.subscription.updated": {
+          const p = bySubscription(obj.id);
+          if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+          const status = String(obj.status ?? "");
+          if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
+          else if (status === "past_due" || status === "unpaid") {
+            p.status = status === "unpaid" ? "cancelled" : "past_due";
+            p.lastFailureAt = store.now().toISOString();
+            if (status === "unpaid") { const u = store.state.users.find((x) => x.id === p.userId); if (u) u.disabled = true; }
+            await store.commit(STRIPE_ACTOR, "billing.past-due", { purchase: p.id, status });
+          } else if (status === "active" && p.status === "past_due") {
+            p.status = "paid";
+            delete p.lastFailureAt;
+            await store.commit(STRIPE_ACTOR, "billing.recovered", { purchase: p.id });
+          }
+          return reply.code(200).send({ ok: true });
+        }
+        case "invoice.payment_failed": {
+          const p = bySubscription(obj.subscription);
+          if (p && p.status === "paid") {
+            p.status = "past_due";
+            p.lastFailureAt = store.now().toISOString();
+            await store.commit(STRIPE_ACTOR, "billing.payment-failed", { purchase: p.id });
+          }
+          return reply.code(200).send({ ok: true });
+        }
+        case "customer.subscription.deleted": {
+          const p = bySubscription(obj.id);
+          if (p && p.status !== "cancelled") {
+            p.status = "cancelled";
+            p.cancelledAt = store.now().toISOString();
+            const u = store.state.users.find((x) => x.id === p.userId);
+            if (u) u.disabled = true;
+            await store.commit(STRIPE_ACTOR, "billing.cancelled", { purchase: p.id, userId: p.userId });
+          }
+          return reply.code(200).send({ ok: true });
+        }
+        default:
+          return reply.code(200).send({ ok: true, ignored: event.type });
       }
-      return reply.code(200).send({ ok: true });
     });
   });
 
-  // The welcome page picks the key up once; after that it is gone from the server.
-  app.post("/v1/billing/claim", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: z.object({ sessionId: z.string().min(1).max(200) }) } }, async (req) => {
-    const p = purchases().find((x) => x.checkoutSessionId === req.body.sessionId);
+  // The welcome step picks the key up once; after that it is gone from the server. If the
+  // webhook has not arrived yet, the server asks Stripe for the subscription itself, so the
+  // in-page flow never waits on webhook delivery.
+  app.post("/v1/billing/claim", { config: { rateLimit: { max: 20, timeWindow: "1 minute" } }, schema: { body: z.object({ sessionId: z.string().min(1).max(200).optional(), purchaseId: z.string().min(1).max(200).optional() }) } }, async (req) => {
+    const p = purchases().find((x) => (req.body.purchaseId && x.id === req.body.purchaseId) || (req.body.sessionId && x.checkoutSessionId === req.body.sessionId));
     if (!p) throw notFound("Purchase");
+    if (p.status === "open" && p.subscriptionId && enabled) {
+      const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId)}`);
+      const status = String(sub.status ?? "");
+      if (status === "active" || status === "trialing") await fulfil(p);
+    }
     if (p.status !== "paid") return { status: p.status };
     const key = p.pendingKey;
     delete p.pendingKey;
-    const user = store.state.users.find((u) => u.id === p.userId);
-    if (key) await store.commit({ userId: p.userId ?? "stripe", name: user?.name ?? "Stripe", role: "planner", anonymous: false }, "billing.key-claimed", { purchase: p.id });
-    return { status: "paid", plan: p.plan, interval: p.interval, quantity: p.quantity, name: user?.name, email: user?.email, ...(key ? { apiKey: key } : { claimed: true }) };
+    if (key) await store.commit({ userId: p.userId ?? "stripe", name: claimView(p).name ?? "Stripe", role: "planner", anonymous: false }, "billing.key-claimed", { purchase: p.id });
+    return { ...claimView(p), ...(key ? { apiKey: key } : { claimed: true }) };
+  });
+
+  // A signed-in subscriber manages card, invoices and cancellation in Stripe's portal.
+  app.post("/v1/billing/portal", async (req) => {
+    const me = req.principal;
+    if (me.anonymous) throw new ApiError(401, "UNAUTHORIZED", "Sign in to manage your subscription.");
+    if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
+    const p = purchases().filter((x) => x.userId === me.userId && x.customerId).at(-1);
+    if (!p) throw notFound("Subscription");
+    const session = await stripe("billing_portal/sessions", { customer: p.customerId!, return_url: `${web()}/users` });
+    return { url: session.url };
+  });
+
+  // Admins see who pays for what.
+  app.get("/v1/billing/purchases", async (req) => {
+    requirePermission(req, "users");
+    return { purchases: purchases().map(({ pendingKey: _k, ...p }) => ({ ...p, hasPendingKey: !!_k })) };
   });
 }

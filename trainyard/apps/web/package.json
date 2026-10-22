@@ -10,6 +10,8 @@
     "test": "echo \"no tests\""
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "4.0.2",
+    "@stripe/stripe-js": "7.9.0",
     "@trainyard/ai-portfolio": "workspace:*",
     "@trainyard/core": "workspace:*",
     "next": "16.4.1",

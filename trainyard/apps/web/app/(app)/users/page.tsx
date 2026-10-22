@@ -223,6 +223,8 @@ export default function UsersPage() {
         </div>
       </section>
 
+      <Billing admin={me.data?.principal.role === "admin"} />
+
       <section className="panel">
         <div className="panel-head">
           <h2>Recent changes</h2>
@@ -310,5 +312,80 @@ function NewUser({ people, onCreated }: { people: Person[]; onCreated: (name: st
         </ul>
       </div>
     </form>
+  );
+}
+
+type Purchase = { id: string; signupId: string; plan: string; interval: string; quantity: number; status: string; userId?: string; customerId?: string; subscriptionId?: string; createdAt: string; paidAt?: string; lastInvoiceAt?: string; lastFailureAt?: string; cancelledAt?: string; hasPendingKey: boolean };
+
+/** Subscriptions: the signed-in person manages theirs in Stripe's portal; admins see everyone's. */
+function Billing({ admin }: { admin: boolean }) {
+  const config = useApi<{ enabled: boolean }>("/v1/billing/config");
+  const purchases = useApi<{ purchases: Purchase[] }>(admin && config.data?.enabled ? "/v1/billing/purchases" : null);
+  const [err, setErr] = useState<string | null>(null);
+  if (!config.data?.enabled) return null;
+  const portal = async () => {
+    setErr(null);
+    try {
+      const { url } = await api<{ url: string }>("POST", "/v1/billing/portal");
+      window.location.assign(url);
+    } catch (x) {
+      const f = x as ApiFailure;
+      setErr(f.code === "NOT_FOUND" ? "No subscription is linked to your sign-in." : f.message);
+    }
+  };
+  const when = (iso?: string) => (iso ? new Date(iso).toLocaleDateString() : "");
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2>Subscription</h2>
+        <button className="btn small" onClick={() => void portal()} title="Card, invoices and cancellation, in Stripe's customer portal">
+          Manage subscription
+        </button>
+      </div>
+      {err ? <p className="error">{err}</p> : null}
+      {admin ? (
+        <div className="scroll-x">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Started</th>
+                <th>Plan</th>
+                <th>Seats</th>
+                <th>Status</th>
+                <th>Last invoice</th>
+                <th>Stripe</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(purchases.data?.purchases ?? []).map((p) => (
+                <tr key={p.id} style={p.status === "cancelled" || p.status === "expired" ? { opacity: 0.6 } : undefined}>
+                  <td className="mono">{when(p.createdAt)}</td>
+                  <td>
+                    {p.plan} · {p.interval}
+                  </td>
+                  <td>{p.quantity}</td>
+                  <td>
+                    <span className={`chip ${p.status === "paid" ? "ok" : p.status === "open" ? "" : "warn"}`}>{p.status}</span>
+                    {p.hasPendingKey ? <span className="faint"> · key not picked up yet</span> : null}
+                    {p.lastFailureAt ? <span className="faint"> · failed {when(p.lastFailureAt)}</span> : null}
+                  </td>
+                  <td className="mono">{when(p.lastInvoiceAt ?? p.paidAt)}</td>
+                  <td className="mono faint">{p.subscriptionId ?? p.customerId ?? ""}</td>
+                </tr>
+              ))}
+              {(purchases.data?.purchases ?? []).length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="faint">
+                    No subscriptions yet.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="muted">Update your card, download invoices or cancel from Stripe&apos;s portal. You come straight back here.</p>
+      )}
+    </section>
   );
 }

@@ -875,6 +875,67 @@ describe("billing", () => {
     expect(verifyStripeSignature("{}", undefined, "whsec_test", now)).toBe(false);
   });
 
+  it("creates an in-page subscription, confirms it with Stripe itself when the webhook is late, and tracks renewals and cancellation", async () => {
+    const calls: { url: string; method: string; body: string }[] = [];
+    let subStatus = "incomplete";
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      calls.push({ url: u, method: init?.method ?? "GET", body: String(init?.body ?? "") });
+      const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+      if (u.endsWith("/customers")) return json({ id: "cus_1" });
+      if (u.endsWith("/subscriptions")) return json({ id: "sub_1", status: "incomplete", latest_invoice: { id: "in_1", amount_due: 3800, currency: "usd", payment_intent: { id: "pi_1", client_secret: "pi_1_secret_x" } } });
+      if (u.endsWith("/subscriptions/sub_1")) return json({ id: "sub_1", status: subStatus });
+      if (u.endsWith("/billing_portal/sessions")) return json({ id: "bps_1", url: "https://billing.stripe.com/p/session/x" });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
+    expect((await call("GET", "/v1/billing/config")).body).toMatchObject({ enabled: true, inPage: true, publishableKey: "pk_test" });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer", seats: 2 });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id, interval: "monthly", quantity: 2 });
+    expect(sub.status).toBe(200);
+    expect(sub.body).toMatchObject({ clientSecret: "pi_1_secret_x", mode: "payment", amountDue: 3800, currency: "usd", subscriptionId: "sub_1" });
+    const created = calls.find((c) => c.url.endsWith("/subscriptions"))!;
+    expect(created.body).toContain("payment_behavior=default_incomplete");
+    expect(created.body).toContain("items%5B0%5D%5Bquantity%5D=2");
+    expect(created.body).toContain("customer=cus_1");
+    // Nothing paid yet: the claim asks Stripe and finds the subscription still incomplete.
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body).toEqual({ status: "open" });
+    // The card went through in the browser; Stripe now says active, before any webhook arrived.
+    subStatus = "active";
+    const first = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId });
+    expect(first.body).toMatchObject({ status: "paid", plan: "trainer", quantity: 2, email: "ada@example.io" });
+    expect(typeof first.body.apiKey).toBe("string");
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body.claimed).toBe(true);
+    const user = store.state.users.find((u) => u.email === "ada@example.io")!;
+    expect(user.role).toBe("planner");
+    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).body.principal).toMatchObject({ name: "Ada" });
+
+    // Webhooks: the late first invoice is idempotent, a renewal is recorded, a failure and a cancellation disable the key.
+    const t = Math.floor(store.now().getTime() / 1000);
+    const send = async (event: object) => {
+      const payload = JSON.stringify(event);
+      const sig = `t=${t},v1=${createHmac("sha256", "whsec_test").update(`${t}.${payload}`).digest("hex")}`;
+      const res = await app.inject({ method: "POST", url: "/v1/webhooks/stripe", payload, headers: { "content-type": "application/json", "stripe-signature": sig } });
+      return { status: res.statusCode, body: JSON.parse(res.body) };
+    };
+    expect((await send({ type: "invoice.paid", data: { object: { id: "in_1", subscription: "sub_1", customer: "cus_1" } } })).body).toMatchObject({ ok: true, renewed: true });
+    expect((await send({ type: "invoice.payment_failed", data: { object: { id: "in_2", subscription: "sub_1" } } })).status).toBe(200);
+    expect(store.state.purchases![0]!.status).toBe("past_due");
+    expect((await send({ type: "customer.subscription.updated", data: { object: { id: "sub_1", status: "active" } } })).status).toBe(200);
+    expect(store.state.purchases![0]!.status).toBe("paid");
+    expect((await send({ type: "invoice.paid", data: { object: { id: "in_x", parent: { subscription_details: { subscription: "sub_1" } } } } })).body).toMatchObject({ renewed: true });
+    // The subscriber can open the portal; a stranger cannot.
+    const portal = await call("POST", "/v1/billing/portal", undefined, first.body.apiKey);
+    expect(portal.body, JSON.stringify(portal.body)).toMatchObject({ url: expect.stringContaining("billing.stripe.com") });
+    expect((await call("POST", "/v1/billing/portal")).status).toBe(401);
+    expect((await call("GET", "/v1/billing/purchases", undefined, first.body.apiKey)).status).toBe(403);
+    expect((await send({ type: "customer.subscription.deleted", data: { object: { id: "sub_1", status: "canceled" } } })).status).toBe(200);
+    expect(store.state.purchases![0]).toMatchObject({ status: "cancelled" });
+    expect(store.state.users.find((u) => u.id === user.id)!.disabled).toBe(true);
+    expect((await call("GET", "/v1/me", undefined, first.body.apiKey)).status).toBe(401);
+    expect((await send({ type: "invoice.paid", data: { object: { id: "in_9", subscription: "sub_unknown" } } })).body).toMatchObject({ ignored: "unknown subscription" });
+  });
+
   it("starts Checkout for a paid sign-up, turns the paid webhook into a user, and hands the key over once", async () => {
     const stripeCalls: { url: string; body: string }[] = [];
     const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {

@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { CopyKey } from "@/components/copy-key";
 import { api, setApiKey, type ApiFailure } from "@/lib/api";
 
-type Claim = { status: "open" | "paid" | "expired"; plan?: string; interval?: string; quantity?: number; name?: string; email?: string; apiKey?: string; claimed?: boolean };
+type Claim = { status: "open" | "paid" | "expired" | "past_due" | "cancelled"; plan?: string; interval?: string; quantity?: number; name?: string; email?: string; apiKey?: string; claimed?: boolean };
 
 export default function WelcomePage() {
   return (
@@ -22,14 +22,16 @@ export default function WelcomePage() {
 function Welcome() {
   const params = useSearchParams();
   const sessionId = params.get("session_id");
+  const purchaseId = params.get("purchase_id");
+  const handle = purchaseId ? { purchaseId } : sessionId ? { sessionId } : null;
   const [claim, setClaim] = useState<Claim | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tries, setTries] = useState(0);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!handle) return;
     let cancelled = false;
-    api<Claim>("POST", "/v1/billing/claim", { sessionId })
+    api<Claim>("POST", "/v1/billing/claim", handle)
       .then((c) => {
         if (cancelled) return;
         setClaim(c);
@@ -40,9 +42,10 @@ function Welcome() {
     return () => {
       cancelled = true;
     };
-  }, [sessionId, tries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId, purchaseId, tries]);
 
-  if (!sessionId)
+  if (!handle)
     return (
       <div style={{ maxWidth: 520, margin: "60px auto" }} className="stack">
         <h1>Welcome</h1>
@@ -55,6 +58,7 @@ function Welcome() {
       {error ? <p className="error">{error}</p> : null}
       {!claim && !error ? <p className="muted">Checking your payment…</p> : null}
       {claim?.status === "open" ? <p className="muted">Waiting for Stripe to confirm the payment. This usually takes a few seconds.</p> : null}
+      {claim?.status === "past_due" || claim?.status === "cancelled" ? <p>This subscription is {claim.status === "past_due" ? "past due" : "cancelled"}. Sign in and open Users → Manage subscription to update the card.</p> : null}
       {claim?.status === "expired" ? (
         <p>
           That payment session expired before it was paid. <Link href="/#join">Start again</Link>.

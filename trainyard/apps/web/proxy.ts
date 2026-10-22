@@ -28,11 +28,14 @@ export function proxy(req: NextRequest) {
   const api = process.env.TRAINYARD_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_TRAINYARD_API_URL ?? "http://localhost:4100";
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
+    // Stripe.js (in-page payment) loads from js.stripe.com and talks to api.stripe.com; its card
+    // fields are iframes from js.stripe.com, 3-D Secure challenges from hooks.stripe.com.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com${dev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    `connect-src 'self' ${api}${dev ? " ws: http://localhost:* http://127.0.0.1:*" : ""}`,
+    `connect-src 'self' ${api} https://api.stripe.com https://r.stripe.com${dev ? " ws: http://localhost:* http://127.0.0.1:*" : ""}`,
+    "frame-src https://js.stripe.com https://hooks.stripe.com",
     `frame-ancestors ${embed ? ancestors : "'none'"}`,
     "base-uri 'self'",
     "form-action 'self'",

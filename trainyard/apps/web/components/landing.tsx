@@ -7,7 +7,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { api, type ApiFailure } from "@/lib/api";
+import { api, setApiKey, type ApiFailure } from "@/lib/api";
+import { CopyKey } from "@/components/copy-key";
+import { InlinePayment, money, type Claim, type Subscription } from "@/components/pay-inline";
 import { REPO_URL } from "@/lib/site";
 import { COMPARISON, FAQ, PLANS, priceFor, type PlanId } from "@/lib/pricing";
 
@@ -480,7 +482,7 @@ export function Landing() {
   );
 }
 
-type BillingConfig = { enabled: boolean; plans: Record<string, boolean>; trialDays: number };
+type BillingConfig = { enabled: boolean; inPage: boolean; publishableKey?: string; plans: Record<string, boolean>; trialDays: number };
 
 function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan: (p: PlanId) => void; audience: Audience; yearly: boolean }) {
   const [name, setName] = useState("");
@@ -491,7 +493,8 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
   const [hp, setHp] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [done, setDone] = useState<{ name: string; email: string; plan: PlanId; paying?: boolean } | null>(null);
+  const [done, setDone] = useState<{ name: string; email: string; plan: PlanId; paying?: boolean; claim?: Claim } | null>(null);
+  const [pay, setPay] = useState<Subscription | null>(null);
   const def = useMemo(() => PLANS.find((p) => p.id === plan)!, [plan]);
   const [billing, setBilling] = useState<BillingConfig | null>(null);
   useEffect(() => {
@@ -516,11 +519,16 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         ...(hp ? { website: hp } : {}),
         source: typeof window !== "undefined" ? window.location.pathname : "/",
       });
-      if (canPay && created.signup?.id) {
-        // Paid plan with Stripe set up: straight to Checkout; the welcome page hands over the key.
+      const quantity = seats && Number(seats) > 0 ? Number(seats) : 1;
+      if (canPay && billing?.inPage && billing.publishableKey && created.signup?.id) {
+        // Paid plan: the subscription is created now and paid right here, on this page.
+        const sub = await api<Subscription>("POST", "/v1/billing/subscribe", { signupId: created.signup.id, interval, quantity });
+        setPay(sub);
+      } else if (canPay && created.signup?.id) {
+        // No publishable key on the server: hosted Checkout, with the welcome page handing over the key.
         setDone({ name: name.trim(), email: email.trim(), plan, paying: true });
         try {
-          const { url } = await api<{ url: string }>("POST", "/v1/billing/checkout", { signupId: created.signup.id, interval, quantity: seats && Number(seats) > 0 ? Number(seats) : 1 });
+          const { url } = await api<{ url: string }>("POST", "/v1/billing/checkout", { signupId: created.signup.id, interval, quantity });
           window.location.assign(url);
           return;
         } catch {
@@ -535,6 +543,63 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
     }
   };
 
+  if (pay && billing?.publishableKey) {
+    const qty = seats && Number(seats) > 0 ? Number(seats) : 1;
+    const unit = plan === "academy" ? "train" : "trainer";
+    return (
+      <div className="ly-form">
+        <div className="ly-step">
+          <span className="ly-step-n">2</span> Payment · {name.trim()}, {email.trim()}
+        </div>
+        <InlinePayment
+          publishableKey={billing.publishableKey}
+          sub={pay}
+          email={email.trim()}
+          summary={`${def.name} · ${qty} ${unit}${qty > 1 ? "s" : ""} · ${interval === "yearly" ? "billed yearly" : "billed monthly"}`}
+          onPaid={(claim) => {
+            setPay(null);
+            setDone({ name: name.trim(), email: email.trim(), plan, claim });
+          }}
+          onBack={() => setPay(null)}
+        />
+      </div>
+    );
+  }
+  if (done?.claim) {
+    const c = done.claim;
+    return (
+      <div className="ly-form">
+        <div className="ly-done" role="status">
+          <div className="check">✓</div>
+          <div className="big">{c.status === "paid" ? `Welcome aboard, ${done.name}.` : `Almost there, ${done.name}.`}</div>
+          {c.status === "paid" && c.apiKey ? (
+            <>
+              <p>
+                Your <strong>{def.name}</strong> subscription is active. This is your sign-in key; it is shown once, so keep it in a password manager. A receipt from Stripe is on its way to {done.email}.
+              </p>
+              <CopyKey value={c.apiKey} />
+              <button
+                onClick={() => {
+                  setApiKey(c.apiKey!);
+                  window.location.assign("/dashboards");
+                }}
+              >
+                Open Trainyard →
+              </button>
+            </>
+          ) : c.status === "paid" ? (
+            <p>
+              The key for this payment was already shown. <Link href="/login">Sign in</Link> with it, or write to us from {done.email} for a new one.
+            </p>
+          ) : (
+            <p>
+              Your payment is still being confirmed{c.status === "open" ? " (bank payments can take a moment)" : ""}. Open <Link href="/welcome">the welcome page</Link> in a minute, or check the email from Stripe.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
   if (done?.paying) {
     return (
       <div className="ly-form">
@@ -624,7 +689,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         </label>
         {err ? <div className="err" role="alert">{err}</div> : null}
         <button type="submit" className="submit" disabled={busy}>
-          {busy ? "One moment…" : def.cta + " →"}
+          {busy ? "One moment…" : canPay && billing?.inPage ? `${def.cta}: ${money((yearly ? (def.yearly ?? 0) * 12 : def.monthly ?? 0) * 100 * (seats && Number(seats) > 0 ? Number(seats) : 1), "usd")} ${yearly ? "a year" : "a month"} →` : def.cta + " →"}
         </button>
         <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4 }}>We use your email to send the sign-in and nothing else. No newsletter, no resale.</p>
       </form>
