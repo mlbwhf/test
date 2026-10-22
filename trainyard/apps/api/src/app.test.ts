@@ -747,3 +747,30 @@ describe("website sign-ups", () => {
     await app.close();
   });
 });
+
+describe("PI outcome planning", () => {
+  it("serves the worked example with its boards, records votes and checks references", async () => {
+    const { call, app } = await setup();
+    const list = await call("GET", "/v1/outcome-planning");
+    expect(list.body.sessions[0]).toMatchObject({ id: "retail-pharmacy-pi2", artName: "Retail Pharmacy ART", teams: 4 });
+    const one = await call("GET", "/v1/outcome-planning/retail-pharmacy-pi2");
+    expect(one.body.derived.board.rows.map((r: { outcome: { title: string } | null }) => r.outcome?.title ?? "Other")).toEqual(["Scale Specialized Diets", "Optimize Margins", "Household Gamification", "Other"]);
+    expect(one.body.derived.teamBoards.cart.rows).toHaveLength(4);
+    expect(one.body.derived.confidence).toMatchObject({ votes: 3, teams: 4 });
+    const vote = await call("POST", "/v1/outcome-planning/retail-pharmacy-pi2/votes", { teamId: "in-store", value: 4 });
+    expect(vote.body.confidence).toMatchObject({ votes: 4, committed: true });
+    const s = one.body.session;
+    const bad = await call("PUT", "/v1/outcome-planning/retail-pharmacy-pi2", { ...s, updatedAt: undefined, milestones: [...s.milestones, { id: "m-x", kind: "release", label: "x", iteration: 2, outcomeId: "t-cart-1" }] });
+    expect(bad.status).toBe(422);
+    expect(bad.body.error.message).toContain("must sit on a PI outcome row");
+    const { updatedAt: _u, ...clean } = s;
+    const ok = await call("PUT", "/v1/outcome-planning/retail-pharmacy-pi2", { ...clean, stage: "final" });
+    expect(ok.status).toBe(200);
+    expect(ok.body.session.stage).toBe("final");
+    const created = await call("POST", "/v1/outcome-planning", { id: "pi-3", artName: "Retail Pharmacy ART", piName: "PI 3" });
+    expect(created.status).toBe(201);
+    expect(created.body.session.teams.length).toBeGreaterThan(0);
+    expect(created.body.session.agenda).toHaveLength(11);
+    await app.close();
+  });
+});

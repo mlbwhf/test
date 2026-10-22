@@ -11,6 +11,7 @@ const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/value-streams", label: "Value streams" },
   { href: "/canvases", label: "Canvases" },
+  { href: "/outcome-planning", label: "PI Outcome Planning" },
   { href: "/templates", label: "Templates" },
   { href: "/imports", label: "Bring your own boards" },
   { href: "/ai", label: "AI portfolio", section: "AI" },

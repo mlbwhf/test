@@ -41,7 +41,7 @@ const ROOMS = [
     tab: "Planning",
     tag: "PLANNING ROOM",
     h: "Plan it live.",
-    p: "Run PI planning from one template: program board, team breakouts, ROAM, confidence vote and PI objectives. Move a card and the iteration changes in Jira or Azure DevOps.",
+    p: "Run PI planning from one template, or AI-Native SAFe's one-day PI Outcome Planning: the outcome tree, the PI Outcome Planning Board, team boards, the management review and the confidence vote. Move a card and the iteration changes in Jira or Azure DevOps.",
     items: ["Nineteen ready boards", "Sticky notes, dependencies, votes", "Two-way Jira and Azure DevOps"],
     bg: "#fff",
     fg: INK,

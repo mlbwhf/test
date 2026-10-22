@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/value-streams", label: "Value streams" },
   { href: "/canvases", label: "Canvases" },
+  { href: "/outcome-planning", label: "Outcome planning" },
   { href: "/dashboards", label: "Dashboards" },
 ];
 

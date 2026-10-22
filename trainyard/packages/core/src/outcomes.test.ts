@@ -1,0 +1,67 @@
+import { describe, expect, it } from "vitest";
+import { confidence, defaultAgenda, demoPlanningSession, emptyPlanningSession, krChange, outcomeTree, planningBoard, planningIssues, teamBoard } from "./outcomes.js";
+
+describe("PI outcome planning", () => {
+  const s = demoPlanningSession();
+
+  it("builds the outcome tree: ART outcomes, their PI outcomes, each team's contribution", () => {
+    const t = outcomeTree(s);
+    expect(t.art.map((a) => a.outcome.title)).toEqual(["The household's trusted health partner", "Family health as a shared, sticky habit", "Profitable growth as AI reshapes the cost base"]);
+    const diets = t.art[0]!.pis[0]!;
+    expect(diets.outcome.title).toBe("Scale Specialized Diets");
+    expect(diets.teams.map((o) => o.teamId)).toEqual(["ai-engine", "ai-engine", "cart", "marketing", "in-store"]);
+    // The Cart Team's agent outcome traces to no PI outcome: an "other" commitment.
+    expect(t.other.map((o) => o.id)).toEqual(["t-cart-3"]);
+  });
+
+  it("lays out the PI Outcome Planning Board with fixed-date milestones on their own row", () => {
+    const b = planningBoard(s);
+    expect(b.milestonesRow.map((c) => c.length)).toEqual([0, 1, 0, 1, 0, 1]);
+    expect(b.rows.map((r) => r.outcome?.title ?? "Other")).toEqual(["Scale Specialized Diets", "Optimize Margins", "Household Gamification", "Other"]);
+    const diets = b.rows[0]!;
+    expect(diets.teamOutcomes).toHaveLength(5);
+    expect(diets.byIteration.map((c) => c.map((m) => m.kind))).toEqual([[], ["learning"], ["sync", "release"], ["learning"], [], ["release"]]);
+    expect(b.rows[3]!.byIteration[3]!.map((m) => m.label)).toEqual(["Spec standard aligned with AI Engine team"]);
+  });
+
+  it("shows a team's board with its work and the milestones it owns, and the iteration-2 clash", () => {
+    const cart = teamBoard(s, "cart");
+    expect(cart.rows.map((r) => r.outcome?.title ?? "Other")).toEqual(["Raise confidence in specialized diet choices at checkout", "Make the family cart a shared habit", "Make agents dependable co-builders with curated data", "Other"]);
+    expect(cart.rows[0]!.byIteration[0]!.work.map((w) => w.kind)).toEqual(["prototype", "enabler"]);
+    expect(cart.rows[0]!.byIteration[1]!.milestones.map((m) => m.label)).toEqual(["Diet classification model accuracy validated"]);
+    expect(cart.rows[3]!.byIteration[0]!.work.map((w) => w.label)).toEqual(["Auditability instrumentation"]);
+    // The agent outcome traces to no PI outcome, so the team-only milestones sit on it, not on "Other" as well.
+    expect(cart.rows[2]!.byIteration[1]!.milestones.map((m) => m.label)).toEqual(["Curated-spec update validated"]);
+    expect(cart.rows[3]!.byIteration[1]!.milestones).toEqual([]);
+    expect(cart.fixed[1]!.map((m) => m.label)).toEqual(["Security audit"]);
+    expect(cart.load).toHaveLength(6);
+    expect(cart.load[1]).toBeGreaterThanOrEqual(4);
+  });
+
+  it("reads the confidence vote and the key-result adjustments", () => {
+    const c = confidence(s);
+    expect(c).toMatchObject({ votes: 3, teams: 4, average: 3.7, low: [], committed: false });
+    expect(confidence({ ...s, votes: [...s.votes, { teamId: "in-store", value: 2, concern: "Hardware lead time" }] }).low).toEqual([{ teamId: "in-store", value: 2, concern: "Hardware lead time" }]);
+    expect(confidence({ ...s, votes: s.teams.map((t) => ({ teamId: t.id, value: 4 as const })) }).committed).toBe(true);
+    const diets = s.outcomes.find((o) => o.id === "pi-diets")!;
+    expect(diets.keyResults.map(krChange)).toEqual(["cut", "cut"]);
+    expect(s.outcomes.find((o) => o.id === "t-cart-2")!.keyResults.map(krChange)).toEqual(["raised", "raised"]);
+    expect(krChange({ id: "x", text: "", target: "5%" })).toBe("kept");
+  });
+
+  it("flags what the final review still needs", () => {
+    const issues = planningIssues(s);
+    expect(issues).toContain("1 team still to vote.");
+    expect(issues.some((i) => i.includes("unanswered"))).toBe(true);
+    expect(planningIssues(emptyPlanningSession("x", "ART", "PI 1", [{ id: "a", name: "A" }], "2026-01-01T00:00:00.000Z"))).toEqual(["A has no team outcome.", "1 team still to vote."]);
+  });
+
+  it("carries SAFe's one-day agenda: 3.5 hours each half", () => {
+    const a = defaultAgenda();
+    const sum = (half: "morning" | "afternoon") => a.filter((x) => x.half === half && x.kind !== "review").reduce((n, x) => n + x.minutes, 0);
+    expect(sum("morning")).toBe(210);
+    expect(sum("afternoon")).toBe(210);
+    expect(a.filter((x) => x.kind === "outcome-breakout")).toHaveLength(4);
+    expect(a.filter((x) => x.kind === "team-breakout")).toHaveLength(2);
+  });
+});

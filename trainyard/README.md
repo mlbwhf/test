@@ -204,6 +204,18 @@ SAFe's working artifacts as structured, editable canvases, laid out like the ori
 
 API: `GET/POST /v1/canvases`, `GET/PUT/DELETE /v1/canvases/:id`, `POST /v1/canvases/from-identification`, `GET /v1/canvases/:id/tows-suggestions`, `POST /v1/canvases/future-state`.
 
+## PI Outcome Planning
+
+AI-Native SAFe replaced two-day PI Planning with a one-day **PI Outcome Planning** event, and **PI Outcome Planning** in the app is that event's set of artifacts for one ART and one PI:
+
+- **The outcome tree** as SAFe's flip-chart pads: ART outcomes (the year, with the state so far), the PI outcomes that advance them, and each team's outcomes that contribute to a PI outcome or stand as the team's own commitments. Every outcome carries key results; a target changed during the event keeps its draft value, so cuts show red and raises green on the final sheets, the way SAFe draws them.
+- **The PI Outcome Planning Board**: PI outcomes × iterations plus "Next PI", team outcomes per row, an ART milestones row for fixed-date milestones, and learning, synchronization and release milestones on the outcome rows.
+- **Team Outcome Planning Boards**: a team's outcomes × iterations with the experiments, prototypes, enablers and features it expects to need and the milestones it owns; the busiest iteration is flagged, where capacity clashes hide.
+- **The Management Review Board**: decisions needed and risks on the top, confirmed decisions and actions underneath, each answering the item it resolves.
+- **The agenda** (3.5 hours each half, outcome and team breakouts, the draft presentation, lunch and management review, planning adjustments, final plan review) and the **fist-of-five confidence vote** per team, with concerns for anyone voting 1 or 2.
+
+The worked example is SAFe's Retail Pharmacy ART planning its second PI, including the Cart Team's capacity clash and the deferral of the diet-swap pilot. API: `GET/POST /v1/outcome-planning`, `GET/PUT/DELETE /v1/outcome-planning/:id` (references checked on save), `POST /v1/outcome-planning/:id/votes`.
+
 ## Inside Jira and Azure DevOps
 
 The same server can run inside the trackers. Both plugins are thin: they read the context (site, organization, project) and open `/embed/<page>?source=…&project=…` in a frame, which serves the normal pages with a compact header instead of the side navigation. Navigating inside the frame stays embedded. Only `/embed/*` and documents loaded into a frame accept framing, and only from `TRAINYARD_FRAME_ANCESTORS` (by default Atlassian and Azure DevOps hosts; set your own sites in production). Every other page still sends `X-Frame-Options: DENY` and `frame-ancestors 'none'`. People sign in once inside the frame with their Trainyard key.

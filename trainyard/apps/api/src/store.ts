@@ -6,7 +6,7 @@ import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@train
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
 import type { Signup } from "./signups.js";
-import { DEMO_NOW, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
+import { DEMO_NOW, demoPlanningSession, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -71,6 +71,8 @@ export interface StoreState {
   canvases: Canvas[];
   /** Requests from the public sign-up form, reviewed under Users. */
   signups?: Signup[];
+  /** PI Outcome Planning sessions (AI-Native SAFe), one per ART and PI. */
+  outcomePlanning?: PlanningSession[];
 }
 
 export function demoState(): StoreState {
@@ -86,6 +88,7 @@ export function demoState(): StoreState {
     connections: [],
     valueStreams: { identifications: [demoIdentification()], maps: [demoMap()] },
     canvases: demoCanvases(demoIdentification(), DEMO_NOW.toISOString()),
+    outcomePlanning: [demoPlanningSession(DEMO_NOW.toISOString())],
   };
 }
 

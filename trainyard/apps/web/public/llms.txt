@@ -12,6 +12,7 @@ Trainyard is self-hosted with Docker Compose and runs beside other sites on the 
 - Lean portfolio: epics with WSJF, budgets and guardrails, OKRs.
 - AI portfolio: initiatives and platforms with lifecycle stages, gates with evidence and evaluations, EU AI Act risk tiers, agents with autonomy levels 0 to 4, value-architect sign-off, audit log.
 - Reporting: metric catalogue (flow, planning, portfolio, AI) and dashboards you compose; AI-written narrative on request.
+- PI Outcome Planning (AI-Native SAFe): the outcome tree (ART, PI and team outcomes with key results), the PI Outcome Planning Board (PI outcomes × iterations with fixed-date, learning, synchronization and release milestones), team Outcome Planning Boards (experiments, prototypes, enablers, features), the Management Review Board (decisions needed, risks, decisions confirmed, actions), the one-day agenda and the fist-of-five confidence vote.
 - Bring your own boards: iObeya board exports (program, team, Kanban, roadmap and free boards with charts, images and dependencies), Miro REST v2, Mural, monday.com GraphQL, Trello, CSV, JSON; boards kept as imported, saved as templates, mapped onto the plan on demand.
 - Security: API keys hashed at rest, roles (admin, planner, architect, viewer), rate limits, sign-in lockout, strict Content Security Policy, encrypted connection tokens, append-only audit.
 
