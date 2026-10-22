@@ -1,0 +1,16 @@
+name: trainyard-check
+# On-demand look at the live site from outside: health, auth mode and whether payments are on.
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the live API
+        run: |
+          api="https://${{ vars.TRAINYARD_API_HOST || 'api.agileagilist.com' }}"
+          web="https://${{ vars.TRAINYARD_WEB_HOST || 'agileagilist.com' }}"
+          echo "== $api/health"; curl -sS --max-time 20 "$api/health"; echo
+          echo "== $api/v1/billing/config"; curl -sS --max-time 20 "$api/v1/billing/config"; echo
+          echo "== $web/ (status)"; curl -sS --max-time 20 -o /dev/null -w '%{http_code}\n' "$web/"
+          echo "== $web/welcome (status)"; curl -sS --max-time 20 -o /dev/null -w '%{http_code}\n' "$web/welcome"
