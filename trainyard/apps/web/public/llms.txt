@@ -24,7 +24,7 @@ Trainyard is self-hosted with Docker Compose and runs beside other sites on the 
 ## Source and docs
 
 - Code and README: https://github.com/mlbwhf/test/tree/claude/confident-cray-JTbgD/trainyard
-- API reference: the API serves OpenAPI at /docs on its own host (plan-api.<domain>)
+- API reference: the API serves OpenAPI at /docs on its own host (api.agileagilist.com)
 
 ## Comparable products
 

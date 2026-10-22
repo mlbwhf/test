@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Check the live site from the outside, the way a visitor reaches it.
-#   ./smoke.sh plan.agile-agilist.com plan-api.agile-agilist.com
+#   ./smoke.sh agileagilist.com api.agileagilist.com [web alias ...]
+# Any further arguments are web aliases that must redirect (308) to the first host.
 # Retries for up to two minutes while containers and certificates settle.
 set -uo pipefail
 web=${1:?usage: smoke.sh <web host> <api host>}
@@ -28,4 +29,11 @@ expect "https://$api/docs/" 200 '' || fail=1
 expect "https://$web/login" 200 'Sign in' || fail=1
 expect "https://$web/login" 200 "window.__TRAINYARD_API__=\"https://$api\"" || fail=1
 expect "https://$web/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1
+expect "https://$web/" 200 'application/ld+json' || fail=1
+expect "https://$web/robots.txt" 200 'Sitemap' || fail=1
+shift 2
+for alias in "$@"; do
+  loc=$(curl -sS --max-time 20 -o /dev/null -w '%{http_code} %{redirect_url}' "https://$alias/login" 2>/dev/null || echo "000")
+  case "$loc" in 30[18]\ https://$web/login*) printf 'ok    %-50s %s\n' "https://$alias/login" "$loc";; *) printf 'FAIL  %-50s got %s (wanted 308 https://%s/login)\n' "https://$alias/login" "$loc" "$web"; fail=1;; esac
+done
 exit $fail

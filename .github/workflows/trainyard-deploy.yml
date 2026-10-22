@@ -3,7 +3,7 @@
 #   DEPLOY_HOST      VPS IP or hostname
 #   DEPLOY_USER      ssh user with docker access ("deploy", created by gate's server-setup.sh)
 #   DEPLOY_SSH_KEY   private key for that user
-# and the repository variables TRAINYARD_WEB_HOST / TRAINYARD_API_HOST for the smoke test.
+# and the repository variables TRAINYARD_WEB_HOST / TRAINYARD_API_HOST / TRAINYARD_WEB_ALIASES for the smoke test.
 # Everything the app needs at runtime lives in /opt/trainyard/.env on the server.
 name: trainyard-deploy
 on:
@@ -128,4 +128,4 @@ jobs:
             ./deploy.sh
             docker logout ghcr.io
       - name: Smoke-test the live site
-        run: bash trainyard/infra/scripts/smoke.sh "${{ vars.TRAINYARD_WEB_HOST || 'plan.agile-agilist.com' }}" "${{ vars.TRAINYARD_API_HOST || 'plan-api.agile-agilist.com' }}"
+        run: bash trainyard/infra/scripts/smoke.sh "${{ vars.TRAINYARD_WEB_HOST || 'agileagilist.com' }}" "${{ vars.TRAINYARD_API_HOST || 'api.agileagilist.com' }}" ${{ vars.TRAINYARD_WEB_ALIASES || 'www.agileagilist.com plan.agile-agilist.com' }}

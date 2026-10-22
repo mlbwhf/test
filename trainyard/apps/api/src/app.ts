@@ -52,7 +52,7 @@ export { ApiError } from "./errors.js";
 
 export interface AppOptions extends AuthOptions {
   store?: Store;
-  corsOrigin?: string | boolean;
+  corsOrigin?: string | string[] | boolean;
   logger?: boolean;
   assist?: AssistProvider;
   /** Shared secret trackers must send as ?token= on webhook calls. */

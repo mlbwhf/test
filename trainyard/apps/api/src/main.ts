@@ -80,7 +80,8 @@ async function main() {
     ...(assist ? { assist } : {}),
     ...(process.env.TRAINYARD_WEBHOOK_SECRET ? { webhookSecret: process.env.TRAINYARD_WEBHOOK_SECRET } : {}),
     syncEveryMinutes: Number(process.env.TRAINYARD_SYNC_EVERY_MINUTES ?? 0),
-    corsOrigin: process.env.TRAINYARD_WEB_URL ?? true,
+    // One origin or a comma-separated list (canonical host plus aliases); placeholders like https://_none_ are dropped.
+    corsOrigin: process.env.TRAINYARD_WEB_URL ? process.env.TRAINYARD_WEB_URL.split(",").map((o) => o.trim()).filter((o) => o && !o.includes("_none_")) : true,
     // Behind Traefik in production the client address is in X-Forwarded-For.
     trustProxy: env === "production" || process.env.TRAINYARD_TRUST_PROXY === "1",
     rateLimitPerMinute: Number(process.env.TRAINYARD_RATE_LIMIT ?? 600),

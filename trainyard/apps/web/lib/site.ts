@@ -2,7 +2,7 @@
 // serves any domain; the fallbacks match the default VPS hostnames.
 
 export function siteUrl(): string {
-  return (process.env.TRAINYARD_PUBLIC_WEB_URL ?? process.env.NEXT_PUBLIC_TRAINYARD_WEB_URL ?? "https://plan.agile-agilist.com").replace(/\/$/, "");
+  return (process.env.TRAINYARD_PUBLIC_WEB_URL ?? process.env.NEXT_PUBLIC_TRAINYARD_WEB_URL ?? "https://agileagilist.com").replace(/\/$/, "");
 }
 
 export function apiUrl(): string {
