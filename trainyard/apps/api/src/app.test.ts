@@ -439,7 +439,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(19);
+    expect(list.body.builtin.length).toBe(24);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     // 4 teams × 6 working iterations, plus milestones, uncommitted and risks strips.
@@ -744,6 +744,31 @@ describe("website sign-ups", () => {
     expect(list.body.signups[0]).toMatchObject({ plan: "academy", seats: 6, source: "/" });
     const done = await call("PATCH", `/v1/signups/${list.body.signups[0].id}`, { status: "invited" });
     expect(done.body.signup.status).toBe("invited");
+    await app.close();
+  });
+});
+
+describe("class boards", () => {
+  it("lists the five classes and keeps them for signed-up trainers", async () => {
+    const { call, app } = await setup();
+    const list = await call("GET", "/v1/templates/boards");
+    const classes = list.body.builtin.filter((b: { info: { tags: string[] } }) => b.info.tags.includes("class"));
+    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-rte"]);
+    // Open mode is anonymous: classes and Miro imports refuse, planning boards do not.
+    const denied = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC cohort" });
+    expect(denied.status).toBe(403);
+    expect(denied.body.error.code).toBe("SIGNUP_REQUIRED");
+    expect((await call("POST", "/v1/imports/miro-csv", { name: "x", csv: '"a"\n"b"' })).body.error.code).toBe("SIGNUP_REQUIRED");
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-pi-planning/create", { name: "PI 3" })).status).toBe(201);
+    // A real user may.
+    const created = await call("POST", "/v1/users", { name: "Nada", email: "nada@example.io", role: "planner" });
+    const key = created.body.apiKey as string;
+    const ok = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC cohort" }, key);
+    expect(ok.status).toBe(201);
+    expect(ok.body.board.counts.frames).toBeGreaterThan(40);
+    const imported = await call("POST", "/v1/imports/miro-csv", { name: "Leading SAFe", csv: '""\n"Parking Lot"\n"Questions"\n\n"<p>Agenda</p>"\n"Lesson 1","","To do"' }, key);
+    expect(imported.status).toBe(201);
+    expect(imported.body.board.counts.frames).toBe(2);
     await app.close();
   });
 });

@@ -65,3 +65,28 @@ describe("PI outcome planning", () => {
     expect(a.filter((x) => x.kind === "team-breakout")).toHaveLength(2);
   });
 });
+
+describe("class boards", () => {
+  it("builds every class with a start strip, one frame per lesson, and the shared exercises", async () => {
+    const { CLASSES, classBoard, classTemplates } = await import("./classes.js");
+    expect(CLASSES.map((c) => c.id)).toEqual(["leading-safe", "spc", "aspc", "popm", "rte"]);
+    const spc = classBoard(CLASSES[1]!);
+    const top = spc.frames.filter((f) => !f.parentId);
+    expect(top[0]!.title).toBe("Start here");
+    expect(top.slice(1).map((f) => f.title)).toHaveLength(CLASSES[1]!.lessons.length);
+    expect(top[2]!.title).toContain("Building a Foundation");
+    // SPC reuses the Leading SAFe lessons and plans with four teams; Leading SAFe with three.
+    expect(spc.frames.filter((f) => /^Team [A-D] .* board$/.test(f.title))).toHaveLength(4);
+    expect(classBoard(CLASSES[0]!).frames.filter((f) => /^Team [A-D] .* board$/.test(f.title))).toHaveLength(3);
+    // The readiness checklist appears in SPC lesson 10 and RTE lesson 3, pointing at the live canvas.
+    const rte = classBoard(CLASSES[4]!);
+    for (const b of [spc, rte]) expect(b.nodes.some((n) => n.fields.link === "/canvases")).toBe(true);
+    expect(spc.nodes.filter((n) => n.text.startsWith("Planning scope and context"))).toHaveLength(1);
+    // Story cards carry their points for the simulation.
+    expect(spc.nodes.filter((n) => typeof n.fields.storyPoints === "number").length).toBeGreaterThan(20);
+    // Nothing overlaps its lesson frame: every node sits inside a frame of the board.
+    const ids = new Set(spc.frames.map((f) => f.id));
+    expect(spc.nodes.every((n) => n.frameId && ids.has(n.frameId))).toBe(true);
+    expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-rte"]);
+  });
+});

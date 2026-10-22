@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Board, BoardOrigin, TemplateInfo } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
-import { api, useApi, type ApiFailure } from "@/lib/api";
+import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
 
 interface Summary {
   id: string;
@@ -19,6 +21,7 @@ interface Summary {
 const FILTERS = [
   ["all", "All"],
   ["safe", "SAFe"],
+  ["class", "Classes"],
   ["team", "Team"],
   ["portfolio", "Portfolio"],
   ["risk", "Risk"],
@@ -30,6 +33,7 @@ const FILTERS = [
 export default function TemplatesPage() {
   const router = useRouter();
   const data = useApi<{ builtin: Summary[]; saved: Summary[] }>("/v1/templates/boards");
+  const me = useMe();
   const [filter, setFilter] = useState<string>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -41,6 +45,8 @@ export default function TemplatesPage() {
   const all: Summary[] = [...data.data.builtin, ...data.data.saved.map((s) => ({ ...s, info: undefined }))];
   const shown = all.filter((t) => filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never)));
   const sel = all.find((t) => t.id === selId);
+  const isClass = (t: Summary | undefined) => !!t?.info?.tags.includes("class" as never);
+  const gated = isClass(sel) && !!me.data?.principal.anonymous;
 
   const create = async () => {
     if (!sel) return;
@@ -121,7 +127,15 @@ export default function TemplatesPage() {
               Board name
               <input id="tpl-name" className="input" placeholder={`${sel.name} ${new Date().toISOString().slice(0, 10)}`} value={name} onChange={(e) => setName(e.target.value)} />
             </label>
-            <button className="btn primary" onClick={create}>
+            {gated ? (
+              <div className="notice warn">
+                <strong>Classes need a Trainer account.</strong>
+                <p style={{ margin: "4px 0 0" }}>
+                  Class boards (Leading SAFe, SPC, Advanced SPC, POPM, RTE) and Miro imports are for signed-up trainers. <a href="/#join">Sign up</a>, then <Link href="/login">sign in</Link> with the key you receive.
+                </p>
+              </div>
+            ) : null}
+            <button className="btn primary" onClick={create} disabled={gated}>
               Create board
             </button>
           </aside>

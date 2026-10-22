@@ -187,3 +187,17 @@ describe("files", () => {
     expect(new ImportError("AUTH", "x").code).toBe("AUTH");
   });
 });
+
+describe("Miro CSV export", () => {
+  it("turns blocks into frames of stickies and tables into grids of cards", async () => {
+    const { boardFromMiroCsv, isMiroCsvExport } = await import("./miroCsv.js");
+    const csv = ['""', '"Parking Lot"', '"Questions"', '"Closed"', "", '"<p>Leading SAFe</p>"', '"Lesson 1: Thriving","","","To do"', '"Lesson 2: Foundation","","",""', "", '"Column 1","Column 2"', '"Steps to create one:","…"', '"Impediments:","…"'].join("\n");
+    expect(isMiroCsvExport(csv)).toBe(true);
+    const b = boardFromMiroCsv(csv, { name: "Leading SAFe", now: "2026-01-01T00:00:00.000Z" });
+    expect(b.frames.map((f) => f.title)).toEqual(["Parking Lot", "Leading SAFe", "Block 3"]);
+    expect(b.nodes.filter((n) => n.frameId === b.frames[0]!.id).map((n) => n.text)).toEqual(["Questions", "Closed"]);
+    expect(b.nodes.filter((n) => n.frameId === b.frames[1]!.id && n.kind === "card")).toHaveLength(8);
+    expect(b.nodes.filter((n) => n.frameId === b.frames[2]!.id).map((n) => n.text)).toEqual(["Column 1", "Column 2", "Steps to create one:", "…", "Impediments:", "…"]);
+    expect(isMiroCsvExport("Feature,Team,Points\nGuest checkout,Checkout,13")).toBe(false);
+  });
+});

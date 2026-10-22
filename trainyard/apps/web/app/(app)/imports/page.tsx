@@ -339,7 +339,7 @@ function IobeyaUpload({ onError }: { onError: (e: unknown) => void }) {
 }
 
 function UploadForms({ onImported, onError }: { onImported: (name: string) => void; onError: (e: unknown) => void }) {
-  const [mode, setMode] = useState<"iobeya" | "csv" | "json">("iobeya");
+  const [mode, setMode] = useState<"iobeya" | "miro" | "csv" | "json">("iobeya");
   const [name, setName] = useState("");
   const [groupBy, setGroupBy] = useState("");
   const [text, setText] = useState("");
@@ -355,6 +355,9 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
     <div className="tabs" role="tablist">
       <button type="button" role="tab" aria-selected={mode === "iobeya"} onClick={() => setMode("iobeya")}>
         iObeya board export
+      </button>
+      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("miro")}>
+        Miro board CSV
       </button>
       <button type="button" role="tab" aria-selected={false} onClick={() => setMode("csv")}>
         CSV / spreadsheet export
@@ -378,6 +381,7 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
         e.preventDefault();
         try {
           if (mode === "csv") await api("POST", "/v1/imports/csv", { name, csv: text, ...(groupBy ? { groupBy } : {}) });
+          else if (mode === "miro") await api("POST", "/v1/imports/miro-csv", { name, csv: text });
           else await api("POST", "/v1/imports/json", { board: JSON.parse(text) });
           onImported(name || "board");
           setText("");
@@ -390,6 +394,9 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
         <button type="button" role="tab" aria-selected={false} onClick={() => setMode("iobeya")}>
           iObeya board export
         </button>
+        <button type="button" role="tab" aria-selected={mode === "miro"} onClick={() => setMode("miro")}>
+          Miro board CSV
+        </button>
         <button type="button" role="tab" aria-selected={mode === "csv"} onClick={() => setMode("csv")}>
           CSV / spreadsheet export
         </button>
@@ -400,28 +407,30 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
       <div className="row" style={{ alignItems: "flex-end" }}>
         <label className="field" style={{ flex: "1 1 160px" }}>
           File
-          <input id="upload-file" className="input" type="file" accept={mode === "csv" ? ".csv,.tsv,text/csv,text/plain" : ".json,application/json"} onChange={(e) => e.target.files?.[0] && read(e.target.files[0])} />
+          <input id="upload-file" className="input" type="file" accept={mode === "json" ? ".json,application/json" : ".csv,.tsv,text/csv,text/plain"} onChange={(e) => e.target.files?.[0] && read(e.target.files[0])} />
         </label>
-        {mode === "csv" ? (
+        {mode === "csv" || mode === "miro" ? (
           <>
             <label className="field">
               Board name
               <input id="upload-name" className="input" required value={name} onChange={(e) => setName(e.target.value)} />
             </label>
-            <label className="field">
-              Group rows by column (optional)
-              <input id="upload-group" className="input" placeholder="e.g. Team" value={groupBy} onChange={(e) => setGroupBy(e.target.value)} />
-            </label>
+            {mode === "csv" ? (
+              <label className="field">
+                Group rows by column (optional)
+                <input id="upload-group" className="input" placeholder="e.g. Team" value={groupBy} onChange={(e) => setGroupBy(e.target.value)} />
+              </label>
+            ) : null}
           </>
         ) : null}
       </div>
       <label className="field">
-        {mode === "csv" ? "Or paste CSV" : "Or paste JSON"}
+        {mode === "json" ? "Or paste JSON" : "Or paste CSV"}
         <textarea id="upload-text" className="textarea mono" style={{ minHeight: 110, fontSize: "0.8rem" }} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === "csv" ? "Feature,Team,Points\nGuest checkout,Checkout,13" : '{ "name": "My board", "columns": ["Title", "Team"], "rows": [{ "Title": "Guest checkout", "Team": "Checkout" }] }'} required />
       </label>
       <div className="row" style={{ justifyContent: "space-between" }}>
         <span className="faint" style={{ fontSize: "0.8rem" }}>
-          {mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
+          {mode === "miro" ? "Needs a Trainer account. Miro: board menu → Export → CSV. Widget texts come in reading order without positions, so blocks become frames of cards; a class board arrives as its lessons and exercises, ready to tidy. (.rtb backups are encrypted by Miro and cannot be read.)" : mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
         </span>
         <button className="btn primary" type="submit" disabled={!text}>
           Import

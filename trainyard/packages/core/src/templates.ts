@@ -8,6 +8,7 @@
 // copy any vendor's materials.
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
+import { classTemplates } from "./classes.js";
 
 export interface TemplateInfo {
   id: string;
@@ -15,7 +16,7 @@ export interface TemplateInfo {
   blurb: string;
   /** Ceremony or cadence the board is used in. */
   event: string;
-  tags: ("safe" | "team" | "portfolio" | "risk" | "lean" | "flow")[];
+  tags: ("safe" | "team" | "portfolio" | "risk" | "lean" | "flow" | "class")[];
   zones: string[];
   cardTypes: string[];
   mapsTo: string;
@@ -248,5 +249,6 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       b.frames = [ideas, ...horizons];
       b.nodes = placeholders([ideas]);
     }),
+    ...classTemplates(NOW),
   ];
 }

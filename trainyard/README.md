@@ -204,6 +204,16 @@ SAFe's working artifacts as structured, editable canvases, laid out like the ori
 
 API: `GET/POST /v1/canvases`, `GET/PUT/DELETE /v1/canvases/:id`, `POST /v1/canvases/from-identification`, `GET /v1/canvases/:id/tows-suggestions`, `POST /v1/canvases/future-state`.
 
+## Classes
+
+Five class boards for trainers, under **Templates → Classes**: Leading SAFe (2 days), SPC (4 days), Advanced SPC (3 days), POPM (2 days) and RTE (3 days). Each opens with a "Start here" strip (Trainyard intro, quick agenda, remote working agreements, team and challenge, parking lot, daily structure) and then one frame per lesson holding that lesson's exercises. Exercises are authored in a small vocabulary in `packages/core/src/classes.ts` (slide, stickies, zones, table, canvas, link, PI planning simulation) and rendered into frames and cards, so a class is a few lines to write and edits like any board.
+
+Shared material is shared: SPC's first lessons are Leading SAFe's (with four simulation teams instead of three); the PI planning simulation plans the autonomous delivery vehicle backlog (31 stories across three features) on an ART board plus team boards, with coach-sync questions, ROAM and the confidence vote; the ART readiness checklist (Y/D/N) sits in SPC lesson 10 and RTE lesson 3 and links to the live ART launch canvas; the design-sprint learning lab and the CARS case studies are in Advanced SPC. The POPM board carries the common POPM exercises until its own Miro export is imported.
+
+**Miro imports.** Miro's "Export board as CSV" lists every widget's text in reading order without positions (the `.rtb` backup holds positions but is encrypted by Miro). `POST /v1/imports/miro-csv` rebuilds it as one frame per block, with tables as grids of cards, so a class board arrives as its lessons and exercises, ready to tidy. **Bring your own boards → Miro board CSV.**
+
+Class boards and Miro imports need a signed-up trainer (`403 SIGNUP_REQUIRED` for anonymous or open-mode access); the planning boards stay open.
+
 ## PI Outcome Planning
 
 AI-Native SAFe replaced two-day PI Planning with a one-day **PI Outcome Planning** event, and **PI Outcome Planning** in the app is that event's set of artifacts for one ART and one PI:

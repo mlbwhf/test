@@ -6,7 +6,7 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { TEMPLATE_CATALOG, boardShape, builtinTemplates, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
-import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer } from "@trainyard/importers";
+import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromMiroCsv } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -161,6 +161,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     },
   );
 
+  // Miro "export as CSV": widget texts in reading order, no positions; rebuilt as frames of cards.
+  app.post("/v1/imports/miro-csv", { bodyLimit: 8 * 1024 * 1024, schema: { body: z.object({ name: z.string().min(1).max(120), csv: z.string().min(1).max(6_000_000) }) } }, async (req, reply) => {
+    require(req, "plan");
+    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", "Importing Miro boards needs a Trainer account. Sign up on the website and sign in with the key you receive.");
+    const board = boardFromMiroCsv(req.body.csv, { name: req.body.name, now: store.now().toISOString() });
+    if (board.nodes.length === 0) throw new ApiError(422, "EMPTY_EXPORT", "No widgets found in this export.");
+    board.origin.importedBy = req.principal.userId;
+    s().workspace.boards = [...boards().filter((b) => b.id !== board.id), board];
+    await store.commit(req.principal, "board.import", { id: board.id, system: "miro", nodes: board.nodes.length, frames: board.frames.length });
+    return reply.code(201).send({ board: summary(board) });
+  });
+
   app.post("/v1/imports/json", { schema: { body: z.object({ board: z.unknown() }) } }, async (req, reply) => {
     require(req, "plan");
     let board: Board;
@@ -227,9 +239,15 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     catalog: TEMPLATE_CATALOG,
   }));
   app.get("/v1/templates/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ board: findTemplate(req.params.id) }));
+  // Class boards and Miro imports are for signed-up trainers: the open demo cannot run them.
+  const requireSignup = (req: { principal: { anonymous: boolean } }, what: string) => {
+    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", `${what} needs a Trainer account. Sign up on the website and sign in with the key you receive.`);
+  };
+
   app.post("/v1/templates/boards/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
     require(req, "plan");
     const t = findTemplate(req.params.id);
+    if (t.fields?.class) requireSignup(req, "Running a class board");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
