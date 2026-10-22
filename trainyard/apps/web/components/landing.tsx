@@ -457,9 +457,9 @@ export function Landing() {
             <h2>
               Your class starts at <span className="chip">00:00</span>.
             </h2>
-            <p>Tell us who you are and which plan fits. You get a sign-in by email, usually the same day. No card needed to begin, and Practice never asks for one.</p>
+            <p>Tell us who you are and which plan fits. Trainer and Academy pay by card through Stripe and get their sign-in straight away; Practice never asks for one.</p>
           </div>
-          <SignupForm plan={plan} setPlan={setPlan} audience={aud} />
+          <SignupForm plan={plan} setPlan={setPlan} audience={aud} yearly={yearly} />
         </div>
       </section>
 
@@ -480,7 +480,9 @@ export function Landing() {
   );
 }
 
-function SignupForm({ plan, setPlan, audience }: { plan: PlanId; setPlan: (p: PlanId) => void; audience: Audience }) {
+type BillingConfig = { enabled: boolean; plans: Record<string, boolean>; trialDays: number };
+
+function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan: (p: PlanId) => void; audience: Audience; yearly: boolean }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
@@ -489,15 +491,21 @@ function SignupForm({ plan, setPlan, audience }: { plan: PlanId; setPlan: (p: Pl
   const [hp, setHp] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [done, setDone] = useState<{ name: string; email: string; plan: PlanId } | null>(null);
+  const [done, setDone] = useState<{ name: string; email: string; plan: PlanId; paying?: boolean } | null>(null);
   const def = useMemo(() => PLANS.find((p) => p.id === plan)!, [plan]);
+  const [billing, setBilling] = useState<BillingConfig | null>(null);
+  useEffect(() => {
+    api<BillingConfig>("GET", "/v1/billing/config").then(setBilling, () => setBilling(null));
+  }, []);
+  const interval = yearly ? "yearly" : "monthly";
+  const canPay = plan !== "practice" && !!billing?.enabled && !!billing.plans[`${plan}-${interval}`];
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setBusy(true);
     setErr(null);
     try {
-      await api("POST", "/v1/signups", {
+      const created = await api<{ signup: { id: string } }>("POST", "/v1/signups", {
         name: name.trim(),
         email: email.trim(),
         plan,
@@ -508,7 +516,17 @@ function SignupForm({ plan, setPlan, audience }: { plan: PlanId; setPlan: (p: Pl
         ...(hp ? { website: hp } : {}),
         source: typeof window !== "undefined" ? window.location.pathname : "/",
       });
-      setDone({ name: name.trim(), email: email.trim(), plan });
+      if (canPay && created.signup?.id) {
+        // Paid plan with Stripe set up: straight to Checkout; the welcome page hands over the key.
+        setDone({ name: name.trim(), email: email.trim(), plan, paying: true });
+        try {
+          const { url } = await api<{ url: string }>("POST", "/v1/billing/checkout", { signupId: created.signup.id, interval, quantity: seats && Number(seats) > 0 ? Number(seats) : 1 });
+          window.location.assign(url);
+          return;
+        } catch {
+          setDone({ name: name.trim(), email: email.trim(), plan });
+        }
+      } else setDone({ name: name.trim(), email: email.trim(), plan });
     } catch (x) {
       const f = x as ApiFailure;
       setErr(f.status === 429 ? "Too many sign-ups from this connection; try again in a minute." : f.message);
@@ -517,6 +535,17 @@ function SignupForm({ plan, setPlan, audience }: { plan: PlanId; setPlan: (p: Pl
     }
   };
 
+  if (done?.paying) {
+    return (
+      <div className="ly-form">
+        <div className="ly-done" role="status">
+          <div className="check">→</div>
+          <div className="big">Taking you to payment, {done.name}.</div>
+          <p>Stripe handles the card. You come back here with your sign-in key.</p>
+        </div>
+      </div>
+    );
+  }
   if (done) {
     return (
       <div className="ly-form">

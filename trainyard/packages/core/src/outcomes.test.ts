@@ -87,6 +87,11 @@ describe("class boards", () => {
     // Nothing overlaps its lesson frame: every node sits inside a frame of the board.
     const ids = new Set(spc.frames.map((f) => f.id));
     expect(spc.nodes.every((n) => n.frameId && ids.has(n.frameId))).toBe(true);
+    // POPM follows the trainer's exported board: five lessons, the animal-named teams in the simulation.
+    const popm = classBoard(CLASSES[3]!);
+    expect(popm.frames.filter((f) => !f.parentId).slice(1).map((f) => f.title.replace(/^Lesson \d+: /, ""))).toEqual(["Becoming a Product Owner / Product Manager", "Preparing for PI Planning", "Leading PI Planning", "Executing Iterations", "Executing the PI"]);
+    expect(popm.frames.filter((f) => /^(Unicorns|Lions|Bears) .* board$/.test(f.title))).toHaveLength(3);
+    expect(popm.nodes.some((n) => n.text.startsWith("Trustworthy:"))).toBe(true);
     expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-rte"]);
   });
 });

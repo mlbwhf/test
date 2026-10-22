@@ -4,6 +4,8 @@ import type { PushChange, TrackerConnector } from "@trainyard/connectors";
 import type { WorkItem } from "@trainyard/core";
 import { MemoryPersistence } from "@trainyard/db";
 import { buildApp, type AppOptions } from "./app.js";
+import { verifyStripeSignature } from "./billing.js";
+import { createHmac } from "node:crypto";
 import { Store, type StoreState } from "./store.js";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -837,5 +839,87 @@ describe("AI-Native ART", () => {
     expect(bad.status).toBe(422);
     expect((await call("PUT", base, { ...art, costLimit: 5000 })).body.derived.cost.overLimit).toBe(true);
     await app.close();
+  });
+});
+
+describe("billing", () => {
+  it("reports billing off and refuses checkout without Stripe", async () => {
+    const { call } = await setup();
+    expect((await call("GET", "/v1/billing/config")).body).toMatchObject({ enabled: false });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer" });
+    const c = await call("POST", "/v1/billing/checkout", { signupId: s.body.signup.id, interval: "monthly", quantity: 1 });
+    expect(c.status).toBe(409);
+    expect(c.body.error.code).toBe("BILLING_OFF");
+    expect((await call("POST", "/v1/webhooks/stripe", { type: "x" })).status).toBe(404);
+  });
+
+  it("keeps sign-up, payment and tracker webhooks reachable once the workspace is closed", async () => {
+    const { call } = await setup({ webhookSecret: "hook" });
+    const admin = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    expect(admin.status).toBe(201);
+    expect((await call("GET", "/v1/boards")).status).toBe(401);
+    expect((await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer" })).status).toBe(201);
+    expect((await call("GET", "/v1/billing/config")).status).toBe(200);
+    expect((await call("POST", "/v1/billing/claim", { sessionId: "cs_none" })).status).toBe(404);
+    expect((await call("POST", "/v1/webhooks/jira?token=nope")).status).toBe(401);
+    expect((await call("GET", "/v1/signups")).status).toBe(401);
+  });
+
+  it("verifies Stripe signatures", () => {
+    const now = 1_700_000_000_000;
+    const t = Math.floor(now / 1000);
+    const sig = createHmac("sha256", "whsec_test").update(`${t}.{}`).digest("hex");
+    expect(verifyStripeSignature("{}", `t=${t},v1=${sig}`, "whsec_test", now)).toBe(true);
+    expect(verifyStripeSignature("{ }", `t=${t},v1=${sig}`, "whsec_test", now)).toBe(false);
+    expect(verifyStripeSignature("{}", `t=${t},v1=${sig}`, "whsec_test", now + 10 * 60_000)).toBe(false);
+    expect(verifyStripeSignature("{}", undefined, "whsec_test", now)).toBe(false);
+  });
+
+  it("starts Checkout for a paid sign-up, turns the paid webhook into a user, and hands the key over once", async () => {
+    const stripeCalls: { url: string; body: string }[] = [];
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      stripeCalls.push({ url: String(url), body: String(init?.body ?? "") });
+      return new Response(JSON.stringify({ id: "cs_test_1", url: "https://checkout.stripe.com/c/pay/cs_test_1" }), { status: 200, headers: { "content-type": "application/json" } });
+    }) as unknown as typeof fetch;
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", webhookSecret: "whsec_test", prices: { "trainer-monthly": "price_tm", "academy-yearly": "price_ay" }, webUrl: "https://agileagilist.com/", fetch: fakeFetch } });
+    expect((await call("GET", "/v1/billing/config")).body).toMatchObject({ enabled: true, plans: { "trainer-monthly": true, "academy-yearly": true } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer", seats: 2 });
+    // Practice is free; a missing price is a configuration error, not a 500.
+    const free = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "practice" });
+    expect((await call("POST", "/v1/billing/checkout", { signupId: free.body.signup.id })).body.error.code).toBe("FREE_PLAN");
+    expect((await call("POST", "/v1/billing/checkout", { signupId: s.body.signup.id, interval: "yearly" })).body.error.code).toBe("NO_PRICE");
+    const c = await call("POST", "/v1/billing/checkout", { signupId: s.body.signup.id, interval: "monthly", quantity: 2 });
+    expect(c.status).toBe(200);
+    expect(c.body.url).toContain("checkout.stripe.com");
+    expect(stripeCalls[0]!.url).toBe("https://api.stripe.com/v1/checkout/sessions");
+    expect(decodeURIComponent(stripeCalls[0]!.body)).toContain("success_url=https://agileagilist.com/welcome?session_id={CHECKOUT_SESSION_ID}");
+    expect(stripeCalls[0]!.body).toContain("line_items%5B0%5D%5Bquantity%5D=2");
+    // Before the webhook the welcome page sees an open purchase.
+    expect((await call("POST", "/v1/billing/claim", { sessionId: "cs_test_1" })).body).toEqual({ status: "open" });
+
+    const event = JSON.stringify({ type: "checkout.session.completed", data: { object: { id: "cs_test_1", payment_status: "paid", customer: "cus_1", subscription: "sub_1", client_reference_id: s.body.signup.id, metadata: { signupId: s.body.signup.id, plan: "trainer" } } } });
+    const t = Math.floor(store.now().getTime() / 1000);
+    const sign = (payload: string, secret = "whsec_test") => `t=${t},v1=${createHmac("sha256", secret).update(`${t}.${payload}`).digest("hex")}`;
+    const webhook = (payload: string, sig: string) => app.inject({ method: "POST", url: "/v1/webhooks/stripe", payload, headers: { "content-type": "application/json", "stripe-signature": sig } });
+    expect((await webhook(event, sign(event, "whsec_wrong"))).statusCode).toBe(400);
+    expect((await webhook(event, sign(event))).statusCode).toBe(200);
+    // Idempotent: Stripe retries.
+    expect(JSON.parse((await webhook(event, sign(event))).body)).toMatchObject({ ok: true, already: true });
+
+    const user = store.state.users.find((u) => u.email === "ada@example.io");
+    expect(user).toMatchObject({ name: "Ada", role: "planner" });
+    expect(store.state.signups!.find((x) => x.id === s.body.signup.id)).toMatchObject({ status: "invited", userId: user!.id });
+    expect(store.state.purchases![0]).toMatchObject({ status: "paid", customerId: "cus_1", subscriptionId: "sub_1", quantity: 2 });
+
+    const first = await call("POST", "/v1/billing/claim", { sessionId: "cs_test_1" });
+    expect(first.body).toMatchObject({ status: "paid", plan: "trainer", interval: "monthly", quantity: 2, email: "ada@example.io" });
+    expect(typeof first.body.apiKey).toBe("string");
+    const second = await call("POST", "/v1/billing/claim", { sessionId: "cs_test_1" });
+    expect(second.body.apiKey).toBeUndefined();
+    expect(second.body.claimed).toBe(true);
+    expect(store.state.purchases![0]!.pendingKey).toBeUndefined();
+    // The key signs in.
+    const me = await call("GET", "/v1/me", undefined, first.body.apiKey);
+    expect(me.body.principal).toMatchObject({ name: "Ada", role: "planner" });
   });
 });

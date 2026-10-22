@@ -47,6 +47,7 @@ import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
+import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
 import { registerAiNativeRoutes } from "./ainative.js";
@@ -74,6 +75,8 @@ export interface AppOptions extends AuthOptions {
   rateLimitPerMinute?: number;
   /** Every website sign-up is POSTed here as JSON (Slack, n8n, a CRM); unset means the list under Users only. */
   signupWebhook?: string;
+  /** Stripe Checkout for the paid plans; without a secret key sign-ups stay requests handled by hand. */
+  billing?: BillingOptions;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -585,6 +588,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerCanvasRoutes(app, store);
   registerOutcomeRoutes(app, store);
   registerAiNativeRoutes(app, store);
+  await registerBillingRoutes(app, store, { ...opts.billing, ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerSignupRoutes(app, store, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);

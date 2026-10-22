@@ -95,9 +95,25 @@ export function registerAuth(app: App, store: Store, opts: AuthOptions = {}) {
     return !!f && f.count >= LOCKOUT_FAILURES && Date.now() - f.since < LOCKOUT_MS;
   };
 
+  // Routes the public reaches without a key once the workspace is closed: the website sign-up,
+  // payment (Checkout start, Stripe's webhook, the one-time key pickup) and the tracker webhooks,
+  // which check their own token. They get a visitor principal with no permissions.
+  const isPublic = (method: string, url: string) => {
+    const path = url.split("?")[0] ?? url;
+    if (method === "POST" && path === "/v1/signups") return true;
+    if (method === "POST" && path.startsWith("/v1/webhooks/")) return true;
+    if (method === "GET" && path === "/v1/billing/config") return true;
+    if (method === "POST" && (path === "/v1/billing/checkout" || path === "/v1/billing/claim")) return true;
+    return false;
+  };
+
   app.decorateRequest("principal", null as unknown as Principal);
   app.addHook("onRequest", async (req, reply) => {
     if (!req.url.startsWith("/v1/")) return;
+    if (!open() && isPublic(req.method, req.url) && !req.headers.authorization) {
+      req.principal = { userId: "anonymous", name: "Visitor", role: "viewer", anonymous: true };
+      return;
+    }
     if (open()) {
       reply.header("x-trainyard-auth", "open");
       req.principal = { userId: "anonymous", name: "Anonymous (open mode)", role: "admin", anonymous: true };

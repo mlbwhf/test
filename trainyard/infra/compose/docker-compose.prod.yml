@@ -51,6 +51,14 @@ services:
       # Allowed browser origins: the canonical web host plus its aliases (aliases redirect, but a cached page may still call)
       # Website sign-ups are POSTed here as JSON (Slack, n8n, a CRM); they are always listed under Users.
       TRAINYARD_SIGNUP_WEBHOOK: ${TRAINYARD_SIGNUP_WEBHOOK:-}
+      # Stripe Checkout for the paid plans; empty = payments off
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_TRAINER_MONTHLY: ${STRIPE_PRICE_TRAINER_MONTHLY:-}
+      STRIPE_PRICE_TRAINER_YEARLY: ${STRIPE_PRICE_TRAINER_YEARLY:-}
+      STRIPE_PRICE_ACADEMY_MONTHLY: ${STRIPE_PRICE_ACADEMY_MONTHLY:-}
+      STRIPE_PRICE_ACADEMY_YEARLY: ${STRIPE_PRICE_ACADEMY_YEARLY:-}
+      STRIPE_TRIAL_DAYS: ${STRIPE_TRIAL_DAYS:-0}
       TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}},https://${TRAINYARD_WEB_ALT:-_none_},https://${TRAINYARD_WEB_ALT2:-_none_}
       TRAINYARD_DEMO_CLOCK: "0"
     networks: [internal]

@@ -5,6 +5,7 @@
 import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@trainyard/ai-portfolio";
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
+import type { Purchase } from "./billing.js";
 import type { Signup } from "./signups.js";
 import { DEMO_NOW, demoArt, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
@@ -71,6 +72,8 @@ export interface StoreState {
   canvases: Canvas[];
   /** Requests from the public sign-up form, reviewed under Users. */
   signups?: Signup[];
+  /** Stripe Checkout sessions started from sign-ups, and what they became. */
+  purchases?: Purchase[];
   /** PI Outcome Planning sessions (AI-Native SAFe), one per ART and PI. */
   outcomePlanning?: PlanningSession[];
   /** AI-Native ART records extending a session: outputs, intent/spec/context, data, assessment. */

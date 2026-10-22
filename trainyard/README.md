@@ -99,6 +99,7 @@ One canonical web host and one API host, plus optional aliases, all in `.env`: `
 | `TRAINYARD_WEBHOOK_SECRET` | Enables `POST /v1/webhooks/{jira\|ado}?token=…`; point Jira and ADO service hooks at it and a sync runs a few seconds after each burst of changes |
 | `TRAINYARD_WEB_URL` | CORS origin for the web app |
 | `TRAINYARD_SIGNUP_WEBHOOK` | Website sign-ups are POSTed here as JSON; they are always listed under Users |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_TRAINER_MONTHLY`/`_YEARLY`, `STRIPE_PRICE_ACADEMY_MONTHLY`/`_YEARLY`, `STRIPE_TRIAL_DAYS` | Stripe Checkout for the paid plans. Unset: payments off, paid sign-ups are handled by hand |
 | `TRAINYARD_FRAME_ANCESTORS` | Web app: hosts allowed to frame `/embed/*` for the Jira app and Azure DevOps extension. Empty means the Atlassian and Azure DevOps defaults; `none` turns embedding off |
 | `TRAINYARD_ENV=production` | Refuses memory persistence and open mode |
 
@@ -276,6 +277,8 @@ The public page at `/` is the "Session" design: a speech-bubble hero with a trai
 **Plans.** Practice (free: self-host everything, or one hosted room of up to 5 people, paid from the sixth), Trainer ($19 per trainer per month, $16 billed yearly, unlimited participants), Academy ($249 per Agile Release Train per month, $199 billed yearly, unlimited people per train, the Jira app and Azure DevOps extension, SSO). Participants are never the price unit.
 
 **Sign-up.** `POST /v1/signups` (public, 10 a minute per address, honeypot field, disposable domains refused) stores the request, audits it and forwards it to `TRAINYARD_SIGNUP_WEBHOOK` if set. Admins see the list under **Users**, create the user, send the key and mark the sign-up invited (`PATCH /v1/signups/:id`). A sign-up is a request, not an account: the server has one workspace, so a person hands out access.
+
+**Payment.** With `STRIPE_SECRET_KEY` set, a Trainer or Academy sign-up goes straight to Stripe Checkout (`POST /v1/billing/checkout` creates a subscription session for the plan's price, yearly or monthly, one line item per seat; promotion codes allowed; optional trial). Stripe calls `POST /v1/webhooks/stripe` (signature over the raw body, 5-minute tolerance, idempotent on retries); on `checkout.session.completed` the server creates the user as a planner (or rotates the key of an existing user with that email), marks the sign-up invited and keeps the key for one pickup. Stripe sends the person to `/welcome?session_id=…`, which calls `POST /v1/billing/claim` and shows the key once; after that the server forgets it. No Stripe SDK: the API uses Stripe's REST endpoints directly, and `GET /v1/billing/config` tells the website which plans can be paid. Sign-up, the billing routes and the tracker webhooks stay reachable without a key once the workspace is closed; everything else needs one.
 
 ## Still to do
 
