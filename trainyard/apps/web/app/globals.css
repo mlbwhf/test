@@ -458,3 +458,20 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .ev-matrix th.chosen, .ev-matrix td.chosen { background: #e5f2cf; }
 .ev-dot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--panel); font-size: 0.72rem; cursor: pointer; color: var(--ink); }
 .ev-dot.on { background: var(--ink); color: #fff; }
+
+/* Link picker and global search */
+.lp-backdrop { position: fixed; inset: 0; background: rgba(23,33,43,0.35); backdrop-filter: blur(4px); z-index: 60; display: flex; align-items: flex-start; justify-content: center; padding: 8vh 16px; }
+.lp { width: min(720px, 100%); max-height: 80vh; display: flex; flex-direction: column; }
+.lp .panel-body { overflow: auto; }
+.lp-results { display: flex; flex-direction: column; gap: 4px; }
+.lp-row, .gs-row { display: flex; gap: 10px; align-items: center; text-align: left; width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; background: transparent; cursor: pointer; color: var(--ink); text-decoration: none; font: inherit; }
+.lp-row:hover, .gs-row:hover { background: var(--sunken); border-color: var(--line); }
+.lp-swatch { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.2); flex: none; }
+.lp-main { display: flex; flex-direction: column; min-width: 0; }
+.lp-title { font-weight: 600; font-size: 0.9rem; line-height: 1.25; }
+.lp-sub { font-size: 0.75rem; color: var(--ink-2); }
+.gs { position: relative; margin: 6px 0 10px; }
+.gs-input { width: 100%; font: inherit; font-size: 0.82rem; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--glass-card); color: var(--ink); }
+.gs-pop { position: absolute; left: 0; top: calc(100% + 4px); width: 360px; max-height: 60vh; overflow: auto; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 12px 32px rgba(23,33,43,0.18); z-index: 50; padding: 4px; }
+/* Linked cards and views on boards */
+.cv-badge { font: 700 11px var(--font-body); letter-spacing: 0.08em; }

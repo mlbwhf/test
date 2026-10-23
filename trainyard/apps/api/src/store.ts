@@ -8,7 +8,7 @@ import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersiste
 import type { Purchase } from "./billing.js";
 import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
-import { DEMO_NOW, demoArt, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
+import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -81,6 +81,10 @@ export interface StoreState {
   aiNativeArts?: AiNativeArt[];
   /** Platform store only: every customer workspace and its plan. */
   workspaces?: WorkspaceRecord[];
+  /** Card types the workspace added beyond the built-in ones. */
+  cardTypes?: CardType[];
+  /** Admin recolouring of built-in card types. */
+  cardTypeOverrides?: CardTypeOverride[];
 }
 
 export function demoState(): StoreState {

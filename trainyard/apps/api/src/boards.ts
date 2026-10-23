@@ -12,6 +12,8 @@ import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
 import type { Store } from "./store.js";
+import { REF_KINDS, backlinks, cardTypes, resolveRef, writeThrough, type RefSummary } from "./refs.js";
+import { refKey, type Ref, type RefKind } from "@trainyard/core";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -189,7 +191,20 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   // ---- boards and templates ----------------------------------------------------------
   app.get("/v1/boards", async () => ({ boards: boards().map(summary) }));
-  app.get("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ board: findBoard(req.params.id), shape: boardShape(findBoard(req.params.id)) }));
+  // The board with every linked card resolved, so the editor shows live records and views.
+  app.get("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => {
+    const b = findBoard(req.params.id);
+    const refs: Record<string, RefSummary | null> = {};
+    for (const n of b.nodes) if (n.ref) refs[refKey(n.ref)] = resolveRef(s(), n.ref);
+    return { board: b, shape: boardShape(b), refs, cardTypes: cardTypes(s()) };
+  });
+  app.get("/v1/boards/:id/nodes/:nodeId/backlinks", { schema: { params: z.object({ id: Id, nodeId: Id }) } }, async (req) => {
+    const b = findBoard(req.params.id);
+    const n = b.nodes.find((x) => x.id === req.params.nodeId) ?? (() => { throw notFound("Card"); })();
+    const self: Ref = { kind: "card", id: n.id, boardId: b.id };
+    const target = n.ref ?? self;
+    return { target, record: resolveRef(s(), target), backlinks: backlinks(s(), target).filter((l) => !(l.boardId === b.id && l.nodeId === n.id)) };
+  });
   app.delete("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
     require(req, "plan");
     findBoard(req.params.id);
@@ -267,30 +282,51 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     height: z.number().min(10).max(5000).optional(),
     color: z.string().max(40).nullable().optional(),
     frameId: z.string().nullable().optional(),
-    kind: z.enum(["sticky", "card", "text", "shape", "image", "other"]).optional(),
+    kind: z.enum(["sticky", "card", "text", "shape", "image", "view", "other"]).optional(),
     tags: z.array(z.string().max(60)).max(20).optional(),
+    /** Link the card to a record (or embed a board/canvas as a view); null unlinks. */
+    ref: z.object({ kind: z.enum(REF_KINDS as [RefKind, ...RefKind[]]), id: z.string().min(1).max(200), boardId: z.string().min(1).max(200).optional() }).nullable().optional(),
+    typeId: z.string().max(60).nullable().optional(),
+    /** Typed card fields, merged into the card's fields. */
+    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).optional(),
   });
+  const asRef = (r: { kind: RefKind; id: string; boardId?: string | undefined }): Ref => ({ kind: r.kind, id: r.id, ...(r.boardId ? { boardId: r.boardId } : {}) });
+  const checkRef = (ref: Ref) => {
+    const r = resolveRef(s(), ref);
+    if (!r) throw notFound(`${ref.kind} ${ref.id}`);
+    return r;
+  };
+  const checkType = (typeId: string) => {
+    if (!cardTypes(s()).some((t) => t.id === typeId)) throw notFound(`Card type ${typeId}`);
+  };
   const frameFor = (b: Board, n: { x: number; y: number }) =>
     b.frames.find((f) => n.x >= f.x && n.x <= f.x + f.width && n.y >= f.y && n.y <= f.y + f.height)?.id;
 
   app.post("/v1/boards/:id/nodes", { schema: { params: z.object({ id: Id }), body: NodeBody.extend({ x: z.number(), y: z.number() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = editable(req.params.id);
-    const { frameId, color, ...rest } = req.body;
+    const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
+    const ref = rawRef ? asRef(rawRef) : rawRef;
     const frame = frameId === null ? undefined : (frameId ?? frameFor(b, req.body));
     if (frame && !b.frames.some((f) => f.id === frame)) throw notFound("Frame");
+    const linked = ref ? checkRef(ref) : null;
+    if (typeId) checkType(typeId);
+    const isView = ref && (ref.kind === "board" || ref.kind === "canvas") && (rest.kind === "view" || rest.kind === undefined);
+    const typeColor = typeId ? cardTypes(s()).find((t) => t.id === typeId)?.color : undefined;
     const node: BoardNode = {
       id: `n-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`,
-      kind: rest.kind ?? "sticky",
-      text: rest.text ?? "",
+      kind: isView ? "view" : (rest.kind ?? (linked ? "card" : "sticky")),
+      text: rest.text ?? linked?.title ?? "",
       x: rest.x,
       y: rest.y,
-      width: rest.width ?? 180,
-      height: rest.height ?? 120,
-      ...(color ? { color } : { color: "#fff6c2" }),
+      width: rest.width ?? (isView ? 360 : 180),
+      height: rest.height ?? (isView ? 240 : 120),
+      ...(color ? { color } : { color: linked && !isView ? linked.color : typeColor ?? (isView ? "#ffffff" : "#fff6c2") }),
       ...(frame ? { frameId: frame } : {}),
       tags: rest.tags ?? [],
-      fields: { createdBy: req.principal.userId },
+      fields: { createdBy: req.principal.userId, ...(fields ?? {}) },
+      ...(ref ? { ref } : {}),
+      ...(typeId ? { typeId } : {}),
     };
     b.nodes.push(node);
     await store.commit(req.principal, "board.node.create", { board: b.id, node: node.id });
@@ -302,7 +338,24 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = editable(req.params.id);
     const n = b.nodes.find((x) => x.id === req.params.nodeId);
     if (!n) throw notFound("Card");
-    const { frameId, color, ...rest } = req.body;
+    const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
+    const ref = rawRef ? asRef(rawRef) : rawRef;
+    if (ref === null) delete n.ref;
+    else if (ref) {
+      checkRef(ref);
+      n.ref = ref;
+      if (!rest.text) n.text = resolveRef(s(), ref)!.title;
+    }
+    if (typeId === null) delete n.typeId;
+    else if (typeId) {
+      checkType(typeId);
+      n.typeId = typeId;
+      const tc = cardTypes(s()).find((t) => t.id === typeId)?.color;
+      if (!color && !n.ref && tc) n.color = tc;
+    }
+    if (fields) for (const [k, v] of Object.entries(fields)) if (v === null) delete n.fields[k]; else n.fields[k] = v;
+    // A linked card's text is the record's title: the edit goes back to the record.
+    if (rest.text !== undefined && n.ref && n.kind !== "view") writeThrough(s(), n.ref, rest.text);
     Object.assign(n, defined(rest));
     if (color === null) delete n.color;
     else if (color) n.color = color;

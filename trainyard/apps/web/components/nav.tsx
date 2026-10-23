@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
+import { GlobalSearch } from "@/components/global-search";
 
 const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/dashboards", label: "Dashboards", section: "Plan" },
@@ -18,6 +19,7 @@ const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/agents", label: "AI agents" },
   { href: "/model", label: "Operating model", section: "Setup" },
   { href: "/sync", label: "Jira & Azure DevOps" },
+  { href: "/card-types", label: "Card types" },
   { href: "/users", label: "Users" },
   { href: "/billing", label: "Plan & billing" },
 ];
@@ -47,6 +49,7 @@ export function Nav() {
         <Mark />
         Trainyard
       </Link>
+      <GlobalSearch />
       {LINKS.filter((l) => l.href !== "/billing" || (me.data && !me.data.workspace.platform)).map((l) => (
         <div key={l.href} style={{ display: "contents" }}>
           {l.section ? <div className="section">{l.section}</div> : null}

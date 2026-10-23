@@ -1269,3 +1269,56 @@ describe("envision the future state", () => {
     expect(portfolio.body.epics.some((e: { kind?: string; title: string }) => e.kind === "enabler" && e.title.includes("customer data platform"))).toBe(true);
   });
 });
+
+describe("universal cards and links", () => {
+  it("finds any record, links it on a board live, writes the title back, embeds a view, shows backlinks, and types cards", async () => {
+    const { call, store } = await setup();
+    const board = (await call("POST", "/v1/templates/boards/tpl-builtin-roam/create", { name: "Room A" })).body.board as { id: string };
+    const other = (await call("POST", "/v1/templates/boards/tpl-builtin-retrospective/create", { name: "Room B" })).body.board as { id: string };
+    const item = (await call("GET", "/v1/board")).body.items[0] as { id: string; title: string };
+    // Search across kinds, with a kind filter.
+    const found = await call("GET", `/v1/search?q=${encodeURIComponent(item.title.split(" ")[0]!)}`);
+    expect(found.body.results.some((r: { kind: string; ref: { id: string } }) => r.kind === "item" && r.ref.id === item.id)).toBe(true);
+    const onlyBoards = await call("GET", "/v1/search?q=Room&kinds=board");
+    expect(onlyBoards.body.results.map((r: { kind: string }) => r.kind)).toEqual(["board", "board"]);
+    // Link the item: the card takes its title and colour; the board view resolves it.
+    const linked = await call("POST", `/v1/boards/${board.id}/nodes`, { ref: { kind: "item", id: item.id }, x: 10, y: 10 });
+    expect(linked.status).toBe(201);
+    expect(linked.body.node).toMatchObject({ kind: "card", text: item.title, ref: { kind: "item", id: item.id } });
+    const view = await call("GET", `/v1/boards/${board.id}`);
+    expect(view.body.refs[`item:${item.id}`]).toMatchObject({ kind: "item", title: item.title });
+    expect(view.body.cardTypes.some((t: { id: string; badge: string }) => t.id === "story" && t.badge.startsWith("G"))).toBe(true);
+    // Editing the linked card renames the record everywhere.
+    await call("PATCH", `/v1/boards/${board.id}/nodes/${linked.body.node.id}`, { text: "Guest checkout in one page" });
+    expect(store.state.workspace.items.find((i) => i.id === item.id)!.title).toBe("Guest checkout in one page");
+    // Backlinks from the record and from the card.
+    const bl = await call("GET", `/v1/refs/backlinks?kind=item&id=${item.id}`);
+    expect(bl.body.backlinks).toEqual([expect.objectContaining({ boardId: board.id, nodeId: linked.body.node.id, as: "link" })]);
+    expect((await call("GET", `/v1/boards/${board.id}/nodes/${linked.body.node.id}/backlinks`)).body.record.title).toBe("Guest checkout in one page");
+    // A missing record is reported, not thrown.
+    expect((await call("POST", `/v1/boards/${board.id}/nodes`, { ref: { kind: "epic", id: "nope" }, x: 0, y: 0 })).status).toBe(404);
+    // Embed another board as a live view.
+    const emb = await call("POST", `/v1/boards/${board.id}/nodes`, { ref: { kind: "board", id: other.id }, x: 300, y: 10 });
+    expect(emb.body.node).toMatchObject({ kind: "view", width: 360, height: 240, text: "Room B" });
+    const view2 = await call("GET", `/v1/boards/${board.id}`);
+    expect(view2.body.refs[`board:${other.id}`].preview.length).toBeGreaterThan(0);
+    expect((await call("GET", `/v1/refs/backlinks?kind=board&id=${other.id}`)).body.backlinks[0].as).toBe("view");
+    // Unlink keeps the card with its last text.
+    await call("PATCH", `/v1/boards/${board.id}/nodes/${linked.body.node.id}`, { ref: null, kind: "card" });
+    expect((await call("GET", `/v1/boards/${board.id}`)).body.board.nodes.find((n: { id: string }) => n.id === linked.body.node.id).ref).toBeUndefined();
+    // Card types: built-ins carry SAFe's legend; admins recolour them and add their own.
+    const types = (await call("GET", "/v1/card-types")).body.types as { id: string; color: string; builtin?: boolean }[];
+    expect(types.find((t) => t.id === "risk")!.color).toBe("#ff5252");
+    const made = await call("POST", "/v1/card-types", { name: "Customer insight", color: "#d1c4e9", badge: "INSIGHT", blurb: "", fields: [{ key: "source", label: "Source", type: "select", options: ["Interview", "Survey"] }, { key: "about", label: "About", type: "ref", refKinds: ["item", "epic"] }] });
+    expect(made.status).toBe(201);
+    expect(made.body.type.id).toBe("customer-insight");
+    const typed = await call("PATCH", `/v1/boards/${board.id}/nodes/${linked.body.node.id}`, { typeId: "customer-insight", fields: { source: "Interview", about: `item:${item.id}` } });
+    expect(typed.body.node).toMatchObject({ typeId: "customer-insight", color: "#d1c4e9", fields: { source: "Interview" } });
+    expect((await call("PATCH", `/v1/boards/${board.id}/nodes/${linked.body.node.id}`, { typeId: "nope" })).status).toBe(404);
+    const recolour = await call("PUT", "/v1/card-types/story", { name: "User story", color: "#a5d6a7", badge: "G", blurb: "Stories", fields: [] });
+    expect(recolour.body.type).toMatchObject({ id: "story", color: "#a5d6a7", badge: "G" });
+    expect(recolour.body.type.fields.length).toBeGreaterThan(0); // fields of a built-in stay
+    expect((await call("DELETE", "/v1/card-types/story")).status).toBe(409);
+    expect((await call("DELETE", "/v1/card-types/customer-insight")).status).toBe(204);
+  });
+});

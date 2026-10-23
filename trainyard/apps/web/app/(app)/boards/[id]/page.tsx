@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { use, useState } from "react";
-import type { Board, BoardMapping, MappingResult } from "@trainyard/core";
+import type { Board, BoardMapping, CardType, MappingResult } from "@trainyard/core";
+import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { AssistButton } from "@/components/assist";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -20,7 +21,7 @@ interface BoardReview {
 
 export default function BoardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const view = useApi<{ board: Board; shape: "canvas" | "table" | "mixed" | "empty" }>(`/v1/boards/${encodeURIComponent(id)}`);
+  const view = useApi<{ board: Board; shape: "canvas" | "table" | "mixed" | "empty"; refs: Record<string, RefSummary | null>; cardTypes: CardType[] }>(`/v1/boards/${encodeURIComponent(id)}`);
   const model = useApi<{ model: { workLevels: { key: string; label: string; planned?: boolean }[] } }>("/v1/model");
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
@@ -146,7 +147,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {shape === "canvas" || shape === "mixed" ? <CanvasEditor board={board} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
+          {shape === "canvas" || shape === "mixed" ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
           {shape === "empty" ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>

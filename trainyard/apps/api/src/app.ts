@@ -49,6 +49,7 @@ import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
+import { registerRefRoutes } from "./refs.js";
 import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
@@ -611,6 +612,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
 
   registerUserRoutes(app, tenants);
   registerAdminRoutes(app, tenants);
+  registerRefRoutes(app, store);
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);

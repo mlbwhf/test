@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
+import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
+import type { CardType } from "@trainyard/core";
+
+const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
+type Backlink = { boardId: string; boardName: string; nodeId: string; frame?: string; as: "link" | "view" };
 
 const PALETTE: Record<string, string> = {
   light_yellow: "#fff9b1", yellow: "#f5d128", light_green: "#d5f692", green: "#c9df56", dark_green: "#93d275", cyan: "#67c6c0", light_pink: "#ffcee0", pink: "#ea94bb", violet: "#be88c7", red: "#f24726", light_blue: "#a6ccf5", blue: "#6cd8fa", dark_blue: "#9ea9ff", black: "#1a1a1a", gray: "#e6e6e6", orange: "#ff9d48", white: "#ffffff",
@@ -130,7 +135,7 @@ function wrap(text: string, width: number): string[] {
  * draw connectors. Every change goes to the API as it happens; the board prop is the
  * source of truth and is refreshed after each save.
  */
-export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [] }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[] }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [nodes, setNodes] = useState<BoardNode[]>(board.nodes);
   const [frames, setFrames] = useState<Frame[]>(board.frames);
@@ -139,12 +144,29 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; text: string } | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [picker, setPicker] = useState<null | { mode: "link" | "view" } | { mode: "field"; key: string }>(null);
+  const [links, setLinks] = useState<{ nodeId: string; record: RefSummary | null; backlinks: Backlink[] } | null>(null);
   const drag = useRef<{ kind: "node" | "frame"; id: string; dx: number; dy: number; moved: boolean; start: { x: number; y: number } } | null>(null);
 
   useEffect(() => {
     setNodes(board.nodes);
     setFrames(board.frames);
   }, [board]);
+
+  useEffect(() => {
+    if (!selected || !nodes.some((n) => n.id === selected)) {
+      setLinks(null);
+      return;
+    }
+    let live = true;
+    api<{ record: RefSummary | null; backlinks: Backlink[] }>("GET", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(selected)}/backlinks`)
+      .then((r) => live && setLinks({ nodeId: selected, record: r.record, backlinks: r.backlinks }))
+      .catch(() => live && setLinks(null));
+    return () => {
+      live = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, board]);
 
   const box = useMemo(() => {
     const xs: number[] = [];
@@ -246,8 +268,26 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
       setEditing({ id: r.node.id, text: "" });
     });
   };
+  const placeFor = () => {
+    const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? frames[0];
+    const inFrame = f ? nodes.filter((n) => n.frameId === f.id).length : 0;
+    return { f, x: f ? f.x + 20 + (inFrame % 2) * 200 : box.x + 120, y: f ? f.y + 20 + Math.floor(inFrame / 2) * 140 : box.y + 120 };
+  };
+  const addLinked = (r: RefSummary, asView: boolean) => {
+    const { f, x, y } = placeFor();
+    setPicker(null);
+    void save(asView ? "Embed view" : "Link record", async () => {
+      const res = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { ref: r.ref, x, y, ...(asView ? { kind: "view" } : {}), ...(f ? { frameId: f.id } : {}) });
+      setSelected(res.node.id);
+    });
+  };
   const selNode = nodes.find((n) => n.id === selected);
   const selFrame = frames.find((f) => f.id === selected);
+  const unlink = () => selNode && void save("Unlink", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(selNode.id)}`, { ref: null, kind: "card" }));
+  const setType = (typeId: string) => selNode && void save("Card type", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(selNode.id)}`, { typeId: typeId || null }));
+  const setField = (key: string, value: string | number | null) => selNode && void save("Card field", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(selNode.id)}`, { fields: { [key]: value } }));
+  const selType = cardTypes.find((t) => t.id === selNode?.typeId);
+  const selRef = selNode?.ref ? refs[refKey(selNode.ref)] : undefined;
   const removeSelected = () => {
     if (!selNode) return;
     const id = selNode.id;
@@ -284,6 +324,12 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
             <>
               <button className="btn small" onClick={addCard}>
                 + Card
+              </button>
+              <button className="btn small" onClick={() => setPicker({ mode: "link" })} title="A card that shows a feature, epic, risk, milestone, outcome or a card from another board, live">
+                + Link a record
+              </button>
+              <button className="btn small" onClick={() => setPicker({ mode: "view" })} title="Bring a whole board or canvas in as a live view">
+                + Embed a view
               </button>
               <button className={`btn small ${tool === "connect" ? "primary" : ""}`} onClick={() => (setTool(tool === "connect" ? "select" : "connect"), setConnectFrom(null))} aria-pressed={tool === "connect"}>
                 {tool === "connect" ? (connectFrom ? "Pick the card it feeds" : "Pick the first card") : "Connect"}
@@ -367,6 +413,12 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
               const lines = chart || src ? [] : wrap(n.text || (placeholder ? "Add a card here" : ""), Math.max(6, Math.floor(w / (fs * 0.56))));
               const isSel = selected === n.id;
               const isFrom = connectFrom === n.id;
+              const sum = n.ref ? refs[refKey(n.ref)] : undefined;
+              const missing = !!n.ref && sum === null;
+              const type = cardTypes.find((t) => t.id === n.typeId);
+              const badge = n.ref ? `${KIND_LABEL[n.ref.kind].toUpperCase()}${sum?.status ? ` · ${sum.status.toUpperCase()}` : ""}` : type?.badge ?? "";
+              const shownLines = n.ref && sum && n.kind !== "view" ? wrap(sum.title, Math.max(6, Math.floor(w / (fs * 0.56)))) : lines;
+              const facts = sum ? Object.entries(sum.facts).slice(0, 2).map(([k, v]) => `${k} ${v}`).join(" · ") : "";
               return (
                 <g
                   key={n.id}
@@ -377,14 +429,65 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
                   filter={placeholder ? undefined : "url(#lift)"}
                 >
-                  <rect x={n.x} y={n.y} width={w} height={h} fill={fill} fillOpacity={placeholder ? 0.5 : 1} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : placeholder ? "var(--line-strong)" : "rgba(255,255,255,0.6)"} strokeWidth={isSel || isFrom ? 4 : 1.5} strokeDasharray={placeholder ? "8 6" : undefined} rx={n.kind === "shape" ? 16 : 12} />
+                  <rect x={n.x} y={n.y} width={w} height={h} fill={fill} fillOpacity={placeholder ? 0.5 : 1} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : missing ? "#c2412d" : placeholder ? "var(--line-strong)" : n.ref || n.kind === "view" ? "rgba(23,33,43,0.35)" : "rgba(255,255,255,0.6)"} strokeWidth={isSel || isFrom ? 4 : n.ref ? 2 : 1.5} strokeDasharray={placeholder || missing ? "8 6" : undefined} rx={n.kind === "shape" ? 16 : 12} />
                   {src ? <image href={src} x={n.x} y={n.y} width={w} height={h} preserveAspectRatio="xMidYMid meet" /> : null}
                   {chart ? <ChartView chart={chart} title={n.text} x={n.x} y={n.y} w={w} h={h} /> : null}
-                  {lines.slice(0, Math.max(1, Math.floor((h - fs * 0.4) / lh))).map((line, i) => (
-                    <text key={i} x={n.x + fs * 0.7} y={n.y + fs * 1.3 + i * lh} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
-                      {line}
+                  {n.kind === "view" ? (
+                    <g>
+                      <rect x={n.x} y={n.y} width={w} height={34} fill="#17212b" rx={12} />
+                      <rect x={n.x} y={n.y + 20} width={w} height={14} fill="#17212b" />
+                      <text x={n.x + 12} y={n.y + 23} fontSize={14} fill="#fff" fontFamily="var(--font-body)" fontWeight={700}>
+                        {(sum?.title ?? n.text).slice(0, 40)}
+                      </text>
+                      <text x={n.x + w - 12} y={n.y + 23} fontSize={10} textAnchor="end" fill="#cfd8e3" fontFamily="var(--font-body)" letterSpacing={1}>
+                        {missing ? "MISSING" : KIND_LABEL[n.ref!.kind].toUpperCase()}
+                      </text>
+                      {sum?.subtitle ? (
+                        <text x={n.x + 12} y={n.y + 54} fontSize={12} fill="#4b5563" fontFamily="var(--font-body)">
+                          {sum.subtitle.slice(0, 60)}
+                        </text>
+                      ) : null}
+                      {(sum?.preview ?? []).slice(0, Math.max(0, Math.floor((h - 100) / 22))).map((pv, i) => {
+                        const max = Math.max(1, ...(sum?.preview ?? []).map((x) => x.count));
+                        return (
+                          <g key={pv.label + i}>
+                            <text x={n.x + 12} y={n.y + 76 + i * 22} fontSize={11} fill="#17212b" fontFamily="var(--font-body)">
+                              {pv.label.slice(0, 28)}
+                            </text>
+                            <rect x={n.x + w * 0.55} y={n.y + 67 + i * 22} width={Math.max(2, (w * 0.35 * pv.count) / max)} height={11} rx={3} fill="#4f7fc4" />
+                            <text x={n.x + w - 12} y={n.y + 76 + i * 22} fontSize={11} textAnchor="end" fill="#4b5563" fontFamily="var(--font-mono)">
+                              {pv.count}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </g>
+                  ) : null}
+                  {n.kind !== "view"
+                    ? shownLines.slice(0, Math.max(1, Math.floor((h - fs * 0.4 - (badge ? fs * 0.9 : 0) - (facts ? fs * 0.8 : 0)) / lh))).map((line, i) => (
+                        <text key={i} x={n.x + fs * 0.7} y={n.y + fs * 1.3 + (badge ? fs * 0.9 : 0) + i * lh} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
+                          {line}
+                        </text>
+                      ))
+                    : null}
+                  {badge && n.kind !== "view" ? (
+                    <text x={n.x + fs * 0.7} y={n.y + fs * 0.95} fontSize={fs * 0.55} fill={missing ? "#c2412d" : dark ? "#e5e7eb" : "#4b5563"} fontFamily="var(--font-body)" fontWeight={800} letterSpacing={1.2}>
+                      {missing ? "MISSING RECORD" : badge}
                     </text>
-                  ))}
+                  ) : null}
+                  {facts && n.kind !== "view" ? (
+                    <text x={n.x + fs * 0.7} y={n.y + h - fs * 0.5} fontSize={fs * 0.6} fill={dark ? "#e5e7eb" : "#4b5563"} fontFamily="var(--font-mono)">
+                      {facts.slice(0, Math.floor(w / (fs * 0.36)))}
+                    </text>
+                  ) : null}
+                  {n.ref && sum && (n.kind === "view" || !n.fields.link) ? (
+                    <a href={sum.href} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+                      <rect x={n.x + w - 64} y={n.y + h - 26} width={56} height={20} rx={10} fill={n.kind === "view" ? "#17212b" : "rgba(23,33,43,0.75)"} />
+                      <text x={n.x + w - 36} y={n.y + h - 12} fontSize={11} textAnchor="middle" fill="#fff" fontFamily="var(--font-body)" fontWeight={600}>
+                        Open ↗
+                      </text>
+                    </a>
+                  ) : null}
                   {typeof n.fields.link === "string" ? (
                     <a href={n.fields.link} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
                       <rect x={n.x + w - 92} y={n.y + h - 34} width={82} height={26} rx={13} fill="#17212b" />
@@ -423,9 +526,122 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
 
         {selNode ? (
           <aside className="panel panel-body stack" aria-label="Selected card">
-            <span className="eyebrow">Card</span>
-            <p style={{ fontWeight: 600, lineHeight: 1.3 }}>{selNode.text || <span className="faint">Empty. Double-click to write.</span>}</p>
+            <span className="eyebrow">{selNode.kind === "view" ? "Embedded view" : selNode.ref ? `Linked ${KIND_LABEL[selNode.ref.kind].toLowerCase()}` : "Card"}</span>
+            <p style={{ fontWeight: 600, lineHeight: 1.3 }}>{(selRef?.title ?? selNode.text) || <span className="faint">Empty. Double-click to write.</span>}</p>
             {selNode.frameId ? <span className="faint" style={{ fontSize: "0.8rem" }}>In: {frames.find((f) => f.id === selNode.frameId)?.title}</span> : null}
+            {selNode.ref ? (
+              selRef ? (
+                <div className="stack" style={{ gap: 4 }}>
+                  {selRef.subtitle ? <span className="faint" style={{ fontSize: "0.8rem" }}>{selRef.subtitle}</span> : null}
+                  <table className="table" style={{ fontSize: "0.78rem" }}>
+                    <tbody>
+                      {Object.entries(selRef.facts).map(([k, v]) => (
+                        <tr key={k}>
+                          <td className="faint">{k}</td>
+                          <td className="mono">{String(v)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="row">
+                    <a className="btn small" href={selRef.href}>
+                      Open ↗
+                    </a>
+                    {!readOnly ? (
+                      <button className="btn small ghost" onClick={unlink}>
+                        Unlink
+                      </button>
+                    ) : null}
+                  </div>
+                  <span className="faint" style={{ fontSize: "0.74rem" }}>{selNode.kind === "view" ? "A live view of the record; open it to edit." : "Editing the text here renames the record everywhere."}</span>
+                </div>
+              ) : (
+                <div className="notice crit" style={{ fontSize: "0.8rem" }}>
+                  The record this card pointed at no longer exists.{" "}
+                  {!readOnly ? (
+                    <button className="btn small ghost" onClick={unlink}>
+                      Unlink
+                    </button>
+                  ) : null}
+                </div>
+              )
+            ) : null}
+            {links && links.nodeId === selNode.id && links.backlinks.length ? (
+              <div className="stack" style={{ gap: 2 }}>
+                <span className="eyebrow">Also shown on</span>
+                {links.backlinks.map((l) => (
+                  <a key={`${l.boardId}-${l.nodeId}`} href={`/boards/${encodeURIComponent(l.boardId)}`} style={{ fontSize: "0.8rem" }}>
+                    {l.boardName}
+                    {l.frame ? ` · ${l.frame}` : ""} {l.as === "view" ? "(as a view)" : ""}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+            {!readOnly && selNode.kind !== "view" ? (
+              <>
+                <label className="field">
+                  Card type
+                  <select className="select" value={selNode.typeId ?? ""} onChange={(e) => setType(e.target.value)}>
+                    <option value="">Plain card</option>
+                    {cardTypes.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {selType?.fields.map((f) => {
+                  const v = selNode.fields[f.key];
+                  const str = v === undefined || v === null ? "" : String(v);
+                  if (f.type === "select")
+                    return (
+                      <label key={f.key} className="field">
+                        {f.label}
+                        <select className="select" value={str} onChange={(e) => setField(f.key, e.target.value || null)}>
+                          <option value="">–</option>
+                          {(f.options ?? []).map((o) => (
+                            <option key={o} value={o}>
+                              {o}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    );
+                  if (f.type === "ref") {
+                    const rv = typeof v === "string" && v.includes(":") ? v : "";
+                    const [rk, rid] = rv.split(":");
+                    const rsum = rk && rid ? refs[refKey({ kind: rk as RefKind, id: rid })] : undefined;
+                    return (
+                      <div key={f.key} className="field">
+                        {f.label}
+                        <div className="row">
+                          <span style={{ fontSize: "0.82rem" }}>{rsum?.title ?? (rv ? rv : <i className="faint">none</i>)}</span>
+                          <button className="btn small ghost" onClick={() => setPicker({ mode: "field", key: f.key })}>
+                            Pick…
+                          </button>
+                          {rv ? (
+                            <button className="btn small ghost" onClick={() => setField(f.key, null)}>
+                              ×
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  }
+                  const inputType = f.type === "number" ? "number" : f.type === "date" ? "date" : f.type === "url" ? "url" : "text";
+                  return (
+                    <label key={f.key} className="field">
+                      {f.label}
+                      {f.type === "text" ? (
+                        <textarea className="input" rows={2} defaultValue={str} onBlur={(e) => e.target.value !== str && setField(f.key, e.target.value || null)} />
+                      ) : (
+                        <input className="input" type={inputType} defaultValue={str} onBlur={(e) => e.target.value !== str && setField(f.key, e.target.value === "" ? null : f.type === "number" ? Number(e.target.value) : e.target.value)} />
+                      )}
+                    </label>
+                  );
+                })}
+              </>
+            ) : null}
             {!readOnly ? (
               <>
                 <span className="eyebrow">Colour</span>
@@ -444,10 +660,10 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
                 </div>
               </>
             ) : null}
-            {Object.keys(selNode.fields).filter((k) => k !== "placeholder" && k !== "createdBy").length ? (
+            {Object.keys(selNode.fields).filter((k) => k !== "placeholder" && k !== "createdBy" && !selType?.fields.some((f) => f.key === k)).length ? (
               <>
                 <span className="eyebrow">From the source</span>
-                <pre className="mono faint" style={{ fontSize: "0.72rem", whiteSpace: "pre-wrap", margin: 0 }}>{JSON.stringify(Object.fromEntries(Object.entries(selNode.fields).filter(([k]) => k !== "placeholder" && k !== "createdBy")), null, 1)}</pre>
+                <pre className="mono faint" style={{ fontSize: "0.72rem", whiteSpace: "pre-wrap", margin: 0 }}>{JSON.stringify(Object.fromEntries(Object.entries(selNode.fields).filter(([k]) => k !== "placeholder" && k !== "createdBy" && !selType?.fields.some((f) => f.key === k))), null, 1)}</pre>
               </>
             ) : null}
           </aside>
@@ -473,6 +689,19 @@ export function CanvasEditor({ board, readOnly, onChanged, onError }: { board: B
           </aside>
         ) : null}
       </div>
+      {picker?.mode === "link" ? <LinkPicker title="Link a record to this board" onPick={(r) => addLinked(r, r.kind === "board" || r.kind === "canvas")} onClose={() => setPicker(null)} /> : null}
+      {picker?.mode === "view" ? <LinkPicker title="Embed a board or canvas as a live view" kinds={["board", "canvas"]} onPick={(r) => addLinked(r, true)} onClose={() => setPicker(null)} exclude={{ kind: "board", id: board.id }} /> : null}
+      {picker?.mode === "field" ? (
+        <LinkPicker
+          title="Pick a record"
+          kinds={selType?.fields.find((f) => f.key === picker.key)?.refKinds}
+          onPick={(r) => {
+            setField(picker.key, `${r.ref.kind}:${r.ref.id}`);
+            setPicker(null);
+          }}
+          onClose={() => setPicker(null)}
+        />
+      ) : null}
     </div>
   );
 }

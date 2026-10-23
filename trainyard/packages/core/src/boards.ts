@@ -27,7 +27,19 @@ export interface Frame {
   parentId?: string;
 }
 
-export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "other";
+export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "view" | "other";
+
+/** Everything in a workspace a card can point at. One record, shown live wherever it is linked. */
+export type RefKind = "item" | "epic" | "risk" | "dependency" | "milestone" | "objective" | "outcome" | "output" | "initiative" | "canvas" | "board" | "card" | "team" | "person";
+
+export interface Ref {
+  kind: RefKind;
+  id: string;
+  /** For kind "card": the board the card sits on. */
+  boardId?: string;
+}
+
+export const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
 
 export interface BoardNode {
   id: string;
@@ -42,8 +54,12 @@ export interface BoardNode {
   color?: string;
   frameId?: string;
   tags: string[];
-  /** Fields the source had that have no slot here, kept verbatim. */
+  /** Fields the source had that have no slot here, kept verbatim; typed card fields live here too, by key. */
   fields: Record<string, unknown>;
+  /** A linked card: the text and status come from the record it points at, edits go back to it. A "view" node embeds a whole board or canvas. */
+  ref?: Ref;
+  /** The card type that structures this card's fields (see cards.ts); absent means a plain sticky. */
+  typeId?: string;
 }
 
 export interface BoardEdge {
