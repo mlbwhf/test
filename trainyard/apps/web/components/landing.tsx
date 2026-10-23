@@ -25,7 +25,7 @@ const HERO: Record<Audience, { eyebrow: string; a: string; b: string; c: string;
     a: "The classroom for ",
     b: "anyone",
     c: " who trains.",
-    p: "Run workshops and PI planning on live boards your participants open by link. Nineteen ready boards, the SAFe canvases, value stream workshops and a co-trainer that drafts and never decides.",
+    p: "Run workshops and PI planning on live boards your participants open by link. Fifty ready boards across SAFe, Scrum, Kanban, Lean and Six Sigma, the SAFe canvases, value stream workshops and a co-trainer that drafts and never decides.",
   },
   enterprise: {
     eyebrow: "FOR AGILE RELEASE TRAINS · JIRA AND AZURE DEVOPS · SELF-HOSTED",
@@ -228,8 +228,8 @@ export function Landing() {
                 </Ring>
               </div>
               <div>
-                <div className="tag">PI READINESS · LIVE</div>
-                <div className="hand">Launch in 3 weeks</div>
+                <div className="tag">SIGN UP TO FIRST BOARD</div>
+                <div className="hand">Launch in 5 min</div>
               </div>
             </div>
             <div className="ly-card ly-roster">
