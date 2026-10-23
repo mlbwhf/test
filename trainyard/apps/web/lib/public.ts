@@ -155,6 +155,7 @@ export function publicPaths(): { path: string; priority: number }[] {
     { path: "/compare", priority: 0.8 },
     ...COMPETITORS.map((c) => ({ path: `/compare/${c.slug}`, priority: 0.7 })),
     { path: "/classes", priority: 0.8 },
+    { path: "/examples/okrs-kpis", priority: 0.8 },
     ...CLASSES.map((c) => ({ path: `/classes/${c.id}`, priority: 0.7 })),
     { path: "/guides", priority: 0.8 },
     ...GUIDES.map((g) => ({ path: `/guides/${g.slug}`, priority: 0.7 })),

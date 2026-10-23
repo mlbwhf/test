@@ -22,6 +22,7 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
         </Link>
         <div className="links">
           <Link href="/classes">SAFe classes</Link>
+          <Link href="/examples/okrs-kpis">OKRs &amp; KPIs</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/compare">Tool comparison</Link>
           <Link href="/pricing">Pricing</Link>
@@ -49,7 +50,7 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
         <div className="meta">
           <span>Trainyard · open source, Apache-2.0</span>
           <span>
-            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a> ·{" "}
+            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/examples/okrs-kpis">OKRs &amp; KPIs example</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a> ·{" "}
             <a href={REPO_URL} rel="noopener">
               Source
             </a>

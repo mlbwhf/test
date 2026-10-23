@@ -172,6 +172,7 @@ export function Landing() {
         <div className="links">
           <a href="#rooms">Planning rooms</a>
           <Link href="/classes">SAFe classes</Link>
+          <Link href="/examples/okrs-kpis">OKRs &amp; KPIs</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/compare">Tool comparison</Link>
           <a href="#pricing">Pricing</a>
@@ -495,7 +496,7 @@ export function Landing() {
         <div className="meta">
           <span>Trainyard · open source, Apache-2.0</span>
           <span>
-            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
+            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/examples/okrs-kpis">OKRs &amp; KPIs example</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
             <a href={REPO_URL} rel="noopener">
               Source
             </a>
