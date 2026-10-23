@@ -118,7 +118,7 @@ export function llmsFullText(base: string): string {
   lines.push("# Trainyard, in full", "", "Open-source (Apache-2.0) planning rooms for scaled agile and the classroom for anyone who trains it. This file carries the content of every public page so an assistant can answer from it. Canonical pages are linked.", "");
   lines.push("## Pricing", `Source: ${base}/pricing`, "");
   for (const p of PLANS) lines.push(`- ${p.name} (${p.tag}): ${p.monthly === null ? "free" : `$${p.monthly} ${p.unit}, or $${p.yearly} ${p.unit} billed yearly`}. ${p.blurb} Includes: ${p.items.join("; ")}.`);
-  lines.push("", "Every paid plan starts with a free 14-day trial, then month by month; yearly is a switch after the first paid month. The first paid month carries a 30-day money-back guarantee the customer claims from Plan & billing: the charge is refunded, the subscription ends, the workspace stays on the free plan with everything kept. Each customer gets a workspace of their own.", "");
+  lines.push("", "Every paid plan starts with a free 30-day trial, then month by month; yearly is a switch after the first paid month. The first paid month carries a 30-day money-back guarantee the customer claims from Plan & billing: the charge is refunded, the subscription ends, the workspace stays on the free plan with everything kept. Each customer gets a workspace of their own.", "");
   lines.push("## Frequently asked", "");
   for (const f of FAQ) lines.push(`Q: ${f.q}`, `A: ${f.a}`, "");
   lines.push("## Comparisons", `Source: ${base}/compare`, "");

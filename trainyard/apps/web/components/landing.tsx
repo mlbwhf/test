@@ -452,7 +452,7 @@ export function Landing() {
           </div>
         </div>
         <p className="fine">
-          Every paid plan starts with a <strong>free 14-day trial</strong>, then month by month: no card charge today, no yearly commitment to begin. Not satisfied in your first paid month? <strong>Money back</strong>, claimed by you from Plan &amp; billing, no questions asked. Yearly billing (ten months for twelve) is a switch you make after the first month. Prices in USD, before tax. Portfolios with more than ten trains, on-premises support agreements and public-sector terms: talk to us.
+          Every paid plan starts with a <strong>free 30-day trial</strong>, then month by month: no card charge today, a reminder by email 7 days before the first charge, no yearly commitment to begin. Not satisfied in your first paid month? <strong>Money back</strong>, claimed by you from Plan &amp; billing, no questions asked. Yearly billing (ten months for twelve) is a switch you make after the first month. Prices in USD, before tax. Portfolios with more than ten trains, on-premises support agreements and public-sector terms: talk to us.
         </p>
       </section>
 
@@ -484,7 +484,7 @@ export function Landing() {
             <h2>
               Your class starts at <span className="chip">00:00</span>.
             </h2>
-            <p>Tell us who you are and which plan fits. Practice is ready at once. Trainer and Academy start with a free 14-day trial, month by month, with a money-back guarantee on the first paid month.</p>
+            <p>Tell us who you are and which plan fits. Practice is ready at once. Trainer and Academy start with a free 30-day trial, month by month, with a money-back guarantee on the first paid month.</p>
           </div>
           <SignupForm plan={plan} setPlan={setPlan} audience={aud} yearly={yearly} />
         </div>

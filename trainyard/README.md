@@ -295,6 +295,8 @@ The **PI planning board** (`/board`) is the living program board: milestones and
 
 **ART PI objectives** are written from the team objectives: the assistant drafts them when a provider is configured (`POST /v1/assist/art-objectives`), and a rule-based synthesis clusters team objectives that share a theme without one (`POST /v1/objectives/synthesise`). Each ART objective keeps the trace to its team objectives, carries the highest business value among them and is uncommitted when any of them is. `POST /v1/objectives` takes `level: "art"` with `sourceObjectiveIds`.
 
+**Trial emails**: every trial is confirmed by email when it starts (nothing charged today, the first charge's amount and date, how to cancel) and announced again 7 days before the first charge, as card networks ask. An hourly job sends what is due, once per purchase; set `TRAINYARD_SMTP_URL` and `TRAINYARD_MAIL_FROM` for mail to leave the server (without them the API logs that nothing was sent and retries later). The trial length is `STRIPE_TRIAL_DAYS` (30 by default; the deploy takes it from the repository variable of the same name).
+
 Canvases carry an as-of date (a target date for a future state), editable in the header.
 
 ## Still to do

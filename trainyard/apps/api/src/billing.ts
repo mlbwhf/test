@@ -18,6 +18,7 @@ import { ApiError, notFound } from "./errors.js";
 import { limitsFor, usageOf } from "./plans.js";
 import type { Plan } from "./signups.js";
 import type { Tenants } from "./tenants.js";
+import { LogMailer, type Mailer } from "./mailer.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -33,7 +34,14 @@ export interface BillingOptions {
   fetch?: typeof fetch;
   /** Trial days on new subscriptions (0 = none). */
   trialDays?: number;
+  /** Sends the trial confirmation and the reminder before the first charge. */
+  mailer?: Mailer;
+  /** How often to look for reminders that are due; 0 or absent = only on demand. */
+  reminderEveryMs?: number;
 }
+
+/** Days before the first charge that the reminder goes out (Visa asks for at least 7). */
+export const TRIAL_REMINDER_DAYS = 7;
 
 export type PurchaseStatus = "open" | "paid" | "expired" | "past_due" | "cancelled" | "refunded";
 
@@ -58,6 +66,13 @@ export interface Purchase {
   paidAt?: string;
   /** When the free trial ends and the first charge happens. */
   trialEndsAt?: string;
+  /** Who gets the trial emails, and what the first charge will be. */
+  email?: string;
+  amountCents?: number;
+  currency?: string;
+  /** The confirmation sent when the trial started, and the reminder before it ends. */
+  trialStartEmailAt?: string;
+  trialReminderSentAt?: string;
   /** The first paid invoice's PaymentIntent, refundable under the first-month guarantee. */
   firstPaymentIntent?: string;
   firstPaidAt?: string;
@@ -108,6 +123,108 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     return json;
   };
   const web = () => (opts.webUrl ?? "").replace(/\/$/, "");
+  const mailer: Mailer = opts.mailer ?? new LogMailer();
+
+  // ---- trial emails ------------------------------------------------------------------------
+  // Card networks ask that a trial which turns into a paid subscription is confirmed when it
+  // starts and announced again at least seven days before the first charge, with the amount,
+  // the date and a way to cancel. Both emails are sent once per purchase; a failure (no SMTP,
+  // a bounce) leaves them unsent so the next run tries again.
+  const PLAN_NAME: Record<string, string> = { trainer: "Trainer", academy: "Academy", practice: "Practice" };
+  const recipient = (p: Purchase) => p.email ?? signups().find((s) => s.id === p.signupId)?.email ?? store.state.users.find((u) => u.id === p.userId)?.email;
+  const amount = (p: Purchase) => (p.amountCents === undefined ? null : new Intl.NumberFormat("en-US", { style: "currency", currency: (p.currency ?? "usd").toUpperCase() }).format(p.amountCents / 100));
+  const day = (iso: string) => new Date(iso).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+  const trialMail = (p: Purchase, kind: "start" | "reminder") => {
+    const plan = `${PLAN_NAME[p.plan] ?? p.plan}${p.quantity > 1 ? ` × ${p.quantity}` : ""}`;
+    const price = amount(p);
+    const when = day(p.trialEndsAt!);
+    const charge = price ? `${price} a month` : "the monthly price of your plan";
+    const manage = `${web()}/billing`;
+    const lines =
+      kind === "start"
+        ? [
+            `Your free Trainyard trial (${plan}) has started.`,
+            "",
+            `Nothing is charged today. Your card is saved and the first charge of ${charge} happens on ${when}, then every month until you cancel.`,
+            `You will get a reminder at least ${TRIAL_REMINDER_DAYS} days before that charge.`,
+            "",
+            `Cancel any time before ${when} and you pay nothing: ${manage} (Plan & billing).`,
+            `If the first paid month does not suit you, claim your money back from the same page within ${GUARANTEE_DAYS} days.`,
+          ]
+        : [
+            `Your free Trainyard trial (${plan}) ends on ${when}.`,
+            "",
+            `On that day your card is charged ${charge}, and the subscription renews every month until you cancel.`,
+            "",
+            `To keep going, do nothing. To stop, cancel before ${when} and you pay nothing: ${manage} (Plan & billing).`,
+            `After the first charge you still have ${GUARANTEE_DAYS} days to ask for your money back from the same page.`,
+          ];
+    const text = [...lines, "", `Terms and prices: ${web()}/pricing`, "", "Trainyard"].join("\n");
+    const subject = kind === "start" ? `Your Trainyard trial has started: first charge on ${when}` : `Your Trainyard trial ends on ${when}: ${price ? `${price} a month` : "first charge"} after that`;
+    return { subject, text };
+  };
+  let mailing = false;
+  /** Sends every trial email that is due. Returns what was sent. */
+  async function sendTrialMail(): Promise<{ started: string[]; reminded: string[]; failed: string[] }> {
+    const out = { started: [] as string[], reminded: [] as string[], failed: [] as string[] };
+    if (mailing) return out;
+    mailing = true;
+    try {
+      const now = store.now().getTime();
+      let changed = false;
+      for (const p of purchases()) {
+        if (!p.trialEndsAt || p.firstPaidAt || !["paid", "open"].includes(p.status)) continue;
+        if (p.status === "open" && !p.subscriptionId) continue;
+        const end = Date.parse(p.trialEndsAt);
+        if (!(end > now)) continue;
+        const to = recipient(p);
+        if (!to) continue;
+        const due: ("start" | "reminder")[] = [];
+        const remind = end - now <= TRIAL_REMINDER_DAYS * 86_400_000;
+        // A trial shorter than the reminder window gets the start email only when it starts;
+        // once inside the window, the reminder says everything the start email would.
+        if (!p.trialStartEmailAt && !p.trialReminderSentAt && !remind && p.status === "paid") due.push("start");
+        if (!p.trialReminderSentAt && remind && p.status === "paid") due.push("reminder");
+        for (const kind of due) {
+          try {
+            await mailer.send({ to, ...trialMail(p, kind) });
+            const at = store.now().toISOString();
+            if (kind === "start") (p.trialStartEmailAt = at), out.started.push(p.id);
+            else (p.trialReminderSentAt = at), (p.trialStartEmailAt ??= at), out.reminded.push(p.id);
+            changed = true;
+          } catch (e) {
+            out.failed.push(p.id);
+            if (mailer.live) console.error(`[mail] trial ${kind} for ${p.id} failed: ${(e as Error).message}`);
+          }
+        }
+      }
+      if (changed) await store.commit(STRIPE_ACTOR, "billing.trial-mail", { started: out.started, reminded: out.reminded });
+    } finally {
+      mailing = false;
+    }
+    return out;
+  }
+  if (opts.reminderEveryMs && opts.reminderEveryMs > 0) {
+    const timer = setInterval(() => void sendTrialMail().catch((e) => console.error(`[mail] trial run failed: ${(e as Error).message}`)), opts.reminderEveryMs);
+    timer.unref();
+    app.addHook("onClose", async () => clearInterval(timer));
+  }
+  // Platform admins can check the mail setup with one message.
+  app.post("/v1/admin/mail/test", { schema: { body: z.object({ to: z.string().trim().email().max(200) }) } }, async (req) => {
+    if (!req.principal.platformAdmin) throw new ApiError(403, "FORBIDDEN", "Platform admins only.");
+    if (!mailer.live) throw new ApiError(409, "MAIL_OFF", "Mail is not set up: put TRAINYARD_SMTP_URL and TRAINYARD_MAIL_FROM in .env and redeploy.");
+    try {
+      await mailer.send({ to: req.body.to, subject: "Trainyard mail works", text: "This is a test from your Trainyard server. Trial confirmations and the 7-day reminders will be sent from this address.\n\nTrainyard" });
+    } catch (e) {
+      throw new ApiError(502, "MAIL_FAILED", `The mail server refused: ${(e as Error).message}`);
+    }
+    return { sent: true, to: req.body.to };
+  });
+  // Platform admins can run the check by hand (and the tests do).
+  app.post("/v1/billing/trial-mail/run", async (req) => {
+    if (!req.principal.platformAdmin) throw new ApiError(403, "FORBIDDEN", "Platform admins only.");
+    return { ...(await sendTrialMail()), mail: mailer.live ? "smtp" : "off" };
+  });
   const priceFor = (plan: Plan, interval: "monthly" | "yearly") => {
     if (plan === "practice") throw new ApiError(422, "FREE_PLAN", "Practice is free; nothing to pay.");
     const price = opts.prices?.[`${plan}-${interval}`];
@@ -243,7 +360,8 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const trialEnd = typeof sub.trial_end === "number" ? new Date(sub.trial_end * 1000).toISOString() : undefined;
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
     const unitAmount = Number((item?.price as StripeObject | undefined)?.unit_amount ?? 0);
-    const p: Purchase = { id: newId("pur"), ...(who.signupId ? { signupId: who.signupId } : {}), ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}), plan: signup.plan, interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString(), ...(trialEnd ? { trialEndsAt: trialEnd } : {}) };
+    const currency = String(invoice?.currency ?? (item?.price as StripeObject | undefined)?.currency ?? "usd");
+    const p: Purchase = { id: newId("pur"), ...(who.signupId ? { signupId: who.signupId } : {}), ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}), plan: signup.plan, interval, quantity: req.body.quantity, customerId, subscriptionId: String(sub.id), status: "open", createdAt: store.now().toISOString(), ...(trialEnd ? { trialEndsAt: trialEnd } : {}), ...(who.email ? { email: who.email } : {}), amountCents: unitAmount * req.body.quantity, currency };
     purchases().push(p);
     await store.commit(req.principal, "billing.subscribe", { purchase: p.id, plan: p.plan, interval: p.interval, quantity: p.quantity, ...(who.workspaceId ? { workspaceId: who.workspaceId } : {}) });
     return {
@@ -254,7 +372,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       amountDue: Number(invoice?.amount_due ?? 0),
       /** What each month costs once the trial ends. */
       recurringAmount: unitAmount * req.body.quantity,
-      currency: String(invoice?.currency ?? (item?.price as StripeObject | undefined)?.currency ?? "usd"),
+      currency,
       trialDays: trial,
       ...(trialEnd ? { trialEndsAt: trialEnd } : {}),
       guaranteeDays: GUARANTEE_DAYS,
@@ -439,9 +557,22 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
         // A trial starts without a charge: the subscription is live as soon as it exists.
         case "customer.subscription.created":
         case "customer.subscription.updated": {
-          const p = bySubscription(obj.id);
+          const p = bySubscription(obj.id) ?? purchases().find((x) => !x.subscriptionId && x.signupId && x.signupId === (obj.metadata as Record<string, string> | undefined)?.signupId);
           if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+          if (!p.subscriptionId) p.subscriptionId = String(obj.id);
           const status = String(obj.status ?? "");
+          if (typeof obj.trial_end === "number") {
+            const end = new Date(obj.trial_end * 1000).toISOString();
+            // A moved trial end needs its own reminder.
+            if (p.trialEndsAt !== end) delete p.trialReminderSentAt;
+            p.trialEndsAt = end;
+          }
+          const subItem = ((obj.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
+          const subPrice = subItem?.price as StripeObject | undefined;
+          if (subPrice?.unit_amount !== undefined) {
+            p.amountCents = Number(subPrice.unit_amount) * Number(subItem?.quantity ?? p.quantity);
+            p.currency = String(subPrice.currency ?? p.currency ?? "usd");
+          }
           if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
           else if (status === "past_due" || status === "unpaid") {
             p.status = status === "unpaid" ? "cancelled" : "past_due";
@@ -455,6 +586,9 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
             if (record?.status === "frozen" && (record.frozenReason ?? "").startsWith("subscription")) { record.status = "active"; delete record.frozenAt; delete record.frozenReason; }
             await store.commit(STRIPE_ACTOR, "billing.recovered", { purchase: p.id });
           }
+          else await store.commit(STRIPE_ACTOR, "billing.subscription", { purchase: p.id, status });
+          // The trial confirmation (or, inside the window, the reminder) goes out right away.
+          void sendTrialMail().catch(() => undefined);
           return reply.code(200).send({ ok: true });
         }
         case "invoice.payment_failed": {

@@ -59,7 +59,10 @@ services:
       STRIPE_PRICE_TRAINER_YEARLY: ${STRIPE_PRICE_TRAINER_YEARLY:-}
       STRIPE_PRICE_ACADEMY_MONTHLY: ${STRIPE_PRICE_ACADEMY_MONTHLY:-}
       STRIPE_PRICE_ACADEMY_YEARLY: ${STRIPE_PRICE_ACADEMY_YEARLY:-}
-      STRIPE_TRIAL_DAYS: ${STRIPE_TRIAL_DAYS:-14}
+      STRIPE_TRIAL_DAYS: ${STRIPE_TRIAL_DAYS:-30}
+      # Outbound mail for the trial confirmation and the reminder 7 days before the first charge.
+      TRAINYARD_SMTP_URL: ${TRAINYARD_SMTP_URL:-}
+      TRAINYARD_MAIL_FROM: ${TRAINYARD_MAIL_FROM:-}
       TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}},https://${TRAINYARD_WEB_ALT:-_none_},https://${TRAINYARD_WEB_ALT2:-_none_},https://${TRAINYARD_WEB_ALT3:-_none_},https://${TRAINYARD_WEB_ALT4:-_none_}
       TRAINYARD_DEMO_CLOCK: "0"
     networks: [internal]

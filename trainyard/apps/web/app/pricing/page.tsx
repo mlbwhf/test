@@ -6,7 +6,7 @@ import { siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Pricing: free for small rooms, per trainer or per train, with a free trial and money back",
-  description: "Trainyard pricing. Practice is free: self-host with no limits, or one hosted room up to 5 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 14-day trial, month by month, and a money-back guarantee on the first paid month.",
+  description: "Trainyard pricing. Practice is free: self-host with no limits, or one hosted room up to 5 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -27,7 +27,7 @@ export default function PricingPage() {
   return (
     <PublicPage crumbs={[{ href: "/pricing", label: "Pricing" }]} jsonLd={jsonLd}>
       <h1>Pricing that counts trainers and trains, not the people in the room.</h1>
-      <p className="lede">Practice is free. Trainer and Academy start with a free 14-day trial, bill month by month, and carry a money-back guarantee on the first paid month that you claim yourself. Yearly billing, ten months for twelve, is a switch after the first month.</p>
+      <p className="lede">Practice is free. Trainer and Academy start with a free 30-day trial, bill month by month, and carry a money-back guarantee on the first paid month that you claim yourself. Yearly billing, ten months for twelve, is a switch after the first month.</p>
       <div className="ly-cards">
         {PLANS.map((p) => (
           <Link key={p.id} href="/#join" className="ly-card">
@@ -53,7 +53,7 @@ export default function PricingPage() {
             ["Who counts", "Up to 5 people in one hosted room", "Trainers and planners; participants are free", "Trains; people are free"],
             ["Boards of your own", "1", "Unlimited", "Unlimited"],
             ["Self-hosting", "Unlimited, every feature", "Yes", "Yes, with a support agreement"],
-            ["Free trial", "n/a", "14 days", "14 days"],
+            ["Free trial", "n/a", "30 days", "30 days"],
             ["Money back", "n/a", "First paid month, within 30 days", "First paid month, within 30 days"],
             ["Jira app and Azure DevOps extension", "Self-hosted only", "Sync", "Included"],
           ]}

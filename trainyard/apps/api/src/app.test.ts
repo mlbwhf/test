@@ -7,14 +7,15 @@ import { buildApp, type AppOptions } from "./app.js";
 import { verifyStripeSignature } from "./billing.js";
 import { createHmac } from "node:crypto";
 import { Store, type StoreState } from "./store.js";
+import { MemoryMailer } from "./mailer.js";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-async function setup(opts: Omit<AppOptions, "store"> & { persistence?: MemoryPersistence<StoreState> } = {}) {
+async function setup(opts: Omit<AppOptions, "store"> & { persistence?: MemoryPersistence<StoreState>; now?: () => Date } = {}) {
   const persistence = opts.persistence ?? new MemoryPersistence<StoreState>();
-  const store = new Store({ persistence });
+  const store = new Store({ persistence, ...(opts.now ? { now: opts.now } : {}) });
   await store.open();
-  const { persistence: _p, ...rest } = opts;
+  const { persistence: _p, now: _n, ...rest } = opts;
   const app = await buildApp({ store, ...rest });
   const call = async (method: Method, url: string, payload?: unknown, key?: string, headers: Record<string, string> = {}) => {
     const res = await app.inject({ method, url, ...(payload !== undefined ? { payload: payload as object } : {}), headers: { ...(key ? { authorization: `Bearer ${key}` } : {}), ...headers } });
@@ -1383,3 +1384,63 @@ describe("universal cards and links", () => {
     expect((await call("DELETE", "/v1/value-streams/ovs-types/healthcare-episode")).status).toBe(204);
   });
 });
+
+describe("trial emails", () => {
+  it("confirms the trial when it starts and reminds 7 days before the first charge, once each, with amount, date and how to cancel", async () => {
+    let clock = Date.parse("2026-11-01T09:00:00.000Z");
+    const trialEnd = Math.floor((clock + 30 * 86_400_000) / 1000);
+    const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+      if (u.endsWith("/customers")) return json({ id: "cus_m" });
+      if (u.endsWith("/subscriptions") && method === "POST") return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: "seti_m" } });
+      if (u.endsWith("/subscriptions/sub_m")) return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm" } }] } });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const mailer = new MemoryMailer();
+    const { call } = await setup({ now: () => new Date(clock), billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    expect((await call("GET", "/v1/billing/config")).body.trialDays).toBe(30);
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer", seats: 2 });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id, quantity: 2 });
+    expect(sub.body).toMatchObject({ mode: "setup", trialDays: 30, recurringAmount: 3800 });
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body.status).toBe("paid");
+    const run = () => call("POST", "/v1/billing/trial-mail/run", {}, root);
+
+    // Day 0: the confirmation.
+    expect((await run()).body).toMatchObject({ started: [sub.body.purchaseId], reminded: [], mail: "smtp" });
+    expect(mailer.sent).toHaveLength(1);
+    expect(mailer.sent[0]!.to).toBe("ada@example.io");
+    expect(mailer.sent[0]!.subject).toContain("trial has started");
+    expect(mailer.sent[0]!.text).toContain("Nothing is charged today");
+    expect(mailer.sent[0]!.text).toContain("$38.00 a month");
+    expect(mailer.sent[0]!.text).toContain("Tuesday, December 1, 2026");
+    expect(mailer.sent[0]!.text).toContain("https://trainyard.app/billing");
+    // Running again sends nothing new.
+    expect((await run()).body).toMatchObject({ started: [], reminded: [] });
+
+    // Day 22: still more than 7 days out.
+    clock += 22 * 86_400_000;
+    expect((await run()).body.reminded).toEqual([]);
+    // Day 23: exactly 7 days before the charge, the reminder.
+    clock += 86_400_000;
+    expect((await run()).body.reminded).toEqual([sub.body.purchaseId]);
+    expect(mailer.sent).toHaveLength(2);
+    expect(mailer.sent[1]!.subject).toBe("Your Trainyard trial ends on Tuesday, December 1, 2026: $38.00 a month after that");
+    expect(mailer.sent[1]!.text).toContain("cancel before Tuesday, December 1, 2026 and you pay nothing");
+    expect(mailer.sent[1]!.text).toContain("https://trainyard.app/pricing");
+    // Once only.
+    clock += 86_400_000;
+    expect((await run()).body.reminded).toEqual([]);
+    expect(mailer.sent).toHaveLength(2);
+    // The mail check.
+    expect((await call("POST", "/v1/admin/mail/test", { to: "root@example.io" }, root)).body).toEqual({ sent: true, to: "root@example.io" });
+    expect(mailer.sent.at(-1)!.subject).toBe("Trainyard mail works");
+    mailer.sent.pop();
+    // Customers cannot trigger it.
+    const ada = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "practice" });
+    expect((await call("POST", "/v1/billing/trial-mail/run", {}, ada.body.apiKey)).status).toBe(403);
+  });
+});
+
