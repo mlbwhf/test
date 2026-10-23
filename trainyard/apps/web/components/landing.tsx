@@ -170,16 +170,16 @@ export function Landing() {
           </span>
         </a>
         <div className="links">
-          <a href="#rooms">Rooms</a>
-          <Link href="/classes">Classes</Link>
+          <a href="#rooms">Planning rooms</a>
+          <Link href="/classes">SAFe classes</Link>
           <Link href="/guides">Guides</Link>
-          <Link href="/compare">Compare</Link>
+          <Link href="/compare">Tool comparison</Link>
           <a href="#pricing">Pricing</a>
-          <Link href="/dashboards" style={{ fontWeight: 600 }}>
+          <Link href="/login" style={{ fontWeight: 600 }}>
             Sign in
           </Link>
           <a href="#join" className="pill navy">
-            Join a class →
+            Sign up free →
           </a>
         </div>
       </nav>
@@ -327,7 +327,7 @@ export function Landing() {
 
       <section id="kit">
         <div className="eyebrow">02 / THE KIT</div>
-        <h2 className="h2">Everything a trainer sticks on the wall.</h2>
+        <h2 className="h2">PI planning boards, SAFe canvases and value stream maps: the whole kit.</h2>
         <div className="ly-kit">
           {KIT.map(([h, p, d], i) => (
             <article key={h} className="ly-note" style={{ background: STICKY[i % 4], transform: `rotate(${TILT[i % 4]})` }}>
@@ -344,7 +344,7 @@ export function Landing() {
 
       <section id="compare">
         <div className="eyebrow">03 / COMPARED</div>
-        <h2 className="h2">How the PI planning tools differ.</h2>
+        <h2 className="h2">PI planning tools compared: Jira apps, iObeya, Miro and Trainyard.</h2>
         <div className="ly-table">
           <table>
             <thead>
@@ -457,7 +457,7 @@ export function Landing() {
       <section id="join" className="ly-joinsec">
         <div className="cols">
           <div className="copy">
-            <div className="eyebrow">06 / JOIN</div>
+            <div className="eyebrow">06 / SIGN UP</div>
             <h2>
               Your class starts at <span className="chip">00:00</span>.
             </h2>

@@ -21,15 +21,15 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
           </span>
         </Link>
         <div className="links">
-          <Link href="/classes">Classes</Link>
+          <Link href="/classes">SAFe classes</Link>
           <Link href="/guides">Guides</Link>
-          <Link href="/compare">Compare</Link>
+          <Link href="/compare">Tool comparison</Link>
           <Link href="/pricing">Pricing</Link>
-          <Link href="/dashboards" style={{ fontWeight: 600 }}>
+          <Link href="/login" style={{ fontWeight: 600 }}>
             Sign in
           </Link>
-          <Link href="/#join" className="pill on">
-            Start free
+          <Link href="/#join" className="pill navy">
+            Sign up free →
           </Link>
         </div>
       </nav>
