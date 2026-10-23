@@ -8,6 +8,14 @@ cd "$(dirname "$0")"
 [ -f .env ] || { echo ".env missing; copy env.production.example and fill it in" >&2; exit 1; }
 # Read single values without sourcing: values are not shell-safe.
 envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E "s/^[[:space:]]+|[[:space:]]+\$//g; s/^\"(.*)\"\$/\1/; s/^'(.*)'\$/\1/"; }
+pin_env() { local var=$1 val=$2; if grep -qE "^$var=" .env; then sed -i -E "s|^$var=.*|$var=$val|" .env; else printf '\n%s=%s\n' "$var" "$val" >> .env; fi; }
+# The canonical hosts and aliases can come from CI (the repository variables), so moving the
+# site to a new domain is a change of variables and a deploy, not an edit on the server.
+for pair in TRAINYARD_WEB_HOST:TRAINYARD_CI_WEB_HOST TRAINYARD_API_HOST:TRAINYARD_CI_API_HOST TRAINYARD_WEB_ALIASES:TRAINYARD_CI_WEB_ALIASES TRAINYARD_API_ALIASES:TRAINYARD_CI_API_ALIASES; do
+  var=${pair%%:*}; src=${pair##*:}; val=${!src:-}
+  [ -n "$val" ] || continue
+  [ "$(envval "$var")" = "$val" ] || { echo "== .env $var: '$(envval "$var")' -> '$val'"; pin_env "$var" "$val"; }
+done
 TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
 BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)
 LLM_PROFILE=$(envval LLM_PROFILE)
@@ -25,8 +33,13 @@ rm -f "$alias_file"
 local_ips=" $(hostname -I 2>/dev/null) $(curl -4 -fsS --max-time 5 https://ifconfig.me 2>/dev/null || true) "
 points_here() { local ip; ip=$(getent ahostsv4 "$1" | awk 'NR==1{print $1}'); [ -n "$ip" ] && [[ "$local_ips" == *" $ip "* ]]; }
 web_labels=""; api_labels=""; n=0
+canonical_web=$(envval TRAINYARD_WEB_HOST); canonical_api=$(envval TRAINYARD_API_HOST); seen=" "
 # TRAINYARD_WEB_ALIASES and TRAINYARD_API_ALIASES take any number of space-separated names.
+# A name listed twice, or equal to the canonical host, gets one router at most.
 for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2) $(envval TRAINYARD_WEB_ALT3) $(envval TRAINYARD_WEB_ALT4) $(envval TRAINYARD_WEB_ALIASES); do
+  [ "$name" = "$canonical_web" ] && continue
+  [[ "$seen" == *" $name "* ]] && continue
+  seen+="$name "
   n=$((n + 1))
   if points_here "$name"; then
     echo "== alias $name -> redirects to the canonical web host"
@@ -41,6 +54,9 @@ for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2) $(envval TR
 done
 m=0
 for name in $(envval TRAINYARD_API_ALT) $(envval TRAINYARD_API_ALIASES); do
+  [ "$name" = "$canonical_api" ] && continue
+  [[ "$seen" == *" $name "* ]] && continue
+  seen+="$name "
   m=$((m + 1))
   if points_here "$name"; then
     echo "== alias $name -> answers as the API"
@@ -106,7 +122,7 @@ for i in $(seq 1 30); do
     # .env, say) restarts the same images instead of whatever :latest is cached on this box.
     for var in TRAINYARD_API_IMAGE TRAINYARD_WEB_IMAGE; do
       val=${!var:-}; [ -n "$val" ] || continue
-      if grep -qE "^$var=" .env; then sed -i -E "s|^$var=.*|$var=$val|" .env; else printf '\n%s=%s\n' "$var" "$val" >> .env; fi
+      pin_env "$var" "$val"
     done
     if [ "$gate_before" = ok ]; then
       for n in 1 2 3 4 5 6; do gate_health && { echo "== gate after: ok"; exit 0; }; sleep 5; done

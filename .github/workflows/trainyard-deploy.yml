@@ -107,11 +107,17 @@ jobs:
           WEB_IMAGE: ${{ env.WEB_IMAGE }}
           GHCR_USER: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The canonical hosts and aliases, from the repository variables; deploy.sh writes them
+          # into /opt/trainyard/.env, so changing the domain is a change of variables.
+          CI_WEB_HOST: ${{ vars.TRAINYARD_WEB_HOST }}
+          CI_API_HOST: ${{ vars.TRAINYARD_API_HOST }}
+          CI_WEB_ALIASES: ${{ vars.TRAINYARD_WEB_ALIASES }}
+          CI_API_ALIASES: ${{ vars.TRAINYARD_API_ALIASES || 'api.agileagilist.com' }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: TAG,API_IMAGE,WEB_IMAGE,GHCR_USER,GHCR_TOKEN
+          envs: TAG,API_IMAGE,WEB_IMAGE,GHCR_USER,GHCR_TOKEN,CI_WEB_HOST,CI_API_HOST,CI_WEB_ALIASES,CI_API_ALIASES
           script: |
             set -euo pipefail
             cd /opt/trainyard
@@ -125,6 +131,7 @@ jobs:
             [ -f .env ] || { echo "/opt/trainyard/.env is missing on the server; run infra/scripts/first-run.sh"; exit 1; }
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             export TRAINYARD_API_IMAGE="$API_IMAGE:$TAG" TRAINYARD_WEB_IMAGE="$WEB_IMAGE:$TAG"
+            export TRAINYARD_CI_WEB_HOST="${CI_WEB_HOST:-}" TRAINYARD_CI_API_HOST="${CI_API_HOST:-}" TRAINYARD_CI_WEB_ALIASES="${CI_WEB_ALIASES:-}" TRAINYARD_CI_API_ALIASES="${CI_API_ALIASES:-}"
             ./deploy.sh
             docker logout ghcr.io
       - name: Smoke-test the live site
