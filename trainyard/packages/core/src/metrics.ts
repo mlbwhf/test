@@ -215,7 +215,7 @@ export const FLOW_METRICS: MetricDef[] = [
     groupBys: ["team", "none"],
     compute({ workspace: ws }, f, groupBy) {
       const teamIds = new Set(selectTeams(ws, f).map((t) => t.id));
-      const objs = ws.objectives.filter((o) => teamIds.has(o.teamId) && (!f.incrementId || o.incrementId === f.incrementId) && o.actualValue !== undefined);
+      const objs = ws.objectives.filter((o) => o.teamId !== undefined && teamIds.has(o.teamId) && (!f.incrementId || o.incrementId === f.incrementId) && o.actualValue !== undefined);
       const score = (list: typeof objs) => {
         const planned = list.filter((o) => o.committed).reduce((s, o) => s + o.plannedValue, 0);
         const actual = list.reduce((s, o) => s + (o.actualValue ?? 0), 0);
@@ -239,7 +239,7 @@ export const FLOW_METRICS: MetricDef[] = [
     groupBys: ["none"],
     compute({ workspace: ws }, f) {
       const teamIds = new Set(selectTeams(ws, f).map((t) => t.id));
-      const scored = ws.objectives.filter((o) => o.committed && o.actualValue !== undefined && teamIds.has(o.teamId) && (!f.incrementId || o.incrementId === f.incrementId));
+      const scored = ws.objectives.filter((o) => o.committed && o.actualValue !== undefined && o.teamId !== undefined && teamIds.has(o.teamId) && (!f.incrementId || o.incrementId === f.incrementId));
       const met = scored.filter((o) => (o.actualValue ?? 0) >= o.plannedValue).length;
       return { value: scored.length ? round((met / scored.length) * 100) : null, unit: "percent", points: [{ label: "Met", value: met }, { label: "Missed", value: scored.length - met }] };
     },

@@ -354,6 +354,7 @@ describe("AI assistance", () => {
   it("drafts objectives, briefings and gate reviews through the provider", async () => {
     const fake = new FakeProvider({
       "draft-objectives": { objectives: [{ title: "Deflect routine tickets", businessValue: 8, committed: true, featureIds: ["f-11"], rationale: "r" }], gaps: "" },
+      "draft-art-objectives": { objectives: [{ title: "Checkout converts more", businessValue: 9, committed: true, sourceObjectiveIds: ["o-curr-t-checkout-0"], rationale: "r" }], gaps: "" },
       "readiness-briefing": { verdict: "go-with-actions", briefing: "Mostly ready.", actions: [{ action: "Rebalance Payments", ownerRole: "RTE", before: "event" }] },
       "gate-review": { assessment: "Not yet.", actions: [{ action: "Add the eval report", ownerRole: "PO", closesBlocker: "evidence" }], questionsForValueArchitect: ["Is 2.4 violations acceptable?"] },
       narrative: { headline: "Steady.", paragraphs: ["p"], watch: ["Flow time"] },
@@ -363,6 +364,10 @@ describe("AI assistance", () => {
     expect(obj.status).toBe(200);
     expect(obj.body.draft.objectives[0].featureIds).toEqual(["f-11"]);
     expect(fake.calls[0]!.user).toContain("Support reply drafting agent");
+    const art = await call("POST", "/v1/assist/art-objectives", {});
+    expect(art.status).toBe(200);
+    expect(art.body.draft.objectives[0].title).toBe("Checkout converts more");
+    expect(fake.calls.find((c) => c.feature === "draft-art-objectives")!.user).toContain("Checkout |");
     expect((await call("POST", "/v1/assist/objectives", { teamId: "nope" })).status).toBe(404);
     expect((await call("POST", "/v1/assist/readiness", {})).body.briefing.verdict).toBe("go-with-actions");
     const gate = await call("POST", "/v1/assist/gate/ai-support", {});
@@ -1323,5 +1328,38 @@ describe("universal cards and links", () => {
     expect(recolour.body.type.fields.length).toBeGreaterThan(0); // fields of a built-in stay
     expect((await call("DELETE", "/v1/card-types/story")).status).toBe(409);
     expect((await call("DELETE", "/v1/card-types/customer-insight")).status).toBe(204);
+  });
+
+  it("writes ART PI objectives from the team objectives, with or without a provider, and runs Coach Sync", async () => {
+    const { call } = await setup();
+    const draft = await call("POST", "/v1/objectives/synthesise", {});
+    expect(draft.status).toBe(200);
+    expect(draft.body.draft.objectives.length).toBeGreaterThan(0);
+    const first = draft.body.draft.objectives[0];
+    expect(first.sourceObjectiveIds.length).toBeGreaterThan(0);
+    const created = await call("POST", "/v1/objectives", { incrementId: "pi-26-4", level: "art", title: first.title, plannedValue: first.businessValue, committed: first.committed, sourceObjectiveIds: first.sourceObjectiveIds });
+    expect(created.status).toBe(201);
+    expect(created.body.objective.level).toBe("art");
+    expect(created.body.objective.groupId).toBe("art-customer");
+    expect(created.body.objective.teamId).toBeUndefined();
+    const board = await call("GET", "/v1/board");
+    expect(board.body.objectives.some((o: { level?: string }) => o.level === "art")).toBe(true);
+    expect((await call("POST", "/v1/objectives", { incrementId: "pi-26-4", title: "No team", plannedValue: 5 })).status).toBe(422);
+    expect((await call("DELETE", `/v1/objectives/${created.body.objective.id}`)).status).toBe(204);
+
+    const sync = await call("GET", "/v1/coach-sync");
+    expect(sync.status).toBe(200);
+    expect(sync.body.checkpoints).toHaveLength(6);
+    expect(sync.body.teams.length).toBe(4);
+    const cp = sync.body.checkpoints[0];
+    const ans = await call("PUT", "/v1/coach-sync/answer", { incrementId: "pi-26-4", checkpointId: cp.id, questionId: cp.questions[0].id, teamId: "t-checkout", answer: "help" });
+    expect(ans.status).toBe(200);
+    expect(ans.body.summary[0].help).toEqual(["t-checkout"]);
+    expect(ans.body.summary[0].answered).toBe(1);
+    const again = await call("GET", "/v1/coach-sync?incrementId=pi-26-4");
+    expect(again.body.state.answers[`${cp.id}|${cp.questions[0].id}|t-checkout`]).toBe("help");
+    expect((await call("PUT", "/v1/coach-sync/answer", { incrementId: "pi-26-4", checkpointId: "nope", questionId: "x", teamId: "t-checkout", answer: "yes" })).status).toBe(404);
+    const note = await call("PUT", "/v1/coach-sync/note", { incrementId: "pi-26-4", checkpointId: cp.id, teamId: "t-checkout", note: "Needs the Payments API contract" });
+    expect(note.body.state.notes[`${cp.id}|t-checkout`]).toBe("Needs the Payments API contract");
   });
 });

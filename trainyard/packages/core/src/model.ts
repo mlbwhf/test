@@ -142,7 +142,14 @@ export interface Risk {
 export interface Objective {
   id: string;
   incrementId: string;
-  teamId: string;
+  /** Team objectives belong to a team; ART objectives have none. */
+  teamId?: string;
+  /** Team (default) or ART: an ART PI objective is a synthesis of the teams' objectives. */
+  level?: "team" | "art";
+  /** ART objectives: the train (group) they belong to. */
+  groupId?: string;
+  /** ART objectives: the team objectives they summarise. */
+  sourceObjectiveIds?: string[];
   title: string;
   /** Business value assigned at planning (1–10 in SAFe). */
   plannedValue: number;

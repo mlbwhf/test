@@ -7,7 +7,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 import { z } from "zod";
 import { STAGES, evaluateGate, type Stage } from "@trainyard/ai-portfolio";
-import { AssistError, draftObjectives, narrateDashboard, readinessBriefing, reviewBoard, reviewGate, reviewRisks, type AssistProvider } from "@trainyard/ai-assist";
+import { AssistError, draftArtObjectives, draftObjectives, narrateDashboard, readinessBriefing, reviewBoard, reviewGate, reviewRisks, type AssistProvider } from "@trainyard/ai-assist";
 import { checkDependencies, planningReadiness, teamLoad, type MetricRegistry } from "@trainyard/core";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
@@ -42,6 +42,18 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     if (board.nodes.filter((n) => n.text.trim()).length === 0) throw new ApiError(422, "EMPTY_BOARD", "There is nothing written on this board yet.");
     const res = await wrap(() => reviewBoard(need(), board));
     return { review: res.data, model: res.model, usage: { input: res.inputTokens, output: res.outputTokens } };
+  });
+
+  app.post("/v1/assist/art-objectives", { ...limited, schema: { body: z.object({ incrementId: Id.optional() }) } }, async (req) => {
+    require(req, "assist");
+    const ws = s().workspace;
+    const inc = req.body.incrementId ? ws.increments.find((i) => i.id === req.body.incrementId) : ws.increments[ws.increments.length - 1];
+    if (!inc) throw notFound("Increment");
+    const teamObjectives = ws.objectives.filter((o) => o.incrementId === inc.id && (o.level ?? "team") === "team");
+    if (teamObjectives.length === 0) throw new ApiError(422, "NO_TEAM_OBJECTIVES", `No team objectives in ${inc.name} yet; ART objectives are written from them.`);
+    const art = ws.groups.find((g) => g.level === "train")?.name ?? ws.name;
+    const res = await wrap(() => draftArtObjectives(need(), art, inc.name, ws.teams, teamObjectives));
+    return { draft: res.data, model: res.model, usage: { input: res.inputTokens, output: res.outputTokens } };
   });
 
   app.post("/v1/assist/objectives", { ...limited, schema: { body: z.object({ teamId: Id, incrementId: Id.optional() }) } }, async (req) => {

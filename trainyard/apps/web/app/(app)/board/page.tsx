@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Dependency, DependencyCheck, Increment, IncrementMilestone, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
 import { AssistButton } from "@/components/assist";
@@ -98,6 +99,10 @@ export default function BoardPage() {
         title={`${labels.incrementLabel} planning board`}
         sub={`Milestones and events on top, ${levelLabel.toLowerCase()}s by team and ${labels.iterationLabel.toLowerCase()}, significant dependencies in red with their strings, risks to ROAM below. Drag a card to replan it; changes queue to sync back to Jira or Azure DevOps.`}
         actions={
+          <div className="row" style={{ gap: 10, alignItems: "center" }}>
+          <Link href="/board/coach-sync" className="btn small" title="The RTE's hourly checkpoints through the team breakouts">
+            Coach Sync
+          </Link>
           <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             {labels.incrementLabel}
             <select id="board-inc" className="select" value={b.increment.id} onChange={(e) => setIncrementId(e.target.value)}>
@@ -108,6 +113,7 @@ export default function BoardPage() {
               ))}
             </select>
           </label>
+          </div>
         }
       />
       {message ? (
@@ -350,8 +356,18 @@ export default function BoardPage() {
 
         <section className="panel">
           <div className="panel-head">
+            <h2>ART PI objectives</h2>
+            <span className="faint">{b.objectives.filter((o) => o.level === "art").length}</span>
+          </div>
+          <div className="panel-body stack" style={{ paddingBottom: 0 }}>
+            <ArtObjectives objectives={b.objectives} teams={b.teams} incrementId={b.increment.id} onSaved={() => void board.reload()} />
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
             <h2>Team objectives</h2>
-            <span className="faint">{b.objectives.length}</span>
+            <span className="faint">{b.objectives.filter((o) => o.level !== "art").length}</span>
           </div>
           <div className="panel-body stack" style={{ paddingBottom: 0 }}>
             <DraftObjectives teams={b.teams} incrementId={b.increment.id} onSaved={() => void board.reload()} />
@@ -366,7 +382,7 @@ export default function BoardPage() {
               </tr>
             </thead>
             <tbody>
-              {b.objectives.map((o) => (
+              {b.objectives.filter((o) => o.level !== "art").map((o) => (
                 <tr key={o.id}>
                   <td>
                     {o.title} {o.committed ? null : <span className="chip">Stretch</span>}
@@ -567,6 +583,136 @@ function LoadMeter({ cell }: { cell: LoadCell }) {
       <div style={{ height: 4, background: "var(--sunken)", borderRadius: 2 }}>
         <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 2 }} />
       </div>
+    </div>
+  );
+}
+
+type ArtDraft = { objectives: { title: string; businessValue: number; committed: boolean; sourceObjectiveIds: string[]; rationale: string }[]; gaps: string };
+
+function ArtObjectives({ objectives, teams, incrementId, onSaved }: { objectives: Objective[]; teams: Team[]; incrementId: string; onSaved: () => void }) {
+  const art = objectives.filter((o) => o.level === "art");
+  const teamObjectives = objectives.filter((o) => o.level !== "art");
+  const [draft, setDraft] = useState<ArtDraft | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const teamName = (id: string | undefined) => teams.find((t) => t.id === id)?.name ?? "";
+  const sources = (ids: string[] | undefined) => (ids ?? []).map((id) => objectives.find((o) => o.id === id)).filter((o): o is Objective => !!o);
+  const accept = async (o: ArtDraft["objectives"][number]) => {
+    await api("POST", "/v1/objectives", { incrementId, level: "art", title: o.title, plannedValue: o.businessValue, committed: o.committed, sourceObjectiveIds: o.sourceObjectiveIds });
+    setDraft((d) => (d ? { ...d, objectives: d.objectives.filter((x) => x !== o) } : d));
+    onSaved();
+  };
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <p className="faint" style={{ margin: 0, fontSize: "0.84rem" }}>
+        The train's summary of what its teams committed to, written from the team objectives below: grouped by outcome, business value carried up, uncommitted when any team objective under it is.
+      </p>
+      <div className="row" style={{ gap: 8 }}>
+        <button
+          className="btn small"
+          disabled={!teamObjectives.length}
+          onClick={async () => {
+            setErr(null);
+            try {
+              const r = await api<{ draft: ArtDraft }>("POST", "/v1/objectives/synthesise", { incrementId });
+              setDraft(r.draft);
+            } catch (e) {
+              setErr((e as Error).message);
+            }
+          }}
+          title="Rule-based: clusters team objectives that share a theme"
+        >
+          Synthesise from team objectives
+        </button>
+        <AssistButton<ArtDraft> label="Draft with the assistant" path="/v1/assist/art-objectives" body={{ incrementId }} small render={(d, close) => (
+          <>
+            {d.objectives.map((o, n) => (
+              <div key={n} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap", alignItems: "flex-start" }}>
+                <span style={{ fontSize: "0.85rem" }}>
+                  <strong>{o.title}</strong> · BV {o.businessValue} {o.committed ? "" : "· uncommitted"}
+                  <div className="faint">{o.rationale}</div>
+                  <div className="faint" style={{ fontSize: "0.75rem" }}>From: {sources(o.sourceObjectiveIds).map((s) => `${teamName(s.teamId)}: ${s.title}`).join(" · ")}</div>
+                </span>
+                <button className="btn small" onClick={async () => (await accept(o), close())}>
+                  Add
+                </button>
+              </div>
+            ))}
+            {d.gaps ? <p className="faint">{d.gaps}</p> : null}
+          </>
+        )} />
+      </div>
+      {err ? <p className="notice crit">{err}</p> : null}
+      {draft ? (
+        <div className="stack" style={{ gap: 6, padding: 10, border: "1px dashed var(--line-strong)", borderRadius: 8 }}>
+          <div className="row" style={{ justifyContent: "space-between" }}>
+            <b style={{ fontSize: "0.85rem" }}>Draft ART objectives</b>
+            <span className="row" style={{ gap: 6 }}>
+              <button
+                className="btn small primary"
+                onClick={async () => {
+                  for (const o of draft.objectives) await api("POST", "/v1/objectives", { incrementId, level: "art", title: o.title, plannedValue: o.businessValue, committed: o.committed, sourceObjectiveIds: o.sourceObjectiveIds });
+                  setDraft(null);
+                  onSaved();
+                }}
+              >
+                Add all
+              </button>
+              <button className="btn small ghost" onClick={() => setDraft(null)}>
+                Discard
+              </button>
+            </span>
+          </div>
+          {draft.objectives.map((o, n) => (
+            <div key={n} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap", alignItems: "flex-start", fontSize: "0.85rem" }}>
+              <span>
+                <strong>{o.title}</strong> · BV {o.businessValue} {o.committed ? "" : "· uncommitted"}
+                <div className="faint">{o.rationale}</div>
+                <div className="faint" style={{ fontSize: "0.75rem" }}>From: {sources(o.sourceObjectiveIds).map((s) => `${teamName(s.teamId)}: ${s.title}`).join(" · ")}</div>
+              </span>
+              <button className="btn small" onClick={() => void accept(o)}>
+                Add
+              </button>
+            </div>
+          ))}
+          {!draft.objectives.length ? <span className="faint">All added.</span> : null}
+        </div>
+      ) : null}
+      {art.length ? (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>ART objective</th>
+              <th>From</th>
+              <th style={{ textAlign: "right" }}>Planned BV</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {art.map((o) => (
+              <tr key={o.id}>
+                <td>
+                  {o.title} {o.committed ? null : <span className="chip">Uncommitted</span>}
+                </td>
+                <td className="muted" style={{ fontSize: "0.8rem" }}>
+                  {sources(o.sourceObjectiveIds).map((s) => (
+                    <div key={s.id}>
+                      <b>{teamName(s.teamId)}</b> {s.title}
+                    </div>
+                  ))}
+                </td>
+                <td className="mono" style={{ textAlign: "right" }}>{o.plannedValue}</td>
+                <td>
+                  <button className="btn small ghost" aria-label={`Remove ${o.title}`} onClick={async () => (await api("DELETE", `/v1/objectives/${o.id}`), onSaved())}>
+                    ×
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <span className="faint" style={{ fontSize: "0.84rem" }}>No ART objectives yet.</span>
+      )}
     </div>
   );
 }

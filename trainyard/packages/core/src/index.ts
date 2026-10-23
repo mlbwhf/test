@@ -12,6 +12,8 @@ export * from "./canvases.js";
 export * from "./flowhistory.js";
 export * from "./outcomes.js";
 export * from "./capacity.js";
+export * from "./artobjectives.js";
+export * from "./coachsync.js";
 export * from "./classes.js";
 export * from "./ainative.js";
 export * from "./cards.js";

@@ -38,6 +38,11 @@ import {
   validateModel,
   type OperatingModel,
   type WorkItem,
+  synthesiseArtObjectives,
+  COACH_SYNC_CHECKPOINTS,
+  coachSyncSummary,
+  type Objective,
+  type CoachSyncAnswer,
 } from "@trainyard/core";
 import { registerAssistRoutes } from "./assist.js";
 import { registerBoardRoutes } from "./boards.js";
@@ -389,15 +394,55 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     return { objective: o };
   });
 
+  // ART PI objectives without a provider: the deterministic synthesis of the team objectives.
+  app.post("/v1/objectives/synthesise", { schema: { body: z.object({ incrementId: Id.optional() }) } }, async (req) => {
+    const ws = s().workspace;
+    const inc = req.body.incrementId ? ws.increments.find((i) => i.id === req.body.incrementId) : ws.increments[ws.increments.length - 1];
+    if (!inc) throw notFound("Increment");
+    const teamObjectives = ws.objectives.filter((o) => o.incrementId === inc.id && (o.level ?? "team") === "team");
+    if (teamObjectives.length === 0) throw new ApiError(422, "NO_TEAM_OBJECTIVES", `No team objectives in ${inc.name} yet; ART objectives are written from them.`);
+    return { draft: { objectives: synthesiseArtObjectives(teamObjectives, ws.teams), gaps: "" }, model: "rules" };
+  });
+
+  app.delete("/v1/objectives/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
+    require(req, "plan");
+    const ws = s().workspace;
+    if (!ws.objectives.some((o) => o.id === req.params.id)) throw notFound("Objective");
+    ws.objectives = ws.objectives.filter((o) => o.id !== req.params.id);
+    await store.commit(req.principal, "objective.delete", { id: req.params.id });
+    return reply.code(204).send();
+  });
+
   app.post(
     "/v1/objectives",
-    { schema: { body: z.object({ incrementId: Id, teamId: Id, title: z.string().min(1).max(200), plannedValue: z.number().int().min(1).max(10), committed: z.boolean().default(true) }) } },
+    {
+      schema: {
+        body: z.object({
+          incrementId: Id,
+          teamId: Id.optional(),
+          level: z.enum(["team", "art"]).default("team"),
+          sourceObjectiveIds: z.array(Id).max(60).optional(),
+          title: z.string().min(1).max(200),
+          plannedValue: z.number().int().min(1).max(10),
+          committed: z.boolean().default(true),
+        }),
+      },
+    },
     async (req, reply) => {
       require(req, "plan");
       const ws = s().workspace;
-      if (!ws.teams.some((t) => t.id === req.body.teamId)) throw notFound("Team");
+      const { level, sourceObjectiveIds, teamId, ...rest } = req.body;
+      if (level === "team" && !teamId) throw new ApiError(422, "TEAM_REQUIRED", "A team objective needs a team.");
+      if (teamId && !ws.teams.some((t) => t.id === teamId)) throw notFound("Team");
       if (!ws.increments.some((i) => i.id === req.body.incrementId)) throw notFound("Increment");
-      const objective = { id: `o-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, ...req.body };
+      for (const id of sourceObjectiveIds ?? []) if (!ws.objectives.some((o) => o.id === id)) throw new ApiError(422, "UNKNOWN_OBJECTIVE", `No objective "${id}" to trace to.`);
+      const art = ws.groups.find((g) => g.level === "train");
+      const objective: Objective = {
+        id: `o-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`,
+        ...rest,
+        ...(teamId ? { teamId } : {}),
+        ...(level === "art" ? { level, ...(art ? { groupId: art.id } : {}), ...(sourceObjectiveIds?.length ? { sourceObjectiveIds } : {}) } : {}),
+      };
       ws.objectives.push(objective);
       await store.commit(req.principal, "objective.create", { id: objective.id, teamId: objective.teamId });
       return reply.code(201).send({ objective });
@@ -615,6 +660,44 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerAdminRoutes(app, tenants);
   registerRefRoutes(app, store);
   registerCapacityRoutes(app, store);
+
+  // Coach Sync: the RTE's hourly checkpoints during PI planning, answered per team.
+  const coachState = (incrementId: string) => {
+    const all = (store.state.coachSync ??= {});
+    return (all[incrementId] ??= { incrementId, answers: {}, notes: {}, updatedAt: store.now().toISOString() });
+  };
+  app.get("/v1/coach-sync", { schema: { querystring: z.object({ incrementId: z.string().optional() }) } }, async (req) => {
+    const ws = s().workspace;
+    const inc = req.query.incrementId ? ws.increments.find((i) => i.id === req.query.incrementId) : ws.increments[ws.increments.length - 1];
+    if (!inc) throw notFound("Increment");
+    const state = store.state.coachSync?.[inc.id] ?? { incrementId: inc.id, answers: {}, notes: {}, updatedAt: "" };
+    return { increment: { id: inc.id, name: inc.name }, increments: ws.increments.map((i) => ({ id: i.id, name: i.name })), teams: ws.teams.map((t) => ({ id: t.id, name: t.name })), checkpoints: COACH_SYNC_CHECKPOINTS, state, summary: coachSyncSummary(state, ws.teams.map((t) => t.id)) };
+  });
+  app.put("/v1/coach-sync/answer", { schema: { body: z.object({ incrementId: Id, checkpointId: Id, questionId: Id, teamId: Id, answer: z.enum(["yes", "partly", "no", "help"]).nullable() }) } }, async (req) => {
+    require(req, "plan");
+    const ws = s().workspace;
+    if (!ws.increments.some((i) => i.id === req.body.incrementId)) throw notFound("Increment");
+    if (!ws.teams.some((t) => t.id === req.body.teamId)) throw notFound("Team");
+    const cp = COACH_SYNC_CHECKPOINTS.find((c) => c.id === req.body.checkpointId);
+    if (!cp || !cp.questions.some((q) => q.id === req.body.questionId)) throw notFound("Checkpoint question");
+    const st = coachState(req.body.incrementId);
+    const key = `${req.body.checkpointId}|${req.body.questionId}|${req.body.teamId}`;
+    if (req.body.answer === null) delete st.answers[key];
+    else st.answers[key] = req.body.answer as CoachSyncAnswer;
+    st.updatedAt = store.now().toISOString();
+    await store.commit(req.principal, "coach-sync.answer", { incrementId: req.body.incrementId, key, answer: req.body.answer });
+    return { state: st, summary: coachSyncSummary(st, ws.teams.map((t) => t.id)) };
+  });
+  app.put("/v1/coach-sync/note", { schema: { body: z.object({ incrementId: Id, checkpointId: Id, teamId: Id, note: z.string().max(600) }) } }, async (req) => {
+    require(req, "plan");
+    const st = coachState(req.body.incrementId);
+    const key = `${req.body.checkpointId}|${req.body.teamId}`;
+    if (req.body.note.trim()) st.notes[key] = req.body.note.trim();
+    else delete st.notes[key];
+    st.updatedAt = store.now().toISOString();
+    await store.commit(req.principal, "coach-sync.note", { incrementId: req.body.incrementId, key });
+    return { state: st };
+  });
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);

@@ -241,9 +241,9 @@ export function demoWorkspace(): Workspace {
       objectives.push({ id: `o-prev-${team.id}-${i}`, incrementId: prev.id, teamId: team.id, title, plannedValue: planned, actualValue: actual, committed });
     });
   }
-  for (const f of FEATURES.filter((_, i) => i % 2 === 0)) {
-    objectives.push({ id: `o-curr-${f.team}-${f.title.length}`, incrementId: curr.id, teamId: f.team, title: f.title, plannedValue: f.bv, committed: true });
-  }
+  FEATURES.forEach((f, i) => {
+    if (i % 2 === 0) objectives.push({ id: `o-curr-${f.team}-${i}`, incrementId: curr.id, teamId: f.team, title: f.title, plannedValue: f.bv, committed: true });
+  });
 
   const portfolio: Portfolio = {
     currency: "USD",

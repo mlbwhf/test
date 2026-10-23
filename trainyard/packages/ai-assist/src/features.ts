@@ -4,7 +4,7 @@
 
 import { z } from "zod";
 import { STAGE_LABELS, type GateResult, type Initiative } from "@trainyard/ai-portfolio";
-import type { Board, Dependency, DependencyCheck, ReadinessReport, Risk, Team, WidgetOutput, WorkItem } from "@trainyard/core";
+import type { Board, Dependency, DependencyCheck, Objective, ReadinessReport, Risk, Team, WidgetOutput, WorkItem } from "@trainyard/core";
 import type { AssistProvider, AssistResult } from "./provider.js";
 
 const lines = (xs: string[]) => (xs.length ? xs.join("\n") : "(none)");
@@ -38,6 +38,40 @@ export function objectivesPrompt(team: Team, features: readonly WorkItem[], incr
 
 export function draftObjectives(provider: AssistProvider, team: Team, features: readonly WorkItem[], incrementName: string): Promise<AssistResult<ObjectivesDraft>> {
   return provider.complete(objectivesPrompt(team, features, incrementName));
+}
+
+// ---- ART PI objectives --------------------------------------------------------------------
+
+export const ArtObjectivesDraft = z.object({
+  objectives: z
+    .array(
+      z.object({
+        title: z.string().describe("The ART-level outcome in plain language, under 110 characters, readable by Business Owners."),
+        businessValue: z.number().int().min(1).max(10).describe("Planned business value 1–10 relative to the other ART objectives."),
+        committed: z.boolean().describe("False when any team objective it rests on is uncommitted."),
+        sourceObjectiveIds: z.array(z.string()).min(1).describe("Ids of the team objectives this ART objective summarises."),
+        rationale: z.string().describe("One sentence on why these team objectives add up to this outcome."),
+      }),
+    )
+    .min(1)
+    .max(8),
+  gaps: z.string().describe("Team objectives that fit no ART objective, or conflicts between teams. Empty string when none."),
+});
+export type ArtObjectivesDraft = z.infer<typeof ArtObjectivesDraft>;
+
+export function artObjectivesPrompt(artName: string, incrementName: string, teams: readonly Team[], objectives: readonly Objective[]) {
+  const system = `Write ART PI objectives for ${incrementName} from the team PI objectives below. An ART objective is the train's summary of what several teams commit to together: one business or customer outcome, not a list of team titles. Group team objectives that serve the same outcome, even across teams; keep a team objective on its own only when nothing else relates to it. Carry the business value the Business Owners would assign to the combined outcome (1 to 10, relative to the other ART objectives). An ART objective is uncommitted when any team objective under it is uncommitted. Every team objective must appear under exactly one ART objective, or be named in gaps. Produce 3 to 6 ART objectives.`;
+  const user = `ART: ${artName}
+
+Team PI objectives (id | team | title | planned business value | committed):
+${lines(
+    objectives.map((o) => `${o.id} | ${teams.find((t) => t.id === o.teamId)?.name ?? "?"} | ${o.title} | ${o.plannedValue} | ${o.committed ? "committed" : "uncommitted"}`),
+  )}`;
+  return { feature: "draft-art-objectives", system, user, schema: ArtObjectivesDraft };
+}
+
+export function draftArtObjectives(provider: AssistProvider, artName: string, incrementName: string, teams: readonly Team[], objectives: readonly Objective[]): Promise<AssistResult<ArtObjectivesDraft>> {
+  return provider.complete(artObjectivesPrompt(artName, incrementName, teams, objectives));
 }
 
 // ---- risk review -----------------------------------------------------------------------
