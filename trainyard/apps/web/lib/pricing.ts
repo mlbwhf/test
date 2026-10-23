@@ -29,7 +29,7 @@ export const PLANS: Plan[] = [
     yearly: null,
     unit: "/ forever",
     blurb: "Self-host the whole product, or run one small room on ours. Free up to 5 people; paid plans start from the sixth.",
-    items: ["Every planning board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one room, up to 5 people", "Community support"],
+    items: ["Teach the five SAFe classes, free", "Fifty ready-made templates, or bring your own", "Every planning board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one room, up to 5 people", "Community support"],
     cta: "Start free",
     bg: "#fff",
     fg: "#14123a",

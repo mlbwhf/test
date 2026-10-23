@@ -256,6 +256,29 @@ export function Landing() {
         </div>
       </div>
 
+      <section id="free" className="ly-free" aria-label="Free classes and templates">
+        <div className="ly-cards">
+          <div className="ly-card ly-free-card" style={{ background: STICKY[0] }}>
+            <div className="tag">TEACH CLASSES · FREE</div>
+            <h3>Teach your classes for free.</h3>
+            <p>Leading SAFe, SPC, Advanced SPC, POPM and RTE class boards, lesson by lesson with the exercises, the PI planning simulation and the votes built in. Sign up free, open a classroom, teach.</p>
+            <a href="#join">Sign up free →</a>
+          </div>
+          <div className="ly-card ly-free-card" style={{ background: STICKY[1] }}>
+            <div className="tag">READY-MADE TEMPLATES</div>
+            <h3>Fifty boards, each in its method's own words.</h3>
+            <p>SAFe named as SAFe names it; Scrum from the Scrum Guide; Kanban, Lean, Six Sigma and the shop floor each with their own boards. Sized to your teams and iterations the moment you create one.</p>
+            <Link href="/templates">See the templates →</Link>
+          </div>
+          <div className="ly-card ly-free-card" style={{ background: STICKY[2] }}>
+            <div className="tag">OR BRING YOUR OWN</div>
+            <h3>Your template, your way.</h3>
+            <p>Import from iObeya, Miro, Mural, monday.com, Trello or a CSV, keep it exactly as it came, and save it as a template for the next class or the next PI.</p>
+            <Link href="/imports">Bring a board →</Link>
+          </div>
+        </div>
+      </section>
+
       <section id="rooms">
         <div className="eyebrow">01 / THREE ROOMS, ONE YARD</div>
         <h2 className="h2">Switch the room, keep the class.</h2>

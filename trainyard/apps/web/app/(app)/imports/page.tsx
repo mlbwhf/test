@@ -430,7 +430,7 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
       </label>
       <div className="row" style={{ justifyContent: "space-between" }}>
         <span className="faint" style={{ fontSize: "0.8rem" }}>
-          {mode === "miro" ? "Needs a Trainer account. Miro: board menu → Export → CSV. Widget texts come in reading order without positions, so blocks become frames of cards; a class board arrives as its lessons and exercises, ready to tidy. (.rtb backups are encrypted by Miro and cannot be read.)" : mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
+          {mode === "miro" ? "Needs a free account. Miro: board menu → Export → CSV. Widget texts come in reading order without positions, so blocks become frames of cards; a class board arrives as its lessons and exercises, ready to tidy. (.rtb backups are encrypted by Miro and cannot be read.)" : mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
         </span>
         <button className="btn primary" type="submit" disabled={!text}>
           Import

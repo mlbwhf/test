@@ -166,7 +166,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   // Miro "export as CSV": widget texts in reading order, no positions; rebuilt as frames of cards.
   app.post("/v1/imports/miro-csv", { bodyLimit: 8 * 1024 * 1024, schema: { body: z.object({ name: z.string().min(1).max(120), csv: z.string().min(1).max(6_000_000) }) } }, async (req, reply) => {
     require(req, "plan");
-    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", "Importing Miro boards needs a Trainer account. Sign up on the website and sign in with the key you receive.");
+    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", "Importing Miro boards needs a free account. Sign up on the website and sign in with the key you receive.");
     const board = boardFromMiroCsv(req.body.csv, { name: req.body.name, now: store.now().toISOString() });
     if (board.nodes.length === 0) throw new ApiError(422, "EMPTY_EXPORT", "No widgets found in this export.");
     board.origin.importedBy = req.principal.userId;
@@ -254,9 +254,9 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     catalog: TEMPLATE_CATALOG,
   }));
   app.get("/v1/templates/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ board: findTemplate(req.params.id) }));
-  // Class boards and Miro imports are for signed-up trainers: the open demo cannot run them.
+  // Class boards and Miro imports are for signed-up trainers (a free account): the open demo cannot run them.
   const requireSignup = (req: { principal: { anonymous: boolean } }, what: string) => {
-    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", `${what} needs a Trainer account. Sign up on the website and sign in with the key you receive.`);
+    if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", `${what} needs a free account. Sign up on the website and sign in with the key you receive.`);
   };
 
   app.post("/v1/templates/boards/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {

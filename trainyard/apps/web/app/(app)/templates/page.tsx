@@ -152,9 +152,9 @@ export default function TemplatesPage() {
             </label>
             {gated ? (
               <div className="notice warn">
-                <strong>Classes need a Trainer account.</strong>
+                <strong>Classes need a free account.</strong>
                 <p style={{ margin: "4px 0 0" }}>
-                  Class boards (Leading SAFe, SPC, Advanced SPC, POPM, RTE) and Miro imports are for signed-up trainers. <a href="/#join">Sign up</a>, then <Link href="/login">sign in</Link> with the key you receive.
+                  Class boards (Leading SAFe, SPC, Advanced SPC, POPM, RTE) and Miro imports are for signed-up trainers; the account is free. <a href="/#join">Sign up</a>, then <Link href="/login">sign in</Link> with the key you receive.
                 </p>
               </div>
             ) : null}

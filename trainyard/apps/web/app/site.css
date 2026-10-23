@@ -259,3 +259,10 @@
 .ly-lesson li { font-size: 16px; }
 .ly-lesson .kind { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.6; margin-left: 6px; }
 @media (max-width: 720px) { .ly-page .ly-article { padding-top: 32px; } }
+
+/* Free classes · templates · bring your own */
+.ly-free { padding: 36px 0 0; }
+.ly-free-card { color: #14123a; padding: 22px 22px 20px; border: 2px solid #14123a; box-shadow: 6px 6px 0 #14123a; display: grid; gap: 8px; align-content: start; }
+.ly-free-card h3 { margin: 0; font: 700 1.35rem/1.15 var(--display); letter-spacing: -0.02em; }
+.ly-free-card p { margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.ly-free-card a { font-weight: 700; color: #14123a; text-decoration: underline; text-underline-offset: 3px; }
