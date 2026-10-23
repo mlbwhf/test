@@ -1,6 +1,6 @@
 # Trainyard
 
-> Open-source (Apache-2.0) planning rooms for scaled agile: PI planning boards, program board, ROAM, confidence vote, retrospectives and dashboards that sync two ways with Jira and Azure DevOps, every scaling model (SAFe Essential/Portfolio/Full, AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels, tribes) as editable configuration, an AI-native portfolio module with stage gates, EU AI Act risk tiers and an agent registry, and import of existing boards from iObeya, Miro, Mural, monday.com, Trello, CSV and JSON.
+> Open-source (Apache-2.0) planning rooms for scaled agile: PI planning board (milestones and events, features by team and iteration, significant dependencies with strings, risks to ROAM), ROAM, confidence vote, retrospectives and dashboards that sync two ways with Jira and Azure DevOps, every scaling model (SAFe Essential/Portfolio/Full, AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels, tribes) as editable configuration, an AI-native portfolio module with stage gates, EU AI Act risk tiers and an agent registry, and import of existing boards from iObeya, Miro, Mural, monday.com, Trello, CSV and JSON.
 
 Trainyard is self-hosted with Docker Compose and runs beside other sites on the same server behind Traefik. One edition includes every module. AI assistance works with Claude (Anthropic API key), any OpenAI-compatible server, or a local Ollama model; every AI answer is schema-validated and is a draft a person accepts.
 

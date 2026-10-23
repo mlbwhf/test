@@ -7,7 +7,7 @@ import "./site.css";
 export const metadata: Metadata = {
   title: "Trainyard: the classroom for anyone who trains. PI planning, SAFe canvases and value streams, open source",
   description:
-    "Open-source planning rooms for coaches, trainers and Agile Release Trains: PI planning boards, program board, ROAM, SAFe canvases and value stream maps measured from Jira or Azure DevOps. Self-host it free, or pay per trainer or per train, never per person in the room.",
+    "Open-source planning rooms for coaches, trainers and Agile Release Trains: PI planning board with milestones and dependency strings, ROAM, SAFe canvases and value stream maps measured from Jira or Azure DevOps. Self-host it free, or pay per trainer or per train, never per person in the room.",
   alternates: { canonical: "/" },
 };
 

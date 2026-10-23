@@ -48,6 +48,11 @@ export function demoWorkspace(): Workspace {
   const model = getTemplate("safe-ai-native");
   const prev = buildIncrement("pi-26-3", "PI 26.3", "2026-08-17", model.cadence);
   const curr = buildIncrement("pi-26-4", "PI 26.4", "2026-10-05", model.cadence);
+  curr.milestones = [
+    { id: "ms-trade-show", label: "Pharmacy trade show demo", kind: "event", iterationId: curr.iterations[2]!.id, date: curr.iterations[2]!.end },
+    { id: "ms-rel-26-4", label: "Release 26.4 to all stores", kind: "release", iterationId: curr.iterations[3]!.id },
+    { id: "ms-audit", label: "Controlled-substances audit", kind: "milestone" },
+  ];
   const increments: Increment[] = [prev, curr];
   const rand = rng(2604);
   const pick = <T,>(xs: readonly T[]) => xs[Math.floor(rand() * xs.length)]!;

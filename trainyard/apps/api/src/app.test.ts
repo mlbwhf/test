@@ -79,6 +79,27 @@ describe("board", () => {
   });
 });
 
+describe("PI planning board milestones", () => {
+  it("lists the demo milestones and lets planners add and remove them on an iteration or after the PI", async () => {
+    const { call } = await setup();
+    const b = await call("GET", "/v1/board");
+    expect(b.body.milestones.map((m: { kind: string }) => m.kind).sort()).toEqual(["event", "milestone", "release"]);
+    const inc = b.body.increment.id as string;
+    const it = b.body.increment.iterations[1].id as string;
+    const made = await call("POST", "/v1/milestones", { incrementId: inc, label: "Trade show", kind: "event", iterationId: it, date: "2026-10-30" });
+    expect(made.status).toBe(201);
+    expect(made.body.milestone).toMatchObject({ label: "Trade show", kind: "event", iterationId: it, date: "2026-10-30" });
+    const after = await call("POST", "/v1/milestones", { incrementId: inc, label: "Audit" });
+    expect(after.body.milestone).toMatchObject({ kind: "milestone" });
+    expect(after.body.milestone.iterationId).toBeUndefined();
+    expect((await call("POST", "/v1/milestones", { incrementId: inc, label: "x", iterationId: "nope" })).status).toBe(404);
+    expect((await call("GET", "/v1/board")).body.milestones).toHaveLength(5);
+    expect((await call("DELETE", `/v1/milestones/${made.body.milestone.id}`)).status).toBe(204);
+    expect((await call("GET", "/v1/board")).body.milestones).toHaveLength(4);
+    expect((await call("DELETE", "/v1/milestones/none")).status).toBe(404);
+  });
+});
+
 describe("dashboards", () => {
   it("runs both default dashboards without widget errors", async () => {
     const { call } = await setup();

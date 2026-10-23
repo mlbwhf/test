@@ -398,3 +398,42 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .an-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .an-demo-cell { background: var(--sunken); border-radius: 10px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
 .an-demo-cell b { width: 100%; font-size: 0.78rem; text-transform: capitalize; }
+
+/* PI planning board: feature, dependency and milestone cards, strings, risks */
+.pb-card { background: var(--panel); border: 1px solid var(--line-strong); }
+.pb-card.pb-feature { background: #e3f0ff; }
+.pb-card.pb-dep { background: #ffd9d3; border-color: #c2412d; }
+.pb-card.pb-dep::before { content: "DEPENDENCY"; display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; color: #c2412d; margin-bottom: 2px; }
+.pb-card.pb-critical { box-shadow: 0 0 0 2px var(--crit); }
+.pb-card.pb-warning { box-shadow: 0 0 0 2px var(--warn); }
+.ms-card { position: relative; background: #ffd58a; border: 1px solid #d9822b; border-radius: 6px; padding: 6px 22px 6px 8px; font-size: 0.8rem; font-weight: 600; line-height: 1.3; display: flex; flex-direction: column; gap: 2px; }
+.ms-card .ms-kind { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #9a4f00; }
+.ms-card .ms-x { position: absolute; right: 4px; top: 4px; border: 0; background: transparent; cursor: pointer; font-size: 0.9rem; line-height: 1; color: #9a4f00; opacity: 0.5; }
+.ms-card .ms-x:hover { opacity: 1; }
+.ms-add { align-self: flex-start; border: 1px dashed var(--line-strong); background: transparent; color: var(--ink-2); border-radius: 6px; width: 26px; height: 22px; cursor: pointer; font-size: 0.9rem; line-height: 1; opacity: 0.5; }
+.ms-add:hover { opacity: 1; border-style: solid; }
+.risk-card { background: #ffe0ea; border: 1px solid #d64a7a; border-radius: 6px; padding: 6px 8px; min-width: 180px; max-width: 260px; }
+.risk-card.roam-resolved { background: #e3f6e9; border-color: #3a8f5a; }
+.risk-card.roam-owned { background: #e3f0ff; border-color: #4a8fe0; }
+.risk-card.roam-accepted { background: #efe9ff; border-color: #7b61d6; }
+.risk-card.roam-mitigated { background: #fff4d6; border-color: #d99400; }
+.lg { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; border: 1px solid rgba(0,0,0,0.25); }
+.lg-blue { background: #e3f0ff; } .lg-red { background: #ffd9d3; border-color: #c2412d; } .lg-orange { background: #ffd58a; border-color: #d9822b; }
+.lg-string { width: 22px; height: 0; border: 0; border-top: 2px solid #c2412d; border-radius: 0; vertical-align: 2px; }
+
+/* Value streams: in-place editing controls */
+.vsm-editbox { position: relative; display: block; }
+.vsm-box.vsm-edit { text-align: center; outline: 3px solid transparent; }
+.vsm-box.vsm-edit:focus { outline-color: var(--signal); }
+.vsm-x { position: absolute; top: -8px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); font-size: 0.8rem; line-height: 1; cursor: pointer; }
+.vsm-addbox { background: transparent !important; color: var(--ink-2) !important; border: 2px dashed var(--line-strong) !important; box-shadow: none !important; }
+.vsm-in { width: 64px; max-width: 100%; font-family: var(--font-mono); font-size: 0.78rem; text-align: center; padding: 3px 4px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--panel); color: var(--ink); }
+.vs-chevedit { cursor: default; padding: 8px 18px 8px 24px; }
+.vs-chevin { width: 100%; background: transparent; border: 0; text-align: center; font: inherit; color: inherit; outline: none; }
+.vs-chevadd { background: transparent; border: 2px dashed var(--line-strong); color: var(--ink-2); clip-path: none; filter: none; border-radius: 12px; }
+.vs-capin { width: 100%; text-align: center; font: inherit; border: 1px dashed var(--line-strong); border-radius: 8px; background: var(--panel); color: var(--ink); padding: 4px; }
+.vs-in { flex: 1 1 120px; min-width: 60px; font: inherit; font-size: 0.8rem; padding: 3px 6px; border: 1px solid var(--line-strong); border-radius: 6px; background: rgba(255,255,255,0.7); color: var(--ink); }
+.vs-x { border: 0; background: transparent; cursor: pointer; font-size: 1rem; line-height: 1; color: var(--ink); opacity: 0.6; }
+.vs-x:hover { opacity: 1; }
+.vs-addbar { background: transparent; border: 2px dashed var(--line-strong); color: var(--ink-2); cursor: pointer; font: inherit; font-size: 0.82rem; animation: none; }
+.vs-addbar:hover { border-color: var(--ink); color: var(--ink); }

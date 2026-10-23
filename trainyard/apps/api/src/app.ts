@@ -270,7 +270,26 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
       readiness: planningReadiness({ increment, teams: ws.teams, items, plannedLevel: planned }),
       objectives: ws.objectives.filter((o) => o.incrementId === increment.id),
       risks: ws.risks,
+      milestones: increment.milestones ?? [],
     };
+  });
+
+  // Milestones and events: the top row of the PI planning board.
+  app.post("/v1/milestones", { schema: { body: z.object({ incrementId: Id, label: z.string().trim().min(1).max(120), kind: z.enum(["milestone", "event", "release"]).default("milestone"), iterationId: z.string().optional(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }) } }, async (req, reply) => {
+    require(req, "plan");
+    const inc = s().workspace.increments.find((i) => i.id === req.body.incrementId) ?? (() => { throw notFound("Increment"); })();
+    if (req.body.iterationId && !inc.iterations.some((i) => i.id === req.body.iterationId)) throw notFound("Iteration");
+    const m = { id: `ms-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, label: req.body.label, kind: req.body.kind, ...(req.body.iterationId ? { iterationId: req.body.iterationId } : {}), ...(req.body.date ? { date: req.body.date } : {}) };
+    inc.milestones = [...(inc.milestones ?? []), m];
+    await store.commit(req.principal, "milestone.create", { incrementId: inc.id, milestoneId: m.id, kind: m.kind });
+    return reply.code(201).send({ milestone: m });
+  });
+  app.delete("/v1/milestones/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
+    require(req, "plan");
+    const inc = s().workspace.increments.find((i) => (i.milestones ?? []).some((m) => m.id === req.params.id)) ?? (() => { throw notFound("Milestone"); })();
+    inc.milestones = (inc.milestones ?? []).filter((m) => m.id !== req.params.id);
+    await store.commit(req.principal, "milestone.delete", { incrementId: inc.id, milestoneId: req.params.id });
+    return reply.code(204).send();
   });
 
   app.patch(

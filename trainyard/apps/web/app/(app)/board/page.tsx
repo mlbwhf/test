@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Dependency, DependencyCheck, Increment, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { Dependency, DependencyCheck, Increment, IncrementMilestone, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
 import { AssistButton } from "@/components/assist";
 import { Loading, PageHead, SourceChip } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
@@ -19,6 +19,7 @@ interface Board {
   readiness: ReadinessReport;
   objectives: Objective[];
   risks: Risk[];
+  milestones: IncrementMilestone[];
 }
 
 const ROAM: { key: Roam; label: string }[] = [
@@ -69,6 +70,21 @@ export default function BoardPage() {
     await board.reload();
   };
 
+  // A card that other teams wait on is a significant dependency: red, with a string to each consumer.
+  const providers = new Set(b.dependencies.map((d) => d.providerId));
+  const addMilestone = async (iterationId: string | null) => {
+    const label = window.prompt(`Milestone or event${iterationId ? "" : " after the last iteration"}: name it`);
+    if (!label?.trim()) return;
+    const kind = /release|launch|ship/i.test(label) ? "release" : /show|demo|conference|event|summit|day/i.test(label) ? "event" : "milestone";
+    await api("POST", "/v1/milestones", { incrementId: b.increment.id, label: label.trim(), kind, ...(iterationId ? { iterationId } : {}) });
+    await board.reload();
+  };
+  const removeMilestone = async (m: IncrementMilestone) => {
+    if (!window.confirm(`Remove "${m.label}"?`)) return;
+    await api("DELETE", `/v1/milestones/${m.id}`);
+    await board.reload();
+  };
+
   const columns: { id: string | null; name: string; dates?: string; isIP?: boolean; current?: boolean }[] = [
     { id: null, name: "Unplanned" },
     ...b.increment.iterations.map((i) => ({ id: i.id, name: i.name.replace(`${b.increment.name}.`, `${labels.iterationLabel} `), dates: `${i.start.slice(5)} – ${i.end.slice(5)}`, ...(i.isIP ? { isIP: true } : {}), current: i.start <= b.today && b.today <= i.end })),
@@ -77,8 +93,8 @@ export default function BoardPage() {
   return (
     <>
       <PageHead
-        title="Program board"
-        sub={`${levelLabel}s planned by team and ${labels.iterationLabel.toLowerCase()}. Drag a card to replan it; changes queue to sync back to Jira or Azure DevOps.`}
+        title={`${labels.incrementLabel} planning board`}
+        sub={`Milestones and events on top, ${levelLabel.toLowerCase()}s by team and ${labels.iterationLabel.toLowerCase()}, significant dependencies in red with their strings, risks to ROAM below. Drag a card to replan it; changes queue to sync back to Jira or Azure DevOps.`}
         actions={
           <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             {labels.incrementLabel}
@@ -99,32 +115,102 @@ export default function BoardPage() {
       ) : null}
 
       <div className="panel scroll-x">
-        <div style={{ display: "grid", gridTemplateColumns: `170px repeat(${columns.length}, minmax(150px, 1fr))`, minWidth: 170 + columns.length * 150 }}>
-          <div style={{ padding: 10, borderBottom: "1px solid var(--line)" }} className="eyebrow">
-            Team
-          </div>
-          {columns.map((c) => (
-            <div key={c.id ?? "none"} style={{ padding: 10, borderBottom: "1px solid var(--line)", borderLeft: "1px solid var(--line)", background: c.current ? "var(--signal-soft)" : c.isIP ? "var(--sunken)" : undefined }}>
-              <div style={{ fontWeight: 700, fontSize: "0.85rem" }}>
-                {c.name}
-                {c.current ? <span className="chip" style={{ marginLeft: 6, borderColor: "var(--signal)", color: "var(--ink)" }}>Now</span> : null}
-              </div>
-              {c.dates ? <div className="mono faint" style={{ fontSize: "0.72rem" }}>{c.dates}</div> : null}
+        <BoardGrid dependencies={b.dependencies} itemsKey={`${b.increment.id}:${b.items.map((i) => `${i.id}@${i.iterationId ?? ""}`).join(",")}`}>
+          <div style={{ display: "grid", gridTemplateColumns: `170px repeat(${columns.length}, minmax(150px, 1fr)) 120px`, minWidth: 170 + columns.length * 150 + 120 }}>
+            <div style={{ padding: 10, borderBottom: "1px solid var(--line)" }} className="eyebrow">
+              Team
             </div>
-          ))}
-          {b.teams.map((team) => (
-            <TeamRow
-              key={team.id}
-              team={team}
-              columns={columns}
-              items={b.items.filter((i) => i.teamId === team.id)}
-              load={b.load.filter((l) => l.teamId === team.id)}
-              severity={severityByItem}
-              dragging={dragging}
-              onDrag={setDragging}
-              onDrop={move}
-            />
-          ))}
+            {columns.map((c) => (
+              <div key={c.id ?? "none"} style={{ padding: 10, borderBottom: "1px solid var(--line)", borderLeft: "1px solid var(--line)", background: c.current ? "var(--signal-soft)" : c.isIP ? "var(--sunken)" : undefined }}>
+                <div style={{ fontWeight: 700, fontSize: "0.85rem" }}>
+                  {c.name}
+                  {c.current ? <span className="chip" style={{ marginLeft: 6, borderColor: "var(--signal)", color: "var(--ink)" }}>Now</span> : null}
+                </div>
+                {c.dates ? <div className="mono faint" style={{ fontSize: "0.72rem" }}>{c.dates}</div> : null}
+              </div>
+            ))}
+            <div style={{ padding: 10, borderBottom: "1px solid var(--line)", borderLeft: "1px solid var(--line)", fontWeight: 700, fontSize: "0.85rem" }} className="faint">
+              Next {labels.incrementLabel} »
+            </div>
+
+            {/* Milestones and events: the top row. */}
+            <div style={{ padding: 10, borderBottom: "2px solid var(--line-strong)" }} className="stack">
+              <strong>Milestones &amp; events</strong>
+              <span className="faint" style={{ fontSize: "0.75rem" }}>releases, trade shows, audits</span>
+            </div>
+            {[...columns, { id: "__next__" as string | null, name: "next" }].map((c) => {
+              const inCell = b.milestones.filter((m) => (c.id === "__next__" ? !m.iterationId : m.iterationId === c.id));
+              return (
+                <div key={`ms-${c.id ?? "none"}`} style={{ borderLeft: "1px solid var(--line)", borderBottom: "2px solid var(--line-strong)", padding: 8, minHeight: 64, display: "flex", flexDirection: "column", gap: 6, background: c.isIP ? "var(--sunken)" : undefined }}>
+                  {inCell.map((m) => (
+                    <div key={m.id} className="ms-card" data-milestone-id={m.id} title={m.kind}>
+                      <span className="ms-kind">{m.kind}</span>
+                      <span>{m.label}</span>
+                      {m.date ? <span className="mono faint" style={{ fontSize: "0.7rem" }}>{m.date.slice(5)}</span> : null}
+                      <button className="ms-x" aria-label={`Remove ${m.label}`} onClick={() => void removeMilestone(m)}>
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  {c.id !== null ? (
+                    <button className="ms-add" onClick={() => void addMilestone(c.id === "__next__" ? null : c.id)} title="Add a milestone or event here">
+                      +
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+
+            {b.teams.map((team) => (
+              <TeamRow
+                key={team.id}
+                team={team}
+                columns={columns}
+                items={b.items.filter((i) => i.teamId === team.id)}
+                load={b.load.filter((l) => l.teamId === team.id)}
+                severity={severityByItem}
+                providers={providers}
+                dragging={dragging}
+                onDrag={setDragging}
+                onDrop={move}
+              />
+            ))}
+
+            {/* Risks: ROAM them here, in the room. */}
+            <div style={{ padding: 10, borderTop: "2px solid var(--line-strong)" }} className="stack">
+              <strong>Risks</strong>
+              <span className="faint" style={{ fontSize: "0.75rem" }}>{b.risks.filter((r) => r.roam === "unroamed").length} to ROAM</span>
+            </div>
+            <div style={{ gridColumn: `span ${columns.length + 1}`, borderTop: "2px solid var(--line-strong)", borderLeft: "1px solid var(--line)", padding: 8, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {b.risks.map((r) => (
+                <div key={r.id} className={`risk-card roam-${r.roam}`}>
+                  <div style={{ fontWeight: 600, fontSize: "0.82rem", lineHeight: 1.3 }}>{r.title}</div>
+                  <select aria-label={`ROAM status for ${r.title}`} className="select" style={{ marginTop: 6, fontSize: "0.75rem", padding: "2px 6px" }} value={r.roam} onChange={(e) => setRoam(r, e.target.value as Roam)}>
+                    {ROAM.map((o) => (
+                      <option key={o.key} value={o.key}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+              {b.risks.length === 0 ? <span className="faint">No risks raised yet. Add them below.</span> : null}
+            </div>
+          </div>
+        </BoardGrid>
+        <div className="row faint" style={{ gap: 14, padding: "8px 12px", fontSize: "0.78rem" }}>
+          <span>
+            <i className="lg lg-blue" /> {levelLabel}
+          </span>
+          <span>
+            <i className="lg lg-red" /> Significant dependency (another team waits on it)
+          </span>
+          <span>
+            <i className="lg lg-orange" /> Milestone or event
+          </span>
+          <span>
+            <i className="lg lg-string" /> String from the waiting {levelLabel.toLowerCase()} to what it waits on; dashed when the timing is wrong
+          </span>
         </div>
       </div>
 
@@ -301,6 +387,7 @@ function TeamRow({
   items,
   load,
   severity,
+  providers,
   dragging,
   onDrag,
   onDrop,
@@ -310,6 +397,7 @@ function TeamRow({
   items: WorkItem[];
   load: LoadCell[];
   severity: Map<string, "warning" | "critical">;
+  providers: Set<string>;
   dragging: WorkItem | null;
   onDrag: (w: WorkItem | null) => void;
   onDrop: (w: WorkItem, iterationId: string | null) => void;
@@ -359,14 +447,14 @@ function TeamRow({
             {cellItems.map((it) => (
               <article
                 key={it.id}
-                className="card"
+                className={`card pb-card ${providers.has(it.id) ? "pb-dep" : "pb-feature"}${severity.get(it.id) ? ` pb-${severity.get(it.id)}` : ""}`}
+                data-item-id={it.id}
                 draggable
                 onDragStart={() => onDrag(it)}
                 onDragEnd={() => onDrag(null)}
+                title={providers.has(it.id) ? "Significant dependency: another team waits on this" : undefined}
                 style={{
-                  background: "var(--panel)",
-                  border: "1px solid var(--line-strong)",
-                  borderLeft: `3px solid ${severity.get(it.id) === "critical" ? "var(--crit)" : severity.get(it.id) === "warning" ? "var(--warn)" : it.flowType === "enabler" ? "var(--ado)" : it.flowType === "defect" ? "var(--crit)" : "var(--chart)"}`,
+                  borderLeft: `3px solid ${severity.get(it.id) === "critical" ? "var(--crit)" : severity.get(it.id) === "warning" ? "var(--warn)" : it.flowType === "enabler" ? "var(--ado)" : it.flowType === "defect" ? "var(--crit)" : providers.has(it.id) ? "#c2412d" : "#4a8fe0"}`,
                   borderRadius: 6,
                   padding: "6px 8px",
                   cursor: "grab",
@@ -392,7 +480,63 @@ function TeamRow({
           </div>
         );
       })}
+      <div style={{ borderLeft: "1px solid var(--line)", borderBottom: "1px solid var(--line)", background: "var(--sunken)" }} />
     </>
+  );
+}
+
+/** Draws the red strings between a waiting card and what it waits on, re-measured when the grid changes. */
+function BoardGrid({ dependencies, itemsKey, children }: { dependencies: Dependency[]; itemsKey: string; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [lines, setLines] = useState<{ id: string; d: string; bad: boolean }[]>([]);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const measure = () => {
+    const root = ref.current;
+    if (!root) return;
+    const box = root.getBoundingClientRect();
+    const at = (id: string) => root.querySelector<HTMLElement>(`[data-item-id="${CSS.escape(id)}"]`)?.getBoundingClientRect();
+    const next: { id: string; d: string; bad: boolean }[] = [];
+    for (const dep of dependencies) {
+      const from = at(dep.consumerId);
+      const to = at(dep.providerId);
+      if (!from || !to) continue;
+      const x1 = from.left - box.left + root.scrollLeft + from.width / 2;
+      const y1 = from.top - box.top + root.scrollTop + from.height / 2;
+      const x2 = to.left - box.left + root.scrollLeft + to.width / 2;
+      const y2 = to.top - box.top + root.scrollTop + to.height / 2;
+      const dx = Math.max(40, Math.abs(x2 - x1) / 2);
+      next.push({ id: dep.id, d: `M ${x1} ${y1} C ${x1 - dx} ${y1}, ${x2 + dx} ${y2}, ${x2} ${y2}`, bad: dep.status === "open" && x2 > x1 });
+    }
+    setLines(next);
+    setSize({ w: root.scrollWidth, h: root.scrollHeight });
+  };
+  useLayoutEffect(measure, [dependencies, itemsKey]);
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(root);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      {children}
+      <svg className="pb-strings" width={size.w} height={size.h} style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none", overflow: "visible" }} aria-hidden="true">
+        {lines.map((l) => (
+          <g key={l.id}>
+            <path d={l.d} fill="none" stroke="#c2412d" strokeWidth={2} strokeDasharray={l.bad ? "6 5" : undefined} opacity={0.85} />
+            <circle r={4} fill="#c2412d">
+              <animateMotion dur="0.01s" fill="freeze" path={l.d} />
+            </circle>
+          </g>
+        ))}
+      </svg>
+    </div>
   );
 }
 

@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Open-source planning rooms for SAFe, LeSS, Scrum@Scale, Nexus and Flight Levels. PI planning boards, ROAM, program board and dashboards synced two ways with Jira and Azure DevOps, an AI-native portfolio module, and bring-your-own boards from Miro, Mural, monday.com and Trello.",
     applicationName: "Trainyard",
-    keywords: ["PI planning", "SAFe", "scaled agile", "program board", "PI planning tool comparison", "value stream mapping", "SAFe canvases", "Jira app", "Azure DevOps extension", "Jira", "Azure DevOps", "AI-native SAFe", "lean portfolio management", "open source"],
+    keywords: ["PI planning", "SAFe", "scaled agile", "PI planning board", "program board", "PI planning tool comparison", "value stream mapping", "SAFe canvases", "Jira app", "Azure DevOps extension", "Jira", "Azure DevOps", "AI-native SAFe", "lean portfolio management", "open source"],
     alternates: { canonical: "/" },
     openGraph: { type: "website", siteName: "Trainyard", url: base, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Trainyard: a PI planning board in the glass theme" }] },
     twitter: { card: "summary_large_image", images: ["/og.png"] },

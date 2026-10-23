@@ -32,7 +32,7 @@ const HERO: Record<Audience, { eyebrow: string; a: string; b: string; c: string;
     a: "One planning room for every ",
     b: "train",
     c: " you run.",
-    p: "PI planning, program boards, portfolio Kanban and value stream maps that stay in step with Jira and Azure DevOps: inside the trackers as a Jira app and an Azure DevOps extension, or on your own server.",
+    p: "PI planning boards, portfolio Kanban and value stream maps that stay in step with Jira and Azure DevOps: inside the trackers as a Jira app and an Azure DevOps extension, or on your own server.",
   },
 };
 
@@ -69,7 +69,7 @@ const ROOMS = [
 ] as const;
 
 const KIT: [string, string, string][] = [
-  ["Boards that are lessons", "PI planning, team breakouts, ROAM, program board, story map, Kanban and roadmap boards, pre-built and facilitator-ready.", "M5 5h15v15H5zM24 5h15v9H24zM24 18h15v21H24zM5 24h15v15H5z"],
+  ["Boards that are lessons", "PI planning board with milestones and dependency strings, team breakouts, ROAM, story map, Kanban and roadmap boards, pre-built and facilitator-ready.", "M5 5h15v15H5zM24 5h15v9H24zM24 18h15v21H24zM5 24h15v15H5z"],
   ["SAFe's own canvases", "Portfolio canvas, SWOT and TOWS, LACE mission, epic hypothesis, Lean business case, feature and enabler canvases, kept as data.", "M6 8h32v28H6zM6 18h32M19 18v18"],
   ["Value streams, measured", "Identify them in a workshop, then map one with numbers pulled from your tracker instead of guessed on a wall.", "M6 38V22M16 38V12M26 38V26M36 38V8"],
   ["Share a link", "Participants open the board in a browser. Viewers watch, planners move cards. Nothing to install.", "M6 22h16M16 14l8 8-8 8M28 8h10v28H28"],
@@ -79,7 +79,7 @@ const KIT: [string, string, string][] = [
   ["Bring your material", "Upload iObeya exports, connect Miro, Mural, monday.com or Trello, or drop a CSV. Boards arrive as they are.", "M6 14h12l3 4h17v18H6zM22 24v8M18 28l4 4 4-4"],
 ];
 
-const MARQUEE = ["PI planning", "Program boards", "ROAM", "Value streams", "SAFe canvases", "Jira & Azure DevOps", "iObeya imports", "Any framework"];
+const MARQUEE = ["PI planning boards", "Milestones & dependencies", "ROAM", "Value streams", "SAFe canvases", "Jira & Azure DevOps", "iObeya imports", "Any framework"];
 
 function Logo({ size = 58 }: { size?: number }) {
   return (

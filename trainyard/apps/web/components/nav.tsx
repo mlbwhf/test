@@ -7,7 +7,7 @@ import { setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
 
 const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/dashboards", label: "Dashboards", section: "Plan" },
-  { href: "/board", label: "Program board" },
+  { href: "/board", label: "PI planning board" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/value-streams", label: "Value streams" },
   { href: "/canvases", label: "Canvases" },

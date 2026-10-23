@@ -131,7 +131,7 @@ export default function SyncPage() {
             {state.data.pending.length === 0 ? (
               <tr>
                 <td colSpan={3} className="faint">
-                  Nothing waiting. Move a card on the program board to queue a change.
+                  Nothing waiting. Move a card on the PI planning board to queue a change.
                 </td>
               </tr>
             ) : null}

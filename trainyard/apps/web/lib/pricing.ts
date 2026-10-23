@@ -75,7 +75,7 @@ export const COMPARISON: { tool: string; hosting: string; pi: string; art: strin
     tool: "Trainyard",
     hosting: "Self-hosted, open source; hosted; Jira app and Azure DevOps extension",
     pi: "Integrated: PI planning, team breakouts, PI objectives, confidence vote",
-    art: "ART and team boards, program board, ROAM, WSJF, retrospectives",
+    art: "ART and team boards, PI planning board with milestones and dependency strings, ROAM, WSJF, retrospectives",
     beyond: "Portfolio Kanban, roadmaps, SAFe canvases, value stream identification and mapping, AI portfolio, dashboards",
     integration: "Jira and Azure DevOps, two ways; imports from iObeya, Miro, Mural, monday.com",
     pricedBy: "Trainer or train; people in the room are free",

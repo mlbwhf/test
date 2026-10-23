@@ -7,7 +7,7 @@ import { Suspense } from "react";
 // The compact header for pages shown inside the Jira app or the Azure DevOps extension.
 // Links stay on normal paths: navigating inside the frame is still served as embedded.
 const LINKS = [
-  { href: "/board", label: "Program board" },
+  { href: "/board", label: "PI planning board" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/value-streams", label: "Value streams" },
   { href: "/canvases", label: "Canvases" },

@@ -81,6 +81,20 @@ export interface Increment {
   start: string;
   end: string;
   iterations: Iteration[];
+  /** The top row of the PI planning board: milestones and events, placed on an iteration or at the PI's end. */
+  milestones?: IncrementMilestone[];
+}
+
+export type IncrementMilestoneKind = "milestone" | "event" | "release";
+
+export interface IncrementMilestone {
+  id: string;
+  label: string;
+  kind: IncrementMilestoneKind;
+  /** The iteration it falls in; absent means after the last iteration (next PI). */
+  iterationId?: string;
+  /** Optional calendar date shown on the card. */
+  date?: string;
 }
 
 export interface Dependency {
