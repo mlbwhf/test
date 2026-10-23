@@ -57,6 +57,14 @@ export default function CanvasesPage() {
         sub="SAFe's working artifacts, kept as structured data: the portfolio canvas and its future state, SWOT and TOWS, the portfolio vision, LACE mission, epic hypothesis and Lean business case, value stream and ART canvases, ART launch readiness, feature and enabler canvases."
       />
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
+      <section className="panel panel-body row" style={{ justifyContent: "space-between" }}>
+        <span>
+          <b>Envision the future state.</b> <span className="muted">Current portfolio canvas → SWOT and TOWS → candidate future states → scored decision → the epics and enablers that get there.</span>
+        </span>
+        <Link href="/portfolio/vision" className="btn primary">
+          Open the workshop
+        </Link>
+      </section>
 
       {vs.data?.identifications.length ? (
         <section className="panel panel-body row">

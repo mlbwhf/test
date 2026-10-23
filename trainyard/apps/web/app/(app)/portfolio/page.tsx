@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { BudgetLine, EpicState, GuardrailBreach, OkrProgress, Portfolio, PortfolioEpic } from "@trainyard/core";
 import { formatValue } from "@/components/charts";
+import Link from "next/link";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
@@ -63,6 +64,10 @@ export default function PortfolioPage() {
         title="Portfolio"
         sub="Lean budgets per value stream, epics ranked by weighted shortest job first, guardrails on spend, and OKRs measured from typed values or live metrics."
         actions={
+          <>
+            <Link href="/portfolio/vision" className="btn">
+              Envision the future state
+            </Link>
           <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             PI
             <select id="pf-inc" className="select" value={v.increment!.id} onChange={(e) => setIncrementId(e.target.value)}>
@@ -73,6 +78,7 @@ export default function PortfolioPage() {
               ))}
             </select>
           </label>
+          </>
         }
       />
       {err ? <ErrorList title="Could not save" items={[{ message: err }]} /> : null}

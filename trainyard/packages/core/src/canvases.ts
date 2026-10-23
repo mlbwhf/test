@@ -282,8 +282,51 @@ export interface Canvas {
   state?: "current" | "future";
   /** What it was prefilled from or belongs to. */
   links?: { identificationId?: string; devStreamId?: string; artId?: string; sourceCanvasIds?: string[] };
+  /** Future-state portfolio canvases only: one explored option, its scores and whether it was chosen. */
+  option?: FutureOption;
   fields: Record<string, SectionValue>;
   updatedAt: string;
+}
+
+export type Emphasis = "offensive" | "defensive" | "fix-first" | "balanced" | "custom";
+
+export interface FutureOption {
+  emphasis: Emphasis;
+  /** Which TOWS quadrants this option leans on. */
+  quadrants: ("so" | "wo" | "st" | "wt")[];
+  /** Scores 1–5 per decision criterion, filled in at Make Decisions. */
+  scores?: Record<string, number>;
+  rationale?: string;
+  selected?: boolean;
+}
+
+/** The decision criteria of the convergent step. Weights sum to 100; "lowerIsBetter" criteria are inverted. */
+export const DECISION_CRITERIA: { key: string; label: string; weight: number; lowerIsBetter?: boolean; prompt: string }[] = [
+  { key: "fit", label: "Strategic fit", weight: 25, prompt: "How well does this future state serve the enterprise strategy and strategic themes?" },
+  { key: "value", label: "Customer and business value", weight: 25, prompt: "How much value, for which segments, how soon?" },
+  { key: "feasibility", label: "Feasibility", weight: 20, prompt: "Do we have, or can we get, the people, partners and resources?" },
+  { key: "cost", label: "Cost and effort", weight: 15, lowerIsBetter: true, prompt: "What does it take to get there, in money and attention?" },
+  { key: "risk", label: "Risk", weight: 15, lowerIsBetter: true, prompt: "What could go wrong, and how reversible is it?" },
+];
+
+export const EMPHASES: Record<Exclude<Emphasis, "custom">, { label: string; quadrants: ("so" | "wo" | "st" | "wt")[]; blurb: string }> = {
+  offensive: { label: "Offensive", quadrants: ["so", "wo"], blurb: "Go after the opportunities: use strengths, fix the weaknesses that stand in the way." },
+  defensive: { label: "Defensive", quadrants: ["st", "wt"], blurb: "Protect the position: counter the threats with strengths, reduce exposure where we are weak." },
+  "fix-first": { label: "Fix first", quadrants: ["wo", "wt"], blurb: "Address the weaknesses before expanding." },
+  balanced: { label: "Balanced", quadrants: ["so", "wo", "st", "wt"], blurb: "A measure of everything; the safest, slowest story." },
+};
+
+/** Weighted score 0–100 of an option's criterion scores (1–5 each); null until every criterion is scored. */
+export function optionScore(scores: Record<string, number> | undefined): number | null {
+  if (!scores) return null;
+  let total = 0;
+  for (const c of DECISION_CRITERIA) {
+    const v = scores[c.key];
+    if (v === undefined || v < 1 || v > 5) return null;
+    const norm = ((c.lowerIsBetter ? 6 - v : v) - 1) / 4;
+    total += norm * c.weight;
+  }
+  return Math.round(total);
 }
 
 const rid = (p: string, i: number) => `${p}-${i + 1}`;
@@ -416,6 +459,63 @@ export function futureStateFrom(current: Canvas, tows: Canvas, ids: { canvas: st
   return { canvas, vision };
 }
 
+/**
+ * Divergent thinking: several candidate future states from one current canvas and one TOWS,
+ * each leaning on different quadrants, so the decision is between real alternatives rather
+ * than one draft.
+ */
+export function futureOptions(current: Canvas, tows: Canvas, ids: string[], now: string): Canvas[] {
+  const q = { so: list(tows.fields.so), wo: list(tows.fields.wo), st: list(tows.fields.st), wt: list(tows.fields.wt) };
+  const base = current.title.replace(/\s*\((current|future) state.*\)$/i, "");
+  const out: Canvas[] = [];
+  (Object.keys(EMPHASES) as (keyof typeof EMPHASES)[]).forEach((emphasis, i) => {
+    const id = ids[i];
+    if (!id) return;
+    const def = EMPHASES[emphasis];
+    const changes = def.quadrants.flatMap((k) => q[k]);
+    if (!changes.length) return;
+    out.push({
+      ...structuredClone(current),
+      id,
+      title: `${base} (future state · ${def.label.toLowerCase()})`,
+      state: "future",
+      links: { ...(current.links ?? {}), sourceCanvasIds: [current.id, tows.id] },
+      option: { emphasis, quadrants: def.quadrants },
+      fields: { ...structuredClone(current.fields), changes: [...list(current.fields.changes), ...changes] },
+      updatedAt: now,
+    });
+  });
+  return out;
+}
+
+export interface EpicDraft {
+  title: string;
+  kind: "business" | "enabler";
+  hypothesis: string;
+  /** The planned change it comes from. */
+  change: string;
+}
+
+const ENABLER_WORDS = /\b(platform|infrastructure|architect|architecture|data|tooling|pipeline|automation|automate|api|cloud|integration|integrate|migrat|security|compliance|regulat|observab|monitoring|devops|ci\/cd|refactor|technical|capability|foundation|legacy|modern)/i;
+
+/** Step 3: the epics and enablers that get the portfolio to the chosen future state, one per planned change. */
+export function epicsFromFutureState(future: Canvas, current?: Canvas): EpicDraft[] {
+  const before = new Set(list(current?.fields.changes));
+  const changes = list(future.fields.changes).filter((c) => !before.has(c));
+  const kpis = ((future.fields.valueProps as TableRow[] | undefined) ?? []).map((r) => r.cells["KPIs / revenue"]).filter(Boolean);
+  return changes.map((change) => {
+    const kind: EpicDraft["kind"] = ENABLER_WORDS.test(change) ? "enabler" : "business";
+    const title = change.replace(/^(use|fix|reduce|take|counter)\s+/i, (m) => m.charAt(0).toUpperCase() + m.slice(1)).replace(/\s+to (capture|counter|limit exposure to)\s+.*$/i, "").replace(/\s+by taking\s+.*$/i, "");
+    const measured = kpis[0] ? ` measured by ${kpis[0]}` : "";
+    return {
+      title: title.length > 110 ? title.slice(0, 107) + "…" : title,
+      kind,
+      hypothesis: kind === "enabler" ? `If we ${change.charAt(0).toLowerCase() + change.slice(1)}, then the business epics that depend on this capability can start in the next PI${measured}.` : `If we ${change.charAt(0).toLowerCase() + change.slice(1)}, then the future-state portfolio canvas becomes true for its customer segments${measured}.`,
+      change,
+    };
+  });
+}
+
 // ---- launch readiness ---------------------------------------------------------------------
 
 export interface LaunchReadiness {
@@ -533,7 +633,28 @@ export function demoCanvases(vsi: ValueStreamIdentification | undefined, now = "
   enabler.fields.header = [{ label: "Enabler name", text: "Single sign-on" }, { label: "Type (exploration, architecture, infrastructure, compliance)", text: "Architecture" }, { label: "Source epic", text: "" }];
   enabler.fields.description = "A single sign-on mechanism will enable sign-on in multiple applications.";
   out.push(enabler);
-  out.push(emptyCanvas("portfolio-canvas", "canvas-portfolio", "Portfolio canvas", now));
-  out.push(emptyCanvas("swot", "canvas-swot", "Portfolio SWOT", now));
+  const pc = emptyCanvas("portfolio-canvas", "canvas-portfolio", "Digital Commerce portfolio canvas", now);
+  pc.fields.valueProps = [
+    { id: "vp-1", cells: { "Value stream": "Online shopping", Solutions: "Web shop and mobile app, checkout, search", "Customer segments": "Households, B2B buyers", Channels: "Web, app, marketplaces", "Customer relationships": "Self-service, loyalty programme", Budget: "€4.2M", "KPIs / revenue": "Conversion rate, basket size, €31M revenue" } },
+    { id: "vp-2", cells: { "Value stream": "Payments and fulfilment", Solutions: "Payment services, order orchestration, returns", "Customer segments": "Every shopper, store staff", Channels: "In app, in store", "Customer relationships": "Trust: pay and get it", Budget: "€2.6M", "KPIs / revenue": "Payment success rate, delivery promise kept" } },
+  ];
+  pc.fields.partners = ["Payment service providers", "Last-mile carriers", "Cloud provider"];
+  pc.fields.activities = ["Strategic themes and Lean budgets", "Portfolio sync", "PI planning", "System demo", "Inspect & Adapt"];
+  pc.fields.resources = ["Epic owners", "Enterprise architect", "LPM authorities", "VMO and LACE", "Shared data platform team"];
+  pc.fields.costs = "€6.8M a year, two thirds on people; the payment gateway contract and cloud spend are the biggest external costs.";
+  pc.fields.revenue = "€31M from online shopping; payments and fulfilment are not monetised separately and are valued by the shopper trust they keep.";
+  out.push(pc);
+  const swot = emptyCanvas("swot", "canvas-swot", "Digital Commerce SWOT", now);
+  swot.fields.strengths = ["Loyal customer base with 1.4M app installs", "One-day delivery in three metro areas", "Experienced search and checkout teams"];
+  swot.fields.weaknesses = ["Legacy order system slows every release", "No shared customer data platform", "Returns handled by hand in stores"];
+  swot.fields.opportunities = ["Marketplace demand for groceries", "Pharmacy and health products moving online", "Embedded finance (buy now, pay later)"];
+  swot.fields.threats = ["Discount platforms undercutting on price", "New payment regulation (PSD3)", "Carrier capacity in peak season"];
+  out.push(swot);
+  const tows = emptyCanvas("tows", "canvas-tows", "Digital Commerce TOWS", now);
+  tows.fields.so = ["Use the loyal app base to launch grocery delivery in the three metro areas", "Use the checkout team's experience to add buy-now-pay-later"];
+  tows.fields.wo = ["Fix the legacy order system by building the grocery flow on a new order platform", "Build a shared customer data platform to personalise pharmacy and health offers"];
+  tows.fields.st = ["Use one-day delivery to counter discount platforms on convenience rather than price"];
+  tows.fields.wt = ["Automate returns in stores to limit exposure to peak-season carrier capacity", "Replace the payment integration to comply with PSD3 before the deadline"];
+  out.push(tows);
   return out;
 }

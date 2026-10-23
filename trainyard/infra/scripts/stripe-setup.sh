@@ -3,7 +3,7 @@
 # in /opt/trainyard/.env. Safe to run again: prices are found by lookup key, the endpoint by URL.
 #
 #   ./stripe-setup.sh            (asks for the secret key; the API host comes from .env)
-#   STRIPE_SECRET_KEY=sk_test_... ./stripe-setup.sh https://api.agileagilist.com
+#   STRIPE_SECRET_KEY=sk_test_... ./stripe-setup.sh https://api.trainyard.app
 #
 # Run it once with the test key and once with the live key. Prices are per seat (per trainer,
 # per Agile Release Train), in USD: Trainer 19/month or 192/year, Academy 249/month or 2388/year.
@@ -52,7 +52,7 @@ price() { # lookup_key product amount_cents interval -> id
   echo "$id"
 }
 
-TRAINER=$(product "Trainyard Trainer" "One trainer, unlimited classes and rooms, hosted on agileagilist.com")
+TRAINER=$(product "Trainyard Trainer" "One trainer, unlimited classes and rooms, hosted on trainyard.app")
 ACADEMY=$(product "Trainyard Academy" "One Agile Release Train with every planning room, integrations and support")
 TM=$(price trainer_monthly "$TRAINER" 1900 month)
 TY=$(price trainer_yearly "$TRAINER" 19200 year)

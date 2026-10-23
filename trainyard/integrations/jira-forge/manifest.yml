@@ -28,4 +28,5 @@ permissions:
       - unsafe-inline
   external:
     frames:
+      - address: https://trainyard.app
       - address: https://agileagilist.com

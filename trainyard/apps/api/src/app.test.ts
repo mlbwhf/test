@@ -1219,3 +1219,53 @@ describe("trial, monthly start and the money-back guarantee", () => {
     expect((await call("POST", "/v1/billing/refund", {}, key)).body.error.code).toBe("NO_SUBSCRIPTION");
   });
 });
+
+describe("envision the future state", () => {
+  it("explores options, scores and selects one (drafting the vision), then creates the epics and enablers in the funnel", async () => {
+    const { call, store } = await setup();
+    const e0 = await call("GET", "/v1/canvases/envision");
+    expect(e0.body.current.map((c: { id: string }) => c.id)).toEqual(["canvas-portfolio"]);
+    expect(e0.body.tows[0]).toMatchObject({ id: "canvas-tows", strategies: 7 });
+    expect(e0.body.options).toEqual([]);
+    expect((await call("POST", "/v1/canvases/options", { currentId: "canvas-swot", towsId: "canvas-tows" })).body.error.code).toBe("NOT_PORTFOLIO_CANVAS");
+    const ex = await call("POST", "/v1/canvases/options", { currentId: "canvas-portfolio", towsId: "canvas-tows" });
+    expect(ex.status).toBe(201);
+    expect(ex.body.options).toHaveLength(4);
+    const ids = ex.body.options.map((o: { id: string }) => o.id) as string[];
+    // Scoring one criterion at a time; the weighted score appears once every criterion is in.
+    for (const k of ["fit", "value", "feasibility"]) await call("PATCH", `/v1/canvases/${ids[0]}/option`, { scores: { [k]: 5 } });
+    expect((await call("GET", "/v1/canvases/envision")).body.options[0].score).toBeNull();
+    const scored = await call("PATCH", `/v1/canvases/${ids[0]}/option`, { scores: { cost: 2, risk: 2 }, rationale: "Grocery is the growth story." });
+    expect(scored.body.option.score).toBe(93); // 70 for fit, value and feasibility at 5, plus 11.25 each for cost and risk at 2
+    // Editing the option's changes in place keeps the option metadata; so does a PUT of the canvas.
+    const put = await call("PUT", `/v1/canvases/${ids[0]}`, { type: "portfolio-canvas", title: "Digital Commerce (future state · offensive)", state: "future", fields: { changes: ["Launch grocery delivery in three metro areas", "Build a shared customer data platform"] } });
+    expect(put.status).toBe(200);
+    expect(store.state.canvases!.find((c) => c.id === ids[0])!.option!.scores!.fit).toBe(5);
+    // Select: one future state, a vision drafted from its changes, exploring again keeps the chosen one.
+    const sel = await call("POST", `/v1/canvases/${ids[0]}/select`);
+    expect(sel.status).toBe(200);
+    expect(sel.body.selected.option.selected).toBe(true);
+    expect(sel.body.vision.type).toBe("portfolio-vision");
+    expect(sel.body.vision.fields.changes).toEqual(["Launch grocery delivery in three metro areas", "Build a shared customer data platform"]);
+    expect((await call("GET", "/v1/canvases/envision")).body.selected).toBe(ids[0]);
+    await call("POST", "/v1/canvases/options", { currentId: "canvas-portfolio", towsId: "canvas-tows" });
+    const again = await call("GET", "/v1/canvases/envision");
+    expect(again.body.selected).toBe(ids[0]);
+    expect(again.body.options).toHaveLength(5);
+    // Epics: drafts from the chosen future state's new changes, then created in the funnel with their kind.
+    const drafts = await call("GET", `/v1/canvases/${ids[0]}/epic-drafts`);
+    expect(drafts.body.drafts.map((d: { kind: string }) => d.kind)).toEqual(["business", "enabler"]);
+    const other = again.body.options.find((o: { id: string }) => o.id !== ids[0]).id as string;
+    expect((await call("GET", `/v1/canvases/${other}/epic-drafts`)).status).toBe(200);
+    expect((await call("GET", `/v1/canvases/${ids[1]}/epic-drafts`)).status).toBe(404); // replaced by the second exploration
+    expect((await call("GET", "/v1/canvases/canvas-portfolio/epic-drafts")).body.error.code).toBe("NOT_FUTURE_STATE");
+    const vs = (await call("GET", "/v1/canvases/envision")).body.valueStreams[0].id as string;
+    const made = await call("POST", `/v1/canvases/${ids[0]}/epics`, { epics: drafts.body.drafts.map((d: { title: string; kind: string; hypothesis: string }) => ({ title: d.title, kind: d.kind, valueStreamId: vs, hypothesis: d.hypothesis })) });
+    expect(made.status).toBe(201);
+    expect(made.body.epics).toHaveLength(2);
+    expect(made.body.epics[1]).toMatchObject({ kind: "enabler", state: "funnel", sourceCanvasId: ids[0] });
+    expect((await call("GET", `/v1/canvases/${ids[0]}/epic-drafts`)).body.drafts.every((d: { exists: boolean }) => d.exists)).toBe(true);
+    const portfolio = await call("GET", "/v1/portfolio");
+    expect(portfolio.body.epics.some((e: { kind?: string; title: string }) => e.kind === "enabler" && e.title.includes("customer data platform"))).toBe(true);
+  });
+});

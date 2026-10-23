@@ -303,7 +303,7 @@ export function Landing() {
               </div>
             ) : room === 1 ? (
               <div className="ly-join">
-                <div className="tag">BOARD LINK · agileagilist.com/boards/vs-loan</div>
+                <div className="tag">BOARD LINK · trainyard.app/boards/vs-loan</div>
                 {roster.map((r) => (
                   <div key={r.n} className="r" style={{ background: r.c, animationDelay: r.d }}>
                     <b>{r.n}</b>

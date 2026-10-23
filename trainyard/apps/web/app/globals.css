@@ -437,3 +437,24 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .vs-x:hover { opacity: 1; }
 .vs-addbar { background: transparent; border: 2px dashed var(--line-strong); color: var(--ink-2); cursor: pointer; font: inherit; font-size: 0.82rem; animation: none; }
 .vs-addbar:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Envision the future state */
+.ev-num { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; color: #fff; font-size: 0.7rem; font-weight: 800; align-items: center; justify-content: center; }
+.ev-flow { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.ev-stage { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 600; color: var(--ink-2); }
+.ev-canvas { width: 120px; height: 78px; border-radius: 6px; background: repeating-linear-gradient(0deg, #b9c9d2 0 22px, transparent 22px 26px), #b9c9d2; position: relative; opacity: 0.9; }
+.ev-canvas::after { content: ""; position: absolute; inset: 26px 0 26px 0; background: repeating-linear-gradient(90deg, transparent 0 36px, var(--panel) 36px 40px); }
+.ev-canvas.small { width: 92px; height: 60px; animation: vs-rise 0.5s both; }
+.ev-canvas.chosen { outline: 3px solid #7fb236; outline-offset: 2px; }
+.ev-canvas.ghost { opacity: 0.35; }
+.ev-stack { display: flex; flex-direction: column; gap: 8px; }
+.ev-arrows { font-weight: 800; font-size: 1.1rem; padding: 6px 10px; border-radius: 999px; }
+.ev-arrows.red { color: #b43a2e; background: #fde4df; }
+.ev-arrows.green { color: #4c7d1e; background: #e5f2cf; }
+.ev-arrows.grey { color: var(--ink-2); }
+.ev-epics { display: grid; grid-template-columns: repeat(2, 54px); gap: 6px; }
+.ev-epics i { display: block; height: 22px; border-radius: 4px; }
+.ev-epics i.e { background: #2a6aa8; } .ev-epics i.n { background: #b43a2e; }
+.ev-matrix th.chosen, .ev-matrix td.chosen { background: #e5f2cf; }
+.ev-dot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--panel); font-size: 0.72rem; cursor: pointer; color: var(--ink); }
+.ev-dot.on { background: var(--ink); color: #fff; }

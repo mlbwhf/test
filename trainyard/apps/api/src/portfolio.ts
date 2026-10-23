@@ -94,6 +94,8 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
     state: z.enum(EPIC_STATES).optional(),
     ownerId: Id.nullable().optional(),
     hypothesis: z.string().max(2000).nullable().optional(),
+    kind: z.enum(["business", "enabler"]).optional(),
+    sourceCanvasId: Id.optional(),
     wsjf: WsjfBody,
     spend: SpendBody,
   });
@@ -110,7 +112,7 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
   app.post("/v1/portfolio/epics", { schema: { body: EpicBody } }, async (req, reply) => {
     require(req, "portfolio");
     validateEpic(req.body);
-    const { itemId, ownerId, hypothesis, state, spend, ...rest } = req.body;
+    const { itemId, ownerId, hypothesis, state, spend, kind, sourceCanvasId, ...rest } = req.body;
     const epic: PortfolioEpic = {
       id: `pe-${Date.now().toString(36)}`,
       state: state ?? "funnel",
@@ -119,6 +121,8 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
       ...(itemId ? { itemId } : {}),
       ...(ownerId ? { ownerId } : {}),
       ...(hypothesis ? { hypothesis } : {}),
+      ...(kind ? { kind } : {}),
+      ...(sourceCanvasId ? { sourceCanvasId } : {}),
     };
     portfolio().epics.push(epic);
     await store.commit(req.principal, "portfolio.epic.create", { id: epic.id });

@@ -31,6 +31,10 @@ export interface PortfolioEpic {
   state: EpicState;
   ownerId?: string;
   hypothesis?: string;
+  /** Business epic or enabler epic; absent means business. */
+  kind?: "business" | "enabler";
+  /** The future-state portfolio canvas this epic was identified from. */
+  sourceCanvasId?: string;
   wsjf: Wsjf;
   /** Features and enablers fall out of the linked work item; this is the money side. */
   spend: EpicSpend[];

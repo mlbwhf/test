@@ -5,7 +5,7 @@
 # never overwrites an existing .env. Run as root or as the deploy user.
 #
 #   git clone --depth 1 -b claude/confident-cray-JTbgD https://github.com/mlbwhf/test.git /root/trainyard-src
-#   bash /root/trainyard-src/trainyard/infra/scripts/first-run.sh agileagilist.com agileagilist.com api.agileagilist.com
+#   bash /root/trainyard-src/trainyard/infra/scripts/first-run.sh trainyard.app trainyard.app api.trainagilist.com
 # Aliases (www, an older hostname) go in .env afterwards: TRAINYARD_WEB_ALT, TRAINYARD_WEB_ALT2, TRAINYARD_API_ALT.
 set -euo pipefail
 domain=${1:?usage: first-run.sh <domain> [web host] [api host]}

@@ -95,3 +95,29 @@ describe("class boards", () => {
     expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-rte"]);
   });
 });
+
+describe("envision the future state", () => {
+  it("diverges into options per TOWS emphasis, scores them, and turns the chosen one's changes into epics and enablers", async () => {
+    const { demoCanvases, futureOptions, optionScore, epicsFromFutureState, DECISION_CRITERIA } = await import("./canvases.js");
+    const { demoIdentification } = await import("./valuestreams.js");
+    const all = demoCanvases(demoIdentification(), "2026-10-01T00:00:00.000Z");
+    const current = all.find((c) => c.id === "canvas-portfolio")!;
+    const tows = all.find((c) => c.id === "canvas-tows")!;
+    const options = futureOptions(current, tows, ["o1", "o2", "o3", "o4"], "2026-10-02T00:00:00.000Z");
+    expect(options.map((o) => o.option!.emphasis)).toEqual(["offensive", "defensive", "fix-first", "balanced"]);
+    expect(options[0]!.state).toBe("future");
+    expect((options[0]!.fields.changes as string[]).length).toBe(4); // SO + WO
+    expect((options[1]!.fields.changes as string[]).length).toBe(3); // ST + WT
+    expect((options[3]!.fields.changes as string[]).length).toBe(7);
+    expect(optionScore(undefined)).toBeNull();
+    expect(optionScore({ fit: 5, value: 5, feasibility: 5, cost: 1, risk: 1 })).toBe(100);
+    expect(optionScore({ fit: 1, value: 1, feasibility: 1, cost: 5, risk: 5 })).toBe(0);
+    expect(optionScore({ fit: 3 })).toBeNull();
+    expect(DECISION_CRITERIA.reduce((n, c) => n + c.weight, 0)).toBe(100);
+    const drafts = epicsFromFutureState(options[3]!, current);
+    expect(drafts).toHaveLength(7);
+    expect(drafts.filter((d) => d.kind === "enabler").map((d) => d.change)).toEqual(expect.arrayContaining([expect.stringContaining("order platform"), expect.stringContaining("customer data platform"), expect.stringContaining("payment integration")]));
+    expect(drafts.find((d) => d.change.startsWith("Use the loyal app base"))).toMatchObject({ kind: "business", title: "Use the loyal app base to launch grocery delivery in the three metro areas" });
+    expect(drafts[0]!.hypothesis).toMatch(/^If we /);
+  });
+});

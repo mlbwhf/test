@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Check the live site from the outside, the way a visitor reaches it.
-#   ./smoke.sh agileagilist.com api.agileagilist.com [web alias ...]
+#   ./smoke.sh trainyard.app api.trainyard.app [web alias ...]
 # Any further arguments are web aliases that must redirect (308) to the first host.
 # Retries for up to two minutes while containers and certificates settle.
 set -uo pipefail
