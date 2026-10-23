@@ -3,14 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   artFit,
+  devStreamPeople,
   identificationIssues,
   mapMetrics,
   stepImpact,
+  type ArtTopology,
   type IdentificationIssue,
+  type OvsType,
   type MapMetrics,
   type ValueStreamIdentification,
   type ValueStreamMap,
 } from "@trainyard/core";
+import { Popover } from "@/components/plan-board";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
@@ -21,7 +25,8 @@ const uid = (p: string) => `${p}-${Math.random().toString(36).slice(2, 8)}`;
 const strip = <T extends object>(x: T, keys: string[]): T => Object.fromEntries(Object.entries(x).filter(([k]) => !keys.includes(k))) as T;
 
 export default function ValueStreamsPage() {
-  const data = useApi<{ identifications: Vsi[]; maps: Vsm[] }>("/v1/value-streams");
+  const data = useApi<{ identifications: Vsi[]; maps: Vsm[]; ovsTypes: OvsType[]; topologies: { id: string; name: string; blurb: string }[] }>("/v1/value-streams");
+  const [newType, setNewType] = useState<{ id: string; name: string; blurb: string } | null>(null);
   const [tab, setTab] = useState<"identify" | "map">("identify");
   const [vsi, setVsi] = useState<Vsi | null>(null);
   const [vsm, setVsm] = useState<Vsm | null>(null);
@@ -76,9 +81,91 @@ export default function ValueStreamsPage() {
       />
       {err ? <ErrorList title="Not saved" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
+      {tab === "identify" ? (
+        <div className="row" style={{ gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <span className="eyebrow">Workshop</span>
+          <select className="select" aria-label="Identification workshop" value={vsi?.id ?? ""} onChange={(e) => { setVsi(data.data!.identifications.find((x) => x.id === e.target.value) ?? null); setDirty((d) => ({ ...d, vsi: false })); }}>
+            {data.data.identifications.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+          <span className="faint">Start another from a type:</span>
+          {data.data.ovsTypes.map((t) => (
+            <button
+              key={t.id}
+              className="btn small"
+              title={t.blurb}
+              onClick={async () => {
+                try {
+                  const r = await api<{ identification: Vsi }>("POST", "/v1/value-streams/identifications/from-type", { typeId: t.id });
+                  await data.reload();
+                  setVsi(r.identification);
+                  setDirty((d) => ({ ...d, vsi: false }));
+                } catch (e) {
+                  setErr((e as ApiFailure).message);
+                }
+              }}
+            >
+              {t.name}
+            </button>
+          ))}
+          <button className="btn small ghost" onClick={() => setNewType({ id: "", name: "", blurb: "" })}>
+            + your own type
+          </button>
+          {vsi ? (
+            <button
+              className="btn small ghost"
+              style={{ marginLeft: "auto" }}
+              onClick={async () => {
+                if (!confirm(`Delete the workshop "${vsi.name}"?`)) return;
+                await api("DELETE", `/v1/value-streams/identifications/${encodeURIComponent(vsi.id)}`);
+                await data.reload();
+                setVsi(null);
+              }}
+            >
+              Delete workshop
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+      {newType ? (
+        <form
+          className="panel panel-body row"
+          style={{ gap: 8, alignItems: "flex-end", flexWrap: "wrap" }}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              await api("POST", "/v1/value-streams/ovs-types", { id: newType.id.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""), name: newType.name.trim(), blurb: newType.blurb.trim() });
+              setNewType(null);
+              void data.reload();
+            } catch (er) {
+              setErr((er as ApiFailure).message);
+            }
+          }}
+        >
+          <label className="field">
+            Type name
+            <input className="input" required placeholder="e.g. Healthcare episode" value={newType.name} onChange={(e) => setNewType({ ...newType, name: e.target.value, id: e.target.value })} />
+          </label>
+          <label className="field" style={{ flex: "1 1 320px" }}>
+            What it covers
+            <input className="input" placeholder="One sentence" value={newType.blurb} onChange={(e) => setNewType({ ...newType, blurb: e.target.value })} />
+          </label>
+          <button className="btn primary" type="submit" disabled={!newType.name.trim()}>
+            Add type
+          </button>
+          <button className="btn ghost" type="button" onClick={() => setNewType(null)}>
+            Cancel
+          </button>
+        </form>
+      ) : null}
       {tab === "identify" && vsi ? (
         <IdentifyView
           vsi={vsi}
+          types={data.data.ovsTypes}
+          topologies={data.data.topologies}
           dirty={dirty.vsi}
           onChange={(v) => {
             setVsi(v);
@@ -121,22 +208,60 @@ export default function ValueStreamsPage() {
 // ---- identification ------------------------------------------------------------------------
 
 const STAGES = [
-  ["Operational value stream", "Start from the customer: the trigger, the steps they and your staff go through, and the value at the end. Click a step to trace who supports it."],
-  ["Supporting systems", "Under each step, the systems that make it happen. A system spanning several steps means one team of teams owns a long stretch of the stream."],
-  ["People and locations", "Who builds and runs each system, how many people, and where they sit: the raw material for the trains."],
-  ["Development value streams", "Group the people and systems that must change together to deliver a feature."],
-  ["ART design", "Cut each development value stream into trains of 50 to 125 people that can plan and deliver together."],
+  ["Operational value stream", "Start from the customer: the trigger, the steps they and your staff go through, and the value at the end. Above each chevron, who performs the step. Click anything to change it."],
+  ["Solutions", "Under each step, the solutions (systems) that support it or that the stream provides to customers. A solution spanning several steps means one team of teams owns a long stretch of the stream."],
+  ["People who develop and support", "Below the solutions: who builds and runs them, how many, where they sit and what they do. Always by group, never by name."],
+  ["Development value streams", "Draw a line around the people and solutions that must change together to deliver a feature; add the people the full business solution needs (legal, marketing, support, operations)."],
+  ["ART design", "Apply the topologies to cut each development value stream into trains of 50 to 125 people that can plan and deliver together."],
 ] as const;
 
-function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vsi: Vsi; dirty: boolean; onChange: (v: Vsi) => void; onSave: () => void; onReset: () => void; onMeasure: () => void }) {
+type Anchor = DOMRect;
+type Open = { kind: "step" | "system" | "group" | "dvs" | "art" | "trigger" | "value"; id: string; anchor: Anchor } | null;
+
+const at = (e: React.MouseEvent) => (e.currentTarget as HTMLElement).getBoundingClientRect();
+
+/** Text that turns into an input when clicked; saves on blur or Enter. */
+function Click({ value, onChange, placeholder, className, style, multiline, label }: { value: string; onChange: (v: string) => void; placeholder?: string; className?: string; style?: React.CSSProperties; multiline?: boolean; label: string }) {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(value);
+  useEffect(() => setV(value), [value]);
+  if (!editing)
+    return (
+      <span role="button" tabIndex={0} aria-label={`${label}: click to edit`} title="Click to edit" className={`vs-click ${className ?? ""}`} style={style} onClick={() => setEditing(true)} onKeyDown={(e) => e.key === "Enter" && setEditing(true)}>
+        {value || <span className="faint">{placeholder ?? "…"}</span>}
+      </span>
+    );
+  const done = () => {
+    setEditing(false);
+    if (v !== value) onChange(v);
+  };
+  const common = { autoFocus: true, value: v, "aria-label": label, onBlur: done, className: "input", style: { ...style, width: "100%" } } as const;
+  return multiline ? (
+    <textarea {...common} rows={2} onChange={(e) => setV(e.target.value)} onKeyDown={(e) => e.key === "Escape" && (setV(value), setEditing(false))} />
+  ) : (
+    <input
+      {...common}
+      onChange={(e) => setV(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+        if (e.key === "Escape") {
+          setV(value);
+          setEditing(false);
+        }
+      }}
+    />
+  );
+}
+
+function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset, onMeasure }: { vsi: Vsi; types: OvsType[]; topologies: { id: string; name: string; blurb: string }[]; dirty: boolean; onChange: (v: Vsi) => void; onSave: () => void; onReset: () => void; onMeasure: () => void }) {
   const [stage, setStage] = useState(5);
   const [sel, setSel] = useState<string | null>(vsi.steps[3]?.id ?? vsi.steps[0]?.id ?? null);
-  const [editing, setEditing] = useState(false);
-  const cols = vsi.steps.length + 2 + (editing ? 1 : 0);
+  const [open, setOpen] = useState<Open>(null);
+  const cols = vsi.steps.length + 2;
   const colOf = new Map(vsi.steps.map((s, i) => [s.id, i + 2]));
   const spanOf = (stepIds: string[]) => {
     const xs = stepIds.map((id) => colOf.get(id)).filter((x): x is number => !!x);
-    if (!xs.length) return undefined;
+    if (!xs.length) return "1 / -1";
     const a = Math.min(...xs);
     const b = Math.max(...xs);
     return `${a} / span ${b - a + 1}`;
@@ -146,9 +271,14 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
   const hitSys = new Set(impact?.systems.map((s) => s.id) ?? []);
   const dim = (ids: string[]) => (impact && hitSys.size && !ids.some((x) => hitSys.has(x)) ? "dim" : "");
   const issues = identificationIssues(vsi);
-  // In-place editing helpers.
+  const type = types.find((t) => t.id === vsi.type);
   const set = (patch: Partial<Vsi>) => onChange({ ...vsi, ...patch });
   const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
+  const setStep = (id: string, patch: Partial<Vsi["steps"][number]>) => set({ steps: vsi.steps.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
+  const setSystem = (id: string, patch: Partial<Vsi["systems"][number]>) => set({ systems: vsi.systems.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
+  const setGroup = (id: string, patch: Partial<Vsi["groups"][number]>) => set({ groups: vsi.groups.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
+  const setDvs = (id: string, patch: Partial<Vsi["devStreams"][number]>) => set({ devStreams: vsi.devStreams.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
+  const setArt = (id: string, patch: Partial<Vsi["arts"][number]>) => set({ arts: vsi.arts.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
   const moveStep = (i: number, d: number) => {
     const j = i + d;
     if (j < 0 || j >= vsi.steps.length) return;
@@ -156,34 +286,220 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
     [out[i], out[j]] = [out[j]!, out[i]!];
     set({ steps: out });
   };
+  const addStepAfter = (i: number) => {
+    const st = { id: uid("step"), name: "New step", actor: "staff" as const };
+    const out = [...vsi.steps];
+    out.splice(i + 1, 0, st);
+    set({ steps: out });
+    setSel(st.id);
+    return st.id;
+  };
   const chips = (label: string, options: { id: string; name: string }[], selected: string[], onToggle: (id: string) => void) => (
-    <div className="row" style={{ gap: 4, marginTop: 6 }}>
+    <div>
       <span className="faint" style={{ fontSize: "0.72rem" }}>
         {label}
       </span>
-      {options.map((o) => (
-        <label key={o.id} className="chip" style={{ textTransform: "none", letterSpacing: 0, cursor: "pointer", background: selected.includes(o.id) ? "var(--ink)" : undefined, color: selected.includes(o.id) ? "#fff" : undefined }}>
-          <input type="checkbox" style={{ display: "none" }} checked={selected.includes(o.id)} onChange={() => onToggle(o.id)} /> {o.name}
-        </label>
-      ))}
+      <div className="row" style={{ gap: 4, marginTop: 4, flexWrap: "wrap" }}>
+        {options.map((o) => (
+          <label key={o.id} className="chip" style={{ textTransform: "none", letterSpacing: 0, cursor: "pointer", background: selected.includes(o.id) ? "var(--ink)" : undefined, color: selected.includes(o.id) ? "#fff" : undefined }}>
+            <input type="checkbox" style={{ display: "none" }} checked={selected.includes(o.id)} onChange={() => onToggle(o.id)} /> {o.name}
+          </label>
+        ))}
+        {!options.length ? <span className="faint">none yet</span> : null}
+      </div>
     </div>
   );
   const sysOptions = vsi.systems.map((x) => ({ id: x.id, name: x.name.replace(/ system$/i, "") }));
   const stepOptions = vsi.steps.map((x) => ({ id: x.id, name: x.name }));
-  const spanOrFull = (ids: string[]) => spanOf(ids) ?? (editing ? "1 / -1" : undefined);
+  const dvsPeople = (id: string) => devStreamPeople(vsi, id).people;
+  const close = () => setOpen(null);
+  const remove = (label: string) => (
+    <button className="btn small ghost" style={{ color: "var(--crit)" }} aria-label={`Remove ${label}`}>
+      Remove
+    </button>
+  );
+
+  // The editor for whatever was clicked.
+  let editor: React.ReactNode = null;
+  if (open?.kind === "step") {
+    const i = vsi.steps.findIndex((x) => x.id === open.id);
+    const s = vsi.steps[i];
+    editor = s ? (
+      <Popover anchor={open.anchor} title={`Step ${i + 1}`} onClose={close}>
+        <label>
+          Step
+          <input className="input" autoFocus value={s.name} onChange={(e) => setStep(s.id, { name: e.target.value })} />
+        </label>
+        <div className="plan-pop-row">
+          <label>
+            Who does it
+            <select className="select" value={s.actor} onChange={(e) => setStep(s.id, { actor: e.target.value as "customer" | "staff" })}>
+              <option value="customer">The customer</option>
+              <option value="staff">Our people</option>
+            </select>
+          </label>
+          <label>
+            People involved (shown above)
+            <input className="input" placeholder="e.g. Marketing, Sales" value={s.people ?? ""} onChange={(e) => (e.target.value ? setStep(s.id, { people: e.target.value }) : set({ steps: vsi.steps.map((x) => (x.id === s.id ? strip(x, ["people"]) : x)) }))} />
+          </label>
+        </div>
+        <div className="plan-pop-actions">
+          <span className="row" style={{ gap: 4 }}>
+            <button className="btn small ghost" onClick={() => moveStep(i, -1)} disabled={i === 0}>
+              ← Earlier
+            </button>
+            <button className="btn small ghost" onClick={() => moveStep(i, 1)} disabled={i === vsi.steps.length - 1}>
+              Later →
+            </button>
+            <button className="btn small" onClick={() => setOpen({ kind: "step", id: addStepAfter(i), anchor: open.anchor })}>
+              + Step after
+            </button>
+          </span>
+          <span onClick={() => (set({ steps: vsi.steps.filter((x) => x.id !== s.id), systems: vsi.systems.map((y) => ({ ...y, stepIds: y.stepIds.filter((z) => z !== s.id) })) }), close())}>{remove(s.name)}</span>
+        </div>
+      </Popover>
+    ) : null;
+  } else if (open?.kind === "system") {
+    const s = vsi.systems.find((x) => x.id === open.id);
+    editor = s ? (
+      <Popover anchor={open.anchor} title="Solution" onClose={close}>
+        <label>
+          Name
+          <input className="input" autoFocus value={s.name} onChange={(e) => setSystem(s.id, { name: e.target.value })} />
+        </label>
+        <label>
+          What it does
+          <input className="input" value={s.note ?? ""} onChange={(e) => setSystem(s.id, { note: e.target.value })} />
+        </label>
+        {chips("Supports the steps", stepOptions, s.stepIds, (id) => setSystem(s.id, { stepIds: toggle(s.stepIds, id) }))}
+        <div className="plan-pop-actions">
+          <span />
+          <span onClick={() => (set({ systems: vsi.systems.filter((x) => x.id !== s.id), groups: vsi.groups.map((gr) => ({ ...gr, systemIds: gr.systemIds.filter((z) => z !== s.id) })), devStreams: vsi.devStreams.map((d) => ({ ...d, systemIds: d.systemIds.filter((z) => z !== s.id) })), arts: vsi.arts.map((a) => ({ ...a, systemIds: a.systemIds.filter((z) => z !== s.id) })) }), close())}>{remove(s.name)}</span>
+        </div>
+      </Popover>
+    ) : null;
+  } else if (open?.kind === "group") {
+    const g = vsi.groups.find((x) => x.id === open.id);
+    editor = g ? (
+      <Popover anchor={open.anchor} title="People who develop and support" onClose={close}>
+        <div className="plan-pop-row">
+          <label>
+            How many
+            <input className="input" type="number" min={0} autoFocus value={g.people} onChange={(e) => setGroup(g.id, { people: Math.max(0, Math.round(Number(e.target.value) || 0)) })} />
+          </label>
+          <label>
+            Function
+            <input className="input" list="vs-functions" placeholder="Development, Support, Legal…" value={g.function ?? ""} onChange={(e) => (e.target.value ? setGroup(g.id, { function: e.target.value }) : set({ groups: vsi.groups.map((x) => (x.id === g.id ? strip(x, ["function"]) : x)) }))} />
+            <datalist id="vs-functions">
+              {["Development", "Support", "Operations", "Legal", "Marketing", "Sales", "Compliance", "Architecture", "Data"].map((f) => (
+                <option key={f} value={f} />
+              ))}
+            </datalist>
+          </label>
+        </div>
+        <label>
+          Location(s)
+          <input className="input" placeholder="e.g. Bangalore · Delhi" value={g.locations} onChange={(e) => setGroup(g.id, { locations: e.target.value })} />
+        </label>
+        {chips("Build or run", sysOptions, g.systemIds, (id) => setGroup(g.id, { systemIds: toggle(g.systemIds, id) }))}
+        <label>
+          Part of the development value stream
+          <select className="select" value={g.devStreamId ?? ""} onChange={(e) => (e.target.value ? setGroup(g.id, { devStreamId: e.target.value }) : set({ groups: vsi.groups.map((x) => (x.id === g.id ? strip(x, ["devStreamId"]) : x)) }))}>
+            <option value="">Through the solutions they build</option>
+            {vsi.devStreams.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="plan-pop-actions">
+          <span />
+          <span onClick={() => (set({ groups: vsi.groups.filter((x) => x.id !== g.id) }), close())}>{remove("these people")}</span>
+        </div>
+      </Popover>
+    ) : null;
+  } else if (open?.kind === "dvs") {
+    const d = vsi.devStreams.find((x) => x.id === open.id);
+    editor = d ? (
+      <Popover anchor={open.anchor} title="Development value stream" onClose={close}>
+        <label>
+          Name
+          <input className="input" autoFocus value={d.name} onChange={(e) => setDvs(d.id, { name: e.target.value })} />
+        </label>
+        {chips("Solutions it builds", sysOptions, d.systemIds, (id) => setDvs(d.id, { systemIds: toggle(d.systemIds, id) }))}
+        <span className="faint" style={{ fontSize: "0.8rem" }}>
+          {dvsPeople(d.id)} people: {devStreamPeople(vsi, d.id).groups.map((g) => `${g.people} ${g.function ?? ""} ${g.locations}`.replace(/\s+/g, " ").trim()).join(" · ") || "no one yet"}
+        </span>
+        <div className="plan-pop-actions">
+          <button className="btn small" onClick={() => set({ groups: [...vsi.groups, { id: uid("grp"), people: 5, locations: "Location", function: "Support", systemIds: [], devStreamId: d.id }] })}>
+            + People the business solution needs
+          </button>
+          <span onClick={() => (set({ devStreams: vsi.devStreams.filter((x) => x.id !== d.id), arts: vsi.arts.map((a) => (a.devStreamId === d.id ? strip(a, ["devStreamId"]) : a)), groups: vsi.groups.map((g) => (g.devStreamId === d.id ? strip(g, ["devStreamId"]) : g)) }), close())}>{remove(d.name)}</span>
+        </div>
+      </Popover>
+    ) : null;
+  } else if (open?.kind === "art") {
+    const a = vsi.arts.find((x) => x.id === open.id);
+    editor = a ? (
+      <Popover anchor={open.anchor} title="Agile Release Train" onClose={close} width={380}>
+        <div className="plan-pop-row">
+          <label>
+            Name
+            <input className="input" autoFocus value={a.name} onChange={(e) => setArt(a.id, { name: e.target.value })} />
+          </label>
+          <label>
+            People
+            <input className="input" type="number" min={0} value={a.people} onChange={(e) => setArt(a.id, { people: Math.max(0, Math.round(Number(e.target.value) || 0)) })} />
+          </label>
+        </div>
+        <label>
+          Locations
+          <input className="input" placeholder="e.g. 40 US · 60 Bangalore" value={a.locations} onChange={(e) => setArt(a.id, { locations: e.target.value })} />
+        </label>
+        <div className="plan-pop-row">
+          <label>
+            Topology
+            <select className="select" value={a.topology ?? ""} onChange={(e) => (e.target.value ? setArt(a.id, { topology: e.target.value as ArtTopology }) : set({ arts: vsi.arts.map((x) => (x.id === a.id ? strip(x, ["topology"]) : x)) }))}>
+              <option value="">Not decided</option>
+              {topologies.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Development value stream
+            <select className="select" value={a.devStreamId ?? ""} onChange={(e) => (e.target.value ? setArt(a.id, { devStreamId: e.target.value }) : set({ arts: vsi.arts.map((x) => (x.id === a.id ? strip(x, ["devStreamId"]) : x)) }))}>
+              <option value="">None</option>
+              {vsi.devStreams.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {a.topology ? <span className="faint" style={{ fontSize: "0.78rem" }}>{topologies.find((t) => t.id === a.topology)?.blurb}</span> : null}
+        {chips("Owns the solutions", sysOptions, a.systemIds, (id) => setArt(a.id, { systemIds: toggle(a.systemIds, id) }))}
+        <div className="plan-pop-actions">
+          <span />
+          <span onClick={() => (set({ arts: vsi.arts.filter((x) => x.id !== a.id) }), close())}>{remove(a.name)}</span>
+        </div>
+      </Popover>
+    ) : null;
+  }
 
   return (
     <>
       <section className="panel panel-body stack">
         <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
           <div className="stack" style={{ gap: 4, maxWidth: 760 }}>
-            <span className="eyebrow">Value stream identification · {editing ? <input className="input" aria-label="Workshop name" style={{ width: 240, display: "inline-block", marginLeft: 6 }} value={vsi.name} onChange={(e) => set({ name: e.target.value })} /> : vsi.name}</span>
+            <span className="eyebrow">Value stream identification</span>
             <p className="muted" style={{ margin: 0 }}>{STAGES[stage - 1]![1]}</p>
           </div>
           <div className="row">
-            <button className="btn" onClick={() => setEditing((e) => !e)} aria-pressed={editing}>
-              {editing ? "Done editing" : "Edit in place"}
-            </button>
             <button className="btn" onClick={onMeasure}>
               Measure it
             </button>
@@ -196,7 +512,9 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
                   Save
                 </button>
               </>
-            ) : null}
+            ) : (
+              <span className="faint" style={{ fontSize: "0.85rem" }}>Click anything to change it</span>
+            )}
           </div>
         </div>
         <div className="row" role="group" aria-label="Workshop steps">
@@ -208,6 +526,54 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
         </div>
       </section>
 
+      {/* The operational value stream template, SAFe's seven fields. */}
+      <section className="panel panel-body vs-template" aria-label="Operational value stream template">
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Type</span>
+          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <select className="select" aria-label="Operational value stream type" value={vsi.type ?? ""} onChange={(e) => (e.target.value ? set({ type: e.target.value }) : onChange(strip(vsi, ["type"])))} style={{ width: "auto" }}>
+              <option value="">Not set</option>
+              {types.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name} operational value stream{t.builtin ? "" : " (yours)"}
+                </option>
+              ))}
+            </select>
+            {type ? <span className="faint" style={{ fontSize: "0.8rem", flex: "1 1 300px" }}>{type.blurb}</span> : null}
+          </div>
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Name</span>
+          <Click label="Name" value={vsi.name} onChange={(v) => set({ name: v })} className="vs-tpl-name" />
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Description</span>
+          <Click label="Description" value={vsi.description ?? ""} placeholder="What the value stream provides, in one sentence" onChange={(v) => set({ description: v })} multiline />
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Customer(s)</span>
+          <Click label="Customers" value={vsi.customers ?? ""} placeholder="Who receives the value: internal, external or both" onChange={(v) => set({ customers: v })} />
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Triggers</span>
+          <Click label="Trigger" value={vsi.trigger} placeholder="What starts the flow of value" onChange={(v) => set({ trigger: v })} />
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Value received to enterprise</span>
+          <Click label="Value to the enterprise" value={vsi.valueToEnterprise ?? vsi.value} placeholder="e.g. Repayment plus interest" onChange={(v) => set({ valueToEnterprise: v, value: v })} />
+        </div>
+        <div className="vs-tpl-row">
+          <span className="vs-tpl-k">Value received to customer</span>
+          <Click label="Value to the customer" value={vsi.valueToCustomer ?? ""} placeholder="e.g. Loan" onChange={(v) => set({ valueToCustomer: v })} />
+        </div>
+        {type?.pattern ? (
+          <div className="vs-tpl-row">
+            <span className="vs-tpl-k">Development pattern</span>
+            <span className="faint" style={{ fontSize: "0.82rem" }}>{type.pattern}</span>
+          </div>
+        ) : null}
+      </section>
+
       <section className="panel panel-body">
         <div className="scroll-x">
           <div style={{ minWidth: Math.max(900, cols * 122) }}>
@@ -217,187 +583,131 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
             </div>
             <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
               <div>
+                <div className="vs-above" />
                 <div className="vs-actor" aria-hidden="true">
                   <Person />
                 </div>
                 <div className="vs-cap">
                   <Bolt />
-                  {editing ? <input className="vs-capin" aria-label="Trigger" value={vsi.trigger} onChange={(e) => set({ trigger: e.target.value })} /> : vsi.trigger}
+                  <Click label="Trigger" value={vsi.trigger} onChange={(v) => set({ trigger: v })} />
                 </div>
               </div>
               {vsi.steps.map((s, i) => (
                 <div key={s.id} style={{ minWidth: 0 }}>
+                  <div className="vs-above" title="Who performs this step">
+                    <Click label={`People involved in ${s.name}`} value={s.people ?? ""} placeholder={s.actor === "customer" ? "" : "+ who"} onChange={(v) => (v ? setStep(s.id, { people: v }) : set({ steps: vsi.steps.map((x) => (x.id === s.id ? strip(x, ["people"]) : x)) }))} style={{ fontSize: "0.72rem" }} />
+                  </div>
                   <div className="vs-actor" aria-hidden="true">
                     {s.actor === "customer" ? <Person /> : <Group />}
                   </div>
-                  {editing ? (
-                    <>
-                      <span className="vs-chev vs-chevedit" aria-pressed={sel === s.id}>
-                        <input className="vs-chevin" aria-label="Step name" value={s.name} onFocus={() => setSel(s.id)} onChange={(e) => set({ steps: vsi.steps.map((x) => (x.id === s.id ? { ...x, name: e.target.value } : x)) })} />
-                      </span>
-                      <div className="row" style={{ gap: 2, justifyContent: "center", marginTop: 4 }}>
-                        <select className="select" aria-label="Who does it" style={{ fontSize: "0.7rem", padding: "2px 4px" }} value={s.actor} onChange={(e) => set({ steps: vsi.steps.map((x) => (x.id === s.id ? { ...x, actor: e.target.value as "customer" | "staff" } : x)) })}>
-                          <option value="customer">Customer</option>
-                          <option value="staff">Staff</option>
-                        </select>
-                        <button className="btn small ghost" style={{ padding: "2px 6px" }} onClick={() => moveStep(i, -1)} aria-label={`Move ${s.name} earlier`}>
-                          ←
-                        </button>
-                        <button className="btn small ghost" style={{ padding: "2px 6px" }} onClick={() => moveStep(i, 1)} aria-label={`Move ${s.name} later`}>
-                          →
-                        </button>
-                        <button className="btn small ghost" style={{ padding: "2px 6px" }} aria-label={`Remove ${s.name}`} onClick={() => set({ steps: vsi.steps.filter((x) => x.id !== s.id), systems: vsi.systems.map((y) => ({ ...y, stepIds: y.stepIds.filter((z) => z !== s.id) })) })}>
-                          ×
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <button className="vs-chev" aria-pressed={sel === s.id} onClick={() => setSel(s.id)}>
-                      {s.name}
-                    </button>
-                  )}
-                </div>
-              ))}
-              {editing ? (
-                <div style={{ minWidth: 0 }}>
-                  <div className="vs-actor" />
-                  <button className="vs-chev vs-chevadd" onClick={() => set({ steps: [...vsi.steps, { id: uid("step"), name: "New step", actor: "staff" }] })} aria-label="Add a step">
-                    + step
+                  <button
+                    className="vs-chev"
+                    aria-pressed={sel === s.id}
+                    title="Click to edit this step"
+                    onClick={(e) => {
+                      setSel(s.id);
+                      setOpen({ kind: "step", id: s.id, anchor: at(e) });
+                    }}
+                  >
+                    {s.name}
+                  </button>
+                  <button className="vs-insert" aria-label={`Add a step after ${s.name}`} title="Add a step here" onClick={(e) => setOpen({ kind: "step", id: addStepAfter(i), anchor: at(e) })}>
+                    +
                   </button>
                 </div>
-              ) : null}
+              ))}
               <div>
+                <div className="vs-above" />
                 <div className="vs-actor" />
                 <div className="vs-cap">
                   <Doc />
-                  {editing ? <input className="vs-capin" aria-label="Value delivered" value={vsi.value} onChange={(e) => set({ value: e.target.value })} /> : vsi.value}
+                  <Click label="Value delivered" value={vsi.value} onChange={(v) => set({ value: v, valueToEnterprise: v })} />
                 </div>
               </div>
             </div>
+            {!vsi.steps.length ? (
+              <button className="btn small" onClick={(e) => setOpen({ kind: "step", id: addStepAfter(-1), anchor: at(e) })}>
+                + First step
+              </button>
+            ) : null}
 
             {stage >= 2 ? (
               <>
-                <div className="vs-lane-label">2 · Supporting systems</div>
+                <div className="vs-lane-label">
+                  2 · Solutions
+                  <button className="vs-lane-add" onClick={(e) => { const id = uid("sys"); set({ systems: [...vsi.systems, { id, name: "New solution", stepIds: sel ? [sel] : [] }] }); setOpen({ kind: "system", id, anchor: at(e) }); }}>
+                    + solution
+                  </button>
+                </div>
                 <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
-                  {vsi.systems.map((s, i) => {
-                    const g = spanOrFull(s.stepIds);
-                    return g ? (
-                      <div key={s.id} className={`vs-bar vs-sys ${dim([s.id])}`} style={{ gridColumn: g, animationDelay: `${i * 80}ms` }}>
-                        {editing ? (
-                          <>
-                            <div className="row" style={{ gap: 4 }}>
-                              <input className="vs-in" aria-label="System name" value={s.name} onChange={(e) => set({ systems: vsi.systems.map((x) => (x.id === s.id ? { ...x, name: e.target.value } : x)) })} />
-                              <input className="vs-in" aria-label="What it does" placeholder="what it does" value={s.note ?? ""} onChange={(e) => set({ systems: vsi.systems.map((x) => (x.id === s.id ? { ...x, note: e.target.value } : x)) })} />
-                              <button className="vs-x" aria-label={`Remove ${s.name}`} onClick={() => set({ systems: vsi.systems.filter((x) => x.id !== s.id), groups: vsi.groups.map((gr) => ({ ...gr, systemIds: gr.systemIds.filter((z) => z !== s.id) })), devStreams: vsi.devStreams.map((d) => ({ ...d, systemIds: d.systemIds.filter((z) => z !== s.id) })), arts: vsi.arts.map((a) => ({ ...a, systemIds: a.systemIds.filter((z) => z !== s.id) })) })}>
-                                ×
-                              </button>
-                            </div>
-                            {chips("Supports:", stepOptions, s.stepIds, (id) => set({ systems: vsi.systems.map((x) => (x.id === s.id ? { ...x, stepIds: toggle(x.stepIds, id) } : x)) }))}
-                          </>
-                        ) : (
-                          <>
-                            <b>{s.name}</b>
-                            {s.note ? (
-                              <>
-                                <br />
-                                <span className="muted">{s.note}</span>
-                              </>
-                            ) : null}
-                          </>
-                        )}
-                      </div>
-                    ) : null;
-                  })}
-                  {editing ? (
-                    <button className="vs-bar vs-addbar" style={{ gridColumn: "1 / -1" }} onClick={() => set({ systems: [...vsi.systems, { id: uid("sys"), name: "New system", stepIds: [] }] })}>
-                      + system
+                  {vsi.systems.map((s, i) => (
+                    <button key={s.id} className={`vs-bar vs-sys vs-clickbar ${dim([s.id])}`} style={{ gridColumn: spanOf(s.stepIds), animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "system", id: s.id, anchor: at(e) })} title="Click to edit">
+                      <b>{s.name}</b>
+                      {s.note ? (
+                        <>
+                          <br />
+                          <span className="muted">{s.note}</span>
+                        </>
+                      ) : null}
+                      {!s.stepIds.length ? <span className="faint"> · supports no step yet</span> : null}
                     </button>
-                  ) : null}
+                  ))}
                 </div>
               </>
             ) : null}
 
             {stage >= 3 ? (
               <>
-                <div className="vs-lane-label">3 · People and locations</div>
+                <div className="vs-lane-label">
+                  3 · People who develop and support the solutions
+                  <button className="vs-lane-add" onClick={(e) => { const id = uid("grp"); set({ groups: [...vsi.groups, { id, people: 10, locations: "Location", function: "Development", systemIds: sel ? vsi.systems.filter((x) => x.stepIds.includes(sel)).map((x) => x.id) : [] }] }); setOpen({ kind: "group", id, anchor: at(e) }); }}>
+                    + people
+                  </button>
+                </div>
                 <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoFlow: "row dense" }}>
-                  {vsi.groups.map((g, i) => {
-                    const span = spanOrFull(sysSteps(g.systemIds));
-                    return span ? (
-                      <div key={g.id} className={`vs-bar vs-people ${dim(g.systemIds)}`} style={{ gridColumn: span, animationDelay: `${i * 80}ms` }}>
-                        {editing ? (
-                          <>
-                            <div className="row" style={{ gap: 4 }}>
-                              <input className="vs-in" type="number" min={0} aria-label="People" style={{ width: 70 }} value={g.people} onChange={(e) => set({ groups: vsi.groups.map((x) => (x.id === g.id ? { ...x, people: Math.max(0, Math.round(Number(e.target.value) || 0)) } : x)) })} />
-                              <span className="faint">people in</span>
-                              <input className="vs-in" aria-label="Locations" value={g.locations} onChange={(e) => set({ groups: vsi.groups.map((x) => (x.id === g.id ? { ...x, locations: e.target.value } : x)) })} />
-                              <button className="vs-x" aria-label="Remove these people" onClick={() => set({ groups: vsi.groups.filter((x) => x.id !== g.id) })}>
-                                ×
-                              </button>
-                            </div>
-                            {chips("Build:", sysOptions, g.systemIds, (id) => set({ groups: vsi.groups.map((x) => (x.id === g.id ? { ...x, systemIds: toggle(x.systemIds, id) } : x)) }))}
-                          </>
-                        ) : (
-                          <>
-                            <span>
-                              <b>{g.people} people</b> · {g.locations}
-                            </span>
-                            <span className="mono" style={{ fontSize: "0.72rem" }}>
-                              {vsi.systems.filter((s) => g.systemIds.includes(s.id)).map((s) => s.name.replace(/ system$/i, "")).join(" · ")}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    ) : null;
-                  })}
-                  {editing ? (
-                    <button className="vs-bar vs-addbar" style={{ gridColumn: "1 / -1" }} onClick={() => set({ groups: [...vsi.groups, { id: uid("grp"), people: 10, locations: "Location", systemIds: [] }] })}>
-                      + people
+                  {vsi.groups.filter((g) => g.systemIds.length).map((g, i) => (
+                    <button key={g.id} className={`vs-bar vs-people vs-clickbar ${dim(g.systemIds)}`} style={{ gridColumn: spanOf(sysSteps(g.systemIds)), animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "group", id: g.id, anchor: at(e) })} title="Click to edit">
+                      <span>
+                        <b>{g.people}</b> {g.function ?? "people"} · {g.locations}
+                      </span>
+                      <span className="mono" style={{ fontSize: "0.72rem" }}>
+                        {vsi.systems.filter((s) => g.systemIds.includes(s.id)).map((s) => s.name.replace(/ system$/i, "")).join(" · ")}
+                      </span>
                     </button>
-                  ) : null}
+                  ))}
                 </div>
               </>
             ) : null}
 
             {stage >= 4 ? (
               <>
-                <div className="vs-lane-label">4 · Development value streams</div>
+                <div className="vs-lane-label">
+                  4 · Development value streams
+                  <button className="vs-lane-add" onClick={(e) => { const id = uid("dvs"); set({ devStreams: [...vsi.devStreams, { id, name: "New development value stream", systemIds: [] }] }); setOpen({ kind: "dvs", id, anchor: at(e) }); }}>
+                    + development value stream
+                  </button>
+                </div>
                 <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                   {vsi.devStreams.map((d, i) => {
-                    const span = spanOrFull(sysSteps(d.systemIds));
-                    const people = vsi.groups.filter((g) => g.systemIds.some((x) => d.systemIds.includes(x))).reduce((n, g) => n + g.people, 0);
-                    return span ? (
-                      <div key={d.id} className={`vs-bar vs-dvs ${dim(d.systemIds)}`} style={{ gridColumn: span, animationDelay: `${i * 100}ms` }}>
-                        {editing ? (
-                          <>
-                            <div className="row" style={{ gap: 4 }}>
-                              <input className="vs-in" aria-label="Development value stream name" value={d.name} onChange={(e) => set({ devStreams: vsi.devStreams.map((x) => (x.id === d.id ? { ...x, name: e.target.value } : x)) })} />
-                              <span className="faint">{people} people</span>
-                              <button className="vs-x" aria-label={`Remove ${d.name}`} onClick={() => set({ devStreams: vsi.devStreams.filter((x) => x.id !== d.id), arts: vsi.arts.map((a) => (a.devStreamId === d.id ? strip(a, ["devStreamId"]) : a)) })}>
-                                ×
-                              </button>
-                            </div>
-                            {chips("Systems:", sysOptions, d.systemIds, (id) => set({ devStreams: vsi.devStreams.map((x) => (x.id === d.id ? { ...x, systemIds: toggle(x.systemIds, id) } : x)) }))}
-                          </>
-                        ) : (
-                          <>
-                            <b>{d.name}</b> · {people} people
-                            <span className="vs-mini" aria-hidden="true">
-                              <span />
-                              <span />
-                              <span />
-                              <span />
-                            </span>
-                          </>
-                        )}
+                    const extra = vsi.groups.filter((g) => g.devStreamId === d.id && !g.systemIds.length);
+                    return (
+                      <div key={d.id} className={`vs-bar vs-dvs ${dim(d.systemIds)}`} style={{ gridColumn: spanOf(sysSteps(d.systemIds)), animationDelay: `${i * 100}ms`, display: "grid", gap: 6 }}>
+                        <button className="vs-clickbar vs-clickline" onClick={(e) => setOpen({ kind: "dvs", id: d.id, anchor: at(e) })} title="Click to edit">
+                          <b>{d.name}</b> · {dvsPeople(d.id)} people
+                        </button>
+                        <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
+                          {extra.map((g) => (
+                            <button key={g.id} className="vs-people vs-mini-people" onClick={(e) => setOpen({ kind: "group", id: g.id, anchor: at(e) })} title="People the business solution needs · click to edit">
+                              {g.people} {g.function ?? ""} · {g.locations}
+                            </button>
+                          ))}
+                          <button className="vs-mini-people vs-mini-add" onClick={(e) => { const id = uid("grp"); set({ groups: [...vsi.groups, { id, people: 5, locations: "Location", function: "Support", systemIds: [], devStreamId: d.id }] }); setOpen({ kind: "group", id, anchor: at(e) }); }} title="Add the people the full business solution needs: legal, marketing, support, operations">
+                            + people
+                          </button>
+                        </div>
                       </div>
-                    ) : null;
+                    );
                   })}
-                  {editing ? (
-                    <button className="vs-bar vs-addbar" style={{ gridColumn: "1 / -1" }} onClick={() => set({ devStreams: [...vsi.devStreams, { id: uid("dvs"), name: "New development value stream", systemIds: [] }] })}>
-                      + development value stream
-                    </button>
-                  ) : null}
                 </div>
               </>
             ) : null}
@@ -406,56 +716,46 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
 
         {stage >= 5 ? (
           <>
-            <div className="vs-lane-label">5 · ART design: 50 to 125 people each</div>
+            <div className="vs-lane-label">
+              5 · ART design: 50 to 125 people each
+              <button className="vs-lane-add" onClick={(e) => { const id = uid("art"); set({ arts: [...vsi.arts, { id, name: "New train", people: 80, locations: "", systemIds: [], topology: "stream-aligned", ...(vsi.devStreams[0] ? { devStreamId: vsi.devStreams[0].id } : {}) }] }); setOpen({ kind: "art", id, anchor: at(e) }); }}>
+                + train
+              </button>
+            </div>
+            <div className="row" style={{ gap: 10, fontSize: "0.78rem", marginBottom: 8 }}>
+              {topologies.map((t) => (
+                <span key={t.id} className="chip" title={t.blurb} style={{ textTransform: "none", letterSpacing: 0 }}>
+                  {t.name}
+                </span>
+              ))}
+              <span className="faint">Topologies: stream-aligned by default; platform, complicated subsystem and enabling where the solution calls for them.</span>
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
               {vsi.arts.map((a, i) => {
                 const fit = artFit(a.people);
                 return (
-                  <article key={a.id} className={`vs-bar card ${dim(a.systemIds)}`} style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10, animationDelay: `${i * 90}ms` }}>
-                    {editing ? (
-                      <>
-                        <div className="row" style={{ gap: 4 }}>
-                          <input className="vs-in" aria-label="Train name" style={{ fontWeight: 700 }} value={a.name} onChange={(e) => set({ arts: vsi.arts.map((x) => (x.id === a.id ? { ...x, name: e.target.value } : x)) })} />
-                          <input className="vs-in" type="number" min={0} aria-label="People" style={{ width: 70 }} value={a.people} onChange={(e) => set({ arts: vsi.arts.map((x) => (x.id === a.id ? { ...x, people: Math.max(0, Math.round(Number(e.target.value) || 0)) } : x)) })} />
-                          <button className="vs-x" aria-label={`Remove ${a.name}`} onClick={() => set({ arts: vsi.arts.filter((x) => x.id !== a.id) })}>
-                            ×
-                          </button>
-                        </div>
-                        <input className="vs-in" aria-label="Locations" placeholder="locations" value={a.locations} onChange={(e) => set({ arts: vsi.arts.map((x) => (x.id === a.id ? { ...x, locations: e.target.value } : x)) })} />
-                        <select className="select" aria-label="Development value stream" value={a.devStreamId ?? ""} onChange={(e) => set({ arts: vsi.arts.map((x) => (x.id === a.id ? (e.target.value ? { ...x, devStreamId: e.target.value } : strip(x, ["devStreamId"])) : x)) })}>
-                          <option value="">No development value stream</option>
-                          {vsi.devStreams.map((d) => (
-                            <option key={d.id} value={d.id}>
-                              {d.name}
-                            </option>
-                          ))}
-                        </select>
-                        {chips("Owns:", sysOptions, a.systemIds, (id) => set({ arts: vsi.arts.map((x) => (x.id === a.id ? { ...x, systemIds: toggle(x.systemIds, id) } : x)) }))}
-                      </>
-                    ) : (
-                      <div className="row" style={{ justifyContent: "space-between" }}>
-                        <b style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem" }}>{a.name}</b>
-                        <span className="mono">{a.people} people</span>
-                      </div>
-                    )}
+                  <button key={a.id} className={`vs-bar card vs-clickbar ${dim(a.systemIds)}`} style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10, animationDelay: `${i * 90}ms`, textAlign: "left" }} onClick={(e) => setOpen({ kind: "art", id: a.id, anchor: at(e) })} title="Click to edit">
+                    <div className="row" style={{ justifyContent: "space-between" }}>
+                      <b style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem" }}>{a.name}</b>
+                      <span className="mono">{a.people} people</span>
+                    </div>
+                    <span className="faint" style={{ fontSize: "0.75rem" }}>
+                      {topologies.find((t) => t.id === a.topology)?.name ?? "Topology not decided"}
+                      {a.devStreamId ? ` · ${vsi.devStreams.find((d) => d.id === a.devStreamId)?.name ?? ""}` : ""}
+                    </span>
                     <div className="vs-meter" role="img" aria-label={`${a.people} people; the healthy band is 50 to 125`}>
                       <div className="band" />
                       <div className="mark" style={{ left: `calc(${Math.min(100, (a.people / 175) * 100).toFixed(1)}% - 2px)`, background: fit === "fits" ? "var(--ink)" : "var(--signal)" }} />
                     </div>
                     <span className="faint" style={{ fontSize: "0.82rem" }}>
-                      {a.locations}
+                      {a.locations || "Locations not set"}
                     </span>
                     <span className="chip" style={{ alignSelf: "flex-start", textTransform: "none", letterSpacing: 0, whiteSpace: "normal", fontFamily: "var(--font-body)", lineHeight: 1.3, background: fit === "fits" ? "var(--ok-soft)" : "var(--signal-soft)", color: "var(--ink)" }}>
                       {fit === "fits" ? "Fits the 50 to 125 band" : fit === "split" ? "Above 125: split, or run a Solution Train" : "Below 50: merge with a neighbour"}
                     </span>
-                  </article>
+                  </button>
                 );
               })}
-              {editing ? (
-                <button className="vs-bar vs-addbar card" style={{ minHeight: 120 }} onClick={() => set({ arts: [...vsi.arts, { id: uid("art"), name: "New train", people: 80, locations: "", systemIds: [] }] })}>
-                  + train
-                </button>
-              ) : null}
             </div>
           </>
         ) : null}
@@ -465,9 +765,10 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
         <div className="stack" style={{ gap: 4 }}>
           <span className="eyebrow">Selected step</span>
           <b>{vsi.steps.find((s) => s.id === sel)?.name ?? "None"}</b>
+          <span className="faint" style={{ fontSize: "0.8rem" }}>{vsi.steps.find((s) => s.id === sel)?.people ?? ""}</span>
         </div>
         <div className="stack" style={{ gap: 4 }}>
-          <span className="eyebrow">Systems</span>
+          <span className="eyebrow">Solutions</span>
           <span>{impact?.systems.map((s) => s.name).join(", ") || "None"}</span>
         </div>
         <div className="stack" style={{ gap: 4 }}>
@@ -488,9 +789,9 @@ function IdentifyView({ vsi, dirty, onChange, onSave, onReset, onMeasure }: { vs
           ))}
         </section>
       ) : (
-        <div className="notice ok">Every step has a system, every system has people and a train, and every train fits 50 to 125.</div>
+        <div className="notice ok">Every step has a solution, every solution has people and a train, and every train fits 50 to 125.</div>
       )}
-
+      {editor}
     </>
   );
 }

@@ -164,7 +164,7 @@ export function PlanStrings({ links, depsKey, onRemove, children }: { links: Str
 }
 
 /** A small editor floating under the card that was clicked; closes on Escape or outside click. */
-export function Popover({ anchor, title, onClose, children }: { anchor: DOMRect; title: string; onClose: () => void; children: ReactNode }) {
+export function Popover({ anchor, title, onClose, children, width = 340 }: { anchor: DOMRect; title: string; onClose: () => void; children: ReactNode; width?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
@@ -182,7 +182,6 @@ export function Popover({ anchor, title, onClose, children }: { anchor: DOMRect;
       window.removeEventListener("mousedown", down);
     };
   }, [onClose]);
-  const width = 340;
   const left = Math.max(8, Math.min(anchor.left, (typeof window !== "undefined" ? window.innerWidth : 1200) - width - 8));
   const below = anchor.bottom + 6;
   const top = typeof window !== "undefined" && below + 320 > window.innerHeight ? Math.max(8, anchor.top - 326) : below;

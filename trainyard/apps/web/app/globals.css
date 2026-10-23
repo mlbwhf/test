@@ -523,3 +523,25 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .cs-grid td:not(:first-child) { text-align: center; }
 .cs-cell { width: 100%; min-width: 96px; padding: 10px 6px; border: 1px solid; border-radius: 6px; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.02em; cursor: pointer; }
 .cs-note { width: 100%; min-height: 48px; font-size: 0.8rem; resize: vertical; }
+
+/* Value stream identification: click anything */
+.vs-click { cursor: text; border-bottom: 1px dashed transparent; border-radius: 4px; padding: 1px 3px; }
+.vs-click:hover, .vs-click:focus { border-bottom-color: var(--line-strong); background: rgba(255, 255, 255, 0.5); outline: none; }
+.vs-template { display: grid; gap: 6px; }
+.vs-tpl-row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 10px; align-items: baseline; font-size: 0.9rem; }
+.vs-tpl-k { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.vs-tpl-name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+.vs-above { min-height: 22px; text-align: center; font-size: 0.72rem; color: var(--ink-3); display: flex; justify-content: center; align-items: flex-end; }
+.vs-insert { position: absolute; display: none; }
+.vs-grid > div { position: relative; }
+.vs-grid > div:hover > .vs-insert { display: flex; }
+.vs-insert { right: -14px; top: 50%; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink); font-weight: 700; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+.vs-lane-label { display: flex; align-items: center; gap: 10px; }
+.vs-lane-add { all: unset; cursor: pointer; font-size: 0.74rem; font-weight: 600; color: var(--ink-3); border: 1px dashed var(--line-strong); border-radius: 999px; padding: 1px 8px; }
+.vs-lane-add:hover { color: var(--ink); border-color: var(--ink); }
+.vs-clickbar { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+button.vs-clickbar.vs-bar:hover { filter: brightness(0.97); }
+.vs-clickline { all: unset; cursor: pointer; display: block; }
+.vs-clickline:hover { text-decoration: underline; }
+.vs-mini-people { font: inherit; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(23, 33, 43, 0.15); cursor: pointer; }
+.vs-mini-add { background: transparent; border-style: dashed; color: var(--ink-3); }

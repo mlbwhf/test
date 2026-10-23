@@ -1362,4 +1362,24 @@ describe("universal cards and links", () => {
     const note = await call("PUT", "/v1/coach-sync/note", { incrementId: "pi-26-4", checkpointId: cp.id, teamId: "t-checkout", note: "Needs the Payments API contract" });
     expect(note.body.state.notes[`${cp.id}|t-checkout`]).toBe("Needs the Payments API contract");
   });
+
+  it("offers operational value stream types, takes custom ones, and seeds a workshop from a type", async () => {
+    const { call } = await setup();
+    const list = await call("GET", "/v1/value-streams");
+    expect(list.body.ovsTypes.map((t: { id: string }) => t.id)).toEqual(["fulfilment", "manufacturing", "software-product", "supporting"]);
+    expect(list.body.topologies.map((t: { id: string }) => t.id)).toEqual(["stream-aligned", "platform", "complicated-subsystem", "enabling"]);
+    expect(list.body.identifications[0].type).toBe("fulfilment");
+    const custom = await call("POST", "/v1/value-streams/ovs-types", { id: "healthcare-episode", name: "Healthcare episode", blurb: "Admit, treat and discharge a patient." });
+    expect(custom.status).toBe(201);
+    expect((await call("POST", "/v1/value-streams/ovs-types", { id: "fulfilment", name: "Dup", blurb: "" })).status).toBe(409);
+    const seeded = await call("POST", "/v1/value-streams/identifications/from-type", { typeId: "software-product", name: "Trainyard SaaS" });
+    expect(seeded.status).toBe(201);
+    expect(seeded.body.identification.steps.map((s: { name: string }) => s.name)).toEqual(["Contracts and licensing", "Sales cycle", "Provisioning", "Customer care", "Renewals"]);
+    expect(seeded.body.identification.name).toBe("Trainyard SaaS");
+    const again = await call("GET", "/v1/value-streams");
+    expect(again.body.ovsTypes.some((t: { id: string }) => t.id === "healthcare-episode")).toBe(true);
+    expect(again.body.identifications.length).toBe(2);
+    expect((await call("DELETE", "/v1/value-streams/ovs-types/fulfilment")).status).toBe(422);
+    expect((await call("DELETE", "/v1/value-streams/ovs-types/healthcare-episode")).status).toBe(204);
+  });
 });

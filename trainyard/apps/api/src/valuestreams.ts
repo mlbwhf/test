@@ -7,7 +7,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { deriveMapFromHistory, historiesFromRows, identificationIssues, mapMetrics, stepImpact, suggestMapping, type ItemHistory, type MapStep, type StepStatusMapping, type ValueStreamIdentification, type ValueStreamMap } from "@trainyard/core";
+import { deriveMapFromHistory, historiesFromRows, identificationIssues, mapMetrics, stepImpact, suggestMapping, type ItemHistory, type MapStep, type StepStatusMapping, type ValueStreamIdentification, type ValueStreamMap , OVS_TYPES, ART_TOPOLOGIES, identificationFromType, type OvsType } from "@trainyard/core";
 import { parseCsv } from "@trainyard/importers";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
@@ -19,16 +19,39 @@ const Id = z.string().min(1).max(120).regex(/^[A-Za-z0-9._:-]+$/, "letters, digi
 const Name = z.string().trim().min(1).max(200);
 const Ids = z.array(Id).max(200);
 
+const Short = z.string().max(300);
 const Identification = z.object({
   id: Id,
   name: Name,
-  trigger: z.string().max(200),
-  value: z.string().max(200),
-  steps: z.array(z.object({ id: Id, name: Name, actor: z.enum(["customer", "staff"]) })).max(40),
+  type: z.string().max(60).optional(),
+  description: z.string().max(600).optional(),
+  customers: Short.optional(),
+  trigger: Short,
+  value: Short,
+  valueToEnterprise: Short.optional(),
+  valueToCustomer: Short.optional(),
+  steps: z.array(z.object({ id: Id, name: Name, actor: z.enum(["customer", "staff"]), people: z.string().max(120).optional() })).max(40),
   systems: z.array(z.object({ id: Id, name: Name, note: z.string().max(200).optional(), stepIds: Ids })).max(60),
-  groups: z.array(z.object({ id: Id, people: z.number().int().min(0).max(100_000), locations: z.string().max(200), systemIds: Ids })).max(100),
+  groups: z.array(z.object({ id: Id, people: z.number().int().min(0).max(100_000), locations: z.string().max(200), function: z.string().max(60).optional(), systemIds: Ids, devStreamId: Id.optional() })).max(100),
   devStreams: z.array(z.object({ id: Id, name: Name, systemIds: Ids })).max(30),
-  arts: z.array(z.object({ id: Id, name: Name, people: z.number().int().min(0).max(100_000), locations: z.string().max(300), systemIds: Ids, devStreamId: Id.optional() })).max(60),
+  arts: z.array(z.object({ id: Id, name: Name, people: z.number().int().min(0).max(100_000), locations: z.string().max(300), systemIds: Ids, devStreamId: Id.optional(), topology: z.enum(["stream-aligned", "platform", "complicated-subsystem", "enabling"]).optional() })).max(60),
+});
+const OvsTypeBody = z.object({
+  id: z.string().min(1).max(60).regex(/^[a-z0-9-]+$/, "lowercase letters, digits and dashes"),
+  name: Name,
+  blurb: z.string().max(400),
+  pattern: z.string().max(400).optional(),
+  example: z
+    .object({
+      name: Name,
+      description: z.string().max(600),
+      customers: Short,
+      trigger: Short,
+      valueToEnterprise: Short,
+      valueToCustomer: Short,
+      steps: z.array(z.object({ name: Name, actor: z.enum(["customer", "staff"]), people: z.string().max(120).optional() })).max(40),
+    })
+    .optional(),
 });
 
 const Measure = z.object({ wait: z.number().min(0).max(1_000_000).nullable(), active: z.number().min(0).max(1_000_000), ca: z.number().min(0).max(100) });
@@ -59,7 +82,10 @@ function checkRefs(v: z.infer<typeof Identification>): string[] {
   const streams = unique("development value stream", v.devStreams.map((d) => d.id));
   unique("ART", v.arts.map((a) => a.id));
   for (const s of v.systems) for (const x of s.stepIds) if (!steps.has(x)) issues.push(`${s.name} points at unknown step "${x}"`);
-  for (const g of v.groups) for (const x of g.systemIds) if (!systems.has(x)) issues.push(`a people group points at unknown system "${x}"`);
+  for (const g of v.groups) {
+    for (const x of g.systemIds) if (!systems.has(x)) issues.push(`a people group points at unknown system "${x}"`);
+    if (g.devStreamId && !streams.has(g.devStreamId)) issues.push(`a people group points at unknown development value stream "${g.devStreamId}"`);
+  }
   for (const d of v.devStreams) for (const x of d.systemIds) if (!systems.has(x)) issues.push(`${d.name} points at unknown system "${x}"`);
   for (const a of v.arts) {
     for (const x of a.systemIds) if (!systems.has(x)) issues.push(`${a.name} points at unknown system "${x}"`);
@@ -73,10 +99,51 @@ export function registerValueStreamRoutes(app: App, store: Store) {
   const withIssues = (v: ValueStreamIdentification) => ({ ...v, issues: identificationIssues(v) });
   const withMetrics = (m: ValueStreamMap) => ({ ...m, metrics: { current: mapMetrics(m, "current"), future: mapMetrics(m, "future") } });
 
+  const ovsTypes = () => [...OVS_TYPES, ...(vs().ovsTypes ?? [])];
   app.get("/v1/value-streams", async () => ({
     identifications: vs().identifications.map(withIssues),
     maps: vs().maps.map(withMetrics),
+    ovsTypes: ovsTypes(),
+    topologies: ART_TOPOLOGIES,
   }));
+
+  // Operational value stream types: four built in, the workspace adds its own.
+  app.post("/v1/value-streams/ovs-types", { schema: { body: OvsTypeBody } }, async (req, reply) => {
+    require(req, "plan");
+    if (ovsTypes().some((t) => t.id === req.body.id)) throw new ApiError(409, "TYPE_EXISTS", `A type "${req.body.id}" already exists.`);
+    const t: OvsType = {
+      id: req.body.id,
+      name: req.body.name,
+      blurb: req.body.blurb,
+      pattern: req.body.pattern ?? "",
+      example: req.body.example
+        ? { ...req.body.example, steps: req.body.example.steps.map((st) => ({ name: st.name, actor: st.actor, ...(st.people ? { people: st.people } : {}) })) }
+        : { name: req.body.name, description: "", customers: "", trigger: "", valueToEnterprise: "", valueToCustomer: "", steps: [] },
+    };
+    (vs().ovsTypes ??= []).push(t);
+    await store.commit(req.principal, "value-stream.type.create", { id: t.id });
+    return reply.code(201).send({ type: t, ovsTypes: ovsTypes() });
+  });
+  app.delete("/v1/value-streams/ovs-types/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
+    require(req, "plan");
+    if (OVS_TYPES.some((t) => t.id === req.params.id)) throw new ApiError(422, "BUILTIN_TYPE", "Built-in types stay; add your own beside them.");
+    const before = vs().ovsTypes?.length ?? 0;
+    vs().ovsTypes = (vs().ovsTypes ?? []).filter((t) => t.id !== req.params.id);
+    if ((vs().ovsTypes?.length ?? 0) === before) throw notFound("Value stream type");
+    await store.commit(req.principal, "value-stream.type.delete", { id: req.params.id });
+    return reply.code(204).send();
+  });
+
+  // A new identification seeded from a type's example.
+  app.post("/v1/value-streams/identifications/from-type", { schema: { body: z.object({ typeId: z.string().max(60), name: Name.optional() }) } }, async (req, reply) => {
+    require(req, "plan");
+    const t = ovsTypes().find((x) => x.id === req.body.typeId);
+    if (!t) throw notFound("Value stream type");
+    const v = identificationFromType(t, `vsi-${Date.now().toString(36)}`, store.now().toISOString(), req.body.name);
+    vs().identifications.push(v);
+    await store.commit(req.principal, "value-stream.identification.create", { id: v.id, type: t.id });
+    return reply.code(201).send({ identification: withIssues(v) });
+  });
 
   app.get("/v1/value-streams/identifications/:id/steps/:stepId", { schema: { params: z.object({ id: Id, stepId: Id }) } }, async (req) => {
     const v = vs().identifications.find((x) => x.id === req.params.id) ?? (() => { throw notFound("Value stream identification"); })();

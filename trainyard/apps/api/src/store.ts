@@ -8,7 +8,7 @@ import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersiste
 import type { Purchase } from "./billing.js";
 import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
-import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState } from "@trainyard/core";
+import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState, type OvsType } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -68,7 +68,7 @@ export interface StoreState {
   /** Connections to Miro, Mural, monday.com and Trello, tokens sealed. */
   connections: Connection[];
   /** Value stream identification workshops and value stream maps. */
-  valueStreams: { identifications: ValueStreamIdentification[]; maps: ValueStreamMap[] };
+  valueStreams: { identifications: ValueStreamIdentification[]; maps: ValueStreamMap[]; ovsTypes?: OvsType[] };
   /** SAFe canvases: LACE, portfolio, SWOT/TOWS, vision, DVS, ART, launch, epic, feature, enabler. */
   canvases: Canvas[];
   /** Requests from the public sign-up form, reviewed under Users. */

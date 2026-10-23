@@ -16,6 +16,150 @@ export interface OperationalStep {
   id: string;
   name: string;
   actor: Actor;
+  /** Who performs the step on the operational side ("Marketing, Sales", "Loan agents"); shown above the chevron. */
+  people?: string;
+}
+
+/**
+ * The kinds of operational value stream SAFe distinguishes. Four come built in; a workspace
+ * adds its own. Each carries the example that seeds a new identification.
+ */
+export interface OvsType {
+  id: string;
+  name: string;
+  blurb: string;
+  /** The development value stream pattern that usually realises it. */
+  pattern: string;
+  example: { name: string; description: string; customers: string; trigger: string; valueToEnterprise: string; valueToCustomer: string; steps: { name: string; actor: Actor; people?: string }[] };
+  builtin?: boolean;
+}
+
+export const OVS_TYPES: OvsType[] = [
+  {
+    id: "fulfilment",
+    name: "Fulfilment",
+    blurb: "A customer asks for a product or service and the enterprise delivers it: a loan, an insurance claim, an e-commerce order, a patient episode.",
+    pattern: "One or a few development value streams build the systems the steps run on (channels, origination, scoring, core processing); each becomes an ART or a Solution Train.",
+    builtin: true,
+    example: {
+      name: "Consumer loans",
+      description: "Provides customers with unsecured or secured loans",
+      customers: "Existing retail customers",
+      trigger: "The customer wants to borrow money and approaches the bank through any existing channel",
+      valueToEnterprise: "Repayment plus interest",
+      valueToCustomer: "Loan",
+      steps: [
+        { name: "Attract customer", actor: "staff", people: "Marketing, Sales" },
+        { name: "Quick rate quote", actor: "staff", people: "Loan agents" },
+        { name: "Complete loan application", actor: "customer" },
+        { name: "Eligibility decision and underwriting", actor: "staff", people: "Underwriters" },
+        { name: "Extend loan terms", actor: "staff", people: "Loan agents" },
+        { name: "Award loan", actor: "staff", people: "Loan agents" },
+        { name: "Set up payment terms", actor: "staff", people: "Servicing" },
+        { name: "Repay money", actor: "customer" },
+        { name: "Close loan", actor: "staff", people: "Servicing" },
+      ],
+    },
+  },
+  {
+    id: "manufacturing",
+    name: "Manufacturing",
+    blurb: "Raw materials and components become a physical product: a vehicle, a device, a consumable.",
+    pattern: "Development value streams produce the specifications the plant builds to (bills of material, design, test and validation, packaging) and the tools designers need (design platform, digital twin); solution intent holds the fixed and variable parts.",
+    builtin: true,
+    example: {
+      name: "Vehicle",
+      description: "Builds and ships vehicles to order",
+      customers: "Dealers and fleet buyers",
+      trigger: "Order received",
+      valueToEnterprise: "Revenue per vehicle",
+      valueToCustomer: "Vehicle",
+      steps: [
+        { name: "Procure materials", actor: "staff", people: "Purchasing" },
+        { name: "Manage inventory", actor: "staff", people: "Logistics" },
+        { name: "Manufacture subassemblies", actor: "staff", people: "Plant" },
+        { name: "Assemble final product", actor: "staff", people: "Plant" },
+        { name: "Validate product", actor: "staff", people: "Quality" },
+        { name: "Package and ship", actor: "staff", people: "Logistics" },
+      ],
+    },
+  },
+  {
+    id: "software-product",
+    name: "Software product",
+    blurb: "The enterprise sells and operates a software product: SaaS, mobile or desktop, from contract to renewal.",
+    pattern: "One development value stream develops the software solution itself; provisioning, help desk, CRM and the customer portal support the operational steps around it.",
+    builtin: true,
+    example: {
+      name: "SaaS product",
+      description: "Sells, provisions and supports a subscription software product",
+      customers: "Business customers",
+      trigger: "Order received",
+      valueToEnterprise: "Subscription revenue and renewals",
+      valueToCustomer: "Working software and support",
+      steps: [
+        { name: "Contracts and licensing", actor: "staff", people: "Legal, Sales" },
+        { name: "Sales cycle", actor: "staff", people: "Sales" },
+        { name: "Provisioning", actor: "staff", people: "Operations" },
+        { name: "Customer care", actor: "staff", people: "Support" },
+        { name: "Renewals", actor: "staff", people: "Account management" },
+      ],
+    },
+  },
+  {
+    id: "supporting",
+    name: "Supporting",
+    blurb: "Internal value streams the enterprise runs for itself: onboarding personnel, procuring supplies, preparing and auditing financials.",
+    pattern: "A single development value stream often supports a shared system (an ERP) used by several supporting value streams across the enterprise.",
+    builtin: true,
+    example: {
+      name: "Personnel onboarding",
+      description: "Brings a new hire from talent need to productive, onboarded staff",
+      customers: "Hiring managers and new hires",
+      trigger: "Talent need",
+      valueToEnterprise: "Onboarded staff",
+      valueToCustomer: "A productive start in the role",
+      steps: [
+        { name: "Post job", actor: "staff", people: "Recruiting" },
+        { name: "Review resumes", actor: "staff", people: "Recruiting, hiring manager" },
+        { name: "Interview", actor: "staff", people: "Hiring team" },
+        { name: "Hire employee", actor: "staff", people: "HR" },
+        { name: "Train new hire", actor: "staff", people: "Manager, L&D" },
+        { name: "Offboard", actor: "staff", people: "HR, IT" },
+      ],
+    },
+  },
+];
+
+/** SAFe's ART topologies, applied when a development value stream is cut into trains. */
+export type ArtTopology = "stream-aligned" | "platform" | "complicated-subsystem" | "enabling";
+export const ART_TOPOLOGIES: { id: ArtTopology; name: string; blurb: string }[] = [
+  { id: "stream-aligned", name: "Stream-aligned ART", blurb: "Aligned to a single value stream or product; releases value on its own. The default." },
+  { id: "platform", name: "Platform ART", blurb: "Builds the shared platform the stream-aligned trains consume, offered as a service." },
+  { id: "complicated-subsystem", name: "Complicated subsystem ART", blurb: "Owns a part needing deep specialist knowledge the others cannot absorb." },
+  { id: "enabling", name: "Enabling ART", blurb: "Helps other trains adopt new practices or technology for a time." },
+];
+
+/** Seeds an identification from a type's example. */
+export function identificationFromType(type: OvsType, id: string, now: string, name = type.example.name): ValueStreamIdentification {
+  let n = 0;
+  return {
+    id,
+    name,
+    type: type.id,
+    description: type.example.description,
+    customers: type.example.customers,
+    trigger: type.example.trigger,
+    value: type.example.valueToEnterprise,
+    valueToEnterprise: type.example.valueToEnterprise,
+    valueToCustomer: type.example.valueToCustomer,
+    steps: type.example.steps.map((st) => ({ id: `step-${++n}`, name: st.name, actor: st.actor, ...(st.people ? { people: st.people } : {}) })),
+    systems: [],
+    groups: [],
+    devStreams: [],
+    arts: [],
+    updatedAt: now,
+  };
 }
 
 export interface SupportingSystem {
@@ -31,8 +175,12 @@ export interface PeopleGroup {
   people: number;
   /** Where they sit, e.g. "Bangalore · Delhi". */
   locations: string;
+  /** What they do: development, support, operations, legal, marketing… */
+  function?: string;
   /** Systems these people build or run. */
   systemIds: string[];
+  /** A development value stream the group belongs to even when it builds no system (legal, marketing, support). */
+  devStreamId?: string;
 }
 
 export interface DevelopmentValueStream {
@@ -48,13 +196,21 @@ export interface ArtCandidate {
   locations: string;
   systemIds: string[];
   devStreamId?: string;
+  topology?: ArtTopology;
 }
 
 export interface ValueStreamIdentification {
   id: string;
   name: string;
+  /** Operational value stream type: a built-in id or one the workspace added. */
+  type?: string;
+  description?: string;
+  customers?: string;
   trigger: string;
+  /** The value label at the end of the chevrons (the value to the enterprise). */
   value: string;
+  valueToEnterprise?: string;
+  valueToCustomer?: string;
   steps: OperationalStep[];
   systems: SupportingSystem[];
   groups: PeopleGroup[];
@@ -160,6 +316,14 @@ export function stepImpact(vsi: ValueStreamIdentification, stepId: string): Step
   return { stepId, systems, groups, people, arts, verdict };
 }
 
+/** Everyone in a development value stream: the groups behind its systems plus the groups attached to it directly. */
+export function devStreamPeople(vsi: ValueStreamIdentification, devStreamId: string): { groups: PeopleGroup[]; people: number } {
+  const d = vsi.devStreams.find((x) => x.id === devStreamId);
+  if (!d) return { groups: [], people: 0 };
+  const groups = vsi.groups.filter((g) => g.devStreamId === d.id || g.systemIds.some((x) => d.systemIds.includes(x)));
+  return { groups, people: groups.reduce((n, g) => n + g.people, 0) };
+}
+
 export interface IdentificationIssue {
   kind: "orphan-step" | "orphan-system" | "unstaffed-system" | "art-size" | "unowned-system";
   message: string;
@@ -187,21 +351,27 @@ export function identificationIssues(vsi: ValueStreamIdentification): Identifica
 /** The consumer-loan example used throughout SAFe's value stream identification guidance. */
 export function demoIdentification(now = "2026-01-01T00:00:00.000Z"): ValueStreamIdentification {
   const step = (id: string, name: string, actor: Actor): OperationalStep => ({ id, name, actor });
+  const who = (st: OperationalStep, people: string): OperationalStep => ({ ...st, people });
   return {
     id: "vsi-consumer-loan",
     name: "Consumer loan",
+    type: "fulfilment",
+    description: "Provides customers with unsecured or secured loans",
+    customers: "Existing retail customers",
     trigger: "Loan need",
     value: "Loan repayment with interest",
+    valueToEnterprise: "Repayment plus interest",
+    valueToCustomer: "Loan",
     steps: [
-      step("attract", "Attract customer", "staff"),
-      step("quote", "Quick rate quote", "staff"),
+      who(step("attract", "Attract customer", "staff"), "Marketing, Sales"),
+      who(step("quote", "Quick rate quote", "staff"), "Loan agents"),
       step("apply", "Complete loan application", "customer"),
-      step("eligibility", "Eligibility decision and underwriting", "staff"),
-      step("terms", "Extend loan terms", "staff"),
-      step("award", "Award loan", "staff"),
-      step("payments", "Set up payment terms", "staff"),
+      who(step("eligibility", "Eligibility decision and underwriting", "staff"), "Underwriters"),
+      who(step("terms", "Extend loan terms", "staff"), "Loan agents"),
+      who(step("award", "Award loan", "staff"), "Loan agents"),
+      who(step("payments", "Set up payment terms", "staff"), "Servicing"),
       step("repay", "Repay money", "customer"),
-      step("close", "Close loan", "staff"),
+      who(step("close", "Close loan", "staff"), "Servicing"),
     ],
     systems: [
       { id: "channels", name: "Channels", note: "web, mobile, branch", stepIds: ["attract"] },
@@ -210,21 +380,26 @@ export function demoIdentification(now = "2026-01-01T00:00:00.000Z"): ValueStrea
       { id: "core", name: "Core banking", note: "terms, award, payments, closure", stepIds: ["terms", "award", "payments", "repay", "close"] },
     ],
     groups: [
-      { id: "g-paris", people: 20, locations: "Paris", systemIds: ["channels"] },
-      { id: "g-us", people: 80, locations: "Redmond · Atlanta", systemIds: ["los"] },
-      { id: "g-india", people: 200, locations: "Bangalore · Delhi", systemIds: ["channels", "los", "credit"] },
-      { id: "g-estonia", people: 30, locations: "Estonia", systemIds: ["credit"] },
-      { id: "g-chicago", people: 150, locations: "Chicago", systemIds: ["core"] },
+      { id: "g-paris", people: 20, locations: "Paris", function: "Development", systemIds: ["channels"] },
+      { id: "g-us", people: 80, locations: "Redmond · Atlanta", function: "Development", systemIds: ["los"] },
+      { id: "g-india", people: 200, locations: "Bangalore · Delhi", function: "Development", systemIds: ["channels", "los", "credit"] },
+      { id: "g-estonia", people: 30, locations: "Estonia", function: "Development", systemIds: ["credit"] },
+      { id: "g-chicago", people: 150, locations: "Chicago", function: "Development", systemIds: ["core"] },
+      // People the full business solution needs beyond development, attached to the development value streams directly.
+      { id: "g-legal", people: 5, locations: "Atlanta", function: "Legal", systemIds: [], devStreamId: "dvs-origination" },
+      { id: "g-marketing", people: 13, locations: "Atlanta", function: "Marketing", systemIds: [], devStreamId: "dvs-origination" },
+      { id: "g-support", people: 15, locations: "Delhi", function: "Support", systemIds: [], devStreamId: "dvs-servicing" },
+      { id: "g-ops", people: 12, locations: "Estonia", function: "Operations", systemIds: [], devStreamId: "dvs-servicing" },
     ],
     devStreams: [
       { id: "dvs-origination", name: "Acquisition and origination", systemIds: ["channels", "los", "credit"] },
       { id: "dvs-servicing", name: "Servicing on core banking", systemIds: ["core"] },
     ],
     arts: [
-      { id: "art-channels", name: "Channel Support", people: 100, locations: "40 US · 60 Bangalore", systemIds: ["channels"], devStreamId: "dvs-origination" },
-      { id: "art-origination", name: "Loan Origination", people: 115, locations: "15 US · 100 Delhi", systemIds: ["los"], devStreamId: "dvs-origination" },
-      { id: "art-credit", name: "Credit", people: 100, locations: "25 Atlanta · 15 Redmond · 30 Estonia · 30 Bangalore", systemIds: ["credit"], devStreamId: "dvs-origination" },
-      { id: "art-core", name: "Core Banking", people: 150, locations: "150 Chicago", systemIds: ["core"], devStreamId: "dvs-servicing" },
+      { id: "art-channels", name: "Channel Support", people: 100, locations: "40 US · 60 Bangalore", systemIds: ["channels"], devStreamId: "dvs-origination", topology: "stream-aligned" },
+      { id: "art-origination", name: "Loan Origination", people: 115, locations: "15 US · 100 Delhi", systemIds: ["los"], devStreamId: "dvs-origination", topology: "stream-aligned" },
+      { id: "art-credit", name: "Credit", people: 100, locations: "25 Atlanta · 15 Redmond · 30 Estonia · 30 Bangalore", systemIds: ["credit"], devStreamId: "dvs-origination", topology: "complicated-subsystem" },
+      { id: "art-core", name: "Core Banking", people: 150, locations: "150 Chicago", systemIds: ["core"], devStreamId: "dvs-servicing", topology: "platform" },
     ],
     updatedAt: now,
   };
