@@ -31,7 +31,10 @@ case "${TRAEFIK_NETWORK:-host}" in host|"") ;; *) opts+=(-f docker-compose.traef
 alias_file=docker-compose.aliases.yml
 rm -f "$alias_file"
 local_ips=" $(hostname -I 2>/dev/null) $(curl -4 -fsS --max-time 5 https://ifconfig.me 2>/dev/null || true) "
-points_here() { local ip; ip=$(getent ahostsv4 "$1" | awk 'NR==1{print $1}'); [ -n "$ip" ] && [[ "$local_ips" == *" $ip "* ]]; }
+# A name "points here" when it resolves to this server, or to the same address as the canonical
+# web host (a CDN such as Cloudflare proxies the zone, so both resolve to the CDN, not to us).
+canonical_ips=" $(getent ahostsv4 "$(envval TRAINYARD_WEB_HOST)" 2>/dev/null | awk '{print $1}' | sort -u | tr '\n' ' ') "
+points_here() { local ip; ip=$(getent ahostsv4 "$1" | awk 'NR==1{print $1}'); [ -n "$ip" ] && { [[ "$local_ips" == *" $ip "* ]] || [[ "$canonical_ips" == *" $ip "* ]]; }; }
 web_labels=""; api_labels=""; n=0
 canonical_web=$(envval TRAINYARD_WEB_HOST); canonical_api=$(envval TRAINYARD_API_HOST); seen=" "
 # TRAINYARD_WEB_ALIASES and TRAINYARD_API_ALIASES take any number of space-separated names.
