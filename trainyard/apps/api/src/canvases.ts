@@ -36,6 +36,7 @@ const Body = z.object({
   type: TypeId,
   title: z.string().trim().min(1).max(200),
   state: z.enum(["current", "future"]).optional(),
+  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "yyyy-mm-dd").optional(),
   links: z.object({ identificationId: Id.optional(), devStreamId: Id.optional(), artId: Id.optional(), sourceCanvasIds: z.array(Id).max(10).optional() }).optional(),
   fields: z.record(z.string().max(60), z.unknown()),
 });
@@ -60,7 +61,7 @@ export function registerCanvasRoutes(app: App, store: Store) {
     await store.commit(req.principal, action, { id: c.id, type: c.type });
   };
 
-  app.get("/v1/canvases", async () => ({ types: CANVAS_TYPES, canvases: list().map((c) => ({ id: c.id, type: c.type, title: c.title, state: c.state, updatedAt: c.updatedAt })) }));
+  app.get("/v1/canvases", async () => ({ types: CANVAS_TYPES, canvases: list().map((c) => ({ id: c.id, type: c.type, title: c.title, state: c.state, asOf: c.asOf, updatedAt: c.updatedAt })) }));
   app.get("/v1/canvases/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ canvas: view(find(req.params.id)), type: canvasType(find(req.params.id).type) }));
 
   app.post("/v1/canvases", { schema: { body: z.object({ type: TypeId, title: z.string().trim().min(1).max(200).optional() }) } }, async (req, reply) => {
@@ -82,6 +83,7 @@ export function registerCanvasRoutes(app: App, store: Store) {
       type: req.body.type,
       title: req.body.title,
       ...(req.body.state ? { state: req.body.state } : {}),
+      ...(req.body.asOf ? { asOf: req.body.asOf } : prev?.asOf ? { asOf: prev.asOf } : {}),
       ...(req.body.links ? { links: req.body.links as NonNullable<Canvas["links"]> } : prev?.links ? { links: prev.links } : {}),
       ...(prev?.option ? { option: prev.option } : {}),
       fields: req.body.fields as Canvas["fields"],

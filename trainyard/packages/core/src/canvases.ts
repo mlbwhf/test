@@ -280,6 +280,8 @@ export interface Canvas {
   title: string;
   /** Current or future state, for canvases SAFe draws twice (the portfolio canvas). */
   state?: "current" | "future";
+  /** The date the canvas describes (ISO yyyy-mm-dd): a current state is dated, a future state is a target date. */
+  asOf?: string;
   /** What it was prefilled from or belongs to. */
   links?: { identificationId?: string; devStreamId?: string; artId?: string; sourceCanvasIds?: string[] };
   /** Future-state portfolio canvases only: one explored option, its scores and whether it was chosen. */
@@ -345,7 +347,7 @@ export function emptyCanvas(type: CanvasTypeId, id: string, title: string, now: 
     else if (s.kind === "checklist") fields[s.key] = [];
     else if (s.kind === "wsjf") fields[s.key] = Object.fromEntries((s.labels ?? []).map((l) => [l, ""]));
   }
-  return { id, type, title, ...(type === "portfolio-canvas" ? { state: "current" as const } : {}), fields, updatedAt: now };
+  return { id, type, title, ...(type === "portfolio-canvas" ? { state: "current" as const } : {}), asOf: now.slice(0, 10), fields, updatedAt: now };
 }
 
 // ---- prefill from a value stream identification ------------------------------------------

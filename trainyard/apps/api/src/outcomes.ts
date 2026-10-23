@@ -28,7 +28,8 @@ const Outcome = z.object({
   approver: z.string().trim().max(120).optional(),
 });
 const Milestone = z.object({ id: Id, kind: z.enum(["fixed", "learning", "sync", "release"]), label: z.string().trim().min(1).max(200), iteration: z.number().int().min(1).max(30), outcomeId: Id.optional(), teamIds: z.array(Id).max(40).optional() });
-const Work = z.object({ id: Id, teamId: Id, kind: z.enum(["experiment", "prototype", "enabler", "feature"]), label: z.string().trim().min(1).max(200), iteration: z.number().int().min(1).max(30), outcomeId: Id.optional() });
+const Work = z.object({ id: Id, teamId: Id, kind: z.enum(["experiment", "prototype", "enabler", "feature"]), label: z.string().trim().min(1).max(200), iteration: z.number().int().min(1).max(30), outcomeId: Id.optional(), onArtBoard: z.boolean().optional() });
+const PlanLink = z.object({ id: Id, fromId: Id, toId: Id, kind: z.enum(["depends", "relates"]), note: Text.optional() });
 const Review = z.object({ id: Id, kind: z.enum(["decision-needed", "risk", "decision-confirmed", "action"]), text: Text.min(1), owner: z.string().trim().max(120).optional(), teamId: Id.optional(), answers: Id.optional() });
 const Agenda = z.object({ id: Id, half: z.enum(["morning", "afternoon"]), minutes: z.number().int().min(5).max(480), title: z.string().trim().min(1).max(120), detail: Text.optional(), kind: z.enum(["plenary", "outcome-breakout", "team-breakout", "review"]), done: z.boolean().optional() });
 const Vote = z.object({ teamId: Id, value: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]), concern: Text.optional() });
@@ -43,6 +44,7 @@ const Session = z.object({
   outcomes: z.array(Outcome).max(200),
   milestones: z.array(Milestone).max(300),
   work: z.array(Work).max(600),
+  links: z.array(PlanLink).max(600).optional(),
   review: z.array(Review).max(300),
   agenda: z.array(Agenda).max(30),
   votes: z.array(Vote).max(40),
@@ -72,6 +74,11 @@ function checkRefs(s: z.infer<typeof Session>): string[] {
   for (const w of s.work) {
     if (!teams.has(w.teamId)) issues.push(`"${w.label}" belongs to unknown team "${w.teamId}"`);
     if (w.outcomeId && outcomes.get(w.outcomeId)?.teamId !== w.teamId) issues.push(`"${w.label}" sits on an outcome of another team`);
+  }
+  const cards = new Set([...s.milestones.map((m) => m.id), ...s.work.map((w) => w.id)]);
+  for (const l of s.links ?? []) {
+    if (!cards.has(l.fromId) || !cards.has(l.toId)) issues.push(`a link joins a card that is not on any board`);
+    if (l.fromId === l.toId) issues.push(`a link joins a card to itself`);
   }
   const reviewIds = new Set(s.review.map((r) => r.id));
   for (const r of s.review) if (r.answers && !reviewIds.has(r.answers)) issues.push(`a ${r.kind} answers an unknown item "${r.answers}"`);

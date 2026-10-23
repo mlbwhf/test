@@ -62,6 +62,18 @@ export interface WorkSticky {
   iteration: number;
   /** The team outcome row it sits on; none means "Other". */
   outcomeId?: string;
+  /** Also shows on the PI Outcome Planning Board, on the row of the team outcome's PI outcome. */
+  onArtBoard?: boolean;
+}
+
+/** A string between two cards (work stickies or milestones) on any of the boards: a dependency or a relation. */
+export interface PlanLink {
+  id: string;
+  /** The card that needs the other one. */
+  fromId: string;
+  toId: string;
+  kind: "depends" | "relates";
+  note?: string;
 }
 
 export interface ReviewItem {
@@ -106,6 +118,8 @@ export interface PlanningSession {
   outcomes: Outcome[];
   milestones: Milestone[];
   work: WorkSticky[];
+  /** Strings between cards, drawn on whichever board shows both ends. */
+  links?: PlanLink[];
   review: ReviewItem[];
   agenda: AgendaSlot[];
   votes: Vote[];
@@ -178,6 +192,8 @@ export interface BoardRow {
   teamOutcomes: Outcome[];
   /** Milestones by iteration (1..iterations+1). */
   byIteration: Milestone[][];
+  /** Team work promoted to the ART board (onArtBoard), per iteration. */
+  workByIteration: WorkSticky[][];
 }
 
 /** The PI Outcome Planning Board: one row per PI outcome, then "Other". */
@@ -193,8 +209,25 @@ export function planningBoard(s: PlanningSession): { milestonesRow: Milestone[][
     return out;
   };
   const pis = s.outcomes.filter((o) => o.level === "pi");
-  const rows: BoardRow[] = pis.map((p) => ({ outcome: p, teamOutcomes: s.outcomes.filter((o) => o.level === "team" && o.parentId === p.id), byIteration: place(s.milestones.filter((m) => m.outcomeId === p.id && m.kind !== "fixed")) }));
-  rows.push({ outcome: null, teamOutcomes: s.outcomes.filter((o) => o.level === "team" && (!o.parentId || !pis.some((p) => p.id === o.parentId))), byIteration: place(s.milestones.filter((m) => !m.outcomeId && m.kind !== "fixed")) });
+  const placeWork = (ws: WorkSticky[]) => {
+    const out = Array.from({ length: cols }, () => [] as WorkSticky[]);
+    for (const w of ws) out[Math.min(cols, Math.max(1, w.iteration)) - 1]!.push(w);
+    return out;
+  };
+  const promoted = s.work.filter((w) => w.onArtBoard);
+  const piOf = (w: WorkSticky) => (w.outcomeId ? s.outcomes.find((o) => o.id === w.outcomeId)?.parentId : undefined);
+  const rows: BoardRow[] = pis.map((p) => ({
+    outcome: p,
+    teamOutcomes: s.outcomes.filter((o) => o.level === "team" && o.parentId === p.id),
+    byIteration: place(s.milestones.filter((m) => m.outcomeId === p.id && m.kind !== "fixed")),
+    workByIteration: placeWork(promoted.filter((w) => piOf(w) === p.id)),
+  }));
+  rows.push({
+    outcome: null,
+    teamOutcomes: s.outcomes.filter((o) => o.level === "team" && (!o.parentId || !pis.some((p) => p.id === o.parentId))),
+    byIteration: place(s.milestones.filter((m) => !m.outcomeId && m.kind !== "fixed")),
+    workByIteration: placeWork(promoted.filter((w) => !pis.some((p) => p.id === piOf(w)))),
+  });
   // Fixed-date milestones constrain the whole ART, so they sit on their own row at the top.
   return { milestonesRow: place(s.milestones.filter((m) => m.kind === "fixed")), rows };
 }
@@ -325,11 +358,11 @@ export function demoPlanningSession(now = "2026-10-01T09:00:00.000Z"): PlanningS
     { id: "w-1", teamId: "cart", kind: "prototype", label: "Diet-swap at checkout", iteration: 1, outcomeId: "t-cart-1" },
     { id: "w-2", teamId: "cart", kind: "enabler", label: "Household diet-profile read", iteration: 1, outcomeId: "t-cart-1" },
     { id: "w-3", teamId: "cart", kind: "experiment", label: "Swap-acceptance framing A/B test", iteration: 2, outcomeId: "t-cart-1" },
-    { id: "w-4", teamId: "cart", kind: "feature", label: "Diet-swap at checkout", iteration: 4, outcomeId: "t-cart-1" },
+    { id: "w-4", teamId: "cart", kind: "feature", label: "Diet-swap at checkout", iteration: 4, outcomeId: "t-cart-1", onArtBoard: true },
     { id: "w-5", teamId: "cart", kind: "experiment", label: "Baseline end-to-end cycle time", iteration: 1, outcomeId: "t-cart-3" },
     { id: "w-6", teamId: "cart", kind: "enabler", label: "Auditability instrumentation", iteration: 1 },
     { id: "w-7", teamId: "ai-engine", kind: "experiment", label: "Classifier retrain on curated labels", iteration: 1, outcomeId: "t-ai-1" },
-    { id: "w-8", teamId: "ai-engine", kind: "feature", label: "Diet-profile service v1", iteration: 2, outcomeId: "t-ai-2" },
+    { id: "w-8", teamId: "ai-engine", kind: "feature", label: "Diet-profile service v1", iteration: 2, outcomeId: "t-ai-2", onArtBoard: true },
     { id: "w-9", teamId: "in-store", kind: "prototype", label: "Shelf-edge diet labels, 10 stores", iteration: 1, outcomeId: "t-store-1" },
     { id: "w-10", teamId: "marketing", kind: "experiment", label: "Diabetes-month campaign creative test", iteration: 2, outcomeId: "t-mkt-1" },
   ];

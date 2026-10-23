@@ -282,6 +282,7 @@ export function classInfo(spec: ClassSpec): TemplateInfo {
     name: spec.name,
     blurb: spec.blurb,
     event: `${spec.days}-day class`,
+    method: "safe",
     tags: ["class", "safe"],
     zones: ["Start here", ...spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
     cardTypes: ["Sticky", "Slide", "Story", "Vote"],

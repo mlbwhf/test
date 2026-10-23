@@ -462,9 +462,12 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(24);
+    expect(list.body.builtin.length).toBe(51);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
+    expect(pi.info.method).toBe("safe");
+    const methods = new Set(list.body.builtin.map((b: { info: { method: string } }) => b.info.method));
+    for (const m of ["safe", "scrum", "kanban", "lean", "six-sigma", "manufacturing"]) expect(methods.has(m)).toBe(true);
     // 4 teams × 6 working iterations, plus milestones, uncommitted and risks strips.
     expect(pi.counts.frames).toBe(4 * 6 + 3);
     const full = await call("GET", "/v1/templates/boards/tpl-builtin-pi-planning");

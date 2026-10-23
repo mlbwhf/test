@@ -21,6 +21,7 @@ import {
   type MilestoneKind,
   type Outcome,
   type OutcomeKeyResult,
+  type PlanLink,
   type PlanningSession,
   type ReviewItem,
   type ReviewKind,
@@ -28,6 +29,7 @@ import {
   type WorkSticky,
 } from "@trainyard/core";
 import { ART_TABS, AssessmentView, DataRegister, IntentView, Pipeline, SenseRespond, TeamCoverage, Views, type ArtDerived, type ArtTab } from "@/components/ainative";
+import { DropCell, PlanCard, PlanStrings, Popover } from "@/components/plan-board";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
@@ -424,20 +426,6 @@ function Diamond({ kind, size = 16 }: { kind: MilestoneKind; size?: number }) {
   return <span className="op-diamond" style={{ width: size, height: size, background: MILESTONE_KINDS[kind].color }} aria-hidden="true" />;
 }
 
-function MilestoneCard({ m, onRemove }: { m: Milestone; onRemove?: () => void }) {
-  return (
-    <div className="op-ms" style={{ borderColor: MILESTONE_KINDS[m.kind].color }} title={MILESTONE_KINDS[m.kind].label}>
-      <Diamond kind={m.kind} />
-      <span>{m.label}</span>
-      {onRemove ? (
-        <button className="btn small ghost" aria-label={`Remove ${m.label}`} onClick={onRemove}>
-          ×
-        </button>
-      ) : null}
-    </div>
-  );
-}
-
 function Legend() {
   return (
     <div className="row" style={{ gap: 14, fontSize: "0.8rem" }}>
@@ -446,90 +434,140 @@ function Legend() {
           <Diamond kind={k} size={12} /> {MILESTONE_KINDS[k].label}
         </span>
       ))}
+      <span className="row" style={{ gap: 6 }}>
+        <span style={{ width: 18, borderTop: "2px solid #c2412d" }} /> depends on
+      </span>
+      <span className="row" style={{ gap: 6 }}>
+        <span style={{ width: 18, borderTop: "2px dotted #1a73c8" }} /> related
+      </span>
     </div>
   );
 }
 
-function Board({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSession) => void }) {
-  const b = useMemo(() => planningBoard(s), [s]);
-  const cols = s.iterations + 1;
-  const [draft, setDraft] = useState<{ kind: MilestoneKind; iteration: number; outcomeId: string; label: string; teamIds: string[] }>({ kind: "learning", iteration: 1, outcomeId: "", label: "", teamIds: [] });
-  const addMilestone = () => {
-    if (!draft.label.trim()) return;
-    onChange({ ...s, milestones: [...s.milestones, { id: uid("m"), kind: draft.kind, label: draft.label.trim(), iteration: draft.iteration, ...(draft.outcomeId && draft.kind !== "fixed" ? { outcomeId: draft.outcomeId } : {}), ...(draft.teamIds.length ? { teamIds: draft.teamIds } : {}) }] });
-    setDraft({ ...draft, label: "" });
+const iterLabel = (s: PlanningSession, i: number) => (i <= s.iterations ? `Iteration ${i}` : "Next PI");
+
+// ---- shared board state: which card is open, which card is drawing a string ------------
+
+interface Open {
+  kind: "ms" | "work";
+  id: string;
+  anchor: DOMRect;
+}
+
+function useBoardState(s: PlanningSession, onChange: (s: PlanningSession) => void) {
+  const [open, setOpen] = useState<Open | null>(null);
+  const [linkFrom, setLinkFrom] = useState<string | null>(null);
+  const [linkKind, setLinkKind] = useState<PlanLink["kind"]>("depends");
+  const links = s.links ?? [];
+  const addLink = (toId: string) => {
+    if (!linkFrom || linkFrom === toId) return;
+    if (!links.some((l) => (l.fromId === linkFrom && l.toId === toId) || (l.fromId === toId && l.toId === linkFrom))) onChange({ ...s, links: [...links, { id: uid("l"), fromId: linkFrom, toId, kind: linkKind }] });
+    setLinkFrom(null);
   };
-  const removeMs = (id: string) => onChange({ ...s, milestones: s.milestones.filter((m) => m.id !== id) });
-  const grid = `minmax(220px, 1.3fr) minmax(200px, 1.2fr) repeat(${cols}, minmax(120px, 1fr))`;
+  const removeLink = (id: string) => onChange({ ...s, links: links.filter((l) => l.id !== id) });
+  const removeCard = (id: string) => onChange({ ...s, milestones: s.milestones.filter((m) => m.id !== id), work: s.work.filter((w) => w.id !== id), links: links.filter((l) => l.fromId !== id && l.toId !== id) });
+  const linkCount = (id: string) => links.filter((l) => l.fromId === id || l.toId === id).length;
+  const startLink = (id: string, kind: PlanLink["kind"]) => {
+    setLinkKind(kind);
+    setLinkFrom(id);
+    setOpen(null);
+  };
+  return { open, setOpen, linkFrom, setLinkFrom, linkKind, links, addLink, removeLink, removeCard, linkCount, startLink };
+}
+
+type BoardState = ReturnType<typeof useBoardState>;
+
+function LinkBanner({ b }: { b: BoardState }) {
+  if (!b.linkFrom) return null;
   return (
-    <div className="stack" style={{ gap: 12 }}>
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <b style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>
-          {s.artName} · {s.piName} · {s.stage === "draft" ? "Draft" : s.stage === "adjusted" ? "Adjusted" : "Final"} PI Outcome Planning Board
-        </b>
-        <Legend />
+    <div className="notice row" style={{ justifyContent: "space-between" }}>
+      <span>{b.linkKind === "depends" ? "Click the card this one depends on." : "Click the related card."} The string shows on every board that has both cards.</span>
+      <button className="btn small ghost" onClick={() => b.setLinkFrom(null)}>
+        Cancel
+      </button>
+    </div>
+  );
+}
+
+function MilestoneCard({ m, b, s }: { m: Milestone; b: BoardState; s: PlanningSession }) {
+  const n = b.linkCount(m.id);
+  return (
+    <PlanCard id={m.id} kind="ms" className="op-ms" style={{ borderColor: MILESTONE_KINDS[m.kind].color }} linkFrom={b.linkFrom} onClick={(anchor) => b.setOpen({ kind: "ms", id: m.id, anchor })} onLinkTo={b.addLink} title={`${MILESTONE_KINDS[m.kind].label} · drag to move, click to edit`}>
+      <Diamond kind={m.kind} />
+      <span>{m.label}</span>
+      {m.teamIds?.length ? <span className="faint" style={{ fontSize: "0.7rem" }}>{m.teamIds.map((t) => s.teams.find((x) => x.id === t)?.name ?? t).join(", ")}</span> : null}
+      {n ? <span className="plan-chip">{n} string{n > 1 ? "s" : ""}</span> : null}
+    </PlanCard>
+  );
+}
+
+function WorkCard({ w, b, s, showTeam }: { w: WorkSticky; b: BoardState; s: PlanningSession; showTeam?: boolean }) {
+  const n = b.linkCount(w.id);
+  return (
+    <PlanCard id={w.id} kind="work" className="op-sticky" style={{ background: WORK_KINDS[w.kind].color, color: WORK_KINDS[w.kind].ink }} linkFrom={b.linkFrom} onClick={(anchor) => b.setOpen({ kind: "work", id: w.id, anchor })} onLinkTo={b.addLink} title={`${WORK_KINDS[w.kind].label} · drag to move, click to edit`}>
+      {showTeam ? <b style={{ display: "block", fontSize: "0.7rem" }}>{s.teams.find((t) => t.id === w.teamId)?.name ?? "Team"}</b> : null}
+      <span>{w.label}</span>
+      <span className="row" style={{ gap: 4, justifyContent: "center", marginTop: 4 }}>
+        {w.onArtBoard ? <span className="plan-chip" title="Shows on the PI Outcome Planning Board">ART</span> : null}
+        {n ? <span className="plan-chip">{n} string{n > 1 ? "s" : ""}</span> : null}
+      </span>
+    </PlanCard>
+  );
+}
+
+function MilestoneEditor({ m, s, b, onChange }: { m: Milestone; s: PlanningSession; b: BoardState; onChange: (s: PlanningSession) => void }) {
+  const cols = s.iterations + 1;
+  const set = (patch: Partial<Milestone>) => onChange({ ...s, milestones: s.milestones.map((x) => (x.id === m.id ? { ...x, ...patch } : x)) });
+  const clear = (key: keyof Milestone) =>
+    onChange({
+      ...s,
+      milestones: s.milestones.map((x) => {
+        if (x.id !== m.id) return x;
+        const { [key]: _drop, ...rest } = x;
+        return rest as Milestone;
+      }),
+    });
+  return (
+    <Popover anchor={b.open!.anchor} title="Milestone" onClose={() => b.setOpen(null)}>
+      <label>
+        Label
+        <input className="input" autoFocus value={m.label} onChange={(e) => set({ label: e.target.value })} />
+      </label>
+      <div className="plan-pop-row">
+        <label>
+          Kind
+          <select
+            className="select"
+            value={m.kind}
+            onChange={(e) => {
+              const kind = e.target.value as MilestoneKind;
+              if (kind === "fixed") {
+                onChange({ ...s, milestones: s.milestones.map((x) => (x.id === m.id ? (({ outcomeId: _o, ...rest }) => ({ ...rest, kind }))(x) : x)) });
+              } else set({ kind });
+            }}
+          >
+            {(Object.keys(MILESTONE_KINDS) as MilestoneKind[]).map((k) => (
+              <option key={k} value={k}>
+                {MILESTONE_KINDS[k].label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Iteration
+          <select className="select" value={m.iteration} onChange={(e) => set({ iteration: Number(e.target.value) })}>
+            {Array.from({ length: cols }, (_, i) => (
+              <option key={i} value={i + 1}>
+                {iterLabel(s, i + 1)}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
-      <div className="scroll-x">
-        <div className="op-board" style={{ gridTemplateColumns: grid }}>
-          <div className="op-h">PI Outcome</div>
-          <div className="op-h">Team Outcomes</div>
-          {Array.from({ length: cols }, (_, i) => (
-            <div key={i} className="op-h center">
-              {i < s.iterations ? (
-                <>
-                  Iteration
-                  <br />
-                  {i + 1}
-                </>
-              ) : (
-                <>
-                  Next
-                  <br />
-                  PI
-                </>
-              )}
-            </div>
-          ))}
-          <div className="op-cell op-ms-row" style={{ gridColumn: "1 / span 2" }}>
-            <b>ART Milestones</b>
-          </div>
-          {b.milestonesRow.map((cell, i) => (
-            <div key={i} className="op-cell op-ms-row center">
-              {cell.map((m) => (
-                <MilestoneCard key={m.id} m={m} onRemove={() => removeMs(m.id)} />
-              ))}
-            </div>
-          ))}
-          {b.rows.map((r) => (
-            <RowCells key={r.outcome?.id ?? "other"} r={r} s={s} onRemove={removeMs} />
-          ))}
-        </div>
-      </div>
-      <form
-        className="row"
-        style={{ gap: 8 }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          addMilestone();
-        }}
-      >
-        <span className="eyebrow">Add a milestone</span>
-        <select className="select" aria-label="Milestone kind" value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as MilestoneKind })}>
-          {(Object.keys(MILESTONE_KINDS) as MilestoneKind[]).map((k) => (
-            <option key={k} value={k}>
-              {MILESTONE_KINDS[k].label}
-            </option>
-          ))}
-        </select>
-        <select className="select" aria-label="Iteration" value={draft.iteration} onChange={(e) => setDraft({ ...draft, iteration: Number(e.target.value) })}>
-          {Array.from({ length: cols }, (_, i) => (
-            <option key={i} value={i + 1}>
-              {i < s.iterations ? `Iteration ${i + 1}` : "Next PI"}
-            </option>
-          ))}
-        </select>
-        {draft.kind !== "fixed" ? (
-          <select className="select" aria-label="PI outcome row" value={draft.outcomeId} onChange={(e) => setDraft({ ...draft, outcomeId: e.target.value })}>
+      {m.kind !== "fixed" ? (
+        <label>
+          PI outcome row
+          <select className="select" value={m.outcomeId ?? ""} onChange={(e) => (e.target.value ? set({ outcomeId: e.target.value }) : clear("outcomeId"))}>
             <option value="">Other</option>
             {s.outcomes
               .filter((o) => o.level === "pi")
@@ -539,81 +577,382 @@ function Board({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
                 </option>
               ))}
           </select>
-        ) : null}
-        <select className="select" aria-label="Owning teams" multiple value={draft.teamIds} onChange={(e) => setDraft({ ...draft, teamIds: [...e.target.selectedOptions].map((o) => o.value) })} style={{ height: 34, minWidth: 140 }} title="Teams that own it (Ctrl-click for several)">
-          {s.teams.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-        <input className="input" aria-label="Milestone" placeholder="e.g. Diet classification model accuracy validated" value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} style={{ flex: "1 1 240px" }} />
-        <button className="btn small" type="submit" disabled={!draft.label.trim()}>
-          Add
+        </label>
+      ) : null}
+      <div>
+        <span style={{ fontSize: "0.78rem", color: "var(--ink-3)" }}>Owning teams (shows on their boards)</span>
+        <div className="row" style={{ gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+          {s.teams.map((t) => {
+            const on = m.teamIds?.includes(t.id) ?? false;
+            return (
+              <label key={t.id} className="row" style={{ gap: 4, display: "inline-flex", fontSize: "0.82rem", color: "inherit" }}>
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={() => {
+                    const next = on ? (m.teamIds ?? []).filter((x) => x !== t.id) : [...(m.teamIds ?? []), t.id];
+                    next.length ? set({ teamIds: next }) : clear("teamIds");
+                  }}
+                />
+                {t.name}
+              </label>
+            );
+          })}
+        </div>
+      </div>
+      <div className="plan-pop-actions">
+        <span className="row" style={{ gap: 4 }}>
+          <button className="btn small" onClick={() => b.startLink(m.id, "depends")} title="Then click the card this depends on">
+            Depends on…
+          </button>
+          <button className="btn small ghost" onClick={() => b.startLink(m.id, "relates")} title="Then click a related card">
+            Relate…
+          </button>
+        </span>
+        <button
+          className="btn small ghost"
+          style={{ color: "var(--crit)" }}
+          onClick={() => {
+            b.removeCard(m.id);
+            b.setOpen(null);
+          }}
+        >
+          Remove
         </button>
-      </form>
+      </div>
+    </Popover>
+  );
+}
+
+function WorkEditor({ w, s, b, onChange }: { w: WorkSticky; s: PlanningSession; b: BoardState; onChange: (s: PlanningSession) => void }) {
+  const cols = s.iterations + 1;
+  const set = (patch: Partial<WorkSticky>) => onChange({ ...s, work: s.work.map((x) => (x.id === w.id ? { ...x, ...patch } : x)) });
+  const clear = (key: keyof WorkSticky) =>
+    onChange({
+      ...s,
+      work: s.work.map((x) => {
+        if (x.id !== w.id) return x;
+        const { [key]: _drop, ...rest } = x;
+        return rest as WorkSticky;
+      }),
+    });
+  const mine = s.outcomes.filter((o) => o.level === "team" && o.teamId === w.teamId);
+  return (
+    <Popover anchor={b.open!.anchor} title={`${WORK_KINDS[w.kind].label} · ${s.teams.find((t) => t.id === w.teamId)?.name ?? "Team"}`} onClose={() => b.setOpen(null)}>
+      <label>
+        Label
+        <input className="input" autoFocus value={w.label} onChange={(e) => set({ label: e.target.value })} />
+      </label>
+      <div className="plan-pop-row">
+        <label>
+          Kind
+          <select className="select" value={w.kind} onChange={(e) => set({ kind: e.target.value as WorkKind })}>
+            {(Object.keys(WORK_KINDS) as WorkKind[]).map((k) => (
+              <option key={k} value={k}>
+                {WORK_KINDS[k].label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Iteration
+          <select className="select" value={w.iteration} onChange={(e) => set({ iteration: Number(e.target.value) })}>
+            {Array.from({ length: cols }, (_, i) => (
+              <option key={i} value={i + 1}>
+                {iterLabel(s, i + 1)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="plan-pop-row">
+        <label>
+          Team
+          <select
+            className="select"
+            value={w.teamId}
+            onChange={(e) => {
+              // Moving to another team drops the outcome row, which belonged to the old team.
+              onChange({ ...s, work: s.work.map((x) => (x.id === w.id ? (({ outcomeId: _o, ...rest }) => ({ ...rest, teamId: e.target.value }))(x) : x)) });
+            }}
+          >
+            {s.teams.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Team outcome row
+          <select className="select" value={w.outcomeId ?? ""} onChange={(e) => (e.target.value ? set({ outcomeId: e.target.value }) : clear("outcomeId"))}>
+            <option value="">Other</option>
+            {mine.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.title}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="row" style={{ gap: 6, display: "inline-flex", alignItems: "center", color: "inherit", fontSize: "0.84rem" }}>
+        <input type="checkbox" checked={!!w.onArtBoard} onChange={(e) => (e.target.checked ? set({ onArtBoard: true }) : clear("onArtBoard"))} />
+        Show on the PI Outcome Planning Board
+      </label>
+      <div className="plan-pop-actions">
+        <span className="row" style={{ gap: 4 }}>
+          <button className="btn small" onClick={() => b.startLink(w.id, "depends")} title="Then click the card this depends on">
+            Depends on…
+          </button>
+          <button className="btn small ghost" onClick={() => b.startLink(w.id, "relates")} title="Then click a related card">
+            Relate…
+          </button>
+        </span>
+        <button
+          className="btn small ghost"
+          style={{ color: "var(--crit)" }}
+          onClick={() => {
+            b.removeCard(w.id);
+            b.setOpen(null);
+          }}
+        >
+          Remove
+        </button>
+      </div>
+    </Popover>
+  );
+}
+
+function Editors({ s, b, onChange }: { s: PlanningSession; b: BoardState; onChange: (s: PlanningSession) => void }) {
+  if (!b.open) return null;
+  if (b.open.kind === "ms") {
+    const m = s.milestones.find((x) => x.id === b.open!.id);
+    return m ? <MilestoneEditor m={m} s={s} b={b} onChange={onChange} /> : null;
+  }
+  const w = s.work.find((x) => x.id === b.open!.id);
+  return w ? <WorkEditor w={w} s={s} b={b} onChange={onChange} /> : null;
+}
+
+function ColumnHeads({ s, extra }: { s: PlanningSession; extra?: (i: number) => { style?: React.CSSProperties; title?: string } }) {
+  const cols = s.iterations + 1;
+  return (
+    <>
+      {Array.from({ length: cols }, (_, i) => {
+        const e = extra?.(i) ?? {};
+        return (
+          <div key={i} className="op-h center" style={e.style} title={e.title}>
+            {i < s.iterations ? (
+              <>
+                Iteration
+                <br />
+                {i + 1}
+              </>
+            ) : (
+              <>
+                Next
+                <br />
+                PI
+              </>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+// ---- PI Outcome Planning Board ---------------------------------------------------------
+
+function Board({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSession) => void }) {
+  const b = useBoardState(s, onChange);
+  const board = useMemo(() => planningBoard(s), [s]);
+  const cols = s.iterations + 1;
+  const grid = `minmax(220px, 1.3fr) minmax(200px, 1.2fr) repeat(${cols}, minmax(120px, 1fr))`;
+  // Dropping on a cell: milestones take the row and iteration; promoted work takes the
+  // iteration (its row follows its team outcome).
+  const drop = (p: { kind: string; id: string }, iteration: number, row: { outcomeId?: string; fixed?: boolean }) => {
+    if (p.kind === "ms") {
+      onChange({
+        ...s,
+        milestones: s.milestones.map((m) => {
+          if (m.id !== p.id) return m;
+          const { outcomeId: _o, ...rest } = m;
+          if (row.fixed) return { ...rest, iteration, kind: "fixed" as const };
+          const kind = m.kind === "fixed" ? ("learning" as const) : m.kind;
+          return row.outcomeId ? { ...rest, iteration, kind, outcomeId: row.outcomeId } : { ...rest, iteration, kind };
+        }),
+      });
+    } else if (p.kind === "work") {
+      onChange({ ...s, work: s.work.map((w) => (w.id === p.id ? { ...w, iteration } : w)) });
+    }
+  };
+  const addMilestone = (iteration: number, row: { outcomeId?: string; fixed?: boolean }, anchor?: DOMRect) => {
+    const m: Milestone = { id: uid("m"), kind: row.fixed ? "fixed" : "learning", label: "New milestone", iteration, ...(row.outcomeId && !row.fixed ? { outcomeId: row.outcomeId } : {}) };
+    onChange({ ...s, milestones: [...s.milestones, m] });
+    if (anchor) b.setOpen({ kind: "ms", id: m.id, anchor });
+  };
+  const cellAdd = (iteration: number, row: { outcomeId?: string; fixed?: boolean }) => (e?: React.MouseEvent) => addMilestone(iteration, row, (e?.currentTarget as HTMLElement | undefined)?.getBoundingClientRect() ?? new DOMRect(200, 200, 0, 0));
+  return (
+    <div className="stack" style={{ gap: 12 }}>
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <b style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>
+          {s.artName} · {s.piName} · {s.stage === "draft" ? "Draft" : s.stage === "adjusted" ? "Adjusted" : "Final"} PI Outcome Planning Board
+        </b>
+        <Legend />
+      </div>
+      <LinkBanner b={b} />
+      <div className="scroll-x">
+        <PlanStrings links={b.links} depsKey={JSON.stringify([s.milestones, s.work])} onRemove={b.removeLink}>
+          <div className="op-board" style={{ gridTemplateColumns: grid }}>
+            <div className="op-h">PI Outcome</div>
+            <div className="op-h">Team Outcomes</div>
+            <ColumnHeads s={s} />
+            <div className="op-cell op-ms-row" style={{ gridColumn: "1 / span 2" }}>
+              <b>ART Milestones</b>
+              <span className="faint" style={{ fontSize: "0.76rem" }}>Fixed dates. Drag a milestone here to make it one.</span>
+            </div>
+            {board.milestonesRow.map((cell, i) => (
+              <DropCell key={i} className="op-cell op-ms-row center" onDrop={(p) => drop(p, i + 1, { fixed: true })} onAdd={() => addMilestone(i + 1, { fixed: true }, new DOMRect(window.innerWidth / 2 - 170, 160, 0, 0))}>
+                {cell.map((m) => (
+                  <MilestoneCard key={m.id} m={m} b={b} s={s} />
+                ))}
+              </DropCell>
+            ))}
+            {board.rows.map((r) => {
+              const row = r.outcome ? { outcomeId: r.outcome.id } : {};
+              return (
+                <div key={r.outcome?.id ?? "other"} style={{ display: "contents" }}>
+                  <OutcomeHead r={r} s={s} onChange={onChange} />
+                  <div className="op-cell">
+                    {r.teamOutcomes.map((t) => (
+                      <div key={t.id} style={{ marginBottom: 8, fontSize: "0.86rem" }}>
+                        <b>{s.teams.find((x) => x.id === t.teamId)?.name ?? "Team"}</b>
+                        <InlineText value={t.title} onChange={(title) => onChange({ ...s, outcomes: s.outcomes.map((o) => (o.id === t.id ? { ...o, title } : o)) })} />
+                      </div>
+                    ))}
+                    {!r.teamOutcomes.length ? <span className="faint" style={{ fontSize: "0.78rem" }}>No team outcome yet.</span> : null}
+                  </div>
+                  {r.byIteration.map((cell, i) => (
+                    <DropCell key={i} className="op-cell center" onDrop={(p) => drop(p, i + 1, row)} onAdd={() => cellAdd(i + 1, row)()}>
+                      {cell.map((m) => (
+                        <MilestoneCard key={m.id} m={m} b={b} s={s} />
+                      ))}
+                      {r.workByIteration[i]!.map((w) => (
+                        <WorkCard key={w.id} w={w} b={b} s={s} showTeam />
+                      ))}
+                    </DropCell>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </PlanStrings>
+      </div>
+      <Editors s={s} b={b} onChange={onChange} />
+      <p className="faint" style={{ fontSize: "0.82rem", margin: 0 }}>
+        Drag a milestone to another iteration or PI outcome row, or into the ART Milestones row to fix its date. Click any card to edit it, string it to another card, or remove it. Hover a cell and press + to add a milestone there. Team work marked “Show on the PI Outcome Planning Board” appears here under its PI outcome.
+      </p>
     </div>
   );
 }
 
-function RowCells({ r, s, onRemove }: { r: ReturnType<typeof planningBoard>["rows"][number]; s: PlanningSession; onRemove: (id: string) => void }) {
-  const o = r.outcome;
+function InlineText({ value, onChange, bold }: { value: string; onChange: (v: string) => void; bold?: boolean }) {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(value);
+  useEffect(() => setV(value), [value]);
+  if (!editing)
+    return (
+      <div className="op-inline" role="button" tabIndex={0} title="Click to edit" style={{ cursor: "text", fontWeight: bold ? 700 : undefined }} onClick={() => setEditing(true)} onKeyDown={(e) => e.key === "Enter" && setEditing(true)}>
+        {value || <span className="faint">(untitled)</span>}
+      </div>
+    );
   return (
-    <>
-      <div className="op-cell op-outcome">
-        <b style={{ fontSize: "1.05rem" }}>{o?.title ?? "Other"}</b>
-        {o ? (
+    <input
+      className="input"
+      autoFocus
+      value={v}
+      onChange={(e) => setV(e.target.value)}
+      onBlur={() => {
+        setEditing(false);
+        if (v.trim() && v !== value) onChange(v.trim());
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+        if (e.key === "Escape") {
+          setV(value);
+          setEditing(false);
+        }
+      }}
+      style={{ fontWeight: bold ? 700 : undefined }}
+    />
+  );
+}
+
+function OutcomeHead({ r, s, onChange }: { r: ReturnType<typeof planningBoard>["rows"][number]; s: PlanningSession; onChange: (s: PlanningSession) => void }) {
+  const o = r.outcome;
+  const setKr = (krId: string, patch: Partial<OutcomeKeyResult>) => onChange({ ...s, outcomes: s.outcomes.map((x) => (x.id === o!.id ? { ...x, keyResults: x.keyResults.map((k) => (k.id === krId ? { ...k, ...patch } : k)) } : x)) });
+  return (
+    <div className="op-cell op-outcome">
+      {o ? (
+        <>
+          <InlineText bold value={o.title} onChange={(title) => onChange({ ...s, outcomes: s.outcomes.map((x) => (x.id === o.id ? { ...x, title } : x)) })} />
           <ul>
             {o.keyResults.map((kr) => {
               const c = krChange(kr);
               return (
-                <li key={kr.id}>
-                  {kr.text} <b style={{ color: s.stage !== "draft" && c === "cut" ? "#b9342f" : s.stage !== "draft" && c === "raised" ? "#5a9e1c" : "inherit" }}>{kr.target}</b>
+                <li key={kr.id} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 4, alignItems: "baseline" }}>
+                  <InlineText value={kr.text} onChange={(text) => setKr(kr.id, { text })} />
+                  <span style={{ fontWeight: 700, color: s.stage !== "draft" && c === "cut" ? "#b9342f" : s.stage !== "draft" && c === "raised" ? "#5a9e1c" : "inherit", minWidth: 40 }}>
+                    <InlineText value={kr.target} onChange={(target) => setKr(kr.id, { target })} />
+                  </span>
                 </li>
               );
             })}
           </ul>
-        ) : (
+        </>
+      ) : (
+        <>
+          <b style={{ fontSize: "1.05rem" }}>Other</b>
           <span className="faint" style={{ fontSize: "0.8rem" }}>Team commitments not linked to a PI outcome.</span>
-        )}
-      </div>
-      <div className="op-cell">
-        {r.teamOutcomes.map((t) => (
-          <div key={t.id} style={{ marginBottom: 8, fontSize: "0.86rem" }}>
-            <b>{s.teams.find((x) => x.id === t.teamId)?.name ?? "Team"}</b>
-            <div>{t.title}</div>
-          </div>
-        ))}
-      </div>
-      {r.byIteration.map((cell, i) => (
-        <div key={i} className="op-cell center">
-          {cell.map((m) => (
-            <MilestoneCard key={m.id} m={m} onRemove={() => onRemove(m.id)} />
-          ))}
-        </div>
-      ))}
-    </>
+        </>
+      )}
+    </div>
   );
 }
 
 // ---- team boards ----------------------------------------------------------------------
 
 function Teams({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSession) => void }) {
+  const b = useBoardState(s, onChange);
   const [team, setTeam] = useState(s.teams[0]?.id ?? "");
   const tb = useMemo(() => (team ? teamBoard(s, team) : null), [s, team]);
   const cols = s.iterations + 1;
-  const [draft, setDraft] = useState<{ kind: WorkKind; iteration: number; outcomeId: string; label: string }>({ kind: "feature", iteration: 1, outcomeId: "", label: "" });
   const mine = s.outcomes.filter((o) => o.level === "team" && o.teamId === team);
-  const add = () => {
-    if (!draft.label.trim() || !team) return;
-    const w: WorkSticky = { id: uid("w"), teamId: team, kind: draft.kind, label: draft.label.trim(), iteration: draft.iteration, ...(draft.outcomeId ? { outcomeId: draft.outcomeId } : {}) };
-    onChange({ ...s, work: [...s.work, w] });
-    setDraft({ ...draft, label: "" });
+  const drop = (p: { kind: string; id: string }, iteration: number, row: { outcomeId?: string; fixed?: boolean }) => {
+    if (p.kind === "work") {
+      onChange({
+        ...s,
+        work: s.work.map((w) => {
+          if (w.id !== p.id) return w;
+          const { outcomeId: _o, ...rest } = w;
+          return row.outcomeId ? { ...rest, teamId: team, iteration, outcomeId: row.outcomeId } : { ...rest, teamId: team, iteration };
+        }),
+      });
+    } else if (p.kind === "ms") {
+      // A milestone keeps its PI outcome row; the team board only moves it in time.
+      onChange({ ...s, milestones: s.milestones.map((m) => (m.id === p.id ? { ...m, iteration } : m)) });
+    }
   };
-  const move = (w: WorkSticky, by: number) => onChange({ ...s, work: s.work.map((x) => (x.id === w.id ? { ...x, iteration: Math.min(cols, Math.max(1, x.iteration + by)) } : x)) });
+  const addWork = (iteration: number, outcomeId?: string) => {
+    if (!team) return;
+    const w: WorkSticky = { id: uid("w"), teamId: team, kind: "feature", label: "New work", iteration, ...(outcomeId ? { outcomeId } : {}) };
+    onChange({ ...s, work: [...s.work, w] });
+    b.setOpen({ kind: "work", id: w.id, anchor: new DOMRect(window.innerWidth / 2 - 170, 160, 0, 0) });
+  };
   if (!tb) return <div className="notice">Add a team on the Outcomes view first.</div>;
   const peak = Math.max(...tb.load);
   const grid = `minmax(240px, 1.4fr) repeat(${cols}, minmax(130px, 1fr))`;
+  const promoted = s.work.filter((w) => w.teamId === team && w.onArtBoard).length;
   return (
     <div className="stack" style={{ gap: 12 }}>
       <div className="row" style={{ justifyContent: "space-between" }}>
@@ -626,6 +965,9 @@ function Teams({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
             ))}
           </select>
           <b style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>Outcome Planning Board</b>
+          <span className="faint" style={{ fontSize: "0.8rem" }}>
+            {promoted} of {s.work.filter((w) => w.teamId === team).length} cards shown on the ART board
+          </span>
         </div>
         <div className="row" style={{ gap: 14, fontSize: "0.8rem" }}>
           {(Object.keys(WORK_KINDS) as WorkKind[]).map((k) => (
@@ -635,115 +977,75 @@ function Teams({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
           ))}
         </div>
       </div>
+      <LinkBanner b={b} />
       <div className="scroll-x">
-        <div className="op-board" style={{ gridTemplateColumns: grid }}>
-          <div className="op-h">Team Outcomes</div>
-          {Array.from({ length: cols }, (_, i) => (
-            <div key={i} className="op-h center" style={peak > 3 && tb.load[i] === peak ? { background: "#b9342f" } : undefined} title={peak > 3 && tb.load[i] === peak ? "Busiest iteration: check capacity" : undefined}>
-              {i < s.iterations ? (
-                <>
-                  Iteration
-                  <br />
-                  {i + 1}
-                </>
-              ) : (
-                <>
-                  Next
-                  <br />
-                  PI
-                </>
-              )}
+        <PlanStrings links={b.links} depsKey={JSON.stringify([s.milestones, s.work, team])} onRemove={b.removeLink}>
+          <div className="op-board" style={{ gridTemplateColumns: grid }}>
+            <div className="op-h">Team Outcomes</div>
+            <ColumnHeads s={s} extra={(i) => (peak > 3 && tb.load[i] === peak ? { style: { background: "#b9342f" }, title: "Busiest iteration: check capacity" } : {})} />
+            <div className="op-cell op-ms-row">
+              <b>ART Milestones</b>
             </div>
-          ))}
-          <div className="op-cell op-ms-row">
-            <b>ART Milestones</b>
-          </div>
-          {tb.fixed.map((cell, i) => (
-            <div key={i} className="op-cell op-ms-row center">
-              {cell.map((m) => (
-                <MilestoneCard key={m.id} m={m} />
-              ))}
-            </div>
-          ))}
-          {tb.rows.map((r) => (
-            <div key={r.outcome?.id ?? "other"} style={{ display: "contents" }}>
-              <div className="op-cell op-outcome">
-                <b>{r.outcome?.title ?? "Other"}</b>
-                {r.outcome ? (
-                  <ul>
-                    {r.outcome.keyResults.map((kr) => (
-                      <li key={kr.id}>
-                        {kr.text} <b>{kr.target}</b>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </div>
-              {r.byIteration.map((cell, i) => (
-                <div key={i} className="op-cell center">
-                  {cell.milestones.map((m) => (
-                    <MilestoneCard key={m.id} m={m} />
-                  ))}
-                  {cell.work.map((w) => (
-                    <div key={w.id} className="op-sticky" style={{ background: WORK_KINDS[w.kind].color, color: WORK_KINDS[w.kind].ink }} title={WORK_KINDS[w.kind].label}>
-                      <span>{w.label}</span>
-                      <span className="op-sticky-tools">
-                        <button aria-label="Earlier" onClick={() => move(w, -1)}>
-                          ‹
-                        </button>
-                        <button aria-label="Later" onClick={() => move(w, 1)}>
-                          ›
-                        </button>
-                        <button aria-label={`Remove ${w.label}`} onClick={() => onChange({ ...s, work: s.work.filter((x) => x.id !== w.id) })}>
-                          ×
-                        </button>
-                      </span>
-                    </div>
-                  ))}
+            {tb.fixed.map((cell, i) => (
+              <DropCell key={i} className="op-cell op-ms-row center" onDrop={(p) => drop(p, i + 1, { fixed: true })}>
+                {cell.map((m) => (
+                  <MilestoneCard key={m.id} m={m} b={b} s={s} />
+                ))}
+              </DropCell>
+            ))}
+            {tb.rows.map((r) => (
+              <div key={r.outcome?.id ?? "other"} style={{ display: "contents" }}>
+                <div className="op-cell op-outcome">
+                  {r.outcome ? (
+                    <>
+                      <InlineText bold value={r.outcome.title} onChange={(title) => onChange({ ...s, outcomes: s.outcomes.map((x) => (x.id === r.outcome!.id ? { ...x, title } : x)) })} />
+                      <ul>
+                        {r.outcome.keyResults.map((kr) => (
+                          <li key={kr.id}>
+                            {kr.text} <b>{kr.target}</b>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <b>Other</b>
+                  )}
                 </div>
-              ))}
-            </div>
-          ))}
-        </div>
+                {r.byIteration.map((cell, i) => (
+                  <DropCell key={i} className="op-cell center" onDrop={(p) => drop(p, i + 1, r.outcome ? { outcomeId: r.outcome.id } : {})} onAdd={() => addWork(i + 1, r.outcome?.id)}>
+                    {cell.milestones.map((m) => (
+                      <MilestoneCard key={m.id} m={m} b={b} s={s} />
+                    ))}
+                    {cell.work.map((w) => (
+                      <WorkCard key={w.id} w={w} b={b} s={s} />
+                    ))}
+                  </DropCell>
+                ))}
+              </div>
+            ))}
+          </div>
+        </PlanStrings>
       </div>
-      <form
-        className="row"
-        style={{ gap: 8 }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          add();
-        }}
-      >
-        <span className="eyebrow">Add work</span>
-        <select className="select" aria-label="Kind" value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as WorkKind })}>
-          {(Object.keys(WORK_KINDS) as WorkKind[]).map((k) => (
-            <option key={k} value={k}>
-              {WORK_KINDS[k].label}
-            </option>
-          ))}
-        </select>
-        <select className="select" aria-label="Iteration" value={draft.iteration} onChange={(e) => setDraft({ ...draft, iteration: Number(e.target.value) })}>
-          {Array.from({ length: cols }, (_, i) => (
-            <option key={i} value={i + 1}>
-              {i < s.iterations ? `Iteration ${i + 1}` : "Next PI"}
-            </option>
-          ))}
-        </select>
-        <select className="select" aria-label="Team outcome" value={draft.outcomeId} onChange={(e) => setDraft({ ...draft, outcomeId: e.target.value })}>
-          <option value="">Other</option>
-          {mine.map((o) => (
-            <option key={o.id} value={o.id}>
-              {o.title}
-            </option>
-          ))}
-        </select>
-        <input className="input" aria-label="Work item" placeholder="e.g. Swap-acceptance framing A/B test" value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} style={{ flex: "1 1 240px" }} />
-        <button className="btn small" type="submit" disabled={!draft.label.trim()}>
-          Add
-        </button>
-      </form>
+      <Editors s={s} b={b} onChange={onChange} />
+      <div className="row" style={{ gap: 8 }}>
+        <span className="eyebrow">Quick add</span>
+        {(Object.keys(WORK_KINDS) as WorkKind[]).map((k) => (
+          <button
+            key={k}
+            className="btn small"
+            style={{ background: WORK_KINDS[k].color, color: WORK_KINDS[k].ink, border: 0 }}
+            onClick={() => {
+              const w: WorkSticky = { id: uid("w"), teamId: team, kind: k, label: `New ${WORK_KINDS[k].label.toLowerCase()}`, iteration: 1, ...(mine[0] ? { outcomeId: mine[0].id } : {}) };
+              onChange({ ...s, work: [...s.work, w] });
+              b.setOpen({ kind: "work", id: w.id, anchor: new DOMRect(window.innerWidth / 2 - 170, 160, 0, 0) });
+            }}
+          >
+            + {WORK_KINDS[k].label}
+          </button>
+        ))}
+      </div>
       <p className="faint" style={{ fontSize: "0.82rem", margin: 0 }}>
-        Outcome-driven teams do not plan every output. Put down the critical experiments, prototypes, enablers and features that will advance the outcomes and test the thinking; a red column header is the busiest iteration, where a capacity clash tends to hide.
+        Drag a card between iterations and outcome rows; click it to edit, string it to another card, or tick “Show on the PI Outcome Planning Board” so it also appears on the ART-level board. Hover a cell and press + to add work there. A red column header is the busiest iteration, where a capacity clash tends to hide.
       </p>
     </div>
   );

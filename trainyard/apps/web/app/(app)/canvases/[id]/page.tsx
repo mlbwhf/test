@@ -52,7 +52,7 @@ export default function CanvasPage({ params }: { params: Promise<{ id: string }>
   const save = async () => {
     setErr(null);
     try {
-      const r = await api<{ canvas: Doc }>("PUT", `/v1/canvases/${encodeURIComponent(doc.id)}`, { type: doc.type, title: doc.title, ...(doc.state ? { state: doc.state } : {}), ...(doc.links ? { links: doc.links } : {}), fields: doc.fields });
+      const r = await api<{ canvas: Doc }>("PUT", `/v1/canvases/${encodeURIComponent(doc.id)}`, { type: doc.type, title: doc.title, ...(doc.state ? { state: doc.state } : {}), ...(doc.asOf ? { asOf: doc.asOf } : {}), ...(doc.links ? { links: doc.links } : {}), fields: doc.fields });
       setDoc(r.canvas);
       setDirty(false);
       setNote("Saved.");
@@ -77,9 +77,37 @@ export default function CanvasPage({ params }: { params: Promise<{ id: string }>
       </div>
       <header className="page-head" style={{ background: TONE.dark!.bg, color: "#fff" }}>
         <div className="stack" style={{ gap: 6, flex: "1 1 420px" }}>
-          <span className="eyebrow" style={{ color: "rgba(255,255,255,0.75)" }}>
+          <span className="eyebrow row" style={{ color: "rgba(255,255,255,0.75)", gap: 8, alignItems: "center" }}>
             {def.name}
-            {doc.state ? ` · ${doc.state} state` : ""}
+            {doc.type === "portfolio-canvas" ? (
+              <select
+                aria-label="Canvas state"
+                className="input"
+                value={doc.state ?? "current"}
+                onChange={(e) => {
+                  setDoc({ ...doc, state: e.target.value as "current" | "future" });
+                  setDirty(true);
+                }}
+                style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", padding: "2px 6px", fontSize: "0.8rem", width: "auto" }}
+              >
+                <option value="current" style={{ color: "#17212b" }}>current state</option>
+                <option value="future" style={{ color: "#17212b" }}>future state</option>
+              </select>
+            ) : null}
+            <label className="row" style={{ gap: 4, alignItems: "center", textTransform: "none", letterSpacing: 0 }}>
+              <span>{doc.state === "future" ? "target date" : "as of"}</span>
+              <input
+                type="date"
+                aria-label="Canvas date"
+                className="input"
+                value={doc.asOf ?? ""}
+                onChange={(e) => {
+                  setDoc({ ...doc, asOf: e.target.value });
+                  setDirty(true);
+                }}
+                style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", padding: "2px 6px", fontSize: "0.8rem", width: "auto", colorScheme: "dark" }}
+              />
+            </label>
           </span>
           <input
             className="input"

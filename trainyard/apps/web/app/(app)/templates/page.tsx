@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { Board, BoardOrigin, TemplateInfo } from "@trainyard/core";
+import { TEMPLATE_METHODS, type Board, type BoardOrigin, type TemplateInfo, type TemplateMethod } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
@@ -35,6 +35,7 @@ export default function TemplatesPage() {
   const data = useApi<{ builtin: Summary[]; saved: Summary[] }>("/v1/templates/boards");
   const me = useMe();
   const [filter, setFilter] = useState<string>("all");
+  const [method, setMethod] = useState<TemplateMethod | "all">("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -43,7 +44,8 @@ export default function TemplatesPage() {
   if (!data.data) return <Loading error={data.error} />;
 
   const all: Summary[] = [...data.data.builtin, ...data.data.saved.map((s) => ({ ...s, info: undefined }))];
-  const shown = all.filter((t) => filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never)));
+  const shown = all.filter((t) => (filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never))) && (method === "all" || t.info?.method === method));
+  const methodBlurb = TEMPLATE_METHODS.find((m) => m.id === method)?.blurb;
   const sel = all.find((t) => t.id === selId);
   const isClass = (t: Summary | undefined) => !!t?.info?.tags.includes("class" as never);
   const gated = isClass(sel) && !!me.data?.principal.anonymous;
@@ -74,6 +76,26 @@ export default function TemplatesPage() {
           </div>
         }
       />
+      <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+        <span className="eyebrow">Method</span>
+        <div className="tabs" role="group" aria-label="Filter by method">
+          <button aria-selected={method === "all"} onClick={() => setMethod("all")}>
+            All methods
+          </button>
+          {TEMPLATE_METHODS.map((m) => (
+            <button key={m.id} aria-selected={method === m.id} onClick={() => setMethod(m.id)} title={m.blurb}>
+              {m.label}
+            </button>
+          ))}
+        </div>
+        {methodBlurb ? (
+          <span className="faint" style={{ fontSize: "0.82rem" }}>
+            {methodBlurb}
+          </span>
+        ) : (
+          <span className="faint" style={{ fontSize: "0.82rem" }}>Each method keeps its own vocabulary: SAFe boards say what SAFe says, Scrum boards what the Scrum Guide says, and so on.</span>
+        )}
+      </div>
       {err ? <ErrorList title="Could not create the board" items={[{ message: err }]} /> : null}
 
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(300px, 380px)", gap: 16, alignItems: "start" }}>
@@ -84,6 +106,7 @@ export default function TemplatesPage() {
               <strong style={{ lineHeight: 1.3 }}>{t.name}</strong>
               <span className="faint" style={{ fontSize: "0.8rem", lineHeight: 1.45 }}>{t.info?.blurb ?? `Saved from ${t.origin.system} on ${t.origin.importedAt.slice(0, 10)}`}</span>
               <span className="mono faint" style={{ fontSize: "0.7rem", marginTop: "auto" }}>
+                {t.info ? `${TEMPLATE_METHODS.find((m) => m.id === t.info!.method)?.label ?? ""} · ` : ""}
                 {t.shape} · {t.info?.event ?? "your template"}
               </span>
             </button>

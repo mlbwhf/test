@@ -12,6 +12,7 @@ interface Summary {
   type: string;
   title: string;
   state?: "current" | "future";
+  asOf?: string;
   updatedAt: string;
 }
 
@@ -110,6 +111,7 @@ export default function CanvasesPage() {
                       <Link key={c.id} href={`/canvases/${encodeURIComponent(c.id)}`} style={{ fontWeight: 600 }}>
                         {c.title}
                         {c.state ? <span className="chip" style={{ marginLeft: 6 }}>{c.state} state</span> : null}
+                        {c.asOf ? <span className="faint" style={{ marginLeft: 6, fontSize: "0.8rem" }}>{c.asOf}</span> : null}
                       </Link>
                     ))}
                   </div>

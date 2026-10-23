@@ -120,4 +120,21 @@ describe("envision the future state", () => {
     expect(drafts.find((d) => d.change.startsWith("Use the loyal app base"))).toMatchObject({ kind: "business", title: "Use the loyal app base to launch grocery delivery in the three metro areas" });
     expect(drafts[0]!.hypothesis).toMatch(/^If we /);
   });
+
+  it("promotes team work onto the PI Outcome Planning Board and keeps strings between any two cards", () => {
+    const s = demoPlanningSession();
+    const b = planningBoard(s);
+    const promoted = s.work.filter((w) => w.onArtBoard);
+    expect(promoted.length).toBeGreaterThan(0);
+    const shown = b.rows.flatMap((r) => r.workByIteration.flat());
+    expect(shown.map((w) => w.id).sort()).toEqual(promoted.map((w) => w.id).sort());
+    // Each promoted card sits on the row of its team outcome's PI outcome, in its own iteration.
+    for (const w of promoted) {
+      const pi = s.outcomes.find((o) => o.id === w.outcomeId)?.parentId;
+      const row = b.rows.find((r) => (r.outcome?.id ?? null) === (pi ?? null))!;
+      expect(row.workByIteration[w.iteration - 1]!.some((x) => x.id === w.id)).toBe(true);
+    }
+    const linked: typeof s = { ...s, links: [{ id: "l-1", fromId: "w-4", toId: "w-8", kind: "depends" }] };
+    expect(linked.links![0]!.kind).toBe("depends");
+  });
 });
