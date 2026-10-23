@@ -8,12 +8,12 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { require } from "./auth.js";
 import { ApiError } from "./errors.js";
-import { hashKey, newKey, type User } from "./auth.js";
+import { PASSWORD_MIN, hashKey, hashPassword, newKey, type User } from "./auth.js";
 import type { Tenants } from "./tenants.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
-export const PLANS = ["practice", "trainer", "academy"] as const;
+export const PLANS = ["practice", "trainer", "academy", "insights"] as const;
 export type Plan = (typeof PLANS)[number];
 
 export interface Signup {
@@ -29,6 +29,8 @@ export interface Signup {
   /** Where the form was shown: the website path, the Jira app, the Azure DevOps extension. */
   source?: string;
   createdAt: string;
+  /** Hash of the password chosen at sign-up, copied to the user when the account is created. */
+  passwordHash?: string;
   status: "new" | "invited" | "declined";
   /** Set when an admin creates the user for this sign-up. */
   userId?: string;
@@ -51,6 +53,8 @@ const Body = z.object({
   source: z.string().trim().max(120).optional(),
   /** Honeypot: bots fill every field; people never see this one. */
   website: z.string().max(200).optional(),
+  /** Chosen at sign-up; the person signs in with email and password from then on. */
+  password: z.string().min(PASSWORD_MIN).max(200).optional(),
 });
 
 const BLOCKED_DOMAINS = /@(example\.(com|org|net)|test\.com|mailinator\.com)$/i;
@@ -93,6 +97,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
       ...(body.note ? { note: body.note } : {}),
       ...(body.source ? { source: body.source } : {}),
       createdAt: store.now().toISOString(),
+      ...(body.password ? { passwordHash: hashPassword(body.password) } : {}),
       status: "new",
     };
     list().push(signup);
@@ -102,7 +107,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
       // Free plan: the workspace exists right away, with the key shown once on the website.
       if (store.state.users.some((u) => u.email.toLowerCase() === email)) throw new ApiError(409, "EMAIL_TAKEN", "There is already a sign-in for this email. Sign in, or ask for a new key.");
       const key = newKey();
-      const user: User = { id: `u-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: signup.name, email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString() };
+      const user: User = { id: `u-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: signup.name, email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) };
       store.state.users.push(user);
       const ws = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: "practice", seats: 1, ownerUserId: user.id }, req.principal);
       user.workspaceId = ws.id;

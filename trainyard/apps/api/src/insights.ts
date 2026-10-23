@@ -10,6 +10,8 @@ import { parseCsv } from "@trainyard/importers";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Store } from "./store.js";
+import type { Tenants } from "./tenants.js";
+import { limitsFor, planLimitError, usageOf } from "./plans.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -65,8 +67,9 @@ const EntityBody = z.object({ name: z.string().trim().min(1).max(120), parentId:
 
 const clean = <T extends object>(o: T): T => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as T;
 
-export function registerInsightRoutes(app: App, store: Store) {
+export function registerInsightRoutes(app: App, store: Store, tenants: Tenants) {
   const st = (): InsightsState => (store.state.insights ??= demoInsights(store.now().toISOString()));
+  const s2 = () => store.state;
   const touch = () => (st().updatedAt = store.now().toISOString());
   const view = () => {
     const s = st();
@@ -109,6 +112,12 @@ export function registerInsightRoutes(app: App, store: Store) {
     const src: DataSource = clean({ id, name: b.name, kind: b.kind, system: b.system, periodField: b.periodField, fields, rows, loadedAt: store.now().toISOString(), owner: b.owner }) as DataSource;
     const s = st();
     const existed = s.sources.some((x) => x.id === id);
+    const record = tenants.record(req.principal.workspaceId);
+    if (record && !existed) {
+      const limit = limitsFor(record.plan, record.seats).sources;
+      const current = usageOf(s2(), []).sources;
+      if (limit !== null && current + 1 > limit) throw planLimitError(record, "sources", limit, current);
+    }
     s.sources = existed ? s.sources.map((x) => (x.id === id ? src : x)) : [...s.sources, src];
     touch();
     await store.commit(req.principal, existed ? "insights.source.reload" : "insights.source.add", { id, rows: rows.length, skippedWithoutDate: rows.length - dated });
@@ -219,10 +228,10 @@ export function registerInsightRoutes(app: App, store: Store) {
   });
 
   // Back to the test data, or empty to start on real extracts.
-  app.post("/v1/insights/reset", { schema: { body: z.object({ to: z.enum(["demo", "empty"]) }) } }, async (req) => {
+  app.post("/v1/insights/reset", { schema: { body: z.object({ to: z.enum(["demo", "northstar", "empty"]) }) } }, async (req) => {
     require(req, "plan");
     const now = store.now().toISOString();
-    store.state.insights = req.body.to === "demo" ? demoInsights(now) : { entities: [{ id: "org", name: "Organisation (all entities)" }], sources: [], measures: [], objectives: [], updatedAt: now };
+    store.state.insights = req.body.to === "empty" ? { entities: [{ id: "org", name: "Organisation (all entities)" }], sources: [], measures: [], objectives: [], updatedAt: now } : demoInsights(now, req.body.to === "northstar" ? "northstar" : "education");
     await store.commit(req.principal, "insights.reset", { to: req.body.to });
     return view();
   });

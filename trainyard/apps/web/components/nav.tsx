@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
+import { api, setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
 import { GlobalSearch } from "@/components/global-search";
 
 const LINKS: { href: string; label: string; section?: string }[] = [
@@ -79,7 +79,7 @@ export function Nav() {
           <span className="row" style={{ gap: 6 }}>
             {me.data.open ? "Open mode" : `${me.data.principal.name} · ${me.data.principal.role}`}
             {!me.data.open ? (
-              <button className="btn ghost small" style={{ color: "inherit" }} onClick={() => (setApiKey(null), window.location.assign("/login"))}>
+              <button className="btn ghost small" style={{ color: "inherit" }} onClick={() => void api("POST", "/v1/auth/logout").catch(() => undefined).finally(() => (setApiKey(null), window.location.assign("/login")))}>
                 Sign out
               </button>
             ) : null}

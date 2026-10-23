@@ -1054,13 +1054,16 @@ function SourcesView({ v, run }: { v: View; run: (fn: () => Promise<unknown>) =>
         {headers.length ? <span className="faint" style={{ fontSize: "0.8rem" }}>{form.fileName}: {headers.join(", ")}</span> : null}
       </form>
 
-      <div className="panel panel-body row" style={{ justifyContent: "space-between" }}>
-        <span className="faint" style={{ fontSize: "0.85rem" }}>The figures shown now are illustrative test data. Start empty to load your own extracts, or go back to the test data.</span>
-        <div className="row">
-          <button className="btn" onClick={() => confirm("Replace everything with the test data?") && void run(() => api("POST", "/v1/insights/reset", { to: "demo" }))}>
-            Load test data
+      <div className="panel panel-body row" style={{ justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+        <span className="faint" style={{ fontSize: "0.85rem" }}>Example customers to explore, or start empty and load your own extracts. Every figure in the examples is illustrative.</span>
+        <div className="row" style={{ flexWrap: "wrap" }}>
+          <button className="btn" onClick={() => confirm("Replace everything with the education and grants example?") && void run(() => api("POST", "/v1/insights/reset", { to: "demo" }))} title="Free learning modules for clinicians in low- and middle-income countries, and young-investigator grants">
+            Example: Education &amp; grants
           </button>
-          <button className="btn ghost" onClick={() => confirm("Remove every source, measure and objective?") && void run(() => api("POST", "/v1/insights/reset", { to: "empty" }))}>
+          <button className="btn" onClick={() => confirm("Replace everything with the Northstar Bank example?") && void run(() => api("POST", "/v1/insights/reset", { to: "northstar" }))} title="The SAFe training example: digital payments traced from the portfolio to two ARTs">
+            Example: Northstar Bank
+          </button>
+          <button className="btn ghost" onClick={() => confirm("Remove every source, measure, objective and initiative?") && void run(() => api("POST", "/v1/insights/reset", { to: "empty" }))}>
             Start empty
           </button>
         </div>

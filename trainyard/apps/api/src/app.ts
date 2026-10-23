@@ -661,7 +661,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerAdminRoutes(app, tenants);
   registerRefRoutes(app, store);
   registerCapacityRoutes(app, store);
-  registerInsightRoutes(app, store);
+  registerInsightRoutes(app, store, tenants);
 
   // Coach Sync: the RTE's hourly checkpoints during PI planning, answered per team.
   const coachState = (incrementId: string) => {

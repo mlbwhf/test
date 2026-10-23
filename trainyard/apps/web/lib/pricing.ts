@@ -1,7 +1,7 @@
 // Plans, the comparison and the FAQ: one place for the numbers the website shows, so the
 // landing page, llms.txt and the structured data agree. Rationale in docs/pricing.md.
 
-export type PlanId = "practice" | "trainer" | "academy";
+export type PlanId = "practice" | "trainer" | "academy" | "insights";
 
 export interface Plan {
   id: PlanId;
@@ -62,6 +62,21 @@ export const PLANS: Plan[] = [
     fg: "#14123a",
   },
 ];
+
+export const INSIGHTS_PLAN: Plan = {
+  id: "insights",
+  tag: "OUTCOMES",
+  name: "Insights",
+  monthly: 99,
+  yearly: 83,
+  unit: "/ 10 sources / mo",
+  blurb: "The outcome dashboard on its own: OKRs, KPIs and funding from every system that holds the evidence, rolled into one-pagers for executives and the board. No planning rooms needed.",
+  items: ["Free 30-day trial, then month by month", "Money back on the first paid month", "Ten data sources per pack: CRM, finance, learning platform, surveys, vendors, Jira", "Unlimited viewers; up to five editors", "Entities with their own objectives, rolled up to the top", "Initiatives with funders, spend and what it bought", "Printable one-pagers per entity", "CSV today; scheduled connectors on request"],
+  cta: "Start Insights",
+  bg: "#5ff0e0",
+  fg: "#14123a",
+};
+PLANS.push(INSIGHTS_PLAN);
 
 export function priceFor(p: Plan, yearly: boolean): { amount: string; unit: string } {
   if (p.monthly === null) return { amount: "$0", unit: p.unit };

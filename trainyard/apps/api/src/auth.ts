@@ -3,7 +3,7 @@
 // every request acts as an admin: that is the demo and local-development mode, and the
 // response header `x-trainyard-auth: open` says so.
 
-import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
@@ -22,6 +22,10 @@ export interface User {
   email: string;
   role: Role;
   keyHash: string;
+  /** scrypt hash of the password, "salt:hash", when the person signs in with email and password. */
+  passwordHash?: string;
+  /** Browser sessions from password sign-ins: the token's hash and when it lapses. */
+  sessions?: { hash: string; expiresAt: string }[];
   createdAt: string;
   disabled?: boolean;
   /** Person in the workspace this login belongs to, for sign-offs and ownership. */
@@ -64,6 +68,29 @@ export function hashKey(key: string): string {
 
 export function newKey(): string {
   return `ty_${randomBytes(24).toString("hex")}`;
+}
+
+export const PASSWORD_MIN = 10;
+/** Thirty days of browser session per sign-in. */
+export const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
+const MAX_SESSIONS = 10;
+
+export function hashPassword(password: string, salt = randomBytes(16).toString("hex")): string {
+  return `${salt}:${scryptSync(password.normalize("NFKC"), salt, 32, { N: 16384, r: 8, p: 1 }).toString("hex")}`;
+}
+
+export function verifyPassword(password: string, stored: string | undefined): boolean {
+  if (!stored) return false;
+  const [salt, hash] = stored.split(":");
+  if (!salt || !hash) return false;
+  const a = Buffer.from(hash, "hex");
+  const b = Buffer.from(hashPassword(password, salt).split(":")[1]!, "hex");
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/** A session token looks like a key but comes from a password sign-in and lapses. */
+export function newSessionToken(): string {
+  return `ts_${randomBytes(24).toString("hex")}`;
 }
 
 function sameHash(a: string, b: string): boolean {
@@ -111,6 +138,7 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
   const isPublic = (method: string, url: string) => {
     const path = url.split("?")[0] ?? url;
     if (method === "POST" && path === "/v1/signups") return true;
+    if (method === "POST" && path === "/v1/auth/login") return true;
     if (method === "POST" && path.startsWith("/v1/webhooks/")) return true;
     if (method === "GET" && path === "/v1/billing/config") return true;
     if (method === "POST" && (path === "/v1/billing/checkout" || path === "/v1/billing/subscribe" || path === "/v1/billing/claim")) return true;
@@ -132,15 +160,33 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
     if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const h = hashKey(key);
     if (bootstrapHash && sameHash(h, bootstrapHash)) return { userId: "bootstrap", name: "Bootstrap admin", role: "admin", anonymous: false, workspaceId: tenants.platformId, platformAdmin: true };
-    const user = platform.state.users.find((u) => sameHash(u.keyHash, h));
+    const nowIso = new Date().toISOString();
+    const user = key.startsWith("ts_") ? platform.state.users.find((u) => (u.sessions ?? []).some((x) => x.expiresAt > nowIso && sameHash(x.hash, h))) : platform.state.users.find((u) => sameHash(u.keyHash, h));
     if (!user || user.disabled) {
       const n = failed(req.ip);
-      req.log.warn({ ip: req.ip, failures: n }, "invalid api key");
-      throw new ApiError(401, "UNAUTHORIZED", "This API key is not valid.");
+      req.log.warn({ ip: req.ip, failures: n }, key.startsWith("ts_") ? "invalid or expired session" : "invalid api key");
+      throw new ApiError(401, "UNAUTHORIZED", key.startsWith("ts_") ? "This session has ended; sign in again." : "This API key is not valid.");
     }
     const home = user.workspaceId ?? tenants.platformId;
     return { userId: user.id, name: user.name, role: user.role, anonymous: false, workspaceId: home, platformAdmin: home === tenants.platformId && user.role === "admin", ...(user.personId ? { personId: user.personId } : {}) };
   };
+
+  // ---- email and password sign-in ---------------------------------------------------------
+  app.post("/v1/auth/login", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: z.object({ email: z.string().trim().email().max(200), password: z.string().min(1).max(200) }) } }, async (req) => {
+    if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
+    const user = platform.state.users.find((u) => u.email.toLowerCase() === req.body.email.toLowerCase());
+    if (!user || user.disabled || !verifyPassword(req.body.password, user.passwordHash)) {
+      failed(req.ip);
+      throw new ApiError(401, "BAD_LOGIN", user && !user.passwordHash && !user.disabled ? "No password is set for this email yet; sign in with your key once and set one under Users, or ask your admin." : "Email or password is wrong.");
+    }
+    const token = newSessionToken();
+    const expiresAt = new Date(Date.now() + SESSION_MS).toISOString();
+    const live = (user.sessions ?? []).filter((x) => x.expiresAt > new Date().toISOString());
+    user.sessions = [...live.slice(-(MAX_SESSIONS - 1)), { hash: hashKey(token), expiresAt }];
+    await platform.commit(req.principal, "auth.login", { userId: user.id });
+    const { keyHash: _k, passwordHash: _p, sessions: _s, ...pub } = user;
+    return { token, expiresAt, user: { ...pub, hasPassword: true } };
+  });
 
   app.decorateRequest("principal", null as unknown as Principal);
   // Callback style on purpose: the rest of the request runs inside the workspace's async context.
@@ -181,7 +227,46 @@ const Id = z.string().min(1).max(200);
 
 export function registerUserRoutes(app: App, tenants: Tenants) {
   const platform = tenants.platform;
-  const publicUser = ({ keyHash: _k, ...u }: User) => u;
+  const publicUser = ({ keyHash: _k, passwordHash, sessions: _s, ...u }: User) => ({ ...u, hasPassword: !!passwordHash });
+  const Password = z.string().min(PASSWORD_MIN, `at least ${PASSWORD_MIN} characters`).max(200);
+
+  app.post("/v1/auth/logout", async (req) => {
+    const header = req.headers.authorization ?? "";
+    const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    const user = platform.state.users.find((u) => u.id === req.principal.userId);
+    if (user && token.startsWith("ts_")) {
+      const h = hashKey(token);
+      user.sessions = (user.sessions ?? []).filter((x) => !sameHash(x.hash, h));
+      await platform.commit(req.principal, "auth.logout", { userId: user.id });
+    }
+    return { ok: true };
+  });
+
+  // Your own password: the current one is needed when one is set and you came in by password.
+  app.post("/v1/auth/password", { schema: { body: z.object({ current: z.string().max(200).optional(), password: Password }) } }, async (req) => {
+    const user = platform.state.users.find((u) => u.id === req.principal.userId);
+    if (!user) throw new ApiError(409, "NO_USER", "The bootstrap admin key has no user record; create your admin user under Users first, then set its password.");
+    const header = req.headers.authorization ?? "";
+    const bySession = header.startsWith("Bearer ts_");
+    if (user.passwordHash && bySession && !verifyPassword(req.body.current ?? "", user.passwordHash)) throw new ApiError(403, "BAD_CURRENT", "The current password is wrong.");
+    user.passwordHash = hashPassword(req.body.password);
+    // Other browsers signed in with the old password are signed out.
+    const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    user.sessions = token.startsWith("ts_") ? (user.sessions ?? []).filter((x) => sameHash(x.hash, hashKey(token))) : [];
+    await platform.commit(req.principal, "auth.password", { userId: user.id });
+    return { user: publicUser(user) };
+  });
+
+  // An admin sets or resets someone's password (and ends their sessions).
+  app.post("/v1/users/:id/password", { schema: { params: z.object({ id: Id }), body: z.object({ password: Password }) } }, async (req) => {
+    require(req, "users");
+    const u = members(req).find((x) => x.id === req.params.id);
+    if (!u) throw notFound("User");
+    u.passwordHash = hashPassword(req.body.password);
+    u.sessions = [];
+    await platform.commit(req.principal, "user.password", { userId: u.id, by: req.principal.userId });
+    return { user: publicUser(u) };
+  });
   const here = (req: FastifyRequest) => req.principal.workspaceId;
   const members = (req: FastifyRequest) => tenants.members(here(req));
   const tag = (req: FastifyRequest) => (here(req) === tenants.platformId ? {} : { workspaceId: here(req) });

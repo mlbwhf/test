@@ -96,6 +96,8 @@ async function main() {
         ...(process.env.STRIPE_PRICE_TRAINER_YEARLY ? { "trainer-yearly": process.env.STRIPE_PRICE_TRAINER_YEARLY } : {}),
         ...(process.env.STRIPE_PRICE_ACADEMY_MONTHLY ? { "academy-monthly": process.env.STRIPE_PRICE_ACADEMY_MONTHLY } : {}),
         ...(process.env.STRIPE_PRICE_ACADEMY_YEARLY ? { "academy-yearly": process.env.STRIPE_PRICE_ACADEMY_YEARLY } : {}),
+        ...(process.env.STRIPE_PRICE_INSIGHTS_MONTHLY ? { "insights-monthly": process.env.STRIPE_PRICE_INSIGHTS_MONTHLY } : {}),
+        ...(process.env.STRIPE_PRICE_INSIGHTS_YEARLY ? { "insights-yearly": process.env.STRIPE_PRICE_INSIGHTS_YEARLY } : {}),
       },
       // Stripe sends people back to the website: the first (canonical) origin.
       ...(process.env.TRAINYARD_WEB_URL ? { webUrl: process.env.TRAINYARD_WEB_URL.split(",")[0]!.trim() } : {}),

@@ -17,14 +17,14 @@ export default function OkrsKpisExample() {
       <p className="lede">OKRs set the desired change. KPIs monitor ongoing health. Outcomes prove value. Click through how a bank ties one objective to its value streams, trains and teams, and how it knows it worked.</p>
       <OkrExplorer />
       <section className="ex-cta">
-        <h2>Run this in your own workspace.</h2>
-        <p>Trainyard keeps the OKR tree, the value stream map, the PI objectives and the KPI dashboards in one place, in step with Jira and Azure DevOps.</p>
+        <h2>Run this on your own numbers.</h2>
+        <p>The Insights plan is this dashboard as a product: load extracts from your CRM, finance, learning platform, survey vendors and Jira, define the outcomes and KPIs each entity owns, track what each initiative was funded with and what it bought, and print the one-pager for the executive team or the board. Northstar Bank is one of the built-in example customers; sign up and open Outcome dashboard to walk through it.</p>
         <div className="ex-row">
           <Link href="/#join" className="pill hot">
             Sign up free →
           </Link>
-          <Link href="/templates" className="pill">
-            See the templates
+          <Link href="/pricing" className="pill">
+            Insights pricing
           </Link>
         </div>
         <p className="ex-sub">

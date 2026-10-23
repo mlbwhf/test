@@ -45,7 +45,7 @@ export default function BillingPage() {
   const [busy, setBusy] = useState(false);
   const data = summary.data;
   const ws = data?.workspace ?? null;
-  const unit = ws?.plan === "academy" ? "train" : "trainer";
+  const unit = ws?.plan === "academy" ? "train" : ws?.plan === "insights" ? "source pack" : "trainer";
   const email = useMemo(() => "", []);
 
   const start = async () => {
@@ -209,7 +209,7 @@ export default function BillingPage() {
             <h2>Thank you.</h2>
             <p>
               {ws.name} is now on <b>{paid.workspace?.plan ?? paid.plan}</b>
-              {paid.workspace ? ` with ${paid.workspace.seats} ${paid.workspace.plan === "academy" ? "train" : "trainer"}${paid.workspace.seats > 1 ? "s" : ""}` : ""}. Your sign-in does not change.
+              {paid.workspace ? ` with ${paid.workspace.seats} ${paid.workspace.plan === "academy" ? "train" : paid.workspace.plan === "insights" ? "source pack" : "trainer"}${paid.workspace.seats > 1 ? "s" : ""}` : ""}. Your sign-in does not change.
             </p>
             <button
               className="btn"
@@ -232,7 +232,7 @@ export default function BillingPage() {
               publishableKey={data.publishableKey}
               sub={pay.sub}
               email={email}
-              summary={`${PLANS.find((p) => p.id === pay.plan)!.name} · ${pay.quantity} ${pay.plan === "academy" ? "train" : "trainer"}${pay.quantity > 1 ? "s" : ""} · month by month`}
+              summary={`${PLANS.find((p) => p.id === pay.plan)!.name} · ${pay.quantity} ${pay.plan === "academy" ? "train" : pay.plan === "insights" ? "source pack" : "trainer"}${pay.quantity > 1 ? "s" : ""} · month by month`}
               onPaid={(c) => {
                 setPay(null);
                 setPaid(c);
@@ -323,7 +323,7 @@ export default function BillingPage() {
               </div>
               <div className="panel-body stack">
                 <div className="row" role="group" aria-label="Plan">
-                  {(["trainer", "academy"] as PlanId[]).map((p) => (
+                  {(["trainer", "academy", "insights"] as PlanId[]).map((p) => (
                     <button key={p} type="button" className={`btn ${choice.plan === p ? "" : "ghost"}`} onClick={() => setChoice({ ...choice, plan: p })} aria-pressed={choice.plan === p}>
                       {PLANS.find((x) => x.id === p)!.name}
                     </button>
@@ -332,7 +332,7 @@ export default function BillingPage() {
                 <p className="muted">{PLANS.find((x) => x.id === choice.plan)!.blurb}</p>
                 <div className="row">
                   <label className="row" style={{ gap: 8 }}>
-                    {choice.plan === "academy" ? "Trains" : "Trainers"}
+                    {choice.plan === "academy" ? "Trains" : choice.plan === "insights" ? "Packs of 10 sources" : "Trainers"}
                     <input className="input" type="number" min={1} max={500} value={choice.quantity} onChange={(e) => setChoice({ ...choice, quantity: Math.max(1, Number(e.target.value) || 1) })} style={{ width: 80 }} />
                   </label>
                   <button className="btn primary" disabled={busy || !data.plans[`${choice.plan}-monthly`]} onClick={() => void start()}>

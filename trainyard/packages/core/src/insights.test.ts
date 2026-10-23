@@ -70,4 +70,21 @@ describe("outcomes across systems", () => {
     expect(manual.spentFrom).toBe("manual");
     expect(manual.remaining).toBe(320_000);
   });
+
+  it("the Northstar Bank example reproduces the deck's dashboard: adoption 58%, cost $0.78, flow 24 days, completion 1.4 min, success 99.7%, abandonment 14%", () => {
+    const n = demoInsights(undefined, "northstar");
+    const at = (id: string) => measureView(n, id);
+    expect(Math.round(at("n-adoption").current!)).toBe(58);
+    expect(at("n-cost-per-payment").current!.toFixed(2)).toBe("0.78");
+    expect(Math.round(at("n-flow").current!)).toBe(24);
+    expect(at("n-completion-time").current!.toFixed(1)).toBe("1.4");
+    expect(at("n-success").current!.toFixed(1)).toBe("99.7");
+    expect(Math.round(at("n-abandonment-rate").current!)).toBe(14);
+    const page = onePager(n, "org");
+    expect(page.scope.map((e) => e.id)).toEqual(["org", "portfolio", "dvs", "payments-art", "channels-art"]);
+    expect(page.objectives.map((o) => o.entity.id)).toEqual(["portfolio", "dvs", "payments-art", "channels-art"]);
+    expect(page.initiatives).toHaveLength(1);
+    expect(insightIssues(n)).toEqual([]);
+  });
 });
+

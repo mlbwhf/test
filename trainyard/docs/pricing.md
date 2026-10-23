@@ -18,7 +18,7 @@ Two patterns stand out. Jira plugins bill every user on the Jira site, so the pr
 
 ## The model
 
-Three plans, named as in the website design (Practice, Trainer, Academy), priced by the two units a buyer already thinks in:
+Four plans. Three are named as in the website design (Practice, Trainer, Academy) and priced by the two units a buyer already thinks in; the fourth, Insights, is the outcome dashboard sold on its own:
 
 - **Practice, $0.** The open-source edition is the product, not a trial, so the free plan has to be honest about it: self-host with every feature and no limits, or one hosted room of up to 5 people; paid plans start from the sixth person. This is the acquisition channel for coaches and the evaluation path for enterprises.
 - **Trainer, $19 per trainer per month ($16 yearly).** The unit is the person running the room. Participants are free and unlimited, which is the opposite of per-member whiteboard pricing. The figure is the design's placeholder kept on purpose: it sits between Miro Starter and Business for one seat, and a trainer running a 30-person class pays $19 where a per-member tool would charge $240 to $750 a month.
@@ -50,3 +50,19 @@ So Academy lands below every integrated tool at that size, above only a whiteboa
 - Hosted costs per room become known (today everything runs on one VPS).
 - Multiple workspaces per server ship, which makes Practice's hosted room and self-serve sign-up real.
 - A vendor changes its unit (for example, if a Jira plugin moves to per-planner pricing).
+
+
+## Insights: the outcome dashboard on its own
+
+**$99 per pack of ten data sources per month ($83 yearly, so $996 a pack a year). Unlimited viewers, up to five editors, one planning room.**
+
+The unit is the data source, because that is what the buyer counts: a CRM extract, a finance ledger, a learning platform export, a survey vendor's feed, Jira. Viewers are free because a one-pager that the executive team and the board cannot open is worthless, and per-seat pricing punishes exactly the readers the product exists for.
+
+What the market charges (October 2026, directional; vendors quote and change):
+
+- Dedicated OKR tools price per user: roughly $6 to $15 per user per month on annual plans (Tability from about $6, Perdoo about $9 to $11, Weekdone about $9 to $11, Mooncamp $3 to $8). A 60-person organisation pays $400 to $900 a month before anyone reads a dashboard, and none of them pull outcomes from finance or a CRM.
+- KPI dashboard tools price by sources or dashboards with users free or capped: Databox free for 3 sources, about $71 a month for 5 sources, $199 for 10 sources and 3 users; Klipfolio from about $120 a month for 3 dashboards; Geckoboard from about $79 a month with extra dashboards and editors billed separately.
+
+Insights sits beside Databox's $199 for ten sources, with unlimited viewers instead of three users, plus what the dashboard tools do not have: entities with their own objectives rolled up to the top, outcomes separated from KPIs with a rationale, initiatives with funders, spend, burn against time and what the money bought, and a printable one-pager. A nonprofit or an association with ten sources and forty readers pays $99 where a per-user OKR tool would charge $400 or more and a dashboard tool would need the $199 tier plus extra users.
+
+Insights does not include the planning rooms; Practice remains free beside it (two sources), Trainer includes three sources, Academy unlimited. Trial, money-back and monthly start are the same as the other paid plans.

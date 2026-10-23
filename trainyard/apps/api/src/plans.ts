@@ -37,17 +37,22 @@ export interface PlanLimits {
   boards: number | null;
   /** Top-level groups (trains). */
   trains: number | null;
+  /** Data sources on the outcome dashboard. */
+  sources: number | null;
 }
 
 /** seats = paid quantity; null means unlimited. */
 export function limitsFor(plan: Plan, seats: number): PlanLimits {
   switch (plan) {
     case "practice":
-      return { members: 5, staff: null, boards: 1, trains: 1 };
+      return { members: 5, staff: null, boards: 1, trains: 1, sources: 2 };
     case "trainer":
-      return { members: null, staff: Math.max(1, seats), boards: null, trains: null };
+      return { members: null, staff: Math.max(1, seats), boards: null, trains: null, sources: 3 };
     case "academy":
-      return { members: null, staff: null, boards: null, trains: Math.max(1, seats) };
+      return { members: null, staff: null, boards: null, trains: Math.max(1, seats), sources: null };
+    // The outcome dashboard on its own: unlimited viewers, ten sources per pack, one planning room.
+    case "insights":
+      return { members: null, staff: 5, boards: 1, trains: 1, sources: 10 * Math.max(1, seats) };
   }
 }
 
@@ -56,6 +61,7 @@ export interface Usage {
   staff: number;
   boards: number;
   trains: number;
+  sources: number;
 }
 
 export function usageOf(state: StoreState, members: { role: string; disabled?: boolean }[]): Usage {
@@ -66,13 +72,14 @@ export function usageOf(state: StoreState, members: { role: string; disabled?: b
     staff: active.filter((m) => m.role !== "viewer").length,
     boards: (state.workspace.boards ?? []).length,
     trains: state.workspace.groups.filter((g) => !g.parentId || g.level === topLevel).length,
+    sources: state.insights?.sources.length ?? 0,
   };
 }
 
-const WHAT: Record<keyof Usage, string> = { members: "people", staff: "trainers", boards: "boards", trains: "trains" };
+const WHAT: Record<keyof Usage, string> = { members: "people", staff: "trainers", boards: "boards", trains: "trains", sources: "data sources" };
 
 export function planLimitError(record: WorkspaceRecord, kind: keyof Usage, limit: number, current: number): ApiError {
-  const upgrade = record.plan === "practice" ? "Upgrade to Trainer or Academy under Billing." : record.plan === "trainer" ? "Add trainers under Billing." : "Add trains under Billing.";
+  const upgrade = kind === "sources" ? (record.plan === "insights" ? "Add a source pack under Billing." : "Add the Insights plan under Billing: ten sources a pack, unlimited viewers.") : record.plan === "practice" ? "Upgrade to Trainer or Academy under Billing." : record.plan === "trainer" ? "Add trainers under Billing." : record.plan === "insights" ? "Insights is the outcome dashboard; for planning rooms add Trainer or Academy under Billing." : "Add trains under Billing.";
   return new ApiError(402, "PLAN_LIMIT", `The ${record.plan} plan allows ${limit} ${WHAT[kind]} and this workspace has ${current}. ${upgrade}`, { kind, limit, current, plan: record.plan, upgrade: "/billing" });
 }
 

@@ -58,6 +58,9 @@ TM=$(price trainer_monthly "$TRAINER" 1900 month)
 TY=$(price trainer_yearly "$TRAINER" 19200 year)
 AM=$(price academy_monthly "$ACADEMY" 24900 month)
 AY=$(price academy_yearly "$ACADEMY" 238800 year)
+INSIGHTS=$(product "Trainyard Insights" "The outcome dashboard: outcomes, KPIs and funding across CRM, finance, learning, survey and Jira sources, rolled into executive one-pagers. Per pack of ten data sources, unlimited viewers")
+IM=$(price insights_monthly "$INSIGHTS" 9900 month)
+IY=$(price insights_yearly "$INSIGHTS" 99000 year)
 
 URL="$API_HOST/v1/webhooks/stripe"
 EXISTING=$(stripe webhook_endpoints -G -d limit=100 | jq -r --arg u "$URL" '.data[] | select(.url==$u) | .id' | head -n1)
@@ -84,7 +87,9 @@ STRIPE_PRICE_TRAINER_MONTHLY=$TM
 STRIPE_PRICE_TRAINER_YEARLY=$TY
 STRIPE_PRICE_ACADEMY_MONTHLY=$AM
 STRIPE_PRICE_ACADEMY_YEARLY=$AY
-STRIPE_TRIAL_DAYS=14
+STRIPE_PRICE_INSIGHTS_MONTHLY=$IM
+STRIPE_PRICE_INSIGHTS_YEARLY=$IY
+STRIPE_TRIAL_DAYS=30
 ENV
 echo
 echo "Then: cd /opt/trainyard && docker compose up -d --no-deps api"

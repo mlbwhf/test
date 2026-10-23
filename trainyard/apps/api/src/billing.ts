@@ -28,7 +28,7 @@ export interface BillingOptions {
   publishableKey?: string;
   webhookSecret?: string;
   /** Stripe price ids per plan and interval. */
-  prices?: Partial<Record<`${"trainer" | "academy"}-${"monthly" | "yearly"}`, string>>;
+  prices?: Partial<Record<`${"trainer" | "academy" | "insights"}-${"monthly" | "yearly"}`, string>>;
   /** Where Stripe sends people back: the website's origin. */
   webUrl?: string;
   fetch?: typeof fetch;
@@ -130,7 +130,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   // starts and announced again at least seven days before the first charge, with the amount,
   // the date and a way to cancel. Both emails are sent once per purchase; a failure (no SMTP,
   // a bounce) leaves them unsent so the next run tries again.
-  const PLAN_NAME: Record<string, string> = { trainer: "Trainer", academy: "Academy", practice: "Practice" };
+  const PLAN_NAME: Record<string, string> = { trainer: "Trainer", academy: "Academy", practice: "Practice", insights: "Insights" };
   const recipient = (p: Purchase) => p.email ?? signups().find((s) => s.id === p.signupId)?.email ?? store.state.users.find((u) => u.id === p.userId)?.email;
   const amount = (p: Purchase) => (p.amountCents === undefined ? null : new Intl.NumberFormat("en-US", { style: "currency", currency: (p.currency ?? "usd").toUpperCase() }).format(p.amountCents / 100));
   const day = (iso: string) => new Date(iso).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
@@ -255,7 +255,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     let user = store.state.users.find((u) => u.email.toLowerCase() === signup.email.toLowerCase());
     const key = newKey();
     if (!user) {
-      user = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString() } satisfies User;
+      user = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) } satisfies User;
       store.state.users.push(user);
     } else {
       user.keyHash = hashKey(key);
@@ -306,7 +306,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   // Every paid plan starts the same way: a free trial, then month by month. Yearly is a switch
   // made later from Billing, once the first month is behind. The interval here is accepted for
   // compatibility and ignored.
-  const SubscribeBody = z.object({ signupId: z.string().min(1).max(80).optional(), plan: z.enum(["trainer", "academy"]).optional(), interval: z.enum(["monthly", "yearly"]).optional(), quantity: z.number().int().min(1).max(500).default(1) });
+  const SubscribeBody = z.object({ signupId: z.string().min(1).max(80).optional(), plan: z.enum(["trainer", "academy", "insights"]).optional(), interval: z.enum(["monthly", "yearly"]).optional(), quantity: z.number().int().min(1).max(500).default(1) });
   /** One trial per customer: none when this email or workspace has paid before. */
   const trialFor = (who: { email: string; workspaceId?: string }) => {
     const trial = opts.trialDays ?? 0;
@@ -315,7 +315,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     return before ? 0 : trial;
   };
   /** Who is paying: a sign-up from the website, or the signed-in owner of an existing workspace. */
-  const payer = (req: { principal: Principal; body: { signupId?: string | undefined; plan?: "trainer" | "academy" | undefined } }) => {
+  const payer = (req: { principal: Principal; body: { signupId?: string | undefined; plan?: "trainer" | "academy" | "insights" | undefined } }) => {
     if (req.body.signupId) {
       const signup = findSignup(req.body.signupId);
       return { email: signup.email, name: signup.name, plan: signup.plan, signupId: signup.id, company: signup.company };
@@ -324,7 +324,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     requirePermission(req as never, "users");
     const record = tenants.record(req.principal.workspaceId);
     if (!record) throw new ApiError(409, "PLATFORM_WORKSPACE", "The platform workspace has no plan to pay for.");
-    if (!req.body.plan) throw new ApiError(422, "PLAN_REQUIRED", "Say which plan: trainer or academy.");
+    if (!req.body.plan) throw new ApiError(422, "PLAN_REQUIRED", "Say which plan: trainer, academy or insights.");
     const owner = store.state.users.find((u) => u.id === req.principal.userId);
     return { email: owner?.email ?? "", name: owner?.name ?? record.name, plan: req.body.plan as Plan, workspaceId: record.id, company: record.name };
   };

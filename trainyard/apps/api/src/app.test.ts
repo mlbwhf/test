@@ -1484,5 +1484,75 @@ describe("trial emails", () => {
     expect((await call("GET", "/v1/insights", undefined, viewer.body.apiKey)).status).toBe(200);
     expect((await call("POST", "/v1/insights/reset", { to: "empty" }, viewer.body.apiKey)).status).toBe(403);
   });
+
+  it("signs people in with email and password: chosen at sign-up, set by admins, sessions that end at sign-out", async () => {
+    const { call } = await setup();
+    // Open mode: the first admin is created with a key; passwords are set afterwards.
+    const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const rk = root.body.apiKey as string;
+    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "whatever-123" })).body.error.message).toContain("No password is set");
+    expect((await call("POST", "/v1/auth/password", { password: "short" }, rk)).status).toBe(400);
+    expect((await call("POST", "/v1/auth/password", { password: "correct horse battery" }, rk)).body.user.hasPassword).toBe(true);
+    const login = await call("POST", "/v1/auth/login", { email: "ROOT@example.io", password: "correct horse battery" });
+    expect(login.status).toBe(200);
+    expect(login.body.token).toMatch(/^ts_/);
+    expect(login.body.user.hasPassword).toBe(true);
+    expect(login.body.user.passwordHash).toBeUndefined();
+    const tok = login.body.token as string;
+    expect((await call("GET", "/v1/me", undefined, tok)).body.principal.userId).toBe(root.body.user.id);
+    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "wrong password here" })).status).toBe(401);
+    // Changing the password by session needs the current one, and ends other sessions.
+    const second = (await call("POST", "/v1/auth/login", { email: "root@example.io", password: "correct horse battery" })).body.token as string;
+    expect((await call("POST", "/v1/auth/password", { password: "another good password", current: "nope nope nope" }, tok)).status).toBe(403);
+    expect((await call("POST", "/v1/auth/password", { password: "another good password", current: "correct horse battery" }, tok)).status).toBe(200);
+    expect((await call("GET", "/v1/me", undefined, second)).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, tok)).status).toBe(200);
+    // Sign out ends the session; the key still works.
+    expect((await call("POST", "/v1/auth/logout", {}, tok)).body.ok).toBe(true);
+    expect((await call("GET", "/v1/me", undefined, tok)).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, rk)).status).toBe(200);
+    // A sign-up chooses its password and signs in with it straight away.
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "ada's own password" });
+    expect(ada.status).toBe(201);
+    const adaLogin = await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "ada's own password" });
+    expect(adaLogin.status).toBe(200);
+    expect((await call("GET", "/v1/me", undefined, adaLogin.body.token)).body.workspace.plan).toBe("practice");
+    // An admin resets a member's password; the member's sessions end.
+    const bo = await call("POST", "/v1/users", { name: "Bo", email: "bo@example.io", role: "planner" }, ada.body.apiKey);
+    expect((await call("POST", `/v1/users/${bo.body.user.id}/password`, { password: "bo's first password" }, ada.body.apiKey)).body.user.hasPassword).toBe(true);
+    const boTok = (await call("POST", "/v1/auth/login", { email: "bo@example.io", password: "bo's first password" })).body.token;
+    expect((await call("GET", "/v1/me", undefined, boTok)).status).toBe(200);
+    await call("POST", `/v1/users/${bo.body.user.id}/password`, { password: "bo's second password" }, ada.body.apiKey);
+    expect((await call("GET", "/v1/me", undefined, boTok)).status).toBe(401);
+    // Members cannot set other people's passwords.
+    expect((await call("POST", `/v1/users/${root.body.user.id}/password`, { password: "sneaky sneaky sneaky" }, boTok)).status).toBe(401);
+    const boTok2 = (await call("POST", "/v1/auth/login", { email: "bo@example.io", password: "bo's second password" })).body.token;
+    expect((await call("POST", `/v1/users/${root.body.user.id}/password`, { password: "sneaky sneaky sneaky" }, boTok2)).status).toBe(403);
+  });
+
+  it("Insights is a plan of its own: source packs, viewers free, and the Northstar Bank example", async () => {
+    const { call } = await setup();
+    const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    // Practice gets two sources; the third is a plan limit pointing at Insights.
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "ada's own password" });
+    const k = ada.body.apiKey;
+    await call("POST", "/v1/insights/reset", { to: "empty" }, k);
+    const csv = "month,n\n2026-01,1\n";
+    expect((await call("POST", "/v1/insights/sources", { name: "One", kind: "crm", periodField: "month", csv }, k)).status).toBe(201);
+    expect((await call("POST", "/v1/insights/sources", { name: "Two", kind: "finance", periodField: "month", csv }, k)).status).toBe(201);
+    const third = await call("POST", "/v1/insights/sources", { name: "Three", kind: "lms", periodField: "month", csv }, k);
+    expect(third.status).toBe(402);
+    expect(third.body.error.message).toContain("Insights");
+    // Reloading an existing source is not a new one.
+    expect((await call("POST", "/v1/insights/sources", { id: "src-one", name: "One", kind: "crm", periodField: "month", csv }, k)).status).toBe(200);
+    // On Insights with one pack: ten sources.
+    const wsId = ada.body.workspace.id;
+    expect((await call("PATCH", `/v1/admin/workspaces/${wsId}`, { plan: "insights", seats: 1 }, root.body.apiKey)).status).toBe(200);
+    expect((await call("POST", "/v1/insights/sources", { name: "Three", kind: "lms", periodField: "month", csv }, k)).status).toBe(201);
+    // The Northstar example loads as a whole.
+    const n = await call("POST", "/v1/insights/reset", { to: "northstar" }, k);
+    expect(n.body.entities.map((e: { id: string }) => e.id)).toContain("channels-art");
+    expect((await call("GET", "/v1/insights/one-pager/payments-art", undefined, k)).body.onePager.objectives[0].objective.title).toBe("Improve payment reliability");
+  });
 });
 

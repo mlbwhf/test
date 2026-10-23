@@ -513,6 +513,7 @@ type BillingConfig = { enabled: boolean; inPage: boolean; publishableKey?: strin
 function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan: (p: PlanId) => void; audience: Audience; yearly: boolean }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [company, setCompany] = useState("");
   const [seats, setSeats] = useState("");
   const [note, setNote] = useState("");
@@ -539,6 +540,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
       const created = await api<{ signup: { id: string }; apiKey?: string; workspace?: { id: string; name: string; plan: string } }>("POST", "/v1/signups", {
         name: name.trim(),
         email: email.trim(),
+        password,
         plan,
         audience,
         ...(company.trim() ? { company: company.trim() } : {}),
@@ -576,7 +578,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
 
   if (pay && billing?.publishableKey) {
     const qty = seats && Number(seats) > 0 ? Number(seats) : 1;
-    const unit = plan === "academy" ? "train" : "trainer";
+    const unit = plan === "academy" ? "train" : plan === "insights" ? "source pack" : "trainer";
     return (
       <div className="ly-form">
         <div className="ly-step">
@@ -608,11 +610,11 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
               <p>
                 {c.plan === "practice" ? (
                   <>
-                    Your <strong>Practice</strong> workspace is ready: one room, up to 5 people, free. This is your sign-in key; it is shown once, so keep it in a password manager.
+                    Your <strong>Practice</strong> workspace is ready: one room, up to 5 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.
                   </>
                 ) : (
                   <>
-                    Your <strong>{def.name}</strong> subscription is active. This is your sign-in key; it is shown once, so keep it in a password manager. A receipt from Stripe is on its way to {done.email}.
+                    Your <strong>{def.name}</strong> subscription is active. Sign in with your email and password. The key below is for scripts and integrations; it is shown once. A receipt from Stripe is on its way to {done.email}.
                   </>
                 )}
               </p>
@@ -696,6 +698,10 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
           Work email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={200} placeholder="ada@company.com" autoComplete="email" />
         </label>
+        <label>
+          Choose a password
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={10} maxLength={200} placeholder="10 characters or more" autoComplete="new-password" />
+        </label>
         <div style={{ fontWeight: 700, fontSize: 15 }}>Plan</div>
         <div className="plans" role="group" aria-label="Plan">
           {PLANS.map((p) => (
@@ -711,7 +717,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
               <input value={company} onChange={(e) => setCompany(e.target.value)} maxLength={120} required={plan === "academy"} autoComplete="organization" />
             </label>
             <label>
-              {plan === "academy" ? "Trains" : "Trainers"}
+              {plan === "academy" ? "Trains" : plan === "insights" ? "Packs of 10 data sources" : "Trainers"}
               <input type="number" min={1} max={100000} value={seats} onChange={(e) => setSeats(e.target.value)} placeholder={plan === "academy" ? "e.g. 3" : "1"} />
             </label>
           </div>
@@ -730,7 +736,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         <button type="submit" className="submit" disabled={busy}>
           {busy ? "One moment…" : canPay && billing?.inPage ? (billing.trialDays ? `${def.cta}: free for ${billing.trialDays} days →` : `${def.cta}: ${money((def.monthly ?? 0) * 100 * (seats && Number(seats) > 0 ? Number(seats) : 1), "usd")} a month →`) : def.cta + " →"}
         </button>
-        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4 }}>We use your email to send the sign-in and nothing else. No newsletter, no resale.</p>
+        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.4 }}>Your email is your sign-in and the address for receipts. No newsletter, no resale.</p>
       </form>
     </div>
   );

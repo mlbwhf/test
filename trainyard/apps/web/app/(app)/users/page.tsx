@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Person } from "@trainyard/core";
 import { CopyKey } from "@/components/copy-key";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
-import { api, setApiKey, useApi, useMe, type ApiFailure } from "@/lib/api";
+import { api, setApiKey, useApi, useMe, type ApiFailure, type Me } from "@/lib/api";
 
 interface User {
   id: string;
@@ -14,6 +14,7 @@ interface User {
   createdAt: string;
   disabled?: boolean;
   personId?: string;
+  hasPassword?: boolean;
 }
 interface Signup {
   id: string;
@@ -69,7 +70,8 @@ export default function UsersPage() {
 
   return (
     <>
-      <PageHead title="Users" sub={me.data.open ? "The API is running open: anyone who can reach it acts as an admin. Create the first user to turn authentication on." : "Each user signs in with an API key. Keys are shown once and stored hashed."} />
+      <PageHead title="Users" sub={me.data.open ? "The API is running open: anyone who can reach it acts as an admin. Create the first user to turn authentication on." : "People sign in with email and password, or with an API key for scripts and integrations. Passwords and keys are stored hashed; keys are shown once."} />
+      <MyPassword me={me.data} users={users.data.users} onChanged={() => void users.reload()} />
       {me.data.open ? <div className="notice warn">Open mode. Create an admin user for yourself first, copy the key, then sign in with it.</div> : null}
       {err ? <ErrorList title="Could not update the user" items={[{ message: err }]} /> : null}
       {issued ? (
@@ -88,6 +90,7 @@ export default function UsersPage() {
               <th>Role</th>
               <th>Person</th>
               <th>Status</th>
+              <th>Password</th>
               <th>Key</th>
             </tr>
           </thead>
@@ -121,6 +124,9 @@ export default function UsersPage() {
                   <button className="btn small" onClick={() => patch(u, { disabled: !u.disabled })}>
                     {u.disabled ? "Enable" : "Disable"}
                   </button>
+                </td>
+                <td>
+                  <SetPassword user={u} onDone={() => void users.reload()} onError={setErr} />
                 </td>
                 <td>
                   <button
@@ -244,6 +250,111 @@ export default function UsersPage() {
         </table>
       </section>
     </>
+  );
+}
+
+function MyPassword({ me, users, onChanged }: { me: Me; users: User[]; onChanged: () => void }) {
+  const mine = users.find((u) => u.id === me.principal.userId);
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState("");
+  const [pw, setPw] = useState("");
+  const [again, setAgain] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const bySession = typeof window !== "undefined" && (localStorage.getItem("trainyard.apiKey") ?? "").startsWith("ts_");
+  if (me.principal.anonymous) return null;
+  if (!mine)
+    return (
+      <div className="notice">
+        You are signed in with the bootstrap admin key. To sign in with email and password, create your own admin user below, sign in with its key once, and set a password here.
+      </div>
+    );
+  return (
+    <section className="panel panel-body stack" style={{ gap: 8 }}>
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <span>
+          <b>Your sign-in</b> · {mine.email} · {mine.hasPassword ? "password set" : "no password yet: sign in with your key until you set one"}
+        </span>
+        <button className="btn small" onClick={() => setOpen(!open)}>
+          {mine.hasPassword ? "Change password" : "Set a password"}
+        </button>
+      </div>
+      {open ? (
+        <form
+          className="row"
+          style={{ gap: 8, alignItems: "flex-end", flexWrap: "wrap" }}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (pw !== again) return setMsg("The two passwords differ.");
+            try {
+              await api("POST", "/v1/auth/password", { password: pw, ...(mine.hasPassword && bySession ? { current } : {}) });
+              setMsg("Password saved. Use it with your email at the next sign-in.");
+              setPw("");
+              setAgain("");
+              setCurrent("");
+              setOpen(false);
+              onChanged();
+            } catch (x) {
+              setMsg((x as ApiFailure).message);
+            }
+          }}
+        >
+          {mine.hasPassword && bySession ? (
+            <label className="field">
+              Current password
+              <input className="input" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
+            </label>
+          ) : null}
+          <label className="field">
+            New password (10+ characters)
+            <input className="input" type="password" autoComplete="new-password" minLength={10} value={pw} onChange={(e) => setPw(e.target.value)} required />
+          </label>
+          <label className="field">
+            Again
+            <input className="input" type="password" autoComplete="new-password" minLength={10} value={again} onChange={(e) => setAgain(e.target.value)} required />
+          </label>
+          <button className="btn primary" type="submit">
+            Save password
+          </button>
+        </form>
+      ) : null}
+      {msg ? <span className="faint">{msg}</span> : null}
+    </section>
+  );
+}
+
+function SetPassword({ user, onDone, onError }: { user: User; onDone: () => void; onError: (m: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [pw, setPw] = useState("");
+  if (!open)
+    return (
+      <button className="btn small" onClick={() => setOpen(true)} title={user.hasPassword ? "Replace the password and sign the person out everywhere" : "Give this person a password"}>
+        {user.hasPassword ? "Reset" : "Set"}
+      </button>
+    );
+  return (
+    <form
+      className="row"
+      style={{ gap: 4 }}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        try {
+          await api("POST", `/v1/users/${user.id}/password`, { password: pw });
+          setPw("");
+          setOpen(false);
+          onDone();
+        } catch (x) {
+          onError((x as ApiFailure).message);
+        }
+      }}
+    >
+      <input className="input" type="password" minLength={10} placeholder="10+ characters" value={pw} onChange={(e) => setPw(e.target.value)} required style={{ width: 150 }} aria-label={`New password for ${user.name}`} />
+      <button className="btn small primary" type="submit">
+        Save
+      </button>
+      <button className="btn small ghost" type="button" onClick={() => setOpen(false)}>
+        ×
+      </button>
+    </form>
   );
 }
 

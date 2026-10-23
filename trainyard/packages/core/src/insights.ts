@@ -357,7 +357,10 @@ export function insightIssues(state: InsightsState): string[] {
  * middle-income countries, and a foundation's young-investigator grants. Every figure is made
  * up to demonstrate the method; replace the sources with real extracts.
  */
-export function demoInsights(now = "2026-10-21T12:00:00.000Z"): InsightsState {
+export type InsightsPreset = "education" | "northstar";
+
+export function demoInsights(now = "2026-10-21T12:00:00.000Z", preset: InsightsPreset = "education"): InsightsState {
+  if (preset === "northstar") return northstarInsights(now);
   const months: string[] = [];
   for (let i = 0; i < 12; i++) {
     const d = new Date(Date.UTC(2025, 10 + i, 1));
@@ -504,6 +507,103 @@ export function demoInsights(now = "2026-10-21T12:00:00.000Z"): InsightsState {
     objectives: [
       { id: "obj-learn", entityId: "education", title: "Improve cancer care in low- and middle-income countries through free learning", outcomeIds: ["m-gain", "m-practice", "m-lmic-reach"], kpiIds: ["m-active", "m-completion-rate", "m-cost-completion", "m-cycle"] },
       { id: "obj-grants", entityId: "foundation", title: "Grow the next generation of cancer researchers", outcomeIds: ["m-retained", "m-follow-on"], kpiIds: [] },
+    ],
+    updatedAt: now,
+  };
+}
+
+/**
+ * Northstar Bank, the SAFe training example: one objective (faster, easier, more reliable
+ * business payments) traced from the portfolio through the development value stream and two
+ * ARTs. Sources: the payments platform, the CRM, the finance ledger and Jira. Figures are
+ * illustrative and end at the deck's "hypothetical current values".
+ */
+export function northstarInsights(now = "2026-10-21T12:00:00.000Z"): InsightsState {
+  const months: string[] = [];
+  for (let i = 0; i < 12; i++) months.push(new Date(Date.UTC(2025, 10 + i, 1)).toISOString().slice(0, 7));
+  const lerp = (a: number, b: number, i: number) => a + ((b - a) * i) / 11;
+  const payments: Record<string, Cell>[] = [];
+  const crm: Record<string, Cell>[] = [];
+  const finance: Record<string, Cell>[] = [];
+  const jira: Record<string, Cell>[] = [];
+  months.forEach((month, i) => {
+    const started = Math.round(lerp(180_000, 262_000, i));
+    const abandonment = lerp(30, 14, i) / 100;
+    const completed = Math.round(started * (1 - abandonment));
+    payments.push({
+      month,
+      payments_started: started,
+      payments_completed: completed,
+      payments_succeeded: Math.round(completed * (lerp(98.5, 99.7, i) / 100)),
+      completion_minutes_avg: +lerp(5.0, 1.4, i).toFixed(2),
+    });
+    const customers = 48_000 + i * 400;
+    crm.push({ month, business_customers: customers, digital_active_customers: Math.round(customers * (lerp(40, 58, i) / 100)), nps: Math.round(lerp(21, 34, i)) });
+    finance.push({ month, payments_operating_cost: Math.round(completed * lerp(1.1, 0.78, i)), programme_spend: Math.round(260_000 + (i % 3) * 18_000) });
+    jira.push({ month, features_released: 3 + (i % 4 === 3 ? 2 : 0), flow_time_days: +lerp(38, 24, i).toFixed(1), escaped_defects: Math.max(1, Math.round(lerp(9, 3, i))) });
+  });
+  const src = (id: string, name: string, kind: SourceKind, system: string, rows: Record<string, Cell>[], owner: string): DataSource => ({ id, name, kind, system, periodField: "month", fields: Object.keys(rows[0]!), rows, loadedAt: now, owner });
+  const field = (sourceId: string, f: string, aggregate: Aggregate = "sum"): MeasureFormula => ({ kind: "field", sourceId, field: f, aggregate });
+  return {
+    entities: [
+      { id: "org", name: "Northstar Bank" },
+      { id: "portfolio", name: "Business Payments portfolio", parentId: "org" },
+      { id: "dvs", name: "Payments development value stream", parentId: "portfolio" },
+      { id: "payments-art", name: "Payments ART", parentId: "dvs" },
+      { id: "channels-art", name: "Digital Channels ART", parentId: "dvs" },
+    ],
+    sources: [
+      src("payments", "Payments platform", "other", "Payments platform events", payments, "Payments operations"),
+      src("crm", "Business customers", "crm", "CRM", crm, "Commercial banking"),
+      src("finance", "Payments cost ledger", "finance", "Finance / ERP", finance, "Finance"),
+      src("jira", "Delivery", "jira", "Jira", jira, "Payments development value stream"),
+    ],
+    measures: [
+      { id: "n-customers", name: "Business customers", role: "kpi", formula: field("crm", "business_customers", "latest"), unit: "", higherIsBetter: true },
+      { id: "n-digital", name: "Digitally active customers", role: "kpi", formula: field("crm", "digital_active_customers", "latest"), unit: "", higherIsBetter: true },
+      { id: "n-adoption", name: "Digital payment adoption", role: "outcome", formula: { kind: "ratio", a: "n-digital", b: "n-customers", scale: 100 }, unit: "%", decimals: 0, higherIsBetter: true, target: 65, targetLabel: "65% by Q4", rationale: "The portfolio key result: customers paying digitally rather than through the branch or the call centre." },
+      { id: "n-started", name: "Payments started", role: "kpi", formula: field("payments", "payments_started"), unit: "", higherIsBetter: true },
+      { id: "n-completed", name: "Payments completed", role: "kpi", formula: field("payments", "payments_completed"), unit: "", higherIsBetter: true },
+      { id: "n-succeeded", name: "Payments succeeded", role: "kpi", formula: field("payments", "payments_succeeded"), unit: "", higherIsBetter: true },
+      { id: "n-abandonment", name: "Payment abandonment", role: "outcome", formula: { kind: "diff", a: "n-started", b: "n-completed" }, unit: "", higherIsBetter: false, rationale: "Payments started and not completed." },
+      { id: "n-abandonment-rate", name: "Payment abandonment rate", role: "outcome", formula: { kind: "ratio", a: "n-abandonment", b: "n-started", scale: 100 }, unit: "%", decimals: 0, higherIsBetter: false, target: 10, targetLabel: "10% by Q4", rationale: "Digital Channels ART's key result: the friction customers give up on." },
+      { id: "n-success", name: "Payment success rate", role: "outcome", formula: { kind: "ratio", a: "n-succeeded", b: "n-completed", scale: 100 }, unit: "%", decimals: 1, higherIsBetter: true, target: 99.9, targetLabel: "99.9% by Q4", rationale: "Payments ART's key result: reliability once a customer has submitted." },
+      { id: "n-completion-time", name: "Payment completion time", role: "outcome", formula: field("payments", "completion_minutes_avg", "avg"), unit: "min", decimals: 1, higherIsBetter: false, target: 1.0, targetLabel: "1 minute by Q4", rationale: "The operational value stream's lead time, customer to confirmation." },
+      { id: "n-cost", name: "Payments operating cost", role: "kpi", formula: field("finance", "payments_operating_cost"), unit: "$", higherIsBetter: false },
+      { id: "n-cost-per-payment", name: "Cost per payment", role: "outcome", formula: { kind: "ratio", a: "n-cost", b: "n-completed" }, unit: "$", decimals: 2, higherIsBetter: false, target: 0.6, targetLabel: "$0.60 by Q4", rationale: "Finance over the payments platform: the servicing cost the business case promised to cut." },
+      { id: "n-flow", name: "Development flow time", role: "kpi", formula: field("jira", "flow_time_days", "avg"), unit: "days", decimals: 0, higherIsBetter: false, target: 15, targetLabel: "15 days", rationale: "How long a feature takes from start to release in the development value stream." },
+      { id: "n-features", name: "Features released", role: "kpi", formula: field("jira", "features_released"), unit: "", higherIsBetter: true, rationale: "Output, not outcome." },
+      { id: "n-defects", name: "Escaped defects", role: "kpi", formula: field("jira", "escaped_defects"), unit: "", higherIsBetter: false, target: 3, targetLabel: "3 a month" },
+      { id: "n-nps", name: "Business customer NPS", role: "kpi", formula: field("crm", "nps", "latest"), unit: "", higherIsBetter: true, target: 40, targetLabel: "40" },
+      { id: "n-spend", name: "Programme spend", role: "kpi", formula: field("finance", "programme_spend"), unit: "$", higherIsBetter: false },
+    ],
+    objectives: [
+      { id: "n-obj-portfolio", entityId: "portfolio", title: "Grow profitable digital payments", outcomeIds: ["n-adoption", "n-cost-per-payment"], kpiIds: ["n-nps", "n-spend"] },
+      { id: "n-obj-dvs", entityId: "dvs", title: "Enable faster, reliable payments", outcomeIds: ["n-completion-time"], kpiIds: ["n-flow", "n-features"] },
+      { id: "n-obj-payments", entityId: "payments-art", title: "Improve payment reliability", outcomeIds: ["n-success"], kpiIds: ["n-defects"] },
+      { id: "n-obj-channels", entityId: "channels-art", title: "Make payment journeys frictionless", outcomeIds: ["n-abandonment-rate"], kpiIds: ["n-started"] },
+    ],
+    initiatives: [
+      {
+        id: "n-init-payments",
+        entityId: "portfolio",
+        name: "Business payments modernisation",
+        objectiveId: "n-obj-portfolio",
+        kind: "Epic",
+        owner: "Head of Business Payments",
+        status: "active",
+        committed: 3_600_000,
+        currency: "USD",
+        funders: [
+          { name: "Digital portfolio budget", amount: 3_000_000 },
+          { name: "Operations savings reinvested", amount: 600_000 },
+        ],
+        start: "2025-11-01",
+        end: "2026-10-31",
+        spendMeasureId: "n-spend",
+        outcomeIds: ["n-adoption", "n-cost-per-payment", "n-completion-time"],
+        notes: "Lean business case: pays back through lower servicing cost once adoption passes 60%.",
+      },
     ],
     updatedAt: now,
   };

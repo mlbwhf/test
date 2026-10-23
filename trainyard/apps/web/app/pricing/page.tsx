@@ -47,15 +47,16 @@ export default function PricingPage() {
       <Prose>
         <h2>How the plans count</h2>
         <DataTable
-          columns={["", "Practice", "Trainer", "Academy"]}
+          columns={["", "Practice", "Trainer", "Academy", "Insights"]}
           rows={[
-            ["Price", "Free", "$19 per trainer per month ($16 yearly)", "$249 per train per month ($199 yearly)"],
-            ["Who counts", "Up to 5 people in one hosted room", "Trainers and planners; participants are free", "Trains; people are free"],
-            ["Boards of your own", "1", "Unlimited", "Unlimited"],
-            ["Self-hosting", "Unlimited, every feature", "Yes", "Yes, with a support agreement"],
-            ["Free trial", "n/a", "30 days", "30 days"],
-            ["Money back", "n/a", "First paid month, within 30 days", "First paid month, within 30 days"],
-            ["Jira app and Azure DevOps extension", "Self-hosted only", "Sync", "Included"],
+            ["Price", "Free", "$19 per trainer per month ($16 yearly)", "$249 per train per month ($199 yearly)", "$99 per pack of 10 data sources per month ($83 yearly)"],
+            ["Who counts", "Up to 5 people in one hosted room", "Trainers and planners; participants are free", "Trains; people are free", "Data sources; viewers are free, up to 5 editors"],
+            ["Boards of your own", "1", "Unlimited", "Unlimited", "1"],
+            ["Outcome dashboard sources", "2", "3", "Unlimited", "10 per pack"],
+            ["Self-hosting", "Unlimited, every feature", "Yes", "Yes, with a support agreement", "Yes"],
+            ["Free trial", "n/a", "30 days", "30 days", "30 days"],
+            ["Money back", "n/a", "First paid month, within 30 days", "First paid month, within 30 days", "First paid month, within 30 days"],
+            ["Jira app and Azure DevOps extension", "Self-hosted only", "Sync", "Included", "Jira as a data source"],
           ]}
         />
         <h2>Questions people ask</h2>
