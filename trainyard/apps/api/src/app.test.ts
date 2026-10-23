@@ -1442,5 +1442,47 @@ describe("trial emails", () => {
     const ada = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "practice" });
     expect((await call("POST", "/v1/billing/trial-mail/run", {}, ada.body.apiKey)).status).toBe(403);
   });
+
+  it("outcome dashboard: loads a CSV source, defines a measure across sources, objectives and funded initiatives, and serves the one-pager", async () => {
+    const { call } = await setup();
+    const base = await call("GET", "/v1/insights");
+    expect(base.body.sources.map((x: { id: string }) => x.id)).toContain("lms");
+    expect(base.body.views.find((x: { id: string }) => x.id === "m-cost-completion").sources).toHaveLength(2);
+    expect(base.body.initiatives).toHaveLength(3);
+    // A CRM extract as CSV, with a date column that rolls up to months.
+    const csv = "date,region,donations\n2026-01-05,EU,1200\n2026-01-20,US,800\n2026-02-03,EU,1500\nno-date,EU,99\n";
+    const src = await call("POST", "/v1/insights/sources", { name: "Donor CRM", kind: "crm", system: "Salesforce", periodField: "date", csv });
+    expect(src.status).toBe(201);
+    expect(src.body.source).toMatchObject({ id: "src-donor-crm", rowCount: 4, fields: ["date", "region", "donations"] });
+    expect(src.body.skippedWithoutDate).toBe(1);
+    expect((await call("POST", "/v1/insights/sources", { name: "Bad", kind: "crm", periodField: "nope", csv })).body.error.code).toBe("NO_PERIOD");
+    const m = await call("PUT", "/v1/insights/measures/m-donations", { name: "Donations", role: "outcome", formula: { kind: "field", sourceId: "src-donor-crm", field: "donations", aggregate: "sum", where: { field: "region", in: ["EU"] } }, unit: "$", higherIsBetter: true, target: 2000 });
+    expect(m.status).toBe(200);
+    expect(m.body.measure.series).toEqual([{ period: "2026-01", value: 1200 }, { period: "2026-02", value: 1500 }]);
+    expect(m.body.measure.status).toBe("off-target");
+    expect((await call("PUT", "/v1/insights/measures/m-x", { name: "X", role: "kpi", formula: { kind: "field", sourceId: "src-donor-crm", field: "missing", aggregate: "sum" }, higherIsBetter: true })).body.error.code).toBe("UNKNOWN_FIELD");
+    // Donations per active learner: CRM ÷ learning platform.
+    expect((await call("PUT", "/v1/insights/measures/m-per-learner", { name: "Donations per learner", role: "kpi", formula: { kind: "ratio", a: "m-donations", b: "m-active" }, unit: "$", decimals: 2, higherIsBetter: true })).body.measure.sources.map((x: { id: string }) => x.id).sort()).toEqual(["lms", "src-donor-crm"]);
+    expect((await call("DELETE", "/v1/insights/sources/src-donor-crm")).body.error.code).toBe("SOURCE_IN_USE");
+    expect((await call("PUT", "/v1/insights/entities/ent-publishing", { name: "Publishing", parentId: "org" })).status).toBe(200);
+    expect((await call("PUT", "/v1/insights/objectives/obj-pub", { entityId: "ent-publishing", title: "Fund open access through donations", outcomeIds: ["m-donations"], kpiIds: ["m-per-learner"] })).status).toBe(200);
+    const init = await call("PUT", "/v1/insights/initiatives/init-oa", { entityId: "ent-publishing", name: "Open access fund", objectiveId: "obj-pub", status: "active", committed: 50_000, currency: "USD", funders: [{ name: "Donors", amount: 20_000 }], start: "2026-01-01", end: "2026-12-31", spentManual: 12_000, outcomeIds: ["m-donations"] });
+    expect(init.status).toBe(200);
+    expect(init.body.initiative).toMatchObject({ spent: 12_000, spentFrom: "manual", remaining: 38_000, unfunded: 30_000 });
+    expect((await call("PUT", "/v1/insights/initiatives/init-bad", { entityId: "ent-publishing", name: "Bad", status: "active", committed: 1, currency: "USD", funders: [], outcomeIds: ["nope"] })).body.error.code).toBe("UNKNOWN_MEASURE");
+    const page = await call("GET", "/v1/insights/one-pager/org");
+    expect(page.body.onePager.scope.map((e: { id: string }) => e.id)).toContain("ent-publishing");
+    expect(page.body.onePager.objectives.some((o: { objective: { id: string } }) => o.objective.id === "obj-pub")).toBe(true);
+    expect(page.body.onePager.initiatives.some((i: { initiative: { id: string } }) => i.initiative.id === "init-oa")).toBe(true);
+    expect(page.body.onePager.funding.committed).toBe(5_070_000);
+    expect((await call("GET", "/v1/insights/one-pager/ent-publishing")).body.onePager.objectives).toHaveLength(1);
+    const empty = await call("POST", "/v1/insights/reset", { to: "empty" });
+    expect(empty.body).toMatchObject({ sources: [], initiatives: [] });
+    expect((await call("POST", "/v1/insights/reset", { to: "demo" })).body.sources.length).toBe(6);
+    // Changes need the plan permission; reads do not. (Creating a user closes open mode.)
+    const viewer = await call("POST", "/v1/users", { name: "V", email: "v@example.io", role: "viewer" });
+    expect((await call("GET", "/v1/insights", undefined, viewer.body.apiKey)).status).toBe(200);
+    expect((await call("POST", "/v1/insights/reset", { to: "empty" }, viewer.body.apiKey)).status).toBe(403);
+  });
 });
 

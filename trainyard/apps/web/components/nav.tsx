@@ -8,6 +8,7 @@ import { GlobalSearch } from "@/components/global-search";
 
 const LINKS: { href: string; label: string; section?: string }[] = [
   { href: "/dashboards", label: "Dashboards", section: "Plan" },
+  { href: "/outcomes", label: "Outcome dashboard" },
   { href: "/board", label: "PI planning board" },
   { href: "/board/coach-sync", label: "Coach Sync" },
   { href: "/portfolio", label: "Portfolio" },

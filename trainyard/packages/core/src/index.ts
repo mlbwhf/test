@@ -17,3 +17,4 @@ export * from "./coachsync.js";
 export * from "./classes.js";
 export * from "./ainative.js";
 export * from "./cards.js";
+export * from "./insights.js";

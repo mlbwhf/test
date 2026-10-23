@@ -56,6 +56,7 @@ import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
 import { registerRefRoutes } from "./refs.js";
 import { registerCapacityRoutes } from "./capacity.js";
+import { registerInsightRoutes } from "./insights.js";
 import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
@@ -660,6 +661,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerAdminRoutes(app, tenants);
   registerRefRoutes(app, store);
   registerCapacityRoutes(app, store);
+  registerInsightRoutes(app, store);
 
   // Coach Sync: the RTE's hourly checkpoints during PI planning, answered per team.
   const coachState = (incrementId: string) => {
