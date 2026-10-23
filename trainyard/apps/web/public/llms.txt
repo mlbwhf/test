@@ -21,7 +21,12 @@ Trainyard is self-hosted with Docker Compose and runs beside other sites on the 
 ## Pages
 
 - Landing: /
-- Sign in: /login (API key issued by an admin)
+- Pricing, trial and money-back guarantee: /pricing
+- PI planning tools compared, one page per tool: /compare, /compare/iobeya, /compare/easy-agile, /compare/agile-hive, /compare/bigpicture, /compare/piplanning-io, /compare/miro
+- Class boards for trainers, one page per class with its lessons and exercises: /classes, /classes/leading-safe, /classes/spc, /classes/aspc, /classes/popm, /classes/rte
+- Guides: /guides/art-readiness-checklist, /guides/pi-outcome-planning, /guides/ai-native-art, /guides/pi-planning-tools
+- Everything above as one text file: /llms-full.txt
+- Sign in: /login (key shown once at sign-up, or issued by the workspace admin)
 - App (needs a key): /dashboards, /board, /portfolio, /templates, /imports, /ai, /agents, /model, /sync, /users
 
 ## Source and docs

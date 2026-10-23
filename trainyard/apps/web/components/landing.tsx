@@ -171,10 +171,10 @@ export function Landing() {
         </a>
         <div className="links">
           <a href="#rooms">Rooms</a>
-          <a href="#kit">The kit</a>
-          <a href="#compare">Compare</a>
+          <Link href="/classes">Classes</Link>
+          <Link href="/guides">Guides</Link>
+          <Link href="/compare">Compare</Link>
           <a href="#pricing">Pricing</a>
-          <a href="#faq">FAQ</a>
           <Link href="/dashboards" style={{ fontWeight: 600 }}>
             Sign in
           </Link>
@@ -472,7 +472,7 @@ export function Landing() {
         <div className="meta">
           <span>Trainyard · Apache-2.0 · built by Agile Agilist</span>
           <span>
-            <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
+            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
             <a href={REPO_URL} rel="noopener">
               Source
             </a>

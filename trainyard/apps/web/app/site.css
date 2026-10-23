@@ -228,3 +228,34 @@
 .ly .ly-fine { font-size: 13px; opacity: 0.75; margin: 0; line-height: 1.45; }
 .ly .ly-link { background: none; border: 0; box-shadow: none; padding: 0; font: 600 15px var(--body); color: var(--ink); text-decoration: underline; cursor: pointer; align-self: flex-start; }
 .ly .ly-link:hover { transform: none; }
+
+/* Public pages: pricing, compare, classes, guides */
+.ly-page .ly-article { max-width: 980px; margin: 0 auto; padding: 60px 5vw 0; }
+.ly-page .ly-crumbs { font-size: 15px; opacity: 0.75; margin-bottom: 24px; }
+.ly-page .ly-crumbs a { color: var(--ink); text-decoration: none; }
+.ly-page .ly-crumbs a:hover { color: var(--blue); }
+.ly-page h1 { font: 800 clamp(34px, 5vw, 56px) / 1.02 var(--display); letter-spacing: -0.04em; margin: 0 0 18px; }
+.ly-page .lede { font-size: 21px; line-height: 1.45; max-width: 760px; margin: 0 0 36px; opacity: 0.9; }
+.ly-prose h2 { font: 800 30px / 1.1 var(--display); letter-spacing: -0.03em; margin: 44px 0 14px; }
+.ly-prose h3 { font: 700 22px / 1.2 var(--display); margin: 28px 0 10px; }
+.ly-prose p, .ly-prose li { font-size: 18px; line-height: 1.55; max-width: 760px; }
+.ly-prose ul { padding-left: 22px; }
+.ly-prose li { margin: 6px 0; }
+.ly-tablewrap { overflow-x: auto; margin: 16px 0 24px; border: 2px solid var(--ink); border-radius: 18px; background: #fff; }
+.ly-table { border-collapse: collapse; width: 100%; font-size: 15px; }
+.ly-table th { text-align: left; background: var(--ink); color: #fff; padding: 12px 14px; font: 700 14px var(--body); white-space: nowrap; }
+.ly-table td { padding: 12px 14px; border-top: 1px solid #e3e0d6; vertical-align: top; line-height: 1.45; }
+.ly-table tr.ours td { background: #fff6c2; font-weight: 600; }
+.ly-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin: 20px 0; }
+.ly-card { display: block; background: #fff; border: 2px solid var(--ink); border-radius: 22px; padding: 22px; color: var(--ink); text-decoration: none; box-shadow: 6px 6px 0 var(--lav); }
+.ly-card:hover { box-shadow: 6px 6px 0 var(--blue); }
+.ly-card h3 { margin: 0 0 8px; font: 800 22px / 1.15 var(--display); letter-spacing: -0.02em; }
+.ly-card p { margin: 0; font-size: 16px; line-height: 1.45; opacity: 0.85; }
+.ly-card .tag { display: inline-block; font: 700 12px var(--body); letter-spacing: 0.08em; text-transform: uppercase; background: var(--yellow); border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+.ly-cta { display: inline-block; margin: 24px 0; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; padding: 14px 24px; border-radius: 999px; }
+.ly-cta:hover { background: var(--blue); }
+.ly-lesson { background: #fff; border: 2px solid var(--ink); border-radius: 18px; padding: 18px 22px; margin: 14px 0; }
+.ly-lesson h3 { margin: 0 0 8px; }
+.ly-lesson li { font-size: 16px; }
+.ly-lesson .kind { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.6; margin-left: 6px; }
+@media (max-width: 720px) { .ly-page .ly-article { padding-top: 32px; } }

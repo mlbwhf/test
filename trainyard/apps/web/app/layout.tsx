@@ -32,6 +32,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en">
       <body>
         {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(api)}` }} /> : null}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />
         {children}
       </body>
     </html>

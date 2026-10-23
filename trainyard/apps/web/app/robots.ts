@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/llms.txt", "/og.png", "/icon.svg"],
+        allow: ["/", "/pricing", "/compare", "/compare/", "/classes", "/classes/", "/guides", "/guides/", "/llms.txt", "/llms-full.txt", "/og.png", "/icon.svg"],
         disallow: ["/dashboards", "/value-streams", "/canvases", "/outcome-planning", "/embed/", "/board", "/boards/", "/portfolio", "/templates", "/imports", "/ai", "/agents", "/model", "/sync", "/users", "/login", "/api/"],
       },
     ],
