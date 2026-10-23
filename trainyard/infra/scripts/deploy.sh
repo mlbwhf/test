@@ -25,7 +25,8 @@ rm -f "$alias_file"
 local_ips=" $(hostname -I 2>/dev/null) $(curl -4 -fsS --max-time 5 https://ifconfig.me 2>/dev/null || true) "
 points_here() { local ip; ip=$(getent ahostsv4 "$1" | awk 'NR==1{print $1}'); [ -n "$ip" ] && [[ "$local_ips" == *" $ip "* ]]; }
 web_labels=""; api_labels=""; n=0
-for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2); do
+# TRAINYARD_WEB_ALIASES and TRAINYARD_API_ALIASES take any number of space-separated names.
+for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2) $(envval TRAINYARD_WEB_ALT3) $(envval TRAINYARD_WEB_ALT4) $(envval TRAINYARD_WEB_ALIASES); do
   n=$((n + 1))
   if points_here "$name"; then
     echo "== alias $name -> redirects to the canonical web host"
@@ -38,15 +39,17 @@ for name in $(envval TRAINYARD_WEB_ALT) $(envval TRAINYARD_WEB_ALT2); do
 "
   else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
 done
-for name in $(envval TRAINYARD_API_ALT); do
+m=0
+for name in $(envval TRAINYARD_API_ALT) $(envval TRAINYARD_API_ALIASES); do
+  m=$((m + 1))
   if points_here "$name"; then
     echo "== alias $name -> answers as the API"
-    api_labels+="      traefik.http.routers.trainyard-api-alias.rule: Host(\`$name\`)
-      traefik.http.routers.trainyard-api-alias.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
-      traefik.http.routers.trainyard-api-alias.tls: \"true\"
-      traefik.http.routers.trainyard-api-alias.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
-      traefik.http.routers.trainyard-api-alias.middlewares: trainyard-api-headers
-      traefik.http.routers.trainyard-api-alias.service: trainyard-api
+    api_labels+="      traefik.http.routers.trainyard-api-alias$m.rule: Host(\`$name\`)
+      traefik.http.routers.trainyard-api-alias$m.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-api-alias$m.tls: \"true\"
+      traefik.http.routers.trainyard-api-alias$m.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-api-alias$m.middlewares: trainyard-api-headers
+      traefik.http.routers.trainyard-api-alias$m.service: trainyard-api
 "
   else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
 done
