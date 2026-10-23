@@ -45,6 +45,20 @@ export interface Person {
   roles: string[];
 }
 
+/** How a team's capacity per iteration is arrived at. */
+export type CapacityMode = "manual" | "calculated" | "velocity";
+
+/** A person's share of a team: who, how much of their time, whether they deliver points. */
+export interface TeamMembership {
+  personId: string;
+  /** Share of the person's time on this team, 0 to 1. */
+  allocation: number;
+  /** Delivers estimated work. Scrum Masters and Product Owners usually do not. */
+  contributes: boolean;
+  /** Days off per iteration id; each costs one point of capacity (SAFe's rule of thumb). */
+  vacationDays?: Record<string, number>;
+}
+
 export interface Team {
   id: string;
   name: string;
@@ -53,6 +67,12 @@ export interface Team {
   source: SourceSystem;
   /** Planned capacity per iteration id, in the team's estimate unit. */
   capacity: Record<string, number>;
+  /** Where the capacity figures come from; manual when absent. */
+  capacityMode?: CapacityMode;
+  /** People on the team with their allocation; drives the calculated mode. */
+  members?: TeamMembership[];
+  /** Points one full-time contributor delivers in an iteration; SAFe's quick-start says 8 for two weeks. */
+  pointsPerFullTime?: number;
   memberIds: string[];
   /** AI agents working as part of the team (AI-native models). */
   agentIds: string[];

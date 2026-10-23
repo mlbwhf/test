@@ -11,6 +11,7 @@ export * from "./valuestreams.js";
 export * from "./canvases.js";
 export * from "./flowhistory.js";
 export * from "./outcomes.js";
+export * from "./capacity.js";
 export * from "./classes.js";
 export * from "./ainative.js";
 export * from "./cards.js";

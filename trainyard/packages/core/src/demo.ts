@@ -4,7 +4,8 @@
 
 import { getTemplate } from "./frameworks.js";
 import { buildIncrement } from "./planning.js";
-import type { Dependency, FlowType, Increment, Objective, Risk, Team, WorkItem, Workspace } from "./model.js";
+import { applyCapacity } from "./capacity.js";
+import type { Dependency, FlowType, Increment, Objective, Person, Risk, Team, WorkItem, Workspace } from "./model.js";
 import type { Portfolio } from "./portfolio.js";
 
 function rng(seed: number) {
@@ -57,15 +58,65 @@ export function demoWorkspace(): Workspace {
   const rand = rng(2604);
   const pick = <T,>(xs: readonly T[]) => xs[Math.floor(rand() * xs.length)]!;
 
-  const teams: Team[] = TEAMS.map((t) => ({
-    id: t.id,
-    name: t.name,
-    groupId: "art-customer",
-    source: t.source,
-    capacity: Object.fromEntries(increments.flatMap((inc) => inc.iterations.map((i) => [i.id, i.isIP ? 0 : 10 + Math.floor(rand() * 4)]))),
-    memberIds: [],
-    agentIds: t.id === "t-assist" ? ["agent-triage", "agent-reply"] : t.id === "t-checkout" ? ["agent-codereview"] : [],
-  }));
+  // Team members: five or six people each, a Scrum Master and Product Owner who do not
+  // deliver points, and a few part-timers. Checkout and Payments calculate capacity from
+  // them (SAFe's 8 points per full-timer); Search uses its velocity; AI Assist types it in.
+  const MEMBERS: Record<string, { name: string; role: string; allocation: number; vacation?: Record<string, number> }[]> = {
+    "t-checkout": [
+      { name: "Noah Petersen", role: "developer", allocation: 1 },
+      { name: "Mei Tanaka", role: "developer", allocation: 1, vacation: { [curr.iterations[1]!.id]: 3 } },
+      { name: "Yusuf Demir", role: "developer", allocation: 1 },
+      { name: "Hannah Weiss", role: "tester", allocation: 1 },
+      { name: "Tomás Rivera", role: "ux", allocation: 0.5 },
+      { name: "Ella Novak", role: "scrum-master", allocation: 1 },
+      { name: "Diego Ramos", role: "po", allocation: 0.5 },
+    ],
+    "t-search": [
+      { name: "Aiko Mori", role: "developer", allocation: 1 },
+      { name: "Ben Carter", role: "developer", allocation: 1 },
+      { name: "Sofia Rossi", role: "developer", allocation: 0.8 },
+      { name: "Kwame Mensah", role: "tester", allocation: 1 },
+      { name: "Ella Novak", role: "scrum-master", allocation: 0 },
+    ],
+    "t-payments": [
+      { name: "Ravi Iyer", role: "developer", allocation: 1 },
+      { name: "Clara Dubois", role: "developer", allocation: 1, vacation: { [curr.iterations[0]!.id]: 5 } },
+      { name: "Jonas Lind", role: "developer", allocation: 1 },
+      { name: "Fatima Zahra", role: "tester", allocation: 1 },
+      { name: "Oliver Grant", role: "architect", allocation: 0.25 },
+      { name: "Ines Costa", role: "scrum-master", allocation: 1 },
+    ],
+    "t-assist": [
+      { name: "Leo Brandt", role: "developer", allocation: 1 },
+      { name: "Zara Khan", role: "ml-engineer", allocation: 1 },
+      { name: "Sam Okoro", role: "ml-engineer", allocation: 1 },
+      { name: "Lena Fischer", role: "ai-value-architect", allocation: 0.25 },
+    ],
+  };
+  const teamPeople: Person[] = [];
+  const personId = (name: string, role: string) => {
+    if (name === "Diego Ramos") return "p-pm";
+    if (name === "Lena Fischer") return "p-ava";
+    const id = `p-${name.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+    if (!teamPeople.some((p) => p.id === id)) teamPeople.push({ id, name, roles: [role] });
+    return id;
+  };
+  const modeOf: Record<string, Team["capacityMode"]> = { "t-checkout": "calculated", "t-payments": "calculated", "t-search": "velocity", "t-assist": "manual" };
+  const teams: Team[] = TEAMS.map((t) => {
+    const members = (MEMBERS[t.id] ?? []).map((m) => ({ personId: personId(m.name, m.role), allocation: m.allocation, contributes: !["scrum-master", "po", "rte"].includes(m.role), ...(m.vacation ? { vacationDays: m.vacation } : {}) }));
+    return {
+      id: t.id,
+      name: t.name,
+      groupId: "art-customer",
+      source: t.source,
+      capacity: Object.fromEntries(increments.flatMap((inc) => inc.iterations.map((i) => [i.id, i.isIP ? 0 : 10 + Math.floor(rand() * 4)]))),
+      capacityMode: modeOf[t.id] ?? "manual",
+      members,
+      pointsPerFullTime: 8,
+      memberIds: members.map((m) => m.personId),
+      agentIds: t.id === "t-assist" ? ["agent-triage", "agent-reply"] : t.id === "t-checkout" ? ["agent-codereview"] : [],
+    };
+  });
 
   const items: WorkItem[] = [];
   let jiraSeq = 100;
@@ -278,6 +329,14 @@ export function demoWorkspace(): Workspace {
     ],
   };
 
+  const people: Person[] = [
+    { id: "p-rte", name: "Amara Okafor", roles: ["rte"] },
+    { id: "p-ava", name: "Lena Fischer", roles: ["ai-value-architect"] },
+    { id: "p-pm", name: "Diego Ramos", roles: ["pm"] },
+    { id: "p-steward", name: "Priya Nair", roles: ["data-steward"] },
+    ...teamPeople,
+  ];
+
   return {
     id: "ws-northwind",
     name: "Northwind Digital",
@@ -286,13 +345,8 @@ export function demoWorkspace(): Workspace {
       { id: "pf-digital", name: "Digital Commerce", level: "portfolio" },
       { id: "art-customer", name: "Customer Platform ART", level: "train", parentId: "pf-digital" },
     ],
-    teams,
-    people: [
-      { id: "p-rte", name: "Amara Okafor", roles: ["rte"] },
-      { id: "p-ava", name: "Lena Fischer", roles: ["ai-value-architect"] },
-      { id: "p-pm", name: "Diego Ramos", roles: ["pm"] },
-      { id: "p-steward", name: "Priya Nair", roles: ["data-steward"] },
-    ],
+    teams: teams.map((t) => applyCapacity(t, { people, items, increments })),
+    people,
     increments,
     items,
     dependencies,

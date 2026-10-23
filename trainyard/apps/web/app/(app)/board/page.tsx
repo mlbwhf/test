@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Dependency, DependencyCheck, Increment, IncrementMilestone, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
 import { AssistButton } from "@/components/assist";
+import { CapacityPanel } from "@/components/capacity-panel";
 import { Loading, PageHead, SourceChip } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
 
@@ -32,6 +33,7 @@ const ROAM: { key: Roam; label: string }[] = [
 
 export default function BoardPage() {
   const [incrementId, setIncrementId] = useState<string | null>(null);
+  const [capacityTeam, setCapacityTeam] = useState<string | null>(null);
   const board = useApi<Board>(`/v1/board${incrementId ? `?incrementId=${incrementId}` : ""}`);
   const model = useApi<{ model: { cadence: { iterationLabel: string; incrementLabel: string }; workLevels: { key: string; label: string }[] } }>("/v1/model");
   const [dragging, setDragging] = useState<WorkItem | null>(null);
@@ -173,6 +175,7 @@ export default function BoardPage() {
                 dragging={dragging}
                 onDrag={setDragging}
                 onDrop={move}
+                onCapacity={() => setCapacityTeam(team.id)}
               />
             ))}
 
@@ -377,6 +380,7 @@ export default function BoardPage() {
           </table>
         </section>
       </div>
+      {capacityTeam ? <CapacityPanel teamId={capacityTeam} incrementId={b.increment.id} onClose={() => setCapacityTeam(null)} onSaved={() => void board.reload()} /> : null}
     </>
   );
 }
@@ -391,6 +395,7 @@ function TeamRow({
   dragging,
   onDrag,
   onDrop,
+  onCapacity,
 }: {
   team: Team;
   columns: { id: string | null; isIP?: boolean; current?: boolean }[];
@@ -401,12 +406,20 @@ function TeamRow({
   dragging: WorkItem | null;
   onDrag: (w: WorkItem | null) => void;
   onDrop: (w: WorkItem, iterationId: string | null) => void;
+  onCapacity: () => void;
 }) {
   const [over, setOver] = useState<string | null>(null);
+  const modeLabel = team.capacityMode === "calculated" ? "capacity from members" : team.capacityMode === "velocity" ? "capacity from velocity" : "capacity typed in";
   return (
     <>
       <div style={{ padding: 10, borderBottom: "1px solid var(--line)" }} className="stack">
-        <strong>{team.name}</strong>
+        <button className="team-name-btn" onClick={onCapacity} title="Members, allocation and capacity">
+          {team.name}
+        </button>
+        <span className="faint" style={{ fontSize: "0.72rem" }}>
+          {team.members?.length ? `${team.members.length} people · ` : ""}
+          {modeLabel}
+        </span>
         <div className="row" style={{ gap: 4 }}>
           <SourceChip system={team.source} />
           {team.agentIds.length ? <span className="chip ai">{team.agentIds.length} agent{team.agentIds.length > 1 ? "s" : ""}</span> : null}
