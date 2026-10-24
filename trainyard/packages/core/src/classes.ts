@@ -79,8 +79,11 @@ class Builder {
   }
 }
 
+/** Lets other board families (e.g. the Two Chasms workshops) reuse the class layout. */
+export { Builder as ExerciseBuilder };
+
 /** Renders one exercise at (x, y) inside a lesson frame; returns the size it took. */
-function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId: string): { w: number; h: number } {
+export function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId: string): { w: number; h: number } {
   switch (ex.kind) {
     case "slide": {
       const w = 420;
