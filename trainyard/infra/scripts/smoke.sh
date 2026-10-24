@@ -32,13 +32,14 @@ expect "https://$web/fonts/instrument-sans-400-600-latin.woff2" 200 '' || fail=1
 expect "https://$web/" 200 'application/ld+json' || fail=1
 expect "https://$web/robots.txt" 200 'Sitemap' || fail=1
 shift 2
-web_ip=$(getent ahostsv4 "$web" | awk 'NR==1{print $1}')
+web_ips=" $(getent ahostsv4 "$web" | awk '{print $1}' | sort -u | tr '\n' ' ') "
 for alias in "$@"; do
   alias_ip=$(getent ahostsv4 "$alias" | awk 'NR==1{print $1}')
   [ -n "$alias_ip" ] || { printf 'skip  %-50s DNS not resolving yet\n' "https://$alias/login"; continue; }
   # An alias that resolves elsewhere (a parking page, the registrar) is a DNS record still to
   # be made, not a broken deploy; deploy.sh skipped it for the same reason.
-  [ "$alias_ip" = "$web_ip" ] || { printf 'skip  %-50s DNS points to %s, not to %s yet\n' "https://$alias/login" "$alias_ip" "$web_ip"; continue; }
+  # A CDN answers with several addresses per name; any shared address means the same front door.
+  [[ "$web_ips" == *" $alias_ip "* ]] || { printf 'skip  %-50s DNS points to %s, not to%s yet\n' "https://$alias/login" "$alias_ip" "$web_ips"; continue; }
   loc=$(curl -sS --max-time 20 -o /dev/null -w '%{http_code} %{redirect_url}' "https://$alias/login" 2>/dev/null || echo "000")
   case "$loc" in 30[18]\ https://$web/login*) printf 'ok    %-50s %s\n' "https://$alias/login" "$loc";; *) printf 'FAIL  %-50s got %s (wanted 308 https://%s/login)\n' "https://$alias/login" "$loc" "$web"; fail=1;; esac
 done
