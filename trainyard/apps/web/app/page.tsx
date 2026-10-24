@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Landing } from "@/components/landing";
 import { FAQ, PLANS } from "@/lib/pricing";
-import { siteUrl } from "@/lib/site";
+import { inlineJson, siteUrl } from "@/lib/site";
 import "./site.css";
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default function Home() {
   ];
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: inlineJson(jsonLd) }} />
       <Landing />
     </>
   );

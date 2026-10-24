@@ -163,7 +163,7 @@ export default function VisionPage() {
           <p className="muted" style={{ margin: 0 }}>
             Score every option 1 to 5 on each criterion; cost and risk count the other way round. The weighted score ranks them, the room decides. Selecting an option makes it the future-state portfolio canvas and drafts the portfolio vision from it.
           </p>
-          <div className="scroll-x">
+          <div className="scroll-x" tabIndex={0}>
             <table className="table ev-matrix">
               <thead>
                 <tr>
@@ -290,7 +290,7 @@ function IdentifyEpics({ selected, valueStreams, hasPortfolio, onError }: { sele
         </div>
       ) : null}
       {drafts.data ? (
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>

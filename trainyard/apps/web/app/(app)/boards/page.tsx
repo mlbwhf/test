@@ -51,7 +51,7 @@ export default function BoardsPage() {
           </button>
           <div className="tabs" role="group" aria-label="Show">
             {(["all", "classes", "templates", "imported"] as const).map((k) => (
-              <button key={k} aria-selected={show === k} onClick={() => setShow(k)}>
+              <button key={k} aria-pressed={show === k} onClick={() => setShow(k)}>
                 {k === "all" ? "All" : k === "classes" ? "Classes" : k === "templates" ? "Whiteboards and templates" : "Imported"}
               </button>
             ))}

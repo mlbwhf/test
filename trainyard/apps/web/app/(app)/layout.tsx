@@ -18,7 +18,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     return (
       <div className="shell embed">
         <EmbedBar />
-        <main className="main">{children}</main>
+        <main id="main" className="main">{children}</main>
       </div>
     );
   }

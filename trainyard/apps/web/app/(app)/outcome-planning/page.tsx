@@ -222,7 +222,7 @@ function Pad({ title, sub, children, stacked }: { title: string; sub: string; ch
 
 function KrLine({ kr, i, onChange, onRemove, stage }: { kr: OutcomeKeyResult; i: number; onChange: (k: OutcomeKeyResult) => void; onRemove: () => void; stage: PlanningSession["stage"] }) {
   const change = krChange(kr);
-  const color = stage === "draft" ? "inherit" : change === "cut" ? "#b9342f" : change === "raised" ? "#5a9e1c" : "inherit";
+  const color = stage === "draft" ? "inherit" : change === "cut" ? "#a8321f" : change === "raised" ? "#3f7512" : "inherit";
   return (
     <div className="op-kr">
       <span className="op-kr-n">KR{i + 1}:</span>
@@ -801,7 +801,7 @@ function Board({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
         <Legend />
       </div>
       <LinkBanner b={b} />
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <PlanStrings links={b.links} depsKey={JSON.stringify([s.milestones, s.work])} onRemove={b.removeLink}>
           <div className="op-board" style={{ gridTemplateColumns: grid }}>
             <div className="op-h">PI Outcome</div>
@@ -902,7 +902,7 @@ function OutcomeHead({ r, s, onChange }: { r: ReturnType<typeof planningBoard>["
               return (
                 <li key={kr.id} style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 4, alignItems: "baseline" }}>
                   <InlineText value={kr.text} onChange={(text) => setKr(kr.id, { text })} />
-                  <span style={{ fontWeight: 700, color: s.stage !== "draft" && c === "cut" ? "#b9342f" : s.stage !== "draft" && c === "raised" ? "#5a9e1c" : "inherit", minWidth: 40 }}>
+                  <span style={{ fontWeight: 700, color: s.stage !== "draft" && c === "cut" ? "#a8321f" : s.stage !== "draft" && c === "raised" ? "#3f7512" : "inherit", minWidth: 40 }}>
                     <InlineText value={kr.target} onChange={(target) => setKr(kr.id, { target })} />
                   </span>
                 </li>
@@ -978,11 +978,11 @@ function Teams({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
         </div>
       </div>
       <LinkBanner b={b} />
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <PlanStrings links={b.links} depsKey={JSON.stringify([s.milestones, s.work, team])} onRemove={b.removeLink}>
           <div className="op-board" style={{ gridTemplateColumns: grid }}>
             <div className="op-h">Team Outcomes</div>
-            <ColumnHeads s={s} extra={(i) => (peak > 3 && tb.load[i] === peak ? { style: { background: "#b9342f" }, title: "Busiest iteration: check capacity" } : {})} />
+            <ColumnHeads s={s} extra={(i) => (peak > 3 && tb.load[i] === peak ? { style: { background: "#a8321f" }, title: "Busiest iteration: check capacity" } : {})} />
             <div className="op-cell op-ms-row">
               <b>ART Milestones</b>
             </div>

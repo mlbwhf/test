@@ -150,9 +150,9 @@ export function Landing() {
 
   return (
     <div className="ly">
-      <div className="ly-ring" aria-hidden="true">
-        <a href="#top" title="Back to the top">
-          <svg width="100%" height="100%" viewBox="0 0 84 84">
+      <div className="ly-ring">
+        <a href="#top" aria-label="Back to the top">
+          <svg width="100%" height="100%" viewBox="0 0 84 84" aria-hidden="true">
             <circle cx="42" cy="42" r="40" fill={INK} />
             <circle cx="42" cy="42" r="32" fill="none" stroke="#fff" strokeOpacity=".2" strokeWidth="6" />
             <circle ref={ringRef} cx="42" cy="42" r="32" fill="none" stroke="#ff9fc6" strokeWidth="6" strokeLinecap="round" strokeDasharray="201" strokeDashoffset="201" transform="rotate(-90 42 42)" />
@@ -164,6 +164,7 @@ export function Landing() {
 
       <SiteNav />
 
+      <main id="main">
       <header id="top" className="ly-hero">
         <div className="toggle" role="group" aria-label="Who is this for">
           <button aria-pressed={aud === "trainer"} onClick={() => setAud("trainer")}>
@@ -344,7 +345,7 @@ export function Landing() {
                       <b style={{ color: "#2f8f5b" }}>6</b>on track
                     </div>
                     <div>
-                      <b style={{ color: "#b87a00" }}>2</b>at risk
+                      <b style={{ color: "#8a5a00" }}>2</b>at risk
                     </div>
                     <div>
                       <b style={{ color: "#b42318" }}>1</b>off track
@@ -394,7 +395,7 @@ export function Landing() {
       <section id="compare">
         <div className="eyebrow">03 / COMPARED</div>
         <h2 className="h2">PI planning tools compared: Jira apps, iObeya, Miro and Trainyard.</h2>
-        <div className="ly-table">
+        <div className="ly-table" tabIndex={0}>
           <table>
             <thead>
               <tr>
@@ -535,6 +536,7 @@ export function Landing() {
         </div>
       </section>
 
+      </main>
       <SiteFooter />
     </div>
   );

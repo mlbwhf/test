@@ -16,7 +16,7 @@ type Data = { okrs: OkrView; entities: Entity[] };
 
 const STATUS: Record<OkrStatus, { label: string; sub: string; color: string; tone: number }> = {
   on: { label: "On track", sub: "Confident", color: "#2f8f5b", tone: 3 },
-  risk: { label: "At risk", sub: "Needs attention", color: "#b87a00", tone: 1 },
+  risk: { label: "At risk", sub: "Needs attention", color: "#8a5a00", tone: 1 },
   off: { label: "Off track", sub: "Needs a decision", color: "#b42318", tone: 4 },
 };
 const health = (pct: number) => (pct >= 90 ? STATUS.on.color : pct >= 70 ? STATUS.risk.color : STATUS.off.color);

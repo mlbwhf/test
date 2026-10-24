@@ -594,7 +594,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
       ) : (
         <>
       <section className="panel panel-body">
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <div style={{ minWidth: Math.max(900, cols * 122) }}>
             <div className="vs-lane-label">1 · Operational value stream</div>
             <div className="vs-traveller" aria-hidden="true">
@@ -910,10 +910,10 @@ function MapView({ vsm, dirty, onChange, onSave, onReset, onDerived }: { vsm: Vs
         </div>
         <div className="row">
           <div className="tabs" role="group" aria-label="State">
-            <button aria-selected={state === "current"} onClick={() => setState("current")}>
+            <button aria-pressed={state === "current"} onClick={() => setState("current")}>
               Current state
             </button>
-            <button aria-selected={state === "future"} onClick={() => setState("future")}>
+            <button aria-pressed={state === "future"} onClick={() => setState("future")}>
               Future state
             </button>
           </div>
@@ -949,7 +949,7 @@ function MapView({ vsm, dirty, onChange, onSave, onReset, onDerived }: { vsm: Vs
 
       <div className="row" style={{ alignItems: "flex-start", gap: 16 }}>
         <section className="panel panel-body stack" style={{ flex: "999 1 720px", minWidth: 0, gap: 16 }}>
-          <div className="scroll-x">
+          <div className="scroll-x" tabIndex={0}>
             <div className="stack" style={{ minWidth: 760, gap: 20 }}>
               {editing && rows.length === 0 ? (
                 <button className="vsm-box vsm-addbox" style={{ maxWidth: 160 }} onClick={addStep} aria-label="Add a step">
@@ -1267,7 +1267,7 @@ function DerivePanel({ vsm, dirty, onDerived }: { vsm: Vsm; dirty: boolean; onDe
             ) : null}
           </div>
 
-          <div className="scroll-x">
+          <div className="scroll-x" tabIndex={0}>
             <table className="table" style={{ minWidth: 820 }}>
               <thead>
                 <tr>

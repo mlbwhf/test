@@ -1053,6 +1053,34 @@ describe("workspaces", () => {
     expect(store.state.workspaces).toHaveLength(2);
   });
 
+  it("never lets a sign-up, an export or an old key reach someone else's account", async () => {
+    const { call } = await setup();
+    const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "ada's own password" });
+    // A paid sign-up for an email that already signs in is refused, so checkout can never re-key it.
+    for (const plan of ["trainer", "academy", "insights"]) expect((await call("POST", "/v1/signups", { name: "Eve", email: "ADA@example.io", plan })).body.error.code).toBe("EMAIL_TAKEN");
+    expect((await call("GET", "/v1/me", undefined, ada.body.apiKey)).status).toBe(200);
+    // Asking again with a pending email issues a new sign-up id; the first one stops working.
+    const first = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "trainer" });
+    const again = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "trainer" });
+    expect(again.body.signup.id).not.toBe(first.body.signup.id);
+    expect((await call("GET", "/v1/signups", undefined, root.body.apiKey)).body.signups.filter((x: { email: string }) => x.email === "bo@example.io").map((x: { id: string }) => x.id)).toEqual([again.body.signup.id]);
+    // The workspace export carries no password hashes or sessions.
+    const exp = await call("GET", "/v1/workspace/export", undefined, ada.body.apiKey);
+    expect(JSON.stringify(exp.body)).not.toMatch(/passwordHash|keyHash|sessions/);
+    expect(exp.body.members[0].hasPassword).toBe(true);
+    // A new key ends every session, and a key alone cannot replace a password that is set.
+    const tok = (await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "ada's own password" })).body.token as string;
+    expect((await call("POST", "/v1/auth/password", { password: "eve's new password" }, ada.body.apiKey)).status).toBe(403);
+    const userId = (await call("GET", "/v1/me", undefined, tok)).body.principal.userId as string;
+    expect((await call("POST", `/v1/users/${userId}/rotate-key`, {}, ada.body.apiKey)).status).toBe(200);
+    expect((await call("GET", "/v1/me", undefined, tok)).status).toBe(401);
+    // Unknown and known emails fail the same way.
+    const a = await call("POST", "/v1/auth/login", { email: "nobody@example.io", password: "whatever-123" });
+    const b = await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "whatever-123" });
+    expect(a.body.error.message).toBe(b.body.error.message);
+  });
+
   it("enforces the Practice limits and points at Billing", async () => {
     const { call } = await setup();
     await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
@@ -1490,7 +1518,7 @@ describe("trial emails", () => {
     // Open mode: the first admin is created with a key; passwords are set afterwards.
     const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
     const rk = root.body.apiKey as string;
-    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "whatever-123" })).body.error.message).toContain("No password is set");
+    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "whatever-123" })).body.error.message).toContain("No password set yet");
     expect((await call("POST", "/v1/auth/password", { password: "short" }, rk)).status).toBe(400);
     expect((await call("POST", "/v1/auth/password", { password: "correct horse battery" }, rk)).body.user.hasPassword).toBe(true);
     const login = await call("POST", "/v1/auth/login", { email: "ROOT@example.io", password: "correct horse battery" });

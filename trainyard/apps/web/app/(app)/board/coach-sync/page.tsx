@@ -113,7 +113,7 @@ export default function CoachSyncPage() {
         ))}
       </div>
 
-      <div className="panel scroll-x">
+      <div className="panel scroll-x" tabIndex={0}>
         <table className="cs-grid">
           <thead>
             <tr>

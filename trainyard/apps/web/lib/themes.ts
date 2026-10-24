@@ -119,7 +119,7 @@ export function themeCss(): string {
         "color-scheme": dark ? "dark" : "light",
       };
       if (dark) Object.assign(v, { "--ok": "#5cc28a", "--ok-soft": "#173325", "--warn": "#e2a74a", "--warn-soft": "#3a2c12", "--crit": "#ef7f6a", "--crit-soft": "#3d1e19", "--ai": "#a993ee", "--ai-soft": "#2a2343" });
-      else Object.assign(v, { "--ok": "#2f8a57", "--ok-soft": "#e1f2e7", "--warn": "#b7791f", "--warn-soft": "#fbf0d9", "--crit": "#c2412d", "--crit-soft": "#fae3de", "--ai": "#6b4fbb", "--ai-soft": "#ece7fa" });
+      else Object.assign(v, { "--ok": "#23704a", "--ok-soft": "#e1f2e7", "--warn": "#8a5a12", "--warn-soft": "#fbf0d9", "--crit": "#a8321f", "--crit-soft": "#fae3de", "--ai": "#6b4fbb", "--ai-soft": "#ece7fa" });
       return `:root[data-theme="${id}"]{${Object.entries(v).map(([k, x]) => `${k}:${x}`).join(";")}}`;
     })
     .join("\n");

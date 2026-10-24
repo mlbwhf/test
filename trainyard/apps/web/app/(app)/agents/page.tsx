@@ -44,7 +44,7 @@ export default function AgentsPage() {
       {!ai.enabled ? <div className="notice warn">AI-native settings are off for this operating model. Turn them on under Operating model to put agents on teams.</div> : null}
       {err ? <ErrorList title={err.title} items={err.items} /> : null}
 
-      <section className="panel scroll-x">
+      <section className="panel scroll-x" tabIndex={0}>
         <table className="table">
           <thead>
             <tr>

@@ -55,7 +55,7 @@ export default function InsightsPage() {
                   <b style={{ color: "#2f8f5b" }}>6</b>on track
                 </div>
                 <div>
-                  <b style={{ color: "#b87a00" }}>2</b>at risk
+                  <b style={{ color: "#8a5a00" }}>2</b>at risk
                 </div>
                 <div>
                   <b style={{ color: "#b42318" }}>1</b>off track

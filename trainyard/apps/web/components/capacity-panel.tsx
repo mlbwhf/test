@@ -163,7 +163,7 @@ export function CapacityPanel({ teamId, incrementId, onClose, onSaved }: { teamI
                 </th>
               ))}
             <th>Points</th>
-            <th />
+            <th><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>

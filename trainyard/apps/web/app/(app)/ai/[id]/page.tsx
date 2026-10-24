@@ -358,7 +358,7 @@ function EvalsPanel({ initiative: i, onSaved }: { initiative: InitiativeView; on
         </button>
       </div>
       <div className="panel-body stack">
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>

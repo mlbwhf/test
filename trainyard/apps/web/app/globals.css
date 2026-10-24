@@ -25,11 +25,11 @@
   --line-strong: rgba(23, 33, 43, 0.18);
   --signal: #d99400;
   --signal-soft: rgba(255, 231, 179, 0.75);
-  --ok: #2f8a57;
+  --ok: #23704a;
   --ok-soft: #e1f2e7;
-  --warn: #b7791f;
+  --warn: #8a5a12;
   --warn-soft: #fbf0d9;
-  --crit: #c2412d;
+  --crit: #a8321f;
   --crit-soft: #fae3de;
   --jira: #2c64c9;
   --ado: #0e7c86;
@@ -230,7 +230,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 
 .tabs { display: flex; gap: 2px; padding: 4px; border-radius: 16px; background: var(--sunken); flex-wrap: wrap; align-self: flex-start; }
 .tabs button { border: 0; background: none; padding: 8px 14px; cursor: pointer; font-weight: 600; color: var(--ink-2); border-radius: 12px; }
-.tabs button[aria-selected="true"] { color: var(--ink); background: var(--glass-strong); box-shadow: 0 1px 0 var(--glass-highlight) inset, 0 3px 10px rgba(var(--shadow-ink), 0.08); }
+.tabs button[aria-selected="true"], .tabs button[aria-pressed="true"] { color: var(--ink); background: var(--glass-strong); box-shadow: 0 1px 0 var(--glass-highlight) inset, 0 3px 10px rgba(var(--shadow-ink), 0.08); }
 .tabs button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .skeleton { color: var(--ink-3); padding: 40px; text-align: center; }
@@ -604,3 +604,12 @@ button.vs-clickbar.vs-bar:hover { filter: brightness(0.97); }
 .imp-tool span { font-size: 0.75rem; color: var(--ink-3); }
 .imp-tool[aria-selected="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink) inset; }
 .imp-tool:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* Accessibility helpers: text for screen readers only, and a skip link that appears on focus. */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: 12px; top: -60px; z-index: 1000; padding: 10px 16px; border-radius: 10px; background: #14123a; color: #fff; font-weight: 700; text-decoration: none; }
+.skip-link:focus { top: 12px; }
+.scroll-x:focus-visible, .ly-tablewrap:focus-visible, .lb-wrap:focus-visible { outline: 2px solid var(--signal, #4a5fe8); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

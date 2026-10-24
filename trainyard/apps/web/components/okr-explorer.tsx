@@ -113,9 +113,9 @@ export function OkrExplorer() {
       <section className="ex-block">
         <div className="ex-eyebrow">03 · One outcome, traced from portfolio to teams</div>
         <div className="ex-align">
-          <div className="ex-tree" role="list">
+          <div className="ex-tree" role="group" aria-label="Levels">
             {N.levels.map((l) => (
-              <button key={l.id} role="listitem" className={`ex-level${trace.has(l.id) ? " trace" : ""}${level === l.id ? " on" : ""}`} onClick={() => setLevel(l.id)} style={{ marginLeft: l.id === "portfolio" ? 0 : l.id === "dvs" ? 24 : l.id === "teams" ? 72 : 48 }}>
+              <button key={l.id} aria-pressed={level === l.id} className={`ex-level${trace.has(l.id) ? " trace" : ""}${level === l.id ? " on" : ""}`} onClick={() => setLevel(l.id)} style={{ marginLeft: l.id === "portfolio" ? 0 : l.id === "dvs" ? 24 : l.id === "teams" ? 72 : 48 }}>
                 <span className="ex-level-k">{l.level}</span>
                 <span>{l.objective}</span>
               </button>
@@ -144,7 +144,7 @@ export function OkrExplorer() {
       <section className="ex-block">
         <div className="ex-eyebrow">04 · Digital Channels ART · payment abandonment</div>
         <h3 className="ex-h3">One KPI can carry a time-bound key result</h3>
-        <div className="ex-chart" role="img" aria-label={`Abandonment by quarter: ${ab.quarters.map((q, i) => `${q} ${ab.values[i]}%`).join(", ")}; target ${ab.target}%`}>
+        <div className="ex-chart" role="figure" aria-label={`Abandonment by quarter: ${ab.quarters.map((q, i) => `${q} ${ab.values[i]}%`).join(", ")}; target ${ab.target}%`}>
           <div className="ex-target" style={{ bottom: `${(ab.target / 35) * 100}%` }}>
             <span>Target {ab.target}% by Q4</span>
           </div>

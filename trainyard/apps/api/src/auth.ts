@@ -88,6 +88,9 @@ export function verifyPassword(password: string, stored: string | undefined): bo
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+/** Compared against when the email is unknown, so a miss costs the same scrypt as a wrong password. */
+const DUMMY_HASH = hashPassword("no such user");
+
 /** A session token looks like a key but comes from a password sign-in and lapses. */
 export function newSessionToken(): string {
   return `ts_${randomBytes(24).toString("hex")}`;
@@ -175,9 +178,11 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
   app.post("/v1/auth/login", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: z.object({ email: z.string().trim().email().max(200), password: z.string().min(1).max(200) }) } }, async (req) => {
     if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const user = platform.state.users.find((u) => u.email.toLowerCase() === req.body.email.toLowerCase());
-    if (!user || user.disabled || !verifyPassword(req.body.password, user.passwordHash)) {
+    // One answer and about the same time for every failure, so the form never tells which emails exist.
+    const ok = verifyPassword(req.body.password, user?.passwordHash ?? DUMMY_HASH) && !!user?.passwordHash && !user.disabled;
+    if (!user || !ok) {
       failed(req.ip);
-      throw new ApiError(401, "BAD_LOGIN", user && !user.passwordHash && !user.disabled ? "No password is set for this email yet; sign in with your key once and set one under Users, or ask your admin." : "Email or password is wrong.");
+      throw new ApiError(401, "BAD_LOGIN", "Email or password is wrong. No password set yet? Sign in with your key once and set one under Users, or ask your admin.");
     }
     const token = newSessionToken();
     const expiresAt = new Date(Date.now() + SESSION_MS).toISOString();
@@ -242,13 +247,12 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
     return { ok: true };
   });
 
-  // Your own password: the current one is needed when one is set and you came in by password.
+  // Your own password: the current one is needed whenever one is set, however you signed in.
   app.post("/v1/auth/password", { schema: { body: z.object({ current: z.string().max(200).optional(), password: Password }) } }, async (req) => {
     const user = platform.state.users.find((u) => u.id === req.principal.userId);
     if (!user) throw new ApiError(409, "NO_USER", "The bootstrap admin key has no user record; create your admin user under Users first, then set its password.");
     const header = req.headers.authorization ?? "";
-    const bySession = header.startsWith("Bearer ts_");
-    if (user.passwordHash && bySession && !verifyPassword(req.body.current ?? "", user.passwordHash)) throw new ApiError(403, "BAD_CURRENT", "The current password is wrong.");
+    if (user.passwordHash && !verifyPassword(req.body.current ?? "", user.passwordHash)) throw new ApiError(403, "BAD_CURRENT", "The current password is wrong.");
     user.passwordHash = hashPassword(req.body.password);
     // Other browsers signed in with the old password are signed out.
     const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
@@ -319,10 +323,14 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
     const losingAdmin = u.role === "admin" && !u.disabled && (req.body.role !== undefined && req.body.role !== "admin" || req.body.disabled === true);
     if (losingAdmin && admins.length === 1) throw new ApiError(409, "LAST_ADMIN", "Keep at least one active admin.");
     const record = recordOf(req);
-    if (record && req.body.role && req.body.role !== "viewer" && u.role === "viewer") {
+    if (record) {
+      // Turning someone back on counts against the plan like adding them; so does lifting a viewer.
+      const enabling = !!u.disabled && req.body.disabled === false;
+      const role = req.body.role ?? u.role;
       const limits = limitsFor(record.plan, record.seats);
       const usage = usageOf(tenants.handle.state, members(req));
-      if (limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
+      if (enabling && limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
+      if (role !== "viewer" && (enabling || u.role === "viewer") && (enabling || !u.disabled) && limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
     }
     const { personId, ...rest } = req.body;
     Object.assign(u, defined(rest));
@@ -338,6 +346,8 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
     if (!u) throw notFound("User");
     const key = newKey();
     u.keyHash = hashKey(key);
+    // A new key ends every browser session too, so a leaked key stops working everywhere.
+    u.sessions = [];
     await platform.commit(req.principal, "user.rotate-key", { userId: u.id });
     return { user: publicUser(u), apiKey: key };
   });

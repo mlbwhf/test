@@ -151,7 +151,10 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   for (const m of [...PORTFOLIO_METRICS, ...AI_METRICS]) metrics.register(m);
 
   // Body limit: CSV and JSON board imports are the largest requests; 8 MB covers a big board.
-  const app = Fastify({ logger: opts.logger ?? false, trustProxy: opts.trustProxy ?? false, bodyLimit: 8 * 1024 * 1024 }).withTypeProvider<ZodTypeProvider>();
+  // Request logs drop secrets carried in the query string (the tracker webhook's ?token=).
+  const redactUrl = (url: string) => url.replace(/([?&](?:token|key|secret)=)[^&]*/gi, "$1[redacted]");
+  const logger = opts.logger ? { serializers: { req: (r: { method: string; url: string; host?: string; ip: string }) => ({ method: r.method, url: redactUrl(r.url), host: r.host ?? "", remoteAddress: r.ip }) } } : false;
+  const app = Fastify({ logger, trustProxy: opts.trustProxy ?? false, bodyLimit: 8 * 1024 * 1024 }).withTypeProvider<ZodTypeProvider>();
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   await app.register(cors, { origin: opts.corsOrigin ?? true, methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"] });
@@ -696,6 +699,10 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   });
   app.put("/v1/coach-sync/note", { schema: { body: z.object({ incrementId: Id, checkpointId: Id, teamId: Id, note: z.string().max(600) }) } }, async (req) => {
     require(req, "plan");
+    const ws = s().workspace;
+    if (!ws.increments.some((i) => i.id === req.body.incrementId)) throw notFound("Increment");
+    if (!ws.teams.some((t) => t.id === req.body.teamId)) throw notFound("Team");
+    if (!COACH_SYNC_CHECKPOINTS.some((c) => c.id === req.body.checkpointId)) throw notFound("Checkpoint");
     const st = coachState(req.body.incrementId);
     const key = `${req.body.checkpointId}|${req.body.teamId}`;
     if (req.body.note.trim()) st.notes[key] = req.body.note.trim();

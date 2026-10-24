@@ -2,7 +2,7 @@
 // smtps://user:pass@host:465), otherwise a mailer that only logs, so a server without mail
 // still runs and says plainly what it would have sent. Tests use the memory mailer.
 
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 
 export interface Mail {
   to: string;
@@ -19,7 +19,7 @@ export interface Mailer {
 
 export class SmtpMailer implements Mailer {
   readonly live = true;
-  private readonly transport: nodemailer.Transporter;
+  private readonly transport: Transporter;
   constructor(url: string, private readonly from: string) {
     this.transport = nodemailer.createTransport(url);
   }

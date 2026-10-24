@@ -74,18 +74,23 @@
 :root[data-theme] .btn.ghost { border-color: transparent; box-shadow: none; background: transparent; }
 :root[data-theme] .btn.primary { background: var(--th-accent); color: var(--th-accent-ink); border-color: var(--th-ink); }
 :root[data-theme] .tabs { background: var(--sunken); border-radius: var(--th-btn-r); }
-:root[data-theme] .tabs button[aria-selected="true"] { background: var(--th-ink); color: var(--th-bg); box-shadow: none; }
+:root[data-theme] .tabs button[aria-selected="true"], :root[data-theme] .tabs button[aria-pressed="true"] { background: var(--th-ink); color: var(--th-bg); box-shadow: none; }
 :root[data-theme] .notice { -webkit-backdrop-filter: none; backdrop-filter: none; }
 :root[data-theme] .input, :root[data-theme] .select, :root[data-theme] .textarea { background: var(--th-panel); color: var(--th-ink); border-color: color-mix(in srgb, var(--th-line) 55%, transparent); }
 
 @media (max-width: 760px) {
-  .ws-top { padding: 8px 12px; gap: 8px; }
-  .ws-brand span { display: none; }
-  .ws-spaces { order: 3; width: 100%; flex-wrap: nowrap; overflow-x: auto; }
-  .ws-space { padding: 6px 14px; font-size: 14px; }
-  .ws-search .gs { width: 46vw; }
+  .ws-top { padding: 8px 12px; gap: 8px; flex-wrap: wrap; }
+  .ws-brand span, .ws-grow { display: none; }
+  .ws-spaces { order: 3; width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .ws-space { padding: 8px 14px; font-size: 14px; flex: none; }
+  .ws-search { flex: 1; min-width: 0; }
+  .ws-search .gs { width: 100%; }
+  .ws-btn { padding: 9px 11px; }
+  .ws-menu { position: fixed; left: 12px; right: 12px; top: 64px; width: auto; max-height: calc(100vh - 80px); overflow-y: auto; }
+  .ws-menu a, .ws-menu button { padding: 12px 10px; }
   .ws-subrow { padding: 12px 12px 0; }
-  .ws-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .ws-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scroll-behavior: smooth; }
+  .ws-chip { padding: 9px 14px; }
 }
 
 /* ---- lane boards ------------------------------------------------------------------------ */

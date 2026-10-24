@@ -102,7 +102,7 @@ export default function PortfolioPage() {
           <h2>Budgets</h2>
           <span className="faint">{p.currency}</span>
         </div>
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>
@@ -142,7 +142,7 @@ export default function PortfolioPage() {
           <h2>Epics by WSJF</h2>
           <span className="faint">{v.epics!.length} open · {v.doneEpics!.length} done</span>
         </div>
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>

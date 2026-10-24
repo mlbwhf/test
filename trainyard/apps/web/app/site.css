@@ -37,7 +37,7 @@
 .ly .pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 99px; text-decoration: none; font-weight: 700; cursor: pointer; border: 2px solid var(--ink); font-family: var(--body); font-size: 16px; padding: 11px 20px; background: #fff; color: var(--ink); transition: background 0.2s, color 0.2s, transform 0.2s; }
 .ly .pill.navy { background: var(--ink); color: #fff; }
 .ly .pill.navy:hover { background: var(--hot); color: #fff; }
-.ly .pill.hot { background: var(--hot); color: #fff; box-shadow: 4px 4px 0 var(--ink); }
+.ly .pill.hot { background: var(--hot); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
 .ly .pill.hot:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
 .ly .pill.on { background: var(--ink); color: #fff; }
 .ly .toggle { display: inline-flex; gap: 4px; background: #fff; border: 2px solid var(--ink); border-radius: 99px; padding: 4px; }
@@ -250,7 +250,9 @@
 .ly-card { display: block; background: #fff; border: 2px solid var(--ink); border-radius: 22px; padding: 22px; color: var(--ink); text-decoration: none; box-shadow: 6px 6px 0 var(--lav); }
 .ly-card:hover { box-shadow: 6px 6px 0 var(--blue); }
 .ly-card h3 { margin: 0 0 8px; font: 800 22px / 1.15 var(--display); letter-spacing: -0.02em; }
-.ly-card p { margin: 0; font-size: 16px; line-height: 1.45; opacity: 0.85; }
+.ly a.ly-card { color: var(--ink); }
+.ly a.ly-cta { color: #fff; }
+.ly-card p { margin: 0; font-size: 16px; line-height: 1.45; }
 .ly-card .tag { display: inline-block; font: 700 12px var(--body); letter-spacing: 0.08em; text-transform: uppercase; background: var(--yellow); border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
 .ly-cta { display: inline-block; margin: 24px 0; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; padding: 14px 24px; border-radius: 999px; }
 .ly-cta:hover { background: var(--blue); }
@@ -331,7 +333,7 @@
 .ex-lens { font: inherit; text-align: left; display: grid; gap: 6px; align-content: start; padding: 16px; border: 2px solid var(--ink); border-radius: 18px; background: #fff; color: var(--ink); cursor: pointer; min-height: 150px; }
 .ex-lens b { font: 800 20px var(--display); }
 .ex-lens span { font-size: 15px; line-height: 1.4; }
-.ex-lens em { font-style: normal; font-weight: 700; font-size: 14px; color: var(--blue); }
+.ex-lens em { font-style: normal; font-weight: 700; font-size: 14px; color: #2b3bb8; }
 .ex-lens.on { background: var(--teal); box-shadow: 4px 4px 0 var(--ink); }
 .ex-review { margin: 0; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
 .ex-review label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
@@ -481,4 +483,18 @@
   .mp-split { grid-template-columns: 1fr; }
   .mp-price { padding: 32px 28px; border-radius: 32px; }
   .sl-panel { position: static; margin: 12px 0 0; width: 100%; }
+}
+
+/* Phones: the site links fold behind a Menu button and open as a stacked list. */
+.sl-burger { display: none; }
+@media (max-width: 760px) {
+  .sl-nav { padding-top: 14px; }
+  .sl-nav .word { font-size: 24px; }
+  .sl-nav .brand .sl-logo { width: 44px; height: 44px; }
+  .sl-burger { all: unset; display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border: 2px solid var(--ink); border-radius: 99px; font: 700 16px var(--body); color: var(--ink); cursor: pointer; background: #fff; }
+  .sl-burger:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .sl-nav .links { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 0 4px; }
+  .sl-nav .links.open { display: flex; }
+  .sl-nav .links > a, .sl-nav .links > .sl-menu { padding: 12px 14px; min-height: 24px; border-radius: 14px; }
+  .sl-nav .links > a.pill { text-align: center; }
 }

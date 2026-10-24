@@ -82,7 +82,7 @@ export default function UsersPage() {
         </div>
       ) : null}
 
-      <section className="panel scroll-x">
+      <section className="panel scroll-x" tabIndex={0}>
         <table className="table">
           <thead>
             <tr>
@@ -170,7 +170,7 @@ export default function UsersPage() {
           <h2>Sign-ups from the website</h2>
           <span className="faint">{(signups.data?.signups ?? []).filter((s) => s.status === "new").length} waiting</span>
         </div>
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>
@@ -260,7 +260,6 @@ function MyPassword({ me, users, onChanged }: { me: Me; users: User[]; onChanged
   const [pw, setPw] = useState("");
   const [again, setAgain] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const bySession = typeof window !== "undefined" && (localStorage.getItem("trainyard.apiKey") ?? "").startsWith("ts_");
   if (me.principal.anonymous) return null;
   if (!mine)
     return (
@@ -286,7 +285,7 @@ function MyPassword({ me, users, onChanged }: { me: Me; users: User[]; onChanged
             e.preventDefault();
             if (pw !== again) return setMsg("The two passwords differ.");
             try {
-              await api("POST", "/v1/auth/password", { password: pw, ...(mine.hasPassword && bySession ? { current } : {}) });
+              await api("POST", "/v1/auth/password", { password: pw, ...(mine.hasPassword ? { current } : {}) });
               setMsg("Password saved. Use it with your email at the next sign-in.");
               setPw("");
               setAgain("");
@@ -298,7 +297,7 @@ function MyPassword({ me, users, onChanged }: { me: Me; users: User[]; onChanged
             }
           }}
         >
-          {mine.hasPassword && bySession ? (
+          {mine.hasPassword ? (
             <label className="field">
               Current password
               <input className="input" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
@@ -455,7 +454,7 @@ function Billing({ admin }: { admin: boolean }) {
       </div>
       {err ? <p className="error">{err}</p> : null}
       {admin ? (
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>

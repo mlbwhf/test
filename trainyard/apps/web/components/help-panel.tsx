@@ -4,7 +4,7 @@
 // help centre and to support. Opens with the ? key too; Esc closes it.
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HELP, helpFor } from "@/lib/help";
 
 export function HelpPanel({ path }: { path: string }) {
@@ -20,14 +20,23 @@ export function HelpPanel({ path }: { path: string }) {
     return () => window.removeEventListener("keydown", key);
   }, []);
   useEffect(() => setOpen(false), [path]);
+  // Focus moves into the panel when it opens and back to the ? button when it closes.
+  const btn = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLElement>(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (open) panel.current?.focus();
+    else if (wasOpen.current && panel.current === null && document.activeElement === document.body) btn.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
   const topic = helpFor(path) ?? HELP[0]!;
   return (
     <>
-      <button className="ws-btn ws-help-btn" aria-label="Help for this page" aria-expanded={open} onClick={() => setOpen(!open)} title="Help (?)">
+      <button ref={btn} className="ws-btn ws-help-btn" aria-label="Help for this page" aria-expanded={open} onClick={() => setOpen(!open)} title="Help (?)">
         ?
       </button>
       {open ? (
-        <aside className="ws-help" role="dialog" aria-label={`Help: ${topic.title}`}>
+        <aside ref={panel} tabIndex={-1} className="ws-help" role="dialog" aria-label={`Help: ${topic.title}`}>
           <div className="ws-help-head">
             <span className="eyebrow">{topic.space} · how to use</span>
             <button className="btn ghost small" onClick={() => setOpen(false)} aria-label="Close help">

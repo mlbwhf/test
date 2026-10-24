@@ -9,7 +9,7 @@
 // Without STRIPE_SECRET_KEY the routes report billing as off and the sign-up stays a request
 // an admin fulfils by hand.
 
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
@@ -232,7 +232,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     return price;
   };
   const findSignup = (id: string) => signups().find((s) => s.id === id) ?? (() => { throw notFound("Sign-up"); })();
-  const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+  const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${randomBytes(9).toString("base64url")}`;
 
   /** Payment is in. New customer: user + workspace, key kept for one pickup. Existing workspace: plan and seats applied. */
   const fulfil = async (purchase: Purchase, patch: Partial<Purchase> = {}) => {
@@ -252,27 +252,19 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     }
     const signup = signups().find((s) => s.id === purchase.signupId);
     if (!signup) return purchase;
-    let user = store.state.users.find((u) => u.email.toLowerCase() === signup.email.toLowerCase());
+    // A sign-up only ever makes a new sign-in. If the email has signed in since (a race with the
+    // check in /v1/signups), nothing about that account changes: no new key, no move, no plan.
+    // Support matches the payment by hand.
+    if (store.state.users.some((u) => u.email.toLowerCase() === signup.email.toLowerCase())) {
+      Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString() });
+      await store.commit(STRIPE_ACTOR, "billing.paid.unmatched", { purchase: purchase.id, plan: purchase.plan, reason: "email already signs in" });
+      return purchase;
+    }
     const key = newKey();
-    if (!user) {
-      user = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) } satisfies User;
-      store.state.users.push(user);
-    } else {
-      user.keyHash = hashKey(key);
-      delete user.disabled;
-    }
-    let record = user.workspaceId ? tenants.record(user.workspaceId) : undefined;
-    if (record) {
-      record.plan = purchase.plan;
-      record.seats = purchase.quantity;
-      record.status = "active";
-      delete record.frozenAt;
-      delete record.frozenReason;
-    } else {
-      record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
-      user.workspaceId = record.id;
-      user.role = "admin";
-    }
+    const user: User = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) };
+    store.state.users.push(user);
+    const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
+    user.workspaceId = record.id;
     Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, workspaceId: record.id, pendingKey: key });
     signup.status = "invited";
     signup.userId = user.id;
@@ -318,6 +310,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const payer = (req: { principal: Principal; body: { signupId?: string | undefined; plan?: "trainer" | "academy" | "insights" | undefined } }) => {
     if (req.body.signupId) {
       const signup = findSignup(req.body.signupId);
+      if (store.state.users.some((u) => u.email.toLowerCase() === signup.email.toLowerCase())) throw new ApiError(409, "EMAIL_TAKEN", "There is already a sign-in for this email. Sign in, then change the plan from Billing.");
       return { email: signup.email, name: signup.name, plan: signup.plan, signupId: signup.id, company: signup.company };
     }
     if (req.principal.anonymous) throw new ApiError(401, "UNAUTHORIZED", "Sign in to change the plan of your workspace.");

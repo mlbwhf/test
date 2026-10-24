@@ -87,7 +87,7 @@ export function Pipeline({ session, art, derived, onChange, onServer, onError }:
         <b style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>AI innovation pipeline</b>
         <span className="faint" style={{ fontSize: "0.82rem" }}>Experiments and prototypes learn and conclude at Validate (A/B tests may release); features and enablers deliver value through Release. Stopping is one click and one reason, from anywhere.</span>
       </div>
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <div className="an-board" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(190px, 1fr))` }}>
           {columns.map((st) => (
             <div key={st} className={`an-col${st === "discarded" ? " discarded" : st === "concluded" ? " concluded" : ""}`}>
@@ -654,7 +654,7 @@ export function DataRegister({ art, onChange }: Props) {
       <p className="faint" style={{ margin: 0, fontSize: "0.86rem" }}>
         Two kinds of curated data: what powers product development, and what powers the products. Four qualities, scored 0–5; the score shows wherever an output depends on the asset.
       </p>
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <table className="table" style={{ minWidth: 900 }}>
           <thead>
             <tr>

@@ -131,7 +131,7 @@ export default function CardTypesPage() {
               <th>Badge</th>
               <th>Stands for</th>
               <th>Fields</th>
-              <th />
+              <th><span className="sr-only">Actions</span></th>
             </tr>
           </thead>
           <tbody>

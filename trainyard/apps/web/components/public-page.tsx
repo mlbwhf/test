@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
-import { siteUrl } from "@/lib/site";
+import { inlineJson, siteUrl } from "@/lib/site";
 import "@/app/site.css";
 
 /** The frame for public, indexable pages: the site nav, a reading column, breadcrumbs with schema, the footer. */
@@ -14,9 +14,9 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
   };
   return (
     <div className="ly ly-page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([breadcrumb, ...(jsonLd ?? [])]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: inlineJson([breadcrumb, ...(jsonLd ?? [])]) }} />
       <SiteNav />
-      <main className="ly-article">
+      <main id="main" className="ly-article">
         <nav className="ly-crumbs" aria-label="Breadcrumb">
           <Link href="/">Trainyard</Link>
           {crumbs.map((c) => (
@@ -41,12 +41,12 @@ export function Prose({ children }: { children: ReactNode }) {
 
 export function DataTable({ columns, rows }: { columns: string[]; rows: string[][] }) {
   return (
-    <div className="ly-tablewrap">
+    <div className="ly-tablewrap" tabIndex={0}>
       <table className="ly-table">
         <thead>
           <tr>
             {columns.map((c) => (
-              <th key={c}>{c}</th>
+              <th key={c} scope="col">{c || <span className="sr-only">Feature</span>}</th>
             ))}
           </tr>
         </thead>

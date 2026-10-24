@@ -212,7 +212,7 @@ function Table({ board }: { board: Board }) {
   const cols = board.columns.filter((c) => !c.id.endsWith(":raw"));
   const groups = board.groups.length ? board.groups : [{ id: "", title: "" }];
   return (
-    <section className="panel scroll-x">
+    <section className="panel scroll-x" tabIndex={0}>
       <table className="table" style={{ minWidth: Math.max(600, cols.length * 160) }}>
         <thead>
           <tr>

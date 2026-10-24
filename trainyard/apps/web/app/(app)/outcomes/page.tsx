@@ -682,7 +682,7 @@ function MeasuresView({ v, run }: { v: View; run: (fn: () => Promise<unknown>) =
         </button>
       </div>
       {edit ? <MeasureEditor d={edit} v={v} onCancel={() => setEdit(null)} onSave={(m) => void run(() => api("PUT", `/v1/insights/measures/${encodeURIComponent(m.id)}`, (({ id: _i, isNew: _n, ...rest }) => rest)(m))).then(() => setEdit(null))} onDelete={(id) => confirm("Remove this measure?") && void run(() => api("DELETE", `/v1/insights/measures/${encodeURIComponent(id)}`)).then(() => setEdit(null))} /> : null}
-      <div className="panel scroll-x">
+      <div className="panel scroll-x" tabIndex={0}>
         <table className="table">
           <thead>
             <tr>
@@ -903,7 +903,7 @@ function SourcesView({ v, run }: { v: View; run: (fn: () => Promise<unknown>) =>
           ))}
         </div>
       ) : null}
-      <div className="panel scroll-x">
+      <div className="panel scroll-x" tabIndex={0}>
         <table className="table">
           <thead>
             <tr>
@@ -946,7 +946,7 @@ function SourcesView({ v, run }: { v: View; run: (fn: () => Promise<unknown>) =>
                 {open === s.id ? (
                   <tr key={`${s.id}-p`}>
                     <td colSpan={7}>
-                      <div className="scroll-x">
+                      <div className="scroll-x" tabIndex={0}>
                         <table className="table" style={{ fontSize: "0.8rem" }}>
                           <thead>
                             <tr>

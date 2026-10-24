@@ -84,7 +84,7 @@ export default function AdminPage() {
         </div>
       ) : null}
       <section className="panel">
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
               <tr>

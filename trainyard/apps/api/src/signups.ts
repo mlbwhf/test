@@ -3,6 +3,7 @@
 // invitation (a user with a key). Each sign-up is audited, and TRAINYARD_SIGNUP_WEBHOOK can
 // forward it to Slack, n8n, a CRM or a mailbox so nobody has to watch the page.
 
+import { randomBytes } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
@@ -79,15 +80,23 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
     if (website) return reply.code(202).send({ ok: true });
     if (BLOCKED_DOMAINS.test(body.email)) throw new ApiError(422, "BAD_EMAIL", "Use the email address you read.");
     const email = body.email.toLowerCase();
+    // Every sign-in is made once per email. Paying for a plan on an email that already signs in
+    // happens from Billing, signed in, so a sign-up can never take over someone's account.
+    if (store.state.users.some((u) => u.email.toLowerCase() === email)) throw new ApiError(409, "EMAIL_TAKEN", "There is already a sign-in for this email. Sign in, then change the plan from Billing.");
     const existing = list().find((s) => s.email === email && s.status === "new");
     if (existing) {
-      // Same person again: keep the first request, take the newest wishes.
-      Object.assign(existing, { plan: body.plan, audience: body.audience, ...(body.company ? { company: body.company } : {}), ...(body.seats ? { seats: body.seats } : {}), ...(body.note ? { note: body.note } : {}) });
+      // Same person again: one row, the newest wishes and password. The id is the key to checkout,
+      // so it is issued afresh to whoever asked last and the earlier one stops working.
+      const id = signupId();
+      for (const p of store.state.purchases ?? []) if (p.signupId === existing.id) p.signupId = id;
+      Object.assign(existing, { id, plan: body.plan, audience: body.audience, ...(body.company ? { company: body.company } : {}), ...(body.seats ? { seats: body.seats } : {}), ...(body.note ? { note: body.note } : {}) });
+      if (body.password) existing.passwordHash = hashPassword(body.password);
+      else delete existing.passwordHash;
       await store.commit(req.principal, "signup.update", { id: existing.id, plan: existing.plan });
       return reply.code(200).send({ signup: publicView(existing), repeated: true });
     }
     const signup: Signup = {
-      id: `su-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+      id: signupId(),
       name: body.name,
       email,
       plan: body.plan,
@@ -105,7 +114,6 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
     void notify(signup);
     if (signup.plan === "practice") {
       // Free plan: the workspace exists right away, with the key shown once on the website.
-      if (store.state.users.some((u) => u.email.toLowerCase() === email)) throw new ApiError(409, "EMAIL_TAKEN", "There is already a sign-in for this email. Sign in, or ask for a new key.");
       const key = newKey();
       const user: User = { id: `u-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: signup.name, email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) };
       store.state.users.push(user);
@@ -136,6 +144,9 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
 }
 
 /** What the visitor gets back: enough to confirm, nothing that lists other people. */
+/** Sign-up ids are bearer tokens for checkout, so they are unguessable. */
+const signupId = () => `su-${randomBytes(12).toString("base64url")}`;
+
 function publicView(s: Signup) {
   return { id: s.id, name: s.name, email: s.email, plan: s.plan, status: s.status, createdAt: s.createdAt };
 }

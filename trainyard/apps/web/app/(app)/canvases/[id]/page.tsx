@@ -262,7 +262,7 @@ function Pairs({ s, value, onChange }: { s: SectionDef; value: Pair[]; onChange:
 function Table({ s, rows, onChange }: { s: SectionDef; rows: TableRow[]; onChange: (v: SectionValue) => void }) {
   const cols = s.labels ?? [];
   return (
-    <div className="scroll-x">
+    <div className="scroll-x" tabIndex={0}>
       <table style={{ width: "100%", borderCollapse: "collapse", minWidth: cols.length * 140, fontSize: "0.86rem" }}>
         <thead>
           <tr>
@@ -366,7 +366,7 @@ function TimelineEdit({ value, onChange }: { value: Timeline; onChange: (v: Sect
           <input className="input" value={t.dateCertainLabel} onChange={(e) => onChange({ ...t, dateCertainLabel: e.target.value })} />
         </label>
       </div>
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <div style={{ minWidth: 200 + weeks.length * 70 }}>
           {t.lanes.map((lane) => (
             <div key={lane.id} style={{ display: "grid", gridTemplateColumns: cols, alignItems: "end", minHeight: 74, borderBottom: "3px solid #3d7a80", position: "relative" }}>

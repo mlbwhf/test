@@ -38,7 +38,7 @@ export default function AiPortfolioPage() {
         <Stat label="Spend this month" value={formatValue(spend, "currency")} />
       </div>
 
-      <div className="scroll-x">
+      <div className="scroll-x" tabIndex={0}>
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${STAGES.length - 1}, minmax(190px, 1fr))`, gap: 10, minWidth: (STAGES.length - 1) * 190 }}>
           {STAGES.filter((s) => s !== "retired").map((stage, n) => (
             <div key={stage} className="stack" style={{ gap: 8 }}>

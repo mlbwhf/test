@@ -87,10 +87,16 @@ export function registerAdminRoutes(app: App, tenants: Tenants) {
   });
 
   // Everything in the workspace as one JSON document: for the owner, or for support.
+  // The platform workspace's state also holds every sign-in, sign-up and purchase; an export
+  // carries the workspace's own planning data only, never credentials.
+  const exportable = (state: typeof platform.state) => {
+    const { users: _u, signups: _su, purchases: _p, workspaces: _w, ...rest } = state as typeof state & Record<"users" | "signups" | "purchases" | "workspaces", unknown>;
+    return rest;
+  };
   const exportOf = async (id: string) => {
     const store = await tenants.get(id);
     const r = tenants.record(id);
-    return { exportedAt: platform.now().toISOString(), workspace: r ?? { id, name: store.state.workspace.name }, members: tenants.members(id).map(({ keyHash: _k, ...u }) => u), state: store.state, version: store.version };
+    return { exportedAt: platform.now().toISOString(), workspace: r ?? { id, name: store.state.workspace.name }, members: tenants.members(id).map(({ keyHash: _k, passwordHash, sessions: _s, ...u }) => ({ ...u, hasPassword: !!passwordHash })), state: exportable(store.state), version: store.version };
   };
   app.get("/v1/admin/workspaces/:id/export", { schema: { params: Id } }, async (req) => {
     requirePlatformAdmin(req);

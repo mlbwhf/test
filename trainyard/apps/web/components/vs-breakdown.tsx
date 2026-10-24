@@ -80,7 +80,7 @@ export function VsBreakdown({ vsi, onPickStep }: { vsi: ValueStreamIdentificatio
           </span>
           <span className="chip">{b.totalPeople} people</span>
         </div>
-        <div className="scroll-x">
+        <div className="scroll-x" tabIndex={0}>
           <svg viewBox={`0 0 ${W} ${layout.H}`} width="100%" style={{ minWidth: 900, display: "block" }} role="img" aria-label={`Breakdown of ${vsi.name}: ${LEVELS.map((l) => `${b.nodes.filter((n) => n.level === l.key).length} ${l.label.slice(4).toLowerCase()}`).join(", ")}`}>
             {LEVELS.map((l, i) => (
               <text key={l.key} x={layout.colX(i)} y={16} fontSize="12" fontWeight="700" fill="currentColor" opacity={0.75}>
@@ -160,7 +160,7 @@ export function VsBreakdown({ vsi, onPickStep }: { vsi: ValueStreamIdentificatio
           A step backed by one train can change on its own. A step that needs several trains is where they plan together, or where the trains should be re-cut. A step with none is not yet owned.
         </p>
         {arts.length ? (
-          <div className="scroll-x">
+          <div className="scroll-x" tabIndex={0}>
             <table className="table">
               <thead>
                 <tr>

@@ -220,7 +220,7 @@ export default function ReadinessPage() {
           <p className="faint" style={{ margin: 0 }}>
             Cost of delay (user / business value + time criticality + risk reduction / opportunity enablement) ÷ job size. Use relative values (1, 2, 3, 5, 8, 13, 20) and score one column at a time across all features, smallest first. Saved once all four are in.
           </p>
-          <div className="scroll-x">
+          <div className="scroll-x" tabIndex={0}>
             <table className="table">
               <thead>
                 <tr>

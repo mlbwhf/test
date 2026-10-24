@@ -341,7 +341,7 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
           })}
         </div>
       ) : (
-        <div className="lb-wrap" ref={wrap}>
+        <div className="lb-wrap" ref={wrap} tabIndex={readOnly ? 0 : -1} role="region" aria-label={`${title}, scrollable`}>
           <div className="lb-inner" role="application" aria-label={`${title} board`} style={{ width: innerW, height: innerH, transform: `scale(${sc})`, cursor: tool === "pen" ? "crosshair" : tool === "note" ? "copy" : undefined }} onPointerDown={canvasDown} onPointerMove={move} onPointerUp={up} onDoubleClick={(e) => !readOnly && e.target === e.currentTarget && addNote(Math.round(toBoard(e).x - 90), Math.round(toBoard(e).y - 60))}>
             {th.train && layout === "cols" ? <div className="lb-rail" style={{ top: Math.max(...geo.map((g) => g.y + g.h)) + 14, width: innerW - PAD * 2 }} /> : null}
             {geo.map((g, li) => {
@@ -388,7 +388,7 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
               const x = dragging ? drag.x : pos.x;
               const y = dragging ? drag.y : pos.y;
               return (
-                <div key={c.id} className={`lb-card${dragging && drag.moved ? " lift" : ""}`} role="listitem" tabIndex={readOnly ? -1 : 0} aria-label={`${c.title}${c.sub ? `, ${c.sub}` : ""}, in ${lanes.find((l) => l.id === c.lane)?.title ?? "no lane"}${readOnly ? "" : ". Alt and arrow keys move it."}`} data-card={c.id} data-lane={c.lane ?? ""} onPointerDown={(e) => down(e, c.id)} onKeyDown={(e) => keyMove(e, c)} style={{ left: x, top: y, width: pos.w, height: pos.h, background: toneBg(c.tone), cursor: readOnly ? "default" : "grab" }}>
+                <div key={c.id} className={`lb-card${dragging && drag.moved ? " lift" : ""}`} role="group" aria-roledescription="card" tabIndex={readOnly ? -1 : 0} aria-label={`${c.title}${c.sub ? `, ${c.sub}` : ""}, in ${lanes.find((l) => l.id === c.lane)?.title ?? "no lane"}${readOnly ? "" : ". Alt and arrow keys move it."}`} data-card={c.id} data-lane={c.lane ?? ""} onPointerDown={(e) => down(e, c.id)} onKeyDown={(e) => keyMove(e, c)} style={{ left: x, top: y, width: pos.w, height: pos.h, background: toneBg(c.tone), cursor: readOnly ? "default" : "grab" }}>
                   {c.tag || c.chip ? (
                     <div className="lb-card-top">
                       <span className="lb-tag">{c.tag}</span>

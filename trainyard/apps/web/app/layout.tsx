@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "./fonts.css";
 import "./globals.css";
 import "./method-fonts.css";
-import { apiUrl, siteUrl } from "@/lib/site";
+import { apiUrl, inlineJson, siteUrl } from "@/lib/site";
 import { locate } from "@/lib/spaces";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,8 +41,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" data-theme={theme}>
       <body>
-        {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(api)}` }} /> : null}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, description: "Open-source planning rooms for scaled agile, an outcome dashboard for executives and boards, and free class boards for SAFe trainers.", sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${inlineJson(api)}` }} /> : null}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: inlineJson([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, description: "Open-source planning rooms for scaled agile, an outcome dashboard for executives and boards, and free class boards for SAFe trainers.", sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />
         {children}
       </body>
     </html>

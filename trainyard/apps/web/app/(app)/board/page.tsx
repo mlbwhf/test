@@ -122,7 +122,7 @@ export default function BoardPage() {
         </div>
       ) : null}
 
-      <div className="panel scroll-x">
+      <div className="panel scroll-x" tabIndex={0}>
         <BoardGrid dependencies={b.dependencies} itemsKey={`${b.increment.id}:${b.items.map((i) => `${i.id}@${i.iterationId ?? ""}`).join(",")}`}>
           <div style={{ display: "grid", gridTemplateColumns: `170px repeat(${columns.length}, minmax(150px, 1fr)) 120px`, minWidth: 170 + columns.length * 150 + 120 }}>
             <div style={{ padding: 10, borderBottom: "1px solid var(--line)" }} className="eyebrow">

@@ -24,3 +24,6 @@ export function supportEmail(): string {
 
 export const SECURITY_EMAIL = "security@agile-agilist.com";
 export const ISSUES_URL = "https://github.com/mlbwhf/test/issues";
+
+/** JSON for an inline <script>: "<" is escaped so no value can close the tag early. */
+export const inlineJson = (x: unknown): string => JSON.stringify(x).replace(/</g, "\\u003c");

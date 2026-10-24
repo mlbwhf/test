@@ -96,10 +96,17 @@ function Account() {
 }
 
 function SubRow({ space, current }: { space: Space; current: string | undefined }) {
+  // On a phone the chips scroll sideways; keep the current one in view.
+  const chips = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = chips.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    const box = chips.current;
+    if (el && box && box.scrollWidth > box.clientWidth) box.scrollLeft = el.offsetLeft - (box.clientWidth - el.offsetWidth) / 2;
+  }, [current]);
   return (
-    <div className="ws-subrow">
+    <nav className="ws-subrow" aria-label={`${space.label} views`}>
       <span className="ws-eyebrow">{space.eyebrow}</span>
-      <nav className="ws-chips" aria-label={`${space.label} views`}>
+      <div className="ws-chips" ref={chips}>
         {space.subs.map((s, i) => (
           <span key={s.href} className="ws-chip-wrap">
             {s.group && s.group !== space.subs[i - 1]?.group ? <span className="ws-group">{s.group}</span> : null}
@@ -108,8 +115,8 @@ function SubRow({ space, current }: { space: Space; current: string | undefined 
             </Link>
           </span>
         ))}
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 }
 
@@ -153,7 +160,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
           <Account />
         </header>
         {here ? <SubRow space={here.space} current={here.sub?.href} /> : null}
-        <main className="main ws-main">{children}</main>
+        <main id="main" className="main ws-main">{children}</main>
       </div>
     </ThemeCtx.Provider>
   );

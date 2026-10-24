@@ -96,6 +96,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
 
   app.get("/v1/connections/:id/boards", { schema: { params: z.object({ id: Id }) } }, async (req) => {
+    require(req, "plan");
     const c = s().connections.find((x) => x.id === req.params.id);
     if (!c) throw notFound("Connection");
     const remote = await translate(() => importerFor(c).listBoards());

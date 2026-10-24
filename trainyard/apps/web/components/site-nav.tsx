@@ -50,10 +50,12 @@ export const INTEGRATIONS = [
 
 export function SiteNav() {
   const [open, setOpen] = useState<"mod" | "int" | null>(null);
+  // On a phone the links fold behind a Menu button.
+  const [menu, setMenu] = useState(false);
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
-    const key = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
-    const click = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && setOpen(null);
+    const key = (e: KeyboardEvent) => e.key === "Escape" && (setOpen(null), setMenu(false));
+    const click = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && (setOpen(null), setMenu(false));
     window.addEventListener("keydown", key);
     window.addEventListener("pointerdown", click);
     return () => (window.removeEventListener("keydown", key), window.removeEventListener("pointerdown", click));
@@ -68,7 +70,10 @@ export function SiteNav() {
           Train<b>yard</b>
         </span>
       </Link>
-      <div className="links">
+      <button className="sl-burger" aria-expanded={menu} aria-controls="sl-links" onClick={() => setMenu(!menu)}>
+        {menu ? "Close" : "Menu"}
+      </button>
+      <div id="sl-links" className={`links${menu ? " open" : ""}`} onClick={(e) => (e.target as HTMLElement).closest("a") && setMenu(false)}>
         <button className="sl-menu" aria-expanded={open === "mod"} aria-controls="sl-mod" onClick={() => setOpen(open === "mod" ? null : "mod")} onMouseEnter={hover("mod")}>
           Modules <span aria-hidden="true">▾</span>
         </button>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
-import { siteUrl } from "@/lib/site";
+import { inlineJson, siteUrl } from "@/lib/site";
 import "@/app/site.css";
 
 /** The frame for the module pages (Classes, Templates, OKRs): full-width sections, breadcrumb schema, the site nav and footer. */
@@ -17,9 +17,9 @@ export function ModulePage({ crumb, children, jsonLd }: { crumb: { href: string;
   };
   return (
     <div className="ly">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([breadcrumb, ...(jsonLd ?? [])]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: inlineJson([breadcrumb, ...(jsonLd ?? [])]) }} />
       <SiteNav />
-      <main>{children}</main>
+      <main id="main">{children}</main>
       <div style={{ marginTop: 120 }}>
         <SiteFooter giant={false} />
       </div>
