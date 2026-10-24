@@ -33,7 +33,7 @@ const Identification = z.object({
   steps: z.array(z.object({ id: Id, name: Name, actor: z.enum(["customer", "staff"]), people: z.string().max(120).optional() })).max(40),
   systems: z.array(z.object({ id: Id, name: Name, note: z.string().max(200).optional(), stepIds: Ids })).max(60),
   groups: z.array(z.object({ id: Id, people: z.number().int().min(0).max(100_000), locations: z.string().max(200), function: z.string().max(60).optional(), systemIds: Ids, devStreamId: Id.optional() })).max(100),
-  devStreams: z.array(z.object({ id: Id, name: Name, systemIds: Ids })).max(30),
+  devStreams: z.array(z.object({ id: Id, name: Name, note: z.string().max(300).optional(), systemIds: Ids })).max(30),
   arts: z.array(z.object({ id: Id, name: Name, people: z.number().int().min(0).max(100_000), locations: z.string().max(300), systemIds: Ids, devStreamId: Id.optional(), topology: z.enum(["stream-aligned", "platform", "complicated-subsystem", "enabling"]).optional() })).max(60),
 });
 const OvsTypeBody = z.object({

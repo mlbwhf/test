@@ -59,3 +59,28 @@ describe("value stream identification", () => {
     expect(vsi.arts.find((a) => a.id === "art-core")!.topology).toBe("platform");
   });
 });
+
+describe("value stream type examples", () => {
+  it("seeds each SAFe pattern with its solutions and development value streams, and switches between them", async () => {
+    const { OVS_TYPES, identificationFromType, applyTypeExample, isTypeExample, identificationIssues } = await import("./valuestreams.js");
+    const t = (id: string) => OVS_TYPES.find((x) => x.id === id)!;
+    const mfg = identificationFromType(t("manufacturing"), "v1", "2026-10-24T00:00:00.000Z");
+    expect(mfg.systems.map((s) => s.name)).toContain("Bills of material");
+    expect(mfg.systems.find((s) => s.name === "Bills of material")!.stepIds).toHaveLength(2);
+    expect(mfg.devStreams.map((d) => d.name)).toEqual(["Vehicle development", "Design tools platform"]);
+    const sw = identificationFromType(t("software-product"), "v2", "2026-10-24T00:00:00.000Z");
+    expect(sw.steps.map((s) => s.name)).toEqual(["Sales cycle", "Contracts and licensing", "Provisioning", "Customer care", "Renewals"]);
+    expect(sw.devStreams.find((d) => d.name === "Business systems")!.systemIds).toHaveLength(3);
+    const sup = identificationFromType(t("supporting"), "v3", "2026-10-24T00:00:00.000Z");
+    expect(sup.systems[0]!.name).toBe("ERP system");
+    for (const v of [mfg, sw, sup]) expect(identificationIssues(v).filter((i) => /unknown/.test(i.message))).toEqual([]);
+    // Every example's systems and dev streams point at real steps and systems.
+    for (const type of OVS_TYPES) for (const sy of type.example.systems ?? []) for (const st of sy.steps) expect(type.example.steps.some((x) => x.name === st)).toBe(true);
+    for (const type of OVS_TYPES) for (const d of type.example.devStreams ?? []) for (const sy of d.systems) expect(type.example.systems?.some((x) => x.name === sy)).toBe(true);
+    expect(isTypeExample(mfg, t("manufacturing"))).toBe(true);
+    const switched = applyTypeExample(mfg, t("software-product"), "2026-10-24T01:00:00.000Z");
+    expect(switched.id).toBe("v1");
+    expect(switched.type).toBe("software-product");
+    expect(isTypeExample({ ...mfg, steps: mfg.steps.slice(1) }, t("manufacturing"))).toBe(false);
+  });
+});

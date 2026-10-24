@@ -30,7 +30,19 @@ export interface OvsType {
   blurb: string;
   /** The development value stream pattern that usually realises it. */
   pattern: string;
-  example: { name: string; description: string; customers: string; trigger: string; valueToEnterprise: string; valueToCustomer: string; steps: { name: string; actor: Actor; people?: string }[] };
+  example: {
+    name: string;
+    description: string;
+    customers: string;
+    trigger: string;
+    valueToEnterprise: string;
+    valueToCustomer: string;
+    steps: { name: string; actor: Actor; people?: string }[];
+    /** Systems (or, for manufacturing, the specifications solution intent holds) and the steps they support, by step name. */
+    systems?: { name: string; note?: string; steps: string[] }[];
+    /** The development value streams of the pattern and the systems each builds, by system name. */
+    devStreams?: { name: string; note?: string; systems: string[] }[];
+  };
   builtin?: boolean;
 }
 
@@ -59,6 +71,16 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Repay money", actor: "customer" },
         { name: "Close loan", actor: "staff", people: "Servicing" },
       ],
+      systems: [
+        { name: "Channels", note: "web, mobile, branch", steps: ["Attract customer"] },
+        { name: "Loan origination system", note: "quotes and applications", steps: ["Quick rate quote", "Complete loan application"] },
+        { name: "Credit scoring system", note: "eligibility and risk", steps: ["Eligibility decision and underwriting"] },
+        { name: "Core banking", note: "terms, award, payments, closure", steps: ["Extend loan terms", "Award loan", "Set up payment terms", "Repay money", "Close loan"] },
+      ],
+      devStreams: [
+        { name: "Acquisition and origination", note: "Builds the channels, origination and scoring the loan is sold and decided on", systems: ["Channels", "Loan origination system", "Credit scoring system"] },
+        { name: "Servicing on core banking", note: "Builds the core banking the loan is run on", systems: ["Core banking"] },
+      ],
     },
   },
   {
@@ -82,6 +104,21 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Validate product", actor: "staff", people: "Quality" },
         { name: "Package and ship", actor: "staff", people: "Logistics" },
       ],
+      // In manufacturing the development value stream's output is the solution intent: the
+      // specifications each operational step builds to, its fixed and variable parts, and the digital twin.
+      systems: [
+        { name: "Bills of material", note: "solution intent", steps: ["Procure materials", "Manage inventory"] },
+        { name: "Design specifications", note: "solution intent", steps: ["Manufacture subassemblies"] },
+        { name: "Manufacturing specifications", note: "solution intent", steps: ["Assemble final product"] },
+        { name: "Test and validation specifications", note: "solution intent", steps: ["Validate product"] },
+        { name: "Packaging and shipping specifications", note: "solution intent", steps: ["Package and ship"] },
+        { name: "Digital twin", note: "simulates and validates the vehicle", steps: ["Validate product"] },
+        { name: "Design tools platform", note: "design, simulation and validation tools", steps: [] },
+      ],
+      devStreams: [
+        { name: "Vehicle development", note: "Develops the specific manufacturing and validation specifications needed for the vehicle", systems: ["Bills of material", "Design specifications", "Manufacturing specifications", "Test and validation specifications", "Packaging and shipping specifications", "Digital twin"] },
+        { name: "Design tools platform", note: "Builds the tools that the vehicle designers need to design, simulate and validate the vehicle", systems: ["Design tools platform"] },
+      ],
     },
   },
   {
@@ -96,21 +133,33 @@ export const OVS_TYPES: OvsType[] = [
       customers: "Business customers",
       trigger: "Order received",
       valueToEnterprise: "Subscription revenue and renewals",
-      valueToCustomer: "Working software and support",
+      valueToCustomer: "SaaS, mobile and desktop software products",
       steps: [
-        { name: "Contracts and licensing", actor: "staff", people: "Legal, Sales" },
         { name: "Sales cycle", actor: "staff", people: "Sales" },
+        { name: "Contracts and licensing", actor: "staff", people: "Legal, Sales" },
         { name: "Provisioning", actor: "staff", people: "Operations" },
         { name: "Customer care", actor: "staff", people: "Support" },
         { name: "Renewals", actor: "staff", people: "Account management" },
+      ],
+      systems: [
+        { name: "Customer portal", steps: ["Sales cycle", "Provisioning", "Customer care", "Renewals"] },
+        { name: "CRM", steps: ["Sales cycle", "Contracts and licensing", "Renewals"] },
+        { name: "Provisioning", note: "system", steps: ["Provisioning"] },
+        { name: "Help desk", steps: ["Customer care"] },
+        { name: "Software product", note: "SaaS, mobile, desktop", steps: [] },
+      ],
+      devStreams: [
+        { name: "Customer portal", note: "Builds the portal customers buy, provision and get help through", systems: ["Customer portal"] },
+        { name: "Business systems", note: "Builds CRM, provisioning and the help desk the operational steps run on", systems: ["CRM", "Provisioning", "Help desk"] },
+        { name: "Software product", note: "Develops the software solution itself", systems: ["Software product"] },
       ],
     },
   },
   {
     id: "supporting",
     name: "Supporting",
-    blurb: "Internal value streams the enterprise runs for itself: onboarding personnel, procuring supplies, preparing and auditing financials.",
-    pattern: "A single development value stream often supports a shared system (an ERP) used by several supporting value streams across the enterprise.",
+    blurb: "Internal value streams the enterprise runs for itself: onboarding personnel, procuring operational supplies, preparing and auditing financials.",
+    pattern: "A single development value stream supports a shared system (an ERP) used by several supporting value streams across the enterprise: procurement of operational supplies, onboarding and supporting personnel, preparing and auditing financials.",
     builtin: true,
     example: {
       name: "Personnel onboarding",
@@ -126,6 +175,14 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Hire employee", actor: "staff", people: "HR" },
         { name: "Train new hire", actor: "staff", people: "Manager, L&D" },
         { name: "Offboard", actor: "staff", people: "HR, IT" },
+      ],
+      systems: [
+        { name: "ERP system", note: "also runs procurement of operational supplies and preparing and auditing financials", steps: ["Post job", "Hire employee", "Train new hire", "Offboard"] },
+        { name: "Applicant tracking", steps: ["Post job", "Review resumes", "Interview"] },
+      ],
+      devStreams: [
+        { name: "ERP", note: "A single development value stream that supports the ERP system used throughout the enterprise", systems: ["ERP system"] },
+        { name: "Talent systems", note: "Builds the applicant tracking the hiring steps run on", systems: ["Applicant tracking"] },
       ],
     },
   },
@@ -155,6 +212,11 @@ export const ART_TOPOLOGIES: { id: ArtTopology; name: string; blurb: string }[] 
 /** Seeds an identification from a type's example. */
 export function identificationFromType(type: OvsType, id: string, now: string, name = type.example.name): ValueStreamIdentification {
   let n = 0;
+  const steps = type.example.steps.map((st) => ({ id: `step-${++n}`, name: st.name, actor: st.actor, ...(st.people ? { people: st.people } : {}) }));
+  const stepId = (nm: string) => steps.find((x) => x.name === nm)?.id;
+  const systems = (type.example.systems ?? []).map((sy, i) => ({ id: `sys-${i + 1}`, name: sy.name, ...(sy.note ? { note: sy.note } : {}), stepIds: sy.steps.map(stepId).filter((x): x is string => !!x) }));
+  const sysId = (nm: string) => systems.find((x) => x.name === nm)?.id;
+  const devStreams = (type.example.devStreams ?? []).map((d, i) => ({ id: `dvs-${i + 1}`, name: d.name, ...(d.note ? { note: d.note } : {}), systemIds: d.systems.map(sysId).filter((x): x is string => !!x) }));
   return {
     id,
     name,
@@ -165,13 +227,30 @@ export function identificationFromType(type: OvsType, id: string, now: string, n
     value: type.example.valueToEnterprise,
     valueToEnterprise: type.example.valueToEnterprise,
     valueToCustomer: type.example.valueToCustomer,
-    steps: type.example.steps.map((st) => ({ id: `step-${++n}`, name: st.name, actor: st.actor, ...(st.people ? { people: st.people } : {}) })),
-    systems: [],
+    steps,
+    systems,
     groups: [],
-    devStreams: [],
+    devStreams,
     arts: [],
     updatedAt: now,
   };
+}
+
+/**
+ * Switch an identification to another type's example: its fields, steps, systems and
+ * development value streams, keeping the identification's id. People and trains are cleared,
+ * since they belonged to the systems being replaced.
+ */
+export function applyTypeExample(vsi: ValueStreamIdentification, type: OvsType, now: string): ValueStreamIdentification {
+  return { ...identificationFromType(type, vsi.id, now), id: vsi.id };
+}
+
+/** True when the identification still holds a type's example unchanged (switching loses nothing). */
+export function isTypeExample(vsi: ValueStreamIdentification, type: OvsType | undefined): boolean {
+  if (!type) return vsi.steps.length === 0 && vsi.systems.length === 0;
+  const ex = identificationFromType(type, vsi.id, vsi.updatedAt);
+  const sig = (v: ValueStreamIdentification) => JSON.stringify([v.name, v.steps.map((x) => [x.name, x.actor, x.people ?? ""]), v.systems.map((x) => [x.name, x.stepIds.length]), v.devStreams.map((x) => [x.name, x.systemIds.length]), v.groups.length, v.arts.length]);
+  return sig(vsi) === sig(ex);
 }
 
 export interface SupportingSystem {
@@ -198,6 +277,8 @@ export interface PeopleGroup {
 export interface DevelopmentValueStream {
   id: string;
   name: string;
+  /** What it develops, in a sentence. */
+  note?: string;
   systemIds: string[];
 }
 

@@ -14,6 +14,8 @@ import {
   type MapMetrics,
   type ValueStreamIdentification,
   type ValueStreamMap,
+  applyTypeExample,
+  isTypeExample,
 } from "@trainyard/core";
 import { Popover } from "@/components/plan-board";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -268,6 +270,16 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
   const issues = identificationIssues(vsi);
   const type = types.find((t) => t.id === vsi.type);
   const set = (patch: Partial<Vsi>) => onChange({ ...vsi, ...patch });
+  // Picking a type loads that type's example (steps, solutions, development value streams), as in
+  // SAFe's patterns. Work already done on this identification is only replaced after a yes.
+  const switchType = (id: string) => {
+    if (!id) return onChange(strip(vsi, ["type"]));
+    const next = types.find((t) => t.id === id);
+    if (!next || !next.example.steps.length) return set({ type: id });
+    if (!isTypeExample(vsi, type) && !window.confirm(`Load the ${next.name} example? It replaces this identification's steps, solutions, people, development value streams and trains. Cancel keeps them and only changes the type.`)) return set({ type: id });
+    setSel(null);
+    onChange(applyTypeExample(vsi, next, new Date().toISOString()) as Vsi);
+  };
   const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
   const setStep = (id: string, patch: Partial<Vsi["steps"][number]>) => set({ steps: vsi.steps.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
   const setSystem = (id: string, patch: Partial<Vsi["systems"][number]>) => set({ systems: vsi.systems.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
@@ -422,6 +434,10 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
           Name
           <input className="input" autoFocus value={d.name} onChange={(e) => setDvs(d.id, { name: e.target.value })} />
         </label>
+        <label>
+          What it develops
+          <input className="input" value={d.note ?? ""} onChange={(e) => setDvs(d.id, { note: e.target.value })} />
+        </label>
         {chips("Solutions it builds", sysOptions, d.systemIds, (id) => setDvs(d.id, { systemIds: toggle(d.systemIds, id) }))}
         <span className="faint" style={{ fontSize: "0.8rem" }}>
           {dvsPeople(d.id)} people: {devStreamPeople(vsi, d.id).groups.map((g) => `${g.people} ${g.function ?? ""} ${g.locations}`.replace(/\s+/g, " ").trim()).join(" · ") || "no one yet"}
@@ -526,7 +542,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
         <div className="vs-tpl-row">
           <span className="vs-tpl-k">Type</span>
           <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <select className="select" aria-label="Operational value stream type" value={vsi.type ?? ""} onChange={(e) => (e.target.value ? set({ type: e.target.value }) : onChange(strip(vsi, ["type"])))} style={{ width: "auto" }}>
+            <select className="select" aria-label="Operational value stream type" value={vsi.type ?? ""} onChange={(e) => switchType(e.target.value)} style={{ width: "auto" }}>
               <option value="">Not set</option>
               {types.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -534,7 +550,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                 </option>
               ))}
             </select>
-            {type ? <span className="faint" style={{ fontSize: "0.8rem", flex: "1 1 300px" }}>{type.blurb}</span> : null}
+            {type ? <span className="faint" style={{ fontSize: "0.8rem", flex: "1 1 300px" }}>{type.blurb} Choosing a type loads its example.</span> : null}
           </div>
         </div>
         <div className="vs-tpl-row">
@@ -644,7 +660,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                           <span className="muted">{s.note}</span>
                         </>
                       ) : null}
-                      {!s.stepIds.length ? <span className="faint"> · supports no step yet</span> : null}
+                      {!s.stepIds.length && !s.note ? <span className="faint"> · supports no step yet</span> : null}
                     </button>
                   ))}
                 </div>
@@ -689,6 +705,12 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                       <div key={d.id} className={`vs-bar vs-dvs ${dim(d.systemIds)}`} style={{ gridColumn: spanOf(sysSteps(d.systemIds)), animationDelay: `${i * 100}ms`, display: "grid", gap: 6 }}>
                         <button className="vs-clickbar vs-clickline" onClick={(e) => setOpen({ kind: "dvs", id: d.id, anchor: at(e) })} title="Click to edit">
                           <b>{d.name}</b> · {dvsPeople(d.id)} people
+                          {d.note ? (
+                            <>
+                              <br />
+                              <span className="muted" style={{ fontSize: "0.78rem" }}>{d.note}</span>
+                            </>
+                          ) : null}
                         </button>
                         <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
                           {extra.map((g) => (
