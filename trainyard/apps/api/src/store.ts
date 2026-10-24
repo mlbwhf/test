@@ -75,6 +75,8 @@ export interface StoreState {
   signups?: Signup[];
   /** Stripe Checkout sessions started from sign-ups, and what they became. */
   purchases?: Purchase[];
+  /** Stripe event ids already handled (the last few hundred), so a redelivery does nothing. */
+  stripeEvents?: string[];
   /** PI Outcome Planning sessions (AI-Native SAFe), one per ART and PI. */
   outcomePlanning?: PlanningSession[];
   /** AI-Native ART records extending a session: outputs, intent/spec/context, data, assessment. */

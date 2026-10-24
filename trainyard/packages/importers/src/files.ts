@@ -108,7 +108,7 @@ export function boardFromJson(input: unknown, now = new Date().toISOString()): B
   if (!input || typeof input !== "object") throw new Error("Board JSON must be an object with at least a name.");
   const j = input as BoardJson;
   if (!j.name || typeof j.name !== "string") throw new Error('Board JSON needs a "name".');
-  const board = emptyBoard(`json-${slug(j.name)}-${now.slice(0, 10)}`, j.name, { system: "json", externalId: j.source ?? j.name, importedAt: now, ...(j.url ? { url: j.url } : {}) });
+  const board = emptyBoard(`json-${slug(j.name)}-${now.slice(0, 10)}`, j.name, { system: "json", externalId: j.source ?? j.name, importedAt: now, ...(typeof j.url === "string" && /^https?:\/\//i.test(j.url) ? { url: j.url } : {}) });
   const num = (v: unknown, d = 0) => (typeof v === "number" && Number.isFinite(v) ? v : d);
   board.frames = (j.frames ?? []).map((f, n) => ({ id: String(f.id ?? `f${n + 1}`), title: String(f.title ?? `Frame ${n + 1}`), x: num(f.x), y: num(f.y), width: num(f.width), height: num(f.height), ...(f.parentId ? { parentId: String(f.parentId) } : {}) }));
   board.nodes = (j.nodes ?? []).map((n, i) => {

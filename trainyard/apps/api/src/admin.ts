@@ -21,6 +21,13 @@ export function registerAdminRoutes(app: App, tenants: Tenants) {
     return req.principal;
   };
   const Id = z.object({ id: z.string().min(1).max(80) });
+
+  // What the server sees of the caller's address: to check the proxy setup (docs/proxy.md).
+  app.get("/v1/admin/client-ip", async (req) => {
+    requirePlatformAdmin(req);
+    const h = (k: string) => (Array.isArray(req.headers[k]) ? (req.headers[k] as string[]).join(", ") : (req.headers[k] as string | undefined)) ?? null;
+    return { clientIp: req.clientIp, ip: req.ip, chain: req.ips ?? [req.ip], socket: req.socket.remoteAddress ?? null, xForwardedFor: h("x-forwarded-for"), cfConnectingIp: h("cf-connecting-ip") };
+  });
   const record = (id: string) => tenants.record(id) ?? (() => { throw notFound("Workspace"); })();
 
   const view = async (id: string) => {

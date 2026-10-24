@@ -105,6 +105,8 @@ function sameHash(a: string, b: string): boolean {
 declare module "fastify" {
   interface FastifyRequest {
     principal: Principal;
+    /** The client's address, worked out from the trusted proxy chain (proxies.ts). */
+    clientIp: string;
   }
 }
 
@@ -160,14 +162,14 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
       if (isPublic(req.method, req.url)) return visitor();
       throw new ApiError(401, "UNAUTHORIZED", "Send Authorization: Bearer <api key>.");
     }
-    if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
+    if (lockedOut(req.clientIp)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const h = hashKey(key);
     if (bootstrapHash && sameHash(h, bootstrapHash)) return { userId: "bootstrap", name: "Bootstrap admin", role: "admin", anonymous: false, workspaceId: tenants.platformId, platformAdmin: true };
     const nowIso = new Date().toISOString();
     const user = key.startsWith("ts_") ? platform.state.users.find((u) => (u.sessions ?? []).some((x) => x.expiresAt > nowIso && sameHash(x.hash, h))) : platform.state.users.find((u) => sameHash(u.keyHash, h));
     if (!user || user.disabled) {
-      const n = failed(req.ip);
-      req.log.warn({ ip: req.ip, failures: n }, key.startsWith("ts_") ? "invalid or expired session" : "invalid api key");
+      const n = failed(req.clientIp);
+      req.log.warn({ ip: req.clientIp, failures: n }, key.startsWith("ts_") ? "invalid or expired session" : "invalid api key");
       throw new ApiError(401, "UNAUTHORIZED", key.startsWith("ts_") ? "This session has ended; sign in again." : "This API key is not valid.");
     }
     const home = user.workspaceId ?? tenants.platformId;
@@ -176,12 +178,12 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
 
   // ---- email and password sign-in ---------------------------------------------------------
   app.post("/v1/auth/login", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } }, schema: { body: z.object({ email: z.string().trim().email().max(200), password: z.string().min(1).max(200) }) } }, async (req) => {
-    if (lockedOut(req.ip)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
+    if (lockedOut(req.clientIp)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const user = platform.state.users.find((u) => u.email.toLowerCase() === req.body.email.toLowerCase());
     // One answer and about the same time for every failure, so the form never tells which emails exist.
     const ok = verifyPassword(req.body.password, user?.passwordHash ?? DUMMY_HASH) && !!user?.passwordHash && !user.disabled;
     if (!user || !ok) {
-      failed(req.ip);
+      failed(req.clientIp);
       throw new ApiError(401, "BAD_LOGIN", "Email or password is wrong. No password set yet? Sign in with your key once and set one under Users, or ask your admin.");
     }
     const token = newSessionToken();

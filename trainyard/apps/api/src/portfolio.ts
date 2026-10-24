@@ -68,9 +68,9 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
         body: z.object({
           name: z.string().min(1).max(80),
           portfolioId: Id,
-          budgets: z.record(z.string(), Money),
+          budgets: z.record(z.string().max(120), Money).refine((r) => Object.keys(r).length <= 200, "At most 200 budget lines"),
           guardrails: z.object({ minEnablerPercent: z.number().min(0).max(100).optional(), maxEpicBudgetPercent: z.number().min(0).max(100).optional(), businessCaseAbove: Money.optional() }),
-          groupIds: z.array(Id),
+          groupIds: z.array(Id).max(200),
         }),
       },
     },

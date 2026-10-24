@@ -30,6 +30,8 @@ export interface Connection {
 }
 
 const Id = z.string().min(1).max(200);
+/** Cards on one board: far more than any planning board needs, small enough to save quickly. */
+const MAX_BOARD_NODES = 5000;
 const Source = z.enum(["miro", "mural", "monday", "trello"]);
 const MappingBody = z.object({
   from: z.enum(["nodes", "rows"]),
@@ -290,6 +292,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const t = findTemplate(req.body.templateId);
     if (t.fields?.class) requireSignup(req, "Adding a class board");
     const merged = insertTemplate(b, t, `t${Date.now().toString(36)}`);
+    if (merged.nodes.length > MAX_BOARD_NODES) throw new ApiError(413, "BOARD_TOO_LARGE", `A board holds up to ${MAX_BOARD_NODES} cards. Start a new board for this template.`);
     Object.assign(b, { frames: merged.frames, nodes: merged.nodes, columns: merged.columns, groups: merged.groups });
     await store.commit(req.principal, "board.insert-template", { id: b.id, template: t.id });
     return { board: summary(b) };
@@ -308,7 +311,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     ref: z.object({ kind: z.enum(REF_KINDS as [RefKind, ...RefKind[]]), id: z.string().min(1).max(200), boardId: z.string().min(1).max(200).optional() }).nullable().optional(),
     typeId: z.string().max(60).nullable().optional(),
     /** Typed card fields, merged into the card's fields. */
-    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).optional(),
+    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").optional(),
   });
   const asRef = (r: { kind: RefKind; id: string; boardId?: string | undefined }): Ref => ({ kind: r.kind, id: r.id, ...(r.boardId ? { boardId: r.boardId } : {}) });
   const checkRef = (ref: Ref) => {
@@ -348,6 +351,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       ...(ref ? { ref } : {}),
       ...(typeId ? { typeId } : {}),
     };
+    if (b.nodes.length >= MAX_BOARD_NODES) throw new ApiError(413, "BOARD_TOO_LARGE", `A board holds up to ${MAX_BOARD_NODES} cards.`);
     b.nodes.push(node);
     await store.commit(req.principal, "board.node.create", { board: b.id, node: node.id });
     return reply.code(201).send({ node });

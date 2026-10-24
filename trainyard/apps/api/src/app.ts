@@ -48,6 +48,7 @@ import { registerAssistRoutes } from "./assist.js";
 import { registerBoardRoutes } from "./boards.js";
 import { SecretBox } from "./secrets.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
+import { clientIp, type ProxyTrust } from "./proxies.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
@@ -81,7 +82,8 @@ export interface AppOptions extends AuthOptions {
   /** fetch used by board importers; tests inject a fake. */
   importFetch?: FetchLike;
   /** Behind Traefik or another proxy: read the client IP from X-Forwarded-For for rate limits and logs. */
-  trustProxy?: boolean;
+  /** true trusts every proxy hop (development only); a ProxyTrust trusts Traefik and the edge (proxies.ts). */
+  trustProxy?: boolean | ProxyTrust;
   /** Requests per minute per client before 429; 0 turns rate limiting off (tests). */
   rateLimitPerMinute?: number;
   /** Every website sign-up is POSTed here as JSON (Slack, n8n, a CRM); unset means the list under Users only. */
@@ -92,25 +94,28 @@ export interface AppOptions extends AuthOptions {
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
 const Id = z.string().min(1).max(200);
+const Short = z.string().max(120);
+/** Links people click in the app: web addresses only, never javascript: or data:. */
+export const WebUrl = z.string().url().max(2000).refine((u) => /^https?:\/\//i.test(u), "Use an http(s) address");
 const ModelBody = z.object({
   id: Id,
-  name: z.string().min(1),
-  framework: z.string(),
-  description: z.string(),
-  basedOn: z.string().optional(),
-  groupLevels: z.array(z.object({ key: z.string(), label: z.string(), parent: z.string().optional() })),
-  workLevels: z.array(z.object({ key: z.string(), label: z.string(), parent: z.string().optional(), planned: z.boolean().optional() })),
+  name: z.string().min(1).max(120),
+  framework: z.string().max(80),
+  description: z.string().max(4000),
+  basedOn: z.string().max(200).optional(),
+  groupLevels: z.array(z.object({ key: Short, label: Short, parent: Short.optional() })).max(20),
+  workLevels: z.array(z.object({ key: Short, label: Short, parent: Short.optional(), planned: z.boolean().optional() })).max(20),
   cadence: z.object({
     mode: z.enum(["iterations", "flow"]),
-    iterationLabel: z.string(),
-    iterationWeeks: z.number(),
-    incrementLabel: z.string(),
-    iterationsPerIncrement: z.number(),
+    iterationLabel: Short,
+    iterationWeeks: z.number().min(0).max(52),
+    incrementLabel: Short,
+    iterationsPerIncrement: z.number().int().min(0).max(52),
     ipIteration: z.boolean(),
   }),
-  roles: z.array(z.object({ key: z.string(), label: z.string(), scope: z.enum(["team", "group", "portfolio"]) })),
-  events: z.array(z.object({ key: z.string(), label: z.string(), scope: z.enum(["team", "group", "portfolio"]), when: z.enum(["iteration", "increment", "continuous"]) })),
-  metrics: z.array(z.string()),
+  roles: z.array(z.object({ key: Short, label: Short, scope: z.enum(["team", "group", "portfolio"]) })).max(100),
+  events: z.array(z.object({ key: Short, label: Short, scope: z.enum(["team", "group", "portfolio"]), when: z.enum(["iteration", "increment", "continuous"]) })).max(100),
+  metrics: z.array(Short).max(200),
   aiNative: z.object({
     enabled: z.boolean(),
     requireAccountableHuman: z.boolean(),
@@ -154,7 +159,13 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   // Request logs drop secrets carried in the query string (the tracker webhook's ?token=).
   const redactUrl = (url: string) => url.replace(/([?&](?:token|key|secret)=)[^&]*/gi, "$1[redacted]");
   const logger = opts.logger ? { serializers: { req: (r: { method: string; url: string; host?: string; ip: string }) => ({ method: r.method, url: redactUrl(r.url), host: r.host ?? "", remoteAddress: r.ip }) } } : false;
-  const app = Fastify({ logger, trustProxy: opts.trustProxy ?? false, bodyLimit: 8 * 1024 * 1024 }).withTypeProvider<ZodTypeProvider>();
+  const proxies = typeof opts.trustProxy === "object" ? opts.trustProxy : null;
+  const trustProxy: boolean | ((addr: string, hop: number) => boolean) = proxies ? proxies.trust : opts.trustProxy === true;
+  const app = Fastify({ logger, trustProxy, bodyLimit: 8 * 1024 * 1024 }).withTypeProvider<ZodTypeProvider>();
+  app.decorateRequest("clientIp", "");
+  app.addHook("onRequest", async (req) => {
+    req.clientIp = clientIp(req, proxies);
+  });
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   await app.register(cors, { origin: opts.corsOrigin ?? true, methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"] });
@@ -179,7 +190,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
       // Signed-in clients are limited per key, anonymous ones per IP.
       keyGenerator: (req) => {
         const auth = req.headers.authorization;
-        return auth && auth.startsWith("Bearer ") ? `key:${auth.slice(7, 27)}` : `ip:${req.ip}`;
+        return auth && auth.startsWith("Bearer ") ? `key:${auth.slice(7, 27)}` : `ip:${req.clientIp || clientIp(req, proxies)}`;
       },
     });
   }
@@ -376,17 +387,21 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     return reply.code(204).send();
   });
 
-  app.post("/v1/risks", { schema: { body: z.object({ title: z.string().min(1).max(300), groupId: z.string().optional(), itemIds: z.array(z.string()).default([]) }) } }, async (req, reply) => {
+  app.post("/v1/risks", { schema: { body: z.object({ title: z.string().min(1).max(300), groupId: Id.optional(), itemIds: z.array(Id).max(50).default([]) }) } }, async (req, reply) => {
     require(req, "plan");
+    const ws = s().workspace;
+    if (req.body.groupId && !ws.groups.some((g) => g.id === req.body.groupId)) throw notFound("Group");
+    if (req.body.itemIds.some((id) => !ws.items.some((i) => i.id === id))) throw notFound("Work item");
     const risk = { id: `r-${Date.now().toString(36)}`, title: req.body.title, roam: "unroamed" as const, itemIds: req.body.itemIds, raisedAt: store.now().toISOString(), ...(req.body.groupId ? { groupId: req.body.groupId } : {}) };
     s().workspace.risks.push(risk);
     await store.commit(req.principal, "risk.create", { id: risk.id });
     return reply.code(201).send({ risk });
   });
-  app.patch("/v1/risks/:id", { schema: { params: z.object({ id: Id }), body: z.object({ roam: z.enum(["unroamed", "resolved", "owned", "accepted", "mitigated"]).optional(), ownerId: z.string().optional() }) } }, async (req) => {
+  app.patch("/v1/risks/:id", { schema: { params: z.object({ id: Id }), body: z.object({ roam: z.enum(["unroamed", "resolved", "owned", "accepted", "mitigated"]).optional(), ownerId: Id.optional() }) } }, async (req) => {
     const risk = s().workspace.risks.find((r) => r.id === req.params.id);
     require(req, "plan");
     if (!risk) throw notFound("Risk");
+    if (req.body.ownerId && !s().workspace.people.some((p) => p.id === req.body.ownerId)) throw notFound("Person");
     Object.assign(risk, defined(req.body));
     await store.commit(req.principal, "risk.update", { id: risk.id, ...defined(req.body) });
     return { risk };
@@ -541,7 +556,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     await store.commit(req.principal, "ai.initiative.advance", { id: next.id, to: next.stage });
     return { initiative: initiativeView(next) };
   });
-  app.post("/v1/ai/initiatives/:id/evidence", { schema: { params: z.object({ id: Id }), body: z.object({ kind: z.enum(EVIDENCE_KINDS), url: z.string().url(), addedBy: Id }) } }, async (req) => {
+  app.post("/v1/ai/initiatives/:id/evidence", { schema: { params: z.object({ id: Id }), body: z.object({ kind: z.enum(EVIDENCE_KINDS), url: WebUrl, addedBy: Id }) } }, async (req) => {
     require(req, "ai");
     const i = findInitiative(req.params.id);
     const evidence = [...i.evidence.filter((e) => e.kind !== req.body.kind), { ...req.body, addedAt: store.now().toISOString() }];
@@ -600,7 +615,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     initiativeId: z.string().optional(),
     accountableId: z.string().optional(),
     autonomy: Autonomy,
-    tools: z.array(z.string()).default([]),
+    tools: z.array(Short).max(50).default([]),
   });
   app.post("/v1/ai/agents", { schema: { body: AgentBody } }, async (req, reply) => {
     require(req, "ai");

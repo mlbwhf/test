@@ -201,7 +201,9 @@ export function registerValueStreamRoutes(app: App, store: Store) {
       },
     },
     async (req) => {
-      if (req.body.apply) require(req, "plan");
+      // Reading through the workspace's Jira or Azure DevOps connection, or parsing a large
+      // export, is for planners; viewers read the maps that result.
+      require(req, "plan");
       const map = vs().maps.find((m) => m.id === req.params.id) ?? (() => { throw notFound("Value stream map"); })();
       let histories: ItemHistory[];
       if (req.body.source === "csv") {

@@ -3,6 +3,7 @@ import { mailerFromEnv } from "./mailer.js";
 import { AdoConnector, JiraConnector, type AdoConfig, type JiraConfig } from "@trainyard/connectors";
 import { FilePersistence, MemoryPersistence, PgPersistence, createPool, migrate, type StatePersistence } from "@trainyard/db";
 import { buildApp } from "./app.js";
+import { proxyTrust } from "./proxies.js";
 import { Store, type StoreState } from "./store.js";
 
 // Configuration is environment variables. Secrets are separate variables so they never
@@ -83,8 +84,10 @@ async function main() {
     syncEveryMinutes: Number(process.env.TRAINYARD_SYNC_EVERY_MINUTES ?? 0),
     // One origin or a comma-separated list (canonical host plus aliases); placeholders like https://_none_ are dropped.
     corsOrigin: process.env.TRAINYARD_WEB_URL ? process.env.TRAINYARD_WEB_URL.split(",").map((o) => o.trim()).filter((o) => o && !o.includes("_none_")) : true,
-    // Behind Traefik in production the client address is in X-Forwarded-For.
-    trustProxy: env === "production" || process.env.TRAINYARD_TRUST_PROXY === "1",
+    // Production sits behind Traefik and Cloudflare: trust the private socket and Cloudflare's
+    // ranges, nothing a client writes (proxies.ts, docs/proxy.md). TRAINYARD_TRUSTED_PROXIES
+    // swaps the edge ranges for another CDN's; TRAINYARD_TRUST_PROXY=1 trusts every hop (dev).
+    trustProxy: process.env.TRAINYARD_TRUST_PROXY === "1" ? true : env === "production" ? proxyTrust(process.env.TRAINYARD_TRUSTED_PROXIES ? process.env.TRAINYARD_TRUSTED_PROXIES.split(",") : undefined) : false,
     rateLimitPerMinute: Number(process.env.TRAINYARD_RATE_LIMIT ?? 600),
     ...(process.env.TRAINYARD_SIGNUP_WEBHOOK ? { signupWebhook: process.env.TRAINYARD_SIGNUP_WEBHOOK } : {}),
     billing: {

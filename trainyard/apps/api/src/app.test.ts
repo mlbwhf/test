@@ -956,6 +956,12 @@ describe("billing", () => {
     expect((await send({ type: "customer.subscription.updated", data: { object: { id: "sub_1", status: "active" } } })).status).toBe(200);
     expect(store.state.purchases![0]!.status).toBe("paid");
     expect((await send({ type: "invoice.paid", data: { object: { id: "in_x", parent: { subscription_details: { subscription: "sub_1" } } } } })).body).toMatchObject({ renewed: true });
+    // A redelivered event is handled once; an older subscription event arriving late changes nothing.
+    const fresh = { id: "evt_new", created: t, type: "customer.subscription.updated", data: { object: { id: "sub_1", status: "active" } } };
+    expect((await send(fresh)).body.duplicate).toBeUndefined();
+    expect((await send(fresh)).body).toMatchObject({ duplicate: true });
+    expect((await send({ id: "evt_old", created: t - 60, type: "customer.subscription.updated", data: { object: { id: "sub_1", status: "unpaid" } } })).body).toMatchObject({ stale: true });
+    expect(store.state.purchases![0]!.status).toBe("paid");
     // The subscriber can open the portal; a stranger cannot.
     const portal = await call("POST", "/v1/billing/portal", undefined, first.body.apiKey);
     expect(portal.body, JSON.stringify(portal.body)).toMatchObject({ url: expect.stringContaining("billing.stripe.com") });
@@ -1637,5 +1643,16 @@ describe("blank whiteboard with templates added", () => {
     expect(Math.min(...added.map((f: { x: number }) => f.x))).toBeGreaterThan(right);
     expect(new Set(both.frames.map((f: { id: string }) => f.id)).size).toBe(both.frames.length);
     expect((await call("POST", `/v1/boards/${a}/insert-template`, { templateId: b })).status).not.toBe(200);
+  });
+});
+
+describe("security limits", () => {
+  it("checks references and refuses unsafe links and reserved keys", async () => {
+    const { call } = await setup();
+    expect((await call("POST", "/v1/risks", { title: "X", itemIds: ["no-such-item"] })).status).toBe(404);
+    expect((await call("POST", "/v1/risks", { title: "X", groupId: "no-such-group" })).status).toBe(404);
+    expect((await call("PATCH", "/v1/risks/r-3", { ownerId: "nobody" })).status).toBe(404);
+    expect((await call("POST", "/v1/ai/initiatives/ai-support/evidence", { kind: "eval-report", url: "javascript:alert(1)", addedBy: "p-pm" })).status).toBe(400);
+    expect((await call("PUT", "/v1/lane-boards/__proto__", { cards: [], notes: [], strokes: [] })).status).toBe(400);
   });
 });

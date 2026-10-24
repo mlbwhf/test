@@ -73,6 +73,8 @@ export interface Purchase {
   /** The confirmation sent when the trial started, and the reminder before it ends. */
   trialStartEmailAt?: string;
   trialReminderSentAt?: string;
+  /** Time of the newest subscription event applied, so an older one arriving late is ignored. */
+  subscriptionEventAt?: number;
   /** The first paid invoice's PaymentIntent, refundable under the first-month guarantee. */
   firstPaymentIntent?: string;
   firstPaidAt?: string;
@@ -496,115 +498,133 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       if (!enabled || !opts.webhookSecret) throw new ApiError(404, "BILLING_OFF", "Payments are not set up.");
       const raw = typeof req.body === "string" ? req.body : JSON.stringify(req.body ?? {});
       if (!verifyStripeSignature(raw, req.headers["stripe-signature"] as string | undefined, opts.webhookSecret, store.now().getTime())) throw new ApiError(400, "BAD_SIGNATURE", "Stripe signature does not verify.");
-      let event: { type: string; data: { object: StripeObject } };
+      let event: { id?: string; created?: number; type: string; data: { object: StripeObject } };
       try {
         event = JSON.parse(raw) as typeof event;
       } catch {
         throw new ApiError(400, "BAD_JSON", "The webhook body is not JSON.");
       }
+      // Stripe delivers at least once and in no set order: each event is handled once, and a
+      // subscription event older than one already applied changes nothing.
+      const seen = (store.state.stripeEvents ??= []);
+      if (event.id && seen.includes(event.id)) return reply.code(200).send({ ok: true, duplicate: true });
+      if (event.id) {
+        seen.push(event.id);
+        if (seen.length > 500) seen.splice(0, seen.length - 500);
+      }
       const obj = event.data.object;
       const bySubscription = (id: unknown) => (id ? purchases().find((p) => p.subscriptionId === id) : undefined);
 
-      switch (event.type) {
-        // Hosted Checkout paid.
-        case "checkout.session.completed":
-        case "checkout.session.async_payment_succeeded": {
-          const purchase = purchases().find((p) => p.checkoutSessionId === obj.id);
-          const signupId = String((obj.metadata as Record<string, string> | undefined)?.signupId ?? obj.client_reference_id ?? purchase?.signupId ?? "");
-          if (!signups().some((s) => s.id === signupId)) return reply.code(200).send({ ignored: "unknown sign-up" });
-          if (purchase?.status === "paid") return reply.code(200).send({ ok: true, already: true });
-          if (String(obj.payment_status ?? "paid") !== "paid") return reply.code(200).send({ ok: true, pending: true });
-          const p = purchase ?? (() => { const n: Purchase = { id: newId("pur"), signupId, plan: (signups().find((s) => s.id === signupId)!.plan), interval: "monthly", quantity: 1, checkoutSessionId: String(obj.id), status: "open", createdAt: store.now().toISOString() }; purchases().push(n); return n; })();
-          await fulfil(p, { ...(obj.customer ? { customerId: String(obj.customer) } : {}), ...(obj.subscription ? { subscriptionId: String(obj.subscription) } : {}) });
-          return reply.code(200).send({ ok: true });
+      // A failure leaves the event unrecorded, so Stripe's retry is handled.
+      try {
+        switch (event.type) {
+          // Hosted Checkout paid.
+          case "checkout.session.completed":
+          case "checkout.session.async_payment_succeeded": {
+            const purchase = purchases().find((p) => p.checkoutSessionId === obj.id);
+            const signupId = String((obj.metadata as Record<string, string> | undefined)?.signupId ?? obj.client_reference_id ?? purchase?.signupId ?? "");
+            if (!signups().some((s) => s.id === signupId)) return reply.code(200).send({ ignored: "unknown sign-up" });
+            if (purchase?.status === "paid") return reply.code(200).send({ ok: true, already: true });
+            if (String(obj.payment_status ?? "paid") !== "paid") return reply.code(200).send({ ok: true, pending: true });
+            const p = purchase ?? (() => { const n: Purchase = { id: newId("pur"), signupId, plan: (signups().find((s) => s.id === signupId)!.plan), interval: "monthly", quantity: 1, checkoutSessionId: String(obj.id), status: "open", createdAt: store.now().toISOString() }; purchases().push(n); return n; })();
+            await fulfil(p, { ...(obj.customer ? { customerId: String(obj.customer) } : {}), ...(obj.subscription ? { subscriptionId: String(obj.subscription) } : {}) });
+            return reply.code(200).send({ ok: true });
+          }
+          case "checkout.session.expired": {
+            const p = purchases().find((x) => x.checkoutSessionId === obj.id);
+            if (p && p.status === "open") {
+              p.status = "expired";
+              await store.commit(STRIPE_ACTOR, "billing.expired", { purchase: p.id });
+            }
+            return reply.code(200).send({ ok: true });
+          }
+          // In-page flow: the first invoice paid (or any renewal).
+          case "invoice.paid":
+          case "invoice.payment_succeeded": {
+            // Newer API versions put the subscription under parent.subscription_details.
+            const details = (obj.parent as StripeObject | undefined)?.subscription_details as StripeObject | undefined;
+            const subId = obj.subscription ?? details?.subscription;
+            const p = bySubscription(subId);
+            if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+            if (Number(obj.amount_paid ?? 0) > 0 && !p.firstPaymentIntent && obj.payment_intent) {
+              p.firstPaymentIntent = String(obj.payment_intent);
+              p.firstPaidAt = store.now().toISOString();
+            }
+            if (p.status === "paid") {
+              p.lastInvoiceAt = store.now().toISOString();
+              delete p.lastFailureAt;
+              await store.commit(STRIPE_ACTOR, "billing.renewed", { purchase: p.id });
+              return reply.code(200).send({ ok: true, renewed: true });
+            }
+            await fulfil(p, { lastInvoiceAt: store.now().toISOString(), ...(obj.customer ? { customerId: String(obj.customer) } : {}) });
+            return reply.code(200).send({ ok: true });
+          }
+          // A trial starts without a charge: the subscription is live as soon as it exists.
+          case "customer.subscription.created":
+          case "customer.subscription.updated": {
+            const p = bySubscription(obj.id) ?? purchases().find((x) => !x.subscriptionId && x.signupId && x.signupId === (obj.metadata as Record<string, string> | undefined)?.signupId);
+            if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
+            if (typeof event.created === "number") {
+              if (p.subscriptionEventAt !== undefined && event.created < p.subscriptionEventAt) return reply.code(200).send({ ok: true, stale: true });
+              p.subscriptionEventAt = event.created;
+            }
+            if (!p.subscriptionId) p.subscriptionId = String(obj.id);
+            const status = String(obj.status ?? "");
+            if (typeof obj.trial_end === "number") {
+              const end = new Date(obj.trial_end * 1000).toISOString();
+              // A moved trial end needs its own reminder.
+              if (p.trialEndsAt !== end) delete p.trialReminderSentAt;
+              p.trialEndsAt = end;
+            }
+            const subItem = ((obj.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
+            const subPrice = subItem?.price as StripeObject | undefined;
+            if (subPrice?.unit_amount !== undefined) {
+              p.amountCents = Number(subPrice.unit_amount) * Number(subItem?.quantity ?? p.quantity);
+              p.currency = String(subPrice.currency ?? p.currency ?? "usd");
+            }
+            if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
+            else if (status === "past_due" || status === "unpaid") {
+              p.status = status === "unpaid" ? "cancelled" : "past_due";
+              p.lastFailureAt = store.now().toISOString();
+              if (status === "unpaid") await freeze(p, "subscription unpaid");
+              await store.commit(STRIPE_ACTOR, "billing.past-due", { purchase: p.id, status });
+            } else if (status === "active" && p.status === "past_due") {
+              p.status = "paid";
+              delete p.lastFailureAt;
+              const record = p.workspaceId ? tenants.record(p.workspaceId) : undefined;
+              if (record?.status === "frozen" && (record.frozenReason ?? "").startsWith("subscription")) { record.status = "active"; delete record.frozenAt; delete record.frozenReason; }
+              await store.commit(STRIPE_ACTOR, "billing.recovered", { purchase: p.id });
+            }
+            else await store.commit(STRIPE_ACTOR, "billing.subscription", { purchase: p.id, status });
+            // The trial confirmation (or, inside the window, the reminder) goes out right away.
+            void sendTrialMail().catch(() => undefined);
+            return reply.code(200).send({ ok: true });
+          }
+          case "invoice.payment_failed": {
+            const p = bySubscription(obj.subscription);
+            if (p && p.status === "paid") {
+              p.status = "past_due";
+              p.lastFailureAt = store.now().toISOString();
+              await store.commit(STRIPE_ACTOR, "billing.payment-failed", { purchase: p.id });
+            }
+            return reply.code(200).send({ ok: true });
+          }
+          case "customer.subscription.deleted": {
+            const p = bySubscription(obj.id);
+            if (p && p.status !== "cancelled" && p.status !== "refunded") {
+              p.status = "cancelled";
+              p.cancelledAt = store.now().toISOString();
+              await freeze(p, "subscription cancelled");
+              await store.commit(STRIPE_ACTOR, "billing.cancelled", { purchase: p.id, workspaceId: p.workspaceId });
+            }
+            return reply.code(200).send({ ok: true });
+          }
+          default:
+            return reply.code(200).send({ ok: true, ignored: event.type });
         }
-        case "checkout.session.expired": {
-          const p = purchases().find((x) => x.checkoutSessionId === obj.id);
-          if (p && p.status === "open") {
-            p.status = "expired";
-            await store.commit(STRIPE_ACTOR, "billing.expired", { purchase: p.id });
-          }
-          return reply.code(200).send({ ok: true });
-        }
-        // In-page flow: the first invoice paid (or any renewal).
-        case "invoice.paid":
-        case "invoice.payment_succeeded": {
-          // Newer API versions put the subscription under parent.subscription_details.
-          const details = (obj.parent as StripeObject | undefined)?.subscription_details as StripeObject | undefined;
-          const subId = obj.subscription ?? details?.subscription;
-          const p = bySubscription(subId);
-          if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
-          if (Number(obj.amount_paid ?? 0) > 0 && !p.firstPaymentIntent && obj.payment_intent) {
-            p.firstPaymentIntent = String(obj.payment_intent);
-            p.firstPaidAt = store.now().toISOString();
-          }
-          if (p.status === "paid") {
-            p.lastInvoiceAt = store.now().toISOString();
-            delete p.lastFailureAt;
-            await store.commit(STRIPE_ACTOR, "billing.renewed", { purchase: p.id });
-            return reply.code(200).send({ ok: true, renewed: true });
-          }
-          await fulfil(p, { lastInvoiceAt: store.now().toISOString(), ...(obj.customer ? { customerId: String(obj.customer) } : {}) });
-          return reply.code(200).send({ ok: true });
-        }
-        // A trial starts without a charge: the subscription is live as soon as it exists.
-        case "customer.subscription.created":
-        case "customer.subscription.updated": {
-          const p = bySubscription(obj.id) ?? purchases().find((x) => !x.subscriptionId && x.signupId && x.signupId === (obj.metadata as Record<string, string> | undefined)?.signupId);
-          if (!p) return reply.code(200).send({ ignored: "unknown subscription" });
-          if (!p.subscriptionId) p.subscriptionId = String(obj.id);
-          const status = String(obj.status ?? "");
-          if (typeof obj.trial_end === "number") {
-            const end = new Date(obj.trial_end * 1000).toISOString();
-            // A moved trial end needs its own reminder.
-            if (p.trialEndsAt !== end) delete p.trialReminderSentAt;
-            p.trialEndsAt = end;
-          }
-          const subItem = ((obj.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
-          const subPrice = subItem?.price as StripeObject | undefined;
-          if (subPrice?.unit_amount !== undefined) {
-            p.amountCents = Number(subPrice.unit_amount) * Number(subItem?.quantity ?? p.quantity);
-            p.currency = String(subPrice.currency ?? p.currency ?? "usd");
-          }
-          if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
-          else if (status === "past_due" || status === "unpaid") {
-            p.status = status === "unpaid" ? "cancelled" : "past_due";
-            p.lastFailureAt = store.now().toISOString();
-            if (status === "unpaid") await freeze(p, "subscription unpaid");
-            await store.commit(STRIPE_ACTOR, "billing.past-due", { purchase: p.id, status });
-          } else if (status === "active" && p.status === "past_due") {
-            p.status = "paid";
-            delete p.lastFailureAt;
-            const record = p.workspaceId ? tenants.record(p.workspaceId) : undefined;
-            if (record?.status === "frozen" && (record.frozenReason ?? "").startsWith("subscription")) { record.status = "active"; delete record.frozenAt; delete record.frozenReason; }
-            await store.commit(STRIPE_ACTOR, "billing.recovered", { purchase: p.id });
-          }
-          else await store.commit(STRIPE_ACTOR, "billing.subscription", { purchase: p.id, status });
-          // The trial confirmation (or, inside the window, the reminder) goes out right away.
-          void sendTrialMail().catch(() => undefined);
-          return reply.code(200).send({ ok: true });
-        }
-        case "invoice.payment_failed": {
-          const p = bySubscription(obj.subscription);
-          if (p && p.status === "paid") {
-            p.status = "past_due";
-            p.lastFailureAt = store.now().toISOString();
-            await store.commit(STRIPE_ACTOR, "billing.payment-failed", { purchase: p.id });
-          }
-          return reply.code(200).send({ ok: true });
-        }
-        case "customer.subscription.deleted": {
-          const p = bySubscription(obj.id);
-          if (p && p.status !== "cancelled" && p.status !== "refunded") {
-            p.status = "cancelled";
-            p.cancelledAt = store.now().toISOString();
-            await freeze(p, "subscription cancelled");
-            await store.commit(STRIPE_ACTOR, "billing.cancelled", { purchase: p.id, workspaceId: p.workspaceId });
-          }
-          return reply.code(200).send({ ok: true });
-        }
-        default:
-          return reply.code(200).send({ ok: true, ignored: event.type });
+      } catch (e) {
+        if (event.id) seen.splice(seen.indexOf(event.id), 1);
+        throw e;
       }
     });
   });
