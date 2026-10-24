@@ -1375,7 +1375,7 @@ describe("universal cards and links", () => {
     expect((await call("POST", "/v1/value-streams/ovs-types", { id: "fulfilment", name: "Dup", blurb: "" })).status).toBe(409);
     const seeded = await call("POST", "/v1/value-streams/identifications/from-type", { typeId: "software-product", name: "Trainyard SaaS" });
     expect(seeded.status).toBe(201);
-    expect(seeded.body.identification.steps.map((s: { name: string }) => s.name)).toEqual(["Contracts and licensing", "Sales cycle", "Provisioning", "Customer care", "Renewals"]);
+    expect(seeded.body.identification.steps.map((s: { name: string }) => s.name)).toEqual(["Sales cycle", "Contracts and licensing", "Provisioning", "Customer care", "Renewals"]);
     expect(seeded.body.identification.name).toBe("Trainyard SaaS");
     const again = await call("GET", "/v1/value-streams");
     expect(again.body.ovsTypes.some((t: { id: string }) => t.id === "healthcare-episode")).toBe(true);
