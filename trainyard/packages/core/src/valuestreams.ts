@@ -527,3 +527,149 @@ export function demoMap(now = "2026-01-01T00:00:00.000Z"): ValueStreamMap {
     updatedAt: now,
   };
 }
+
+// ---- the full breakdown: all five levels at once ----------------------------------------
+// Operational steps → solutions → people → development value streams → ARTs, with people as
+// the quantity that flows (a Sankey: band width = people). A group building several solutions
+// is shared evenly between them; a solution supporting several steps likewise. Beside the
+// flow: a step × train matrix (who must coordinate on which step) and coverage per level.
+
+export type BreakdownLevel = "step" | "system" | "group" | "dvs" | "art";
+
+export interface BreakdownNode {
+  id: string;
+  level: BreakdownLevel;
+  label: string;
+  sub?: string;
+  people: number;
+}
+
+export interface BreakdownLink {
+  from: string;
+  to: string;
+  people: number;
+}
+
+export interface BreakdownCoverage {
+  level: BreakdownLevel;
+  label: string;
+  covered: number;
+  total: number;
+  /** What "covered" means at this level. */
+  rule: string;
+  gaps: string[];
+}
+
+export interface IdentificationBreakdown {
+  nodes: BreakdownNode[];
+  links: BreakdownLink[];
+  /** Per operational step: the trains whose solutions support it, with those solutions. */
+  matrix: { stepId: string; step: string; cells: { artId: string; systems: string[] }[] }[];
+  coverage: BreakdownCoverage[];
+  totalPeople: number;
+}
+
+const round1 = (n: number) => Math.round(n * 10) / 10;
+
+export function identificationBreakdown(vsi: ValueStreamIdentification): IdentificationBreakdown {
+  const nodes: BreakdownNode[] = [];
+  const links: BreakdownLink[] = [];
+  const key = (level: BreakdownLevel, id: string) => `${level}:${id}`;
+  const add = (from: string, to: string, people: number) => {
+    if (people <= 0) return;
+    const l = links.find((x) => x.from === from && x.to === to);
+    if (l) l.people = round1(l.people + people);
+    else links.push({ from, to, people: round1(people) });
+  };
+  // people → solutions, shared evenly across the solutions a group builds
+  const sysPeople = new Map<string, number>();
+  for (const g of vsi.groups) for (const sid of g.systemIds) sysPeople.set(sid, (sysPeople.get(sid) ?? 0) + g.people / g.systemIds.length);
+
+  for (const st of vsi.steps) {
+    const systems = vsi.systems.filter((s) => s.stepIds.includes(st.id));
+    const people = systems.reduce((n, s) => n + (sysPeople.get(s.id) ?? 0) / Math.max(1, s.stepIds.length), 0);
+    nodes.push({ id: key("step", st.id), level: "step", label: st.name, ...(st.people ? { sub: st.people } : {}), people: round1(people) });
+    for (const s of systems) add(key("step", st.id), key("system", s.id), (sysPeople.get(s.id) ?? 0) / Math.max(1, s.stepIds.length));
+  }
+  for (const s of vsi.systems) {
+    nodes.push({ id: key("system", s.id), level: "system", label: s.name, ...(s.note ? { sub: s.note } : {}), people: round1(sysPeople.get(s.id) ?? 0) });
+    for (const g of vsi.groups.filter((x) => x.systemIds.includes(s.id))) add(key("system", s.id), key("group", g.id), g.people / g.systemIds.length);
+  }
+  for (const g of vsi.groups) {
+    nodes.push({ id: key("group", g.id), level: "group", label: `${g.people} ${g.function ?? "people"}`.trim(), sub: g.locations, people: g.people });
+    for (const d of vsi.devStreams) {
+      const share = g.devStreamId === d.id ? g.people : g.systemIds.length ? (g.people * g.systemIds.filter((x) => d.systemIds.includes(x)).length) / g.systemIds.length : 0;
+      add(key("group", g.id), key("dvs", d.id), share);
+    }
+  }
+  for (const d of vsi.devStreams) {
+    nodes.push({ id: key("dvs", d.id), level: "dvs", label: d.name, ...(d.note ? { sub: d.note } : {}), people: devStreamPeople(vsi, d.id).people });
+    for (const a of vsi.arts) {
+      const share = a.devStreamId === d.id ? a.people : !a.devStreamId && a.systemIds.length ? (a.people * a.systemIds.filter((x) => d.systemIds.includes(x)).length) / a.systemIds.length : 0;
+      add(key("dvs", d.id), key("art", a.id), share);
+    }
+  }
+  for (const a of vsi.arts) nodes.push({ id: key("art", a.id), level: "art", label: a.name, sub: `${a.people} people · ${artFit(a.people) === "fits" ? "fits 50–125" : artFit(a.people) === "split" ? "over 125: split" : "under 50: merge"}`, people: a.people });
+
+  const matrix = vsi.steps.map((st) => {
+    const systems = vsi.systems.filter((s) => s.stepIds.includes(st.id));
+    return {
+      stepId: st.id,
+      step: st.name,
+      cells: vsi.arts.map((a) => ({ artId: a.id, systems: systems.filter((s) => a.systemIds.includes(s.id)).map((s) => s.name) })),
+    };
+  });
+
+  const staffed = vsi.systems.filter((s) => (sysPeople.get(s.id) ?? 0) > 0);
+  const inDvs = vsi.groups.filter((g) => vsi.devStreams.some((d) => g.devStreamId === d.id || g.systemIds.some((x) => d.systemIds.includes(x))));
+  const dvsWithArt = vsi.devStreams.filter((d) => vsi.arts.some((a) => a.devStreamId === d.id || (!a.devStreamId && a.systemIds.some((x) => d.systemIds.includes(x)))));
+  const supported = vsi.steps.filter((st) => vsi.systems.some((s) => s.stepIds.includes(st.id)));
+  const fitting = vsi.arts.filter((a) => artFit(a.people) === "fits");
+  const coverage: BreakdownCoverage[] = [
+    { level: "step", label: "Operational steps", covered: supported.length, total: vsi.steps.length, rule: "supported by at least one solution", gaps: vsi.steps.filter((s) => !supported.includes(s)).map((s) => s.name) },
+    { level: "system", label: "Solutions", covered: staffed.length, total: vsi.systems.length, rule: "someone builds or runs it", gaps: vsi.systems.filter((s) => !staffed.includes(s)).map((s) => s.name) },
+    { level: "group", label: "People", covered: inDvs.reduce((n, g) => n + g.people, 0), total: vsi.groups.reduce((n, g) => n + g.people, 0), rule: "belong to a development value stream", gaps: vsi.groups.filter((g) => !inDvs.includes(g)).map((g) => `${g.people} ${g.function ?? ""} ${g.locations}`.replace(/\s+/g, " ").trim()) },
+    { level: "dvs", label: "Development value streams", covered: dvsWithArt.length, total: vsi.devStreams.length, rule: "realised by at least one ART", gaps: vsi.devStreams.filter((d) => !dvsWithArt.includes(d)).map((d) => d.name) },
+    { level: "art", label: "ARTs", covered: fitting.length, total: vsi.arts.length, rule: "between 50 and 125 people", gaps: vsi.arts.filter((a) => !fitting.includes(a)).map((a) => `${a.name} (${a.people})`) },
+  ];
+  return { nodes, links, matrix, coverage, totalPeople: vsi.groups.reduce((n, g) => n + g.people, 0) };
+}
+
+/**
+ * Everything one box of the breakdown touches across the five levels, traced through the
+ * solutions themselves (not through whole development value streams), so a solution lights
+ * only the trains that own it.
+ */
+export function breakdownTrace(vsi: ValueStreamIdentification, nodeId: string): Set<string> {
+  const [level, id] = nodeId.split(":") as [BreakdownLevel, string];
+  const dvs = level === "dvs" ? vsi.devStreams.find((d) => d.id === id) : undefined;
+  const art = level === "art" ? vsi.arts.find((a) => a.id === id) : undefined;
+  const group = level === "group" ? vsi.groups.find((g) => g.id === id) : undefined;
+  const seed = new Set<string>(
+    level === "step"
+      ? vsi.systems.filter((s) => s.stepIds.includes(id)).map((s) => s.id)
+      : level === "system"
+        ? [id]
+        : group
+          ? group.systemIds.length
+            ? group.systemIds
+            : (vsi.devStreams.find((d) => d.id === group.devStreamId)?.systemIds ?? [])
+          : dvs
+            ? dvs.systemIds
+            : (art?.systemIds ?? []),
+  );
+  const out = new Set<string>([nodeId]);
+  for (const s of vsi.systems) if (seed.has(s.id)) out.add(`system:${s.id}`);
+  for (const st of vsi.steps) if (vsi.systems.some((s) => seed.has(s.id) && s.stepIds.includes(st.id))) out.add(`step:${st.id}`);
+  const streamIds = new Set(vsi.devStreams.filter((d) => d.id === dvs?.id || d.id === art?.devStreamId || d.systemIds.some((x) => seed.has(x))).map((d) => d.id));
+  if (group?.devStreamId) streamIds.add(group.devStreamId);
+  for (const d of streamIds) out.add(`dvs:${d}`);
+  for (const g of vsi.groups) {
+    const builds = g.systemIds.some((x) => seed.has(x));
+    // People attached to a stream directly (legal, marketing) belong to the stream, so only a stream or one of its trains lights them.
+    const attached = g.devStreamId !== undefined && streamIds.has(g.devStreamId) && (level === "dvs" || level === "art");
+    if (builds || attached || g.id === group?.id) out.add(`group:${g.id}`);
+  }
+  for (const a of vsi.arts) if (a.id === art?.id || a.systemIds.some((x) => seed.has(x)) || (dvs && a.devStreamId === dvs.id)) out.add(`art:${a.id}`);
+  return out;
+}

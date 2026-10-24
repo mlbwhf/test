@@ -18,6 +18,7 @@ import {
   isTypeExample,
 } from "@trainyard/core";
 import { Popover } from "@/components/plan-board";
+import { VsBreakdown } from "@/components/vs-breakdown";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
@@ -508,7 +509,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
         <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
           <div className="stack" style={{ gap: 4, maxWidth: 760 }}>
             <span className="eyebrow">Value stream identification</span>
-            <p className="muted" style={{ margin: 0 }}>{STAGES[stage - 1]![1]}</p>
+            <p className="muted" style={{ margin: 0 }}>{stage === 6 ? "All five levels at once: operational steps, the solutions behind them, the people who build them, the development value streams they form and the trains cut from them, with coverage per level and which trains each step depends on." : STAGES[stage - 1]![1]}</p>
           </div>
           <div className="row">
             <button className="btn" onClick={onMeasure}>
@@ -534,6 +535,9 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
               {i + 1} · {label}
             </button>
           ))}
+          <button className={`btn small ${stage === 6 ? "primary" : ""}`} onClick={() => setStage(6)} aria-pressed={stage === 6}>
+            Full breakdown · all five levels
+          </button>
         </div>
       </section>
 
@@ -585,6 +589,10 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
         ) : null}
       </section>
 
+      {stage === 6 ? (
+        <VsBreakdown vsi={vsi} onPickStep={(id) => (setStage(5), setSel(id))} />
+      ) : (
+        <>
       <section className="panel panel-body">
         <div className="scroll-x">
           <div style={{ minWidth: Math.max(900, cols * 122) }}>
@@ -797,6 +805,8 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
           <span>{impact?.verdict ?? "Pick a step."}</span>
         </div>
       </section>
+        </>
+      )}
 
       {issues.length ? (
         <section className="notice warn stack" style={{ gap: 4 }}>

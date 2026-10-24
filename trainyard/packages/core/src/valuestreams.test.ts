@@ -84,3 +84,40 @@ describe("value stream type examples", () => {
     expect(isTypeExample({ ...mfg, steps: mfg.steps.slice(1) }, t("manufacturing"))).toBe(false);
   });
 });
+
+describe("identification breakdown", () => {
+  it("flows people from steps through solutions, people, development value streams and trains", async () => {
+    const { demoIdentification, identificationBreakdown } = await import("./valuestreams.js");
+    const v = demoIdentification();
+    const b = identificationBreakdown(v);
+    const levels = ["step", "system", "group", "dvs", "art"] as const;
+    for (const l of levels) expect(b.nodes.some((n) => n.level === l)).toBe(true);
+    expect(b.totalPeople).toBe(v.groups.reduce((n, g) => n + g.people, 0));
+    // People out of the solutions equal the development people who build them.
+    const devPeople = v.groups.filter((g) => g.systemIds.length).reduce((n, g) => n + g.people, 0);
+    const sysToGroup = b.links.filter((l) => l.from.startsWith("system:")).reduce((n, l) => n + l.people, 0);
+    expect(Math.round(sysToGroup)).toBe(devPeople);
+    expect(b.links.every((l) => l.people > 0)).toBe(true);
+    expect(b.matrix).toHaveLength(v.steps.length);
+    const attract = b.matrix.find((r) => r.stepId === "attract")!;
+    expect(attract.cells.find((c) => c.artId === "art-channels")!.systems).toEqual(["Channels"]);
+    expect(b.coverage.map((c) => c.level)).toEqual([...levels]);
+    expect(b.coverage.find((c) => c.level === "art")).toMatchObject({ covered: 3, total: 4 });
+  });
+});
+
+describe("breakdown trace", () => {
+  it("lights only the trains that own the traced solution", async () => {
+    const { demoIdentification, breakdownTrace } = await import("./valuestreams.js");
+    const v = demoIdentification();
+    const t = breakdownTrace(v, "system:credit");
+    expect([...t].filter((x) => x.startsWith("art:"))).toEqual(["art:art-credit"]);
+    expect(t.has("step:eligibility")).toBe(true);
+    expect(t.has("dvs:dvs-origination")).toBe(true);
+    expect(t.has("group:g-legal")).toBe(false);
+    const d = breakdownTrace(v, "dvs:dvs-origination");
+    expect(d.has("group:g-legal")).toBe(true);
+    expect([...d].filter((x) => x.startsWith("art:")).length).toBe(3);
+    expect(breakdownTrace(v, "art:art-core").has("step:close")).toBe(true);
+  });
+});

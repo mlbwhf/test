@@ -587,3 +587,12 @@ button.vs-clickbar.vs-bar:hover { filter: brightness(0.97); }
   .op-page { border: 0; padding: 0; background: #fff; color: #000; }
   .op-card { break-inside: avoid; }
 }
+
+/* ---- value stream full breakdown ---- */
+.vsb-coverage { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.vsb-cov { padding: 14px; display: flex; flex-direction: column; gap: 4px; border-top: 4px solid; }
+.vsb-cov b { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.1; }
+.vsb-cov .faint { font-size: 0.8rem; }
+.vsb-gaps { font-size: 0.8rem; color: var(--warn); }
+.vsb-gaps.ok { color: var(--ok); }
+.vsb-hit { background: var(--signal-soft); font-weight: 600; }
