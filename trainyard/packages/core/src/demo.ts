@@ -184,6 +184,8 @@ export function demoWorkspace(): Workspace {
       ...(started ? { startedAt: `${iter.start}T09:00:00Z` } : {}),
       source: sourceFor(f.team, "2026-10-20T16:00:00Z"),
       ...(f.ai ? { aiInitiativeId: f.ai } : {}),
+      // Most features are WSJF-scored for PI planning; a few are left for the room to score.
+      ...(idx % 5 !== 4 ? { wsjf: { userBusinessValue: Math.max(1, Math.min(20, f.bv)), timeCriticality: [1, 2, 3, 5, 8, 13][(idx * 3) % 6]!, riskReductionOpportunity: [1, 2, 3, 5, 8][(idx * 2) % 5]!, jobSize: [1, 2, 3, 5, 8, 13, 20].find((n) => n >= Math.ceil(f.est / 3)) ?? 20 } } : {}),
     });
     for (let s = 0; s < 3; s++) {
       const done = started && rand() < 0.6;

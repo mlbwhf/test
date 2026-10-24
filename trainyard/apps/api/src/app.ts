@@ -312,6 +312,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
           teamId: z.string().optional(),
           estimate: z.number().min(0).nullable().optional(),
           businessValue: z.number().min(0).max(100).nullable().optional(),
+          wsjf: z.object({ userBusinessValue: z.number().min(0).max(100), timeCriticality: z.number().min(0).max(100), riskReductionOpportunity: z.number().min(0).max(100), jobSize: z.number().min(0).max(100) }).nullable().optional(),
           aiInitiativeId: z.string().nullable().optional(),
         }),
       },
@@ -343,6 +344,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
       apply("teamId", b.teamId);
       apply("estimate", b.estimate, "estimate");
       apply("businessValue", b.businessValue, "businessValue");
+      apply("wsjf", b.wsjf);
       apply("aiInitiativeId", b.aiInitiativeId);
       ws.items = ws.items.map((i) => (i.id === item.id ? (next as unknown as WorkItem) : i));
       if (item.source.system !== "native" && changed.length) s().pending.push({ itemId: item.id, fields: changed, at: store.now().toISOString(), base });

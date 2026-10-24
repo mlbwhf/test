@@ -112,11 +112,23 @@ export function planningReadiness(input: {
   const candidates = items.filter((i) => i.level === plannedLevel && i.status !== "done");
   const unestimated = candidates.filter((i) => i.estimate === undefined);
   const unvalued = candidates.filter((i) => i.businessValue === undefined);
+  const unranked = candidates.filter((i) => !i.wsjf);
   const checks = [
     { key: "capacity", ok: missingCapacity.length === 0, message: missingCapacity.length ? `${missingCapacity.length} team(s) have iterations with no capacity set.` : "Every team has capacity for every iteration." },
     { key: "backlog", ok: candidates.length > 0, message: candidates.length ? `${candidates.length} item(s) ready to plan.` : "The backlog has nothing to plan." },
     { key: "estimates", ok: unestimated.length === 0, message: unestimated.length ? `${unestimated.length} item(s) have no estimate.` : "Every item is estimated." },
     { key: "value", ok: unvalued.length === 0, message: unvalued.length ? `${unvalued.length} item(s) have no business value.` : "Every item has business value." },
+    { key: "wsjf", ok: unranked.length === 0, message: unranked.length ? `${unranked.length} item(s) have no WSJF yet: the ART backlog is not ranked.` : "The ART backlog is ranked by WSJF." },
   ];
   return { ready: checks.every((c) => c.ok), checks };
+}
+
+/** The ART backlog in WSJF order: scored items first, highest WSJF first; unscored ones after, as they were. */
+export function rankByWsjf<T extends WorkItem>(items: readonly T[]): (T & { wsjfScore: number | null; costOfDelay: number | null })[] {
+  const scored = items.map((i) => {
+    const w = i.wsjf;
+    const cod = w ? w.userBusinessValue + w.timeCriticality + w.riskReductionOpportunity : null;
+    return { ...i, costOfDelay: cod, wsjfScore: w && w.jobSize > 0 ? Math.round(((cod ?? 0) / w.jobSize) * 100) / 100 : null };
+  });
+  return [...scored.filter((i) => i.wsjfScore !== null).sort((a, b) => b.wsjfScore! - a.wsjfScore!), ...scored.filter((i) => i.wsjfScore === null)];
 }

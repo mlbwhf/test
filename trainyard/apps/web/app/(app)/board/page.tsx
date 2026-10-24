@@ -256,37 +256,14 @@ export default function BoardPage() {
             <h2>{labels.incrementLabel} Planning readiness</h2>
             <span className={`chip ${b.readiness.ready ? "ok" : "warn"}`}>{b.readiness.ready ? "Ready" : "Not ready"}</span>
           </div>
-          <ul className="panel-body stack" style={{ listStyle: "none", margin: 0 }}>
-            {b.readiness.checks.map((c) => (
-              <li key={c.key} className="row" style={{ flexWrap: "nowrap", alignItems: "flex-start" }}>
-                <span className="dot" style={{ background: c.ok ? "var(--ok)" : "var(--warn)", marginTop: 6 }} />
-                <span>{c.message}</span>
-              </li>
-            ))}
-            <li>
-              <AssistButton<{ verdict: string; briefing: string; actions: { action: string; ownerRole: string; before: string }[] }>
-                label="Draft the readiness briefing"
-                path="/v1/assist/readiness"
-                body={{ incrementId: b.increment.id }}
-                small
-                render={(d) => (
-                  <>
-                    <span className={`chip ${d.verdict === "go" ? "ok" : d.verdict === "not-ready" ? "crit" : "warn"}`}>{d.verdict}</span>
-                    <p>{d.briefing}</p>
-                    {d.actions.length ? (
-                      <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        {d.actions.map((a, n) => (
-                          <li key={n}>
-                            {a.action} <span className="faint">({a.ownerRole}, before {a.before})</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </>
-                )}
-              />
-            </li>
-          </ul>
+          <div className="panel-body stack">
+            <span className="muted">
+              {b.readiness.checks.filter((c) => c.ok).length} of {b.readiness.checks.length} checks pass. Readiness, the WSJF-ranked backlog, risks and the launch canvases live together before the event.
+            </span>
+            <Link href="/readiness" className="btn" style={{ alignSelf: "flex-start" }}>
+              Open readiness, WSJF and risks →
+            </Link>
+          </div>
         </section>
 
         <section className="panel">

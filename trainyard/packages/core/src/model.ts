@@ -1,5 +1,5 @@
 import type { Board } from "./boards.js";
-import type { Portfolio } from "./portfolio.js";
+import type { Portfolio, Wsjf } from "./portfolio.js";
 
 // Domain types shared by every package. Nothing here knows about Jira, Azure DevOps or a
 // specific scaling framework: frameworks are data (see frameworks.ts) and trackers are
@@ -31,6 +31,8 @@ export interface WorkItem {
   flowType: FlowType;
   estimate?: number;
   businessValue?: number;
+  /** Weighted shortest job first, scored while the ART backlog is readied for PI planning. */
+  wsjf?: Wsjf;
   createdAt: string;
   startedAt?: string;
   doneAt?: string;

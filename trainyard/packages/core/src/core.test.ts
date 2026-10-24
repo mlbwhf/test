@@ -25,6 +25,7 @@ import {
   orderLevels,
   percentile,
   planningReadiness,
+  rankByWsjf,
   teamLoad,
   validateModel,
   type Dependency,
@@ -146,6 +147,14 @@ describe("planning", () => {
     expect(r.ready).toBe(false);
     expect(r.checks.find((c) => c.key === "capacity")!.ok).toBe(false);
     expect(r.checks.find((c) => c.key === "value")!.ok).toBe(false);
+    expect(r.checks.find((c) => c.key === "wsjf")!.ok).toBe(false);
+    const ranked = rankByWsjf([
+      { ...item("low", undefined, 3), wsjf: { userBusinessValue: 2, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 8 } },
+      item("none", undefined, 3),
+      { ...item("high", undefined, 3), wsjf: { userBusinessValue: 8, timeCriticality: 5, riskReductionOpportunity: 3, jobSize: 4 } },
+    ]);
+    expect(ranked.map((i) => [i.id, i.wsjfScore])).toEqual([["high", 4], ["low", 0.5], ["none", null]]);
+    expect(ranked[0]!.costOfDelay).toBe(16);
   });
 });
 

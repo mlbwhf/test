@@ -9,6 +9,8 @@ export interface SubView {
   label: string;
   /** Extra path prefixes that count as this view. */
   also?: string[];
+  /** Stage label shown before the first view of a group (Strategy, Launch & readiness…). */
+  group?: string;
 }
 
 export interface Space {
@@ -16,6 +18,8 @@ export interface Space {
   label: string;
   theme: ThemeId;
   eyebrow: string;
+  /** Where the space's top-bar button goes; the first sub-view when unset. */
+  home?: string;
   subs: SubView[];
 }
 
@@ -59,14 +63,17 @@ export const SPACES: Space[] = [
     label: "Plan",
     theme: "safe",
     eyebrow: "Plan · Train theme",
+    home: "/board",
+    // In the order an ART lives through them: decide what to fund, get ready, plan the PI, measure.
     subs: [
-      { href: "/board", label: "PI planning board" },
-      { href: "/board/coach-sync", label: "Coach Sync" },
-      { href: "/outcome-planning", label: "PI Outcome Planning" },
-      { href: "/portfolio", label: "Portfolio" },
-      { href: "/value-streams", label: "Value streams" },
-      { href: "/canvases", label: "Canvases" },
-      { href: "/dashboards", label: "Delivery dashboards" },
+      { href: "/portfolio", label: "Portfolio", group: "Strategy" },
+      { href: "/value-streams", label: "Value streams", group: "Strategy" },
+      { href: "/readiness", label: "Readiness, WSJF & risks", group: "Launch & readiness" },
+      { href: "/canvases", label: "Canvases", group: "Launch & readiness" },
+      { href: "/board", label: "PI planning board", group: "PI planning" },
+      { href: "/board/coach-sync", label: "Coach Sync", group: "PI planning" },
+      { href: "/outcome-planning", label: "PI Outcome Planning", group: "PI planning" },
+      { href: "/dashboards", label: "Delivery dashboards", group: "Measure" },
     ],
   },
   {

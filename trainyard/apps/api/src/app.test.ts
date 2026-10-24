@@ -1575,3 +1575,17 @@ describe("OKRs and lane boards", () => {
     expect((await call("PUT", "/v1/lane-boards/bad key", { cards: [], notes: [], strokes: [] })).status).toBe(400);
   });
 });
+
+describe("launch and PI planning readiness", () => {
+  it("scores features by WSJF and flags the unranked ones", async () => {
+    const { call } = await setup();
+    const before = (await call("GET", "/v1/board")).body;
+    const unranked = before.items.filter((i: { level: string; wsjf?: unknown }) => i.level === "feature" && !i.wsjf);
+    expect(unranked.length).toBeGreaterThan(0);
+    expect(before.readiness.checks.find((c: { key: string }) => c.key === "wsjf").ok).toBe(false);
+    for (const i of unranked) expect((await call("PATCH", `/v1/items/${i.id}`, { wsjf: { userBusinessValue: 5, timeCriticality: 3, riskReductionOpportunity: 2, jobSize: 5 } })).status).toBe(200);
+    const after = (await call("GET", "/v1/board")).body;
+    expect(after.readiness.checks.find((c: { key: string }) => c.key === "wsjf").ok).toBe(true);
+    expect((await call("PATCH", `/v1/items/${unranked[0].id}`, { wsjf: null })).body.item.wsjf).toBeUndefined();
+  });
+});

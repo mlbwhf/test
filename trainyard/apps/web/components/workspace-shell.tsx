@@ -99,10 +99,13 @@ function SubRow({ space, current }: { space: Space; current: string | undefined 
     <div className="ws-subrow">
       <span className="ws-eyebrow">{space.eyebrow}</span>
       <nav className="ws-chips" aria-label={`${space.label} views`}>
-        {space.subs.map((s) => (
-          <Link key={s.href} href={s.href} className="ws-chip" aria-current={current === s.href ? "page" : undefined}>
-            {s.label}
-          </Link>
+        {space.subs.map((s, i) => (
+          <span key={s.href} className="ws-chip-wrap">
+            {s.group && s.group !== space.subs[i - 1]?.group ? <span className="ws-group">{s.group}</span> : null}
+            <Link href={s.href} className="ws-chip" aria-current={current === s.href ? "page" : undefined}>
+              {s.label}
+            </Link>
+          </span>
         ))}
       </nav>
     </div>
@@ -136,7 +139,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
           </Link>
           <nav className="ws-spaces" aria-label="Spaces">
             {top.map((s) => (
-              <Link key={s.id} href={s.subs[0]!.href} className="ws-space" aria-current={here?.space.id === s.id ? "page" : undefined}>
+              <Link key={s.id} href={s.home ?? s.subs[0]!.href} className="ws-space" aria-current={here?.space.id === s.id ? "page" : undefined}>
                 {s.label}
               </Link>
             ))}
