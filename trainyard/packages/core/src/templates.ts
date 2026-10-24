@@ -9,6 +9,7 @@
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import { classTemplates } from "./classes.js";
+import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
 
 export type TemplateMethod = "safe" | "scrum" | "kanban" | "lean" | "six-sigma" | "manufacturing" | "general";
 
@@ -87,7 +88,7 @@ export const TEMPLATE_CATALOG: TemplateInfo[] = [
   { id: "confidence-vote", name: "Confidence vote", blurb: "Fist of five per team and for the ART.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["1 · No confidence", "2", "3", "4", "5 · Full confidence"], cardTypes: ["Vote"], mapsTo: "Nothing (record only)" },
   { id: "retrospective", name: "Retrospective", blurb: "Went well, didn't go well, ideas, actions.", event: "Iteration · Inspect & Adapt", method: "general", tags: ["team"], zones: ["Went well", "Didn't go well", "Ideas", "Actions"], cardTypes: ["Note", "Action"], mapsTo: "Actions as items" },
   { id: "kanban", name: "Team Kanban", blurb: "Columns with WIP limits.", event: "Daily", method: "kanban", tags: ["team", "flow"], zones: ["Ready", "In progress", "Review", "Done"], cardTypes: ["Work item"], mapsTo: "Items with status" },
-  { id: "inspect-adapt", name: "Inspect & Adapt", blurb: "Problem-solving workshop: fishbone, five whys, improvement backlog.", event: "Inspect & Adapt", method: "safe", tags: ["safe", "team"], zones: ["Problem statement", "Fishbone", "Five whys", "Improvement backlog"], cardTypes: ["Cause", "Improvement"], mapsTo: "Improvement items" },
+  { id: "inspect-adapt", name: "Inspect & Adapt", blurb: "PI system demo, quantitative and qualitative measurement, and the problem-solving workshop: fishbone by SAFe's categories, five whys, improvement backlog.", event: "Inspect & Adapt", method: "safe", tags: ["safe", "team"], zones: ["PI system demo", "Measurement", "Problem statement", "Fishbone (people, processes, tools, program, environment)", "Five whys", "Improvement backlog"], cardTypes: ["Cause", "Improvement"], mapsTo: "Improvement items" },
   { id: "lean-business-case", name: "Epic / Lean business case", blurb: "Hypothesis, MVP, leading indicators, WSJF.", event: "Portfolio Sync", method: "safe", tags: ["portfolio"], zones: ["Hypothesis", "MVP", "Leading indicators", "WSJF"], cardTypes: ["Note"], mapsTo: "Portfolio epic" },
   { id: "okr-tree", name: "OKR tree", blurb: "Objectives with key results and owners.", event: "Quarterly", method: "general", tags: ["portfolio"], zones: ["Objective", "Key results", "Owner", "Metric link"], cardTypes: ["Row"], mapsTo: "OKRs" },
   { id: "dependency-map", name: "Dependency map", blurb: "Teams as nodes, dependencies as arrows.", event: "ART Sync", method: "general", tags: ["safe", "risk"], zones: ["Teams", "Arrows", "Legend"], cardTypes: ["Team node"], mapsTo: "Dependencies" },
@@ -194,8 +195,15 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       ];
     }),
     template(info("inspect-adapt"), (b) => {
-      b.frames = [strip("Problem statement", 0, 2 * W + GAP, 160), { id: "fishbone", title: "Root causes (fishbone)", x: 0, y: 200, width: 2 * W + GAP, height: 520 }, { id: "five-whys", title: "Five whys", x: 2 * (W + GAP), y: 0, width: W, height: 720 }, strip("Improvement backlog", 760, 3 * (W + GAP) - GAP, 240)];
-      b.nodes = placeholders([b.frames[1]!], "#fbd9d2");
+      // Built from INSPECT_AND_ADAPT, the same definition the class boards use.
+      const fullW = 3 * (W + GAP) - GAP;
+      const parts = INSPECT_AND_ADAPT.parts.map((p, i) => ({ id: slug(p.title), title: `${i + 1}. ${p.title}`, x: i * (W + GAP), y: 0, width: W, height: 180 }));
+      const problem = strip("Problem statement", 220, 2 * W + GAP, 160);
+      const bones = INSPECT_AND_ADAPT.fishbone.map((c, i) => ({ id: `fishbone-${slug(c)}`, title: `Root causes · ${c}`, x: (i % 3) * ((2 * W + GAP) / 3 + 0), y: 420 + Math.floor(i / 3) * 280, width: Math.floor((2 * W + GAP) / 3) - 12, height: 260 }));
+      const whys = { id: "five-whys", title: "Five whys", x: 2 * (W + GAP), y: 220, width: W, height: 740 };
+      const backlog = { id: "improvement-backlog", title: `Improvement backlog: ${INSPECT_AND_ADAPT.improvementBacklog.join(" · ")}`, x: 0, y: 1000, width: fullW, height: 240 };
+      b.frames = [...parts, problem, ...bones, whys, backlog];
+      b.nodes = placeholders(bones, "#fbd9d2");
     }),
     template(info("lean-business-case"), (b) => {
       b.frames = [

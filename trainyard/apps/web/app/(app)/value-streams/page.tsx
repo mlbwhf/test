@@ -10,6 +10,7 @@ import {
   type ArtTopology,
   type IdentificationIssue,
   type OvsType,
+  VS_WORKSHOP_STEPS,
   type MapMetrics,
   type ValueStreamIdentification,
   type ValueStreamMap,
@@ -207,13 +208,7 @@ export default function ValueStreamsPage() {
 
 // ---- identification ------------------------------------------------------------------------
 
-const STAGES = [
-  ["Operational value stream", "Start from the customer: the trigger, the steps they and your staff go through, and the value at the end. Above each chevron, who performs the step. Click anything to change it."],
-  ["Solutions", "Under each step, the solutions (systems) that support it or that the stream provides to customers. A solution spanning several steps means one team of teams owns a long stretch of the stream."],
-  ["People who develop and support", "Below the solutions: who builds and runs them, how many, where they sit and what they do. Always by group, never by name."],
-  ["Development value streams", "Draw a line around the people and solutions that must change together to deliver a feature; add the people the full business solution needs (legal, marketing, support, operations)."],
-  ["ART design", "Apply the topologies to cut each development value stream into trains of 50 to 125 people that can plan and deliver together."],
-] as const;
+const STAGES = VS_WORKSHOP_STEPS;
 
 type Anchor = DOMRect;
 type Open = { kind: "step" | "system" | "group" | "dvs" | "art" | "trigger" | "value"; id: string; anchor: Anchor } | null;

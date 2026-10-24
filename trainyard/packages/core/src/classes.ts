@@ -13,6 +13,11 @@
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import type { TemplateInfo } from "./templates.js";
+import { PI_PLANNING_READINESS } from "./canvases.js";
+import { COACH_SYNC_CHECKPOINTS } from "./coachsync.js";
+import { POINTS_PER_FULL_TIME } from "./capacity.js";
+import { ART_TOPOLOGIES, OVS_TEMPLATE_FIELDS, OVS_TYPES, VS_WORKSHOP_STEPS } from "./valuestreams.js";
+import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
 
 export type Exercise =
   /** A read-only instruction card: EXERCISE / DIRECTIONS / ACTIVITY, the way the Miro boards did it. */
@@ -378,31 +383,14 @@ const WSJF_EXAMPLE: Exercise = {
   ],
 };
 
+// Built from PI_PLANNING_READINESS, the same list the ART launch canvas scores.
 const READINESS_CHECKLIST: Exercise[] = [
   {
     kind: "table",
-    title: "ART readiness checklist: must it be in place to launch? Y · N · D(epends)",
-    columns: ["Area", "Question", "Y / D / N"],
-    rows: [
-      ["Planning scope and context", "Is the scope (product, system, technology domains) understood? Have we identified our value stream(s) and ARTs?", ""],
-      ["Release Train Engineer", "Have we identified the RTE? Do they understand the role in preparing the organization and the PI Planning event?", ""],
-      ["Planning timeframe, iteration and PI cadence", "Have we identified the PI Planning dates, the iteration cadence and the PI cadence?", ""],
-      ["Agile Teams (SM/TCs, POs)", "Does each team have an identified Scrum Master/Team Coach and Product Owner?", ""],
-      ["Team makeup / commitment", "Are there dedicated, cross-functional team members on every team?", ""],
-      ["Agile Team attendance", "Are all team members attending, in person or remotely?", ""],
-      ["Executive, Business Owner", "Who sets the business context and strategy? Who assigns business value and accepts the plans?", ""],
-      ["Business alignment", "Is there reasonable agreement on priorities among Business Owners and Product Management?", ""],
-      ["Architecture vision and development practices", "Who presents the architecture vision and required development practices?", ""],
-      ["System Team", "Has the System Team been identified and formed?", ""],
-      ["Shared Services", "Have the shared services (UX, architecture, etc.) been identified?", ""],
-      ["Other attendees", "Which other key business and technology stakeholders should attend?", ""],
-      ["ALM tooling", "Where will iterations, PIs, features, stories and measures be maintained?", ""],
-      ["Development infrastructure", "Do we have a strategy for using and improving the Continuous Delivery Pipeline?", ""],
-      ["Quality practices", "Is there a strategy for applying built-in quality practices?", ""],
-    ],
+    title: "PI planning readiness: must it be in place to launch? Y · N · D(epends)",
+    columns: ["Area", "Question", "Needed or desirable", "Y / D / N"],
+    rows: PI_PLANNING_READINESS.map((r) => [r.text, r.question, r.tier === "needed" ? "Needed" : "Desirable", ""]),
   },
-  { kind: "link", title: "Score it live", body: "The same checklist, with SAFe's needed and desirable items and the readiness ring, lives on the ART launch canvas. Create one for your ART and tick items as the launch progresses.", href: "/canvases" },
-  { kind: "stickies", title: "Launch planning", lanes: ["Key people to attend", "Who might hinder the launch", "Keeping training sessions a reasonable size"], rows: 2, color: COLORS.green },
 ];
 
 const LEADING_SAFE_LESSONS: Record<2 | 4 | 5, Lesson> = {
@@ -609,49 +597,65 @@ export function classTemplates(now?: string): (Board & { info: TemplateInfo })[]
   return CLASSES.map((spec) => Object.assign(classBoard(spec, now), { info: classInfo(spec) }));
 }
 
-// ---- live tools in the classes -------------------------------------------------------------
-// Chapters that teach something Trainyard runs for real open the live tool instead of a copy of
-// it, so when the tool changes (a new readiness item, a new Coach Sync question, the value
-// stream workshop) every class shows the change without editing the class.
+// ---- the tools, inside the classes -----------------------------------------------------------
+// Chapters that teach something Trainyard runs are built from the same definitions the tools
+// use (the readiness checklist, the Coach Sync checkpoints, the capacity rule, the value stream
+// workshop and template, the Inspect & Adapt agenda). Class boards are regenerated from them on
+// every start, so when a tool's definition changes, the class changes with it.
 
-export const LIVE_TOOLS = {
-  piPlanning: [
-    { kind: "link", title: "PI planning board, live", body: "Milestones and events on top, features by team and iteration, dependency strings, risks to ROAM, team capacity from members or velocity, and team and ART PI objectives.", href: "/board" },
-    { kind: "link", title: "Coach Sync during PI planning", body: "The six checkpoints across the two days (1:00, 2:00, 3:00, 3:45; 10:30, 11:30), answered per team on a question × team grid.", href: "/board/coach-sync" },
+export const CLASS_TOOLS = {
+  piPlanning: (): Exercise[] => [
+    {
+      kind: "table",
+      title: `Team capacity: each contributor gives allocation × ${POINTS_PER_FULL_TIME} points per iteration, minus one point per day off; Scrum Master and Product Owner do not count`,
+      columns: ["Team member", "Role", "Allocation %", "Days off", "Points"],
+      rows: [["", "Developer", "100", "0", String(POINTS_PER_FULL_TIME)], ["", "Developer", "100", "2", String(POINTS_PER_FULL_TIME - 2)], ["", "Tester", "50", "0", String(POINTS_PER_FULL_TIME / 2)], ["", "Scrum Master", "100", "0", "0"], ["", "Product Owner", "100", "0", "0"]],
+      blankRows: 2,
+    },
+    {
+      kind: "table",
+      title: "Coach Sync: the RTE's checkpoints through the breakouts (Yes · Partly · Not yet · Needs help)",
+      columns: ["Checkpoint", "Question", "Team 1", "Team 2", "Team 3", "Team 4"],
+      rows: COACH_SYNC_CHECKPOINTS.flatMap((c) => c.questions.map((q, i) => [i === 0 ? `Day ${c.day} · ${c.time} · ${c.title}` : "", q.text, "", "", "", ""])),
+    },
+    { kind: "table", title: "PI objectives: team and ART", columns: ["Level", "PI objective", "Committed?", "Planned BV (1–10)", "Source team objectives"], rows: [], blankRows: 6 },
   ],
-  valueStreams: [
-    { kind: "link", title: "Value stream identification, live", body: "Operational value stream type and template, steps with who performs them, solutions, people who develop and support them by group, development value streams and ART topologies. Click anything to edit.", href: "/value-streams" },
-    { kind: "link", title: "Value stream mapping", body: "Active time, wait time and %C&A per step, current and future state, flow efficiency and the queue to attack first.", href: "/value-streams" },
+  valueStreams: (): Exercise[] => [
+    { kind: "table", title: `Operational value stream template (types: ${OVS_TYPES.map((t) => t.name).join(", ")}, or your own)`, columns: ["Field", "Your value stream"], rows: OVS_TEMPLATE_FIELDS.map((f) => [f, ""]) },
+    { kind: "stickies", title: "Identify the value stream, step by step", lanes: VS_WORKSHOP_STEPS.map(([step]) => step), hint: VS_WORKSHOP_STEPS.map(([step, how]) => `${step}: ${how}`).join(" "), rows: 3 },
+    { kind: "zones", title: "Realise ARTs: which topology fits each train?", zones: ART_TOPOLOGIES.map((t) => t.name), items: ART_TOPOLOGIES.map((t) => t.blurb) },
   ],
-  readiness: [
-    { kind: "link", title: "PI planning readiness, live", body: "The ART readiness checklist with SAFe's needed and desirable items and the readiness ring, on the ART launch canvas beside the launch timeline.", href: "/canvases/canvas-launch" },
-    { kind: "link", title: "Readiness checklist guide", body: "Each item with the question behind it, and how trainers and RTEs use it.", href: "/guides/art-readiness-checklist" },
+  readiness: (): Exercise[] => READINESS_CHECKLIST,
+  inspectAdapt: (): Exercise[] => [
+    { kind: "slide", title: "Inspect & Adapt: the three parts", body: INSPECT_AND_ADAPT.parts.map((p) => `${p.title}: ${p.detail}`).join(" "), steps: [...INSPECT_AND_ADAPT.workshopSteps] },
+    { kind: "table", title: `PI objectives: planned and actual business value. ${INSPECT_AND_ADAPT.predictability}`, columns: [...INSPECT_AND_ADAPT.objectives], rows: [], blankRows: 6 },
+    { kind: "zones", title: "Problem-solving workshop: fishbone", zones: [...INSPECT_AND_ADAPT.fishbone], color: COLORS.pink },
+    { kind: "table", title: "Improvement backlog", columns: [...INSPECT_AND_ADAPT.improvementBacklog], rows: [], blankRows: 4 },
   ],
-  inspectAdapt: [
-    { kind: "link", title: "Inspect & Adapt board, live", body: "Problem statement, fishbone root causes, five whys and the improvement backlog, created for your ART from the template.", href: "/templates?tpl=tpl-builtin-inspect-adapt" },
-    { kind: "link", title: "PI objectives: planned and actual business value", body: "Score actual business value against plan per team and for the ART; the predictability measure follows on the dashboards.", href: "/board" },
-    { kind: "link", title: "Predictability and flow dashboards", body: "ART predictability, flow time, flow load and flow distribution for the PI system demo and the quantitative review.", href: "/dashboards" },
-  ],
-} satisfies Record<string, Exercise[]>;
+};
 
-/** Which chapter (1-based lesson number) of which class opens which live tool. */
-export const LIVE_CHAPTERS: Record<string, Record<number, (keyof typeof LIVE_TOOLS)[]>> = {
+/** Which chapter (1-based lesson number) of which class is built from which tool. */
+export const CLASS_TOOL_CHAPTERS: Record<string, Record<number, (keyof typeof CLASS_TOOLS)[]>> = {
   "leading-safe": { 4: ["piPlanning"] },
   spc: { 4: ["piPlanning"], 9: ["valueStreams"], 10: ["readiness"], 11: ["inspectAdapt"] },
   rte: { 3: ["readiness"], 6: ["inspectAdapt"] },
 };
 
 function withLiveTools(c: ClassSpec): ClassSpec {
-  const map = LIVE_CHAPTERS[c.id];
+  const map = CLASS_TOOL_CHAPTERS[c.id];
   if (!map) return c;
   return {
     ...c,
     lessons: c.lessons.map((l, i) => {
       const tools = map[i + 1];
       if (!tools) return l;
-      const have = new Set(l.exercises.flatMap((e) => (e.kind === "link" ? [e.href] : [])));
-      const add = tools.flatMap((t) => LIVE_TOOLS[t] as Exercise[]).filter((e) => e.kind === "link" && !have.has(e.href) && (have.add(e.href), true));
-      return { ...l, exercises: [...l.exercises, ...add] };
+      const generated = tools.flatMap((t) => CLASS_TOOLS[t]());
+      const titles = new Set(generated.map((e) => e.title));
+      // The tool's own version replaces any hand-written copy of the same exercise.
+      // Links to the tool go too: the chapter now holds the tool's own content.
+      const superseded = (e: Exercise) => titles.has(e.title) || e.kind === "link" || /^(PI planning readiness|Problem-solving workshop|Fishbone|Improvement backlog|Operational steps)/.test(e.title);
+      const kept = l.exercises.filter((e) => !superseded(e));
+      return { ...l, exercises: [...kept, ...generated] };
     }),
   };
 }

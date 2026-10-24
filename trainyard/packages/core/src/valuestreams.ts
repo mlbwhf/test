@@ -131,6 +131,18 @@ export const OVS_TYPES: OvsType[] = [
   },
 ];
 
+/** The identification workshop, step by step; the page and the class boards both use it. */
+export const VS_WORKSHOP_STEPS: [string, string][] = [
+  ["Operational value stream", "Start from the customer: the trigger, the steps they and your staff go through, and the value at the end. Above each step, who performs it."],
+  ["Solutions", "Under each step, the solutions (systems) that support it or that the stream provides to customers. A solution spanning several steps means one team of teams owns a long stretch of the stream."],
+  ["People who develop and support", "Below the solutions: who builds and runs them, how many, where they sit and what they do. Always by group, never by name."],
+  ["Development value streams", "Draw a line around the people and solutions that must change together to deliver a feature; add the people the full business solution needs (legal, marketing, support, operations)."],
+  ["ART design", "Apply the topologies to cut each development value stream into trains of 50 to 125 people that can plan and deliver together."],
+];
+
+/** SAFe's operational value stream template. */
+export const OVS_TEMPLATE_FIELDS = ["Type", "Name", "Description", "Customer(s)", "Triggers", "Value received to enterprise", "Value received to customer"] as const;
+
 /** SAFe's ART topologies, applied when a development value stream is cut into trains. */
 export type ArtTopology = "stream-aligned" | "platform" | "complicated-subsystem" | "enabling";
 export const ART_TOPOLOGIES: { id: ArtTopology; name: string; blurb: string }[] = [

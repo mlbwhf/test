@@ -518,6 +518,29 @@ export function epicsFromFutureState(future: Canvas, current?: Canvas): EpicDraf
   });
 }
 
+/**
+ * SAFe's PI planning (ART) readiness checklist: the needed items and the desirable ones, each
+ * with the consideration behind it and the launch lane that prepares it. One definition feeds
+ * the ART launch canvas, the readiness guide and the class boards.
+ */
+export const PI_PLANNING_READINESS: { text: string; question: string; tier: "needed" | "desirable"; laneId?: string }[] = [
+  { text: "Planning scope and context", question: "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?", tier: "needed", laneId: "content" },
+  { text: "Release Train Engineer", question: "Have we identified the Release Train Engineer? Do they understand the scope of the role in preparing the organization and preparing for the PI Planning event?", tier: "needed", laneId: "teams" },
+  { text: "Planning timeframe, iteration and PI cadence", question: "Have we identified the PI Planning dates, the iteration cadence, and the PI cadence?", tier: "needed", laneId: "cadence" },
+  { text: "Agile Teams (SM/TCs, POs)", question: "Does each team have an identified Scrum Master/Team Coach and Product Owner?", tier: "needed", laneId: "teams" },
+  { text: "Team makeup/commitment", question: "Have we identified cross-functional Agile Teams? Are there dedicated team members on every team?", tier: "needed", laneId: "teams" },
+  { text: "Agile Team attendance", question: "Are all team members attending PI Planning, whether in person or involved remotely?", tier: "needed", laneId: "teams" },
+  { text: "Executive, Business Owner", question: "Do we know who will set and present the business context and strategy? Do we know who will assign business value and accept the plans?", tier: "needed", laneId: "leadership" },
+  { text: "Business alignment", question: "Is there reasonable agreement on priorities amongst the Business Owners and Product Management?", tier: "needed", laneId: "content" },
+  { text: "Architecture vision and development practices", question: "Do we know who will present the architecture vision and required development practices?", tier: "needed", laneId: "content" },
+  { text: "System Team", question: "Has the system team been identified and formed?", tier: "desirable", laneId: "teams" },
+  { text: "Shared Services", question: "Have the shared services (User Experience, Architecture, etc.) been identified?", tier: "desirable", laneId: "teams" },
+  { text: "Other Attendees", question: "Do we know what other key business and technology stakeholders should attend?", tier: "desirable", laneId: "leadership" },
+  { text: "Agile Lifecycle Management (ALM) tooling", question: "Do we know how and where iterations, PIs, features, stories, measures, etc., will be maintained?", tier: "desirable" },
+  { text: "Development infrastructure", question: "Do we have a strategy for using and improving the Continuous Delivery Pipeline?", tier: "desirable" },
+  { text: "Quality practices", question: "Is there a strategy for applying built-in quality practices?", tier: "desirable" },
+];
+
 // ---- launch readiness ---------------------------------------------------------------------
 
 export interface LaunchReadiness {
@@ -598,26 +621,9 @@ export function demoCanvases(vsi: ValueStreamIdentification | undefined, now = "
   const day = new Date(now.slice(0, 10) + "T00:00:00Z");
   day.setUTCDate(day.getUTCDate() - ((day.getUTCDay() + 6) % 7) - 21);
   launch.fields.timeline = { start: day.toISOString().slice(0, 10), weeks: 10, dateCertainWeek: 9, dateCertainLabel: "Quick-start", lanes };
-  // SAFe's ART readiness checklist: the needed items and the desirable ones, each with the
-  // consideration behind it, placed on the launch lane that prepares it.
-  const N = "needed", D = "desirable";
-  launch.fields.readiness = ([
-    ["Planning scope and context", "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?", N, "content", true],
-    ["Release Train Engineer", "Have we identified the Release Train Engineer? Do they understand the scope of the role in preparing the organization and preparing for the PI Planning event?", N, "teams", true],
-    ["Planning timeframe, iteration and PI cadence", "Have we identified the PI Planning dates, the iteration cadence, and the PI cadence?", N, "cadence", true],
-    ["Agile Teams (SM/TCs, POs)", "Does each team have an identified Scrum Master/Team Coach and Product Owner?", N, "teams", false],
-    ["Team makeup/commitment", "Have we identified cross-functional Agile Teams? Are there dedicated team members on every team?", N, "teams", false],
-    ["Agile Team attendance", "Are all team members attending PI Planning, whether in person or involved remotely?", N, "teams", false],
-    ["Executive, Business Owner", "Do we know who will set and present the business context and strategy? Do we know who will assign business value and accept the plans?", N, "leadership", true],
-    ["Business alignment", "Is there reasonable agreement on priorities amongst the Business Owners and Product Management?", N, "content", false],
-    ["Architecture vision and development practices", "Do we know who will present the architecture vision and required development practices?", N, "content", true],
-    ["System Team", "Has the system team been identified and formed?", D, "teams", false],
-    ["Shared Services", "Have the shared services (User Experience, Architecture, etc.) been identified?", D, "teams", false],
-    ["Other Attendees", "Do we know what other key business and technology stakeholders should attend?", D, "leadership", true],
-    ["Agile Lifecycle Management (ALM) tooling", "Do we know how and where iterations, PIs, features, stories, measures, etc., will be maintained?", D, undefined, true],
-    ["Development infrastructure", "Do we have a strategy for using and improving the Continuous Delivery Pipeline?", D, undefined, false],
-    ["Quality practices", "Is there a strategy for applying built-in quality practices?", D, undefined, false],
-  ] as [string, string, "needed" | "desirable", string | undefined, boolean][]).map(([text, question, tier, laneId, done], i) => ({ id: rid("r", i), text, question, tier, done, ...(laneId ? { laneId } : {}) }));
+  // The checklist itself is PI_PLANNING_READINESS; the demo marks the first few as done.
+  const demoDone = [true, true, true, false, false, false, true, false, true, false, false, true, true, false, false];
+  launch.fields.readiness = PI_PLANNING_READINESS.map((r, i) => ({ id: rid("r", i), text: r.text, question: r.question, tier: r.tier, done: demoDone[i] ?? false, ...(r.laneId ? { laneId: r.laneId } : {}) }));
 
   const out = [lace, launch];
   if (vsi) {
