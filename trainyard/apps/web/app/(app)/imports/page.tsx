@@ -37,15 +37,17 @@ interface RemoteBoard {
   imported: boolean;
 }
 
-const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
+const SOURCE_LABEL: Record<string, string> = { miro: "Miro", lucid: "Lucid", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
-// One list of tools, ordered by reach: Miro reports 90–100 million users, Mural around 10
-// million, Trello and monday.com are work-management tools whose boards still come over, and
-// iObeya is an enterprise obeya platform with a smaller, mostly SAFe user base. Spreadsheet and
-// JSON uploads cover everything else.
-type ToolId = "miro" | "mural" | "trello" | "monday" | "iobeya" | "csv" | "json";
-const TOOLS: { id: ToolId; label: string; how: string; connect?: string; upload?: "iobeya" | "miro" | "csv" | "json" }[] = [
+// One list of tools, ordered by reach: Miro reports 90–100 million users, Lucid about 100 million
+// across its suite (after Miro, whose users are all on the whiteboard), Mural around 10 million,
+// Trello and monday.com are work-management tools whose boards still come over, and iObeya is
+// an enterprise obeya platform with a smaller, mostly SAFe user base. Spreadsheet and JSON
+// uploads cover everything else.
+type ToolId = "miro" | "lucid" | "mural" | "trello" | "monday" | "iobeya" | "csv" | "json";
+const TOOLS: { id: ToolId; label: string; how: string; connect?: string; upload?: "iobeya" | "miro" | "lucid" | "csv" | "json" }[] = [
   { id: "miro", label: "Miro", how: "connect, or upload its CSV", connect: "miro", upload: "miro" },
+  { id: "lucid", label: "Lucid", how: "connect, or upload its shape CSV", connect: "lucid", upload: "lucid" },
   { id: "mural", label: "Mural", how: "connect", connect: "mural" },
   { id: "trello", label: "Trello", how: "connect", connect: "trello" },
   { id: "monday", label: "monday.com", how: "connect", connect: "monday" },
@@ -78,7 +80,7 @@ export default function ImportsPage() {
 
   return (
     <>
-      <PageHead title="Bring your own boards" sub="Pull a board in from the tool it lives in, exactly as it is: Miro, Mural, Trello, monday.com, iObeya, or a spreadsheet export from anything else. Save any board as a template, add it to another board, and map its cards or rows onto the plan when you are ready." />
+      <PageHead title="Bring your own boards" sub="Pull a board in from the tool it lives in, exactly as it is: Miro, Lucidchart, Lucidspark, Mural, Trello, monday.com, iObeya, or a spreadsheet export from anything else. Save any board as a template, add it to another board, and map its cards or rows onto the plan when you are ready." />
       {!conns.data.persistent ? <div className="notice warn">Connection tokens are encrypted with a key that lives only in this process. Set TRAINYARD_SECRET on the API server so connections survive a restart.</div> : null}
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
@@ -370,7 +372,7 @@ function IobeyaUpload({ onError }: { onError: (e: unknown) => void }) {
   );
 }
 
-function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | "csv" | "json"; onImported: (name: string) => void; onError: (e: unknown) => void }) {
+function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | "lucid" | "csv" | "json"; onImported: (name: string) => void; onError: (e: unknown) => void }) {
   const [name, setName] = useState("");
   const [groupBy, setGroupBy] = useState("");
   const [text, setText] = useState("");
@@ -391,6 +393,7 @@ function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | 
         try {
           if (mode === "csv") await api("POST", "/v1/imports/csv", { name, csv: text, ...(groupBy ? { groupBy } : {}) });
           else if (mode === "miro") await api("POST", "/v1/imports/miro-csv", { name, csv: text });
+          else if (mode === "lucid") await api("POST", "/v1/imports/lucid-csv", { name, csv: text });
           else await api("POST", "/v1/imports/json", { board: JSON.parse(text) });
           onImported(name || "board");
           setText("");
@@ -404,7 +407,7 @@ function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | 
           File
           <input id="upload-file" className="input" type="file" accept={mode === "json" ? ".json,application/json" : ".csv,.tsv,text/csv,text/plain"} onChange={(e) => e.target.files?.[0] && read(e.target.files[0])} />
         </label>
-        {mode === "csv" || mode === "miro" ? (
+        {mode === "csv" || mode === "miro" || mode === "lucid" ? (
           <>
             <label className="field">
               Board name
@@ -421,11 +424,11 @@ function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | 
       </div>
       <label className="field">
         {mode === "json" ? "Or paste JSON" : "Or paste CSV"}
-        <textarea id="upload-text" className="textarea mono" style={{ minHeight: 110, fontSize: "0.8rem" }} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === "csv" ? "Feature,Team,Points\nGuest checkout,Checkout,13" : mode === "miro" ? "Paste the CSV Miro exports (board menu → Export → CSV)" : '{ "name": "My board", "columns": ["Title", "Team"], "rows": [{ "Title": "Guest checkout", "Team": "Checkout" }] }'} required />
+        <textarea id="upload-text" className="textarea mono" style={{ minHeight: 110, fontSize: "0.8rem" }} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === "csv" ? "Feature,Team,Points\nGuest checkout,Checkout,13" : mode === "miro" ? "Paste the CSV Miro exports (board menu → Export → CSV)" : mode === "lucid" ? "Paste the CSV Lucid exports (File → Export → CSV of Shape Data)" : '{ "name": "My board", "columns": ["Title", "Team"], "rows": [{ "Title": "Guest checkout", "Team": "Checkout" }] }'} required />
       </label>
       <div className="row" style={{ justifyContent: "space-between" }}>
         <span className="faint" style={{ fontSize: "0.8rem" }}>
-          {mode === "miro" ? "Needs a free account. Miro: board menu → Export → CSV. Widget texts come in reading order without positions, so blocks become frames of cards; a class board arrives as its lessons and exercises, ready to tidy. (.rtb backups are encrypted by Miro and cannot be read.)" : mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
+          {mode === "miro" ? "Needs a free account. Miro: board menu → Export → CSV. Widget texts come in reading order without positions, so blocks become frames of cards; a class board arrives as its lessons and exercises, ready to tidy. (.rtb backups are encrypted by Miro and cannot be read.)" : mode === "lucid" ? "Lucidchart or Lucidspark: File → Export → CSV of Shape Data. Each page becomes a frame with its containers inside, shapes and sticky notes become cards with their text, and lines become connectors. The export has no positions, so cards are laid out in a grid." : mode === "csv" ? "Any export with a header row: Excel, Google Sheets, Airtable, Notion, Smartsheet, Jira, Asana." : "Frames, cards, connectors, columns and rows; see the README for the format. Any script or tool that can write this file can bring a board in."}
         </span>
         <button className="btn primary" type="submit" disabled={!text}>
           Import

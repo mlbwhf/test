@@ -462,6 +462,15 @@ describe("boards and imports", () => {
     expect(res.status).toBe(401);
     expect(res.body.error.code).toBe("IMPORT_AUTH");
   });
+
+  it("imports a Lucid CSV of Shape Data and refuses other files", async () => {
+    const { call } = await setup();
+    const csv = ["Id,Name,Shape Library,Page ID,Contained By,Group,Line Source,Line Destination,Source Arrow,Destination Arrow,Status,Text Area 1", "1,Page,,,,,,,,,,ART board", "2,Process,Flowchart Shapes,1,,,,,,,,Guest checkout", "3,Process,Flowchart Shapes,1,,,,,,,,Saved carts", "4,Line,,1,,,2,3,None,Arrow,,"].join("\n");
+    const res = await call("POST", "/v1/imports/lucid-csv", { name: "Lucid board", csv });
+    expect(res.status).toBe(201);
+    expect(res.body.board).toMatchObject({ origin: { system: "lucid" }, counts: { frames: 1, nodes: 2, edges: 1 } });
+    expect((await call("POST", "/v1/imports/lucid-csv", { name: "x", csv: "Feature,Team\nA,B" })).body.error.code).toBe("NOT_LUCID");
+  });
 });
 
 describe("built-in templates and board editing", () => {

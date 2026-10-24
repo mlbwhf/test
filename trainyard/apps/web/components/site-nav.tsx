@@ -43,7 +43,7 @@ const MODULES = [
 
 export const INTEGRATIONS = [
   { t: "TRACKERS", items: [["Jira", "Jira app (Atlassian Forge) with two-way sync"], ["Azure DevOps", "Extension with sync"]] },
-  { t: "BRING YOUR BOARDS", items: [["Miro, Mural, Trello, monday.com, iObeya", "Connect or upload; boards arrive as they are"], ["Any spreadsheet", "CSV from Excel, Sheets, Airtable or Jira"]] },
+  { t: "BRING YOUR BOARDS", items: [["Miro, Lucid, Mural, Trello, monday.com, iObeya", "Connect or upload; boards arrive as they are"], ["Any spreadsheet", "CSV from Excel, Sheets, Airtable or Jira"]] },
   { t: "DATA FOR OKRs", items: [["CSV", "Any system that exports a table"], ["CRM, finance, surveys", "Learning platform, vendors, Jira"]] },
   { t: "AI", items: [["AI co-trainer", "Bring your own key. You approve everything."], ["Open source", "Apache-2.0, self-host with every feature"]] },
 ] as const;

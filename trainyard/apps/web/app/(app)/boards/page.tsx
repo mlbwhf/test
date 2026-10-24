@@ -43,7 +43,7 @@ export default function BoardsPage() {
     <>
       <PageHead
         title="Your boards"
-        sub="Boards you created from a template, blank whiteboards, classes you are running and boards you brought from Miro, Mural, Trello, monday.com or iObeya. Any board can take more templates: open it and add one beside what is there."
+        sub="Boards you created from a template, blank whiteboards, classes you are running and boards you brought from Miro, Lucid, Mural, Trello, monday.com or iObeya. Any board can take more templates: open it and add one beside what is there."
         actions={
           <>
           <button className="btn primary" onClick={() => void blank()}>

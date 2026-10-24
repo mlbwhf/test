@@ -1,4 +1,4 @@
-// Connection tokens for Miro, Mural, monday.com and Trello are stored in the workspace
+// Connection tokens for Miro, Lucid, Mural, monday.com and Trello are stored in the workspace
 // state, so they are encrypted with AES-256-GCM under a key derived from TRAINYARD_SECRET
 // (falls back to the admin key). Without either, a random key is used for this process
 // only and connections do not survive a restart; main.ts says so at start.

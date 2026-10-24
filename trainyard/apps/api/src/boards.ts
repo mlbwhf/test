@@ -6,7 +6,7 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { TEMPLATE_CATALOG, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
-import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromMiroCsv } from "@trainyard/importers";
+import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -30,7 +30,7 @@ export interface Connection {
 }
 
 const Id = z.string().min(1).max(200);
-const Source = z.enum(["miro", "mural", "monday", "trello"]);
+const Source = z.enum(["miro", "lucid", "mural", "monday", "trello"]);
 const MappingBody = z.object({
   from: z.enum(["nodes", "rows"]),
   level: z.string().min(1),
@@ -173,6 +173,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     board.origin.importedBy = req.principal.userId;
     s().workspace.boards = [...boards().filter((b) => b.id !== board.id), board];
     await store.commit(req.principal, "board.import", { id: board.id, system: "miro", nodes: board.nodes.length, frames: board.frames.length });
+    return reply.code(201).send({ board: summary(board) });
+  });
+
+  // Lucid "Export → CSV of Shape Data" (Lucidchart or Lucidspark): pages, shapes and lines, no positions.
+  app.post("/v1/imports/lucid-csv", { bodyLimit: 8 * 1024 * 1024, schema: { body: z.object({ name: z.string().min(1).max(120), csv: z.string().min(1).max(6_000_000) }) } }, async (req, reply) => {
+    require(req, "plan");
+    if (!isLucidCsvExport(req.body.csv)) throw new ApiError(422, "NOT_LUCID", "This file is not a Lucid shape data export. In Lucidchart or Lucidspark, choose File → Export → CSV of Shape Data.");
+    const board = boardFromLucidCsv(req.body.csv, { name: req.body.name, now: store.now().toISOString() });
+    if (board.nodes.length === 0) throw new ApiError(422, "EMPTY_EXPORT", "No shapes found in this export.");
+    board.origin.importedBy = req.principal.userId;
+    s().workspace.boards = [...boards().filter((b) => b.id !== board.id), board];
+    await store.commit(req.principal, "board.import", { id: board.id, system: "lucid", nodes: board.nodes.length, edges: board.edges.length });
     return reply.code(201).send({ board: summary(board) });
   });
 
