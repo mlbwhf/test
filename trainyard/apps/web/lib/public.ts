@@ -175,6 +175,7 @@ export function llmsText(base: string): string {
   lines.push(`- PI planning tools compared: ${base}/compare` + COMPETITORS.map((c) => `, ${base}/compare/${c.slug}`).join(""));
   lines.push(`- Class boards for trainers: ${base}/classes` + CLASSES.map((c) => `, ${base}/classes/${c.id}`).join(""));
   lines.push(`- Board templates by method (SAFe, Scrum, Kanban, Lean, Six Sigma, manufacturing): ${base}/methods`, `- OKR and KPI dashboard for executives and boards (Insights): ${base}/insights`);
+  lines.push(`- Support, help and how to use every page: ${base}/support`);
   lines.push(`- Guides: ` + GUIDES.map((g) => `${base}/guides/${g.slug}`).join(", "));
   lines.push(`- Every public page as one text file: ${base}/llms-full.txt`, `- Sign in: ${base}/login`, "");
   lines.push("## Pricing", "");
@@ -240,6 +241,7 @@ export function publicPaths(): { path: string; priority: number; updated: string
     { path: "/classes", priority: 0.9, updated: SITE_UPDATED },
     { path: "/methods", priority: 0.9, updated: SITE_UPDATED },
     { path: "/insights", priority: 0.9, updated: SITE_UPDATED },
+    { path: "/support", priority: 0.6, updated: SITE_UPDATED },
     ...CLASSES.map((c) => ({ path: `/classes/${c.id}`, priority: 0.7, updated: SITE_UPDATED })),
     { path: "/guides", priority: 0.8, updated: SITE_UPDATED },
     ...GUIDES.map((g) => ({ path: `/guides/${g.slug}`, priority: 0.8, updated: g.updated })),

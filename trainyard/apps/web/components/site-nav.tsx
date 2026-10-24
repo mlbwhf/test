@@ -81,8 +81,8 @@ export function SiteNav() {
         <Link href="/#faq" onMouseEnter={hover(null)}>
           FAQ
         </Link>
-        <Link href="/guides" onMouseEnter={hover(null)}>
-          Guides
+        <Link href="/support" onMouseEnter={hover(null)}>
+          Support
         </Link>
         <Link href="/login" className="pill">
           Sign in
@@ -151,7 +151,7 @@ export function SiteFooter({ giant = true }: { giant?: boolean }) {
       <div className="meta">
         <span>Trainyard · Apache-2.0 · built by Agile Agilist</span>
         <span>
-          <Link href="/classes">Classes</Link> · <Link href="/methods">Templates</Link> · <Link href="/insights">OKRs</Link> · <Link href="/pricing">Pricing</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
+          <Link href="/classes">Classes</Link> · <Link href="/methods">Templates</Link> · <Link href="/insights">OKRs</Link> · <Link href="/pricing">Pricing</Link> · <Link href="/guides">Guides</Link> · <Link href="/support">Support</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
           <a href={REPO_URL} rel="noopener">
             Source
           </a>

@@ -78,7 +78,7 @@ function LoginForm() {
             </button>
           </div>
           <p className="faint" style={{ fontSize: "0.8rem", margin: 0 }}>
-            No account? <a href="/#join">Sign up free</a>. Forgot your password? Your workspace admin can set a new one under Users; if you are the admin, sign in with your API key and set it there.
+            No account? <a href="/#join">Sign up free</a>. Forgot your password? Your workspace admin can set a new one under Users; if you are the admin, sign in with your API key and set it there. Still stuck? <a href="/support">Contact support</a>.
           </p>
         </form>
       ) : (

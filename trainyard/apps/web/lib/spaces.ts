@@ -90,6 +90,7 @@ export const SPACES: Space[] = [
       { href: "/users", label: "Users" },
       { href: "/billing", label: "Plan & billing" },
       { href: "/admin", label: "Support console" },
+      { href: "/help", label: "Help and how-to" },
     ],
   },
 ];

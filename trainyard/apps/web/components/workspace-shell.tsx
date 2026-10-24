@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { api, setApiKey, setSupportWorkspace, useMe } from "@/lib/api";
 import { GlobalSearch } from "@/components/global-search";
+import { HelpPanel } from "@/components/help-panel";
 import { SPACES, locate, type Space } from "@/lib/spaces";
 import type { ThemeId } from "@/lib/themes";
 
@@ -148,6 +149,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
           <div className="ws-search">
             <GlobalSearch />
           </div>
+          <HelpPanel path={path} />
           <Account />
         </header>
         {here ? <SubRow space={here.space} current={here.sub?.href} /> : null}

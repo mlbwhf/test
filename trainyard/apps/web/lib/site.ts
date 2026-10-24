@@ -16,3 +16,11 @@ export const REPO_URL = "https://github.com/mlbwhf/test/tree/claude/confident-cr
  * public by design: it is served at /<key>.txt to prove the site owns the submissions.
  */
 export const INDEXNOW_KEY = "7c1e4b9a2f6d48e3b05a9c7d3e1f2a64";
+
+/** Where support requests go; set TRAINYARD_SUPPORT_EMAIL on the server to change it. */
+export function supportEmail(): string {
+  return process.env.TRAINYARD_SUPPORT_EMAIL ?? "support@trainyard.app";
+}
+
+export const SECURITY_EMAIL = "security@agile-agilist.com";
+export const ISSUES_URL = "https://github.com/mlbwhf/test/issues";
