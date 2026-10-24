@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { REPO_URL, siteUrl } from "@/lib/site";
+import { SiteFooter, SiteNav } from "@/components/site-nav";
+import { siteUrl } from "@/lib/site";
 import "@/app/site.css";
 
-/** The frame for public, indexable pages: the landing page's look, a reading column, breadcrumbs with schema. */
+/** The frame for public, indexable pages: the site nav, a reading column, breadcrumbs with schema, the footer. */
 export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: string; label: string }[]; children: ReactNode; jsonLd?: unknown[] }) {
   const base = siteUrl();
   const breadcrumb = {
@@ -14,26 +15,7 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
   return (
     <div className="ly ly-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([breadcrumb, ...(jsonLd ?? [])]) }} />
-      <nav className="ly-nav" aria-label="Site">
-        <Link href="/" className="brand">
-          <span className="word">
-            Train<b>yard</b>
-          </span>
-        </Link>
-        <div className="links">
-          <Link href="/classes">SAFe classes</Link>
-          <Link href="/examples/okrs-kpis">OKRs &amp; KPIs</Link>
-          <Link href="/guides">Guides</Link>
-          <Link href="/compare">Tool comparison</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link href="/login" style={{ fontWeight: 600 }}>
-            Sign in
-          </Link>
-          <Link href="/#join" className="pill navy">
-            Sign up free →
-          </Link>
-        </div>
-      </nav>
+      <SiteNav />
       <main className="ly-article">
         <nav className="ly-crumbs" aria-label="Breadcrumb">
           <Link href="/">Trainyard</Link>
@@ -46,18 +28,9 @@ export function PublicPage({ crumbs, children, jsonLd }: { crumbs: { href: strin
         </nav>
         {children}
       </main>
-      <footer className="ly-foot" style={{ marginTop: 80 }}>
-        <div className="meta">
-          <span>Trainyard · open source, Apache-2.0</span>
-          <span>
-            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/examples/okrs-kpis">OKRs &amp; KPIs example</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">llms-full.txt</a> ·{" "}
-            <a href={REPO_URL} rel="noopener">
-              Source
-            </a>
-          </span>
-        </div>
-        <p className="legal">SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Jira is a trademark of Atlassian. Azure DevOps is a trademark of Microsoft. Other product names belong to their owners. Trainyard is not affiliated with them.</p>
-      </footer>
+      <div style={{ marginTop: 80 }}>
+        <SiteFooter giant={false} />
+      </div>
     </div>
   );
 }

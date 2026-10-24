@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import "./fonts.css";
 import "./globals.css";
+import "./method-fonts.css";
 import { apiUrl, siteUrl } from "@/lib/site";
 import { locate } from "@/lib/spaces";
 

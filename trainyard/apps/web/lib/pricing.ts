@@ -36,7 +36,7 @@ export const PLANS: Plan[] = [
   },
   {
     id: "trainer",
-    tag: "TRAINER",
+    tag: "CLASSES",
     name: "Trainer",
     monthly: 19,
     yearly: 16,
@@ -50,7 +50,7 @@ export const PLANS: Plan[] = [
   },
   {
     id: "academy",
-    tag: "ACADEMY",
+    tag: "TEMPLATES",
     name: "Academy",
     monthly: 249,
     yearly: 199,
@@ -65,7 +65,7 @@ export const PLANS: Plan[] = [
 
 export const INSIGHTS_PLAN: Plan = {
   id: "insights",
-  tag: "OUTCOMES",
+  tag: "OKRs",
   name: "Insights",
   monthly: 99,
   yearly: 83,
@@ -73,7 +73,7 @@ export const INSIGHTS_PLAN: Plan = {
   blurb: "The outcome dashboard on its own: OKRs, KPIs and funding from every system that holds the evidence, rolled into one-pagers for executives and the board. No planning rooms needed.",
   items: ["Free 30-day trial, then month by month", "Money back on the first paid month", "Ten data sources per pack: CRM, finance, learning platform, surveys, vendors, Jira", "Unlimited viewers; up to five editors", "Entities with their own objectives, rolled up to the top", "Initiatives with funders, spend and what it bought", "Printable one-pagers per entity", "CSV today; scheduled connectors on request"],
   cta: "Start Insights",
-  bg: "#5ff0e0",
+  bg: "#ff9fc6",
   fg: "#14123a",
 };
 PLANS.push(INSIGHTS_PLAN);

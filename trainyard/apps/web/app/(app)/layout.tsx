@@ -5,7 +5,6 @@ import { EmbedBar } from "@/components/embed-bar";
 import { WorkspaceShell } from "@/components/workspace-shell";
 import { WorkspaceBanner } from "@/components/workspace-banner";
 import { themeCss } from "@/lib/themes";
-import "../method-fonts.css";
 import "../workspace.css";
 
 // Everything under here is the signed-in application: not for search engines.

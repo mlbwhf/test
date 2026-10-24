@@ -1,16 +1,16 @@
 "use client";
 
 // The public website. One long page in the "Session" design: a speech-bubble hero with an
-// audience toggle, three rooms, the kit, the comparison, pricing, a chat-style FAQ and the
-// sign-up. Everything here describes what the app does today; the design's trainer-room
-// features that are not built (timers, breakout rooms) are not promised.
+// audience toggle, the three modules (Classes, Templates, OKRs) with a demo each, the kit, the
+// comparison, integrations, pricing by module, a chat-style FAQ and the sign-up. Everything
+// here describes what the app does today.
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { api, setApiKey, type ApiFailure } from "@/lib/api";
 import { CopyKey } from "@/components/copy-key";
 import { InlinePayment, money, type Claim, type Subscription } from "@/components/pay-inline";
-import { REPO_URL } from "@/lib/site";
+import { INTEGRATIONS, SiteFooter, SiteNav } from "@/components/site-nav";
 import { COMPARISON, FAQ, PLANS, priceFor, type PlanId } from "@/lib/pricing";
 
 const INK = "#14123a";
@@ -21,81 +21,79 @@ type Audience = "trainer" | "enterprise";
 
 const HERO: Record<Audience, { eyebrow: string; a: string; b: string; c: string; p: string }> = {
   trainer: {
-    eyebrow: "BUILT FOR COACHES AND TRAINERS · OPEN SOURCE · SELF-HOSTABLE",
+    eyebrow: "BUILT FOR TRAINERS · OPEN SOURCE · SELF-HOSTABLE",
     a: "The classroom for ",
     b: "anyone",
     c: " who trains.",
-    p: "Run workshops and PI planning on live boards your participants open by link. Fifty ready boards across SAFe, Scrum, Kanban, Lean and Six Sigma, the SAFe canvases, value stream workshops and a co-trainer that drafts and never decides.",
+    p: "Run workshops on live boards your learners open by link. Timeboxes, breakout tables, the PI planning simulation and a readout drafted for you, so you teach instead of wrangling tools.",
   },
   enterprise: {
     eyebrow: "FOR AGILE RELEASE TRAINS · JIRA AND AZURE DEVOPS · SELF-HOSTED",
     a: "One planning room for every ",
     b: "train",
     c: " you run.",
-    p: "PI planning boards, portfolio Kanban and value stream maps that stay in step with Jira and Azure DevOps: inside the trackers as a Jira app and an Azure DevOps extension, or on your own server.",
+    p: "PI planning boards, templates in every method's own words and an OKR dashboard for the board, in step with Jira and Azure DevOps: inside the trackers as a Jira app and an Azure DevOps extension, or on your own server.",
   },
 };
 
 const ROSTER: [string, string][] = [["Priya", "#ff9fc6"], ["Marcus", "#5ff0e0"], ["Lena", "#ffe27a"], ["Diego", "#b9c6ff"], ["Aiko", "#ff9fc6"]];
 
-const ROOMS = [
+const MODULES = [
   {
-    tab: "Planning",
-    tag: "PLANNING ROOM",
-    h: "Plan it live.",
-    p: "Run PI planning from one template, or AI-Native SAFe's one-day PI Outcome Planning: the outcome tree, the PI Outcome Planning Board, team boards, the management review and the confidence vote. Move a card and the iteration changes in Jira or Azure DevOps.",
-    items: ["Nineteen ready boards", "Sticky notes, dependencies, votes", "Two-way Jira and Azure DevOps"],
+    tab: "Classes",
+    tag: "CLASSES · TRAINER",
+    h: "Run the class.",
+    p: "Each class is a board: a start-here strip, one frame per lesson with its exercises, and a PI planning simulation. Open one per cohort and hand out the link.",
+    items: ["Leading SAFe, SPC, Advanced SPC, POPM, RTE", "Breakout tables, timeboxes, a day plan", "Import your Miro class boards"],
+    href: "/classes",
     bg: "#fff",
     fg: INK,
   },
   {
-    tab: "Workshop",
-    tag: "WORKSHOP ROOM",
-    h: "Teach it together.",
-    p: "Value stream identification, SWOT into TOWS into a portfolio vision, story maps and the SAFe canvases, on boards the whole room writes on. Bring your own from iObeya, Miro or Mural.",
-    items: ["Share the board link, no install", "SAFe canvases as structured data", "Import the boards you already teach from"],
+    tab: "Templates",
+    tag: "TEMPLATES · ACADEMY",
+    h: "Pick the method.",
+    p: "Fifty-odd boards across SAFe, Scrum, Kanban, Lean, Six Sigma and the shop floor, each in its method's own words. Pick one and the whole board changes shape: SAFe becomes a train, Kanban enforces WIP limits.",
+    items: ["Nine method themes", "WIP limits, capacity and human gates enforced", "Or bring your own from Miro, Mural, iObeya"],
+    href: "/methods",
     bg: "#4a5fe8",
     fg: "#fff",
   },
   {
-    tab: "Measuring",
-    tag: "MEASURING ROOM",
-    h: "Measure it honestly.",
-    p: "Value stream maps with wait time, active time and %C&A calculated from status history, flow dashboards with a narrative, and a PI planning readiness score against the launch timeline.",
-    items: ["Numbers from Jira, Azure DevOps or a CSV", "Flow, predictability and WSJF metrics", "Readiness scored against the date"],
+    tab: "OKRs",
+    tag: "OKRs · INSIGHTS",
+    h: "Show what the money bought.",
+    p: "OKRs, KPIs and funding from every system that holds the evidence: CRM, finance, the learning platform, surveys, Jira. Weekly check-ins by drag, one-pagers for the executive team and the board.",
+    items: ["Dashboard, alignment and check-in", "Initiatives with funders and spend", "Printable one-pagers per entity"],
+    href: "/insights",
     bg: "#ff9fc6",
     fg: INK,
   },
 ] as const;
 
+const METHOD_DEMO: { id: string; label: string; dot: string; bg: string; lane: string; line: string; cards: string[]; train?: boolean }[] = [
+  { id: "safe", label: "SAFe", dot: "#ffb627", bg: "#efe8d8", lane: "#fffaf0", line: "#0d1815", cards: ["#ffd37a", "#cde0f2", "#cfe8d4"], train: true },
+  { id: "scrum", label: "Scrum", dot: "#2f6bff", bg: "#eef3ff", lane: "#fff", line: "#cdd9ff", cards: ["#fff0b8", "#d6e4ff", "#d2f5e3"] },
+  { id: "kanban", label: "Kanban", dot: "#5ff0e0", bg: "#0e1117", lane: "#171c25", line: "#3a4658", cards: ["#4a4326", "#233a5a", "#1f4a3f"] },
+  { id: "lean", label: "Lean", dot: "#d93a2b", bg: "#fbfbf8", lane: "#fff", line: "#1a1a1a", cards: ["#fff08a", "#ffb3ab", "#c9f2c7"] },
+  { id: "six-sigma", label: "Six Sigma", dot: "#0f9d8f", bg: "#eefaf8", lane: "#fff", line: "#a6d9d3", cards: ["#fff4c2", "#d3f0ee", "#d7f5d0"] },
+  { id: "manufacturing", label: "Manufacturing", dot: "#ffd400", bg: "#e9e9e4", lane: "#f7f7f2", line: "#1b1b1b", cards: ["#ffd400", "#cfe0ee", "#cdeccb"] },
+  { id: "innovation", label: "Innovation", dot: "#c6ff3d", bg: "#1a1033", lane: "#241547", line: "#7a5cd0", cards: ["#5c4a14", "#2a3f7a", "#1d5a3b"] },
+  { id: "mutation", label: "Mutation", dot: "#ff5a36", bg: "#12100f", lane: "#1c1715", line: "#6a554b", cards: ["#4d3d12", "#1f3b5c", "#1f4a34"] },
+];
+
 const KIT: [string, string, string][] = [
   ["Boards that are lessons", "PI planning board with milestones and dependency strings, team breakouts, ROAM, story map, Kanban and roadmap boards, pre-built and facilitator-ready.", "M5 5h15v15H5zM24 5h15v9H24zM24 18h15v21H24zM5 24h15v15H5z"],
-  ["SAFe's own canvases", "Portfolio canvas, SWOT and TOWS, LACE mission, epic hypothesis, Lean business case, feature and enabler canvases, kept as data.", "M6 8h32v28H6zM6 18h32M19 18v18"],
-  ["Value streams, measured", "Identify them in a workshop, then map one with numbers pulled from your tracker instead of guessed on a wall.", "M6 38V22M16 38V12M26 38V26M36 38V8"],
+  ["A clock the room sees", "Timeboxes on every lane board, and a day plan that holds each half-day to 180 minutes, so a full-day class stays on schedule.", "M22 12v10l6 4M22 4v4M14 4h16M22 40a16 16 0 1 0 0-32 16 16 0 0 0 0 32z"],
   ["Share a link", "Participants open the board in a browser. Viewers watch, planners move cards. Nothing to install.", "M6 22h16M16 14l8 8-8 8M28 8h10v28H28"],
-  ["Jira and Azure DevOps, both ways", "Features, stories, risks and dependencies come from the tracker and go back to it, with a queue you can inspect first.", "M12 22a10 10 0 1 0 20 0 10 10 0 0 0-20 0zM22 4v8M22 32v8M4 22h8M32 22h8"],
+  ["Simulations", "The PI planning simulation with its backlog, Coach Sync checkpoints, ROAM and the confidence vote, built into the class boards.", "M6 32l9-9 6 6 13-15M26 14h8v8"],
+  ["Breakout teams", "Tables of four: drag people in, or seat everyone at random. A full table refuses the fifth.", "M14 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM30 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM4 30a10 10 0 0 1 20 0M20 30a10 10 0 0 1 20 0M22 40a5 5 0 1 0 0-10"],
   ["A co-trainer", "Drafts PI objectives, suggests ROAM, reviews a board and writes the readout. You approve everything.", "M22 8v6M22 30v6M8 22h6M30 22h6M13 13l4 4M27 27l4 4M31 13l-4 4M17 27l-4 4"],
-  ["Instant readout", "Dashboards by team, increment and work level, with the narrative written for you.", "M6 32l9-9 6 6 13-15M26 14h8v8"],
+  ["Instant readout", "Dashboards by team, increment and work level, with the narrative written for you.", "M6 38V22M16 38V12M26 38V26M36 38V8"],
   ["Bring your material", "Upload iObeya exports, connect Miro, Mural, monday.com or Trello, or drop a CSV. Boards arrive as they are.", "M6 14h12l3 4h17v18H6zM22 24v8M18 28l4 4 4-4"],
 ];
 
-const MARQUEE = ["PI planning boards", "Milestones & dependencies", "ROAM", "Value streams", "SAFe canvases", "Jira & Azure DevOps", "iObeya imports", "Any framework"];
-
-function Logo({ size = 58 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 240 240" style={{ overflow: "visible" }} aria-hidden="true">
-      <path d="M52 16h136a32 32 0 0 1 32 32v100a32 32 0 0 1-32 32H96l-46 38v-38h2A32 32 0 0 1 20 148V48a32 32 0 0 1 32-32z" fill="#4a5fe8" transform="translate(0 2)" />
-      <circle cx="120" cy="98" r="58" fill="none" stroke="#fff" strokeOpacity=".25" strokeWidth="10" />
-      <circle cx="120" cy="98" r="58" fill="none" stroke="#fff" strokeWidth="10" strokeLinecap="round" strokeDasharray="365" transform="rotate(-90 120 98)" style={{ animation: "ringL 6s linear infinite" }} />
-      <rect x="92" y="72" width="56" height="16" rx="5" fill="#fff" />
-      <rect x="112" y="88" width="16" height="42" rx="5" fill="#fff" />
-      <rect x="70" y="100" width="17" height="17" rx="4" fill="#ffe27a" />
-      <rect x="152" y="96" width="17" height="17" rx="4" fill="#ff9fc6" />
-      <rect x="152" y="118" width="17" height="17" rx="4" fill="#5ff0e0" />
-      <rect x="186" y="170" width="44" height="34" rx="12" fill="#ff3d8f" stroke="#f4f1ea" strokeWidth="5" />
-    </svg>
-  );
-}
+const MARQUEE = ["Class boards", "PI planning", "Scrum", "Kanban", "Lean", "Six Sigma", "OKRs", "Value streams", "Jira & Azure DevOps"];
 
 function Ring({ size, r, stroke, color, track, value, children, viewBox = 200 }: { size: number; r: number; stroke: number; color: string; track: string; value: number; children?: React.ReactNode; viewBox?: number }) {
   const c = 2 * Math.PI * r;
@@ -111,24 +109,25 @@ function Ring({ size, r, stroke, color, track, value, children, viewBox = 200 }:
   );
 }
 
-/** The readiness checklist ticking up, the way it does on the ART launch canvas. */
-function useReadiness(total = 12) {
-  const [done, setDone] = useState(6);
+/** A timebox counting down from four minutes, the way it does on a lane board. */
+function useTimebox(total = 240) {
+  const [left, setLeft] = useState(total);
   useEffect(() => {
-    const t = setInterval(() => setDone((d) => (d >= total ? 4 : d + 1)), 1600);
+    const t = setInterval(() => setLeft((s) => (s <= 0 ? total : s - 1)), 1000);
     return () => clearInterval(t);
   }, [total]);
-  return { done, total, share: done / total };
+  return { left, share: left / total, label: `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}` };
 }
 
 export function Landing() {
   const [aud, setAud] = useState<Audience>("trainer");
-  const [room, setRoom] = useState(0);
+  const [mod, setMod] = useState(0);
+  const [method, setMethod] = useState(0);
   const [open, setOpen] = useState(0);
   const [yearly, setYearly] = useState(false);
   const [plan, setPlan] = useState<PlanId>("trainer");
   const ringRef = useRef<SVGCircleElement>(null);
-  const ready = useReadiness();
+  const timer = useTimebox();
 
   useEffect(() => {
     const onScroll = () => {
@@ -141,7 +140,8 @@ export function Landing() {
   }, []);
 
   const hero = HERO[aud];
-  const cur = ROOMS[room]!;
+  const cur = MODULES[mod]!;
+  const md = METHOD_DEMO[method]!;
   const roster = ROSTER.map(([n, c], i) => ({ n, c, d: `${i * 0.35}s` }));
   const choose = (id: PlanId) => {
     setPlan(id);
@@ -162,28 +162,7 @@ export function Landing() {
         </a>
       </div>
 
-      <nav className="ly-nav" aria-label="Site">
-        <a href="#top" className="brand">
-          <Logo />
-          <span className="word">
-            Train<b>yard</b>
-          </span>
-        </a>
-        <div className="links">
-          <a href="#rooms">Planning rooms</a>
-          <Link href="/classes">SAFe classes</Link>
-          <Link href="/examples/okrs-kpis">OKRs &amp; KPIs</Link>
-          <Link href="/guides">Guides</Link>
-          <Link href="/compare">Tool comparison</Link>
-          <a href="#pricing">Pricing</a>
-          <Link href="/login" style={{ fontWeight: 600 }}>
-            Sign in
-          </Link>
-          <a href="#join" className="pill navy">
-            Sign up free →
-          </a>
-        </div>
-      </nav>
+      <SiteNav />
 
       <header id="top" className="ly-hero">
         <div className="toggle" role="group" aria-label="Who is this for">
@@ -209,10 +188,10 @@ export function Landing() {
               <p>{hero.p}</p>
               <div className="ctas">
                 <a href="#join" className="a">
-                  Open a classroom
+                  Register free
                 </a>
-                <a href="#rooms" className="b">
-                  See the three rooms
+                <a href="#modules" className="b">
+                  See the three modules
                 </a>
               </div>
             </div>
@@ -222,15 +201,14 @@ export function Landing() {
           <div className="right">
             <div className="ly-card ly-ready">
               <div className="clock">
-                <Ring size={110} r={88} stroke={16} color={INK} track="#14123a33" value={ready.share}>
-                  <b>
-                    {ready.done} / {ready.total}
-                  </b>
+                <Ring size={110} r={88} stroke={16} color={INK} track="#14123a33" value={timer.share}>
+                  <b>{timer.label}</b>
                 </Ring>
               </div>
               <div>
-                <div className="tag">SIGN UP TO FIRST BOARD</div>
-                <div className="hand">Launch in 5 min</div>
+                <div className="tag">TIMEBOX · LIVE</div>
+                <div className="hand">Draft plans, 4 min</div>
+                <div className="tag" style={{ marginTop: 8 }}>LAUNCH IN 5 MIN, NOT 3 WEEKS</div>
               </div>
             </div>
             <div className="ly-card ly-roster">
@@ -269,7 +247,7 @@ export function Landing() {
             <div className="tag">READY-MADE TEMPLATES</div>
             <h3>Fifty boards, each in its method's own words.</h3>
             <p>SAFe named as SAFe names it; Scrum from the Scrum Guide; Kanban, Lean, Six Sigma and the shop floor each with their own boards. Sized to your teams and iterations the moment you create one.</p>
-            <Link href="/templates">See the templates →</Link>
+            <Link href="/methods">See the templates →</Link>
           </div>
           <div className="ly-card ly-free-card" style={{ background: STICKY[2] }}>
             <div className="tag">OR BRING YOUR OWN</div>
@@ -280,12 +258,12 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="rooms">
-        <div className="eyebrow">01 / THREE ROOMS, ONE YARD</div>
-        <h2 className="h2">Switch the room, keep the class.</h2>
-        <div className="ly-tabs" role="tablist" aria-label="Rooms">
-          {ROOMS.map((r, i) => (
-            <button key={r.tab} role="tab" aria-selected={room === i} onClick={() => setRoom(i)} style={room === i ? { background: r.bg, color: r.fg, boxShadow: `4px 4px 0 ${INK}` } : undefined}>
+      <section id="modules">
+        <div className="eyebrow">01 / THREE MODULES, ONE YARD</div>
+        <h2 className="h2">Classes, templates, OKRs.</h2>
+        <div className="ly-tabs" role="tablist" aria-label="Modules">
+          {MODULES.map((r, i) => (
+            <button key={r.tab} role="tab" aria-selected={mod === i} onClick={() => setMod(i)} style={mod === i ? { background: r.bg, color: r.fg, boxShadow: `4px 4px 0 ${INK}` } : undefined}>
               <span className="sw" style={{ background: r.bg }} />
               {r.tab}
             </button>
@@ -296,6 +274,9 @@ export function Landing() {
             <div className="tag">{cur.tag}</div>
             <h3>{cur.h}</h3>
             <p>{cur.p}</p>
+            <Link href={cur.href} className="pill navy md-open" style={mod === 1 ? { background: "#fff", color: INK } : undefined}>
+              Open {cur.tab} →
+            </Link>
             <ul>
               {cur.items.map((it) => (
                 <li key={it}>
@@ -305,44 +286,88 @@ export function Landing() {
               ))}
             </ul>
           </div>
-          <div className="ly-demo" aria-hidden="true">
-            {room === 0 ? (
-              <div className="ly-board">
+          <div className="ly-demo">
+            {mod === 0 ? (
+              <div className="md-list" aria-label="Class boards, one per cohort">
+                <div className="tag">CLASS BOARDS · ONE PER COHORT</div>
                 {(
                   [
-                    ["ITERATION 1", [["Cart", 0], ["Pay", 1]]],
-                    ["ITERATION 2", [["API", 2]]],
-                    ["ITERATION 3", [["Index", 3], ["Gate", 0]]],
-                  ] as [string, [string, number][]][]
-                ).map(([t, notes], i) => (
-                  <div key={t} className="ly-col">
-                    <div className="t">{t}</div>
-                    {notes.map(([n, c], j) => (
-                      <div key={n} className="ly-sticky" style={{ background: STICKY[c], animationDelay: `${(i + j) * 0.4}s` }}>
-                        {n}
-                      </div>
-                    ))}
-                  </div>
+                    ["LS", "Leading SAFe", "2 days"],
+                    ["SPC", "SAFe Practice Consultant", "4 days"],
+                    ["ASPC", "Advanced SPC", "3 days"],
+                    ["POPM", "Product Owner / Manager", "2 days"],
+                    ["RTE", "Release Train Engineer", "3 days"],
+                  ] as const
+                ).map(([k, n, d], i) => (
+                  <Link key={k} href="/classes" className="r" style={{ background: STICKY[i % 4], color: INK, textDecoration: "none", animationDelay: `${i * 0.08}s` }}>
+                    <span className="mono">{k}</span>
+                    <span>{n}</span>
+                    <span>{d}</span>
+                  </Link>
                 ))}
               </div>
-            ) : room === 1 ? (
-              <div className="ly-join">
-                <div className="tag">BOARD LINK · trainyard.app/boards/vs-loan</div>
-                {roster.map((r) => (
-                  <div key={r.n} className="r" style={{ background: r.c, animationDelay: r.d }}>
-                    <b>{r.n}</b>
-                    <span>on the board ✓</span>
-                  </div>
-                ))}
+            ) : mod === 1 ? (
+              <div className="md-methods">
+                <div className="md-chips" role="group" aria-label="Method">
+                  {METHOD_DEMO.map((m, i) => (
+                    <button key={m.id} aria-pressed={method === i} onClick={() => setMethod(i)}>
+                      <span className="d" style={{ background: m.dot }} />
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="md-mini" style={{ background: md.bg }} aria-label={`${md.label} board`}>
+                  {["To do", "Doing", "Done"].map((t, i) => (
+                    <div key={t} className="ln" style={{ background: md.lane, border: `2px solid ${md.line}`, borderRadius: md.train ? "12px 12px 4px 4px" : md.id === "lean" || md.id === "manufacturing" ? 2 : 12, color: md.bg === "#0e1117" || md.bg === "#1a1033" || md.bg === "#12100f" ? "#fff" : INK }}>
+                      <b>{md.id === "safe" ? ["Iteration 1", "Iteration 2", "IP"][i] : md.id === "kanban" ? ["Ready · WIP 4", "Doing · WIP 3", "Done"][i] : md.id === "mutation" ? ["Signal", "Response", "Learning"][i] : md.id === "lean" ? ["Plan", "Do", "Check"][i] : md.id === "six-sigma" ? ["Measure", "Analyze", "Improve"][i] : t}</b>
+                      {md.cards.slice(0, 3 - i).map((c, j) => (
+                        <span key={j} className="cd" style={{ background: c, border: `1.5px solid ${md.line}`, borderRadius: md.id === "lean" ? 2 : 6 }} />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                {md.train ? <div className="md-mini-rail" aria-hidden="true" /> : null}
               </div>
             ) : (
-              <div className="ly-bigring">
-                <Ring size={270} r={88} stroke={14} color="#ff3d8f" track="#14123a26" value={0.05 + ready.share * 0.3}>
-                  <div className="c">
-                    <div className="n">{Math.round((0.05 + ready.share * 0.3) * 100)}%</div>
-                    <div className="tag">FLOW EFFICIENCY</div>
+              <div className="md-exec" aria-label="OKR dashboard example">
+                <div className="hd">
+                  <b>Q4 dashboard</b>
+                  <span>38 DAYS LEFT</span>
+                </div>
+                <div className="top">
+                  <div className="ring">
+                    <Ring size={98} r={80} stroke={18} color="#0f2342" track="#0f234222" value={0.87} />
+                    <b>87%</b>
                   </div>
-                </Ring>
+                  <div className="cnt">
+                    <div>
+                      <b style={{ color: "#2f8f5b" }}>6</b>on track
+                    </div>
+                    <div>
+                      <b style={{ color: "#b87a00" }}>2</b>at risk
+                    </div>
+                    <div>
+                      <b style={{ color: "#b42318" }}>1</b>off track
+                    </div>
+                  </div>
+                </div>
+                {(
+                  [
+                    ["Grow reach in low-income countries", 87],
+                    ["Raise learning impact", 100],
+                    ["Run the programme efficiently", 75],
+                  ] as const
+                ).map(([t, v]) => (
+                  <div key={t} className="obj">
+                    <div className="row">
+                      <span>{t}</span>
+                      <span>{v}%</span>
+                    </div>
+                    <div className="bar">
+                      <span style={{ width: `${v}%` }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -351,7 +376,7 @@ export function Landing() {
 
       <section id="kit">
         <div className="eyebrow">02 / THE KIT</div>
-        <h2 className="h2">PI planning boards, SAFe canvases and value stream maps: the whole kit.</h2>
+        <h2 className="h2">Everything a trainer sticks on the wall.</h2>
         <div className="ly-kit">
           {KIT.map(([h, p, d], i) => (
             <article key={h} className="ly-note" style={{ background: STICKY[i % 4], transform: `rotate(${TILT[i % 4]})` }}>
@@ -400,9 +425,28 @@ export function Landing() {
         <p className="fine">Capabilities from a side-by-side evaluation of PI planning dashboard tools and each vendor&apos;s public pages. Products change; check each vendor for its current features. Product names are trademarks of their owners.</p>
       </section>
 
+      <section id="integrations">
+        <div className="eyebrow">04 / INTEGRATIONS</div>
+        <h2 className="h2">Plugs into what you already use.</h2>
+        <div className="it-grid">
+          {INTEGRATIONS.map((g, i) => (
+            <article key={g.t} className="it-card" style={{ background: STICKY[i % 4], transform: `rotate(${TILT[i % 4]})` }}>
+              <div className="tape" />
+              <div className="tag">{g.t}</div>
+              {g.items.map(([n, d]) => (
+                <div key={n}>
+                  <h3>{n}</h3>
+                  <p>{d}</p>
+                </div>
+              ))}
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section id="pricing">
-        <div className="eyebrow">04 / PRICING</div>
-        <h2 className="h2">Priced per trainer and per train, never per person in the room.</h2>
+        <div className="eyebrow">05 / PRICING</div>
+        <h2 className="h2">Priced by module, not by headcount.</h2>
         <div className="toggle" role="group" aria-label="Billing" style={{ marginBottom: 40 }}>
           <button aria-pressed={!yearly} onClick={() => setYearly(false)}>
             Monthly
@@ -415,7 +459,7 @@ export function Landing() {
           {PLANS.map((p, i) => {
             const price = priceFor(p, yearly);
             return (
-              <div key={p.id} className="ly-plan" style={{ background: p.bg, color: p.fg, transform: `rotate(${["-1.5deg", "0deg", "1.5deg"][i]})` }}>
+              <div key={p.id} className="ly-plan" style={{ background: p.bg, color: p.fg, transform: `rotate(${["-1.5deg", "0deg", "1deg", "-0.5deg"][i % 4]})` }}>
                 <div className="top">
                   <span>{p.tag}</span>
                   <span>{p.badge ?? ""}</span>
@@ -459,7 +503,7 @@ export function Landing() {
 
       <section id="faq" className="ly-faq">
         <div className="head">
-          <div className="eyebrow">05 / ASK THE ROOM</div>
+          <div className="eyebrow">06 / ASK THE ROOM</div>
           <h2 className="h2">Questions, answered out loud.</h2>
         </div>
         <div className="list">
@@ -481,29 +525,17 @@ export function Landing() {
       <section id="join" className="ly-joinsec">
         <div className="cols">
           <div className="copy">
-            <div className="eyebrow">06 / SIGN UP</div>
+            <div className="eyebrow">07 / REGISTER</div>
             <h2>
               Your class starts at <span className="chip">00:00</span>.
             </h2>
-            <p>Tell us who you are and which plan fits. Practice is ready at once. Trainer and Academy start with a free 30-day trial, month by month, with a money-back guarantee on the first paid month.</p>
+            <p>Register, pick a module and send learners a link. Practice is ready at once. Trainer, Academy and Insights start with a free 30-day trial, month by month, with a money-back guarantee on the first paid month.</p>
           </div>
           <SignupForm plan={plan} setPlan={setPlan} audience={aud} yearly={yearly} />
         </div>
       </section>
 
-      <footer className="ly-foot">
-        <div className="giant">Class dismissed.</div>
-        <div className="meta">
-          <span>Trainyard · open source, Apache-2.0</span>
-          <span>
-            <Link href="/pricing">Pricing</Link> · <Link href="/classes">Classes</Link> · <Link href="/examples/okrs-kpis">OKRs &amp; KPIs example</Link> · <Link href="/guides">Guides</Link> · <Link href="/compare">Compare</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
-            <a href={REPO_URL} rel="noopener">
-              Source
-            </a>
-          </span>
-        </div>
-        <p className="legal">SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Jira is a trademark of Atlassian. Azure DevOps is a trademark of Microsoft. Trainyard is not affiliated with them.</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
