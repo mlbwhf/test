@@ -15,6 +15,7 @@ export * from "./capacity.js";
 export * from "./artobjectives.js";
 export * from "./coachsync.js";
 export * from "./classes.js";
+export * from "./twochasms.js";
 export * from "./ainative.js";
 export * from "./cards.js";
 export * from "./insights.js";

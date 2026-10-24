@@ -10,8 +10,9 @@
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import { classTemplates } from "./classes.js";
 import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
+import { twoChasmsTemplates } from "./twochasms.js";
 
-export type TemplateMethod = "safe" | "scrum" | "kanban" | "lean" | "six-sigma" | "manufacturing" | "general";
+export type TemplateMethod = "safe" | "scrum" | "kanban" | "lean" | "six-sigma" | "manufacturing" | "two-chasms" | "general";
 
 export const TEMPLATE_METHODS: { id: TemplateMethod; label: string; blurb: string }[] = [
   { id: "safe", label: "SAFe", blurb: "Scaled Agile Framework events and artifacts, named as SAFe names them." },
@@ -20,6 +21,7 @@ export const TEMPLATE_METHODS: { id: TemplateMethod; label: string; blurb: strin
   { id: "lean", label: "Lean", blurb: "Lean thinking and the Toyota way: A3, PDCA, value stream mapping, kaizen, obeya, hoshin kanri." },
   { id: "six-sigma", label: "Six Sigma", blurb: "DMAIC and its tools: project charter, SIPOC, voice of the customer, fishbone, FMEA, control plan." },
   { id: "manufacturing", label: "Manufacturing", blurb: "Shop-floor management: SQDC tiered boards, andon, OEE, heijunka, 5S, gemba walks." },
+  { id: "two-chasms", label: "Two Chasms", blurb: "The Two Chasms Framework from The Innovation Playground and The Mutation Age: five states (Reflex, Playground, Signal Sensing, Immune, Mutation), the readiness check, sixteen workshops and the Foundations class." },
   { id: "general", label: "General", blurb: "Practices every method shares." },
 ];
 
@@ -534,5 +536,6 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       b.nodes = [...placeholders([b.frames[1]!], "#fff6c2"), ...placeholders([b.frames[3]!], "#fbd9d2")];
     }),
     ...classTemplates(NOW),
+    ...twoChasmsTemplates(NOW),
   ];
 }
