@@ -2,7 +2,7 @@
 // Boards live on workspace.boards and are stored exactly as imported; mapping writes
 // planning objects only when the user applies it after a dry run.
 
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { TEMPLATE_CATALOG, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
@@ -13,7 +13,8 @@ import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
 import type { Store } from "./store.js";
 import { REF_KINDS, backlinks, cardTypes, resolveRef, writeThrough, type RefSummary } from "./refs.js";
-import { refKey, type Ref, type RefKind } from "@trainyard/core";
+import { boardAccess, canEdit, canView, refKey, roomAccess, type Ref, type RefKind } from "@trainyard/core";
+import { roomViewer } from "./rooms.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 
@@ -64,7 +65,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       throw e;
     }
   };
-  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, shape: boardShape(b), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
+  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, roomId: b.roomId ?? null, shape: boardShape(b), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
 
   // ---- connections -------------------------------------------------------------------
   app.get("/v1/connections", async () => ({ connections: s().connections.map(publicConnection), sources: CONNECTION_FIELDS, persistent: secrets.persistent }));
@@ -205,16 +206,32 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
 
   // ---- boards and templates ----------------------------------------------------------
-  app.get("/v1/boards", async () => ({ boards: boards().map(summary) }));
+  // Rooms decide who sees a board (core rooms.ts); boards outside a room are open to all.
+  const reach = (req: FastifyRequest, id: string, need: "view" | "edit") => {
+    const b = findBoard(id);
+    const a = boardAccess(b, s().rooms ?? [], roomViewer(req.principal));
+    if (!canView(a)) throw notFound("Board");
+    if (need === "edit" && !canEdit(a)) throw new ApiError(403, "FORBIDDEN", "This board's room lets you look but not change it.");
+    return b;
+  };
+  /** A room a new board can go into: one the caller may edit in. */
+  const intoRoom = (req: FastifyRequest, roomId: string) => {
+    const room = (s().rooms ?? []).find((r) => r.id === roomId);
+    const a = room ? roomAccess(room, roomViewer(req.principal)) : "none";
+    if (!room || !canView(a)) throw notFound("Room");
+    if (!canEdit(a)) throw new ApiError(403, "FORBIDDEN", "You can look in this room but not add boards to it.");
+    return room.id;
+  };
+  app.get("/v1/boards", async (req) => ({ boards: boards().filter((b) => canView(boardAccess(b, s().rooms ?? [], roomViewer(req.principal)))).map(summary) }));
   // The board with every linked card resolved, so the editor shows live records and views.
   app.get("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => {
-    const b = findBoard(req.params.id);
+    const b = reach(req, req.params.id, "view");
     const refs: Record<string, RefSummary | null> = {};
     for (const n of b.nodes) if (n.ref) refs[refKey(n.ref)] = resolveRef(s(), n.ref);
     return { board: b, shape: boardShape(b), refs, cardTypes: cardTypes(s()) };
   });
   app.get("/v1/boards/:id/nodes/:nodeId/backlinks", { schema: { params: z.object({ id: Id, nodeId: Id }) } }, async (req) => {
-    const b = findBoard(req.params.id);
+    const b = reach(req, req.params.id, "view");
     const n = b.nodes.find((x) => x.id === req.params.nodeId) ?? (() => { throw notFound("Card"); })();
     const self: Ref = { kind: "card", id: n.id, boardId: b.id };
     const target = n.ref ?? self;
@@ -222,14 +239,14 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
   app.delete("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
     require(req, "plan");
-    findBoard(req.params.id);
+    reach(req, req.params.id, "edit");
     s().workspace.boards = boards().filter((b) => b.id !== req.params.id);
     await store.commit(req.principal, "board.delete", { id: req.params.id });
     return reply.code(204).send();
   });
   app.patch("/v1/boards/:id", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req) => {
     require(req, "plan");
-    const b = findBoard(req.params.id);
+    const b = reach(req, req.params.id, "edit");
     b.name = req.body.name;
     await store.commit(req.principal, "board.rename", { id: b.id });
     return { board: summary(b) };
@@ -237,7 +254,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.post("/v1/boards/:id/template", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional() }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = findBoard(req.params.id);
+    const b = reach(req, req.params.id, "view");
     const t = templateFrom(b, `tpl-${Date.now().toString(36)}`, req.body.name ?? `${b.name} template`, store.now().toISOString());
     boards().push(t);
     await store.commit(req.principal, "board.template", { id: t.id, from: b.id });
@@ -246,7 +263,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.post("/v1/boards/:id/instantiate", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
     require(req, "plan");
-    const t = findBoard(req.params.id);
+    const t = reach(req, req.params.id, "view");
     if (!t.isTemplate) throw new ApiError(422, "NOT_A_TEMPLATE", "Only templates can be instantiated. Save this board as a template first.");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
     boards().push(b);
@@ -274,33 +291,35 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     if (req.principal.anonymous) throw new ApiError(403, "SIGNUP_REQUIRED", `${what} needs a free account. Sign up on the website and sign in with the key you receive.`);
   };
 
-  app.post("/v1/templates/boards/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
+  app.post("/v1/templates/boards/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120), roomId: Id.optional() }) } }, async (req, reply) => {
     require(req, "plan");
     const t = findTemplate(req.params.id);
     if (t.fields?.class) requireSignup(req, "Running a class board");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
+    if (req.body.roomId) b.roomId = intoRoom(req, req.body.roomId);
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
     return reply.code(201).send({ board: summary(b) });
   });
 
-  const editable = (id: string) => {
-    const b = findBoard(id);
+  const editable = (req: FastifyRequest, id: string) => {
+    const b = reach(req, id, "edit");
     if (b.isTemplate) throw new ApiError(422, "TEMPLATE_READ_ONLY", "Templates are not edited in place. Create a board from it first.");
     return b;
   };
 
   // A blank whiteboard, and any template added onto an existing board beside what is there.
-  app.post("/v1/boards/blank", { schema: { body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
+  app.post("/v1/boards/blank", { schema: { body: z.object({ name: z.string().min(1).max(120), roomId: Id.optional() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = emptyBoard(`b-${Date.now().toString(36)}`, req.body.name, { system: "trainyard", externalId: "blank", importedAt: store.now().toISOString() });
+    if (req.body.roomId) b.roomId = intoRoom(req, req.body.roomId);
     boards().push(b);
     await store.commit(req.principal, "board.create", { id: b.id, blank: true });
     return reply.code(201).send({ board: summary(b) });
   });
   app.post("/v1/boards/:id/insert-template", { schema: { params: z.object({ id: Id }), body: z.object({ templateId: Id }) } }, async (req) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const t = findTemplate(req.body.templateId);
     if (t.fields?.class) requireSignup(req, "Adding a class board");
     const merged = insertTemplate(b, t, `t${Date.now().toString(36)}`);
@@ -339,7 +358,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.post("/v1/boards/:id/nodes", { schema: { params: z.object({ id: Id }), body: NodeBody.extend({ x: z.number(), y: z.number() }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
     const ref = rawRef ? asRef(rawRef) : rawRef;
     const frame = frameId === null ? undefined : (frameId ?? frameFor(b, req.body));
@@ -371,7 +390,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.patch("/v1/boards/:id/nodes/:nodeId", { schema: { params: z.object({ id: Id, nodeId: Id }), body: NodeBody } }, async (req) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const n = b.nodes.find((x) => x.id === req.params.nodeId);
     if (!n) throw notFound("Card");
     const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
@@ -412,7 +431,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.delete("/v1/boards/:id/nodes/:nodeId", { schema: { params: z.object({ id: Id, nodeId: Id }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const before = b.nodes.length;
     b.nodes = b.nodes.filter((x) => x.id !== req.params.nodeId);
     if (b.nodes.length === before) throw notFound("Card");
@@ -423,7 +442,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.post("/v1/boards/:id/edges", { schema: { params: z.object({ id: Id }), body: z.object({ fromId: Id, toId: Id, label: z.string().max(200).optional() }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const ids = new Set([...b.nodes.map((n) => n.id), ...b.frames.map((f) => f.id)]);
     if (!ids.has(req.body.fromId) || !ids.has(req.body.toId)) throw notFound("Card");
     if (req.body.fromId === req.body.toId) throw new ApiError(422, "SELF_EDGE", "A connector needs two different cards.");
@@ -435,7 +454,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.delete("/v1/boards/:id/edges/:edgeId", { schema: { params: z.object({ id: Id, edgeId: Id }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const before = b.edges.length;
     b.edges = b.edges.filter((e) => e.id !== req.params.edgeId);
     if (b.edges.length === before) throw notFound("Connector");
@@ -445,7 +464,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.patch("/v1/boards/:id/frames/:frameId", { schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional() }) } }, async (req) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const f = b.frames.find((x) => x.id === req.params.frameId);
     if (!f) throw notFound("Frame");
     const dx = (req.body.x ?? f.x) - f.x;
@@ -459,7 +478,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
 
   app.post("/v1/boards/:id/frames", { schema: { params: z.object({ id: Id }), body: z.object({ title: z.string().min(1).max(200), x: z.number(), y: z.number(), width: z.number().min(40), height: z.number().min(40) }) } }, async (req, reply) => {
     require(req, "plan");
-    const b = editable(req.params.id);
+    const b = editable(req, req.params.id);
     const frame = { id: `f-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, ...req.body };
     b.frames.push(frame);
     await store.commit(req.principal, "board.frame.create", { board: b.id, frame: frame.id });
@@ -469,7 +488,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   // ---- mapping -----------------------------------------------------------------------
   app.post("/v1/boards/:id/map", { schema: { params: z.object({ id: Id }), querystring: z.object({ dry_run: z.stringbool().default(true) }), body: MappingBody } }, async (req) => {
     require(req, "plan");
-    const b = findBoard(req.params.id);
+    const b = reach(req, req.params.id, "view");
     const ws = s().workspace;
     if (!s().model.workLevels.some((w) => w.key === req.body.level)) throw new ApiError(422, "UNKNOWN_LEVEL", `"${req.body.level}" is not a work level in this operating model.`);
     const mapping = defined(req.body) as BoardMapping;

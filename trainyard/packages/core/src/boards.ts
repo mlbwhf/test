@@ -104,6 +104,8 @@ export interface Board {
   rows: Row[];
   /** Board-level facts from the source with no slot here (layout type, teams, stages…), kept verbatim. */
   fields?: Record<string, unknown>;
+  /** The room the board lives in (rooms.ts); none means it is open to the whole workspace. */
+  roomId?: string;
 }
 
 export function emptyBoard(id: string, name: string, origin: BoardOrigin): Board {

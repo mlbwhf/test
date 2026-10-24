@@ -5,7 +5,7 @@
 export interface HelpTopic {
   /** The route it explains; the most specific match wins (/board/coach-sync over /board). */
   path: string;
-  space: "Getting started" | "OKRs" | "Classes" | "Templates and boards" | "Plan" | "Setup";
+  space: "Getting started" | "Rooms" | "OKRs" | "Classes" | "Templates and boards" | "Plan" | "Setup";
   title: string;
   /** What the page is for, in a sentence or two. */
   what: string;
@@ -88,6 +88,21 @@ export const HELP: HelpTopic[] = [
     steps: ["Drag lessons between sessions; going over 180 minutes warns you.", "Use −15 and +15 on a lesson to change its length.", "Reset to the class order puts everything back."],
   },
   {
+    path: "/rooms",
+    space: "Rooms",
+    title: "Rooms",
+    what: "A room holds the boards and views for one purpose (an ART's planning room, the OKR room, the portfolio room, a class) and decides who may enter. Rooms are optional: boards outside a room are open to the whole workspace.",
+    steps: ["Name the room, pick its purpose and who can enter, then Create room.", "Open the room to add boards: new, from a template, or moved in from the workspace.", "Connect it to the rooms it works with, so people move between them in one click."],
+    tips: ["Your plan sets how many rooms you have and whether they can be private; the meter at the top shows where you stand.", "A workspace viewer only ever looks, in any room."],
+  },
+  {
+    path: "/rooms/",
+    space: "Rooms",
+    title: "Inside a room",
+    what: "The room's boards, the app views pinned to it, its people and its connected rooms.",
+    steps: ["Add board creates a board in this room; Move in brings a board from the whole workspace.", "Managers add people and set each one to Can look, Can edit or Manages.", "Make private keeps the room to its people and the workspace's admins; Open to the workspace lets everyone in at the default access.", "Connect a room links two rooms both ways; Delete room keeps its boards, open to the workspace."],
+  },
+  {
     path: "/templates",
     space: "Templates and boards",
     title: "Template gallery",
@@ -97,7 +112,7 @@ export const HELP: HelpTopic[] = [
   },
   {
     path: "/boards",
-    space: "Templates and boards",
+    space: "Rooms",
     title: "Your boards",
     what: "Every board in the workspace: from templates, blank whiteboards, classes and imports.",
     steps: ["New blank whiteboard opens an empty board.", "Open any board and use Add a template to place a template beside what is there.", "Filter by Classes, Whiteboards and templates, or Imported."],
@@ -218,4 +233,4 @@ export function helpFor(path: string): HelpTopic | undefined {
   return best;
 }
 
-export const HELP_SPACES: HelpTopic["space"][] = ["Getting started", "OKRs", "Classes", "Templates and boards", "Plan", "Setup"];
+export const HELP_SPACES: HelpTopic["space"][] = ["Getting started", "Rooms", "OKRs", "Classes", "Templates and boards", "Plan", "Setup"];

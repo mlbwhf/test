@@ -51,6 +51,7 @@ export default function PricingPage() {
           rows={[
             ["Price", "Free", "$19 per trainer per month ($16 yearly)", "$249 per train per month ($199 yearly)", "$99 per pack of 10 data sources per month ($83 yearly)"],
             ["Who counts", "Up to 5 people in one hosted room", "Trainers and planners; participants are free", "Trains; people are free", "Data sources; viewers are free, up to 5 editors"],
+            ["Rooms (boards by purpose, access per room)", "1, open to everyone", "5 per trainer, open or private", "Unlimited, open or private", "2, open or private"],
             ["Boards of your own", "1", "Unlimited", "Unlimited", "1"],
             ["Outcome dashboard sources", "2", "3", "Unlimited", "10 per pack"],
             ["Self-hosting", "Unlimited, every feature", "Yes", "Yes, with a support agreement", "Yes"],

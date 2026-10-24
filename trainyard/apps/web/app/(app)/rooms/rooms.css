@@ -1,0 +1,21 @@
+/* Rooms: cards per room grouped by purpose, and the room page (boards, pins, people, links). */
+.rm-allow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 0.9rem; color: var(--th-mute, var(--ink-2)); }
+.rm-meter { width: 140px; height: 8px; border-radius: 99px; background: var(--sunken); overflow: hidden; }
+.rm-meter span { display: block; height: 100%; background: var(--th-accent, var(--signal)); }
+.rm-group { display: grid; gap: 10px; margin-top: 18px; }
+.rm-group > h2 { margin: 0; font: 600 11px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--th-mute, var(--ink-3)); }
+.rm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.rm-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; text-decoration: none; color: inherit; min-height: 150px; }
+.rm-card:focus-visible { outline: 2px solid var(--th-accent, var(--signal)); outline-offset: 2px; }
+.rm-card h3 { margin: 0; font-size: 1.1rem; }
+.rm-card .rm-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+.rm-swatch { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; color: #14123a; }
+.rm-new { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; align-items: end; }
+.rm-new label { display: grid; gap: 4px; font-size: 0.85rem; font-weight: 600; }
+.rm-cols { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.rm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.rm-list li { display: flex; align-items: center; gap: 8px; justify-content: space-between; padding: 8px 10px; border: 1px solid var(--th-line, var(--line)); border-radius: 10px; }
+.rm-list li a { font-weight: 600; }
+.rm-pins { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 860px) { .rm-cols { grid-template-columns: 1fr; } }
+@media (pointer: coarse) { .rm-list li { min-height: 44px; } }

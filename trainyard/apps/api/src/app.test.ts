@@ -1705,3 +1705,51 @@ describe("email verification", () => {
     expect((await call("POST", "/v1/billing/subscribe", { signupId: id })).body.error?.code).not.toBe("EMAIL_NOT_VERIFIED");
   });
 });
+
+describe("rooms", () => {
+  it("organises boards in rooms and decides access per room", async () => {
+    const { call } = await setup();
+    const admin = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const pat = await call("POST", "/v1/users", { name: "Pat", email: "pat@example.io", role: "planner" }, admin);
+    const sam = await call("POST", "/v1/users", { name: "Sam", email: "sam@example.io", role: "planner" }, admin);
+    const vic = await call("POST", "/v1/users", { name: "Vic", email: "vic@example.io", role: "viewer" }, admin);
+    // Pat opens a private ART room; it starts with the ART views pinned and Pat as manager.
+    const art = await call("POST", "/v1/rooms", { name: "ART Credit", kind: "art", visibility: "private" }, pat.body.apiKey);
+    expect(art.status).toBe(201);
+    expect(art.body.room).toMatchObject({ access: "manage", members: [{ userId: pat.body.user.id, access: "manage" }] });
+    expect(art.body.room.pins.map((p: { href: string }) => p.href)).toContain("/board");
+    const roomId = art.body.room.id as string;
+    const board = await call("POST", "/v1/boards/blank", { name: "Team breakout", roomId }, pat.body.apiKey);
+    expect(board.body.board.roomId).toBe(roomId);
+    // Sam is not a member: the room and its board do not exist for Sam. Admins see everything.
+    expect((await call("GET", "/v1/rooms", undefined, sam.body.apiKey)).body.rooms).toHaveLength(0);
+    expect((await call("GET", `/v1/boards/${board.body.board.id}`, undefined, sam.body.apiKey)).status).toBe(404);
+    expect((await call("GET", "/v1/boards", undefined, sam.body.apiKey)).body.boards.some((b: { id: string }) => b.id === board.body.board.id)).toBe(false);
+    expect((await call("GET", `/v1/boards/${board.body.board.id}`, undefined, admin)).status).toBe(200);
+    // Pat adds Sam to look, and Vic (a viewer) to edit: Vic still only looks.
+    await call("PUT", `/v1/rooms/${roomId}/members`, { members: [{ userId: pat.body.user.id, access: "manage" }, { userId: sam.body.user.id, access: "view" }, { userId: vic.body.user.id, access: "edit" }] }, pat.body.apiKey);
+    expect((await call("GET", `/v1/boards/${board.body.board.id}`, undefined, sam.body.apiKey)).status).toBe(200);
+    expect((await call("PATCH", `/v1/boards/${board.body.board.id}`, { name: "Renamed" }, sam.body.apiKey)).status).toBe(403);
+    expect((await call("GET", `/v1/rooms/${roomId}`, undefined, vic.body.apiKey)).body.room.access).toBe("view");
+    // Sam cannot run the room; Pat can connect it to an open OKR room both ways.
+    expect((await call("PATCH", `/v1/rooms/${roomId}`, { name: "Mine" }, sam.body.apiKey)).status).toBe(403);
+    const okr = await call("POST", "/v1/rooms", { name: "Company OKRs", kind: "okr" }, sam.body.apiKey);
+    expect((await call("PUT", `/v1/rooms/${roomId}/links/${okr.body.room.id}`, { on: true }, pat.body.apiKey)).body.room.links).toMatchObject([{ id: okr.body.room.id, visible: true }]);
+    expect((await call("GET", `/v1/rooms/${okr.body.room.id}`, undefined, pat.body.apiKey)).body.room.links[0].id).toBe(roomId);
+    // Deleting the room keeps the board, now open to the workspace.
+    expect((await call("DELETE", `/v1/rooms/${roomId}`, undefined, pat.body.apiKey)).status).toBe(204);
+    expect((await call("GET", `/v1/boards/${board.body.board.id}`, undefined, sam.body.apiKey)).body.board.roomId).toBeUndefined();
+  });
+
+  it("counts rooms against the plan and keeps private rooms to paid plans", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice" });
+    const key = ada.body.apiKey as string;
+    expect((await call("POST", "/v1/rooms", { name: "Private", kind: "art", visibility: "private" }, key)).body.error.code).toBe("PLAN_LIMIT");
+    expect((await call("POST", "/v1/rooms", { name: "ART", kind: "art" }, key)).status).toBe(201);
+    const second = await call("POST", "/v1/rooms", { name: "OKRs", kind: "okr" }, key);
+    expect(second.status).toBe(402);
+    expect(second.body.error.details).toMatchObject({ kind: "rooms", limit: 1 });
+  });
+});

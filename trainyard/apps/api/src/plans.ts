@@ -39,20 +39,26 @@ export interface PlanLimits {
   trains: number | null;
   /** Data sources on the outcome dashboard. */
   sources: number | null;
+  /** Rooms that organise boards and access (rooms.ts in core). */
+  rooms: number | null;
+  /** Whether rooms can be private (members only). */
+  privateRooms: boolean;
 }
 
 /** seats = paid quantity; null means unlimited. */
 export function limitsFor(plan: Plan, seats: number): PlanLimits {
   switch (plan) {
     case "practice":
-      return { members: 5, staff: null, boards: 1, trains: 1, sources: 2 };
+      return { members: 5, staff: null, boards: 1, trains: 1, sources: 2, rooms: 1, privateRooms: false };
     case "trainer":
-      return { members: null, staff: Math.max(1, seats), boards: null, trains: null, sources: 3 };
+      // A room per cohort: five per trainer seat.
+      return { members: null, staff: Math.max(1, seats), boards: null, trains: null, sources: 3, rooms: 5 * Math.max(1, seats), privateRooms: true };
     case "academy":
-      return { members: null, staff: null, boards: null, trains: Math.max(1, seats), sources: null };
+      // Priced by trains; rooms (ART, portfolio, OKR, team) are as many as the trains need.
+      return { members: null, staff: null, boards: null, trains: Math.max(1, seats), sources: null, rooms: null, privateRooms: true };
     // The outcome dashboard on its own: unlimited viewers, ten sources per pack, one planning room.
     case "insights":
-      return { members: null, staff: 5, boards: 1, trains: 1, sources: 10 * Math.max(1, seats) };
+      return { members: null, staff: 5, boards: 1, trains: 1, sources: 10 * Math.max(1, seats), rooms: 2, privateRooms: true };
   }
 }
 
@@ -62,6 +68,7 @@ export interface Usage {
   boards: number;
   trains: number;
   sources: number;
+  rooms: number;
 }
 
 export function usageOf(state: StoreState, members: { role: string; disabled?: boolean }[]): Usage {
@@ -73,10 +80,11 @@ export function usageOf(state: StoreState, members: { role: string; disabled?: b
     boards: (state.workspace.boards ?? []).length,
     trains: state.workspace.groups.filter((g) => !g.parentId || g.level === topLevel).length,
     sources: state.insights?.sources.length ?? 0,
+    rooms: (state.rooms ?? []).length,
   };
 }
 
-const WHAT: Record<keyof Usage, string> = { members: "people", staff: "trainers", boards: "boards", trains: "trains", sources: "data sources" };
+const WHAT: Record<keyof Usage, string> = { members: "people", staff: "trainers", boards: "boards", trains: "trains", sources: "data sources", rooms: "rooms" };
 
 export function planLimitError(record: WorkspaceRecord, kind: keyof Usage, limit: number, current: number): ApiError {
   const upgrade = kind === "sources" ? (record.plan === "insights" ? "Add a source pack under Billing." : "Add the Insights plan under Billing: ten sources a pack, unlimited viewers.") : record.plan === "practice" ? "Upgrade to Trainer or Academy under Billing." : record.plan === "trainer" ? "Add trainers under Billing." : record.plan === "insights" ? "Insights is the outcome dashboard; for planning rooms add Trainer or Academy under Billing." : "Add trains under Billing.";
@@ -87,9 +95,12 @@ export function planLimitError(record: WorkspaceRecord, kind: keyof Usage, limit
 export function enforceStateLimits(record: WorkspaceRecord, state: StoreState): void {
   const limits = limitsFor(record.plan, record.seats);
   const usage = usageOf(state, []);
-  for (const kind of ["boards", "trains"] as const) {
+  for (const kind of ["boards", "trains", "rooms"] as const) {
     const limit = limits[kind];
     if (limit !== null && usage[kind] > limit) throw planLimitError(record, kind, limit, usage[kind]);
+  }
+  if (!limits.privateRooms && (state.rooms ?? []).some((r) => r.visibility === "private")) {
+    throw new ApiError(402, "PLAN_LIMIT", `Private rooms come with the Trainer and Academy plans; on ${record.plan} every room is open to the workspace. Upgrade under Billing.`, { kind: "privateRooms", plan: record.plan, upgrade: "/billing" });
   }
 }
 

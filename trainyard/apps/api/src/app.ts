@@ -61,6 +61,8 @@ import { registerLaneBoardRoutes } from "./lanes.js";
 import { registerInsightRoutes } from "./insights.js";
 import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
+import { registerRoomRoutes } from "./rooms.js";
+import { limitsFor } from "./plans.js";
 import { registerIdentityRoutes, type SsoProvider } from "./identity.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
 import { registerAiNativeRoutes } from "./ainative.js";
@@ -689,6 +691,15 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerCapacityRoutes(app, store);
   registerInsightRoutes(app, store, tenants);
   registerLaneBoardRoutes(app, store);
+  registerRoomRoutes(app, store, {
+    members: (req) => tenants.members(req.principal.workspaceId),
+    allowance: (req) => {
+      const record = tenants.record(req.principal.workspaceId);
+      if (!record) return null;
+      const l = limitsFor(record.plan, record.seats);
+      return { rooms: l.rooms, privateRooms: l.privateRooms };
+    },
+  });
 
   // Coach Sync: the RTE's hourly checkpoints during PI planning, answered per team.
   const coachState = (incrementId: string) => {

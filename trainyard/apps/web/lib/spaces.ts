@@ -1,4 +1,4 @@
-// The workspace's information architecture: four spaces in the top bar, each with its own
+// The workspace's information architecture: the spaces in the top bar, each with its own
 // sub-views and theme. Every route of the app belongs to one space, so the top bar always shows
 // where you are and the second row always shows what else lives there.
 
@@ -14,7 +14,7 @@ export interface SubView {
 }
 
 export interface Space {
-  id: "okrs" | "classes" | "templates" | "plan" | "setup";
+  id: "rooms" | "okrs" | "classes" | "templates" | "plan" | "setup";
   label: string;
   theme: ThemeId;
   eyebrow: string;
@@ -24,6 +24,17 @@ export interface Space {
 }
 
 export const SPACES: Space[] = [
+  {
+    // Rooms organise boards by purpose and decide who may enter; boards live in them.
+    id: "rooms",
+    label: "Rooms",
+    theme: "general",
+    eyebrow: "Rooms & boards",
+    subs: [
+      { href: "/rooms", label: "Rooms" },
+      { href: "/boards", label: "Your boards", also: ["/boards/"] },
+    ],
+  },
   {
     id: "okrs",
     label: "OKRs",
@@ -54,7 +65,6 @@ export const SPACES: Space[] = [
     eyebrow: "Templates",
     subs: [
       { href: "/templates", label: "Gallery" },
-      { href: "/boards", label: "Your boards", also: ["/boards/"] },
       { href: "/imports", label: "Bring your own boards" },
     ],
   },

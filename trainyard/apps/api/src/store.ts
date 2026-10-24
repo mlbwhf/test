@@ -8,7 +8,7 @@ import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersiste
 import type { Purchase } from "./billing.js";
 import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
-import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState, type OvsType, type InsightsState, type LaneBoardState } from "@trainyard/core";
+import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState, type OvsType, type InsightsState, type LaneBoardState, type Room } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -75,6 +75,8 @@ export interface StoreState {
   signups?: Signup[];
   /** Stripe Checkout sessions started from sign-ups, and what they became. */
   purchases?: Purchase[];
+  /** Rooms that organise boards and who may open them. */
+  rooms?: Room[];
   /** Stripe event ids already handled (the last few hundred), so a redelivery does nothing. */
   stripeEvents?: string[];
   /** PI Outcome Planning sessions (AI-Native SAFe), one per ART and PI. */
