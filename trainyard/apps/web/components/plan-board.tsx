@@ -4,15 +4,11 @@
 // between any two cards, and a popover that edits whatever card was clicked.
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { beginCardDrag, useDropZone, type DragPayload } from "@/lib/touch";
 
-export interface DragPayload {
-  kind: string;
-  id: string;
-}
+export type { DragPayload };
 
-let dragging: DragPayload | null = null;
-
-/** A card: draggable, clickable, and a link target when a string is being drawn. */
+/** A card: draggable (mouse, pen or finger), clickable, and a link target when a string is being drawn. */
 export function PlanCard({
   id,
   kind,
@@ -41,15 +37,7 @@ export function PlanCard({
       className={`${className ?? ""} plan-card${linkFrom === id ? " plan-card-linking" : ""}${arming ? " plan-card-target" : ""}`}
       style={style}
       title={arming ? "Click to string these two together" : (title ?? "Drag to move · click to edit")}
-      draggable
-      onDragStart={(e) => {
-        dragging = { kind, id };
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", id);
-      }}
-      onDragEnd={() => {
-        dragging = null;
-      }}
+      onPointerDown={(e) => beginCardDrag(e, { kind, id })}
       onClick={(e) => {
         e.stopPropagation();
         if (arming) onLinkTo(id);
@@ -61,27 +49,13 @@ export function PlanCard({
   );
 }
 
+const anyCard = () => true;
+
 /** A grid cell that accepts dropped cards and offers a "+" to add one in place. */
-export function DropCell({ className, style, onDrop, onAdd, children }: { className?: string; style?: CSSProperties; onDrop: (p: DragPayload) => void; onAdd?: () => void; children: ReactNode }) {
-  const [over, setOver] = useState(false);
+export function DropCell({ className, style, accepts = anyCard, onDrop, onAdd, children }: { className?: string; style?: CSSProperties; accepts?: (p: DragPayload) => boolean; onDrop: (p: DragPayload) => void; onAdd?: () => void; children: ReactNode }) {
+  const { over, zoneProps } = useDropZone(accepts, onDrop);
   return (
-    <div
-      className={`${className ?? ""} plan-cell${over ? " plan-cell-over" : ""}`}
-      style={style}
-      onDragOver={(e) => {
-        if (!dragging) return;
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-        if (!over) setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setOver(false);
-        if (dragging) onDrop(dragging);
-        dragging = null;
-      }}
-    >
+    <div className={`${className ?? ""} plan-cell${over ? " plan-cell-over" : ""}`} style={style} {...zoneProps}>
       {children}
       {onAdd ? (
         <button type="button" className="plan-add" aria-label="Add here" title="Add a card here" onClick={onAdd}>
@@ -149,6 +123,7 @@ export function PlanStrings({ links, depsKey, onRemove, children }: { links: Str
               {onRemove ? (
                 <g style={{ pointerEvents: "auto", cursor: "pointer" }} onClick={() => onRemove(l.id)}>
                   <title>{l.kind === "depends" ? "Depends on · click to remove the string" : "Related · click to remove the string"}</title>
+                  <circle className="plan-x-hit" cx={l.mx} cy={l.my} r={0} fill="transparent" />
                   <circle cx={l.mx} cy={l.my} r={7} fill="#fff" stroke={color} strokeWidth={1.5} />
                   <text x={l.mx} y={l.my + 3.5} textAnchor="middle" fontSize={10} fontWeight={700} fill={color}>
                     ×
@@ -170,16 +145,16 @@ export function Popover({ anchor, title, onClose, children, width = 340 }: { anc
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    const down = (e: MouseEvent) => {
+    const down = (e: PointerEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
     window.addEventListener("keydown", key);
     // Deferred so the click that opened it does not close it.
-    const t = setTimeout(() => window.addEventListener("mousedown", down), 0);
+    const t = setTimeout(() => window.addEventListener("pointerdown", down), 0);
     return () => {
       window.removeEventListener("keydown", key);
       clearTimeout(t);
-      window.removeEventListener("mousedown", down);
+      window.removeEventListener("pointerdown", down);
     };
   }, [onClose]);
   const left = Math.max(8, Math.min(anchor.left, (typeof window !== "undefined" ? window.innerWidth : 1200) - width - 8));

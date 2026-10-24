@@ -5,8 +5,10 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Dependency, DependencyCheck, Increment, IncrementMilestone, LoadCell, Objective, ReadinessReport, Risk, Roam, Team, WorkItem } from "@trainyard/core";
 import { AssistButton } from "@/components/assist";
 import { CapacityPanel } from "@/components/capacity-panel";
+import { DropCell } from "@/components/plan-board";
 import { Loading, PageHead, SourceChip } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
+import { beginCardDrag } from "@/lib/touch";
 
 interface Board {
   today: string;
@@ -37,7 +39,6 @@ export default function BoardPage() {
   const [capacityTeam, setCapacityTeam] = useState<string | null>(null);
   const board = useApi<Board>(`/v1/board${incrementId ? `?incrementId=${incrementId}` : ""}`);
   const model = useApi<{ model: { cadence: { iterationLabel: string; incrementLabel: string }; workLevels: { key: string; label: string }[] } }>("/v1/model");
-  const [dragging, setDragging] = useState<WorkItem | null>(null);
   const [message, setMessage] = useState<{ kind: "ok" | "crit"; text: string } | null>(null);
 
   const severityByItem = useMemo(() => {
@@ -178,8 +179,6 @@ export default function BoardPage() {
                 load={b.load.filter((l) => l.teamId === team.id)}
                 severity={severityByItem}
                 providers={providers}
-                dragging={dragging}
-                onDrag={setDragging}
                 onDrop={move}
                 onCapacity={() => setCapacityTeam(team.id)}
               />
@@ -385,8 +384,6 @@ function TeamRow({
   load,
   severity,
   providers,
-  dragging,
-  onDrag,
   onDrop,
   onCapacity,
 }: {
@@ -396,12 +393,9 @@ function TeamRow({
   load: LoadCell[];
   severity: Map<string, "warning" | "critical">;
   providers: Set<string>;
-  dragging: WorkItem | null;
-  onDrag: (w: WorkItem | null) => void;
   onDrop: (w: WorkItem, iterationId: string | null) => void;
   onCapacity: () => void;
 }) {
-  const [over, setOver] = useState<string | null>(null);
   const modeLabel = team.capacityMode === "calculated" ? "capacity from members" : team.capacityMode === "velocity" ? "capacity from velocity" : "capacity typed in";
   return (
     <>
@@ -422,21 +416,13 @@ function TeamRow({
         const key = c.id ?? "none";
         const cellItems = items.filter((i) => (i.iterationId ?? null) === c.id);
         const cell = load.find((l) => l.iterationId === c.id);
-        const canDrop = dragging?.teamId === team.id;
         return (
-          <div
+          <DropCell
             key={key}
-            onDragOver={(e) => {
-              if (!canDrop) return;
-              e.preventDefault();
-              setOver(key);
-            }}
-            onDragLeave={() => setOver(null)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setOver(null);
-              if (dragging && canDrop) onDrop(dragging, c.id);
-              onDrag(null);
+            accepts={(p) => items.some((i) => i.id === p.id)}
+            onDrop={(p) => {
+              const it = items.find((i) => i.id === p.id);
+              if (it) onDrop(it, c.id);
             }}
             style={{
               borderLeft: "1px solid var(--line)",
@@ -446,18 +432,16 @@ function TeamRow({
               display: "flex",
               flexDirection: "column",
               gap: 6,
-              background: over === key ? "var(--signal-soft)" : c.isIP ? "var(--sunken)" : undefined,
+              background: c.isIP ? "var(--sunken)" : undefined,
             }}
           >
             {cell && cell.capacity + cell.load > 0 ? <LoadMeter cell={cell} /> : null}
             {cellItems.map((it) => (
               <article
                 key={it.id}
-                className={`card pb-card ${providers.has(it.id) ? "pb-dep" : "pb-feature"}${severity.get(it.id) ? ` pb-${severity.get(it.id)}` : ""}`}
+                className={`card pb-card plan-card ${providers.has(it.id) ? "pb-dep" : "pb-feature"}${severity.get(it.id) ? ` pb-${severity.get(it.id)}` : ""}`}
                 data-item-id={it.id}
-                draggable
-                onDragStart={() => onDrag(it)}
-                onDragEnd={() => onDrag(null)}
+                onPointerDown={(e) => beginCardDrag(e, { kind: "item", id: it.id })}
                 title={providers.has(it.id) ? "Significant dependency: another team waits on this" : undefined}
                 style={{
                   borderLeft: `3px solid ${severity.get(it.id) === "critical" ? "var(--crit)" : severity.get(it.id) === "warning" ? "var(--warn)" : it.flowType === "enabler" ? "var(--ado)" : it.flowType === "defect" ? "var(--crit)" : providers.has(it.id) ? "#c2412d" : "#4a8fe0"}`,
@@ -483,7 +467,7 @@ function TeamRow({
                 </div>
               </article>
             ))}
-          </div>
+          </DropCell>
         );
       })}
       <div style={{ borderLeft: "1px solid var(--line)", borderBottom: "1px solid var(--line)", background: "var(--sunken)" }} />
