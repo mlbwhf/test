@@ -21,7 +21,7 @@ export default function Home() {
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       url: base,
-      description: "Open-source planning rooms for scaled agile: PI planning boards, SAFe canvases, value stream mapping, two-way Jira and Azure DevOps sync, an AI-native portfolio module, and import of boards from iObeya, Miro, Mural and monday.com.",
+      description: "Open-source planning rooms for scaled agile: PI planning boards, SAFe canvases, value stream mapping, two-way Jira and Azure DevOps sync, an AI-native portfolio module, and import of boards from Miro, Mural, Trello, monday.com and iObeya.",
       offers: PLANS.map((p) => ({
         "@type": "Offer",
         name: `${p.name} plan`,

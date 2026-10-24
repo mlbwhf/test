@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { use, useState } from "react";
-import type { Board, BoardMapping, CardType, MappingResult } from "@trainyard/core";
+import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type MappingResult, type TemplateInfo } from "@trainyard/core";
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { AssistButton } from "@/components/assist";
@@ -43,15 +43,15 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   return (
     <>
       <div>
-        <Link href="/imports" className="faint" style={{ fontSize: "0.85rem" }}>
-          ← Bring your own boards
+        <Link href="/boards" className="faint" style={{ fontSize: "0.85rem" }}>
+          ← Your boards
         </Link>
       </div>
       <PageHead
         title={board.name}
         sub={
           <>
-            <span className="chip">{board.isTemplate ? "Template" : SOURCE_LABEL[board.origin.system] ?? board.origin.system}</span> Imported {board.origin.importedAt.slice(0, 10)}
+            <span className="chip">{board.isTemplate ? "Template" : SOURCE_LABEL[board.origin.system] ?? board.origin.system}</span> {board.origin.system === "trainyard" ? "Created" : "Imported"} {board.origin.importedAt.slice(0, 10)}
             {board.origin.url ? (
               <>
                 {" "}
@@ -76,9 +76,12 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
               New board from template
             </button>
           ) : (
-            <button className="btn" onClick={() => run("Saved as a template. Find it under Templates.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/template`, {}))}>
-              Save as template
-            </button>
+            <>
+              <AddTemplate onAdd={(templateId, name) => void run(`Added "${name}" to this board, to the right of what was there.`, () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/insert-template`, { templateId })).then(() => view.reload())} />
+              <button className="btn" onClick={() => run("Saved as a template. Find it under Templates.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/template`, {}))}>
+                Save as template
+              </button>
+            </>
           )
         }
       />
@@ -138,7 +141,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       <div className="tabs" role="tablist">
         <button role="tab" aria-selected={tab === "board"} onClick={() => setTab("board")}>
-          Board as imported
+          {board.origin.system === "trainyard" ? "Board" : "Board as imported"}
         </button>
         <button role="tab" aria-selected={tab === "map"} onClick={() => setTab("map")} disabled={board.isTemplate}>
           Map onto the plan
@@ -147,14 +150,61 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {shape === "canvas" || shape === "mixed" ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
+          {shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
-          {shape === "empty" ? <div className="panel panel-body faint">This board is empty.</div> : null}
+          {shape === "empty" && board.isTemplate ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
       ) : (
         <Mapper board={board} shape={shape} levels={model.data.model.workLevels} onApplied={(r) => setDone(`Added ${r.items.length} items, ${r.risks.length} risks, ${r.dependencies.length} dependencies${r.newTeams.length ? ` and ${r.newTeams.length} teams` : ""} to the plan.`)} onError={(e) => setErr(e)} />
       )}
     </>
+  );
+}
+
+/** Pick any template and add it to this board: a blank whiteboard becomes whatever the session needs. */
+function AddTemplate({ onAdd }: { onAdd: (templateId: string, name: string) => void }) {
+  const list = useApi<{ builtin: { id: string; name: string; info?: TemplateInfo }[]; saved: { id: string; name: string }[] }>("/v1/templates/boards");
+  const [pick, setPick] = useState("");
+  if (!list.data) return null;
+  const byMethod = TEMPLATE_METHODS.map((m) => ({ m, items: list.data!.builtin.filter((t) => t.info?.method === m.id && !t.info.tags.includes("class" as never)) })).filter((g) => g.items.length);
+  const classes = list.data.builtin.filter((t) => t.info?.tags.includes("class" as never));
+  const all = [...list.data.builtin, ...list.data.saved];
+  return (
+    <span className="row" style={{ gap: 6 }}>
+      <select className="select" aria-label="Template to add" value={pick} onChange={(e) => setPick(e.target.value)} style={{ maxWidth: 260 }}>
+        <option value="">Add a template to this board…</option>
+        {byMethod.map((g) => (
+          <optgroup key={g.m.id} label={g.m.label}>
+            {g.items.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+        {classes.length ? (
+          <optgroup label="Classes">
+            {classes.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+        {list.data.saved.length ? (
+          <optgroup label="Your templates">
+            {list.data.saved.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+      </select>
+      <button className="btn" disabled={!pick} onClick={() => (onAdd(pick, all.find((t) => t.id === pick)?.name ?? "template"), setPick(""))}>
+        Add
+      </button>
+    </span>
   );
 }
 

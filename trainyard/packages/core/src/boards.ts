@@ -161,6 +161,27 @@ export function instantiate(template: Board, id: string, name: string, now: stri
   };
 }
 
+/**
+ * Add a template to a board that already exists: its frames, cards and table columns land to
+ * the right of what is there, with fresh ids, so one whiteboard can hold a PI planning board
+ * beside a retrospective beside a fishbone.
+ */
+export function insertTemplate(board: Board, template: Board, insertId: string): Board {
+  const prefix = `${insertId}:`;
+  const right = Math.max(0, ...board.frames.map((f) => f.x + f.width), ...board.nodes.map((n) => n.x + (n.width ?? 0)));
+  const left = Math.min(...template.frames.map((f) => f.x), ...template.nodes.map((n) => n.x), Infinity);
+  const top = Math.min(...template.frames.map((f) => f.y), ...template.nodes.map((n) => n.y), Infinity);
+  const dx = (board.frames.length || board.nodes.length ? right + 240 : 0) - (Number.isFinite(left) ? left : 0);
+  const dy = -(Number.isFinite(top) ? top : 0);
+  return {
+    ...board,
+    frames: [...board.frames, ...template.frames.map((f) => ({ ...f, id: prefix + f.id, x: f.x + dx, y: f.y + dy, ...(f.parentId ? { parentId: prefix + f.parentId } : {}) }))],
+    nodes: [...board.nodes, ...template.nodes.map((n) => ({ ...n, id: prefix + n.id, x: n.x + dx, y: n.y + dy, ...(n.frameId ? { frameId: prefix + n.frameId } : {}) }))],
+    columns: [...board.columns, ...template.columns.filter((c) => !board.columns.some((x) => x.id === c.id)).map((c) => ({ ...c }))],
+    groups: [...board.groups, ...template.groups.filter((g) => !board.groups.some((x) => x.id === g.id)).map((g) => ({ ...g }))],
+  };
+}
+
 // ---- mapping imported content onto planning objects ----------------------------------
 
 export interface ColorRule {

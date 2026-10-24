@@ -74,6 +74,10 @@ export default function TemplatesPage() {
         title={sel ? sel.name : "Start from a template"}
         sub={sel?.info?.blurb ?? "Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."}
         actions={
+          <>
+          <Link href="/boards" className="btn" title="Start from an empty whiteboard and add any of these templates to it">
+            Or start blank
+          </Link>
           <label className="row" style={{ gap: 6 }}>
             <span className="eyebrow">Kind</span>
             <select className="select" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter templates by kind">
@@ -84,6 +88,7 @@ export default function TemplatesPage() {
               ))}
             </select>
           </label>
+          </>
         }
       />
       <nav className="ws-chips" aria-label="Filter by method">

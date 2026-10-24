@@ -596,3 +596,11 @@ button.vs-clickbar.vs-bar:hover { filter: brightness(0.97); }
 .vsb-gaps { font-size: 0.8rem; color: var(--warn); }
 .vsb-gaps.ok { color: var(--ok); }
 .vsb-hit { background: var(--signal-soft); font-weight: 600; }
+
+/* ---- bring your own boards: tool picker ---- */
+.imp-tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.imp-tool { all: unset; cursor: pointer; box-sizing: border-box; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--glass-card); }
+.imp-tool b { font-size: 0.95rem; }
+.imp-tool span { font-size: 0.75rem; color: var(--ink-3); }
+.imp-tool[aria-selected="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink) inset; }
+.imp-tool:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }

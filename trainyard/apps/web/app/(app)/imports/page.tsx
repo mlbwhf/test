@@ -39,11 +39,28 @@ interface RemoteBoard {
 
 const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
+// One list of tools, ordered by reach: Miro reports 90–100 million users, Mural around 10
+// million, Trello and monday.com are work-management tools whose boards still come over, and
+// iObeya is an enterprise obeya platform with a smaller, mostly SAFe user base. Spreadsheet and
+// JSON uploads cover everything else.
+type ToolId = "miro" | "mural" | "trello" | "monday" | "iobeya" | "csv" | "json";
+const TOOLS: { id: ToolId; label: string; how: string; connect?: string; upload?: "iobeya" | "miro" | "csv" | "json" }[] = [
+  { id: "miro", label: "Miro", how: "connect, or upload its CSV", connect: "miro", upload: "miro" },
+  { id: "mural", label: "Mural", how: "connect", connect: "mural" },
+  { id: "trello", label: "Trello", how: "connect", connect: "trello" },
+  { id: "monday", label: "monday.com", how: "connect", connect: "monday" },
+  { id: "iobeya", label: "iObeya", how: "upload a board export", upload: "iobeya" },
+  { id: "csv", label: "Any spreadsheet", how: "Excel, Sheets, Airtable, Jira… as CSV", upload: "csv" },
+  { id: "json", label: "Trainyard JSON", how: "from a script or another workspace", upload: "json" },
+];
+
 export default function ImportsPage() {
   const conns = useApi<{ connections: Connection[]; sources: Record<string, SourceInfo>; persistent: boolean }>("/v1/connections");
   const boards = useApi<{ boards: BoardSummary[] }>("/v1/boards");
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
+  const [tool, setTool] = useState<ToolId>("miro");
+  const cur = TOOLS.find((t) => t.id === tool)!;
   if (!conns.data || !boards.data) return <Loading error={conns.error ?? boards.error} />;
 
   const after = (msg: string) => {
@@ -61,12 +78,36 @@ export default function ImportsPage() {
 
   return (
     <>
-      <PageHead title="Bring your own boards" sub="Connect Miro, Mural, monday.com or Trello and pull a board in exactly as it is, upload an iObeya board export, or a CSV or JSON from any other tool. Save any board as a template, and map its cards or rows onto the plan when you are ready." />
+      <PageHead title="Bring your own boards" sub="Pull a board in from the tool it lives in, exactly as it is: Miro, Mural, Trello, monday.com, iObeya, or a spreadsheet export from anything else. Save any board as a template, add it to another board, and map its cards or rows onto the plan when you are ready." />
       {!conns.data.persistent ? <div className="notice warn">Connection tokens are encrypted with a key that lives only in this process. Set TRAINYARD_SECRET on the API server so connections survive a restart.</div> : null}
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
 
-      <div className="grid-2">
+      <section className="panel">
+        <div className="panel-head">
+          <h2>Where is your board?</h2>
+          <span className="faint">ordered by how many people use each tool</span>
+        </div>
+        <div className="panel-body stack">
+          <div className="imp-tools" role="tablist" aria-label="Tool">
+            {TOOLS.map((t) => (
+              <button key={t.id} role="tab" aria-selected={tool === t.id} className="imp-tool" onClick={() => setTool(t.id)}>
+                <b>{t.label}</b>
+                <span>{t.how}</span>
+              </button>
+            ))}
+          </div>
+          {cur.connect && conns.data.sources[cur.connect] ? <ConnectForm key={cur.connect} sources={conns.data.sources} fixed={cur.connect} onConnected={(label) => after(`Connected ${label}. Pick a board under Connections below.`)} onError={fail} /> : null}
+          {cur.upload ? (
+            <div className="stack">
+              {cur.connect ? <span className="eyebrow">Or upload an export</span> : null}
+              <UploadForms key={cur.upload} mode={cur.upload} onImported={(name) => after(`Imported "${name}".`)} onError={fail} />
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {conns.data.connections.length ? (
         <section className="panel">
           <div className="panel-head">
             <h2>Connections</h2>
@@ -76,21 +117,9 @@ export default function ImportsPage() {
             {conns.data.connections.map((c) => (
               <ConnectionRow key={c.id} connection={c} onImported={(name) => after(`Imported "${name}".`)} onError={fail} onRemoved={() => after("Connection removed.")} />
             ))}
-            {conns.data.connections.length === 0 ? <p className="faint">No tools connected yet.</p> : null}
-            <ConnectForm sources={conns.data.sources} onConnected={(label) => after(`Connected ${label}.`)} onError={fail} />
           </div>
         </section>
-
-        <section className="panel">
-          <div className="panel-head">
-            <h2>Upload a file</h2>
-            <span className="faint">any tool</span>
-          </div>
-          <div className="panel-body stack">
-            <UploadForms onImported={(name) => after(`Imported "${name}".`)} onError={fail} />
-          </div>
-        </section>
-      </div>
+      ) : null}
 
       <section className="panel">
         <div className="panel-head">
@@ -227,9 +256,10 @@ function ConnectionRow({ connection: c, onImported, onError, onRemoved }: { conn
   );
 }
 
-function ConnectForm({ sources, onConnected, onError }: { sources: Record<string, SourceInfo>; onConnected: (label: string) => void; onError: (e: unknown) => void }) {
+function ConnectForm({ sources, fixed, onConnected, onError }: { sources: Record<string, SourceInfo>; fixed?: string; onConnected: (label: string) => void; onError: (e: unknown) => void }) {
   const keys = Object.keys(sources);
-  const [system, setSystem] = useState(keys[0] ?? "miro");
+  const [picked, setSystem] = useState(keys[0] ?? "miro");
+  const system = fixed ?? picked;
   const [values, setValues] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const src = sources[system]!;
@@ -250,18 +280,20 @@ function ConnectForm({ sources, onConnected, onError }: { sources: Record<string
         }
       }}
     >
-      <span className="eyebrow">Connect a tool</span>
+      <span className="eyebrow">Connect {fixed ? src.label : "a tool"}</span>
       <div className="row" style={{ alignItems: "flex-end" }}>
-        <label className="field">
-          Tool
-          <select id="conn-system" className="select" value={system} onChange={(e) => (setSystem(e.target.value), setValues({}))}>
-            {keys.map((k) => (
-              <option key={k} value={k}>
-                {sources[k]!.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        {fixed ? null : (
+          <label className="field">
+            Tool
+            <select id="conn-system" className="select" value={system} onChange={(e) => (setSystem(e.target.value), setValues({}))}>
+              {keys.map((k) => (
+                <option key={k} value={k}>
+                  {sources[k]!.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {src.fields.map((f) => (
           <label key={f.key} className="field" style={{ flex: "1 1 200px" }}>
             {f.label}
@@ -338,8 +370,7 @@ function IobeyaUpload({ onError }: { onError: (e: unknown) => void }) {
   );
 }
 
-function UploadForms({ onImported, onError }: { onImported: (name: string) => void; onError: (e: unknown) => void }) {
-  const [mode, setMode] = useState<"iobeya" | "miro" | "csv" | "json">("iobeya");
+function UploadForms({ mode, onImported, onError }: { mode: "iobeya" | "miro" | "csv" | "json"; onImported: (name: string) => void; onError: (e: unknown) => void }) {
   const [name, setName] = useState("");
   const [groupBy, setGroupBy] = useState("");
   const [text, setText] = useState("");
@@ -351,29 +382,7 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
     };
     r.readAsText(file);
   };
-  const tabs = (
-    <div className="tabs" role="tablist">
-      <button type="button" role="tab" aria-selected={mode === "iobeya"} onClick={() => setMode("iobeya")}>
-        iObeya board export
-      </button>
-      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("miro")}>
-        Miro board CSV
-      </button>
-      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("csv")}>
-        CSV / spreadsheet export
-      </button>
-      <button type="button" role="tab" aria-selected={false} onClick={() => setMode("json")}>
-        Trainyard board JSON
-      </button>
-    </div>
-  );
-  if (mode === "iobeya")
-    return (
-      <div className="stack">
-        {tabs}
-        <IobeyaUpload onError={onError} />
-      </div>
-    );
+  if (mode === "iobeya") return <IobeyaUpload onError={onError} />;
   return (
     <form
       className="stack"
@@ -390,20 +399,6 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
         }
       }}
     >
-      <div className="tabs" role="tablist">
-        <button type="button" role="tab" aria-selected={false} onClick={() => setMode("iobeya")}>
-          iObeya board export
-        </button>
-        <button type="button" role="tab" aria-selected={mode === "miro"} onClick={() => setMode("miro")}>
-          Miro board CSV
-        </button>
-        <button type="button" role="tab" aria-selected={mode === "csv"} onClick={() => setMode("csv")}>
-          CSV / spreadsheet export
-        </button>
-        <button type="button" role="tab" aria-selected={mode === "json"} onClick={() => setMode("json")}>
-          Trainyard board JSON
-        </button>
-      </div>
       <div className="row" style={{ alignItems: "flex-end" }}>
         <label className="field" style={{ flex: "1 1 160px" }}>
           File
@@ -426,7 +421,7 @@ function UploadForms({ onImported, onError }: { onImported: (name: string) => vo
       </div>
       <label className="field">
         {mode === "json" ? "Or paste JSON" : "Or paste CSV"}
-        <textarea id="upload-text" className="textarea mono" style={{ minHeight: 110, fontSize: "0.8rem" }} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === "csv" ? "Feature,Team,Points\nGuest checkout,Checkout,13" : '{ "name": "My board", "columns": ["Title", "Team"], "rows": [{ "Title": "Guest checkout", "Team": "Checkout" }] }'} required />
+        <textarea id="upload-text" className="textarea mono" style={{ minHeight: 110, fontSize: "0.8rem" }} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === "csv" ? "Feature,Team,Points\nGuest checkout,Checkout,13" : mode === "miro" ? "Paste the CSV Miro exports (board menu → Export → CSV)" : '{ "name": "My board", "columns": ["Title", "Team"], "rows": [{ "Title": "Guest checkout", "Team": "Checkout" }] }'} required />
       </label>
       <div className="row" style={{ justifyContent: "space-between" }}>
         <span className="faint" style={{ fontSize: "0.8rem" }}>

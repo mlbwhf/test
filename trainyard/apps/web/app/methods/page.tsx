@@ -86,7 +86,7 @@ export default function MethodsPage() {
             [
               ["Pick a method", "The template list, the board's look and its vocabulary follow the method you choose."],
               ["Size it to your teams", "Boards are created with your teams and iterations already in place."],
-              ["Or bring your own", "Import from Miro, Mural, iObeya, monday.com or Trello, and save it as a template."],
+              ["Or bring your own", "Import from Miro, Mural, Trello, monday.com or iObeya, save it as a template, or start a blank whiteboard and add any template to it."],
             ] as const
           ).map(([h, p], i) => (
             <div key={h} className="mp-step">

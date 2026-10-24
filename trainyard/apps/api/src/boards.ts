@@ -5,7 +5,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { TEMPLATE_CATALOG, boardShape, builtinTemplates, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
+import { TEMPLATE_CATALOG, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromMiroCsv } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
@@ -274,6 +274,25 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     if (b.isTemplate) throw new ApiError(422, "TEMPLATE_READ_ONLY", "Templates are not edited in place. Create a board from it first.");
     return b;
   };
+
+  // A blank whiteboard, and any template added onto an existing board beside what is there.
+  app.post("/v1/boards/blank", { schema: { body: z.object({ name: z.string().min(1).max(120) }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = emptyBoard(`b-${Date.now().toString(36)}`, req.body.name, { system: "trainyard", externalId: "blank", importedAt: store.now().toISOString() });
+    boards().push(b);
+    await store.commit(req.principal, "board.create", { id: b.id, blank: true });
+    return reply.code(201).send({ board: summary(b) });
+  });
+  app.post("/v1/boards/:id/insert-template", { schema: { params: z.object({ id: Id }), body: z.object({ templateId: Id }) } }, async (req) => {
+    require(req, "plan");
+    const b = editable(req.params.id);
+    const t = findTemplate(req.body.templateId);
+    if (t.fields?.class) requireSignup(req, "Adding a class board");
+    const merged = insertTemplate(b, t, `t${Date.now().toString(36)}`);
+    Object.assign(b, { frames: merged.frames, nodes: merged.nodes, columns: merged.columns, groups: merged.groups });
+    await store.commit(req.principal, "board.insert-template", { id: b.id, template: t.id });
+    return { board: summary(b) };
+  });
   const NodeBody = z.object({
     text: z.string().max(4000).optional(),
     x: z.number().optional(),

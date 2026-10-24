@@ -1589,3 +1589,25 @@ describe("launch and PI planning readiness", () => {
     expect((await call("PATCH", `/v1/items/${unranked[0].id}`, { wsjf: null })).body.item.wsjf).toBeUndefined();
   });
 });
+
+describe("blank whiteboard with templates added", () => {
+  it("creates a blank board and adds templates side by side", async () => {
+    const { call } = await setup();
+    const blank = await call("POST", "/v1/boards/blank", { name: "Workshop wall" });
+    expect(blank.status).toBe(201);
+    const id = blank.body.board.id;
+    expect((await call("GET", `/v1/boards/${id}`)).body.board.frames).toHaveLength(0);
+    const tpls = (await call("GET", "/v1/templates/boards")).body.builtin as { id: string; info?: { tags: string[] } }[];
+    const [a, b] = tpls.filter((t) => !t.info?.tags.includes("class")).map((t) => t.id);
+    expect((await call("POST", `/v1/boards/${id}/insert-template`, { templateId: a })).status).toBe(200);
+    const first = (await call("GET", `/v1/boards/${id}`)).body.board;
+    const right = Math.max(...first.frames.map((f: { x: number; width: number }) => f.x + f.width));
+    await call("POST", `/v1/boards/${id}/insert-template`, { templateId: b });
+    const both = (await call("GET", `/v1/boards/${id}`)).body.board;
+    const added = both.frames.slice(first.frames.length);
+    expect(added.length).toBeGreaterThan(0);
+    expect(Math.min(...added.map((f: { x: number }) => f.x))).toBeGreaterThan(right);
+    expect(new Set(both.frames.map((f: { id: string }) => f.id)).size).toBe(both.frames.length);
+    expect((await call("POST", `/v1/boards/${a}/insert-template`, { templateId: b })).status).not.toBe(200);
+  });
+});
