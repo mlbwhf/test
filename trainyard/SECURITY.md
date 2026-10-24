@@ -19,7 +19,7 @@ Email security@agile-agilist.com with the steps to reproduce. You will get an an
 
 **Secrets at rest**
 
-- Tokens for Miro, Mural, monday.com and Trello are sealed with AES-256-GCM under `TRAINYARD_SECRET` before they are stored; the API never returns them.
+- Tokens for Miro, Lucid, Mural, monday.com and Trello are sealed with AES-256-GCM under `TRAINYARD_SECRET` before they are stored; the API never returns them.
 - Jira and Azure DevOps credentials live only in environment variables.
 - Every mutation is written with a version and an append-only audit entry naming the actor.
 

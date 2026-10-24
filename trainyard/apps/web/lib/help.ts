@@ -113,8 +113,8 @@ export const HELP: HelpTopic[] = [
     path: "/imports",
     space: "Templates and boards",
     title: "Bring your own boards",
-    what: "Pull a board in from Miro, Mural, Trello, monday.com, iObeya or a spreadsheet, exactly as it is.",
-    steps: ["Pick the tool your board lives in.", "Connect it with an access token (Miro, Mural, Trello, monday.com) and choose a board, or upload an export (Miro CSV, iObeya export, any CSV).", "Open the imported board, save it as a template or map it onto the plan."],
+    what: "Pull a board in from Miro, Lucid (Lucidchart and Lucidspark), Mural, Trello, monday.com, iObeya or a spreadsheet, exactly as it is.",
+    steps: ["Pick the tool your board lives in.", "Connect it with an access token (Miro, Lucid, Mural, Trello, monday.com) and choose a board, or upload an export (Miro CSV, Lucid shape data CSV, iObeya export, any CSV).", "Open the imported board, save it as a template or map it onto the plan."],
     tips: ["Tokens are stored encrypted and used only to read your boards."],
   },
   {

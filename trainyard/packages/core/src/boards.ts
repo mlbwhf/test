@@ -6,7 +6,7 @@
 
 import type { Dependency, FlowType, Risk, StatusCategory, Team, WorkItem } from "./model.js";
 
-export type BoardSource = "miro" | "mural" | "monday" | "trello" | "iobeya" | "csv" | "json" | "trainyard";
+export type BoardSource = "miro" | "lucid" | "mural" | "monday" | "trello" | "iobeya" | "csv" | "json" | "trainyard";
 
 export interface BoardOrigin {
   system: BoardSource;

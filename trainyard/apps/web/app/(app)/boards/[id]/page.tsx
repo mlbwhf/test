@@ -9,7 +9,7 @@ import { AssistButton } from "@/components/assist";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 
-const SOURCE_LABEL: Record<string, string> = { miro: "Miro", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
+const SOURCE_LABEL: Record<string, string> = { miro: "Miro", lucid: "Lucid", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
 interface BoardReview {
   summary: string;

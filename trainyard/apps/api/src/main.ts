@@ -10,7 +10,7 @@ import { Store, type StoreState } from "./store.js";
 // end up in a config file:
 //   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
 //   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
-//   TRAINYARD_SECRET             encrypts Miro/Mural/monday/Trello tokens at rest (falls back to the admin key)
+//   TRAINYARD_SECRET             encrypts Miro/Lucid/Mural/monday/Trello tokens at rest (falls back to the admin key)
 //   ANTHROPIC_API_KEY            AI facilitation through Claude (model: TRAINYARD_AI_MODEL)
 //   TRAINYARD_LLM_URL            or any OpenAI-compatible server, e.g. http://ollama:11434/v1
 //                                (TRAINYARD_LLM_MODEL, optional TRAINYARD_LLM_KEY); free and local

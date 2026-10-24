@@ -49,7 +49,7 @@ export default async function CompareToolPage({ params }: { params: Promise<{ to
         </ul>
         <h2>Moving boards over</h2>
         <p>
-          {c.tool === "iObeya" ? "iObeya board exports (program, team, Kanban, roadmap and free boards, with charts, images and dependencies) import into Trainyard at their positions and colours, become templates, and map onto the plan when you say so." : c.tool === "Miro" ? "Miro boards import through the REST API or Miro's CSV export; class boards keep their frames and lessons." : "Boards from iObeya, Miro, Mural, monday.com, Trello, CSV and JSON import as they are; Jira and Azure DevOps data syncs rather than imports."}
+          {c.tool === "iObeya" ? "iObeya board exports (program, team, Kanban, roadmap and free boards, with charts, images and dependencies) import into Trainyard at their positions and colours, become templates, and map onto the plan when you say so." : c.tool === "Miro" ? "Miro boards import through the REST API or Miro's CSV export; class boards keep their frames and lessons." : "Boards from iObeya, Miro, Lucid, Mural, monday.com, Trello, CSV and JSON import as they are; Jira and Azure DevOps data syncs rather than imports."}
         </p>
         <p>
           <Link href="/#join" className="ly-cta">

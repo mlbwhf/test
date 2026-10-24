@@ -65,7 +65,7 @@ export interface StoreState {
   dashboards: Dashboard[];
   pending: PendingChange[];
   users: User[];
-  /** Connections to Miro, Mural, monday.com and Trello, tokens sealed. */
+  /** Connections to Miro, Lucid, Mural, monday.com and Trello, tokens sealed. */
   connections: Connection[];
   /** Value stream identification workshops and value stream maps. */
   valueStreams: { identifications: ValueStreamIdentification[]; maps: ValueStreamMap[]; ovsTypes?: OvsType[] };

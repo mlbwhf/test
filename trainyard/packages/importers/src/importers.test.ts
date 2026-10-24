@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ImportError, MiroImporter, MondayImporter, MuralImporter, TrelloImporter, boardFromCsv, boardFromJson, createImporter, parseCsv, stripHtml, type FetchLike } from "./index.js";
+import { ImportError, LucidImporter, MiroImporter, MondayImporter, MuralImporter, TrelloImporter, boardFromCsv, boardFromJson, boardFromLucidCsv, createImporter, isLucidCsvExport, parseCsv, stripHtml, type FetchLike } from "./index.js";
 
 function server(routes: Record<string, unknown | ((url: URL, init: RequestInit) => unknown)>) {
   const calls: { url: string; init: RequestInit }[] = [];
@@ -52,6 +52,142 @@ describe("Miro", () => {
     expect(await new MiroImporter("t", { fetch: fetchFn }).listBoards()).toEqual([{ id: "a", name: "A", url: "u", container: "Dev" }]);
     const denied = server({ "/v2/boards": new Response("{}", { status: 401 }) });
     await expect(new MiroImporter("bad", { fetch: denied.fetchFn }).listBoards()).rejects.toMatchObject({ code: "AUTH" });
+  });
+});
+
+describe("Lucid", () => {
+  // Shaped like the documented Document Content resource: pages with items.shapes / items.lines,
+  // shapes with class and textAreas, lines with endpoint1/endpoint2.connectedTo.
+  const contents = {
+    id: "d0c-1",
+    title: "PI 26.4 dependencies",
+    product: "lucidchart",
+    pages: [
+      { id: "0_1", title: "Risks", index: 1, items: { shapes: [{ id: "r1", class: "StickyNoteBlock", textAreas: [{ label: "Text", text: "Vendor SLA unknown" }], boundingBox: { x: 500, y: 300, w: 120, h: 120 } }] } },
+      {
+        id: "0_0",
+        title: "ART board",
+        index: 0,
+        items: {
+          shapes: [
+            { id: "s1", class: "ProcessBlock", textAreas: [{ label: "Text", text: "Guest checkout" }], customData: [{ key: "Points", value: "13" }] },
+            { id: "s2", class: "DecisionBlock", textAreas: [{ label: "Text", text: "Go <b>live</b>?" }] },
+            { id: "s3", class: "TextBlock", textAreas: [] },
+          ],
+          lines: [
+            { id: "l1", endpoint1: { style: "None", connectedTo: "s1" }, endpoint2: { style: "Arrow", connectedTo: "s2" }, textAreas: [{ label: "t0", text: "depends on" }] },
+            { id: "l2", endpoint1: { style: "None", connectedTo: "s1" }, endpoint2: { style: "Arrow", connectedTo: null } },
+          ],
+          groups: [{ id: "g1", members: ["s1", "s2"] }],
+        },
+      },
+    ],
+  };
+
+  it("imports pages as frames, shapes as nodes and lines as edges", async () => {
+    const { fetchFn, calls } = server({
+      "/documents/d0c-1": { documentId: "d0c-1", title: "PI 26.4 dependencies", editUrl: "https://lucid.app/lucidchart/d0c-1/edit" },
+      "/documents/d0c-1/contents": contents,
+    });
+    const b = await new LucidImporter("key-abc", { fetch: fetchFn }).fetchBoard("d0c-1");
+    expect(b.id).toBe("lucid-d0c-1");
+    expect(b.origin).toMatchObject({ system: "lucid", externalId: "d0c-1", url: "https://lucid.app/lucidchart/d0c-1/edit" });
+    expect(b.frames.map((f) => f.title)).toEqual(["ART board", "Risks"]);
+    expect(b.nodes.map((n) => [n.id, n.kind, n.text, n.frameId])).toEqual([
+      ["s1", "shape", "Guest checkout", "page-0_0"],
+      ["s2", "shape", "Go live?", "page-0_0"],
+      ["s3", "text", "", "page-0_0"],
+      ["r1", "sticky", "Vendor SLA unknown", "page-0_1"],
+    ]);
+    expect(b.nodes[0]!.fields).toEqual({ lucidShape: "ProcessBlock", lucidGroup: "g1", customData: { Points: "13" } });
+    // The Risks page has bounding boxes, so its sticky keeps its place relative to the page.
+    const risks = b.frames[1]!;
+    expect(b.nodes[3]).toMatchObject({ x: 20, y: risks.y + 50, width: 120, height: 120 });
+    expect(b.edges).toEqual([{ id: "l1", fromId: "s1", toId: "s2", label: "depends on" }]);
+    expect(calls[0]!.init.headers).toMatchObject({ Authorization: "Bearer key-abc", "Lucid-Api-Version": "1" });
+  });
+
+  it("lists documents through the Link header and never follows it off the API host", async () => {
+    const { fetchFn, calls } = server({
+      "/users/me/profile": { id: 7, fullName: "Amara Okafor", email: "amara@example.com", username: "amara" },
+      "/documents/search": (url: URL, init: RequestInit) => {
+        expect(init.method).toBe("POST");
+        expect(JSON.parse(String(init.body))).toEqual({ product: ["lucidchart", "lucidspark"] });
+        if (url.searchParams.get("pageToken") === "p2") {
+          return new Response(JSON.stringify([{ documentId: "d2", title: "Retro", product: "lucidspark", viewUrl: "https://lucid.app/lucidspark/d2/view" }]), { status: 200, headers: { Link: '<https://evil.example/documents/search?pageToken=p3>; rel="next"' } });
+        }
+        return new Response(JSON.stringify([{ documentId: "d1", title: "Program board", product: "lucidchart", editUrl: "https://lucid.app/lucidchart/d1/edit", lastModified: "2026-10-01T09:00:00Z" }]), { status: 200, headers: { Link: '<https://api.lucid.co/documents/search?pageSize=200&pageToken=p2>; rel="next"' } });
+      },
+    });
+    const lucid = new LucidImporter("tok", { fetch: fetchFn });
+    expect(await lucid.whoami()).toEqual({ name: "Amara Okafor" });
+    expect(await lucid.listBoards()).toEqual([
+      { id: "d1", name: "Program board", url: "https://lucid.app/lucidchart/d1/edit", container: "Lucidchart", updatedAt: "2026-10-01T09:00:00Z" },
+      { id: "d2", name: "Retro", url: "https://lucid.app/lucidspark/d2/view", container: "Lucidspark" },
+    ]);
+    expect(calls.some((c) => c.url.includes("evil.example"))).toBe(false);
+    expect(calls.filter((c) => c.url.includes("/documents/search"))).toHaveLength(2);
+  });
+
+  it("checks an API key without a profile through a search, and encodes ids", async () => {
+    const { fetchFn, calls } = server({ "/users/me/profile": new Response("{}", { status: 403 }), "/documents/search": [] });
+    expect(await new LucidImporter("key", { fetch: fetchFn }).whoami()).toEqual({ name: "Lucid user" });
+    const denied = server({ "/documents/search": new Response("{}", { status: 401 }) });
+    await expect(new LucidImporter("bad", { fetch: denied.fetchFn }).whoami()).rejects.toMatchObject({ code: "AUTH" });
+    await new LucidImporter("key", { fetch: fetchFn }).fetchBoard("a/b?c").catch(() => undefined);
+    expect(calls.at(-1)!.url).toContain("/documents/a%2Fb%3Fc/contents");
+    expect(createImporter("lucid", { token: "t" }).system).toBe("lucid");
+  });
+
+  it("reads a Lucidchart CSV of Shape Data: pages, containers, shapes and lines", () => {
+    const csv = [
+      "Id,Name,Shape Library,Page ID,Contained By,Group,Line Source,Line Destination,Source Arrow,Destination Arrow,Status,Text Area 1,Text Area 2,Comments",
+      "1,Document,,,,,,,,,Draft,PI 26.4 dependencies,,",
+      "2,Page,,,,,,,,,,ART board,,",
+      "3,Page,,,,,,,,,,Risks,,",
+      "4,Swim Lane,Flowchart Shapes,2,,,,,,,,Team Checkout,,",
+      "5,Process,Flowchart Shapes,2,4,,,,,,,Guest checkout,13 pts,",
+      '6,Process,Flowchart Shapes,2,4,,,,,,,"Saved carts, phase 2",,',
+      "7,Decision,Flowchart Shapes,2,,,,,,,,Go live?,,",
+      "8,Line,,2,,,5,7,None,Arrow,,depends on,,",
+      "9,Sticky Note,Standard,3,,,,,,,,Vendor SLA unknown,,Raised by the RTE",
+      "10,Line,,2,,,5,99,None,Arrow,,,,",
+    ].join("\r\n");
+    expect(isLucidCsvExport(csv)).toBe(true);
+    const b = boardFromLucidCsv(csv, { name: "Dependencies", now: "2026-10-24T00:00:00.000Z" });
+    expect(b.origin).toMatchObject({ system: "lucid", externalId: "csv:Dependencies" });
+    expect(b.frames.map((f) => [f.title, f.parentId])).toEqual([
+      ["ART board", undefined],
+      ["Team Checkout", "page-2"],
+      ["Risks", undefined],
+    ]);
+    expect(b.nodes.map((n) => [n.id, n.kind, n.text, n.frameId])).toEqual([
+      ["7", "shape", "Go live?", "page-2"],
+      ["5", "shape", "Guest checkout\n13 pts", "frame-4"],
+      ["6", "shape", "Saved carts, phase 2", "frame-4"],
+      ["9", "sticky", "Vendor SLA unknown", "page-3"],
+    ]);
+    expect(b.nodes[1]!.fields).toEqual({ lucidShape: "Process", shapeLibrary: "Flowchart Shapes" });
+    expect(b.nodes[3]!.fields).toMatchObject({ Comments: "Raised by the RTE" });
+    // Containers sit inside their page; their cards inside them.
+    const lane = b.frames[1]!;
+    expect(b.nodes[1]!.y).toBeGreaterThan(lane.y);
+    expect(b.nodes[1]!.y + 170).toBeLessThanOrEqual(lane.y + lane.height);
+    expect(b.edges).toEqual([{ id: "8", fromId: "5", toId: "7", label: "depends on" }]);
+    expect(b.fields).toMatchObject({ lucidCsv: true, pages: 2, documentTitle: "PI 26.4 dependencies" });
+  });
+
+  it("reads a Lucidspark CSV with frames, tags and comments, and refuses other CSVs", () => {
+    const csv = ["Id,Name,Shape Library,Page ID,Contained By,Group,Status,Text Area 1,Comments,Tags", "1,Page,,,,,,Retro board,,", "2,Frame,Lucidspark,1,,,,Went well,,", "3,Sticky Note,Lucidspark,1,2,,,Fast releases,,ops", '4,Sticky Note,Lucidspark,1,,,,Too many meetings,"Agreed, cut one","process; meetings"'].join("\n");
+    expect(isLucidCsvExport(csv)).toBe(true);
+    const b = boardFromLucidCsv(csv, { name: "Retro" });
+    expect(b.frames.map((f) => f.title)).toEqual(["Retro board", "Went well"]);
+    expect(b.nodes.map((n) => [n.text, n.kind, n.frameId, n.tags])).toEqual([
+      ["Too many meetings", "sticky", "page-1", ["process", "meetings"]],
+      ["Fast releases", "sticky", "frame-2", ["ops"]],
+    ]);
+    expect(b.nodes[0]!.fields).toMatchObject({ Comments: "Agreed, cut one" });
+    expect(isLucidCsvExport("Feature,Team,Points\nGuest checkout,Checkout,13")).toBe(false);
   });
 });
 

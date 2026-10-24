@@ -54,7 +54,7 @@ const MODULES = [
     tag: "TEMPLATES · ACADEMY",
     h: "Pick the method.",
     p: "Fifty-odd boards across SAFe, Scrum, Kanban, Lean, Six Sigma and the shop floor, each in its method's own words. Pick one and the whole board changes shape: SAFe becomes a train, Kanban enforces WIP limits.",
-    items: ["Nine method themes", "WIP limits, capacity and human gates enforced", "Or bring your own from Miro, Mural, Trello, monday.com or iObeya"],
+    items: ["Nine method themes", "WIP limits, capacity and human gates enforced", "Or bring your own from Miro, Lucid, Mural, Trello, monday.com or iObeya"],
     href: "/methods",
     bg: "#4a5fe8",
     fg: "#fff",
@@ -90,7 +90,7 @@ const KIT: [string, string, string][] = [
   ["Breakout teams", "Tables of four: drag people in, or seat everyone at random. A full table refuses the fifth.", "M14 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM30 14a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM4 30a10 10 0 0 1 20 0M20 30a10 10 0 0 1 20 0M22 40a5 5 0 1 0 0-10"],
   ["A co-trainer", "Drafts PI objectives, suggests ROAM, reviews a board and writes the readout. You approve everything.", "M22 8v6M22 30v6M8 22h6M30 22h6M13 13l4 4M27 27l4 4M31 13l-4 4M17 27l-4 4"],
   ["Instant readout", "Dashboards by team, increment and work level, with the narrative written for you.", "M6 38V22M16 38V12M26 38V26M36 38V8"],
-  ["Bring your material", "Connect Miro, Mural, Trello or monday.com, upload an iObeya export, or drop a CSV. Boards arrive as they are; add any template beside them.", "M6 14h12l3 4h17v18H6zM22 24v8M18 28l4 4 4-4"],
+  ["Bring your material", "Connect Miro, Lucid, Mural, Trello or monday.com, upload an iObeya or Lucid export, or drop a CSV. Boards arrive as they are; add any template beside them.", "M6 14h12l3 4h17v18H6zM22 24v8M18 28l4 4 4-4"],
 ];
 
 const MARQUEE = ["Class boards", "PI planning", "Scrum", "Kanban", "Lean", "Six Sigma", "OKRs", "Value streams", "Jira & Azure DevOps"];
@@ -253,7 +253,7 @@ export function Landing() {
           <div className="ly-card ly-free-card" style={{ background: STICKY[2] }}>
             <div className="tag">OR BRING YOUR OWN</div>
             <h3>Your template, your way.</h3>
-            <p>Import from Miro, Mural, Trello, monday.com, iObeya or a CSV, keep it exactly as it came, and save it as a template for the next class or the next PI.</p>
+            <p>Import from Miro, Lucid, Mural, Trello, monday.com, iObeya or a CSV, keep it exactly as it came, and save it as a template for the next class or the next PI.</p>
             <Link href="/imports">Bring a board →</Link>
           </div>
         </div>

@@ -33,7 +33,12 @@ export class ImportError extends Error {
   }
 }
 
-export async function requestJson<T>(fetchFn: FetchLike, url: string, init: RequestInit, tool: string, sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms))): Promise<T> {
+export async function requestJson<T>(fetchFn: FetchLike, url: string, init: RequestInit, tool: string, sleep?: (ms: number) => Promise<void>): Promise<T> {
+  return (await requestJsonWithHeaders<T>(fetchFn, url, init, tool, sleep)).body;
+}
+
+/** requestJson that also hands back the response headers, for APIs that page through a Link header. */
+export async function requestJsonWithHeaders<T>(fetchFn: FetchLike, url: string, init: RequestInit, tool: string, sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms))): Promise<{ body: T; headers: Headers }> {
   for (let attempt = 0; ; attempt++) {
     let res: Response;
     try {
@@ -43,7 +48,7 @@ export async function requestJson<T>(fetchFn: FetchLike, url: string, init: Requ
     }
     if (res.ok) {
       const text = await res.text();
-      return (text ? JSON.parse(text) : {}) as T;
+      return { body: (text ? JSON.parse(text) : {}) as T, headers: res.headers };
     }
     if (res.status === 401 || res.status === 403) throw new ImportError("AUTH", `${tool} rejected the token (${res.status}). Check it and the scopes it was granted.`);
     if (res.status === 404) throw new ImportError("NOT_FOUND", `${tool} has no such board, or the token cannot see it.`);
