@@ -110,6 +110,9 @@ async function main() {
       mailer: mailerFromEnv(),
       reminderEveryMs: 60 * 60 * 1000,
     },
+    // New addresses are confirmed with an emailed code whenever mail can be sent; set
+    // TRAINYARD_EMAIL_VERIFICATION=off or =required to choose explicitly.
+    emailVerification: process.env.TRAINYARD_EMAIL_VERIFICATION === "off" ? "off" : process.env.TRAINYARD_EMAIL_VERIFICATION === "required" || process.env.TRAINYARD_SMTP_URL ? "required" : "off",
     logger: true,
   });
   console.log(process.env.TRAINYARD_SMTP_URL ? `[mail] SMTP on, from ${process.env.TRAINYARD_MAIL_FROM || "Trainyard <billing@trainyard.app>"}` : "[mail] off (set TRAINYARD_SMTP_URL and TRAINYARD_MAIL_FROM): trial confirmations and the 7-day reminder before the first charge will not be sent");

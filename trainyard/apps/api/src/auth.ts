@@ -32,6 +32,13 @@ export interface User {
   personId?: string;
   /** The customer workspace this login belongs to; absent for the platform's own users. */
   workspaceId?: string;
+  /** When the person proved they read this address (sign-up code, or an identity provider). */
+  emailVerifiedAt?: string;
+  /**
+   * Sign-ins from outside identity providers linked to this user (identity.ts): single
+   * sign-on through OIDC or SAML adds one entry per provider, keyed by its subject id.
+   */
+  identities?: { provider: string; subject: string; linkedAt: string }[];
 }
 
 export interface Principal {

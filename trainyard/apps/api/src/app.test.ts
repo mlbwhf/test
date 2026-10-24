@@ -1656,3 +1656,43 @@ describe("security limits", () => {
     expect((await call("PUT", "/v1/lane-boards/__proto__", { cards: [], notes: [], strokes: [] })).status).toBe(400);
   });
 });
+
+describe("email verification", () => {
+  const codeIn = (mailer: MemoryMailer) => /\b(\d{6})\b/.exec(mailer.sent.at(-1)!.subject)![1]!;
+  it("creates nothing until the emailed code is entered, then hands over the practice workspace", async () => {
+    const mailer = new MemoryMailer();
+    const { call, store } = await setup({ emailVerification: "required", billing: { mailer } });
+    expect((await call("GET", "/v1/auth/providers")).body).toMatchObject({ password: true, emailVerification: "required", sso: [] });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "ada's own password" });
+    expect(s.status).toBe(201);
+    expect(s.body).toMatchObject({ verify: "code-sent" });
+    expect(s.body.apiKey).toBeUndefined();
+    expect(store.state.users).toHaveLength(0);
+    expect(mailer.sent[0]!.to).toBe("ada@example.io");
+    // Wrong codes count; the right one creates the workspace and the key.
+    const code = codeIn(mailer);
+    const wrong = code === "000000" ? "111111" : "000000";
+    expect((await call("POST", `/v1/signups/${s.body.signup.id}/verify`, { code: wrong })).body.error.code).toBe("BAD_CODE");
+    const ok = await call("POST", `/v1/signups/${s.body.signup.id}/verify`, { code });
+    expect(ok.status).toBe(200);
+    expect(typeof ok.body.apiKey).toBe("string");
+    expect(store.state.users[0]!.emailVerifiedAt).toBeTruthy();
+    expect((await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "ada's own password" })).status).toBe(200);
+  });
+
+  it("stops after five wrong codes, sends a new one on request, and keeps paid sign-ups from checkout until confirmed", async () => {
+    const mailer = new MemoryMailer();
+    const { call } = await setup({ emailVerification: "required", billing: { mailer, secretKey: "sk_test", prices: { "trainer-monthly": "price_tm" } } });
+    const s = await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "trainer" });
+    const id = s.body.signup.id as string;
+    expect((await call("POST", "/v1/billing/subscribe", { signupId: id })).body.error.code).toBe("EMAIL_NOT_VERIFIED");
+    const code = codeIn(mailer);
+    const wrong = code === "000000" ? "111111" : "000000";
+    for (let i = 0; i < 5; i++) await call("POST", `/v1/signups/${id}/verify`, { code: wrong });
+    expect((await call("POST", `/v1/signups/${id}/verify`, { code })).body.error.code).toBe("CODE_EXPIRED");
+    expect((await call("POST", `/v1/signups/${id}/resend`)).body).toMatchObject({ verify: "code-sent" });
+    const ok = await call("POST", `/v1/signups/${id}/verify`, { code: codeIn(mailer) });
+    expect(ok.body).toMatchObject({ verified: true });
+    expect((await call("POST", "/v1/billing/subscribe", { signupId: id })).body.error?.code).not.toBe("EMAIL_NOT_VERIFIED");
+  });
+});

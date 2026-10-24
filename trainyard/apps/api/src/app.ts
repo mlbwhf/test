@@ -61,6 +61,7 @@ import { registerLaneBoardRoutes } from "./lanes.js";
 import { registerInsightRoutes } from "./insights.js";
 import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
+import { registerIdentityRoutes, type SsoProvider } from "./identity.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
 import { registerAiNativeRoutes } from "./ainative.js";
 import { Store } from "./store.js";
@@ -82,6 +83,10 @@ export interface AppOptions extends AuthOptions {
   /** fetch used by board importers; tests inject a fake. */
   importFetch?: FetchLike;
   /** Behind Traefik or another proxy: read the client IP from X-Forwarded-For for rate limits and logs. */
+  /** "required" confirms a sign-up's address with an emailed code before anything is created. */
+  emailVerification?: "required" | "off";
+  /** Single sign-on providers offered on the sign-in page (identity.ts). */
+  sso?: SsoProvider[];
   /** true trusts every proxy hop (development only); a ProxyTrust trusts Traefik and the edge (proxies.ts). */
   trustProxy?: boolean | ProxyTrust;
   /** Requests per minute per client before 429; 0 turns rate limiting off (tests). */
@@ -731,8 +736,9 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerCanvasRoutes(app, store);
   registerOutcomeRoutes(app, store);
   registerAiNativeRoutes(app, store);
-  await registerBillingRoutes(app, tenants, { ...opts.billing, ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
-  registerSignupRoutes(app, tenants, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
+  await registerBillingRoutes(app, tenants, { ...opts.billing, emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
+  registerSignupRoutes(app, tenants, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}), emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}) });
+  registerIdentityRoutes(app, { emailVerification: opts.emailVerification ?? "off", sso: opts.sso ?? [] });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
 

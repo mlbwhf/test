@@ -16,7 +16,7 @@ import { z } from "zod";
 import { hashKey, newKey, require as requirePermission, type Principal, type User } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import { limitsFor, usageOf } from "./plans.js";
-import type { Plan } from "./signups.js";
+import { signupVerified, type Plan } from "./signups.js";
 import type { Tenants } from "./tenants.js";
 import { LogMailer, type Mailer } from "./mailer.js";
 
@@ -38,6 +38,8 @@ export interface BillingOptions {
   mailer?: Mailer;
   /** How often to look for reminders that are due; 0 or absent = only on demand. */
   reminderEveryMs?: number;
+  /** "required": a sign-up pays only once its address is confirmed (signups.ts). */
+  emailVerification?: "required" | "off";
 }
 
 /** Days before the first charge that the reminder goes out (Visa asks for at least 7). */
@@ -233,7 +235,11 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     if (!price) throw new ApiError(409, "NO_PRICE", `No Stripe price is configured for ${plan} ${interval}.`);
     return price;
   };
-  const findSignup = (id: string) => signups().find((s) => s.id === id) ?? (() => { throw notFound("Sign-up"); })();
+  const findSignup = (id: string) => {
+    const signup = signups().find((s) => s.id === id) ?? (() => { throw notFound("Sign-up"); })();
+    if (!signupVerified(signup, opts.emailVerification)) throw new ApiError(403, "EMAIL_NOT_VERIFIED", "Confirm your email address with the code we sent, then continue to payment.");
+    return signup;
+  };
   const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${randomBytes(9).toString("base64url")}`;
 
   /** Payment is in. New customer: user + workspace, key kept for one pickup. Existing workspace: plan and seats applied. */

@@ -556,6 +556,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<{ name: string; email: string; plan: PlanId; paying?: boolean; claim?: Claim } | null>(null);
   const [pay, setPay] = useState<Subscription | null>(null);
+  const [verify, setVerify] = useState<{ id: string; code: string; sent: boolean } | null>(null);
   const def = useMemo(() => PLANS.find((p) => p.id === plan)!, [plan]);
   const [billing, setBilling] = useState<BillingConfig | null>(null);
   useEffect(() => {
@@ -571,7 +572,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
     setBusy(true);
     setErr(null);
     try {
-      const created = await api<{ signup: { id: string }; apiKey?: string; workspace?: { id: string; name: string; plan: string } }>("POST", "/v1/signups", {
+      const created = await api<{ signup: { id: string }; apiKey?: string; workspace?: { id: string; name: string; plan: string }; verify?: "code-sent" }>("POST", "/v1/signups", {
         name: name.trim(),
         email: email.trim(),
         password,
@@ -583,6 +584,50 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         ...(hp ? { website: hp } : {}),
         source: typeof window !== "undefined" ? window.location.pathname : "/",
       });
+      if (created.verify === "code-sent") {
+        // The address is confirmed first: nothing is created or charged until the code is in.
+        setVerify({ id: created.signup.id, code: "", sent: true });
+        return;
+      }
+      await proceed(created);
+    } catch (x) {
+      const f = x as ApiFailure;
+      setErr(f.status === 429 ? "Too many sign-ups from this connection; try again in a minute." : f.code === "EMAIL_TAKEN" ? "There is already a sign-in for this email. Use Sign in at the top, or write to us for a new key." : f.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirm = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!verify) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const done = await api<{ signup: { id: string }; apiKey?: string; verified?: boolean }>("POST", `/v1/signups/${encodeURIComponent(verify.id)}/verify`, { code: verify.code.trim() });
+      setVerify(null);
+      await proceed(done);
+    } catch (x) {
+      const f = x as ApiFailure;
+      setErr(f.code === "EMAIL_TAKEN" ? "There is already a sign-in for this email. Use Sign in at the top." : f.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const resend = async () => {
+    if (!verify) return;
+    setErr(null);
+    try {
+      await api("POST", `/v1/signups/${encodeURIComponent(verify.id)}/resend`);
+      setVerify({ ...verify, code: "", sent: true });
+    } catch (x) {
+      setErr((x as ApiFailure).status === 429 ? "A new code was sent a moment ago; wait a minute." : (x as ApiFailure).message);
+    }
+  };
+
+  /** After the sign-up (and its code): the practice key, in-page payment, or hosted Checkout. */
+  const proceed = async (created: { signup: { id: string }; apiKey?: string }) => {
+    {
       const quantity = seats && Number(seats) > 0 ? Number(seats) : 1;
       if (created.apiKey) {
         // Practice: the workspace exists already; the key is shown once, right here.
@@ -602,14 +647,37 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
           setDone({ name: name.trim(), email: email.trim(), plan });
         }
       } else setDone({ name: name.trim(), email: email.trim(), plan });
-    } catch (x) {
-      const f = x as ApiFailure;
-      setErr(f.status === 429 ? "Too many sign-ups from this connection; try again in a minute." : f.code === "EMAIL_TAKEN" ? "There is already a sign-in for this email. Use Sign in at the top, or write to us for a new key." : f.message);
-    } finally {
-      setBusy(false);
     }
   };
 
+  if (verify) {
+    return (
+      <form className="ly-form" onSubmit={confirm}>
+        <div className="ly-step">
+          <span className="ly-step-n">2</span> Confirm your email · {email.trim()}
+        </div>
+        <p style={{ margin: 0 }}>We sent a six-digit code to <b>{email.trim()}</b>. Enter it here; it works for 10 minutes. Nothing is created or charged until then.</p>
+        <label>
+          Code
+          <input value={verify.code} onChange={(e) => setVerify({ ...verify, code: e.target.value.replace(/\D/g, "").slice(0, 6) })} inputMode="numeric" autoComplete="one-time-code" pattern="\d{6}" required autoFocus aria-describedby="code-help" />
+        </label>
+        <span id="code-help" style={{ fontSize: 14, opacity: 0.8 }}>
+          No email? Check spam, or{" "}
+          <button type="button" className="ly-link" onClick={() => void resend()}>
+            send a new code
+          </button>
+          .
+        </span>
+        {err ? <div className="err" role="alert">{err}</div> : null}
+        <button type="submit" className="submit" disabled={busy || verify.code.length !== 6}>
+          {busy ? "Checking…" : "Confirm and continue"}
+        </button>
+        <button type="button" className="ly-link" onClick={() => setVerify(null)}>
+          ← Use a different email
+        </button>
+      </form>
+    );
+  }
   if (pay && billing?.publishableKey) {
     const qty = seats && Number(seats) > 0 ? Number(seats) : 1;
     const unit = plan === "academy" ? "train" : plan === "insights" ? "source pack" : "trainer";
