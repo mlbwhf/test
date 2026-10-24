@@ -10,3 +10,9 @@ export function apiUrl(): string {
 }
 
 export const REPO_URL = "https://github.com/mlbwhf/test/tree/claude/confident-cray-JTbgD/trainyard";
+
+/**
+ * IndexNow key (Bing, Yandex, Seznam, Naver; Bing feeds ChatGPT search and Copilot). The key is
+ * public by design: it is served at /<key>.txt to prove the site owns the submissions.
+ */
+export const INDEXNOW_KEY = "7c1e4b9a2f6d48e3b05a9c7d3e1f2a64";

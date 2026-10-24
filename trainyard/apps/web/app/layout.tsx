@@ -14,10 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
       "Open-source planning rooms for SAFe, LeSS, Scrum@Scale, Nexus and Flight Levels. PI planning boards, ROAM, program board and dashboards synced two ways with Jira and Azure DevOps, an AI-native portfolio module, and bring-your-own boards from Miro, Mural, monday.com and Trello.",
     applicationName: "Trainyard",
     keywords: ["PI planning", "SAFe", "scaled agile", "PI planning board", "program board", "PI planning tool comparison", "value stream mapping", "SAFe canvases", "Jira app", "Azure DevOps extension", "Jira", "Azure DevOps", "AI-native SAFe", "lean portfolio management", "open source"],
-    alternates: { canonical: "/" },
     openGraph: { type: "website", siteName: "Trainyard", url: base, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Trainyard: a PI planning board in the glass theme" }] },
     twitter: { card: "summary_large_image", images: ["/og.png"] },
     icons: { icon: "/icon.svg" },
+    // Search Console and Bing Webmaster Tools ownership, set on the server without a rebuild.
+    verification: {
+      ...(process.env.TRAINYARD_GOOGLE_VERIFICATION ? { google: process.env.TRAINYARD_GOOGLE_VERIFICATION } : {}),
+      ...(process.env.TRAINYARD_BING_VERIFICATION ? { other: { "msvalidate.01": process.env.TRAINYARD_BING_VERIFICATION } } : {}),
+    },
+    alternates: { canonical: "/", types: { "text/plain": [{ url: "/llms.txt", title: "llms.txt" }] } },
     // App pages override this with noindex in their own layout.
     robots: { index: true, follow: true },
   };
@@ -32,7 +37,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en">
       <body>
         {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(api)}` }} /> : null}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, description: "Open-source planning rooms for scaled agile, an outcome dashboard for executives and boards, and free class boards for SAFe trainers.", sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />
         {children}
       </body>
     </html>

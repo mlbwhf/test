@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { TEMPLATE_METHODS, type Board, type BoardOrigin, type TemplateInfo, type TemplateMethod } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
@@ -36,7 +36,8 @@ export default function TemplatesPage() {
   const me = useMe();
   const [filter, setFilter] = useState<string>("all");
   const [method, setMethod] = useState<TemplateMethod | "all">("all");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const params = useSearchParams();
+  const [selectedId, setSelectedId] = useState<string | null>(params.get("tpl"));
   const [err, setErr] = useState<string | null>(null);
   const [name, setName] = useState("");
   const selId = selectedId ?? data.data?.builtin[0]?.id ?? null;

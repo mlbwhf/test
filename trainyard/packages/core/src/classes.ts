@@ -276,6 +276,9 @@ export function classBoard(spec: ClassSpec, now = "2026-01-01T00:00:00.000Z"): B
   return board;
 }
 
+
+
+
 export function classInfo(spec: ClassSpec): TemplateInfo {
   return {
     id: `class-${spec.id}`,
@@ -460,7 +463,7 @@ const CARS_SCENARIO: Exercise[] = [
   { kind: "slide", title: "CARS: the problems to overcome", body: "Dysfunctional leadership with conflicting priorities and autocratic, risk-averse styles; little psychological safety among executives. A rigid financial structure: portfolio spend committed annually with no flexibility. A portfolio structure that creates silos: each senior vice president owns their own portfolio." },
 ];
 
-export const CLASSES: ClassSpec[] = [
+const RAW_CLASSES: ClassSpec[] = [
   {
     id: "leading-safe",
     name: "Leading SAFe",
@@ -605,3 +608,52 @@ export const CLASSES: ClassSpec[] = [
 export function classTemplates(now?: string): (Board & { info: TemplateInfo })[] {
   return CLASSES.map((spec) => Object.assign(classBoard(spec, now), { info: classInfo(spec) }));
 }
+
+// ---- live tools in the classes -------------------------------------------------------------
+// Chapters that teach something Trainyard runs for real open the live tool instead of a copy of
+// it, so when the tool changes (a new readiness item, a new Coach Sync question, the value
+// stream workshop) every class shows the change without editing the class.
+
+export const LIVE_TOOLS = {
+  piPlanning: [
+    { kind: "link", title: "PI planning board, live", body: "Milestones and events on top, features by team and iteration, dependency strings, risks to ROAM, team capacity from members or velocity, and team and ART PI objectives.", href: "/board" },
+    { kind: "link", title: "Coach Sync during PI planning", body: "The six checkpoints across the two days (1:00, 2:00, 3:00, 3:45; 10:30, 11:30), answered per team on a question × team grid.", href: "/board/coach-sync" },
+  ],
+  valueStreams: [
+    { kind: "link", title: "Value stream identification, live", body: "Operational value stream type and template, steps with who performs them, solutions, people who develop and support them by group, development value streams and ART topologies. Click anything to edit.", href: "/value-streams" },
+    { kind: "link", title: "Value stream mapping", body: "Active time, wait time and %C&A per step, current and future state, flow efficiency and the queue to attack first.", href: "/value-streams" },
+  ],
+  readiness: [
+    { kind: "link", title: "PI planning readiness, live", body: "The ART readiness checklist with SAFe's needed and desirable items and the readiness ring, on the ART launch canvas beside the launch timeline.", href: "/canvases/canvas-launch" },
+    { kind: "link", title: "Readiness checklist guide", body: "Each item with the question behind it, and how trainers and RTEs use it.", href: "/guides/art-readiness-checklist" },
+  ],
+  inspectAdapt: [
+    { kind: "link", title: "Inspect & Adapt board, live", body: "Problem statement, fishbone root causes, five whys and the improvement backlog, created for your ART from the template.", href: "/templates?tpl=tpl-builtin-inspect-adapt" },
+    { kind: "link", title: "PI objectives: planned and actual business value", body: "Score actual business value against plan per team and for the ART; the predictability measure follows on the dashboards.", href: "/board" },
+    { kind: "link", title: "Predictability and flow dashboards", body: "ART predictability, flow time, flow load and flow distribution for the PI system demo and the quantitative review.", href: "/dashboards" },
+  ],
+} satisfies Record<string, Exercise[]>;
+
+/** Which chapter (1-based lesson number) of which class opens which live tool. */
+export const LIVE_CHAPTERS: Record<string, Record<number, (keyof typeof LIVE_TOOLS)[]>> = {
+  "leading-safe": { 4: ["piPlanning"] },
+  spc: { 4: ["piPlanning"], 9: ["valueStreams"], 10: ["readiness"], 11: ["inspectAdapt"] },
+  rte: { 3: ["readiness"], 6: ["inspectAdapt"] },
+};
+
+function withLiveTools(c: ClassSpec): ClassSpec {
+  const map = LIVE_CHAPTERS[c.id];
+  if (!map) return c;
+  return {
+    ...c,
+    lessons: c.lessons.map((l, i) => {
+      const tools = map[i + 1];
+      if (!tools) return l;
+      const have = new Set(l.exercises.flatMap((e) => (e.kind === "link" ? [e.href] : [])));
+      const add = tools.flatMap((t) => LIVE_TOOLS[t] as Exercise[]).filter((e) => e.kind === "link" && !have.has(e.href) && (have.add(e.href), true));
+      return { ...l, exercises: [...l.exercises, ...add] };
+    }),
+  };
+}
+
+export const CLASSES: ClassSpec[] = RAW_CLASSES.map(withLiveTools);

@@ -138,3 +138,6 @@ jobs:
             docker logout ghcr.io
       - name: Smoke-test the live site
         run: bash trainyard/infra/scripts/smoke.sh "${{ vars.TRAINYARD_WEB_HOST || 'agileagilist.com' }}" "${{ vars.TRAINYARD_API_HOST || 'api.agileagilist.com' }}" ${{ vars.TRAINYARD_WEB_ALIASES || 'www.agileagilist.com plan.agile-agilist.com' }}
+      - name: Tell search engines and AI search what changed (IndexNow)
+        continue-on-error: true
+        run: bash trainyard/infra/scripts/indexnow.sh "${{ vars.TRAINYARD_WEB_HOST || 'agileagilist.com' }}"
