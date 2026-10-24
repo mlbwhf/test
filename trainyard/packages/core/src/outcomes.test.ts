@@ -95,6 +95,15 @@ describe("class boards", () => {
     expect(popm.frames.filter((f) => !f.parentId).slice(1).map((f) => f.title.replace(/^Lesson \d+: /, ""))).toEqual(["Becoming a Product Owner / Product Manager", "Preparing for PI Planning", "Leading PI Planning", "Executing Iterations", "Executing the PI"]);
     expect(popm.frames.filter((f) => /^(Unicorns|Lions|Bears) .* board$/.test(f.title))).toHaveLength(3);
     expect(popm.nodes.some((n) => n.text.startsWith("Trustworthy:"))).toBe(true);
+    // POPM and Advanced SPC chapters are built from the tools' own definitions too.
+    expect(popm.frames.some((f) => f.title.startsWith("Feature canvas"))).toBe(true);
+    expect(popm.frames.some((f) => f.title.startsWith("Coach Sync"))).toBe(true);
+    expect(popm.frames.some((f) => f.title === "Processes")).toBe(true);
+    const aspc = classBoard(CLASSES[2]!);
+    expect(aspc.nodes.some((n) => n.text === "Curated data")).toBe(true);
+    expect(aspc.frames.some((f) => f.title.startsWith("Lean business case"))).toBe(true);
+    expect(aspc.nodes.some((n) => n.text === "AI-Native SAFe")).toBe(true);
+    expect(aspc.frames.some((f) => f.title === "Implementing")).toBe(true);
     expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-rte"]);
   });
 });

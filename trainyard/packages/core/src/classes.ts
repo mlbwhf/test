@@ -13,7 +13,10 @@
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import type { TemplateInfo } from "./templates.js";
-import { PI_PLANNING_READINESS } from "./canvases.js";
+import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
+import { EPIC_STATES } from "./portfolio.js";
+import { SUCCESS_FACTORS } from "./ainative.js";
+import { TEMPLATES as OPERATING_MODELS } from "./frameworks.js";
 import { COACH_SYNC_CHECKPOINTS } from "./coachsync.js";
 import { POINTS_PER_FULL_TIME } from "./capacity.js";
 import { ART_TOPOLOGIES, OVS_TEMPLATE_FIELDS, OVS_TYPES, VS_WORKSHOP_STEPS } from "./valuestreams.js";
@@ -603,6 +606,26 @@ export function classTemplates(now?: string): (Board & { info: TemplateInfo })[]
 // workshop and template, the Inspect & Adapt agenda). Class boards are regenerated from them on
 // every start, so when a tool's definition changes, the class changes with it.
 
+/** A canvas exercise built from one of the canvases the tool uses: same sections, same prompts. */
+function canvasExercise(id: string, cols = 3): Exercise {
+  const def = CANVAS_TYPES.find((t) => t.id === id);
+  if (!def) throw new Error(`No canvas ${id}`);
+  const sections = def.sections.map((s) => s.title);
+  const prompts: Record<string, string> = {};
+  for (const s of def.sections) {
+    const p = s.prompt ?? (s.labels ? s.labels.join(" · ") : undefined);
+    if (p) prompts[s.title] = p;
+  }
+  return { kind: "canvas", title: `${def.name}: ${def.blurb}`, sections, cols, prompts };
+}
+
+/** The WSJF table, with the cost-of-delay parts named the way the feature canvas names them. */
+function wsjfTable(item: string): Exercise {
+  const parts = CANVAS_TYPES.find((t) => t.id === "feature-canvas")!.sections.find((s) => s.kind === "wsjf")!.labels!;
+  const [value, time, risk, size] = parts as [string, string, string, string];
+  return { kind: "table", title: `WSJF: cost of delay (${value} + ${time} + ${risk}) ÷ ${size}`, columns: [item, value, time, risk, "Cost of delay", size, "WSJF"], rows: [], blankRows: 4 };
+}
+
 export const CLASS_TOOLS = {
   piPlanning: (): Exercise[] => [
     {
@@ -626,6 +649,30 @@ export const CLASS_TOOLS = {
     { kind: "zones", title: "Realise ARTs: which topology fits each train?", zones: ART_TOPOLOGIES.map((t) => t.name), items: ART_TOPOLOGIES.map((t) => t.blurb) },
   ],
   readiness: (): Exercise[] => READINESS_CHECKLIST,
+  features: (): Exercise[] => [canvasExercise("feature-canvas"), canvasExercise("enabler-canvas"), wsjfTable("Feature")],
+  portfolio: (): Exercise[] => [
+    { kind: "zones", title: "Portfolio Kanban: move each epic to its state, then set a WIP limit per state", zones: EPIC_STATES.map((st) => st[0]!.toUpperCase() + st.slice(1)), color: COLORS.blue },
+    canvasExercise("epic-hypothesis"),
+    canvasExercise("lean-business-case"),
+    wsjfTable("Epic"),
+  ],
+  strategy: (): Exercise[] => [canvasExercise("lace-mission"), canvasExercise("swot", 2), canvasExercise("tows", 2), canvasExercise("portfolio-vision")],
+  aiNative: (): Exercise[] => [
+    {
+      kind: "table",
+      title: "AI-Native readiness: score each success factor 1–5 on your own, then compare and name the gaps",
+      columns: ["Shift", "Success factor", "Person 1", "Person 2", "Person 3", "Person 4", "Gap and next step"],
+      rows: SUCCESS_FACTORS.flatMap((g) => g.factors.map((f, i) => [i === 0 ? g.shift : "", f, "", "", "", "", ""])),
+    },
+  ],
+  operatingModels: (): Exercise[] => [
+    {
+      kind: "table",
+      title: "Operating models: start from the closest one, then keep, adapt, drop or add levels, roles and events",
+      columns: ["Model", "Group levels", "Work levels", "Cadence", "Keep · adapt · drop"],
+      rows: OPERATING_MODELS.map((m) => [m.name, m.groupLevels.map((g) => g.label).join(" › "), m.workLevels.map((w) => w.label).join(" › "), m.cadence.mode === "flow" ? "Flow (replenishment)" : `${m.cadence.iterationsPerIncrement} × ${m.cadence.iterationWeeks}-week ${m.cadence.iterationLabel.toLowerCase()}s per ${m.cadence.incrementLabel}`, ""]),
+    },
+  ],
   inspectAdapt: (): Exercise[] => [
     { kind: "slide", title: "Inspect & Adapt: the three parts", body: INSPECT_AND_ADAPT.parts.map((p) => `${p.title}: ${p.detail}`).join(" "), steps: [...INSPECT_AND_ADAPT.workshopSteps] },
     { kind: "table", title: `PI objectives: planned and actual business value. ${INSPECT_AND_ADAPT.predictability}`, columns: [...INSPECT_AND_ADAPT.objectives], rows: [], blankRows: 6 },
@@ -639,6 +686,8 @@ export const CLASS_TOOL_CHAPTERS: Record<string, Record<number, (keyof typeof CL
   "leading-safe": { 4: ["piPlanning"] },
   spc: { 4: ["piPlanning"], 9: ["valueStreams"], 10: ["readiness"], 11: ["inspectAdapt"] },
   rte: { 3: ["readiness"], 6: ["inspectAdapt"] },
+  popm: { 2: ["readiness", "features"], 3: ["piPlanning"], 5: ["inspectAdapt"] },
+  aspc: { 2: ["aiNative"], 4: ["strategy"], 5: ["portfolio"], 6: ["operatingModels"] },
 };
 
 function withLiveTools(c: ClassSpec): ClassSpec {
@@ -653,7 +702,7 @@ function withLiveTools(c: ClassSpec): ClassSpec {
       const titles = new Set(generated.map((e) => e.title));
       // The tool's own version replaces any hand-written copy of the same exercise.
       // Links to the tool go too: the chapter now holds the tool's own content.
-      const superseded = (e: Exercise) => titles.has(e.title) || e.kind === "link" || /^(PI planning readiness|Problem-solving workshop|Fishbone|Improvement backlog|Operational steps)/.test(e.title);
+      const superseded = (e: Exercise) => titles.has(e.title) || e.kind === "link" || /^(PI planning readiness|Problem-solving workshop|Fishbone|Improvement backlog|Operational steps|Features: benefit hypothesis|WSJF: Cost of Delay)/.test(e.title);
       const kept = l.exercises.filter((e) => !superseded(e));
       return { ...l, exercises: [...kept, ...generated] };
     }),
