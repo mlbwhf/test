@@ -1556,3 +1556,22 @@ describe("trial emails", () => {
   });
 });
 
+
+describe("OKRs and lane boards", () => {
+  it("serves objectives as key results, records check-ins, realigns, and keeps lane boards", async () => {
+    const { call } = await setup();
+    const v = (await call("GET", "/v1/okrs")).body.okrs;
+    expect(v.counts.total).toBeGreaterThan(0);
+    const kr = v.objectives[0].keyResults[0];
+    const checked = (await call("PUT", "/v1/okrs/check-in", { measureId: kr.measureId, status: "off", note: "Vendor slipped" })).body.okrs;
+    expect(checked.objectives[0].keyResults[0]).toMatchObject({ status: "off", checkIn: { note: "Vendor slipped" } });
+    expect((await call("PUT", "/v1/okrs/check-in", { measureId: "nope", status: "on" })).status).toBe(404);
+    const moved = (await call("PUT", "/v1/okrs/align", { measureId: kr.measureId, objectiveId: v.objectives[1].id })).body.okrs;
+    expect(moved.objectives[1].keyResults.map((k: { measureId: string }) => k.measureId)).toContain(kr.measureId);
+    expect((await call("GET", "/v1/lane-boards/class-breakouts")).body.board).toBeNull();
+    const saved = await call("PUT", "/v1/lane-boards/class-breakouts", { cards: [{ id: "p1", lane: "t1", title: "Amara" }], notes: [{ id: "n1", kind: "sticky", text: "hi", x: 10, y: 20, tone: 1 }], strokes: ["M0 0L10 10"] });
+    expect(saved.status).toBe(200);
+    expect((await call("GET", "/v1/lane-boards/class-breakouts")).body.board.cards[0].lane).toBe("t1");
+    expect((await call("PUT", "/v1/lane-boards/bad key", { cards: [], notes: [], strokes: [] })).status).toBe(400);
+  });
+});

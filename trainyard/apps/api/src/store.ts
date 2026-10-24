@@ -8,7 +8,7 @@ import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersiste
 import type { Purchase } from "./billing.js";
 import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
-import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState, type OvsType, type InsightsState } from "@trainyard/core";
+import { DEMO_NOW, demoArt, type CardType, type CardTypeOverride, demoPlanningSession, type AiNativeArt, type PlanningSession, demoCanvases, demoIdentification, type Canvas, demoMap, demoWorkspace, getTemplate, type Dashboard, type OperatingModel, type SourceSystem, type ValueStreamIdentification, type ValueStreamMap, type Workspace , type CoachSyncState, type OvsType, type InsightsState, type LaneBoardState } from "@trainyard/core";
 import type { Principal, User } from "./auth.js";
 import type { Connection } from "./boards.js";
 import { ApiError } from "./errors.js";
@@ -87,6 +87,8 @@ export interface StoreState {
   insights?: InsightsState;
   /** Coach Sync answers during PI planning, per increment id. */
   coachSync?: Record<string, CoachSyncState>;
+  /** Lane boards kept per key: class breakouts and agenda, notes, timers and ink. */
+  laneBoards?: Record<string, LaneBoardState>;
   /** Admin recolouring of built-in card types. */
   cardTypeOverrides?: CardTypeOverride[];
 }

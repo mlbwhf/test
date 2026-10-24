@@ -45,6 +45,8 @@ export function proxy(req: NextRequest) {
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
+  // The signed-in shell picks its space theme from the path before the first paint.
+  requestHeaders.set("x-pathname", req.nextUrl.pathname);
   requestHeaders.set("content-security-policy", csp);
   if (embed) requestHeaders.set("x-embed", "1");
   else requestHeaders.delete("x-embed");

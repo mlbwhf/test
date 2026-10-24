@@ -107,7 +107,19 @@ export interface InsightsState {
   measures: Measure[];
   objectives: InsightObjective[];
   initiatives?: Initiative[];
+  /** Weekly OKR check-ins: what the owner says is true today, newest last. Overrides the computed status. */
+  checkIns?: CheckIn[];
   updatedAt: string;
+}
+
+export type OkrStatus = "on" | "risk" | "off";
+
+export interface CheckIn {
+  measureId: string;
+  status: OkrStatus;
+  note?: string;
+  at: string;
+  by: string;
 }
 
 export interface SeriesPoint {
@@ -606,5 +618,113 @@ export function northstarInsights(now = "2026-10-21T12:00:00.000Z"): InsightsSta
       },
     ],
     updatedAt: now,
+  };
+}
+
+
+// ---- OKRs: objectives with their key results, as the OKR space shows them ------------------
+// Each objective's outcomes and KPIs are its key results. Progress runs from the first value in
+// the data (the baseline) to the target; status is computed from the data unless the latest
+// check-in says otherwise. The weekly trend is the same progress computed at each past period.
+
+export interface OkrKeyResult {
+  measureId: string;
+  objectiveId: string;
+  name: string;
+  role: Measure["role"];
+  value: string;
+  target: string;
+  /** 0–100, baseline to target. */
+  progress: number;
+  status: OkrStatus;
+  /** What the data alone says. */
+  computed: OkrStatus;
+  checkIn?: CheckIn;
+}
+
+export interface OkrObjectiveView {
+  id: string;
+  title: string;
+  entity: string;
+  progress: number;
+  keyResults: OkrKeyResult[];
+  mix: Record<OkrStatus, number>;
+}
+
+export interface OkrView {
+  objectives: OkrObjectiveView[];
+  overall: number;
+  counts: Record<OkrStatus, number> & { total: number };
+  /** Overall progress per period, oldest first; the last is now. */
+  trend: { period: string; progress: number }[];
+  daysLeft: number;
+  needsAttention: OkrKeyResult[];
+}
+
+function progressAt(m: MeasureView, value: number | null): number {
+  if (value === null || m.target === undefined) return 0;
+  const met = m.higherIsBetter ? value >= m.target : value <= m.target;
+  if (met) return 100;
+  const base = m.first;
+  if (base === null || base === m.target) return 0;
+  return Math.max(0, Math.min(99, Math.round(((value - base) / (m.target - base)) * 100)));
+}
+
+const statusOf = (progress: number): OkrStatus => (progress >= 100 ? "on" : progress >= 60 ? "risk" : "off");
+
+export function okrView(state: InsightsState, now: Date, entityId?: string): OkrView {
+  const ids = entityId ? new Set(onePager(state, entityId).scope.map((e) => e.id)) : null;
+  const latest = new Map<string, CheckIn>();
+  for (const c of state.checkIns ?? []) latest.set(c.measureId, c);
+  const views = new Map<string, MeasureView>();
+  const view = (id: string) => views.get(id) ?? views.set(id, measureView(state, id)).get(id)!;
+  const objectives: OkrObjectiveView[] = state.objectives
+    .filter((o) => !ids || ids.has(o.entityId))
+    .map((o) => {
+      const keyResults = [...o.outcomeIds, ...o.kpiIds].map((id): OkrKeyResult => {
+        const m = view(id);
+        const progress = progressAt(m, m.current);
+        const computed = statusOf(progress);
+        const checkIn = latest.get(id);
+        return { measureId: id, objectiveId: o.id, name: m.name, role: m.role, value: formatMeasure(m.current, m.unit, m.decimals), target: m.targetLabel ?? (m.target !== undefined ? formatMeasure(m.target, m.unit, m.decimals) : "no target"), progress, computed, status: checkIn?.status ?? computed, ...(checkIn ? { checkIn } : {}) };
+      });
+      const mix = { on: 0, risk: 0, off: 0 };
+      for (const k of keyResults) mix[k.status]++;
+      const progress = keyResults.length ? Math.round(keyResults.reduce((n, k) => n + k.progress, 0) / keyResults.length) : 0;
+      return { id: o.id, title: o.title, entity: state.entities.find((e) => e.id === o.entityId)?.name ?? "", progress, keyResults, mix };
+    });
+  const krs = objectives.flatMap((o) => o.keyResults);
+  const counts = { on: 0, risk: 0, off: 0, total: krs.length };
+  for (const k of krs) counts[k.status]++;
+  const overall = krs.length ? Math.round(krs.reduce((n, k) => n + k.progress, 0) / krs.length) : 0;
+  const periods = [...new Set(krs.flatMap((k) => view(k.measureId).series.map((p) => p.period)))].sort().slice(-6);
+  const trend = periods.map((period) => {
+    const at = krs.map((k) => {
+      const m = view(k.measureId);
+      const pts = m.series.filter((p) => p.period <= period);
+      return progressAt(m, pts.at(-1)?.value ?? null);
+    });
+    return { period, progress: at.length ? Math.round(at.reduce((n, x) => n + x, 0) / at.length) : 0 };
+  });
+  const q = Math.floor(now.getUTCMonth() / 3);
+  const end = Date.UTC(now.getUTCFullYear(), q * 3 + 3, 1);
+  const daysLeft = Math.max(0, Math.ceil((end - now.getTime()) / 86_400_000));
+  const rank: Record<OkrStatus, number> = { off: 0, risk: 1, on: 2 };
+  const needsAttention = krs.filter((k) => k.status !== "on").sort((a, b) => rank[a.status] - rank[b.status] || a.progress - b.progress);
+  return { objectives, overall, counts, trend, daysLeft, needsAttention };
+}
+
+/** Move a key result to another objective, keeping its role (outcome or KPI). */
+export function realign(state: InsightsState, measureId: string, toObjectiveId: string): InsightsState {
+  const to = state.objectives.find((o) => o.id === toObjectiveId);
+  const m = state.measures.find((x) => x.id === measureId);
+  if (!to || !m) throw new Error("unknown objective or measure");
+  const key = m.role === "outcome" ? "outcomeIds" : "kpiIds";
+  return {
+    ...state,
+    objectives: state.objectives.map((o) => {
+      const without = { ...o, outcomeIds: o.outcomeIds.filter((id) => id !== measureId), kpiIds: o.kpiIds.filter((id) => id !== measureId) };
+      return o.id === toObjectiveId ? { ...without, [key]: [...without[key], measureId] } : without;
+    }),
   };
 }

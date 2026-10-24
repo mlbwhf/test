@@ -3,9 +3,12 @@
 import Link from "next/link";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { TEMPLATE_METHODS, type Board, type BoardOrigin, type TemplateInfo, type TemplateMethod } from "@trainyard/core";
+import { useMemo, useState } from "react";
+import { TEMPLATE_METHODS, type Board, type BoardOrigin, type LaneCard, type TemplateInfo, type TemplateMethod } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
+import { LaneBoard, type Lane } from "@/components/lane-board";
+import { useTheme } from "@/components/workspace-shell";
+import { METHOD_DOT, THEMES, methodTheme, type ThemeId } from "@/lib/themes";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
 
@@ -40,7 +43,8 @@ export default function TemplatesPage() {
   const [selectedId, setSelectedId] = useState<string | null>(params.get("tpl"));
   const [err, setErr] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const selId = selectedId ?? data.data?.builtin[0]?.id ?? null;
+  const [look, setLook] = useState<"lanes" | "canvas">("lanes");
+  const selId = selectedId ?? data.data?.builtin.find((t) => method === "all" || t.info?.method === method)?.id ?? null;
   const preview = useApi<{ board: Board }>(selId ? `/v1/templates/boards/${encodeURIComponent(selId)}` : null);
   if (!data.data) return <Loading error={data.error} />;
 
@@ -62,126 +66,195 @@ export default function TemplatesPage() {
     }
   };
 
+  const theme = methodTheme(method === "all" ? sel?.info?.method : method);
   return (
     <>
+      <ThemeFor theme={theme} />
       <PageHead
-        title="Start from a template"
-        sub="Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."
+        title={sel ? sel.name : "Start from a template"}
+        sub={sel?.info?.blurb ?? "Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."}
         actions={
-          <div className="tabs" role="group" aria-label="Filter templates">
-            {FILTERS.map(([k, label]) => (
-              <button key={k} aria-selected={filter === k} onClick={() => setFilter(k)}>
-                {label}
-              </button>
-            ))}
-          </div>
+          <label className="row" style={{ gap: 6 }}>
+            <span className="eyebrow">Kind</span>
+            <select className="select" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter templates by kind">
+              {FILTERS.map(([k, label]) => (
+                <option key={k} value={k}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
         }
       />
-      <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-        <span className="eyebrow">Method</span>
-        <div className="tabs" role="group" aria-label="Filter by method">
-          <button aria-selected={method === "all"} onClick={() => setMethod("all")}>
-            All methods
+      <nav className="ws-chips" aria-label="Filter by method">
+        <button className="ws-chip-btn" aria-pressed={method === "all"} onClick={() => setMethod("all")}>
+          All methods
+        </button>
+        {TEMPLATE_METHODS.map((m) => (
+          <button key={m.id} className="ws-chip-btn" aria-pressed={method === m.id} onClick={() => (setMethod(m.id), setSelectedId(null))} title={m.blurb}>
+            <span className="dot" style={{ background: METHOD_DOT[m.id] ?? "#999" }} />
+            {m.label}
           </button>
-          {TEMPLATE_METHODS.map((m) => (
-            <button key={m.id} aria-selected={method === m.id} onClick={() => setMethod(m.id)} title={m.blurb}>
-              {m.label}
-            </button>
-          ))}
-        </div>
-        {methodBlurb ? (
-          <span className="faint" style={{ fontSize: "0.82rem" }}>
-            {methodBlurb}
-          </span>
-        ) : (
-          <span className="faint" style={{ fontSize: "0.82rem" }}>Each method keeps its own vocabulary: SAFe boards say what SAFe says, Scrum boards what the Scrum Guide says, and so on.</span>
-        )}
-      </div>
+        ))}
+      </nav>
       {err ? <ErrorList title="Could not create the board" items={[{ message: err }]} /> : null}
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(300px, 380px)", gap: 16, alignItems: "start" }}>
-        <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }} aria-label="Templates">
+      <div className="tpl-layout">
+        <aside className="tpl-list" aria-label="Templates">
+          <span className="ws-eyebrow">Start from a template</span>
+          <p className="faint" style={{ fontSize: "0.85rem" }}>
+            {methodBlurb ?? "Each method keeps its own vocabulary: SAFe boards say what SAFe says, Scrum boards what the Scrum Guide says, and so on."}
+          </p>
           {shown.map((t) => (
-            <button key={t.id} className="card" onClick={() => setSelectedId(t.id)} aria-pressed={t.id === selId} style={{ textAlign: "left", padding: 14, display: "flex", flexDirection: "column", gap: 8, cursor: "pointer", borderColor: t.id === selId ? "var(--signal)" : undefined, boxShadow: t.id === selId ? "0 0 0 2px var(--signal) inset" : undefined }}>
+            <button key={t.id} className="tpl-item" onClick={() => setSelectedId(t.id)} aria-pressed={t.id === selId}>
               <Thumb summary={t} />
-              <strong style={{ lineHeight: 1.3 }}>{t.name}</strong>
-              <span className="faint" style={{ fontSize: "0.8rem", lineHeight: 1.45 }}>{t.info?.blurb ?? `Saved from ${t.origin.system} on ${t.origin.importedAt.slice(0, 10)}`}</span>
-              <span className="mono faint" style={{ fontSize: "0.7rem", marginTop: "auto" }}>
-                {t.info ? `${TEMPLATE_METHODS.find((m) => m.id === t.info!.method)?.label ?? ""} · ` : ""}
-                {t.shape} · {t.info?.event ?? "your template"}
+              <strong>{t.name}</strong>
+              <span className="faint">
+                {t.info ? `${TEMPLATE_METHODS.find((m) => m.id === t.info!.method)?.label ?? ""} · ${t.info.event}` : `Saved from ${t.origin.system} on ${t.origin.importedAt.slice(0, 10)}`}
               </span>
             </button>
           ))}
           {shown.length === 0 ? <p className="faint">Nothing here yet. Import a board and choose “Save as template”.</p> : null}
-        </section>
+        </aside>
 
-        {sel ? (
-          <aside className="panel panel-body stack" aria-live="polite">
-            <span className="eyebrow">Selected template</span>
-            <h2>{sel.name}</h2>
-            {sel.info ? (
-              <>
-                <p className="muted">{sel.info.blurb}</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 6 }}>
-                  {sel.info.zones.map((z) => (
-                    <span key={z} className="chip" style={{ justifyContent: "center", textTransform: "none", letterSpacing: 0, fontFamily: "var(--font-body)", padding: "6px 8px", whiteSpace: "normal" }}>
-                      {z}
-                    </span>
-                  ))}
-                </div>
-                <div className="stack" style={{ gap: 4, fontSize: "0.85rem" }}>
-                  <div className="row" style={{ justifyContent: "space-between" }}>
-                    <span className="muted">Used in</span>
-                    <strong>{sel.info.event}</strong>
-                  </div>
-                  <div className="row" style={{ justifyContent: "space-between" }}>
-                    <span className="muted">Card types</span>
-                    <strong>{sel.info.cardTypes.join(", ")}</strong>
-                  </div>
-                  <div className="row" style={{ justifyContent: "space-between" }}>
-                    <span className="muted">Maps onto the plan as</span>
-                    <strong>{sel.info.mapsTo}</strong>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <p className="muted">Saved from an import. Structure kept, content cleared.</p>
-            )}
-            <label className="field">
-              Board name
-              <input id="tpl-name" className="input" placeholder={`${sel.name} ${new Date().toISOString().slice(0, 10)}`} value={name} onChange={(e) => setName(e.target.value)} />
-            </label>
-            {gated ? (
-              <div className="notice warn">
-                <strong>Classes need a free account.</strong>
-                <p style={{ margin: "4px 0 0" }}>
-                  Class boards (Leading SAFe, SPC, Advanced SPC, POPM, RTE) and Miro imports are for signed-up trainers; the account is free. <a href="/#join">Sign up</a>, then <Link href="/login">sign in</Link> with the key you receive.
-                </p>
+        <div className="stack" style={{ minWidth: 0, gap: 14 }}>
+          {sel ? (
+            <section className="panel panel-body tpl-detail" aria-live="polite">
+              <div className="stack" style={{ gap: 8, minWidth: 0 }}>
+                <span className="eyebrow">
+                  {sel.info ? `${TEMPLATE_METHODS.find((m) => m.id === sel.info!.method)?.label ?? ""} · ${THEMES[theme].name} theme` : "Your template"}
+                </span>
+                {sel.info ? (
+                  <>
+                    <div className="tpl-zones">
+                      {sel.info.zones.map((z) => (
+                        <span key={z} className="chip">
+                          {z}
+                        </span>
+                      ))}
+                    </div>
+                    <dl className="tpl-facts">
+                      <dt>Used in</dt>
+                      <dd>{sel.info.event}</dd>
+                      <dt>Card types</dt>
+                      <dd>{sel.info.cardTypes.join(", ")}</dd>
+                      <dt>Maps onto the plan as</dt>
+                      <dd>{sel.info.mapsTo}</dd>
+                    </dl>
+                  </>
+                ) : (
+                  <p className="muted">Saved from an import. Structure kept, content cleared.</p>
+                )}
               </div>
-            ) : null}
-            <button className="btn primary" onClick={create} disabled={gated}>
-              Create board
-            </button>
-          </aside>
-        ) : null}
-      </div>
+              <div className="stack" style={{ gap: 8 }}>
+                <label className="field">
+                  Board name
+                  <input id="tpl-name" className="input" placeholder={`${sel.name} ${new Date().toISOString().slice(0, 10)}`} value={name} onChange={(e) => setName(e.target.value)} />
+                </label>
+                {gated ? (
+                  <div className="notice warn">
+                    <strong>Classes need a free account.</strong>
+                    <p style={{ margin: "4px 0 0" }}>
+                      Class boards (Leading SAFe, SPC, Advanced SPC, POPM, RTE) and Miro imports are for signed-up trainers; the account is free. <a href="/#join">Sign up</a>, then <Link href="/login">sign in</Link> with the key you receive.
+                    </p>
+                  </div>
+                ) : null}
+                <button className="btn primary" onClick={create} disabled={gated}>
+                  Create board from template
+                </button>
+              </div>
+            </section>
+          ) : null}
 
-      {preview.data ? (
-        <section className="stack">
-          <span className="eyebrow">Preview</span>
-          <CanvasEditor board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />
-        </section>
-      ) : null}
+          {preview.data ? (
+            <section className="stack">
+              <div className="row" style={{ justifyContent: "space-between" }}>
+                <span className="eyebrow">Preview</span>
+                <div className="lb-seg" role="group" aria-label="Preview as">
+                  <button aria-pressed={look === "lanes"} onClick={() => setLook("lanes")}>
+                    Lanes
+                  </button>
+                  <button aria-pressed={look === "canvas"} onClick={() => setLook("canvas")}>
+                    Whiteboard
+                  </button>
+                </div>
+              </div>
+              {look === "lanes" ? <TemplateLanes board={preview.data.board} theme={theme} /> : <CanvasEditor board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />}
+            </section>
+          ) : null}
+        </div>
+      </div>
     </>
   );
 }
 
+function ThemeFor({ theme }: { theme: ThemeId }) {
+  useTheme(theme);
+  return null;
+}
+
+/** A template's top-level frames as lanes and the cards inside each, read-only: the quick look before creating the board. */
+function TemplateLanes({ board, theme }: { board: Board; theme: ThemeId }) {
+  const { lanes, cards } = useMemo(() => {
+    if (!board.frames.length && board.groups.length) {
+      // Table templates (Kanban and the like): groups are the lanes, rows the cards, "(WIP n)" the limit.
+      const lanes: Lane[] = board.groups.map((g) => {
+        const wip = /\(WIP (\d+)\)/i.exec(g.title);
+        return { id: g.id, title: g.title.replace(/\s*\(WIP \d+\)/i, ""), w: 240, ...(wip ? { wip: Number(wip[1]) } : {}) };
+      });
+      const titleCol = board.columns[0]?.id;
+      const cards: LaneCard[] = board.rows.filter((r) => r.groupId).map((r) => ({ id: r.id, lane: r.groupId!, title: String((titleCol && r.cells[titleCol]) ?? "Row"), tone: 2 }));
+      return { lanes, cards };
+    }
+    const top = board.frames.filter((f) => !f.parentId).slice(0, 14);
+    const rootOf = (id: string | undefined): string | undefined => {
+      let f = board.frames.find((x) => x.id === id);
+      while (f?.parentId) f = board.frames.find((x) => x.id === f!.parentId);
+      return f?.id;
+    };
+    const lanes: Lane[] = top.map((f) => ({ id: f.id, title: f.title || "Untitled", w: 250 }));
+    const per = new Map<string, number>();
+    const empty = new Map<string, number>();
+    const cards: LaneCard[] = [];
+    // Nodes belong to a frame by id, or (boards laid out on a grid) by where they sit.
+    const under = (n: Board["nodes"][number]) => top.find((f) => n.x >= f.x && n.x < f.x + f.width && n.y >= f.y && n.y < f.y + f.height)?.id;
+    for (const n of board.nodes) {
+      const lane = rootOf(n.frameId) ?? under(n);
+      const text = n.text.trim();
+      if (!lane || !top.some((f) => f.id === lane)) continue;
+      if (!text) {
+        empty.set(lane, (empty.get(lane) ?? 0) + 1);
+        continue;
+      }
+      const k = per.get(lane) ?? 0;
+      if (k >= 12) continue;
+      per.set(lane, k + 1);
+      cards.push({ id: n.id, lane, title: text.length > 90 ? `${text.slice(0, 88)}…` : text, tone: toneOf(n.color) });
+    }
+    for (const l of lanes) if (empty.get(l.id)) l.sub = `${empty.get(l.id)} empty slot${empty.get(l.id) === 1 ? "" : "s"} to fill`;
+    return { lanes, cards };
+  }, [board]);
+  if (!lanes.length) return <p className="faint">This template has no frames to show as lanes; switch to Whiteboard.</p>;
+  return <LaneBoard title={board.name} theme={theme} lanes={lanes} cards={cards} cardHeight={72} readOnly />;
+}
+
+function toneOf(color: string | undefined): number {
+  const c = (color ?? "").toLowerCase();
+  if (/yellow|fff6c2|fff9b1|ffd|ffe/.test(c)) return 1;
+  if (/blue|cfe3fb|e6e0ff|purple|violet/.test(c)) return 2;
+  if (/green|dcf3e4|teal/.test(c)) return 3;
+  if (/red|pink|fbd9d2|orange/.test(c)) return 4;
+  return 0;
+}
+
 function Thumb({ summary: t }: { summary: Summary }) {
-  const tones = t.shape === "table" ? ["var(--sunken)", "var(--glass-strong)", "var(--sunken)", "var(--glass-strong)", "var(--sunken)", "var(--glass-strong)"] : ["#fff6c2", "#fff6c2", "#cfe3fb", "#dcf3e4", "#dcf3e4", "#fbd9d2"];
+  // The template's own theme swatches, so "All methods" shows each one in its method's colours.
+  const th = THEMES[methodTheme(t.info?.method)];
+  const tones = [th.tones[0], th.tones[1], th.tones[2], th.tones[3], th.tones[4], th.tones[1]];
   return (
-    <div aria-hidden="true" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 4, height: 64 }}>
+    <div aria-hidden="true" className="tpl-thumb" style={{ background: th.bg }}>
       {tones.map((c, i) => (
-        <div key={i} style={{ borderRadius: 8, background: c, border: "1px solid var(--line)" }} />
+        <div key={i} style={{ borderRadius: 4, background: c, border: `1px solid ${th.line}` }} />
       ))}
     </div>
   );

@@ -19,3 +19,4 @@ export * from "./ainative.js";
 export * from "./cards.js";
 export * from "./insights.js";
 export * from "./inspectadapt.js";
+export * from "./lanes.js";

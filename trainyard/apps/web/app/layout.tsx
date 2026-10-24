@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import "./fonts.css";
 import "./globals.css";
 import { apiUrl, siteUrl } from "@/lib/site";
+import { locate } from "@/lib/spaces";
 
 export async function generateMetadata(): Promise<Metadata> {
   const base = siteUrl();
@@ -31,10 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // The API URL is read when the page is served, not when the image is built, so one web
   // image runs on any domain. The nonce comes from proxy.ts, which also sets the CSP.
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const h = await headers();
+  const nonce = h.get("x-nonce") ?? undefined;
+  // Signed-in spaces paint in their theme from the first byte (the shell keeps it in step after).
+  const theme = h.get("x-embed") === "1" ? undefined : locate(h.get("x-pathname") ?? "")?.space.theme;
   const api = apiUrl();
   return (
-    <html lang="en">
+    <html lang="en" data-theme={theme}>
       <body>
         {api ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: `window.__TRAINYARD_API__=${JSON.stringify(api)}` }} /> : null}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([{ "@context": "https://schema.org", "@type": "Organization", name: "Trainyard", url: siteUrl(), logo: `${siteUrl()}/icon.svg`, description: "Open-source planning rooms for scaled agile, an outcome dashboard for executives and boards, and free class boards for SAFe trainers.", sameAs: ["https://github.com/mlbwhf/test"] }, { "@context": "https://schema.org", "@type": "WebSite", name: "Trainyard", url: siteUrl() }]) }} />

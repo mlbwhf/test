@@ -5,7 +5,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { demoInsights, initiativeView, insightIssues, measureView, onePager, type Initiative, type DataSource, type Entity, type InsightsState, type Measure } from "@trainyard/core";
+import { demoInsights, initiativeView, insightIssues, measureView, okrView, onePager, realign, type Initiative, type DataSource, type Entity, type InsightsState, type Measure } from "@trainyard/core";
 import { parseCsv } from "@trainyard/importers";
 import { require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
@@ -234,5 +234,30 @@ export function registerInsightRoutes(app: App, store: Store, tenants: Tenants) 
     store.state.insights = req.body.to === "empty" ? { entities: [{ id: "org", name: "Organisation (all entities)" }], sources: [], measures: [], objectives: [], updatedAt: now } : demoInsights(now, req.body.to === "northstar" ? "northstar" : "education");
     await store.commit(req.principal, "insights.reset", { to: req.body.to });
     return view();
+  });
+
+  // OKRs: the same objectives and measures as objectives with key results, plus weekly check-ins.
+  const okrs = (entityId?: string) => ({ okrs: okrView(st(), store.now(), entityId), entities: st().entities });
+  app.get("/v1/okrs", { schema: { querystring: z.object({ entityId: Id.optional() }) } }, async (req) => {
+    if (req.query.entityId && !st().entities.some((e) => e.id === req.query.entityId)) throw notFound("Entity");
+    return okrs(req.query.entityId);
+  });
+  app.put("/v1/okrs/check-in", { schema: { body: z.object({ measureId: Id, status: z.enum(["on", "risk", "off"]), note: z.string().trim().max(400).optional(), entityId: Id.optional() }) } }, async (req) => {
+    require(req, "plan");
+    const s = st();
+    if (!s.objectives.some((o) => o.outcomeIds.includes(req.body.measureId) || o.kpiIds.includes(req.body.measureId))) throw notFound("Key result");
+    s.checkIns = [...(s.checkIns ?? []), { measureId: req.body.measureId, status: req.body.status, ...(req.body.note ? { note: req.body.note } : {}), at: store.now().toISOString(), by: req.principal.name }].slice(-2000);
+    touch();
+    await store.commit(req.principal, "okrs.check-in", { measureId: req.body.measureId, status: req.body.status });
+    return okrs(req.body.entityId);
+  });
+  app.put("/v1/okrs/align", { schema: { body: z.object({ measureId: Id, objectiveId: Id, entityId: Id.optional() }) } }, async (req) => {
+    require(req, "plan");
+    const s = st();
+    if (!s.objectives.some((o) => o.id === req.body.objectiveId)) throw notFound("Objective");
+    if (!s.measures.some((m) => m.id === req.body.measureId)) throw notFound("Key result");
+    store.state.insights = { ...realign(s, req.body.measureId, req.body.objectiveId), updatedAt: store.now().toISOString() };
+    await store.commit(req.principal, "okrs.align", { measureId: req.body.measureId, objectiveId: req.body.objectiveId });
+    return okrs(req.body.entityId);
   });
 }

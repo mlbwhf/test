@@ -88,3 +88,28 @@ describe("outcomes across systems", () => {
   });
 });
 
+
+describe("OKR view", () => {
+  it("turns objectives' measures into key results with progress, status, check-ins, trend and realignment", async () => {
+    const { demoInsights, okrView, realign } = await import("./insights.js");
+    const now = new Date("2026-10-21T12:00:00Z");
+    const st = demoInsights(now.toISOString());
+    const v = okrView(st, now);
+    expect(v.objectives.length).toBeGreaterThan(0);
+    expect(v.counts.total).toBe(v.objectives.reduce((n, o) => n + o.keyResults.length, 0));
+    expect(v.counts.on + v.counts.risk + v.counts.off).toBe(v.counts.total);
+    expect(v.daysLeft).toBe(72);
+    expect(v.trend.length).toBeGreaterThan(1);
+    expect(v.trend.at(-1)!.progress).toBe(v.overall);
+    for (const k of v.objectives.flatMap((o) => o.keyResults)) expect(k.progress === 100).toBe(k.computed === "on");
+    const kr = v.objectives[0]!.keyResults[0]!;
+    const checked = okrView({ ...st, checkIns: [{ measureId: kr.measureId, status: "off", at: now.toISOString(), by: "me" }] }, now);
+    const after = checked.objectives[0]!.keyResults[0]!;
+    expect(after.status).toBe("off");
+    expect(checked.needsAttention[0]!.status).toBe("off");
+    const target = v.objectives[1]!;
+    const moved = okrView(realign(st, kr.measureId, target.id), now);
+    expect(moved.objectives.find((o) => o.id === target.id)!.keyResults.some((k) => k.measureId === kr.measureId)).toBe(true);
+    expect(moved.objectives[0]!.keyResults.some((k) => k.measureId === kr.measureId)).toBe(false);
+  });
+});
