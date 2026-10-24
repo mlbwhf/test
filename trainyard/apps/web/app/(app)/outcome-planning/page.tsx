@@ -850,7 +850,7 @@ function Board({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
       </div>
       <Editors s={s} b={b} onChange={onChange} />
       <p className="faint" style={{ fontSize: "0.82rem", margin: 0 }}>
-        Drag a milestone to another iteration or PI outcome row, or into the ART Milestones row to fix its date. Click any card to edit it, string it to another card, or remove it. Hover a cell and press + to add a milestone there. Team work marked “Show on the PI Outcome Planning Board” appears here under its PI outcome.
+        Drag a milestone to another iteration or PI outcome row, or into the ART Milestones row to fix its date. Click any card to edit it, string it to another card, or remove it. Press + in a cell (hover it with a mouse) to add a milestone there. Team work marked “Show on the PI Outcome Planning Board” appears here under its PI outcome.
       </p>
     </div>
   );
@@ -1045,7 +1045,7 @@ function Teams({ s, onChange }: { s: PlanningSession; onChange: (s: PlanningSess
         ))}
       </div>
       <p className="faint" style={{ fontSize: "0.82rem", margin: 0 }}>
-        Drag a card between iterations and outcome rows; click it to edit, string it to another card, or tick “Show on the PI Outcome Planning Board” so it also appears on the ART-level board. Hover a cell and press + to add work there. A red column header is the busiest iteration, where a capacity clash tends to hide.
+        Drag a card between iterations and outcome rows; click it to edit, string it to another card, or tick “Show on the PI Outcome Planning Board” so it also appears on the ART-level board. Press + in a cell (hover it with a mouse) to add work there. A red column header is the busiest iteration, where a capacity clash tends to hide.
       </p>
     </div>
   );

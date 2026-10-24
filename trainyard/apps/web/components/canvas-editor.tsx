@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
+import { useDoubleTap, usePanZoom } from "@/lib/touch";
 import type { CardType } from "@trainyard/core";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
@@ -23,6 +24,10 @@ const SWATCHES = [
 ] as const;
 
 type Tool = "select" | "connect";
+type Drag = { kind: "node" | "frame"; id: string; dx: number; dy: number; moved: boolean; start: { x: number; y: number }; last: { x: number; y: number } };
+
+/** How long a finger rests on a frame before it picks the frame up instead of panning. */
+const LONG_PRESS = 450;
 
 /**
  * Frame titles sit above the frame when there is room (built-in templates leave gaps) and
@@ -137,6 +142,7 @@ function wrap(text: string, width: number): string[] {
  */
 export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [] }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[] }) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const panel = useRef<HTMLElement>(null);
   const [nodes, setNodes] = useState<BoardNode[]>(board.nodes);
   const [frames, setFrames] = useState<Frame[]>(board.frames);
   const [selected, setSelected] = useState<string | null>(null);
@@ -146,7 +152,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const [zoom, setZoom] = useState(1);
   const [picker, setPicker] = useState<null | { mode: "link" | "view" } | { mode: "field"; key: string }>(null);
   const [links, setLinks] = useState<{ nodeId: string; record: RefSummary | null; backlinks: Backlink[] } | null>(null);
-  const drag = useRef<{ kind: "node" | "frame"; id: string; dx: number; dy: number; moved: boolean; start: { x: number; y: number } } | null>(null);
+  // One drag per pointer, so several people can move cards on one screen at once.
+  const drags = useRef(new Map<number, Drag>());
+  const pan = usePanZoom(panel, svgRef, zoom, setZoom, 0.5, 10);
+  const doubleTap = useDoubleTap();
+  const press = useRef(new Map<number, number>());
 
   useEffect(() => {
     setNodes(board.nodes);
@@ -208,18 +218,39 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   };
 
   // ---- pointer handling -------------------------------------------------------------
+  const grab = (kind: "node" | "frame", id: string, e: { pointerId: number; clientX: number; clientY: number }) => {
+    const p = toBoard(e);
+    const item = kind === "node" ? nodes.find((n) => n.id === id)! : frames.find((f) => f.id === id)!;
+    drags.current.set(e.pointerId, { kind, id, dx: p.x - item.x, dy: p.y - item.y, moved: false, start: { x: item.x, y: item.y }, last: { x: item.x, y: item.y } });
+  };
   const startDrag = (kind: "node" | "frame", id: string, e: React.PointerEvent) => {
     if (readOnly) return;
     e.stopPropagation(); // keep the canvas background from clearing the selection or the connect pick
-    if (tool !== "select") return;
-    (e.target as Element).setPointerCapture?.(e.pointerId);
-    const p = toBoard(e);
-    const item = kind === "node" ? nodes.find((n) => n.id === id)! : frames.find((f) => f.id === id)!;
-    drag.current = { kind, id, dx: p.x - item.x, dy: p.y - item.y, moved: false, start: { x: item.x, y: item.y } };
-    setSelected(id);
+    if (tool !== "select" || e.button !== 0) return;
+    if ([...drags.current.values()].some((d) => d.id === id)) return; // someone already has it
+    // Capture on the card itself, so its click and double-click still land on it.
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+    // Frames fill most big boards, so a finger on one pans; resting it there picks the frame up.
+    if (kind === "frame" && e.pointerType === "touch") {
+      pan.down(e);
+      const at = { pointerId: e.pointerId, clientX: e.clientX, clientY: e.clientY };
+      press.current.set(
+        e.pointerId,
+        window.setTimeout(() => {
+          press.current.delete(at.pointerId);
+          if (!pan.still(at.pointerId)) return;
+          pan.release(at.pointerId);
+          grab("frame", id, at);
+          navigator.vibrate?.(10);
+        }, LONG_PRESS),
+      );
+      return;
+    }
+    grab(kind, id, e);
   };
   const onMove = (e: React.PointerEvent) => {
-    const d = drag.current;
+    if (pan.move(e)) return;
+    const d = drags.current.get(e.pointerId);
     if (!d) return;
     const p = toBoard(e);
     const x = Math.round(p.x - d.dx);
@@ -227,17 +258,38 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     if (Math.abs(x - d.start.x) + Math.abs(y - d.start.y) > 2) d.moved = true;
     if (d.kind === "node") setNodes((ns) => ns.map((n) => (n.id === d.id ? { ...n, x, y } : n)));
     else {
-      const f = frames.find((x) => x.id === d.id)!;
-      const ddx = x - f.x;
-      const ddy = y - f.y;
+      // Step from the last position, not the last render: moves can outpace renders.
+      const ddx = x - d.last.x;
+      const ddy = y - d.last.y;
+      d.last = { x, y };
       setFrames((fs) => fs.map((fr) => (fr.id === d.id ? { ...fr, x, y } : fr)));
       setNodes((ns) => ns.map((n) => (n.frameId === d.id ? { ...n, x: n.x + ddx, y: n.y + ddy } : n)));
     }
   };
-  const endDrag = () => {
-    const d = drag.current;
-    drag.current = null;
-    if (!d || !d.moved) return;
+  const endDrag = (e: React.PointerEvent) => {
+    window.clearTimeout(press.current.get(e.pointerId));
+    press.current.delete(e.pointerId);
+    const tap = pan.up(e);
+    if (tap) {
+      // A tap on the background clears the selection, as a mouse press does; on a frame it selects it.
+      if (tap === "tap") {
+        const frame = (e.target as Element).closest?.("[data-frame-id]")?.getAttribute("data-frame-id");
+        setSelected(frame ?? null);
+        setConnectFrom(null);
+      }
+      return;
+    }
+    const d = drags.current.get(e.pointerId);
+    drags.current.delete(e.pointerId);
+    if (!d) return;
+    // Selecting opens the side panel and narrows the canvas, so it waits for the release:
+    // the board must not shift under other hands still on it.
+    setSelected(d.id);
+    if (!d.moved) {
+      // Double-tap a card to write on it, the touch twin of double-click.
+      if (d.kind === "node" && e.pointerType !== "mouse" && e.type === "pointerup" && doubleTap(d.id, e.clientX, e.clientY)) setEditing({ id: d.id, text: nodes.find((n) => n.id === d.id)?.text ?? "" });
+      return;
+    }
     if (d.kind === "node") {
       const n = nodes.find((x) => x.id === d.id)!;
       void save("Move card", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(n.id)}`, { x: n.x, y: n.y }));
@@ -337,7 +389,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={removeSelected} disabled={!selNode}>
                 Delete card
               </button>
-              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click a card to write · Esc deselects</span>
+              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click or double-tap a card to write · pinch to zoom · Esc deselects</span>
             </>
           )}
         </div>
@@ -353,19 +405,25 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: selNode || selFrame ? "minmax(0, 1fr) 260px" : "minmax(0, 1fr)", gap: 14, alignItems: "start" }}>
-        <section className="panel" style={{ overflow: "auto", maxHeight: "72vh", position: "relative" }} onKeyDown={(e) => e.key === "Escape" && (setSelected(null), setEditing(null), setConnectFrom(null))} tabIndex={-1}>
+        <section ref={panel} className="panel" style={{ overflow: "auto", maxHeight: "72vh", position: "relative" }} onKeyDown={(e) => e.key === "Escape" && (setSelected(null), setEditing(null), setConnectFrom(null))} tabIndex={-1}>
           <svg
             ref={svgRef}
             viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
             // 100% fits the board to the panel width, whatever the board's own size (built-in
             // templates are ~2,000 units wide, iObeya boards ~10,000); zoom scales from there.
+            className="canvas-surface"
             style={{ display: "block", userSelect: "none", touchAction: "none", width: `${zoom * 100}%`, minWidth: 600, height: "auto" }}
             role="img"
             aria-label={`${board.name}${readOnly ? "" : ", editable"}`}
             onPointerMove={onMove}
             onPointerUp={endDrag}
-            onPointerLeave={endDrag}
-            onPointerDown={() => (setSelected(null), setConnectFrom(null))}
+            onPointerCancel={endDrag}
+            onPointerDown={(e) => {
+              // Fingers and pens pan and pinch the background; a tap still clears the selection.
+              if (pan.down(e)) return;
+              setSelected(null);
+              setConnectFrom(null);
+            }}
           >
             <defs>
               <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
@@ -376,7 +434,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               </filter>
             </defs>
             {frames.map((f) => (
-              <g key={f.id} onPointerDown={(e) => startDrag("frame", f.id, e)} style={{ cursor: readOnly ? "default" : "grab" }}>
+              <g key={f.id} data-frame-id={f.id} onPointerDown={(e) => startDrag("frame", f.id, e)} style={{ cursor: readOnly ? "default" : "grab" }}>
                 <rect x={f.x} y={f.y} width={f.width} height={f.height} fill="rgba(255,255,255,0.55)" stroke={selected === f.id ? "var(--signal)" : "rgba(255,255,255,0.9)"} strokeWidth={selected === f.id ? 4 : 2} rx={18} />
                 <text {...frameTitlePos(f, frames)} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
                   {f.title}
@@ -647,7 +705,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 <span className="eyebrow">Colour</span>
                 <div className="row" style={{ gap: 6 }}>
                   {SWATCHES.map(([c, label]) => (
-                    <button key={c} className="btn small" title={label} aria-label={`${label} colour`} onClick={() => recolor(c)} style={{ background: c, width: 34, height: 28, padding: 0, borderColor: cssColor(selNode.color) === c ? "var(--signal)" : undefined }} />
+                    <button key={c} className="btn small ce-swatch" title={label} aria-label={`${label} colour`} onClick={() => recolor(c)} style={{ background: c, borderColor: cssColor(selNode.color) === c ? "var(--signal)" : undefined }} />
                   ))}
                 </div>
                 <div className="row">

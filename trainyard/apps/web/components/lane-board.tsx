@@ -5,11 +5,14 @@
 // WIP limits, hard seats, the Mutation human gate), and a dock adds sticky notes, ink and
 // timeboxes. Board or list view, zoom, smart-board mode for a room screen, and copy-as-text.
 // The parent owns the cards and persists moves; notes, timers and ink go through onExtras.
+// Drags and strokes are tracked per pointer, so several people can work one wall display at
+// once; a finger on empty board pans, two fingers pinch to zoom.
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent, type ReactNode } from "react";
 import { checkDrop, laneLoad, laneMarkdown, type LaneCard, type LaneNote, type LaneRule } from "@trainyard/core";
 import { THEMES, type ThemeId } from "@/lib/themes";
 import { api } from "@/lib/api";
+import { useCoarsePointer, useDoubleTap, usePanZoom } from "@/lib/touch";
 
 export interface Lane extends LaneRule {
   sub?: string;
@@ -50,6 +53,13 @@ const HEAD_COLS = 92;
 const HEAD_ROWS = 84;
 const uid = () => Math.random().toString(36).slice(2, 10);
 
+type Drag = { id: string; dx: number; dy: number; x: number; y: number; moved: boolean; over: string | null; note: boolean; touch: boolean };
+
+/** A palm resting near a stylus tip is not a finger asking for something. */
+const PALM_REACH = 400;
+/** A second finger this soon after the first turns a stroke into a pan or pinch. */
+const PINCH_WINDOW = 350;
+
 type Geo = { lane: Lane; x: number; y: number; w: number; h: number; hh: number; cols: number; cw: number; ch: number; cards: LaneCard[] };
 
 function geometry(lanes: Lane[], cards: LaneCard[], layout: "cols" | "rows", ch: number, equal: boolean, width: number): Geo[] {
@@ -89,8 +99,17 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
   const [tool, setTool] = useState<"select" | "note" | "pen">("select");
   const [tone, setTone] = useState(1);
   const [toast, setToast] = useState<string | null>(null);
-  const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; x: number; y: number; moved: boolean; over: string | null; note?: boolean } | null>(null);
-  const [pen, setPen] = useState<string | null>(null);
+  const inner = useRef<HTMLDivElement>(null);
+  // Live drags and ink strokes, one per pointer; refs so fast moves from several hands
+  // never read a stale copy, and a redraw to show them.
+  const drags = useRef(new Map<number, Drag>());
+  const inks = useRef(new Map<number, string>());
+  const [, redraw] = useReducer((n: number) => n + 1, 0);
+  const styluses = useRef(new Map<number, { x: number; y: number }>());
+  const fingerInk = useRef<{ id: number; t: number; x: number; y: number } | null>(null);
+  const smartFrom = useRef(1);
+  const coarse = useCoarsePointer();
+  const doubleTap = useDoubleTap();
   const [editing, setEditing] = useState<string | null>(null);
   const [local, setLocal] = useState<LaneCard[]>(cards);
   const notes = extras?.notes ?? [];
@@ -113,10 +132,15 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
     window.setTimeout(() => setToast((x) => (x === t ? null : x)), 3400);
   }, []);
 
-  const geo = useMemo(() => geometry(lanes, local, layout, cardHeight, !!th.equal, width), [lanes, local, layout, cardHeight, th.equal, width]);
-  const innerW = Math.max(...geo.map((g) => g.x + g.w), ...notes.map((n) => n.x + 200), 900) + 120;
+  // Room for finger-sized buttons when a card carries actions on a touch screen.
+  const ch = cardHeight + (coarse && cardFoot ? 24 : 0);
+  const geo = useMemo(() => geometry(lanes, local, layout, ch, !!th.equal, width), [lanes, local, layout, ch, th.equal, width]);
+  // At least as wide as the view, so the pen, notes and panning work on every bit of a wide screen.
+  const contentW = Math.max(...geo.map((g) => g.x + g.w), ...notes.map((n) => n.x + 200), 900) + 120;
+  const innerW = Math.max(contentW, Math.floor(width));
   const innerH = Math.max(...geo.map((g) => g.y + g.h), ...notes.map((n) => n.y + 140), 560) + 120;
-  const sc = smart ? 1.25 : scale;
+  const sc = scale;
+  const pan = usePanZoom(wrap, inner, scale, setScale, 0.5, 1.6);
 
   const setExtras = (x: Partial<Extras>) => onExtras?.({ notes, strokes, ...x });
 
@@ -145,10 +169,7 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
     return n.running && s ? Math.max(0, s.from - Math.floor((Date.now() - s.at) / 1000)) : (n.seconds ?? 300);
   };
 
-  const toBoard = (e: { clientX: number; clientY: number }) => {
-    const r = wrap.current!.querySelector(".lb-inner")!.getBoundingClientRect();
-    return { x: (e.clientX - r.left) / sc, y: (e.clientY - r.top) / sc };
-  };
+  const toBoard = (e: { clientX: number; clientY: number }, r = inner.current!.getBoundingClientRect()) => ({ x: (e.clientX - r.left) / sc, y: (e.clientY - r.top) / sc });
   const laneAt = (p: { x: number; y: number }) => geo.find((g) => p.x >= g.x && p.x <= g.x + g.w && p.y >= g.y && p.y <= g.y + g.h) ?? null;
 
   const commitMove = async (card: LaneCard, g: Geo, p: { x: number; y: number }) => {
@@ -179,38 +200,74 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
     if (readOnly || tool === "pen" || e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
+    if ([...drags.current.values()].some((d) => d.id === id)) return; // someone already has it
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     const p = toBoard(e);
     const pos = note ? notes.find((n) => n.id === id)! : cardPos(id)!;
-    setDrag({ id, dx: p.x - pos.x, dy: p.y - pos.y, x: pos.x, y: pos.y, moved: false, over: null, note });
+    drags.current.set(e.pointerId, { id, dx: p.x - pos.x, dy: p.y - pos.y, x: pos.x, y: pos.y, moved: false, over: null, note, touch: e.pointerType !== "mouse" });
+    redraw();
   };
   const move = (e: RPointerEvent) => {
-    if (pen !== null) {
-      const p = toBoard(e);
-      setPen((d) => `${d} L${Math.round(p.x)} ${Math.round(p.y)}`);
+    if (e.pointerType === "pen" && styluses.current.has(e.pointerId)) styluses.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pan.move(e)) return;
+    const r = inner.current!.getBoundingClientRect();
+    const ink = inks.current.get(e.pointerId);
+    if (ink !== undefined) {
+      if (fingerInk.current?.id === e.pointerId) Object.assign(fingerInk.current, { x: e.clientX, y: e.clientY });
+      // Coalesced events carry the points the browser sampled between frames: smoother ink.
+      const all = e.nativeEvent.getCoalescedEvents?.() ?? [];
+      let d = ink;
+      for (const ev of all.length ? all : [e]) {
+        const p = toBoard(ev, r);
+        d += ` L${Math.round(p.x)} ${Math.round(p.y)}`;
+      }
+      inks.current.set(e.pointerId, d);
+      redraw();
       return;
     }
+    const drag = drags.current.get(e.pointerId);
     if (!drag) return;
-    const p = toBoard(e);
+    const p = toBoard(e, r);
     const x = p.x - drag.dx;
     const y = p.y - drag.dy;
     const moved = drag.moved || Math.hypot(x - drag.x, y - drag.y) > 5;
-    setDrag({ ...drag, x, y, moved, over: drag.note ? null : (laneAt(p)?.lane.id ?? null) });
+    drags.current.set(e.pointerId, { ...drag, x, y, moved, over: drag.note ? null : (laneAt(p)?.lane.id ?? null) });
+    redraw();
   };
   const up = (e: RPointerEvent) => {
-    if (pen !== null) {
-      if (pen.includes("L")) setExtras({ strokes: [...strokes, pen] });
-      setPen(null);
+    styluses.current.delete(e.pointerId);
+    if (pan.up(e)) return;
+    const done = e.type === "pointerup";
+    const ink = inks.current.get(e.pointerId);
+    if (ink !== undefined) {
+      inks.current.delete(e.pointerId);
+      if (fingerInk.current?.id === e.pointerId) fingerInk.current = null;
+      if (done && ink.includes("L")) setExtras({ strokes: [...strokes, ink] });
+      redraw();
       return;
     }
-    if (!drag) return;
-    const d = drag;
-    setDrag(null);
-    if (!d.moved) return;
+    const d = drags.current.get(e.pointerId);
+    if (!d) return;
+    drags.current.delete(e.pointerId);
+    redraw();
+    if (!done) return;
+    if (!d.moved) {
+      // A tap on a sticky note opens it for writing; a mouse double-clicks instead.
+      if (d.note && d.touch && notes.find((n) => n.id === d.id)?.kind !== "timer") setEditing(d.id);
+      return;
+    }
     if (d.note) return setExtras({ notes: notes.map((n) => (n.id === d.id ? { ...n, x: Math.round(d.x), y: Math.round(d.y) } : n)) });
     const card = local.find((c) => c.id === d.id)!;
     const g = laneAt(toBoard(e));
     if (g) void commitMove(card, g, toBoard(e));
+  };
+  // Palm rejection: while a stylus is down, a new touch near its tip is the hand holding it.
+  const palm = (e: RPointerEvent) => {
+    if (e.pointerType === "pen") styluses.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    else if (e.pointerType === "touch" && [...styluses.current.values()].some((s) => Math.hypot(s.x - e.clientX, s.y - e.clientY) < PALM_REACH)) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   const cardPos = (id: string) => {
@@ -228,12 +285,36 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
   };
 
   const canvasDown = (e: RPointerEvent) => {
-    if (readOnly) return;
+    if ((e.target as Element).closest("textarea, input, button, a")) return;
+    if (readOnly || tool === "select") {
+      // Double-tap on empty board adds a note, as a double-click does; otherwise pan.
+      if (!readOnly && e.pointerType !== "mouse" && e.target === e.currentTarget && doubleTap("board", e.clientX, e.clientY)) {
+        const p = toBoard(e);
+        addNote(Math.round(p.x - 90), Math.round(p.y - 60));
+        return;
+      }
+      pan.down(e);
+      return;
+    }
+    e.preventDefault();
     const p = toBoard(e);
-    if (tool !== "select") e.preventDefault();
     if (tool === "pen") {
+      if (e.pointerType === "touch") {
+        const f = fingerInk.current;
+        if (f && inks.current.has(f.id) && Date.now() - f.t < PINCH_WINDOW && Math.hypot(f.x - e.clientX, f.y - e.clientY) < PALM_REACH) {
+          // Two fingers together: the first one's stroke was the start of a pan or pinch.
+          inks.current.delete(f.id);
+          fingerInk.current = null;
+          pan.add(f.id, f.x, f.y);
+          pan.down(e);
+          redraw();
+          return;
+        }
+        fingerInk.current = { id: e.pointerId, t: Date.now(), x: e.clientX, y: e.clientY };
+      }
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      setPen(`M${Math.round(p.x)} ${Math.round(p.y)}`);
+      inks.current.set(e.pointerId, `M${Math.round(p.x)} ${Math.round(p.y)}`);
+      redraw();
     } else if (tool === "note") {
       addNote(Math.round(p.x - 90), Math.round(p.y - 60));
       setTool("select");
@@ -303,7 +384,16 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
             </div>
           ) : null}
           {view === "board" && !readOnly ? (
-            <button className="lb-btn" aria-pressed={smart} onClick={() => setSmart(!smart)} title="Bigger cards and buttons for a room screen">
+            <button
+              className="lb-btn"
+              aria-pressed={smart}
+              onClick={() => {
+                if (!smart) smartFrom.current = scale;
+                setScale(smart ? smartFrom.current : 1.25);
+                setSmart(!smart);
+              }}
+              title="Bigger cards and buttons for a room screen"
+            >
               Smart board
             </button>
           ) : null}
@@ -342,8 +432,8 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
         </div>
       ) : (
         <div className="lb-wrap" ref={wrap} tabIndex={readOnly ? 0 : -1} role="region" aria-label={`${title}, scrollable`}>
-          <div className="lb-inner" role="application" aria-label={`${title} board`} style={{ width: innerW, height: innerH, transform: `scale(${sc})`, cursor: tool === "pen" ? "crosshair" : tool === "note" ? "copy" : undefined }} onPointerDown={canvasDown} onPointerMove={move} onPointerUp={up} onDoubleClick={(e) => !readOnly && e.target === e.currentTarget && addNote(Math.round(toBoard(e).x - 90), Math.round(toBoard(e).y - 60))}>
-            {th.train && layout === "cols" ? <div className="lb-rail" style={{ top: Math.max(...geo.map((g) => g.y + g.h)) + 14, width: innerW - PAD * 2 }} /> : null}
+          <div ref={inner} className="lb-inner" role="application" aria-label={`${title} board`} style={{ width: innerW, height: innerH, transform: `scale(${sc})`, cursor: tool === "pen" ? "crosshair" : tool === "note" ? "copy" : undefined }} onPointerDownCapture={palm} onPointerDown={canvasDown} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onDoubleClick={(e) => !readOnly && e.target === e.currentTarget && addNote(Math.round(toBoard(e).x - 90), Math.round(toBoard(e).y - 60))}>
+            {th.train && layout === "cols" ? <div className="lb-rail" style={{ top: Math.max(...geo.map((g) => g.y + g.h)) + 14, width: contentW - PAD * 2 }} /> : null}
             {geo.map((g, li) => {
               const load = laneLoad(g.lane, local);
               const limit = g.lane.wip ?? g.lane.cap;
@@ -351,7 +441,7 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
               const over = limit !== undefined && used > limit;
               const cyc = th.cycle ? toneBg((li % 4) + 1) : undefined;
               return (
-                <div key={g.lane.id} className={`lb-lane${drag?.over === g.lane.id ? " hl" : ""}${over ? " over" : ""}`} role="group" aria-label={`${g.lane.title}${limit !== undefined ? `, ${used} of ${limit}` : ""}`} data-lane={g.lane.id} style={{ left: g.x, top: g.y, width: g.w, height: g.h, ...(cyc ? { background: cyc } : {}), ...(th.cycle ? { transform: `rotate(${li % 2 ? 0.6 : -0.5}deg)` } : {}) }}>
+                <div key={g.lane.id} className={`lb-lane${[...drags.current.values()].some((d) => d.over === g.lane.id) ? " hl" : ""}${over ? " over" : ""}`} role="group" aria-label={`${g.lane.title}${limit !== undefined ? `, ${used} of ${limit}` : ""}`} data-lane={g.lane.id} style={{ left: g.x, top: g.y, width: g.w, height: g.h, ...(cyc ? { background: cyc } : {}), ...(th.cycle ? { transform: `rotate(${li % 2 ? 0.6 : -0.5}deg)` } : {}) }}>
                   {th.band ? <div className="lb-band" style={{ background: toneBg((li % 4) + 1) }} /> : null}
                   {th.tape ? <span className="lb-tape" aria-hidden="true" /> : null}
                   <div className="lb-lane-head">
@@ -379,16 +469,18 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
               {strokes.map((d, i) => (
                 <path key={i} d={d} />
               ))}
-              {pen ? <path d={pen} /> : null}
+              {[...inks.current].map(([id, d]) => (
+                <path key={`live-${id}`} d={d} />
+              ))}
             </svg>
             {local.map((c) => {
               const pos = cardPos(c.id);
               if (!pos) return null;
-              const dragging = drag?.id === c.id && !drag.note;
-              const x = dragging ? drag.x : pos.x;
-              const y = dragging ? drag.y : pos.y;
+              const drag = [...drags.current.values()].find((d) => d.id === c.id && !d.note);
+              const x = drag ? drag.x : pos.x;
+              const y = drag ? drag.y : pos.y;
               return (
-                <div key={c.id} className={`lb-card${dragging && drag.moved ? " lift" : ""}`} role="group" aria-roledescription="card" tabIndex={readOnly ? -1 : 0} aria-label={`${c.title}${c.sub ? `, ${c.sub}` : ""}, in ${lanes.find((l) => l.id === c.lane)?.title ?? "no lane"}${readOnly ? "" : ". Alt and arrow keys move it."}`} data-card={c.id} data-lane={c.lane ?? ""} onPointerDown={(e) => down(e, c.id)} onKeyDown={(e) => keyMove(e, c)} style={{ left: x, top: y, width: pos.w, height: pos.h, background: toneBg(c.tone), cursor: readOnly ? "default" : "grab" }}>
+                <div key={c.id} className={`lb-card${drag?.moved ? " lift" : ""}`} role="group" aria-roledescription="card" tabIndex={readOnly ? -1 : 0} aria-label={`${c.title}${c.sub ? `, ${c.sub}` : ""}, in ${lanes.find((l) => l.id === c.lane)?.title ?? "no lane"}${readOnly ? "" : ". Alt and arrow keys move it."}`} data-card={c.id} data-lane={c.lane ?? ""} onPointerDown={(e) => down(e, c.id)} onKeyDown={(e) => keyMove(e, c)} style={{ left: x, top: y, width: pos.w, height: pos.h, background: toneBg(c.tone), cursor: readOnly ? "default" : "grab" }}>
                   {c.tag || c.chip ? (
                     <div className="lb-card-top">
                       <span className="lb-tag">{c.tag}</span>
@@ -402,9 +494,9 @@ export function LaneBoard({ title, theme, lanes, cards, layout = "cols", cardHei
               );
             })}
             {notes.map((n) => {
-              const dragging = drag?.id === n.id && drag.note;
-              const x = dragging ? drag.x : n.x;
-              const y = dragging ? drag.y : n.y;
+              const drag = [...drags.current.values()].find((d) => d.id === n.id && d.note);
+              const x = drag ? drag.x : n.x;
+              const y = drag ? drag.y : n.y;
               if (n.kind === "timer") {
                 const left = secondsLeft(n);
                 return (

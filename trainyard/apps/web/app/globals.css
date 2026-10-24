@@ -613,3 +613,45 @@ button.vs-clickbar.vs-bar:hover { filter: brightness(0.97); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---- touch: wall displays, tablets, touch laptops ---- */
+/* No double-tap zoom (and so no tap delay) on controls. */
+a, button, input, select, textarea, label, summary, [role="button"] { touch-action: manipulation; }
+/* Cards that drag: a finger moves the card, not the page, and no selection or callout pops up. */
+.plan-card, .canvas-surface { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.drag-ghost { opacity: 0.92; transform: rotate(-2deg) scale(1.03); box-shadow: 0 14px 30px rgba(23, 33, 43, 0.28); cursor: grabbing; transition: none; }
+.drag-source { opacity: 0.35; }
+.plan-x-hit { r: 0; }
+.btn.ce-swatch { width: 34px; height: 28px; padding: 0; }
+@media (any-pointer: coarse) {
+  /* Controls that only showed on hover stay visible where there may be no hover. */
+  .plan-add { opacity: 0.75; }
+  .vs-grid > div > .vs-insert { display: flex; }
+  .op-ms .btn, .ms-card .ms-x, .ms-add { opacity: 1; }
+}
+@media (pointer: coarse) {
+  .btn, .btn.small { min-height: 44px; }
+  .btn.small { padding: 4px 14px; }
+  .btn.small[aria-label] { min-width: 44px; justify-content: center; }
+  .input, .select { min-height: 44px; }
+  /* 16px stops iOS zooming into a field when it gets focus. */
+  .input, .select, .textarea { font-size: max(16px, 1em); }
+  .rail a.nav { min-height: 44px; box-sizing: border-box; }
+  .team-name-btn { min-height: 44px; align-items: center; }
+  .plan-add { width: 34px; height: 34px; font-size: 1rem; }
+  .vs-insert { width: 34px; height: 34px; right: -20px; }
+  .ms-add { width: 44px; height: 44px; }
+  .ms-card { padding-right: 44px; }
+  .ms-card .ms-x { top: 0; right: 0; width: 44px; height: 44px; }
+  .vs-lane-add { padding: 10px 14px; }
+  .tabs button { min-height: 44px; }
+  .vs-mini-people { min-height: 36px; padding: 4px 12px; }
+  .vsm-x { width: 32px; height: 32px; top: -14px; right: -12px; }
+  .op-inline { min-height: 44px; }
+  .vs-click { min-height: 44px; display: inline-flex; align-items: center; box-sizing: border-box; }
+  .op-sticky-tools button { min-width: 36px; min-height: 36px; text-align: center; }
+  .btn.ce-swatch { width: 44px; height: 44px; }
+  .plan-x-hit { r: 22px; }
+  /* Grow small round buttons' hit area to 44px without growing what you see. */
+  .plan-add::after, .vs-insert::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; }
+}
