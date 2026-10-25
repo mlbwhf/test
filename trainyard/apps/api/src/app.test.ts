@@ -817,6 +817,58 @@ describe("class boards", () => {
     expect(imported.body.board.counts.frames).toBe(2);
     await app.close();
   });
+
+  it("imports a trainer's own .pptx as a private class template and starts a class from it", async () => {
+    const { call, app } = await setup();
+    // A two-slide deck built here, stored (uncompressed) in a zip; every word is invented.
+    const { crc32 } = await import("node:zlib");
+    const NS = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"';
+    const sp = (t: string, ph: string, y: number) => `<p:sp><p:nvSpPr><p:cNvPr id="2" name="s"/><p:cNvSpPr/><p:nvPr>${ph}</p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="635000" y="${y}"/><a:ext cx="6350000" cy="635000"/></a:xfrm></p:spPr><p:txBody><a:bodyPr/><a:p><a:r><a:t>${t}</a:t></a:r></a:p></p:txBody></p:sp>`;
+    const slide = (title: string, body: string) => `<p:sld ${NS}><p:cSld><p:spTree>${sp(title, '<p:ph type="title"/>', 0)}${sp(body, "", 1270000)}</p:spTree></p:cSld></p:sld>`;
+    const parts: Record<string, string> = {
+      "ppt/presentation.xml": `<p:presentation ${NS}><p:sldIdLst><p:sldId id="256" r:id="rId1"/><p:sldId id="257" r:id="rId2"/></p:sldIdLst><p:sldSz cx="12192000" cy="6858000"/></p:presentation>`,
+      "ppt/_rels/presentation.xml.rels": '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide2.xml"/></Relationships>',
+      "ppt/slides/slide1.xml": slide("Welcome, kite pilots", "Name tags on the left"),
+      "ppt/slides/slide2.xml": slide("Lesson 1 Activity: Tail lengths", "Measure twice"),
+    };
+    const locals: Buffer[] = [];
+    const centrals: Buffer[] = [];
+    let offset = 0;
+    for (const [name, text] of Object.entries(parts)) {
+      const n = Buffer.from(name);
+      const data = Buffer.from(text);
+      const local = Buffer.alloc(30);
+      local.writeUInt32LE(0x04034b50, 0); local.writeUInt32LE(crc32(data), 14); local.writeUInt32LE(data.length, 18); local.writeUInt32LE(data.length, 22); local.writeUInt16LE(n.length, 26);
+      const central = Buffer.alloc(46);
+      central.writeUInt32LE(0x02014b50, 0); central.writeUInt32LE(crc32(data), 16); central.writeUInt32LE(data.length, 20); central.writeUInt32LE(data.length, 24); central.writeUInt16LE(n.length, 28); central.writeUInt32LE(offset, 42);
+      locals.push(local, n, data);
+      centrals.push(central, n);
+      offset += 30 + n.length + data.length;
+    }
+    const cd = Buffer.concat(centrals);
+    const end = Buffer.alloc(22);
+    end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(4, 8); end.writeUInt16LE(4, 10); end.writeUInt32LE(cd.length, 12); end.writeUInt32LE(offset, 16);
+    const pptx = Buffer.concat([...locals, cd, end]).toString("base64");
+
+    // The open demo cannot; a signed-up trainer can.
+    expect((await call("POST", "/v1/imports/class-deck", { fileName: "kites.pptx", contentBase64: pptx })).body.error.code).toBe("SIGNUP_REQUIRED");
+    const key = (await call("POST", "/v1/users", { name: "Kit", email: "kit@example.io", role: "planner" })).body.apiKey as string;
+    const bad = await call("POST", "/v1/imports/class-deck", { fileName: "notes.pptx", contentBase64: Buffer.from("not a deck at all").toString("base64") }, key);
+    expect(bad.status).toBe(422);
+    expect(bad.body.error.code).toBe("NOT_PPTX");
+    const res = await call("POST", "/v1/imports/class-deck", { fileName: "kites.pptx", contentBase64: pptx, name: "Kite school" }, key);
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ slides: 2, lessons: 1, bands: ["Welcome", "Lesson 1"] });
+    expect(res.body.board).toMatchObject({ name: "Kite school", isTemplate: true, origin: { system: "pptx" }, counts: { frames: 4, nodes: 4 } });
+    const saved = (await call("GET", "/v1/templates/boards", undefined, key)).body.saved as { id: string }[];
+    expect(saved.map((t) => t.id)).toContain(res.body.board.id);
+    const tpl = (await call("GET", `/v1/templates/boards/${res.body.board.id}`, undefined, key)).body.board;
+    expect(tpl.fields).toMatchObject({ class: "custom", source: "deck" });
+    const run = await call("POST", `/v1/templates/boards/${res.body.board.id}/create`, { name: "Kite school, May" }, key);
+    expect(run.status).toBe(201);
+    expect(run.body.board).toMatchObject({ templateId: res.body.board.id, counts: { frames: 4 } });
+    await app.close();
+  });
 });
 
 describe("PI outcome planning", () => {

@@ -1,8 +1,9 @@
 "use client";
 
 // The Classes space, in the Classroom theme: the class boards a trainer runs (start one from
-// the built-in class, reopen the ones already running), breakout tables that seat four, and
-// the day plan with each half-day holding 180 minutes. Breakouts and agenda are kept per class.
+// the built-in class or from the trainer's own imported course deck, reopen the ones already
+// running), breakout tables that seat four, and the day plan with each half-day holding 180
+// minutes. Breakouts and agenda are kept per class.
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,7 +18,7 @@ interface BoardSummary {
   name: string;
   templateId?: string;
   isTemplate?: boolean;
-  origin: { importedAt: string };
+  origin: { system?: string; importedAt: string };
 }
 
 const ROLES = ["Release train engineer", "Product owner", "Scrum master", "Developer", "Business owner", "System architect", "Product manager", "UX lead"];
@@ -46,7 +47,7 @@ export function ClassBoards() {
   const boards = useApi<{ boards: BoardSummary[] }>("/v1/boards");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const running = (boards.data?.boards ?? []).filter((b) => !b.isTemplate && b.templateId?.startsWith("tpl-builtin-class-"));
+  const running = (boards.data?.boards ?? []).filter((b) => !b.isTemplate && (b.templateId?.startsWith("tpl-builtin-class-") || b.templateId?.startsWith("tpl-deck-")));
   const start = async (c: ClassSpec) => {
     setBusy(c.id);
     try {
@@ -90,6 +91,7 @@ export function ClassBoards() {
           </article>
         ))}
       </div>
+      <CourseDecks anonymous={!!me.data?.principal.anonymous} onStarted={(id) => router.push(`/boards/${encodeURIComponent(id)}`)} />
       <section className="panel panel-body stack">
         <h2>Classes you are running</h2>
         {!boards.data ? (
@@ -108,6 +110,133 @@ export function ClassBoards() {
         )}
       </section>
     </>
+  );
+}
+
+function toBase64(buf: ArrayBuffer): string {
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+/** Largest deck the import route takes (its body limit is 48 MB of base64). */
+const MAX_DECK_BYTES = 35 * 1024 * 1024;
+
+/**
+ * The trainer's own course deck (.pptx) as a class template: uploaded here, kept in this
+ * workspace only, one band per lesson with a frame per slide. Licensed courseware never ships
+ * with Trainyard, so this is how a class built on it gets onto a board.
+ */
+function CourseDecks({ anonymous, onStarted }: { anonymous: boolean; onStarted: (boardId: string) => void }) {
+  const templates = useApi<{ saved: BoardSummary[] }>("/v1/templates/boards");
+  const decks = (templates.data?.saved ?? []).filter((t) => t.origin.system === "pptx");
+  const [file, setFile] = useState<File | null>(null);
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [done, setDone] = useState<string | null>(null);
+  const upload = async () => {
+    if (!file) return;
+    setErr(null);
+    setDone(null);
+    if (!/\.pptx$/i.test(file.name)) return setErr("Choose a PowerPoint .pptx file. Save older .ppt decks, Keynote or Google Slides as .pptx first.");
+    if (file.size > MAX_DECK_BYTES) return setErr(`This deck is ${Math.round(file.size / 1024 / 1024)} MB; up to 35 MB can be imported. Compress its pictures in PowerPoint and try again.`);
+    setBusy("upload");
+    try {
+      const r = await api<{ board: { name: string }; slides: number; lessons: number }>("POST", "/v1/imports/class-deck", { fileName: file.name, contentBase64: toBase64(await file.arrayBuffer()), ...(name.trim() ? { name: name.trim() } : {}) });
+      setDone(`${r.board.name}: ${r.slides} slide${r.slides === 1 ? "" : "s"} in ${r.lessons} lesson${r.lessons === 1 ? "" : "s"}, plus Welcome.`);
+      setFile(null);
+      setName("");
+      await templates.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  const start = async (t: BoardSummary) => {
+    setBusy(t.id);
+    try {
+      const r = await api<{ board: { id: string } }>("POST", `/v1/templates/boards/${encodeURIComponent(t.id)}/create`, { name: `${t.name} class ${new Date().toISOString().slice(0, 10)}` });
+      onStarted(r.board.id);
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+      setBusy(null);
+    }
+  };
+  const remove = async (t: BoardSummary) => {
+    if (!window.confirm(`Remove the template "${t.name}"? Classes already started from it stay.`)) return;
+    setBusy(t.id);
+    try {
+      await api("DELETE", `/v1/boards/${encodeURIComponent(t.id)}`);
+      await templates.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <section className="panel panel-body stack">
+      <h2>Your course decks</h2>
+      <p className="faint">
+        Teach from your own licensed courseware: import the PowerPoint deck you run the class from and it becomes a class template, one frame per lesson with a frame per slide. Text boxes keep their place, tables become stickies, and empty cells stay blank for learners to fill.
+      </p>
+      <div className="notice">The deck stays private to this workspace. It is not shared with other workspaces or added to Trainyard&apos;s built-in templates, and removing the template removes it.</div>
+      {err ? <ErrorList title="Could not use the deck" items={[{ message: err }]} /> : null}
+      {done ? <div className="notice">Imported {done}</div> : null}
+      <form
+        className="stack"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void upload();
+        }}
+      >
+        <div className="row" style={{ alignItems: "flex-end" }}>
+          <label className="field" style={{ flex: "1 1 220px" }}>
+            Import your course deck (.pptx)
+            <input id="deck-file" className="input" type="file" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation" onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={anonymous} required />
+          </label>
+          <label className="field" style={{ flex: "1 1 180px" }}>
+            Template name (optional)
+            <input id="deck-name" className="input" placeholder="Taken from the file" value={name} onChange={(e) => setName(e.target.value)} disabled={anonymous} />
+          </label>
+          <button className="btn primary" type="submit" disabled={!file || busy !== null || anonymous}>
+            {busy === "upload" ? "Importing…" : "Import deck"}
+          </button>
+        </div>
+        <span className="faint" style={{ fontSize: "0.8rem" }}>
+          Slides group into lessons by their titles (&ldquo;Lesson 3 Activity: …&rdquo;, &ldquo;L3: …&rdquo;); the rest open the board under Welcome. Pictures and charts are left out. Up to 200 slides and 35 MB.
+        </span>
+      </form>
+      {!templates.data ? (
+        <Loading error={templates.error} />
+      ) : decks.length ? (
+        <ul className="cls-running">
+          {decks.map((t) => (
+            <li key={t.id}>
+              <span>
+                <strong>{t.name}</strong> <span className="faint mono">{t.origin.importedAt.slice(0, 10)}</span>
+              </span>
+              <span className="row" style={{ gap: 6 }}>
+                <button className="btn primary" disabled={busy !== null || anonymous} onClick={() => void start(t)}>
+                  {busy === t.id ? "Starting…" : "Start a class from it"}
+                </button>
+                <Link className="btn" href={`/templates?tpl=${encodeURIComponent(t.id)}`}>
+                  Preview
+                </Link>
+                <button className="btn ghost" disabled={busy !== null} onClick={() => void remove(t)}>
+                  Remove
+                </button>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="faint">No decks imported yet.</p>
+      )}
+    </section>
   );
 }
 

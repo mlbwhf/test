@@ -337,3 +337,115 @@ describe("Miro CSV export", () => {
     expect(isMiroCsvExport("Feature,Team,Points\nGuest checkout,Checkout,13")).toBe(false);
   });
 });
+
+describe("PowerPoint course decks", () => {
+  // A stored zip of the given parts: enough of a .pptx for the reader. Every word is invented.
+  const zip = async (parts: Record<string, string>) => {
+    const { crc32 } = await import("node:zlib");
+    const locals: Buffer[] = [];
+    const centrals: Buffer[] = [];
+    let offset = 0;
+    for (const [name, text] of Object.entries(parts)) {
+      const n = Buffer.from(name);
+      const data = Buffer.from(text);
+      const crc = crc32(data);
+      const local = Buffer.alloc(30);
+      local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4); local.writeUInt32LE(crc, 14); local.writeUInt32LE(data.length, 18); local.writeUInt32LE(data.length, 22); local.writeUInt16LE(n.length, 26);
+      const central = Buffer.alloc(46);
+      central.writeUInt32LE(0x02014b50, 0); central.writeUInt16LE(20, 4); central.writeUInt16LE(20, 6); central.writeUInt32LE(crc, 16); central.writeUInt32LE(data.length, 20); central.writeUInt32LE(data.length, 24); central.writeUInt16LE(n.length, 28); central.writeUInt32LE(offset, 42);
+      locals.push(local, n, data);
+      centrals.push(central, n);
+      offset += 30 + n.length + data.length;
+    }
+    const cd = Buffer.concat(centrals);
+    const end = Buffer.alloc(22);
+    end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(Object.keys(parts).length, 8); end.writeUInt16LE(Object.keys(parts).length, 10); end.writeUInt32LE(cd.length, 12); end.writeUInt32LE(offset, 16);
+    return Buffer.concat([...locals, cd, end]);
+  };
+  const NS = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"';
+  const REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+  const rels = (list: [string, string, string][]) => `<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${list.map(([id, type, target]) => `<Relationship Id="${id}" Type="${REL}/${type}" Target="${target}"/>`).join("")}</Relationships>`;
+  const xfrm = (x: number, y: number, cx: number, cy: number) => `<a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm>`;
+  const para = (t: string) => `<a:p><a:r><a:rPr lang="en-US" sz="2400"/><a:t>${t}</a:t></a:r></a:p>`;
+  const title = (t: string, pos = "") => `<p:sp><p:nvSpPr><p:cNvPr id="2" name="Title"/><p:cNvSpPr/><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr><p:spPr>${pos}</p:spPr><p:txBody><a:bodyPr/>${para(t)}</p:txBody></p:sp>`;
+  const box = (t: string, pos: string, fill?: string) => `<p:sp><p:nvSpPr><p:cNvPr id="3" name="Box"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr>${pos}${fill ? `<a:solidFill><a:srgbClr val="${fill}"/></a:solidFill>` : ""}</p:spPr><p:txBody><a:bodyPr/>${t.split("\n").map(para).join("")}</p:txBody></p:sp>`;
+  const cell = (t: string) => `<a:tc><a:txBody><a:bodyPr/>${para(t)}</a:txBody><a:tcPr/></a:tc>`;
+  const table = (pos: [number, number], rows: string[][]) =>
+    `<p:graphicFrame><p:nvGraphicFramePr><p:cNvPr id="4" name="Table"/><p:cNvGraphicFramePr/><p:nvPr/></p:nvGraphicFramePr><p:xfrm><a:off x="${pos[0]}" y="${pos[1]}"/><a:ext cx="2540000" cy="1270000"/></p:xfrm><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table"><a:tbl><a:tblGrid><a:gridCol w="1270000"/><a:gridCol w="1270000"/></a:tblGrid>${rows.map((r) => `<a:tr h="635000">${r.map(cell).join("")}</a:tr>`).join("")}</a:tbl></a:graphicData></a:graphic></p:graphicFrame>`;
+  const slide = (shapes: string) => `<?xml version="1.0"?><p:sld ${NS}><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${shapes}</p:spTree></p:cSld></p:sld>`;
+  const toLayout = rels([["rId1", "slideLayout", "../slideLayouts/slideLayout1.xml"]]);
+  // Presentation order is not file order: the second slide shown lives in slide3.xml.
+  const file = (i: number) => `ppt/slides/slide${[1, 3, 2, 4][i] ?? i + 1}.xml`;
+  const deck = (slides: string[]) =>
+    zip({
+      "[Content_Types].xml": '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>',
+      "ppt/presentation.xml": `<?xml version="1.0"?><p:presentation ${NS}><p:sldIdLst>${slides.map((_, i) => `<p:sldId id="${256 + i}" r:id="rId${i + 10}"/>`).join("")}</p:sldIdLst><p:sldSz cx="12192000" cy="6858000"/></p:presentation>`,
+      "ppt/_rels/presentation.xml.rels": rels(slides.map((_, i) => [`rId${i + 10}`, "slide", file(i).replace("ppt/", "")])),
+      ...Object.fromEntries(slides.flatMap((s, i) => [[file(i), s], [file(i).replace("slides/", "slides/_rels/") + ".rels", toLayout]])),
+      // The layout gives titles their place when a slide leaves it out.
+      "ppt/slideLayouts/slideLayout1.xml": slide(title("", xfrm(635000, 317500, 10922000, 952500))),
+    });
+
+  it("turns slides into lesson bands of slide frames, with text boxes in place and tables as stickies", async () => {
+    const { boardFromPptx, isPptx, lessonOf, readPptx } = await import("./pptx.js");
+    const bytes = await deck([
+      slide(title("Kite Flying Basics") + box("Meet the crew\nPack a snack", xfrm(635000, 1270000, 3175000, 1270000))),
+      slide(title("Lesson 2 Activity: Paper planes", xfrm(0, 0, 12192000, 952500)) + box("Fold along the line", xfrm(635000, 1270000, 1905000, 952500), "FFEE99") + table([6350000, 1270000], [["Wing", "Notes"], ["Delta", "…"]])),
+      slide(title("L5: Launch day") + box("Bring string", xfrm(0, 3175000, 1270000, 635000))),
+      slide(title("Lesson 2 Discussion: Landings")),
+    ]);
+    expect(isPptx(bytes)).toBe(true);
+    const parsed = readPptx(bytes);
+    expect(parsed).toMatchObject({ width: 1920, height: 1080, hidden: 0 });
+    expect(parsed.slides.map((s) => [s.number, s.title, s.lesson])).toEqual([
+      [1, "Kite Flying Basics", undefined],
+      [2, "Lesson 2 Activity: Paper planes", 2],
+      [3, "L5: Launch day", 5],
+      [4, "Lesson 2 Discussion: Landings", 2],
+    ]);
+    // The first title has no position of its own and takes the layout's.
+    expect(parsed.slides[0]!.texts[0]).toMatchObject({ role: "title", x: 100, y: 50, width: 1720, height: 150, fontSize: 48 });
+
+    const b = boardFromPptx(bytes, { fileName: "Kite_Course.pptx", id: "tpl-deck-1", now: "2026-01-01T00:00:00.000Z" });
+    expect(b).toMatchObject({ id: "tpl-deck-1", name: "Kite Course", isTemplate: true, origin: { system: "pptx", externalId: "Kite_Course.pptx" } });
+    expect(b.fields).toMatchObject({ class: "custom", source: "deck", slides: 4, lessons: 2, bands: ["Welcome", "Lesson 2", "Lesson 5"] });
+    const bands = b.frames.filter((f) => !f.parentId);
+    expect(bands.map((f) => f.title)).toEqual(["Welcome", "Lesson 2", "Lesson 5"]);
+    // Bands stack top to bottom; slides sit side by side inside, in deck order.
+    expect(bands[1]!.y).toBeGreaterThan(bands[0]!.y + bands[0]!.height);
+    const inLesson2 = b.frames.filter((f) => f.parentId === "lesson-2");
+    expect(inLesson2.map((f) => f.title)).toEqual(["2. Lesson 2 Activity: Paper planes", "4. Lesson 2 Discussion: Landings"]);
+    expect(inLesson2[1]!.x).toBe(inLesson2[0]!.x + 1920 + 40);
+    expect(inLesson2[0]).toMatchObject({ width: 1920, y: inLesson2[1]!.y });
+
+    const s2 = inLesson2[0]!;
+    const onS2 = b.nodes.filter((n) => n.frameId === s2.id);
+    // The filled text box is a sticky at its slide position (EMU / 6350), under the frame's heading.
+    expect(onS2.find((n) => n.text === "Fold along the line")).toMatchObject({ kind: "sticky", color: "#ffee99", x: s2.x + 100, y: s2.y + 50 + 200, width: 300, height: 150 });
+    expect(onS2.find((n) => n.fields.role === "title")).toMatchObject({ kind: "text", text: "Lesson 2 Activity: Paper planes" });
+    const cells = onS2.filter((n) => n.id.includes("-tbl1-"));
+    expect(cells.map((n) => [n.kind, n.text])).toEqual([["card", "Wing"], ["card", "Notes"], ["sticky", "Delta"], ["sticky", ""]]);
+    expect(cells[0]!.fields).toMatchObject({ header: true, bold: true, fontColor: "#ffffff" });
+    expect(cells[3]!.fields.placeholder).toBe(true);
+    expect(cells[3]).toMatchObject({ x: s2.x + 1000 + 200, y: s2.y + 50 + 200 + 100, width: 200, height: 100 });
+    const s1 = b.frames.find((f) => f.parentId === "welcome")!;
+    expect(b.nodes.find((n) => n.frameId === s1.id && n.text === "Meet the crew\nPack a snack")).toMatchObject({ kind: "text", x: s1.x + 100 });
+
+    expect(lessonOf("Lesson 6 Discussion: Wind")).toBe(6);
+    expect(lessonOf("L3: Gliding")).toBe(3);
+    expect(lessonOf("L4 Discussion")).toBe(4);
+    expect(lessonOf("Launch day")).toBeUndefined();
+    expect(lessonOf("Lessons learned")).toBeUndefined();
+  });
+
+  it("refuses files that are not decks and decks over the slide and card caps", async () => {
+    const { boardFromPptx, isPptx, readPptx } = await import("./pptx.js");
+    expect(isPptx(Buffer.from("just some text, not a zip"))).toBe(false);
+    const other = await zip({ "notes.txt": "hello" });
+    expect(isPptx(other)).toBe(false);
+    expect(() => readPptx(other)).toThrow(ImportError);
+    const bytes = await deck([slide(title("One")), slide(title("Two")), slide(title("Three"))]);
+    expect(() => readPptx(bytes, { maxSlides: 2 })).toThrow(/3 slides; up to 2/);
+    expect(() => boardFromPptx(bytes, { fileName: "x.pptx", maxNodes: 2 })).toThrow(/more than 2 cards/);
+  });
+});
