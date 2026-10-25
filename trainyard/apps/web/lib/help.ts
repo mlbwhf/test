@@ -106,9 +106,9 @@ export const HELP: HelpTopic[] = [
     path: "/templates",
     space: "Templates and boards",
     title: "Template gallery",
-    what: "Ready-made boards in each method's own words: SAFe, Scrum, Kanban, Lean, Six Sigma, manufacturing and general.",
-    steps: ["Pick a method: the page takes on that method's look.", "Pick a template on the left and preview it as lanes or as a whiteboard.", "Name it and choose Create board from template."],
-    tips: ["Or start blank from Your boards and add any templates to one board."],
+    what: "Ready-made boards in each method's own words: SAFe, Scrum, Kanban, Lean, Six Sigma, manufacturing and general. Packages at the top create the boards a SAFe event needs together: Prepare for PI planning, PI planning, and Close the PI (IP iteration, then Inspect & Adapt).",
+    steps: ["Pick a method: the page takes on that method's look.", "Pick a template on the left and preview it as lanes or as a whiteboard.", "Name it and choose Create board from template.", "Or pick a package: name it, choose one board with the templates side by side or a board for each, optionally a room, and Create."],
+    tips: ["Or start blank from Your boards and add any templates to one board.", "Class boards are not listed here; start them under Classes.", "Click a board's name in a package to preview it."],
   },
   {
     path: "/boards",

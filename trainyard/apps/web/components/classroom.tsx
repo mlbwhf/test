@@ -11,6 +11,7 @@ import { CLASSES, type ClassSpec, type LaneCard } from "@trainyard/core";
 import { LaneBoard, StatChip, useLaneState, type Lane } from "@/components/lane-board";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
+import { useSavedClassTemplates } from "@/lib/class-templates";
 
 interface BoardSummary {
   id: string;
@@ -46,11 +47,15 @@ export function ClassBoards() {
   const boards = useApi<{ boards: BoardSummary[] }>("/v1/boards");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const running = (boards.data?.boards ?? []).filter((b) => !b.isTemplate && b.templateId?.startsWith("tpl-builtin-class-"));
-  const start = async (c: ClassSpec) => {
-    setBusy(c.id);
+  // Classes someone saved as a template (fields.class) are started from here, not the template gallery.
+  const savedIds = useSavedClassTemplates(boards.data?.boards.filter((b) => b.isTemplate).map((b) => b.id));
+  const saved = (boards.data?.boards ?? []).filter((b) => b.isTemplate && savedIds?.has(b.id));
+  const running = (boards.data?.boards ?? []).filter((b) => !b.isTemplate && (b.templateId?.startsWith("tpl-builtin-class-") || (!!b.templateId && !!savedIds?.has(b.templateId))));
+  const start = (c: ClassSpec) => startFrom(c.id, `tpl-builtin-class-${c.id}`, `${c.short} class ${new Date().toISOString().slice(0, 10)}`);
+  const startFrom = async (key: string, templateId: string, name: string) => {
+    setBusy(key);
     try {
-      const r = await api<{ board: { id: string } }>("POST", `/v1/templates/boards/tpl-builtin-class-${c.id}/create`, { name: `${c.short} class ${new Date().toISOString().slice(0, 10)}` });
+      const r = await api<{ board: { id: string } }>("POST", `/v1/templates/boards/${encodeURIComponent(templateId)}/create`, { name });
       router.push(`/boards/${encodeURIComponent(r.board.id)}`);
     } catch (e) {
       setErr((e as ApiFailure).message);
@@ -90,6 +95,23 @@ export function ClassBoards() {
           </article>
         ))}
       </div>
+      {saved.length ? (
+        <section className="panel panel-body stack" aria-labelledby="cls-saved-head">
+          <h2 id="cls-saved-head">Your class templates</h2>
+          <ul className="cls-running">
+            {saved.map((t) => (
+              <li key={t.id}>
+                <span>
+                  {t.name} <span className="faint mono">{t.origin.importedAt.slice(0, 10)}</span>
+                </span>
+                <button className="btn small" disabled={busy !== null || !!me.data?.principal.anonymous} onClick={() => void startFrom(t.id, t.id, `${t.name} ${new Date().toISOString().slice(0, 10)}`)} aria-label={`Start a class from ${t.name}`}>
+                  {busy === t.id ? "Starting…" : "Start a class"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <section className="panel panel-body stack">
         <h2>Classes you are running</h2>
         {!boards.data ? (
