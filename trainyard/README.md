@@ -222,6 +222,8 @@ Shared material is shared: SPC's first lessons are Leading SAFe's (with four sim
 
 Class boards and Miro imports need a signed-up trainer (`403 SIGNUP_REQUIRED` for anonymous or open-mode access); the planning boards stay open.
 
+
+**Running a class.** A class board opens with a Welcome area (how to work on the board, the agenda and the day's logistics, an icebreaker, the team and its challenge, working agreements, parking lot) and a tab per lesson: the lesson alone on the canvas, fitted, with full screen and zoom (buttons, Fit, Ctrl+wheel, pinch). The trainer renames the class, wipes it (back to how it starts, or empty), saves it as their own class template keeping every card, or deletes it. **Students** are added by name and email; each gets a personal link (`/join/…`) that opens that one class board with no account, emailed when mail is configured, otherwise copied; a link reads the board and adds, edits and moves cards, nothing else, and can be replaced or removed (`GET/POST /v1/boards/:id/students`, `POST …/students/:sid/link`, `DELETE …/students/:sid`, `POST /v1/boards/:id/reset`). **Your own course deck**: a trainer uploads the .pptx they are licensed to teach from (`POST /v1/imports/class-deck`) and it becomes a class template in their workspace only, one tab per lesson by slide title; licensed courseware is never part of this repository or the built-in classes.
 ## PI Outcome Planning
 
 AI-Native SAFe replaced two-day PI Planning with a one-day **PI Outcome Planning** event, and **PI Outcome Planning** in the app is that event's set of artifacts for one ART and one PI:
