@@ -137,6 +137,27 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
   }, [theme]);
   useEffect(() => () => void delete document.documentElement.dataset.theme, []);
   const top = SPACES.filter((s) => s.id !== "setup");
+  // A student who joined by link sees their class board and nothing of the workspace around it.
+  if (me.data?.principal.guestBoardId) {
+    return (
+      <ThemeCtx.Provider value={setOverride}>
+        <div className="ws">
+          <header className="ws-top">
+            <span className="ws-brand">
+              <Logo />
+              <span>Trainyard</span>
+            </span>
+            <div className="ws-grow" />
+            <span className="faint" style={{ fontSize: "0.85rem" }}>
+              In class as <b>{me.data.principal.name}</b>
+            </span>
+            <HelpPanel path={path} />
+          </header>
+          <main id="main" className="main ws-main">{children}</main>
+        </div>
+      </ThemeCtx.Provider>
+    );
+  }
   return (
     <ThemeCtx.Provider value={setOverride}>
       <div className="ws">

@@ -1,6 +1,6 @@
 // Class boards: one board per training class (Leading SAFe, SPC, Advanced SPC, POPM, RTE),
-// laid out the way trainers run them on a whiteboard: a "Start here" strip (intro, quick
-// agenda, working agreements, team and challenge, parking lot, daily structure), then one
+// laid out the way trainers run them on a whiteboard: a "Welcome" area (board intro, quick
+// agenda and logistics, icebreaker, team and challenge, agreements, parking lot), then one
 // frame per lesson holding that lesson's exercises. Exercises are described with a small
 // vocabulary (slide, stickies, zones, table, canvas, board, link) and rendered into frames
 // and cards, so a class is authored in a few lines and edited like any other board.
@@ -49,7 +49,7 @@ export interface ClassSpec {
   short: string;
   blurb: string;
   days: number;
-  /** Trainer notes shown on the "Start here" strip. */
+  /** Trainer notes shown in the "Welcome" area. */
   challenge?: string;
   lessons: Lesson[];
 }
@@ -220,9 +220,12 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
   }
 }
 
-/** The "Start here" strip every class opens with. */
+/** The "Welcome" area every class opens with. */
+// The welcome area, in the order a class starts: how to work on the board, the agenda and the
+// day's logistics, an icebreaker, the team and its challenge, the working agreements and the
+// parking lot, then the start.
 function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
-  const strip = b.frame("Start here", x, y, 2560, 0);
+  const strip = b.frame("Welcome", x, y, 2560, 0);
   let cx = x + PAD;
   const put = (ex: Exercise) => {
     const r = renderExercise(b, ex, cx, y + 110, strip.id);
@@ -230,12 +233,14 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
     return r;
   };
   const hs = [
-    put({ kind: "slide", title: "Trainyard intro", body: "Trainyard is a shared board, like a whiteboard: everyone works on it at once. Use the mouse wheel or pinch to zoom, drag the background to move. Double-click a card to write; drag it to move; the connect tool draws dependencies. Ctrl/Cmd+Z undoes.", steps: ["Open the board from the link your trainer sent", "Find your name on the roster", "Add one sticky with what you want from the class"] }),
-    put({ kind: "table", title: "Quick agenda", columns: ["Lesson", "Day", "Status", "Top 3?"], rows: spec.lessons.map((l, i) => [l.title, `Day ${Math.min(spec.days, Math.floor((i * spec.days) / spec.lessons.length) + 1)}`, i === 0 ? "To do" : "", ""]) }),
-    put({ kind: "slide", title: "Remote working agreements", body: "How we work together for the next days.", steps: ["Respect your humanness", "One conversation at a time", "Assume positive intent", "Be present", "Respect the timeboxes", "[Add additional working agreements]"] }),
+    put({ kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] }),
+    put({ kind: "table", title: "Quick agenda", columns: ["Lesson", "Day", "Status"], rows: spec.lessons.map((l, i) => [`${i + 1}. ${l.title}`, `Day ${Math.min(spec.days, Math.floor((i * spec.days) / spec.lessons.length) + 1)}`, i === 0 ? "Now" : ""]) }),
+    put({ kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] }),
+    put({ kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 }),
     put({ kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 }),
+    put({ kind: "slide", title: "Remote working agreements", body: "How we work together for the next days.", steps: ["Respect your humanness", "One conversation at a time", "Assume positive intent", "Be present", "Respect the timeboxes", "[Add additional working agreements]"] }),
     put({ kind: "zones", title: "Parking lot", zones: ["Questions", "Closed · answered", "Open space · keep on the radar", "On hold · consider later", "Canceled · do not consider"], color: COLORS.blue }),
-    put({ kind: "table", title: "Daily structure", columns: ["Block", "Length"], rows: [["Morning session 1", "1h 30m"], ["Break", "15 min"], ["Morning session 2", "1h 30m"], ["Lunch", "45 min"], ["Afternoon session 1", "1h 30m"], ["Break", "15 min"], ["Afternoon session 2", "1h 30m"], ["Feedback · parking lot", "15 min"]] }),
+    put({ kind: "slide", title: "Let's get started!", body: `${spec.name}: ${spec.lessons.length} lessons over ${spec.days} day${spec.days > 1 ? "s" : ""}. Open the Lesson 1 tab.` }),
   ];
   const h = Math.max(...hs.map((r) => r.h)) + 110 + PAD;
   strip.height = h;
@@ -295,7 +300,7 @@ export function classInfo(spec: ClassSpec): TemplateInfo {
     event: `${spec.days}-day class`,
     method: "safe",
     tags: ["class", "safe"],
-    zones: ["Start here", ...spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
+    zones: ["Welcome", ...spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
     cardTypes: ["Sticky", "Slide", "Story", "Vote"],
     mapsTo: "Nothing (a class is run, not synced)",
   };

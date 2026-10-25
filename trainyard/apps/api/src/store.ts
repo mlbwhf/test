@@ -5,6 +5,7 @@
 import { demoAgents, demoInitiatives, type Agent, type Initiative } from "@trainyard/ai-portfolio";
 import type { PendingChange, TrackerConnector } from "@trainyard/connectors";
 import { MemoryPersistence, StaleWriteError, type AuditEntry, type StatePersistence } from "@trainyard/db";
+import type { ClassGuest } from "./students.js";
 import type { Purchase } from "./billing.js";
 import type { WorkspaceRecord } from "./plans.js";
 import type { Signup } from "./signups.js";
@@ -75,6 +76,8 @@ export interface StoreState {
   signups?: Signup[];
   /** Stripe Checkout sessions started from sign-ups, and what they became. */
   purchases?: Purchase[];
+  /** Students invited to class boards by link (platform state; students.ts). */
+  classGuests?: ClassGuest[];
   /** Rooms that organise boards and who may open them. */
   rooms?: Room[];
   /** Stripe event ids already handled (the last few hundred), so a redelivery does nothing. */

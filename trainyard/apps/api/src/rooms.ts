@@ -27,7 +27,8 @@ const Body = z.object({
 
 /** Who is asking, in the terms room access is decided in. Open mode and support see everything. */
 export function roomViewer(p: Principal): RoomViewer {
-  return { userId: p.userId, role: p.role, ...(p.anonymous || p.support ? { unrestricted: true } : {}) };
+  // A student's link reaches only its own class board (auth.ts), whatever room that board is in.
+  return { userId: p.userId, role: p.role, ...(p.anonymous || p.support || p.guestBoardId ? { unrestricted: true } : {}) };
 }
 
 export interface RoomRouteOptions {

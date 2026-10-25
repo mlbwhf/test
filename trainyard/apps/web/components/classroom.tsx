@@ -59,7 +59,7 @@ export function ClassBoards() {
   };
   return (
     <>
-      <PageHead title="Class boards" sub="Teach for free: every class opens with a Start here strip, then one frame per lesson. The chapters that teach a Trainyard tool are built from the tool itself, so the class changes when the tool does." />
+      <PageHead title="Class boards" sub="Teach for free: every class opens with a Welcome area (how to work on the board, agenda and logistics, icebreaker), then a tab per lesson. The chapters that teach a Trainyard tool are built from the tool itself, so the class changes when the tool does." />
       {err ? <ErrorList title="Could not start the class" items={[{ message: err }]} /> : null}
       {me.data?.principal.anonymous ? <div className="notice warn">Sign up free to start a class board: classes are kept for signed-up trainers.</div> : null}
       <div className="cls-grid">

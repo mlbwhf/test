@@ -69,7 +69,7 @@ export const HELP: HelpTopic[] = [
     path: "/classroom",
     space: "Classes",
     title: "Class boards",
-    what: "Leading SAFe, SPC, Advanced SPC, POPM and RTE, each a board with a Start here strip and one frame per lesson.",
+    what: "Leading SAFe, SPC, Advanced SPC, POPM and RTE, each a board with a Welcome area and a full-screen tab per lesson.",
     steps: ["Choose Start this class: a board for this cohort is created and opened.", "Share the board link with participants.", "Classes you are running are listed below for next time."],
     tips: ["Chapters that teach a Trainyard tool (PI planning, readiness, value streams, Inspect & Adapt) are built from the tool itself, so they stay current."],
   },

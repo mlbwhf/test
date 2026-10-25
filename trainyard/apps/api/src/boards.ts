@@ -252,10 +252,12 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     return { board: summary(b) };
   });
 
-  app.post("/v1/boards/:id/template", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional() }) } }, async (req, reply) => {
+  app.post("/v1/boards/:id/template", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional(), keepCards: z.boolean().optional() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = reach(req, req.params.id, "view");
-    const t = templateFrom(b, `tpl-${Date.now().toString(36)}`, req.body.name ?? `${b.name} template`, store.now().toISOString());
+    // A class saved as a custom template keeps everything on it; other boards keep the structure.
+    const keep = req.body.keepCards ?? !!b.fields?.class;
+    const t = templateFrom(b, `tpl-${Date.now().toString(36)}`, req.body.name ?? `${b.name} template`, store.now().toISOString(), keep);
     boards().push(t);
     await store.commit(req.principal, "board.template", { id: t.id, from: b.id });
     return reply.code(201).send({ board: summary(t) });
@@ -342,6 +344,19 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     boards().push(b);
     await store.commit(req.principal, "board.create", { id: b.id, blank: true });
     return reply.code(201).send({ board: summary(b) });
+  });
+  // Wipe a board: back to its template as it started (a class run again), or to empty.
+  app.post("/v1/boards/:id/reset", { schema: { params: z.object({ id: Id }), body: z.object({ to: z.enum(["template", "empty"]).default("template") }) } }, async (req) => {
+    require(req, "plan");
+    const b = editable(req, req.params.id);
+    let fresh = emptyBoard(b.id, b.name, b.origin);
+    if (req.body.to === "template") {
+      if (!b.templateId) throw new ApiError(422, "NO_TEMPLATE", "This board was not made from a template; it can only be emptied.");
+      fresh = instantiate(findTemplate(b.templateId), b.id, b.name, store.now().toISOString());
+    }
+    Object.assign(b, { frames: fresh.frames, nodes: fresh.nodes, edges: fresh.edges, columns: fresh.columns, groups: fresh.groups, rows: fresh.rows });
+    await store.commit(req.principal, "board.reset", { id: b.id, to: req.body.to });
+    return { board: summary(b) };
   });
   app.post("/v1/boards/:id/insert-template", { schema: { params: z.object({ id: Id }), body: z.object({ templateId: Id }) } }, async (req) => {
     require(req, "plan");

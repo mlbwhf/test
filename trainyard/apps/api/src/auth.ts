@@ -11,6 +11,7 @@ type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify")
 import { z } from "zod";
 import { ApiError, defined, notFound } from "./errors.js";
 import { limitsFor, planLimitError, usageOf, type WorkspaceRecord } from "./plans.js";
+import { guestMayUse } from "./students.js";
 import type { Tenants } from "./tenants.js";
 
 export const ROLES = ["admin", "planner", "architect", "viewer"] as const;
@@ -54,6 +55,8 @@ export interface Principal {
   platformAdmin: boolean;
   /** Set when a platform admin is inside a customer workspace. */
   support?: boolean;
+  /** A student who joined by link: the one class board they may work on (students.ts). */
+  guestBoardId?: string;
 }
 
 /** What each role may do. Reads are open to every role. */
@@ -171,6 +174,16 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
     }
     if (lockedOut(req.clientIp)) throw new ApiError(429, "LOCKED_OUT", "Too many failed sign-ins from this address; try again in a few minutes.");
     const h = hashKey(key);
+    if (key.startsWith("gst_")) {
+      // A student's class link: one board, no account.
+      const g = (platform.state.classGuests ?? []).find((x) => sameHash(x.tokenHash, h));
+      if (!g) {
+        failed(req.clientIp);
+        throw new ApiError(401, "UNAUTHORIZED", "This class link is no longer valid. Ask your trainer for a new one.");
+      }
+      g.seenAt = new Date().toISOString();
+      return { userId: `guest:${g.id}`, name: g.name, role: "planner", anonymous: false, workspaceId: g.workspaceId, platformAdmin: false, guestBoardId: g.boardId };
+    }
     if (bootstrapHash && sameHash(h, bootstrapHash)) return { userId: "bootstrap", name: "Bootstrap admin", role: "admin", anonymous: false, workspaceId: tenants.platformId, platformAdmin: true };
     const nowIso = new Date().toISOString();
     const user = key.startsWith("ts_") ? platform.state.users.find((u) => (u.sessions ?? []).some((x) => x.expiresAt > nowIso && sameHash(x.hash, h))) : platform.state.users.find((u) => sameHash(u.keyHash, h));
@@ -208,6 +221,7 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
     if (!req.url.startsWith("/v1/")) return done();
     resolve(req, reply)
       .then(async (principal) => {
+        if (principal.guestBoardId && !guestMayUse(req.method, req.url, principal.guestBoardId)) throw new ApiError(403, "GUEST_SCOPE", "A class link opens its class board only.");
         // A platform admin may step into any workspace as support; everyone else stays home.
         const asked = req.headers["x-trainyard-workspace"];
         let target = principal.workspaceId;

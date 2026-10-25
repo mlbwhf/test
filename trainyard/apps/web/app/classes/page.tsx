@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const COLORS = ["#ffe27a", "#ff9fc6", "#5ff0e0", "#b9c6ff", "#ffe27a"];
 
 const STEPS: [string, string][] = [
-  ["Start here", "A strip with the intro, quick agenda, working agreements, team and challenge, parking lot and daily structure."],
+  ["Welcome", "How to work on the board, the agenda and the day's logistics, an icebreaker, the team and its challenge, working agreements and a parking lot."],
   ["One frame per lesson", "Each lesson holds its exercises. The chapters that teach a Trainyard tool are built from the tool itself, so they change when it does."],
   ["Simulate", "Run the PI planning simulation with breakout tables of four, timeboxes and the confidence vote."],
   ["Bring your own", "Import your Miro class boards from the CSV export, and keep them as templates for the next cohort."],

@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type MappingResult, type TemplateInfo } from "@trainyard/core";
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
+import { ClassBoard } from "@/components/class-board";
+import { ClassStudents } from "@/components/class-students";
 import { AssistButton } from "@/components/assist";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
-import { api, useApi, type ApiFailure } from "@/lib/api";
+import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
 
 const SOURCE_LABEL: Record<string, string> = { miro: "Miro", lucid: "Lucid", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
@@ -26,8 +29,23 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const [tab, setTab] = useState<"board" | "map">("board");
-  if (!view.data || !model.data) return <Loading error={view.error ?? model.error} />;
+  const [showStudents, setShowStudents] = useState(false);
+  const me = useMe();
+  const router = useRouter();
+  if (!view.data || (!model.data && !me.data?.principal.guestBoardId)) return <Loading error={view.error ?? (me.data?.principal.guestBoardId ? null : model.error)} />;
   const { board, shape } = view.data;
+  // A class board shows a tab per lesson; a student who joined by link sees only that.
+  const isClass = !!board.fields?.class;
+  const guest = !!me.data?.principal.guestBoardId;
+  if (guest) {
+    return (
+      <>
+        <PageHead title={board.name} sub="Your class board: open a lesson tab, add cards and write on them. Your trainer and classmates see the same board." />
+        {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
+        <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={false} onChanged={() => void view.reload()} onError={setErr} />
+      </>
+    );
+  }
 
   const run = async (label: string, fn: () => Promise<unknown>) => {
     try {
@@ -75,6 +93,46 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
             >
               New board from template
             </button>
+          ) : isClass ? (
+            <>
+              <button className="btn primary" onClick={() => setShowStudents((v) => !v)} aria-expanded={showStudents}>
+                Students
+              </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  const n = window.prompt("Name this class", board.name)?.trim();
+                  if (n && n !== board.name) void run(`Renamed to "${n}".`, () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}`, { name: n })).then(() => view.reload());
+                }}
+              >
+                Rename
+              </button>
+              <button className="btn" onClick={() => run("Saved as your own class template: start new classes from it under Classes.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/template`, { name: `${board.name} (my template)`, keepCards: true }))}>
+                Save as my class template
+              </button>
+              <select
+                className="select"
+                aria-label="Wipe the class"
+                value=""
+                onChange={(e) => {
+                  const to = e.target.value as "template" | "empty";
+                  if (!to) return;
+                  if (window.confirm(to === "template" ? "Wipe everything learners added and start the class fresh?" : "Clear the whole board, content and all?")) void run(to === "template" ? "Wiped: the class is back as it starts." : "The board is empty.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/reset`, { to })).then(() => view.reload());
+                }}
+              >
+                <option value="">Wipe…</option>
+                <option value="template">Start fresh: remove learners&apos; work</option>
+                <option value="empty">Clear the whole board</option>
+              </select>
+              <button
+                className="btn ghost"
+                onClick={() => {
+                  if (window.confirm(`Delete "${board.name}"? Students' links stop working.`)) void api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}`).then(() => router.push("/classroom"), (e: ApiFailure) => setErr(e.message));
+                }}
+              >
+                Delete
+              </button>
+            </>
           ) : (
             <>
               <AddTemplate onAdd={(templateId, name) => void run(`Added "${name}" to this board, to the right of what was there.`, () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/insert-template`, { templateId })).then(() => view.reload())} />
@@ -87,7 +145,8 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       />
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
       {done ? <div className="notice" role="status">{done}</div> : null}
-      {!board.isTemplate ? (
+      {isClass && showStudents && !board.isTemplate ? <ClassStudents boardId={board.id} /> : null}
+      {!board.isTemplate && !isClass ? (
         <AssistButton<BoardReview>
           label="Review this board"
           path={`/v1/assist/boards/${encodeURIComponent(board.id)}`}
@@ -150,12 +209,14 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
+          {isClass ? (
+            <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
+          ) : shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
           {shape === "empty" && board.isTemplate ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
       ) : (
-        <Mapper board={board} shape={shape} levels={model.data.model.workLevels} onApplied={(r) => setDone(`Added ${r.items.length} items, ${r.risks.length} risks, ${r.dependencies.length} dependencies${r.newTeams.length ? ` and ${r.newTeams.length} teams` : ""} to the plan.`)} onError={(e) => setErr(e)} />
+        <Mapper board={board} shape={shape} levels={model.data?.model.workLevels ?? []} onApplied={(r) => setDone(`Added ${r.items.length} items, ${r.risks.length} risks, ${r.dependencies.length} dependencies${r.newTeams.length ? ` and ${r.newTeams.length} teams` : ""} to the plan.`)} onError={(e) => setErr(e)} />
       )}
     </>
   );

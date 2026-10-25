@@ -62,6 +62,7 @@ import { registerInsightRoutes } from "./insights.js";
 import { Tenants } from "./tenants.js";
 import { registerSignupRoutes } from "./signups.js";
 import { registerRoomRoutes } from "./rooms.js";
+import { registerStudentRoutes } from "./students.js";
 import { limitsFor } from "./plans.js";
 import { registerIdentityRoutes, type SsoProvider } from "./identity.js";
 import { registerOutcomeRoutes } from "./outcomes.js";
@@ -761,6 +762,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerIdentityRoutes(app, { emailVerification: opts.emailVerification ?? "off", sso: opts.sso ?? [] });
   registerAssistRoutes(app, store, metrics, opts.assist);
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch);
+  registerStudentRoutes(app, tenants, store, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
 
   return Object.assign(app, { sync });
 }

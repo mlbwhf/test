@@ -1775,3 +1775,54 @@ describe("rooms", () => {
     expect(second.body.error.details).toMatchObject({ kind: "rooms", limit: 1 });
   });
 });
+
+describe("classes: students by link, wipe and custom templates", () => {
+  it("lets a student in by a personal link to one class board, and nothing else", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const cls = await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE class March" }, root);
+    expect(cls.status).toBe(201);
+    const id = cls.body.board.id as string;
+    const added = await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "Ana@Example.io" }, { name: "Ben", email: "ben@example.io" }] }, root);
+    expect(added.status).toBe(201);
+    const ana = added.body.students[0];
+    expect(ana.token).toMatch(/^gst_/);
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.students.map((s: { email: string }) => s.email)).toEqual(["ana@example.io", "ben@example.io"]);
+    // The link opens the board and lets the student add a card; everything else is closed.
+    expect((await call("GET", "/v1/me", undefined, ana.token)).body.principal).toMatchObject({ name: "Ana", guestBoardId: id });
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(200);
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "Hello from Ana", x: 10, y: 10 }, ana.token)).status).toBe(201);
+    expect((await call("GET", "/v1/boards", undefined, ana.token)).status).toBe(403);
+    expect((await call("GET", "/v1/users", undefined, ana.token)).status).toBe(403);
+    expect((await call("DELETE", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(403);
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, ana.token)).status).toBe(403);
+    // A new link replaces the old; removing the student closes it.
+    const fresh = await call("POST", `/v1/boards/${id}/students/${ana.id}/link`, {}, root);
+    expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(401);
+    expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(200);
+    expect((await call("DELETE", `/v1/boards/${id}/students/${ana.id}`, undefined, root)).status).toBe(204);
+    expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(401);
+  });
+
+  it("renames, wipes back to the class as it started, saves a custom class template that keeps its cards, and deletes", async () => {
+    const { call: raw } = await setup();
+    const key = (await raw("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const call = (m: Parameters<typeof raw>[0], u: string, p?: unknown) => raw(m, u, p, key);
+    const cls = await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE class" });
+    const id = cls.body.board.id as string;
+    const before = (await call("GET", `/v1/boards/${id}`)).body.board;
+    expect(before.fields.class).toBe("rte");
+    expect(before.frames.find((f: { parentId?: string }) => !f.parentId).title).toBe("Welcome");
+    expect((await call("PATCH", `/v1/boards/${id}`, { name: "RTE class, April cohort" })).body.board.name).toBe("RTE class, April cohort");
+    await call("POST", `/v1/boards/${id}/nodes`, { text: "learner note", x: 0, y: 0 });
+    const wiped = await call("POST", `/v1/boards/${id}/reset`, { to: "template" });
+    expect(wiped.body.board.counts.nodes).toBe(before.nodes.length);
+    expect(wiped.body.board.name).toBe("RTE class, April cohort");
+    const custom = await call("POST", `/v1/boards/${id}/template`, { name: "My RTE class" });
+    const tpl = (await call("GET", `/v1/templates/boards/${custom.body.board.id}`)).body.board;
+    expect(tpl.nodes.length).toBe(before.nodes.length);
+    expect(tpl.fields.class).toBe("rte");
+    expect((await call("POST", `/v1/boards/${id}/reset`, { to: "empty" })).body.board.counts.nodes).toBe(0);
+    expect((await call("DELETE", `/v1/boards/${id}`)).status).toBe(204);
+  });
+});

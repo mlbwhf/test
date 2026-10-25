@@ -140,7 +140,7 @@ function wrap(text: string, width: number): string[] {
  * draw connectors. Every change goes to the API as it happens; the board prop is the
  * source of truth and is refreshed after each save.
  */
-export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [] }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[] }) {
+export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [], focus = null, fill = false }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[]; /** A top-level frame to show on its own (a class lesson). */ focus?: string | null; /** Fill the screen (full-screen mode). */ fill?: boolean }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const panel = useRef<HTMLElement>(null);
   const [nodes, setNodes] = useState<BoardNode[]>(board.nodes);
@@ -178,17 +178,47 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, board]);
 
+  // With a focus (one lesson of a class board), only that frame, the frames inside it and the
+  // cards on them are shown, and the view fits to it.
+  const { shownFrames, shownNodes } = useMemo(() => {
+    const root = focus ? frames.find((f) => f.id === focus) : undefined;
+    if (!root) return { shownFrames: frames, shownNodes: nodes };
+    const ids = new Set([root.id]);
+    for (let grew = true; grew; ) {
+      grew = false;
+      for (const f of frames) if (f.parentId && ids.has(f.parentId) && !ids.has(f.id)) (ids.add(f.id), (grew = true));
+    }
+    const inside = (n: BoardNode) => n.x >= root.x && n.y >= root.y && n.x < root.x + root.width && n.y < root.y + root.height;
+    return { shownFrames: frames.filter((f) => ids.has(f.id)), shownNodes: nodes.filter((n) => (n.frameId ? ids.has(n.frameId) : inside(n))) };
+  }, [focus, frames, nodes]);
+  useEffect(() => {
+    setZoom(1);
+    panel.current?.scrollTo({ left: 0, top: 0 });
+  }, [focus]);
+  // Ctrl or Cmd with the wheel (or a trackpad pinch, which browsers send the same way) zooms.
+  useEffect(() => {
+    const el = panel.current;
+    if (!el) return;
+    const wheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      setZoom((z) => Math.min(10, Math.max(0.5, +(z * (e.deltaY < 0 ? 1.1 : 1 / 1.1)).toFixed(3))));
+    };
+    el.addEventListener("wheel", wheel, { passive: false });
+    return () => el.removeEventListener("wheel", wheel);
+  }, []);
+
   const box = useMemo(() => {
     const xs: number[] = [];
     const ys: number[] = [];
-    for (const f of frames) xs.push(f.x, f.x + f.width), ys.push(f.y, f.y + f.height);
-    for (const n of nodes) xs.push(n.x, n.x + (n.width ?? 180)), ys.push(n.y, n.y + (n.height ?? 120));
+    for (const f of shownFrames) xs.push(f.x, f.x + f.width), ys.push(f.y, f.y + f.height);
+    for (const n of shownNodes) xs.push(n.x, n.x + (n.width ?? 180)), ys.push(n.y, n.y + (n.height ?? 120));
     if (!xs.length) return { x: -40, y: -40, w: 1200, h: 700 };
     const pad = 80;
     const x = Math.min(...xs) - pad;
     const y = Math.min(...ys) - pad;
     return { x, y, w: Math.max(...xs) + pad - x, h: Math.max(...ys) + pad - y };
-  }, [frames, nodes]);
+  }, [shownFrames, shownNodes]);
 
   const toBoard = (e: { clientX: number; clientY: number }) => {
     const svg = svgRef.current!;
@@ -310,7 +340,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
 
   // ---- actions ----------------------------------------------------------------------
   const addCard = () => {
-    const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? frames[0];
+    const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? shownFrames[0];
     const inFrame = f ? nodes.filter((n) => n.frameId === f.id).length : 0;
     const x = f ? f.x + 20 + (inFrame % 2) * 200 : box.x + 120;
     const y = f ? f.y + 20 + Math.floor(inFrame / 2) * 140 : box.y + 120;
@@ -321,7 +351,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     });
   };
   const placeFor = () => {
-    const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? frames[0];
+    const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? shownFrames[0];
     const inFrame = f ? nodes.filter((n) => n.frameId === f.id).length : 0;
     return { f, x: f ? f.x + 20 + (inFrame % 2) * 200 : box.x + 120, y: f ? f.y + 20 + Math.floor(inFrame / 2) * 140 : box.y + 120 };
   };
@@ -389,7 +419,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={removeSelected} disabled={!selNode}>
                 Delete card
               </button>
-              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click or double-tap a card to write · pinch to zoom · Esc deselects</span>
+              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click or double-tap a card to write · pinch or Ctrl+wheel to zoom · Esc deselects</span>
             </>
           )}
         </div>
@@ -401,11 +431,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
           <button className="btn small ghost" onClick={() => setZoom((z) => Math.min(10, +(z * 1.25).toFixed(3)))} aria-label="Zoom in">
             +
           </button>
+          <button className="btn small ghost" onClick={() => (setZoom(1), panel.current?.scrollTo({ left: 0, top: 0 }))} title="Fit the whole board or lesson in view">
+            Fit
+          </button>
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: selNode || selFrame ? "minmax(0, 1fr) 260px" : "minmax(0, 1fr)", gap: 14, alignItems: "start" }}>
-        <section ref={panel} className="panel" style={{ overflow: "auto", maxHeight: "72vh", position: "relative" }} onKeyDown={(e) => e.key === "Escape" && (setSelected(null), setEditing(null), setConnectFrom(null))} tabIndex={-1}>
+        <section ref={panel} className="panel" style={{ overflow: "auto", maxHeight: fill ? "calc(100vh - 150px)" : "72vh", position: "relative" }} onKeyDown={(e) => e.key === "Escape" && (setSelected(null), setEditing(null), setConnectFrom(null))} tabIndex={-1}>
           <svg
             ref={svgRef}
             viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
@@ -433,7 +466,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="rgb(23,33,43)" floodOpacity="0.14" />
               </filter>
             </defs>
-            {frames.map((f) => (
+            {shownFrames.map((f) => (
               <g key={f.id} data-frame-id={f.id} onPointerDown={(e) => startDrag("frame", f.id, e)} style={{ cursor: readOnly ? "default" : "grab" }}>
                 <rect x={f.x} y={f.y} width={f.width} height={f.height} fill="rgba(255,255,255,0.55)" stroke={selected === f.id ? "var(--signal)" : "rgba(255,255,255,0.9)"} strokeWidth={selected === f.id ? 4 : 2} rx={18} />
                 <text {...frameTitlePos(f, frames)} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
@@ -441,7 +474,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 </text>
               </g>
             ))}
-            {board.edges.map((e) => {
+            {board.edges.filter((e) => !focus || (shownNodes.some((n) => n.id === e.fromId) && shownNodes.some((n) => n.id === e.toId))).map((e) => {
               const a = center(e.fromId);
               const b = center(e.toId);
               if (!a || !b) return null;
@@ -457,7 +490,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 </g>
               );
             })}
-            {nodes.map((n) => {
+            {shownNodes.map((n) => {
               const w = n.width ?? 180;
               const h = n.height ?? (n.kind === "text" ? 60 : 120);
               const placeholder = !!n.fields.placeholder && !n.text.trim();

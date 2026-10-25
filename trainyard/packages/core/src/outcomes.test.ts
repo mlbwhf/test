@@ -72,7 +72,7 @@ describe("class boards", () => {
     expect(CLASSES.map((c) => c.id)).toEqual(["leading-safe", "spc", "aspc", "popm", "rte"]);
     const spc = classBoard(CLASSES[1]!);
     const top = spc.frames.filter((f) => !f.parentId);
-    expect(top[0]!.title).toBe("Start here");
+    expect(top[0]!.title).toBe("Welcome");
     expect(top.slice(1).map((f) => f.title)).toHaveLength(CLASSES[1]!.lessons.length);
     expect(top[2]!.title).toContain("Building a Foundation");
     // SPC reuses the Leading SAFe lessons and plans with four teams; Leading SAFe with three.

@@ -123,10 +123,10 @@ export function boardShape(b: Board): "canvas" | "table" | "mixed" | "empty" {
  * empty slots only when the frame or group would otherwise be empty, so the template
  * still shows where things go. Rows are dropped.
  */
-export function templateFrom(board: Board, id: string, name: string, now: string): Board {
-  const keptNodes: BoardNode[] = [];
+export function templateFrom(board: Board, id: string, name: string, now: string, keepCards = false): Board {
+  const keptNodes: BoardNode[] = keepCards ? structuredClone(board.nodes) : [];
   const seenFrames = new Set<string>();
-  for (const n of board.nodes) {
+  for (const n of keepCards ? [] : board.nodes) {
     if (!n.frameId || seenFrames.has(n.frameId)) continue;
     seenFrames.add(n.frameId);
     keptNodes.push({ ...n, id: `${n.id}-slot`, text: "", tags: [], fields: { placeholder: true } });
@@ -140,6 +140,7 @@ export function templateFrom(board: Board, id: string, name: string, now: string
     nodes: keptNodes,
     edges: [],
     columns: structuredClone(board.columns),
+    ...(board.fields ? { fields: structuredClone(board.fields) } : {}),
     groups: structuredClone(board.groups),
     rows: [],
   };
@@ -160,6 +161,8 @@ export function instantiate(template: Board, id: string, name: string, now: stri
     columns: template.columns.map((c) => ({ ...c })),
     groups: template.groups.map((g) => ({ ...g })),
     rows: [],
+    // Board-level facts travel with it: a class board stays a class board.
+    ...(template.fields ? { fields: structuredClone(template.fields) } : {}),
   };
 }
 
