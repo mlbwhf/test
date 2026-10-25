@@ -6,7 +6,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
-import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
+import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -33,6 +33,8 @@ export interface Connection {
 const Id = z.string().min(1).max(200);
 /** Cards on one board: far more than any planning board needs, small enough to save quickly. */
 const MAX_BOARD_NODES = 5000;
+/** Slides in one imported course deck; a five-day class runs well under this. */
+const MAX_DECK_SLIDES = 200;
 const Source = z.enum(["miro", "lucid", "mural", "monday", "trello"]);
 const MappingBody = z.object({
   from: z.enum(["nodes", "rows"]),
@@ -164,6 +166,30 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       s().workspace.boards = [...boards().filter((b) => b.id !== board.id), board];
       await store.commit(req.principal, "board.import", { id: board.id, system: "iobeya", nodes: board.nodes.length, edges: board.edges.length, type: board.fields?.iobeyaBoardType });
       return reply.code(201).send({ board: summary(board), libraryCards: board.fields?.libraryCards ?? 0 });
+    },
+  );
+
+  // A trainer's own course deck (.pptx) becomes a class template in this workspace only: one band
+  // per lesson, a frame per slide. Licensed courseware stays with whoever uploaded it.
+  app.post(
+    "/v1/imports/class-deck",
+    { bodyLimit: 48 * 1024 * 1024, schema: { body: z.object({ fileName: z.string().min(1).max(300), contentBase64: z.string().min(8).max(48 * 1024 * 1024), name: z.string().min(1).max(120).optional() }) } },
+    async (req, reply) => {
+      require(req, "plan");
+      requireSignup(req, "Importing a course deck");
+      const bytes = Buffer.from(req.body.contentBase64, "base64");
+      if (!isPptx(bytes)) throw new ApiError(422, "NOT_PPTX", "This file is not a PowerPoint deck. Save it as .pptx (PowerPoint 2007 or later) and upload that; .ppt, .key and .pdf files are not read.");
+      let board: Board;
+      try {
+        board = boardFromPptx(bytes, { fileName: req.body.fileName, id: `tpl-deck-${Date.now().toString(36)}`, now: store.now().toISOString(), maxSlides: MAX_DECK_SLIDES, maxNodes: MAX_BOARD_NODES, ...(req.body.name ? { name: req.body.name } : {}) });
+      } catch (e) {
+        throw new ApiError(422, e instanceof ImportError ? "DECK_TOO_LARGE" : "BAD_PPTX", e instanceof ImportError ? e.message : `Could not read ${req.body.fileName}: ${(e as Error).message}.`);
+      }
+      if (!board.nodes.length) throw new ApiError(422, "EMPTY_DECK", "No text or tables found on the slides of this deck.");
+      board.origin.importedBy = req.principal.userId;
+      boards().push(board);
+      await store.commit(req.principal, "board.import", { id: board.id, system: "pptx", slides: board.fields?.slides, nodes: board.nodes.length });
+      return reply.code(201).send({ board: summary(board), slides: board.fields?.slides, lessons: board.fields?.lessons, bands: board.fields?.bands, skipped: board.fields?.skipped });
     },
   );
 

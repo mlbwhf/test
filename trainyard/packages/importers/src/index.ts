@@ -6,6 +6,8 @@ export * from "./monday.js";
 export * from "./trello.js";
 export * from "./files.js";
 export * from "./iobeya.js";
+export * from "./zip.js";
+export * from "./pptx.js";
 
 import type { BoardSource } from "@trainyard/core";
 import { LucidImporter } from "./lucid.js";
