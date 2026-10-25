@@ -4,13 +4,14 @@ import Link from "next/link";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { TEMPLATE_METHODS, type Board, type BoardOrigin, type LaneCard, type TemplateInfo, type TemplateMethod } from "@trainyard/core";
+import { TEMPLATE_METHODS, canEdit, type Board, type BoardOrigin, type LaneCard, type RoomAccess, type TemplateInfo, type TemplateMethod, type TemplatePackage } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { LaneBoard, type Lane } from "@/components/lane-board";
 import { useTheme } from "@/components/workspace-shell";
 import { METHOD_DOT, THEMES, methodTheme, type ThemeId } from "@/lib/themes";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
+import { useSavedClassTemplates } from "@/lib/class-templates";
 
 interface Summary {
   id: string;
@@ -21,10 +22,15 @@ interface Summary {
   info?: TemplateInfo;
 }
 
+interface RoomOption {
+  id: string;
+  name: string;
+  access: RoomAccess;
+}
+
 const FILTERS = [
   ["all", "All"],
   ["safe", "SAFe"],
-  ["class", "Classes"],
   ["team", "Team"],
   ["portfolio", "Portfolio"],
   ["risk", "Risk"],
@@ -35,7 +41,10 @@ const FILTERS = [
 
 export default function TemplatesPage() {
   const router = useRouter();
-  const data = useApi<{ builtin: Summary[]; saved: Summary[] }>("/v1/templates/boards");
+  const data = useApi<{ builtin: Summary[]; saved: Summary[]; packages: TemplatePackage[] }>("/v1/templates/boards");
+  const rooms = useApi<{ rooms: RoomOption[] }>("/v1/rooms");
+  // Classes live in the Classes space: the built-in class boards and any class saved as a template.
+  const savedClasses = useSavedClassTemplates(data.data?.saved.map((s) => s.id));
   const me = useMe();
   const [filter, setFilter] = useState<string>("all");
   const [method, setMethod] = useState<TemplateMethod | "all">("all");
@@ -44,16 +53,18 @@ export default function TemplatesPage() {
   const [err, setErr] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [look, setLook] = useState<"lanes" | "canvas">("lanes");
-  const selId = selectedId ?? data.data?.builtin.find((t) => method === "all" || t.info?.method === method)?.id ?? null;
+  const selId = selectedId ?? data.data?.builtin.find((t) => !isClass(t) && (method === "all" || t.info?.method === method))?.id ?? null;
   const preview = useApi<{ board: Board }>(selId ? `/v1/templates/boards/${encodeURIComponent(selId)}` : null);
   if (!data.data) return <Loading error={data.error} />;
 
   const all: Summary[] = [...data.data.builtin, ...data.data.saved.map((s) => ({ ...s, info: undefined }))];
-  const shown = all.filter((t) => (filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never))) && (method === "all" || t.info?.method === method));
+  // Until the saved templates are checked for classes, only the built-ins are listed.
+  const gallery = [...data.data.builtin.filter((t) => !isClass(t)), ...(savedClasses ? data.data.saved.filter((s) => !savedClasses.has(s.id)).map((s) => ({ ...s, info: undefined })) : [])];
+  const shown = gallery.filter((t) => (filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never))) && (method === "all" || t.info?.method === method));
   const methodBlurb = TEMPLATE_METHODS.find((m) => m.id === method)?.blurb;
   const sel = all.find((t) => t.id === selId);
-  const isClass = (t: Summary | undefined) => !!t?.info?.tags.includes("class" as never);
-  const gated = isClass(sel) && !!me.data?.principal.anonymous;
+  const showPackages = (filter === "all" || filter === "safe") && (method === "all" || method === "safe") && data.data.packages.length > 0;
+  const gated = (isClass(sel) || (!!sel && !!savedClasses?.has(sel.id))) && !!me.data?.principal.anonymous;
 
   const create = async () => {
     if (!sel) return;
@@ -103,6 +114,24 @@ export default function TemplatesPage() {
         ))}
       </nav>
       {err ? <ErrorList title="Could not create the board" items={[{ message: err }]} /> : null}
+
+      {showPackages ? (
+        <section className="stack" aria-labelledby="pkg-head" style={{ gap: 10 }}>
+          <div className="stack" style={{ gap: 2 }}>
+            <h2 id="pkg-head" className="pkg-head">
+              Packages
+            </h2>
+            <p className="faint" style={{ margin: 0, fontSize: "0.88rem" }}>
+              The boards an event needs, created together: on one board side by side, or a board each.
+            </p>
+          </div>
+          <div className="pkg-grid">
+            {data.data.packages.map((p) => (
+              <PackageCard key={p.id} pkg={p} builtin={data.data!.builtin} rooms={(rooms.data?.rooms ?? []).filter((r) => canEdit(r.access))} onPreview={(id) => (setMethod("all"), setSelectedId(id), requestAnimationFrame(() => document.querySelector(".tpl-detail")?.scrollIntoView({ behavior: "smooth", block: "start" })))} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div className="tpl-layout">
         <aside className="tpl-list" aria-label="Templates">
@@ -190,6 +219,107 @@ export default function TemplatesPage() {
         </div>
       </div>
     </>
+  );
+}
+
+const isClass = (t: Summary | undefined) => !!t?.info?.tags.includes("class");
+
+/** One template package: what it is for, the boards it holds, and how to create them. */
+function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage; builtin: Summary[]; rooms: RoomOption[]; onPreview: (templateId: string) => void }) {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [mode, setMode] = useState<"one-board" | "boards">("one-board");
+  const [roomId, setRoomId] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<ApiFailure | null>(null);
+  const fallback = `${pkg.name} ${new Date().toISOString().slice(0, 10)}`;
+  const templates = pkg.templates.map((id) => ({ id: `tpl-builtin-${id}`, name: builtin.find((b) => b.id === `tpl-builtin-${id}`)?.name ?? id }));
+  const base = `pkg-${pkg.id}`;
+
+  const create = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await api<{ boards: { id: string }[] }>("POST", `/v1/templates/packages/${encodeURIComponent(pkg.id)}/create`, { name: name.trim() || fallback, mode, ...(roomId ? { roomId } : {}) });
+      router.push(mode === "one-board" && r.boards[0] ? `/boards/${encodeURIComponent(r.boards[0].id)}` : "/boards");
+    } catch (e) {
+      setErr(e as ApiFailure);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <article className="panel panel-body pkg-card" aria-labelledby={`${base}-name`}>
+      <div className="stack" style={{ gap: 4 }}>
+        <span className="eyebrow">{pkg.when}</span>
+        <h3 id={`${base}-name`}>{pkg.name}</h3>
+        <p className="muted pkg-blurb">{pkg.blurb}</p>
+      </div>
+      <div className="stack" style={{ gap: 4 }}>
+        <span className="eyebrow" id={`${base}-holds`}>
+          {templates.length} board{templates.length === 1 ? "" : "s"}
+        </span>
+        <ol className="pkg-templates" aria-labelledby={`${base}-holds`}>
+          {templates.map((t) => (
+            <li key={t.id}>
+              <button type="button" className="pkg-tpl" onClick={() => onPreview(t.id)} title={`Preview ${t.name}`}>
+                {t.name}
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <form
+        className="stack pkg-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void create();
+        }}
+      >
+        <label className="field">
+          Name
+          <input className="input" placeholder={fallback} value={name} onChange={(e) => setName(e.target.value)} maxLength={100} />
+        </label>
+        <fieldset className="pkg-mode">
+          <legend>Create as</legend>
+          <label>
+            <input type="radio" name={`${base}-mode`} value="one-board" checked={mode === "one-board"} onChange={() => setMode("one-board")} />
+            One board, templates side by side
+          </label>
+          <label>
+            <input type="radio" name={`${base}-mode`} value="boards" checked={mode === "boards"} onChange={() => setMode("boards")} />
+            A board for each
+          </label>
+        </fieldset>
+        {rooms.length ? (
+          <label className="field">
+            Room (optional)
+            <select className="select" value={roomId} onChange={(e) => setRoomId(e.target.value)}>
+              <option value="">No room: open to the workspace</option>
+              {rooms.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        {err ? (
+          <div className="notice warn" role="alert">
+            {err.message}
+            {err.code === "PLAN_LIMIT" || err.status === 402 ? (
+              <>
+                {" "}
+                <Link href="/billing">See plans and billing</Link>
+              </>
+            ) : null}
+          </div>
+        ) : null}
+        <button type="submit" className="btn primary" disabled={busy}>
+          {busy ? "Creating…" : mode === "one-board" ? "Create the board" : `Create ${templates.length} boards`}
+        </button>
+      </form>
+    </article>
   );
 }
 
