@@ -226,25 +226,39 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
 // parking lot, then the start.
 function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
   const strip = b.frame("Welcome", x, y, 2560, 0);
+  // Rows about as wide as a lesson, so the welcome area fits a screen when its tab is open.
+  const MAX_W = 2000;
   let cx = x + PAD;
+  let cy = y + 110;
+  let rowH = 0;
+  let widest = 0;
   const put = (ex: Exercise) => {
-    const r = renderExercise(b, ex, cx, y + 110, strip.id);
+    const size = renderExercise(new Builder(), ex, 0, 0, "p");
+    if (cx > x + PAD && cx + size.w > x + MAX_W) {
+      cx = x + PAD;
+      cy += rowH + GAP;
+      rowH = 0;
+    }
+    const r = renderExercise(b, ex, cx, cy, strip.id);
     cx += r.w + GAP;
+    rowH = Math.max(rowH, r.h);
+    widest = Math.max(widest, cx - x);
     return r;
   };
-  const hs = [
-    put({ kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] }),
-    put({ kind: "table", title: "Quick agenda", columns: ["Lesson", "Day", "Status"], rows: spec.lessons.map((l, i) => [`${i + 1}. ${l.title}`, `Day ${Math.min(spec.days, Math.floor((i * spec.days) / spec.lessons.length) + 1)}`, i === 0 ? "Now" : ""]) }),
-    put({ kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] }),
-    put({ kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 }),
-    put({ kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 }),
-    put({ kind: "slide", title: "Remote working agreements", body: "How we work together for the next days.", steps: ["Respect your humanness", "One conversation at a time", "Assume positive intent", "Be present", "Respect the timeboxes", "[Add additional working agreements]"] }),
-    put({ kind: "zones", title: "Parking lot", zones: ["Questions", "Closed · answered", "Open space · keep on the radar", "On hold · consider later", "Canceled · do not consider"], color: COLORS.blue }),
-    put({ kind: "slide", title: "Let's get started!", body: `${spec.name}: ${spec.lessons.length} lessons over ${spec.days} day${spec.days > 1 ? "s" : ""}. Open the Lesson 1 tab.` }),
+  const welcome: Exercise[] = [
+    { kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] },
+    { kind: "table", title: "Quick agenda", columns: ["Lesson", "Day", "Status"], rows: spec.lessons.map((l, i) => [`${i + 1}. ${l.title}`, `Day ${Math.min(spec.days, Math.floor((i * spec.days) / spec.lessons.length) + 1)}`, i === 0 ? "Now" : ""]) },
+    { kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] },
+    { kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 },
+    { kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 },
+    { kind: "slide", title: "Remote working agreements", body: "How we work together for the next days.", steps: ["Respect your humanness", "One conversation at a time", "Assume positive intent", "Be present", "Respect the timeboxes", "[Add additional working agreements]"] },
+    { kind: "zones", title: "Parking lot", zones: ["Questions", "Closed · answered", "Open space · keep on the radar", "On hold · consider later", "Canceled · do not consider"], color: COLORS.blue },
+    { kind: "slide", title: "Let's get started!", body: `${spec.name}: ${spec.lessons.length} lessons over ${spec.days} day${spec.days > 1 ? "s" : ""}. Open the Lesson 1 tab.` },
   ];
-  const h = Math.max(...hs.map((r) => r.h)) + 110 + PAD;
+  for (const ex of welcome) put(ex);
+  const h = cy + rowH - y + PAD;
   strip.height = h;
-  strip.width = cx - x;
+  strip.width = widest;
   return h;
 }
 

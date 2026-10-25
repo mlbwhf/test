@@ -47,7 +47,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
           Whole board
         </button>
         <span className="class-tabs-grow" />
-        <button className="btn small" onClick={toggleFull} aria-pressed={full}>
+        <button className="btn small" style={{ whiteSpace: "nowrap", flex: "none" }} onClick={toggleFull} aria-pressed={full}>
           {full ? "Exit full screen" : "Full screen"}
         </button>
       </div>

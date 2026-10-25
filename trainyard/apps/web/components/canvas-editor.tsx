@@ -216,7 +216,8 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     if (!xs.length) return { x: -40, y: -40, w: 1200, h: 700 };
     const pad = 80;
     const x = Math.min(...xs) - pad;
-    const y = Math.min(...ys) - pad;
+    // Frame titles sit above their frames: room for them at the top.
+    const y = Math.min(...ys) - pad - 40;
     return { x, y, w: Math.max(...xs) + pad - x, h: Math.max(...ys) + pad - y };
   }, [shownFrames, shownNodes]);
 
@@ -469,9 +470,12 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
             {shownFrames.map((f) => (
               <g key={f.id} data-frame-id={f.id} onPointerDown={(e) => startDrag("frame", f.id, e)} style={{ cursor: readOnly ? "default" : "grab" }}>
                 <rect x={f.x} y={f.y} width={f.width} height={f.height} fill="rgba(255,255,255,0.55)" stroke={selected === f.id ? "var(--signal)" : "rgba(255,255,255,0.9)"} strokeWidth={selected === f.id ? 4 : 2} rx={18} />
-                <text {...frameTitlePos(f, frames)} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
-                  {f.title}
-                </text>
+                {/* A focused lesson is named by its tab; its own big title would sit over the frames inside. */}
+                {f.id === focus ? null : (
+                  <text {...frameTitlePos(f, frames)} fontWeight={700} fill="var(--ink)" fontFamily="var(--font-display)">
+                    {f.title}
+                  </text>
+                )}
               </g>
             ))}
             {board.edges.filter((e) => !focus || (shownNodes.some((n) => n.id === e.fromId) && shownNodes.some((n) => n.id === e.toId))).map((e) => {
