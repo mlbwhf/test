@@ -9,11 +9,32 @@ export type EpicState = "funnel" | "reviewing" | "analyzing" | "backlog" | "impl
 export const EPIC_STATES: EpicState[] = ["funnel", "reviewing", "analyzing", "backlog", "implementing", "done"];
 
 export interface Wsjf {
-  /** Relative sizes, 1–20. Fibonacci-like values are usual but not required. */
+  /** Relative values on the modified Fibonacci scale (WSJF_SCALE), the smallest job in each column a 1. */
   userBusinessValue: number;
   timeCriticality: number;
   riskReductionOpportunity: number;
+  /** The remaining job size, a proxy for duration; what is already done does not count (sunk cost). */
   jobSize: number;
+}
+
+/** The modified Fibonacci subset SAFe uses for WSJF. Anything bigger than 20 should be split. */
+export const WSJF_SCALE = [1, 2, 3, 5, 8, 13, 20] as const;
+
+export const WSJF_PARTS = ["userBusinessValue", "timeCriticality", "riskReductionOpportunity", "jobSize"] as const;
+
+/** Relative cost of delay: user-business value + time criticality + risk reduction | opportunity enablement. */
+export function costOfDelay(w: Wsjf): number {
+  return w.userBusinessValue + w.timeCriticality + w.riskReductionOpportunity;
+}
+
+/**
+ * The columns of a backlog's WSJF table without a 1. Each column is estimated on its own with
+ * the smallest job set to 1, which normalises the parts against each other; a column without
+ * a 1 weighs more than the others and skews every score.
+ */
+export function wsjfColumnGaps(scores: readonly Wsjf[]): (typeof WSJF_PARTS)[number][] {
+  if (scores.length === 0) return [];
+  return WSJF_PARTS.filter((k) => !scores.some((w) => w[k] === 1));
 }
 
 export interface EpicSpend {
@@ -36,6 +57,11 @@ export interface PortfolioEpic {
   /** The future-state portfolio canvas this epic was identified from. */
   sourceCanvasId?: string;
   wsjf: Wsjf;
+  /**
+   * The epic's forecast cost from its Lean business case (MVP plus the rest), in the portfolio
+   * currency. Once epics have one, WSJF divides by the cost normalised to the cheapest epic.
+   */
+  cost?: number;
   /** Features and enablers fall out of the linked work item; this is the money side. */
   spend: EpicSpend[];
 }
@@ -92,19 +118,59 @@ export function emptyPortfolio(currency = "USD"): Portfolio {
   return { currency, valueStreams: [], epics: [], okrs: [] };
 }
 
-/** Weighted shortest job first: cost of delay over job size. */
+/** Weighted shortest job first for features and capabilities: cost of delay over job size. */
 export function wsjf(w: Wsjf): number {
   if (w.jobSize <= 0) return 0;
-  return Math.round(((w.userBusinessValue + w.timeCriticality + w.riskReductionOpportunity) / w.jobSize) * 100) / 100;
+  return Math.round((costOfDelay(w) / w.jobSize) * 100) / 100;
 }
 
-/** Epics that are still candidates, highest WSJF first. Ties keep the smaller job first. */
+/** An epic's cost: the Lean business case figure, else what is planned against it. */
+export function epicCost(e: PortfolioEpic): number | undefined {
+  if (e.cost && e.cost > 0) return e.cost;
+  const planned = e.spend.reduce((n, s) => n + s.planned, 0);
+  return planned > 0 ? planned : undefined;
+}
+
+export interface EpicWsjf {
+  costOfDelay: number;
+  /** What the cost of delay is divided by: normalised cost, or relative job size before costs exist. */
+  denominator: { kind: "cost"; cost: number; normalized: number } | { kind: "size"; size: number };
+  score: number;
+}
+
+/**
+ * WSJF for epics. Duration is the epic's cost normalised across the candidates: the cheapest
+ * epic is 1.0 and every other is its cost divided by that one's (0.5M → 1.0, 1.5M → 3.0).
+ * An epic with no cost yet (early in the Kanban) falls back to its relative job size.
+ */
+export function epicWsjf(epics: readonly PortfolioEpic[]): Map<string, EpicWsjf> {
+  const candidates = epics.filter((e) => e.state !== "done");
+  const costs = candidates.map(epicCost).filter((c): c is number => c !== undefined);
+  const lowest = costs.length ? Math.min(...costs) : undefined;
+  const out = new Map<string, EpicWsjf>();
+  for (const e of candidates) {
+    const cod = costOfDelay(e.wsjf);
+    const cost = epicCost(e);
+    if (cost !== undefined && lowest) {
+      const normalized = Math.round((cost / lowest) * 10) / 10;
+      out.set(e.id, { costOfDelay: cod, denominator: { kind: "cost", cost, normalized }, score: Math.round((cod / normalized) * 100) / 100 });
+    } else {
+      out.set(e.id, { costOfDelay: cod, denominator: { kind: "size", size: e.wsjf.jobSize }, score: wsjf(e.wsjf) });
+    }
+  }
+  return out;
+}
+
+/** Epics that are still candidates, highest WSJF first. Ties keep the smaller (cheaper) job first. */
 export function rankEpics(epics: readonly PortfolioEpic[]): PortfolioEpic[] {
+  const scores = epicWsjf(epics);
+  const den = (e: PortfolioEpic) => {
+    const d = scores.get(e.id)!.denominator;
+    return d.kind === "cost" ? d.normalized : d.size;
+  };
   return epics
     .filter((e) => e.state !== "done")
-    .map((e) => ({ e, score: wsjf(e.wsjf) }))
-    .sort((a, b) => b.score - a.score || a.e.wsjf.jobSize - b.e.wsjf.jobSize)
-    .map((x) => x.e);
+    .sort((a, b) => scores.get(b.id)!.score - scores.get(a.id)!.score || den(a) - den(b));
 }
 
 export interface BudgetLine {

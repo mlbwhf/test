@@ -230,9 +230,12 @@ describe("lean portfolio", () => {
   it("ranks epics by WSJF with smaller jobs first on ties", () => {
     expect(wsjf({ userBusinessValue: 13, timeCriticality: 8, riskReductionOpportunity: 3, jobSize: 8 })).toBe(3);
     expect(wsjf({ userBusinessValue: 1, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 0 })).toBe(0);
+    // Before any epic has a cost, job size is the denominator; ties keep the smaller job first.
+    const early = { ...p.epics[0]!, spend: [] as typeof p.epics[0]["spend"] };
+    delete (early as { cost?: number }).cost;
     const ranked = rankEpics([
-      { ...p.epics[0]!, id: "a", wsjf: { userBusinessValue: 4, timeCriticality: 4, riskReductionOpportunity: 2, jobSize: 5 } },
-      { ...p.epics[0]!, id: "b", wsjf: { userBusinessValue: 8, timeCriticality: 8, riskReductionOpportunity: 4, jobSize: 10 } },
+      { ...early, id: "a", wsjf: { userBusinessValue: 4, timeCriticality: 4, riskReductionOpportunity: 2, jobSize: 5 } },
+      { ...early, id: "b", wsjf: { userBusinessValue: 8, timeCriticality: 8, riskReductionOpportunity: 4, jobSize: 10 } },
       { ...p.epics[0]!, id: "done", state: "done" },
     ]);
     expect(ranked.map((e) => e.id)).toEqual(["a", "b"]);

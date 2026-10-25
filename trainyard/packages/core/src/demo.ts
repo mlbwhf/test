@@ -184,8 +184,8 @@ export function demoWorkspace(): Workspace {
       ...(started ? { startedAt: `${iter.start}T09:00:00Z` } : {}),
       source: sourceFor(f.team, "2026-10-20T16:00:00Z"),
       ...(f.ai ? { aiInitiativeId: f.ai } : {}),
-      // Most features are WSJF-scored for PI planning; a few are left for the room to score.
-      ...(idx % 5 !== 4 ? { wsjf: { userBusinessValue: Math.max(1, Math.min(20, f.bv)), timeCriticality: [1, 2, 3, 5, 8, 13][(idx * 3) % 6]!, riskReductionOpportunity: [1, 2, 3, 5, 8][(idx * 2) % 5]!, jobSize: [1, 2, 3, 5, 8, 13, 20].find((n) => n >= Math.ceil(f.est / 3)) ?? 20 } } : {}),
+      // Most features are WSJF-scored for PI planning (relative values, the smallest in each column a 1); a few are left for the room to score.
+      ...(idx % 5 !== 4 ? { wsjf: { userBusinessValue: [1, 2, 3, 5, 8, 13, 20].reduce((a, b) => (Math.abs(b - Math.max(1, f.bv - 3)) < Math.abs(a - Math.max(1, f.bv - 3)) ? b : a)), timeCriticality: [1, 2, 3, 5, 8, 13][(idx * 3) % 6]!, riskReductionOpportunity: [1, 2, 3, 5, 8][(idx * 2) % 5]!, jobSize: [1, 2, 3, 5, 8, 13, 20].find((n) => n >= Math.ceil(f.est / 3)) ?? 20 } } : {}),
     });
     for (let s = 0; s < 3; s++) {
       const done = started && rand() < 0.6;
@@ -269,6 +269,8 @@ export function demoWorkspace(): Workspace {
         ownerId: "p-pm",
         hypothesis: "If guest checkout and saved carts remove two steps, conversion rises from 2.1% to 5% within two PIs.",
         wsjf: { userBusinessValue: 13, timeCriticality: 8, riskReductionOpportunity: 3, jobSize: 8 },
+        // Forecast in the Lean business case; WSJF divides by it, normalised to the cheapest epic.
+        cost: 1_500_000,
         spend: [
           { incrementId: prev.id, planned: 380_000, actual: 362_000 },
           { incrementId: curr.id, planned: 420_000 },
@@ -283,6 +285,7 @@ export function demoWorkspace(): Workspace {
         ownerId: "p-ava",
         hypothesis: "Drafting and triage agents cut handle time 30% without raising escalations.",
         wsjf: { userBusinessValue: 8, timeCriticality: 5, riskReductionOpportunity: 8, jobSize: 13 },
+        cost: 2_400_000,
         spend: [
           { incrementId: prev.id, planned: 300_000, actual: 318_000 },
           { incrementId: curr.id, planned: 410_000 },
@@ -293,7 +296,8 @@ export function demoWorkspace(): Workspace {
         title: "Third-party marketplace sellers",
         valueStreamId: "vs-commerce",
         state: "analyzing",
-        wsjf: { userBusinessValue: 20, timeCriticality: 3, riskReductionOpportunity: 2, jobSize: 20 },
+        wsjf: { userBusinessValue: 20, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 20 },
+        cost: 4_600_000,
         spend: [{ incrementId: curr.id, planned: 60_000 }],
       },
       {
@@ -301,7 +305,8 @@ export function demoWorkspace(): Workspace {
         title: "Platform observability",
         valueStreamId: "vs-commerce",
         state: "backlog",
-        wsjf: { userBusinessValue: 3, timeCriticality: 5, riskReductionOpportunity: 13, jobSize: 5 },
+        wsjf: { userBusinessValue: 1, timeCriticality: 5, riskReductionOpportunity: 13, jobSize: 5 },
+        cost: 500_000,
         spend: [{ incrementId: curr.id, planned: 90_000 }],
       },
     ],

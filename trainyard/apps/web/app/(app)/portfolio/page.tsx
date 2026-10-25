@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { BudgetLine, EpicState, GuardrailBreach, OkrProgress, Portfolio, PortfolioEpic } from "@trainyard/core";
+import type { BudgetLine, EpicWsjf, EpicState, GuardrailBreach, OkrProgress, Portfolio, PortfolioEpic } from "@trainyard/core";
 import { formatValue } from "@/components/charts";
 import Link from "next/link";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -10,7 +10,9 @@ import { api, useApi, type ApiFailure } from "@/lib/api";
 interface View {
   portfolio: Portfolio | null;
   increment?: { id: string; name: string };
-  epics?: (PortfolioEpic & { score: number })[];
+  epics?: (Omit<PortfolioEpic, "cost"> & EpicWsjf & { cost: number | null })[];
+  /** Cost-of-delay columns with no epic at 1. */
+  wsjfGaps?: string[];
   doneEpics?: PortfolioEpic[];
   budgets?: BudgetLine[];
   breaches?: GuardrailBreach[];
@@ -48,15 +50,23 @@ export default function PortfolioPage() {
   const people = ws.data.workspace.people;
   const vsName = (id: string) => p.valueStreams.find((x) => x.id === id)?.name ?? id;
 
-  const setState = async (epic: PortfolioEpic, state: EpicState) => {
+  const patchEpic = async (epic: { id: string }, body: Record<string, unknown>) => {
     try {
-      await api("PATCH", `/v1/portfolio/epics/${epic.id}`, { state });
+      await api("PATCH", `/v1/portfolio/epics/${epic.id}`, body);
       setErr(null);
       await view.reload();
     } catch (e) {
       setErr((e as ApiFailure).message);
     }
   };
+  const setState = (epic: { id: string }, state: EpicState) => patchEpic(epic, { state });
+  // A typed cost is the Lean business case figure; empty goes back to the planned spend.
+  const setCost = (epic: { id: string; cost: number | null }, raw: string) => {
+    const cost = raw.trim() === "" ? null : Number(raw.replace(/[^0-9.]/g, ""));
+    if (cost !== null && (!Number.isFinite(cost) || cost <= 0)) return;
+    return patchEpic(epic, { cost });
+  };
+  const PART_LABEL: Record<string, string> = { userBusinessValue: "user-business value", timeCriticality: "time criticality", riskReductionOpportunity: "risk reduction / opportunity enablement" };
 
   return (
     <>
@@ -142,6 +152,14 @@ export default function PortfolioPage() {
           <h2>Epics by WSJF</h2>
           <span className="faint">{v.epics!.length} open · {v.doneEpics!.length} done</span>
         </div>
+        <p className="faint" style={{ margin: "0 16px 8px" }}>
+          WSJF = cost of delay ÷ duration. For epics, duration is the epic&apos;s cost normalised to the cheapest one: the lowest-cost epic is 1.0 and each other is its cost ÷ that cost. Estimate the cost-of-delay parts one column at a time, the smallest epic at 1. Epics with no cost yet use relative job size until the Lean business case has one. For big commitments, the Lean business case decides alongside WSJF.
+        </p>
+        {v.wsjfGaps?.length ? (
+          <div className="notice warn" style={{ margin: "0 16px 8px" }}>
+            No epic has a 1 for {v.wsjfGaps.map((k) => PART_LABEL[k] ?? k).join(", ")}: give the smallest one a 1 and size the rest against it, or that part outweighs the others.
+          </div>
+        ) : null}
         <div className="scroll-x" tabIndex={0}>
           <table className="table">
             <thead>
@@ -149,8 +167,10 @@ export default function PortfolioPage() {
                 <th>#</th>
                 <th>Epic</th>
                 <th>Value stream</th>
-                <th title="User-business value + time criticality + risk reduction, over job size">WSJF</th>
-                <th>Cost of delay parts</th>
+                <th title="User-business value + time criticality + risk reduction / opportunity enablement">Cost of delay</th>
+                <th title="The epic's forecast cost from its Lean business case">Cost</th>
+                <th title="Cost ÷ the cheapest epic's cost: the cheapest is 1.0. Stands in for duration">Normalised cost</th>
+                <th title="Cost of delay ÷ normalised cost">WSJF</th>
                 <th style={{ textAlign: "right" }}>Planned {v.increment!.name}</th>
                 <th>State</th>
               </tr>
@@ -167,11 +187,23 @@ export default function PortfolioPage() {
                       {e.ownerId ? <div className="faint" style={{ fontSize: "0.78rem" }}>Owner: {people.find((x) => x.id === e.ownerId)?.name}</div> : null}
                     </td>
                     <td className="muted">{vsName(e.valueStreamId)}</td>
+                    <td className="mono">
+                      <strong>{e.costOfDelay}</strong>
+                      <div className="faint" style={{ fontSize: "0.75rem" }}>
+                        {e.wsjf.userBusinessValue} + {e.wsjf.timeCriticality} + {e.wsjf.riskReductionOpportunity}
+                      </div>
+                    </td>
+                    <td>
+                      <input className="input mono" style={{ width: 110 }} aria-label={`Cost of ${e.title}`} defaultValue={e.cost ?? ""} key={`${e.id}-${e.cost ?? ""}`} placeholder="Lean business case" onBlur={(ev) => ev.target.value !== String(e.cost ?? "") && void setCost(e, ev.target.value)} />
+                    </td>
+                    <td className="mono">{e.denominator.kind === "cost" ? e.denominator.normalized.toFixed(1) : <span className="faint" title="No cost yet: relative job size stands in until the Lean business case has one">size {e.denominator.size}</span>}</td>
                     <td>
                       <span className="mono" style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem" }}>{e.score}</span>
-                    </td>
-                    <td className="mono faint" style={{ fontSize: "0.78rem" }}>
-                      BV {e.wsjf.userBusinessValue} + TC {e.wsjf.timeCriticality} + RR {e.wsjf.riskReductionOpportunity} / size {e.wsjf.jobSize}
+                      {e.state === "analyzing" || e.state === "backlog" ? (
+                        <div className="faint" style={{ fontSize: "0.72rem", maxWidth: "18ch" }}>
+                          Weigh with the Lean business case, not WSJF alone
+                        </div>
+                      ) : null}
                     </td>
                     <td className="mono" style={{ textAlign: "right" }}>{planned ? money(planned, p.currency) : "–"}</td>
                     <td>

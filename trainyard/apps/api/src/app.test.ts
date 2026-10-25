@@ -318,7 +318,10 @@ describe("portfolio", () => {
     const { call } = await setup();
     const { status, body } = await call("GET", "/v1/portfolio?incrementId=pi-26-4");
     expect(status).toBe(200);
-    expect(body.epics[0]).toMatchObject({ id: "pe-observability", score: 4.2 });
+    // Cost of delay over cost normalised to the cheapest epic (observability, 0.5M = 1.0).
+    expect(body.epics[0]).toMatchObject({ id: "pe-observability", costOfDelay: 19, denominator: { kind: "cost", normalized: 1 }, score: 19 });
+    expect(body.epics.map((e: { id: string }) => e.id)).toEqual(["pe-observability", "pe-conversion", "pe-ai-service", "pe-marketplace"]);
+    expect(body.epics[1].denominator.normalized).toBe(3);
     expect(body.budgets.find((b: { incrementId: string }) => b.incrementId === "pi-26-4").state).toBe("over");
     const okr = body.okrs.find((o: { okr: { id: string } }) => o.okr.id === "okr-growth");
     expect(okr.keyResults[1].current).toBe(3); // flow-time metric read live
@@ -331,7 +334,9 @@ describe("portfolio", () => {
     expect(bad.status).toBe(404);
     const ok = await call("POST", "/v1/portfolio/epics", { title: "Loyalty points", valueStreamId: "vs-commerce", wsjf: { userBusinessValue: 8, timeCriticality: 3, riskReductionOpportunity: 1, jobSize: 3 }, spend: [{ incrementId: "pi-26-4", planned: 50000 }] });
     expect(ok.status).toBe(201);
-    expect(ok.body.epic.score).toBe(4);
+    // No business-case cost: divided by its planned spend, here the cheapest, so 1.0.
+    expect(ok.body.epic).toMatchObject({ costOfDelay: 12, denominator: { kind: "cost", normalized: 1 }, score: 12 });
+    expect((await call("POST", "/v1/portfolio/epics", { title: "Y", valueStreamId: "vs-commerce", wsjf: { userBusinessValue: 4, timeCriticality: 1, riskReductionOpportunity: 1, jobSize: 1 }, spend: [] })).status).toBe(400);
     const moved = await call("PATCH", `/v1/portfolio/epics/${ok.body.epic.id}`, { state: "backlog", hypothesis: "Points lift repeat purchase 5%." });
     expect(moved.body.epic.state).toBe("backlog");
     const okr = await call("PUT", "/v1/portfolio/okrs/okr-new", { title: "Faster flow", level: "group", ownerGroupId: "art-customer", keyResults: [{ title: "WIP", baseline: 20, target: 10, metric: { key: "flow-load", filters: { level: "story" } } }] });

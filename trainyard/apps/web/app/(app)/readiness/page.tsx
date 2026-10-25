@@ -8,7 +8,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { rankByWsjf, type CanvasTypeDef, type Increment, type ReadinessReport, type Risk, type Roam, type Team, type WorkItem, type Wsjf } from "@trainyard/core";
+import { WSJF_SCALE, rankByWsjf, wsjfColumnGaps, type CanvasTypeDef, type Increment, type ReadinessReport, type Risk, type Roam, type Team, type WorkItem, type Wsjf } from "@trainyard/core";
 import { AssistButton } from "@/components/assist";
 import { CanvasCards, type CanvasSummary } from "@/components/canvas-cards";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -38,7 +38,7 @@ const PARTS: { key: keyof Wsjf; label: string; short: string }[] = [
   { key: "userBusinessValue", label: "User / business value", short: "UBV" },
   { key: "timeCriticality", label: "Time criticality", short: "TC" },
   { key: "riskReductionOpportunity", label: "Risk reduction / opportunity enablement", short: "RR | OE" },
-  { key: "jobSize", label: "Job size", short: "Size" },
+  { key: "jobSize", label: "Job size (remaining), standing in for duration", short: "Job size" },
 ];
 
 export default function ReadinessPage() {
@@ -93,6 +93,8 @@ export default function ReadinessPage() {
   };
 
   const scored = backlog.filter((i) => i.wsjfScore !== null).length;
+  // Each column is estimated on its own with the smallest feature at 1; a column without a 1 skews every score.
+  const gaps = new Set(wsjfColumnGaps(backlog.filter((i) => i.wsjf).map((i) => i.wsjf!)));
   const roamed = b.risks.filter((r) => r.roam !== "unroamed").length;
 
   return (
@@ -218,7 +220,7 @@ export default function ReadinessPage() {
         </div>
         <div className="panel-body stack">
           <p className="faint" style={{ margin: 0 }}>
-            Cost of delay (user / business value + time criticality + risk reduction / opportunity enablement) ÷ job size. Use relative values (1, 2, 3, 5, 8, 13, 20) and score one column at a time across all features, smallest first. Saved once all four are in.
+            WSJF = cost of delay ÷ duration. Cost of delay is user-business value + time criticality + risk reduction and/or opportunity enablement; for features, job size stands in for duration (only what is left to do: work already done is a sunk cost). Score with Business Owners, Product Management and the affected teams, one column at a time: give the smallest feature a 1, then size the rest against it on 1, 2, 3, 5, 8, 13, 20. Every column needs at least one 1. Saved once all four are in.
           </p>
           <div className="scroll-x" tabIndex={0}>
             <table className="table">
@@ -230,6 +232,11 @@ export default function ReadinessPage() {
                   {PARTS.map((p) => (
                     <th key={p.key} title={p.label}>
                       {p.short}
+                      {gaps.has(p.key) ? (
+                        <span className="chip warn" style={{ marginLeft: 6 }} title="No feature has a 1 in this column: give the smallest one a 1 and size the rest against it">
+                          no 1
+                        </span>
+                      ) : null}
                     </th>
                   ))}
                   <th>CoD</th>
@@ -246,7 +253,21 @@ export default function ReadinessPage() {
                       <td className="faint">{teamName(i.teamId)}</td>
                       {PARTS.map((p) => (
                         <td key={p.key}>
-                          <input className="input mono" type="number" min={0} max={100} style={{ width: 64 }} aria-label={`${p.label} for ${i.title}`} defaultValue={d[p.key] ?? ""} key={`${i.id}-${p.key}-${d[p.key] ?? ""}`} onBlur={(e) => e.target.value !== String(d[p.key] ?? "") && void scoreItem(i, p.key, e.target.value)} />
+                          <select className="select mono" style={{ width: 72 }} aria-label={`${p.label} for ${i.title}`} value={d[p.key] ?? ""} onChange={(e) => void scoreItem(i, p.key, e.target.value)}>
+                            <option value="">–</option>
+                            {/* A value saved before the scale was enforced stays visible until it is re-scored. */}
+                            {d[p.key] !== undefined && !(WSJF_SCALE as readonly number[]).includes(d[p.key]!) ? <option value={d[p.key]}>{d[p.key]}</option> : null}
+                            {WSJF_SCALE.map((v) => (
+                              <option key={v} value={v}>
+                                {v}
+                              </option>
+                            ))}
+                          </select>
+                          {p.key === "jobSize" && d.jobSize === 20 ? (
+                            <div className="faint" style={{ fontSize: "0.72rem" }}>
+                              Consider splitting
+                            </div>
+                          ) : null}
                         </td>
                       ))}
                       <td className="mono">{i.costOfDelay ?? "–"}</td>

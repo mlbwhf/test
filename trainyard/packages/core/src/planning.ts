@@ -130,5 +130,6 @@ export function rankByWsjf<T extends WorkItem>(items: readonly T[]): (T & { wsjf
     const cod = w ? w.userBusinessValue + w.timeCriticality + w.riskReductionOpportunity : null;
     return { ...i, costOfDelay: cod, wsjfScore: w && w.jobSize > 0 ? Math.round(((cod ?? 0) / w.jobSize) * 100) / 100 : null };
   });
-  return [...scored.filter((i) => i.wsjfScore !== null).sort((a, b) => b.wsjfScore! - a.wsjfScore!), ...scored.filter((i) => i.wsjfScore === null)];
+  // Ties: the smaller job first, since it frees capacity sooner.
+  return [...scored.filter((i) => i.wsjfScore !== null).sort((a, b) => b.wsjfScore! - a.wsjfScore! || a.wsjf!.jobSize - b.wsjf!.jobSize), ...scored.filter((i) => i.wsjfScore === null)];
 }

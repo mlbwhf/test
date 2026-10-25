@@ -96,6 +96,7 @@ export const COMPARISON: { tool: string; hosting: string; pi: string; art: strin
     pricedBy: "Trainer or train; people in the room are free",
     ours: true,
   },
+  { tool: "Jira Align", hosting: "Atlassian cloud or on premises", pi: "Program board and PI planning inside the platform", art: "Program board, ROAM, WSJF, objectives, team and program rooms", beyond: "The whole SAFe hierarchy: strategy, portfolio, solution, OKRs, financials, roadmaps", integration: "Jira, and Azure DevOps through a connector", pricedBy: "User, by enterprise contract" },
   { tool: "iObeya", hosting: "On premises or separate server", pi: "Integrated web interface", art: "ART board, ROAM, WSJF, retrospectives", beyond: "Portfolio and more", integration: "Full integration through API and iFrame", pricedBy: "Room, with a minimum number of rooms" },
   { tool: "Easy Agile", hosting: "Jira plugin", pi: "Within Jira", art: "ART and team boards", beyond: "None", integration: "Jira only", pricedBy: "Every Jira user on the site" },
   { tool: "Agile Hive", hosting: "Jira plugin", pi: "Within Jira", art: "ART board, ROAM, WSJF, team execution", beyond: "Portfolio Kanban, roadmap, reporting", integration: "Jira only", pricedBy: "User, by quote" },

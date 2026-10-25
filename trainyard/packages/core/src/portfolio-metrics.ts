@@ -2,7 +2,7 @@
 // metric-linked key results, call back into the registry through ctx.extensions.readMetric.
 
 import type { MetricContext, MetricDef } from "./metrics.js";
-import { budgetLines, okrProgress, rankEpics, wsjf, type Portfolio } from "./portfolio.js";
+import { budgetLines, epicWsjf, okrProgress, rankEpics, type Portfolio } from "./portfolio.js";
 
 export type ReadMetric = (key: string, filters?: Record<string, unknown>) => number | null;
 
@@ -44,7 +44,8 @@ export const PORTFOLIO_METRICS: MetricDef[] = [
     compute(ctx) {
       const p = portfolio(ctx);
       const ranked = rankEpics(p.epics);
-      return { value: ranked.length, unit: "count", points: ranked.slice(0, 10).map((e) => ({ label: e.title, value: wsjf(e.wsjf) })), note: "Headline counts open epics. Points show the WSJF score." };
+      const scores = epicWsjf(p.epics);
+      return { value: ranked.length, unit: "count", points: ranked.slice(0, 10).map((e) => ({ label: e.title, value: scores.get(e.id)!.score })), note: "Headline counts open epics. Points show the WSJF score." };
     },
   },
   {

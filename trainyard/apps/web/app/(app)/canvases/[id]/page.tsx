@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
 import {
+  WSJF_SCALE,
   launchReadiness,
   towsSuggestions,
   wsjfOf,
@@ -324,7 +325,7 @@ function Wsjf({ s, value, onChange }: { s: SectionDef; value: Record<string, str
       <div className="row" style={{ justifyContent: "space-around" }}>
         {circle(w.cod || "–", "Cost of delay")}
         <span style={{ fontSize: "1.6rem" }} aria-hidden="true">÷</span>
-        {circle(w.size || "–", "Size")}
+        {circle(w.size || "–", "Job size (for duration)")}
         <span style={{ fontSize: "1.6rem" }} aria-hidden="true">=</span>
         {circle(w.wsjf ?? "–", "WSJF", true)}
       </div>
@@ -332,7 +333,14 @@ function Wsjf({ s, value, onChange }: { s: SectionDef; value: Record<string, str
         {(s.labels ?? []).map((l) => (
           <label key={l} className="field" style={{ fontSize: "0.78rem" }}>
             {l}
-            <input className="input mono" inputMode="numeric" value={value[l] ?? ""} onChange={(e) => onChange({ ...value, [l]: e.target.value.replace(/[^0-9.]/g, "") })} placeholder="1, 2, 3, 5, 8, 13, 20" />
+            <select className="select mono" value={value[l] ?? ""} onChange={(e) => onChange({ ...value, [l]: e.target.value })}>
+              <option value="">–</option>
+              {WSJF_SCALE.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
           </label>
         ))}
       </div>

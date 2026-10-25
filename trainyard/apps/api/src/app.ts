@@ -102,6 +102,8 @@ export interface AppOptions extends AuthOptions {
 // Loose schemas: the domain functions do the real validation and return readable issues.
 const Id = z.string().min(1).max(200);
 const Short = z.string().max(120);
+/** WSJF parts take the modified Fibonacci values 1–20 (core WSJF_SCALE). */
+const WsjfValue = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(5), z.literal(8), z.literal(13), z.literal(20)]);
 /** Links people click in the app: web addresses only, never javascript: or data:. */
 export const WebUrl = z.string().url().max(2000).refine((u) => /^https?:\/\//i.test(u), "Use an http(s) address");
 const ModelBody = z.object({
@@ -333,7 +335,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
           teamId: z.string().optional(),
           estimate: z.number().min(0).nullable().optional(),
           businessValue: z.number().min(0).max(100).nullable().optional(),
-          wsjf: z.object({ userBusinessValue: z.number().min(0).max(100), timeCriticality: z.number().min(0).max(100), riskReductionOpportunity: z.number().min(0).max(100), jobSize: z.number().min(0).max(100) }).nullable().optional(),
+          wsjf: z.object({ userBusinessValue: WsjfValue, timeCriticality: WsjfValue, riskReductionOpportunity: WsjfValue, jobSize: WsjfValue }).nullable().optional(),
           aiInitiativeId: z.string().nullable().optional(),
         }),
       },
@@ -365,6 +367,13 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
       apply("teamId", b.teamId);
       apply("estimate", b.estimate, "estimate");
       apply("businessValue", b.businessValue, "businessValue");
+      if (b.wsjf) {
+        // WSJF ranks features and capabilities; stories follow the feature that spawned them.
+        const levels = s().model.workLevels;
+        const planned = levels.find((l) => l.planned)?.key;
+        const below = (key: string): boolean => { const l = levels.find((x) => x.key === key); return !!l?.parent && (l.parent === planned || below(l.parent)); };
+        if (planned && below(item.level)) throw new ApiError(422, "WSJF_NOT_FOR_STORIES", `WSJF ranks the ${planned} backlog; a ${item.level} takes the priority of the ${planned} it belongs to.`);
+      }
       apply("wsjf", b.wsjf);
       apply("aiInitiativeId", b.aiInitiativeId);
       ws.items = ws.items.map((i) => (i.id === item.id ? (next as unknown as WorkItem) : i));

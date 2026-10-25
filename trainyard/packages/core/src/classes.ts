@@ -386,6 +386,20 @@ const WSJF_EXAMPLE: Exercise = {
   ],
 };
 
+// Epics: duration is the epic's cost normalised to the cheapest one (cost ÷ lowest cost), so
+// WSJF = cost of delay ÷ normalised cost. The same rule ranks epics on the Portfolio page.
+const WSJF_EPIC_EXAMPLE: Exercise = {
+  kind: "table",
+  title: "WSJF for epics: cost of delay ÷ normalised cost",
+  columns: ["Epic", "User-business value", "Time criticality", "RR · OE", "CoD", "Cost", "Normalised cost", "WSJF"],
+  rows: [
+    ["Self-service onboarding", "5", "3", "2", "10", "0.4M", "1.0", "10"],
+    ["Partner API", "13", "8", "3", "24", "1.2M", "3.0", "8"],
+    ["Fraud scoring", "8", "13", "13", "34", "3.4M", "8.5", "4"],
+    ["Data platform", "3", "1", "20", "24", "4.8M", "12.0", "2"],
+  ],
+};
+
 // Built from PI_PLANNING_READINESS, the same list the ART launch canvas scores.
 const READINESS_CHECKLIST: Exercise[] = [
   {
@@ -489,7 +503,7 @@ const RAW_CLASSES: ClassSpec[] = [
       { title: "Designing the Implementation", exercises: [{ kind: "slide", title: "Identify the value streams", body: "From an operational value stream (trigger, steps, value) to the systems behind it, the people who build them, the development value streams and the ARTs. Example: Old Age Security, a government benefit service for Canadian seniors, triggered by retirement; steps from 'learn about benefit' to 'terminate benefit'; systems: benefit marketing, application processing, benefit processing." }, { kind: "table", title: "Value stream canvas", columns: ["Field", "Answer"], rows: [["Name", ""], ["Type", ""], ["Description", ""], ["Customer(s)", ""], ["Triggers", ""], ["Value received by the enterprise", ""], ["Value received by the customer", ""]] }, { kind: "stickies", title: "Operational steps → systems → people → ARTs", lanes: ["Steps", "Systems", "People and locations", "Development value streams", "ARTs"], rows: 3, color: COLORS.blue }, { kind: "link", title: "Run it live", body: "The value stream identification workshop in Trainyard draws the chevrons, the systems under them, the people, the development value streams and the trains, and checks each train against 50–125 people.", href: "/value-streams" }] },
       { title: "Launching an Agile Release Train", exercises: READINESS_CHECKLIST },
       { title: "Coaching ART Execution", exercises: [{ kind: "zones", title: "Fishbone: why does the ART miss its PI objectives?", zones: ["People", "Process", "Tools", "Environment", "Measures"], color: COLORS.pink }, { kind: "stickies", title: "Coaching plan for the first PI", lanes: ["Before PI Planning", "During the PI", "At Inspect & Adapt"], rows: 2 }] },
-      { title: "Enhancing the Portfolio", exercises: [WSJF_EXAMPLE, { kind: "link", title: "Portfolio Kanban, canvases and guardrails", body: "Portfolio Kanban with WIP limits, the Portfolio canvas, SWOT → TOWS → vision, epic hypothesis, Lean business case and budget guardrails are live in Trainyard.", href: "/portfolio" }] },
+      { title: "Enhancing the Portfolio", exercises: [WSJF_EXAMPLE, WSJF_EPIC_EXAMPLE, { kind: "link", title: "Portfolio Kanban, canvases and guardrails", body: "Portfolio Kanban with WIP limits, the Portfolio canvas, SWOT → TOWS → vision, epic hypothesis, Lean business case and budget guardrails are live in Trainyard.", href: "/portfolio" }] },
       { title: "Accelerating Business Agility", exercises: [{ kind: "stickies", title: "Measure and grow: where are we?", lanes: ["Strengths", "Growth areas", "Next three improvements"], rows: 2, color: COLORS.green }] },
       { title: "Get Certified and Start Training", exercises: [{ kind: "stickies", title: "Your first 90 days as an SPC", lanes: ["Month 1", "Month 2", "Month 3"], rows: 2 }] },
     ],
@@ -505,7 +519,7 @@ const RAW_CLASSES: ClassSpec[] = [
       { title: "Embracing AI", exercises: [{ kind: "zones", title: "Where does AI change the work?", zones: ["Exponential", "Generative", "Emergent", "Disruptive"], color: COLORS.purple }, { kind: "stickies", title: "AI in our transformation", lanes: ["Use today", "Try next PI", "Guardrails we need"], rows: 2 }] },
       { title: "Engaging Executives", exercises: [{ kind: "table", title: "Case study 1: charting the road ahead", columns: ["Leader persona", "What they care about", "What they fear", "Our ask"], rows: [], blankRows: 4 }, { kind: "slide", title: "Case study 2: communicating the transformation strategy", body: "Using the CARS scenario: draft the message from leadership to the organisation that resolves conflicting priorities, and decide who delivers it and how often.", minutes: 30 }] },
       { title: "Developing a Transformation Strategy", exercises: [{ kind: "table", title: "Case study 3: do we have the metrics we need?", columns: ["Outcome", "Measure", "Baseline", "Target", "Owner"], rows: [], blankRows: 5 }, { kind: "zones", title: "OKRs for the transformation", zones: ["Objective", "Key results", "Risks"] }] },
-      { title: "Unlocking Portfolio Flow", exercises: [{ kind: "slide", title: "Case study 4: using facts as our guide", body: "Prioritise the CARS portfolio backlog with WSJF using Fibonacci values, then challenge each other's numbers: which assumptions drive the order?", minutes: 30 }, WSJF_EXAMPLE, WSJF_TABLE, { kind: "link", title: "Portfolio flow, live", body: "Portfolio Kanban with WIP limits, flow metrics and the value stream maps measured from Jira or Azure DevOps.", href: "/portfolio" }] },
+      { title: "Unlocking Portfolio Flow", exercises: [{ kind: "slide", title: "Case study 4: using facts as our guide", body: "Prioritise the CARS portfolio backlog with WSJF using Fibonacci values, then challenge each other's numbers: which assumptions drive the order?", minutes: 30 }, WSJF_EXAMPLE, WSJF_EPIC_EXAMPLE, WSJF_TABLE, { kind: "link", title: "Portfolio flow, live", body: "Portfolio Kanban with WIP limits, flow metrics and the value stream maps measured from Jira or Azure DevOps.", href: "/portfolio" }] },
       { title: "Customizing SAFe to Your Context", exercises: [{ kind: "stickies", title: "Keep · adapt · drop", lanes: ["Keep", "Adapt", "Drop", "Add"], rows: 3, color: COLORS.green }, { kind: "link", title: "Operating models as data", body: "Every scaling model in Trainyard is configuration: fork SAFe, rename levels and ceremonies, and the boards follow.", href: "/model" }] },
       { title: "Learning Lab: design sprint", exercises: DESIGN_SPRINT },
       { title: "Get Certified and Start Training", exercises: [{ kind: "stickies", title: "Your next transformation move", lanes: ["This week", "This PI", "This year"], rows: 2 }] },
@@ -623,6 +637,9 @@ function canvasExercise(id: string, cols = 3): Exercise {
 function wsjfTable(item: string): Exercise {
   const parts = CANVAS_TYPES.find((t) => t.id === "feature-canvas")!.sections.find((s) => s.kind === "wsjf")!.labels!;
   const [value, time, risk, size] = parts as [string, string, string, string];
+  // WSJF divides cost of delay by duration: job size stands in for it on features, the cost
+  // normalised to the cheapest epic on epics.
+  if (item === "Epic") return { kind: "table", title: `WSJF for epics: cost of delay (${value} + ${time} + ${risk}) ÷ normalised cost`, columns: [item, value, time, risk, "Cost of delay", "Cost", "Normalised cost (÷ lowest)", "WSJF"], rows: [], blankRows: 4 };
   return { kind: "table", title: `WSJF: cost of delay (${value} + ${time} + ${risk}) ÷ ${size}`, columns: [item, value, time, risk, "Cost of delay", size, "WSJF"], rows: [], blankRows: 4 };
 }
 

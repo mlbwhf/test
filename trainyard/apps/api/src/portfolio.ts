@@ -3,14 +3,16 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
 import { z } from "zod";
-import { EPIC_STATES, budgetLines, checkGuardrails, emptyPortfolio, okrProgress, rankEpics, wsjf, type MetricRegistry, type Okr, type PortfolioEpic, type ValueStream } from "@trainyard/core";
+import { EPIC_STATES, budgetLines, checkGuardrails, emptyPortfolio, epicCost, epicWsjf, okrProgress, rankEpics, wsjfColumnGaps, type MetricRegistry, type Okr, type PortfolioEpic, type ValueStream } from "@trainyard/core";
 import { require } from "./auth.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { Store } from "./store.js";
 
 const Id = z.string().min(1).max(200);
 const Money = z.number().min(0);
-const WsjfBody = z.object({ userBusinessValue: z.number().min(0).max(100), timeCriticality: z.number().min(0).max(100), riskReductionOpportunity: z.number().min(0).max(100), jobSize: z.number().min(0).max(100) });
+// The modified Fibonacci values SAFe uses for WSJF; anything bigger should be split first.
+const Fib = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(5), z.literal(8), z.literal(13), z.literal(20)]);
+const WsjfBody = z.object({ userBusinessValue: Fib, timeCriticality: Fib, riskReductionOpportunity: Fib, jobSize: Fib });
 const SpendBody = z.array(z.object({ incrementId: Id, planned: Money, actual: Money.optional() })).max(50);
 const KeyResultBody = z.object({
   id: Id.optional(),
@@ -43,7 +45,12 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
     return {
       portfolio: p,
       increment: { id: increment.id, name: increment.name },
-      epics: rankEpics(p.epics).map((e) => ({ ...e, score: wsjf(e.wsjf) })),
+      // WSJF for epics divides by cost normalised to the cheapest epic; the columns without a 1 are shown so they get fixed.
+      epics: (() => {
+        const scores = epicWsjf(p.epics);
+        return rankEpics(p.epics).map((e) => ({ ...e, ...scores.get(e.id)!, cost: epicCost(e) ?? null }));
+      })(),
+      wsjfGaps: wsjfColumnGaps(p.epics.filter((e) => e.state !== "done").map((e) => e.wsjf)).filter((k) => k !== "jobSize"),
       doneEpics: p.epics.filter((e) => e.state === "done"),
       budgets: budgetLines(p, ws.increments),
       breaches: checkGuardrails(p, increment, ws.items),
@@ -97,10 +104,12 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
     kind: z.enum(["business", "enabler"]).optional(),
     sourceCanvasId: Id.optional(),
     wsjf: WsjfBody,
+    /** Forecast cost from the Lean business case; WSJF divides by it, normalised. */
+    cost: Money.nullable().optional(),
     spend: SpendBody,
   });
 
-  const validateEpic = (b: z.infer<typeof EpicBody>) => {
+  const validateEpic = (b: Pick<z.infer<typeof EpicBody>, "valueStreamId" | "itemId" | "ownerId" | "spend"> & { hypothesis?: string | null | undefined }) => {
     const p = portfolio();
     const ws = s().workspace;
     if (!p.valueStreams.some((v) => v.id === b.valueStreamId)) throw notFound("Value stream");
@@ -112,7 +121,7 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
   app.post("/v1/portfolio/epics", { schema: { body: EpicBody } }, async (req, reply) => {
     require(req, "portfolio");
     validateEpic(req.body);
-    const { itemId, ownerId, hypothesis, state, spend, kind, sourceCanvasId, ...rest } = req.body;
+    const { itemId, ownerId, hypothesis, state, spend, kind, sourceCanvasId, cost, ...rest } = req.body;
     const epic: PortfolioEpic = {
       id: `pe-${Date.now().toString(36)}`,
       state: state ?? "funnel",
@@ -123,10 +132,11 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
       ...(hypothesis ? { hypothesis } : {}),
       ...(kind ? { kind } : {}),
       ...(sourceCanvasId ? { sourceCanvasId } : {}),
+      ...(cost ? { cost } : {}),
     };
     portfolio().epics.push(epic);
     await store.commit(req.principal, "portfolio.epic.create", { id: epic.id });
-    return reply.code(201).send({ epic: { ...epic, score: wsjf(epic.wsjf) } });
+    return reply.code(201).send({ epic: { ...epic, ...epicWsjf(portfolio().epics).get(epic.id) } });
   });
 
   app.patch("/v1/portfolio/epics/:id", { schema: { params: z.object({ id: Id }), body: EpicBody.partial() } }, async (req) => {
@@ -136,11 +146,12 @@ export function registerPortfolioRoutes(app: App, store: Store, metrics: MetricR
     if (!epic) throw notFound("Epic");
     const merged = { ...epic, ...defined(req.body), ...(req.body.spend ? { spend: req.body.spend.map((x) => defined(x)) } : {}) } as PortfolioEpic & { itemId?: string | null; ownerId?: string | null; hypothesis?: string | null };
     validateEpic({ ...merged, itemId: merged.itemId ?? undefined, ownerId: merged.ownerId ?? undefined, hypothesis: merged.hypothesis ?? undefined });
-    for (const k of ["itemId", "ownerId", "hypothesis"] as const) if (merged[k] === null) delete merged[k];
+    const loose = merged as unknown as Record<string, unknown>;
+    for (const k of ["itemId", "ownerId", "hypothesis", "cost"] as const) if (loose[k] === null) delete loose[k];
     const next = merged as PortfolioEpic;
     p.epics = p.epics.map((e) => (e.id === next.id ? next : e));
     await store.commit(req.principal, "portfolio.epic.update", { id: next.id, ...defined(req.body) });
-    return { epic: { ...next, score: wsjf(next.wsjf) } };
+    return { epic: { ...next, ...epicWsjf(p.epics).get(next.id) } };
   });
 
   app.put(
