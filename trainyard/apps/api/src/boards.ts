@@ -5,7 +5,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { TEMPLATE_CATALOG, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
+import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, createImporter, isIobeyaExport, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
@@ -284,7 +284,33 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     builtin: builtins().map((b) => ({ ...summary(b), info: b.info })),
     saved: boards().filter((b) => b.isTemplate).map(summary),
     catalog: TEMPLATE_CATALOG,
+    packages: TEMPLATE_PACKAGES,
   }));
+
+  // A package creates the boards an event needs at once: one board with every template side by
+  // side (fits any plan), or a board each, optionally in a room.
+  app.post("/v1/templates/packages/:id/create", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(100), mode: z.enum(["one-board", "boards"]).default("one-board"), roomId: Id.optional() }) } }, async (req, reply) => {
+    require(req, "plan");
+    const pkg = TEMPLATE_PACKAGES.find((p) => p.id === req.params.id) ?? (() => { throw notFound("Package"); })();
+    const roomId = req.body.roomId ? intoRoom(req, req.body.roomId) : undefined;
+    const templates = pkg.templates.map((id) => findTemplate(`tpl-builtin-${id}`));
+    const stamp = Date.now().toString(36);
+    const made: Board[] = [];
+    if (req.body.mode === "one-board") {
+      let b = emptyBoard(`b-${stamp}`, req.body.name, { system: "trainyard", externalId: `package:${pkg.id}`, importedAt: store.now().toISOString() });
+      templates.forEach((t, i) => (b = insertTemplate(b, t, `p${i}`)));
+      made.push(b);
+    } else {
+      templates.forEach((t, i) => made.push(instantiate(t, `b-${stamp}-${i}`, `${req.body.name} · ${t.name}`, store.now().toISOString())));
+    }
+    for (const b of made) {
+      if (b.nodes.length > MAX_BOARD_NODES) throw new ApiError(413, "BOARD_TOO_LARGE", `A board holds up to ${MAX_BOARD_NODES} cards.`);
+      if (roomId) b.roomId = roomId;
+      boards().push(b);
+    }
+    await store.commit(req.principal, "board.package", { package: pkg.id, boards: made.map((b) => b.id) });
+    return reply.code(201).send({ boards: made.map(summary) });
+  });
   app.get("/v1/templates/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => ({ board: findTemplate(req.params.id) }));
   // Class boards and Miro imports are for signed-up trainers (a free account): the open demo cannot run them.
   const requireSignup = (req: { principal: { anonymous: boolean } }, what: string) => {

@@ -10,6 +10,7 @@
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import { classTemplates } from "./classes.js";
 import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
+import { PI_PLANNING_READINESS } from "./canvases.js";
 
 export type TemplateMethod = "safe" | "scrum" | "kanban" | "lean" | "six-sigma" | "manufacturing" | "general";
 
@@ -86,6 +87,9 @@ export const TEMPLATE_CATALOG: TemplateInfo[] = [
   { id: "roam", name: "ROAM risk board", blurb: "Resolved, Owned, Accepted, Mitigated.", event: "PI Planning · ART Sync", method: "safe", tags: ["safe", "risk"], zones: ["Inbox", "Resolved", "Owned", "Accepted", "Mitigated"], cardTypes: ["Risk"], mapsTo: "Risks with ROAM state" },
   { id: "program-board", name: "PI planning board", blurb: "The living version of the PI plan (the program board), with dependency strings.", event: "ART Sync", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Shared services", "Milestones"], cardTypes: ["Feature", "Milestone"], mapsTo: "Items and dependencies" },
   { id: "confidence-vote", name: "Confidence vote", blurb: "Fist of five per team and for the ART.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["1 · No confidence", "2", "3", "4", "5 · Full confidence"], cardTypes: ["Vote"], mapsTo: "Nothing (record only)" },
+  { id: "pi-planning-readiness", name: "PI planning readiness", blurb: "Every readiness question from the ART launch checklist, sorted by the RTE and LACE into ready, depends and not ready before the room meets.", event: "Pre-PI Planning · IP iteration", method: "safe", tags: ["safe"], zones: ["To assess", "Ready (Y)", "Depends (D)", "Not ready (N)", "Actions before PI planning"], cardTypes: ["Readiness question", "Action"], mapsTo: "Nothing (record only)" },
+  { id: "pi-planning-agenda", name: "PI planning agenda", blurb: "The two days of PI planning in SAFe's order: business context and visions, team breakouts and draft plans, management review, adjustments, final plans, program risks and the confidence vote.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Day 1", "Day 2", "Parking lot"], cardTypes: ["Agenda item", "Note"], mapsTo: "Nothing (record only)" },
+  { id: "ip-iteration", name: "IP iteration calendar", blurb: "Two weeks that close the PI: buffer, final verification and validation, innovation and readiness, then pre-PI planning, continuing education, Inspect & Adapt and the next PI planning.", event: "IP iteration · Inspect & Adapt", method: "safe", tags: ["safe"], zones: ["Week 1: Monday to Friday", "Week 2: Monday to Friday"], cardTypes: ["Event", "Activity"], mapsTo: "Nothing (record only)" },
   { id: "retrospective", name: "Retrospective", blurb: "Went well, didn't go well, ideas, actions.", event: "Iteration · Inspect & Adapt", method: "general", tags: ["team"], zones: ["Went well", "Didn't go well", "Ideas", "Actions"], cardTypes: ["Note", "Action"], mapsTo: "Actions as items" },
   { id: "kanban", name: "Team Kanban", blurb: "Columns with WIP limits.", event: "Daily", method: "kanban", tags: ["team", "flow"], zones: ["Ready", "In progress", "Review", "Done"], cardTypes: ["Work item"], mapsTo: "Items with status" },
   { id: "inspect-adapt", name: "Inspect & Adapt", blurb: "PI system demo, quantitative and qualitative measurement, and the problem-solving workshop: fishbone by SAFe's categories, five whys, improvement backlog.", event: "Inspect & Adapt", method: "safe", tags: ["safe", "team"], zones: ["PI system demo", "Measurement", "Problem statement", "Fishbone (people, processes, tools, program, environment)", "Five whys", "Improvement backlog"], cardTypes: ["Cause", "Improvement"], mapsTo: "Improvement items" },
@@ -160,6 +164,49 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       const bottom = ["PI objectives: committed · uncommitted (BV · AV)", "Risks", "Features backlog", "Planning poker"].map((t, i) => strip(t, 880, quarter, 340, i * (quarter + GAP)));
       b.frames = [...cap, ...stories, ...features, ip, ...bottom];
       b.nodes = [...placeholders(stories, "#dcf3e4"), ...placeholders(features, "#cfe3fb"), ...placeholders([bottom[1]!], "#fbd9d2")];
+    }),
+    template(info("pi-planning-readiness"), (b) => {
+      // Built from PI_PLANNING_READINESS, the same list the ART launch canvas scores and the classes teach.
+      const cols = ["To assess", "Ready (Y)", "Depends (D)", "Not ready (N)"];
+      const h = 140 + PI_PLANNING_READINESS.length * 70;
+      b.frames = [...cols.map((t, i) => ({ id: slug(t), title: t, x: i * (W + GAP), y: 0, width: W, height: h })), strip("Actions before PI planning: owner and date", h + GAP, 4 * (W + GAP) - GAP, 260)];
+      b.nodes = PI_PLANNING_READINESS.map((r, i) => ({ id: `ready-${i + 1}`, kind: "sticky" as const, text: `${r.text}${r.tier === "needed" ? " (needed)" : " (desirable)"}`, x: 20, y: 60 + i * 70, width: W - 40, height: 56, color: r.tier === "needed" ? "#fff6c2" : "#e8f0ff", frameId: "to-assess", tags: [r.tier], fields: { question: r.question } }));
+    }),
+    template(info("pi-planning-agenda"), (b) => {
+      const days: [string, string[]][] = [
+        ["Day 1", ["Business context", "Product / solution vision", "Architecture vision and development practices", "Planning requirements and lunch", "Team breakouts", "Draft plan review", "Management review and problem-solving"]],
+        ["Day 2", ["Planning adjustments", "Team breakouts", "Final plan review and lunch", "Program risks", "PI confidence vote", "Plan rework if necessary", "Planning retrospective and moving forward"]],
+      ];
+      b.frames = [];
+      b.nodes = [];
+      days.forEach(([day, items], d) => {
+        b.frames.push({ id: slug(day), title: day, x: d * (W + GAP), y: 0, width: W, height: 80 + items.length * 120 });
+        items.forEach((t, i) => b.nodes.push({ id: `${slug(day)}-${i + 1}`, kind: "card", text: t, x: d * (W + GAP) + 20, y: 60 + i * 120, width: W - 40, height: 96, color: "#dcefb4", frameId: slug(day), tags: ["agenda"], fields: {} }));
+      });
+      b.frames.push({ id: "parking-lot", title: "Parking lot", x: 2 * (W + GAP), y: 0, width: W, height: 80 + 7 * 120 });
+    }),
+    template(info("ip-iteration"), (b) => {
+      // SAFe's example IP iteration calendar: week one runs four tracks across every day; week
+      // two holds pre-PI planning, continuing education, Inspect & Adapt and PI planning.
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+      const dw = 300;
+      const weekW = days.length * (dw + 20) - 20;
+      b.frames = [];
+      b.nodes = [];
+      days.forEach((d, i) => b.frames.push({ id: `w1-${slug(d)}`, title: `Week 1 · ${d}`, x: i * (dw + 20), y: 0, width: dw, height: 560 }));
+      ["Buffer for leftover work", "Final verification and validation, and documentation (if releasing)", "Innovation", "PI planning readiness"].forEach((t, i) => b.nodes.push({ id: `w1-track-${i + 1}`, kind: "card", text: t, x: 20, y: 70 + i * 120, width: weekW - 40, height: 96, color: "#cfe3fb", tags: ["ip-iteration"], fields: {} }));
+      const y2 = 620;
+      days.forEach((d, i) => b.frames.push({ id: `w2-${slug(d)}`, title: `Week 2 · ${d}`, x: i * (dw + 20), y: y2, width: dw, height: 620 }));
+      const card = (id: string, text: string, col: number, row: number, span = 1, rows = 1, color = "#9fc3ef") => b.nodes.push({ id, kind: "card", text, x: col * (dw + 20) + 20, y: y2 + 60 + row * 140, width: span * (dw + 20) - 60, height: rows * 140 - 24, color, frameId: `w2-${slug(days[col]!)}`, tags: ["ip-iteration"], fields: {} });
+      card("w2-pre-pi", "Solution Train pre-PI planning", 0, 0);
+      card("w2-innovation", "Innovation continues", 0, 1);
+      card("w2-readiness", "PI planning readiness", 0, 2);
+      card("w2-education", "Continuing education", 1, 0);
+      card("w2-ia", "Inspect & Adapt event", 1, 1, 1, 3, "#7fb0e8");
+      card("w2-pi-planning", "PI planning: day 1 (Wednesday) and day 2 (Thursday)", 2, 0, 2, 1, "#7fb0e8");
+      card("w2-day1", "Business context · product / solution vision · architecture vision · planning requirements · team breakouts · draft plan review · management review and problem-solving", 2, 1, 1, 3, "#dcefb4");
+      card("w2-day2", "Planning adjustments · team breakouts · final plan review · program risks · PI confidence vote · plan rework if necessary · planning retrospective", 3, 1, 1, 3, "#dcefb4");
+      card("w2-distributed", "Optional time for distributed planning", 4, 0);
     }),
     template(info("roam"), (b) => {
       const cols = grid(["Inbox", "Resolved", "Owned", "Accepted", "Mitigated"], ["Risks"], { h: 700, w: 320 });
@@ -536,3 +583,42 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
     ...classTemplates(NOW),
   ];
 }
+
+/**
+ * Template packages: the boards an event needs, created together. Preparing for PI planning
+ * happens through the PI and its IP iteration; PI planning is the two days; closing the PI is
+ * the IP iteration and then Inspect & Adapt.
+ */
+export interface TemplatePackage {
+  id: string;
+  name: string;
+  blurb: string;
+  /** When in the PI the package is used. */
+  when: string;
+  /** Template ids, in the order the boards are used. */
+  templates: string[];
+}
+
+export const TEMPLATE_PACKAGES: TemplatePackage[] = [
+  {
+    id: "prepare-pi-planning",
+    name: "Prepare for PI planning",
+    blurb: "Get the content, the teams and the room ready: readiness by the RTE and LACE, the ART backlog through the Kanban, and pre-PI planning across trains.",
+    when: "Through the PI, finishing in the IP iteration",
+    templates: ["pi-planning-readiness", "art-kanban", "portfolio-art-board"],
+  },
+  {
+    id: "pi-planning",
+    name: "PI planning",
+    blurb: "The two days: the agenda, the PI planning board with dependencies, a breakout board per team, program risks to ROAM and the confidence vote.",
+    when: "PI planning, days 1 and 2",
+    templates: ["pi-planning-agenda", "pi-planning", "team-breakout", "roam", "confidence-vote"],
+  },
+  {
+    id: "closing-pi",
+    name: "Close the PI",
+    blurb: "The IP iteration (buffer, final verification and validation, innovation, readiness, continuing education) and then Inspect & Adapt: PI system demo, measurement and the problem-solving workshop.",
+    when: "The IP iteration, then Inspect & Adapt",
+    templates: ["ip-iteration", "inspect-adapt"],
+  },
+];

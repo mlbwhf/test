@@ -482,7 +482,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(51);
+    expect(list.body.builtin.length).toBe(54);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     expect(pi.info.method).toBe("safe");
@@ -1657,6 +1657,23 @@ describe("blank whiteboard with templates added", () => {
     expect(Math.min(...added.map((f: { x: number }) => f.x))).toBeGreaterThan(right);
     expect(new Set(both.frames.map((f: { id: string }) => f.id)).size).toBe(both.frames.length);
     expect((await call("POST", `/v1/boards/${a}/insert-template`, { templateId: b })).status).not.toBe(200);
+  });
+});
+
+describe("template packages", () => {
+  it("creates a package as one board with its templates side by side, or as a board each", async () => {
+    const { call } = await setup();
+    const list = await call("GET", "/v1/templates/boards");
+    expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["prepare-pi-planning", "pi-planning", "closing-pi"]);
+    const one = await call("POST", "/v1/templates/packages/closing-pi/create", { name: "PI 26.4 close", mode: "one-board" });
+    expect(one.status).toBe(201);
+    expect(one.body.boards).toHaveLength(1);
+    const board = (await call("GET", `/v1/boards/${one.body.boards[0].id}`)).body.board;
+    expect(board.frames.some((f: { title: string }) => f.title === "Week 2 · Tuesday")).toBe(true);
+    expect(board.nodes.some((n: { text: string }) => n.text === "Inspect & Adapt event")).toBe(true);
+    const each = await call("POST", "/v1/templates/packages/pi-planning/create", { name: "PI 26.5 planning", mode: "boards" });
+    expect(each.body.boards.map((b: { name: string }) => b.name)).toEqual(["PI 26.5 planning · PI planning agenda", "PI 26.5 planning · PI Planning board", "PI 26.5 planning · Team breakout", "PI 26.5 planning · ROAM risk board", "PI 26.5 planning · Confidence vote"]);
+    expect((await call("POST", "/v1/templates/packages/nope/create", { name: "x" })).status).toBe(404);
   });
 });
 
