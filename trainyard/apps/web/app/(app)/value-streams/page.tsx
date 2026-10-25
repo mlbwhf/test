@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   artFit,
   devStreamPeople,
@@ -265,6 +265,101 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
     return `${a} / span ${b - a + 1}`;
   };
   const sysSteps = (ids: string[]) => vsi.systems.filter((s) => ids.includes(s.id)).flatMap((s) => s.stepIds);
+  // Each solution is one box under the first step it serves that has room, wired to exactly the
+  // steps it supports, as on SAFe's patterns. A solution serving no step (the product the
+  // customer receives, a design platform) sits at the value end.
+  const sysCol = useMemo(() => {
+    const taken = new Set<number>();
+    const out = new Map<string, number>();
+    const first = (ids: string[]) => Math.min(...ids.map((id) => colOf.get(id) ?? cols));
+    for (const s of [...vsi.systems].sort((a, b) => first(a.stepIds) - first(b.stepIds))) {
+      const xs = s.stepIds.map((id) => colOf.get(id)).filter((x): x is number => !!x).sort((a, b) => a - b);
+      if (!xs.length) {
+        out.set(s.id, cols);
+        continue;
+      }
+      // The nearest free column from its first step onwards, so boxes line up as on the pattern.
+      let c: number | undefined;
+      for (let k = xs[0]!; c === undefined && k < cols; k++) if (!taken.has(k)) c = k;
+      c ??= xs[0]!;
+      taken.add(c);
+      out.set(s.id, c);
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vsi.systems, vsi.steps]);
+  /** The columns under a set of solutions' boxes; at least two wide so trains fit. */
+  const boxSpan = (sysIds: string[]) => {
+    const xs = sysIds.map((id) => sysCol.get(id)).filter((x): x is number => !!x);
+    if (!xs.length) return "1 / -1";
+    let a = Math.min(...xs);
+    const b = Math.max(...xs);
+    if (a === b && a > 1) a -= 1;
+    return `${a} / span ${b - a + 1}`;
+  };
+
+  // Wires from each solution box up to the chevrons it supports, and down to its development value stream.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const chevRef = useRef(new Map<string, HTMLElement>());
+  const sysRef = useRef(new Map<string, HTMLElement>());
+  const dvsRef = useRef(new Map<string, HTMLElement>());
+  const [wires, setWires] = useState<{ d: string; hot: boolean; dot?: [number, number] }[]>([]);
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const measure = () => {
+      const base = wrap.getBoundingClientRect();
+      const rel = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height };
+      };
+      const out: { d: string; hot: boolean; dot?: [number, number] }[] = [];
+      if (stage >= 2) {
+        const perStep = new Map<string, string[]>();
+        for (const sy of vsi.systems) for (const id of sy.stepIds) perStep.set(id, [...(perStep.get(id) ?? []), sy.id]);
+        for (const sy of vsi.systems) {
+          const box = sysRef.current.get(sy.id);
+          if (!box) continue;
+          const b = rel(box);
+          sy.stepIds.forEach((id, k) => {
+            const chev = chevRef.current.get(id);
+            if (!chev) return;
+            const c = rel(chev);
+            const share = perStep.get(id) ?? [sy.id];
+            const x2 = c.x + c.w / 2 + (share.indexOf(sy.id) - (share.length - 1) / 2) * 16;
+            const y2 = c.y + c.h;
+            const x1 = b.x + b.w / 2 + (k - (sy.stepIds.length - 1) / 2) * 8;
+            const y1 = b.y;
+            const m = (y1 + y2) / 2;
+            out.push({ d: `M${x1},${y1} C${x1},${m} ${x2},${m} ${x2},${y2}`, hot: sel === id, dot: [x2, y2 + 3] });
+          });
+        }
+      }
+      if (stage >= 4) {
+        for (const d of vsi.devStreams) {
+          const strip = dvsRef.current.get(d.id);
+          if (!strip) continue;
+          const t = rel(strip);
+          for (const id of d.systemIds) {
+            const box = sysRef.current.get(id);
+            if (!box) continue;
+            const b = rel(box);
+            const x1 = b.x + b.w / 2;
+            const y1 = b.y + b.h;
+            const x2 = Math.min(Math.max(x1, t.x + 12), t.x + t.w - 12);
+            out.push({ d: `M${x1},${y1} L${x1},${t.y - 10} L${x2},${t.y - 10} L${x2},${t.y}`, hot: false });
+          }
+        }
+      }
+      setWires(out);
+    };
+    measure();
+    // Boxes rise in with an animation; measure again once they have landed.
+    const later = window.setTimeout(measure, 700);
+    const ro = new ResizeObserver(measure);
+    ro.observe(wrap);
+    return () => (window.clearTimeout(later), ro.disconnect());
+  }, [vsi, stage, sel]);
   const impact = sel ? stepImpact(vsi, sel) : null;
   const hitSys = new Set(impact?.systems.map((s) => s.id) ?? []);
   const dim = (ids: string[]) => (impact && hitSys.size && !ids.some((x) => hitSys.has(x)) ? "dim" : "");
@@ -595,7 +690,15 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
         <>
       <section className="panel panel-body">
         <div className="scroll-x" tabIndex={0}>
-          <div style={{ minWidth: Math.max(900, cols * 122) }}>
+          <div className="vs-layers" ref={wrapRef} style={{ minWidth: Math.max(900, cols * 122) }}>
+            <svg className="vs-wires" aria-hidden="true">
+              {wires.map((w, i) => (
+                <g key={i} className={w.hot ? "hot" : ""}>
+                  <path d={w.d} />
+                  {w.dot ? <circle cx={w.dot[0]} cy={w.dot[1]} r={3.5} /> : null}
+                </g>
+              ))}
+            </svg>
             <div className="vs-lane-label">1 · Operational value stream</div>
             <div className="vs-traveller" aria-hidden="true">
               <span />
@@ -621,6 +724,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                   </div>
                   <button
                     className="vs-chev"
+                    ref={(el) => void (el ? chevRef.current.set(s.id, el) : chevRef.current.delete(s.id))}
                     aria-pressed={sel === s.id}
                     title="Click to edit this step"
                     onClick={(e) => {
@@ -658,9 +762,9 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                     + solution
                   </button>
                 </div>
-                <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+                <div className="vs-grid vs-sys-row" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoFlow: "row dense" }}>
                   {vsi.systems.map((s, i) => (
-                    <button key={s.id} className={`vs-bar vs-sys vs-clickbar ${dim([s.id])}`} style={{ gridColumn: spanOf(s.stepIds), animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "system", id: s.id, anchor: at(e) })} title="Click to edit">
+                    <button key={s.id} ref={(el) => void (el ? sysRef.current.set(s.id, el) : sysRef.current.delete(s.id))} className={`vs-bar vs-sys vs-clickbar ${dim([s.id])}`} style={{ gridColumn: `${sysCol.get(s.id) ?? cols} / span 1`, animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "system", id: s.id, anchor: at(e) })} title={`Supports: ${s.stepIds.map((id) => vsi.steps.find((x) => x.id === id)?.name).filter(Boolean).join(", ") || "no operational step (delivered to the customer or used by the developers)"} · click to edit`}>
                       <b>{s.name}</b>
                       {s.note ? (
                         <>
@@ -679,13 +783,14 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
               <>
                 <div className="vs-lane-label">
                   3 · People who develop and support the solutions
+                  {vsi.sizing ? <span className="faint" style={{ textTransform: "none", letterSpacing: 0, fontFamily: "var(--font-body)" }}>Sized for {vsi.sizing.charAt(0).toLowerCase() + vsi.sizing.slice(1)} Hover a group for where its number comes from.</span> : null}
                   <button className="vs-lane-add" onClick={(e) => { const id = uid("grp"); set({ groups: [...vsi.groups, { id, people: 10, locations: "Location", function: "Development", systemIds: sel ? vsi.systems.filter((x) => x.stepIds.includes(sel)).map((x) => x.id) : [] }] }); setOpen({ kind: "group", id, anchor: at(e) }); }}>
                     + people
                   </button>
                 </div>
                 <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoFlow: "row dense" }}>
                   {vsi.groups.filter((g) => g.systemIds.length).map((g, i) => (
-                    <button key={g.id} className={`vs-bar vs-people vs-clickbar ${dim(g.systemIds)}`} style={{ gridColumn: spanOf(sysSteps(g.systemIds)), animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "group", id: g.id, anchor: at(e) })} title="Click to edit">
+                    <button key={g.id} className={`vs-bar vs-people vs-clickbar ${dim(g.systemIds)}`} style={{ gridColumn: boxSpan(g.systemIds).replace(/span (\d+)/, (_m, n) => `span ${Math.max(1, Number(n))}`), animationDelay: `${i * 80}ms` }} onClick={(e) => setOpen({ kind: "group", id: g.id, anchor: at(e) })} title={`${g.basis ? `Sized from: ${g.basis}. ` : ""}Click to edit`}>
                       <span>
                         <b>{g.people}</b> {g.function ?? "people"} · {g.locations}
                       </span>
@@ -706,12 +811,19 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                     + development value stream
                   </button>
                 </div>
-                <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+                <div className="vs-grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoFlow: "row dense" }}>
                   {vsi.devStreams.map((d, i) => {
                     const extra = vsi.groups.filter((g) => g.devStreamId === d.id && !g.systemIds.length);
+                    const trains = vsi.arts.filter((a) => a.devStreamId === d.id);
                     return (
-                      <div key={d.id} className={`vs-bar vs-dvs ${dim(d.systemIds)}`} style={{ gridColumn: spanOf(sysSteps(d.systemIds)), animationDelay: `${i * 100}ms`, display: "grid", gap: 6 }}>
-                        <button className="vs-clickbar vs-clickline" onClick={(e) => setOpen({ kind: "dvs", id: d.id, anchor: at(e) })} title="Click to edit">
+                      <div key={d.id} className={`vs-dvs-col ${dim(d.systemIds)}`} style={{ gridColumn: boxSpan(d.systemIds), animationDelay: `${i * 100}ms` }}>
+                        <div className="vs-dvs-strip" ref={(el) => void (el ? dvsRef.current.set(d.id, el) : dvsRef.current.delete(d.id))} aria-hidden="true">
+                          <span />
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                        <button className="vs-clickbar vs-clickline vs-dvs-name" onClick={(e) => setOpen({ kind: "dvs", id: d.id, anchor: at(e) })} title="Click to edit">
                           <b>{d.name}</b> · {dvsPeople(d.id)} people
                           {d.note ? (
                             <>
@@ -720,7 +832,7 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                             </>
                           ) : null}
                         </button>
-                        <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
+                        <div className="row" style={{ gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
                           {extra.map((g) => (
                             <button key={g.id} className="vs-people vs-mini-people" onClick={(e) => setOpen({ kind: "group", id: g.id, anchor: at(e) })} title="People the business solution needs · click to edit">
                               {g.people} {g.function ?? ""} · {g.locations}
@@ -730,6 +842,27 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
                             + people
                           </button>
                         </div>
+                        {stage >= 5 && !trains.length && vsi.arts.some((a) => a.systemIds.some((x) => d.systemIds.includes(x))) ? (
+                          <span className="faint" style={{ fontSize: "0.75rem" }}>
+                            Realised by {vsi.arts.filter((a) => a.systemIds.some((x) => d.systemIds.includes(x))).map((a) => a.name).join(", ")}
+                            {dvsPeople(d.id) < 50 ? ": too small for a train of its own" : ""}
+                          </span>
+                        ) : null}
+                        {stage >= 5 && trains.length ? (
+                          <div className="vs-trains" aria-label={`Trains cut from ${d.name}`}>
+                            {trains.map((a) => {
+                              const fit = artFit(a.people);
+                              return (
+                                <button key={a.id} className={`vs-train ${fit}`} onClick={(e) => setOpen({ kind: "art", id: a.id, anchor: at(e) })} title={`${topologies.find((t) => t.id === a.topology)?.name ?? "Topology not decided"} · ${a.locations || "locations not set"} · click to edit`}>
+                                  <span className="vs-train-tag">ART</span>
+                                  <b>{a.name}</b>
+                                  <span className="mono">{a.people} people</span>
+                                  <span className="faint">{fit === "fits" ? "fits 50–125" : fit === "split" ? "above 125: split" : "below 50: merge"}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : null}
                       </div>
                     );
                   })}
@@ -755,6 +888,11 @@ function IdentifyView({ vsi, types, topologies, dirty, onChange, onSave, onReset
               ))}
               <span className="faint">Topologies: stream-aligned by default; platform, complicated subsystem and enabling where the solution calls for them.</span>
             </div>
+            {vsi.arts.some((a) => a.devStreamId && vsi.devStreams.some((d) => d.id === a.devStreamId)) ? (
+              <p className="faint" style={{ margin: "0 0 8px", fontSize: "0.82rem" }}>
+                Each train hangs under the development value stream it is cut from, above. Below: every train with its size against the 50 to 125 band.
+              </p>
+            ) : null}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
               {vsi.arts.map((a, i) => {
                 const fit = artFit(a.people);

@@ -66,14 +66,29 @@ describe("value stream type examples", () => {
     const t = (id: string) => OVS_TYPES.find((x) => x.id === id)!;
     const mfg = identificationFromType(t("manufacturing"), "v1", "2026-10-24T00:00:00.000Z");
     expect(mfg.systems.map((s) => s.name)).toContain("Bills of material");
-    expect(mfg.systems.find((s) => s.name === "Bills of material")!.stepIds).toHaveLength(2);
+    // As drawn on SAFe's patterns: each system serves exactly the steps its line reaches.
+    expect(mfg.systems.find((s) => s.name === "Bills of material")!.stepIds).toHaveLength(1);
     expect(mfg.devStreams.map((d) => d.name)).toEqual(["Vehicle development", "Design tools platform"]);
     const sw = identificationFromType(t("software-product"), "v2", "2026-10-24T00:00:00.000Z");
     expect(sw.steps.map((s) => s.name)).toEqual(["Sales cycle", "Contracts and licensing", "Provisioning", "Customer care", "Renewals"]);
-    expect(sw.devStreams.find((d) => d.name === "Business systems")!.systemIds).toHaveLength(3);
+    expect(sw.devStreams.find((d) => d.name === "CRM, provisioning and help desk")!.systemIds).toHaveLength(3);
+    const stepNames = (name: string) => sw.systems.find((s) => s.name === name)!.stepIds.map((id) => sw.steps.find((x) => x.id === id)!.name);
+    expect(stepNames("Customer portal")).toEqual(["Sales cycle", "Contracts and licensing", "Customer care"]);
+    expect(stepNames("CRM")).toEqual(["Sales cycle", "Renewals"]);
+    expect(stepNames("SaaS, mobile, desktop software products")).toEqual([]);
     const sup = identificationFromType(t("supporting"), "v3", "2026-10-24T00:00:00.000Z");
     expect(sup.systems[0]!.name).toBe("ERP system");
     for (const v of [mfg, sw, sup]) expect(identificationIssues(v).filter((i) => /unknown/.test(i.message))).toEqual([]);
+    // Each example comes with people sized from published averages, and trains of 50 to 125.
+    for (const type of OVS_TYPES) {
+      const v = identificationFromType(type, "x", "2026-10-24T00:00:00.000Z");
+      expect(v.groups.length).toBeGreaterThan(0);
+      expect(v.arts.length).toBeGreaterThan(0);
+      for (const g of type.example.groups ?? []) for (const sy of g.systems) expect(type.example.systems?.some((x) => x.name === sy)).toBe(true);
+      for (const a of v.arts) expect(a.devStreamId).toBeTruthy();
+    }
+    for (const a of sw.arts) expect(a.people >= 50 && a.people <= 125).toBe(true);
+    expect(sup.arts[0]).toMatchObject({ name: "ERP", people: 88 });
     // Every example's systems and dev streams point at real steps and systems.
     for (const type of OVS_TYPES) for (const sy of type.example.systems ?? []) for (const st of sy.steps) expect(type.example.steps.some((x) => x.name === st)).toBe(true);
     for (const type of OVS_TYPES) for (const d of type.example.devStreams ?? []) for (const sy of d.systems) expect(type.example.systems?.some((x) => x.name === sy)).toBe(true);

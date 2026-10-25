@@ -42,6 +42,15 @@ export interface OvsType {
     systems?: { name: string; note?: string; steps: string[] }[];
     /** The development value streams of the pattern and the systems each builds, by system name. */
     devStreams?: { name: string; note?: string; systems: string[] }[];
+    /**
+     * Who develops and supports each system, sized from published averages for that kind of
+     * application (basis says which), plus the people the business solution needs, by stream.
+     */
+    groups?: { people: number; locations: string; function: string; systems: string[]; devStream?: string; basis?: string }[];
+    /** The trains cut from the development value streams, by stream and system name. */
+    arts?: { name: string; people: number; locations: string; systems: string[]; devStream: string; topology: ArtTopology }[];
+    /** The organisation the example is sized for, so the numbers can be scaled to yours. */
+    sizing?: string;
   };
   builtin?: boolean;
 }
@@ -81,6 +90,24 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Acquisition and origination", note: "Builds the channels, origination and scoring the loan is sold and decided on", systems: ["Channels", "Loan origination system", "Credit scoring system"] },
         { name: "Servicing on core banking", note: "Builds the core banking the loan is run on", systems: ["Core banking"] },
       ],
+      sizing: "A retail bank with about 600 people building and running its lending systems.",
+      groups: [
+        { people: 20, locations: "Paris", function: "Development", systems: ["Channels"] },
+        { people: 80, locations: "Redmond · Atlanta", function: "Development", systems: ["Loan origination system"] },
+        { people: 200, locations: "Bangalore · Delhi", function: "Development", systems: ["Channels", "Loan origination system", "Credit scoring system"] },
+        { people: 30, locations: "Estonia", function: "Development", systems: ["Credit scoring system"] },
+        { people: 150, locations: "Chicago", function: "Development", systems: ["Core banking"] },
+        { people: 5, locations: "Atlanta", function: "Legal", systems: [], devStream: "Acquisition and origination" },
+        { people: 13, locations: "Atlanta", function: "Marketing", systems: [], devStream: "Acquisition and origination" },
+        { people: 15, locations: "Delhi", function: "Support", systems: [], devStream: "Servicing on core banking" },
+        { people: 12, locations: "Estonia", function: "Operations", systems: [], devStream: "Servicing on core banking" },
+      ],
+      arts: [
+        { name: "Channel Support", people: 100, locations: "40 US · 60 Bangalore", systems: ["Channels"], devStream: "Acquisition and origination", topology: "stream-aligned" },
+        { name: "Loan Origination", people: 115, locations: "15 US · 100 Delhi", systems: ["Loan origination system"], devStream: "Acquisition and origination", topology: "stream-aligned" },
+        { name: "Credit", people: 100, locations: "25 Atlanta · 15 Redmond · 30 Estonia · 30 Bangalore", systems: ["Credit scoring system"], devStream: "Acquisition and origination", topology: "complicated-subsystem" },
+        { name: "Core Banking", people: 150, locations: "150 Chicago", systems: ["Core banking"], devStream: "Servicing on core banking", topology: "platform" },
+      ],
     },
   },
   {
@@ -107,17 +134,31 @@ export const OVS_TYPES: OvsType[] = [
       // In manufacturing the development value stream's output is the solution intent: the
       // specifications each operational step builds to, its fixed and variable parts, and the digital twin.
       systems: [
-        { name: "Bills of material", note: "solution intent", steps: ["Procure materials", "Manage inventory"] },
+        { name: "Bills of material", note: "solution intent", steps: ["Procure materials"] },
         { name: "Design specifications", note: "solution intent", steps: ["Manufacture subassemblies"] },
         { name: "Manufacturing specifications", note: "solution intent", steps: ["Assemble final product"] },
         { name: "Test and validation specifications", note: "solution intent", steps: ["Validate product"] },
         { name: "Packaging and shipping specifications", note: "solution intent", steps: ["Package and ship"] },
-        { name: "Digital twin", note: "simulates and validates the vehicle", steps: ["Validate product"] },
-        { name: "Design tools platform", note: "design, simulation and validation tools", steps: [] },
+        { name: "Digital twin", note: "the virtual vehicle, simulated and validated", steps: [] },
+        { name: "Design tools platform", note: "the tools designers design, simulate and validate with", steps: [] },
       ],
       devStreams: [
         { name: "Vehicle development", note: "Develops the specific manufacturing and validation specifications needed for the vehicle", systems: ["Bills of material", "Design specifications", "Manufacturing specifications", "Test and validation specifications", "Packaging and shipping specifications", "Digital twin"] },
         { name: "Design tools platform", note: "Builds the tools that the vehicle designers need to design, simulate and validate the vehicle", systems: ["Design tools platform"] },
+      ],
+      sizing: "One vehicle line at a carmaker. Carmakers and suppliers employ engineers by the thousand across all their lines (Aptiv over 19,000, Porsche Engineering about 1,500), so one line's specification and tooling work is sized in the low hundreds.",
+      groups: [
+        { people: 60, locations: "Stuttgart", function: "Product engineering", systems: ["Design specifications"], basis: "Body, chassis and powertrain design: several specialist teams" },
+        { people: 45, locations: "Stuttgart · Puebla", function: "Manufacturing engineering", systems: ["Bills of material", "Manufacturing specifications"], basis: "Process and assembly engineering for the plant, with the bill of material" },
+        { people: 35, locations: "Stuttgart", function: "Test and validation", systems: ["Test and validation specifications"], basis: "Test rigs, homologation and validation planning" },
+        { people: 15, locations: "Puebla", function: "Packaging and logistics engineering", systems: ["Packaging and shipping specifications"] },
+        { people: 30, locations: "Bangalore", function: "Simulation", systems: ["Digital twin"], basis: "Virtual vehicle models used before and alongside physical tests" },
+        { people: 70, locations: "Bangalore · Stuttgart", function: "Platform software", systems: ["Design tools platform"], basis: "CAD, simulation and PLM tooling shared by every vehicle line" },
+      ],
+      arts: [
+        { name: "Vehicle Design", people: 90, locations: "60 Stuttgart · 30 Bangalore", systems: ["Design specifications", "Digital twin"], devStream: "Vehicle development", topology: "stream-aligned" },
+        { name: "Manufacturing and Validation", people: 95, locations: "65 Stuttgart · 30 Puebla", systems: ["Bills of material", "Manufacturing specifications", "Test and validation specifications", "Packaging and shipping specifications"], devStream: "Vehicle development", topology: "stream-aligned" },
+        { name: "Design Tools Platform", people: 70, locations: "50 Bangalore · 20 Stuttgart", systems: ["Design tools platform"], devStream: "Design tools platform", topology: "platform" },
       ],
     },
   },
@@ -141,17 +182,36 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Customer care", actor: "staff", people: "Support" },
         { name: "Renewals", actor: "staff", people: "Account management" },
       ],
+      // As on SAFe's pattern: each application serves only the steps it is drawn to.
       systems: [
-        { name: "Customer portal", steps: ["Sales cycle", "Provisioning", "Customer care", "Renewals"] },
-        { name: "CRM", steps: ["Sales cycle", "Contracts and licensing", "Renewals"] },
+        { name: "Customer portal", steps: ["Sales cycle", "Contracts and licensing", "Customer care"] },
+        { name: "CRM", steps: ["Sales cycle", "Renewals"] },
         { name: "Provisioning", note: "system", steps: ["Provisioning"] },
         { name: "Help desk", steps: ["Customer care"] },
-        { name: "Software product", note: "SaaS, mobile, desktop", steps: [] },
+        { name: "SaaS, mobile, desktop software products", note: "what the customer receives", steps: [] },
       ],
       devStreams: [
-        { name: "Customer portal", note: "Builds the portal customers buy, provision and get help through", systems: ["Customer portal"] },
-        { name: "Business systems", note: "Builds CRM, provisioning and the help desk the operational steps run on", systems: ["CRM", "Provisioning", "Help desk"] },
-        { name: "Software product", note: "Develops the software solution itself", systems: ["Software product"] },
+        { name: "Customer portal", note: "Builds the portal customers buy, license and get help through", systems: ["Customer portal"] },
+        { name: "CRM, provisioning and help desk", note: "Builds the business systems the operational steps run on", systems: ["CRM", "Provisioning", "Help desk"] },
+        { name: "Software solution", note: "Develops the software solution itself", systems: ["SaaS, mobile, desktop software products"] },
+      ],
+      sizing: "A SaaS company of about 400 people with about 1,000 internal users of its CRM.",
+      groups: [
+        { people: 16, locations: "Austin", function: "Development", systems: ["Customer portal"], basis: "Two product teams of 6 to 8 (Insight Partners: 6 to 8 people per product team)" },
+        { people: 24, locations: "Austin · Dublin", function: "Admins and developers", systems: ["CRM"], basis: "About one admin per 75 to 100 CRM users plus developers, analysts and an architect: for 1,000 users, 10 admins and 14 others (FoundHQ; BlackLine runs 11 for 500 reps)" },
+        { people: 14, locations: "Dublin", function: "Development", systems: ["Provisioning"], basis: "Two teams of 6 to 8" },
+        { people: 12, locations: "Manila", function: "Platform team", systems: ["Help desk"], basis: "IT service management platforms run on 4 to 7 people for 1,000 to 50,000 users, more when processes are built in-house: admins, developers and process engineers" },
+        { people: 140, locations: "Austin · Kraków", function: "Engineering", systems: ["SaaS, mobile, desktop software products"], basis: "R&D is about 30 to 40% of a mature SaaS company's headcount, 80 to 90% of it engineering (Drivetrain, ICONIQ): about 140 of 400" },
+        { people: 6, locations: "Dublin", function: "Operations", systems: [], devStream: "CRM, provisioning and help desk" },
+        { people: 10, locations: "Manila", function: "Support", systems: [], devStream: "Software solution" },
+        { people: 6, locations: "Austin", function: "Marketing", systems: [], devStream: "Software solution" },
+      ],
+      arts: [
+        // The portal stream is too small for a train of its own (16): it joins the business systems.
+        { name: "Customer Operations", people: 72, locations: "30 Austin · 26 Dublin · 16 Manila", systems: ["Customer portal", "CRM", "Provisioning", "Help desk"], devStream: "CRM, provisioning and help desk", topology: "stream-aligned" },
+        // 156 people is above 125: two trains on the one product.
+        { name: "Product Platform", people: 80, locations: "40 Austin · 40 Kraków", systems: ["SaaS, mobile, desktop software products"], devStream: "Software solution", topology: "platform" },
+        { name: "Product Experience", people: 76, locations: "36 Austin · 30 Kraków · 10 Manila", systems: ["SaaS, mobile, desktop software products"], devStream: "Software solution", topology: "stream-aligned" },
       ],
     },
   },
@@ -176,13 +236,20 @@ export const OVS_TYPES: OvsType[] = [
         { name: "Train new hire", actor: "staff", people: "Manager, L&D" },
         { name: "Offboard", actor: "staff", people: "HR, IT" },
       ],
+      // As on SAFe's pattern: the ERP serves the middle of each supporting value stream.
       systems: [
-        { name: "ERP system", note: "also runs procurement of operational supplies and preparing and auditing financials", steps: ["Post job", "Hire employee", "Train new hire", "Offboard"] },
-        { name: "Applicant tracking", steps: ["Post job", "Review resumes", "Interview"] },
+        { name: "ERP system", note: "also runs procurement of operational supplies and preparing and auditing financials", steps: ["Interview", "Hire employee", "Train new hire"] },
       ],
       devStreams: [
         { name: "ERP", note: "A single development value stream that supports the ERP system used throughout the enterprise", systems: ["ERP system"] },
-        { name: "Talent systems", note: "Builds the applicant tracking the hiring steps run on", systems: ["Applicant tracking"] },
+      ],
+      sizing: "An enterprise of about 6,000 people, 4,800 of them ERP users across procurement, HR and finance.",
+      groups: [
+        { people: 80, locations: "Dublin · Manila", function: "ERP development and support", systems: ["ERP system"], basis: "Avasant's median is 60 ERP users per support staff member: 4,800 users ÷ 60 = 80" },
+        { people: 8, locations: "Dublin", function: "Process owners", systems: [], devStream: "ERP" },
+      ],
+      arts: [
+        { name: "ERP", people: 88, locations: "50 Dublin · 38 Manila", systems: ["ERP system"], devStream: "ERP", topology: "platform" },
       ],
     },
   },
@@ -217,6 +284,16 @@ export function identificationFromType(type: OvsType, id: string, now: string, n
   const systems = (type.example.systems ?? []).map((sy, i) => ({ id: `sys-${i + 1}`, name: sy.name, ...(sy.note ? { note: sy.note } : {}), stepIds: sy.steps.map(stepId).filter((x): x is string => !!x) }));
   const sysId = (nm: string) => systems.find((x) => x.name === nm)?.id;
   const devStreams = (type.example.devStreams ?? []).map((d, i) => ({ id: `dvs-${i + 1}`, name: d.name, ...(d.note ? { note: d.note } : {}), systemIds: d.systems.map(sysId).filter((x): x is string => !!x) }));
+  const dvsId = (nm?: string) => (nm ? devStreams.find((x) => x.name === nm)?.id : undefined);
+  const sysIds = (names: string[]) => names.map(sysId).filter((x): x is string => !!x);
+  const groups: PeopleGroup[] = (type.example.groups ?? []).map((g, i) => {
+    const d = dvsId(g.devStream);
+    return { id: `grp-${i + 1}`, people: g.people, locations: g.locations, function: g.function, systemIds: sysIds(g.systems), ...(d ? { devStreamId: d } : {}), ...(g.basis ? { basis: g.basis } : {}) };
+  });
+  const arts: ArtCandidate[] = (type.example.arts ?? []).map((a, i) => {
+    const d = dvsId(a.devStream);
+    return { id: `art-${i + 1}`, name: a.name, people: a.people, locations: a.locations, systemIds: sysIds(a.systems), topology: a.topology, ...(d ? { devStreamId: d } : {}) };
+  });
   return {
     id,
     name,
@@ -229,17 +306,17 @@ export function identificationFromType(type: OvsType, id: string, now: string, n
     valueToCustomer: type.example.valueToCustomer,
     steps,
     systems,
-    groups: [],
+    groups,
     devStreams,
-    arts: [],
+    arts,
+    ...(type.example.sizing ? { sizing: type.example.sizing } : {}),
     updatedAt: now,
   };
 }
 
 /**
- * Switch an identification to another type's example: its fields, steps, systems and
- * development value streams, keeping the identification's id. People and trains are cleared,
- * since they belonged to the systems being replaced.
+ * Switch an identification to another type's example: its fields, steps, systems, people,
+ * development value streams and trains, keeping the identification's id.
  */
 export function applyTypeExample(vsi: ValueStreamIdentification, type: OvsType, now: string): ValueStreamIdentification {
   return { ...identificationFromType(type, vsi.id, now), id: vsi.id };
@@ -272,6 +349,8 @@ export interface PeopleGroup {
   systemIds: string[];
   /** A development value stream the group belongs to even when it builds no system (legal, marketing, support). */
   devStreamId?: string;
+  /** Where the number comes from: a benchmark, a ratio, an assumption. */
+  basis?: string;
 }
 
 export interface DevelopmentValueStream {
@@ -309,6 +388,8 @@ export interface ValueStreamIdentification {
   groups: PeopleGroup[];
   devStreams: DevelopmentValueStream[];
   arts: ArtCandidate[];
+  /** The organisation the people numbers are sized for (examples), so they can be scaled. */
+  sizing?: string;
   updatedAt: string;
 }
 
