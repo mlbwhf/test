@@ -52,7 +52,7 @@ const MappingBody = z.object({
   createMissingTeams: z.boolean().optional(),
 });
 
-export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike) {
+export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
   const s = () => store.state;
   const boards = () => (s().workspace.boards ??= []);
   const findBoard = (id: string) => boards().find((b) => b.id === id) ?? (() => { throw notFound("Board"); })();
@@ -382,6 +382,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     }
     Object.assign(b, { frames: fresh.frames, nodes: fresh.nodes, edges: fresh.edges, columns: fresh.columns, groups: fresh.groups, rows: fresh.rows });
     await store.commit(req.principal, "board.reset", { id: b.id, to: req.body.to });
+    await hooks.afterReset?.(req, b);
     return { board: summary(b) };
   });
   app.post("/v1/boards/:id/insert-template", { schema: { params: z.object({ id: Id }), body: z.object({ templateId: Id }) } }, async (req) => {

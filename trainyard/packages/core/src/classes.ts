@@ -746,3 +746,64 @@ function withLiveTools(c: ClassSpec): ClassSpec {
 }
 
 export const CLASSES: ClassSpec[] = RAW_CLASSES.map(withLiveTools);
+
+// ---- seating students --------------------------------------------------------------------
+// When the trainer adds students to a class, each one's name goes into the icebreaker (a row
+// of their own, in its first column) and onto "The awesome team". Rows run out: a new row is
+// added across the columns and everything below moves down to make room. A removed student's
+// name sticky is emptied; what they wrote elsewhere stays.
+
+/** The frames seats are kept in: the icebreaker and the team. */
+const SEAT_FRAMES = [/^Icebreaker/i, /^Presenting our team/i];
+
+export function seatStudents(board: Board, students: { id: string; name: string }[]): boolean {
+  let changed = false;
+  for (const pattern of SEAT_FRAMES) {
+    const frame = board.frames.find((f) => pattern.test(f.title));
+    if (!frame) continue;
+    const lanes = board.frames.filter((f) => f.parentId === frame.id).sort((a, b) => a.x - b.x);
+    // The icebreaker seats a student in every column's row; the team frame only in its first column.
+    const seatLanes = pattern === SEAT_FRAMES[0] ? lanes : lanes.slice(0, 1);
+    const nameLane = lanes[0];
+    if (!nameLane) continue;
+    const inLane = (lane: Frame) => board.nodes.filter((n) => n.frameId === lane.id && n.kind === "sticky").sort((a, b) => a.y - b.y);
+    const first = inLane(nameLane);
+    const step = first.length > 1 ? first[1]!.y - first[0]!.y : (first[0]?.height ?? 160) + 20;
+    // Students no longer in the class: their name sticky goes back to an empty seat.
+    for (const n of first) {
+      const sid = n.fields.studentId;
+      if (typeof sid === "string" && !students.some((s) => s.id === sid)) {
+        n.text = "";
+        n.fields = { placeholder: true };
+        changed = true;
+      }
+    }
+    for (const s of students) {
+      const seated = inLane(nameLane).find((n) => n.fields.studentId === s.id);
+      if (seated) {
+        // A rename shows, unless someone already wrote over the name.
+        if (seated.text === seated.fields.studentName && seated.text !== s.name) (seated.text = s.name), (seated.fields = { ...seated.fields, studentName: s.name }), (changed = true);
+        continue;
+      }
+      let seat = inLane(nameLane).find((n) => !n.text.trim() && !n.fields.studentId);
+      if (!seat) {
+        // A new row across the seat columns, and room for it below.
+        const rows = inLane(nameLane);
+        const y = (rows.at(-1)?.y ?? nameLane.y + 40 - step) + step;
+        const bottom = frame.y + frame.height;
+        for (const f of board.frames) if (f.y >= bottom) f.y += step;
+        for (const n of board.nodes) if (n.y >= bottom) n.y += step;
+        for (const f of board.frames) if (f.id === frame.id || lanes.includes(f) || (f.x <= frame.x && f.x + f.width >= frame.x + frame.width && f.y <= frame.y && f.y + f.height >= bottom)) f.height += step;
+        for (const lane of seatLanes) {
+          const proto = inLane(lane)[0];
+          board.nodes.push({ id: `seat-${lane.id}-${Math.round(y)}`, kind: "sticky", text: "", x: proto?.x ?? lane.x + 20, y, width: proto?.width ?? 160, height: proto?.height ?? 160, color: proto?.color ?? COLORS.yellow, frameId: lane.id, tags: [], fields: { placeholder: true } });
+        }
+        seat = inLane(nameLane).find((n) => !n.text.trim() && !n.fields.studentId)!;
+      }
+      seat.text = s.name;
+      seat.fields = { studentId: s.id, studentName: s.name };
+      changed = true;
+    }
+  }
+  return changed;
+}

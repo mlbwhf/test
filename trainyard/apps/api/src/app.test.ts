@@ -1840,6 +1840,12 @@ describe("classes: students by link, wipe and custom templates", () => {
     const ana = added.body.students[0];
     expect(ana.token).toMatch(/^gst_/);
     expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.students.map((s: { email: string }) => s.email)).toEqual(["ana@example.io", "ben@example.io"]);
+    // Their names are on the board: a row each in the icebreaker, a seat on the team.
+    const seated = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.nodes.filter((n: { fields: { studentId?: string } }) => n.fields.studentId).map((n: { text: string }) => n.text);
+    expect(seated.sort()).toEqual(["Ana", "Ana", "Ben", "Ben"]);
+    // Wiping the board back to its template seats them again.
+    await call("POST", `/v1/boards/${id}/reset`, { to: "template" }, root);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.nodes.filter((n: { fields: { studentId?: string } }) => n.fields.studentId)).toHaveLength(4);
     // The link opens the board and lets the student add a card; everything else is closed.
     expect((await call("GET", "/v1/me", undefined, ana.token)).body.principal).toMatchObject({ name: "Ana", guestBoardId: id });
     expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(200);
@@ -1853,6 +1859,7 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(401);
     expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(200);
     expect((await call("DELETE", `/v1/boards/${id}/students/${ana.id}`, undefined, root)).status).toBe(204);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.nodes.filter((n: { text: string }) => n.text === "Ana")).toHaveLength(0);
     expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(401);
   });
 

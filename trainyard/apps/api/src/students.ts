@@ -7,6 +7,7 @@ import { randomBytes } from "node:crypto";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { seatStudents, type Board } from "@trainyard/core";
 import { hashKey, require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Mailer } from "./mailer.js";
@@ -40,6 +41,14 @@ export interface StudentOptions {
 const Student = z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) });
 const MAX_STUDENTS = 300;
 
+/** Seats a class board's students on it (the icebreaker and the team); boards.ts calls it after a wipe. */
+export function seatClass(tenants: Tenants, store: Store) {
+  return async (req: FastifyRequest, b: Board) => {
+    const list = (tenants.platform.state.classGuests ?? []).filter((g) => g.boardId === b.id && g.workspaceId === req.principal.workspaceId).sort((a, c) => a.createdAt.localeCompare(c.createdAt));
+    if (seatStudents(b, list.map((g) => ({ id: g.id, name: g.name })))) await store.commit(req.principal, "class.students.seat", { boardId: b.id, students: list.length });
+  };
+}
+
 export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, opts: StudentOptions = {}) {
   const platform = tenants.platform;
   const guests = () => (platform.state.classGuests ??= []);
@@ -51,6 +60,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
     return b;
   };
   const here = (req: FastifyRequest) => req.principal.workspaceId;
+  const seat = seatClass(tenants, store);
   const view = (g: ClassGuest) => ({ id: g.id, name: g.name, email: g.email, createdAt: g.createdAt, ...(g.emailedAt ? { emailedAt: g.emailedAt } : {}), ...(g.seenAt ? { seenAt: g.seenAt } : {}) });
   const link = (token: string) => `${(opts.webUrl ?? "").replace(/\/$/, "")}/join/${token}`;
   const email = async (g: ClassGuest, boardName: string, token: string) => {
@@ -87,6 +97,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
       out.push({ ...view(g), token, emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
+    await seat(req, b);
     return reply.code(201).send({ students: out });
   });
 
@@ -108,6 +119,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
     platform.state.classGuests = guests().filter((x) => !(x.id === req.params.sid && x.boardId === b.id && x.workspaceId === here(req)));
     if (guests().length === before) throw notFound("Student");
     await platform.commit(req.principal, "class.students.remove", { boardId: b.id, studentId: req.params.sid });
+    await seat(req, b);
     return reply.code(204).send();
   });
 }

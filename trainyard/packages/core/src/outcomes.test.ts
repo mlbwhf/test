@@ -150,3 +150,26 @@ describe("envision the future state", () => {
     expect(linked.links![0]!.kind).toBe("depends");
   });
 });
+
+describe("seating students in a class", () => {
+  it("puts each student in the icebreaker and the team, adds rows when full, and frees the seat when one leaves", async () => {
+    const { CLASSES, classBoard, seatStudents } = await import("./classes.js");
+    const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
+    const ice = b.frames.find((f) => /^Icebreaker/.test(f.title))!;
+    const nameLane = b.frames.filter((f) => f.parentId === ice.id).sort((a, x) => a.x - x.x)[0]!;
+    const lessonY = b.frames.find((f) => f.title.startsWith("Lesson 1"))!.y;
+    const students = Array.from({ length: 6 }, (_, i) => ({ id: `s${i}`, name: `Student ${i + 1}` }));
+    expect(seatStudents(b, students)).toBe(true);
+    const names = () => b.nodes.filter((n) => n.frameId === nameLane.id && n.kind === "sticky").sort((a, x) => a.y - x.y).map((n) => n.text);
+    // Four rows to start with, two added for students 5 and 6, and the lessons moved down to make room.
+    expect(names()).toEqual(students.map((s) => s.name));
+    expect(b.frames.find((f) => f.title.startsWith("Lesson 1"))!.y).toBeGreaterThan(lessonY);
+    const team = b.frames.find((f) => /^Presenting our team/.test(f.title))!;
+    const teamLane = b.frames.filter((f) => f.parentId === team.id).sort((a, x) => a.x - x.x)[0]!;
+    expect(b.nodes.filter((n) => n.frameId === teamLane.id && n.text).map((n) => n.text)).toEqual(students.map((s) => s.name));
+    // Seating again changes nothing; a rename shows; a student who leaves frees their seat.
+    expect(seatStudents(b, students)).toBe(false);
+    seatStudents(b, [{ id: "s0", name: "Ana Lopez" }, ...students.slice(1, 5)]);
+    expect(names()).toEqual(["Ana Lopez", "Student 2", "Student 3", "Student 4", "Student 5", ""]);
+  });
+});
