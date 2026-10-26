@@ -94,3 +94,42 @@ describe("the RTE class", () => {
     for (let i = 1; i < top.length; i++) expect(top[i]!.y).toBeGreaterThan(top[i - 1]!.y + top[i - 1]!.height);
   });
 });
+
+describe("upgrading a class to its template's current version", () => {
+  it("adds the new chapters and keeps what the class did, the renamed exercise included", async () => {
+    const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade, cardChoices } = await import("./index.js");
+    const rte = CLASSES.find((c) => c.id === "rte")!;
+    // The RTE class as it was: three chapters, the objective exercise under its old title.
+    const oldCourse = rte.course!.slice(0, 3).map((l, i) => ({ ...l, activities: l.activities.slice(0, i === 2 ? 4 : undefined).map((a) => (a.title === "Conflicting views of value" ? { ...a, title: "Business value of an architectural objective" } : a)) }));
+    const oldT = classBoard({ ...rte, lessons: rte.lessons.slice(0, 3), course: oldCourse });
+    const newT = classBoard(rte);
+    const b = instantiate(oldT, "b-old", "RTE March", "2026-03-01T00:00:00.000Z");
+    expect(needsTemplateUpgrade(b, newT)).toBe(true);
+    const objective = b.frames.find((f) => f.title === "Activity: Business value of an architectural objective")!;
+    objective.done = true;
+    b.nodes.push({ id: "n-mine", kind: "sticky", text: "Show the enabler's value", x: objective.x + 40, y: objective.y + 40, width: 180, height: 120, frameId: objective.id, tags: [], fields: {} });
+    const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;
+    const answer = b.nodes.find((n) => n.frameId === readiness.id && cardChoices(n).length)!;
+    answer.fields.choice = "Y";
+    b.fields = { ...b.fields, students: [{ id: "s1", name: "Ana" }] };
+
+    const u = upgradeFromTemplate(b, newT, "2026-04-01T00:00:00.000Z");
+    expect(needsTemplateUpgrade(u, newT)).toBe(false);
+    expect(u.frames.filter((f) => !f.parentId).map((f) => f.title)).toHaveLength(8);
+    const renamed = u.frames.find((f) => f.title === "Activity: Conflicting views of value")!;
+    expect(renamed.done).toBe(true);
+    const mine = u.nodes.find((n) => n.id === "n-mine")!;
+    expect(mine.frameId).toBe(renamed.id);
+    expect(mine.x - renamed.x).toBe(40);
+    // The answered card keeps its answer, under the new version's id for that card.
+    const newReadiness = u.frames.find((f) => f.title.endsWith("readiness preparation"))!;
+    const answered = u.nodes.filter((n) => n.frameId === newReadiness.id && n.fields.choice === "Y");
+    expect(answered.map((n) => [n.text, n.x - newReadiness.x, n.y - newReadiness.y])).toEqual([[answer.text, answer.x - readiness.x, answer.y - readiness.y]]);
+    expect(u.nodes.filter((n) => n.frameId === newReadiness.id && cardChoices(n).length)).toHaveLength(15);
+    expect(u.fields).toMatchObject({ students: [{ id: "s1", name: "Ana" }], lessons: 7 });
+    expect(u.frames.some((f) => f.activity?.board === "roam")).toBe(true);
+    // The agenda lists every chapter once.
+    const toStart = u.frames.find((f) => f.title === "To start")!;
+    expect(u.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toHaveLength(7);
+  });
+});

@@ -11,8 +11,8 @@
 // Scaled Agile, Inc.; course names identify the class the trainer runs, the exercises are the
 // trainer's.
 
-import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
-import { addActivities, type ActivitySpec, type CoursePack } from "./activities.js";
+import { emptyBoard, instantiate, type Board, type BoardNode, type Frame } from "./boards.js";
+import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from "./activities.js";
 import { RTE_COURSE } from "./courses/rte.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
@@ -854,4 +854,94 @@ export function seatStudents(board: Board, students: { id: string; name: string 
     }
   }
   return changed;
+}
+
+/** Which version of its template a class board was built from (kept in `fields.templateRev`). */
+export const templateRevision = (template: Board): string => boardRevision(template);
+
+/** True when a class board was made from an older version of its template. */
+export function needsTemplateUpgrade(board: Board, template: Board): boolean {
+  return !board.isTemplate && board.templateId === template.id && !!template.fields?.class && board.fields?.templateRev !== templateRevision(template);
+}
+
+/**
+ * Rebuilds a class board from the current version of its template and carries over what the
+ * class did: frames are matched by their place and title (or, for a renamed exercise, by its
+ * steps), and keep their "done" mark and board state; cards people added or filled in move with
+ * their frame; lines between surviving cards stay. Template backgrounds come from the new version.
+ */
+export function upgradeFromTemplate(old: Board, template: Board, now: string): Board {
+  const fresh = instantiate(template, old.id, old.name, now);
+  const prefix = `${old.id}:`;
+  const pathOf = (b: Board) => {
+    const byId = new Map(b.frames.map((f) => [f.id, f]));
+    const path = (f: Frame): string => `${f.parentId && byId.get(f.parentId) ? `${path(byId.get(f.parentId)!)}/` : ""}${f.title}`;
+    return path;
+  };
+  const oldPath = pathOf(old);
+  const freshPath = pathOf(fresh);
+  const freshBy = new Map(fresh.frames.map((f) => [freshPath(f), f]));
+  const map = new Map<string, Frame>();
+  // Parents before children, so a renamed exercise can be found among its new lesson's exercises.
+  const depth = (f: Frame): number => {
+    const parent = f.parentId ? old.frames.find((x) => x.id === f.parentId) : undefined;
+    return parent ? 1 + depth(parent) : 0;
+  };
+  for (const f of [...old.frames].sort((a, b) => depth(a) - depth(b))) {
+    let to = freshBy.get(oldPath(f));
+    if (!to && f.activity?.steps) {
+      const parent = f.parentId ? map.get(f.parentId) : undefined;
+      to = fresh.frames.find((x) => x.parentId === parent?.id && x.activity?.steps === f.activity!.steps && ![...map.values()].includes(x));
+    }
+    if (to) map.set(f.id, to);
+  }
+  for (const [oldId, to] of map) {
+    const f = old.frames.find((x) => x.id === oldId)!;
+    if (f.done) to.done = true;
+    if (f.state && Object.keys(f.state).length) to.state = structuredClone(f.state);
+  }
+  const freshIds = new Set(fresh.nodes.map((n) => n.id));
+  const oldFrames = new Map(old.frames.map((f) => [f.id, f]));
+  const nodes = new Map(fresh.nodes.map((n) => [n.id, n]));
+  const claimed = new Set<string>();
+  const renamed = new Map<string, string>();
+  for (const n of old.nodes) {
+    const fromTemplate = n.id.startsWith(prefix);
+    // Template backgrounds (pictures, grid cells, labels) always come from the new version.
+    if (fromTemplate && (n.fields.locked || (!freshIds.has(n.id) && !n.text.trim()))) continue;
+    const of = n.frameId ? oldFrames.get(n.frameId) : undefined;
+    const to = n.frameId ? map.get(n.frameId) : undefined;
+    if (of && !to) {
+      // Its frame is gone: keep what someone wrote, where it was.
+      if (n.text.trim()) {
+        const { frameId: _gone, ...kept } = structuredClone(n);
+        nodes.set(n.id, kept);
+      }
+      continue;
+    }
+    const moved = structuredClone(n);
+    if (of && to) Object.assign(moved, { x: n.x + to.x - of.x, y: n.y + to.y - of.y, frameId: to.id });
+    if (!moved.frameId) delete moved.frameId;
+    // Template card ids count up as content is added, so the same card can have a new id in the
+    // new version: it is the card of the same kind in the same spot of the same exercise.
+    if (fromTemplate && !freshIds.has(n.id) && to) {
+      const same = fresh.nodes.find((x) => x.frameId === to.id && x.kind === n.kind && x.x === moved.x && x.y === moved.y && !claimed.has(x.id));
+      if (same) {
+        claimed.add(same.id);
+        renamed.set(n.id, same.id);
+        nodes.set(same.id, { ...moved, id: same.id });
+        continue;
+      }
+    }
+    nodes.set(n.id, moved);
+  }
+  const edges = new Map(fresh.edges.map((e) => [e.id, e]));
+  for (const e of old.edges) {
+    const [fromId, toId] = [renamed.get(e.fromId) ?? e.fromId, renamed.get(e.toId) ?? e.toId];
+    if (!edges.has(e.id) && nodes.has(fromId) && nodes.has(toId)) edges.set(e.id, { ...structuredClone(e), fromId, toId });
+  }
+  const fields: Record<string, unknown> = { ...(old.fields ?? {}), ...(fresh.fields ?? {}), templateRev: templateRevision(template) };
+  const timer = old.fields?.timer as { frameId?: string } | undefined;
+  if (timer?.frameId) fields.timer = { ...timer, frameId: map.get(timer.frameId)?.id ?? timer.frameId };
+  return { ...old, frames: fresh.frames, nodes: [...nodes.values()], edges: [...edges.values()], columns: fresh.columns, groups: fresh.groups, fields };
 }

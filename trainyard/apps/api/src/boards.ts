@@ -6,7 +6,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
-import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
+import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, needsTemplateUpgrade, templateFrom, templateRevision, upgradeFromTemplate, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
@@ -284,8 +284,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   };
   app.get("/v1/boards", async (req) => ({ boards: boards().filter((b) => canView(boardAccess(b, s().rooms ?? [], roomViewer(req.principal)))).map(summary) }));
   // The board with every linked card resolved, so the editor shows live records and views.
+  // A class made from an older version of a built-in class template moves to the current one the
+  // next time it is opened, keeping what the class did.
+  const upToDate = async (req: FastifyRequest, b: Board) => {
+    if (!b.templateId || b.isTemplate) return;
+    const t = builtins().find((x) => x.id === b.templateId);
+    if (!t || !needsTemplateUpgrade(b, t)) return;
+    Object.assign(b, upgradeFromTemplate(b, t, store.now().toISOString()));
+    await store.commit(req.principal, "board.upgrade-template", { id: b.id, template: t.id });
+  };
   app.get("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => {
     const b = reach(req, req.params.id, "view");
+    await upToDate(req, b);
     const refs: Record<string, RefSummary | null> = {};
     for (const n of b.nodes) if (n.ref) refs[refKey(n.ref)] = resolveRef(s(), n.ref);
     // Learners on a join link never get the answer keys and trainer notes.
@@ -386,6 +396,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const t = findTemplate(req.params.id);
     if (t.fields?.class) requireSignup(req, "Running a class board");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
+    if (t.fields?.class) b.fields = { ...b.fields, templateRev: templateRevision(t) };
     if (req.body.roomId) b.roomId = intoRoom(req, req.body.roomId);
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
@@ -414,7 +425,9 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     let fresh = emptyBoard(b.id, b.name, b.origin);
     if (req.body.to === "template") {
       if (!b.templateId) throw new ApiError(422, "NO_TEMPLATE", "This board was not made from a template; it can only be emptied.");
-      fresh = instantiate(findTemplate(b.templateId), b.id, b.name, store.now().toISOString());
+      const t = findTemplate(b.templateId);
+      fresh = instantiate(t, b.id, b.name, store.now().toISOString());
+      if (t.fields?.class) b.fields = { ...b.fields, templateRev: templateRevision(t) };
     }
     Object.assign(b, { frames: fresh.frames, nodes: fresh.nodes, edges: fresh.edges, columns: fresh.columns, groups: fresh.groups, rows: fresh.rows });
     await store.commit(req.principal, "board.reset", { id: b.id, to: req.body.to });

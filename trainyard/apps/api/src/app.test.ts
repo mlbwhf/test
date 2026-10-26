@@ -1847,6 +1847,31 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect(state).toMatchObject({ choice: "ART Sync" });
   });
 
+  it("moves a class made from an older RTE template to the current one when it is opened, keeping the class's work", async () => {
+    const { call, store } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const b = store.state.workspace.boards!.find((x) => x.id === id)!;
+    expect(b.fields?.templateRev).toEqual(expect.any(String));
+    // Make it look like a class from before chapter 7 existed, with some work done.
+    const last = b.frames.find((f) => f.title.startsWith("Lesson 7"))!;
+    const gone = new Set(b.frames.filter((f) => f.id === last.id || f.parentId === last.id).map((f) => f.id));
+    b.frames = b.frames.filter((f) => !gone.has(f.id));
+    b.nodes = b.nodes.filter((n) => !n.frameId || !gone.has(n.frameId));
+    delete b.fields!.templateRev;
+    const ex = b.frames.find((f) => f.title === "Activity: ROAM ART PI risks")!;
+    ex.done = true;
+    ex.state = { "roam:0": "O" };
+    b.nodes.push({ id: "n-mine", kind: "sticky", text: "Mine", x: ex.x + 10, y: ex.y + 10, frameId: ex.id, tags: [], fields: {} });
+
+    const after = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board as typeof b;
+    expect(after.frames.some((f) => f.title.startsWith("Lesson 7"))).toBe(true);
+    const roam = after.frames.find((f) => f.title === "Activity: ROAM ART PI risks")!;
+    expect(roam).toMatchObject({ done: true, state: { "roam:0": "O" } });
+    expect(after.nodes.find((n) => n.id === "n-mine")).toMatchObject({ frameId: roam.id });
+    expect(after.fields?.templateRev).toEqual(expect.any(String));
+  });
+
   it("imports a trainer's own course as a class template, and the trainer marks exercises complete", async () => {
     const { call } = await setup();
     const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
