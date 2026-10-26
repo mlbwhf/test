@@ -100,7 +100,10 @@ const lesson2: ActivitySpec[] = [
   },
 ];
 
-/** The 2×2 "how much preparation" grid: more or less pre-planning, positive or negative. */
+/**
+ * The 2×2 "how much preparation" grid, read as a rating: where a team posts an item says how
+ * positive or negative it is, and how far toward more or less pre-planning; the centre is neutral.
+ */
 function preparationGrid(): ActivityItem[] {
   const [x0, y0, w, h, gap] = [220, 100, 1080, 760, 12];
   const qw = (w - 3 * gap) / 2;
@@ -117,6 +120,7 @@ function preparationGrid(): ActivityItem[] {
     label("Less pre-planning", x0 + w / 2 - 200, y0 + h + 15, 420),
     label("Positive", 30, y0 + h / 2 - 35, 180),
     label("Negative", x0 + w + 20, y0 + h / 2 - 35, 200),
+    { kind: "shape", text: "Neutral", x: x0 + w / 2 - 66, y: y0 + h / 2 - 28, width: 132, height: 56, color: "#ffffff", fontSize: 26, locked: true },
   ];
 }
 
