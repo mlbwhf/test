@@ -44,6 +44,7 @@ expect "https://app.$d/help" 200 'How can we help' || fail=1
 expect "https://$d/help/quick-start" 200 'Quick start' || fail=1
 expect "https://$d/faq" 200 'FAQPage' || fail=1
 expect "https://$d/robots.txt" 200 'Sitemap:' || fail=1
+expect "https://$d/.well-known/security.txt" 200 'Contact: mailto:security@' || fail=1
 expect "https://$d/sitemap.xml" 200 '<urlset' || fail=1
 expect "https://$d/llms.txt" 200 '# EnrollClass' || fail=1
 expect "https://app.$d/sitemap.xml" 200 '<urlset' || fail=1
