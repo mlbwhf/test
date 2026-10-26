@@ -12,6 +12,8 @@
 // trainer's.
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
+import { addActivities, type ActivitySpec, type CoursePack } from "./activities.js";
+import { RTE_COURSE } from "./courses/rte.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -52,6 +54,10 @@ export interface ClassSpec {
   /** Trainer notes shown in the "Welcome" area. */
   challenge?: string;
   lessons: Lesson[];
+  /** Only these parts of the Welcome area, by title start (e.g. ["Icebreaker"]); all when absent. */
+  welcome?: string[];
+  /** Lessons built from activities (timed exercises with steps and references) instead of `lessons`' exercises. */
+  course?: { title: string; activities: ActivitySpec[] }[];
 }
 
 // ---- layout ------------------------------------------------------------------------------
@@ -255,7 +261,7 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
     { kind: "zones", title: "Parking lot", zones: ["Questions", "Closed · answered", "Open space · keep on the radar", "On hold · consider later", "Canceled · do not consider"], color: COLORS.blue },
     { kind: "slide", title: "Let's get started!", body: `${spec.name}: ${spec.lessons.length} lessons over ${spec.days} day${spec.days > 1 ? "s" : ""}. Open the Lesson 1 tab.` },
   ];
-  for (const ex of welcome) put(ex);
+  for (const ex of welcome) if (!spec.welcome || spec.welcome.some((w) => ex.title.startsWith(w))) put(ex);
   const h = cy + rowH - y + PAD;
   strip.height = h;
   strip.width = widest;
@@ -300,7 +306,41 @@ export function classBoard(spec: ClassSpec, now = "2026-01-01T00:00:00.000Z"): B
   board.frames = b.frames;
   board.nodes = b.nodes;
   board.fields = { class: spec.id, days: spec.days, lessons: spec.lessons.length };
+  if (spec.course) fillCourse(board, spec.course);
   return board;
+}
+
+/**
+ * Puts a course's activities into its lessons: each lesson holds exactly its exercises (not the
+ * notes exercise an empty lesson gets), stacked under the Welcome area and grown to fit.
+ */
+function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[] }[]) {
+  const lessons = b.frames.filter((f) => !f.parentId && /^Lesson\s+\d+/i.test(f.title)).sort((x, y) => x.y - y.y);
+  const drop = new Set(b.frames.filter((f) => lessons.some((l) => isInside(b, f, l.id))).map((f) => f.id));
+  b.frames = b.frames.filter((f) => !drop.has(f.id));
+  b.nodes = b.nodes.filter((n) => !n.frameId || !drop.has(n.frameId));
+  const welcome = b.frames.filter((f) => !f.parentId && !lessons.includes(f));
+  let y = Math.max(0, ...welcome.map((f) => f.y + f.height)) + 80;
+  for (const l of lessons) {
+    l.y = y;
+    l.height = 160;
+    y += l.height + 80;
+  }
+  lessons.forEach((l, i) => addActivities(b, l.id, course[i]?.activities ?? [], `${l.id}-x`));
+}
+
+function isInside(b: Board, f: Frame, ancestor: string): boolean {
+  for (let p = f.parentId; p; p = b.frames.find((x) => x.id === p)?.parentId) if (p === ancestor) return true;
+  return false;
+}
+
+/** A trainer's own course as a class template in their workspace: the full Welcome area, then its lessons. */
+export function courseBoard(pack: CoursePack, id: string, now: string): Board {
+  const b = classBoard({ id: "course", name: pack.name, short: pack.name, blurb: "", days: 1, lessons: pack.lessons.map((l) => ({ title: l.title, exercises: [] })), course: pack.lessons }, now);
+  b.id = id;
+  b.origin = { system: "json", externalId: "course-pack", importedAt: now };
+  b.fields = { class: "custom", source: "course", lessons: pack.lessons.length };
+  return b;
 }
 
 
@@ -614,18 +654,11 @@ const RAW_CLASSES: ClassSpec[] = [
     id: "rte",
     name: "Release Train Engineer (RTE)",
     short: "RTE",
-    blurb: "Three days for RTEs: the role, applying SAFe principles, organizing and launching the ART with the readiness checklist, planning a PI, executing a PI, relentless improvement, serving the ART.",
+    blurb: "The RTE class chapter by chapter: each exercise on its own tab with its timing, steps and references, the class timer, and exercises the trainer marks complete.",
     days: 3,
-    lessons: [
-      { title: "Exploring the RTE Role and Responsibilities", exercises: [{ kind: "stickies", title: "The RTE's week", lanes: ["Facilitating", "Coaching", "Removing impediments", "Reporting"], rows: 2 }] },
-      { title: "Applying SAFe Principles", exercises: [{ kind: "zones", title: "Which principle helps here?", zones: ["Economic view", "Systems thinking", "Assume variability", "Build incrementally", "Objective milestones", "Visualise and limit WIP"], items: ["Teams miss their PI objectives every PI", "Dependencies surface at the end of the PI", "Business Owners change priorities mid-PI"] }] },
-      { title: "Organizing the Agile Release Train", exercises: [{ kind: "stickies", title: "Value stream and ART design", lanes: ["Value stream steps", "Systems", "Teams", "Shared services"], rows: 3, color: COLORS.blue }, ...READINESS_CHECKLIST, { kind: "link", title: "ART launch timeline and PI planning readiness", body: "The weekly launch timeline (content, cadence, teams, leadership) with the readiness checklist scored against the date-certain quick-start.", href: "/canvases" }] },
-      { title: "Planning a Program Increment", exercises: [{ kind: "slide", title: "PI Planning simulation", body: "The RTE facilitates: business context, vision, architecture, planning context, team breakouts, draft plan review, management review and problem-solving, planning adjustments, final plan review, confidence vote, plan rework, retrospective.", steps: ["Run the two-day agenda in two hours", "Coach sync questions at the half", "Management review: decisions needed, risks, actions"], minutes: 120 }, { kind: "pi-planning", title: "PI Planning simulation · autonomous delivery vehicle", teams: ["Team A · Vehicle control", "Team B · Mobile app", "Team C · Sensor management", "Team D · Test track"], backlog: VEHICLE_BACKLOG }, { kind: "link", title: "PI Outcome Planning (AI-Native SAFe)", body: "The one-day alternative: outcome tree, PI Outcome Planning Board, team boards, management review board and the vote.", href: "/outcome-planning" }] },
-      { title: "Executing a Program Increment", exercises: [{ kind: "stickies", title: "ART sync agenda", lanes: ["Coach sync", "PO sync", "Scope and risks", "Impediments"], rows: 2 }, { kind: "link", title: "Program board and flow dashboards", body: "The living program board synced with Jira and Azure DevOps, and the flow and predictability dashboards.", href: "/board" }] },
-      { title: "Fostering Relentless Improvement", exercises: [{ kind: "zones", title: "Problem-solving workshop: fishbone", zones: ["People", "Process", "Tools", "Environment", "Measures"], color: COLORS.pink }, { kind: "table", title: "Improvement backlog items", columns: ["Problem", "Root cause", "Improvement story", "Owner", "By"], rows: [], blankRows: 4 }] },
-      { title: "Serving the ART", exercises: [{ kind: "stickies", title: "Servant leadership: what changes on Monday", lanes: ["Stop", "Start", "Continue"], rows: 2, color: COLORS.green }] },
-      { title: "Continuing Your Learning Journey", exercises: [{ kind: "stickies", title: "Your first PI as RTE", lanes: ["Before PI Planning", "PI Planning", "During the PI", "Inspect & Adapt"], rows: 2 }] },
-    ],
+    welcome: ["Icebreaker"],
+    lessons: RTE_COURSE.map((l) => ({ title: l.title, exercises: [] })),
+    course: RTE_COURSE,
   },
 ];
 

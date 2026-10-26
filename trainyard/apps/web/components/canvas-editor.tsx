@@ -5,7 +5,7 @@ import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
 import { useDoubleTap, usePanZoom } from "@/lib/touch";
-import type { CardType, ConnectionType } from "@trainyard/core";
+import { cardChoices, type CardType, type ConnectionType } from "@trainyard/core";
 import { ActivityEditor } from "@/components/activity-editor";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
@@ -26,7 +26,9 @@ const SWATCHES = [
 
 type Tool = "select" | "connect";
 /** Card fields that are bookkeeping, not something to show. */
-const HIDDEN_FIELDS = new Set(["placeholder", "createdBy", "src", "locked", "pin", "studentId", "studentName"]);
+const HIDDEN_FIELDS = new Set(["placeholder", "createdBy", "src", "locked", "pin", "studentId", "studentName", "choices"]);
+/** Answer buttons on a card: Yes green, No red, Depends amber. */
+const CHOICE_COLOR: Record<string, string> = { Y: "#2e8b57", N: "#c2412d", D: "#d98a1c" };
 type Rubber = { pointerId: number; from: string; x: number; y: number; moved: boolean; start: { x: number; y: number } };
 type Drag = { kind: "node" | "frame"; id: string; dx: number; dy: number; moved: boolean; start: { x: number; y: number }; last: { x: number; y: number } };
 
@@ -209,6 +211,8 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     panel.current?.scrollTo({ left: 0, top: 0 });
     setTool("select");
     setConnectFrom(null);
+    setSelected(null);
+    setSelEdge(null);
   }, [focus]);
   // In a mapping activity, connectors carry one of its connection types, each in its colour.
   const types: ConnectionType[] = useMemo(() => frames.find((f) => f.id === focus)?.activity?.connectionTypes ?? [], [frames, focus]);
@@ -448,6 +452,20 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       setEditing({ id: r.node.id, text: "" });
     });
   };
+  /** Double-click a spot (the background, or a fixed picture or grid) to put a sticky right there. */
+  const addStickyAt = (p: { x: number; y: number }) => {
+    const inner = [...shownFrames].reverse().find((f) => p.x >= f.x && p.y >= f.y && p.x <= f.x + f.width && p.y <= f.y + f.height);
+    void save("Add card", async () => {
+      const r = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { text: "", x: Math.round(p.x - 90), y: Math.round(p.y - 60), ...(inner ? { frameId: inner.id } : {}) });
+      setSelected(r.node.id);
+      setEditing({ id: r.node.id, text: "" });
+    });
+  };
+  const choose = (n: BoardNode, c: string) => {
+    const choice = n.fields.choice === c ? null : c;
+    setNodes((ns) => ns.map((x) => (x.id === n.id ? { ...x, fields: { ...x.fields, choice } } : x)));
+    void save("Answer", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(n.id)}`, { fields: { choice } }));
+  };
   const placeFor = () => {
     const f = frames.find((x) => x.id === selected) ?? frames.find((x) => nodes.find((n) => n.id === selected)?.frameId === x.id) ?? shownFrames[0];
     const inFrame = f ? nodes.filter((n) => n.frameId === f.id).length : 0;
@@ -584,6 +602,12 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
             onPointerMove={onMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onDoubleClick={(e) => {
+              if (readOnly || tool !== "select") return;
+              const hit = (e.target as Element).closest?.("[data-node-id]")?.getAttribute("data-node-id");
+              if (hit && !nodes.find((n) => n.id === hit)?.fields.locked) return;
+              addStickyAt(toBoard(e));
+            }}
             onPointerDown={(e) => {
               // Fingers and pens pan and pinch the background; a tap still clears the selection.
               if (tool === "connect" && connectFrom && e.pointerType === "mouse") {
@@ -625,7 +649,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               const w = n.width ?? 180;
               const h = n.height ?? (n.kind === "text" ? 60 : 120);
               const placeholder = !!n.fields.placeholder && !n.text.trim();
-              const src = typeof n.fields.src === "string" && n.fields.src.startsWith("data:image/") ? n.fields.src : undefined;
+              const src = typeof n.fields.src === "string" && (n.fields.src.startsWith("data:image/") || n.fields.src.startsWith("/courses/")) ? n.fields.src : undefined;
               const chart = n.fields.chart as ChartData | undefined;
               const fill = n.kind === "text" ? (n.color ? cssColor(n.color) : "transparent") : src ? "transparent" : chart ? "#ffffff" : cssColor(n.color);
               const dark = n.kind !== "text" && !src && !chart && isDark(cssColor(n.color));
@@ -647,7 +671,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                   data-node-id={n.id}
                   onPointerDown={(e) => startDrag("node", n.id, e)}
                   onClick={(e) => e.stopPropagation()}
-                  onDoubleClick={() => !readOnly && setEditing({ id: n.id, text: n.text })}
+                  onDoubleClick={() => !readOnly && !n.fields.locked && setEditing({ id: n.id, text: n.text })}
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
                   filter={placeholder ? undefined : "url(#lift)"}
                 >
@@ -686,7 +710,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                     </g>
                   ) : null}
                   {n.kind !== "view"
-                    ? shownLines.slice(0, Math.max(1, Math.floor((h - fs * 0.4 - (badge ? fs * 0.9 : 0) - (facts ? fs * 0.8 : 0)) / lh))).map((line, i) => (
+                    ? shownLines.slice(0, Math.max(1, Math.floor((h - fs * 0.4 - (badge ? fs * 0.9 : 0) - (facts ? fs * 0.8 : 0) - (cardChoices(n).length ? Math.max(28, fs * 1.4) + fs * 0.6 : 0)) / lh))).map((line, i) => (
                         <text key={i} x={n.x + fs * 0.7} y={n.y + fs * 1.3 + (badge ? fs * 0.9 : 0) + i * lh} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
                           {line}
                         </text>
@@ -718,6 +742,21 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                       </text>
                     </a>
                   ) : null}
+                  {cardChoices(n).map((c, ci) => {
+                    const on = n.fields.choice === c;
+                    const pw = Math.max(44, fs * 2.4);
+                    const ph = Math.max(28, fs * 1.4);
+                    const cx = n.x + fs * 0.7 + ci * (pw + 8);
+                    const cy = n.y + h - ph - fs * 0.5;
+                    return (
+                      <g key={c} role="button" aria-pressed={on} aria-label={`Answer ${c}`} style={{ cursor: readOnly ? "default" : "pointer" }} onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()} onClick={(e) => (e.stopPropagation(), !readOnly && choose(n, c))}>
+                        <rect x={cx} y={cy} width={pw} height={ph} rx={ph / 2} fill={on ? CHOICE_COLOR[c] ?? "#2f6fbd" : "#ffffff"} stroke={CHOICE_COLOR[c] ?? "#2f6fbd"} strokeWidth={2} />
+                        <text x={cx + pw / 2} y={cy + ph * 0.68} fontSize={ph * 0.55} textAnchor="middle" fill={on ? "#fff" : CHOICE_COLOR[c] ?? "#2f6fbd"} fontFamily="var(--font-body)" fontWeight={800}>
+                          {c}
+                        </text>
+                      </g>
+                    );
+                  })}
                   {typeof n.fields.storyPoints === "number" && n.fields.storyPoints > 0 && !chart ? (
                     <text x={n.x + w - fs * 0.6} y={n.y + h - fs * 0.5} fontSize={fs * 0.8} textAnchor="end" fill={dark ? "#fff" : "#17212b"} fontFamily="var(--font-mono)" opacity={0.75}>
                       {n.fields.storyPoints} pts

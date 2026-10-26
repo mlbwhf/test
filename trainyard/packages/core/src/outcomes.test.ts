@@ -154,7 +154,7 @@ describe("envision the future state", () => {
 describe("seating students in a class", () => {
   it("puts each student in the icebreaker and the team, adds rows when full, and frees the seat when one leaves", async () => {
     const { CLASSES, classBoard, seatStudents } = await import("./classes.js");
-    const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
+    const b = classBoard(CLASSES.find((c) => !c.welcome)!);
     const ice = b.frames.find((f) => /^Icebreaker/.test(f.title))!;
     const nameLane = b.frames.filter((f) => f.parentId === ice.id).sort((a, x) => a.x - x.x)[0]!;
     const lessonY = b.frames.find((f) => f.title.startsWith("Lesson 1"))!.y;

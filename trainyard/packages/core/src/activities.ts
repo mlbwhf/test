@@ -1,9 +1,8 @@
 // Class activities: an exercise frame with its own timing, steps, reference material shown beside
 // it (an article, a picture, a table) and, for mapping exercises, typed connections learners draw.
-// Licensed course content never ships here: instructors bring it in per workspace (addActivities).
+// Course content comes from the built-in classes (courses/) or a trainer's own course file (addActivities).
 
 import type { Board, BoardNode, Frame } from "./boards.js";
-import { classBoard } from "./classes.js";
 
 export interface ConnectionType {
   id: string;
@@ -47,7 +46,8 @@ export interface ClassTimer {
 
 /** Something to place on the activity's canvas, in pixels from its top-left corner. */
 export interface ActivityItem {
-  kind: "image" | "pin" | "card" | "text";
+  /** "shape" is a plain block, e.g. a quadrant of a 2×2 grid. */
+  kind: "image" | "pin" | "card" | "text" | "shape";
   text?: string;
   src?: string;
   x: number;
@@ -56,6 +56,15 @@ export interface ActivityItem {
   height?: number;
   color?: string;
   fontSize?: number;
+  /** Stays put: part of the background people work on (pictures always are). */
+  locked?: boolean;
+  /** One-tap answers shown on the card, e.g. ["Y", "N", "D"]; the pick is kept in the card's `choice` field. */
+  choices?: string[];
+}
+
+/** The answers a card offers (its `choices` field, "Y|N|D"). */
+export function cardChoices(n: BoardNode): string[] {
+  return typeof n.fields.choices === "string" && n.fields.choices ? n.fields.choices.split("|") : [];
 }
 
 export interface ActivitySpec extends Activity {
@@ -126,7 +135,7 @@ export function addActivities(board: Board, lessonId: string, specs: ActivitySpe
     items.forEach((it, j) => {
       const node: BoardNode = {
         id: `${id}-i${j + 1}`,
-        kind: it.kind === "image" ? "image" : it.kind === "text" ? "text" : it.kind === "pin" ? "shape" : "sticky",
+        kind: it.kind === "image" ? "image" : it.kind === "text" ? "text" : it.kind === "pin" || it.kind === "shape" ? "shape" : "sticky",
         text: it.text ?? "",
         x: lesson.x + 30 + it.x,
         y: y + it.y,
@@ -134,7 +143,7 @@ export function addActivities(board: Board, lessonId: string, specs: ActivitySpe
         height: it.height ?? (it.kind === "pin" ? 44 : 120),
         frameId: id,
         tags: [],
-        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "image" ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}) },
+        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "image" || it.locked ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}), ...(it.choices?.length ? { choices: it.choices.join("|") } : {}) },
         ...(it.color ? { color: it.color } : it.kind === "pin" ? { color: "#17212b" } : it.kind === "card" ? { color: "#fff6c2" } : {}),
       };
       board.nodes.push(node);
@@ -162,36 +171,4 @@ export function boardRevision(b: Board): string {
 export interface CoursePack {
   name: string;
   lessons: { title: string; activities: ActivitySpec[] }[];
-}
-
-/**
- * A class template from a course pack: the Welcome area (board intro, agenda, logistics,
- * icebreaker, team) and a lesson per pack lesson holding exactly its exercises.
- */
-export function courseBoard(pack: CoursePack, id: string, now: string): Board {
-  const b = classBoard({ id: "course", name: pack.name, short: pack.name, blurb: "", days: 1, lessons: pack.lessons.map((l) => ({ title: l.title, exercises: [] })) }, now);
-  b.id = id;
-  b.isTemplate = true;
-  b.origin = { system: "json", externalId: "course-pack", importedAt: now };
-  b.fields = { class: "custom", source: "course", lessons: pack.lessons.length };
-  const lessons = b.frames.filter((f) => !f.parentId && /^Lesson\s+\d+/i.test(f.title)).sort((x, y) => x.y - y.y);
-  // classBoard gives an empty lesson a notes exercise; a course lesson holds only its own.
-  const drop = new Set(b.frames.filter((f) => lessons.some((l) => isInside(b, f, l.id))).map((f) => f.id));
-  b.frames = b.frames.filter((f) => !drop.has(f.id));
-  b.nodes = b.nodes.filter((n) => !n.frameId || !drop.has(n.frameId));
-  // Empty lessons, stacked below the Welcome area; each grows as its exercises go in.
-  const welcome = b.frames.filter((f) => !f.parentId && !lessons.includes(f));
-  let y = Math.max(0, ...welcome.map((f) => f.y + f.height)) + 80;
-  for (const l of lessons) {
-    l.y = y;
-    l.height = 160;
-    y += l.height + 80;
-  }
-  lessons.forEach((l, i) => addActivities(b, l.id, pack.lessons[i]!.activities, `${l.id}-x`));
-  return b;
-}
-
-function isInside(b: Board, f: Frame, ancestor: string): boolean {
-  for (let p = f.parentId; p; p = b.frames.find((x) => x.id === p)?.parentId) if (p === ancestor) return true;
-  return false;
 }

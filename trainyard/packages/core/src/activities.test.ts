@@ -58,3 +58,22 @@ describe("a trainer's own course", () => {
     expect(b).toMatchObject({ isTemplate: true, fields: { class: "custom" } });
   });
 });
+
+describe("the RTE class", () => {
+  it("opens with the icebreaker only, then a lesson per chapter holding its exercises", async () => {
+    const { CLASSES, classBoard, cardChoices } = await import("./index.js");
+    const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
+    const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning"]);
+    const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y).map((f) => f.title);
+    expect(kids(top[0]!.id)).toEqual(["Icebreaker: introduce yourself"]);
+    expect(kids(top[1]!.id)).toHaveLength(5);
+    expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation"]);
+    const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;
+    const cards = b.nodes.filter((n) => n.frameId === readiness.id && cardChoices(n).length);
+    expect(cards.length).toBeGreaterThanOrEqual(15);
+    expect(cardChoices(cards[0]!)).toEqual(["Y", "N", "D"]);
+    // Lessons never overlap.
+    for (let i = 1; i < top.length; i++) expect(top[i]!.y).toBeGreaterThan(top[i - 1]!.y + top[i - 1]!.height);
+  });
+});
