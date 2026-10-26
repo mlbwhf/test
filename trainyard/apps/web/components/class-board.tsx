@@ -14,7 +14,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { activityTiming, cardChoices, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ActivityEditor } from "@/components/activity-editor";
-import { ClassIcon, classShort } from "@/components/class-icon";
+import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
 import type { RefSummary } from "@/components/link-picker";
 import { api, type ApiFailure } from "@/lib/api";
 
@@ -213,7 +213,8 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
         {crumbs}
         <section className="train-hero">
           <div className="train-hero-top">
-            <div>
+            <BadgeRing classId={classId} name={board.name} done={done} total={flat.length} size={150} />
+            <div style={{ flex: 1 }}>
               <span className="train-eyebrow">
                 CLASS · {lessons.filter(isLesson).length} LESSONS · {flat.length} EXERCISES
               </span>
@@ -528,10 +529,3 @@ function ActivitySide({ steps, side }: { steps: string; side: SideItem[] }) {
   );
 }
 
-/** A class board's lessons (Welcome first) with their exercises, as the Classes library shows it. */
-export function classOutline(board: Pick<Board, "frames">): { id: string; n: string; title: string; exercises: { id: string; title: string; done: boolean }[] }[] {
-  return board.frames
-    .filter((f) => !f.parentId)
-    .sort((a, b) => a.y - b.y || a.x - b.x)
-    .map((l) => ({ id: l.id, ...lessonName(l), exercises: (isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [l]).map((e) => ({ id: e.id, title: titleOf(e), done: !!e.done })) }));
-}

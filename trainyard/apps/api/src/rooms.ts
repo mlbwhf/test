@@ -55,7 +55,7 @@ export function registerRoomRoutes(app: App, store: Store, opts: RoomRouteOption
     return {
       ...room,
       access: roomAccess(room, roomViewer(req.principal)),
-      boards: boards.map((b) => ({ id: b.id, name: b.name, system: b.origin.system, isTemplate: b.isTemplate, nodes: b.nodes.length, rows: b.rows.length })),
+      boards: boards.map((b) => ({ id: b.id, name: b.name, system: b.origin.system, isTemplate: b.isTemplate, nodes: b.nodes.length, rows: b.rows.length, ...(b.templateId ? { templateId: b.templateId } : {}), importedAt: b.origin.importedAt })),
       members: room.members.map((m) => ({ ...m, name: people.find((u) => u.id === m.userId)?.name ?? "Former member" })),
       links: room.links.filter((id) => rooms().some((r) => r.id === id)).map((id) => {
         const other = rooms().find((r) => r.id === id)!;
@@ -69,7 +69,7 @@ export function registerRoomRoutes(app: App, store: Store, opts: RoomRouteOption
     rooms: rooms().filter((r) => canView(roomAccess(r, roomViewer(req.principal)))).map((r) => view(r, req)),
     allowance: { used: rooms().length, ...(opts.allowance(req) ?? { rooms: null, privateRooms: true }) },
     // Boards outside any room, open to the whole workspace.
-    unassigned: (s().workspace.boards ?? []).filter((b) => !b.roomId && !b.isTemplate).map((b) => ({ id: b.id, name: b.name })),
+    unassigned: (s().workspace.boards ?? []).filter((b) => !b.roomId && !b.isTemplate).map((b) => ({ id: b.id, name: b.name, ...(b.templateId ? { templateId: b.templateId } : {}), importedAt: b.origin.importedAt })),
   }));
 
   app.get("/v1/rooms/:id", { schema: { params: z.object({ id: Id }) } }, async (req) => {
@@ -80,7 +80,7 @@ export function registerRoomRoutes(app: App, store: Store, opts: RoomRouteOption
       ...(access === "manage" ? { people: members(req).filter((u) => !u.disabled).map((u) => ({ id: u.id, name: u.name, role: u.role })) } : {}),
       // Rooms it could connect to, and boards it could take in.
       others: rooms().filter((r) => r.id !== room.id && canView(roomAccess(r, roomViewer(req.principal)))).map((r) => ({ id: r.id, name: r.name, kind: r.kind })),
-      unassigned: (s().workspace.boards ?? []).filter((b) => !b.roomId && !b.isTemplate).map((b) => ({ id: b.id, name: b.name })),
+      unassigned: (s().workspace.boards ?? []).filter((b) => !b.roomId && !b.isTemplate).map((b) => ({ id: b.id, name: b.name, ...(b.templateId ? { templateId: b.templateId } : {}), importedAt: b.origin.importedAt })),
     };
   });
 

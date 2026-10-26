@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { ROOM_KIND_LABELS } from "@trainyard/core";
 import { Loading, PageHead } from "@/components/ui";
+import { BoardList } from "@/components/board-list";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 import { ACCESS_LABEL, KIND_COLOR, type RoomView } from "@/lib/rooms";
 import "../rooms.css";
@@ -93,27 +94,17 @@ export default function RoomPage() {
           <h2 id="rm-boards" style={{ margin: 0 }}>
             Boards
           </h2>
-          {room.boards.length ? (
-            <ul className="rm-list">
-              {room.boards.map((b) => (
-                <li key={b.id}>
-                  <Link href={`/boards/${encodeURIComponent(b.id)}`}>{b.name}</Link>
-                  <span className="row" style={{ gap: 6 }}>
-                    <span className="faint">{b.nodes} cards</span>
-                    {canEdit ? (
-                      <button className="btn ghost small" onClick={() => void run(() => api("PUT", `/v1/boards/${encodeURIComponent(b.id)}/room`, { roomId: null }))} aria-label={`Take ${b.name} out of this room`}>
-                        Take out
-                      </button>
-                    ) : null}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="faint" style={{ margin: 0 }}>
-              No boards in this room yet.
-            </p>
-          )}
+          <BoardList
+            boards={room.boards}
+            onChanged={() => void q.reload()}
+            canEdit={canEdit}
+            empty="No boards in this room yet."
+            extra={(b) => (
+              <button className="train-btn small" onClick={() => void run(() => api("PUT", `/v1/boards/${encodeURIComponent(b.id)}/room`, { roomId: null }))} aria-label={`Take ${b.name} out of this room`}>
+                Take out
+              </button>
+            )}
+          />
           {canEdit ? (
             <div className="stack" style={{ gap: 8 }}>
               <div className="row" style={{ gap: 8, flexWrap: "wrap", alignItems: "flex-end" }}>

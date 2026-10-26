@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TEMPLATE_CATALOG } from "@trainyard/core";
 import { Loading, PageHead } from "@/components/ui";
+import { BoardList } from "@/components/board-list";
 import { api, useApi, type ApiFailure } from "@/lib/api";
 import { THEMES, methodTheme } from "@/lib/themes";
 
@@ -60,25 +61,22 @@ export default function BoardsPage() {
         }
       />
       {err ? <div className="notice crit">{err}</div> : null}
-      <div className="boards-grid">
-        {boards.map((b) => {
-          const m = methodOf(b);
+      <BoardList
+        boards={boards.map((b) => ({ id: b.id, name: b.name, templateId: b.templateId, importedAt: b.origin.importedAt }))}
+        onChanged={() => void q.reload()}
+        empty={null}
+        icon={(lb) => {
+          const m = methodOf(boards.find((b) => b.id === lb.id)!);
           const th = THEMES[m === "classes" ? "classes" : methodTheme(m)];
           return (
-            <Link key={b.id} href={`/boards/${encodeURIComponent(b.id)}`} className="tpl-item" style={{ textDecoration: "none" }}>
-              <div aria-hidden="true" className="tpl-thumb" style={{ background: th.bg }}>
-                {[0, 1, 2, 3, 4, 1].map((t, i) => (
-                  <div key={i} style={{ borderRadius: 4, background: th.tones[t], border: `1px solid ${th.line}` }} />
-                ))}
-              </div>
-              <strong>{b.name}</strong>
-              <span className="faint">
-                {th.name} theme · {b.counts.frames} frames · {b.counts.nodes} cards · {b.origin.importedAt.slice(0, 10)}
-              </span>
-            </Link>
+            <span aria-hidden="true" className="blist-swatch" title={`${th.name} theme`} style={{ background: th.bg }}>
+              {[0, 1, 2, 3].map((t) => (
+                <i key={t} style={{ background: th.tones[t], borderColor: th.line }} />
+              ))}
+            </span>
           );
-        })}
-      </div>
+        }}
+      />
       {boards.length === 0 ? (
         <p className="faint">
           No boards here yet. <Link href="/templates">Start from a template</Link>, <Link href="/classroom">start a class</Link> or <Link href="/imports">bring your own</Link>.

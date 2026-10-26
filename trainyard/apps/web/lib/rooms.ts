@@ -10,7 +10,7 @@ export interface RoomView {
   visibility: "open" | "private";
   defaultAccess: "view" | "edit";
   access: "none" | "view" | "edit" | "manage";
-  boards: { id: string; name: string; system: string; nodes: number }[];
+  boards: { id: string; name: string; system: string; nodes: number; templateId?: string; importedAt?: string }[];
   members: { userId: string; access: "view" | "edit" | "manage"; name: string }[];
   links: { id: string; name: string; kind: RoomKind; visible: boolean }[];
   pins: { href: string; label: string }[];

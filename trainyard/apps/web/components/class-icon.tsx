@@ -14,7 +14,7 @@ export function ClassIcon({ classId, name, size = 64, locked = false }: { classI
   if (badge) return <img src={badge} alt={`${name} badge`} width={size} height={size} className={`class-badge${locked ? " locked" : ""}`} />;
   const short = classShort(classId, name);
   return (
-    <span className="class-shield" aria-hidden style={{ width: size, height: size * 1.1, ["--tint" as string]: (typeof classId === "string" && TINTS[classId]) || "#cde0f2", fontSize: Math.min(size / 3, (size * 0.8) / (short.length * 0.72 + 0.6)) }}>
+    <span className="class-shield" aria-hidden style={{ width: size, height: size * 1.1, ["--tint" as string]: (typeof classId === "string" && TINTS[classId]) || "#cde0f2", fontSize: Math.min(size / 3, (size * 0.68) / (short.length * 0.72 + 0.6)) }}>
       {short}
     </span>
   );

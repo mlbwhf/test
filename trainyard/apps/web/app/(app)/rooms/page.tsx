@@ -9,12 +9,13 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ROOM_KINDS, ROOM_KIND_LABELS, type RoomKind } from "@trainyard/core";
 import { Loading, PageHead } from "@/components/ui";
+import { BoardList } from "@/components/board-list";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
 import { ACCESS_LABEL, KIND_COLOR, type RoomView } from "@/lib/rooms";
 import "./rooms.css";
 
 export default function RoomsPage() {
-  const q = useApi<{ rooms: RoomView[]; unassigned: { id: string; name: string }[]; allowance: { used: number; rooms: number | null; privateRooms: boolean } }>("/v1/rooms");
+  const q = useApi<{ rooms: RoomView[]; unassigned: { id: string; name: string; templateId?: string; importedAt?: string }[]; allowance: { used: number; rooms: number | null; privateRooms: boolean } }>("/v1/rooms");
   const me = useMe();
   const router = useRouter();
   const [name, setName] = useState("");
@@ -128,13 +129,7 @@ export default function RoomsPage() {
       {unassigned.length ? (
         <section className="rm-group" aria-labelledby="rm-loose">
           <h2 id="rm-loose">Boards outside any room · open to the whole workspace</h2>
-          <ul className="rm-list">
-            {unassigned.map((b) => (
-              <li key={b.id}>
-                <Link href={`/boards/${encodeURIComponent(b.id)}`}>{b.name}</Link>
-              </li>
-            ))}
-          </ul>
+          <BoardList boards={unassigned} onChanged={() => void q.reload()} canEdit={canCreate} />
         </section>
       ) : null}
     </>

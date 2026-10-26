@@ -443,3 +443,31 @@ span.conn-type { cursor: default; }
 .lib-more { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .lib-class { display: flex; gap: 16px; align-items: center; padding: 16px; background: #fffaf0; border: 2px solid #0d1815; border-radius: 14px 14px 6px 6px; box-shadow: 0 5px 0 #0d1815; }
 a.train-btn { text-decoration: none; }
+.lib-all { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.lib-card { display: flex; flex-direction: column; gap: 12px; padding: 18px; background: #fffaf0; border: 2px solid #0d1815; border-radius: 16px 16px 6px 6px; box-shadow: 0 6px 0 #0d1815; border-top: 14px solid var(--tint); }
+.lib-card header { display: flex; gap: 14px; align-items: center; }
+.lib-card-name { font: 800 19px "Familjen Grotesk", var(--font-body); letter-spacing: -0.01em; line-height: 1.2; }
+.lib-card-lessons { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 13.5px; color: #33413a; }
+.lib-card-lessons b { font: 600 11px "JetBrains Mono", var(--font-mono); margin-right: 6px; }
+.lib-mine-row { border-top: 1px solid #0d181522; padding: 10px 18px; display: grid; gap: 10px; }
+.lib-mine-row:first-child { border-top: 0; }
+.lib-mine-main { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.lib-mine-name { font-weight: 700; color: #0d1815; }
+.train .grow { flex: 1; }
+/* The shared list of boards and classes (board-list.tsx). */
+.blist { --ink: #0d1815; background: #fffaf0; color: var(--ink); border: 2px solid var(--ink); border-radius: 14px 14px 6px 6px; box-shadow: 0 5px 0 var(--ink); overflow: hidden; }
+.blist > header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 2px solid var(--ink); background: #f3ead3; }
+.blist-title { font: 800 18px Syne, var(--font-display); }
+.blist .grow { flex: 1; }
+.blist-row { padding: 10px 16px; border-top: 1px solid #0d181522; display: grid; gap: 10px; }
+.blist-row:first-of-type { border-top: 0; }
+.blist-main { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.blist-icon { display: inline-grid; place-items: center; min-width: 36px; }
+.blist-name { font-weight: 700; color: var(--ink); }
+.blist-empty { padding: 12px 16px; margin: 0; }
+.blist-swatch { display: grid; grid-template-columns: repeat(2, 12px); gap: 3px; padding: 5px; border-radius: 8px; }
+.blist-swatch i { width: 12px; height: 9px; border-radius: 2px; border: 1px solid; }
+.blist .train-btn { all: unset; cursor: pointer; box-sizing: border-box; display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 10px; border: 2px solid var(--ink); background: #fffaf0; color: var(--ink); font: 700 13px "Familjen Grotesk", var(--font-body); box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; text-decoration: none; }
+.blist .train-btn.primary { background: #ffb627; }
+.blist .train-btn:disabled { opacity: 0.4; cursor: default; }
+.blist .train-mono { font: 600 11.5px "JetBrains Mono", var(--font-mono); letter-spacing: 0.1em; }
