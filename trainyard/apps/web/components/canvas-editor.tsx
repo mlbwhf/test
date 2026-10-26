@@ -319,6 +319,27 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     const rail = (y0 + y1) / 2;
     return `M${sx} ${y0}V${rail}H${tx}V${y1}`;
   };
+  /** A planning board's dependency string: a smooth S from the side (or bottom) of one card to the next. */
+  const curve = (fromId: string, toId: string) => {
+    const box = (id: string) => {
+      const n = nodes.find((x) => x.id === id);
+      return n ? { x: n.x, y: n.y, w: n.width ?? 180, h: n.height ?? 120 } : null;
+    };
+    const s = box(fromId);
+    const t = box(toId);
+    if (!s || !t) return null;
+    const [sx, sy, tx, ty] = [s.x + s.w / 2, s.y + s.h / 2, t.x + t.w / 2, t.y + t.h / 2];
+    if (Math.abs(tx - sx) > (s.w + t.w) / 2) {
+      const dir = tx > sx ? 1 : -1;
+      const [ax, bx] = [sx + (dir * s.w) / 2, tx - (dir * t.w) / 2];
+      const mid = (ax + bx) / 2;
+      return `M${ax} ${sy}C${mid} ${sy} ${mid} ${ty} ${bx} ${ty}`;
+    }
+    const dir = ty > sy ? 1 : -1;
+    const [ay, by] = [sy + (dir * s.h) / 2, ty - (dir * t.h) / 2];
+    const mid = (ay + by) / 2;
+    return `M${sx} ${ay}C${sx} ${mid} ${tx} ${mid} ${tx} ${by}`;
+  };
   /** Where the line from a card's centre toward `to` leaves the card. */
   const rim = (id: string, to: readonly [number, number]) => {
     const n = nodes.find((x) => x.id === id);
@@ -784,6 +805,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               const badge = n.ref ? `${KIND_LABEL[n.ref.kind].toUpperCase()}${sum?.status ? ` · ${sum.status.toUpperCase()}` : ""}` : type?.badge ?? "";
               const shownLines = n.ref && sum && n.kind !== "view" ? wrap(sum.title, Math.max(6, Math.floor(w / (fs * 0.56)))) : lines;
               const facts = sum ? Object.entries(sum.facts).slice(0, 2).map(([k, v]) => `${k} ${v}`).join(" · ") : "";
+              const centred = n.fields.align === "center" && !badge;
               if (n.fields.dot)
                 // A plotted dot: a coloured circle with its name beside it.
                 return (
@@ -810,9 +832,9 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                   onClick={(e) => (e.stopPropagation(), tool === "dot" && n.fields.locked && !readOnly && plotAt(toBoard(e), e))}
                   onDoubleClick={() => !readOnly && !n.fields.locked && setEditing({ id: n.id, text: n.text })}
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
-                  filter={placeholder ? undefined : "url(#lift)"}
+                  filter={placeholder || (n.fields.locked && n.kind !== "image") ? undefined : "url(#lift)"}
                 >
-                  <rect x={n.x} y={n.y} width={w} height={h} fill={fill} fillOpacity={placeholder ? 0.5 : 1} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : missing ? "#c2412d" : placeholder ? "var(--line-strong)" : n.ref || n.kind === "view" ? "rgba(23,33,43,0.35)" : "rgba(255,255,255,0.6)"} strokeWidth={isSel || isFrom ? 4 : n.ref ? 2 : 1.5} strokeDasharray={placeholder || missing ? "8 6" : undefined} rx={n.kind === "shape" ? 16 : 12} />
+                  <rect x={n.x} y={n.y} width={w} height={h} fill={fill} fillOpacity={placeholder ? 0.5 : 1} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : missing ? "#c2412d" : placeholder ? "var(--line-strong)" : n.ref || n.kind === "view" ? "rgba(23,33,43,0.35)" : "rgba(255,255,255,0.6)"} strokeWidth={isSel || isFrom ? 4 : n.ref ? 2 : 1.5} strokeDasharray={placeholder || missing ? "8 6" : undefined} rx={n.fields.locked ? 2 : n.kind === "shape" ? 16 : 12} />
                   {src ? <image href={src} x={n.x} y={n.y} width={w} height={h} preserveAspectRatio="xMidYMid meet" /> : null}
                   {chart ? <ChartView chart={chart} title={n.text} x={n.x} y={n.y} w={w} h={h} /> : null}
                   {n.kind === "view" ? (
@@ -848,7 +870,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                   ) : null}
                   {n.kind !== "view"
                     ? shownLines.slice(0, Math.max(1, Math.floor((h - fs * 0.4 - (badge ? fs * 0.9 : 0) - (facts ? fs * 0.8 : 0) - (cardChoices(n).length ? Math.max(28, fs * 1.4) + fs * 0.6 : 0)) / lh))).map((line, i) => (
-                        <text key={i} x={n.x + fs * 0.7} y={n.y + fs * 1.3 + (badge ? fs * 0.9 : 0) + i * lh} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
+                        <text key={i} x={centred ? n.x + w / 2 : n.x + fs * 0.7} y={centred ? n.y + (h - Math.min(shownLines.length, Math.max(1, Math.floor(h / lh))) * lh) / 2 + fs * 0.95 + i * lh : n.y + fs * 1.3 + (badge ? fs * 0.9 : 0) + i * lh} textAnchor={centred ? "middle" : undefined} fontSize={fs} fill={placeholder ? "var(--ink-3)" : typeof n.fields.fontColor === "string" ? n.fields.fontColor : dark ? "#fff" : "#17212b"} fontFamily="var(--font-body)" fontWeight={i === 0 && n.kind !== "text" ? 600 : 400}>
                           {line}
                         </text>
                       ))
@@ -915,7 +937,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 <g key={e.id} onPointerDown={(ev) => ev.stopPropagation()} onClick={(ev) => (ev.stopPropagation(), setSelEdge(e.id), setSelected(null))} style={{ cursor: "pointer", pointerEvents: tool === "dot" ? "none" : undefined }} aria-label={`Connector${e.type ? `: ${types.find((t) => t.id === e.type)?.label ?? e.type}` : ""}`}>
                   <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth={22} />
                   {selEdge === e.id ? <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--signal)" strokeOpacity={0.35} strokeWidth={14} strokeLinecap="round" /> : null}
-                  {c ? <path d={elbow(e.fromId, e.toId) ?? `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`} fill="none" stroke={c} strokeWidth={6} strokeLinejoin="round" markerEnd={`url(#arrow-${e.type})`} /> : <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />}
+                  {e.style === "curve" ? <path d={curve(e.fromId, e.toId) ?? `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`} fill="none" stroke={e.color ?? "#e60000"} strokeWidth={3.5} strokeLinecap="round" /> : c ? <path d={elbow(e.fromId, e.toId) ?? `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`} fill="none" stroke={c} strokeWidth={6} strokeLinejoin="round" markerEnd={`url(#arrow-${e.type})`} /> : <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />}
                   {e.label ? (
                     <text x={(a[0] + b[0]) / 2} y={(a[1] + b[1]) / 2 - 8} fontSize={15} textAnchor="middle" fill="var(--ink-2)">
                       {e.label}

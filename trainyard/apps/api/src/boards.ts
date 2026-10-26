@@ -47,7 +47,8 @@ const ActivitySpecBody = ActivityBody.extend({
   title: z.string().min(1).max(200),
   width: z.number().min(200).max(10_000).optional(),
   height: z.number().min(200).max(10_000).optional(),
-  items: z.array(z.object({ kind: z.enum(["image", "pin", "card", "text", "shape", "dot"]), text: z.string().max(2000).optional(), src: ImageData.optional(), x: z.number(), y: z.number(), width: z.number().min(10).max(10_000).optional(), height: z.number().min(10).max(10_000).optional(), color: z.string().max(40).optional(), fontSize: z.number().min(8).max(200).optional(), locked: z.boolean().optional(), choices: z.array(z.string().min(1).max(12)).min(2).max(6).optional(), connType: z.string().min(1).max(40).optional() })).max(200).optional(),
+  items: z.array(z.object({ kind: z.enum(["image", "pin", "card", "text", "shape", "dot"]), text: z.string().max(2000).optional(), src: ImageData.optional(), x: z.number(), y: z.number(), width: z.number().min(10).max(10_000).optional(), height: z.number().min(10).max(10_000).optional(), color: z.string().max(40).optional(), fontSize: z.number().min(8).max(200).optional(), locked: z.boolean().optional(), choices: z.array(z.string().min(1).max(12)).min(2).max(6).optional(), connType: z.string().min(1).max(40).optional(), align: z.literal("center").optional() })).max(400).optional(),
+  links: z.array(z.object({ from: z.number().int().min(0), to: z.number().int().min(0), color: z.string().max(40).optional(), curve: z.boolean().optional() })).max(400).optional(),
 });
 /** Cards on one board: far more than any planning board needs, small enough to save quickly. */
 const MAX_BOARD_NODES = 5000;

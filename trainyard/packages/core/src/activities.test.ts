@@ -73,7 +73,12 @@ describe("the RTE class", () => {
     expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning"]);
     expect(b.nodes.some((n) => n.fields.dot && n.text === "RTE")).toBe(true);
     expect(kids(top[1]!.id)).toHaveLength(5);
-    expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation"]);
+    expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Business value of an architectural objective"]);
+    // The three example planning boards keep their dependency strings.
+    const reading = b.frames.find((f) => f.title.includes("Reading the ART planning board"))!;
+    const planCards = b.nodes.filter((n) => n.frameId === reading.id && /^[FDME]\d$/.test(n.text));
+    expect(planCards.length).toBe(11 + 15 + 18);
+    expect(b.edges.filter((e) => e.style === "curve" && planCards.some((c) => c.id === e.fromId)).length).toBe(9 + 8 + 13);
     const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;
     const cards = b.nodes.filter((n) => n.frameId === readiness.id && cardChoices(n).length);
     expect(cards.length).toBeGreaterThanOrEqual(15);

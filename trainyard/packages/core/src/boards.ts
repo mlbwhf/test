@@ -74,6 +74,10 @@ export interface BoardEdge {
   label?: string;
   /** A connection type of the activity it sits in (activities.ts). */
   type?: string;
+  /** Drawn as a smooth curve (a planning board's dependency strings) instead of a straight arrow. */
+  style?: "curve";
+  /** CSS colour of the line. */
+  color?: string;
 }
 
 export interface Column {
@@ -151,7 +155,7 @@ export function templateFrom(board: Board, id: string, name: string, now: string
     isTemplate: true,
     frames: structuredClone(board.frames),
     nodes: keptNodes,
-    edges: [],
+    edges: keepCards ? structuredClone(board.edges) : [],
     columns: structuredClone(board.columns),
     ...(board.fields ? { fields: boardFacts(board.fields) } : {}),
     groups: structuredClone(board.groups),
@@ -170,7 +174,8 @@ export function instantiate(template: Board, id: string, name: string, now: stri
     templateId: template.id,
     frames: template.frames.map((f) => ({ ...f, id: prefix + f.id, ...(f.parentId ? { parentId: prefix + f.parentId } : {}) })),
     nodes: template.nodes.map((n) => ({ ...n, id: prefix + n.id, ...(n.frameId ? { frameId: prefix + n.frameId } : {}) })),
-    edges: [],
+    // Lines that are part of the template (a planning board's dependencies) come along; learners' lines are not in templates.
+    edges: template.edges.map((e) => ({ ...e, id: prefix + e.id, fromId: prefix + e.fromId, toId: prefix + e.toId })),
     columns: template.columns.map((c) => ({ ...c })),
     groups: template.groups.map((g) => ({ ...g })),
     rows: [],

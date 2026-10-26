@@ -64,6 +64,8 @@ export interface ActivityItem {
   choices?: string[];
   /** For a dot: the connection type it stands for. */
   connType?: string;
+  /** Text centred in the item (grid labels, planning board cards). */
+  align?: "center";
 }
 
 /** The answers a card offers (its `choices` field, "Y|N|D"). */
@@ -77,6 +79,8 @@ export interface ActivitySpec extends Activity {
   width?: number;
   height?: number;
   items?: ActivityItem[];
+  /** Lines between items (by index in `items`), e.g. dependencies on a planning board. */
+  links?: { from: number; to: number; color?: string; curve?: boolean }[];
 }
 
 /** Size of a plotted dot on a board. */
@@ -136,7 +140,7 @@ export function addActivities(board: Board, lessonId: string, specs: ActivitySpe
     const need = y + height + 40 - (lesson.y + lesson.height);
     if (need > 0) makeRoom(board, lesson, need);
     if (lesson.width < width + 60) lesson.width = width + 60;
-    const { title, width: _w, height: _h, items = [], ...activity } = spec;
+    const { title, width: _w, height: _h, items = [], links: _l, ...activity } = spec;
     const id = `${prefix}-a${i + 1}`;
     board.frames.push({ id, title: `${spec.kind}: ${title}`, x: lesson.x + 30, y, width, height, parentId: lesson.id, activity: { ...activity, ...(activity.connectionTypes ? { connectionTypes: activity.connectionTypes.map((t, ti) => ({ ...t, color: t.color || DEFAULT_CONNECTION_COLORS[ti % DEFAULT_CONNECTION_COLORS.length]! })) } : {}) } });
     items.forEach((it, j) => {
@@ -150,10 +154,14 @@ export function addActivities(board: Board, lessonId: string, specs: ActivitySpe
         height: it.height ?? (it.kind === "dot" ? DOT : it.kind === "pin" ? 44 : 120),
         frameId: id,
         tags: [],
-        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "dot" ? { dot: true, ...(it.connType ? { connType: it.connType } : {}) } : {}), ...(it.kind === "image" || it.locked ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}), ...(it.choices?.length ? { choices: it.choices.join("|") } : {}) },
+        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "dot" ? { dot: true, ...(it.connType ? { connType: it.connType } : {}) } : {}), ...(it.kind === "image" || it.locked ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}), ...(it.choices?.length ? { choices: it.choices.join("|") } : {}), ...(it.align ? { align: it.align } : {}) },
         ...(it.color ? { color: it.color } : it.kind === "pin" ? { color: "#17212b" } : it.kind === "card" ? { color: "#fff6c2" } : {}),
       };
       board.nodes.push(node);
+    });
+    (spec.links ?? []).forEach((l, k) => {
+      if (!items[l.from] || !items[l.to]) return;
+      board.edges.push({ id: `${id}-l${k + 1}`, fromId: `${id}-i${l.from + 1}`, toId: `${id}-i${l.to + 1}`, ...(l.curve ? { style: "curve" as const } : {}), ...(l.color ? { color: l.color } : {}) });
     });
     ids.push(id);
     y += height + 80;

@@ -157,6 +157,86 @@ const lesson3: ActivitySpec[] = [
   },
 ];
 
+// ---- the example ART planning boards (slides 3-27 to 3-29), rebuilt cell by cell ---------------
+
+type PlanCard = [label: string, x: number, y: number];
+/** Grid lines and card centres in the slides' own 1600 × 900 coordinates. */
+const PLAN_COLS = [69, 272, 474, 677, 880, 1083, 1285, 1487];
+const PLAN_ROWS = [190, 238, 300, 349, 398, 447, 496, 545, 593, 641, 690, 751];
+const PLAN_HEAD = ["", "Iteration 1.1", "Iteration 1.2", "Iteration 1.3", "Iteration 1.4", "Iteration 1.5 (IP)", "PI 2 >>>"];
+const PLAN_LANES = ["Milestones/ Events", "Unicorns", "Dolphins", "Bears", "Eagles", "Iguanas", "Antelope", "Tarantulas", "Needs UX Help", "Needs Sys Arch Help"];
+const PLAN_BOARDS: { cards: PlanCard[]; links: [string, string][] }[] = [
+  {
+    cards: [["M1", 985, 268], ["F1", 780, 324], ["D1", 379, 373], ["D2", 580, 374], ["F2", 780, 422], ["F6", 985, 471], ["F3", 543, 521], ["F5", 986, 569], ["D3", 379, 614], ["D4", 580, 614], ["F4", 782, 615]],
+    links: [["M1", "F1"], ["M1", "F2"], ["D2", "F1"], ["D2", "F2"], ["D2", "F5"], ["D2", "F4"], ["D1", "F3"], ["D3", "F3"], ["D4", "F2"]],
+  },
+  {
+    cards: [["M1", 782, 268], ["F6", 379, 324], ["F1", 580, 324], ["F3", 782, 324], ["F5", 983, 324], ["D2", 638, 422], ["D1", 379, 470], ["F4", 843, 469], ["D7", 983, 470], ["D4", 580, 519], ["F2", 638, 568], ["D6", 983, 568], ["D3", 516, 615], ["D5", 729, 615], ["F7", 983, 615]],
+    links: [["M1", "F1"], ["F1", "D1"], ["F1", "D2"], ["F3", "D4"], ["F5", "D7"], ["D7", "D6"], ["F2", "D3"], ["F4", "D5"]],
+  },
+  {
+    cards: [["M1", 782, 268], ["E1", 1183, 268], ["D1", 377, 324], ["F2", 580, 325], ["D5", 580, 374], ["F5", 983, 374], ["F3", 782, 422], ["D3", 377, 471], ["D7", 782, 471], ["F6", 1039, 471], ["F1", 516, 521], ["D6", 580, 568], ["F7", 1039, 567], ["D4", 377, 615], ["D2", 643, 615], ["F4", 778, 615], ["D8", 778, 665], ["D9", 983, 719]],
+    links: [["F2", "M1"], ["D1", "D5"], ["D5", "F3"], ["D5", "D3"], ["D5", "D7"], ["D7", "F5"], ["F5", "E1"], ["D7", "F7"], ["D7", "D6"], ["F1", "D4"], ["D4", "D6"], ["D8", "F5"], ["F5", "D9"]],
+  },
+];
+const READING_QUESTIONS = ["What problems do you see?", "How would you, the RTE, act if you could see these on the ART planning board at the end of Day 1 in PI Planning?", "What could be a potential solution for the specific problems?"];
+
+/** The three boards one under another, each with a column per question to its right. */
+function planningBoards(): Pick<ActivitySpec, "items" | "links" | "width" | "height"> {
+  const items: ActivityItem[] = [];
+  const links: NonNullable<ActivitySpec["links"]> = [];
+  const [x0, tableW] = [30, PLAN_COLS.at(-1)! - PLAN_COLS[0]!];
+  const tableH = PLAN_ROWS.at(-1)! - PLAN_ROWS[0]!;
+  const block = 70 + tableH + 70;
+  PLAN_BOARDS.forEach((pb, bi) => {
+    const top = 20 + bi * block;
+    const y0 = top + 70;
+    const at = (x: number, y: number) => ({ x: x0 + x - PLAN_COLS[0]!, y: y0 + y - PLAN_ROWS[0]! });
+    items.push({ kind: "text", text: `Example ART planning board #${bi + 1}`, x: x0, y: top, width: 900, height: 60, fontSize: 34, locked: true });
+    items.push({ kind: "shape", ...at(PLAN_COLS[0]!, PLAN_ROWS[0]!), width: tableW, height: tableH, color: "#7f7f7f", locked: true });
+    for (let r = 0; r < PLAN_ROWS.length - 1; r++)
+      for (let c = 0; c < PLAN_COLS.length - 1; c++) {
+        const gap = r === 9 ? 5 : 2; // the heavy line above the help rows
+        const label = r === 0 ? PLAN_HEAD[c]! : c === 0 ? PLAN_LANES[r - 1]! : "";
+        items.push({ kind: "shape", ...at(PLAN_COLS[c]! + 2, PLAN_ROWS[r]! + gap), width: PLAN_COLS[c + 1]! - PLAN_COLS[c]! - 2, height: PLAN_ROWS[r + 1]! - PLAN_ROWS[r]! - gap, color: r === 0 || c === 0 ? "#efefef" : "#ffffff", locked: true, ...(label ? { text: label, fontSize: 19, align: "center" as const } : {}) });
+      }
+    const index = new Map<string, number>();
+    for (const [label, cx, cy] of pb.cards) {
+      const kind = label[0];
+      index.set(label, items.length);
+      items.push({ kind: "card", text: label, ...at(cx - (kind === "F" ? 26 : kind === "D" ? 26 : 42), cy - 20), width: kind === "M" || kind === "E" ? 84 : 52, height: 40, color: kind === "F" ? "#9cc8f5" : kind === "D" ? "#c00000" : "#f99d1c", fontSize: 20, align: "center", locked: true });
+    }
+    for (const [a, b] of pb.links) links.push({ from: index.get(a)!, to: index.get(b)!, color: "#e60000", curve: true });
+    READING_QUESTIONS.forEach((q, qi) => {
+      const x = x0 + tableW + 40 + qi * 320;
+      items.push({ kind: "text", text: q, x, y: y0, width: 300, height: 110, fontSize: 18, locked: true });
+      for (let k = 0; k < 2; k++) items.push({ kind: "card", text: "", x, y: y0 + 130 + k * 140, width: 280, height: 120 });
+    });
+  });
+  return { items, links, width: x0 + tableW + 40 + 3 * 320 + 20, height: 20 + PLAN_BOARDS.length * block };
+}
+
+lesson3.push(
+  {
+    title: "Reading the ART planning board in PI Planning",
+    kind: "Activity",
+    prepare: 7,
+    steps: "Step 1: With your group, look at the three different ART planning board examples\nStep 2: Capture the answers to the following questions for each scenario:\n- What problems do you see?\n- How would you, the RTE, act if you could see these on the ART planning board at the end of Day 1 in PI Planning?\n- What could be a potential solution for the specific problems?\nStep 3: Be prepared to share with the class",
+    ...planningBoards(),
+  },
+  {
+    title: "Business value of an architectural objective",
+    kind: "Activity",
+    prepare: 7,
+    share: 3,
+    width: 1200,
+    height: 520,
+    steps: "Step 1: Consider the following scenario:\nBusiness Owners have assigned a value of 2 to the PI Objective “Reduce GPS signal loss by 25%,” and they have requested that the team move the objective to uncommitted. The team believes this function provides a critical architectural enablement for the entire ART. The team is clearly disappointed and concerned that an important technical item is ranked so low. “We just don’t see much business value in it now,” said the Vice President of Product.\nStep 2: Working in your group, discuss what your steps should be for solving this problem\nStep 3: Be prepared to share with the class",
+    side: [{ title: "Objectives for PI 1", image: `${PIC}/pi-objectives.png` }],
+    items: Array.from({ length: 8 }, (_, k): ActivityItem => ({ kind: "card", text: "", x: 30 + (k % 4) * 290, y: 30 + Math.floor(k / 4) * 240, width: 260, height: 200 })),
+  },
+);
+
 export const RTE_COURSE: { title: string; activities: ActivitySpec[] }[] = [
   { title: "Exploring the RTE Role and Responsibilities", activities: lesson1 },
   { title: "Organizing the ART", activities: lesson2 },
