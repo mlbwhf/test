@@ -1829,6 +1829,41 @@ describe("rooms", () => {
 });
 
 describe("classes: students by link, wipe and custom templates", () => {
+  it("adds activities to a lesson, runs one timer for the class, and keeps answer keys from learners", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE class" }, root)).body.board.id as string;
+    const lesson = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames.filter((f: { parentId?: string; title: string }) => !f.parentId && f.title.startsWith("Lesson"))[0];
+    const img = "data:image/png;base64,iVBORw0KGgo=";
+    const added = await call("POST", `/v1/boards/${id}/activities`, { lessonId: lesson.id, activities: [{ title: "Map the role", kind: "Activity", prepare: 7, share: 3, steps: "Step 1", side: [{ title: "Article", url: "https://example.org/role" }, { title: "Answer key", image: img, instructorOnly: true }], connectionTypes: [{ id: "talk", label: "Communicates" }], items: [{ kind: "image", src: img, x: 0, y: 0, width: 800, height: 500 }, { kind: "pin", text: "Coach", x: 300, y: 200 }] }] }, root);
+    expect(added.status).toBe(201);
+    const fid = added.body.frames[0] as string;
+    expect((await call("POST", `/v1/boards/${id}/activities`, { lessonId: lesson.id, activities: [{ title: "Bad", kind: "Activity", steps: "", side: [{ title: "x", url: "javascript:alert(1)" }] }] }, root)).status).toBe(400);
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
+    const sideFor = async (k: string) => (await call("GET", `/v1/boards/${id}`, undefined, k)).body.board.frames.find((f: { id: string }) => f.id === fid).activity.side.map((x: { title: string }) => x.title);
+    expect(await sideFor(root)).toEqual(["Article", "Answer key"]);
+    expect(await sideFor(ana)).toEqual(["Article"]);
+    // A learner draws a typed connector from the pin to a spot of their own.
+    const pin = (await call("GET", `/v1/boards/${id}`, undefined, ana)).body.board.nodes.find((n: { frameId?: string; text: string }) => n.frameId === fid && n.text === "Coach");
+    const spot = (await call("POST", `/v1/boards/${id}/nodes`, { text: "Business Owners", x: pin.x + 300, y: pin.y, frameId: fid }, ana)).body.node;
+    const edge = await call("POST", `/v1/boards/${id}/edges`, { fromId: pin.id, toId: spot.id, type: "talk" }, ana);
+    expect(edge.body.edge).toMatchObject({ type: "talk" });
+    // One timer for everyone: the trainer runs it, learners see it.
+    expect((await call("PUT", `/v1/boards/${id}/timer`, { action: "start", label: "Prepare", seconds: 420, frameId: fid }, ana)).status).toBe(403);
+    const started = await call("PUT", `/v1/boards/${id}/timer`, { action: "start", label: "Prepare", seconds: 420, frameId: fid }, root);
+    expect(started.body.left).toBeGreaterThan(415);
+    const seen = await call("GET", `/v1/boards/${id}/timer`, undefined, ana);
+    expect(seen.body.timer).toMatchObject({ label: "Prepare", frameId: fid });
+    const paused = await call("PUT", `/v1/boards/${id}/timer`, { action: "pause" }, root);
+    expect(paused.body.timer.endsAt).toBeUndefined();
+    expect((await call("PUT", `/v1/boards/${id}/timer`, { action: "add", seconds: 60 }, root)).body.left).toBeGreaterThan(475);
+    expect((await call("PUT", `/v1/boards/${id}/timer`, { action: "resume" }, root)).body.timer.endsAt).toBeTruthy();
+    expect((await call("PUT", `/v1/boards/${id}/timer`, { action: "stop" }, root)).body.timer).toBeNull();
+    // The trainer can edit an activity in place, or turn it back into a plain frame.
+    expect((await call("PATCH", `/v1/boards/${id}/frames/${fid}`, { activity: { kind: "Discussion", prepare: 5, share: 3, steps: "New" } }, root)).body.frame.activity).toMatchObject({ kind: "Discussion", prepare: 5 });
+    expect((await call("PATCH", `/v1/boards/${id}/frames/${fid}`, { activity: null }, root)).body.frame.activity).toBeUndefined();
+  });
+
   it("lets a student in by a personal link to one class board, and nothing else", async () => {
     const { call } = await setup();
     const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;

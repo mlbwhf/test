@@ -134,7 +134,7 @@ export function guestMayUse(method: string, url: string, boardId: string): boole
     if (!path.startsWith(b)) continue;
     const rest = path.slice(b.length);
     if (rest && !rest.startsWith("/")) continue;
-    if (method === "GET" && (rest === "" || /^\/nodes\/[^/]+\/backlinks$/.test(rest))) return true;
+    if (method === "GET" && (rest === "" || rest === "/timer" || /^\/nodes\/[^/]+\/backlinks$/.test(rest))) return true;
     if (/^\/nodes(\/[^/]+)?$/.test(rest) && ["POST", "PATCH", "DELETE"].includes(method)) return true;
     if (/^\/edges(\/[^/]+)?$/.test(rest) && ["POST", "DELETE"].includes(method)) return true;
   }

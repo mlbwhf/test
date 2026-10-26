@@ -5,7 +5,8 @@ import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
 import { useDoubleTap, usePanZoom } from "@/lib/touch";
-import type { CardType } from "@trainyard/core";
+import type { CardType, ConnectionType } from "@trainyard/core";
+import { ActivityEditor } from "@/components/activity-editor";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
 type Backlink = { boardId: string; boardName: string; nodeId: string; frame?: string; as: "link" | "view" };
@@ -24,6 +25,9 @@ const SWATCHES = [
 ] as const;
 
 type Tool = "select" | "connect";
+/** Card fields that are bookkeeping, not something to show. */
+const HIDDEN_FIELDS = new Set(["placeholder", "createdBy", "src", "locked", "pin", "studentId", "studentName"]);
+type Rubber = { pointerId: number; from: string; x: number; y: number; moved: boolean; start: { x: number; y: number } };
 type Drag = { kind: "node" | "frame"; id: string; dx: number; dy: number; moved: boolean; start: { x: number; y: number }; last: { x: number; y: number } };
 
 /** How long a finger rests on a frame before it picks the frame up instead of panning. */
@@ -119,6 +123,11 @@ function ChartView({ chart, title, x, y, w, h }: { chart: ChartData; title: stri
   );
 }
 
+/** The line that follows the pointer while a connector is drawn. */
+function RubberLine({ from, to, color }: { from: readonly [number, number] | null; to: { x: number; y: number }; color: string }) {
+  return from ? <line x1={from[0]} y1={from[1]} x2={to.x} y2={to.y} stroke={color} strokeWidth={5} strokeDasharray="10 8" pointerEvents="none" /> : null;
+}
+
 function wrap(text: string, width: number): string[] {
   const out: string[] = [];
   for (const para of text.split("\n")) {
@@ -140,7 +149,7 @@ function wrap(text: string, width: number): string[] {
  * draw connectors. Every change goes to the API as it happens; the board prop is the
  * source of truth and is refreshed after each save.
  */
-export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [], focus = null, fill = false }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[]; /** A top-level frame to show on its own (a class lesson). */ focus?: string | null; /** Fill the screen (full-screen mode). */ fill?: boolean }) {
+export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, cardTypes = [], focus = null, fill = false, trainer = true }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; refs?: Record<string, RefSummary | null>; cardTypes?: CardType[]; /** A top-level frame to show on its own (a class lesson). */ focus?: string | null; /** Fill the screen (full-screen mode). */ fill?: boolean; /** May add pictures, lock them and set up activities (not a learner on a join link). */ trainer?: boolean }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const panel = useRef<HTMLElement>(null);
   const [nodes, setNodes] = useState<BoardNode[]>(board.nodes);
@@ -148,6 +157,10 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const [selected, setSelected] = useState<string | null>(null);
   const [tool, setTool] = useState<Tool>("select");
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
+  const [connType, setConnType] = useState<string | null>(null);
+  const [rubber, setRubber] = useState<Rubber | null>(null);
+  const [selEdge, setSelEdge] = useState<string | null>(null);
+  const picture = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState<{ id: string; text: string } | null>(null);
   const [zoom, setZoom] = useState(1);
   const [picker, setPicker] = useState<null | { mode: "link" | "view" } | { mode: "field"; key: string }>(null);
@@ -194,7 +207,23 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   useEffect(() => {
     setZoom(1);
     panel.current?.scrollTo({ left: 0, top: 0 });
+    setTool("select");
+    setConnectFrom(null);
   }, [focus]);
+  // In a mapping activity, connectors carry one of its connection types, each in its colour.
+  const types: ConnectionType[] = useMemo(() => frames.find((f) => f.id === focus)?.activity?.connectionTypes ?? [], [frames, focus]);
+  const typeColor = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const f of frames) for (const t of f.activity?.connectionTypes ?? []) if (!m.has(t.id)) m.set(t.id, t.color);
+    return m;
+  }, [frames]);
+  const counts = useMemo(() => {
+    const inside = new Set(shownNodes.map((n) => n.id));
+    const c: Record<string, number> = {};
+    for (const e of board.edges) if (e.type && (inside.has(e.fromId) || inside.has(e.toId))) c[e.type] = (c[e.type] ?? 0) + 1;
+    return c;
+  }, [board.edges, shownNodes]);
+  useEffect(() => setConnType((t) => (t && types.some((x) => x.id === t) ? t : null)), [types]);
   // Ctrl or Cmd with the wheel (or a trackpad pinch, which browsers send the same way) zooms.
   useEffect(() => {
     const el = panel.current;
@@ -247,6 +276,18 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     const f = frames.find((x) => x.id === id);
     return f ? ([f.x + f.width / 2, f.y + f.height / 2] as const) : null;
   };
+  /** Where the line from a card's centre toward `to` leaves the card. */
+  const rim = (id: string, to: readonly [number, number]) => {
+    const n = nodes.find((x) => x.id === id);
+    if (!n) return null;
+    const w = (n.width ?? 180) / 2;
+    const h = (n.height ?? 120) / 2;
+    const dx = to[0] - (n.x + w);
+    const dy = to[1] - (n.y + h);
+    if (!dx && !dy) return null;
+    const k = Math.min(1, dx ? w / Math.abs(dx) : Infinity, dy ? h / Math.abs(dy) : Infinity);
+    return [n.x + w + dx * k, n.y + h + dy * k] as const;
+  };
 
   // ---- pointer handling -------------------------------------------------------------
   const grab = (kind: "node" | "frame", id: string, e: { pointerId: number; clientX: number; clientY: number }) => {
@@ -257,7 +298,20 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const startDrag = (kind: "node" | "frame", id: string, e: React.PointerEvent) => {
     if (readOnly) return;
     e.stopPropagation(); // keep the canvas background from clearing the selection or the connect pick
-    if (tool !== "select" || e.button !== 0) return;
+    if (e.button !== 0) return;
+    const locked = kind === "node" && !!nodes.find((n) => n.id === id)?.fields.locked;
+    if (tool === "connect") {
+      // Press on a card and drag to another card, or to a spot on a picture, to connect them.
+      (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+      const p = toBoard(e);
+      setRubber({ pointerId: e.pointerId, from: kind === "node" && !locked ? id : "", x: p.x, y: p.y, moved: false, start: p });
+      return;
+    }
+    if (locked) {
+      // A locked picture is part of the background: it pans and selects, it does not move.
+      if (!pan.down(e)) setSelected(id);
+      return;
+    }
     if ([...drags.current.values()].some((d) => d.id === id)) return; // someone already has it
     // Capture on the card itself, so its click and double-click still land on it.
     (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
@@ -280,6 +334,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     grab(kind, id, e);
   };
   const onMove = (e: React.PointerEvent) => {
+    if (rubber && rubber.pointerId === e.pointerId) {
+      const p = toBoard(e);
+      setRubber({ ...rubber, x: p.x, y: p.y, moved: rubber.moved || Math.abs(p.x - rubber.start.x) + Math.abs(p.y - rubber.start.y) > 8 });
+      return;
+    }
     if (pan.move(e)) return;
     const d = drags.current.get(e.pointerId);
     if (!d) return;
@@ -300,10 +359,31 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const endDrag = (e: React.PointerEvent) => {
     window.clearTimeout(press.current.get(e.pointerId));
     press.current.delete(e.pointerId);
+    if (rubber && rubber.pointerId === e.pointerId) {
+      setRubber(null);
+      const p = toBoard(e);
+      const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest?.("[data-node-id]")?.getAttribute("data-node-id") ?? null;
+      const target = hit && !nodes.find((n) => n.id === hit)?.fields.locked ? hit : null;
+      const from = rubber.from || connectFrom;
+      if (rubber.moved && rubber.from) {
+        if (target && target !== rubber.from) connect(rubber.from, target);
+        else if (!target) connectToSpot(rubber.from, p);
+        setConnectFrom(null);
+      } else if (!rubber.moved && from && from !== rubber.from) {
+        // Tap, then tap the other end: a card, or a spot on the picture for a new marker.
+        if (rubber.from) connect(from, rubber.from);
+        else connectToSpot(from, p);
+        setConnectFrom(null);
+      } else if (rubber.from) setConnectFrom(rubber.from);
+      return;
+    }
     const tap = pan.up(e);
     if (tap) {
       // A tap on the background clears the selection, as a mouse press does; on a frame it selects it.
-      if (tap === "tap") {
+      if (tap === "tap" && tool === "connect" && connectFrom) {
+        connectToSpot(connectFrom, toBoard(e));
+        setConnectFrom(null);
+      } else if (tap === "tap") {
         const frame = (e.target as Element).closest?.("[data-frame-id]")?.getAttribute("data-frame-id");
         setSelected(frame ?? null);
         setConnectFrom(null);
@@ -329,14 +409,31 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       void save("Move frame", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/frames/${encodeURIComponent(f.id)}`, { x: f.x, y: f.y }));
     }
   };
-  const clickNode = (id: string) => {
-    if (tool !== "connect") return;
-    if (!connectFrom) setConnectFrom(id);
-    else if (connectFrom !== id) {
-      const from = connectFrom;
-      setConnectFrom(null);
-      void save("Connect", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: id }));
-    }
+  const connect = (from: string, to: string) => void save("Connect", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: to, ...(connType ? { type: connType } : {}) }));
+  /** A connector to a spot with no card: a small marker goes there first, ready to name. */
+  const connectToSpot = (from: string, p: { x: number; y: number }) => {
+    const inner = [...shownFrames].reverse().find((f) => p.x >= f.x && p.y >= f.y && p.x <= f.x + f.width && p.y <= f.y + f.height);
+    void save("Connect", async () => {
+      const r = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { text: "", kind: "shape", x: Math.round(p.x - 70), y: Math.round(p.y - 24), width: 140, height: 48, color: "#17212b", fields: { pin: true }, ...(inner ? { frameId: inner.id } : {}) });
+      await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: r.node.id, ...(connType ? { type: connType } : {}) });
+      setEditing({ id: r.node.id, text: "" });
+    });
+  };
+  const addPicture = (file: File) => {
+    if (file.size > 4 * 1024 * 1024) return onError("Pictures up to 4 MB, please.");
+    const read = new FileReader();
+    read.onload = () => {
+      const src = String(read.result);
+      const img = new Image();
+      img.onload = () => {
+        const { f, x, y } = placeFor();
+        const width = Math.min(1400, f ? f.width - 40 : 1400);
+        const height = Math.round((width * img.naturalHeight) / Math.max(1, img.naturalWidth));
+        void save("Add picture", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { kind: "image", text: file.name, x, y, width, height, src, fields: { locked: true }, ...(f ? { frameId: f.id } : {}) }));
+      };
+      img.src = src;
+    };
+    read.readAsDataURL(file);
   };
 
   // ---- actions ----------------------------------------------------------------------
@@ -393,7 +490,9 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     if (!selFrame || !title.trim() || title === selFrame.title) return;
     void save("Rename frame", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/frames/${encodeURIComponent(selFrame.id)}`, { title }));
   };
-  const removeEdge = (edgeId: string) => void save("Remove connector", () => api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}/edges/${encodeURIComponent(edgeId)}`));
+  const removeEdge = (edgeId: string) => (setSelEdge(null), void save("Remove connector", () => api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}/edges/${encodeURIComponent(edgeId)}`)));
+  const toggleLock = () => selNode && void save("Lock", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(selNode.id)}`, { fields: { locked: selNode.fields.locked ? null : true } }));
+  const edgeSel = board.edges.find((x) => x.id === selEdge);
 
   const editingNode = editing ? nodes.find((n) => n.id === editing.id) : undefined;
 
@@ -414,9 +513,19 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={() => setPicker({ mode: "view" })} title="Bring a whole board or canvas in as a live view">
                 + Embed a view
               </button>
-              <button className={`btn small ${tool === "connect" ? "primary" : ""}`} onClick={() => (setTool(tool === "connect" ? "select" : "connect"), setConnectFrom(null))} aria-pressed={tool === "connect"}>
-                {tool === "connect" ? (connectFrom ? "Pick the card it feeds" : "Pick the first card") : "Connect"}
-              </button>
+              {types.length ? null : (
+                <button className={`btn small ${tool === "connect" ? "primary" : ""}`} onClick={() => (setTool(tool === "connect" ? "select" : "connect"), setConnectFrom(null))} aria-pressed={tool === "connect"}>
+                  {tool === "connect" ? (connectFrom ? "Drag or tap to the other end" : "Press a card and drag") : "Connect"}
+                </button>
+              )}
+              {trainer ? (
+                <>
+                  <button className="btn small" onClick={() => picture.current?.click()} title="A picture to work on, such as a framework diagram. It stays put; people connect to spots on it.">
+                    + Picture
+                  </button>
+                  <input ref={picture} type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden onChange={(e) => (e.target.files?.[0] && addPicture(e.target.files[0]), (e.target.value = ""))} />
+                </>
+              ) : null}
               <button className="btn small" onClick={removeSelected} disabled={!selNode}>
                 Delete card
               </button>
@@ -438,8 +547,31 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: selNode || selFrame ? "minmax(0, 1fr) 260px" : "minmax(0, 1fr)", gap: 14, alignItems: "start" }}>
-        <section ref={panel} className="panel" style={{ overflow: "auto", maxHeight: fill ? "calc(100vh - 150px)" : "72vh", position: "relative" }} onKeyDown={(e) => e.key === "Escape" && (setSelected(null), setEditing(null), setConnectFrom(null))} tabIndex={-1}>
+      {types.length ? (
+        <div className="conn-types" role="group" aria-label="Connection types">
+          <span className="eyebrow">Connect</span>
+          {types.map((t) => {
+            const on = tool === "connect" && connType === t.id;
+            return (
+              <button key={t.id} className="conn-type" aria-pressed={on} disabled={readOnly} onClick={() => (on ? (setTool("select"), setConnType(null)) : (setTool("connect"), setConnType(t.id)), setConnectFrom(null))} style={{ ["--c" as string]: t.color }}>
+                <span className="conn-dot" aria-hidden />
+                <span>{t.label}</span>
+                <span className="conn-count" aria-label={`${counts[t.id] ?? 0} drawn`}>
+                  {counts[t.id] ? `${counts[t.id]} ✓` : "0"}
+                </span>
+              </button>
+            );
+          })}
+          <span className="faint" style={{ fontSize: "0.78rem" }}>
+            {tool === "connect" ? (connectFrom ? "Now tap the other end, or a spot on the picture" : "Press on a card or marker and drag to what it connects with; drop on the picture to mark a new spot") : "Pick a type, then draw from the card"}
+          </span>
+        </div>
+      ) : null}
+      <div style={{ display: "grid", gridTemplateColumns: selNode || selFrame || edgeSel ? "minmax(0, 1fr) 260px" : "minmax(0, 1fr)", gap: 14, alignItems: "start" }}>
+        <section ref={panel} className="panel" style={{ overflow: "auto", maxHeight: fill ? "calc(100vh - 150px)" : "72vh", position: "relative" }} onKeyDown={(e) => {
+            if (e.key === "Escape") (setSelected(null), setEditing(null), setConnectFrom(null), setSelEdge(null));
+            if ((e.key === "Delete" || e.key === "Backspace") && selEdge && !editing && !readOnly) removeEdge(selEdge);
+          }} tabIndex={-1}>
           <svg
             ref={svgRef}
             viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
@@ -454,8 +586,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
             onPointerCancel={endDrag}
             onPointerDown={(e) => {
               // Fingers and pens pan and pinch the background; a tap still clears the selection.
+              if (tool === "connect" && connectFrom && e.pointerType === "mouse") {
+                connectToSpot(connectFrom, toBoard(e));
+                setConnectFrom(null);
+                return;
+              }
               if (pan.down(e)) return;
               setSelected(null);
+              setSelEdge(null);
               setConnectFrom(null);
             }}
           >
@@ -463,6 +601,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
                 <path d="M0 0L10 5L0 10z" fill="var(--ink-3)" />
               </marker>
+              {[...typeColor.entries()].map(([id, c]) => (
+                <marker key={id} id={`arrow-${id}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0 0L10 5L0 10z" fill={c} />
+                </marker>
+              ))}
               <filter id="lift" x="-10%" y="-10%" width="120%" height="140%">
                 <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="rgb(23,33,43)" floodOpacity="0.14" />
               </filter>
@@ -478,22 +621,6 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 )}
               </g>
             ))}
-            {board.edges.filter((e) => !focus || (shownNodes.some((n) => n.id === e.fromId) && shownNodes.some((n) => n.id === e.toId))).map((e) => {
-              const a = center(e.fromId);
-              const b = center(e.toId);
-              if (!a || !b) return null;
-              return (
-                <g key={e.id} onClick={() => !readOnly && removeEdge(e.id)} style={{ cursor: readOnly ? "default" : "pointer" }}>
-                  <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth={18} />
-                  <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />
-                  {e.label ? (
-                    <text x={(a[0] + b[0]) / 2} y={(a[1] + b[1]) / 2 - 8} fontSize={15} textAnchor="middle" fill="var(--ink-2)">
-                      {e.label}
-                    </text>
-                  ) : null}
-                </g>
-              );
-            })}
             {shownNodes.map((n) => {
               const w = n.width ?? 180;
               const h = n.height ?? (n.kind === "text" ? 60 : 120);
@@ -519,7 +646,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                   key={n.id}
                   data-node-id={n.id}
                   onPointerDown={(e) => startDrag("node", n.id, e)}
-                  onClick={(e) => (e.stopPropagation(), clickNode(n.id))}
+                  onClick={(e) => e.stopPropagation()}
                   onDoubleClick={() => !readOnly && setEditing({ id: n.id, text: n.text })}
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
                   filter={placeholder ? undefined : "url(#lift)"}
@@ -599,6 +726,29 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 </g>
               );
             })}
+            {/* Connectors over the cards and pictures they join, so they stay visible on a picture. */}
+            {board.edges.filter((e) => !focus || (shownNodes.some((n) => n.id === e.fromId) && shownNodes.some((n) => n.id === e.toId))).map((e) => {
+              const ca = center(e.fromId);
+              const cb = center(e.toId);
+              if (!ca || !cb) return null;
+              // From edge to edge of the two cards, so the arrowhead shows.
+              const a = rim(e.fromId, cb) ?? ca;
+              const b = rim(e.toId, ca) ?? cb;
+              const c = e.type ? typeColor.get(e.type) : undefined;
+              return (
+                <g key={e.id} onPointerDown={(ev) => ev.stopPropagation()} onClick={(ev) => (ev.stopPropagation(), setSelEdge(e.id), setSelected(null))} style={{ cursor: "pointer" }} aria-label={`Connector${e.type ? `: ${types.find((t) => t.id === e.type)?.label ?? e.type}` : ""}`}>
+                  <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth={22} />
+                  {selEdge === e.id ? <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--signal)" strokeOpacity={0.35} strokeWidth={14} strokeLinecap="round" /> : null}
+                  <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={c ?? "var(--ink-3)"} strokeWidth={c ? 5 : 3} markerEnd={`url(#${c ? `arrow-${e.type}` : "arrow"})`} />
+                  {e.label ? (
+                    <text x={(a[0] + b[0]) / 2} y={(a[1] + b[1]) / 2 - 8} fontSize={15} textAnchor="middle" fill="var(--ink-2)">
+                      {e.label}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+            {rubber && rubber.from && rubber.moved ? <RubberLine from={center(rubber.from)} to={rubber} color={(connType && typeColor.get(connType)) || "var(--ai)"} /> : null}
             {editingNode ? (
               <foreignObject x={editingNode.x} y={editingNode.y} width={editingNode.width ?? 180} height={editingNode.height ?? 120}>
                 <textarea
@@ -619,6 +769,25 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
           </svg>
         </section>
 
+        {edgeSel && !selNode && !selFrame ? (
+          <aside className="panel panel-body stack" aria-label="Selected connector">
+            <span className="eyebrow">Connector</span>
+            <p style={{ fontWeight: 600, lineHeight: 1.3 }}>
+              {nodes.find((n) => n.id === edgeSel.fromId)?.text || frames.find((f) => f.id === edgeSel.fromId)?.title || "…"} → {nodes.find((n) => n.id === edgeSel.toId)?.text || frames.find((f) => f.id === edgeSel.toId)?.title || "a marked spot"}
+            </p>
+            {edgeSel.type ? (
+              <span className="row" style={{ gap: 6, fontSize: "0.82rem" }}>
+                <span className="conn-dot" style={{ ["--c" as string]: typeColor.get(edgeSel.type) }} aria-hidden />
+                {frames.flatMap((f) => f.activity?.connectionTypes ?? []).find((t) => t.id === edgeSel.type)?.label ?? edgeSel.type}
+              </span>
+            ) : null}
+            {!readOnly ? (
+              <button className="btn small" onClick={() => removeEdge(edgeSel.id)}>
+                Delete connector
+              </button>
+            ) : null}
+          </aside>
+        ) : null}
         {selNode ? (
           <aside className="panel panel-body stack" aria-label="Selected card">
             <span className="eyebrow">{selNode.kind === "view" ? "Embedded view" : selNode.ref ? `Linked ${KIND_LABEL[selNode.ref.kind].toLowerCase()}` : "Card"}</span>
@@ -753,12 +922,17 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                     Delete
                   </button>
                 </div>
+                {trainer && selNode.kind === "image" ? (
+                  <label className="row" style={{ gap: 6, fontSize: "0.82rem" }}>
+                    <input type="checkbox" checked={!!selNode.fields.locked} onChange={toggleLock} /> Locked in place (people connect to spots on it)
+                  </label>
+                ) : null}
               </>
             ) : null}
-            {Object.keys(selNode.fields).filter((k) => k !== "placeholder" && k !== "createdBy" && !selType?.fields.some((f) => f.key === k)).length ? (
+            {Object.keys(selNode.fields).filter((k) => !HIDDEN_FIELDS.has(k) && !selType?.fields.some((f) => f.key === k)).length ? (
               <>
                 <span className="eyebrow">From the source</span>
-                <pre className="mono faint" style={{ fontSize: "0.72rem", whiteSpace: "pre-wrap", margin: 0 }}>{JSON.stringify(Object.fromEntries(Object.entries(selNode.fields).filter(([k]) => k !== "placeholder" && k !== "createdBy" && !selType?.fields.some((f) => f.key === k))), null, 1)}</pre>
+                <pre className="mono faint" style={{ fontSize: "0.72rem", whiteSpace: "pre-wrap", margin: 0 }}>{JSON.stringify(Object.fromEntries(Object.entries(selNode.fields).filter(([k]) => !HIDDEN_FIELDS.has(k) && !selType?.fields.some((f) => f.key === k))), null, 1)}</pre>
               </>
             ) : null}
           </aside>
@@ -781,6 +955,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 + Card in this frame
               </button>
             ) : null}
+            {!readOnly && trainer ? <ActivityEditor key={selFrame.id} boardId={board.id} frame={selFrame} onSaved={onChanged} onError={onError} /> : null}
           </aside>
         ) : null}
       </div>

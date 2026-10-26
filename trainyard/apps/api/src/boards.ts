@@ -5,7 +5,8 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode } from "@trainyard/core";
+import { addActivities, boardRevision, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
+import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
@@ -31,6 +32,22 @@ export interface Connection {
 }
 
 const Id = z.string().min(1).max(200);
+const Link = z.string().url().max(2000).refine((u) => /^https?:\/\//i.test(u), "Use an http(s) address");
+const ImageData = z.string().max(6_000_000).regex(/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]+$/, "A PNG, JPEG, GIF or WebP image");
+const ActivityBody = z.object({
+  kind: z.string().min(1).max(40),
+  prepare: z.number().int().min(0).max(600).optional(),
+  share: z.number().int().min(0).max(600).optional(),
+  steps: z.string().max(8000),
+  side: z.array(z.object({ title: z.string().min(1).max(200), url: Link.optional(), image: ImageData.optional(), text: z.string().max(8000).optional(), instructorOnly: z.boolean().optional() })).max(8).optional(),
+  connectionTypes: z.array(z.object({ id: z.string().min(1).max(40), label: z.string().min(1).max(300), color: z.string().max(40).default("") })).max(8).optional(),
+});
+const ActivitySpecBody = ActivityBody.extend({
+  title: z.string().min(1).max(200),
+  width: z.number().min(200).max(10_000).optional(),
+  height: z.number().min(200).max(10_000).optional(),
+  items: z.array(z.object({ kind: z.enum(["image", "pin", "card", "text"]), text: z.string().max(2000).optional(), src: ImageData.optional(), x: z.number(), y: z.number(), width: z.number().min(10).max(10_000).optional(), height: z.number().min(10).max(10_000).optional(), color: z.string().max(40).optional(), fontSize: z.number().min(8).max(200).optional() })).max(200).optional(),
+});
 /** Cards on one board: far more than any planning board needs, small enough to save quickly. */
 const MAX_BOARD_NODES = 5000;
 /** Slides in one imported course deck; a five-day class runs well under this. */
@@ -254,7 +271,9 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = reach(req, req.params.id, "view");
     const refs: Record<string, RefSummary | null> = {};
     for (const n of b.nodes) if (n.ref) refs[refKey(n.ref)] = resolveRef(s(), n.ref);
-    return { board: b, shape: boardShape(b), refs, cardTypes: cardTypes(s()) };
+    // Learners on a join link never get the answer keys and trainer notes.
+    const shown = req.principal.guestBoardId ? { ...b, frames: b.frames.map((f) => (f.activity?.side?.some((x) => x.instructorOnly) ? { ...f, activity: { ...f.activity, side: f.activity.side.filter((x) => !x.instructorOnly) } } : f)) } : b;
+    return { board: shown, shape: boardShape(b), refs, cardTypes: cardTypes(s()) };
   });
   app.get("/v1/boards/:id/nodes/:nodeId/backlinks", { schema: { params: z.object({ id: Id, nodeId: Id }) } }, async (req) => {
     const b = reach(req, req.params.id, "view");
@@ -409,6 +428,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     /** Link the card to a record (or embed a board/canvas as a view); null unlinks. */
     ref: z.object({ kind: z.enum(REF_KINDS as [RefKind, ...RefKind[]]), id: z.string().min(1).max(200), boardId: z.string().min(1).max(200).optional() }).nullable().optional(),
     typeId: z.string().max(60).nullable().optional(),
+    /** A picture for an image card (data URL). */
+    src: ImageData.optional(),
     /** Typed card fields, merged into the card's fields. */
     fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").optional(),
   });
@@ -427,7 +448,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   app.post("/v1/boards/:id/nodes", { schema: { params: z.object({ id: Id }), body: NodeBody.extend({ x: z.number(), y: z.number() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = editable(req, req.params.id);
-    const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
+    const { frameId, color, ref: rawRef, typeId, fields, src, ...rest } = req.body;
     const ref = rawRef ? asRef(rawRef) : rawRef;
     const frame = frameId === null ? undefined : (frameId ?? frameFor(b, req.body));
     if (frame && !b.frames.some((f) => f.id === frame)) throw notFound("Frame");
@@ -446,7 +467,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       ...(color ? { color } : { color: linked && !isView ? linked.color : typeColor ?? (isView ? "#ffffff" : "#fff6c2") }),
       ...(frame ? { frameId: frame } : {}),
       tags: rest.tags ?? [],
-      fields: { createdBy: req.principal.userId, ...(fields ?? {}) },
+      fields: { createdBy: req.principal.userId, ...(fields ?? {}), ...(src ? { src } : {}) },
       ...(ref ? { ref } : {}),
       ...(typeId ? { typeId } : {}),
     };
@@ -461,8 +482,9 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = editable(req, req.params.id);
     const n = b.nodes.find((x) => x.id === req.params.nodeId);
     if (!n) throw notFound("Card");
-    const { frameId, color, ref: rawRef, typeId, fields, ...rest } = req.body;
+    const { frameId, color, ref: rawRef, typeId, fields, src, ...rest } = req.body;
     const ref = rawRef ? asRef(rawRef) : rawRef;
+    if (src) n.fields.src = src;
     if (ref === null) delete n.ref;
     else if (ref) {
       checkRef(ref);
@@ -508,13 +530,13 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     return reply.code(204).send();
   });
 
-  app.post("/v1/boards/:id/edges", { schema: { params: z.object({ id: Id }), body: z.object({ fromId: Id, toId: Id, label: z.string().max(200).optional() }) } }, async (req, reply) => {
+  app.post("/v1/boards/:id/edges", { schema: { params: z.object({ id: Id }), body: z.object({ fromId: Id, toId: Id, label: z.string().max(200).optional(), type: z.string().min(1).max(40).optional() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = editable(req, req.params.id);
     const ids = new Set([...b.nodes.map((n) => n.id), ...b.frames.map((f) => f.id)]);
     if (!ids.has(req.body.fromId) || !ids.has(req.body.toId)) throw notFound("Card");
     if (req.body.fromId === req.body.toId) throw new ApiError(422, "SELF_EDGE", "A connector needs two different cards.");
-    const edge = { id: `e-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, fromId: req.body.fromId, toId: req.body.toId, ...(req.body.label ? { label: req.body.label } : {}) };
+    const edge = { id: `e-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, fromId: req.body.fromId, toId: req.body.toId, ...(req.body.label ? { label: req.body.label } : {}), ...(req.body.type ? { type: req.body.type } : {}) };
     b.edges.push(edge);
     await store.commit(req.principal, "board.edge.create", { board: b.id, edge: edge.id });
     return reply.code(201).send({ edge });
@@ -530,27 +552,71 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     return reply.code(204).send();
   });
 
-  app.patch("/v1/boards/:id/frames/:frameId", { schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional() }) } }, async (req) => {
+  app.patch("/v1/boards/:id/frames/:frameId", { bodyLimit: 32 * 1024 * 1024, schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional(), activity: ActivityBody.nullable().optional() }) } }, async (req) => {
     require(req, "plan");
     const b = editable(req, req.params.id);
     const f = b.frames.find((x) => x.id === req.params.frameId);
     if (!f) throw notFound("Frame");
     const dx = (req.body.x ?? f.x) - f.x;
     const dy = (req.body.y ?? f.y) - f.y;
-    Object.assign(f, defined(req.body));
+    const { activity, ...geometry } = req.body;
+    Object.assign(f, defined(geometry));
+    if (activity === null) delete f.activity;
+    else if (activity) f.activity = defined(activity) as Activity;
     // Cards travel with their frame.
     if (dx || dy) for (const n of b.nodes) if (n.frameId === f.id) (n.x += dx), (n.y += dy);
-    await store.commit(req.principal, "board.frame.update", { board: b.id, frame: f.id, ...defined(req.body) });
+    await store.commit(req.principal, "board.frame.update", { board: b.id, frame: f.id, ...defined(geometry), ...(activity !== undefined ? { activity: activity ? "set" : "cleared" } : {}) });
     return { frame: f };
   });
 
-  app.post("/v1/boards/:id/frames", { schema: { params: z.object({ id: Id }), body: z.object({ title: z.string().min(1).max(200), x: z.number(), y: z.number(), width: z.number().min(40), height: z.number().min(40) }) } }, async (req, reply) => {
+  app.post("/v1/boards/:id/frames", { schema: { params: z.object({ id: Id }), body: z.object({ title: z.string().min(1).max(200), x: z.number(), y: z.number(), width: z.number().min(40), height: z.number().min(40), parentId: Id.optional() }) } }, async (req, reply) => {
     require(req, "plan");
     const b = editable(req, req.params.id);
-    const frame = { id: `f-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, ...req.body };
+    if (req.body.parentId && !b.frames.some((f) => f.id === req.body.parentId)) throw notFound("Frame");
+    const frame = { id: `f-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`, ...defined(req.body) } as Frame;
     b.frames.push(frame);
     await store.commit(req.principal, "board.frame.create", { board: b.id, frame: frame.id });
     return reply.code(201).send({ frame });
+  });
+
+  // ---- class activities and the class timer ---------------------------------------------
+  app.post("/v1/boards/:id/activities", { bodyLimit: 48 * 1024 * 1024, schema: { params: z.object({ id: Id }), body: z.object({ lessonId: Id, activities: z.array(ActivitySpecBody).min(1).max(40) }) } }, async (req, reply) => {
+    require(req, "plan");
+    const b = editable(req, req.params.id);
+    const lesson = b.frames.find((f) => f.id === req.body.lessonId);
+    if (!lesson) throw notFound("Lesson");
+    if (b.nodes.length + req.body.activities.reduce((n, a) => n + (a.items?.length ?? 0), 0) > MAX_BOARD_NODES) throw new ApiError(413, "BOARD_TOO_LARGE", `A board holds up to ${MAX_BOARD_NODES} cards.`);
+    const ids = addActivities(b, lesson.id, req.body.activities.map((a) => defined(a) as ActivitySpec), `act${Date.now().toString(36)}`);
+    await store.commit(req.principal, "board.activities.add", { board: b.id, lesson: lesson.id, activities: ids.length });
+    return reply.code(201).send({ frames: ids });
+  });
+  app.get("/v1/boards/:id/timer", { schema: { params: z.object({ id: Id }) } }, async (req) => {
+    const b = reach(req, req.params.id, "view");
+    const t = b.fields?.timer as ClassTimer | undefined;
+    return { timer: t ?? null, left: t ? timerLeft(t, store.now()) : 0, now: store.now().toISOString(), rev: boardRevision(b) };
+  });
+  app.put("/v1/boards/:id/timer", { schema: { params: z.object({ id: Id }), body: z.discriminatedUnion("action", [z.object({ action: z.literal("start"), label: z.string().min(1).max(120), seconds: z.number().int().min(5).max(6 * 3600), frameId: Id.optional() }), z.object({ action: z.enum(["pause", "resume", "stop"]) }), z.object({ action: z.literal("add"), seconds: z.number().int().min(-3600).max(3600) })]) } }, async (req) => {
+    require(req, "plan");
+    if (req.principal.guestBoardId) throw new ApiError(403, "GUEST_SCOPE", "Only the trainer runs the timer.");
+    const b = editable(req, req.params.id);
+    const now = store.now();
+    const fields = (b.fields ??= {});
+    const t = fields.timer as ClassTimer | undefined;
+    const at = (secs: number) => new Date(now.getTime() + secs * 1000).toISOString();
+    const body = req.body;
+    if (body.action === "start") fields.timer = { label: body.label, seconds: body.seconds, endsAt: at(body.seconds), ...(body.frameId ? { frameId: body.frameId } : {}) } satisfies ClassTimer;
+    else if (!t) throw notFound("Timer");
+    else if (body.action === "stop") delete fields.timer;
+    else if (body.action === "pause" && t.endsAt) fields.timer = { ...t, endsAt: undefined, left: timerLeft(t, now) };
+    else if (body.action === "resume" && !t.endsAt) fields.timer = { ...t, endsAt: at(t.left ?? t.seconds), left: undefined };
+    else if (body.action === "add") {
+      const left = Math.max(0, timerLeft(t, now) + body.seconds);
+      fields.timer = t.endsAt ? { ...t, seconds: t.seconds + body.seconds, endsAt: at(left) } : { ...t, seconds: t.seconds + body.seconds, left };
+    }
+    if (fields.timer) fields.timer = JSON.parse(JSON.stringify(fields.timer));
+    await store.commit(req.principal, "board.timer", { board: b.id, action: body.action });
+    const nt = fields.timer as ClassTimer | undefined;
+    return { timer: nt ?? null, left: nt ? timerLeft(nt, now) : 0, now: now.toISOString() };
   });
 
   // ---- mapping -----------------------------------------------------------------------

@@ -3,19 +3,42 @@
 // A class board, lesson by lesson: a tab for the Welcome area and each lesson (the board's
 // top-level frames, top to bottom), the lesson alone on the canvas and fitted to it, and a full
 // screen mode that leaves only the tabs, the zoom and the board. "Whole board" shows everything.
+// A lesson's activities sit in a strip under the tabs; opening one shows its steps and reference
+// material beside the canvas. One timer runs for the whole class, and the board refreshes when
+// someone else changes it.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Board, CardType } from "@trainyard/core";
+import { activityTiming, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import type { RefSummary } from "@/components/link-picker";
+import { api, type ApiFailure } from "@/lib/api";
 
-export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onError }: { board: Board; refs: Record<string, RefSummary | null>; cardTypes: CardType[]; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+const clock = (secs: number) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+
+export function ClassBoard({
+  board,
+  refs,
+  cardTypes,
+  readOnly,
+  onChanged,
+  onError,
+  trainer = true,
+}: {
+  board: Board;
+  refs: Record<string, RefSummary | null>;
+  cardTypes: CardType[];
+  readOnly: boolean;
+  onChanged: () => void;
+  onError: (m: string) => void;
+  /** Runs the timer and sets up activities; false for a learner on a join link. */ trainer?: boolean;
+}) {
   const tabs = useMemo(() => board.frames.filter((f) => !f.parentId).sort((a, b) => a.y - b.y || a.x - b.x), [board.frames]);
   const [tab, setTab] = useState<string | null>(() => {
     if (typeof window === "undefined") return tabs[0]?.id ?? null;
-    const n = /^#lesson-(\d+)$/.exec(window.location.hash)?.[1];
+    const n = /^#lesson-(\d+)/.exec(window.location.hash)?.[1];
     return (n !== undefined ? tabs[Number(n)]?.id : undefined) ?? tabs[0]?.id ?? null;
   });
+  const [act, setAct] = useState<string | null>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const [full, setFull] = useState(false);
   useEffect(() => {
@@ -23,8 +46,22 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     document.addEventListener("fullscreenchange", on);
     return () => document.removeEventListener("fullscreenchange", on);
   }, []);
-  const pick = (id: string | null) => {
+
+  // The activities of the open lesson, in reading order.
+  const activities = useMemo(() => {
+    if (!tab) return [];
+    const under = new Set([tab]);
+    for (let grew = true; grew; ) {
+      grew = false;
+      for (const f of board.frames) if (f.parentId && under.has(f.parentId) && !under.has(f.id)) (under.add(f.id), (grew = true));
+    }
+    return board.frames.filter((f) => f.activity && f.id !== tab && under.has(f.id)).sort((a, b) => a.y - b.y || a.x - b.x);
+  }, [board.frames, tab]);
+  const current = activities.find((f) => f.id === act) ?? null;
+
+  const pick = (id: string | null, activity: string | null = null) => {
     setTab(id);
+    setAct(activity);
     const i = tabs.findIndex((t) => t.id === id);
     history.replaceState(null, "", i >= 0 ? `#lesson-${i}` : " ");
   };
@@ -33,25 +70,251 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     else if (wrap.current?.requestFullscreen) void wrap.current.requestFullscreen().catch(() => setFull((f) => !f));
     else setFull((f) => !f);
   };
+
+  // ---- the class timer and live refresh ----------------------------------------------------
+  const [timer, setTimer] = useState<{ t: ClassTimer; offset: number } | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+  const rev = useRef<string | null>(null);
+  const busy = useRef(false);
+  useEffect(() => {
+    let live = true;
+    const poll = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const r = await api<{
+          timer: ClassTimer | null;
+          now: string;
+          rev: string;
+        }>("GET", `/v1/boards/${encodeURIComponent(board.id)}/timer`);
+        if (!live) return;
+        setTimer(r.timer ? { t: r.timer, offset: Date.parse(r.now) - Date.now() } : null);
+        // Someone changed the board: fetch it, unless this person is in the middle of something.
+        const typing = document.activeElement instanceof HTMLTextAreaElement || document.activeElement instanceof HTMLInputElement;
+        if (rev.current && r.rev !== rev.current && !busy.current && !typing) onChanged();
+        if (!busy.current && !typing) rev.current = r.rev;
+      } catch {
+        /* offline for a moment: try again on the next tick */
+      }
+    };
+    void poll();
+    const id = window.setInterval(() => void poll(), 3000);
+    return () => {
+      live = false;
+      window.clearInterval(id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board.id]);
+  // A change made here is already on screen: take the new revision on the next poll without a refetch.
+  useEffect(() => {
+    rev.current = null;
+  }, [board]);
+  useEffect(() => {
+    if (!timer?.t.endsAt) return;
+    const id = window.setInterval(() => setNow(Date.now()), 250);
+    return () => window.clearInterval(id);
+  }, [timer]);
+  const left = timer ? (timer.t.endsAt ? Math.min(timer.t.seconds, Math.max(0, Math.ceil((Date.parse(timer.t.endsAt) - (now + timer.offset)) / 1000))) : Math.round(timer.t.left ?? timer.t.seconds)) : 0;
+  const runTimer = async (body: Record<string, unknown>) => {
+    try {
+      const r = await api<{ timer: ClassTimer | null; now: string }>("PUT", `/v1/boards/${encodeURIComponent(board.id)}/timer`, body);
+      setTimer(r.timer ? { t: r.timer, offset: Date.parse(r.now) - Date.now() } : null);
+      setNow(Date.now());
+    } catch (e) {
+      onError((e as ApiFailure).message);
+    }
+  };
+  const start = (f: Frame, label: string, minutes: number) =>
+    void runTimer({
+      action: "start",
+      label,
+      seconds: minutes * 60,
+      frameId: f.id,
+    });
+  const timerFrame = timer?.t.frameId ? board.frames.find((f) => f.id === timer.t.frameId) : undefined;
+  const openTimerActivity = () => {
+    if (!timerFrame) return;
+    let top: Frame | undefined = timerFrame;
+    while (top?.parentId) top = board.frames.find((f) => f.id === top!.parentId);
+    if (top) pick(top.id, timerFrame.id);
+  };
+
   // "Lesson 3: Facilitating PI Planning" reads "3 · Facilitating PI Planning" on its tab.
   const label = (title: string) => title.replace(/^Lesson\s+(\d+)\s*[:·-]\s*/i, "$1 · ");
+  const [sideOpen, setSideOpen] = useState(true);
   return (
-    <div ref={wrap} className={`class-board${full ? " full" : ""}`}>
-      <div className="class-tabs" role="tablist" aria-label="Lessons">
-        {tabs.map((t) => (
-          <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => pick(t.id)} title={t.title}>
-            {label(t.title)}
+    <div ref={wrap} className={`class-board${full ? " full" : ""}`} onPointerDownCapture={() => (busy.current = true)} onPointerUpCapture={() => (busy.current = false)} onPointerCancelCapture={() => (busy.current = false)}>
+      <div className="class-bar">
+        <div className="class-tabs" role="tablist" aria-label="Lessons">
+          {tabs.map((t) => (
+            <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => pick(t.id)} title={t.title}>
+              {label(t.title)}
+            </button>
+          ))}
+          <button role="tab" aria-selected={tab === null} onClick={() => pick(null)}>
+            Whole board
           </button>
-        ))}
-        <button role="tab" aria-selected={tab === null} onClick={() => pick(null)}>
-          Whole board
-        </button>
-        <span className="class-tabs-grow" />
+        </div>
+        {timer ? (
+          <span className={`class-timer${left === 0 ? " done" : ""}${timer.t.endsAt ? "" : " paused"}`} role="timer" aria-live={left === 0 ? "assertive" : "off"}>
+            <button className="class-timer-label" onClick={openTimerActivity} title={timerFrame ? `Open ${timerFrame.title}` : undefined}>
+              {left === 0 ? "Time's up" : `${timer.t.label} · ${clock(left)}`}
+              {timer.t.endsAt || left === 0 ? "" : " (paused)"}
+            </button>
+            {trainer ? (
+              <>
+                {left > 0 ? (
+                  <button
+                    onClick={() =>
+                      void runTimer({
+                        action: timer.t.endsAt ? "pause" : "resume",
+                      })
+                    }
+                    aria-label={timer.t.endsAt ? "Pause" : "Resume"}
+                  >
+                    {timer.t.endsAt ? "❚❚" : "▶"}
+                  </button>
+                ) : null}
+                <button onClick={() => void runTimer({ action: "add", seconds: 60 })} aria-label="One more minute">
+                  +1
+                </button>
+                <button onClick={() => void runTimer({ action: "stop" })} aria-label="Stop the timer">
+                  ×
+                </button>
+              </>
+            ) : null}
+          </span>
+        ) : null}
         <button className="btn small" style={{ whiteSpace: "nowrap", flex: "none" }} onClick={toggleFull} aria-pressed={full}>
           {full ? "Exit full screen" : "Full screen"}
         </button>
       </div>
-      <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={tab} fill={full} />
+
+      {activities.length ? (
+        <div className="class-acts" role="tablist" aria-label="Activities in this lesson">
+          <button role="tab" aria-selected={!current} onClick={() => setAct(null)}>
+            Whole lesson
+          </button>
+          {activities.map((f) => (
+            <button key={f.id} role="tab" aria-selected={current?.id === f.id} onClick={() => setAct(f.id)}>
+              <span>{f.title}</span>
+              {activityTiming(f.activity!) ? <small>{activityTiming(f.activity!)}</small> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {current ? (
+        <div className="class-act-head">
+          <div>
+            <span className="eyebrow">{current.activity!.kind}</span>
+            <h3>{current.title.replace(new RegExp(`^${current.activity!.kind}:\\s*`), "")}</h3>
+          </div>
+          <span className="class-act-time">{activityTiming(current.activity!)}</span>
+          {trainer ? (
+            <span className="row" style={{ gap: 6 }}>
+              {current.activity!.prepare ? (
+                <button className="btn small" onClick={() => start(current, current.activity!.share ? "Prepare" : current.activity!.kind, current.activity!.prepare!)}>
+                  ▶ {current.activity!.share ? "Prepare" : "Start"} {current.activity!.prepare} min
+                </button>
+              ) : null}
+              {current.activity!.share ? (
+                <button className="btn small" onClick={() => start(current, "Share", current.activity!.share!)}>
+                  ▶ Share {current.activity!.share} min
+                </button>
+              ) : null}
+            </span>
+          ) : null}
+          <span className="class-tabs-grow" />
+          <button className="btn small ghost" onClick={() => setSideOpen((v) => !v)} aria-expanded={sideOpen}>
+            {sideOpen ? "Hide steps" : "Show steps"}
+          </button>
+        </div>
+      ) : null}
+
+      <div className={current && sideOpen ? "class-act-body" : undefined}>
+        <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={current?.id ?? tab} fill={full} trainer={trainer} />
+        {current && sideOpen ? <ActivitySide steps={current.activity!.steps} side={current.activity!.side ?? []} /> : null}
+      </div>
     </div>
+  );
+}
+
+/** The steps, then the reference material: one tab per item when there are several. */
+function ActivitySide({ steps, side }: { steps: string; side: SideItem[] }) {
+  const [i, setI] = useState(0);
+  const [zoomed, setZoomed] = useState<string | null>(null);
+  const item = side[Math.min(i, side.length - 1)];
+  return (
+    <aside className="class-act-side panel panel-body stack" aria-label="Steps and reference">
+      {steps.trim() ? (
+        <ol className="class-steps">
+          {steps
+            .split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean)
+            .map((l, k) => {
+              const m = /^(Step\s*\d+)\s*[:.]\s*(.*)$/i.exec(l);
+              const sub = /^[-•*]\s*/.test(l);
+              return (
+                <li key={k} className={sub ? "sub" : undefined}>
+                  {m ? (
+                    <>
+                      <b>{m[1]}:</b> {m[2]}
+                    </>
+                  ) : (
+                    l.replace(/^[-•*]\s*/, "")
+                  )}
+                </li>
+              );
+            })}
+        </ol>
+      ) : null}
+      {side.length > 1 ? (
+        <div className="class-side-tabs" role="tablist">
+          {side.map((x, k) => (
+            <button key={k} role="tab" aria-selected={k === i} onClick={() => setI(k)}>
+              {x.title}
+              {x.instructorOnly ? " 🔒" : ""}
+            </button>
+          ))}
+        </div>
+      ) : item ? (
+        <span className="eyebrow">
+          {item.title}
+          {item.instructorOnly ? " · trainer only" : ""}
+        </span>
+      ) : null}
+      {item?.url ? (
+        <div className="stack" style={{ gap: 6 }}>
+          <iframe className="class-side-frame" src={item.url} title={item.title} sandbox="allow-scripts allow-same-origin allow-popups allow-forms" referrerPolicy="no-referrer" loading="lazy" />
+          <span className="faint" style={{ fontSize: "0.76rem" }}>
+            Blank? Some sites do not allow being shown inside another page.{" "}
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              Open it in a new tab ↗
+            </a>
+          </span>
+        </div>
+      ) : null}
+      {item?.image ? (
+        <button className="class-side-img" onClick={() => setZoomed(item.image!)} aria-label={`Enlarge ${item.title}`}>
+          <img src={item.image} alt={item.title} />
+        </button>
+      ) : null}
+      {item?.text ? <p style={{ whiteSpace: "pre-wrap", margin: 0 }}>{item.text}</p> : null}
+      {zoomed ? (
+        <div className="lp-backdrop" style={{ zIndex: 95, alignItems: "center", padding: 16 }} role="dialog" aria-modal="true" aria-label="Picture" onClick={() => setZoomed(null)}>
+          <img
+            src={zoomed}
+            alt=""
+            style={{
+              maxWidth: "96vw",
+              maxHeight: "92vh",
+              borderRadius: 10,
+              background: "#fff",
+            }}
+          />
+        </div>
+      ) : null}
+    </aside>
   );
 }

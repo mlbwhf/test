@@ -5,6 +5,7 @@
 // mapping can promote its cards or rows into planning objects when the user asks.
 
 import type { Dependency, FlowType, Risk, StatusCategory, Team, WorkItem } from "./model.js";
+import type { Activity } from "./activities.js";
 
 export type BoardSource = "miro" | "lucid" | "mural" | "monday" | "trello" | "iobeya" | "csv" | "json" | "pptx" | "trainyard";
 
@@ -25,6 +26,8 @@ export interface Frame {
   width: number;
   height: number;
   parentId?: string;
+  /** A class activity: timing, steps, reference material and connection types (activities.ts). */
+  activity?: Activity;
 }
 
 export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "view" | "other";
@@ -67,6 +70,8 @@ export interface BoardEdge {
   fromId: string;
   toId: string;
   label?: string;
+  /** A connection type of the activity it sits in (activities.ts). */
+  type?: string;
 }
 
 export interface Column {
@@ -118,6 +123,12 @@ export function boardShape(b: Board): "canvas" | "table" | "mixed" | "empty" {
   return canvas && table ? "mixed" : canvas ? "canvas" : table ? "table" : "empty";
 }
 
+/** Board-level facts to carry to a copy; a running class timer stays behind. */
+function boardFacts(fields: Record<string, unknown>): Record<string, unknown> {
+  const { timer: _timer, ...rest } = structuredClone(fields);
+  return rest;
+}
+
 /**
  * Keep the structure, drop the content. Frames, columns and groups stay; cards become
  * empty slots only when the frame or group would otherwise be empty, so the template
@@ -140,7 +151,7 @@ export function templateFrom(board: Board, id: string, name: string, now: string
     nodes: keptNodes,
     edges: [],
     columns: structuredClone(board.columns),
-    ...(board.fields ? { fields: structuredClone(board.fields) } : {}),
+    ...(board.fields ? { fields: boardFacts(board.fields) } : {}),
     groups: structuredClone(board.groups),
     rows: [],
   };
@@ -162,7 +173,7 @@ export function instantiate(template: Board, id: string, name: string, now: stri
     groups: template.groups.map((g) => ({ ...g })),
     rows: [],
     // Board-level facts travel with it: a class board stays a class board.
-    ...(template.fields ? { fields: structuredClone(template.fields) } : {}),
+    ...(template.fields ? { fields: boardFacts(template.fields) } : {}),
   };
 }
 

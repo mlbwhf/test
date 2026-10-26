@@ -8,6 +8,7 @@ import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
 import { ClassStudents } from "@/components/class-students";
+import { ImportActivities } from "@/components/activity-editor";
 import { AssistButton } from "@/components/assist";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
@@ -42,7 +43,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       <>
         <PageHead title={board.name} sub="Your class board: open a lesson tab, add cards and write on them. Your trainer and classmates see the same board." />
         {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
-        <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={false} onChanged={() => void view.reload()} onError={setErr} />
+        <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={false} onChanged={() => void view.reload()} onError={setErr} trainer={false} />
       </>
     );
   }
@@ -107,6 +108,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
               >
                 Rename
               </button>
+              <ImportActivities board={board} onDone={(m) => (setErr(null), setDone(m), void view.reload())} onError={setErr} />
               <button className="btn" onClick={() => run("Saved as your own class template: start new classes from it under Classes.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/template`, { name: `${board.name} (my template)`, keepCards: true }))}>
                 Save as my class template
               </button>
