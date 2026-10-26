@@ -72,7 +72,7 @@ const lesson1: ActivitySpec[] = [
     share: 5,
     width: widthFor(3),
     height: 600,
-    steps: "Step 1: In your group, explore how the widespread adoption of AI could augment Release Train Engineers' responsibilities and support teams in delivering value. For example, consider:\n- PI Planning facilitation: How might AI-assisted planning tools and dependency mapping change how you prepare for and facilitate PI Planning events, and how you budget your time?\n- Impediment identification: How might AI analyzing team metrics, flow data, and retrospective feedback change how you identify and remove impediments across the ART?\n- Coach and servant leader priorities: How might AI handling coordination and reporting tasks change how you support team-level and ART-level continuous improvement?\nStep 2: Be prepared to share with the class.",
+    steps: "Step 1: In your group, explore how the widespread adoption of AI could augment Release Train Engineers’ responsibilities and support teams in delivering value. For example, consider:\n- PI Planning facilitation: How might AI-assisted planning tools and dependency mapping change how you prepare for and facilitate PI Planning events, and how you budget your time?\n- Impediment identification: How might AI analyzing team metrics, flow data, and retrospective feedback change how you identify and remove impediments across the ART?\n- Coach and servant leader priorities: How might AI handling coordination and reporting tasks change how you support team-level and ART-level continuous improvement?\nStep 2: Be prepared to share with the class.",
     side: [RTE_ROLE],
     items: columns(["PI Planning facilitation", "Impediment identification", "Coach and servant leader priorities"]),
   },
@@ -124,7 +124,7 @@ function preparationGrid(): ActivityItem[] {
 function readinessCards(): ActivityItem[] {
   const [w, h, gap, cols] = [380, 230, 24, 4];
   return [
-    { kind: "text", text: "(Y) Yes, must be in place   ·   (N) No, doesn't need to be in place   ·   (D) Depends on context", x: 30, y: 20, width: cols * (w + gap), height: 60, fontSize: 26, locked: true },
+    { kind: "text", text: "(Y) Yes, must be in place   ·   (N) No, doesn’t need to be in place   ·   (D) Depends on context", x: 30, y: 20, width: cols * (w + gap), height: 60, fontSize: 26, locked: true },
     ...PI_PLANNING_READINESS.map((r, i): ActivityItem => ({ kind: "card", text: `${r.text}\n${r.question}`, x: 30 + (i % cols) * (w + gap), y: 100 + Math.floor(i / cols) * (h + gap), width: w, height: h, color: "#ffffff", fontSize: 17, choices: ["Y", "N", "D"] })),
   ];
 }
@@ -137,7 +137,7 @@ const lesson3: ActivitySpec[] = [
     share: 5,
     width: 1560,
     height: 1000,
-    steps: "Step 1: With your group, consider the effects of doing more or less pre-planning before PI Planning.\nStep 2: Place each point in the quadrant where it fits: more or less pre-planning, with a positive or a negative effect. Put a point on a border when it sits between two, and say why.\nStep 3: Be prepared to share with the class.\n- Double-click a spot on the grid to add a sticky there.",
+    steps: "How much preparation is enough?",
     items: preparationGrid(),
   },
   {
@@ -145,9 +145,10 @@ const lesson3: ActivitySpec[] = [
     kind: "Activity",
     prepare: 5,
     share: 5,
+    shareLabel: "Showcase",
     width: 4 * 404 + 40,
     height: 100 + Math.ceil(PI_PLANNING_READINESS.length / 4) * 254 + 40,
-    steps: "Step 1: Determine which items on the ART readiness checklist must be in place in order to run your next PI Planning event.\nStep 2: In your workbook, mark each item with a Y, N, or D to indicate if it is necessary for running the PI Planning event:\n- (Y) Yes, must be in place\n- (N) No, doesn't need to be in place\n- (D) Depends on context\nStep 3: Be prepared to share with the class",
+    steps: "Step 1: Determine which items on the ART readiness checklist must be in place in order to run your next PI Planning event.\nStep 2: In your workbook, mark each item with a Y, N, or D to indicate if it is necessary for running the PI Planning event:\n- (Y) Yes, must be in place\n- (N) No, doesn’t need to be in place\n- (D) Depends on context\nStep 3: Be prepared to share with the class",
     items: readinessCards(),
   },
 ];

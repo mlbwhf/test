@@ -28,6 +28,8 @@ export interface Activity {
   /** Minutes to prepare (work in groups) and to share back; either may be absent. */
   prepare?: number;
   share?: number;
+  /** What the second part is called when not "Share" (e.g. "Showcase"). */
+  shareLabel?: string;
   /** The question, one step per line. */
   steps: string;
   side?: SideItem[];
@@ -78,8 +80,8 @@ export interface ActivitySpec extends Activity {
 export const DEFAULT_CONNECTION_COLORS = ["#c2412d", "#2f6fbd", "#2e8b57", "#8c6bc8", "#d98a1c", "#1f8a9e"];
 
 /** "Prepare: 7 min · Share: 3 min" */
-export function activityTiming(a: Pick<Activity, "prepare" | "share">): string {
-  const parts = [a.prepare ? `${a.share ? "Prepare: " : ""}${a.prepare} min` : "", a.share ? `Share: ${a.share} min` : ""].filter(Boolean);
+export function activityTiming(a: Pick<Activity, "prepare" | "share" | "shareLabel">): string {
+  const parts = [a.prepare ? `${a.share ? "Prepare: " : ""}${a.prepare} min` : "", a.share ? `${a.shareLabel ?? "Share"}: ${a.share} min` : ""].filter(Boolean);
   return parts.join(" · ");
 }
 

@@ -88,6 +88,7 @@ function Dialog({ base, frame, onClose, onSaved, onError }: { base: string; fram
             steps,
             ...(p !== undefined ? { prepare: p } : {}),
             ...(s !== undefined ? { share: s } : {}),
+            ...(a.shareLabel ? { shareLabel: a.shareLabel } : {}),
             side: side
               .filter((x) => x.title.trim() && (sideKind(x) === "text" || (sideKind(x) === "url" ? !!x.url?.trim() : !!x.image)))
               .map((x) => ({

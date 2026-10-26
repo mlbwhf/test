@@ -38,6 +38,7 @@ const ActivityBody = z.object({
   kind: z.string().min(1).max(40),
   prepare: z.number().int().min(0).max(600).optional(),
   share: z.number().int().min(0).max(600).optional(),
+  shareLabel: z.string().min(1).max(40).optional(),
   steps: z.string().max(8000),
   side: z.array(z.object({ title: z.string().min(1).max(200), url: Link.optional(), image: ImageData.optional(), text: z.string().max(8000).optional(), instructorOnly: z.boolean().optional() })).max(8).optional(),
   connectionTypes: z.array(z.object({ id: z.string().min(1).max(40), label: z.string().min(1).max(300), color: z.string().max(40).default("") })).max(8).optional(),

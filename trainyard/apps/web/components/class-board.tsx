@@ -230,8 +230,8 @@ export function ClassBoard({
                 </button>
               ) : null}
               {current.activity.share ? (
-                <button className="btn small" onClick={() => start(current, "Share", current.activity!.share!)}>
-                  ▶ Share {current.activity.share} min
+                <button className="btn small" onClick={() => start(current, current.activity!.shareLabel ?? "Share", current.activity!.share!)}>
+                  ▶ {current.activity.shareLabel ?? "Share"} {current.activity.share} min
                 </button>
               ) : null}
             </span>

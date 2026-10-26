@@ -547,7 +547,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={removeSelected} disabled={!selNode}>
                 Delete card
               </button>
-              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click or double-tap a card to write · pinch or Ctrl+wheel to zoom · Esc deselects</span>
+              <span className="faint" style={{ fontSize: "0.78rem" }}>Drag to move · double-click or double-tap a card to write, or an empty spot to add a sticky there · pinch or Ctrl+wheel to zoom · Esc deselects</span>
             </>
           )}
         </div>
