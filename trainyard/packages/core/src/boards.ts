@@ -28,6 +28,8 @@ export interface Frame {
   parentId?: string;
   /** A class activity: timing, steps, reference material and connection types (activities.ts). */
   activity?: Activity;
+  /** A class exercise the trainer marked complete. */
+  done?: boolean;
 }
 
 export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "view" | "other";

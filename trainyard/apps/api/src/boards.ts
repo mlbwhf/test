@@ -5,7 +5,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { addActivities, boardRevision, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
+import { addActivities, boardRevision, courseBoard, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
 import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
@@ -209,6 +209,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       return reply.code(201).send({ board: summary(board), slides: board.fields?.slides, lessons: board.fields?.lessons, bands: board.fields?.bands, skipped: board.fields?.skipped });
     },
   );
+
+  // The trainer's own course as a JSON file: lessons with their exercises, a class template kept in this workspace.
+  app.post("/v1/imports/class-pack", { bodyLimit: 48 * 1024 * 1024, schema: { body: z.object({ name: z.string().min(1).max(120), lessons: z.array(z.object({ title: z.string().min(1).max(200), activities: z.array(ActivitySpecBody).max(40) })).min(1).max(40) }) } }, async (req, reply) => {
+    require(req, "plan");
+    requireSignup(req, "Importing a course");
+    if (req.body.lessons.reduce((n, l) => n + l.activities.reduce((m, a) => m + (a.items?.length ?? 0), 0), 0) > MAX_BOARD_NODES) throw new ApiError(413, "BOARD_TOO_LARGE", `A board holds up to ${MAX_BOARD_NODES} cards.`);
+    const board = courseBoard({ name: req.body.name, lessons: req.body.lessons.map((l) => ({ title: l.title, activities: l.activities.map((a) => defined(a) as ActivitySpec) })) }, `tpl-deck-${Date.now().toString(36)}`, store.now().toISOString());
+    board.origin.importedBy = req.principal.userId;
+    boards().push(board);
+    await store.commit(req.principal, "board.import", { id: board.id, system: "course", lessons: req.body.lessons.length });
+    return reply.code(201).send({ board: summary(board), lessons: req.body.lessons.length, activities: req.body.lessons.reduce((n, l) => n + l.activities.length, 0) });
+  });
 
   // Miro "export as CSV": widget texts in reading order, no positions; rebuilt as frames of cards.
   app.post("/v1/imports/miro-csv", { bodyLimit: 8 * 1024 * 1024, schema: { body: z.object({ name: z.string().min(1).max(120), csv: z.string().min(1).max(6_000_000) }) } }, async (req, reply) => {
@@ -552,20 +564,22 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     return reply.code(204).send();
   });
 
-  app.patch("/v1/boards/:id/frames/:frameId", { bodyLimit: 32 * 1024 * 1024, schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional(), activity: ActivityBody.nullable().optional() }) } }, async (req) => {
+  app.patch("/v1/boards/:id/frames/:frameId", { bodyLimit: 32 * 1024 * 1024, schema: { params: z.object({ id: Id, frameId: Id }), body: z.object({ title: z.string().min(1).max(200).optional(), x: z.number().optional(), y: z.number().optional(), width: z.number().min(40).optional(), height: z.number().min(40).optional(), activity: ActivityBody.nullable().optional(), done: z.boolean().optional() }) } }, async (req) => {
     require(req, "plan");
     const b = editable(req, req.params.id);
     const f = b.frames.find((x) => x.id === req.params.frameId);
     if (!f) throw notFound("Frame");
     const dx = (req.body.x ?? f.x) - f.x;
     const dy = (req.body.y ?? f.y) - f.y;
-    const { activity, ...geometry } = req.body;
+    const { activity, done, ...geometry } = req.body;
     Object.assign(f, defined(geometry));
+    if (done === false) delete f.done;
+    else if (done) f.done = true;
     if (activity === null) delete f.activity;
     else if (activity) f.activity = defined(activity) as Activity;
     // Cards travel with their frame.
     if (dx || dy) for (const n of b.nodes) if (n.frameId === f.id) (n.x += dx), (n.y += dy);
-    await store.commit(req.principal, "board.frame.update", { board: b.id, frame: f.id, ...defined(geometry), ...(activity !== undefined ? { activity: activity ? "set" : "cleared" } : {}) });
+    await store.commit(req.principal, "board.frame.update", { board: b.id, frame: f.id, ...defined(geometry), ...(activity !== undefined ? { activity: activity ? "set" : "cleared" } : {}), ...(done !== undefined ? { done } : {}) });
     return { frame: f };
   });
 

@@ -43,3 +43,18 @@ describe("class activities", () => {
     expect(timerLeft({ label: "Prepare", seconds: 420, endsAt: "2026-01-01T09:00:00Z" }, now)).toBe(0);
   });
 });
+
+describe("a trainer's own course", () => {
+  it("builds a class with the Welcome area and exactly the pack's exercises per lesson", async () => {
+    const { courseBoard } = await import("./index.js");
+    const b = courseBoard({ name: "My RTE", lessons: [{ title: "Exploring the role", activities: [{ title: "One", kind: "Activity", prepare: 7, share: 3, steps: "Step 1" }, { title: "Two", kind: "Discussion", prepare: 15, steps: "" }] }, { title: "Organizing the ART", activities: [{ title: "Three", kind: "Discussion", prepare: 8, steps: "" }] }] }, "tpl-deck-x", "2026-01-01T00:00:00.000Z");
+    const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the role", "Lesson 2: Organizing the ART"]);
+    const kids = (id: string) => b.frames.filter((f) => f.parentId === id).map((f) => f.title);
+    expect(kids(top[1]!.id)).toEqual(["Activity: One", "Discussion: Two"]);
+    expect(kids(top[2]!.id)).toEqual(["Discussion: Three"]);
+    // Lessons do not overlap.
+    expect(top[2]!.y).toBeGreaterThan(top[1]!.y + top[1]!.height);
+    expect(b).toMatchObject({ isTemplate: true, fields: { class: "custom" } });
+  });
+});

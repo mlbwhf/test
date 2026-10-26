@@ -328,3 +328,6 @@
 @media (pointer: coarse) { .conn-type { padding: 10px 12px; } .class-acts [role="tab"] { padding: 10px 14px; } }
 .class-bar { display: flex; gap: 8px; align-items: center; min-width: 0; }
 .class-bar .class-tabs { flex: 1; min-width: 0; }
+.class-acts [role="tab"].done { border-style: solid; border-color: #2e8b57; }
+.class-done { color: #2e8b57; font-weight: 800; }
+[aria-selected="true"] > .class-done { color: inherit; }

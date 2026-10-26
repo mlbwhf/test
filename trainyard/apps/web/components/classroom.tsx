@@ -153,7 +153,7 @@ const MAX_DECK_BYTES = 35 * 1024 * 1024;
  */
 function CourseDecks({ anonymous, onStarted }: { anonymous: boolean; onStarted: (boardId: string) => void }) {
   const templates = useApi<{ saved: BoardSummary[] }>("/v1/templates/boards");
-  const decks = (templates.data?.saved ?? []).filter((t) => t.origin.system === "pptx");
+  const decks = (templates.data?.saved ?? []).filter((t) => t.origin.system === "pptx" || t.id.startsWith("tpl-deck-"));
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -163,7 +163,25 @@ function CourseDecks({ anonymous, onStarted }: { anonymous: boolean; onStarted: 
     if (!file) return;
     setErr(null);
     setDone(null);
-    if (!/\.pptx$/i.test(file.name)) return setErr("Choose a PowerPoint .pptx file. Save older .ppt decks, Keynote or Google Slides as .pptx first.");
+    if (/\.json$/i.test(file.name)) {
+      // A course file: lessons with their exercises, steps, timings and pictures.
+      setBusy("upload");
+      try {
+        const pack = JSON.parse(await file.text()) as { name?: string; lessons?: unknown[] };
+        if (!Array.isArray(pack.lessons)) throw new Error("This JSON file is not a course: it has no lessons.");
+        const r = await api<{ board: { name: string }; lessons: number; activities: number }>("POST", "/v1/imports/class-pack", { name: name.trim() || pack.name || file.name.replace(/\.json$/i, ""), lessons: pack.lessons });
+        setDone(`${r.board.name}: ${r.activities} exercise${r.activities === 1 ? "" : "s"} in ${r.lessons} lesson${r.lessons === 1 ? "" : "s"}, plus Welcome.`);
+        setFile(null);
+        setName("");
+        await templates.reload();
+      } catch (e) {
+        setErr(e instanceof SyntaxError ? "That file is not valid JSON." : (e as Error).message);
+      } finally {
+        setBusy(null);
+      }
+      return;
+    }
+    if (!/\.pptx$/i.test(file.name)) return setErr("Choose a PowerPoint .pptx file or a course .json file. Save older .ppt decks, Keynote or Google Slides as .pptx first.");
     if (file.size > MAX_DECK_BYTES) return setErr(`This deck is ${Math.round(file.size / 1024 / 1024)} MB; up to 35 MB can be imported. Compress its pictures in PowerPoint and try again.`);
     setBusy("upload");
     try {
@@ -218,8 +236,8 @@ function CourseDecks({ anonymous, onStarted }: { anonymous: boolean; onStarted: 
       >
         <div className="row" style={{ alignItems: "flex-end" }}>
           <label className="field" style={{ flex: "1 1 220px" }}>
-            Import your course deck (.pptx)
-            <input id="deck-file" className="input" type="file" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation" onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={anonymous} required />
+            Import your course deck (.pptx) or course file (.json)
+            <input id="deck-file" className="input" type="file" accept=".pptx,.json,application/json,application/vnd.openxmlformats-officedocument.presentationml.presentation" onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={anonymous} required />
           </label>
           <label className="field" style={{ flex: "1 1 180px" }}>
             Template name (optional)

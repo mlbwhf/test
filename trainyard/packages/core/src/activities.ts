@@ -3,6 +3,7 @@
 // Licensed course content never ships here: instructors bring it in per workspace (addActivities).
 
 import type { Board, BoardNode, Frame } from "./boards.js";
+import { classBoard } from "./classes.js";
 
 export interface ConnectionType {
   id: string;
@@ -151,8 +152,46 @@ export function boardRevision(b: Board): string {
     for (let i = 0; i < v.length; i++) h = Math.imul(h ^ v.charCodeAt(i), 16777619);
   };
   add(b.name);
-  for (const f of b.frames) add(`${f.id}|${f.title}|${f.x}|${f.y}|${f.width}|${f.height}|${f.activity ? JSON.stringify({ ...f.activity, side: f.activity.side?.map((x) => [x.title, x.url, x.text, x.image?.length, x.instructorOnly]) }) : ""}`);
+  for (const f of b.frames) add(`${f.id}|${f.title}|${f.done ? 1 : 0}|${f.x}|${f.y}|${f.width}|${f.height}|${f.activity ? JSON.stringify({ ...f.activity, side: f.activity.side?.map((x) => [x.title, x.url, x.text, x.image?.length, x.instructorOnly]) }) : ""}`);
   for (const n of b.nodes) add(`${n.id}|${n.x}|${n.y}|${n.width}|${n.height}|${n.text}|${n.color}|${n.frameId}|${n.fields.locked ? 1 : 0}|${typeof n.fields.src === "string" ? n.fields.src.length : 0}`);
   for (const e of b.edges) add(`${e.id}|${e.fromId}|${e.toId}|${e.type ?? ""}|${e.label ?? ""}`);
   return (h >>> 0).toString(36);
+}
+
+/** A trainer's own course: lessons in order, each with its exercises. Kept in their workspace only. */
+export interface CoursePack {
+  name: string;
+  lessons: { title: string; activities: ActivitySpec[] }[];
+}
+
+/**
+ * A class template from a course pack: the Welcome area (board intro, agenda, logistics,
+ * icebreaker, team) and a lesson per pack lesson holding exactly its exercises.
+ */
+export function courseBoard(pack: CoursePack, id: string, now: string): Board {
+  const b = classBoard({ id: "course", name: pack.name, short: pack.name, blurb: "", days: 1, lessons: pack.lessons.map((l) => ({ title: l.title, exercises: [] })) }, now);
+  b.id = id;
+  b.isTemplate = true;
+  b.origin = { system: "json", externalId: "course-pack", importedAt: now };
+  b.fields = { class: "custom", source: "course", lessons: pack.lessons.length };
+  const lessons = b.frames.filter((f) => !f.parentId && /^Lesson\s+\d+/i.test(f.title)).sort((x, y) => x.y - y.y);
+  // classBoard gives an empty lesson a notes exercise; a course lesson holds only its own.
+  const drop = new Set(b.frames.filter((f) => lessons.some((l) => isInside(b, f, l.id))).map((f) => f.id));
+  b.frames = b.frames.filter((f) => !drop.has(f.id));
+  b.nodes = b.nodes.filter((n) => !n.frameId || !drop.has(n.frameId));
+  // Empty lessons, stacked below the Welcome area; each grows as its exercises go in.
+  const welcome = b.frames.filter((f) => !f.parentId && !lessons.includes(f));
+  let y = Math.max(0, ...welcome.map((f) => f.y + f.height)) + 80;
+  for (const l of lessons) {
+    l.y = y;
+    l.height = 160;
+    y += l.height + 80;
+  }
+  lessons.forEach((l, i) => addActivities(b, l.id, pack.lessons[i]!.activities, `${l.id}-x`));
+  return b;
+}
+
+function isInside(b: Board, f: Frame, ancestor: string): boolean {
+  for (let p = f.parentId; p; p = b.frames.find((x) => x.id === p)?.parentId) if (p === ancestor) return true;
+  return false;
 }

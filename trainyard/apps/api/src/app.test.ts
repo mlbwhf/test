@@ -1829,6 +1829,25 @@ describe("rooms", () => {
 });
 
 describe("classes: students by link, wipe and custom templates", () => {
+  it("imports a trainer's own course as a class template, and the trainer marks exercises complete", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const pack = { name: "My RTE", lessons: [{ title: "Exploring the role", activities: [{ title: "One", kind: "Activity", prepare: 7, share: 3, steps: "Step 1" }] }, { title: "Organizing the ART", activities: [{ title: "Two", kind: "Discussion", prepare: 8, steps: "Step 1" }] }] };
+    const r = await call("POST", "/v1/imports/class-pack", pack, root);
+    expect(r.status).toBe(201);
+    expect(r.body).toMatchObject({ lessons: 2, activities: 2 });
+    const tplId = r.body.board.id as string;
+    expect(tplId).toMatch(/^tpl-deck-/);
+    expect((await call("GET", "/v1/templates/boards", undefined, root)).body.saved.map((b: { id: string }) => b.id)).toContain(tplId);
+    const id = (await call("POST", `/v1/templates/boards/${tplId}/create`, { name: "March" }, root)).body.board.id as string;
+    const frames = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; title: string; done?: boolean }[];
+    const one = frames.find((f) => f.title === "Activity: One")!;
+    expect((await call("PATCH", `/v1/boards/${id}/frames/${one.id}`, { done: true }, root)).body.frame.done).toBe(true);
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
+    expect((await call("PATCH", `/v1/boards/${id}/frames/${one.id}`, { done: false }, ana)).status).toBe(403);
+    expect((await call("PATCH", `/v1/boards/${id}/frames/${one.id}`, { done: false }, root)).body.frame.done).toBeUndefined();
+  });
+
   it("adds activities to a lesson, runs one timer for the class, and keeps answer keys from learners", async () => {
     const { call } = await setup();
     const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;

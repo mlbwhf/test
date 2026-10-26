@@ -13,6 +13,8 @@ import { CanvasEditor } from "@/components/canvas-editor";
 import type { RefSummary } from "@/components/link-picker";
 import { api, type ApiFailure } from "@/lib/api";
 
+/** The "Whole lesson" sub-tab. */
+const WHOLE = "__whole__";
 const clock = (secs: number) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
 
 export function ClassBoard({
@@ -47,17 +49,12 @@ export function ClassBoard({
     return () => document.removeEventListener("fullscreenchange", on);
   }, []);
 
-  // The activities of the open lesson, in reading order.
-  const activities = useMemo(() => {
-    if (!tab) return [];
-    const under = new Set([tab]);
-    for (let grew = true; grew; ) {
-      grew = false;
-      for (const f of board.frames) if (f.parentId && under.has(f.parentId) && !under.has(f.id)) (under.add(f.id), (grew = true));
-    }
-    return board.frames.filter((f) => f.activity && f.id !== tab && under.has(f.id)).sort((a, b) => a.y - b.y || a.x - b.x);
-  }, [board.frames, tab]);
-  const current = activities.find((f) => f.id === act) ?? null;
+  // A lesson's exercises are the frames directly in it, in reading order: a sub-tab each.
+  const exercisesOf = (id: string) => board.frames.filter((f) => f.parentId === id).sort((a, b) => a.y - b.y || a.x - b.x);
+  const exercises = useMemo(() => (tab ? exercisesOf(tab) : []), [board.frames, tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  // A lesson opens on its first exercise; "Whole lesson" shows them all.
+  const current = act === WHOLE ? null : (exercises.find((f) => f.id === act) ?? exercises[0] ?? null);
+  const markDone = (f: Frame) => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/frames/${encodeURIComponent(f.id)}`, { done: !f.done }).then(onChanged, (e: ApiFailure) => onError(e.message));
 
   const pick = (id: string | null, activity: string | null = null) => {
     setTab(id);
@@ -138,18 +135,23 @@ export function ClassBoard({
     if (top) pick(top.id, timerFrame.id);
   };
 
-  // "Lesson 3: Facilitating PI Planning" reads "3 · Facilitating PI Planning" on its tab.
-  const label = (title: string) => title.replace(/^Lesson\s+(\d+)\s*[:·-]\s*/i, "$1 · ");
+  // "Lesson 3: Facilitating PI Planning" reads "03 Facilitating PI Planning" on its tab.
+  const label = (title: string) => title.replace(/^Lesson\s+(\d+)\s*[:·-]?\s*/i, (_, n: string) => `${n.padStart(2, "0")} `);
   const [sideOpen, setSideOpen] = useState(true);
   return (
     <div ref={wrap} className={`class-board${full ? " full" : ""}`} onPointerDownCapture={() => (busy.current = true)} onPointerUpCapture={() => (busy.current = false)} onPointerCancelCapture={() => (busy.current = false)}>
       <div className="class-bar">
         <div className="class-tabs" role="tablist" aria-label="Lessons">
-          {tabs.map((t) => (
-            <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => pick(t.id)} title={t.title}>
-              {label(t.title)}
-            </button>
-          ))}
+          {tabs.map((t) => {
+            const ex = exercisesOf(t.id);
+            const done = ex.length > 0 && ex.every((f) => f.done);
+            return (
+              <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => pick(t.id)} title={t.title}>
+                {label(t.title)}
+                {done ? <span className="class-done" aria-label="complete"> ✓</span> : null}
+              </button>
+            );
+          })}
           <button role="tab" aria-selected={tab === null} onClick={() => pick(null)}>
             Whole board
           </button>
@@ -189,51 +191,63 @@ export function ClassBoard({
         </button>
       </div>
 
-      {activities.length ? (
-        <div className="class-acts" role="tablist" aria-label="Activities in this lesson">
-          <button role="tab" aria-selected={!current} onClick={() => setAct(null)}>
-            Whole lesson
-          </button>
-          {activities.map((f) => (
-            <button key={f.id} role="tab" aria-selected={current?.id === f.id} onClick={() => setAct(f.id)}>
-              <span>{f.title}</span>
-              {activityTiming(f.activity!) ? <small>{activityTiming(f.activity!)}</small> : null}
+      {exercises.length ? (
+        <div className="class-acts" role="tablist" aria-label="Exercises in this lesson">
+          {exercises.map((f) => (
+            <button key={f.id} role="tab" aria-selected={current?.id === f.id} onClick={() => setAct(f.id)} className={f.done ? "done" : undefined}>
+              <span>
+                {f.done ? <span aria-label="complete">✓ </span> : null}
+                {f.title}
+              </span>
+              {f.activity && activityTiming(f.activity) ? <small>{activityTiming(f.activity)}</small> : null}
             </button>
           ))}
+          <button role="tab" aria-selected={!current} onClick={() => setAct(WHOLE)}>
+            Whole lesson
+          </button>
         </div>
       ) : null}
 
       {current ? (
         <div className="class-act-head">
           <div>
-            <span className="eyebrow">{current.activity!.kind}</span>
-            <h3>{current.title.replace(new RegExp(`^${current.activity!.kind}:\\s*`), "")}</h3>
+            {current.activity ? <span className="eyebrow">{current.activity.kind}</span> : null}
+            <h3>{current.activity ? current.title.replace(new RegExp(`^${current.activity.kind}:\\s*`), "") : current.title}</h3>
           </div>
-          <span className="class-act-time">{activityTiming(current.activity!)}</span>
+          {current.activity && activityTiming(current.activity) ? <span className="class-act-time">{activityTiming(current.activity)}</span> : null}
           {trainer ? (
+            <button className={`btn small${current.done ? " primary" : ""}`} onClick={() => void markDone(current)} aria-pressed={!!current.done}>
+              {current.done ? "✓ Completed" : "Mark complete"}
+            </button>
+          ) : current.done ? (
+            <span className="chip">✓ Completed</span>
+          ) : null}
+          {trainer && current.activity ? (
             <span className="row" style={{ gap: 6 }}>
-              {current.activity!.prepare ? (
+              {current.activity.prepare ? (
                 <button className="btn small" onClick={() => start(current, current.activity!.share ? "Prepare" : current.activity!.kind, current.activity!.prepare!)}>
-                  ▶ {current.activity!.share ? "Prepare" : "Start"} {current.activity!.prepare} min
+                  ▶ {current.activity.share ? "Prepare" : "Start"} {current.activity.prepare} min
                 </button>
               ) : null}
-              {current.activity!.share ? (
+              {current.activity.share ? (
                 <button className="btn small" onClick={() => start(current, "Share", current.activity!.share!)}>
-                  ▶ Share {current.activity!.share} min
+                  ▶ Share {current.activity.share} min
                 </button>
               ) : null}
             </span>
           ) : null}
           <span className="class-tabs-grow" />
-          <button className="btn small ghost" onClick={() => setSideOpen((v) => !v)} aria-expanded={sideOpen}>
-            {sideOpen ? "Hide steps" : "Show steps"}
-          </button>
+          {current.activity ? (
+            <button className="btn small ghost" onClick={() => setSideOpen((v) => !v)} aria-expanded={sideOpen}>
+              {sideOpen ? "Hide steps" : "Show steps"}
+            </button>
+          ) : null}
         </div>
       ) : null}
 
-      <div className={current && sideOpen ? "class-act-body" : undefined}>
+      <div className={current?.activity && sideOpen ? "class-act-body" : undefined}>
         <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={current?.id ?? tab} fill={full} trainer={trainer} />
-        {current && sideOpen ? <ActivitySide steps={current.activity!.steps} side={current.activity!.side ?? []} /> : null}
+        {current?.activity && sideOpen ? <ActivitySide steps={current.activity!.steps} side={current.activity!.side ?? []} /> : null}
       </div>
     </div>
   );

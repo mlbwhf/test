@@ -257,7 +257,20 @@ export function ImportActivities({ board, onDone, onError }: { board: { id: stri
       const pack = JSON.parse(await file.text()) as {
         lesson?: number | string;
         activities?: unknown[];
+        lessons?: { activities?: unknown[] }[];
       };
+      if (Array.isArray(pack.lessons)) {
+        // A whole course file: each of its lessons goes into this board's lesson with the same number.
+        let n = 0;
+        for (const [i, l] of pack.lessons.entries()) {
+          const target = lessons.find((f) => new RegExp(`^Lesson\\s+${i + 1}\\b`, "i").test(f.title));
+          if (!target || !l.activities?.length) continue;
+          await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/activities`, { lessonId: target.id, activities: l.activities });
+          n += l.activities.length;
+        }
+        onDone(`Added ${n} exercises to the lessons with the same numbers.`);
+        return;
+      }
       if (!Array.isArray(pack.activities) || !pack.activities.length) throw new Error("The file has no activities.");
       // The file may name its lesson by number ("Lesson 1: …"); the picker wins when set.
       const byNumber = pack.lesson !== undefined ? lessons.find((f) => new RegExp(`^Lesson\\s+${pack.lesson}\\b`, "i").test(f.title)) : undefined;
