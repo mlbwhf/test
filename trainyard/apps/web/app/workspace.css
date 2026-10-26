@@ -471,3 +471,5 @@ a.train-btn { text-decoration: none; }
 .blist .train-btn.primary { background: #ffb627; }
 .blist .train-btn:disabled { opacity: 0.4; cursor: default; }
 .blist .train-mono { font: 600 11.5px "JetBrains Mono", var(--font-mono); letter-spacing: 0.1em; }
+button.conn-type.tool { cursor: pointer; background: #fff; }
+button.conn-type.tool[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 14%, #fff); }

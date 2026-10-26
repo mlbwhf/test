@@ -162,6 +162,9 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const [tool, setTool] = useState<Tool>("select");
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
   const [chooser, setChooser] = useState<Chooser | null>(null);
+  // In an exercise, the board offers that exercise's own tools: its connection types, or a sticky.
+  const [plotType, setPlotType] = useState<string | null>(null);
+  const [allTools, setAllTools] = useState(false);
   const [rubber, setRubber] = useState<Rubber | null>(null);
   const [selEdge, setSelEdge] = useState<string | null>(null);
   const picture = useRef<HTMLInputElement>(null);
@@ -215,9 +218,13 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     setConnectFrom(null);
     setSelected(null);
     setSelEdge(null);
+    setPlotType(null);
+    setAllTools(false);
   }, [focus]);
   // In a mapping activity, connectors carry one of its connection types, each in its colour.
   const types: ConnectionType[] = useMemo(() => frames.find((f) => f.id === focus)?.activity?.connectionTypes ?? [], [frames, focus]);
+  const exercise = !!frames.find((f) => f.id === focus)?.activity;
+  const exerciseTools = exercise && !allTools;
   const typeColor = useMemo(() => {
     const m = new Map<string, string>();
     for (const f of frames) for (const t of f.activity?.connectionTypes ?? []) if (!m.has(t.id)) m.set(t.id, t.color);
@@ -282,6 +289,31 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     const f = frames.find((x) => x.id === id);
     return f ? ([f.x + f.width / 2, f.y + f.height / 2] as const) : null;
   };
+  /**
+   * A typed link drawn the way the framework pictures draw them: out of the card, along a rail
+   * halfway between, and into the target from above or below; side by side, straight across.
+   */
+  const elbow = (fromId: string, toId: string) => {
+    const box = (id: string) => {
+      const n = nodes.find((x) => x.id === id);
+      if (n) return { x: n.x, y: n.y, w: n.width ?? 180, h: n.height ?? 120 };
+      const f = frames.find((x) => x.id === id);
+      return f ? { x: f.x, y: f.y, w: f.width, h: f.height } : null;
+    };
+    const s = box(fromId);
+    const t = box(toId);
+    if (!s || !t) return null;
+    const [sx, sy, tx, ty] = [s.x + s.w / 2, s.y + s.h / 2, t.x + t.w / 2, t.y + t.h / 2];
+    if (Math.abs(ty - sy) < Math.max(s.h, t.h)) {
+      const dir = tx > sx ? 1 : -1;
+      return `M${sx + (dir * s.w) / 2} ${sy}V${sy}H${tx - dir * (t.w / 2 + 4)}V${ty}`;
+    }
+    const down = ty > sy ? 1 : -1;
+    const y0 = sy + (down * s.h) / 2;
+    const y1 = ty - down * (t.h / 2 + 4);
+    const rail = (y0 + y1) / 2;
+    return `M${sx} ${y0}V${rail}H${tx}V${y1}`;
+  };
   /** Where the line from a card's centre toward `to` leaves the card. */
   const rim = (id: string, to: readonly [number, number]) => {
     const n = nodes.find((x) => x.id === id);
@@ -306,8 +338,8 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     e.stopPropagation(); // keep the canvas background from clearing the selection or the connect pick
     if (e.button !== 0) return;
     const locked = kind === "node" && !!nodes.find((n) => n.id === id)?.fields.locked;
-    if (tool === "dot") return;
-    if (tool === "connect") {
+    if (tool === "dot" && !(plotType && kind === "node" && !locked)) return;
+    if (tool === "connect" || tool === "dot") {
       // Press on a card and drag to another card, or to a spot on a picture, to connect them.
       (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
       const p = toBoard(e);
@@ -372,6 +404,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest?.("[data-node-id]")?.getAttribute("data-node-id") ?? null;
       const target = hit && !nodes.find((n) => n.id === hit)?.fields.locked ? hit : null;
       const from = rubber.from || connectFrom;
+      const typed = tool === "dot" && plotType ? types.find((t) => t.id === plotType) : undefined;
+      if (typed) {
+        // Drawing with a connection type: drag from a card or dot to another, or to a spot for a new dot.
+        if (rubber.moved && rubber.from && target && target !== rubber.from) connect(rubber.from, target, typed.id);
+        else if (rubber.moved && rubber.from && !target) plotDot({ p, from: rubber.from, left: 0, top: 0 }, typed);
+        else if (!rubber.moved && rubber.from) setSelected(rubber.from);
+        return;
+      }
       if (rubber.moved && rubber.from) {
         if (target && target !== rubber.from) connect(rubber.from, target);
         else if (!target) connectToSpot(rubber.from, p, e);
@@ -391,7 +431,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
         connectToSpot(connectFrom, toBoard(e), e);
         setConnectFrom(null);
       } else if (tap === "tap" && tool === "dot") {
-        askType(toBoard(e), e, null);
+        plotAt(toBoard(e), e);
       } else if (tap === "tap") {
         const frame = (e.target as Element).closest?.("[data-frame-id]")?.getAttribute("data-frame-id");
         setSelected(frame ?? null);
@@ -423,9 +463,15 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     const t = nodes.find((n) => n.id === id)?.fields.connType;
     return typeof t === "string" ? t : undefined;
   };
-  const connect = (from: string, to: string) => {
-    const type = typeOf(to) ?? typeOf(from);
+  const connect = (from: string, to: string, as?: string) => {
+    const type = as ?? typeOf(to) ?? typeOf(from);
     void save("Connect", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: to, ...(type ? { type } : {}) }));
+  };
+  /** A click with a connection type picked plots its dot right there; without one, asks which type. */
+  const plotAt = (p: { x: number; y: number }, e: { clientX: number; clientY: number }) => {
+    const typed = plotType ? types.find((t) => t.id === plotType) : undefined;
+    if (typed) plotDot({ p, from: null, left: 0, top: 0 }, typed);
+    else askType(p, e, null);
   };
   /** Opens the type chooser at a board point (pointer event for where on screen). */
   const askType = (p: { x: number; y: number }, e: { clientX: number; clientY: number }, from: string | null) => {
@@ -549,8 +595,45 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
         <div className="row">
           {readOnly ? (
             <span className="chip">Template · read only</span>
+          ) : exerciseTools ? (
+            <>
+              {types.length ? (
+                types.map((t) => {
+                  const on = tool === "dot" && plotType === t.id;
+                  return (
+                    <button key={t.id} className="conn-type tool" aria-pressed={on} style={{ ["--c" as string]: t.color }} onClick={() => (on ? (setTool("select"), setPlotType(null)) : (setTool("dot"), setPlotType(t.id)), setConnectFrom(null))} title={`${t.label}: click a spot to plot a dot, or drag from RTE to link`}>
+                      <span className="conn-dot" aria-hidden />
+                      <span>{t.label}</span>
+                      <span className="conn-count" aria-label={`${counts[t.id] ?? 0} linked`}>
+                        {counts[t.id] ? `${counts[t.id]} ✓` : "0"}
+                      </span>
+                    </button>
+                  );
+                })
+              ) : (
+                <button className="btn small" onClick={addCard}>
+                  + Sticky
+                </button>
+              )}
+              <button className="btn small" onClick={removeSelected} disabled={!selNode || !!selNode.fields.locked}>
+                Delete
+              </button>
+              <span className="faint" style={{ fontSize: "0.78rem" }}>
+                {types.length ? (plotType ? "Click a spot to plot a dot · drag from RTE (or a dot) to link" : "Pick a type, then click a spot or drag from RTE") : "Double-click an empty spot to add a sticky there · drag to move · double-click a card to write"}
+              </span>
+              {trainer ? (
+                <button className="btn small ghost" onClick={() => setAllTools(true)}>
+                  All tools
+                </button>
+              ) : null}
+            </>
           ) : (
             <>
+              {exercise && trainer ? (
+                <button className="btn small ghost" onClick={() => setAllTools(false)}>
+                  Exercise tools
+                </button>
+              ) : null}
               <button className="btn small" onClick={addCard}>
                 + Card
               </button>
@@ -597,7 +680,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
         </div>
       </div>
 
-      {types.length ? (
+      {types.length && !exerciseTools ? (
         <div className="conn-types" role="list" aria-label="Connection types">
           {types.map((t) => (
             <span key={t.id} role="listitem" className="conn-type" style={{ ["--c" as string]: t.color }}>
@@ -643,7 +726,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 setConnectFrom(null);
                 return;
               }
-              if (tool === "dot" && e.pointerType === "mouse") return askType(toBoard(e), e, null);
+              if (tool === "dot" && e.pointerType === "mouse") return plotAt(toBoard(e), e);
               if (pan.down(e)) return;
               setSelected(null);
               setSelEdge(null);
@@ -655,7 +738,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 <path d="M0 0L10 5L0 10z" fill="var(--ink-3)" />
               </marker>
               {[...typeColor.entries()].map(([id, c]) => (
-                <marker key={id} id={`arrow-${id}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <marker key={id} id={`arrow-${id}`} viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="26" markerHeight="26" orient="auto-start-reverse">
                   <path d="M0 0L10 5L0 10z" fill={c} />
                 </marker>
               ))}
@@ -711,7 +794,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                   key={n.id}
                   data-node-id={n.id}
                   onPointerDown={(e) => startDrag("node", n.id, e)}
-                  onClick={(e) => (e.stopPropagation(), tool === "dot" && n.fields.locked && !readOnly && askType(toBoard(e), e, null))}
+                  onClick={(e) => (e.stopPropagation(), tool === "dot" && n.fields.locked && !readOnly && plotAt(toBoard(e), e))}
                   onDoubleClick={() => !readOnly && !n.fields.locked && setEditing({ id: n.id, text: n.text })}
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
                   filter={placeholder ? undefined : "url(#lift)"}
@@ -819,7 +902,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 <g key={e.id} onPointerDown={(ev) => ev.stopPropagation()} onClick={(ev) => (ev.stopPropagation(), setSelEdge(e.id), setSelected(null))} style={{ cursor: "pointer" }} aria-label={`Connector${e.type ? `: ${types.find((t) => t.id === e.type)?.label ?? e.type}` : ""}`}>
                   <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth={22} />
                   {selEdge === e.id ? <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--signal)" strokeOpacity={0.35} strokeWidth={14} strokeLinecap="round" /> : null}
-                  <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={c ?? "var(--ink-3)"} strokeWidth={c ? 5 : 3} markerEnd={`url(#${c ? `arrow-${e.type}` : "arrow"})`} />
+                  {c ? <path d={elbow(e.fromId, e.toId) ?? `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`} fill="none" stroke={c} strokeWidth={6} strokeLinejoin="round" markerEnd={`url(#arrow-${e.type})`} /> : <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />}
                   {e.label ? (
                     <text x={(a[0] + b[0]) / 2} y={(a[1] + b[1]) / 2 - 8} fontSize={15} textAnchor="middle" fill="var(--ink-2)">
                       {e.label}
@@ -828,7 +911,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 </g>
               );
             })}
-            {rubber && rubber.from && rubber.moved ? <RubberLine from={center(rubber.from)} to={rubber} color="var(--ai)" /> : null}
+            {rubber && rubber.from && rubber.moved ? <RubberLine from={center(rubber.from)} to={rubber} color={(plotType && typeColor.get(plotType)) || "var(--ai)"} /> : null}
             {editingNode ? (
               <foreignObject x={editingNode.fields.dot ? editingNode.x + (editingNode.width ?? DOT) + 8 : editingNode.x} y={editingNode.fields.dot ? editingNode.y - 6 : editingNode.y} width={editingNode.fields.dot ? 260 : editingNode.width ?? 180} height={editingNode.fields.dot ? 52 : editingNode.height ?? 120}>
                 <textarea
