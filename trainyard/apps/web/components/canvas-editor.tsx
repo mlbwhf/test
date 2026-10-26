@@ -225,6 +225,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const types: ConnectionType[] = useMemo(() => frames.find((f) => f.id === focus)?.activity?.connectionTypes ?? [], [frames, focus]);
   const exercise = !!frames.find((f) => f.id === focus)?.activity;
   const exerciseTools = exercise && !allTools;
+  // A mapping exercise: lines run from a fixed anchor (the RTE dot) to the spots people click.
+  const mapping = exerciseTools && types.length > 0;
+  const anchor = mapping ? shownNodes.find((n) => n.fields.dot && !n.fields.connType) : undefined;
+  const mapLinks = anchor ? board.edges.filter((e) => e.type && e.fromId === anchor.id && shownNodes.some((n) => n.id === e.toId)) : [];
+  const linkNo = new Map(mapLinks.map((e, i) => [e.toId, i + 1]));
   const typeColor = useMemo(() => {
     const m = new Map<string, string>();
     for (const f of frames) for (const t of f.activity?.connectionTypes ?? []) if (!m.has(t.id)) m.set(t.id, t.color);
@@ -470,7 +475,8 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   /** A click with a connection type picked plots its dot right there; without one, asks which type. */
   const plotAt = (p: { x: number; y: number }, e: { clientX: number; clientY: number }) => {
     const typed = plotType ? types.find((t) => t.id === plotType) : undefined;
-    if (typed) plotDot({ p, from: null, left: 0, top: 0 }, typed);
+    // In a mapping exercise one click routes a line from the anchor to the spot; the note is written below.
+    if (typed) plotDot({ p, from: anchor?.id ?? null, left: 0, top: 0 }, typed, !anchor);
     else askType(p, e, null);
   };
   /** Opens the type chooser at a board point (pointer event for where on screen). */
@@ -479,13 +485,13 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     setChooser({ p, from, left: e.clientX - r.left + panel.current!.scrollLeft, top: e.clientY - r.top + panel.current!.scrollTop });
   };
   /** Plots a dot of one connection type, linked from `from` when set, and opens its name for writing. */
-  const plotDot = (c: Chooser, type: ConnectionType) => {
+  const plotDot = (c: Chooser, type: ConnectionType, edit = true) => {
     setChooser(null);
     const inner = [...shownFrames].reverse().find((f) => c.p.x >= f.x && c.p.y >= f.y && c.p.x <= f.x + f.width && c.p.y <= f.y + f.height);
     void save("Plot a dot", async () => {
       const r = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { text: "", kind: "shape", x: Math.round(c.p.x - DOT / 2), y: Math.round(c.p.y - DOT / 2), width: DOT, height: DOT, color: type.color, fields: { pin: true, dot: true, connType: type.id }, ...(inner ? { frameId: inner.id } : {}) });
       if (c.from) await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: c.from, toId: r.node.id, type: type.id });
-      setEditing({ id: r.node.id, text: "" });
+      if (edit) setEditing({ id: r.node.id, text: "" });
     });
   };
   /** A connector to a spot with no card: a small marker goes there first, ready to name. */
@@ -597,6 +603,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
             <span className="chip">Template · read only</span>
           ) : exerciseTools ? (
             <>
+              {types.length ? <span className="train-step">1 · Pick a type</span> : null}
               {types.length ? (
                 types.map((t) => {
                   const on = tool === "dot" && plotType === t.id;
@@ -619,7 +626,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 Delete
               </button>
               <span className="faint" style={{ fontSize: "0.78rem" }}>
-                {types.length ? (plotType ? "Click a spot to plot a dot · drag from RTE (or a dot) to link" : "Pick a type, then click a spot or drag from RTE") : "Double-click an empty spot to add a sticky there · drag to move · double-click a card to write"}
+                {types.length ? <span className="train-step">{anchor ? "2 · Click anything on the picture to route a line from the RTE" : "2 · Click a spot to plot a dot, or drag from one card to another"}</span> : "Double-click an empty spot to add a sticky there · drag to move · double-click a card to write"}
               </span>
               {trainer ? (
                 <button className="btn small ghost" onClick={() => setAllTools(true)}>
@@ -781,8 +788,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 // A plotted dot: a coloured circle with its name beside it.
                 return (
                   <g key={n.id} data-node-id={n.id} onPointerDown={(e) => startDrag("node", n.id, e)} onClick={(e) => e.stopPropagation()} onDoubleClick={() => !readOnly && setEditing({ id: n.id, text: n.text })} style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}>
-                    <circle cx={n.x + w / 2} cy={n.y + h / 2} r={w / 2 + (isSel || isFrom ? 4 : 0)} fill={cssColor(n.color)} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : "#ffffff"} strokeWidth={4} />
-                    {n.text ? (
+                    <circle cx={n.x + w / 2} cy={n.y + h / 2} r={w / 2 + (isSel || isFrom ? 4 : 0)} fill={cssColor(n.color)} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : "#ffffff"} strokeWidth={4}>
+                      {n.text ? <title>{String(n.text)}</title> : null}
+                    </circle>
+                    {linkNo.has(n.id) ? (
+                      <text x={n.x + w / 2} y={n.y + h / 2 + 8} fontSize={22} fontWeight={800} textAnchor="middle" fill="#ffffff" fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif" pointerEvents="none">
+                        {linkNo.get(n.id)}
+                      </text>
+                    ) : n.text ? (
                       <text x={n.x + w + 10} y={n.y + h / 2 + 8} fontSize={22} fontWeight={700} fill="#17212b" stroke="#ffffff" strokeWidth={5} paintOrder="stroke" fontFamily="var(--font-body)">
                         {n.text}
                       </text>
@@ -899,7 +912,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               const b = rim(e.toId, ca) ?? cb;
               const c = e.type ? typeColor.get(e.type) : undefined;
               return (
-                <g key={e.id} onPointerDown={(ev) => ev.stopPropagation()} onClick={(ev) => (ev.stopPropagation(), setSelEdge(e.id), setSelected(null))} style={{ cursor: "pointer" }} aria-label={`Connector${e.type ? `: ${types.find((t) => t.id === e.type)?.label ?? e.type}` : ""}`}>
+                <g key={e.id} onPointerDown={(ev) => ev.stopPropagation()} onClick={(ev) => (ev.stopPropagation(), setSelEdge(e.id), setSelected(null))} style={{ cursor: "pointer", pointerEvents: tool === "dot" ? "none" : undefined }} aria-label={`Connector${e.type ? `: ${types.find((t) => t.id === e.type)?.label ?? e.type}` : ""}`}>
                   <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth={22} />
                   {selEdge === e.id ? <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--signal)" strokeOpacity={0.35} strokeWidth={14} strokeLinecap="round" /> : null}
                   {c ? <path d={elbow(e.fromId, e.toId) ?? `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`} fill="none" stroke={c} strokeWidth={6} strokeLinejoin="round" markerEnd={`url(#arrow-${e.type})`} /> : <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--ink-3)" strokeWidth={3} markerEnd="url(#arrow)" />}
@@ -1136,6 +1149,39 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
           </aside>
         ) : null}
       </div>
+      {mapping && anchor ? (
+        <section className="map-notes" aria-label="Connections">
+          <header>
+            <span className="train-step">3 · Say why it matters ({mapLinks.length} connection{mapLinks.length === 1 ? "" : "s"})</span>
+            <button className="btn small" disabled={!mapLinks.length || readOnly} onClick={() => mapLinks.length && void save("Undo", () => api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(mapLinks[mapLinks.length - 1]!.toId)}`))}>
+              Undo last
+            </button>
+          </header>
+          {mapLinks.map((e, i) => {
+            const t = types.find((x) => x.id === e.type);
+            const target = nodes.find((n) => n.id === e.toId);
+            return (
+              <div key={e.id} className="map-note">
+                <span className="map-no" style={{ background: t?.color ?? "#17212b" }}>
+                  {i + 1}
+                </span>
+                <b>{t?.label ?? e.type}</b>
+                <input
+                  key={`${e.toId}:${target?.text ?? ""}`}
+                  className="map-input"
+                  defaultValue={target?.text ?? ""}
+                  placeholder="What did you connect, and what flows between the RTE and it?"
+                  disabled={readOnly}
+                  aria-label={`Connection ${i + 1}`}
+                  onBlur={(ev) => target && ev.target.value !== target.text && void save("Note", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(target.id)}`, { text: ev.target.value }))}
+                  onKeyDown={(ev) => ev.key === "Enter" && (ev.target as HTMLInputElement).blur()}
+                />
+              </div>
+            );
+          })}
+          {!mapLinks.length ? <p className="faint" style={{ margin: 0 }}>Pick a type, then click on the picture.</p> : null}
+        </section>
+      ) : null}
       {picker?.mode === "link" ? <LinkPicker title="Link a record to this board" onPick={(r) => addLinked(r, r.kind === "board" || r.kind === "canvas")} onClose={() => setPicker(null)} /> : null}
       {picker?.mode === "view" ? <LinkPicker title="Embed a board or canvas as a live view" kinds={["board", "canvas"]} onPick={(r) => addLinked(r, true)} onClose={() => setPicker(null)} exclude={{ kind: "board", id: board.id }} /> : null}
       {picker?.mode === "field" ? (

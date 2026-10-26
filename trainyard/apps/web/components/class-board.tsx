@@ -328,7 +328,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
               ) : null
             ) : null}
           </header>
-          {focus ? <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focus.id} fill={full} trainer={trainer} /> : null}
+          {here && kindOf(here.ex) === "CHECK" ? <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} /> : focus ? <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focus.id} fill={full} trainer={trainer} /> : null}
         </main>
 
         <aside className="train-rail" aria-label="Steps and timer">
@@ -420,6 +420,89 @@ function LessonSection({ lesson, tint, exercises, kindOf, current, onOpen, onWho
         </div>
       ) : null}
     </section>
+  );
+}
+
+const ANSWERS: Record<string, { label: string; tint: string; ink: string }> = {
+  Y: { label: "Yes, must be in place", tint: "#d9efe1", ink: "#2f8f5b" },
+  N: { label: "No, not needed", tint: "#f9d9d4", ink: "#d93a2b" },
+  D: { label: "Depends on context", tint: "#fbe7c0", ink: "#b27400" },
+};
+
+/**
+ * A checklist exercise as one table: every question visible with its answer to pick, rows tinted
+ * by the answer, a car per question on a rail above, and the tally. Answers are the cards' choices.
+ */
+function Checklist({ board, frame, readOnly, onChanged, onError }: { board: Board; frame: Frame; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+  const inside = board.nodes.filter((n) => n.frameId === frame.id);
+  const items = inside.filter((n) => cardChoices(n).length).sort((a, b) => a.y - b.y || a.x - b.x);
+  const legend = inside.find((n) => n.kind === "text" && n.fields.locked)?.text;
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  useEffect(() => setAnswers({}), [board]);
+  const answerOf = (id: string, fallback: unknown) => answers[id] ?? (typeof fallback === "string" ? fallback : "");
+  const tally = (c: string) => items.filter((n) => answerOf(n.id, n.fields.choice) === c).length;
+  const open = items.filter((n) => !answerOf(n.id, n.fields.choice)).length;
+  const pick = async (id: string, choice: string) => {
+    setAnswers((a) => ({ ...a, [id]: choice }));
+    try {
+      await api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(id)}`, { fields: { choice: choice || null } });
+      onChanged();
+    } catch (e) {
+      onError((e as ApiFailure).message);
+    }
+  };
+  return (
+    <div className="check">
+      <div className="check-rail" aria-hidden>
+        {items.map((n) => {
+          const a = ANSWERS[answerOf(n.id, n.fields.choice)];
+          return <i key={n.id} style={a ? { background: a.ink } : undefined} />;
+        })}
+      </div>
+      <div className="row" style={{ gap: 8 }}>
+        {(["Y", "N", "D"] as const).map((c) => (
+          <span key={c} className="check-tally" style={{ background: ANSWERS[c]!.tint }}>
+            {c === "Y" ? "Yes" : c === "N" ? "No" : "Depends"} {tally(c)}
+          </span>
+        ))}
+        <span className="check-tally">Open {open}</span>
+      </div>
+      {legend ? <p className="check-legend">{legend}</p> : null}
+      <table className="check-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Question</th>
+            <th>Must be in place?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((n, i) => {
+            const [title, ...rest] = n.text.split("\n");
+            const a = answerOf(n.id, n.fields.choice);
+            return (
+              <tr key={n.id} style={ANSWERS[a] ? { background: ANSWERS[a]!.tint } : undefined}>
+                <td className="check-n">{i + 1}</td>
+                <td>
+                  <b>{title}</b>
+                  {rest.length ? <p>{rest.join(" ")}</p> : null}
+                </td>
+                <td>
+                  <select className="check-select" value={a} disabled={readOnly} onChange={(e) => void pick(n.id, e.target.value)} aria-label={`Answer for ${title}`}>
+                    <option value="">Choose…</option>
+                    {cardChoices(n).map((c) => (
+                      <option key={c} value={c}>
+                        {ANSWERS[c]?.label ?? c}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
