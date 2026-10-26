@@ -64,16 +64,23 @@ describe("the RTE class", () => {
     const { CLASSES, classBoard, cardChoices } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
-    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning"]);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Facilitating ART Events, Flow and DevOps", "Lesson 5: Measuring and Improving Flow", "Lesson 6: Improving the ART", "Lesson 7: Sustaining the ART"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y).map((f) => f.title);
     expect(kids(top[0]!.id).sort()).toEqual(["Icebreaker: introduce yourself", "Quick agenda"]);
     const agenda = b.frames.find((f) => f.title === "Quick agenda")!;
     expect(kids(agenda.id).length).toBe(3);
     const toStart = b.frames.find((f) => f.parentId === agenda.id && f.title === "To start")!;
-    expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning"]);
+    expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning", "04 Facilitating ART Events, Flow and DevOps", "05 Measuring and Improving Flow", "06 Improving the ART", "07 Sustaining the ART"]);
     expect(b.nodes.some((n) => n.fields.dot && n.text === "RTE")).toBe(true);
     expect(kids(top[1]!.id)).toHaveLength(5);
-    expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Business value of an architectural objective"]);
+    expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Conflicting views of value", "Activity: ROAM ART PI risks", "Discussion: Confidence not high? Plan rework.", "Discussion: AI-empowered PI Planning"]);
+    // Purpose-built boards carry their setup; the problem-solving workshop's steps share one board.
+    const roam = b.frames.find((f) => f.title === "Activity: ROAM ART PI risks")!;
+    expect(roam.activity).toMatchObject({ board: "roam", config: { risks: expect.any(Array) } });
+    expect((roam.activity!.config!.risks as string[]).length).toBe(6);
+    const rca = b.frames.filter((f) => f.activity?.board === "rca");
+    expect(rca.map((f) => f.activity!.config!.step)).toEqual(["agree", "rca", "restate", "brainstorm", "readout"]);
+    expect(kids(top[6]!.id)).toHaveLength(12);
     // The three example planning boards keep their dependency strings.
     const reading = b.frames.find((f) => f.title.includes("Reading the ART planning board"))!;
     const planCards = b.nodes.filter((n) => n.frameId === reading.id && /^[FDME]\d$/.test(n.text));

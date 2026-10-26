@@ -17,8 +17,9 @@ import { ActivityEditor } from "@/components/activity-editor";
 import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
 import type { RefSummary } from "@/components/link-picker";
 import { api, type ApiFailure } from "@/lib/api";
+import { ExerciseBoard, useFrameState } from "@/components/exercise-boards";
 
-const TINTS = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae"];
+const TINTS = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae", "#d9cdf0", "#f0d9a8", "#d6e6c3", "#e6d3f0"];
 const clock = (secs: number) => `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
 const isLesson = (f: Frame) => /^Lesson\s+\d+/i.test(f.title);
 /** "Lesson 3: Facilitating PI Planning" → { n: "03", title: "Facilitating PI Planning" }. */
@@ -204,6 +205,35 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     </nav>
   );
 
+  const [stepsOn, setStepsOn] = useState(false);
+  const [focusOn, setFocusOn] = useState(false);
+  const [palOpen, setPalOpen] = useState(false);
+  const [palQ, setPalQ] = useState("");
+  const [stepI, setStepI] = useState(0);
+  const pillsRef = useRef<HTMLDivElement>(null);
+  const exId = view.at === "exercise" ? view.id : null;
+  // A new exercise starts at its first step, with the steps panel closed and its tab in view.
+  useEffect(() => {
+    setStepI(0);
+    setStepsOn(false);
+    pillsRef.current?.querySelector('[data-on="1"]')?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [exId]);
+  useEffect(() => {
+    if (view.at === "overview") return;
+    const key = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("input, textarea, select, [contenteditable]")) return;
+      if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || e.key === "/") return e.preventDefault(), setPalOpen(true), setPalQ("");
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "Escape") return palOpen ? setPalOpen(false) : stepsOn ? setStepsOn(false) : focusOn ? setFocusOn(false) : undefined;
+      if (e.key === "f" || e.key === "F") return setFocusOn((v) => !v);
+      if (e.key === "s" || e.key === "S") return setStepsOn((v) => !v);
+      if (e.key === "ArrowRight" && idx >= 0 && idx < flat.length - 1) go({ at: "exercise", id: flat[idx + 1]!.ex.id });
+      if (e.key === "ArrowLeft" && idx > 0) go({ at: "exercise", id: flat[idx - 1]!.ex.id });
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  });
   const pressing = { onPointerDownCapture: () => (busy.current = true), onPointerUpCapture: () => (busy.current = false), onPointerCancelCapture: () => (busy.current = false) };
 
   // ---- overview ---------------------------------------------------------------------------
@@ -263,125 +293,215 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
       </div>
     );
 
-  // ---- exercise or whole lesson -------------------------------------------------------------
-  const focus = here?.ex ?? lessonHere ?? null;
+  // ---- the exercise studio: chapter tabs, exercise tabs, toolbar, step strip, board, footer --------
+  const focusFrame = here?.ex ?? lessonHere ?? null;
   const act = here?.ex.activity;
-  const wholeExercises = view.at === "lesson" && lessonHere ? (exercisesOf.get(lessonHere.id) ?? []) : [];
+  const lesson = lessonHere ?? lessons[0];
+  const tint = TINTS[Math.max(0, lessons.findIndex((l) => l.id === lesson?.id)) % TINTS.length]!;
+  const lessonEx = lesson ? (exercisesOf.get(lesson.id) ?? []) : [];
+  const steps = act ? stepsOf(act.steps) : [];
+  const stepAt = Math.min(stepI, Math.max(0, steps.length - 1));
+  const firstOpen = (l: Frame) => {
+    const ex = exercisesOf.get(l.id) ?? [];
+    return ex.find((e) => !e.done) ?? ex[0];
+  };
+  const next1 = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : undefined;
+  const prev1 = idx > 0 ? flat[idx - 1] : undefined;
+  const matches = flat.filter((x) => !palQ.trim() || `${titleOf(x.ex)} ${x.lesson.title} ${x.ex.activity?.kind ?? ""}`.toLowerCase().includes(palQ.trim().toLowerCase()));
+  const boardFor = () => {
+    if (!focusFrame) return null;
+    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} onChanged={onChanged} onError={onError} />;
+    if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
+    return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
+  };
   return (
-    <div ref={wrap} className={`train${full ? " full" : ""}`} {...pressing}>
-      {crumbs}
-      <div className="train-work">
-        <aside className="train-tree" aria-label="Lessons and exercises">
-          <span className="train-mono">
-            {done}/{flat.length} DONE
-          </span>
-          <div className="train-progress small">
-            <span style={{ width: `${flat.length ? (100 * done) / flat.length : 0}%` }} />
-          </div>
-          {lessons.map((l) => {
-            const ln = lessonName(l);
-            const ex = exercisesOf.get(l.id) ?? [];
-            return (
-              <div key={l.id} className="train-tree-lesson">
-                {isLesson(l) ? (
-                  <button className={`train-tree-head${view.at === "lesson" && view.id === l.id ? " on" : ""}`} onClick={() => go({ at: "lesson", id: l.id })}>
-                    {ln.n} {ln.title}
-                  </button>
-                ) : null}
-                {ex.map((e) => (
-                  <button key={e.id} className={`train-tree-ex${here?.ex.id === e.id ? " on" : ""}`} onClick={() => go({ at: "exercise", id: e.id })} aria-current={here?.ex.id === e.id ? "step" : undefined}>
-                    <span className={`train-check${e.done ? " done" : ""}`} aria-label={e.done ? "complete" : "not complete"}>
-                      {e.done ? "✓" : ""}
-                    </span>
-                    {titleOf(e)}
-                  </button>
-                ))}
-              </div>
-            );
-          })}
-        </aside>
-
-        <main className="train-centre">
-          <header className="train-ex-head">
-            <div>
-              <span className="train-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}`.toUpperCase() : `LESSON ${lessonHere ? lessonName(lessonHere).n : ""} · WHOLE LESSON`}</span>
-              <h2>{here ? titleOf(here.ex) : lessonHere ? lessonName(lessonHere).title : ""}</h2>
-            </div>
-            <span className="grow" />
-            {trainer && here && act?.prepare ? (
-              <button className="train-btn" onClick={() => start(here.ex, act.share ? "Prepare" : act.kind, act.prepare!)}>
-                ▶ {act.share ? "Prepare" : "Start"} {act.prepare} min
-              </button>
-            ) : null}
-            {trainer && here && act?.share ? (
-              <button className="train-btn" onClick={() => start(here.ex, act.shareLabel ?? "Share", act.share!)}>
-                ▶ {act.shareLabel ?? "Share"} {act.share} min
-              </button>
-            ) : null}
-            {here ? (
-              trainer ? (
-                <button className={`train-btn${here.ex.done ? " done" : ""}`} onClick={() => void markDone(here.ex)} aria-pressed={!!here.ex.done}>
-                  {here.ex.done ? "✓ Completed" : "Mark complete"}
+    <div ref={wrap} className={`studio${focusOn ? " focus" : ""}`} {...pressing} style={{ ["--tint" as string]: tint }}>
+      {!focusOn ? (
+        <nav className="studio-chapters" aria-label="Chapters">
+          <Link className="studio-logo" href="/classroom" aria-label="Classes">
+            <ClassIcon classId={classId} name={board.name} size={30} />
+          </Link>
+          <button className="studio-class" onClick={() => go({ at: "overview" })}>
+            ‹ CLASS {short}
+          </button>
+          <div className="studio-tabs" role="tablist">
+            {lessons.map((l, li) => {
+              const ex = exercisesOf.get(l.id) ?? [];
+              const d = ex.filter((e) => e.done).length;
+              const ln = lessonName(l);
+              const on = l.id === lesson?.id;
+              return (
+                <button key={l.id} role="tab" aria-selected={on} className="studio-chapter" style={{ ["--c" as string]: TINTS[li % TINTS.length] }} onClick={() => (firstOpen(l) ? go({ at: "exercise", id: firstOpen(l)!.id }) : go({ at: "lesson", id: l.id }))} title={l.title}>
+                  <b>{ln.n || "·"}</b>
+                  <span className="studio-chapter-name">{ln.title}</span>
+                  <small>
+                    {d}/{ex.length}
+                  </small>
+                  <i style={{ width: `${ex.length ? (100 * d) / ex.length : 0}%` }} />
                 </button>
-              ) : here.ex.done ? (
-                <span className="train-chip done">✓ Completed</span>
-              ) : null
+              );
+            })}
+          </div>
+          {timerChip}
+        </nav>
+      ) : null}
+      {!focusOn ? (
+        <div className="studio-exercises">
+          <div className="studio-pills" role="tablist" aria-label="Exercises in this chapter" ref={pillsRef}>
+            {lessonEx.map((e, k) => (
+              <button key={e.id} role="tab" aria-selected={here?.ex.id === e.id} className="studio-pill" data-on={here?.ex.id === e.id ? "1" : undefined} onClick={() => go({ at: "exercise", id: e.id })} title={titleOf(e)}>
+                <span className={`studio-num${e.done ? " done" : ""}`}>{e.done ? "✓" : k + 1}</span>
+                <span className="studio-pill-title">{titleOf(e)}</span>
+              </button>
+            ))}
+            {lesson && isLesson(lesson) ? (
+              <button role="tab" aria-selected={view.at === "lesson"} className="studio-pill" data-on={view.at === "lesson" ? "1" : undefined} onClick={() => go({ at: "lesson", id: lesson.id })}>
+                <span className="studio-num">≡</span>
+                <span className="studio-pill-title">Whole lesson</span>
+              </button>
             ) : null}
+          </div>
+          <span className="ex-mono">{here ? `${lessonEx.findIndex((e) => e.id === here.ex.id) + 1} / ${lessonEx.length}` : `${lessonEx.length} exercises`}</span>
+        </div>
+      ) : null}
+      <div className="studio-toolbar">
+        <div className="studio-title">
+          <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
+          <span className="ex-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}` : "Whole lesson"}</span>
+        </div>
+        <span className="grow" />
+        {focusOn && timerChip}
+        {trainer && here && act?.prepare ? (
+          <button className="studio-btn" onClick={() => start(here.ex, act.share ? "Prepare" : act.kind, act.prepare!)}>
+            ▶ {act.share ? "Prepare" : "Start"} {act.prepare} min
+          </button>
+        ) : null}
+        {trainer && here && act?.share ? (
+          <button className="studio-btn" onClick={() => start(here.ex, act.shareLabel ?? "Share", act.share!)}>
+            ▶ {act.shareLabel ?? "Share"} {act.share} min
+          </button>
+        ) : null}
+        <button className="studio-btn" onClick={() => (setPalOpen(true), setPalQ(""))} title="Jump to an exercise (/ or Ctrl+K)">
+          Jump
+        </button>
+        <button className="studio-btn" aria-pressed={stepsOn} onClick={() => setStepsOn((v) => !v)} title="Steps and references (S)">
+          Steps
+        </button>
+        <button className="studio-btn" aria-pressed={focusOn} onClick={() => setFocusOn((v) => !v)} title="Focus: hide the tabs (F)">
+          Focus
+        </button>
+        {here ? (
+          trainer ? (
+            <button className={`studio-btn${here.ex.done ? " done" : ""}`} onClick={() => void markDone(here.ex)} aria-pressed={!!here.ex.done}>
+              {here.ex.done ? "✓ Completed" : "Mark complete"}
+            </button>
+          ) : here.ex.done ? (
+            <span className="studio-btn done">✓ Completed</span>
+          ) : null
+        ) : null}
+      </div>
+      {steps.length ? (
+        <div className="studio-step">
+          <button aria-label="Previous step" disabled={stepAt === 0} onClick={() => setStepI(stepAt - 1)}>
+            ‹
+          </button>
+          <button className="studio-step-text" onClick={() => setStepsOn(true)}>
+            <span className="ex-mono">
+              STEP {stepAt + 1}/{steps.length}
+            </span>{" "}
+            {steps[stepAt]!.replace(/^Step\s*\d+\s*[:.]\s*/i, "").split("\n")[0]}
+          </button>
+          <button aria-label="Next step" disabled={stepAt >= steps.length - 1} onClick={() => setStepI(stepAt + 1)}>
+            ›
+          </button>
+        </div>
+      ) : null}
+      <div className="studio-canvas">{boardFor()}</div>
+      <footer className="studio-foot">
+        <button className="studio-foot-nav" disabled={!prev1} onClick={() => prev1 && go({ at: "exercise", id: prev1.ex.id })}>
+          ‹ {prev1 ? titleOf(prev1.ex) : ""}
+        </button>
+        <div className="studio-segs" aria-label={`Exercise ${idx + 1} of ${flat.length}`}>
+          {flat.map((x) => (
+            <button key={x.ex.id} className={`studio-seg${x.ex.id === here?.ex.id ? " on" : x.ex.done ? " done" : ""}`} title={titleOf(x.ex)} onClick={() => go({ at: "exercise", id: x.ex.id })} />
+          ))}
+        </div>
+        <button
+          className="studio-foot-nav next"
+          onClick={async () => {
+            if (here && trainer && !here.ex.done) await markDone(here.ex, true);
+            if (next1) go({ at: "exercise", id: next1.ex.id });
+            else if (!here && lessonEx[0]) go({ at: "exercise", id: lessonEx[0].id });
+            else go({ at: "overview" });
+          }}
+        >
+          {here ? (next1 ? `${trainer ? "Complete · " : ""}${titleOf(next1.ex)} ›` : "Finish class ▸") : "Start the first exercise ›"}
+        </button>
+      </footer>
+      {stepsOn ? (
+        <aside className="studio-steps" aria-label="Steps and references">
+          <header>
+            <span className="ex-mono">{here ? "Steps" : "Questions in this lesson"}</span>
+            <button onClick={() => setStepsOn(false)} aria-label="Close">
+              ×
+            </button>
           </header>
-          {here && kindOf(here.ex) === "CHECK" ? <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} /> : focus ? <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focus.id} fill={full} trainer={trainer} /> : null}
-        </main>
-
-        <aside className="train-rail" aria-label="Steps and timer">
-          {timer ? (
-            <div className="train-card train-timer">
-              <span className="train-mono">TIMER · {timer.t.label.toUpperCase()}</span>
-              <b aria-live="polite">{left === 0 ? "Time's up" : clock(left)}</b>
-            </div>
-          ) : null}
           {here && act ? <ActivitySide steps={act.steps} side={act.side ?? []} /> : null}
-          {wholeExercises.length ? (
-            <div className="train-card stack">
-              <span className="train-mono">QUESTIONS IN THIS LESSON</span>
-              {wholeExercises.map((e) => (
+          {!here
+            ? lessonEx.map((e) => (
                 <div key={e.id} className="train-whole-q">
                   <button onClick={() => go({ at: "exercise", id: e.id })}>
                     {e.done ? "✓ " : ""}
                     {e.title}
                   </button>
-                  {e.activity && activityTiming(e.activity) ? <span className="train-mono">{activityTiming(e.activity)}</span> : null}
+                  {e.activity && activityTiming(e.activity) ? <span className="ex-mono">{activityTiming(e.activity)}</span> : null}
                   {e.activity?.steps.trim() ? <Steps text={e.activity.steps} /> : null}
                 </div>
+              ))
+            : null}
+        </aside>
+      ) : null}
+      {palOpen ? (
+        <div className="lp-backdrop" style={{ zIndex: 120 }} onClick={() => setPalOpen(false)} role="presentation">
+          <div className="studio-palette" role="dialog" aria-label="Jump to an exercise" onClick={(e) => e.stopPropagation()}>
+            <input autoFocus placeholder="Jump to an exercise, lesson or type…" value={palQ} onChange={(e) => setPalQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && matches[0] && (go({ at: "exercise", id: matches[0].ex.id }), setPalOpen(false))} />
+            <div className="studio-palette-list">
+              {matches.map((x) => (
+                <button key={x.ex.id} onClick={() => (go({ at: "exercise", id: x.ex.id }), setPalOpen(false))}>
+                  <span className={`studio-num${x.ex.done ? " done" : ""}`}>{x.ex.done ? "✓" : lessonName(x.lesson).n || "·"}</span>
+                  <b>{titleOf(x.ex)}</b>
+                  <span className="ex-mono">{x.ex.activity?.kind ?? ""}</span>
+                </button>
               ))}
             </div>
-          ) : null}
-        </aside>
-      </div>
-      <footer className="train-bar">
-        <button className="train-btn ghost" disabled={idx <= 0} onClick={() => idx > 0 && go({ at: "exercise", id: flat[idx - 1]!.ex.id })}>
-          ‹ Previous
-        </button>
-        <span className="train-mono">{here ? `Exercise ${idx + 1} of ${flat.length}` : `${wholeExercises.length} exercises in this lesson`}</span>
-        {here ? (
-          <button
-            className="train-btn primary"
-            onClick={async () => {
-              if (trainer && !here.ex.done) await markDone(here.ex, true);
-              if (idx < flat.length - 1) go({ at: "exercise", id: flat[idx + 1]!.ex.id });
-              else go({ at: "overview" });
-            }}
-          >
-            {idx < flat.length - 1 ? (trainer ? "Complete and next ›" : "Next ›") : trainer ? "Finish class ✓" : "Back to the class"}
-          </button>
-        ) : wholeExercises[0] ? (
-          <button className="train-btn primary" onClick={() => go({ at: "exercise", id: wholeExercises[0]!.id })}>
-            Start the first exercise ›
-          </button>
-        ) : (
-          <span />
-        )}
-      </footer>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
+}
+
+/** The steps of an activity: each "Step n" with the lines under it. */
+function stepsOf(text: string): string[] {
+  const out: string[] = [];
+  for (const line of text.split("\n").map((l) => l.trim()).filter(Boolean)) {
+    if (/^Step\s*\d+/i.test(line) || !out.length) out.push(line);
+    else out[out.length - 1] += `\n${line}`;
+  }
+  return out;
+}
+
+/** A purpose-built exercise board with its shared state. */
+function ExerciseHost({ board, frame, kind, readOnly, trainer, onChanged, onError }: { board: Board; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; onChanged: () => void; onError: (m: string) => void }) {
+  // Steps of one workshop (config.shared) keep their work on the first step's frame.
+  const shared = frame.activity?.config?.shared;
+  const home = (shared ? board.frames.find((f) => f.activity?.config?.shared === shared) : undefined) ?? frame;
+  return <ExerciseState key={home.id} board={board} home={home} frame={frame} kind={kind} readOnly={readOnly} trainer={trainer} onChanged={onChanged} onError={onError} />;
+}
+
+function ExerciseState({ board, home, frame, kind, readOnly, trainer, onChanged, onError }: { board: Board; home: Frame; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; onChanged: () => void; onError: (m: string) => void }) {
+  const [st, op] = useFrameState(board, home, onChanged, onError);
+  return <ExerciseBoard kind={kind} board={board} frame={frame} config={frame.activity?.config ?? {}} st={st} op={op} readOnly={readOnly} trainer={trainer} />;
 }
 
 function LessonSection({ lesson, tint, exercises, kindOf, current, onOpen, onWhole, add }: { lesson: Frame; tint: string; exercises: Frame[]; kindOf: (f: Frame) => string; current?: string | undefined; onOpen: (id: string) => void; onWhole: () => void; add: React.ReactNode }) {

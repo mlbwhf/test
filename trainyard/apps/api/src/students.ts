@@ -137,6 +137,7 @@ export function guestMayUse(method: string, url: string, boardId: string): boole
     if (method === "GET" && (rest === "" || rest === "/timer" || /^\/nodes\/[^/]+\/backlinks$/.test(rest))) return true;
     if (/^\/nodes(\/[^/]+)?$/.test(rest) && ["POST", "PATCH", "DELETE"].includes(method)) return true;
     if (/^\/edges(\/[^/]+)?$/.test(rest) && ["POST", "DELETE"].includes(method)) return true;
+    if (/^\/frames\/[^/]+\/state$/.test(rest) && method === "PUT") return true;
   }
   return false;
 }

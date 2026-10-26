@@ -225,7 +225,7 @@ lesson3.push(
     ...planningBoards(),
   },
   {
-    title: "Business value of an architectural objective",
+    title: "Conflicting views of value",
     kind: "Activity",
     prepare: 7,
     share: 3,
@@ -237,8 +237,293 @@ lesson3.push(
   },
 );
 
+// ---- lesson 3 continued: risks, confidence vote, AI in PI Planning ---------------------------
+
+/** A purpose-built board: the exercise's frame only needs to be big enough to hold it on the canvas. */
+const BOARD = { width: 1200, height: 600 };
+
+const ART_PI_RISKS = [
+  "Team member X is a bottleneck. They are the only one who can handle critical parts of the implementation for an important Feature that is scheduled for delivery in the Iteration.",
+  "No system team is available yet. The integration infrastructure is in poor condition and could put the integration and/or the System Demo at risk.",
+  "Two teams have a shared Product Owner. This might have a negative impact on the team’s Iteration Planning and demos.",
+  "The QA team is pointing out that application performance might be at risk during Iteration 3, as there will be an influx of new users. They are unsure how this might impact the ART.",
+  "In Iteration 3, an important supplier might be delayed with their crucial delivery. They have been late before, and this time it might impact several teams.",
+  "There is a holiday mid-PI, and many people will be on vacation.",
+];
+
+const ROAM = [
+  ["R", "Resolved", "Addressed; the risk is no longer a concern"],
+  ["O", "Owned", "Someone has taken responsibility"],
+  ["A", "Accepted", "Nothing more can be done, and if the risk occurs, the release may be compromised"],
+  ["M", "Mitigated", "The team has a plan to adjust as necessary"],
+];
+
+/** A discussion's questions, each with its own lane of notes. */
+const lanes = (titles: string[], more: Record<string, unknown> = {}) => ({ board: "lanes", config: { lanes: titles.map((title) => ({ title })), ...more }, ...BOARD });
+
+lesson3.push(
+  {
+    title: "ROAM ART PI risks",
+    kind: "Activity",
+    prepare: 10,
+    steps: "Step 1: As a class, read through the six risks on the next slide.\nStep 2: Develop a clear plan for how you, the RTE, would facilitate ROAMing the risks.\nStep 3: Document the approach for each risk. Indicate what ROAM you would suggest and why. Focus on how you would facilitate finding the solution during PI Planning, not what the solution would be",
+    side: [{ title: "Addressing ART PI risks", text: `After all plans have been presented, the remaining ART PI risks and impediments are discussed and categorized.\n\nROAM stands for:\n${ROAM.map(([, n, d]) => `- ${n} - ${d}`).join("\n")}` }],
+    board: "roam",
+    config: { risks: ART_PI_RISKS, roam: ROAM },
+    ...BOARD,
+  },
+  {
+    title: "Confidence not high? Plan rework.",
+    kind: "Discussion",
+    prepare: 7,
+    steps: "As a class, discuss the role of the RTE in facilitating the confidence vote. Consider the following:\n- How can the RTE ensure that attendees feel safe to voice their concerns?\n- How would you facilitate reworking the plan if there is little to no confidence (teams vote a 1 or 2)?\n- What agreements would you put in place to rework the plan?",
+    ...lanes(["How can the RTE ensure that attendees feel safe to voice their concerns?", "How would you facilitate reworking the plan if there is little to no confidence (teams vote a 1 or 2)?", "What agreements would you put in place to rework the plan?"], { intro: "As a class, discuss the role of the RTE in facilitating the confidence vote.", layout: "grid", cols: 3 }),
+  },
+  {
+    title: "AI-empowered PI Planning",
+    kind: "Discussion",
+    prepare: 5,
+    steps: "As a class, brainstorm ways AI can reduce overhead or friction in PI Planning. Consider:\n- Where does planning feel the hardest or most time-consuming?\n- How could AI reduce effort, improve clarity, or surface risks earlier?\n- What should always remain a human responsibility?\n- What’s one AI-enabled improvement you’d consider trying next PI?\nExamples:\n- Summarizing planning inputs and outputs\n- Surfacing risks, dependencies, and timing conflicts\n- Capturing decisions and action items in real time",
+    ...lanes(["Where does planning feel the hardest or most time-consuming?", "How could AI reduce effort, improve clarity, or surface risks earlier?", "What should always remain a human responsibility?", "What’s one AI-enabled improvement you’d consider trying next PI?"], { intro: "As a class, brainstorm ways AI can reduce overhead or friction in PI Planning.", examples: ["Summarizing planning inputs and outputs", "Surfacing risks, dependencies, and timing conflicts", "Capturing decisions and action items in real time"], layout: "grid" }),
+  },
+);
+
+// ---- lesson 4 -------------------------------------------------------------------------------
+
+const lesson4: ActivitySpec[] = [
+  {
+    title: "The RTE and ART events",
+    kind: "Activity",
+    prepare: 10,
+    share: 12,
+    steps: "Step 1: In your group, prepare a three-minute presentation about an ART event facilitated by the RTE. Use the event descriptions as a guide and draw from your own experiences. Be sure to include:\n- A clear statement about the purpose of the event and why it’s important for the RTE role\n- A list of facilitators and attendees, plus a suggested agenda for the event with timing and cadence\n- The key inputs and outputs of the event\n- Possible event anti-patterns, like a discussion of what would happen if this event was canceled\n- Success criteria for the RTE\n- General tips\nStep 2: Be prepared to share with the class.",
+    ...lanes(["Purpose", "Attendees and agenda", "Inputs/outputs", "Anti-patterns", "Success criteria", "Tips"], { layout: "rows", heading: { label: "ART Event", placeholder: "[enter here]" } }),
+  },
+  {
+    title: "Build your own ART kanban board",
+    kind: "Activity",
+    prepare: 15,
+    share: 10,
+    steps: "Step 1: In your group, select one person’s context.\nStep 2: Together, build an ART kanban board using the tools described in this lesson topic. Be sure the group:\n- Understands the actual workflow of features.\n- Decides how to map it to the board (columns, policies, and so on).\n- Determines initial WIP limits.\nStep 3: Be prepared to share with the class.",
+    side: [{ title: "Example ART kanban board", image: `${PIC}/kanban-example.webp` }],
+    board: "kanban",
+    config: { columns: ["Funnel", "Analyzing", "Ready", "Implementing", "Validating on Staging", "Deployment to Production", "Releasing", "Done"] },
+    ...BOARD,
+  },
+  {
+    title: "Accelerating quality",
+    kind: "Discussion",
+    prepare: 12,
+    steps: "AI tools offer powerful ways to accelerate quality workflows, but they introduce new risks to the continuous delivery pipeline.\nAs a class, discuss the following:\n- How can an RTE coach teams to use AI safely to accelerate basic built-in quality practices (e.g., test auto-generation, code reviews)?\n- What risks emerge when teams over-rely on AI, and how do we apply the definition of done as a strict guardrail?\n- Which ART roles and events are most critical for aligning and maintaining these AI quality boundaries?",
+    ...lanes(["How can an RTE coach teams to use AI safely to accelerate basic built-in quality practices (e.g., test auto-generation, code reviews)?", "What risks emerge when teams over-rely on AI, and how do we apply the definition of done as a strict guardrail?", "Which ART roles and events are most critical for aligning and maintaining these AI quality boundaries?"], { intro: "AI tools offer powerful ways to accelerate quality workflows, but they introduce new risks to the continuous delivery pipeline.", examples: ["Basic Agile Quality Practices"], layout: "grid", cols: 3 }),
+  },
+  {
+    title: "Create a two-minute pitch",
+    kind: "Activity",
+    prepare: 10,
+    share: 10,
+    steps: "Step 1: In your group, create a two-minute pitch to Business Owners and Product Management about the need to build DevOps capabilities. Be sure to include the following:\n- A clear statement about what is likely to happen if the practice is not implemented.\n- A statement about how the RTE can support this practice.\n- Metrics to support your pitch.\nStep 2: Be prepared to share with the class.",
+    ...lanes(["What will happen if DevOps capabilities are not built?", "How can the RTE support the building of DevOps capabilities?", "Two-minute pitch outline", "What metrics will you use to support your pitch?", "Additional notes"], { layout: "pitch" }),
+  },
+];
+
+// ---- lesson 5 -------------------------------------------------------------------------------
+
+const FLOW_METRICS = ["Flow Distribution", "Flow Velocity", "Flow Time", "Flow Load", "Flow Efficiency", "Flow Predictability"];
+const FLOW_ACCELERATORS = ["Visualize and limit WIP", "Address bottlenecks", "Minimize handoffs and dependencies", "Get faster feedback", "Work in smaller batches", "Reduce queue lengths", "Optimize time ‘in the zone’", "Remediate legacy policies and practices"];
+
+const lesson5: ActivitySpec[] = [
+  {
+    title: "Measuring the flow of value",
+    kind: "Activity",
+    prepare: 5,
+    share: 3,
+    steps: "Step 1: Individually, select which flow metrics would provide the most value for your ART. For each selected metric, capture:\n- Purpose: What question does this metric help you answer?\n- Data source: Where could you collect this data (for example, from a tool, report, or board)?\n- Action: How would you use the results to improve flow?\nStep 2: Reflect on how your ART kanban supports visualization of these metrics. What adjustments might help you see or track flow more effectively?\nStep 3: Be prepared to share with the class.",
+    board: "metrics",
+    config: { metrics: FLOW_METRICS, fields: [["Purpose", "What question does this metric help you answer?"], ["Data source", "Where could you collect this data (for example, from a tool, report, or board)?"], ["Action", "How would you use the results to improve flow?"]], reflect: "Reflect on how your ART kanban supports visualization of these metrics. What adjustments might help you see or track flow more effectively?" },
+    ...BOARD,
+  },
+  {
+    title: "Data versus context",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps: "Step 1: Consider the following scenario:\n- Your organization's AI widget analyzed your PI 3 flow metric data and generated a summary report and recommended insights. However, the widget is missing a critical piece of operational context: Midway through PI 3, three teams were redirected for two iterations to address an emergency security vulnerability. Planned feature work stopped, and unplanned remediation work took its place. The risk was successfully resolved, but the metrics reflect an ART operating under highly abnormal conditions.\nStep 2: Working in your groups, review the ART flow metrics and AI-generated insights in the activity handout. Select 1–2 of the insights to analyze and decide whether the recommendations are safe to implement directly or address the wrong problem.\nStep 3: Be prepared to share with the class.",
+    ...lanes(["Insights we selected", "Safe to implement directly", "Address the wrong problem"], { intro: "Your organization's AI widget analyzed your PI 3 flow metric data and generated a summary report and recommended insights. However, the widget is missing a critical piece of operational context: Midway through PI 3, three teams were redirected for two iterations to address an emergency security vulnerability. Planned feature work stopped, and unplanned remediation work took its place. The risk was successfully resolved, but the metrics reflect an ART operating under highly abnormal conditions.", introStyle: "scenario", layout: "grid", cols: 3 }),
+  },
+  {
+    title: "Which flow accelerators address what kind of problems?",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps: "Step 1: In your group, review the example problems on the next slide. Select the problems that most closely match one you experience in your team or ART.\nStep 2: Select which flow accelerators would help address that problem.\nStep 3: Be prepared to share with the class.",
+    board: "accel",
+    config: { accelerators: FLOW_ACCELERATORS },
+    ...BOARD,
+  },
+];
+
+// ---- lesson 6 -------------------------------------------------------------------------------
+
+/** The five problem-solving workshop steps share one board, so each step builds on the last. */
+const workshop = (step: string) => ({ board: "rca", config: { step, shared: "problem-solving-workshop" }, ...BOARD });
+
+const lesson6: ActivitySpec[] = [
+  {
+    title: "Balancing the IP iteration",
+    kind: "Discussion",
+    prepare: 7,
+    steps: "Step 1: Reflect on how your ART currently uses the IP iteration\nStep 2: Discuss as a class:\n- How do you balance innovation, planning, and readiness activities?\n- What trade-offs or tensions have you experienced?\n- What can the RTE do to protect time for innovation while ensuring readiness for PI Planning?",
+    ...lanes(["How do you balance innovation, planning, and readiness activities?", "What trade-offs or tensions have you experienced?", "What can the RTE do to protect time for innovation while ensuring readiness for PI Planning?"], { layout: "grid", cols: 3 }),
+  },
+  {
+    title: "Preparing for the PI System Demo",
+    kind: "Discussion",
+    prepare: 7,
+    steps: "As a class, discuss the following questions:\n- What preparations does the RTE need to do before the I&A for the PI System Demo?\n- What preparations does the RTE need to do before the I&A for the quantitative and qualitative measurements?\n- Who can assist the RTE with these preparations?\n- What can the RTE do to ensure key ART stakeholders attend the I&A?",
+    ...lanes(["What preparations does the RTE need to do before the I&A for the PI System Demo?", "What preparations does the RTE need to do before the I&A for the quantitative and qualitative measurements?", "Who can assist the RTE with these preparations?", "What can the RTE do to ensure key ART stakeholders attend the I&A?"], { layout: "grid" }),
+  },
+  {
+    title: "Agree on the problem",
+    kind: "Activity",
+    prepare: 5,
+    steps: "Step 1: Working in your groups, write a problem statement\nStep 2: Capture the statement in the Original problem statement section",
+    ...workshop("agree"),
+  },
+  {
+    title: "Root cause analysis",
+    kind: "Activity",
+    prepare: 25,
+    steps: "Step 1: Brainstorm potential causes of the problem and write down the ‘root-cause analysis’ on the template problem-solving board\nStep 2: For each cause identified, use the ‘Five Whys’ technique to get to a potential root cause",
+    side: [{ title: "Example", image: `${PIC}/rca-example.webp` }],
+    ...workshop("rca"),
+  },
+  {
+    title: "Restate the new problem",
+    kind: "Activity",
+    prepare: 10,
+    steps: "Step 1: Dot vote to identify the biggest root cause on your chart.\nStep 2: Use Pareto analysis to identify the biggest root cause. Write down the ‘biggest root cause’ on the problem-solving board.\nStep 3: Restate the problem to address the identified root cause and the economic impact of the problem under the 'restate problem' heading on the problem-solving board.",
+    side: [{ title: "Example", text: "We did not have the ability to measure or test the full electrical load on vehicles in real operating conditions.\n\nImpact:\nWe had to upgrade the deployed power distribution system beyond what was specified. Major cost and schedule overrun." }],
+    ...workshop("restate"),
+  },
+  {
+    title: "Brainstorm solutions",
+    kind: "Activity",
+    prepare: 8,
+    steps: "Step 1: Individually brainstorm and write ideas on sticky notes and put them up on the board\nStep 2: After all ideas are captured, discuss them as a team\nStep 3: Organize ideas into affinity groups\nStep 4: Dot vote to reveal the top contenders to add to ‘identify improvement backlog items’ on the problem-solving board",
+    ...workshop("brainstorm"),
+  },
+  {
+    title: "Problem-solving workshop readout",
+    kind: "Discussion",
+    prepare: 10,
+    steps: "Step 1: Select a person from your team to do a readout\nStep 2: Start the readout by stating the original problem and conclude with the proposed improvement backlog items",
+    ...workshop("readout"),
+  },
+  {
+    title: "Business Agility Self Assessment",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps: "Step 1: Individually, fill in the Business Agility assessment in your workbook\nStep 2: Share some opportunities for the improvement you identified",
+    board: "radar",
+    config: {
+      title: "Business Agility Assessment",
+      dims: [
+        ["Team and Technical Agility (TTA)", 3.13],
+        ["Product Development Flow (PDF)", 2.88],
+        ["Large Solution Integration and Development (LSID)", 3.33],
+        ["Lean Portfolio Management (LPM)", 3.33],
+        ["Leadership and Culture (L&C)", 2.83],
+      ],
+      max: 5,
+      lane: "Opportunities for improvement",
+    },
+    ...BOARD,
+  },
+  {
+    title: "Development Value Stream Mapping – current state",
+    kind: "Activity",
+    prepare: 15,
+    share: 5,
+    steps: "Step 1: Working in your groups, map a current development process from one person’s real context\nStep 2: Identify the delays between the steps\nStep 3: Be prepared to share your results with the class",
+    side: [{ title: "Value Stream Mapping: Measure the steps", image: `${PIC}/vsm-measure.webp` }],
+    board: "vsm",
+    config: {},
+    ...BOARD,
+  },
+  {
+    title: "Development Value Stream Mapping – future state",
+    kind: "Activity",
+    prepare: 15,
+    share: 5,
+    steps: "Step 1: Working in your groups, use the same work context as in the previous activity.\nStep 2: Map the desired future state of the development process. Use the principles, practices, and tools found in SAFe.\nStep 3: Be prepared to share how you identified bottlenecks and what you would do to remove them with the class.",
+    side: [{ title: "Value Stream Mapping: Think about the future state", image: `${PIC}/vsm-future.webp` }],
+    board: "vsm",
+    config: { groups: ["Exploration", "Integration", "Deployment"] },
+    ...BOARD,
+  },
+  {
+    title: "Draft your ART’s AI boundaries",
+    kind: "Discussion",
+    prepare: 7,
+    share: 3,
+    steps: "Emerging AI capabilities can augment how ARTs plan, build, test, and learn, but must be managed carefully. ARTs must develop and socialize boundaries for these tools to ensure responsible usage.\nStep 1: In your group, discuss scenarios where AI could be used with human review, and where it should not be used\nStep 2: Be prepared to share with the class",
+    board: "lanes",
+    config: {
+      intro: "Emerging AI capabilities can augment how ARTs plan, build, test, and learn, but must be managed carefully. ARTs must develop and socialize boundaries for these tools to ensure responsible usage.",
+      layout: "rows",
+      lanes: [
+        { title: "AI is helpful here but needs human review", examples: ["Synthesizing team health survey data before I&A"] },
+        { title: "AI should not be used here", examples: ["Determining team capacity or deciding who owns a dependency"] },
+      ],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Your next steps",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps: "Throughout this course, you’ve learned about various ways to integrate AI into your daily work as an RTE. What do you want to implement when you return to your role?\nStep 1: Identify one improvement you want to make in how your ART delivers value\nStep 2: Decide which SAFe value(s), principle(s), or practice(s) will guide your approach\nStep 3: Determine the first step you will take in the next 30 days to start making this improvement\nStep 4: Be prepared to share with the class",
+    ...lanes(["Identify one improvement you want to make in how your ART delivers value", "Decide which SAFe value(s), principle(s), or practice(s) will guide your approach", "Determine the first step you will take in the next 30 days to start making this improvement"], { intro: "Throughout this course, you’ve learned about various ways to integrate AI into your daily work as an RTE. What do you want to implement when you return to your role?", layout: "rows" }),
+  },
+];
+
+// ---- lesson 7 -------------------------------------------------------------------------------
+
+const AIA_W = 1100;
+const AIA_H = Math.round((AIA_W * 675) / 1078);
+
+const lesson7: ActivitySpec[] = [
+  {
+    title: "The ART can’t run without trust",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    width: AIA_W + 60 + 480,
+    height: AIA_H + 120,
+    steps: "Step 1: In your group, discuss which SAFe events and activities can help establish trust among the members of the ART and ART stakeholders.\nStep 2: Identify these activities on the Big Picture and note why they would help establish trust.\nStep 3: Choose one of the SAFe activities you identified. Discuss and capture how the RTE can act to further increase the amount of trust built in that activity.\nStep 4: Be prepared to share your ideas with the class.",
+    items: [
+      { kind: "image", src: `${PIC}/ai-empowered-agility.webp`, x: 30, y: 60, width: AIA_W, height: AIA_H },
+      ...Array.from({ length: 6 }, (_, k): ActivityItem => ({ kind: "card", text: "", x: AIA_W + 70 + (k % 2) * 230, y: 60 + Math.floor(k / 2) * 200, width: 210, height: 180, color: "#cfe6e8" })),
+    ],
+  },
+  {
+    title: "Sustaining the victory",
+    kind: "Discussion",
+    steps: "Sustaining the victory",
+    ...lanes(["How are you connecting team victories to the vision?", "How are you creating connections between yourself and the teams?", "Discuss an upcoming PI event and how the RTE could sustain the victory."], { layout: "grid", cols: 3 }),
+  },
+];
+
+// Lessons 4–7 are named after what their exercises cover until the course's own lesson titles are in.
 export const RTE_COURSE: { title: string; activities: ActivitySpec[] }[] = [
   { title: "Exploring the RTE Role and Responsibilities", activities: lesson1 },
   { title: "Organizing the ART", activities: lesson2 },
   { title: "Facilitating PI Planning", activities: lesson3 },
+  { title: "Facilitating ART Events, Flow and DevOps", activities: lesson4 },
+  { title: "Measuring and Improving Flow", activities: lesson5 },
+  { title: "Improving the ART", activities: lesson6 },
+  { title: "Sustaining the ART", activities: lesson7 },
 ];

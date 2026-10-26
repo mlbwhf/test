@@ -34,6 +34,40 @@ export interface Activity {
   steps: string;
   side?: SideItem[];
   connectionTypes?: ConnectionType[];
+  /**
+   * A purpose-built board instead of the free canvas: "lanes" (questions with a sticky lane each),
+   * "roam", "kanban", "metrics", … Its setup is in `config`; what people add is in the frame's `state`.
+   */
+  board?: string;
+  config?: Record<string, unknown>;
+}
+
+/** One change to an exercise board's shared state, so many people can add at once without overwriting each other. */
+export type StateOp =
+  | { key: string; op: "set"; value: unknown }
+  | { key: string; op: "push"; value: Record<string, unknown> }
+  | { key: string; op: "update"; id: string; value: Record<string, unknown> }
+  | { key: string; op: "remove"; id: string };
+
+/** Applies one change to a frame's state; list entries carry an `id`. Returns the new value of the key. */
+export function applyStateOp(state: Record<string, unknown>, change: StateOp, newId: () => string): unknown {
+  const list = () => (Array.isArray(state[change.key]) ? (state[change.key] as Record<string, unknown>[]) : []);
+  switch (change.op) {
+    case "set":
+      if (change.value === null || change.value === undefined) delete state[change.key];
+      else state[change.key] = change.value;
+      break;
+    case "push":
+      state[change.key] = [...list(), { ...change.value, id: newId() }];
+      break;
+    case "update":
+      state[change.key] = list().map((x) => (x.id === change.id ? { ...x, ...change.value, id: x.id } : x));
+      break;
+    case "remove":
+      state[change.key] = list().filter((x) => x.id !== change.id);
+      break;
+  }
+  return state[change.key];
 }
 
 /** One countdown for the whole class, shown to every learner. */
@@ -176,7 +210,7 @@ export function boardRevision(b: Board): string {
     for (let i = 0; i < v.length; i++) h = Math.imul(h ^ v.charCodeAt(i), 16777619);
   };
   add(b.name);
-  for (const f of b.frames) add(`${f.id}|${f.title}|${f.done ? 1 : 0}|${f.x}|${f.y}|${f.width}|${f.height}|${f.activity ? JSON.stringify({ ...f.activity, side: f.activity.side?.map((x) => [x.title, x.url, x.text, x.image?.length, x.instructorOnly]) }) : ""}`);
+  for (const f of b.frames) add(`${f.id}|${f.title}|${f.done ? 1 : 0}|${f.state ? JSON.stringify(f.state) : ""}|${f.x}|${f.y}|${f.width}|${f.height}|${f.activity ? JSON.stringify({ ...f.activity, side: f.activity.side?.map((x) => [x.title, x.url, x.text, x.image?.length, x.instructorOnly]) }) : ""}`);
   for (const n of b.nodes) add(`${n.id}|${n.x}|${n.y}|${n.width}|${n.height}|${n.text}|${n.color}|${n.frameId}|${n.fields.locked ? 1 : 0}|${typeof n.fields.src === "string" ? n.fields.src.length : 0}`);
   for (const e of b.edges) add(`${e.id}|${e.fromId}|${e.toId}|${e.type ?? ""}|${e.label ?? ""}`);
   return (h >>> 0).toString(36);

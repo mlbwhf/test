@@ -30,6 +30,8 @@ export interface Frame {
   activity?: Activity;
   /** A class exercise the trainer marked complete. */
   done?: boolean;
+  /** What people added on a purpose-built exercise board (activities.ts `board`), by key. */
+  state?: Record<string, unknown>;
 }
 
 export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "view" | "other";

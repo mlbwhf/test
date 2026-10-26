@@ -5,7 +5,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { addActivities, boardRevision, courseBoard, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
+import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
 import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, templateFrom, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
@@ -32,6 +32,7 @@ export interface Connection {
 }
 
 const Id = z.string().min(1).max(200);
+const StateKey = z.string().min(1).max(120);
 const Link = z.string().url().max(2000).refine((u) => /^https?:\/\//i.test(u), "Use an http(s) address");
 const ImageData = z.string().max(6_000_000).regex(/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]+$/, "A PNG, JPEG, GIF or WebP image");
 const ActivityBody = z.object({
@@ -42,6 +43,8 @@ const ActivityBody = z.object({
   steps: z.string().max(8000),
   side: z.array(z.object({ title: z.string().min(1).max(200), url: Link.optional(), image: ImageData.optional(), text: z.string().max(8000).optional(), instructorOnly: z.boolean().optional() })).max(8).optional(),
   connectionTypes: z.array(z.object({ id: z.string().min(1).max(40), label: z.string().min(1).max(300), color: z.string().max(40).default("") })).max(8).optional(),
+  board: z.string().min(1).max(40).optional(),
+  config: z.record(z.string().max(60), z.unknown()).optional(),
 });
 const ActivitySpecBody = ActivityBody.extend({
   title: z.string().min(1).max(200),
@@ -596,6 +599,20 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
 
   // ---- class activities and the class timer ---------------------------------------------
+  // What people add on a purpose-built exercise board: one change at a time, so many can add at once.
+  app.put("/v1/boards/:id/frames/:frameId/state", { bodyLimit: 2 * 1024 * 1024, schema: { params: z.object({ id: Id, frameId: Id }), body: z.discriminatedUnion("op", [z.object({ key: StateKey, op: z.literal("set"), value: z.unknown() }), z.object({ key: StateKey, op: z.literal("push"), value: z.record(z.string().max(60), z.unknown()) }), z.object({ key: StateKey, op: z.literal("update"), id: Id, value: z.record(z.string().max(60), z.unknown()) }), z.object({ key: StateKey, op: z.literal("remove"), id: Id })]) } }, async (req) => {
+    require(req, "plan");
+    const b = editable(req, req.params.id);
+    const f = b.frames.find((x) => x.id === req.params.frameId);
+    if (!f) throw notFound("Frame");
+    const state = (f.state ??= {});
+    const before = JSON.stringify(state).length;
+    const value = applyStateOp(state, req.body as StateOp, () => `s${Date.now().toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`);
+    if (JSON.stringify(state).length > 1_000_000 && JSON.stringify(state).length > before) throw new ApiError(413, "STATE_TOO_LARGE", "This exercise board is full.");
+    if (Array.isArray(value) && value.length > 1000) throw new ApiError(413, "STATE_TOO_LARGE", "This list is full.");
+    await store.commit(req.principal, "board.frame.state", { board: b.id, frame: f.id, key: req.body.key, op: req.body.op });
+    return { key: req.body.key, value: value ?? null };
+  });
   app.post("/v1/boards/:id/activities", { bodyLimit: 48 * 1024 * 1024, schema: { params: z.object({ id: Id }), body: z.object({ lessonId: Id, activities: z.array(ActivitySpecBody).min(1).max(40) }) } }, async (req, reply) => {
     require(req, "plan");
     const b = editable(req, req.params.id);

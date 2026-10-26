@@ -1829,6 +1829,24 @@ describe("rooms", () => {
 });
 
 describe("classes: students by link, wipe and custom templates", () => {
+  it("keeps what people add on an exercise board, one change at a time, learners included", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const frame = ((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; parentId?: string }[]).find((f) => f.parentId)!;
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
+    const url = `/v1/boards/${id}/frames/${encodeURIComponent(frame.id)}/state`;
+    const a = await call("PUT", url, { key: "lane:0", op: "push", value: { text: "From the trainer" } }, root);
+    const b = await call("PUT", url, { key: "lane:0", op: "push", value: { text: "From Ana" } }, ana);
+    expect(b.body.value.map((x: { text: string }) => x.text)).toEqual(["From the trainer", "From Ana"]);
+    const mine = b.body.value[1].id as string;
+    expect((await call("PUT", url, { key: "lane:0", op: "update", id: mine, value: { text: "Edited" } }, ana)).body.value[1].text).toBe("Edited");
+    expect((await call("PUT", url, { key: "lane:0", op: "remove", id: a.body.value[0].id }, ana)).body.value).toHaveLength(1);
+    expect((await call("PUT", url, { key: "choice", op: "set", value: "ART Sync" }, ana)).body.value).toBe("ART Sync");
+    const state = ((await call("GET", `/v1/boards/${id}`, undefined, ana)).body.board.frames as { id: string; state?: Record<string, unknown> }[]).find((f) => f.id === frame.id)!.state;
+    expect(state).toMatchObject({ choice: "ART Sync" });
+  });
+
   it("imports a trainer's own course as a class template, and the trainer marks exercises complete", async () => {
     const { call } = await setup();
     const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
