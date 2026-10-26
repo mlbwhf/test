@@ -13,6 +13,9 @@ import { LaneBoard, StatChip, useLaneState, type Lane } from "@/components/lane-
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
 import { useSavedClassTemplates } from "@/lib/class-templates";
+import { BadgeRing, ClassIcon } from "@/components/class-icon";
+import { classOutline } from "@/components/class-board";
+import type { Board } from "@trainyard/core";
 
 interface BoardSummary {
   id: string;
@@ -66,37 +69,9 @@ export function ClassBoards() {
   };
   return (
     <>
-      <PageHead title="Class boards" sub="Teach for free: every class opens with a Welcome area (how to work on the board, agenda and logistics, icebreaker), then a tab per lesson. The chapters that teach a Trainyard tool are built from the tool itself, so the class changes when the tool does." />
       {err ? <ErrorList title="Could not start the class" items={[{ message: err }]} /> : null}
       {me.data?.principal.anonymous ? <div className="notice warn">Sign up free to start a class board: classes are kept for signed-up trainers.</div> : null}
-      <div className="cls-grid">
-        {CLASSES.map((c, i) => (
-          <article key={c.id} className="cls-card" style={{ background: `var(--th-t${(i % 4) + 1})`, transform: `rotate(${i % 2 ? 0.6 : -0.5}deg)` }}>
-            <span className="lb-tape" aria-hidden="true" />
-            <div className="cls-card-top">
-              <span className="lb-tag">{c.short}</span>
-              <span className="lb-chip">
-                {c.days} day{c.days === 1 ? "" : "s"} · {c.lessons.length} lessons
-              </span>
-            </div>
-            <h2>{c.name}</h2>
-            <p>{c.blurb}</p>
-            <ol className="cls-lessons">
-              {c.lessons.map((l) => (
-                <li key={l.title}>{l.title}</li>
-              ))}
-            </ol>
-            <div className="row" style={{ marginTop: "auto" }}>
-              <button className="btn primary" disabled={busy !== null || !!me.data?.principal.anonymous} onClick={() => void start(c)}>
-                {busy === c.id ? "Starting…" : "Start this class"}
-              </button>
-              <Link className="btn" href={`/templates?tpl=tpl-builtin-class-${c.id}`}>
-                Preview
-              </Link>
-            </div>
-          </article>
-        ))}
-      </div>
+      <ClassLibrary running={running} busy={busy} anonymous={!!me.data?.principal.anonymous} onStart={(c) => void start(c)} />
       {saved.length ? (
         <section className="panel panel-body stack" aria-labelledby="cls-saved-head">
           <h2 id="cls-saved-head">Your class templates</h2>
@@ -133,6 +108,96 @@ export function ClassBoards() {
         )}
       </section>
     </>
+  );
+}
+
+/** The library: the featured class with its badge and progress, its lessons, then the other classes, each with its own icon. */
+function ClassLibrary({ running, busy, anonymous, onStart }: { running: BoardSummary[]; busy: string | null; anonymous: boolean; onStart: (c: ClassSpec) => void }) {
+  // Featured: the class most recently started, else the RTE class.
+  const latest = [...running].sort((a, b) => b.origin.importedAt.localeCompare(a.origin.importedAt))[0];
+  const board = useApi<{ board: Board }>(latest ? `/v1/boards/${encodeURIComponent(latest.id)}` : null);
+  const classId = (board.data?.board.fields?.class as string | undefined) ?? (latest ? undefined : "rte");
+  const spec = CLASSES.find((c) => c.id === classId) ?? CLASSES.find((c) => c.id === "rte")!;
+  const outline = board.data ? classOutline(board.data.board) : null;
+  const all = outline?.flatMap((l) => l.exercises) ?? [];
+  const done = all.filter((e) => e.done).length;
+  const others = CLASSES.filter((c) => c.id !== spec.id);
+  const tints = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae"];
+  return (
+    <div className="train lib">
+      <section className="train-hero lib-hero">
+        <BadgeRing classId={latest ? classId : spec.id} name={latest?.name ?? spec.name} done={done} total={all.length || 1} size={210} />
+        <div className="lib-hero-text">
+          <span className="train-eyebrow">SAFe · {latest ? "your featured class" : "start here"}</span>
+          <h2>{latest?.name ?? spec.name}</h2>
+          <p>{outline ? `${outline.filter((l) => l.n).length} lessons, ${all.length} exercises.` : `${spec.lessons.length} lessons over ${spec.days} days.`}</p>
+          {outline ? (
+            <div className="row" style={{ gap: 10, alignItems: "center" }}>
+              <div className="train-progress" style={{ margin: 0 }}>
+                <span style={{ width: `${all.length ? (100 * done) / all.length : 0}%` }} />
+              </div>
+              <span className="train-mono">
+                {done}/{all.length}
+              </span>
+            </div>
+          ) : null}
+          <div className="row" style={{ gap: 12, marginTop: 16 }}>
+            {latest ? (
+              <Link className="train-btn primary big" href={`/boards/${encodeURIComponent(latest.id)}`}>
+                {done ? "Continue" : "Open class"} ▸
+              </Link>
+            ) : null}
+            <button className={`train-btn big${latest ? " ghost" : " primary"}`} disabled={busy !== null || anonymous} onClick={() => onStart(spec)}>
+              {busy === spec.id ? "Starting…" : latest ? "Start a new class" : "Start this class ▸"}
+            </button>
+          </div>
+        </div>
+      </section>
+      <div className="train-sections">
+        {outline ? (
+          <>
+            <span className="train-mono">Earn it lesson by lesson</span>
+            <div className="lib-tiles">
+              {outline.map((l, i) => (
+                <Link key={l.id} className="train-car lib-tile" style={{ ["--tint" as string]: tints[i % tints.length] }} href={`/boards/${encodeURIComponent(latest!.id)}${l.exercises[0] ? `#ex-${encodeURIComponent(l.exercises[0].id)}` : ""}`}>
+                  <span className="train-car-title">
+                    <b>{l.n || "·"}</b> {l.title}
+                  </span>
+                  <span className="train-dots">
+                    {l.exercises.map((e) => (
+                      <i key={e.id} className={e.done ? "on" : undefined} title={e.title} />
+                    ))}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </>
+        ) : null}
+        <span className="train-mono">Classes</span>
+        <h2>More classes</h2>
+        <div className="lib-more">
+          {others.map((c) => (
+            <article key={c.id} className="lib-class">
+              <ClassIcon classId={c.id} name={c.name} size={64} />
+              <div className="stack" style={{ gap: 6 }}>
+                <b>{c.name}</b>
+                <span className="faint" style={{ fontSize: 13 }}>
+                  {c.days} day{c.days === 1 ? "" : "s"} · {c.lessons.length} lessons
+                </span>
+                <div className="row" style={{ gap: 8 }}>
+                  <button className="train-btn small primary" disabled={busy !== null || anonymous} onClick={() => onStart(c)}>
+                    {busy === c.id ? "Starting…" : "Start"}
+                  </button>
+                  <Link className="train-btn small" href={`/templates?tpl=tpl-builtin-class-${c.id}`}>
+                    Preview
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -34,15 +34,15 @@ const lesson1: ActivitySpec[] = [
     height: BP_H + 120,
     steps: "Step 1: Working in your groups, use the Big Picture to identify connections between the RTE and other Framework elements across communication, collaboration, problem-solving, and inputs/outputs. Identify at least one connection for each type.\nStep 2: Be ready to present and discuss the connections you identify.",
     connectionTypes: [
-      { id: "communicates", label: "Communicates with Business Owners to understand priorities and long-term vision, and communicates progress toward objectives", color: "#c2412d" },
-      { id: "collaborates", label: "Collaborates with the Scrum Masters and/or Team Coaches on the ART to measure progress and help remove impediments", color: "#2f6fbd" },
-      { id: "facilitates", label: "Facilitates the Inspect & Adapt (I&A) event to coach the ART to identify and solve problems", color: "#2e8b57" },
-      { id: "gathers", label: "Gathers the key outputs of events, like PI objectives from PI Planning", color: "#d98a1c" },
+      { id: "communicates", label: "Communication", color: "#c2412d" },
+      { id: "collaborates", label: "Collaboration", color: "#2f6fbd" },
+      { id: "facilitates", label: "Facilitate", color: "#2e8b57" },
+      { id: "gathers", label: "Input/Output", color: "#d98a1c" },
     ],
     side: [{ title: "Example connections", image: `${PIC}/rte-connections-example.png`, instructorOnly: true }],
     items: [
       { kind: "image", src: `${PIC}/big-picture.png`, x: 30, y: 60, width: BP_W, height: BP_H },
-      { kind: "pin", text: "RTE", ...((p) => ({ x: p.x - 60, y: p.y - 22 }))(onBp(668, 318)), width: 120, height: 44, color: "#7b3f8c" },
+      { kind: "dot", text: "RTE", ...((p) => ({ x: p.x - 18, y: p.y - 18 }))(onBp(668, 300)), color: "#7b3f8c" },
     ],
   },
   {

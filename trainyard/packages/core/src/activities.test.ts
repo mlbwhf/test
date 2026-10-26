@@ -60,13 +60,18 @@ describe("a trainer's own course", () => {
 });
 
 describe("the RTE class", () => {
-  it("opens with the icebreaker only, then a lesson per chapter holding its exercises", async () => {
+  it("opens with the agenda kanban and the icebreaker, then a lesson per chapter holding its exercises", async () => {
     const { CLASSES, classBoard, cardChoices } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
     expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y).map((f) => f.title);
-    expect(kids(top[0]!.id)).toEqual(["Icebreaker: introduce yourself"]);
+    expect(kids(top[0]!.id).sort()).toEqual(["Icebreaker: introduce yourself", "Quick agenda"]);
+    const agenda = b.frames.find((f) => f.title === "Quick agenda")!;
+    expect(kids(agenda.id).length).toBe(3);
+    const toStart = b.frames.find((f) => f.parentId === agenda.id && f.title === "To start")!;
+    expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning"]);
+    expect(b.nodes.some((n) => n.fields.dot && n.text === "RTE")).toBe(true);
     expect(kids(top[1]!.id)).toHaveLength(5);
     expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation"]);
     const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;

@@ -31,6 +31,8 @@ export type Exercise =
   | { kind: "stickies"; title: string; lanes: string[]; hint?: string; color?: string; rows?: number }
   /** Sorting zones, e.g. Not applicable / Work as-is / Requires rethinking. */
   | { kind: "zones"; title: string; zones: string[]; items?: string[]; color?: string }
+  /** A kanban: lanes left to right, the items as cards in the first lane, to drag across. */
+  | { kind: "kanban"; title: string; lanes: string[]; items: string[] }
   /** A grid of cards; the first row is the header. Empty cells become blank cards. */
   | { kind: "table"; title: string; columns: string[]; rows: string[][]; blankRows?: number }
   /** A canvas with named sections (empathy map, feature canvas). */
@@ -123,6 +125,18 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
       ex.zones.forEach((z, i) => {
         const zf = b.frame(z, x + 20 + i * (zoneW + 20), y + 50, zoneW, h - 70, f.id);
         if (i === 0) (ex.items ?? ["", ""]).forEach((it, k) => b.node("sticky", it, zf.x + 20 + (k % 2) * (STICKY - 20), zf.y + 40 + Math.floor(k / 2) * 120, STICKY - 30, 110, zf.id, { color: ex.color ?? COLORS.yellow, fields: it ? {} : { placeholder: true } }));
+      });
+      return { w, h };
+    }
+    case "kanban": {
+      const laneW = 360;
+      const cardH = 64;
+      const w = ex.lanes.length * (laneW + 20) + 20;
+      const h = Math.max(320, 110 + ex.items.length * (cardH + 14) + PAD);
+      const f = b.frame(ex.title, x, y, w, h, parentId);
+      ex.lanes.forEach((lane, i) => {
+        const lf = b.frame(lane, x + 20 + i * (laneW + 20), y + 50, laneW, h - 70, f.id);
+        if (i === 0) ex.items.forEach((it, k) => b.node("card", it, lf.x + 16, lf.y + 44 + k * (cardH + 14), laneW - 32, cardH, lf.id, { color: COLORS.yellow, fields: { fontSize: 18 } }));
       });
       return { w, h };
     }
@@ -253,7 +267,7 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
   };
   const welcome: Exercise[] = [
     { kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] },
-    { kind: "table", title: "Quick agenda", columns: ["Lesson", "Day", "Status"], rows: spec.lessons.map((l, i) => [`${i + 1}. ${l.title}`, `Day ${Math.min(spec.days, Math.floor((i * spec.days) / spec.lessons.length) + 1)}`, i === 0 ? "Now" : ""]) },
+    { kind: "kanban", title: "Quick agenda", lanes: ["To start", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
     { kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] },
     { kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 },
     { kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 },
@@ -656,8 +670,9 @@ const RAW_CLASSES: ClassSpec[] = [
     short: "RTE",
     blurb: "The RTE class chapter by chapter: each exercise on its own tab with its timing, steps and references, the class timer, and exercises the trainer marks complete.",
     days: 3,
-    welcome: ["Icebreaker"],
-    lessons: RTE_COURSE.map((l) => ({ title: l.title, exercises: [] })),
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: RTE_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
     course: RTE_COURSE,
   },
 ];

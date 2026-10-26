@@ -5,7 +5,7 @@ import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
 import { useDoubleTap, usePanZoom } from "@/lib/touch";
-import { cardChoices, type CardType, type ConnectionType } from "@trainyard/core";
+import { cardChoices, DOT, type CardType, type ConnectionType } from "@trainyard/core";
 import { ActivityEditor } from "@/components/activity-editor";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
@@ -24,7 +24,9 @@ const SWATCHES = [
   ["#ffffff", "Note"],
 ] as const;
 
-type Tool = "select" | "connect";
+type Tool = "select" | "connect" | "dot";
+/** A spot waiting for its connection type: a new dot goes there, linked from `from` when set. */
+type Chooser = { p: { x: number; y: number }; left: number; top: number; from: string | null };
 /** Card fields that are bookkeeping, not something to show. */
 const HIDDEN_FIELDS = new Set(["placeholder", "createdBy", "src", "locked", "pin", "studentId", "studentName", "choices"]);
 /** Answer buttons on a card: Yes green, No red, Depends amber. */
@@ -159,7 +161,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
   const [selected, setSelected] = useState<string | null>(null);
   const [tool, setTool] = useState<Tool>("select");
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
-  const [connType, setConnType] = useState<string | null>(null);
+  const [chooser, setChooser] = useState<Chooser | null>(null);
   const [rubber, setRubber] = useState<Rubber | null>(null);
   const [selEdge, setSelEdge] = useState<string | null>(null);
   const picture = useRef<HTMLInputElement>(null);
@@ -227,7 +229,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     for (const e of board.edges) if (e.type && (inside.has(e.fromId) || inside.has(e.toId))) c[e.type] = (c[e.type] ?? 0) + 1;
     return c;
   }, [board.edges, shownNodes]);
-  useEffect(() => setConnType((t) => (t && types.some((x) => x.id === t) ? t : null)), [types]);
+
   // Ctrl or Cmd with the wheel (or a trackpad pinch, which browsers send the same way) zooms.
   useEffect(() => {
     const el = panel.current;
@@ -304,6 +306,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     e.stopPropagation(); // keep the canvas background from clearing the selection or the connect pick
     if (e.button !== 0) return;
     const locked = kind === "node" && !!nodes.find((n) => n.id === id)?.fields.locked;
+    if (tool === "dot") return;
     if (tool === "connect") {
       // Press on a card and drag to another card, or to a spot on a picture, to connect them.
       (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
@@ -371,12 +374,12 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       const from = rubber.from || connectFrom;
       if (rubber.moved && rubber.from) {
         if (target && target !== rubber.from) connect(rubber.from, target);
-        else if (!target) connectToSpot(rubber.from, p);
+        else if (!target) connectToSpot(rubber.from, p, e);
         setConnectFrom(null);
       } else if (!rubber.moved && from && from !== rubber.from) {
         // Tap, then tap the other end: a card, or a spot on the picture for a new marker.
         if (rubber.from) connect(from, rubber.from);
-        else connectToSpot(from, p);
+        else connectToSpot(from, p, e);
         setConnectFrom(null);
       } else if (rubber.from) setConnectFrom(rubber.from);
       return;
@@ -385,8 +388,10 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     if (tap) {
       // A tap on the background clears the selection, as a mouse press does; on a frame it selects it.
       if (tap === "tap" && tool === "connect" && connectFrom) {
-        connectToSpot(connectFrom, toBoard(e));
+        connectToSpot(connectFrom, toBoard(e), e);
         setConnectFrom(null);
+      } else if (tap === "tap" && tool === "dot") {
+        askType(toBoard(e), e, null);
       } else if (tap === "tap") {
         const frame = (e.target as Element).closest?.("[data-frame-id]")?.getAttribute("data-frame-id");
         setSelected(frame ?? null);
@@ -413,13 +418,37 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       void save("Move frame", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/frames/${encodeURIComponent(f.id)}`, { x: f.x, y: f.y }));
     }
   };
-  const connect = (from: string, to: string) => void save("Connect", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: to, ...(connType ? { type: connType } : {}) }));
+  // A link takes the type of the dot it reaches (or leaves): Communication, Collaboration…
+  const typeOf = (id: string) => {
+    const t = nodes.find((n) => n.id === id)?.fields.connType;
+    return typeof t === "string" ? t : undefined;
+  };
+  const connect = (from: string, to: string) => {
+    const type = typeOf(to) ?? typeOf(from);
+    void save("Connect", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: to, ...(type ? { type } : {}) }));
+  };
+  /** Opens the type chooser at a board point (pointer event for where on screen). */
+  const askType = (p: { x: number; y: number }, e: { clientX: number; clientY: number }, from: string | null) => {
+    const r = panel.current!.getBoundingClientRect();
+    setChooser({ p, from, left: e.clientX - r.left + panel.current!.scrollLeft, top: e.clientY - r.top + panel.current!.scrollTop });
+  };
+  /** Plots a dot of one connection type, linked from `from` when set, and opens its name for writing. */
+  const plotDot = (c: Chooser, type: ConnectionType) => {
+    setChooser(null);
+    const inner = [...shownFrames].reverse().find((f) => c.p.x >= f.x && c.p.y >= f.y && c.p.x <= f.x + f.width && c.p.y <= f.y + f.height);
+    void save("Plot a dot", async () => {
+      const r = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { text: "", kind: "shape", x: Math.round(c.p.x - DOT / 2), y: Math.round(c.p.y - DOT / 2), width: DOT, height: DOT, color: type.color, fields: { pin: true, dot: true, connType: type.id }, ...(inner ? { frameId: inner.id } : {}) });
+      if (c.from) await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: c.from, toId: r.node.id, type: type.id });
+      setEditing({ id: r.node.id, text: "" });
+    });
+  };
   /** A connector to a spot with no card: a small marker goes there first, ready to name. */
-  const connectToSpot = (from: string, p: { x: number; y: number }) => {
+  const connectToSpot = (from: string, p: { x: number; y: number }, e?: { clientX: number; clientY: number }) => {
+    if (types.length && e) return askType(p, e, from);
     const inner = [...shownFrames].reverse().find((f) => p.x >= f.x && p.y >= f.y && p.x <= f.x + f.width && p.y <= f.y + f.height);
     void save("Connect", async () => {
       const r = await api<{ node: BoardNode }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/nodes`, { text: "", kind: "shape", x: Math.round(p.x - 70), y: Math.round(p.y - 24), width: 140, height: 48, color: "#17212b", fields: { pin: true }, ...(inner ? { frameId: inner.id } : {}) });
-      await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: r.node.id, ...(connType ? { type: connType } : {}) });
+      await api("POST", `/v1/boards/${encodeURIComponent(board.id)}/edges`, { fromId: from, toId: r.node.id });
       setEditing({ id: r.node.id, text: "" });
     });
   };
@@ -531,11 +560,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={() => setPicker({ mode: "view" })} title="Bring a whole board or canvas in as a live view">
                 + Embed a view
               </button>
-              {types.length ? null : (
-                <button className={`btn small ${tool === "connect" ? "primary" : ""}`} onClick={() => (setTool(tool === "connect" ? "select" : "connect"), setConnectFrom(null))} aria-pressed={tool === "connect"}>
-                  {tool === "connect" ? (connectFrom ? "Drag or tap to the other end" : "Press a card and drag") : "Connect"}
+              {types.length ? (
+                <button className={`btn small ${tool === "dot" ? "primary" : ""}`} onClick={() => (setTool(tool === "dot" ? "select" : "dot"), setConnectFrom(null))} aria-pressed={tool === "dot"} title="Click a spot on the picture, then pick its type">
+                  ● Plot a dot
                 </button>
-              )}
+              ) : null}
+              <button className={`btn small ${tool === "connect" ? "primary" : ""}`} onClick={() => (setTool(tool === "connect" ? "select" : "connect"), setConnectFrom(null))} aria-pressed={tool === "connect"}>
+                {tool === "connect" ? (connectFrom ? "Drag or tap to the other end" : "Press a card and drag") : types.length ? "↗ Link" : "Connect"}
+              </button>
               {trainer ? (
                 <>
                   <button className="btn small" onClick={() => picture.current?.click()} title="A picture to work on, such as a framework diagram. It stays put; people connect to spots on it.">
@@ -566,22 +598,18 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
       </div>
 
       {types.length ? (
-        <div className="conn-types" role="group" aria-label="Connection types">
-          <span className="eyebrow">Connect</span>
-          {types.map((t) => {
-            const on = tool === "connect" && connType === t.id;
-            return (
-              <button key={t.id} className="conn-type" aria-pressed={on} disabled={readOnly} onClick={() => (on ? (setTool("select"), setConnType(null)) : (setTool("connect"), setConnType(t.id)), setConnectFrom(null))} style={{ ["--c" as string]: t.color }}>
-                <span className="conn-dot" aria-hidden />
-                <span>{t.label}</span>
-                <span className="conn-count" aria-label={`${counts[t.id] ?? 0} drawn`}>
-                  {counts[t.id] ? `${counts[t.id]} ✓` : "0"}
-                </span>
-              </button>
-            );
-          })}
+        <div className="conn-types" role="list" aria-label="Connection types">
+          {types.map((t) => (
+            <span key={t.id} role="listitem" className="conn-type" style={{ ["--c" as string]: t.color }}>
+              <span className="conn-dot" aria-hidden />
+              <span>{t.label}</span>
+              <span className="conn-count" aria-label={`${counts[t.id] ?? 0} linked`}>
+                {counts[t.id] ? `${counts[t.id]} ✓` : "0"}
+              </span>
+            </span>
+          ))}
           <span className="faint" style={{ fontSize: "0.78rem" }}>
-            {tool === "connect" ? (connectFrom ? "Now tap the other end, or a spot on the picture" : "Press on a card or marker and drag to what it connects with; drop on the picture to mark a new spot") : "Pick a type, then draw from the card"}
+            {tool === "dot" ? "Click a spot, then pick its type" : tool === "connect" ? "Drag from RTE to a dot; drop on an empty spot to plot one there" : "Plot a dot, then link RTE to it"}
           </span>
         </div>
       ) : null}
@@ -611,10 +639,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
             onPointerDown={(e) => {
               // Fingers and pens pan and pinch the background; a tap still clears the selection.
               if (tool === "connect" && connectFrom && e.pointerType === "mouse") {
-                connectToSpot(connectFrom, toBoard(e));
+                connectToSpot(connectFrom, toBoard(e), e);
                 setConnectFrom(null);
                 return;
               }
+              if (tool === "dot" && e.pointerType === "mouse") return askType(toBoard(e), e, null);
               if (pan.down(e)) return;
               setSelected(null);
               setSelEdge(null);
@@ -665,12 +694,24 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               const badge = n.ref ? `${KIND_LABEL[n.ref.kind].toUpperCase()}${sum?.status ? ` · ${sum.status.toUpperCase()}` : ""}` : type?.badge ?? "";
               const shownLines = n.ref && sum && n.kind !== "view" ? wrap(sum.title, Math.max(6, Math.floor(w / (fs * 0.56)))) : lines;
               const facts = sum ? Object.entries(sum.facts).slice(0, 2).map(([k, v]) => `${k} ${v}`).join(" · ") : "";
+              if (n.fields.dot)
+                // A plotted dot: a coloured circle with its name beside it.
+                return (
+                  <g key={n.id} data-node-id={n.id} onPointerDown={(e) => startDrag("node", n.id, e)} onClick={(e) => e.stopPropagation()} onDoubleClick={() => !readOnly && setEditing({ id: n.id, text: n.text })} style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}>
+                    <circle cx={n.x + w / 2} cy={n.y + h / 2} r={w / 2 + (isSel || isFrom ? 4 : 0)} fill={cssColor(n.color)} stroke={isFrom ? "var(--ai)" : isSel ? "var(--signal)" : "#ffffff"} strokeWidth={4} />
+                    {n.text ? (
+                      <text x={n.x + w + 10} y={n.y + h / 2 + 8} fontSize={22} fontWeight={700} fill="#17212b" stroke="#ffffff" strokeWidth={5} paintOrder="stroke" fontFamily="var(--font-body)">
+                        {n.text}
+                      </text>
+                    ) : null}
+                  </g>
+                );
               return (
                 <g
                   key={n.id}
                   data-node-id={n.id}
                   onPointerDown={(e) => startDrag("node", n.id, e)}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => (e.stopPropagation(), tool === "dot" && n.fields.locked && !readOnly && askType(toBoard(e), e, null))}
                   onDoubleClick={() => !readOnly && !n.fields.locked && setEditing({ id: n.id, text: n.text })}
                   style={{ cursor: readOnly ? "default" : tool === "connect" ? "crosshair" : "grab" }}
                   filter={placeholder ? undefined : "url(#lift)"}
@@ -787,9 +828,9 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                 </g>
               );
             })}
-            {rubber && rubber.from && rubber.moved ? <RubberLine from={center(rubber.from)} to={rubber} color={(connType && typeColor.get(connType)) || "var(--ai)"} /> : null}
+            {rubber && rubber.from && rubber.moved ? <RubberLine from={center(rubber.from)} to={rubber} color="var(--ai)" /> : null}
             {editingNode ? (
-              <foreignObject x={editingNode.x} y={editingNode.y} width={editingNode.width ?? 180} height={editingNode.height ?? 120}>
+              <foreignObject x={editingNode.fields.dot ? editingNode.x + (editingNode.width ?? DOT) + 8 : editingNode.x} y={editingNode.fields.dot ? editingNode.y - 6 : editingNode.y} width={editingNode.fields.dot ? 260 : editingNode.width ?? 180} height={editingNode.fields.dot ? 52 : editingNode.height ?? 120}>
                 <textarea
                   id={`edit-${editingNode.id}`}
                   aria-label="Card text"
@@ -806,6 +847,20 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               </foreignObject>
             ) : null}
           </svg>
+          {chooser ? (
+            <div className="dot-chooser" role="dialog" aria-label="Pick the connection type" style={{ left: chooser.left, top: chooser.top }} onPointerDown={(e) => e.stopPropagation()}>
+              <span className="eyebrow">Type of connection</span>
+              {types.map((t) => (
+                <button key={t.id} className="conn-type" style={{ ["--c" as string]: t.color }} onClick={() => plotDot(chooser, t)}>
+                  <span className="conn-dot" aria-hidden />
+                  {t.label}
+                </button>
+              ))}
+              <button className="btn small ghost" onClick={() => setChooser(null)}>
+                Cancel
+              </button>
+            </div>
+          ) : null}
         </section>
 
         {edgeSel && !selNode && !selFrame ? (

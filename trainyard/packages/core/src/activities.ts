@@ -49,7 +49,7 @@ export interface ClassTimer {
 /** Something to place on the activity's canvas, in pixels from its top-left corner. */
 export interface ActivityItem {
   /** "shape" is a plain block, e.g. a quadrant of a 2×2 grid. */
-  kind: "image" | "pin" | "card" | "text" | "shape";
+  kind: "image" | "pin" | "card" | "text" | "shape" | "dot";
   text?: string;
   src?: string;
   x: number;
@@ -62,6 +62,8 @@ export interface ActivityItem {
   locked?: boolean;
   /** One-tap answers shown on the card, e.g. ["Y", "N", "D"]; the pick is kept in the card's `choice` field. */
   choices?: string[];
+  /** For a dot: the connection type it stands for. */
+  connType?: string;
 }
 
 /** The answers a card offers (its `choices` field, "Y|N|D"). */
@@ -76,6 +78,9 @@ export interface ActivitySpec extends Activity {
   height?: number;
   items?: ActivityItem[];
 }
+
+/** Size of a plotted dot on a board. */
+export const DOT = 36;
 
 export const DEFAULT_CONNECTION_COLORS = ["#c2412d", "#2f6fbd", "#2e8b57", "#8c6bc8", "#d98a1c", "#1f8a9e"];
 
@@ -137,15 +142,15 @@ export function addActivities(board: Board, lessonId: string, specs: ActivitySpe
     items.forEach((it, j) => {
       const node: BoardNode = {
         id: `${id}-i${j + 1}`,
-        kind: it.kind === "image" ? "image" : it.kind === "text" ? "text" : it.kind === "pin" || it.kind === "shape" ? "shape" : "sticky",
+        kind: it.kind === "image" ? "image" : it.kind === "text" ? "text" : it.kind === "pin" || it.kind === "shape" || it.kind === "dot" ? "shape" : "sticky",
         text: it.text ?? "",
         x: lesson.x + 30 + it.x,
         y: y + it.y,
-        width: it.width ?? (it.kind === "pin" ? 120 : 180),
-        height: it.height ?? (it.kind === "pin" ? 44 : 120),
+        width: it.width ?? (it.kind === "dot" ? DOT : it.kind === "pin" ? 120 : 180),
+        height: it.height ?? (it.kind === "dot" ? DOT : it.kind === "pin" ? 44 : 120),
         frameId: id,
         tags: [],
-        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "image" || it.locked ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}), ...(it.choices?.length ? { choices: it.choices.join("|") } : {}) },
+        fields: { ...(it.src ? { src: it.src } : {}), ...(it.kind === "pin" ? { pin: true } : {}), ...(it.kind === "dot" ? { dot: true, ...(it.connType ? { connType: it.connType } : {}) } : {}), ...(it.kind === "image" || it.locked ? { locked: true } : {}), ...(it.fontSize ? { fontSize: it.fontSize } : {}), ...(it.choices?.length ? { choices: it.choices.join("|") } : {}) },
         ...(it.color ? { color: it.color } : it.kind === "pin" ? { color: "#17212b" } : it.kind === "card" ? { color: "#fff6c2" } : {}),
       };
       board.nodes.push(node);

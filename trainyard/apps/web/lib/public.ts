@@ -50,7 +50,7 @@ export const WHEN_THEM: Record<string, string> = {
 
 export const classSlugs = () => CLASSES.map((c) => c.id);
 export const classById = (id: string): ClassSpec | undefined => CLASSES.find((c) => c.id === id);
-export const exerciseKindLabel: Record<Exercise["kind"], string> = { slide: "Instructions", stickies: "Sticky notes", zones: "Sorting zones", table: "Table", canvas: "Canvas", link: "Live Trainyard room", "pi-planning": "PI planning simulation" };
+export const exerciseKindLabel: Record<Exercise["kind"], string> = { slide: "Instructions", stickies: "Sticky notes", zones: "Sorting zones", kanban: "Kanban", table: "Table", canvas: "Canvas", link: "Live Trainyard room", "pi-planning": "PI planning simulation" };
 
 // ---- guides ----------------------------------------------------------------------------------
 
