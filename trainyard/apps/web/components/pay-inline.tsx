@@ -112,7 +112,15 @@ function PayForm({ sub, email, summary, onPaid, onBack }: { sub: Subscription; e
         {busy === "paying" ? "Confirming with your bank…" : busy === "finishing" ? "Creating your workspace…" : sub.trialDays ? `Start free trial · ${money(0, sub.currency)} today` : `Pay ${money(sub.amountDue, sub.currency)} and start`}
       </button>
       <p className="ly-fine">
-        Processed by Stripe on this page. Month by month, no yearly commitment to start; switch to yearly later from Plan &amp; billing. Cancel any time there. Card details go to Stripe only.
+        Processed by Stripe on this page. Month by month, no yearly commitment to start; switch to yearly later from Plan &amp; billing. Cancel any time there. Card details go to Stripe only. By continuing you agree to the{" "}
+        <a href="/terms" target="_blank" rel="noopener">
+          terms of service
+        </a>{" "}
+        and the{" "}
+        <a href="/privacy" target="_blank" rel="noopener">
+          privacy policy
+        </a>
+        .
       </p>
       {onBack ? (
         <button type="button" className="ly-link" onClick={onBack}>

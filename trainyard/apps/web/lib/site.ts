@@ -27,3 +27,13 @@ export const ISSUES_URL = "https://github.com/mlbwhf/test/issues";
 
 /** JSON for an inline <script>: "<" is escaped so no value can close the tag early. */
 export const inlineJson = (x: unknown): string => JSON.stringify(x).replace(/</g, "\\u003c");
+
+/** Who runs trainyard.app, for the privacy policy and terms. */
+export const LEGAL = {
+  operator: "Agile Agilist",
+  /** Whose laws govern the terms, and whose courts hear disputes. */
+  jurisdiction: "the Province of Ontario and the federal laws of Canada that apply there",
+  courts: "the courts of Ontario, Canada",
+  /** When the current versions took effect. */
+  effective: "October 27, 2026",
+};

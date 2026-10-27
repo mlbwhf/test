@@ -244,6 +244,8 @@ export function publicPaths(): { path: string; priority: number; updated: string
     { path: "/insights", priority: 0.9, updated: SITE_UPDATED },
     { path: "/support", priority: 0.6, updated: SITE_UPDATED },
     { path: "/book", priority: 0.6, updated: SITE_UPDATED },
+    { path: "/privacy", priority: 0.3, updated: SITE_UPDATED },
+    { path: "/terms", priority: 0.3, updated: SITE_UPDATED },
     ...CLASSES.map((c) => ({ path: `/classes/${c.id}`, priority: 0.7, updated: SITE_UPDATED })),
     { path: "/guides", priority: 0.8, updated: SITE_UPDATED },
     ...GUIDES.map((g) => ({ path: `/guides/${g.slug}`, priority: 0.8, updated: g.updated })),

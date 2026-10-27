@@ -41,10 +41,17 @@ stripe() {
 ACCOUNT=$(stripe account | jq -r '[(.settings.dashboard.display_name // .id), (if .livemode then "live mode" else "test mode" end)] | join(" · ")')
 echo "Stripe account: $ACCOUNT"
 
-product() { # name -> id (reuse by name)
+# What customers see on their card statement for Trainyard subscriptions, whatever the account's
+# own descriptor is (Stripe uses a product's descriptor for its subscription charges). 5-22 characters.
+DESCRIPTOR=${STRIPE_STATEMENT_DESCRIPTOR:-TRAINYARD}
+product() { # name -> id (reuse by name), with the statement descriptor set
   local id
   id=$(stripe products -G -d active=true -d limit=100 | jq -r --arg n "$1" '.data[] | select(.name==$n) | .id' | head -n1)
-  [ -n "$id" ] || id=$(stripe products -d "name=$1" -d "description=$2" | jq -r .id)
+  if [ -n "$id" ]; then
+    stripe "products/$id" -d "statement_descriptor=$DESCRIPTOR" >/dev/null
+  else
+    id=$(stripe products -d "name=$1" -d "description=$2" -d "statement_descriptor=$DESCRIPTOR" | jq -r .id)
+  fi
   echo "$id"
 }
 price() { # lookup_key product amount_cents interval -> id
@@ -81,8 +88,11 @@ fi
 # portal as it is: found again by its metadata, headed "Trainyard", back to trainyard.app.
 WEB_HOST=$(envval TRAINYARD_WEB_HOST); [ -n "$WEB_HOST" ] || WEB_HOST=trainyard.app
 PORTAL=$(stripe billing_portal/configurations -G -d limit=100 -d active=true | jq -r '.data[] | select(.metadata.app=="trainyard") | .id' | head -n1)
-if [ -z "$PORTAL" ]; then
-  PORTAL=$(stripe billing_portal/configurations -d "business_profile[headline]=Trainyard: manage your plan, card and invoices" \
+LEGAL=(-d "business_profile[privacy_policy_url]=https://$WEB_HOST/privacy" -d "business_profile[terms_of_service_url]=https://$WEB_HOST/terms")
+if [ -n "$PORTAL" ]; then
+  stripe "billing_portal/configurations/$PORTAL" "${LEGAL[@]}" >/dev/null
+else
+  PORTAL=$(stripe billing_portal/configurations -d "business_profile[headline]=Trainyard: manage your plan, card and invoices" "${LEGAL[@]}" \
     -d "default_return_url=https://$WEB_HOST/billing" -d "metadata[app]=trainyard" \
     -d "features[invoice_history][enabled]=true" -d "features[payment_method_update][enabled]=true" \
     -d "features[customer_update][enabled]=true" -d "features[customer_update][allowed_updates][]=email" -d "features[customer_update][allowed_updates][]=address" -d "features[customer_update][allowed_updates][]=tax_id" \
@@ -108,4 +118,5 @@ STRIPE_PORTAL_CONFIGURATION=$PORTAL
 ENV
 echo
 echo "Then: cd /opt/trainyard && ./deploy.sh"
+echo "Card statements show \"$DESCRIPTOR\" for Trainyard subscriptions."
 echo "Trainyard has its own customer portal ($PORTAL); any portal the account already has is left as it is."
