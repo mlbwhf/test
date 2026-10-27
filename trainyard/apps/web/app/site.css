@@ -533,3 +533,30 @@
 .bk .bk-cta { align-self: flex-start; background: #5f7bff; color: #fff; font-weight: 700; font-size: 18px; padding: 16px 24px; border-radius: 99px; text-decoration: none; }
 .bk .bk-cta:hover { opacity: 0.88; }
 @media (max-width: 860px) { .bk-grid { grid-template-columns: minmax(0, 1fr); } .bk-frame { height: 820px; } }
+
+/* 404: the "not on the board" page from the design */
+.nf { min-height: 100vh; box-sizing: border-box; padding: 28px 5vw 56px; display: flex; flex-direction: column; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, sans-serif; background: radial-gradient(60vw 60vw at 10% 0%, #ff5fa255, transparent 60%), radial-gradient(50vw 50vw at 100% 60%, #5f7bff66, transparent 60%), #0a0a1f; }
+.nf *, .nf *::before, .nf *::after { box-sizing: border-box; }
+.nf a { color: #ff9fc6; }
+.nf a:hover { color: #fff; }
+.nf .nf-brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; font-size: 28px; font-weight: 700; letter-spacing: -0.05em; }
+.nf-blue { color: #5f7bff; }
+.nf-pink { color: #ff9fc6; }
+.nf-mono { font: 500 14px ui-monospace, Menlo, monospace; letter-spacing: 0.08em; }
+.nf-main { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 40px; align-items: center; max-width: 1100px; width: 100%; margin: 0 auto; padding-top: 32px; }
+.nf-copy { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+.nf h1 { font-size: clamp(44px, 7vw, 96px); letter-spacing: -0.045em; line-height: 0.95; margin: 0; text-wrap: balance; }
+.nf p { margin: 0; font-size: 20px; line-height: 1.45; color: #d4d0f0; max-width: 44ch; text-wrap: pretty; }
+.nf-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.nf .nf-primary { background: #5f7bff; color: #fff; text-decoration: none; font-weight: 700; font-size: 18px; padding: 16px 28px; border-radius: 99px; }
+.nf .nf-primary:hover { background: #7b92ff; color: #fff; }
+.nf .nf-ghost { border: 2px solid rgba(255, 255, 255, 0.5); color: #fff; text-decoration: none; font-weight: 600; font-size: 18px; padding: 14px 26px; border-radius: 99px; }
+.nf .nf-ghost:hover { background: #fff; color: #120f2b; }
+.nf-help { color: #b9b5dc; letter-spacing: 0; margin-top: 8px; }
+.nf-glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 36px; padding: 36px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+.nf-glass svg { width: 100%; max-width: 420px; overflow: visible; }
+.nf-drift { transform-box: fill-box; transform-origin: center; transform: rotate(var(--r)); animation: nf-drift 4s ease-in-out infinite; }
+.nf-dot { animation: nf-dots 1.2s infinite; }
+@keyframes nf-drift { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-12px) rotate(var(--r)); } }
+@keyframes nf-dots { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .nf-drift, .nf-dot { animation: none; } }
