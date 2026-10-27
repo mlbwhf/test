@@ -94,7 +94,9 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
         subject: `${code} is your Trainyard code`,
         text: `Hi ${signup.name},\n\nYour Trainyard code is ${code}. Enter it on the sign-up page to confirm this is your address. It works for ${CODE_MINUTES} minutes.\n\nDidn't sign up? Ignore this email; nothing is created without the code.\n\nTrainyard`,
       });
-    } catch {
+    } catch (e) {
+      // The mail service's own answer (a refused sender, an unapproved account, a bad login) goes to the log.
+      console.error(`[mail] sign-up code to ${signup.email} not sent: ${(e as Error).message}`);
       throw new ApiError(503, "MAIL_FAILED", "We could not send the code just now. Try again in a minute.");
     }
     return { verify: "code-sent" as const, expiresInMinutes: CODE_MINUTES };
