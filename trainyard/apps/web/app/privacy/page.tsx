@@ -18,7 +18,7 @@ export default function PrivacyPage() {
     <PublicPage crumbs={[{ href: "/privacy", label: "Privacy" }]}>
       <h1>Privacy policy</h1>
       <p className="lede">
-        Trainyard is run by {LEGAL.operator}. This policy explains what we collect when you use trainyard.app, why, and what you can do about it. In effect from {LEGAL.effective}.
+        Trainyard is run by {LEGAL.operator}, registered in {LEGAL.registered}. This policy explains what we collect when you use trainyard.app, why, and what you can do about it. In effect from {LEGAL.effective}.
       </p>
       <Prose>
         <h2>The short version</h2>

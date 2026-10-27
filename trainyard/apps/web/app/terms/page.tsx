@@ -17,7 +17,7 @@ export default function TermsPage() {
     <PublicPage crumbs={[{ href: "/terms", label: "Terms" }]}>
       <h1>Terms of service</h1>
       <p className="lede">
-        These terms are an agreement between you and {LEGAL.operator}, which runs Trainyard at trainyard.app. By creating an account, joining a workspace or paying for a plan, you agree to them. In effect from {LEGAL.effective}.
+        These terms are an agreement between you and {LEGAL.operator} (registered in {LEGAL.registered}), which runs Trainyard at trainyard.app. By creating an account, joining a workspace or paying for a plan, you agree to them. In effect from {LEGAL.effective}.
       </p>
       <Prose>
         <h2>1. Who can use Trainyard</h2>
@@ -80,7 +80,7 @@ export default function TermsPage() {
 
         <h2>10. Disclaimers and liability</h2>
         <p>
-          Apart from what these terms promise, Trainyard is provided &quot;as is&quot;, without warranties of fitness for a particular purpose or non-infringement, to the extent the law allows. Neither of us is liable for indirect or consequential losses, such as lost profits or data you could have exported. Our total liability for any claim is limited to what you paid us in the 12 months before it arose (or CAD $100 if you use a free plan). Nothing here limits liability that cannot be limited by law, or your rights as a consumer where those apply.
+          Apart from what these terms promise, Trainyard is provided &quot;as is&quot;, without warranties of fitness for a particular purpose or non-infringement, to the extent the law allows. Neither of us is liable for indirect or consequential losses, such as lost profits or data you could have exported. For paid plans, our total liability for any claim is limited to what you paid us for Trainyard in the 12 months before it arose. Free plans (Practice, free class boards and joining a class as a student) are provided at your own risk: as a condition of using them free of charge, {LEGAL.operator} accepts no liability for them. Nothing here limits liability that cannot be limited by law, or your rights as a consumer where those apply.
         </p>
 
         <h2>11. Ending the agreement</h2>

@@ -30,7 +30,9 @@ export const inlineJson = (x: unknown): string => JSON.stringify(x).replace(/</g
 
 /** Who runs trainyard.app, for the privacy policy and terms. */
 export const LEGAL = {
-  operator: "Agile Agilist",
+  operator: "Agile Agilist Inc.",
+  /** Where the operator is registered. */
+  registered: "Canada, the United States and the United Arab Emirates",
   /** Whose laws govern the terms, and whose courts hear disputes. */
   jurisdiction: "the Province of Ontario and the federal laws of Canada that apply there",
   courts: "the courts of Ontario, Canada",
