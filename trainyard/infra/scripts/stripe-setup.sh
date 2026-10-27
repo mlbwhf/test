@@ -25,8 +25,6 @@ fi
 case "$STRIPE_SECRET_KEY" in sk_test_*|sk_live_*|rk_*) ;; *) echo "That does not look like a Stripe secret key (sk_test_... or sk_live_...)."; exit 1;; esac
 command -v jq >/dev/null || { echo "jq is required: sudo apt install -y jq"; exit 1; }
 echo "Setting up Stripe for $API_HOST ..."
-ACCOUNT=$(stripe account | jq -r '[(.settings.dashboard.display_name // .id), (if .livemode then "live mode" else "test mode" end)] | join(" · ")')
-echo "Stripe account: $ACCOUNT"
 
 # Every call stops the script with Stripe's own message when it fails (wrong key, no permission, ...).
 stripe() {
@@ -38,6 +36,9 @@ stripe() {
   fi
   echo "$out"
 }
+
+ACCOUNT=$(stripe account | jq -r '[(.settings.dashboard.display_name // .id), (if .livemode then "live mode" else "test mode" end)] | join(" · ")')
+echo "Stripe account: $ACCOUNT"
 
 product() { # name -> id (reuse by name)
   local id
@@ -92,5 +93,5 @@ STRIPE_PRICE_INSIGHTS_YEARLY=$IY
 STRIPE_TRIAL_DAYS=30
 ENV
 echo
-echo "Then: cd /opt/trainyard && docker compose up -d --no-deps api"
+echo "Then: cd /opt/trainyard && ./deploy.sh"
 echo "Also turn on Settings → Billing → Customer portal in the Stripe dashboard once."
