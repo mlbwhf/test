@@ -40,6 +40,13 @@ export default function SupportPage() {
             </p>
           </div>
           <div className="ly-card">
+            <span className="tag">CALL</span>
+            <h3>Book a session</h3>
+            <p>
+              A product demo, a support session with a Trainyard specialist, or a billing call: <Link href="/book">pick a time</Link> and the invite comes by email.
+            </p>
+          </div>
+          <div className="ly-card">
             <span className="tag">BUGS AND IDEAS</span>
             <h3>Open an issue</h3>
             <p>

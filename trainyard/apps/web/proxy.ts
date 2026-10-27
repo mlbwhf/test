@@ -35,7 +35,8 @@ export function proxy(req: NextRequest) {
     "img-src 'self' data: blob:",
     "font-src 'self'",
     `connect-src 'self' ${api} https://api.stripe.com https://r.stripe.com${dev ? " ws: http://localhost:* http://127.0.0.1:*" : ""}`,
-    "frame-src https://js.stripe.com https://hooks.stripe.com",
+    // The /book page shows Google Calendar appointment schedules in place.
+    "frame-src https://js.stripe.com https://hooks.stripe.com https://calendar.google.com",
     `frame-ancestors ${embed ? ancestors : "'none'"}`,
     "base-uri 'self'",
     "form-action 'self'",
