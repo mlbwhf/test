@@ -102,7 +102,7 @@ One canonical web host and one API host, plus optional aliases, all in `.env`: `
 | `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_TRAINER_MONTHLY`/`_YEARLY`, `STRIPE_PRICE_ACADEMY_MONTHLY`/`_YEARLY`, `STRIPE_TRIAL_DAYS` | Stripe subscriptions for the paid plans, paid in page. Unset: payments off, paid sign-ups are handled by hand |
 | `TRAINYARD_FRAME_ANCESTORS` | Web app: hosts allowed to frame `/embed/*` for the Jira app and Azure DevOps extension. Empty means the Atlassian and Azure DevOps defaults; `none` turns embedding off |
 | `TRAINYARD_ENV=production` | Refuses memory persistence and open mode |
-| `TRAINYARD_SMTP_URL`, `TRAINYARD_MAIL_FROM` | Outbound mail: sign-up codes and trial emails. Any SMTP service works (Postmark, Resend, Amazon SES, Mailgun) |
+| `TRAINYARD_SMTP_URL`, `TRAINYARD_MAIL_FROM`, `TRAINYARD_BILLING_FROM` | Outbound mail. Any SMTP service works (Postmark, Resend, Amazon SES, Mailgun). Sign-up codes, account setup and class invitations come from `TRAINYARD_MAIL_FROM` (default `support@trainyard.app`); trial and payment emails from `TRAINYARD_BILLING_FROM` (default `billing@trainyard.app`) |
 | `TRAINYARD_EMAIL_VERIFICATION` | `required` or `off`. Default: required when SMTP is set |
 | `TRAINYARD_TRUSTED_PROXIES` | Edge proxy ranges to trust for client addresses (default Cloudflare's). See `docs/proxy.md` |
 

@@ -1,5 +1,5 @@
 import { ClaudeProvider, OpenAICompatibleProvider, type AssistProvider } from "@trainyard/ai-assist";
-import { mailerFromEnv } from "./mailer.js";
+import { mailerFromEnv, senders } from "./mailer.js";
 import { AdoConnector, JiraConnector, type AdoConfig, type JiraConfig } from "@trainyard/connectors";
 import { FilePersistence, MemoryPersistence, PgPersistence, createPool, migrate, type StatePersistence } from "@trainyard/db";
 import { buildApp } from "./app.js";
@@ -115,7 +115,7 @@ async function main() {
     emailVerification: process.env.TRAINYARD_EMAIL_VERIFICATION === "off" ? "off" : process.env.TRAINYARD_EMAIL_VERIFICATION === "required" || process.env.TRAINYARD_SMTP_URL ? "required" : "off",
     logger: true,
   });
-  console.log(process.env.TRAINYARD_SMTP_URL ? `[mail] SMTP on, from ${process.env.TRAINYARD_MAIL_FROM || "Trainyard <billing@trainyard.app>"}` : "[mail] off (set TRAINYARD_SMTP_URL and TRAINYARD_MAIL_FROM): trial confirmations and the 7-day reminder before the first charge will not be sent");
+  console.log(process.env.TRAINYARD_SMTP_URL ? `[mail] SMTP on: accounts and invitations from ${senders().support}, payments from ${senders().billing}` : "[mail] off (set TRAINYARD_SMTP_URL): sign-up codes, class invitations, trial confirmations and the 7-day reminder before the first charge will not be sent");
   console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {
     await app.close();

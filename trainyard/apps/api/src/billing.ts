@@ -191,7 +191,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
         if (!p.trialReminderSentAt && remind && p.status === "paid") due.push("reminder");
         for (const kind of due) {
           try {
-            await mailer.send({ to, ...trialMail(p, kind) });
+            await mailer.send({ to, from: "billing", ...trialMail(p, kind) });
             const at = store.now().toISOString();
             if (kind === "start") (p.trialStartEmailAt = at), out.started.push(p.id);
             else (p.trialReminderSentAt = at), (p.trialStartEmailAt ??= at), out.reminded.push(p.id);

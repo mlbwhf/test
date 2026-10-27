@@ -4,8 +4,15 @@
 
 import nodemailer, { type Transporter } from "nodemailer";
 
+/** Which address a mail comes from: support@ for accounts, sign-up codes and invitations, billing@ for payments. */
+export type Sender = "support" | "billing";
+
+export const DEFAULT_FROM: Record<Sender, string> = { support: "Trainyard <support@trainyard.app>", billing: "Trainyard Billing <billing@trainyard.app>" };
+
 export interface Mail {
   to: string;
+  /** Defaults to support. */
+  from?: Sender;
   subject: string;
   text: string;
   html?: string;
@@ -20,11 +27,13 @@ export interface Mailer {
 export class SmtpMailer implements Mailer {
   readonly live = true;
   private readonly transport: Transporter;
-  constructor(url: string, private readonly from: string) {
+  constructor(url: string, private readonly from: Record<Sender, string>) {
     this.transport = nodemailer.createTransport(url);
   }
   async send(mail: Mail): Promise<void> {
-    await this.transport.sendMail({ from: this.from, to: mail.to, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
+    const from = this.from[mail.from ?? "support"];
+    // Replies go back to the address the mail came from.
+    await this.transport.sendMail({ from, replyTo: from, to: mail.to, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
   }
 }
 
@@ -48,5 +57,10 @@ export class MemoryMailer implements Mailer {
 export function mailerFromEnv(env: NodeJS.ProcessEnv = process.env): Mailer {
   const url = env.TRAINYARD_SMTP_URL;
   if (!url) return new LogMailer();
-  return new SmtpMailer(url, env.TRAINYARD_MAIL_FROM || "Trainyard <billing@trainyard.app>");
+  return new SmtpMailer(url, senders(env));
+}
+
+/** TRAINYARD_MAIL_FROM sends account, sign-up and invitation mail; TRAINYARD_BILLING_FROM sends payment mail. */
+export function senders(env: NodeJS.ProcessEnv = process.env): Record<Sender, string> {
+  return { support: env.TRAINYARD_MAIL_FROM || DEFAULT_FROM.support, billing: env.TRAINYARD_BILLING_FROM || DEFAULT_FROM.billing };
 }

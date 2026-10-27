@@ -1511,7 +1511,7 @@ describe("trial emails", () => {
     // Day 0: the confirmation.
     expect((await run()).body).toMatchObject({ started: [sub.body.purchaseId], reminded: [], mail: "smtp" });
     expect(mailer.sent).toHaveLength(1);
-    expect(mailer.sent[0]!.to).toBe("ada@example.io");
+    expect(mailer.sent[0]).toMatchObject({ to: "ada@example.io", from: "billing" });
     expect(mailer.sent[0]!.subject).toContain("trial has started");
     expect(mailer.sent[0]!.text).toContain("Nothing is charged today");
     expect(mailer.sent[0]!.text).toContain("$38.00 a month");
@@ -1752,6 +1752,7 @@ describe("email verification", () => {
     expect(s.body.apiKey).toBeUndefined();
     expect(store.state.users).toHaveLength(0);
     expect(mailer.sent[0]!.to).toBe("ada@example.io");
+    expect(mailer.sent[0]!.from ?? "support").toBe("support");
     // Wrong codes count; the right one creates the workspace and the key.
     const code = codeIn(mailer);
     const wrong = code === "000000" ? "111111" : "000000";
