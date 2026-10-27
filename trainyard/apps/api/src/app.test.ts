@@ -984,7 +984,7 @@ describe("billing", () => {
       if (u.endsWith("/billing_portal/sessions")) return json({ id: "bps_1", url: "https://billing.stripe.com/p/session/x" });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
-    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", portalConfiguration: "bpc_trainyard", fetch: fakeFetch } });
     expect((await call("GET", "/v1/billing/config")).body).toMatchObject({ enabled: true, inPage: true, publishableKey: "pk_test" });
     const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "trainer", seats: 2 });
     const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id, interval: "monthly", quantity: 2 });
@@ -1030,6 +1030,8 @@ describe("billing", () => {
     expect(store.state.purchases![0]!.status).toBe("paid");
     // The subscriber can open the portal; a stranger cannot.
     const portal = await call("POST", "/v1/billing/portal", undefined, first.body.apiKey);
+    // Trainyard's own portal, so the Stripe account's other products keep theirs.
+    expect(calls.find((c) => c.url.endsWith("/billing_portal/sessions"))!.body).toContain("configuration=bpc_trainyard");
     expect(portal.body, JSON.stringify(portal.body)).toMatchObject({ url: expect.stringContaining("billing.stripe.com") });
     expect((await call("POST", "/v1/billing/portal")).status).toBe(401);
     // The owner sees their own workspace's purchases only.

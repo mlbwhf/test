@@ -9,7 +9,8 @@
 # per Agile Release Train), in USD: Trainer 19/month or 192/year, Academy 249/month or 2388/year.
 set -euo pipefail
 cd "$(dirname "$0")"
-envval() { grep -E "^$1=" .env 2>/dev/null | head -n1 | cut -d= -f2- | tr -d '"' | tr -d "'"; }
+# A setting from .env, or nothing when it is not there (never a failure: the script runs under pipefail).
+envval() { { grep -E "^$1=" .env 2>/dev/null || true; } | head -n1 | cut -d= -f2- | tr -d '"' | tr -d "'"; }
 if [ -n "${1:-}" ]; then
   API_HOST=$1
 else
@@ -76,6 +77,18 @@ else
   WHSEC=$(echo "$EP" | jq -r .secret)
 fi
 
+# Trainyard's own customer portal, so an account that also bills other products keeps its existing
+# portal as it is: found again by its metadata, headed "Trainyard", back to trainyard.app.
+WEB_HOST=$(envval TRAINYARD_WEB_HOST); [ -n "$WEB_HOST" ] || WEB_HOST=trainyard.app
+PORTAL=$(stripe billing_portal/configurations -G -d limit=100 -d active=true | jq -r '.data[] | select(.metadata.app=="trainyard") | .id' | head -n1)
+if [ -z "$PORTAL" ]; then
+  PORTAL=$(stripe billing_portal/configurations -d "business_profile[headline]=Trainyard: manage your plan, card and invoices" \
+    -d "default_return_url=https://$WEB_HOST/billing" -d "metadata[app]=trainyard" \
+    -d "features[invoice_history][enabled]=true" -d "features[payment_method_update][enabled]=true" \
+    -d "features[customer_update][enabled]=true" -d "features[customer_update][allowed_updates][]=email" -d "features[customer_update][allowed_updates][]=address" -d "features[customer_update][allowed_updates][]=tax_id" \
+    -d "features[subscription_cancel][enabled]=true" -d "features[subscription_cancel][mode]=at_period_end" | jq -r .id)
+fi
+
 PK=$(case "$STRIPE_SECRET_KEY" in sk_test_*) echo "pk_test_... (Developers → API keys, test mode)";; *) echo "pk_live_... (Developers → API keys)";; esac)
 
 cat <<ENV
@@ -91,7 +104,8 @@ STRIPE_PRICE_ACADEMY_YEARLY=$AY
 STRIPE_PRICE_INSIGHTS_MONTHLY=$IM
 STRIPE_PRICE_INSIGHTS_YEARLY=$IY
 STRIPE_TRIAL_DAYS=30
+STRIPE_PORTAL_CONFIGURATION=$PORTAL
 ENV
 echo
 echo "Then: cd /opt/trainyard && ./deploy.sh"
-echo "Also turn on Settings → Billing → Customer portal in the Stripe dashboard once."
+echo "Trainyard has its own customer portal ($PORTAL); any portal the account already has is left as it is."

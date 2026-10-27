@@ -106,6 +106,8 @@ async function main() {
       ...(process.env.TRAINYARD_WEB_URL ? { webUrl: process.env.TRAINYARD_WEB_URL.split(",")[0]!.trim() } : {}),
       // Every paid plan starts with a free trial; 0 turns it off.
       trialDays: Number(process.env.STRIPE_TRIAL_DAYS ?? 30),
+      // Trainyard's own customer portal when the Stripe account also bills other products.
+      ...(process.env.STRIPE_PORTAL_CONFIGURATION ? { portalConfiguration: process.env.STRIPE_PORTAL_CONFIGURATION } : {}),
       // Trial confirmation and the reminder 7 days before the first charge, checked hourly.
       mailer: mailerFromEnv(),
       reminderEveryMs: 60 * 60 * 1000,

@@ -34,6 +34,8 @@ export interface BillingOptions {
   fetch?: typeof fetch;
   /** Trial days on new subscriptions (0 = none). */
   trialDays?: number;
+  /** Stripe customer portal configuration (bpc_...) for Trainyard, when the Stripe account serves other products too. */
+  portalConfiguration?: string;
   /** Sends the trial confirmation and the reminder before the first charge. */
   mailer?: Mailer;
   /** How often to look for reminders that are due; 0 or absent = only on demand. */
@@ -660,7 +662,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     if (!enabled) throw new ApiError(409, "BILLING_OFF", "Payments are not set up on this server.");
     const p = purchases().filter((x) => x.customerId && (x.workspaceId === me.workspaceId || x.userId === me.userId)).at(-1);
     if (!p) throw notFound("Subscription");
-    const session = await stripe("billing_portal/sessions", { customer: p.customerId!, return_url: `${web()}/users` });
+    const session = await stripe("billing_portal/sessions", { customer: p.customerId!, return_url: `${web()}/users`, configuration: opts.portalConfiguration });
     return { url: session.url };
   });
 
