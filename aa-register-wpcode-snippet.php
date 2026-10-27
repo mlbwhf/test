@@ -1414,6 +1414,11 @@ function aa_reg_moves() {
 			'2026-10-19' => '2026-10-20',
 		),
 		'aspc' => array( '2026-09-14' => '2026-09-15' ),
+		/* Asked for on 27 Oct 2026: the mid-November LPM runs from Thursday
+		   12 November, confirmed, instead of the cadence's Wednesday the 11th
+		   (which is also Remembrance Day). Offered to a buyer in writing the
+		   same day. The id stays lpm-2026-11-11. */
+		'lpm'  => array( '2026-11-11' => '2026-11-12' ),
 	);
 }
 
