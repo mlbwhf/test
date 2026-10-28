@@ -81,7 +81,9 @@ describe("class boards", () => {
     // The readiness checklist appears in SPC lesson 10 and RTE lesson 3, pointing at the live canvas.
     const rte = classBoard(CLASSES[4]!);
     // The chapters built from the tools carry the tools' own content, not links to them.
-    for (const b of [spc, rte]) expect(b.nodes.some((n) => n.text.startsWith("Planning scope and context"))).toBe(true);
+    expect(spc.nodes.some((n) => n.text.startsWith("Planning scope and context"))).toBe(true);
+    // RTE works through the readiness checklist on its Class Studio board.
+    expect(rte.frames.some((f) => f.activity?.board === "check")).toBe(true);
     expect(spc.nodes.some((n) => n.text.includes("Getting started"))).toBe(true);
     expect(spc.frames.some((f) => f.title === "Processes")).toBe(true);
     expect(spc.nodes.filter((n) => n.text.startsWith("Planning scope and context"))).toHaveLength(1);

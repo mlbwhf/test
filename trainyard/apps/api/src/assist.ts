@@ -44,6 +44,22 @@ export function registerAssistRoutes(app: App, store: Store, metrics: MetricRegi
     return { review: res.data, model: res.model, usage: { input: res.inputTokens, output: res.outputTokens } };
   });
 
+  // A class exercise's ✦ Suggest: a few short lines for the group to keep, edit or drop.
+  app.post("/v1/boards/:id/suggest", { ...limited, schema: { params: z.object({ id: Id }), body: z.object({ prompt: z.string().trim().min(1).max(2000) }) } }, async (req) => {
+    require(req, "assist");
+    const board = (s().workspace.boards ?? []).find((b) => b.id === req.params.id);
+    if (!board) throw notFound("Board");
+    const res = await wrap(() =>
+      need().complete({
+        feature: "class-suggest",
+        system: "You help a group of learners in a SAFe class work through an exercise. Answer with short, concrete lines only: no numbering, no preamble.",
+        user: req.body.prompt,
+        schema: z.object({ lines: z.array(z.string().max(240)).max(6) }),
+      }),
+    );
+    return { lines: res.data.lines.map((l) => l.trim()).filter(Boolean) };
+  });
+
   app.post("/v1/assist/art-objectives", { ...limited, schema: { body: z.object({ incrementId: Id.optional() }) } }, async (req) => {
     require(req, "assist");
     const ws = s().workspace;

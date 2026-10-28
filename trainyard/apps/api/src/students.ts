@@ -144,6 +144,8 @@ export function guestMayUse(method: string, url: string, boardId: string): boole
     if (/^\/nodes(\/[^/]+)?$/.test(rest) && ["POST", "PATCH", "DELETE"].includes(method)) return true;
     if (/^\/edges(\/[^/]+)?$/.test(rest) && ["POST", "DELETE"].includes(method)) return true;
     if (/^\/frames\/[^/]+\/state$/.test(rest) && method === "PUT") return true;
+    // The exercise boards' ✦ Suggest buttons.
+    if (rest === "/suggest" && method === "POST") return true;
   }
   return false;
 }

@@ -61,7 +61,7 @@ describe("a trainer's own course", () => {
 
 describe("the RTE class", () => {
   it("opens with the agenda kanban and the icebreaker, then a lesson per chapter holding its exercises", async () => {
-    const { CLASSES, classBoard, cardChoices } = await import("./index.js");
+    const { CLASSES, classBoard } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
     expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Facilitating ART Events, Flow and DevOps", "Lesson 5: Measuring and Improving Flow", "Lesson 6: Improving the ART", "Lesson 7: Sustaining the ART"]);
@@ -71,25 +71,18 @@ describe("the RTE class", () => {
     expect(kids(agenda.id).length).toBe(3);
     const toStart = b.frames.find((f) => f.parentId === agenda.id && f.title === "To start")!;
     expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning", "04 Facilitating ART Events, Flow and DevOps", "05 Measuring and Improving Flow", "06 Improving the ART", "07 Sustaining the ART"]);
-    expect(b.nodes.some((n) => n.fields.dot && n.text === "RTE")).toBe(true);
     expect(kids(top[1]!.id)).toHaveLength(5);
     expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Conflicting views of value", "Activity: ROAM ART PI risks", "Discussion: Confidence not high? Plan rework.", "Discussion: AI-empowered PI Planning"]);
-    // Purpose-built boards carry their setup; the problem-solving workshop's steps share one board.
-    const roam = b.frames.find((f) => f.title === "Activity: ROAM ART PI risks")!;
-    expect(roam.activity).toMatchObject({ board: "roam", config: { risks: expect.any(Array) } });
-    expect((roam.activity!.config!.risks as string[]).length).toBe(6);
+    // Every exercise is a Class Studio board with its setup; the workshop's steps share one board.
+    const exercises = b.frames.filter((f) => f.activity);
+    expect(exercises.every((f) => f.activity!.board)).toBe(true);
+    expect(b.frames.find((f) => f.title === "Activity: ROAM ART PI risks")!.activity!.board).toBe("roam");
     const rca = b.frames.filter((f) => f.activity?.board === "rca");
-    expect(rca.map((f) => f.activity!.config!.step)).toEqual(["agree", "rca", "restate", "brainstorm", "readout"]);
-    expect(kids(top[6]!.id)).toHaveLength(12);
-    // The three example planning boards keep their dependency strings.
-    const reading = b.frames.find((f) => f.title.includes("Reading the ART planning board"))!;
-    const planCards = b.nodes.filter((n) => n.frameId === reading.id && /^[FDME]\d$/.test(n.text));
-    expect(planCards.length).toBe(11 + 15 + 18);
-    expect(b.edges.filter((e) => e.style === "curve" && planCards.some((c) => c.id === e.fromId)).length).toBe(9 + 8 + 13);
-    const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;
-    const cards = b.nodes.filter((n) => n.frameId === readiness.id && cardChoices(n).length);
-    expect(cards.length).toBeGreaterThanOrEqual(15);
-    expect(cardChoices(cards[0]!)).toEqual(["Y", "N", "D"]);
+    expect(rca.map((f) => f.activity!.config!.rstep)).toEqual(["all", "agree", "rca", "restate", "brainstorm", "readout"]);
+    expect(new Set(rca.map((f) => f.activity!.config!.shared)).size).toBe(1);
+    expect(kids(top[6]!.id)).toHaveLength(13);
+    const disc = b.frames.find((f) => f.title === "Discussion: Preparing for the PI System Demo")!.activity!.config!;
+    expect(disc).toMatchObject({ quad: true, qs: expect.arrayContaining(["Who can assist the RTE with these preparations?"]) });
     // Lessons never overlap.
     for (let i = 1; i < top.length; i++) expect(top[i]!.y).toBeGreaterThan(top[i - 1]!.y + top[i - 1]!.height);
   });
@@ -97,7 +90,7 @@ describe("the RTE class", () => {
 
 describe("upgrading a class to its template's current version", () => {
   it("adds the new chapters and keeps what the class did, the renamed exercise included", async () => {
-    const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade, cardChoices } = await import("./index.js");
+    const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade } = await import("./index.js");
     const rte = CLASSES.find((c) => c.id === "rte")!;
     // The RTE class as it was: three chapters, the objective exercise under its old title.
     const oldCourse = rte.course!.slice(0, 3).map((l, i) => ({ ...l, activities: l.activities.slice(0, i === 2 ? 4 : undefined).map((a) => (a.title === "Conflicting views of value" ? { ...a, title: "Business value of an architectural objective" } : a)) }));
@@ -109,8 +102,7 @@ describe("upgrading a class to its template's current version", () => {
     objective.done = true;
     b.nodes.push({ id: "n-mine", kind: "sticky", text: "Show the enabler's value", x: objective.x + 40, y: objective.y + 40, width: 180, height: 120, frameId: objective.id, tags: [], fields: {} });
     const readiness = b.frames.find((f) => f.title.endsWith("readiness preparation"))!;
-    const answer = b.nodes.find((n) => n.frameId === readiness.id && cardChoices(n).length)!;
-    answer.fields.choice = "Y";
+    readiness.state = { "chk:0": "Y" };
     b.fields = { ...b.fields, students: [{ id: "s1", name: "Ana" }] };
 
     const u = upgradeFromTemplate(b, newT, "2026-04-01T00:00:00.000Z");
@@ -121,11 +113,8 @@ describe("upgrading a class to its template's current version", () => {
     const mine = u.nodes.find((n) => n.id === "n-mine")!;
     expect(mine.frameId).toBe(renamed.id);
     expect(mine.x - renamed.x).toBe(40);
-    // The answered card keeps its answer, under the new version's id for that card.
-    const newReadiness = u.frames.find((f) => f.title.endsWith("readiness preparation"))!;
-    const answered = u.nodes.filter((n) => n.frameId === newReadiness.id && n.fields.choice === "Y");
-    expect(answered.map((n) => [n.text, n.x - newReadiness.x, n.y - newReadiness.y])).toEqual([[answer.text, answer.x - readiness.x, answer.y - readiness.y]]);
-    expect(u.nodes.filter((n) => n.frameId === newReadiness.id && cardChoices(n).length)).toHaveLength(15);
+    // The readiness board keeps its answers.
+    expect(u.frames.find((f) => f.title.endsWith("readiness preparation"))!.state).toEqual({ "chk:0": "Y" });
     expect(u.fields).toMatchObject({ students: [{ id: "s1", name: "Ana" }], lessons: 7 });
     expect(u.frames.some((f) => f.activity?.board === "roam")).toBe(true);
     // The agenda lists every chapter once.
