@@ -787,3 +787,77 @@ Slug and title unchanged, so no redirect is needed.
 **Contradiction #1 (`best-ai-models-2026` vs `chinese-ai-models-2026`) remains open**
 and now has the Qwen3.8-27B index-score question attached to it (see §2) — both are
 blocked on `artificialanalysis.ai`, so they should be done together the moment it opens.
+
+---
+
+# FRESHNESS AUDIT — 28 Oct 2026
+
+Prompted by the owner observing it had "been a while since we had updates". Measured
+rather than estimated, across all **147 published pages**, using each page's actual
+`dateModified`.
+
+## Last-modified distribution
+
+| Month last touched | Pages |
+|---|---|
+| June 2026 | **63** (43%) |
+| July 2026 | 31 |
+| August 2026 | 36 |
+| September 2026 | 12 |
+| October 2026 | **5** |
+
+Three of October's five were done today. **So before today, the whole of October
+produced two page updates** (421 on 2 Oct, 969 on 1 Oct). A monthly CRITICAL pass alone
+should touch more than that.
+
+## The real finding: 49 pages share one timestamp
+
+**49 pages are frozen at exactly `2026-06-20`.** A single identical timestamp across 49
+pages is a bulk operation — a migration or site-wide find/replace — not 49 individual
+reviews. These pages have therefore **never been editorially reviewed since launch**,
+four months ago. The register has been describing this as "~20 STANDARD quarterly pages
+untouched". It is more than twice that, and they are not merely overdue; they have never
+been through the cycle once.
+
+Breakdown: **23 glossary** terms · **22 reports** · 2 privacy · 2 about.
+
+## The 22 frozen reports — two entire clusters
+
+**`/reports/dark-side-of-ai/` — 13 pages** (499 trends & 2030 forecast · 500 deepfake
+fraud statistics · 501 cybercrime/WormGPT · 502 chatbot failures & liability · 503
+deepfake disinformation & voice scams · 543 companion chatbots & mental-health harms ·
+544 algorithmic bias · 545 AI slop · 546 copyright · 547 surveillance · 548 deepfake
+market manipulation · 549 frontier dual-use · 552 LLM agent risks)
+
+**`/reports/real-world-ai/` — 9 pages** (446 hub · 463 medical diagnosis · 466 wildfire ·
+467 Vesuvius · 468 fraud detection · 469 animal communication · 470 protein structure ·
+471 fusion plasma · 472 legal research)
+
+## Why this matters more than the raw count
+
+**We have been growing the library at the front while it decays at the back.** The
+Dark Side section now carries two new reports written in the last two months — 2553 (the
+slowdown pact) and 1057 (the Hugging Face incident, updated today) — sitting on top of
+**13 sibling reports that have never been reviewed.** Every one of those 13 is in the
+fastest-moving, most-litigated subject area on the site.
+
+Specific exposure worth naming:
+
+- **499** carries a **2030 forecast** and a 2019–2025 trend series, unreviewed for four
+  months. Forecast pages decay differently from statistics (see `prediction-tracking.md`).
+- **500 / 503 / 548** are deepfake-fraud figures. These move fast, they are heavily
+  searched, and an earlier pass already turned up a deepfake correction elsewhere on the
+  site.
+- **543** covers companion chatbots and mental-health harm — an area with active
+  litigation and regulation. A four-month-old page here is the highest reputational risk
+  of the 49.
+- **23 glossary terms** are STABLE cadence (semi-annual), so June is *within* policy for
+  them. They are the one part of this list that is not actually late.
+
+## Consequence for the register
+
+The "~20 STANDARD quarterly pages" line has been understating the backlog all along,
+because it counted pages *due* for review rather than pages that have never had one.
+Corrected here. Next pass should work the 22 frozen reports by volatility, not by URL
+order, and "Reviewed — no change" (§5) is an acceptable and publishable outcome for any
+of them that prove still current.
