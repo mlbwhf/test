@@ -984,3 +984,31 @@ that came from secondary commentary, so it was reworded before moving on.
 
 FAQ 2 → 5, methodology note added, §4 stamp mismatch fixed (was Jun 16 vs Jun 20), new
 external links `nofollow noopener`. CRITICAL, next review 28 Nov.
+
+## 503 `ai-deepfake-disinformation-voice-scams` — REFRESHED 28 Oct 2026 (3 of 13)
+
+| | Was | Now |
+|---|---|---|
+| EU AI Act labelling | "will require … from August 2026" (future tense, now passed) | **in force since 2 Aug 2026**; Digital Omnibus (Reg. 2026/1744) did *not* delay Art. 50; watermark grace to **2 Dec 2026** for existing systems |
+| TAKE IT DOWN | "signed May 2025" | **platform duties enforced from 19 May 2026**, 48-hr removal, $53,088/violation |
+| "45 states" tile | single figure over the *election* section | **corrected** — 45–48 is *sexual*-deepfake laws; election laws are **30–33** |
+| FTC imposter losses | $2.95B (2024) | **$3.5B (2025)** — series extended |
+| Grok | omitted | **added** — and it predated June, so an omission, not news |
+| Midterms | 2024 examples only | **added**: $137M on 220 AI ads by 11 Oct (Wesleyan) |
+
+**The "45 states" error was in the consequential direction:** it overstated the
+protection voters have by attaching the sexual-deepfake count to the election section.
+
+**Also fixed a June ambiguity:** "penalties reaching €35M or 7%" read as attached to
+labelling; that tier is for prohibited practices. Art. 50 breaches top out at €15M/3%.
+
+**Argued:** the midterm problem is *disclosed* fakes from legitimate campaigns — 3-second
+corner "AI GENERATED" labels that satisfy disclosure laws without informing anyone. The
+regulatory model assumed concealment was the danger. And Grok showed the largest abuse
+event came from a mainstream product, not fringe nudify apps — which the June framing
+had implied.
+
+**Labelled carefully:** Grok volumes are *researcher estimates* via a congressional
+letter; Texas Russia attribution is *private-researcher*, not governmental. No count of
+2026 election deepfakes offered. Cadence CRITICAL through the midterms and the 2 Dec EU
+deadline.
