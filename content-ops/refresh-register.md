@@ -956,3 +956,31 @@ voice scams · **548** deepfake market manipulation · **499** trends & 2030 for
 (carries a forecast) · **502** chatbot failures & liability · **546** copyright ·
 **501** cybercrime/WormGPT · **552** LLM agent risks · **544** algorithmic bias ·
 **547** surveillance · **545** AI slop · **549** frontier dual-use.
+
+## 500 `ai-deepfake-fraud-statistics` — REFRESHED 28 Oct 2026 (2 of 13)
+
+First review since publication. **Every figure was a 2024 reading**, and the case the
+page was named after is no longer the record.
+
+| | Was | Now |
+|---|---|---|
+| Largest known case | Arup ~$25M (2024) | **Fideuram €95M / ~$108M** (Reuters, 25 Sep 2026) — superseded |
+| Official US measure | none | **FBI IC3 2025: 22,364 AI complaints, $893M** (first standalone AI section) |
+| Regula / Sumsub survey figures | undated | kept, **dated 2024** — no newer edition found |
+| Title | "The $25-Million Heist Era" | "The Nine-Figure Heist Era" — **slug unchanged, no redirect** |
+
+**Argued:** the record loss used *no video* (WhatsApp + cloned voice), it targeted the
+*chairman*, and it came through a channel the bank didn't govern. So the page's own rule
+— "no face on a screen authorizes a wire" — was too narrow; restated as "no voice,
+message or face arriving through a channel the attacker can reach authorizes a payment,
+including from the most senior people."
+
+**Not adopted:** cumulative global deepfake loss tallies ($2.19B vs ≥$3.7B) — reported
+as a range. Deloitte's **$40B by 2027** labelled as a *forecast* of all gen-AI fraud,
+not a deepfake count — **add to the prediction ledger** (resolves 2027; also on 1111).
+
+**Self-caught:** drafted a line attributing the "$893M is a floor" framing to the FBI;
+that came from secondary commentary, so it was reworded before moving on.
+
+FAQ 2 → 5, methodology note added, §4 stamp mismatch fixed (was Jun 16 vs Jun 20), new
+external links `nofollow noopener`. CRITICAL, next review 28 Nov.
