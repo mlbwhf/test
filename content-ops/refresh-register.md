@@ -580,3 +580,149 @@ Updated across: pricing table, numbers-in-full table, new section, sidebar sourc
 on-this-page nav, visible date stamp, Article `dateModified`, Dataset `dateModified`
 + `temporalCoverage` + `citation`. **"What changed" block added** per §2, retaining
 previous values and stating why.
+
+---
+
+# OCTOBER-END PASS — 28 Oct 2026
+
+Month-end close. The October pass opened on 1 Oct and was recorded as roughly a third
+done; this entry covers what closed on 28 Oct.
+
+## 1. `/reports/meta-blackrock-off-balance-sheet-ai-financing/` (1421) — WATCH ITEM RESOLVED
+
+The September and 1 October passes both rolled this forward with the same note: no
+report of the El Paso JV actually closing, coverage still reading "expected to close in
+Q3 2026", and **Meta's Q3 10-Q is what will settle it.** The 10-Q (quarter ended
+30 September 2026) has now been filed, and it settles it.
+
+| | Was | Now |
+|---|---|---|
+| Deal status | "expected to close in Q3 2026" | **Formed July 2026** — closed |
+| Accounting treatment | inferred non-consolidation | **non-marketable equity method investment** (stated) |
+| Residual-value guarantee | not disclosed | **~$13B aggregate threshold**, declining |
+| Meta's contribution | ~$2.3B | **$2.26B** held-for-sale assets, net of liabilities |
+| One-time distribution | ~$1B | **$1.04B** |
+
+### The substantive finding: the residual-value guarantee qualifies our own thesis
+
+The page's argument was that ownership moved and control didn't. That still holds. But
+the 10-Q discloses residual-value guarantees with an aggregate threshold of roughly
+**$13 billion** — larger than the $12.5B of debt — and the page had **no mention of
+them at all**.
+
+A residual-value guarantee means Meta promised to make investors whole if the asset is
+worth less than expected. So the campus and its debt sit outside Meta's consolidated
+accounts while a large slice of the **downside was retained, not transferred**.
+"Off the books" describes where an asset is *recorded*; it does not describe where the
+risk ended up. That distinction is now the first bullet under "What to actually watch",
+written as a qualification of what we previously published rather than as new colour.
+
+### Confidence: MEDIUM, deliberately
+
+`sec.gov` is still unreachable from this environment (re-tested 28 Oct, along with
+`artificialanalysis.ai`, `s21.q4cdn.com` and `report-ai.org` itself — all still blocked).
+The filing's language was obtained through search indexes and cross-checked against
+Meta's July investor announcement where the two overlap; they agree. Rated **MEDIUM**
+and labelled as such on the page, with an explicit note that it will go to HIGH once
+read at source. A figure we have not personally opened does not get a HIGH chip,
+however authoritative its origin.
+
+### Cadence change: CRITICAL → STANDARD
+
+This page was CRITICAL (monthly) under §1 because it tracked a live, unclosed
+transaction with MEDIUM figures attached. The transaction has closed, so it moves to
+**STANDARD (quarterly)**, next review 28 Jan 2027. The one remaining live thread —
+whether a third and fourth deal follow — is a pattern question, not a negotiation.
+
+Updated across: byline/Updated stamp, new "What changed" block, analysis prose,
+structure table (3 rows added, 1 refined), "What to actually watch", 2 new FAQ entries,
+FAQ JSON-LD, Article `dateModified`. Visible stamp and `dateModified` agree at
+2026-10-28, per §4.
+
+## 2. Homepage (6) — the open-weights claim corrected
+
+Outstanding since the Muse Glimmer release was noticed on 1 Oct. The Model Watch
+open-weight block asserted **"The US frontier ships no weights at all."** As written
+that was false: Meta published **Muse Glimmer 30B under Apache 2.0 on 10 Aug 2026**,
+its first Apache-2.0 model. Corrected, with a visible correction line naming the
+previous wording per §2 — corrections do not wait for cadence (§6).
+
+Block header also moved from "Chinese labs, September 2026" to "who actually ships
+weights, October 2026", since it now covers a US model.
+
+### Why no index score for Glimmer
+
+Published trackers disagree far too widely to pick one. Across sources found on 28 Oct,
+Muse Glimmer's Artificial Analysis Intelligence Index appears as **35, 17.5, 17 and 6**
+— a six-fold spread, partly explained by index versions (v4.3.2 cited) and reasoning
+settings, but not reconcilable from here. So the correction states the **licence, size
+and date**, which every source agrees on, plus the one directional claim that is
+unanimous: *every source that compares them ranks Glimmer below Qwen3.8-27B.* No
+composite published. Same discipline as the September decision not to publish US
+frontier composites while trackers disagreed by 12 points.
+
+### ⚠️ New finding: our own Qwen3.8-27B index score may be stale
+
+The homepage and `chinese-ai-models-2026` both carry **Intelligence Index 52** for
+Qwen3.8-27B. Sources checked on 28 Oct put it at **33.7** (OpenRouter) and **34**
+(AIWIZ, index v4.3.2). That is not necessarily an error — index versions are rebased
+and a score can legitimately move between them — so it has **not** been changed
+silently. Flagged here for verification the moment `artificialanalysis.ai` opens. If
+52 came from an earlier index version, the fix is a RESTATED pair, not an overwrite.
+
+## 3. Homepage — figure of the week, W40 → W44
+
+Four weeks stale on a weekly cadence (today is ISO week 44). Rotated to Meta's El Paso
+capital stack, in $bn: **residual-value guarantee $13.0 · debt $12.5 · BlackRock cash
+in $4.9 · Meta assets in $2.3.** Chosen because the ordering is the story — the
+guarantee is the largest bar, above even the debt. Chip set to **MEDIUM** (it was HIGH
+for the Anthropic pricing figure) with the sec.gov limitation named in the source line.
+Links to 1421 rather than the token price index.
+
+## 4. Homepage — user-count caveat added
+
+The Model Watch assistant table is headed "weekly active users" and lists ChatGPT 900M,
+Gemini 650M, Meta AI 600M, Copilot 220M, Claude 80M, Perplexity 30M, sourced as
+"provider-reported". Report 2589 established that figures like these circulate on
+mixed bases and that Claude alone spans 56M–245M depending on source.
+
+These are not strictly contradictory — WAU is necessarily below MAU — so no figure was
+changed. But presenting six numbers of different provenance in one ranked column
+implies a precision 2589 explicitly says does not exist. Added "mixed bases" to the
+source line and an internal link to 2589. Fixing the figures themselves needs research
+the blocked trackers currently prevent.
+
+## 5. Scraped-post importer — still stopped, 25 days
+
+**No post created in any status since 3 Oct 2026** (checked 28 Oct). The stop is now
+25 days old and still unexplained — nobody has confirmed what ended it, so it could
+resume.
+
+Current post state: **130 published · 44 draft · 0 trash.** The **News** category holds
+exactly **94** posts, matching the count from the 13 Oct note; the other 36 published
+posts are genuine. Trash is empty, so the 91 trashed on 23 Sep have since been emptied
+— those are gone, along with their social share records.
+
+**The final purge of the 94 is ready and not done.** It is reversible (trash, not force)
+and the noindex snippet covers both the posts and the category archive, so the SEO
+harm is contained while they sit there. Holding for an explicit go-ahead because it is
+bulk removal of live content, which is the owner's call, not a cadence action.
+
+## Still outstanding after this pass
+
+**Contradictions #1 and #2 remain unfixed** — `best-ai-models-2026` vs
+`chinese-ai-models-2026`; `ai-autonomous-cyberattacks-defense` ("two OpenAI models stole
+the benchmark answers") vs the METR findings on 2553. Both are factual errors on live
+pages and should lead the next pass.
+
+**STANDARD quarterly:** ~20 pages, still none attempted this quarter. This is the
+largest single gap in the register.
+
+**Still blocked, so genuinely cannot be done from here:** `artificialanalysis.ai` (the
+US-frontier and Qwen composites, now with a specific question attached — see §2),
+`sec.gov` (the 8GW vs 10GW discrepancy on `ai-data-center-cost`, and upgrading the
+10-Q figures above to HIGH).
+
+**Diarised:** December 2026 resolves the Forrester ~50% reversal forecast on pillar 2297
+(task #6) — now five weeks out, and inside the 90-day window that the prediction track
+proposes should make it automatically CRITICAL.
