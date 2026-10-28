@@ -1954,6 +1954,11 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect((await call("GET", "/v1/users", undefined, ana.token)).status).toBe(403);
     expect((await call("DELETE", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(403);
     expect((await call("GET", `/v1/boards/${id}/students`, undefined, ana.token)).status).toBe(403);
+    // Adding her again (the list pasted twice) keeps the link she was sent.
+    const again = await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana Lopez", email: "ana@example.io" }] }, root);
+    expect(again.body.students[0]).toMatchObject({ id: ana.id, name: "Ana Lopez", existing: true });
+    expect(again.body.students[0].token).toBeUndefined();
+    expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(200);
     // A new link replaces the old; removing the student closes it.
     const fresh = await call("POST", `/v1/boards/${id}/students/${ana.id}/link`, {}, root);
     expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(401);

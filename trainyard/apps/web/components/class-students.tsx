@@ -22,6 +22,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   const [text, setText] = useState("");
   const [send, setSend] = useState(true);
   const [links, setLinks] = useState<{ name: string; email: string; link: string; emailed: boolean }[]>([]);
+  const [kept, setKept] = useState<string[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const parse = () =>
@@ -39,8 +40,9 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   const add = async () => {
     setErr(null);
     try {
-      const r = await api<{ students: (Student & { token: string; emailed: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
-      setLinks(r.students.map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token), emailed: s.emailed })));
+      const r = await api<{ students: (Student & { token?: string; emailed: boolean; existing?: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
+      setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!), emailed: s.emailed })));
+      setKept(r.students.filter((s) => s.existing).map((s) => s.name));
       setText("");
       await q.reload();
     } catch (e) {
@@ -51,6 +53,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
     try {
       const r = await api<{ student: Student & { token: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
       setLinks([{ name: s.name, email: s.email, link: linkFor(r.student.token), emailed: r.student.emailed }]);
+      setKept([]);
       await q.reload();
     } catch (e) {
       setErr((e as ApiFailure).message);
@@ -99,6 +102,11 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         </button>
       </div>
       {err ? <div className="notice crit" role="alert">{err}</div> : null}
+      {kept.length ? (
+        <div className="notice stack" role="status">
+          Already in this class, so their links are unchanged: {kept.join(", ")}. Use <b>New link</b> next to a name only if a link was lost; the old one then stops working.
+        </div>
+      ) : null}
       {links.length ? (
         <div className="notice ok stack" style={{ gap: 6 }} role="status">
           <b>Links, shown once: copy them now{links.some((l) => l.emailed) ? " (emailed ones are already on their way)" : ""}</b>
