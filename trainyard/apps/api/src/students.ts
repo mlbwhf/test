@@ -64,7 +64,10 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   const view = (g: ClassGuest) => ({ id: g.id, name: g.name, email: g.email, createdAt: g.createdAt, ...(g.emailedAt ? { emailedAt: g.emailedAt } : {}), ...(g.seenAt ? { seenAt: g.seenAt } : {}) });
   const link = (token: string) => `${(opts.webUrl ?? "").replace(/\/$/, "")}/join/${token}`;
   const email = async (g: ClassGuest, boardName: string, token: string) => {
-    if (!opts.mailer?.live || !opts.webUrl) return false;
+    if (!opts.mailer?.live || !opts.webUrl) {
+      console.warn(`[mail] class link for ${g.email} not sent: ${opts.mailer?.live ? "no web address (TRAINYARD_WEB_URL)" : "mail is off (TRAINYARD_SMTP_URL)"}`);
+      return false;
+    }
     await opts.mailer.send({
       to: g.email,
       subject: `Your link to ${boardName}`,
@@ -96,7 +99,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
       const token = newGuestToken();
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
-      const emailed = req.body.send ? await email(g, b.name, token).catch(() => false) : false;
+      const emailed = req.body.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
       out.push({ ...view(g), token, emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
@@ -111,7 +114,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
     if (!g) throw notFound("Student");
     const token = newGuestToken();
     g.tokenHash = hashKey(token);
-    const emailed = req.body?.send ? await email(g, b.name, token).catch(() => false) : false;
+    const emailed = req.body?.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
     return { student: { ...view(g), token, emailed } };
   });
