@@ -1418,7 +1418,14 @@ function aa_reg_moves() {
 		   12 November, confirmed, instead of the cadence's Wednesday the 11th
 		   (which is also Remembrance Day). Offered to a buyer in writing the
 		   same day. The id stays lpm-2026-11-11. */
-		'lpm'  => array( '2026-11-11' => '2026-11-12' ),
+		'lpm'  => array(
+			/* Asked for on 28 Oct 2026: this week's LPM starts Thursday the
+			   29th, not Wednesday the 28th as the site and an email to a buyer
+			   both said. The id stays lpm-2026-10-28, so the registration link
+			   she was sent keeps working. */
+			'2026-10-28' => '2026-10-29',
+			'2026-11-11' => '2026-11-12',
+		),
 	);
 }
 
