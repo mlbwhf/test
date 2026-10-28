@@ -861,3 +861,98 @@ because it counted pages *due* for review rather than pages that have never had 
 Corrected here. Next pass should work the 22 frozen reports by volatility, not by URL
 order, and "Reviewed — no change" (§5) is an acceptable and publishable outcome for any
 of them that prove still current.
+
+---
+
+# DARK SIDE CLUSTER REFRESH — started 28 Oct 2026
+
+Owner chose the Dark Side cluster (13 pages) from the freshness audit, worked by
+volatility. Progress: **1 of 13.**
+
+## 543 `ai-companion-chatbots-mental-health-harms` — REFRESHED 28 Oct 2026
+
+Taken first: active litigation, live bankruptcy, and statutes with imminent
+commencement dates make it the highest reputational exposure of the 13. Last reviewed
+**20 June 2026** — four months.
+
+Almost every load-bearing fact had moved, including the status of the company at the
+centre of the story.
+
+| | Was (Jun) | Now (28 Oct) |
+|---|---|---|
+| Character.AI | adding teen guardrails | **Chapter 11**, filed 12 Oct 2026; Disney lead bidder, $20M for certain IP |
+| Regulation | not covered at all | CA SB 243 live since 1 Jan 2026; ID, OR, WA enacted; **NY signed 28 Oct 2026** |
+| Litigation | 5+ family suits | plus **two attorneys general** — KY (Jan 2026) and FL, which names Altman personally (Jun 2026) |
+| Usage scale | not stated | **72%** of US teens have used a companion, **52%** regularly |
+| ChatGPT user base | "~800M weekly" as current | re-dated to **Oct 2025** — clarified, not overwritten |
+
+### The 800M figure: a fourth cross-page instance, and why the obvious fix was wrong
+
+This page carried **800M weekly ChatGPT users in four places** — takeaway, stat tile,
+prose and FAQ (visible and JSON-LD) — three weeks after we corrected 969 to 900M+.
+**Fourth instance this quarter** of a figure fixed in one place and left stale in
+another.
+
+But the find-and-replace fix would have been an error. The 1.2M suicide-conversation
+figure is a **dated October 2025 disclosure**, and 800M was the correct denominator *at
+that time*. Swapping in 900M would have manufactured a ratio OpenAI never published.
+The actual defect was presenting a 2025 reading as current. It is now explicitly dated
+in all five surfaces, with the reasoning stated on the page.
+
+**This generalises, and the planned cross-page consistency sweep needs to account for
+it:** a repeated figure is not always a figure to synchronise. Point-in-time
+disclosures and their denominators have to travel together. A naive sweep that
+synchronises every instance of "800M" would have corrupted this page.
+
+### The analytical additions
+
+- **The regulatory shift is from "known minor" to "confirm adult."** SB 243's minor
+  duties bite only when an operator *knows* the user is a minor — avoidable by not
+  asking. NY requires confirming adulthood before offering restricted features, and
+  SB 1119 (Adam's Law) reportedly replaces the SB 243 minor provisions with mandatory
+  age assurance from 1 Jan 2027. Knowledge standard → verification duty, which changes
+  the engineering, not just the paperwork.
+- **The safety fix and the business model may be in tension.** Character.AI applied the
+  under-18 ban ~24–25 Nov 2025 and filed for Chapter 11 eleven months later. Causation
+  is *not* established and the page says so — but the firm that implemented the demanded
+  guardrail most aggressively is the one being broken up, and the question is now
+  unavoidable.
+- **Regulation may be aimed at the smaller half of the problem.** The companion
+  specialist went bankrupt; the general-purpose assistants did not, and that is where
+  the distress traffic actually is — 1.2M weekly suicide conversations were on ChatGPT,
+  not on a companion app.
+- **The asset being sold is a corpus of intimate conversations with minors.** A DOJ
+  bankruptcy watchdog objected on 28 Oct that the privacy policy is "ambiguous" and
+  wants a consumer privacy ombudsman appointed before any sale of personal data. The
+  company can be liquidated; the transcripts do not vanish with it.
+
+### Deliberately not asserted
+
+- **NY effective date.** Sources give 1 Jan 2027, 1 Jun 2027, and "90 days after
+  signing". Unreconcilable without the enrolled text, which is unreachable. Stated as a
+  disagreement.
+- **SB 1119 mechanism** — single compliance tracker, flagged on the page as the least
+  verified claim on it.
+- **GUARD Act status** and the **Florida docket's** current position — not established,
+  so reported as filed, not decided.
+- Character.AI's user count (a "163M" figure circulates from a weak source) — omitted.
+
+### Also fixed
+
+Visible stamp said "Jun 17" while `dateModified` said "Jun 20" — **already in breach of
+§4** before this review; both now 28 Oct. Page also failed the content-depth rule: 2 FAQ
+entries (now **5**) and **no methodology note** (now added, with the confidence
+reasoning and the egress limits). Cite-this-page date corrected. Rail nav and primary
+sources updated; new external links carry `target="_blank" rel="nofollow noopener"` per
+the linking rule. Cadence set **CRITICAL/monthly**, next review 28 Nov 2026.
+
+Confidence **MEDIUM** throughout the legal material: court dockets, legislature sites
+and the FTC are all unreachable from here, so nothing was read at source.
+
+## Remaining in this cluster (12)
+
+By volatility: **500** deepfake fraud statistics · **503** deepfake disinformation &
+voice scams · **548** deepfake market manipulation · **499** trends & 2030 forecast
+(carries a forecast) · **502** chatbot failures & liability · **546** copyright ·
+**501** cybercrime/WormGPT · **552** LLM agent risks · **544** algorithmic bias ·
+**547** surveillance · **545** AI slop · **549** frontier dual-use.
