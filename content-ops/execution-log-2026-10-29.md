@@ -38,3 +38,13 @@ Progress record so worker restarts can't lose state.
       FBI $893M; broken nudify link fixed; "~98%" aligned to 541's "96–98%"; Aug "latest"
       items → Oct; new "Checked & scored" block. Stored as PHP array (verified raw).
 - [x] Broken nudify slug also fixed on 498 (hub), 503, 576 (5 instances).
+- [x] **Consolidation 500 ← 866 + 1111**: unique material from both (Sumsub +700%, Entrust
+      every-5-min / 24% liveness / 244% docs, iProov 0.1%, 55.5% meta-analysis, Deepfake-Eval 78%,
+      FBI 2024 $16B, Deloitte $11.5B email scenario, C2PA/SynthID provenance, FTC Voice Cloning
+      Challenge) merged into 500 as "Attack volume, detection and provenance" + new FAQ;
+      500 re-stamped 29 Oct. 866 and 1111 → redirect stubs (instant meta refresh + JS
+      location.replace + visible link); tags verified preserved. All 7 inbound internal links
+      repointed to 500; exact-search confirms 0 remaining. 576 list de-duplicated (17 → 16).
+      **Owner: add two 301s in Redirection to make these server-side** (see checklist).
+- [x] 499 vs 576 differentiated with explicit role statements and cross-links
+      (576 = data index; 499 = analysis + forecast scoring).
