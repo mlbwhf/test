@@ -1040,3 +1040,37 @@ from a planned slug list before pages were created.
 deepfake price-manipulation action found. Risk moved to KYC: FINRA 2026 oversight
 report flags deepfake selfies/AI-forged IDs defeating broker onboarding, feeding
 account takeovers used for small-cap pump-and-dump buying. Cadence **STANDARD**.
+
+## 499 `ai-dark-side-statistics-trends-2030-forecast` — REFRESHED 28 Oct 2026 (5 of 13)
+
+The section's summary page, and so the place figures fixed elsewhere go stale. **Four
+figures corrected on 500 / 503 earlier this cycle were still wrong here** — Arup as
+record, EU labelling in the future tense, "45 states" for all deepfake laws, and a link
+to 500 under its old title. All now match (§3).
+
+**Forecast table scored** for the first time, on the prediction-ledger scale:
+
+| Forecast | Verdict |
+|---|---|
+| Deloitte US gen-AI fraud $40B by 2027 | **Open** — no measure of the same quantity exists |
+| Deloitte synthetic-ID fraud ≥$23B by 2030 | Open |
+| Cybersecurity Ventures $10.5T (2025) → $12.2T (2031) | **Unfalsifiable as published** |
+| Detection market $1.75B / deepfake-AI market $8.1B by 2030 | Open |
+
+**The finding:** the "$10.5T in 2025" was printed as a *baseline*. It is the firm's own
+**2020 forecast** of 15%/yr growth restated once the year arrived — a forecast quoted as
+its own outcome. For scale, 2025 cybercrime losses *reported* to the FBI: $20.9B (~0.2%).
+None of the five forecasts can currently be checked against an independent measurement.
+**All five go into the prediction ledger;** Deloitte 2027 resolves first.
+
+Incident series (233 → 362) **confirmed** by Stanford HAI's 2026 AI Index. FBI IC3 row
+added to the trend table. Grok and Fideuram added with links to their detail pages.
+FAQ 3 → 5, methodology added. CRITICAL.
+
+**Process notes (both self-caught, no damage):**
+- **Site timezone is US Eastern.** GMT had rolled to 29 Oct while the site's local date
+  was still 28 Oct; stamps briefly said 29, then reverted to 28 to match `post_modified`.
+  **Rule: stamp with the site-local date** (`post_modified`), not GMT.
+- Ran two `wp_alter_post` calls on one post in parallel — the race I'd ruled out on
+  1421. Re-ran both; both reported "no occurrences", so both had applied and nothing was
+  overwritten. Back to strictly sequential.
