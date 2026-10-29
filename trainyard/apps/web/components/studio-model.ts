@@ -30,7 +30,13 @@ export const STK = ["#ffd37a", "#f6b9ae", "#cfe8d4", "#cde0f2"];
 const ROT = ["-1.5deg", "1deg", "-.5deg", "1.8deg"];
 
 const CHECKS = [["Planning scope and context", "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?"], ["Release Train Engineer", "Have we identified the Release Train Engineer? Do they understand the scope of the role in preparing the organization and preparing for the PI Planning event?"], ["Planning timeframe, iteration and PI cadence", "Have we identified the PI Planning dates, the iteration cadence, and the PI cadence?"], ["Agile Teams (SM/TCs, POs)", "Does each team have an identified Scrum Master/Team Coach and Product Owner?"], ["Team makeup/commitment", "Have we identified cross-functional Agile Teams? Are there dedicated team members on every team?"], ["Agile Team attendance", "Are all team members attending PI Planning, whether in person or involved remotely?"], ["Executive, Business Owner", "Do we know who will set and present the business context and strategy? Do we know who will assign business value and accept the plans?"], ["Business alignment", "Is there reasonable agreement on priorities amongst the Business Owners and Product Management?"], ["Architecture vision and development practices", "Do we know who will present the architecture vision and required development practices?"], ["System Team", "Has the system team been identified and formed?"], ["Shared Services", "Have the shared services (User Experience, Architecture, etc.) been identified?"], ["Other Attendees", "Do we know what other key business and technology stakeholders should attend?"], ["Agile Lifecycle Management (ALM) tooling", "Do we know how and where iterations, PIs, features, stories, measures, etc., will be maintained?"], ["Development infrastructure", "Do we have a strategy for using and improving the Continuous Delivery Pipeline?"], ["Quality practices", "Is there a strategy for applying built-in quality practices?"]];
-const CTYPES = [["Communication", "#d93a2b"], ["Collaboration", "#4a5fe8"], ["Facilitate", "#2f8f5b"], ["Input/Output", "#e29a00"]];
+// The RTE's four kinds of connection: name, color, line pattern and the course's description of it.
+const CTYPES: [string, string, string, string][] = [
+  ["Communication", "#d93a2b", "none", "Communicates with Business Owners to understand priorities and long-term vision, and communicates progress toward objectives"],
+  ["Collaboration", "#4a5fe8", "22 12", "Collaborates with the Scrum Masters and/or Team Coaches on the ART to measure progress and help remove impediments"],
+  ["Facilitate", "#2f8f5b", "1 14", "Facilitates the Inspect & Adapt (I&A) event to coach the ART to identify and solve problems"],
+  ["Input/Output", "#e29a00", "26 9 4 9", "Gathers the key outputs of events, like PI objectives from PI Planning"],
+];
 const BOARDS = [
   { c: [["M1", 986, 269], ["D1", 380, 373], ["D2", 580, 375], ["F1", 781, 325], ["F2", 781, 423], ["F6", 986, 471], ["F3", 544, 522], ["F5", 987, 569], ["D3", 380, 614], ["D4", 581, 614], ["F4", 782, 616]], l: ["M945 269 C 870 268 830 285 795 305", "M608 374 C 690 372 740 360 775 343", "M608 374 C 670 375 680 395 682 402 C 690 425 730 423 756 423", "M808 422 C 900 420 975 385 987 295", "M380 395 C 385 480 450 520 518 522", "M408 614 C 490 612 540 590 546 545", "M580 397 C 590 520 680 616 756 616", "M580 397 C 600 450 680 510 760 530 C 840 555 900 568 960 568", "M581 592 C 585 540 620 515 680 517 C 740 518 775 490 782 445"] },
   { c: [["M1", 782, 269], ["F6", 380, 324], ["F1", 581, 324], ["F3", 782, 324], ["F5", 984, 324], ["D2", 638, 423], ["D1", 380, 471], ["F4", 843, 469], ["D7", 984, 471], ["D4", 581, 520], ["F2", 638, 569], ["D6", 984, 569], ["D3", 517, 616], ["D5", 730, 616], ["F7", 984, 616]], l: ["M740 269 C 650 270 600 285 581 303", "M581 346 C 585 372 625 365 638 400", "M581 346 C 560 390 470 395 430 400 C 400 405 385 430 380 449", "M782 346 C 780 440 700 510 608 520", "M984 346 C 990 385 1040 390 1042 430 C 1042 455 1030 468 1010 471", "M984 493 C 980 510 930 515 928 545 C 928 565 945 568 958 569", "M843 491 C 840 560 800 612 757 616", "M545 616 C 600 612 635 605 638 591"] },
@@ -116,19 +122,37 @@ export function studioModel(c: StudioCtx): Record<string, any> {
   }
 
   if (c.kind === "connect") {
-    const types: [string, string][] = cfg.types ?? CTYPES;
-    const cl = list<Item>("conn"), ctype = ui.ctype ?? 0;
+    const types: string[][] = cfg.types ?? CTYPES;
+    const cl = list<Item>("conn"), ctype = (ui.ctype as number | undefined) ?? 0, hov = ui.hov as [number, number] | undefined;
+    const ty = (i: number) => types[i] ?? types[0]!;
+    const line = (i: number) => ({ col: ty(i)[1], dash: ty(i)[2] ?? "none", cap: ty(i)[2] === "1 14" ? "round" : "butt", io: ty(i)[0] === "Input/Output" ? "url(#conn-io)" : undefined });
+    const route = (x: number, y: number) => `M786 408 V${y < 440 ? 440 : 455} H${x} V${y}`;
+    const at = (e: React.MouseEvent): [number, number] => {
+      const r = (e.currentTarget as Element).getBoundingClientRect();
+      return [Math.round(((e.clientX - r.left) / r.width) * 1600), Math.round(((e.clientY - r.top) / r.height) * 900)];
+    };
     v.conn = {
       count: cl.length,
       clear: () => cl.length && op({ key: "conn", op: "remove", id: cl[cl.length - 1]!.id }),
       click: (e: React.MouseEvent) => {
-        const r = (e.currentTarget as Element).getBoundingClientRect();
-        op({ key: "conn", op: "push", value: { x: Math.round(((e.clientX - r.left) / r.width) * 1600), y: Math.round(((e.clientY - r.top) / r.height) * 900), type: ctype, note: "" } });
+        const [x, y] = at(e);
+        op({ key: "conn", op: "push", value: { x, y, type: ctype, note: "" } });
       },
-      lines: cl.map((p, i) => ({ d: `M786 408 V${p.y < 440 ? 440 : 455} H${p.x} V${p.y}`, x: p.x, y: p.y, ty: p.y + 9, n: i + 1, col: types[p.type]?.[1] ?? "#d93a2b" })),
-      items: cl.map((p, i) => ({ n: i + 1, col: types[p.type]?.[1], type: types[p.type]?.[0], note: p.note, save: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => op({ key: "conn", op: "update", id: p.id, value: { note: e.target.value } }) })),
+      move: (e: React.MouseEvent) => setUi({ hov: at(e) }),
+      leave: () => setUi({ hov: undefined }),
+      ghost: hov ? [{ d: route(hov[0], hov[1]), x: hov[0], y: hov[1], ...line(ctype) }] : [],
+      lines: cl.map((p, i) => ({ d: route(p.x, p.y), x: p.x, y: p.y, ty: p.y + 9, n: i + 1, ...line(p.type) })),
+      items: cl.map((p, i) => ({
+        n: i + 1, type: ty(p.type)[0], note: p.note, ...line(p.type),
+        cycle: () => op({ key: "conn", op: "update", id: p.id, value: { type: (p.type + 1) % types.length } }),
+        del: () => op({ key: "conn", op: "remove", id: p.id }),
+        save: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => op({ key: "conn", op: "update", id: p.id, value: { note: e.target.value } }),
+      })),
+      desc: ty(ctype)[3] ?? "",
+      sel: line(ctype),
+      legend: types.map((t, i) => ({ label: t[0], ...line(i) })),
     };
-    v.ctypes = types.map((t, i) => ({ label: t[0], c: t[1], bg: ctype === i ? "#ffd37a" : "#fffaf0", sh: ctype === i ? "2px 2px 0 #0d1815" : "none", go: () => setUi({ ctype: i }) }));
+    v.ctypes = types.map((t, i) => ({ label: t[0], ...line(i), bg: ctype === i ? "#ffd37a" : "#fffaf0", sh: ctype === i ? "2px 2px 0 #0d1815" : "none", go: () => setUi({ ctype: i }) }));
   }
 
   if (c.kind === "art") {

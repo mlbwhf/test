@@ -22,7 +22,7 @@ export function supportEmail(): string {
   return process.env.TRAINYARD_SUPPORT_EMAIL ?? "support@trainyard.app";
 }
 
-export const SECURITY_EMAIL = "security@agile-agilist.com";
+export const SECURITY_EMAIL = "support@trainyard.app";
 export const ISSUES_URL = "https://github.com/mlbwhf/test/issues";
 
 /** JSON for an inline <script>: "<" is escaped so no value can close the tag early. */
