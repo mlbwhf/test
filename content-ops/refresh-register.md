@@ -1237,3 +1237,26 @@ update found. **Broken links fixed:** `ai-surveillance-facial-recognition`,
 
 **Self-caught:** an insertion briefly produced "The case but it illustrates…"; fixed
 immediately. **Broken link fixed:** `ai-frontier-risks-bioweapon`. FAQ 2 → 5. STANDARD.
+
+## 545 `ai-slop-content-pollution-internet` — REFRESHED 29 Oct 2026 (12 of 13)
+
+**Of four headline figures, two were misattributed/untraceable and one had nearly tripled:**
+
+| | Was | Now |
+|---|---|---|
+| "AI articles overtook human-written in late 2024" | attributed to **Ahrefs** | **Misattributed** — it's **Graphite**'s finding, and Graphite's own newer study (data to Q1 2026) supersedes it: AI-primary articles **plateaued near 50%** (50.9% Q4 2025, 49.9% Q1 2026) |
+| "AI now writes most new web pages" | headline | **Reworded** — Ahrefs' 74.2% = pages *containing* any AI content (same pattern as the 82.6% phishing figure) |
+| "Chatbots repeat false claims 62% of the time" | takeaway, prose, rail tile | **Withdrawn** — untraceable. Replaced with the NewsGuard monitor series: 18% (Aug 2024) → 35% (Aug 2025) → 28.8% (Jan 2026) |
+| NewsGuard AI sites | 1,271 (2025) | **3,749** (Jun 2026); looser counts far higher (~15k in French alone, not comparable) |
+
+**The new finding, and the best number on the page:** Deezer — AI tracks 10% of daily
+uploads (Jan 2025) → 44% (Apr 2026) → **>50% (Jun 2026)**, yet **1–3% of streams**.
+Production ≠ consumption. The harm is less displacement of what people consume than
+raising the cost of finding human work. Graphite's plateau points the same way.
+
+**Self-caught (×2):** a splice produced "These sites are many churning out…" (fixed);
+drafted an unverified claim about fraudulent AI streams (removed). NewsGuard's
+explanation for the false-claim rise attributed to NewsGuard, not asserted as ours.
+
+**Broken links fixed — three in one block:** `ai-market-manipulation`,
+`ai-surveillance-facial-recognition`, `ai-copyright-ownership`. FAQ 2 → 5. STANDARD.
