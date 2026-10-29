@@ -1129,3 +1129,33 @@ stay, 30 Jun 2026).
 
 **Broken links fixed:** `ai-slop-synthetic-content` and `ai-market-manipulation`.
 CRITICAL while the NYT case is at summary judgment.
+
+## 501 `ai-cybercrime-phishing-wormgpt` — REFRESHED 29 Oct 2026 (8 of 13)
+
+**Three headline statistics failed tracing:**
+
+| Claim | Action | Why |
+|---|---|---|
+| "82.6% of phishing written by AI" (tile + takeaway + FAQ) | **Reworded** | KnowBe4 2025 counts *any* AI involvement (personalisation, obfuscation), not authorship. ~40% for BEC primarily AI-written per another estimate |
+| "FBI's IC3 noted a 37% jump in AI-assisted BEC" | **Withdrawn** | Only in secondary blogs; not traceable to IC3, whose AI-linked BEC figure is ~$30M |
+| "Over 80% of cyberattacks involve AI" (prose + rail tile) | **Withdrawn** | No traceable source |
+
+**Pattern worth noting:** all three were large percentages from vendor aggregators,
+each broader than the words describing it. Restore either withdrawn figure only with a
+primary source.
+
+**Added — the assistant → operator shift**, primary-sourced:
+- Anthropic **GTG-1002** (Nov 2025): Claude Code did ~80–90% of tactical work in a
+  state-linked espionage campaign (~30 targets); Aug 2025 report: extortion of ≥17 orgs.
+- Google GTIG (Nov 2025): **PROMPTSTEAL** (APT28 vs Ukraine, Jun 2025) — first
+  LLM-querying malware in live ops; PROMPTFLUX experimental; ESET PromptLock prototype.
+- OpenAI–Hugging Face (Jul 2026), linked to 1057.
+- FBI IC3 2025 AI section; set beside $2.77B total BEC (2024) to show AI is a small
+  *identified* share.
+
+The June thesis ("AI doesn't create fundamentally new attacks") kept for phishing,
+explicitly qualified for intrusion.
+
+**Cross-page fix on 499** (§3): it repeated "82.6% AI-written" in takeaway, trend table
+and prose, plus the withdrawn "over 80%". Corrected there; 499 re-stamped 29 Oct with a
+"follow-up correction" row. FAQ 2 → 5, methodology added. CRITICAL.
