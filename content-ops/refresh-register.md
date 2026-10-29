@@ -1211,3 +1211,29 @@ matters most for AI because models rarely "intend" anything.
 Wrongful-arrest count ("at least eight") kept but dated to early-2025 reporting — no
 update found. **Broken links fixed:** `ai-surveillance-facial-recognition`,
 `ai-slop-synthetic-content`. FAQ 2 → 5, methodology added. STANDARD.
+
+## 547 `ai-surveillance-authoritarian-toolkit` — REFRESHED 29 Oct 2026 (11 of 13)
+
+**Two weak headline figures demoted:**
+- "$157B predictive-policing market by 2034" (tile, takeaway, FAQ) — **unattributed**
+  market research implying 46× growth in a decade. Arithmetic is internally consistent
+  (3.4 × 1.467¹⁰ ≈ 157) but provenance is nil. Kept in prose only, labelled as vendor
+  enthusiasm; tile replaced.
+- Clearview "50B+ images" — now **labelled company-stated** (60B+ in later reports).
+
+**EU tense corrected:** real-time remote biometric ID ban **in force since 2 Feb 2025**
+(narrow police exceptions); untargeted facial scraping (the Clearview model) banned.
+
+**Added — "deployment without a statute"**, the frame the page lacked:
+- **UK**: Home Office white paper 26 Jan 2026 — LFR vans 10 → ~50, £26M+ national
+  system; **no dedicated law enacted**. Norfolk 50k+ faces (Mar 2026). Cumulative-scan
+  figure and a recent court ruling are single-source and marked so.
+- **ICE Mobile Fortify** (reported Jun 2025): field face-matching vs DHS records; NEC
+  (DHS inventory, Jan 2026); ~100k uses (reported); 15-yr retention incl. non-matches
+  (reported); DHS IG warned Feb 2025; no warrant requirement.
+- **New Orleans**: ~2 years of real-time alerts from Project NOLA (5,000+ cameras) despite
+  a 2022 ordinance banning live monitoring; paused 8 Apr 2025; resumption unconfirmed.
+- **Clearview BIPA settlement** (23% equity, ~$51.75M) **vacated by 7th Cir. 13 Jul 2026**.
+
+**Self-caught:** an insertion briefly produced "The case but it illustrates…"; fixed
+immediately. **Broken link fixed:** `ai-frontier-risks-bioweapon`. FAQ 2 → 5. STANDARD.
