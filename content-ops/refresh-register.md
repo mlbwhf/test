@@ -1189,3 +1189,25 @@ end-2026" **resolves in ~2 months, no published progress measure** — score in 
 
 **Broken links fixed:** `ai-frontier-risks-bioweapon`, `ai-market-manipulation`.
 FAQ 3 → 5. CRITICAL until the Gartner forecast is scored.
+
+## 544 `ai-algorithmic-bias-discrimination` — REFRESHED 29 Oct 2026 (10 of 13)
+
+The evidence of bias (Gender Shades 2018, COMPAS 2016, Obermeyer/*Science* 2019) is
+unchanged and stands — now **dated** in tiles and prose. **The governance narrative was
+backwards.** June said regulators were "beginning to treat fairness as a requirement";
+since then, most of it loosened or slipped:
+
+| | Was | Now |
+|---|---|---|
+| US federal | "agencies … testing civil-rights law" | **EO 14281** (Apr 2025): agencies told to deprioritise **disparate-impact** enforcement |
+| Colorado AI Act | not covered | **repealed and replaced** by SB 26-189 (signed 14 May 2026): anti-discrimination duty, deployer risk programmes and impact assessments **eliminated**; narrower law from 1 Jan 2027. Original stayed by federal court 27 Apr 2026 (AI developer's constitutional challenge, DOJ intervened) |
+| EU AI Act high-risk | "classes such uses as high-risk" | classification stands, **obligations delayed to 2 Dec 2027** (Digital Omnibus) |
+| *Mobley v. Workday* | collective allowed 2025 | **widened** to HiredScore (Mar 2026); class-cert hearing Mar 2027; no liability |
+
+**Argued:** in the US the risk moved from regulatory compliance to **litigation** —
+less predictable, and it arrives after the harm. Disparate impact is the theory that
+matters most for AI because models rarely "intend" anything.
+
+Wrongful-arrest count ("at least eight") kept but dated to early-2025 reporting — no
+update found. **Broken links fixed:** `ai-surveillance-facial-recognition`,
+`ai-slop-synthetic-content`. FAQ 2 → 5, methodology added. STANDARD.
