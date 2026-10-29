@@ -6833,7 +6833,8 @@ function aa_training_copy_i18n() {
 				'title'  => 'Certification SAFe',
 				'accent' => 'par rôle.',
 				'sub'    => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, '
-				          . 'Advanced Scrum Master, DevOps, SAFe for Teams et Business Owner. La '
+				          . 'Advanced Scrum Master, DevOps, SAFe for Teams, Business Owner, SAFe '
+				          . 'Architect et Agile Software Engineering. La '
 				          . 'plupart durent deux jours en direct virtuel, examen inclus : vous '
 				          . 'passez l’examen et repartez certifié dans la même semaine.',
 				'comp'   => 'Deux jours · examen inclus · report sans frais.',
@@ -6900,7 +6901,8 @@ function aa_training_copy_i18n() {
 				'title'  => 'Certificación SAFe',
 				'accent' => 'por rol.',
 				'sub'    => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, '
-				          . 'Advanced Scrum Master, DevOps, SAFe for Teams y Business Owner. La '
+				          . 'Advanced Scrum Master, DevOps, SAFe for Teams, Business Owner, SAFe '
+				          . 'Architect y Agile Software Engineering. La '
 				          . 'mayoría dura dos días en vivo online con el examen incluido, así que '
 				          . 'puedes presentarte al examen y certificarte en la misma semana.',
 				'comp'   => 'Dos días · examen incluido · cambio de fecha sin coste.',
@@ -7048,7 +7050,8 @@ function aa_training_copy() {
 			'title'   => 'SAFe certification',
 			'accent'  => 'by role.',
 			'sub'     => 'Leading SAFe, SAFe Scrum Master, Product Owner / Product Manager, Advanced '
-			           . 'Scrum Master, DevOps, SAFe for Teams and Business Owner. Most run two days '
+			           . 'Scrum Master, DevOps, SAFe for Teams, Business Owner, SAFe Architect and '
+			           . 'Agile Software Engineering. Most run two days '
 			           . 'live online with the exam fee included, so you can sit the exam and be '
 			           . 'certified inside the same week.',
 			'comp'    => 'Two days · exam fee included · reschedule at no fee.',
@@ -7176,7 +7179,11 @@ function aa_training_salary_note() {
 function aa_training_courses( $cat ) {
 	$map = array(
 		'adv-safe'      => array( 'spc', 'aspc', 'rte', 'apm', 'lpm', 'arch', 'large-solution' ),
-		'safe-roles'    => array( 'sa', 'scrum-master', 'popm', 'asm', 'devops', 'team-practitioner', 'bo' ),
+		/* ARCH AND ASE ARE ROLE COURSES, NOT INDUSTRY ONES. Moved here from
+		   safe-industry on 29 Oct 2026 at the client's direction. ARCH also
+		   stays in adv-safe above; nobody asked to take it out of there. */
+		'safe-roles'    => array( 'sa', 'scrum-master', 'popm', 'asm', 'devops', 'team-practitioner', 'bo',
+		                          'arch', 'ase' ),
 		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2' ),
 		/* THESE TWO USED TO TAKE THEIR LIST FROM THE PAGE'S OWN CHILDREN.
 		   That works in English, where the queried page is the English track
@@ -7187,7 +7194,7 @@ function aa_training_courses( $cat ) {
 		   resolves each one in the reader's language. */
 		'safe-found'    => array( 'conflict-collaboration', 'value-stream-mapping',
 		                          'responsible-ai-safe', 'agile-contracting-government' ),
-		'safe-industry' => array( 'arch', 'ase', 'safe-for-hardware-teams',
+		'safe-industry' => array( 'safe-for-hardware-teams',
 		                          'sa-gov', 'team-practitioner' ),
 	);
 	if ( ! empty( $map[ $cat ] ) ) { return $map[ $cat ]; }
@@ -9025,8 +9032,8 @@ add_shortcode( 'aa_cohorts', 'aa_reg_cohorts_section' );
    descriptions from aa_training_copy_l10n(), which is already translated. Add
    a course and the count on the home page moves on its own.
 
-   THE TOTAL IS DISTINCT, NOT A SUM. ARCH sits in both Advanced SAFe and SAFe
-   by Industry, and SAFe Practitioner in both Core Roles and SAFe by Industry.
+   THE TOTAL IS DISTINCT, NOT A SUM. ARCH sits in both Advanced SAFe and Core SAFe
+   Roles, and SAFe Practitioner in both Core Roles and SAFe by Industry.
    Adding the five track counts would claim credentials we do not have, so the
    headline figure counts distinct slugs.
 
@@ -10115,9 +10122,9 @@ function aa_reg_role_map() {
  */
 function aa_reg_track_codes() {
 	return array(
-		'safe'          => array( 'SA', 'SSM', 'POPM', 'SASM', 'SDP', 'SP', 'BO' ),
+		'safe'          => array( 'SA', 'SSM', 'POPM', 'SASM', 'SDP', 'SP', 'BO', 'ARCH', 'ASE' ),
 		'adv-safe'      => array( 'RTE', 'LSSP', 'SPC', 'ASPC', 'APM', 'LPM', 'ARCH' ),
-		'safe-industry' => array( 'ARCH', 'ASE', 'SHWA', 'SHWP', 'SA-Gov' ),
+		'safe-industry' => array( 'SHWA', 'SHWP', 'SA-Gov' ),
 		/* ARTL WAS MISSING HERE, which is why Launching AI-Native ARTs appeared
 		   under no category anywhere on the site. It was added to
 		   aa_reg_courses() for the launch -- so it generated cohorts, priced
