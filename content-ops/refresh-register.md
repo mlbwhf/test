@@ -1012,3 +1012,31 @@ had implied.
 letter; Texas Russia attribution is *private-researcher*, not governmental. No count of
 2026 election deepfakes offered. Cadence CRITICAL through the midterms and the 2 Dec EU
 deadline.
+
+## 548 `ai-deepfake-market-manipulation` — REFRESHED + CORRECTED 28 Oct 2026 (4 of 13)
+
+**Headline figure corrected.** The page said the 2023 fake Pentagon image dipped the
+S&P 500 "about 0.26% — a momentary swing of roughly $500 billion". Those two numbers
+cannot describe the same move:
+
+| Input | Value | Basis |
+|---|---|---|
+| S&P 500 total value, May 2023 | ~$34–36T | approximate |
+| 0.26% dip (as cited here) | **≈ $90B** | DERIVED |
+| ~30-point / ~0.7% dip (other reports) | **≈ $250B** | DERIVED |
+| Widely quoted figure | $500B | 2023 coverage (TheStreet, SFist); **no published method** |
+
+$500B would need a ~1.4% fall — 2× the largest reported move, 5× the one cited. Now
+presented as "the widely quoted claim" beside the DERIVED range. Stat tile, rail tile,
+prose, FAQ, JSON-LD and excerpt all changed (§3).
+
+**Broken internal links found and fixed:** `/ai-slop-synthetic-content/` and
+`/ai-llm-agent-risks/` don't exist (real slugs: `ai-slop-content-pollution-internet`,
+`ai-llm-agent-dark-side-risks`). **The same bad slugs are on 544, 546 (slop) and 549
+(agents)** — to fix as each is reached. Suggests the "More from" blocks were written
+from a planned slug list before pages were created.
+
+**Reviewed-negative result recorded:** no 2026 deepfake moved a broad index; no SEC
+deepfake price-manipulation action found. Risk moved to KYC: FINRA 2026 oversight
+report flags deepfake selfies/AI-forged IDs defeating broker onboarding, feeding
+account takeovers used for small-cap pump-and-dump buying. Cadence **STANDARD**.
