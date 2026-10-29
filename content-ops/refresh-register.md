@@ -1260,3 +1260,83 @@ explanation for the false-claim rise attributed to NewsGuard, not asserted as ou
 
 **Broken links fixed — three in one block:** `ai-market-manipulation`,
 `ai-surveillance-facial-recognition`, `ai-copyright-ownership`. FAQ 2 → 5. STANDARD.
+
+## 549 `ai-frontier-dual-use-risks` — REFRESHED + ONE CORRECTION 29 Oct 2026 (13 of 13)
+
+**Correction:** the page called FLI's **C+** "the best *existential-safety* planning
+grade". C+ is the best **overall** grade; on existential safety the best was **D** —
+and still is in the Summer 2026 index (published 7 Jul 2026: Anthropic C+ 2.66,
+OpenAI C, Google DeepMind C, Meta D+, xAI/DeepSeek/Mistral F). The error made the field
+look more than a full grade better prepared for its most serious risks. Tile and rail
+now say **D**.
+
+**"The safety net is voluntary" is now only partly true:**
+- **California SB 53** in force since **1 Jan 2026** — large developers (>$500M revenue)
+  publish safety frameworks; critical incidents reported within **15 days**; up to
+  **$1M/violation**.
+- **NY RAISE Act** signed 19 Dec 2025, amended 27 Mar 2026; **72-hour** reporting;
+  effective date contested (most say 1 Jan 2027) — stated as contested.
+- EU general-purpose-model duties since Aug 2025.
+- **Argued:** the laws make the frameworks public and accountable to their own terms;
+  they do **not** set thresholds, require independent pre-release testing, or block
+  deployment. Thresholds are still self-set.
+
+**Added — the labs' own threshold calls** (company-stated, precautionary): Anthropic
+ASL-3 for Claude Opus 4 (May 2025); OpenAI ChatGPT Agent "High" in bio/chem (Jul 2025).
+Cyber linked to 1057 and 501. Broken links fixed. FAQ 2 → 5. STANDARD.
+
+**Process slip (no damage):** ran two same-post edits in parallel for the second time;
+re-ran both, both reported "no occurrences", so both had applied.
+
+---
+
+## CLUSTER COMPLETE — 13 of 13, 28–29 Oct 2026
+
+All 13 never-reviewed Dark Side reports refreshed. Every one had stale or wrong content;
+**none** qualified for "Reviewed — no change."
+
+### Corrections (claims wrong when written, not merely dated)
+
+| Page | What was wrong |
+|---|---|
+| 548 | $500B market swing — arithmetic implies ~$90–250B |
+| 546 | *Bartz v. Anthropic* stated backwards; Copyright Office report called "pending" when published |
+| 549 | C+ called best *existential-safety* grade; it was D |
+| 545 | Graphite finding attributed to Ahrefs; "62% false claims" untraceable |
+| 501 | "37% AI-assisted BEC" and "over 80% of attacks involve AI" untraceable |
+| 503 | "45 states" was the sexual-deepfake count, used for election laws |
+| 502 | McDonald's test "two-year" in body, "three-year" in FAQ |
+
+**Withdrawn as untraceable: 4 figures** (501 ×2, 545 ×1, 549's framing). **Reworded as
+broader than described: 3** (82.6% phishing, 74.2% web pages, 50B Clearview). Recurring
+pattern: **vendor-aggregator percentages, each broader than the words describing them.**
+
+### Broken internal links — systemic, now cleared
+
+Six wrong slugs across 544, 545, 546, 547, 548, 549, 552, plus a seventh
+(`ai-deepfake-porn-nudify-apps-statistics` → real slug `ai-deepfake-image-abuse-statistics`)
+on **498 (the Dark Side hub)**, **503** and **576** — 5 instances. **Site-wide search
+confirms no remaining live instance of any of the seven.** Likely cause: "More from"
+blocks written from a planned slug list before the pages existed.
+
+### Cross-page consistency pass on 576 (Dark Side statistics index)
+
+Not a full review, and labelled as such on the page. FTC series extended to 2025
+($15.9B / $3.5B), Fideuram record added, 82.6% reworded, and an internal contradiction
+removed (trend text said AI was a "minority" of 2024 phishing; its own table said 67.4%).
+
+### Still open — follow-ups this cluster surfaced
+
+- **866 `ai-deepfakes-fraud-statistics` and 1111 `deepfake-fraud-scams-2026`** still lead
+  with the $25M Arup case. They are **duplicates of 500's topic** — three deepfake-fraud
+  pages competing for the same queries. Consolidation decision for the owner, ahead of a
+  refresh.
+- **576 full review** (only consistency-checked).
+- **Prediction ledger** now has concrete entries: Deloitte $40B (2027), Gartner 40%
+  agents (resolves **end-2026** — score in January), Cybersecurity Ventures
+  ("unfalsifiable as published"), Forrester reversal (Dec 2026).
+- **Real-world AI cluster** (9 pages) — the other frozen cluster, untouched.
+- **Process rules confirmed this cycle:** stamp with the **site-local** date
+  (`post_modified`, US Eastern), not GMT; `wp_alter_post` calls on one post strictly
+  sequential; splice-style insertions need the tail of the original sentence checked
+  (two broken-sentence slips caught, 545 and 547).
