@@ -1101,3 +1101,31 @@ doctrine any court stated. Market signals: Cursor support bot invented a policy 
 "three-year" in the FAQ (2021 → Jul 2024 ≈ three). EU Art. 50 chatbot disclosure now
 noted as law since 2 Aug 2026. Internal links added to the customer-support cluster
 (2298) and reversal report (2293). FAQ 2 → 5, methodology added. STANDARD.
+
+## 546 `ai-copyright-who-owns-the-rights` — REFRESHED + TWO CORRECTIONS 28 Oct 2026 (7 of 13)
+
+**Correction 1 — the Anthropic ruling was stated backwards.** The page said a judge found
+"ingesting millions of pirated, full-text books for commercial training went well
+beyond fair use." *Bartz v. Anthropic* (Alsup, 23 Jun 2025) held **training was fair
+use** ("exceedingly transformative"), scanning purchased books was fair use, and only
+**acquiring and keeping a pirated central library** was not. That reversed the lesson
+for readers; it is now corrected in body, takeaway, rail tile, FAQ and JSON-LD.
+
+**Correction 2 — "the Copyright Office's third report … is still pending."** False when
+written: the **pre-publication Part 3 was released 9 May 2025**. Only the final version
+is outstanding (Perlmutter removed the next day, reinstated Sept 2025; SCOTUS declined to
+stay, 30 Jun 2026).
+
+**Added:**
+- **First US appellate ruling on AI training: 3d Cir., *Thomson Reuters v. Ross*,
+  29 Sep 2026 — fair use rejected**, for a non-generative tool; generative question
+  reserved; binds one circuit.
+- *NYT v. OpenAI* consolidated as **MDL 3143, at summary judgment**; **DOJ intervened
+  2 Sep 2026 for OpenAI** — so the Copyright Office says training is sometimes
+  infringing while DOJ argues for the trainer. Flagged as "the government on both sides".
+- *Thaler* — **cert denied 2 Mar 2026**.
+- New 2026 filings (Google Jul; USA Today 8 Oct; Suno). **"51 suits" tile retired** —
+  dated Oct 2025, no reliable current count.
+
+**Broken links fixed:** `ai-slop-synthetic-content` and `ai-market-manipulation`.
+CRITICAL while the NYT case is at summary judgment.
