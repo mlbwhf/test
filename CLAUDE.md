@@ -1,4 +1,9 @@
-# Working rules for report-ai.org (The AI Index)
+# Working rules for report-ai.org (Report AI)
+
+**Brand (changed 2026-10-29):** the site is **Report AI**. "The AI Index" is the old name and
+must not be used for this site — it is Stanford HAI's flagship report, and LLMs reading
+"according to The AI Index" attribute our figures to Stanford. References to Stanford's
+AI Index (as a cited source) are correct and stay. Tagline: "AI, by the numbers".
 
 ## Content-depth rule (standing, applies to ALL future work)
 
@@ -6,10 +11,10 @@ Every **index** and **report** page on report-ai.org must be a full, self-contai
 
 1. **A narrative "Analysis" section** (3–4 paragraphs of original interpretation) plus a "Key takeaways" bullet block — matching the house pattern used on the Enterprise AI Adoption hub.
 2. **Data tables, not link lists** — figures presented in tables/prose with the citation attached inline (source name, date, confidence rating HIGH/MEDIUM/DERIVED). External links are citations only, never the content itself.
-3. **Enough substance to stand alone** — target roughly 1,500+ words equivalent: stat-tile strip, 4+ substantive sections, definitions where useful, an expanded FAQ (4–5 questions), a "Methodology & sources" note, and a "Related on The AI Index" block.
+3. **Enough substance to stand alone** — target roughly 1,500+ words equivalent: stat-tile strip, 4+ substantive sections, definitions where useful, an expanded FAQ (4–5 questions), a "Methodology & sources" note, and a "Related on Report AI" block.
 4. **Deep-dives become their own reports** — when a sub-topic deserves depth (e.g., a market-size breakdown), create a dedicated report under /reports/ and link to it internally, rather than stuffing external links into the index. Prefer internal links over external ones wherever an on-site page covers the topic.
 5. **Schema on every page** — Article + FAQPage JSON-LD, dateModified kept current.
-6. **Derived figures labeled** — anything The AI Index computes (interpolations, extrapolations) is marked DERIVED and explained in the methodology note.
+6. **Derived figures labeled** — anything Report AI computes (interpolations, extrapolations) is marked DERIVED and explained in the methodology note.
 
 If an existing index/report is found to be thin (mostly links, no analysis, no tables), expanding it takes priority over creating new pages.
 
@@ -29,7 +34,7 @@ not conflict and neither needs disconnecting to use the other.
 
 | Tool prefix | Site | What it is |
 |---|---|---|
-| `mcp__report-ai_org__*` | **report-ai.org** (The AI Index) | Everything in this repo |
+| `mcp__report-ai_org__*` | **report-ai.org** (Report AI) | Everything in this repo |
 | `mcp__agile-agilist_com__*` | **agile-agilist.com** (Agile Agilist, SAFe training) | Unrelated business |
 
 **The hazard:** the tool names are identical apart from the prefix, so nothing
@@ -59,8 +64,40 @@ caused that misdirection. They belong to the other agent's repo; consider removi
 - Site: https://report-ai.org (self-hosted WordPress on Hostinger; managed via the "report-ai_org" WordPress MCP server (bearer-token mode; renamed from "set_up_the_agent" on 2026-09-23)).
 - House style: inline-styled HTML using Archivo + IBM Plex Mono, `.tai-*` class system, #2545f5 accent, stat-tile strips, confidence chips.
 - Section hubs live under /indexes/ (9 sections); deep-dives under /reports/; definitions under /glossary/.
-- Main Indexes hub is page ID 39; Enterprise AI hub is ID 393.
+- Main Indexes hub is page ID 39; Enterprise AI hub is ID 393; Reports hub is ID 40.
+- Accountability pages (added 2026-10-29) — link them, keep them current:
+  fact-check register 3227 `/reports/ai-statistics-fact-check/` (anchors `#fc-*`),
+  corrections log 3229 `/about/corrections/`, editorial standards 3231
+  `/about/editorial-standards/`, predictions scoreboard 3233 `/reports/ai-predictions-scoreboard/`.
+  **Every correction of error gets a row in the corrections log the same day.** A widely
+  repeated figure we find to be wrong gets a fact-check entry.
+- Canonical deepfake-fraud page is 500; 866 and 1111 are redirect stubs (do not revive).
+  576 = Dark Side data index; 499 = analysis + forecast scoring.
 - SEO stack: All in One SEO, Redirection, Site Kit, Optimole, Bing URL Submission.
+
+## Downloadable data (CSV + Dataset schema) — added 2026-10-29
+
+45 index/report pages carry a "Download the data" box (`id="download-data"`, placed after
+the last table) linking a long-format CSV in the media library
+(`/wp-content/uploads/2026/10/report-ai-data-<slug>.csv`; columns page_url, page_updated,
+table_no, table_section, row, column, value) and a Dataset JSON-LD `distribution` pointing
+at it. Source copies live in `site-content/data/`.
+
+- **When a page's figures change, regenerate its CSV** in the same update — a stale CSV
+  is a second copy of a stale figure (freshness rule 3). Re-upload under the same filename
+  only after deleting the old media item, or WordPress appends `-1` and the link breaks;
+  otherwise upload a new file and repoint the box + schema.
+- New index/report pages with tables get the box and the Dataset `distribution` at birth.
+- Upload route that works from the cloud container: commit the CSV to this (public) repo,
+  then `wp_upload_media` with `url` = the raw.githubusercontent.com link at that commit SHA.
+  (curl to report-ai.org is blocked from here; base64 works but is expensive.)
+
+## Writing for citation (LLM/AI-search rule) — added 2026-10-29
+
+Write every key figure as one self-contained sentence: figure + unit + date + source +
+scope ("The FBI's 2025 Internet Crime Report counted 22,364 complaints with an AI descriptor
+and $893 million in losses"), never "Losses hit $893M (FBI)". Keep the date beside the number.
+Schema must say what the visible text says. Full plan: `content-ops/seo-llm-strategy-oct-2026.md`.
 
 ## Known infrastructure quirk
 
@@ -80,6 +117,24 @@ So for any nested page: create it, then **immediately `wp_update_post` the
 `post_parent`, then verify the permalink** with `wp_get_posts` before writing or
 publishing anything that links to it. Hard-coded internal links will otherwise 404
 the moment the page goes live. Set parents top-down (pillar before children).
+
+**Edit mechanics learned the hard way (2026-10):**
+- `wp_alter_post` calls on the **same post must be sequential**, never parallel. Different
+  posts can run in parallel.
+- `wp_alter_post` replaces **every** occurrence; make the search string unique, or in regex
+  mode anchor to the last occurrence with `(?![\s\S]*X)`. In regex replacements `$1`..`$9`
+  are backreferences, so any `$` in new text (e.g. "$25B") gets eaten — use plain (non-regex)
+  mode for text containing `$`.
+- Many templates store literal "—", "→", "·" characters, others use entities; copy the
+  search anchor from the raw (`context:"edit"`) content, not from the rendered page.
+- `wp_get_posts` search is word-based; for phrase checks use `list_pages`/`list_posts` with
+  `search_semantics:"exact"`.
+- **Date stamps use the site-local date** (US Eastern) from `post_modified`, not GMT.
+- **Never write AIOSEO options via MCP** (`aioseo_options`, `aioseo_options_dynamic`):
+  they are JSON strings and `wp_update_option` stores them as arrays → PHP fatal site-wide.
+  AIOSEO settings are changed by the owner in the UI. Core PHP-array options such as
+  `widget_block` are safe (verify raw after writing).
+- Media has no trash on this site (MEDIA_TRASH off): media deletes are permanent — ask first.
 
 The site's firewall (WAF) has previously 403-blocked large POST payloads and content containing JSON-like `{"..."}` sequences:
 - Prefer `wp_alter_post` (small search/replace edits) over full-content `wp_update_post` for published pages.

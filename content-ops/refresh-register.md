@@ -1340,3 +1340,17 @@ removed (trend text said AI was a "minority" of 2024 phishing; its own table sai
   (`post_modified`, US Eastern), not GMT; `wp_alter_post` calls on one post strictly
   sequential; splice-style insertions need the tail of the original sentence checked
   (two broken-sentence slips caught, 545 and 547).
+
+## 29 Oct 2026 — SEO/LLM plan executed ("go ahead with all")
+
+Full step log: `content-ops/execution-log-2026-10-29.md`. Register-relevant outcomes:
+
+- **New cadence obligations.** 3227 fact-check register (monthly), 3229 corrections log
+  (same-day on every correction), 3233 predictions scoreboard (score Gartner 40%-apps,
+  Forrester layoff reversal and our kill-switch odds in **Jan 2027**).
+- **CSV downloads now exist for 45 pages.** A figure change on any of them must regenerate
+  the page's CSV in the same update (see CLAUDE.md). Files: `site-content/data/`.
+- **Correction 29 Oct:** 498 hub tile "$25M largest heist" → €95M Fideuram (logged in 3229).
+- **Schema gaps closed:** Article added on 11 pages; Dataset on 45. Still open: 1104 has no
+  FAQPage and no visible date; 576 and 1102 have no visible update stamp.
+- **Merged pages:** 866 and 1111 are redirect stubs into 500 (owner to add the 301s).
