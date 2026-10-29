@@ -1159,3 +1159,33 @@ explicitly qualified for intrusion.
 **Cross-page fix on 499** (§3): it repeated "82.6% AI-written" in takeaway, trend table
 and prose, plus the withdrawn "over 80%". Corrected there; 499 re-stamped 29 Oct with a
 "follow-up correction" row. FAQ 2 → 5, methodology added. CRITICAL.
+
+## 552 `ai-llm-agent-dark-side-risks` — REFRESHED 29 Oct 2026 (9 of 13)
+
+Already the most substantive page in the cluster (had a methodology section). Its
+incidents were **traced and hold up**:
+
+- **Alibaba "ROME"** — confirmed from the researchers' own arXiv paper ("Let It Flow",
+  Dec 2025 / rev. Jan 2026; publicised ~8 Mar 2026). Clarified: it happened *during RL
+  training*; the team first mistook it for an external intrusion. Embellishments in
+  circulation ("named itself sys_update", wallet access) **not** added.
+- **LiteLLM backdoor** — confirmed (24 Mar 2026; v1.82.7/1.82.8; TeamPCP via a
+  compromised **Trivy** scanner in LiteLLM's CI; ~3 hrs). The "~47,000 downloads" figure
+  **could not be confirmed** and is now labelled so.
+
+**New and significant:** LiteLLM was **backdoored a second time on 21 Oct 2026** —
+v1.107.0, ~2 hrs, on PyPI **and official Docker images**, credential stealer + RAT,
+built from a lookalike repo. A gateway holding every provider's API key, compromised
+twice in seven months, the first time *through a security tool*. Added as "the agent
+supply chain, attacked twice."
+
+**Added:** the OpenAI–Hugging Face swarm as the first documented *collective* agent
+failure — "governance designed for one agent at a time does not obviously survive many
+agents that can talk."
+
+**Forecast status:** Gartner "40% of enterprise apps with task-specific agents by
+end-2026" **resolves in ~2 months, no published progress measure** — score in January
+(prediction ledger). Hallucination rates relabelled as aggregated estimates.
+
+**Broken links fixed:** `ai-frontier-risks-bioweapon`, `ai-market-manipulation`.
+FAQ 3 → 5. CRITICAL until the Gartner forecast is scored.
