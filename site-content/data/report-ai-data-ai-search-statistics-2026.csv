@@ -1,0 +1,55 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",1,Study,"Pew Research Center, Jul 2025"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",1,Finding,Click rate 8% with AI summary vs 15% without (−47% relative); only 1% of AI Overviews produced a click on the cited source
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",1,Scale,"68,879 real user queries"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",1,Confidence,HIGH
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",2,Study,"Seer Interactive, Sep 2025"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",2,Finding,Organic CTR fell −61% (1.76% → 0.61%) and paid CTR −68% when AI Overviews appeared
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",2,Scale,"25.1M impressions, 42 organizations"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",2,Confidence,HIGH
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",3,Study,"Semrush, 2025"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",3,Finding,Google AI Mode sessions end with zero clicks ~93% of the time
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",3,Scale,Large-scale clickstream panel
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",3,Confidence,MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",4,Study,"Industry SERP tracking, 2026"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",4,Finding,AI Overviews now appear on ~48–50% of US queries; presence correlates with an average −34.5% CTR for the #1 result
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",4,Scale,Multiple rank trackers
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",4,Confidence,MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",5,Study,"Gartner, Feb 2024 (projection)"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",5,Finding,Traditional search engine volume to fall ~25% by 2026 as chatbots and AI agents absorb queries
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",5,Scale,Forecast
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",5,Confidence,HIGH
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",6,Study,"Think with Google, 2026"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",6,Finding,"Ten-word queries trigger AI Overviews 5× more often than single-word queries — behavior is shifting toward long, conversational questions"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",6,Scale,Google internal data
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,1,"The zero-click era, measured",6,Confidence,HIGH
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",1,Signal,"""generative engine optimization"" search volume"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",1,Change,+997%
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",1,Window,18 months
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",1,Source,"Ahrefs, 2026 HIGH"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",2,Signal,"""geo vs seo"" search volume"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",2,Change,+982%
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",2,Window,18 months
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",2,Source,"Ahrefs, 2026 HIGH"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",3,Signal,"""ai search tracking"" / ""ai rank tracking"""
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",3,Change,+184% / +175%
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",3,Window,12 months
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",3,Source,"Ahrefs, 2026 HIGH"
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",4,Signal,Overlap: top Google rankings ↔ AI citations
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",4,Change,~75% → 17–38%
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",4,Window,2024 → 2026
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",4,Source,Industry citation studies MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",5,Signal,Organic CTR lift for brands cited in AI Overviews
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",5,Change,+35% (paid: +91%)
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",5,Window,2025
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,2,"GEO: the new discipline, by the numbers",5,Source,Semrush AI Overviews Study MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,1,Date,May 2024
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,1,Event,Google launches AI Overviews in the US; initial coverage ~15% of queries.
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,2,Date,Feb 2024
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,2,Event,Gartner forecasts traditional search volume −25% by 2026.
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,3,Date,Jul 2025
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,3,Event,Pew publishes the first large-scale behavioral study: clicks nearly halve under AI summaries.
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,4,Date,2025
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,4,Event,Google rolls out AI Mode; Semrush measures ~93% of AI Mode sessions ending zero-click. ChatGPT search referrals become a measurable analytics channel.
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,5,Date,2026
+https://report-ai.org/indexes/enterprise-ai/ai-search-statistics-2026/,2026-10-29,3,How we got here: a short timeline,5,Event,"AI Overviews reach ~half of US queries. ""GEO"" becomes a hiring category; AI-visibility tools become the fastest-growing SEO software niche."

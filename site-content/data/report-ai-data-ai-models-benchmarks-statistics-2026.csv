@@ -1,0 +1,31 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,1,Benchmark,SWE-bench
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,1,One-year gain (pp),+67.3
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,2,Benchmark,GPQA
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,2,One-year gain (pp),+48.9
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,3,Benchmark,MMMU
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,1,Deep dive: why benchmarks keep changing,3,One-year gain (pp),+18.8
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,1,Metric,SWE-bench (coding) 2023 → 2024
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,1,Figure,4.4% → 71.7%
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,1,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,2,Metric,GPQA one-year gain
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,2,Figure,+48.9 pp
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,2,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,3,Metric,MMMU one-year gain
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,3,Figure,+18.8 pp
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,3,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,4,Metric,Top US lead over China (Mar 2026)
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,4,Figure,2.7%
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,4,Source,Stanford HAI 2026
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,5,Metric,Closed–open gap (Jan 2024)
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,5,Figure,8.0%
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,5,Source,Stanford HAI 2026
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,6,Metric,Closed–open gap (Feb 2025)
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,6,Figure,1.7%
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,6,Source,Stanford HAI 2026
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,7,Metric,HLE one-year gain
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,7,Figure,+30 pp
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,7,Source,Stanford HAI 2026
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,8,Metric,Inference cost decline (late ’22–late ’24)
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,8,Figure,~280×
+https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/,2026-10-29,2,The numbers in full,8,Source,Stanford HAI 2025

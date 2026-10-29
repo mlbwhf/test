@@ -1,0 +1,36 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,1,Year,2024
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,1,Data-center electricity (TWh),415
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,2,Year,2025
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,2,Data-center electricity (TWh),485
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,3,Year,2030
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,3,Data-center electricity (TWh),945
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,4,Year,2035
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,1,Data-center electricity demand,4,Data-center electricity (TWh),"1,200"
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,1,Metric,Data-center electricity (2024)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,1,Figure,~415 TWh (~1.5%)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,1,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,2,Metric,Data-center electricity (2025)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,2,Figure,~485 TWh (~17% YoY)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,2,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,3,Metric,"Projected (2030, base case)"
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,3,Figure,~945 TWh (~3%)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,3,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,4,Metric,Projected (2035)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,4,Figure,"~1,200 TWh"
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,4,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,5,Metric,AI-accelerated server growth
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,5,Figure,~30% / year
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,5,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,6,Metric,Conventional server growth
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,6,Figure,~9% / year
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,6,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,7,Metric,5-year historical growth
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,7,Figure,~12% / year
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,7,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,8,Metric,US data-center demand by 2030
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,8,Figure,+130%
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,8,Source,IEA
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,9,Metric,AI infrastructure spend (2026)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,9,Figure,$497B (~56% YoY)
+https://report-ai.org/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/,2026-10-29,2,The numbers in full,9,Source,IDC

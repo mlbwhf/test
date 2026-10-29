@@ -1,0 +1,42 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,1,Platform,Kling 3.0
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,1,Owner,Kuaishou
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,1,2026 standing,Revenue leader; best value per clip
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,1,Key figures,~$500M annualized run-rate (mid-2026); 60M creators and 600M+ videos by Dec 2025 MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,2,Platform,Veo 3.1 / Flow
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,2,Owner,Google
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,2,2026 standing,"Enterprise favorite; deepest distribution (Gemini, Flow, Adobe Firefly)"
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,2,Key figures,"70M+ videos in ~2 months post-launch; Flow passed 275M videos in ~5 months (Google, Oct 2025) HIGH"
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,3,Platform,Sora 2
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,3,Owner,OpenAI
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,3,2026 standing,Being retired despite category-leading motion realism
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,3,Key figures,"Peaked at ~3.3M monthly downloads (Nov 2025); app closed Apr 26, 2026; API sunsets Sep 24, 2026 MEDIUM"
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,4,Platform,Runway Gen-4.5
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,4,Owner,Runway
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,4,2026 standing,Filmmaker/pro tooling; unlimited-generation subscription model
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,4,Key figures,Unlimited tier at $76/mo; standard from ~$12–15/mo MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,5,Platform,Seedance 2.0
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,5,Owner,ByteDance
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,5,2026 standing,Fast follower with TikTok-scale distribution potential
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,1,The platform landscape,5,Key figures,Competitive on benchmarks; API pricing among the lowest tier MEDIUM
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,1,Model / tier,Veo 3.1 Lite (API)
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,1,Pricing model,Per second
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,1,Representative cost,~$0.05/sec → ~$0.50 per 10-sec clip
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,2,Model / tier,Kling 3.0 Standard (API)
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,2,Pricing model,Per clip
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,2,Representative cost,~$0.84 per 10 sec with audio
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,3,Model / tier,"Sora 2 Pro (API, until sunset)"
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,3,Pricing model,Per second
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,3,Representative cost,~$0.75/sec → ~$7.50 per 10-sec clip
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,4,Model / tier,Typical 30-second finished clip
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,4,Pricing model,Any model
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,4,Representative cost,$1.50–$12 depending on model and tier
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,5,Model / tier,Runway Unlimited
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,5,Pricing model,Subscription
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,5,Representative cost,"$76/mo, unlimited generations"
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,6,Model / tier,Kling consumer
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,6,Pricing model,Subscription
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,6,Representative cost,from ~$10/mo
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,7,Model / tier,Veo via Google AI Pro / Adobe Firefly
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,7,Pricing model,Bundled subscription
+https://report-ai.org/indexes/enterprise-ai/ai-video-generation-statistics-2026/,2026-10-29,2,The price of a generated second,7,Representative cost,$28.99/mo / $9.99/mo

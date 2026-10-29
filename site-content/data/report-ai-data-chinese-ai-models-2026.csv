@@ -1,0 +1,99 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,#,1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Model,Claude Fable 5 see caveat
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Lab · Country,Anthropic · US
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Index,59.9
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Parameters,undisclosed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Weights,Closed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,1,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,#,2
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Model,GPT-5.6 Sol
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Lab · Country,OpenAI · US
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Index,58.9
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Parameters,undisclosed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Weights,Closed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,2,Confidence,HIGH
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,#,3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Model,Qwen3.8-Max
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Lab · Country,Alibaba · China
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Index,58
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Parameters,2.4T total / 95B active (MoE)
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Weights,Closed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,3,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,#,4
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Model,Kimi K3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Lab · Country,Moonshot · China
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Index,57.1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Parameters,2.8T (MoE)
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Weights,Open (MIT-based)
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,4,Confidence,HIGH
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,#,5
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Model,Claude Opus 4.8
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Lab · Country,Anthropic · US
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Index,55.7
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Parameters,undisclosed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Weights,Closed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,5,Confidence,HIGH
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,#,6
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Model,Qwen3.8-27B
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Lab · Country,Alibaba · China
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Index,52
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Parameters,27.8B dense
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Weights,Apache 2.0
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,1,The ranking,6,Confidence,HIGH
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",1,Benchmark,Artificial Analysis Intelligence Index
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",1,Qwen3.8-27B,52
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",1,Compared with,GPT-5.6 Sol 58.9 · Kimi K3 57.1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",1,Confidence,HIGH
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",2,Benchmark,SWE-bench Pro (agentic coding)
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",2,Qwen3.8-27B,61.7
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",2,Compared with,Grok 4.5 64.7 · Claude Opus 4.8 69.2
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",2,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",3,Benchmark,Terminal-Bench 2.1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",3,Qwen3.8-27B,73.0
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",3,Compared with,Grok 4.5 83.3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",3,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",4,Benchmark,LiveCodeBench v6
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",4,Qwen3.8-27B,90.3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",4,Compared with,—
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",4,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",5,Benchmark,OSWorld-Verified
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",5,Qwen3.8-27B,84.3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",5,Compared with,GPT-5.6 Sol 62.6 (OSWorld 2.0)
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,2,"The Aug 14 release, in detail",5,Confidence,MEDIUM
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,1,Model,Qwen3.8-27B
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,1,Index,52
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,1,Total params,0.0278T
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,1,Index points per 100B params,187.1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,1,Runs on,One 24GB consumer GPU
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,2,Model,Qwen3.8-Max
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,2,Index,58
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,2,Total params,2.4T
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,2,Index points per 100B params,2.4
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,2,Runs on,Datacentre / API only
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,3,Model,Kimi K3
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,3,Index,57.1
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,3,Total params,2.8T
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,3,Index points per 100B params,2.0
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,3,Runs on,Multi-GPU cluster
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,4,Model,GPT-5.6 Sol · Claude Opus 4.8
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,4,Index,58.9 · 55.7
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,4,Total params,undisclosed
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,4,Index points per 100B params,—
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,3,Capability per parameter,4,Runs on,API only
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,1,Model,DeepSeek V4-Pro
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,1,Lab,DeepSeek
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,1,Known for,"Price-to-capability leader: MMLU-Pro 87.5, GPQA Diamond 90.1, SWE-bench Verified 80.6 at roughly $0.87 per million output tokens"
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,1,Weights,MIT
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,2,Model,GLM-5 / 5.2
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,2,Lab,Zhipu AI
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,2,Known for,Agentic and tool-use workflows; 77.8% SWE-bench Verified; reliable function calling and structured output
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,2,Weights,Open
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,3,Model,MiniMax
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,3,Lab,MiniMax
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,3,Known for,"Very long context and mixed-media input — long documents, audio, video"
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,3,Weights,Open
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,4,Model,Doubao
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,4,Lab,ByteDance
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,4,Known for,"Not a benchmark contender but China's consumer default, at 382M monthly users"
+https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/,2026-09-03,4,The rest of the Chinese field,4,Weights,Closed

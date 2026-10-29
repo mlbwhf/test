@@ -1,0 +1,29 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,1,#,1
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,1,Mechanism,Responsible scaling / frontier safety frameworks
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,1,What it controls,Ties safeguards to capability thresholds
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,1,How binding today,"Voluntary, self-authored"
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,2,#,2
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,2,Mechanism,Dangerous-capability evals & red-teaming
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,2,What it controls,"Detects CBRN, cyber, autonomy risk pre-launch"
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,2,How binding today,"Voluntary, contractual access"
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,3,#,3
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,3,Mechanism,Compute governance
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,3,What it controls,Reporting thresholds + chip export controls
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,3,How binding today,Partly binding (EU); US rolled back
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,4,#,4
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,4,Mechanism,Model-weight security
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,4,What it controls,Stops theft/exfiltration of the model
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,4,How binding today,Voluntary; RAND SL framework
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,5,#,5
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,5,Mechanism,Incident reporting & transparency
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,5,What it controls,"Discloses capabilities, safeguards, failures"
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,5,How binding today,Binding for EU systemic-risk models
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,6,#,6
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,6,Mechanism,Independent oversight & whistleblowers
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,6,What it controls,Checks the labs from outside
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,6,How binding today,Weakest leg; CA SB 53 a start
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,7,#,7
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,7,Mechanism,International coordination
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,7,What it controls,"Shared testing, evidence, and norms"
+https://report-ai.org/indexes/regulating-ai/controlling-ai-research-best-practices/,2026-07-28,1,The playbook at a glance,7,How binding today,"Diplomatic, non-binding"

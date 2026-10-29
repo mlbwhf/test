@@ -1,0 +1,37 @@
+page_url,page_modified,table_no,table_section,row,column,value
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,1,Dimension,Legal instrument
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,1,European Union,One binding regulation (AI Act 2024/1689)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,1,United States,No federal law; ~50 state laws + executive orders
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,1,China,Several binding administrative rules (CAC-led)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,2,Dimension,Core philosophy
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,2,European Union,"Rights-based, precautionary"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,2,United States,"Market-led, pro-innovation"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,2,China,"State control, content & security"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,3,Dimension,Coverage trigger
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,3,European Union,Risk tier of the use + GPAI compute (10^25 FLOP)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,3,United States,Varies by state; frontier compute (CA: 10^26)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,3,China,Public-facing service + content type
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,4,Dimension,Headline obligation
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,4,European Union,Conformity assessment for high-risk systems
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,4,United States,Transparency & anti-discrimination (state-dependent)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,4,China,Algorithm registration + content labeling
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,5,Dimension,Max penalty
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,5,European Union,€35M or 7% global turnover
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,5,United States,"e.g. TX $200k/violation; UT $2,500; no federal cap"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,5,China,"Takedown, suspension, license revocation"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,6,Dimension,Enforcer
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,6,European Union,AI Office + national authorities
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,6,United States,"State AGs, FTC, EEOC, sector agencies"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,6,China,Cyberspace Administration (CAC) + agencies
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,7,Dimension,Extraterritorial?
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,7,European Union,Yes — providers serving the EU
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,7,United States,"Effectively, via state reach & export controls"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,7,China,Applies to services offered in China
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,8,Dimension,Frontier focus
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,8,European Union,Yes — GPAI systemic-risk tier
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,8,United States,Yes at state level (CA SB 53); no federal
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,8,China,"Indirect (security review, algorithm filing)"
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,9,Dimension,Status (mid-2026)
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,9,European Union,In force; high-risk rules delayed to Dec 2027
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,9,United States,Patchwork live; federal preemption threatened
+https://report-ai.org/indexes/regulating-ai/ai-laws-compared-2026/,2026-07-28,1,The master scorecard,9,China,In force (layered)
