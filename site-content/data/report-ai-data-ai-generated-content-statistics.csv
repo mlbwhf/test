@@ -1,93 +1,93 @@
-page_url,page_modified,table_no,table_section,row,column,value
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,1,Metric,AI share of new web articles
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,1,Prior,crossover Nov 2024
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,1,Current,51.7% (May 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,1,Source,Graphite
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,2,Metric,New pages with any AI content
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,2,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,2,Current,74.2% (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,2,Source,Ahrefs
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,3,Metric,AI in top-20 Google results
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,3,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,3,Current,~17% (Sep 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,3,Source,Originality.ai
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,4,Metric,ChatGPT non-work message share
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,4,Prior,53% (2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,4,Current,73% (Jun 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,1,AI-generated text,4,Source,OpenAI/NBER
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,1,Metric,Google: AI share of new code
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,1,Prior,>30% (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,1,Current,~75% (Apr 2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,1,Source,Pichai / Google
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,2,Metric,Microsoft: AI-written code in repos
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,2,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,2,Current,20–30% (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,2,Source,Nadella
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,3,Metric,GitHub Copilot users
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,3,Prior,15M (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,3,Current,20M+ (Jul 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,3,Source,MS earnings
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,4,Metric,Developers using/planning AI tools
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,4,Prior,76% (2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,4,Current,84% (2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,4,Source,Stack Overflow
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,5,Metric,Developers distrusting AI accuracy
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,5,Prior,31% (2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,5,Current,46% (2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,5,Source,Stack Overflow
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,6,Metric,SWE-bench solve rate
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,6,Prior,4.4% (2023)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,6,Current,71.7% (2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,2,AI-generated code,6,Source,Stanford HAI
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,1,Metric,Adobe Firefly cumulative generations
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,1,Prior,13B (Oct 2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,1,Current,24B+ (Jun 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,1,Source,Adobe
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,2,Metric,Adobe Stock library that is AI
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,2,Prior,2.5% (May 2023)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,2,Current,47.85% (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,2,Source,Kneschke count
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,3,Metric,AI share of election images on X
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,3,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,3,Current,~12% (Jul–Sep 2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,3,Source,arXiv study
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,4,Metric,Cumulative AI images (industry)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,4,Prior,15B+ (mid-2023)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,4,Current,not reliably updated
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,3,AI-generated images,4,Source,Everypixel
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,1,Metric,Deezer: fully-AI share of daily uploads
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,1,Prior,44% (Apr 2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,1,Current,>50% (Jun 2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,1,Source,Deezer
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,2,Metric,Deezer: AI tracks uploaded/day
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,2,Prior,"~75,000 (Apr 2026)"
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,2,Current,"~90,000 (Jun 2026)"
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,2,Source,Deezer
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,3,Metric,AI share of actual streams
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,3,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,3,Current,1–3%
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,3,Source,Deezer
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,4,Metric,Suno valuation
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,4,Prior,$2.45B (Nov 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,4,Current,$5.4B (Jun 2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,4,Source,Billboard/MBW
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,5,Metric,ElevenLabs valuation / ARR
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,5,Prior,$3.3B (Jan 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,5,Current,$11B / $330M+ ARR
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,4,AI-generated audio & music,5,Source,TechCrunch/CNBC
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,1,Metric,OpenAI Sora
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,1,Prior,Sora (Dec 2024)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,1,Current,Sora 2 (Sep 2025) → discontinued Apr 2026
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,1,Source,OpenAI
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,2,Metric,Sora app downloads
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,2,Prior,—
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,2,Current,1M in <5 days (Oct 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,2,Source,CNBC/Appfigures
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,3,Metric,Runway valuation
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,3,Prior,~$3B (Apr 2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,3,Current,$5.3B (Feb 2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,3,Source,TechCrunch
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,4,Metric,Marketers using AI video
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,4,Prior,51% (2025)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,4,Current,63% (2026)
-https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-10-29,5,AI-generated video,4,Source,Wyzowl
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,1,Metric,AI share of new web articles
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,1,Prior,crossover Nov 2024
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,1,Current,51.7% (May 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,1,Source,Graphite
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,2,Metric,New pages with any AI content
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,2,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,2,Current,74.2% (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,2,Source,Ahrefs
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,3,Metric,AI in top-20 Google results
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,3,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,3,Current,~17% (Sep 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,3,Source,Originality.ai
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,4,Metric,ChatGPT non-work message share
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,4,Prior,53% (2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,4,Current,73% (Jun 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,1,AI-generated text,4,Source,OpenAI/NBER
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,1,Metric,Google: AI share of new code
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,1,Prior,>30% (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,1,Current,~75% (Apr 2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,1,Source,Pichai / Google
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,2,Metric,Microsoft: AI-written code in repos
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,2,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,2,Current,20–30% (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,2,Source,Nadella
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,3,Metric,GitHub Copilot users
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,3,Prior,15M (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,3,Current,20M+ (Jul 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,3,Source,MS earnings
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,4,Metric,Developers using/planning AI tools
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,4,Prior,76% (2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,4,Current,84% (2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,4,Source,Stack Overflow
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,5,Metric,Developers distrusting AI accuracy
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,5,Prior,31% (2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,5,Current,46% (2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,5,Source,Stack Overflow
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,6,Metric,SWE-bench solve rate
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,6,Prior,4.4% (2023)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,6,Current,71.7% (2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,2,AI-generated code,6,Source,Stanford HAI
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,1,Metric,Adobe Firefly cumulative generations
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,1,Prior,13B (Oct 2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,1,Current,24B+ (Jun 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,1,Source,Adobe
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,2,Metric,Adobe Stock library that is AI
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,2,Prior,2.5% (May 2023)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,2,Current,47.85% (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,2,Source,Kneschke count
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,3,Metric,AI share of election images on X
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,3,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,3,Current,~12% (Jul–Sep 2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,3,Source,arXiv study
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,4,Metric,Cumulative AI images (industry)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,4,Prior,15B+ (mid-2023)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,4,Current,not reliably updated
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,3,AI-generated images,4,Source,Everypixel
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,1,Metric,Deezer: fully-AI share of daily uploads
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,1,Prior,44% (Apr 2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,1,Current,>50% (Jun 2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,1,Source,Deezer
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,2,Metric,Deezer: AI tracks uploaded/day
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,2,Prior,"~75,000 (Apr 2026)"
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,2,Current,"~90,000 (Jun 2026)"
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,2,Source,Deezer
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,3,Metric,AI share of actual streams
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,3,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,3,Current,1–3%
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,3,Source,Deezer
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,4,Metric,Suno valuation
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,4,Prior,$2.45B (Nov 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,4,Current,$5.4B (Jun 2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,4,Source,Billboard/MBW
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,5,Metric,ElevenLabs valuation / ARR
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,5,Prior,$3.3B (Jan 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,5,Current,$11B / $330M+ ARR
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,4,AI-generated audio & music,5,Source,TechCrunch/CNBC
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,1,Metric,OpenAI Sora
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,1,Prior,Sora (Dec 2024)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,1,Current,Sora 2 (Sep 2025) → discontinued Apr 2026
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,1,Source,OpenAI
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,2,Metric,Sora app downloads
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,2,Prior,—
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,2,Current,1M in <5 days (Oct 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,2,Source,CNBC/Appfigures
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,3,Metric,Runway valuation
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,3,Prior,~$3B (Apr 2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,3,Current,$5.3B (Feb 2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,3,Source,TechCrunch
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,4,Metric,Marketers using AI video
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,4,Prior,51% (2025)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,4,Current,63% (2026)
+https://report-ai.org/indexes/enterprise-ai/ai-generated-content-statistics/,2026-07-24,5,AI-generated video,4,Source,Wyzowl

@@ -1,57 +1,57 @@
-page_url,page_modified,table_no,table_section,row,column,value
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Developer / model,AnthropicClaude
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Safety framework,A
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Capability testing,A
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Weight security,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Transparency,A
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Oversight,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,1,Overall,A
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Developer / model,OpenAIGPT
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Safety framework,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Capability testing,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Weight security,B+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Transparency,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Oversight,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,2,Overall,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Developer / model,Google DeepMindGemini
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Safety framework,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Capability testing,B+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Weight security,A-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Transparency,B+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Oversight,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,3,Overall,B+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Developer / model,MicrosoftCopilot
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Safety framework,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Capability testing,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Weight security,B+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Transparency,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Oversight,B-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,4,Overall,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Developer / model,MetaLlama (open)
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Safety framework,B-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Capability testing,C+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Weight security,D
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Transparency,B
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Oversight,C+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,5,Overall,C+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Developer / model,xAIGrok
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Safety framework,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Capability testing,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Weight security,B-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Transparency,C+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Oversight,C-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,6,Overall,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Developer / model,Mistral(open)
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Safety framework,C+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Capability testing,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Weight security,D+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Transparency,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Oversight,C-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,7,Overall,C
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Developer / model,DeepSeek(open)
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Safety framework,D+
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Capability testing,D
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Weight security,D
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Transparency,C-
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Oversight,D
-https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,2026-10-29,1,The scorecard,8,Overall,D+
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Developer / model,AnthropicClaude
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Safety framework,A
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Capability testing,A
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Weight security,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Transparency,A
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Oversight,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,1,Overall,A
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Developer / model,OpenAIGPT
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Safety framework,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Capability testing,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Weight security,B+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Transparency,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Oversight,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,2,Overall,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Developer / model,Google DeepMindGemini
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Safety framework,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Capability testing,B+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Weight security,A-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Transparency,B+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Oversight,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,3,Overall,B+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Developer / model,MicrosoftCopilot
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Safety framework,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Capability testing,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Weight security,B+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Transparency,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Oversight,B-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,4,Overall,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Developer / model,MetaLlama (open)
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Safety framework,B-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Capability testing,C+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Weight security,D
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Transparency,B
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Oversight,C+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,5,Overall,C+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Developer / model,xAIGrok
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Safety framework,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Capability testing,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Weight security,B-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Transparency,C+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Oversight,C-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,6,Overall,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Developer / model,Mistral(open)
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Safety framework,C+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Capability testing,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Weight security,D+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Transparency,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Oversight,C-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,7,Overall,C
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Developer / model,DeepSeek(open)
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Safety framework,D+
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Capability testing,D
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Weight security,D
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Transparency,C-
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Oversight,D
+https://report-ai.org/indexes/regulating-ai/ai-model-security-ratings-2026/,,1,The scorecard,8,Overall,D+

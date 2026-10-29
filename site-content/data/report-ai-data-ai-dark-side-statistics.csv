@@ -1,58 +1,58 @@
-page_url,page_modified,table_no,table_section,row,column,value
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,1,Year,2012
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,1,Incidents,<10
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,1,Change,baseline
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,2,Year,2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,2,Incidents,233
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,2,Change,—
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,3,Year,2025
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,3,Incidents,362
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,1,1 · Documented AI incidents,3,Change,▲ +55%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),1,Period,2017–2022 (cumulative)
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),1,Incidents,22
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),1,Change,baseline
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),2,Period,2023
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),2,Incidents,42
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),2,Change,▲ ~2×
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),3,Period,2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),3,Incidents,150
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),3,Change,▲ ~4×
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),4,Period,Q1 2025
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),4,Incidents,179
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,2,2 · Deepfake fraud incidents (detected),4,Change,▲ >100% of 2024 in one quarter
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),1,Year,2022
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),1,Total fraud losses,$8.8B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),1,Imposter scams,$2.6B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),2,Year,2023
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),2,Total fraud losses,~$10.0B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),2,Imposter scams,$2.7B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),3,Year,2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),3,Total fraud losses,$12.5B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),3,Imposter scams,$2.95B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),4,Year,2025
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),4,Total fraud losses,$15.9B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,3,3 · US consumer fraud losses (all methods),4,Imposter scams,$3.5B
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,1,Metric,Phishing emails using AI
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,1,Figure,82.6%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,1,Window,2025 (+53.5% YoY)
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,2,Metric,Phishing attacks using AI
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,2,Figure,67.4%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,2,Window,2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,3,Metric,Gen-AI-linked phishing growth
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,3,Figure,"+1,265%"
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,3,Window,since 2023
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,4,Metric,Voice phishing (vishing)
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,4,Figure,+442%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,4,Window,2023→2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,5,Metric,Deepfake phishing
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,5,Figure,+310%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,4,4 · AI in social engineering,5,Window,2023→2025
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),1,Metric,Deepfakes that are nonconsensual sexual imagery
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),1,Figure,~96%
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),1,Window,"2018, ~steady to 2023"
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),2,Metric,Visits to 16 “nudify” sites
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),2,Figure,200M
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),2,Window,H1 2024
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),3,Metric,Nudify-app users in a single month
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),3,Figure,24M+
-https://report-ai.org/indexes/ai-dark-side-statistics/,2026-10-29,5,5 · Synthetic sexual abuse (NCII),3,Window,2024
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,1,Year,2012
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,1,Incidents,<10
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,1,Change,baseline
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,2,Year,2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,2,Incidents,233
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,2,Change,—
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,3,Year,2025
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,3,Incidents,362
+https://report-ai.org/indexes/ai-dark-side-statistics/,,1,1 · Documented AI incidents,3,Change,▲ +55%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),1,Period,2017–2022 (cumulative)
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),1,Incidents,22
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),1,Change,baseline
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),2,Period,2023
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),2,Incidents,42
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),2,Change,▲ ~2×
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),3,Period,2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),3,Incidents,150
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),3,Change,▲ ~4×
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),4,Period,Q1 2025
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),4,Incidents,179
+https://report-ai.org/indexes/ai-dark-side-statistics/,,2,2 · Deepfake fraud incidents (detected),4,Change,▲ >100% of 2024 in one quarter
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),1,Year,2022
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),1,Total fraud losses,$8.8B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),1,Imposter scams,$2.6B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),2,Year,2023
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),2,Total fraud losses,~$10.0B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),2,Imposter scams,$2.7B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),3,Year,2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),3,Total fraud losses,$12.5B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),3,Imposter scams,$2.95B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),4,Year,2025
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),4,Total fraud losses,$15.9B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,3,3 · US consumer fraud losses (all methods),4,Imposter scams,$3.5B
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,1,Metric,Phishing emails using AI
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,1,Figure,82.6%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,1,Window,2025 (+53.5% YoY)
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,2,Metric,Phishing attacks using AI
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,2,Figure,67.4%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,2,Window,2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,3,Metric,Gen-AI-linked phishing growth
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,3,Figure,"+1,265%"
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,3,Window,since 2023
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,4,Metric,Voice phishing (vishing)
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,4,Figure,+442%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,4,Window,2023→2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,5,Metric,Deepfake phishing
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,5,Figure,+310%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,4,4 · AI in social engineering,5,Window,2023→2025
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),1,Metric,Deepfakes that are nonconsensual sexual imagery
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),1,Figure,~96%
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),1,Window,"2018, ~steady to 2023"
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),2,Metric,Visits to 16 “nudify” sites
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),2,Figure,200M
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),2,Window,H1 2024
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),3,Metric,Nudify-app users in a single month
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),3,Figure,24M+
+https://report-ai.org/indexes/ai-dark-side-statistics/,,5,5 · Synthetic sexual abuse (NCII),3,Window,2024

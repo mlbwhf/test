@@ -1,29 +1,29 @@
-page_url,page_modified,table_no,table_section,row,column,value
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,1,Source,Google Gemini (2025)
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,1,Watt-hours per query,0.24
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,2,Source,Epoch GPT-4o est.
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,2,Watt-hours per query,0.30
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,3,Source,ChatGPT — Altman
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,3,Watt-hours per query,0.34
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,4,Source,Google search (ref.)
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,4,Watt-hours per query,0.30
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,5,Source,Older 2023–24 est.
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,1,Per-query energy estimates compared,5,Watt-hours per query,2.90
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,1,Metric,"Energy, median Gemini text prompt"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,1,Value,0.24 Wh
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,1,Source & date,"Google, Aug 2025"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,2,Metric,"Water, median Gemini text prompt"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,2,Value,0.26 mL
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,2,Source & date,"Google, Aug 2025"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,3,Metric,"Energy, ChatGPT query"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,3,Value,~0.34 Wh
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,3,Source & date,"Sam Altman, Jun 2025"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,4,Metric,"Energy, GPT-4o query (est.)"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,4,Value,~0.3 Wh
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,4,Source & date,Epoch AI
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,5,Metric,"Data-center electricity, 2024 → 2030"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,5,Value,~415 → ~945 TWh
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,5,Source & date,"IEA, 2025"
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,6,Metric,GPT-3 training emissions (one-time)
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,6,Value,~552 tonnes CO₂
-https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-10-29,2,The numbers in full,6,Source & date,"Patterson et al., 2021"
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,1,Source,Google Gemini (2025)
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,1,Watt-hours per query,0.24
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,2,Source,Epoch GPT-4o est.
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,2,Watt-hours per query,0.30
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,3,Source,ChatGPT — Altman
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,3,Watt-hours per query,0.34
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,4,Source,Google search (ref.)
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,4,Watt-hours per query,0.30
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,5,Source,Older 2023–24 est.
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,1,Per-query energy estimates compared,5,Watt-hours per query,2.90
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,1,Metric,"Energy, median Gemini text prompt"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,1,Value,0.24 Wh
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,1,Source & date,"Google, Aug 2025"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,2,Metric,"Water, median Gemini text prompt"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,2,Value,0.26 mL
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,2,Source & date,"Google, Aug 2025"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,3,Metric,"Energy, ChatGPT query"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,3,Value,~0.34 Wh
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,3,Source & date,"Sam Altman, Jun 2025"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,4,Metric,"Energy, GPT-4o query (est.)"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,4,Value,~0.3 Wh
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,4,Source & date,Epoch AI
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,5,Metric,"Data-center electricity, 2024 → 2030"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,5,Value,~415 → ~945 TWh
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,5,Source & date,"IEA, 2025"
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,6,Metric,GPT-3 training emissions (one-time)
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,6,Value,~552 tonnes CO₂
+https://report-ai.org/indexes/technical-benchmarks/ai-energy-water-per-query/,2026-07-24,2,The numbers in full,6,Source & date,"Patterson et al., 2021"

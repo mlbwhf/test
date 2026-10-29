@@ -1,76 +1,76 @@
-page_url,page_modified,table_no,table_section,row,column,value
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,1,Country / region,United States
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,1,Most-used model,ChatGPT (61.7% share)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,1,Challenger,Gemini (13.5%)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,1,Why this winner,First-mover brand = the verb for AI; broad asking-and-doing query mix suits a generalist frontier model
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,2,Country / region,Europe (aggregate)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,2,Most-used model,ChatGPT (70.8% share)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,2,Challenger,Gemini; Mistral in FR enterprise/government
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,2,Why this winner,Highest ChatGPT share anywhere; Mistral wins EU data-sovereignty deployments rather than consumer use
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,3,Country / region,United Kingdom
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,3,Most-used model,"ChatGPT (#5 traffic source, 3.2%)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,3,Challenger,"Gemini, Claude"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,3,Why this winner,English-language research/writing query mix — frontier default holds
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,4,Country / region,China
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,4,Most-used model,Doubao — ByteDance (382M MAU)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,4,Challenger,"Qianwen/Qwen (167M), DeepSeek (130M)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,4,Why this winner,Western models blocked; Doubao rides the Douyin ecosystem; Qwen up 58× on Alibaba's push; DeepSeek's chat app fading as its open models spread
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,5,Country / region,India
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,5,Most-used model,"ChatGPT (198M users, #2 country)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,5,Challenger,"Gemini (gaining fast), Sarvam (sovereign)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,5,Why this winner,"Scale is ChatGPT's; momentum is Gemini's — UPI billing, rupee pricing, free AI Studio tier, Android pre-install fit a price-sensitive, mobile-first query mix"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,6,Country / region,Brazil
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,6,Most-used model,"ChatGPT (#3 traffic source, 5.7%)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,6,Challenger,Gemini (WhatsApp/Android reach)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,6,Why this winner,Portuguese well-served by frontier models; personal-use-heavy mix; no local champion
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,7,Country / region,Japan
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,7,Most-used model,"ChatGPT (#4 traffic source, ~5%)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,7,Challenger,"Fugaku-LLM (public sector), Gemini"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,7,Why this winner,+34.1% usage growth; domestic Fugaku-LLM serves Japanese-language government/enterprise niches
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,8,Country / region,South Korea
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,8,Most-used model,HyperCLOVA X — Naver (local-language)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,8,Challenger,ChatGPT (global tasks)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,8,Why this winner,"Naver holds ~63% of search and pipes AI Briefing through HyperCLOVA X, which beats foreign models on Korean benchmarks (48.9 vs 32.4 KoBALT-700); world's fastest usage growth (+43.2%)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,9,Country / region,Russia
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,9,Most-used model,Perplexity (~48% share)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,9,Challenger,"GigaChat (Sber), YandexGPT"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,9,Why this winner,Sanctions artifact: Perplexity stayed reachable as rivals restricted access; state-backed GigaChat owns Russian-language official use
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,10,Country / region,Southeast Asia
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,10,Most-used model,ChatGPT
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,10,Challenger,"Gemini, DeepSeek (dev/API use)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,10,Why this winner,Thailand's +36.2% growth is region-typical; DeepSeek's cheap API wins developer workloads — its 4.1% global share is heavily Asian
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,11,Country / region,Middle East (Gulf)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,11,Most-used model,ChatGPT
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,11,Challenger,Arabic sovereign models (HUMAIN ecosystem)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,1,The map: most-used model by country,11,Why this winner,Consumer default is ChatGPT; sovereign-wealth programs build Arabic models for state and enterprise use — see our Sovereign AI Index
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,1,Query-mix profile,Research & writing-heavy (asking + doing in English and major European languages)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,1,What wins it,"Frontier generalists — ChatGPT, with Gemini and Claude as alternates"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,1,Where it decides the map,"US, UK, Europe, Brazil — ChatGPT's 54–71% shares"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,2,Query-mix profile,Daily-utility & entertainment (short personal tasks inside super-apps)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,2,What wins it,Ecosystem-embedded assistants
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,2,Where it decides the map,China — Doubao inside Douyin beats better-benchmarked rivals
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,3,Query-mix profile,"Price-sensitive mobile-first (high volume, low ARPU, prepaid payments)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,3,What wins it,Free tiers + local billing + pre-installs
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,3,Where it decides the map,India — Gemini's UPI/rupee/AI-Studio stack; DeepSeek's cheap API across Asian developer markets
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,4,Query-mix profile,Local-language-dominant (queries frontier models handle poorly)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,4,What wins it,Sovereign/local champions
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,4,Where it decides the map,"Korea (HyperCLOVA X), Japan (Fugaku-LLM niches), Russia (GigaChat)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,5,Query-mix profile,"Access-constrained (blocks, sanctions)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,5,What wins it,Whatever remains reachable
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,2,Why: the query-type evidence,5,Where it decides the map,China's walled garden; Russia's Perplexity anomaly
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,1,Prompt profile,Coding-dominant
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,1,Countries,"India, Vietnam, Egypt"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,1,What the data shows,"India ranks #1 globally with 45.2% of AI use on software tasks; Vietnam 42.1%, Egypt 39.2% (Anthropic Economic Index HIGH)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,1,What it explains,"Why developer economics (free tiers, cheap APIs — Gemini, DeepSeek) move share in these markets faster than consumer branding"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,2,Prompt profile,Diverse / augmentation-heavy
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,2,Countries,"US, Singapore, Canada, Western Europe"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,2,What the data shows,"High-adoption countries spread prompts across education, science and business, and favor iterating with the model; Singapore's per-capita use is 4.6× expected, Canada 2.9×"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,2,What it explains,"Why frontier generalists (ChatGPT, Claude, Gemini) hold rich markets: varied, conversational query mixes reward breadth"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,3,Prompt profile,Automation-leaning
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,3,Countries,Lower-adoption markets broadly
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,3,What the data shows,Lower-AUI countries more often delegate complete tasks to the model rather than iterate (Anthropic Economic Index)
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,3,What it explains,"Why ""do this for me"" markets are price-buyers — the cheapest competent model wins the delegated task"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,4,Prompt profile,Coursework-heavy
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,4,Countries,Lower-income countries
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,4,What the data shows,"Education/coursework prompts take a larger share; prompt sophistication correlates tightly with output quality (Oxford, 2026)"
-https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-10-29,3,The prompt layer: what each country actually asks,4,What it explains,Why student-friendly free tiers are the main acquisition channel in emerging markets — and why Oxford warns AI may amplify global inequalities
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,1,Country / region,United States
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,1,Most-used model,ChatGPT (61.7% share)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,1,Challenger,Gemini (13.5%)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,1,Why this winner,First-mover brand = the verb for AI; broad asking-and-doing query mix suits a generalist frontier model
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,2,Country / region,Europe (aggregate)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,2,Most-used model,ChatGPT (70.8% share)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,2,Challenger,Gemini; Mistral in FR enterprise/government
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,2,Why this winner,Highest ChatGPT share anywhere; Mistral wins EU data-sovereignty deployments rather than consumer use
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,3,Country / region,United Kingdom
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,3,Most-used model,"ChatGPT (#5 traffic source, 3.2%)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,3,Challenger,"Gemini, Claude"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,3,Why this winner,English-language research/writing query mix — frontier default holds
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,4,Country / region,China
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,4,Most-used model,Doubao — ByteDance (382M MAU)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,4,Challenger,"Qianwen/Qwen (167M), DeepSeek (130M)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,4,Why this winner,Western models blocked; Doubao rides the Douyin ecosystem; Qwen up 58× on Alibaba's push; DeepSeek's chat app fading as its open models spread
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,5,Country / region,India
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,5,Most-used model,"ChatGPT (198M users, #2 country)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,5,Challenger,"Gemini (gaining fast), Sarvam (sovereign)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,5,Why this winner,"Scale is ChatGPT's; momentum is Gemini's — UPI billing, rupee pricing, free AI Studio tier, Android pre-install fit a price-sensitive, mobile-first query mix"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,6,Country / region,Brazil
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,6,Most-used model,"ChatGPT (#3 traffic source, 5.7%)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,6,Challenger,Gemini (WhatsApp/Android reach)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,6,Why this winner,Portuguese well-served by frontier models; personal-use-heavy mix; no local champion
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,7,Country / region,Japan
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,7,Most-used model,"ChatGPT (#4 traffic source, ~5%)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,7,Challenger,"Fugaku-LLM (public sector), Gemini"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,7,Why this winner,+34.1% usage growth; domestic Fugaku-LLM serves Japanese-language government/enterprise niches
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,8,Country / region,South Korea
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,8,Most-used model,HyperCLOVA X — Naver (local-language)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,8,Challenger,ChatGPT (global tasks)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,8,Why this winner,"Naver holds ~63% of search and pipes AI Briefing through HyperCLOVA X, which beats foreign models on Korean benchmarks (48.9 vs 32.4 KoBALT-700); world's fastest usage growth (+43.2%)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,9,Country / region,Russia
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,9,Most-used model,Perplexity (~48% share)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,9,Challenger,"GigaChat (Sber), YandexGPT"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,9,Why this winner,Sanctions artifact: Perplexity stayed reachable as rivals restricted access; state-backed GigaChat owns Russian-language official use
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,10,Country / region,Southeast Asia
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,10,Most-used model,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,10,Challenger,"Gemini, DeepSeek (dev/API use)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,10,Why this winner,Thailand's +36.2% growth is region-typical; DeepSeek's cheap API wins developer workloads — its 4.1% global share is heavily Asian
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,11,Country / region,Middle East (Gulf)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,11,Most-used model,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,11,Challenger,Arabic sovereign models (HUMAIN ecosystem)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,1,The map: most-used model by country,11,Why this winner,Consumer default is ChatGPT; sovereign-wealth programs build Arabic models for state and enterprise use — see our Sovereign AI Index
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,1,Query-mix profile,Research & writing-heavy (asking + doing in English and major European languages)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,1,What wins it,"Frontier generalists — ChatGPT, with Gemini and Claude as alternates"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,1,Where it decides the map,"US, UK, Europe, Brazil — ChatGPT's 54–71% shares"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,2,Query-mix profile,Daily-utility & entertainment (short personal tasks inside super-apps)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,2,What wins it,Ecosystem-embedded assistants
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,2,Where it decides the map,China — Doubao inside Douyin beats better-benchmarked rivals
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,3,Query-mix profile,"Price-sensitive mobile-first (high volume, low ARPU, prepaid payments)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,3,What wins it,Free tiers + local billing + pre-installs
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,3,Where it decides the map,India — Gemini's UPI/rupee/AI-Studio stack; DeepSeek's cheap API across Asian developer markets
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,4,Query-mix profile,Local-language-dominant (queries frontier models handle poorly)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,4,What wins it,Sovereign/local champions
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,4,Where it decides the map,"Korea (HyperCLOVA X), Japan (Fugaku-LLM niches), Russia (GigaChat)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,5,Query-mix profile,"Access-constrained (blocks, sanctions)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,5,What wins it,Whatever remains reachable
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,2,Why: the query-type evidence,5,Where it decides the map,China's walled garden; Russia's Perplexity anomaly
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,1,Prompt profile,Coding-dominant
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,1,Countries,"India, Vietnam, Egypt"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,1,What the data shows,"India ranks #1 globally with 45.2% of AI use on software tasks; Vietnam 42.1%, Egypt 39.2% (Anthropic Economic Index HIGH)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,1,What it explains,"Why developer economics (free tiers, cheap APIs — Gemini, DeepSeek) move share in these markets faster than consumer branding"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,2,Prompt profile,Diverse / augmentation-heavy
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,2,Countries,"US, Singapore, Canada, Western Europe"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,2,What the data shows,"High-adoption countries spread prompts across education, science and business, and favor iterating with the model; Singapore's per-capita use is 4.6× expected, Canada 2.9×"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,2,What it explains,"Why frontier generalists (ChatGPT, Claude, Gemini) hold rich markets: varied, conversational query mixes reward breadth"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,3,Prompt profile,Automation-leaning
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,3,Countries,Lower-adoption markets broadly
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,3,What the data shows,Lower-AUI countries more often delegate complete tasks to the model rather than iterate (Anthropic Economic Index)
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,3,What it explains,"Why ""do this for me"" markets are price-buyers — the cheapest competent model wins the delegated task"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,4,Prompt profile,Coursework-heavy
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,4,Countries,Lower-income countries
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,4,What the data shows,"Education/coursework prompts take a larger share; prompt sophistication correlates tightly with output quality (Oxford, 2026)"
+https://report-ai.org/indexes/geography-of-ai/popular-ai-models-by-country/,2026-08-07,3,The prompt layer: what each country actually asks,4,What it explains,Why student-friendly free tiers are the main acquisition channel in emerging markets — and why Oxford warns AI may amplify global inequalities
