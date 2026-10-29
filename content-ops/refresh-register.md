@@ -1074,3 +1074,30 @@ FAQ 3 → 5, methodology added. CRITICAL.
 - Ran two `wp_alter_post` calls on one post in parallel — the race I'd ruled out on
   1421. Re-ran both; both reported "no occurrences", so both had applied and nothing was
   overwritten. Back to strictly sequential.
+
+## 502 `ai-chatbot-failures-liability` — REFRESHED 28 Oct 2026 (6 of 13)
+
+All cases were 2023–24. Called a single decision "the precedent that matters" without
+saying it was a **CA$812 small-claims award** (BC Civil Resolution Tribunal; persuasive,
+not binding). Now stated.
+
+**Added the 2025–26 law, framed as three routes to the same answer:**
+1. *Misrepresentation* — *Moffatt* (2024): needs breach of a duty of care; leaves room
+   to argue a careful bot met the standard.
+2. *Attribution* — **OLG Hamm, 4 UKl 3/25, 12 May 2026**: clinic chatbot's invented
+   specialist titles attributed to the operator **"even with careful configuration."**
+   First published German higher-court chatbot-liability decision; BGH appeal allowed,
+   not final. Plus Munich LG injunction vs Google AI Overviews (26 O 869/26).
+3. *Product liability* — ***Garcia*** (M.D. Fla., 21 May 2025): output not treated as
+   protected speech at pleading stage; §230 rejected as "first-party product". Settled
+   Jan 2026, so never tested on appeal.
+
+**Argued:** if Hamm stands, configuration quality stops being a *defence* and becomes
+only a way to reduce frequency. The three-routes framing is labelled as ours, not a
+doctrine any court stated. Market signals: Cursor support bot invented a policy (Apr
+2025, "reportedly"); Lloyd's/Armilla AI-error cover (May 2025).
+
+**Internal contradiction fixed:** McDonald's IBM test was "two-year" in the body and
+"three-year" in the FAQ (2021 → Jul 2024 ≈ three). EU Art. 50 chatbot disclosure now
+noted as law since 2 Aug 2026. Internal links added to the customer-support cluster
+(2298) and reversal report (2293). FAQ 2 → 5, methodology added. STANDARD.
