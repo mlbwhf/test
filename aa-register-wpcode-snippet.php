@@ -10355,8 +10355,10 @@ function aa_reg_cert_table() {
 		   Their absence was invisible while nothing walked an industry path:
 		   aacp_code_for_slug() matches a course page's slug against this table,
 		   so /training/safe-industry/arch/ resolved to no code at all. */
-		'ARCH' => array( 'SAFe for Architects',            '/training/safe-industry/arch/' ),
-		'ASE'  => array( 'SAFe Agile Software Engineering','/training/safe-industry/ase/' ),
+		/* Both moved under Core SAFe Roles on 29 Oct 2026. The old addresses
+		   301 here through the redirects snippet. */
+		'ARCH' => array( 'SAFe for Architects',            '/training/safe/arch/' ),
+		'ASE'  => array( 'SAFe Agile Software Engineering','/training/safe/ase/' ),
 		'ACG'  => array( 'SAFe Agile Contracting for Government', '/training/safe-found/agile-contracting-government/' ),
 		/* The seven rows aa_reg_courses() does carry are listed here too, for the
 		   label only. Their course names are sales titles -- "Implementing SAFe(R)
