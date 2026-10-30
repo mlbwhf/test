@@ -57,6 +57,12 @@ export function setApiKey(key: string | null): void {
   }
 }
 
+/**
+ * Pages people use without signing in (the website, sign-up, the welcome page Stripe returns to,
+ * class links): a "not signed in" answer there is shown on the page, never a jump to Sign in.
+ */
+const SIGNED_OUT_PAGE = /^\/(login|welcome|join|pricing|book|support|privacy|terms)?(\/|$)/;
+
 export async function api<T>(method: string, path: string, body?: unknown): Promise<T> {
   let res: Response;
   const key = getApiKey();
@@ -73,7 +79,7 @@ export async function api<T>(method: string, path: string, body?: unknown): Prom
   }
   if (res.status === 204) return undefined as T;
   const json = await res.json().catch(() => ({}));
-  if (res.status === 401 && typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+  if (res.status === 401 && typeof window !== "undefined" && !SIGNED_OUT_PAGE.test(window.location.pathname)) {
     window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname)}`);
   }
   if (!res.ok) throw new ApiFailure(res.status, json?.error?.code ?? "ERROR", json?.error?.message ?? res.statusText, json?.error?.details);

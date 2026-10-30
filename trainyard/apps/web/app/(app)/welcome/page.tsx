@@ -31,8 +31,16 @@ function Welcome() {
   useEffect(() => {
     if (!handle) return;
     let cancelled = false;
+    // The server hands the key over once; keep it for this tab so a repeat request or a refresh still shows it.
+    const slot = `trainyard.welcome.${purchaseId ?? sessionId}`;
     api<Claim>("POST", "/v1/billing/claim", handle)
       .then((c) => {
+        try {
+          if (c.apiKey) sessionStorage.setItem(slot, c.apiKey);
+          else if (c.claimed && sessionStorage.getItem(slot)) c = { ...c, apiKey: sessionStorage.getItem(slot)!, claimed: false };
+        } catch {
+          /* storage blocked: the key shows on this load only */
+        }
         if (cancelled) return;
         setClaim(c);
         // The webhook can arrive a few seconds after the redirect: ask again while the session is open.
@@ -68,7 +76,7 @@ function Welcome() {
         <div className="panel panel-body stack">
           <p>
             Your <strong>{claim.plan}</strong> plan ({claim.interval}
-            {claim.quantity && claim.quantity > 1 ? `, ${claim.quantity} seats` : ""}) is active. This is your sign-in key. It is shown once; store it in a password manager.
+            {claim.quantity && claim.quantity > 1 ? `, ${claim.quantity} seats` : ""}) is active. From now on, sign in with your email and the password you chose at sign-up. The key below is for scripts and integrations; it is shown once, so store it in a password manager.
           </p>
           <CopyKey value={claim.apiKey} />
           <button
@@ -81,14 +89,19 @@ function Welcome() {
             Sign in on this browser
           </button>
           <p className="muted">
-            Lost it later? An admin can issue a new key under Users, or write to us with the email you paid with ({claim.email}).
+            Forgot the password later? Use “Forgot your password?” on Sign in. A new key can be issued under Users.
           </p>
         </div>
       ) : null}
       {claim?.status === "paid" && claim.claimed ? (
-        <p>
-          The key for this payment was already shown. If it is in this browser, <Link href="/dashboards">continue</Link>; otherwise <Link href="/login">sign in</Link> with it or ask for a new one.
-        </p>
+        <div className="panel panel-body stack">
+          <p style={{ margin: 0 }}>Your workspace is ready. Sign in with your email{claim.email ? ` (${claim.email})` : ""} and the password you chose at sign-up.</p>
+          <div>
+            <Link className="btn primary" href="/login">
+              Sign in
+            </Link>
+          </div>
+        </div>
       ) : null}
     </div>
   );

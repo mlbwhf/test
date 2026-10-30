@@ -271,7 +271,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       return purchase;
     }
     const key = newKey();
-    const user: User = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}) };
+    const user: User = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}), ...(signup.emailVerifiedAt ? { emailVerifiedAt: signup.emailVerifiedAt } : {}) };
     store.state.users.push(user);
     const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
     user.workspaceId = record.id;
@@ -652,6 +652,8 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const key = p.pendingKey;
     delete p.pendingKey;
     if (key) await store.commit({ userId: p.userId ?? "stripe", name: claimView(p).name ?? "Stripe", role: "admin", anonymous: false, workspaceId: p.workspaceId ?? tenants.platformId, platformAdmin: false }, "billing.key-claimed", { purchase: p.id });
+    // The trial confirmation goes out now, not only when Stripe's webhook arrives or the hourly run.
+    if (key) void sendTrialMail().catch(() => undefined);
     return { ...claimView(p), ...(key ? { apiKey: key } : { claimed: true }) };
   });
 

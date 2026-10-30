@@ -1510,8 +1510,8 @@ describe("trial emails", () => {
     expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body.status).toBe("paid");
     const run = () => call("POST", "/v1/billing/trial-mail/run", {}, root);
 
-    // Day 0: the confirmation.
-    expect((await run()).body).toMatchObject({ started: [sub.body.purchaseId], reminded: [], mail: "smtp" });
+    // Day 0: the confirmation, sent as the workspace is handed over.
+    await new Promise((r) => setTimeout(r, 50));
     expect(mailer.sent).toHaveLength(1);
     expect(mailer.sent[0]).toMatchObject({ to: "ada@example.io", from: "billing" });
     expect(mailer.sent[0]!.subject).toContain("trial has started");
@@ -1829,6 +1829,65 @@ describe("closed server: sign-up confirmation and forgotten passwords", () => {
     await call("POST", "/v1/auth/forgot", { email: "bo@example.io" });
     expect(mailer.sent.at(-1)).toMatchObject({ to: "bo@example.io", subject: "Finish signing up for Trainyard" });
     expect(mailer.sent.at(-1)!.text).toContain("https://trainyard.app/pricing");
+  });
+});
+
+describe("paid sign-up end to end on a closed server", () => {
+  it("takes a visitor from the form through the code and the Stripe payment to signing in", async () => {
+    const mailer = new MemoryMailer();
+    const codeIn = () => /\b(\d{6})\b/.exec(mailer.sent.filter((m) => /code/.test(m.subject)).at(-1)!.subject)![1]!;
+    const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+    let subs = 0;
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      const method = init?.method ?? "GET";
+      if (u.endsWith("/customers")) return json({ id: "cus_e2e" });
+      if (u.endsWith("/subscriptions") && method === "POST") {
+        subs++;
+        return json({ id: `sub_e2e${subs}`, status: "trialing", trial_end: 1_800_000_000, items: { data: [{ id: "si", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: `seti_secret_${subs}` } });
+      }
+      if (/\/subscriptions\/sub_e2e\d+$/.test(u)) return json({ id: u.split("/").at(-1), status: "trialing", items: { data: [{ id: "si", price: { id: "price_tm" } }] } });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${method} ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
+    // Every call below is made without a key, as the website does.
+    const config = await call("GET", "/v1/billing/config");
+    expect(config.body).toMatchObject({ enabled: true, inPage: true, publishableKey: "pk_test", trialDays: 30 });
+    expect(config.body.plans["trainer-monthly"]).toBe(true);
+    // First attempt, abandoned at the code; the second replaces it and carries on.
+    await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer", password: "first forgotten password" });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer", password: "the password to keep" });
+    expect(s.status).toBe(200);
+    expect(s.body).toMatchObject({ verify: "code-sent", repeated: true });
+    const id = s.body.signup.id as string;
+    expect((await call("POST", `/v1/signups/${id}/resend`)).status).toBe(200);
+    const verified = await call("POST", `/v1/signups/${id}/verify`, { code: codeIn() });
+    expect(verified.status).toBe(200);
+    expect(verified.body).toMatchObject({ verified: true });
+    // Confirming again (a retry after a dropped answer) is fine and still lets payment start.
+    expect((await call("POST", `/v1/signups/${id}/verify`, { code: "000000" })).body).toMatchObject({ verified: true });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: id, interval: "monthly", quantity: 1 });
+    expect(sub.status).toBe(200);
+    expect(sub.body).toMatchObject({ mode: "setup", clientSecret: expect.stringMatching(/^seti_secret_/), amountDue: 0, recurringAmount: 1900, trialDays: 30 });
+    // After Stripe confirms the card, the page asks for the workspace.
+    const claim = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId });
+    expect(claim.status).toBe(200);
+    expect(claim.body).toMatchObject({ status: "paid", plan: "trainer", workspace: { plan: "trainer", seats: 1 } });
+    expect(claim.body.apiKey).toMatch(/^ty_/);
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body).toMatchObject({ status: "paid", claimed: true });
+    // The trial confirmation goes out from billing@ as soon as the workspace is handed over.
+    await new Promise((r) => setTimeout(r, 50));
+    expect(mailer.sent.some((m) => m.to === "ada@trainyard-test.io" && m.from === "billing" && /trial has started/.test(m.subject))).toBe(true);
+    // Signing in with the password chosen at sign-up (not the abandoned one).
+    expect((await call("POST", "/v1/auth/login", { email: "ada@trainyard-test.io", password: "first forgotten password" })).status).toBe(401);
+    const login = await call("POST", "/v1/auth/login", { email: "ada@trainyard-test.io", password: "the password to keep" });
+    expect(login.status).toBe(200);
+    const me = await call("GET", "/v1/me", undefined, login.body.token);
+    expect(me.status).toBe(200);
+    expect(me.body.principal.workspaceId).toBe(claim.body.workspace.id);
+    expect(store.state.users.find((u) => u.email === "ada@trainyard-test.io")!.emailVerifiedAt).toBeTruthy();
+    // A second sign-up for the same email is turned away to Sign in.
+    expect((await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" })).body.error.code).toBe("EMAIL_TAKEN");
   });
 });
 
