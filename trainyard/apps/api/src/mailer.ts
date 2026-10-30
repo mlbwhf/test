@@ -30,6 +30,10 @@ export class SmtpMailer implements Mailer {
   constructor(url: string, private readonly from: Record<Sender, string>) {
     this.transport = nodemailer.createTransport(url);
   }
+  /** Connects and logs in without sending anything; throws with the mail service's answer. */
+  async verify(): Promise<void> {
+    await this.transport.verify();
+  }
   async send(mail: Mail): Promise<void> {
     const from = this.from[mail.from ?? "support"];
     // Replies go back to the address the mail came from.

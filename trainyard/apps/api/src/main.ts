@@ -1,5 +1,5 @@
 import { ClaudeProvider, OpenAICompatibleProvider, type AssistProvider } from "@trainyard/ai-assist";
-import { mailerFromEnv, senders } from "./mailer.js";
+import { mailerFromEnv, senders, SmtpMailer } from "./mailer.js";
 import { AdoConnector, JiraConnector, type AdoConfig, type JiraConfig } from "@trainyard/connectors";
 import { FilePersistence, MemoryPersistence, PgPersistence, createPool, migrate, type StatePersistence } from "@trainyard/db";
 import { buildApp } from "./app.js";
@@ -118,6 +118,15 @@ async function main() {
     logger: true,
   });
   console.log(process.env.TRAINYARD_SMTP_URL ? `[mail] SMTP on: accounts and invitations from ${senders().support}, payments from ${senders().billing}` : "[mail] off (set TRAINYARD_SMTP_URL): sign-up codes, class invitations, trial confirmations and the 7-day reminder before the first charge will not be sent");
+  // Log in to the mail service once at start, so a wrong token or a blocked port shows in the log
+  // straight away instead of on the first sign-up.
+  if (process.env.TRAINYARD_SMTP_URL) {
+    const where = (() => { try { const u = new URL(process.env.TRAINYARD_SMTP_URL!); return `${u.hostname}:${u.port || (u.protocol === "smtps:" ? 465 : 587)}`; } catch { return "the SMTP server"; } })();
+    void new SmtpMailer(process.env.TRAINYARD_SMTP_URL, senders()).verify().then(
+      () => console.log(`[mail] logged in to ${where}: mail can be sent`),
+      (e: Error) => console.error(`[mail] cannot log in to ${where}: ${e.message}`),
+    );
+  }
   console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {
     await app.close();
