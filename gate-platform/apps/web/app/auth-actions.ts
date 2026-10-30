@@ -13,7 +13,7 @@ const fail = (message: string): ActionState => ({ status: "error", message });
 export async function emailSignInAction(_prev: ActionState, data: FormData): Promise<ActionState> {
   const email = f(data, "email").toLowerCase();
   if (!EMAIL_RE.test(email)) return fail("Enter a valid email address.");
-  const r = await api.emailSignIn(email, safePath(f(data, "returnTo"), ""));
+  const r = await api.emailSignIn(email, safePath(f(data, "returnTo"), ""), f(data, "turnstileToken") || undefined);
   if (!r.ok) return fail(describeFailure(r.error));
   return { status: "ok", message: `Check ${email}. We sent a sign-in link that works for 20 minutes.` };
 }

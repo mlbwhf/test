@@ -297,6 +297,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
         event={sel.event.id}
         currency={sel.event.currency}
         stripePk={process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
+        turnstileSiteKey={process.env.TURNSTILE_SITE_KEY ?? null}
         priceLabel={price ? whole(price.minor, price.currency) : "—"}
         dateLabel={range(sel)}
         disabled={left === 0}

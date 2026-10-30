@@ -153,6 +153,8 @@ export const CreateOrderBody = z.object({
   source: z.enum(["marketplace"]).optional(),
   /** The flexible-ticket upgrade (when the organizer offers it). */
   flexible: z.boolean().optional(),
+  /** Cloudflare Turnstile token from the checkout form; see turnstile.ts for when it is required. */
+  turnstileToken: z.string().max(4096).optional(),
 });
 export const RefundSchema = z.object({ id: z.string(), orderId: z.string(), organizationId: z.string(), amountMinor: Minor, reason: z.string(), status: z.enum(["pending", "succeeded", "failed"]), paymentRefundRef: z.string().nullable(), createdAt: z.string() });
 export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.number().int().min(1).optional(), reason: z.string().min(1) });

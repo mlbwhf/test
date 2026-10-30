@@ -9,6 +9,8 @@ type Props = {
   event: string;
   currency: string;
   stripePk: string | null;
+  /** Cloudflare Turnstile site key: the checkout asks for a browser check before placing the order. */
+  turnstileSiteKey: string | null;
   priceLabel: string;
   dateLabel: string;
   disabled: boolean;
@@ -94,6 +96,7 @@ export function RegisterSheet(p: Props) {
               data-gate-currency={p.currency}
               {...(claiming ? {} : { "data-gate-event": p.event })}
               {...(p.stripePk ? { "data-gate-stripe-pk": p.stripePk } : {})}
+              {...(p.turnstileSiteKey ? { "data-gate-turnstile": p.turnstileSiteKey } : {})}
               {...(fromFinder ? { "data-gate-source": "marketplace" } : {})}
             />
           </div>

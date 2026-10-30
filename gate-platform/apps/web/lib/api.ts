@@ -695,8 +695,8 @@ export type CreateInvoiceOrderInput = { corporateAccountId: string; ticketTypeId
 
 export const api = {
   // ---- accounts and team ----
-  providers: () => request<{ providers: { id: string; label: string }[]; email: boolean }>("GET", "/auth/providers"),
-  emailSignIn: (email: string, returnTo?: string) => request<{ sent: boolean }>("POST", "/auth/email", { email, ...(returnTo ? { returnTo } : {}) }),
+  providers: () => request<{ providers: { id: string; label: string }[]; email: boolean; turnstile: boolean }>("GET", "/auth/providers"),
+  emailSignIn: (email: string, returnTo?: string, turnstileToken?: string) => request<{ sent: boolean }>("POST", "/auth/email", { email, ...(returnTo ? { returnTo } : {}), ...(turnstileToken ? { turnstileToken } : {}) }),
   exchange: (code: string) => request<{ token: string; returnTo: string | null; me: Me }>("POST", "/auth/exchange", { code }),
   me: () => request<Me>("GET", "/auth/me"),
   logout: () => request<{ ok: boolean }>("POST", "/auth/logout", {}),

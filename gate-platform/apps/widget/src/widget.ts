@@ -29,6 +29,11 @@ export interface WidgetOptions {
   quantity?: number;
   /** Leave out the cover image and course header (the host already shows them). */
   compact?: boolean;
+  /**
+   * Cloudflare Turnstile site key: a browser check before a real order is placed. EnrollClass's own
+   * pages set it; a host website can too, once its hostname is listed on the Turnstile widget.
+   */
+  turnstileSiteKey?: string;
 }
 
 /** Timing knobs (mutable so tests can shorten them). */
@@ -37,6 +42,7 @@ export const config = {
   pollTimeoutMs: 20_000,
   debounceMs: 300,
   stripeSrc: "https://js.stripe.com/v3/",
+  turnstileSrc: "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",
 };
 
 /* ---------- Minimal Stripe.js typing (no @stripe/stripe-js dependency) ---------- */
@@ -70,6 +76,35 @@ function loadStripe(): Promise<StripeFactory> {
     });
   }
   return stripeLoader;
+}
+
+/* ---------- Cloudflare Turnstile (browser check before an order) ---------- */
+interface TurnstileRenderOptions {
+  sitekey: string; action?: string; theme?: "auto" | "light" | "dark";
+  callback: (token: string) => void; "expired-callback"?: () => void; "error-callback"?: () => void;
+}
+export interface TurnstileApi { render(el: HTMLElement, options: TurnstileRenderOptions): string; reset(id?: string): void; remove(id: string): void }
+declare global {
+  interface Window { turnstile?: TurnstileApi }
+}
+
+let turnstileLoader: Promise<TurnstileApi> | undefined;
+function loadTurnstile(): Promise<TurnstileApi> {
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  if (!turnstileLoader) {
+    turnstileLoader = new Promise<TurnstileApi>((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = config.turnstileSrc;
+      script.async = true;
+      script.onload = () => (window.turnstile ? resolve(window.turnstile) : reject(new Error("Turnstile did not initialise")));
+      script.onerror = () => {
+        turnstileLoader = undefined;
+        reject(new Error("Turnstile failed to load"));
+      };
+      document.head.append(script);
+    });
+  }
+  return turnstileLoader;
 }
 
 /* ---------- Tiny DOM helpers ---------- */
@@ -426,6 +461,14 @@ export class Widget {
     const summary = h("div", { class: "gw-summary", "aria-live": "polite" });
     const errors = h("div", { class: "gw-errors" });
     const submitButton = h("button", { type: "submit", class: "gw-btn gw-btn-primary" }, unit === 0 ? "Register" : "Continue to payment");
+    // Turnstile, when the host page gave a site key: one token per real order (price previews need none).
+    let challengeToken = "";
+    let challengeId: string | undefined;
+    const challengeBox = this.opts.turnstileSiteKey ? h("div", { class: "gw-turnstile" }) : null;
+    const challengeReset = (): void => {
+      challengeToken = "";
+      if (challengeId !== undefined) window.turnstile?.reset(challengeId);
+    };
 
     const syncFirst = (): void => {
       const first = drafts[0];
@@ -548,11 +591,14 @@ export class Widget {
       submitButton.disabled = true;
       this.setStatus("Creating your order…");
       try {
-        const res = await this.api.createOrder(this.orderBody(tt, currency, quantity, buyerEmail, drafts, false, flexible), idempotencyKey);
+        const body = this.orderBody(tt, currency, quantity, buyerEmail, drafts, false, flexible);
+        if (challengeToken) body.turnstileToken = challengeToken;
+        const res = await this.api.createOrder(body, idempotencyKey);
         await this.afterOrder(res, { cohort, ticket: tt, quantity, buyerEmail, attendees: toAttendees(drafts) });
       } catch (err) {
         this.setStatus("");
         submitButton.disabled = false;
+        challengeReset(); // a token works once; the retry needs a fresh one
         errors.replaceChildren(errorBlock(err));
       }
     };
@@ -569,6 +615,7 @@ export class Widget {
       ...(flexibleBox ? [flexibleBox] : []),
       summary,
       errors,
+      ...(challengeBox ? [challengeBox] : []),
       submitButton,
     );
 
@@ -582,6 +629,21 @@ export class Widget {
     renderAttendees();
     void refreshPricing();
     buyerInput.focus();
+    if (challengeBox && this.opts.turnstileSiteKey) {
+      const sitekey = this.opts.turnstileSiteKey;
+      loadTurnstile()
+        .then((turnstile) => {
+          challengeId = turnstile.render(challengeBox, {
+            sitekey, action: "register", theme: prefersDark() ? "dark" : "light",
+            callback: (token) => { challengeToken = token; },
+            "expired-callback": () => { challengeToken = ""; },
+            "error-callback": () => { challengeToken = ""; },
+          });
+        })
+        .catch(() => {
+          challengeBox.replaceChildren(h("p", { class: "gw-muted" }, "The browser check didn't load. If your registration is refused, reload the page and try again."));
+        });
+    }
   }
 
   private orderBody(tt: TicketType, currency: string, quantity: number, buyerEmail: string, drafts: readonly Draft[], dryRun: boolean, flexible = false): OrderRequest {

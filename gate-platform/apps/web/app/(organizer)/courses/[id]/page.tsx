@@ -308,6 +308,10 @@ export default async function CourseDetailPage({ params, searchParams }: { param
               <>
                 <pre className="code-block">{code}</pre>
                 <CopyButton text={code} label="Copy widget code" />
+                <p className="hint">
+                  Registrations on EnrollClass&apos;s own pages pass a Cloudflare browser check against bots. To run it on your website too, ask support to list your
+                  hostname, then add <code>data-gate-turnstile=&quot;your site key&quot;</code> to the tag above.
+                </p>
               </>
             );
           })()}

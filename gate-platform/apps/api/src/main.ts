@@ -6,6 +6,7 @@ import { TeamsMeetings, ZoomMeetings } from "@gate/meetings";
 import type { MeetingProvider } from "@gate/core";
 import { createPool, migrate, PgIdempotencyStore, PostgresLedgerStore, createPgIdentityRepos, createPgIntegrationRepos, createPgRepos, type IdempotencyStore } from "@gate/db";
 import { StripePaymentsAdapter } from "@gate/payments-stripe";
+import { turnstileFromEnv } from "./turnstile.js";
 import { AiGateway, AnthropicProvider, DEFAULT_TENANT_DEFAULTS, EnvSecretResolver, InMemoryAuditSink, InMemoryBudgetStore, InMemoryTenantAiConfigStore, OpenAICompatibleProvider } from "@gate/ai-gateway";
 import { buildApp } from "./app.js";
 import { randomId } from "./auth.js";
@@ -188,6 +189,8 @@ async function main() {
   }
 
   const providers = configuredProviders(process.env);
+  const turnstile = turnstileFromEnv(process.env);
+  console.log(turnstile ? `[turnstile] on: sign-in links and checkout (orders: ${turnstile.orders})` : "[turnstile] off (set TURNSTILE_SECRET_KEY)");
   console.log(`[auth] sign-in: ${[...providers.map((p) => p.id), ...(process.env.RESEND_API_KEY || env !== "production" ? ["email link"] : [])].join(", ") || "none configured"}`);
 
   const app = await buildApp({
@@ -199,6 +202,7 @@ async function main() {
     identities: new Identities(identityRepos, core, { now: () => new Date() }, { next: randomId }),
     integrations,
     providers,
+    ...(turnstile ? { turnstile } : {}),
     ...(process.env.RESEND_API_KEY || env !== "production" ? { mailer: notifier } : {}),
     publicPageUrl: coursePageUrl,
   });

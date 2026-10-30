@@ -53,6 +53,7 @@ color-scheme:light;font:15px/1.5 "Instrument Sans",system-ui,-apple-system,"Sego
 .gw-summary{margin:16px 0;padding:12px 16px;border:1px solid var(--gw-border);border-radius:10px;background:var(--gw-surface)}
 .gw-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.95em;font-variant-numeric:tabular-nums}
 .gw-total{margin-top:4px;padding-top:8px;border-top:1px solid var(--gw-border);font-weight:700}
+.gw-turnstile{margin:4px 0 12px}
 .gw-error{margin:8px 0;color:var(--gw-danger)}
 .gw-error-hint{display:block;margin-top:2px;font-size:.9em;color:var(--gw-muted)}
 .gw-payment-element{margin:12px 0;min-height:48px}

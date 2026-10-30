@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CoursePayload, OrderRequest, OrderResponse, WaitlistRequest } from "./api.js";
-import { config, mount, type StripeFactory } from "./widget.js";
+import { config, mount, type StripeFactory, type TurnstileApi } from "./widget.js";
 
 const API = "https://api.test";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
@@ -113,6 +113,7 @@ afterEach(() => {
   document.body.innerHTML = "";
   document.getElementById("gate-widget-css")?.remove();
   delete window.Stripe;
+  delete window.turnstile;
 });
 
 describe("schedule", () => {
@@ -667,5 +668,63 @@ describe("auto-init", () => {
     await vi.waitFor(() => expect(text(host)).toContain("You're registered"));
     expect(window.sessionStorage.getItem("gate-pending:leading-safe")).toBeNull();
     window.history.replaceState(null, "", "/");
+  });
+});
+
+describe("turnstile", () => {
+  it("sends the browser-check token with the real order only, and gets a fresh one after a refusal", async () => {
+    const bodies: OrderRequest[] = [];
+    let refuse = true;
+    stubFetch((url, init, json) => {
+      if (courseRoute(url, init, json)) return { body: course };
+      if (url.endsWith("/orders") && json) {
+        bodies.push(json);
+        if (!json.dryRun && refuse) {
+          refuse = false;
+          return { status: 400, body: { error: { code: "VALIDATION", message: "We couldn't confirm you're not a robot. Reload the page and try again." } } };
+        }
+        return { status: json.dryRun ? 200 : 201, body: orderResponse(json, "ord_t") };
+      }
+      return undefined;
+    });
+    // A stand-in for Cloudflare's script: hands out a token on render and a new one on every reset.
+    let issued = 0;
+    let callback: ((token: string) => void) | undefined;
+    const turnstile: TurnstileApi = {
+      render: vi.fn((_el, options) => { const cb = options.callback; callback = cb; cb(`tok-${++issued}`); return "w1"; }),
+      reset: vi.fn(() => { callback?.(`tok-${++issued}`); }),
+      remove: vi.fn(),
+    };
+    window.turnstile = turnstile;
+
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe", currency: "GBP", turnstileSiteKey: "1x00000000000000000000AA" });
+    await widget.ready;
+    await openCheckout(host, 0, "buyer@example.com");
+    expect(turnstile.render).toHaveBeenCalledWith(host.querySelector(".gw-turnstile"), expect.objectContaining({ sitekey: "1x00000000000000000000AA", action: "register" }));
+
+    submitForm(host);
+    await vi.waitFor(() => expect(text(host.querySelector(".gw-errors"))).toContain("confirm you're not a robot"));
+    expect(turnstile.reset).toHaveBeenCalledWith("w1");
+
+    submitForm(host);
+    // A paid seat: the order went through and the (test-mode) payment step is next.
+    await vi.waitFor(() => expect(text(host)).toContain("Simulate payment"));
+
+    const previews = bodies.filter((b) => b.dryRun);
+    const real = bodies.filter((b) => !b.dryRun);
+    expect(previews.length).toBeGreaterThan(0);
+    expect(previews.every((b) => b.turnstileToken === undefined)).toBe(true);
+    expect(real.map((b) => b.turnstileToken)).toEqual(["tok-1", "tok-2"]);
+  });
+
+  it("places no browser check when the host page gives no site key", async () => {
+    stubFetch((url, init, json) => (courseRoute(url, init, json) ? { body: course } : json ? { status: 201, body: orderResponse(json) } : undefined));
+    const turnstile: TurnstileApi = { render: vi.fn(() => "w"), reset: vi.fn(), remove: vi.fn() };
+    window.turnstile = turnstile;
+    const widget = mount(host, { api: API, org: "org_1", course: "leading-safe" });
+    await widget.ready;
+    await openCheckout(host, 0, "buyer@example.com");
+    expect(host.querySelector(".gw-turnstile")).toBeNull();
+    expect(turnstile.render).not.toHaveBeenCalled();
   });
 });

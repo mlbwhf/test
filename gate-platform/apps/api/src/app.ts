@@ -6,6 +6,7 @@ import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCom
 import { z } from "zod";
 import { COURSE_CATEGORIES, Core, CredentialSigner, DEFAULT_INSTRUCTOR_ACCESS, DomainError, activePayments, FakePaymentsAdapter, Identities, buildIcs, can, courseJsonLd, createInMemoryIdentityRepos, createInMemoryIntegrationRepos, Integrations, homeSummary, type Certificate, eventLines, eventOverview, type Notifier, type Organization, type Role } from "@gate/core";
 import { bearer, permissionFor, randomId, registerAuth, registerTeam } from "./auth.js";
+import { CHALLENGE_MESSAGE, ownPageHosts, requestPageHost, type Turnstile } from "./turnstile.js";
 import type { ProviderConfig } from "./oauth.js";
 import rateLimit from "@fastify/rate-limit";
 import { readFile } from "node:fs/promises";
@@ -79,6 +80,8 @@ export interface AppDeps {
   ticketSecret?: string;
   /** Base URL of the web app (learner ticket pages, organizer check-in). */
   webUrl?: string;
+  /** Cloudflare Turnstile, when configured: a browser check on sign-up and checkout. */
+  turnstile?: Turnstile;
   /** Accounts, sessions and teams; defaults to in-memory storage. */
   identities?: Identities;
   /** API keys, webhooks and the hosted MCP endpoint; in-memory when not given. */
@@ -127,8 +130,9 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const identities = deps.identities ?? new Identities(createInMemoryIdentityRepos(), deps.core, { now: () => new Date() }, { next: randomId });
   const integrations = deps.integrations ?? new Integrations(createInMemoryIntegrationRepos(), { now: () => new Date() }, { next: randomId }, { allowPrivateUrls: env !== "production" });
   registerMcpRoute(app, integrations);
-  const authDeps = { core: deps.core, identities, providers: deps.providers ?? [], publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000", mailer: deps.mailer, fetchImpl: deps.fetchImpl, adminKey: deps.adminKey };
+  const authDeps = { core: deps.core, identities, providers: deps.providers ?? [], publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000", mailer: deps.mailer, fetchImpl: deps.fetchImpl, adminKey: deps.adminKey, turnstile: deps.turnstile };
   await registerAuth(app, authDeps);
+  const ownHosts = ownPageHosts(deps.webUrl ?? "http://localhost:3000");
   if (env === "production" && !deps.ticketSecret) throw new Error("ticketSecret is required in production");
   const tickets = { core: deps.core, signer: new TicketSigner(deps.ticketSecret ?? "development-ticket-secret"), publicUrl: deps.publicUrl ?? "", webUrl: deps.webUrl ?? "http://localhost:3000" };
   registerMediaRoutes(app, { store: media });
@@ -363,8 +367,15 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       },
     }, async (req, reply) => {
       const idem = req.headers["idempotency-key"];
-      const dryRun = req.body.dryRun === true;
-      const res = await deps.core.createOrder(req.params.orgId, { ...req.body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
+      const { turnstileToken, ...body } = req.body;
+      const dryRun = body.dryRun === true;
+      // Real orders from EnrollClass's own pages carry a Turnstile token; price previews never need one.
+      if (deps.turnstile && !dryRun) {
+        const own = ownHosts.has(requestPageHost(req.headers) ?? "");
+        const needed = turnstileToken !== undefined || own || deps.turnstile.orders === "always";
+        if (needed && !(await deps.turnstile.verify(turnstileToken))) throw new DomainError("VALIDATION", CHALLENGE_MESSAGE);
+      }
+      const res = await deps.core.createOrder(req.params.orgId, { ...body, dryRun, ...(typeof idem === "string" ? { idempotencyKey: idem } : {}) });
       // Buyers never see split or transfer internals.
       const order = S.toOrder(res.order);
       return reply.code(res.created ? 201 : 200).send({ order: { ...order, splits: { organizerMinor: 0, lines: [] }, transferRefs: {} }, clientSecret: res.clientSecret, stripeAccount: res.order.chargeAccountRef ?? null, dryRun });

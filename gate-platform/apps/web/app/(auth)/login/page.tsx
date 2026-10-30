@@ -5,6 +5,7 @@ import { sessionToken } from "@/lib/session";
 import { publicApiUrl, safePath } from "@/lib/urls";
 import { ActionForm } from "@/components/action-form";
 import { emailSignInAction } from "@/app/auth-actions";
+import { TurnstileField } from "@/components/turnstile-field";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Sign in" };
@@ -23,6 +24,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const providers = await api.providers();
   const list = providers.ok ? providers.data.providers : [];
   const emailOn = providers.ok ? providers.data.email : false;
+  // Cloudflare's browser check: the API asks for it (TURNSTILE_SECRET_KEY) and this page renders it (TURNSTILE_SITE_KEY).
+  const turnstileKey = process.env.TURNSTILE_SITE_KEY ?? "";
+  const challengeMissing = providers.ok && providers.data.turnstile && !turnstileKey;
+  if (challengeMissing) console.error("[login] the API requires Turnstile but TURNSTILE_SITE_KEY is not set on the web app");
   const base = publicApiUrl();
   const signup = mode === "signup";
   const invite = mode === "invite" || returnTo.startsWith("/invite/");
@@ -64,7 +69,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               Email
               <input name="email" type="email" autoComplete="email" required placeholder="you@company.com" />
             </label>
+            {turnstileKey && <TurnstileField siteKey={turnstileKey} action="signin" />}
           </ActionForm>
+          {challengeMissing && <div className="notice notice-warn">Email sign-in is temporarily unavailable on this site. Use one of the buttons above, or try again later.</div>}
         </>
       )}
       {providers.ok && list.length === 0 && !emailOn && <div className="notice notice-warn">No sign-in method is configured yet.</div>}

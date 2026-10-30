@@ -8738,3 +8738,8 @@ figure.preview {
     padding: 10px 16px 14px;
   }
 }
+
+/* Cloudflare Turnstile inside sign-in and other forms */
+.turnstile-field {
+  margin: 4px 0 12px;
+}

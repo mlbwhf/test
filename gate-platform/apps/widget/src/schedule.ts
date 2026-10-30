@@ -14,6 +14,8 @@ export interface ScheduleOptions {
   course: string;
   currency?: string;
   stripePk?: string;
+  /** Cloudflare Turnstile site key for the inline checkout (see WidgetOptions). */
+  turnstileSiteKey?: string;
   /** Heading above the list (default "Schedules"). */
   title?: string;
   /** Brand colours: buttons and dark accents, and the highlight colour. */
@@ -343,6 +345,7 @@ export class ScheduleWidget {
     this.checkout = mount(target, {
       api: this.opts.api, org: this.opts.org, course: this.opts.course, event: id, checkout: true, compact: true,
       quantity: this.qty.get(id) ?? 1, currency: this.currency, ...(this.opts.stripePk ? { stripePk: this.opts.stripePk } : {}),
+      ...(this.opts.turnstileSiteKey ? { turnstileSiteKey: this.opts.turnstileSiteKey } : {}),
     });
   }
 

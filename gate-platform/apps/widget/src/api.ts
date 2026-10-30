@@ -30,6 +30,8 @@ export interface OrderRequest {
   source?: "marketplace";
   /** The flexible-ticket upgrade. */
   flexible?: boolean;
+  /** Cloudflare Turnstile token, when the host page runs the browser check. */
+  turnstileToken?: string;
 }
 export interface Pricing {
   subtotalMinor: number; platformFeeMinor: number; attendeeFeeMinor: number; totalMinor: number;

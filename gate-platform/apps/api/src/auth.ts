@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import rateLimit from "@fastify/rate-limit";
+import { CHALLENGE_MESSAGE, type Turnstile } from "./turnstile.js";
 import { DomainError, ROLES, activePayments, can, type Core, type Identities, type Notifier, type Organization, type Permission, type Role, type SessionContext } from "@gate/core";
 import { authorizeUrl, exchangeCode, pkcePair, safeReturnTo, type ProviderConfig } from "./oauth.js";
 import * as S from "./schemas.js";
@@ -18,6 +19,8 @@ export interface AuthDeps {
   fetchImpl?: typeof fetch | undefined;
   adminKey?: string | undefined;
   emailFromName?: string | undefined;
+  /** Cloudflare Turnstile: when set, asking for a sign-in link needs a token from the form. */
+  turnstile?: Turnstile | undefined;
 }
 
 export const randomId = (prefix: string) => `${prefix}_${randomBytes(9).toString("base64url")}`;
@@ -87,8 +90,8 @@ export async function registerAuth(app: FastifyInstance, d: AuthDeps) {
     const r = raw.withTypeProvider<ZodTypeProvider>();
     await r.register(rateLimit, { max: 30, timeWindow: "1 minute" });
 
-    r.get("/auth/providers", { schema: { tags: ["auth"], security: [], response: { 200: z.object({ providers: z.array(z.object({ id: z.string(), label: z.string() })), email: z.boolean() }) } } },
-      async () => ({ providers: d.providers.map((p) => ({ id: p.id, label: p.label })), email: Boolean(d.mailer) }));
+    r.get("/auth/providers", { schema: { tags: ["auth"], security: [], response: { 200: z.object({ providers: z.array(z.object({ id: z.string(), label: z.string() })), email: z.boolean(), turnstile: z.boolean() }) } } },
+      async () => ({ providers: d.providers.map((p) => ({ id: p.id, label: p.label })), email: Boolean(d.mailer), turnstile: Boolean(d.turnstile) }));
 
     r.get("/auth/:provider/start", { schema: { tags: ["auth"], security: [], params: z.object({ provider: z.string() }), querystring: z.object({ returnTo: z.string().optional() }) } }, async (req, reply) => {
       const p = d.providers.find((x) => x.id === req.params.provider);
@@ -118,8 +121,9 @@ export async function registerAuth(app: FastifyInstance, d: AuthDeps) {
 
     // Passwordless: a sign-in link by email. Always answers the same way, so it cannot be
     // used to find out who has an account.
-    r.post("/auth/email", { schema: { tags: ["auth"], security: [], body: z.object({ email: z.string().email().max(254), returnTo: z.string().max(500).optional() }), response: { 202: z.object({ sent: z.boolean() }) } } }, async (req, reply) => {
+    r.post("/auth/email", { schema: { tags: ["auth"], security: [], body: z.object({ email: z.string().email().max(254), returnTo: z.string().max(500).optional(), turnstileToken: z.string().max(4096).optional() }), response: { 202: z.object({ sent: z.boolean() }) } } }, async (req, reply) => {
       if (!d.mailer) throw new DomainError("INVALID_STATE", "email sign-in is not configured");
+      if (d.turnstile && !(await d.turnstile.verify(req.body.turnstileToken))) throw new DomainError("VALIDATION", CHALLENGE_MESSAGE);
       const email = req.body.email.trim().toLowerCase();
       const returnTo = safeReturnTo(req.body.returnTo);
       const token = await d.identities.issueToken("email_link", { email, ...(returnTo ? { returnTo } : {}) });

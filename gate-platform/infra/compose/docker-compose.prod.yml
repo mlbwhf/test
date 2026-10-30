@@ -81,6 +81,7 @@ services:
       GATE_PUBLIC_API_URL: https://api.${GATE_DOMAIN}
       GATE_DOMAIN: ${GATE_DOMAIN}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
       NEXT_PUBLIC_GATE_API_URL: https://api.${GATE_DOMAIN}
     networks: [internal]
     labels:

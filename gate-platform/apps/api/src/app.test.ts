@@ -497,3 +497,44 @@ describe("API", () => {
     expect(served.rawPayload.equals(jpg)).toBe(true);
   });
 });
+
+describe("turnstile", () => {
+  it("checkout: EnrollClass's own pages need a token, organizers' websites do not, 'always' means everyone", async () => {
+    const seen: (string | undefined)[] = [];
+    const turnstile = { orders: "own-pages" as "own-pages" | "always", verify: async (t: string | undefined) => { seen.push(t); return t === "good"; } };
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.enrollclass.test", webUrl: "https://app.enrollclass.test", turnstile });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json();
+    const J = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const orgId = created.organization.id as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "safe", name: "SAFe" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-20T14:00:00Z", endsAt: "2099-11-20T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 0, quantity: 50 } })).json();
+    let n = 0;
+    const order = (headers: Record<string, string>, body: object = {}) => {
+      const email = `learner${++n}@example.com`;
+      return im.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, headers: { ...headers, "content-type": "application/json" }, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: email, attendees: [{ email }], ...body } });
+    };
+    const own = { origin: "https://app.enrollclass.test" };
+    const bare = { referer: "https://enrollclass.test/classes" };
+    const theirs = { origin: "https://training.example.com" };
+
+    // Price previews never need a token, not even from our own pages.
+    expect([200, 201]).toContain((await order(own, { dryRun: true })).statusCode);
+    const refused = await order(own);
+    expect(refused.statusCode).toBe(400);
+    expect(JSON.stringify(refused.json())).toContain("confirm you're not a robot");
+    expect((await order(bare)).statusCode).toBe(400);
+    expect((await order(own, { turnstileToken: "forged" })).statusCode).toBe(400);
+    expect((await order(own, { turnstileToken: "good" })).statusCode).toBe(201);
+    // The widget on an organizer's website: no token needed, but one that is sent is still checked.
+    expect((await order(theirs)).statusCode).toBe(201);
+    expect((await order(theirs, { turnstileToken: "forged" })).statusCode).toBe(400);
+    expect((await order({})).statusCode).toBe(201);
+    turnstile.orders = "always";
+    expect((await order(theirs)).statusCode).toBe(400);
+    expect((await order({})).statusCode).toBe(400);
+    expect((await order(theirs, { turnstileToken: "good" })).statusCode).toBe(201);
+    expect(seen).toEqual([undefined, undefined, "forged", "good", "forged", undefined, undefined, "good"]);
+  });
+});

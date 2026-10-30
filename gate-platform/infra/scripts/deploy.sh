@@ -18,6 +18,11 @@ compose() { docker compose "${opts[@]}" "$@"; }
 
 missing=$(grep -E '^(STRIPE_SECRET_KEY|STRIPE_PUBLISHABLE_KEY|RESEND_API_KEY|ANTHROPIC_API_KEY)=' .env | sed -E 's/#.*$//' | grep -E '=\s*$' | cut -d= -f1 || true)
 [ -z "$missing" ] || { echo "fill these in .env before deploying:"; echo "$missing" | sed 's/^/    /'; exit 1; }
+# Turnstile is a pair: the API checks tokens (secret), the web app renders the widget (site key).
+ts_secret=$(envval TURNSTILE_SECRET_KEY); ts_site=$(envval TURNSTILE_SITE_KEY)
+if [ -n "$ts_secret$ts_site" ] && { [ -z "$ts_secret" ] || [ -z "$ts_site" ]; }; then
+  echo "set both TURNSTILE_SECRET_KEY and TURNSTILE_SITE_KEY in .env, or neither"; exit 1
+fi
 [ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
 echo "== pulling images"

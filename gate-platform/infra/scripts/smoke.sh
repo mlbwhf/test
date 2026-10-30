@@ -23,6 +23,10 @@ expect() {
 fail=0
 expect "https://api.$d/health" 200 '"ok":true' || fail=1
 expect "https://api.$d/auth/providers" 200 '"providers"' || fail=1
+# When the API asks for Cloudflare's browser check, the sign-in page must carry it.
+if curl -fsS --max-time 15 "https://api.$d/auth/providers" | grep -q '"turnstile":true'; then
+  expect "https://app.$d/login" 200 'turnstile-field' || fail=1
+fi
 expect "https://$d/" 200 'Start with one cohort' || fail=1
 expect "https://$d/terms" 200 'Terms of service' || fail=1
 expect "https://www.$d/" 308 "https://$d/" || fail=1

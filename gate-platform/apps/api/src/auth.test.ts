@@ -53,7 +53,7 @@ const BJ = (t: string) => ({ authorization: `Bearer ${t}`, "content-type": "appl
 describe("sign-in", () => {
   it("lists only configured providers", async () => {
     const { app } = await setup();
-    expect((await app.inject("/auth/providers")).json()).toEqual({ providers: [{ id: "google", label: "Google" }], email: true });
+    expect((await app.inject("/auth/providers")).json()).toEqual({ providers: [{ id: "google", label: "Google" }], email: true, turnstile: false });
     expect(configuredProviders({ LINKEDIN_CLIENT_ID: "x" })).toEqual([]);
   });
 
@@ -87,6 +87,24 @@ describe("sign-in", () => {
     expect(safeReturnTo("/dashboard?x=1")).toBe("/dashboard?x=1");
     expect(safeReturnTo("https://evil.com")).toBeUndefined();
     expect(safeReturnTo("/\\evil.com")).toBeUndefined();
+  });
+
+  it("email link: with Turnstile on, the form's token is checked before any email goes out", async () => {
+    const seen: (string | undefined)[] = [];
+    const turnstile = { orders: "own-pages" as const, verify: async (t: string | undefined) => { seen.push(t); return t === "good"; } };
+    const mailer = new InMemoryNotifier();
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const app = await buildApp({ core, env: "test", adminKey: "admin", publicUrl: API, webUrl: WEB, mailer, providers: [], turnstile });
+    expect((await app.inject("/auth/providers")).json()).toMatchObject({ email: true, turnstile: true });
+    const ask = (payload: object) => app.inject({ method: "POST", url: "/auth/email", payload: { email: "ada@example.com", ...payload } });
+    const missing = await ask({});
+    expect(missing.statusCode).toBe(400);
+    expect(JSON.stringify(missing.json())).toContain("confirm you're not a robot");
+    expect((await ask({ turnstileToken: "forged" })).statusCode).toBe(400);
+    expect(mailer.sent).toHaveLength(0);
+    expect((await ask({ turnstileToken: "good" })).statusCode).toBe(202);
+    expect(mailer.sent).toHaveLength(1);
+    expect(seen).toEqual([undefined, "forged", "good"]);
   });
 
   it("email link: one-time, and the same answer whether or not the account exists", async () => {

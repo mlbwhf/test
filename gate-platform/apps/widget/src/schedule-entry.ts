@@ -14,6 +14,7 @@ function readOptions(el: HTMLElement): ScheduleOptions | string {
   const o: ScheduleOptions = { api: d.gateApi, org: d.gateOrg, course: d.gateCourse };
   if (d.gateCurrency) o.currency = d.gateCurrency.trim().toUpperCase();
   if (d.gateStripePk) o.stripePk = d.gateStripePk.trim();
+  if (d.gateTurnstile) o.turnstileSiteKey = d.gateTurnstile.trim();
   if (d.gateTitle) o.title = d.gateTitle;
   if (d.gateInk) o.ink = d.gateInk;
   if (d.gateAccent) o.accent = d.gateAccent;
