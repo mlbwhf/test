@@ -153,7 +153,8 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
   const isPublic = (method: string, url: string) => {
     const path = url.split("?")[0] ?? url;
     if (method === "POST" && path === "/v1/signups") return true;
-    if (method === "POST" && path === "/v1/auth/login") return true;
+    if (method === "POST" && /^\/v1\/signups\/[^/]+\/(verify|resend)$/.test(path)) return true;
+    if (method === "POST" && (path === "/v1/auth/login" || path === "/v1/auth/forgot" || path === "/v1/auth/reset")) return true;
     if (method === "POST" && path.startsWith("/v1/webhooks/")) return true;
     if (method === "GET" && path === "/v1/billing/config") return true;
     if (method === "POST" && (path === "/v1/billing/checkout" || path === "/v1/billing/subscribe" || path === "/v1/billing/claim")) return true;
@@ -204,7 +205,7 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
     const ok = verifyPassword(req.body.password, user?.passwordHash ?? DUMMY_HASH) && !!user?.passwordHash && !user.disabled;
     if (!user || !ok) {
       failed(req.clientIp);
-      throw new ApiError(401, "BAD_LOGIN", "Email or password is wrong. No password set yet? Sign in with your key once and set one under Users, or ask your admin.");
+      throw new ApiError(401, "BAD_LOGIN", "Email or password is wrong. Forgot it? Use “Forgot your password?” below to get a code by email.");
     }
     const token = newSessionToken();
     const expiresAt = new Date(Date.now() + SESSION_MS).toISOString();

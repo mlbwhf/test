@@ -1592,7 +1592,7 @@ describe("trial emails", () => {
     // Open mode: the first admin is created with a key; passwords are set afterwards.
     const root = await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
     const rk = root.body.apiKey as string;
-    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "whatever-123" })).body.error.message).toContain("No password set yet");
+    expect((await call("POST", "/v1/auth/login", { email: "root@example.io", password: "whatever-123" })).body.error.message).toContain("Forgot your password?");
     expect((await call("POST", "/v1/auth/password", { password: "short" }, rk)).status).toBe(400);
     expect((await call("POST", "/v1/auth/password", { password: "correct horse battery" }, rk)).body.user.hasPassword).toBe(true);
     const login = await call("POST", "/v1/auth/login", { email: "ROOT@example.io", password: "correct horse battery" });
@@ -1780,6 +1780,55 @@ describe("email verification", () => {
     const ok = await call("POST", `/v1/signups/${id}/verify`, { code: codeIn(mailer) });
     expect(ok.body).toMatchObject({ verified: true });
     expect((await call("POST", "/v1/billing/subscribe", { signupId: id })).body.error?.code).not.toBe("EMAIL_NOT_VERIFIED");
+  });
+});
+
+describe("closed server: sign-up confirmation and forgotten passwords", () => {
+  const codeIn = (mailer: MemoryMailer) => /\b(\d{6})\b/.exec(mailer.sent.at(-1)!.subject)![1]!;
+  it("lets a visitor confirm a sign-up code and ask for a new one once the server has sign-ins", async () => {
+    const mailer = new MemoryMailer();
+    const { call } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { mailer } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "ada's own password" });
+    expect(s.body).toMatchObject({ verify: "code-sent" });
+    expect((await call("POST", `/v1/signups/${s.body.signup.id}/resend`)).status).toBe(200);
+    const ok = await call("POST", `/v1/signups/${s.body.signup.id}/verify`, { code: codeIn(mailer) });
+    expect(ok.status).toBe(200);
+    expect(typeof ok.body.apiKey).toBe("string");
+  });
+
+  it("resets a forgotten password with an emailed code and never tells which emails exist", async () => {
+    const mailer = new MemoryMailer();
+    const { call } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { mailer } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice", password: "first password here" });
+    await call("POST", `/v1/signups/${s.body.signup.id}/verify`, { code: codeIn(mailer) });
+    const sent = mailer.sent.length;
+    // Unknown email: the same answer, and nothing is sent.
+    const nobody = await call("POST", "/v1/auth/forgot", { email: "nobody@example.io" });
+    expect(nobody.status).toBe(202);
+    expect(mailer.sent.length).toBe(sent);
+    const asked = await call("POST", "/v1/auth/forgot", { email: "Ada@Example.io" });
+    expect(asked.status).toBe(202);
+    expect(mailer.sent.at(-1)!.to).toBe("ada@example.io");
+    const code = codeIn(mailer);
+    const wrong = code === "000000" ? "111111" : "000000";
+    expect((await call("POST", "/v1/auth/reset", { email: "ada@example.io", code: wrong, password: "a brand new password" })).body.error.code).toBe("BAD_CODE");
+    const done = await call("POST", "/v1/auth/reset", { email: "ada@example.io", code, password: "a brand new password" });
+    expect(done.status).toBe(200);
+    expect(done.body.token).toMatch(/^ts_/);
+    expect(done.body.user.passwordHash).toBeUndefined();
+    // The code works once; the old password is gone, the new one signs in.
+    expect((await call("POST", "/v1/auth/reset", { email: "ada@example.io", code, password: "another new password" })).body.error.code).toBe("BAD_CODE");
+    expect((await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "first password here" })).status).toBe(401);
+    expect((await call("POST", "/v1/auth/login", { email: "ada@example.io", password: "a brand new password" })).status).toBe(200);
+  });
+
+  it("tells someone who never finished signing up how to carry on", async () => {
+    const mailer = new MemoryMailer();
+    const { call } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { mailer, webUrl: "https://trainyard.app" } });
+    await call("POST", "/v1/signups", { name: "Bo", email: "bo@example.io", plan: "trainer", password: "forgotten password" });
+    await call("POST", "/v1/auth/forgot", { email: "bo@example.io" });
+    expect(mailer.sent.at(-1)).toMatchObject({ to: "bo@example.io", subject: "Finish signing up for Trainyard" });
+    expect(mailer.sent.at(-1)!.text).toContain("https://trainyard.app/pricing");
   });
 });
 
