@@ -67,7 +67,9 @@ export async function api<T>(method: string, path: string, body?: unknown): Prom
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
   } catch {
-    throw new ApiFailure(0, "OFFLINE", `Cannot reach the Trainyard API at ${BASE}. Start it with "pnpm dev:api".`);
+    // People see this; only a local setup needs to be told to start the API.
+    const local = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(BASE);
+    throw new ApiFailure(0, "OFFLINE", local ? `Cannot reach the Trainyard API at ${BASE}. Start it with "pnpm dev:api".` : "Trainyard did not answer just now. Check your connection and try again in a moment; nothing you entered is lost.");
   }
   if (res.status === 204) return undefined as T;
   const json = await res.json().catch(() => ({}));
