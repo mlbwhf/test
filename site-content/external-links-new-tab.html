@@ -1,0 +1,17 @@
+<!-- report-ai.org: open all EXTERNAL links in a new tab, site-wide.
+     Install: WPCode (or Code Snippets) → Add Snippet → "HTML Snippet"
+     → paste this whole block → Location: Site Wide Footer → Activate.
+     Internal links keep the same tab (standard UX/SEO practice). -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var here = window.location.hostname;
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    if (a.hostname && a.hostname !== here && /^https?:$/.test(a.protocol)) {
+      a.target = '_blank';
+      var rel = (a.getAttribute('rel') || '').split(/\s+/).filter(Boolean);
+      if (rel.indexOf('noopener') === -1) rel.push('noopener');
+      a.setAttribute('rel', rel.join(' '));
+    }
+  });
+});
+</script>

@@ -1,0 +1,32 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,1,Senate measure,AI Risk Evaluation Act (S.2938)
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,1,Sponsors,"Hawley (R-MO), Blumenthal (D-CT)"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,1,What it would do,DOE evaluation program; bars deploying an advanced system unless the developer is in compliance; tests weaponization & loss-of-control risk; $1M/day minimum
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,1,Shutdown power?,"Yes, in effect — a gate before launch, not a post-launch switch"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,2,Senate measure,Preserving American Dominance in AI Act
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,2,Sponsors,"Romney, Reed, Moran, King, Hassan"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,2,What it would do,Creates an AI Safety Review Office in Commerce; oversight of frontier hardware & deployment; CBRN/cyber safeguards
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,2,Shutdown power?,Indirect — a review office that could gate deployment
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,3,Senate measure,Bipartisan Framework for U.S. AI Act (2023)
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,3,Sponsors,"Blumenthal, Hawley"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,3,What it would do,Blueprint for a licensing regime + independent oversight body; never became a bill
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,3,Shutdown power?,"No — licensing/withholding, superseded"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,4,Senate measure,SANDBOX Act (S.2750)
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,4,Sponsors,Cruz (R-TX)
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,4,What it would do,Lets developers apply to waive federal AI rules; the deregulatory pole
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,1,The part everyone missed: the Senate has no kill switch,4,Shutdown power?,No — opposite direction
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,1,Scenario (this Congress),House Kill Switch Act becomes law as written
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,1,Our estimate,~5%
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,1,Why,New emergency power over a heavily lobbied industry; split committee jurisdiction; deregulatory Senate gatekeeper
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,2,Scenario (this Congress),Senate S.2938 (pre-deployment gate) enacted intact
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,2,Our estimate,~8%
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,2,Why,"Bipartisan and serious, but stalled in Commerce with no markup"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,3,Scenario (this Congress),Some shutdown/pause power passes in diluted form
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,3,Our estimate,~20%
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,3,Why,A focusing incident plus the 99–1 appetite to keep authority could yield a watered-down study/authority
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,4,Scenario (this Congress),"Narrower guardrails pass instead (transparency, liability, child safety)"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,4,Our estimate,~45%
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,4,Why,"GUARD Act, AI LEAD Act and testbed bills are already moving; lowest-friction path"
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,5,Scenario (this Congress),Nothing federal passes; states + executive orders continue
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,5,Our estimate,~35%
+https://report-ai.org/indexes/regulating-ai/ai-kill-switch-bill-forecast-2026/,,2,Our probability forecast,5,Why,Default outcome given the deregulatory federal posture
