@@ -9,6 +9,18 @@ Clocks go back on Sun 1 Nov, so posts from then on are at UTC−5.
 **Images** are hosted at `https://report-ai.org/wp-content/uploads/2026/10/<file>`.
 Machine-readable copy for every platform: `posts.json` (fields x, linkedin, facebook, threads, instagram, alt).
 
+## Scheduling status (30 Oct 2026)
+
+**Buffer** (org "AI Indexes"; free plan, 10 queued posts per channel, both channels now full):
+- LinkedIn page: days 1–10, daily at 08:47 Toronto (30 Oct → 8 Nov).
+- X @AIbyNumbers: days 1–3 and 5–11, daily at 12:13 Toronto. **Day 4 on X was declined
+  by the owner and not scheduled.** Day 4 still runs on LinkedIn.
+- Still to add as slots free up: LinkedIn days 11–14 (from 9 Nov), X days 12–14 (from 10 Nov).
+
+**Not in Buffer:** Instagram is disconnected in Buffer; Facebook and Threads aren't Buffer
+channels. These go through Planable (owner loads them from this sheet). Don't add
+LinkedIn or X to Planable too, or they will post twice.
+
 | Day | Date | Topic | Image |
 |---|---|---|---|
 | 1 | Fri 30 Oct | We traced 13 of the most-quoted AI statistics back to their sources. | [01-fact-check-register.png](https://report-ai.org/wp-content/uploads/2026/10/01-fact-check-register.png) |
