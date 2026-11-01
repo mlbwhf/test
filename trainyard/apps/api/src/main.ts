@@ -137,6 +137,9 @@ async function main() {
     const v = process.env[name];
     if (v && !shape.test(v.trim())) console.error(`[billing] ${name} does not look right: it should start with ${want}`);
   }
+  for (const [name, v] of Object.entries(process.env)) {
+    if (name.startsWith("STRIPE_PRICE_") && v && !/^price_[A-Za-z0-9]{8,}$/.test(v.trim())) console.error(`[billing] ${name} does not look right ("${v.slice(0, 14)}…"): use the price ID from Stripe → Product catalog, price_…`);
+  }
   console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {
     await app.close();
