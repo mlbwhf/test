@@ -6820,7 +6820,7 @@ function aa_training_copy_i18n() {
 				'title'  => 'Certification SAFe Avancé',
 				'accent' => 'pour le poste senior.',
 				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect et Large Solution SAFe, '
-				          . 'en direct virtuel avec un SPCT Gold, examen inclus. Ce sont les '
+				          . 'en direct virtuel avec un SPCT Platinum, examen inclus. Ce sont les '
 				          . 'certifications que les grandes entreprises recherchent quand elles '
 				          . 'recrutent quelqu’un pour diriger une transformation, et non pour y '
 				          . 'participer.',
@@ -6888,7 +6888,7 @@ function aa_training_copy_i18n() {
 				'title'  => 'Certificación SAFe Avanzado',
 				'accent' => 'para el puesto sénior.',
 				'sub'    => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect y Large '
-				          . 'Solution SAFe, impartidos en vivo online por un Gold SPCT con el examen '
+				          . 'Solution SAFe, impartidos en vivo online por un Platinum SPCT con el examen '
 				          . 'incluido. Son las credenciales que buscan las grandes empresas cuando '
 				          . 'contratan a alguien para dirigir una transformación, no para participar '
 				          . 'en ella.',
@@ -6958,7 +6958,7 @@ function aa_training_copy_i18n() {
 				'title'  => 'شهادات SAFe المتقدّمة',
 				'accent' => 'للمقعد القيادي.',
 				'sub'    => 'SPC وASPC وRTE وLPM وAPM وSAFe Architect وLarge Solution '
-				          . 'SAFe، تُدرَّس مباشرة عبر الإنترنت على يد مدرّب Gold SPCT مع رسوم الامتحان '
+				          . 'SAFe، تُدرَّس مباشرة عبر الإنترنت على يد مدرّب Platinum SPCT مع رسوم الامتحان '
 				          . 'مشمولة. هذه هي الشهادات التي تبحث عنها المؤسسات الكبرى حين توظّف شخصًا '
 				          . 'ليقود تحوّلًا لا ليشارك فيه.',
 				'comp'   => 'مباشر عبر الإنترنت · الامتحان مشمول · تغيير الموعد بدون رسوم.',
@@ -7032,7 +7032,7 @@ function aa_training_copy() {
 			'title'   => 'Advanced SAFe certification',
 			'accent'  => 'for the senior seat.',
 			'sub'     => 'SPC, ASPC, RTE, LPM, APM, SAFe Architect and Large Solution SAFe, '
-			           . 'taught live online by a Gold SPCT with the exam fee included. These are the '
+			           . 'taught live online by a Platinum SPCT with the exam fee included. These are the '
 			           . 'credentials enterprises screen for when they are hiring someone to lead a '
 			           . 'transformation rather than take part in one.',
 			'comp'    => 'Live online · exam fee included · reschedule at no fee.',
@@ -8879,7 +8879,7 @@ function aa_reg_hub_hero( $atts ) {
 	$h .= '<span class="aah__kicker">Training &amp; certification</span>';
 	$h .= '<h1 class="aah__h1">' . (int) $total . ' certifications, '
 	    . '<em>for the people who lead the change.</em></h1>';
-	$h .= '<p class="aah__sub">Live-virtual cohorts taught by a Gold SPCT. Every course includes the '
+	$h .= '<p class="aah__sub">Live-virtual cohorts taught by a Platinum SPCT. Every course includes the '
 	    . 'exam voucher and the courseware, most run two to four days, and rescheduling is free '
 	    . 'with no deadline and no fee.</p>';
 	$h .= '<div class="aah__btns">'

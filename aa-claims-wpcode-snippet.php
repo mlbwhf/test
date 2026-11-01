@@ -107,6 +107,33 @@ function aa_claims_rules() {
 		   word is used legitimately elsewhere on the site. */
 		array( '/\b(?:5|five)\s+pillars\b/iu', 'the Six Practices' ),
 
+		/* ------------------------------------------------------------------
+		   PARTNER TIER — Gold became Platinum.
+		   ------------------------------------------------------------------
+		   Confirmed by the client, Nov 2026: Agile Agilist is now a
+		   Platinum SPCT partner of Scaled Agile. "Gold" sits on 40-plus pages
+		   in all four languages -- headers, heroes, the About pages, the city
+		   landing pages and the Course JSON-LD -- so it is corrected here, at
+		   render, the same way the pass guarantee was.
+
+		   ANCHORED ON THE PARTNER PHRASE, NEVER ON "Gold" ALONE. Every form
+		   the pages actually use is covered:
+		     SAFe(R) Gold Partner, Scaled Agile Gold Partner, Gold Partner de
+		     Scaled Agile, Gold Partner instructors   -> Gold + Partner
+		     a Gold SPCT, formateurs Gold SPCT        -> Gold + SPCT
+		     un SPCT Gold                             -> SPCT + Gold (French)
+		   The Arabic pages carry the English words "Gold SPCT", so the same
+		   rule covers them without anyone writing Arabic.
+
+		   THE EXCLUSIVITY CLAIMS ARE NOT ADDED HERE, deliberately. "The only
+		   Canadian Platinum SPCT partner" is for Canada-facing copy only, and
+		   "the only Platinum partner registered in the UAE" for UAE-facing copy
+		   only. A site-wide rule cannot tell which page is which market, so
+		   those belong in the page copy itself, placed by hand. */
+		array( '/\bGold(?=(?:\s|&nbsp;|\x{00A0})+(?:SPCT(?:\s|&nbsp;|\x{00A0})+)?partners?\b)/iu', 'Platinum' ),
+		array( '/\bGold(?=(?:\s|&nbsp;|\x{00A0})+SPCTs?\b)/u', 'Platinum' ),
+		array( '/\b(SPCTs?(?:\s|&nbsp;|\x{00A0})+)Gold\b/u', '${1}Platinum' ),
+
 		/* ---- English ----
 		   These REPLACE rather than delete. Removing the guarantee left the
 		   sentence shorter but said nothing in its place; the instruction is to
@@ -572,6 +599,11 @@ function aa_claims_report() {
 		   a number into the wrong language is worse than a report that names
 		   the page. */
 		'<div class="aa-stat-n">98%</div>' => 'pass-rate figure',
+		/* The old partner tier. Rewritten to Platinum at render; these list the
+		   pages whose stored copy still says Gold. */
+		'Gold Partner' => 'Gold partner tier',
+		'Gold SPCT'    => 'Gold partner tier',
+		'SPCT Gold'    => 'Gold partner tier',
 	);
 
 	$rows = array();
