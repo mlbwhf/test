@@ -257,6 +257,19 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${randomBytes(9).toString("base64url")}`;
 
   /** Payment is in. New customer: user + workspace, key kept for one pickup. Existing workspace: plan and seats applied. */
+  /**
+   * Stripe calls a subscription with a free trial "trialing" the moment it exists, before the
+   * card is saved. It is live for us once it is active, or trialing with a payment method on it
+   * (set when the card form confirms) or on its customer.
+   */
+  const isLive = (sub: StripeObject) => {
+    const status = String(sub.status ?? "");
+    if (status === "active") return true;
+    if (status !== "trialing") return false;
+    const customer = sub.customer as StripeObject | string | null | undefined;
+    const onCustomer = typeof customer === "object" && customer ? (customer.invoice_settings as StripeObject | undefined)?.default_payment_method : undefined;
+    return !!(sub.default_payment_method ?? onCustomer ?? sub.default_source);
+  };
   const fulfil = async (purchase: Purchase, patch: Partial<Purchase> = {}) => {
     if (purchase.workspaceId) {
       const record = tenants.record(purchase.workspaceId);
@@ -602,7 +615,12 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
               p.amountCents = Number(subPrice.unit_amount) * Number(subItem?.quantity ?? p.quantity);
               p.currency = String(subPrice.currency ?? p.currency ?? "usd");
             }
-            if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
+            if (isLive(obj) && p.status === "open") await fulfil(p);
+            else if (status === "trialing" && p.status === "open") {
+              // Card not saved yet: nothing is created or sent until it is.
+              await store.commit(STRIPE_ACTOR, "billing.awaiting-card", { purchase: p.id });
+              return reply.code(200).send({ ok: true, awaitingCard: true });
+            }
             else if (status === "past_due" || status === "unpaid") {
               p.status = status === "unpaid" ? "cancelled" : "past_due";
               p.lastFailureAt = store.now().toISOString();
@@ -656,9 +674,8 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const p = purchases().find((x) => (req.body.purchaseId && x.id === req.body.purchaseId) || (req.body.sessionId && x.checkoutSessionId === req.body.sessionId));
     if (!p) throw notFound("Purchase");
     if (p.status === "open" && p.subscriptionId && enabled) {
-      const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId)}`);
-      const status = String(sub.status ?? "");
-      if (status === "active" || status === "trialing") await fulfil(p);
+      const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId)}?expand[]=customer`);
+      if (isLive(sub)) await fulfil(p);
     }
     if (p.status !== "paid") return { status: p.status };
     const key = p.pendingKey;

@@ -980,7 +980,7 @@ describe("billing", () => {
       const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
       if (u.endsWith("/customers")) return json({ id: "cus_1" });
       if (u.endsWith("/subscriptions")) return json({ id: "sub_1", status: "incomplete", latest_invoice: { id: "in_1", amount_due: 3800, currency: "usd", payment_intent: { id: "pi_1", client_secret: "pi_1_secret_x" } } });
-      if (u.endsWith("/subscriptions/sub_1")) return json({ id: "sub_1", status: subStatus });
+      if (u.split("?")[0]!.endsWith("/subscriptions/sub_1")) return json({ id: "sub_1", status: subStatus });
       if (u.endsWith("/billing_portal/sessions")) return json({ id: "bps_1", url: "https://billing.stripe.com/p/session/x" });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
@@ -1185,7 +1185,7 @@ describe("workspaces", () => {
       if (u.endsWith("/customers")) return json({ id: "cus_9" });
       if (u.endsWith("/subscriptions")) return json({ id: "sub_9", status: "incomplete", latest_invoice: { amount_due: 1900, currency: "usd", payment_intent: { client_secret: "pi_9_secret" } } });
       if (u.endsWith("/subscriptions/sub_9") && init?.method === "POST") { quantity = Number(new URLSearchParams(String(init.body)).get("items[0][quantity]")); return json({ id: "sub_9", status: "active" }); }
-      if (u.endsWith("/subscriptions/sub_9")) return json({ id: "sub_9", status: subStatus, items: { data: [{ id: "si_9", quantity }] } });
+      if (u.split("?")[0]!.endsWith("/subscriptions/sub_9")) return json({ id: "sub_9", status: subStatus, items: { data: [{ id: "si_9", quantity }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const { call, store } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
@@ -1274,7 +1274,7 @@ describe("trial, monthly start and the money-back guarantee", () => {
       }
       if (u.endsWith("/subscriptions/sub_t") && method === "DELETE") { subStatus = "canceled"; return json({ id: "sub_t", status: "canceled" }); }
       if (u.endsWith("/subscriptions/sub_t") && method === "POST") return json({ id: "sub_t", status: "active" });
-      if (u.endsWith("/subscriptions/sub_t")) return json({ id: "sub_t", status: subStatus, items: { data: [{ id: "si_t", price: { id: "price_tm" } }] } });
+      if (u.startsWith("https://api.stripe.com/v1/subscriptions/sub_t")) return json({ id: "sub_t", status: subStatus, default_payment_method: "pm_card", items: { data: [{ id: "si_t", price: { id: "price_tm" } }] } });
       if (u.endsWith("/refunds")) return json({ id: "re_t", amount: 3800 });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
@@ -1497,7 +1497,7 @@ describe("trial emails", () => {
       const method = init?.method ?? "GET";
       if (u.endsWith("/customers")) return json({ id: "cus_m" });
       if (u.endsWith("/subscriptions") && method === "POST") return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: "seti_m" } });
-      if (u.endsWith("/subscriptions/sub_m")) return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm" } }] } });
+      if (u.startsWith("https://api.stripe.com/v1/subscriptions/sub_m")) return json({ id: "sub_m", status: "trialing", default_payment_method: "pm_card", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm" } }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const mailer = new MemoryMailer();
@@ -1837,7 +1837,7 @@ describe("paid sign-up end to end on a closed server", () => {
     const mailer = new MemoryMailer();
     const codeIn = () => /\b(\d{6})\b/.exec(mailer.sent.filter((m) => /code/.test(m.subject)).at(-1)!.subject)![1]!;
     const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
-    let subs = 0;
+    let subs = 0, cardSaved = false;
     const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
       const u = String(url);
       const method = init?.method ?? "GET";
@@ -1846,7 +1846,7 @@ describe("paid sign-up end to end on a closed server", () => {
         subs++;
         return json({ id: `sub_e2e${subs}`, status: "trialing", trial_end: 1_800_000_000, items: { data: [{ id: "si", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: `seti_secret_${subs}` } });
       }
-      if (/\/subscriptions\/sub_e2e\d+$/.test(u)) return json({ id: u.split("/").at(-1), status: "trialing", items: { data: [{ id: "si", price: { id: "price_tm" } }] } });
+      if (/\/subscriptions\/sub_e2e\d+(\?|$)/.test(u)) return json({ id: u.split("/").at(-1)!.split("?")[0], status: "trialing", default_payment_method: cardSaved ? "pm_card" : null, items: { data: [{ id: "si", price: { id: "price_tm" } }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${method} ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const { call, store } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
@@ -1869,7 +1869,12 @@ describe("paid sign-up end to end on a closed server", () => {
     const sub = await call("POST", "/v1/billing/subscribe", { signupId: id, interval: "monthly", quantity: 1 });
     expect(sub.status).toBe(200);
     expect(sub.body).toMatchObject({ mode: "setup", clientSecret: expect.stringMatching(/^seti_secret_/), amountDue: 0, recurringAmount: 1900, trialDays: 30 });
+    // Stripe already calls the subscription "trialing", but no card is saved yet: nothing is created, nothing is sent.
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body).toEqual({ status: "open" });
+    expect(mailer.sent.some((m) => m.from === "billing")).toBe(false);
+    expect(store.state.users.some((u) => u.email === "ada@trainyard-test.io")).toBe(false);
     // After Stripe confirms the card, the page asks for the workspace.
+    cardSaved = true;
     const claim = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId });
     expect(claim.status).toBe(200);
     expect(claim.body).toMatchObject({ status: "paid", plan: "trainer", workspace: { plan: "trainer", seats: 1 } });
@@ -1900,6 +1905,39 @@ describe("payment service refusals reach the page", () => {
     expect(sub.status).toBe(503);
     expect(sub.body.error).toMatchObject({ code: "STRIPE" });
     expect(sub.body.error.message).toContain("ID of an API key");
+  });
+});
+
+describe("a trial is live only once the card is saved", () => {
+  it("ignores Stripe's early trialing event and fulfils on the one that carries the payment method", async () => {
+    const mailer = new MemoryMailer();
+    const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      if (u.endsWith("/customers")) return json({ id: "cus_w" });
+      if (u.endsWith("/subscriptions") && init?.method === "POST") return json({ id: "sub_w", status: "trialing", trial_end: 1_800_000_000, items: { data: [{ id: "si", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: "seti_w" } });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id });
+    const t = Math.floor(store.now().getTime() / 1000);
+    const send = async (event: object) => {
+      const payload = JSON.stringify(event);
+      const sig = `t=${t},v1=${createHmac("sha256", "whsec_test").update(`${t}.${payload}`).digest("hex")}`;
+      const res = await app.inject({ method: "POST", url: "/v1/webhooks/stripe", payload, headers: { "content-type": "application/json", "stripe-signature": sig } });
+      return JSON.parse(res.body);
+    };
+    // The event Stripe sends as soon as the subscription exists: trialing, no card yet.
+    expect(await send({ id: "evt_1", created: t, type: "customer.subscription.created", data: { object: { id: "sub_w", status: "trialing", trial_end: 1_800_000_000, default_payment_method: null, metadata: { signupId: s.body.signup.id } } } })).toMatchObject({ awaitingCard: true });
+    expect(store.state.users).toHaveLength(0);
+    expect(mailer.sent.filter((m) => m.from === "billing")).toHaveLength(0);
+    // The card form confirms: Stripe attaches the payment method and sends an update.
+    expect(await send({ id: "evt_2", created: t + 5, type: "customer.subscription.updated", data: { object: { id: "sub_w", status: "trialing", trial_end: 1_800_000_000, default_payment_method: "pm_card" } } })).toMatchObject({ ok: true });
+    expect(store.state.users.map((u) => u.email)).toEqual(["ada@trainyard-test.io"]);
+    expect(store.state.purchases!.find((p) => p.id === sub.body.purchaseId)!.status).toBe("paid");
+    await new Promise((r) => setTimeout(r, 50));
+    expect(mailer.sent.filter((m) => m.from === "billing").map((m) => m.subject)[0]).toContain("trial has started");
   });
 });
 
