@@ -127,6 +127,16 @@ async function main() {
       (e: Error) => console.error(`[mail] cannot log in to ${where}: ${e.message}`),
     );
   }
+  // Catch pasted look-alikes (a key's ID, a placeholder) at start instead of on the first customer.
+  const keyShape: [string, RegExp, string][] = [
+    ["STRIPE_SECRET_KEY", /^(sk|rk)_(live|test)_/, "sk_live_… (Developers → API keys → Secret key; mk_… is the key's ID, not the key)"],
+    ["STRIPE_PUBLISHABLE_KEY", /^pk_(live|test)_/, "pk_live_…"],
+    ["STRIPE_WEBHOOK_SECRET", /^whsec_/, "whsec_… (Webhooks → your endpoint → Signing secret; we_… is the endpoint's ID)"],
+  ];
+  for (const [name, shape, want] of keyShape) {
+    const v = process.env[name];
+    if (v && !shape.test(v.trim())) console.error(`[billing] ${name} does not look right: it should start with ${want}`);
+  }
   console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {
     await app.close();

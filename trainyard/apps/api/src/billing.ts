@@ -130,12 +130,13 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` }, signal } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}), signal });
     } catch (e) {
       console.error(`[billing] Stripe ${method} ${path} did not answer: ${(e as Error).message}`);
-      throw new ApiError(504, "STRIPE_TIMEOUT", "The payment service did not answer in time. Try again in a moment.");
+      throw new ApiError(503, "STRIPE_TIMEOUT", "The payment service did not answer in time. Try again in a moment.");
     }
     const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } } & StripeObject;
     if (!res.ok) {
       console.error(`[billing] Stripe ${method} ${path} refused (${res.status}): ${json.error?.message ?? "no message"}`);
-      throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
+      // 503, not 502: the proxy in front (Cloudflare) swaps 502 and 504 answers for its own page, and the browser could not read the reason.
+      throw new ApiError(503, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
     }
     return json;
   };
@@ -370,7 +371,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const invoice = sub.latest_invoice as StripeObject | null;
     const intent = (invoice?.payment_intent as StripeObject | null) ?? (sub.pending_setup_intent as StripeObject | null);
     const clientSecret = intent?.client_secret as string | undefined;
-    if (!clientSecret) throw new ApiError(502, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
+    if (!clientSecret) throw new ApiError(503, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
     const trialEnd = typeof sub.trial_end === "number" ? new Date(sub.trial_end * 1000).toISOString() : undefined;
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
     const unitAmount = Number((item?.price as StripeObject | undefined)?.unit_amount ?? 0);
@@ -407,7 +408,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     if (req.body.quantity < inUse) throw new ApiError(422, "SEATS_IN_USE", `${inUse} ${record.plan === "academy" ? "trains" : "trainers"} are in use; remove some before going below that.`);
     const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
-    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    if (!item?.id) throw new ApiError(503, "STRIPE", "The subscription has no item to change.");
     await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][quantity]": req.body.quantity, proration_behavior: "always_invoice" });
     p.quantity = req.body.quantity;
     record.seats = req.body.quantity;
@@ -427,7 +428,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const price = priceFor(record.plan, req.body.interval);
     const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
-    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    if (!item?.id) throw new ApiError(503, "STRIPE", "The subscription has no item to change.");
     await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][price]": price, "items[0][quantity]": p.quantity, proration_behavior: "always_invoice" });
     p.interval = req.body.interval;
     await store.commit(req.principal, "billing.interval", { purchase: p.id, workspaceId: record.id, interval: p.interval });

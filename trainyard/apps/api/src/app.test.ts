@@ -1891,6 +1891,18 @@ describe("paid sign-up end to end on a closed server", () => {
   });
 });
 
+describe("payment service refusals reach the page", () => {
+  it("answers 503 with Stripe's reason when the key is wrong, so the proxy passes it through", async () => {
+    const refuse = (async () => new Response(JSON.stringify({ error: { message: "Invalid API key provided: mk_1***. This looks like the ID of an API key rather than the key itself." } }), { status: 401 })) as unknown as typeof fetch;
+    const { call } = await setup({ billing: { secretKey: "mk_1notakey", publishableKey: "pk_test", prices: { "trainer-monthly": "price_tm" }, fetch: refuse } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id });
+    expect(sub.status).toBe(503);
+    expect(sub.body.error).toMatchObject({ code: "STRIPE" });
+    expect(sub.body.error.message).toContain("ID of an API key");
+  });
+});
+
 describe("rooms", () => {
   it("organises boards in rooms and decides access per room", async () => {
     const { call } = await setup();
