@@ -123,9 +123,20 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const purchases = () => (store.state.purchases ??= []);
   const signups = () => store.state.signups ?? [];
   const stripe = async (path: string, body?: Record<string, string | number | undefined>, method: "GET" | "POST" | "DELETE" = body ? "POST" : "GET"): Promise<StripeObject> => {
-    const res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` } } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}) });
-    const json = (await res.json()) as { error?: { message?: string } } & StripeObject;
-    if (!res.ok) throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
+    // A time limit, so a slow Stripe gives a readable answer before the proxy in front gives up silently.
+    const signal = AbortSignal.timeout(20_000);
+    let res: Response;
+    try {
+      res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` }, signal } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}), signal });
+    } catch (e) {
+      console.error(`[billing] Stripe ${method} ${path} did not answer: ${(e as Error).message}`);
+      throw new ApiError(504, "STRIPE_TIMEOUT", "The payment service did not answer in time. Try again in a moment.");
+    }
+    const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } } & StripeObject;
+    if (!res.ok) {
+      console.error(`[billing] Stripe ${method} ${path} refused (${res.status}): ${json.error?.message ?? "no message"}`);
+      throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
+    }
     return json;
   };
   const web = () => (opts.webUrl ?? "").replace(/\/$/, "");
