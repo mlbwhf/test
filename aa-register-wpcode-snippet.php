@@ -7184,7 +7184,10 @@ function aa_training_courses( $cat ) {
 		   stays in adv-safe above; nobody asked to take it out of there. */
 		'safe-roles'    => array( 'sa', 'scrum-master', 'popm', 'asm', 'devops', 'team-practitioner', 'bo',
 		                          'arch', 'ase' ),
-		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2' ),
+		/* Launching AI-Native ARTs added 1 Nov 2026: its page was live but it was
+		   missing from this list, so the training page never showed it. */
+		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2',
+		                          'launching-ai-native-arts' ),
 		/* THESE TWO USED TO TAKE THEIR LIST FROM THE PAGE'S OWN CHILDREN.
 		   That works in English, where the queried page is the English track
 		   page and its children are the course pages. It fails everywhere else:
