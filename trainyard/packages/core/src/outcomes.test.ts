@@ -77,7 +77,10 @@ describe("class boards", () => {
     expect(top[2]!.title).toContain("Building a Foundation");
     // SPC reuses the Leading SAFe lessons and plans with four teams; Leading SAFe with three.
     expect(spc.frames.filter((f) => /^Team [A-D] .* board$/.test(f.title))).toHaveLength(4);
-    expect(classBoard(CLASSES[0]!).frames.filter((f) => /^Team [A-D] .* board$/.test(f.title))).toHaveLength(3);
+    // Leading SAFe runs its PI Planning simulation on the Class Studio board, one shared by its five steps.
+    const lsa = classBoard(CLASSES[0]!);
+    expect(lsa.frames.filter((f) => /^Team [A-D] .* board$/.test(f.title))).toHaveLength(0);
+    expect(lsa.frames.filter((f) => f.activity?.config?.shared === "pi-planning").map((f) => f.activity!.board)).toEqual(["pib", "pcs", "ppr", "pbv", "prm"]);
     // The readiness checklist appears in SPC lesson 10 and RTE lesson 3, pointing at the live canvas.
     const rte = classBoard(CLASSES[4]!);
     // The chapters built from the tools carry the tools' own content, not links to them.

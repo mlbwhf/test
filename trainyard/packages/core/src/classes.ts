@@ -14,6 +14,7 @@
 import { emptyBoard, instantiate, type Board, type BoardNode, type Frame } from "./boards.js";
 import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from "./activities.js";
 import { RTE_COURSE } from "./courses/rte.js";
+import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -546,17 +547,12 @@ const RAW_CLASSES: ClassSpec[] = [
     id: "leading-safe",
     name: "Leading SAFe",
     short: "LS",
-    blurb: "Two days: business agility, the mindset and principles, team and technical agility, Agile Product Delivery with a PI planning simulation, Lean Portfolio Management, leading the change.",
+    blurb: "Two days, chapter by chapter: business agility, the mindset and principles, team and technical agility, Agile Product Delivery with the PI Planning simulation, Lean Portfolio Management, leading the change. Each exercise on its own Class Studio board with its timing and steps.",
     days: 2,
-    challenge: "We're running this class to solve: problem #1, issue #2, concern #3. By the end: outcome #1, outcome #2, outcome #3.",
-    lessons: [
-      { title: "Thriving in the Digital Age with Business Agility", exercises: [{ kind: "stickies", title: "What brought you here", lanes: ["What I want from the class", "A challenge I bring"], hint: "One sticky each. Examples from past classes: 'How to square line management with multidisciplinary teams', 'Can Agile and fixed-price contracts be friends?', 'How to reduce the overhead of scaled agile'.", rows: 3 }, { kind: "zones", title: "Potential for improvement × ease of implementation", zones: ["High potential · easy", "High potential · difficult", "Low potential · easy", "Low potential · difficult"] }] },
-      LEADING_SAFE_LESSONS[2],
-      { title: "Establishing Team and Technical Agility", exercises: [{ kind: "stickies", title: "Built-in quality in your teams", lanes: ["Practices we have", "Practices we lack", "First step"], rows: 2, color: COLORS.green }] },
-      LEADING_SAFE_LESSONS[4],
-      LEADING_SAFE_LESSONS[5],
-      { title: "Leading the Change", exercises: [{ kind: "table", title: "The leader's call to action (one page)", columns: ["Part", "Your draft"], rows: [["Organisation leadership: what we need", "Need to improve timeliness of delivery."], ["Business language: the issue", "We are unable to predict what will get done by when; we miss commitments and blow through estimates."], ["Impacts", ""], ["Call to action", "Fully adopt SAFe to shape teams, create accurate estimates and achieve milestones predictably: outcomes understood and measured; backlog mature; teams have the skills; delivery on a measurable cadence."], ["End with an ask", "More time to help leaders learn."]] }, { kind: "stickies", title: "Who do we need? Guiding coalition", lanes: ["Sponsors", "Change agents", "Who might resist"], rows: 2 }] },
-    ],
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: LEADING_SAFE_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LEADING_SAFE_COURSE,
   },
   {
     id: "spc",
@@ -767,7 +763,6 @@ export const CLASS_TOOLS = {
 
 /** Which chapter (1-based lesson number) of which class is built from which tool. */
 export const CLASS_TOOL_CHAPTERS: Record<string, Record<number, (keyof typeof CLASS_TOOLS)[]>> = {
-  "leading-safe": { 4: ["piPlanning"] },
   spc: { 4: ["piPlanning"], 9: ["valueStreams"], 10: ["readiness"], 11: ["inspectAdapt"] },
   rte: { 3: ["readiness"], 6: ["inspectAdapt"] },
   popm: { 2: ["readiness", "features"], 3: ["piPlanning"], 5: ["inspectAdapt"] },

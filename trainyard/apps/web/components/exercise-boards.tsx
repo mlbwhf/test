@@ -6,7 +6,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type React from "react";
 import { STUDIO_KINDS, studioModel } from "@/components/studio-model";
+import { LSA_KINDS, lsaModel } from "@/components/studio-model-lsa";
 import * as Views from "@/components/studio-views";
+import * as Lsa from "@/components/studio-views-lsa";
 import { applyStateOp, type Board, type Frame, type StateOp } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 
@@ -229,12 +231,16 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
-  return STUDIO_KINDS.has(props.kind) ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
+  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
 const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = {
   talk: Views.TalkView, quad: Views.QuadView, check: Views.CheckView, connect: Views.ConnectView, trust: Views.TrustView, bound: Views.BoundView, next: Views.NextView, vsm: Views.VsmView, ba: Views.BaView, rca: Views.RcaView,
   metrics: Views.MetView, ctx: Views.CtxView, accel: Views.AccView, wheel: Views.WheelView, evt: Views.EvtView, kanban: Views.KanView, pitch: Views.PitchView, disc: Views.DiscView, bv: Views.BvView, roam: Views.RoamView, art: Views.ArtView,
+  // Leading SAFe (studio-views-lsa.tsx); an overview board picks its view from the exercise's setup.
+  vote: Lsa.VoteView, vsid: Lsa.VsidView, delay: Lsa.DelayView, prin: Lsa.PrinView, sbd: Lsa.SbdView, dec: Lsa.DecView, emp: Lsa.EmpView, feat: Lsa.FeatView, wsjf: Lsa.WsjfView, rse: Lsa.RseView, cap: Lsa.CapView, attr: Lsa.AttrView,
+  pib: Lsa.PibView, pcs: Lsa.PcsView, ppr: Lsa.PprView, pbv: Lsa.PbvView, prm: Lsa.PrmView,
+  ov: ({ v }) => (v.view === "bp" ? <Lsa.OvBView v={v} /> : v.view === "pri" ? <Lsa.OvPView v={v} /> : <Lsa.OvDView v={v} />),
 };
 
 /** A board from the Class Studio design: its generated layout, driven by the ported logic (studio-model.ts). */
@@ -248,7 +254,20 @@ function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: 
       return [];
     }
   }, [board.id]);
-  const v = studioModel({ kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask });
+  // The PI Planning simulation builds its teams from the class's students; only the trainer may list them.
+  const needsStudents = trainer && ["pib", "pcs", "ppr", "pbv", "prm"].includes(kind);
+  useEffect(() => {
+    if (!needsStudents) return;
+    let gone = false;
+    api<{ students: { name: string }[] }>("GET", `/v1/boards/${encodeURIComponent(board.id)}/students`)
+      .then((r) => !gone && setUi({ students: r.students.map((s) => s.name) }))
+      .catch(() => undefined);
+    return () => {
+      gone = true;
+    };
+  }, [needsStudents, board.id, setUi]);
+  const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask };
+  const v = LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
   const View = VIEWS[kind]!;
   return (
     <div className="studio-board">

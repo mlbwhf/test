@@ -88,6 +88,34 @@ describe("the RTE class", () => {
   });
 });
 
+describe("the Leading SAFe class", () => {
+  it("opens with the Welcome chapter, then a lesson per chapter, every exercise on its Class Studio board with the design's wording", async () => {
+    const { CLASSES, classBoard } = await import("./index.js");
+    const b = classBoard(CLASSES.find((c) => c.id === "leading-safe")!);
+    const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Welcome", "Lesson 2: Thriving in the digital age with business agility", "Lesson 3: Building a foundation with mindset, values and principles", "Lesson 4: Establishing team and technical agility", "Lesson 5: Building solutions with Agile product delivery", "Lesson 6: Exploring Lean Portfolio Management", "Lesson 7: Leading the change"]);
+    const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y);
+    expect(kids(top[1]!.id).map((f) => f.title)).toEqual(["Overview: Welcome to Leading SAFe", "Overview: The story of the course on the Big Picture", "Discussion: What are you hoping to get from SAFe?", "Discussion: AI disruption", "Activity: Course overview: vote on a discipline"]);
+    expect(kids(top[3]!.id).map((f) => f.activity!.board)).toEqual(["vsid", "delay", "prin", "disc", "sbd", "talk", "disc", "dec", "ov"]);
+    expect(kids(top[5]!.id).map((f) => f.activity!.board)).toEqual(["emp", "feat", "wsjf", "rse", "cap", "pib", "pcs", "ppr", "pbv", "prm", "disc"]);
+    const exercises = b.frames.filter((f) => f.activity);
+    expect(exercises).toHaveLength(33);
+    expect(exercises.every((f) => f.activity!.board)).toBe(true);
+    // Work that carries from one exercise into the next shares one board.
+    const shared = (g: string) => exercises.filter((f) => f.activity!.config?.shared === g).map((f) => f.activity!.board);
+    expect(shared("value-stream")).toEqual(["vsid", "delay"]);
+    expect(shared("features")).toEqual(["feat", "wsjf"]);
+    expect(shared("pi-planning")).toEqual(["pib", "pcs", "ppr", "pbv", "prm"]);
+    // The design's wording, step by step, and its trainer note beside the exercise.
+    const dec = b.frames.find((f) => f.title === "Activity: Decentralize decision-making")!.activity!;
+    expect(dec.steps.split("\n")[2]).toBe("Step 3: Add the total values: zero to three = centralize; four to six = decentralize.");
+    expect(dec.side).toEqual([{ title: "Trainer note", text: "Frequent and time-critical: Yes = 2, No = 0. Economies of scale: Yes = 0, No = 2.", instructorOnly: true }]);
+    expect(b.frames.find((f) => f.title === "Discussion: Responsible AI and Portfolio Leadership")!.activity!.config!.qs).toHaveLength(3);
+    expect(b.frames.find((f) => f.title === "Overview: The SAFe principles")!.activity!.config).toEqual({ view: "pri" });
+    for (let i = 1; i < top.length; i++) expect(top[i]!.y).toBeGreaterThan(top[i - 1]!.y + top[i - 1]!.height);
+  });
+});
+
 describe("upgrading a class to its template's current version", () => {
   it("adds the new chapters and keeps what the class did, the renamed exercise included", async () => {
     const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade } = await import("./index.js");
