@@ -86,6 +86,8 @@ compose() { docker compose "${opts[@]}" "$@"; }
 for required in TRAINYARD_DOMAIN POSTGRES_PASSWORD TRAINYARD_ADMIN_KEY; do
   [ -n "$(envval $required)" ] || { echo "set $required in .env before deploying" >&2; exit 1; }
 done
+# .env must belong to the deploy user: editing it as root (mv, cp) hands it to root and the deploy can no longer read or pin it.
+[ -w .env ] || { echo "== .env is owned by $(stat -c %U .env) and not writable by $(id -un). On the server run: sudo chown $(id -un) /opt/trainyard/.env && sudo chmod 600 /opt/trainyard/.env" >&2; exit 1; }
 [ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
 # This box also runs EnrollClass (gate). Never start the local model when it would push the
