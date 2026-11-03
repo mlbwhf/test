@@ -271,6 +271,7 @@ export function PlanningRoomView({ v }: { v: any }) {
 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "12px" } as any}>
 {(v.scenarios || []).map((s: any, s_n: number) => (<Fragment key={s_n}><button onClick={s.go} style={{ textAlign: "left", cursor: "pointer", border: "2px solid #14123a", borderRadius: "18px", padding: "14px 16px", background: `${s.bg}`, boxShadow: `${s.sh}`, display: "flex", flexDirection: "column", gap: "6px", fontFamily: "inherit", color: "#14123a" } as any}><span style={{ font: "800 22px 'Familjen Grotesk',sans-serif", letterSpacing: "-.02em" } as any}>{s.name}</span><span style={{ fontSize: "14px", lineHeight: "1.35" } as any}>{s.blurb}</span><span style={{ font: "700 11px ui-monospace,Menlo,monospace", color: "#5b5b6e" } as any}>{s.meta}</span></button></Fragment>))}
 </div>
+{v.ownBacklog}
 <div style={{ display: "flex", gap: "12px", marginTop: "26px", flexWrap: "wrap", alignItems: "center" } as any}>
 <button onClick={v.startRoom} style={{ background: "#14123a", color: "#fff", border: "0", padding: "16px 30px", borderRadius: "99px", fontWeight: "700", fontSize: "18px", cursor: "pointer" } as any}>Start planning</button>
 <span style={{ fontSize: "14px", color: "#5b5b6e" } as any}>{v.draft} teams · {v.scnName}</span>

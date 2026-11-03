@@ -11,7 +11,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loading } from "@/components/ui";
 import { OkrBoardView, PlanningRoomView, RoadmapView } from "@/components/planning-views";
 import { useDoc, useDocOnce, type DocKey } from "@/lib/doc";
-import { ApiFailure } from "@/lib/api";
+import { ALICE_FEATURES, GEEKBOOKS_FEATURES, type BacklogFeature } from "@/components/handout-scenarios";
+import { api, ApiFailure } from "@/lib/api";
 
 const page = (bg: string) => ({ margin: "-16px", padding: "0 0 60px", background: bg, minHeight: "100vh", fontFamily: "'Instrument Sans', sans-serif", color: "#14123a" }) as React.CSSProperties;
 const Note = ({ text }: { text: string | null }) => (text ? <div style={{ margin: "0 5vw", padding: "10px 16px", background: "#fff4c2", border: "2px solid #14123a", borderRadius: 12, fontWeight: 600 }}>{text}</div> : null);
@@ -22,6 +23,12 @@ export type RoadmapDoc = { lanes: { id: string; name: string; info: string }[]; 
 const COL: Record<string, string> = { epic: "#4a5fe8", enabler: "#c8372d", feature: "#14123a" };
 const TN: Record<string, string> = { epic: "Epic", enabler: "Enabler", feature: "Feature" };
 const MAX = 12;
+function toB64(buf: ArrayBuffer): string {
+  let out = "";
+  const b = new Uint8Array(buf);
+  for (let i = 0; i < b.length; i += 0x8000) out += String.fromCharCode(...b.subarray(i, i + 0x8000));
+  return btoa(out);
+}
 const TINT = ["#cfe9e4", "#e6e0f7", "#f6e3c9"];
 const BAND = ["Forecast in quarters", "Forecast in half years", "Forecast in years"];
 const nid = (p: string) => p + Math.random().toString(36).slice(2, 8);
@@ -248,10 +255,10 @@ export function OkrBoardPage() {
 }
 
 // ---- Planning room (the multi-team train yard) --------------------------------------------
-type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
+type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; text?: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
 /** The PI calendar: start date, weeks per iteration, iterations in the PI (the last one is IP). */
 export type Cal = { start: string; weeks: 1 | 2 | 3; n: number };
-export type WorkDoc = { scn?: string; cal?: Cal; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
 const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
 const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
 const POKER: (string | number)[] = ["?", 1, 2, 3, 5, 8, 13, 21, 40, 100, "∞"];
@@ -265,49 +272,58 @@ const EPICS0 = ["GPS", "Follow route", "Stay in lane", "Obey traffic laws", "Map
 const OBJ0: Record<string, string> = { o1: "Increase customer satisfaction", o2: "Optimize operational processes", o3: "Drive higher conversion rates", o4: "Integrate advanced analytics" };
 const LINKS0: Record<string, string[]> = { o1: ["Follow route"], o2: ["Mapping software", "Delivery spike"], o3: ["Obey traffic laws"], o4: ["GPS"] };
 const CAP0 = [12, 16, 14, 16];
-/** The simulations a trainer can seed the teams with (design: `SCN`). ALICE is a placeholder until the handout arrives. */
-type Scenario = { name: string; blurb: string; ph: boolean; feats: string[]; pios: [string, number, boolean][]; risks: string[] };
+/** The simulations a trainer can seed the teams with (design: `SCN`): the two class handouts, a blank board, or the trainer's own backlog. */
+type Scenario = { name: string; blurb: string; feats: string[]; features?: BacklogFeature[]; pios: [string, number, boolean][]; risks: string[]; own?: boolean };
 export const SCN: Record<string, Scenario> = {
-  alice: { name: "ALICE", blurb: "Customer service platform. Placeholder content until the handout is loaded.", ph: true,
-    feats: ["Order lookup", "Returns portal", "Loyalty points", "Store locator", "Gift cards", "Delivery tracking", "Inventory alerts", "Customer chat"],
-    pios: [["99% chat availability", 8, true], ["Customers self-serve returns", 5, true], ["Loyalty points on mobile", 3, false]], risks: ["Chat vendor contract", "Legacy order API limit", "Key engineer on leave"] },
-  geek: { name: "GeekBooks", blurb: "Online bookstore with shopping, shipping and admin features.", ph: false,
-    feats: ["Book detail display", "Profile management", "Help center", "Data export", "Teams connector", "Deployment automation", "New administration interface", "Links"],
+  alice: { name: "ALICE", blurb: "The autonomous delivery vehicle from the Leading SAFe handout: seven features, their stories and enabler spikes, sized as in the handout.",
+    feats: ALICE_FEATURES.map((f) => f.title), features: ALICE_FEATURES, pios: [],
+    risks: ["GPS expertise to calculate arrival and travel times", "Test track configured with lines, mock vehicles and heavy loads", "Bandwidth to stream the vehicle position to the mobile app"] },
+  geek: { name: "GeekBooks", blurb: "The online bookstore from the Leading SAFe handout: ten features, their stories and enablers, sized as in the handout.",
+    feats: GEEKBOOKS_FEATURES.map((f) => f.title), features: GEEKBOOKS_FEATURES,
     pios: [["95% system uptime", 8, true], ["Allow users to choose their preferred shipping method", 7, true], ["Implement a fully functional shipping method", 5, true], ["Updated shopping cart feature", 3, false]], risks: ["Call center training", "UX interface not ready", "Payment vendor rate limit"] },
-  av: { name: "Autonomous delivery", blurb: "The SAFe solution roadmap example. Parent epics come from your Roadmap.", ph: false,
+  av: { name: "Autonomous delivery", blurb: "The SAFe solution roadmap example. Parent epics come from your Roadmap.",
     feats: ["GPS integration", "Route following", "Lane keeping", "Obstacle detection", "Surround cameras", "Self-park", "Traffic law rules", "Delivery tests"],
     pios: [["Selection of mapping software", 8, true], ["Front camera", 6, true], ["Radar components", 5, true], ["Install communications on mule", 4, true], ["Send real-time status", 3, false]], risks: ["Sensor supplier delay", "Test track availability", "Map licence cost"] },
-  empty: { name: "Empty trains", blurb: "Blank board for each team. Create your own tickets.", ph: false, feats: [], pios: [], risks: [] },
+  own: { name: "Your own backlog", blurb: "Upload the feature spreadsheets or a CSV, or pull features and stories from Jira or Azure DevOps.", feats: [], pios: [], risks: [], own: true },
+  empty: { name: "Empty trains", blurb: "Blank board for each team. Create your own tickets.", feats: [], pios: [], risks: [] },
 };
 // Story titles are built from the feature until the handouts bring real stories.
 const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
-type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; busy: string; note: string; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
-function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }): Ticket[] {
+function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, own?: BacklogFeature[]): Ticket[] {
   const S = SCN[scn], t: Ticket[] = [];
-  if (!S || !S.feats.length) return t;
+  if (!S) return t;
+  const features = S.own ? (own ?? []) : S.features;
+  const titles = features ? features.map((f) => f.title) : S.feats;
+  if (!titles.length) return t;
   const key = () => `TY-${++kn.n}`;
   for (let k = 1; k <= n; k++) {
     const fids: string[] = [], fs: string[] = [];
-    for (let j = 0; j < 3; j++) { const id = key(), title = S.feats[((k - 1) * 3 + j) % S.feats.length]!; fids.push(id); fs.push(title); t.push({ id, type: "feature", title, parent: epics[(k + j * 2) % epics.length], team: k, iter: j < 2 ? j + 1 : null, pts: 0 }); }
-    for (let j = 0; j < 4; j++) { const [pre, pts] = STORY_T[j]!; t.push({ id: key(), type: "story", title: pre + fs[j % 3]!, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
-    t.push({ id: key(), type: "risk", title: S.risks[k % S.risks.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
+    // Three features per team, each team starting three further along the list, so teams get different work.
+    for (let j = 0; j < Math.min(3, titles.length); j++) { const id = key(), title = titles[((k - 1) * 3 + j) % titles.length]!; fids.push(id); fs.push(title); t.push({ id, type: "feature", title, parent: epics[(k + j * 2) % epics.length], team: k, iter: features ? null : j < 2 ? j + 1 : null, pts: 0 }); }
+    if (features) {
+      // The handout's stories, as written and sized (0 = the team sizes it), all in the freight yard to plan.
+      fs.forEach((title, j) => { const f = features.find((x) => x.title === title); f?.stories.forEach((st) => t.push({ id: key(), type: "story", title: st.enabler ? `Enabler: ${st.title}` : st.title, text: [st.text, st.note ? `Note: ${st.note}` : ""].filter(Boolean).join(" "), parent: fids[j], team: k, iter: null, pts: st.pts })); });
+    } else {
+      for (let j = 0; j < 4; j++) { const [pre, pts] = STORY_T[j]!; t.push({ id: key(), type: "story", title: pre + fs[j % 3]!, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
+    }
+    if (S.risks.length) t.push({ id: key(), type: "risk", title: S.risks[k % S.risks.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
     S.pios.forEach(([title, bv, c]) => t.push({ id: key(), type: "pio", title, team: k, bv: k % 2 && c ? bv : 0, commit: c, pts: 0, iter: null }));
   }
   return t;
 }
 
-/** The planning room: the workspace's own, or a class's when `docKey` names its board. */
 export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey } = {}) {
   const { doc, loaded, save, error } = useDoc<WorkDoc>(docKey);
   const road = useDocOnce<RoadmapDoc>("roadmap");
   const okr = useDocOnce<OkrDoc>("okr-board");
   const [s, setS] = useState<Room | null>(null);
   useEffect(() => {
-    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, calOpen: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, calOpen: false, busy: "", note: "", teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
   }, [loaded, doc, road, okr, s]);
   useEffect(() => {
-    if (s && s.teams) save({ scn: s.scn, cal: s.cal, teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
   }, [s, save]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
   const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
@@ -321,7 +337,30 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const selT = s.sel ? by[s.sel] : undefined;
   const upd = (id: string, patch: Partial<Ticket>) => set((t) => ({ tickets: t.tickets.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
   const flashIt = (id: string) => { set(() => ({ flash: id })); setTimeout(() => set(() => ({ flash: null })), 2200); };
-  const start = () => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, s.scn, epics, kn); set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null })); };
+  const start = () => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, s.scn, epics, kn, s.backlog); if (!tickets.length && SCN[s.scn]?.own) { set(() => ({ note: "Upload a backlog or pull one from a tracker first." })); return; } set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null, note: "" })); };
+  // The trainer's own backlog: spreadsheets or CSV parsed by the API, or a tracker's features and stories.
+  const storyCount = (fs: BacklogFeature[]) => fs.reduce((a, f) => a + f.stories.length, 0);
+  const upload = async (files: FileList | null) => {
+    if (!files || !files.length) return;
+    const list = Array.from(files), n = list.length;
+    set(() => ({ busy: "Reading…", note: "" }));
+    try {
+      const body = { files: await Promise.all(list.map(async (f) => ({ fileName: f.name, contentBase64: toB64(await f.arrayBuffer()) }))) };
+      const r = await api<{ features: BacklogFeature[] }>("POST", "/v1/planning/backlog", body);
+      set(() => ({ backlog: r.features, scn: "own", busy: "", note: `${r.features.length} features · ${storyCount(r.features)} stories from ${n} file${n > 1 ? "s" : ""}.` }));
+    } catch (e) {
+      set(() => ({ busy: "", note: (e as ApiFailure).message }));
+    }
+  };
+  const pull = async (system: "jira" | "ado") => {
+    set(() => ({ busy: `Pulling from ${system === "jira" ? "Jira" : "Azure DevOps"}…`, note: "" }));
+    try {
+      const r = await api<{ features: BacklogFeature[]; items: number }>("GET", `/v1/planning/backlog/${system}`);
+      set(() => ({ backlog: r.features, scn: "own", busy: "", note: `${r.features.length} features · ${storyCount(r.features)} stories from ${r.items} work items.` }));
+    } catch (e) {
+      set(() => ({ busy: "", note: (e as ApiFailure).message }));
+    }
+  };
   // The PI calendar: iteration i runs from start + (i-1) weeks to the Friday of its last week; the last iteration is IP.
   const cal = s.cal, iters = Array.from({ length: cal.n }, (_, k) => k + 1);
   const iName = (i: number) => (i === cal.n ? "IP iteration" : `Iteration ${i}`);
@@ -433,7 +472,32 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     calWeeks: ([1, 2, 3] as const).map((w) => ({ n: `${w} ${w === 1 ? "week" : "weeks"}`, bg: cal.weeks === w ? "#14123a" : "transparent", fg: cal.weeks === w ? "#fff" : "#14123a", go: () => setCal({ weeks: w }) })),
     calPreview: iters.map((i) => ({ name: iName(i), dates: iDates(i), bg: i === cal.n ? "#ffe14d" : "#fbf9f4" })),
     piRange: dSpan(dAdd(cal.start, 0), dAdd(cal.start, cal.n * cal.weeks * 7 - 3)), scnName: SCN[s.scn]!.name,
-    scenarios: Object.keys(SCN).map((k) => { const S = SCN[k]!; return { name: S.name, blurb: S.blurb, meta: S.feats.length ? (S.ph ? "PLACEHOLDER CONTENT" : `${S.feats.length} FEATURES · ${S.pios.length} OBJECTIVES`) : "NO SEED DATA", bg: s.scn === k ? "#ffe14d" : "#fff", sh: s.scn === k ? "5px 5px 0 #14123a" : "none", go: () => set(() => ({ scn: k })) }; }),
+    scenarios: Object.keys(SCN).map((k) => { const S = SCN[k]!; const fs = S.own ? (s.backlog ?? []) : S.features; return { name: S.name, blurb: S.blurb, meta: fs ? (fs.length ? `${fs.length} FEATURES · ${storyCount(fs)} STORIES${S.pios.length ? ` · ${S.pios.length} OBJECTIVES` : ""}` : "UPLOAD OR CONNECT") : S.feats.length ? `${S.feats.length} FEATURES · ${S.pios.length} OBJECTIVES` : "NO SEED DATA", bg: s.scn === k ? "#ffe14d" : "#fff", sh: s.scn === k ? "5px 5px 0 #14123a" : "none", go: () => set(() => ({ scn: k })) }; }),
+    ownBacklog: SCN[s.scn]?.own ? (
+      <div style={{ marginTop: 14, background: "#fff", border: "2px solid #14123a", borderRadius: 20, boxShadow: "5px 5px 0 #14123a", padding: "14px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ font: "700 11px ui-monospace, Menlo, monospace", color: "#5b5b6e", letterSpacing: ".1em" }}>YOUR OWN BACKLOG</div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <label style={{ border: "2px solid #14123a", borderRadius: 99, padding: "8px 16px", fontWeight: 700, fontSize: 14, cursor: "pointer", background: "#ffe14d" }}>
+            Upload spreadsheets or CSV
+            <input type="file" multiple accept=".xlsx,.csv,.tsv,.txt" style={{ display: "none" }} onChange={(e) => { void upload(e.target.files); e.target.value = ""; }} />
+          </label>
+          <button onClick={() => void pull("jira")} style={{ border: "2px solid #14123a", borderRadius: 99, padding: "8px 16px", fontWeight: 700, fontSize: 14, cursor: "pointer", background: "#fff" }}>Pull from Jira</button>
+          <button onClick={() => void pull("ado")} style={{ border: "2px solid #14123a", borderRadius: 99, padding: "8px 16px", fontWeight: 700, fontSize: 14, cursor: "pointer", background: "#fff" }}>Pull from Azure DevOps</button>
+          {s.backlog?.length ? <button onClick={() => set(() => ({ backlog: undefined, note: "" }))} style={{ border: "2px solid #14123a", borderRadius: 99, padding: "8px 14px", fontWeight: 700, fontSize: 13, cursor: "pointer", background: "#f4f1ea" }}>Clear</button> : null}
+          <span style={{ fontSize: 13, color: s.busy ? "#5b5b6e" : "#14123a" }}>{s.busy || s.note}</span>
+        </div>
+        <div style={{ fontSize: 13, color: "#5b5b6e", lineHeight: 1.4 }}>One file per feature in the handout layout (Item Name, Item Description, Item Type with SIZE and Feature lines), or one sheet with Feature, Title, Description, Type and Points columns. Jira and Azure DevOps use the server's connection: features with the stories under them.</div>
+        {s.backlog?.length ? (
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {s.backlog.map((f) => (
+              <span key={`${f.n}-${f.title}`} style={{ border: "2px solid #14123a", borderRadius: 12, padding: "4px 10px", fontSize: 13, background: "#fbf9f4" }}>
+                <b>{f.title}</b> · {f.stories.length} {f.stories.length === 1 ? "story" : "stories"}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    ) : null,
     goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
     kinds: ([["story", "Story"], ["feature", "Feature"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),

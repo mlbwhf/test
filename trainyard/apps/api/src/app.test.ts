@@ -1968,6 +1968,20 @@ describe("planning documents", () => {
     expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, ana)).status).toBe(403);
     expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, root)).status).toBe(404);
   });
+
+  it("turns uploaded handout files into a backlog for the planning room, and says when no tracker is connected", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const csv = (text: string) => Buffer.from(text).toString("base64");
+    const r = await call("POST", "/v1/planning/backlog", { files: [
+      { fileName: "Feature_2_Request_Delivery.csv", contentBase64: csv('Item Name,Item Description,Item Type\nPickup location,"As a requestor, I can enter the pickup location.\nSIZE: __\nFeature: #2 Request Delivery",User Story\nSave orders,"As a requestor, I can save orders.\nSIZE: 5\nFeature: #2 Request Delivery",User Story') },
+      { fileName: "Feature_3_Parallel_Park.csv", contentBase64: csv('Item Name,Item Description,Item Type\nDetect red curb,"As vehicle control, I can detect a red curb.\nSIZE: 1\nFeature: #3 Parallel Park",User Story') },
+    ] }, root);
+    expect(r.status).toBe(200);
+    expect(r.body.features.map((f: { n: number; title: string; stories: { pts: number }[] }) => [f.n, f.title, f.stories.map((s) => s.pts)])).toEqual([[2, "Request Delivery", [0, 5]], [3, "Parallel Park", [1]]]);
+    expect((await call("POST", "/v1/planning/backlog", { files: [{ fileName: "notes.csv", contentBase64: csv("just a line") }] }, root)).status).toBe(422);
+    expect((await call("GET", "/v1/planning/backlog/jira", undefined, root)).status).toBe(409);
+  });
 });
 
 describe("rooms", () => {

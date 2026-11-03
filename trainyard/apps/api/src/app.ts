@@ -55,6 +55,7 @@ import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerDocRoutes } from "./docs.js";
+import { registerPlanningRoutes } from "./planning.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
 import { registerRefRoutes } from "./refs.js";
@@ -758,6 +759,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);
   registerDocRoutes(app, store);
+  registerPlanningRoutes(app, store);
   registerOutcomeRoutes(app, store);
   registerAiNativeRoutes(app, store);
   await registerBillingRoutes(app, tenants, { ...opts.billing, emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
