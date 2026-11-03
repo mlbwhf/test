@@ -2271,6 +2271,11 @@ function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) 
  */
 function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = false ) {
 	$live = aa_reg_is_live();
+	/* Not every caller hands over a full course record -- the track calendar's
+	   per-bar panel passes only a price. A missing name is an empty field, not
+	   a warning: one warning here and WPCode stops the whole snippet, which
+	   took every [aa_*] shortcode on the home page down with it on 2 Nov. */
+	$cname = ! empty( $course['name'] ) ? (string) $course['name'] : '';
 	return '<form class="aareg-inline ' . esc_attr( $prefix ) . '-inline" data-aa-inline novalidate'
 	     . ( $fixed ? ' data-aa-inline-fixed' : '' )
 	     . ' data-cohort="' . esc_attr( $cohort['id'] ) . '"'
@@ -2286,7 +2291,7 @@ function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = fals
 	        the cohort is passed into this function, so it is always the one on
 	        screen and never needs a query parameter to recover it. */
 	     . '<input type="hidden" name="cohort" value="' . esc_attr( $cohort['id'] ) . '">'
-	     . '<input type="hidden" name="course" value="' . esc_attr( $course['name'] ) . '">'
+	     . '<input type="hidden" name="course" value="' . esc_attr( $cname ) . '">'
 	     . '<input type="hidden" name="cohort_dates" value="'
 	     . esc_attr( aa_reg_range( $cohort['start'], $cohort['end'] ) ) . '">'
 	     . '<label class="aareg-inline-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
@@ -3453,7 +3458,7 @@ function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 	}
 
 	$out .= aa_reg_inline(
-		array( 'price' => $mm['price'] ),
+		array( 'price' => $mm['price'], 'name' => $mm['name'] ),
 		$c,
 		$mm['cur'],
 		'aatco',
@@ -3613,7 +3618,7 @@ function aa_reg_panel( $atts ) {
 	    . '<input type="hidden" name="cohort" data-sel-cohort value="'
 	    . esc_attr( $sel ? $sel['id'] : '' ) . '">'
 	    . '<input type="hidden" name="course" data-sel-course value="'
-	    . esc_attr( $course['name'] ) . '">'
+	    . esc_attr( ! empty( $course['name'] ) ? $course['name'] : '' ) . '">'
 	    . '<input type="hidden" name="cohort_dates" data-sel-cohort-dates value="'
 	    . esc_attr( $sel ? aa_reg_range( $sel['start'], $sel['end'] ) : '' ) . '">'
 	    . '<label class="aacal-field"><span class="aacal-sr">' . esc_html( aa_reg_t( 'your_email', 'Your email' ) ) . '</span>'
