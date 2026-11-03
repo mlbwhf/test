@@ -1,0 +1,6 @@
+# Trainyard security contact (RFC 9116)
+Contact: mailto:support@trainyard.app
+Expires: 2027-11-03T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://trainyard.app/.well-known/security.txt
+Policy: https://github.com/mlbwhf/test/blob/main/trainyard/SECURITY.md
