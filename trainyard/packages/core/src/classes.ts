@@ -80,8 +80,8 @@ class Builder {
   id(p: string) {
     return `${p}-${++this.n}`;
   }
-  frame(title: string, x: number, y: number, width: number, height: number, parentId?: string): Frame {
-    const f: Frame = { id: this.id(slug(title).slice(0, 40)), title, x, y, width, height, ...(parentId ? { parentId } : {}) };
+  frame(title: string, x: number, y: number, width: number, height: number, parentId?: string, extra: Partial<Frame> = {}): Frame {
+    const f: Frame = { id: this.id(slug(title).slice(0, 40)), title, x, y, width, height, ...(parentId ? { parentId } : {}), ...extra };
     this.frames.push(f);
     return f;
   }
@@ -137,7 +137,8 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
       const h = Math.max(320, 110 + ex.items.length * (cardH + 14) + PAD);
       const f = b.frame(ex.title, x, y, w, h, parentId);
       ex.lanes.forEach((lane, i) => {
-        const lf = b.frame(lane, x + 20 + i * (laneW + 20), y + 50, laneW, h - 70, f.id);
+        // Each lane stacks its cards (core stack.ts): a lesson dragged to WIP or Done snaps into the column.
+        const lf = b.frame(lane, x + 20 + i * (laneW + 20), y + 50, laneW, h - 70, f.id, { layout: "stack" });
         if (i === 0) ex.items.forEach((it, k) => b.node("card", it, lf.x + 16, lf.y + 44 + k * (cardH + 14), laneW - 32, cardH, lf.id, { color: COLORS.yellow, fields: { fontSize: 18 } }));
       });
       return { w, h };

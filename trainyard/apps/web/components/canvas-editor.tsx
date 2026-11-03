@@ -5,7 +5,7 @@ import type { Board, BoardNode, Frame } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from "@/components/link-picker";
 import { useDoubleTap, usePanZoom } from "@/lib/touch";
-import { cardChoices, DOT, type CardType, type ConnectionType } from "@trainyard/core";
+import { cardChoices, DOT, type CardType, type ConnectionType, stackCards, stackLaneAt, stackHeight } from "@trainyard/core";
 import { ActivityEditor } from "@/components/activity-editor";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
@@ -478,6 +478,38 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     }
     if (d.kind === "node") {
       const n = nodes.find((x) => x.id === d.id)!;
+      const p = toBoard(e);
+      // Kanban lanes (frames with layout "stack"): the card snaps into the lane it was dropped on,
+      // and the lane it left closes the gap. Anywhere else a card stays where it was put.
+      const lane = stackLaneAt(frames, p);
+      const from = n.frameId ? frames.find((f) => f.id === n.frameId && f.layout === "stack") : undefined;
+      if (lane || from) {
+        let changed: BoardNode[] = lane ? stackCards(lane, nodes, { id: n.id, y: p.y }) : [];
+        let next = nodes.map((x) => changed.find((c) => c.id === x.id) ?? x);
+        if (!lane) {
+          // Out of its lane onto the open canvas: it keeps the spot and joins the frame under it, if any.
+          const under = frames.filter((f) => !f.layout && p.x >= f.x && p.x <= f.x + f.width && p.y >= f.y && p.y <= f.y + f.height).sort((a, b) => a.width * a.height - b.width * b.height)[0];
+          const free = { ...n, ...(under ? { frameId: under.id } : {}) };
+          if (!under) delete free.frameId;
+          changed = [free];
+          next = next.map((x) => (x.id === n.id ? free : x));
+        }
+        if (from && from.id !== lane?.id) {
+          const closed = stackCards(from, next);
+          changed = [...changed, ...closed];
+          next = next.map((x) => closed.find((c) => c.id === x.id) ?? x);
+        }
+        setNodes(next);
+        for (const c of changed) void save("Move card", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(c.id)}`, { x: c.x, y: c.y, width: c.width, frameId: c.frameId ?? null }));
+        if (lane) {
+          const h = stackHeight(lane, next);
+          if (h > lane.height) {
+            setFrames((fs) => fs.map((f) => (f.id === lane.id ? { ...f, height: h } : f)));
+            void save("Grow lane", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/frames/${encodeURIComponent(lane.id)}`, { height: h }));
+          }
+        }
+        return;
+      }
       void save("Move card", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}/nodes/${encodeURIComponent(n.id)}`, { x: n.x, y: n.y }));
     } else {
       const f = frames.find((x) => x.id === d.id)!;
