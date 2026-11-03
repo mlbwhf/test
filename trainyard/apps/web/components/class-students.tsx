@@ -15,7 +15,9 @@ interface Student {
   seenAt?: string;
 }
 
-const linkFor = (token: string) => `${window.location.origin}/join/${token}`;
+// The API builds links on the canonical web address (TRAINYARD_WEB_URL) so a copied link never
+// carries an alias host the trainer happened to be on; the browser's own address is the fallback.
+const linkFor = (token: string, link?: string) => link || `${window.location.origin}/join/${token}`;
 
 export function ClassStudents({ boardId }: { boardId: string }) {
   const q = useApi<{ students: Student[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
@@ -40,8 +42,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   const add = async () => {
     setErr(null);
     try {
-      const r = await api<{ students: (Student & { token?: string; emailed: boolean; existing?: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
-      setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!), emailed: s.emailed })));
+      const r = await api<{ students: (Student & { token?: string; link?: string; emailed: boolean; existing?: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
+      setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!, s.link), emailed: s.emailed })));
       setKept(r.students.filter((s) => s.existing).map((s) => s.name));
       setText("");
       await q.reload();
@@ -51,8 +53,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   };
   const relink = async (s: Student) => {
     try {
-      const r = await api<{ student: Student & { token: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
-      setLinks([{ name: s.name, email: s.email, link: linkFor(r.student.token), emailed: r.student.emailed }]);
+      const r = await api<{ student: Student & { token: string; link?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
+      setLinks([{ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), emailed: r.student.emailed }]);
       setKept([]);
       await q.reload();
     } catch (e) {

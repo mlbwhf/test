@@ -87,7 +87,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   app.post("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ students: z.array(Student).min(1).max(MAX_STUDENTS), send: z.boolean().default(false) }) } }, async (req, reply) => {
     const b = classBoard(req, req.params.id);
     const onBoard = () => guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req));
-    const out: (ReturnType<typeof view> & { token?: string; emailed: boolean; existing?: true })[] = [];
+    const out: (ReturnType<typeof view> & { token?: string; link?: string; emailed: boolean; existing?: true })[] = [];
     for (const s of req.body.students) {
       let g = onBoard().find((x) => x.email.toLowerCase() === s.email.toLowerCase());
       if (g) {
@@ -100,7 +100,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
       const emailed = req.body.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
-      out.push({ ...view(g), token, emailed });
+      out.push({ ...view(g), token, link: link(token), emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
     await seat(req, b);
@@ -116,7 +116,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
     g.tokenHash = hashKey(token);
     const emailed = req.body?.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
-    return { student: { ...view(g), token, emailed } };
+    return { student: { ...view(g), token, link: link(token), emailed } };
   });
 
   app.delete("/v1/boards/:id/students/:sid", { schema: { params: z.object({ id: z.string().max(200), sid: z.string().max(80) }) } }, async (req, reply) => {
