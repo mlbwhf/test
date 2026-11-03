@@ -102,10 +102,18 @@ function aa_fl_course( $slug ) {
 		);
 	}
 
+	/* A CODE HAS TO LOOK LIKE A CODE TO BE SHOWN. The hand table carries real
+	   credential codes (SA, SSM, RTE). A course derived from its page has its
+	   code manufactured from the page title, which can come out as a sentence
+	   in capitals; that is a title, not a chip, so the chip is left off. Same
+	   rule the home-page track strip uses. */
+	$code = isset( $c['code'] ) ? trim( (string) $c['code'] ) : '';
+	if ( ! preg_match( '/^[A-Z0-9][A-Z0-9-]{1,7}$/', $code ) ) { $code = ''; }
+
 	$out = array(
 		'id'       => (string) $slug,
 		'name'     => (string) $c['name'],
-		'code'     => isset( $c['code'] ) ? (string) $c['code'] : strtoupper( $slug ),
+		'code'     => $code,
 		'url'      => home_url( $c['url'] ),
 		'price'    => $price,
 		'length'   => $days === 1 ? __( '1 day', 'aa-fl' ) : sprintf( __( '%d days', 'aa-fl' ), $days ),
@@ -130,8 +138,42 @@ function aa_fl_courses() {
 	return $memo;
 }
 
+/** Does the page being served carry the flow? Cheap, and memoised per request. */
+function aa_fl_page_has_flow() {
+	static $has = null;
+	if ( $has !== null ) { return $has; }
+	$has = false;
+	if ( is_singular() ) {
+		$p = get_post();
+		/* strpos first: has_shortcode() runs the full shortcode regex over the
+		   content, and this is asked on every page view. */
+		$has = $p && strpos( (string) $p->post_content, '[aa_class_flow' ) !== false
+		    && has_shortcode( (string) $p->post_content, 'aa_class_flow' );
+	}
+	return $has;
+}
+
+/**
+ * TWO FONT FAMILIES, NOT THREE. The design names Instrument Sans, Instrument
+ * Serif and IBM Plex Mono. The mono face is used for four short uppercase
+ * labels at 10.5px, where ui-monospace is indistinguishable -- so it is not
+ * fetched, and the stack falls through to the system mono. One fewer font
+ * file on a page whose whole job is to get someone to checkout.
+ */
 function aa_fl_fonts() {
-	wp_enqueue_style( 'aa-fl-fonts', 'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&display=swap', array(), null );
+	wp_enqueue_style( 'aa-fl-fonts', 'https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap', array(), null );
+}
+
+/* Preconnect to the font hosts from <head>, so the DNS and TLS handshakes are
+   done by the time the stylesheet printed in the footer asks for the files.
+   Only on the page that carries the flow. */
+add_filter( 'wp_resource_hints', 'aa_fl_resource_hints', 10, 2 );
+function aa_fl_resource_hints( $urls, $relation ) {
+	if ( $relation === 'preconnect' && aa_fl_enabled() && aa_fl_page_has_flow() ) {
+		$urls[] = array( 'href' => 'https://fonts.googleapis.com' );
+		$urls[] = array( 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' );
+	}
+	return $urls;
 }
 
 /** Compare table: a real <table>, readable with JS off. */
@@ -189,7 +231,10 @@ function aa_fl_shortcode( $atts ) {
 	$max = function_exists( 'aa_reg_max_seats' ) ? (int) aa_reg_max_seats() : 12;
 
 	$h  = aa_fl_assets();
-	$h .= '<div class="aa-fl" data-aa-fl data-max-seats="' . (int) $max . '">';
+	/* lang on the root, because the copy in this block is English whatever the
+	   page around it is -- the flow is English-only until its strings are
+	   translated. A screen reader and a translator both read this attribute. */
+	$h .= '<div class="aa-fl" lang="en" data-aa-fl data-max-seats="' . (int) $max . '">';
 
 	/* Progress */
 	$steps = array(
@@ -219,7 +264,7 @@ function aa_fl_shortcode( $atts ) {
 		    . ' data-name="' . esc_attr( $c['name'] ) . '" data-url="' . esc_url( $c['url'] ) . '" data-price="' . esc_attr( $c['price'] ) . '">'
 		    . '<h3><label for="aa-fl-c-' . esc_attr( $id ) . '">' . esc_html( $c['name'] ) . '</label></h3>'
 		    . ( $c['about'] !== '' ? '<p class="aa-fl__who">' . esc_html( $c['about'] ) . '</p>' : '' )
-		    . '<div class="aa-fl__meta"><span class="aa-fl__code">' . esc_html( $c['code'] ) . '</span><span>' . esc_html( $c['length'] ) . '</span>'
+		    . '<div class="aa-fl__meta">' . ( $c['code'] !== '' ? '<span class="aa-fl__code">' . esc_html( $c['code'] ) . '</span>' : '' ) . '<span>' . esc_html( $c['length'] ) . '</span>'
 		    . '<span aria-hidden="true">·</span><span>' . esc_html__( 'Next', 'aa-fl' ) . ' <time datetime="' . esc_attr( $next['start'] ) . '">' . esc_html( $next['label'] ) . '</time></span>'
 		    . '<bdi class="aa-fl__price">' . esc_html( $c['price'] ) . '</bdi></div>'
 		    . '<span class="aa-fl__box" aria-hidden="true"></span></li>';
@@ -233,7 +278,7 @@ function aa_fl_shortcode( $atts ) {
 	    . '<p class="aa-fl__lede">' . esc_html__( 'We’ve picked the soonest date. Change any of them. Dates that overlap are flagged.', 'aa-fl' ) . '</p>';
 	foreach ( $courses as $id => $c ) {
 		$h .= '<fieldset class="aa-fl__cls" data-id="' . esc_attr( $id ) . '"><legend><strong>' . esc_html( $c['name'] ) . '</strong>'
-		    . '<span class="aa-fl__code">' . esc_html( $c['code'] ) . '</span>'
+		    . ( $c['code'] !== '' ? '<span class="aa-fl__code">' . esc_html( $c['code'] ) . '</span>' : '' )
 		    . '<button type="button" class="aa-fl__rm aa-fl__js" data-rm="' . esc_attr( $id ) . '">' . esc_html__( 'Remove', 'aa-fl' ) . '</button></legend>'
 		    . '<div class="aa-fl__dates" role="radiogroup" aria-label="' . esc_attr( $c['name'] ) . '">';
 		foreach ( $c['cohorts'] as $k ) {
@@ -287,13 +332,10 @@ function aa_fl_shortcode( $atts ) {
 /* noindex,follow on the page that carries the flow: its state is in the URL. */
 add_filter( 'wp_robots', 'aa_fl_robots' );
 function aa_fl_robots( $robots ) {
-	if ( is_singular() ) {
-		$p = get_post();
-		if ( $p && has_shortcode( (string) $p->post_content, 'aa_class_flow' ) ) {
-			$robots['noindex'] = true;
-			$robots['follow']  = true;
-			unset( $robots['index'] );
-		}
+	if ( aa_fl_page_has_flow() ) {
+		$robots['noindex'] = true;
+		$robots['follow']  = true;
+		unset( $robots['index'] );
 	}
 	return $robots;
 }
@@ -313,8 +355,16 @@ function aa_fl_footer_helpers() {
 	$p = get_post();
 	if ( ! $p ) { return; }
 	$content = (string) $p->post_content;
-	$course  = strpos( $content, 'id="aa-cohorts"' ) !== false;
 	$confirm = $p->post_name === apply_filters( 'aa_reg_confirm_page_slug', 'registration-confirmed' );
+	/* THE COURSE-PAGE HELPER IS PRINTED ONLY WHEN THE URL CARRIES A SEAT COUNT.
+	   It has one job -- apply ?seats= from the flow -- and a course page reached
+	   any other way has nothing for it to do, so it should not cost those
+	   visitors a kilobyte of script. Gating on the query string is safe here
+	   because a URL with a query string is served fresh, not from the full-page
+	   cache, so the gate is answered per request. */
+	$course  = ! $confirm
+	        && isset( $_GET['cohort'], $_GET['seats'] ) && (int) $_GET['seats'] > 1
+	        && strpos( $content, 'id="aa-cohorts"' ) !== false;
 	if ( ! $course && ! $confirm ) { return; }
 	?>
 <script>
