@@ -134,6 +134,8 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
 export function guestMayUse(method: string, url: string, boardId: string): boolean {
   const path = (url.split("?")[0] ?? url).replace(/\/$/, "");
   if (method === "GET" && path === "/v1/me") return true;
+  // The class's own planning room (the PI Planning simulation exercises): students read and write it.
+  if (["GET", "PUT"].includes(method) && (path === `/v1/docs/planning-room%3A${boardId}` || path === `/v1/docs/planning-room:${boardId}`)) return true;
   const base = `/v1/boards/${encodeURIComponent(boardId)}`;
   const alt = `/v1/boards/${boardId}`;
   for (const b of new Set([base, alt])) {

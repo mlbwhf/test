@@ -233,7 +233,26 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
+  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
+}
+
+/** The PI Planning simulation exercises (board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
+const PI_ROOM_KINDS = new Set(["pib", "pcs", "ppr", "pbv", "prm"]);
+function PiRoomEmbed({ boardId }: { boardId: string }) {
+  const q = `?doc=${encodeURIComponent(boardId)}`;
+  return (
+    <div className="studio-board" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <span className="ex-mono" style={{ color: "#4d5a52" }}>PI PLANNING BOARD · CHOOSE THE SIMULATION, SET THE NUMBER OF TEAMS, THEN WORK THIS EXERCISE ON EVERY TEAM</span>
+        <span style={{ flex: 1 }} />
+        <a href={`/planning-room${q}`} target="_blank" rel="noreferrer" style={{ font: "700 12px 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#0d1815", border: "2px solid #0d1815", borderRadius: 8, padding: "4px 10px", background: "#fff", textDecoration: "none" }}>
+          Open full screen ↗
+        </a>
+      </div>
+      <iframe src={`/embed/planning-room${q}`} title="PI planning board" style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 640, border: "2px solid #0d1815", borderRadius: 12, background: "#f4f1ea" }} />
+    </div>
+  );
 }
 
 const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = {
@@ -241,7 +260,6 @@ const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = 
   metrics: Views.MetView, ctx: Views.CtxView, accel: Views.AccView, wheel: Views.WheelView, evt: Views.EvtView, kanban: Views.KanView, pitch: Views.PitchView, disc: Views.DiscView, bv: Views.BvView, roam: Views.RoamView, art: Views.ArtView,
   // Leading SAFe (studio-views-lsa.tsx); an overview board picks its view from the exercise's setup.
   vote: Lsa.VoteView, vsid: Lsa.VsidView, delay: Lsa.DelayView, prin: Lsa.PrinView, sbd: Lsa.SbdView, dec: Lsa.DecView, emp: Lsa.EmpView, feat: Lsa.FeatView, wsjf: Lsa.WsjfView, rse: Lsa.RseView, cap: Lsa.CapView, attr: Lsa.AttrView,
-  pib: Lsa.PibView, pcs: Lsa.PcsView, ppr: Lsa.PprView, pbv: Lsa.PbvView, prm: Lsa.PrmView,
   ov: ({ v }) => (v.view === "bp" ? <Lsa.OvBView v={v} /> : v.view === "pri" ? <Lsa.OvPView v={v} /> : <Lsa.OvDView v={v} />),
   // Launching AI-Native ARTs (planning-views.tsx, studio-model-aart.ts): one board kind, the step picks what it shows.
   aart: AartView,
@@ -259,7 +277,7 @@ function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: 
     }
   }, [board.id]);
   // The PI Planning simulation builds its teams from the class's students; only the trainer may list them.
-  const needsStudents = trainer && ["pib", "pcs", "ppr", "pbv", "prm"].includes(kind);
+  const needsStudents = false as boolean;
   useEffect(() => {
     if (!needsStudents) return;
     let gone = false;

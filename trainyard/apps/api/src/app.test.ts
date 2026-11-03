@@ -1954,6 +1954,20 @@ describe("planning documents", () => {
     expect((await call("GET", "/v1/docs/menu", undefined, admin)).status).toBe(400);
     expect((await call("PUT", "/v1/docs/roadmap", { doc: null }, admin)).body.doc).toBeNull();
   });
+
+  it("gives a class its own planning room that its students write by link, and nothing else", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "LSA class" }, root)).body.board.id as string;
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
+    const key = `planning-room%3A${id}`;
+    const room = { scn: "geek", teams: 2, caps: {}, kn: 100, tickets: [] };
+    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, ana)).body.doc).toEqual(room);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc).toEqual(room);
+    expect((await call("GET", "/v1/docs/planning-room", undefined, ana)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, ana)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, root)).status).toBe(404);
+  });
 });
 
 describe("rooms", () => {

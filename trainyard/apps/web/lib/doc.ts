@@ -7,7 +7,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, type ApiFailure } from "@/lib/api";
 
-export type DocKey = "roadmap" | "okr-board" | "planning-room";
+/** A workspace document, or a class's own planning room: `planning-room:<boardId>`. */
+export type DocKey = "roadmap" | "okr-board" | "planning-room" | `planning-room:${string}`;
 
 export function useDoc<T extends object>(key: DocKey): { doc: T | null; loaded: boolean; save: (doc: T) => void; error: string | null } {
   const [doc, setDoc] = useState<T | null>(null);
@@ -17,7 +18,7 @@ export function useDoc<T extends object>(key: DocKey): { doc: T | null; loaded: 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     let gone = false;
-    api<{ doc: T | null }>("GET", `/v1/docs/${key}`)
+    api<{ doc: T | null }>("GET", `/v1/docs/${encodeURIComponent(key)}`)
       .then((r) => {
         if (gone) return;
         last.current = JSON.stringify(r.doc);
@@ -36,7 +37,7 @@ export function useDoc<T extends object>(key: DocKey): { doc: T | null; loaded: 
       last.current = text;
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => {
-        api("PUT", `/v1/docs/${key}`, { doc: next }).then(() => setError(null), (e: ApiFailure) => setError(e.status === 403 ? "You can look, but only planners can change this page." : e.message));
+        api("PUT", `/v1/docs/${encodeURIComponent(key)}`, { doc: next }).then(() => setError(null), (e: ApiFailure) => setError(e.status === 403 ? "You can look, but only planners can change this page." : e.message));
       }, 600);
     },
     [key],
@@ -49,7 +50,7 @@ export function useDocOnce<T extends object>(key: DocKey): T | null | undefined 
   const [doc, setDoc] = useState<T | null | undefined>(undefined);
   useEffect(() => {
     let gone = false;
-    api<{ doc: T | null }>("GET", `/v1/docs/${key}`).then((r) => !gone && setDoc(r.doc), () => !gone && setDoc(null));
+    api<{ doc: T | null }>("GET", `/v1/docs/${encodeURIComponent(key)}`).then((r) => !gone && setDoc(r.doc), () => !gone && setDoc(null));
     return () => {
       gone = true;
     };

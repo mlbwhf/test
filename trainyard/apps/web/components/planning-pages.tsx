@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loading } from "@/components/ui";
 import { OkrBoardView, PlanningRoomView, RoadmapView } from "@/components/planning-views";
-import { useDoc, useDocOnce } from "@/lib/doc";
+import { useDoc, useDocOnce, type DocKey } from "@/lib/doc";
 import { ApiFailure } from "@/lib/api";
 
 const page = (bg: string) => ({ margin: "-16px", padding: "0 0 60px", background: bg, minHeight: "100vh", fontFamily: "'Instrument Sans', sans-serif", color: "#14123a" }) as React.CSSProperties;
@@ -249,45 +249,65 @@ export function OkrBoardPage() {
 
 // ---- Planning room (the multi-team train yard) --------------------------------------------
 type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
-export type WorkDoc = { teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+/** The PI calendar: start date, weeks per iteration, iterations in the PI (the last one is IP). */
+export type Cal = { start: string; weeks: 1 | 2 | 3; n: number };
+export type WorkDoc = { scn?: string; cal?: Cal; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
 const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
 const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
 const POKER: (string | number)[] = ["?", 1, 2, 3, 5, 8, 13, 21, 40, 100, "∞"];
 const ROAM: [string, string, string][] = [["R", "Resolved", "#5ff0e0"], ["O", "Owned", "#ffe14d"], ["A", "Accepted", "#b8e07a"], ["M", "Mitigated", "#ff9fc6"]];
-const ITER: [string, string][] = [["Iteration 1", "Mar 10 – 23"], ["Iteration 2", "Mar 24 – Apr 6"], ["Iteration 3", "Apr 7 – 20"], ["Iteration 4", "Apr 21 – May 4"], ["IP iteration", "May 5 – 18"]];
+const MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const dAdd = (st: string, d: number) => { const x = new Date(`${st}T00:00:00Z`); x.setUTCDate(x.getUTCDate() + d); return x; };
+const dFmt = (x: Date) => `${MO[x.getUTCMonth()]} ${x.getUTCDate()}`;
+const dSpan = (a: Date, b: Date) => `${dFmt(a)} – ${a.getUTCMonth() === b.getUTCMonth() ? b.getUTCDate() : dFmt(b)}`;
+const CAL0: Cal = { start: "2026-03-09", weeks: 2, n: 5 };
 const EPICS0 = ["GPS", "Follow route", "Stay in lane", "Obey traffic laws", "Mapping software", "Delivery spike"];
 const OBJ0: Record<string, string> = { o1: "Increase customer satisfaction", o2: "Optimize operational processes", o3: "Drive higher conversion rates", o4: "Integrate advanced analytics" };
 const LINKS0: Record<string, string[]> = { o1: ["Follow route"], o2: ["Mapping software", "Delivery spike"], o3: ["Obey traffic laws"], o4: ["GPS"] };
-const FEATS = ["Shopping cart", "Shipping options", "Search", "Sorting order", "Payments", "Order history", "Notifications", "Wishlist"];
-const STORIES: [string, number][] = [["Add item", 3], ["Remove item", 2], ["Live totals", 5], ["Pick delivery", 8], ["Date estimate", 13], ["Index titles", 5], ["Sort by price", 3], ["Saved cards", 8]];
-const RISKS0 = ["Call center training", "UX interface not ready", "Vendor API limit", "Key engineer on leave"];
-const CAP0 = [12, 16, 14, 16, 16];
-type Room = WorkDoc & { draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+const CAP0 = [12, 16, 14, 16];
+/** The simulations a trainer can seed the teams with (design: `SCN`). ALICE is a placeholder until the handout arrives. */
+type Scenario = { name: string; blurb: string; ph: boolean; feats: string[]; pios: [string, number, boolean][]; risks: string[] };
+export const SCN: Record<string, Scenario> = {
+  alice: { name: "ALICE", blurb: "Customer service platform. Placeholder content until the handout is loaded.", ph: true,
+    feats: ["Order lookup", "Returns portal", "Loyalty points", "Store locator", "Gift cards", "Delivery tracking", "Inventory alerts", "Customer chat"],
+    pios: [["99% chat availability", 8, true], ["Customers self-serve returns", 5, true], ["Loyalty points on mobile", 3, false]], risks: ["Chat vendor contract", "Legacy order API limit", "Key engineer on leave"] },
+  geek: { name: "GeekBooks", blurb: "Online bookstore with shopping, shipping and admin features.", ph: false,
+    feats: ["Book detail display", "Profile management", "Help center", "Data export", "Teams connector", "Deployment automation", "New administration interface", "Links"],
+    pios: [["95% system uptime", 8, true], ["Allow users to choose their preferred shipping method", 7, true], ["Implement a fully functional shipping method", 5, true], ["Updated shopping cart feature", 3, false]], risks: ["Call center training", "UX interface not ready", "Payment vendor rate limit"] },
+  av: { name: "Autonomous delivery", blurb: "The SAFe solution roadmap example. Parent epics come from your Roadmap.", ph: false,
+    feats: ["GPS integration", "Route following", "Lane keeping", "Obstacle detection", "Surround cameras", "Self-park", "Traffic law rules", "Delivery tests"],
+    pios: [["Selection of mapping software", 8, true], ["Front camera", 6, true], ["Radar components", 5, true], ["Install communications on mule", 4, true], ["Send real-time status", 3, false]], risks: ["Sensor supplier delay", "Test track availability", "Map licence cost"] },
+  empty: { name: "Empty trains", blurb: "Blank board for each team. Create your own tickets.", ph: false, feats: [], pios: [], risks: [] },
+};
+// Story titles are built from the feature until the handouts bring real stories.
+const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
-function seedRoom(n: number, sample: boolean, epics: string[], kn: { n: number }): Ticket[] {
-  const t: Ticket[] = [];
-  if (!sample) return t;
+function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }): Ticket[] {
+  const S = SCN[scn], t: Ticket[] = [];
+  if (!S || !S.feats.length) return t;
   const key = () => `TY-${++kn.n}`;
   for (let k = 1; k <= n; k++) {
-    const fids: string[] = [];
-    for (let j = 0; j < 3; j++) { const id = key(); fids.push(id); t.push({ id, type: "feature", title: FEATS[(k * 3 + j) % FEATS.length]!, parent: epics[(k + j * 2) % epics.length], team: k, iter: j < 2 ? j + 1 : null, pts: 0 }); }
-    for (let j = 0; j < 4; j++) { const [title, pts] = STORIES[(k + j * 2) % STORIES.length]!; t.push({ id: key(), type: "story", title, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
-    t.push({ id: key(), type: "risk", title: RISKS0[k % RISKS0.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
-    ([["95% system uptime", 8, true], ["Delivery choice live", 5, true], ["Updated cart", 3, false]] as const).forEach(([title, bv, c]) => t.push({ id: key(), type: "pio", title, team: k, bv: k % 2 && c ? bv : 0, commit: c, pts: 0, iter: null }));
+    const fids: string[] = [], fs: string[] = [];
+    for (let j = 0; j < 3; j++) { const id = key(), title = S.feats[((k - 1) * 3 + j) % S.feats.length]!; fids.push(id); fs.push(title); t.push({ id, type: "feature", title, parent: epics[(k + j * 2) % epics.length], team: k, iter: j < 2 ? j + 1 : null, pts: 0 }); }
+    for (let j = 0; j < 4; j++) { const [pre, pts] = STORY_T[j]!; t.push({ id: key(), type: "story", title: pre + fs[j % 3]!, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
+    t.push({ id: key(), type: "risk", title: S.risks[k % S.risks.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
+    S.pios.forEach(([title, bv, c]) => t.push({ id: key(), type: "pio", title, team: k, bv: k % 2 && c ? bv : 0, commit: c, pts: 0, iter: null }));
   }
   return t;
 }
 
-export function PlanningRoomPage() {
-  const { doc, loaded, save, error } = useDoc<WorkDoc>("planning-room");
+/** The planning room: the workspace's own, or a class's when `docKey` names its board. */
+export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey } = {}) {
+  const { doc, loaded, save, error } = useDoc<WorkDoc>(docKey);
   const road = useDocOnce<RoadmapDoc>("roadmap");
   const okr = useDocOnce<OkrDoc>("okr-board");
   const [s, setS] = useState<Room | null>(null);
   useEffect(() => {
-    if (loaded && road !== undefined && okr !== undefined && !s) setS({ teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, calOpen: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
   }, [loaded, doc, road, okr, s]);
   useEffect(() => {
-    if (s && s.teams) save({ teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+    if (s && s.teams) save({ scn: s.scn, cal: s.cal, teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
   }, [s, save]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
   const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
@@ -301,7 +321,13 @@ export function PlanningRoomPage() {
   const selT = s.sel ? by[s.sel] : undefined;
   const upd = (id: string, patch: Partial<Ticket>) => set((t) => ({ tickets: t.tickets.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
   const flashIt = (id: string) => { set(() => ({ flash: id })); setTimeout(() => set(() => ({ flash: null })), 2200); };
-  const start = (sample: boolean) => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, sample, epics, kn); set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null })); };
+  const start = () => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, s.scn, epics, kn); set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null })); };
+  // The PI calendar: iteration i runs from start + (i-1) weeks to the Friday of its last week; the last iteration is IP.
+  const cal = s.cal, iters = Array.from({ length: cal.n }, (_, k) => k + 1);
+  const iName = (i: number) => (i === cal.n ? "IP iteration" : `Iteration ${i}`);
+  const iDates = (i: number) => dSpan(dAdd(cal.start, (i - 1) * cal.weeks * 7), dAdd(cal.start, i * cal.weeks * 7 - 3));
+  const defCap = (i: number) => (i === cal.n ? 16 : (CAP0[i - 1] ?? 16));
+  const setCal = (p: Partial<Cal>) => set((t) => { const c = { ...t.cal, ...p }; c.n = Math.max(3, Math.min(7, c.n)); return { cal: c, tickets: t.tickets.map((x) => (x.iter && x.iter > c.n ? { ...x, iter: null } : x)) }; });
   const drag = (e: React.PointerEvent, id: string) => {
     if (e.button) return;
     const x0 = e.clientX, y0 = e.clientY;
@@ -332,12 +358,12 @@ export function PlanningRoomPage() {
   };
   const epicObj = (title: string) => { const id = Object.keys(links).find((k) => (links[k] ?? []).includes(title)); return id ? { id, title: objs[id] ?? id } : null; };
   const teamOf = (n: number) => ({ name: `Team ${n}`, color: TC[(n - 1) % 8]! });
-  const where = (t: Ticket) => (t.type === "pio" ? `Team ${t.team} · PI objective` : `Team ${t.team} · ${t.iter ? ITER[t.iter - 1]![0] : "Freight yard"}`);
-  const capOf = (n: number, i: number) => s.caps[`${n}:${i}`] ?? CAP0[i - 1]!;
+  const where = (t: Ticket) => (t.type === "pio" ? `Team ${t.team} · PI objective` : `Team ${t.team} · ${t.iter ? iName(t.iter) : "Freight yard"}`);
+  const capOf = (n: number, i: number) => s.caps[`${n}:${i}`] ?? defCap(i);
   const loadOf = (n: number, i: number) => s.tickets.filter((t) => t.team === n && t.type === "story" && t.iter === i).reduce((a, t) => a + t.pts, 0);
   const checks = (n: number): [string, boolean][] => {
     const T = s.tickets.filter((t) => t.team === n), pio = T.filter((t) => t.type === "pio"), rk = T.filter((t) => t.type === "risk");
-    return [["Every feature is on a wagon", T.some((t) => t.type === "feature") && T.filter((t) => t.type === "feature").every((t) => t.iter)], ["No wagon over capacity", [1, 2, 3, 4, 5].every((i) => loadOf(n, i) <= capOf(n, i))], ["Every story is sized", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.pts > 0)], ["Every objective has business value", pio.length > 0 && pio.every((t) => (t.bv ?? 0) > 0)], ["Every risk is ROAMed", rk.length > 0 && rk.every((t) => t.roam)]];
+    return [["Every feature is on a wagon", T.some((t) => t.type === "feature") && T.filter((t) => t.type === "feature").every((t) => t.iter)], ["No wagon over capacity", iters.every((i) => loadOf(n, i) <= capOf(n, i))], ["Every story is sized", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.pts > 0)], ["Every objective has business value", pio.length > 0 && pio.every((t) => (t.bv ?? 0) > 0)], ["Every risk is ROAMed", rk.length > 0 && rk.every((t) => t.roam)]];
   };
   const lineage = (t: Ticket) => {
     const out: { kind: string; key: string; title: string; meta: string; color: string; id: string | null }[] = [];
@@ -365,7 +391,7 @@ export function PlanningRoomPage() {
   const yard = Array.from({ length: N }, (_, k) => k + 1).map((n) => {
     const tm = teamOf(n), TT = s.tickets.filter((t) => t.team === n), ch = checks(n).filter((x) => x[1]).length, rk = TT.filter((t) => t.type === "risk"), open = rk.filter((r) => !r.roam).length;
     let lt = 0, cp = 0;
-    const cars = [1, 2, 3, 4, 5].map((i) => { const l = loadOf(n, i), c = capOf(n, i); lt += l; cp += c; return { h: Math.min(100, c ? (l / c) * 100 : 0), bg: l > c ? "#ef4b4b" : tm.color }; });
+    const cars = iters.map((i) => { const l = loadOf(n, i), c = capOf(n, i); lt += l; cp += c; return { h: Math.min(100, c ? (l / c) * 100 : 0), bg: l > c ? "#ef4b4b" : tm.color }; });
     return { name: tm.name, color: tm.color, checks: `${ch}/5`, chkBg: ch === 5 ? "#5ff0e0" : "#eef2f7", cars, load: lt, cap: cp, features: TT.filter((t) => t.type === "feature").length, stories: TT.filter((t) => t.type === "story").length, risks: open ? `${open} open risk${open > 1 ? "s" : ""}` : rk.length ? "risks ROAMed" : "no risks yet", riskColor: open ? "#c8372d" : "#2f7d1f", prog: ch * 20, go: () => set(() => ({ view: String(n), sel: null })) };
   });
   const shared = epics.map((e) => {
@@ -377,15 +403,15 @@ export function PlanningRoomPage() {
   const sz = (t: Ticket) => t.est || (t.pts ? t.pts : "?");
   const fcOf = (st: Ticket) => { const f = st.parent ? by[st.parent] : undefined; return f && f.type === "feature" ? KC.epic : "#14123a"; };
   const mkStory = (t: Ticket) => ({ key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) });
-  const wagons = [1, 2, 3, 4, 5].map((i) => {
+  const wagons = iters.map((i) => {
     const l = loadOf(ct, i), c = capOf(ct, i), over = l > c, here = T.filter((t) => t.iter === i);
-    return { key: `w:${i}`, name: ITER[i - 1]![0], dates: ITER[i - 1]![1], load: l, cap: c, fill: Math.min(100, (l / (c || 1)) * 100), gauge: over ? "#ef4b4b" : l / (c || 1) > 0.85 ? "#ffb020" : "#5fb83a", numColor: over ? "#c8372d" : "#14123a", bg: over ? "#fde0dc" : "#fbf9f4",
+    return { key: `w:${i}`, name: iName(i), dates: iDates(i), load: l, cap: c, fill: Math.min(100, (l / (c || 1)) * 100), gauge: over ? "#ef4b4b" : l / (c || 1) > 0.85 ? "#ffb020" : "#5fb83a", numColor: over ? "#c8372d" : "#14123a", bg: over ? "#fde0dc" : "#fbf9f4",
       capUp: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: c + 1 } })), capDown: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: Math.max(0, c - 1) } })),
       flags: here.filter((t) => t.type === "feature").map((t) => ({ key: t.id, t: t.title, color: KC.epic, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) })), crates: here.filter((t) => t.type === "story").map(mkStory),
       hazards: here.filter((t) => t.type === "risk").map((t) => ({ t: t.title, roam: t.roam || "?", bg: t.roam ? "#fff" : "#f8a08a", down: (e: React.PointerEvent) => drag(e, t.id), outline: out(t).outline })) };
   });
   const yt = T.filter((t) => !t.iter && t.type !== "pio" && t.type !== "risk").map((t) => ({ key: t.id, t: t.title, pts: t.type === "story" ? ` · ${sz(t)}` : "", bg: t.type === "story" ? "#e9c98a" : KC.epic, fg: t.type === "story" ? "#14123a" : "#fff", down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }));
-  const rks = T.filter((t) => t.type === "risk").map((t) => ({ key: t.id, t: t.title, bg: t.roam ? "#f4f1ea" : "#f8a08a", outline: out(t).outline, stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), where: t.roam ? ROAM.find((o) => o[0] === t.roam)![1] + (t.iter ? ` · ${ITER[t.iter - 1]![0]}` : "") : t.iter ? `On ${ITER[t.iter - 1]![0]}` : "Drag onto a wagon", roam: ROAM.map(([k, name, c]) => ({ k, name, bg: t.roam === k ? c : "#fff", go: () => upd(t.id, { roam: t.roam === k ? null : k }) })) }));
+  const rks = T.filter((t) => t.type === "risk").map((t) => ({ key: t.id, t: t.title, bg: t.roam ? "#f4f1ea" : "#f8a08a", outline: out(t).outline, stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), where: t.roam ? ROAM.find((o) => o[0] === t.roam)![1] + (t.iter ? ` · ${iName(t.iter)}` : "") : t.iter ? `On ${iName(t.iter)}` : "Drag onto a wagon", roam: ROAM.map(([k, name, c]) => ({ k, name, bg: t.roam === k ? c : "#fff", go: () => upd(t.id, { roam: t.roam === k ? null : k }) })) }));
   const pios = T.filter((t) => t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit)).map((t) => ({ t: t.title, bg: t.commit ? "#fff" : "#f4f1ea", border: t.commit ? "solid" : "dashed", tag: t.commit ? "C" : "U", rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) }));
   const cBV = T.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), aBV = T.filter((t) => t.type === "pio").reduce((a, t) => a + (t.bv ?? 0), 0);
   const ck = checks(ct);
@@ -401,7 +427,13 @@ export function PlanningRoomPage() {
   const v = {
     needSetup: !s.teams || s.view === "setup", inRoom: !!s.teams && s.view !== "setup", draft: s.draft, draftChips: Array.from({ length: s.draft }, (_, k) => teamOf(k + 1)),
     draftUp: () => set((t) => ({ draft: Math.min(8, t.draft + 1) })), draftDown: () => set((t) => ({ draft: Math.max(2, t.draft - 1) })),
-    startSample: () => start(true), startEmpty: () => start(false), resize: () => set(() => ({ view: "setup" })), teamCount: N,
+    startRoom: start, resize: () => set(() => ({ view: "setup" })), teamCount: N, showNav: false,
+    nIter: cal.n, calN: cal.n, calStart: cal.start, calOpen: s.calOpen, toggleCal: () => set((t) => ({ calOpen: !t.calOpen })), calBtnBg: s.calOpen ? "#ffe14d" : "#fff",
+    setStart: (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.value) setCal({ start: e.target.value }); }, nUp: () => setCal({ n: cal.n + 1 }), nDown: () => setCal({ n: cal.n - 1 }),
+    calWeeks: ([1, 2, 3] as const).map((w) => ({ n: `${w} ${w === 1 ? "week" : "weeks"}`, bg: cal.weeks === w ? "#14123a" : "transparent", fg: cal.weeks === w ? "#fff" : "#14123a", go: () => setCal({ weeks: w }) })),
+    calPreview: iters.map((i) => ({ name: iName(i), dates: iDates(i), bg: i === cal.n ? "#ffe14d" : "#fbf9f4" })),
+    piRange: dSpan(dAdd(cal.start, 0), dAdd(cal.start, cal.n * cal.weeks * 7 - 3)), scnName: SCN[s.scn]!.name,
+    scenarios: Object.keys(SCN).map((k) => { const S = SCN[k]!; return { name: S.name, blurb: S.blurb, meta: S.feats.length ? (S.ph ? "PLACEHOLDER CONTENT" : `${S.feats.length} FEATURES · ${S.pios.length} OBJECTIVES`) : "NO SEED DATA", bg: s.scn === k ? "#ffe14d" : "#fff", sh: s.scn === k ? "5px 5px 0 #14123a" : "none", go: () => set(() => ({ scn: k })) }; }),
     goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
     kinds: ([["story", "Story"], ["feature", "Feature"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
