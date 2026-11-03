@@ -169,6 +169,59 @@ services:
           memory: ${OLLAMA_MEMORY_LIMIT:-3g}
           cpus: "${OLLAMA_CPUS:-1}"
 
+  # Flowise (visual LLM flows) on the same box at FLOWISE_HOST, e.g. flowise.<domain>. Enabled by
+  # setting FLOWISE_HOST in .env once its DNS points here (deploy.sh adds --profile flowise).
+  # Its flows, credentials and SQLite database live in the flowise volume; nothing is shared with
+  # the Trainyard API or database. Capped at 1 GB so it cannot starve gate or Trainyard.
+  flowise:
+    image: flowiseai/flowise:${FLOWISE_VERSION:-latest}
+    restart: unless-stopped
+    profiles: [flowise]
+    security_opt: [no-new-privileges:true]
+    environment:
+      PORT: "3000"
+      APP_URL: https://${FLOWISE_HOST:-flowise.${TRAINYARD_DOMAIN}}
+      # First sign-in on Flowise 3 creates the owner account in its own screen; these two keep
+      # older images (basic auth) closed as well. Both come from .env.
+      FLOWISE_USERNAME: ${FLOWISE_USERNAME:-}
+      FLOWISE_PASSWORD: ${FLOWISE_PASSWORD:-}
+      # Encrypts stored credentials (API keys of the models Flowise calls). Set once, keep it.
+      FLOWISE_SECRETKEY_OVERWRITE: ${FLOWISE_SECRET:?set FLOWISE_SECRET in .env (openssl rand -hex 24)}
+      DATABASE_TYPE: sqlite
+      DATABASE_PATH: /root/.flowise
+      APIKEY_PATH: /root/.flowise
+      SECRETKEY_PATH: /root/.flowise
+      LOG_PATH: /root/.flowise/logs
+      BLOB_STORAGE_PATH: /root/.flowise/storage
+      DISABLE_FLOWISE_TELEMETRY: "true"
+      CORS_ORIGINS: ${FLOWISE_CORS_ORIGINS:-}
+      IFRAME_ORIGINS: ${FLOWISE_IFRAME_ORIGINS:-}
+    volumes:
+      - flowise:/root/.flowise
+    networks: [internal]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: trainyard_internal
+      traefik.http.routers.trainyard-flowise.rule: Host(`${FLOWISE_HOST:-flowise.${TRAINYARD_DOMAIN}}`)
+      traefik.http.routers.trainyard-flowise.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-flowise.tls: "true"
+      traefik.http.routers.trainyard-flowise.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-flowise.middlewares: trainyard-flowise-headers
+      traefik.http.services.trainyard-flowise.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.trainyard-flowise-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.trainyard-flowise-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.trainyard-flowise-headers.headers.referrerPolicy: strict-origin-when-cross-origin
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/v1/ping >/dev/null 2>&1 || curl -fsS http://127.0.0.1:3000/api/v1/ping >/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: ${FLOWISE_MEMORY_LIMIT:-1g}
+
   # Nightly pg_dump to S3-compatible storage. Disabled until BACKUP_S3_BUCKET is set.
   backup:
     image: eeshugerman/postgres-backup-s3:16
@@ -195,6 +248,7 @@ services:
 volumes:
   pgdata:
   ollama:
+  flowise:
 
 networks:
   # Traefik in host network mode (Hostinger template) routes to container IPs on this

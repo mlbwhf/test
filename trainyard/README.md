@@ -63,7 +63,7 @@ Trainyard runs beside gate under `/opt/trainyard`, with its own Postgres, publis
 
 ```
 infra/docker/Dockerfile.api, Dockerfile.web   images built by GitHub Actions, pushed to ghcr.io/mlbwhf/trainyard-{api,web}
-infra/compose/docker-compose.prod.yml         postgres, api, web; optional ollama (--profile llm) and backup (--profile backup)
+infra/compose/docker-compose.prod.yml         postgres, api, web; optional ollama (--profile llm), backup (--profile backup) and flowise (--profile flowise)
 infra/compose/env.production.example          every runtime variable
 infra/scripts/first-run.sh                    one-time: /opt/trainyard, .env with generated secrets, Traefik values copied from /opt/gate/.env
 infra/scripts/deploy.sh                       pull, roll, wait for /health (CI and by hand)
@@ -80,6 +80,17 @@ Steps:
 5. Sign in at `https://plan.<domain>/login` with the admin key and create users.
 
 **Keeping EnrollClass safe.** The two stacks share nothing but the host and Traefik: separate Compose projects (`gate`, `trainyard`), networks, volumes, Postgres instances, router, middleware and service names, and hostnames; Trainyard publishes no host ports; its workflow only runs on changes under `trainyard/` and `gate-deploy` only on `gate-platform/`. `deploy.sh` checks gate's public `/health` before and after every roll and exits non-zero if gate was healthy before and is not after, so the GitHub run turns red instead of a customer noticing. Memory on a KVM2 (8 GB): gate's limits add up to about 3.5 GB and Trainyard to about 1.5 GB, so both fit. Ollama is capped at 3 GB and one CPU, and `deploy.sh` refuses to start it unless that much memory plus 1 GB of headroom is free; on a KVM2 beside gate, leave it off and use Claude or a bigger box.
+
+### Flowise on the same box
+
+Flowise (visual LLM flows) can run next to Trainyard behind the same Traefik, at its own name such as `flowise.trainyard.app`:
+
+1. In Cloudflare, add an A record for the name to the VPS address, proxied like the other names.
+2. In `/opt/trainyard/.env`: `FLOWISE_HOST=flowise.trainyard.app`, `FLOWISE_SECRET=$(openssl rand -hex 24)`, optionally `FLOWISE_USERNAME` and `FLOWISE_PASSWORD`.
+3. Run `./deploy.sh` (or push a commit). It adds `--profile flowise` only once the name resolves to the server, so an early deploy is harmless.
+4. Open the name: Flowise 3 asks you to create the owner account on first use.
+
+Its flows, credentials and SQLite database live in the `flowise` volume, separate from Trainyard's Postgres; back the volume up with the host (it is not in the nightly `pg_dump`). It is capped at 1 GB (`FLOWISE_MEMORY_LIMIT`); with gate's 3.5 GB and Trainyard's 1.5 GB it still fits a KVM2, but not together with Ollama. Pin `FLOWISE_VERSION` once a version works for you.
 
 ## Domains
 

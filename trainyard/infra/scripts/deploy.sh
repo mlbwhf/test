@@ -19,6 +19,7 @@ done
 TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
 BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)
 LLM_PROFILE=$(envval LLM_PROFILE)
+FLOWISE_HOST=$(envval FLOWISE_HOST)
 
 opts=(-f docker-compose.yml)
 case "${TRAEFIK_NETWORK:-host}" in host|"") ;; *) opts+=(-f docker-compose.traefik-bridge.yml);; esac
@@ -80,6 +81,13 @@ if [ -n "$web_labels$api_labels" ]; then
     [ -n "$web_labels" ] && printf '  web:\n    labels:\n%s' "$web_labels"
   } > "$alias_file"
   opts+=(-f "$alias_file")
+fi
+# Flowise joins the stack once FLOWISE_HOST is set and its DNS points here (a name that does not
+# resolve yet would make Let's Encrypt retry and the container start for nothing).
+if [ -n "${FLOWISE_HOST:-}" ]; then
+  if [ -z "$(envval FLOWISE_SECRET)" ]; then echo "== flowise skipped: set FLOWISE_SECRET in .env (openssl rand -hex 24)"
+  elif points_here "$FLOWISE_HOST"; then echo "== flowise at https://$FLOWISE_HOST"; opts+=(--profile flowise)
+  else echo "== flowise skipped: the DNS of $FLOWISE_HOST does not point to this server yet"; fi
 fi
 compose() { docker compose "${opts[@]}" "$@"; }
 
