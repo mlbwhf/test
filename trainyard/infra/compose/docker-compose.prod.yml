@@ -180,7 +180,7 @@ services:
   # Its flows, credentials and SQLite database live in the flowise volume; nothing is shared with
   # the Trainyard API or database. Capped at 1 GB so it cannot starve gate or Trainyard.
   flowise:
-    image: flowiseai/flowise:${FLOWISE_VERSION:-latest}
+    image: flowiseai/flowise:${FLOWISE_VERSION:-3.1.3}
     restart: unless-stopped
     profiles: [flowise]
     security_opt: [no-new-privileges:true]
