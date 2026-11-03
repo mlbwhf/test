@@ -116,6 +116,23 @@ describe("the Leading SAFe class", () => {
   });
 });
 
+describe("the Launching AI-Native ARTs class", () => {
+  it("has two lessons of eighteen steps on one shared assessment board, with the course's statements", async () => {
+    const { CLASSES, classBoard, AI_NATIVE_SUCCESS_FACTORS } = await import("./index.js");
+    const b = classBoard(CLASSES.find((c) => c.id === "aart")!);
+    const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Start and calibrate", "Lesson 2: Assess the ART"]);
+    const ex = b.frames.filter((f) => f.activity);
+    expect(ex).toHaveLength(18);
+    expect(ex.every((f) => f.activity!.board === "aart" && f.activity!.config!.shared === "assessment")).toBe(true);
+    expect(ex.map((f) => f.activity!.config!.step)).toEqual(["scale", "text", "flow", "okr", "sf", "sf", "sf", "text", "strategy", "sf", "sf", "sf", "text", "data", "sf", "sf", "sf", "gap"]);
+    expect(ex.filter((f) => f.activity!.config!.step === "sf").map((f) => `${f.activity!.config!.sf}:${f.activity!.config!.mode}`)).toEqual(["sf1:assess", "sf1:discuss", "sf1:adjust", "sf2:assess", "sf2:discuss", "sf2:adjust", "sf3:assess", "sf3:discuss", "sf3:adjust"]);
+    expect(b.frames.find((f) => f.title === "Activity: Compare workflows")!.activity).toMatchObject({ prepare: 10, share: 3 });
+    expect(Object.values(AI_NATIVE_SUCCESS_FACTORS).flatMap((f) => f.statements)).toHaveLength(12);
+    expect(AI_NATIVE_SUCCESS_FACTORS.sf3!.statements[2]![0]).toBe("We verify that datasets meet all four core curation standards: complete, accurate, maintained, and securely accessed.");
+  });
+});
+
 describe("upgrading a class to its template's current version", () => {
   it("adds the new chapters and keeps what the class did, the renamed exercise included", async () => {
     const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade } = await import("./index.js");

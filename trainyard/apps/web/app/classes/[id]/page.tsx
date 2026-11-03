@@ -48,8 +48,8 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
               Lesson {i + 1}: {l.title}
             </h3>
             <ul>
-              {l.exercises.map((e) => (
-                <li key={e.title}>
+              {l.exercises.map((e, j) => (
+                <li key={`${j}-${e.title}`}>
                   {e.title}
                   <span className="kind">{exerciseKindLabel[e.kind]}</span>
                   {e.kind === "pi-planning" ? ` · ${e.teams.length} teams` : ""}

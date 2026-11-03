@@ -67,7 +67,7 @@ let drag: { k: string; id: string | number } | null = null;
 /** Autoplay of the Big Picture story, per board. */
 const bpTimers = new Map<string, ReturnType<typeof setInterval>>();
 /** Who is voting from this browser: a random id kept here, never a name. */
-function voter(): string {
+export function voter(): string {
   try {
     let v = localStorage.getItem("trainyard.voter");
     if (!v) localStorage.setItem("trainyard.voter", (v = uid() + uid()));

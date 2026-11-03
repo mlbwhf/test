@@ -1,0 +1,425 @@
+"use client";
+
+// The planning suite's pages, ported from the design prototypes' logic (Trainyard Roadmap, OKR
+// Board and PI Planning Board .dc.html): each keeps the prototype's state shape and rules and
+// renders the generated layout in planning-views.tsx. What the prototype kept in browser storage
+// lives in the workspace's documents (lib/doc.ts); the epic title is still the join key between
+// the roadmap, the OKR board and the planning room, as in the prototype.
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Loading } from "@/components/ui";
+import { OkrBoardView, PlanningRoomView, RoadmapView } from "@/components/planning-views";
+import { useDoc, useDocOnce } from "@/lib/doc";
+import { ApiFailure } from "@/lib/api";
+
+const page = (bg: string) => ({ margin: "-16px", padding: "0 0 60px", background: bg, minHeight: "100vh", fontFamily: "'Instrument Sans', sans-serif", color: "#14123a" }) as React.CSSProperties;
+const Note = ({ text }: { text: string | null }) => (text ? <div style={{ margin: "0 5vw", padding: "10px 16px", background: "#fff4c2", border: "2px solid #14123a", borderRadius: 12, fontWeight: 600 }}>{text}</div> : null);
+
+// ---- Roadmap -------------------------------------------------------------------------------
+export type RoadItem = { id: string; title: string; type: "epic" | "enabler" | "feature"; lane: string; start: number; len: number; committed: boolean; placed: boolean };
+export type RoadmapDoc = { lanes: { id: string; name: string; info: string }[]; items: RoadItem[]; miles: { id: string; title: string; at: number; release: boolean }[] };
+const COL: Record<string, string> = { epic: "#4a5fe8", enabler: "#c8372d", feature: "#14123a" };
+const TN: Record<string, string> = { epic: "Epic", enabler: "Enabler", feature: "Feature" };
+const MAX = 12;
+const TINT = ["#cfe9e4", "#e6e0f7", "#f6e3c9"];
+const BAND = ["Forecast in quarters", "Forecast in half years", "Forecast in years"];
+const nid = (p: string) => p + Math.random().toString(36).slice(2, 8);
+export const ROADMAP_SAMPLE: RoadmapDoc = {
+  lanes: [{ id: "a1", name: "ART 1", info: "Navigation" }, { id: "a2", name: "ART 2", info: "Perception" }, { id: "a3", name: "ART 3", info: "Delivery" }],
+  items: [
+    { id: "i1", title: "GPS", type: "epic", lane: "a1", start: 1, len: 1, committed: true, placed: true },
+    { id: "i2", title: "Follow route", type: "epic", lane: "a1", start: 2, len: 2, committed: true, placed: true },
+    { id: "i3", title: "Make turns", type: "epic", lane: "a1", start: 4, len: 2, committed: false, placed: true },
+    { id: "i4", title: "Mapping software", type: "enabler", lane: "a1", start: 6, len: 3, committed: false, placed: true },
+    { id: "i5", title: "Surround cameras", type: "enabler", lane: "a2", start: 1, len: 2, committed: true, placed: true },
+    { id: "i6", title: "Stay in lane", type: "epic", lane: "a2", start: 3, len: 2, committed: true, placed: true },
+    { id: "i7", title: "Obey traffic laws", type: "epic", lane: "a2", start: 5, len: 3, committed: false, placed: true },
+    { id: "i8", title: "Forward radar", type: "enabler", lane: "a3", start: 1, len: 1, committed: true, placed: true },
+    { id: "i9", title: "Ultrasonic sensors", type: "enabler", lane: "a3", start: 2, len: 2, committed: true, placed: true },
+    { id: "i10", title: "Delivery spike", type: "enabler", lane: "a3", start: 6, len: 3, committed: false, placed: true },
+    { id: "i11", title: "Self-park", type: "epic", lane: "a3", start: 9, len: 3, committed: false, placed: false },
+    { id: "i12", title: "Real-time status", type: "feature", lane: "a1", start: 1, len: 1, committed: false, placed: false },
+  ],
+  miles: [
+    { id: "m1", title: "Annual suppliers’ event", at: 1, release: false },
+    { id: "m2", title: "Route following v1.0", at: 5, release: true },
+    { id: "m3", title: "First field test", at: 7, release: false },
+    { id: "m4", title: "On-road certification", at: 10, release: false },
+  ],
+};
+export const BLANK_ROADMAP: RoadmapDoc = { lanes: [{ id: "a1", name: "ART 1", info: "Name this train" }, { id: "a2", name: "ART 2", info: "Name this train" }], items: [], miles: [] };
+
+type RoadState = RoadmapDoc & { tab: "timeline" | "plan"; from: number; count: number; curPI: number; sel: { k: "i" | "m"; id: string } | null; checked: Record<string, boolean>; newText: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+
+export function RoadmapPage() {
+  const { doc, loaded, save, error } = useDoc<RoadmapDoc>("roadmap");
+  const [s, setS] = useState<RoadState | null>(null);
+  const sRef = useRef<RoadState | null>(null);
+  sRef.current = s;
+  useEffect(() => {
+    if (loaded && !s) setS({ ...structuredClone(doc ?? ROADMAP_SAMPLE), tab: "timeline", from: 1, count: 12, curPI: 1, sel: null, checked: {}, newText: "", ghost: null, flash: null });
+  }, [loaded, doc, s]);
+  useEffect(() => {
+    if (s) save({ lanes: s.lanes, items: s.items, miles: s.miles });
+  }, [s, save]);
+  const set = useCallback((fn: (t: RoadState) => Partial<RoadState>) => setS((t) => (t ? { ...t, ...fn(t) } : t)), []);
+  if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
+  const upd = (id: string, patch: Partial<RoadItem>) => set((t) => ({ items: t.items.map((i) => (i.id === id ? { ...i, ...patch } : i)) }));
+  const cell = () => { const t = document.querySelector("[data-track]"); if (!t) return null; const r = t.getBoundingClientRect(); return { r, w: r.width / sRef.current!.count }; };
+  const laneAt = (x: number, y: number) => {
+    const el = document.elementsFromPoint(x, y).map((e) => e.closest && e.closest("[data-lane]")).find(Boolean) as Element | undefined;
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { lane: el.getAttribute("data-lane")!, cell: Math.floor((x - r.left) / (r.width / sRef.current!.count)) + sRef.current!.from };
+  };
+  const drag = (e: React.PointerEvent, id: string, mode: "move" | "resize" | "new") => {
+    e.stopPropagation();
+    if (e.button) return;
+    const it = s.items.find((i) => i.id === id)!, c = cell();
+    const d = { x0: e.clientX, y0: e.clientY, start0: it.start, len0: it.len, moved: false, w: c ? c.w : 80 };
+    const mv = (ev: PointerEvent) => {
+      const dx = ev.clientX - d.x0;
+      if (!d.moved && Math.abs(dx) + Math.abs(ev.clientY - d.y0) < 4) return;
+      d.moved = true;
+      if (mode === "new") { set(() => ({ ghost: { x: ev.clientX + 12, y: ev.clientY + 12, id } })); return; }
+      if (mode === "resize") { upd(id, { len: Math.max(1, Math.min(MAX + 1 - d.start0, d.len0 + Math.round(dx / d.w))) }); return; }
+      const hit = laneAt(ev.clientX, ev.clientY);
+      const start = Math.max(1, Math.min(MAX + 1 - d.len0, d.start0 + Math.round(dx / d.w)));
+      upd(id, hit ? { start, lane: hit.lane } : { start });
+    };
+    const up = (ev: PointerEvent) => {
+      window.removeEventListener("pointermove", mv);
+      window.removeEventListener("pointerup", up);
+      if (mode === "new") {
+        set(() => ({ ghost: null }));
+        if (d.moved) { const hit = laneAt(ev.clientX, ev.clientY); if (hit) upd(id, { placed: true, lane: hit.lane, start: Math.max(1, Math.min(MAX, hit.cell)) }); }
+      }
+      set(() => ({ sel: { k: "i", id } }));
+    };
+    window.addEventListener("pointermove", mv);
+    window.addEventListener("pointerup", up);
+  };
+  const pack = (laneId: string) => {
+    const ends: number[] = [], out: { i: RoadItem; r: number; s: number; e: number }[] = [];
+    s.items.filter((i) => i.placed && i.lane === laneId).sort((a, b) => a.start - b.start).forEach((i) => {
+      let r = ends.findIndex((e) => e <= i.start);
+      if (r < 0) { r = ends.length; ends.push(0); }
+      ends[r] = i.start + i.len;
+      const a = Math.max(i.start, s.from), e = Math.min(i.start + i.len, s.from + s.count);
+      if (e > a) out.push({ i, r, s: a, e });
+    });
+    return { out, rows: Math.max(ends.length, 1) };
+  };
+  const addCardRaw = (title: string, extra: Partial<RoadItem> = {}) => { const id = nid("n"); set((t) => ({ items: [...t.items, { id, title, type: "feature", lane: t.lanes[0]?.id ?? "", start: t.from, len: 1, committed: false, placed: false, ...extra }], sel: { k: "i", id } })); };
+  const N = s.count, from = s.from;
+  const selI = s.sel?.k === "i" ? s.items.find((i) => i.id === s.sel!.id) : undefined;
+  const selM = s.sel?.k === "m" ? s.miles.find((m) => m.id === s.sel!.id) : undefined;
+  const seg = (on: boolean) => ({ bg: on ? "#14123a" : "transparent", fg: on ? "#fff" : "#14123a" });
+  const pct = (n: number) => `${(n * 100) / N}%`;
+  const lanes = s.lanes.map((l) => {
+    const { out, rows } = pack(l.id);
+    return {
+      id: l.id, name: l.name, info: `${s.items.filter((i) => i.placed && i.lane === l.id).length} cards`, h: Math.max(84, rows * 46 + 14),
+      dbl: (e: React.MouseEvent) => { if (e.target !== e.currentTarget) return; const r = e.currentTarget.getBoundingClientRect(); addCardRaw("New card", { placed: true, lane: l.id, start: Math.floor((e.clientX - r.left) / (r.width / N)) + from, type: "epic" }); },
+      items: out.map(({ i, r, s: a, e }) => { const on = selI?.id === i.id; return { title: i.title, left: pct(a - from), w: `calc(${pct(e - a)} - 4px)`, top: 7 + r * 46, color: COL[i.type], border: i.committed ? "solid" : "dashed", op: i.committed ? 1 : 0.82, outline: on ? "3px solid #ff3d8f" : "none", z: on ? 5 : 1, anim: s.flash === i.id ? "pulse .7s 3" : "none", down: (ev: React.PointerEvent) => drag(ev, i.id, "move"), resize: (ev: React.PointerEvent) => drag(ev, i.id, "resize") }; }),
+    };
+  });
+  const pis: any[] = [], bands: any[] = [];
+  for (let k = 0; k < N; k++) { const a = from + k, b = a <= 4 ? 0 : a <= 8 ? 1 : 2; pis.push({ label: "PI " + a, tint: TINT[b] }); bands.push({ tint: TINT[b], label: k === 0 || a === 5 || a === 9 ? BAND[b] : "" }); }
+  const miles = s.miles.filter((m) => m.at >= from && m.at < from + N).map((m) => ({ title: m.title, left: `calc(${pct(m.at - from + 0.5)} - ${N > 6 ? 55 : 80}px)`, w: `${N > 6 ? 110 : 160}px`, fill: m.release ? "#ffe14d" : "#8a8a99", outline: selM?.id === m.id ? "3px solid #ff3d8f" : "none", pick: (e: React.MouseEvent) => { e.stopPropagation(); set(() => ({ sel: { k: "m", id: m.id } })); } }));
+  const cards = s.items.map((i) => ({
+    title: i.title, color: COL[i.type], op: i.placed ? 1 : 0.6, cursor: i.placed ? "default" : "grab", bg: selI?.id === i.id ? "#fff4c2" : "#fff",
+    sub: TN[i.type] + (i.placed ? ` · ${s.lanes.find((l) => l.id === i.lane)?.name ?? ""} · PI ${i.start}` : " · not on board"),
+    checked: !!s.checked[i.id], toggle: () => set((t) => ({ checked: { ...t.checked, [i.id]: !t.checked[i.id] } })), stop: (e: React.SyntheticEvent) => e.stopPropagation(),
+    action: i.placed ? "Locate" : "Place", down: (e: React.PointerEvent) => { if (!i.placed) drag(e, i.id, "new"); },
+    locate: () => {
+      if (i.placed) { const nf = i.start < from || i.start >= from + N ? Math.max(1, Math.min(MAX + 1 - N, i.start)) : from; set(() => ({ tab: "timeline", from: nf, sel: { k: "i", id: i.id }, flash: i.id })); setTimeout(() => set(() => ({ flash: null })), 2200); }
+      else upd(i.id, { placed: true, start: from, lane: i.lane || s.lanes[0]?.id || "" });
+    },
+  }));
+  const unplacedChecked = s.items.filter((i) => s.checked[i.id] && !i.placed).length;
+  const planCols = [0, 1, 2].map((o) => {
+    const pi = s.curPI + o, its = s.items.filter((i) => i.placed && i.start === pi);
+    const mk = (i: RoadItem) => ({ title: i.title, color: COL[i.type], lane: `${s.lanes.find((l) => l.id === i.lane)?.name ?? ""} · ${i.len} ${i.len > 1 ? "PIs" : "PI"}`, bd: selI?.id === i.id ? "#ff3d8f" : "transparent", pick: () => { if (o === 0) upd(i.id, { committed: !i.committed }); set(() => ({ sel: { k: "i", id: i.id } })); }, left: (e: React.MouseEvent) => { e.stopPropagation(); upd(i.id, { start: Math.max(1, i.start - 1) }); }, right: (e: React.MouseEvent) => { e.stopPropagation(); upd(i.id, { start: Math.min(MAX, i.start + 1) }); } });
+    const groups = o === 0 ? [{ name: "COMMITTED", hd: "flex", cards: its.filter((i) => i.committed).map(mk) }, { name: "UNCOMMITTED", hd: "flex", cards: its.filter((i) => !i.committed).map(mk) }] : [{ name: "", hd: "none", cards: its.map(mk) }];
+    const ms = s.miles.filter((m) => m.at === pi).map((m) => ({ title: m.title, fill: m.release ? "#ffe14d" : "#8a8a99" }));
+    return { title: o === 0 ? `PI ${pi} Plan` : `PI +${o} (PI ${pi})`, groups, miles: ms, noMiles: !ms.length, empty: !its.length, isFirst: o === 0 };
+  });
+  const mapI = (f: (i: RoadItem) => Partial<RoadItem>) => set((t) => ({ items: t.items.map((i) => (selI && i.id === selI.id ? { ...i, ...f(i) } : i)) }));
+  const mapM = (f: (m: RoadmapDoc["miles"][number]) => Partial<RoadmapDoc["miles"][number]>) => set((t) => ({ miles: t.miles.map((m) => (selM && m.id === selM.id ? { ...m, ...f(m) } : m)) }));
+  const sel = selI ? { isCard: true, title: selI.title, startLabel: selI.len > 1 ? `${selI.start}–${selI.start + selI.len - 1}` : String(selI.start), commitLabel: selI.committed ? "Committed" : "Uncommitted", commitBg: selI.committed ? "#5ff0e0" : "#fff" } : selM ? { isMile: true, title: selM.title, at: selM.at, relLabel: selM.release ? "Release" : "Milestone", relBg: selM.release ? "#ffe14d" : "#fff" } : null;
+  const v = {
+    tabs: ([["timeline", "Roadmap"], ["plan", "PI plan"]] as const).map(([k, n]) => ({ n, ...seg(s.tab === k), go: () => set(() => ({ tab: k })) })),
+    zooms: ([[12, "Portfolio · 1–3 yr"], [6, "Solution · 6 PIs"], [3, "PI roadmap · 3 PIs"]] as const).map(([n, l]) => ({ n: l, ...seg(N === n), go: () => set((t) => ({ count: n, from: Math.max(1, Math.min(MAX + 1 - n, n === 12 ? 1 : t.from)) })) })),
+    isTimeline: s.tab === "timeline", isPlan: s.tab === "plan", cellPct: 100 / N, pis, bands, showBands: true, lanes, miles, cards, planCols, curPI: s.curPI,
+    legend: [{ c: COL.epic, n: "Epic" }, { c: COL.enabler, n: "Enabler" }, { c: COL.feature, n: "Feature" }],
+    windowLabel: `PI ${from}–${from + N - 1}`,
+    prev: () => set((t) => ({ from: Math.max(1, t.from - 1) })), next: () => set((t) => ({ from: Math.min(MAX + 1 - t.count, t.from + 1) })),
+    prevPI: () => set((t) => ({ curPI: Math.max(1, t.curPI - 1) })), nextPI: () => set((t) => ({ curPI: Math.min(MAX - 2, t.curPI + 1) })),
+    mileClick: (e: React.MouseEvent) => { const r = e.currentTarget.getBoundingClientRect(); const at = Math.floor((e.clientX - r.left) / (r.width / N)) + from; const id = nid("m"); set((t) => ({ miles: [...t.miles, { id, title: "New milestone", at, release: false }], sel: { k: "m", id } })); },
+    newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })),
+    newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") { addCardRaw(s.newText.trim() || "New card"); set(() => ({ newText: "" })); } },
+    addCard: () => { addCardRaw(s.newText.trim() || "New card"); set(() => ({ newText: "" })); },
+    allChecked: s.items.length > 0 && s.items.every((i) => s.checked[i.id]), cardCount: s.items.length,
+    toggleAll: () => set((t) => { const all = t.items.every((i) => t.checked[i.id]); const c: Record<string, boolean> = {}; t.items.forEach((i) => (c[i.id] = !all)); return { checked: c }; }),
+    delChecked: () => set((t) => ({ items: t.items.filter((i) => !t.checked[i.id]), checked: {}, sel: null })),
+    addToBoard: () => set((t) => ({ items: t.items.map((i) => (t.checked[i.id] && !i.placed ? { ...i, placed: true, start: t.from, lane: i.lane || t.lanes[0]?.id || "" } : i)), checked: {} })),
+    addBg: unplacedChecked ? "#ffe14d" : "#e9e4d6", addCount: unplacedChecked ? ` (${unplacedChecked})` : "",
+    ghost: !!s.ghost, ghostX: s.ghost?.x ?? 0, ghostY: s.ghost?.y ?? 0, ghostTitle: s.ghost ? s.items.find((i) => i.id === s.ghost!.id)?.title ?? "" : "", ghostColor: s.ghost ? COL[s.items.find((i) => i.id === s.ghost!.id)?.type ?? "feature"] : "#14123a",
+    hasSel: !!sel, noSel: !sel, sel: sel ?? {},
+    setTitle: (e: React.ChangeEvent<HTMLInputElement>) => { const val = e.target.value; if (selI) mapI(() => ({ title: val })); else mapM(() => ({ title: val })); },
+    typeOpts: (["epic", "enabler", "feature"] as const).map((k) => ({ n: TN[k], bg: selI?.type === k ? COL[k] : "#fff", fg: selI?.type === k ? "#fff" : "#14123a", go: () => mapI(() => ({ type: k })) })),
+    laneOpts: s.lanes.map((l) => ({ id: l.id, name: `${l.name} · ${l.info}`, sel: selI?.lane === l.id })), laneVal: selI?.lane ?? "",
+    setLane: (e: React.ChangeEvent<HTMLSelectElement>) => { const val = e.target.value; mapI(() => ({ lane: val })); },
+    lenDown: () => mapI((i) => ({ len: Math.max(1, i.len - 1) })), lenUp: () => mapI((i) => ({ len: Math.min(MAX + 1 - i.start, i.len + 1) })),
+    toggleCommit: () => mapI((i) => ({ committed: !i.committed })), toCollection: () => mapI(() => ({ placed: false })),
+    mileLeft: () => mapM((m) => ({ at: Math.max(1, m.at - 1) })), mileRight: () => mapM((m) => ({ at: Math.min(MAX, m.at + 1) })), toggleRelease: () => mapM((m) => ({ release: !m.release })),
+    delSel: () => set((t) => (t.sel?.k === "i" ? { items: t.items.filter((i) => i.id !== t.sel!.id), sel: null } : { miles: t.miles.filter((m) => m.id !== t.sel!.id), sel: null })),
+    loadSample: () => set(() => ({ ...structuredClone(ROADMAP_SAMPLE), sel: null, checked: {}, from: 1 })),
+    loadBlank: () => set(() => ({ ...structuredClone(BLANK_ROADMAP), sel: null, checked: {}, from: 1 })),
+  };
+  return (
+    <div style={page("#f4f1ea")}>
+      <style>{`@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff3d8f}50%{box-shadow:0 0 0 8px transparent}}@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}`}</style>
+      <Note text={error} />
+      <RoadmapView v={v} />
+    </div>
+  );
+}
+
+// ---- OKR board -----------------------------------------------------------------------------
+type Kr = { t: string; a: number; b: number; n: number; c: number; u: string };
+export type OkrDoc = { objs: { id: string; title: string; krs: Kr[] }[]; links: Record<string, string[]> };
+const ACC = ["#ff8a3d", "#d94fb5", "#ef4b4b", "#7bd34f"];
+export const OKR_SAMPLE: OkrDoc = {
+  objs: [
+    { id: "o1", title: "Increase customer satisfaction", krs: [{ t: "NPS from 32 to 50", a: 32, b: 50, n: 44, c: 2, u: "" }, { t: "Support first reply under 2 h", a: 8, b: 2, n: 4, c: 1, u: "h" }, { t: "Churn below 3 %", a: 6, b: 3, n: 5.2, c: 0, u: "%" }] },
+    { id: "o2", title: "Optimize operational processes", krs: [{ t: "Lead time from 90 to 45 days", a: 90, b: 45, n: 58, c: 1, u: "d" }, { t: "Release every PI without hotfix", a: 0, b: 4, n: 3, c: 2, u: "" }, { t: "Cut manual hand-offs by 40 %", a: 0, b: 40, n: 18, c: 1, u: "%" }] },
+    { id: "o3", title: "Drive higher conversion rates", krs: [{ t: "Trial to paid from 8 to 14 %", a: 8, b: 14, n: 9, c: 0, u: "%" }, { t: "Checkout drop-off under 20 %", a: 38, b: 20, n: 33, c: 0, u: "%" }] },
+    { id: "o4", title: "Integrate advanced analytics", krs: [{ t: "5 teams on shared metrics", a: 0, b: 5, n: 4, c: 2, u: "" }, { t: "Forecast accuracy to 85 %", a: 60, b: 85, n: 71, c: 1, u: "%" }, { t: "Dashboards live for all ARTs", a: 0, b: 3, n: 2, c: 1, u: "" }] },
+  ],
+  links: { o1: ["Follow route"], o2: ["Mapping software", "Delivery spike"], o3: ["Obey traffic laws"], o4: ["GPS"] },
+};
+const FALLBACK_EPICS = [{ title: "GPS", start: 1, len: 1 }, { title: "Follow route", start: 2, len: 2 }, { title: "Stay in lane", start: 3, len: 2 }, { title: "Obey traffic laws", start: 5, len: 3 }, { title: "Mapping software", start: 6, len: 3 }, { title: "Delivery spike", start: 6, len: 3 }];
+const CONF = ["Low", "Med", "High"];
+const prog = (k: Kr) => Math.max(0, Math.min(1, (k.n - k.a) / (k.b - k.a)));
+const hue = (p: number) => (p >= 0.7 ? "#5fb83a" : p >= 0.4 ? "#ffb020" : "#ef4b4b");
+
+export function OkrBoardPage() {
+  const { doc, loaded, save, error } = useDoc<OkrDoc>("okr-board");
+  const road = useDocOnce<RoadmapDoc>("roadmap");
+  const [s, setS] = useState<(OkrDoc & { sel: string; hov: string | null }) | null>(null);
+  useEffect(() => {
+    if (loaded && !s) setS({ ...structuredClone(doc ?? OKR_SAMPLE), sel: (doc ?? OKR_SAMPLE).objs[0]?.id ?? "o1", hov: null });
+  }, [loaded, doc, s]);
+  useEffect(() => {
+    if (s) save({ objs: s.objs, links: s.links });
+  }, [s, save]);
+  if (!s || road === undefined) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
+  const set = (fn: (t: NonNullable<typeof s>) => Partial<NonNullable<typeof s>>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
+  const fromRoad = (road?.items ?? []).filter((i) => i.placed && i.type === "epic").map((i) => ({ title: i.title, start: i.start, len: i.len }));
+  const epics = fromRoad.length ? fromRoad : FALLBACK_EPICS;
+  const byTitle: Record<string, { title: string; start: number; len: number }> = {};
+  epics.forEach((e) => (byTitle[e.title] = e));
+  const setKr = (oid: string, i: number, patch: Partial<Kr>) => set((t) => ({ objs: t.objs.map((o) => (o.id === oid ? { ...o, krs: o.krs.map((k, j) => (j === i ? { ...k, ...patch } : k)) } : o)) }));
+  const score = (o: OkrDoc["objs"][number]) => o.krs.reduce((a, k) => a + prog(k), 0) / (o.krs.length || 1);
+  const cards = s.objs.map((o, oi) => {
+    const sc = score(o), ep = (s.links[o.id] ?? []).map((t) => byTitle[t]).filter(Boolean) as { start: number; len: number }[];
+    const cover = Array.from({ length: 12 }, (_, k) => ({ bg: ep.some((e) => k + 1 >= e.start && k + 1 < e.start + e.len) ? ACC[oi % 4] : "#d9d4c7" }));
+    return { title: o.title, accent: ACC[oi % 4], ink: "#14123a", krCount: o.krs.length, score: sc.toFixed(2), scoreColor: hue(sc), epicCount: ep.length, cover, outline: s.sel === o.id ? "3px solid #ffe14d" : "none", pick: () => set(() => ({ sel: o.id })), stop: (e: React.SyntheticEvent) => e.stopPropagation(),
+      rename: (e: React.ChangeEvent<HTMLInputElement>) => { const val = e.target.value; set((t) => ({ objs: t.objs.map((x) => (x.id === o.id ? { ...x, title: val } : x)) })); },
+      rings: o.krs.map((k, i) => { const r = 98 - i * 20, c = 2 * Math.PI * r, p = prog(k), on = s.hov === o.id + i; return { r, w: on ? 17 : 13, color: hue(p), dash: `${p * c} ${c}` }; }) };
+  });
+  const so = s.objs.find((o) => o.id === s.sel) ?? s.objs[0]!, si = s.objs.indexOf(so);
+  const krs = so.krs.map((k, i) => { const p = prog(k), lo = Math.min(k.a, k.b), hi = Math.max(k.a, k.b), step = hi - lo > 20 ? 1 : 0.1; return { title: k.t, now: k.n, target: k.b, unit: k.u, min: lo, max: hi, step, color: hue(p), bg: s.hov === so.id + i ? "#fff" : "transparent", enter: () => set(() => ({ hov: so.id + i })), leave: () => set(() => ({ hov: null })), rename: (e: React.ChangeEvent<HTMLInputElement>) => setKr(so.id, i, { t: e.target.value }), set: (e: React.ChangeEvent<HTMLInputElement>) => setKr(so.id, i, { n: +e.target.value }), conf: CONF.map((n, ci) => ({ n, bg: k.c === ci ? ["#ff9fc6", "#ffe14d", "#5ff0e0"][ci] : "#fff", go: () => setKr(so.id, i, { c: ci }) })) }; });
+  const linked = new Set<string>();
+  Object.values(s.links).forEach((a) => a.forEach((t) => linked.add(t)));
+  const mapRows = epics.map((e) => ({ title: e.title, ink: linked.has(e.title) ? "#14123a" : "#c8372d", warn: linked.has(e.title) ? "" : " · unfunded", cells: s.objs.map((o, oi) => { const on = (s.links[o.id] ?? []).includes(e.title); return { bg: on ? ACC[oi % 4] : "#fff", mark: on ? "✓" : "", go: () => set((t) => { const cur = t.links[o.id] ?? []; return { links: { ...t.links, [o.id]: on ? cur.filter((x) => x !== e.title) : [...cur, e.title] } }; }) }; }) }));
+  const un = epics.filter((e) => !linked.has(e.title)).length;
+  const v = { cards, krs, selTitle: so.title.toUpperCase(), selAccent: ACC[si % 4], objCount: s.objs.length, mapHead: s.objs.map((o, i) => ({ title: o.title, accent: ACC[i % 4] })), mapRows, unfundedMsg: un ? `${un} epic${un > 1 ? "s" : ""} not tied to any objective` : "Every epic supports an objective", unfundedColor: un ? "#c8372d" : "#2f7d1f" };
+  return (
+    <div style={page("#0b0a2e")}>
+      <style>{`@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}`}</style>
+      <Note text={error} />
+      <OkrBoardView v={v} />
+    </div>
+  );
+}
+
+// ---- Planning room (the multi-team train yard) --------------------------------------------
+type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
+export type WorkDoc = { teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
+const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
+const POKER: (string | number)[] = ["?", 1, 2, 3, 5, 8, 13, 21, 40, 100, "∞"];
+const ROAM: [string, string, string][] = [["R", "Resolved", "#5ff0e0"], ["O", "Owned", "#ffe14d"], ["A", "Accepted", "#b8e07a"], ["M", "Mitigated", "#ff9fc6"]];
+const ITER: [string, string][] = [["Iteration 1", "Mar 10 – 23"], ["Iteration 2", "Mar 24 – Apr 6"], ["Iteration 3", "Apr 7 – 20"], ["Iteration 4", "Apr 21 – May 4"], ["IP iteration", "May 5 – 18"]];
+const EPICS0 = ["GPS", "Follow route", "Stay in lane", "Obey traffic laws", "Mapping software", "Delivery spike"];
+const OBJ0: Record<string, string> = { o1: "Increase customer satisfaction", o2: "Optimize operational processes", o3: "Drive higher conversion rates", o4: "Integrate advanced analytics" };
+const LINKS0: Record<string, string[]> = { o1: ["Follow route"], o2: ["Mapping software", "Delivery spike"], o3: ["Obey traffic laws"], o4: ["GPS"] };
+const FEATS = ["Shopping cart", "Shipping options", "Search", "Sorting order", "Payments", "Order history", "Notifications", "Wishlist"];
+const STORIES: [string, number][] = [["Add item", 3], ["Remove item", 2], ["Live totals", 5], ["Pick delivery", 8], ["Date estimate", 13], ["Index titles", 5], ["Sort by price", 3], ["Saved cards", 8]];
+const RISKS0 = ["Call center training", "UX interface not ready", "Vendor API limit", "Key engineer on leave"];
+const CAP0 = [12, 16, 14, 16, 16];
+type Room = WorkDoc & { draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+
+function seedRoom(n: number, sample: boolean, epics: string[], kn: { n: number }): Ticket[] {
+  const t: Ticket[] = [];
+  if (!sample) return t;
+  const key = () => `TY-${++kn.n}`;
+  for (let k = 1; k <= n; k++) {
+    const fids: string[] = [];
+    for (let j = 0; j < 3; j++) { const id = key(); fids.push(id); t.push({ id, type: "feature", title: FEATS[(k * 3 + j) % FEATS.length]!, parent: epics[(k + j * 2) % epics.length], team: k, iter: j < 2 ? j + 1 : null, pts: 0 }); }
+    for (let j = 0; j < 4; j++) { const [title, pts] = STORIES[(k + j * 2) % STORIES.length]!; t.push({ id: key(), type: "story", title, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
+    t.push({ id: key(), type: "risk", title: RISKS0[k % RISKS0.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
+    ([["95% system uptime", 8, true], ["Delivery choice live", 5, true], ["Updated cart", 3, false]] as const).forEach(([title, bv, c]) => t.push({ id: key(), type: "pio", title, team: k, bv: k % 2 && c ? bv : 0, commit: c, pts: 0, iter: null }));
+  }
+  return t;
+}
+
+export function PlanningRoomPage() {
+  const { doc, loaded, save, error } = useDoc<WorkDoc>("planning-room");
+  const road = useDocOnce<RoadmapDoc>("roadmap");
+  const okr = useDocOnce<OkrDoc>("okr-board");
+  const [s, setS] = useState<Room | null>(null);
+  useEffect(() => {
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+  }, [loaded, doc, road, okr, s]);
+  useEffect(() => {
+    if (s && s.teams) save({ teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+  }, [s, save]);
+  if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
+  const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
+  const fromRoad = (road?.items ?? []).filter((i) => i.placed && i.type === "epic").map((i) => i.title);
+  const epics = fromRoad.length ? fromRoad : EPICS0;
+  const objs: Record<string, string> = okr?.objs ? Object.fromEntries(okr.objs.map((o) => [o.id, o.title])) : OBJ0;
+  const links = okr?.links ?? LINKS0;
+  const N = s.teams || 0, cur = s.view === "yard" || s.view === "setup" ? null : +s.view, ct = cur || 1;
+  const by: Record<string, Ticket> = {};
+  s.tickets.forEach((x) => (by[x.id] = x));
+  const selT = s.sel ? by[s.sel] : undefined;
+  const upd = (id: string, patch: Partial<Ticket>) => set((t) => ({ tickets: t.tickets.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
+  const flashIt = (id: string) => { set(() => ({ flash: id })); setTimeout(() => set(() => ({ flash: null })), 2200); };
+  const start = (sample: boolean) => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, sample, epics, kn); set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null })); };
+  const drag = (e: React.PointerEvent, id: string) => {
+    if (e.button) return;
+    const x0 = e.clientX, y0 = e.clientY;
+    let moved = false;
+    const mv = (ev: PointerEvent) => { if (!moved && Math.abs(ev.clientX - x0) + Math.abs(ev.clientY - y0) < 5) return; moved = true; set(() => ({ ghost: { x: ev.clientX + 10, y: ev.clientY + 10, id } })); };
+    const up = (ev: PointerEvent) => {
+      window.removeEventListener("pointermove", mv);
+      window.removeEventListener("pointerup", up);
+      set(() => ({ ghost: null, sel: id }));
+      if (!moved) return;
+      const z = document.elementsFromPoint(ev.clientX, ev.clientY).map((n) => n.closest && n.closest("[data-drop]")).find(Boolean) as Element | undefined;
+      if (!z) return;
+      const d = z.getAttribute("data-drop")!;
+      upd(id, { iter: d === "yard" ? null : +d.split(":")[1]! });
+    };
+    window.addEventListener("pointermove", mv);
+    window.addEventListener("pointerup", up);
+  };
+  const key = () => `TY-${s.kn + 1}`;
+  const addT = (parent: string) => {
+    const title = s.newText.trim();
+    if (!title) return;
+    const team = cur ?? 1, id = key();
+    const t: Ticket = { id, type: s.kind, title, parent: parent || "", team, iter: null, pts: 0 };
+    if (s.kind === "risk") t.roam = null;
+    set((x) => ({ tickets: [...x.tickets, t], kn: x.kn + 1, newText: "", view: String(team), sel: id }));
+    flashIt(id);
+  };
+  const epicObj = (title: string) => { const id = Object.keys(links).find((k) => (links[k] ?? []).includes(title)); return id ? { id, title: objs[id] ?? id } : null; };
+  const teamOf = (n: number) => ({ name: `Team ${n}`, color: TC[(n - 1) % 8]! });
+  const where = (t: Ticket) => (t.type === "pio" ? `Team ${t.team} · PI objective` : `Team ${t.team} · ${t.iter ? ITER[t.iter - 1]![0] : "Freight yard"}`);
+  const capOf = (n: number, i: number) => s.caps[`${n}:${i}`] ?? CAP0[i - 1]!;
+  const loadOf = (n: number, i: number) => s.tickets.filter((t) => t.team === n && t.type === "story" && t.iter === i).reduce((a, t) => a + t.pts, 0);
+  const checks = (n: number): [string, boolean][] => {
+    const T = s.tickets.filter((t) => t.team === n), pio = T.filter((t) => t.type === "pio"), rk = T.filter((t) => t.type === "risk");
+    return [["Every feature is on a wagon", T.some((t) => t.type === "feature") && T.filter((t) => t.type === "feature").every((t) => t.iter)], ["No wagon over capacity", [1, 2, 3, 4, 5].every((i) => loadOf(n, i) <= capOf(n, i))], ["Every story is sized", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.pts > 0)], ["Every objective has business value", pio.length > 0 && pio.every((t) => (t.bv ?? 0) > 0)], ["Every risk is ROAMed", rk.length > 0 && rk.every((t) => t.roam)]];
+  };
+  const lineage = (t: Ticket) => {
+    const out: { kind: string; key: string; title: string; meta: string; color: string; id: string | null }[] = [];
+    let c: Ticket | undefined = t;
+    while (c) {
+      out.unshift({ kind: ({ story: "STORY", feature: "FEATURE", risk: "RISK", pio: "PI OBJECTIVE" } as Record<string, string>)[c.type]!, key: c.id, title: c.title, meta: where(c), color: c.type === "story" ? "#e9c98a" : c.type === "risk" ? "#f8a08a" : KC.feature, id: c.id });
+      if (c.type === "feature") {
+        const ob = epicObj(c.parent ?? "");
+        out.unshift({ kind: "EPIC", key: "", title: c.parent || "No epic", meta: "On the Roadmap · shared by every team", color: KC.epic, id: null });
+        out.unshift(ob ? { kind: "OBJECTIVE", key: "", title: ob.title, meta: "On the OKR board", color: "#7bd34f", id: null } : { kind: "OBJECTIVE", key: "", title: "Not linked to an objective", meta: "Link it on the OKR board", color: "#fff", id: null });
+        break;
+      }
+      c = c.parent ? by[c.parent] : undefined;
+    }
+    return out;
+  };
+  const out = (n: Ticket) => ({ outline: s.sel === n.id ? "3px solid #ff3d8f" : "none", anim: s.flash === n.id ? "glow .7s 3" : "none" });
+  const T = s.tickets.filter((t) => t.team === ct);
+  const goTicket = (t: Ticket) => () => { set(() => ({ view: String(t.team), sel: t.id })); flashIt(t.id); };
+  const parentOpts = s.kind === "feature" ? epics.map((e) => ({ id: e, t: e })) : s.kind === "story" ? T.filter((t) => t.type === "feature").map((t) => ({ id: t.id, t: t.title })) : [{ id: "", t: "Nothing" }, ...T.filter((t) => t.type === "feature" || t.type === "story").map((t) => ({ id: t.id, t: t.title }))];
+  const ps = parentOpts.some((o) => o.id === s.parentSel) ? s.parentSel : (parentOpts[0]?.id ?? "");
+  const rail = Array.from({ length: N }, (_, k) => k + 1).map((n) => { const tm = teamOf(n), c = checks(n).filter((x) => x[1]).length; return { name: tm.name, color: tm.color, checks: `${c}/5`, bg: cur === n ? "#14123a" : "#fff", fg: cur === n ? "#fff" : "#14123a", go: () => set(() => ({ view: String(n), sel: null })) }; });
+  const q = s.q.trim().toLowerCase();
+  const results = q ? s.tickets.filter((t) => `${t.id} ${t.title}`.toLowerCase().includes(q)).slice(0, 7).map((t) => ({ key: t.id, title: t.title, color: t.type === "story" ? "#e9c98a" : t.type === "risk" ? "#f8a08a" : "#14123a", where: `T${t.team}${t.iter ? ` · It ${t.iter}` : ""}`, go: () => { set(() => ({ q: "", view: String(t.team), sel: t.id })); flashIt(t.id); } })) : [];
+  const yard = Array.from({ length: N }, (_, k) => k + 1).map((n) => {
+    const tm = teamOf(n), TT = s.tickets.filter((t) => t.team === n), ch = checks(n).filter((x) => x[1]).length, rk = TT.filter((t) => t.type === "risk"), open = rk.filter((r) => !r.roam).length;
+    let lt = 0, cp = 0;
+    const cars = [1, 2, 3, 4, 5].map((i) => { const l = loadOf(n, i), c = capOf(n, i); lt += l; cp += c; return { h: Math.min(100, c ? (l / c) * 100 : 0), bg: l > c ? "#ef4b4b" : tm.color }; });
+    return { name: tm.name, color: tm.color, checks: `${ch}/5`, chkBg: ch === 5 ? "#5ff0e0" : "#eef2f7", cars, load: lt, cap: cp, features: TT.filter((t) => t.type === "feature").length, stories: TT.filter((t) => t.type === "story").length, risks: open ? `${open} open risk${open > 1 ? "s" : ""}` : rk.length ? "risks ROAMed" : "no risks yet", riskColor: open ? "#c8372d" : "#2f7d1f", prog: ch * 20, go: () => set(() => ({ view: String(n), sel: null })) };
+  });
+  const shared = epics.map((e) => {
+    const fs = s.tickets.filter((t) => t.type === "feature" && t.parent === e), tms = [...new Set(fs.map((f) => f.team))].sort((a, b) => a - b), ob = epicObj(e);
+    const pts = s.tickets.filter((t) => t.type === "story" && fs.some((f) => f.id === t.parent)).reduce((a, t) => a + t.pts, 0);
+    return { title: e, obj: ob ? `→ ${ob.title}` : "No objective linked", pts, none: !tms.length, teams: tms.map((n) => ({ label: `Team ${n} · ${fs.filter((f) => f.team === n).length}`, color: teamOf(n).color, go: () => set(() => ({ view: String(n) })) })) };
+  });
+  const tm = teamOf(ct);
+  const sz = (t: Ticket) => t.est || (t.pts ? t.pts : "?");
+  const fcOf = (st: Ticket) => { const f = st.parent ? by[st.parent] : undefined; return f && f.type === "feature" ? KC.epic : "#14123a"; };
+  const mkStory = (t: Ticket) => ({ key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) });
+  const wagons = [1, 2, 3, 4, 5].map((i) => {
+    const l = loadOf(ct, i), c = capOf(ct, i), over = l > c, here = T.filter((t) => t.iter === i);
+    return { key: `w:${i}`, name: ITER[i - 1]![0], dates: ITER[i - 1]![1], load: l, cap: c, fill: Math.min(100, (l / (c || 1)) * 100), gauge: over ? "#ef4b4b" : l / (c || 1) > 0.85 ? "#ffb020" : "#5fb83a", numColor: over ? "#c8372d" : "#14123a", bg: over ? "#fde0dc" : "#fbf9f4",
+      capUp: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: c + 1 } })), capDown: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: Math.max(0, c - 1) } })),
+      flags: here.filter((t) => t.type === "feature").map((t) => ({ key: t.id, t: t.title, color: KC.epic, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) })), crates: here.filter((t) => t.type === "story").map(mkStory),
+      hazards: here.filter((t) => t.type === "risk").map((t) => ({ t: t.title, roam: t.roam || "?", bg: t.roam ? "#fff" : "#f8a08a", down: (e: React.PointerEvent) => drag(e, t.id), outline: out(t).outline })) };
+  });
+  const yt = T.filter((t) => !t.iter && t.type !== "pio" && t.type !== "risk").map((t) => ({ key: t.id, t: t.title, pts: t.type === "story" ? ` · ${sz(t)}` : "", bg: t.type === "story" ? "#e9c98a" : KC.epic, fg: t.type === "story" ? "#14123a" : "#fff", down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }));
+  const rks = T.filter((t) => t.type === "risk").map((t) => ({ key: t.id, t: t.title, bg: t.roam ? "#f4f1ea" : "#f8a08a", outline: out(t).outline, stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), where: t.roam ? ROAM.find((o) => o[0] === t.roam)![1] + (t.iter ? ` · ${ITER[t.iter - 1]![0]}` : "") : t.iter ? `On ${ITER[t.iter - 1]![0]}` : "Drag onto a wagon", roam: ROAM.map(([k, name, c]) => ({ k, name, bg: t.roam === k ? c : "#fff", go: () => upd(t.id, { roam: t.roam === k ? null : k }) })) }));
+  const pios = T.filter((t) => t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit)).map((t) => ({ t: t.title, bg: t.commit ? "#fff" : "#f4f1ea", border: t.commit ? "solid" : "dashed", tag: t.commit ? "C" : "U", rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) }));
+  const cBV = T.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), aBV = T.filter((t) => t.type === "pio").reduce((a, t) => a + (t.bv ?? 0), 0);
+  const ck = checks(ct);
+  let chain: any[] = [], down: any[] = [], sel: any = {};
+  if (selT) {
+    const lin = lineage(selT);
+    chain = lin.map((n, i) => ({ ...n, key: n.key ? ` · ${n.key}` : "", ring: n.id === selT.id ? "3px solid #ff3d8f" : "none", line: i === lin.length - 1 ? 0 : 0.35, fw: n.id === selT.id ? 800 : 600, cursor: n.id && by[n.id] ? "pointer" : "default", go: () => n.id && by[n.id] && goTicket(by[n.id]!)() }));
+    down = s.tickets.filter((t) => t.parent === selT.id).map((t) => ({ t: t.title, color: t.type === "story" ? "#e9c98a" : "#f8a08a", where: t.type === "story" ? `${t.iter ? `It ${t.iter}` : "yard"} · ${sz(t)} pts` : "risk", go: goTicket(t) }));
+    sel = { key: selT.id, title: selT.title, where: where(selT) + (selT.type === "story" ? ` · ${sz(selT)} pts` : "") };
+  }
+  const g = s.ghost, pk = selT?.type === "story" ? selT : null;
+  const hint: Record<string, string> = { "?": "Not enough information", "∞": "Too big, split it", 100: "Huge", 40: "Very large" };
+  const v = {
+    needSetup: !s.teams || s.view === "setup", inRoom: !!s.teams && s.view !== "setup", draft: s.draft, draftChips: Array.from({ length: s.draft }, (_, k) => teamOf(k + 1)),
+    draftUp: () => set((t) => ({ draft: Math.min(8, t.draft + 1) })), draftDown: () => set((t) => ({ draft: Math.max(2, t.draft - 1) })),
+    startSample: () => start(true), startEmpty: () => start(false), resize: () => set(() => ({ view: "setup" })), teamCount: N,
+    goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
+    kinds: ([["story", "Story"], ["feature", "Feature"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
+    newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
+    newHint: `${tm.name}: new ${s.kind}…`, hasParents: true, parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: s.kind === "feature" ? "Epic" : s.kind === "story" ? "Feature" : "Relates to",
+    isYard: !cur, isTeam: !!cur, yard, shared, team: tm, wagons, yardTickets: yt, yardEmpty: !yt.length, risks: rks, noRisks: !rks.length, pios, cBV, reliab: aBV ? `${Math.round((cBV / aBV) * 100)}% reliability` : "no BV yet",
+    addPio: () => set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio", title: "New objective", team: ct, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1 })),
+    poker: POKER.map((val, k) => ({ v: val, rot: (k - 5) * 4, dy: Math.abs(k - 5) * 2, bg: pk && (pk.est === val || (!pk.est && pk.pts === val)) ? "#ffe14d" : "#fff", go: () => pk && upd(pk.id, typeof val === "number" ? { pts: val, est: "" } : { pts: 0, est: val }) })),
+    pokerFor: pk ? `Sizing: ${pk.title}${pk.est ? ` · ${hint[pk.est]}` : pk.pts >= 40 ? ` · ${hint[pk.pts]}` : ""}` : "Click a story, then a card.",
+    checks: ck.map(([t, ok]) => ({ t, fg: ok ? "#fff" : "#a9a7d6", bg: ok ? "#5ff0e0" : "transparent", mark: ok ? "✓" : "" })), doneCount: ck.filter((x) => x[1]).length,
+    hasSel: !!selT, sel, chain, down, noDown: !down.length, closeSel: () => set(() => ({ sel: null })),
+    delSel: () => set((t) => ({ tickets: t.tickets.filter((x) => x.id !== t.sel && x.parent !== t.sel), sel: null })),
+    ghost: !!g, gx: g?.x ?? 0, gy: g?.y ?? 0, gt: g && by[g.id] ? by[g.id]!.title : "",
+  };
+  return (
+    <div style={page("#f4f1ea")}>
+      <style>{`@keyframes glow{0%,100%{box-shadow:0 0 0 0 #ff3d8f}50%{box-shadow:0 0 0 7px transparent}}@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}`}</style>
+      <Note text={error} />
+      <PlanningRoomView v={v} />
+    </div>
+  );
+}

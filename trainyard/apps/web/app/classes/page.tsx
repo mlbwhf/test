@@ -5,8 +5,8 @@ import { ModulePage, PriceStrip } from "@/components/module-page";
 import { PLANS } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: "Class boards for SAFe trainers: Leading SAFe, SPC, Advanced SPC, POPM and RTE",
-  description: "Ready-to-run class boards for Leading SAFe, SAFe Practice Consultant, Advanced SPC, Product Owner/Product Manager and Release Train Engineer classes: a start-here strip, one frame per lesson with its exercises, a PI planning simulation, breakout tables, a day plan, and your own Miro class boards imported.",
+  title: "Class boards for SAFe trainers: Leading SAFe, SPC, Advanced SPC, POPM, ART Leader and RTE",
+  description: "Ready-to-run class boards for Leading SAFe, SAFe Practice Consultant, Advanced SPC, Product Owner/Product Manager, Launching AI-Native ARTs (ART Leader) and Release Train Engineer classes: a start-here strip, one frame per lesson with its exercises, a PI planning simulation, breakout tables, a day plan, and your own Miro class boards imported.",
   alternates: { canonical: "/classes" },
 };
 
@@ -34,7 +34,7 @@ export default function ClassesPage() {
             Start the 30-day trial
           </Link>
           <a href="#classes" className="pill">
-            See the five classes
+            See the six classes
           </a>
         </div>
       </header>

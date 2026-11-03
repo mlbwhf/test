@@ -482,7 +482,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(54);
+    expect(list.body.builtin.length).toBe(55);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     expect(pi.info.method).toBe("safe");
@@ -795,11 +795,11 @@ describe("website sign-ups", () => {
 });
 
 describe("class boards", () => {
-  it("lists the five classes and keeps them for signed-up trainers", async () => {
+  it("lists the six classes and keeps them for signed-up trainers", async () => {
     const { call, app } = await setup();
     const list = await call("GET", "/v1/templates/boards");
     const classes = list.body.builtin.filter((b: { info: { tags: string[] } }) => b.info.tags.includes("class"));
-    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-rte"]);
+    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-aart", "tpl-builtin-class-rte"]);
     // Open mode is anonymous: classes and Miro imports refuse, planning boards do not.
     const denied = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC cohort" });
     expect(denied.status).toBe(403);
@@ -1938,6 +1938,21 @@ describe("a trial is live only once the card is saved", () => {
     expect(store.state.purchases!.find((p) => p.id === sub.body.purchaseId)!.status).toBe("paid");
     await new Promise((r) => setTimeout(r, 50));
     expect(mailer.sent.filter((m) => m.from === "billing").map((m) => m.subject)[0]).toContain("trial has started");
+  });
+});
+
+describe("planning documents", () => {
+  it("keeps the roadmap, OKR board and planning room per workspace, written by planners and read by members", async () => {
+    const { call } = await setup();
+    const admin = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const viewer = (await call("POST", "/v1/users", { name: "Vic", email: "vic@example.io", role: "viewer" }, admin)).body.apiKey as string;
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body).toEqual({ key: "roadmap", doc: null });
+    const doc = { lanes: [{ id: "a1", name: "ART 1", info: "Navigation" }], items: [{ id: "i1", title: "GPS", type: "epic", lane: "a1", start: 1, len: 1, committed: true, placed: true }], miles: [] };
+    expect((await call("PUT", "/v1/docs/roadmap", { doc }, viewer)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/roadmap", { doc }, admin)).body.doc).toEqual(doc);
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body.doc).toEqual(doc);
+    expect((await call("GET", "/v1/docs/menu", undefined, admin)).status).toBe(400);
+    expect((await call("PUT", "/v1/docs/roadmap", { doc: null }, admin)).body.doc).toBeNull();
   });
 });
 

@@ -15,6 +15,7 @@ import { emptyBoard, instantiate, type Board, type BoardNode, type Frame } from 
 import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from "./activities.js";
 import { RTE_COURSE } from "./courses/rte.js";
 import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
+import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -659,6 +660,17 @@ const RAW_CLASSES: ClassSpec[] = [
         ],
       },
     ],
+  },
+  {
+    id: "aart",
+    name: "Launching AI-Native ARTs",
+    short: "ART Leader",
+    blurb: "Assess your ART against three success factors: outcome-driven product development, portfolio and investment strategy, and curated data. Rate, compare, reach consensus, then turn every gap into a launch plan on the roadmap.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: AI_NATIVE_ARTS_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: AI_NATIVE_ARTS_COURSE,
   },
   {
     id: "rte",
