@@ -27,6 +27,11 @@ const itNote = (link: string) => {
 export function ClassStudents({ boardId }: { boardId: string }) {
   const q = useApi<{ students: Student[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
   const [text, setText] = useState("");
+  // "one": a name and an email; "many": a pasted list, one per line.
+  const [mode, setMode] = useState<"one" | "many">("one");
+  const [oneName, setOneName] = useState("");
+  const [oneEmail, setOneEmail] = useState("");
+  const [picked, setPicked] = useState<string[]>([]);
   const [send, setSend] = useState(true);
   const [links, setLinks] = useState<{ name: string; email: string; link: string; emailed: boolean }[]>([]);
   const [kept, setKept] = useState<string[]>([]);
@@ -42,7 +47,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         const name = l.replace(email, "").replace(/[<>,;]/g, " ").trim() || email.split("@")[0]!;
         return { name, email };
       });
-  const rows = parse();
+  const oneOk = /^[^\s,;<>]+@[^\s,;<>]+$/.test(oneEmail.trim());
+  const rows = mode === "one" ? (oneEmail.trim() ? [{ name: oneName.trim() || oneEmail.trim().split("@")[0]!, email: oneEmail.trim() }] : []) : parse();
   const bad = rows.filter((r) => !r.email);
   const add = async () => {
     setErr(null);
@@ -51,6 +57,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
       setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!, s.link), emailed: s.emailed })));
       setKept(r.students.filter((s) => s.existing).map((s) => s.name));
       setText("");
+      setOneName("");
+      setOneEmail("");
       await q.reload();
     } catch (e) {
       setErr((e as ApiFailure).message);
@@ -75,6 +83,35 @@ export function ClassStudents({ boardId }: { boardId: string }) {
       setErr((e as ApiFailure).message);
     }
   };
+  // Several students at once: new links for all picked, or remove all picked.
+  const pickedStudents = () => (q.data?.students ?? []).filter((s) => picked.includes(s.id));
+  const relinkPicked = async () => {
+    const out: typeof links = [];
+    try {
+      for (const s of pickedStudents()) {
+        const r = await api<{ student: Student & { token: string; link?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
+        out.push({ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), emailed: r.student.emailed });
+      }
+      setLinks(out);
+      setKept([]);
+      setPicked([]);
+      await q.reload();
+    } catch (e) {
+      setLinks(out);
+      setErr((e as ApiFailure).message);
+    }
+  };
+  const removePicked = async () => {
+    const list = pickedStudents();
+    if (!list.length || !window.confirm(`Remove ${list.length} student${list.length === 1 ? "" : "s"}? Their links stop working.`)) return;
+    try {
+      for (const s of list) await api("DELETE", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}`);
+      setPicked([]);
+      await q.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    }
+  };
   const copy = async (value: string, what: string) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -91,10 +128,31 @@ export function ClassStudents({ boardId }: { boardId: string }) {
       <p className="faint" style={{ margin: 0 }}>
         Add each student&apos;s name and email. Everyone gets a personal link that opens this class board, with no account and no password. A link works until you replace it or remove the student.
       </p>
-      <label className="stack" style={{ gap: 4 }}>
-        <span>One per line: name, email</span>
-        <textarea className="textarea" rows={4} value={text} onChange={(e) => setText(e.target.value)} placeholder={"Ana Lopez, ana@company.com\nBen Okafor, ben@company.com"} />
-      </label>
+      <div className="row" style={{ gap: 6 }} role="tablist" aria-label="How many to add">
+        <button role="tab" aria-selected={mode === "one"} className={`btn small${mode === "one" ? " primary" : ""}`} onClick={() => setMode("one")}>
+          One student
+        </button>
+        <button role="tab" aria-selected={mode === "many"} className={`btn small${mode === "many" ? " primary" : ""}`} onClick={() => setMode("many")}>
+          Several at once
+        </button>
+      </div>
+      {mode === "one" ? (
+        <div className="row" style={{ gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
+          <label className="stack" style={{ gap: 4, flex: "1 1 180px" }}>
+            <span>Name</span>
+            <input className="input" value={oneName} onChange={(e) => setOneName(e.target.value)} placeholder="Ana Lopez" autoComplete="off" />
+          </label>
+          <label className="stack" style={{ gap: 4, flex: "1 1 220px" }}>
+            <span>Email</span>
+            <input className="input" type="email" value={oneEmail} onChange={(e) => setOneEmail(e.target.value)} placeholder="ana@company.com" autoComplete="off" onKeyDown={(e) => e.key === "Enter" && oneOk && void add()} />
+          </label>
+        </div>
+      ) : (
+        <label className="stack" style={{ gap: 4 }}>
+          <span>One per line: name, email</span>
+          <textarea className="textarea" rows={4} value={text} onChange={(e) => setText(e.target.value)} placeholder={"Ana Lopez, ana@company.com\nBen Okafor, ben@company.com"} />
+        </label>
+      )}
       {bad.length ? <span className="faint" style={{ color: "var(--warn)" }}>No email on: {bad.map((b) => b.name).join(", ")}</span> : null}
       <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
         {q.data?.canEmail ? (
@@ -104,8 +162,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         ) : (
           <span className="faint">Mail is not set up on this server: copy the links and send them yourself.</span>
         )}
-        <button className="btn primary" disabled={!rows.length || bad.length > 0} onClick={() => void add()}>
-          Add {rows.length || ""} student{rows.length === 1 ? "" : "s"}
+        <button className="btn primary" disabled={!rows.length || bad.length > 0 || (mode === "one" && !oneOk)} onClick={() => void add()}>
+          {mode === "one" ? "Add student" : `Add ${rows.length || ""} student${rows.length === 1 ? "" : "s"}`}
         </button>
       </div>
       {err ? <div className="notice crit" role="alert">{err}</div> : null}
@@ -146,6 +204,9 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         <table className="table">
           <thead>
             <tr>
+              <th style={{ width: 28 }}>
+                <input type="checkbox" aria-label="Select all students" checked={picked.length > 0 && picked.length === q.data.students.length} onChange={(e) => setPicked(e.target.checked ? q.data!.students.map((s) => s.id) : [])} />
+              </th>
               <th>Name</th>
               <th>Email</th>
               <th>Joined</th>
@@ -157,6 +218,9 @@ export function ClassStudents({ boardId }: { boardId: string }) {
           <tbody>
             {q.data.students.map((s) => (
               <tr key={s.id}>
+                <td>
+                  <input type="checkbox" aria-label={`Select ${s.name}`} checked={picked.includes(s.id)} onChange={(e) => setPicked(e.target.checked ? [...picked, s.id] : picked.filter((x) => x !== s.id))} />
+                </td>
                 <td>{s.name}</td>
                 <td className="faint">{s.email}</td>
                 <td className="faint">{s.seenAt ? s.seenAt.slice(0, 16).replace("T", " ") : "Not yet"}</td>
@@ -172,6 +236,20 @@ export function ClassStudents({ boardId }: { boardId: string }) {
             ))}
           </tbody>
         </table>
+      ) : null}
+      {picked.length ? (
+        <div className="row" style={{ gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <span className="faint">{picked.length} selected</span>
+          <button className="btn small" onClick={() => void relinkPicked()} title="New links; the old ones stop working">
+            New links for selected
+          </button>
+          <button className="btn small ghost" onClick={() => void removePicked()}>
+            Remove selected
+          </button>
+          <button className="btn small ghost" onClick={() => setPicked([])}>
+            Clear selection
+          </button>
+        </div>
       ) : null}
     </section>
   );
