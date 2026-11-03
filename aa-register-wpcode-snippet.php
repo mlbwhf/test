@@ -362,13 +362,17 @@ function aa_reg_courses() {
 		   site, which also gives them the holiday handling and the backfill
 		   that the per-city path never had.
 
-		   TWICE A MONTH, AND NEVER TWO ON THE SAME DAY. One trainer cannot
-		   run two classes at once, so the weeks interleave and the two courses
-		   that share weeks 1 and 3 sit on different weekdays:
+		   FOUR A MONTH SINCE 3 NOV 2026 (it was twice). The original rows are
+		   kept and new ones added, so no published cohort id disappears:
 
-		     Foundations           Thursday, weeks 1 and 3   (1 day)
-		     Value Architect       Thursday, weeks 2 and 4   (2 days, Thu-Fri)
-		     Leading the Org       Tuesday,  weeks 1 and 3   (2 days, Tue-Wed)
+		     Foundations           Thu wk 1, 3 + Mon wk 2, 4   (2 days)
+		     Value Architect       Mon wk 1, 3 + Thu wk 2, 4   (2 days)
+		     Leading the Org       Tue, weeks 1-4              (1 day)
+		     Launching ARTs        every Wednesday             (2 days)
+
+		   At that rate the four courses can share a day; one trainer per
+		   course, not one for the track. Eventbrite dates for Foundations
+		   and Value Architect are added on top: aa_reg_event_dates().
 
 		   Change any of it by changing 'cadence' — the dates follow.
 
@@ -413,11 +417,17 @@ function aa_reg_courses() {
 			   pointing the other way, which is how it got to 1 in the first
 			   place. */
 			'days'     => 2,
-			'weeks'    => 52,         // twice a month over a year: ~24 dates
+			'weeks'    => 52,         // four a month over a year: ~48 dates
 			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
+			/* FOUR A MONTH, asked for on 3 Nov 2026 ("at least 4 times a
+			   month"). The two Thursdays are the original rows and are kept, so
+			   every cohort id already published or sold still exists; the two
+			   Mondays are added in the weeks Value Architect has its Thursdays. */
 			'cadence'  => array(
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 2 ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 3 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
 			),
 		),
 		'ai-native-change-agent' => array(
@@ -439,8 +449,14 @@ function aa_reg_courses() {
 			'days'     => 2,
 			'weeks'    => 52,
 			'proof'    => array( 'Live online', 'Exam fee included', 'AINF required' ),
+			/* FOUR A MONTH, asked for on 3 Nov 2026. Monday and Thursday are the
+			   days the client already runs it on Eventbrite. The Thursdays are
+			   the original rows, kept so no published cohort id disappears.
+			   Eventbrite dates are added on top -- see aa_reg_event_dates(). */
 			'cadence'  => array(
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 4 ),
 			),
 		),
@@ -460,12 +476,16 @@ function aa_reg_courses() {
 			'days'     => 1,
 			'weeks'    => 52,
 			'proof'    => array( 'Six months coaching', 'Exam fee included' ),
-			/* TUESDAY, NOT THURSDAY. This course shares weeks 1 and 3 with
-			   Foundations, and two classes cannot run on one day. Tuesday keeps
-			   the two-day span inside the same working week. */
+			/* EVERY TUESDAY OF WEEKS 1-4: four a month, asked for on 3 Nov
+			   2026. Weeks 1 and 3 are the original rows and keep their ids.
+			   At four a month for every AI-Native course there is no longer a
+			   weekday free of the others -- a Tuesday here can share the day
+			   with the second day of a Monday Foundations or Value Architect. */
 			'cadence'  => array(
 				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 2 ),
 				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 3 ),
+				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 4 ),
 			),
 		),
 
@@ -1475,20 +1495,137 @@ function aa_reg_extra_dates() {
  * one of these. The cadence dates still compete for the cap among themselves.
  */
 function aa_reg_extra_cohorts( $slug, $course, $out ) {
-	$map = aa_reg_extra_dates();
-	if ( empty( $map[ $slug ] ) ) { return $out; }
+	$map   = aa_reg_extra_dates();
+	$hand  = ! empty( $map[ $slug ] ) ? (array) $map[ $slug ] : array();
+	$event = array();
+	/* English only. The Eventbrite listings are the English cohorts, and the
+	   mirrors are capped at one AI-Native date a month on purpose. Checkout
+	   runs without a page and answers 'en', so a date offered here is always
+	   one checkout can find. */
+	if ( aa_reg_lang() === 'en' ) {
+		$ev    = aa_reg_event_dates();
+		$event = ! empty( $ev[ $slug ] ) ? (array) $ev[ $slug ] : array();
+	}
+	if ( ! $hand && ! $event ) { return $out; }
 
 	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
 	$have  = array();
 	foreach ( $out as $c ) { $have[ $c['start'] ] = true; }
 
-	foreach ( $map[ $slug ] as $start ) {
+	foreach ( $hand as $start ) {
 		if ( $start < $today || isset( $have[ $start ] ) ) { continue; }
+		$out[]          = aa_reg_make( $slug, $course, $start, 'morning', 'hand-set' );
+		$have[ $start ] = true;
+	}
+
+	/* An Eventbrite date is a class someone already decided to teach, so it is
+	   trusted like a hand-set one -- including a Saturday or a December date
+	   the cadence would never produce. The one thing it may not do is put a
+	   teaching day on Christmas or New Year's Day. */
+	$days = max( 1, (int) $course['days'] );
+	foreach ( $event as $start ) {
+		if ( $start < $today || isset( $have[ $start ] ) ) { continue; }
+		$blocked = false;
+		foreach ( aa_reg_span_dates( $start, $days ) as $ymd ) {
+			if ( aa_reg_is_blacked( $ymd ) ) { $blocked = true; break; }
+		}
+		if ( $blocked ) { continue; }
 		$out[]          = aa_reg_make( $slug, $course, $start, 'morning', 'hand-set' );
 		$have[ $start ] = true;
 	}
 	return $out;
 }
+
+/**
+ * EVENTBRITE DATES ARE SELLABLE DATES.
+ *
+ * The calendar draws wp_events posts imported from Eventbrite; registration
+ * sells the generated schedule. A date added on Eventbrite therefore showed on
+ * the calendar but never in the hero or at checkout -- which is how all of
+ * December's Value Architect classes went missing on 3 Nov 2026: the December
+ * rule above replaces two-day cadence dates in December, and nothing else put
+ * them back.
+ *
+ * Course slug => the event_category slugs whose future events are bookable.
+ * The price still comes from the course table, never from the event. Only the
+ * AI-Native courses are wired; add a course here, or through the filter, once
+ * its Eventbrite listings are the dates it is really taught on.
+ */
+function aa_reg_event_categories() {
+	return apply_filters( 'aa_reg_event_categories', array(
+		'ai-native-change-agent' => array( 'ai-chan' ),   // AI-Native Value Architect
+		'ai-native-foundations'  => array( 'ainf' ),
+	) );
+}
+
+/**
+ * Future Eventbrite start dates per course slug, sorted.
+ *
+ * One query per wired course, cached for six hours and dropped whenever an
+ * event is saved, deleted or has its start date changed -- so a page view
+ * costs nothing and a new Eventbrite import shows up on its next render.
+ */
+function aa_reg_event_dates() {
+	static $memo = null;
+	if ( $memo !== null ) { return $memo; }
+	$memo = array();
+	if ( ! post_type_exists( 'wp_events' ) || ! taxonomy_exists( 'event_category' ) ) { return $memo; }
+
+	$cached = get_transient( 'aa_reg_event_dates' );
+	if ( is_array( $cached ) ) { return $memo = $cached; }
+
+	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
+	foreach ( aa_reg_event_categories() as $slug => $terms ) {
+		$posts = get_posts( array(
+			'post_type'        => 'wp_events',
+			'post_status'      => 'publish',
+			'numberposts'      => 200,
+			'suppress_filters' => true,
+			'no_found_rows'    => true,
+			'tax_query'        => array( array(
+				'taxonomy' => 'event_category',
+				'field'    => 'slug',
+				'terms'    => (array) $terms,
+			) ),
+			'meta_query'       => array( array(
+				'key'     => 'event_start_date',
+				'value'   => $today,
+				'compare' => '>=',
+				'type'    => 'DATE',
+			) ),
+		) );
+		$dates = array();
+		foreach ( $posts as $p ) {
+			$d = (string) get_post_meta( $p->ID, 'event_start_date', true );
+			if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $d ) ) { $dates[ $d ] = true; }
+		}
+		if ( $dates ) {
+			$dates = array_keys( $dates );
+			sort( $dates );
+			$memo[ $slug ] = $dates;
+		}
+	}
+	set_transient( 'aa_reg_event_dates', $memo, 6 * HOUR_IN_SECONDS );
+	return $memo;
+}
+
+function aa_reg_event_dates_flush( $post_id = 0 ) {
+	if ( $post_id && get_post_type( $post_id ) !== 'wp_events' ) { return; }
+	delete_transient( 'aa_reg_event_dates' );
+}
+add_action( 'save_post_wp_events', 'aa_reg_event_dates_flush' );
+add_action( 'before_delete_post', 'aa_reg_event_dates_flush' );
+add_action( 'trashed_post', 'aa_reg_event_dates_flush' );
+/* Importers often write the date after the post is saved. */
+add_action( 'added_post_meta', function ( $mid, $post_id, $key ) {
+	if ( $key === 'event_start_date' ) { aa_reg_event_dates_flush( $post_id ); }
+}, 10, 3 );
+add_action( 'updated_post_meta', function ( $mid, $post_id, $key ) {
+	if ( $key === 'event_start_date' ) { aa_reg_event_dates_flush( $post_id ); }
+}, 10, 3 );
+add_action( 'set_object_terms', function ( $post_id, $terms, $tt_ids, $taxonomy ) {
+	if ( $taxonomy === 'event_category' ) { aa_reg_event_dates_flush( $post_id ); }
+}, 10, 4 );
 
 function aa_reg_make( $slug, $course, $start, $slot, $reason = '', $place = null ) {
 	/* Applied before anything is derived from the date: the end date, the
