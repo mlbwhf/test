@@ -210,6 +210,8 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const [palOpen, setPalOpen] = useState(false);
   const [palQ, setPalQ] = useState("");
   const [stepI, setStepI] = useState(0);
+  const [navOpen, setNavOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState<Record<string, boolean>>({});
   const pillsRef = useRef<HTMLDivElement>(null);
   const exId = view.at === "exercise" ? view.id : null;
   // A new exercise starts at its first step, with the steps panel closed and its tab in view.
@@ -314,109 +316,191 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
     return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
   };
+  // Exercise type → header colour and icon (the design's TYC map; unknown types read as Activity).
+  const TYC: Record<string, [string, string]> = {
+    Activity: ["#ff6a1f", "M10 40Q8 24 22 26T34 12M31 8l7 7M38 8l-7 7M9 12a3 3 0 1 0 .01 0"],
+    Discussion: ["#ff3d8f", "M8 10h22a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H20l-7 6v-6H8a3 3 0 0 1-3-3V13a3 3 0 0 1 3-3zM37 20h3a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-2v6l-7-6h-9"],
+    Overview: ["#1d6f7a", "M10 14h28M10 24h28M10 34h18"],
+    Simulation: ["#7b44f5", "M8 8h14v14H8zM26 8h14v14H26zM8 26h14v14H8zM26 26h14v14H26z"],
+    Assess: ["#7b44f5", "M8 36l10-10 8 8 14-16M30 18h10v10"],
+  };
+  const tyOf = (f: Frame) => TYC[f.activity?.kind ?? ""] ?? TYC.Activity!;
+  const exTy = here ? tyOf(here.ex) : TYC.Overview!;
+  const lessonLabel = (l: Frame) => (isLesson(l) ? `Lesson ${lessonName(l).n} · ${lessonName(l).title}` : l.title);
+  const questions = act?.kind === "Discussion" && steps.length > 1 ? steps : [];
   return (
     <div ref={wrap} className={`studio${focusOn ? " focus" : ""}`} {...pressing} style={{ ["--tint" as string]: tint }}>
       {!focusOn ? (
-        <nav className="studio-chapters" aria-label="Chapters">
+        <nav className="studio-chapters" aria-label="Class">
           <Link className="studio-logo" href="/classroom" aria-label="Classes">
             <ClassIcon classId={classId} name={board.name} size={30} />
           </Link>
           <button className="studio-class" onClick={() => go({ at: "overview" })}>
             ‹ CLASS {short}
           </button>
-          <div className="studio-tabs" role="tablist">
-            {lessons.map((l, li) => {
-              const ex = exercisesOf.get(l.id) ?? [];
-              const d = ex.filter((e) => e.done).length;
-              const ln = lessonName(l);
-              const on = l.id === lesson?.id;
-              return (
-                <button key={l.id} role="tab" aria-selected={on} className="studio-chapter" style={{ ["--c" as string]: TINTS[li % TINTS.length] }} onClick={() => (firstOpen(l) ? go({ at: "exercise", id: firstOpen(l)!.id }) : go({ at: "lesson", id: l.id }))} title={l.title}>
-                  <b>{ln.n || "·"}</b>
-                  <span className="studio-chapter-name">{ln.title}</span>
-                  <small>
-                    {d}/{ex.length}
-                  </small>
-                  <i style={{ width: `${ex.length ? (100 * d) / ex.length : 0}%` }} />
-                </button>
-              );
-            })}
-          </div>
+          <span className="grow" />
           {timerChip}
+          <button className="train-btn small" onClick={toggleFull} aria-pressed={full}>
+            {full ? "Exit full screen" : "Full screen"}
+          </button>
         </nav>
       ) : null}
-      {!focusOn ? (
-        <div className="studio-exercises">
-          <div className="studio-pills" role="tablist" aria-label="Exercises in this chapter" ref={pillsRef}>
-            {lessonEx.map((e, k) => (
-              <button key={e.id} role="tab" aria-selected={here?.ex.id === e.id} className="studio-pill" data-on={here?.ex.id === e.id ? "1" : undefined} onClick={() => go({ at: "exercise", id: e.id })} title={titleOf(e)}>
-                <span className={`studio-num${e.done ? " done" : ""}`}>{e.done ? "✓" : k + 1}</span>
-                <span className="studio-pill-title">{titleOf(e)}</span>
+      <div className="studio-body">
+        {!focusOn ? (
+          <aside className={`studio-menu${navOpen ? "" : " shut"}`} aria-label="All slides">
+            <div className="studio-menu-head">
+              {navOpen ? <span className="ex-mono">ALL SLIDES</span> : null}
+              <button onClick={() => setNavOpen((v) => !v)} aria-label={navOpen ? "Collapse slide menu" : "Open slide menu"} aria-expanded={navOpen}>
+                {navOpen ? "«" : "☰"}
               </button>
-            ))}
-            {lesson && isLesson(lesson) ? (
-              <button role="tab" aria-selected={view.at === "lesson"} className="studio-pill" data-on={view.at === "lesson" ? "1" : undefined} onClick={() => go({ at: "lesson", id: lesson.id })}>
-                <span className="studio-num">≡</span>
-                <span className="studio-pill-title">Whole lesson</span>
+            </div>
+            <div className="studio-menu-list" ref={pillsRef}>
+              {lessons.map((l, li) => {
+                const ex = exercisesOf.get(l.id) ?? [];
+                const d = ex.filter((e) => e.done).length;
+                const ln = lessonName(l);
+                const cur = l.id === lesson?.id;
+                const open = navOpen && (menuOpen[l.id] ?? cur);
+                return (
+                  <div key={l.id} className="studio-menu-lesson">
+                    <button className="studio-menu-row" title={lessonLabel(l)} style={{ background: cur ? TINTS[li % TINTS.length] : "transparent" }} onClick={() => (navOpen ? setMenuOpen({ ...menuOpen, [l.id]: !open }) : (setNavOpen(true), setMenuOpen({ ...menuOpen, [l.id]: true })))} aria-expanded={open}>
+                      <b>{ln.n || "★"}</b>
+                      {navOpen ? (
+                        <>
+                          <span className="studio-menu-name">{ln.title}</span>
+                          <small>
+                            {d}/{ex.length}
+                          </small>
+                        </>
+                      ) : null}
+                    </button>
+                    {open ? (
+                      <div className="studio-menu-ex">
+                        {ex.map((e) => {
+                          const on = here?.ex.id === e.id;
+                          const ty = tyOf(e);
+                          return (
+                            <button key={e.id} className={`studio-chip${on ? " on" : e.done ? " done" : ""}`} data-on={on ? "1" : undefined} title={titleOf(e)} onClick={() => go({ at: "exercise", id: e.id })} aria-current={on ? "true" : undefined}>
+                              <span className="studio-chip-ic" style={{ background: ty[0] }}>
+                                <svg width="19" height="19" viewBox="0 0 48 48" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                  <path d={ty[1]} />
+                                </svg>
+                              </span>
+                              <span className="studio-chip-title">{titleOf(e)}</span>
+                              <span className="studio-chip-mark">{e.done ? "✓" : ""}</span>
+                            </button>
+                          );
+                        })}
+                        {isLesson(l) ? (
+                          <button className={`studio-chip${view.at === "lesson" && cur ? " on" : ""}`} onClick={() => go({ at: "lesson", id: l.id })}>
+                            <span className="studio-chip-ic" style={{ background: "#0d1815" }}>≡</span>
+                            <span className="studio-chip-title">Whole lesson</span>
+                            <span className="studio-chip-mark" />
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </aside>
+        ) : null}
+        <section className="studio-main">
+          {!focusOn ? (
+            <header className="studio-band">
+              <span className="studio-band-ic" style={{ background: exTy[0] }}>
+                <svg width="50" height="50" viewBox="0 0 48 48" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d={exTy[1]} />
+                </svg>
+              </span>
+              <div className="studio-band-text">
+                <span className="ex-mono" style={{ color: exTy[0] }}>
+                  {here ? (act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")).toUpperCase() : "LESSON"} · {lesson ? lessonLabel(lesson) : ""}
+                </span>
+                <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
+              </div>
+              {act ? (
+                <div className="studio-band-time">
+                  {act.prepare ? <span>{act.share ? "Prepare" : "Duration"}: {act.prepare} min</span> : null}
+                  {act.share ? (
+                    <span>
+                      {act.shareLabel ?? "Share"}: {act.share} min
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+            </header>
+          ) : null}
+          <div className="studio-toolbar">
+            {focusOn ? (
+              <div className="studio-title">
+                <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
+                <span className="ex-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}` : "Whole lesson"}</span>
+              </div>
+            ) : null}
+            <span className="grow" />
+            {focusOn && timerChip}
+            {trainer && here && act?.prepare ? (
+              <button className="studio-btn" onClick={() => start(here.ex, act.share ? "Prepare" : act.kind, act.prepare!)}>
+                ▶ {act.share ? "Prepare" : "Start"} {act.prepare} min
               </button>
             ) : null}
-          </div>
-          <span className="ex-mono">{here ? `${lessonEx.findIndex((e) => e.id === here.ex.id) + 1} / ${lessonEx.length}` : `${lessonEx.length} exercises`}</span>
-        </div>
-      ) : null}
-      <div className="studio-toolbar">
-        <div className="studio-title">
-          <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
-          <span className="ex-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}` : "Whole lesson"}</span>
-        </div>
-        <span className="grow" />
-        {focusOn && timerChip}
-        {trainer && here && act?.prepare ? (
-          <button className="studio-btn" onClick={() => start(here.ex, act.share ? "Prepare" : act.kind, act.prepare!)}>
-            ▶ {act.share ? "Prepare" : "Start"} {act.prepare} min
-          </button>
-        ) : null}
-        {trainer && here && act?.share ? (
-          <button className="studio-btn" onClick={() => start(here.ex, act.shareLabel ?? "Share", act.share!)}>
-            ▶ {act.shareLabel ?? "Share"} {act.share} min
-          </button>
-        ) : null}
-        <button className="studio-btn" onClick={() => (setPalOpen(true), setPalQ(""))} title="Jump to an exercise (/ or Ctrl+K)">
-          Jump
-        </button>
-        <button className="studio-btn" aria-pressed={stepsOn} onClick={() => setStepsOn((v) => !v)} title="Steps and references (S)">
-          Steps
-        </button>
-        <button className="studio-btn" aria-pressed={focusOn} onClick={() => setFocusOn((v) => !v)} title="Focus: hide the tabs (F)">
-          Focus
-        </button>
-        {here ? (
-          trainer ? (
-            <button className={`studio-btn${here.ex.done ? " done" : ""}`} onClick={() => void markDone(here.ex)} aria-pressed={!!here.ex.done}>
-              {here.ex.done ? "✓ Completed" : "Mark complete"}
+            {trainer && here && act?.share ? (
+              <button className="studio-btn" onClick={() => start(here.ex, act.shareLabel ?? "Share", act.share!)}>
+                ▶ {act.shareLabel ?? "Share"} {act.share} min
+              </button>
+            ) : null}
+            <button className="studio-btn" onClick={() => (setPalOpen(true), setPalQ(""))} title="Jump to an exercise (/ or Ctrl+K)">
+              ⌕ Jump
             </button>
-          ) : here.ex.done ? (
-            <span className="studio-btn done">✓ Completed</span>
-          ) : null
-        ) : null}
+            <button className="studio-btn" aria-pressed={stepsOn} onClick={() => setStepsOn((v) => !v)} title="Steps and references (S)">
+              Steps
+            </button>
+            <button className="studio-btn" aria-pressed={focusOn} onClick={() => setFocusOn((v) => !v)} title="Focus: hide the menu (F)">
+              {focusOn ? "Exit focus" : "Focus"}
+            </button>
+            {here ? (
+              trainer ? (
+                <button className={`studio-btn${here.ex.done ? " done" : ""}`} onClick={() => void markDone(here.ex)} aria-pressed={!!here.ex.done}>
+                  {here.ex.done ? "✓ Completed" : "Mark complete"}
+                </button>
+              ) : here.ex.done ? (
+                <span className="studio-btn done">✓ Completed</span>
+              ) : null
+            ) : null}
+          </div>
+          {steps.length ? (
+            <div className="studio-step">
+              <div className="studio-step-row">
+                <button aria-label="Previous step" disabled={stepAt === 0} onClick={() => setStepI(stepAt - 1)}>
+                  ‹
+                </button>
+                <span className="ex-mono studio-step-no">
+                  STEP {stepAt + 1}/{steps.length}
+                </span>
+                <button className="studio-step-text" onClick={() => setStepsOn(true)}>
+                  {steps[stepAt]!.replace(/^Step\s*\d+\s*[:.]\s*/i, "").split("\n")[0]}
+                </button>
+                <button aria-label="Next step" disabled={stepAt >= steps.length - 1} onClick={() => setStepI(stepAt + 1)}>
+                  ›
+                </button>
+              </div>
+              {questions.length ? (
+                <ol className="studio-step-qs" aria-label="Questions">
+                  {questions.map((q, i) => (
+                    <li key={i} className={i === stepAt ? "on" : undefined}>
+                      <span>{i + 1}</span>
+                      {q.replace(/^Step\s*\d+\s*[:.]\s*/i, "")}
+                    </li>
+                  ))}
+                </ol>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="studio-canvas">{boardFor()}</div>
+        </section>
       </div>
-      {steps.length ? (
-        <div className="studio-step">
-          <button aria-label="Previous step" disabled={stepAt === 0} onClick={() => setStepI(stepAt - 1)}>
-            ‹
-          </button>
-          <button className="studio-step-text" onClick={() => setStepsOn(true)}>
-            <span className="ex-mono">
-              STEP {stepAt + 1}/{steps.length}
-            </span>{" "}
-            {steps[stepAt]!.replace(/^Step\s*\d+\s*[:.]\s*/i, "").split("\n")[0]}
-          </button>
-          <button aria-label="Next step" disabled={stepAt >= steps.length - 1} onClick={() => setStepI(stepAt + 1)}>
-            ›
-          </button>
-        </div>
-      ) : null}
-      <div className="studio-canvas">{boardFor()}</div>
       <footer className="studio-foot">
         <button className="studio-foot-nav" disabled={!prev1} onClick={() => prev1 && go({ at: "exercise", id: prev1.ex.id })}>
           ‹ {prev1 ? titleOf(prev1.ex) : ""}
