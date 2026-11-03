@@ -141,7 +141,7 @@ function aa_mcal_catalog() {
 			'desc' => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track.' ),
 		'ai-native-foundations' => array( 'code' => 'AINF', 'name' => 'AI-Native Foundations Certification',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
-			'url' => '/training/ai-native/ai-native-foundations/', 'days' => 1, 'pdus' => 8, 'exam_q' => 45, 'exam_m' => 90,
+			'url' => '/training/ai-native/ai-native-foundations/', 'days' => 2, 'pdus' => 8, 'exam_q' => 45, 'exam_m' => 90,
 			'desc' => 'Personal AI fluency — get genuinely productive with AI tools in your own work. The entry credential of the AI-Native track.' ),
 		'ai-chan'          => array( 'code' => 'AINVA',   'name' => 'AI-Native Value Architect Certification',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
@@ -157,12 +157,19 @@ function aa_mcal_catalog() {
 			'desc' => 'A two-day executive cohort capped at twelve senior leaders, designing the AI-Native operating model.' ),
 		'ai-native-ready-certification-2' => array( 'code' => 'AINORG', 'name' => 'Leading the AI-Native Organization',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
-			'url' => '/training/ai-native/ai-native-ready-certification-2/', 'days' => 2, 'pdus' => 16, 'exam_q' => 0, 'exam_m' => 0,
+			'url' => '/training/ai-native/ai-native-ready-certification-2/', 'days' => 1, 'pdus' => 16, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => 'A two-day executive cohort capped at twelve senior leaders, designing the AI-Native operating model.' ),
 		'artl'             => array( 'code' => 'ARTL',    'name' => 'Launching AI-Native ARTs',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
 			'url' => '/training/ai-native/launching-ai-native-arts/', 'days' => 2, 'pdus' => 15, 'exam_q' => 0, 'exam_m' => 0,
 			'desc' => 'Become an ART Leader as you turn your Lean-Agile foundation into an engine for AI-driven execution. Exam included.' ),
+		/* AI-Native SAFe Fundamentals, 3 Nov 2026 -- the page that was
+		   "AI-Native Ready Certification", so it keeps that slug. One day;
+		   45 questions in 90 minutes. PDUs not published, so 0. */
+		'ai-native-ready-certification' => array( 'code' => 'AINSF', 'name' => 'AI-Native SAFe Fundamentals',
+			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
+			'url' => '/training/ai-native/ai-native-ready-certification/', 'days' => 1, 'pdus' => 0, 'exam_q' => 45, 'exam_m' => 90,
+			'desc' => 'The entry point to AI-Native SAFe: core concepts, shared language and the operating model, in one day. No prerequisites.' ),
 		'launching-ai-native-arts' => array( 'code' => 'ARTL', 'name' => 'Launching AI-Native ARTs',
 			'track' => 'AI-Native', 'color' => '#D34B2A', 'tint' => '#FBEAE4', 'tint_border' => '#F2CDC0',
 			'url' => '/training/ai-native/launching-ai-native-arts/', 'days' => 2, 'pdus' => 15, 'exam_q' => 0, 'exam_m' => 0,
@@ -293,6 +300,9 @@ function aa_mcal_reg_map() {
 		'ainorg'                          => 'ai-native-ready-certification-2',
 		'ai-native-ready-certification-2' => 'ai-native-ready-certification-2',
 		'artl'                            => 'launching-ai-native-arts',
+		'ainsf'                           => 'ai-native-ready-certification',
+		'ai-native-ready-certification'   => 'ai-native-ready-certification',
+		'ai-native-safe-fundamentals'     => 'ai-native-ready-certification',
 		'launching-ai-native-arts'        => 'launching-ai-native-arts',
 
 		/* THE REST OF THE CATALOGUE. These were absent, and absence from this

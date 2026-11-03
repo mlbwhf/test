@@ -77,9 +77,11 @@ function aa_hh_courses() {
 		'popm',                             // Product Owner / Product Manager
 
 		/* AI-NATIVE */
+		'ai-native-ready-certification',    // AI-Native SAFe Fundamentals (shows once priced)
 		'ai-native-foundations',
 		'ai-native-change-agent',           // AI-Native Value Architect
 		'ai-native-ready-certification-2',  // Leading the AI-Native Organization
+		'launching-ai-native-arts',         // Launching AI-Native ARTs
 	) );
 }
 
@@ -124,6 +126,8 @@ function aa_hh_track( $crumb, $slug = '' ) {
 		'aspc'              => 'Advanced SAFe',
 
 		// AI-Native — its own track, and the reason the industry chip went.
+		'ai-native-ready-certification'   => 'AI-Native',   // AI-Native SAFe Fundamentals
+		'launching-ai-native-arts'        => 'AI-Native',
 		'ai-native-foundations'           => 'AI-Native',
 		'ai-native-change-agent'          => 'AI-Native',
 		'ai-native-ready-certification-2' => 'AI-Native',
@@ -222,6 +226,10 @@ function aa_hh_rows() {
 	foreach ( aa_hh_courses() as $slug ) {
 		$course = aa_reg_course( $slug );
 		if ( ! $course ) { continue; }
+		/* No price yet, no row: this panel prints "$" + price and takes the
+		   money inline, so an unpriced course would read as "$0". It appears
+		   by itself the moment the course table gives it a price. */
+		if ( empty( $course['price'] ) || (int) $course['price'] < 1 ) { continue; }
 		$next = aa_reg_upcoming( $slug, $course );
 		if ( ! $next ) { continue; }
 		$rows[] = array(
@@ -968,11 +976,18 @@ function aa_hh_render( $atts ) {
 	$h .= '</div></div>';
 
 	/* ---------- trust row ---------- */
-	$h .= '<div class="aa-hh-trust"><span class="aa-hh-trust-label">' . esc_html( $str['trust'] ) . '</span>';
-	foreach ( aa_hh_trust() as $t ) {
-		$h .= '<span class="aa-hh-trust-item">' . esc_html( $t ) . '</span>';
+	/* FILTERED TO NOTHING REMOVES THE BAND, not just its contents.
+	   An empty list used to leave "Trusted by" sitting alone on its own
+	   full-width strip, which reads as a section that failed to load rather
+	   than one that is switched off. */
+	$trust = array_filter( (array) aa_hh_trust() );
+	if ( $trust ) {
+		$h .= '<div class="aa-hh-trust"><span class="aa-hh-trust-label">' . esc_html( $str['trust'] ) . '</span>';
+		foreach ( $trust as $t ) {
+			$h .= '<span class="aa-hh-trust-item">' . esc_html( $t ) . '</span>';
+		}
+		$h .= '</div>';
 	}
-	$h .= '</div>';
 
 	$h .= '</section>';
 

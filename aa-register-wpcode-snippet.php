@@ -365,13 +365,17 @@ function aa_reg_courses() {
 		   FOUR A MONTH SINCE 3 NOV 2026 (it was twice). The original rows are
 		   kept and new ones added, so no published cohort id disappears:
 
-		     Foundations           Thu wk 1, 3 + Mon wk 2, 4   (2 days)
-		     Value Architect       Mon wk 1, 3 + Thu wk 2, 4   (2 days)
-		     Leading the Org       Tue, weeks 1-4              (1 day)
-		     Launching ARTs        every Wednesday             (2 days)
+		     Value Architect       Mon wk 1, 3 + Thu wk 2, 4 + Sat after the wk-1 Mon
+		     Foundations           Thu wk 1, 3 + Mon wk 2, 4 + Sat after the wk-2 Mon
+		     Leading the Org       every Wednesday             (1 day)
+		     SAFe Fundamentals     Wednesday, weeks 1-4        (1 day)
+		     Launching ARTs        Mon wk 1, 3 + Thu wk 2, 4 + Sat after the wk-3 Mon
 
-		   At that rate the four courses can share a day; one trainer per
-		   course, not one for the track. Eventbrite dates for Foundations
+		   Value Architect and Foundations interleave Mon-Tue / Thu-Fri with
+		   Leading the Org on the Wednesday between them (3 Nov 2026). Each
+		   weekend class has its own weekend. Launching ARTs and SAFe
+		   Fundamentals are SAFe-instructor courses and share days with the
+		   others by design. Eventbrite dates for Foundations
 		   and Value Architect are added on top: aa_reg_event_dates().
 
 		   Change any of it by changing 'cadence' — the dates follow.
@@ -426,6 +430,10 @@ function aa_reg_courses() {
 			'cadence'  => array(
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 1 ),
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 2 ),
+				/* THE WEEKEND CLASS, asked for on 3 Nov 2026: the Saturday
+				   after the week-2 Monday, so the same week offers a weekday
+				   and a weekend batch. Sat-Sun. */
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'after' => array( 'dow' => 'Mon', 'week' => 2 ) ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 3 ),
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
 			),
@@ -455,6 +463,10 @@ function aa_reg_courses() {
 			   Eventbrite dates are added on top -- see aa_reg_event_dates(). */
 			'cadence'  => array(
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
+				/* THE WEEKEND CLASS: the Saturday after the week-1 Monday, the
+				   same pattern as Foundations one week earlier, so the two
+				   never share a weekend. */
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'after' => array( 'dow' => 'Mon', 'week' => 1 ) ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 2 ),
 				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
 				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 4 ),
@@ -476,16 +488,12 @@ function aa_reg_courses() {
 			'days'     => 1,
 			'weeks'    => 52,
 			'proof'    => array( 'Six months coaching', 'Exam fee included' ),
-			/* EVERY TUESDAY OF WEEKS 1-4: four a month, asked for on 3 Nov
-			   2026. Weeks 1 and 3 are the original rows and keep their ids.
-			   At four a month for every AI-Native course there is no longer a
-			   weekday free of the others -- a Tuesday here can share the day
-			   with the second day of a Monday Foundations or Value Architect. */
+			/* EVERY WEDNESDAY, asked for on 3 Nov 2026, "so it will fall
+			   between Value Architect and Foundations": those two run Mon-Tue
+			   and Thu-Fri, so Wednesday is the one weekday neither touches.
+			   No paid registration was on a Tuesday cohort when this moved. */
 			'cadence'  => array(
-				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 1 ),
-				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 2 ),
-				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 3 ),
-				array( 'dow' => 'Tue', 'slot' => 'morning', 'week' => 4 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning' ),
 			),
 		),
 
@@ -662,10 +670,62 @@ function aa_reg_courses() {
 			'price'    => 999,
 			'days'     => 2,
 			'weeks'    => 52,
+			/* MONDAY AND THURSDAY IN ALTERNATE WEEKS, PLUS ONE WEEKEND, asked
+			   for on 3 Nov 2026. It was every Wednesday, which Leading the
+			   AI-Native Organization now takes. The weekend follows the week-3
+			   Monday, after Value Architect's (week 1) and Foundations' (week 2),
+			   so each AI-Native weekend class has a weekend to itself. No paid
+			   registration was on a Wednesday cohort when this moved. */
 			'cadence'  => array(
-				array( 'dow' => 'Wed', 'slot' => 'morning' ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'after' => array( 'dow' => 'Mon', 'week' => 3 ) ),
+				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 4 ),
 			),
 			'proof'    => array( 'Live online', 'Exam fee included', '15 PDUs' ),
+		),
+
+		/* AI-NATIVE SAFE FUNDAMENTALS, 3 Nov 2026. It took over the page that
+		   was "AI-Native Ready Certification", so the slug stays
+		   ai-native-ready-certification (no redirect, no lost links). Not to be
+		   confused with ai-native-ready-certification-2, which is Leading the
+		   AI-Native Organization.
+
+		   Facts from Scaled Agile's course page as supplied by the client:
+		   one day, foundational, no prerequisites, 45 questions in 90 minutes,
+		   80% to pass, English.
+
+		   NO PRICE YET, DELIBERATELY 0. It has not been given, and a price is
+		   not something to guess. At 0 the dates are published but every form
+		   becomes "Ask for this date" and checkout refuses the course -- see
+		   aa_reg_on_sale(). Put the price here and it goes on sale.
+
+		   THE CODE IS OURS, NOT SCALED AGILE'S. They publish no abbreviation
+		   for this course; AINSF follows the AINF / AINVA / AINORG family and
+		   is only a label. Replace it if Scaled Agile publishes one.
+
+		   EVERY WEDNESDAY OF WEEKS 1-4: the day the two-day AI-Native
+		   courses leave free in every week. */
+		'ai-native-ready-certification' => array(
+			'code'     => 'AINSF',
+			'name'     => 'AI-Native SAFe Fundamentals',
+			'eyebrow'  => 'Live online · Foundational certification',
+			'h1'       => 'AI-Native SAFe Fundamentals.',
+			'lede'     => 'The entry point to AI-Native SAFe: the core concepts, the shared language and the operating model scaled organizations use to adopt AI, in one day. No prerequisites, exam included.',
+			'url'      => '/training/ai-native/ai-native-ready-certification/',
+			'crumb'    => 'AI-Native',
+			'currency' => 'usd',
+			'price'    => 0,
+			'days'     => 1,
+			'weeks'    => 52,
+			'cadence'  => array(
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 3 ),
+				array( 'dow' => 'Wed', 'slot' => 'morning', 'week' => 4 ),
+			),
+			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
 		),
 	);
 }
@@ -1300,6 +1360,29 @@ function aa_reg_generate( $slug, $course ) {
 		   Days 29-31 are week 5. A rule pinned to weeks 1-4 simply does not
 		   fire there, which is why a long month has four starts and not five. */
 		$want_week = isset( $rule['week'] ) ? (int) $rule['week'] : 0;
+
+		/* OPTIONAL: THE FIRST <dow> AFTER ANOTHER CLASS.
+		   'after' => array( 'dow' => 'Mon', 'week' => 2 ) means "the first
+		   Saturday after the week-2 Monday" -- the weekend batch that follows
+		   a weekday batch in the same week. Pinning the Saturday to a week
+		   number instead would sometimes put it BEFORE the Monday it is meant
+		   to follow. The anchor search starts a week early so a weekend that
+		   falls just after the floor is not missed. */
+		if ( ! empty( $rule['after'] ) && is_array( $rule['after'] ) ) {
+			$aw = isset( $rule['after']['week'] ) ? (int) $rule['after']['week'] : 0;
+			$a  = ( clone $floor )->modify( '-7 days' );
+			$a->modify( 'this week ' . $rule['after']['dow'] );
+			while ( $a <= $limit ) {
+				if ( ! $aw || (int) ceil( (int) $a->format( 'j' ) / 7 ) === $aw ) {
+					$t = ( clone $a )->modify( 'next ' . $rule['dow'] );
+					if ( $t >= $floor && $t <= $limit ) {
+						$planned[] = array( 'start' => $t->format( 'Y-m-d' ), 'slot' => $rule['slot'] );
+					}
+				}
+				$a->modify( '+1 week' );
+			}
+			continue;
+		}
 
 		$d = clone $floor;
 		// first occurrence of this weekday on or after the floor
@@ -2407,6 +2490,7 @@ function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) 
  *                    would leave the form pointed at the wrong cohort.
  */
 function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = false ) {
+	if ( ! aa_reg_on_sale( $course ) ) { return aa_reg_ask_block( $prefix ); }
 	$live = aa_reg_is_live();
 	/* Not every caller hands over a full course record -- the track calendar's
 	   per-bar panel passes only a price. A missing name is an empty field, not
@@ -2583,7 +2667,26 @@ function aa_reg_range( $start, $end, $short = false ) {
 	return $s->format( 'M j' ) . ' – ' . $e->format( 'M j' ) . $y;
 }
 
+/**
+ * Is this course on sale? A course with no price is published with its dates
+ * but every form becomes "Ask for this date" -- a price of 0 is "not given
+ * yet", never "free". Checkout refuses anything under $1 on its own as well.
+ */
+function aa_reg_on_sale( $course ) {
+	return is_array( $course ) && (int) ( isset( $course['price'] ) ? $course['price'] : 0 ) > 0;
+}
+
+/** What replaces a checkout form while a course has no price. */
+function aa_reg_ask_block( $prefix ) {
+	return '<div class="aareg-inline ' . esc_attr( $prefix ) . '-inline aareg-ask">'
+	     . '<p class="aareg-inline-total">' . esc_html( aa_reg_t( 'price_on_request', 'Price on request' ) ) . '</p>'
+	     . '<a class="aacal-cta" href="#aa-book">' . esc_html( aa_reg_t( 'ask_date', 'Ask for this date' ) ) . ' &#10230;</a>'
+	     . '</div>';
+}
+
 function aa_reg_money( $amount, $currency ) {
+	/* 0 means "no price given yet". Printing "$0" would read as free. */
+	if ( (float) $amount <= 0 ) { return aa_reg_t( 'price_on_request', 'Price on request' ); }
 	$sym = strtolower( $currency ) === 'cad' ? 'C$' : ( strtolower( $currency ) === 'eur' ? '€' : '$' );
 	return $sym . number_format_i18n( (float) $amount );
 }
@@ -3751,6 +3854,9 @@ function aa_reg_panel( $atts ) {
 		if ( $cc['id'] === $sel_id ) { $sel = $cc; break; }
 	}
 
+	if ( ! aa_reg_on_sale( $course ) ) {
+		$h .= aa_reg_ask_block( 'aacal' );
+	} else {
 	$h .= '<form class="aacal-panel" data-panel="1" novalidate>'
 	    . '<input type="hidden" name="cohort" data-sel-cohort value="'
 	    . esc_attr( $sel ? $sel['id'] : '' ) . '">'
@@ -3789,6 +3895,7 @@ function aa_reg_panel( $atts ) {
 	        ? aa_reg_t( 'pay_note_long', 'You will be taken to Stripe to pay. We never see your card details.' )
 	        : aa_reg_t( 'pay_note_off_long', 'Online payment is switched off right now — please contact us and we will register you.' ) )
 	    . '</p></form>';
+	}
 
 	$h .= '<div class="aacal-done" data-panel="done" hidden role="status">'
 	    . '<p class="aacal-done-h">You\'re in, <span data-done-name>there</span>.</p>'
@@ -3820,6 +3927,8 @@ function aa_reg_panel( $atts ) {
 				'url'           => home_url( $course['url'] ),
 			),
 		);
+		/* No price, no Offer: a price of 0 in structured data says "free". */
+		if ( ! aa_reg_on_sale( $course ) ) { unset( $instances[ count( $instances ) - 1 ]['offers'] ); }
 	}
 	$h .= '<script type="application/ld+json">' . wp_json_encode( array(
 		'@context'          => 'https://schema.org',
@@ -7335,8 +7444,8 @@ function aa_training_courses( $cat ) {
 		                          'arch', 'ase' ),
 		/* Launching AI-Native ARTs added 1 Nov 2026: its page was live but it was
 		   missing from this list, so the training page never showed it. */
-		'ai-native'     => array( 'ai-native-foundations', 'ai-native-change-agent', 'ai-native-ready-certification-2',
-		                          'launching-ai-native-arts' ),
+		'ai-native'     => array( 'ai-native-ready-certification', 'ai-native-foundations', 'ai-native-change-agent',
+		                          'ai-native-ready-certification-2', 'launching-ai-native-arts' ),
 		/* THESE TWO USED TO TAKE THEIR LIST FROM THE PAGE'S OWN CHILDREN.
 		   That works in English, where the queried page is the English track
 		   page and its children are the course pages. It fails everywhere else:
@@ -10282,7 +10391,7 @@ function aa_reg_track_codes() {
 		   aa_reg_courses() for the launch -- so it generated cohorts, priced
 		   correctly and sold -- but a course only shows up in a track listing
 		   if its code is in this array, and nothing cross-checks the two. */
-		'ai-native'     => array( 'AINF', 'AINVA', 'AINORG', 'ARTL' ),
+		'ai-native'     => array( 'AINSF', 'AINF', 'AINVA', 'AINORG', 'ARTL' ),
 		/* THE MICRO-CREDENTIAL PAGE HAD NO SET AND FELL BACK TO THE HUB'S
 		   DEFAULT -- Scrum Master, Product Owner, RTE, Agile Coach, the same
 		   four the hub shows everybody. Its own four badges split two ways:
@@ -10525,6 +10634,7 @@ function aa_reg_cert_table() {
 		'AINVA'=> array( 'AI-Native Value Architect',         '/training/ai-native/ai-native-change-agent/' ),
 		'AINORG'=>array( 'Leading the AI-Native Organization','/training/ai-native/ai-native-ready-certification-2/' ),
 		'ARTL' => array( 'Launching AI-Native ARTs',          '/training/ai-native/launching-ai-native-arts/' ),
+		'AINSF'=> array( 'AI-Native SAFe Fundamentals',       '/training/ai-native/ai-native-ready-certification/' ),
 	);
 }
 
