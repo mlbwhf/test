@@ -123,7 +123,7 @@ Trainyard`,
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
       const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
-      out.push({ ...view(g), token, link: link(token), emailed });
+      out.push({ ...view(g), token, ...(opts.webUrl ? { link: link(token) } : {}), emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
     await seat(req, b);
@@ -139,7 +139,7 @@ Trainyard`,
     g.tokenHash = hashKey(token);
     const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
-    return { student: { ...view(g), token, link: link(token), emailed } };
+    return { student: { ...view(g), token, ...(opts.webUrl ? { link: link(token) } : {}), emailed } };
   });
 
   app.delete("/v1/boards/:id/students/:sid", { schema: { params: z.object({ id: z.string().max(200), sid: z.string().max(80) }) } }, async (req, reply) => {
