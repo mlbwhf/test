@@ -184,6 +184,9 @@ services:
     restart: unless-stopped
     profiles: [flowise]
     security_opt: [no-new-privileges:true]
+    # The image's default user cannot write /root/.flowise on a fresh volume (EACCES at start), so
+    # it runs as root inside the container, as Flowise's own compose file does; the volume is its own.
+    user: "0:0"
     environment:
       PORT: "3000"
       APP_URL: https://${FLOWISE_HOST:-flowise.${TRAINYARD_DOMAIN}}
