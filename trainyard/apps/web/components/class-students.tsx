@@ -18,6 +18,11 @@ interface Student {
 // The API builds links on the canonical web address (TRAINYARD_WEB_URL) so a copied link never
 // carries an alias host the trainer happened to be on; the browser's own address is the fallback.
 const linkFor = (token: string, link?: string) => link || `${window.location.origin}/join/${token}`;
+/** What a participant's IT team needs to allow for the class links and emails to get through. */
+const itNote = (link: string) => {
+  const host = new URL(link).host.replace(/^www\./, "");
+  return `Our training runs on Trainyard. Please allow for our participants:\n- Web: https://${host} and https://api.${host} (TLS, port 443; no inspection or block page on these hosts)\n- Email: messages from support@${host} (SPF, DKIM and DMARC are published for ${host}; sent through Postmark)\nParticipants open a personal link of the form https://${host}/join/… ; no account, download or plug-in is needed.`;
+};
 
 export function ClassStudents({ boardId }: { boardId: string }) {
   const q = useApi<{ students: Student[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
@@ -129,6 +134,12 @@ export function ClassStudents({ boardId }: { boardId: string }) {
               {copied === "all" ? "Copied all" : "Copy all"}
             </button>
           ) : null}
+          <p className="faint" style={{ margin: "4px 0 0" }}>
+            Government and company networks often block or flag sites and senders they do not know yet (a security warning on the link, the email in spam). Send their IT this note before the class.{" "}
+            <button className="btn small" onClick={() => void copy(itNote(links[0]!.link), "it")}>
+              {copied === "it" ? "Copied" : "Copy note for IT"}
+            </button>
+          </p>
         </div>
       ) : null}
       {q.data?.students.length ? (

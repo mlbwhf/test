@@ -63,18 +63,41 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   const seat = seatClass(tenants, store);
   const view = (g: ClassGuest) => ({ id: g.id, name: g.name, email: g.email, createdAt: g.createdAt, ...(g.emailedAt ? { emailedAt: g.emailedAt } : {}), ...(g.seenAt ? { seenAt: g.seenAt } : {}) });
   const link = (token: string) => `${(opts.webUrl ?? "").replace(/\/$/, "")}/join/${token}`;
-  const email = async (g: ClassGuest, boardName: string, token: string) => {
+  // The invitation names the trainer and the class and replies to the trainer, so a strict mail
+  // filter (government and corporate mail gateways) sees a message from a person about a known
+  // class, not a bare link. It also tells the student what to ask IT for when a filter still objects.
+  const email = async (g: ClassGuest, boardName: string, token: string, trainer: { name: string; email?: string }) => {
     if (!opts.mailer?.live || !opts.webUrl) {
       console.warn(`[mail] class link for ${g.email} not sent: ${opts.mailer?.live ? "no web address (TRAINYARD_WEB_URL)" : "mail is off (TRAINYARD_SMTP_URL)"}`);
       return false;
     }
+    const host = new URL(opts.webUrl).host;
     await opts.mailer.send({
       to: g.email,
-      subject: `Your link to ${boardName}`,
-      text: `Hi ${g.name},\n\nYour trainer has added you to "${boardName}". Open the class board with your personal link; no account is needed:\n\n${link(token)}\n\nKeep the link to yourself: it opens the board as you.\n\nTrainyard`,
+      ...(trainer.email ? { replyTo: `${trainer.name} <${trainer.email}>` } : {}),
+      subject: `${trainer.name} invited you to ${boardName}`,
+      text: `Hi ${g.name},
+
+${trainer.name} has added you to the class "${boardName}" on Trainyard, the board you will work on together during the class.
+
+Open it with your personal link; no account or password is needed:
+
+${link(token)}
+
+Keep the link to yourself: it opens the board as you. If you lose it, ${trainer.name} can send a new one.
+
+If your browser shows a security warning on the link, or this email reached you in a spam or quarantine folder, your organisation's network or mail filter does not know ${host} yet. Ask your IT team to allow ${host} and api.${host.replace(/^www\./, "")} and email from support@${host.replace(/^www\./, "")}; both are the training platform of ${trainer.name}.
+
+Replies to this email go to ${trainer.name}.
+
+Trainyard`,
     });
     g.emailedAt = new Date().toISOString();
     return true;
+  };
+  const trainerOf = (req: FastifyRequest) => {
+    const u = tenants.platform.state.users.find((x) => x.id === req.principal.userId);
+    return { name: req.principal.name || "Your trainer", ...(u?.email ? { email: u.email } : {}) };
   };
 
   app.get("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
@@ -99,7 +122,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
       const token = newGuestToken();
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
-      const emailed = req.body.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
+      const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
       out.push({ ...view(g), token, link: link(token), emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
@@ -114,7 +137,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
     if (!g) throw notFound("Student");
     const token = newGuestToken();
     g.tokenHash = hashKey(token);
-    const emailed = req.body?.send ? await email(g, b.name, token).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
+    const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
     return { student: { ...view(g), token, link: link(token), emailed } };
   });
