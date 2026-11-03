@@ -186,7 +186,9 @@ services:
       FLOWISE_USERNAME: ${FLOWISE_USERNAME:-}
       FLOWISE_PASSWORD: ${FLOWISE_PASSWORD:-}
       # Encrypts stored credentials (API keys of the models Flowise calls). Set once, keep it.
-      FLOWISE_SECRETKEY_OVERWRITE: ${FLOWISE_SECRET:?set FLOWISE_SECRET in .env (openssl rand -hex 24)}
+      # Compose interpolates this even when the profile is off, so no :? here; deploy.sh refuses the
+      # profile without a secret instead.
+      FLOWISE_SECRETKEY_OVERWRITE: ${FLOWISE_SECRET:-}
       DATABASE_TYPE: sqlite
       DATABASE_PATH: /root/.flowise
       APIKEY_PATH: /root/.flowise
