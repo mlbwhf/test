@@ -25,7 +25,7 @@ const itNote = (link: string) => {
 };
 
 export function ClassStudents({ boardId }: { boardId: string }) {
-  const q = useApi<{ students: Student[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
+  const q = useApi<{ students: Student[]; canEmail: boolean; mirrorHost?: string }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
   const [text, setText] = useState("");
   // "one": a name and an email; "many": a pasted list, one per line.
   const [mode, setMode] = useState<"one" | "many">("one");
@@ -33,7 +33,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   const [oneEmail, setOneEmail] = useState("");
   const [picked, setPicked] = useState<string[]>([]);
   const [send, setSend] = useState(true);
-  const [links, setLinks] = useState<{ name: string; email: string; link: string; emailed: boolean }[]>([]);
+  const [links, setLinks] = useState<{ name: string; email: string; link: string; mirrorLink?: string; emailed: boolean }[]>([]);
   const [kept, setKept] = useState<string[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
@@ -53,8 +53,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   const add = async () => {
     setErr(null);
     try {
-      const r = await api<{ students: (Student & { token?: string; link?: string; emailed: boolean; existing?: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
-      setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!, s.link), emailed: s.emailed })));
+      const r = await api<{ students: (Student & { token?: string; link?: string; mirrorLink?: string; emailed: boolean; existing?: boolean })[] }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students`, { students: rows, send: send && !!q.data?.canEmail });
+      setLinks(r.students.filter((s) => s.token).map((s) => ({ name: s.name, email: s.email, link: linkFor(s.token!, s.link), ...(s.mirrorLink ? { mirrorLink: s.mirrorLink } : {}), emailed: s.emailed })));
       setKept(r.students.filter((s) => s.existing).map((s) => s.name));
       setText("");
       setOneName("");
@@ -66,8 +66,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   };
   const relink = async (s: Student) => {
     try {
-      const r = await api<{ student: Student & { token: string; link?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
-      setLinks([{ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), emailed: r.student.emailed }]);
+      const r = await api<{ student: Student & { token: string; link?: string; mirrorLink?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
+      setLinks([{ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), ...(r.student.mirrorLink ? { mirrorLink: r.student.mirrorLink } : {}), emailed: r.student.emailed }]);
       setKept([]);
       await q.reload();
     } catch (e) {
@@ -89,8 +89,8 @@ export function ClassStudents({ boardId }: { boardId: string }) {
     const out: typeof links = [];
     try {
       for (const s of pickedStudents()) {
-        const r = await api<{ student: Student & { token: string; link?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
-        out.push({ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), emailed: r.student.emailed });
+        const r = await api<{ student: Student & { token: string; link?: string; mirrorLink?: string; emailed: boolean } }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/students/${encodeURIComponent(s.id)}/link`, { send: send && !!q.data?.canEmail });
+        out.push({ name: s.name, email: s.email, link: linkFor(r.student.token, r.student.link), ...(r.student.mirrorLink ? { mirrorLink: r.student.mirrorLink } : {}), emailed: r.student.emailed });
       }
       setLinks(out);
       setKept([]);
@@ -185,10 +185,19 @@ export function ClassStudents({ boardId }: { boardId: string }) {
               <button className="btn small" onClick={() => void copy(l.link, l.link)}>
                 {copied === l.link ? "Copied" : "Copy"}
               </button>
+              {l.mirrorLink ? (
+                <>
+                  <span className="faint">blocked networks:</span>
+                  <code style={{ fontSize: "0.75rem", wordBreak: "break-all" }}>{l.mirrorLink}</code>
+                  <button className="btn small" onClick={() => void copy(l.mirrorLink!, l.mirrorLink!)}>
+                    {copied === l.mirrorLink ? "Copied" : "Copy"}
+                  </button>
+                </>
+              ) : null}
             </div>
           ))}
           {links.length > 1 ? (
-            <button className="btn small" style={{ alignSelf: "flex-start" }} onClick={() => void copy(links.map((l) => `${l.name} <${l.email}>: ${l.link}`).join("\n"), "all")}>
+            <button className="btn small" style={{ alignSelf: "flex-start" }} onClick={() => void copy(links.map((l) => `${l.name} <${l.email}>: ${l.link}${l.mirrorLink ? ` (if blocked: ${l.mirrorLink})` : ""}`).join("\n"), "all")}>
               {copied === "all" ? "Copied all" : "Copy all"}
             </button>
           ) : null}

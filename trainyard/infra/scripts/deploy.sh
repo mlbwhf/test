@@ -73,6 +73,25 @@ for name in $(envval TRAINYARD_API_ALT) $(envval TRAINYARD_API_ALIASES); do
 "
   else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
 done
+# The mirror host (TRAINYARD_WEB_MIRROR, e.g. an older domain) serves the class paths as itself
+# instead of redirecting, for networks that block the main domain as newly registered. Its API
+# twin (TRAINYARD_API_MIRROR) must already answer as the API (an API alias). Higher priority than
+# the alias redirect for the same host; every other path still redirects to the canonical site.
+mirror=$(envval TRAINYARD_WEB_MIRROR); mirror_api=$(envval TRAINYARD_API_MIRROR)
+if [ -n "$mirror" ]; then
+  if [ -z "$mirror_api" ]; then echo "== mirror $mirror skipped: set TRAINYARD_API_MIRROR (an API alias, e.g. api.$mirror)"
+  elif points_here "$mirror" && points_here "$mirror_api"; then
+    echo "== mirror $mirror serves class links and boards as itself (API at $mirror_api)"
+    web_labels+="      traefik.http.routers.trainyard-web-mirror.rule: Host(\`$mirror\`) && (PathPrefix(\`/join\`) || PathPrefix(\`/boards\`) || PathPrefix(\`/embed\`) || PathPrefix(\`/planning-room\`) || PathPrefix(\`/login\`) || PathPrefix(\`/_next\`) || PathPrefix(\`/fonts\`) || PathPrefix(\`/courses\`) || PathPrefix(\`/icon.svg\`) || PathPrefix(\`/favicon.ico\`))
+      traefik.http.routers.trainyard-web-mirror.priority: \"200\"
+      traefik.http.routers.trainyard-web-mirror.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-web-mirror.tls: \"true\"
+      traefik.http.routers.trainyard-web-mirror.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-web-mirror.middlewares: trainyard-web-headers
+      traefik.http.routers.trainyard-web-mirror.service: trainyard-web
+"
+  else echo "== mirror $mirror skipped: $mirror or $mirror_api does not point to this server yet"; fi
+fi
 if [ -n "$web_labels$api_labels" ]; then
   {
     echo "# Written by deploy.sh on every deploy; do not edit."

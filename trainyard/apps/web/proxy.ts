@@ -26,6 +26,7 @@ export function proxy(req: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const dev = process.env.NODE_ENV !== "production";
   const api = process.env.TRAINYARD_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_TRAINYARD_API_URL ?? "http://localhost:4100";
+  const mirrorApi = process.env.TRAINYARD_PUBLIC_API_MIRROR?.trim();
   const csp = [
     "default-src 'self'",
     // Stripe.js (in-page payment) loads from js.stripe.com and talks to api.stripe.com; its card
@@ -34,7 +35,7 @@ export function proxy(req: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    `connect-src 'self' ${api} https://api.stripe.com https://r.stripe.com${dev ? " ws: http://localhost:* http://127.0.0.1:*" : ""}`,
+    `connect-src 'self' ${api}${mirrorApi ? ` https://${mirrorApi}` : ""} https://api.stripe.com https://r.stripe.com${dev ? " ws: http://localhost:* http://127.0.0.1:*" : ""}`,
     // The /book page shows Google Calendar appointment schedules in place; a class's PI Planning
     // exercises show the planning room (/embed/planning-room) in place.
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://calendar.google.com",

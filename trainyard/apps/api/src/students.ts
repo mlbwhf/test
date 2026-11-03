@@ -36,6 +36,8 @@ export interface StudentOptions {
   mailer?: Mailer;
   /** The website's origin, for the links in emails. */
   webUrl?: string;
+  /** An older domain serving the same class links, for networks that block the main one. */
+  webMirrorUrl?: string;
 }
 
 const Student = z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) });
@@ -63,6 +65,8 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   const seat = seatClass(tenants, store);
   const view = (g: ClassGuest) => ({ id: g.id, name: g.name, email: g.email, createdAt: g.createdAt, ...(g.emailedAt ? { emailedAt: g.emailedAt } : {}), ...(g.seenAt ? { seenAt: g.seenAt } : {}) });
   const link = (token: string) => `${(opts.webUrl ?? "").replace(/\/$/, "")}/join/${token}`;
+  const mirrorLink = (token: string) => (opts.webMirrorUrl ? `${opts.webMirrorUrl.replace(/\/$/, "")}/join/${token}` : undefined);
+  const links = (token: string) => (opts.webUrl ? { link: link(token), ...(mirrorLink(token) ? { mirrorLink: mirrorLink(token) } : {}) } : {});
   // The invitation names the trainer and the class and replies to the trainer, so a strict mail
   // filter (government and corporate mail gateways) sees a message from a person about a known
   // class, not a bare link. It also tells the student what to ask IT for when a filter still objects.
@@ -83,7 +87,7 @@ ${trainer.name} has added you to the class "${boardName}" on Trainyard, the boar
 Open it with your personal link; no account or password is needed:
 
 ${link(token)}
-
+${mirrorLink(token) ? `\nIf your organisation's network blocks that address, this one opens the same board:\n\n${mirrorLink(token)}\n` : ""}
 Keep the link to yourself: it opens the board as you. If you lose it, ${trainer.name} can send a new one.
 
 If your browser shows a security warning on the link, or this email reached you in a spam or quarantine folder, your organisation's network or mail filter does not know ${host} yet. Ask your IT team to allow ${host} and api.${host.replace(/^www\./, "")} and email from support@${host.replace(/^www\./, "")}; both are the training platform of ${trainer.name}.
@@ -102,7 +106,7 @@ Trainyard`,
 
   app.get("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), canEmail: !!(opts.mailer?.live && opts.webUrl) };
+    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
   });
 
   // Adds students; the new links come back once. An email already on the class keeps the link it
@@ -110,7 +114,7 @@ Trainyard`,
   app.post("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ students: z.array(Student).min(1).max(MAX_STUDENTS), send: z.boolean().default(false) }) } }, async (req, reply) => {
     const b = classBoard(req, req.params.id);
     const onBoard = () => guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req));
-    const out: (ReturnType<typeof view> & { token?: string; link?: string; emailed: boolean; existing?: true })[] = [];
+    const out: (ReturnType<typeof view> & { token?: string; link?: string; mirrorLink?: string; emailed: boolean; existing?: true })[] = [];
     for (const s of req.body.students) {
       let g = onBoard().find((x) => x.email.toLowerCase() === s.email.toLowerCase());
       if (g) {
@@ -123,7 +127,7 @@ Trainyard`,
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
       const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
-      out.push({ ...view(g), token, ...(opts.webUrl ? { link: link(token) } : {}), emailed });
+      out.push({ ...view(g), token, ...links(token), emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
     await seat(req, b);
@@ -139,7 +143,7 @@ Trainyard`,
     g.tokenHash = hashKey(token);
     const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
-    return { student: { ...view(g), token, ...(opts.webUrl ? { link: link(token) } : {}), emailed } };
+    return { student: { ...view(g), token, ...links(token), emailed } };
   });
 
   app.delete("/v1/boards/:id/students/:sid", { schema: { params: z.object({ id: z.string().max(200), sid: z.string().max(80) }) } }, async (req, reply) => {

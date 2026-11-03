@@ -92,6 +92,10 @@ Flowise (visual LLM flows) can run next to Trainyard behind the same Traefik, at
 
 Its flows, credentials and SQLite database live in the `flowise` volume, separate from Trainyard's Postgres; back the volume up with the host (it is not in the nightly `pg_dump`). It is capped at 1 GB (`FLOWISE_MEMORY_LIMIT`); with gate's 3.5 GB and Trainyard's 1.5 GB it still fits a KVM2, but not together with Ollama. Pin `FLOWISE_VERSION` once a version works for you.
 
+### Client networks that block the main domain
+
+Some organisations (government, banks) filter the web by domain reputation and block a young domain such as `trainyard.app` outright (Microsoft Defender SmartScreen shows "This content is blocked by your organisation"). The clean fix is on their side: their IT allows `trainyard.app`, `api.trainyard.app` and mail from `support@trainyard.app`; the class's Students panel has a "Copy note for IT" button with that text. Until they do, an older domain of yours can serve the class as itself: set `TRAINYARD_WEB_MIRROR=agileagilist.com` and `TRAINYARD_API_MIRROR=api.agileagilist.com` in `/opt/trainyard/.env` (both already pointing at the server; the API name must be one of the API aliases) and deploy. Class links and boards then also answer on that domain, pages served there call its API twin, every new student link comes with its mirror twin (shown in the panel and included in the invitation email), and every other path on the mirror still redirects to the canonical site.
+
 ## Domains
 
 One canonical web host and one API host, plus optional aliases, all in `.env`: `TRAINYARD_WEB_HOST` (e.g. `trainyard.app`), `TRAINYARD_API_HOST` (`api.agileagilist.com`), `TRAINYARD_WEB_ALT` and `TRAINYARD_WEB_ALT2` (`www.agileagilist.com`, `plan.agile-agilist.com`), `TRAINYARD_API_ALT` (`plan-api.agile-agilist.com`). Web aliases get their own certificate and a permanent redirect to the canonical host, so search engines index one site; the API alias answers directly because a redirect would break browsers' CORS preflight. Every host needs an A record to the VPS. The smoke test checks the canonical hosts and that each alias redirects.

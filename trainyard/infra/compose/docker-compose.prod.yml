@@ -67,7 +67,10 @@ services:
       TRAINYARD_SMTP_URL: ${TRAINYARD_SMTP_URL:-}
       TRAINYARD_MAIL_FROM: ${TRAINYARD_MAIL_FROM:-}
       TRAINYARD_BILLING_FROM: ${TRAINYARD_BILLING_FROM:-}
-      TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}},https://${TRAINYARD_WEB_ALT:-_none_},https://${TRAINYARD_WEB_ALT2:-_none_},https://${TRAINYARD_WEB_ALT3:-_none_},https://${TRAINYARD_WEB_ALT4:-_none_}
+      TRAINYARD_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN:?set TRAINYARD_DOMAIN in .env}},https://${TRAINYARD_WEB_ALT:-_none_},https://${TRAINYARD_WEB_ALT2:-_none_},https://${TRAINYARD_WEB_ALT3:-_none_},https://${TRAINYARD_WEB_ALT4:-_none_},https://${TRAINYARD_WEB_MIRROR:-_none_}
+      # An older domain that serves class links and boards as itself, for networks whose web filter
+      # blocks the main domain as new (TRAINYARD_WEB_MIRROR, with TRAINYARD_API_MIRROR for the API).
+      TRAINYARD_WEB_MIRROR_URL: ${TRAINYARD_WEB_MIRROR:+https://${TRAINYARD_WEB_MIRROR}}
       TRAINYARD_DEMO_CLOCK: "0"
     networks: [internal]
     labels:
@@ -101,6 +104,9 @@ services:
       # Read when a page is served, so the same image works on any domain.
       TRAINYARD_PUBLIC_API_URL: https://${TRAINYARD_API_HOST:-plan-api.${TRAINYARD_DOMAIN}}
       TRAINYARD_PUBLIC_WEB_URL: https://${TRAINYARD_WEB_HOST:-plan.${TRAINYARD_DOMAIN}}
+      # Served on the mirror host, pages talk to the mirror API host (both must point at this server).
+      TRAINYARD_PUBLIC_WEB_MIRROR: ${TRAINYARD_WEB_MIRROR:-}
+      TRAINYARD_PUBLIC_API_MIRROR: ${TRAINYARD_API_MIRROR:-}
       # Search Console and Bing Webmaster Tools ownership tokens (the content of their meta tags).
       TRAINYARD_GOOGLE_VERIFICATION: ${TRAINYARD_GOOGLE_VERIFICATION:-}
       TRAINYARD_SUPPORT_EMAIL: ${TRAINYARD_SUPPORT_EMAIL:-}

@@ -37,7 +37,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const nonce = h.get("x-nonce") ?? undefined;
   // Signed-in spaces paint in their theme from the first byte (the shell keeps it in step after).
   const theme = h.get("x-embed") === "1" ? undefined : locate(h.get("x-pathname") ?? "")?.space.theme;
-  const api = apiUrl();
+  // On the mirror host (an older domain for networks that block the main one) the page talks to
+  // the mirror API host, which that network allows for the same reason.
+  const reqHost = (h.get("x-forwarded-host") ?? h.get("host") ?? "").split(",")[0]!.trim().replace(/:\d+$/, "");
+  const mirror = process.env.TRAINYARD_PUBLIC_WEB_MIRROR?.trim(), mirrorApi = process.env.TRAINYARD_PUBLIC_API_MIRROR?.trim();
+  const api = mirror && mirrorApi && reqHost === mirror ? `https://${mirrorApi}` : apiUrl();
   return (
     <html lang="en" data-theme={theme}>
       <body>
