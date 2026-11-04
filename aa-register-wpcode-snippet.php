@@ -696,10 +696,8 @@ function aa_reg_courses() {
 		   one day, foundational, no prerequisites, 45 questions in 90 minutes,
 		   80% to pass, English.
 
-		   NO PRICE YET, DELIBERATELY 0. It has not been given, and a price is
-		   not something to guess. At 0 the dates are published but every form
-		   becomes "Ask for this date" and checkout refuses the course -- see
-		   aa_reg_on_sale(). Put the price here and it goes on sale.
+		   USD 850, confirmed by the client on 4 Nov 2026. (Until then it was 0,
+		   which aa_reg_on_sale() treats as "price on request".)
 
 		   THE CODE IS OURS, NOT SCALED AGILE'S. They publish no abbreviation
 		   for this course; AINSF follows the AINF / AINVA / AINORG family and
@@ -716,7 +714,7 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-ready-certification/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 0,
+			'price'    => 850,
 			'days'     => 1,
 			'weeks'    => 52,
 			'cadence'  => array(
