@@ -302,7 +302,7 @@ export const SCN: Record<string, Scenario> = {
 };
 // Story titles are built from the feature until the handouts bring real stories.
 const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
-type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; full: boolean; coll: string | null; collText: string; collEn: boolean; en: boolean; draft: number; view: string; sel: string | null; kind: Exclude<TType, "pio">; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; full: boolean; coll: string | null; collText: string; collEn: boolean; en: boolean; draft: number; view: string; sel: string | null; kind: TType; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
 function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, own?: BacklogFeature[]): Ticket[] {
   const S = SCN[scn], t: Ticket[] = [];
@@ -449,10 +449,14 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     if (e.button) return;
     const x0 = e.clientX, y0 = e.clientY;
     let moved = false;
+    // Keep the pointer even when the chip re-renders under it (live updates) or the finger leaves it.
+    try { (e.currentTarget as Element).setPointerCapture?.(e.pointerId); } catch { /* not capturable */ }
     const mv = (ev: PointerEvent) => { if (!moved && Math.abs(ev.clientX - x0) + Math.abs(ev.clientY - y0) < 5) return; moved = true; set(() => ({ ghost: { x: ev.clientX + 10, y: ev.clientY + 10, id } })); };
+    const cancel = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", cancel); set(() => ({ ghost: null })); };
     const up = (ev: PointerEvent) => {
       window.removeEventListener("pointermove", mv);
       window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", cancel);
       set(() => ({ ghost: null, sel: id }));
       if (!moved) return;
       const z = document.elementsFromPoint(ev.clientX, ev.clientY).map((n) => n.closest && n.closest("[data-drop]")).find(Boolean) as Element | undefined;
@@ -462,6 +466,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     };
     window.addEventListener("pointermove", mv);
     window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", cancel);
   };
   const key = () => `TY-${s.kn + 1}`;
   const addT = (parent: string) => {
@@ -470,6 +475,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     const team = cur ?? 1, id = key();
     const t: Ticket = { id, type: s.kind, title, parent: parent || "", team, iter: null, pts: 0 };
     if (s.kind === "risk") t.roam = null;
+    else if (s.kind === "pio") (t.bv = 0), (t.commit = true), (t.parent = "");
     else if (s.en) t.en = true;
     set((x) => ({ tickets: [...x.tickets, t], kn: x.kn + 1, newText: "", view: String(team), sel: id }));
     flashIt(id);
@@ -531,8 +537,30 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const kidsN = (id: string) => s.tickets.filter((x) => x.parent === id).length;
   const isCard = (t: Ticket) => t.type === "epic" || t.type === "capability" || t.type === "feature";
   // A flag or yard card: type colour, hatch and ⚙ for enablers, a ▤ n badge that opens the stack of its children.
-  const mkCard = (t: Ticket) => { const c = col(t), n = kidsN(t.id); return { key: t.id, t: t.title, color: c, bg: c, fg: ink(c), img: t.en ? HATCH : "none", en: t.en ? "⚙ " : "", hasKids: n > 0, n, open: () => set(() => ({ coll: t.id })), stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
-  const mkStory = (t: Ticket) => ({ key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), bg: col(t), fg: ink(col(t)), img: t.en ? HATCH : CRATE, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) });
+  // What a chip says without opening it: a story's sentence, a feature's or epic's hypothesis, an enabler's purpose.
+  const preview = (t: Ticket) => {
+    const f = t.f ?? {};
+    if (t.type === "story") return t.en ? (f.enwhy || f.why || "") : f.role || f.want || f.why ? `As a ${f.role || "…"}, I can ${f.want || "…"} so that ${f.why || "…"}` : "";
+    if (t.type === "pio") return t.commit === false ? "Uncommitted objective" : "Committed objective";
+    if (t.type === "risk") return t.roam ? `ROAM: ${ROAM.find((r) => r[0] === t.roam)?.[1] ?? t.roam}` : "Not ROAMed yet";
+    return f.hyp || f.desc || f.enwhy || (t.type === "epic" && f.for ? `For ${f.for} who ${f.who || "…"}: ${f.that || ""}` : "");
+  };
+  const short = (x: string, n = 90) => (x.length > n ? `${x.slice(0, n - 1).trimEnd()}…` : x);
+  // Hands a ticket to another team with everything under it; it lands in that team's freight yard.
+  const moveTeam = (id: string, to: number) => {
+    const root = by[id];
+    if (!root || !to || to === root.team) return;
+    const under = new Set<string>([id]);
+    let grew = true;
+    while (grew) {
+      grew = false;
+      for (const x of s.tickets) if (x.parent && under.has(x.parent) && !under.has(x.id)) (under.add(x.id), (grew = true));
+    }
+    set((t) => ({ tickets: t.tickets.map((x) => (under.has(x.id) ? { ...x, team: to, iter: null } : x)), view: String(to), sel: id, flash: id }));
+  };
+  const teamPick = (t: Ticket) => ({ teamOpts: Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name })), teamVal: String(t.team), setTeam: (e: React.ChangeEvent<HTMLSelectElement>) => moveTeam(t.id, Number(e.target.value)), canTeam: N > 1 && t.type !== "story" });
+  const mkCard = (t: Ticket) => { const c = col(t), n = kidsN(t.id), pv = preview(t); return { key: t.id, t: t.title, color: c, bg: c, fg: ink(c), img: t.en ? HATCH : "none", en: t.en ? "⚙ " : "", hasKids: n > 0, n, sub: short(pv), hint: `${t.id} · ${t.title}${pv ? `\n${pv}` : ""}`, ...teamPick(t), open: () => set(() => ({ coll: t.id })), stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
+  const mkStory = (t: Ticket) => { const pv = preview(t); return { key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), bg: col(t), fg: ink(col(t)), img: t.en ? HATCH : CRATE, sub: short(pv, 70), hint: `${t.id} · ${t.title}${pv ? `\n${pv}` : ""}`, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
   const wagons = iters.map((i) => {
     const l = loadOf(ct, i), c = capOf(ct, i), over = l > c, here = T.filter((t) => t.iter === i);
     return { key: `w:${i}`, name: iName(i), dates: iDates(i), load: l, cap: c, fill: Math.min(100, (l / (c || 1)) * 100), gauge: over ? "#ef4b4b" : l / (c || 1) > 0.85 ? "#ffb020" : "#5fb83a", numColor: over ? "#c8372d" : "#14123a", bg: over ? "#fde0dc" : "#fbf9f4",
@@ -558,20 +586,23 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       formTitle: ({ story: "USER STORY · AS A / I WANT / SO THAT", feature: "FEATURE · HYPOTHESIS, OBJECTIVES, EPIC LINK", epic: "EPIC · HYPOTHESIS STATEMENT", capability: "CAPABILITY · BENEFIT HYPOTHESIS", risk: "RISK", pio: "OBJECTIVE" } as Record<string, string>)[selT.type] + (selT.en ? " · ENABLER" : ""),
       canParent: selT.type !== "epic" && selT.type !== "pio", parentLbl: ({ capability: "EPIC", feature: "EPIC / CAPABILITY", story: "FEATURE", risk: "RELATES TO" } as Record<string, string>)[selT.type] ?? "",
       parentValW: selT.parent ?? "", setParentW: (e: React.ChangeEvent<HTMLSelectElement>) => upd(selT.id, { parent: e.target.value }),
+      // The ticket as its SAFe card, the way the course handouts draw them: a user story on a green
+      // sticky (As a … I can … so that …), an enabler story on a pink one, a feature as a card with its
+      // benefit hypothesis and numbered acceptance criteria, an objective with its business value.
+      card: (() => {
+        const f = selT.f ?? {};
+        const lines = (x: string) => x.split(/\n+/).map((l) => l.replace(/^\s*(\d+[.)]|[-•*])\s*/, "").trim()).filter(Boolean);
+        if (selT.type === "story" && selT.en) return { kind: "enabler", bg: "#f3c6cd", title: selT.title, text: f.enwhy || f.why || "", pts: sz(selT) };
+        if (selT.type === "story") return { kind: "story", bg: "#cfe36b", role: f.role || "", want: f.want || "", why: f.why || "", title: selT.title, pts: sz(selT), ac: lines(f.ac || "") };
+        if (selT.type === "feature" || selT.type === "capability") return { kind: selT.type, bg: "#fff", head: selT.en ? "#0f8f7a" : "#2b6f8f", title: selT.title, hyp: f.hyp || "", ac: lines(f.ac || ""), en: !!selT.en };
+        if (selT.type === "pio") return { kind: "pio", bg: "#e6fbf7", title: selT.title, bv: selT.bv ?? 0, commit: selT.commit !== false };
+        if (selT.type === "risk") return { kind: "risk", bg: "#f8a08a", title: selT.title, roam: selT.roam ? ROAM.find((r) => r[0] === selT.roam)?.[1] ?? selT.roam : "Not ROAMed yet" };
+        return { kind: "epic", bg: "#dfe4fb", title: selT.title, text: [f.for ? `For ${f.for}` : "", f.who ? `who ${f.who}` : "", f.the ? `the ${f.the}` : "", f.isa ? `is a ${f.isa}` : "", f.that ? `that ${f.that}` : "", f.unlike ? `Unlike ${f.unlike}` : "", f.sol ? `our solution ${f.sol}` : ""].filter(Boolean).join(" ") };
+      })(),
       // Assigning work to a team: a feature (or capability, epic, risk, objective) moves with everything under it.
       teamOpts: Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name, sel: k + 1 === selT.team })),
       teamValW: String(selT.team),
-      setTeamW: (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const to = Number(e.target.value);
-        if (!to || to === selT.team) return;
-        const under = new Set<string>([selT.id]);
-        let grew = true;
-        while (grew) {
-          grew = false;
-          for (const x of s.tickets) if (x.parent && under.has(x.parent) && !under.has(x.id)) (under.add(x.id), (grew = true));
-        }
-        set((t) => ({ tickets: t.tickets.map((x) => (under.has(x.id) ? { ...x, team: to, iter: null } : x)), view: String(to), flash: selT.id }));
-      },
+      setTeamW: (e: React.ChangeEvent<HTMLSelectElement>) => moveTeam(selT.id, Number(e.target.value)),
     };
     facts = [{ k: "TEAM", v: teamOf(selT.team).name }, { k: "LOCATION", v: where(selT) }, { k: selT.type === "story" ? "SIZE" : "CHILDREN", v: selT.type === "story" ? `${sz(selT)} pts` : String(down.length) }, { k: selT.type === "risk" ? "ROAM" : "STATUS", v: selT.type === "risk" ? (selT.roam || "Not yet ROAMed") : selT.iter ? "Loaded" : "In the yard" }];
     const fv = selT.f ?? {};
@@ -694,7 +725,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       </div>
     ) : null,
     goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
-    kinds: ([["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, dot: k === "risk" ? "#f8a08a" : col({ type: k, en: s.en }), bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
+    kinds: ([["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"], ["risk", "Risk"], ["pio", "PI objective"]] as const).map(([k, n]) => ({ n, dot: k === "risk" ? "#f8a08a" : k === "pio" ? "#5ff0e0" : col({ type: k, en: s.en }), bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
     toggleNewEn: () => set((t) => ({ en: !t.en })), enBg: s.en ? "#ffe14d" : "transparent", enFg: s.en ? "#14123a" : "#fff",
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
     newHint: `${tm.name}: new ${s.en && s.kind !== "risk" ? "enabler " : ""}${s.kind}…`, hasParents: s.kind !== "epic", parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: ({ capability: "Epic", feature: "Epic / capability", story: "Feature" } as Record<string, string>)[s.kind] ?? "Relates to",
