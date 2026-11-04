@@ -27,3 +27,4 @@ export * from "./stack.js";
 export { VALUE_ARCHITECT_LAB } from "./courses/ai-native-value-architect.js";
 export * from "./teams.js";
 export * from "./class-meta.js";
+export * from "./export.js";

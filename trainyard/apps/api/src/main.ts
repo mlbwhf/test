@@ -90,6 +90,8 @@ async function main() {
     trustProxy: process.env.TRAINYARD_TRUST_PROXY === "1" ? true : env === "production" ? proxyTrust(process.env.TRAINYARD_TRUSTED_PROXIES ? process.env.TRAINYARD_TRUSTED_PROXIES.split(",") : undefined) : false,
     rateLimitPerMinute: Number(process.env.TRAINYARD_RATE_LIMIT ?? 600),
     ...(process.env.TRAINYARD_SIGNUP_WEBHOOK ? { signupWebhook: process.env.TRAINYARD_SIGNUP_WEBHOOK } : {}),
+    // Retention: days idle before a class is archived, days archived before it is emailed out and deleted; 0 turns either off.
+    retention: { archiveDays: Number(process.env.TRAINYARD_RETENTION_ARCHIVE_DAYS ?? 180), deleteDays: Number(process.env.TRAINYARD_RETENTION_DELETE_DAYS ?? 365) },
     billing: {
       ...(process.env.STRIPE_SECRET_KEY ? { secretKey: process.env.STRIPE_SECRET_KEY } : {}),
       ...(process.env.STRIPE_PUBLISHABLE_KEY ? { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } : {}),

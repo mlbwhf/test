@@ -121,6 +121,24 @@ export function useMe() {
   return useApi<Me>("/v1/me");
 }
 
+/** Fetches a file from the API with this person's key and hands it to the browser to save. */
+export async function download(path: string, filename: string): Promise<void> {
+  const key = getApiKey();
+  const res = await fetch(`${BASE}${path}`, { headers: { ...(key ? { Authorization: `Bearer ${key}` } : {}), ...(getSupportWorkspace() ? { "x-trainyard-workspace": getSupportWorkspace()! } : {}) } });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new ApiFailure(res.status, json?.error?.code ?? "ERROR", json?.error?.message ?? res.statusText);
+  }
+  const url = URL.createObjectURL(await res.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
 /**
  * Live push: holds a streaming connection to an `/events` route and calls `onChange` for every
  * change notice. Plain fetch, so the API key travels in the header as everywhere else. Reconnects

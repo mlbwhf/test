@@ -75,7 +75,7 @@ const MappingBody = z.object({
   createMissingTeams: z.boolean().optional(),
 });
 
-export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
+export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void>; /** Runs before a board is removed (a class's record is emailed to its trainer). */ beforeDelete?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
   const s = () => store.state;
   const boards = () => (s().workspace.boards ??= []);
   const findBoard = (id: string) => boards().find((b) => b.id === id) ?? (() => { throw notFound("Board"); })();
@@ -90,7 +90,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       throw e;
     }
   };
-  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, roomId: b.roomId ?? null, shape: boardShape(b), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
+  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, roomId: b.roomId ?? null, shape: boardShape(b), ...(b.fields?.class ? { class: b.fields.class } : {}), ...(typeof b.fields?.archived === "string" ? { archived: b.fields.archived } : {}), ...(typeof b.fields?.touchedAt === "string" ? { touchedAt: b.fields.touchedAt } : {}), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
 
   // ---- connections -------------------------------------------------------------------
   app.get("/v1/connections", async () => ({ connections: s().connections.map(publicConnection), sources: CONNECTION_FIELDS, persistent: secrets.persistent }));
@@ -272,6 +272,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = findBoard(id);
     const a = boardAccess(b, s().rooms ?? [], roomViewer(req.principal));
     if (!canView(a)) throw notFound("Board");
+    // An archived class is closed to its students; the trainer still opens it, to export or to reopen.
+    if (req.principal.guestBoardId && b.fields?.archived) throw new ApiError(410, "CLASS_ARCHIVED", "This class has ended and its board is archived. Ask your trainer for a copy of the work.");
     if (need === "edit" && !canEdit(a)) throw new ApiError(403, "FORBIDDEN", "This board's room lets you look but not change it.");
     return b;
   };
@@ -312,8 +314,12 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
   app.delete("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
     require(req, "plan");
-    reach(req, req.params.id, "edit");
+    const gone = reach(req, req.params.id, "edit");
+    await hooks.beforeDelete?.(req, gone);
     s().workspace.boards = boards().filter((b) => b.id !== req.params.id);
+    // Its planning room goes with it.
+    const docs = s().workspace.docs;
+    if (docs) delete docs[`planning-room:${req.params.id}`];
     await store.commit(req.principal, "board.delete", { id: req.params.id });
     return reply.code(204).send();
   });
@@ -340,7 +346,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     require(req, "plan");
     const t = reach(req, req.params.id, "view");
     if (!t.isTemplate) throw new ApiError(422, "NOT_A_TEMPLATE", "Only templates can be instantiated. Save this board as a template first.");
-    const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
+    const b = owned(req, instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString()));
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
     return reply.code(201).send({ board: summary(b) });
@@ -398,6 +404,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     if (t.fields?.class) requireSignup(req, "Running a class board");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
     if (t.fields?.class) b.fields = { ...b.fields, templateRev: templateRevision(t) };
+    owned(req, b);
     if (req.body.roomId) b.roomId = intoRoom(req, req.body.roomId);
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
@@ -407,6 +414,13 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   const editable = (req: FastifyRequest, id: string) => {
     const b = reach(req, id, "edit");
     if (b.isTemplate) throw new ApiError(422, "TEMPLATE_READ_ONLY", "Templates are not edited in place. Create a board from it first.");
+    // When the board was last worked on: what the retention sweep goes by (retention.ts).
+    b.fields = { ...(b.fields ?? {}), touchedAt: store.now().toISOString() };
+    return b;
+  };
+  /** The person a class belongs to: who made it, for the emailed record when it goes. */
+  const owned = (req: FastifyRequest, b: Board) => {
+    if (!req.principal.guestBoardId && !req.principal.anonymous) b.fields = { ...(b.fields ?? {}), ownerId: req.principal.userId };
     return b;
   };
 

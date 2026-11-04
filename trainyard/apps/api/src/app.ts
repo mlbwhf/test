@@ -56,6 +56,7 @@ import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerDocRoutes } from "./docs.js";
 import { onCommit as liveOnCommit } from "./events.js";
+import { DEFAULT_RETENTION, registerRetention, type RetentionOptions } from "./retention.js";
 import { registerPlanningRoutes } from "./planning.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
@@ -102,6 +103,8 @@ export interface AppOptions extends AuthOptions {
   signupWebhook?: string;
   /** Stripe Checkout for the paid plans; without a secret key sign-ups stay requests handled by hand. */
   billing?: BillingOptions;
+  /** How long classes are kept (retention.ts); unset means the defaults, with mail from `billing`. */
+  retention?: Partial<RetentionOptions>;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -769,7 +772,8 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerSignupRoutes(app, tenants, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}), emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}) });
   registerIdentityRoutes(app, { emailVerification: opts.emailVerification ?? "off", sso: opts.sso ?? [] });
   registerAssistRoutes(app, store, metrics, opts.assist);
-  registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store) });
+  const retention = registerRetention(app, tenants, store, { ...DEFAULT_RETENTION, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}), ...(opts.retention ?? {}) });
+  registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store), beforeDelete: retention.beforeDelete });
   registerPasswordReset(app, tenants, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
   registerStudentRoutes(app, tenants, store, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
 

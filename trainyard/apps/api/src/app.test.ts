@@ -2295,3 +2295,59 @@ describe("storage in shards", () => {
     expect((await persistence.load(second.workspaceId))!.state.workspace.boards).toBeUndefined();
   });
 });
+
+describe("class records and retention", () => {
+  it("exports a class, archives it away from its students, emails its record before a delete, and sweeps old classes", async () => {
+    let clock = Date.parse("2026-11-04T09:00:00.000Z");
+    const mailer = new MemoryMailer();
+    const { call, store, app } = await setup({ now: () => new Date(clock), billing: { mailer, webUrl: "https://trainyard.app" }, retention: { archiveDays: 30, deleteDays: 60, everyMs: 0 } });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE Nov" }, root)).body.board.id as string;
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0] as { id: string; token: string };
+    await call("PUT", `/v1/boards/${id}/teams`, { count: 1 }, root);
+    const frame = ((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; parentId?: string; activity?: unknown }[]).find((f) => f.parentId && f.activity)!;
+    await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(frame.id)}/state`, { key: "t1|lane:0", op: "push", value: { text: "Ana wrote this" } }, ana.token);
+    await call("PUT", `/v1/docs/planning-room%3A${id}`, { doc: { scn: "geek", teams: 1, caps: {}, kn: 101, tickets: [{ id: "TY-101", type: "story", title: "First story", team: 1, iter: 1, pts: 3 }] } }, root);
+    // Export: JSON with everything, and the readable report; students may not.
+    const json = await call("GET", `/v1/boards/${id}/export`, undefined, root);
+    expect(json.status).toBe(200);
+    expect(json.headers["content-disposition"]).toContain(".json");
+    expect(json.body).toMatchObject({ format: "trainyard-class/1", students: [{ name: "Ana", email: "ana@example.io", team: "Team 1" }], teams: [{ id: "t1" }], planningRoom: { teams: 1 } });
+    expect(JSON.stringify(json.body.board)).toContain("Ana wrote this");
+    const html = await app.inject({ method: "GET", url: `/v1/boards/${id}/export?format=html`, headers: { authorization: `Bearer ${root}` } });
+    expect(html.headers["content-type"]).toContain("text/html");
+    expect(html.body).toContain("Ana wrote this");
+    expect(html.body).toContain("First story");
+    expect((await call("GET", `/v1/boards/${id}/export`, undefined, ana.token)).status).toBe(403);
+    // Archive: the student's link is closed with a clear answer; the trainer still opens it; reopening lets the student back.
+    expect((await call("POST", `/v1/boards/${id}/archive`, { archived: true }, root)).body.archived).toBe("2026-11-04T09:00:00.000Z");
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(410);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).status).toBe(200);
+    expect((await call("GET", "/v1/boards", undefined, root)).body.boards.find((b: { id: string }) => b.id === id).archived).toBeTruthy();
+    await call("POST", `/v1/boards/${id}/archive`, { archived: false }, root);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(200);
+    // Delete by the trainer: the record goes to the trainer by mail first, the room and the links go with the board.
+    expect((await call("DELETE", `/v1/boards/${id}`, undefined, root)).status).toBe(204);
+    const mail = mailer.sent.at(-1)!;
+    expect(mail.to).toBe("root@example.io");
+    expect(mail.subject).toBe("Your class record: RTE Nov");
+    expect(mail.attachments!.map((a) => a.filename.split(".").pop())).toEqual(["html", "json"]);
+    expect(String(mail.attachments![1]!.content)).toContain("Ana wrote this");
+    expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(401);
+    expect(store.state.workspace.docs?.[`planning-room:${id}`]).toBeUndefined();
+    // The sweep: a class idle for 31 days is archived; 61 days after that it is emailed out and deleted.
+    const id2 = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE Old" }, root)).body.board.id as string;
+    const ben = (await call("POST", `/v1/boards/${id2}/students`, { students: [{ name: "Ben", email: "ben@example.io" }] }, root)).body.students[0] as { token: string };
+    clock += 31 * 24 * 3600 * 1000;
+    const first = await call("POST", "/v1/admin/retention/sweep", {}, root);
+    expect(first.body).toEqual({ archived: [id2], deleted: [], emailed: [] });
+    expect((await call("GET", `/v1/boards/${id2}`, undefined, ben.token)).status).toBe(410);
+    clock += 61 * 24 * 3600 * 1000;
+    const second = await call("POST", "/v1/admin/retention/sweep", {}, root);
+    expect(second.body).toEqual({ archived: [], deleted: [id2], emailed: [id2] });
+    expect(mailer.sent.at(-1)!.text).toContain("retention policy");
+    expect((await call("GET", `/v1/boards/${id2}`, undefined, root)).status).toBe(404);
+    expect((await call("GET", "/v1/me", undefined, ben.token)).status).toBe(401);
+    expect((await call("GET", "/v1/admin/retention", undefined, root)).body).toMatchObject({ archiveDays: 30, deleteDays: 60, mail: true });
+  });
+});

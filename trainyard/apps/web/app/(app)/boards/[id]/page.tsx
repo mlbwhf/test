@@ -9,7 +9,7 @@ import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
 import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
-import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
+import { api, download, useApi, useMe, type ApiFailure } from "@/lib/api";
 
 // Loaded when needed, not with the page: the planning room (its own bundle), and the trainer's panels.
 const PlanningRoomPage = dynamic(() => import("@/components/planning-pages").then((m) => m.PlanningRoomPage), { ssr: false, loading: () => <Loading error={null} /> });
@@ -132,10 +132,34 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
                 <option value="template">Start fresh: remove learners&apos; work</option>
                 <option value="empty">Clear the whole board</option>
               </select>
+              <select
+                className="select"
+                aria-label="Download the class record"
+                value=""
+                onChange={(e) => {
+                  const f = e.target.value as "json" | "html" | "";
+                  if (!f) return;
+                  const stem = board.name.replace(/[^\w.-]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "class";
+                  void download(`/v1/boards/${encodeURIComponent(board.id)}/export?format=${f}`, `${stem}.${f}`).then(() => (setErr(null), setDone(f === "html" ? "The printable report is downloading." : "The class record is downloading.")), (x: ApiFailure) => setErr(x.message));
+                }}
+              >
+                <option value="">Download record…</option>
+                <option value="html">Printable report (HTML)</option>
+                <option value="json">Full record (JSON, for keeping or importing)</option>
+              </select>
+              <button
+                className="btn"
+                onClick={() => {
+                  const archived = typeof board.fields?.archived === "string";
+                  if (archived || window.confirm("Archive this class? Students' links close and the class leaves your list; you keep it, can download it, and can reopen it. Archived classes are deleted after the retention period, with the record emailed to you first.")) void run(archived ? "The class is open again." : "The class is archived.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/archive`, { archived: !archived })).then(() => view.reload());
+                }}
+              >
+                {typeof board.fields?.archived === "string" ? "Reopen class" : "Archive class"}
+              </button>
               <button
                 className="btn ghost"
                 onClick={() => {
-                  if (window.confirm(`Delete "${board.name}"? Students' links stop working.`)) void api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}`).then(() => router.push("/classroom"), (e: ApiFailure) => setErr(e.message));
+                  if (window.confirm(`Delete "${board.name}"? Students' links stop working and the planning room goes with it. A copy of the class record is emailed to you first; use "Download record" if you want it on this computer too.`)) void api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}`).then(() => router.push("/classroom"), (e: ApiFailure) => setErr(e.message));
                 }}
               >
                 Delete
