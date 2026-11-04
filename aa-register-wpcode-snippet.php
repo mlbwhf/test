@@ -1551,9 +1551,15 @@ function aa_reg_extra_dates() {
 		/* ASKED FOR ON 2 NOV 2026: AI-Native Foundations on Mon 7 - Tue 8 Dec,
 		   and Leading the AI-Native Organization on Wed 9 Dec. Neither falls on
 		   the Thursday / Tuesday cadence, so they are hand-set here. Foundations
-		   is two days, so the 7th gives 7-8 Dec; AINORG is one day. */
-		'ai-native-foundations'           => array( '2026-12-07' ),
-		'ai-native-ready-certification-2' => array( '2026-12-09' ),
+		   is two days, so the 7th gives 7-8 Dec; AINORG is one day.
+
+		   CONFIRMED TO SHUHARI BY EMAIL in October, before the 3 Nov
+		   schedule change moved these courses off those days: Foundations
+		   weekend Sat 21 - Sun 22 Nov (tickets bought) and Leading the
+		   AI-Native Organization on Mon 23 Nov. Kept so the site shows the
+		   classes that are actually running. */
+		'ai-native-foundations'           => array( '2026-11-21', '2026-12-07' ),
+		'ai-native-ready-certification-2' => array( '2026-11-23', '2026-12-09' ),
 
 		/* RTE ON TUESDAY 27 OCTOBER 2026, asked for on 13 Oct.
 		   The cadence runs RTE on Mondays, Wednesdays and Fridays, so a Tuesday
