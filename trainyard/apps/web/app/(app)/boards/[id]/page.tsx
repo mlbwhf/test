@@ -245,7 +245,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
             board.isTemplate ? (
               <div className="panel panel-body faint">Create a board from this template: it opens as the planning room, with its own teams, PI calendar and backlog.</div>
             ) : (
-              <PlanningRoomPage docKey={`planning-room:${board.id}`} />
+              <PlanningRoomPage docKey={`planning-room:${board.id}`} mode="template" />
             )
           ) : isClass ? (
             <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />

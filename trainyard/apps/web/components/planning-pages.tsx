@@ -257,19 +257,23 @@ export function OkrBoardPage() {
 // ---- Planning room (the multi-team train yard) --------------------------------------------
 /** The work hierarchy (epic → capability → feature → story) plus risks and PI objectives; `en` marks an enabler. */
 type TType = "epic" | "capability" | "feature" | "story" | "risk" | "pio";
-type Ticket = { id: string; type: TType; title: string; text?: string; en?: boolean; note?: string; f?: Record<string, string>; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
+type Ticket = { id: string; type: TType; title: string; text?: string; en?: boolean; note?: string; f?: Record<string, string>; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean; /** Actual business value scored at the System Demo (PI objectives); null or absent = not scored. */ abv?: number | null; /** The ART PI objective this team objective rolls up into. */ art?: string };
+/** An ART PI objective: team objectives roll up into it (template mode). */
+type ArtObj = { id: string; title: string; commit: boolean };
+/** One PI of the predictability history: each team's percentage, and the ART's (null = from the teams). */
+type PiHist = { name: string; teams: Record<string, number | null>; art: number | null };
 /** The PI calendar: start date, weeks per iteration, iterations in the PI (the last one is IP). */
 export type Cal = { start: string; weeks: 1 | 2 | 3; n: number };
 /** A team's capacity the SAFe way: eight points per full-time member per two-week iteration, less vacation days (Leading SAFe). */
 export type TeamCap = { rows: { r: string; n: number; a: number; on: boolean }[]; vac: number };
 export const SAMPLE_TEAM: TeamCap = { rows: [{ r: "Developers", n: 3, a: 100, on: true }, { r: "Testers", n: 2, a: 100, on: true }, { r: "Product Owner", n: 1, a: 100, on: false }, { r: "Scrum Master / Team Coach", n: 1, a: 100, on: false }], vac: 0 };
-export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teamCap?: Record<string, TeamCap>; colors?: Record<string, string>; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teamCap?: Record<string, TeamCap>; colors?: Record<string, string>; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[]; artObjs?: ArtObj[]; piHist?: PiHist[]; /** Fields written on the roadmap's epics (virtual epics, by title). */ epm?: Record<string, Record<string, string>>; /** Kanban stage overrides in the tracking tree, by node id. */ stg?: Record<string, number> };
 const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
 const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
 const TYPES: [TType, string][] = [["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"]];
 const CHILD: Partial<Record<TType, TType>> = { epic: "capability", capability: "feature", feature: "story" };
 /** Default colours by type, enablers with an E (design: DEFC); the room's `colors` overrides them. */
-const DEFC: Record<string, string> = { epic: "#4a5fe8", capability: "#8a5cf5", feature: "#14123a", story: "#e9c98a", epicE: "#c8372d", capabilityE: "#ff8a3d", featureE: "#0f8f7a", storyE: "#f4a340" };
+const DEFC: Record<string, string> = { epic: "#1f4f6b", capability: "#6e5bc4", feature: "#2a9d8f", story: "#7fb7f0", epicE: "#8e2f2a", capabilityE: "#b23b3b", featureE: "#d4574f", storyE: "#f08c82" };
 const HATCH = "repeating-linear-gradient(135deg,rgba(255,255,255,.38) 0 5px,transparent 5px 10px)";
 const CRATE = "linear-gradient(90deg,transparent 46%,rgba(20,18,58,.18) 46%,rgba(20,18,58,.18) 54%,transparent 54%)";
 /** Dark or white text on a colour, by luminance. */
@@ -302,7 +306,7 @@ export const SCN: Record<string, Scenario> = {
 };
 // Story titles are built from the feature until the handouts bring real stories.
 const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
-type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; full: boolean; coll: string | null; collText: string; collEn: boolean; en: boolean; draft: number; view: string; sel: string | null; kind: TType; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { artObjs: ArtObj[]; piHist: PiHist[]; epm: Record<string, Record<string, string>>; stg: Record<string, number>; artText: string; tObjText: Record<string, string>; tkOpen: Record<string, boolean>; calOpen: boolean; capOpen: boolean; busy: string; note: string; full: boolean; coll: string | null; collText: string; collEn: boolean; en: boolean; draft: number; view: string; sel: string | null; kind: TType; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
 function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, own?: BacklogFeature[]): Ticket[] {
   const S = SCN[scn], t: Ticket[] = [];
@@ -327,7 +331,14 @@ function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, ow
   return t;
 }
 
-export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey } = {}) {
+/**
+ * The room in two modes. "class": the PI planning simulation a class runs, with team PI objectives
+ * (BV, ABV, the predictability stamp) and nothing above the teams. "template": the full board for a
+ * workspace or a board made from the PI planning room template: ART PI objectives with the roll-up,
+ * the predictability report and the epic view too.
+ */
+export function PlanningRoomPage({ docKey = "planning-room", mode = "template" }: { docKey?: DocKey; mode?: "class" | "template" } = {}) {
+  const isClass = mode === "class";
   const { doc, loaded, save, saveSlice, error, remote, live } = useDoc<WorkDoc>(docKey);
   const me = useMe();
   // A student (by link) saves their team's part of the room; the trainer may save the room whole.
@@ -359,7 +370,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     return () => window.removeEventListener("keydown", kd);
   }, []);
   useEffect(() => {
-    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, colors: doc?.colors ?? {}, calOpen: false, capOpen: false, busy: "", note: "", full: false, coll: null, collText: "", collEn: false, en: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, colors: doc?.colors ?? {}, calOpen: false, capOpen: false, busy: "", note: "", full: false, coll: null, collText: "", collEn: false, en: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null, artObjs: doc?.artObjs ?? [], piHist: doc?.piHist ?? [], epm: doc?.epm ?? {}, stg: doc?.stg ?? {}, artText: "", tObjText: {}, tkOpen: {} });
   }, [loaded, doc, road, okr, s]);
   // Saving, light and safe for many people at once: inside a team, only that team's tickets, capacity
   // cells and capacity sheet go out (a few kilobytes, merged on the server); the whole room goes out
@@ -371,13 +382,13 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const applied = useRef(0);
   useEffect(() => {
     if (!s || !s.teams || applied.current !== remote) return;
-    const inTeam = s.view === "yard" || s.view === "setup" || s.view === "pio" ? null : +s.view;
-    const global = JSON.stringify([s.scn, s.cal, s.backlog, s.colors, s.teams]);
+    const inTeam = s.view === "yard" || s.view === "setup" || s.view === "objs" || s.view === "pred" ? null : +s.view;
+    const global = JSON.stringify([s.scn, s.cal, s.backlog, s.colors, s.teams, s.artObjs, s.piHist, s.epm, s.stg]);
     const globalChanged = lastGlobal.current !== "" && lastGlobal.current !== global;
     lastGlobal.current = global;
     // The room itself changed (set up, calendar, scenario, colours, team count): the whole room goes, from the trainer.
     if ((globalChanged || !doc?.teams) && !guest) {
-      save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+      save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn, ...(s.artObjs.length ? { artObjs: s.artObjs } : {}), ...(s.piHist.length ? { piHist: s.piHist } : {}), ...(Object.keys(s.epm).length ? { epm: s.epm } : {}), ...(Object.keys(s.stg).length ? { stg: s.stg } : {}) });
       return;
     }
     // The teams whose part changed since the room last came from the server (inside a team, that team).
@@ -399,8 +410,8 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   useEffect(() => {
     applied.current = remote;
     if (!remote || !doc) return;
-    lastGlobal.current = JSON.stringify([doc.scn && SCN[doc.scn] ? doc.scn : "geek", doc.cal ?? CAL0, doc.backlog, doc.colors ?? {}, doc.teams ?? 0]);
-    setS((t) => (t ? { ...t, scn: doc.scn && SCN[doc.scn] ? doc.scn : t.scn, cal: doc.cal ?? t.cal, backlog: doc.backlog, teamCap: doc.teamCap, colors: doc.colors ?? {}, teams: doc.teams ?? 0, tickets: doc.tickets ?? [], caps: doc.caps ?? {}, kn: Math.max(t.kn, doc.kn ?? 0), sel: t.sel && !(doc.tickets ?? []).some((x) => x.id === t.sel) ? null : t.sel } : t));
+    lastGlobal.current = JSON.stringify([doc.scn && SCN[doc.scn] ? doc.scn : "geek", doc.cal ?? CAL0, doc.backlog, doc.colors ?? {}, doc.teams ?? 0, doc.artObjs ?? [], doc.piHist ?? [], doc.epm ?? {}, doc.stg ?? {}]);
+    setS((t) => (t ? { ...t, scn: doc.scn && SCN[doc.scn] ? doc.scn : t.scn, cal: doc.cal ?? t.cal, backlog: doc.backlog, teamCap: doc.teamCap, colors: doc.colors ?? {}, teams: doc.teams ?? 0, tickets: doc.tickets ?? [], caps: doc.caps ?? {}, kn: Math.max(t.kn, doc.kn ?? 0), artObjs: doc.artObjs ?? [], piHist: doc.piHist ?? [], epm: doc.epm ?? {}, stg: doc.stg ?? {}, sel: t.sel && !(doc.tickets ?? []).some((x) => x.id === t.sel) ? null : t.sel } : t));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remote]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
@@ -409,14 +420,19 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const epics = fromRoad.length ? fromRoad : EPICS0;
   const objs: Record<string, string> = okr?.objs ? Object.fromEntries(okr.objs.map((o) => [o.id, o.title])) : OBJ0;
   const links = okr?.links ?? LINKS0;
-  const N = s.teams || 0, cur = s.view === "yard" || s.view === "setup" || s.view === "pio" ? null : +s.view, ct = cur || 1;
+  const N = s.teams || 0, cur = s.view === "yard" || s.view === "setup" || s.view === "objs" || s.view === "pred" ? null : +s.view, ct = cur || 1;
   const by: Record<string, Ticket> = {};
   s.tickets.forEach((x) => (by[x.id] = x));
-  const selT = s.sel ? by[s.sel] : undefined;
+  // A roadmap epic has no ticket of its own: selected from the tracking tree it is a virtual epic ("E:<title>") whose fields live in `epm`.
+  const selT: Ticket | undefined = s.sel ? (by[s.sel] ?? (s.sel.startsWith("E:") ? { id: s.sel, type: "epic" as TType, title: s.sel.slice(2), team: ct, parent: "", pts: 0, iter: null, f: s.epm[s.sel.slice(2)] ?? {} } : undefined)) : undefined;
+  const virt = !!selT && selT.id.startsWith("E:");
   const upd = (id: string, patch: Partial<Ticket>) => set((t) => ({ tickets: t.tickets.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
   // Colour by type and enabler flag, the room's own colours first (design: col()).
   const col = (t: { type: TType; en?: boolean }) => { const k = t.type + (t.en ? "E" : ""); return s.colors?.[k] ?? DEFC[k] ?? "#14123a"; };
-  const setF = (id: string, k: string, v: string) => set((t) => ({ tickets: t.tickets.map((x) => (x.id !== id ? x : k === "note" ? { ...x, note: v } : { ...x, f: { ...(x.f ?? {}), [k]: v } })) }));
+  const setF = (id: string, k: string, v: string) => {
+    if (id.startsWith("E:")) { const nm = id.slice(2); set((t) => ({ epm: { ...t.epm, [nm]: { ...(t.epm[nm] ?? {}), [k]: v } } })); return; }
+    set((t) => ({ tickets: t.tickets.map((x) => (x.id !== id ? x : k === "note" ? { ...x, note: v } : { ...x, f: { ...(x.f ?? {}), [k]: v } })) }));
+  };
   type FDef = { k: string; label: string; ph: string; area: boolean; rows: number };
   // The waybill's form per type: the story's As a / I want / So that, the feature's benefit hypothesis, the epic hypothesis statement, the capability; enablers add what they enable.
   const formDefs = (t: Ticket): FDef[] => {
@@ -479,6 +495,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       if (!z) return;
       const d = z.getAttribute("data-drop")!;
       if (d === "backlog") moveTeam(id, 0);
+      else if (d !== "yard" && by[id] && by[id]!.type !== "story" && by[id]!.type !== "risk") set(() => ({ note: "Only stories and enabler stories go on an iteration. Features stay in the freight yard: open the ▤ stack and plan their stories." }));
       else upd(id, { iter: d === "yard" ? null : +d.split(":")[1]! });
     };
     window.addEventListener("pointermove", mv);
@@ -508,7 +525,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const loadOf = (n: number, i: number) => s.tickets.filter((t) => t.team === n && t.type === "story" && t.iter === i).reduce((a, t) => a + t.pts, 0);
   const checks = (n: number): [string, boolean][] => {
     const T = s.tickets.filter((t) => t.team === n), pio = T.filter((t) => t.type === "pio"), rk = T.filter((t) => t.type === "risk");
-    return [["Every feature is on a wagon", T.some((t) => t.type === "feature") && T.filter((t) => t.type === "feature").every((t) => t.iter)], ["No wagon over capacity", iters.every((i) => loadOf(n, i) <= capOf(n, i))], ["Every story is sized", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.pts > 0)], ["Every objective has business value", pio.length > 0 && pio.every((t) => (t.bv ?? 0) > 0)], ["Every risk is ROAMed", rk.length > 0 && rk.every((t) => t.roam)]];
+    return [["Every story is on a wagon", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.iter)], ["No wagon over capacity", iters.every((i) => loadOf(n, i) <= capOf(n, i))], ["Every story is sized", T.some((t) => t.type === "story") && T.filter((t) => t.type === "story").every((t) => t.pts > 0)], ["Every objective has business value", pio.length > 0 && pio.every((t) => (t.bv ?? 0) > 0)], ["Every risk is ROAMed", rk.length > 0 && rk.every((t) => t.roam)]];
   };
   const lineage = (t: Ticket) => {
     const out: { kind: string; key: string; title: string; meta: string; color: string; id: string | null }[] = [];
@@ -590,6 +607,18 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const pios = T.filter((t) => t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit)).map((t) => ({ t: t.title, bg: t.commit ? "#fff" : "#f4f1ea", border: t.commit ? "solid" : "dashed", tag: t.commit ? "C" : "U", rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) }));
   const cBV = T.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), aBV = T.filter((t) => t.type === "pio").reduce((a, t) => a + (t.bv ?? 0), 0);
   const ck = checks(ct);
+  // The work as a tree, the way the tracking view and the epic view read it: the roadmap's epics
+  // (virtual) and epic tickets at the top, capabilities and features under them, stories as leaves.
+  type Node = { id: string; pid: string; kind: string; title: string; en: boolean; t: Ticket | null; team?: number; feats?: Node[] };
+  const AT = s.tickets, mkN = (x: Ticket): Node => ({ id: x.id, pid: x.id, kind: x.type, title: x.title, en: !!x.en, t: x });
+  const epicNodes: Node[] = [...epics.map((e) => ({ id: `E:${e}`, pid: e, kind: "epic", title: e, en: false, t: null })), ...AT.filter((x) => x.type === "epic").map(mkN)];
+  const kidsN2 = (n: Node): Node[] => n.kind === "epic" ? [...AT.filter((x) => x.type === "capability" && x.parent === n.pid), ...AT.filter((x) => x.type === "feature" && x.parent === n.pid)].map(mkN) : n.kind === "capability" ? AT.filter((x) => x.type === "feature" && x.parent === n.id).map(mkN) : n.kind === "feature" ? AT.filter((x) => x.type === "story" && x.parent === n.id).map(mkN) : [];
+  const ptsN = (n: Node): number => n.kind === "team" ? (n.feats ?? []).reduce((a, k) => a + ptsN(k), 0) : n.kind === "story" ? (n.t?.pts ?? 0) : kidsN2(n).reduce((a, k) => a + ptsN(k), 0);
+  const leafSt = (n: Node): Node[] => n.kind === "team" ? (n.feats ?? []).flatMap(leafSt) : n.kind === "story" ? [n] : kidsN2(n).flatMap(leafSt);
+  const featsN = (n: Node): Node[] => n.kind === "team" ? (n.feats ?? []) : n.kind === "feature" ? [n] : kidsN2(n).flatMap(featsN);
+  const selNode: Node | null = selT ? (virt ? (epicNodes.find((e) => e.id === selT.id) ?? null) : mkN(selT)) : null;
+  const SHIRTS: [string, string, number][] = [["S", "100K – 200K", 20], ["M", "250K – 400K", 60], ["L", "500K – 800K", 150], ["XL", "1M – 1.5M", 300], ["XXL", "2M+", 1e9]];
+  const autoShirt = (p: number) => SHIRTS.find((x) => p <= x[2])![0];
   let chain: any[] = [], down: any[] = [], sel: any = {}, facts: any[] = [], form: any[] = [], etypes: any[] = [], parentOptsW: any[] = [];
   if (selT) {
     const lin = lineage(selT);
@@ -603,19 +632,6 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       formTitle: ({ story: "USER STORY · AS A / I WANT / SO THAT", feature: "FEATURE · HYPOTHESIS, OBJECTIVES, EPIC LINK", epic: "EPIC · HYPOTHESIS STATEMENT", capability: "CAPABILITY · BENEFIT HYPOTHESIS", risk: "RISK", pio: "OBJECTIVE" } as Record<string, string>)[selT.type] + (selT.en ? " · ENABLER" : ""),
       canParent: selT.type !== "epic" && selT.type !== "pio", parentLbl: ({ capability: "EPIC", feature: "EPIC / CAPABILITY", story: "FEATURE", risk: "RELATES TO" } as Record<string, string>)[selT.type] ?? "",
       parentValW: selT.parent ?? "", setParentW: (e: React.ChangeEvent<HTMLSelectElement>) => upd(selT.id, { parent: e.target.value }),
-      // The ticket as its SAFe card, the way the course handouts draw them: a user story on a green
-      // sticky (As a … I can … so that …), an enabler story on a pink one, a feature as a card with its
-      // benefit hypothesis and numbered acceptance criteria, an objective with its business value.
-      card: (() => {
-        const f = selT.f ?? {};
-        const lines = (x: string) => x.split(/\n+/).map((l) => l.replace(/^\s*(\d+[.)]|[-•*])\s*/, "").trim()).filter(Boolean);
-        if (selT.type === "story" && selT.en) return { kind: "enabler", bg: "#f3c6cd", title: selT.title, text: f.enwhy || f.why || "", pts: sz(selT) };
-        if (selT.type === "story") return { kind: "story", bg: "#cfe36b", role: f.role || "", want: f.want || "", why: f.why || "", title: selT.title, pts: sz(selT), ac: lines(f.ac || "") };
-        if (selT.type === "feature" || selT.type === "capability") return { kind: selT.type, bg: "#fff", head: selT.en ? "#0f8f7a" : "#2b6f8f", title: selT.title, hyp: f.hyp || "", ac: lines(f.ac || ""), en: !!selT.en };
-        if (selT.type === "pio") return { kind: "pio", bg: "#e6fbf7", title: selT.title, bv: selT.bv ?? 0, commit: selT.commit !== false };
-        if (selT.type === "risk") return { kind: "risk", bg: "#f8a08a", title: selT.title, roam: selT.roam ? ROAM.find((r) => r[0] === selT.roam)?.[1] ?? selT.roam : "Not ROAMed yet" };
-        return { kind: "epic", bg: "#dfe4fb", title: selT.title, text: [f.for ? `For ${f.for}` : "", f.who ? `who ${f.who}` : "", f.the ? `the ${f.the}` : "", f.isa ? `is a ${f.isa}` : "", f.that ? `that ${f.that}` : "", f.unlike ? `Unlike ${f.unlike}` : "", f.sol ? `our solution ${f.sol}` : ""].filter(Boolean).join(" ") };
-      })(),
       // Assigning work to a team: a feature (or capability, epic, risk, objective) moves with everything under it.
       teamOpts: [{ id: "0", t: "ART backlog · no team", sel: selT.team === 0 }, ...Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name, sel: k + 1 === selT.team }))],
       teamValW: String(selT.team),
@@ -626,7 +642,51 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     form = formDefs(selT).map((d) => ({ label: d.label, ph: d.ph, area: d.area, line: !d.area, rows: d.rows, val: d.k === "note" ? (selT.note ?? "") : (fv[d.k] ?? ""), set: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF(selT.id, d.k, e.target.value), chipBg: tc, chipFg: ink2 }));
     etypes = ["Architecture", "Infrastructure", "Exploration", "Compliance"].map((n) => ({ n, bg: fv.etype === n ? tc : "#fff", fg: fv.etype === n ? ink2 : "#14123a", go: () => setF(selT.id, "etype", fv.etype === n ? "" : n) }));
     parentOptsW = parentList(selT).map((o) => ({ ...o, sel: o.id === (selT.parent ?? "") }));
+    // The ticket as its SAFe card (design "card"): user story, enabler story, feature or capability with
+    // its hypothesis, acceptance criteria and sizes; an epic as the epic dashboard, in the template only.
+    sel.card = (() => {
+      const ty = selT.type, en = !!selT.en, acRaw = fv.ac ?? "", ac = acRaw.split("\n").map((x) => x.replace(/^\s*\d+[.)]\s*/, "").trim()).filter(Boolean);
+      const sf = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF(selT.id, k, e.target.value);
+      const row = (k: string, label: string, ph: string, area = false) => ({ label, ph, area, val: fv[k] ?? "", set: sf(k) });
+      const tot = selNode ? ptsN(selNode) : 0, fl = selNode ? featsN(selNode) : [], tnums = [...new Set(fl.map((x) => x.t!.team))].sort((a, b) => a - b), shirt = fv.shirt || autoShirt(tot);
+      const epic = ty !== "epic" ? null : { total: tot, nF: fl.length, shirtAuto: !fv.shirt, shirt, name: selT.title,
+        head: [row("funnel", "Funnel entry date", "[ The date the epic entered the funnel ]"), row("owner", "Epic owner", "[ Name of the epic owner ]")],
+        desc: [row("for", "For", "[ customers ]"), row("who", "who", "[ do something ]"), row("the", "the", "[ solution ]"), row("isa", "Is a", "[ something, the 'how' ]"), row("that", "that", "[ provides this value ]"), row("unlike", "unlike", "[ competitor, current solution or non-existing solution ]"), row("sol", "our solution", "[ does something better, the 'why' ]")],
+        tail: [row("bo", "Business outcomes", "[ The measurable benefits the business can anticipate if the epic hypothesis is proven correct ]", true), row("ind", "Leading indicators", "[ The early measures that help predict the business outcome hypothesis ]", true), row("nfr", "Nonfunctional requirements (NFRs)", "[ NFRs associated with the epic ]", true)],
+        shirts: SHIRTS.map((x) => ({ t: x[0], cost: x[1], on: shirt === x[0], bg: shirt === x[0] ? "#ffe14d" : "#dde9fb", go: () => setF(selT.id, "shirt", shirt === x[0] && fv.shirt ? "" : x[0]) })), shirtCost: (SHIRTS.find((x) => x[0] === shirt) ?? [])[1],
+        arts: tnums.map((n) => { const lo = fl.filter((x) => x.t!.team === n).reduce((a, x) => a + ptsN(x), 0), hi = Math.round(lo * 1.25), vv = +(fv[`v${n}`] ?? 0) || 120, c = +(fv[`c${n}`] ?? 0) || 40, av = Math.round((vv * c) / 100); return { name: `Team ${n}`, color: teamOf(n).color, range: `${lo} – ${hi}`, vel: String(vv), cap: String(c), avail: av, fc: av ? `${Math.ceil(lo / av)} – ${Math.ceil(hi / av)}` : "—", setV: sf(`v${n}`), setC: sf(`c${n}`) }; }) };
+      return { isFeat: ty === "feature" || ty === "capability", isEpic: ty === "epic" && !isClass, epic: epic ?? { head: [], desc: [], tail: [], shirts: [], arts: [] }, isStory: ty === "story", isEn: en, isUser: ty === "story" && !en, label: ty === "story" ? (en ? "Enabler story" : "User story") : `Example ${en ? "enabler " : ""}${ty}`, banner: tc, bannerFg: ink2, title: selT.title, rollPts: tot, rollN: selNode ? leafSt(selNode).length : 0, hyp: fv.hyp || fv.desc || "", acRaw, ac: ac.map((x, i) => ({ n: i + 1, x })), roleV: fv.role ?? "", wantV: fv.want ?? "", whyV: fv.why ?? "",
+        sizes: [1, 2, 3, 5, 8, 13].map((vv) => { const on = !selT.est && selT.pts === vv; return { v: vv, on, bg: on ? "#ffe14d" : "#fff", sh: on ? "3px 3px 0 #14123a" : "1px 1px 0 #14123a", go: () => upd(selT.id, { pts: on ? 0 : vv, est: "" }) }; }), setRole: sf("role"), setWant: sf("want"), setWhy: sf("why"), setHyp: sf(fv.desc && !fv.hyp ? "desc" : "hyp"), setAc: sf("ac"),
+        bg: en ? "#e9c4ca" : "#cfe27a", bd: en ? "#7a2e3a" : "#7d8f1a", fold: en ? "#7a2e3a" : "#7d8f1a" };
+    })();
   }
+  // Tracking (design "top"): the portfolio as a tree with each level's kanban stage, the teams a
+  // feature is assigned to (click a team to hand it over) and the stories' spread across iterations.
+  const STG: Record<string, string[]> = { team: [], epic: ["Funnel", "Reviewing", "Analyzing", "Portfolio backlog", "Implementing", "Done"], capability: ["Funnel", "Analyzing", "Backlog", "Implementing", "Done"], feature: ["Funnel", "Analyzing", "Ready", "Implementing", "Validating", "Releasing", "Done"], story: ["To do", "Doing", "Review", "Done"] };
+  const BRD: Record<string, string> = { team: "", epic: "PORTFOLIO KANBAN", capability: "SOLUTION KANBAN", feature: "ART KANBAN", story: "TEAM BOARD" }, KID: Record<string, string> = { team: "ART KANBAN · FEATURES", epic: "ART KANBAN · FEATURES", capability: "ART KANBAN · FEATURES", feature: "TEAM BOARDS · STORIES" }, LVL: Record<string, string> = { team: "TEAM", epic: "EPIC", capability: "CAPABILITY", feature: "FEATURE", story: "STORY" };
+  const tk = (n: Node): Node[] => n.kind === "epic" ? [...new Set(featsN(n).map((x) => x.t!.team))].sort((a, b) => a - b).map((tn) => ({ id: `T:${n.id}:${tn}`, pid: n.id, kind: "team", team: tn, title: tn ? `Team ${tn}` : "ART backlog", en: false, t: null, feats: featsN(n).filter((x) => x.t!.team === tn) })) : n.kind === "team" ? (n.feats ?? []) : kidsN2(n);
+  const stageOf = (n: Node): number => { if (n.kind === "team") return 0; const o = s.stg[n.id]; if (o != null) return o; if (n.kind === "story") return n.t!.iter === 1 ? 1 : 0; if (n.kind === "feature") { const st = kidsN2(n), pl = st.filter((x) => x.t!.iter).length; return st.length && pl === st.length ? 3 : pl ? 2 : 1; } return n.kind === "epic" ? 4 : 3; };
+  const dflt = (epicNodes.find((e) => featsN(e).length) ?? epicNodes[0] ?? { id: "" }).id, trows: any[] = [];
+  const walk = (n: Node, d: number) => {
+    const op = s.tkOpen[n.id] ?? n.id === dflt, kids = tk(n), c = n.kind === "team" ? teamOf(n.team ?? 0).color : col({ type: n.kind as TType, en: n.en }), stg = STG[n.kind] ?? [], si = stageOf(n), pts = ptsN(n), lf = leafSt(n), fvn = n.t ? (n.t.f ?? {}) : (s.epm[n.pid] ?? {});
+    const ks = n.kind === "story" ? [] : kids.map((k) => ({ i: stageOf(k), m: (STG[k.kind] ?? []).length - 1 })), kd = ks.filter((k) => k.i === k.m).length, kn2 = ks.filter((k) => k.i > 0 && k.i < k.m).length, k0 = ks.length - kd - kn2;
+    const teams = n.kind === "team" ? [n.team ?? 0] : [...new Set((n.kind === "story" || n.kind === "feature" ? [n] : featsN(n)).map((x) => x.t!.team))].sort((x, y) => x - y);
+    const its = [...new Set(lf.map((x) => x.t!.iter || 0))].sort((x, y) => (x || 99) - (y || 99)).map((i) => ({ t: i ? `Iteration ${i}` : "Freight yard", n: lf.filter((x) => (x.t!.iter || 0) === i).length, bg: i ? "#cfe8ff" : "#eee8da" }));
+    trows.push({ id: n.id, lv: LVL[n.kind], isEpic: n.kind === "epic", isStory: n.kind === "story", en: n.en, enOn: n.en ? "inline-block" : "none", title: n.title, pad: d * 26, rx: d * 26 - 13, railOn: d ? "block" : "none", bg: c, fg: ink(c), bd: n.en ? "#7a1f1f" : "#14123a", bs: n.en ? "dashed" : "solid", img: n.en ? HATCH : "none",
+      rad: n.kind === "team" ? "99px" : n.kind === "epic" ? "6px" : n.kind === "capability" ? "18px" : n.kind === "feature" ? "4px 16px 16px 4px" : "2px", fs: n.kind === "epic" ? 17 : n.kind === "capability" ? 15.5 : n.kind === "feature" ? 14.5 : 13.5, py: n.kind === "epic" ? 12 : n.kind === "story" ? 7 : 9,
+      out: s.sel === n.id ? "3px solid #ff3d8f" : "none", pts, ptsL: n.kind === "story" ? "pts" : "pts · auto", shirt: n.kind === "epic" ? (fvn.shirt || autoShirt(pts)) : "", stage: stg[si] ?? "", stOn: n.kind === "team" ? "none" : "inline-block", hasBoard: n.kind !== "team", isFeat: n.kind === "feature",
+      assign: n.kind !== "feature" ? [] : Array.from({ length: N }, (_, i) => i + 1).map((tn) => { const on = n.t!.team === tn, tc2 = teamOf(tn).color; return { t: `Team ${tn}`, bg: on ? tc2 : "#fff", fg: on ? ink(tc2) : "#14123a", go: () => moveTeam(n.id, tn) }; }), chev: kids.length ? (op ? "▾" : "▸") : "", hasKids: kids.length > 0, open: op,
+      teams: teams.map((x) => ({ t: n.kind === "feature" ? (x ? `Assigned to Team ${x}` : "In the ART backlog") : n.kind === "team" ? "" : x ? `Team ${x}` : "ART backlog", bg: teamOf(x).color })), teamsOn: n.kind === "team" ? "none" : "flex", where: n.kind === "story" ? (n.t!.iter ? `I${n.t!.iter}` : "Yard") : "",
+      go: () => set((x) => ({ sel: n.kind === "team" ? x.sel : n.id, tkOpen: { ...x.tkOpen, [n.id]: !op } })),
+      board: BRD[n.kind], stages: stg.map((nm, i) => ({ t: nm, bg: i < si ? "#b8e07a" : i === si ? "#ffe14d" : "#fff", bw: i === si ? "3px" : "2px", fw: i === si ? 800 : 600, mark: i < si ? "✓ " : "", go: () => set((x) => ({ stg: { ...x.stg, [n.id]: i } })) })),
+      canBack: si > 0, canAdv: si < stg.length - 1, back: () => set((x) => ({ stg: { ...x.stg, [n.id]: Math.max(0, si - 1) } })), adv: () => set((x) => ({ stg: { ...x.stg, [n.id]: Math.min(stg.length - 1, si + 1) } })),
+      kidName: KID[n.kind] ?? "", hasTrackKids: ks.length > 0, kseg: [{ t: "Not started", n: k0, bg: "#fff" }, { t: "In progress", n: kn2, bg: "#ffe14d" }, { t: "Done", n: kd, bg: "#b8e07a" }].filter((x) => x.n), kdone: `${kd} of ${ks.length} done`,
+      hasIters: its.length > 0 && n.kind !== "story", iters: its, hasTeamsX: n.kind === "epic" && teams.length > 0, teamLines: teams.map((x) => ({ t: `${x ? `Team ${x}` : "ART backlog"} · ${featsN(n).filter((y) => y.t!.team === x).length} feature${featsN(n).filter((y) => y.t!.team === x).length === 1 ? "" : "s"}`, bg: teamOf(x).color, fg: ink(teamOf(x).color) })), storyCount: lf.length });
+    if (op) kids.forEach((k) => walk(k, d + 1));
+  };
+  epicNodes.forEach((e) => walk(e, 0));
+  const allNodes = (n: Node): Node[] => [n, ...kidsN2(n).flatMap(allNodes)];
+  const top = { rows: trows, expandAll: () => set(() => ({ tkOpen: Object.fromEntries(epicNodes.flatMap(allNodes).map((n) => [n.id, true])) })), collapseAll: () => set(() => ({ tkOpen: Object.fromEntries(epicNodes.map((e) => [e.id, false])) })) };
   // The colour key: per type, standard and enabler, with counts for the view in front of you.
   const base = cur ? T : s.tickets;
   const legend = (en: boolean) => TYPES.map(([k, n]) => { const kk = k + (en ? "E" : ""), c = s.colors?.[kk] ?? DEFC[kk]!; return { name: n, color: c, fg: ink(c), img: en ? HATCH : "none", n: base.filter((t) => t.type === k && !!t.en === en).length, set: (e: React.ChangeEvent<HTMLInputElement>) => { const val = e.target.value; set((x) => ({ colors: { ...(x.colors ?? {}), [kk]: val } })); }, tag: s.colors?.[kk] ? "custom" : "default" }; });
@@ -635,6 +695,92 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const collRows = cp ? s.tickets.filter((x) => x.parent === cp.id).map((x, xi) => { const c = x.type === "risk" ? "#f8a08a" : col(x); return { delay: `${xi * 70}ms`, rot: [-2.2, 1.6, -1, 2.4][xi % 4], tag: (x.en ? "⚙ ENABLER " : "") + x.type.toUpperCase(), size: x.type === "story" ? String(sz(x)) : "", hasSize: x.type === "story", moveOpts: parentList(x).map((o) => ({ ...o, sel: o.id === x.parent })), moveVal: x.parent ?? "", move: (e: React.ChangeEvent<HTMLSelectElement>) => upd(x.id, { parent: e.target.value }), color: c, fg: ink(c), img: x.en ? HATCH : "none", t: x.title, meta: `${x.en ? "Enabler " : ""}${x.type}${x.type === "story" ? ` · ${sz(x)} pts` : ""} · ${where(x)}`, locate: () => { set(() => ({ coll: null, full: false, view: String(x.team), sel: x.id })); flashIt(x.id); }, open: () => set(() => ({ coll: null, sel: x.id, full: true, view: String(x.team) })) }; }) : [];
   const addKid = () => { const title = s.collText.trim(); if (!cp || !kidT || !title) return; const id = key(); const t: Ticket = { id, type: kidT, title, parent: cp.id, team: cp.team, iter: null, pts: 0, ...(s.collEn ? { en: true } : {}) }; set((x) => ({ tickets: [...x.tickets, t], kn: x.kn + 1, collText: "" })); flashIt(id); };
   const stepT = (d: number) => { if (!selT) return; const peers = s.tickets.filter((x) => x.team === selT.team && x.type !== "pio"), i = peers.findIndex((x) => x.id === selT.id), n = peers[(i + d + peers.length) % peers.length]; if (n) set(() => ({ sel: n.id })); };
+  // ---- PI objectives: team flipchart sheets, the ART roll-up and predictability (design "PI objectives") ----
+  const isObjs = s.view === "objs" && !isClass, AO = s.artObjs, allP = s.tickets.filter((t) => t.type === "pio"), aoIds = new Set(AO.map((a) => a.id));
+  const setArt = (id: string, p: Partial<ArtObj>) => set((x) => ({ artObjs: x.artObjs.map((a) => (a.id === id ? { ...a, ...p } : a)) }));
+  const moveArt = (i: number, d: number) => set((x) => { const a = [...x.artObjs], j = i + d; if (j < 0 || j >= a.length) return {}; const tmp = a[i]!; a[i] = a[j]!; a[j] = tmp; return { artObjs: a }; });
+  const hasA = (p: Ticket) => p.abv !== null && p.abv !== undefined;
+  const abvOf = (p: Ticket) => (hasA(p) ? Number(p.abv) : 0);
+  const artList = AO.map((a, i) => {
+    const kids = allP.filter((p) => p.art === a.id).sort((x, y) => x.team - y.team), bv = kids.filter((p) => p.commit).reduce((z, p) => z + (p.bv ?? 0), 0), ubv = kids.filter((p) => !p.commit).reduce((z, p) => z + (p.bv ?? 0), 0), any = kids.some(hasA);
+    return { num: i + 1, t: a.title, tag: a.commit ? "COMMITTED" : "UNCOMMITTED", tagBg: a.commit ? "#5ff0e0" : "#fff", bg: a.commit ? "#fff" : "#f4f1ea", border: a.commit ? "solid" : "dashed", bv: a.commit ? bv : "—", ubvL: a.commit ? (ubv ? `+${ubv} unc.` : "") : `unc. ${bv + ubv}`, none: !kids.length, abvBg: any ? "#7fe08a" : "#c8f5c833", abv: any ? kids.reduce((z, p) => z + abvOf(p), 0) : "—", rowBg: a.commit ? "transparent" : "#f4f1ea",
+      kids: kids.map((p) => ({ t: p.title, team: `T${p.team}${p.commit ? "" : " · U"}`, kb: p.commit ? "solid" : "dashed", kbg: p.commit ? "#fff" : "#f4f1ea", color: teamOf(p.team).color, bv: p.bv ?? 0, unlink: () => upd(p.id, { art: "" }) })),
+      rename: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setArt(a.id, { title: e.target.value }), flip: () => setArt(a.id, { commit: !a.commit }), up: () => moveArt(i, -1), down: () => moveArt(i, 1),
+      del: () => set((x) => ({ artObjs: x.artObjs.filter((y) => y.id !== a.id), tickets: x.tickets.map((t) => (t.art === a.id ? { ...t, art: "" } : t)) })) };
+  });
+  const linkedP = allP.filter((p) => aoIds.has(p.art ?? "")), commitIds = new Set(AO.filter((a) => a.commit).map((a) => a.id));
+  const inPlan = (p: Ticket) => !!p.commit && commitIds.has(p.art ?? ""), artCBV = linkedP.filter(inPlan).reduce((z, p) => z + (p.bv ?? 0), 0), artUBV = linkedP.filter((p) => !inPlan(p)).reduce((z, p) => z + (p.bv ?? 0), 0);
+  const addArt = () => { const title = s.artText.trim(); if (!title) return; set((x) => ({ artObjs: [...x.artObjs, { id: `AO-${x.kn + 1}`, title, commit: true }], kn: x.kn + 1, artText: "" })); };
+  const synth = () => set((x) => { const ao = [...x.artObjs], ids = new Set(ao.map((a) => a.id)), nm = (vv: unknown) => String(vv ?? "").trim().toLowerCase(); let kn = x.kn;
+    const tickets = x.tickets.map((t) => { if (t.type !== "pio" || ids.has(t.art ?? "")) return t; let a = ao.find((y) => nm(y.title) === nm(t.title)); if (!a) { a = { id: `AO-${++kn}`, title: t.title, commit: !!t.commit }; ao.push(a); } return { ...t, art: a.id }; });
+    return { artObjs: ao, tickets, kn }; });
+  const addTO = (n: number) => { const title = (s.tObjText[n] ?? "").trim(); if (!title) return; set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio" as TType, title, team: n, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1, tObjText: { ...x.tObjText, [n]: "" } })); };
+  const num10 = (vv: string): number | null => { const x = parseInt(vv, 10); return isNaN(x) ? null : Math.max(0, Math.min(10, x)); };
+  const predOf = (plan: number, act: number, any: boolean) => { const pr = plan ? Math.round((act / plan) * 100) : 0; return { stamp: any ? `${pr}%` : `BV ${plan}`, stampL: any ? "PREDICTABILITY" : "PLANNED", stampC: !any ? "#4a5fe8" : pr >= 80 && pr <= 100 ? "#2f7d1f" : pr > 100 ? "#c99a10" : "#c8372d" }; };
+  const sheetOf = (n: number, wl0: boolean) => {
+    const wl = wl0 && !isClass, tmn = teamOf(n), P = allP.filter((p) => p.team === n), C = P.filter((p) => p.commit), U = P.filter((p) => !p.commit), lk = P.filter((p) => aoIds.has(p.art ?? "")).length;
+    const row = (p: Ticket, i: number, sec: boolean) => { const on = aoIds.has(p.art ?? ""), ai = AO.findIndex((a) => a.id === p.art);
+      return { num: sec ? `${i + 1}.` : "◦", t: p.title, bv: p.bv || "", abv: hasA(p) ? p.abv : "", abvBg: hasA(p) ? "#7fe08a" : "#c8f5c833", wl, nl: !wl && !isClass, off: !on, artTag: on ? `↑ ART ${ai + 1}` : "NOT ROLLED UP", tagBg: on ? tmn.color : "#c8372d", selBg: on ? "#fff" : "#ffe0dc",
+        rename: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => upd(p.id, { title: e.target.value }), setBv: (e: React.ChangeEvent<HTMLInputElement>) => upd(p.id, { bv: num10(e.target.value) ?? 0 }), setAbv: (e: React.ChangeEvent<HTMLInputElement>) => upd(p.id, { abv: num10(e.target.value) }),
+        flip: () => upd(p.id, { commit: !p.commit }), flipT: p.commit ? "Move to uncommitted" : "Move to committed", flipI: p.commit ? "↓ uncommit" : "↑ commit", del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== p.id) })),
+        opts: [{ id: "", t: "Not rolled up", sel: !on }, ...AO.map((a, j) => ({ id: a.id, t: `↑ ART ${j + 1} · ${a.title}`, sel: p.art === a.id }))], linkVal: on ? p.art : "", link: (e: React.ChangeEvent<HTMLSelectElement>) => upd(p.id, { art: e.target.value }),
+        promote: () => set((x) => { const id = `AO-${x.kn + 1}`; return { artObjs: [...x.artObjs, { id, title: p.title, commit: !!p.commit }], kn: x.kn + 1, tickets: x.tickets.map((t) => (t.id === p.id ? { ...t, art: id } : t)) }; }) }; };
+    const pBV = C.reduce((z, p) => z + (p.bv ?? 0), 0), uBV = U.reduce((z, p) => z + (p.bv ?? 0), 0), any = P.some(hasA), aBV = P.reduce((z, p) => z + abvOf(p), 0);
+    return { range: dSpan(dAdd(s.cal.start, 0), dAdd(s.cal.start, s.cal.n * s.cal.weeks * 7 - 3)), name: tmn.name, color: tmn.color, rot: [-0.8, 0.6, -0.4, 0.9][(n - 1) % 4], committed: C.map((p, i) => row(p, i, true)), uncommitted: U.map((p, i) => row(p, i, false)), hasU: U.length > 0, empty: !P.length,
+      pBV, uBV, aBV: any ? aBV : "—", abvFoot: any ? "#7fe08a" : "#c8f5c833", ...predOf(pBV, aBV, any), statA: `Uncommitted BV ${uBV} · excluded from plan, counts toward actual`, statB: wl ? `${lk} of ${P.length} rolled up to the ART` : isClass ? "Business owners set BV 1–10 for each objective" : "ABV is scored with business owners at the System Demo",
+      newText: s.tObjText[n] ?? "", setNew: (e: React.ChangeEvent<HTMLInputElement>) => { const vv = e.target.value; set((x) => ({ tObjText: { ...x.tObjText, [n]: vv } })); }, add: () => addTO(n), kd: (e: React.KeyboardEvent) => { if (e.key === "Enter") addTO(n); } };
+  };
+  const objSheets = Array.from({ length: N }, (_, k) => sheetOf(k + 1, true)), teamSheets = N && cur ? [sheetOf(ct, false)] : [];
+  const isPred = s.view === "pred" && !isClass, hist = s.piHist;
+  const liveRow: PiHist = { name: `PI ${hist.length + 1}`, teams: {}, art: null }; let lp = 0, la = 0;
+  for (let n = 1; n <= N; n++) { const P = allP.filter((p) => p.team === n); if (!P.some(hasA)) continue; const pl = P.filter((p) => p.commit).reduce((z, p) => z + (p.bv ?? 0), 0), ac = P.reduce((z, p) => z + abvOf(p), 0); if (!pl) continue; liveRow.teams[n] = Math.round((ac / pl) * 100); lp += pl; la += ac; }
+  if (lp) liveRow.art = Math.round((la / lp) * 100);
+  const lastH = hist[hist.length - 1], hasLive = Object.keys(liveRow.teams).length > 0 && !(lastH && JSON.stringify(lastH.teams ?? {}) === JSON.stringify(liveRow.teams) && lastH.art === liveRow.art);
+  const artOf = (h: PiHist): number | null => { if (h.art !== null && h.art !== undefined) return +h.art; const vals = Object.values(h.teams ?? {}).filter((x): x is number => x !== null && x !== undefined); return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null; };
+  const PTS = [...hist.map((h) => ({ name: h.name, teams: h.teams ?? {}, art: artOf(h), liveRow: false })), ...(hasLive ? [{ ...liveRow, liveRow: true }] : [])];
+  const tMax = Math.max(N, ...hist.flatMap((h) => Object.keys(h.teams ?? {}).map(Number)), 0);
+  const X0 = 70, X1 = 680, Y0 = 20, Y1 = 370, yv = (vv: number) => Y1 - (Math.max(0, Math.min(130, vv)) / 120) * (Y1 - Y0);
+  const xi = (i: number) => (PTS.length > 1 ? X0 + 30 + (i * (X1 - X0 - 60)) / (PTS.length - 1) : (X0 + X1) / 2);
+  const inBand = (vv: number) => vv >= 80 && vv <= 100, vc = (vv: number | null | undefined) => (vv === null || vv === undefined ? "#fff" : inBand(+vv) ? "#d6f0b8" : "#ffd6cf");
+  const pathOf = (vals: (number | null)[]) => { let d = "", pen = false; vals.forEach((vv, i) => { if (vv === null || vv === undefined) { pen = false; return; } d += `${pen ? " L " : " M "}${xi(i).toFixed(1)} ${yv(+vv).toFixed(1)}`; pen = true; }); return d.trim() || "M 0 0"; };
+  const predLines: any[] = [], predDots: any[] = [], predLegend: any[] = [];
+  for (let n = 1; n <= tMax; n++) { const c = teamOf(n).color, vals = PTS.map((pt) => pt.teams[n] ?? null); if (!vals.some((vv) => vv !== null)) continue; predLines.push({ color: c, d: pathOf(vals) });
+    vals.forEach((vv, i) => { if (vv !== null) predDots.push({ x: xi(i), y: yv(+vv), r: 5, color: c, fill: "#fff", tip: `Team ${n} · ${PTS[i]!.name} · ${vv}%` }); });
+    const nv = vals.filter((vv): vv is number => vv !== null), spread = Math.max(...nv) - Math.min(...nv), ins = nv.filter(inBand).length;
+    predLegend.push({ name: `Team ${n}`, color: c, verdict: nv.length < 2 ? (inBand(nv[0]!) ? "in the target band" : "outside the target band") : ins === nv.length ? "Controlled development" : spread > 35 || ins / nv.length < 0.5 ? "Out-of-control development" : "Stabilizing", meta: `${nv.length} PI${nv.length > 1 ? "s" : ""} · ${ins} in band · range ${Math.min(...nv)}–${Math.max(...nv)}%` }); }
+  const artVals = PTS.map((pt) => pt.art), artD = pathOf(artVals);
+  artVals.forEach((vv, i) => { if (vv !== null) predDots.push({ x: xi(i), y: yv(vv), r: 7, color: "#a67c1a", fill: "#d4a843", tip: `ART · ${PTS[i]!.name} · ${vv}%` }); });
+  let li = -1; artVals.forEach((vv, i) => { if (vv !== null) li = i; });
+  const artArrow = li >= 0 ? (() => { const x = Math.min(xi(li) + 14, X1 + 10), y = yv(artVals[li]!); return `${x},${y - 13} ${x + 22},${y} ${x},${y + 13}`; })() : "0,0 0,0 0,0";
+  const av = artVals.filter((vv): vv is number => vv !== null), aIns = av.filter(inBand).length, nowV = li >= 0 ? artVals[li]! : null;
+  const setHist = (f: (a: PiHist[]) => PiHist[]) => set((x) => ({ piHist: f([...x.piHist]) }));
+  const histHead = Array.from({ length: tMax }, (_, k) => ({ name: `Team ${k + 1}`, color: teamOf(k + 1).color }));
+  const numOrNull = (vv: string): number | null => { const x = parseInt(vv, 10); return isNaN(x) ? null : Math.max(0, Math.min(200, x)); };
+  const histRows = hist.map((h, hi) => ({ name: h.name, rename: (e: React.ChangeEvent<HTMLInputElement>) => { const vv = e.target.value; setHist((a) => { a[hi] = { ...a[hi]!, name: vv }; return a; }); },
+    cells: histHead.map((_, k) => { const tv = (h.teams ?? {})[k + 1]; return { v: tv ?? "", bg: vc(tv), set: (e: React.ChangeEvent<HTMLInputElement>) => { const vv = numOrNull(e.target.value); setHist((a) => { a[hi] = { ...a[hi]!, teams: { ...(a[hi]!.teams ?? {}), [k + 1]: vv } }; return a; }); } }; }),
+    art: h.art ?? "", artBg: vc(artOf(h)), setArt: (e: React.ChangeEvent<HTMLInputElement>) => { const vv = numOrNull(e.target.value); setHist((a) => { a[hi] = { ...a[hi]!, art: vv }; return a; }); }, del: () => setHist((a) => a.filter((_, j) => j !== hi)) }));
+  const EXA = [[60, 32, 88, 65], [68, 95, 72, 106], [74, 83, 91, 87], [55, 71, 79, 94], [80, 62, 85, 92], [66, 90, 77, 98], [72, 58, 84, 89], [61, 78, 93, 86]], EXART = [65, 62, 80, 86];
+  const predVals = {
+    isPred, goPred: () => set(() => ({ view: "pred", sel: null })), predBg: isPred ? "#14123a" : "#fff", predFg: isPred ? "#fff" : "#14123a",
+    bandY: yv(100), bandH: yv(80) - yv(100), bandLy: yv(100) + 15,
+    yTicks: [0, 20, 40, 60, 80, 100, 120].map((vv) => ({ y: yv(vv), ty: yv(vv) + 5, l: vv })),
+    xTicks: PTS.map((pt, i) => ({ x: xi(i), l: pt.name, sub: pt.liveRow ? "LIVE" : "" })),
+    predLines, predDots, predLegend, artD, artArrow, predEmpty: !PTS.length,
+    artVerdict: !av.length ? "no PIs scored yet" : av.length < 2 ? (inBand(av[0]!) ? "in the target band" : "outside the target band") : aIns === av.length ? "Predictable · in control" : `Converging${inBand(av[av.length - 1]!) ? ", now in band" : ""}`,
+    artMeta: av.length ? `${av.length} PI${av.length > 1 ? "s" : ""} · ${aIns} in band` : "Σ actual BV ÷ Σ planned BV",
+    predNow: nowV === null ? "—" : `${nowV}%`, predNowL: nowV === null ? "ART PREDICTABILITY" : `ART · ${PTS[li]!.name}`, predNowC: nowV === null ? "#8a8a99" : inBand(nowV) ? "#2f7d1f" : nowV > 100 ? "#c99a10" : "#c8372d",
+    histHead, histRows, hasLive, liveName: liveRow.name, liveCells: histHead.map((_, k) => { const vv = liveRow.teams[k + 1]; return { v: vv ?? "—", bg: vc(vv) }; }), liveArt: liveRow.art ?? "—", liveArtBg: vc(liveRow.art),
+    recBg: hasLive ? "#14123a" : "#8a8a99",
+    recordPI: () => { if (!hasLive) return; setHist((a) => [...a, { name: liveRow.name, teams: { ...liveRow.teams }, art: liveRow.art }]); },
+    loadExample: () => set(() => ({ piHist: EXART.map((ar, i) => ({ name: `PI ${i + 1}`, teams: Object.fromEntries(Array.from({ length: Math.max(N, 2) }, (_, k) => [k + 1, EXA[k % 8]![i]!])), art: N <= 2 ? ar : null })) })),
+    addPIRow: () => setHist((a) => [...a, { name: `PI ${a.length + 1}`, teams: {}, art: null }]), clearHist: () => set(() => ({ piHist: [] })),
+  };
+  const artAny = linkedP.some(hasA), artABV = linkedP.reduce((z, p) => z + abvOf(p), 0), artPred = predOf(artCBV, artABV, artAny);
+  // Features by team (template): who builds what, and how far its stories are planned.
+  const featRows = s.tickets.filter((t) => t.type === "feature").sort((a, b) => a.team - b.team || a.id.localeCompare(b.id)).map((t) => {
+    const st = s.tickets.filter((x) => x.parent === t.id && x.type === "story"), planned = st.filter((x) => x.iter).length, tmc = teamOf(t.team).color, ep = t.parent ? (by[t.parent]?.title ?? t.parent) : "";
+    return { key: t.id, t: t.title, en: t.en ? "⚙ " : "", epic: ep, team: teamOf(t.team).name, color: tmc, fg: ink(tmc), stories: st.length, planned, pct: st.length ? Math.round((planned / st.length) * 100) : 0, pts: st.reduce((a, x) => a + x.pts, 0), iters: [...new Set(st.filter((x) => x.iter).map((x) => x.iter))].sort((a, b) => a! - b!).map((i) => `I${i}`).join(" ") || "—", go: () => { if (t.team) set(() => ({ view: String(t.team), sel: t.id })); else set(() => ({ sel: t.id, full: true })); } };
+  });
   const g = s.ghost, pk = selT?.type === "story" ? selT : null;
   const hint: Record<string, string> = { "?": "Not enough information", "∞": "Too big, split it", 100: "Huge", 40: "Very large" };
   const v = {
@@ -748,20 +894,17 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     // The ART backlog: features (and epics, capabilities) nobody has taken yet, to pull into a team.
     backlog: s.tickets.filter((t) => t.team === 0 && t.type !== "story" && t.type !== "pio" && t.type !== "risk").map((t) => ({ ...mkCard(t), pts: "" })),
     backlogStories: s.tickets.filter((t) => t.team === 0 && t.type === "story").length,
-    // The PI objectives board: every team's objectives, business value and commitment, with the totals.
-    goPio: () => set(() => ({ view: "pio", sel: null })), pioBg: s.view === "pio" ? "#14123a" : "#fff", pioFg: s.view === "pio" ? "#fff" : "#14123a", isPio: s.view === "pio",
-    pioTeams: Array.from({ length: N }, (_, k) => k + 1).map((n) => {
-      const tm = teamOf(n), rows = s.tickets.filter((t) => t.team === n && t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit));
-      const c = rows.filter((t) => t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), u = rows.filter((t) => !t.commit).reduce((a, t) => a + (t.bv ?? 0), 0);
-      return { n, name: tm.name, color: tm.color, committed: c, uncommitted: u, count: rows.length, go: () => set(() => ({ view: String(n), sel: null })),
-        add: () => set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio", title: "New objective", team: n, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1 })),
-        rows: rows.map((t) => ({ key: t.id, t: t.title, tag: t.commit ? "COMMITTED" : "UNCOMMITTED", tagBg: t.commit ? "#5ff0e0" : "#f4f1ea", bv: t.bv ?? 0, rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ n: k + 1, bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) })) };
-    }),
-    pioTotal: s.tickets.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), pioTotalU: s.tickets.filter((t) => t.type === "pio" && !t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
+    // PI objectives, the ART roll-up and predictability (template), the tracking tree and the parent cards.
+    ...predVals, isObjs, isClass, isTpl: !isClass, ctxLabel: isClass ? "CLASS SIMULATION" : "TEMPLATE · FULL BOARD", ctxBg: isClass ? "#7b44f5" : "#fff", ctxFg: isClass ? "#fff" : "#14123a", ctxSwitch: isClass ? "Opened from a class: team PI objectives, no ART roll-up or predictability report." : "The full board: ART PI objectives, predictability and the epic view.", toggleCtx: () => undefined,
+    artList, artEmpty: !AO.length, artCount: AO.length, artCBV, artUBV, artStat: `${AO.length} OBJECTIVE${AO.length === 1 ? "" : "S"} · ${linkedP.length}/${allP.length} TEAM OBJECTIVES ROLLED UP`,
+    artText: s.artText, setArtText: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ artText: e.target.value })), artKd: (e: React.KeyboardEvent) => { if (e.key === "Enter") addArt(); }, addArt, synth, canSynth: allP.some((p) => !aoIds.has(p.art ?? "")), objSheets, teamSheets, artABV: artAny ? artABV : "—", artAbvFoot: artAny ? "#7fe08a" : "#c8f5c833", artStamp: artPred.stamp, artStampL: artPred.stampL, artStampC: artPred.stampC,
+    goObjs: () => set(() => ({ view: "objs", sel: null })), objsBg: isObjs ? "#14123a" : "#fff", objsFg: isObjs ? "#fff" : "#14123a",
+    top, featRows, note: s.note,
+    parents: selT && selT.type === "story" ? chain.filter((n: any) => /(FEATURE|CAPABILITY|EPIC)$/.test(n.kind)).map((n: any) => ({ ...n, kind: String(n.kind).replace(/^ENABLER /, "") })) : [], hasParents: !!(selT && selT.type === "story" && chain.some((n: any) => /(FEATURE|CAPABILITY|EPIC)$/.test(n.kind))),
     kinds: ([["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"], ["risk", "Risk"], ["pio", "PI objective"]] as const).map(([k, n]) => ({ n, dot: k === "risk" ? "#f8a08a" : k === "pio" ? "#5ff0e0" : col({ type: k, en: s.en }), bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
     toggleNewEn: () => set((t) => ({ en: !t.en })), enBg: s.en ? "#ffe14d" : "transparent", enFg: s.en ? "#14123a" : "#fff",
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
-    newHint: `${tm.name}: new ${s.en && s.kind !== "risk" ? "enabler " : ""}${s.kind}…`, hasParents: s.kind !== "epic", parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: ({ capability: "Epic", feature: "Epic / capability", story: "Feature" } as Record<string, string>)[s.kind] ?? "Relates to",
+    newHint: `${tm.name}: new ${s.en && s.kind !== "risk" ? "enabler " : ""}${s.kind}…`, hasParentPick: s.kind !== "epic", parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: ({ capability: "Epic", feature: "Epic / capability", story: "Feature" } as Record<string, string>)[s.kind] ?? "Relates to",
     legStd: legend(false), legEn: legend(true), hasCustom: Object.keys(s.colors ?? {}).length > 0, resetColors: () => set(() => ({ colors: {} })),
     showFull: !!selT && s.full, facts, form, etypes, parentOptsW, openFull: () => set(() => ({ full: true })), closeFull: () => set(() => ({ full: false })), stopClick: (e: React.SyntheticEvent) => e.stopPropagation(),
     fullTitle: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { title: e.target.value }), fullNote: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { note: e.target.value }), prevT: () => stepT(-1), nextT: () => stepT(1),

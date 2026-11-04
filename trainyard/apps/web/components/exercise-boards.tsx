@@ -240,7 +240,7 @@ export function ExerciseBoard(props: BoardProps & { kind: string }) {
 /** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
 const PI_ROOM_KINDS = new Set(["cap", "pib", "pcs", "ppr", "pbv", "prm"]);
 function PiRoomEmbed({ boardId, trainer }: { boardId: string; trainer: boolean }) {
-  const q = `?doc=${encodeURIComponent(boardId)}`;
+  const q = `?doc=${encodeURIComponent(boardId)}&mode=class`;
   // The class has a planning room of its own. A trainer who set the simulation up under Plan →
   // Planning room instead can bring that room in here, for the students' links to reach it.
   const [gen, setGen] = useState(0);
