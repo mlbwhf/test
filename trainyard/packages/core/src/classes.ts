@@ -902,9 +902,13 @@ export function needsTemplateUpgrade(board: Board, template: Board): boolean {
 export function upgradeFromTemplate(old: Board, template: Board, now: string): Board {
   const fresh = instantiate(template, old.id, old.name, now);
   const prefix = `${old.id}:`;
+  // Chapter numbers are not part of a frame's identity: a class made when the Welcome chapter was
+  // "Lesson 1" and the rest counted from 2 must find its exercises in a template that numbers them
+  // from 1 (and keeps Welcome unnumbered), or a running class would lose its work on the next open.
+  const norm = (f: Frame) => (f.parentId ? f.title : f.title.replace(/^Lesson\s+\d+:\s*/i, ""));
   const pathOf = (b: Board) => {
     const byId = new Map(b.frames.map((f) => [f.id, f]));
-    const path = (f: Frame): string => `${f.parentId && byId.get(f.parentId) ? `${path(byId.get(f.parentId)!)}/` : ""}${f.title}`;
+    const path = (f: Frame): string => `${f.parentId && byId.get(f.parentId) ? `${path(byId.get(f.parentId)!)}/` : ""}${norm(f)}`;
     return path;
   };
   const oldPath = pathOf(old);

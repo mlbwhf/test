@@ -136,6 +136,38 @@ describe("the Launching AI-Native ARTs class", () => {
 });
 
 describe("upgrading a class to its template's current version", () => {
+  it("keeps a running Leading SAFe class's work when the chapters are renumbered and Welcome joins the strip", async () => {
+    const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade } = await import("./index.js");
+    const tpl = classBoard(CLASSES.find((c) => c.id === "leading-safe")!);
+    // The class as it was made: the course's Welcome chapter as "Lesson 1: Welcome", the rest numbered from 2.
+    const old = instantiate(tpl, "b-run", "LSA cohort", "2026-11-01T00:00:00.000Z");
+    const strip = old.frames.find((f) => !f.parentId && f.title === "Welcome")!;
+    const welcomeEx = old.frames.filter((f) => f.parentId === strip.id && f.activity);
+    const lessonFrames = old.frames.filter((f) => !f.parentId && /^Lesson \d+/.test(f.title)).sort((a, b) => a.y - b.y);
+    for (const l of lessonFrames) l.title = l.title.replace(/^Lesson (\d+):/, (_, n) => `Lesson ${Number(n) + 1}:`);
+    const w1 = { id: "b-run:lesson-1-welcome-old", title: "Lesson 1: Welcome", x: 0, y: strip.y + strip.height + 10, width: 2600, height: 400 };
+    old.frames.push(w1);
+    for (const f of welcomeEx) f.parentId = w1.id;
+    old.fields = { ...old.fields, templateRev: "older" };
+    // Work done so far: a vote on the Welcome chapter, cards and a done mark in lesson 2, the value stream in lesson 3.
+    welcomeEx[4]!.state = { votes: [{ voter: "ana", v: "lpm" }] };
+    const l2 = old.frames.find((f) => f.title.startsWith("Lesson 3: Building a foundation"))!;
+    const vsid = old.frames.find((f) => f.parentId === l2.id && f.activity?.board === "vsid")!;
+    vsid.state = { steps: [{ id: "s1", t: "Idea" }] };
+    vsid.done = true;
+    expect(needsTemplateUpgrade(old, tpl)).toBe(true);
+    const up = upgradeFromTemplate(old, tpl, "2026-11-04T00:00:00.000Z");
+    const top = up.frames.filter((f) => !f.parentId).sort((a, b) => a.y - b.y).map((f) => f.title);
+    expect(top[0]).toBe("Welcome");
+    expect(top[1]).toBe("Lesson 1: Thriving in the digital age with business agility");
+    const vote = up.frames.find((f) => f.activity?.board === "vote")!;
+    expect(vote.parentId).toBe(up.frames.find((f) => !f.parentId && f.title === "Welcome")!.id);
+    expect(vote.state).toEqual({ votes: [{ voter: "ana", v: "lpm" }] });
+    const vsid2 = up.frames.find((f) => f.activity?.board === "vsid")!;
+    expect(vsid2.state).toEqual({ steps: [{ id: "s1", t: "Idea" }] });
+    expect(vsid2.done).toBe(true);
+  });
+
   it("adds the new chapters and keeps what the class did, the renamed exercise included", async () => {
     const { CLASSES, classBoard, instantiate, upgradeFromTemplate, needsTemplateUpgrade } = await import("./index.js");
     const rte = CLASSES.find((c) => c.id === "rte")!;
