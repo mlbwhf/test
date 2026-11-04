@@ -328,7 +328,7 @@ function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, ow
 }
 
 export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey } = {}) {
-  const { doc, loaded, save, saveSlice, error, remote } = useDoc<WorkDoc>(docKey);
+  const { doc, loaded, save, saveSlice, error, remote, live } = useDoc<WorkDoc>(docKey);
   const me = useMe();
   // A student (by link) saves their team's part of the room; the trainer may save the room whole.
   const guest = !!me.data?.principal.guestBoardId;
@@ -629,6 +629,9 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     calWeeks: ([1, 2, 3] as const).map((w) => ({ n: `${w} ${w === 1 ? "week" : "weeks"}`, bg: cal.weeks === w ? "#14123a" : "transparent", fg: cal.weeks === w ? "#fff" : "#14123a", go: () => setCal({ weeks: w }) })),
     calPreview: iters.map((i) => ({ name: iName(i), dates: iDates(i), bg: i === cal.n ? "#ffe14d" : "#fbf9f4" })),
     piRange: dSpan(dAdd(cal.start, 0), dAdd(cal.start, cal.n * cal.weeks * 7 - 3)), scnName: SCN[s.scn]!.name,
+    // Whether this page hears changes the moment they happen, and whose room it is.
+    liveText: live ? "LIVE" : "REFRESHING EVERY 3 S", liveBg: live ? "#5ff0e0" : "#ffe14d", liveTitle: live ? "Connected: other teams' changes show the moment they are saved." : "No live stream from the server right now: the page checks for changes every few seconds.",
+    roomText: docKey === "planning-room" ? "WORKSPACE ROOM · NOT WHAT STUDENT LINKS SEE" : "CLASS ROOM", roomTitle: docKey === "planning-room" ? "This is the workspace's planning room under Plan. A class's students work in the class's own room: open it from the class exercise." : "The planning room of this class: students' links work here.",
     scenarios: Object.keys(SCN).map((k) => { const S = SCN[k]!; const fs = S.own ? (s.backlog ?? []) : S.features; return { name: S.name, blurb: S.blurb, meta: fs ? (fs.length ? `${fs.length} FEATURES · ${storyCount(fs)} STORIES${S.pios.length ? ` · ${S.pios.length} OBJECTIVES` : ""}` : "UPLOAD OR CONNECT") : S.feats.length ? `${S.feats.length} FEATURES · ${S.pios.length} OBJECTIVES` : "NO SEED DATA", bg: s.scn === k ? "#ffe14d" : "#fff", sh: s.scn === k ? "5px 5px 0 #14123a" : "none", go: () => set(() => ({ scn: k })) }; }),
     capacityPanel: (() => {
       const tc = s.teamCap?.[String(ct)];

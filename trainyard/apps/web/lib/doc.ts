@@ -23,6 +23,8 @@ export interface DocHandle<T> {
   error: string | null;
   /** Counts up each time someone else's change arrived; pages take the new `doc` into their state then. */
   remote: number;
+  /** True while the live stream is up (changes arrive at once); false means the page polls instead. */
+  live: boolean;
 }
 
 /**
@@ -35,6 +37,7 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [remote, setRemote] = useState(0);
+  const [live, setLive] = useState(false);
   const last = useRef<string>("");
   const lastSlice = useRef<Record<number, string>>({});
   const rev = useRef<string | null>(null);
@@ -69,7 +72,7 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
     };
     // Live push: a change notice fetches at once; the poll runs only while no stream is up.
     let streaming = false;
-    const stop = pollMs > 0 ? subscribe(`/v1/docs/${encodeURIComponent(key)}/events`, () => void poll(), (on) => (streaming = on)) : () => undefined;
+    const stop = pollMs > 0 ? subscribe(`/v1/docs/${encodeURIComponent(key)}/events`, () => void poll(), (on) => ((streaming = on), setLive(on))) : () => undefined;
     // While a stream is up the poll is only a safety net, every 20 s, for a notice that came during a save.
     let tick = 0;
     const id = pollMs > 0 ? window.setInterval(() => (streaming && ++tick % Math.max(1, Math.round(20_000 / pollMs)) !== 0 ? undefined : void poll()), pollMs) : 0;
@@ -112,7 +115,7 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
     },
     [put],
   );
-  return { doc, loaded, save, saveSlice, error, remote };
+  return { doc, loaded, save, saveSlice, error, remote, live };
 }
 
 /** Reads another page's document once (the roadmap's epics on the OKR board, for instance). */
