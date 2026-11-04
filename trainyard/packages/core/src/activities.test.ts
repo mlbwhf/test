@@ -66,11 +66,12 @@ describe("the RTE class", () => {
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
     expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Facilitating ART Events, Flow and DevOps", "Lesson 5: Measuring and Improving Flow", "Lesson 6: Improving the ART", "Lesson 7: Sustaining the ART"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y).map((f) => f.title);
-    expect(kids(top[0]!.id).sort()).toEqual(["Icebreaker: introduce yourself", "Quick agenda"]);
-    const agenda = b.frames.find((f) => f.title === "Quick agenda")!;
-    expect(kids(agenda.id).length).toBe(3);
-    const toStart = b.frames.find((f) => f.parentId === agenda.id && f.title === "To start")!;
-    expect(b.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning", "04 Facilitating ART Events, Flow and DevOps", "05 Measuring and Improving Flow", "06 Improving the ART", "07 Sustaining the ART"]);
+    expect(kids(top[0]!.id).sort()).toEqual(["Activity: Quick agenda", "Icebreaker: introduce yourself"]);
+    // The agenda is a kanban board (apps/web agenda view): three columns, a ticket per lesson, kept in the frame's state.
+    const agenda = b.frames.find((f) => f.title === "Activity: Quick agenda")!;
+    expect(agenda.activity).toMatchObject({ board: "agenda", config: { lanes: ["To do", "WIP", "Done"] } });
+    expect((agenda.activity!.config!.items as { id: string; t: string }[]).map((i) => i.t)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning", "04 Facilitating ART Events, Flow and DevOps", "05 Measuring and Improving Flow", "06 Improving the ART", "07 Sustaining the ART"]);
+    expect(new Set((agenda.activity!.config!.items as { id: string }[]).map((i) => i.id)).size).toBe(7);
     expect(kids(top[1]!.id)).toHaveLength(5);
     expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Conflicting views of value", "Activity: ROAM ART PI risks", "Discussion: Confidence not high? Plan rework.", "Discussion: AI-empowered PI Planning"]);
     // Every exercise is a Class Studio board with its setup; the workshop's steps share one board.
@@ -97,10 +98,10 @@ describe("the Leading SAFe class", () => {
     expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Thriving in the digital age with business agility", "Lesson 2: Building a foundation with mindset, values and principles", "Lesson 3: Establishing team and technical agility", "Lesson 4: Building solutions with Agile product delivery", "Lesson 5: Exploring Lean Portfolio Management", "Lesson 6: Leading the change"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y);
     // The course's Welcome chapter sits in the Welcome strip, after the start-here exercises.
-    expect(kids(top[0]!.id).filter((f) => f.activity).map((f) => f.title)).toEqual(["Overview: Welcome to Leading SAFe", "Overview: The story of the course on the Big Picture", "Discussion: What are you hoping to get from SAFe?", "Discussion: AI disruption", "Activity: Course overview: vote on a discipline"]);
+    expect(kids(top[0]!.id).filter((f) => f.activity).map((f) => f.title)).toEqual(["Activity: Quick agenda", "Overview: Welcome to Leading SAFe", "Overview: The story of the course on the Big Picture", "Discussion: What are you hoping to get from SAFe?", "Discussion: AI disruption", "Activity: Course overview: vote on a discipline"]);
     expect(kids(top[2]!.id).map((f) => f.activity!.board)).toEqual(["vsid", "delay", "prin", "disc", "sbd", "talk", "disc", "dec", "ov"]);
     expect(kids(top[4]!.id).map((f) => f.activity!.board)).toEqual(["emp", "feat", "wsjf", "rse", "cap", "pib", "pcs", "ppr", "pbv", "prm", "disc"]);
-    const exercises = b.frames.filter((f) => f.activity);
+    const exercises = b.frames.filter((f) => f.activity && f.activity.board !== "agenda");
     expect(exercises).toHaveLength(33);
     expect(exercises.every((f) => f.activity!.board)).toBe(true);
     // Work that carries from one exercise into the next shares one board.
@@ -124,7 +125,7 @@ describe("the Launching AI-Native ARTs class", () => {
     const b = classBoard(CLASSES.find((c) => c.id === "aart")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
     expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Start and calibrate", "Lesson 2: SF1: Outcome-driven product development", "Lesson 3: SF2: Portfolio and investment strategy", "Lesson 4: SF3: Curated data", "Lesson 5: Gap analysis"]);
-    const ex = b.frames.filter((f) => f.activity);
+    const ex = b.frames.filter((f) => f.activity && f.activity.board !== "agenda");
     expect(ex).toHaveLength(18);
     expect(ex.every((f) => f.activity!.board === "aart" && f.activity!.config!.shared === "assessment")).toBe(true);
     expect(ex.map((f) => f.activity!.config!.step)).toEqual(["scale", "text", "flow", "okr", "sf", "sf", "sf", "text", "strategy", "sf", "sf", "sf", "text", "data", "sf", "sf", "sf", "gap"]);
@@ -142,7 +143,7 @@ describe("upgrading a class to its template's current version", () => {
     // The class as it was made: the course's Welcome chapter as "Lesson 1: Welcome", the rest numbered from 2.
     const old = instantiate(tpl, "b-run", "LSA cohort", "2026-11-01T00:00:00.000Z");
     const strip = old.frames.find((f) => !f.parentId && f.title === "Welcome")!;
-    const welcomeEx = old.frames.filter((f) => f.parentId === strip.id && f.activity);
+    const welcomeEx = old.frames.filter((f) => f.parentId === strip.id && f.activity && f.activity.board !== "agenda");
     const lessonFrames = old.frames.filter((f) => !f.parentId && /^Lesson \d+/.test(f.title)).sort((a, b) => a.y - b.y);
     for (const l of lessonFrames) l.title = l.title.replace(/^Lesson (\d+):/, (_, n) => `Lesson ${Number(n) + 1}:`);
     const w1 = { id: "b-run:lesson-1-welcome-old", title: "Lesson 1: Welcome", x: 0, y: strip.y + strip.height + 10, width: 2600, height: 400 };
@@ -197,7 +198,7 @@ describe("upgrading a class to its template's current version", () => {
     expect(u.fields).toMatchObject({ students: [{ id: "s1", name: "Ana" }], lessons: 7 });
     expect(u.frames.some((f) => f.activity?.board === "roam")).toBe(true);
     // The agenda lists every chapter once.
-    const toStart = u.frames.find((f) => f.title === "To start")!;
-    expect(u.nodes.filter((n) => n.frameId === toStart.id).map((n) => n.text)).toHaveLength(7);
+    const agenda = u.frames.find((f) => f.activity?.board === "agenda")!;
+    expect((agenda.activity!.config!.items as unknown[]).length).toBe(7);
   });
 });

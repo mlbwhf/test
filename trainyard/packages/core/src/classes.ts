@@ -34,7 +34,7 @@ export type Exercise =
   | { kind: "stickies"; title: string; lanes: string[]; hint?: string; color?: string; rows?: number }
   /** Sorting zones, e.g. Not applicable / Work as-is / Requires rethinking. */
   | { kind: "zones"; title: string; zones: string[]; items?: string[]; color?: string }
-  /** A kanban: lanes left to right, the items as cards in the first lane, to drag across. */
+  /** A kanban (the agenda board): columns left to right, the items as tickets in the first, dragged one column at a time. */
   | { kind: "kanban"; title: string; lanes: string[]; items: string[] }
   /** A grid of cards; the first row is the header. Empty cells become blank cards. */
   | { kind: "table"; title: string; columns: string[]; rows: string[][]; blankRows?: number }
@@ -132,16 +132,20 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
       return { w, h };
     }
     case "kanban": {
-      const laneW = 360;
-      const cardH = 64;
-      const w = ex.lanes.length * (laneW + 20) + 20;
-      const h = Math.max(320, 110 + ex.items.length * (cardH + 14) + PAD);
-      const f = b.frame(ex.title, x, y, w, h, parentId);
-      ex.lanes.forEach((lane, i) => {
-        // Each lane stacks its cards (core stack.ts): a lesson dragged to WIP or Done snaps into the column.
-        const lf = b.frame(lane, x + 20 + i * (laneW + 20), y + 50, laneW, h - 70, f.id, { layout: "stack" });
-        if (i === 0) ex.items.forEach((it, k) => b.node("card", it, lf.x + 16, lf.y + 44 + k * (cardH + 14), laneW - 32, cardH, lf.id, { color: COLORS.yellow, fields: { fontSize: 18 } }));
+      // The agenda is a Class Studio kanban (apps/web agenda board): To do, WIP and Done columns with
+      // their counts, each lesson a ticket dragged one column at a time. On the canvas the frame only
+      // points to it; the tickets and their columns live in the frame's state, so they stay put.
+      const w = 1060;
+      const h = 220;
+      const used = new Set<string>();
+      const items = ex.items.map((t) => {
+        let id = slug(t.replace(/^\d+\s+/, "")).slice(0, 40) || "item";
+        while (used.has(id)) id += "-";
+        used.add(id);
+        return { id, t };
       });
+      const f = b.frame(`Activity: ${ex.title}`, x, y, w, h, parentId, { activity: { kind: "Activity", steps: `Step 1: When a lesson starts, drag its ticket from ${ex.lanes[0]} to ${ex.lanes[1] ?? "the next column"}.\nStep 2: When it ends, drag it on to ${ex.lanes[ex.lanes.length - 1]}.\nStep 3: One column at a time: the counts show how far the day has come.`, board: "agenda", config: { lanes: ex.lanes, items } } });
+      b.node("text", `${ex.title}: a kanban with ${ex.lanes.join(" · ")}. Open it from the menu on the left; each lesson is a ticket to drag from ${ex.lanes[0]} to ${ex.lanes[ex.lanes.length - 1]} as the day goes on.`, x + PAD, y + 56, w - 2 * PAD, 110, f.id, { fields: { fontSize: 18 } });
       return { w, h };
     }
     case "table": {
@@ -271,7 +275,7 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
   };
   const welcome: Exercise[] = [
     { kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] },
-    { kind: "kanban", title: "Quick agenda", lanes: ["To start", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
+    { kind: "kanban", title: "Quick agenda", lanes: ["To do", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
     { kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] },
     { kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 },
     { kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 },
