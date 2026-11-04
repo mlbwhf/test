@@ -4727,9 +4727,8 @@ function aa_reg_batches( WP_REST_Request $req ) {
  */
 function aa_reg_agreed_prices() {
 	return apply_filters( 'aa_reg_agreed_prices', array(
-		/* National Bank, 4 Nov 2026: same price as her colleague, whose
-		   Eventbrite registration came to USD 2,200. */
-		'emilie.leandri@bnc.ca' => array( 'ai-native-change-agent' => 2200 ),
+		/* Format: 'buyer@example.com' => array( 'course-slug' => 2200 ),
+		   (National Bank, Nov 2026: paid 4 Nov, line removed.) */
 	) );
 }
 
