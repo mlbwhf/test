@@ -1946,13 +1946,18 @@ describe("planning documents", () => {
     const { call } = await setup();
     const admin = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
     const viewer = (await call("POST", "/v1/users", { name: "Vic", email: "vic@example.io", role: "viewer" }, admin)).body.apiKey as string;
-    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body).toEqual({ key: "roadmap", doc: null });
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body).toMatchObject({ key: "roadmap", doc: null });
     const doc = { lanes: [{ id: "a1", name: "ART 1", info: "Navigation" }], items: [{ id: "i1", title: "GPS", type: "epic", lane: "a1", start: 1, len: 1, committed: true, placed: true }], miles: [] };
     expect((await call("PUT", "/v1/docs/roadmap", { doc }, viewer)).status).toBe(403);
-    expect((await call("PUT", "/v1/docs/roadmap", { doc }, admin)).body.doc).toEqual(doc);
-    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body.doc).toEqual(doc);
+    const saved = await call("PUT", "/v1/docs/roadmap", { doc }, admin);
+    expect(saved.body.rev).toMatch(/^[a-z0-9]+$/);
+    const got = await call("GET", "/v1/docs/roadmap", undefined, viewer);
+    expect(got.body).toEqual({ key: "roadmap", doc, rev: saved.body.rev });
+    // A page that holds the current revision gets a one-word answer, not the document.
+    expect((await call("GET", `/v1/docs/roadmap?rev=${saved.body.rev}`, undefined, viewer)).body).toEqual({ key: "roadmap", rev: saved.body.rev, same: true });
     expect((await call("GET", "/v1/docs/menu", undefined, admin)).status).toBe(400);
-    expect((await call("PUT", "/v1/docs/roadmap", { doc: null }, admin)).body.doc).toBeNull();
+    await call("PUT", "/v1/docs/roadmap", { doc: null }, admin);
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body.doc).toBeNull();
   });
 
   it("gives a class its own planning room that its students write by link, and nothing else", async () => {
@@ -1961,11 +1966,22 @@ describe("planning documents", () => {
     const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "LSA class" }, root)).body.board.id as string;
     const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
     const key = `planning-room%3A${id}`;
-    const room = { scn: "geek", teams: 2, caps: {}, kn: 100, tickets: [] };
-    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, ana)).body.doc).toEqual(room);
-    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc).toEqual(room);
+    const t = (id: string, team: number, title: string) => ({ id, type: "story", title, team, iter: null, pts: 3 });
+    const room = { scn: "geek", teams: 2, caps: { "1:1": 10, "2:1": 12 }, kn: 102, tickets: [t("TY-101", 1, "A1"), t("TY-102", 2, "B1")] };
+    // The trainer sets the room up whole; a student sends their team's slice only, which is merged.
+    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, ana)).status).toBe(403);
+    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, root)).status).toBe(200);
+    const mine = await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-999", 1, "not mine")], caps: { "2:1": 14, "1:1": 99 }, teamCap: { rows: [], vac: 2 }, kn: 103 } }, ana);
+    expect(mine.status).toBe(200);
+    const after = (await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc;
+    expect(after.tickets.map((x: { id: string; title: string }) => [x.id, x.title])).toEqual([["TY-101", "A1"], ["TY-102", "B1 sized"], ["TY-103", "B2"]]);
+    expect(after.caps).toEqual({ "1:1": 10, "2:1": 14 });
+    expect(after).toMatchObject({ scn: "geek", teams: 2, kn: 103, teamCap: { "2": { rows: [], vac: 2 } } });
+    // Two teams saving at once keep each other's work: team 1's slice leaves team 2's tickets alone.
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1 done"), t("TY-104", 1, "A2")] } }, root);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, ana)).body.doc.tickets.map((x: { id: string }) => x.id).sort()).toEqual(["TY-101", "TY-102", "TY-103", "TY-104"]);
     expect((await call("GET", "/v1/docs/planning-room", undefined, ana)).status).toBe(403);
-    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, ana)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { team: 1, slice: {} }, ana)).status).toBe(403);
     expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, root)).status).toBe(404);
   });
 

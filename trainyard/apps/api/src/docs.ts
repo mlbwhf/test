@@ -20,25 +20,75 @@ const boardOf = (key: string) => (key.startsWith("planning-room:") ? key.slice("
 /** A document is at most this long as JSON. */
 export const DOC_MAX_BYTES = 1_000_000;
 
+/** A short fingerprint of a document, so a page asks for it again only when it changed. */
+export function docRevision(doc: unknown): string {
+  const v = JSON.stringify(doc ?? null);
+  let h = 2166136261;
+  for (let i = 0; i < v.length; i++) h = Math.imul(h ^ v.charCodeAt(i), 16777619);
+  return `${(h >>> 0).toString(36)}${v.length.toString(36)}`;
+}
+
+/** The part of a planning room one team writes: its tickets, its capacity cells (`team:iter`), its capacity sheet, and the id counter. */
+type Slice = { tickets?: unknown[]; caps?: Record<string, unknown>; teamCap?: unknown; kn?: number };
+const TeamSlice = z.object({ tickets: z.array(z.record(z.string(), z.unknown())).max(2000).optional(), caps: z.record(z.string(), z.unknown()).optional(), teamCap: z.unknown().optional(), kn: z.number().int().min(0).optional() });
+
+/**
+ * Merges one team's slice into the room: only that team's tickets and capacity change, the rest of
+ * the room (other teams, the scenario, the calendar, the backlog) stays as the server has it. So
+ * four teams working at once never overwrite each other, and each browser sends a few kilobytes.
+ */
+export function mergeTeamSlice(room: Record<string, unknown> | null, team: number, slice: Slice): Record<string, unknown> {
+  const base: Record<string, unknown> = room ? { ...room } : { teams: team, caps: {}, kn: 100, tickets: [] };
+  const mine = (t: unknown) => typeof t === "object" && t !== null && (t as { team?: unknown }).team === team;
+  const others = (Array.isArray(base.tickets) ? (base.tickets as unknown[]) : []).filter((t) => !mine(t));
+  if (slice.tickets) base.tickets = [...others, ...slice.tickets.filter(mine)];
+  if (slice.caps) {
+    const caps = { ...((base.caps as Record<string, unknown> | undefined) ?? {}) };
+    for (const k of Object.keys(caps)) if (k.startsWith(`${team}:`)) delete caps[k];
+    for (const [k, v] of Object.entries(slice.caps)) if (k.startsWith(`${team}:`)) caps[k] = v;
+    base.caps = caps;
+  }
+  if (slice.teamCap !== undefined) base.teamCap = { ...((base.teamCap as Record<string, unknown> | undefined) ?? {}), [String(team)]: slice.teamCap };
+  if (typeof slice.kn === "number") base.kn = Math.max(Number(base.kn) || 0, slice.kn);
+  return base;
+}
+
 export function registerDocRoutes(app: App, store: Store) {
   const docs = () => (store.state.workspace.docs ??= {});
 
-  app.get("/v1/docs/:key", { schema: { params: z.object({ key: Key }) } }, async (req) => {
+  // With ?rev=<the revision a page holds>, an unchanged document comes back as `same: true` and
+  // nothing else: a page polls this every few seconds at almost no cost and downloads the document
+  // only when someone changed it.
+  app.get("/v1/docs/:key", { schema: { params: z.object({ key: Key }), querystring: z.object({ rev: z.string().max(40).optional() }) } }, async (req) => {
     if (req.principal.guestBoardId && req.principal.guestBoardId !== boardOf(req.params.key)) throw new ApiError(403, "GUEST_SCOPE", "A class link opens its class board only.");
-    return { key: req.params.key, doc: docs()[req.params.key] ?? null };
+    const doc = docs()[req.params.key] ?? null;
+    const rev = docRevision(doc);
+    if (req.query.rev && req.query.rev === rev) return { key: req.params.key, rev, same: true };
+    return { key: req.params.key, doc, rev };
   });
 
-  app.put("/v1/docs/:key", { schema: { params: z.object({ key: Key }), body: z.object({ doc: z.record(z.string(), z.unknown()).nullable() }) } }, async (req) => {
+  // Saves a document: whole (`doc`), or one team's slice of a planning room (`team` + `slice`),
+  // merged on the server. A student's link may only send a team slice, never the whole room.
+  const Body = z.union([z.object({ doc: z.record(z.string(), z.unknown()).nullable() }), z.object({ team: z.number().int().min(1).max(40), slice: TeamSlice })]);
+  app.put("/v1/docs/:key", { schema: { params: z.object({ key: Key }), body: Body } }, async (req) => {
     // A class's planning room is the class's work: its students (by link) write it like the trainer.
     const board = boardOf(req.params.key);
     if (req.principal.guestBoardId) { if (req.principal.guestBoardId !== board) throw new ApiError(403, "GUEST_SCOPE", "A class link opens its class board only."); }
     else if (board && !(store.state.workspace.boards ?? []).some((b) => b.id === board)) throw new ApiError(404, "NOT_FOUND", "No such class board.");
     require(req, "plan");
-    const text = JSON.stringify(req.body.doc);
+    let next: Record<string, unknown> | null;
+    if ("team" in req.body) {
+      if (!board) throw new ApiError(400, "VALIDATION", "Only a planning room is saved by team.");
+      next = mergeTeamSlice((docs()[req.params.key] as Record<string, unknown> | undefined) ?? null, req.body.team, req.body.slice as Slice);
+    } else {
+      if (req.principal.guestBoardId) throw new ApiError(403, "GUEST_SCOPE", "A student saves their team's part of the room, not the whole room.");
+      next = req.body.doc;
+    }
+    const text = JSON.stringify(next);
     if (text.length > DOC_MAX_BYTES) throw new ApiError(413, "DOC_TOO_LARGE", `The ${req.params.key} document is over ${Math.round(DOC_MAX_BYTES / 1000)} KB.`);
-    if (req.body.doc === null) delete docs()[req.params.key];
-    else docs()[req.params.key] = req.body.doc;
-    await store.commit(req.principal, "docs.put", { key: req.params.key, bytes: text.length });
-    return { key: req.params.key, doc: docs()[req.params.key] ?? null };
+    if (next === null) delete docs()[req.params.key];
+    else docs()[req.params.key] = next;
+    await store.commit(req.principal, "docs.put", { key: req.params.key, bytes: text.length, ...("team" in req.body ? { team: req.body.team } : {}) });
+    return { key: req.params.key, rev: docRevision(docs()[req.params.key] ?? null) };
   });
 }

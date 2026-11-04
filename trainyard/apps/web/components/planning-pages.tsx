@@ -12,7 +12,7 @@ import { Loading } from "@/components/ui";
 import { OkrBoardView, PlanningRoomView, RoadmapView } from "@/components/planning-views";
 import { useDoc, useDocOnce, type DocKey } from "@/lib/doc";
 import { ALICE_FEATURES, GEEKBOOKS_FEATURES, type BacklogFeature } from "@/components/handout-scenarios";
-import { api, ApiFailure } from "@/lib/api";
+import { api, ApiFailure, useMe } from "@/lib/api";
 
 const page = (bg: string) => ({ margin: "-16px", padding: "0 0 60px", background: bg, minHeight: "100vh", fontFamily: "'Instrument Sans', sans-serif", color: "#14123a" }) as React.CSSProperties;
 const Note = ({ text }: { text: string | null }) => (text ? <div style={{ margin: "0 5vw", padding: "10px 16px", background: "#fff4c2", border: "2px solid #14123a", borderRadius: 12, fontWeight: 600 }}>{text}</div> : null);
@@ -328,7 +328,10 @@ function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, ow
 }
 
 export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey } = {}) {
-  const { doc, loaded, save, error } = useDoc<WorkDoc>(docKey);
+  const { doc, loaded, save, saveSlice, error, remote } = useDoc<WorkDoc>(docKey);
+  const me = useMe();
+  // A student (by link) saves their team's part of the room; the trainer may save the room whole.
+  const guest = !!me.data?.principal.guestBoardId;
   const road = useDocOnce<RoadmapDoc>("roadmap");
   const okr = useDocOnce<OkrDoc>("okr-board");
   const [s, setS] = useState<Room | null>(null);
@@ -358,9 +361,32 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   useEffect(() => {
     if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, colors: doc?.colors ?? {}, calOpen: false, capOpen: false, busy: "", note: "", full: false, coll: null, collText: "", collEn: false, en: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
   }, [loaded, doc, road, okr, s]);
+  // Saving, light and safe for many people at once: inside a team, only that team's tickets, capacity
+  // cells and capacity sheet go out (a few kilobytes, merged on the server); the whole room goes out
+  // only for a change to the room itself (scenario, calendar, backlog, colours, team count), and
+  // only from the trainer.
+  const lastGlobal = useRef<string>("");
   useEffect(() => {
-    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
-  }, [s, save]);
+    if (!s || !s.teams) return;
+    const team = s.view === "yard" || s.view === "setup" ? null : +s.view;
+    const global = JSON.stringify([s.scn, s.cal, s.backlog, s.colors, s.teams]);
+    const globalChanged = lastGlobal.current !== "" && lastGlobal.current !== global;
+    lastGlobal.current = global;
+    if (team && !globalChanged) {
+      saveSlice(team, { tickets: s.tickets.filter((t) => t.team === team), caps: Object.fromEntries(Object.entries(s.caps).filter(([k]) => k.startsWith(`${team}:`))), ...(s.teamCap?.[String(team)] ? { teamCap: s.teamCap[String(team)] } : {}), kn: s.kn });
+      return;
+    }
+    if (guest) return;
+    save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+  }, [s, save, saveSlice, guest]);
+  // Someone else's change arrived (another team, the trainer): take the room as the server has it,
+  // keeping what is only on this screen (the view, the selection, open panels).
+  useEffect(() => {
+    if (!remote || !doc) return;
+    lastGlobal.current = JSON.stringify([doc.scn && SCN[doc.scn] ? doc.scn : "geek", doc.cal ?? CAL0, doc.backlog, doc.colors ?? {}, doc.teams ?? 0]);
+    setS((t) => (t ? { ...t, scn: doc.scn && SCN[doc.scn] ? doc.scn : t.scn, cal: doc.cal ?? t.cal, backlog: doc.backlog, teamCap: doc.teamCap, colors: doc.colors ?? {}, teams: doc.teams ?? 0, tickets: doc.tickets ?? [], caps: doc.caps ?? {}, kn: Math.max(t.kn, doc.kn ?? 0), sel: t.sel && !(doc.tickets ?? []).some((x) => x.id === t.sel) ? null : t.sel } : t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remote]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
   const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
   const fromRoad = (road?.items ?? []).filter((i) => i.placed && i.type === "epic").map((i) => i.title);
