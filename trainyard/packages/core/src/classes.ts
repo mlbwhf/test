@@ -16,6 +16,7 @@ import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from
 import { RTE_COURSE } from "./courses/rte.js";
 import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
 import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
+import { AI_NATIVE_VALUE_ARCHITECT_COURSE } from "./courses/ai-native-value-architect.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -693,6 +694,16 @@ const RAW_CLASSES: ClassSpec[] = [
     // The course's exercises, listed (the board itself is built from `course`).
     lessons: AI_NATIVE_ARTS_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
     course: AI_NATIVE_ARTS_COURSE,
+  },
+  {
+    id: "aiva",
+    name: "The AI-Native Value Architect",
+    short: "Value Architect",
+    blurb: "Shape AI-native solutions that deliver value and hold up to scrutiny. Lesson 3's Mini Lab builds a multi-agent flow in Flowise with Groq that puts the HR Navigator chatbot proposal in front of three skeptics: a technologist, a P&L owner and an ethicist.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: AI_NATIVE_VALUE_ARCHITECT_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: AI_NATIVE_VALUE_ARCHITECT_COURSE,
   },
   {
     id: "rte",

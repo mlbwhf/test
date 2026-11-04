@@ -4,7 +4,7 @@
 import { CLASSES } from "@trainyard/core";
 
 const BADGES: Record<string, string> = { rte: "/courses/rte/badge.png", "leading-safe": "/courses/lsa/badge-leading-safe.webp", aart: "/courses/aart/badge.png" };
-const TINTS: Record<string, string> = { "leading-safe": "#cfe8d4", spc: "#cde0f2", aspc: "#f6b9ae", popm: "#ffd37a", rte: "#ffd37a" };
+const TINTS: Record<string, string> = { "leading-safe": "#cfe8d4", spc: "#cde0f2", aspc: "#f6b9ae", popm: "#ffd37a", rte: "#ffd37a", aiva: "#d9cdf0" };
 
 export const classSpec = (classId: unknown) => CLASSES.find((c) => c.id === classId);
 export const classShort = (classId: unknown, name: string) => classSpec(classId)?.short ?? name.replace(/[^A-Z0-9]/g, "").slice(0, 4) ?? "CL";

@@ -8,6 +8,8 @@ import type React from "react";
 import { STUDIO_KINDS, studioModel } from "@/components/studio-model";
 import { LSA_KINDS, lsaModel } from "@/components/studio-model-lsa";
 import { aartModel } from "@/components/studio-model-aart";
+import { LabView } from "@/components/studio-views-lab";
+import { labModel } from "@/components/studio-model-lab";
 import { AartView } from "@/components/planning-views";
 import * as Views from "@/components/studio-views";
 import * as Lsa from "@/components/studio-views-lsa";
@@ -234,7 +236,7 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} />;
-  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
+  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
 /** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
@@ -263,6 +265,8 @@ const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = 
   ov: ({ v }) => (v.view === "bp" ? <Lsa.OvBView v={v} /> : v.view === "pri" ? <Lsa.OvPView v={v} /> : <Lsa.OvDView v={v} />),
   // Launching AI-Native ARTs (planning-views.tsx, studio-model-aart.ts): one board kind, the step picks what it shows.
   aart: AartView,
+  // The AI-Native Value Architect Mini Lab (studio-views-lab.tsx, studio-model-lab.ts).
+  lab: LabView,
 };
 
 /** A board from the Class Studio design: its generated layout, driven by the ported logic (studio-model.ts). */
@@ -289,7 +293,7 @@ function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: 
     };
   }, [needsStudents, board.id, setUi]);
   const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask };
-  const v = kind === "aart" ? aartModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
+  const v = kind === "aart" ? aartModel(ctx) : kind === "lab" ? labModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
   const View = VIEWS[kind]!;
   return (
     <div className="studio-board">

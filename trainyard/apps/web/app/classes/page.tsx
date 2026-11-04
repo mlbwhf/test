@@ -34,7 +34,7 @@ export default function ClassesPage() {
             Start the 30-day trial
           </Link>
           <a href="#classes" className="pill">
-            See the six classes
+            See the seven classes
           </a>
         </div>
       </header>
