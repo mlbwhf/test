@@ -55,6 +55,7 @@ import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
 import { registerDocRoutes } from "./docs.js";
+import { onCommit as liveOnCommit } from "./events.js";
 import { registerPlanningRoutes } from "./planning.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
@@ -164,6 +165,8 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   // The platform store is the operator's own workspace plus everything that spans workspaces;
   // `store` below is a proxy that resolves to the request's workspace (see tenants.ts).
   const tenants = new Tenants(opts.store ?? new Store());
+  // Live push: pages watching a board or document hear about every commit that touched it (events.ts).
+  tenants.platform.onCommit = liveOnCommit;
   const store = tenants.handle;
   const metrics = new MetricRegistry();
   for (const m of [...PORTFOLIO_METRICS, ...AI_METRICS]) metrics.register(m);

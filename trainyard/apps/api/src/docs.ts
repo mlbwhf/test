@@ -7,6 +7,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { require } from "./auth.js";
 import { ApiError } from "./errors.js";
+import { stream } from "./events.js";
 import type { Store } from "./store.js";
 
 type App = FastifyInstance<import("fastify").RawServerDefault, import("fastify").RawRequestDefaultExpression, import("fastify").RawReplyDefaultExpression, import("fastify").FastifyBaseLogger, ZodTypeProvider>;
@@ -65,6 +66,12 @@ export function registerDocRoutes(app: App, store: Store) {
     const rev = docRevision(doc);
     if (req.query.rev && req.query.rev === rev) return { key: req.params.key, rev, same: true };
     return { key: req.params.key, doc, rev };
+  });
+
+  // Live push: a change notice whenever the document is saved, by anyone.
+  app.get("/v1/docs/:key/events", { schema: { params: z.object({ key: Key }) } }, async (req, reply) => {
+    if (req.principal.guestBoardId && req.principal.guestBoardId !== boardOf(req.params.key)) throw new ApiError(403, "GUEST_SCOPE", "A class link opens its class board only.");
+    stream(req, reply, `doc:${req.params.key}`, { rev: docRevision(docs()[req.params.key] ?? null) });
   });
 
   // Saves a document: whole (`doc`), or one team's slice of a planning room (`team` + `slice`),

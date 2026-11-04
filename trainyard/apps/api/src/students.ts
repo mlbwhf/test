@@ -203,13 +203,14 @@ export function guestMayUse(method: string, url: string, boardId: string): boole
   if (method === "GET" && path === "/v1/me") return true;
   // The class's own planning room (the PI Planning simulation exercises): students read and write it.
   if (["GET", "PUT"].includes(method) && (path === `/v1/docs/planning-room%3A${boardId}` || path === `/v1/docs/planning-room:${boardId}`)) return true;
+  if (method === "GET" && (path === `/v1/docs/planning-room%3A${boardId}/events` || path === `/v1/docs/planning-room:${boardId}/events`)) return true;
   const base = `/v1/boards/${encodeURIComponent(boardId)}`;
   const alt = `/v1/boards/${boardId}`;
   for (const b of new Set([base, alt])) {
     if (!path.startsWith(b)) continue;
     const rest = path.slice(b.length);
     if (rest && !rest.startsWith("/")) continue;
-    if (method === "GET" && (rest === "" || rest === "/timer" || /^\/nodes\/[^/]+\/backlinks$/.test(rest))) return true;
+    if (method === "GET" && (rest === "" || rest === "/timer" || rest === "/events" || /^\/nodes\/[^/]+\/backlinks$/.test(rest))) return true;
     if (/^\/nodes(\/[^/]+)?$/.test(rest) && ["POST", "PATCH", "DELETE"].includes(method)) return true;
     if (/^\/edges(\/[^/]+)?$/.test(rest) && ["POST", "DELETE"].includes(method)) return true;
     if (/^\/frames\/[^/]+\/state$/.test(rest) && method === "PUT") return true;

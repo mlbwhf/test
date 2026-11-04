@@ -10,6 +10,7 @@ import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, empt
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
+import { stream } from "./events.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
 import type { Store } from "./store.js";
@@ -640,6 +641,11 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = reach(req, req.params.id, "view");
     const t = b.fields?.timer as ClassTimer | undefined;
     return { timer: t ?? null, left: t ? timerLeft(t, store.now()) : 0, now: store.now().toISOString(), rev: boardRevision(b) };
+  });
+  // Live push: one stream per open board; a change notice arrives on every commit that touched it.
+  app.get("/v1/boards/:id/events", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
+    const b = reach(req, req.params.id, "view");
+    stream(req, reply, `board:${b.id}`, { rev: boardRevision(b) });
   });
   app.put("/v1/boards/:id/timer", { schema: { params: z.object({ id: Id }), body: z.discriminatedUnion("action", [z.object({ action: z.literal("start"), label: z.string().min(1).max(120), seconds: z.number().int().min(5).max(6 * 3600), frameId: Id.optional() }), z.object({ action: z.enum(["pause", "resume", "stop"]) }), z.object({ action: z.literal("add"), seconds: z.number().int().min(-3600).max(3600) })]) } }, async (req) => {
     require(req, "plan");

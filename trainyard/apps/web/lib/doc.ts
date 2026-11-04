@@ -5,7 +5,7 @@
 // last writer wins, as on the prototype's shared storage; the server keeps one copy per workspace.
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api, type ApiFailure } from "@/lib/api";
+import { api, subscribe, type ApiFailure } from "@/lib/api";
 
 /** A workspace document, or a class's own planning room: `planning-room:<boardId>`. */
 export type DocKey = "roadmap" | "okr-board" | "planning-room" | `planning-room:${string}`;
@@ -51,12 +51,10 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
         setLoaded(true);
       })
       .catch((e: ApiFailure) => !gone && (setError(e.message), setLoaded(true)));
-    // The poll: skipped while a save is pending or in flight, while this tab is hidden, and while
-    // someone has text in a field, so an incoming document never pulls the text from under them.
+    // The poll: skipped while a save is pending or in flight (an edit in progress is already in the
+    // page's state and on its way), and while this tab is hidden.
     const poll = async () => {
       if (gone || !rev.current || timer.current || inflight.current || document.visibilityState !== "visible") return;
-      const el = document.activeElement;
-      if ((el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) && el.value.trim()) return;
       try {
         const r = await api<{ rev: string; same?: boolean; doc?: T | null }>("GET", `/v1/docs/${encodeURIComponent(key)}?rev=${encodeURIComponent(rev.current)}`);
         if (gone || r.same || timer.current || inflight.current) return;
@@ -69,9 +67,15 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
         /* offline for a moment: try again on the next tick */
       }
     };
-    const id = pollMs > 0 ? window.setInterval(() => void poll(), pollMs) : 0;
+    // Live push: a change notice fetches at once; the poll runs only while no stream is up.
+    let streaming = false;
+    const stop = pollMs > 0 ? subscribe(`/v1/docs/${encodeURIComponent(key)}/events`, () => void poll(), (on) => (streaming = on)) : () => undefined;
+    // While a stream is up the poll is only a safety net, every 20 s, for a notice that came during a save.
+    let tick = 0;
+    const id = pollMs > 0 ? window.setInterval(() => (streaming && ++tick % Math.max(1, Math.round(20_000 / pollMs)) !== 0 ? undefined : void poll()), pollMs) : 0;
     return () => {
       gone = true;
+      stop();
       if (id) window.clearInterval(id);
     };
   }, [key, pollMs]);

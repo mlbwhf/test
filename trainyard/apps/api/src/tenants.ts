@@ -82,6 +82,7 @@ export class Tenants {
     const record = this.record(id);
     if (!record) throw new Error(`unknown workspace ${id}`);
     const store = new Store({ persistence: this.persistence, now: this.now, initial: freshState(record) });
+    if (this.platform.onCommit) store.onCommit = this.platform.onCommit;
     await store.open();
     this.attachGuard(store, record);
     return store;

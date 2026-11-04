@@ -17,7 +17,7 @@ import { CanvasEditor } from "@/components/canvas-editor";
 import { ActivityEditor } from "@/components/activity-editor";
 import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
 import type { RefSummary } from "@/components/link-picker";
-import { api, useMe, type ApiFailure } from "@/lib/api";
+import { api, subscribe, useMe, type ApiFailure } from "@/lib/api";
 import { ExerciseBoard, useFrameState } from "@/components/exercise-boards";
 
 const TINTS = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae", "#d9cdf0", "#f0d9a8", "#d6e6c3", "#e6d3f0"];
@@ -148,9 +148,15 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
       }
     };
     void poll();
-    const id = window.setInterval(() => void poll(), 3000);
+    // Live push tells us the moment the board changed; the poll runs only while no stream is up.
+    let streaming = false;
+    const stop = subscribe(`/v1/boards/${encodeURIComponent(board.id)}/events`, () => void poll(), (on) => (streaming = on));
+    // While a stream is up the poll is only a safety net, every 21 s, for a notice that came while this person was busy.
+    let tick = 0;
+    const id = window.setInterval(() => (streaming && ++tick % 7 !== 0 ? undefined : void poll()), 3000);
     return () => {
       live = false;
+      stop();
       window.clearInterval(id);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
