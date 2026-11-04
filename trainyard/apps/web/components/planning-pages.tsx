@@ -558,6 +558,20 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       formTitle: ({ story: "USER STORY · AS A / I WANT / SO THAT", feature: "FEATURE · HYPOTHESIS, OBJECTIVES, EPIC LINK", epic: "EPIC · HYPOTHESIS STATEMENT", capability: "CAPABILITY · BENEFIT HYPOTHESIS", risk: "RISK", pio: "OBJECTIVE" } as Record<string, string>)[selT.type] + (selT.en ? " · ENABLER" : ""),
       canParent: selT.type !== "epic" && selT.type !== "pio", parentLbl: ({ capability: "EPIC", feature: "EPIC / CAPABILITY", story: "FEATURE", risk: "RELATES TO" } as Record<string, string>)[selT.type] ?? "",
       parentValW: selT.parent ?? "", setParentW: (e: React.ChangeEvent<HTMLSelectElement>) => upd(selT.id, { parent: e.target.value }),
+      // Assigning work to a team: a feature (or capability, epic, risk, objective) moves with everything under it.
+      teamOpts: Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name, sel: k + 1 === selT.team })),
+      teamValW: String(selT.team),
+      setTeamW: (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const to = Number(e.target.value);
+        if (!to || to === selT.team) return;
+        const under = new Set<string>([selT.id]);
+        let grew = true;
+        while (grew) {
+          grew = false;
+          for (const x of s.tickets) if (x.parent && under.has(x.parent) && !under.has(x.id)) (under.add(x.id), (grew = true));
+        }
+        set((t) => ({ tickets: t.tickets.map((x) => (under.has(x.id) ? { ...x, team: to, iter: null } : x)), view: String(to), flash: selT.id }));
+      },
     };
     facts = [{ k: "TEAM", v: teamOf(selT.team).name }, { k: "LOCATION", v: where(selT) }, { k: selT.type === "story" ? "SIZE" : "CHILDREN", v: selT.type === "story" ? `${sz(selT)} pts` : String(down.length) }, { k: selT.type === "risk" ? "ROAM" : "STATUS", v: selT.type === "risk" ? (selT.roam || "Not yet ROAMed") : selT.iter ? "Loaded" : "In the yard" }];
     const fv = selT.f ?? {};

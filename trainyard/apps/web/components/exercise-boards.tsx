@@ -233,24 +233,44 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: false, loading: () => <div className="studio-board faint" style={{ padding: 24 }}>Loading the exercise…</div> });
 
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
-  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} />;
+  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
 /** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
 const PI_ROOM_KINDS = new Set(["cap", "pib", "pcs", "ppr", "pbv", "prm"]);
-function PiRoomEmbed({ boardId }: { boardId: string }) {
+function PiRoomEmbed({ boardId, trainer }: { boardId: string; trainer: boolean }) {
   const q = `?doc=${encodeURIComponent(boardId)}`;
+  // The class has a planning room of its own. A trainer who set the simulation up under Plan →
+  // Planning room instead can bring that room in here, for the students' links to reach it.
+  const [gen, setGen] = useState(0);
+  const [msg, setMsg] = useState<string | null>(null);
+  const adopt = async () => {
+    if (!window.confirm("Bring the room you set up under Plan → Planning room into this class? It replaces whatever this class's room holds.")) return;
+    try {
+      const r = await api<{ teams: number; tickets: number }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/planning-room/adopt`, {});
+      setMsg(`Brought in: ${r.teams} teams, ${r.tickets} tickets.`);
+      setGen((g) => g + 1);
+    } catch (e) {
+      setMsg((e as ApiFailure).message);
+    }
+  };
   return (
     <div className="studio-board" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <span className="ex-mono" style={{ color: "#4d5a52" }}>PI PLANNING BOARD · CHOOSE THE SIMULATION, SET THE NUMBER OF TEAMS, THEN WORK THIS EXERCISE ON EVERY TEAM</span>
+        <span className="ex-mono" style={{ color: "#4d5a52" }}>PI PLANNING BOARD · THIS CLASS&apos;S OWN ROOM · SET IT UP HERE ONCE, THEN EVERY TEAM WORKS THE EXERCISES ON IT</span>
         <span style={{ flex: 1 }} />
+        {trainer ? (
+          <button onClick={() => void adopt()} title="Copy the room you set up under Plan → Planning room into this class" style={{ font: "700 12px 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#0d1815", border: "2px solid #0d1815", borderRadius: 8, padding: "4px 10px", background: "#ffd37a", cursor: "pointer" }}>
+            Bring in the room from Plan
+          </button>
+        ) : null}
+        {msg ? <span className="faint">{msg}</span> : null}
         <a href={`/planning-room${q}`} target="_blank" rel="noreferrer" style={{ font: "700 12px 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#0d1815", border: "2px solid #0d1815", borderRadius: 8, padding: "4px 10px", background: "#fff", textDecoration: "none" }}>
           Open full screen ↗
         </a>
       </div>
-      <iframe src={`/embed/planning-room${q}`} title="PI planning board" style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 640, border: "2px solid #0d1815", borderRadius: 12, background: "#f4f1ea" }} />
+      <iframe key={gen} src={`/embed/planning-room${q}`} title="PI planning board" style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 640, border: "2px solid #0d1815", borderRadius: 12, background: "#f4f1ea" }} />
     </div>
   );
 }

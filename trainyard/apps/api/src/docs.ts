@@ -41,7 +41,9 @@ const TeamSlice = z.object({ tickets: z.array(z.record(z.string(), z.unknown()))
 export function mergeTeamSlice(room: Record<string, unknown> | null, team: number, slice: Slice): Record<string, unknown> {
   const base: Record<string, unknown> = room ? { ...room } : { teams: team, caps: {}, kn: 100, tickets: [] };
   const mine = (t: unknown) => typeof t === "object" && t !== null && (t as { team?: unknown }).team === team;
-  const others = (Array.isArray(base.tickets) ? (base.tickets as unknown[]) : []).filter((t) => !mine(t));
+  // A ticket handed over from another team arrives in this team's slice: its old copy goes.
+  const arriving = new Set((slice.tickets ?? []).filter(mine).map((t) => (t as { id?: unknown }).id));
+  const others = (Array.isArray(base.tickets) ? (base.tickets as unknown[]) : []).filter((t) => !mine(t) && !arriving.has((t as { id?: unknown }).id));
   if (slice.tickets) base.tickets = [...others, ...slice.tickets.filter(mine)];
   if (slice.caps) {
     const caps = { ...((base.caps as Record<string, unknown> | undefined) ?? {}) };
@@ -72,6 +74,19 @@ export function registerDocRoutes(app: App, store: Store) {
   app.get("/v1/docs/:key/events", { schema: { params: z.object({ key: Key }) } }, async (req, reply) => {
     if (req.principal.guestBoardId && req.principal.guestBoardId !== boardOf(req.params.key)) throw new ApiError(403, "GUEST_SCOPE", "A class link opens its class board only.");
     stream(req, reply, `doc:${req.params.key}`, { rev: docRevision(docs()[req.params.key] ?? null) });
+  });
+
+  // A class takes over the workspace's planning room (what the trainer set up under Plan → Planning
+  // room), so the simulation the trainer prepared is the one the students' links reach.
+  app.post("/v1/boards/:id/planning-room/adopt", { schema: { params: z.object({ id: z.string().regex(/^b-[a-z0-9]+$/) }) } }, async (req) => {
+    require(req, "plan");
+    if (req.principal.guestBoardId) throw new ApiError(403, "FORBIDDEN", "Only the trainer sets the class's room up.");
+    if (!(store.state.workspace.boards ?? []).some((b) => b.id === req.params.id && !b.isTemplate)) throw new ApiError(404, "NOT_FOUND", "No such class board.");
+    const src = docs()["planning-room"] as { teams?: number; tickets?: unknown[] } | undefined;
+    if (!src || !src.teams) throw new ApiError(409, "NO_ROOM", "There is no planning room set up under Plan → Planning room yet. Set this class's room up right here instead: choose the teams and the simulation, then Start planning.");
+    docs()[`planning-room:${req.params.id}`] = structuredClone(src);
+    await store.commit(req.principal, "docs.put", { key: `planning-room:${req.params.id}`, from: "planning-room" });
+    return { teams: src.teams, tickets: Array.isArray(src.tickets) ? src.tickets.length : 0 };
   });
 
   // Saves a document: whole (`doc`), or one team's slice of a planning room (`team` + `slice`),

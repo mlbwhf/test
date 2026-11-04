@@ -453,6 +453,11 @@ export function PlanningRoomView({ v }: { v: any }) {
 </div>
 </div>
 <div>
+<div style={{ border: "2px solid #14123a", borderRadius: "16px", padding: "12px 14px", background: "#fff6cf", marginBottom: "18px" } as any}>
+<div style={{ font: "700 11px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em", marginBottom: "6px" } as any}>🚂 ASSIGNED TO TEAM</div>
+<select value={v.sel.teamValW} onChange={v.sel.setTeamW} aria-label="Team" style={{ width: "100%", border: "2px solid #14123a", borderRadius: "99px", padding: "8px 12px", font: "600 14px 'Instrument Sans',sans-serif", background: "#fff" } as any}>{(v.sel.teamOpts || []).map((o: any, o_n: number) => (<Fragment key={o_n}><option value={o.id}>{o.t}</option></Fragment>))}</select>
+<div style={{ fontSize: "12px", color: "#5b5b6e", marginTop: "6px" } as any}>Pick another team to hand this over: it moves with everything under it and lands in that team&apos;s freight yard.</div>
+</div>
 {v.sel.canParent ? (<><div style={{ border: "2px solid #14123a", borderRadius: "16px", padding: "12px 14px", background: "#f4f1ea", marginBottom: "18px" } as any}>
 <div style={{ font: "700 11px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em", marginBottom: "6px" } as any}>⛓ LINKED TO · {v.sel.parentLbl}</div>
 <select value={v.sel.parentValW} onChange={v.sel.setParentW} style={{ width: "100%", border: "2px solid #14123a", borderRadius: "99px", padding: "8px 12px", font: "600 14px 'Instrument Sans',sans-serif", background: "#fff" } as any}>{(v.parentOptsW || []).map((o: any, o_n: number) => (<Fragment key={o_n}><option value={o.id}>{o.t}</option></Fragment>))}</select>

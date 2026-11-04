@@ -1977,6 +1977,10 @@ describe("planning documents", () => {
     expect(after.tickets.map((x: { id: string; title: string }) => [x.id, x.title])).toEqual([["TY-101", "A1"], ["TY-102", "B1 sized"], ["TY-103", "B2"]]);
     expect(after.caps).toEqual({ "1:1": 10, "2:1": 14 });
     expect(after).toMatchObject({ scn: "geek", teams: 2, kn: 103, teamCap: { "2": { rows: [], vac: 2 } } });
+    // A feature handed over to team 2 arrives in team 2's slice and leaves team 1.
+    await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-101", 2, "A1 now ours")] } }, ana);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc.tickets.map((x: { id: string; team: number }) => `${x.id}:${x.team}`).sort()).toEqual(["TY-101:2", "TY-102:2", "TY-103:2"]);
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1")] } }, root);
     // Two teams saving at once keep each other's work: team 1's slice leaves team 2's tickets alone.
     await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1 done"), t("TY-104", 1, "A2")] } }, root);
     expect((await call("GET", `/v1/docs/${key}`, undefined, ana)).body.doc.tickets.map((x: { id: string }) => x.id).sort()).toEqual(["TY-101", "TY-102", "TY-103", "TY-104"]);
