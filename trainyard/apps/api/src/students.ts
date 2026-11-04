@@ -7,7 +7,7 @@ import { randomBytes } from "node:crypto";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { seatStudents, type Board } from "@trainyard/core";
+import { classTeams, makeTeams, MAX_TEAMS, placeStudent, seatStudents, teamOf, type Board, type ClassTeam } from "@trainyard/core";
 import { hashKey, require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Mailer } from "./mailer.js";
@@ -70,7 +70,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   // The invitation names the trainer and the class and replies to the trainer, so a strict mail
   // filter (government and corporate mail gateways) sees a message from a person about a known
   // class, not a bare link. It also tells the student what to ask IT for when a filter still objects.
-  const email = async (g: ClassGuest, boardName: string, token: string, trainer: { name: string; email?: string }) => {
+  const email = async (g: ClassGuest, boardName: string, token: string, trainer: { name: string; email?: string }, team?: ClassTeam) => {
     if (!opts.mailer?.live || !opts.webUrl) {
       console.warn(`[mail] class link for ${g.email} not sent: ${opts.mailer?.live ? "no web address (TRAINYARD_WEB_URL)" : "mail is off (TRAINYARD_SMTP_URL)"}`);
       return false;
@@ -82,7 +82,7 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
       subject: `${trainer.name} invited you to ${boardName}`,
       text: `Hi ${g.name},
 
-${trainer.name} has added you to the class "${boardName}" on Trainyard, the board you will work on together during the class.
+${trainer.name} has added you to the class "${boardName}" on Trainyard, the board you will work on together during the class.${team ? `\n\nYou are in ${team.name}: the exercises you open on the board are your team's copy.` : ""}
 
 Open it with your personal link; no account or password is needed:
 
@@ -106,7 +106,7 @@ Trainyard`,
 
   app.get("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
+    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), teams: classTeams(b), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
   });
 
   // Adds students; the new links come back once. An email already on the class keeps the link it
@@ -126,10 +126,13 @@ Trainyard`,
       const token = newGuestToken();
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
-      const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
+      // With teams set up, a new student joins the smallest one.
+      if (classTeams(b).length) b.fields = { ...(b.fields ?? {}), teams: makeTeams(classTeams(b).length, classTeams(b), onBoard().map((x) => x.id)) };
+      const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req), teamOf(classTeams(b), g.id)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
       out.push({ ...view(g), token, ...links(token), emailed });
     }
     await platform.commit(req.principal, "class.students.add", { boardId: b.id, count: out.length });
+    if (classTeams(b).length) await store.commit(req.principal, "class.teams.seat", { boardId: b.id });
     await seat(req, b);
     return reply.code(201).send({ students: out });
   });
@@ -141,7 +144,7 @@ Trainyard`,
     if (!g) throw notFound("Student");
     const token = newGuestToken();
     g.tokenHash = hashKey(token);
-    const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
+    const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req), teamOf(classTeams(b), g.id)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
     return { student: { ...view(g), token, ...links(token), emailed } };
   });
@@ -152,8 +155,34 @@ Trainyard`,
     platform.state.classGuests = guests().filter((x) => !(x.id === req.params.sid && x.boardId === b.id && x.workspaceId === here(req)));
     if (guests().length === before) throw notFound("Student");
     await platform.commit(req.principal, "class.students.remove", { boardId: b.id, studentId: req.params.sid });
+    if (teamOf(classTeams(b), req.params.sid)) {
+      b.fields = { ...(b.fields ?? {}), teams: placeStudent(classTeams(b), req.params.sid, null) };
+      await store.commit(req.principal, "class.teams.seat", { boardId: b.id });
+    }
     await seat(req, b);
     return reply.code(204).send();
+  });
+  // The class's teams: `count` makes that many (keeping the ones there are and seating every
+  // student), `shuffle` deals the students out again at random, `spread` evenly in order, `move` puts one student in a team (or in
+  // none), `names` renames them.
+  app.put("/v1/boards/:id/teams", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ count: z.number().int().min(0).max(MAX_TEAMS).optional(), shuffle: z.boolean().optional(), spread: z.boolean().optional(), move: z.object({ studentId: z.string().max(80), teamId: z.string().max(40).nullable() }).optional(), names: z.record(z.string().max(40), z.string().trim().min(1).max(60)).optional() }) } }, async (req) => {
+    const b = classBoard(req, req.params.id);
+    const ids = guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map((g) => g.id);
+    let teams = classTeams(b);
+    if (req.body.count !== undefined) teams = makeTeams(req.body.count, teams, ids);
+    // A shuffle deals every student out again, at random, into the same teams.
+    if (req.body.shuffle && teams.length) teams = makeTeams(teams.length, teams.map((t) => ({ ...t, members: [] })), [...ids].sort(() => Math.random() - 0.5));
+    // Spread evenly: the students dealt out again in their current order, one per team in turn.
+    if (req.body.spread && teams.length) teams = makeTeams(teams.length, teams.map((t) => ({ ...t, members: [] })), [...teams.flatMap((t) => t.members), ...ids.filter((i) => !teams.some((t) => t.members.includes(i)))]);
+    if (req.body.move) {
+      if (!ids.includes(req.body.move.studentId)) throw notFound("Student");
+      if (req.body.move.teamId && !teams.some((t) => t.id === req.body.move!.teamId)) throw notFound("Team");
+      teams = placeStudent(teams, req.body.move.studentId, req.body.move.teamId);
+    }
+    if (req.body.names) teams = teams.map((t) => ({ ...t, name: req.body.names![t.id] ?? t.name }));
+    b.fields = { ...(b.fields ?? {}), teams };
+    await store.commit(req.principal, "class.teams", { boardId: b.id, teams: teams.length });
+    return { teams };
   });
 }
 

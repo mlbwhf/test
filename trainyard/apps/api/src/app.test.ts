@@ -2169,6 +2169,29 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(401);
   });
 
+  it("splits a class into teams: students seated as they come, moved by the trainer, the teams on the board for every link", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const first = await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }, { name: "Ben", email: "ben@example.io" }, { name: "Cy", email: "cy@example.io" }] }, root);
+    const [ana, ben, cy] = first.body.students as { id: string; token: string }[];
+    const made = await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, root);
+    expect(made.status).toBe(200);
+    expect(made.body.teams).toEqual([{ id: "t1", name: "Team 1", members: [ana!.id, cy!.id] }, { id: "t2", name: "Team 2", members: [ben!.id] }]);
+    // A fourth student joins the smallest team; the students list and the board carry the teams.
+    const dee = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Dee", email: "dee@example.io" }] }, root)).body.students[0] as { id: string };
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.teams[1].members).toEqual([ben!.id, dee.id]);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana!.token)).body.board.fields.teams).toHaveLength(2);
+    // The trainer moves and renames; a student may not.
+    const moved = await call("PUT", `/v1/boards/${id}/teams`, { move: { studentId: cy!.id, teamId: "t2" }, names: { t1: "Red" } }, root);
+    expect(moved.body.teams).toEqual([{ id: "t1", name: "Red", members: [ana!.id] }, { id: "t2", name: "Team 2", members: [ben!.id, dee.id, cy!.id] }]);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 3 }, ana!.token)).status).toBe(403);
+    // Removing a student takes them out of their team; no teams clears the lot.
+    await call("DELETE", `/v1/boards/${id}/students/${ben!.id}`, undefined, root);
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.teams[1].members).toEqual([dee.id, cy!.id]);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 0 }, root)).body.teams).toEqual([]);
+  });
+
   it("renames, wipes back to the class as it started, saves a custom class template that keeps its cards, and deletes", async () => {
     const { call: raw } = await setup();
     const key = (await raw("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;

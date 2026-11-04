@@ -10,13 +10,14 @@
 // refreshes when someone else changes it.
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { activityTiming, cardChoices, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
+import { activityTiming, cardChoices, classTeams, isClassWide, teamOf, teamOp, teamState, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ActivityEditor } from "@/components/activity-editor";
 import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
 import type { RefSummary } from "@/components/link-picker";
-import { api, type ApiFailure } from "@/lib/api";
+import { api, useMe, type ApiFailure } from "@/lib/api";
 import { ExerciseBoard, useFrameState } from "@/components/exercise-boards";
 
 const TINTS = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae", "#d9cdf0", "#f0d9a8", "#d6e6c3", "#e6d3f0"];
@@ -39,6 +40,33 @@ const viewFromHash = (): View => {
 
 export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onError, trainer = true }: { board: Board; refs: Record<string, RefSummary | null>; cardTypes: CardType[]; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; /** Runs the timer, marks exercises complete and sets them up; false for a learner on a join link. */ trainer?: boolean }) {
   const lessons = useMemo(() => board.frames.filter((f) => !f.parentId).sort((a, b) => a.y - b.y || a.x - b.x), [board.frames]);
+  // Teams: a student works on their team's copy of every exercise; the trainer picks which team's
+  // copy to look at (kept per board in this browser). No teams, or "Class": one shared copy.
+  const teams = useMemo(() => classTeams(board), [board]);
+  const me = useMe();
+  const studentId = me.data?.principal.userId.startsWith("guest:") ? me.data.principal.userId.slice(6) : null;
+  const myTeam = studentId ? teamOf(teams, studentId) : undefined;
+  const [teamPick, setTeamPick] = useState<string | null>(null);
+  const asked = useSearchParams().get("team");
+  useEffect(() => {
+    // "Enter" on a team card in the Students panel opens the board as that team (?team=…).
+    try {
+      if (asked) localStorage.setItem(`trainyard.team.${board.id}`, asked);
+      setTeamPick(asked ?? localStorage.getItem(`trainyard.team.${board.id}`));
+    } catch {
+      setTeamPick(asked);
+    }
+  }, [board.id, asked]);
+  const pickTeam = (id: string | null) => {
+    setTeamPick(id);
+    try {
+      if (id) localStorage.setItem(`trainyard.team.${board.id}`, id);
+      else localStorage.removeItem(`trainyard.team.${board.id}`);
+    } catch {
+      /* no storage */
+    }
+  };
+  const team = trainer ? (teams.find((t) => t.id === teamPick) ?? teams[0] ?? null) : (myTeam ?? null);
   // The Welcome area is a single exercise; a lesson's exercises are the frames directly in it.
   const exercisesOf = useMemo(() => {
     const m = new Map<string, Frame[]>();
@@ -314,7 +342,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const matches = flat.filter((x) => !palQ.trim() || `${titleOf(x.ex)} ${x.lesson.title} ${x.ex.activity?.kind ?? ""}`.toLowerCase().includes(palQ.trim().toLowerCase()));
   const boardFor = () => {
     if (!focusFrame) return null;
-    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} onChanged={onChanged} onError={onError} />;
+    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : team?.id ?? null} onChanged={onChanged} onError={onError} />;
     if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
     return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
   };
@@ -422,6 +450,19 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
                 </span>
                 <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
               </div>
+              {teams.length && here && !isClassWide(here.ex) ? (
+                <div className="studio-band-teams" role={trainer ? "tablist" : undefined} aria-label="Team">
+                  {trainer ? (
+                    teams.map((t) => (
+                      <button key={t.id} role="tab" aria-selected={team?.id === t.id} className={`studio-team${team?.id === t.id ? " on" : ""}`} onClick={() => pickTeam(t.id)} title={`${t.members.length} student${t.members.length === 1 ? "" : "s"}`}>
+                        {t.name}
+                      </button>
+                    ))
+                  ) : (
+                    <span className="studio-team on">{team ? team.name : "No team yet"}</span>
+                  )}
+                </div>
+              ) : null}
               {act ? (
                 <div className="studio-band-time">
                   {act.prepare ? <span>{act.share ? "Prepare" : "Duration"}: {act.prepare} min</span> : null}
@@ -578,15 +619,18 @@ function stepsOf(text: string): string[] {
 }
 
 /** A purpose-built exercise board with its shared state. */
-function ExerciseHost({ board, frame, kind, readOnly, trainer, onChanged, onError }: { board: Board; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; onChanged: () => void; onError: (m: string) => void }) {
+function ExerciseHost({ board, frame, kind, readOnly, trainer, team, onChanged, onError }: { board: Board; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; onChanged: () => void; onError: (m: string) => void }) {
   // Steps of one workshop (config.shared) keep their work on the first step's frame.
   const shared = frame.activity?.config?.shared;
   const home = (shared ? board.frames.find((f) => f.activity?.config?.shared === shared) : undefined) ?? frame;
-  return <ExerciseState key={home.id} board={board} home={home} frame={frame} kind={kind} readOnly={readOnly} trainer={trainer} onChanged={onChanged} onError={onError} />;
+  return <ExerciseState key={`${home.id}:${team ?? ""}`} board={board} home={home} frame={frame} kind={kind} readOnly={readOnly} trainer={trainer} team={team} onChanged={onChanged} onError={onError} />;
 }
 
-function ExerciseState({ board, home, frame, kind, readOnly, trainer, onChanged, onError }: { board: Board; home: Frame; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; onChanged: () => void; onError: (m: string) => void }) {
-  const [st, op] = useFrameState(board, home, onChanged, onError);
+function ExerciseState({ board, home, frame, kind, readOnly, trainer, team, onChanged, onError }: { board: Board; home: Frame; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; onChanged: () => void; onError: (m: string) => void }) {
+  const [all, opAll] = useFrameState(board, home, onChanged, onError);
+  // A team's copy of the exercise: its part of the frame's state, its changes addressed to it.
+  const st = useMemo(() => (team ? teamState(all, team) : all), [all, team]);
+  const op: typeof opAll = team ? (change) => opAll(teamOp(change, team)) : opAll;
   return <ExerciseBoard kind={kind} board={board} frame={frame} config={frame.activity?.config ?? {}} st={st} op={op} readOnly={readOnly} trainer={trainer} />;
 }
 

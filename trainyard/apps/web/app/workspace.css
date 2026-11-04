@@ -563,6 +563,10 @@ textarea.ex-sticky { resize: none; font: inherit; outline: 2px solid #ffb627; }
 .studio-band-text { flex: 1 1 260px; min-width: 0; padding: 12px 22px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
 .studio-band-text .ex-mono { font-weight: 700; letter-spacing: 0.1em; }
 .studio-band h2 { font: 500 clamp(20px, 2.4vw, 32px)/1.1 var(--font-display), "Helvetica Neue", Arial, sans-serif; color: #0e3b47; letter-spacing: -0.02em; }
+.studio-band-teams { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 8px 14px; max-width: 46%; }
+.studio-team { cursor: pointer; border: 2px solid #0d1815; border-radius: 99px; padding: 4px 12px; background: #fff; font: 700 12px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #0d1815; box-shadow: 2px 2px 0 #0d1815; }
+.studio-team.on { background: #ffd37a; }
+span.studio-team { cursor: default; }
 .studio-band-time { display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 2px; padding: 8px 22px; font: 700 14px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #0e3b47; }
 .studio-toolbar { flex: none; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 16px; }
 .studio-title { display: grid; gap: 2px; min-width: 0; }
