@@ -258,7 +258,10 @@ export function OkrBoardPage() {
 type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; text?: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
 /** The PI calendar: start date, weeks per iteration, iterations in the PI (the last one is IP). */
 export type Cal = { start: string; weeks: 1 | 2 | 3; n: number };
-export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+/** A team's capacity the SAFe way: eight points per full-time member per two-week iteration, less vacation days (Leading SAFe). */
+export type TeamCap = { rows: { r: string; n: number; a: number; on: boolean }[]; vac: number };
+export const SAMPLE_TEAM: TeamCap = { rows: [{ r: "Developers", n: 3, a: 100, on: true }, { r: "Testers", n: 2, a: 100, on: true }, { r: "Product Owner", n: 1, a: 100, on: false }, { r: "Scrum Master / Team Coach", n: 1, a: 100, on: false }], vac: 0 };
+export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teamCap?: Record<string, TeamCap>; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
 const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
 const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
 const POKER: (string | number)[] = ["?", 1, 2, 3, 5, 8, 13, 21, 40, 100, "∞"];
@@ -289,7 +292,7 @@ export const SCN: Record<string, Scenario> = {
 };
 // Story titles are built from the feature until the handouts bring real stories.
 const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
-type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; busy: string; note: string; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
 function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, own?: BacklogFeature[]): Ticket[] {
   const S = SCN[scn], t: Ticket[] = [];
@@ -320,10 +323,10 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const okr = useDocOnce<OkrDoc>("okr-board");
   const [s, setS] = useState<Room | null>(null);
   useEffect(() => {
-    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, calOpen: false, busy: "", note: "", teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, calOpen: false, capOpen: false, busy: "", note: "", teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
   }, [loaded, doc, road, okr, s]);
   useEffect(() => {
-    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
   }, [s, save]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
   const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
@@ -398,7 +401,11 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const epicObj = (title: string) => { const id = Object.keys(links).find((k) => (links[k] ?? []).includes(title)); return id ? { id, title: objs[id] ?? id } : null; };
   const teamOf = (n: number) => ({ name: `Team ${n}`, color: TC[(n - 1) % 8]! });
   const where = (t: Ticket) => (t.type === "pio" ? `Team ${t.team} · PI objective` : `Team ${t.team} · ${t.iter ? iName(t.iter) : "Freight yard"}`);
-  const capOf = (n: number, i: number) => s.caps[`${n}:${i}`] ?? defCap(i);
+  // Points per full-time member per iteration: 8 for two weeks (ten days less two for meetings), scaled to the iteration length.
+  const perPerson = Math.max(1, cal.weeks * 5 - 2);
+  const capPts = (tc: TeamCap) => Math.max(0, Math.round((tc.rows.reduce((a, r) => a + (r.on ? (+r.n || 0) * perPerson * ((+r.a || 0) / 100) : 0), 0) - (+tc.vac || 0)) * 10) / 10);
+  const teamCapOf = (n: number) => { const tc = s.teamCap?.[String(n)]; return tc ? Math.round(capPts(tc)) : undefined; };
+  const capOf = (n: number, i: number) => s.caps[`${n}:${i}`] ?? teamCapOf(n) ?? defCap(i);
   const loadOf = (n: number, i: number) => s.tickets.filter((t) => t.team === n && t.type === "story" && t.iter === i).reduce((a, t) => a + t.pts, 0);
   const checks = (n: number): [string, boolean][] => {
     const T = s.tickets.filter((t) => t.team === n), pio = T.filter((t) => t.type === "pio"), rk = T.filter((t) => t.type === "risk");
@@ -473,6 +480,75 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     calPreview: iters.map((i) => ({ name: iName(i), dates: iDates(i), bg: i === cal.n ? "#ffe14d" : "#fbf9f4" })),
     piRange: dSpan(dAdd(cal.start, 0), dAdd(cal.start, cal.n * cal.weeks * 7 - 3)), scnName: SCN[s.scn]!.name,
     scenarios: Object.keys(SCN).map((k) => { const S = SCN[k]!; const fs = S.own ? (s.backlog ?? []) : S.features; return { name: S.name, blurb: S.blurb, meta: fs ? (fs.length ? `${fs.length} FEATURES · ${storyCount(fs)} STORIES${S.pios.length ? ` · ${S.pios.length} OBJECTIVES` : ""}` : "UPLOAD OR CONNECT") : S.feats.length ? `${S.feats.length} FEATURES · ${S.pios.length} OBJECTIVES` : "NO SEED DATA", bg: s.scn === k ? "#ffe14d" : "#fff", sh: s.scn === k ? "5px 5px 0 #14123a" : "none", go: () => set(() => ({ scn: k })) }; }),
+    capacityPanel: (() => {
+      const tc = s.teamCap?.[String(ct)];
+      const setTc = (next: TeamCap | undefined) => set((t) => { const all = { ...(t.teamCap ?? {}) }; if (next) all[String(ct)] = next; else delete all[String(ct)]; return { teamCap: all }; });
+      const pts = tc ? capPts(tc) : null;
+      const btn = { border: "2px solid #14123a", borderRadius: 99, padding: "6px 12px", fontWeight: 700, fontSize: 13, cursor: "pointer", background: "#fff" } as const;
+      return (
+        <div style={{ margin: "0 0 12px", background: "#fff", border: "2px solid #14123a", borderRadius: 18, boxShadow: "4px 4px 0 #14123a", padding: "10px 16px" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <span style={{ font: "700 11px ui-monospace, Menlo, monospace", letterSpacing: ".1em", color: "#5b5b6e" }}>TEAM CAPACITY</span>
+            <b style={{ fontSize: 15 }}>{pts !== null ? `${Math.round(pts)} points per iteration` : "Not calculated: the default gauges apply"}</b>
+            <span style={{ flex: 1 }} />
+            <button onClick={() => set((t) => ({ capOpen: !t.capOpen }))} style={{ ...btn, background: s.capOpen ? "#ffe14d" : "#fff" }}>{s.capOpen ? "Close calculator" : "Calculate capacity"}</button>
+          </div>
+          {s.capOpen ? (
+            <div style={{ marginTop: 10, display: "grid", gap: 10 }}>
+              <div style={{ fontSize: 13, lineHeight: 1.45, color: "#14123a" }}>
+                For every full-time Agile Team member contributing to solution development, give the team {perPerson} points per {cal.weeks}-week iteration; adjust for part-time members. Subtract one point for every vacation day and holiday. Assign one point to a story that takes about half a day to develop and half a day to test and validate, and estimate every other story relative to it.
+              </div>
+              {tc ? (
+                <>
+                  <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ font: "700 11px ui-monospace, Menlo, monospace", letterSpacing: ".08em", color: "#5b5b6e", textAlign: "left" }}>
+                        <th style={{ padding: "4px 6px" }}>ROLE</th><th style={{ padding: "4px 6px" }}>PEOPLE</th><th style={{ padding: "4px 6px" }}>AVAILABILITY</th><th style={{ padding: "4px 6px" }}>COUNTS</th><th style={{ padding: "4px 6px", textAlign: "right" }}>POINTS</th><th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tc.rows.map((r, i) => {
+                        const up = (patch: Partial<TeamCap["rows"][number]>) => setTc({ ...tc, rows: tc.rows.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+                        return (
+                          <tr key={i} style={{ borderTop: "1px solid #eee8da" }}>
+                            <td style={{ padding: "4px 6px" }}><input value={r.r} onChange={(e) => up({ r: e.target.value })} style={{ width: "100%", border: "1px solid #c9c5d6", borderRadius: 8, padding: "4px 8px", font: "inherit" }} /></td>
+                            <td style={{ padding: "4px 6px" }}><input type="number" min={0} value={r.n} onChange={(e) => up({ n: Math.max(0, +e.target.value || 0) })} style={{ width: 64, border: "1px solid #c9c5d6", borderRadius: 8, padding: "4px 8px", font: "inherit" }} /></td>
+                            <td style={{ padding: "4px 6px" }}>
+                              <select value={String(r.a)} onChange={(e) => up({ a: +e.target.value })} style={{ border: "1px solid #c9c5d6", borderRadius: 8, padding: "4px 8px", font: "inherit", background: "#fff" }}>
+                                {[100, 75, 50, 25].map((a) => <option key={a} value={a}>{a}%</option>)}
+                              </select>
+                            </td>
+                            <td style={{ padding: "4px 6px" }}><label style={{ display: "flex", gap: 6, alignItems: "center" }}><input type="checkbox" checked={r.on} onChange={(e) => up({ on: e.target.checked })} /> {r.on ? "yes" : "no"}</label></td>
+                            <td style={{ padding: "4px 6px", textAlign: "right", fontWeight: 700 }}>{r.on ? Math.round((+r.n || 0) * perPerson * ((+r.a || 0) / 100) * 10) / 10 : 0}</td>
+                            <td style={{ padding: "4px 6px" }}><button onClick={() => setTc({ ...tc, rows: tc.rows.filter((_, j) => j !== i) })} aria-label={`Remove ${r.r}`} style={{ ...btn, padding: "2px 8px" }}>×</button></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                    <button onClick={() => setTc({ ...tc, rows: [...tc.rows, { r: "Team member", n: 1, a: 100, on: true }] })} style={btn}>+ Role</button>
+                    <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 14 }}>
+                      Vacation and holiday days this iteration
+                      <input type="number" min={0} value={tc.vac} onChange={(e) => setTc({ ...tc, vac: Math.max(0, +e.target.value || 0) })} style={{ width: 64, border: "1px solid #c9c5d6", borderRadius: 8, padding: "4px 8px", font: "inherit" }} />
+                    </label>
+                    <span style={{ flex: 1 }} />
+                    <b style={{ fontSize: 16 }}>{Math.round(pts!)} points per iteration</b>
+                    <button onClick={() => setTc(undefined)} style={btn}>Back to defaults</button>
+                  </div>
+                  <div style={{ fontSize: 12.5, color: "#5b5b6e" }}>Applies to every wagon of {tm.name}, including the IP iteration. The gauge's − and + still adjust a single iteration on top of this.</div>
+                </>
+              ) : (
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  <button onClick={() => setTc(structuredClone(SAMPLE_TEAM))} style={{ ...btn, background: "#ffe14d" }}>Start from the example team (3 developers, 2 testers, PO, SM)</button>
+                  <button onClick={() => setTc({ rows: [{ r: "Team member", n: 1, a: 100, on: true }], vac: 0 })} style={btn}>Start empty</button>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </div>
+      );
+    })(),
     ownBacklog: SCN[s.scn]?.own ? (
       <div style={{ marginTop: 14, background: "#fff", border: "2px solid #14123a", borderRadius: 20, boxShadow: "5px 5px 0 #14123a", padding: "14px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ font: "700 11px ui-monospace, Menlo, monospace", color: "#5b5b6e", letterSpacing: ".1em" }}>YOUR OWN BACKLOG</div>

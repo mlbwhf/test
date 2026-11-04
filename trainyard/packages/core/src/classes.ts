@@ -286,7 +286,12 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
 }
 
 /** Builds the class board: start strip, then one frame per lesson with its exercises in rows. */
-export function classBoard(spec: ClassSpec, now = "2026-01-01T00:00:00.000Z"): Board {
+/** A course's opening chapter: not numbered (the design shows it as "·" / ★), and part of the Welcome strip. */
+export const isWelcomeLesson = (l: { title: string }) => l.title.trim().toLowerCase() === "welcome";
+
+export function classBoard(spec0: ClassSpec, now = "2026-01-01T00:00:00.000Z"): Board {
+  // Chapter numbers follow the design: Welcome is unnumbered, the lessons count from 1 after it.
+  const spec = { ...spec0, lessons: spec0.lessons.filter((l, i) => !(i === 0 && isWelcomeLesson(l))) };
   const b = new Builder();
   let y = 0;
   y += startHere(b, spec, 0, 0) + GAP * 2;
@@ -343,7 +348,23 @@ function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[
     l.height = 160;
     y += l.height + 80;
   }
-  lessons.forEach((l, i) => addActivities(b, l.id, course[i]?.activities ?? [], `${l.id}-x`));
+  // The course's own Welcome chapter joins the Welcome strip, under the start-here exercises.
+  const strip = welcome.find((f) => f.title === "Welcome");
+  let rest = course;
+  if (course[0] && isWelcomeLesson(course[0]) && strip) {
+    rest = course.slice(1);
+    const nf = b.frames.length, nn = b.nodes.length, top = strip.height;
+    addActivities(b, strip.id, course[0].activities, `${strip.id}-x`);
+    const added = b.frames.slice(nf), addedNodes = b.nodes.slice(nn);
+    const first = Math.min(...added.map((f) => f.y));
+    const dy = strip.y + top - first + 40;
+    for (const f of added) f.y += dy;
+    for (const n of addedNodes) n.y += dy;
+    strip.height = Math.max(top, Math.max(...added.map((f) => f.y + f.height)) - strip.y + 40);
+    const shift = strip.height - top;
+    if (shift > 0) for (const l of lessons) l.y += shift;
+  }
+  lessons.forEach((l, i) => addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
 }
 
 function isInside(b: Board, f: Frame, ancestor: string): boolean {
@@ -371,7 +392,7 @@ export function classInfo(spec: ClassSpec): TemplateInfo {
     event: `${spec.days}-day class`,
     method: "safe",
     tags: ["class", "safe"],
-    zones: ["Welcome", ...spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
+    zones: ["Welcome", ...spec.lessons.filter((l, i) => !(i === 0 && isWelcomeLesson(l))).map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
     cardTypes: ["Sticky", "Slide", "Story", "Vote"],
     mapsTo: "Nothing (a class is run, not synced)",
   };

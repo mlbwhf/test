@@ -93,11 +93,13 @@ describe("the Leading SAFe class", () => {
     const { CLASSES, classBoard } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "leading-safe")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
-    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Welcome", "Lesson 2: Thriving in the digital age with business agility", "Lesson 3: Building a foundation with mindset, values and principles", "Lesson 4: Establishing team and technical agility", "Lesson 5: Building solutions with Agile product delivery", "Lesson 6: Exploring Lean Portfolio Management", "Lesson 7: Leading the change"]);
+    // Chapter numbers as in the design: Welcome is the start strip (unnumbered), lessons count from 1 after it.
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Thriving in the digital age with business agility", "Lesson 2: Building a foundation with mindset, values and principles", "Lesson 3: Establishing team and technical agility", "Lesson 4: Building solutions with Agile product delivery", "Lesson 5: Exploring Lean Portfolio Management", "Lesson 6: Leading the change"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y);
-    expect(kids(top[1]!.id).map((f) => f.title)).toEqual(["Overview: Welcome to Leading SAFe", "Overview: The story of the course on the Big Picture", "Discussion: What are you hoping to get from SAFe?", "Discussion: AI disruption", "Activity: Course overview: vote on a discipline"]);
-    expect(kids(top[3]!.id).map((f) => f.activity!.board)).toEqual(["vsid", "delay", "prin", "disc", "sbd", "talk", "disc", "dec", "ov"]);
-    expect(kids(top[5]!.id).map((f) => f.activity!.board)).toEqual(["emp", "feat", "wsjf", "rse", "cap", "pib", "pcs", "ppr", "pbv", "prm", "disc"]);
+    // The course's Welcome chapter sits in the Welcome strip, after the start-here exercises.
+    expect(kids(top[0]!.id).filter((f) => f.activity).map((f) => f.title)).toEqual(["Overview: Welcome to Leading SAFe", "Overview: The story of the course on the Big Picture", "Discussion: What are you hoping to get from SAFe?", "Discussion: AI disruption", "Activity: Course overview: vote on a discipline"]);
+    expect(kids(top[2]!.id).map((f) => f.activity!.board)).toEqual(["vsid", "delay", "prin", "disc", "sbd", "talk", "disc", "dec", "ov"]);
+    expect(kids(top[4]!.id).map((f) => f.activity!.board)).toEqual(["emp", "feat", "wsjf", "rse", "cap", "pib", "pcs", "ppr", "pbv", "prm", "disc"]);
     const exercises = b.frames.filter((f) => f.activity);
     expect(exercises).toHaveLength(33);
     expect(exercises.every((f) => f.activity!.board)).toBe(true);
@@ -117,11 +119,11 @@ describe("the Leading SAFe class", () => {
 });
 
 describe("the Launching AI-Native ARTs class", () => {
-  it("has two lessons of eighteen steps on one shared assessment board, with the course's statements", async () => {
+  it("has the design's five chapters of eighteen steps on one shared assessment board, with the course's statements", async () => {
     const { CLASSES, classBoard, AI_NATIVE_SUCCESS_FACTORS } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "aart")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
-    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Start and calibrate", "Lesson 2: Assess the ART"]);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Start and calibrate", "Lesson 2: SF1: Outcome-driven product development", "Lesson 3: SF2: Portfolio and investment strategy", "Lesson 4: SF3: Curated data", "Lesson 5: Gap analysis"]);
     const ex = b.frames.filter((f) => f.activity);
     expect(ex).toHaveLength(18);
     expect(ex.every((f) => f.activity!.board === "aart" && f.activity!.config!.shared === "assessment")).toBe(true);

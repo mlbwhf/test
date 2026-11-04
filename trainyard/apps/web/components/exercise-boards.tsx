@@ -237,8 +237,8 @@ export function ExerciseBoard(props: BoardProps & { kind: string }) {
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
-/** The PI Planning simulation exercises (board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
-const PI_ROOM_KINDS = new Set(["pib", "pcs", "ppr", "pbv", "prm"]);
+/** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
+const PI_ROOM_KINDS = new Set(["cap", "pib", "pcs", "ppr", "pbv", "prm"]);
 function PiRoomEmbed({ boardId }: { boardId: string }) {
   const q = `?doc=${encodeURIComponent(boardId)}`;
   return (

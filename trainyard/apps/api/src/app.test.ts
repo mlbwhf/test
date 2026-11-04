@@ -482,7 +482,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(55);
+    expect(list.body.builtin.length).toBe(56);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     expect(pi.info.method).toBe("safe");

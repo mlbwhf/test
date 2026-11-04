@@ -7,6 +7,7 @@ import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type Ma
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
+import { PlanningRoomPage } from "@/components/planning-pages";
 import { ClassStudents } from "@/components/class-students";
 import { ImportActivities } from "@/components/activity-editor";
 import { AssistButton } from "@/components/assist";
@@ -37,6 +38,8 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   const { board, shape } = view.data;
   // A class board shows a tab per lesson; a student who joined by link sees only that.
   const isClass = !!board.fields?.class;
+  // A board made from the "PI planning room" template is the planning room with its own document.
+  const isRoom = board.fields?.room === "planning";
   const guest = !!me.data?.principal.guestBoardId;
   if (guest) {
     return (
@@ -211,11 +214,17 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {isClass ? (
+          {isRoom ? (
+            board.isTemplate ? (
+              <div className="panel panel-body faint">Create a board from this template: it opens as the planning room, with its own teams, PI calendar and backlog.</div>
+            ) : (
+              <PlanningRoomPage docKey={`planning-room:${board.id}`} />
+            )
+          ) : isClass ? (
             <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
-          {shape === "empty" && board.isTemplate ? <div className="panel panel-body faint">This board is empty.</div> : null}
+          {shape === "empty" && board.isTemplate && !isRoom ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
       ) : (
         <Mapper board={board} shape={shape} levels={model.data?.model.workLevels ?? []} onApplied={(r) => setDone(`Added ${r.items.length} items, ${r.risks.length} risks, ${r.dependencies.length} dependencies${r.newTeams.length ? ` and ${r.newTeams.length} teams` : ""} to the plan.`)} onError={(e) => setErr(e)} />

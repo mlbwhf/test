@@ -213,7 +213,12 @@ export default function TemplatesPage() {
                   </button>
                 </div>
               </div>
-              {look === "lanes" ? <TemplateLanes board={preview.data.board} theme={theme} /> : <CanvasEditor board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />}
+              {preview.data.board.fields?.room === "planning" ? (
+                <div className="panel panel-body stack">
+                  <b>Opens as the planning room</b>
+                  <span className="faint">Choose the number of teams, the PI calendar and the simulation or backlog, then every team gets its own train. Create a board from it to start; each board keeps its own room.</span>
+                </div>
+              ) : look === "lanes" ? <TemplateLanes board={preview.data.board} theme={theme} /> : <CanvasEditor board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />}
             </section>
           ) : null}
         </div>

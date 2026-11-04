@@ -42,7 +42,9 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   // The Welcome area is a single exercise; a lesson's exercises are the frames directly in it.
   const exercisesOf = useMemo(() => {
     const m = new Map<string, Frame[]>();
-    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [l]);
+    // A numbered lesson lists its frames; the Welcome strip is itself the first exercise (the start-here
+    // canvas), followed by any course activities placed inside it (a course's own Welcome chapter).
+    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [l, ...board.frames.filter((f) => f.parentId === l.id && f.activity).sort((a, b) => a.y - b.y || a.x - b.x)]);
     return m;
   }, [board.frames, lessons]);
   const flat = useMemo(() => lessons.flatMap((l) => (exercisesOf.get(l.id) ?? []).map((e) => ({ lesson: l, ex: e }))), [lessons, exercisesOf]);

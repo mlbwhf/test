@@ -388,5 +388,9 @@ export const AI_NATIVE_ARTS_COURSE: {
   activities: ActivitySpec[];
 }[] = [
   { title: "Start and calibrate", activities: lesson1 },
-  { title: "Assess the ART", activities: lesson2 },
+  // The design's chapters 02-05: one per success factor, then the gap analysis.
+  { title: "SF1: Outcome-driven product development", activities: lesson2.slice(0, 6) },
+  { title: "SF2: Portfolio and investment strategy", activities: lesson2.slice(6, 11) },
+  { title: "SF3: Curated data", activities: lesson2.slice(11, 16) },
+  { title: "Gap analysis", activities: lesson2.slice(16) },
 ];

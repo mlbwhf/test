@@ -343,6 +343,7 @@ export function PlanningRoomView({ v }: { v: any }) {
 <button onClick={v.addPio} style={{ flex: "0 0 52px", border: "2px dashed #14123a", borderRadius: "14px", background: "transparent", fontSize: "24px", cursor: "pointer" } as any}>+</button>
 </div></div>
 
+{v.capacityPanel}
 <div style={{ display: "grid", gridTemplateColumns: `repeat(${v.nIter},minmax(0,1fr))`, gap: "12px", alignItems: "stretch" } as any}>
 {(v.wagons || []).map((w: any, w_n: number) => (<Fragment key={w_n}>
 <div style={{ display: "flex", flexDirection: "column" } as any}>
