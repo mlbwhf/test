@@ -12,5 +12,5 @@
     "test": "vitest run"
   },
   "dependencies": { "pg": "^8.23.1" },
-  "devDependencies": { "@types/pg": "^8.15.0", "typescript": "^5.9.0", "vitest": "^3.2.0", "@types/node": "^22.19.0" }
+  "devDependencies": { "@types/pg": "^8.15.0", "typescript": "^7.0.2", "vitest": "^3.2.0", "@types/node": "^22.19.0" }
 }
