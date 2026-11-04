@@ -255,15 +255,25 @@ export function OkrBoardPage() {
 }
 
 // ---- Planning room (the multi-team train yard) --------------------------------------------
-type Ticket = { id: string; type: "feature" | "story" | "risk" | "pio"; title: string; text?: string; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
+/** The work hierarchy (epic → capability → feature → story) plus risks and PI objectives; `en` marks an enabler. */
+type TType = "epic" | "capability" | "feature" | "story" | "risk" | "pio";
+type Ticket = { id: string; type: TType; title: string; text?: string; en?: boolean; note?: string; f?: Record<string, string>; team: number; iter: number | null; pts: number; est?: string; parent?: string; roam?: string | null; bv?: number; commit?: boolean };
 /** The PI calendar: start date, weeks per iteration, iterations in the PI (the last one is IP). */
 export type Cal = { start: string; weeks: 1 | 2 | 3; n: number };
 /** A team's capacity the SAFe way: eight points per full-time member per two-week iteration, less vacation days (Leading SAFe). */
 export type TeamCap = { rows: { r: string; n: number; a: number; on: boolean }[]; vac: number };
 export const SAMPLE_TEAM: TeamCap = { rows: [{ r: "Developers", n: 3, a: 100, on: true }, { r: "Testers", n: 2, a: 100, on: true }, { r: "Product Owner", n: 1, a: 100, on: false }, { r: "Scrum Master / Team Coach", n: 1, a: 100, on: false }], vac: 0 };
-export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teamCap?: Record<string, TeamCap>; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
+export type WorkDoc = { scn?: string; cal?: Cal; backlog?: BacklogFeature[]; teamCap?: Record<string, TeamCap>; colors?: Record<string, string>; teams: number; caps: Record<string, number>; kn: number; tickets: Ticket[] };
 const TC = ["#4a5fe8", "#ff3d8f", "#1fb89a", "#ff8a3d", "#8a5cf5", "#c99a10", "#2aa4d8", "#ef4b4b"];
 const KC = { epic: "#4a5fe8", feature: "#14123a", enabler: "#c8372d" };
+const TYPES: [TType, string][] = [["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"]];
+const CHILD: Partial<Record<TType, TType>> = { epic: "capability", capability: "feature", feature: "story" };
+/** Default colours by type, enablers with an E (design: DEFC); the room's `colors` overrides them. */
+const DEFC: Record<string, string> = { epic: "#4a5fe8", capability: "#8a5cf5", feature: "#14123a", story: "#e9c98a", epicE: "#c8372d", capabilityE: "#ff8a3d", featureE: "#0f8f7a", storyE: "#f4a340" };
+const HATCH = "repeating-linear-gradient(135deg,rgba(255,255,255,.38) 0 5px,transparent 5px 10px)";
+const CRATE = "linear-gradient(90deg,transparent 46%,rgba(20,18,58,.18) 46%,rgba(20,18,58,.18) 54%,transparent 54%)";
+/** Dark or white text on a colour, by luminance. */
+const ink = (c: string) => { const h = String(c).replace("#", ""), v = [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16) || 0); return (v[0]! * 299 + v[1]! * 587 + v[2]! * 114) / 1000 > 150 ? "#14123a" : "#fff"; };
 const POKER: (string | number)[] = ["?", 1, 2, 3, 5, 8, 13, 21, 40, 100, "∞"];
 const ROAM: [string, string, string][] = [["R", "Resolved", "#5ff0e0"], ["O", "Owned", "#ffe14d"], ["A", "Accepted", "#b8e07a"], ["M", "Mitigated", "#ff9fc6"]];
 const MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -292,7 +302,7 @@ export const SCN: Record<string, Scenario> = {
 };
 // Story titles are built from the feature until the handouts bring real stories.
 const STORY_T: [string, number][] = [["Model the data for ", 3], ["Build the screen for ", 5], ["Expose the API for ", 5], ["Test end to end: ", 8]];
-type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; draft: number; view: string; sel: string | null; kind: "story" | "feature" | "risk"; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type Room = Required<Pick<WorkDoc, "scn" | "cal">> & WorkDoc & { calOpen: boolean; capOpen: boolean; busy: string; note: string; full: boolean; coll: string | null; collText: string; collEn: boolean; en: boolean; draft: number; view: string; sel: string | null; kind: Exclude<TType, "pio">; newText: string; parentSel: string; q: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
 function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, own?: BacklogFeature[]): Ticket[] {
   const S = SCN[scn], t: Ticket[] = [];
@@ -304,12 +314,12 @@ function seedRoom(n: number, scn: string, epics: string[], kn: { n: number }, ow
   for (let k = 1; k <= n; k++) {
     const fids: string[] = [], fs: string[] = [];
     // Three features per team, each team starting three further along the list, so teams get different work.
-    for (let j = 0; j < Math.min(3, titles.length); j++) { const id = key(), title = titles[((k - 1) * 3 + j) % titles.length]!; fids.push(id); fs.push(title); t.push({ id, type: "feature", title, parent: epics[(k + j * 2) % epics.length], team: k, iter: features ? null : j < 2 ? j + 1 : null, pts: 0 }); }
+    for (let j = 0; j < Math.min(3, titles.length); j++) { const id = key(), title = titles[((k - 1) * 3 + j) % titles.length]!; fids.push(id); fs.push(title); t.push({ id, type: "feature", title, parent: epics[(k + j * 2) % epics.length], team: k, iter: features ? null : j < 2 ? j + 1 : null, pts: 0, ...(!features && j === 2 ? { en: true } : {}) }); }
     if (features) {
       // The handout's stories, as written and sized (0 = the team sizes it), all in the freight yard to plan.
-      fs.forEach((title, j) => { const f = features.find((x) => x.title === title); f?.stories.forEach((st) => t.push({ id: key(), type: "story", title: st.enabler ? `Enabler: ${st.title}` : st.title, text: [st.text, st.note ? `Note: ${st.note}` : ""].filter(Boolean).join(" "), parent: fids[j], team: k, iter: null, pts: st.pts })); });
+      fs.forEach((title, j) => { const f = features.find((x) => x.title === title); f?.stories.forEach((st) => t.push({ id: key(), type: "story", title: st.title, ...(st.enabler ? { en: true } : {}), text: [st.text, st.note ? `Note: ${st.note}` : ""].filter(Boolean).join(" "), parent: fids[j], team: k, iter: null, pts: st.pts })); });
     } else {
-      for (let j = 0; j < 4; j++) { const [pre, pts] = STORY_T[j]!; t.push({ id: key(), type: "story", title: pre + fs[j % 3]!, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts }); }
+      for (let j = 0; j < 4; j++) { const [pre, pts] = STORY_T[j]!; t.push({ id: key(), type: "story", title: pre + fs[j % 3]!, parent: fids[j % 3], team: k, iter: j < 2 ? 1 + (j % 2) : j === 2 ? 3 : null, pts: j === 3 ? 0 : pts, ...(j === 2 ? { en: true } : {}) }); }
     }
     if (S.risks.length) t.push({ id: key(), type: "risk", title: S.risks[k % S.risks.length]!, parent: fids[1], team: k, iter: null, pts: 0, roam: null });
     S.pios.forEach(([title, bv, c]) => t.push({ id: key(), type: "pio", title, team: k, bv: k % 2 && c ? bv : 0, commit: c, pts: 0, iter: null }));
@@ -322,11 +332,34 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const road = useDocOnce<RoadmapDoc>("roadmap");
   const okr = useDocOnce<OkrDoc>("okr-board");
   const [s, setS] = useState<Room | null>(null);
+  // Esc folds the stack, then the waybill; Enter unfolds the selected ticket; ← → step through the team.
   useEffect(() => {
-    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, calOpen: false, capOpen: false, busy: "", note: "", teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
+    const kd = (e: KeyboardEvent) => {
+      const tag = ((e.target as HTMLElement)?.tagName || "").toLowerCase(), typing = tag === "input" || tag === "textarea" || tag === "select";
+      setS((t) => {
+        if (!t) return t;
+        if (e.key === "Escape" && t.coll) return { ...t, coll: null };
+        if (e.key === "Escape" && t.full) return { ...t, full: false };
+        if (typing) return t;
+        if (e.key === "Enter" && t.sel && !t.full) return { ...t, full: true };
+        if (t.full && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+          const cur = t.tickets.find((x) => x.id === t.sel);
+          if (!cur) return t;
+          const peers = t.tickets.filter((x) => x.team === cur.team && x.type !== "pio"), i = peers.findIndex((x) => x.id === cur.id);
+          const n = peers[(i + (e.key === "ArrowRight" ? 1 : -1) + peers.length) % peers.length];
+          return n ? { ...t, sel: n.id } : t;
+        }
+        return t;
+      });
+    };
+    window.addEventListener("keydown", kd);
+    return () => window.removeEventListener("keydown", kd);
+  }, []);
+  useEffect(() => {
+    if (loaded && road !== undefined && okr !== undefined && !s) setS({ scn: doc?.scn && SCN[doc.scn] ? doc.scn : "geek", cal: doc?.cal ?? CAL0, backlog: doc?.backlog, teamCap: doc?.teamCap, colors: doc?.colors ?? {}, calOpen: false, capOpen: false, busy: "", note: "", full: false, coll: null, collText: "", collEn: false, en: false, teams: doc?.teams ?? 0, tickets: doc?.tickets ?? [], caps: doc?.caps ?? {}, kn: doc?.kn ?? 100, draft: doc?.teams || 4, view: "yard", sel: null, kind: "story", newText: "", parentSel: "", q: "", ghost: null, flash: null });
   }, [loaded, doc, road, okr, s]);
   useEffect(() => {
-    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
+    if (s && s.teams) save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
   }, [s, save]);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
   const set = (fn: (t: Room) => Partial<Room>) => setS((t) => (t ? { ...t, ...fn(t) } : t));
@@ -339,6 +372,22 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   s.tickets.forEach((x) => (by[x.id] = x));
   const selT = s.sel ? by[s.sel] : undefined;
   const upd = (id: string, patch: Partial<Ticket>) => set((t) => ({ tickets: t.tickets.map((x) => (x.id === id ? { ...x, ...patch } : x)) }));
+  // Colour by type and enabler flag, the room's own colours first (design: col()).
+  const col = (t: { type: TType; en?: boolean }) => { const k = t.type + (t.en ? "E" : ""); return s.colors?.[k] ?? DEFC[k] ?? "#14123a"; };
+  const setF = (id: string, k: string, v: string) => set((t) => ({ tickets: t.tickets.map((x) => (x.id !== id ? x : k === "note" ? { ...x, note: v } : { ...x, f: { ...(x.f ?? {}), [k]: v } })) }));
+  type FDef = { k: string; label: string; ph: string; area: boolean; rows: number };
+  // The waybill's form per type: the story's As a / I want / So that, the feature's benefit hypothesis, the epic hypothesis statement, the capability; enablers add what they enable.
+  const formDefs = (t: Ticket): FDef[] => {
+    const A = (k: string, label: string, ph: string, rows = 3): FDef => ({ k, label, ph, area: true, rows }), L = (k: string, label: string, ph: string): FDef => ({ k, label, ph, area: false, rows: 1 });
+    let d: FDef[] = ({
+      story: [L("role", "AS A", "who is the user or role?"), L("want", "I WANT", "what do they need to do?"), L("why", "SO THAT", "what value do they get?"), A("ac", "ACCEPTANCE", "Given … When … Then …", 3)],
+      feature: [A("hyp", "BENEFIT HYPOTHESIS", "We believe that [this feature] will deliver [benefit]. We will know we are right when [measurable signal].", 3), A("obj", "OBJECTIVES", "Which PI objective or business outcome does this serve?", 2), A("ac", "ACCEPTANCE", "Given … When … Then …", 3)],
+      epic: [L("for", "FOR", "target customer"), L("who", "WHO", "need or problem"), L("the", "THE", "name of the solution"), L("isa", "IS A", "product category"), L("that", "THAT", "key benefit"), L("unlike", "UNLIKE", "current alternative"), L("sol", "OUR SOLUTION", "what makes it different"), A("mvp", "MVP", "Smallest thing that tests the hypothesis", 2), A("ind", "LEADING INDICATORS", "What will tell us early that the hypothesis holds", 2)],
+      capability: [A("desc", "WHAT IT ENABLES", "The solution-level behavior this unlocks", 2), A("hyp", "BENEFIT HYPOTHESIS", "We believe … will deliver … We will know when …", 2), A("ac", "ACCEPTANCE", "Given … When … Then …", 2)],
+    } as Record<string, FDef[]>)[t.type] ?? [];
+    if (t.en) d = [A("enwhy", "WHAT IT ENABLES", "The architecture, infrastructure or learning the team needs before delivering value", 2), ...d];
+    return [...d, A("note", "NOTES", "Anything else the team should know", 3)];
+  };
   const flashIt = (id: string) => { set(() => ({ flash: id })); setTimeout(() => set(() => ({ flash: null })), 2200); };
   const start = () => { const n = s.draft; const kn = { n: s.kn }; const tickets = s.teams ? s.tickets.filter((t) => t.team <= n) : seedRoom(n, s.scn, epics, kn, s.backlog); if (!tickets.length && SCN[s.scn]?.own) { set(() => ({ note: "Upload a backlog or pull one from a tracker first." })); return; } set(() => ({ teams: n, tickets, kn: kn.n, view: "yard", sel: null, note: "" })); };
   // The trainer's own backlog: spreadsheets or CSV parsed by the API, or a tracker's features and stories.
@@ -395,6 +444,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     const team = cur ?? 1, id = key();
     const t: Ticket = { id, type: s.kind, title, parent: parent || "", team, iter: null, pts: 0 };
     if (s.kind === "risk") t.roam = null;
+    else if (s.en) t.en = true;
     set((x) => ({ tickets: [...x.tickets, t], kn: x.kn + 1, newText: "", view: String(team), sel: id }));
     flashIt(id);
   };
@@ -415,10 +465,11 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     const out: { kind: string; key: string; title: string; meta: string; color: string; id: string | null }[] = [];
     let c: Ticket | undefined = t;
     while (c) {
-      out.unshift({ kind: ({ story: "STORY", feature: "FEATURE", risk: "RISK", pio: "PI OBJECTIVE" } as Record<string, string>)[c.type]!, key: c.id, title: c.title, meta: where(c), color: c.type === "story" ? "#e9c98a" : c.type === "risk" ? "#f8a08a" : KC.feature, id: c.id });
-      if (c.type === "feature") {
+      out.unshift({ kind: (c.en ? "ENABLER " : "") + ({ story: "STORY", feature: "FEATURE", capability: "CAPABILITY", epic: "EPIC", risk: "RISK", pio: "PI OBJECTIVE" } as Record<string, string>)[c.type]!, key: c.id, title: c.title, meta: where(c), color: c.type === "risk" ? "#f8a08a" : col(c), id: c.id });
+      // A feature (or capability, or epic) whose parent is a Roadmap epic by title rather than a ticket.
+      if ((c.type === "feature" || c.type === "capability" || c.type === "epic") && !(c.parent && by[c.parent]) && (c.type === "feature" || c.parent)) {
         const ob = epicObj(c.parent ?? "");
-        out.unshift({ kind: "EPIC", key: "", title: c.parent || "No epic", meta: "On the Roadmap · shared by every team", color: KC.epic, id: null });
+        out.unshift({ kind: "EPIC", key: "", title: c.parent || "No epic", meta: "On the Roadmap · shared by every team", color: col({ type: "epic" }), id: null });
         out.unshift(ob ? { kind: "OBJECTIVE", key: "", title: ob.title, meta: "On the OKR board", color: "#7bd34f", id: null } : { kind: "OBJECTIVE", key: "", title: "Not linked to an objective", meta: "Link it on the OKR board", color: "#fff", id: null });
         break;
       }
@@ -429,11 +480,14 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const out = (n: Ticket) => ({ outline: s.sel === n.id ? "3px solid #ff3d8f" : "none", anim: s.flash === n.id ? "glow .7s 3" : "none" });
   const T = s.tickets.filter((t) => t.team === ct);
   const goTicket = (t: Ticket) => () => { set(() => ({ view: String(t.team), sel: t.id })); flashIt(t.id); };
-  const parentOpts = s.kind === "feature" ? epics.map((e) => ({ id: e, t: e })) : s.kind === "story" ? T.filter((t) => t.type === "feature").map((t) => ({ id: t.id, t: t.title })) : [{ id: "", t: "Nothing" }, ...T.filter((t) => t.type === "feature" || t.type === "story").map((t) => ({ id: t.id, t: t.title }))];
+  // Valid parents by type: capabilities under epics (Roadmap or ticket), features under epics or capabilities, stories under this team's features, risks on this team's features or stories.
+  const epicS = epics.map((e) => ({ id: e, t: e })), epicT = s.tickets.filter((t) => t.type === "epic").map((t) => ({ id: t.id, t: `Epic · ${t.title}` })), capT = s.tickets.filter((t) => t.type === "capability").map((t) => ({ id: t.id, t: `Capability · ${t.title}` }));
+  const parentList = (t: Ticket) => { const b = t.type === "capability" ? [...epicS, ...epicT] : t.type === "feature" ? [...epicS, ...epicT, ...capT] : t.type === "story" ? s.tickets.filter((x) => x.type === "feature" && x.team === t.team).map((x) => ({ id: x.id, t: `Feature · ${x.title}` })) : t.type === "risk" ? s.tickets.filter((x) => (x.type === "feature" || x.type === "story") && x.team === t.team).map((x) => ({ id: x.id, t: `${x.type} · ${x.title}` })) : []; return [{ id: "", t: "— Unlinked —" }, ...b]; };
+  const parentOpts = s.kind === "capability" ? [...epicS, ...epicT] : s.kind === "feature" ? [...epicS, ...epicT, ...capT] : s.kind === "story" ? T.filter((t) => t.type === "feature").map((t) => ({ id: t.id, t: t.title })) : s.kind === "epic" ? [] : [{ id: "", t: "Nothing" }, ...T.filter((t) => t.type === "feature" || t.type === "story").map((t) => ({ id: t.id, t: t.title }))];
   const ps = parentOpts.some((o) => o.id === s.parentSel) ? s.parentSel : (parentOpts[0]?.id ?? "");
   const rail = Array.from({ length: N }, (_, k) => k + 1).map((n) => { const tm = teamOf(n), c = checks(n).filter((x) => x[1]).length; return { name: tm.name, color: tm.color, checks: `${c}/5`, bg: cur === n ? "#14123a" : "#fff", fg: cur === n ? "#fff" : "#14123a", go: () => set(() => ({ view: String(n), sel: null })) }; });
   const q = s.q.trim().toLowerCase();
-  const results = q ? s.tickets.filter((t) => `${t.id} ${t.title}`.toLowerCase().includes(q)).slice(0, 7).map((t) => ({ key: t.id, title: t.title, color: t.type === "story" ? "#e9c98a" : t.type === "risk" ? "#f8a08a" : "#14123a", where: `T${t.team}${t.iter ? ` · It ${t.iter}` : ""}`, go: () => { set(() => ({ q: "", view: String(t.team), sel: t.id })); flashIt(t.id); } })) : [];
+  const results = q ? s.tickets.filter((t) => `${t.id} ${t.title}`.toLowerCase().includes(q)).slice(0, 7).map((t) => ({ key: t.id, title: t.title, color: t.type === "risk" ? "#f8a08a" : col(t), where: `T${t.team}${t.iter ? ` · It ${t.iter}` : ""}`, go: () => { set(() => ({ q: "", view: String(t.team), sel: t.id })); flashIt(t.id); } })) : [];
   const yard = Array.from({ length: N }, (_, k) => k + 1).map((n) => {
     const tm = teamOf(n), TT = s.tickets.filter((t) => t.team === n), ch = checks(n).filter((x) => x[1]).length, rk = TT.filter((t) => t.type === "risk"), open = rk.filter((r) => !r.roam).length;
     let lt = 0, cp = 0;
@@ -447,27 +501,52 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   });
   const tm = teamOf(ct);
   const sz = (t: Ticket) => t.est || (t.pts ? t.pts : "?");
-  const fcOf = (st: Ticket) => { const f = st.parent ? by[st.parent] : undefined; return f && f.type === "feature" ? KC.epic : "#14123a"; };
-  const mkStory = (t: Ticket) => ({ key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) });
+  const fcOf = (st: Ticket) => { const f = st.parent ? by[st.parent] : undefined; return f ? col(f) : "#14123a"; };
+  const kidsN = (id: string) => s.tickets.filter((x) => x.parent === id).length;
+  const isCard = (t: Ticket) => t.type === "epic" || t.type === "capability" || t.type === "feature";
+  // A flag or yard card: type colour, hatch and ⚙ for enablers, a ▤ n badge that opens the stack of its children.
+  const mkCard = (t: Ticket) => { const c = col(t), n = kidsN(t.id); return { key: t.id, t: t.title, color: c, bg: c, fg: ink(c), img: t.en ? HATCH : "none", en: t.en ? "⚙ " : "", hasKids: n > 0, n, open: () => set(() => ({ coll: t.id })), stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
+  const mkStory = (t: Ticket) => ({ key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), bg: col(t), fg: ink(col(t)), img: t.en ? HATCH : CRATE, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) });
   const wagons = iters.map((i) => {
     const l = loadOf(ct, i), c = capOf(ct, i), over = l > c, here = T.filter((t) => t.iter === i);
     return { key: `w:${i}`, name: iName(i), dates: iDates(i), load: l, cap: c, fill: Math.min(100, (l / (c || 1)) * 100), gauge: over ? "#ef4b4b" : l / (c || 1) > 0.85 ? "#ffb020" : "#5fb83a", numColor: over ? "#c8372d" : "#14123a", bg: over ? "#fde0dc" : "#fbf9f4",
       capUp: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: c + 1 } })), capDown: () => set((t) => ({ caps: { ...t.caps, [`${ct}:${i}`]: Math.max(0, c - 1) } })),
-      flags: here.filter((t) => t.type === "feature").map((t) => ({ key: t.id, t: t.title, color: KC.epic, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) })), crates: here.filter((t) => t.type === "story").map(mkStory),
+      flags: here.filter(isCard).map(mkCard), crates: here.filter((t) => t.type === "story").map(mkStory),
       hazards: here.filter((t) => t.type === "risk").map((t) => ({ t: t.title, roam: t.roam || "?", bg: t.roam ? "#fff" : "#f8a08a", down: (e: React.PointerEvent) => drag(e, t.id), outline: out(t).outline })) };
   });
-  const yt = T.filter((t) => !t.iter && t.type !== "pio" && t.type !== "risk").map((t) => ({ key: t.id, t: t.title, pts: t.type === "story" ? ` · ${sz(t)}` : "", bg: t.type === "story" ? "#e9c98a" : KC.epic, fg: t.type === "story" ? "#14123a" : "#fff", down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }));
+  const yt = T.filter((t) => !t.iter && t.type !== "pio" && t.type !== "risk").map((t) => ({ ...mkCard(t), pts: t.type === "story" ? ` · ${sz(t)}` : "" }));
   const rks = T.filter((t) => t.type === "risk").map((t) => ({ key: t.id, t: t.title, bg: t.roam ? "#f4f1ea" : "#f8a08a", outline: out(t).outline, stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), where: t.roam ? ROAM.find((o) => o[0] === t.roam)![1] + (t.iter ? ` · ${iName(t.iter)}` : "") : t.iter ? `On ${iName(t.iter)}` : "Drag onto a wagon", roam: ROAM.map(([k, name, c]) => ({ k, name, bg: t.roam === k ? c : "#fff", go: () => upd(t.id, { roam: t.roam === k ? null : k }) })) }));
   const pios = T.filter((t) => t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit)).map((t) => ({ t: t.title, bg: t.commit ? "#fff" : "#f4f1ea", border: t.commit ? "solid" : "dashed", tag: t.commit ? "C" : "U", rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) }));
   const cBV = T.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), aBV = T.filter((t) => t.type === "pio").reduce((a, t) => a + (t.bv ?? 0), 0);
   const ck = checks(ct);
-  let chain: any[] = [], down: any[] = [], sel: any = {};
+  let chain: any[] = [], down: any[] = [], sel: any = {}, facts: any[] = [], form: any[] = [], etypes: any[] = [], parentOptsW: any[] = [];
   if (selT) {
     const lin = lineage(selT);
     chain = lin.map((n, i) => ({ ...n, key: n.key ? ` · ${n.key}` : "", ring: n.id === selT.id ? "3px solid #ff3d8f" : "none", line: i === lin.length - 1 ? 0 : 0.35, fw: n.id === selT.id ? 800 : 600, cursor: n.id && by[n.id] ? "pointer" : "default", go: () => n.id && by[n.id] && goTicket(by[n.id]!)() }));
-    down = s.tickets.filter((t) => t.parent === selT.id).map((t) => ({ t: t.title, color: t.type === "story" ? "#e9c98a" : "#f8a08a", where: t.type === "story" ? `${t.iter ? `It ${t.iter}` : "yard"} · ${sz(t)} pts` : "risk", go: goTicket(t) }));
-    sel = { key: selT.id, title: selT.title, where: where(selT) + (selT.type === "story" ? ` · ${sz(selT)} pts` : "") };
+    down = s.tickets.filter((t) => t.parent === selT.id).map((t) => ({ t: t.title, color: t.type === "risk" ? "#f8a08a" : col(t), where: t.type === "story" ? `${t.iter ? `It ${t.iter}` : "yard"} · ${sz(t)} pts` : t.type === "risk" ? "risk" : `${kidsN(t.id)} inside`, go: goTicket(t) }));
+    const peers = s.tickets.filter((t) => t.team === selT.team && t.type !== "pio"), pi = peers.findIndex((t) => t.id === selT.id), tc = selT.type === "risk" ? "#f8a08a" : col(selT), ink2 = ink(tc);
+    sel = {
+      key: selT.id, title: selT.title, where: where(selT) + (selT.type === "story" ? ` · ${sz(selT)} pts` : ""), type: (selT.en ? "ENABLER " : "") + selT.type.toUpperCase(), color: tc, fg: ink2,
+      enOn: !!selT.en, enBg: selT.en ? "#ffe14d" : "transparent", canEn: selT.type !== "risk" && selT.type !== "pio", canKids: !!CHILD[selT.type], kidType: CHILD[selT.type] ?? "",
+      toggleEn: () => upd(selT.id, { en: !selT.en }), openColl: () => set(() => ({ coll: selT.id })), note: selT.note ?? "", pos: `${pi + 1} / ${peers.length}`,
+      formTitle: ({ story: "USER STORY · AS A / I WANT / SO THAT", feature: "FEATURE · HYPOTHESIS, OBJECTIVES, EPIC LINK", epic: "EPIC · HYPOTHESIS STATEMENT", capability: "CAPABILITY · BENEFIT HYPOTHESIS", risk: "RISK", pio: "OBJECTIVE" } as Record<string, string>)[selT.type] + (selT.en ? " · ENABLER" : ""),
+      canParent: selT.type !== "epic" && selT.type !== "pio", parentLbl: ({ capability: "EPIC", feature: "EPIC / CAPABILITY", story: "FEATURE", risk: "RELATES TO" } as Record<string, string>)[selT.type] ?? "",
+      parentValW: selT.parent ?? "", setParentW: (e: React.ChangeEvent<HTMLSelectElement>) => upd(selT.id, { parent: e.target.value }),
+    };
+    facts = [{ k: "TEAM", v: teamOf(selT.team).name }, { k: "LOCATION", v: where(selT) }, { k: selT.type === "story" ? "SIZE" : "CHILDREN", v: selT.type === "story" ? `${sz(selT)} pts` : String(down.length) }, { k: selT.type === "risk" ? "ROAM" : "STATUS", v: selT.type === "risk" ? (selT.roam || "Not yet ROAMed") : selT.iter ? "Loaded" : "In the yard" }];
+    const fv = selT.f ?? {};
+    form = formDefs(selT).map((d) => ({ label: d.label, ph: d.ph, area: d.area, line: !d.area, rows: d.rows, val: d.k === "note" ? (selT.note ?? "") : (fv[d.k] ?? ""), set: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF(selT.id, d.k, e.target.value), chipBg: tc, chipFg: ink2 }));
+    etypes = ["Architecture", "Infrastructure", "Exploration", "Compliance"].map((n) => ({ n, bg: fv.etype === n ? tc : "#fff", fg: fv.etype === n ? ink2 : "#14123a", go: () => setF(selT.id, "etype", fv.etype === n ? "" : n) }));
+    parentOptsW = parentList(selT).map((o) => ({ ...o, sel: o.id === (selT.parent ?? "") }));
   }
+  // The colour key: per type, standard and enabler, with counts for the view in front of you.
+  const base = cur ? T : s.tickets;
+  const legend = (en: boolean) => TYPES.map(([k, n]) => { const kk = k + (en ? "E" : ""), c = s.colors?.[kk] ?? DEFC[kk]!; return { name: n, color: c, fg: ink(c), img: en ? HATCH : "none", n: base.filter((t) => t.type === k && !!t.en === en).length, set: (e: React.ChangeEvent<HTMLInputElement>) => { const val = e.target.value; set((x) => ({ colors: { ...(x.colors ?? {}), [kk]: val } })); }, tag: s.colors?.[kk] ? "custom" : "default" }; });
+  // The stack: a card's children dealt out, each with Locate, Open and a parent switch; the footer adds the next level down.
+  const cp = s.coll ? by[s.coll] : undefined, kidT = cp ? CHILD[cp.type] : undefined, cpf = cp?.f ?? {}, collSummary = cp ? (cpf.hyp || cpf.sol || cpf.desc || cpf.enwhy || "") : "";
+  const collRows = cp ? s.tickets.filter((x) => x.parent === cp.id).map((x, xi) => { const c = x.type === "risk" ? "#f8a08a" : col(x); return { delay: `${xi * 70}ms`, rot: [-2.2, 1.6, -1, 2.4][xi % 4], tag: (x.en ? "⚙ ENABLER " : "") + x.type.toUpperCase(), size: x.type === "story" ? String(sz(x)) : "", hasSize: x.type === "story", moveOpts: parentList(x).map((o) => ({ ...o, sel: o.id === x.parent })), moveVal: x.parent ?? "", move: (e: React.ChangeEvent<HTMLSelectElement>) => upd(x.id, { parent: e.target.value }), color: c, fg: ink(c), img: x.en ? HATCH : "none", t: x.title, meta: `${x.en ? "Enabler " : ""}${x.type}${x.type === "story" ? ` · ${sz(x)} pts` : ""} · ${where(x)}`, locate: () => { set(() => ({ coll: null, full: false, view: String(x.team), sel: x.id })); flashIt(x.id); }, open: () => set(() => ({ coll: null, sel: x.id, full: true, view: String(x.team) })) }; }) : [];
+  const addKid = () => { const title = s.collText.trim(); if (!cp || !kidT || !title) return; const id = key(); const t: Ticket = { id, type: kidT, title, parent: cp.id, team: cp.team, iter: null, pts: 0, ...(s.collEn ? { en: true } : {}) }; set((x) => ({ tickets: [...x.tickets, t], kn: x.kn + 1, collText: "" })); flashIt(id); };
+  const stepT = (d: number) => { if (!selT) return; const peers = s.tickets.filter((x) => x.team === selT.team && x.type !== "pio"), i = peers.findIndex((x) => x.id === selT.id), n = peers[(i + d + peers.length) % peers.length]; if (n) set(() => ({ sel: n.id })); };
   const g = s.ghost, pk = selT?.type === "story" ? selT : null;
   const hint: Record<string, string> = { "?": "Not enough information", "∞": "Too big, split it", 100: "Huge", 40: "Very large" };
   const v = {
@@ -575,9 +654,14 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       </div>
     ) : null,
     goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
-    kinds: ([["story", "Story"], ["feature", "Feature"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
+    kinds: ([["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"], ["risk", "Risk"]] as const).map(([k, n]) => ({ n, dot: k === "risk" ? "#f8a08a" : col({ type: k, en: s.en }), bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
+    toggleNewEn: () => set((t) => ({ en: !t.en })), enBg: s.en ? "#ffe14d" : "transparent", enFg: s.en ? "#14123a" : "#fff",
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
-    newHint: `${tm.name}: new ${s.kind}…`, hasParents: true, parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: s.kind === "feature" ? "Epic" : s.kind === "story" ? "Feature" : "Relates to",
+    newHint: `${tm.name}: new ${s.en && s.kind !== "risk" ? "enabler " : ""}${s.kind}…`, hasParents: s.kind !== "epic", parentOpts: parentOpts.map((o) => ({ ...o, sel: o.id === ps })), parentVal: ps, setParent: (e: React.ChangeEvent<HTMLSelectElement>) => set(() => ({ parentSel: e.target.value })), parentLabel: ({ capability: "Epic", feature: "Epic / capability", story: "Feature" } as Record<string, string>)[s.kind] ?? "Relates to",
+    legStd: legend(false), legEn: legend(true), hasCustom: Object.keys(s.colors ?? {}).length > 0, resetColors: () => set(() => ({ colors: {} })),
+    showFull: !!selT && s.full, facts, form, etypes, parentOptsW, openFull: () => set(() => ({ full: true })), closeFull: () => set(() => ({ full: false })), stopClick: (e: React.SyntheticEvent) => e.stopPropagation(),
+    fullTitle: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { title: e.target.value }), fullNote: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { note: e.target.value }), prevT: () => stepT(-1), nextT: () => stepT(1),
+    showColl: !!cp, collSummary, hasSummary: !!collSummary, collTitle: cp?.title ?? "", collColor: cp ? col(cp) : "#fff", collFg: cp ? ink(col(cp)) : "#14123a", collKind: cp ? (cp.en ? "ENABLER " : "") + cp.type.toUpperCase() : "", collRows, collEmpty: !collRows.length, collN: collRows.length, collAdd: kidT ? `Add ${kidT}` : "", canAddKid: !!kidT, collText: s.collText, setCollText: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ collText: e.target.value })), collKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addKid(); }, addKid, collEnBg: s.collEn ? "#ffe14d" : "#fff", toggleCollEn: () => set((t) => ({ collEn: !t.collEn })), closeColl: () => set(() => ({ coll: null })),
     isYard: !cur, isTeam: !!cur, yard, shared, team: tm, wagons, yardTickets: yt, yardEmpty: !yt.length, risks: rks, noRisks: !rks.length, pios, cBV, reliab: aBV ? `${Math.round((cBV / aBV) * 100)}% reliability` : "no BV yet",
     addPio: () => set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio", title: "New objective", team: ct, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1 })),
     poker: POKER.map((val, k) => ({ v: val, rot: (k - 5) * 4, dy: Math.abs(k - 5) * 2, bg: pk && (pk.est === val || (!pk.est && pk.pts === val)) ? "#ffe14d" : "#fff", go: () => pk && upd(pk.id, typeof val === "number" ? { pts: val, est: "" } : { pts: 0, est: val }) })),
@@ -589,7 +673,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   };
   return (
     <div style={page("#f4f1ea")}>
-      <style>{`@keyframes glow{0%,100%{box-shadow:0 0 0 0 #ff3d8f}50%{box-shadow:0 0 0 7px transparent}}@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}`}</style>
+      <style>{`@keyframes glow{0%,100%{box-shadow:0 0 0 0 #ff3d8f}50%{box-shadow:0 0 0 7px transparent}}@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}@keyframes unfold{from{opacity:0;transform:perspective(1200px) rotateX(-70deg) scale(.9);transform-origin:top center}to{opacity:1;transform:none}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes deal{from{opacity:0;transform:translate(-50px,-70px) rotate(-14deg)}to{opacity:1;transform:none}}`}</style>
       <Note text={error} />
       <PlanningRoomView v={v} />
     </div>
