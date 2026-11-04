@@ -2244,3 +2244,54 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect((await call("DELETE", `/v1/boards/${id}`)).status).toBe(204);
   });
 });
+
+describe("storage in shards", () => {
+  it("saves each board and planning document on its own, only when it changed, and loads them back", async () => {
+    const persistence = new MemoryPersistence<StoreState>();
+    const { call, store } = await setup({ persistence });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const ws = store.workspaceId;
+    const shards = async () => (await persistence.loadShards(ws)).map((s) => `${s.kind}/${s.key}`);
+    expect(await shards()).toContain(`board/${id}`);
+    // The core row carries no boards or documents.
+    const core = (await persistence.load(ws))!.state;
+    expect(core.workspace.boards).toBeUndefined();
+    expect(core.workspace.docs).toBeUndefined();
+    // A sticky on the board rewrites that board's shard and nothing else; the room document gets its own.
+    const frame = ((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; parentId?: string }[]).find((f) => f.parentId)!;
+    const before = (await persistence.loadShards(ws)).find((s) => s.key === id)!.data as { frames: { id: string; state?: Record<string, unknown> }[] };
+    expect(before.frames.find((f) => f.id === frame.id)!.state).toBeUndefined();
+    await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(frame.id)}/state`, { key: "lane:0", op: "push", value: { text: "Hello" } }, root);
+    await call("PUT", `/v1/docs/planning-room%3A${id}`, { doc: { teams: 2, caps: {}, kn: 100, tickets: [] } }, root);
+    const after = await persistence.loadShards(ws);
+    expect((after.find((s) => s.key === id)!.data as typeof before).frames.find((f) => f.id === frame.id)!.state).toMatchObject({ "lane:0": [{ text: "Hello" }] });
+    expect(after.find((s) => s.kind === "doc" && s.key === `planning-room:${id}`)!.data).toMatchObject({ teams: 2 });
+    // A fresh store on the same persistence sees the board, its state and the document.
+    const again = new Store({ persistence });
+    expect(await again.open()).toBe("loaded");
+    const b = again.state.workspace.boards!.find((x) => x.id === id)!;
+    expect(b.frames.find((f) => f.id === frame.id)!.state).toMatchObject({ "lane:0": [{ text: "Hello" }] });
+    expect(again.state.workspace.docs![`planning-room:${id}`]).toMatchObject({ teams: 2 });
+    // Deleting the board removes its shard.
+    await call("DELETE", `/v1/boards/${id}`, undefined, root);
+    expect(await shards()).not.toContain(`board/${id}`);
+  });
+
+  it("moves a workspace saved whole (before the split) into shards on its first commit", async () => {
+    const persistence = new MemoryPersistence<StoreState>();
+    const first = new Store({ persistence });
+    await first.open();
+    // As an older server left it: the board inside the core row.
+    first.state.workspace.boards = [{ id: "b-old", name: "Old", origin: { system: "trainyard", externalId: "x", importedAt: "2026-01-01T00:00:00.000Z" }, isTemplate: false, frames: [], nodes: [], edges: [], columns: [], groups: [], rows: [] }];
+    first.state.workspace.docs = { roadmap: { lanes: [] } };
+    await persistence.save(first.workspaceId, first.state, first.version);
+    const second = new Store({ persistence });
+    expect(await second.open()).toBe("loaded");
+    expect(second.state.workspace.boards!.map((b) => b.id)).toEqual(["b-old"]);
+    expect(second.state.workspace.docs).toEqual({ roadmap: { lanes: [] } });
+    await second.commit({ userId: "u1", name: "U", role: "admin", anonymous: false, workspaceId: second.workspaceId, platformAdmin: false }, "workspace.touch");
+    expect((await persistence.loadShards(second.workspaceId)).map((s) => `${s.kind}/${s.key}`).sort()).toEqual(["board/b-old", "doc/roadmap"]);
+    expect((await persistence.load(second.workspaceId))!.state.workspace.boards).toBeUndefined();
+  });
+});
