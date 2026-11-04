@@ -7,7 +7,7 @@ import { randomBytes } from "node:crypto";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { classTeams, makeTeams, MAX_TEAMS, placeStudent, seatStudents, teamOf, type Board, type ClassTeam } from "@trainyard/core";
+import { classTeams, makeRounds, makeTeams, MAX_TEAMS, placeStudent, roundCount, seatStudents, teamOf, teamPolicy, teamRounds, type Board, type ClassTeam, type TeamPolicy } from "@trainyard/core";
 import { hashKey, require } from "./auth.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Mailer } from "./mailer.js";
@@ -63,6 +63,14 @@ export function registerStudentRoutes(app: App, tenants: Tenants, store: Store, 
   };
   const here = (req: FastifyRequest) => req.principal.workspaceId;
   const seat = seatClass(tenants, store);
+  const studentIds = (req: FastifyRequest, b: Board) => guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map((g) => g.id);
+  // Writes the teams back: round 0 is `teams`; with a rotation policy, the other rounds follow.
+  const saveTeams = (b: Board, teams: ClassTeam[], rounds: ClassTeam[][], ids: string[], policy: TeamPolicy) => {
+    const all = teams.length ? makeRounds(policy, teams, rounds, ids, roundCount(b, policy)) : [[]];
+    b.fields = { ...(b.fields ?? {}), teams, teamPolicy: policy, teamRounds: all.slice(1).length ? all : undefined };
+    if (b.fields.teamRounds === undefined) delete b.fields.teamRounds;
+    return all;
+  };
   const view = (g: ClassGuest) => ({ id: g.id, name: g.name, email: g.email, createdAt: g.createdAt, ...(g.emailedAt ? { emailedAt: g.emailedAt } : {}), ...(g.seenAt ? { seenAt: g.seenAt } : {}) });
   const link = (token: string) => `${(opts.webUrl ?? "").replace(/\/$/, "")}/join/${token}`;
   const mirrorLink = (token: string) => (opts.webMirrorUrl ? `${opts.webMirrorUrl.replace(/\/$/, "")}/join/${token}` : undefined);
@@ -106,7 +114,7 @@ Trainyard`,
 
   app.get("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), teams: classTeams(b), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
+    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), teams: classTeams(b), teamPolicy: teamPolicy(b), teamRounds: teamRounds(b), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
   });
 
   // Adds students; the new links come back once. An email already on the class keeps the link it
@@ -127,7 +135,7 @@ Trainyard`,
       g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
       guests().push(g);
       // With teams set up, a new student joins the smallest one.
-      if (classTeams(b).length) b.fields = { ...(b.fields ?? {}), teams: makeTeams(classTeams(b).length, classTeams(b), onBoard().map((x) => x.id)) };
+      if (classTeams(b).length) saveTeams(b, makeTeams(classTeams(b).length, classTeams(b), onBoard().map((x) => x.id)), teamRounds(b), onBoard().map((x) => x.id), teamPolicy(b));
       const emailed = req.body.send ? await email(g, b.name, token, trainerOf(req), teamOf(classTeams(b), g.id)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
       out.push({ ...view(g), token, ...links(token), emailed });
     }
@@ -155,34 +163,37 @@ Trainyard`,
     platform.state.classGuests = guests().filter((x) => !(x.id === req.params.sid && x.boardId === b.id && x.workspaceId === here(req)));
     if (guests().length === before) throw notFound("Student");
     await platform.commit(req.principal, "class.students.remove", { boardId: b.id, studentId: req.params.sid });
-    if (teamOf(classTeams(b), req.params.sid)) {
-      b.fields = { ...(b.fields ?? {}), teams: placeStudent(classTeams(b), req.params.sid, null) };
+    if (classTeams(b).length) {
+      saveTeams(b, placeStudent(classTeams(b), req.params.sid, null), teamRounds(b).map((r) => placeStudent(r, req.params.sid, null)), studentIds(req, b), teamPolicy(b));
       await store.commit(req.principal, "class.teams.seat", { boardId: b.id });
     }
     await seat(req, b);
     return reply.code(204).send();
   });
   // The class's teams: `count` makes that many (keeping the ones there are and seating every
-  // student), `shuffle` deals the students out again at random, `spread` evenly in order, `move` puts one student in a team (or in
-  // none), `names` renames them.
-  app.put("/v1/boards/:id/teams", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ count: z.number().int().min(0).max(MAX_TEAMS).optional(), shuffle: z.boolean().optional(), spread: z.boolean().optional(), move: z.object({ studentId: z.string().max(80), teamId: z.string().max(40).nullable() }).optional(), names: z.record(z.string().max(40), z.string().trim().min(1).max(60)).optional() }) } }, async (req) => {
+  // student), `policy` sets the rotation (never, every day, every chapter), and `shuffle` (at
+  // random), `spread` (evenly, in order), `move` (one student to a team, or to none) and `names`
+  // change the seating of one `round` (default the first; names are shared by every round).
+  app.put("/v1/boards/:id/teams", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ count: z.number().int().min(0).max(MAX_TEAMS).optional(), policy: z.enum(["never", "day", "chapter"]).optional(), round: z.number().int().min(0).max(40).optional(), shuffle: z.boolean().optional(), spread: z.boolean().optional(), move: z.object({ studentId: z.string().max(80), teamId: z.string().max(40).nullable() }).optional(), names: z.record(z.string().max(40), z.string().trim().min(1).max(60)).optional() }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    const ids = guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map((g) => g.id);
-    let teams = classTeams(b);
-    if (req.body.count !== undefined) teams = makeTeams(req.body.count, teams, ids);
-    // A shuffle deals every student out again, at random, into the same teams.
-    if (req.body.shuffle && teams.length) teams = makeTeams(teams.length, teams.map((t) => ({ ...t, members: [] })), [...ids].sort(() => Math.random() - 0.5));
-    // Spread evenly: the students dealt out again in their current order, one per team in turn.
-    if (req.body.spread && teams.length) teams = makeTeams(teams.length, teams.map((t) => ({ ...t, members: [] })), [...teams.flatMap((t) => t.members), ...ids.filter((i) => !teams.some((t) => t.members.includes(i)))]);
+    const ids = studentIds(req, b);
+    const policy = req.body.policy ?? teamPolicy(b);
+    let rounds = teamRounds(b).map((r) => r);
+    if (req.body.count !== undefined) rounds = [makeTeams(req.body.count, rounds[0] ?? [], ids)];
+    const r = Math.min(req.body.round ?? 0, Math.max(0, rounds.length - 1));
+    let cur = rounds[r] ?? rounds[0] ?? [];
+    if (req.body.shuffle && cur.length) cur = makeTeams(cur.length, cur.map((t) => ({ ...t, members: [] })), [...ids].sort(() => Math.random() - 0.5));
+    if (req.body.spread && cur.length) cur = makeTeams(cur.length, cur.map((t) => ({ ...t, members: [] })), [...cur.flatMap((t) => t.members), ...ids.filter((i) => !cur.some((t) => t.members.includes(i)))]);
     if (req.body.move) {
       if (!ids.includes(req.body.move.studentId)) throw notFound("Student");
-      if (req.body.move.teamId && !teams.some((t) => t.id === req.body.move!.teamId)) throw notFound("Team");
-      teams = placeStudent(teams, req.body.move.studentId, req.body.move.teamId);
+      if (req.body.move.teamId && !cur.some((t) => t.id === req.body.move!.teamId)) throw notFound("Team");
+      cur = placeStudent(cur, req.body.move.studentId, req.body.move.teamId);
     }
-    if (req.body.names) teams = teams.map((t) => ({ ...t, name: req.body.names![t.id] ?? t.name }));
-    b.fields = { ...(b.fields ?? {}), teams };
-    await store.commit(req.principal, "class.teams", { boardId: b.id, teams: teams.length });
-    return { teams };
+    rounds[r] = cur;
+    if (req.body.names) rounds = rounds.map((rr) => rr.map((t) => ({ ...t, name: req.body.names![t.id] ?? t.name })));
+    const all = saveTeams(b, rounds[0] ?? [], rounds, ids, policy);
+    await store.commit(req.principal, "class.teams", { boardId: b.id, teams: (rounds[0] ?? []).length, policy });
+    return { teams: classTeams(b), teamPolicy: policy, teamRounds: all };
   });
 }
 

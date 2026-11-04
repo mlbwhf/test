@@ -70,3 +70,69 @@ export function teamState(state: Record<string, unknown>, teamId: string): Recor
 export function teamOp(change: StateOp, teamId: string): StateOp {
   return { ...change, key: `${prefix(teamId)}${change.key}` };
 }
+
+// ---- Rotation: new teams every day or every chapter ---------------------------------------------
+// With a policy, the class holds one seating per round (a day or a chapter), all with the same team
+// names. Which round is in force follows the lesson being worked on, so every student and the
+// trainer land on the same teams for a given chapter without anyone pressing a button.
+
+export type TeamPolicy = "never" | "day" | "chapter";
+
+export function teamPolicy(b: Pick<Board, "fields">): TeamPolicy {
+  const p = b.fields?.teamPolicy;
+  return p === "day" || p === "chapter" ? p : "never";
+}
+
+/** The seatings, one per round; without a policy, the one seating. */
+export function teamRounds(b: Pick<Board, "fields">): ClassTeam[][] {
+  const r = b.fields?.teamRounds;
+  const rounds = Array.isArray(r) ? (r as unknown[]).map((x) => classTeams({ fields: { teams: x } })) : [];
+  return teamPolicy(b) !== "never" && rounds.length ? rounds : [classTeams(b)];
+}
+
+/** How many rounds the policy needs: one per day or per chapter (lessons, days from the class board's fields). */
+export function roundCount(b: Pick<Board, "fields">, policy = teamPolicy(b)): number {
+  const lessons = Math.max(1, Number(b.fields?.lessons) || 1);
+  const days = Math.max(1, Number(b.fields?.days) || Math.ceil(lessons / 2));
+  return policy === "chapter" ? lessons : policy === "day" ? days : 1;
+}
+
+/** The round a lesson falls in (lessonIdx counts the numbered lessons from 0; the Welcome area is round 0). */
+export function roundOf(b: Pick<Board, "fields">, lessonIdx: number): number {
+  const n = roundCount(b);
+  if (n <= 1 || lessonIdx < 0) return 0;
+  const lessons = Math.max(1, Number(b.fields?.lessons) || 1);
+  const perRound = Math.ceil(lessons / n);
+  return Math.min(n - 1, Math.floor(lessonIdx / perRound));
+}
+
+/** The teams in force for a lesson. */
+export function teamsAt(b: Pick<Board, "fields">, lessonIdx: number): ClassTeam[] {
+  const rounds = teamRounds(b);
+  return rounds[Math.min(rounds.length - 1, roundOf(b, lessonIdx))] ?? [];
+}
+
+const shuffled = <T>(xs: T[], rnd: () => number) => {
+  const a = [...xs];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+};
+
+/**
+ * The seatings for a policy: round 0 is the teams as they are; every later round deals the
+ * students out again at random (the team names kept). Existing later rounds are kept when their
+ * count fits, re-seated for students who came or went.
+ */
+export function makeRounds(policy: TeamPolicy, teams: ClassTeam[], existing: ClassTeam[][], studentIds: string[], rounds: number, rnd: () => number = Math.random): ClassTeam[][] {
+  if (policy === "never" || !teams.length) return [teams];
+  const out: ClassTeam[][] = [teams];
+  for (let r = 1; r < rounds; r++) {
+    const prev = existing[r];
+    const base = prev && prev.length === teams.length ? prev.map((t, i) => ({ ...t, id: teams[i]!.id, name: teams[i]!.name })) : teams.map((t) => ({ ...t, members: [] }));
+    out.push(makeTeams(teams.length, base, prev && prev.length === teams.length ? studentIds : shuffled(studentIds, rnd)));
+  }
+  return out;
+}

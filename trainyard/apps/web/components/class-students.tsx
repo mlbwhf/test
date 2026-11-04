@@ -29,13 +29,18 @@ type Team = { id: string; name: string; members: string[] };
 const TEAM_COLORS = ["#ffd37a", "#cde0f2", "#cfe8d4", "#f6b9ae", "#d9cdf0", "#f0d9a8", "#d6e6c3", "#e6d3f0", "#c9e07a", "#a9c4ec"];
 
 export function ClassStudents({ boardId }: { boardId: string }) {
-  const q = useApi<{ students: Student[]; teams: Team[]; canEmail: boolean; mirrorHost?: string }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
-  const teams = q.data?.teams ?? [];
+  const q = useApi<{ students: Student[]; teams: Team[]; teamPolicy: "never" | "day" | "chapter"; teamRounds: Team[][]; canEmail: boolean; mirrorHost?: string }>(`/v1/boards/${encodeURIComponent(boardId)}/students`);
+  const policy = q.data?.teamPolicy ?? "never";
+  const rounds = q.data?.teamRounds?.length ? q.data.teamRounds : [q.data?.teams ?? []];
+  // The round (day or chapter) whose seating the cards show and edit.
+  const [roundI, setRoundI] = useState(0);
+  const round = Math.min(roundI, rounds.length - 1);
+  const teams = rounds[round] ?? [];
   const [teamN, setTeamN] = useState<number | null>(null);
   const wantTeams = teamN ?? (teams.length || 4);
-  const setTeams = async (body: { count?: number; shuffle?: boolean; spread?: boolean; move?: { studentId: string; teamId: string | null }; names?: Record<string, string> }) => {
+  const setTeams = async (body: { count?: number; policy?: "never" | "day" | "chapter"; shuffle?: boolean; spread?: boolean; move?: { studentId: string; teamId: string | null }; names?: Record<string, string> }) => {
     try {
-      await api("PUT", `/v1/boards/${encodeURIComponent(boardId)}/teams`, body);
+      await api("PUT", `/v1/boards/${encodeURIComponent(boardId)}/teams`, { round, ...body });
       setErr(null);
       await q.reload();
     } catch (e) {
@@ -193,7 +198,26 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         </div>
         {teams.length ? (
           <>
-            {assign === "manual" ? <span className="faint">Pick a student, then pick a team. Teams stay the same all class unless you change them.</span> : null}
+            <div className="row" style={{ gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <span className="ex-mono" style={{ color: "#4d5a52" }}>RESHUFFLE TEAMS</span>
+              {(["never", "day", "chapter"] as const).map((p) => (
+                <button key={p} className="btn small" aria-pressed={policy === p} onClick={() => void setTeams({ policy: p }).then(() => setRoundI(0))} style={{ background: policy === p ? "#ffd37a" : "#fff" }}>
+                  {p === "never" ? "Never" : p === "day" ? "Every day" : "Every chapter"}
+                </button>
+              ))}
+              <span className="faint">{policy === "never" ? "Same teams for the whole class." : policy === "day" ? "New teams at the start of each day: the board switches seating with the day's chapters, by itself." : "New teams at the start of every chapter, so everyone works with new people; the board switches by itself."}</span>
+            </div>
+            {rounds.length > 1 ? (
+              <div className="row" style={{ gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                <span className="ex-mono" style={{ color: "#4d5a52" }}>SEATING FOR</span>
+                {rounds.map((_, i) => (
+                  <button key={i} className="btn small" aria-pressed={i === round} onClick={() => setRoundI(i)} style={{ background: i === round ? "#ffb627" : "#fff" }}>
+                    {policy === "day" ? `Day ${i + 1}` : `Chapter ${i + 1}`}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {assign === "manual" ? <span className="faint">Pick a student, then pick a team.{policy === "never" ? " Teams stay the same all class unless you change them." : ` This changes the ${policy === "day" ? "day" : "chapter"} shown above only.`}</span> : null}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
               {teams.map((t, i) => (
                 <div key={t.id} onClick={() => sel && assign === "manual" && void setTeams({ move: { studentId: sel, teamId: t.id } }).then(() => setSel(null))} style={{ border: "2px solid #0d1815", borderRadius: 12, background: TEAM_COLORS[i % TEAM_COLORS.length], padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8, cursor: sel ? "pointer" : "default", boxShadow: sel ? "3px 3px 0 #ffb627" : "none" }}>
@@ -321,7 +345,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
               </th>
               <th>Name</th>
               <th>Email</th>
-              {teams.length ? <th>Team</th> : null}
+              {teams.length ? <th>{rounds.length > 1 ? `Team (${policy === "day" ? "day" : "chapter"} ${round + 1})` : "Team"}</th> : null}
               <th>Joined</th>
               <th>
                 <span className="sr-only">Actions</span>

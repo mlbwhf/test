@@ -2186,6 +2186,20 @@ describe("classes: students by link, wipe and custom templates", () => {
     const moved = await call("PUT", `/v1/boards/${id}/teams`, { move: { studentId: cy!.id, teamId: "t2" }, names: { t1: "Red" } }, root);
     expect(moved.body.teams).toEqual([{ id: "t1", name: "Red", members: [ana!.id] }, { id: "t2", name: "Team 2", members: [ben!.id, dee.id, cy!.id] }]);
     expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 3 }, ana!.token)).status).toBe(403);
+    // A rotation every chapter: one seating per lesson, the first as it is, the same names, everyone seated in each.
+    const rot = await call("PUT", `/v1/boards/${id}/teams`, { policy: "chapter" }, root);
+    const lessons = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.fields.lessons as number;
+    expect(rot.body.teamRounds).toHaveLength(lessons);
+    expect(rot.body.teamRounds[0]).toEqual(moved.body.teams);
+    for (const round of rot.body.teamRounds as { name: string; members: string[] }[][]) {
+      expect(round.map((t) => t.name)).toEqual(["Red", "Team 2"]);
+      expect(round.flatMap((t) => t.members).sort()).toEqual([ana!.id, ben!.id, cy!.id, dee.id].sort());
+    }
+    // A move in round 2 leaves round 1 alone; back to "never" keeps the first seating only.
+    const r2 = await call("PUT", `/v1/boards/${id}/teams`, { round: 1, move: { studentId: ana!.id, teamId: "t2" } }, root);
+    expect(r2.body.teamRounds[1][1].members).toContain(ana!.id);
+    expect(r2.body.teamRounds[0]).toEqual(moved.body.teams);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { policy: "never" }, root)).body.teamRounds).toEqual([moved.body.teams]);
     // Removing a student takes them out of their team; no teams clears the lot.
     await call("DELETE", `/v1/boards/${id}/students/${ben!.id}`, undefined, root);
     expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.teams[1].members).toEqual([dee.id, cy!.id]);

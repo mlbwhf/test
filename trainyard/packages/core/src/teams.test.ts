@@ -32,3 +32,29 @@ describe("class teams", () => {
     expect(isClassWide({ activity: { kind: "Activity", steps: "", board: "vote", config: { classWide: true } } })).toBe(true);
   });
 });
+
+describe("team rotation", () => {
+  it("deals new teams per day or per chapter and picks the round from the lesson", async () => {
+    const { makeRounds, makeTeams, roundOf, teamsAt, roundCount } = await import("./teams.js");
+    const ids = ["a", "b", "c", "d", "e", "f"];
+    const t = makeTeams(2, [], ids);
+    let k = 0;
+    const rnd = () => ((k += 7) % 11) / 11;
+    const rounds = makeRounds("chapter", t, [], ids, 3, rnd);
+    expect(rounds).toHaveLength(3);
+    expect(rounds[0]).toEqual(t);
+    for (const r of rounds) {
+      expect(r.map((x) => x.name)).toEqual(["Team 1", "Team 2"]);
+      expect(r.flatMap((x) => x.members).sort()).toEqual(ids);
+    }
+    expect(rounds[1]).not.toEqual(rounds[0]);
+    // Later rounds survive a re-make with a new student, who is seated in each.
+    const again = makeRounds("chapter", makeTeams(2, t, [...ids, "g"]), rounds, [...ids, "g"], 3, rnd);
+    expect(again[1]!.flatMap((x) => x.members).filter((m) => m !== "g")).toEqual(rounds[1]!.flatMap((x) => x.members));
+    const b = { fields: { lessons: 6, days: 2, teamPolicy: "day", teamRounds: makeRounds("day", t, [], ids, 2, rnd) } };
+    expect(roundCount(b)).toBe(2);
+    expect([0, 2, 3, 5].map((i) => roundOf(b, i))).toEqual([0, 0, 1, 1]);
+    expect(teamsAt(b, 4)).toEqual(b.fields.teamRounds[1]);
+    expect(teamsAt({ fields: { lessons: 6, teams: t } }, 4)).toEqual(t);
+  });
+});

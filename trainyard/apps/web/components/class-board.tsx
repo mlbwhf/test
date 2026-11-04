@@ -12,7 +12,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { activityTiming, cardChoices, classTeams, isClassWide, teamOf, teamOp, teamState, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
+import { activityTiming, cardChoices, classTeams, isClassWide, roundOf, teamOf, teamOp, teamPolicy, teamsAt, teamState, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ActivityEditor } from "@/components/activity-editor";
 import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
@@ -45,7 +45,6 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const teams = useMemo(() => classTeams(board), [board]);
   const me = useMe();
   const studentId = me.data?.principal.userId.startsWith("guest:") ? me.data.principal.userId.slice(6) : null;
-  const myTeam = studentId ? teamOf(teams, studentId) : undefined;
   const [teamPick, setTeamPick] = useState<string | null>(null);
   const asked = useSearchParams().get("team");
   useEffect(() => {
@@ -66,7 +65,14 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
       /* no storage */
     }
   };
-  const team = trainer ? (teams.find((t) => t.id === teamPick) ?? teams[0] ?? null) : (myTeam ?? null);
+  // With a rotation (new teams every day or chapter), the teams in force follow the lesson in view.
+  const lessonIdxOf = (lessonId: string | undefined) => (lessonId ? lessons.filter(isLesson).findIndex((l) => l.id === lessonId) : -1);
+  const teamsNow = (lessonId: string | undefined) => (teams.length ? teamsAt(board, lessonIdxOf(lessonId)) : []);
+  const teamFor = (lessonId: string | undefined) => {
+    const now = teamsNow(lessonId);
+    return trainer ? (now.find((t) => t.id === teamPick) ?? now[0] ?? null) : studentId ? (teamOf(now, studentId) ?? null) : null;
+  };
+  const roundLabel = (lessonId: string | undefined) => (teamPolicy(board) === "never" ? "" : `${teamPolicy(board) === "day" ? "Day" : "Chapter"} ${roundOf(board, lessonIdxOf(lessonId)) + 1} teams`);
   // The Welcome area is a single exercise; a lesson's exercises are the frames directly in it.
   const exercisesOf = useMemo(() => {
     const m = new Map<string, Frame[]>();
@@ -342,7 +348,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const matches = flat.filter((x) => !palQ.trim() || `${titleOf(x.ex)} ${x.lesson.title} ${x.ex.activity?.kind ?? ""}`.toLowerCase().includes(palQ.trim().toLowerCase()));
   const boardFor = () => {
     if (!focusFrame) return null;
-    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : team?.id ?? null} onChanged={onChanged} onError={onError} />;
+    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : teamFor(here.lesson.id)?.id ?? null} onChanged={onChanged} onError={onError} />;
     if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
     return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
   };
@@ -452,14 +458,15 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
               </div>
               {teams.length && here && !isClassWide(here.ex) ? (
                 <div className="studio-band-teams" role={trainer ? "tablist" : undefined} aria-label="Team">
+                  {roundLabel(here.lesson.id) ? <span className="ex-mono" style={{ color: "#4d5a52", width: "100%" }}>{roundLabel(here.lesson.id).toUpperCase()}</span> : null}
                   {trainer ? (
-                    teams.map((t) => (
-                      <button key={t.id} role="tab" aria-selected={team?.id === t.id} className={`studio-team${team?.id === t.id ? " on" : ""}`} onClick={() => pickTeam(t.id)} title={`${t.members.length} student${t.members.length === 1 ? "" : "s"}`}>
+                    teamsNow(here.lesson.id).map((t) => (
+                      <button key={t.id} role="tab" aria-selected={teamFor(here.lesson.id)?.id === t.id} className={`studio-team${teamFor(here.lesson.id)?.id === t.id ? " on" : ""}`} onClick={() => pickTeam(t.id)} title={t.members.length ? `${t.members.length} student${t.members.length === 1 ? "" : "s"}` : "Nobody yet"}>
                         {t.name}
                       </button>
                     ))
                   ) : (
-                    <span className="studio-team on">{team ? team.name : "No team yet"}</span>
+                    <span className="studio-team on">{teamFor(here.lesson.id)?.name ?? "No team yet"}</span>
                   )}
                 </div>
               ) : null}
