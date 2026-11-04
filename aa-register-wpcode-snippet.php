@@ -4718,6 +4718,27 @@ function aa_reg_batches( WP_REST_Request $req ) {
 	);
 }
 
+/**
+ * Prices agreed with a named buyer, by email and course slug, in USD.
+ *
+ * For a discount agreed in writing that the website price does not carry --
+ * the buyer checks out on the course page with this email and Stripe charges
+ * the agreed amount. Remove a line once the buyer has paid.
+ */
+function aa_reg_agreed_prices() {
+	return apply_filters( 'aa_reg_agreed_prices', array(
+		/* National Bank, 4 Nov 2026: same price as her colleague, whose
+		   Eventbrite registration came to USD 2,200. */
+		'emilie.leandri@bnc.ca' => array( 'ai-native-change-agent' => 2200 ),
+	) );
+}
+
+function aa_reg_agreed_price( $email, $slug ) {
+	$email = strtolower( trim( (string) $email ) );
+	$map   = aa_reg_agreed_prices();
+	return isset( $map[ $email ][ (string) $slug ] ) ? (int) $map[ $email ][ (string) $slug ] : 0;
+}
+
 function aa_reg_checkout( WP_REST_Request $req ) {
 	if ( ! aa_reg_is_live() ) {
 		return new WP_Error( 'aa_off', 'Online payment is switched off right now.', array( 'status' => 503 ) );
@@ -4803,6 +4824,12 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 			$course['name']     = ! empty( $mirror['name'] ) ? $mirror['name'] : $course['name'];
 		}
 	}
+
+	/* A PRICE AGREED WITH ONE BUYER BY EMAIL. Matched on the email entered at
+	   checkout and the course, server-side -- nothing the browser sends can
+	   choose it. See aa_reg_agreed_prices(). */
+	$agreed = aa_reg_agreed_price( $email, $found['slug'] );
+	if ( $agreed > 0 ) { $course['price'] = $agreed; }
 
 	// THE amount. From the table, never from the request.
 	$unit = (int) round( $course['price'] * 100 );
