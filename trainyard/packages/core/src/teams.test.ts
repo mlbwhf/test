@@ -58,3 +58,10 @@ describe("team rotation", () => {
     expect(teamsAt({ fields: { lessons: 6, teams: t } }, 4)).toEqual(t);
   });
 });
+
+describe("class meta", () => {
+  it("names every built-in class the way CLASSES does", async () => {
+    const { CLASSES, CLASS_META } = await import("./index.js");
+    expect(CLASS_META).toEqual(CLASSES.map((c) => ({ id: c.id, name: c.name, short: c.short })));
+  });
+});

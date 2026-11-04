@@ -7,12 +7,15 @@ import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type Ma
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
-import { PlanningRoomPage } from "@/components/planning-pages";
-import { ClassStudents } from "@/components/class-students";
-import { ImportActivities } from "@/components/activity-editor";
-import { AssistButton } from "@/components/assist";
+import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
+
+// Loaded when needed, not with the page: the planning room (its own bundle), and the trainer's panels.
+const PlanningRoomPage = dynamic(() => import("@/components/planning-pages").then((m) => m.PlanningRoomPage), { ssr: false, loading: () => <Loading error={null} /> });
+const ClassStudents = dynamic(() => import("@/components/class-students").then((m) => m.ClassStudents), { ssr: false });
+const ImportActivities = dynamic(() => import("@/components/activity-editor").then((m) => m.ImportActivities), { ssr: false });
+const AssistButton = dynamic(() => import("@/components/assist").then((m) => m.AssistButton as React.ComponentType<React.ComponentProps<typeof m.AssistButton<BoardReview>>>), { ssr: false });
 
 const SOURCE_LABEL: Record<string, string> = { miro: "Miro", lucid: "Lucid", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
@@ -152,7 +155,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       {done ? <div className="notice" role="status">{done}</div> : null}
       {isClass && showStudents && !board.isTemplate ? <ClassStudents boardId={board.id} /> : null}
       {!board.isTemplate && !isClass ? (
-        <AssistButton<BoardReview>
+        <AssistButton
           label="Review this board"
           path={`/v1/assist/boards/${encodeURIComponent(board.id)}`}
           small

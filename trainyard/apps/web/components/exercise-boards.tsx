@@ -3,18 +3,11 @@
 // Purpose-built exercise boards (an activity's `board`): each keeps what people add in its frame's
 // shared state, one change at a time (push, update, remove, set), so a whole class can add at once.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { STUDIO_KINDS } from "@/components/studio-model";
+import { LSA_KINDS } from "@/components/studio-model-lsa";
 import type React from "react";
-import { STUDIO_KINDS, studioModel } from "@/components/studio-model";
-import { LSA_KINDS, lsaModel } from "@/components/studio-model-lsa";
-import { aartModel } from "@/components/studio-model-aart";
-import { LabView } from "@/components/studio-views-lab";
-import { labModel } from "@/components/studio-model-lab";
-import { agendaModel } from "@/components/studio-model-agenda";
-import { AgendaView } from "@/components/studio-views-agenda";
-import { AartView } from "@/components/planning-views";
-import * as Views from "@/components/studio-views";
-import * as Lsa from "@/components/studio-views-lsa";
 import { applyStateOp, type Board, type Frame, type StateOp } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 
@@ -236,6 +229,9 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 }
 
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
+// The Class Studio boards and their logic arrive as their own bundle, the first time one is opened.
+const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: false, loading: () => <div className="studio-board faint" style={{ padding: 24 }}>Loading the exercise…</div> });
+
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
@@ -255,53 +251,6 @@ function PiRoomEmbed({ boardId }: { boardId: string }) {
         </a>
       </div>
       <iframe src={`/embed/planning-room${q}`} title="PI planning board" style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 640, border: "2px solid #0d1815", borderRadius: 12, background: "#f4f1ea" }} />
-    </div>
-  );
-}
-
-const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = {
-  talk: Views.TalkView, quad: Views.QuadView, check: Views.CheckView, connect: Views.ConnectView, trust: Views.TrustView, bound: Views.BoundView, next: Views.NextView, vsm: Views.VsmView, ba: Views.BaView, rca: Views.RcaView,
-  metrics: Views.MetView, ctx: Views.CtxView, accel: Views.AccView, wheel: Views.WheelView, evt: Views.EvtView, kanban: Views.KanView, pitch: Views.PitchView, disc: Views.DiscView, bv: Views.BvView, roam: Views.RoamView, art: Views.ArtView,
-  // Leading SAFe (studio-views-lsa.tsx); an overview board picks its view from the exercise's setup.
-  vote: Lsa.VoteView, vsid: Lsa.VsidView, delay: Lsa.DelayView, prin: Lsa.PrinView, sbd: Lsa.SbdView, dec: Lsa.DecView, emp: Lsa.EmpView, feat: Lsa.FeatView, wsjf: Lsa.WsjfView, rse: Lsa.RseView, cap: Lsa.CapView, attr: Lsa.AttrView,
-  ov: ({ v }) => (v.view === "bp" ? <Lsa.OvBView v={v} /> : v.view === "pri" ? <Lsa.OvPView v={v} /> : <Lsa.OvDView v={v} />),
-  // Launching AI-Native ARTs (planning-views.tsx, studio-model-aart.ts): one board kind, the step picks what it shows.
-  aart: AartView,
-  // The AI-Native Value Architect Mini Lab (studio-views-lab.tsx, studio-model-lab.ts).
-  lab: LabView,
-  // The class agenda kanban (studio-views-agenda.tsx, studio-model-agenda.ts).
-  agenda: AgendaView,
-};
-
-/** A board from the Class Studio design: its generated layout, driven by the ported logic (studio-model.ts). */
-function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: BoardProps & { kind: string }) {
-  const [ui, setUiState] = useState<Record<string, unknown>>({});
-  const setUi = useCallback((p: Record<string, unknown>) => setUiState((u) => ({ ...u, ...p })), []);
-  const ask = useCallback(async (prompt: string) => {
-    try {
-      return (await api<{ lines: string[] }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/suggest`, { prompt })).lines;
-    } catch {
-      return [];
-    }
-  }, [board.id]);
-  // The PI Planning simulation builds its teams from the class's students; only the trainer may list them.
-  const needsStudents = false as boolean;
-  useEffect(() => {
-    if (!needsStudents) return;
-    let gone = false;
-    api<{ students: { name: string }[] }>("GET", `/v1/boards/${encodeURIComponent(board.id)}/students`)
-      .then((r) => !gone && setUi({ students: r.students.map((s) => s.name) }))
-      .catch(() => undefined);
-    return () => {
-      gone = true;
-    };
-  }, [needsStudents, board.id, setUi]);
-  const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask };
-  const v = kind === "aart" ? aartModel(ctx) : kind === "lab" ? labModel(ctx) : kind === "agenda" ? agendaModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
-  const View = VIEWS[kind]!;
-  return (
-    <div className="studio-board">
-      <View v={v} />
     </div>
   );
 }
