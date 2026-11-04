@@ -1981,6 +1981,11 @@ describe("planning documents", () => {
     await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-101", 2, "A1 now ours")] } }, ana);
     expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc.tickets.map((x: { id: string; team: number }) => `${x.id}:${x.team}`).sort()).toEqual(["TY-101:2", "TY-102:2", "TY-103:2"]);
     await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1")] } }, root);
+    // The ART backlog (team 0) travels with any team's slice: team 1 releases a feature to it, team 2's next save keeps it there.
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 0, "A1 back in the ART backlog")] } }, root);
+    await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-101", 0, "A1 back in the ART backlog")] } }, ana);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc.tickets.map((x: { id: string; team: number }) => `${x.id}:${x.team}`).sort()).toEqual(["TY-101:0", "TY-102:2", "TY-103:2"]);
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1")] } }, root);
     // Two teams saving at once keep each other's work: team 1's slice leaves team 2's tickets alone.
     await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1 done"), t("TY-104", 1, "A2")] } }, root);
     expect((await call("GET", `/v1/docs/${key}`, undefined, ana)).body.doc.tickets.map((x: { id: string }) => x.id).sort()).toEqual(["TY-101", "TY-102", "TY-103", "TY-104"]);

@@ -366,22 +366,38 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   // only for a change to the room itself (scenario, calendar, backlog, colours, team count), and
   // only from the trainer.
   const lastGlobal = useRef<string>("");
+  // A document that arrived from the server and is not yet in `s`: no save until it is, or the page
+  // would push its stale state back over what someone else just did.
+  const applied = useRef(0);
   useEffect(() => {
-    if (!s || !s.teams) return;
-    const team = s.view === "yard" || s.view === "setup" ? null : +s.view;
+    if (!s || !s.teams || applied.current !== remote) return;
+    const inTeam = s.view === "yard" || s.view === "setup" || s.view === "pio" ? null : +s.view;
     const global = JSON.stringify([s.scn, s.cal, s.backlog, s.colors, s.teams]);
     const globalChanged = lastGlobal.current !== "" && lastGlobal.current !== global;
     lastGlobal.current = global;
-    if (team && !globalChanged) {
-      saveSlice(team, { tickets: s.tickets.filter((t) => t.team === team), caps: Object.fromEntries(Object.entries(s.caps).filter(([k]) => k.startsWith(`${team}:`))), ...(s.teamCap?.[String(team)] ? { teamCap: s.teamCap[String(team)] } : {}), kn: s.kn });
+    // The room itself changed (set up, calendar, scenario, colours, team count): the whole room goes, from the trainer.
+    if ((globalChanged || !doc?.teams) && !guest) {
+      save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
       return;
     }
-    if (guest) return;
-    save({ scn: s.scn, cal: s.cal, ...(s.backlog ? { backlog: s.backlog } : {}), ...(s.teamCap ? { teamCap: s.teamCap } : {}), ...(s.colors && Object.keys(s.colors).length ? { colors: s.colors } : {}), teams: s.teams, tickets: s.tickets, caps: s.caps, kn: s.kn });
-  }, [s, save, saveSlice, guest]);
+    // The teams whose part changed since the room last came from the server (inside a team, that team).
+    const was = new Map((doc?.tickets ?? []).map((t) => [t.id, t]));
+    const touched = new Set<number>();
+    for (const t of s.tickets) if (!inTeam || t.team === inTeam || t.team === 0) { const w = was.get(t.id); if (!w || JSON.stringify(w) !== JSON.stringify(t)) touched.add(t.team); }
+    for (const [id, w] of was) if (!s.tickets.some((t) => t.id === id)) touched.add(w.team);
+    for (const k of Object.keys(s.caps)) if (s.caps[k] !== doc?.caps?.[k]) touched.add(Number(k.split(":")[0]));
+    for (const k of Object.keys(doc?.caps ?? {})) if (!(k in s.caps)) touched.add(Number(k.split(":")[0]));
+    for (const k of Object.keys(s.teamCap ?? {})) if (JSON.stringify(s.teamCap?.[k]) !== JSON.stringify(doc?.teamCap?.[k])) touched.add(Number(k));
+    const slice = (team: number) => ({ tickets: s.tickets.filter((t) => t.team === team || t.team === 0), caps: Object.fromEntries(Object.entries(s.caps).filter(([k]) => k.startsWith(`${team}:`))), ...(s.teamCap?.[String(team)] ? { teamCap: s.teamCap[String(team)] } : {}), kn: s.kn });
+    const teams = [...touched].filter((n) => Number.isFinite(n) && n >= 0);
+    if (!teams.length) return;
+    // The backlog alone (team 0) rides with any team; with nothing else touched it goes as its own slice.
+    for (const n of teams.includes(0) && teams.length > 1 ? teams.filter((n) => n !== 0) : teams) saveSlice(n, slice(n));
+  }, [s, save, saveSlice, guest, doc, remote]);
   // Someone else's change arrived (another team, the trainer): take the room as the server has it,
   // keeping what is only on this screen (the view, the selection, open panels).
   useEffect(() => {
+    applied.current = remote;
     if (!remote || !doc) return;
     lastGlobal.current = JSON.stringify([doc.scn && SCN[doc.scn] ? doc.scn : "geek", doc.cal ?? CAL0, doc.backlog, doc.colors ?? {}, doc.teams ?? 0]);
     setS((t) => (t ? { ...t, scn: doc.scn && SCN[doc.scn] ? doc.scn : t.scn, cal: doc.cal ?? t.cal, backlog: doc.backlog, teamCap: doc.teamCap, colors: doc.colors ?? {}, teams: doc.teams ?? 0, tickets: doc.tickets ?? [], caps: doc.caps ?? {}, kn: Math.max(t.kn, doc.kn ?? 0), sel: t.sel && !(doc.tickets ?? []).some((x) => x.id === t.sel) ? null : t.sel } : t));
@@ -393,7 +409,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   const epics = fromRoad.length ? fromRoad : EPICS0;
   const objs: Record<string, string> = okr?.objs ? Object.fromEntries(okr.objs.map((o) => [o.id, o.title])) : OBJ0;
   const links = okr?.links ?? LINKS0;
-  const N = s.teams || 0, cur = s.view === "yard" || s.view === "setup" ? null : +s.view, ct = cur || 1;
+  const N = s.teams || 0, cur = s.view === "yard" || s.view === "setup" || s.view === "pio" ? null : +s.view, ct = cur || 1;
   const by: Record<string, Ticket> = {};
   s.tickets.forEach((x) => (by[x.id] = x));
   const selT = s.sel ? by[s.sel] : undefined;
@@ -462,7 +478,8 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
       const z = document.elementsFromPoint(ev.clientX, ev.clientY).map((n) => n.closest && n.closest("[data-drop]")).find(Boolean) as Element | undefined;
       if (!z) return;
       const d = z.getAttribute("data-drop")!;
-      upd(id, { iter: d === "yard" ? null : +d.split(":")[1]! });
+      if (d === "backlog") moveTeam(id, 0);
+      else upd(id, { iter: d === "yard" ? null : +d.split(":")[1]! });
     };
     window.addEventListener("pointermove", mv);
     window.addEventListener("pointerup", up);
@@ -481,7 +498,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     flashIt(id);
   };
   const epicObj = (title: string) => { const id = Object.keys(links).find((k) => (links[k] ?? []).includes(title)); return id ? { id, title: objs[id] ?? id } : null; };
-  const teamOf = (n: number) => ({ name: `Team ${n}`, color: TC[(n - 1) % 8]! });
+  const teamOf = (n: number) => (n === 0 ? { name: "ART backlog", color: "#8a8a99" } : { name: `Team ${n}`, color: TC[(n - 1) % 8]! });
   const where = (t: Ticket) => (t.type === "pio" ? `Team ${t.team} · PI objective` : `Team ${t.team} · ${t.iter ? iName(t.iter) : "Freight yard"}`);
   // Points per full-time member per iteration: 8 for two weeks (ten days less two for meetings), scaled to the iteration length.
   const perPerson = Math.max(1, cal.weeks * 5 - 2);
@@ -549,16 +566,16 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
   // Hands a ticket to another team with everything under it; it lands in that team's freight yard.
   const moveTeam = (id: string, to: number) => {
     const root = by[id];
-    if (!root || !to || to === root.team) return;
+    if (!root || !Number.isFinite(to) || to === root.team) return;
     const under = new Set<string>([id]);
     let grew = true;
     while (grew) {
       grew = false;
       for (const x of s.tickets) if (x.parent && under.has(x.parent) && !under.has(x.id)) (under.add(x.id), (grew = true));
     }
-    set((t) => ({ tickets: t.tickets.map((x) => (under.has(x.id) ? { ...x, team: to, iter: null } : x)), view: String(to), sel: id, flash: id }));
+    set((t) => ({ tickets: t.tickets.map((x) => (under.has(x.id) ? { ...x, team: to, iter: null } : x)), view: to ? String(to) : "yard", sel: id, flash: id }));
   };
-  const teamPick = (t: Ticket) => ({ teamOpts: Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name })), teamVal: String(t.team), setTeam: (e: React.ChangeEvent<HTMLSelectElement>) => moveTeam(t.id, Number(e.target.value)), canTeam: N > 1 && t.type !== "story" });
+  const teamPick = (t: Ticket) => ({ teamOpts: [{ id: "0", t: "ART backlog · no team" }, ...Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name }))], teamVal: String(t.team), setTeam: (e: React.ChangeEvent<HTMLSelectElement>) => moveTeam(t.id, Number(e.target.value)), canTeam: t.type !== "story" && t.type !== "pio" });
   const mkCard = (t: Ticket) => { const c = col(t), n = kidsN(t.id), pv = preview(t); return { key: t.id, t: t.title, color: c, bg: c, fg: ink(c), img: t.en ? HATCH : "none", en: t.en ? "⚙ " : "", hasKids: n > 0, n, sub: short(pv), hint: `${t.id} · ${t.title}${pv ? `\n${pv}` : ""}`, ...teamPick(t), open: () => set(() => ({ coll: t.id })), stop: (e: React.SyntheticEvent) => e.stopPropagation(), down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
   const mkStory = (t: Ticket) => { const pv = preview(t); return { key: t.id, t: t.title, pts: sz(t), w: t.pts >= 8 ? 100 : t.pts >= 3 ? 66 : 50, fc: fcOf(t), bg: col(t), fg: ink(col(t)), img: t.en ? HATCH : CRATE, sub: short(pv, 70), hint: `${t.id} · ${t.title}${pv ? `\n${pv}` : ""}`, down: (e: React.PointerEvent) => drag(e, t.id), ...out(t) }; };
   const wagons = iters.map((i) => {
@@ -600,7 +617,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
         return { kind: "epic", bg: "#dfe4fb", title: selT.title, text: [f.for ? `For ${f.for}` : "", f.who ? `who ${f.who}` : "", f.the ? `the ${f.the}` : "", f.isa ? `is a ${f.isa}` : "", f.that ? `that ${f.that}` : "", f.unlike ? `Unlike ${f.unlike}` : "", f.sol ? `our solution ${f.sol}` : ""].filter(Boolean).join(" ") };
       })(),
       // Assigning work to a team: a feature (or capability, epic, risk, objective) moves with everything under it.
-      teamOpts: Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name, sel: k + 1 === selT.team })),
+      teamOpts: [{ id: "0", t: "ART backlog · no team", sel: selT.team === 0 }, ...Array.from({ length: N }, (_, k) => ({ id: String(k + 1), t: teamOf(k + 1).name, sel: k + 1 === selT.team }))],
       teamValW: String(selT.team),
       setTeamW: (e: React.ChangeEvent<HTMLSelectElement>) => moveTeam(selT.id, Number(e.target.value)),
     };
@@ -727,7 +744,20 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
         ) : null}
       </div>
     ) : null,
-    goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: cur ? "#fff" : "#14123a", yardFg: cur ? "#14123a" : "#fff", rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
+    goYard: () => set(() => ({ view: "yard", sel: null })), yardBg: s.view === "yard" ? "#14123a" : "#fff", yardFg: s.view === "yard" ? "#fff" : "#14123a",
+    // The ART backlog: features (and epics, capabilities) nobody has taken yet, to pull into a team.
+    backlog: s.tickets.filter((t) => t.team === 0 && t.type !== "story" && t.type !== "pio" && t.type !== "risk").map((t) => ({ ...mkCard(t), pts: "" })),
+    backlogStories: s.tickets.filter((t) => t.team === 0 && t.type === "story").length,
+    // The PI objectives board: every team's objectives, business value and commitment, with the totals.
+    goPio: () => set(() => ({ view: "pio", sel: null })), pioBg: s.view === "pio" ? "#14123a" : "#fff", pioFg: s.view === "pio" ? "#fff" : "#14123a", isPio: s.view === "pio",
+    pioTeams: Array.from({ length: N }, (_, k) => k + 1).map((n) => {
+      const tm = teamOf(n), rows = s.tickets.filter((t) => t.team === n && t.type === "pio").sort((a, b) => Number(b.commit) - Number(a.commit));
+      const c = rows.filter((t) => t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), u = rows.filter((t) => !t.commit).reduce((a, t) => a + (t.bv ?? 0), 0);
+      return { n, name: tm.name, color: tm.color, committed: c, uncommitted: u, count: rows.length, go: () => set(() => ({ view: String(n), sel: null })),
+        add: () => set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio", title: "New objective", team: n, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1 })),
+        rows: rows.map((t) => ({ key: t.id, t: t.title, tag: t.commit ? "COMMITTED" : "UNCOMMITTED", tagBg: t.commit ? "#5ff0e0" : "#f4f1ea", bv: t.bv ?? 0, rename: (e: React.ChangeEvent<HTMLInputElement>) => upd(t.id, { title: e.target.value }), flip: () => upd(t.id, { commit: !t.commit }), del: () => set((x) => ({ tickets: x.tickets.filter((y) => y.id !== t.id) })), pips: Array.from({ length: 10 }, (_, k) => ({ n: k + 1, bg: k < (t.bv ?? 0) ? (t.commit ? tm.color : "#8a8a99") : "#fff", go: () => upd(t.id, { bv: t.bv === k + 1 ? 0 : k + 1 }) })) })) };
+    }),
+    pioTotal: s.tickets.filter((t) => t.type === "pio" && t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), pioTotalU: s.tickets.filter((t) => t.type === "pio" && !t.commit).reduce((a, t) => a + (t.bv ?? 0), 0), rail, q: s.q, setQ: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ q: e.target.value })), results, hasResults: results.length > 0,
     kinds: ([["epic", "Epic"], ["capability", "Capability"], ["feature", "Feature"], ["story", "Story"], ["risk", "Risk"], ["pio", "PI objective"]] as const).map(([k, n]) => ({ n, dot: k === "risk" ? "#f8a08a" : k === "pio" ? "#5ff0e0" : col({ type: k, en: s.en }), bg: s.kind === k ? "#ffe14d" : "transparent", fg: s.kind === k ? "#14123a" : "#fff", go: () => set(() => ({ kind: k, parentSel: "" })) })),
     toggleNewEn: () => set((t) => ({ en: !t.en })), enBg: s.en ? "#ffe14d" : "transparent", enFg: s.en ? "#14123a" : "#fff",
     newText: s.newText, setNew: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ newText: e.target.value })), newKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addT(ps); }, addTicket: () => addT(ps),
@@ -736,7 +766,7 @@ export function PlanningRoomPage({ docKey = "planning-room" }: { docKey?: DocKey
     showFull: !!selT && s.full, facts, form, etypes, parentOptsW, openFull: () => set(() => ({ full: true })), closeFull: () => set(() => ({ full: false })), stopClick: (e: React.SyntheticEvent) => e.stopPropagation(),
     fullTitle: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { title: e.target.value }), fullNote: (e: React.ChangeEvent<HTMLTextAreaElement>) => selT && upd(selT.id, { note: e.target.value }), prevT: () => stepT(-1), nextT: () => stepT(1),
     showColl: !!cp, collSummary, hasSummary: !!collSummary, collTitle: cp?.title ?? "", collColor: cp ? col(cp) : "#fff", collFg: cp ? ink(col(cp)) : "#14123a", collKind: cp ? (cp.en ? "ENABLER " : "") + cp.type.toUpperCase() : "", collRows, collEmpty: !collRows.length, collN: collRows.length, collAdd: kidT ? `Add ${kidT}` : "", canAddKid: !!kidT, collText: s.collText, setCollText: (e: React.ChangeEvent<HTMLInputElement>) => set(() => ({ collText: e.target.value })), collKey: (e: React.KeyboardEvent) => { if (e.key === "Enter") addKid(); }, addKid, collEnBg: s.collEn ? "#ffe14d" : "#fff", toggleCollEn: () => set((t) => ({ collEn: !t.collEn })), closeColl: () => set(() => ({ coll: null })),
-    isYard: !cur, isTeam: !!cur, yard, shared, team: tm, wagons, yardTickets: yt, yardEmpty: !yt.length, risks: rks, noRisks: !rks.length, pios, cBV, reliab: aBV ? `${Math.round((cBV / aBV) * 100)}% reliability` : "no BV yet",
+    isYard: s.view === "yard", isTeam: !!cur, yard, shared, team: tm, wagons, yardTickets: yt, yardEmpty: !yt.length, risks: rks, noRisks: !rks.length, pios, cBV, reliab: aBV ? `${Math.round((cBV / aBV) * 100)}% reliability` : "no BV yet",
     addPio: () => set((x) => ({ tickets: [...x.tickets, { id: `TY-${x.kn + 1}`, type: "pio", title: "New objective", team: ct, bv: 0, commit: true, pts: 0, iter: null }], kn: x.kn + 1 })),
     poker: POKER.map((val, k) => ({ v: val, rot: (k - 5) * 4, dy: Math.abs(k - 5) * 2, bg: pk && (pk.est === val || (!pk.est && pk.pts === val)) ? "#ffe14d" : "#fff", go: () => pk && upd(pk.id, typeof val === "number" ? { pts: val, est: "" } : { pts: 0, est: val }) })),
     pokerFor: pk ? `Sizing: ${pk.title}${pk.est ? ` · ${hint[pk.est]}` : pk.pts >= 40 ? ` · ${hint[pk.pts]}` : ""}` : "Click a story, then a card.",

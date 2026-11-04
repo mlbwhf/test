@@ -41,8 +41,13 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
   const last = useRef<string>("");
   const lastSlice = useRef<Record<number, string>>({});
   const rev = useRef<string | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // One pending save per target (the whole document, or one team's slice), so saves for several
+  // teams in a row all go out instead of the last one cancelling the rest.
+  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const inflight = useRef(0);
+  // The poll, reachable from a save: after a slice is merged on the server the page fetches the
+  // merged room at once, so what it compares against is what the server holds.
+  const pollRef = useRef<(force?: boolean) => Promise<void>>(async () => undefined);
   useEffect(() => {
     let gone = false;
     api<{ doc: T | null; rev: string }>("GET", `/v1/docs/${encodeURIComponent(key)}`)
@@ -56,11 +61,11 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
       .catch((e: ApiFailure) => !gone && (setError(e.message), setLoaded(true)));
     // The poll: skipped while a save is pending or in flight (an edit in progress is already in the
     // page's state and on its way), and while this tab is hidden.
-    const poll = async () => {
-      if (gone || !rev.current || timer.current || inflight.current || document.visibilityState !== "visible") return;
+    const poll = async (force = false) => {
+      if (gone || !rev.current || timers.current.size || inflight.current || (!force && document.visibilityState !== "visible")) return;
       try {
         const r = await api<{ rev: string; same?: boolean; doc?: T | null }>("GET", `/v1/docs/${encodeURIComponent(key)}?rev=${encodeURIComponent(rev.current)}`);
-        if (gone || r.same || timer.current || inflight.current) return;
+        if (gone || r.same || timers.current.size || inflight.current) return;
         rev.current = r.rev;
         last.current = canon(r.doc ?? null);
         lastSlice.current = {};
@@ -75,6 +80,7 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
     const stop = pollMs > 0 ? subscribe(`/v1/docs/${encodeURIComponent(key)}/events`, () => void poll(), (on) => ((streaming = on), setLive(on))) : () => undefined;
     // While a stream is up the poll is only a safety net, every 20 s, for a notice that came during a save.
     let tick = 0;
+    pollRef.current = poll;
     const id = pollMs > 0 ? window.setInterval(() => (streaming && ++tick % Math.max(1, Math.round(20_000 / pollMs)) !== 0 ? undefined : void poll()), pollMs) : 0;
     return () => {
       gone = true;
@@ -83,15 +89,19 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
     };
   }, [key, pollMs]);
   const put = useCallback(
-    (body: unknown, after?: (r: { rev: string }) => void) => {
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => {
-        timer.current = null;
+    (target: string, body: unknown, after?: (r: { rev: string }) => void) => {
+      const old = timers.current.get(target);
+      if (old) clearTimeout(old);
+      timers.current.set(target, setTimeout(() => {
+        timers.current.delete(target);
         inflight.current += 1;
         api<{ rev: string }>("PUT", `/v1/docs/${encodeURIComponent(key)}`, body)
           .then((r) => (setError(null), after?.(r)), (e: ApiFailure) => setError(e.status === 403 ? "You can look, but only planners can change this page." : e.message))
-          .finally(() => (inflight.current -= 1));
-      }, 600);
+          .finally(() => {
+            inflight.current -= 1;
+            if (!inflight.current && !timers.current.size) void pollRef.current(true);
+          });
+      }, 600));
     },
     [key],
   );
@@ -101,7 +111,9 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
       if (text === last.current) return;
       last.current = text;
       // The server now holds exactly this, so its new revision needs no download.
-      put({ doc: next }, (r) => (rev.current = r.rev));
+      // A whole save supersedes any slice still waiting.
+      for (const [k, t] of timers.current) if (k !== "doc") (clearTimeout(t), timers.current.delete(k));
+      put("doc", { doc: next }, (r) => ((rev.current = r.rev), setDoc(next)));
     },
     [put],
   );
@@ -111,7 +123,7 @@ export function useDoc<T extends object>(key: DocKey, { pollMs = 3000 }: { pollM
       if (text === lastSlice.current[team]) return;
       lastSlice.current[team] = text;
       // Merged on the server with the other teams' work: the next poll brings the whole room back.
-      put({ team, slice });
+      put(`team:${team}`, { team, slice });
     },
     [put],
   );

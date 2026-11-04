@@ -29,7 +29,7 @@ export function docRevision(doc: unknown): string {
   return `${(h >>> 0).toString(36)}${v.length.toString(36)}`;
 }
 
-/** The part of a planning room one team writes: its tickets, its capacity cells (`team:iter`), its capacity sheet, and the id counter. */
+/** The part of a planning room one team writes: its tickets (and the ART backlog, team 0), its capacity cells (`team:iter`), its capacity sheet, and the id counter. */
 type Slice = { tickets?: unknown[]; caps?: Record<string, unknown>; teamCap?: unknown; kn?: number };
 const TeamSlice = z.object({ tickets: z.array(z.record(z.string(), z.unknown())).max(2000).optional(), caps: z.record(z.string(), z.unknown()).optional(), teamCap: z.unknown().optional(), kn: z.number().int().min(0).optional() });
 
@@ -40,7 +40,8 @@ const TeamSlice = z.object({ tickets: z.array(z.record(z.string(), z.unknown()))
  */
 export function mergeTeamSlice(room: Record<string, unknown> | null, team: number, slice: Slice): Record<string, unknown> {
   const base: Record<string, unknown> = room ? { ...room } : { teams: team, caps: {}, kn: 100, tickets: [] };
-  const mine = (t: unknown) => typeof t === "object" && t !== null && (t as { team?: unknown }).team === team;
+  // Team 0 is the ART backlog (features nobody has taken yet): every team's slice carries it too.
+  const mine = (t: unknown) => typeof t === "object" && t !== null && ((t as { team?: unknown }).team === team || (t as { team?: unknown }).team === 0);
   // A ticket handed over from another team arrives in this team's slice: its old copy goes.
   const arriving = new Set((slice.tickets ?? []).filter(mine).map((t) => (t as { id?: unknown }).id));
   const others = (Array.isArray(base.tickets) ? (base.tickets as unknown[]) : []).filter((t) => !mine(t) && !arriving.has((t as { id?: unknown }).id));
@@ -91,7 +92,7 @@ export function registerDocRoutes(app: App, store: Store) {
 
   // Saves a document: whole (`doc`), or one team's slice of a planning room (`team` + `slice`),
   // merged on the server. A student's link may only send a team slice, never the whole room.
-  const Body = z.union([z.object({ doc: z.record(z.string(), z.unknown()).nullable() }), z.object({ team: z.number().int().min(1).max(40), slice: TeamSlice })]);
+  const Body = z.union([z.object({ doc: z.record(z.string(), z.unknown()).nullable() }), z.object({ team: z.number().int().min(0).max(40), slice: TeamSlice })]);
   app.put("/v1/docs/:key", { schema: { params: z.object({ key: Key }), body: Body } }, async (req) => {
     // A class's planning room is the class's work: its students (by link) write it like the trainer.
     const board = boardOf(req.params.key);
