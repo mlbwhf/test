@@ -44,6 +44,8 @@ export function RoadmapView({ v }: { v: any }) {
 </div>
 </section>
 
+{v.isOutcomes ? v.outcomesNode : null}
+{v.isOutcomes ? null : (<>
 <section style={{ margin: "18px 5vw 0", display: "flex", gap: "22px", alignItems: "flex-start", flexWrap: "wrap" } as any}>
 
 <aside style={{ flex: "0 0 330px", maxWidth: "100%", background: "#fff", border: "2px solid #14123a", borderRadius: "24px", boxShadow: "8px 8px 0 #14123a", overflow: "hidden" } as any}>
@@ -161,6 +163,7 @@ export function RoadmapView({ v }: { v: any }) {
 </div>
 </div>
 </section>
+</>)}
 
 {v.ghost ? (<><div style={{ position: "fixed", left: `${v.ghostX}px`, top: `${v.ghostY}px`, pointerEvents: "none", zIndex: "99", background: `${v.ghostColor}`, color: "#fff", border: "2px solid #14123a", borderRadius: "10px", padding: "9px 14px", font: "700 14px 'Instrument Sans',sans-serif", boxShadow: "4px 4px 0 #14123a", maxWidth: "240px", transform: "rotate(-2deg)" } as any}>{v.ghostTitle}</div></>) : null}
 </div>

@@ -17,9 +17,11 @@ import { api, ApiFailure, useMe } from "@/lib/api";
 const page = (bg: string) => ({ margin: "-16px", padding: "0 0 60px", background: bg, minHeight: "100vh", fontFamily: "'Instrument Sans', sans-serif", color: "#14123a" }) as React.CSSProperties;
 const Note = ({ text }: { text: string | null }) => (text ? <div style={{ margin: "0 5vw", padding: "10px 16px", background: "#fff4c2", border: "2px solid #14123a", borderRadius: 12, fontWeight: 600 }}>{text}</div> : null);
 
+import { OutcomeRoadmap, markKind, type Mark, type MarkKind, type Outcome } from "./outcome-roadmap";
+
 // ---- Roadmap -------------------------------------------------------------------------------
 export type RoadItem = { id: string; title: string; type: "epic" | "enabler" | "feature"; lane: string; start: number; len: number; committed: boolean; placed: boolean };
-export type RoadmapDoc = { lanes: { id: string; name: string; info: string }[]; items: RoadItem[]; miles: { id: string; title: string; at: number; release: boolean }[] };
+export type RoadmapDoc = { lanes: { id: string; name: string; info: string }[]; items: RoadItem[]; miles: Mark[]; /** ART outcomes: the rows of the outcome-driven roadmap. */ outcomes?: Outcome[] };
 const COL: Record<string, string> = { epic: "#4a5fe8", enabler: "#c8372d", feature: "#14123a" };
 const TN: Record<string, string> = { epic: "Epic", enabler: "Enabler", feature: "Feature" };
 const MAX = 12;
@@ -49,15 +51,41 @@ export const ROADMAP_SAMPLE: RoadmapDoc = {
     { id: "i12", title: "Real-time status", type: "feature", lane: "a1", start: 1, len: 1, committed: false, placed: false },
   ],
   miles: [
-    { id: "m1", title: "Annual suppliers’ event", at: 1, release: false },
+    { id: "m1", title: "Annual suppliers’ event", at: 1, release: false, pos: 0.2 },
     { id: "m2", title: "Route following v1.0", at: 5, release: true },
     { id: "m3", title: "First field test", at: 7, release: false },
     { id: "m4", title: "On-road certification", at: 10, release: false },
+    // The outcome-driven roadmap example (Leading SAFe 4-10).
+    { id: "o1a", title: "Assistant used in 20% of sessions", at: 1, release: false, kind: "outcome", out: "oc1", pos: 0.25 },
+    { id: "o1b", title: "Assistant used in 35% of sessions", at: 1, release: false, kind: "outcome", out: "oc1", pos: 0.7 },
+    { id: "o1c", title: "Model review board sign-off", at: 2, release: false, kind: "milestone", out: "oc1", pos: 0.17 },
+    { id: "o1d", title: "Assistant 1.0", at: 2, release: true, kind: "release", out: "oc1", pos: 0.47 },
+    { id: "o1e", title: "Customers cite AI as reason to choose", at: 2, release: false, kind: "outcome", out: "oc1", pos: 0.8 },
+    { id: "o1f", title: "Pricing decision", at: 3, release: false, kind: "milestone", out: "oc1", pos: 0.17 },
+    { id: "o1g", title: "Partner integration freeze", at: 3, release: false, kind: "milestone", out: "oc1", pos: 0.45 },
+    { id: "o1h", title: "Assistant 2.0", at: 3, release: true, kind: "release", out: "oc1", pos: 0.75 },
+    { id: "o2a", title: "Opt-in above 50%", at: 1, release: false, kind: "outcome", out: "oc2", pos: 0.25 },
+    { id: "o2b", title: "Privacy review", at: 1, release: false, kind: "milestone", out: "oc2", pos: 0.7 },
+    { id: "o2c", title: "Regulatory submission", at: 2, release: false, kind: "milestone", out: "oc2", pos: 0.17 },
+    { id: "o2d", title: "Complaint rate below 1%", at: 2, release: false, kind: "outcome", out: "oc2", pos: 0.5 },
+    { id: "o2e", title: "External audit", at: 3, release: false, kind: "milestone", out: "oc2", pos: 0.17 },
+    { id: "o2f", title: "AI on by default for every customer", at: 3, release: false, kind: "outcome", out: "oc2", pos: 0.75 },
+    { id: "o3a", title: "Every team ships one AI-assisted feature", at: 1, release: false, kind: "outcome", out: "oc3", pos: 0.4 },
+    { id: "o3b", title: "Shared evaluation harness live", at: 1, release: false, kind: "milestone", out: "oc3", pos: 0.7 },
+    { id: "x1", title: "Platform 4.2", at: 2, release: true, kind: "release", pos: 0.25 },
+    { id: "x2", title: "Security certification", at: 2, release: false, kind: "milestone", pos: 0.8 },
+    { id: "x3", title: "Trade show", at: 3, release: false, kind: "milestone", pos: 0.3 },
+    { id: "x4", title: "Fiscal year close", at: 3, release: false, kind: "milestone", pos: 0.7 },
+  ],
+  outcomes: [
+    { id: "oc1", title: "Make AI assistance the capability customers choose the platform for.", kind: "moonshot", desc: "" },
+    { id: "oc2", title: "Earn the trust to put AI in front of every customer", kind: "roofshot", desc: "" },
+    { id: "oc3", title: "Accelerate the ART’s capacity to build with AI.", kind: "roofshot", desc: "" },
   ],
 };
-export const BLANK_ROADMAP: RoadmapDoc = { lanes: [{ id: "a1", name: "ART 1", info: "Name this train" }, { id: "a2", name: "ART 2", info: "Name this train" }], items: [], miles: [] };
+export const BLANK_ROADMAP: RoadmapDoc = { lanes: [{ id: "a1", name: "ART 1", info: "Name this train" }, { id: "a2", name: "ART 2", info: "Name this train" }], items: [], miles: [], outcomes: [{ id: "oc1", title: "Name the first ART outcome", kind: "roofshot", desc: "" }] };
 
-type RoadState = RoadmapDoc & { tab: "timeline" | "plan"; from: number; count: number; curPI: number; sel: { k: "i" | "m"; id: string } | null; checked: Record<string, boolean>; newText: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
+type RoadState = RoadmapDoc & { tab: "timeline" | "plan" | "outcomes"; arm: MarkKind; from: number; count: number; curPI: number; sel: { k: "i" | "m" | "o"; id: string } | null; checked: Record<string, boolean>; newText: string; ghost: { x: number; y: number; id: string } | null; flash: string | null };
 
 export function RoadmapPage() {
   const { doc, loaded, save, error } = useDoc<RoadmapDoc>("roadmap");
@@ -65,10 +93,10 @@ export function RoadmapPage() {
   const sRef = useRef<RoadState | null>(null);
   sRef.current = s;
   useEffect(() => {
-    if (loaded && !s) setS({ ...structuredClone(doc ?? ROADMAP_SAMPLE), tab: "timeline", from: 1, count: 12, curPI: 1, sel: null, checked: {}, newText: "", ghost: null, flash: null });
+    if (loaded && !s) setS({ ...structuredClone(doc ?? ROADMAP_SAMPLE), tab: "timeline", arm: "milestone", from: 1, count: 12, curPI: 1, sel: null, checked: {}, newText: "", ghost: null, flash: null });
   }, [loaded, doc, s]);
   useEffect(() => {
-    if (s) save({ lanes: s.lanes, items: s.items, miles: s.miles });
+    if (s) save({ lanes: s.lanes, items: s.items, miles: s.miles, outcomes: s.outcomes ?? [] });
   }, [s, save]);
   const set = useCallback((fn: (t: RoadState) => Partial<RoadState>) => setS((t) => (t ? { ...t, ...fn(t) } : t)), []);
   if (!s) return <Loading error={error ? new ApiFailure(0, "ERROR", error) : null} />;
@@ -134,7 +162,7 @@ export function RoadmapPage() {
   });
   const pis: any[] = [], bands: any[] = [];
   for (let k = 0; k < N; k++) { const a = from + k, b = a <= 4 ? 0 : a <= 8 ? 1 : 2; pis.push({ label: "PI " + a, tint: TINT[b] }); bands.push({ tint: TINT[b], label: k === 0 || a === 5 || a === 9 ? BAND[b] : "" }); }
-  const miles = s.miles.filter((m) => m.at >= from && m.at < from + N).map((m) => ({ title: m.title, left: `calc(${pct(m.at - from + 0.5)} - ${N > 6 ? 55 : 80}px)`, w: `${N > 6 ? 110 : 160}px`, fill: m.release ? "#ffe14d" : "#8a8a99", outline: selM?.id === m.id ? "3px solid #ff3d8f" : "none", pick: (e: React.MouseEvent) => { e.stopPropagation(); set(() => ({ sel: { k: "m", id: m.id } })); } }));
+  const miles = s.miles.filter((m) => markKind(m) !== "outcome" && m.at >= from && m.at < from + N).map((m) => ({ title: m.title, left: `calc(${pct(m.at - from + 0.5)} - ${N > 6 ? 55 : 80}px)`, w: `${N > 6 ? 110 : 160}px`, fill: m.release ? "#ffe14d" : "#8a8a99", outline: selM?.id === m.id ? "3px solid #ff3d8f" : "none", pick: (e: React.MouseEvent) => { e.stopPropagation(); set(() => ({ sel: { k: "m", id: m.id } })); } }));
   const cards = s.items.map((i) => ({
     title: i.title, color: COL[i.type], op: i.placed ? 1 : 0.6, cursor: i.placed ? "default" : "grab", bg: selI?.id === i.id ? "#fff4c2" : "#fff",
     sub: TN[i.type] + (i.placed ? ` · ${s.lanes.find((l) => l.id === i.lane)?.name ?? ""} · PI ${i.start}` : " · not on board"),
@@ -150,16 +178,30 @@ export function RoadmapPage() {
     const pi = s.curPI + o, its = s.items.filter((i) => i.placed && i.start === pi);
     const mk = (i: RoadItem) => ({ title: i.title, color: COL[i.type], lane: `${s.lanes.find((l) => l.id === i.lane)?.name ?? ""} · ${i.len} ${i.len > 1 ? "PIs" : "PI"}`, bd: selI?.id === i.id ? "#ff3d8f" : "transparent", pick: () => { if (o === 0) upd(i.id, { committed: !i.committed }); set(() => ({ sel: { k: "i", id: i.id } })); }, left: (e: React.MouseEvent) => { e.stopPropagation(); upd(i.id, { start: Math.max(1, i.start - 1) }); }, right: (e: React.MouseEvent) => { e.stopPropagation(); upd(i.id, { start: Math.min(MAX, i.start + 1) }); } });
     const groups = o === 0 ? [{ name: "COMMITTED", hd: "flex", cards: its.filter((i) => i.committed).map(mk) }, { name: "UNCOMMITTED", hd: "flex", cards: its.filter((i) => !i.committed).map(mk) }] : [{ name: "", hd: "none", cards: its.map(mk) }];
-    const ms = s.miles.filter((m) => m.at === pi).map((m) => ({ title: m.title, fill: m.release ? "#ffe14d" : "#8a8a99" }));
+    const ms = s.miles.filter((m) => markKind(m) !== "outcome" && m.at === pi).map((m) => ({ title: m.title, fill: m.release ? "#ffe14d" : "#8a8a99" }));
     return { title: o === 0 ? `PI ${pi} Plan` : `PI +${o} (PI ${pi})`, groups, miles: ms, noMiles: !ms.length, empty: !its.length, isFirst: o === 0 };
   });
   const mapI = (f: (i: RoadItem) => Partial<RoadItem>) => set((t) => ({ items: t.items.map((i) => (selI && i.id === selI.id ? { ...i, ...f(i) } : i)) }));
   const mapM = (f: (m: RoadmapDoc["miles"][number]) => Partial<RoadmapDoc["miles"][number]>) => set((t) => ({ miles: t.miles.map((m) => (selM && m.id === selM.id ? { ...m, ...f(m) } : m)) }));
   const sel = selI ? { isCard: true, title: selI.title, startLabel: selI.len > 1 ? `${selI.start}–${selI.start + selI.len - 1}` : String(selI.start), commitLabel: selI.committed ? "Committed" : "Uncommitted", commitBg: selI.committed ? "#5ff0e0" : "#fff" } : selM ? { isMile: true, title: selM.title, at: selM.at, relLabel: selM.release ? "Release" : "Milestone", relBg: selM.release ? "#ffe14d" : "#fff" } : null;
+  const outcomesNode = (
+    <OutcomeRoadmap
+      outcomes={s.outcomes ?? []} marks={s.miles} from={from} count={N} max={MAX} sel={s.sel?.k === "i" ? null : (s.sel as { k: "m" | "o"; id: string } | null)} arm={s.arm}
+      setArm={(k) => set(() => ({ arm: k }))}
+      prev={() => set((t) => ({ from: Math.max(1, t.from - 1) }))} next={() => set((t) => ({ from: Math.min(MAX + 1 - t.count, t.from + 1) }))}
+      pick={(sel) => set(() => ({ sel }))}
+      addMark={(out, at, pos) => { const id = nid("m"); set((t) => ({ miles: [...t.miles, { id, title: `New ${t.arm}`, at, pos, release: t.arm === "release", kind: t.arm, out }], sel: { k: "m", id } })); }}
+      updMark={(id, patch) => set((t) => ({ miles: t.miles.map((m) => (m.id === id ? { ...m, ...patch } : m)) }))}
+      delMark={(id) => set((t) => ({ miles: t.miles.filter((m) => m.id !== id), sel: null }))}
+      addOutcome={() => { const id = nid("oc"); set((t) => ({ outcomes: [...(t.outcomes ?? []), { id, title: "New ART outcome", kind: "roofshot", desc: "" }], sel: { k: "o", id } })); }}
+      updOutcome={(id, patch) => set((t) => ({ outcomes: (t.outcomes ?? []).map((o) => (o.id === id ? { ...o, ...patch } : o)) }))}
+      delOutcome={(id) => set((t) => ({ outcomes: (t.outcomes ?? []).filter((o) => o.id !== id), miles: t.miles.map((m) => (m.out === id ? { ...m, out: "" } : m)), sel: null }))}
+    />
+  );
   const v = {
-    tabs: ([["timeline", "Roadmap"], ["plan", "PI plan"]] as const).map(([k, n]) => ({ n, ...seg(s.tab === k), go: () => set(() => ({ tab: k })) })),
+    tabs: ([["timeline", "Roadmap"], ["plan", "PI plan"], ["outcomes", "Outcomes"]] as const).map(([k, n]) => ({ n, ...seg(s.tab === k), go: () => set((t) => ({ tab: k, sel: null, count: k === "outcomes" ? 3 : t.count, from: k === "outcomes" ? Math.min(t.from, MAX - 2) : t.from })) })),
     zooms: ([[12, "Portfolio · 1–3 yr"], [6, "Solution · 6 PIs"], [3, "PI roadmap · 3 PIs"]] as const).map(([n, l]) => ({ n: l, ...seg(N === n), go: () => set((t) => ({ count: n, from: Math.max(1, Math.min(MAX + 1 - n, n === 12 ? 1 : t.from)) })) })),
-    isTimeline: s.tab === "timeline", isPlan: s.tab === "plan", cellPct: 100 / N, pis, bands, showBands: true, lanes, miles, cards, planCols, curPI: s.curPI,
+    isTimeline: s.tab === "timeline", isPlan: s.tab === "plan", isOutcomes: s.tab === "outcomes", outcomesNode, cellPct: 100 / N, pis, bands, showBands: true, lanes, miles, cards, planCols, curPI: s.curPI,
     legend: [{ c: COL.epic, n: "Epic" }, { c: COL.enabler, n: "Enabler" }, { c: COL.feature, n: "Feature" }],
     windowLabel: `PI ${from}–${from + N - 1}`,
     prev: () => set((t) => ({ from: Math.max(1, t.from - 1) })), next: () => set((t) => ({ from: Math.min(MAX + 1 - t.count, t.from + 1) })),
@@ -181,9 +223,9 @@ export function RoadmapPage() {
     setLane: (e: React.ChangeEvent<HTMLSelectElement>) => { const val = e.target.value; mapI(() => ({ lane: val })); },
     lenDown: () => mapI((i) => ({ len: Math.max(1, i.len - 1) })), lenUp: () => mapI((i) => ({ len: Math.min(MAX + 1 - i.start, i.len + 1) })),
     toggleCommit: () => mapI((i) => ({ committed: !i.committed })), toCollection: () => mapI(() => ({ placed: false })),
-    mileLeft: () => mapM((m) => ({ at: Math.max(1, m.at - 1) })), mileRight: () => mapM((m) => ({ at: Math.min(MAX, m.at + 1) })), toggleRelease: () => mapM((m) => ({ release: !m.release })),
+    mileLeft: () => mapM((m) => ({ at: Math.max(1, m.at - 1) })), mileRight: () => mapM((m) => ({ at: Math.min(MAX, m.at + 1) })), toggleRelease: () => mapM((m) => ({ release: !m.release, kind: m.release ? "milestone" : "release" })),
     delSel: () => set((t) => (t.sel?.k === "i" ? { items: t.items.filter((i) => i.id !== t.sel!.id), sel: null } : { miles: t.miles.filter((m) => m.id !== t.sel!.id), sel: null })),
-    loadSample: () => set(() => ({ ...structuredClone(ROADMAP_SAMPLE), sel: null, checked: {}, from: 1 })),
+    loadSample: () => set((t) => ({ ...structuredClone(ROADMAP_SAMPLE), sel: null, checked: {}, from: 1, count: t.tab === "outcomes" ? 3 : t.count })),
     loadBlank: () => set(() => ({ ...structuredClone(BLANK_ROADMAP), sel: null, checked: {}, from: 1 })),
   };
   return (
