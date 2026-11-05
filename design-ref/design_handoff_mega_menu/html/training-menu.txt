@@ -1,0 +1,41 @@
+# Agile Agilist — training classes (plain text index)
+# Source of truth: training-menu.json. Course pages carry the registration section (#register).
+
+## AI-Native — The AI-Native track: from foundations to launching AI-powered release trains.
+- AI-Native Foundations (AINF) | 1 day | next class 2026-11-12 | https://agile-agilist.com/training/ai-native-foundations/
+- AI-Native Ready Certification (AINR) | 2 days | next class 2026-11-19 | https://agile-agilist.com/training/ai-native-ready-certification/
+- Leading the AI-Native Org (AINL) | 2 days | next class 2026-12-03 | https://agile-agilist.com/training/leading-the-ai-native-org/
+- AI-Native Value Architect (AINV) | 2 days | next class 2026-12-10 | https://agile-agilist.com/training/ai-native-value-architect/
+- Launching AI-Native ARTs (AINA) | 3 days | next class 2027-01-14 | https://agile-agilist.com/training/launching-ai-native-arts/
+
+## Core — The essentials for teams and the people who run them. Pick the roles you need on your train.
+- SAFe DevOps (DEVOPS) | 2 days | next class 2026-11-19 | https://agile-agilist.com/training/safe-devops/
+- SAFe for Teams (SP) (SP) | 2 days | next class 2026-11-21 | https://agile-agilist.com/training/safe-for-teams-sp/
+- Leading SAFe (SA) (LSA) | 2 days | next class 2026-11-14 | https://agile-agilist.com/training/leading-safe-sa/
+- Scrum Master (SSM) | 2 days | next class 2026-11-17 | https://agile-agilist.com/training/scrum-master/
+- SAFe POPM (POPM) | 2 days | next class 2026-11-16 | https://agile-agilist.com/training/safe-popm/
+
+## SAFe Roles — Role certifications beyond the Core set: advanced Scrum, business ownership, engineering, architecture and large solutions.
+- Advanced Scrum Master (ASM) | 2 days | next class 2026-12-01 | https://agile-agilist.com/training/advanced-scrum-master/
+- Business Owner (BO) | 1 day | next class 2026-12-08 | https://agile-agilist.com/training/business-owner/
+- Agile Software Engineering (ASE) (ASE) | 3 days | next class 2026-12-02 | https://agile-agilist.com/training/agile-software-engineering-ase/
+- SAFe for Architects (ARCH) | 2 days | next class 2027-01-12 | https://agile-agilist.com/training/safe-for-architects/
+- Large Solution SAFe (LSSP) (LSSP) | 2 days | next class 2027-01-26 | https://agile-agilist.com/training/large-solution-safe-lssp/
+
+## Advanced SAFe — Advanced practitioner and consultant certifications for leaders of transformation.
+- Implementing SAFe (SPC) (SPC) | 4 days | next class 2026-11-16 | https://agile-agilist.com/training/implementing-safe-spc/
+- Adv. Practice Consultant (ASPC) (ASPC) | 3 days | next class 2027-01-20 | https://agile-agilist.com/training/adv-practice-consultant-aspc/
+- Release Train Engineer (RTE) (RTE) | 3 days | next class 2026-11-23 | https://agile-agilist.com/training/release-train-engineer-rte/
+- Agile Product Mgmt (APM) (APM) | 2 days | next class 2026-12-14 | https://agile-agilist.com/training/agile-product-mgmt-apm/
+- Lean Portfolio Mgmt (LPM) (LPM) | 2 days | next class 2027-01-08 | https://agile-agilist.com/training/lean-portfolio-mgmt-lpm/
+
+## Micro-Credential — Focused skills you can add in a day or less.
+- Achieving Responsible AI (RAI) | half day | next class 2026-11-13 | https://agile-agilist.com/training/achieving-responsible-ai/
+- Conflict & Collaboration (CC) | half day | next class 2026-11-20 | https://agile-agilist.com/training/conflict-collaboration/
+- Value Stream Mapping (VSM) | 1 day | next class 2026-12-04 | https://agile-agilist.com/training/value-stream-mapping/
+- Agile Contracting for Government (ACG) | 1 day | next class 2027-01-09 | https://agile-agilist.com/training/agile-contracting-for-government/
+
+## SAFe by Industry — SAFe tuned for regulated and hardware-heavy environments.
+- SAFe for Hardware (HW) | 2 days | next class 2027-01-15 | https://agile-agilist.com/training/safe-for-hardware/
+- SAFe for Hardware Teams (HWT) | 2 days | next class 2027-01-22 | https://agile-agilist.com/training/safe-for-hardware-teams/
+- Leading SAFe for Government (LSG) | 2 days | next class 2027-02-03 | https://agile-agilist.com/training/leading-safe-for-government/

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin:0; background:#EAF3F2; }
+  a { color:inherit; text-decoration:none; }
+  button { font-family:inherit; cursor:pointer; }
+  @keyframes aamIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes aamPop { 0% { transform:scale(.6); } 60% { transform:scale(1.2); } 100% { transform:scale(1); } }
+  .aam-in { animation:aamIn .35s cubic-bezier(.2,.7,.2,1) both; }
+  .aam-pop { animation:aamPop .3s ease-out; }
+  .aam-scroll::-webkit-scrollbar { display:none; }
+  @media (prefers-reduced-motion: reduce) { .aam-in, .aam-pop { animation:none; } }
+</style>
+</helmet>
+<div style="min-height:100vh; font-family:'Instrument Sans',system-ui,sans-serif; color:#0B2E35; -webkit-font-smoothing:antialiased;">
+
+  <header style="background:#FFFFFF; border-bottom:2px solid #0B2E35; display:flex; align-items:stretch; gap:clamp(8px,2vw,28px); padding:0 clamp(12px,3vw,40px); flex-wrap:wrap;">
+    <a href="/" style="display:flex; align-items:center; font-weight:700; font-size:20px; letter-spacing:-0.02em; padding:16px 0; white-space:nowrap;">Agile Agilist<span style="color:#0E8074;">.</span></a>
+    <nav aria-label="Primary" class="aam-scroll" style="display:flex; align-items:stretch; overflow-x:auto; flex:1 1 auto; min-width:0;">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <span style="{{ n.style }}">{{ n.label }}</span>
+      </sc-for>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px; padding:10px 0;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.08em; padding:11px 18px; border:1.5px solid #0B2E35; border-radius:100px;">ENROLL</span>
+      <span style="font-weight:600; font-size:14px; padding:13px 22px; border-radius:100px; background:#0B2E35; color:#FFFFFF;">Book Consult ⟶</span>
+    </div>
+  </header>
+
+  <div class="aam-in" style="max-width:1220px; margin:18px auto 0; padding:0 clamp(10px,2vw,20px) 48px; box-sizing:border-box;">
+    <div style="background:#FFFFFF; border:1px solid #CFE3E1; border-radius:20px; box-shadow:0 30px 70px rgba(11,46,53,.16); overflow:hidden;">
+
+      <div style="display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #E6EFEE; background:#F6FAF9;">
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#0E8074;">Training · pick your classes</span>
+          <span style="font-size:15px; color:#35555B;">Choose a category, tick the classes you want. They collect in your shortlist.</span>
+        </div>
+        <label style="display:flex; align-items:center; gap:10px; flex:0 1 320px; min-width:min(100%,220px); height:46px; padding:0 16px; border:1px solid #CFE3E1; border-radius:100px; background:#FFFFFF; box-sizing:border-box;">
+          <span aria-hidden="true" style="color:#0E8074; font-size:16px;">⌕</span>
+          <input type="search" value="{{ q }}" onInput="{{ onQ }}" placeholder="Search all classes" aria-label="Search all classes" style="flex:1 1 auto; min-width:0; border:0; outline:0; background:transparent; font:inherit; font-size:15px; color:#0B2E35;" />
+        </label>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; align-items:stretch;">
+
+        <div class="aam-scroll" role="tablist" aria-label="Categories" style="flex:1 1 250px; max-width:100%; display:flex; flex-direction:column; gap:4px; padding:14px; border-inline-end:1px solid #E6EFEE; box-sizing:border-box;">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+            <button role="tab" aria-selected="{{ c.on }}" onClick="{{ c.pick }}" style="{{ c.style }}">
+              <span style="{{ c.dot }}"></span>
+              <span style="flex:1 1 auto; min-width:0; text-align:start; display:flex; flex-direction:column; gap:2px;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:15px; font-weight:600;">{{ c.name }}<span style="{{ c.newStyle }}">NEW</span></span>
+                <span style="font-size:12px; opacity:.75;">{{ c.blurb }}</span>
+              </span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; opacity:.8;">{{ c.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div key="{{ catKey }}" class="aam-in" style="flex:3 1 520px; min-width:0; display:flex; flex-direction:column; box-sizing:border-box;">
+          <div style="{{ band }}">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; color:#8FCFCF;">{{ eyebrow }}</span>
+            <h2 style="margin:0; font-family:'Instrument Serif',serif; font-weight:400; font-size:clamp(28px,4vw,38px); line-height:1.05; letter-spacing:-0.01em;">{{ title }}</h2>
+            <p style="margin:0; font-size:14.5px; line-height:1.5; color:#B9DCDC; max-width:60ch; text-wrap:pretty;">{{ desc }}</p>
+          </div>
+          <div role="status" style="padding:14px 20px 0; font-size:13px; color:#5C7479;">{{ resultLine }}</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr)); gap:10px; padding:12px 20px 20px;">
+            <sc-for list="{{ items }}" as="i" hint-placeholder-count="6">
+              <div style="{{ i.style }}">
+                <div style="display:flex; align-items:flex-start; gap:10px;">
+                  <a href="{{ i.href }}" style="flex:1 1 auto; min-width:0; font-size:15px; font-weight:600; line-height:1.3; letter-spacing:-0.005em;" style-hover="color:#0E8074;">{{ i.name }}</a>
+                  <button aria-pressed="{{ i.on }}" aria-label="{{ i.aria }}" onClick="{{ i.toggle }}" class="{{ i.cls }}" style="{{ i.btn }}">{{ i.mark }}</button>
+                </div>
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; font-size:12.5px; color:#5C7479;">
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:.06em; padding:2px 7px; border-radius:6px; background:#EEF7F6; color:#0B2E35;">{{ i.code }}</span>
+                  <span>{{ i.days }}</span><span aria-hidden="true">·</span><span>Next {{ i.next }}</span>
+                </div>
+                <sc-if value="{{ i.crossCat }}">
+                  <span style="font-size:12px; color:#0E8074; font-weight:600;">In {{ i.catName }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ empty }}">
+            <p style="margin:0; padding:10px 20px 30px; font-size:15px; color:#35555B;">No class matches “{{ q }}”. Try “SAFe” or “AI”.</p>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="{{ tray }}">
+        <div style="display:flex; align-items:center; gap:10px; flex:0 0 auto;">
+          <span aria-hidden="true" style="width:30px; height:30px; border-radius:50%; background:#8FCFCF; color:#0B2E35; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center;">{{ count }}</span>
+          <span style="font-weight:600; font-size:15px;">Your shortlist</span>
+        </div>
+        <div class="aam-scroll" style="flex:1 1 260px; min-width:0; display:flex; flex-wrap:wrap; gap:8px;">
+          <sc-if value="{{ noneSel }}"><span style="font-size:14px; color:#B9DCDC;">Nothing yet. Tick a class above.</span></sc-if>
+          <sc-for list="{{ chosen }}" as="s" hint-placeholder-count="0">
+            <span class="aam-pop" style="display:inline-flex; align-items:center; gap:4px; padding:0 4px 0 14px; min-height:40px; border-radius:100px; background:rgba(143,207,207,.16); border:1px solid rgba(143,207,207,.4); font-size:13.5px; font-weight:600;">{{ s.name }} <span style="font-weight:500; color:#8FCFCF; font-size:12.5px;">· {{ s.next }}</span>
+              <button aria-label="{{ s.aria }}" onClick="{{ s.remove }}" style="width:34px; height:34px; border:0; border-radius:50%; background:transparent; color:#FFFFFF; font-size:18px; line-height:1;">×</button>
+            </span>
+          </sc-for>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; flex:0 0 auto;">
+          <sc-if value="{{ hasSel }}">
+            <a href="{{ regHref }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 24px; border-radius:100px; background:#8FCFCF; color:#0B2E35; font-weight:700; font-size:15px;" style-hover="background:#FFFFFF;">{{ regLabel }} ⟶</a>
+            <button onClick="{{ clear }}" style="min-height:48px; padding:0 18px; border-radius:100px; background:transparent; border:1px solid rgba(143,207,207,.5); color:#FFFFFF; font-weight:600; font-size:14px;">Clear</button>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin:18px 4px 0; font-size:13.5px; line-height:1.55; color:#35555B; max-width:90ch;">Categories and classes come from one list in the component (<code style="font-family:'IBM Plex Mono',monospace; font-size:12px;">CATS</code>). Add an object with a name, colour and class codes and it appears here with a NEW tag. “Core” was added that way.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const COURSES = {
+  ainf:['AI-Native Foundations','AINF','1 day','Nov 12'], ainr:['AI-Native Ready Certification','AINR','2 days','Nov 19'],
+  ainl:['Leading the AI-Native Org','AINL','2 days','Dec 3'], ainv:['AI-Native Value Architect','AINV','2 days','Dec 10'],
+  aina:['Launching AI-Native ARTs','AINA','3 days','Jan 14'],
+  la:['Leading SAFe (SA)','LSA','2 days','Nov 14'], popm:['SAFe POPM','POPM','2 days','Nov 16'],
+  sm:['Scrum Master','SSM','2 days','Nov 17'], asm:['Advanced Scrum Master','ASM','2 days','Dec 1'],
+  devops:['SAFe DevOps','DEVOPS','2 days','Nov 19'], bo:['Business Owner','BO','1 day','Dec 8'],
+  sp:['SAFe for Teams (SP)','SP','2 days','Nov 21'], ase:['Agile Software Engineering (ASE)','ASE','3 days','Dec 2'],
+  arch:['SAFe for Architects','ARCH','2 days','Jan 12'],
+  spc:['Implementing SAFe (SPC)','SPC','4 days','Nov 16'], aspc:['Adv. Practice Consultant (ASPC)','ASPC','3 days','Jan 20'],
+  rte:['Release Train Engineer (RTE)','RTE','3 days','Nov 23'], apm:['Agile Product Mgmt (APM)','APM','2 days','Dec 14'],
+  lpm:['Lean Portfolio Mgmt (LPM)','LPM','2 days','Jan 8'], lssp:['Large Solution SAFe (LSSP)','LSSP','2 days','Jan 26'],
+  rai:['Achieving Responsible AI','RAI','half day','Nov 13'], cc:['Conflict & Collaboration','CC','half day','Nov 20'],
+  vsm:['Value Stream Mapping','VSM','1 day','Dec 4'], acg:['Agile Contracting for Government','ACG','1 day','Jan 9'],
+  hw:['SAFe for Hardware','HW','2 days','Jan 15'], hwt:['SAFe for Hardware Teams','HWT','2 days','Jan 22'], lsg:['Leading SAFe for Government','LSG','2 days','Feb 3']
+};
+// To add a category: push { id, name, eyebrow, desc, blurb, color, isNew, ids:[…course keys] }.
+const CATS = [
+  { id:'ai', name:'AI-Native', eyebrow:'Flagship', blurb:'Lead delivery with AI', desc:'The AI-Native track: from foundations to launching AI-powered release trains.', color:'#8FCFCF', ids:['ainf','ainr','ainl','ainv','aina'] },
+  { id:'core', name:'Core', eyebrow:'Start here', blurb:'Where most teams begin', isNew:true, desc:'The essentials for teams and the people who run them. Pick the roles you need on your train.', color:'#F2B66D', ids:['devops','sp','la','sm','popm'] },
+  { id:'roles', name:'SAFe Roles', eyebrow:'Role-based', blurb:'Advanced and specialist roles', desc:'Role certifications beyond the Core set: advanced Scrum, business ownership, engineering, architecture and large solutions.', color:'#0E8074', ids:['asm','bo','ase','arch','lssp'] },
+  { id:'adv', name:'Advanced SAFe', eyebrow:'Certification', blurb:'SPC, RTE, portfolio', desc:'Advanced practitioner and consultant certifications for leaders of transformation.', color:'#5B8DEF', ids:['spc','aspc','rte','apm','lpm'] },
+  { id:'micro', name:'Micro-Credential', eyebrow:'Short & sharp', blurb:'Half-day to one day', desc:'Focused skills you can add in a day or less.', color:'#C98BDB', ids:['rai','cc','vsm','acg'] },
+  { id:'ind', name:'SAFe by Industry', eyebrow:'Specialised', blurb:'Hardware, government', desc:'SAFe tuned for regulated and hardware-heavy environments.', color:'#E58D7A', ids:['hw','hwt','lsg'] }
+];
+class Component extends DCLogic {
+  state = { cat:'core', sel:['devops','sp'], q:'' };
+  toggle(k) { this.setState(s => ({ sel: s.sel.includes(k) ? s.sel.filter(x => x !== k) : [...s.sel, k] })); }
+  renderVals() {
+    const { cat, sel, q } = this.state;
+    const cur = CATS.find(c => c.id === cat) || CATS[0];
+    const ql = q.trim().toLowerCase();
+    const slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const item = (k, cross) => {
+      const [name, code, days, next] = COURSES[k], on = sel.includes(k);
+      const home = CATS.find(c => c.ids.includes(k));
+      return { name, code, days, next, on, href:'/training/' + slug(name) + '/',
+        aria: (on ? 'Remove ' : 'Add ') + name + (on ? ' from shortlist' : ' to shortlist'),
+        mark: on ? '✓' : '+', cls: on ? 'aam-pop' : '',
+        toggle: () => this.toggle(k), crossCat: cross, catName: home ? home.name : '',
+        style: 'display:flex; flex-direction:column; gap:9px; padding:14px; border-radius:14px; box-sizing:border-box; transition:border-color .2s, background .2s;' + (on ? 'border:1.5px solid #0E8074; background:#F2FAF9;' : 'border:1px solid #DCEAE8; background:#FFFFFF;'),
+        btn: 'flex:0 0 auto; width:44px; height:44px; margin:-6px -6px 0 0; border-radius:50%; font-size:20px; font-weight:700; line-height:1; transition:background .2s, color .2s;' + (on ? 'background:#0E8074; color:#FFFFFF; border:1.5px solid #0E8074;' : 'background:#FFFFFF; color:#0E8074; border:1.5px solid #BFD9D5;') };
+    };
+    let list, results;
+    if (ql) {
+      const keys = Object.keys(COURSES).filter(k => (COURSES[k][0] + ' ' + COURSES[k][1]).toLowerCase().includes(ql));
+      list = keys.map(k => item(k, true)); results = list.length + ' match' + (list.length === 1 ? '' : 'es') + ' across all categories';
+    } else { list = cur.ids.map(k => item(k, false)); results = list.length + ' classes in ' + cur.name + '. Next dates shown.'; }
+    const first = sel[0];
+    return {
+      nav: ['Assessments','Services','Training','About','Blog'].map(l => ({ label:l, style:'display:flex; align-items:center; padding:0 clamp(12px,2vw,22px); font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap;' + (l === 'Training' ? 'background:#8FCFCF; color:#0B2E35; font-weight:600; box-shadow:inset 0 -3px 0 #0B2E35;' : 'color:#35555B;') })),
+      cats: CATS.map(c => { const on = !ql && c.id === cat; return { name:c.name, blurb:c.blurb, count:c.ids.length, on, pick: () => this.setState({ cat:c.id, q:'' }),
+        newStyle: c.isNew ? 'font-family:"IBM Plex Mono",monospace; font-size:9px; letter-spacing:.1em; padding:2px 6px; border-radius:100px; background:#F2B66D; color:#0B2E35;' : 'display:none;',
+        dot: 'flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:' + c.color + ';' + (on ? 'box-shadow:0 0 0 3px rgba(255,255,255,.25);' : ''),
+        style: 'display:flex; align-items:center; gap:12px; width:100%; min-height:56px; padding:8px 14px; border-radius:12px; border:0; box-sizing:border-box; transition:background .2s;' + (on ? 'background:#0B2E35; color:#FFFFFF;' : 'background:transparent; color:#0B2E35;') }; }),
+      catKey: ql ? 'search' : cat, q,
+      onQ: e => this.setState({ q:e.target.value }),
+      band: 'display:flex; flex-direction:column; gap:8px; padding:22px 24px; color:#FFFFFF; background:linear-gradient(110deg,#0B2E35 35%,' + (ql ? '#1B4A55' : '#1E3A78') + ' 130%);',
+      eyebrow: ql ? 'Search' : cur.eyebrow, title: ql ? 'Results for “' + q + '”' : cur.name, desc: ql ? 'Matches from every category.' : cur.desc,
+      items: list, empty: list.length === 0, resultLine: results,
+      count: sel.length, hasSel: sel.length > 0, noneSel: sel.length === 0,
+      chosen: sel.map(k => ({ name:COURSES[k][0], next:COURSES[k][3], aria:'Remove ' + COURSES[k][0], remove: () => this.toggle(k) })),
+      regLabel: sel.length > 1 ? 'Pick dates (' + sel.length + ')' : 'Pick a date',
+      regHref: first ? '/training/' + slug(COURSES[first][0]) + '/#register' : '#',
+      clear: () => this.setState({ sel:[] }),
+      tray: 'display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; padding:14px 20px; background:#0B2E35; color:#FFFFFF;'
+    };
+  }
+}
+</script>
+</body>
+</html>

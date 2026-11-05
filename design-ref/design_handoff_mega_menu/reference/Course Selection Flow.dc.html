@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  body { margin:0; background:#EAF3F2; }
+  a { color:inherit; text-decoration:none; }
+  button { font-family:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  input { font-family:inherit; }
+  @keyframes aafIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+  @keyframes aafPop { 0% { transform:scale(.7); } 60% { transform:scale(1.15); } 100% { transform:scale(1); } }
+  @keyframes aafSpin { to { transform:rotate(360deg); } }
+  .aaf-in { animation:aafIn .4s cubic-bezier(.2,.7,.2,1) backwards; }
+  .aaf-pop { animation:aafPop .3s ease-out; }
+  .aaf-x::-webkit-scrollbar { display:none; }
+  @media (prefers-reduced-motion: reduce) { .aaf-in, .aaf-pop { animation:none; } }
+</style>
+</helmet>
+<div style="min-height:100vh; font-family:'Instrument Sans',system-ui,sans-serif; color:#0B2E35; -webkit-font-smoothing:antialiased;">
+<div style="max-width:1100px; margin:0 auto; padding:clamp(10px,3vw,32px) clamp(8px,2vw,20px) 0; box-sizing:border-box;">
+<div style="background:#FFFFFF; border:1px solid #CFE3E1; border-radius:20px; box-shadow:0 30px 70px rgba(11,46,53,.14); overflow:clip;">
+
+  <nav aria-label="Progress" style="display:flex; gap:6px; padding:14px clamp(10px,2vw,20px); background:#F6FAF9; border-bottom:1px solid #E6EFEE; overflow-x:auto;" class="aaf-x">
+    <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+      <button onClick="{{ s.go }}" aria-current="{{ s.cur }}" style="{{ s.style }}">
+        <span style="{{ s.circle }}">{{ s.mark }}</span>
+        <span style="display:flex; flex-direction:column; align-items:flex-start; gap:1px; text-align:start;">
+          <span style="font-size:14.5px; font-weight:600; white-space:nowrap;">{{ s.label }}</span>
+          <span style="font-size:12px; opacity:.75; white-space:nowrap;">{{ s.sub }}</span>
+        </span>
+      </button>
+    </sc-for>
+  </nav>
+
+  <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+    <div key="s1" class="aaf-in" style="padding:clamp(16px,3vw,28px) clamp(14px,3vw,28px) 24px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#0E8074;">Step 1 · Core category</span>
+      <h2 style="margin:8px 0 6px; font-family:'Instrument Serif',serif; font-weight:400; font-size:clamp(28px,4.4vw,40px); letter-spacing:-0.01em; line-height:1.05;">Which classes do you need?</h2>
+      <p style="margin:0 0 20px; font-size:15px; line-height:1.55; color:#35555B; max-width:60ch;">Pick one or several. Next you choose a date for each. You can compare before you pay.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:10px;">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+          <button role="checkbox" aria-checked="{{ c.on }}" onClick="{{ c.toggle }}" style="{{ c.style }}">
+            <span style="display:flex; align-items:flex-start; gap:12px; width:100%;">
+              <span style="flex:1 1 auto; min-width:0; text-align:start; display:flex; flex-direction:column; gap:6px;">
+                <span style="font-size:16px; font-weight:600; line-height:1.25;">{{ c.name }}</span>
+                <span style="font-size:13px; line-height:1.45; color:#5C7479;">{{ c.who }}</span>
+              </span>
+              <span style="{{ c.box }}">{{ c.mark }}</span>
+            </span>
+            <span style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font-size:12.5px; color:#35555B; width:100%;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:6px; background:#EEF7F6;">{{ c.code }}</span>
+              <span>{{ c.days }}</span><span aria-hidden="true">·</span><span>Next {{ c.next }}</span><span style="margin-inline-start:auto; font-weight:600; color:#0B2E35;">{{ c.price }}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isStep2 }}">
+    <div key="s2" class="aaf-in" style="padding:clamp(16px,3vw,28px) clamp(14px,3vw,28px) 24px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#0E8074;">Step 2 · Dates</span>
+      <h2 style="margin:8px 0 6px; font-family:'Instrument Serif',serif; font-weight:400; font-size:clamp(28px,4.4vw,40px); letter-spacing:-0.01em; line-height:1.05;">Choose a date for each class.</h2>
+      <p style="margin:0 0 20px; font-size:15px; line-height:1.55; color:#35555B; max-width:60ch;">We’ve picked the soonest open date. Change any of them. Dates that overlap are flagged.</p>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <sc-for list="{{ chosen }}" as="c" hint-placeholder-count="2">
+          <div style="border:1px solid #DCEAE8; border-radius:16px; padding:16px; background:#FFFFFF; display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px;">
+              <strong style="font-size:17px; font-weight:600; letter-spacing:-0.01em;">{{ c.name }}</strong>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:6px; background:#EEF7F6;">{{ c.code }}</span>
+              <button onClick="{{ c.remove }}" style="margin-inline-start:auto; min-height:44px; padding:0 8px; border:0; background:transparent; color:#5C7479; font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:3px;">Remove</button>
+            </div>
+            <div role="radiogroup" aria-label="{{ c.aria }}" class="aaf-x" style="display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px; scroll-snap-type:x proximity;">
+              <sc-for list="{{ c.dates }}" as="d" hint-placeholder-count="3">
+                <button role="radio" aria-checked="{{ d.on }}" aria-disabled="{{ d.full }}" onClick="{{ d.pick }}" style="{{ d.style }}">
+                  <span style="display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;">
+                    <span style="font-size:16px; font-weight:700;">{{ d.range }}</span>
+                    <span style="{{ d.check }}">{{ d.mark }}</span>
+                  </span>
+                  <span style="font-size:12.5px; color:#5C7479;">{{ d.kind }} · {{ d.time }}</span>
+                  <span style="{{ d.seatStyle }}">{{ d.seats }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ c.clash }}"><p role="alert" style="margin:0; display:flex; gap:9px; align-items:flex-start; padding:10px 12px; border-radius:10px; background:#FFF3EE; border:1px solid #F0CDBF; color:#7A2E14; font-size:13.5px; font-weight:600; line-height:1.4;"><span aria-hidden="true" style="flex:0 0 auto; width:18px; height:18px; border-radius:50%; background:#C2502A; color:#FFFFFF; font-size:11px; display:flex; align-items:center; justify-content:center;">!</span>{{ c.clash }}</p></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isStep3 }}">
+    <div key="s3" class="aaf-in" style="padding:clamp(16px,3vw,28px) clamp(14px,3vw,28px) 24px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#0E8074;">Step 3 · Decide</span>
+      <h2 style="margin:8px 0 14px; font-family:'Instrument Serif',serif; font-weight:400; font-size:clamp(28px,4.4vw,40px); letter-spacing:-0.01em; line-height:1.05;">Register now, or compare first.</h2>
+      <div role="tablist" aria-label="Next action" style="display:inline-flex; gap:4px; padding:4px; border-radius:100px; background:#EEF3F2; margin-bottom:20px; max-width:100%;">
+        <button role="tab" aria-selected="{{ isReg }}" onClick="{{ setReg }}" style="{{ regTab }}">Register</button>
+        <button role="tab" aria-selected="{{ isCmp }}" onClick="{{ setCmp }}" style="{{ cmpTab }}">Compare <span style="opacity:.7;">({{ n }})</span></button>
+      </div>
+
+      <sc-if value="{{ isReg }}" hint-placeholder-val="{{ true }}">
+        <div key="reg" class="aaf-in" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:18px; align-items:start;">
+          <div style="display:flex; flex-direction:column; border:1px solid #DCEAE8; border-radius:16px; overflow:hidden;">
+            <sc-for list="{{ regRows }}" as="r" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid #EEF3F2;">
+                <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:3px;">
+                  <strong style="font-size:15px; font-weight:600;">{{ r.name }}</strong>
+                  <span style="font-size:13px; color:#35555B;">{{ r.range }}</span>
+                </div>
+                <bdi style="font-size:15px; font-weight:600; white-space:nowrap;">{{ r.price }}</bdi>
+              </div>
+            </sc-for>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:#F6FAF9;">
+              <span style="font-size:14px; font-weight:600;">Seats per class</span>
+              <span style="display:inline-flex; align-items:center; border:1px solid #CFE3E1; border-radius:100px; background:#FFFFFF;">
+                <button aria-label="Fewer seats" onClick="{{ seatDown }}" style="width:46px; height:44px; border:0; background:transparent; font-size:20px; color:#35555B;">−</button>
+                <span style="min-width:28px; text-align:center; font-weight:700;" aria-live="polite">{{ seats }}</span>
+                <button aria-label="More seats" onClick="{{ seatUp }}" style="width:46px; height:44px; border:0; background:transparent; font-size:20px; color:#0E8074;">+</button>
+              </span>
+            </div>
+          </div>
+          <div style="border:1px solid #DCEAE8; border-radius:16px; padding:18px; background:#F6FAF9; display:flex; flex-direction:column; gap:12px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; color:#0E8074;">Your details</span>
+            <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600;">Work email
+              <input type="email" value="{{ email }}" onInput="{{ onEmail }}" placeholder="you@company.com" autocomplete="email" inputmode="email" style="height:48px; border-radius:10px; border:1px solid #CFE3E1; padding:0 14px; font-size:16px; color:#0B2E35; background:#FFFFFF;" />
+            </label>
+            <div role="alert" style="min-height:0;">
+              <sc-if value="{{ refused }}"><p style="margin:0; display:flex; gap:9px; align-items:flex-start; padding:11px 12px; border-radius:10px; background:#FFF3EE; border:1px solid #F0CDBF; color:#7A2E14; font-size:13.5px; font-weight:600; line-height:1.4;"><span aria-hidden="true" style="flex:0 0 auto; width:18px; height:18px; border-radius:50%; background:#C2502A; color:#FFFFFF; font-size:11px; display:flex; align-items:center; justify-content:center;">!</span>{{ refusal }}</p></sc-if>
+            </div>
+            <sc-if value="{{ idle }}" hint-placeholder-val="{{ true }}"><button onClick="{{ submit }}" style="display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; border:0; border-radius:100px; background:#0E8074; color:#FFFFFF; font-weight:600; font-size:15.5px;" style-hover="background:#0B2E35;">Continue to payment <span aria-hidden="true">⟶</span></button></sc-if>
+            <sc-if value="{{ busy }}"><span role="button" aria-busy="true" aria-disabled="true" style="display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; border-radius:100px; background:#0B2E35; color:#FFFFFF; font-weight:600; font-size:15.5px;"><span aria-hidden="true" style="width:15px; height:15px; border-radius:50%; border:2px solid rgba(143,207,207,.3); border-top-color:#8FCFCF; animation:aafSpin .8s linear infinite;"></span>Opening checkout…</span></sc-if>
+            <p style="margin:0; font-size:12.5px; line-height:1.5; color:#5C7479;">Next: secure payment in this tab. Your total is confirmed there. Not ready? <a href="#" style="color:#0E8074; font-weight:600; text-decoration:underline; text-underline-offset:3px;" onClick="{{ setCmp }}">Compare classes</a> first.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCmp }}">
+        <div key="cmp" class="aaf-in" style="display:flex; flex-direction:column; gap:14px;">
+          <label style="display:inline-flex; align-items:center; gap:10px; font-size:14px; font-weight:600; min-height:44px; align-self:flex-start;">
+            <input type="checkbox" checked="{{ diffOnly }}" onChange="{{ toggleDiff }}" style="width:20px; height:20px; accent-color:#0E8074;" /> Show differences only
+          </label>
+          <div class="aaf-x" style="overflow-x:auto; border:1px solid #DCEAE8; border-radius:16px; scroll-snap-type:x proximity;">
+            <div style="{{ grid }}">
+              <div style="position:sticky; inset-inline-start:0; z-index:2; background:#FFFFFF; border-bottom:1px solid #DCEAE8;"></div>
+              <sc-for list="{{ heads }}" as="h" hint-placeholder-count="3">
+                <div style="padding:14px; border-bottom:1px solid #DCEAE8; display:flex; flex-direction:column; gap:10px; scroll-snap-align:start; background:#FFFFFF;">
+                  <strong style="font-size:16px; font-weight:600; line-height:1.25;">{{ h.name }}</strong>
+                  <button onClick="{{ h.regOne }}" style="min-height:44px; padding:0 16px; border-radius:100px; border:0; background:#0E8074; color:#FFFFFF; font-weight:600; font-size:14px;">Register this one</button>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+              <div style="{{ grid }}">
+                <div style="position:sticky; inset-inline-start:0; z-index:2; background:#F6FAF9; padding:12px 14px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:600; color:#5C7479; border-bottom:1px solid #EEF3F2; display:flex; align-items:center;">{{ r.label }}</div>
+                <sc-for list="{{ r.cells }}" as="x" hint-placeholder-count="3">
+                  <div style="{{ x.style }}">{{ x.v }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ allSame }}"><p style="margin:0; font-size:14px; color:#35555B;">These classes match on every row. Switch off “differences only” to see the details.</p></sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="position:sticky; bottom:0; z-index:5; display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; padding:12px clamp(12px,2vw,20px) calc(12px + env(safe-area-inset-bottom)); background:#0B2E35; color:#FFFFFF;">
+    <button onClick="{{ back }}" style="{{ backStyle }}">Back</button>
+    <div style="flex:1 1 140px; min-width:0; font-size:13.5px; color:#B9DCDC;">{{ summary }}</div>
+    <sc-if value="{{ showNext }}"><button disabled="{{ nextOff }}" onClick="{{ next }}" style="{{ nextStyle }}">{{ nextLabel }} <span aria-hidden="true">⟶</span></button></sc-if>
+  </div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const CL = {
+  devops:{ name:'SAFe DevOps', code:'DEVOPS', days:'2 days', price:'US$1,590', pn:1590, who:'Teams that ship and run what they build.', fmt:'Live online', exam:'Included', pre:'Working knowledge of Agile delivery', best:'DevOps leads, release engineers', cohorts:[['d1','Nov 19–20','Thu–Fri','09:00–17:00 ET','4 seats left','2026-11-19','2026-11-20'],['d2','Dec 10–11','Thu–Fri','09:00–17:00 ET','Seats open','2026-12-10','2026-12-11'],['d3','Jan 14–15','Thu–Fri','09:00–17:00 ET','Seats open','2027-01-14','2027-01-15']] },
+  sp:{ name:'SAFe for Teams (SP)', code:'SP', days:'2 days', price:'US$1,590', pn:1590, who:'Everyone on an agile team inside SAFe.', fmt:'Live online', exam:'Included', pre:'None', best:'Team members, developers, testers', cohorts:[['s1','Nov 21–22','Sat–Sun','09:00–17:00 ET','Seats open','2026-11-21','2026-11-22'],['s2','Dec 12–13','Sat–Sun','09:00–17:00 ET','Seats open','2026-12-12','2026-12-13'],['s3','Jan 16–17','Sat–Sun','09:00–17:00 ET','Full','2027-01-16','2027-01-17']] },
+  la:{ name:'Leading SAFe (SA)', code:'LSA', days:'2 days', price:'US$1,590', pn:1590, who:'Leaders adopting SAFe across the organization.', fmt:'Live online', exam:'Included', pre:'None', best:'Managers, executives, change leaders', cohorts:[['l1','Nov 14–15','Sat–Sun','09:00–17:00 ET','2 seats left','2026-11-14','2026-11-15'],['l2','Dec 5–6','Sat–Sun','09:00–17:00 ET','Seats open','2026-12-05','2026-12-06'],['l3','Jan 9–10','Sat–Sun','09:00–17:00 ET','Seats open','2027-01-09','2027-01-10']] },
+  sm:{ name:'Scrum Master', code:'SSM', days:'2 days', price:'US$1,590', pn:1590, who:'Servant leaders who coach agile teams.', fmt:'Live online', exam:'Included', pre:'Scrum experience helps', best:'Scrum Masters, team coaches', cohorts:[['m1','Nov 17–18','Tue–Wed','09:00–17:00 ET','Seats open','2026-11-17','2026-11-18'],['m2','Dec 1–2','Tue–Wed','09:00–17:00 ET','Seats open','2026-12-01','2026-12-02'],['m3','Jan 12–13','Tue–Wed','09:00–17:00 ET','Seats open','2027-01-12','2027-01-13']] },
+  popm:{ name:'SAFe POPM', code:'POPM', days:'2 days', price:'US$1,590', pn:1590, who:'Product Owners and Product Managers.', fmt:'Live online', exam:'Included', pre:'Product ownership experience', best:'Product Owners, Product Managers', cohorts:[['p1','Nov 16–17','Mon–Tue','09:00–17:00 ET','Seats open','2026-11-16','2026-11-17'],['p2','Dec 7–8','Mon–Tue','09:00–17:00 ET','Seats open','2026-12-07','2026-12-08'],['p3','Jan 11–12','Mon–Tue','09:00–17:00 ET','Seats open','2027-01-11','2027-01-12']] },
+  rte:{ name:'Release Train Engineer', code:'RTE', days:'3 days', price:'US$2,450', pn:2450, who:'Servant leaders of the release train.', fmt:'Live online', exam:'Included', pre:'SAFe and facilitation experience', best:'RTEs, program managers', cohorts:[['r1','Nov 23–25','Mon–Wed','09:00–17:00 ET','Seats open','2026-11-23','2026-11-25'],['r2','Dec 14–16','Mon–Wed','09:00–17:00 ET','Seats open','2026-12-14','2026-12-16'],['r3','Jan 25–27','Mon–Wed','09:00–17:00 ET','Seats open','2027-01-25','2027-01-27']] }
+};
+const ORDER = ['devops','sp','la','sm','popm','rte'];
+class Component extends DCLogic {
+  state = { step:1, sel:['devops','sp'], dates:{}, mode:'register', seats:1, email:'', diff:false, status:'idle', err:'' };
+  firstOpen(id) { const c = CL[id].cohorts.find(x => x[4] !== 'Full'); return c ? c[0] : CL[id].cohorts[0][0]; }
+  goStep(n) {
+    if (n === 2 || n === 3) this.setState(s => { const d = { ...s.dates }; s.sel.forEach(id => { if (!d[id]) d[id] = this.firstOpen(id); }); return { step:n, dates:d, status:'idle', err:'' }; });
+    else this.setState({ step:n, status:'idle', err:'' });
+  }
+  toggle(id) { this.setState(s => ({ sel: s.sel.includes(id) ? s.sel.filter(x => x !== id) : ORDER.filter(x => s.sel.includes(x) || x === id) })); }
+  dateOf(id) { const k = this.state.dates[id] || this.firstOpen(id); return CL[id].cohorts.find(c => c[0] === k); }
+  clashes(id) {
+    const a = this.dateOf(id); const out = this.state.sel.filter(o => o !== id).filter(o => { const b = this.dateOf(o); return a[5] <= b[6] && b[5] <= a[6]; });
+    return out.length ? 'This overlaps ' + CL[out[0]].name + '. Pick a different date for one of them.' : '';
+  }
+  renderVals() {
+    const { step, sel, mode, seats, email, diff, status, err } = this.state;
+    const n = sel.length;
+    const circ = (on, done) => 'flex:0 0 auto; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;' + (on ? 'background:#8FCFCF; color:#0B2E35;' : done ? 'background:#0E8074; color:#FFFFFF;' : 'background:#DCEAE8; color:#35555B;');
+    const stepDefs = [['Classes', n ? n + ' selected' : 'None yet'], ['Dates', step > 1 && n ? 'Set for ' + n : 'Per class'], ['Register or compare', mode === 'register' ? 'Register' : 'Compare']];
+    const steps = stepDefs.map((d, i) => { const k = i + 1, on = step === k, done = step > k, can = k === 1 || n > 0;
+      return { label:d[0], sub:d[1], cur: on ? 'step' : 'false', mark: done ? '✓' : String(k), circle:circ(on, done), go: () => can && this.goStep(k),
+        style:'display:flex; align-items:center; gap:10px; min-height:52px; padding:0 16px 0 10px; border-radius:100px; border:0; flex:0 0 auto;' + (on ? 'background:#0B2E35; color:#FFFFFF;' : 'background:transparent; color:#0B2E35;') + (can ? '' : 'opacity:.45; cursor:not-allowed;') }; });
+    const cards = ORDER.map(id => { const c = CL[id], on = sel.includes(id), nx = c.cohorts.find(x => x[4] !== 'Full') || c.cohorts[0];
+      return { name:c.name, code:c.code, days:c.days, price:c.price, who:c.who, next:nx[2] ? nx[1].split('–')[0] : '', on, mark:on ? '✓' : '', toggle: () => this.toggle(id),
+        box:'flex:0 0 auto; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; margin-top:1px;' + (on ? 'background:#0E8074; color:#FFFFFF; border:1.5px solid #0E8074;' : 'background:#FFFFFF; border:1.5px solid #BFD9D5;'),
+        style:'display:flex; flex-direction:column; gap:14px; align-items:stretch; min-height:44px; padding:16px; border-radius:14px; text-align:start; font:inherit; color:#0B2E35; transition:border-color .2s, background .2s;' + (on ? 'border:1.5px solid #0E8074; background:#F2FAF9; padding:15.5px;' : 'border:1px solid #DCEAE8; background:#FFFFFF;') }; });
+    const chosen = sel.map(id => { const c = CL[id], cur = this.state.dates[id] || this.firstOpen(id);
+      return { name:c.name, code:c.code, aria:'Dates for ' + c.name, remove: () => { this.toggle(id); if (sel.length === 1) this.goStep(1); }, clash:this.clashes(id),
+        dates: c.cohorts.map(h => { const on = h[0] === cur, full = h[4] === 'Full', low = /left/.test(h[4]);
+          return { range:h[1], kind:h[2], time:h[3], seats:h[4], on, full, mark:on ? '✓' : '', pick: () => !full && this.setState(s => ({ dates:{ ...s.dates, [id]:h[0] } })),
+            check:'width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;' + (on ? 'background:#0E8074; color:#FFFFFF;' : 'background:#F0F4F3; border:1px solid #D5E2E0;'),
+            seatStyle:'font-size:12px; font-weight:600;' + (full ? 'color:#8A9A9D;' : low ? 'color:#B3541E;' : 'color:#0E8074;'),
+            style:'flex:0 0 min(78%,200px); scroll-snap-align:start; display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:92px; padding:13px 14px; border-radius:13px; text-align:start; font:inherit; color:#0B2E35; transition:border-color .2s, background .2s;' + (on ? 'border:2px solid #0E8074; background:#F2FAF9; padding:12px 13px; box-shadow:0 0 0 4px rgba(14,128,116,.1);' : full ? 'border:1px solid #E3ECEB; background:#F7F9F9; opacity:.6; cursor:not-allowed;' : 'border:1px solid #DCEAE8; background:#FFFFFF;') }; }) }; });
+    const clashAny = sel.some(id => this.clashes(id));
+    const regRows = sel.map(id => ({ name:CL[id].name, range:this.dateOf(id)[1] + ', ' + this.dateOf(id)[2], price:CL[id].price + ' / seat' }));
+    const rowDefs = [['Price per seat', id => CL[id].price], ['Length', id => CL[id].days], ['Your date', id => this.dateOf(id)[1] + ' · ' + this.dateOf(id)[2]], ['Format', id => CL[id].fmt], ['Exam', id => CL[id].exam], ['Prerequisites', id => CL[id].pre], ['Best for', id => CL[id].best]];
+    let allSame = false;
+    const rows = rowDefs.map(([label, fn]) => { const vals = sel.map(fn), same = vals.every(v => v === vals[0]); return { label, same, cells: vals.map(v => ({ v, style:'padding:12px 14px; font-size:14px; line-height:1.45; border-bottom:1px solid #EEF3F2; scroll-snap-align:start; background:' + (same ? '#FFFFFF; color:#5C7479;' : '#FFFFFF; color:#0B2E35; font-weight:600;') })) }; });
+    const shown = diff ? rows.filter(r => !r.same || r.label === 'Your date') : rows;
+    if (diff && n > 1 && rows.every(r => r.same || r.label === 'Your date') && rows.filter(r => !r.same).length === 0) allSame = true;
+    const busy = status === 'busy', refused = !!err;
+    const isStep3 = step === 3;
+    const nextLabel = step === 1 ? 'Choose dates (' + n + ')' : mode === 'compare' ? 'Register (' + n + ')' : 'Review';
+    return {
+      steps, cards, chosen, n, seats, email, regRows, rows:shown, allSame, diffOnly:diff,
+      isStep1:step === 1, isStep2:step === 2, isStep3, isReg:mode === 'register', isCmp:mode === 'compare',
+      regTab:'min-height:46px; padding:0 22px; border:0; border-radius:100px; font-size:14.5px; font-weight:600;' + (mode === 'register' ? 'background:#0B2E35; color:#FFFFFF;' : 'background:transparent; color:#35555B;'),
+      cmpTab:'min-height:46px; padding:0 22px; border:0; border-radius:100px; font-size:14.5px; font-weight:600;' + (mode === 'compare' ? 'background:#0B2E35; color:#FFFFFF;' : 'background:transparent; color:#35555B;'),
+      setReg: () => this.setState({ mode:'register' }), setCmp: e => { e && e.preventDefault && e.preventDefault(); this.setState({ mode:'compare' }); },
+      seatUp: () => this.setState(s => ({ seats:Math.min(20, s.seats + 1) })), seatDown: () => this.setState(s => ({ seats:Math.max(1, s.seats - 1) })),
+      onEmail: e => this.setState({ email:e.target.value, err:'' }),
+      refused, refusal:err, idle:!busy, busy,
+      submit: () => { if (!/^\S+@\S+\.\S+$/.test(this.state.email)) return this.setState({ err:'Enter a valid work email to continue.' }); if (sel.some(id => this.clashes(id))) return this.setState({ err:'Two classes overlap. Go back and change a date.' }); this.setState({ status:'busy', err:'' }); setTimeout(() => this.setState({ status:'idle' }), 2200); },
+      grid:'display:grid; grid-template-columns:116px repeat(' + Math.max(1, n) + ',minmax(190px,1fr)); min-width:min-content;',
+      heads: sel.map(id => ({ name:CL[id].name, regOne: () => this.setState({ sel:[id], mode:'register' }) })),
+      toggleDiff: () => this.setState(s => ({ diff:!s.diff })),
+      back: () => step > 1 && this.goStep(step - 1),
+      backStyle:'min-height:48px; padding:0 20px; border-radius:100px; background:transparent; border:1px solid rgba(143,207,207,.5); color:#FFFFFF; font-weight:600; font-size:14.5px;' + (step === 1 ? 'visibility:hidden;' : ''),
+      summary: step === 1 ? (n ? n + (n === 1 ? ' class' : ' classes') + ' selected' : 'Select at least one class') : step === 2 ? (clashAny ? 'Some dates overlap' : 'Dates set for ' + n + (n === 1 ? ' class' : ' classes')) : (mode === 'register' ? 'Seats: ' + seats + ' per class' : 'Comparing ' + n),
+      showNext: step < 3, nextOff: n === 0 || (step === 2 && clashAny), nextLabel: step === 1 ? 'Choose dates (' + n + ')' : 'Review & decide',
+      next: () => this.goStep(step + 1),
+      nextStyle:'min-height:48px; padding:0 24px; border-radius:100px; border:0; background:#8FCFCF; color:#0B2E35; font-weight:700; font-size:15px;' + (n === 0 || (step === 2 && clashAny) ? 'opacity:.45; cursor:not-allowed;' : '')
+    };
+  }
+}
+</script>
+</body>
+</html>

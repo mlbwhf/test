@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,follow">
+<title>Select your classes | Agile Agilist</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#EAF3F2;font-family:"Instrument Sans",system-ui,sans-serif}</style><style>/* Agile Agilist class-selection flow — namespace .aa-fl */
+.aa-fl{--ink:#0B2E35;--teal:#0E8074;--mint:#8FCFCF;--mist:#B9DCDC;--line:#DCEAE8;--soft:#F6FAF9;--mute:#5C7479;--warn:#B3541E;position:relative;font-family:inherit;color:var(--ink);background:#fff;border:1px solid #CFE3E1;border-radius:20px;overflow:clip;box-shadow:0 30px 70px rgba(11,46,53,.14);-webkit-font-smoothing:antialiased}
+.aa-fl *{box-sizing:border-box}
+.aa-fl button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.aa-fl a{color:inherit;text-decoration:none}
+.aa-fl :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.aa-fl [hidden]{display:none!important}
+.aa-fl__eyebrow{margin:0 0 8px;font:600 10.5px/1.2 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.aa-fl__steps{background:var(--soft);border-bottom:1px solid #E6EFEE;overflow-x:auto;scrollbar-width:none}
+.aa-fl__steps::-webkit-scrollbar{display:none}
+.aa-fl__steps ol{list-style:none;margin:0;padding:14px clamp(10px,2vw,20px);display:flex;gap:6px}
+.aa-fl__stepbtn{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px 0 10px;border:0;border-radius:100px;background:transparent;color:var(--ink);text-align:start;white-space:nowrap;transition:background .3s,color .3s}
+.aa-fl__stepbtn[aria-current=step]{background:var(--ink);color:#fff}
+.aa-fl__stepbtn:disabled{opacity:.45;cursor:not-allowed}
+.aa-fl__num{flex:none;width:28px;height:28px;border-radius:50%;background:#DCEAE8;color:#35555B;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.aa-fl__stepbtn[aria-current=step] .aa-fl__num{background:var(--mint);color:var(--ink)}
+.aa-fl__stepbtn.is-done .aa-fl__num{background:var(--teal);color:#fff;font-size:0}
+.aa-fl__stepbtn.is-done .aa-fl__num::before{content:"✓";font-size:13px}
+.aa-fl__stt{display:flex;flex-direction:column;gap:1px}.aa-fl__stt b{font-size:14.5px;font-weight:600}.aa-fl__stt small{font-size:12px;opacity:.75}
+.aa-fl__step{padding:clamp(16px,3vw,28px) clamp(14px,3vw,28px) 24px}
+.aa-fl__step.is-off{display:none}
+.aa-fl.is-ready .aa-fl__step:not(.is-off){animation:aaflIn .4s cubic-bezier(.2,.7,.2,1) backwards}
+.aa-fl__step h2{margin:0 0 6px;font:400 clamp(28px,4.4vw,40px)/1.05 "Instrument Serif",Georgia,serif;letter-spacing:-.01em;outline:0}
+.aa-fl__lede{margin:0 0 20px;font-size:15px;line-height:1.55;color:#35555B;max-width:60ch}
+.aa-fl__cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
+.aa-fl__card{position:relative;display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;transition:border-color .25s,background .25s,transform .25s,box-shadow .25s}
+.aa-fl__card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(11,46,53,.08)}
+.aa-fl__card.is-on{border-color:var(--teal);background:#F2FAF9;box-shadow:inset 0 0 0 .5px var(--teal)}
+.aa-fl.is-ready .aa-fl__step:not(.is-off) .aa-fl__card{animation:aaflCard .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*50ms + 80ms)}
+.aa-fl__chk,.aa-fl__rad{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.aa-fl__card h3{margin:0;padding-inline-end:36px;font-size:16px;font-weight:600;line-height:1.25}
+.aa-fl__card h3 label{cursor:pointer}
+.aa-fl__card h3 label::after{content:"";position:absolute;inset:0;border-radius:14px}
+.aa-fl__chk:focus-visible~h3 label::after,.aa-fl__rad:focus-visible~.aa-fl__range{outline:2px solid var(--teal);outline-offset:2px}
+.aa-fl__who{margin:0;font-size:13px;line-height:1.45;color:var(--mute)}
+.aa-fl__meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12.5px;color:#35555B}
+.aa-fl__code{font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:6px;background:#EEF7F6}
+.aa-fl__price{margin-inline-start:auto;font-weight:600;color:var(--ink)}
+.aa-fl__box{position:absolute;top:16px;inset-inline-end:16px;width:26px;height:26px;border-radius:8px;border:1.5px solid #BFD9D5;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;transition:background .2s,border-color .2s}
+.aa-fl__card.is-on .aa-fl__box{background:var(--teal);border-color:var(--teal)}
+.aa-fl__card.is-on .aa-fl__box::before{content:"✓"}
+.aa-fl__cls{margin:0 0 14px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;min-width:0}
+.aa-fl__cls.is-off{display:none}
+.aa-fl__cls legend{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;width:100%;padding:0;margin:0 0 12px;float:left}
+.aa-fl__cls legend+*{clear:both}
+.aa-fl__cls legend strong{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.aa-fl__rm{margin-inline-start:auto;min-height:44px;padding:0 8px;border:0;background:transparent;color:var(--mute);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.aa-fl__dates{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;scrollbar-width:none;clear:both}
+.aa-fl__dates::-webkit-scrollbar{display:none}
+.aa-fl:not(.is-ready) .aa-fl__dates{flex-wrap:wrap}
+.aa-fl__date{position:relative;flex:0 0 min(78%,200px);scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:92px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:#fff;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+.aa-fl__date.is-on{border:2px solid var(--teal);padding:12px 13px;background:#F2FAF9;box-shadow:0 0 0 4px rgba(14,128,116,.1)}
+.aa-fl__date[data-state=full]{opacity:.6;background:#F7F9F9;cursor:not-allowed}
+.aa-fl__range{font-size:16px;font-weight:700}
+.aa-fl__dk{font-size:12.5px;color:var(--mute)}
+.aa-fl__seats{font-size:12px;font-weight:600;color:var(--teal)}
+.aa-fl__date[data-state=low] .aa-fl__seats{color:var(--warn)}.aa-fl__date[data-state=full] .aa-fl__seats{color:#8A9A9D}
+.aa-fl__tick{position:absolute;top:12px;inset-inline-end:12px;width:22px;height:22px;border-radius:50%;background:#F0F4F3;border:1px solid #D5E2E0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.aa-fl__date.is-on .aa-fl__tick{background:var(--teal);border-color:var(--teal)}.aa-fl__date.is-on .aa-fl__tick::before{content:"✓"}
+.aa-fl__alert{margin:0}
+.aa-fl__alert:not(:empty){margin-top:10px;display:flex;gap:9px;align-items:flex-start;padding:11px 12px;border-radius:10px;background:#FFF3EE;border:1px solid #F0CDBF;color:#7A2E14;font-size:13.5px;font-weight:600;line-height:1.4}
+.aa-fl__alert:not(:empty)::before{content:"!";flex:none;width:18px;height:18px;border-radius:50%;background:#C2502A;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.aa-fl__tabs{display:inline-flex;gap:4px;padding:4px;border-radius:100px;background:#EEF3F2;margin:0 0 20px;max-width:100%}
+.aa-fl__tab{min-height:46px;padding:0 22px;border:0;border-radius:100px;background:transparent;color:#35555B;font-size:14.5px;font-weight:600;transition:background .25s,color .25s}
+.aa-fl__tab[aria-selected=true]{background:var(--ink);color:#fff}
+.aa-fl__panel.is-off{display:none}
+.aa-fl.is-ready .aa-fl__panel:not(.is-off){animation:aaflIn .35s cubic-bezier(.2,.7,.2,1) backwards}
+.aa-fl__reg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px;align-items:start}
+.aa-fl__rows{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.aa-fl__row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #EEF3F2}
+.aa-fl__row div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.aa-fl__row strong{font-size:15px;font-weight:600}.aa-fl__row span{font-size:13px;color:#35555B}
+.aa-fl__row bdi{font-size:15px;font-weight:600;white-space:nowrap}
+.aa-fl__seatrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--soft)}
+.aa-fl__stepper{display:inline-flex;align-items:center;border:1px solid #CFE3E1;border-radius:100px;background:#fff}
+.aa-fl__stepper button{width:46px;height:44px;border:0;background:transparent;font-size:20px;color:var(--teal)}
+.aa-fl__stepper output{min-width:28px;text-align:center;font-weight:700}
+.aa-fl__side{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--soft);display:flex;flex-direction:column;gap:12px}
+.aa-fl__go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border:0;border-radius:100px;background:var(--teal);color:#fff;font-weight:600;font-size:15.5px;transition:background .2s,transform .15s}
+.aa-fl__go:hover{background:var(--ink)}.aa-fl__go:active{transform:scale(.98)}
+.aa-fl__go[aria-busy=true]{background:var(--ink);pointer-events:none}
+.aa-fl__go[aria-busy=true]::before{content:"";width:15px;height:15px;border-radius:50%;border:2px solid rgba(143,207,207,.3);border-top-color:var(--mint);animation:aaflSpin .8s linear infinite}
+.aa-fl__help{margin:0;font-size:12.5px;line-height:1.5;color:var(--mute)}
+.aa-fl__help button{padding:0;border:0;background:none;color:var(--teal);font-weight:600;text-decoration:underline;text-underline-offset:3px;min-height:44px}
+.aa-fl__diff{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;min-height:44px;margin-bottom:12px}
+.aa-fl__diff input{width:20px;height:20px;accent-color:var(--teal)}
+.aa-fl__scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:#fff;scroll-snap-type:x proximity}
+.aa-fl__table{border-collapse:collapse;width:100%;min-width:calc(116px + var(--cols,3)*190px);font-size:14px;line-height:1.45}
+.aa-fl__table th,.aa-fl__table td{padding:12px 14px;text-align:start;vertical-align:top;border-bottom:1px solid #EEF3F2}
+.aa-fl__table thead th{font-size:16px;font-weight:600;background:#fff;scroll-snap-align:start}
+.aa-fl__table thead th a{display:block;margin-bottom:10px}
+.aa-fl__table tbody th{position:sticky;inset-inline-start:0;z-index:2;background:var(--soft);width:116px;min-width:116px;font:600 10.5px/1.3 "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.aa-fl__table tbody td{color:var(--mute);scroll-snap-align:start}
+.aa-fl__table tr.is-diff td{color:var(--ink);font-weight:600}
+.aa-fl__regone{min-height:44px;padding:0 16px;border-radius:100px;border:0;background:var(--teal);color:#fff;font-weight:600;font-size:14px}
+.aa-fl:not(.is-ready) .aa-fl__regone,.aa-fl:not(.is-ready) .aa-fl__js{display:none}
+.aa-fl__bar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;padding:12px clamp(12px,2vw,20px) calc(12px + env(safe-area-inset-bottom));background:var(--ink);color:#fff}
+.aa-fl__msg{flex:1 1 140px;min-width:0;margin:0;font-size:13.5px;color:var(--mist)}
+.aa-fl__back{min-height:48px;padding:0 20px;border-radius:100px;background:transparent;border:1px solid rgba(143,207,207,.5);color:#fff;font-weight:600;font-size:14.5px}
+.aa-fl__back[hidden]{display:inline-block!important;visibility:hidden}
+.aa-fl__next{min-height:48px;padding:0 24px;border-radius:100px;border:0;background:var(--mint);color:var(--ink);font-weight:700;font-size:15px;transition:opacity .2s,background .2s}
+.aa-fl__next:hover:not(:disabled){background:#fff}.aa-fl__next:disabled{opacity:.45;cursor:not-allowed}
+.aa-fl:not(.is-ready) .aa-fl__steps,.aa-fl:not(.is-ready) .aa-fl__bar,.aa-fl:not(.is-ready) .aa-fl__tabs,.aa-fl:not(.is-ready) .aa-fl__reg{display:none}
+.aa-fl:not(.is-ready) .aa-fl__step{border-bottom:1px solid #E6EFEE}
+.aa-fl:not(.is-ready) .aa-fl__panel.is-off{display:block}
+[dir=rtl] .aa-fl__arrow{display:inline-block;transform:scaleX(-1)}
+.aa-fl-page{max-width:1100px;margin:0 auto;padding:clamp(10px,3vw,32px) clamp(8px,2vw,20px)}
+.aa-fl-page h1{font:400 clamp(30px,5vw,46px)/1.05 "Instrument Serif",Georgia,serif;letter-spacing:-.01em;margin:0 0 10px}
+.aa-fl-page .aa-fl__scroll{box-shadow:0 20px 50px rgba(11,46,53,.1)}
+.aa-fl-cohorts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.aa-fl-cohorts li{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding:12px 14px;border:1px solid #DCEAE8;border-radius:12px;background:#fff}
+@keyframes aaflIn{from{opacity:0;transform:translateY(12px)}}
+@keyframes aaflCard{from{opacity:0;transform:translateY(14px) scale(.98)}}
+@keyframes aaflSpin{to{transform:rotate(360deg)}}
+@media (max-width:760px){.aa-fl{border-radius:16px}.aa-fl__cards{grid-template-columns:1fr}.aa-fl__reg{grid-template-columns:1fr}.aa-fl__price{margin-inline-start:0}.aa-fl__bar .aa-fl__msg{order:3;flex-basis:100%}.aa-fl__bar{padding-top:10px}.aa-fl__next{flex:1}.aa-fl__tabs{display:flex;width:100%}.aa-fl__tab{flex:1;padding:0 10px}}
+@media (prefers-reduced-motion:reduce){.aa-fl *{animation:none!important;transition:none!important}}
+</style></head><body>
+<main class="aa-fl-page">
+<div class="aa-fl" data-aa-fl data-check-url="">
+  <nav class="aa-fl__steps" aria-label="Progress"><ol>
+    <li><button type="button" class="aa-fl__stepbtn" data-go="1" aria-current="step"><span class="aa-fl__num">1</span><span class="aa-fl__stt"><b>Classes</b><small data-sub="1">None yet</small></span></button></li>
+    <li><button type="button" class="aa-fl__stepbtn" data-go="2" aria-current="false"><span class="aa-fl__num">2</span><span class="aa-fl__stt"><b>Dates</b><small data-sub="2">Per class</small></span></button></li>
+    <li><button type="button" class="aa-fl__stepbtn" data-go="3" aria-current="false"><span class="aa-fl__num">3</span><span class="aa-fl__stt"><b>Register or compare</b><small data-sub="3">Register</small></span></button></li>
+  </ol></nav>
+
+  <section class="aa-fl__step" data-step="1" aria-labelledby="aa-fl-h1">
+    <p class="aa-fl__eyebrow">Step 1 · Core category</p>
+    <h2 id="aa-fl-h1" tabindex="-1">Which classes do you need?</h2>
+    <p class="aa-fl__lede">Pick one or several. Next you choose a date for each. You can compare before you pay.</p>
+    <ul class="aa-fl__cards">
+      <li class="aa-fl__card" style="--i:0"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-la" value="la" data-name="Leading SAFe (SA)" data-url="/training/leading-safe-sa/" data-price="US$1,590"><h3><label for="aa-fl-c-la">Leading SAFe (SA)</label></h3><p class="aa-fl__who">Leaders adopting SAFe across the organization.</p><div class="aa-fl__meta"><span class="aa-fl__code">LSA</span><span>2 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-14">Nov 14</time></span><bdi class="aa-fl__price">US$1,590</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+      <li class="aa-fl__card" style="--i:1"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-popm" value="popm" data-name="SAFe POPM" data-url="/training/safe-popm/" data-price="US$1,590"><h3><label for="aa-fl-c-popm">SAFe POPM</label></h3><p class="aa-fl__who">Product Owners and Product Managers.</p><div class="aa-fl__meta"><span class="aa-fl__code">POPM</span><span>2 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-16">Nov 16</time></span><bdi class="aa-fl__price">US$1,590</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+      <li class="aa-fl__card" style="--i:2"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-sm" value="sm" data-name="Scrum Master" data-url="/training/scrum-master/" data-price="US$1,590"><h3><label for="aa-fl-c-sm">Scrum Master</label></h3><p class="aa-fl__who">Servant leaders who coach agile teams.</p><div class="aa-fl__meta"><span class="aa-fl__code">SSM</span><span>2 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-17">Nov 17</time></span><bdi class="aa-fl__price">US$1,590</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+      <li class="aa-fl__card" style="--i:3"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-devops" value="devops" data-name="SAFe DevOps" data-url="/training/safe-devops/" data-price="US$1,590"><h3><label for="aa-fl-c-devops">SAFe DevOps</label></h3><p class="aa-fl__who">Teams that ship and run what they build.</p><div class="aa-fl__meta"><span class="aa-fl__code">DEVOPS</span><span>2 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-19">Nov 19</time></span><bdi class="aa-fl__price">US$1,590</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+      <li class="aa-fl__card" style="--i:4"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-sp" value="sp" data-name="SAFe for Teams (SP)" data-url="/training/safe-for-teams-sp/" data-price="US$1,590"><h3><label for="aa-fl-c-sp">SAFe for Teams (SP)</label></h3><p class="aa-fl__who">Everyone on an agile team inside SAFe.</p><div class="aa-fl__meta"><span class="aa-fl__code">SP</span><span>2 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-21">Nov 21</time></span><bdi class="aa-fl__price">US$1,590</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+      <li class="aa-fl__card" style="--i:5"><input class="aa-fl__chk" type="checkbox" id="aa-fl-c-rte" value="rte" data-name="Release Train Engineer (RTE)" data-url="/training/release-train-engineer-rte/" data-price="US$2,450"><h3><label for="aa-fl-c-rte">Release Train Engineer (RTE)</label></h3><p class="aa-fl__who">Servant leaders of the release train.</p><div class="aa-fl__meta"><span class="aa-fl__code">RTE</span><span>3 days</span><span aria-hidden="true">·</span><span>Next <time datetime="2026-11-23">Nov 23</time></span><bdi class="aa-fl__price">US$2,450</bdi></div><span class="aa-fl__box" aria-hidden="true"></span></li>
+    </ul>
+  </section>
+
+  <section class="aa-fl__step is-off" data-step="2" aria-labelledby="aa-fl-h2">
+    <p class="aa-fl__eyebrow">Step 2 · Dates</p>
+    <h2 id="aa-fl-h2" tabindex="-1">Choose a date for each class.</h2>
+    <p class="aa-fl__lede">We’ve picked the soonest open date. Change any of them. Dates that overlap are flagged.</p>
+    <fieldset class="aa-fl__cls" data-id="la"><legend><strong>Leading SAFe (SA)</strong><span class="aa-fl__code">LSA</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="la">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="low"><input class="aa-fl__rad" type="radio" name="aa-fl-d-la" value="l1" data-start="2026-11-14" data-end="2026-11-15" data-label="Nov 14–15" data-days="Sat–Sun"><span class="aa-fl__range"><time datetime="2026-11-14">Nov 14–15</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">2 seats left</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-la" value="l2" data-start="2026-12-05" data-end="2026-12-06" data-label="Dec 5–6" data-days="Sat–Sun"><span class="aa-fl__range"><time datetime="2026-12-05">Dec 5–6</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-la" value="l3" data-start="2027-01-09" data-end="2027-01-10" data-label="Jan 9–10" data-days="Sat–Sun"><span class="aa-fl__range"><time datetime="2027-01-09">Jan 9–10</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+    <fieldset class="aa-fl__cls" data-id="popm"><legend><strong>SAFe POPM</strong><span class="aa-fl__code">POPM</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="popm">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-popm" value="p1" data-start="2026-11-16" data-end="2026-11-17" data-label="Nov 16–17" data-days="Mon–Tue"><span class="aa-fl__range"><time datetime="2026-11-16">Nov 16–17</time></span><span class="aa-fl__dk">Mon–Tue · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-popm" value="p2" data-start="2026-12-07" data-end="2026-12-08" data-label="Dec 7–8" data-days="Mon–Tue"><span class="aa-fl__range"><time datetime="2026-12-07">Dec 7–8</time></span><span class="aa-fl__dk">Mon–Tue · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-popm" value="p3" data-start="2027-01-11" data-end="2027-01-12" data-label="Jan 11–12" data-days="Mon–Tue"><span class="aa-fl__range"><time datetime="2027-01-11">Jan 11–12</time></span><span class="aa-fl__dk">Mon–Tue · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+    <fieldset class="aa-fl__cls" data-id="sm"><legend><strong>Scrum Master</strong><span class="aa-fl__code">SSM</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="sm">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sm" value="m1" data-start="2026-11-17" data-end="2026-11-18" data-label="Nov 17–18" data-days="Tue–Wed"><span class="aa-fl__range"><time datetime="2026-11-17">Nov 17–18</time></span><span class="aa-fl__dk">Tue–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sm" value="m2" data-start="2026-12-01" data-end="2026-12-02" data-label="Dec 1–2" data-days="Tue–Wed"><span class="aa-fl__range"><time datetime="2026-12-01">Dec 1–2</time></span><span class="aa-fl__dk">Tue–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sm" value="m3" data-start="2027-01-12" data-end="2027-01-13" data-label="Jan 12–13" data-days="Tue–Wed"><span class="aa-fl__range"><time datetime="2027-01-12">Jan 12–13</time></span><span class="aa-fl__dk">Tue–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+    <fieldset class="aa-fl__cls" data-id="devops"><legend><strong>SAFe DevOps</strong><span class="aa-fl__code">DEVOPS</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="devops">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="low"><input class="aa-fl__rad" type="radio" name="aa-fl-d-devops" value="d1" data-start="2026-11-19" data-end="2026-11-20" data-label="Nov 19–20" data-days="Thu–Fri"><span class="aa-fl__range"><time datetime="2026-11-19">Nov 19–20</time></span><span class="aa-fl__dk">Thu–Fri · 09:00–17:00 ET</span><span class="aa-fl__seats">4 seats left</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-devops" value="d2" data-start="2026-12-10" data-end="2026-12-11" data-label="Dec 10–11" data-days="Thu–Fri"><span class="aa-fl__range"><time datetime="2026-12-10">Dec 10–11</time></span><span class="aa-fl__dk">Thu–Fri · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-devops" value="d3" data-start="2027-01-14" data-end="2027-01-15" data-label="Jan 14–15" data-days="Thu–Fri"><span class="aa-fl__range"><time datetime="2027-01-14">Jan 14–15</time></span><span class="aa-fl__dk">Thu–Fri · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+    <fieldset class="aa-fl__cls" data-id="sp"><legend><strong>SAFe for Teams (SP)</strong><span class="aa-fl__code">SP</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="sp">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sp" value="s1" data-start="2026-11-21" data-end="2026-11-22" data-label="Nov 21–22" data-days="Sat–Sun"><span class="aa-fl__range"><time datetime="2026-11-21">Nov 21–22</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sp" value="s2" data-start="2026-12-12" data-end="2026-12-13" data-label="Dec 12–13" data-days="Sat–Sun"><span class="aa-fl__range"><time datetime="2026-12-12">Dec 12–13</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="full"><input class="aa-fl__rad" type="radio" name="aa-fl-d-sp" value="s3" data-start="2027-01-16" data-end="2027-01-17" data-label="Jan 16–17" data-days="Sat–Sun" disabled><span class="aa-fl__range"><time datetime="2027-01-16">Jan 16–17</time></span><span class="aa-fl__dk">Sat–Sun · 09:00–17:00 ET</span><span class="aa-fl__seats">Full</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+    <fieldset class="aa-fl__cls" data-id="rte"><legend><strong>Release Train Engineer (RTE)</strong><span class="aa-fl__code">RTE</span><button type="button" class="aa-fl__rm aa-fl__js" data-rm="rte">Remove</button></legend>
+      <div class="aa-fl__dates"><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-rte" value="r1" data-start="2026-11-23" data-end="2026-11-25" data-label="Nov 23–25" data-days="Mon–Wed"><span class="aa-fl__range"><time datetime="2026-11-23">Nov 23–25</time></span><span class="aa-fl__dk">Mon–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-rte" value="r2" data-start="2026-12-14" data-end="2026-12-16" data-label="Dec 14–16" data-days="Mon–Wed"><span class="aa-fl__range"><time datetime="2026-12-14">Dec 14–16</time></span><span class="aa-fl__dk">Mon–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label><label class="aa-fl__date" data-state="open"><input class="aa-fl__rad" type="radio" name="aa-fl-d-rte" value="r3" data-start="2027-01-25" data-end="2027-01-27" data-label="Jan 25–27" data-days="Mon–Wed"><span class="aa-fl__range"><time datetime="2027-01-25">Jan 25–27</time></span><span class="aa-fl__dk">Mon–Wed · 09:00–17:00 ET</span><span class="aa-fl__seats">Seats open</span><span class="aa-fl__tick" aria-hidden="true"></span></label></div>
+      <p class="aa-fl__alert" role="alert"></p></fieldset>
+  </section>
+
+  <section class="aa-fl__step is-off" data-step="3" aria-labelledby="aa-fl-h3">
+    <p class="aa-fl__eyebrow">Step 3 · Decide</p>
+    <h2 id="aa-fl-h3" tabindex="-1">Register now, or compare first.</h2>
+    <div class="aa-fl__tabs" role="tablist" aria-label="Next action"><button type="button" role="tab" class="aa-fl__tab" data-mode="register" aria-selected="true">Register</button><button type="button" role="tab" class="aa-fl__tab" data-mode="compare" aria-selected="false">Compare (<span data-n>0</span>)</button></div>
+    <div class="aa-fl__panel" data-panel="register">
+      <div class="aa-fl__reg">
+        <div><ul class="aa-fl__rows"></ul><div class="aa-fl__seatrow"><span>Seats per class</span><span class="aa-fl__stepper"><button type="button" data-seat="-1" aria-label="Fewer seats">−</button><output aria-live="polite">1</output><button type="button" data-seat="1" aria-label="More seats">+</button></span></div></div>
+        <div class="aa-fl__side">
+          <p class="aa-fl__eyebrow" style="margin:0">Next</p>
+          <div class="aa-fl__alert aa-fl__ralert" role="alert"></div>
+          <button type="button" class="aa-fl__go">Continue to payment <span class="aa-fl__arrow" aria-hidden="true">⟶</span></button>
+          <p class="aa-fl__help">Secure payment opens in this tab. You enter your email there, and your total is confirmed there. Not ready? <button type="button" data-gocmp>Compare classes</button> first.</p>
+        </div>
+      </div>
+    </div>
+    <div class="aa-fl__panel is-off" data-panel="compare">
+      <label class="aa-fl__diff aa-fl__js"><input type="checkbox"> Show differences only</label>
+<div class="aa-fl__scroll"><table class="aa-fl__table"><caption class="aa-fl__sr" style="position:absolute;left:-9999px">Core classes compared</caption>
+<thead><tr><td></td><th scope="col" data-col="la"><a href="/training/leading-safe-sa/">Leading SAFe (SA)</a> (LSA)<button type="button" class="aa-fl__regone" data-reg="la">Register this one</button></th><th scope="col" data-col="popm"><a href="/training/safe-popm/">SAFe POPM</a> (POPM)<button type="button" class="aa-fl__regone" data-reg="popm">Register this one</button></th><th scope="col" data-col="sm"><a href="/training/scrum-master/">Scrum Master</a> (SSM)<button type="button" class="aa-fl__regone" data-reg="sm">Register this one</button></th><th scope="col" data-col="devops"><a href="/training/safe-devops/">SAFe DevOps</a> (DEVOPS)<button type="button" class="aa-fl__regone" data-reg="devops">Register this one</button></th><th scope="col" data-col="sp"><a href="/training/safe-for-teams-sp/">SAFe for Teams (SP)</a> (SP)<button type="button" class="aa-fl__regone" data-reg="sp">Register this one</button></th><th scope="col" data-col="rte"><a href="/training/release-train-engineer-rte/">Release Train Engineer (RTE)</a> (RTE)<button type="button" class="aa-fl__regone" data-reg="rte">Register this one</button></th></tr></thead>
+<tbody>
+<tr data-js data-keep hidden><th scope="row">Your date</th><td data-col="la" data-yourdate></td><td data-col="popm" data-yourdate></td><td data-col="sm" data-yourdate></td><td data-col="devops" data-yourdate></td><td data-col="sp" data-yourdate></td><td data-col="rte" data-yourdate></td></tr>
+<tr><th scope="row">Price per seat</th><td data-col="la">US$1,590</td><td data-col="popm">US$1,590</td><td data-col="sm">US$1,590</td><td data-col="devops">US$1,590</td><td data-col="sp">US$1,590</td><td data-col="rte">US$2,450</td></tr>
+<tr><th scope="row">Length</th><td data-col="la">2 days</td><td data-col="popm">2 days</td><td data-col="sm">2 days</td><td data-col="devops">2 days</td><td data-col="sp">2 days</td><td data-col="rte">3 days</td></tr>
+<tr><th scope="row">Format</th><td data-col="la">Live online</td><td data-col="popm">Live online</td><td data-col="sm">Live online</td><td data-col="devops">Live online</td><td data-col="sp">Live online</td><td data-col="rte">Live online</td></tr>
+<tr><th scope="row">Exam</th><td data-col="la">Included</td><td data-col="popm">Included</td><td data-col="sm">Included</td><td data-col="devops">Included</td><td data-col="sp">Included</td><td data-col="rte">Included</td></tr>
+<tr><th scope="row">Prerequisites</th><td data-col="la">None</td><td data-col="popm">Product ownership experience</td><td data-col="sm">Scrum experience helps</td><td data-col="devops">Working knowledge of Agile delivery</td><td data-col="sp">None</td><td data-col="rte">SAFe and facilitation experience</td></tr>
+<tr><th scope="row">Best for</th><td data-col="la">Managers, executives, change leaders</td><td data-col="popm">Product Owners, Product Managers</td><td data-col="sm">Scrum Masters, team coaches</td><td data-col="devops">DevOps leads, release engineers</td><td data-col="sp">Team members, developers, testers</td><td data-col="rte">RTEs, program managers</td></tr>
+<tr><th scope="row">Who it is for</th><td data-col="la">Leaders adopting SAFe across the organization.</td><td data-col="popm">Product Owners and Product Managers.</td><td data-col="sm">Servant leaders who coach agile teams.</td><td data-col="devops">Teams that ship and run what they build.</td><td data-col="sp">Everyone on an agile team inside SAFe.</td><td data-col="rte">Servant leaders of the release train.</td></tr>
+<tr data-keep><th scope="row">Upcoming dates</th><td data-col="la"><time datetime="2026-11-14">Nov 14–15</time> (Sat–Sun, 2 seats left)<br><time datetime="2026-12-05">Dec 5–6</time> (Sat–Sun, Seats open)<br><time datetime="2027-01-09">Jan 9–10</time> (Sat–Sun, Seats open)</td><td data-col="popm"><time datetime="2026-11-16">Nov 16–17</time> (Mon–Tue, Seats open)<br><time datetime="2026-12-07">Dec 7–8</time> (Mon–Tue, Seats open)<br><time datetime="2027-01-11">Jan 11–12</time> (Mon–Tue, Seats open)</td><td data-col="sm"><time datetime="2026-11-17">Nov 17–18</time> (Tue–Wed, Seats open)<br><time datetime="2026-12-01">Dec 1–2</time> (Tue–Wed, Seats open)<br><time datetime="2027-01-12">Jan 12–13</time> (Tue–Wed, Seats open)</td><td data-col="devops"><time datetime="2026-11-19">Nov 19–20</time> (Thu–Fri, 4 seats left)<br><time datetime="2026-12-10">Dec 10–11</time> (Thu–Fri, Seats open)<br><time datetime="2027-01-14">Jan 14–15</time> (Thu–Fri, Seats open)</td><td data-col="sp"><time datetime="2026-11-21">Nov 21–22</time> (Sat–Sun, Seats open)<br><time datetime="2026-12-12">Dec 12–13</time> (Sat–Sun, Seats open)<br><time datetime="2027-01-16">Jan 16–17</time> (Sat–Sun, Full)</td><td data-col="rte"><time datetime="2026-11-23">Nov 23–25</time> (Mon–Wed, Seats open)<br><time datetime="2026-12-14">Dec 14–16</time> (Mon–Wed, Seats open)<br><time datetime="2027-01-25">Jan 25–27</time> (Mon–Wed, Seats open)</td></tr>
+</tbody></table></div>
+      <p class="aa-fl__help aa-fl__cmpnote" hidden style="margin-top:10px">These classes match on every row. Switch off “differences only” to see the details.</p>
+    </div>
+  </section>
+
+  <div class="aa-fl__bar"><button type="button" class="aa-fl__back" hidden>Back</button><p class="aa-fl__msg" role="status" aria-live="polite">Select at least one class</p><button type="button" class="aa-fl__next" disabled>Choose dates (0) <span class="aa-fl__arrow" aria-hidden="true">⟶</span></button></div>
+</div>
+</main>
+<script>/* Agile Agilist class-selection flow. No dependencies. Enhances server-rendered markup. */
+(function(){
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return [].slice.call((r||document).querySelectorAll(s))}
+  function init(root){
+    var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var checkUrl=root.getAttribute('data-check-url')||'';
+    var chks=qa('.aa-fl__chk',root),by={};
+    chks.forEach(function(c){by[c.value]={chk:c,card:c.closest('.aa-fl__card'),name:c.getAttribute('data-name'),url:c.getAttribute('data-url'),price:c.getAttribute('data-price'),fs:q('.aa-fl__cls[data-id="'+c.value+'"]',root)}});
+    var steps=qa('.aa-fl__step',root),sbtn=qa('.aa-fl__stepbtn',root),bar=q('.aa-fl__bar',root),back=q('.aa-fl__back',root),next=q('.aa-fl__next',root),msg=q('.aa-fl__msg',root),
+        tabs=qa('.aa-fl__tab',root),panels=qa('.aa-fl__panel',root),rows=q('.aa-fl__rows',root),seatsOut=q('.aa-fl__seatrow output',root),
+        go=q('.aa-fl__go',root),ralert=q('.aa-fl__ralert',root),table=q('.aa-fl__table',root),diffBox=q('.aa-fl__diff input',root),cmpNote=q('.aa-fl__cmpnote',root),
+        st={step:1,mode:'register',seats:1,diff:false};
+
+    function ids(){return chks.filter(function(c){return c.checked}).map(function(c){return c.value})}
+    function dateOf(id){return q('.aa-fl__rad:checked',by[id].fs)}
+    function ensure(){ids().forEach(function(id){if(!dateOf(id)){var r=q('.aa-fl__rad:not(:disabled)',by[id].fs);if(r)r.checked=true}})}
+    function clash(id){var a=dateOf(id);if(!a)return'';var l=ids();for(var i=0;i<l.length;i++){if(l[i]===id)continue;var b=dateOf(l[i]);if(b&&a.getAttribute('data-start')<=b.getAttribute('data-end')&&b.getAttribute('data-start')<=a.getAttribute('data-end'))return'This overlaps '+by[l[i]].name+'. Pick a different date for one of them.'}return''}
+    function anyClash(){return ids().some(function(id){return clash(id)})}
+    function writeUrl(){try{var u=new URL(location.href),l=ids();if(l.length){u.searchParams.set('classes',l.join(','));u.searchParams.set('cohorts',l.map(function(id){var r=dateOf(id);return r?r.value:''}).join(','))}else{u.searchParams.delete('classes');u.searchParams.delete('cohorts')}history.replaceState(null,'',u)}catch(e){}}
+    function readUrl(){
+      var p=new URLSearchParams(location.search),c=(p.get('classes')||'').split(',').filter(function(x){return by[x]}),d=(p.get('cohorts')||'').split(',');
+      c.forEach(function(id,i){by[id].chk.checked=true;var r=q('.aa-fl__rad[value="'+(d[i]||'')+'"]:not(:disabled)',by[id].fs);if(r)r.checked=true});
+      return c.length;
+    }
+    function names(n){return n+(n===1?' class':' classes')}
+
+    function render(){
+      var l=ids(),n=l.length,cl=anyClash();
+      chks.forEach(function(c){by[c.value].card.classList.toggle('is-on',c.checked)});
+      qa('.aa-fl__date',root).forEach(function(d){d.classList.toggle('is-on',q('input',d).checked)});
+      sbtn.forEach(function(b,i){var k=i+1;b.setAttribute('aria-current',st.step===k?'step':'false');b.classList.toggle('is-done',st.step>k);b.disabled=k>1&&!n});
+      q('[data-sub="1"]',root).textContent=n?n+' selected':'None yet';
+      q('[data-sub="2"]',root).textContent=st.step>1&&n?'Set for '+n:'Per class';
+      q('[data-sub="3"]',root).textContent=st.mode==='register'?'Register':'Compare';
+      steps.forEach(function(s){s.classList.toggle('is-off',+s.getAttribute('data-step')!==st.step)});
+      Object.keys(by).forEach(function(id){var on=by[id].chk.checked;by[id].fs.classList.toggle('is-off',!on);q('.aa-fl__alert',by[id].fs).textContent=on?clash(id):''});
+      back.hidden=st.step===1;next.hidden=st.step===3;
+      next.disabled=!n||(st.step===2&&cl);
+      next.firstChild.textContent=(st.step===1?'Choose dates ('+n+')':'Review & decide')+' ';
+      msg.textContent=st.step===1?(n?names(n)+' selected':'Select at least one class'):st.step===2?(cl?'Some dates overlap':'Dates set for '+names(n)):(st.mode==='register'?'Seats: '+st.seats+' per class':'Comparing '+n);
+      tabs.forEach(function(t){t.setAttribute('aria-selected',t.getAttribute('data-mode')===st.mode)});
+      panels.forEach(function(p){p.classList.toggle('is-off',p.getAttribute('data-panel')!==st.mode)});
+      q('[data-n]',root).textContent=n;
+      seatsOut.textContent=st.seats;
+      rows.innerHTML='';
+      l.forEach(function(id){var r=dateOf(id),li=document.createElement('li');li.className='aa-fl__row';
+        li.innerHTML='<div><strong></strong><span></span></div><bdi></bdi>';
+        li.querySelector('strong').textContent=by[id].name;li.querySelector('span').textContent=r?r.getAttribute('data-label')+', '+r.getAttribute('data-days'):'';
+        li.querySelector('bdi').textContent=by[id].price+' / seat';rows.appendChild(li)});
+      // compare table
+      table.style.setProperty('--cols',Math.max(1,n));
+      qa('[data-col]',table).forEach(function(c){c.hidden=l.indexOf(c.getAttribute('data-col'))<0});
+      qa('td[data-yourdate]',table).forEach(function(td){var r=l.indexOf(td.getAttribute('data-col'))>-1&&dateOf(td.getAttribute('data-col'));td.textContent=r?r.getAttribute('data-label')+' · '+r.getAttribute('data-days'):''});
+      var diffRows=0;
+      qa('tbody tr',table).forEach(function(tr){
+        if(tr.hasAttribute('data-js')&&!l.length){tr.hidden=true;return}
+        var vals=qa('td',tr).filter(function(c){return !c.hidden}).map(function(c){return c.textContent.trim()}),same=vals.every(function(v){return v===vals[0]});
+        tr.classList.toggle('is-diff',!same&&n>1);if(!same)diffRows++;
+        tr.hidden=st.diff&&same&&!tr.hasAttribute('data-keep');
+      });
+      cmpNote.hidden=!(st.diff&&n>1&&diffRows===0);
+      writeUrl();
+    }
+    function goStep(n){
+      if(n>1&&!ids().length)return;if(n>=2)ensure();st.step=n;render();
+      var h=q('.aa-fl__step[data-step="'+n+'"] h2',root);if(h)h.focus({preventScroll:true});
+      var top=root.getBoundingClientRect().top;if(top<0)window.scrollTo({top:window.pageYOffset+top-12,behavior:RM?'auto':'smooth'});
+    }
+    function busy(b){go.setAttribute('aria-busy',b);go.disabled=false;go.firstChild.textContent=b?'Opening checkout… ':'Continue to payment '}
+    function verify(l){
+      if(!checkUrl)return Promise.resolve([]);
+      var c=new AbortController(),t=setTimeout(function(){c.abort()},1500);
+      return fetch(checkUrl+(checkUrl.indexOf('?')>-1?'&':'?')+'cohorts='+l.map(function(id){return dateOf(id).value}).join(','),{signal:c.signal,credentials:'same-origin'})
+        .then(function(r){return r.json()}).then(function(j){clearTimeout(t);return j.full||[]}).catch(function(){clearTimeout(t);return[]});
+    }
+    function checkout(){
+      var l=ids();ralert.textContent='';
+      if(anyClash()){ralert.textContent='Two classes overlap. Go back and change a date.';return}
+      busy(true);
+      verify(l).then(function(full){
+        if(full.length){
+          busy(false);
+          l.forEach(function(id){var r=dateOf(id);if(full.indexOf(r.value)>-1){r.disabled=true;r.checked=false;r.closest('.aa-fl__date').setAttribute('data-state','full');q('.aa-fl__seats',r.closest('.aa-fl__date')).textContent='Full';
+            ralert.textContent=r.getAttribute('data-label')+' just filled up. Choose another date.'}});
+          st.step=2;ensure();render();return;
+        }
+        var first=l[0],r=dateOf(first);
+        try{sessionStorage.setItem('aa_fl_queue',JSON.stringify(l.slice(1).map(function(id){return{id:id,cohort:dateOf(id).value,seats:st.seats}})))}catch(e){}
+        location.assign(by[first].url+'?cohort='+encodeURIComponent(r.value)+'&seats='+st.seats+'#register');
+      });
+    }
+    root.addEventListener('change',function(e){
+      if(e.target.classList.contains('aa-fl__chk')||e.target.classList.contains('aa-fl__rad')){if(e.target.classList.contains('aa-fl__chk')&&e.target.checked)ensure();render()}
+      if(e.target===diffBox){st.diff=diffBox.checked;render()}
+    });
+    root.addEventListener('click',function(e){
+      var t=e.target.closest('button');if(!t)return;
+      if(t.classList.contains('aa-fl__stepbtn'))goStep(+t.getAttribute('data-go'));
+      else if(t.classList.contains('aa-fl__back'))goStep(st.step-1);
+      else if(t.classList.contains('aa-fl__next'))goStep(st.step+1);
+      else if(t.classList.contains('aa-fl__tab')){st.mode=t.getAttribute('data-mode');render()}
+      else if(t.hasAttribute('data-gocmp')){st.mode='compare';render()}
+      else if(t.classList.contains('aa-fl__rm')){by[t.getAttribute('data-rm')].chk.checked=false;if(!ids().length){st.step=1}render()}
+      else if(t.classList.contains('aa-fl__regone')){var id=t.getAttribute('data-reg');chks.forEach(function(c){c.checked=c.value===id});st.mode='register';render()}
+      else if(t.hasAttribute('data-seat')){st.seats=Math.max(1,Math.min(20,st.seats+(+t.getAttribute('data-seat'))));render()}
+      else if(t===go)checkout();
+    });
+    root.addEventListener('keydown',function(e){if(e.key==='Escape'&&go.getAttribute('aria-busy')==='true')busy(false)});
+    var pre=readUrl();root.classList.add('is-ready');st.step=pre?2:1;if(pre)ensure();render();
+    window.addEventListener('pageshow',function(e){if(e.persisted)busy(false)});
+  }
+  function boot(){[].forEach.call(document.querySelectorAll('[data-aa-fl]'),init)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script></body></html>

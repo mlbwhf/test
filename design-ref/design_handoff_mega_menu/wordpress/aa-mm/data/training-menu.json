@@ -1,0 +1,540 @@
+{
+  "version": 1,
+  "defaultCategory": "core",
+  "courses": {
+    "ainf": {
+      "name": "AI-Native Foundations",
+      "code": "AINF",
+      "duration": "1 day",
+      "next": "Nov 12",
+      "url": "/training/ai-native-foundations/",
+      "iso": "2026-11-12"
+    },
+    "ainr": {
+      "name": "AI-Native Ready Certification",
+      "code": "AINR",
+      "duration": "2 days",
+      "next": "Nov 19",
+      "url": "/training/ai-native-ready-certification/",
+      "iso": "2026-11-19"
+    },
+    "ainl": {
+      "name": "Leading the AI-Native Org",
+      "code": "AINL",
+      "duration": "2 days",
+      "next": "Dec 3",
+      "url": "/training/leading-the-ai-native-org/",
+      "iso": "2026-12-03"
+    },
+    "ainv": {
+      "name": "AI-Native Value Architect",
+      "code": "AINV",
+      "duration": "2 days",
+      "next": "Dec 10",
+      "url": "/training/ai-native-value-architect/",
+      "iso": "2026-12-10"
+    },
+    "aina": {
+      "name": "Launching AI-Native ARTs",
+      "code": "AINA",
+      "duration": "3 days",
+      "next": "Jan 14",
+      "url": "/training/launching-ai-native-arts/",
+      "iso": "2027-01-14"
+    },
+    "la": {
+      "name": "Leading SAFe (SA)",
+      "code": "LSA",
+      "duration": "2 days",
+      "next": "Nov 14",
+      "url": "/training/leading-safe-sa/",
+      "iso": "2026-11-14",
+      "price": "US$1,590",
+      "who": "Leaders adopting SAFe across the organization.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "None",
+      "bestFor": "Managers, executives, change leaders",
+      "cohorts": [
+        {
+          "id": "l1",
+          "start": "2026-11-14",
+          "end": "2026-11-15",
+          "label": "Nov 14–15",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "low",
+          "seatsLabel": "2 seats left"
+        },
+        {
+          "id": "l2",
+          "start": "2026-12-05",
+          "end": "2026-12-06",
+          "label": "Dec 5–6",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "l3",
+          "start": "2027-01-09",
+          "end": "2027-01-10",
+          "label": "Jan 9–10",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        }
+      ]
+    },
+    "popm": {
+      "name": "SAFe POPM",
+      "code": "POPM",
+      "duration": "2 days",
+      "next": "Nov 16",
+      "url": "/training/safe-popm/",
+      "iso": "2026-11-16",
+      "price": "US$1,590",
+      "who": "Product Owners and Product Managers.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "Product ownership experience",
+      "bestFor": "Product Owners, Product Managers",
+      "cohorts": [
+        {
+          "id": "p1",
+          "start": "2026-11-16",
+          "end": "2026-11-17",
+          "label": "Nov 16–17",
+          "days": "Mon–Tue",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "p2",
+          "start": "2026-12-07",
+          "end": "2026-12-08",
+          "label": "Dec 7–8",
+          "days": "Mon–Tue",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "p3",
+          "start": "2027-01-11",
+          "end": "2027-01-12",
+          "label": "Jan 11–12",
+          "days": "Mon–Tue",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        }
+      ]
+    },
+    "sm": {
+      "name": "Scrum Master",
+      "code": "SSM",
+      "duration": "2 days",
+      "next": "Nov 17",
+      "url": "/training/scrum-master/",
+      "iso": "2026-11-17",
+      "price": "US$1,590",
+      "who": "Servant leaders who coach agile teams.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "Scrum experience helps",
+      "bestFor": "Scrum Masters, team coaches",
+      "cohorts": [
+        {
+          "id": "m1",
+          "start": "2026-11-17",
+          "end": "2026-11-18",
+          "label": "Nov 17–18",
+          "days": "Tue–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "m2",
+          "start": "2026-12-01",
+          "end": "2026-12-02",
+          "label": "Dec 1–2",
+          "days": "Tue–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "m3",
+          "start": "2027-01-12",
+          "end": "2027-01-13",
+          "label": "Jan 12–13",
+          "days": "Tue–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        }
+      ]
+    },
+    "asm": {
+      "name": "Advanced Scrum Master",
+      "code": "ASM",
+      "duration": "2 days",
+      "next": "Dec 1",
+      "url": "/training/advanced-scrum-master/",
+      "iso": "2026-12-01"
+    },
+    "devops": {
+      "name": "SAFe DevOps",
+      "code": "DEVOPS",
+      "duration": "2 days",
+      "next": "Nov 19",
+      "url": "/training/safe-devops/",
+      "iso": "2026-11-19",
+      "price": "US$1,590",
+      "who": "Teams that ship and run what they build.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "Working knowledge of Agile delivery",
+      "bestFor": "DevOps leads, release engineers",
+      "cohorts": [
+        {
+          "id": "d1",
+          "start": "2026-11-19",
+          "end": "2026-11-20",
+          "label": "Nov 19–20",
+          "days": "Thu–Fri",
+          "time": "09:00–17:00 ET",
+          "seats": "low",
+          "seatsLabel": "4 seats left"
+        },
+        {
+          "id": "d2",
+          "start": "2026-12-10",
+          "end": "2026-12-11",
+          "label": "Dec 10–11",
+          "days": "Thu–Fri",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "d3",
+          "start": "2027-01-14",
+          "end": "2027-01-15",
+          "label": "Jan 14–15",
+          "days": "Thu–Fri",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        }
+      ]
+    },
+    "bo": {
+      "name": "Business Owner",
+      "code": "BO",
+      "duration": "1 day",
+      "next": "Dec 8",
+      "url": "/training/business-owner/",
+      "iso": "2026-12-08"
+    },
+    "sp": {
+      "name": "SAFe for Teams (SP)",
+      "code": "SP",
+      "duration": "2 days",
+      "next": "Nov 21",
+      "url": "/training/safe-for-teams-sp/",
+      "iso": "2026-11-21",
+      "price": "US$1,590",
+      "who": "Everyone on an agile team inside SAFe.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "None",
+      "bestFor": "Team members, developers, testers",
+      "cohorts": [
+        {
+          "id": "s1",
+          "start": "2026-11-21",
+          "end": "2026-11-22",
+          "label": "Nov 21–22",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "s2",
+          "start": "2026-12-12",
+          "end": "2026-12-13",
+          "label": "Dec 12–13",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "s3",
+          "start": "2027-01-16",
+          "end": "2027-01-17",
+          "label": "Jan 16–17",
+          "days": "Sat–Sun",
+          "time": "09:00–17:00 ET",
+          "seats": "full",
+          "seatsLabel": "Full"
+        }
+      ]
+    },
+    "ase": {
+      "name": "Agile Software Engineering (ASE)",
+      "code": "ASE",
+      "duration": "3 days",
+      "next": "Dec 2",
+      "url": "/training/agile-software-engineering-ase/",
+      "iso": "2026-12-02"
+    },
+    "arch": {
+      "name": "SAFe for Architects",
+      "code": "ARCH",
+      "duration": "2 days",
+      "next": "Jan 12",
+      "url": "/training/safe-for-architects/",
+      "iso": "2027-01-12"
+    },
+    "spc": {
+      "name": "Implementing SAFe (SPC)",
+      "code": "SPC",
+      "duration": "4 days",
+      "next": "Nov 16",
+      "url": "/training/implementing-safe-spc/",
+      "iso": "2026-11-16"
+    },
+    "aspc": {
+      "name": "Adv. Practice Consultant (ASPC)",
+      "code": "ASPC",
+      "duration": "3 days",
+      "next": "Jan 20",
+      "url": "/training/adv-practice-consultant-aspc/",
+      "iso": "2027-01-20"
+    },
+    "rte": {
+      "name": "Release Train Engineer (RTE)",
+      "code": "RTE",
+      "duration": "3 days",
+      "next": "Nov 23",
+      "url": "/training/release-train-engineer-rte/",
+      "iso": "2026-11-23",
+      "price": "US$2,450",
+      "who": "Servant leaders of the release train.",
+      "format": "Live online",
+      "exam": "Included",
+      "prerequisites": "SAFe and facilitation experience",
+      "bestFor": "RTEs, program managers",
+      "cohorts": [
+        {
+          "id": "r1",
+          "start": "2026-11-23",
+          "end": "2026-11-25",
+          "label": "Nov 23–25",
+          "days": "Mon–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "r2",
+          "start": "2026-12-14",
+          "end": "2026-12-16",
+          "label": "Dec 14–16",
+          "days": "Mon–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        },
+        {
+          "id": "r3",
+          "start": "2027-01-25",
+          "end": "2027-01-27",
+          "label": "Jan 25–27",
+          "days": "Mon–Wed",
+          "time": "09:00–17:00 ET",
+          "seats": "open",
+          "seatsLabel": "Seats open"
+        }
+      ]
+    },
+    "apm": {
+      "name": "Agile Product Mgmt (APM)",
+      "code": "APM",
+      "duration": "2 days",
+      "next": "Dec 14",
+      "url": "/training/agile-product-mgmt-apm/",
+      "iso": "2026-12-14"
+    },
+    "lpm": {
+      "name": "Lean Portfolio Mgmt (LPM)",
+      "code": "LPM",
+      "duration": "2 days",
+      "next": "Jan 8",
+      "url": "/training/lean-portfolio-mgmt-lpm/",
+      "iso": "2027-01-08"
+    },
+    "lssp": {
+      "name": "Large Solution SAFe (LSSP)",
+      "code": "LSSP",
+      "duration": "2 days",
+      "next": "Jan 26",
+      "url": "/training/large-solution-safe-lssp/",
+      "iso": "2027-01-26"
+    },
+    "rai": {
+      "name": "Achieving Responsible AI",
+      "code": "RAI",
+      "duration": "half day",
+      "next": "Nov 13",
+      "url": "/training/achieving-responsible-ai/",
+      "iso": "2026-11-13"
+    },
+    "cc": {
+      "name": "Conflict & Collaboration",
+      "code": "CC",
+      "duration": "half day",
+      "next": "Nov 20",
+      "url": "/training/conflict-collaboration/",
+      "iso": "2026-11-20"
+    },
+    "vsm": {
+      "name": "Value Stream Mapping",
+      "code": "VSM",
+      "duration": "1 day",
+      "next": "Dec 4",
+      "url": "/training/value-stream-mapping/",
+      "iso": "2026-12-04"
+    },
+    "acg": {
+      "name": "Agile Contracting for Government",
+      "code": "ACG",
+      "duration": "1 day",
+      "next": "Jan 9",
+      "url": "/training/agile-contracting-for-government/",
+      "iso": "2027-01-09"
+    },
+    "hw": {
+      "name": "SAFe for Hardware",
+      "code": "HW",
+      "duration": "2 days",
+      "next": "Jan 15",
+      "url": "/training/safe-for-hardware/",
+      "iso": "2027-01-15"
+    },
+    "hwt": {
+      "name": "SAFe for Hardware Teams",
+      "code": "HWT",
+      "duration": "2 days",
+      "next": "Jan 22",
+      "url": "/training/safe-for-hardware-teams/",
+      "iso": "2027-01-22"
+    },
+    "lsg": {
+      "name": "Leading SAFe for Government",
+      "code": "LSG",
+      "duration": "2 days",
+      "next": "Feb 3",
+      "url": "/training/leading-safe-for-government/",
+      "iso": "2027-02-03"
+    }
+  },
+  "categories": [
+    {
+      "id": "ai",
+      "name": "AI-Native",
+      "eyebrow": "Flagship",
+      "blurb": "Lead delivery with AI",
+      "desc": "The AI-Native track: from foundations to launching AI-powered release trains.",
+      "color": "#8FCFCF",
+      "courses": [
+        "ainf",
+        "ainr",
+        "ainl",
+        "ainv",
+        "aina"
+      ]
+    },
+    {
+      "id": "core",
+      "name": "Core",
+      "eyebrow": "Start here",
+      "blurb": "Where most teams begin",
+      "isNew": true,
+      "desc": "The essentials for teams and the people who run them. Pick the roles you need on your train.",
+      "color": "#F2B66D",
+      "courses": [
+        "devops",
+        "sp",
+        "la",
+        "sm",
+        "popm"
+      ]
+    },
+    {
+      "id": "roles",
+      "name": "SAFe Roles",
+      "eyebrow": "Role-based",
+      "blurb": "Advanced and specialist roles",
+      "desc": "Role certifications beyond the Core set: advanced Scrum, business ownership, engineering, architecture and large solutions.",
+      "color": "#0E8074",
+      "courses": [
+        "asm",
+        "bo",
+        "ase",
+        "arch",
+        "lssp"
+      ]
+    },
+    {
+      "id": "adv",
+      "name": "Advanced SAFe",
+      "eyebrow": "Certification",
+      "blurb": "SPC, RTE, portfolio",
+      "desc": "Advanced practitioner and consultant certifications for leaders of transformation.",
+      "color": "#5B8DEF",
+      "courses": [
+        "spc",
+        "aspc",
+        "rte",
+        "apm",
+        "lpm"
+      ]
+    },
+    {
+      "id": "micro",
+      "name": "Micro-Credential",
+      "eyebrow": "Short & sharp",
+      "blurb": "Half-day to one day",
+      "desc": "Focused skills you can add in a day or less.",
+      "color": "#C98BDB",
+      "courses": [
+        "rai",
+        "cc",
+        "vsm",
+        "acg"
+      ]
+    },
+    {
+      "id": "ind",
+      "name": "SAFe by Industry",
+      "eyebrow": "Specialised",
+      "blurb": "Hardware, government",
+      "desc": "SAFe tuned for regulated and hardware-heavy environments.",
+      "color": "#E58D7A",
+      "courses": [
+        "hw",
+        "hwt",
+        "lsg"
+      ]
+    }
+  ]
+}
