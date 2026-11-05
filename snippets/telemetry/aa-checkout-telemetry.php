@@ -31,7 +31,9 @@ if ( ! defined( 'ABSPATH' ) ) { return; }
 if ( ! function_exists( 'aa_ct_log' ) ) :
 
 function aa_ct_settings() {
-	$d = array( 'notify' => 'info@agile-agilist.com', 'keep' => 200, 'debounce' => HOUR_IN_SECONDS );
+	$d = array( 'notify' => 'info@agile-agilist.com', 'keep' => 200, 'debounce' => HOUR_IN_SECONDS,
+		/* The lead form the assessments already submit to; its notifications reach the inbox. */
+		'hs_portal' => '46316757', 'hs_form' => 'c6f0d4c1-d233-4875-9b0c-4528cda02237' );
 	$s = get_option( 'aa_ct_settings', array() );
 	return array_merge( $d, is_array( $s ) ? $s : array() );
 }
@@ -51,7 +53,35 @@ function aa_ct_log( $e ) {
 	/* Email only when a buyer actually tried to pay. A JavaScript error on the
 	   page is logged for diagnosis but is not, by itself, a lost sale. */
 	if ( $e['outcome'] !== 'to_stripe' && $e['outcome'] !== 'browser_jserror' ) { aa_ct_alert( $e ); }
+	if ( $e['email'] && $e['outcome'] !== 'browser_jserror' ) { aa_ct_hubspot( $e ); }
 	return $e;
+}
+
+/**
+ * Tell HubSpot about every attempt that carried an email, as a real form
+ * submission (the same lead form the assessments use). HubSpot's own
+ * notification email then goes out for it, and the contact's timeline shows
+ * "Checkout started" or "Checkout failed: <reason>" with the class and page.
+ * The forms API needs no token. Fields other than email are not sent, because
+ * HubSpot rejects a whole submission that names a field the form lacks; the
+ * detail travels in the page name, which HubSpot stores with the submission.
+ */
+function aa_ct_hubspot( $e ) {
+	$set = aa_ct_settings();
+	if ( empty( $set['hs_portal'] ) || empty( $set['hs_form'] ) ) { return; }
+	$key = 'aa_ct_hs_' . md5( $e['email'] . '|' . $e['cohort'] . '|' . ( $e['outcome'] === 'to_stripe' ? 'ok' : 'fail' ) );
+	if ( get_transient( $key ) ) { return; }               // one submission per buyer, class and outcome per hour
+	set_transient( $key, 1, HOUR_IN_SECONDS );
+	$class = aa_ct_class_label( $e['cohort'], $e['course'] );
+	$name  = ( $e['outcome'] === 'to_stripe' ? 'Checkout started' : 'Checkout FAILED: ' . trim( $e['code'] . ' ' . $e['msg'] ) ) . ( $class ? ' — ' . $class : '' ) . ( $e['seats'] > 1 ? ' — ' . (int) $e['seats'] . ' seats' : '' );
+	wp_remote_post( 'https://api.hsforms.com/submissions/v3/integration/submit/' . rawurlencode( $set['hs_portal'] ) . '/' . rawurlencode( $set['hs_form'] ), array(
+		'timeout' => 8, 'blocking' => false,
+		'headers' => array( 'Content-Type' => 'application/json' ),
+		'body'    => wp_json_encode( array(
+			'fields'  => array( array( 'name' => 'email', 'value' => $e['email'] ) ),
+			'context' => array( 'pageUri' => $e['url'] ?: home_url( '/' ), 'pageName' => mb_substr( $name, 0, 250 ) ),
+		) ),
+	) );
 }
 
 function aa_ct_ip() {
