@@ -395,12 +395,13 @@ function aa_sv_parse_ics( $ics ) {
 	if ( ! preg_match_all( '/BEGIN:VEVENT\n(.*?)\nEND:VEVENT/s', $ics, $blocks ) ) { return $events; }
 	$tz = wp_timezone();
 	foreach ( $blocks[1] as $b ) {
-		$ev = array( 'uid' => '', 'summary' => '', 'start' => '', 'end' => '', 'status' => '', 'attendees' => array(), 'rrule' => '', 'allday' => false );
+		$ev = array( 'uid' => '', 'summary' => '', 'start' => '', 'end' => '', 'status' => '', 'attendees' => array(), 'rrule' => '', 'allday' => false, 'organizer' => '' );
 		foreach ( explode( "\n", $b ) as $line ) {
 			if ( ! preg_match( '/^([A-Z\-]+)((?:;[^:]*)?):(.*)$/', $line, $m ) ) { continue; }
 			$prop = $m[1]; $params = $m[2]; $val = $m[3];
 			switch ( $prop ) {
 				case 'UID':     $ev['uid'] = $val; break;
+				case 'ORGANIZER': if ( preg_match( '/mailto:([^\s]+)/i', $val, $mo ) ) { $ev['organizer'] = strtolower( trim( $mo[1] ) ); } break;
 				case 'STATUS':  $ev['status'] = strtoupper( $val ); break;
 				case 'RRULE':   $ev['rrule'] = $val; break;
 				case 'SUMMARY': $ev['summary'] = str_replace( array( '\\,', '\\;', '\\n', '\\\\' ), array( ',', ';', ' ', '\\' ), $val ); break;
@@ -427,6 +428,7 @@ function aa_sv_parse_ics( $ics ) {
 			}
 		}
 		if ( $ev['end'] === '' ) { $ev['end'] = $ev['start']; }
+		if ( $ev['organizer'] !== '' ) { unset( $ev['attendees'][ $ev['organizer'] ] ); }   // the sender of the invite is never a student
 		if ( $ev['start'] !== '' ) { $events[] = $ev; }
 	}
 	return $events;
@@ -625,6 +627,18 @@ function aa_sv_daily() {
 	aa_sv_hubspot_retry();
 }
 add_action( 'aa_sv_daily_event', 'aa_sv_daily' );
+/* Run now from outside: GET /?aa_sv_run=<key>, where <key> is 'run_key' in the aa_sv_settings option. Same work as the daily run. */
+add_action( 'init', function () {
+	if ( empty( $_GET['aa_sv_run'] ) ) { return; } // phpcs:ignore
+	$set = aa_sv_settings();
+	if ( empty( $set['run_key'] ) || ! hash_equals( (string) $set['run_key'], (string) wp_unslash( $_GET['aa_sv_run'] ) ) ) { return; } // phpcs:ignore
+	nocache_headers(); header( 'Content-Type: application/json; charset=utf-8' );
+	aa_sv_daily();
+	$out = array();
+	foreach ( aa_sv_deliveries() as $k => $d ) { $sent = 0; foreach ( aa_sv_recipients() as $p ) { if ( $p['delivery'] === $k && $p['sent'] ) { $sent++; } } $out[ $k ] = array( 'status' => $d['status'], 'people' => count( $d['people'] ), 'sent' => $sent, 'send_at' => $d['send_at'] ); }
+	echo wp_json_encode( array( 'ok' => true, 'ran_at' => current_time( 'mysql' ), 'deliveries' => $out ) );
+	exit;
+}, 20 );
 add_action( 'init', function () {
 	if ( ! wp_next_scheduled( 'aa_sv_daily_event' ) ) {
 		$at = new DateTime( 'tomorrow 09:10', wp_timezone() );   // a quiet hour, local time
@@ -1059,7 +1073,7 @@ function aa_sv_admin_page() {
 	echo '<tr><th>Timing</th><td>Send <input type="number" name="days_after" min="0" max="30" value="' . (int) $set['days_after'] . '" style="width:60px"> days after the class ends · one reminder after <input type="number" name="reminder_days" min="0" max="30" value="' . (int) $set['reminder_days'] . '" style="width:60px"> days (0 = no reminder) · ignore classes that ended before <input type="date" name="since" value="' . esc_attr( $set['since'] ) . '"></td></tr>';
 	echo '<tr><th>Answers go to</th><td><input type="email" name="notify" value="' . esc_attr( $set['notify'] ) . '" class="regular-text"> · consultation link <input type="url" name="book" value="' . esc_attr( $set['book'] ) . '" class="regular-text"></td></tr>';
 	echo '<tr><th>Survey page ID</th><td><input type="number" name="page_id" value="' . (int) $set['page_id'] . '" style="width:90px"> <span class="description">0 = the page with slug <code>survey</code>. The page must contain <code>[aa_survey]</code>.</span></td></tr>';
-	echo '<tr><th>Never email these domains</th><td><textarea name="skip_domains" rows="3" class="large-text">' . esc_textarea( $set['skip_domains'] ) . '</textarea></td></tr>';
+	echo '<tr><th>Never email these</th><td><textarea name="skip_domains" rows="3" class="large-text">' . esc_textarea( $set['skip_domains'] ) . '</textarea><p class="description">Domains or full addresses, one per line: the trainer, the sending account, shared mailboxes. The invite’s organiser is always excluded.</p></td></tr>';
 	echo '<tr><th>Organisation names</th><td><textarea name="orgs" rows="3" class="large-text">' . esc_textarea( $set['orgs'] ) . '</textarea><p class="description">domain=Name, one per line. Shown on the survey header for that organisation’s attendees.</p></td></tr>';
 	echo '<tr><th>HubSpot private app token</th><td><input type="password" name="aa_hubspot_token" value="' . esc_attr( get_option( 'aa_hubspot_token', '' ) ) . '" class="regular-text" autocomplete="off"><p class="description">HubSpot → Settings → Integrations → Private apps. Scopes: crm.objects.contacts.read, crm.objects.contacts.write, crm.schemas.contacts.write, crm.objects.notes.write. Ignored when wp-config.php defines AA_HUBSPOT_TOKEN.</p></td></tr>';
 	echo '</table><p><button class="button button-primary">Save settings</button> ';
