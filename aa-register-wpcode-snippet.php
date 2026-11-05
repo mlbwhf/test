@@ -4729,6 +4729,15 @@ function aa_reg_agreed_prices() {
 	return apply_filters( 'aa_reg_agreed_prices', array(
 		/* Format: 'buyer@example.com' => array( 'course-slug' => 2200 ),
 		   (National Bank, Nov 2026: paid 4 Nov, line removed.) */
+
+		/* RTE individual discount agreed 5 Nov 2026: 2,050 instead of 2,200,
+		   any RTE date. */
+		'kannaiah.subbiah@gmail.com' => array( 'rte' => 2050 ),
+
+		/* Payment plan agreed 5 Nov 2026 for VA (list 2,250): this is the
+		   1,000 deposit taken at checkout. The balance of 1,250 is billed
+		   as 6 monthly payments outside the site. Remove after the deposit. */
+		'thamaraiselvik@gmail.com' => array( 'ai-native-change-agent' => 1000 ),
 	) );
 }
 
