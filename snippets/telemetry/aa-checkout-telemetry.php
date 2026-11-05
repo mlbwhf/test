@@ -48,7 +48,9 @@ function aa_ct_log( $e ) {
 	$log = get_option( 'aa_ct_log', array() ); $log = is_array( $log ) ? $log : array();
 	array_unshift( $log, $e );
 	update_option( 'aa_ct_log', array_slice( $log, 0, (int) $set['keep'] ), false );
-	if ( $e['outcome'] !== 'to_stripe' ) { aa_ct_alert( $e ); }
+	/* Email only when a buyer actually tried to pay. A JavaScript error on the
+	   page is logged for diagnosis but is not, by itself, a lost sale. */
+	if ( $e['outcome'] !== 'to_stripe' && $e['outcome'] !== 'browser_jserror' ) { aa_ct_alert( $e ); }
 	return $e;
 }
 
@@ -135,6 +137,16 @@ add_action( 'init', function () {
 	) );
 	status_header( 204 ); exit;
 }, 1 );
+
+/* URL HYGIENE. Some ad links arrive as /page/#anchor&utm_source=... — the
+   tracking parameters glued onto the fragment. The theme's smooth-scroll then
+   calls querySelector('#anchor&utm_...') and throws, and analytics never sees
+   the UTM values. Before any theme script runs, move everything after the
+   first & or ? in the fragment into the query string and keep a clean anchor. */
+add_action( 'wp_head', function () {
+	if ( is_admin() ) { return; }
+	echo '<script id="aa-ct-url">(function(){try{var h=location.hash;if(!h)return;var i=h.search(/[&?]/);if(i<0)return;var anchor=h.slice(0,i),extra=h.slice(i+1).replace(/^[&?]+/,"");var q=location.search;if(extra){q+=(q?"&":"?")+extra}history.replaceState(history.state,"",location.pathname+q+(anchor.length>1?anchor:""))}catch(e){}})();</script>' . "\n";
+}, 0 );
 
 add_action( 'wp_footer', function () {
 	if ( is_admin() ) { return; }
