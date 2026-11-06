@@ -1,0 +1,5 @@
+node_modules/
+mcp-server/dist/
+__pycache__/
+*.pyc
+.DS_Store
