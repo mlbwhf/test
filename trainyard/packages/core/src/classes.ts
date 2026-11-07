@@ -974,7 +974,13 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
   const nodes = new Map(fresh.nodes.map((n) => [n.id, n]));
   const claimed = new Set<string>();
   const renamed = new Map<string, string>();
+  // Teams' copies of canvas exercises (teams.ts) are the class's own: they come along as they are.
+  const copyFrames = new Set(old.frames.filter((f) => f.copyOf).map((f) => f.id));
   for (const n of old.nodes) {
+    if (n.frameId && copyFrames.has(n.frameId)) {
+      nodes.set(n.id, structuredClone(n));
+      continue;
+    }
     const fromTemplate = n.id.startsWith(prefix);
     // Template backgrounds (pictures, grid cells, labels) always come from the new version.
     if (fromTemplate && (n.fields.locked || (!freshIds.has(n.id) && !n.text.trim()))) continue;
@@ -1012,5 +1018,6 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
   const fields: Record<string, unknown> = { ...(old.fields ?? {}), ...(fresh.fields ?? {}), templateRev: templateRevision(template) };
   const timer = old.fields?.timer as { frameId?: string } | undefined;
   if (timer?.frameId) fields.timer = { ...timer, frameId: map.get(timer.frameId)?.id ?? timer.frameId };
-  return { ...old, frames: fresh.frames, nodes: [...nodes.values()], edges: [...edges.values()], columns: fresh.columns, groups: fresh.groups, fields };
+  const copies = old.frames.filter((f) => f.copyOf).map((f) => ({ ...structuredClone(f), copyOf: map.get(f.copyOf!)?.id ?? f.copyOf! }));
+  return { ...old, frames: [...fresh.frames, ...copies], nodes: [...nodes.values()], edges: [...edges.values()], columns: fresh.columns, groups: fresh.groups, fields };
 }

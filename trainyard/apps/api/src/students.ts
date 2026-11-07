@@ -7,8 +7,10 @@ import { randomBytes } from "node:crypto";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { classTeams, makeRounds, makeTeams, MAX_TEAMS, placeStudent, roundCount, seatStudents, teamOf, teamPolicy, teamRounds, type Board, type ClassTeam, type TeamPolicy } from "@trainyard/core";
-import { hashKey, require } from "./auth.js";
+import { classTeams, makeRounds, makeTeams, MAX_TEAMS, placeStudent, roundCount, seatStudents, teamCopies, teamOf, teamPolicy, teamRounds, type Board, type ClassTeam, type TeamPolicy } from "@trainyard/core";
+import { hashKey, newKey, require, type User } from "./auth.js";
+import { limitsFor, planLimitError, usageOf } from "./plans.js";
+import { CODE_LIFETIME_MINUTES, type ResetCodes } from "./password-reset.js";
 import { ApiError, notFound } from "./errors.js";
 import type { Mailer } from "./mailer.js";
 import type { Store } from "./store.js";
@@ -38,6 +40,8 @@ export interface StudentOptions {
   webUrl?: string;
   /** An older domain serving the same class links, for networks that block the main one. */
   webMirrorUrl?: string;
+  /** Sign-in codes, so a new co-instructor's first sign-in email carries one. */
+  codes?: ResetCodes;
 }
 
 const Student = z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) });
@@ -192,8 +196,78 @@ Trainyard`,
     rounds[r] = cur;
     if (req.body.names) rounds = rounds.map((rr) => rr.map((t) => ({ ...t, name: req.body.names![t.id] ?? t.name })));
     const all = saveTeams(b, rounds[0] ?? [], rounds, ids, policy);
-    await store.commit(req.principal, "class.teams", { boardId: b.id, teams: (rounds[0] ?? []).length, policy });
+    // Every team gets its own copy of the class's canvas exercises (the purpose-built boards keep a state per team by themselves).
+    const copies = teamCopies(b, classTeams(b));
+    await store.commit(req.principal, "class.teams", { boardId: b.id, teams: (rounds[0] ?? []).length, policy, copies });
     return { teams: classTeams(b), teamPolicy: policy, teamRounds: all };
+  });
+
+  // ---- co-instructors ---------------------------------------------------------------------
+  // A class is run by whoever made it and the colleagues they add. A co-instructor is a member of
+  // the same workspace (one is created for a new email, with a code to choose a password), named
+  // on the board; they manage the class, its students and its record like the owner.
+  const instructorIds = (b: Board): string[] => (Array.isArray(b.fields?.instructors) ? (b.fields!.instructors as unknown[]).filter((x): x is string => typeof x === "string") : []);
+  const publicInstructor = (u: User, role: "owner" | "co-instructor") => ({ id: u.id, name: u.name, email: u.email, role, hasPassword: !!u.passwordHash, disabled: !!u.disabled });
+  const instructorsOf = (req: FastifyRequest, b: Board) => {
+    const users = tenants.members(here(req));
+    const owner = typeof b.fields?.ownerId === "string" ? users.find((u) => u.id === b.fields!.ownerId) : undefined;
+    return [...(owner ? [publicInstructor(owner, "owner")] : []), ...instructorIds(b).map((id) => users.find((u) => u.id === id)).filter((u): u is User => !!u).map((u) => publicInstructor(u, "co-instructor"))];
+  };
+  const web = (opts.webUrl ?? "").replace(/\/$/, "");
+  app.get("/v1/boards/:id/instructors", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
+    const b = classBoard(req, req.params.id);
+    return { instructors: instructorsOf(req, b), canEmail: !!opts.mailer?.live };
+  });
+  app.post("/v1/boards/:id/instructors", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) }) } }, async (req, reply) => {
+    const b = classBoard(req, req.params.id);
+    const email = req.body.email.toLowerCase();
+    const inHere = (u: User) => (here(req) === tenants.platformId ? !u.workspaceId : u.workspaceId === here(req));
+    let user = platform.state.users.find((u) => u.email.toLowerCase() === email);
+    let created = false;
+    if (user && !inHere(user)) throw new ApiError(409, "OTHER_WORKSPACE", "This email already signs in to another Trainyard workspace. Ask them for a different address, or share the class link from that workspace.");
+    if (user?.disabled) throw new ApiError(409, "DISABLED", "This person's sign-in is disabled. Enable it under Users first.");
+    if (!user) {
+      // A new colleague joins the workspace as a planner, within the plan's seats.
+      const record = tenants.record(here(req));
+      if (record) {
+        const limits = limitsFor(record.plan, record.seats), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
+        if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
+        if (limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
+      }
+      user = { id: `u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: req.body.name, email, role: "planner", keyHash: hashKey(newKey()), createdAt: platform.now().toISOString(), ...(here(req) === tenants.platformId ? {} : { workspaceId: here(req) }) };
+      platform.state.users.push(user);
+      created = true;
+      await platform.commit(req.principal, "user.create", { userId: user.id, role: user.role, workspaceId: here(req), invitedFor: b.id });
+    }
+    if (user.id !== b.fields?.ownerId && !instructorIds(b).includes(user.id)) {
+      b.fields = { ...(b.fields ?? {}), instructors: [...instructorIds(b), user.id] };
+      await store.commit(req.principal, "class.instructors.add", { boardId: b.id, userId: user.id });
+    }
+    // A private room keeps the class from them until they are a member of it.
+    const room = b.roomId ? (store.state.rooms ?? []).find((r) => r.id === b.roomId) : undefined;
+    if (room && room.visibility === "private" && !room.members.some((m) => m.userId === user!.id)) {
+      room.members.push({ userId: user.id, access: "edit" });
+      await store.commit(req.principal, "room.members", { id: room.id, added: user.id });
+    }
+    let emailed = false;
+    if (opts.mailer?.live) {
+      const link = web ? `${web}/boards/${encodeURIComponent(b.id)}` : "";
+      const signIn = user.passwordHash || !opts.codes ? `Sign in${web ? ` at ${web}/login` : ""} and open the class${link ? `: ${link}` : "."}` : `To sign in for the first time, choose a password with this code: ${opts.codes.issue(user.id)} (it works for ${CODE_LIFETIME_MINUTES} minutes${web ? `, at ${web}/reset?email=${encodeURIComponent(email)}` : ""}). Then open the class${link ? `: ${link}` : "."}`;
+      try {
+        await opts.mailer.send({ to: email, subject: `${req.principal.name} added you to the class “${b.name}”`, text: `Hi ${user.name},\n\n${req.principal.name} added you as a co-instructor of the class “${b.name}” on Trainyard. You can run the class together: the board, the students, the teams and the class record.\n\n${signIn}\n\nTrainyard` });
+        emailed = true;
+      } catch (e) {
+        console.error(`[mail] co-instructor invite to ${email} not sent: ${(e as Error).message}`);
+      }
+    }
+    return reply.code(201).send({ instructors: instructorsOf(req, b), created, emailed });
+  });
+  app.delete("/v1/boards/:id/instructors/:uid", { schema: { params: z.object({ id: z.string().max(200), uid: z.string().max(80) }) } }, async (req, reply) => {
+    const b = classBoard(req, req.params.id);
+    if (!instructorIds(b).includes(req.params.uid)) throw notFound("Co-instructor");
+    b.fields = { ...(b.fields ?? {}), instructors: instructorIds(b).filter((x) => x !== req.params.uid) };
+    await store.commit(req.principal, "class.instructors.remove", { boardId: b.id, userId: req.params.uid });
+    return reply.code(200).send({ instructors: instructorsOf(req, b) });
   });
 }
 

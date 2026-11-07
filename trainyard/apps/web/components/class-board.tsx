@@ -12,7 +12,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { activityTiming, cardChoices, classTeams, isClassWide, roundOf, teamOf, teamOp, teamPolicy, teamsAt, teamState, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
+import { activityTiming, cardChoices, classTeams, isClassWide, roundOf, teamCopyOf, teamOf, teamOp, teamPolicy, teamsAt, teamState, type Board, type CardType, type ClassTimer, type Frame, type SideItem } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { ActivityEditor } from "@/components/activity-editor";
 import { BadgeRing, ClassIcon, classShort } from "@/components/class-icon";
@@ -39,7 +39,8 @@ const viewFromHash = (): View => {
 };
 
 export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onError, trainer = true }: { board: Board; refs: Record<string, RefSummary | null>; cardTypes: CardType[]; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; /** Runs the timer, marks exercises complete and sets them up; false for a learner on a join link. */ trainer?: boolean }) {
-  const lessons = useMemo(() => board.frames.filter((f) => !f.parentId).sort((a, b) => a.y - b.y || a.x - b.x), [board.frames]);
+  // Teams' copies of canvas exercises (teams.ts) sit beside the class, not among its lessons.
+  const lessons = useMemo(() => board.frames.filter((f) => !f.parentId && !f.copyOf).sort((a, b) => a.y - b.y || a.x - b.x), [board.frames]);
   // Teams: a student works on their team's copy of every exercise; the trainer picks which team's
   // copy to look at (kept per board in this browser). No teams, or "Class": one shared copy.
   const teams = useMemo(() => classTeams(board), [board]);
@@ -355,8 +356,12 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const boardFor = () => {
     if (!focusFrame) return null;
     if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : teamFor(here.lesson.id)?.id ?? null} viewerTeam={teamFor(here.lesson.id)?.id ?? null} onChanged={onChanged} onError={onError} />;
-    if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
-    return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
+    // A canvas exercise: the team's own copy when the class has teams (made when the teams were set up), else the shared one.
+    const teamId = here ? teamFor(here.lesson.id)?.id : undefined;
+    const copy = here && teamId ? teamCopyOf(board, here.ex.id, teamId) : undefined;
+    const shown = copy ?? focusFrame;
+    if (here && kindOf(shown) === "CHECK") return <Checklist board={board} frame={shown} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
+    return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={shown.id} fill trainer={trainer} />;
   };
   // Exercise type → header colour and icon (the design's TYC map; unknown types read as Activity).
   const TYC: Record<string, [string, string]> = {
@@ -462,7 +467,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
                 </span>
                 <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
               </div>
-              {teams.length && here && !isClassWide(here.ex) ? (
+              {teams.length && here && (!here.ex.activity || !isClassWide(here.ex)) ? (
                 <div className="studio-band-teams" role={trainer ? "tablist" : undefined} aria-label="Team">
                   {roundLabel(here.lesson.id) ? <span className="ex-mono" style={{ color: "#4d5a52", width: "100%" }}>{roundLabel(here.lesson.id).toUpperCase()}</span> : null}
                   {trainer ? (

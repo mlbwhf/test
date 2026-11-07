@@ -122,5 +122,10 @@ function activity(e: LpmExercise, shared: string): ActivitySpec {
   };
 }
 
-export const LPM_COURSE: { title: string; activities: ActivitySpec[] }[] = LPM_LESSONS.map((l) => ({ title: l.t, activities: l.ex.map((e) => activity(e, "lpm")) }));
+// The class ends with the Getting Started with LPM workshop's working sections; the workshop is
+// also its own class (below) for when it runs on its own day.
+export const LPM_COURSE: { title: string; activities: ActivitySpec[] }[] = [
+  ...LPM_LESSONS.map((l) => ({ title: l.t, activities: l.ex.map((e) => activity(e, "lpm")) })),
+  ...LPM_WORKSHOP_SECTIONS.filter((l) => l.ex.length).map((l) => ({ title: `Workshop: ${l.t}`, activities: l.ex.map((e) => activity(e, "lpm")) })),
+];
 export const LPM_WORKSHOP_COURSE: { title: string; activities: ActivitySpec[] }[] = LPM_WORKSHOP_SECTIONS.map((l) => ({ title: l.t, activities: l.ex.map((e) => activity(e, "lpm-ws")) }));

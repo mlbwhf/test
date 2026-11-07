@@ -4,7 +4,7 @@
 // team on an exercise is kept in the frame's state under keys prefixed with the team's id, so the
 // boards, their saving and the template upgrade need no change.
 
-import type { Board, Frame } from "./boards.js";
+import type { Board, BoardNode, Frame } from "./boards.js";
 import type { StateOp } from "./activities.js";
 
 export interface ClassTeam {
@@ -57,6 +57,50 @@ export function isClassWide(frame: Pick<Frame, "activity">): boolean {
 }
 
 const prefix = (teamId: string) => `${teamId}|`;
+
+// ---- Canvas exercises: one copy per team ------------------------------------------------------
+// A purpose-built exercise board keeps a state per team (above). A canvas exercise (stickies, a
+// table, zones drawn on the board) is copied once per team instead: the copy carries the
+// template's cards, sits to the right of the class, and the class board shows a team its copy.
+
+/** The canvas exercises of a class: frames inside a lesson with no purpose-built board. */
+export function canvasExercises(b: Pick<Board, "frames">): Frame[] {
+  // Inside a numbered lesson: the Welcome area (board intro, icebreaker, the team) stays one for the class.
+  const lessons = new Set(b.frames.filter((f) => !f.parentId && !f.copyOf && /^Lesson\s+\d+/i.test(f.title)).map((f) => f.id));
+  return b.frames.filter((f) => f.parentId && lessons.has(f.parentId) && !f.activity && !f.copyOf);
+}
+
+/** The team's copy of a canvas exercise, when the team has one. */
+export const teamCopyOf = (b: Pick<Board, "frames">, frameId: string, teamId: string): Frame | undefined => b.frames.find((f) => f.copyOf === frameId && f.team === teamId);
+
+/** Gives every team its own copy of every canvas exercise it does not have yet; returns how many were made. */
+export function teamCopies(b: Board, teams: ClassTeam[]): number {
+  let made = 0;
+  for (const f of canvasExercises(b)) {
+    // The exercise's own frames (lanes, zones) and the cards on any of them, or simply placed on it.
+    const ids = new Set([f.id]);
+    for (let grew = true; grew; ) {
+      grew = false;
+      for (const x of b.frames) if (x.parentId && ids.has(x.parentId) && !ids.has(x.id)) (ids.add(x.id), (grew = true));
+    }
+    const on = (n: BoardNode) => (n.frameId ? ids.has(n.frameId) : n.x >= f.x && n.y >= f.y && n.x < f.x + f.width && n.y < f.y + f.height);
+    for (const t of teams) {
+      if (teamCopyOf(b, f.id, t.id)) continue;
+      const right = Math.max(0, ...b.frames.map((x) => x.x + x.width), ...b.nodes.map((n) => n.x + (n.width ?? 0)));
+      const dx = right + 240 - f.x;
+      const suffix = `~${t.id}`;
+      const { parentId: _lesson, done: _done, ...rest } = structuredClone(f);
+      b.frames.push({ ...rest, id: f.id + suffix, title: `${f.title} · ${t.name}`, x: f.x + dx, copyOf: f.id, team: t.id });
+      for (const x of b.frames.filter((y) => ids.has(y.id) && y.id !== f.id)) b.frames.push({ ...structuredClone(x), id: x.id + suffix, parentId: x.parentId! + suffix, x: x.x + dx });
+      const inside = b.nodes.filter(on);
+      const nodeIds = new Set(inside.map((n) => n.id));
+      for (const n of inside) b.nodes.push({ ...structuredClone(n), id: n.id + suffix, ...(n.frameId ? { frameId: n.frameId + suffix } : {}), x: n.x + dx });
+      for (const e of b.edges) if (nodeIds.has(e.fromId) && nodeIds.has(e.toId)) b.edges.push({ ...structuredClone(e), id: e.id + suffix, fromId: e.fromId + suffix, toId: e.toId + suffix });
+      made++;
+    }
+  }
+  return made;
+}
 
 /** The part of a frame's state that is one team's: its keys without the team prefix. */
 export function teamState(state: Record<string, unknown>, teamId: string): Record<string, unknown> {

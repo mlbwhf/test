@@ -65,3 +65,39 @@ describe("class meta", () => {
     expect(CLASS_META).toEqual(CLASSES.map((c) => ({ id: c.id, name: c.name, short: c.short })));
   });
 });
+
+describe("team copies of canvas exercises", () => {
+  it("gives every team its own copy of each canvas exercise, once, and keeps them through a template upgrade", async () => {
+    const { CLASSES, classBoard, classTemplates, teamCopies, teamCopyOf, canvasExercises, makeTeams, upgradeFromTemplate } = await import("./index.js");
+    const spc = CLASSES.find((c) => c.id === "spc")!;
+    const b = classBoard(spc);
+    const canvas = canvasExercises(b);
+    expect(canvas.length).toBeGreaterThan(10);
+    const teams = makeTeams(2, [], ["s1", "s2", "s3"]);
+    const framesBefore = b.frames.length, nodesBefore = b.nodes.length;
+    expect(teamCopies(b, teams)).toBe(canvas.length * 2);
+    expect(b.frames.length).toBeGreaterThanOrEqual(framesBefore + canvas.length * 2);
+    expect(b.nodes.length).toBeGreaterThan(nodesBefore);
+    // A second run adds nothing; a third team gets its copies.
+    expect(teamCopies(b, teams)).toBe(0);
+    expect(teamCopies(b, makeTeams(3, teams, ["s1", "s2", "s3"]))).toBe(canvas.length);
+    const ex = canvas.find((f) => b.nodes.some((n) => n.x >= f.x && n.y >= f.y && n.x < f.x + f.width && n.y < f.y + f.height))!;
+    const copy = teamCopyOf(b, ex.id, teams[0]!.id)!;
+    expect(copy.title).toBe(`${ex.title} · ${teams[0]!.name}`);
+    expect(copy.parentId).toBeUndefined();
+    const on = (f: { x: number; y: number; width: number; height: number; id: string }) => b.nodes.filter((n) => n.x >= f.x && n.y >= f.y && n.x < f.x + f.width && n.y < f.y + f.height);
+    expect(on(copy).length).toBe(on(ex).length);
+    expect(on(copy).length).toBeGreaterThan(0);
+    // The exercise's own lanes come along, under the copy.
+    expect(b.frames.filter((x) => x.parentId === copy.id).length).toBe(b.frames.filter((x) => x.parentId === ex.id).length);
+    // The copies and what was written on them survive an upgrade to the template.
+    const written = on(copy)[0]!;
+    written.text = "Team 1 wrote this";
+    const t = classTemplates().find((x) => x.info.id === "class-spc")!;
+    const up = upgradeFromTemplate(b, t, "2026-02-01T00:00:00.000Z");
+    const exUp = up.frames.find((f) => f.title === ex.title && f.parentId && !f.copyOf)!;
+    const copyUp = teamCopyOf(up, exUp.id, teams[0]!.id)!;
+    expect(copyUp).toBeDefined();
+    expect(up.nodes.some((n) => n.text === "Team 1 wrote this" && n.x >= copyUp.x && n.x < copyUp.x + copyUp.width)).toBe(true);
+  });
+});

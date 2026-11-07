@@ -47,7 +47,7 @@ import {
 import { registerAssistRoutes } from "./assist.js";
 import { registerBoardRoutes } from "./boards.js";
 import { SecretBox } from "./secrets.js";
-import { registerPasswordReset } from "./password-reset.js";
+import { registerPasswordReset, ResetCodes } from "./password-reset.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
 import { clientIp, type ProxyTrust } from "./proxies.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -774,8 +774,9 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerAssistRoutes(app, store, metrics, opts.assist);
   const retention = registerRetention(app, tenants, store, { ...DEFAULT_RETENTION, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}), ...(opts.retention ?? {}) });
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store), beforeDelete: retention.beforeDelete });
-  registerPasswordReset(app, tenants, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
-  registerStudentRoutes(app, tenants, store, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  const codes = new ResetCodes();
+  registerPasswordReset(app, tenants, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  registerStudentRoutes(app, tenants, store, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
 
   return Object.assign(app, { sync });
 }

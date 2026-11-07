@@ -147,6 +147,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
   };
   return (
     <section className="panel panel-body stack" aria-labelledby="students-h">
+      <ClassInstructors boardId={boardId} />
       <h2 id="students-h" style={{ margin: 0 }}>
         Students
       </h2>
@@ -401,5 +402,74 @@ export function ClassStudents({ boardId }: { boardId: string }) {
         </div>
       ) : null}
     </section>
+  );
+}
+
+
+type Instructor = { id: string; name: string; email: string; role: "owner" | "co-instructor"; hasPassword: boolean; disabled: boolean };
+
+/** Who runs the class: its owner and the co-instructors they add by email. A new colleague gets a sign-in by email. */
+export function ClassInstructors({ boardId }: { boardId: string }) {
+  const q = useApi<{ instructors: Instructor[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/instructors`);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const add = async () => {
+    if (!name.trim() || !email.trim()) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await api<{ created: boolean; emailed: boolean }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/instructors`, { name: name.trim(), email: email.trim() });
+      setNote(r.emailed ? (r.created ? `${name.trim()} is in: an email with a code to choose a password is on its way.` : `${name.trim()} is in and has been emailed the class link.`) : r.created ? `${name.trim()} is in. Mail is off here: ask them to sign up with ${email.trim()} and use “Forgot password” to set one.` : `${name.trim()} is in; they can open the class from their Classes list.`);
+      setName("");
+      setEmail("");
+      await q.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const remove = async (u: Instructor) => {
+    if (!window.confirm(`Remove ${u.name} as co-instructor? They keep their sign-in, but no longer run this class.`)) return;
+    try {
+      await api("DELETE", `/v1/boards/${encodeURIComponent(boardId)}/instructors/${encodeURIComponent(u.id)}`);
+      await q.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    }
+  };
+  return (
+    <div className="stack" style={{ gap: 10, padding: "14px 16px", border: "2px solid #0d1815", borderRadius: 12, background: "#fff", boxShadow: "3px 3px 0 #0d1815" }} aria-labelledby="instructors-h">
+      <span className="ex-mono" id="instructors-h" style={{ color: "#4d5a52" }}>
+        CO-INSTRUCTORS
+      </span>
+      <span className="faint">Colleagues who run this class with you: the board, the students, the teams and the class record. A new colleague gets an email to choose a password.</span>
+      <div className="row" style={{ gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        {(q.data?.instructors ?? []).map((u) => (
+          <span key={u.id} style={{ display: "inline-flex", gap: 8, alignItems: "center", border: "2px solid #0d1815", borderRadius: 99, padding: "4px 12px", background: u.role === "owner" ? "#ffd37a" : "#cde0f2" }} title={u.email}>
+            <b>{u.name}</b>
+            <span className="faint" style={{ fontSize: 12 }}>{u.role === "owner" ? "owner" : u.hasPassword ? "co-instructor" : "invited · not signed in yet"}</span>
+            {u.role === "co-instructor" ? (
+              <button aria-label={`Remove ${u.name}`} onClick={() => void remove(u)} style={{ border: 0, background: "none", cursor: "pointer", fontWeight: 800 }}>
+                ×
+              </button>
+            ) : null}
+          </span>
+        ))}
+        {q.data && !q.data.instructors.length ? <span className="faint">Nobody named yet.</span> : null}
+      </div>
+      <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Colleague's name" aria-label="Co-instructor name" style={{ flex: "1 1 160px" }} />
+        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="their@email" type="email" aria-label="Co-instructor email" onKeyDown={(e) => e.key === "Enter" && void add()} style={{ flex: "1 1 200px" }} />
+        <button className="btn primary" onClick={() => void add()} disabled={busy || !name.trim() || !email.trim()}>
+          Add co-instructor
+        </button>
+      </div>
+      {note ? <span className="faint">{note}</span> : null}
+      {err ? <span style={{ color: "#c8372d" }}>{err}</span> : null}
+    </div>
   );
 }
