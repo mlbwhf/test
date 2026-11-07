@@ -56,7 +56,7 @@ function aa_mm_categories() {
 		array( 'id' => 'ai',    'name' => 'AI-Native',        'eyebrow' => 'Flagship',      'blurb' => 'Lead delivery with AI',
 		       'desc' => 'The AI-Native track: from foundations to launching AI-powered release trains.', 'color' => '#8FCFCF',
 		       'courses' => array( 'ai-native-foundations', 'ai-native-ready-certification', 'ai-native-ready-certification-2', 'ai-native-change-agent', 'launching-ai-native-arts' ) ),
-		array( 'id' => 'core',  'name' => 'Core',             'eyebrow' => 'Start here',    'blurb' => 'Where most teams begin', 'isNew' => true,
+		array( 'id' => 'core',  'name' => 'Core',             'eyebrow' => 'Start here',    'blurb' => 'Where most teams begin',
 		       'desc' => 'The essentials for teams and the people who run them. Pick the roles you need on your train.', 'color' => '#F2B66D',
 		       'courses' => array( 'devops', 'team-practitioner', 'sa', 'scrum-master', 'popm' ) ),
 		array( 'id' => 'roles', 'name' => 'SAFe Roles',       'eyebrow' => 'Role-based',    'blurb' => 'Advanced and specialist roles',
@@ -110,6 +110,11 @@ function aa_mm_overrides() {
 		'safe-for-hardware-teams'          => array( 'SAFe for Hardware Teams',          'SHWA',   '/training/safe-industry/safe-for-hardware-teams/',      '2 days' ),
 		'sa-gov'                           => array( 'Leading SAFe for Government',      'SA-GOV', '/training/safe-industry/sa-gov/',                       '2 days' ),
 	) );
+}
+
+/** Classes that carry the NEW tag on their card (not on a category). */
+function aa_mm_new_slugs() {
+	return apply_filters( 'aa_mm_new_slugs', array( 'large-solution', 'launching-ai-native-arts', 'ai-native-ready-certification' ) );
 }
 
 function aa_mm_lang() {
@@ -209,7 +214,7 @@ function aa_mm_card( $id, $c, $i ) {
 	$h  = '<li class="aa-mm__card" style="--i:' . (int) $i . '" data-id="' . esc_attr( $id ) . '" data-name="' . esc_attr( $c['name'] ) . '"'
 	    . ' data-next="' . esc_attr( $c['next'] ) . '" data-url="' . esc_url( $c['url'] ) . '" data-flow="' . ( $c['flow'] ? '1' : '0' ) . '"'
 	    . ' data-search="' . esc_attr( strtolower( $c['name'] . ' ' . $c['code'] ) ) . '">'
-	    . '<div class="aa-mm__row"><h3 class="aa-mm__h"><a class="aa-mm__name" href="' . esc_url( $c['url'] ) . '">' . esc_html( $c['name'] ) . '</a></h3>'
+	    . '<div class="aa-mm__row"><h3 class="aa-mm__h"><a class="aa-mm__name" href="' . esc_url( $c['url'] ) . '">' . esc_html( $c['name'] ) . '</a>' . ( in_array( $id, aa_mm_new_slugs(), true ) ? ' <u class="aa-mm__new">' . esc_html__( 'NEW', 'aa-mm' ) . '</u>' : '' ) . '</h3>'
 	    . '<button type="button" class="aa-mm__add" aria-pressed="false" data-id="' . esc_attr( $id ) . '" aria-label="' . esc_attr( sprintf( __( 'Add %s to shortlist', 'aa-mm' ), $c['name'] ) ) . '"><span aria-hidden="true">+</span></button></div>'
 	    . '<div class="aa-mm__meta">';
 	if ( $c['code'] !== '' )     { $h .= '<span class="aa-mm__code">' . esc_html( $c['code'] ) . '</span>'; }
