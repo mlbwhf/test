@@ -482,7 +482,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(57);
+    expect(list.body.builtin.length).toBe(59);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     expect(pi.info.method).toBe("safe");
@@ -795,11 +795,11 @@ describe("website sign-ups", () => {
 });
 
 describe("class boards", () => {
-  it("lists the seven classes and keeps them for signed-up trainers", async () => {
+  it("lists the nine classes and keeps them for signed-up trainers", async () => {
     const { call, app } = await setup();
     const list = await call("GET", "/v1/templates/boards");
     const classes = list.body.builtin.filter((b: { info: { tags: string[] } }) => b.info.tags.includes("class"));
-    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-aart", "tpl-builtin-class-aiva", "tpl-builtin-class-rte"]);
+    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-aart", "tpl-builtin-class-aiva", "tpl-builtin-class-lpm", "tpl-builtin-class-lpm-ws", "tpl-builtin-class-rte"]);
     // Open mode is anonymous: classes and Miro imports refuse, planning boards do not.
     const denied = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC cohort" });
     expect(denied.status).toBe(403);

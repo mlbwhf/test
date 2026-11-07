@@ -9,5 +9,7 @@ export const CLASS_META: { id: string; name: string; short: string }[] = [
   { id: "popm", name: "Product Owner / Product Manager (POPM)", short: "POPM" },
   { id: "aart", name: "Launching AI-Native ARTs", short: "ART Leader" },
   { id: "aiva", name: "The AI-Native Value Architect", short: "Value Architect" },
+  { id: "lpm", name: "Lean Portfolio Management (LPM)", short: "LPM" },
+  { id: "lpm-ws", name: "Getting Started with LPM workshop", short: "LPM workshop" },
   { id: "rte", name: "Release Train Engineer (RTE)", short: "RTE" },
 ];

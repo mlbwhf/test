@@ -354,7 +354,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const matches = flat.filter((x) => !palQ.trim() || `${titleOf(x.ex)} ${x.lesson.title} ${x.ex.activity?.kind ?? ""}`.toLowerCase().includes(palQ.trim().toLowerCase()));
   const boardFor = () => {
     if (!focusFrame) return null;
-    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : teamFor(here.lesson.id)?.id ?? null} onChanged={onChanged} onError={onError} />;
+    if (here && act?.board) return <ExerciseHost board={board} frame={here.ex} kind={act.board} readOnly={readOnly} trainer={trainer} team={isClassWide(here.ex) ? null : teamFor(here.lesson.id)?.id ?? null} viewerTeam={teamFor(here.lesson.id)?.id ?? null} onChanged={onChanged} onError={onError} />;
     if (here && kindOf(here.ex) === "CHECK") return <Checklist board={board} frame={here.ex} readOnly={readOnly} onChanged={onChanged} onError={onError} />;
     return <CanvasEditor board={board} refs={refs} cardTypes={cardTypes} readOnly={readOnly} onChanged={onChanged} onError={onError} focus={focusFrame.id} fill trainer={trainer} />;
   };
@@ -632,19 +632,19 @@ function stepsOf(text: string): string[] {
 }
 
 /** A purpose-built exercise board with its shared state. */
-function ExerciseHost({ board, frame, kind, readOnly, trainer, team, onChanged, onError }: { board: Board; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; onChanged: () => void; onError: (m: string) => void }) {
+function ExerciseHost({ board, frame, kind, readOnly, trainer, team, viewerTeam, onChanged, onError }: { board: Board; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; viewerTeam: string | null; onChanged: () => void; onError: (m: string) => void }) {
   // Steps of one workshop (config.shared) keep their work on the first step's frame.
   const shared = frame.activity?.config?.shared;
   const home = (shared ? board.frames.find((f) => f.activity?.config?.shared === shared) : undefined) ?? frame;
-  return <ExerciseState key={`${home.id}:${team ?? ""}`} board={board} home={home} frame={frame} kind={kind} readOnly={readOnly} trainer={trainer} team={team} onChanged={onChanged} onError={onError} />;
+  return <ExerciseState key={`${home.id}:${team ?? ""}`} board={board} home={home} frame={frame} kind={kind} readOnly={readOnly} trainer={trainer} team={team} viewerTeam={viewerTeam} onChanged={onChanged} onError={onError} />;
 }
 
-function ExerciseState({ board, home, frame, kind, readOnly, trainer, team, onChanged, onError }: { board: Board; home: Frame; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; onChanged: () => void; onError: (m: string) => void }) {
+function ExerciseState({ board, home, frame, kind, readOnly, trainer, team, viewerTeam, onChanged, onError }: { board: Board; home: Frame; frame: Frame; kind: string; readOnly: boolean; trainer: boolean; team: string | null; viewerTeam: string | null; onChanged: () => void; onError: (m: string) => void }) {
   const [all, opAll] = useFrameState(board, home, onChanged, onError);
   // A team's copy of the exercise: its part of the frame's state, its changes addressed to it.
   const st = useMemo(() => (team ? teamState(all, team) : all), [all, team]);
   const op: typeof opAll = team ? (change) => opAll(teamOp(change, team)) : opAll;
-  return <ExerciseBoard kind={kind} board={board} frame={frame} config={frame.activity?.config ?? {}} st={st} op={op} readOnly={readOnly} trainer={trainer} />;
+  return <ExerciseBoard kind={kind} board={board} frame={frame} config={frame.activity?.config ?? {}} st={st} op={op} readOnly={readOnly} trainer={trainer} team={viewerTeam} />;
 }
 
 function LessonSection({ lesson, tint, exercises, kindOf, current, onOpen, onWhole, add }: { lesson: Frame; tint: string; exercises: Frame[]; kindOf: (f: Frame) => string; current?: string | undefined; onOpen: (id: string) => void; onWhole: () => void; add: React.ReactNode }) {

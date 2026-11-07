@@ -17,6 +17,7 @@ import { RTE_COURSE } from "./courses/rte.js";
 import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
 import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
 import { AI_NATIVE_VALUE_ARCHITECT_COURSE } from "./courses/ai-native-value-architect.js";
+import { LPM_COURSE, LPM_WORKSHOP_COURSE } from "./courses/lpm.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -708,6 +709,26 @@ const RAW_CLASSES: ClassSpec[] = [
     welcome: ["Quick agenda", "Icebreaker"],
     lessons: AI_NATIVE_VALUE_ARCHITECT_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
     course: AI_NATIVE_VALUE_ARCHITECT_COURSE,
+  },
+  {
+    id: "lpm",
+    name: "Lean Portfolio Management (LPM)",
+    short: "LPM",
+    blurb: "Strategy to execution: eight lessons with Terrific Transport Corporation (TTC) as the running case. Every exercise has a working template, from the portfolio process flow map and the portfolio canvas to participatory budgeting, the portfolio Kanban and WSJF, each team with its own copy.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: LPM_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LPM_COURSE,
+  },
+  {
+    id: "lpm-ws",
+    name: "Getting Started with LPM workshop",
+    short: "LPM workshop",
+    blurb: "The one-day workshop run after the two-day LPM class. Build the actionable artifacts for your LPM journey: the pitch, the portfolio scope, the LPM team, the events, the CoP and the next steps to the kickoff.",
+    days: 1,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: LPM_WORKSHOP_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LPM_WORKSHOP_COURSE,
   },
   {
     id: "rte",

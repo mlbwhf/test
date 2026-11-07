@@ -11,6 +11,7 @@ import { STUDIO_KINDS, studioModel } from "@/components/studio-model";
 import { LSA_KINDS, lsaModel } from "@/components/studio-model-lsa";
 import { aartModel } from "@/components/studio-model-aart";
 import { labModel } from "@/components/studio-model-lab";
+import { lpmModel } from "@/components/studio-model-lpm";
 import { agendaModel } from "@/components/studio-model-agenda";
 import { AgendaView } from "@/components/studio-views-agenda";
 import * as Views from "@/components/studio-views";
@@ -26,6 +27,7 @@ export { STUDIO_KINDS, LSA_KINDS };
 const wait = () => <div className="faint" style={{ padding: 16 }}>Loading…</div>;
 const AartView = dynamic(() => import("@/components/planning-views").then((m) => m.AartView), { ssr: false, loading: wait });
 const LabView = dynamic(() => import("@/components/studio-views-lab").then((m) => m.LabView), { ssr: false, loading: wait });
+const LpmView = dynamic(() => import("@/components/studio-views-lpm").then((m) => m.LpmView), { ssr: false, loading: wait });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const VIEWS: Record<string, React.ComponentType<{ v: any }>> = {
@@ -40,10 +42,12 @@ const VIEWS: Record<string, React.ComponentType<{ v: any }>> = {
   lab: LabView,
   // The class agenda kanban (studio-views-agenda.tsx, studio-model-agenda.ts).
   agenda: AgendaView,
+  // Lean Portfolio Management and the Getting Started with LPM workshop (studio-views-lpm.tsx, studio-model-lpm.ts): one board kind, the step picks the template.
+  lpm: LpmView,
 };
 
 /** A board from the Class Studio design: its generated layout, driven by the ported logic (studio-model.ts). */
-export function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: BoardProps & { kind: string }) {
+export function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer, team }: BoardProps & { kind: string }) {
   const [ui, setUiState] = useState<Record<string, unknown>>({});
   const setUi = useCallback((p: Record<string, unknown>) => setUiState((u) => ({ ...u, ...p })), []);
   const ask = useCallback(async (prompt: string) => {
@@ -65,8 +69,8 @@ export function StudioBoard({ kind, board, frame, config, st, op, readOnly, trai
       gone = true;
     };
   }, [needsStudents, board.id, setUi]);
-  const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask };
-  const v = kind === "aart" ? aartModel(ctx) : kind === "lab" ? labModel(ctx) : kind === "agenda" ? agendaModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
+  const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask, team: team ?? null };
+  const v = kind === "aart" ? aartModel(ctx) : kind === "lpm" ? lpmModel(ctx) : kind === "lab" ? labModel(ctx) : kind === "agenda" ? agendaModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
   const View = VIEWS[kind]!;
   return (
     <div className="studio-board">

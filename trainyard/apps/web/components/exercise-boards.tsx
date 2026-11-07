@@ -20,6 +20,8 @@ export interface BoardProps {
   op: Op;
   readOnly: boolean;
   trainer: boolean;
+  /** The team this person works in (their table), also on a class-wide exercise; null when the class has no teams. */
+  team?: string | null;
 }
 
 /** The frame's state with this person's changes applied at once, saved one by one. */
@@ -234,7 +236,7 @@ const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: fa
 
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} />;
-  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
+  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
 /** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
