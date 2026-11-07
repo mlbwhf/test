@@ -13,10 +13,10 @@
  *    badge image keep the mark, so nothing breaks while the image is missing.
  *
  * 2. TEAM QUOTE GOES TO A FORM. The "Request a team quote" strip pointed at
- *    #enroll (the public schedule) on older pages. It now opens the Book a
- *    Consult popup (Fluent Form 5, "Training Contact us"), with the message
- *    pre-filled with the course name, so the request arrives as a form entry
- *    and a notification. "Talk to an advisor" in the final block does the same.
+ *    #enroll (the public schedule) on older pages. It now goes to the team
+ *    training page (/team-training/, form in inc/team-quote.php) with
+ *    ?course=<this page's slug>, so the form opens with the class chosen.
+ *    "Talk to an advisor" in the final block opens the Book a Consult popup.
  *
  * Edit aa_cb_badges() to add a badge image for a code.
  */
@@ -60,12 +60,6 @@ function aa_cb_badge_url( $code ) {
 	return isset( $map[ $code ] ) ? $map[ $code ] : '';
 }
 
-/** The course name the page's bar shows, for the pre-filled quote message. */
-function aa_cb_course_name( $content ) {
-	if ( preg_match( '~aa-coursebar.*?<span class="nr"[^>]*>(.*?)</span>~s', $content, $m ) ) { return trim( wp_strip_all_tags( $m[1] ) ); }
-	return get_the_title();
-}
-
 add_filter( 'the_content', function ( $content ) {
 	if ( is_admin() || strpos( $content, 'aa-coursebar' ) === false ) { return $content; }
 
@@ -82,24 +76,28 @@ add_filter( 'the_content', function ( $content ) {
 		$content
 	);
 
-	/* 2. The team-quote strip and the advisor button open the consult form. */
-	$name = aa_cb_course_name( $content );
+	/* 2. The team-quote strip goes to the team training page; the advisor button opens the consult form. */
+	$slug = (string) get_post_field( 'post_name', get_the_ID() );
+	$to   = add_query_arg( 'course', rawurlencode( $slug ), apply_filters( 'aa_cb_team_url', home_url( '/team-training/' ) ) ) . '#quote';
 	$content = preg_replace_callback(
-		'~(<div class="aa-corp">.*?)<a href="#[^"]*"(?![^>]*aa-book)([^>]*)>~s',
-		function ( $m ) use ( $name ) { return $m[1] . '<a href="#aa-book" class="aa-book aa-corp-quote" data-aa-course="' . esc_attr( $name ) . '"' . $m[2] . '>'; },
+		'~(<div class="aa-corp">.*?)<a href="[^"]*"([^>]*)>~s',
+		function ( $m ) use ( $to ) {
+			$attrs = preg_replace( '~\sclass="[^"]*"|\sdata-aa-course="[^"]*"~', '', $m[2] );
+			return $m[1] . '<a href="' . esc_url( $to ) . '" class="aa-corp-quote"' . $attrs . '>';
+		},
 		$content, 1
 	);
 	$content = preg_replace( '~(<a href=")#enroll(" class="btn-wghost"[^>]*>\s*Talk to an advisor)~', '$1#aa-book$2', $content, 1 );
 	return $content;
 }, 20 );
 
-/* Pre-fill the consult form's message when the popup was opened from a quote link. */
+/* Pre-fill the consult form's message with the course when "Talk to an advisor" opens it. */
 add_action( 'wp_footer', function () {
 	if ( is_admin() || ! is_singular() ) { return; }
 	$p = get_post();
 	if ( ! $p || strpos( (string) $p->post_content, 'aa-coursebar' ) === false ) { return; }
 	?>
-<script id="aa-cb-quote">document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('.aa-corp-quote'):null;if(!a)return;var course=a.getAttribute('data-aa-course')||document.title;setTimeout(function(){var m=document.getElementById('aa-book-modal');if(!m)return;var t=m.querySelector('textarea');if(t&&!t.value){t.value='Team quote request: '+course+'\nTeam size: \nPreferred dates / timezone: \n';t.dispatchEvent(new Event('input',{bubbles:true}))}},80)},true);</script>
+<script id="aa-cb-quote">document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('a.btn-wghost[href="#aa-book"]'):null;if(!a)return;var n=document.querySelector('.aa-coursebar .nr'),course=n?n.textContent.trim():document.title;setTimeout(function(){var m=document.getElementById('aa-book-modal');if(!m)return;var t=m.querySelector('textarea');if(t&&!t.value){t.value='Question about: '+course+'\n';t.dispatchEvent(new Event('input',{bubbles:true}))}},80)},true);</script>
 	<?php
 }, 98 );
 
