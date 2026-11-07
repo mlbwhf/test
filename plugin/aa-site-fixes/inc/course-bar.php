@@ -2,7 +2,8 @@
 /**
  * AA — Course page fixes   [no shortcode; the_content filter on course pages]
  *
- * WPCode: PHP snippet, "Run everywhere".
+ * Part of the "AA — Site fixes" plugin. (Also valid as a WPCode PHP snippet,
+ * "Run everywhere", pasted without the <?php line.)
  *
  * 1. BADGES, NOT LETTER MARKS. Older course pages draw the credential as a
  *    round <span class="badge"><b>CODE</b><i>CERT</i></span>. Wherever the
