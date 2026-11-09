@@ -52,7 +52,7 @@ function aa_ct_log( $e ) {
 	update_option( 'aa_ct_log', array_slice( $log, 0, (int) $set['keep'] ), false );
 	/* Email only when a buyer actually tried to pay. A JavaScript error on the
 	   page is logged for diagnosis but is not, by itself, a lost sale. */
-	if ( $e['outcome'] !== 'to_stripe' && $e['outcome'] !== 'browser_jserror' ) { aa_ct_alert( $e ); }
+	if ( ! in_array( $e['outcome'], array( 'to_stripe', 'browser_jserror', 'browser_refused' ), true ) ) { aa_ct_alert( $e ); }   // a validation prompt is the page working, not a failure
 	if ( $e['email'] && $e['outcome'] !== 'browser_jserror' ) { aa_ct_hubspot( $e ); }
 	return $e;
 }
@@ -194,7 +194,11 @@ return p.then(function(r){if(!r.ok){r.clone().text().then(function(t){send(ctx({
 else{r.clone().text().then(function(t){try{var j=JSON.parse(t);if(!j||!j.url)send(ctx({kind:'badanswer',status:r.status,text:t.slice(0,200)}))}catch(e){send(ctx({kind:'notjson',status:r.status,text:t.slice(0,200)}))}}).catch(function(){})}
 return r},function(err){send(ctx({kind:'network',text:String(err&&err.message||err)+' · online='+navigator.onLine}));throw err})};
 document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('[data-inline-pay],[data-pay]'):null;if(!b||b.disabled)return;
-var mine=++clicks;setTimeout(function(){if(requests<mine)send({kind:'noreq',text:'Pay pressed but no checkout request left the browser within 8s'})},8000)},true);
+var mine=++clicks,box=b.closest('[data-aa-inline],.aacal-panel,.aareg,form')||document;
+setTimeout(function(){if(requests>=mine)return;var em=box.querySelector('input[type=email],input[name=email]'),v=em?String(em.value||'').trim():'',ok=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v),cb=box.querySelector('input[type=checkbox][required],[data-consent] input[type=checkbox],input[type=checkbox][name*=consent]'),co=box.getAttribute&&(box.getAttribute('data-cohort')||box.getAttribute('data-start'))||'';
+if(!ok)send({kind:'refused',email:v,cohort:co,text:v?'Pay pressed with an invalid email; the page asked for a valid one':'Pay pressed with the email field empty; the page asked for it'});
+else if(cb&&!cb.checked)send({kind:'refused',email:v,cohort:co,text:'Pay pressed without ticking the agreement box; the page asked for it'});
+else send({kind:'noreq',email:v,cohort:co,text:'Pay pressed with a valid email but no checkout request left the browser within 8s'})},8000)},true);
 var errs=0;window.addEventListener('error',function(e){if(errs++<3)send({kind:'jserror',text:String(e.message||'').slice(0,200)+' @ '+String(e.filename||'').split('/').pop()+':'+(e.lineno||0)})});
 })();</script>
 	<?php
