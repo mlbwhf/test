@@ -1354,3 +1354,16 @@ Full step log: `content-ops/execution-log-2026-10-29.md`. Register-relevant outc
 - **Schema gaps closed:** Article added on 11 pages; Dataset on 45. Still open: 1104 has no
   FAQPage and no visible date; 576 and 1102 have no visible update stamp.
 - **Merged pages:** 866 and 1111 are redirect stubs into 500 (owner to add the 301s).
+
+## 9–10 Nov 2026 — market-research programme launched
+
+Full record: `content-ops/launch-2026-11-10-market-research.md`.
+
+- **New, with cadence:** 3435 AI agents market report (STANDARD, quarterly — next Feb 2027);
+  3441 AI Market Pulse (CRITICAL, monthly — next edition early Dec 2026; archive Nov edition to
+  /reports/ai-market-pulse/2026-11/ first).
+- **862 AI Agent Statistics:** $93.2B (MarketsandMarkets 2025 edition) → ~$49B 2030 median,
+  marked Superseded in a What-changed block (9 Nov 2026). Page still thin — expand.
+- **388 TaaS:** $206.5B clarified (software with agent capabilities; standalone line ~$29B).
+- **Due from the Pulse research:** ChatGPT 1.2B weekly (contested), Anthropic public S-1 (572
+  stale), token index October readings (421), Doubao 419M (2589, 3227).
