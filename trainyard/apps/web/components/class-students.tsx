@@ -446,7 +446,7 @@ export function ClassInstructors({ boardId }: { boardId: string }) {
       <span className="ex-mono" id="instructors-h" style={{ color: "#4d5a52" }}>
         CO-INSTRUCTORS
       </span>
-      <span className="faint">Colleagues who run this class with you: the board, the students, the teams and the class record. A new colleague gets an email to choose a password.</span>
+      <span className="faint">Colleagues who run this class with you: the board, the students, the teams and the class record. A co-instructor uses no trainer seat: they run only the classes you add them to. A new colleague gets an email to choose a password.</span>
       <div className="row" style={{ gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         {(q.data?.instructors ?? []).map((u) => (
           <span key={u.id} style={{ display: "inline-flex", gap: 8, alignItems: "center", border: "2px solid #0d1815", borderRadius: 99, padding: "4px 12px", background: u.role === "owner" ? "#ffd37a" : "#cde0f2" }} title={u.email}>

@@ -1206,6 +1206,11 @@ describe("workspaces", () => {
     const second = await call("POST", "/v1/users", { name: "T2", email: "t2@example.io", role: "planner" }, key);
     expect(second.status).toBe(402);
     expect(second.body.error.details).toMatchObject({ kind: "staff", limit: 1 });
+    // A co-instructor takes no trainer seat: with the one seat in use, Ada still adds one to her class.
+    const cls = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM" }, key)).body.board.id as string;
+    const co = await call("POST", `/v1/boards/${cls}/instructors`, { name: "Sam", email: "sam@example.io" }, key);
+    expect(co.status).toBe(201);
+    expect(co.body.instructors.map((u: { role: string }) => u.role)).toEqual(["owner", "co-instructor"]);
     // Buy a seat, billed pro rata, then the second trainer fits.
     expect((await call("POST", "/v1/billing/seats", { quantity: 3 }, key)).body).toEqual({ seats: 3 });
     expect(quantity).toBe(3);
@@ -2393,7 +2398,8 @@ describe("co-instructors and team copies", () => {
     expect(added.body).toMatchObject({ created: true, emailed: false });
     expect(added.body.instructors.map((u: { name: string; role: string; hasPassword: boolean }) => [u.name, u.role, u.hasPassword])).toEqual([["Root", "owner", false], ["Sam", "co-instructor", false]]);
     const sam = (await call("GET", "/v1/users", undefined, root)).body.users.find((u: { email: string }) => u.email === "sam@example.io") as { id: string; role: string };
-    expect(sam.role).toBe("planner");
+    // A co-instructor takes no trainer seat: they join as a viewer and run this class only.
+    expect(sam.role).toBe("viewer");
     // Adding again is idempotent; an existing user is simply named.
     const again = await call("POST", `/v1/boards/${id}/instructors`, { name: "Sam", email: "SAM@example.io" }, root);
     expect(again.body).toMatchObject({ created: false });
@@ -2403,6 +2409,12 @@ describe("co-instructors and team copies", () => {
     expect((await call("GET", `/v1/boards/${id}/students`, undefined, key)).status).toBe(200);
     expect((await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, key)).status).toBe(201);
     expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, key)).status).toBe(200);
+    expect((await call("PATCH", `/v1/boards/${id}`, { name: "LPM · spring" }, key)).status).toBe(200);
+    // Elsewhere Sam is a viewer: another class stays read-only, and no new classes.
+    const other = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    expect((await call("GET", `/v1/boards/${other}`, undefined, key)).status).toBe(200);
+    expect((await call("GET", `/v1/boards/${other}/students`, undefined, key)).status).toBe(403);
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "Mine" }, key)).status).toBe(403);
     // Students may not manage instructors; removal leaves Sam's sign-in alone.
     const ana = (await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.students[0] as { id: string };
     const link = await call("POST", `/v1/boards/${id}/students/${ana.id}/link`, {}, root);

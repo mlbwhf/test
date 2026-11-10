@@ -57,7 +57,24 @@ export interface Principal {
   support?: boolean;
   /** A student who joined by link: the one class board they may work on (students.ts). */
   guestBoardId?: string;
+  /** A co-instructor (a viewer, using no trainer seat) running this class: planner on its routes only. */
+  coInstructorOf?: string;
 }
+
+/** The class board a request is about: /v1/boards/<id>… or the class's planning room document. */
+export function classBoardOfUrl(url: string): string | undefined {
+  const path = url.split("?")[0] ?? url;
+  const m = /^\/v1\/boards\/([^/]+)/.exec(path) ?? /^\/v1\/docs\/planning-room(?::|%3A)([^/]+)/i.exec(path);
+  if (!m) return undefined;
+  try {
+    return decodeURIComponent(m[1]!);
+  } catch {
+    return undefined;
+  }
+}
+
+/** Whether the user is named a co-instructor on the board (students.ts adds them). */
+export const isCoInstructor = (b: { fields?: Record<string, unknown> } | undefined, userId: string): boolean => !!b && Array.isArray(b.fields?.instructors) && (b.fields!.instructors as unknown[]).includes(userId);
 
 /** What each role may do. Reads are open to every role. */
 export const PERMISSIONS = {
@@ -240,7 +257,17 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
         req.principal = principal;
         return target === tenants.platformId ? platform : tenants.get(target);
       })
-      .then((store) => tenants.run(store, done), done);
+      .then((store) => {
+        // A co-instructor joins as a viewer (no trainer seat) and runs the classes they are named
+        // on: for requests about such a class, they act as a planner; everywhere else, a viewer.
+        const p = req.principal;
+        if (p.role === "viewer" && !p.guestBoardId && !p.anonymous) {
+          const id = classBoardOfUrl(req.url);
+          const b = id ? (store.state.workspace.boards ?? []).find((x) => x.id === id) : undefined;
+          if (b && isCoInstructor(b, p.userId)) req.principal = { ...p, role: "planner", coInstructorOf: b.id };
+        }
+        tenants.run(store, done);
+      }, done);
   });
 }
 
