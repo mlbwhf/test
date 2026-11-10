@@ -9,7 +9,7 @@ export const cards = [
   note:'S&P 500 dip of 22 May 2023 × index value of ~$34–36T. $500B would need a ~1.4% fall.', conf:'DERIVED', source:'Report AI arithmetic on reported S&P 500 moves'},
  {n:3, file:'03-doubao-382m.png', eyebrow:'Lost in translation', headline:'Doubao has 382 million users, not 3.8 billion', chart:'hbar', unit:'M',
   rows:[{l:'Headline figure',v:3800,claim:1},{l:'Actual monthly users',v:382,hl:1}],
-  note:'The Chinese figure was 3.8亿. One 亿 is a hundred million, so it means about 380 million (382M), not 3.8 billion.', conf:'HIGH', source:'QuestMobile monthly active users; unit conversion'},
+  note:'The Chinese figure was 3.8 yi. One yi is a hundred million, so it means about 380 million (382M), not 3.8 billion.', conf:'HIGH', source:'QuestMobile monthly active users; unit conversion'},
  {n:4, file:'04-dev-review-inversion.png', eyebrow:'Software developers, 2026', headline:'Reviewing AI code now takes more time than writing code', chart:'col', unit:'h', dec:1,
   rows:[{l:'Writing new code',v:9.8},{l:'Reviewing AI code',v:11.4,hl:1}],
   note:'Hours per week, Q1 2026. Median PR review time +441%; 31% more PRs merge with no review.', conf:'MEDIUM', source:'Developer survey Q1 2026; Faros AI'},

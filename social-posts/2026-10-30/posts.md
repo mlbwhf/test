@@ -25,7 +25,7 @@ LinkedIn or X to Planable too, or they will post twice.
 |---|---|---|---|
 | 1 | Fri 30 Oct | We traced 13 of the most-quoted AI statistics back to their sources. | [01-fact-check-register.png](https://report-ai.org/wp-content/uploads/2026/10/01-fact-check-register.png) |
 | 2 | Sat 31 Oct | "A fake AI image of a Pentagon explosion wiped $500B off US stocks." | [02-pentagon-500b.png](https://report-ai.org/wp-content/uploads/2026/10/02-pentagon-500b.png) |
-| 3 | Sun 01 Nov | "Doubao has 3.8 billion users." | [03-doubao-382m.png](https://report-ai.org/wp-content/uploads/2026/10/03-doubao-382m.png) |
+| 3 | Sun 01 Nov | "Doubao has 3.8 billion users." | [03-doubao-382m-v2.png](https://report-ai.org/wp-content/uploads/2026/10/03-doubao-382m-v2.png) |
 | 4 | Mon 02 Nov | In Q1 2026, reviewing AI-generated code overtook writing code: 11.4 ho | [04-dev-review-inversion.png](https://report-ai.org/wp-content/uploads/2026/10/04-dev-review-inversion.png) |
 | 5 | Tue 03 Nov | AI support vendors quote 70–90% deflection. | [05-support-deflection.png](https://report-ai.org/wp-content/uploads/2026/10/05-support-deflection.png) |
 | 6 | Wed 04 Nov | Meta measured its own AI restructuring (CTO, June 2026): | [06-meta-project-ot.png](https://report-ai.org/wp-content/uploads/2026/10/06-meta-project-ot.png) |
@@ -137,14 +137,14 @@ Full data, sources and confidence ratings at report-ai.org (link in bio).
 ---
 ## Day 3 · Sun 01 Nov 2026
 
-**Image:** https://report-ai.org/wp-content/uploads/2026/10/03-doubao-382m.png
-**Alt text:** Bar chart: a claimed 3.8 billion Doubao users against the actual 382 million monthly users. The Chinese figure 3.8亿 means about 380 million.
+**Image:** https://report-ai.org/wp-content/uploads/2026/10/03-doubao-382m-v2.png
+**Alt text:** Bar chart: a claimed 3.8 billion Doubao users against the actual 382 million monthly users. The Chinese figure, 3.8 units of 100 million, means about 380 million.
 
 ### X / Threads (198 chars on X)
 ```
 "Doubao has 3.8 billion users."
 
-The Chinese figure was 3.8亿. One 亿 = 100 million. So: ~382 million monthly users, not 3.8 billion.
+The Chinese figure was 3.8 "yi". One yi = 100 million. So: ~382 million monthly users, not 3.8 billion.
 
 A tenfold error, published as a headline.
 https://report-ai.org/reports/ai-statistics-fact-check/#fc-doubao
@@ -156,11 +156,11 @@ https://report-ai.org/reports/ai-statistics-fact-check/#fc-doubao
 
 At least one English-language outlet ran that as a headline.
 
-The Chinese figure is 3.8亿. One 亿 is a hundred million, so 3.8亿 is about 380 million: QuestMobile's 382 million monthly active users. The headline overstated it tenfold.
+The Chinese figure is 3.8 yi. One yi, the standard Chinese unit, is a hundred million, so 3.8 yi is about 380 million: QuestMobile's 382 million monthly active users. The headline overstated it tenfold.
 
 The unit conversion is certain (HIGH). The 382 million itself is a device-panel estimate, which we rate MEDIUM.
 
-Chinese user numbers are where this error happens most. 万 (10,000) and 亿 (100 million) don't map neatly onto thousands and millions.
+Chinese user numbers are where this error happens most: Chinese counts in units of 10,000 (wan) and 100 million (yi), which don't map neatly onto thousands and millions.
 
 https://report-ai.org/reports/ai-statistics-fact-check/#fc-doubao
 ```
@@ -171,11 +171,11 @@ https://report-ai.org/reports/ai-statistics-fact-check/#fc-doubao
 
 At least one English-language outlet ran that as a headline.
 
-The Chinese figure is 3.8亿. One 亿 is a hundred million, so 3.8亿 is about 380 million: QuestMobile's 382 million monthly active users. The headline overstated it tenfold.
+The Chinese figure is 3.8 yi. One yi, the standard Chinese unit, is a hundred million, so 3.8 yi is about 380 million: QuestMobile's 382 million monthly active users. The headline overstated it tenfold.
 
 The unit conversion is certain (HIGH). The 382 million itself is a device-panel estimate, which we rate MEDIUM.
 
-Chinese user numbers are where this error happens most. 万 (10,000) and 亿 (100 million) don't map neatly onto thousands and millions.
+Chinese user numbers are where this error happens most: Chinese counts in units of 10,000 (wan) and 100 million (yi), which don't map neatly onto thousands and millions.
 
 Full data, sources and confidence ratings at report-ai.org (link in bio).
 
