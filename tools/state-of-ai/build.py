@@ -30,6 +30,14 @@ NOBR = ' style="border-right:none;"'
 def detail(link):
     return f' &middot; <a href="{html.escape(link, quote=True)}">detail</a>' if link else ''
 
+def clip(text, n=300):
+    """Excerpt that ends on a whole sentence (or word), never mid-word."""
+    text = ' '.join(str(text).split())
+    if len(text) <= n:
+        return text
+    cut = text.rfind('. ', 0, n)
+    return text[:cut + 1] if cut > 80 else text[:n].rsplit(' ', 1)[0] + '…'
+
 E = lambda s: html.escape(str(s), quote=False)
 A = lambda s: html.escape(str(s), quote=True)
 
@@ -259,7 +267,7 @@ def theme_report(t, d, published, published_h, outdir):
     body = '<!-- wp:html -->\n' + body + ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', '2024/2026')
     rows = [(t, m, y, m['values'][y]) for m in ms for y in YEARS if m['values'].get(y)]
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
-    excerpt = (d.get('dek_2026', '') + ' ' + d['headlines']['2026'][0])[:300]
+    excerpt = clip(d.get('dek_2026', '') + ' ' + d['headlines']['2026'][0])
     return dict(slug=slug, title=f'{title} — Report AI', excerpt=excerpt, html=body, csv=csv_name, url=url)
 
 
@@ -297,7 +305,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
         related(SERIES_LINKS) + '\n</div>\n<!-- /wp:html -->'
     body = '<!-- wp:html -->\n' + body + ld(title, intro['dek_plain'], url, published, intro['faq'], csv_name, f'{title} (data)', f'{yrs[0]}/{year}')
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
-    return dict(slug=slug, title=f'{title} — Report AI', excerpt=intro['dek_plain'][:300], html=body, csv=csv_name, url=url)
+    return dict(slug=slug, title=f'{title} — Report AI', excerpt=clip(intro['dek_plain']), html=body, csv=csv_name, url=url)
 
 
 def yoy_page(ds, published, published_h, outdir, intro):
@@ -326,7 +334,7 @@ def yoy_page(ds, published, published_h, outdir, intro):
         related(SERIES_LINKS) + '\n</div>\n<!-- /wp:html -->'
     body = '<!-- wp:html -->\n' + body + ld(title, intro['dek_plain'], url, published, intro['faq'], csv_name, f'{title} (data)', '2024/2026')
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
-    return dict(slug=slug, title=f'{title} — Report AI', excerpt=intro['dek_plain'][:300], html=body, csv=csv_name, url=url)
+    return dict(slug=slug, title=f'{title} — Report AI', excerpt=clip(intro['dek_plain']), html=body, csv=csv_name, url=url)
 
 
 def load_narr():
@@ -427,7 +435,7 @@ def theme_report_long(t, d, n, published, published_h, outdir):
     full += ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', f'{TY[0]}/2026')
     rows = [(t, m, y, m['values'][y]) for m in ms for y in TY if m['values'].get(y)]
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
-    excerpt = (d.get('dek_2026', '') + ' ' + (n.get('at_a_glance') or d['headlines']['2026'])[0])[:300]
+    excerpt = clip(d.get('dek_2026', '') + ' ' + (n.get('at_a_glance') or d['headlines']['2026'])[0])
     return dict(slug=slug, title=f'{title} — Report AI', excerpt=excerpt, html=full, csv=csv_name, url=url, exhibits=C.n)
 
 
@@ -448,7 +456,7 @@ def landing(ds, published, published_h, intro):
           "hasPart": [{"@type": "Article", "name": f"State of AI {NAME[t]} 2026", "url": BASE + SLUG[t] + '/'} for t in THEMES if t in ds]},
          {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": f["q"], "acceptedAnswer": {"@type": "Answer", "text": f["a"]}} for f in intro['faq']]}]
     full += '\n<!-- wp:html -->\n<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@graph": g}, ensure_ascii=False, separators=(',', ':')) + '</script>\n<!-- /wp:html -->'
-    return dict(slug='state-of-ai', title='State of AI: The Report AI Series', excerpt=intro['dek_plain'][:300], html=full, csv=None, url=BASE)
+    return dict(slug='state-of-ai', title='State of AI: The Report AI Series', excerpt=clip(intro['dek_plain']), html=full, csv=None, url=BASE)
 
 
 if __name__ == '__main__':

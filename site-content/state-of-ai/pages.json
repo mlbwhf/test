@@ -2,7 +2,7 @@
  {
   "slug": "state-of-ai-usage",
   "title": "State of AI Usage 2026 — Report AI",
-  "excerpt": "How many people and organisations use AI, how often, and for what: consumer assistant audiences (weekly and monthly, never mixed), organisational adoption, worker and adult usage surveys, what people actually ask ChatGPT, AI search reach, and China's AI-native app market, 2024 to 2026. OpenAI said C",
+  "excerpt": "How many people and organisations use AI, how often, and for what: consumer assistant audiences (weekly and monthly, never mixed), organisational adoption, worker and adult usage surveys, what people actually ask ChatGPT, AI search reach, and China's AI-native app market, 2024 to 2026.",
   "csv": "report-ai-data-state-of-ai-usage-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-usage/",
   "exhibits": 10,
@@ -11,7 +11,7 @@
  {
   "slug": "state-of-ai-spending",
   "title": "State of AI Spending 2026 — Report AI",
-  "excerpt": "What companies and governments spend on AI each year: worldwide AI spending forecasts, enterprise generative-AI and API budgets, big-tech capital expenditure, data-centre electricity, AI-agent software and public AI money, each figure dated and labelled as actual, estimate or forecast. Gartner forec",
+  "excerpt": "What companies and governments spend on AI each year: worldwide AI spending forecasts, enterprise generative-AI and API budgets, big-tech capital expenditure, data-centre electricity, AI-agent software and public AI money, each figure dated and labelled as actual, estimate or forecast.",
   "csv": "report-ai-data-state-of-ai-spending-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-spending/",
   "exhibits": 10,
@@ -20,7 +20,7 @@
  {
   "slug": "state-of-ai-finance",
   "title": "State of AI Finance 2026 — Report AI",
-  "excerpt": "How much money is flowing into and out of AI companies in 2026: venture funding and its concentration, frontier-lab valuations, revenue and losses, Nvidia's data-centre sales, the debt and equity financing the build-out, M&A and IPOs, and the indicators behind the bubble debate. Crunchbase recorded ",
+  "excerpt": "How much money is flowing into and out of AI companies in 2026: venture funding and its concentration, frontier-lab valuations, revenue and losses, Nvidia's data-centre sales, the debt and equity financing the build-out, M&A and IPOs, and the indicators behind the bubble debate.",
   "csv": "report-ai-data-state-of-ai-finance-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-finance/",
   "exhibits": 10,
@@ -29,7 +29,7 @@
  {
   "slug": "state-of-ai-work",
   "title": "State of AI Work 2026 — Report AI",
-  "excerpt": "How AI is changing the number, kind and pay of jobs: US job cuts employers attribute to AI, reversals and rehiring, entry-level and graduate hiring, AI job postings, worker AI use, the AI skills wage premium, measured productivity effects and occupational exposure, each figure dated, sourced and con",
+  "excerpt": "How AI is changing the number, kind and pay of jobs: US job cuts employers attribute to AI, reversals and rehiring, entry-level and graduate hiring, AI job postings, worker AI use, the AI skills wage premium, measured productivity effects and occupational exposure, each figure dated, sourced and…",
   "csv": "report-ai-data-state-of-ai-work-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-work/",
   "exhibits": 10,
@@ -38,7 +38,7 @@
  {
   "slug": "state-of-ai-models-prices",
   "title": "State of AI Models & Prices 2026 — Report AI",
-  "excerpt": "What frontier AI models can do and what they cost: benchmark scores, the US–China and open–closed gaps, token prices from the cheapest tier to the frontier, training compute and cost, context windows, reasoning milestones and energy per query, each dated and sourced. The top reported score on the SW",
+  "excerpt": "What frontier AI models can do and what they cost: benchmark scores, the US–China and open–closed gaps, token prices from the cheapest tier to the frontier, training compute and cost, context windows, reasoning milestones and energy per query, each dated and sourced.",
   "csv": "report-ai-data-state-of-ai-models-prices-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-models-prices/",
   "exhibits": 10,
@@ -47,16 +47,16 @@
  {
   "slug": "state-of-ai-tokens",
   "title": "State of AI Tokens 2026 — Report AI",
-  "excerpt": "What a million AI tokens cost, how many tokens the largest platforms process, and what is earned and returned per token, 2024 to 2026 to date. Google said it processed more than 3.2 quadrillion tokens a month across its products in May 2026, about 330 times the 9.7 trillion it processed in spring 20",
+  "excerpt": "What a million AI tokens cost, how many tokens the largest platforms process, and what is earned and returned per token, year by year from 2022 to 2026 to date.",
   "csv": "report-ai-data-state-of-ai-tokens-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-tokens/",
-  "exhibits": 10,
+  "exhibits": 11,
   "file": "state-of-ai-tokens.html"
  },
  {
   "slug": "state-of-ai-infrastructure-energy",
   "title": "State of AI Infrastructure & Energy 2026 — Report AI",
-  "excerpt": "Measures the physical build-out behind AI: accelerator revenue and supply, data-centre capacity, electricity and water use, power contracts and GPU rental prices, for 2024, 2025 and 2026 to date. Nvidia reported data-centre revenue of $89.0 billion for the quarter ended 26 July 2026, up 117% year on",
+  "excerpt": "Measures the physical build-out behind AI: accelerator revenue and supply, data-centre capacity, electricity and water use, power contracts and GPU rental prices, for 2024, 2025 and 2026 to date.",
   "csv": "report-ai-data-state-of-ai-infrastructure-energy-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-infrastructure-energy/",
   "exhibits": 10,
@@ -65,7 +65,7 @@
  {
   "slug": "state-of-ai-geography",
   "title": "State of AI Geography 2026 — Report AI",
-  "excerpt": "Where AI's money, compute, models, users and state programmes sit - the United States, China, Europe, India, the Gulf and the rest - measured with dated, sourced, confidence-rated figures for 2024, 2025 and 2026 to date. US private AI investment reached $285.9 billion in 2025, more than 23 times Chi",
+  "excerpt": "Where AI's money, compute, models, users and state programmes sit - the United States, China, Europe, India, the Gulf and the rest - measured with dated, sourced, confidence-rated figures for 2024, 2025 and 2026 to date.",
   "csv": "report-ai-data-state-of-ai-geography-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-geography/",
   "exhibits": 10,
@@ -74,7 +74,7 @@
  {
   "slug": "state-of-ai-industries",
   "title": "State of AI Industries 2026 — Report AI",
-  "excerpt": "How far AI has spread through healthcare, finance, software, retail, manufacturing, education, legal, marketing and government, what each sector spends on it, and which measured outcomes exist so far. Ramp's AI Index showed 55.9% of US businesses on its platform paying for AI tools in September 2026",
+  "excerpt": "How far AI has spread through healthcare, finance, software, retail, manufacturing, education, legal, marketing and government, what each sector spends on it, and which measured outcomes exist so far.",
   "csv": "report-ai-data-state-of-ai-industries-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-industries/",
   "exhibits": 10,
@@ -83,7 +83,7 @@
  {
   "slug": "state-of-ai-risk",
   "title": "State of AI Risk 2026 — Report AI",
-  "excerpt": "AI misuse and harm, measured: incidents, deepfake fraud, AI-assisted phishing, synthetic sexual abuse, misinformation, autonomous AI intrusions and chatbot-harm litigation, with each figure dated, sourced and confidence-rated. Reuters reported on 25 September 2026 that fraudsters using a WhatsApp me",
+  "excerpt": "AI misuse and harm, measured: incidents, deepfake fraud, AI-assisted phishing, synthetic sexual abuse, misinformation, autonomous AI intrusions and chatbot-harm litigation, with each figure dated, sourced and confidence-rated.",
   "csv": "report-ai-data-state-of-ai-risk-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-risk/",
   "exhibits": 10,
@@ -92,7 +92,7 @@
  {
   "slug": "state-of-ai-regulation",
   "title": "State of AI Regulation 2026 — Report AI",
-  "excerpt": "AI law and policy counted: what the EU, the US federal government, the US states, China and the UK have enacted, delayed and enforced, with every count dated and sourced. The EU's AI Omnibus, Regulation (EU) 2026/1744, in force since 27 July 2026, moved the AI Act's stand-alone high-risk obligations",
+  "excerpt": "AI law and policy counted: what the EU, the US federal government, the US states, China and the UK have enacted, delayed and enforced, with every count dated and sourced.",
   "csv": "report-ai-data-state-of-ai-regulation-2026.csv",
   "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-regulation/",
   "exhibits": 10,
