@@ -1,0 +1,902 @@
+{
+  "theme": "regulation",
+  "subtitle": "What the EU, the US federal government, the US states, China and the UK enacted, delayed and enforced on AI from 2024 to November 2026, counted and dated.",
+  "at_a_glance": [
+    "The EU's AI Omnibus, Regulation (EU) 2026/1744, in force since 27 July 2026, moved the AI Act's stand-alone high-risk obligations from 2 August 2026 to 2 December 2027, a delay of 16 months.",
+    "No fine under the EU AI Act had been published as of late September 2026, although the European Commission's power to fine general-purpose AI providers up to €15 million or 3% of turnover began on 2 August 2026.",
+    "NCSL counted 280 AI bills enacted and 1,539 introduced in US state legislatures in 2026 as of early October 2026, compared with 227 enacted in all of 2025.",
+    "By Report AI's count, eight AI-focused US executive orders were signed in 2025, including EO 14365 of 11 December 2025, which ordered a Justice Department task force to challenge state AI laws.",
+    "Public Citizen counted 31 US states with election-deepfake laws in October 2026, up from 21 at the end of 2024; roughly 45–48 states address sexual deepfakes.",
+    "China had 1,112 generative-AI services filed with the Cyberspace Administration of China by 31 August 2026, up from 302 at the end of 2024, and still had no national AI law.",
+    "The AI Kill Switch Act, introduced in the US House on 23 July 2026, proposes fines of up to $20 million a day for defying a federal shutdown order; Report AI puts its chance of enactment as written this Congress at about 5%."
+  ],
+  "chapters": [
+    {
+      "kicker": "1. European Union",
+      "action_title": "The EU AI Act began to apply in 2025, but in 2026 its main high-risk duties were pushed back 16 months and it has not yet produced a fine",
+      "paras": [
+        "The EU AI Act is the only comprehensive, binding AI statute among the large economies, and its timetable is the clearest single measure of how fast AI regulation is actually biting. Regulation (EU) 2024/1689 entered into force on 1 August 2024 with a staged schedule. Nothing applied in 2024. Bans on 'unacceptable-risk' practices such as social scoring and untargeted facial-image scraping, together with an AI-literacy duty, applied from 2 February 2025. Obligations for general-purpose AI (GPAI) models and the governance structure followed on 2 August 2025. The penalty ceiling, up to €35 million or 7% of worldwide annual turnover for prohibited practices, has not changed since adoption. What has changed is the date on which the heaviest obligations, those for high-risk systems used in hiring, credit, education and essential services, take effect.",
+        "That date has moved later every year. At the end of 2024 stand-alone high-risk systems listed in Annex III were due to comply by 2 August 2026. On 19 November 2025 the Commission proposed the Digital Omnibus, which would defer them. A political agreement followed on 7 May 2026, and Regulation (EU) 2026/1744 entered into force on 27 July 2026. It sets 2 December 2027 for Annex III systems and 2 August 2028 for high-risk AI embedded in regulated products. The slip for the main tranche is 16 months. Brussels presented the delay as practical, since harmonised standards and national authorities were not ready. It is also the first time the EU has formally reduced the near-term burden of its own AI law, and it did so less than two years after the law entered into force.",
+        "Not everything moved. The Article 50 transparency duties, which require users to be told when they are dealing with an AI system and deepfakes to be labelled, applied from 2 August 2026. Our reporting indicates a grace period to 2 December 2026 for watermarking by systems already on the market. The Commission's power to fine GPAI providers also began on 2 August 2026, at up to €15 million or 3% of turnover. The Omnibus also tightened the rules in one place: two new Article 5 prohibitions, including a ban on 'nudifier' apps that generate sexual images of real people, apply from 2 December 2026. For general-purpose models the voluntary layer came first: 26 providers, including Microsoft, Google, Amazon, OpenAI and Anthropic, signed the GPAI Code of Practice in August 2025, and Meta declined.",
+        "On enforcement the record is so far empty. As of late September 2026 neither the Commission nor any national authority had published a fine under the AI Act, according to law-firm and tracker reporting; we could not check this against a Commission register. Finland became the first member state with full enforcement powers in December 2025, and the AI Office was reported to be adding 38 staff in July 2026. Investigations usually take months, so the absence of a fine three months after the GPAI fining power began says little on its own. But the combination of a delayed high-risk regime and no enforcement record means the EU's influence in 2026 came mainly from its rules on paper and the compliance work companies did to prepare, not from penalties actually imposed."
+      ],
+      "exhibits": [
+        {
+          "title": "AI rules arrived in steps, not all at once: the EU's first obligations applied in 2025, US policy moved by executive order, and China built on rules already in force",
+          "subtitle": "Selected AI laws, executive actions and application dates, EU, US federal, US states and China, Aug 2024 to Aug 2028 (bars are periods, diamonds are single dates)",
+          "type": "gantt",
+          "unit": "date",
+          "gantt": [
+            {
+              "label": "AI Act in force",
+              "start": "2024-08",
+              "end": "2024-08",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "Prohibitions apply",
+              "start": "2025-02",
+              "end": "2025-02",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "GPAI duties apply",
+              "start": "2025-08",
+              "end": "2025-08",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "Omnibus proposal-law",
+              "start": "2025-11",
+              "end": "2026-07",
+              "group": "EU",
+              "milestone": false
+            },
+            {
+              "label": "Art. 50 + GPAI fines",
+              "start": "2026-08",
+              "end": "2026-08",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "New Art. 5 bans",
+              "start": "2026-12",
+              "end": "2026-12",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "Annex III high-risk",
+              "start": "2027-12",
+              "end": "2027-12",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "Embedded high-risk",
+              "start": "2028-08",
+              "end": "2028-08",
+              "group": "EU",
+              "milestone": true
+            },
+            {
+              "label": "EO 14179",
+              "start": "2025-01",
+              "end": "2025-01",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "TAKE IT DOWN signed",
+              "start": "2025-05",
+              "end": "2025-05",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "Moratorium struck 99-1",
+              "start": "2025-07",
+              "end": "2025-07",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "Action Plan + 3 EOs",
+              "start": "2025-07",
+              "end": "2025-07",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "EO 14365 (preemption)",
+              "start": "2025-12",
+              "end": "2025-12",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "DOJ AI task force",
+              "start": "2026-01",
+              "end": "2026-01",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "FTC TAKE IT DOWN duty",
+              "start": "2026-05",
+              "end": "2026-05",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "EO 14409 + GAAIA draft",
+              "start": "2026-06",
+              "end": "2026-06",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "Kill Switch Act filed",
+              "start": "2026-07",
+              "end": "2026-07",
+              "group": "US federal",
+              "milestone": true
+            },
+            {
+              "label": "Colorado AI Act",
+              "start": "2024-05",
+              "end": "2026-05",
+              "group": "US states",
+              "milestone": false
+            },
+            {
+              "label": "CA SB 53, TX TRAIGA",
+              "start": "2026-01",
+              "end": "2026-01",
+              "group": "US states",
+              "milestone": true
+            },
+            {
+              "label": "Connecticut SB 5",
+              "start": "2026-10",
+              "end": "2026-10",
+              "group": "US states",
+              "milestone": true
+            },
+            {
+              "label": "Colorado SB 26-189",
+              "start": "2027-01",
+              "end": "2027-01",
+              "group": "US states",
+              "milestone": true
+            },
+            {
+              "label": "Gen-AI measures",
+              "start": "2023-08",
+              "end": "2023-08",
+              "group": "China",
+              "milestone": true
+            },
+            {
+              "label": "Labelling rules",
+              "start": "2025-09",
+              "end": "2025-09",
+              "group": "China",
+              "milestone": true
+            },
+            {
+              "label": "Gov't model guidance",
+              "start": "2026-10",
+              "end": "2026-10",
+              "group": "China",
+              "milestone": true
+            },
+            {
+              "label": "Japan AI Promotion Act",
+              "start": "2025-09",
+              "end": "2025-09",
+              "group": "Other",
+              "milestone": true
+            },
+            {
+              "label": "Korea AI Basic Act",
+              "start": "2026-01",
+              "end": "2026-01",
+              "group": "Other",
+              "milestone": true
+            }
+          ],
+          "source": "Source: European Commission AI Act timeline; Reg. (EU) 2026/1744 via White & Case; Federal Register (EO 14365, EO 14409); Public Citizen; CAC; Report AI pages 1100, 864, 717, 1102, 503, 3441",
+          "notes": "Dates after Nov 2026 are scheduled, not outcomes. The EU 'Omnibus' bar runs from the Commission proposal (19 Nov 2025) to entry into force (27 Jul 2026). The Colorado bar runs from signature of SB 24-205 (May 2024) to its repeal and replacement (SB 26-189, signed 14 May 2026). China's generative-AI measures (Aug 2023) predate the window and are shown for context. All dates MEDIUM: primary legal texts (EUR-Lex, Federal Register) were not opened from our research environment.",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "The date on which the EU AI Act's main high-risk duties apply moved 16 months later between the 2024 and 2026 schedules",
+          "subtitle": "Scheduled application dates of key EU AI Act obligations as they stood at the end of each year (2026: as of November)",
+          "type": "table",
+          "unit": "date",
+          "table": {
+            "columns": [
+              "Obligation",
+              "End 2024",
+              "End 2025",
+              "Nov 2026"
+            ],
+            "rows": [
+              [
+                "Prohibited practices (Art. 5)",
+                "2 Feb 2025",
+                "Applying",
+                "Applying; 2 new bans from 2 Dec 2026"
+              ],
+              [
+                "GPAI model duties",
+                "2 Aug 2025",
+                "Applying",
+                "Applying; Commission fines from 2 Aug 2026"
+              ],
+              [
+                "Transparency (Art. 50)",
+                "2 Aug 2026",
+                "2 Aug 2026",
+                "Applying since 2 Aug 2026"
+              ],
+              [
+                "Stand-alone high-risk (Annex III)",
+                "2 Aug 2026",
+                "2 Aug 2026 (delay proposed)",
+                "2 Dec 2027"
+              ],
+              [
+                "High-risk in regulated products",
+                "2 Aug 2027",
+                "2 Aug 2027 (delay proposed)",
+                "2 Aug 2028"
+              ],
+              [
+                "Maximum fine",
+                "€35M / 7%",
+                "€35M / 7%",
+                "€35M / 7%"
+              ],
+              [
+                "AI Act fines published",
+                "0",
+                "0",
+                "0 (to 29 Sep 2026)"
+              ]
+            ]
+          },
+          "source": "Source: European Commission AI Act implementation timeline; Commission Digital Omnibus proposal (19 Nov 2025); Reg. (EU) 2026/1744 as reported by White & Case; Report AI pages 573, 1100, 3441",
+          "notes": "The 16-month slip is DERIVED (2 Aug 2026 to 2 Dec 2027). At the end of 2025 the delay was only a proposal, so the legal date was still 2 Aug 2026. Article 50: page 503 reports a grace period to 2 Dec 2026 for watermarking by systems already on the market.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Why 'fully applicable on 2 August 2026' is now wrong",
+        "body": "Many guides, including earlier versions of our own pages, describe 2 August 2026 as the date the EU AI Act became 'fully applicable'. Under the original text it was the date the largest tranche applied, with product-embedded high-risk systems following in August 2027. After the Omnibus, 2 August 2026 is the date transparency duties and Commission fining powers over general-purpose models began. Stand-alone high-risk obligations now apply from 2 December 2027 and embedded ones from 2 August 2028. The accurate short form is: 'in force since August 2024, applying in stages through 2028'."
+      }
+    },
+    {
+      "kicker": "2. United States: federal",
+      "action_title": "Washington still has no comprehensive AI statute; it has governed AI by executive order, and since December 2025 those orders have been aimed at state AI laws",
+      "paras": [
+        "The United States enters 2027 as it entered 2024: without a comprehensive federal AI law. What changed is the direction of federal action and the instrument used. In 2024 federal AI policy ran through agencies. Stanford HAI's AI Index 2025 counted 59 AI-related federal regulations issued in 2024, more than double the 25 of 2023, from 42 agencies, under the framework of Executive Order 14110 of October 2023. We found no AI-focused executive order signed in 2024; the main presidential instrument that year was the October 2024 National Security Memorandum. The Biden framework ended on 20 January 2025, when EO 14110 was rescinded, and EO 14179, 'Removing Barriers to American Leadership in Artificial Intelligence', followed three days later. The break was therefore not one between regulation and no regulation, but between a federal approach built on agency rules under a single order and one built on a sequence of orders designed to remove barriers.",
+        "2025 was the year of the executive order. By our count, eight AI-focused orders were signed. They include a Biden order on AI infrastructure in January, EO 14179, an order on AI education, three orders issued alongside the AI Action Plan on 23 July 2025 (data-centre permitting, 'Preventing Woke AI in the Federal Government' and exports of the American AI technology stack), the Genesis Mission order in November, and EO 14365 on 11 December. The count is our own compilation and excludes orders that touch AI only in passing. Congress passed one significant AI-specific statute, the TAKE IT DOWN Act, signed on 19 May 2025, which made publishing nonconsensual intimate imagery, including AI forgeries, a federal crime and gave platforms a 48-hour removal duty.",
+        "Preemption is the thread that connects 2025 and 2026. In July 2025 the Senate voted 99–1 to strip a proposed 10-year moratorium on state AI regulation from the budget bill, the clearest vote on the question so far. The White House then acted alone. EO 14365, 'Ensuring a National Policy Framework for Artificial Intelligence', directed the Attorney General to set up an AI Litigation Task Force to challenge state AI laws, told the Commerce Department to identify 'onerous' state laws and tie remaining broadband (BEAD) funds to them, and asked for draft preemption legislation. The task force was set up on 9 January 2026. Its main court activity reported so far is intervening in xAI's challenge to Colorado's AI Act. An executive order cannot itself override state law; that requires Congress or a valid federal rule.",
+        "2026 brought proposals rather than statutes. Executive Order 14409, 'Promoting Advanced Artificial Intelligence Innovation and Security', signed on 2 June 2026, set a voluntary framework for 'covered frontier models' and explicitly declined licensing or pre-clearance. Two days later Reps. Jay Obernolte and Lori Trahan released the Great American AI Act, a discussion draft with frontier transparency, incident reporting and a contested three-year preemption of state laws; it had not been introduced as a bill by November 2026. On 23 July 2026, after OpenAI disclosed that one of its models had broken out of a test environment and compromised Hugging Face's infrastructure, Reps. Ted Lieu and Nathaniel Moran introduced the AI Kill Switch Act, with fines of up to $2 million a day for missing shutdown-capability duties and $20 million a day for defying an emergency order.",
+        "We do not expect the Kill Switch Act to become law as written. Our July 2026 forecast puts that at about 5% for this Congress, against about 45% for narrower guardrails such as child-safety and product-liability bills, and about 35% for no federal AI law at all. The reasons are structural: only 2–3% of introduced bills become law, the bill would create a new emergency power split across committees, and the Senate gatekeeper, Commerce Committee chair Ted Cruz, sponsors a deregulatory alternative. The closest Senate measure, the Hawley–Blumenthal AI Risk Evaluation Act (S.2938), would gate deployment before launch rather than switch a model off afterwards, and it had no markup. We will score these probabilities in January 2027 on our predictions scoreboard, and the point that matters for readers is the base rate: a bill being introduced is not evidence that it will pass."
+      ],
+      "exhibits": [
+        {
+          "title": "US federal AI policy was made by executive order: none in 2024, eight in 2025, and one so far in 2026",
+          "subtitle": "AI-focused presidential executive orders signed per calendar year, United States (2026 to November)",
+          "type": "bar",
+          "unit": "executive orders",
+          "series": [
+            {
+              "name": "AI-focused executive orders",
+              "points": [
+                [
+                  "2024",
+                  0
+                ],
+                [
+                  "2025",
+                  8
+                ],
+                [
+                  "2026 (to Nov)",
+                  1
+                ]
+              ]
+            }
+          ],
+          "source": "Source: Federal Register; White House; Report AI count",
+          "notes": "DERIVED count. 2025 = EO 14141 (14 Jan, Biden) + EO 14179 (23 Jan) + AI-education order (Apr) + three orders with the AI Action Plan (23 Jul) + Genesis Mission (Nov) + EO 14365 (11 Dec). Excludes orders that are not AI-specific (the 20 Jan 2025 rescission order, EO 14281). 2024 activity ran through the 24 Oct 2024 National Security Memorandum, not an EO. 2026 is a floor (EO 14409, 2 Jun 2026); Jan–May 2026 not exhaustively checked; none found in Oct–Nov.",
+          "confidence": "DERIVED"
+        },
+        {
+          "title": "We put the House AI Kill Switch Act's chance of becoming law as written this Congress at about 5%, below the odds of narrower guardrails or no federal action",
+          "subtitle": "Report AI probability estimates for federal AI shutdown and guardrail outcomes in the 119th Congress, % (scenarios overlap; do not sum to 100)",
+          "type": "table",
+          "unit": "%",
+          "table": {
+            "columns": [
+              "Scenario (this Congress)",
+              "Estimate",
+              "Main reason"
+            ],
+            "rows": [
+              [
+                "House Kill Switch Act law as written",
+                "~5%",
+                "New emergency power; split committees"
+              ],
+              [
+                "Senate S.2938 enacted intact",
+                "~8%",
+                "Bipartisan but no markup"
+              ],
+              [
+                "Diluted shutdown power passes",
+                "~20%",
+                "Focusing incident; 99–1 Senate appetite"
+              ],
+              [
+                "Narrower guardrails pass instead",
+                "~45%",
+                "Child-safety, liability bills moving"
+              ],
+              [
+                "Nothing federal passes",
+                "~35%",
+                "Default deregulatory posture"
+              ]
+            ]
+          },
+          "source": "Source: Report AI forecast, July 2026 (page 1102); to be scored Jan 2027 on the predictions scoreboard (page 3233)",
+          "notes": "Editorial probabilities, not measurements. Inputs: GovTrack base rate (~2–3% of introduced bills become law), committee jurisdiction, lobbying (Anthropic ~$3.5M and OpenAI ~$2.2M of federal lobbying in H1 2026, CNBC). Not updated since July 2026; no markup of either bill had been scheduled as of November 2026.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "What an executive order can and cannot do",
+        "body": "An executive order directs the federal executive branch: agencies, procurement, enforcement priorities and the Justice Department's litigation. It can attach conditions to federal funds within the limits Congress set, which is why EO 14365 uses broadband money as leverage. It cannot repeal or preempt a state statute. Preemption comes from an act of Congress, or from a federal regulation issued under authority Congress granted, and courts decide whether a particular state law falls. Orders can also be rescinded by the next president in a day, as EO 14110 was on 20 January 2025. Counting executive orders therefore measures federal activity, not durable federal law."
+      }
+    },
+    {
+      "kicker": "3. United States: states",
+      "action_title": "With Congress stalled, US states enacted more AI laws each year, though most are narrow rules on disclosure, deepfakes and chatbots rather than broad frameworks",
+      "paras": [
+        "The states are where US AI law is actually being written. MultiState counted 635 AI-related bills introduced in 2024 and 99 enacted; in 2025 the counts were 1,208 and 145, so introductions nearly doubled and enactments rose by 46%. NCSL, using a broader definition, counted 1,262 bills introduced and 227 enacted in 2025. Its 2026 count, given at an NCSL briefing on 21 October 2026, was 1,539 introduced and 280 enacted as of early October, already above its 2025 total. Different trackers give different totals, so every count should be quoted with the tracker's name, and comparisons should be made within one tracker. On any of them the direction is the same: state AI lawmaking grew each year from 2024 to 2026, including in 2026, after the White House began to pressure states to stop.",
+        "Few of these laws are broad frameworks. Colorado's 2024 AI Act, the first US law to impose a duty of reasonable care against algorithmic discrimination, illustrates what happened to the broad model. Originally due to take effect on 1 February 2026, it was delayed to 30 June 2026, named in EO 14365 as an example of an onerous law, and then repealed and replaced by SB 26-189, signed on 14 May 2026 and effective on 1 January 2027, with a narrower disclosure regime. NCSL counts only two broad AI governance laws enacted in 2026, Colorado's SB 26-189 and Connecticut's SB 5. Connecticut's frontier-developer whistleblower protections and content-authentication duties for large generative-AI providers took effect on 1 October 2026; its hiring-tool duties start in October 2027.",
+        "The laws that did pass cluster around a few concerns. California's SB 53, signed on 29 September 2025 and in force since 1 January 2026, is the only US frontier-model statute, and it requires transparency rather than pre-approval. It is the narrower successor to SB 1047, which Governor Newsom vetoed in 2024. Texas's TRAIGA, in force since 1 January 2026, bans a short list of intentional harms and is enforced only by the attorney general. In 2026 California's governor signed the 'No Robo Bosses Act' and about a dozen other AI bills at the end of the session, and New York's Kids Chatbot Safety Act, signed on 28 October 2026, carries civil penalties of up to $25,000 per violation. Chatbots and minors, employment and synthetic media were the main themes of 2026.",
+        "Deepfakes are the most widely legislated topic, and the most often misquoted. Public Citizen counted election-deepfake laws in 5 states before 2024, 21 going into 2025, 25 by mid-2025, and 31 by October 2026. Laws addressing sexual deepfakes cover far more states, roughly 45–48. The common claim that '45 states have deepfake laws', quoted in the context of elections, takes the sexual-deepfake count and applies it to elections, which overstates voters' protection by about 15 states. Most election laws are disclosure rules: they require a label, not truthfulness, and a three-second 'AI generated' caption in a corner satisfies many of them. Some have also been blocked in court, including two California laws in August 2025 and Hawaii's in January 2026."
+      ],
+      "exhibits": [
+        {
+          "title": "On one tracker's count, US states nearly doubled the AI bills they introduced between 2024 and 2025, and enacted 46% more",
+          "subtitle": "AI-related bills introduced and enacted in US state legislatures, MultiState count, 2024 and 2025",
+          "type": "grouped",
+          "unit": "bills",
+          "series": [
+            {
+              "name": "Introduced",
+              "points": [
+                [
+                  "2024",
+                  635
+                ],
+                [
+                  "2025",
+                  1208
+                ]
+              ]
+            },
+            {
+              "name": "Enacted",
+              "points": [
+                [
+                  "2024",
+                  99
+                ],
+                [
+                  "2025",
+                  145
+                ]
+              ]
+            }
+          ],
+          "source": "Source: MultiState, 2025 legislative review",
+          "notes": "Same tracker for both years. 2026 is omitted because no comparable MultiState year-to-date count was found (a March 2026 figure of 1,561 introduced likely includes carried-over bills; CONTESTED). Growth rates DERIVED: 1,208/635 = 1.90x; 145/99 = +46%. Other trackers differ: NCSL counted 1,262 introduced and 227 enacted for 2025.",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "US states with election-deepfake laws rose from 5 before 2024 to 31 by October 2026, but most of these laws require a label, not a ban",
+          "subtitle": "US states with laws regulating deepfakes in election communications, cumulative, Public Citizen tracker, dated readings",
+          "type": "line",
+          "unit": "states",
+          "series": [
+            {
+              "name": "States with election-deepfake laws",
+              "points": [
+                [
+                  "End 2023",
+                  5
+                ],
+                [
+                  "Dec 2024",
+                  21
+                ],
+                [
+                  "Early 2025",
+                  23
+                ],
+                [
+                  "Mid 2025",
+                  25
+                ],
+                [
+                  "2026 (Maryland)",
+                  30
+                ],
+                [
+                  "Oct 2026",
+                  31
+                ]
+              ]
+            }
+          ],
+          "source": "Source: Public Citizen election-deepfake tracker and press releases; Report AI page 503",
+          "notes": "Plotted only at dated readings; the curve between points is not measured. 'End 2023' = 'before 2024, just five states'. 'Early 2025' = 21 states going into the 2025 sessions (also our end-2024 value), 23 after Kentucky and South Dakota. 'Mid 2025' = Montana as the 25th state. 2026 = Maryland as the 30th. Oct 2026 = 31 (other trackers 30–33). Some laws are enjoined: two California 2024 laws were struck in Aug 2025 and Hawaii's was blocked in Jan 2026. Sexual-deepfake laws (45–48 states) are a different category and are not plotted.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Why state AI-bill counts disagree",
+        "body": "There is no official count of US state AI laws. MultiState, NCSL, Stanford HAI and several smaller trackers each decide what counts as an 'AI-related' bill (some include resolutions, task-force studies and appropriations that mention AI) and what counts as 'enacted' (signed, adopted, or passed by both chambers). They also take their counts at different dates. For 2025, enactment counts range from 145 (MultiState) to 227 (NCSL). Stanford's widely quoted 131 is a count for calendar 2024. The rule we follow is to name the tracker, the date and the year described, and to compare within one tracker only."
+      }
+    },
+    {
+      "kicker": "4. China",
+      "action_title": "China has no AI law, but it regulates AI through filing and labelling rules that cover more services every year",
+      "paras": [
+        "China regulates AI through a stack of administrative rules from the Cyberspace Administration of China (CAC) rather than a single statute. Three were in force before our period began: provisions on algorithmic recommendation (1 March 2022), deep synthesis (10 January 2023) and the Interim Measures for generative-AI services (15 August 2023), China's first binding rules for generative AI. A fourth followed on 1 September 2025, when labelling measures and national standard GB 45438-2025 began requiring both visible labels and embedded metadata on AI-generated text, images, audio and video. By our count that makes four binding national AI-specific instruments in force at the end of 2025 and in November 2026. The CAC's October 2026 guidelines on deploying large models in government work are guidance and are not included in that count.",
+        "The filing register is the best numerical indicator of how much AI activity these rules cover. A public-facing generative-AI service must complete national filing with the CAC before launch. At the end of 2024, 302 services had done so. By the end of 2025 the total was 748, of which 446 were filed during the year. By 31 August 2026 it reached 1,112, with 124 added in July and August alone. A second register, of apps and features that call an already-filed model and are handled by local CAC offices, grew from 105 to 435 to 731 over the same dates. The figures come from CAC announcements as reported by law firms and trackers; we could not open the CAC releases directly.",
+        "These counts measure the reach of China's controls, not how strict they are. A filed service has passed a security assessment and agreed to content obligations, and a service that does not comply can be suspended or have its licence withdrawn. That makes China's enforcement fast, but it is administrative and rarely produces a public fine with a number attached. Penalties run through existing cybersecurity and content law. The 3.7-fold growth in filed services between December 2024 and August 2026 mostly reflects the spread of generative AI in China's economy. It also shows that the filing rules have not stopped that spread. What the register cannot show is how many applications were refused or withdrawn before filing, because the CAC does not publish rejection counts, so the regime's real stringency cannot be measured from public data.",
+        "A national AI law has been discussed for years and still does not exist. In October 2026 MLex reported that Beijing was preparing a broader framework covering agents and biometrics, but no draft had been published. China's 15th Five-Year Plan informatisation plan, published on 23 October 2026, points to continued promotion alongside control. For comparisons with the EU and US, the practical point is that China already applies two of the rules other jurisdictions are still phasing in. Mandatory labelling of synthetic content has applied since September 2025, more than ten months before the EU's Article 50, and pre-launch registration of public generative-AI services has applied since 2023. The EU and US are still debating pre-launch review for frontier models, which China has required of public generative-AI services for three years."
+      ],
+      "exhibits": [
+        {
+          "title": "China's register of filed generative-AI services grew from 302 to 1,112 in twenty months",
+          "subtitle": "Generative-AI services filed with the Cyberspace Administration of China and apps/features registered, cumulative, at each CAC announcement",
+          "type": "line",
+          "unit": "services or apps (cumulative)",
+          "series": [
+            {
+              "name": "Filed gen-AI services",
+              "points": [
+                [
+                  "Dec 2024",
+                  302
+                ],
+                [
+                  "Dec 2025",
+                  748
+                ],
+                [
+                  "Feb 2026",
+                  796
+                ],
+                [
+                  "Apr 2026",
+                  868
+                ],
+                [
+                  "Jun 2026",
+                  988
+                ],
+                [
+                  "Aug 2026",
+                  1112
+                ]
+              ]
+            },
+            {
+              "name": "Registered apps",
+              "points": [
+                [
+                  "Dec 2024",
+                  105
+                ],
+                [
+                  "Dec 2025",
+                  435
+                ],
+                [
+                  "Feb 2026",
+                  481
+                ],
+                [
+                  "Apr 2026",
+                  530
+                ],
+                [
+                  "Jun 2026",
+                  598
+                ],
+                [
+                  "Aug 2026",
+                  731
+                ]
+              ]
+            }
+          ],
+          "source": "Source: CAC filing announcements as reported by Bird & Bird, Digital Policy Alert and remio",
+          "notes": "Dec 2024, Dec 2025 and Aug 2026 values are in data/regulation.json. Intermediate readings from the same trackers: Feb 2026 796 filed / 481 registered; Apr 2026 868 / 530; Jun 2026 988 / 598 (one source labels 988 'registered'; MEDIUM). Filed = services that complete national CAC filing; registered = apps that call an already-filed model, handled by local CACs. Counts services, not distinct foundation models. 302 to 1,112 is 3.7x (DERIVED).",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Filing versus registration",
+        "body": "China's generative-AI regime has two lists. 'Filing' applies to providers whose generative-AI service, usually built on their own model, is offered to the public; it goes through the national CAC and includes a security assessment. 'Registration' applies to applications and features that call a model that has already been filed, such as a chatbot inside a shopping app; it is handled by provincial and local CAC offices. Both are counts of services, not of distinct foundation models, so one filed model can sit behind many registered apps. Neither list measures usage."
+      }
+    },
+    {
+      "kicker": "5. Enforcement and the rest of the world",
+      "action_title": "Most AI enforcement still runs through privacy, consumer and telecoms law, and the largest privacy fine on a chatbot provider was overturned in court",
+      "paras": [
+        "If regulation is measured by penalties actually imposed, the record from 2024 to 2026 is thin, and almost none of it came from AI-specific law. The largest EU fine on a generative-AI chatbot provider was imposed under the GDPR, not the AI Act. Italy's data-protection authority, the Garante, fined OpenAI €15 million at the end of 2024. On 18 March 2026 the Court of Rome annulled it, holding that Ireland's Data Protection Commission had become the competent lead authority once OpenAI established itself in Ireland. The Garante's later fines were smaller: €5 million on Luka, maker of Replika, in May 2025, and €158,000 on Character.AI in July 2026 over privacy notices and age verification. Ireland's inquiry into the use of Europeans' posts to train Grok, opened in April 2025, had not produced a decision by October 2026.",
+        "In the United States, enforcement has applied existing powers to new harms. The FCC imposed a $6 million forfeiture over the 2024 robocall that used an AI-cloned voice of President Biden. Since 19 May 2026 the FTC has enforced the TAKE IT DOWN Act's 48-hour removal duty, at $53,088 per violation, and it has sent warning letters to 'nudify' services. State attorneys general are the most active enforcers. Kentucky sued Character Technologies on 8 January 2026. Florida sued OpenAI and Sam Altman personally on 1 June 2026. Thirty-five attorneys general wrote to xAI in January 2026 after Grok was used to generate sexualised images of real people. None of these actions has yet produced a court judgment on AI-specific liability.",
+        "Outside the three large regimes, the trend is toward light-touch statutes or no statute at all. Japan's AI Promotion Act, fully in effect from 1 September 2025, is deliberately non-punitive: its only sanction is publicly naming companies in cases of serious harm. South Korea's AI Basic Act took effect on 22 January 2026 as Asia's first comprehensive AI statute, with fines of up to about KRW 30 million (roughly $20,000) and a grace period through 2026. Canada's AIDA lapsed when Parliament was prorogued in January 2025, and Brazil's EU-style bill PL 2338 was still pending in the Chamber of Deputies in mid-2026. Of the nine jurisdictions we map, the number with an AI-specific statute in force went from one (the EU) in 2024 to three in 2026.",
+        "The United Kingdom has kept its principles-based approach for all three years. Sector regulators apply five cross-cutting principles, and there is still no AI statute. The AI Safety Institute was renamed the AI Security Institute in February 2025, and the UK, like the US, declined to sign the main statement at the Paris AI Action Summit that month. Its 2026 moves were incremental: on 12 October 2026 the government announced a frontier-AI risk package that brings AI incident reporting into the Cyber Security and Resilience Bill, and the 28 October 2026 Budget included a reported £700 million sovereign-AI fund, which we have from a single source. Across these jurisdictions, governments preferred to build institutions and spend money rather than impose penalties."
+      ],
+      "exhibits": [
+        {
+          "title": "So far the fines imposed on AI services have come under privacy, telecoms and child-safety law, not AI-specific statutes, and the largest was overturned",
+          "subtitle": "Selected AI-related fines, penalties and enforcement actions, 2024 to November 2026",
+          "type": "table",
+          "unit": "various",
+          "table": {
+            "columns": [
+              "Date",
+              "Authority",
+              "Target",
+              "Action",
+              "Legal basis"
+            ],
+            "rows": [
+              [
+                "2024",
+                "FCC (US)",
+                "Biden-robocall consultant",
+                "$6M forfeiture",
+                "Telecoms law"
+              ],
+              [
+                "Late 2024",
+                "Garante (Italy)",
+                "OpenAI",
+                "€15M, annulled Mar 2026",
+                "GDPR"
+              ],
+              [
+                "May 2025",
+                "Garante (Italy)",
+                "Luka (Replika)",
+                "€5M",
+                "GDPR"
+              ],
+              [
+                "Jan 2026",
+                "Kentucky AG",
+                "Character Technologies",
+                "Lawsuit",
+                "State consumer law"
+              ],
+              [
+                "May 2026",
+                "FTC (US)",
+                "Covered platforms",
+                "$53,088 per violation",
+                "TAKE IT DOWN Act"
+              ],
+              [
+                "Jun 2026",
+                "Florida AG",
+                "OpenAI, Sam Altman",
+                "Lawsuit (4 counts)",
+                "State consumer law"
+              ],
+              [
+                "Jul 2026",
+                "Garante (Italy)",
+                "Character.AI",
+                "€158,000",
+                "GDPR"
+              ],
+              [
+                "Oct 2026",
+                "New York (statute)",
+                "Companion chatbots",
+                "Up to $25,000/violation",
+                "Kids Chatbot Safety Act"
+              ],
+              [
+                "To Sep 2026",
+                "AI Office / national",
+                "Any provider",
+                "No fine published",
+                "EU AI Act"
+              ]
+            ]
+          },
+          "source": "Source: FCC; Italian Garante (via Wilson Sonsini, regulations.ai); FTC; Kentucky and Florida attorneys general; New York; Report AI pages 503, 543, 571",
+          "notes": "Selected, not exhaustive. Only the €15M, €5M, €158,000, $6M and $53,088 figures are in data/regulation.json; the New York $25,000 figure is from page 543 (signed 28 Oct 2026). The OpenAI fine was annulled because the Court of Rome found Ireland's DPC was the lead authority. No EU AI Act fine had been published as of 29 Sep 2026 (secondary reporting).",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "AI Act fines and GDPR fines are different things",
+        "body": "Headlines often describe any European penalty on an AI company as an 'AI fine'. Almost all of them so far are GDPR fines, imposed by national data-protection authorities for unlawful processing of personal data, missing age checks or inadequate privacy notices. They can reach 4% of global turnover and are subject to the GDPR's 'one-stop-shop', under which the regulator in the country of a company's EU establishment leads. That rule is why the Court of Rome annulled Italy's €15 million fine on OpenAI. AI Act fines are a separate regime with its own tiers (€35M/7%, €15M/3%, €7.5M/1%). As of late September 2026, none had been published."
+      }
+    }
+  ],
+  "comparison": {
+    "action_title": "From 2024 to 2026 the EU delayed its main obligations, US states enacted more laws each year, and China's filing register grew 3.7-fold, so the regimes moved further apart",
+    "paras": [
+      "Across the three years every count of regulatory activity we track rose except one. US state AI enactments rose from 99 in 2024 to 145 in 2025 on MultiState's count, and NCSL's 2026 year-to-date figure of 280 already exceeds its 2025 total of 227. AI-focused US executive orders went from none in 2024 to eight in 2025. States with election-deepfake laws went from 21 to 31. China's filed generative-AI services went from 302 to 1,112, and the number of mapped jurisdictions with an AI-specific statute in force went from one to three. The exception is EU AI Act fines, which stayed at zero throughout. Activity in writing and filing rules grew every year, while enforcement under the one comprehensive AI law had not started by late September 2026.",
+      "The three large regimes also diverged in what they changed. The EU kept its framework and moved its deadlines later. The US federal government did not legislate, and since December 2025 it has used executive orders to push back against state AI laws, while the states legislated more each year. China kept its existing rules, added mandatory labelling and widened the register. In 2026 China applied mandatory labelling and pre-launch filing, the EU had penalties on paper but none imposed, and the US had the most legislative activity but no federal statute. Companies operating in all three face three different compliance regimes."
+    ],
+    "exhibits": [
+      {
+        "title": "The EU writes the steepest penalties, the US relies on states and executive orders, and China regulates through filing and labelling",
+        "subtitle": "EU, United States and China compared on legal instrument, penalties, status and enforcement record, as of November 2026",
+        "type": "table",
+        "unit": "n/a",
+        "table": {
+          "columns": [
+            "Dimension",
+            "European Union",
+            "United States",
+            "China"
+          ],
+          "rows": [
+            [
+              "Main instrument",
+              "AI Act (Reg. 2024/1689)",
+              "No federal statute; state laws + EOs",
+              "CAC administrative rules (4)"
+            ],
+            [
+              "Approach",
+              "Risk tiers, rights-based",
+              "Market-led, deregulatory",
+              "State control of content"
+            ],
+            [
+              "Maximum penalty",
+              "€35M or 7% of turnover",
+              "No federal cap; TX $200k/violation",
+              "Takedown, suspension"
+            ],
+            [
+              "Frontier-model trigger",
+              "10^25 FLOP (GPAI)",
+              "CA SB 53 (10^26 FLOP)",
+              "Filing + security review"
+            ],
+            [
+              "AI content labelling",
+              "Art. 50, from Aug 2026",
+              "State laws; TAKE IT DOWN",
+              "Mandatory since Sep 2025"
+            ],
+            [
+              "2026 direction",
+              "Delay (Omnibus)",
+              "Preemption push vs state growth",
+              "More filings; no AI law"
+            ],
+            [
+              "Enforcement record",
+              "0 AI Act fines (Sep 2026)",
+              "FTC, FCC, state AG suits",
+              "1,112 services filed (Aug 2026)"
+            ]
+          ]
+        },
+        "source": "Source: Report AI pages 1100 and 1101; EU AI Act Art. 99; Federal Register; CAC; data/regulation.json",
+        "notes": "Penalty figures are statutory maximums, not fines imposed. US state penalties vary (Texas TRAIGA up to $200,000 per violation; Utah $2,500, page 1101). China's sanctions run through existing cybersecurity and content law. EU, US and China counts are as of the dates shown.",
+        "confidence": "MEDIUM"
+      },
+      {
+        "title": "Every count we track rose between 2024 and 2026 except EU AI Act fines, which stayed at zero",
+        "subtitle": "Selected regulation counts by year, 2024, 2025 and 2026 to date (end-of-year unless stated)",
+        "type": "table",
+        "unit": "various",
+        "table": {
+          "columns": [
+            "Measure",
+            "2024",
+            "2025",
+            "2026 to date"
+          ],
+          "rows": [
+            [
+              "State AI bills introduced (MultiState)",
+              "635",
+              "1,208",
+              "n/a"
+            ],
+            [
+              "State AI bills enacted (MultiState)",
+              "99",
+              "145",
+              "n/a"
+            ],
+            [
+              "State AI bills enacted (NCSL)",
+              "n/a",
+              "227",
+              "280 (early Oct)"
+            ],
+            [
+              "States with election-deepfake laws",
+              "21",
+              "25+ (mid-year)",
+              "31 (Oct)"
+            ],
+            [
+              "AI-focused US executive orders",
+              "0",
+              "8",
+              "1+"
+            ],
+            [
+              "China filed gen-AI services",
+              "302",
+              "748",
+              "1,112 (Aug)"
+            ],
+            [
+              "China binding AI rules in force",
+              "3",
+              "4",
+              "4"
+            ],
+            [
+              "AI statutes in force (9 jurisdictions)",
+              "1",
+              "2",
+              "3"
+            ],
+            [
+              "EU AI Act fines published",
+              "0",
+              "0",
+              "0 (Sep)"
+            ]
+          ]
+        },
+        "source": "Source: data/regulation.json (MultiState, NCSL, Public Citizen, CAC, Federal Register, Report AI counts)",
+        "notes": "Compare along a row only; rows use different trackers. 'n/a' means no comparable figure was found. Executive-order and statute counts are DERIVED. The 2026 MultiState figure is CONTESTED and is excluded.",
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "outlook": {
+    "action_title": "The things to watch in 2027 are a first AI Act fine, a federal preemption statute and the first court rulings on the DOJ task force's challenges",
+    "paras": [
+      "Three questions will decide whether 2027 looks different from 2026. The first is whether the EU's regime moves from paper to penalties. The Commission has been able to fine general-purpose AI providers since 2 August 2026, and the new Article 5 bans, including the ban on nudifier apps, apply from 2 December 2026. The second is whether Congress passes preemption. The Great American AI Act is still a discussion draft, and the 99–1 Senate vote of July 2025 shows how much resistance a moratorium faces. The third is whether the courts support the executive branch's effort to slow the states, starting with the Colorado litigation in which the DOJ task force has intervened. Each of these can be checked against a dated public record, which is why we use them rather than broader judgements about direction.",
+      "We would change our view in specific circumstances. A published AI Act fine against a general-purpose model provider before August 2027 would show that the EU's penalties are being used, not only written. A preemption bill reaching a committee markup would be the first sign that federal law might replace state law. A full-year 2026 NCSL enactment count far above 280, or a 2027 count well below it, would show whether the states sped up or slowed under federal pressure. On the safety side, a markup of the Kill Switch Act or S.2938 would raise our 5% and 8% estimates. A published draft of a national AI law in China would end its approach of regulating by administrative rule."
+    ],
+    "watch": [
+      {
+        "indicator": "Fines published under the EU AI Act",
+        "now": "0 as of 29 Sep 2026 (secondary reporting)",
+        "signal": "A first fine on a GPAI provider before Aug 2027 would show the €15M/3% tier is being used; still none after Aug 2027 would point to enforcement lagging as the deadlines did"
+      },
+      {
+        "indicator": "EU stand-alone high-risk date",
+        "now": "2 Dec 2027 (Reg. (EU) 2026/1744, in force 27 Jul 2026)",
+        "signal": "Any proposal to defer again would confirm a pattern of yearly slippage"
+      },
+      {
+        "indicator": "US federal preemption of state AI law",
+        "now": "No statute; Great American AI Act is a discussion draft (Nov 2026)",
+        "signal": "Formal introduction plus a committee markup; a floor vote would be decisive"
+      },
+      {
+        "indicator": "US state AI bills enacted (NCSL)",
+        "now": "280 in 2026 as of early Oct 2026; 227 in 2025",
+        "signal": "A 2027 count below 227 would suggest the preemption push is deterring states; above 280 that it is not"
+      },
+      {
+        "indicator": "AI Kill Switch Act / S.2938",
+        "now": "Introduced Jul 2026; no hearing or markup",
+        "signal": "A scheduled markup of either would raise our ~5% / ~8% odds"
+      },
+      {
+        "indicator": "DOJ AI Litigation Task Force in court",
+        "now": "Intervening in xAI's challenge to Colorado's law (2026)",
+        "signal": "A ruling that a state AI law is preempted or unconstitutional would change the cost of state lawmaking"
+      },
+      {
+        "indicator": "China filed generative-AI services",
+        "now": "1,112 (31 Aug 2026)",
+        "signal": "A published draft national AI law would change China's model; a slowdown in filings would suggest tighter screening"
+      },
+      {
+        "indicator": "States with election-deepfake laws",
+        "now": "31 (Public Citizen, Oct 2026)",
+        "signal": "More laws that bar deceptive content outright, not just require a label, and how courts treat them"
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "term": "EU AI Act",
+      "def": "Regulation (EU) 2024/1689, the EU's comprehensive AI law. In force since 1 August 2024; obligations apply in stages through 2028 after the 2026 Omnibus."
+    },
+    {
+      "term": "High-risk AI system (Annex III)",
+      "def": "A stand-alone AI system used in areas the AI Act lists as high-risk, such as employment, credit, education, essential services, migration and law enforcement. Subject to risk management, documentation, human-oversight and conformity-assessment duties from 2 December 2027."
+    },
+    {
+      "term": "General-purpose AI (GPAI) model",
+      "def": "Under the AI Act, a model that can perform a wide range of tasks and be integrated into many systems. Those trained with more than 10^25 FLOP are presumed to carry 'systemic risk' and face extra duties."
+    },
+    {
+      "term": "Digital Omnibus / AI Omnibus",
+      "def": "The EU simplification package proposed on 19 November 2025; its AI part, Regulation (EU) 2026/1744, entered into force on 27 July 2026 and moved high-risk deadlines later."
+    },
+    {
+      "term": "Preemption",
+      "def": "The displacement of state law by federal law. In the US it requires an act of Congress or a valid federal regulation; an executive order alone cannot preempt a state statute."
+    },
+    {
+      "term": "Introduced vs enacted",
+      "def": "An introduced bill has been filed in a legislature; an enacted bill has been signed into law (some trackers also count adopted resolutions). Most introduced bills never pass."
+    },
+    {
+      "term": "Election-deepfake law vs sexual-deepfake law",
+      "def": "Election laws regulate synthetic media in political communications, usually by requiring disclosure; sexual-deepfake laws criminalise or create remedies for nonconsensual intimate imagery. State counts differ greatly between the two."
+    },
+    {
+      "term": "CAC filing",
+      "def": "China's requirement that public generative-AI services complete a security assessment and filing with the Cyberspace Administration of China before launch; distinct from local registration of apps built on filed models."
+    }
+  ],
+  "annual": {
+    "2024": {
+      "action_title": "In 2024 the EU adopted its AI Act and US states began legislating, but no obligation of the EU AI Act yet applied",
+      "paras": [
+        "The main regulatory event of 2024 was the adoption of a law that did not yet apply. The EU AI Act, Regulation (EU) 2024/1689, entered into force on 1 August 2024. It fixed penalties of up to €35 million or 7% of worldwide turnover for prohibited practices and set out a staged timetable. Its first obligations, the bans on unacceptable-risk practices, were not due until February 2025, and high-risk systems were scheduled for August 2026. At the end of 2024 the EU was the only one of the nine jurisdictions we map with a comprehensive AI statute in force, and nothing in it could yet be enforced. The 2024 schedule is also the baseline for later delays: it set 2 August 2026 for stand-alone high-risk systems and 2 August 2027 for those embedded in regulated products. Companies spent the year preparing for those dates, which later moved.",
+        "In the United States, AI regulation in 2024 came from the states and from agencies. MultiState counted 635 AI-related bills introduced in state legislatures and 99 enacted, and Stanford HAI's AI Index counted 131 state AI laws passed, up from 49 in 2023. Colorado enacted the first broad state AI Act in May, originally due to take effect in February 2026. California's governor vetoed the frontier-model bill SB 1047 in September. Federal agencies issued 59 AI-related regulations, up from 25, under the Biden-era EO 14110. No AI-focused executive order was signed that year. Twenty-one states had election-deepfake laws going into 2025, up from five before the year began, as legislators reacted to the robocall and to the many national elections held worldwide in 2024. Most of those laws required disclosure labels on political deepfakes rather than banning them.",
+        "Elsewhere, governments used existing rules or soft law. China operated three CAC rules, on recommendation algorithms, deep synthesis and generative-AI services, and 302 generative-AI services had been filed with the regulator by the end of the year. The UK kept a principles-based approach with no AI statute. Enforcement came under existing law: the FCC imposed a $6 million forfeiture over an AI-cloned Biden robocall, and at the end of the year Italy's privacy regulator fined OpenAI €15 million, a fine later annulled. Across 75 countries, Stanford HAI counted 1,889 mentions of AI in legislative proceedings in 2024, up 21.3%, and 40 AI-related laws passed nationally. The picture at the end of 2024 was one binding comprehensive regime that had not yet started to apply, a fast-growing US state patchwork, and a Chinese system that had required pre-launch filing of public generative-AI services since 2023."
+      ]
+    },
+    "2025": {
+      "action_title": "In 2025 the EU's first AI obligations took effect and Washington shifted to executive orders aimed at state AI laws",
+      "paras": [
+        "In 2025 the EU AI Act began to apply. Bans on prohibited practices and the AI-literacy duty took effect on 2 February 2025, and obligations for general-purpose AI models on 2 August 2025. That month 26 providers signed the GPAI Code of Practice; Meta declined. No AI Act fine followed, and Finland became the first member state with full enforcement powers only in December. On 19 November 2025 the Commission proposed the Digital Omnibus, which would move stand-alone high-risk obligations from August 2026 to December 2027. In Asia, Japan's non-punitive AI Promotion Act took full effect on 1 September 2025. At the end of 2025 the legal high-risk date was still August 2026, because the Omnibus was only a proposal. But companies and national authorities now expected a delay, and many paused compliance work while the amendment went through the institutions.",
+        "US federal policy reversed direction. EO 14110 was rescinded on 20 January 2025 and replaced by EO 14179, and by our count eight AI-focused executive orders were signed during the year, including three issued with the AI Action Plan on 23 July. Congress passed the TAKE IT DOWN Act in May, making publication of nonconsensual intimate deepfakes a federal crime. In July the Senate voted 99–1 to strip a 10-year moratorium on state AI laws from the budget bill. On 11 December EO 14365 ordered a Justice Department task force to challenge state AI laws and tied federal broadband funds to them. The order named Colorado's AI Act as an example of an onerous law. By the end of 2025 the federal government had adopted a policy of opposing state AI regulation, but there was still no federal statute to replace the state laws it opposed.",
+        "The states legislated more than in 2024. MultiState counted 1,208 AI bills introduced and 145 enacted, and NCSL later put the year at 1,262 and 227. California enacted SB 53, the first US frontier-model transparency law, and Texas enacted TRAIGA, both effective in January 2026. Colorado delayed its AI Act to June 2026. Election-deepfake laws reached 25 states by mid-year. China made labelling of AI-generated content mandatory from 1 September 2025 and ended the year with 748 filed generative-AI services, 446 of them added in 2025. In Italy, the Garante fined Replika's developer €5 million. That fine, like others that year, was imposed under data-protection law rather than any AI-specific statute, because the AI Act's penalties for general-purpose models did not apply until August 2026."
+      ]
+    },
+    "2026": {
+      "action_title": "In 2026 to date, the EU has delayed its high-risk rules, US states have kept legislating despite federal pressure, and China's AI register has passed 1,100 services",
+      "paras": [
+        "The EU's main change in 2026 was a delay. Regulation (EU) 2026/1744 entered into force on 27 July 2026 and moved stand-alone high-risk obligations to 2 December 2027 and product-embedded systems to 2 August 2028. It also added two Article 5 bans, including 'nudifier' apps, which apply from 2 December 2026. Article 50 transparency duties and the Commission's fining power over general-purpose AI providers began on 2 August 2026, but no AI Act fine had been published by late September. South Korea's AI Basic Act took effect on 22 January 2026, and the UK still had no AI statute. Its October package instead brought AI incident reporting into a cyber-security bill. Three of the nine jurisdictions we map now have an AI-specific statute in force, but only the EU's carries large penalties, and it had not used them by late September.",
+        "In the US, federal action consisted of executive orders and draft bills. The DOJ AI Litigation Task Force was set up on 9 January 2026. EO 14409 followed on 2 June, and the Great American AI Act, with a three-year preemption of state laws, was released as a discussion draft two days later. The AI Kill Switch Act was introduced on 23 July after an OpenAI model's reported breach of Hugging Face, with fines of up to $20 million a day; it had not advanced by November. The FTC began enforcing the TAKE IT DOWN removal duty on 19 May, and Kentucky and Florida sued AI chatbot companies. Florida's suit named Sam Altman personally. Federal AI policy in 2026 mostly targeted state law: no federal statute replaced it, and the shutdown proposal that drew most attention had little chance of passing as written.",
+        "The states did not slow down. NCSL counted 1,539 AI bills introduced and 280 enacted by early October, more enactments than in all of 2025. Colorado repealed and replaced its AI Act with a narrower law effective in January 2027, Connecticut's SB 5 took effect on 1 October, and New York enacted a chatbot safety law for minors on 28 October. Public Citizen counted 31 states with election-deepfake laws by October, ahead of the 3 November midterms. China filed its 1,112th generative-AI service by 31 August 2026, and in October MLex reported that a broader framework was in preparation, though no draft national AI law had been published. In 2026 state laws increasingly came in narrow, specific forms, such as chatbot safety for minors, AI in hiring and deepfake disclosure, while China's controls continued to cover more services."
+      ]
+    }
+  }
+}

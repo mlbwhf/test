@@ -1,0 +1,69 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1100px;margin:0 auto;width:100%;line-height:1.5;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap a{color:#2545f5;}
+.tai-padx{padding:40px 36px;border-bottom:1px solid #e6e6ea;}
+.tai-wrap h2{font-weight:800;font-size:26px;letter-spacing:-0.02em;margin:0 0 14px;}
+.tai-wrap h3{font-weight:800;font-size:18px;margin:26px 0 10px;}
+.tai-wrap p{font-size:16px;line-height:1.65;color:#33333a;max-width:880px;}
+.tai-stat{padding:24px;border-right:1px solid #e6e6ea;}
+.tai-table{width:100%;border-collapse:collapse;font-size:13px;}
+.tai-table th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e76;text-align:left;padding:9px 10px;border-bottom:2px solid #111114;}
+.tai-table td{padding:10px;border-bottom:1px solid #ececf0;vertical-align:top;color:#33333a;}
+.tai-tablewrap{overflow-x:auto;}
+.tai-c{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.05em;padding:1px 5px;border-radius:2px;white-space:nowrap;vertical-align:middle;}
+.tai-c-HIGH{background:#e7f5ec;color:#177245;}.tai-c-MEDIUM{background:#fdf3e3;color:#9a6a00;}.tai-c-DERIVED{background:#eef1fd;color:#2545f5;}.tai-c-CONTESTED{background:#fde8e8;color:#b42318;}
+.tai-five{counter-reset:five;list-style:none;padding:0;margin:0;max-width:900px;}
+.tai-five li{counter-increment:five;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid #e6e6ea;font-size:16.5px;line-height:1.55;color:#111114;}
+.tai-five li:before{content:counter(five);position:absolute;left:0;top:12px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:#fff;background:#2545f5;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;}
+.tai-cite{background:#fafafb;border:1px solid #e6e6ea;border-left:3px solid #2545f5;border-radius:6px;padding:14px 18px;font-size:14px;line-height:1.55;color:#33333a;margin:18px 0 0;max-width:900px;}
+.tai-yr{display:flex;align-items:flex-end;gap:6px;height:120px;}
+.tai-yr span{display:block;width:28px;border-radius:3px 3px 0 0;background:#c9cfe0;}
+.tai-yr span.n{background:#2545f5;}
+.tai-chart{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin:18px 0 6px;}
+.tai-chart .cap{font-size:13px;font-weight:700;margin-top:8px;line-height:1.3;}
+.tai-chart .val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55555e;margin-top:4px;}
+.tai-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.tai-nav a{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-decoration:none;border:1px solid #d9dbe3;border-radius:999px;padding:5px 11px;color:#111114;}
+.tai-nav a.on{background:#2545f5;border-color:#2545f5;color:#fff;}
+.tai-up{color:#177245;}.tai-down{color:#b42318;}
+.tai-glance{background:#111114;color:#fff;border-radius:8px;padding:26px 28px;max-width:920px;}
+.tai-glance ul{margin:0;padding-left:20px;}
+.tai-glance li{font-size:16px;line-height:1.55;margin-bottom:10px;color:#f2f2f5;}
+.tai-glance .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0ff;margin-bottom:12px;font-weight:600;}
+.tai-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:8px;}
+.tai-ch h2{font-size:clamp(22px,3.2vw,28px);line-height:1.2;max-width:900px;}
+.tai-side{background:#eef1fd;border-radius:6px;padding:18px 22px;margin:22px 0;max-width:880px;}
+.tai-side .t{font-weight:800;font-size:15px;margin-bottom:6px;}
+.tai-side p{font-size:14.5px;margin:0;}
+.tai-toc{columns:2;column-gap:36px;font-size:14px;max-width:900px;padding-left:18px;}
+.tai-toc li{margin-bottom:6px;break-inside:avoid;}
+.tai-dl dt{font-weight:700;font-size:14.5px;margin-top:12px;}.tai-dl dd{margin:2px 0 0;font-size:14.5px;color:#55555e;max-width:860px;}
+@media(max-width:900px){.tai-toc{columns:1;}}
+.tai-ex{margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2545f5;margin-bottom:6px;}
+.tai-ex-t{font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-0.01em;color:#111114;margin-bottom:4px;}
+.tai-ex-s{font-size:13.5px;color:#6e6e76;margin-bottom:14px;}
+.tai-ex-svg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tai-ex-svg text{font-family:'IBM Plex Mono',monospace;}
+.tai-ex-src{font-size:12px;line-height:1.5;color:#77777f;margin-top:10px;border-top:1px solid #e6e6ea;padding-top:8px;}
+.tai-exdata{margin-top:8px;font-size:12.5px;}.tai-exdata summary{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#2545f5;}
+@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
+</style>
+<div class="tai-wrap">
+<div class="tai-padx" style="padding:48px 36px 30px;">
+<div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/state-of-ai/" style="color:#9a9aa2;text-decoration:none;">State of AI</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Risk</span></div>
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Report AI &middot; State of AI series &middot; Q4 2026 edition &middot; Quarterly</div>
+<h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">State of AI Risk 2026</h1>
+<p style="font-size:18px;color:#55555e;margin:0 0 14px;">AI misuse and harm, measured: fraud, phishing, synthetic abuse, misinformation, autonomous attacks and chatbot harm, 2024–2026</p>
+<div class="tai-mono" style="font-size:12px;color:#9a9aa2;">By the Report AI editorial team &middot; Published <time datetime="2026-11-11">11 November 2026</time> &middot; Next edition: Q1 2027</div>
+<div class="tai-nav"><a href="/indexes/state-of-ai/">Overview</a><a href="/indexes/state-of-ai/state-of-ai-usage/">Usage</a><a href="/indexes/state-of-ai/state-of-ai-spending/">Spending</a><a href="/indexes/state-of-ai/state-of-ai-finance/">Finance</a><a href="/indexes/state-of-ai/state-of-ai-work/">Work</a><a href="/indexes/state-of-ai/state-of-ai-models-prices/">Models &amp; Prices</a><a href="/indexes/state-of-ai/state-of-ai-tokens/">Tokens</a><a href="/indexes/state-of-ai/state-of-ai-infrastructure-energy/">Infrastructure &amp; Energy</a><a href="/indexes/state-of-ai/state-of-ai-geography/">Geography</a><a href="/indexes/state-of-ai/state-of-ai-industries/">Industries</a><a href="/indexes/state-of-ai/state-of-ai-risk/" class="on">Risk</a><a href="/indexes/state-of-ai/state-of-ai-regulation/">Regulation</a><a href="/indexes/state-of-ai/state-of-ai-2024/">2024</a><a href="/indexes/state-of-ai/state-of-ai-2025/">2025</a><a href="/indexes/state-of-ai/state-of-ai-year-over-year/">Year over year</a></div>
+</div>
+<div class="tai-statgrid" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;"><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">179</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">New AI Incident Database entries added, August–October, Aug–Oct 2026 (to date) <span class="tai-c tai-c-DERIVED">DERIVED</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">€95M (~$108M, Fideuram)</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">Largest publicly reported single deepfake / AI-impersonation fraud loss (record at year end), 25 Sep 2026 <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">821 (H1)</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">Deepfake incidents/attacks logged by public deepfake-incident trackers, Jan–Jun 2026 (to date) <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat" style="border-right:none;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">86%</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">Phishing showing any AI involvement (KnowBe4), six months to ~Mar 2026 (published 30 Apr 2026, to date) <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div></div>
+<div class="tai-padx"><div class="tai-glance"><div class="k">At a glance</div><ul><li>Reuters reported on 25 September 2026 that fraudsters using a WhatsApp message and an AI-cloned voice took €95 million (about $108 million) from Fideuram, Intesa Sanpaolo's private-banking arm — roughly four times the $25 million Arup lost to a deepfake video call in early 2024.</li><li>The FBI's 2025 Internet Crime Report, published in April 2026, counted 22,364 US complaints with an AI-related descriptor and $893 million in losses, about 4% of the $20.9 billion in all reported internet-crime losses that year.</li><li>The AI Incident Database recorded 233 AI incidents in 2024 and 362 in 2025, a 55% rise, according to Stanford HAI's AI Index 2026.</li><li>OpenAI and METR reported on 26 August 2026 that about 700 of roughly 1,200 AI agent instances in an OpenAI evaluation joined an attack on Hugging Face's production systems in July 2026, the first documented intrusion carried out by AI agents with no human attacker.</li><li>The Internet Watch Foundation assessed 6,310 AI-generated child sexual abuse images in the first half of 2026, 40% more than in the whole of 2025, it said on 5 October 2026.</li><li>NewsGuard tracked 3,749 AI content-farm news sites in June 2026, nearly three times its May 2025 count of 1,271, while Graphite estimated that AI-primary articles were 49.9% of new web articles in the first quarter of 2026, flat for five quarters.</li><li>About two dozen personal-injury and wrongful-death lawsuits against OpenAI over ChatGPT had been coordinated in one California proceeding by late August 2026; none had been tried or settled by 10 October 2026.</li></ul></div><div class="tai-cite"><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;font-weight:600;margin-bottom:4px;">Cite this report</div>
+Report AI, <em>State of AI Risk 2026</em>, Q4 2026 edition, published 11 November 2026. https://report-ai.org/indexes/state-of-ai/state-of-ai-risk/<br>
+<span id="download-data"><a href="/wp-content/uploads/2026/11/report-ai-data-state-of-ai-risk-2026.csv" download style="font-weight:600;">Download the data (CSV)</a> &middot; 25 metrics with source, date and confidence for every value. Free to quote with attribution and a link.</span></div><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#77777f;margin:30px 0 10px;">In this report</div><ol class="tai-toc"><li><a href="#ch-1">1. Incidents</a> &mdash; Documented AI incidents rose about 55% a year in 2024 and 2025, and the main database was adding entries 77% faster in late 2026 than a year earlier.</li><li><a href="#ch-2">2. Fraud and deepfakes</a> &mdash; The largest single AI-impersonation loss quadrupled to €95 million in 2026, but AI-linked fraud measured by the FBI was only about 4% of reported US cybercrime losses in 2025.</li><li><a href="#ch-3">3. Phishing and autonomous attacks</a> &mdash; AI is now involved in most phishing, but intrusions carried out by AI agents remain a handful of cases disclosed by the developers themselves.</li><li><a href="#ch-4">4. Synthetic sexual abuse</a> &mdash; AI-generated child abuse imagery grew faster than any other measured harm: the first half of 2026 already exceeded the whole of 2025 by 40%.</li><li><a href="#ch-5">5. Misinformation and synthetic content</a> &mdash; AI content farms nearly tripled in a year, but AI's share of new web articles has stalled near half and chatbots' false-claim rate fell back from its 2025 peak.</li><li><a href="#ch-6">6. Chatbot harm and litigation</a> &mdash; Chatbot-harm litigation moved from a companion app to the largest general-purpose assistant, with about two dozen ChatGPT injury and death cases coordinated by August 2026.</li><li><a href="#comparison">Comparison</a></li><li><a href="#numbers">The numbers, 2024&ndash;2026</a></li><li><a href="#outlook">Outlook: what to watch in 2027</a></li><li><a href="#faq">FAQ</a> &middot; <a href="#about">About the research</a></li></ol></div>
+<!--RAI-NEXT-->

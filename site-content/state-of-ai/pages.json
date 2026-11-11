@@ -1,0 +1,65 @@
+[
+ {
+  "slug": "state-of-ai-usage",
+  "title": "State of AI Usage 2026 — Report AI",
+  "excerpt": "How many people and organisations use AI, how often, and for what: consumer assistant audiences (weekly and monthly, never mixed), organisational adoption, worker and adult usage surveys, what people actually ask ChatGPT, AI search reach, and China's AI-native app market, 2024 to 2026. OpenAI said C",
+  "csv": "report-ai-data-state-of-ai-usage-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-usage/",
+  "exhibits": 10,
+  "file": "state-of-ai-usage.html"
+ },
+ {
+  "slug": "state-of-ai-spending",
+  "title": "State of AI Spending 2026 — Report AI",
+  "excerpt": "What companies and governments spend on AI each year: worldwide AI spending forecasts, enterprise generative-AI and API budgets, big-tech capital expenditure, data-centre electricity, AI-agent software and public AI money, each figure dated and labelled as actual, estimate or forecast. Gartner forec",
+  "csv": "report-ai-data-state-of-ai-spending-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-spending/",
+  "exhibits": 10,
+  "file": "state-of-ai-spending.html"
+ },
+ {
+  "slug": "state-of-ai-finance",
+  "title": "State of AI Finance 2026 — Report AI",
+  "excerpt": "How much money is flowing into and out of AI companies in 2026: venture funding and its concentration, frontier-lab valuations, revenue and losses, Nvidia's data-centre sales, the debt and equity financing the build-out, M&A and IPOs, and the indicators behind the bubble debate. Crunchbase recorded ",
+  "csv": "report-ai-data-state-of-ai-finance-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-finance/",
+  "exhibits": 10,
+  "file": "state-of-ai-finance.html"
+ },
+ {
+  "slug": "state-of-ai-work",
+  "title": "State of AI Work 2026 — Report AI",
+  "excerpt": "How AI is changing the number, kind and pay of jobs: US job cuts employers attribute to AI, reversals and rehiring, entry-level and graduate hiring, AI job postings, worker AI use, the AI skills wage premium, measured productivity effects and occupational exposure, each figure dated, sourced and con",
+  "csv": "report-ai-data-state-of-ai-work-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-work/",
+  "exhibits": 10,
+  "file": "state-of-ai-work.html"
+ },
+ {
+  "slug": "state-of-ai-models-prices",
+  "title": "State of AI Models & Prices 2026 — Report AI",
+  "excerpt": "What frontier AI models can do and what they cost: benchmark scores, the US–China and open–closed gaps, token prices from the cheapest tier to the frontier, training compute and cost, context windows, reasoning milestones and energy per query, each dated and sourced. The top reported score on the SW",
+  "csv": "report-ai-data-state-of-ai-models-prices-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-models-prices/",
+  "exhibits": 10,
+  "file": "state-of-ai-models-prices.html"
+ },
+ {
+  "slug": "state-of-ai-risk",
+  "title": "State of AI Risk 2026 — Report AI",
+  "excerpt": "AI misuse and harm, measured: incidents, deepfake fraud, AI-assisted phishing, synthetic sexual abuse, misinformation, autonomous AI intrusions and chatbot-harm litigation, with each figure dated, sourced and confidence-rated. Reuters reported on 25 September 2026 that fraudsters using a WhatsApp me",
+  "csv": "report-ai-data-state-of-ai-risk-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-risk/",
+  "exhibits": 10,
+  "file": "state-of-ai-risk.html"
+ },
+ {
+  "slug": "state-of-ai-regulation",
+  "title": "State of AI Regulation 2026 — Report AI",
+  "excerpt": "AI law and policy counted: what the EU, the US federal government, the US states, China and the UK have enacted, delayed and enforced, with every count dated and sourced. The EU's AI Omnibus, Regulation (EU) 2026/1744, in force since 27 July 2026, moved the AI Act's stand-alone high-risk obligations",
+  "csv": "report-ai-data-state-of-ai-regulation-2026.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/state-of-ai-regulation/",
+  "exhibits": 10,
+  "file": "state-of-ai-regulation.html"
+ }
+]

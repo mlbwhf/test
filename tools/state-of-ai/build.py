@@ -7,12 +7,18 @@ import csv, html, json, os, re, sys
 
 ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
 DATA = os.environ.get('SOA_DATA') or os.path.join(ROOT, 'content-ops', 'state-of-ai', 'data')
-THEMES = ['usage', 'spending', 'finance', 'work', 'models', 'risk', 'regulation']
+THEMES = ['usage', 'spending', 'finance', 'work', 'models', 'tokens', 'infrastructure', 'geography', 'industries', 'risk', 'regulation']
 SLUG = {'usage': 'state-of-ai-usage', 'spending': 'state-of-ai-spending', 'finance': 'state-of-ai-finance',
         'work': 'state-of-ai-work', 'models': 'state-of-ai-models-prices', 'risk': 'state-of-ai-risk',
-        'regulation': 'state-of-ai-regulation'}
+        'regulation': 'state-of-ai-regulation', 'tokens': 'state-of-ai-tokens',
+        'infrastructure': 'state-of-ai-infrastructure-energy', 'geography': 'state-of-ai-geography',
+        'industries': 'state-of-ai-industries'}
 NAME = {'usage': 'Usage', 'spending': 'Spending', 'finance': 'Finance', 'work': 'Work',
-        'models': 'Models & Prices', 'risk': 'Risk', 'regulation': 'Regulation'}
+        'models': 'Models & Prices', 'risk': 'Risk', 'regulation': 'Regulation',
+        'tokens': 'Tokens', 'infrastructure': 'Infrastructure & Energy', 'geography': 'Geography', 'industries': 'Industries'}
+NARR = os.environ.get('SOA_NARR') or os.path.join(ROOT, 'content-ops', 'state-of-ai', 'narrative')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import charts
 BASE = 'https://report-ai.org/indexes/state-of-ai/'
 UP = 'https://report-ai.org/wp-content/uploads/2026/11/'
 YEARS = ['2024', '2025', '2026']
@@ -24,6 +30,21 @@ def detail(link):
 
 E = lambda s: html.escape(str(s), quote=False)
 A = lambda s: html.escape(str(s), quote=True)
+
+EXTRA_CSS = r""".tai-glance{background:#111114;color:#fff;border-radius:8px;padding:26px 28px;max-width:920px;}
+.tai-glance ul{margin:0;padding-left:20px;}
+.tai-glance li{font-size:16px;line-height:1.55;margin-bottom:10px;color:#f2f2f5;}
+.tai-glance .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0ff;margin-bottom:12px;font-weight:600;}
+.tai-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:8px;}
+.tai-ch h2{font-size:clamp(22px,3.2vw,28px);line-height:1.2;max-width:900px;}
+.tai-side{background:#eef1fd;border-radius:6px;padding:18px 22px;margin:22px 0;max-width:880px;}
+.tai-side .t{font-weight:800;font-size:15px;margin-bottom:6px;}
+.tai-side p{font-size:14.5px;margin:0;}
+.tai-toc{columns:2;column-gap:36px;font-size:14px;max-width:900px;padding-left:18px;}
+.tai-toc li{margin-bottom:6px;break-inside:avoid;}
+.tai-dl dt{font-weight:700;font-size:14.5px;margin-top:12px;}.tai-dl dd{margin:2px 0 0;font-size:14.5px;color:#55555e;max-width:860px;}
+@media(max-width:900px){.tai-toc{columns:1;}}
+"""
 
 CSS = """<style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -56,8 +77,8 @@ CSS = """<style>
 .tai-nav a{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-decoration:none;border:1px solid #d9dbe3;border-radius:999px;padding:5px 11px;color:#111114;}
 .tai-nav a.on{background:#2545f5;border-color:#2545f5;color:#fff;}
 .tai-up{color:#177245;}.tai-down{color:#b42318;}
-@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
-</style>"""
+%%EXTRA%%@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
+</style>""".replace("%%EXTRA%%", EXTRA_CSS + charts.CSS)
 
 
 def load():
@@ -301,6 +322,112 @@ def yoy_page(ds, published, published_h, outdir, intro):
     return dict(slug=slug, title=f'{title} — Report AI', excerpt=intro['dek_plain'][:300], html=body, csv=csv_name, url=url)
 
 
+def load_narr():
+    out = {}
+    for t in THEMES:
+        p = os.path.join(NARR, t + '.json')
+        if os.path.exists(p):
+            out[t] = json.load(open(p))
+    return out
+
+
+def paras(ps):
+    return ''.join(f'<p>{E(x)}</p>' for x in ps or [])
+
+
+class Counter:
+    def __init__(self):
+        self.n = 0
+
+    def ex(self, e):
+        html_ = charts.exhibit(self.n + 1, e)
+        if html_:
+            self.n += 1
+        return html_
+
+
+def sidebar(sb):
+    if not sb or not sb.get('body'):
+        return ''
+    return f'<div class="tai-side"><div class="t">{E(sb.get("title", ""))}</div><p>{E(sb["body"])}</p></div>'
+
+
+def theme_report_long(t, d, n, published, published_h, outdir):
+    """McKinsey-style long-form theme report (data + narrative)."""
+    slug = SLUG[t]; url = BASE + slug + '/'; title = f'State of AI {NAME[t]} 2026'
+    csv_name = f'report-ai-data-{slug}-2026.csv'
+    ms = d['metrics']; C = Counter()
+    tiles = [m for m in ms if (m['values'].get('2026') or {}).get('value')][:4]
+    tile_html = ''.join(f'<div class="tai-stat"{NOBR if i == len(tiles) - 1 else ""}><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">{E(m["values"]["2026"]["value"])}</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">{E(m["label"])}, {E(m["values"]["2026"].get("as_of", ""))} {chip(m["values"]["2026"].get("confidence"))}</div></div>' for i, m in enumerate(tiles))
+    chs = n.get('chapters', [])
+    toc = ''.join(f'<li><a href="#ch-{i + 1}">{E(c.get("kicker", ""))}</a> &mdash; {E(c.get("action_title", ""))}</li>' for i, c in enumerate(chs))
+    toc += '<li><a href="#comparison">Comparison</a></li><li><a href="#numbers">The numbers, 2024&ndash;2026</a></li><li><a href="#outlook">Outlook: what to watch in 2027</a></li><li><a href="#faq">FAQ</a> &middot; <a href="#about">About the research</a></li>'
+    body = header(NAME[t], 'Report AI &middot; State of AI series &middot; Q4 2026 edition &middot; Quarterly', title,
+                  E(n.get('subtitle') or d.get('dek_2026', '')),
+                  f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time> &middot; Next edition: Q1 2027', NAME[t])
+    body += f'\n<div class="tai-statgrid" style="display:grid;grid-template-columns:repeat({len(tiles)},1fr);border-bottom:1px solid #e6e6ea;">{tile_html}</div>'
+    body += ('\n<div class="tai-padx"><div class="tai-glance"><div class="k">At a glance</div><ul>' +
+             ''.join(f'<li>{E(x)}</li>' for x in n.get('at_a_glance') or d['headlines']['2026']) + '</ul></div>' +
+             cite_box(title, 'Q4 2026 edition', url, published_h, csv_name, len(ms)) +
+             f'<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#77777f;margin:30px 0 10px;">In this report</div><ol class="tai-toc">{toc}</ol></div>')
+    for i, c in enumerate(chs):
+        body += (f'\n<div class="tai-padx tai-ch" id="ch-{i + 1}"><div class="tai-kicker">{E(c.get("kicker", ""))}</div>'
+                 f'<h2>{E(c.get("action_title", ""))}</h2>')
+        ps = c.get('paras', []); exs = c.get('exhibits', [])
+        # interleave: first half of paragraphs, exhibits, rest
+        k = max(1, (len(ps) + 1) // 2)
+        body += paras(ps[:k]) + ''.join(C.ex(e) for e in exs[:1]) + paras(ps[k:]) + ''.join(C.ex(e) for e in exs[1:]) + sidebar(c.get('sidebar')) + '</div>'
+    cmp_ = n.get('comparison') or {}
+    yoy = [m for m in ms if m.get('yoy')]
+    changed_rows = ''.join(f'<tr><td>{E(m["label"])}</td><td>{cell(m["values"].get("2024"), False)}</td><td>{cell(m["values"].get("2025"), False)}</td><td>{cell(m["values"].get("2026"), False)}</td><td>{change(m["values"].get("2025") or {}, m["values"].get("2026") or {})}</td></tr>' for m in yoy)
+    body += (f'\n<div class="tai-padx tai-ch" id="comparison"><div class="tai-kicker">Comparison</div><h2>{E(cmp_.get("action_title", "How 2026 compares with 2024 and 2025"))}</h2>' +
+             paras(cmp_.get('paras')) + ''.join(C.ex(e) for e in cmp_.get('exhibits', [])) +
+             (f'<h3>Year over year, every comparable measure</h3><div class="tai-tablewrap"><table class="tai-table"><tr><th>Measure</th><th>2024</th><th>2025</th><th>2026 (to date)</th><th>2025&rarr;26</th></tr>{changed_rows}</table></div>' if yoy else '') +
+             '<ul style="font-size:15px;line-height:1.6;color:#33333a;max-width:880px;padding-left:20px;margin:16px 0 0;">' + ''.join(f'<li style="margin-bottom:6px;">{E(x)}</li>' for x in d.get('yoy_takeaways', [])) + '</ul>' +
+             f'<p style="font-size:14px;margin-top:14px;">All eleven themes side by side: <a href="/indexes/state-of-ai/state-of-ai-year-over-year/">State of AI, year over year</a>.</p></div>')
+    body += f'\n<div class="tai-padx" id="numbers"><div class="tai-kicker">Data appendix</div><h2>The numbers, 2024 to 2026</h2><p>Every measure in this report with its value for each year, as-of date, source and confidence. Change compares 2025 with 2026 to date where both are numeric.</p>{metric_table(ms)}</div>'
+    stop = d.get('stop_quoting') or []
+    if stop:
+        stop_html = ''.join(f'<tr><td>&ldquo;{E(x["claim"])}&rdquo;</td><td>{E(x["fact"])}{detail(x.get("link"))}</td></tr>' for x in stop)
+        body += f'\n<div class="tai-padx"><div class="tai-kicker">Fact check</div><h2>Numbers to stop quoting</h2><div class="tai-tablewrap"><table class="tai-table"><tr><th>Widely repeated</th><th>What the evidence supports</th></tr>{stop_html}</table></div></div>'
+    ol = n.get('outlook') or {}
+    watch = ''.join(f'<tr><td><strong>{E(w.get("indicator", ""))}</strong></td><td>{E(w.get("now", ""))}</td><td>{E(w.get("signal", ""))}</td></tr>' for w in ol.get('watch', []))
+    body += (f'\n<div class="tai-padx tai-ch" id="outlook" style="background:#f5f5f7;"><div class="tai-kicker">Outlook</div><h2>{E(ol.get("action_title", "What to watch in 2027"))}</h2>' + paras(ol.get('paras')) +
+             (f'<h3>What to watch in 2027</h3><div class="tai-tablewrap"><table class="tai-table"><tr><th>Indicator</th><th>Where it stands</th><th>What would change the picture</th></tr>{watch}</table></div>' if watch else '') + '</div>')
+    if n.get('definitions'):
+        body += '\n<div class="tai-padx"><div class="tai-kicker">Definitions</div><dl class="tai-dl">' + ''.join(f'<dt>{E(x["term"])}</dt><dd>{E(x["def"])}</dd>' for x in n['definitions']) + '</dl></div>'
+    body += f'\n<div class="tai-padx" id="faq"><h2>Frequently asked</h2>{faq_html(d.get("faq_2026", []))}</div>'
+    gaps = d.get('gaps') or []
+    gap_txt = ('Known gaps in this edition: ' + '; '.join(gaps) + '. ') if gaps else ''
+    body += '<div id="about"></div>' + methodology(f'Exhibits plot only dated, sourced readings; lines are not interpolated between them, and values with different definitions are never placed on one axis. {gap_txt}') + related(SERIES_LINKS)
+    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + body + '\n</div>\n<!-- /wp:html -->'
+    full += ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', '2024/2026')
+    rows = [(t, m, y, m['values'][y]) for m in ms for y in YEARS if m['values'].get(y)]
+    write_csv(os.path.join(outdir, csv_name), url, published, rows)
+    excerpt = (d.get('dek_2026', '') + ' ' + (n.get('at_a_glance') or d['headlines']['2026'])[0])[:300]
+    return dict(slug=slug, title=f'{title} — Report AI', excerpt=excerpt, html=full, csv=csv_name, url=url, exhibits=C.n)
+
+
+def landing(ds, published, published_h, intro):
+    cards = ''.join(f'<a href="/indexes/state-of-ai/{SLUG[t]}/" style="display:block;text-decoration:none;border:1px solid #e6e6ea;border-radius:8px;padding:18px 18px 16px;color:#111114;"><div class="tai-mono" style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;">Q4 2026 edition</div><div style="font-weight:800;font-size:18px;margin:6px 0 6px;">State of AI {E(NAME[t])}</div><div style="font-size:13.5px;line-height:1.45;color:#55555e;">{E(ds[t].get("dek_2026", ""))}</div></a>' for t in THEMES if t in ds)
+    years = [('2022', '/indexes/state-of-ai/state-of-ai-2022/', 'The year ChatGPT arrived'), ('2023', '/indexes/state-of-ai/state-of-ai-2023/', 'Generative AI&rsquo;s breakout year'),
+             ('2024', '/indexes/state-of-ai/state-of-ai-2024/', 'State of AI in Numbers 2024'), ('2025', '/indexes/state-of-ai/state-of-ai-2025/', 'State of AI in Numbers 2025')]
+    yr = ''.join(f'<tr><td><strong>{y}</strong></td><td><a href="{u}">{t_}</a></td></tr>' for y, u, t_ in years) + '<tr><td><strong>2026</strong></td><td>State of AI in Numbers 2026 &mdash; publishes mid-December 2026</td></tr>'
+    body = header('Overview', 'Report AI &middot; State of AI series', 'State of AI: The Report AI Series', intro['dek'],
+                  f'By the Report AI editorial team &middot; Updated <time datetime="{published}">{published_h}</time>', 'Overview')
+    body += '\n<div class="tai-padx" style="background:#f5f5f7;"><div class="tai-kicker">Analysis</div>' + paras(intro['analysis']) + '</div>'
+    body += f'\n<div class="tai-padx"><h2>The quarterly reports</h2><p>Eleven reports, one per theme, each with an executive summary, numbered exhibits, three years of data with sources and confidence ratings, a comparison chapter, an outlook and a CSV download.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px;">{cards}</div></div>'
+    body += f'\n<div class="tai-padx"><h2>The annual editions: State of AI in Numbers</h2><div class="tai-tablewrap"><table class="tai-table"><tr><th>Year</th><th>Edition</th></tr>{yr}</table></div><p style="margin-top:14px;">Compare the years directly: <a href="/indexes/state-of-ai/state-of-ai-year-over-year/">State of AI, year over year (2024 vs 2025 vs 2026)</a> &middot; <a href="/indexes/state-of-ai/state-of-ai-2022-2026/">Timeline 2022&ndash;2026</a>.</p></div>'
+    body += f'\n<div class="tai-padx"><h2>Frequently asked</h2>{faq_html(intro["faq"])}</div>' + methodology() + related(SERIES_LINKS)
+    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + body + '\n</div>\n<!-- /wp:html -->'
+    g = [{"@type": "CollectionPage", "name": "State of AI: The Report AI Series", "url": BASE, "description": intro['dek_plain'], "dateModified": published,
+          "publisher": {"@id": "https://report-ai.org/#organization"},
+          "hasPart": [{"@type": "Article", "name": f"State of AI {NAME[t]} 2026", "url": BASE + SLUG[t] + '/'} for t in THEMES if t in ds]},
+         {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": f["q"], "acceptedAnswer": {"@type": "Answer", "text": f["a"]}} for f in intro['faq']]}]
+    full += '\n<!-- wp:html -->\n<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@graph": g}, ensure_ascii=False, separators=(',', ':')) + '</script>\n<!-- /wp:html -->'
+    return dict(slug='state-of-ai', title='State of AI: The Report AI Series', excerpt=intro['dek_plain'][:300], html=full, csv=None, url=BASE)
+
+
 if __name__ == '__main__':
     outdir = sys.argv[1]; published = sys.argv[2] if len(sys.argv) > 2 else '2026-11-11'
     import datetime
@@ -309,8 +436,16 @@ if __name__ == '__main__':
     ds = load()
     intros = json.load(open(os.path.join(DATA, 'intros.json'))) if os.path.exists(os.path.join(DATA, 'intros.json')) else {}
     pages = []
-    for t, d in ds.items():
-        pages.append(theme_report(t, d, published, published_h, outdir))
+    ns = load_narr()
+    for t in THEMES:
+        if t not in ds:
+            continue
+        if t in ns:
+            pages.append(theme_report_long(t, ds[t], ns[t], published, published_h, outdir))
+        else:
+            pages.append(theme_report(t, ds[t], published, published_h, outdir))
+    if 'landing' in intros:
+        pages.append(landing(ds, published, published_h, intros['landing']))
     for y in ('2024', '2025', '2026'):
         if y in intros:
             pages.append(annual(y, ds, published, published_h, outdir, intros[y],
@@ -321,8 +456,11 @@ if __name__ == '__main__':
         fn = p['slug'] + '.html'
         open(os.path.join(outdir, fn), 'w').write(p['html'])
         p['file'] = fn; del p['html']
+        p.setdefault('exhibits', 0)
         for s in re.findall(r'<script type="application/ld\+json">(.*?)</script>', open(os.path.join(outdir, fn)).read(), flags=re.S):
             json.loads(s)
     json.dump(pages, open(os.path.join(outdir, 'pages.json'), 'w'), ensure_ascii=False, indent=1)
     for p in pages:
-        print(p['slug'], os.path.getsize(os.path.join(outdir, p['file'])), p['csv'])
+        txt = re.sub(r'<script.*?</script>|<style.*?</style>|<svg.*?</svg>', ' ', open(os.path.join(outdir, p['file'])).read(), flags=re.S)
+        words = len(html.unescape(re.sub(r'<[^>]+>', ' ', txt)).split())
+        print(p['slug'], os.path.getsize(os.path.join(outdir, p['file'])), 'words', words, 'exhibits', p['exhibits'], p['csv'])

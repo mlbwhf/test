@@ -1,0 +1,1107 @@
+{
+  "theme": "finance",
+  "title": "State of AI Finance",
+  "dek_2026": "How much money is flowing into and out of AI companies in 2026: venture funding and its concentration, frontier-lab valuations, revenue and losses, Nvidia's data-centre sales, the debt and equity financing the build-out, M&A and IPOs, and the indicators behind the bubble debate.",
+  "metrics": [
+    {
+      "id": "ai_vc_global_crunchbase",
+      "label": "Global venture funding to AI companies (Crunchbase)",
+      "unit": "USD per year",
+      "group": "Venture funding",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$100B+",
+          "num": 100000000000,
+          "as_of": "Jan 2025 (full-year 2024)",
+          "source": "Crunchbase News, year-end 2024 analysis",
+          "url": "https://news.crunchbase.com/venture/global-funding-data-analysis-ai-eoy-2024",
+          "confidence": "MEDIUM",
+          "note": "RESTATED: Crunchbase/HumanX's 2026 report puts 2024 at $114B. First-reported figure kept for like-for-like comparison with the 2025 year-end analysis. Stanford HAI's broader 'corporate AI investment' measure was $252.3B for 2024 (site page 322) and is not comparable.",
+          "site_page": 73
+        },
+        "2025": {
+          "value": "$202.3B",
+          "num": 202300000000,
+          "as_of": "Jan 2026 (full-year 2025)",
+          "source": "Crunchbase News, year-end 2025 analysis",
+          "url": "https://news.crunchbase.com/ai/big-funding-trends-charts-eoy-2025/",
+          "confidence": "MEDIUM",
+          "note": "RESTATED: Crunchbase/HumanX report later gave $211B. OECD, on a different definition, counts $258.7B (site page 73).",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "~$488B (Jan–Sep, to date)",
+          "num": 488000000000,
+          "as_of": "Q3 2026 (to 30 Sep 2026)",
+          "source": "Crunchbase quarterly reports, as reported",
+          "url": "https://aiweekly.co/alerts/crunchbase-logs-27-billion-dollar-rounds-in-q3-2026-as-ai-grabs-102b-or-64-of",
+          "confidence": "DERIVED",
+          "note": "Formula: Q1 $242B + Q2 (>70% x $205B = $143.5B, lower bound) + Q3 $102B = ~$488B. Crunchbase has not published a nine-month AI total that we found; Q2 AI dollar figure is not published, only 'more than 70%'.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "ai_share_global_vc",
+      "label": "AI share of global venture funding (Crunchbase)",
+      "unit": "% of global VC dollars",
+      "group": "Venture funding",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~34% (about a third)",
+          "num": 34,
+          "as_of": "Jan 2025 (full-year 2024)",
+          "source": "Crunchbase",
+          "url": "https://news.crunchbase.com/venture/global-funding-data-analysis-ai-eoy-2024",
+          "confidence": "MEDIUM",
+          "note": "Crunchbase's 2025 year-end analysis restates 2024 as 34%. CB Insights gives 37% on its own methodology.",
+          "site_page": 73
+        },
+        "2025": {
+          "value": "~50%",
+          "num": 50,
+          "as_of": "Jan 2026 (full-year 2025)",
+          "source": "Crunchbase",
+          "url": "https://news.crunchbase.com/ai/big-funding-trends-charts-eoy-2025/",
+          "confidence": "CONTESTED",
+          "note": "Crunchbase: nearly 50% ($202.3B of $425B). OECD: 61% ($258.7B of $427.1B, Feb 2026). PitchBook global: 53%. The gap is definitional (what counts as an 'AI company'), not an error; do not mix series.",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "~72% (Jan–Sep, to date)",
+          "num": 72,
+          "as_of": "Q3 2026",
+          "source": "Crunchbase quarterly reports, as reported",
+          "url": "https://news.crunchbase.com/venture/record-breaking-funding-ai-global-q1-2026/",
+          "confidence": "DERIVED",
+          "note": "Formula: ~$488B AI / $679B global (Crunchbase nine-month total) = ~72%. Quarterly shares as reported: Q1 ~80% ($242B of ~$300B), Q2 >70% of $205B, Q3 64% ($102B of $159B). October 2026: 66% of $59B.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "global_vc_total_crunchbase",
+      "label": "Total global venture funding, all sectors (Crunchbase)",
+      "unit": "USD per year",
+      "group": "Venture funding",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$314B",
+          "num": 314000000000,
+          "as_of": "Jan 2025",
+          "source": "Crunchbase",
+          "url": "https://news.crunchbase.com/venture/global-funding-data-analysis-ai-eoy-2024",
+          "confidence": "MEDIUM",
+          "note": "RESTATED: Crunchbase's 2025 year-end analysis gives 2024 as $328B. KPMG Venture Pulse: $391.9B (different scope).",
+          "site_page": 73
+        },
+        "2025": {
+          "value": "$425B",
+          "num": 425000000000,
+          "as_of": "Jan 2026",
+          "source": "Crunchbase",
+          "url": "https://news.crunchbase.com/ai/big-funding-trends-charts-eoy-2025/",
+          "confidence": "MEDIUM",
+          "note": "OECD $427.1B; KPMG $500B+. Report AI's page 73 cites KPMG; series differ by scope.",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "$679B (Jan–Sep, to date)",
+          "num": 679000000000,
+          "as_of": "Q3 2026 (reported early Oct 2026)",
+          "source": "Crunchbase, as reported",
+          "url": "https://fourweekmba.com/ai-crunchbase-q3-2026-159b-venture-27-billion-dollar-rounds-ai/",
+          "confidence": "MEDIUM",
+          "note": "Already above any prior full year. H1 2026 alone was $510B. Quarter sums (Q1 ~$305B + Q2 $205B + Q3 $159B = $669B) differ from the $679B total because of revisions. CB Insights put Q3 at $187.2B.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "ai_share_us_vc_pitchbook",
+      "label": "AI share of US venture deal value (PitchBook-NVCA)",
+      "unit": "% of US VC deal value",
+      "group": "Venture funding",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "46.4% of $209B",
+          "num": 46.4,
+          "as_of": "Jan 2025",
+          "source": "PitchBook-NVCA Venture Monitor Q4 2024, as reported",
+          "url": "https://siliconangle.com/2025/01/07/ai-dominates-global-venture-funding-sectors-faced-challenges-q4/",
+          "confidence": "MEDIUM",
+          "note": "Implies ~$97B of US AI deal value (DERIVED: 46.4% x $209B), consistent with Bloomberg's 'record $97B' for 2024. PitchBook's global AI share for 2024 was 35.7%.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "65.4% of $339.4B",
+          "num": 65.4,
+          "as_of": "Jan 2026",
+          "source": "PitchBook-NVCA Venture Monitor Q4 2025",
+          "url": "https://nvca.org/wp-content/uploads/2026/01/q4-2025-pitchbook-nvca-venture-monitor.pdf",
+          "confidence": "MEDIUM",
+          "note": "Secondary sources round to 65.6% / $222B of $339B.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "82.7% of $515.8B (Jan–Sep, to date)",
+          "num": 82.7,
+          "as_of": "Q3 2026 (released 8 Oct 2026)",
+          "source": "PitchBook-NVCA Venture Monitor Q3 2026",
+          "url": "https://nvca.org/pitchbook-nvca-venture-monitor/",
+          "confidence": "MEDIUM",
+          "note": "US deal value through Q3 2026 was already ~44% above the 2021 full-year record. Q3 alone: $98.4B, AI share 65.9%. H1 share was ~86%.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "largest_ai_round",
+      "label": "Largest AI venture round of the year",
+      "unit": "USD raised (post-money valuation)",
+      "group": "Venture funding",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "Databricks $10B at $62B",
+          "num": 10000000000,
+          "as_of": "Dec 2024",
+          "source": "Crunchbase News",
+          "url": "https://news.crunchbase.com/ai/largest-ai-startup-funding-deals-2024/",
+          "confidence": "MEDIUM",
+          "note": "Largest venture raise of 2024. Largest frontier-lab round: OpenAI $6.6B at $157B (Oct 2024). xAI raised $6B twice.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "OpenAI $40B at $300B",
+          "num": 40000000000,
+          "as_of": "Mar 2025",
+          "source": "OpenAI / SoftBank, as reported (Maginative, The Decoder)",
+          "url": "https://the-decoder.com/openai-hits-500-billion-valuation-after-secondary-share-sale/",
+          "confidence": "MEDIUM",
+          "note": "Led by SoftBank. Five AI companies (OpenAI, Anthropic, xAI, Scale AI, Project Prometheus) each raised >$5B in 2025 (Crunchbase, site page 73).",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "OpenAI $122B at $852B",
+          "num": 122000000000,
+          "as_of": "31 Mar 2026",
+          "source": "OpenAI; Bloomberg",
+          "url": "https://finance.yahoo.com/sectors/technology/article/openai-valued-at-852-billion-in-latest-funding-round-ahead-of-ipo-213943098.html",
+          "confidence": "MEDIUM",
+          "note": "Largest private round on record. Amazon $50B (about $35B contingent on an IPO by 2028 or AGI), Nvidia $30B, SoftBank $30B, ~$3B retail. Next largest in 2026: Anthropic $65B Series H at $965B (May 2026).",
+          "site_page": 716
+        }
+      }
+    },
+    {
+      "id": "openai_valuation",
+      "label": "OpenAI valuation (latest of the year)",
+      "unit": "USD (post-money unless noted)",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$157B",
+          "num": 157000000000,
+          "as_of": "Oct 2024",
+          "source": "OpenAI; TechCrunch; Fortune",
+          "url": "https://techcrunch.com/2024/10/02/openai-raises-6-6b-and-is-now-valued-at-157b/",
+          "confidence": "MEDIUM",
+          "note": "$6.6B round led by Thrive Capital.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$500B",
+          "num": 500000000000,
+          "as_of": "2 Oct 2025",
+          "source": "Secondary share sale, as reported (SiliconANGLE, The Decoder)",
+          "url": "https://siliconangle.com/2025/10/02/openai-reportedly-closes-new-6-6b-secondary-sale-500b-valuation/",
+          "confidence": "MEDIUM",
+          "note": "Employee secondary sale of ~$6.6B; no new capital to OpenAI. Primary round earlier in 2025: $40B at $300B (Mar 2025).",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "$1.25T (to date)",
+          "num": 1250000000000,
+          "as_of": "6 Nov 2026",
+          "source": "Bloomberg, Reuters, as reported",
+          "url": "https://siliconangle.com/2026/11/06/openai-reportedly-raises-11b-in-new-funding-at-1-25t-valuation/",
+          "confidence": "MEDIUM",
+          "note": "First close of ~$11B; round may reach $20B; valuation below an earlier $1.4T-$1.5T ask. Outlets do not say whether $1.25T is pre- or post-money. Previous: $852B post-money (31 Mar 2026). Not confirmed by OpenAI.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "openai_revenue",
+      "label": "OpenAI revenue (recognised, calendar year)",
+      "unit": "USD",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$3.7B",
+          "num": 3700000000,
+          "as_of": "FY2024",
+          "source": "CNBC / The Information, as reported",
+          "url": "https://www.cnbc.com/",
+          "confidence": "MEDIUM",
+          "note": "Widely reported figure; later reporting on 2025 accounts describes 2025 revenue as more than triple the $3.7B of 2024.",
+          "site_page": 935
+        },
+        "2025": {
+          "value": "~$13.07B",
+          "num": 13070000000,
+          "as_of": "FY2025",
+          "source": "Leaked audited financials reported by the Financial Times, as relayed by secondary outlets",
+          "url": "https://cryptobriefing.com/openai-2025-financials-revenue-costs/",
+          "confidence": "MEDIUM",
+          "note": "Against roughly $34B of costs. OpenAI had targeted $12.7B for 2025.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~$12.4B (H1 2026, to date)",
+          "num": 12400000000,
+          "as_of": "H1 2026 (Jan–Jun)",
+          "source": "The Information, as reported (TNW, The Decoder)",
+          "url": "https://the-decoder.com/openai-tripled-revenue-to-5-7-billion-in-q1-but-burned-through-3-7-billion-to-get-there/",
+          "confidence": "MEDIUM",
+          "note": "Q1 $5.7B + Q2 $6.7B as reported from investor materials. Half-year figure, not comparable with full years. Recognised on a net basis; not like-for-like with Anthropic's gross reporting of partner-channel revenue.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "openai_run_rate",
+      "label": "OpenAI annualised revenue run-rate",
+      "unit": "USD (annualised)",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$5.5B",
+          "num": 5500000000,
+          "as_of": "Dec 2024",
+          "source": "OpenAI spokesperson via Reuters / CNBC (Jun 2025)",
+          "url": "https://www.thestar.com.my/tech/tech-news/2025/06/10/openai039s-annualized-revenue-hits-10-billion-up-from-55-billion-in-december-2024",
+          "confidence": "MEDIUM",
+          "note": "Excludes Microsoft licensing revenue and large one-off deals.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$20B",
+          "num": 20000000000,
+          "as_of": "End 2025",
+          "source": "The Information via Yahoo Finance; Statista",
+          "url": "https://finance.yahoo.com/news/openai-tops-25-billion-annualized-033836274.html",
+          "confidence": "MEDIUM",
+          "note": "Rose to ~$25B in early 2026 (Sacra, site pages 321, 47). $10B in Jun 2025.",
+          "site_page": 969
+        },
+        "2026": {
+          "value": "~$50B (to date)",
+          "num": 50000000000,
+          "as_of": "End Sep 2026",
+          "source": "Financial Times; CNBC; Reuters",
+          "url": "https://news.bloombergtax.com/artificial-intelligence/openais-annualized-revenue-nears-50-billion-ft-says",
+          "confidence": "MEDIUM",
+          "note": "Reuters: 'almost $50 billion'. Earlier reports of $68B-$70B counted gross revenue from partners; Bloomberg reports a target of $70B+ by end 2026 (a target, not an outcome). Over $40B in Aug 2026.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "openai_operating_loss",
+      "label": "OpenAI operating loss",
+      "unit": "USD",
+      "group": "Bubble indicators",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$5B loss",
+          "num": 5000000000,
+          "as_of": "FY2024 (projection reported Sep 2024)",
+          "source": "The Information / CNBC, as reported",
+          "url": "https://www.cnbc.com/",
+          "confidence": "MEDIUM",
+          "note": "Reported as both an operating and a net loss; basis unclear. Not audited.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$20.92B",
+          "num": 20920000000,
+          "as_of": "FY2025",
+          "source": "Leaked audited financials reported by the FT, as relayed",
+          "url": "https://cryptobriefing.com/openai-2025-financials-revenue-costs/",
+          "confidence": "MEDIUM",
+          "note": "Net loss attributable ~$38.5B, mostly a ~$41.55B non-cash charge tied to the restructuring. Estimates of 2025 cash burn range from ~$8B (after stripping non-cash items) upward; treat cash burn as CONTESTED.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~$21.6B (H1 2026, to date)",
+          "num": 21600000000,
+          "as_of": "H1 2026",
+          "source": "The Information, as reported",
+          "url": "https://www.pymnts.com/?p=3859081",
+          "confidence": "DERIVED",
+          "note": "Formula: Q1 operating loss $9.3B + Q2 $12.3B (each as reported, single-source chain). Q1 2026 cash burn: $3.7B on $5.7B revenue. Full-year 2026 loss projections range $14B-$27B (operating/cash) and higher on a GAAP basis.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "anthropic_valuation",
+      "label": "Anthropic valuation (latest priced round of the year)",
+      "unit": "USD (post-money)",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$18.4B",
+          "num": 18400000000,
+          "as_of": "Early 2024 (Series D)",
+          "source": "Reported at the time (Menlo Ventures-led round)",
+          "url": null,
+          "confidence": "MEDIUM",
+          "note": "Not re-verified in this research session (search budget); from consistent 2024 reporting. Amazon's $4B (Nov 2024) carried no disclosed valuation. Next priced round: $61.5B Series E (Mar 2025).",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$183B",
+          "num": 183000000000,
+          "as_of": "Sep 2025 (Series F)",
+          "source": "Anthropic; Crunchbase",
+          "url": "https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation",
+          "confidence": "CONTESTED",
+          "note": "$183B was the last priced round of 2025 ($13B Series F). The Microsoft (up to $5B) and Nvidia (up to $10B) investment of Nov 2025 implied ~$350B but was not a priced round. Both figures circulate as 'end-2025 valuation'.",
+          "site_page": 73
+        },
+        "2026": {
+          "value": "$965B (to date)",
+          "num": 965000000000,
+          "as_of": "Late May 2026 (Series H)",
+          "source": "Fortune; Anthropic",
+          "url": "https://www.investmentnews.com/equities/anthropic-files-for-ipo-as-ai-giant-nears-1t-valuation/266819",
+          "confidence": "MEDIUM",
+          "note": "$65B Series H. Earlier in 2026: $30B Series G at $380B (12 Feb 2026, Anthropic). IPO price range blank in the 26 Oct S-1; reported IPO valuation talk ~$1.5T (down from ~$2T pre-IPO market pricing in Sep). Not a priced figure.",
+          "site_page": 572
+        }
+      }
+    },
+    {
+      "id": "anthropic_revenue",
+      "label": "Anthropic revenue (recognised)",
+      "unit": "USD",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$0.4B",
+          "num": 400000000,
+          "as_of": "FY2024",
+          "source": "Anthropic S-1, as reported by Reuters",
+          "url": "https://www.sec.gov/Archives/edgar/data/0002130357/000162828026067168/anthropicpbc-sx1.htm",
+          "confidence": "MEDIUM",
+          "note": "'Roughly $400 million'. Filing not opened directly.",
+          "site_page": 572
+        },
+        "2025": {
+          "value": "~$4.6B",
+          "num": 4600000000,
+          "as_of": "FY2025",
+          "source": "Anthropic S-1, as reported (Reuters, CryptoBriefing)",
+          "url": "https://cryptobriefing.com/anthropic-ipo-42b-loss-spending-plans/",
+          "confidence": "MEDIUM",
+          "note": "About 12x 2024. Two unnamed customers (reported as Amazon and Google) each ~12% of 2025 revenue.",
+          "site_page": 572
+        },
+        "2026": {
+          "value": "$16.3B (H1 2026, to date)",
+          "num": 16300000000,
+          "as_of": "H1 2026 (Jan–Jun)",
+          "source": "Anthropic S-1 filed 26 Oct 2026, as reported",
+          "url": "https://ppc.land/anthropic-files-for-nasdaq-ipo-with-16-3bn-in-first-half-revenue/",
+          "confidence": "MEDIUM",
+          "note": "Up from ~$1.16B-$1.2B in H1 2025. Q2 2026 revenue $11.6B. Half-year figure, not comparable with full years. Anthropic reports some cloud-partner revenue gross; OpenAI's comparable figures are net.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "anthropic_run_rate",
+      "label": "Anthropic annualised revenue run-rate",
+      "unit": "USD (annualised)",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$1B",
+          "num": 1000000000,
+          "as_of": "Around Dec 2024 / Jan 2025",
+          "source": "Forbes, as reported",
+          "url": null,
+          "confidence": "MEDIUM",
+          "note": "Reported as ~$1B ARR in early 2025; no exact end-2024 figure found.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$9B",
+          "num": 9000000000,
+          "as_of": "End 2025",
+          "source": "Reuters; Bloomberg",
+          "url": "https://aiweekly.co/alerts/anthropic-tells-investors-annualized-revenue-run-rate-hit-65b-by-end-of-july-up",
+          "confidence": "MEDIUM",
+          "note": "$14B at the Series G (Feb 2026), $30B in Apr 2026, ~$47B in May 2026 (site pages 381, 572).",
+          "site_page": 381
+        },
+        "2026": {
+          "value": ">$65B (to date)",
+          "num": 65000000000,
+          "as_of": "End Jul 2026",
+          "source": "Bloomberg (17 Aug 2026)",
+          "url": "https://news.bgov.com/financial-accounting/anthropic-revenue-run-rate-surpasses-65-billion-ahead-of-ipo",
+          "confidence": "CONTESTED",
+          "note": "Last figure Anthropic gave investors. Later estimates differ: SemiAnalysis ~$74B, Sacra ~$70B (Oct), one report $80B+ (Oct); a '$100B' claim (Sep) is uncorroborated. The S-1 leaves 'run-rate revenue as of 31 Oct 2026' blank.",
+          "site_page": 381
+        }
+      }
+    },
+    {
+      "id": "anthropic_operating_loss",
+      "label": "Anthropic operating loss (profit)",
+      "unit": "USD",
+      "group": "Bubble indicators",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$2.98B loss",
+          "num": -2980000000,
+          "as_of": "FY2024",
+          "source": "Anthropic S-1, as reported by Reuters",
+          "url": "https://cryptobriefing.com/anthropic-ipo-42b-loss-spending-plans/",
+          "confidence": "MEDIUM",
+          "note": "num negative = loss.",
+          "site_page": 572
+        },
+        "2025": {
+          "value": "$8.06B loss",
+          "num": -8060000000,
+          "as_of": "FY2025",
+          "source": "Anthropic S-1, as reported by Reuters",
+          "url": "https://cryptobriefing.com/anthropic-ipo-42b-loss-spending-plans/",
+          "confidence": "MEDIUM",
+          "note": "Net loss ~$42B (audited, $41.965B), of which ~$34B was an accounting charge. Year-end cash and short-term investments $20.28B.",
+          "site_page": 572
+        },
+        "2026": {
+          "value": "$693M loss (H1); $974M profit in Q2",
+          "num": -693000000,
+          "as_of": "H1 2026",
+          "source": "Anthropic S-1, as reported",
+          "url": "https://hackernoon.com/anthropics-s-1-shows-$163b-in-half-year-revenue-a-900percent-nrr-and-an-$807b-loss-that-mostly-isnt",
+          "confidence": "MEDIUM",
+          "note": "Q2 2026 is the first operating profit in any period the S-1 reports. H1 net loss ~$80B-$80.7B, mostly a ~$72.4B non-cash fair-value charge. Fixed compute commitments ~$265.6B; new lease/compute agreements after 30 Jun 2026 ~$245B (single source).",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "xai_valuation",
+      "label": "xAI valuation",
+      "unit": "USD",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$45B–$50B",
+          "num": 50000000000,
+          "as_of": "Dec 2024 (Series C, $6B)",
+          "source": "TechCrunch (filing: $45B); Sacra ($50B)",
+          "url": "https://techcrunch.com/",
+          "confidence": "CONTESTED",
+          "note": "Filing-based $45B vs widely reported $50B.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$200B (reported, denied)",
+          "num": 200000000000,
+          "as_of": "Sep 2025",
+          "source": "CNBC",
+          "url": "https://www.pymnts.com/news/artificial-intelligence/2025/elon-musk-denies-report-xai-is-raising-capital",
+          "confidence": "CONTESTED",
+          "note": "CNBC reported a $10B raise at $200B (later +$5B); Musk called it 'fake news'. ~$75B was reported in Jul 2025. Next confirmed: $20B Series E at ~$230B (Jan 2026).",
+          "site_page": null
+        },
+        "2026": {
+          "value": "$250B (in SpaceX merger)",
+          "num": 250000000000,
+          "as_of": "2 Feb 2026",
+          "source": "Bloomberg; WSJ, as reported",
+          "url": "https://news.bloomberglaw.com/tech-and-telecom-law/elon-musks-spacex-said-to-combine-with-xai-ahead-of-mega-ipo",
+          "confidence": "MEDIUM",
+          "note": "SpaceX ($1T) combined with xAI ($250B) at ~$1.25T; now operating as SpaceXAI (site page 2553). xAI no longer valued separately; SpaceX listed in Jun 2026.",
+          "site_page": 2553
+        }
+      }
+    },
+    {
+      "id": "mistral_valuation",
+      "label": "Mistral AI valuation",
+      "unit": "EUR (USD equivalent)",
+      "group": "Frontier labs",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~€5.8B (~$6.2B)",
+          "num": 6200000000,
+          "as_of": "Jun 2024",
+          "source": "Reported at the time (Series B, ~€600M)",
+          "url": null,
+          "confidence": "MEDIUM",
+          "note": "Not re-verified in this research session (search budget).",
+          "site_page": null
+        },
+        "2025": {
+          "value": "€11.7B (~$14B)",
+          "num": 14000000000,
+          "as_of": "Sep 2025 (Series C)",
+          "source": "Bloomberg; CNBC; Crunchbase",
+          "url": "https://www.cnbc.com/2025/09/09/ai-firm-mistral-valued-at-14-billion-as-asml-takes-major-stake.html",
+          "confidence": "MEDIUM",
+          "note": "€1.7B round led by ASML (~11% stake); Europe's largest AI round at the time.",
+          "site_page": 956
+        },
+        "2026": {
+          "value": ">€21B (~$24B)",
+          "num": 24000000000,
+          "as_of": "8 Sep 2026 (Series D, €3B)",
+          "source": "Mistral; Euronews; Bloomberg/Reuters reporting",
+          "url": "https://www.euronews.com/2026/09/08/mistral-ai-raises-record-3-billion-in-samsung-led-funding-round",
+          "confidence": "MEDIUM",
+          "note": "Led by Samsung Electronics; EQT Scaleup Europe Fund and PSG Equity participating. CFO reportedly expects $1B ARR by end 2026 (a target).",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "deepseek_valuation",
+      "label": "DeepSeek valuation",
+      "unit": "USD",
+      "group": "Frontier labs",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": null,
+          "confidence": "",
+          "note": "No external funding round; no valuation published.",
+          "site_page": null
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": null,
+          "confidence": "",
+          "note": "No external funding round; no valuation published.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~$86B post-money (to date)",
+          "num": 86000000000,
+          "as_of": "Late Oct 2026",
+          "source": "Crunchbase News; DealStreetAsia; The Information",
+          "url": "https://news.crunchbase.com/venture/october-2026-global-startup-funding-strong-china-deepseek/",
+          "confidence": "CONTESTED",
+          "note": "Second round of ~$15-16B (100-105.5B yuan); valuations reported as $74B pre-money, ~$86B post-money or $90B. First external round (Jun-Jul 2026): ~$7.4B (~50B yuan) at ~$52B-$59B post-money (Caixin, Bloomberg); founder Liang Wenfeng reportedly ~20B yuan.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "nvidia_dc_revenue",
+      "label": "Nvidia data-centre revenue",
+      "unit": "USD per fiscal year (FY ends late January)",
+      "group": "Compute suppliers",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$115.2B (FY2025)",
+          "num": 115200000000,
+          "as_of": "FY ended 26 Jan 2025",
+          "source": "Nvidia Q4 FY25 results / 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/q4fy25cfocommentary.htm",
+          "confidence": "MEDIUM",
+          "note": "Up 142%. Nvidia's fiscal 2025 runs Feb 2024-Jan 2025, i.e. roughly calendar 2024. Total revenue $130.5B.",
+          "site_page": 968
+        },
+        "2025": {
+          "value": "$193.7B (FY2026)",
+          "num": 193700000000,
+          "as_of": "FY ended Jan 2026 (reported 25 Feb 2026)",
+          "source": "Nvidia Q4 FY26 results, as reported",
+          "url": "https://www.hartware.de/?p=357664",
+          "confidence": "MEDIUM",
+          "note": "Up 68%; roughly calendar 2025. Total revenue $215.9B. Q4 FY26 data centre $62.3B.",
+          "site_page": 968
+        },
+        "2026": {
+          "value": "$164.2B (H1 FY2027, to date)",
+          "num": 164200000000,
+          "as_of": "Feb–Jul 2026 (Q2 FY27 reported 26-27 Aug 2026)",
+          "source": "Nvidia Q1 and Q2 FY27 results, as reported",
+          "url": "https://www.verdict.co.uk/nvidia-q2-fy27-results/",
+          "confidence": "DERIVED",
+          "note": "Formula: Q1 FY27 $75.2B (+92% y/y) + Q2 FY27 $89.0B (+117% y/y). Two quarters only. Q3 FY27 total-revenue guidance $108B (excludes China data-centre compute); results due late Nov 2026.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "bigtech_capex",
+      "label": "Combined capex of Amazon, Alphabet, Microsoft and Meta",
+      "unit": "USD per year",
+      "group": "Bubble indicators",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$246B",
+          "num": 246000000000,
+          "as_of": "FY2024",
+          "source": "Company filings, as compiled by secondary reporting",
+          "url": "https://finance.yahoo.com/sectors/technology/article/meta-microsoft-amazon-and-alphabet-are-about-to-spend-a-shocking-amount-of-money-to-dominate-the-ai-era-115359575.html",
+          "confidence": "MEDIUM",
+          "note": "Bases differ (finance leases, net of incentives); order of magnitude only.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$410B",
+          "num": 410000000000,
+          "as_of": "FY2025",
+          "source": "Financial Times running tally, as reported",
+          "url": "https://www.pulse.bot/finance/news/google-microsoft-meta-and-amazon-capex-spending-to-hit-725-billion-in-2026-up-77-from-last-year-anal-de8aaed4-8b8d-4bad-a436-dc80d4a15faf/",
+          "confidence": "MEDIUM",
+          "note": "Moody's models ~$410B for 2025 (site page 1081).",
+          "site_page": 1081
+        },
+        "2026": {
+          "value": "$720B–$740B (full-year guidance, not an outcome)",
+          "num": 730000000000,
+          "as_of": "Guidance as of 28-29 Oct 2026",
+          "source": "Company Q3 2026 guidance: Alphabet $195-205B, Meta $135-145B, Amazon ~$220B, Microsoft ~$170B",
+          "url": null,
+          "confidence": "DERIVED",
+          "note": "Formula: sum of guidance ranges = $720B-$740B; midpoint $730B used as num. This is a forecast; the outcome to date is ~$207B in Q3 2026 alone (Amazon $75.9B, Alphabet $51.4B, Microsoft $45.2B, Meta $34.91B). Microsoft's period (calendar 2026 vs FY2027) is CONTESTED. Older '$600B+ in 2026' projections are superseded.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_to_lab_revenue",
+      "label": "Big-four capex per dollar of OpenAI + Anthropic revenue",
+      "unit": "ratio (x)",
+      "group": "Bubble indicators",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~60x",
+          "num": 60.0,
+          "as_of": "FY2024",
+          "source": "Report AI calculation",
+          "url": null,
+          "confidence": "DERIVED",
+          "note": "Formula: $246B capex / ($3.7B OpenAI + $0.4B Anthropic revenue) = 60.0x. Crude gauge: capex serves cloud and other workloads, and model makers are not the only AI revenue.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~23x",
+          "num": 23.2,
+          "as_of": "FY2025",
+          "source": "Report AI calculation",
+          "url": null,
+          "confidence": "DERIVED",
+          "note": "Formula: $410B / ($13.07B + $4.6B = $17.67B) = 23.2x.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~13x (guidance vs annualised H1 revenue)",
+          "num": 12.7,
+          "as_of": "H1 2026 revenue; Oct 2026 capex guidance",
+          "source": "Report AI calculation",
+          "url": null,
+          "confidence": "DERIVED",
+          "note": "Formula: $730B guidance midpoint / (2 x ($12.4B OpenAI H1 + $16.3B Anthropic H1) = $57.4B) = 12.7x. Mixes a capex forecast with annualised half-year revenue and gross (Anthropic) with net (OpenAI) revenue; read as direction only. On run-rates (~$50B + >$65B) the ratio is ~6x.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "hyperscaler_bonds",
+      "label": "Bond issuance by Amazon, Alphabet, Meta and Oracle",
+      "unit": "USD per year",
+      "group": "Debt and financing",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "Bank of America",
+          "url": null,
+          "confidence": "",
+          "note": "No like-for-like 2024 figure found. BofA: the five hyperscalers (incl. Microsoft) averaged ~$28B a year of issuance in 2020-2024.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$108B",
+          "num": 108000000000,
+          "as_of": "FY2025",
+          "source": "Reuters analysis of LSEG data",
+          "url": "https://wdez.com/2026/07/29/hyperscaler-debt-binge-pushes-yields-up-as-investor-demand-cools/",
+          "confidence": "MEDIUM",
+          "note": "BofA's five-company count (adds Microsoft): ~$121B. Includes Meta's ~$30B Oct 2025 deal, the largest non-M&A high-grade bond sale on record (MUFG). Total data-centre debt issuance ~$182B in 2025, nearly double 2024 (Morgan Stanley, site page 1081).",
+          "site_page": 1081
+        },
+        "2026": {
+          "value": "~$194B (to 7 Jul 2026, to date)",
+          "num": 194000000000,
+          "as_of": "7 Jul 2026",
+          "source": "Reuters analysis of LSEG data",
+          "url": "https://wdez.com/2026/07/29/hyperscaler-debt-binge-pushes-yields-up-as-investor-demand-cools/",
+          "confidence": "MEDIUM",
+          "note": "Up ~79% on all of 2025 within six months. Later deals not included: Meta $15B bond (5 Nov), Oracle $10B notes at up to 8.65% (Nov), Alphabet EUR6B bond (Nov). 78 of 91 hyperscaler bonds issued in 2026 traded at higher yields than at issue on 28 Jul. Goldman Sachs forecast ~$250B for the five in 2026 (a forecast).",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "offbalance_ai_obligations",
+      "label": "Off-balance-sheet future obligations of five hyperscalers",
+      "unit": "USD (stock, not flow)",
+      "group": "Debt and financing",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": null,
+          "confidence": "",
+          "note": "Not published for 2024; Nikkei reports the total grew ~8x since 2022.",
+          "site_page": null
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": null,
+          "confidence": "",
+          "note": "Not published for year-end 2025.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~$1.65T",
+          "num": 1650000000000,
+          "as_of": "Jul 2026",
+          "source": "Nikkei Asia study",
+          "url": "https://asia.nikkei.com/business/technology/five-us-tech-giants-hidden-debts-soar-to-1.65tn-on-opaque-ai-funding",
+          "confidence": "MEDIUM",
+          "note": "Alphabet, Microsoft, Amazon, Meta, Oracle: not-yet-commenced leases, purchase commitments, JV obligations; exceeds their ~$1.35T on-balance-sheet debt. Disclosed in filings, so 'hidden' is contested. Moody's: ~$1.2T lease commitments, >$820B not yet commenced. Meta's two JVs (Hyperion $27B, Oct 2025; El Paso $14.3B, Jul 2026) move ~$41B off its balance sheet, with a ~$13B residual-value guarantee.",
+          "site_page": 1081
+        }
+      }
+    },
+    {
+      "id": "ai_ma",
+      "label": "M&A involving AI companies",
+      "unit": "USD (largest deal; aggregate where available)",
+      "group": "M&A and IPOs",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "$49.9B across 454 deals (AI startups)",
+          "num": 49900000000,
+          "as_of": "FY2024",
+          "source": "Mergermarket, as reported by PYMNTS",
+          "url": "https://www.pymnts.com/artificial-intelligence-2/2025/ai-startup-ma-deal-volume-and-valuation-hit-records/",
+          "confidence": "MEDIUM",
+          "note": "Up 288% in value and 53% in count on 2023. Largest single AI acquisition of 2024 not established.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "Largest: Nvidia-Groq ~$20B licensing deal",
+          "num": 20000000000,
+          "as_of": "Dec 2025",
+          "source": "PitchBook, as reported",
+          "url": "https://www.law360.com/articles/2429074/smaller-ai-deals-have-surged-as-cos-seek-talent-tech-edge",
+          "confidence": "MEDIUM",
+          "note": "A licensing-and-hiring structure, not a standard acquisition. No full-year 2025 aggregate on the Mergermarket basis found. Crunchbase H1 2025: 262 AI M&A deals (+35%). Cognition acquired Windsurf (Jul 2025; site page 966).",
+          "site_page": 966
+        },
+        "2026": {
+          "value": "Largest: SpaceX-xAI combination (xAI at $250B); SpaceX-Anysphere (Cursor) $60B",
+          "num": 60000000000,
+          "as_of": "Feb 2026; 16 Jun 2026",
+          "source": "Bloomberg; SpaceX 8-K, as reported",
+          "url": "https://qz.com/spacex-buying-cursor-anysphere-60-billion-deal-061626",
+          "confidence": "MEDIUM",
+          "note": "num = Cursor deal (third-party acquisition). Crunchbase: acquirers spent at least $119.8B on venture-backed companies (all sectors) in 2026 to date, about half from the Cursor deal. Others: Schneider-PTC ~$22.6B (5 Oct), Nvidia-Hugging Face ~$12.9B (3 Sep), AMD-World Labs $8.2B (Sep), Salesforce-Braze $5.66B (20 Oct).",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "largest_ai_ipo",
+      "label": "Largest AI-related IPO of the year",
+      "unit": "USD raised",
+      "group": "M&A and IPOs",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": null,
+          "confidence": "",
+          "note": "No AI IPO of comparable scale identified.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "CoreWeave $1.5B",
+          "num": 1500000000,
+          "as_of": "28 Mar 2025",
+          "source": "CNBC; Yahoo Finance",
+          "url": "https://finance.yahoo.com/news/coreweave-goes-public-40-per-000805457.html",
+          "confidence": "MEDIUM",
+          "note": "Priced at $40, below a $47-$55 target range; ~$19B basic / ~$23B fully diluted valuation; Nvidia anchored $250M. Largest US tech IPO since 2021.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "SpaceX $75B at $1.77T (includes xAI)",
+          "num": 75000000000,
+          "as_of": "Priced 11 Jun 2026; Nasdaq: SPCX",
+          "source": "NPR; TechRepublic; IPOScoop",
+          "url": "https://www.npr.org/2026/06/11/nx-s1-5853199/spacex-is-poised-for-blastoff-with-an-ipo-likely-to-break-records",
+          "confidence": "MEDIUM",
+          "note": "Largest pure-play AI IPO: Cerebras $5.55B at $185 (May 2026), up 68% on day one. Anthropic filed a public S-1 on 26 Oct 2026 (Nasdaq: ANT; 22 banks); price range and date not set as of 10 Nov 2026.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "cursor_arr",
+      "label": "Cursor (Anysphere) annualised revenue",
+      "unit": "USD (ARR)",
+      "group": "AI-native companies",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$100M",
+          "num": 100000000,
+          "as_of": "Jan 2025",
+          "source": "Company / press reports",
+          "url": "https://www.kucoin.com/news/flash/cursor-surpasses-100m-arr-faster-than-any-software-company-a16z-reports",
+          "confidence": "MEDIUM",
+          "note": "Reached $100M ARR in January 2025, about a year after monetisation (site page 935).",
+          "site_page": 935
+        },
+        "2025": {
+          "value": "~$1B",
+          "num": 1000000000,
+          "as_of": "Nov 2025",
+          "source": "Company (Series D announcement); Bloomberg",
+          "url": "https://techcrunch.com/",
+          "confidence": "MEDIUM",
+          "note": "$500M+ in Jun 2025 at a $9.9B valuation; $2.3B Series D at $29.3B (13 Nov 2025).",
+          "site_page": 381
+        },
+        "2026": {
+          "value": "$2.6B–$4B",
+          "num": null,
+          "as_of": "Jun 2026",
+          "source": "Dealroom ($4B, person familiar); acquisition coverage ($2.6B)",
+          "url": "https://dealroom.co/news/134107-cursor-tops-4b-annualized-revenue/",
+          "confidence": "CONTESTED",
+          "note": "Topped $2B in early Feb 2026 (Bloomberg). Mid-year reports conflict: ~$2.6B vs ~$4B (also $3B in May). CNBC: company projects >$6B by end 2026 (a projection). Acquired by SpaceX for $60B in stock (Jun 2026).",
+          "site_page": 381
+        }
+      }
+    }
+  ],
+  "headlines": {
+    "2024": [
+      "Crunchbase counted more than $100 billion of venture funding to AI companies in 2024, about a third of the roughly $314 billion invested in startups worldwide that year.",
+      "OpenAI raised $6.6 billion at a $157 billion valuation in October 2024, and Databricks' $10 billion round in December 2024 was the largest venture raise of the year, according to Crunchbase.",
+      "Nvidia reported data-centre revenue of $115.2 billion for its fiscal year ended January 2025, roughly calendar 2024, up 142% on the year before.",
+      "OpenAI generated about $3.7 billion of revenue in 2024 and ended the year at an annualised run-rate of about $5.5 billion, according to figures the company confirmed in June 2025.",
+      "Anthropic's S-1, as reported by Reuters in 2026, shows revenue of roughly $400 million and an operating loss of $2.98 billion for 2024."
+    ],
+    "2025": [
+      "Crunchbase counted $202.3 billion of venture funding to AI companies in 2025, close to half of the $425 billion invested globally; the OECD, using a broader definition, put AI's share at 61%, or $258.7 billion of $427.1 billion.",
+      "OpenAI's $40 billion round led by SoftBank in March 2025, at a $300 billion valuation, was the largest venture round of 2025, and an employee share sale in October 2025 valued the company at $500 billion.",
+      "OpenAI booked about $13.07 billion of revenue and a $20.92 billion operating loss in 2025, according to leaked audited accounts reported by the Financial Times.",
+      "Nvidia reported data-centre revenue of $193.7 billion for its fiscal year ended January 2026, roughly calendar 2025, up 68% on the year before.",
+      "Amazon, Alphabet, Meta and Oracle sold about $108 billion of bonds in 2025, according to a Reuters analysis of LSEG data, against an average of about $28 billion a year for the five hyperscalers in 2020–2024 (Bank of America)."
+    ],
+    "2026": [
+      "Crunchbase recorded $679 billion of global venture funding in the first nine months of 2026, a record for that period, with AI companies taking about 80% in the first quarter, more than 70% in the second and 64% in the third.",
+      "OpenAI closed a $122 billion round at an $852 billion post-money valuation on 31 March 2026, the largest private round on record, and on 6 November 2026 closed a first tranche of about $11 billion at a reported $1.25 trillion valuation.",
+      "Anthropic's public S-1, filed on 26 October 2026, reports revenue of $16.3 billion for the first half of 2026, up from about $1.2 billion a year earlier, and an operating profit of $974 million in the second quarter.",
+      "OpenAI told investors its annualised revenue was almost $50 billion at the end of September 2026, according to the Financial Times, CNBC and Reuters.",
+      "Amazon, Alphabet, Microsoft and Meta reported about $207 billion of combined capital expenditure for July–September 2026, and between 26 October and 5 November 2026 Meta, Oracle and Alphabet raised more than $70 billion of new equity and debt, by Report AI's count."
+    ]
+  },
+  "analysis": {
+    "2024": [
+      "2024 was the year AI became the venture market's centre of gravity. Crunchbase counted more than $100 billion of funding to AI companies, about a third of the roughly $314 billion invested worldwide, up more than 80% on 2023, and PitchBook put AI at 46.4% of US deal value. The money was concentrated. Databricks raised $10 billion, OpenAI $6.6 billion at a $157 billion valuation, and xAI $6 billion twice. A handful of labs and data platforms took the cheques that defined the year, while the rest of the venture market stayed close to its 2023 level.",
+      "Revenue was a small fraction of the spending it was meant to justify. OpenAI earned about $3.7 billion and reported losing roughly $5 billion, and Anthropic's S-1 shows about $400 million of revenue against a $2.98 billion operating loss. Amazon, Alphabet, Microsoft and Meta spent about $246 billion on capital expenditure. By our crude gauge, that is about 60 dollars of big-tech capex for every dollar the two leading model makers earned. In June 2024 Sequoia's David Cahn called this gap 'AI's $600B question': the annual revenue the ecosystem would need to earn to pay for the build-out.",
+      "The clearest winner was the supplier. Nvidia's data-centre revenue reached $115.2 billion in the fiscal year to January 2025, up 142%, which made it the one company whose AI income was measurable rather than projected. Exits were scarce: no AI company of scale went public in 2024. Consolidation instead ran through acquisitions and licensing-and-hiring deals; Mergermarket counted $49.9 billion of M&A involving AI startups across 454 deals, both records. The financing pattern of the next two years was already set: private capital for the labs, operating cash flow for the hyperscalers, and very little public-market price discovery."
+    ],
+    "2025": [
+      "In 2025 AI took roughly half of all venture money, and the exact share depends on who is counting. Crunchbase counted $202.3 billion, close to 50% of $425 billion; the OECD counted $258.7 billion, or 61% of $427.1 billion; PitchBook put AI at 65.4% of US deal value. These are differences of definition, not errors, and they should never be mixed in one series. What every tracker agrees on is concentration. OpenAI's $40 billion round at $300 billion was the largest of the year, and five companies each raised more than $5 billion, about a fifth of global venture funding.",
+      "Valuations moved faster than revenue. OpenAI went from $300 billion in March to $500 billion in an October employee share sale. Anthropic's last priced round was $183 billion in September, although the Microsoft and Nvidia investment in November implied about $350 billion. Revenue grew quickly but from a low base: OpenAI booked about $13.07 billion with a $20.92 billion operating loss, and Anthropic about $4.6 billion with an $8.06 billion operating loss. By year end their annualised run-rates were about $20 billion and $9 billion. The big four's capex reached about $410 billion, roughly 23 times the two labs' combined revenue.",
+      "The way AI was financed began to change. Amazon, Alphabet, Meta and Oracle sold about $108 billion of bonds, Meta's $27 billion Hyperion joint venture with Blue Owl became the largest private-credit deal on record, and Morgan Stanley put total data-centre debt issuance at about $182 billion. Nvidia agreed in September to invest up to $100 billion in OpenAI, which would buy Nvidia systems in return; the agreement was still unsigned in December. That deal made circular financing the year's main bubble argument. Public markets were cautious: CoreWeave's IPO raised $1.5 billion at $40 a share, below its target range."
+    ],
+    "2026": [
+      "The scale of private funding in 2026 has no precedent. Crunchbase counted about $300 billion of global venture funding in the first quarter alone, and $679 billion over the first nine months, more than in any previous full year. By our calculation AI companies took about 72% of it, and PitchBook puts AI at 82.7% of US deal value. The largest single cheques went to frontier labs: OpenAI raised $122 billion at $852 billion in March, Anthropic $30 billion at $380 billion in February and $65 billion at $965 billion in May, and xAI $20 billion before it merged into SpaceX. Concentration, not breadth, explains the record.",
+      "Revenue is now arriving at scale, but the two leading labs do not report it on the same basis. Anthropic's S-1 shows $16.3 billion of revenue in the first half of 2026 and its first operating profit, $974 million, in the second quarter. OpenAI reported about $12.4 billion for the same half and a run-rate of almost $50 billion by September, compared with Anthropic's more than $65 billion at the end of July. Anthropic counts some cloud-partner revenue gross, and OpenAI does not, so a direct comparison is CONTESTED. Losses remain very large: OpenAI's operating loss was about $21.6 billion in the half year, and Anthropic's net loss of about $80 billion was mostly a non-cash charge.",
+      "The exit market reopened in 2026, and AI is driving it. Cerebras raised $5.55 billion in May. SpaceX, which absorbed xAI at a $250 billion valuation in February, raised $75 billion at $1.77 trillion in June. Days later it agreed to buy Cursor's maker, Anysphere, for $60 billion in stock, the largest acquisition of a venture-backed startup. Anthropic filed its public S-1 on 26 October without a price range. Outside the US, DeepSeek took outside money for the first time: about $7.4 billion around mid-year and about $15–16 billion in October, at a valuation reported between $74 billion and $90 billion.",
+      "The bubble indicators point in two directions. The ratio of big-four capex to the two labs' revenue has narrowed from about 60 times in 2024 to about 13 times on 2026 guidance, so the revenue gap is closing. How the spending is paid for, however, has become riskier. Hyperscaler bond issuance reached about $194 billion by early July, Meta raised about $35 billion of equity, Oracle paid coupons of up to 8.65%, and a data-centre loan backed by an Anthropic contract was marketed at 11% or more. Nikkei counts about $1.65 trillion of off-balance-sheet obligations. OpenAI's latest round priced at $1.25 trillion, below its $1.4–1.5 trillion ask."
+    ]
+  },
+  "takeaways_2026": [
+    "Private capital hit records: $679 billion of global venture funding in January–September 2026 (Crunchbase), about 72% of it to AI by our calculation, led by OpenAI's $122 billion round at $852 billion.",
+    "Frontier-lab revenue is now measured in tens of billions: Anthropic reported $16.3 billion of revenue in H1 2026 in its 26 October S-1, and OpenAI's run-rate was almost $50 billion at the end of September; the two report on different bases.",
+    "Exits reopened: Cerebras ($5.55 billion, May), SpaceX including xAI ($75 billion at $1.77 trillion, June), SpaceX's $60 billion purchase of Cursor, and Anthropic's public S-1 make 2026 the first year of AI liquidity at scale.",
+    "The build-out is increasingly debt- and equity-financed: about $194 billion of hyperscaler bonds by July, more than $70 billion of new equity and debt from Meta, Oracle and Alphabet in late October–early November, and about $1.65 trillion of off-balance-sheet obligations (Nikkei)."
+  ],
+  "yoy_takeaways": [
+    "AI's share of global venture funding rose from about a third in 2024 to about half in 2025 and about 72% in January–September 2026 (Crunchbase basis; 2026 is Report AI's calculation from quarterly figures).",
+    "OpenAI's valuation rose from $157 billion (October 2024) to $500 billion (October 2025) to a reported $1.25 trillion (November 2026); Anthropic's priced valuation went from about $18 billion (early 2024) to $183 billion (September 2025) to $965 billion (May 2026).",
+    "Model-maker revenue grew far faster than capex: OpenAI's recognised revenue went from about $3.7 billion (2024) to $13.07 billion (2025), and Anthropic's from about $0.4 billion to $4.6 billion to $16.3 billion in H1 2026 alone, narrowing big-four capex per lab revenue dollar from about 60x to 23x to about 13x on 2026 guidance.",
+    "Nvidia's data-centre revenue went from $115.2 billion (fiscal year to January 2025) to $193.7 billion (to January 2026) to $164.2 billion in the first half of fiscal 2027 alone, while the financing of AI shifted from cash flow to bonds, equity and off-balance-sheet vehicles."
+  ],
+  "faq_2026": [
+    {
+      "q": "How much venture capital went into AI in 2026?",
+      "a": "Crunchbase recorded $679 billion of global venture funding in January–September 2026, a record for any nine-month period. AI companies took about $242 billion (roughly 80%) in the first quarter, more than 70% of $205 billion in the second, and $102 billion (64%) in the third; Report AI calculates the year-to-date AI total at about $488 billion, or roughly 72%. PitchBook-NVCA puts AI at 82.7% of US deal value through September 2026."
+    },
+    {
+      "q": "What is OpenAI's valuation and revenue in 2026?",
+      "a": "OpenAI closed a $122 billion round at an $852 billion post-money valuation on 31 March 2026, and on 6 November 2026 Bloomberg and Reuters reported a first close of about $11 billion at a $1.25 trillion valuation, below an earlier $1.4–1.5 trillion ask. OpenAI told investors its annualised revenue was almost $50 billion at the end of September 2026 (Financial Times, CNBC, Reuters); recognised revenue was about $12.4 billion in the first half of 2026, as reported by The Information."
+    },
+    {
+      "q": "What does Anthropic's S-1 show?",
+      "a": "Anthropic's public S-1, filed on 26 October 2026 for a Nasdaq listing under the ticker ANT, reports revenue of $16.3 billion for the first half of 2026, up from about $1.2 billion a year earlier, $11.6 billion of revenue in the second quarter and a $974 million operating profit in that quarter. It also shows 2025 revenue of about $4.6 billion with an $8.06 billion operating loss. A half-year net loss of about $80 billion is mostly a non-cash fair-value charge. The filing sets no price range; Anthropic's last private valuation was $965 billion in May 2026."
+    },
+    {
+      "q": "Is AI a bubble? What do the financial indicators say?",
+      "a": "The evidence cuts both ways. Revenue is catching up: Report AI calculates that Amazon, Alphabet, Microsoft and Meta spent about 60 dollars of capex per dollar of OpenAI and Anthropic revenue in 2024, about 23 in 2025 and about 13 on 2026 guidance. Financing risk is rising: the four companies reported about $207 billion of capex in July–September 2026, free cash flow turned negative at Meta, Alphabet and Amazon, hyperscalers issued about $194 billion of bonds by early July 2026, and Nikkei counts about $1.65 trillion of off-balance-sheet obligations (July 2026). Circular deals, such as Nvidia's $30 billion stake in OpenAI's March 2026 round, mean that some demand is supplier-financed."
+    },
+    {
+      "q": "Which AI companies went public or were acquired in 2026?",
+      "a": "Cerebras raised $5.55 billion at $185 a share in May 2026, the largest pure-play AI IPO of the year so far. SpaceX, which combined with xAI in February 2026 at a $250 billion valuation for xAI, raised $75 billion at a $1.77 trillion valuation when it listed on Nasdaq on 12 June 2026. SpaceX then agreed on 16 June 2026 to buy Anysphere, the maker of Cursor, for $60 billion in stock. Anthropic filed a public S-1 on 26 October 2026 but had not priced its offering as of 10 November 2026."
+    }
+  ],
+  "stop_quoting": [
+    {
+      "claim": "OpenAI's annualised revenue is about $25 billion.",
+      "fact": "That was the early-2026 figure. OpenAI told investors its run-rate was almost $50 billion at the end of September 2026 (Financial Times, CNBC, Reuters).",
+      "link": "/indexes/ai-economics/llm-market-statistics-2026/"
+    },
+    {
+      "claim": "OpenAI's annualised revenue is $70 billion.",
+      "fact": "Reports of $68–70 billion counted gross revenue from partners; on its own reporting basis OpenAI's run-rate was almost $50 billion at the end of September 2026. $70 billion or more is a target for the end of 2026, not an outcome.",
+      "link": null
+    },
+    {
+      "claim": "Anthropic's run-rate is about $47 billion.",
+      "fact": "That was May 2026. Bloomberg reported more than $65 billion at the end of July 2026; later estimates of $70–80 billion are unconfirmed, and the S-1 leaves the 31 October run-rate blank.",
+      "link": "/indexes/ai-economics/ai-native-companies-2026/"
+    },
+    {
+      "claim": "Anthropic was valued at $183 billion at the end of 2025.",
+      "fact": "$183 billion was its last priced round (Series F, September 2025). The Microsoft and Nvidia investment in November 2025 implied about $350 billion. Anthropic was valued at $380 billion in February 2026 and $965 billion in May 2026.",
+      "link": "/indexes/ai-economics/ai-investment-funding-statistics-2026/"
+    },
+    {
+      "claim": "OpenAI is valued at $852 billion.",
+      "fact": "True as of 31 March 2026. A first close of about $11 billion on 6 November 2026 valued OpenAI at a reported $1.25 trillion.",
+      "link": "/reports/openai-122-billion-funding-round-852-billion-valuation/"
+    },
+    {
+      "claim": "Anthropic is going public at a $965 billion valuation.",
+      "fact": "$965 billion was the private Series H valuation of May 2026. The public S-1 of 26 October 2026 sets no price range; reported IPO valuation talk (about $1.5 trillion) is not a priced figure.",
+      "link": "/reports/anthropic-ipo-s1-filing-965-billion-valuation/"
+    },
+    {
+      "claim": "Anthropic lost $80 billion in the first half of 2026 (or OpenAI lost $38.5 billion in 2025).",
+      "fact": "Both are net losses driven mainly by non-cash fair-value or restructuring charges (about $72.4 billion and $41.55 billion). Operating results: Anthropic lost $693 million in H1 2026 with a Q2 operating profit of $974 million, and OpenAI's 2025 operating loss was $20.92 billion.",
+      "link": null
+    },
+    {
+      "claim": "Hyperscaler capex will exceed $600 billion in 2026.",
+      "fact": "Superseded. Q3 2026 guidance from Alphabet ($195–205B), Meta ($135–145B), Amazon (~$220B) and Microsoft (~$170B) sums to about $720–740 billion for the four alone, a forecast rather than an outcome.",
+      "link": "/reports/ai-market-pulse/"
+    },
+    {
+      "claim": "Nvidia is investing $100 billion in OpenAI.",
+      "fact": "The September 2025 agreement was a letter of intent for up to $100 billion, still unsigned in December 2025 and reported as stalled in early 2026. Nvidia's confirmed commitment is $30 billion in OpenAI's March 2026 round.",
+      "link": "/indexes/ai-economics/ai-bubble-tracker/"
+    },
+    {
+      "claim": "Cursor has about $2 billion in annual revenue and is valued at $29.3 billion.",
+      "fact": "Cursor topped $2 billion ARR in February 2026; mid-2026 reports range from $2.6 billion to $4 billion. SpaceX agreed to acquire its maker, Anysphere, for $60 billion in stock in June 2026.",
+      "link": "/indexes/ai-economics/ai-native-companies-2026/"
+    }
+  ],
+  "related_pages": [
+    73,
+    967,
+    381,
+    321,
+    716,
+    572,
+    3441,
+    1081,
+    1421,
+    1387,
+    968,
+    966,
+    935,
+    956,
+    954,
+    969,
+    2553,
+    358,
+    322,
+    392,
+    3227
+  ],
+  "gaps": [
+    "No primary document could be opened: WebFetch failed (hosts outside the session's allowed network, e.g. thenextweb.com, fourweekmba.com), so no figure is rated HIGH; all rest on WebSearch summaries of secondary reporting. The Anthropic S-1 on EDGAR, Nvidia's 8-Ks and the PitchBook-NVCA PDFs should be read at source to upgrade.",
+    "The WebSearch budget for the session ran out before the M&A and 2024 checks were complete. Not re-verified this session: Anthropic's early-2024 $18.4B valuation and Mistral's June 2024 ~EUR5.8B valuation, taken from consistent 2024 reporting. The largest AI acquisition of 2024 and a full-year 2025 AI M&A aggregate on the Mergermarket basis were not found.",
+    "No full-year 2024 OECD AI VC share was found; OECD gives 30% (2022) and 61% (2025) only, so the OECD series is used as a note, not a metric.",
+    "Crunchbase has not published a nine-month 2026 AI dollar total that we found, and its Q2 2026 AI dollar figure is published only as 'more than 70%'. The ~$488B / ~72% year-to-date figures are DERIVED lower bounds.",
+    "Like-for-like hyperscaler bond issuance for 2024 was not found (only BofA's 2020–2024 average of ~$28B a year). 2026 bond totals after 7 July are not consolidated. Morgan Stanley's 2024 data-centre debt base and a 2026 equivalent were not found.",
+    "OpenAI's 2024 loss (~$5B) is a reported projection with unclear basis (operating vs net). OpenAI cash burn for 2025 (~$8B adjusted estimate) and full-year 2026 (projections from $14B to $27B, GAAP estimates higher) are CONTESTED and not used as metric values.",
+    "Anthropic's run-rate after July 2026 is unconfirmed ($70B–$80B+ estimates; $100B claim uncorroborated). Anthropic's IPO price, date and proceeds were not set as of 10 Nov 2026.",
+    "Cursor's mid-2026 ARR is CONTESTED ($2.6B vs $4B). Whether the SpaceX–Anysphere acquisition closed (one source says 15 Aug 2026) is single-sourced.",
+    "DeepSeek's October 2026 round size ($15B–$15.9B) and valuation ($74B pre, ~$86B post, or $90B) are CONTESTED. Its first-round terms (~$7.4B at $52B–$59B) are MEDIUM.",
+    "xAI's 2025 valuation is CONTESTED (CNBC's $200B report was denied by Musk; ~$75B was reported in July 2025). The xAI–X merger valuation of March 2025 was not verified this session.",
+    "Status of Nvidia's $100B OpenAI letter of intent in late 2026 is not confirmed; Nvidia's Q3 FY2027 results (due late Nov 2026) are not yet available.",
+    "Site pages 73, 321, 381, 47 and 967 carry stale OpenAI/Anthropic run-rates ($25B, $47B), Anthropic's '$183B end-2025' and '$600B+ hyperscaler capex in 2026'; page 358's stat tile '$37B' sits next to 'of global VC went to AI' in the plain-text corpus and should be checked for a label mismatch."
+  ]
+}
