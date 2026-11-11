@@ -1367,3 +1367,22 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
 - **388 TaaS:** $206.5B clarified (software with agent capabilities; standalone line ~$29B).
 - **Due from the Pulse research:** ChatGPT 1.2B weekly (contested), Anthropic public S-1 (572
   stale), token index October readings (421), Doubao 419M (2589, 3227).
+
+## 10–11 Nov 2026 — ChatGPT weekly users 900M+ → 1B+; Chinese characters removed
+
+- **ChatGPT weekly active users:** 900M+ (OpenAI, 27 Feb 2026) → **1B+ (OpenAI, 31 Aug 2026)**.
+  OpenAI's "1.2B weekly users" (DevDay, 29 Sep 2026) is reported as "collective", possibly
+  beyond ChatGPT, and is not used as the ChatGPT figure. MEDIUM. Plan and checker:
+  `content-ops/research/chatgpt-1b-edit-plan.json`, `check_plan.py`.
+  Updated: 969 (with What-changed block, 11 Nov), 3227, 2589, 43, 47, 39, 393, 392, 6, 450, 970.
+  **Not yet updated (dated "Feb 2026" mentions, true as dated but stale):** 321, 317, 318, 62,
+  1196, 957 (800M), 716, 362; AI Market Pulse (3441) still says "1.2 billion, CONTESTED" —
+  resolve to 1B+ (31 Aug) / 1.2B collective (29 Sep) in the December edition.
+  **43 and 47 still carry "Updated Jun 2026" stamps and June dateModified**: they need a full
+  refresh with What-changed blocks (planned as part of State of AI Usage).
+  CSVs for 43, 47, 2589 not regenerated yet.
+- **Other stale figures found:** Gemini now 1B+ MAU (28 Oct 2026); Doubao 419M MAU (Q3 2026);
+  OpenAI revenue run-rate ~$50B (Sept 2026) vs "$25B" on 47/321/393/969.
+- **Chinese characters removed** from 3227 and 2589 (unit explained as "yi", 100 million);
+  all 153 pages and 36 posts scanned clean. Day 3 social card re-made (v2).
+- **Owner request:** restructure into a citable series → `content-ops/state-of-ai-series-proposal.md`.
