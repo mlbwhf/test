@@ -1,0 +1,19 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,1,Metric,Deep Research on Humanity's Last Exam
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,1,Figure,26.6%
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,1,Source,OpenAI
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,2,Metric,"Gemini Deep Think, IMO 2025"
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,2,Figure,35/42 (gold)
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,2,Source,Google DeepMind
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,3,Metric,Frontier HLE one-year gain
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,3,Figure,+30pp
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,3,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,4,Metric,SWE-bench solve rate (2023→2024)
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,4,Figure,4.4% → 71.7%
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,4,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,5,Metric,MMLU saturation
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,5,Figure,>92%
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,5,Source,Stanford HAI
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,6,Metric,Inference cost decline (2022→2024)
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,6,Figure,~280×
+https://report-ai.org/indexes/technical-benchmarks/test-time-compute-reasoning-2026/,2026-07-24,1,The numbers in full,6,Source,Stanford HAI

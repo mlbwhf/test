@@ -1,0 +1,821 @@
+{
+  "theme": "industries",
+  "subtitle": "Adoption, spending and measured outcomes in healthcare, finance, software, retail, manufacturing, education, legal, marketing and government, 2024 to 2026",
+  "at_a_glance": [
+    "Ramp's AI Index showed 55.9% of US businesses on its platform paying for AI tools in September 2026; in August, technology firms were at 80.9% and accommodation and food services at 33.1%, a gap of about 2.4 to 1.",
+    "The US Census Bureau's Business Trends and Outlook Survey found 19.8% of US employer businesses using AI as of 3 May 2026, with the information sector at 39.7% and finance and insurance at 33.9%.",
+    "The American Medical Association found that 81% of US physicians used AI in their practice in a survey of 1,692 physicians fielded from 15 January to 2 February 2026, up from 66% in November 2024.",
+    "The FDA's AI-Enabled Medical Device List reached 1,614 entries in its 4 September 2026 update, after a record 335 AI device authorizations with 2025 decision dates (other counts of 2025 range from 295 to 333).",
+    "HEPI found that 95% of UK full-time undergraduates used AI in December 2025, and Clio's 2026 Legal Trends Report found that 85% of legal professionals reported some level of AI adoption at their firms.",
+    "IDC estimated that banks spent about $31.3 billion on AI in 2024, more than any other industry, while Menlo Ventures found healthcare the largest buyer of vertical generative-AI software at $1.5 billion in 2025.",
+    "Controlled studies show smaller gains than adoption rates suggest: a JAMA multisite study published in April 2026 found ambient AI scribes cut documentation time by about 16 minutes a day, and METR's July 2025 trial found experienced developers 19% slower with early-2025 AI tools."
+  ],
+  "chapters": [
+    {
+      "kicker": "1. Adoption across sectors",
+      "action_title": "Every comparable survey ranks information, finance and professional services first and hospitality, construction and retail last, with a gap of more than two to one",
+      "paras": [
+        "Three survey families measure AI adoption by industry, and each answers a different question. Ramp's AI Index records whether a business on its card and bill-pay platform pays for an AI subscription or contract. The US Census Bureau's Business Trends and Outlook Survey (BTOS) asks a representative sample of employer businesses whether they used AI in any of 15 business functions. Eurostat asks EU enterprises with ten or more employees whether they use specific AI technologies. Their levels differ by a factor of two to three: in mid-2026 Ramp put paid adoption at 55.9%, the Census Bureau put use at 19.8% and Eurostat's latest reading, for 2025, was 19.95%. Because of that spread, this report never places two of these surveys on one chart. Within each survey the sector ranking is consistent, and that ranking is the most reliable finding available.",
+        "Ramp's August 2026 breakdown is the most detailed single-survey view. Technology firms led at 80.9%, followed by finance at 73.7% and manufacturing at 61.1%. Retail stood at 48.8%, health care at 43.4%, construction at 42.2% and accommodation and food services at 33.1%, against 55.2% for all businesses. The top sector is about 2.4 times the bottom one. Manufacturing's position above retail and health care is notable: Ramp counts any paid AI tool, and manufacturers buy software for design, maintenance and back-office work even where the factory floor is unchanged. Health care's low firm-level figure sits beside very high individual use by physicians, a contrast discussed in chapter 2. Ramp's customers lean towards technology-forward and venture-backed firms, so the absolute levels overstate adoption in the wider economy.",
+        "The Census Bureau's representative survey gives the same order at lower levels. As of 3 May 2026, 39.7% of information-sector businesses and 33.9% of finance and insurance businesses used AI, against a national rate of 19.8%; retail trade was at about 14%. Firm size matters as much as industry: 37% of businesses with 250 or more employees used AI. Eurostat's 2025 data show the same shape in Europe. The information and communication sector reached 62.52% and professional, scientific and technical services 40.43%, while every other activity was below 25%, with construction at 10.79%. Only the top two EU sectors could be verified at sector level; other values circulating online could not be matched to Eurostat's table and are not used here.",
+        "The trend lines show steady rather than explosive growth. Ramp's overall measure rose from 36.4% in November 2024 to 46.6% in December 2025 and 55.9% in September 2026. Finance and insurance climbed faster, from 51.2% to 58.1% to 73.7% in August 2026, overtaking manufacturing and closing on technology. The Census national rate stayed between 17% and 20% from December 2025 to May 2026 on its new question. Two cautions apply. Ramp expanded its sample to more than 70,000 businesses in June 2026 and revises past months, and the Census Bureau changed its question in November 2025, which roughly doubled the measured rate overnight. Neither break invalidates the ranking, but both make year-on-year growth rates less certain than the headline figures imply.",
+        "The pattern is consistent with what AI tools currently do. Text drafting, coding, search and summarization are useful wherever work is digital and done at a desk, which describes most of the information, finance and professional-services workforce. In hospitality, construction and retail, much of the work is physical or customer-facing, and AI arrives first in back-office functions such as marketing, finance and customer service. McKinsey's 2026 survey found 89% of organizations using AI in at least one function, but that survey covers mostly large firms, and only 37% of respondents reported any EBIT impact. Industry adoption is no longer a question of whether firms use AI at all; it is a question of how many functions, how intensively and with what measurable effect."
+      ],
+      "exhibits": [
+        {
+          "title": "Technology firms are about 2.4 times as likely as hospitality firms to pay for AI tools",
+          "subtitle": "Share of US businesses on Ramp with a paid AI subscription or contract, by industry, August 2026, %",
+          "type": "hbar",
+          "unit": "% of businesses",
+          "series": [
+            {
+              "name": "Paying for AI tools, Aug 2026",
+              "points": [
+                [
+                  "Technology",
+                  80.9
+                ],
+                [
+                  "Finance & insurance",
+                  73.7
+                ],
+                [
+                  "Manufacturing",
+                  61.1
+                ],
+                [
+                  "All businesses",
+                  55.2
+                ],
+                [
+                  "Retail",
+                  48.8
+                ],
+                [
+                  "Health care",
+                  43.4
+                ],
+                [
+                  "Construction",
+                  42.2
+                ],
+                [
+                  "Accommodation & food",
+                  33.1
+                ]
+              ]
+            }
+          ],
+          "source": "Source: Ramp AI Index (industry values via MacroMicro's chart of the index; all-business value from Ramp's table); Report AI analysis",
+          "notes": "Single survey only. Ramp assigns firms to sectors with a model based on NAICS; its own table labels the top sector 'information' at 80.0% for August 2026 (79.9% in September). Ramp's customer base leans towards technology-forward and venture-backed firms, so levels are higher than in representative surveys such as Census BTOS (19.8% nationally, May 2026). Ramp expanded its sample in June 2026 and revises history. Ratio 80.9 / 33.1 = 2.4 (DERIVED).",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "Paid AI adoption rose about 19 points in under two years, and finance rose faster than the average",
+          "subtitle": "Share of US businesses on Ramp paying for AI tools, all businesses and finance and insurance, %, selected months",
+          "type": "line",
+          "unit": "% of businesses",
+          "series": [
+            {
+              "name": "All businesses",
+              "points": [
+                [
+                  "Nov 2024",
+                  36.4
+                ],
+                [
+                  "Dec 2025",
+                  46.6
+                ],
+                [
+                  "Aug 2026",
+                  55.2
+                ]
+              ]
+            },
+            {
+              "name": "Finance & insurance",
+              "points": [
+                [
+                  "Nov 2024",
+                  51.2
+                ],
+                [
+                  "Dec 2025",
+                  58.1
+                ],
+                [
+                  "Aug 2026",
+                  73.7
+                ]
+              ]
+            }
+          ],
+          "source": "Source: Ramp AI Index (FRED series RAMPAIALL and RAMPAIFINANCE; Ramp January 2026 update; MacroMicro chart); Report AI analysis",
+          "notes": "Only dated readings are plotted; the path between them was not linear (for example, a February 2026 reading shows 49.1% overall and 66.6% for finance). September 2026 overall: 55.9%. Information-sector firms were at 65.9% in November 2024 and 80.0% in August 2026; no December 2025 value was found, so that series is not plotted. Ramp expanded its sample in June 2026. 55.2 - 36.4 = 18.8 points (DERIVED).",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Why the adoption surveys disagree on levels but not on rankings",
+        "body": "Ramp measures payment: a firm counts if it buys an AI subscription through Ramp, and Ramp's customers are disproportionately technology-forward, so its levels run high (55.9% in September 2026). The Census Bureau's BTOS measures use: a representative sample of US employer businesses is asked whether AI was used in any of 15 functions, and many small firms say no (19.8% in May 2026). Eurostat measures specific technologies among EU firms with ten or more employees (19.95% in 2025). Each method has a different denominator and a different definition of 'use', so their levels cannot be compared. All three, however, rank information and professional or financial services first and construction, hospitality and retail last."
+      }
+    },
+    {
+      "kicker": "2. Healthcare",
+      "action_title": "Healthcare moved from pilots to practice: 81% of US physicians use AI and the FDA authorized a record number of AI devices in 2025, but measured gains remain narrow",
+      "paras": [
+        "Physician adoption has risen faster than in almost any other profession. The American Medical Association found 38% of US physicians using AI in 2023, 66% in November 2024 and 81% in a survey of 1,692 physicians fielded from 15 January to 2 February 2026. The average physician now reports 2.3 use cases, up from 1.1 in 2023, and the share using AI to summarize medical research rose from 13% in 2024 to 39% in 2026. These are self-reported uses and mostly administrative or informational: drafting documentation, summarizing literature and answering questions. They do not mean that 81% of diagnoses involve AI. No AMA wave was fielded in calendar 2025, so the series has a gap between the November 2024 and early-2026 readings.",
+        "Institutions are moving more slowly than their clinicians. Menlo Ventures estimated in October 2025 that 22% of US healthcare organizations had implemented domain-specific AI tools, which it described as seven times the 2024 level, implying roughly 3% a year earlier. Health systems led at 27%, outpatient providers were at 18% and payers at 14%. Menlo put healthcare AI spending at $1.4 billion in 2025, nearly triple 2024, and its enterprise survey ranked healthcare first among vertical generative-AI buyers at $1.5 billion. At firm level the sector still trails: Ramp's August 2026 data show 43.4% of health-care businesses paying for AI tools, below the 55.2% average, because many small practices do not buy AI software even when their physicians use general-purpose chatbots.",
+        "The regulatory pipeline has grown every year since 2019. The September 2026 snapshot of the FDA's AI-Enabled Medical Device List attributes 80 authorizations to 2019, 114 to 2020, 130 to 2021, 163 to 2022, 226 to 2023, 235 to 2024 and 335 to 2025. The cumulative list stood at 1,016 entries in December 2024, about 1,430 by the end of 2025 and 1,614 in its 4 September 2026 update, which covers decisions through 29 June 2026. Third-party quarterly counts put the first half of 2026 at roughly 167 to 178 authorizations, broadly in line with the 2025 pace. Counts of 2025 itself differ by method, from 295 for 510(k) clearances alone to 335 on the full list, so the year is rated CONTESTED. About three-quarters of all listed devices are in radiology.",
+        "Outcome evidence is real but narrower than the adoption figures. The strongest result remains the MASAI randomized trial of more than 100,000 Swedish women, in which AI-supported mammography reading detected 29% more cancers without more false positives and cut radiologists' reading workload by 44% (site page 863). For ambient AI scribes, the most widely deployed generative tool, a JAMA multisite study of more than 1,800 users and 6,770 controls published in April 2026 found documentation time fell by about 16 minutes a day, roughly 10%, and total electronic-record time by about 13 minutes, or 3%. Only 32% of users were heavy users, and they saw larger gains. Earlier pre/post studies reported burnout falling from 51.9% to 38.8% after 30 days, but they had no control group and low response rates.",
+        "The data cannot yet show whether AI improves patient outcomes at scale. The FDA list counts authorizations, not deployments or clinical effects, and the agency itself says the list is not comprehensive. Most authorized devices reach market through the 510(k) pathway, which requires equivalence to an existing device rather than new outcome trials. Physician surveys measure use, not accuracy. Patient attitudes also lag: a Pew Research Center survey found 60% of US adults would be uncomfortable if their provider relied on AI for diagnosis and treatment (2023; site page 863). The next stage of evidence will need trials that link AI deployment to diagnoses, readmissions or mortality, not only to time saved. Nor does any public source track how often clinicians override or ignore AI output."
+      ],
+      "exhibits": [
+        {
+          "title": "FDA AI device authorizations more than quadrupled between 2019 and 2025, with the largest annual increase in 2025",
+          "subtitle": "AI-enabled medical device authorizations by FDA decision year, 2019-2025, number of devices (FDA list, September 2026 snapshot)",
+          "type": "line",
+          "unit": "devices",
+          "series": [
+            {
+              "name": "FDA AI device authorizations",
+              "points": [
+                [
+                  "2019",
+                  80
+                ],
+                [
+                  "2020",
+                  114
+                ],
+                [
+                  "2021",
+                  130
+                ],
+                [
+                  "2022",
+                  163
+                ],
+                [
+                  "2023",
+                  226
+                ],
+                [
+                  "2024",
+                  235
+                ],
+                [
+                  "2025",
+                  335
+                ]
+              ]
+            }
+          ],
+          "source": "Source: US FDA AI-Enabled Medical Device List, as tabulated by The Medical Futurist (2021-2023), OneDayAdvisor (2019-2020) and aiadoption.org (2023-2025); Report AI analysis",
+          "notes": "Counts by decision date from the list as it stood in September 2026; the FDA back-fills the list, so earlier snapshots show lower counts (2022 was first reported as 91). 2025 is CONTESTED: other counts are 331, 333 and 295 (510(k) only). Partial 2026 (January-June: about 167-178) is excluded because it is not a full year. 335 / 80 = 4.2 (DERIVED).",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "Physician AI use more than doubled in under three years, to 81% in early 2026",
+          "subtitle": "Share of US physicians using AI in their practice, AMA surveys, %",
+          "type": "bar",
+          "unit": "% of physicians",
+          "series": [
+            {
+              "name": "Physicians using AI",
+              "points": [
+                [
+                  "2023",
+                  38
+                ],
+                [
+                  "Nov 2024",
+                  66
+                ],
+                [
+                  "Jan-Feb 2026",
+                  81
+                ]
+              ]
+            }
+          ],
+          "source": "Source: American Medical Association physician surveys on augmented intelligence (2023; Nov 2024, n=1,183; Jan-Feb 2026, n=1,692)",
+          "notes": "Self-reported use of any AI in practice, including administrative and research tasks. No wave was fielded in calendar 2025, so the gap between bars is uneven.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "How the FDA list counts AI devices",
+        "body": "The FDA's AI-Enabled Medical Device List records devices authorized for marketing in the US that the agency identifies as using AI, dated by decision. It is updated periodically and back-filled, so the count for any past year tends to rise in later snapshots; 2022, for example, was first reported as 91 and now shows about 163. Third parties count the same list differently: some include only 510(k) clearances, others all pathways. The FDA states that the list is not a comprehensive resource. An authorization means a device may be sold, not that it is in use or that it improves outcomes. We therefore plot one snapshot consistently and label 2025 CONTESTED."
+      }
+    },
+    {
+      "kicker": "3. Financial services and software",
+      "action_title": "Finance and software lead on adoption and spending, but the best controlled evidence on productivity is mixed",
+      "paras": [
+        "Financial services is the most AI-intensive industry outside technology itself. Ramp's data show finance and insurance firms paying for AI rising from 51.2% in November 2024 to 58.1% in December 2025 and 73.7% in August 2026. The Census Bureau found 33.9% of finance and insurance businesses using AI as of May 2026, second only to the information sector. Gallup's May 2026 workplace data show the same order for daily use by employees: 42% in technology, 27% in finance and 22% in professional services, with the other seven industries between 9% and 15%. IDC estimated that banks spent about $31.3 billion on AI in 2024, more than 20% of all AI spending tracked by its industry guide, making banking the largest-spending vertical.",
+        "The largest banks report deployment at scale, mostly through their own disclosures. JPMorgan Chase expects about $19.8 billion of technology spending in 2026, up roughly 10%; reports of the AI-specific share differ, at $1.2 billion or about $2 billion, so the allocation is rated CONTESTED. Its president put the annual business value of AI tools at $1 billion to $1.5 billion, and the bank said its internal LLM Suite was used by about 150,000 employees weekly in February 2026. Bank of America's Erica assistant handled 676 million client interactions in 2024 and nearly 700 million in 2025, passing 3.2 billion cumulative interactions by the end of 2025. Annual Erica use grew only about 3% in 2025, a sign that mature consumer-facing assistants grow with the customer base rather than with AI capability.",
+        "Fraud detection is the oldest and best-documented banking use, but most outcome figures come from vendors. Mastercard says its Decision Intelligence Pro model improves fraud detection by about 20% on average and cuts false positives by up to 85%, scoring transactions in under 50 milliseconds; Danske Bank reported roughly 60% fewer false positives after moving to machine-learning models (site page 468). These are company analyses on their own data. The scale of the problem is independently measured: the Nilson Report put global card fraud losses at about $33.41 billion in 2024, slightly lower than in 2023. A falling loss total is consistent with better detection but cannot be attributed to AI alone. Losses are concentrated in the United States, which accounts for about a quarter of card volume but close to 42% of losses.",
+        "Software development has the highest practitioner adoption of any occupation surveyed. Stack Overflow's developer survey found 62% of developers using AI tools in 2024 and 78% in 2025; in 2026 only 17.2% said they used no AI tools, implying about 83% use on a reworded question. Daily use rose from 47.1% in 2025 to 58% in Stack Overflow's March 2026 analysis. GitHub Copilot had 4.7 million paid subscribers at the end of 2025, about 75% more than a year earlier, and Microsoft reported 50 million Copilot users in mid-2026. Menlo Ventures found coding accounted for about 55% of departmental generative-AI spending in 2025 (site page 376). Coding agents are spreading too: an arXiv study found traces of coding-agent use in 22% to 29% of GitHub projects as of February 2026 (site page 862).",
+        "Productivity evidence in software is more cautious than adoption suggests. Trust in the accuracy of AI tools fell from 43% of developers in 2024 to 33% in 2025, and in 2026 only 6.6% said they would trust AI output for important decisions. The only randomized trial of experienced developers in their own codebases, published by METR in July 2025, found that 16 open-source developers took 19% longer on 246 tasks when allowed early-2025 AI tools, even though they expected to be faster. The study is small and the tools have since improved, but it is a reminder that self-reported time savings and measured output can differ. No large controlled study of AI's effect on software output across firms has yet been published."
+      ],
+      "exhibits": [
+        {
+          "title": "Finance adoption and developer use rose every year, while developer trust in AI accuracy fell",
+          "subtitle": "Selected indicators for financial services and software, latest reading in each year",
+          "type": "table",
+          "unit": "",
+          "table": {
+            "columns": [
+              "Indicator",
+              "2024",
+              "2025",
+              "2026 to date",
+              "Source"
+            ],
+            "rows": [
+              [
+                "Finance & insurance firms paying for AI",
+                "51.2% (Nov)",
+                "58.1% (Dec)",
+                "73.7% (Aug)",
+                "Ramp AI Index"
+              ],
+              [
+                "Finance & insurance firms using AI",
+                "n/a",
+                "n/a",
+                "33.9% (May)",
+                "Census BTOS"
+              ],
+              [
+                "Employees using AI daily: tech / finance",
+                "n/a",
+                "n/a",
+                "42% / 27% (May)",
+                "Gallup"
+              ],
+              [
+                "Erica cumulative interactions",
+                "2.5B+",
+                "3.2B+",
+                "3.4B+",
+                "Bank of America"
+              ],
+              [
+                "Developers using AI tools",
+                "62%",
+                "78%",
+                "~83% (DERIVED)",
+                "Stack Overflow"
+              ],
+              [
+                "Developers trusting AI accuracy",
+                "43%",
+                "33%",
+                "n/a",
+                "Stack Overflow"
+              ],
+              [
+                "GitHub Copilot paid subscribers",
+                "~2.7M (DERIVED)",
+                "4.7M",
+                "not disclosed",
+                "Microsoft"
+              ],
+              [
+                "Time on tasks with AI, METR trial",
+                "n/a",
+                "+19% (slower)",
+                "n/a",
+                "METR"
+              ]
+            ]
+          },
+          "source": "Source: Ramp AI Index; US Census Bureau BTOS (26 May 2026); Gallup workplace AI indicator (May 2026); Bank of America; CMSWire; Stack Overflow Developer Surveys 2024-2026; Microsoft earnings; METR (Jul 2025)",
+          "notes": "Gallup daily-use figures: technology 42%, finance 27%, professional services 22%, other industries 9-15% (Gallup, May 2026). Census uses a new question from November 2025. Stack Overflow 2026 = 100% - 17.2% reporting no AI tools (DERIVED; wording changed). Copilot 2024 = 4.7M / 1.75 (DERIVED from Microsoft's +75% year-on-year). Some outlets report 2025 trust as 29%. Erica 2026 from CMSWire; a 3.6B figure for August 2026 is unverified.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Reading vendor-reported outcomes",
+        "body": "Many sector outcome figures come from the company selling or running the system: Mastercard's 20% detection gain, Stripe's 32% fraud reduction, JPMorgan's $1-1.5 billion of annual AI value. These figures are not necessarily wrong, but they are measured on the vendor's own data, against a baseline the vendor chooses, and they are rarely replicated. We label them as vendor-reported and do not add them up across firms. Independent measures, such as total card fraud losses or randomized trials like METR's, are rarer but carry more weight, even when they are small. Where only vendor figures exist, the honest conclusion is that a gain is plausible, not that it has been measured."
+      }
+    },
+    {
+      "kicker": "4. Education and legal",
+      "action_title": "In education and law, individual use is near-universal while institutions, assessment rules and verification lag behind",
+      "paras": [
+        "University students adopted AI faster than any other group tracked in this report. HEPI's annual survey of UK full-time undergraduates found 66% using AI in the 2023-24 academic year, 92% in 2024-25 and 95% in 2025-26, the last from fieldwork by Savanta in December 2025 with 1,054 respondents. In the latest wave 94% used generative AI for assessed work, and 12% said they included AI-generated text directly in assessed work, up from 3% in 2024 and 8% in 2025. Institutional provision has grown but remains far behind: 38% of students said their university now supplies generative-AI tools, up from 23% and 9% in the two previous years. Students are, in effect, bringing their own tools to institutions that are still writing the rules.",
+        "In US schools the picture is similar but measured less consistently. Pew Research Center found that 13% of US teens had used ChatGPT for schoolwork in fall 2023 and 26% in fall 2024; in fall 2025, on a wider question covering any chatbot, 54% had used one for schoolwork, and 10% used chatbots for all or most of it. The jump therefore mixes real growth with a change of definition. Among teachers, Gallup and the Walton Family Foundation found 60% had used AI in the 2024-25 school year and 32% weekly, with weekly users saving about 5.9 hours a week. Their 2025-26 survey found 59% of K-12 educators using AI, but it covered a wider population including paraprofessionals, so the flat reading is not evidence of decline.",
+        "Legal adoption has reached a similar plateau. Clio's Legal Trends Reports found 19% of legal professionals using AI in 2023, 79% in 2024 and 79% again in 2025; the 2026 report found 85% reporting some level of AI adoption at their firms. Large firms led at 87% in 2025, against 71% of solo practitioners. Spending has followed: Menlo Ventures estimated legal generative-AI spending at $350 million in 2024 and $650 million in 2025, the second-largest vertical after healthcare. Thomson Reuters' CoCounsel reported more than 1 million users in early 2026 (site page 472). Other survey series report much lower legal adoption, around 30% in 2024, because they measure firm-level tool deployment rather than individual use; the two should not be mixed.",
+        "The constraint in both sectors is verification rather than access. A 2024 Stanford RegLab and HAI study found leading legal research tools hallucinated on 17% to 33% of queries, despite vendor claims of hallucination-free citations, and the 2023 Mata v. Avianca sanctions showed the professional cost of filing unverified AI output (site page 472). In education, Turnitin reported in 2024 that about 11% of more than 200 million papers it reviewed contained at least 20% AI-written text, while detection accuracy remains disputed. The outcome evidence for learning is thin but positive in controlled settings: a World Bank trial in Nigeria estimated gains equivalent to 1.5 to 2 years of schooling from a six-week AI tutoring programme (site page 865). One trial does not establish a system-wide effect."
+      ],
+      "exhibits": [
+        {
+          "title": "Nearly all UK undergraduates now use AI, but only 38% say their university supplies AI tools",
+          "subtitle": "Share of UK full-time undergraduates using AI in any way, and share whose institution provides generative-AI tools, by academic year, %",
+          "type": "grouped",
+          "unit": "% of students",
+          "series": [
+            {
+              "name": "Use AI in any way",
+              "points": [
+                [
+                  "2023-24",
+                  66
+                ],
+                [
+                  "2024-25",
+                  92
+                ],
+                [
+                  "2025-26",
+                  95
+                ]
+              ]
+            },
+            {
+              "name": "University provides tools",
+              "points": [
+                [
+                  "2023-24",
+                  9
+                ],
+                [
+                  "2024-25",
+                  23
+                ],
+                [
+                  "2025-26",
+                  38
+                ]
+              ]
+            }
+          ],
+          "source": "Source: HEPI / Kortext Student Generative AI Surveys 2024, 2025 and 2026 (2026: n=1,054, fieldwork December 2025 by Savanta)",
+          "notes": "Single survey series. Academic years are labelled by the year they describe; each survey was fielded early in that academic year (for example, December 2025 for 2025-26). In this report's data file, 2025-26 is filed under 2026.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "How we date school and university surveys",
+        "body": "Education surveys are fielded in one calendar year and describe an academic year that spans two. HEPI's December 2025 fieldwork describes 2025-26; Pew's September-October 2025 survey describes the 2025-26 school year; Gallup-Walton's July-August 2026 survey looks back on 2025-26. To keep like with like, we label each by the academic year it describes and file it under the calendar year in which that academic year ends. This matches the labels on Report AI's education page but differs from the publication year some outlets use. Where a survey changed its question, as Pew did in 2025 by widening 'ChatGPT' to 'chatbots', we mark a break in the series rather than compute growth."
+      }
+    },
+    {
+      "kicker": "5. Retail, marketing, manufacturing and government",
+      "action_title": "Outside the knowledge industries adoption is lower and harder to measure, and the best data track customer behaviour rather than firm deployment",
+      "paras": [
+        "Retail is a large AI spender but a modest adopter by firm count. IDC estimated retail AI spending at about $25 billion in 2024, third among industries. Yet Ramp found 48.8% of retail businesses paying for AI in August 2026, below the 55.2% average, and the Census Bureau found about 14% of retail businesses using AI in May 2026, among the lowest rates of any sector. The difference reflects concentration: a handful of large chains account for most retail AI spending, while hundreds of thousands of small stores do not buy AI tools. Retail's AI story is therefore told mainly through large-retailer disclosures and through measures of shopper behaviour, not through representative adoption surveys. IDC does not publish retail AI spending after 2024.",
+        "Shopper behaviour is changing faster than retailer adoption. Adobe Analytics found that traffic from generative-AI sources to US retail websites rose 1,300% in the 2024 holiday season and 693.4% in the 2025 season, with AI-driven revenue per visit more than doubling; by September 2026 the monthly year-on-year increase had slowed to 71% from a much larger base. Salesforce estimated that AI and agents influenced $229 billion of global online holiday sales in 2024, about 19% of orders, and $262 billion in 2025, about 20%. Retailers with their own agents grew sales 6.2% against 3.9% for peers. 'Influenced' is Salesforce's attribution model, not a causal estimate, and the growth rates come from a small base, so these figures show direction rather than size of effect.",
+        "Marketing is where AI use inside firms is best measured over time. The CMO Survey, run by Duke's Fuqua School of Business with Deloitte and the American Marketing Association, found generative AI used in 7.0% of marketing activities in spring 2024, 15.1% in 2025 and 22.4% in 2026; marketers expect more than half within three years, a forecast rather than an outcome. Menlo Ventures put creator-tool spending at $360 million in 2025. McKinsey's surveys name technology, media and telecom as the sectors furthest along with AI agents. Manufacturing has no comparable three-year series. Ramp found 61.1% of manufacturers paying for AI in August 2026, and Rockwell Automation's 2026 survey of about 1,500 manufacturers estimated that 34% of operations are AI-augmented, but neither measures what happens on the factory floor.",
+        "Government adoption is measured by inventories, not surveys. US federal agencies reported 2,133 AI use cases across 41 agencies in 2024 and 3,611 across 56 agencies in the 2025 inventory released in April 2026, an increase of about 69%. Much of that rise is a reporting change: research and development uses were added, NASA's count went from 18 to 425, and nine agencies reported for the first time. High-impact use cases rose from 351 to 445 but fell as a share, from 16.5% to 12.3%, under a new definition. Federal AI contract obligations totalled $5.6 billion across fiscal years 2022 to 2024, 72% of it at the Department of Defense (GAO; site page 374). No comparable series exists for state, local or non-US governments."
+      ],
+      "exhibits": [
+        {
+          "title": "Retail and marketing indicators rose steeply from small bases, while government counts were inflated by a reporting change",
+          "subtitle": "Selected indicators for retail, marketing, manufacturing and US federal government, latest reading in each year",
+          "type": "table",
+          "unit": "",
+          "table": {
+            "columns": [
+              "Indicator",
+              "2024",
+              "2025",
+              "2026 to date",
+              "Source"
+            ],
+            "rows": [
+              [
+                "Gen-AI traffic to US retail sites, YoY",
+                "+1,300% (holiday)",
+                "+693.4% (holiday)",
+                "+71% (Sep, not comparable)",
+                "Adobe Analytics"
+              ],
+              [
+                "AI-influenced global holiday sales",
+                "$229B (19%)",
+                "$262B (~20%)",
+                "season in progress",
+                "Salesforce"
+              ],
+              [
+                "Retail firms paying for AI",
+                "n/a",
+                "n/a",
+                "48.8% (Aug)",
+                "Ramp AI Index"
+              ],
+              [
+                "Retail firms using AI",
+                "n/a",
+                "n/a",
+                "~14% (May)",
+                "Census BTOS"
+              ],
+              [
+                "Marketing activities using gen AI",
+                "7.0%",
+                "15.1%",
+                "22.4%",
+                "The CMO Survey"
+              ],
+              [
+                "Manufacturing firms paying for AI",
+                "n/a",
+                "n/a",
+                "61.1% (Aug)",
+                "Ramp AI Index"
+              ],
+              [
+                "Manufacturing operations AI-augmented",
+                "n/a",
+                "n/a",
+                "34%",
+                "Rockwell Automation"
+              ],
+              [
+                "US federal AI use cases",
+                "2,133",
+                "3,611",
+                "not yet published",
+                "OMB inventory"
+              ]
+            ]
+          },
+          "source": "Source: Adobe Analytics; Salesforce; Ramp AI Index; US Census Bureau BTOS; The CMO Survey (Duke Fuqua, Deloitte, AMA); Rockwell Automation State of Smart Manufacturing 2026; OMB Federal AI Use Case Inventory (via Nextgov, Brookings)",
+          "notes": "Adobe's September 2026 figure is a single month and not comparable with holiday-season windows. Salesforce's 'influenced' is an attribution model. The 2025 federal inventory added R&D use cases and nine new reporting agencies, so the 69% rise is partly definitional. Rockwell's survey (May 2026, about 1,500 respondents in 17 countries) is a self-assessment.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Counting use cases is not counting use",
+        "body": "Government AI inventories and corporate 'use case' tallies count projects an organization chooses to report, not how much work AI does. A single chatbot pilot and a fraud-scoring system that processes millions of transactions each count as one. Counts also move with reporting rules: the 2025 US federal inventory rose 69% partly because research uses were added and nine agencies reported for the first time. Use-case counts are useful for tracking breadth and for spotting high-impact systems that need oversight, but they are not a measure of adoption depth, spending or outcome, and they should not be compared across organizations that define a use case differently."
+      }
+    },
+    {
+      "kicker": "6. Spending and outcomes",
+      "action_title": "Spending is concentrating in banking, software and healthcare, but sector-level returns remain mostly unmeasured",
+      "paras": [
+        "Total AI spending is measured well; spending by industry is not. Gartner put worldwide AI spending at $987.9 billion in 2024 in its September 2025 edition and now puts 2025 at about $1.79 trillion, restated from the $1.48 trillion it published a year earlier. Its September 2026 forecast for 2026 is about $2.67 trillion, up 49.5%, with about 56% going to infrastructure. These totals include data-centre hardware, AI-enabled devices and services, and they are not split by buying industry. They are also forecasts for a year in progress, so they should not be compared with the measured adoption figures elsewhere in this report. Gartner's January and May 2026 editions put 2026 at $2.52 trillion and $2.59 trillion; each revision has been upwards, driven mostly by infrastructure.",
+        "IDC's industry guide is the only public source that ranks industries by total AI spending, and its public figures stop at 2024. Banking led at about $31.3 billion, retail followed at about $25 billion, and software and information services completed the top three, which together accounted for about $89.6 billion, roughly 38% of global AI spending tracked by IDC. An earlier IDC edition put 2023 banking spending at $20.6 billion, but editions differ in scope, so the two years are not compared here. Manufacturing and healthcare are not separately disclosed in public IDC materials. The industry ranking by total spend is therefore a 2024 snapshot, not a trend. Until IDC or another tracker publishes 2025 and 2026 industry totals, any claim that one sector's AI spending is growing faster than another's rests on survey data or company disclosures.",
+        "For generative-AI software bought for a specific industry, Menlo Ventures' annual enterprise survey gives a two-year view. Healthcare spending rose from about $500 million in 2024 to $1.5 billion in 2025, 43% of a $3.5 billion vertical-AI total, and legal from $350 million to $650 million. Menlo's separate healthcare report put 2025 healthcare AI spending at $1.4 billion. Across departments rather than industries, coding took about 55% of departmental generative-AI spending in 2025. These are survey-based estimates from about 500 US enterprise buyers, and Menlo restated its earlier years to exclude inference, so growth multiples should be read as approximate. The vertical total itself, $3.5 billion, is small next to the roughly $37 billion Menlo estimates enterprises spent on generative AI overall in 2025, most of it on horizontal tools and model access.",
+        "Measured returns lag both spending and adoption. McKinsey's 2026 survey found 89% of organizations using AI in at least one function but only 37% reporting any EBIT impact, and about 6% qualifying as high performers. At sector level, the controlled evidence comes from a short list of studies: the MASAI mammography trial (29% more cancers detected), the JAMA scribe study (about 16 minutes a day of documentation saved), the METR developer trial (19% slower) and the Stanford legal-tool test (17-33% hallucination rates). Each covers one task in one setting. None measures industry-wide productivity, and the sectors spending most, banking and software, publish the fewest independent outcome measures. Until more sectors publish controlled results, adoption and spending figures should be read as measures of activity, not of value."
+      ],
+      "exhibits": [
+        {
+          "title": "Healthcare's vertical generative-AI spending tripled in 2025, about twice the growth rate of legal",
+          "subtitle": "US enterprise spending on industry-specific generative-AI software, healthcare and legal, 2024 and 2025, US$ millions",
+          "type": "grouped",
+          "unit": "US$ M",
+          "series": [
+            {
+              "name": "2024",
+              "points": [
+                [
+                  "Healthcare",
+                  500
+                ],
+                [
+                  "Legal",
+                  350
+                ]
+              ]
+            },
+            {
+              "name": "2025",
+              "points": [
+                [
+                  "Healthcare",
+                  1500
+                ],
+                [
+                  "Legal",
+                  650
+                ]
+              ]
+            }
+          ],
+          "source": "Source: Menlo Ventures, The State of Generative AI in the Enterprise (2024 and 2025 editions)",
+          "notes": "Survey-based estimates (2025: n=495 US enterprise decision-makers, 7-25 November 2025). Healthcare 1,500 / 500 = 3.0x; legal 650 / 350 = 1.9x (DERIVED). Menlo's separate healthcare report gives $1.4B for 2025. 2024 figures come from secondary coverage of the 2024 edition. Not comparable with IDC's total AI spending, which covers all AI, not generative-AI software only.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Why AI spending figures disagree",
+        "body": "Gartner, IDC and Menlo Ventures measure different things. Gartner's worldwide total ($2.67 trillion forecast for 2026) includes AI-optimized servers, data centres, AI-enabled phones and PCs, and services, and is not split by buying industry. IDC tracks vendor revenue for AI software, hardware and services by the industry that buys them, which is why banking appears as a $31.3 billion line. Menlo surveys enterprise buyers about generative-AI software only, so its healthcare figure is $1.5 billion. Each is internally consistent; none can be added to or ranked against another. Gartner also revises its past years, as with 2025, restated from $1.48 trillion to about $1.79 trillion."
+      }
+    }
+  ],
+  "comparison": {
+    "action_title": "Between 2024 and 2026 the sector ranking barely moved; what changed was the level of practitioner use and the volume of regulated AI products",
+    "paras": [
+      "Comparing 2024, 2025 and 2026 shows three patterns. First, the order of sectors is stable. Information and technology firms led on Ramp in November 2024 (65.9%) and still led in 2026 (about 80%); finance was second throughout; Eurostat's top two sectors were the same in 2024 and 2025. Second, practitioner use in regulated professions converged at high levels: physicians went from 66% to 81%, UK undergraduates from 66% to 95% over three academic years, and legal professionals from 79% to 85% on Clio's measure. Third, the regulated product pipeline grew, with FDA AI device authorizations rising from 235 in 2024 to 335 in 2025 and continuing at a similar pace in the first half of 2026.",
+      "Across sectors in 2026 the clearest contrast is between individual and organizational adoption. In healthcare, 81% of physicians use AI but only 43.4% of health-care businesses on Ramp pay for it and 22% of healthcare organizations had implemented domain-specific tools by 2025. In education, 95% of UK students use AI but 38% get tools from their university. In finance and software the gap is smaller, because firms buy tools centrally. Retail, construction and hospitality show low figures on both measures. Outcome evidence follows a different order: healthcare has the most controlled studies, while banking and software, the largest spenders, rely mainly on vendor or company figures.",
+      "Several apparent year-on-year jumps are partly definitional and should not be quoted as growth. The Census Bureau's measured rate roughly doubled when it changed its question in November 2025; Pew's teen figure doubled when the question widened from ChatGPT to any chatbot; the federal use-case count rose 69% when research uses were added; and Gartner restated 2025 spending upwards by about $300 billion. Where a series broke, this report shows both readings and does not compute a growth rate."
+    ],
+    "exhibits": [
+      {
+        "title": "Sectors that adopt most are not the sectors with the strongest outcome evidence",
+        "subtitle": "Latest adoption, spending and outcome indicators by sector; each column comes from a single source and is comparable only down the column",
+        "type": "table",
+        "unit": "",
+        "table": {
+          "columns": [
+            "Sector",
+            "Firms paying for AI (Ramp, Aug 2026)",
+            "Firms using AI (Census, May 2026)",
+            "Practitioner use (latest)",
+            "Spend signal",
+            "Measured outcome"
+          ],
+          "rows": [
+            [
+              "Software & IT",
+              "80.9%",
+              "39.7%",
+              "~83% of developers (2026, DERIVED)",
+              "Coding ~55% of departmental gen-AI spend (2025)",
+              "Experienced devs 19% slower (METR RCT, 2025)"
+            ],
+            [
+              "Finance & insurance",
+              "73.7%",
+              "33.9%",
+              "27% of employees use AI daily (May 2026)",
+              "Banking ~$31.3B AI spend (IDC, 2024)",
+              "Vendor-reported only (e.g. +20% fraud detection)"
+            ],
+            [
+              "Manufacturing",
+              "61.1%",
+              "n/a",
+              "34% of operations AI-augmented (2026)",
+              "Not disclosed",
+              "No controlled evidence found"
+            ],
+            [
+              "Retail",
+              "48.8%",
+              "~14%",
+              "n/a",
+              "~$25B AI spend (IDC, 2024)",
+              "AI-influenced holiday sales $262B (attribution, 2025)"
+            ],
+            [
+              "Healthcare",
+              "43.4%",
+              "n/a",
+              "81% of physicians (Jan-Feb 2026)",
+              "$1.5B vertical gen AI (Menlo, 2025)",
+              "Scribes save ~16 min/day (JAMA, 2026); +29% cancers detected (MASAI)"
+            ],
+            [
+              "Education",
+              "n/a",
+              "n/a",
+              "95% of UK undergraduates (2025-26)",
+              "n/a",
+              "Weekly teacher users save 5.9 h/week (self-reported, 2025)"
+            ],
+            [
+              "Legal",
+              "n/a",
+              "n/a",
+              "85% at firms with AI (Clio, 2026)",
+              "$650M vertical gen AI (Menlo, 2025)",
+              "17-33% hallucination in research tools (Stanford, 2024)"
+            ],
+            [
+              "Marketing & media",
+              "n/a",
+              "n/a",
+              "22.4% of marketing activities (2026)",
+              "$360M creator tools (Menlo, 2025)",
+              "n/a"
+            ],
+            [
+              "US federal government",
+              "n/a",
+              "n/a",
+              "3,611 use cases (2025 inventory)",
+              "$5.6B AI contracts FY2022-24 (GAO)",
+              "n/a"
+            ]
+          ]
+        },
+        "source": "Source: Ramp AI Index; US Census Bureau BTOS; Stack Overflow; Gallup; Rockwell Automation; AMA; HEPI; Clio; The CMO Survey; OMB; IDC; Menlo Ventures; GAO; METR; JAMA; MASAI / The Lancet; Gallup-Walton; Stanford RegLab/HAI; Salesforce; Report AI analysis",
+        "notes": "Read down the columns, not across: each column uses one source and its own definition. Ramp's 'technology' sector is compared with Census's 'information' sector. 'Practitioner use' rows come from different surveys with different populations and are not ranked. Outcome entries are single studies or company figures, not sector-wide estimates. Sources for figures not in the data file: Gallup daily use (May 2026); Rockwell (May 2026); Menlo coding share and creator tools (site page 376); MASAI (site page 863); Stanford (site page 472); GAO (site page 374).",
+        "confidence": "MEDIUM"
+      },
+      {
+        "title": "Most sector readings are six to twelve months old, and two key series changed method in late 2025",
+        "subtitle": "Fieldwork windows and release dates of the latest readings used in this report, September 2025-December 2026",
+        "type": "gantt",
+        "unit": "",
+        "gantt": [
+          {
+            "label": "Pew teens fieldwork",
+            "start": "2025-09",
+            "end": "2025-10",
+            "group": "Education",
+            "milestone": false
+          },
+          {
+            "label": "Holiday season 2025",
+            "start": "2025-11",
+            "end": "2025-12",
+            "group": "Retail",
+            "milestone": false
+          },
+          {
+            "label": "BTOS question change",
+            "start": "2025-11",
+            "end": "2025-11",
+            "group": "Cross-industry",
+            "milestone": true
+          },
+          {
+            "label": "HEPI fieldwork",
+            "start": "2025-12",
+            "end": "2025-12",
+            "group": "Education",
+            "milestone": true
+          },
+          {
+            "label": "AMA fieldwork",
+            "start": "2026-01",
+            "end": "2026-02",
+            "group": "Healthcare",
+            "milestone": false
+          },
+          {
+            "label": "FDA decisions counted",
+            "start": "2026-01",
+            "end": "2026-06",
+            "group": "Healthcare",
+            "milestone": false
+          },
+          {
+            "label": "Federal inventory out",
+            "start": "2026-04",
+            "end": "2026-04",
+            "group": "Government",
+            "milestone": true
+          },
+          {
+            "label": "Census BTOS reading",
+            "start": "2026-05",
+            "end": "2026-05",
+            "group": "Cross-industry",
+            "milestone": true
+          },
+          {
+            "label": "Gallup-Walton survey",
+            "start": "2026-07",
+            "end": "2026-08",
+            "group": "Education",
+            "milestone": false
+          },
+          {
+            "label": "Ramp latest reading",
+            "start": "2026-09",
+            "end": "2026-09",
+            "group": "Cross-industry",
+            "milestone": true
+          },
+          {
+            "label": "FDA list update",
+            "start": "2026-09",
+            "end": "2026-09",
+            "group": "Healthcare",
+            "milestone": true
+          },
+          {
+            "label": "Stack Overflow results",
+            "start": "2026-10",
+            "end": "2026-10",
+            "group": "Software",
+            "milestone": true
+          },
+          {
+            "label": "Eurostat 2026 due",
+            "start": "2026-12",
+            "end": "2026-12",
+            "group": "Cross-industry",
+            "milestone": true
+          }
+        ],
+        "source": "Source: Pew Research Center; Adobe; Salesforce; US Census Bureau; HEPI; AMA; FDA list via Innolitics and Complizen; OMB via Nextgov; Gallup-Walton; Ramp; Stack Overflow; Eurostat",
+        "notes": "Pew fielded 25 Sep-9 Oct 2025; holiday windows are 1 Nov-31 Dec 2025; BTOS new question from the 17 Nov 2025 collection; AMA fielded 15 Jan-2 Feb 2026; the 4 Sep 2026 FDA list update covers decisions through 29 Jun 2026; Census reading as of 3 May 2026; Gallup-Walton fielded 28 Jul-14 Aug 2026; Stack Overflow results published 6 Oct 2026. Eurostat's December 2026 release is a scheduled date, not a reading.",
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "outlook": {
+    "action_title": "In 2027 the test for industry AI shifts from adoption to measured outcomes, and the earliest signals will come from healthcare, finance and representative business surveys",
+    "paras": [
+      "Adoption by practitioners is close to its ceiling in medicine, higher education, law and software, so further growth in those headline figures will tell us little. The more informative indicators for 2027 are representative business adoption, which at about one firm in five in the Census survey still has room to rise, the gap between the most and least digital sectors, and the volume and type of regulated AI products. A narrowing of the sector gap would mean AI tools have found uses in physical and customer-facing work; a stable gap would mean adoption is saturating within knowledge work.",
+      "The bigger open question is outcomes. By the end of 2027 there should be more controlled studies of ambient scribes, coding agents and AI tutoring, and the second year of McKinsey-style EBIT questions under higher adoption. If controlled studies keep finding single-digit or low double-digit time savings, and the share of organizations reporting EBIT impact stays below 40%, the case that AI is transforming sector productivity will remain unproven, whatever the adoption rates. If replicated trials show larger effects on output or patient outcomes, that view would change."
+    ],
+    "watch": [
+      {
+        "indicator": "Census BTOS national AI use rate (new question)",
+        "now": "19.8% as of 3 May 2026",
+        "signal": "A sustained reading above 25% would mean adoption is spreading beyond knowledge sectors; a reading still below 22% by mid-2027 would mean a plateau."
+      },
+      {
+        "indicator": "Ramp gap between technology and accommodation and food services",
+        "now": "80.9% vs 33.1% (about 2.4 to 1), August 2026",
+        "signal": "A ratio below 2 to 1 would mean AI tools are finding uses in physical and customer-facing work."
+      },
+      {
+        "indicator": "FDA AI device authorizations per year",
+        "now": "335 in 2025 (CONTESTED, 295-335); about 167-178 in January-June 2026",
+        "signal": "More than 400 in 2026 would mean acceleration; fewer than 300 would mean the pipeline has levelled off."
+      },
+      {
+        "indicator": "Controlled outcome studies of ambient AI scribes",
+        "now": "About 16 minutes a day (about 10%) of documentation time saved (JAMA, April 2026)",
+        "signal": "Replicated trials showing 20% or more time saved, or effects on patient outcomes, would change the assessment of clinical AI."
+      },
+      {
+        "indicator": "Organizations reporting any EBIT impact from AI (McKinsey)",
+        "now": "37% in the 2026 survey",
+        "signal": "Above 50% would mean adoption is turning into measurable financial returns; flat at about 37-39% would mean it is not."
+      },
+      {
+        "indicator": "US federal AI use cases, high-impact share",
+        "now": "3,611 use cases, 12.3% high-impact (2025 inventory)",
+        "signal": "A 2026 inventory with a rising high-impact share would mean government use is moving from pilots into decisions that affect people."
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "term": "Ramp AI Index",
+      "def": "The monthly share of US businesses on Ramp's corporate card and bill-pay platform that pay for at least one AI subscription or contract, reported overall and by industry. It measures paid adoption among Ramp's customers, not use across the whole economy."
+    },
+    {
+      "term": "Business Trends and Outlook Survey (BTOS)",
+      "def": "A US Census Bureau survey of employer businesses fielded every two weeks. Since the 17 November 2025 collection it asks whether a business used AI in any of 15 business functions; before that it asked about AI used to produce goods or services."
+    },
+    {
+      "term": "FDA AI-Enabled Medical Device List",
+      "def": "The FDA's public list of medical devices authorized for US marketing that it identifies as using AI, dated by decision. It is updated periodically, back-filled and, by the FDA's own description, not comprehensive."
+    },
+    {
+      "term": "510(k) clearance",
+      "def": "The FDA pathway for devices shown to be substantially equivalent to a device already on the market. Most AI devices are cleared this way, which does not require new clinical outcome trials."
+    },
+    {
+      "term": "Domain-specific AI tool",
+      "def": "In Menlo Ventures' healthcare survey, AI software built for a healthcare task (such as ambient documentation or coding) rather than a general-purpose chatbot."
+    },
+    {
+      "term": "Vertical AI",
+      "def": "AI software sold for one industry, such as healthcare or legal. Menlo Ventures estimates vertical generative-AI spending separately from horizontal tools and coding."
+    },
+    {
+      "term": "Ambient AI scribe",
+      "def": "Software that listens to a clinical consultation and drafts the visit note for the clinician to review and sign."
+    },
+    {
+      "term": "AI use case inventory",
+      "def": "The annual list of AI applications that US federal agencies report to the Office of Management and Budget. It counts reported projects, not usage volume or spending."
+    },
+    {
+      "term": "AI-influenced sales",
+      "def": "Salesforce's estimate of online orders in which shoppers interacted with AI or agents during the purchase journey. It is an attribution model, not a measure of sales caused by AI."
+    }
+  ],
+  "annual": {
+    "2024": {
+      "action_title": "In 2024 AI spread fastest among individual professionals in data-heavy industries, while firm-level adoption and measured outcomes stayed thin",
+      "paras": [
+        "In 2024 AI adoption by industry followed the digital intensity of the work. Ramp's index showed 36.4% of US businesses on its platform paying for AI tools in November 2024, with information-sector firms at 65.9% and finance and insurance at 51.2%. Eurostat found 13.5% of EU enterprises using AI, with the information and communication sector at 48.72% and professional, scientific and technical services at 30.53%; every other sector was below 16%. The Census Bureau's survey, on its original narrower question, put US business use at roughly 5% in mid-2024. Professionals moved faster than their employers: the AMA found 66% of US physicians using AI in November 2024, up from 38% in 2023, and Clio found 79% of legal professionals using AI, up from 19%.",
+        "Regulated AI products accumulated steadily. The FDA's AI device list reached 1,016 entries in its December 2024 update, and the September 2026 snapshot of the list attributes 235 authorizations to 2024, slightly above 2023's 226. About three-quarters of listed devices were in radiology, so most clinical AI in use was imaging software. Menlo Ventures estimated that only about 3% of US healthcare organizations had implemented domain-specific AI tools, and healthcare was the largest vertical buyer of generative-AI software at about $500 million. Stack Overflow found 62% of developers using AI tools, with 43% trusting their accuracy.",
+        "Spending was concentrated in a few industries. IDC estimated banking AI spending at about $31.3 billion and retail at about $25 billion, with software and information services completing a top three worth about $89.6 billion. Gartner put worldwide AI spending at $987.9 billion. Consumer behaviour began to shift in retail: Adobe recorded a 1,300% rise in generative-AI referral traffic to US retail sites in the holiday season, from a small base, and Salesforce estimated that AI influenced $229 billion of global online holiday sales. Measured outcomes were few, and the most cited one came from legal research, where Stanford researchers found leading tools hallucinating on 17-33% of queries."
+      ]
+    },
+    "2025": {
+      "action_title": "In 2025 healthcare became the fastest-moving regulated sector and the gap between individual and institutional AI use became the defining pattern",
+      "paras": [
+        "In 2025 headline adoption figures for large organizations stopped rising much. McKinsey found 88% of organizations using AI in at least one function, against 78% in 2024. Representative surveys showed more room: Eurostat's EU enterprise rate rose to 19.95%, with the information and communication sector at 62.52%, and Ramp's paid-adoption index ended the year at 46.6%. The Census Bureau changed its AI question in November 2025, and the measured US rate moved from about 10% on the old question to 17.3% on the new one. Within finance, Ramp's measure reached 58.1% in December 2025.",
+        "Healthcare recorded the largest changes. The FDA list attributes a record 335 AI device authorizations to 2025, 42.6% more than in 2024 on the same snapshot, although other counts range from 295 to 333. Menlo Ventures found 22% of healthcare organizations had implemented domain-specific AI tools, about seven times the 2024 level, and estimated healthcare AI spending at $1.4 billion; its enterprise survey put healthcare at $1.5 billion, 43% of vertical generative-AI spending. Legal generative-AI spending reached $650 million. In schools, Gallup and the Walton Family Foundation found 60% of US teachers had used AI in the 2024-25 school year, and HEPI found 92% of UK undergraduates using it, though only 23% received tools from their university.",
+        "Evidence on outcomes was mixed. METR's randomized trial found experienced open-source developers took 19% longer with early-2025 AI tools, while Stack Overflow found developer use rising to 78% and trust falling to 33%. Pre/post studies of ambient scribes reported lower burnout but lacked control groups. In retail, Adobe recorded a 693.4% rise in generative-AI referral traffic over the holiday season, and Salesforce estimated that AI and agents influenced $262 billion of global online holiday sales, about 20% of the total. US federal agencies reported 3,611 AI use cases, up from 2,133, partly because of a change in what agencies had to report."
+      ]
+    },
+    "2026": {
+      "action_title": "In 2026 to date a majority of firms tracked by Ramp pay for AI and practitioner use is near saturation, but outcome evidence remains limited",
+      "paras": [
+        "In 2026 to date, paid AI adoption has passed half of the US businesses on Ramp's platform, reaching 55.9% in September. Technology firms were at about 80% and finance at 73.7% in August, while accommodation and food services were at 33.1%. The Census Bureau's representative survey found 19.8% of US businesses using AI as of 3 May 2026, with information at 39.7% and finance and insurance at 33.9%. The ranking of sectors is the same in both surveys and in Eurostat's 2025 data. McKinsey's 2026 survey found 89% of organizations using AI in at least one function and 37% reporting any EBIT impact.",
+        "Practitioner use has reached high levels in the professions. The AMA found 81% of US physicians using AI in a survey fielded in January and February 2026. HEPI found 95% of UK undergraduates using AI in the 2025-26 academic year, with 38% saying their university supplies tools. Clio found 85% of legal professionals at firms with some AI adoption. Pew found 54% of US teens had used chatbots for schoolwork, on a wider question than before, and Gallup and Walton found 59% of K-12 educators using AI in 2025-26. Stack Overflow's 2026 survey implies about 83% of developers use AI tools.",
+        "The regulated product pipeline continued at the 2025 pace. The FDA list reached 1,614 entries in its September 2026 update, with about 167 to 178 authorizations in the first half of the year, depending on the count. The clearest new outcome evidence came from a JAMA multisite study showing ambient scribes saved clinicians about 16 minutes of documentation a day. Gartner raised its 2026 forecast of worldwide AI spending to about $2.67 trillion, but no public source has updated industry-level spending beyond 2024, and Eurostat's 2026 enterprise data are due in December."
+      ]
+    }
+  }
+}

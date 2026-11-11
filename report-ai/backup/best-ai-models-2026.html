@@ -1,0 +1,326 @@
+<!-- wp:html -->
+<style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');</style>
+
+<div style="font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:920px;margin:0 auto;line-height:1.6;font-size:17px;">
+
+<!-- Breadcrumb -->
+<nav style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.02em;color:#6b6b76;margin-bottom:28px;">
+<a href="https://report-ai.org/" style="color:#6b6b76;text-decoration:none;">Home</a> / <a href="https://report-ai.org/indexes/" style="color:#6b6b76;text-decoration:none;">Indexes</a> / <a href="https://report-ai.org/indexes/technical-performance/" style="color:#6b6b76;text-decoration:none;">Technical Performance</a> / <span style="color:#111114;">Best AI Models 2026</span>
+</nav>
+
+<!-- Intro dek -->
+<p style="font-size:21px;line-height:1.5;color:#2a2a32;margin:0 0 14px;">By mid-2026 the frontier is a photo-finish. On the <strong>Artificial Analysis Intelligence Index</strong> (July 2026), <strong>OpenAI's GPT-5.6 Sol</strong> holds the top composite score at 58.9, with <strong>Claude Opus 4.8</strong> (55.7) and <strong>GPT-5.6 Terra</strong> (55.0) close behind; <strong>Google's Gemini 3.1 Pro</strong> leads the <strong>LMArena</strong> text board within a statistical tie of Opus.</p>
+<p style="margin:0 0 30px;">But there is no single "best." The honest answer is that the best model depends on the task in front of you — Claude and GPT-5.6 for agentic coding, Gemini for multimodal and 2M-token context, DeepSeek and Qwen for near-frontier reasoning at a fraction of the price. Below we rate every major lab's flagship on a defined nine-point rubric and tag each with what it is actually best for.</p>
+
+<!-- Methodology box -->
+<div style="background:#f5f5f7;border:1px solid #e6e6ea;border-radius:14px;padding:26px 28px;margin:0 0 36px;">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Methodology</div>
+<p style="margin:0 0 14px;font-size:16px;">We score each model 1–5 (rendered as <span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span> filled/empty dots) across nine criteria:</p>
+<ol style="margin:0 0 16px;padding-left:22px;font-size:16px;">
+<li><strong>Reasoning &amp; Math</strong></li>
+<li><strong>Coding</strong></li>
+<li><strong>Writing &amp; Language</strong></li>
+<li><strong>Multimodal</strong> (vision / audio / video)</li>
+<li><strong>Long context</strong></li>
+<li><strong>Speed &amp; latency</strong></li>
+<li><strong>Price / value</strong></li>
+<li><strong>Reliability</strong> (factual accuracy, low hallucination)</li>
+<li><strong>Agentic &amp; tool use</strong></li>
+</ol>
+<p style="margin:0;font-size:15px;color:#3a3a44;">Ratings synthesize named public leaderboards — <strong>LMArena / Chatbot Arena</strong>, <strong>Artificial Analysis Intelligence Index</strong>, <strong>SWE-bench Verified</strong> and <strong>SWE-bench Pro</strong>, <strong>MMLU-Pro</strong>, <strong>GPQA Diamond</strong>, <strong>AIME / HMMT</strong>, and <strong>MMMU-Pro</strong> — plus published pricing and context specs, <strong>as of July 2026</strong>. These scores are an <strong>editorial synthesis of public benchmarks, not absolute fact</strong>; leaderboards shift weekly and some benchmarks (e.g. SWE-bench Verified) face contamination questions. We update this page periodically.</p>
+</div>
+
+<!-- COMPARISON MATRIX -->
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 8px;">The comparison matrix</h2>
+<p style="font-size:14px;color:#6b6b76;margin:0 0 14px;font-family:'IBM Plex Mono',monospace;">Rows = models · Columns = the 9 criteria · scroll horizontally on mobile →</p>
+
+<div style="overflow-x:auto;border:1px solid #e6e6ea;border-radius:12px;margin:0 0 40px;">
+<table style="border-collapse:collapse;width:100%;min-width:900px;font-size:14px;">
+<thead>
+<tr style="background:#111114;color:#ffffff;">
+<th style="position:sticky;left:0;z-index:2;background:#111114;text-align:left;padding:12px 14px;font-weight:600;white-space:nowrap;">Model</th>
+<th style="padding:12px 10px;font-weight:500;">Reason<br>&amp; Math</th>
+<th style="padding:12px 10px;font-weight:500;">Coding</th>
+<th style="padding:12px 10px;font-weight:500;">Writing</th>
+<th style="padding:12px 10px;font-weight:500;">Multi-<br>modal</th>
+<th style="padding:12px 10px;font-weight:500;">Long<br>ctx</th>
+<th style="padding:12px 10px;font-weight:500;">Speed</th>
+<th style="padding:12px 10px;font-weight:500;">Price /<br>value</th>
+<th style="padding:12px 10px;font-weight:500;">Reliab-<br>ility</th>
+<th style="padding:12px 10px;font-weight:500;">Agentic</th>
+<th style="padding:12px 10px;font-weight:600;background:#2545f5;">Overall</th>
+<th style="padding:12px 14px;font-weight:600;text-align:left;white-space:nowrap;">Best for</th>
+</tr>
+</thead>
+<tbody style="font-family:'IBM Plex Mono',monospace;">
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">GPT-5.6 Sol<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">OpenAI</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●</span><span style="color:#c9c9d1;">○○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●●</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Agentic workflows, science &amp; reasoning</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Claude Opus 4.8<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">Anthropic</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Agentic coding &amp; long-form writing</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Gemini 3.1 Pro<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">Google</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Multimodal &amp; 2M-token context</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Qwen3.7-Max<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">Alibaba</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Long-horizon agents &amp; multilingual</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">DeepSeek V4-Pro<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">DeepSeek</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Cheapest near-frontier reasoning (open weight)</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Grok 4.5<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">xAI</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Real-time agentic tool use</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Llama 5<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">Meta</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●●</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">Open-weight, ultra-long-context self-hosting</td>
+</tr>
+<tr style="border-top:1px solid #e6e6ea;">
+<td style="position:sticky;left:0;background:#ffffff;padding:12px 14px;font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;">Mistral Large 3<br><span style="font-weight:400;color:#6b6b76;font-size:12px;">Mistral</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●●</span><span style="color:#c9c9d1;">○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;"><span style="color:#2545f5;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="text-align:center;padding:10px 8px;background:#eef1ff;"><span style="color:#2545f5;font-weight:700;">●●●</span><span style="color:#c9c9d1;">○○</span></td>
+<td style="padding:10px 14px;font-family:'Archivo',sans-serif;color:#2545f5;font-weight:600;white-space:nowrap;">EU data-sovereign, efficient open deploy</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- /wp:html -->
+
+<!-- wp:html -->
+<div style="font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:920px;margin:0 auto;line-height:1.6;font-size:17px;">
+
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 22px;">Model by model</h2>
+
+<!-- Card: GPT-5.6 -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">GPT-5.6 Sol <span style="font-weight:400;color:#6b6b76;font-size:15px;">· OpenAI</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●●</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: agentic workflows, science &amp; reasoning</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●●</span> · Code <span style="color:#2545f5;">●●●●●</span> · Write <span style="color:#2545f5;">●●●●●</span> · MM <span style="color:#2545f5;">●●●●</span>○ · Ctx <span style="color:#2545f5;">●●●●</span>○ · Speed <span style="color:#2545f5;">●●●</span>○○ · Price <span style="color:#2545f5;">●●</span>○○○ · Rel <span style="color:#2545f5;">●●●●</span>○ · Agent <span style="color:#2545f5;">●●●●●</span></p>
+<p style="margin:0;">Generally available July 9, 2026, the Sol flagship tops the Artificial Analysis Intelligence Index at 58.9 and sets state-of-the-art marks on agentic evals — BrowseComp 92.2%, OSWorld 2.0 62.6%, and the Coding Agent Index at 80. Its clear weakness is price: at $5 / $30 per million tokens it is the most expensive flagship here, so the cheaper Terra ($2.50 / $15) and Luna ($1 / $6) tiers carry most everyday work.</p>
+</div>
+
+<!-- Card: Claude Opus 4.8 -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Claude Opus 4.8 <span style="font-weight:400;color:#6b6b76;font-size:15px;">· Anthropic</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: agentic coding &amp; long-form writing</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●●</span> · Code <span style="color:#2545f5;">●●●●●</span> · Write <span style="color:#2545f5;">●●●●●</span> · MM <span style="color:#2545f5;">●●●</span>○○ · Ctx <span style="color:#2545f5;">●●●●</span>○ · Speed <span style="color:#2545f5;">●●●</span>○○ · Price <span style="color:#2545f5;">●●●</span>○○ · Rel <span style="color:#2545f5;">●●●●●</span> · Agent <span style="color:#2545f5;">●●●●●</span></p>
+<p style="margin:0;">Launched May 28, 2026 at $5 / $25, Opus 4.8 leads the coding-focused SWE-bench Pro board (69.2%) and scores 88.6% on SWE-bench Verified, and it holds the top tier of the LMArena text leaderboard within a statistical tie. Its reliability and writing quality are class-leading; its softest dimension is multimodal, where it trails Gemini on vision, audio and video. For teams that want Opus-class coding cheaper, Sonnet 5 ($3 / $15, $2 / $10 intro) is the value sibling.</p>
+</div>
+
+<!-- Card: Gemini 3.1 Pro -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Gemini 3.1 Pro <span style="font-weight:400;color:#6b6b76;font-size:15px;">· Google</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: multimodal understanding &amp; 2M-token context</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●●</span> · Code <span style="color:#2545f5;">●●●●</span>○ · Write <span style="color:#2545f5;">●●●●</span>○ · MM <span style="color:#2545f5;">●●●●●</span> · Ctx <span style="color:#2545f5;">●●●●●</span> · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●</span>○ · Rel <span style="color:#2545f5;">●●●●</span>○ · Agent <span style="color:#2545f5;">●●●●</span>○</p>
+<p style="margin:0;">Gemini 3.1 Pro pairs the frontier's largest usable window — 2M tokens — with the best multimodal scores in the field: MMMU-Pro 81.0% and GPQA Diamond 94.3%, plus a LiveCodeBench Pro Elo near 2,439. It sits in the LMArena top three in a statistical tie with Opus. Coding trails Claude and GPT-5.6 by a hair on agentic SWE tasks, but for anything spanning documents, images, audio and video, nothing else is close.</p>
+</div>
+
+<!-- Card: Qwen3.7-Max -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Qwen3.7-Max <span style="font-weight:400;color:#6b6b76;font-size:15px;">· Alibaba</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: long-horizon agents &amp; multilingual work</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●●</span> · Code <span style="color:#2545f5;">●●●●</span>○ · Write <span style="color:#2545f5;">●●●●</span>○ · MM <span style="color:#2545f5;">●●●●</span>○ · Ctx <span style="color:#2545f5;">●●●●</span>○ · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●</span>○ · Rel <span style="color:#2545f5;">●●●●</span>○ · Agent <span style="color:#2545f5;">●●●●●</span></p>
+<p style="margin:0;">Alibaba's May 2026 flagship is the strongest non-US frontier model, posting GPQA Diamond 92.4%, HMMT Feb 2026 97.1%, and SWE-bench Verified 80.4%. Its headline feat is endurance: in one demo it ran autonomously for 35 straight hours across 1,158 tool calls. Reliability and multimodal are solid rather than best-in-class, and the top Max tier is proprietary — but the open-weight Qwen 3.5 line makes the ecosystem exceptionally deployable.</p>
+</div>
+
+<!-- Card: DeepSeek V4-Pro -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">DeepSeek V4-Pro <span style="font-weight:400;color:#6b6b76;font-size:15px;">· DeepSeek</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: cheapest near-frontier reasoning, open weight</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●●</span> · Code <span style="color:#2545f5;">●●●●</span>○ · Write <span style="color:#2545f5;">●●●●</span>○ · MM <span style="color:#2545f5;">●●●</span>○○ · Ctx <span style="color:#2545f5;">●●●●</span>○ · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●●</span> · Rel <span style="color:#2545f5;">●●●●</span>○ · Agent <span style="color:#2545f5;">●●●●</span>○</p>
+<p style="margin:0;">Shipped April 24, 2026 under an MIT license, the 1.6T-parameter V4-Pro is the standout open-weight value: MMLU-Pro 87.5, GPQA Diamond 90.1, SWE-bench Verified 80.6% (tied with Gemini 3.1 Pro as the top open entry) — at roughly $0.87 per million output tokens. It is weakest on multimodal, and NIST's CAISI review judged its all-round capability to lag the closed frontier by about eight months, but on price-per-point of reasoning nothing beats it.</p>
+</div>
+
+<!-- Card: Grok 4.5 -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Grok 4.5 <span style="font-weight:400;color:#6b6b76;font-size:15px;">· xAI</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●●○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: real-time agentic tool use</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●●</span>○ · Code <span style="color:#2545f5;">●●●●</span>○ · Write <span style="color:#2545f5;">●●●●</span>○ · MM <span style="color:#2545f5;">●●●</span>○○ · Ctx <span style="color:#2545f5;">●●●</span>○○ · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●</span>○ · Rel <span style="color:#2545f5;">●●●</span>○○ · Agent <span style="color:#2545f5;">●●●●●</span></p>
+<p style="margin:0;">Released July 8, 2026, Grok 4.5 lands around #4 on the Artificial Analysis Intelligence Index (score 54) and takes the single top spot on agentic tool use, backed by Terminal-Bench 2.1 at 83.3% and SWE-bench Pro at 64.7%. At $2 / $6 it is priced aggressively. The trade-offs are a smaller 500K context window and a shorter reliability track record than the incumbents.</p>
+</div>
+
+<!-- Card: Llama 5 -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 18px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Llama 5 <span style="font-weight:400;color:#6b6b76;font-size:15px;">· Meta</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●○○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: open-weight, ultra-long-context self-hosting</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●</span>○○ · Code <span style="color:#2545f5;">●●●</span>○○ · Write <span style="color:#2545f5;">●●●</span>○○ · MM <span style="color:#2545f5;">●●●</span>○○ · Ctx <span style="color:#2545f5;">●●●●●</span> · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●●</span> · Rel <span style="color:#2545f5;">●●●</span>○○ · Agent <span style="color:#2545f5;">●●●</span>○○</p>
+<p style="margin:0;">Announced April 8, 2026, Llama 5 is a ~600B open-weight model with a headline 5M-token context. Its value proposition is freedom — free to self-host with the longest context of any release here. But coverage as of July 2026 is mixed: reporting disputes whether Llama 5 is a full frontier generation, and independent boards place its reasoning and coding a clear tier below the closed leaders. It shines when you need weights you own plus enormous context, not when you need the top benchmark score.</p>
+</div>
+
+<!-- Card: Mistral Large 3 -->
+<div style="border:1px solid #e6e6ea;border-radius:14px;padding:24px 26px;margin:0 0 34px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+<h3 style="font-size:21px;font-weight:700;margin:0;">Mistral Large 3 <span style="font-weight:400;color:#6b6b76;font-size:15px;">· Mistral</span></h3>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#2545f5;">Overall ●●●○○</span>
+</div>
+<p style="margin:6px 0 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2545f5;font-weight:500;">Best for: EU data-sovereign, efficient open deployment</p>
+<p style="margin:0 0 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3a3a44;">R&amp;M <span style="color:#2545f5;">●●●</span>○○ · Code <span style="color:#2545f5;">●●●</span>○○ · Write <span style="color:#2545f5;">●●●●</span>○ · MM <span style="color:#2545f5;">●●●</span>○○ · Ctx <span style="color:#2545f5;">●●●</span>○○ · Speed <span style="color:#2545f5;">●●●●</span>○ · Price <span style="color:#2545f5;">●●●●</span>○ · Rel <span style="color:#2545f5;">●●●</span>○○ · Agent <span style="color:#2545f5;">●●●</span>○○</p>
+<p style="margin:0;">Mistral Large 3 (December 2025) is a 675B-parameter open-weight MoE — the largest from a Western lab — scoring MMLU-Pro 73.11 and MATH-500 93.6 on independent evals. It is a tier below the US and Chinese frontier on raw capability, but its European base, permissive weights, and efficient Medium 3.5 and Small 4 tiers make it the default for cost-sensitive, data-sovereign EU deployments.</p>
+</div>
+
+<!-- Which model should you use -->
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 16px;">Which model should you use?</h2>
+<ul style="list-style:none;padding:0;margin:0 0 34px;">
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Coding</span><br><strong style="color:#2545f5;">Claude Opus 4.8</strong> — tops SWE-bench Pro (69.2%); GPT-5.6 Sol is a near-equal alternative on agentic coding.</li>
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Writing &amp; language</span><br><strong style="color:#2545f5;">Claude Opus 4.8</strong> — the reference for long-form prose and voice; GPT-5.6 Sol close behind.</li>
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Reasoning &amp; math</span><br><strong style="color:#2545f5;">GPT-5.6 Sol</strong> — #1 on the Intelligence Index; Gemini 3.1 Pro leads GPQA Diamond (94.3%).</li>
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Multimodal</span><br><strong style="color:#2545f5;">Gemini 3.1 Pro</strong> — best MMMU-Pro (81.0%) plus native audio and video.</li>
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Long context</span><br><strong style="color:#2545f5;">Gemini 3.1 Pro</strong> (2M tokens) for hosted use; <strong style="color:#2545f5;">Llama 5</strong> (5M) if you self-host.</li>
+<li style="border-bottom:1px solid #e6e6ea;padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Cheapest capable</span><br><strong style="color:#2545f5;">DeepSeek V4-Pro</strong> — near-frontier reasoning at ~$0.87 per million output tokens.</li>
+<li style="padding:12px 0;"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:#6b6b76;">Open-weight &amp; self-hostable</span><br><strong style="color:#2545f5;">DeepSeek V4-Pro</strong> (MIT) for capability; <strong style="color:#2545f5;">Llama 5</strong> / <strong style="color:#2545f5;">Mistral Large 3</strong> for ecosystem and licensing.</li>
+</ul>
+
+<!-- FAQ -->
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 16px;">FAQ</h2>
+<div style="margin:0 0 12px;">
+<p style="font-weight:700;margin:0 0 4px;">What is the best AI model in 2026?</p>
+<p style="margin:0;">There is no single winner. As of July 2026, GPT-5.6 Sol holds the top overall composite (Artificial Analysis Intelligence Index 58.9), with Claude Opus 4.8 and Gemini 3.1 Pro in a statistical tie just behind on LMArena. The best model depends on the task — see the matrix above.</p>
+</div>
+<div style="margin:0 0 12px;">
+<p style="font-weight:700;margin:0 0 4px;">What is the best AI model for coding?</p>
+<p style="margin:0;">Claude Opus 4.8 leads SWE-bench Pro (69.2%) and is the reference for agentic coding, with GPT-5.6 Sol essentially tied on agentic coding evals. For value, Claude Sonnet 5 delivers near-Opus coding at roughly 40% lower cost.</p>
+</div>
+<div style="margin:0 0 34px;">
+<p style="font-weight:700;margin:0 0 4px;">What is the cheapest capable AI model?</p>
+<p style="margin:0;">DeepSeek V4-Pro — an MIT-licensed open-weight model at about $0.87 per million output tokens that still posts MMLU-Pro 87.5 and GPQA Diamond 90.1, near-frontier reasoning for a fraction of the flagship price.</p>
+</div>
+
+<!-- Go deeper -->
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 14px;">Go deeper</h2>
+<ul style="margin:0 0 34px;padding-left:20px;">
+<li><a href="https://report-ai.org/indexes/ai-economics/llm-market-statistics-2026/" style="color:#2545f5;">LLM market statistics 2026</a></li>
+<li><a href="https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/" style="color:#2545f5;">AI models benchmarks statistics 2026</a></li>
+<li><a href="https://report-ai.org/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/" style="color:#2545f5;">Open vs closed AI models 2026</a></li>
+</ul>
+
+<!-- Sources -->
+<h2 style="font-size:27px;font-weight:700;letter-spacing:-0.01em;margin:0 0 14px;">Sources</h2>
+<ul style="font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.75;color:#3a3a44;margin:0;padding-left:20px;">
+<li>Artificial Analysis, Intelligence Index Leaderboard, July 2026 — https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index</li>
+<li>LMArena, Text / Chatbot Arena Leaderboard, 2026 — https://arena.ai/leaderboard/text</li>
+<li>OpenAI, "GPT-5.6: Frontier intelligence that scales," Jul 9 2026 — https://openai.com/index/gpt-5-6/</li>
+<li>Anthropic, "Introducing Claude Sonnet 5," 2026 — https://www.anthropic.com/news/claude-sonnet-5</li>
+<li>Google DeepMind, Gemini 3.1 Pro model card, 2026 — https://deepmind.google/models/model-cards/gemini-3-1-pro/</li>
+<li>SpaceXAI (xAI), "Introducing Grok 4.5," Jul 8 2026 — https://x.ai/news/grok-4-5</li>
+<li>SWE-bench, Verified &amp; Pro Leaderboards, July 2026 — https://www.swebench.com/</li>
+<li>Scale AI, SWE-bench Pro (public) Leaderboard, 2026 — https://labs.scale.com/leaderboard/swe_bench_pro_public</li>
+<li>DeepSeek, V4 model &amp; benchmarks, Apr 24 2026 — https://api-docs.deepseek.com/</li>
+<li>NIST CAISI, Evaluation of DeepSeek V4 Pro, May 2026 — https://www.nist.gov/news-events/news/2026/05/caisi-evaluation-deepseek-v4-pro</li>
+<li>Vals AI, Qwen3.7-Max model page, 2026 — https://www.vals.ai/models/alibaba_qwen3.7-max</li>
+<li>Vals AI, Mistral Large 3 model page, 2026 — https://www.vals.ai/models/mistralai_mistral-large-2512</li>
+<li>Stanford HAI, 2026 AI Index Report — Technical Performance — https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance</li>
+</ul>
+
+</div>
+<!-- /wp:html -->
+
+<!-- wp:html -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the best AI model in 2026?","acceptedAnswer":{"@type":"Answer","text":"There is no single winner. As of July 2026, GPT-5.6 Sol holds the top overall composite (Artificial Analysis Intelligence Index 58.9), with Claude Opus 4.8 and Gemini 3.1 Pro in a statistical tie just behind on LMArena. The best model depends on the task."}},{"@type":"Question","name":"What is the best AI model for coding?","acceptedAnswer":{"@type":"Answer","text":"Claude Opus 4.8 leads SWE-bench Pro at 69.2% and is the reference for agentic coding, with GPT-5.6 Sol essentially tied. For value, Claude Sonnet 5 delivers near-Opus coding at roughly 40% lower cost."}},{"@type":"Question","name":"What is the cheapest capable AI model?","acceptedAnswer":{"@type":"Answer","text":"DeepSeek V4-Pro, an MIT-licensed open-weight model at about $0.87 per million output tokens that still posts MMLU-Pro 87.5 and GPQA Diamond 90.1 — near-frontier reasoning for a fraction of the flagship price."}}]}
+</script>
+<!-- /wp:html -->

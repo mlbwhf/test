@@ -1,0 +1,97 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,1,Measure,Weekly hours reviewing AI code vs writing new code
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,1,Finding,11.4h vs 9.8h
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,1,Source,"Developer survey, Q1 2026 — a reversal from Q4 2024, when writing held a four-hour lead"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,1,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,2,Measure,"Same, among self-described heavy agentic-tool users"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,2,Finding,14–16h reviewing
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,2,Source,Writing hours flat or modestly down
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,2,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,3,Measure,Developers spending more time in review since their team adopted AI — independent corroboration
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,3,Finding,81%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,3,Source,"Harness, State of Engineering Excellence 2026; 700 practitioners across US, UK, India, France, Germany. 28% report review time up by 30% or more."
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,3,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,4,Measure,Incidents per pull request
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,4,Finding,+242.7%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,4,Source,"Faros AI. Faros's own caveat, which we repeat because their headline drops it: “This is a ratio, not a probability: a single PR can be linked to multiple incidents, and not every incident traces directly to the most recent merge.”"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,4,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,5,Measure,Monthly incidents
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,5,Finding,+57.9%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,5,Source,"Faros AI — the absolute count, without the per-PR framing"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,5,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,6,Measure,Median time a pull request spends in review
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,6,Finding,+441.5%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,6,Source,Faros AI — the figure usually quoted
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,6,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,7,Measure,Average time in review
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,7,Finding,+199.6%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,7,Source,Faros AI — a different metric; routinely confused with the one above
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,7,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,8,Measure,Median time to first review
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,8,Finding,+156.6%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,8,Source,Faros AI — how long a PR waits before anyone looks at it
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,8,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,9,Measure,Pull request size
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,9,Finding,+51%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,9,Source,Faros AI
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,9,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,10,Measure,Bugs per developer
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,10,Finding,+54%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,10,Source,"Faros AI — up from +9% in their 2025 report. This is the headline figure, but it does not control for volume."
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,10,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,11,Measure,Bugs per pull request
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,11,Finding,+28.7%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,11,Source,"Faros AI — in the report PDF only, not the public summary. This is the harder-to-dismiss number: it controls for output volume, and it is roughly half the headline."
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,11,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,12,Measure,Pull requests merged with no review at all
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,12,Finding,+31%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,12,Source,Faros AI
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,12,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,13,Measure,"Developers saying AI output is ""almost correct"" but flawed"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,13,Finding,66%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,13,Source,Developer survey
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,1,The inversion: where developer time went,13,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,1,Measure,Copy-pasted code as a share of all new code
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,1,Change,9.4% → 15.7% (2022–early 2026)
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,1,Source,GitClear
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,1,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,2,Measure,“Moved” code — GitClear's proxy for refactoring — as a share of changed lines
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,2,Change,21% (2022) → 3.8%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,2,Source,GitClear
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,2,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,3,Measure,Two-week code churn — share of authored lines rewritten or removed within two weeks
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,3,Change,+15%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,3,Source,"GitClear, 623M changes"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,3,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,4,Measure,Code churn on a different definition — ratio of lines deleted to lines added per quarter
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,4,Change,+861% ~10× the prior rate
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,4,Source,"Faros AI — not comparable with the row above; same word, incompatible metrics"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,4,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,5,Measure,"Change-failure-rate stability, per 25pp of AI code adoption"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,5,Change,−7.2%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,5,Source,DORA 2025
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,2,What happens to the codebase,5,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,1,Measure,Fall in entry-level developer job postings
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,1,Figure,−67%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,1,Period,2022–2026
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,1,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,2,Measure,Entry-level postings rose while actual hiring fell — roles filled with senior staff instead
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,2,Figure,+47% / −73%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,2,Period,2023–2024
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,2,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,3,Measure,Companies that stopped hiring juniors because of AI
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,3,Figure,54%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,3,Period,2026
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,3,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,4,Measure,Senior developers reporting burnout
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,4,Figure,68%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,4,Period,2024
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,4,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,5,Measure,"Average developer burnout rating, ~75% sustained 6+ months"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,5,Figure,7.4 / 10
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,5,Period,2026
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,5,Confidence,MEDIUM
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,6,Measure,"Teams omitting tech debt, validation time and burnout from metrics"
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,6,Figure,94%
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,6,Period,2026
+https://report-ai.org/indexes/workforce-labor/will-ai-replace-my-job/software-developers/,2026-09-11,3,The part that does not recover quickly,6,Confidence,MEDIUM

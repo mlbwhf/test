@@ -1,0 +1,21 @@
+import json,re
+P=[
+dict(key='pulse',img='pulse-capex-q3.png',link='https://report-ai.org/reports/ai-market-pulse/',
+ x="Amazon, Alphabet, Microsoft and Meta spent about $207B on capex in Q3 2026.\n\nFree cash flow went negative at three of them. Then Meta, Oracle and Alphabet raised $70B+ in new equity and debt in under two weeks.\n\nOur first monthly AI Market Pulse:",
+ li="New: AI Market Pulse, our monthly round-up of the AI numbers that moved, checked and dated.\n\nNovember's headline: the AI build-out started borrowing in earnest.\n\n• Amazon, Alphabet, Microsoft and Meta reported about $207B of capex for July–September, as each reports it.\n• Free cash flow went negative at Meta (−$2.1B), Alphabet (≈−$9.1B) and Amazon (−$42.4B over 12 months).\n• Between 26 Oct and 5 Nov, Meta, Oracle and Alphabet raised more than $70B of new equity and debt, at coupons up to 8.65%.\n\nAlso inside: the largest funding rounds (DeepSeek, OpenAI at $1.25T), token prices, assistant user numbers, and AI-attributed job cuts. Every figure dated and confidence-rated; the data is downloadable.",
+ alt="Column chart of Q3 2026 capital expenditure as each company reports it: Amazon $75.9 billion, Alphabet $51.4 billion, Microsoft $45.2 billion, Meta $34.9 billion, about $207 billion combined."),
+dict(key='agents',img='agents-market-2030.png',link='https://report-ai.org/reports/ai-agents-market-size/',
+ x="How big is the AI agents market? $49B, $155B, $468B or $985B by 2030, depending who you ask.\n\nWe put 30 forecasts side by side. Most of the gap is definitions: only the $49B median measures agent revenue.",
+ li="How big is the AI agents market, really?\n\nThe 2030 figure is quoted as $49B, $155B, $468B and $985B. We collected 30 published forecasts from 24 firms and found the disagreement is mostly about what's being counted:\n\n• Standalone agent revenue (research firms): about $7–8B in 2025, a 2030 median of about $49B, most forecasts between $36B and $54B.\n• Gartner's $985B (and $206.5B for 2026) counts all software with agentic features built in. Its standalone agents line is about $29B for 2026.\n• IDC's $1.3T for 2029 is total AI spending.\n• Bank of America's $155B and Goldman's implied $468B+ are value-capture estimates, not revenue.\n\nMeanwhile 17% of organisations have deployed agents (Gartner) and Gartner expects 40%+ of agentic projects to be cancelled by 2027.\n\nFull comparison, with every forecast converted to 2030 and the data as CSV:",
+ alt="Bar chart of 2030 AI agent figures: standalone agent revenue median of 20 forecasts $49 billion; Bank of America value-capture estimate $155 billion; Goldman Sachs implied share of app software over $468 billion; Gartner spending on all software with agentic features $985 billion."),
+dict(key='jobs',img='pulse-ai-job-cuts.png',link='https://report-ai.org/reports/ai-market-pulse/',
+ x="US job cuts attributed to AI: 121,401 from Jan–Oct 2026, more than twice all of 2025 (54,836).\n\nBut October had just 1,265, the lowest month of the year, and AI is no longer the top stated reason. One month isn't a trend.",
+ li="US job cuts attributed to AI reached 121,401 from January to October 2026, more than twice the 54,836 for all of 2025 (Challenger, Gray & Christmas).\n\nBut the monthly picture turned: October had just 1,265 AI-attributed cuts, the lowest month of the year, and \"market/economic conditions\" has overtaken AI as the leading stated reason in 2026.\n\nOne month is not a trend. November's report will show whether this is a pause or a turn. And \"attributed to AI\" is the employer's stated reason, which can overstate or understate AI's actual role.\n\nMore in this month's AI Market Pulse:",
+ alt="Column chart of US job cuts attributed to AI: 54,836 in all of 2025 and 121,401 from January to October 2026, per Challenger, Gray and Christmas."),
+]
+def xl(s): return len(re.sub(r'https?://\S+','x'*23,s))
+for p in P:
+    p['x_full']=p['x']+'\n'+p['link']; p['li_full']=p['li']+'\n\n'+p['link']; p['x_len']=xl(p['x_full'])
+    assert p['x_len']<=280,(p['key'],p['x_len'])
+json.dump(P,open('posts.json','w'),ensure_ascii=False,indent=1)
+print([(p['key'],p['x_len']) for p in P])

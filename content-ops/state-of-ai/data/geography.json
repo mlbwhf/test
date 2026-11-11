@@ -1,0 +1,1129 @@
+{
+ "theme": "geography",
+ "title": "State of AI Geography",
+ "dek_2026": "Where AI's money, compute, models, users and state programmes sit - the United States, China, Europe, India, the Gulf and the rest - measured with dated, sourced, confidence-rated figures for 2024, 2025 and 2026 to date.",
+ "metrics": [
+  {
+   "id": "private_ai_investment_us",
+   "label": "US private AI investment",
+   "unit": "USD (calendar year)",
+   "group": "Capital",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "$109.1B",
+     "num": 109100000000.0,
+     "as_of": "2024 (full year)",
+     "source": "Stanford HAI, 2025 AI Index (Economy)",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+     "confidence": "MEDIUM",
+     "note": "Nearly 12x China ($9.3B) and 24x the UK ($4.5B). 2023 comparator (2024 AI Index): $67.2B.",
+     "site_page": 930
+    },
+    "2025": {
+     "value": "$285.9B",
+     "num": 285900000000.0,
+     "as_of": "2025 (full year)",
+     "source": "Stanford HAI, 2026 AI Index (Economy, ch. 4)",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "MEDIUM",
+     "note": "23.1x China's $12.4B. Up 162% on 2024 (DERIVED: 285.9/109.1). Primary PDF unreachable from our environment; figure consistent across Stanford web page and coverage.",
+     "site_page": 954
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Calendar-2026 figure will first appear in Stanford's 2027 AI Index (expected Apr 2027). Year-to-date venture proxy: see us_share_ai_vc_funding.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "private_ai_investment_china",
+   "label": "China private AI investment",
+   "unit": "USD (calendar year)",
+   "group": "Capital",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "$9.3B",
+     "num": 9300000000.0,
+     "as_of": "2024 (full year)",
+     "source": "Stanford HAI, 2025 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+     "confidence": "MEDIUM",
+     "note": "2023 comparator (2024 AI Index): ~$7.8B. Private capital only; excludes state guidance funds (Stanford estimates ~$184B deployed into AI firms 2000-2023).",
+     "site_page": 930
+    },
+    "2025": {
+     "value": "$12.4B",
+     "num": 12400000000.0,
+     "as_of": "2025 (full year)",
+     "source": "Stanford HAI, 2026 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "MEDIUM",
+     "note": "Up 33% on 2024 (DERIVED). Excludes government guidance funds and the ¥60.1B National AI Industry Investment Fund (Jan 2025).",
+     "site_page": 954
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Not yet published. A single late-Oct 2026 DeepSeek round of ~$15-16B (100-105.5B yuan) at ~$86B post-money (CONTESTED; reports range $74B pre to $90B) would on its own exceed China's 2025 Stanford total, but Stanford's 2026 count is not available until 2027.",
+     "site_page": 3441
+    }
+   }
+  },
+  {
+   "id": "private_ai_investment_uk",
+   "label": "UK private AI investment",
+   "unit": "USD (calendar year)",
+   "group": "Capital",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "$4.5B",
+     "num": 4500000000.0,
+     "as_of": "2024 (full year)",
+     "source": "Stanford HAI, 2025 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+     "confidence": "MEDIUM",
+     "note": "Third globally. 2023 comparator (2024 AI Index): ~$3.8B.",
+     "site_page": 956
+    },
+    "2025": {
+     "value": "$5.9B",
+     "num": 5900000000.0,
+     "as_of": "2025 (full year)",
+     "source": "Stanford HAI, 2026 AI Index fig. 4.2.8, as reported by a secondary chart",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Single secondary source; not confirmed in Stanford text. Same chart: France $4.4B, Canada $4.3B.",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Not yet published.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_share_global_private_ai_investment",
+   "label": "US share of global private AI investment",
+   "unit": "% of global private AI investment",
+   "group": "Capital",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "~72%",
+     "num": 72.0,
+     "as_of": "2024",
+     "source": "Report AI calculation from Stanford HAI",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "109.1 / 151.5 = 72.0%. The 2024 global base ($151.5B) is back-calculated from the 2026 AI Index's 2025 total ($344.7B) and stated growth (+127.5%): 344.7/2.275. Mixes two report vintages; treat as approximate.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "82.9%",
+     "num": 82.9,
+     "as_of": "2025",
+     "source": "Report AI calculation from Stanford HAI, 2026 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "DERIVED",
+     "note": "285.9 / 344.7 = 82.9%. Note: $344.7B is global PRIVATE investment; $581.7B is total corporate AI investment (incl. M&A, minority stakes, public offerings) and must not be used as the denominator.",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Awaits 2027 AI Index.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_share_ai_vc_funding",
+   "label": "US share of global AI start-up funding",
+   "unit": "% of global AI venture dollars",
+   "group": "Capital",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "76%",
+     "num": 76.0,
+     "as_of": "2024 (full year)",
+     "source": "Crunchbase data, as reported in secondary coverage",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Single secondary citation of Crunchbase; no clean primary 2024 share found.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "79%",
+     "num": 79.0,
+     "as_of": "2025 (full year)",
+     "source": "Crunchbase year-end analysis",
+     "url": "https://news.crunchbase.com/ai/big-funding-trends-charts-eoy-2025/",
+     "confidence": "MEDIUM",
+     "note": "$159B of $202.3B (DERIVED 78.6%). Other tallies: $211B total (Crunchbase AI-related), OECD ~75%.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "~88%",
+     "num": 88.0,
+     "as_of": "2026 to date (Crunchbase article, mid-2026; exact cutoff not stated)",
+     "source": "Crunchbase News",
+     "url": "https://news.crunchbase.com/venture/us-ai-startup-funding-boom-data/",
+     "confidence": "MEDIUM",
+     "note": "$319B to US-headquartered AI companies 'so far this year'. Inflated by a few very large rounds, incl. OpenAI's $122B round (closed H1 2026, page 716). Q3 2026: US companies took ~57% of ALL global venture ($91B of $159B).",
+     "site_page": 716
+    }
+   }
+  },
+  {
+   "id": "europe_ai_vc_funding",
+   "label": "European AI start-up venture funding",
+   "unit": "USD",
+   "group": "Capital",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "~$10B (Crunchbase) / $12.8B (Dealroom)",
+     "num": 10000000000.0,
+     "as_of": "2024 (full year)",
+     "source": "Crunchbase; Dealroom",
+     "url": "https://news.crunchbase.com/venture/european-funding-nudged-higher-ai-led-2025",
+     "confidence": "CONTESTED",
+     "note": "Crunchbase: 'just over $10B'. Dealroom (used on site page 956): ~$12.8B, ~12% of global AI VC. Different deal definitions; num uses Crunchbase for series consistency.",
+     "site_page": 956
+    },
+    "2025": {
+     "value": "$17.5B",
+     "num": 17500000000.0,
+     "as_of": "2025 (full year)",
+     "source": "Crunchbase",
+     "url": "https://news.crunchbase.com/venture/european-funding-nudged-higher-ai-led-2025",
+     "confidence": "MEDIUM",
+     "note": "AI the leading European sector for the first time; total European VC ~$58B. PitchBook (different base): EUR 23.5B of EUR 66.2B.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "$23B (H1)",
+     "num": 23000000000.0,
+     "as_of": "H1 2026 (to date)",
+     "source": "HumanX / Crunchbase report",
+     "url": "https://www.intelligentcio.com/eu/2026/08/17/european-ai-start-ups-capture-55-of-vc-funding-as-investment-hits-us23-billion/",
+     "confidence": "MEDIUM",
+     "note": "Half-year figure: +130% YoY, 55% of all European VC. UK $12B, Germany $3.5B, France $2.9B. H1 2026 alone exceeds full-year 2025 by 31% (DERIVED).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "mistral_valuation",
+   "label": "Mistral AI valuation (Europe's most valuable AI lab)",
+   "unit": "EUR, post-money",
+   "group": "Capital",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "€5.8B",
+     "num": 5800000000.0,
+     "as_of": "Jun 2024",
+     "source": "Series B reporting (Bloomberg, Reuters)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "EUR 600M Series B.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "€11.7B",
+     "num": 11700000000.0,
+     "as_of": "9 Sep 2025",
+     "source": "Mistral / ASML-led Series C (CNBC, Bloomberg)",
+     "url": "https://www.cnbc.com/2025/09/09/ai-firm-mistral-valued-at-14-billion-as-asml-takes-major-stake.html",
+     "confidence": "MEDIUM",
+     "note": "EUR 1.7B round; often rounded to EUR 12B / ~$14B.",
+     "site_page": 956
+    },
+    "2026": {
+     "value": "€21B+",
+     "num": 21000000000.0,
+     "as_of": "8 Sep 2026",
+     "source": "Euronews and others: Samsung-led EUR 3B Series D",
+     "url": "https://www.euronews.com/2026/09/08/mistral-ai-raises-record-3-billion-in-samsung-led-funding-round",
+     "confidence": "MEDIUM",
+     "note": "~$24.4B. Roughly doubled for the second year running. Compare OpenAI's ~$1.25T (Nov 2026) and DeepSeek's reported ~$86B.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_share_new_ai_compute",
+   "label": "US share of new AI compute added worldwide",
+   "unit": "% of H100-equivalent compute added in period",
+   "group": "Compute",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "~60%",
+     "num": 60.0,
+     "as_of": "2024",
+     "source": "Epoch AI, AI Chip Imports explorer",
+     "url": "https://epoch.ai/latest/introducing-the-ai-chip-imports-explorer",
+     "confidence": "MEDIUM",
+     "note": "Epoch: the US acquired 'around 60%' of new compute each year 2022-2024.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "72%",
+     "num": 72.0,
+     "as_of": "2025",
+     "source": "Epoch AI",
+     "url": "https://epoch.ai/latest/introducing-the-ai-chip-imports-explorer",
+     "confidence": "MEDIUM",
+     "note": "Customs/shipment-based estimate.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "78% (H1)",
+     "num": 78.0,
+     "as_of": "H1 2026 (to date)",
+     "source": "Epoch AI (X post and explorer)",
+     "url": "https://x.com/EpochAIResearch/status/2115186242459767006",
+     "confidence": "MEDIUM",
+     "note": "Half-year. Epoch's chip-import data captures China's export-controlled and smuggled chips poorly; China share is an estimate.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_share_cumulative_ai_compute",
+   "label": "US share of all AI compute added since 2022",
+   "unit": "% of cumulative H100e",
+   "group": "Compute",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Older Epoch supercomputer dataset (different measure): US ~75%, China ~15%, EU ~5% of tracked AI-supercomputer performance, as of early 2025 (page 930). Not comparable with the chip-imports series.",
+     "site_page": 930
+    },
+    "2025": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "See 2026 cumulative snapshot.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "72.2%",
+     "num": 72.2,
+     "as_of": "Through Q2 2026",
+     "source": "Epoch AI, AI Chip Imports explorer",
+     "url": "https://epoch.ai/latest/introducing-the-ai-chip-imports-explorer",
+     "confidence": "MEDIUM",
+     "note": "19.8M of 27.4M H100e since 2022. China 9.6%, EU 5.1%, Malaysia 2.4%, India 1.6%, Japan 1.6%, rest of world 7.5%. China holds ~18% of chips but ~10% of compute (lower-performance H20 and domestic chips).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "nvidia_china_revenue_share",
+   "label": "Nvidia revenue from China (customer HQ basis)",
+   "unit": "% of Nvidia revenue",
+   "group": "Compute",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "19.2% (HQ basis) / 13% (billing basis)",
+     "num": 19.2,
+     "as_of": "FY2025 (Feb 2024-Jan 2025)",
+     "source": "Analyst count from Nvidia filings (FourWeekMBA); Nvidia 10-K billing location",
+     "url": "https://fourweekmba.com/ai-nvidias-china-revenue-19-under-its-new-count-not-13/",
+     "confidence": "CONTESTED",
+     "note": "Nvidia reports China incl. Hong Kong at ~$17.1B, 13% of $130.5B by billing location; counted by customer headquarters it is ~19%. num uses HQ basis for series consistency.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "9.1%",
+     "num": 9.1,
+     "as_of": "FY2026 (Feb 2025-Jan 2026)",
+     "source": "Analyst count from Nvidia filings (FourWeekMBA)",
+     "url": "https://fourweekmba.com/ai-nvidias-china-revenue-19-under-its-new-count-not-13/",
+     "confidence": "MEDIUM",
+     "note": "$19.7B of $215.9B (DERIVED 9.1%). Includes $4.5B H20 charge context: licence requirement Apr 2025; ~$60M H20 revenue under Aug 2025 licences.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "~8.2%",
+     "num": 8.2,
+     "as_of": "Quarter to 26 Jul 2026 (to date)",
+     "source": "Analyst count (FourWeekMBA); Bloomberg",
+     "url": "https://www.bloomberg.com/news/articles/2026-08-26/nvidia-steps-back-into-china-market-with-first-h200-chip-sales",
+     "confidence": "MEDIUM",
+     "note": "Single analyst tally (~$7.9B). H200 sales to China were under 1% of data-centre revenue in that quarter (Bloomberg, 26 Aug 2026); quarter to Jan 2026 ~4.5%. Nvidia guidance assumes no China data-centre compute revenue.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "nvidia_sovereign_ai_revenue",
+   "label": "Nvidia sovereign AI revenue",
+   "unit": "USD (fiscal year)",
+   "group": "Sovereign AI",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "under ~$10B",
+     "num": null,
+     "as_of": "FY2025 (Feb 2024-Jan 2025)",
+     "source": "Report AI inference from Nvidia FY2026 statement",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "Implied by 'more than tripled to over $30 billion' in FY2026: FY2025 base < $30B/3 = ~$10B. Not separately disclosed.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "$30B+",
+     "num": 30000000000.0,
+     "as_of": "FY2026 (Feb 2025-Jan 2026)",
+     "source": "Nvidia Q4 FY2026 earnings call (Feb 2026)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Growth led by Canada, France, Netherlands, Singapore, UK; ~13.9% of revenue (Motley Fool estimate).",
+     "site_page": 934
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "No FY2027 sovereign figure disclosed as of Nov 2026.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_china_top_model_gap",
+   "label": "Performance gap, top US vs top Chinese model (Chatbot Arena / LMArena)",
+   "unit": "% score gap",
+   "group": "Models",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "9.26%",
+     "num": 9.26,
+     "as_of": "Jan 2024",
+     "source": "Stanford HAI, 2025 AI Index (via 36Kr)",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+     "confidence": "MEDIUM",
+     "note": "Reported in Japanese-language coverage of the 2025 AI Index; English excerpt not seen. Site page 930 cites ~31.6% for 2023 (different benchmarks).",
+     "site_page": 930
+    },
+    "2025": {
+     "value": "1.70%",
+     "num": 1.7,
+     "as_of": "Feb 2025",
+     "source": "Stanford HAI, 2025 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+     "confidence": "MEDIUM",
+     "note": "DeepSeek-R1 briefly matched the top US model in Feb 2025 (2026 AI Index).",
+     "site_page": null
+    },
+    "2026": {
+     "value": "2.7%",
+     "num": 2.7,
+     "as_of": "Mar 2026 (to date)",
+     "source": "Stanford HAI, 2026 AI Index",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "MEDIUM",
+     "note": "Arena scores 1,503 vs 1,464 (DERIVED 2.66%). Gap widened slightly from Feb 2025. Different index, later date: Artificial Analysis Intelligence Index, Sep 2026 - GPT-5.6 Sol 58.9 vs Qwen3.8-Max 58 (0.9 points; Qwen score revised 53-56-58).",
+     "site_page": 954
+    }
+   }
+  },
+  {
+   "id": "notable_models_us",
+   "label": "Notable AI models released by US institutions",
+   "unit": "models (calendar year)",
+   "group": "Models",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "40",
+     "num": 40,
+     "as_of": "2024",
+     "source": "Stanford HAI, 2025 AI Index (Epoch AI data)",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+     "confidence": "MEDIUM",
+     "note": "2023 comparator (2024 AI Index): 61.",
+     "site_page": 930
+    },
+    "2025": {
+     "value": "50 or 59",
+     "num": 50,
+     "as_of": "2025",
+     "source": "Stanford HAI, 2026 AI Index (Epoch AI data)",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "CONTESTED",
+     "note": "Chapter PDF and most coverage: 50; Stanford web chapter summary: 59. Likely an Epoch dataset revision. Also: the 2026 Index says releases declined year on year in all regions, which is inconsistent with 40 -> 50/59 unless 2024 was restated upward.",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Annual count; 2026 not yet compiled.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "notable_models_china",
+   "label": "Notable AI models released by Chinese institutions",
+   "unit": "models (calendar year)",
+   "group": "Models",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "15",
+     "num": 15,
+     "as_of": "2024",
+     "source": "Stanford HAI, 2025 AI Index (Epoch AI data)",
+     "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+     "confidence": "MEDIUM",
+     "note": "Europe: 3 (2024).",
+     "site_page": 930
+    },
+    "2025": {
+     "value": "30 or 35",
+     "num": 30,
+     "as_of": "2025",
+     "source": "Stanford HAI, 2026 AI Index (Epoch AI data)",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+     "confidence": "CONTESTED",
+     "note": "PDF/coverage 30; web summary 35. South Korea 5 or 8; Europe ~2 (secondary).",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Annual count; 2026 not yet compiled.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "chinese_open_model_token_share",
+   "label": "Chinese open-weight models' share of tokens on OpenRouter",
+   "unit": "% of tokens processed",
+   "group": "Models",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "1.2%",
+     "num": 1.2,
+     "as_of": "Late 2024",
+     "source": "a16z / OpenRouter, 'State of AI: 100 Trillion Token Study' (Dec 2025)",
+     "url": "https://openrouter.ai/state-of-ai",
+     "confidence": "MEDIUM",
+     "note": "Starting share at the beginning of the study window (Nov 2024).",
+     "site_page": null
+    },
+    "2025": {
+     "value": "~13% (average; peaks near 30%)",
+     "num": 13.0,
+     "as_of": "Nov 2024-Nov 2025 average",
+     "source": "a16z / OpenRouter",
+     "url": "https://openrouter.ai/state-of-ai",
+     "confidence": "MEDIUM",
+     "note": "Period average, not a point reading; weekly peaks near 30%. One platform; critics note roleplay-heavy usage and single-account spikes.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "~61%",
+     "num": 61.0,
+     "as_of": "May 2026 (to date)",
+     "source": "Wing VC, 'China's Open-Weight Takeover'",
+     "url": "https://www.wing.vc/content/chinas-open-weight-takeover",
+     "confidence": "MEDIUM",
+     "note": "Single VC source, not verified against OpenRouter data. Separate measure: Chinese models 41% of Hugging Face downloads Feb 2025-Feb 2026 vs US 36.5% (Hugging Face spring 2026 report); 17.1% vs US 15.8% for Aug 2024-Aug 2025 (MIT/Hugging Face, different scope).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "china_ai_patent_share",
+   "label": "China's share of AI patents granted worldwide",
+   "unit": "% of AI patents granted",
+   "group": "Models",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "74.2%",
+     "num": 74.2,
+     "as_of": "2024",
+     "source": "Stanford HAI, 2026 AI Index (R&D chapter)",
+     "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development",
+     "confidence": "MEDIUM",
+     "note": "97,206 of 131,121 granted; US 12.1%. The 69.7% figure on site pages 930/954 is the 2023 share from the 2025 AI Index. Patent volume is not influence: China holds ~29.8% of forward citations (secondary).",
+     "site_page": 954
+    },
+    "2025": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Not yet published.",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Not yet published.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "ai_usage_world_microsoft",
+   "label": "Working-age population using generative AI, world (Microsoft AI Diffusion)",
+   "unit": "% of working-age population",
+   "group": "Adoption",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Microsoft's diffusion series begins in 2025.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "16.3%",
+     "num": 16.3,
+     "as_of": "H2 2025",
+     "source": "Microsoft AI Economy Institute, AI Diffusion Report (Jan 2026)",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/01/08/global-ai-adoption-in-2025/",
+     "confidence": "MEDIUM",
+     "note": "Telemetry-based modelled estimate.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "18.8%",
+     "num": 18.8,
+     "as_of": "Jun 2026 (Q2 2026, to date)",
+     "source": "Microsoft AI Diffusion Report Q2 2026 (21 Sep 2026)",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/09/21/the-continued-state-of-global-ai-diffusion-in-2026/",
+     "confidence": "MEDIUM",
+     "note": "Q1 2026: 17.8%. Global North 28.8%, Global South 16.2%. An independent analysis (Pebblous) says the aggregates cannot be recomputed from published material and some country values come from surveys.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "ai_usage_uae_microsoft",
+   "label": "Working-age population using generative AI, UAE (world #1)",
+   "unit": "% of working-age population",
+   "group": "Adoption",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Series begins 2025.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "64.0%",
+     "num": 64.0,
+     "as_of": "H2 2025",
+     "source": "Microsoft AI Diffusion Report (Jan 2026)",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/01/08/global-ai-adoption-in-2025/",
+     "confidence": "MEDIUM",
+     "note": "H1 2025: 59.4%. Singapore #2 at 60.9%.",
+     "site_page": 955
+    },
+    "2026": {
+     "value": "73.3%",
+     "num": 73.3,
+     "as_of": "Q2 2026 (to date)",
+     "source": "Microsoft AI Diffusion Report Q2 2026",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/09/21/the-continued-state-of-global-ai-diffusion-in-2026/",
+     "confidence": "MEDIUM",
+     "note": "Q1 2026: 70.1%. Q2 2026 others: Singapore 64.3%, Ireland 49.9%, France 49.6%, South Korea 40.6% (#12), US 33.0% (#21), India 18.5%, China 17.5% (#67; excludes several Chinese domestic tools).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "ai_usage_us_microsoft",
+   "label": "Working-age population using generative AI, United States",
+   "unit": "% of working-age population",
+   "group": "Adoption",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Series begins 2025.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "28.3%",
+     "num": 28.3,
+     "as_of": "H2 2025",
+     "source": "Microsoft AI Diffusion Report (Jan 2026)",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/01/08/global-ai-adoption-in-2025/",
+     "confidence": "MEDIUM",
+     "note": "Ranked 24th. H1 2025: 26.3%. South Korea H2 2025: 30.7%.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "33.0%",
+     "num": 33.0,
+     "as_of": "Q2 2026 (to date)",
+     "source": "Microsoft AI Diffusion Report Q2 2026, via Quartz / FourWeekMBA",
+     "url": "https://blogs.microsoft.com/on-the-issues/2026/09/21/the-continued-state-of-global-ai-diffusion-in-2026/",
+     "confidence": "MEDIUM",
+     "note": "Ranked 21st; Q1 2026 31.3%.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "china_genai_users_cnnic",
+   "label": "Generative AI users in China (CNNIC)",
+   "unit": "people (have used gen-AI products)",
+   "group": "Adoption",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "249M",
+     "num": 249000000.0,
+     "as_of": "Dec 2024",
+     "source": "CNNIC, 55th Statistical Report (Jan 2025)",
+     "url": "https://english.www.gov.cn/archive/statistics/202501/18/content_WS678ae7f6c6d0868f4e8eef08.html",
+     "confidence": "MEDIUM",
+     "note": "~17.7% of population (attributed to Internet Society of China).",
+     "site_page": null
+    },
+    "2025": {
+     "value": "602M",
+     "num": 602000000.0,
+     "as_of": "Dec 2025",
+     "source": "CNNIC, 57th Statistical Report (Feb 2026)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Penetration 42.8%. Jun 2025: 515M (36.5%). +142% in 2025 (DERIVED 602/249).",
+     "site_page": null
+    },
+    "2026": {
+     "value": "700M+",
+     "num": 700000000.0,
+     "as_of": "Jun 2026 (to date)",
+     "source": "CNNIC, Generative AI Application Development Report 2026 (29 Sep 2026)",
+     "url": "http://www.ecns.cn/cns-wire/2026-09-29/detail-ihfkteqw7936690.shtml",
+     "confidence": "MEDIUM",
+     "note": "Penetration above 50%. 'Users' = ever used; not comparable with monthly-active panels (QuestMobile 499M AI-native app MAU, May 2026) or Microsoft's usage share.",
+     "site_page": 2589
+    }
+   }
+  },
+  {
+   "id": "doubao_mau",
+   "label": "Doubao (ByteDance) monthly active users",
+   "unit": "users (monthly)",
+   "group": "Adoption",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "~60M",
+     "num": 60000000.0,
+     "as_of": "Nov 2024",
+     "source": "Counterpoint Research",
+     "url": "https://www.counterpointresearch.com/insight/post-insight-research-notes-blogs-why-bytedances-doubao-is-1-chatbot-in-china",
+     "confidence": "MEDIUM",
+     "note": "Different tracker from later readings.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "157M",
+     "num": 157000000.0,
+     "as_of": "Aug 2025",
+     "source": "QuestMobile (via secondary reporting)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Year-end 2025 estimates ~160-172M (lower-reliability sources); 100M+ DAU reported 24 Dec 2025.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "419.08M",
+     "num": 419080000.0,
+     "as_of": "Sep 2026 (Q3 2026, to date)",
+     "source": "QuestMobile",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Single source. May 2026: 382M (QuestMobile). Per-app MAU are not deduplicated and must not be summed. The '3.8 billion users' headline is a mistranslation of 3.8 yi (= 380M).",
+     "site_page": 3441
+    }
+   }
+  },
+  {
+   "id": "china_cac_genai_filings",
+   "label": "Generative AI services filed with China's Cyberspace Administration (cumulative)",
+   "unit": "services",
+   "group": "Adoption",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "302",
+     "num": 302,
+     "as_of": "End-2024",
+     "source": "CAC (via CNNIC / MLex)",
+     "url": "https://www.mlex.com/mlex/articles/2281577",
+     "confidence": "MEDIUM",
+     "note": "238 added in 2024.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "748",
+     "num": 748,
+     "as_of": "End-2025",
+     "source": "CAC (via secondary reporting)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "446 added in 2025. 796 by 28 Feb 2026 (CAC).",
+     "site_page": null
+    },
+    "2026": {
+     "value": "1,112",
+     "num": 1112,
+     "as_of": "31 Aug 2026 (to date)",
+     "source": "CAC batch published 14 Sep 2026, via Remio",
+     "url": "https://www.remio.ai/post/cac-generative-ai-filings-hit-1-112-as-china-speeds-up-compliance",
+     "confidence": "MEDIUM",
+     "note": "Single secondary source; the CAC notice for 30 Jun 2026 gave 988 services and 598 registered apps/features.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "korea_ai_budget",
+   "label": "South Korea government AI budget",
+   "unit": "KRW (budget year)",
+   "group": "Sovereign AI",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "No reliable 2024 AI-specific total found.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "₩3.3T",
+     "num": 3300000000000.0,
+     "as_of": "2025 main budget",
+     "source": "Korea Times / budget reporting (Aug-Nov 2025)",
+     "url": "https://www.koreatimes.co.kr/economy/20250829/korea-to-more-than-triple-ai-budget-to-727-bil-in-2026",
+     "confidence": "MEDIUM",
+     "note": "Plus a ₩1.9T AI supplementary budget (2025). Site page 374 currently lists ₩10.1T as the 2025 figure - that is the 2026 budget.",
+     "site_page": 374
+    },
+    "2026": {
+     "value": "₩10.1T (~$7.27B)",
+     "num": 10100000000000.0,
+     "as_of": "2026 budget",
+     "source": "President Lee budget speech, 4 Nov 2025; Korea Times",
+     "url": "https://www.koreatimes.co.kr/economy/20250829/korea-to-more-than-triple-ai-budget-to-727-bil-in-2026",
+     "confidence": "CONTESTED",
+     "note": "Proposal: ₩10.1T (3.06x 2025, DERIVED); MLex reports ₩9.9T ($6.7B). Includes 15,000 GPUs.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "india_gpus_onboarded",
+   "label": "GPUs onboarded under the IndiaAI Mission compute portal",
+   "unit": "GPUs (cumulative)",
+   "group": "Sovereign AI",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Mission approved Mar 2024 (₹10,372 crore, ~$1.25B over five years); no GPUs onboarded until the first tender awards in early 2025.",
+     "site_page": 957
+    },
+    "2025": {
+     "value": "34,000+",
+     "num": 34000,
+     "as_of": "May 2025",
+     "source": "PIB / MeitY",
+     "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2132817",
+     "confidence": "MEDIUM",
+     "note": "₹115-150 per GPU-hour, ~42% below market.",
+     "site_page": 957
+    },
+    "2026": {
+     "value": "38,231",
+     "num": 38231,
+     "as_of": "Mar 2026 (to date)",
+     "source": "MeitY statement / Lok Sabha answer (25 Mar 2026)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Target 100,000 by end-2026. One unverified source reports 45,000+ by Jun 2026. Utilisation questioned (Communications Today).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "us_ai_talent_net_inflow",
+   "label": "Net inflow of top AI authors/inventors into the US (12-month rolling)",
+   "unit": "index of net movers",
+   "group": "Talent",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "No 2024 point reported in coverage.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "26.0",
+     "num": 26.0,
+     "as_of": "Sep 2025",
+     "source": "Stanford HAI, 2026 AI Index (via Voronoi)",
+     "url": "https://www.voronoiapp.com/technology/Americas-Net-Inflow-of-Top-AI-Talent-Fell-92-8843",
+     "confidence": "MEDIUM",
+     "note": "Down 92% from a 323.5 peak in Dec 2022. Stanford coverage: inflow down 89% since 2017 and ~80% in the latest year. Not a count of all AI workers.",
+     "site_page": null
+    },
+    "2026": {
+     "value": null,
+     "num": null,
+     "as_of": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Next reading in the 2027 AI Index.",
+     "site_page": null
+    }
+   }
+  }
+ ],
+ "headlines": {
+  "2024": [
+   "Stanford HAI's 2025 AI Index counted $109.1 billion of US private AI investment in 2024, nearly 12 times China's $9.3 billion and 24 times the UK's $4.5 billion.",
+   "US institutions released 40 notable AI models in 2024, against 15 from China and 3 from Europe, according to Stanford HAI's 2025 AI Index.",
+   "In January 2024 the top US model led the top Chinese model by 9.26% on the Chatbot Arena leaderboard, according to Stanford HAI's 2025 AI Index.",
+   "China had 249 million generative AI users at the end of December 2024, according to the China Internet Network Information Center (CNNIC).",
+   "China was granted 74.2% of the world's AI patents in 2024, 97,206 of 131,121, against 12.1% for the United States, according to Stanford HAI's 2026 AI Index."
+  ],
+  "2025": [
+   "US private AI investment reached $285.9 billion in 2025, more than 23 times China's $12.4 billion, according to Stanford HAI's 2026 AI Index.",
+   "US-headquartered companies raised $159 billion, or 79%, of the $202.3 billion invested in AI start-ups worldwide in 2025, according to Crunchbase.",
+   "The United States took about 72% of the AI computing capacity added worldwide in 2025, up from around 60% a year in 2022-2024, according to Epoch AI's chip-imports data.",
+   "China's generative AI users rose to 602 million in December 2025 from 249 million a year earlier, according to CNNIC.",
+   "Microsoft estimated that 16.3% of the world's working-age population used generative AI in the second half of 2025, ranging from 64.0% in the UAE to 28.3% in the United States."
+  ],
+  "2026": [
+   "The top US model led the top Chinese model by 2.7% on the LMArena leaderboard in March 2026, according to Stanford HAI's 2026 AI Index, compared with 1.70% in February 2025.",
+   "Microsoft estimated that 18.8% of the world's working-age population used generative AI in June 2026, led by the UAE at 73.3%, with the United States at 33.0% and China at 17.5% on a measure that excludes several Chinese domestic tools.",
+   "The United States received 78% of the AI compute added worldwide in the first half of 2026 and holds 72.2% of all AI compute added since 2022, against 9.6% for China and 5.1% for the EU, according to Epoch AI.",
+   "China had more than 700 million generative AI users in June 2026, a penetration rate above 50%, according to a CNNIC report published on 29 September 2026.",
+   "European AI start-ups raised a record $23 billion in the first half of 2026, 55% of all venture funding in the region, according to Crunchbase data compiled for HumanX."
+  ]
+ },
+ "analysis": {
+  "2024": [
+   "In 2024 the geography of AI capital was already lopsided. Stanford HAI's 2025 AI Index put US private AI investment at $109.1 billion, against $9.3 billion in China and $4.5 billion in the United Kingdom. The US figure was up from $67.2 billion in 2023, while China's private total stayed in single digits. Those Chinese numbers exclude state guidance funds, which Stanford estimates had channelled about $184 billion into AI firms between 2000 and 2023, and the ¥344 billion semiconductor 'Big Fund III' registered in May 2024. Private and state money are different instruments, and the honest comparison for 2024 is that the US led decisively on private capital while China relied on public vehicles that do not appear in the headline tables.",
+   "On output, the US produced 40 notable AI models in 2024, China 15 and Europe 3 (Stanford HAI, 2025 AI Index). But the performance gap between the best models from each country was narrowing quickly. In January 2024 the top US model led the top Chinese model by 9.26% on the Chatbot Arena leaderboard; by February 2025 the lead was 1.70%. China dominated research volume in a different way: it was granted 74.2% of the world's AI patents in 2024, against 12.1% for the US, according to the 2026 AI Index. Patents measure volume, not influence, and the US kept the lead on the most-cited work.",
+   "Governments began building rather than only regulating. India's Cabinet approved the ₹10,372 crore (about $1.25 billion) IndiaAI Mission in March 2024; Abu Dhabi set up MGX; and Japan's METI subsidised domestic cloud compute. Nvidia's sovereign AI revenue for its fiscal 2025, roughly calendar 2024, was not disclosed, but its later statement that the business 'more than tripled' to over $30 billion implies a base under about $10 billion. Consumer adoption in China was still early: CNNIC counted 249 million generative AI users at the end of 2024, about 18% of the population."
+  ],
+  "2025": [
+   "2025 turned a large lead in private capital into an overwhelming one. Stanford HAI's 2026 AI Index put US private AI investment at $285.9 billion, 2.6 times the 2024 figure and 23 times China's $12.4 billion. On Stanford's global private total of $344.7 billion, that is an 82.9% US share by Report AI's calculation. Crunchbase's venture data agree: US companies raised $159 billion of the $202.3 billion that went to AI start-ups, 79%. Europe grew from a much smaller base, to about $17.5 billion of AI venture funding, and Mistral's valuation doubled to €11.7 billion. DeepSeek-R1's release in January 2025, and its brief tie with the top US model in February, showed that capital alone did not determine capability.",
+   "Compute concentrated even faster than money. Epoch AI estimates the US took 72% of the AI compute added worldwide in 2025, up from around 60% a year in 2022-2024. Export policy changed repeatedly. The AI Diffusion Rule issued in January 2025 was rescinded in May; a licence requirement on Nvidia's H20 in April led to a $4.5 billion charge; and by November Washington had approved the equivalent of 35,000 Blackwell GB300 chips each for Saudi Arabia's HUMAIN and the UAE's G42. On an analyst's customer-headquarters count, China's share of Nvidia revenue fell from about 19% in fiscal 2025 to 9.1% in fiscal 2026.",
+   "Adoption followed income and policy more closely than model origin. Microsoft estimated that 16.3% of the world's working-age population used generative AI in the second half of 2025, from 64.0% in the UAE and 60.9% in Singapore to 28.3% in the US, which ranked 24th. Anthropic's Economic Index found the US produced 21.6% of Claude.ai use, while Israel used it at seven times its population share. In China, CNNIC counted 602 million generative AI users by December, up 142% in a year, and 748 generative AI services had completed filing with the Cyberspace Administration. The flow of top AI talent into the US fell about 80% over the year to September 2025, according to the 2026 AI Index."
+  ],
+  "2026": [
+   "The model gap between the US and China has largely closed and is now small enough to change sign. Stanford's 2026 AI Index put the top US model 2.7% ahead of the top Chinese model on LMArena in March 2026, slightly wider than the 1.70% of February 2025. On the Artificial Analysis index in September 2026, two Chinese models were in the global top four, within two points of the leader. The more durable difference is distribution: Chinese labs publish weights and US frontier labs do not. Chinese models accounted for 41% of Hugging Face downloads in the year to February 2026, and one VC estimate puts their share of OpenRouter tokens near 61% in May 2026.",
+   "Compute moved the other way. Epoch AI estimates the US received 78% of the AI compute added worldwide in the first half of 2026 and holds 72.2% of everything added since 2022, against 9.6% for China and 5.1% for the EU. Export controls loosened for chips and tightened for models. A January 2026 rule moved H200 exports to China to case-by-case licensing with a 25% charge, but Beijing held purchases back and H200 sales were under 1% of Nvidia's data-centre revenue in the quarter to July. In June, Commerce placed Anthropic's Claude Fable 5 and Mythos 5 under export controls, and both were withdrawn within a week.",
+   "Capital remains American, with Europe accelerating. Crunchbase counted about $319 billion, roughly 88%, of AI start-up funding going to US-headquartered companies so far in 2026, a share swollen by a few very large rounds, including OpenAI's $122 billion raise. European AI start-ups raised $23 billion in the first half alone, more than in all of 2025, and Mistral was valued at over €21 billion in September. China's largest private raise came late: DeepSeek's reported $15-16 billion round in October, at a valuation reported between $74 billion and $90 billion. Stanford's country totals for 2026 will not be available until 2027.",
+   "Usage is spreading fastest outside the US. Microsoft's estimate of the share of working-age people using generative AI rose to 18.8% worldwide in June 2026, 73.3% in the UAE and 40.6% in South Korea, against 33.0% in the US. Microsoft's China figure, 17.5%, omits domestic tools; CNNIC counted more than 700 million Chinese users by June 2026, and Doubao alone reached 419 million monthly users by September. States are spending more but still modestly: South Korea's 2026 AI budget of about ₩10.1 trillion is triple 2025's, and India had onboarded 38,231 subsidised GPUs by March. None of these series is measured the same way across countries."
+  ]
+ },
+ "takeaways_2026": [
+  "The model gap is nearly gone: the top US model led the top Chinese model by 2.7% on LMArena in March 2026 (Stanford HAI), and Chinese open-weight models now lead global download charts.",
+  "Money and machines are more concentrated, not less: about 88% of AI start-up funding so far in 2026 (Crunchbase) and 78% of new AI compute in H1 2026 (Epoch AI) went to the United States.",
+  "Usage leaders are small, rich and state-backed: the UAE (73.3%) and Singapore (64.3%) top Microsoft's June 2026 ranking, while the US sits 21st at 33.0%.",
+  "Export controls shifted from chips to models: H200 sales to China resumed under licence but stayed under 1% of Nvidia data-centre revenue, while two frontier US models were withdrawn under export controls in June 2026."
+ ],
+ "yoy_takeaways": [
+  "US private AI investment rose from $109.1 billion in 2024 to $285.9 billion in 2025 while China's rose from $9.3 billion to $12.4 billion, widening the ratio from about 12x to 23x (Stanford HAI).",
+  "The US share of newly added AI compute climbed from about 60% (2024) to 72% (2025) to 78% (H1 2026), according to Epoch AI, even as China's share of AI patents and open-model downloads rose.",
+  "The US-China top-model gap fell from 9.26% (Jan 2024) to 1.70% (Feb 2025) and then held near parity at 2.7% (Mar 2026) on Chatbot Arena/LMArena (Stanford HAI).",
+  "China's generative AI user base grew from 249 million (Dec 2024) to 602 million (Dec 2025) to more than 700 million (Jun 2026), according to CNNIC, making it the largest national user base by that survey measure."
+ ],
+ "faq_2026": [
+  {
+   "q": "Which country leads in AI in 2026?",
+   "a": "The United States leads on capital and compute: Stanford HAI's 2026 AI Index put US private AI investment at $285.9 billion in 2025, 23 times China's $12.4 billion, and Epoch AI estimates the US holds 72.2% of all AI compute added since 2022. China leads on AI patents (74.2% of grants in 2024), open-weight model downloads and the size of its domestic user base (more than 700 million generative AI users in June 2026, per CNNIC). On model performance the two are close: the top US model led by 2.7% on LMArena in March 2026."
+  },
+  {
+   "q": "How far behind the US is China in AI models?",
+   "a": "Very little on headline benchmarks. Stanford HAI's 2026 AI Index found the top US model 2.7% ahead of the top Chinese model on the LMArena leaderboard in March 2026, compared with 9.26% in January 2024 and 1.70% in February 2025. On the Artificial Analysis Intelligence Index in September 2026, Alibaba's Qwen3.8-Max scored 58 and Moonshot's Kimi K3 57.1 against 58.9 for OpenAI's GPT-5.6 Sol. The US still released more notable models in 2025: 50 or 59 against China's 30 or 35, depending on the edition of Epoch AI's data used."
+  },
+  {
+   "q": "Which countries use AI the most?",
+   "a": "By Microsoft's estimate of the share of working-age people using generative AI, the UAE led in June 2026 at 73.3%, followed by Singapore at 64.3%, Ireland at 49.9% and France at 49.6%; South Korea was 12th at 40.6% and the United States 21st at 33.0%. The world average was 18.8%. Microsoft's China figure, 17.5%, excludes several domestic Chinese tools; China's own CNNIC survey counted more than 700 million generative AI users, over half the population, in June 2026."
+  },
+  {
+   "q": "How much of the world's AI compute is in the United States?",
+   "a": "About three-quarters. Epoch AI's chip-imports data estimates the US received 72.2% of the AI compute (in H100-equivalents) added worldwide between 2022 and the second quarter of 2026, against 9.6% for China, 5.1% for the EU, 2.4% for Malaysia and 1.6% each for India and Japan. The US share of newly added compute rose from about 60% in 2024 to 72% in 2025 and 78% in the first half of 2026. China holds about 18% of chips but only about 10% of compute, because many of its chips are lower-performance."
+  },
+  {
+   "q": "Do US chip export controls still restrict China in 2026?",
+   "a": "Yes, but the form has changed. A Commerce rule effective 15 January 2026 moved Nvidia H200 exports to China to case-by-case licensing with a 25% charge, but Chinese authorities discouraged purchases, and H200 sales to Chinese buyers were under 1% of Nvidia's data-centre revenue in the quarter to 26 July 2026 (Bloomberg). In June 2026 the controls reached models for the first time in practice, when Commerce placed Anthropic's Claude Fable 5 and Mythos 5 under export controls and both were withdrawn within a week."
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "South Korea allocated ₩10.1 trillion for AI in 2025.",
+   "fact": "₩10.1 trillion (about $7.27 billion) is Korea's proposed 2026 AI budget; the 2025 main AI budget was about ₩3.3 trillion, plus a ₩1.9 trillion supplementary budget. MLex reports a final 2026 figure of ₩9.9 trillion.",
+   "link": "/indexes/ai-economics/ai-government-spending-2026/"
+  },
+  {
+   "claim": "China files 69.7% of AI patents, according to the 2026 AI Index.",
+   "fact": "69.7% is China's 2023 share from the 2025 AI Index. The 2026 AI Index puts China at 74.2% of AI patents granted in 2024 (97,206 of 131,121), against 12.1% for the US.",
+   "link": "/indexes/geography-of-ai/ai-in-china-2026/"
+  },
+  {
+   "claim": "59% of the world's top AI researchers work in the United States.",
+   "fact": "That is MacroPolo's 2019 figure. Its 2022 data put the US share at 42% (ITIF reading) or 46% (Carnegie reading); MacroPolo ceased operations in 2025 and there is no later edition.",
+   "link": "/indexes/geography-of-ai/"
+  },
+  {
+   "claim": "The US accounted for $285.9 billion of $581 billion of global AI investment in 2025.",
+   "fact": "$285.9 billion is US private AI investment; the matching global private total is $344.7 billion (an 82.9% US share). $581.7 billion is total corporate AI investment, a broader measure that includes M&A and minority stakes.",
+   "link": "/indexes/geography-of-ai/"
+  },
+  {
+   "claim": "The US-China AI model gap is 1.7%.",
+   "fact": "1.70% was the February 2025 reading. Stanford HAI's 2026 AI Index puts it at 2.7% in March 2026 on LMArena.",
+   "link": "/indexes/geography-of-ai/ai-in-china-2026/"
+  },
+  {
+   "claim": "Only 17.5% of people in China use AI (Microsoft).",
+   "fact": "Microsoft's Q2 2026 figure excludes several widely used Chinese domestic tools. CNNIC counted more than 700 million generative AI users in China in June 2026, a penetration rate above 50%. The two measures are not comparable.",
+   "link": null
+  },
+  {
+   "claim": "Doubao has 3.8 billion users.",
+   "fact": "Mistranslation of 3.8 yi (380 million). QuestMobile put Doubao at 382 million monthly users in May 2026 and 419 million in Q3 2026.",
+   "link": "/reports/ai-user-numbers-us-china-compared/"
+  },
+  {
+   "claim": "The $500 billion Stargate project is US government AI spending.",
+   "fact": "Stargate is a private joint venture; the White House confirmed it involves no federal funds. Direct US federal AI R&D was a $3.3 billion request for FY2025.",
+   "link": "/indexes/ai-economics/ai-government-spending-2026/"
+  }
+ ],
+ "related_pages": [
+  930,
+  954,
+  956,
+  957,
+  955,
+  934,
+  1266,
+  374,
+  1654,
+  2589,
+  3441,
+  566,
+  3227
+ ],
+ "gaps": [
+  "Primary sources (hai.stanford.edu, Microsoft and Epoch PDFs, Crunchbase, CNNIC) could not be opened from this environment; every figure is MEDIUM from consistent secondary reporting or Report AI's own pages, none HIGH.",
+  "No calendar-2026 private AI investment by country: Stanford's country totals for 2026 arrive with the 2027 AI Index (expected Apr 2027). The 2026 venture proxy (Crunchbase ~88% US) has an unstated cutoff.",
+  "Notable models 2025 is CONTESTED (US 50 vs 59, China 30 vs 35) across the Stanford PDF and web chapter; no 2026 count exists yet.",
+  "UK 2025 private AI investment ($5.9B) rests on one secondary chart citing Stanford fig. 4.2.8.",
+  "Data-centre capacity by country not used as a metric: end-2025 installed estimates disagree (US 50.4 vs 53.7 GW; China 30.9 vs 19.6 GW) and IEA's regional split (US 45%, China 25%, Europe 15% of 2024 data-centre electricity) was not re-confirmed in the 2026 IEA update.",
+  "Stargate UAE's first 200 MW (due Q3/end-2026) has no confirmed go-live; HUMAIN's 2026 operating capacity not found.",
+  "Nvidia sovereign AI revenue for FY2027 not disclosed; FY2025 base is only implied (DERIVED). Nvidia China revenue shares are one analyst's customer-HQ count, not Nvidia-reported.",
+  "Microsoft AI Diffusion China and India values for H2 2025 not found; Microsoft's aggregates cannot be independently recomputed (Pebblous).",
+  "Anthropic Economic Index 2026 country per-capita indices conflict across secondary sources (Jan 2026: Israel 4.90x vs Jun 2026 aggregator: Australia 6.40x); only the Sep 2025 figures are used.",
+  "US federal AI R&D FY2026 request (NITRD supplement) not retrieved; Korea 2024 AI budget not found; Korea 2026 final budget CONTESTED (₩10.1T proposed vs ₩9.9T).",
+  "Top-tier AI talent share by country has no edition after MacroPolo's 2022 data; US net talent inflow has no 2024 or 2026 reading.",
+  "Huawei Ascend output for 2026 exists only as a target (~2M); not used, to avoid mixing a forecast with outcomes.",
+  "Site pages needing editor attention (not edited here): 374 lists Korea's ₩10.1T as 2025; 954 cites 69.7% patents as the 2026 Index; 930 presents MacroPolo's 59% talent figure as 2024 and sets $285.9B private against the $581B corporate total."
+ ]
+}

@@ -1,0 +1,439 @@
+{
+  "theme": "models",
+  "title": "State of AI Models & Prices",
+  "dek_2026": "What frontier AI models can do and what they cost: benchmark scores, the US–China and open–closed gaps, token prices from the cheapest tier to the frontier, training compute and cost, context windows, reasoning milestones and energy per query, each dated and sourced.",
+  "metrics": [
+    {
+      "id": "swe_bench_verified_top",
+      "label": "SWE-bench Verified, top reported score",
+      "unit": "% of tasks resolved",
+      "group": "Capability benchmarks",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "71.7%", "num": 71.7, "as_of": "Dec 2024", "source": "OpenAI (o3 preview announcement), as reported in Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "o3 was a preview, not generally available, when this score was announced. Stanford HAI pairs it with a 4.4% 2023 figure that was measured on the original full SWE-bench, not SWE-bench Verified (released Aug 2024); the two endpoints are different test versions. Claude 3.5 Sonnet (Oct 2024) was the best generally available model at about 49%.", "site_page": 89},
+        "2025": {"value": "80.9%", "num": 80.9, "as_of": "24 Nov 2025", "source": "Anthropic (Claude Opus 4.5 launch), vendor-reported", "url": "https://www.anthropic.com/news/claude-opus-4-5", "confidence": "MEDIUM", "note": "First model reported above 80%. Rivals at the time: GPT-5.1-Codex-Max 77.9%, Claude Sonnet 4.5 77.2%, Gemini 3 Pro 76.2% (vendor figures, secondary reporting).", "site_page": null},
+        "2026": {"value": "97.0% (to date)", "num": 97.0, "as_of": "1 Sep 2026", "source": "Vals.ai SWE-bench Verified leaderboard (Claude Opus 5, mini-SWE-agent harness)", "url": "https://www.vals.ai/benchmarks/swebench", "confidence": "MEDIUM", "note": "Single independent harness, read via search summary. DeepSeek V4 Pro 96.4% and GPT-5.6 Sol 96.2% on the same board. BenchLM (29 Jul 2026) shows 96%; vendor figure for Claude Opus 4.8 was 88.6% (May 2026, page 964). Vals says the benchmark is saturated and no longer runs it on new releases. Stanford HAI 2026 describes the same move as about 60% to nearly 100% of the human baseline in one year. Harness differences mean 2026 is not strictly comparable with the vendor-run 2024–25 figures.", "site_page": 89}
+      }
+    },
+    {
+      "id": "gpqa_diamond_top",
+      "label": "GPQA Diamond (graduate-level science questions), top reported score",
+      "unit": "% correct",
+      "group": "Capability benchmarks",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "87.7%", "num": 87.7, "as_of": "Dec 2024", "source": "OpenAI (o3 preview announcement)", "url": "", "confidence": "MEDIUM", "note": "Vendor-reported for a preview model; not re-verified in this session. Generally available o1 (Sep–Dec 2024) reported 78%. Stanford HAI records a +48.9 percentage-point one-year gain on GPQA, 2023 to 2024.", "site_page": 89},
+        "2025": {"value": "93.8%", "num": 93.8, "as_of": "Dec 2025", "source": "Google (Gemini 3 Deep Think), vendor-reported", "url": "", "confidence": "MEDIUM", "note": "GPT-5.2 Pro reported 93.2% and Gemini 3 Pro 91.9% in the same period (secondary reporting of vendor figures).", "site_page": null},
+        "2026": {"value": "94.3% (to date)", "num": 94.3, "as_of": "Feb 2026", "source": "Google DeepMind, Gemini 3.1 Pro model card", "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/", "confidence": "MEDIUM", "note": "An aggregator lists GPT-5.4 Pro at 94.4% (self-reported). Expert review suggests only about 90–95% of GPQA Diamond questions are valid, so scores in the mid-90s are at the ceiling: the benchmark is saturated.", "site_page": 964}
+      }
+    },
+    {
+      "id": "hle_top",
+      "label": "Humanity's Last Exam, top reported score",
+      "unit": "% correct",
+      "group": "Capability benchmarks",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "~9%", "num": 9, "as_of": "Jan 2025 (benchmark launch; end-2024 models)", "source": "Center for AI Safety / Scale AI launch results (o1), as cited by OpenAI", "url": "https://agi.safe.ai/", "confidence": "MEDIUM", "note": "HLE launched in January 2025; the best end-2024 models (o1, DeepSeek-R1) scored about 9%. Listed under 2024 because it measures 2024 models.", "site_page": 386},
+        "2025": {"value": "41.0% (no tools)", "num": 41.0, "as_of": "Dec 2025", "source": "Google (Gemini 3 Deep Think), as tabulated by R&D World", "url": "https://www.rdworldonline.com/how-gpt-5-2-stacks-up-against-gemini-3-0-and-claude-opus-4-5/", "confidence": "CONTESTED", "note": "Another source gives 45.1% for the December Deep Think version. With tools, OpenAI Deep Research scored 26.6% in Feb 2025 (page 386); tool and no-tool scores are not comparable. Stanford HAI 2026 reports a roughly +30 pp one-year frontier gain on HLE.", "site_page": 386},
+        "2026": {"value": "54.8% (to date)", "num": 54.8, "as_of": "17 Oct 2026", "source": "Scale Labs HLE leaderboard (GPT-6 Astra), via BenchLM mirror", "url": "https://labs.scale.com/leaderboard/humanitys_last_exam", "confidence": "CONTESTED", "note": "Scale's own page could not be opened. A mirror of a 29 Sep 2026 snapshot shows GPT-6 Astra at 60.6%; another tracker lists Claude Mythos 5 at 59% (no tools, 20 Aug 2026); Artificial Analysis's own HLE run shows Claude Fable 5 at 53.3%. Gemini 3 Deep Think reported 48.4% on 12 Feb 2026. Treat the 2026 top as about 55–60% depending on leaderboard and setting.", "site_page": null}
+      }
+    },
+    {
+      "id": "arc_agi_top",
+      "label": "ARC-AGI, top verified score (version changes: ARC-AGI-1 in 2024, ARC-AGI-2 from 2025)",
+      "unit": "% of tasks, semi-private set",
+      "group": "Capability benchmarks",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "75.7% (ARC-AGI-1)", "num": 75.7, "as_of": "20 Dec 2024", "source": "ARC Prize Foundation (OpenAI o3 preview, within $10k compute limit)", "url": "https://arcprize.org/blog/oai-o3-pub-breakthrough", "confidence": "MEDIUM", "note": "87.5% in a high-compute (172×) configuration. The tested model was a preview trained partly on ARC-AGI-1 public training data; the released o3 later scored about 41%. Different benchmark from 2025–26 values: do not chart as one series.", "site_page": null},
+        "2025": {"value": "54% (ARC-AGI-2)", "num": 54, "as_of": "5 Dec 2025", "source": "ARC Prize Foundation verification of Poetiq (meta-system on Gemini 3 Pro)", "url": "https://bdtechtalks.com/2025/12/09/poetiq-arc-agi-2-solution/", "confidence": "MEDIUM", "note": "At about $30.57 per task; Gemini 3 Deep Think had scored 45.1% at about $77 per task. ARC-AGI-2 launched in March 2025 because ARC-AGI-1 was near-solved.", "site_page": null},
+        "2026": {"value": "84.6% (ARC-AGI-2, to date)", "num": 84.6, "as_of": "Feb 2026", "source": "ARC Prize Foundation verification of Gemini 3 Deep Think (upgrade)", "url": "https://officechai.com/ai/gemini-3-deep-think-benchmarks-arc-agi", "confidence": "MEDIUM", "note": "About $13.62 per task. BenchLM lists GPT-5.6 Sol at 92.5% (29 Jul 2026), but whether that run was ARC Prize-verified is unclear. Attention has moved to ARC-AGI-3, where frontier models score below 1% in the sources seen.", "site_page": null}
+      }
+    },
+    {
+      "id": "mmlu_saturation",
+      "label": "MMLU, frontier score (saturation marker)",
+      "unit": "% correct",
+      "group": "Capability benchmarks",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "92.3%", "num": 92.3, "as_of": "Sep 2024", "source": "OpenAI (o1 announcement)", "url": "", "confidence": "MEDIUM", "note": "Vendor figure, not re-verified in this session. MMLU launched in 2020 with frontier accuracy near 32%; its practical ceiling is about 95% because of label errors.", "site_page": 89},
+        "2025": {"value": ">92% (saturated; labs report MMLU-Pro instead)", "num": null, "as_of": "2025", "source": "Stanford HAI AI Index 2026", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "No single top score tracked: model cards stopped headlining MMLU during 2025.", "site_page": 89},
+        "2026": {"value": ">92% for every frontier system", "num": null, "as_of": "Q1 2026", "source": "Stanford HAI AI Index 2026, as summarised on Report AI", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "Successor MMLU-Pro is itself near saturation: DeepSeek V4-Pro reports 87.5 (Apr 2026, page 964).", "site_page": 89}
+      }
+    },
+    {
+      "id": "us_china_gap_arena",
+      "label": "Lead of the top US model over the best Chinese model, Chatbot Arena / LMArena",
+      "unit": "% score gap",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "9.26%", "num": 9.26, "as_of": "Jan 2024", "source": "Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "In 2023 the gap on major benchmarks was 17.5–31.6 percentage points (Stanford HAI, page 954).", "site_page": 954},
+        "2025": {"value": "1.70%", "num": 1.70, "as_of": "Feb 2025", "source": "Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "DeepSeek-R1 briefly matched the top US model in February 2025 (page 89).", "site_page": 89},
+        "2026": {"value": "2.7%", "num": 2.7, "as_of": "Mar 2026", "source": "Stanford HAI AI Index 2026", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "On a different instrument, Artificial Analysis's Intelligence Index, Alibaba's Qwen3.8-Max scored 58 against 58.9 for GPT-5.6 Sol on 3 Sep 2026 (page 1654), with Qwen3.8-Max's score moving 53→56→58 across re-runs.", "site_page": 954}
+      }
+    },
+    {
+      "id": "open_closed_gap_arena",
+      "label": "Lead of the top closed-weight model over the best open-weight model, Chatbot Arena / LMArena",
+      "unit": "% score gap",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "8.04%", "num": 8.04, "as_of": "Jan 2024", "source": "Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "Fell to 0.5% by Aug 2024 (Stanford HAI 2026, page 861).", "site_page": 861},
+        "2025": {"value": "1.70%", "num": 1.70, "as_of": "Feb 2025", "source": "Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "Same 1.70% value as the US–China gap that month; the two are separate measurements.", "site_page": 861},
+        "2026": {"value": "3.3%", "num": 3.3, "as_of": "Mar 2026", "source": "Stanford HAI AI Index 2026", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "Gap widened again from its 2024–25 low. Anthropic, xAI, Google, OpenAI, Alibaba and DeepSeek sit within 25 Elo points of one another on Arena.", "site_page": 861}
+      }
+    },
+    {
+      "id": "aa_open_weight_gap",
+      "label": "Gap between best open-weight and best proprietary model, Artificial Analysis Intelligence Index",
+      "unit": "index points",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "No comparable reading found; index versions changed.", "site_page": null},
+        "2025": {"value": "13 points", "num": 13, "as_of": "~Apr 2025", "source": "Artificial Analysis (DeepSeek V3 0324 at 22 vs Claude 3.7 Sonnet at 35)", "url": "https://artificialanalysis.ai/articles/recent-open-weights-model-launches", "confidence": "MEDIUM", "note": "Earlier index version; scores are not comparable with 2026 versions.", "site_page": 861},
+        "2026": {"value": "12 points (v5); 6 points on v4 in Sep", "num": 12, "as_of": "Oct 2026", "source": "Artificial Analysis Intelligence Index v5, via secondary coverage", "url": "https://cybernews.com/ai-news/artificial-analysis-leaderboard-update-open-weight-ai-ranking-hit/", "confidence": "CONTESTED", "note": "On v4.x in Sep 2026 the gap was about 6 points (Kimi K3 59.7 vs Claude Fable 5.1 65.7). Index v5 (Oct 2026, mostly private test sets) shows 12 points if Kimi K3.1 Pro counts as open, although its weights were not yet published; counting only published weights the best open model scores about 32 against 58 for Claude Opus 5.5, a ~26-point gap (DERIVED: 58 − 32). Artificial Analysis described the change as the gap going from 3 to 12 points. All 10 top open-weight models were Chinese in April 2026; Nvidia's Nemotron 3.5 Super VL led US open models at 26 in October.", "site_page": 861}
+      }
+    },
+    {
+      "id": "open_weight_lag_months",
+      "label": "Time lag of best open-weight model behind the closed frontier, Epoch Capabilities Index",
+      "unit": "months",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Epoch publishes a multi-year average (Jan 2023–Oct 2025), not a 2024-only figure; see 2025.", "site_page": null},
+        "2025": {"value": "~3 months (average Jan 2023–Oct 2025)", "num": 3, "as_of": "Oct 2025", "source": "Epoch AI", "url": "https://epoch.ai/data-insights/open-closed-eci-gap", "confidence": "MEDIUM", "note": "Period average, not a single-year reading.", "site_page": 861},
+        "2026": {"value": "~4 months (average since Jan 2026, to date)", "num": 4, "as_of": "2026", "source": "Epoch AI", "url": "https://epoch.ai/data-insights/open-closed-eci-gap", "confidence": "MEDIUM", "note": "Slight widening, consistent with Stanford HAI's 3.3% Arena gap.", "site_page": 861}
+      }
+    },
+    {
+      "id": "notable_models_us",
+      "label": "Notable AI models produced by US-based institutions",
+      "unit": "models per year",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "40", "num": 40, "as_of": "2024 (published Apr 2025)", "source": "Stanford HAI AI Index 2025 (Epoch AI data)", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development", "confidence": "MEDIUM", "note": "Europe produced 3 in 2024 (down from 21 in 2023); the US produced 61 in 2023.", "site_page": 930},
+        "2025": {"value": "50 or 59", "num": 50, "as_of": "2025 (published Apr 2026)", "source": "Stanford HAI AI Index 2026", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development", "confidence": "CONTESTED", "note": "The Chapter 1 PDF says 50 (with South Korea third at 5); Stanford's R&D web page says 59. The difference may reflect a revised Epoch dataset. num uses the PDF figure. Either way the count is above 2024's 40, while Stanford says new releases declined across major regions on its own basis — check before citing.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Not yet published; expected in the AI Index 2027 (spring 2027).", "site_page": null}
+      }
+    },
+    {
+      "id": "notable_models_china",
+      "label": "Notable AI models produced by China-based institutions",
+      "unit": "models per year",
+      "group": "Competition: US vs China, open vs closed",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "15", "num": 15, "as_of": "2024 (published Apr 2025)", "source": "Stanford HAI AI Index 2025 (Epoch AI data)", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development", "confidence": "MEDIUM", "note": "Also 15 in 2023.", "site_page": 930},
+        "2025": {"value": "30 or 35", "num": 30, "as_of": "2025 (published Apr 2026)", "source": "Stanford HAI AI Index 2026", "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development", "confidence": "CONTESTED", "note": "PDF: 30; web page: 35. On either count China's share of US output rose from 38% (15/40) to 59–60% (30/50 or 35/59) — DERIVED.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Not yet published.", "site_page": null}
+      }
+    },
+    {
+      "id": "gpt35_class_inference_cost",
+      "label": "Inference price of GPT-3.5-level performance (MMLU 64.8)",
+      "unit": "$ per million tokens",
+      "group": "Token prices",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "$0.07", "num": 0.07, "as_of": "Oct 2024", "source": "Stanford HAI AI Index 2025", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance", "confidence": "MEDIUM", "note": "Down from $20.00 in Nov 2022: a more than 280-fold decline (DERIVED: 20 / 0.07 ≈ 286). Intermediate points on page 421 ($1.80 Aug 2023, $0.18 Jun 2024) are illustrative.", "site_page": 421},
+        "2025": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Stanford HAI did not extend this specific series in the material found; see median_token_price for its 2025 measure.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Not published.", "site_page": null}
+      }
+    },
+    {
+      "id": "median_token_price",
+      "label": "Median price per million tokens across AI models",
+      "unit": "$ per million tokens",
+      "group": "Token prices",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "$2.10", "num": 2.10, "as_of": "2024", "source": "Stanford HAI AI Index 2026, via secondary coverage", "url": "https://www.remio.ai/post/stanford-ai-index-shows-cheaper-models-fiercer-competition", "confidence": "MEDIUM", "note": "Single secondary source; not confirmed in the report text.", "site_page": null},
+        "2025": {"value": "$0.85", "num": 0.85, "as_of": "2025", "source": "Stanford HAI AI Index 2026, via secondary coverage", "url": "https://www.remio.ai/post/stanford-ai-index-shows-cheaper-models-fiercer-competition", "confidence": "MEDIUM", "note": "A 60% fall (DERIVED: 1 − 0.85/2.10). A median across listed models, not usage-weighted and not at fixed capability.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Next reading due in AI Index 2027. For 2026 market pricing see silicon_data_token_index (different method).", "site_page": null}
+      }
+    },
+    {
+      "id": "silicon_data_token_index",
+      "label": "Silicon Data LLM Token Expenditure Index (usage-weighted market price)",
+      "unit": "$ per million tokens",
+      "group": "Token prices",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "Index launched December 2025.", "site_page": null},
+        "2025": {"value": "≈$1.0–1.1 (launch level)", "num": null, "as_of": "Dec 2025", "source": "Report AI calculation from Bloomberg-reported movement", "url": "https://aiweekly.co/alerts/silicon-data-token-index-drops-20-from-may-bloomberg-warns", "confidence": "DERIVED", "note": "Silicon Data does not publish the launch value openly. Bloomberg reported the index had nearly doubled from its December inception to its late-May 2026 peak of $2.07: 2.07 / ~1.9–2.0 ≈ $1.04–1.09. Approximate.", "site_page": null},
+        "2026": {"value": "$0.97 (to date; below $1 again in Oct)", "num": 0.97, "as_of": "1 Sep 2026", "source": "Silicon Data, via CNBC", "url": "https://www.cnbc.com/2026/09/01/ai-token-prices-lows.html", "confidence": "MEDIUM", "note": "Axios (22 Oct 2026) said it fell below $1, 54% under the $2.07 late-May peak — implied ≈ $0.95 (DERIVED: 2.07 × 0.46). That a 'recent' fall below $1 followed a $0.97 reading on 1 Sep implies it rose above $1 in between, or Axios is lagging (flagged CONTESTED in research notes). Silicon Data's own segment readings on 22 Apr 2026: frontier $4.20, open-weight $0.85 per million tokens.", "site_page": 421}
+      }
+    },
+    {
+      "id": "price_decline_fixed_capability",
+      "label": "Rate of price decline at a fixed capability level",
+      "unit": "× per year",
+      "group": "Token prices",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "~10× per year", "num": null, "as_of": "Nov 2024", "source": "a16z, LLMflation", "url": "https://a16z.com/llmflation-llm-inference-cost/", "confidence": "MEDIUM", "note": "Methods differ across the three years; do not chart as one series.", "site_page": 421},
+        "2025": {"value": "~50× per year median; ~200× per year since Jan 2024", "num": null, "as_of": "Mar 2025", "source": "Epoch AI, LLM inference price trends", "url": "https://epoch.ai/data-insights/llm-inference-price-trends", "confidence": "MEDIUM", "note": "Range 9× to 900× per year depending on benchmark and threshold.", "site_page": 421},
+        "2026": {"value": "~47% per quarter (≈13× per year)", "num": null, "as_of": "2026", "source": "Epoch AI, via secondary coverage", "url": "https://pasqualepillitteri.it/en/news/21044/epoch-ai-ai-prices-fall-47-percent-quarter", "confidence": "MEDIUM", "note": "Single secondary source. Annualisation is DERIVED: 1 / (1 − 0.47)^4 ≈ 12.7×. Not a slowdown signal: different method and benchmark set from the 2025 figure.", "site_page": null}
+      }
+    },
+    {
+      "id": "anthropic_top_tier_price",
+      "label": "Anthropic Opus-tier list price (input / output)",
+      "unit": "$ per million tokens (num = output)",
+      "group": "Token prices",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "$15 / $75 (Claude 3 Opus)", "num": 75, "as_of": "Mar 2024", "source": "Anthropic pricing", "url": "https://www.anthropic.com/pricing", "confidence": "MEDIUM", "note": "Published list price at launch; not re-verified in this session.", "site_page": null},
+        "2025": {"value": "$5 / $25 (Claude Opus 4.5)", "num": 25, "as_of": "24 Nov 2025", "source": "Anthropic", "url": "https://www.anthropic.com/news/claude-opus-4-5", "confidence": "MEDIUM", "note": "Two-thirds cut from the $15 / $75 of earlier Opus 4.x models. Opus 4.8 kept $5 / $25 (page 421, verified Jul 2026).", "site_page": 421},
+        "2026": {"value": "$4 / $20 (Claude Opus 5.5)", "num": 20, "as_of": "1 Oct 2026", "source": "Anthropic pricing page, verified by Report AI", "url": "https://www.anthropic.com/pricing", "confidence": "HIGH", "note": "Verified at source by Report AI on 1 Oct 2026 (page 421). A new tier sits above Opus: Claude Fable 5.1 at $10 / $50. Batch halves prices; Opus 5.5 fast mode costs 2×.", "site_page": 421}
+      }
+    },
+    {
+      "id": "openai_flagship_launch_price",
+      "label": "OpenAI newest flagship, list price at launch (input / output)",
+      "unit": "$ per million tokens (num = output)",
+      "group": "Token prices",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "$15 / $60 (o1)", "num": 60, "as_of": "Dec 2024", "source": "OpenAI pricing, as cited on Report AI", "url": "https://openai.com/api/pricing/", "confidence": "MEDIUM", "note": "Reasoning flagship. GPT-4o, the general model, listed at $2.50 / $10.", "site_page": 861},
+        "2025": {"value": "$1.25 / $10 (GPT-5)", "num": 10, "as_of": "7 Aug 2025", "source": "OpenAI pricing at GPT-5 launch", "url": "https://openai.com/api/pricing/", "confidence": "MEDIUM", "note": "Not re-verified in this session.", "site_page": null},
+        "2026": {"value": "$2 / $10 (GPT-6 Sol)", "num": 10, "as_of": "22 Sep 2026", "source": "OpenAI, via trade coverage", "url": "https://www.iclarified.com/102351/openai-cuts-api-prices-50-with-gpt-6-sol-and-luna", "confidence": "MEDIUM", "note": "Launched with a 50% cut versus GPT-5.6 Sol, which listed at $5 / $30 in Jul 2026 (page 964; one price sheet shows $4 / $20). GPT-6 Astra (3 Sep 2026) is priced about 5× Sol. GPT-6.1 Terra (26 Oct 2026) lists at $1 / $5. OpenAI's pricing page was not checked.", "site_page": 3441}
+      }
+    },
+    {
+      "id": "anthropic_small_tier_price",
+      "label": "Anthropic Haiku-tier (smallest model) list price (input / output)",
+      "unit": "$ per million tokens (num = output)",
+      "group": "Token prices",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "$0.80 / $4 (Claude 3.5 Haiku)", "num": 4, "as_of": "Nov 2024", "source": "Anthropic pricing", "url": "https://www.anthropic.com/pricing", "confidence": "MEDIUM", "note": "Raised from Claude 3 Haiku's $0.25 / $1.25. Not re-verified in this session.", "site_page": null},
+        "2025": {"value": "$1 / $5 (Claude Haiku 4.5)", "num": 5, "as_of": "Oct 2025", "source": "Anthropic pricing, verified by Report AI", "url": "https://www.anthropic.com/pricing", "confidence": "HIGH", "note": "Listed as unchanged on page 421 (verified 1 Oct 2026).", "site_page": 421},
+        "2026": {"value": "$0.10 / $0.50 (Claude Haiku 5.5)", "num": 0.5, "as_of": "7 Oct 2026", "source": "Anthropic, via TechRepublic / Decrypt", "url": "https://www.techrepublic.com/article/news-anthropic-claude-haiku-5-5-api-pricing/", "confidence": "MEDIUM", "note": "For prompts up to 100K tokens; $0.50 / $2.50 above. Anthropic says the same text uses ~30% more tokens with the new tokenizer, and whether the cut is 90% or a ~75% average is disputed. 1M-token context.", "site_page": 3441}
+      }
+    },
+    {
+      "id": "deepseek_flagship_price",
+      "label": "DeepSeek flagship list price, open-weight price floor (input / output)",
+      "unit": "$ per million tokens (num = output)",
+      "group": "Token prices",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "$0.27 / $1.10 (DeepSeek-V3)", "num": 1.10, "as_of": "Dec 2024", "source": "DeepSeek API pricing", "url": "https://api-docs.deepseek.com/", "confidence": "MEDIUM", "note": "Standard price after a launch promotion; not re-verified in this session.", "site_page": null},
+        "2025": {"value": "$0.55 / $2.19 (DeepSeek-R1)", "num": 2.19, "as_of": "20 Jan 2025", "source": "DeepSeek", "url": "https://api-docs.deepseek.com/news/news250120", "confidence": "MEDIUM", "note": "Reasoning model, about 96% cheaper than OpenAI o1's $15 / $60 (page 861). Mixes model types year to year: V3 (2024), R1 (2025), V4-Pro (2026).", "site_page": 861},
+        "2026": {"value": "~$0.87 output (DeepSeek V4-Pro)", "num": 0.87, "as_of": "24 Apr 2026", "source": "DeepSeek, as cited on Report AI", "url": "https://api-docs.deepseek.com/", "confidence": "MEDIUM", "note": "MIT-licensed, 1.6T parameters. V4.1-Flash lists at $0.15 / $0.60 off-peak and $0.30 / $1.20 peak (Oct 2026).", "site_page": 964}
+      }
+    },
+    {
+      "id": "largest_training_compute",
+      "label": "Largest known training run (compute)",
+      "unit": "FLOP",
+      "group": "Training compute & cost",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "~3.8×10^25 FLOP (Llama 3.1 405B); no model above 10^26", "num": 3.8e25, "as_of": "Jul 2024", "source": "Epoch AI, Large-Scale AI Models database", "url": "https://epoch.ai/data/large-scale-ai-models", "confidence": "MEDIUM", "note": "Largest 2024 model with a public estimate; closed 2024 models may be larger. Epoch says the first model estimated above 10^26 FLOP was Grok 3 (Feb 2025).", "site_page": null},
+        "2025": {"value": "~5×10^26 FLOP (Grok 4)", "num": 5e26, "as_of": "Jul 2025", "source": "Epoch AI", "url": "https://epoch.ai/data-insights/grok-4-training-resources", "confidence": "MEDIUM", "note": "Epoch's estimate, largely based on vague public statements from xAI. About 13× Llama 3.1 405B (DERIVED: 5e26 / 3.8e25).", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "No public compute estimates found for 2026 frontier models; public databases lack estimates for closed models after mid-2025.", "site_page": null}
+      }
+    },
+    {
+      "id": "frontier_training_cost",
+      "label": "Estimated cost to train a frontier model",
+      "unit": "$ (compute cost of final training run)",
+      "group": "Training compute & cost",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "~$170M (Llama 3.1 405B)", "num": 170000000, "as_of": "Jul 2024 model; published Apr 2025", "source": "Stanford HAI AI Index 2025 (Epoch AI estimate)", "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development", "confidence": "MEDIUM", "note": "Widely repeated; not confirmed against the report text this session. Other estimates for the same model range $30–60M under different scopes.", "site_page": null},
+        "2025": {"value": "~$490M (Grok 4)", "num": 490000000, "as_of": "Jul 2025 model; published Sep 2025", "source": "Epoch AI", "url": "https://epoch.ai/data-insights/grok-4-training-resources", "confidence": "MEDIUM", "note": "Median estimate: 246M H100-hours at $1.90–2.20 per hour; also ~310 GWh and ~150,000 t CO2e. Stanford HAI 2026 puts Grok 4 training emissions at 72,816 t CO2e, about half Epoch's figure (CONTESTED on emissions). Contrast: DeepSeek reported $294K for R1's reinforcement-learning stage (Nature, Sep 2025), on top of a $5.58M final V3 pre-training run — not a total model cost.", "site_page": 954},
+        "2026": {"value": null, "num": null, "as_of": "", "source": "", "url": "", "confidence": "", "note": "No credible public estimate found for any 2026 frontier model. Anthropic's S-1 (26 Oct 2026) discloses ~$245B of future compute and lease commitments, not per-model training cost.", "site_page": null}
+      }
+    },
+    {
+      "id": "flagship_context_window",
+      "label": "Context window, median of OpenAI, Anthropic and Google flagships",
+      "unit": "tokens",
+      "group": "Context & reasoning",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "200K", "num": 200000, "as_of": "Dec 2024", "source": "Vendor model documentation (GPT-4o 128K, Claude 3.5 Sonnet 200K, Gemini 1.5 Pro 2M)", "url": "", "confidence": "DERIVED", "note": "Median of the three flagships. Gemini 1.5 Pro's 2M window (Jun 2024) was the largest in a frontier closed model.", "site_page": 99},
+        "2025": {"value": "400K", "num": 400000, "as_of": "Dec 2025", "source": "Vendor model documentation (GPT-5 400K, Claude Opus 4.5 200K, Gemini 3 Pro 1M)", "url": "", "confidence": "DERIVED", "note": "Median of the three. Largest advertised window in any notable release: Meta's open-weight Llama 4 Scout, 10M tokens (Apr 2025).", "site_page": 99},
+        "2026": {"value": "~1M (to date)", "num": 1050000, "as_of": "Oct 2026", "source": "Vendor documentation and trade coverage (GPT-6 Sol 1.05M, Claude Fable 5 / Haiku 5.5 1M, Gemini 3.1 Pro 2M)", "url": "", "confidence": "DERIVED", "note": "Median of the three (GPT-6 Sol 1,050,000). Opus 5.5's window not confirmed. Largest advertised: Llama 5, 5M tokens (Apr 2026, page 964), with disputed real-world quality.", "site_page": 964}
+      }
+    },
+    {
+      "id": "imo_ai_result",
+      "label": "Best AI result at the International Mathematical Olympiad",
+      "unit": "points out of 42",
+      "group": "Context & reasoning",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "28/42 (silver standard)", "num": 28, "as_of": "Jul 2024", "source": "Google DeepMind (AlphaProof + AlphaGeometry 2)", "url": "https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/", "confidence": "MEDIUM", "note": "Problems were formalised by humans; not a natural-language result. Not re-verified this session.", "site_page": null},
+        "2025": {"value": "35/42 (gold, officially certified)", "num": 35, "as_of": "Jul 2025", "source": "Google DeepMind (Gemini Deep Think), certified by the IMO", "url": "https://deepmind.google/discover/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/", "confidence": "MEDIUM", "note": "5 of 6 problems, in natural language within contest time. OpenAI's experimental model also reported 35/42 but was self-graded, not IMO-certified.", "site_page": 386},
+        "2026": {"value": "42/42 (perfect scores reported)", "num": 42, "as_of": "Jul 2026", "source": "Trade press (36Kr, NewsBytes, Xenospectrum)", "url": "https://www.digitalapplied.com/blog/imo-2026-perfect-scores-ai-benchmark-saturation", "confidence": "MEDIUM", "note": "Several systems reported perfect scores at IMO 2026 in Shanghai, including Huawei's Celia, Xiaohongshu's dots-note-3.0, an xhigh GPT-5.6 Sol and Claude Fable 5 (single outlet for the last two). The six systems credited with 42/42 were not graded the same way, and no official IMO statement was found.", "site_page": null}
+      }
+    },
+    {
+      "id": "energy_per_query",
+      "label": "Energy per typical AI text query",
+      "unit": "watt-hours",
+      "group": "Energy",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "~0.3 Wh (GPT-4o, estimate)", "num": 0.3, "as_of": "Feb 2025 estimate of a 2024 model", "source": "Epoch AI", "url": "https://epoch.ai/gradient-updates/how-much-energy-does-chatgpt-use", "confidence": "CONTESTED", "note": "The widely circulated 2023–24 estimate was ~2.9 Wh per query, about 10× higher; Epoch's re-estimate assumed newer hardware and shorter outputs. Methods differ across years.", "site_page": 428},
+        "2025": {"value": "0.24 Wh (median Gemini text prompt)", "num": 0.24, "as_of": "Aug 2025 (measured May 2025)", "source": "Google technical report", "url": "https://cloud.google.com/blog/products/infrastructure/measuring-the-environmental-impact-of-ai-inference", "confidence": "MEDIUM", "note": "Self-reported; also 0.26 mL water and 0.03 g CO2e. Sam Altman cited ~0.34 Wh per ChatGPT query (Jun 2025) without a method.", "site_page": 428},
+        "2026": {"value": "0.31 Wh median; ~3.9 Wh for long reasoning responses", "num": 0.31, "as_of": "2026", "source": "Microsoft Research study in Joule, via secondary coverage", "url": "https://intuitionlabs.ai/articles/ai-inference-energy-joules-per-task", "confidence": "MEDIUM", "note": "Single study; reasoning-style responses use roughly 13× the median. No new vendor per-query disclosure was found for 2026, and no regulator mandates one as of Sep 2026.", "site_page": null}
+      }
+    },
+    {
+      "id": "frontier_releases",
+      "label": "Notable frontier model releases",
+      "unit": "releases (list)",
+      "group": "Releases",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "Claude 3 (Mar); GPT-4o (May); Claude 3.5 Sonnet (Jun); Llama 3.1 405B (Jul); o1-preview (Sep) and o1 (Dec); Gemini 2.0 Flash (Dec); DeepSeek-V3 (26 Dec)", "num": null, "as_of": "2024", "source": "Vendor announcements", "url": "", "confidence": "MEDIUM", "note": "Editorial selection, not a count. o3 was announced as a preview in Dec 2024 but released in Apr 2025.", "site_page": 322},
+        "2025": {"value": "DeepSeek-R1 (20 Jan); Claude 3.7 Sonnet, GPT-4.5 (Feb); Gemini 2.5 Pro (Mar); Llama 4, o3 (Apr); Claude 4 (May); Grok 4 (Jul); GPT-5 (7 Aug); Gemini 3 Pro (18 Nov); Claude Opus 4.5 (24 Nov); Mistral Large 3 (Dec)", "num": null, "as_of": "2025", "source": "Vendor announcements", "url": "", "confidence": "MEDIUM", "note": "Editorial selection.", "site_page": 358},
+        "2026": {"value": "Gemini 3.1 Pro (Feb); Llama 5 (8 Apr); DeepSeek V4-Pro (24 Apr); Gemini 3.5 Flash (19 May); Claude Opus 4.8 (28 May); Claude Fable 5 (9 Jun, withdrawn within a week); Grok 4.5 (8 Jul); GPT-5.6 Sol (9 Jul); Qwen3.8-27B (14 Aug); GPT-6 Astra (3 Sep); GPT-6 Sol/Luna and Claude Opus 5.5 (22 Sep); Claude Haiku 5.5 (7 Oct); Gemini 4 Argon GA (13 Oct); Meta Muse Spark Open (15 Oct); Mistral Large 4 weights (29 Oct)", "num": null, "as_of": "to 8 Nov 2026", "source": "Vendor announcements via Report AI pages and trade coverage", "url": "", "confidence": "MEDIUM", "note": "Dates for 2026 are from trade coverage; most vendor pages could not be opened from our environment. Kimi K3 (Moonshot) release date not confirmed.", "site_page": 3441}
+      }
+    }
+  ],
+  "headlines": {
+    "2024": [
+      "Stanford HAI's AI Index 2025 found that the inference price of GPT-3.5-level performance fell from $20 per million tokens in November 2022 to $0.07 in October 2024, a more than 280-fold decline.",
+      "The ARC Prize Foundation reported on 20 December 2024 that OpenAI's o3 preview scored 75.7% on the ARC-AGI-1 semi-private evaluation within the $10,000 compute limit.",
+      "OpenAI reported in December 2024 that its o3 preview resolved 71.7% of SWE-bench Verified coding tasks, a figure Stanford HAI uses as the 2024 high point.",
+      "Stanford HAI counted 40 notable AI models from US institutions in 2024, against 15 from China and 3 from Europe.",
+      "On the Chatbot Arena leaderboard in January 2024, the top closed-weight model led the best open-weight model by 8.04% and the top US model led the best Chinese model by 9.26%, according to Stanford HAI's AI Index 2025."
+    ],
+    "2025": [
+      "Anthropic reported that Claude Opus 4.5, released on 24 November 2025, scored 80.9% on SWE-bench Verified, the first model reported above 80%.",
+      "Google DeepMind's Gemini Deep Think scored 35 of 42 points at the July 2025 International Mathematical Olympiad, the first AI result officially certified at gold-medal standard.",
+      "Epoch AI estimated that training xAI's Grok 4, released in July 2025, used about 5×10^26 FLOP and cost about $490 million, the largest known training run.",
+      "DeepSeek priced its open-weight R1 reasoning model at $0.55 per million input tokens and $2.19 per million output tokens on 20 January 2025, against $15 and $60 for OpenAI's o1.",
+      "Stanford HAI's 2026 AI Index reports that the median price per million tokens across AI models fell from $2.10 in 2024 to $0.85 in 2025."
+    ],
+    "2026": [
+      "Vals.ai's SWE-bench Verified leaderboard, updated on 1 September 2026, ranked Claude Opus 5 first at 97.0%, and Vals said the benchmark had saturated.",
+      "Stanford HAI's 2026 AI Index found that the top US model led the best Chinese model by 2.7% on the Arena leaderboard in March 2026, and the top closed-weight model led the best open-weight model by 3.3%.",
+      "Silicon Data's usage-weighted LLM Token Expenditure Index fell to $0.97 per million tokens on 1 September 2026, while Anthropic's top model, Claude Fable 5.1, listed at $10 per million input tokens and $50 per million output tokens.",
+      "The ARC Prize Foundation verified a score of 84.6% on ARC-AGI-2 for Google's Gemini 3 Deep Think in February 2026, up from a verified best of 54% in December 2025.",
+      "Anthropic's Claude Haiku 5.5, launched on 7 October 2026, lists at $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100,000 tokens, a tenth of Claude Haiku 4.5's $1 and $5."
+    ]
+  },
+  "analysis": {
+    "2024": [
+      "2024 was the year the classic capability benchmarks broke. Stanford HAI's AI Index 2025 recorded one-year gains of 48.9 percentage points on GPQA and 18.8 on MMMU between 2023 and 2024. In December, OpenAI's o3 preview posted 71.7% on SWE-bench Verified and, according to the ARC Prize Foundation, 75.7% on the ARC-AGI-1 semi-private set within the public compute limit. Both December results came from a model that was not yet available to customers, which matters: the year-end frontier was a preview, not a product. MMLU, the reference test since 2020, effectively stopped separating models once OpenAI's o1 reported 92.3% in September 2024, close to the test's practical ceiling of about 95%.",
+      "Prices fell faster than capability rose. Stanford HAI measured the cost of GPT-3.5-level performance (MMLU 64.8) at $0.07 per million tokens in October 2024, down from $20 in November 2022, a decline of more than 280-fold. That curve describes a fixed capability bar, not the price of the newest model. OpenAI's o1 launched in December 2024 at $15 per million input tokens and $60 per million output tokens, and Anthropic's top model, Claude 3 Opus, listed at $15 and $75. The pattern that runs through this whole series was already visible: last year's capability became nearly free while the frontier was priced for what buyers would pay.",
+      "The competitive map narrowed from two sides. On the Chatbot Arena leaderboard in January 2024 the top closed-weight model led the best open-weight model by 8.04% and the top US model led the best Chinese model by 9.26%; DeepSeek-V3, released on 26 December 2024 under open weights, closed much of both gaps within weeks. Output still favoured the US, which produced 40 notable models in 2024 to China's 15 and Europe's 3 (Stanford HAI). Training budgets kept climbing: the AI Index's widely cited estimate for Meta's Llama 3.1 405B is about $170 million, and Epoch AI's records show no model above 10^26 FLOP of training compute until Grok 3 in February 2025."
+    ],
+    "2025": [
+      "2025 was the year test-time compute became the main lever of progress. DeepSeek-R1, released on 20 January, showed that reinforcement-learned reasoning could be reproduced with open weights at a fraction of o1's price: $0.55 and $2.19 per million input and output tokens against $15 and $60. In July, Gemini Deep Think earned an officially certified gold-medal score of 35 out of 42 at the International Mathematical Olympiad, up from a 28-point silver for DeepMind's formal-proof systems in 2024. By year-end, Claude Opus 4.5 had become the first model reported above 80% on SWE-bench Verified (80.9%, 24 November) and Gemini 3 Deep Think reported 93.8% on GPQA Diamond, close to that test's ceiling.",
+      "As older tests saturated, attention moved to benchmarks designed to resist them, and those moved quickly too. Humanity's Last Exam launched in January 2025 with the best models near 9%; OpenAI's Deep Research, which searches the web, reached 26.6% in February, and Gemini 3 Deep Think reported 41.0% without tools in December, though another account gives 45.1%. ARC-AGI-2, launched in March to replace the near-solved original, ended the year with a verified top score of 54% from Poetiq, a six-person startup running its own system on top of Gemini 3 Pro. Scores on these tests depend heavily on the setting, with or without tools and verified or self-reported, and should not be compared across settings.",
+      "Training costs and usage prices moved in opposite directions. Epoch AI estimates that xAI's Grok 4, released in July, used about 5×10^26 FLOP, the largest known run, at a median cost of about $490 million. Meanwhile Stanford HAI's 2026 AI Index reports that the median price per million tokens across models fell from $2.10 in 2024 to $0.85 in 2025, and Epoch measured price declines at fixed capability with a median of about 50× a year. Anthropic cut its flagship price by two-thirds when Opus 4.5 launched at $5 and $25 per million tokens. Model output stayed concentrated: the US produced 50 notable models to China's 30 in 2025 by the AI Index's chapter count, while a later Stanford page gives 59 and 35."
+    ],
+    "2026": [
+      "By 2026 the benchmarks that defined the previous two years were effectively exhausted. Vals.ai's SWE-bench Verified board, updated on 1 September 2026, showed Claude Opus 5 at 97.0%, with DeepSeek V4 Pro and GPT-5.6 Sol within one point, and Vals stopped running the test on new releases. GPQA Diamond topped out near 94%, roughly the share of its questions that experts judge valid. The ARC Prize Foundation verified 84.6% on ARC-AGI-2 for Gemini 3 Deep Think in February. Even the International Mathematical Olympiad stopped separating models: several systems were reported with perfect 42-point scores in July, though they were not graded the same way and we found no official IMO certification. The measurable frontier now sits on Humanity's Last Exam, ARC-AGI-3 and agentic tests.",
+      "The frontier is crowded and the gaps are small, but not zero. Stanford HAI's 2026 AI Index puts the top US model's lead over the best Chinese model at 2.7% on the Arena leaderboard in March 2026, and the closed-weight lead over open weights at 3.3%, wider than the 1.70% recorded in February 2025. On the Artificial Analysis Intelligence Index in September, Alibaba's Qwen3.8-Max scored 58 against 58.9 for OpenAI's GPT-5.6 Sol. How large the open-weight gap looks depends on the instrument: about 6 points on Artificial Analysis's index in September, 12 points on its stricter version 5 in October, roughly 26 if only models with published weights are counted, and about four months of lag by Epoch AI's measure.",
+      "Prices now move in two directions. Silicon Data's usage-weighted index, which tracks what the market actually pays, fell to $0.97 per million tokens on 1 September 2026 and below $1 again in October, about 54% under its late-May peak of $2.07. New small models launched at a tenth of their predecessors' prices: Anthropic's Claude Haiku 5.5 lists at $0.10 input and $0.50 output per million tokens, against $1 and $5 for Haiku 4.5. At the top, prices are holding or rising. Claude Fable 5.1 lists at $10 and $50, and Google's Gemini 4 Argon doubles to $4 and $20 when its introductory period ends on 30 November 2026. Cheap capability is getting cheaper; the frontier is being priced as scarce.",
+      "Two things got harder to measure. Public estimates of training compute and cost for closed models largely stop after mid-2025, because labs disclose less: Stanford HAI reports that the average Foundation Model Transparency Index score fell from 58 to 40. And availability became a variable in its own right. Anthropic withdrew Claude Fable 5 under US export controls within a week of its 9 June launch, and OpenAI paused its largest planned reinforcement-learning run in August after evaluations could not rule out a critical cyber-risk level. Energy per query is the one cost that still looks small, about 0.31 watt-hours for a median chatbot query in a 2026 Microsoft Research study, but the same study puts long reasoning responses near 3.9 Wh, which is where usage is heading."
+    ]
+  },
+  "takeaways_2026": [
+    "The classic benchmarks are saturated: SWE-bench Verified reached 97.0% (Vals.ai, 1 Sep 2026), GPQA Diamond about 94% (Feb 2026) and perfect IMO scores were reported in July 2026; real separation now shows only on Humanity's Last Exam (about 55–60%, contested) and ARC-AGI-3 (below 1%).",
+    "The gaps are small but depend on the instrument: Stanford HAI measured a 2.7% US lead over China and a 3.3% closed-over-open lead on Arena in March 2026, while Artificial Analysis's open-weight gap ranged from 6 to 26 points across versions and definitions in September–October 2026.",
+    "Prices run at two speeds: the usage-weighted market price fell below $1 per million tokens (Silicon Data, Sep–Oct 2026) and Anthropic's smallest model got 90% cheaper, while frontier list prices sit between $4/$20 and $10/$50 and Google's Gemini 4 Argon doubles its price on 30 November 2026.",
+    "The cost side of frontier AI has gone dark: Epoch AI's ~$490 million estimate for Grok 4 (2025) is the last solid training-cost figure, transparency scores fell from 58 to 40 (Stanford HAI), and a US export order showed in June 2026 that a released model can be withdrawn within a week."
+  ],
+  "yoy_takeaways": [
+    "Coding: the top SWE-bench Verified score went from 71.7% (o3 preview, Dec 2024) to 80.9% (Claude Opus 4.5, Nov 2025) to 97.0% (Claude Opus 5, Sep 2026, independent harness) — saturated in under two years.",
+    "Competition: the top US model's Arena lead over China went 9.26% (Jan 2024) → 1.70% (Feb 2025) → 2.7% (Mar 2026), and the closed-over-open lead 8.04% → 1.70% → 3.3%: convergence, then a modest reopening.",
+    "Frontier prices: Anthropic's Opus-tier output price fell from $75 (2024) to $25 (2025) to $20 per million tokens (2026), and OpenAI's newest flagship from $60 (o1) to $10 (GPT-5, GPT-6 Sol) — but a new top tier appeared above Opus at $50 (Claude Fable 5.1).",
+    "Reasoning: AI went from a 28/42 silver at the 2024 IMO to a certified 35/42 gold in 2025 to reported perfect 42/42 scores in 2026."
+  ],
+  "faq_2026": [
+    {
+      "q": "What is the best AI model in November 2026?",
+      "a": "It depends on the test and the month. On Artificial Analysis's version 5 Intelligence Index in October 2026, Anthropic's Claude Opus 5.5 led at 58. OpenAI's GPT-6 Astra led Scale's Humanity's Last Exam leaderboard at 54.8% on 17 October 2026, and Claude Opus 5 topped Vals.ai's SWE-bench Verified board at 97.0% on 1 September 2026. Google says Gemini 4 Argon, generally available since 13 October 2026, leads 12 or 13 of 18 benchmarks, but those are its own evaluations. No single model leads on every measure."
+    },
+    {
+      "q": "How much does it cost to use an AI model in 2026?",
+      "a": "It depends on the tier. Silicon Data's usage-weighted index, which reflects what the market actually pays, was $0.97 per million tokens on 1 September 2026 and fell below $1 again in October. Small models are cheapest: Anthropic's Claude Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens (7 October 2026). Frontier models cost far more: OpenAI's GPT-6 Sol lists at $2 and $10 (22 September 2026), Claude Opus 5.5 at $4 and $20, Claude Fable 5.1 at $10 and $50, and Google's Gemini 4 Argon rises to $4 and $20 after 30 November 2026."
+    },
+    {
+      "q": "Has China caught up with the US in AI models?",
+      "a": "Nearly, on capability. Stanford HAI's 2026 AI Index found the top US model led the best Chinese model by 2.7% on the Arena leaderboard in March 2026, down from 9.26% in January 2024. On the Artificial Analysis Intelligence Index on 3 September 2026, Alibaba's Qwen3.8-Max scored 58 against 58.9 for OpenAI's GPT-5.6 Sol. The US still produces more notable models: 50 to China's 30 in 2025 by one Stanford count (59 to 35 by another), up from 40 to 15 in 2024. China's distinctive advantage is open weights; its labs publish them and the leading US labs mostly do not."
+    },
+    {
+      "q": "Are open-weight AI models as good as closed ones in 2026?",
+      "a": "Close, but behind, and how far behind depends on the measure. Stanford HAI found the top closed model led the best open model by 3.3% on Arena in March 2026, up from 1.70% in February 2025. Epoch AI estimates open-weight models have lagged the closed frontier by about four months on average since January 2026. On Artificial Analysis's index the gap was about 6 points in September 2026, but 12 points on its stricter version 5 in October, and about 26 points if only models with published weights are counted."
+    },
+    {
+      "q": "How much energy does one AI query use in 2026?",
+      "a": "A typical text query uses roughly a third of a watt-hour. A 2026 Microsoft Research study in the journal Joule estimated a median of 0.31 watt-hours per chatbot query, in line with Google's August 2025 figure of 0.24 Wh for a median Gemini text prompt and Sam Altman's June 2025 figure of about 0.34 Wh for ChatGPT. Long reasoning-style responses use far more: about 3.9 Wh in the same study. The older 2.9 Wh per-query figure from 2023–24 is out of date, and no regulator requires companies to disclose these numbers."
+    }
+  ],
+  "stop_quoting": [
+    {
+      "claim": "AI coding went from 4.4% to 71.7% on SWE-bench in one year.",
+      "fact": "The direction is right, but the two endpoints are different tests: 4.4% is a 2023 result on the original full SWE-bench, while 71.7% is OpenAI's o3 preview on SWE-bench Verified, a human-validated 500-task subset released in August 2024, announced in December 2024 before o3 was available. Quote each with its test version and date. This pairing appears on Report AI pages 89, 322, 386 and 413 and should carry that caveat.",
+      "link": "/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"
+    },
+    {
+      "claim": "AI inference costs have fallen 280-fold.",
+      "fact": "Stanford HAI's 280× figure is the price of reaching GPT-3.5-level performance, from $20 per million tokens in November 2022 to $0.07 in October 2024. It describes a fixed, old capability bar, not frontier prices, which in 2026 range from $2/$10 (GPT-6 Sol) to $10/$50 (Claude Fable 5.1) per million input/output tokens.",
+      "link": "/indexes/ai-economics/llm-token-price-index/"
+    },
+    {
+      "claim": "AI now costs less than $1 per million tokens.",
+      "fact": "Silicon Data's $0.97 reading (1 September 2026) is a usage-weighted average dominated by cheap and mid-tier models. It is what the market pays on average, not what frontier capability costs; frontier list prices are 4 to 50 times higher on output.",
+      "link": "/indexes/ai-economics/llm-token-price-index/"
+    },
+    {
+      "claim": "One AI query uses about 3 watt-hours, ten times a Google search.",
+      "fact": "That 2.9 Wh estimate dates from 2023–24. Google reported 0.24 Wh for a median Gemini text prompt (August 2025) and a 2026 Microsoft Research study found a 0.31 Wh median. Long reasoning responses can reach about 3.9 Wh, so the high figure now applies only to that kind of query.",
+      "link": "/indexes/technical-benchmarks/ai-energy-water-per-query/"
+    },
+    {
+      "claim": "DeepSeek trained a frontier model for $5.6 million (or $294,000).",
+      "fact": "$5.58 million was DeepSeek's stated GPU-rental cost for the final pre-training run of V3; $294,000 was the reinforcement-learning stage that turned V3 into R1 (Nature, September 2025). Neither includes research, earlier runs, staff or hardware, so neither is comparable with Epoch AI's ~$490 million estimate for Grok 4.",
+      "link": "/indexes/geography-of-ai/ai-in-china-2026/"
+    },
+    {
+      "claim": "Open-source models have caught up with closed models.",
+      "fact": "Stanford HAI measured a 3.3% closed-model lead on Arena in March 2026, wider than in 2025; Epoch AI puts the lag at about four months; and Artificial Analysis's version 5 index (October 2026) shows a 12-point gap, or about 26 points counting only models with published weights.",
+      "link": "/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/"
+    },
+    {
+      "claim": "Claude Fable 5 is the world's best AI model (Intelligence Index 59.9).",
+      "fact": "Fable 5 was withdrawn under US export controls within a week of its 9 June 2026 launch, and the listed score may partly reflect its Opus 4.8 fallback. Any 'best model' claim needs a test name and a date.",
+      "link": "/indexes/technical-benchmarks/chinese-ai-models-2026/"
+    },
+    {
+      "claim": "The US produced 40 notable AI models last year.",
+      "fact": "40 is the 2024 count (Stanford HAI AI Index 2025). For 2025 the AI Index 2026 gives 50 in its chapter PDF and 59 on its web page; China's count rose from 15 to 30 or 35.",
+      "link": "/indexes/geography-of-ai/"
+    }
+  ],
+  "related_pages": [89, 964, 1654, 421, 386, 428, 861, 954, 930, 3441, 2553, 566, 715, 322, 358, 3227, 99, 350],
+  "gaps": [
+    "Primary sources could not be opened: WebFetch to hai.stanford.edu failed to resolve, and vendor, Epoch, ARC Prize, Scale and Artificial Analysis pages were read only via WebSearch summaries. No figure gathered this session is HIGH; the only HIGH values are Anthropic prices that Report AI verified at source on 1 Oct 2026 (page 421).",
+    "Several 2024–25 values (o1 MMLU 92.3%, o3 GPQA 87.7%, Claude 3 Opus and 3.5 Haiku prices, GPT-5 launch price, DeepSeek-V3 price, AlphaProof 28/42, flagship context windows) are published vendor figures not re-verified this session; rated MEDIUM.",
+    "Notable models per country for 2025 is CONTESTED (US 50 vs 59, China 30 vs 35 in two Stanford HAI outputs); 2026 counts will not exist until AI Index 2027.",
+    "No public training-compute or training-cost estimate was found for any 2026 frontier model; Epoch-style estimates for closed models effectively stop after mid-2025. Grok 4 emissions are CONTESTED (Stanford 72,816 t vs Epoch ~150,000 t CO2e).",
+    "Stanford's GPT-3.5-class cost series was not extended past Oct 2024; its 2025 median-price figure ($2.10 → $0.85) comes from a single secondary source.",
+    "Silicon Data's Dec 2025 launch value is not published (DERIVED approximation only), and its 1 Sep 2026 ($0.97) and 22 Oct 2026 (below $1, implied ≈$0.95) readings are hard to reconcile (CONTESTED in the market-pulse research notes).",
+    "Humanity's Last Exam top score for 2026 is CONTESTED (54.8% vs 60.6% on two Scale snapshots; 59% no-tools elsewhere); end-2025 is CONTESTED (41.0% vs 45.1%).",
+    "IMO 2026 perfect scores: no official IMO statement found, and the systems were graded differently; OpenAI and Anthropic entries rest on one outlet.",
+    "Artificial Analysis Intelligence Index versions are not comparable across time. Site pages disagree as a result: page 861 cites GPT-5.5 at 60 while page 964 cites GPT-5.6 Sol at 58.9 as the top score — editorial consistency check needed.",
+    "Page 89's stat tile attributes '95%+ SWE-bench Verified, top model 2026' to Stanford HAI; Stanford's 2026 framing is percent of human baseline, and the 95–97% raw scores come from Vals.ai/BenchLM. Worth re-sourcing.",
+    "Kimi K3's release date, Claude Opus 5's release date and Opus 5.5's context window were not found.",
+    "No 2026 vendor disclosure of energy per query was found; the 2026 value rests on one academic study via secondary coverage."
+  ]
+}

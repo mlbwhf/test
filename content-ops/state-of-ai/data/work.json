@@ -1,0 +1,975 @@
+{
+ "theme": "work",
+ "title": "State of AI Work",
+ "dek_2026": "How AI is changing the number, kind and pay of jobs: US job cuts employers attribute to AI, reversals and rehiring, entry-level and graduate hiring, AI job postings, worker AI use, the AI skills wage premium, measured productivity effects and occupational exposure, each figure dated, sourced and confidence-rated.",
+ "metrics": [
+  {
+   "id": "challenger_ai_cuts",
+   "label": "US job cuts attributed to AI (Challenger)",
+   "unit": "announced job cuts",
+   "group": "AI-attributed layoffs",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "12,742",
+     "num": 12742,
+     "as_of": "Dec 2024 (full year)",
+     "source": "Challenger, Gray & Christmas (via secondary reporting)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Single secondary summary. Consistent with Challenger's cumulative count of 71,825 AI-attributed cuts since tracking began in 2023 (71,825 − 54,836 − 12,742 = 4,247 implied for 2023). Employer-stated reason: a ceiling for causation, and a floor for AI involvement because some cuts are filed under 'technological update'.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "54,836",
+     "num": 54836,
+     "as_of": "Dec 2025 (full year)",
+     "source": "Challenger, Gray & Christmas, 2025 year-end report",
+     "url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/",
+     "confidence": "MEDIUM",
+     "note": "Challenger: 4.5% of all 2025 announced cuts. Site page 2300 rounds to ~55,000.",
+     "site_page": 3441
+    },
+    "2026": {
+     "value": "121,401 (Jan–Oct, to date)",
+     "num": 121401,
+     "as_of": "5 Nov 2026 (Jan–Oct 2026)",
+     "source": "Challenger, Gray & Christmas, October 2026 report",
+     "url": "https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129",
+     "confidence": "MEDIUM",
+     "note": "To date. October 2026: 1,265 (lowest month of the year); September: 3,961; Jan–Sep: 120,136 (120,136 + 1,265 = 121,401 checks). 'Market/economic conditions' (130,531) overtook AI as the top year-to-date reason in this report. Earlier 2026 checkpoints: 49,135 Jan–Apr; ~101,743 H1 (page 88); 112,713 Jan–Jul.",
+     "site_page": 3441
+    }
+   }
+  },
+  {
+   "id": "challenger_total_cuts",
+   "label": "All announced US job cuts (Challenger)",
+   "unit": "announced job cuts",
+   "group": "AI-attributed layoffs",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "761,358",
+     "num": 761358,
+     "as_of": "Dec 2024 (full year)",
+     "source": "Challenger, Gray & Christmas (2025 year-end report, prior-year comparison)",
+     "url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/",
+     "confidence": "MEDIUM",
+     "note": "",
+     "site_page": null
+    },
+    "2025": {
+     "value": "1,206,374",
+     "num": 1206374,
+     "as_of": "Dec 2025 (full year)",
+     "source": "Challenger, Gray & Christmas, 2025 year-end report",
+     "url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/",
+     "confidence": "MEDIUM",
+     "note": "Up 58% on 2024; highest annual total since 2020.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "617,189 (Jan–Oct, to date)",
+     "num": 617189,
+     "as_of": "5 Nov 2026 (Jan–Oct 2026)",
+     "source": "Challenger, Gray & Christmas, October 2026 report",
+     "url": "https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129",
+     "confidence": "MEDIUM",
+     "note": "To date; down 44% year on year. October 2026: 43,994, down 71% from 153,074 in October 2025.",
+     "site_page": 3441
+    }
+   }
+  },
+  {
+   "id": "challenger_ai_share",
+   "label": "AI-attributed cuts as a share of all US announced cuts",
+   "unit": "% of announced cuts",
+   "group": "AI-attributed layoffs",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "1.7%",
+     "num": 1.7,
+     "as_of": "Dec 2024 (full year)",
+     "source": "Report AI, from Challenger figures",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "12,742 ÷ 761,358 = 1.67%.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "4.5%",
+     "num": 4.5,
+     "as_of": "Dec 2025 (full year)",
+     "source": "Report AI, from Challenger figures (Challenger also states 4.5%)",
+     "url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/",
+     "confidence": "DERIVED",
+     "note": "54,836 ÷ 1,206,374 = 4.55%.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "19.7% (Jan–Oct, to date)",
+     "num": 19.7,
+     "as_of": "5 Nov 2026 (Jan–Oct 2026)",
+     "source": "Report AI, from Challenger figures",
+     "url": "https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129",
+     "confidence": "DERIVED",
+     "note": "121,401 ÷ 617,189 = 19.67%. Challenger's own monthly peak: AI was 25% of March 2026 cuts and the #1 stated reason that month (page 2300); ~21% of Jan–Sep cuts.",
+     "site_page": 2300
+    }
+   }
+  },
+  {
+   "id": "challenger_ai_cumulative",
+   "label": "Cumulative US job cuts attributed to AI since 2023 (Challenger)",
+   "unit": "announced job cuts (cumulative)",
+   "group": "AI-attributed layoffs",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "16,989",
+     "num": 16989,
+     "as_of": "Dec 2024",
+     "source": "Report AI, from Challenger figures",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "71,825 (Challenger cumulative to end-2025) − 54,836 (2025) = 16,989 for 2023–2024.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "71,825",
+     "num": 71825,
+     "as_of": "Dec 2025",
+     "source": "Challenger, Gray & Christmas, 2025 year-end report (via secondary reporting)",
+     "url": "https://www.challengergray.com/blog/2025-year-end-challenger-report-highest-q4-layoffs-since-2008-lowest-ytd-hiring-since-2010/",
+     "confidence": "MEDIUM",
+     "note": "",
+     "site_page": null
+    },
+    "2026": {
+     "value": "193,226 (to date)",
+     "num": 193226,
+     "as_of": "5 Nov 2026 (through Oct 2026)",
+     "source": "Report AI, from Challenger figures",
+     "url": "https://www.hcamag.com/us/specialization/transformation/ai-blamed-for-121401-job-cuts-but-the-labor-data-isnt-buying-it/594129",
+     "confidence": "DERIVED",
+     "note": "71,825 + 121,401 = 193,226. Cross-check: secondary reporting gave 184,538 through July 2026 = 71,825 + 112,713 (Jan–Jul 2026).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "ai_cut_roles_refilled",
+   "label": "US hiring managers who cut a role because of AI and later rehired for it",
+   "unit": "% of hiring managers",
+   "group": "Reversals and rehiring",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "32%",
+     "num": 32,
+     "as_of": "2026",
+     "source": "Robert Half survey (~2,000 US hiring managers)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Some outlets report 29%; Report AI uses 32% as on pages 2293/2297. Rehired roles typically return as hybrid positions at a 20–35% salary premium (Robert Half). Vendor research from a firm active in the hiring market.",
+     "site_page": 2293
+    }
+   }
+  },
+  {
+   "id": "employers_regret_ai_layoffs",
+   "label": "Employers who regret AI-related layoffs",
+   "unit": "% of employers",
+   "group": "Reversals and rehiring",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "55%",
+     "num": 55,
+     "as_of": "2026",
+     "source": "Forrester, Future of Work / Predictions 2026",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Secondary reporting says Orgvue's workforce survey produced an almost identical figure; the original survey origin should be confirmed. Measures stated regret, not reversals. Related: 30.9% of organisations spent more rehiring than automation saved and 42.4% broke even, so ~73% ended no better off (DERIVED, 30.9 + 42.4, assumes no overlap; page 2293). Forrester forecasts ~50% of AI-attributed layoffs reversed in some form by end-2026 — a forecast that resolves Jan 2027 (page 3233).",
+     "site_page": 2293
+    }
+   }
+  },
+  {
+   "id": "stanford_early_career_gap",
+   "label": "Relative employment decline, ages 22–25, most AI-exposed US occupations (Stanford DEL)",
+   "unit": "% relative to less-exposed peers",
+   "group": "Entry-level and graduate hiring",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "16%",
+     "num": 16,
+     "as_of": "Nov 2025 (ADP payroll data, late 2022 to 2025)",
+     "source": "Brynjolfsson, Chandar & Chen, 'Canaries in the Coal Mine?', Stanford Digital Economy Lab, revised 13 Nov 2025",
+     "url": "https://digitaleconomy.stanford.edu/app/uploads/2025/11/CanariesintheCoalMine_Nov25.pdf",
+     "confidence": "MEDIUM",
+     "note": "RESTATED: the August 2025 version reported 13% (still shown on site page 395); the November 2025 revision, controlling for firm-level shocks, reports 16% (page 88). Descriptive, not causal; working paper.",
+     "site_page": 88
+    },
+    "2026": {
+     "value": "19%",
+     "num": 19,
+     "as_of": "12 Aug 2026 (payroll data through Jun 2026)",
+     "source": "Stanford Digital Economy Lab, Canaries August 2026 update",
+     "url": "https://digitaleconomy.stanford.edu/app/uploads/2026/08/Canaries_August2026.pdf",
+     "confidence": "MEDIUM",
+     "note": "Employment of 22–25-year-olds in AI-exposed jobs is 19% below where it would be had it kept pace with less-exposed peers. Metric wording differs slightly from the 2025 'relative decline'; treat the 16% → 19% move as directional. Authors find no evidence of economy-wide displacement.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "entry_level_dev_postings",
+   "label": "Change in entry-level software developer job postings since 2022",
+   "unit": "% change",
+   "group": "Entry-level and graduate hiring",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "−67%",
+     "num": -67,
+     "as_of": "2026 (2022–2026)",
+     "source": "Industry posting analyses compiled by Report AI",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Gathered via search summaries; vendor-sourced. Same pages: 54% of companies say they stopped hiring junior developers because of AI. Postings lead hiring and can overstate turning points.",
+     "site_page": 2299
+    }
+   }
+  },
+  {
+   "id": "bigtech_newgrad_hiring",
+   "label": "New-graduate hiring at 12 large US tech firms vs 2019 (SignalFire)",
+   "unit": "% change vs 2019",
+   "group": "Entry-level and graduate hiring",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "about −50%",
+     "num": -50,
+     "as_of": "2024 (SignalFire State of Talent 2025)",
+     "source": "SignalFire, State of Tech Talent Report 2025",
+     "url": "https://www.signalfire.com/blog/signalfire-state-of-talent-report-2025",
+     "confidence": "MEDIUM",
+     "note": "New grads were about 7% of Big Tech hires in 2024, roughly half pre-pandemic levels.",
+     "site_page": null
+    },
+    "2025": null,
+    "2026": {
+     "value": "about −65%",
+     "num": -65,
+     "as_of": "Jun 2026",
+     "source": "SignalFire, State of Tech Talent Report 2026 / June 2026 update",
+     "url": "https://www.signalfire.com/blog/signalfire-state-of-talent-report-2026",
+     "confidence": "MEDIUM",
+     "note": "Secondary coverage only; the 50% and 65% figures are different report vintages, not one number. Engineering new-grad hiring reportedly fell far less (~11% vs 2019) than design (~48%).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "nace_grad_hiring_projection",
+   "label": "US employers' projected change in hiring of new college graduates (NACE)",
+   "unit": "% change vs prior class (employer projection)",
+   "group": "Entry-level and graduate hiring",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "+0.6% (class of 2025)",
+     "num": 0.6,
+     "as_of": "Spring 2025 update",
+     "source": "NACE, Job Outlook 2025 Spring Update",
+     "url": "https://www.naceweb.org/job-market/trends-and-predictions/",
+     "confidence": "MEDIUM",
+     "note": "Employer projection, not an outcome.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "+5.6% (class of 2026)",
+     "num": 5.6,
+     "as_of": "Apr 2026 (fielded 12 Feb–17 Mar 2026)",
+     "source": "NACE, Job Outlook 2026 Spring Update",
+     "url": "https://www.naceweb.org/job-outlook/",
+     "confidence": "MEDIUM",
+     "note": "Employer projection. NACE's November 2025 forecast was +1.6% (mean basis); the spring 2026 figure is reported as a median, so the two are not strictly comparable.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "indeed_ai_postings_us",
+   "label": "Share of US job postings on Indeed mentioning AI-related terms",
+   "unit": "% of postings",
+   "group": "AI job postings",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "2.71%",
+     "num": 2.71,
+     "as_of": "31 Dec 2024",
+     "source": "Indeed Hiring Lab, AI Tracker data (7-day trailing average)",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "Read from Hiring Lab's published dataset (commit of 8 Oct 2026). 31 Dec 2023: 1.94%. Different measure from Lightcast's 'postings requiring AI skills' (1.8% for 2024 in Stanford's AI Index 2025).",
+     "site_page": null
+    },
+    "2025": {
+     "value": "4.44%",
+     "num": 4.44,
+     "as_of": "31 Dec 2025",
+     "source": "Indeed Hiring Lab, AI Tracker data",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "RESTATED: Hiring Lab wrote in January 2026 that the tracker reached 4.2% at end-2025; the current (revised) dataset shows 4.44%. Lightcast/Stanford AI Index 2026 puts 2025 US postings requiring AI skills at about 2.5–2.6% (PwC's Lightcast analysis: 2.8%) — a different definition.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "7.34% (to date)",
+     "num": 7.34,
+     "as_of": "30 Sep 2026 (latest in dataset)",
+     "source": "Indeed Hiring Lab, AI Tracker data",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "Up from 5.44% on 31 Mar 2026 and 5.99% on 30 Jun 2026.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "indeed_ai_postings_uk",
+   "label": "Share of UK job postings on Indeed mentioning AI-related terms",
+   "unit": "% of postings",
+   "group": "AI job postings",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "3.44%",
+     "num": 3.44,
+     "as_of": "31 Dec 2024",
+     "source": "Indeed Hiring Lab, AI Tracker data",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "",
+     "site_page": null
+    },
+    "2025": {
+     "value": "7.12%",
+     "num": 7.12,
+     "as_of": "31 Dec 2025",
+     "source": "Indeed Hiring Lab, AI Tracker data",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "",
+     "site_page": null
+    },
+    "2026": {
+     "value": "9.92% (to date)",
+     "num": 9.92,
+     "as_of": "30 Sep 2026",
+     "source": "Indeed Hiring Lab, AI Tracker data",
+     "url": "https://github.com/hiring-lab/ai-tracker",
+     "confidence": "HIGH",
+     "note": "Hiring Lab reported 9.4% in late June 2026 coverage.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "indeed_softdev_postings",
+   "label": "US software-development job postings on Indeed vs 1 Feb 2020",
+   "unit": "index (1 Feb 2020 = 100), seasonally adjusted",
+   "group": "Software developers",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "67.5 (−32.5%)",
+     "num": 67.52,
+     "as_of": "31 Dec 2024",
+     "source": "Indeed Hiring Lab, Job Postings Index by sector",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "Read from Hiring Lab's published dataset (commit of 4 Nov 2026).",
+     "site_page": null
+    },
+    "2025": {
+     "value": "67.3 (−32.7%)",
+     "num": 67.29,
+     "as_of": "31 Dec 2025",
+     "source": "Indeed Hiring Lab, Job Postings Index by sector",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "Flat across 2025.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "81.6 (−18.4%, to date)",
+     "num": 81.58,
+     "as_of": "30 Oct 2026",
+     "source": "Indeed Hiring Lab, Job Postings Index by sector",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "Up 21.2% since end-2025 (DERIVED: 81.58 ÷ 67.29 − 1). Hiring Lab reports senior roles accounted for 71% of the gain between May 2025 and May 2026 (secondary reporting, MEDIUM).",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "indeed_total_postings",
+   "label": "All US job postings on Indeed vs 1 Feb 2020",
+   "unit": "index (1 Feb 2020 = 100), seasonally adjusted",
+   "group": "Software developers",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "110.6",
+     "num": 110.64,
+     "as_of": "31 Dec 2024",
+     "source": "Indeed Hiring Lab, Job Postings Index",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "Context for the software-development series.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "103.4",
+     "num": 103.38,
+     "as_of": "31 Dec 2025",
+     "source": "Indeed Hiring Lab, Job Postings Index",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "",
+     "site_page": null
+    },
+    "2026": {
+     "value": "103.8 (to date)",
+     "num": 103.79,
+     "as_of": "30 Oct 2026",
+     "source": "Indeed Hiring Lab, Job Postings Index",
+     "url": "https://github.com/hiring-lab/job_postings_tracker",
+     "confidence": "HIGH",
+     "note": "",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "gallup_daily_use",
+   "label": "US employees using AI at work daily (Gallup)",
+   "unit": "% of employees",
+   "group": "Worker AI use",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "4%",
+     "num": 4,
+     "as_of": "Q2 2024",
+     "source": "Gallup Workforce survey",
+     "url": "https://www.gallup.com/workplace/699689/ai-use-at-work-has-nearly-doubled-in-two-years.aspx",
+     "confidence": "MEDIUM",
+     "note": "From Gallup's Q2 2025 statement that daily use 'doubled in the past 12 months, from 4% to 8%'.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "12%",
+     "num": 12,
+     "as_of": "Fall 2025 (Q4)",
+     "source": "Gallup Workforce survey (AP reporting)",
+     "url": "https://www.gallup.com/workplace/699689/ai-use-at-work-rises.aspx",
+     "confidence": "MEDIUM",
+     "note": "Gallup added a 'don't know' option from Q3 2025 (10% daily), so Q3 2025 onward is not strictly comparable with earlier waves.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "15% (to date)",
+     "num": 15,
+     "as_of": "May 2026 (Q2)",
+     "source": "Gallup, AI indicator",
+     "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx",
+     "confidence": "MEDIUM",
+     "note": "Q1 2026 (fielded 4–19 Feb, n=23,717): 13%. Gallup's page labels are inconsistent about the quarter.",
+     "site_page": 433
+    }
+   }
+  },
+  {
+   "id": "gallup_any_use",
+   "label": "US employees using AI at work at least a few times a year (Gallup)",
+   "unit": "% of employees",
+   "group": "Worker AI use",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "46%",
+     "num": 46,
+     "as_of": "Q4 2025",
+     "source": "Gallup Workforce survey",
+     "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx",
+     "confidence": "MEDIUM",
+     "note": "Q2 2025: 40%; Q3 2025: 45% (method change in Q3). Q2 2023 baseline: 21%.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "52% (to date)",
+     "num": 52,
+     "as_of": "May 2026 (Q2)",
+     "source": "Gallup, AI indicator",
+     "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx",
+     "confidence": "MEDIUM",
+     "note": "Q1 2026: 50% (page 433). In May 2026, 30% used AI a few times a week or more (Q1 2026: 28%).",
+     "site_page": 433
+    }
+   }
+  },
+  {
+   "id": "pew_work_with_ai",
+   "label": "US workers saying at least some of their work is done with AI (Pew)",
+   "unit": "% of workers",
+   "group": "Worker AI use",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "16%",
+     "num": 16,
+     "as_of": "Oct 2024",
+     "source": "Pew Research Center",
+     "url": "https://www.pewresearch.org/social-trends/2025/02/25/u-s-workers-are-more-worried-than-hopeful-about-future-ai-use-in-the-workplace/",
+     "confidence": "MEDIUM",
+     "note": "",
+     "site_page": null
+    },
+    "2025": {
+     "value": "21%",
+     "num": 21,
+     "as_of": "Sep 2025",
+     "source": "Pew Research Center",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Different question from Gallup's frequency-of-use series; do not compare directly.",
+     "site_page": null
+    },
+    "2026": null
+   }
+  },
+  {
+   "id": "pwc_wage_premium",
+   "label": "Wage premium in job ads requiring AI skills vs comparable roles (PwC Global AI Jobs Barometer)",
+   "unit": "% premium",
+   "group": "AI skills premium",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "56%",
+     "num": 56,
+     "as_of": "2024 job ads (PwC 2025 Barometer, Jun 2025)",
+     "source": "PwC, 2025 Global AI Jobs Barometer",
+     "url": "https://pwc.com/gx/en/news-room/press-releases/2025/ai-linked-to-a-fourfold-increase-in-productivity-growth.html",
+     "confidence": "MEDIUM",
+     "note": "RESTATED: PwC's 2026 release gives the prior-year figure as 57%. The 2024 Barometer (2023 ads) reported 25% (the 'up to about 25%' on page 1114). Global, roughly a billion job ads.",
+     "site_page": 387
+    },
+    "2025": {
+     "value": "62%",
+     "num": 62,
+     "as_of": "2025 job ads (PwC 2026 Barometer, published 15 Jun 2026)",
+     "source": "PwC, 2026 Global AI Jobs Barometer",
+     "url": "https://www.pwc.com/gx/en/news-room/press-releases/2026/pwc-2026-ai-jobs-barometer.html",
+     "confidence": "MEDIUM",
+     "note": "Assigned to 2025 because each edition analyses the previous year's ads (confirmed for the 2025 edition; assumed for 2026). Ranges from 118% (consumer markets) to 16% (government). Jobs requiring AI skills grew ~69% vs ~9% for all jobs. Site pages 387 and 395 still show 56% as current.",
+     "site_page": 88
+    },
+    "2026": null
+   }
+  },
+  {
+   "id": "stlfed_hours_saved",
+   "label": "Share of all US work hours saved by generative AI (St. Louis Fed survey)",
+   "unit": "% of total work hours",
+   "group": "Productivity evidence",
+   "yoy": true,
+   "values": {
+    "2024": {
+     "value": "1.4%",
+     "num": 1.4,
+     "as_of": "Nov 2024 survey",
+     "source": "Bick, Blandin & Deming / Federal Reserve Bank of St. Louis, Real-Time Population Survey",
+     "url": "https://www.stlouisfed.org/open-vault/2025/oct/generative-ai-productivity-future-work",
+     "confidence": "MEDIUM",
+     "note": "Self-reported. Users alone reported savings of ~5.4% of their hours.",
+     "site_page": null
+    },
+    "2025": {
+     "value": "about 2.0%",
+     "num": 2.0,
+     "as_of": "Q4 2025",
+     "source": "FRED series RPSGENAITSALL (St. Louis Fed RPS), via secondary summary",
+     "url": "https://fred.stlouisfed.org/series/RPSGENAITSALL",
+     "confidence": "MEDIUM",
+     "note": "FRED could not be opened from our environment; values read from a search summary (Q2 2025 ~1.81%, Q3 ~1.75%, Q4 ~2.00%). The 2024 working-paper estimate and the FRED series may differ in construction.",
+     "site_page": null
+    },
+    "2026": {
+     "value": "about 2.2% (to date)",
+     "num": 2.16,
+     "as_of": "Q1 2026",
+     "source": "FRED series RPSGENAITSALL, via secondary summary",
+     "url": "https://fred.stlouisfed.org/series/RPSGENAITSALL",
+     "confidence": "MEDIUM",
+     "note": "Self-reported time saved is not measured productivity; it lifts output only if the time is redeployed.",
+     "site_page": null
+    }
+   }
+  },
+  {
+   "id": "metr_dev_rct",
+   "label": "Task-time effect of early-2025 AI tools on experienced open-source developers (METR RCT)",
+   "unit": "% change in completion time",
+   "group": "Productivity evidence",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "+19% (slower)",
+     "num": 19,
+     "as_of": "Feb–Jun 2025 trial, published 10 Jul 2025",
+     "source": "METR, 'Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity'",
+     "url": "https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/",
+     "confidence": "MEDIUM",
+     "note": "Developers expected a ~20% speed-up. Small sample on mature repositories they knew well; secondary reporting says Stanford's AI Index 2026 notes METR did not replicate the slowdown in a later study (unverified).",
+     "site_page": 966
+    },
+    "2026": null
+   }
+  },
+  {
+   "id": "dev_review_vs_write_hours",
+   "label": "Developer hours per week reviewing AI-generated code vs writing new code",
+   "unit": "hours per week",
+   "group": "Software developers",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "11.4h reviewing vs 9.8h writing",
+     "num": 11.4,
+     "as_of": "Q1 2026",
+     "source": "Developer survey data compiled by Report AI",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Reverses Q4 2024, when writing led by about four hours. Related 2026 delivery data (Faros AI, associations, no control group): median PR review time +441%, bugs per developer +54%, PRs merged with no review +31%. Meta (HIGH, Reuters 26 Aug 2026): code changes +220%, shipped features +36%, major incidents +40%.",
+     "site_page": 2299
+    }
+   }
+  },
+  {
+   "id": "support_deflection_median",
+   "label": "Median tier-1 customer-support deflection by AI, enterprise programmes",
+   "unit": "% of tier-1 contacts resolved without a human",
+   "group": "Customer support",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "41.2%",
+     "num": 41.2,
+     "as_of": "2026",
+     "source": "ClarityArc 2026 production benchmarks; Zendesk CX Trends 2026 aggregate",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Top quartile 58.7%, bottom 22.4%; vendor marketing claims 70–90%. Nuanced complaints rarely exceed 25%. Only 20% of service leaders have cut agent numbers because of AI; 95% plan to keep human agents. Klarna: AI did the work of ~700 agents (Feb 2024) and 853 employees (Nov 2025), with partial rehiring of humans after May 2025.",
+     "site_page": 2298
+    }
+   }
+  },
+  {
+   "id": "imf_global_exposure",
+   "label": "Share of global employment exposed to AI (IMF)",
+   "unit": "% of employment",
+   "group": "Occupational exposure",
+   "yoy": false,
+   "values": {
+    "2024": {
+     "value": "40%",
+     "num": 40,
+     "as_of": "Jan 2024",
+     "source": "IMF, 'Gen-AI: Artificial Intelligence and the Future of Work'",
+     "url": "https://www.imf.org/en/Publications/Staff-Discussion-Notes/Issues/2024/01/14/Gen-AI-Artificial-Intelligence-and-the-Future-of-Work-542379",
+     "confidence": "MEDIUM",
+     "note": "About 60% in advanced economies. Exposure is not job loss: it covers jobs AI may complement as well as substitute.",
+     "site_page": 1114
+    },
+    "2025": null,
+    "2026": null
+   }
+  },
+  {
+   "id": "office_admin_task_share",
+   "label": "Task-automation share, office and administrative support (highest of any occupational group)",
+   "unit": "% of tasks",
+   "group": "Occupational exposure",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": null,
+    "2026": {
+     "value": "46%",
+     "num": 46,
+     "as_of": "2026",
+     "source": "Studies compiled on Report AI's by-occupation page",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "Task share, not headcount. Legal work 44%; interpreters and translators carry 98%+ automation exposure (a different measure). Methodologies differ; read as a ranking, not a forecast.",
+     "site_page": 2300
+    }
+   }
+  },
+  {
+   "id": "wef_jobs_created_2030",
+   "label": "Jobs created worldwide by 2030 (WEF forecast)",
+   "unit": "jobs (forecast, 2025–2030)",
+   "group": "Forecasts",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "170M",
+     "num": 170000000,
+     "as_of": "Jan 2025",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "FORECAST, not an outcome. WEF Future of Jobs Report 2025 (Jan 2025), employer survey covering 14M+ workers; covers all structural drivers (technology, green transition, demographics, economics), not AI alone. Previous edition (2023) forecast 69M created and 83M eliminated over 2023–2027 (net −14M) — different horizon and sample, not comparable.",
+     "site_page": 88
+    },
+    "2026": {
+     "value": "170M (unchanged)",
+     "num": 170000000,
+     "as_of": "Nov 2026 (no newer edition)",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "Same forecast still in force; listed for completeness, not a new measurement.",
+     "site_page": 88
+    }
+   }
+  },
+  {
+   "id": "wef_jobs_displaced_2030",
+   "label": "Jobs displaced worldwide by 2030 (WEF forecast)",
+   "unit": "jobs (forecast, 2025–2030)",
+   "group": "Forecasts",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "92M",
+     "num": 92000000,
+     "as_of": "Jan 2025",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "FORECAST, not an outcome. WEF Future of Jobs Report 2025 (Jan 2025), employer survey covering 14M+ workers; covers all structural drivers (technology, green transition, demographics, economics), not AI alone. Previous edition (2023) forecast 69M created and 83M eliminated over 2023–2027 (net −14M) — different horizon and sample, not comparable.",
+     "site_page": 88
+    },
+    "2026": {
+     "value": "92M (unchanged)",
+     "num": 92000000,
+     "as_of": "Nov 2026 (no newer edition)",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "Same forecast still in force.",
+     "site_page": 88
+    }
+   }
+  },
+  {
+   "id": "wef_net_jobs_2030",
+   "label": "Net change in jobs worldwide by 2030 (WEF forecast)",
+   "unit": "jobs (forecast, 2025–2030)",
+   "group": "Forecasts",
+   "yoy": false,
+   "values": {
+    "2024": null,
+    "2025": {
+     "value": "+78M",
+     "num": 78000000,
+     "as_of": "Jan 2025",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "FORECAST, not an outcome. WEF Future of Jobs Report 2025 (Jan 2025), employer survey covering 14M+ workers; covers all structural drivers (technology, green transition, demographics, economics), not AI alone. Previous edition (2023) forecast 69M created and 83M eliminated over 2023–2027 (net −14M) — different horizon and sample, not comparable. Same report: 22% of jobs churned, 39% of core skills changing by 2030. Tracked on the predictions scoreboard (page 3233).",
+     "site_page": 88
+    },
+    "2026": {
+     "value": "+78M (unchanged)",
+     "num": 78000000,
+     "as_of": "Nov 2026 (no newer edition)",
+     "source": "World Economic Forum, Future of Jobs Report 2025",
+     "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+     "confidence": "MEDIUM",
+     "note": "Same forecast still in force.",
+     "site_page": 3233
+    }
+   }
+  }
+ ],
+ "headlines": {
+  "2024": [
+   "Challenger, Gray & Christmas counted 12,742 US job cuts in 2024 that employers attributed to artificial intelligence, about 1.7% of the 761,358 cuts announced that year.",
+   "Indeed Hiring Lab data show that 2.71% of US job postings on Indeed mentioned AI-related terms on 31 December 2024, up from 1.94% a year earlier.",
+   "Indeed's US software-development job postings index stood 32.5% below its 1 February 2020 level on 31 December 2024, while total US postings were 10.6% above it.",
+   "PwC's 2025 Global AI Jobs Barometer found that job advertisements requiring AI skills offered a 56% wage premium over comparable roles in 2024, a figure PwC later restated as 57%.",
+   "Pew Research Center found in October 2024 that 16% of US workers said at least some of their work was done with AI."
+  ],
+  "2025": [
+   "Challenger, Gray & Christmas counted 54,836 US job cuts attributed to AI in 2025, 4.5% of the 1,206,374 cuts announced that year and more than four times the 2024 count.",
+   "The World Economic Forum's Future of Jobs Report 2025, published in January 2025, forecast that 170 million jobs will be created and 92 million displaced worldwide by 2030, a net gain of 78 million driven by all structural trends, not AI alone.",
+   "A November 2025 revision of Stanford Digital Economy Lab research, using ADP payroll data, found a 16% relative decline since late 2022 in employment of 22-to-25-year-olds in the most AI-exposed US occupations.",
+   "PwC's 2026 Global AI Jobs Barometer, published on 15 June 2026 and based on the previous year's job advertisements, put the average wage premium for jobs requiring AI skills at 62%.",
+   "Indeed Hiring Lab data show that 4.44% of US job postings mentioned AI-related terms on 31 December 2025, while US software-development postings remained 32.7% below their February 2020 level."
+  ],
+  "2026": [
+   "Challenger, Gray & Christmas counted 121,401 US job cuts attributed to AI from January to October 2026, more than twice the 2025 total, but only 1,265 of them came in October, the lowest month of the year.",
+   "Gallup found in May 2026 that 52% of US employees used AI at work at least a few times a year and 15% used it daily.",
+   "Indeed Hiring Lab data show that 7.34% of US job postings mentioned AI-related terms on 30 September 2026, up from 4.44% at the end of 2025.",
+   "Stanford Digital Economy Lab's August 2026 update found that employment of 22-to-25-year-olds in AI-exposed US occupations was 19% below where it would have been had it kept pace with less-exposed peers, using payroll data through June 2026.",
+   "Robert Half found in 2026 that 32% of US hiring managers who eliminated a role primarily because of AI had later rehired for it, typically in hybrid roles paying 20–35% more."
+  ]
+ },
+ "analysis": {
+  "2024": [
+   "In 2024 AI was a marginal stated reason for job cuts. Challenger, Gray & Christmas counted 12,742 US cuts that employers attributed to AI, about 1.7% of the 761,358 announced that year by Report AI's division. The count is employer-stated, and Challenger's analysts noted that some AI-linked cuts were filed under vaguer headings such as 'technological update', so it is both a floor for explicit attribution and a ceiling for proven causation. The larger labour-market story of 2024 was a cooling technology market rather than AI layoffs: Indeed's software-development postings index ended the year 32.5% below its February 2020 baseline, while total US postings were still 10.6% above it.",
+   "Demand for AI skills rose while hiring overall cooled. On 31 December 2024, 2.71% of US postings on Indeed mentioned AI-related terms, up from 1.94% a year earlier, and Lightcast data in Stanford's AI Index put the share of US postings requiring AI skills at 1.8% for the year. The two series use different keyword sets, which explains the gap between them; their direction agrees. PwC's 2025 Global AI Jobs Barometer, which analysed 2024 job advertisements, found that roles requiring AI skills offered a 56% wage premium over comparable roles without them, more than double the 25% PwC had reported a year earlier. PwC has since restated the 2024 figure as 57%.",
+   "Worker use was still a minority habit. Pew Research Center's October 2024 survey found that 16% of US workers said at least some of their work was done with AI, and Gallup's data imply that only about 4% of US employees used AI daily in the second quarter of 2024. Exposure estimates were far larger than use: the IMF said in January 2024 that about 40% of global employment was exposed to AI, rising to about 60% in advanced economies. That gap between exposure and use is the main reason displacement forecasts ran ahead of measured effects. The St. Louis Fed's November 2024 survey put the time saved by generative AI at about 1.4% of all US work hours."
+  ],
+  "2025": [
+   "AI moved from footnote to recognised layoff reason in 2025. Challenger counted 54,836 AI-attributed US cuts, more than four times the 2024 count, but still only 4.5% of the 1,206,374 cuts announced in a year when total cuts rose 58% to their highest level since 2020. Most of the increase came from reasons other than AI. Companies also began to discover the cost of cutting first. Klarna, whose assistant had been described as doing the work of about 700 agents, said in May 2025 that cost had been 'too predominant' a factor, began rehiring human agents for complex cases, and kept the automation for routine work. Partial reversal rather than abandonment became the pattern for 2026.",
+   "The clearest evidence of AI affecting employment came at the bottom of the career ladder. Stanford Digital Economy Lab researchers, using ADP payroll records, reported in August 2025 a 13% relative decline in employment for 22-to-25-year-olds in the most AI-exposed occupations since late 2022, revised to 16% in November 2025 after controlling for firm-level shocks. Older workers in the same occupations held steady. Graduate hiring was flat: NACE's spring 2025 update projected that employers would hire 0.6% more graduates from the class of 2025 than from the class of 2024. The authors stress that the pattern is descriptive and may partly reflect forces other than AI, such as higher interest rates and post-pandemic over-hiring.",
+   "The pay and productivity evidence pointed in different directions. PwC's 2026 Barometer, which analyses the previous year's job advertisements, put the AI skills wage premium at 62%, and the share of US Indeed postings mentioning AI rose to 4.44% by the end of 2025. But the best controlled evidence on productivity was mixed. A METR randomised trial published in July 2025 found that experienced developers took 19% longer with early-2025 AI tools on codebases they knew well, despite expecting a 20% speed-up. Survey estimates were modest: the St. Louis Fed's series put time saved at about 2% of all US work hours by the fourth quarter. Large gains on specific tasks had not yet become large gains across whole jobs."
+  ],
+  "2026": [
+   "2026 is the year AI became, for a time, the leading stated reason for US job cuts, and then stopped being it. Challenger counted 121,401 AI-attributed cuts from January to October, more than double the 2025 total and about 19.7% of the 617,189 cuts announced in the period by Report AI's division. AI was the most-cited reason in March, when it accounted for 25% of cuts, and stayed on top for several months. Attributed cuts then fell to 3,961 in September and 1,265 in October, and by Challenger's 5 November report 'market/economic conditions' (130,531) had overtaken AI year to date. One month is not a trend; the November report will show whether this is a pause.",
+   "Much of the 2026 evidence is about the cost of cutting first. Robert Half found that 32% of US hiring managers who eliminated a role primarily because of AI later rehired for it, typically in hybrid roles paying 20–35% more. Survey data cited by Forrester show 55% of employers regret AI-related layoffs, and survey data on reversing organisations imply that about 73% ended up no better off than if they had never cut, by Report AI's sum of two survey groups. Meta abandoned the second wave of its Project OT cuts after AI-assisted code changes rose 220% and major incidents rose 40%. Most of this is vendor research, rated MEDIUM; Forrester's forecast that half of AI-attributed layoffs will be reversed resolves in January 2027.",
+   "The entry-level squeeze deepened even as software hiring recovered. Stanford's August 2026 update put employment of 22-to-25-year-olds in AI-exposed occupations 19% below the path of less-exposed peers, and SignalFire reports new-graduate hiring at 12 large tech firms about 65% below 2019. Yet Indeed's US software-development postings index rose from 67.3 at the end of 2025 to 81.6 on 30 October 2026, still 18.4% below February 2020 but up 21% in ten months, with senior roles accounting for most of the gain. Inside engineering teams the constraint moved to verification: survey data put weekly hours spent reviewing AI-generated code at 11.4 in the first quarter of 2026, against 9.8 hours writing new code.",
+   "Using AI at work became a majority habit in 2026 but stayed light for most workers. Gallup found that 52% of US employees used AI at least a few times a year by May 2026, 30% a few times a week or more, and 15% daily. The share of US Indeed postings mentioning AI reached 7.34% on 30 September 2026. Aggregate effects remain hard to find: in the NBER study 'Firm Data on AI' (February 2026), more than 90% of executives reported no effect of AI on their firm's employment over the previous three years and 89% reported none on labour productivity, while expecting a 0.7% employment decline over the next three. The WEF's net 78 million jobs by 2030 remains a forecast, not a measurement."
+  ]
+ },
+ "takeaways_2026": [
+  "Challenger counted 121,401 AI-attributed US job cuts in January–October 2026, more than twice 2025's 54,836, but the monthly count fell to 1,265 in October and AI is no longer the top stated reason year to date.",
+  "Reversals are now measurable: Robert Half found 32% of US hiring managers who cut a role because of AI later rehired for it, typically at a 20–35% salary premium.",
+  "The pressure is at entry level: Stanford's August 2026 update puts the early-career employment gap in AI-exposed US occupations at 19%, even as Indeed's software-development postings recovered to 18.4% below their February 2020 level by 30 October 2026.",
+  "About half of US employees use AI at work (Gallup, May 2026: 52%) but only 15% daily, and most executives report no measurable effect on employment or productivity so far (NBER, February 2026)."
+ ],
+ "yoy_takeaways": [
+  "AI-attributed US job cuts rose from 12,742 in 2024 to 54,836 in 2025 and 121,401 in January–October 2026; as a share of all announced cuts, from about 1.7% to 4.5% to 19.7% (Report AI's division of Challenger figures).",
+  "The share of US Indeed postings mentioning AI rose from 2.71% at the end of 2024 to 4.44% at the end of 2025 and 7.34% on 30 September 2026, about 2.7 times in 21 months.",
+  "US software-development postings sat about 32.5% below their February 2020 level at the end of both 2024 and 2025, then recovered to 18.4% below by 30 October 2026: AI did not stop developer hiring, but the recovery favours senior roles while early-career employment in exposed occupations kept falling behind.",
+  "PwC's AI skills wage premium in job advertisements rose from 25% (2023 ads) to 56% (2024 ads, restated 57%) to 62% (2025 ads), and daily AI use among US employees rose from about 4% (Q2 2024) to 12% (late 2025) to 15% (May 2026)."
+ ],
+ "faq_2026": [
+  {
+   "q": "How many US jobs have been cut because of AI?",
+   "a": "Challenger, Gray & Christmas counted 12,742 US job cuts attributed to AI in 2024, 54,836 in 2025 and 121,401 from January to October 2026, about 193,000 since its tracking began in 2023 by Report AI's sum. These are announced cuts where the employer named AI as the reason; they can overstate AI's role, because AI is a palatable public reason, and understate it, because some cuts are filed under other headings. AI-attributed cuts fell to 1,265 in October 2026, and by 5 November 2026 market and economic conditions had overtaken AI as the leading stated reason for 2026."
+  },
+  {
+   "q": "Are companies rehiring workers after AI layoffs?",
+   "a": "Yes, in measurable numbers. Robert Half found in 2026 that 32% of US hiring managers who eliminated a role primarily because of AI later rehired for it, usually in a hybrid role paying 20–35% more. Klarna began rehiring human support agents in 2025 after its CEO said cost had been too predominant a factor, and Meta cancelled the second wave of its 2026 Project OT cuts. Forrester has forecast that about half of AI-attributed layoffs will be reversed in some form by the end of 2026; that forecast resolves in January 2027."
+  },
+  {
+   "q": "Is AI reducing entry-level and graduate jobs?",
+   "a": "The evidence points that way for AI-exposed occupations, though causation is not proven. Stanford Digital Economy Lab's August 2026 update, using ADP payroll data through June 2026, found employment of 22-to-25-year-olds in AI-exposed US occupations 19% below where it would have been had it kept pace with less-exposed peers, up from 16% in November 2025. SignalFire reports new-graduate hiring at 12 large tech firms about 65% below 2019 in 2026. Graduate hiring overall is not collapsing: NACE's spring 2026 update projected a 5.6% increase in hiring for the class of 2026."
+  },
+  {
+   "q": "How many workers use AI at work, and does it pay?",
+   "a": "Gallup found in May 2026 that 52% of US employees used AI at work at least a few times a year, 30% a few times a week or more and 15% daily, up from about 4% daily in mid-2024. PwC's 2026 Global AI Jobs Barometer, published in June 2026 and based on the previous year's job advertisements across many countries, found that jobs requiring AI skills advertised wages 62% higher on average than comparable roles without them, up from 56% (restated 57%) a year earlier. The premium varies widely by sector, from 118% in consumer markets to 16% in government."
+  },
+  {
+   "q": "Does AI actually make workers more productive?",
+   "a": "On specific tasks often, across whole jobs not yet measurably. The St. Louis Fed's survey put time saved by generative AI at about 1.4% of all US work hours in November 2024 and about 2% by early 2026, self-reported. A METR randomised trial published in July 2025 found experienced developers took 19% longer with early-2025 AI tools on codebases they knew. In NBER's February 2026 study of executives in four countries, 89% reported no effect of AI on labour productivity over the previous three years, while expecting a 1.4% gain over the next three."
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "AI is the top reason for US layoffs in 2026.",
+   "fact": "AI led Challenger's stated reasons for several months from March 2026, but in Challenger's 5 November 2026 report 'market/economic conditions' (130,531 cuts) overtook AI (121,401) for January–October, and AI-attributed cuts fell to 1,265 in October.",
+   "link": "/reports/ai-market-pulse/"
+  },
+  {
+   "claim": "AI will wipe out 92 million jobs by 2030.",
+   "fact": "The World Economic Forum's Future of Jobs Report 2025 forecasts 92 million jobs displaced and 170 million created worldwide by 2030, a net gain of 78 million, from all structural trends (technology, green transition, demographics, economics), not AI alone. It is an employer-survey forecast, not a measurement.",
+   "link": "/indexes/workforce-labor/ai-jobs-statistics-2026/"
+  },
+  {
+   "claim": "Workers with AI skills earn a 56% wage premium (or 'up to 25%').",
+   "fact": "Superseded. PwC's 2026 Global AI Jobs Barometer (June 2026) puts the average premium in job advertisements at 62%; the 56% describes 2024 ads and was restated as 57%; 25% describes 2023 ads. It is an advertised-wage gap between comparable roles, not a measured pay rise for individual workers.",
+   "link": "/indexes/workforce-labor/ai-jobs-statistics-2026/"
+  },
+  {
+   "claim": "Stanford found entry-level jobs in AI-exposed occupations are down 13%.",
+   "fact": "Superseded. The August 2025 working paper's 13% was revised to 16% in November 2025, and the August 2026 update puts employment of 22-to-25-year-olds in AI-exposed occupations 19% below the path of less-exposed peers. It is a relative, descriptive measure, not a count of jobs lost to AI.",
+   "link": "/indexes/workforce-labor/ai-jobs-statistics-2026/"
+  },
+  {
+   "claim": "Half of AI layoffs have already been reversed.",
+   "fact": "That is Forrester's forecast for the end of 2026, which resolves in January 2027. The interim evidence is that 32% of US hiring managers who cut a role because of AI have rehired for it (Robert Half, 2026).",
+   "link": "/reports/ai-predictions-scoreboard/"
+  },
+  {
+   "claim": "Software developer job postings are still collapsing because of AI.",
+   "fact": "Indeed's US software-development postings index was flat at about 67 (one-third below February 2020) through 2024 and 2025, then rose to 81.6 on 30 October 2026, up 21% in ten months. The steeper 'entry-level postings −67% since 2022' figure is a vendor estimate for junior roles only.",
+   "link": "/indexes/workforce-labor/will-ai-replace-my-job/software-developers/"
+  }
+ ],
+ "related_pages": [
+  88,
+  2297,
+  2293,
+  2299,
+  2298,
+  2300,
+  387,
+  395,
+  1114,
+  3441,
+  966,
+  433,
+  320,
+  3233,
+  3227
+ ],
+ "gaps": [
+  "Primary sources could not be opened: WebFetch failed (stackoverflow.blog not resolvable), FRED and Challenger's site were blocked; only Indeed Hiring Lab's GitHub datasets were read directly (HIGH). The session's WebSearch budget ran out before a few checks (METR follow-up study, exact FRED RPSGENAITSALL values, Stack Overflow 2026 headline figures).",
+  "Challenger 2024 AI-attributed total (12,742) comes from a single secondary summary; it is consistent with Challenger's cumulative 71,825 since 2023 only if 2023 was 4,247, which was not independently confirmed.",
+  "Gallup 'any use' share for 2024 not found; the 2024 daily-use value (4%) is taken from Gallup's statement that daily use doubled from 4% to 8% in the year to Q2 2025. Gallup changed its question (added 'don't know') in Q3 2025.",
+  "Stack Overflow 2026 Developer Survey (published Oct 2026): no all-respondent AI-use or trust figure retrieved. 2024→2025 trust figures are themselves inconsistent across coverage (43%→33% vs 40%→29%), so developer AI adoption was left out of the metrics.",
+  "PwC year mapping: the 2025 edition explicitly analyses 2024 ads; that the 2026 edition (62%) analyses 2025 ads is assumed. No 2026-year value until the 2027 edition.",
+  "No newer WEF Future of Jobs edition after January 2025 was found; WEF 2030 values are repeated for 2026 as the forecast in force, not as new data.",
+  "Pew's 2026 update and NACE's class-of-2024 projection were not found. NACE's class-of-2026 figures mix mean (+1.6%, Nov 2025) and median (+5.6%, Apr 2026) bases.",
+  "Lightcast/Stanford AI Index US AI-postings share for 2025 varies by write-up (2.5%, 2.56%, PwC's 2.8%); left as a note on the Indeed metric rather than a separate series.",
+  "No 2026 randomised productivity study with measured whole-job effects was found; the 2023 customer-support field study (14% more issues resolved per hour, data 2020–21) predates the series window.",
+  "The 55% 'employers regret AI layoffs' figure is credited to Forrester on the site; secondary reporting links it also to an Orgvue survey — origin should be confirmed.",
+  "Stale figures on the site (corpus 10 Nov 2026): pages 387 and 395 show the PwC premium as 56% (current: 62%); page 395 shows Stanford −13% (revised to 16%, now 19%); page 1114 says 'up to about 25%'; page 88 (updated July 2026) uses H1 2026 Challenger figures (~101,743) and the 16% Stanford figure; pages 2297 and 2300 present AI as the #1 layoff reason, true for March–mid 2026 but not year to date as of 5 Nov 2026.",
+  "Indeed's AI tracker values are revised over time: Hiring Lab reported 4.2% for end-2025 in January 2026; the current dataset shows 4.44% (marked RESTATED).",
+  "The '58% of employees use AI semi-regularly' figure on page 387 (Stanford HAI 2026, global) was not traced to its underlying survey and is not used here.",
+  "Occupational exposure figures (page 2300) come from studies with different methods and were gathered via search summaries; only the office-and-admin task share is carried as a metric."
+ ]
+}

@@ -1,0 +1,69 @@
+<!-- "What changed" block — house pattern for every updated index/report.
+     PLACEMENT: directly under the stat-tile strip, above the Analysis section.
+     RULES: keep the three most recent revisions; older rows roll into the
+     methodology note. Never delete a superseded figure — the previous value is
+     the evidence that we update honestly.
+     STATUS VALUES: Revised · Restated (source changed its own history) ·
+     Confirmed (was MEDIUM, now HIGH) · Superseded (better source) ·
+     Retracted (pull immediately, do not wait for cadence). -->
+
+<div class="tai-padx" style="padding:28px 36px;border-bottom:1px solid #e6e6ea;background:#fafafb;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+    <div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;font-weight:600;">What changed</div>
+    <div class="tai-mono" style="font-size:11px;color:#9a9aa2;">Reviewed 22 Aug 2026 &middot; previously 18 Aug 2026 &middot; next review 22 Sep 2026</div>
+  </div>
+
+  <div class="tai-tablewrap"><table class="tai-table">
+    <tr><th>Figure</th><th>Was</th><th>Now</th><th>Change</th><th>Why</th></tr>
+    <tr>
+      <td>Nvidia debt guarantee, Ohio site</td>
+      <td class="tai-mono" style="color:#9a9aa2;">~$250B</td>
+      <td class="tai-mono" style="font-weight:600;">~$250B</td>
+      <td><span class="tai-mono" style="font-size:11px;color:#77777f;">no change</span></td>
+      <td>Still reported as under negotiation; no definitive agreement filed. <span class="tai-conf tai-conf-med">MEDIUM</span></td>
+    </tr>
+    <tr>
+      <td>Worldwide AI spend, 2026</td>
+      <td class="tai-mono" style="color:#9a9aa2;">$2.52T</td>
+      <td class="tai-mono" style="font-weight:600;">$2.59T</td>
+      <td><span class="tai-mono" style="font-size:11px;color:#177245;">&#9650; +2.8%</span></td>
+      <td>Gartner raised its own forecast (May 2026). <span class="tai-conf tai-conf-hi">HIGH</span></td>
+    </tr>
+    <tr>
+      <td>Organizations using gen AI</td>
+      <td class="tai-mono" style="color:#9a9aa2;">71%</td>
+      <td class="tai-mono" style="font-weight:600;">72%</td>
+      <td><span class="tai-mono" style="font-size:11px;color:#177245;">&#9650; +1pt</span></td>
+      <td>McKinsey restated; source label corrected from "Survey". <span class="tai-conf tai-conf-hi">HIGH</span></td>
+    </tr>
+  </table></div>
+
+  <p style="font-size:13px;line-height:1.55;color:#6e6e76;margin:12px 0 0;max-width:840px;">
+    We publish the previous value alongside the new one so any figure can be audited over
+    time. Revisions by a source to its own history are marked <strong>RESTATED</strong> and both
+    numbers are kept. Figures we compute are recalculated when their inputs change, never
+    carried forward. See <a href="/about/">methodology and corrections</a>.
+  </p>
+</div>
+
+<!-- ============================================================
+     "REVIEWED, NO CHANGE" variant — use when the cadence check
+     found nothing. A page that was checked and is current should
+     look checked, not neglected.
+     ============================================================ -->
+
+<div class="tai-padx" style="padding:18px 36px;border-bottom:1px solid #e6e6ea;background:#fafafb;">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+    <span class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#177245;font-weight:600;">Reviewed &middot; no change</span>
+    <span class="tai-mono" style="font-size:11px;color:#9a9aa2;">All figures re-checked against primary sources 22 Aug 2026 &middot; next review 22 Nov 2026</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCHEMA — bump alongside every update. dateModified and the
+     visible "Updated" stamp must never disagree.
+     ============================================================
+     "dateModified":"2026-08-22"
+     Optionally, for pages with a review cadence, expose it:
+     "isPartOf":{"@type":"Dataset","datePublished":"...","dateModified":"..."}
+     ============================================================ -->

@@ -1,0 +1,169 @@
+/* ============================================================
+   Report AI — Global nav, Option B "Jump Palette"
+   Destination: the site's shared stylesheet (Additional CSS,
+   post 258) — REFACTOR INTO the existing sheet, do not append
+   a duplicate block (standing rule).
+   Requires: GeneratePress, primary menu = menu 34,
+   Customizer → Layout → Primary Navigation →
+   Dropdown behaviour: "Click – arrow".
+   Fonts (Archivo + IBM Plex Mono) already load site-wide.
+   ============================================================ */
+
+/* ---- Primary bar ---- */
+.main-navigation {
+  background: #fff;
+  border-bottom: 1px solid #e6e6ea;
+}
+.main-navigation .main-nav ul li a {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #111114;
+  padding: 10px 14px;
+}
+.main-navigation .main-nav ul li[class*="current-menu"] > a,
+.main-navigation .main-nav ul li.sfHover > a,
+.main-navigation .main-nav ul li > a:hover {
+  color: #2545f5;
+  background: transparent;
+}
+/* Site title: Archivo 900 (set font in Customizer; this covers weight/tracking) */
+.main-title a {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: #111114;
+}
+
+/* ---- Jump palette (all sub-menus) ---- */
+.main-navigation .sub-menu {
+  width: 360px;
+  background: #111114;
+  border: 1px solid #111114;
+  box-shadow: none;
+  right: 0;
+  left: auto;
+  margin-top: 8px;
+  counter-reset: idx;
+  z-index: 999;
+}
+.main-navigation .sub-menu li {
+  border-bottom: 1px solid #26262a;
+  counter-increment: idx;
+}
+.main-navigation .sub-menu li:last-child { border-bottom: none; }
+.main-navigation .sub-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.main-navigation .sub-menu a::before {
+  content: counter(idx, decimal-leading-zero);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #2545f5;
+}
+.main-navigation .sub-menu a::after {
+  content: "\2192"; /* → */
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #55555c;
+}
+.main-navigation .sub-menu a:hover,
+.main-navigation .sub-menu a:focus {
+  background: #1a1a1f;
+  color: #fff;
+}
+.main-navigation .sub-menu a:hover::after,
+.main-navigation .sub-menu a:focus::after { color: #2545f5; }
+
+/* Un-numbered utility rows inside palettes */
+.main-navigation .sub-menu .nav-tool a::before,
+.main-navigation .sub-menu .nav-all a::before { content: none; }
+.main-navigation .sub-menu .nav-tool a,
+.main-navigation .sub-menu .nav-all a {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2545f5;
+}
+.main-navigation .sub-menu .nav-all { border-top: 1px solid #333336; }
+
+/* Reports palette: narrower, eyebrow via menu-item description
+   (needs the GP filter in child-theme-snippets.php) */
+.main-navigation .menu-reports .sub-menu { width: 300px; }
+.main-navigation .menu-reports .sub-menu li { counter-increment: none; }
+.main-navigation .menu-reports .sub-menu a::before { content: none; }
+.main-navigation .sub-menu .menu-item-description {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #77777f;
+  margin-bottom: 2px;
+}
+
+/* Dropdown arrow toggle button (GP click-arrow mode) */
+.main-navigation .main-nav ul li .dropdown-menu-toggle {
+  padding-left: 6px;
+  padding-right: 10px;
+  color: #55555c;
+}
+.main-navigation .main-nav ul li.sfHover > a .dropdown-menu-toggle,
+.main-navigation .main-nav ul li > a:hover .dropdown-menu-toggle { color: #2545f5; }
+
+/* ---- Utility strip (thin bar above primary nav) ----
+   Markup comes from the generate_before_header hook
+   (see child-theme-snippets.php) */
+.tai-utility {
+  display: flex;
+  justify-content: flex-end;
+  gap: 22px;
+  padding: 8px 32px;
+  border-bottom: 1px solid #e6e6ea;
+  background: #fff;
+}
+.tai-utility a {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #77777f;
+  text-decoration: none;
+}
+.tai-utility a:hover { color: #111114; }
+.tai-utility a.tai-login { color: #111114; }
+
+/* ---- Mobile (≤768px): GP off-canvas, phase 1 ---- */
+@media (max-width: 768px) {
+  .main-navigation .sub-menu {
+    width: 100%;
+    right: auto;
+    left: 0;
+    margin-top: 0;
+  }
+  .main-navigation .main-nav ul li a { min-height: 44px; }
+  .tai-utility { padding: 8px 20px; gap: 16px; }
+  .menu-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    border: 1px solid #e6e6ea;
+  }
+}
+
+/* Right-anchored flyout overflow guard, 769–1100px */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .main-navigation .sub-menu { right: 0; left: auto; max-width: calc(100vw - 40px); }
+}

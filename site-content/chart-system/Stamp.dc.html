@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Report AI stamp</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 100%; height: 100%; min-width: 120px; min-height: 120px; display: flex; align-items: center; justify-content: center; font-family: 'Archivo', sans-serif; color: {{ink}}">
+<svg viewBox="0 0 160 160" style="width: 100%; height: 100%; display: block" role="img" aria-label="Report AI stamp: sourced, dated, confidence-rated" xmlns="http://www.w3.org/2000/svg">
+<defs><path id="rai-ring" d="M18,80 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"></path></defs>
+<circle cx="80" cy="80" r="76" fill="none" stroke="{{ink}}" stroke-width="3.2"></circle>
+<circle cx="80" cy="80" r="72" fill="none" stroke="{{ink}}" stroke-width="0.9"></circle>
+<circle cx="80" cy="80" r="50" fill="none" stroke="{{ink}}" stroke-width="1.6"></circle>
+<text fill="{{ink}}" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600"><textPath href="#rai-ring" startOffset="0" textLength="386" lengthAdjust="spacing">SOURCED · DATED · CONFIDENCE-RATED · REPORT-AI.ORG ·</textPath></text>
+<text x="80" y="75" text-anchor="middle" fill="{{ink}}" font-family="Archivo, sans-serif" font-weight="900" font-size="17" letter-spacing="-0.3">REPORT</text>
+<text x="80" y="104" text-anchor="middle" fill="{{ink}}" font-family="Archivo, sans-serif" font-weight="900" font-size="32" letter-spacing="-0.5">AI</text>
+<line x1="56" x2="104" y1="83" y2="83" stroke="{{ink}}" stroke-width="1.2"></line>
+<text x="80" y="117" text-anchor="middle" fill="{{ink}}" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="6.6" letter-spacing="1">BY THE NUMBERS</text>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ink":{"editor":"color","default":"#2545f5","options":["#2545f5","#111114","#b42318"]},"$preview":{"width":320,"height":320}}'>
+class Component extends DCLogic {
+renderVals() {
+return { ink: this.props.ink ?? '#2545f5' };
+}
+}
+</script>
+</body>
+</html>

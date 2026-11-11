@@ -1,0 +1,78 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,1,Period,Nov 2022
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,1,GPT-3.5-level inference cost ($/1M tokens),$20.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,2,Period,Aug 2023
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,2,GPT-3.5-level inference cost ($/1M tokens),$1.80
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,3,Period,Jun 2024
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,3,GPT-3.5-level inference cost ($/1M tokens),$0.18
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,4,Period,Oct 2024
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,1,The capability-cost curve,4,GPT-3.5-level inference cost ($/1M tokens),$0.07
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,1,2026 indicator,LLM Token Expenditure Index (usage-weighted)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,1,Value,$0.97 / 1M
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,1,Source · confidence,"Silicon Data, 1 Sep 2026 · Medium"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,2,2026 indicator,Index vs its own summer 2026 peak
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,2,Value,less than half
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,2,Source · confidence,Silicon Data · Medium
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,3,2026 indicator,Frontier token prices vs March 2023
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,3,Value,−81.3%
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,3,Source · confidence,Reported Sep 2026 · Medium
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,4,2026 indicator,"Claude Opus 5.5 vs Opus 5, cost to run"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,4,Value,−40%
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,4,Source · confidence,"Anthropic, 22 Sep 2026 · High"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,5,2026 indicator,Claude Sonnet 5.5 vs Sonnet 5
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,5,Value,"up to −30%, 30% faster"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,2,The market price in 2026: below a dollar,5,Source · confidence,"Anthropic, 28 Sep 2026 · High"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,1,Model,Anthropic Claude Fable 5.1
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,1,Input ($/1M),$10.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,1,Output ($/1M),$50.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,1,Confidence,High
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,2,Model,Anthropic Claude Opus 5.5
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,2,Input ($/1M),$4.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,2,Output ($/1M),$20.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,2,Confidence,High
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,3,Model,Anthropic Claude Sonnet 5.5
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,3,Input ($/1M),$2.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,3,Output ($/1M),$10.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,3,Confidence,High
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,4,Model,Anthropic Claude Haiku 4.5
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,4,Input ($/1M),$1.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,4,Output ($/1M),$5.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,4,Confidence,High
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,5,Model,Anthropic cached reads (all tiers)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,5,Input ($/1M),$0.10–$0.25
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,5,Output ($/1M),—
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,5,Confidence,High
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,6,Model,"Other frontier vendors (OpenAI, Google, DeepSeek, xAI)"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,6,Input ($/1M),List prices vary; confirm on each provider’s page
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,6,Output ($/1M),
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,3,Current frontier API pricing,6,Confidence,Vendor-listed
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,1,Indicator,GPT-3.5-level inference cost (Nov 2022)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,1,Value,$20.00 / 1M
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,1,Source,Stanford HAI
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,2,Indicator,GPT-3.5-level inference cost (Oct 2024)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,2,Value,$0.07 / 1M
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,2,Source,Stanford HAI
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,3,Indicator,"Total decline, GPT-3.5-class"
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,3,Value,>280×
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,3,Source,Stanford HAI
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,4,Indicator,Cost decline at fixed capability
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,4,Value,~10×/yr
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,4,Source,a16z
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,5,Indicator,Task-specific cost decline (longer run)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,5,Value,~50×/yr median · up to ~900×/yr
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,5,Source,Epoch AI
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,6,Indicator,LLM Token Expenditure Index (usage-weighted)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,6,Value,$0.97 / 1M · 1 Sep 2026
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,6,Source,Silicon Data
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,7,Indicator,Frontier token prices vs March 2023
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,7,Value,−81.3%
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,7,Source,Reported Sep 2026
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,8,Indicator,Claude Fable 5.1 (input / output)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,8,Value,$10.00 / $50.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,8,Source,Anthropic
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,9,Indicator,Claude Opus 5.5 (input / output)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,9,Value,$4.00 / $20.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,9,Source,Anthropic
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,10,Indicator,Claude Sonnet 5.5 (input / output)
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,10,Value,$2.00 / $10.00
+https://report-ai.org/indexes/ai-economics/llm-token-price-index/,2026-10-01,4,The numbers in full,10,Source,Anthropic

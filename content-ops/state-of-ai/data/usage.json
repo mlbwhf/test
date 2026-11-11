@@ -1,0 +1,409 @@
+{
+  "theme": "usage",
+  "title": "State of AI Usage",
+  "dek_2026": "How many people and organisations use AI, how often, and for what: consumer assistant audiences (weekly and monthly, never mixed), organisational adoption, worker and adult usage surveys, what people actually ask ChatGPT, AI search reach, and China's AI-native app market, 2024 to 2026.",
+  "metrics": [
+    {
+      "id": "chatgpt_wau",
+      "label": "ChatGPT weekly active users",
+      "unit": "users (weekly)",
+      "group": "Consumer assistants",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "300M", "num": 300000000, "as_of": "Dec 2024", "source": "OpenAI", "url": null, "confidence": "MEDIUM", "note": "Company-disclosed milestone; up from 200M in Aug 2024. Series per Report AI brief.", "site_page": 969},
+        "2025": {"value": "800M", "num": 800000000, "as_of": "6 Oct 2025", "source": "OpenAI / Sam Altman at DevDay, via TechCrunch", "url": "https://techcrunch.com/2025/10/06/sam-altman-says-chatgpt-has-hit-800m-weekly-active-users/", "confidence": "MEDIUM", "note": "2025 series: 400M (Feb), ~700M (Jul), 800M (Oct).", "site_page": 969},
+        "2026": {"value": "1B+", "num": 1000000000, "as_of": "31 Aug 2026 (to date)", "source": "OpenAI", "url": null, "confidence": "MEDIUM", "note": "Up from 900M+ on 27 Feb 2026 (TechCrunch). Several outlets date an OpenAI statement that 'our models now reach more than one billion active users' to 31 Jul/1 Aug 2026 without saying 'weekly'; the brief records the ChatGPT weekly milestone as 31 Aug 2026 — verify the date. OpenAI's '1.2B weekly users' at DevDay (29 Sep 2026) is a collective figure that may include other products and is not used here. The ~1B monthly app-user figure (May/Jun 2026) is a different metric. Site pages 969, 43, 47, 317, 970 still show 900M.", "site_page": 2589}
+      }
+    },
+    {
+      "id": "chatgpt_paid_subscribers",
+      "label": "ChatGPT paying subscribers",
+      "unit": "subscribers",
+      "group": "Consumer assistants",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "15.5M", "num": 15500000, "as_of": "End 2024", "source": "OpenAI figures given to shareholders, reported by The Information", "url": "https://finance.yahoo.com/news/chatgpt-crosses-20m-paid-users-140519166.html", "confidence": "MEDIUM", "note": "Up from 5.8M in 2023 and 11M+ in Sep 2024. Passed 20M by Apr 2025.", "site_page": null},
+        "2025": {"value": "~35M", "num": 35000000, "as_of": "Jul 2025", "source": "The Information (Nov 2025 report on OpenAI projections)", "url": "https://www.pymnts.com/artificial-intelligence-2/2025/openai-expects-chatgpt-to-have-220-million-paid-subscribers-by-2030/", "confidence": "MEDIUM", "note": "Plus and Pro plans only (~5% of weekly users). The same report carries OpenAI's projection of ~220M paying users by 2030 — a forecast, not an outcome. Site page 969 cites '20M+' (Business of Apps), which is the Apr 2025 level.", "site_page": 969},
+        "2026": {"value": "50M+", "num": 50000000, "as_of": "27 Feb 2026 (to date)", "source": "OpenAI (announcement with the 900M weekly-user milestone)", "url": "https://www.roic.ai/news/openais-chatgpt-surpasses-900-million-weekly-users-50-million-paying-subscribers-02-27-2026", "confidence": "MEDIUM", "note": "Reports differ on scope (consumer-only vs all tiers; 9M+ paying business seats reported separately). A '122M paid subscribers' figure (Apr 2026) circulates but matches OpenAI's internal 2026 forecast for consumer subscribers driven by the $8 Go tier; unverified as an outcome and not used.", "site_page": 969}
+      }
+    },
+    {
+      "id": "gemini_app_mau",
+      "label": "Google Gemini app monthly active users",
+      "unit": "users (monthly)",
+      "group": "Consumer assistants",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No 2024 monthly figure disclosed. A Google slide shown at the US antitrust remedies trial (Apr 2025) gave 9M daily users in Oct 2024 — a different metric.", "site_page": null},
+        "2025": {"value": "750M", "num": 750000000, "as_of": "Q4 2025 (disclosed 4 Feb 2026)", "source": "Alphabet Q4 2025 earnings remarks (Sundar Pichai)", "url": "https://pulse2.com/google-gemini-surpasses-750-million-monthly-active-users/", "confidence": "MEDIUM", "note": "2025 path: 350M (Mar 2025, court exhibit), ~650M (Oct 2025), 750M (end 2025).", "site_page": 970},
+        "2026": {"value": "1B+", "num": 1000000000, "as_of": "28 Oct 2026 (to date)", "source": "Alphabet Q3 2026 earnings remarks (Sundar Pichai)", "url": "https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q3-2026/", "confidence": "MEDIUM", "note": "Up from 900M (I/O, May 2026) and 950M (Q2 call, Jul 2026); daily users 'tripled' year on year. Monthly, so not comparable with ChatGPT's weekly count. Site page 970 still shows 900M; page 2589 shows 750M–900M CONTESTED.", "site_page": 970}
+      }
+    },
+    {
+      "id": "meta_ai_mau",
+      "label": "Meta AI monthly active users (across Meta apps)",
+      "unit": "users (monthly)",
+      "group": "Consumer assistants",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "~500M", "num": 500000000, "as_of": "Sep 2024", "source": "Meta, via TechCrunch", "url": "https://techcrunch.com/2025/05/29/meta-ai-now-has-1b-monthly-active-users/", "confidence": "MEDIUM", "note": "Embedded in WhatsApp, Instagram, Facebook and Messenger; presence is not the same as deliberate use.", "site_page": null},
+        "2025": {"value": "~1B", "num": 1000000000, "as_of": "28 May 2025", "source": "Mark Zuckerberg, Meta annual shareholder meeting (CNBC, TechCrunch)", "url": "https://techcrunch.com/2025/05/29/meta-ai-now-has-1b-monthly-active-users/", "confidence": "MEDIUM", "note": "Secondary reports put engaged use far lower (~185M weekly, ~40M daily).", "site_page": 970},
+        "2026": {"value": "~600M–1.2B", "num": null, "as_of": "Q1 2026", "source": "Report AI pages 970 and 2589 (conflicting)", "url": null, "confidence": "CONTESTED", "note": "Page 970 gives 1.2B monthly (Q1 2026); page 2589 gives ~600M monthly. Meta gave no Meta AI user total in its Q3 2026 results (21 Oct 2026) — only that its Muse agent has 10M+ accounts and Meta AI engagement per person 'more than doubled since April'. No 2026 company figure found.", "site_page": 970}
+      }
+    },
+    {
+      "id": "copilot_mau",
+      "label": "Microsoft Copilot apps monthly active users",
+      "unit": "users (monthly)",
+      "group": "Consumer assistants",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No comparable figure found.", "site_page": null},
+        "2025": {"value": "150M", "num": 150000000, "as_of": "Quarter to 30 Sep 2025", "source": "Microsoft FY26 Q1 earnings (Satya Nadella), via CIO Dive", "url": "https://www.ciodive.com/news/microsoft-AI-cloud-growth-earnings-Q1/804338", "confidence": "MEDIUM", "note": "Copilot family, commercial and consumer combined; up from 100M+ (Jul 2025). Single secondary source for 150M.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": "28 Oct 2026", "source": "Microsoft FY27 Q1 earnings, via UC Today", "url": "https://uctoday.com/microsoft-q1-copilot-usage-jumps-seat-count-goes-missing", "confidence": null, "note": "No absolute user number disclosed in 2026: daily users up ~50% quarter on quarter and >5x year on year, with no baseline. Site page 970 shows '100M+ MAU' and page 2589 '~220M' without a 2026 disclosure behind either.", "site_page": 970}
+      }
+    },
+    {
+      "id": "m365_copilot_paid_seats",
+      "label": "Microsoft 365 Copilot paid seats",
+      "unit": "seats",
+      "group": "Organisations",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Not disclosed.", "site_page": null},
+        "2025": {"value": "15M", "num": 15000000, "as_of": "Quarter to Dec 2025 (disclosed Jan 2026)", "source": "Microsoft FY26 Q2 earnings, via CIO Dive", "url": null, "confidence": "MEDIUM", "note": "Paid enterprise seats.", "site_page": null},
+        "2026": {"value": "30M+", "num": 30000000, "as_of": "Jul 2026 (to date)", "source": "Microsoft FY26 Q4 earnings, via UC Today", "url": "https://uctoday.com/microsoft-q1-copilot-usage-jumps-seat-count-goes-missing", "confidence": "MEDIUM", "note": "Not updated at the Oct 2026 results.", "site_page": null}
+      }
+    },
+    {
+      "id": "claude_mau",
+      "label": "Claude monthly users (third-party estimates)",
+      "unit": "users (monthly)",
+      "group": "Consumer assistants",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Anthropic does not publish a consumer user count.", "site_page": null},
+        "2025": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No reliable estimate found.", "site_page": null},
+        "2026": {"value": "56M–245M", "num": null, "as_of": "Q2 2026", "source": "Sensor Tower and other trackers (via secondary reporting)", "url": null, "confidence": "CONTESTED", "note": "56M (app-only MAU, Sensor Tower Q2 2026, page 970) vs ~245M (web + app, Sensor Tower May 2026, page 1266) — a 4.4x spread. Other estimates: 271M (web + mobile), ~120M app MAU (Jun 2026). An unverified blog claim of '10M+ weekly users' also circulates. The S-1 (26 Oct 2026) reports business metrics, not consumer users.", "site_page": 2589}
+      }
+    },
+    {
+      "id": "doubao_mau",
+      "label": "ByteDance Doubao monthly active users (China app)",
+      "unit": "users (monthly)",
+      "group": "China",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "~56M", "num": 56000000, "as_of": "Nov 2024", "source": "QuestMobile, via secondary reporting", "url": null, "confidence": "MEDIUM", "note": "Secondary sources give ~56M to 'nearly 60M' for Nov 2024; no Dec 2024 figure found. Weakest point in the series.", "site_page": null},
+        "2025": {"value": "226M", "num": 226000000, "as_of": "Dec 2025", "source": "QuestMobile, via 36Kr summary", "url": "https://www.36kr.com/p/3706582295212163", "confidence": "MEDIUM", "note": "Doubao overtook DeepSeek in Aug 2025 (157M vs ~143M).", "site_page": null},
+        "2026": {"value": "419.08M", "num": 419080000, "as_of": "Sep 2026 (to date)", "source": "QuestMobile Q3 2026, via FourWeekMBA and 36Kr", "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/", "confidence": "MEDIUM", "note": "181M daily users on 30 Sep 2026. Third-party device-panel estimate, not a company disclosure. Site pages 2589 and 1266 still show 382M (May/Jun 2026). Never '3.8 billion' (mistranslation of 3.8 yi).", "site_page": 2589}
+      }
+    },
+    {
+      "id": "deepseek_mau",
+      "label": "DeepSeek monthly active users (China app)",
+      "unit": "users (monthly)",
+      "group": "China",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Consumer app launched 11 Jan 2025; no 2024 figure.", "site_page": 2589},
+        "2025": {"value": "135M", "num": 135000000, "as_of": "Dec 2025", "source": "QuestMobile, via 36Kr summary", "url": "https://www.36kr.com/p/3706582295212163", "confidence": "MEDIUM", "note": "Below its Jan–Feb 2025 peak; ~146M in Q3 2025 per secondary summaries.", "site_page": null},
+        "2026": {"value": "122.65M", "num": 122650000, "as_of": "Sep 2026 (to date)", "source": "QuestMobile Q3 2026, via FourWeekMBA and 36Kr", "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/", "confidence": "MEDIUM", "note": "Down from ~130M (May/Jun 2026, page 2589). China app only; excludes web and API use abroad. Site page 970 shows '188M WAU' (Q1 2026, global estimate) — a different metric and basis.", "site_page": 2589}
+      }
+    },
+    {
+      "id": "china_ai_native_app_mau",
+      "label": "China AI-native app users, deduplicated",
+      "unit": "users (monthly)",
+      "group": "China",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No comparable QuestMobile national figure found for 2024.", "site_page": null},
+        "2025": {"value": "287M", "num": 287000000, "as_of": "Sep 2025", "source": "QuestMobile 2025 autumn report, via 36Kr", "url": "https://www.36kr.com/p/3538125335239561", "confidence": "MEDIUM", "note": "QuestMobile's Sep 2026 growth rate (+82.1% YoY) implies ~300M for Sep 2025 (546 / 1.821, DERIVED); the gap suggests a restated base. Separate categories in the same report: in-app AI plug-ins 706M, device-maker assistants 535M — not additive.", "site_page": null},
+        "2026": {"value": "546M", "num": 546000000, "as_of": "Sep 2026 (to date)", "source": "QuestMobile Q3 2026, via 36Kr and DoNews", "url": "https://eu.36kr.com/en/p/4033570288948355", "confidence": "MEDIUM", "note": "+82.1% year on year. Earlier 2026: 440M (Q1), 461M (Apr), 499M (May/Jun, +85.4% YoY — site page 2589). Deduplicated nationally; per-app figures are not, so app MAUs cannot be summed.", "site_page": 2589}
+      }
+    },
+    {
+      "id": "org_ai_adoption",
+      "label": "Organisations using AI in at least one business function",
+      "unit": "% of organisations (survey respondents)",
+      "group": "Organisations",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "78%", "num": 78, "as_of": "Survey Jul 2024 (published Mar 2025)", "source": "McKinsey, The State of AI", "url": null, "confidence": "MEDIUM", "note": "Up from 72% in the early-2024 survey and 55% in 2023. Also cited by Stanford HAI AI Index 2025.", "site_page": 322},
+        "2025": {"value": "88%", "num": 88, "as_of": "Survey 25 Jun–29 Jul 2025 (published Nov 2025)", "source": "McKinsey, The State of AI in 2025", "url": "https://www.mckinsey.com/featured-insights/artificial-intelligence/the-state-of-ai-2025", "confidence": "MEDIUM", "note": "1,993 respondents. Only 39% attributed any EBIT impact to AI; 23% scaling agentic AI.", "site_page": 358},
+        "2026": {"value": "89%", "num": 89, "as_of": "Survey 4 May–8 Jun 2026 (published Aug 2026)", "source": "McKinsey, The State of AI in 2026: On the road to ROI", "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai", "confidence": "MEDIUM", "note": "1,719 respondents, 97 countries. 37% report any EBIT impact; 44% say AI is scaling across the enterprise (38% a year earlier). Site pages 43, 433 and 318 still present 88% as the current figure.", "site_page": null}
+      }
+    },
+    {
+      "id": "org_genai_adoption",
+      "label": "Organisations regularly using generative AI in at least one function",
+      "unit": "% of organisations (survey respondents)",
+      "group": "Organisations",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "71%", "num": 71, "as_of": "Survey Jul 2024", "source": "McKinsey, The State of AI; Stanford HAI AI Index 2025", "url": null, "confidence": "MEDIUM", "note": "Up from 65% early 2024 and 33% in 2023.", "site_page": 43},
+        "2025": {"value": "72%–79%", "num": null, "as_of": "Survey Jun–Jul 2025", "source": "McKinsey, The State of AI in 2025 (secondary readings)", "url": null, "confidence": "CONTESTED", "note": "Secondary coverage quotes 72% ('up from 33% in 2024' — but 33% was the 2023 figure); a garbled extraction of McKinsey's exhibit shows 79%. McKinsey's page could not be opened to settle it.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No gen-AI-specific share found in 2026 edition coverage; one aggregator pairs 72% with the 2026 edition, apparently mixing years.", "site_page": null}
+      }
+    },
+    {
+      "id": "openai_business_customers",
+      "label": "OpenAI business customers",
+      "unit": "organisations",
+      "group": "Organisations",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No comparable figure found.", "site_page": null},
+        "2025": {"value": "1M+", "num": 1000000, "as_of": "Nov 2025", "source": "OpenAI", "url": "https://openai.com/index/1-million-businesses-putting-ai-to-work/", "confidence": "MEDIUM", "note": "7M+ ChatGPT workplace seats (OpenAI, State of Enterprise AI 2025).", "site_page": 969},
+        "2026": {"value": "2M+", "num": 2000000, "as_of": "31 Jul 2026 (to date)", "source": "OpenAI, via Herald Corp / Korea Times", "url": "https://mbiz.heraldcorp.com/article/10827817", "confidence": "MEDIUM", "note": "Announced alongside OpenAI's 'more than one billion active users' statement.", "site_page": null}
+      }
+    },
+    {
+      "id": "workers_ai_any_gallup",
+      "label": "US employees using AI at work at least a few times a year",
+      "unit": "% of US employees",
+      "group": "Workers",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "27%", "num": 27, "as_of": "Q2 2024", "source": "Gallup, via Axios", "url": "https://www.axios.com/2025/12/15/ai-chatgpt-jobs", "confidence": "MEDIUM", "note": "Axios corrected its baseline to Q2 2024. Q2 2023 was 21%.", "site_page": null},
+        "2025": {"value": "46%", "num": 46, "as_of": "Q4 2025", "source": "Gallup quarterly workforce survey", "url": "https://www.gallup.com/workplace/699689/ai-use-at-work-rises.aspx", "confidence": "MEDIUM", "note": "40% (Q2 2025), 45% (Q3 2025, 23,068 workers, 5–19 Aug), 46% (Q4 2025).", "site_page": null},
+        "2026": {"value": "52%", "num": 52, "as_of": "May 2026 (to date)", "source": "Gallup AI indicator", "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx", "confidence": "MEDIUM", "note": "50% in Q1 2026 (23,717 workers, 4–19 Feb). Post 107 on the site reports the Q1 50%.", "site_page": null}
+      }
+    },
+    {
+      "id": "workers_ai_frequent_gallup",
+      "label": "US employees using AI at work a few times a week or more",
+      "unit": "% of US employees",
+      "group": "Workers",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "12%", "num": 12, "as_of": "2024", "source": "Gallup, via Axios", "url": "https://www.axios.com/2025/12/15/ai-chatgpt-jobs", "confidence": "MEDIUM", "note": "Axios reports weekly-or-more use of 23% 'from 12% last year'; the exact 2024 quarter is not stated. 11% in Q2 2023.", "site_page": null},
+        "2025": {"value": "23%", "num": 23, "as_of": "Q3 2025", "source": "Gallup", "url": "https://www.gallup.com/workplace/699689/ai-use-at-work-rises.aspx", "confidence": "MEDIUM", "note": "19% in Q2 2025. Daily use ~10% in Q3 2025.", "site_page": null},
+        "2026": {"value": "30%", "num": 30, "as_of": "May 2026 (to date)", "source": "Gallup AI indicator", "url": "https://www.gallup.com/699797/indicator-artificial-intelligence.aspx", "confidence": "MEDIUM", "note": "28% in Q1 2026. Daily use 15% (May 2026), 13% (Q1 2026).", "site_page": null}
+      }
+    },
+    {
+      "id": "workers_genai_rps",
+      "label": "US adults 18–64 using generative AI for work",
+      "unit": "% of adults 18–64",
+      "group": "Workers",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "33.3%", "num": 33.3, "as_of": "Aug 2024", "source": "St. Louis Fed Real-Time Population Survey (Bick, Blandin & Deming)", "url": "https://www.stlouisfed.org/on-the-economy/2025/nov/state-generative-ai-adoption-2025", "confidence": "MEDIUM", "note": "Revised series (question order changed Aug 2025; earlier waves underestimated use). Base is all adults 18–64, not only the employed.", "site_page": null},
+        "2025": {"value": "37.4%", "num": 37.4, "as_of": "Aug 2025", "source": "St. Louis Fed, The State of Generative AI Adoption in 2025", "url": "https://www.stlouisfed.org/on-the-economy/2025/nov/state-generative-ai-adoption-2025", "confidence": "MEDIUM", "note": "A separate wave reports ~41% of workers in Nov 2025 (different base).", "site_page": null},
+        "2026": {"value": "45%", "num": 45, "as_of": "May 2026 (to date)", "source": "Bick, Blandin, Deming & Schumacher, 'What Work Does Generative AI Do?' (St. Louis Fed WP 2026-017), via The Register", "url": "https://www.theregister.com/a/5293545", "confidence": "MEDIUM", "note": "Not checked against the paper itself. A different FRED series (employed adults using gen AI for work in the past week) runs 28.2% (Q3 2024) to 39.2% (Q2 2026); do not mix the two.", "site_page": null}
+      }
+    },
+    {
+      "id": "adults_genai_rps",
+      "label": "US adults 18–64 using generative AI (any purpose)",
+      "unit": "% of adults 18–64",
+      "group": "Consumers",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "44.6%", "num": 44.6, "as_of": "Aug 2024", "source": "St. Louis Fed Real-Time Population Survey (Bick, Blandin & Deming)", "url": "https://www.stlouisfed.org/on-the-economy/2025/nov/state-generative-ai-adoption-2025", "confidence": "MEDIUM", "note": "RESTATED: originally published as 39.4% (NBER w32966); the Aug 2024 wave was revised up after a question-order change. Both numbers kept.", "site_page": 317},
+        "2025": {"value": "54.6%", "num": 54.6, "as_of": "Aug 2025", "source": "St. Louis Fed, The State of Generative AI Adoption in 2025", "url": "https://www.stlouisfed.org/on-the-economy/2025/nov/state-generative-ai-adoption-2025", "confidence": "MEDIUM", "note": "Non-work use 48.7%. Site page 317 rounds to ~55%.", "site_page": 317},
+        "2026": {"value": "62%", "num": 62, "as_of": "May 2026 (to date)", "source": "Bick, Blandin, Deming & Schumacher (St. Louis Fed WP 2026-017), via The Register", "url": "https://www.theregister.com/a/5293545", "confidence": "MEDIUM", "note": "55% for non-work purposes. Secondhand; not checked against the paper.", "site_page": null}
+      }
+    },
+    {
+      "id": "knowledge_workers_genai_wti",
+      "label": "Knowledge workers using generative AI at work (31 countries)",
+      "unit": "% of knowledge workers",
+      "group": "Workers",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "75%", "num": 75, "as_of": "Survey early 2024 (published 8 May 2024)", "source": "Microsoft & LinkedIn, 2024 Work Trend Index", "url": "https://news.microsoft.com/2024/05/08/microsoft-and-linkedin-release-the-2024-work-trend-index-on-the-state-of-ai-at-work/", "confidence": "MEDIUM", "note": "31,000 knowledge workers in 31 countries; 78% of users brought their own AI tools. Knowledge-worker sample — not comparable with Gallup or the St. Louis Fed's general-population surveys.", "site_page": null},
+        "2025": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "2025 Work Trend Index found no comparable usage share.", "site_page": null},
+        "2026": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Not found.", "site_page": null}
+      }
+    },
+    {
+      "id": "us_adults_chatgpt_pew",
+      "label": "US adults who have used ChatGPT",
+      "unit": "% of US adults",
+      "group": "Consumers",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "23%", "num": 23, "as_of": "Feb 2024 (published 26 Mar 2024)", "source": "Pew Research Center", "url": "https://www.pewresearch.org/short-reads/2024/03/26/americans-use-of-chatgpt-is-ticking-up-but-few-trust-its-election-information/", "confidence": "MEDIUM", "note": "43% of adults under 30. 18% in 2023. The 23% overall figure was not re-read in this research session (see gaps).", "site_page": null},
+        "2025": {"value": "34%", "num": 34, "as_of": "24 Feb–2 Mar 2025", "source": "Pew Research Center", "url": "https://www.pewresearch.org/short-reads/2025/06/25/34-of-us-adults-have-used-chatgpt-about-double-the-share-in-2023/", "confidence": "MEDIUM", "note": "5,123 adults. 58% of adults under 30.", "site_page": 969},
+        "2026": {"value": "44%", "num": 44, "as_of": "17–23 Feb 2026 (published 17 Jun 2026)", "source": "Pew Research Center, Americans and AI 2026", "url": "https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026/", "confidence": "MEDIUM", "note": "Question wording changed in 2026 (asked alongside other chatbots, of all adults), so 2025→2026 is not a clean comparison.", "site_page": null}
+      }
+    },
+    {
+      "id": "us_adults_chatbots_pew",
+      "label": "US adults who use AI chatbots",
+      "unit": "% of US adults",
+      "group": "Consumers",
+      "yoy": false,
+      "values": {
+        "2024": {"value": "33%", "num": 33, "as_of": "Summer 2024", "source": "Pew Research Center", "url": "https://www.pewresearch.org/chart/about-half-of-u-s-adults-now-use-ai-chatbots-up-from-a-third-in-2024/", "confidence": "MEDIUM", "note": "In 2024 asked only of those who had heard of chatbots.", "site_page": null},
+        "2025": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No 2025 wave of this question found.", "site_page": null},
+        "2026": {"value": "49%", "num": 49, "as_of": "17–23 Feb 2026", "source": "Pew Research Center, Americans and AI 2026", "url": "https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026/", "confidence": "MEDIUM", "note": "Asked of all adults in 2026, so part of the rise is a broader base. About a quarter use chatbots daily.", "site_page": null}
+      }
+    },
+    {
+      "id": "chatgpt_nonwork_share",
+      "label": "Share of ChatGPT consumer messages not related to work",
+      "unit": "% of messages",
+      "group": "What people use AI for",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "53%", "num": 53, "as_of": "Jun 2024", "source": "Chatterji et al., 'How People Use ChatGPT', NBER WP 34255 (OpenAI/Harvard/Duke)", "url": "https://openai.com/index/how-people-are-using-chatgpt/", "confidence": "MEDIUM", "note": "Consumer plans only.", "site_page": 317},
+        "2025": {"value": "73%", "num": 73, "as_of": "Jun 2025 (published 15 Sep 2025)", "source": "Chatterji et al., NBER WP 34255", "url": "https://tech.co/news/chatgpt-uses-non-work-related-openai-study", "confidence": "MEDIUM", "note": "1.5M conversations. OpenAI's summary rounds to ~70% (as on site page 317).", "site_page": 317},
+        "2026": {"value": "68.9%", "num": 68.9, "as_of": "Mar 2026", "source": "Report AI page 1266, attributed to OpenAI usage research", "url": null, "confidence": "CONTESTED", "note": "Page 1266 says non-work use rose 'from 59.8% to 68.9%' by Mar 2026, which conflicts with the NBER paper's 73% in Jun 2025 — probably a different sample or classifier. Source not traced; do not present as a decline from 73%.", "site_page": 1266}
+      }
+    },
+    {
+      "id": "chatgpt_top_tasks",
+      "label": "Share of ChatGPT messages that are practical guidance, seeking information or writing",
+      "unit": "% of messages",
+      "group": "What people use AI for",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Not reported for 2024.", "site_page": null},
+        "2025": {"value": "~78%", "num": 78, "as_of": "Jun 2025", "source": "Chatterji et al., NBER WP 34255", "url": "https://openai.com/index/how-people-are-using-chatgpt/", "confidence": "MEDIUM", "note": "OpenAI's summary says 'about three-quarters'; site page 317 uses ~78%. Writing = 40% of work messages (two-thirds of it editing users' own text); programming = 4.2% of all messages. Intent split: asking 49%, doing 40%, expressing 11%.", "site_page": 317},
+        "2026": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "No 2026 edition of the study found.", "site_page": null}
+      }
+    },
+    {
+      "id": "ai_overviews_mau",
+      "label": "Google AI Overviews monthly users",
+      "unit": "users (monthly)",
+      "group": "AI search",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "1B+", "num": 1000000000, "as_of": "Oct 2024", "source": "Alphabet Q3 2024 earnings remarks (Sundar Pichai)", "url": null, "confidence": "MEDIUM", "note": "Five months after the May 2024 US launch. Not re-checked in this research session (see gaps).", "site_page": null},
+        "2025": {"value": "2B+", "num": 2000000000, "as_of": "Jul 2025", "source": "Alphabet Q2 2025 earnings, via Dataconomy", "url": "https://dataconomy.com/2025/07/24/googles-ai-overviews-now-serve-2-billion-monthly-users/", "confidence": "MEDIUM", "note": "Up from 1.5B the previous quarter; 200+ countries, 40+ languages.", "site_page": 970},
+        "2026": {"value": "2.5B", "num": 2500000000, "as_of": "May 2026 (to date)", "source": "Google I/O 2026, via secondary reporting", "url": null, "confidence": "MEDIUM", "note": "Secondary aggregators only; no Q3 2026 update found. AI Mode separately passed 1B monthly users (May 2026). Exposure inside Search, not chosen use — not comparable with assistant user counts.", "site_page": 970}
+      }
+    },
+    {
+      "id": "ai_referral_share_web",
+      "label": "AI platforms' share of all website referral traffic",
+      "unit": "% of total website traffic",
+      "group": "AI search",
+      "yoy": true,
+      "values": {
+        "2024": {"value": "0.02%", "num": 0.02, "as_of": "2024", "source": "SE Ranking AI traffic study", "url": "https://seranking.com/blog/ai-traffic-research-study/", "confidence": "MEDIUM", "note": "Vendor panel; method differs from Similarweb.", "site_page": null},
+        "2025": {"value": "0.24%", "num": 0.24, "as_of": "2025", "source": "SE Ranking AI traffic study", "url": "https://seranking.com/blog/ai-traffic-research-study/", "confidence": "MEDIUM", "note": "ChatGPT generated 79.7% of AI referrals in 2025.", "site_page": null},
+        "2026": {"value": "0.32%", "num": 0.32, "as_of": "2026 (to date)", "source": "SE Ranking AI traffic study", "url": "https://seranking.com/blog/ai-traffic-research-study/", "confidence": "MEDIUM", "note": "ChatGPT's share of AI referrals fell to ~75–76%. Another benchmark gives 0.15–0.25%. Similarweb counts 770.7M AI referral visits a month on average, Jun 2025–May 2026 (+117.4% YoY). Site page 1196's '+527% YoY' is an earlier measure of growth, not share.", "site_page": 1196}
+      }
+    },
+    {
+      "id": "chatgpt_genai_web_share",
+      "label": "ChatGPT share of generative-AI chatbot web visits",
+      "unit": "% of visits",
+      "group": "Consumer assistants",
+      "yoy": false,
+      "values": {
+        "2024": {"value": null, "num": null, "as_of": null, "source": null, "url": null, "confidence": null, "note": "Not collected.", "site_page": null},
+        "2025": {"value": "~76%–86.7%", "num": null, "as_of": "May 2025", "source": "Similarweb (two readings)", "url": "https://www.similarweb.com/blog/marketing/geo/gen-ai-stats/", "confidence": "CONTESTED", "note": "Site page 970 uses 86.7% (share across the seven largest chatbots); later Similarweb commentary gives ~76% 'a year ago'. Different comparison sets.", "site_page": 970},
+        "2026": {"value": "53.9%", "num": 53.9, "as_of": "May 2026 (to date)", "source": "Similarweb", "url": "https://www.similarweb.com/blog/marketing/geo/gen-ai-stats/", "confidence": "MEDIUM", "note": "Gemini 27.9%. Share fell because rivals grew, not because ChatGPT shrank. Web visits only; excludes apps.", "site_page": 970}
+      }
+    }
+  ],
+  "headlines": {
+    "2024": [
+      "OpenAI said ChatGPT had 300 million weekly active users in December 2024, up from 200 million in August 2024.",
+      "McKinsey's 2024 State of AI survey found that 78% of organisations used AI in at least one business function, up from 55% in 2023.",
+      "McKinsey found that 71% of organisations regularly used generative AI in at least one business function in 2024, more than double the 33% it recorded in 2023.",
+      "The St. Louis Fed's Real-Time Population Survey found that 44.6% of US adults aged 18 to 64 had used generative AI in August 2024, and 33.3% had used it for work.",
+      "Google said AI Overviews in Search reached more than 1 billion monthly users in October 2024, five months after their US launch."
+    ],
+    "2025": [
+      "OpenAI said ChatGPT reached 800 million weekly active users in October 2025, double the 400 million it reported in February 2025.",
+      "McKinsey's 2025 State of AI survey, fielded in June and July 2025, found that 88% of organisations used AI in at least one business function, up from 78% a year earlier.",
+      "OpenAI's NBER study of 1.5 million ChatGPT conversations found that 73% of consumer messages were unrelated to work in June 2025, up from 53% in June 2024.",
+      "The St. Louis Fed's Real-Time Population Survey found that 54.6% of US adults aged 18 to 64 used generative AI in August 2025, up from 44.6% a year earlier.",
+      "Meta said its Meta AI assistant had about 1 billion monthly active users across its apps in May 2025, double the roughly 500 million it reported in September 2024."
+    ],
+    "2026": [
+      "OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026, up from more than 900 million in February 2026.",
+      "Alphabet said the Gemini app had more than 1 billion monthly users on 28 October 2026, up from 750 million at the end of 2025.",
+      "QuestMobile counted 546 million monthly users of China's AI-native apps in September 2026, up 82.1% year on year, led by ByteDance's Doubao at 419 million.",
+      "Gallup found that 52% of US employees used AI at work at least a few times a year in May 2026, but only 15% used it daily.",
+      "McKinsey's 2026 State of AI survey, fielded in May and June 2026, found that 89% of organisations regularly used AI in at least one business function, against 88% in 2025."
+    ]
+  },
+  "analysis": {
+    "2024": [
+      "2024 was the year AI assistants became mass-market products rather than curiosities. OpenAI said ChatGPT had 200 million weekly active users in August 2024 and 300 million by December 2024, and its paying base reached about 15.5 million subscribers by year-end, according to figures OpenAI gave shareholders, as reported by The Information. Google said AI Overviews in Search reached more than 1 billion monthly users in October 2024, and Meta said Meta AI had about 500 million monthly users in September 2024. Those two figures measure exposure inside products people already used, not people choosing an assistant, and they are monthly rather than weekly counts. They should not be placed beside ChatGPT's weekly figure as if they were the same quantity.",
+      "Inside organisations, 2024 was the inflection point. McKinsey's mid-2024 survey found that 78% of organisations used AI in at least one business function, up from 55% in 2023, and that 71% regularly used generative AI, up from 33%. These are self-reported shares of organisations with at least one use, so they measure breadth, not depth: a company running one chatbot pilot in marketing counts the same as one that has rebuilt its operations around AI. McKinsey's own surveys that year found few firms able to point to measurable earnings impact, which set up the question that dominated 2025: whether near-universal adoption was producing value or only activity.",
+      "Individual use was rising quickly but was still a minority habit. The St. Louis Fed's Real-Time Population Survey, run by Bick, Blandin and Deming, found that 44.6% of US adults aged 18 to 64 had used generative AI in August 2024 (restated from the 39.4% first published) and 33.3% had used it for work. Gallup found that 27% of US employees used AI at work at least a few times a year in the second quarter of 2024. Pew found that 23% of US adults had ever used ChatGPT in early 2024, rising to 43% among adults under 30. Microsoft's 2024 Work Trend Index put use at 75%, but it surveyed knowledge workers in 31 countries and is not comparable with the general-population surveys."
+    ],
+    "2025": [
+      "2025 was the year consumer AI use more than doubled and shifted towards everyday life. OpenAI reported ChatGPT at 400 million weekly active users in February 2025 and 800 million in October 2025. OpenAI's own study of 1.5 million conversations, published through NBER in September 2025, found that the share of consumer messages unrelated to work rose from 53% in June 2024 to 73% in June 2025, and that practical guidance, seeking information and writing made up roughly three-quarters of conversations. Programming was only about 4.2% of messages. The growth was not mainly professionals adopting a work tool; it was the general public using a general-purpose assistant for everyday questions, advice and editing their own text.",
+      "Competitors scaled mostly through distribution. Meta said Meta AI reached about 1 billion monthly users in May 2025, largely inside WhatsApp, Instagram and Facebook. Google reported 750 million monthly Gemini app users at the end of 2025 and more than 2 billion monthly AI Overviews users in July 2025, and Microsoft reported 150 million monthly users across its Copilot apps in the quarter to September 2025. In China, QuestMobile counted 287 million monthly users of AI-native apps in September 2025; by December, Doubao had 226 million and DeepSeek 135 million, DeepSeek having fallen back from its January surge. These are monthly reach figures, which run well above weekly or daily engagement, and the per-app Chinese figures cannot be added together.",
+      "Organisational adoption approached saturation while worker-level use rose more slowly. McKinsey's 2025 survey, fielded in June and July, found that 88% of organisations used AI in at least one business function, yet only 39% attributed any EBIT impact to it. Among individuals, the St. Louis Fed survey found that 54.6% of US adults aged 18 to 64 used generative AI in August 2025 and 37.4% used it for work, while Gallup found that 46% of US employees used AI at work at least a few times a year by the fourth quarter and 23% used it a few times a week or more in the third. The gap between near-universal organisational adoption and frequent use by under a quarter of workers is the clearest sign of how shallow most deployments were."
+    ],
+    "2026": [
+      "ChatGPT crossed the threshold OpenAI had been targeting. OpenAI said ChatGPT had more than 900 million weekly active users on 27 February 2026 and more than 1 billion on 31 August 2026, alongside more than 50 million paying subscribers reported in February. Growth has slowed in absolute terms: ChatGPT added about 400 million weekly users in the eight months from February to October 2025, but about 100 million in the six months from February to August 2026 (DERIVED from OpenAI's milestones). OpenAI cited 1.2 billion weekly users at its developer conference on 29 September 2026, but that figure may cover more than ChatGPT and its date is disputed, so it is not used as the ChatGPT count here.",
+      "Rivals are now at the same order of magnitude on their own measures. Alphabet said the Gemini app passed 1 billion monthly users on 28 October 2026, but that is a monthly count and is not directly comparable with ChatGPT's weekly figure. Meta has not given a 2026 Meta AI total, Microsoft gave only relative Copilot growth, and estimates for Claude range from 56 million to 245 million monthly users. China's AI-native apps reached 546 million monthly users in September 2026, according to QuestMobile, up 82.1% year on year, with Doubao at 419 million, Qwen at 158 million and DeepSeek at 122.65 million. Those app figures overlap, so they cannot be summed into a market total.",
+      "Worker use crossed half the workforce on the broadest measure but remains light for most. Gallup found that 52% of US employees used AI at work at least a few times a year in May 2026, 30% used it a few times a week or more, and 15% used it daily. The St. Louis Fed survey put generative AI use at 62% of US adults aged 18 to 64 and work use at 45% in May 2026. Pew found that 49% of US adults used AI chatbots in February 2026. McKinsey's 2026 survey found organisational adoption at 89%, essentially unchanged from 88%, while the share reporting any EBIT impact stayed at 37%. Breadth has plateaued; depth is the variable that is still moving.",
+      "Search is where most people meet AI without choosing it. Google's AI Overviews reached about 2.5 billion monthly users by May 2026, according to secondary reporting of Google I/O, and AI Mode passed 1 billion. Yet AI platforms still sent only about 0.32% of all website traffic in 2026, according to SE Ranking, up from 0.02% in 2024. ChatGPT's share of chatbot web visits fell to 53.9% in May 2026 on Similarweb's measure as Gemini grew to 27.9%. The pattern is consistent: AI is absorbing a large and growing share of questions, but it passes very little of that attention on to the open web, which changes what being visible online means for publishers."
+    ]
+  },
+  "takeaways_2026": [
+    "ChatGPT passed 1 billion weekly active users on 31 August 2026 (OpenAI), but growth has slowed: about 100 million added in six months of 2026 against about 400 million in eight months of 2025 (DERIVED).",
+    "The Gemini app passed 1 billion monthly users on 28 October 2026 (Alphabet); a monthly count is not comparable with ChatGPT's weekly one, and Meta, Microsoft and Anthropic published no comparable 2026 consumer totals.",
+    "Organisational adoption has plateaued near the ceiling at 89% (McKinsey, mid-2026) while worker use is broad but light: 52% of US employees use AI at work at all, 15% daily (Gallup, May 2026).",
+    "China's AI-native apps reached 546 million monthly users in September 2026 (QuestMobile), up 82.1% year on year, led by Doubao at 419 million; per-app figures overlap and cannot be added."
+  ],
+  "yoy_takeaways": [
+    "ChatGPT's weekly users grew from 300 million (December 2024) to 800 million (October 2025) to more than 1 billion (August 2026) — roughly 3.3x in under two years (DERIVED: 1,000M / 300M), with growth decelerating in 2026.",
+    "Organisational AI adoption rose from 78% (2024) to 88% (2025) to 89% (2026) in McKinsey's surveys: the big move was 2023 to 2025, and the 2026 change is within noise.",
+    "Individual use roughly doubled on every general-population measure: US employees using AI at work went from 27% (Q2 2024) to 46% (Q4 2025) to 52% (May 2026) in Gallup's survey, and US adults aged 18 to 64 using generative AI went from 44.6% (August 2024) to 54.6% (August 2025) to 62% (May 2026) in the St. Louis Fed's survey.",
+    "Use shifted from work to everyday life: the non-work share of ChatGPT consumer messages rose from 53% (June 2024) to 73% (June 2025) in OpenAI's NBER study, while AI's share of website referral traffic stayed below half a percent (0.02% in 2024, 0.24% in 2025, 0.32% in 2026, SE Ranking)."
+  ],
+  "faq_2026": [
+    {
+      "q": "How many people use ChatGPT in 2026?",
+      "a": "OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026, up from more than 900 million on 27 February 2026 and 800 million in October 2025. OpenAI also reported more than 50 million paying subscribers in February 2026. A figure of 1.2 billion weekly users cited at OpenAI's developer conference on 29 September 2026 may include other OpenAI products, and a figure of about 1 billion monthly app users (mid-2026) is a different metric."
+    },
+    {
+      "q": "Which AI assistant has the most users in 2026?",
+      "a": "It depends on the metric, and the metrics should not be mixed. On weekly users, ChatGPT leads with more than 1 billion (OpenAI, 31 August 2026). On monthly users, Alphabet said the Gemini app passed 1 billion on 28 October 2026. Meta AI was put at about 1 billion monthly users in May 2025 but Meta has not given a 2026 total. In China, ByteDance's Doubao leads with 419 million monthly users in September 2026, according to QuestMobile."
+    },
+    {
+      "q": "What percentage of companies use AI in 2026?",
+      "a": "McKinsey's 2026 State of AI survey, fielded from 4 May to 8 June 2026 among 1,719 respondents, found that 89% of organisations regularly use AI in at least one business function, against 88% in 2025 and 78% in 2024. Only 37% reported any EBIT impact from AI, so adoption is near-universal but measurable value is not."
+    },
+    {
+      "q": "What share of US workers use AI at work in 2026?",
+      "a": "Gallup found that 52% of US employees used AI at work at least a few times a year in May 2026, 30% used it a few times a week or more, and 15% used it daily. The St. Louis Fed's Real-Time Population Survey found that 45% of US adults aged 18 to 64 used generative AI for work in May 2026. The two surveys use different questions and bases, so their figures differ."
+    },
+    {
+      "q": "What do people actually use ChatGPT for?",
+      "a": "Mostly everyday, non-work tasks. OpenAI's NBER study of 1.5 million consumer conversations found that 73% of messages were unrelated to work in June 2025, up from 53% in June 2024. Practical guidance, seeking information and writing made up roughly three-quarters of messages; writing was 40% of work-related messages, mostly editing users' own text, and programming was only about 4.2% of all messages."
+    }
+  ],
+  "stop_quoting": [
+    {"claim": "ChatGPT has 800 million weekly users.", "fact": "Correct for October 2025. OpenAI reported more than 900 million in February 2026 and more than 1 billion on 31 August 2026.", "link": "/reports/ai-statistics-fact-check/#fc-chatgpt-800m"},
+    {"claim": "ChatGPT has 900 million weekly users (as a current figure).", "fact": "Correct for February 2026; out of date since OpenAI reported more than 1 billion weekly users on 31 August 2026. Pages 43, 47, 317, 433, 969 and 970 still carry 900M as current.", "link": "/indexes/enterprise-ai/chatgpt-statistics-2026/"},
+    {"claim": "ChatGPT has 1.2 billion weekly users.", "fact": "OpenAI cited 1.2 billion weekly users at DevDay on 29 September 2026, but the figure may cover more than ChatGPT and its date is disputed (29 Sep vs 3 Nov). The ChatGPT figure is more than 1 billion weekly (31 August 2026).", "link": "/reports/ai-user-numbers-us-china-compared/"},
+    {"claim": "Doubao has 3.8 billion users.", "fact": "3.8 yi means about 380 million; the latest QuestMobile figure is 419 million monthly users in September 2026.", "link": "/reports/ai-statistics-fact-check/#fc-doubao"},
+    {"claim": "Claude has N million users (any single figure).", "fact": "Anthropic publishes no consumer user count; third-party estimates for 2026 range from 56 million to 245 million monthly users.", "link": "/reports/ai-statistics-fact-check/#fc-claude"},
+    {"claim": "88% of organisations use AI (quoted as the 2026 figure).", "fact": "88% is McKinsey's 2025 survey (fielded June–July 2025). The 2026 edition, fielded May–June 2026, reports 89%.", "link": "/indexes/enterprise-ai/ai-adoption-statistics-2026/"},
+    {"claim": "Half of US workers now use AI every day.", "fact": "Gallup's 52% (May 2026) is the share using AI at work at least a few times a year; daily use is 15%, and use a few times a week or more is 30%.", "link": null},
+    {"claim": "China's AI apps have 499 million users (as a current figure).", "fact": "499 million was QuestMobile's May/June 2026 deduplicated figure; September 2026 is 546 million. Per-app figures overlap and cannot be summed to a market total.", "link": "/reports/ai-user-numbers-us-china-compared/"},
+    {"claim": "39.4% of US adults use generative AI (August 2024).", "fact": "RESTATED: the St. Louis Fed revised the August 2024 wave to 44.6% after a question-order change; the same series reached 54.6% in August 2025.", "link": null}
+  ],
+  "related_pages": [969, 970, 2589, 43, 47, 317, 1196, 1266, 433, 318, 322, 358, 387, 3227],
+  "gaps": [
+    "No primary source could be opened from this environment (mckinsey.com, frbsf.org and others failed to resolve); every value is MEDIUM or CONTESTED from consistent secondary reporting. The web-search budget for this session ran out before the last checks.",
+    "ChatGPT 1B+ weekly users: the brief dates it 31 Aug 2026, but news reports of OpenAI saying its models 'reach more than one billion active users' are dated 31 Jul/1 Aug 2026 and do not say 'weekly'. Confirm date and metric against OpenAI's post.",
+    "Not re-verified this session (searches exhausted): Pew 23% of US adults had used ChatGPT (early 2024) and Google AI Overviews 1B+ monthly users (Oct 2024). Both are widely reported but should be checked before publication.",
+    "McKinsey generative-AI share: 2025 is CONTESTED (72% vs 79% in secondary readings); no 2026 gen-AI figure found.",
+    "Meta AI: no 2026 company total; site pages 970 (1.2B) and 2589 (~600M) disagree — CONTESTED.",
+    "Microsoft Copilot: no absolute 2026 user count; no 2024 figure. Claude: no 2024/2025 figures; 2026 CONTESTED (56M–245M). Gemini: no 2024 monthly figure.",
+    "Microsoft Work Trend Index: no comparable usage share for 2025 or 2026.",
+    "QuestMobile China AI-native apps: no 2024 national figure found; the Sep 2025 figure (287M) is inconsistent with the +82.1% YoY QuestMobile reports for Sep 2026 (implies ~300M).",
+    "ChatGPT non-work share for 2026 (68.9%, page 1266) cannot be traced and conflicts with the NBER 73% for June 2025; site page 1266 should be checked.",
+    "Doubao 2024 (~56M, Nov 2024) rests on secondary sources; Doubao and DeepSeek Dec 2025 figures come from a 36Kr summary of QuestMobile.",
+    "Pew chatbot-use question has no 2025 wave; the 2026 Pew questions changed wording, so 2025→2026 comparisons are approximate.",
+    "AI Overviews 2.5B (May 2026) and AI Mode 1B are from secondary aggregators; no Q3 2026 AI Overviews update found.",
+    "Site pages carrying stale usage figures (for the page-update pass): 969, 43, 47, 317, 433, 970 (ChatGPT 900M; Gemini 900M); 2589 and 1266 (Doubao 382M, China 499M); 43, 433, 318 (88% as current)."
+  ]
+}

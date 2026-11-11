@@ -1,0 +1,74 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1100px;margin:0 auto;width:100%;line-height:1.5;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap a{color:#2545f5;}
+.tai-padx{padding:40px 36px;border-bottom:1px solid #e6e6ea;}
+.tai-wrap h2{font-weight:800;font-size:26px;letter-spacing:-0.02em;margin:0 0 14px;}
+.tai-wrap h3{font-weight:800;font-size:18px;margin:26px 0 10px;}
+.tai-wrap p{font-size:16px;line-height:1.65;color:#33333a;max-width:880px;}
+.tai-stat{padding:24px;border-right:1px solid #e6e6ea;}
+.tai-table{width:100%;border-collapse:collapse;font-size:13px;}
+.tai-table th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e76;text-align:left;padding:9px 10px;border-bottom:2px solid #111114;}
+.tai-table td{padding:10px;border-bottom:1px solid #ececf0;vertical-align:top;color:#33333a;}
+.tai-tablewrap{overflow-x:auto;}
+.tai-c{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.05em;padding:1px 5px;border-radius:2px;white-space:nowrap;vertical-align:middle;}
+.tai-c-HIGH{background:#e7f5ec;color:#177245;}.tai-c-MEDIUM{background:#fdf3e3;color:#9a6a00;}.tai-c-DERIVED{background:#eef1fd;color:#2545f5;}.tai-c-CONTESTED{background:#fde8e8;color:#b42318;}
+.tai-five{counter-reset:five;list-style:none;padding:0;margin:0;max-width:900px;}
+.tai-five li{counter-increment:five;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid #e6e6ea;font-size:16.5px;line-height:1.55;color:#111114;}
+.tai-five li:before{content:counter(five);position:absolute;left:0;top:12px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:#fff;background:#2545f5;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;}
+.tai-cite{background:#fafafb;border:1px solid #e6e6ea;border-left:3px solid #2545f5;border-radius:6px;padding:14px 18px;font-size:14px;line-height:1.55;color:#33333a;margin:18px 0 0;max-width:900px;}
+.tai-yr{display:flex;align-items:flex-end;gap:6px;height:120px;}
+.tai-yr span{display:block;width:28px;border-radius:3px 3px 0 0;background:#c9cfe0;}
+.tai-yr span.n{background:#2545f5;}
+.tai-chart{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin:18px 0 6px;}
+.tai-chart .cap{font-size:13px;font-weight:700;margin-top:8px;line-height:1.3;}
+.tai-chart .val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55555e;margin-top:4px;}
+.tai-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.tai-nav a{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-decoration:none;border:1px solid #d9dbe3;border-radius:999px;padding:5px 11px;color:#111114;}
+.tai-nav a.on{background:#2545f5;border-color:#2545f5;color:#fff;}
+.tai-up{color:#177245;}.tai-down{color:#b42318;}
+.tai-glance{background:#111114;color:#fff;border-radius:8px;padding:26px 28px;max-width:920px;}
+.tai-glance ul{margin:0;padding-left:20px;}
+.tai-glance li{font-size:16px;line-height:1.55;margin-bottom:10px;color:#f2f2f5;}
+.tai-glance .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0ff;margin-bottom:12px;font-weight:600;}
+.tai-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:8px;}
+.tai-ch h2{font-size:clamp(22px,3.2vw,28px);line-height:1.2;max-width:900px;}
+.tai-side{background:#eef1fd;border-radius:6px;padding:18px 22px;margin:22px 0;max-width:880px;}
+.tai-side .t{font-weight:800;font-size:15px;margin-bottom:6px;}
+.tai-side p{font-size:14.5px;margin:0;}
+.tai-toc{columns:2;column-gap:36px;font-size:14px;max-width:900px;padding-left:18px;}
+.tai-toc li{margin-bottom:6px;break-inside:avoid;}
+.tai-dl dt{font-weight:700;font-size:14.5px;margin-top:12px;}.tai-dl dd{margin:2px 0 0;font-size:14.5px;color:#55555e;max-width:860px;}
+@media(max-width:900px){.tai-toc{columns:1;}}
+.tai-ex{position:relative;margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex-stamp{position:absolute;top:10px;right:0;width:76px;height:76px;transform:rotate(-8deg);opacity:.9;}
+.tai-ex-t,.tai-ex-s{padding-right:90px;}
+.tai-ex-wm{display:block;text-align:right;margin-top:6px;font-family:'Archivo',sans-serif;font-weight:900;font-size:15px;letter-spacing:-.02em;color:#111114;}.tai-ex-wm b{color:#2545f5;font-weight:900;}.tai-ex-wm i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11.5px;color:#77777f;letter-spacing:0;margin-left:6px;}
+@media(max-width:600px){.tai-ex-stamp{width:56px;height:56px;}.tai-ex-t,.tai-ex-s{padding-right:64px;}}
+.tai-ex-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2545f5;margin-bottom:6px;}
+.tai-ex-t{font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-0.01em;color:#111114;margin-bottom:4px;}
+.tai-ex-s{font-size:13.5px;color:#6e6e76;margin-bottom:14px;}
+.tai-mm-t{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#33333a;margin:12px 0 2px;}.tai-mm-t span{font-weight:400;color:#77777f;}
+.tai-ex-svg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tai-ex-svg text{font-family:'IBM Plex Mono',monospace;}
+.tai-ex-src{font-size:12px;line-height:1.5;color:#77777f;margin-top:10px;border-top:1px solid #e6e6ea;padding-top:8px;}
+.tai-exdata{margin-top:8px;font-size:12.5px;}.tai-exdata summary{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#2545f5;}
+@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
+</style>
+<div class="tai-wrap">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs><path id="rai-ring" d="M18,80 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/><symbol id="rai-stamp" viewBox="0 0 160 160"><g fill="none" stroke="#2545f5"><circle cx="80" cy="80" r="76" stroke-width="3.2"/><circle cx="80" cy="80" r="72" stroke-width=".9"/><circle cx="80" cy="80" r="50" stroke-width="1.6"/></g><g fill="#2545f5"><text font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600"><textPath href="#rai-ring" textLength="386" lengthAdjust="spacing">SOURCED · DATED · CONFIDENCE-RATED · REPORT-AI.ORG ·</textPath></text><text x="80" y="75" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="17">REPORT</text><text x="80" y="104" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="32">AI</text><text x="80" y="117" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="600" font-size="6.6" letter-spacing="1">BY THE NUMBERS</text></g><path d="M56 83H104" stroke="#2545f5" stroke-width="1.2"/></symbol></defs></svg><div class="tai-padx" style="padding:48px 36px 30px;">
+<div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/state-of-ai/" style="color:#9a9aa2;text-decoration:none;">State of AI</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Usage</span></div>
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Report AI &middot; State of AI series &middot; Q4 2026 edition &middot; Quarterly</div>
+<h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">State of AI Usage 2026</h1>
+<p style="font-size:18px;color:#55555e;margin:0 0 14px;">How many people and organisations use AI, how often and for what, measured like for like, 2024 to 2026 (Q4 2026 edition)</p>
+<div class="tai-mono" style="font-size:12px;color:#9a9aa2;">By the Report AI editorial team &middot; Published <time datetime="2026-11-11">11 November 2026</time> &middot; Next edition: Q1 2027</div>
+<div class="tai-nav"><a href="/indexes/state-of-ai/">Overview</a><a href="/indexes/state-of-ai/state-of-ai-usage/" class="on">Usage</a><a href="/indexes/state-of-ai/state-of-ai-spending/">Spending</a><a href="/indexes/state-of-ai/state-of-ai-finance/">Finance</a><a href="/indexes/state-of-ai/state-of-ai-work/">Work</a><a href="/indexes/state-of-ai/state-of-ai-models-prices/">Models &amp; Prices</a><a href="/indexes/state-of-ai/state-of-ai-tokens/">Tokens</a><a href="/indexes/state-of-ai/state-of-ai-infrastructure-energy/">Infrastructure &amp; Energy</a><a href="/indexes/state-of-ai/state-of-ai-geography/">Geography</a><a href="/indexes/state-of-ai/state-of-ai-industries/">Industries</a><a href="/indexes/state-of-ai/state-of-ai-risk/">Risk</a><a href="/indexes/state-of-ai/state-of-ai-regulation/">Regulation</a><a href="/indexes/state-of-ai/state-of-ai-2024/">2024</a><a href="/indexes/state-of-ai/state-of-ai-2025/">2025</a><a href="/indexes/state-of-ai/state-of-ai-year-over-year/">Year over year</a></div>
+</div>
+<div class="tai-statgrid" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;"><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">1B+</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">ChatGPT weekly active users, 31 Aug 2026 (to date) <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">50M+</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">ChatGPT paying subscribers, 27 Feb 2026 (to date) <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">1B+</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">Google Gemini app monthly active users, 28 Oct 2026 (to date) <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat" style="border-right:none;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">~600M–1.2B</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">Meta AI monthly active users (across Meta apps), Q1 2026 <span class="tai-c tai-c-CONTESTED">CONTESTED</span></div></div></div>
+<div class="tai-padx"><div class="tai-glance"><div class="k">At a glance</div><ul><li>OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026, five times the 200 million it reported in August 2024.</li><li>Alphabet said the Gemini app had more than 1 billion monthly users on 28 October 2026; that is a monthly count and cannot be ranked against ChatGPT's weekly figure.</li><li>QuestMobile counted 546 million monthly users of China's AI-native apps in September 2026, up 82.1% year on year, with ByteDance's Doubao at 419 million.</li><li>McKinsey's 2026 State of AI survey found that 89% of organisations regularly use AI in at least one business function, but only 37% report any EBIT impact from it.</li><li>Gallup found that 52% of US employees used AI at work at least a few times a year in May 2026, while 30% used it a few times a week or more and 15% used it daily.</li><li>OpenAI's NBER study of 1.5 million conversations found that 73% of ChatGPT consumer messages were unrelated to work in June 2025, up from 53% in June 2024.</li><li>AI platforms accounted for about 0.32% of all website traffic in 2026, up from 0.02% in 2024, according to SE Ranking.</li></ul></div><div class="tai-cite"><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;font-weight:600;margin-bottom:4px;">Cite this report</div>
+Report AI, <em>State of AI Usage 2026</em>, Q4 2026 edition, published 11 November 2026. https://report-ai.org/indexes/state-of-ai/state-of-ai-usage/<br>
+<span id="download-data"><a href="/wp-content/uploads/2026/11/report-ai-data-state-of-ai-usage-2026.csv" download style="font-weight:600;">Download the data (CSV)</a> &middot; 25 metrics with source, date and confidence for every value. Free to quote with attribution and a link.</span></div><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#77777f;margin:30px 0 10px;">In this report</div><ol class="tai-toc"><li><a href="#ch-1">1. Consumers</a> &mdash; ChatGPT passed 1 billion weekly users in 2026, but its growth slowed from about 50 million a month in 2025 to under 20 million</li><li><a href="#ch-2">2. Platforms</a> &mdash; Gemini and Meta AI reached ChatGPT's order of magnitude through products people already used, on monthly measures that cannot be ranked against weekly ones</li><li><a href="#ch-3">3. China</a> &mdash; China's AI-native apps reached 546 million monthly users in 2026, in a market measured by panels, led by Doubao and impossible to sum</li><li><a href="#ch-4">4. Organisations and workers</a> &mdash; Nine in ten organisations use AI, but only three in ten US employees use it at work a few times a week or more</li><li><a href="#ch-5">5. Purpose</a> &mdash; Most ChatGPT use is personal: the non-work share of consumer messages rose from 53% to 73% in a year, and programming is about 4%</li><li><a href="#ch-6">6. Search</a> &mdash; Billions now see AI answers in search, but AI platforms send about one website visit in 300</li><li><a href="#comparison">Comparison</a></li><li><a href="#numbers">The numbers, 2024&ndash;2026</a></li><li><a href="#outlook">Outlook: what to watch in 2027</a></li><li><a href="#faq">FAQ</a> &middot; <a href="#about">About the research</a></li></ol></div>
+<!--RAI-NEXT-->

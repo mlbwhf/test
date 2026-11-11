@@ -1,0 +1,1180 @@
+{
+  "theme": "spending",
+  "title": "State of AI Spending",
+  "dek_2026": "What companies and governments spend on AI each year: worldwide AI spending forecasts, enterprise generative-AI and API budgets, big-tech capital expenditure, data-centre electricity, AI-agent software and public AI money, each figure dated and labelled as actual, estimate or forecast.",
+  "metrics": [
+    {
+      "id": "gartner_ai_spend",
+      "label": "Worldwide AI spending (Gartner)",
+      "unit": "US$ per year, all AI categories",
+      "group": "Worldwide AI spending",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$988B",
+          "num": 987904000000,
+          "as_of": "Sep 2025 (estimate for a completed year)",
+          "source": "Gartner, AI spending forecast, 17 Sep 2025",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2025-09-17-gartner-says-worldwide-ai-spending-will-total-1-point-5-trillion-in-2025",
+          "confidence": "MEDIUM",
+          "note": "ESTIMATE, not a forecast: the 2024 column of Gartner's September 2025 table ($987,904M). Gartner restructured its AI categories in 2026 and we have not seen a 2024 value on the new basis, so the 2024-to-2025 change mixes two editions and is partly definitional.",
+          "site_page": 376
+        },
+        "2025": {
+          "value": "$1.79T",
+          "num": 1786671000000,
+          "as_of": "16 Sep 2026 (estimate for a completed year)",
+          "source": "Gartner, AI spending forecast, 16 Sep 2026",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-09-16-gartner-forecasts-worldwide-ai-spending-to-grow-49-point-5-percent-in-2026",
+          "confidence": "MEDIUM",
+          "note": "RESTATED. Gartner's September 2025 forecast put 2025 at $1.48T ($1,478,634M); its January 2026 table restated 2025 to $1.757T; the September 2026 table gives $1,786,671M. Keep both: the $1.48T was a forecast made during the year, the $1.79T is Gartner's later estimate on a wider category set.",
+          "site_page": 376
+        },
+        "2026": {
+          "value": "$2.67T (forecast)",
+          "num": 2670460000000,
+          "as_of": "16 Sep 2026",
+          "source": "Gartner, AI spending forecast, 16 Sep 2026",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-09-16-gartner-forecasts-worldwide-ai-spending-to-grow-49-point-5-percent-in-2026",
+          "confidence": "MEDIUM",
+          "note": "FORECAST, +49.5% year on year. Third upward revision of 2026: $2.52T (15 Jan 2026, +44%), $2.59T (19 May 2026, +47%), $2.67T (16 Sep 2026). Gartner's release rounds to $2.7T. AI infrastructure is about $1.48T (~56%) of the 2026 total; 2027 forecast $3.64T. Report AI pages 376, 967 and 362 still carry $2.59T or $2.5T.",
+          "site_page": 376
+        }
+      }
+    },
+    {
+      "id": "idc_ai_infra",
+      "label": "AI infrastructure spending (IDC)",
+      "unit": "US$ per year, AI-optimised servers and storage",
+      "group": "Worldwide AI spending",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$153.9B",
+          "num": 153900000000,
+          "as_of": "Nov 2026 (actual)",
+          "source": "IDC Worldwide Quarterly AI Infrastructure Tracker",
+          "url": "https://www.idc.com/?p=122953",
+          "confidence": "MEDIUM",
+          "note": "ACTUAL, as given in IDC's 2026 tracker releases (seen via search extracts). Hardware only: much narrower than Gartner's all-category total.",
+          "site_page": 93
+        },
+        "2025": {
+          "value": "$318.7B",
+          "num": 318700000000,
+          "as_of": "Apr 2026 (actual)",
+          "source": "IDC Worldwide Quarterly AI Infrastructure Tracker, 16 Apr 2026",
+          "url": "https://www.idc.com/resource-center/blog/ai-infrastructure-spending-caps-historic-year-at-90-billion-in-q4-2025-2029-spending-to-eclipse-1-trillion/",
+          "confidence": "MEDIUM",
+          "note": "ACTUAL, +107.2% year on year. Q4 2025 alone was about $90B.",
+          "site_page": 93
+        },
+        "2026": {
+          "value": "$521B (forecast)",
+          "num": 521000000000,
+          "as_of": "6 Nov 2026",
+          "source": "IDC Worldwide Quarterly AI Infrastructure Tracker, 6 Nov 2026",
+          "url": "https://www.idc.com/?p=122953",
+          "confidence": "MEDIUM",
+          "note": "FORECAST, ~63% year on year. Raised from $487B (16 Apr 2026) and $497B (21 Jul 2026) on higher component prices and CPU demand. Actuals so far: Q1 2026 $89.7B, Q2 2026 $121.4B (+53% YoY); servers were 98% of Q2 value. IDC forecasts $1.17T in 2029 and $1.33T in 2030. Report AI pages 93 and 376 show $497B; pages 73, 320, 354 and 318 show $487B.",
+          "site_page": 93
+        }
+      }
+    },
+    {
+      "id": "ai_share_of_it_spend",
+      "label": "AI spending as a share of worldwide IT spending (Gartner on Gartner)",
+      "unit": "% of worldwide IT spending",
+      "group": "Budgets",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "19%",
+          "num": 19.3,
+          "as_of": "Jan 2025 / Sep 2025 tables",
+          "source": "Report AI calculation from Gartner",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2025-09-17-gartner-says-worldwide-ai-spending-will-total-1-point-5-trillion-in-2025",
+          "confidence": "DERIVED",
+          "note": "= Gartner 2024 AI spending $987.9B (Sep 2025 table) / Gartner 2024 IT spending $5,114.8B (21 Jan 2025 table) = 19.3%. Assumes Gartner's AI categories sit inside its IT spending total, which Gartner does not state.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "32%",
+          "num": 32.0,
+          "as_of": "Sep–Oct 2026 tables",
+          "source": "Report AI calculation from Gartner",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-10-21-gartner-forecasts-worldwide-it-spending-to-grow-15-percent-in-2027-totaling-7-point-35-trillion",
+          "confidence": "DERIVED",
+          "note": "= $1,786.7B AI (16 Sep 2026) / $5,581.7B IT, where 2025 IT = $6,391B / 1.145 (Gartner's 2026 IT total and its stated 14.5% growth, Oct 2026). Part of the jump from 2024 reflects Gartner widening its AI categories, not only new spending.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "42% (forecast)",
+          "num": 41.8,
+          "as_of": "Sep–Oct 2026 tables",
+          "source": "Report AI calculation from Gartner",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-10-21-gartner-forecasts-worldwide-it-spending-to-grow-15-percent-in-2027-totaling-7-point-35-trillion",
+          "confidence": "DERIVED",
+          "note": "= $2,670.5B AI (16 Sep 2026) / $6,391B IT (Oct 2026). Both are forecasts. A share of market spending, not a survey of IT budgets: Futurum (Sep 2026, n=1,636) found 46.9% of enterprises over their AI budget in 2H 2026 and 38.7% of those funding it from elsewhere in IT; RBC (Dec 2025, n=117) found 90% planned to raise AI spending in 2026.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "menlo_enterprise_genai",
+      "label": "US enterprise generative-AI spending (Menlo Ventures)",
+      "unit": "US$ per year",
+      "group": "Enterprise spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "$11.5B (restated; first published as $13.8B)",
+          "num": 11500000000,
+          "as_of": "Dec 2025",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2025",
+          "url": "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
+          "confidence": "MEDIUM",
+          "note": "RESTATED. Menlo's Nov 2024 report said $13.8B (up from $2.3B in 2023); its Dec 2025 report restated 2024 to $11.5B and 2023 to $1.7B after excluding inference. Keep both numbers.",
+          "site_page": 46
+        },
+        "2025": {
+          "value": "$37B",
+          "num": 37000000000,
+          "as_of": "9 Dec 2025",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2025",
+          "url": "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
+          "confidence": "MEDIUM",
+          "note": "3.2x 2024 on the restated basis; about $19B applications and $18B infrastructure (secondary breakdown: foundation-model APIs $12.5B, training infrastructure $4.0B). Survey of ~495 US enterprise decision-makers plus a bottom-up model. Menlo is an Anthropic investor.",
+          "site_page": 46
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "No full-year 2026 figure on this definition. Menlo's 3 Nov 2026 report switched to an annualised run-rate of 'deployment' spend: see menlo_ai_deployment_runrate. Do not compare the two.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "menlo_ai_deployment_runrate",
+      "label": "Enterprise AI deployment spending, annualised run-rate (Menlo Ventures)",
+      "unit": "US$, annualised run-rate",
+      "group": "Enterprise spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Not published on this definition.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$33B",
+          "num": 33000000000,
+          "as_of": "Sep 2025 run-rate (published 3 Nov 2026)",
+          "source": "Menlo Ventures, 2026: The State of Enterprise AI",
+          "url": "https://menlovc.com/wp-content/uploads/2026/11/menlo_ventures_enterprise_ai_report-2026-110326.pdf",
+          "confidence": "MEDIUM",
+          "note": "Restated base for the 2026 report's narrower 'deployment' definition; not the same measure as the $37B full-year 2025 GenAI figure.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "$176.8B",
+          "num": 176800000000,
+          "as_of": "Sep 2026 run-rate (published 3 Nov 2026)",
+          "source": "Menlo Ventures, 2026: The State of Enterprise AI",
+          "url": "https://menlovc.com/wp-content/uploads/2026/11/menlo_ventures_enterprise_ai_report-2026-110326.pdf",
+          "confidence": "MEDIUM",
+          "note": "Annualised run-rate, not money spent in 2026 to date. $99.5B infrastructure, $77.3B applications; excludes model development (training compute and data, $102.5B). 5.4x the $33B a year earlier. SaaStr's reading of the report: only 22% came out of software budgets. Survey size reported as ~400 or 495.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "enterprise_llm_api_spend",
+      "label": "Enterprise LLM API spending (Menlo Ventures)",
+      "unit": "US$, annualised",
+      "group": "Enterprise spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "$3.5B",
+          "num": 3500000000,
+          "as_of": "Nov 2024",
+          "source": "Menlo Ventures, Mid-Year LLM Market Update, 31 Jul 2025",
+          "url": "https://natlawreview.com/press-releases/enterprise-llm-spend-reaches-84b-anthropic-overtakes-openai-according-new",
+          "confidence": "MEDIUM",
+          "note": "Annualised spend on model APIs as of November 2024.",
+          "site_page": 321
+        },
+        "2025": {
+          "value": "$8.4B",
+          "num": 8400000000,
+          "as_of": "Mid-2025",
+          "source": "Menlo Ventures, Mid-Year LLM Market Update, 31 Jul 2025",
+          "url": "https://natlawreview.com/press-releases/enterprise-llm-spend-reaches-84b-anthropic-overtakes-openai-according-new",
+          "confidence": "MEDIUM",
+          "note": "Annualised, mid-2025: 2.4x in about six months. Menlo's Dec 2025 report puts full-year 2025 foundation-model API spend at about $12.5B (secondary summary, single source); do not chart it against the run-rate values.",
+          "site_page": 321
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "No dollar total for API spend found in coverage of Menlo's Nov 2026 report; shares only (see provider-share metrics).",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "anthropic_api_share",
+      "label": "Anthropic share of enterprise LLM API spending (Menlo Ventures)",
+      "unit": "% of enterprise LLM API spend",
+      "group": "Enterprise spending",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "24%",
+          "num": 24,
+          "as_of": "Nov 2024",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2024",
+          "url": "https://www.pymnts.com/?p=2295796",
+          "confidence": "MEDIUM",
+          "note": "Published by Menlo (12% in 2023 to 24% in 2024). Page 321 labels its 2024 shares as interpolated; Menlo did publish 24% and 34%.",
+          "site_page": 321
+        },
+        "2025": {
+          "value": "40%",
+          "num": 40,
+          "as_of": "Dec 2025",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2025",
+          "url": "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
+          "confidence": "MEDIUM",
+          "note": "",
+          "site_page": 321
+        },
+        "2026": {
+          "value": "55%",
+          "num": 55,
+          "as_of": "3 Nov 2026",
+          "source": "Menlo Ventures, 2026: The State of Enterprise AI",
+          "url": "https://menlovc.com/wp-content/uploads/2026/11/menlo_ventures_enterprise_ai_report-2026-110326.pdf",
+          "confidence": "MEDIUM",
+          "note": "Anthropic and OpenAI together 86% (from 67%). Menlo is an Anthropic investor. Page 321 still shows 40%.",
+          "site_page": 321
+        }
+      }
+    },
+    {
+      "id": "openai_api_share",
+      "label": "OpenAI share of enterprise LLM API spending (Menlo Ventures)",
+      "unit": "% of enterprise LLM API spend",
+      "group": "Enterprise spending",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "34%",
+          "num": 34,
+          "as_of": "Nov 2024",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2024",
+          "url": "https://www.pymnts.com/?p=2295796",
+          "confidence": "MEDIUM",
+          "note": "Down from 50% in 2023.",
+          "site_page": 321
+        },
+        "2025": {
+          "value": "27%",
+          "num": 27,
+          "as_of": "Dec 2025",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2025",
+          "url": "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
+          "confidence": "MEDIUM",
+          "note": "",
+          "site_page": 321
+        },
+        "2026": {
+          "value": "31%",
+          "num": 31,
+          "as_of": "3 Nov 2026",
+          "source": "Menlo Ventures, 2026: The State of Enterprise AI",
+          "url": "https://menlovc.com/wp-content/uploads/2026/11/menlo_ventures_enterprise_ai_report-2026-110326.pdf",
+          "confidence": "MEDIUM",
+          "note": "",
+          "site_page": 321
+        }
+      }
+    },
+    {
+      "id": "google_api_share",
+      "label": "Google share of enterprise LLM API spending (Menlo Ventures)",
+      "unit": "% of enterprise LLM API spend",
+      "group": "Enterprise spending",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~12%",
+          "num": 12,
+          "as_of": "2025 (interpolated)",
+          "source": "Report AI interpolation between Menlo's 2023 (7%) and 2025 (21%) values",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "Interpolated on page 321; we did not find a Google share in coverage of Menlo's 2024 report.",
+          "site_page": 321
+        },
+        "2025": {
+          "value": "21%",
+          "num": 21,
+          "as_of": "Dec 2025",
+          "source": "Menlo Ventures, State of Generative AI in the Enterprise 2025",
+          "url": "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
+          "confidence": "MEDIUM",
+          "note": "",
+          "site_page": 321
+        },
+        "2026": {
+          "value": "9%",
+          "num": 9,
+          "as_of": "3 Nov 2026",
+          "source": "Menlo Ventures, 2026: The State of Enterprise AI",
+          "url": "https://menlovc.com/wp-content/uploads/2026/11/menlo_ventures_enterprise_ai_report-2026-110326.pdf",
+          "confidence": "MEDIUM",
+          "note": "A fall of 12 points in a year, per secondary coverage of the report. xAI and open-weight Chinese models together 'just under 5%'.",
+          "site_page": 321
+        }
+      }
+    },
+    {
+      "id": "capex_microsoft",
+      "label": "Microsoft capital expenditure, calendar year (incl. finance leases)",
+      "unit": "US$ per calendar year",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$75.6B",
+          "num": 75600000000,
+          "as_of": "Jan 2025",
+          "source": "Report AI sum of Microsoft quarterly results",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "= FY24 Q3 $14.0B + FY24 Q4 $19.0B + FY25 Q1 $20.0B + FY25 Q2 $22.6B, capex including finance leases. Quarterly inputs not re-verified in this research pass; secondary reporting of a $246B four-company 2024 total implies about $77B.",
+          "site_page": 3441
+        },
+        "2025": {
+          "value": "$118.0B",
+          "num": 118000000000,
+          "as_of": "Jan 2026",
+          "source": "Report AI sum of Microsoft quarterly results",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "= FY25 Q3 $21.4B + FY25 Q4 $24.2B (CFO Dive) + FY26 Q1 $34.9B (Converge Digest) + FY26 Q2 $37.5B (single source). Fiscal 2025 (Jul 2024–Jun 2025) was $88.7B.",
+          "site_page": 3441
+        },
+        "2026": {
+          "value": "$118.1B (Jan–Sep, to date)",
+          "num": 118100000000,
+          "as_of": "28 Oct 2026",
+          "source": "Report AI sum of Microsoft quarterly results",
+          "url": "https://www.cfodive.com/news/microsoft-holds-line-ai-spending-plans/826648/",
+          "confidence": "DERIVED",
+          "note": "TO DATE = FY26 Q3 $31.9B + FY26 Q4 $41.0B + FY27 Q1 $45.2B. FY27 Q1 components are CONTESTED ($39.4B cash + $7.4B leases does not equal $45.2B). Full-year guidance ~$170B: most outlets say calendar 2026, one says fiscal 2027 (CONTESTED); it was ~$175B in July. Q2 FY27 outlook >$50B.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_alphabet",
+      "label": "Alphabet capital expenditure, calendar year",
+      "unit": "US$ per calendar year (purchases of property and equipment)",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$52.5B",
+          "num": 52500000000,
+          "as_of": "Feb 2025",
+          "source": "Alphabet results, as reported",
+          "url": "https://www.irishtimes.com/business/2025/02/07/big-tech-lines-up-over-300bn-in-ai-spending-for-2025",
+          "confidence": "MEDIUM",
+          "note": "",
+          "site_page": 3441
+        },
+        "2025": {
+          "value": "$91.4B",
+          "num": 91400000000,
+          "as_of": "Feb 2026",
+          "source": "Alphabet Q4 2025 results, as reported",
+          "url": "https://yourstory.com/2026/02/alphabet-caps-2025-revenue-milestone-doubles-down-ai-spending",
+          "confidence": "MEDIUM",
+          "note": "Within the $91–93B range Alphabet guided to in Q3 2025. Initial 2026 guidance was $175–185B.",
+          "site_page": 3441
+        },
+        "2026": {
+          "value": "$132.0B (Jan–Sep, to date)",
+          "num": 132000000000,
+          "as_of": "28 Oct 2026",
+          "source": "Report AI sum of Alphabet quarterly results",
+          "url": "https://ppc.land/alphabets-free-cash-flow-drops-to-negative-9-1bn-despite-26-2bn-profit/",
+          "confidence": "DERIVED",
+          "note": "TO DATE = Q1 $35.7B + Q2 $44.9B + Q3 $51.4B. Full-year guidance $195–205B, unchanged on 28 Oct 2026 (raised from $180–190B in July). Q3 free cash flow about −$9.1B. A '>$300B for 2027' figure is analyst speculation, not guidance.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_amazon",
+      "label": "Amazon capital expenditure, calendar year (cash, net of proceeds and incentives)",
+      "unit": "US$ per calendar year",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$77.7B",
+          "num": 77700000000,
+          "as_of": "Feb 2025",
+          "source": "Amazon results, as reported",
+          "url": "https://www.irishtimes.com/business/2025/02/07/big-tech-lines-up-over-300bn-in-ai-spending-for-2025",
+          "confidence": "MEDIUM",
+          "note": "Net basis, reported as '$77 billion'. Gross purchases of property and equipment were about $83B; quote the basis with the number.",
+          "site_page": 3441
+        },
+        "2025": {
+          "value": "$131.8B",
+          "num": 131800000000,
+          "as_of": "Feb 2026",
+          "source": "Amazon results, as compiled by Sherwood News",
+          "url": "https://www.sherwood.news/tech/how-the-big-tech-companies-are-spending-their-huge-capex-budgets/",
+          "confidence": "MEDIUM",
+          "note": "Above the ~$125B Amazon guided to in Q3 2025. Initial 2026 guidance was ~$200B.",
+          "site_page": 3441
+        },
+        "2026": {
+          "value": "$172.2B (Jan–Sep, to date)",
+          "num": 172200000000,
+          "as_of": "29 Oct 2026",
+          "source": "Amazon Q3 2026 results, as reported",
+          "url": "https://finsee.ai/earnings/amzn/2026/q3/en/",
+          "confidence": "MEDIUM",
+          "note": "TO DATE, nine-month total as reported (Q3 $75.9B net of incentives, single source). Full-year guidance ~$220B, reaffirmed (raised from $200B in July). Trailing-12-month free cash flow −$42.4B. Jassy: 2027 spending to 'rise meaningfully'.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_meta",
+      "label": "Meta capital expenditure, calendar year (incl. finance-lease principal)",
+      "unit": "US$ per calendar year",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$39.2B",
+          "num": 39200000000,
+          "as_of": "Jan 2025",
+          "source": "Meta FY2024 results",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "Within Meta's late-2024 guidance of $38–40B; the exact figure was not re-checked against a source in this research pass.",
+          "site_page": 3441
+        },
+        "2025": {
+          "value": "$72.2B",
+          "num": 72200000000,
+          "as_of": "Jan 2026",
+          "source": "Meta results, as compiled by Sherwood News",
+          "url": "https://www.sherwood.news/tech/how-the-big-tech-companies-are-spending-their-huge-capex-budgets/",
+          "confidence": "MEDIUM",
+          "note": "At the top of Meta's $70–72B guidance. Initial 2026 guidance was $115–135B. Excludes the ~$27B Hyperion SPV financed off balance sheet with Blue Owl (page 1081).",
+          "site_page": 3441
+        },
+        "2026": {
+          "value": "~$85.8B (Jan–Sep, to date)",
+          "num": 85750000000,
+          "as_of": "21 Oct 2026",
+          "source": "Report AI sum of Meta quarterly results",
+          "url": "https://fourweekmba.com/ai-metas-q3-explained-capex-outran-its-cash-by-2-1-billion/",
+          "confidence": "DERIVED",
+          "note": "TO DATE = Q1 $19.84B + Q2 ~$31B (single source) + Q3 $34.91B. Full-year guidance $135–145B (narrowed 21 Oct 2026 from $130–145B; was $125–145B after Q1). Q3 free cash flow −$2.12B.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_oracle",
+      "label": "Oracle capital expenditure, fiscal year ending 31 May (gross)",
+      "unit": "US$ per fiscal year; year key = calendar year holding most of the fiscal year",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "$21.2B (FY2025, Jun 2024–May 2025)",
+          "num": 21200000000,
+          "as_of": "Jun 2025",
+          "source": "Oracle FY2025 results, as reported",
+          "url": "https://www.tmgm.com/vi/analysis/market-news/oracle-capex-boom-overshadows-strong-earnings",
+          "confidence": "MEDIUM",
+          "note": "Oracle does not report calendar years. FY2025 runs Jun 2024–May 2025 (seven months in 2024). Implied by the reported 162% rise to FY2026.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$55.7B (FY2026, Jun 2025–May 2026)",
+          "num": 55660000000,
+          "as_of": "10 Jun 2026",
+          "source": "Oracle FY2026 results and call, as reported",
+          "url": "https://www.tmgm.com/vi/analysis/market-news/oracle-capex-boom-overshadows-strong-earnings",
+          "confidence": "MEDIUM",
+          "note": "Gross. Net cash capex about $48B after ~$8B of customer prepayments and timing. FY2026 free cash flow −$23.7B. Guidance had been ~$50B.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "$28.5B (FY2027 Q1, Jun–Aug 2026, to date)",
+          "num": 28500000000,
+          "as_of": "Sep 2026",
+          "source": "Oracle FY2027 Q1 results, via Zacks",
+          "url": "https://www.zacks.com/stock/news/3007007/will-rising-capex-weigh-on-oracle-s-free-cash-flow-outlook",
+          "confidence": "MEDIUM",
+          "note": "TO DATE, single source; ~$18B net of prepayments. FY2027 guidance $90–95B gross with net cash capex capped at ~$70B. Oracle raised $20B in stock and notes on 2–4 Nov 2026 (page 3441).",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_big4_combined",
+      "label": "Combined capex of Microsoft, Alphabet, Amazon and Meta, calendar year",
+      "unit": "US$ per calendar year, sum of each company's reported basis",
+      "group": "Big-tech capex",
+      "yoy": true,
+      "values": {
+        "2024": {
+          "value": "~$245B",
+          "num": 245000000000,
+          "as_of": "Feb 2025",
+          "source": "Report AI sum",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "= Microsoft $75.6B + Alphabet $52.5B + Amazon $77.7B + Meta $39.2B. Secondary reporting gave $246B (up 63% from $151B in 2023). Bases differ: treat as an order of magnitude.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "~$413B",
+          "num": 413400000000,
+          "as_of": "Feb 2026",
+          "source": "Report AI sum",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "= $118.0B + $91.4B + $131.8B + $72.2B. Consistent with Moody's ~$410B for 2025 cited on page 1081.",
+          "site_page": 1081
+        },
+        "2026": {
+          "value": "~$508B (Jan–Sep, to date)",
+          "num": 508050000000,
+          "as_of": "29 Oct 2026",
+          "source": "Report AI sum",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "TO DATE = Microsoft $118.1B + Alphabet $132.0B + Amazon $172.2B + Meta ~$85.8B. Q3 2026 alone ≈ $207B (page 3441). Already above full-year 2025 with a quarter to go.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "capex_big4_guidance_2026",
+      "label": "2026 full-year capex guidance, Microsoft + Alphabet + Amazon + Meta",
+      "unit": "US$, company guidance",
+      "group": "Big-tech capex",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "",
+          "site_page": null
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "",
+          "site_page": null
+        },
+        "2026": {
+          "value": "~$720–740B (guidance)",
+          "num": 730000000000,
+          "as_of": "29 Oct 2026",
+          "source": "Company guidance, summed by Report AI",
+          "url": "",
+          "confidence": "DERIVED",
+          "note": "GUIDANCE, not an outcome = Microsoft ~$170B (period CONTESTED: calendar 2026 or fiscal 2027) + Alphabet $195–205B + Amazon ~$220B + Meta $135–145B; num is the midpoint. In early 2026 the same four guided to roughly $630–650B; Report AI pages 73, 354, 349 and 320 still say '$600B+'.",
+          "site_page": 3441
+        }
+      }
+    },
+    {
+      "id": "dc_electricity_iea",
+      "label": "Global data-centre electricity consumption (IEA)",
+      "unit": "TWh per year",
+      "group": "Energy and power",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "~415 TWh",
+          "num": 415,
+          "as_of": "Apr 2025",
+          "source": "IEA, Energy and AI (2025)",
+          "url": "https://www.iea.org/reports/energy-and-ai",
+          "confidence": "MEDIUM",
+          "note": "About 1.5% of global electricity. Rated from the IEA report summary as used on page 93; primary not reopened here.",
+          "site_page": 93
+        },
+        "2025": {
+          "value": "~485 TWh",
+          "num": 485,
+          "as_of": "Apr 2026",
+          "source": "IEA, Key Questions on Energy and AI (Apr 2026)",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary",
+          "confidence": "CONTESTED",
+          "note": "Level agreed; growth CONTESTED: secondary coverage says +17%, IEA slides say 'almost 20%'. Electricity for AI-focused data centres grew about 50% in 2025.",
+          "site_page": 93
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "No IEA estimate for 2026 found. Gartner forecasts global data-centre electricity demand +26% in 2026 (Jun 2026, page 93); not chained to the IEA base because the sources differ. IEA projects ~950 TWh in 2030 (Apr 2026 edition; 945 TWh in the 2025 edition) and ~1,200 TWh in 2035. US: LBNL projects 325–580 TWh by 2028 from 176 TWh in 2023.",
+          "site_page": 93
+        }
+      }
+    },
+    {
+      "id": "gartner_agentic_software_spend",
+      "label": "Spending on software with agentic AI capabilities (Gartner)",
+      "unit": "US$ per year, embedded measure",
+      "group": "AI agents",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Not published.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$86.4B",
+          "num": 86400000000,
+          "as_of": "5 May 2026",
+          "source": "Gartner press release, 5 May 2026",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "Counts all spending on software products with agent capabilities, including existing enterprise applications with agents added. Not an 'AI agents market'.",
+          "site_page": 3435
+        },
+        "2026": {
+          "value": "$206.5B (forecast)",
+          "num": 206500000000,
+          "as_of": "5 May 2026",
+          "source": "Gartner press release, 5 May 2026",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "FORECAST; $376.3B in 2027 and ~$985B in 2030 (62.7% CAGR 2025–30, Gartner abstract 17 Feb 2026). Definition caveat: see page 3435.",
+          "site_page": 3435
+        }
+      }
+    },
+    {
+      "id": "gartner_agents_assistants",
+      "label": "Spending on standalone AI agents and assistants (Gartner)",
+      "unit": "US$ per year",
+      "group": "AI agents",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Category created in the Sep 2026 forecast; no 2024 value.",
+          "site_page": null
+        },
+        "2025": {
+          "value": "$16.5B",
+          "num": 16480000000,
+          "as_of": "16 Sep 2026",
+          "source": "Gartner AI spending forecast, 16 Sep 2026",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-09-16-gartner-forecasts-worldwide-ai-spending-to-grow-49-point-5-percent-in-2026",
+          "confidence": "MEDIUM",
+          "note": "Cross-functional enterprise agents plus consumer agents, split out of 'AI software' in the Sep 2026 restructuring.",
+          "site_page": 3435
+        },
+        "2026": {
+          "value": "$29.2B (forecast)",
+          "num": 29220000000,
+          "as_of": "16 Sep 2026",
+          "source": "Gartner AI spending forecast, 16 Sep 2026",
+          "url": "https://www.gartner.com/en/newsroom/press-releases/2026-09-16-gartner-forecasts-worldwide-ai-spending-to-grow-49-point-5-percent-in-2026",
+          "confidence": "MEDIUM",
+          "note": "FORECAST; $65.5B in 2027. Research-firm forecasts of the standalone agents market: ~$7–8B in 2025, 2030 median ~$49B (page 3435).",
+          "site_page": 3435
+        }
+      }
+    },
+    {
+      "id": "us_federal_ai_rd",
+      "label": "US federal non-defence AI R&D, budget request (NITRD)",
+      "unit": "US$ per fiscal year",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "$3.09B (FY2024 request)",
+          "num": 3086000000,
+          "as_of": "2023",
+          "source": "NITRD supplement to the President's FY2024 budget",
+          "url": "https://www.nitrd.gov/",
+          "confidence": "MEDIUM",
+          "note": "$3,085.8M requested AI R&D.",
+          "site_page": 374
+        },
+        "2025": {
+          "value": "$3.32B (FY2025 request)",
+          "num": 3316000000,
+          "as_of": "Dec 2024",
+          "source": "NITRD/NAIIO supplement to the President's FY2025 budget",
+          "url": "https://executivegov.com/2024/12/nitrd-supplement-president-fy2025-budget/",
+          "confidence": "MEDIUM",
+          "note": "$1.954B core + $1.361B crosscut. Page 374 rates the $3.3B HIGH.",
+          "site_page": 374
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "FY2026 NITRD AI total not found. Separate measure: the Pentagon's FY2026 request includes $13.4B for AI and autonomy (secondary reporting).",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "us_federal_ai_contracts",
+      "label": "US federal AI contract obligations (Brookings)",
+      "unit": "US$ obligated",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "$355M or $675M",
+          "num": null,
+          "as_of": "18 May 2026",
+          "source": "Brookings, 'Where does federal AI spending stand in 2026?'",
+          "url": "https://www.brookings.edu/articles/where-does-federal-ai-spending-stand-in-2026/",
+          "confidence": "CONTESTED",
+          "note": "Brookings-based coverage gives $675M; Benton's summary of the same article gives $355M.",
+          "site_page": null
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Not found.",
+          "site_page": null
+        },
+        "2026": {
+          "value": "$7.2B (to date)",
+          "num": 7200000000,
+          "as_of": "18 May 2026",
+          "source": "Brookings, 'Where does federal AI spending stand in 2026?'",
+          "url": "https://www.brookings.edu/articles/where-does-federal-ai-spending-stand-in-2026/",
+          "confidence": "MEDIUM",
+          "note": "TO DATE (period as published, likely fiscal 2026 to May). Potential contract value $91.8B, of which DoD 98.9%. Different method from GAO's $5.6B for FY2022–24 cited on page 374.",
+          "site_page": 374
+        }
+      }
+    },
+    {
+      "id": "eu_ai_factories",
+      "label": "EU public AI compute commitment: EuroHPC AI Factories",
+      "unit": "EUR, multi-year co-investment (EU + member states)",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "",
+          "site_page": null
+        },
+        "2025": {
+          "value": ">€2.7B",
+          "num": 2700000000,
+          "as_of": "2025",
+          "source": "EuroHPC Joint Undertaking",
+          "url": "https://eurohpc-ju.europa.eu/",
+          "confidence": "HIGH",
+          "note": "HIGH as rated on page 374. 19 AI Factories, 2024–27. The €200B InvestAI headline (Feb 2025) is a mobilisation total including hoped-for private capital, not an appropriation; it includes a €20B public-private gigafactory fund.",
+          "site_page": 374
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "No 2026 EU appropriation found in this pass.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "china_state_ai_funds",
+      "label": "China state AI and chip investment vehicles (registered capital)",
+      "unit": "CNY, one-time equity vehicles (US$ in num)",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "¥344B (~$47.5B), Big Fund III",
+          "num": 47500000000,
+          "as_of": "May 2024",
+          "source": "China Daily / Caixin",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "Semiconductor-focused; underwrites the AI chip stack. One-time registration, not an annual budget.",
+          "site_page": 374
+        },
+        "2025": {
+          "value": "¥60.1B (~$8.2B), National AI Industry Investment Fund",
+          "num": 8200000000,
+          "as_of": "Jan 2025",
+          "source": "MIIT / Ministry of Finance via China Daily",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "Also Mar 2025: a National Venture Capital Guidance Fund to mobilise ~¥1T ($138B) over 20 years (page 954). Not comparable with annual budgets.",
+          "site_page": 374
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "No new 2026 vehicle found in this pass.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "uk_public_ai",
+      "label": "UK public AI commitments",
+      "unit": "GBP",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "",
+          "site_page": null
+        },
+        "2025": {
+          "value": "£2B (2025–30 envelope)",
+          "num": null,
+          "as_of": "Jun 2025",
+          "source": "GOV.UK, Spending Review 2025",
+          "url": "https://www.gov.uk/",
+          "confidence": "HIGH",
+          "note": "HIGH as rated on page 374; about £1B of it sovereign compute.",
+          "site_page": 374
+        },
+        "2026": {
+          "value": "£560M Sovereign AI Fund (£500M + £60M)",
+          "num": null,
+          "as_of": "28 Oct 2026",
+          "source": "DSIT; Autumn Budget 2026 coverage (ITPro, CMS)",
+          "url": "https://www.itpro.com/business/policy-and-legislation/autumn-budget-2026-uk-tech-industry-welcomes-strong-ai-investment-focus",
+          "confidence": "CONTESTED",
+          "note": "£500M fund launched 16 Apr 2026, plus £60M top-up in the 28 Oct 2026 Budget. The Budget's overall AI package is reported as £600M+ (ITPro) or £700M (CMS); 'a £700M sovereign AI fund' (page 3441 research) misdescribes it.",
+          "site_page": null
+        }
+      }
+    },
+    {
+      "id": "gulf_sovereign_ai",
+      "label": "Gulf sovereign AI capital: MGX (Abu Dhabi) fund close",
+      "unit": "US$, fund commitments",
+      "group": "Government spending",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "MGX founded 2024; no capital figure found.",
+          "site_page": null
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Saudi PIF launched HUMAIN in May 2025 without a disclosed capital figure; AWS and HUMAIN committed >$5B to a Riyadh 'AI Zone' (partly Amazon money).",
+          "site_page": 955
+        },
+        "2026": {
+          "value": "$49B (Fund I close)",
+          "num": 49000000000,
+          "as_of": "Jul 2026",
+          "source": "Forbes / Bloomberg",
+          "url": "https://www.forbes.com/sites/guneyyildiz/2026/07/03/abu-dhabis-49-billion-ai-fund-and-its-sovereign-rivals/",
+          "confidence": "MEDIUM",
+          "note": "Against a $45B target; long-run goal >$100B AUM. Sovereign capital deployed commercially for return, not a grant budget: never sum with appropriations.",
+          "site_page": 955
+        }
+      }
+    },
+    {
+      "id": "idc_banking_ai_spend",
+      "label": "Banking AI spending, worldwide (IDC)",
+      "unit": "US$ per year",
+      "group": "Spending by industry",
+      "yoy": false,
+      "values": {
+        "2024": {
+          "value": "~$31.3B",
+          "num": 31300000000,
+          "as_of": "2025",
+          "source": "IDC Worldwide AI and GenAI Spending Guide",
+          "url": "",
+          "confidence": "MEDIUM",
+          "note": "Banking is the #1 vertical at >20% of AI spend; banking, software & information services and retail together ~$89.6B in 2024 (~38%), forecast ~$222B by 2028.",
+          "site_page": 376
+        },
+        "2025": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Worldwide industry tables are behind IDC's paywall.",
+          "site_page": null
+        },
+        "2026": {
+          "value": null,
+          "num": null,
+          "as_of": "",
+          "source": "",
+          "url": "",
+          "confidence": "",
+          "note": "Worldwide figure not found. Europe: banking is 12.6% of European AI spending in 2026 and financial services 19.2% (IDC, 17 Sep 2026); Europe total ~$470B by 2030.",
+          "site_page": null
+        }
+      }
+    }
+  ],
+  "headlines": {
+    "2024": [
+      "Gartner estimated worldwide AI spending at about $988 billion in 2024, in the 2024 baseline of its September 2025 forecast, before it widened its AI categories in 2026.",
+      "Microsoft, Alphabet, Amazon and Meta spent about $245 billion on capital expenditure in calendar 2024, by Report AI's sum of each company's reported figures.",
+      "IDC counted $153.9 billion of worldwide spending on AI infrastructure hardware in 2024, according to its AI infrastructure tracker.",
+      "The International Energy Agency estimates that data centres worldwide used about 415 TWh of electricity in 2024, roughly 1.5% of global electricity demand.",
+      "Menlo Ventures reported in November 2024 that US enterprises spent $13.8 billion on generative AI that year, a figure it restated to $11.5 billion in December 2025 after excluding inference."
+    ],
+    "2025": [
+      "Gartner's September 2026 forecast puts worldwide AI spending in 2025 at about $1.79 trillion, against the $1.48 trillion Gartner projected for the same year in September 2025.",
+      "Microsoft, Alphabet, Amazon and Meta spent about $413 billion on capital expenditure in calendar 2025, roughly 69% more than in 2024, by Report AI's sum of their reported figures.",
+      "IDC counted $318.7 billion of worldwide AI infrastructure spending in 2025, up 107% from 2024, according to its April 2026 tracker release.",
+      "Menlo Ventures estimated in December 2025 that US enterprises spent $37 billion on generative AI in 2025, 3.2 times its restated 2024 figure.",
+      "The IEA estimates that global data-centre electricity use reached about 485 TWh in 2025, with electricity for AI-focused data centres up about 50% in the year."
+    ],
+    "2026": [
+      "Gartner forecast on 16 September 2026 that worldwide AI spending will reach about $2.67 trillion in 2026, up 49.5% year on year and its third upward revision of 2026 this year.",
+      "Microsoft, Alphabet, Amazon and Meta spent about $508 billion on capital expenditure from January to September 2026, already more than in all of 2025, by Report AI's sum of their quarterly results.",
+      "IDC raised its forecast for 2026 AI infrastructure spending to $521 billion on 6 November 2026, from $497 billion in July, after second-quarter spending of $121.4 billion.",
+      "Menlo Ventures estimated on 3 November 2026 that US enterprise AI deployment spending was running at an annualised $176.8 billion in September 2026, with Anthropic taking 55% of enterprise LLM API spend.",
+      "Gartner forecasts $29.2 billion of spending on standalone AI agents and assistants in 2026 (16 September 2026), against $206.5 billion for all software with agentic features built in (5 May 2026)."
+    ]
+  },
+  "analysis": {
+    "2024": [
+      "2024 was the year AI spending became an infrastructure story. The four largest US cloud and platform companies, Microsoft, Alphabet, Amazon and Meta, spent about $245 billion on capital expenditure in calendar 2024, up from about $151 billion in 2023, according to our sum of their reported figures. Not all of that is AI, but the increase was driven by data centres, servers and accelerators. IDC, which counts only AI-optimised hardware, put worldwide AI infrastructure spending at $153.9 billion for the year. Gartner's broader estimate, which also counts AI software, services and AI-enabled devices, was about $988 billion. The gap between those two figures is a matter of definition, not disagreement.",
+      "Enterprise buying of generative AI was still small by comparison. Menlo Ventures first reported $13.8 billion of US enterprise generative-AI spending in 2024, a sixfold rise, and later restated the year to $11.5 billion after removing inference from its count; applications accounted for $4.6 billion of the original total. Model API spending ran at about $3.5 billion annualised in November 2024, with OpenAI holding 34% of enterprise API spend and Anthropic 24%. The pattern was already visible: companies were paying for models through cloud bills and coding tools long before most could show a return on them.",
+      "Physical limits entered the conversation the same year. The IEA estimates that data centres used about 415 TWh of electricity in 2024, about 1.5% of global demand, with electricity for AI-accelerated servers growing roughly 30% a year. Governments, meanwhile, spent modestly in direct terms: the US requested about $3.1 billion of non-defence federal AI R&D for fiscal 2024, while China registered its ¥344 billion semiconductor 'Big Fund III' in May 2024. Public AI money in 2024 was small next to corporate capex, and mostly took the form of one-time funds rather than recurring budgets."
+    ],
+    "2025": [
+      "In 2025 spending roughly doubled on most measures. Our sum of reported capital expenditure for Microsoft, Alphabet, Amazon and Meta is about $413 billion for the calendar year, up roughly 69% on 2024; Oracle's capex for its fiscal year to May 2026 rose to about $55.7 billion from $21.2 billion. IDC counted $318.7 billion of AI infrastructure spending, up 107%. Gartner's estimate for 2025 moved from $1.48 trillion, its September 2025 forecast, to about $1.79 trillion in its September 2026 table, partly because it added categories. Both numbers are Gartner's; they are different editions, and neither should be presented as a measured total.",
+      "Enterprise spending grew faster than adoption. Menlo Ventures estimated US enterprise generative-AI spending at $37 billion in 2025, 3.2 times the restated 2024 figure, with coding tools the largest application category at about $4 billion. Model API spending reached about $8.4 billion annualised by mid-2025, and the leading provider changed: Anthropic took 40% of enterprise API spend against OpenAI's 27%. Agent spending was still small in measured terms. Gartner's later estimate for standalone AI agents and assistants in 2025 is $16.5 billion, against $86.4 billion for all software with agentic features built in.",
+      "Energy and public money followed the capex. The IEA estimates data-centre electricity use rose to about 485 TWh in 2025, with consumption at AI-focused sites up about 50%. Government commitments were larger on paper than in budgets: the EU's €200 billion InvestAI headline is a mobilisation figure whose verifiable public core is the >€2.7 billion EuroHPC AI Factories programme, and the $500 billion Stargate venture announced in January 2025 contains no federal money. China registered a ¥60.1 billion national AI fund, the UK set a £2 billion AI envelope to 2030, and Saudi Arabia launched HUMAIN without a disclosed capital figure."
+    ],
+    "2026": [
+      "The defining spending number of 2026 is capex. Microsoft, Alphabet, Amazon and Meta spent about $508 billion from January to September, already more than all of 2025, and about $207 billion in the third quarter alone. Their full-year guidance adds up to roughly $720–740 billion, against the '$600 billion plus' that was widely quoted at the start of the year. Microsoft's ~$170 billion guidance may refer to its fiscal rather than calendar year, so the total is approximate. Oracle guides to $90–95 billion of gross capex for its fiscal 2027. For Meta, Alphabet and Amazon, spending now exceeds the cash their businesses generate.",
+      "Forecasters have raised their numbers repeatedly. Gartner's 2026 forecast for worldwide AI spending went from $2.52 trillion in January to $2.59 trillion in May and $2.67 trillion on 16 September, a 49.5% rise on its 2025 estimate, with infrastructure about 56% of the total. IDC raised its 2026 AI infrastructure forecast from $487 billion in April to $497 billion in July and $521 billion in November. These are forecasts made during the year, and several Report AI pages still show the earlier editions. The direction of revision has been upward every time, mainly because hardware spending keeps exceeding plans.",
+      "Enterprise spending is harder to pin down than capex because the measures keep changing. Menlo Ventures' November 2026 report put US enterprise AI deployment spending at an annualised $176.8 billion in September 2026, 5.4 times a restated $33 billion a year earlier. That is a run-rate on a new definition, not money spent in 2026 and not comparable with the $37 billion full-year 2025 figure. On the same survey, Anthropic's share of enterprise LLM API spend rose to 55% while Google's fell to 9%. A September 2026 Futurum survey found 46.9% of enterprises over their AI budget in the second half.",
+      "Two figures need care. Gartner's $206.5 billion for 'AI agent software' in 2026 counts all software with agentic features built in; its own line for standalone agents and assistants is $29.2 billion. Gartner's forecast that AI spending will be about 42% of worldwide IT spending in 2026, on our arithmetic from its two forecasts, describes market spending, not company budgets. Public money remains small next to corporate capex and is mostly one-off: the UK's £500 million Sovereign AI Fund launched in April with a £60 million top-up in October, Abu Dhabi's MGX closed a $49 billion fund in July, and Brookings counts $7.2 billion of US federal AI contract obligations so far in 2026, almost all defence."
+    ]
+  },
+  "takeaways_2026": [
+    "Capex is the biggest and best-measured AI spending line: about $508 billion from Microsoft, Alphabet, Amazon and Meta in January–September 2026 (Report AI sum), with full-year guidance of roughly $720–740 billion.",
+    "Every major forecast was raised during the year: Gartner's 2026 worldwide AI spending forecast went from $2.52 trillion (January) to $2.67 trillion (16 September), and IDC's AI infrastructure forecast from $487 billion (April) to $521 billion (6 November).",
+    "Enterprise AI spending figures are not comparable across editions: Menlo's $176.8 billion (September 2026) is an annualised run-rate on a new definition, not 2026 spending and not a successor to its $37 billion for 2025.",
+    "Government AI money is small next to corporate capex and mostly one-off funds or mobilisation headlines; the largest verified public items in 2026 are equity vehicles such as Abu Dhabi's $49 billion MGX fund, not budgets."
+  ],
+  "yoy_takeaways": [
+    "Big-tech capex roughly doubled in two years: about $245 billion in 2024 and $413 billion in 2025 for Microsoft, Alphabet, Amazon and Meta, and $508 billion in the first nine months of 2026 alone (Report AI sums of reported figures).",
+    "IDC's measured AI infrastructure spending went from $153.9 billion (2024) to $318.7 billion (2025), with $521 billion forecast for 2026; the first two are actuals, the third is a forecast.",
+    "Gartner's worldwide AI spending series rose from about $988 billion (2024 estimate) to $1.79 trillion (2025 estimate) and a $2.67 trillion forecast for 2026, but category changes between editions mean part of each step is definitional.",
+    "In enterprise LLM APIs the leader changed and then pulled away: Anthropic's share of enterprise API spend went 24% (2024), 40% (2025), 55% (2026), while OpenAI went 34%, 27%, 31% (Menlo Ventures, an Anthropic investor)."
+  ],
+  "faq_2026": [
+    {
+      "q": "How much will the world spend on AI in 2026?",
+      "a": "Gartner forecast on 16 September 2026 that worldwide AI spending will reach about $2.67 trillion in 2026, up 49.5% from its estimate of about $1.79 trillion for 2025. About $1.48 trillion of the 2026 figure, roughly 56%, is AI infrastructure. It is a forecast that Gartner has raised twice this year, from $2.52 trillion in January and $2.59 trillion in May. IDC's narrower measure, AI infrastructure hardware only, is forecast at $521 billion for 2026 (6 November 2026)."
+    },
+    {
+      "q": "How much are Microsoft, Alphabet, Amazon and Meta spending on capex in 2026?",
+      "a": "They spent about $508 billion on capital expenditure from January to September 2026, by Report AI's sum of each company's quarterly results: Amazon $172.2 billion, Alphabet $132.0 billion, Microsoft $118.1 billion and Meta about $85.8 billion. Their full-year 2026 guidance, given in late October 2026, adds up to roughly $720–740 billion: Amazon about $220 billion, Alphabet $195–205 billion, Microsoft about $170 billion (calendar or fiscal year is disputed) and Meta $135–145 billion. The companies report on slightly different bases, so totals are approximate."
+    },
+    {
+      "q": "How much do enterprises spend on generative AI?",
+      "a": "Menlo Ventures estimated that US enterprises spent $37 billion on generative AI in 2025, 3.2 times the $11.5 billion it now estimates for 2024. Its November 2026 report uses a different measure: enterprise AI deployment spending running at an annualised $176.8 billion in September 2026, up from a restated $33 billion a year earlier. That is a run-rate on a new definition, not money spent in 2026, so it should not be compared directly with the $37 billion."
+    },
+    {
+      "q": "How much is being spent on AI agents in 2026?",
+      "a": "It depends on the definition. Gartner forecasts $29.2 billion of spending on standalone AI agents and assistants in 2026 (16 September 2026 forecast), up from $16.5 billion in 2025. Its better-known $206.5 billion figure for 2026 (5 May 2026) counts all spending on software that has agentic features built in, including existing enterprise applications. Research firms that size a standalone agents market put it at about $7–8 billion in 2025 (Report AI comparison, November 2026)."
+    },
+    {
+      "q": "How much do governments spend on AI?",
+      "a": "Far less than companies, and much of it is one-off. The US requested $3.3 billion of non-defence federal AI R&D for fiscal 2025, and Brookings counted $7.2 billion of federal AI contract obligations so far in 2026 (May 2026), almost all for defence. The EU's verifiable public commitment is the >€2.7 billion EuroHPC AI Factories programme, not the €200 billion InvestAI headline. The UK launched a £500 million Sovereign AI Fund in April 2026, topped up by £60 million in October, and Abu Dhabi's MGX closed a $49 billion fund in July 2026."
+    }
+  ],
+  "stop_quoting": [
+    {
+      "claim": "Gartner: worldwide AI spending will be $2.59 trillion in 2026 (or $2.5 trillion).",
+      "fact": "Superseded. Gartner's 16 September 2026 forecast is about $2.67 trillion (rounded to $2.7 trillion), up 49.5%. The $2.52 trillion (15 Jan 2026) and $2.59 trillion (19 May 2026) figures were earlier editions.",
+      "link": "/indexes/ai-economics/ai-spending-by-industry-2026/"
+    },
+    {
+      "claim": "$2.59 trillion in 2026 is up 47% from about $1.5 trillion in 2025.",
+      "fact": "The arithmetic does not work: $1.5 trillion plus 47% is about $2.2 trillion. Gartner had restated its 2025 base to about $1.76 trillion by January 2026; its September 2026 table gives $1.79 trillion. The $1.5 trillion was its September 2025 forecast for 2025.",
+      "link": "/indexes/ai-economics/ai-spending-by-industry-2026/"
+    },
+    {
+      "claim": "IDC forecasts $487 billion (or $497 billion) of AI infrastructure spending in 2026.",
+      "fact": "Superseded. IDC raised its 2026 forecast to $521 billion on 6 November 2026, after $487 billion in April and $497 billion in July.",
+      "link": "/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/"
+    },
+    {
+      "claim": "Hyperscaler capex will top $600 billion in 2026.",
+      "fact": "Out of date. Microsoft, Alphabet, Amazon and Meta alone had spent about $508 billion by September 2026, and their full-year guidance sums to roughly $720–740 billion (Report AI sum, October 2026).",
+      "link": "/indexes/ai-economics/ai-investment-funding-statistics-2026/"
+    },
+    {
+      "claim": "The AI agents market is worth $206.5 billion in 2026 (Gartner).",
+      "fact": "Gartner's $206.5 billion counts spending on all software with agentic features built in. Its own line for standalone AI agents and assistants is $29.2 billion for 2026.",
+      "link": "/reports/ai-agents-market-size/"
+    },
+    {
+      "claim": "IDC: agentic AI spending will reach $1.3 trillion by 2029.",
+      "fact": "IDC's $1.3 trillion for 2029 (26 Aug 2025) is total AI spending, with agentic AI described as its main driver; it is not an agentic-AI market size.",
+      "link": "/reports/ai-agents-market-size/"
+    },
+    {
+      "claim": "Enterprises spent $177 billion on AI in 2026 (Menlo Ventures).",
+      "fact": "Menlo's $176.8 billion is an annualised run-rate of enterprise AI deployment spending as of September 2026, on a new definition. It is not money spent in 2026 and is not comparable with Menlo's $37 billion for 2025.",
+      "link": null
+    },
+    {
+      "claim": "The EU is investing €200 billion in AI; Stargate is $500 billion of US government AI spending.",
+      "fact": "InvestAI's €200 billion is a mobilisation total including hoped-for private capital; the verifiable public commitment is >€2.7 billion for EuroHPC AI Factories. Stargate is a private venture with no federal funds.",
+      "link": "/indexes/ai-economics/ai-government-spending-2026/"
+    },
+    {
+      "claim": "The UK's October 2026 Budget created a £700 million sovereign AI fund.",
+      "fact": "The Sovereign AI Fund is £500 million (launched 16 April 2026) plus a £60 million top-up in the Budget; £600–700 million is the reported size of the Budget's wider AI package.",
+      "link": null
+    },
+    {
+      "claim": "Anthropic has 40% of enterprise LLM API spend.",
+      "fact": "True for Menlo's 2025 report; its November 2026 report puts Anthropic at 55%, OpenAI 31% and Google 9%.",
+      "link": "/indexes/ai-economics/llm-market-statistics-2026/"
+    }
+  ],
+  "related_pages": [
+    376,
+    374,
+    93,
+    46,
+    321,
+    3441,
+    3435,
+    388,
+    320,
+    73,
+    967,
+    955,
+    428,
+    1081,
+    1387,
+    954,
+    3227
+  ],
+  "gaps": [
+    "No primary page could be opened (WebFetch failed on gartner.com and idc.com), and the session's web-search budget ran out before every item was checked; nothing in this file is rated HIGH from new research. HIGH ratings that appear are carried over from page 374.",
+    "Gartner 2024 AI spending on its 2026 category basis: not found. The 2024 value ($988B) is from the September 2025 edition, so the 2024-to-2025 step mixes editions.",
+    "Microsoft calendar-2024 and 2025 capex and Meta 2024 capex rest partly on quarterly inputs not re-verified in this pass; Microsoft's Dec 2025 quarter ($37.5B) and Meta's Q2 2026 (~$31B) are single-source.",
+    "Microsoft's ~$170B guidance: calendar 2026 or fiscal 2027 (CONTESTED); FY27 Q1 components do not add up to the reported $45.2B.",
+    "Menlo Ventures 2026: no dollar total for enterprise LLM API spend found; Google's fall to 9% share rests on secondary coverage; survey size reported as ~400 or 495.",
+    "IDC's full-stack Worldwide AI and GenAI Spending Guide: totals for 2024–2026 not verified (2024 reported as $235B in the Aug 2024 edition and $315.9B in a later citation; a '$940B in 2026' figure could not be traced). Worldwide industry splits for 2025–2026 are paywalled.",
+    "IEA: no 2026 data-centre electricity estimate; 2025 growth is 17% in secondary coverage and 'almost 20%' in IEA slides. No US data-centre power demand in GW was gathered.",
+    "US federal non-defence AI R&D request for FY2026 not found; Brookings' 2024 contract-obligation base is CONTESTED ($355M vs $675M) and its 2026 period is not stated in what we saw.",
+    "No 2026 EU appropriation, no 2026 China AI vehicle, and no disclosed HUMAIN capital figure found. Japan (¥1.23T, FY2026) and South Korea (₩10.1T, 2025) budgets are on page 374 but not carried as metrics here.",
+    "No survey gives a clean 'share of IT budget spent on AI' for 2024–2026; the share metric here is Gartner AI spending divided by Gartner IT spending (DERIVED).",
+    "Site pages carrying stale spending figures: 376, 967, 362 ($2.59T/$2.5T); 93, 376 ($497B); 73, 320, 354, 318 ($487B); 73, 354, 349, 320 ('$600B+ hyperscaler capex 2026'); 321 (Anthropic 40%, and its 2024 shares are labelled interpolated although Menlo published 24% and 34%)."
+  ]
+}
