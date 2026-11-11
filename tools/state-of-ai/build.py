@@ -23,6 +23,7 @@ BASE = 'https://report-ai.org/indexes/state-of-ai/'
 UP = 'https://report-ai.org/wp-content/uploads/2026/11/'
 YEARS = ['2024', '2025', '2026']
 
+NS = {}
 ON = ' class="on"'
 NOBR = ' style="border-right:none;"'
 def detail(link):
@@ -266,7 +267,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
     csv_name = f'report-ai-data-{slug}-in-numbers.csv'
     prev = str(int(year) - 1)
     yrs = [prev, year] if prev in YEARS else [year]
-    secs = ''; rows = []; allfaq = []
+    secs = ''; rows = []; allfaq = []; C = Counter()
     toc = ' &middot; '.join(f'<a href="#{t}">{NAME[t]}</a>' for t in THEMES if t in ds)
     for t in THEMES:
         if t not in ds:
@@ -274,8 +275,12 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
         d = ds[t]
         ms = [m for m in d['metrics'] if (m['values'].get(year) or {}).get('value')]
         rows += [(t, m, y, m['values'][y]) for m in ms for y in yrs if m['values'].get(y)]
-        secs += f'\n<div class="tai-padx" id="{t}"><div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:8px;">{NAME[t]}</div><h2>{E(d["headlines"][year][0])}</h2>' + \
-            five(d['headlines'][year][1:5]) + ''.join(f'<p>{E(p)}</p>' for p in d['analysis'][year]) + \
+        na = (NS.get(t) or {}).get('annual', {}).get(year) or {}
+        h2 = na.get('action_title') or d["headlines"][year][0]
+        hl = d['headlines'][year][:5] if na.get('action_title') else d['headlines'][year][1:5]
+        body_paras = na.get('paras') or d['analysis'][year]
+        secs += f'\n<div class="tai-padx tai-ch" id="{t}"><div class="tai-kicker">{NAME[t]}</div><h2>{E(h2)}</h2>' + \
+            five(hl) + ''.join(f'<p>{E(p)}</p>' for p in body_paras) + first_chart(t, C) + \
             metric_table(ms, yrs, with_change=len(yrs) > 1) + \
             (f'<p style="font-size:14px;margin-top:14px;">Latest edition: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026</a></p>' if year != '2026' else f'<p style="font-size:14px;margin-top:14px;">Full detail: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026 (quarterly)</a></p>') + '</div>'
     lead = [ds[t]['headlines'][year][0] for t in THEMES if t in ds]
@@ -297,7 +302,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
 def yoy_page(ds, published, published_h, outdir, intro):
     slug = 'state-of-ai-year-over-year'; url = BASE + slug + '/'; title = 'State of AI, Year over Year: 2024 vs 2025 vs 2026'
     csv_name = 'report-ai-data-state-of-ai-year-over-year.csv'
-    secs = ''; rows = []
+    secs = ''; rows = []; C = Counter()
     for t in THEMES:
         if t not in ds:
             continue
@@ -307,6 +312,7 @@ def yoy_page(ds, published, published_h, outdir, intro):
                      f'<td>{change(m["values"].get("2024") or {}, m["values"].get("2025") or {})}</td><td>{change(m["values"].get("2025") or {}, m["values"].get("2026") or {})}</td></tr>' for m in ms)
         secs += f'\n<div class="tai-padx" id="{t}"><h2>{NAME[t]}</h2><ul style="font-size:15px;line-height:1.6;color:#33333a;max-width:880px;padding-left:20px;margin:0 0 16px;">' + \
             ''.join(f'<li style="margin-bottom:6px;">{E(x)}</li>' for x in d.get('yoy_takeaways', [])) + '</ul>' + yoy_charts(ms) + \
+            ''.join(C.ex(e) for e in ((NS.get(t) or {}).get('comparison') or {}).get('exhibits', [])[:1]) + \
             f'<div class="tai-tablewrap" style="margin-top:16px;"><table class="tai-table"><tr><th>Measure</th><th>2024</th><th>2025</th><th>2026 (to date)</th><th>2024&rarr;25</th><th>2025&rarr;26</th></tr>{tr}</table></div>' + \
             f'<p style="font-size:14px;margin-top:12px;">Sources, dates and confidence for each value: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026</a>.</p></div>'
     body = CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + header(
@@ -350,6 +356,15 @@ def sidebar(sb):
     if not sb or not sb.get('body'):
         return ''
     return f'<div class="tai-side"><div class="t">{E(sb.get("title", ""))}</div><p>{E(sb["body"])}</p></div>'
+
+
+def first_chart(t, C):
+    n = NS.get(t) or {}
+    for c in n.get('chapters', []):
+        for e in c.get('exhibits', []):
+            if e.get('type') in ('line', 'bar', 'hbar', 'grouped', 'gantt'):
+                return C.ex(e)
+    return ''
 
 
 def theme_report_long(t, d, n, published, published_h, outdir):
@@ -436,7 +451,7 @@ if __name__ == '__main__':
     ds = load()
     intros = json.load(open(os.path.join(DATA, 'intros.json'))) if os.path.exists(os.path.join(DATA, 'intros.json')) else {}
     pages = []
-    ns = load_narr()
+    ns = load_narr(); NS.update(ns)
     for t in THEMES:
         if t not in ds:
             continue
