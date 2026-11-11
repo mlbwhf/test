@@ -9,6 +9,9 @@
 | A3 | 92 AI Safety & Governance | Stanford's 2024 count presented as "the past year" | Label as 2024 (Stanford AI Index 2025) |
 | A4 | 89 Model Benchmarks | Stat tile credits "95%+ SWE-bench Verified" to Stanford HAI | Raw 95–97% scores are from Vals.ai / BenchLM leaderboards (Sep 2026) |
 | A5 | 89, 322, 386, 413 | "SWE-bench 4.4% → 71.7%" pairs two benchmark versions (full SWE-bench 2023 vs SWE-bench Verified) and a pre-release o3 score | State each with its version; 71.7% was o3 preview on Verified, Dec 2024 (322 is being rebuilt anyway) |
+| A7 | 374 AI Government Spending | Korea's ₩10.1T given as the 2025 AI budget | ₩10.1T is the proposed 2026 budget (MLex reports ₩9.9T); 2025 was about ₩3.3T |
+| A8 | 954 AI in China | China's 69.7% patent share attributed to the 2026 AI Index | 69.7% is the 2023 figure; the 2026 AI Index gives 74.2% for 2024 |
+| A9 | 930 Geography of AI | "59% of top AI researchers work in the US" shown as 2024; $285.9B set against "$581B global" | 59% is MacroPolo's 2019 figure; $285.9B US private investment compares with $344.7B global private (82.9%); $581.7B is the broader corporate total |
 | A6 | 498 Dark Side hub | "82.6% of phishing emails AI-written", "49% of businesses hit by deepfakes" — already corrected on child pages | Use the child pages' corrected figures |
 
 ## B. Stale figures → next refresh of each page (What-changed block, not corrections)
