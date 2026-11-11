@@ -22,6 +22,7 @@ import charts
 BASE = 'https://report-ai.org/indexes/state-of-ai/'
 UP = 'https://report-ai.org/wp-content/uploads/2026/11/'
 YEARS = ['2024', '2025', '2026']
+ALL_YEARS = ['2022', '2023', '2024', '2025', '2026']
 
 NS = {}
 ON = ' class="on"'
@@ -372,6 +373,12 @@ def theme_report_long(t, d, n, published, published_h, outdir):
     slug = SLUG[t]; url = BASE + slug + '/'; title = f'State of AI {NAME[t]} 2026'
     csv_name = f'report-ai-data-{slug}-2026.csv'
     ms = d['metrics']; C = Counter()
+    TY = [y for y in ALL_YEARS if any((m['values'].get(y) or {}).get('value') for m in ms)]
+    if TY == YEARS:
+        cols = '<th>2024</th><th>2025</th><th>2026 (to date)</th>'
+    else:
+        cols = ''.join(f'<th>{y}{" (to date)" if y == "2026" else ""}</th>' for y in TY)
+    span = f'{TY[0]} to 2026'
     tiles = [m for m in ms if (m['values'].get('2026') or {}).get('value')][:4]
     tile_html = ''.join(f'<div class="tai-stat"{NOBR if i == len(tiles) - 1 else ""}><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">{E(m["values"]["2026"]["value"])}</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">{E(m["label"])}, {E(m["values"]["2026"].get("as_of", ""))} {chip(m["values"]["2026"].get("confidence"))}</div></div>' for i, m in enumerate(tiles))
     chs = n.get('chapters', [])
@@ -394,13 +401,14 @@ def theme_report_long(t, d, n, published, published_h, outdir):
         body += paras(ps[:k]) + ''.join(C.ex(e) for e in exs[:1]) + paras(ps[k:]) + ''.join(C.ex(e) for e in exs[1:]) + sidebar(c.get('sidebar')) + '</div>'
     cmp_ = n.get('comparison') or {}
     yoy = [m for m in ms if m.get('yoy')]
-    changed_rows = ''.join(f'<tr><td>{E(m["label"])}</td><td>{cell(m["values"].get("2024"), False)}</td><td>{cell(m["values"].get("2025"), False)}</td><td>{cell(m["values"].get("2026"), False)}</td><td>{change(m["values"].get("2025") or {}, m["values"].get("2026") or {})}</td></tr>' for m in yoy)
+    yoy = yoy if TY == YEARS else [m for m in ms if m.get('yoy') or m.get('long_run')]
+    changed_rows = ''.join(f'<tr><td>{E(m["label"])}</td>' + ''.join(f'<td>{cell(m["values"].get(y), False)}</td>' for y in TY) + f'<td>{change(m["values"].get("2025") or {}, m["values"].get("2026") or {})}</td></tr>' for m in yoy)
     body += (f'\n<div class="tai-padx tai-ch" id="comparison"><div class="tai-kicker">Comparison</div><h2>{E(cmp_.get("action_title", "How 2026 compares with 2024 and 2025"))}</h2>' +
              paras(cmp_.get('paras')) + ''.join(C.ex(e) for e in cmp_.get('exhibits', [])) +
-             (f'<h3>Year over year, every comparable measure</h3><div class="tai-tablewrap"><table class="tai-table"><tr><th>Measure</th><th>2024</th><th>2025</th><th>2026 (to date)</th><th>2025&rarr;26</th></tr>{changed_rows}</table></div>' if yoy else '') +
+             (f'<h3>Year over year, every comparable measure</h3><div class="tai-tablewrap"><table class="tai-table"><tr><th>Measure</th>{cols}<th>2025&rarr;26</th></tr>{changed_rows}</table></div>' if yoy else '') +
              '<ul style="font-size:15px;line-height:1.6;color:#33333a;max-width:880px;padding-left:20px;margin:16px 0 0;">' + ''.join(f'<li style="margin-bottom:6px;">{E(x)}</li>' for x in d.get('yoy_takeaways', [])) + '</ul>' +
              f'<p style="font-size:14px;margin-top:14px;">All eleven themes side by side: <a href="/indexes/state-of-ai/state-of-ai-year-over-year/">State of AI, year over year</a>.</p></div>')
-    body += f'\n<div class="tai-padx" id="numbers"><div class="tai-kicker">Data appendix</div><h2>The numbers, 2024 to 2026</h2><p>Every measure in this report with its value for each year, as-of date, source and confidence. Change compares 2025 with 2026 to date where both are numeric.</p>{metric_table(ms)}</div>'
+    body += f'\n<div class="tai-padx" id="numbers"><div class="tai-kicker">Data appendix</div><h2>The numbers, {span}</h2><p>Every measure in this report with its value for each year, as-of date, source and confidence. Change compares 2025 with 2026 to date where both are numeric.</p>{metric_table(ms, TY)}</div>'
     stop = d.get('stop_quoting') or []
     if stop:
         stop_html = ''.join(f'<tr><td>&ldquo;{E(x["claim"])}&rdquo;</td><td>{E(x["fact"])}{detail(x.get("link"))}</td></tr>' for x in stop)
@@ -416,8 +424,8 @@ def theme_report_long(t, d, n, published, published_h, outdir):
     gap_txt = ('Known gaps in this edition: ' + '; '.join(gaps) + '. ') if gaps else ''
     body += '<div id="about"></div>' + methodology(f'Exhibits plot only dated, sourced readings; lines are not interpolated between them, and values with different definitions are never placed on one axis. {gap_txt}') + related(SERIES_LINKS)
     full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + body + '\n</div>\n<!-- /wp:html -->'
-    full += ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', '2024/2026')
-    rows = [(t, m, y, m['values'][y]) for m in ms for y in YEARS if m['values'].get(y)]
+    full += ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', f'{TY[0]}/2026')
+    rows = [(t, m, y, m['values'][y]) for m in ms for y in TY if m['values'].get(y)]
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
     excerpt = (d.get('dek_2026', '') + ' ' + (n.get('at_a_glance') or d['headlines']['2026'])[0])[:300]
     return dict(slug=slug, title=f'{title} — Report AI', excerpt=excerpt, html=full, csv=csv_name, url=url, exhibits=C.n)
