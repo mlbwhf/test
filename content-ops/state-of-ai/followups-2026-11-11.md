@@ -29,3 +29,18 @@
 - Meta AI 2026 users: our own pages disagree (1.2B on 970 vs ~600M on 2589); Meta published no 2026 total.
 - Page 1266 "non-work share 68.9%" — source not traced.
 - Usage agent's question on the ChatGPT 1B date: settled 11 Nov — OpenAI's own ads post says "more than 1 billion weekly active users", dated 31 Aug 2026; the 31 Jul/1 Aug reports were a different claim ("our models reach"). OpenAI's 8 Sep figure covers "our products".
+
+## D. Drafts written to WordPress (11 Nov 2026)
+
+| Page | ID | CSV media | Status |
+|---|---|---|---|
+| State of AI Usage 2026 | 3521 | 3587 | draft, patched to stamped build (IDENTICAL 127,708 bytes) |
+| State of AI Spending 2026 | 3524 | 3594 | draft (IDENTICAL) |
+| State of AI Finance 2026 | 3526 | 3605 | draft (IDENTICAL) |
+
+Before publishing: replace the truncated excerpts on 3521/3524/3526 with the sentence-safe ones in
+`site-content/state-of-ai/pages.json`. Owner action: AIOSEO Organization/WebSite schema still says
+"The AI Index" (change in the AIOSEO UI; never via MCP).
+
+WAF note: a wp_alter_post whose search began with `"><div` and whose replacement inserted `<svg` was
+403'd; anchoring on `<div class="tai-ex-n">` instead passed.
