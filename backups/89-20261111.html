@@ -1,0 +1,128 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.rai-wrap{font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111114;max-width:1080px;margin:0 auto;padding:0 20px;line-height:1.55;}
+.rai-wrap *{box-sizing:border-box;}
+.rai-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#2545f5;font-weight:500;margin:0 0 6px;}
+.rai-crumb{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.05em;color:#9a9aa2;text-transform:uppercase;margin:0 0 20px;}
+.rai-crumb a{color:#9a9aa2;text-decoration:none;}
+.rai-crumb a:hover{color:#2545f5;}
+.rai-h1{font-weight:900;font-size:clamp(34px,6vw,58px);line-height:1.0;letter-spacing:-0.03em;margin:6px 0 18px;}
+.rai-intro{font-size:19px;line-height:1.55;color:#3a3a42;max-width:820px;margin:0 0 10px;}
+.rai-updated{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9a9aa2;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 26px;}
+.rai-updated strong{color:#111114;font-weight:600;}
+.rai-wrap a{color:#2545f5;}
+.rai-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#e6e6ea;border:1px solid #e6e6ea;margin:30px 0;}
+.rai-stat{background:#fff;padding:22px 18px;}
+.rai-stat .n{font-weight:900;font-size:clamp(26px,3.6vw,40px);line-height:1;letter-spacing:-0.02em;}
+.rai-stat .n span{color:#2545f5;}
+.rai-stat .l{font-size:12.5px;line-height:1.35;color:#55555e;margin-top:9px;}
+.rai-stat .s{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#9a9aa2;margin-top:6px;}
+.rai-wrap h2{font-weight:900;font-size:clamp(22px,3vw,30px);letter-spacing:-0.02em;margin:52px 0 8px;padding-top:18px;border-top:2px solid #111114;}
+.rai-wrap h3{font-weight:800;font-size:19px;margin:26px 0 6px;letter-spacing:-0.01em;}
+.rai-wrap p{font-size:16px;line-height:1.65;}
+.rai-callout{background:#f6f6f9;border-left:3px solid #2545f5;border-radius:3px;padding:20px 24px;margin:26px 0;}
+.rai-callout .rai-eyebrow{margin-bottom:10px;}
+.rai-callout ul{margin:0;padding-left:20px;}
+.rai-callout li{font-size:15px;line-height:1.6;margin:6px 0;}
+.rai-tbl{overflow-x:auto;margin:22px 0 12px;}
+.rai-tbl table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px;}
+.rai-tbl thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.05em;text-transform:uppercase;color:#111114;font-weight:600;padding:11px 13px;border-bottom:2px solid #111114;background:#fafafb;}
+.rai-tbl tbody td{padding:11px 13px;border-bottom:1px solid #ececef;vertical-align:top;}
+.rai-tbl tbody tr:hover{background:#fafafb;}
+.rai-quote{font-size:20px;line-height:1.5;font-weight:600;letter-spacing:-0.01em;color:#111114;border-left:4px solid #2545f5;padding:6px 0 6px 22px;margin:30px 0;}
+.rai-srcnote{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9a9aa2;margin:6px 0 0;}
+.rai-related{border-left:3px solid #2545f5;background:#f6f6f9;margin-top:44px;padding:22px 24px;border-radius:3px;}
+.rai-related h3{margin-top:0;}
+.rai-src{font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3a3a42;}
+.rai-src a{word-break:break-word;}
+.rai-cite{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;color:#55555e;background:#fafafb;border:1px solid #ececef;border-radius:3px;padding:14px 16px;margin:26px 0;}
+@media(max-width:820px){.rai-stats{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.rai-stats{grid-template-columns:1fr;}}
+</style>
+
+<div class="rai-wrap">
+  <p class="rai-eyebrow">Technical Performance · Index</p>
+  <p class="rai-crumb"><a href="/">Home</a> / <a href="/indexes/">Indexes</a> / <a href="/indexes/technical-benchmarks/">Technical Performance</a> / Model Benchmarks 2026</p>
+  <h1 class="rai-h1">AI Model Benchmarks 2026</h1>
+  <p class="rai-intro">AI capability is improving faster than benchmarks can keep up &mdash; SWE-bench, MMLU, GPQA and the frontier-model race, in primary-sourced numbers. Every figure is linked to its source and dated.</p>
+  <p class="rai-updated">By <strong>Report AI</strong> · Updated <strong>July 2026</strong> · 7 min read · 9 sourced figures</p>
+
+  <div class="rai-stats">
+    <div class="rai-stat"><div class="n">95<span>%+</span></div><div class="l">SWE-bench Verified, top model 2026</div><div class="s">Stanford HAI</div></div>
+    <div class="rai-stat"><div class="n">92<span>%+</span></div><div class="l">Frontier MMLU (saturated)</div><div class="s">Stanford HAI</div></div>
+    <div class="rai-stat"><div class="n">+67<span>pp</span></div><div class="l">SWE-bench one-year gain, 2023&rarr;24</div><div class="s">Stanford HAI</div></div>
+    <div class="rai-stat"><div class="n">2.7<span>%</span></div><div class="l">US lead over China, Mar 2026</div><div class="s">Stanford HAI</div></div>
+  </div>
+
+  <div class="rai-callout">
+    <p class="rai-eyebrow">Key takeaways</p>
+    <ul>
+      <li>On SWE-bench, models went from solving <strong>4.4% of coding tasks in 2023 to 71.7% in 2024</strong> &mdash; a +67.3 pp jump in one year. <em>(Stanford HAI)</em></li>
+      <li><strong>MMLU is now saturated above 92%</strong>, near its ~95% ceiling &mdash; pushing labs to harder tests like HLE and FrontierMath. <em>(Stanford HAI)</em></li>
+      <li>The US-China frontier gap is razor-thin: the top U.S. model leads by just <strong>2.7%</strong> as of March 2026. <em>(Stanford HAI)</em></li>
+      <li>The closed-weight lead on Chatbot Arena narrowed from <strong>8.0% (Jan 2024) to 1.7% (Feb 2025)</strong>.</li>
+    </ul>
+  </div>
+
+  <h2 id="summary">Capability is outpacing the benchmarks</h2>
+  <p><strong>AI model capability is improving faster than benchmarks can keep up.</strong> On SWE-bench, models went from solving <strong>4.4% of coding tasks in 2023 to 71.7% in 2024</strong> (<a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noreferrer noopener">Stanford HAI</a>). MMLU is now effectively saturated above 92%, and the gap between the top U.S. and Chinese models has stayed in the single digits all year (<a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">Stanford HAI 2026</a>). In a single year (2023&ndash;2024), scores rose 18.8, 48.9, and 67.3 percentage points on MMMU, GPQA, and SWE-bench respectively.</p>
+  <p>MMLU launched in 2020 near 32% frontier accuracy; by Q1 2026 every frontier system scores above 92%, near the benchmark&#8217;s ~95% ceiling. As classic benchmarks saturate, the open question is no longer whether models can pass the test, but which test is hard enough to still discriminate between them.</p>
+  <h3>Deep dive: why benchmarks keep changing</h3>
+  <p>As classic benchmarks saturate, frontier labs have moved to harder tests. The benchmarks model cards actually report in 2026 include <strong>Humanity&#8217;s Last Exam (HLE), FrontierMath, ARC-AGI-2, GPQA Diamond, SWE-bench Verified, AIME 2025, and τ-bench</strong>. Even these are falling quickly &mdash; frontier models gained roughly <strong>30 percentage points on HLE in a single year</strong>, a test explicitly designed to be hard for AI (<a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">Stanford HAI 2026</a>).</p>
+  <div class="rai-tbl">
+    <table>
+      <thead><tr><th>Benchmark</th><th>One-year gain (pp)</th></tr></thead>
+      <tbody>
+        <tr><td>SWE-bench</td><td>+67.3</td></tr>
+        <tr><td>GPQA</td><td>+48.9</td></tr>
+        <tr><td>MMMU</td><td>+18.8</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="rai-srcnote">One-year benchmark gains, 2023&rarr;2024 · Source: Stanford HAI · percentage points</p>
+  <div class="rai-quote">&#8220;As the old benchmarks saturate, the frontier has become a race to build a test that AI can&#8217;t yet pass.&#8221;</div>
+
+  <h2 id="race">The competitive landscape</h2>
+  <p>The frontier is close and contested. In February 2025, China&#8217;s DeepSeek-R1 briefly matched the top U.S. model; since then the lead has changed hands repeatedly while staying in the single digits. As of March 2026 the top U.S. model leads by <strong>2.7%</strong>. The open-vs-closed gap has also compressed &mdash; from 8.0% in January 2024 to 1.7% by February 2025 on the Chatbot Arena Leaderboard (<a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">Stanford HAI 2026</a>).</p>
+
+  <h2 id="numbers">The numbers in full</h2>
+  <div class="rai-tbl">
+    <table>
+      <thead><tr><th>Metric</th><th>Figure</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>SWE-bench (coding) 2023 &rarr; 2024</td><td>4.4% &rarr; 71.7%</td><td>Stanford HAI</td></tr>
+        <tr><td>GPQA one-year gain</td><td>+48.9 pp</td><td>Stanford HAI</td></tr>
+        <tr><td>MMMU one-year gain</td><td>+18.8 pp</td><td>Stanford HAI</td></tr>
+        <tr><td>Top US lead over China (Mar 2026)</td><td>2.7%</td><td>Stanford HAI 2026</td></tr>
+        <tr><td>Closed&ndash;open gap (Jan 2024)</td><td>8.0%</td><td>Stanford HAI 2026</td></tr>
+        <tr><td>Closed&ndash;open gap (Feb 2025)</td><td>1.7%</td><td>Stanford HAI 2026</td></tr>
+        <tr><td>HLE one-year gain</td><td>+30 pp</td><td>Stanford HAI 2026</td></tr>
+        <tr><td>Inference cost decline (late &#8217;22&ndash;late &#8217;24)</td><td>~280×</td><td>Stanford HAI 2025</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="rai-srcnote">Figures reflect each Stanford HAI AI Index release; one-year benchmark gains are for 2023&ndash;2024.</p>
+<div id="download-data" style="margin:20px 0 28px;padding:14px 18px;border:1px solid #e6e6ea;border-left:3px solid #2545f5;border-radius:8px;background:#fafafb;font-size:14.5px;line-height:1.55;color:#33333a;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;font-weight:600;margin-bottom:4px;">Download the data</div><a href="/wp-content/uploads/2026/10/report-ai-data-ai-models-benchmarks-statistics-2026.csv" download style="color:#2545f5;font-weight:600;">Both tables on this page as CSV</a> &middot; 30 data cells, one row per cell, with the same sources, dates and confidence ratings shown here. Please cite <em>Report AI</em> and link to this page. <a href="/about/editorial-standards/">How we source and rate figures</a>.</div>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Dataset","name":"AI Model Benchmarks 2026: SWE-bench, MMLU & Frontier Models (data)","description":"Every data table published on the Report AI page “AI Model Benchmarks 2026: SWE-bench, MMLU & Frontier Models”: 2 tables, 30 data cells, each figure with the source, date and confidence rating shown on the page.","url":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/","creator":{"@type":"Organization","name":"Report AI","url":"https://report-ai.org"},"publisher":{"@id":"https://report-ai.org/#organization"},"isAccessibleForFree":true,"dateModified":"2026-07-24","distribution":[{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"https://report-ai.org/wp-content/uploads/2026/10/report-ai-data-ai-models-benchmarks-statistics-2026.csv"}]}]}</script>
+
+  <h2 id="faq">Frequently asked</h2>
+  <p><strong>What is the best AI benchmark in 2026?</strong><br>There is no single benchmark. As MMLU and similar tests saturate above 92%, frontier labs now report on harder ones &mdash; Humanity&#8217;s Last Exam (HLE), FrontierMath, ARC-AGI-2, GPQA Diamond, and SWE-bench Verified, among others. <em>(Stanford HAI)</em></p>
+  <p><strong>How fast is AI improving on benchmarks?</strong><br>Very fast. In 2023&ndash;2024 alone, SWE-bench jumped from <strong>4.4% to 71.7%</strong> (+67.3 pp), and frontier models have since gained about 30 points in a year on Humanity&#8217;s Last Exam. <em>(Stanford HAI)</em></p>
+  <p><strong>Are US or Chinese AI models better?</strong><br>They are very close. The lead has changed hands repeatedly since early 2025; as of March 2026 the top U.S. model leads China&#8217;s best by about <strong>2.7%</strong>, per Stanford HAI. <em>(Stanford HAI)</em></p>
+
+  <div class="rai-related">
+    <h3>Related</h3>
+    <p><a href="/indexes/technical-benchmarks/test-time-compute-reasoning-2026/">Test-Time Compute &amp; Reasoning Models 2026</a> · <a href="/indexes/technical-benchmarks/ai-infrastructure-compute-statistics-2026/">AI Infrastructure 2026</a> · <a href="/indexes/compare/">Compare year over year</a> · <a href="/glossary/large-language-model/">Large Language Model</a></p>
+  </div>
+
+  <h2>Primary sources</h2>
+  <div class="rai-src">
+    &bull; Stanford HAI &mdash; <em>AI Index 2025</em> (SWE-bench · one-year gains · inference cost) &mdash; <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noreferrer noopener">hai.stanford.edu</a><br>
+    &bull; Stanford HAI &mdash; <em>AI Index 2026, Technical Performance</em> (MMLU saturation · US-China gap · HLE) &mdash; <a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" target="_blank" rel="noreferrer noopener">hai.stanford.edu</a>
+  </div>
+
+  <div class="rai-cite">Report AI (2026). <em>AI Model Benchmarks 2026: SWE-bench, MMLU &amp; Frontier Models.</em> Retrieved July 2026, from report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/</div>
+</div>
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","@id":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://report-ai.org/"},{"@type":"ListItem","position":2,"name":"Indexes","item":"https://report-ai.org/indexes/"},{"@type":"ListItem","position":3,"name":"Technical Performance","item":"https://report-ai.org/indexes/technical-benchmarks/"},{"@type":"ListItem","position":4,"name":"AI Model Benchmarks 2026"}]},{"@type":"Article","@id":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/#article","headline":"AI Model Benchmarks 2026: SWE-bench, MMLU & Frontier Models","description":"Sourced 2026 AI model benchmark statistics: SWE-bench rose from 4.4% to 71.7%, MMLU is saturated above 92%, and the top US model leads China by 2.7%.","datePublished":"2026-06-05","dateModified":"2026-07-24","author":{"@type":"Organization","name":"Report AI","url":"https://report-ai.org"},"publisher":{"@id":"https://report-ai.org/#organization"},"mainEntityOfPage":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"},{"@type":"FAQPage","@id":"https://report-ai.org/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/#faq","mainEntity":[{"@type":"Question","name":"What is the best AI benchmark in 2026?","acceptedAnswer":{"@type":"Answer","text":"There is no single benchmark. As MMLU saturates above 92%, frontier labs now report on harder tests — Humanity's Last Exam (HLE), FrontierMath, ARC-AGI-2, GPQA Diamond, and SWE-bench Verified."}},{"@type":"Question","name":"How fast is AI improving on benchmarks?","acceptedAnswer":{"@type":"Answer","text":"Very fast. In 2023-2024 alone, SWE-bench jumped from 4.4% to 71.7%, and frontier models have since gained about 30 points in a year on Humanity's Last Exam."}},{"@type":"Question","name":"Are US or Chinese AI models better?","acceptedAnswer":{"@type":"Answer","text":"They are very close. As of March 2026 the top US model leads China's best by about 2.7%, per Stanford HAI, after the lead changed hands repeatedly since early 2025."}}]}]}</script>
