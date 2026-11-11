@@ -43,10 +43,15 @@
 .tai-toc li{margin-bottom:6px;break-inside:avoid;}
 .tai-dl dt{font-weight:700;font-size:14.5px;margin-top:12px;}.tai-dl dd{margin:2px 0 0;font-size:14.5px;color:#55555e;max-width:860px;}
 @media(max-width:900px){.tai-toc{columns:1;}}
-.tai-ex{margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex{position:relative;margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex-stamp{position:absolute;top:10px;right:0;width:76px;height:76px;transform:rotate(-8deg);opacity:.9;}
+.tai-ex-t,.tai-ex-s{padding-right:90px;}
+.tai-ex-wm{display:block;text-align:right;margin-top:6px;font-family:'Archivo',sans-serif;font-weight:900;font-size:15px;letter-spacing:-.02em;color:#111114;}.tai-ex-wm b{color:#2545f5;font-weight:900;}.tai-ex-wm i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11.5px;color:#77777f;letter-spacing:0;margin-left:6px;}
+@media(max-width:600px){.tai-ex-stamp{width:56px;height:56px;}.tai-ex-t,.tai-ex-s{padding-right:64px;}}
 .tai-ex-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2545f5;margin-bottom:6px;}
 .tai-ex-t{font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-0.01em;color:#111114;margin-bottom:4px;}
 .tai-ex-s{font-size:13.5px;color:#6e6e76;margin-bottom:14px;}
+.tai-mm-t{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#33333a;margin:12px 0 2px;}.tai-mm-t span{font-weight:400;color:#77777f;}
 .tai-ex-svg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .tai-ex-svg text{font-family:'IBM Plex Mono',monospace;}
 .tai-ex-src{font-size:12px;line-height:1.5;color:#77777f;margin-top:10px;border-top:1px solid #e6e6ea;padding-top:8px;}
@@ -54,7 +59,7 @@
 @media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
 </style>
 <div class="tai-wrap">
-<div class="tai-padx" style="padding:48px 36px 30px;">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs><path id="rai-ring" d="M18,80 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/><symbol id="rai-stamp" viewBox="0 0 160 160"><g fill="none" stroke="#2545f5"><circle cx="80" cy="80" r="76" stroke-width="3.2"/><circle cx="80" cy="80" r="72" stroke-width=".9"/><circle cx="80" cy="80" r="50" stroke-width="1.6"/></g><g fill="#2545f5"><text font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600"><textPath href="#rai-ring" textLength="386" lengthAdjust="spacing">SOURCED · DATED · CONFIDENCE-RATED · REPORT-AI.ORG ·</textPath></text><text x="80" y="75" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="17">REPORT</text><text x="80" y="104" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="32">AI</text><text x="80" y="117" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="600" font-size="6.6" letter-spacing="1">BY THE NUMBERS</text></g><path d="M56 83H104" stroke="#2545f5" stroke-width="1.2"/></symbol></defs></svg><div class="tai-padx" style="padding:48px 36px 30px;">
 <div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/" style="color:#9a9aa2;text-decoration:none;">Indexes</a> <span style="color:#d3d3da;">/</span> <a href="/indexes/state-of-ai/" style="color:#9a9aa2;text-decoration:none;">State of AI</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">Work</span></div>
 <div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Report AI &middot; State of AI series &middot; Q4 2026 edition &middot; Quarterly</div>
 <h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">State of AI Work 2026</h1>

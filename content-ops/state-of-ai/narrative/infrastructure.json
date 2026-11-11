@@ -1,0 +1,366 @@
+{
+  "theme": "infrastructure",
+  "subtitle": "Chips, data-centre capacity, electricity, water, power contracts and GPU prices, 2024 to November 2026",
+  "at_a_glance": [
+    "Nvidia reported data-centre revenue of $89.0 billion for the quarter ended 26 July 2026, up 117% year on year, taking the first half of its fiscal 2027 to $164.2 billion against $193.7 billion for the whole of fiscal 2026.",
+    "Broadcom's AI semiconductor revenue reached $35.9 billion in the first three quarters of its fiscal 2026 and AMD's Data Center segment $21.0 billion in the first three quarters of calendar 2026, both already above their full-year 2025 totals (Report AI sums of company-reported quarters).",
+    "OpenAI said in April 2026 that it had secured 10 gigawatts of US data-centre capacity, about five times the 1.9 gigawatts of compute it said it operated at the end of 2025; Epoch AI estimated its flagship Abilene campus was running about 421 megawatts of IT power in July 2026.",
+    "Gartner forecast on 10 June 2026 that global data-centre electricity consumption will reach 565 terawatt-hours in 2026, up 26% from 447 terawatt-hours in 2025, with AI-optimised servers using about 31% of the total.",
+    "PJM's capacity auction held in July 2026 cleared at its $325 per megawatt-day cap for the third consecutive auction and still procured about 6,831 megawatts less than its reliability requirement, with data centres the main source of new load.",
+    "Silicon Data's H100 rental index read $2.88 per GPU-hour on 24 October 2026, about 44% above its $2.00 low on 9 December 2025, reversing two years of falling GPU rental prices.",
+    "Google measured 0.24 watt-hours for a median Gemini text prompt in August 2025, and a 2026 Microsoft Research study puts a typical chatbot response at a median 0.31 watt-hours and a long reasoning response at 3.91 watt-hours."
+  ],
+  "chapters": [
+    {
+      "kicker": "1. Chips",
+      "action_title": "Nvidia earned $164 billion from data centres in six months of 2026, but custom accelerators are now growing faster from a smaller base",
+      "paras": [
+        "The AI build-out is, first, a semiconductor purchase. Nvidia's data-centre revenue was $115.2 billion in the fiscal year ended January 2025, $193.7 billion in the year ended January 2026, and $164.2 billion in just the first six months of fiscal 2027, February to July 2026. The latest quarter, to 26 July, was $89.0 billion, up 117% on the year and 18% on the quarter before. Data centres now account for more than nine-tenths of Nvidia's revenue, and the company reported a 75% gross margin in that quarter. The company guided total revenue for the quarter to October 2026 to $108 billion, plus or minus 2%, without any data-centre compute sales to mainland China. Measured by money, there has been no slowdown in 2026: each quarter of the year has been larger than the last, and the sequential increase has stayed close to a fifth.",
+        "What Nvidia sells has changed as much as how much. In the quarter to April 2026, data-centre compute was $60.4 billion, up 77%, while networking was $14.8 billion, up 199%; in the quarter to January 2026 networking had already risen 263%. The company is increasingly selling whole racks and the fabric that ties tens of thousands of GPUs together, not individual chips. Its new disclosure also splits data-centre revenue into hyperscale customers ($38 billion in the April quarter) and a second group covering AI clouds, industrial and enterprise buyers ($37 billion). Roughly half of the revenue therefore comes from outside the largest cloud providers, including neoclouds and sovereign buyers. On site page 968 we record Nvidia's sovereign-AI revenue at more than $30 billion in fiscal 2026, more than three times the prior year.",
+        "The faster growth rates sit with custom silicon. Broadcom, which designs accelerators (XPUs) for individual cloud customers and supplies AI networking, reported AI semiconductor revenue of $12.2 billion in fiscal 2024 and about $20 billion in fiscal 2025, then $8.4 billion, $10.8 billion and $16.7 billion in the first three quarters of fiscal 2026: $35.9 billion in total, with the latest quarter up 221%. XPUs were 73% of that quarter's AI revenue. Broadcom guides to about $58 billion for fiscal 2026 and has given outlooks of about $115 billion for fiscal 2027 and $230 billion for fiscal 2028; these are company forecasts, not results. TrendForce's January 2026 forecast puts custom-ASIC systems at 27.8% of 2026 AI-server shipments, growing 44.6% against 16.1% for GPU-based systems.",
+        "AMD is the merchant alternative. Its Data Center segment, which includes EPYC server CPUs as well as Instinct GPUs, grew from $12.6 billion in 2024 to $16.6 billion in 2025, and reached $21.0 billion in the first nine months of 2026. Third-quarter revenue of $8.5 billion was up 97% and made up 64% of the company's sales, helped by the launch of the MI450 series. The OpenAI agreement for 6 gigawatts of AMD GPUs, with a first gigawatt from the second half of 2026, is the main test of whether a second GPU supplier can be deployed at gigawatt scale. AMD's growth in 2025 was held back partly by export limits on its China-specific MI308; Nvidia took a $4.5 billion charge on H20 inventory for the same reason in 2025.",
+        "Market share is the figure most often quoted and least well measured. Published estimates of Nvidia's share of AI-accelerator revenue in 2026 range from about 70–75% (Bloomberg Intelligence, a forecast through 2030) to about 85% (Morgan Stanley, March 2026), with a widely repeated 92% for 2025 traceable only to secondary sites. The spread comes from whether in-house chips such as Google's TPUs are counted, and whether shares are measured by revenue or units. We mark the share CONTESTED. Two other caveats apply to all vendor revenue. Fiscal years do not align, so Exhibit 1.2 compares six-month periods for 2026. And some purchases are financed by the seller: Nvidia's guarantee of up to $105 billion of debt for the Ohio Stargate site, cut from about $250 billion in August 2026, is the largest example."
+      ],
+      "exhibits": [
+        {
+          "title": "Nvidia's quarterly data-centre revenue has risen in every quarter since late 2024 and reached $89 billion in the quarter to July 2026",
+          "subtitle": "Nvidia data-centre segment revenue by fiscal quarter, labelled by quarter-end month, $ billion, Oct 2024–Jul 2026",
+          "type": "line",
+          "unit": "$B",
+          "series": [
+            {"name": "Nvidia data-centre revenue", "points": [["Oct 2024", 30.8], ["Jan 2025", 35.6], ["Apr 2025", 39.2], ["Jul 2025", 41.0], ["Oct 2025", 51.2], ["Jan 2026", 62.3], ["Apr 2026", 75.2], ["Jul 2026", 89.0]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: Nvidia quarterly results (Q4 FY2025, Q3 FY2026, Q4 FY2026, Q1 and Q2 FY2027); Report AI analysis",
+          "notes": "Reported values: Jan 2025 $35.6B (Q4 FY2025 release), Oct 2025 $51.2B (Q3 FY2026, site page 968), Jan 2026 $62.3B, Apr 2026 $75.2B, Jul 2026 $89.0B. DERIVED from reported year-on-year growth rates: Oct 2024 = 51.2 / 1.66 = 30.8; Apr 2025 = 75.2 / 1.92 = 39.2; Jul 2025 = 89.0 / 2.17 = 41.0. Fiscal quarters end in late January, April, July and October. From Q1 FY2027 Nvidia reports 'Data Center' and 'Edge Computing' platforms; the series is the data-centre line in each release. Quarter to October 2026 not yet reported at 11 Nov 2026.",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "All three AI chip vendors earned more from data centres in the first half of 2026 than in the whole of 2024",
+          "subtitle": "Data-centre or AI revenue by vendor: full fiscal year 2024 and 2025, and the first six months of 2026, $ billion",
+          "type": "grouped",
+          "unit": "$B",
+          "series": [
+            {"name": "Nvidia data centre", "points": [["2024 (FY)", 115.2], ["2025 (FY)", 193.7], ["H1 2026", 164.2]]},
+            {"name": "Broadcom AI semis", "points": [["2024 (FY)", 12.2], ["2025 (FY)", 20.0], ["H1 2026", 27.5]]},
+            {"name": "AMD Data Center", "points": [["2024 (FY)", 12.6], ["2025 (FY)", 16.6], ["H1 2026", 12.5]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: Nvidia, Broadcom and AMD results releases; Report AI analysis",
+          "notes": "Periods differ. Nvidia: FY2025 (Feb 2024–Jan 2025), FY2026 (Feb 2025–Jan 2026), H1 2026 = Q1+Q2 FY2027 (Feb–Jul 2026). Broadcom: FY2024 and FY2025 end early November; H1 2026 = Q2+Q3 FY2026 (Feb–Aug 2026) = 10.8 + 16.7. AMD: calendar years; H1 2026 = Q1+Q2 2026 = 5.8 + 6.7. All 2026 values DERIVED sums of reported quarters. Segments are not like-for-like: AMD's includes server CPUs; Broadcom's is AI chips and networking only; Nvidia's includes networking. AMD's Q3 2026 ($8.5B) and Broadcom's Q1 FY2026 ($8.4B) fall outside the six-month window; nine-month totals are $21.0B and $35.9B.",
+          "confidence": "DERIVED"
+        }
+      ],
+      "sidebar": {
+        "title": "How we compare chip vendors' years",
+        "body": "Nvidia's fiscal year ends in late January, Broadcom's in early November and AMD's in December. We treat Nvidia's fiscal 2025 as calendar 2024 and its fiscal 2026 as calendar 2025, which shifts its figures about one month later than AMD's. For 2026, where no vendor has reported a full year, we compare six-month windows rather than year-to-date totals, because Nvidia has reported two quarters of fiscal 2027 and AMD three of calendar 2026. Vendor revenue is also not the same as chips installed: products are booked when shipped, and many systems are energised months later. Segment definitions differ too, so these figures show direction and scale, not market share."
+      }
+    },
+    {
+      "kicker": "2. Supply and prices",
+      "action_title": "Compute is scarcer in late 2026 than a year earlier: H100 rental prices are up about 44% from their December 2025 low even as packaging capacity has more than tripled since 2024",
+      "paras": [
+        "The binding constraint on accelerator supply has been packaging, not chip design. TSMC's CoWoS process, which bonds a GPU to stacks of high-bandwidth memory (HBM), had capacity of about 35,000 wafers a month at the end of 2024 and about 75,000–80,000 at the end of 2025, according to TrendForce and industry sources. TSMC's target for the end of 2026 is about 120,000–130,000, and outsourced assembly partners could add 50,000–60,000 more. TrendForce expects the gap between CoWoS demand and supply to narrow from about 20% to about 10% by the end of 2026, and in October 2026 reported that TSMC was considering raising CoWoS prices by about a fifth. HBM is the second chokepoint: HBM3E is expected to be about two-thirds of 2026 HBM shipments as HBM4 ramps for Nvidia's Rubin platform. More packaging has not yet meant surplus.",
+        "The rental price of a GPU-hour is the most direct reading of scarcity, and it has turned. H100s rented for about $8 an hour during the 2023 shortage and could be had for about $2 on resale markets by October 2024. Silicon Data's daily H100 index, launched in May 2025, read about $2.36 in June 2025, $2.22–2.26 in August and $2.00 on 9 December 2025. It then rose: $2.20 by 6 January 2026, $2.88 on 24 October and $2.97 on 5 November 2026. SemiAnalysis's one-year contract index shows the same turn, from about $1.70 in October 2025 to about $2.35 in March 2026. A three-year-old GPU that was being written down in 2025 is earning more per hour in late 2026.",
+        "The reason is inference. As reasoning models and agents consume more tokens per task, older GPUs that are uneconomic for frontier training remain useful for serving models, and demand for them has outrun the release of capacity from expiring 2023 contracts. List prices confirm the direction: Nebius raised its on-demand H100 rate from $3.85 to $4.50 an hour on 1 October 2026, and the median on-demand price across providers tracked by Uvik was $4.20 in October. Hyperscaler list prices remain far higher, about $10–12 per GPU-hour at Oracle and Azure, because they bundle storage, networking and availability guarantees. The token prices that end users pay have fallen in the same period; the cost of the underlying hour has not. For buyers of inference, rising hourly costs and falling per-token prices together imply that providers are absorbing the difference through better utilisation and cheaper models.",
+        "Compute is becoming a traded commodity. CME Group and Silicon Data announced H100 and B200 rental-index futures on 11 August 2026 for an October start; regulatory review has pushed the launch to around January 2027. ICE and Ornn have announced similar contracts. A price that lenders and buyers can hedge matters because GPUs now back debt: lenders value the collateral on what an hour of compute will earn over the loan's life. Trackers still disagree, sometimes widely, because they sample different providers, contract lengths and service levels, so any single index level should be read as one market's price, not the price. The direction across trackers is consistent even where levels differ: every series we found rose between late 2025 and late 2026. For lenders, a reversal matters more than the level, because loans written at today's hourly rates assume those rates hold."
+      ],
+      "exhibits": [
+        {
+          "title": "H100 rental prices bottomed at $2.00 an hour in December 2025 and have since risen by about 44%",
+          "subtitle": "Silicon Data H100 Rental Index (SDH100RT, neocloud), $ per GPU-hour, selected dated readings, Jun 2025–Nov 2026",
+          "type": "line",
+          "unit": "$ per GPU-hour",
+          "series": [
+            {"name": "H100 rental index", "points": [["Jun 2025", 2.36], ["9 Dec 2025", 2.00], ["6 Jan 2026", 2.20], ["24 Oct 2026", 2.88], ["5 Nov 2026", 2.97]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: Silicon Data (via Silicon Data blog, Introl and FourWeekMBA); Report AI analysis",
+          "notes": "Only dated readings found in secondary reporting are plotted; the line between points is not the daily path. Jun 2025 ($2.36) from Introl; 9 Dec 2025 ($2.00) and 6 Jan 2026 ($2.20) from Silicon Data's own blog post on the January rise; 24 Oct 2026 ($2.88) and 5 Nov 2026 ($2.97) from FourWeekMBA citing the index page. Silicon Data revised its index methodology after launch, so the June 2025 reading may not be strictly comparable. The 2024 ~$2 resale price (Latent Space) is a different measure and is not plotted. Rise since the low: 2.88 / 2.00 − 1 = 44% (DERIVED). silicondata.com could not be opened from our environment.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Three prices for one GPU",
+        "body": "An H100 has at least three prices. The index price, such as Silicon Data's SDH100RT, samples what neocloud and marketplace providers charge for on-demand capacity and was about $2.88 per GPU-hour in late October 2026. The list price is what a provider advertises for on-demand use without negotiation; neocloud lists cluster around $4 and hyperscaler lists around $10–12. The contract price is what a buyer pays for a reserved block over a year or more, usually below on-demand; SemiAnalysis's one-year index was about $2.35 in March 2026. Quotes that mix these routinely differ by a factor of three or more."
+      }
+    },
+    {
+      "kicker": "3. Capacity",
+      "action_title": "Announced gigawatts have run far ahead of energised megawatts: OpenAI has contracted about five times the compute it operated at the end of 2025",
+      "paras": [
+        "OpenAI publishes the clearest company series for compute actually available. Its chief financial officer said on 18 January 2026 that the company had about 0.2 gigawatts in 2023, 0.6 gigawatts in 2024 and about 1.9 gigawatts at the end of 2025. Three months later, in late April 2026, OpenAI said it had secured 10 gigawatts of US capacity, reaching a goal it had set for 2029, with about 3 gigawatts contracted in the previous 90 days, including 2 gigawatts from Amazon. It has since described a plan for 30 gigawatts by 2030, and Oracle has reported leasing a further 4.5 gigawatts for its OpenAI commitments. The 10-gigawatt figure counts contracts, not power flowing to servers. No company has published a dated figure for the gigawatts it is actually operating in 2026.",
+        "The flagship site shows how long contracts take to become capacity. Stargate's first campus, in Abilene, Texas, is designed for about 1.2 gigawatts. Epoch AI's satellite tracker estimated it at about 421 megawatts of IT power in late July 2026, equivalent to roughly 509,000 H100s, with four of eight buildings operating by mid-2026 and the remaining four expected around November. A planned 600-megawatt expansion was dropped in March 2026. Epoch's April review found the other US Stargate sites mostly targeting completion around the fourth quarter of 2028. In Ohio, the Department of Energy's 10-gigawatt PORTS campus, costed at about $500 billion, has a first phase of about 800 megawatts due in early 2028. These are among the most advanced projects in the industry, and each runs years behind its announcement.",
+        "The same gap appears elsewhere. Elon Musk said on 17 January 2026 that xAI's Colossus 2 in Memphis was the world's first gigawatt training cluster; satellite analysis of its cooling plant suggested about 350 megawatts at the time. Meta said in July 2025 that its 1-gigawatt Prometheus cluster in Ohio would come online in 2026, and we found no confirmation that it is fully live. Its Hyperion campus in Louisiana targets 2 gigawatts by 2030 and up to 5 gigawatts later, and its 960-megawatt El Paso campus is due in 2028. Outside the US, the first 200-megawatt phase of Stargate UAE is due in 2026. Gartner puts global data-centre power demand at 104 gigawatts in 2025 and forecasts 132 gigawatts for 2026, so a single campus of one to ten gigawatts is a meaningful share of world capacity.",
+        "Commercial-market data show that construction has accelerated without easing scarcity. CBRE counted 3,872 megawatts under construction in North America's primary data-centre markets in the first half of 2024, 5,243 megawatts in the first half of 2025 and a record 7,481 megawatts in the first half of 2026. Vacancy fell over the same period from 2.8% to 1.6% to 1.4%, and the share of construction already preleased was about 80%, 74.3% and 80.4%. Prices for deployments of 10 megawatts or more rose 9.7% in the first half of 2026. Atlanta overtook Northern Virginia as the largest construction market. JLL reports 66 gigawatts under construction in North America on a much broader definition; the two figures cannot be compared. Bisnow reports record absorption of about 25 gigawatts in the first half of 2026 on JLL's basis. Whatever the definition, new space is being taken as fast as it is finished.",
+        "Who owns the capacity is changing as fast as how much there is. Meta has moved two campuses into joint ventures it does not consolidate: Hyperion, about $27 billion with Blue Owl in October 2025, and El Paso, $14.3 billion with BlackRock-managed funds in July 2026, both with Meta holding 20% and leasing back the site. Nikkei counts about $1.65 trillion of off-balance-sheet obligations at five hyperscalers, mostly leases that have not yet started. Hyperscaler capital spending, covered in our Spending report, provides the context: Amazon, Alphabet, Microsoft and Meta spent about $207 billion combined in the third quarter of 2026 on differing bases. Much of the capacity under construction is already committed to a single tenant on a lease of up to twenty years."
+      ],
+      "exhibits": [
+        {
+          "title": "OpenAI roughly tripled its available compute in each of the last two years, to about 1.9 gigawatts at the end of 2025",
+          "subtitle": "OpenAI compute capacity available at year end, gigawatts, 2023–2025 (company statements)",
+          "type": "bar",
+          "unit": "GW",
+          "series": [
+            {"name": "OpenAI available compute", "points": [["2023", 0.2], ["2024", 0.6], ["2025", 1.9]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: OpenAI CFO Sarah Friar, 'A business that scales with the value of intelligence', 18 Jan 2026 (via Reuters, DCD, SiliconAngle)",
+          "notes": "Company-stated available compute. The 10 GW that OpenAI said in April 2026 it had 'secured' is contracted capacity and is deliberately not plotted beside these operating figures. No 2026 operating figure has been published. OpenAI's page could not be opened from our environment.",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "North American data-centre construction nearly doubled in two years, yet vacancy fell to a record 1.4%",
+          "subtitle": "CBRE North America primary markets, first half of each year, 2024–2026",
+          "type": "table",
+          "unit": null,
+          "series": [],
+          "gantt": [],
+          "table": {
+            "columns": ["Measure", "H1 2024", "H1 2025", "H1 2026"],
+            "rows": [
+              ["Vacancy", "2.8%", "1.6%", "1.4%"],
+              ["Under construction", "3,872 MW", "5,243 MW", "7,481 MW"],
+              ["Construction preleased", "~80%", "74.3%", "80.4%"],
+              ["Primary-market supply", "n/a", "8,155 MW", "10,903 MW"]
+            ]
+          },
+          "source": "Source: CBRE North America Data Center Trends, H1 2024, H1 2025 and H1 2026",
+          "notes": "Primary markets as defined by CBRE in each edition (eight markets in 2024, including Northern Virginia, Dallas–Fort Worth, Silicon Valley, Chicago, Phoenix, New York Tri-State, Atlanta and Hillsboro); CBRE revised some series between editions. Under construction peaked at 6,350 MW in H2 2024. H1 2024 preleasing reported as 'nearly 80%'. JLL's 66 GW under construction (H1 2026) is a broader measure and is not comparable.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "Contracted, planned, operating: three meanings of a gigawatt",
+        "body": "A gigawatt figure for a data centre can mean at least three things. Planned capacity is what a campus is designed for when fully built, such as Abilene's 1.2 GW. Contracted capacity is what a buyer has signed for, such as OpenAI's 10 GW, which may sit in buildings not yet started. Operating capacity is power actually delivered to running servers, usually stated as IT load, which excludes cooling and other overhead. Grid connection figures add another layer, because a site's interconnection limit exceeds its average draw. We compare only like with like and label each figure with its meaning."
+      }
+    },
+    {
+      "kicker": "4. Electricity",
+      "action_title": "Data-centre electricity is rising by a fifth to a quarter a year, and forecasters agree on the direction while disagreeing by about 40 terawatt-hours on the level for the same year",
+      "paras": [
+        "The International Energy Agency estimates that data centres worldwide used about 415 terawatt-hours of electricity in 2024, about 1.5% of global consumption, and about 485 terawatt-hours in 2025, an increase of roughly 17%. Electricity used by AI-focused data centres rose about 50% in 2025. The IEA's central projection, updated in April 2026, is about 950 terawatt-hours in 2030, close to its 2025 projection of 945 and just under 3% of world electricity. Electricity for AI-accelerated servers is projected to grow about 30% a year against about 9% for conventional servers. The IEA's 2026 mid-year electricity update names data centres among the drivers of 3.6% global demand growth this year, but we could not find a 2026 data-centre total in the material available to us.",
+        "Gartner, using its own boundaries, puts 2025 lower and 2026 higher. Its 10 June 2026 forecast estimates 447 terawatt-hours for 2025 and 565 terawatt-hours for 2026, an increase of 26%, rising to 702 in 2027. Within that, AI-optimised servers used about 95 terawatt-hours in 2025 and are forecast to use about 175 in 2026, about 31% of the total, and to overtake conventional servers in 2027. Gartner puts the power demand of the world's data centres at 104 gigawatts in 2025, 132 gigawatts in 2026 and 290 gigawatts in 2030. The IEA and Gartner differ by about 38 terawatt-hours for 2025, roughly the annual consumption of a small European country. Neither is wrong; they count different facilities and treat cryptocurrency mining and enterprise server rooms differently.",
+        "The United States is where the pressure concentrates. Lawrence Berkeley National Laboratory estimated US data-centre use at 176 terawatt-hours in 2023, 4.4% of national electricity, up from 58 terawatt-hours in 2014. EPRI's February 2026 update puts 2024 at 177–192 terawatt-hours, 4–5% of the total, and sets scenarios of 380–790 terawatt-hours, or 9–17%, by 2030, about 60% above its previous scenarios, with peak demand of 45–94 gigawatts. LBNL's scenarios for 2028 are 325–580 terawatt-hours. In Virginia data centres already use more than a fifth of the state's electricity, and EPRI's scenarios reach 41–59% by 2030. These are scenario ranges, not forecasts, and the upper ends are widely quoted as if they were predictions. EPRI itself cautions that announced capacity is a pipeline indicator and that new sites ramp over several years, typically peaking well below their stated maximum.",
+        "Company disclosures show the same trend at smaller scale. Google's data centres used about 42 terawatt-hours in 2025, up about 39% from about 30.6 terawatt-hours in 2024, and the company's total electricity use has risen more than 250% since 2019. Google alone accounts for roughly 9% of the IEA's 2025 global estimate (42 ÷ 485, a DERIVED comparison across different boundaries). It matched all of its consumption with renewable purchases on an annual basis, but its greenhouse-gas emissions rose 18% in 2025, mostly from the hardware, steel and concrete of construction. The data cannot yet show how much of the growth is AI rather than conventional cloud, because no company discloses that split, and no measured 2026 total for the world or the US yet exists."
+      ],
+      "exhibits": [
+        {
+          "title": "The IEA and Gartner disagree on 2025 data-centre electricity by about 38 TWh, and every figure beyond 2025 is a projection",
+          "subtitle": "Data-centre electricity consumption by source, scope and year: estimates and projections, TWh",
+          "type": "table",
+          "unit": "TWh",
+          "series": [],
+          "gantt": [],
+          "table": {
+            "columns": ["Source", "Scope", "Year", "TWh", "Type"],
+            "rows": [
+              ["IEA", "World", "2024", "~415", "Estimate"],
+              ["IEA", "World", "2025", "~485", "Estimate"],
+              ["Gartner", "World", "2025", "447", "Estimate"],
+              ["Gartner", "World", "2026", "565", "Forecast"],
+              ["Gartner", "AI-optimised servers", "2026", "175", "Forecast"],
+              ["IEA", "World", "2030", "~950", "Projection"],
+              ["LBNL", "US", "2023", "176", "Estimate"],
+              ["EPRI", "US", "2024", "177–192", "Estimate"],
+              ["LBNL", "US", "2028", "325–580", "Scenario range"],
+              ["EPRI", "US", "2030", "380–790", "Scenario range"]
+            ]
+          },
+          "source": "Source: IEA, Energy and AI (2025) and Key Questions on Energy and AI (Apr 2026); Gartner (10 Jun 2026); LBNL (Dec 2024); EPRI, Powering Intelligence 2026 (Feb 2026)",
+          "notes": "2025 world figures are CONTESTED (IEA ~485 vs Gartner 447). IEA's 2030 projection was ~945 TWh in its 2025 edition (still used on site page 93) and ~950 TWh in the April 2026 update. Scenario ranges are not forecasts. Estimates use different boundaries for what counts as a data centre. iea.org could not be opened from our environment.",
+          "confidence": "CONTESTED"
+        }
+      ],
+      "sidebar": {
+        "title": "Why forecasts disagree",
+        "body": "Data-centre electricity estimates differ for four main reasons. Boundary: whether enterprise server rooms, telecom sites and cryptocurrency mining are included. Method: bottom-up counts of installed servers multiplied by assumed utilisation and overhead, against top-down utility and grid data. Utilisation: an AI server's rated power is far above its average draw, and few operators publish actual load. Pipeline: projections depend on which announced projects are assumed to be built and when; EPRI explicitly warns that announced capacity is a pipeline indicator, not a peak-demand forecast. The spread therefore widens with the horizon: about 8% between two estimates for 2025, and more than a factor of two within single US scenarios for 2030."
+      }
+    },
+    {
+      "kicker": "5. Energy and water per query",
+      "action_title": "A typical AI text prompt now measures about 0.24–0.31 watt-hours, a tenth of the 2024 headline estimate, but a long reasoning response uses about 13 times as much",
+      "paras": [
+        "The best-known per-query figure of 2024, about 2.9 watt-hours for a ChatGPT request, was a top-down estimate built on early GPT-4-era assumptions. Better measurements arrived in 2025. Google reported in August 2025 that a median Gemini text prompt used 0.24 watt-hours, counting the accelerator, host server, idle capacity and data-centre overhead; the chips alone accounted for 0.10 watt-hours. It also reported 0.26 millilitres of water and 0.03 grams of CO2-equivalent per prompt, the latter on a market-based accounting method, and said per-prompt energy had fallen 33-fold in twelve months. Sam Altman said in June 2025 that an average ChatGPT query used about 0.34 watt-hours, without publishing a method, and Epoch AI estimated about 0.3 watt-hours for GPT-4o. The three figures sit within about 0.1 watt-hours of each other and of a reference Google search.",
+        "The most systematic 2026 estimate comes from Microsoft researchers, published in Joule. It puts the median energy of a typical chatbot response of about 300 tokens, served on optimised frontier-scale hardware, at 0.31 watt-hours, with an interquartile range of 0.16 to 0.60. For long reasoning-style responses of about 5,000 tokens the median rises to 3.91 watt-hours, about 13 times higher. The authors find that if 10% of daily requests were reasoning-style, total energy would more than double, and that widely cited estimates overstate typical-query energy by four to twenty times. Outlier estimates persist: a University of Rhode Island estimate of more than 18 watt-hours for a medium-length GPT-5 response uses very different assumptions. The spread between estimates is mostly about response length and hardware, not disagreement over physics.",
+        "Water follows the same pattern of small per-prompt figures and large totals. Google's company-wide water consumption was about 10.9 billion gallons in 2025, up 34% from about 8.1 billion in 2024 (DERIVED from the reported growth rate) and more than double its 2021 level, with data centres driving most of the increase. Its replenishment projects returned about 7.7 billion gallons, equal to about 78% of its 2025 freshwater consumption. Cooling design determines most of a site's water use: evaporative cooling consumes about 2.6 million gallons per megawatt per year, while closed-loop liquid cooling with dry coolers can bring on-site consumption close to zero, at the cost of more electricity on hot days. Most project announcements do not say which method will be used.",
+        "Falling per-prompt energy and rising fleet electricity are both true, and do not conflict. Billions of prompts a day, more tokens per answer, agents that call models repeatedly, and constant model training all add up; efficiency gains lower the cost of each step and so encourage more steps. The data cannot show the split between training and inference in total electricity, the share of queries that are reasoning-style, or the energy of image and video generation, because no company publishes these. As of September 2026 no regulator or standards body required per-query energy disclosure. Until one does, the per-prompt figures are vendor-reported or modelled, and should be quoted with their method and date. Site page 428 keeps the comparison current as new disclosures arrive."
+      ],
+      "exhibits": [
+        {
+          "title": "Current measurements of a typical text prompt cluster between 0.24 and 0.34 Wh, while reasoning responses and the old 2024 estimate sit an order of magnitude higher",
+          "subtitle": "Published estimates of electricity per AI prompt or response, watt-hours, by source and method, 2024–2026",
+          "type": "hbar",
+          "unit": "Wh",
+          "series": [
+            {"name": "Wh per prompt", "points": [["Google Gemini (2025)", 0.24], ["Epoch GPT-4o est.", 0.30], ["MSR typical (2026)", 0.31], ["Altman ChatGPT (2025)", 0.34], ["2024 headline est.", 2.9], ["MSR reasoning (2026)", 3.91]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: Google technical report (Aug 2025); Epoch AI; Sam Altman (Jun 2025); Oviedo et al., Microsoft Research, Joule (2026); EPRI (2024); Report AI analysis",
+          "notes": "Not like-for-like: Google's is a measured fleet median including overhead; Altman's is a stated average without method; Epoch's and Microsoft Research's are modelled; the 2024 figure is a top-down estimate for an earlier model generation. Microsoft Research medians: typical ~300-token response 0.31 Wh (IQR 0.16–0.60); reasoning ~5,000-token response 3.91 Wh (IQR 2.15–7.05). Training energy is excluded from all. See site page 428.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "What a per-prompt figure includes",
+        "body": "Per-prompt energy depends on the boundary drawn around it. The narrowest measure counts only the accelerator while it generates the answer; Google's chip-only figure was 0.10 Wh. Broader measures add the host CPU and memory, idle machines held in reserve for peak demand, and data-centre overhead such as cooling, expressed through power usage effectiveness (PUE); Google's comprehensive figure was 0.24 Wh. Training the model, manufacturing the hardware and building the data centre are excluded from almost all per-prompt figures. Response length matters as much as boundary: output tokens drive energy, so a long reasoning answer can cost ten or more times a short reply from the same model."
+      }
+    },
+    {
+      "kicker": "6. Power deals and grid prices",
+      "action_title": "Tech companies have moved from buying existing nuclear output to underwriting reactors not yet built, while the largest US grid's capacity price has sat at its cap for three auctions",
+      "paras": [
+        "The scale of power contracts has grown about eightfold in two years. In September 2024 Microsoft agreed to buy all the output of Three Mile Island Unit 1, now the Crane Clean Energy Center, for 20 years; the 835-megawatt reactor's restart is targeted for the second half of 2027 with the help of a $1 billion Department of Energy loan. In October 2024 Google agreed to buy power from up to 500 megawatts of Kairos small reactors. In June 2025 Amazon signed a 1,920-megawatt agreement with Talen Energy's Susquehanna plant, running to 2042, and Meta a 1,121-megawatt deal for the Clinton plant's output from 2027. On 9 January 2026 Meta announced up to 6.6 gigawatts by 2035, combining 20-year contracts with three Vistra plants and offtake from TerraPower and Oklo reactors not yet built.",
+        "Almost none of that nuclear electricity arrives when the data centres need it. Talen's supply to Amazon ramps from 2029 to 2032, Meta's small-reactor power is due in the 2030s, and even the Crane restart is a 2027 event. Capacity needed between 2026 and 2028 is therefore being met with gas. The Ohio Stargate campus includes 9.2 gigawatts of on-site gas generation; xAI has installed turbines at a site in Southaven, Mississippi, to supply Colossus 2. The constraint has moved to equipment: GE Vernova's gas-turbine backlog reached 116 gigawatts in the second quarter of 2026 against manufacturing capacity of about 20 gigawatts a year, and Siemens Energy's stood near 69 gigawatts. The nuclear contracts are best read as long-term hedges, not as the power supply for this cycle.",
+        "The grid market shows the strain directly. PJM, which runs the grid for 13 states and Washington, DC, buys capacity three years ahead in annual auctions. The auction held in July 2024 cleared at $269.92 per megawatt-day for 2025/26. The July 2025 auction cleared at its $329.17 cap, a 22% rise costing about $16.1 billion, and the December 2025 auction at its $333.44 cap. The July 2026 auction, for 2028/29, cleared at its $325 cap across all zones for the third consecutive time. PJM estimates the price without a cap would have been about $555. It still procured about 6,831 megawatts less than its reliability requirement, only 525 megawatts of new or upgraded capacity cleared, and the forecast peak rose about 2,000 megawatts, mostly from data centres.",
+        "Capacity prices are paid by every customer on the grid, so they are where the AI build-out first reaches household bills. PJM's independent market monitor attributes about $6.3 billion of capacity costs to data centres; that is the monitor's estimate, not PJM's. The caps that have held prices at about $325–333 were negotiated with state governments and are political as much as economic. Without them, buyers would have paid about $29.7 billion for the 2028/29 delivery year instead of about $16.4 billion, by Modo Energy's estimate. The data show a market that is sending the strongest price signal its rules allow and is still not attracting enough new supply to meet its own reliability standard. The next auction will show whether higher prices are drawing in new generation or merely transferring costs."
+      ],
+      "exhibits": [
+        {
+          "title": "Gigawatt campuses and nuclear contracts announced since 2024 deliver most of their power between 2026 and 2035",
+          "subtitle": "Selected AI data-centre projects, nuclear power agreements and chip-supply deals: announcement or start to target date, 2024–2035",
+          "type": "gantt",
+          "unit": null,
+          "series": [],
+          "gantt": [
+            {"label": "Stargate announced", "start": "2025-01", "end": "2025-01", "group": "AI campuses", "milestone": true},
+            {"label": "Abilene 1.2 GW", "start": "2025-01", "end": "2026-12", "group": "AI campuses", "milestone": false},
+            {"label": "Stargate UAE 200 MW", "start": "2025-05", "end": "2026-12", "group": "AI campuses", "milestone": false},
+            {"label": "Colossus 2 (Memphis)", "start": "2025-05", "end": "2026-01", "group": "AI campuses", "milestone": false},
+            {"label": "Meta Prometheus 1 GW", "start": "2025-07", "end": "2026-12", "group": "AI campuses", "milestone": false},
+            {"label": "Meta Hyperion 2 GW", "start": "2025-10", "end": "2030-12", "group": "AI campuses", "milestone": false},
+            {"label": "Ohio PORTS ph1 800 MW", "start": "2026-03", "end": "2028-03", "group": "AI campuses", "milestone": false},
+            {"label": "OpenAI 10 GW secured", "start": "2026-04", "end": "2026-04", "group": "AI campuses", "milestone": true},
+            {"label": "Meta El Paso 960 MW", "start": "2026-07", "end": "2028-12", "group": "AI campuses", "milestone": false},
+            {"label": "AMD MI450 first 1 GW", "start": "2025-10", "end": "2026-12", "group": "Chip supply", "milestone": false},
+            {"label": "Crane restart 835 MW", "start": "2024-09", "end": "2027-12", "group": "Nuclear power", "milestone": false},
+            {"label": "Kairos SMRs 500 MW", "start": "2024-10", "end": "2030-12", "group": "Nuclear power", "milestone": false},
+            {"label": "Talen–AWS 1.92 GW", "start": "2025-06", "end": "2032-12", "group": "Nuclear power", "milestone": false},
+            {"label": "Clinton PPA 1.1 GW", "start": "2025-06", "end": "2027-01", "group": "Nuclear power", "milestone": false},
+            {"label": "Meta nuclear 6.6 GW", "start": "2026-01", "end": "2035-12", "group": "Nuclear power", "milestone": false}
+          ],
+          "table": null,
+          "source": "Source: OpenAI; Epoch AI; US DOE and SoftBank (via site page 1387); Meta; xAI; AMD; Constellation; Google/Kairos; Talen Energy; Report AI analysis",
+          "notes": "Bars run from announcement (or construction start where known) to the stated target for the capacity named, not to full build-out. Abilene construction began before Stargate's January 2025 announcement; completion per Epoch AI's projected Q4 2026. Colossus 2 end date is Musk's January 2026 '1 GW' claim, which satellite analysis disputes (~350 MW cooling) — CONTESTED. Meta Prometheus 2026 is a stated plan, not confirmed live. Meta Hyperion: 2 GW by 2030, scaling to 5 GW later. Ohio PORTS: DOE announcement Mar 2026, phase one due early 2028 (site page 1387). El Paso: Meta–BlackRock JV formed Jul 2026, completion 2028 (site page 1421). Crane: restart targeted H2 2027. Kairos: first unit by 2030, 500 MW by 2035. Talen–AWS: deliveries ramp 2029–2032. Clinton: deliveries from 2027. Meta 6.6 GW: by 2035. AMD–OpenAI: 6 GW deal announced Oct 2025, first 1 GW from H2 2026 (site page 968).",
+          "confidence": "MEDIUM"
+        },
+        {
+          "title": "PJM capacity prices rose 22% in a year and have cleared at the cap in three consecutive auctions",
+          "subtitle": "PJM Base Residual Auction clearing price, RTO-wide, $ per megawatt-day, by delivery year (auction month in brackets)",
+          "type": "bar",
+          "unit": "$ per MW-day",
+          "series": [
+            {"name": "PJM clearing price", "points": [["2025/26 (Jul 24)", 269.92], ["2026/27 (Jul 25)", 329.17], ["2027/28 (Dec 25)", 333.44], ["2028/29 (Jul 26)", 325]]}
+          ],
+          "gantt": [],
+          "table": null,
+          "source": "Source: PJM; Utility Dive; POWER Magazine; Modo Energy",
+          "notes": "2026/27, 2027/28 and 2028/29 cleared at the price cap agreed with state governments. PJM's simulated uncapped price for 2028/29 was about $555/MW-day. Some zones cleared higher in 2025/26 (BGE $466.35, Dominion $444.26). The 2028/29 auction procured about 6,831 MW below the reliability requirement.",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "sidebar": {
+        "title": "What a capacity auction price measures",
+        "body": "A capacity price is not the price of electricity. PJM pays generators, storage and demand-response providers to be available three years ahead, so that the grid can meet its forecast peak with a reserve margin. The clearing price, in dollars per megawatt per day, multiplied by the capacity procured, is recovered from all customers through their bills. A price at the cap means buyers would have paid more if allowed; a shortfall against the reliability requirement means that even at the cap not enough supply offered. Data centres raise the forecast peak, which raises the quantity PJM must buy, which raises the price for everyone."
+      }
+    }
+  ],
+  "comparison": {
+    "action_title": "From 2024 to 2026 chip revenue grew by half or more each year, construction nearly doubled and power prices reached their ceilings; only energy per prompt moved the other way",
+    "paras": [
+      "Across the three years the physical build-out accelerated on every measure we track except one. Nvidia's data-centre revenue rose 68% in its fiscal 2026 and earned 85% of that year's total in the first half of fiscal 2027. Broadcom's AI revenue went from $12.2 billion to about $20 billion to $35.9 billion in three quarters; AMD's Data Center segment from $12.6 billion to $16.6 billion to $21.0 billion in three quarters. North American construction nearly doubled while vacancy fell to a record low, and contract sizes for power grew from under a gigawatt to 6.6 gigawatts. The exception is energy per prompt, which fell from a 2024 headline estimate of about 2.9 watt-hours to measured figures of 0.24–0.31.",
+      "Between companies, the fastest growth has moved from the dominant supplier to the challengers. In their latest reported quarters Broadcom's AI revenue grew 221% and AMD's Data Center segment 97%, against 117% for Nvidia's data-centre business, but from bases a fifth or less of Nvidia's size. Between buyers, OpenAI's available compute roughly tripled each year to 1.9 gigawatts, while its contracts reached 10 gigawatts; Meta has shifted capacity into off-balance-sheet joint ventures; and Microsoft, Amazon, Google and Meta have all signed nuclear contracts that deliver mostly after 2027.",
+      "Between regions, the US dominates both the build and the strain. US data centres used 4–5% of national electricity in 2024 against about 1.5% for data centres worldwide, and EPRI's scenarios reach 9–17% by 2030. The Gulf is the largest new centre outside the US, with the first 200 megawatts of Stargate UAE due in 2026. Prices moved in opposite directions: PJM capacity prices rose from $269.92 to the $325–333 cap, and H100 rental prices fell from about $8 to about $2 before rising again to about $2.88."
+    ],
+    "exhibits": [
+      {
+        "title": "On nearly every infrastructure measure 2026 is already larger than 2025, which was larger than 2024",
+        "subtitle": "Key infrastructure indicators, 2024, 2025 and 2026 to date (periods and dates as stated)",
+        "type": "table",
+        "unit": null,
+        "series": [],
+        "gantt": [],
+        "table": {
+          "columns": ["Indicator", "2024", "2025", "2026 to date"],
+          "rows": [
+            ["Nvidia data-centre revenue", "$115.2B (FY)", "$193.7B (FY)", "$164.2B (Feb–Jul)"],
+            ["Broadcom AI revenue", "$12.2B (FY)", "~$20B (FY)", "$35.9B (Q1–Q3)"],
+            ["AMD Data Center revenue", "$12.6B", "$16.6B", "$21.0B (Q1–Q3)"],
+            ["OpenAI compute, year end", "0.6 GW", "1.9 GW", "10 GW contracted (Apr)"],
+            ["N. America vacancy (H1)", "2.8%", "1.6%", "1.4%"],
+            ["N. America under construction (H1)", "3,872 MW", "5,243 MW", "7,481 MW"],
+            ["Data-centre electricity, world", "~415 TWh (IEA)", "~485 TWh (IEA) / 447 (Gartner)", "565 TWh (Gartner forecast)"],
+            ["Largest tech nuclear deal", "835 MW", "1,920 MW", "6.6 GW"],
+            ["PJM capacity price (auction year)", "$269.92", "$329.17", "$325 (cap)"],
+            ["H100 rental, $/GPU-hr", "~$2 (Oct, resale)", "$2.00 (Dec, index)", "$2.88 (Oct, index)"],
+            ["Energy per text prompt", "~2.9 Wh (estimate)", "0.24 Wh (Google)", "0.31 Wh (MSR median)"]
+          ]
+        },
+        "source": "Source: company results; CBRE; IEA; Gartner; PJM; OpenAI; Silicon Data; Latent Space; Google; Microsoft Research; EPRI; Report AI analysis",
+        "notes": "Not every row is like-for-like across years. OpenAI 2026 is contracted capacity, not operating (no operating figure published). World electricity 2025 is CONTESTED and 2026 is a forecast from a different source. H100 2024 is a resale-market reading, 2025–26 the Silicon Data index. Energy per prompt uses different methods each year. 2026 vendor revenue values are DERIVED sums of reported quarters.",
+        "confidence": "MEDIUM"
+      }
+    ]
+  },
+  "outlook": {
+    "action_title": "2027 will test whether contracted gigawatts become energised megawatts on schedule, and whether grids and turbine makers can keep pace",
+    "paras": [
+      "The 2024–2026 record establishes that money and chips are available in quantity; the open questions for 2027 are physical. OpenAI's 10 contracted gigawatts, Meta's Hyperion and El Paso campuses, the Ohio PORTS site and the next wave of custom accelerators all depend on power arriving on time. Gas turbines are booked years ahead, nuclear restarts and new reactors arrive from 2027 into the 2030s, and the largest US grid has failed two consecutive reliability targets. We expect vendor revenue to keep rising into 2027 on current guidance, but we will treat any widening gap between reported chip shipments and energised capacity as the main sign that the build-out is outrunning its inputs.",
+      "Three findings would change our reading. A sustained fall in GPU rental prices back below $2 an hour would indicate that capacity has caught up with demand. A capacity auction that clears below its cap with no shortfall would show supply responding to price. And published operating-gigawatt figures from OpenAI, Meta or xAI that close most of the gap with their contracted numbers would show that announcements are being delivered. Equally, guidance cuts from Nvidia or Broadcom, or project cancellations like the dropped 600-megawatt Abilene expansion repeated at scale, would indicate that financing or power, not demand, has become the limit."
+    ],
+    "watch": [
+      {"indicator": "Nvidia quarterly data-centre revenue", "now": "$89.0B, quarter to 26 Jul 2026 (+117% YoY, +18% QoQ); total-revenue guide $108B for quarter to Oct 2026", "signal": "Sequential growth below 5% for two consecutive quarters would mark a plateau; a guidance cut would be the first since the build-out began"},
+      {"indicator": "OpenAI / Stargate operating capacity", "now": "1.9 GW operating at end-2025; 10 GW contracted (Apr 2026); Abilene ~421 MW IT (Jul 2026, Epoch AI)", "signal": "Abilene not at ~1.2 GW by mid-2027, or OpenAI reporting under 5 GW operating at end-2027, would show contracted capacity slipping"},
+      {"indicator": "Silicon Data H100 rental index", "now": "$2.88 per GPU-hour on 24 Oct 2026 ($2.97 on 5 Nov)", "signal": "Below $2.00 would indicate oversupply; above $3.50 would indicate a deepening compute shortage"},
+      {"indicator": "PJM capacity auction (next Base Residual Auction)", "now": "$325/MW-day at cap; 6,831 MW short of reliability requirement (Jul 2026)", "signal": "Clearing below the cap with no shortfall would show supply catching up; a larger shortfall would increase pressure for data-centre-specific tariffs or curtailment rules"},
+      {"indicator": "Measured 2026 data-centre electricity (IEA, Gartner outturns)", "now": "Gartner forecast 565 TWh for 2026; IEA estimate ~485 TWh for 2025", "signal": "An outturn below ~520 TWh would suggest energisation is lagging chip sales; above ~600 TWh would put the IEA's ~950 TWh 2030 projection at risk of being exceeded"},
+      {"indicator": "TSMC CoWoS packaging capacity", "now": "Target ~120,000–130,000 wafers/month by end-2026 (TrendForce, Jun 2026)", "signal": "Reported year-end capacity below ~110,000 would cap 2027 accelerator output; a CoWoS price rise of ~20% would feed through to GPU prices"},
+      {"indicator": "Crane (Three Mile Island Unit 1) restart", "now": "Targeted for H2 2027", "signal": "Slippage into 2028 would signal that nuclear restarts cannot be relied on for this cycle's capacity"}
+    ]
+  },
+  "definitions": [
+    {"term": "Gigawatt (GW) of data-centre capacity", "def": "A unit of power, not energy. For data centres it may refer to planned design capacity, contracted capacity or operating IT load; 1 GW running all year uses about 8.8 TWh."},
+    {"term": "IT load", "def": "Power drawn by servers, storage and networking, excluding cooling and other facility overhead. Epoch AI's Abilene estimate is IT load."},
+    {"term": "Terawatt-hour (TWh)", "def": "A unit of electrical energy equal to one billion kilowatt-hours; used for annual consumption."},
+    {"term": "PUE (power usage effectiveness)", "def": "Total facility energy divided by IT energy. A PUE of 1.1 means 10% overhead for cooling and power conversion."},
+    {"term": "CoWoS", "def": "Chip-on-Wafer-on-Substrate, TSMC's advanced-packaging process that places a GPU and high-bandwidth memory on one substrate; measured in wafers per month."},
+    {"term": "HBM (high-bandwidth memory)", "def": "Stacked DRAM placed beside an accelerator to supply data quickly; HBM3E and HBM4 are current generations."},
+    {"term": "XPU / custom ASIC", "def": "An accelerator designed for one customer's workloads, such as Google's TPU or Amazon's Trainium, often co-designed with Broadcom or Marvell."},
+    {"term": "H100-equivalent", "def": "A way of expressing mixed GPU fleets as the number of Nvidia H100 chips with the same computing power."},
+    {"term": "Neocloud", "def": "A cloud provider specialising in GPU capacity, such as CoreWeave, Nebius or Lambda, as distinct from the large general-purpose clouds."},
+    {"term": "Preleasing", "def": "Capacity in a data centre under construction that a tenant has already committed to lease."},
+    {"term": "Capacity auction (MW-day)", "def": "A market in which a grid operator buys future availability of supply; prices are in dollars per megawatt per day and are recovered from all customers."},
+    {"term": "PPA (power purchase agreement)", "def": "A long-term contract to buy electricity, capacity or clean-energy attributes from a specific generator at agreed terms."}
+  ],
+  "annual": {
+    "2024": {
+      "action_title": "In 2024 AI infrastructure was supply-constrained by chips and packaging, and power became a planning problem rather than an operating one",
+      "paras": [
+        "Nvidia's data-centre revenue reached $115.2 billion in the fiscal year that ended in January 2025, up 142%, and its total revenue $130.5 billion. AMD's Data Center segment grew 94% to $12.6 billion, with Instinct accelerators above $5 billion, and Broadcom's AI revenue rose 220% to $12.2 billion. TrendForce estimates AI-server shipments grew 46%. The limiting factor was not demand but packaging: TSMC ended the year with roughly 35,000 wafers a month of CoWoS capacity. In the rental market, the 2023 shortage unwound. Prices for H100s that had reached about $8 an hour fell to about $2 on resale markets by October, as early reserved contracts were resold and fewer new model developers were training from scratch. The year's growth was concentrated in a single supplier and a few cloud buyers.",
+        "Electricity use was still modest in absolute terms. The IEA estimates that data centres worldwide used about 415 terawatt-hours in 2024, roughly 1.5% of global electricity, and EPRI later put US data centres at 177–192 terawatt-hours, or 4–5% of national use. What changed was the outlook. In December the Department of Energy published Lawrence Berkeley National Laboratory's estimate of 176 terawatt-hours for 2023 alongside scenarios of 325–580 terawatt-hours by 2028, and the widely quoted per-query figure, about 2.9 watt-hours for a ChatGPT request, framed the public debate. That figure was a top-down estimate for an earlier model generation and was later shown to be about ten times higher than measurements of typical prompts.",
+        "Hyperscalers began contracting firm power directly. In September Microsoft agreed to buy the full output of the 835-megawatt Three Mile Island Unit 1 reactor for 20 years, a restart of a shut reactor contracted to a single buyer, and in October Google agreed to buy power from up to 500 megawatts of Kairos small reactors. Grid markets registered the coming load: PJM's July auction cleared at $269.92 per megawatt-day for 2025/26, with two data-centre-heavy zones above $440. In North America's primary markets, CBRE reported record-low vacancy of 2.8% and a record 3,872 megawatts under construction in the first half, nearly 80% of it preleased."
+      ]
+    },
+    "2025": {
+      "action_title": "In 2025 chip revenue kept compounding, custom silicon gained ground and power became the visible constraint on AI capacity",
+      "paras": [
+        "Nvidia's data-centre revenue rose 68% to $193.7 billion in the fiscal year that ended in January 2026, within total revenue of $215.9 billion; networking grew fastest as customers bought whole rack-scale systems. Broadcom's AI revenue reached about $20 billion in its fiscal 2025, and AMD's Data Center segment grew 32% to $16.6 billion, slowed by export limits on its China-specific MI308. TSMC roughly doubled CoWoS capacity to 75,000–80,000 wafers a month. Rental prices for H100s drifted lower through the year on Silicon Data's new index, from about $2.36 an hour in June to $2.00 in early December. Large supply agreements followed the revenue: OpenAI announced a 6-gigawatt GPU deal with AMD in October, and Nvidia a letter of intent for up to $100 billion of investment tied to 10 gigawatts.",
+        "Capacity announcements outran delivered capacity. Stargate launched in January as a $500 billion private commitment and by September counted nearly 7 gigawatts planned, while OpenAI later said it ended the year with about 1.9 gigawatts of compute, up from 0.6 gigawatts. Meta announced its 1-gigawatt Prometheus and multi-gigawatt Hyperion clusters, financing Hyperion through a roughly $27 billion joint venture with Blue Owl in October. CBRE's primary North American markets reached a record-low vacancy of 1.6% in the first half, with 5,243 megawatts under construction. The IEA estimates global data-centre electricity rose to about 485 terawatt-hours, with AI-focused facilities up about 50%; Gartner's estimate for the same year is 447 terawatt-hours.",
+        "Power contracting scaled up and grid prices followed. In June Amazon signed a 1,920-megawatt agreement with Talen Energy's Susquehanna nuclear plant running to 2042, and Meta a 1,121-megawatt agreement for the Clinton plant's output from 2027. PJM's July auction cleared at its $329.17 cap for 2026/27, up 22%, and its December auction at its $333.44 cap for 2027/28. Measurement of AI's per-query footprint improved: in August Google reported 0.24 watt-hours and 0.26 millilitres of water for a median Gemini text prompt, and its data centres' electricity use grew about 39% over the year to about 42 terawatt-hours, with company-wide water consumption up 34% to 10.9 billion gallons."
+      ]
+    },
+    "2026": {
+      "action_title": "So far in 2026 chip revenue has hit records every quarter while energised capacity, grid supply and GPU rental prices show the build-out pressing against physical limits",
+      "paras": [
+        "Every major AI chip vendor is on course for its largest year. Nvidia's data-centre revenue reached $164.2 billion in the six months to 26 July, with the latest quarter at $89.0 billion, up 117%. Broadcom's AI revenue was $35.9 billion in the first three quarters of its fiscal year, the latest up 221%, and AMD's Data Center segment $21.0 billion in the first nine months, the latest quarter up 97% as MI450 shipments began. TSMC targets 120,000–130,000 wafers a month of CoWoS capacity by year end. GPU-hours became more expensive: Silicon Data's H100 index rose from $2.00 in December 2025 to $2.88 on 24 October 2026, and CME announced compute futures, since delayed to early 2027.",
+        "Contracted capacity ran well ahead of operating capacity. OpenAI said in April that it had secured 10 gigawatts of US capacity and set a 30-gigawatt target for 2030, while Epoch AI estimated its Abilene campus at about 421 megawatts of IT power in July against 1.2 gigawatts planned; a 600-megawatt Abilene expansion was dropped in March. The Department of Energy announced a 10-gigawatt campus in Ohio, with Nvidia's guarantee of its debt cut from about $250 billion to up to $105 billion in August. Meta moved its 960-megawatt El Paso campus into a $14.3 billion joint venture with BlackRock-managed funds. CBRE reported record-low vacancy of 1.4% and a record 7,481 megawatts under construction in North America's primary markets in the first half.",
+        "Electricity became the binding input. Gartner forecasts data-centre consumption of 565 terawatt-hours in 2026, up 26%, with AI-optimised servers at about 175 terawatt-hours; EPRI's February update projects US data centres at 9–17% of national electricity by 2030. Meta's January agreements for up to 6.6 gigawatts of nuclear power by 2035 were the largest of their kind, but most of that supply arrives after 2030. PJM's July auction cleared at its $325 cap for the third consecutive time and fell about 6,831 megawatts short of its reliability requirement. A Microsoft Research study put a typical chatbot response at a median 0.31 watt-hours and a long reasoning response at 3.91, so per-prompt efficiency is improving while reasoning workloads grow."
+      ]
+    }
+  }
+}

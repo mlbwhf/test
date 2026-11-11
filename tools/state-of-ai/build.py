@@ -237,7 +237,7 @@ def theme_report(t, d, published, published_h, outdir):
     changed_rows = ''.join(f'<tr><td>{E(m["label"])}</td><td>{cell(m["values"].get("2025"), False)}</td><td>{cell(m["values"].get("2026"), False)}</td><td>{change(m["values"].get("2025") or {}, m["values"].get("2026") or {})}</td></tr>' for m in yoy)
     stop = d.get('stop_quoting') or []
     stop_html = ''.join(f'<tr><td>&ldquo;{E(s["claim"])}&rdquo;</td><td>{E(s["fact"])}{detail(s.get("link"))}</td></tr>' for s in stop)
-    body = CSS + '\n<div class="tai-wrap">\n' + header(
+    body = CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + header(
         f'{NAME[t]}', f'Report AI &middot; State of AI series &middot; Q4 2026 edition &middot; Quarterly', title,
         E(d.get('dek_2026', '')),
         f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time> &middot; Next edition: Q1 2027', NAME[t]) + \
@@ -279,7 +279,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
             metric_table(ms, yrs, with_change=len(yrs) > 1) + \
             (f'<p style="font-size:14px;margin-top:14px;">Latest edition: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026</a></p>' if year != '2026' else f'<p style="font-size:14px;margin-top:14px;">Full detail: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026 (quarterly)</a></p>') + '</div>'
     lead = [ds[t]['headlines'][year][0] for t in THEMES if t in ds]
-    body = CSS + '\n<div class="tai-wrap">\n' + header(
+    body = CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + header(
         str(year), f'Report AI &middot; State of AI in Numbers &middot; Annual edition {year}{" (retrospective)" if year != "2026" else ""}', title,
         intro['dek'],
         f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time>{status_note}', str(year)) + \
@@ -309,7 +309,7 @@ def yoy_page(ds, published, published_h, outdir, intro):
             ''.join(f'<li style="margin-bottom:6px;">{E(x)}</li>' for x in d.get('yoy_takeaways', [])) + '</ul>' + yoy_charts(ms) + \
             f'<div class="tai-tablewrap" style="margin-top:16px;"><table class="tai-table"><tr><th>Measure</th><th>2024</th><th>2025</th><th>2026 (to date)</th><th>2024&rarr;25</th><th>2025&rarr;26</th></tr>{tr}</table></div>' + \
             f'<p style="font-size:14px;margin-top:12px;">Sources, dates and confidence for each value: <a href="/indexes/state-of-ai/{SLUG[t]}/">State of AI {NAME[t]} 2026</a>.</p></div>'
-    body = CSS + '\n<div class="tai-wrap">\n' + header(
+    body = CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + header(
         'Year over year', 'Report AI &middot; State of AI series &middot; Comparison', title, intro['dek'],
         f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time> &middot; Updated with each quarterly edition', 'Year over year') + \
         f'\n<div class="tai-padx" style="background:#f5f5f7;"><div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">What changed in three years</div>' + \
@@ -400,7 +400,7 @@ def theme_report_long(t, d, n, published, published_h, outdir):
     gaps = d.get('gaps') or []
     gap_txt = ('Known gaps in this edition: ' + '; '.join(gaps) + '. ') if gaps else ''
     body += '<div id="about"></div>' + methodology(f'Exhibits plot only dated, sourced readings; lines are not interpolated between them, and values with different definitions are never placed on one axis. {gap_txt}') + related(SERIES_LINKS)
-    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + body + '\n</div>\n<!-- /wp:html -->'
+    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + body + '\n</div>\n<!-- /wp:html -->'
     full += ld(title, d.get('dek_2026', ''), url, published, d.get('faq_2026', []), csv_name, f'{title} (data)', '2024/2026')
     rows = [(t, m, y, m['values'][y]) for m in ms for y in YEARS if m['values'].get(y)]
     write_csv(os.path.join(outdir, csv_name), url, published, rows)
@@ -419,7 +419,7 @@ def landing(ds, published, published_h, intro):
     body += f'\n<div class="tai-padx"><h2>The quarterly reports</h2><p>Eleven reports, one per theme, each with an executive summary, numbered exhibits, three years of data with sources and confidence ratings, a comparison chapter, an outlook and a CSV download.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px;">{cards}</div></div>'
     body += f'\n<div class="tai-padx"><h2>The annual editions: State of AI in Numbers</h2><div class="tai-tablewrap"><table class="tai-table"><tr><th>Year</th><th>Edition</th></tr>{yr}</table></div><p style="margin-top:14px;">Compare the years directly: <a href="/indexes/state-of-ai/state-of-ai-year-over-year/">State of AI, year over year (2024 vs 2025 vs 2026)</a> &middot; <a href="/indexes/state-of-ai/state-of-ai-2022-2026/">Timeline 2022&ndash;2026</a>.</p></div>'
     body += f'\n<div class="tai-padx"><h2>Frequently asked</h2>{faq_html(intro["faq"])}</div>' + methodology() + related(SERIES_LINKS)
-    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + body + '\n</div>\n<!-- /wp:html -->'
+    full = '<!-- wp:html -->\n' + CSS + '\n<div class="tai-wrap">\n' + charts.STAMP_SPRITE + body + '\n</div>\n<!-- /wp:html -->'
     g = [{"@type": "CollectionPage", "name": "State of AI: The Report AI Series", "url": BASE, "description": intro['dek_plain'], "dateModified": published,
           "publisher": {"@id": "https://report-ai.org/#organization"},
           "hasPart": [{"@type": "Article", "name": f"State of AI {NAME[t]} 2026", "url": BASE + SLUG[t] + '/'} for t in THEMES if t in ds]},

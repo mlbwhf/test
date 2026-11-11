@@ -8,6 +8,7 @@ import html, math, re
 PAL = ['#2545f5', '#e8730c', '#11826a', '#a33fb8', '#c9a100']
 GRID = '#e6e6ea'; AXIS = '#9a9aa2'; INK = '#33333a'; MUTED = '#6e6e76'
 W = 720
+H = 330
 E = lambda s: html.escape(str(s), quote=False)
 A = lambda s: html.escape(str(s), quote=True)
 FONT = ''  # font set in CSS (.tai-ex-svg text)
@@ -102,6 +103,35 @@ def yaxis(x0, x1, y0, y1, lo, hi, unit):
     return out
 
 
+MONTHS = {m: i for i, m in enumerate(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'])}
+
+
+def when(label):
+    """Label -> months since year 0 (float), or None if it is not a plain date."""
+    s = str(label).strip().lower().replace('–', '-').replace('—', '-')
+    s = re.sub(r'\s*\(.*?\)\s*', ' ', s).strip()
+    m = re.fullmatch(r'(?:(\d{1,2}) )?([a-z]{3})[a-z]*\.? (\d{4})', s)
+    if m and m.group(2) in MONTHS:
+        return int(m.group(3)) * 12 + MONTHS[m.group(2)] + (int(m.group(1)) / 31 if m.group(1) else 0.5)
+    m = re.fullmatch(r'([a-z]{3})[a-z]*-([a-z]{3})[a-z]* (\d{4})', s)
+    if m and m.group(1) in MONTHS and m.group(2) in MONTHS:
+        a, b = MONTHS[m.group(1)], MONTHS[m.group(2)]
+        return int(m.group(3)) * 12 + (a + b + 1) / 2
+    m = re.fullmatch(r'q([1-4]) (\d{4})', s)
+    if m:
+        return int(m.group(2)) * 12 + (int(m.group(1)) - 1) * 3 + 1.5
+    m = re.fullmatch(r'h([12]) (\d{4})', s)
+    if m:
+        return int(m.group(2)) * 12 + (0 if m.group(1) == '1' else 6) + 3
+    m = re.fullmatch(r'(end|end of|early|mid|late) (\d{4})', s)
+    if m:
+        return int(m.group(2)) * 12 + {'end': 11.5, 'end of': 11.5, 'early': 2, 'mid': 6, 'late': 10}[m.group(1)]
+    m = re.fullmatch(r'(\d{4})', s)
+    if m:
+        return int(m.group(1)) * 12 + 6
+    return None
+
+
 def line_chart(ex):
     series = [s for s in ex.get('series', []) if s.get('points')]
     labs = labels_of(series)
@@ -110,17 +140,26 @@ def line_chart(ex):
         return ''
     lo = min(0, min(vals)); hi = nice_max(max(vals))
     top = 46 if len(series) > 1 else 30
-    h = 330; x0, x1, y0, y1 = 70, W - 120, top, h - 44
-    X = lambda i: x0 + i * (x1 - x0) / max(1, len(labs) - 1)
+    h = H; x0, x1, y0, y1 = 70, W - 120, top, h - 44
+    T = {l: when(l) for l in labs}
+    timed = all(v is not None for v in T.values()) and len(set(T.values())) == len(labs)
+    if timed:  # dated labels: sort chronologically and place in proportion to time
+        labs = sorted(labs, key=lambda l: T[l])
+        t0, t1 = T[labs[0]], T[labs[-1]]
+        X = lambda i: x0 + (T[labs[i]] - t0) / ((t1 - t0) or 1) * (x1 - x0)
+    else:
+        X = lambda i: x0 + i * (x1 - x0) / max(1, len(labs) - 1)
     Y = lambda v: y1 - (v - lo) / (hi - lo) * (y1 - y0)
     out = svg_open(h, ex.get('title', '')) + legend(series, 14) + yaxis(x0, x1, y0, y1, lo, hi, ex.get('unit', ''))
-    every = max(1, math.ceil(len(labs) / 8))
-    for i, l in enumerate(labs):
-        if i % every == 0 or i == len(labs) - 1:
-            out += f'<text x="{X(i):.1f}" y="{h - 22}" font-size="11.5" fill="{AXIS}" text-anchor="middle">{E(l)}</text>'
+    shown = []  # x-axis labels: keep the last, drop any closer than 68 units to a kept neighbour
+    for i in range(len(labs) - 1, -1, -1):
+        if not shown or X(shown[-1]) - X(i) >= 68:
+            shown.append(i)
+    for i in shown:
+        out += f'<text x="{X(i):.1f}" y="{h - 22}" font-size="11.5" fill="{AXIS}" text-anchor="middle">{E(labs[i])}</text>'
     for si, s in enumerate(series):
         c = PAL[si % len(PAL)]
-        pts = [(labs.index(p[0]), num(p[1])) for p in s['points'] if num(p[1]) is not None]
+        pts = sorted([(labs.index(p[0]), num(p[1])) for p in s['points'] if num(p[1]) is not None])
         d = ' '.join(f'{"M" if k == 0 else "L"}{X(i):.1f},{Y(v):.1f}' for k, (i, v) in enumerate(pts))
         out += f'<path d="{d}" fill="none" stroke="{c}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/>'
         for i, v in pts:
@@ -128,7 +167,7 @@ def line_chart(ex):
         li, lv = pts[-1]
         out += f'<text x="{X(li) + 9:.1f}" y="{Y(lv) + 4:.1f}" font-size="12.5" font-weight="600" fill="{INK}">{fmt(lv)}</text>'
         if len(series) > 1 and len(series) <= 4:
-            out += f'<text x="{X(li) + 9:.1f}" y="{Y(lv) + 18:.1f}" font-size="10.5" fill="{MUTED}">{E(str(s["name"])[:16])}</text>'
+            out += f'<text x="{X(li) + 9:.1f}" y="{Y(lv) + 18:.1f}" font-size="10.5" fill="{MUTED}">{E(str(s["name"])[:22])}</text>'
         if len(pts) > 1:
             fi, fv = pts[0]
             out += f'<text x="{X(fi) + 6:.1f}" y="{Y(fv) - 10:.1f}" font-size="11.5" fill="{MUTED}" text-anchor="start">{fmt(fv)}</text>'
@@ -136,16 +175,27 @@ def line_chart(ex):
 
 
 def bar_chart(ex, grouped=False):
+    global H
     series = [s for s in ex.get('series', []) if s.get('points')]
     if not grouped:
         series = series[:1]
+    maxes = [max((num(p[1]) or 0) for p in s['points']) for s in series]
+    if grouped and len(series) > 1 and min(maxes) > 0 and max(maxes) / min(maxes) > 20:
+        # one axis would flatten the smaller series: draw small multiples, each on its own scale
+        keep, H = H, 210
+        try:
+            parts = [f'<div class="tai-mm-t">{E(s["name"])} <span>(own scale)</span></div>' + bar_chart(dict(ex, series=[s]))
+                     for s in series]
+        finally:
+            H = keep
+        return '<div class="tai-mm">' + ''.join(parts) + '</div>'
     labs = labels_of(series)
     vals = [num(p[1]) for s in series for p in s['points'] if num(p[1]) is not None]
     if not vals:
         return ''
     lo = min(0, min(vals)); hi = nice_max(max(vals)) if max(vals) > 0 else 1
     top = 46 if len(series) > 1 else 30
-    h = 330; x0, x1, y0, y1 = 70, W - 20, top, h - 44
+    h = H; x0, x1, y0, y1 = 70, W - 20, top, h - 44
     Y = lambda v: y1 - (v - lo) / (hi - lo) * (y1 - y0)
     out = svg_open(h, ex.get('title', '')) + legend(series, 14) + yaxis(x0, x1, y0, y1, lo, hi, ex.get('unit', ''))
     band = (x1 - x0) / len(labs); ns = len(series)
@@ -261,6 +311,20 @@ def data_table(ex):
     return f'<details class="tai-exdata"><summary>View the data</summary>{table_html(cols, rows)}</details>'
 
 
+STAMP_SPRITE = ('<svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>'
+    '<path id="rai-ring" d="M18,80 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/>'
+    '<symbol id="rai-stamp" viewBox="0 0 160 160"><g fill="none" stroke="#2545f5"><circle cx="80" cy="80" r="76" stroke-width="3.2"/>'
+    '<circle cx="80" cy="80" r="72" stroke-width=".9"/><circle cx="80" cy="80" r="50" stroke-width="1.6"/></g>'
+    '<g fill="#2545f5"><text font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600"><textPath href="#rai-ring" textLength="386" lengthAdjust="spacing">'
+    'SOURCED · DATED · CONFIDENCE-RATED · REPORT-AI.ORG ·</textPath></text>'
+    '<text x="80" y="75" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="17">REPORT</text>'
+    '<text x="80" y="104" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="32">AI</text>'
+    '<text x="80" y="117" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="600" font-size="6.6" letter-spacing="1">BY THE NUMBERS</text></g>'
+    '<path d="M56 83H104" stroke="#2545f5" stroke-width="1.2"/></symbol></defs></svg>')
+STAMP_USE = '<svg class="tai-ex-stamp" viewBox="0 0 160 160" role="img" aria-label="Report AI stamp"><use href="#rai-stamp"/></svg>'
+WORDMARK = '<span class="tai-ex-wm">REPORT<b>AI</b> <i>report-ai.org</i></span>'
+
+
 def exhibit(n, ex):
     t = ex.get('type')
     body = {'line': line_chart, 'bar': bar_chart, 'hbar': hbar_chart, 'gantt': gantt_chart,
@@ -273,16 +337,21 @@ def exhibit(n, ex):
     conf = (ex.get('confidence') or '').upper()
     chip = f' <span class="tai-c tai-c-{conf}">{conf}</span>' if conf in ('HIGH', 'MEDIUM', 'DERIVED', 'CONTESTED') else ''
     notes = f'<br>Notes: {E(ex["notes"])}' if ex.get('notes') else ''
-    return (f'<figure class="tai-ex" id="exhibit-{n}"><div class="tai-ex-n">Exhibit {n}</div>'
+    return (f'<figure class="tai-ex" id="exhibit-{n}">{STAMP_USE}<div class="tai-ex-n">Exhibit {n}</div>'
             f'<div class="tai-ex-t">{E(ex.get("title", ""))}</div>'
             f'<div class="tai-ex-s">{E(ex.get("subtitle", ""))}</div>{body}{data_table(ex) if body and t != "table" else ""}'
-            f'<figcaption class="tai-ex-src">{E(ex.get("source", ""))}{chip}{notes}</figcaption></figure>')
+            f'<figcaption class="tai-ex-src">{E(ex.get("source", ""))}{chip}{notes}{WORDMARK}</figcaption></figure>')
 
 
-CSS = """.tai-ex{margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+CSS = """.tai-ex{position:relative;margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex-stamp{position:absolute;top:10px;right:0;width:76px;height:76px;transform:rotate(-8deg);opacity:.9;}
+.tai-ex-t,.tai-ex-s{padding-right:90px;}
+.tai-ex-wm{display:block;text-align:right;margin-top:6px;font-family:'Archivo',sans-serif;font-weight:900;font-size:15px;letter-spacing:-.02em;color:#111114;}.tai-ex-wm b{color:#2545f5;font-weight:900;}.tai-ex-wm i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11.5px;color:#77777f;letter-spacing:0;margin-left:6px;}
+@media(max-width:600px){.tai-ex-stamp{width:56px;height:56px;}.tai-ex-t,.tai-ex-s{padding-right:64px;}}
 .tai-ex-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2545f5;margin-bottom:6px;}
 .tai-ex-t{font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-0.01em;color:#111114;margin-bottom:4px;}
 .tai-ex-s{font-size:13.5px;color:#6e6e76;margin-bottom:14px;}
+.tai-mm-t{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#33333a;margin:12px 0 2px;}.tai-mm-t span{font-weight:400;color:#77777f;}
 .tai-ex-svg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .tai-ex-svg text{font-family:'IBM Plex Mono',monospace;}
 .tai-ex-src{font-size:12px;line-height:1.5;color:#77777f;margin-top:10px;border-top:1px solid #e6e6ea;padding-top:8px;}
