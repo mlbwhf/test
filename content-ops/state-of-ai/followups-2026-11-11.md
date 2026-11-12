@@ -40,6 +40,7 @@
 | State of AI Usage 2026 | 3521 | 3587 | draft, patched to stamped build (IDENTICAL 127,708 bytes) |
 | State of AI Spending 2026 | 3524 | 3594 | draft (IDENTICAL) |
 | State of AI Finance 2026 | 3526 | 3605 | draft (IDENTICAL) |
+| State of AI Work 2026 | 3626 | 3688 | draft (IDENTICAL 130,584 bytes), 12 Nov |
 
 Before publishing: replace the truncated excerpts on 3521/3524/3526 with the sentence-safe ones in
 `site-content/state-of-ai/pages.json`. Owner action: AIOSEO Organization/WebSite schema still says

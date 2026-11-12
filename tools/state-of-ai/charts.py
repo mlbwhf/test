@@ -31,6 +31,21 @@ def fmt(v):
     return s
 
 
+SUP = str.maketrans('0123456789-', '⁰¹²³⁴⁵⁶⁷⁸⁹⁻')
+
+
+def sci(v):
+    """Scientific notation for log-scale exhibits: 3.8×10²⁵ (plain fmt below 10,000)."""
+    if v is None:
+        return ''
+    if 0 < abs(v) < 1e4 and abs(v) >= 1e-2:
+        return fmt(v)
+    e = math.floor(math.log10(abs(v)))
+    m = v / 10 ** e
+    ms = f'{m:.1f}'.rstrip('0').rstrip('.')
+    return ('' if ms == '1' else ms + '×') + '10' + str(e).translate(SUP)
+
+
 def nice_step(span, n=5):
     raw = span / n if span > 0 else 1
     e = 10 ** math.floor(math.log10(raw))
@@ -132,7 +147,61 @@ def when(label):
     return None
 
 
+def log_line_chart(ex):
+    """Log-10 y axis for series spanning many orders of magnitude (e.g. training compute).
+    Points may carry a third element, a short annotation drawn beside the marker."""
+    series = [s for s in ex.get('series', []) if s.get('points')]
+    pts_all = [(p[0], num(p[1])) for s in series for p in s['points'] if (num(p[1]) or 0) > 0]
+    labs = labels_of(series)
+    T = {l: when(l) for l in labs}
+    if len(pts_all) < 2 or any(v is None for v in T.values()):
+        return ''
+    labs = sorted(labs, key=lambda l: T[l])
+    lv = [math.log10(v) for _, v in pts_all]
+    lo, hi = math.floor(min(lv)), math.ceil(max(lv))
+    if hi == lo:
+        hi += 1
+    step = max(1, math.ceil((hi - lo) / 8))
+    lo = (lo // step) * step
+    hi = lo + math.ceil((hi - lo) / step) * step
+    top = 46 if len(series) > 1 else 30
+    h = H + 40; x0, x1, y0, y1 = 70, W - 130, top, h - 44
+    t0, t1 = T[labs[0]], T[labs[-1]]
+    X = lambda t: x0 + (t - t0) / ((t1 - t0) or 1) * (x1 - x0)
+    Y = lambda v: y1 - (math.log10(v) - lo) / (hi - lo) * (y1 - y0)
+    out = svg_open(h, ex.get('title', '')) + legend(series, 14)
+    for e in range(lo, hi + 1, step):
+        y = y1 - (e - lo) / (hi - lo) * (y1 - y0)
+        out += f'<line x1="{x0}" x2="{x1}" y1="{y:.1f}" y2="{y:.1f}" stroke="{GRID}" stroke-width="1"/>'
+        out += f'<text x="{x0 - 8}" y="{y + 4:.1f}" font-size="11.5" fill="{AXIS}" text-anchor="end">10{str(e).translate(SUP)}</text>'
+    if ex.get('unit'):
+        out += f'<text x="{x0 - 8}" y="{y0 - 14}" font-size="11.5" fill="{MUTED}" text-anchor="end">{E(ex["unit"])} (log scale)</text>'
+    y_a, y_b = int(t0 // 12), int(t1 // 12) + 1
+    span = y_b - y_a
+    yst = 10 if span > 40 else 5 if span > 15 else 2 if span > 6 else 1
+    for yr in range(((y_a + yst - 1) // yst) * yst, y_b + 1, yst):
+        x = X(yr * 12)
+        if x0 - 1 <= x <= x1 + 1:
+            out += f'<text x="{x:.1f}" y="{h - 22}" font-size="11.5" fill="{AXIS}" text-anchor="middle">{yr}</text>'
+            out += f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{y1}" y2="{y1 + 5}" stroke="{AXIS}" stroke-width="1"/>'
+    out += f'<line x1="{x0}" x2="{x1}" y1="{y1}" y2="{y1}" stroke="{AXIS}" stroke-width="1"/>'
+    for si, s in enumerate(series):
+        c = PAL[si % len(PAL)]
+        pts = sorted([(T[p[0]], num(p[1]), (p[2] if len(p) > 2 else '')) for p in s['points'] if (num(p[1]) or 0) > 0])
+        if ex.get('connect', True) and len(pts) > 1:
+            d = ' '.join(f'{"M" if k == 0 else "L"}{X(t):.1f},{Y(v):.1f}' for k, (t, v, _) in enumerate(pts))
+            out += f'<path d="{d}" fill="none" stroke="{c}" stroke-width="1.6" stroke-opacity=".45" stroke-linejoin="round"/>'
+        for k, (t, v, note) in enumerate(pts):
+            out += f'<circle cx="{X(t):.1f}" cy="{Y(v):.1f}" r="4.5" fill="{c}" stroke="#fff" stroke-width="2"><title>{E(note or s["name"])}: {sci(v)} {E(ex.get("unit", ""))}</title></circle>'
+            if note:
+                above = k % 2 == 0
+                out += f'<text x="{X(t) + (7 if X(t) < x1 - 60 else -7):.1f}" y="{Y(v) + (-8 if above else 15):.1f}" font-size="10.5" fill="{INK}" text-anchor="{"start" if X(t) < x1 - 60 else "end"}">{E(str(note)[:24])}</text>'
+    return out + '</svg></div>'
+
+
 def line_chart(ex):
+    if ex.get('log'):
+        return log_line_chart(ex)
     series = [s for s in ex.get('series', []) if s.get('points')]
     labs = labels_of(series)
     vals = [num(p[1]) for s in series for p in s['points'] if num(p[1]) is not None]
@@ -271,7 +340,15 @@ def gantt_chart(ex):
     out = svg_open(h, ex.get('title', ''))
     if len(groups) > 1:
         out += legend([{'name': g or 'Other'} for g in groups], 14)
-    for yv in range(lo // 12, hi // 12 + 1):
+    nyears = (hi - lo) // 12
+    if nyears > 16:  # long spans: gridlines and labels per decade (or 5 years), placed on the line
+        st = 10 if nyears > 40 else 5
+        lo = (lo // (12 * st)) * 12 * st; hi = -(-hi // (12 * st)) * 12 * st
+        for yv in range(lo // 12, hi // 12 + 1, st):
+            x = X(yv * 12)
+            out += f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{top - 6}" y2="{h - 26}" stroke="{GRID}" stroke-width="1"/>'
+            out += f'<text x="{x:.1f}" y="{h - 10}" font-size="11.5" fill="{AXIS}" text-anchor="middle">{yv}</text>'
+    for yv in (range(lo // 12, hi // 12 + 1) if nyears <= 16 else []):
         x = X(yv * 12)
         out += f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{top - 6}" y2="{h - 26}" stroke="{GRID}" stroke-width="1"/>'
         if yv * 12 < hi:
@@ -306,8 +383,13 @@ def data_table(ex):
     else:
         series = [s for s in ex.get('series', []) if s.get('points')]
         labs = labels_of(series)
-        cols = [''] + [s['name'] for s in series]
-        rows = [[l] + [next((fmt(num(p[1])) for p in s['points'] if p[0] == l), '') for s in series] for l in labs]
+        f_ = sci if ex.get('log') else fmt
+        if any(len(p) > 2 for s in series for p in s['points']):  # annotated points: one row per point
+            cols = ['Date', 'Item', ex.get('unit', '') or 'Value']
+            rows = [[p[0], p[2] if len(p) > 2 else s['name'], f_(num(p[1]))] for s in series for p in s['points']]
+        else:
+            cols = [''] + [s['name'] for s in series]
+            rows = [[l] + [next((f_(num(p[1])) for p in s['points'] if p[0] == l), '') for s in series] for l in labs]
     return f'<details class="tai-exdata"><summary>View the data</summary>{table_html(cols, rows)}</details>'
 
 
