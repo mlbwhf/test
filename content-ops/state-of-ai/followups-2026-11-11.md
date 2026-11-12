@@ -109,7 +109,7 @@ Staged (12 Nov ET):
 | Edition | Draft ID | CSV media | Notes |
 |---|---|---|---|
 | 2024 | 4007 | 4086 (`2026/11/report-ai-data-state-of-ai-2024-in-numbers.csv`, 89,041 bytes) | slug state-of-ai-2024-rebuild, parent 362, compare.py IDENTICAL 207,186 bytes. Live 322 untouched (still links CSV 3298 from 2026/10). |
-| 2025 | (pending) | (pending) | upload agent still running |
+| 2025 | 4009 | 4093 (`2026/11/report-ai-data-state-of-ai-2025-in-numbers.csv`, 205,565 bytes) | slug state-of-ai-2025-rebuild, parent 362, compare.py IDENTICAL 273,479 bytes. Live 358 untouched (still links CSV 3295 from 2026/10). |
 
 At the swap: the draft's canonical, schema `url` and nav already point at `/indexes/state-of-ai/state-of-ai-2024/`, so they resolve once 4007 takes the real slug. Re-stamp dates to the publish day. Old CSV 3298 stays in the library, unlinked (no media deletes).
 
