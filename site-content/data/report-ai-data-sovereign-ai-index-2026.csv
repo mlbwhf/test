@@ -1,0 +1,854 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign AI (umbrella),Definition,"A state's capacity to develop, run and govern AI on infrastructure, data and models it controls, rather than renting them from foreign providers. Definitions are contested: 'hard' sovereignty means self-sufficiency across the stack; 'soft' sovereignty means control over the layers that matter for a given use case."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign infrastructure (compute),Definition,"Domestic data centres and GPU clusters under national legal control, funded by budgets, state banks or sovereign-wealth vehicles."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign infrastructure (compute),Examples,"IndiaAI common compute (38,231 GPUs); Isambard-AI (UK); ABCI 3.0 (Japan); JUPITER (EU)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign models - from scratch,Definition,Foundation models pre-trained from random initialisation by a national lab or champion.
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign models - from scratch,Examples,Falcon (UAE); Jais 2 (UAE); K2 Think V2 (UAE); ALLaM 34B (Saudi)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign models - adapted (continued pre-training / fine-tune of foreign open weights),Definition,"A national model built on a foreign open-weight base (Llama, Gemma, Qwen, Mistral, Nemotron) with local data."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign models - adapted (continued pre-training / fine-tune of foreign open weights),Examples,SEA-LION v4 (Gemma 3; Qwen variant); Fanar 2.0 (Gemma-3-27B); KazLLM (Llama); Latam-GPT (Llama 3.1)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign deployment of foreign models,Definition,"Foreign proprietary or open models run in-country under local data residency, often via 'sovereign cloud' offers."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign deployment of foreign models,Examples,"Japan's 'Gennai' government AI (OpenAI-powered, now A/B-testing domestic LLMs); SoftBank Cloud PF Type A on Oracle Alloy; Cohere on Bell AI Fabric (Canada)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign data,Definition,"Legal and practical control over national training corpora and the data pipeline (licensed national-library, news and administrative text)."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign data,Examples,GPT-NL licensed news + KB national library; Viettel administrative/regulatory corpora; TAIDE government documents; Jais 2's 600B Arabic tokens
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign capital,Definition,"Public money behind the stack: budgets/appropriations, equity funds, sovereign-wealth vehicles, and mobilisation headlines - four categories that must never be summed."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign capital,Examples,"IndiaAI Mission (budget); China National AI Fund (equity); HUMAIN, MGX (sovereign vehicles); EU InvestAI EUR 200B (mobilisation)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign by default,Definition,"Markets where foreign assistants are blocked or restricted, so domestic models dominate regardless of policy intent."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Sovereign by default,Examples,"China: Doubao 419M MAU, Qwen 158M, DeepSeek 123M (Sep 2026); Russia (sanctions): domestic share depends on measurement method"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,1,A typology of sovereign AI,Popularity metrics (and why they cannot be compared),Definition,"Hugging Face downloads (developer pulls, inflated by CI/mirrors), derivatives (fine-tunes on a base), app MAU/WAU (consumer reach; panels disagree), web-traffic share, Statcounter referral share (clicks from chatbots to websites), OpenRouter token share (one developer aggregator), leaderboard rank (capability, not use)."
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Model family,Mistral (Mistral Large / Medium / Small;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Developer,Mistral AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,How built,from scratch (private national champion)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Latest version,Mistral Large 4 (API preview 6 Oct 2026; open weights 29…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,"HF downloads, 30 days",8.12M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,"HF downloads, all time",332.01M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Users (where reported),about 1 million app downloads in first 13 days
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",France,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,Model family,Aleph Alpha (Luminous; PhariaAI platform)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,Developer,Aleph Alpha (Heidelberg)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,How built,from scratch (Luminous); later pivot to…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,"HF downloads, 30 days",23k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,"HF downloads, all time",127k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,Model family,Teuken (OpenGPT-X)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,Developer,Fraunhofer IAIS & IIS with OpenGPT-X…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,How built,from scratch (~6T tokens per arXiv…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,Latest version,Teuken-7B-instruct (research and commercial v0.4)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,"HF downloads, 30 days",5k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,"HF downloads, all time",861k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Germany / EU,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,Model family,OpenEuroLLM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,Developer,Consortium of 20+ European…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,How built,from scratch (planned)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,Latest version,'First models' deliverable due 31 Jul 2026
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,"HF downloads, 30 days",19k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,"HF downloads, all time",122k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,Model family,EuroLLM (and Portugal's AMALIA derivative)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,Developer,"Unbabel, Instituto Superior Tecnico and…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,Latest version,"EuroLLM-9B (22B reported Dec 2025, unconfirmed)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,"HF downloads, 30 days",123k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,"HF downloads, all time",3.71M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",EU / Portugal,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Model family,UK-LLM (English-Welsh reasoning model)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Developer,"UCL, Bangor University with NVIDIA"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,How built,adapted (NVIDIA Nemotron open…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Latest version,UK-LLM Welsh model
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Model family,Lumen Sovereign
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Developer,"Cosine (London, ~30 staff)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,How built,"from scratch (claimed: pre-, mid- and…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Latest version,in development; deployment-readiness targeted end-2026
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Kingdom,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,Model family,Apertus
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,Developer,"Swiss AI Initiative (EPFL, ETH Zurich,…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,How built,"from scratch, fully open"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,Latest version,Apertus 1.5 (70B and smaller; distilled 0.5B/1.5B/4B in May…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,"HF downloads, 30 days",325k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,"HF downloads, all time",6.09M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Switzerland,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,Model family,ALIA
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,Developer,Barcelona Supercomputing Center…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,How built,from scratch on MareNostrum 5 (9.37T…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,Latest version,"ALIA-40b-instruct-2606 (HF, 30 Jun 2026); function-calling…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,"HF downloads, 30 days",82k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,"HF downloads, all time",2.27M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Spain,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Model family,Minerva / ChatMinerva
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Developer,Sapienza NLP (Sapienza University of…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,How built,from scratch (500B+ words…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Latest version,ChatMinerva (multimodal assistant on Minerva)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,"HF downloads, 30 days",22k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,"HF downloads, all time",737k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Model family,Velvet
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Developer,Almawave (listed; Almaviva group)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Latest version,Velvet2-3B (Hugging Face listing Oct 2026); Velvet 25B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,"HF downloads, 30 days",6k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,"HF downloads, all time",159k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Italy,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Netherlands,Model family,GPT-NL
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Netherlands,Developer,"TNO, NFI, SURF"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Netherlands,How built,from scratch on Snellius with licensed…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Netherlands,Latest version,"GPT-NL 1.0 (beta, launching partners only)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Netherlands,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,Model family,"Poro, Viking"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,Developer,AMD Silo AI with TurkuNLP (University…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,How built,Poro 2 = continued pre-training of…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,Latest version,"Poro 2 (8B, 70B)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,"HF downloads, 30 days",16k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,"HF downloads, all time",468k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Finland / Nordics,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Model family,"Falcon (Falcon-H1, Falcon-H1R, Falcon-H1…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Developer,"Technology Innovation Institute (TII),…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,How built,from scratch (hybrid Transformer-Mamba)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Latest version,Falcon-H1R 7B (reasoning) and Falcon-H1 Arabic 3B/7B/34B;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, 30 days",378k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, all time",68.71M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Model family,Jais
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Developer,Inception (G42) with MBZUAI Institute…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,How built,from scratch (2.6T tokens; trained and…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Latest version,"Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B,…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, 30 days",30k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, all time",1.69M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Users (where reported),None users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Model family,K2 Think / K2-V2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Developer,MBZUAI Institute of Foundation Models…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,How built,"from scratch, fully open"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Latest version,K2 Think V2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, 30 days",273k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,"HF downloads, all time",1.51M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",United Arab Emirates,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Model family,ALLaM / HUMAIN Chat
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Developer,HUMAIN (PIF-owned; ALLaM originated at…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,How built,from scratch (3T+ tokens per site page…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Open weights,partly:…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Latest version,ALLaM 34B (served via HUMAIN Chat)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,"HF downloads, 30 days",93k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,"HF downloads, all time",392k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Users (where reported),None users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Saudi Arabia,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,Model family,Fanar
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,Developer,Qatar Computing Research Institute…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,How built,adapted: continual pre-training of…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,Latest version,"Fanar 2.0 (Fanar-27B core model, FanarGuard moderation)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,"HF downloads, 30 days",11k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,"HF downloads, all time",9.97M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Qatar,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,"Sarvam (Sarvam 30B, Sarvam 105B; Indus app)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,Sarvam AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,from scratch on IndiaAI mission compute
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Latest version,Sarvam 105B and Sarvam 30B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, 30 days",64k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, all time",2.59M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Users (where reported),None users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,BharatGen Param2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,BharatGen consortium (IIT…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,from scratch (with NVIDIA collaboration)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Latest version,Param2 17B-A2.4B (incl. Thinking checkpoint)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, 30 days",18k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, all time",244k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,EKA-1 (Project EKA)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,Soket AI Labs
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Latest version,EKA-1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,Inya VoiceOS / Vachana
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,Gnani.ai
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,from scratch (speech; STT trained on…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Latest version,Inya VoiceOS 5B voice-to-voice (preview); Vachana TTS;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,Other IndiaAI foundation-model teams
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,Gan.AI (cohort 1); Tech Mahindra Makers…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,not stated
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Model family,Krutrim / Kruti
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Developer,Krutrim (Ola group)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,How built,not stated
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Latest version,"Krutrim models (2T+ tokens, 22 languages per site page 957)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, 30 days",265k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,"HF downloads, all time",440k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Users (where reported),offline consumer assistant status
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",India,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,Sakana AI models
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,Sakana AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,research lab (model merging /…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, 30 days",8k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, all time",822k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,PLaMo
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,Preferred Networks (PFN)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Open weights,partly (Translate…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,PLaMo 3.1 Prime (27 Oct 2026); PLaMo 3 Translate…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, 30 days",731k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, all time",2.93M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,LLM-jp
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,National Institute of Informatics (NII)…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,"from scratch (~12T tokens), fully open"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,LLM-jp-4.1 (33B/32B-A3B/8B thinking)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, 30 days",509k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, all time",6.42M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,Fugaku-LLM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,"RIKEN, Tokyo Tech, Fujitsu and partners"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,from scratch on Fugaku supercomputer
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,Fugaku-LLM 13B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, 30 days",24
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, all time",15k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,tsuzumi
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,NTT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,from scratch (lightweight)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Open weights,No
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,tsuzumi 2 (chart/table update 19 May 2026)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,Sarashina
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,SB Intuitions (SoftBank)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,"Sarashina3 series (5 models, Jun 2026); Sarashina3.2 mini…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, 30 days",178k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,"HF downloads, all time",3.57M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Model family,National physical-AI foundation model
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Developer,Noetra (formerly Japan AI Foundation…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,How built,"from scratch (multimodal: language,…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Latest version,in development (FY2026-FY2030)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Japan,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,K-EXAONE / EXAONE
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,LG AI Research
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Latest version,"K-EXAONE 2.0 (750B-A37B, HF 29 Jul 2026)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",725k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",20.35M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,A.X
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,SK Telecom
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Latest version,"A.X K2 (HF, Aug 2026)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",344k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",17.12M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,Solar
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,Upstage
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Latest version,"Solar Open 2 250B (open weights, Jul 2026); Solar Pro 4…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",186k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",4.90M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,Motif
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,Motif Technologies (with KAIST)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Latest version,Motif3
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",8k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",104k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,HyperCLOVA X
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,Naver Cloud
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,from scratch core; vision encoder from…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Latest version,HyperCLOVA X (SEED 4B open model; Think)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",34k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",4.73M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Users (where reported),about 30 million monthly users of Naver AI…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Model family,NC AI (VARCO)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Developer,NC AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,How built,not stated
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, 30 days",4k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,"HF downloads, all time",250k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,Model family,TAIDE
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,Developer,National Science and Technology Council…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,How built,adapted (Meta Llama 3/3.1 and Google…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,Latest version,Gemma-3-TAIDE-12b-Chat-2602 (Feb 2026);…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,"HF downloads, 30 days",54k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,"HF downloads, all time",400k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Taiwan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,Model family,SEA-LION
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,Developer,AI Singapore (National Multimodal LLM…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,How built,adapted: v4 on Google Gemma 3 27B;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,Latest version,"SEA-LION v4.5 27B / v4.8 (120B-A12B, 30B-A3B) (2026…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,"HF downloads, 30 days",66k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,"HF downloads, all time",1.13M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Singapore,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,Model family,Sahabat-AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,Developer,GoTo Group and Indosat Ooredoo Hutchison
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,How built,adapted (SEA-LION / Llama-based)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,"HF downloads, 30 days",126k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,"HF downloads, all time",1.56M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,Users (where reported),None users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Indonesia,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Vietnam,Model family,VT-Super (Viettel AI)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Vietnam,Developer,Viettel (state-owned military telecom…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Vietnam,How built,adapted: NVIDIA Nemotron 3 Super…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Vietnam,Latest version,VT-Super-120B-A12B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Vietnam,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,Model family,Typhoon
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,Developer,SCB 10X (SCBX banking group)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,How built,"adapted (open base models, e.g.…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,Latest version,Typhoon 2 family; Typhoon-S post-training method (Jun…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,"HF downloads, 30 days",320k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,"HF downloads, all time",11.66M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Thailand,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,Model family,ILMU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,Developer,YTL AI Labs with Universiti Malaya
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,How built,adapted: NVIDIA Nemotron fine-tune;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,Latest version,"ILMU-Nemo-30B (Mar 2026); ILMU-GLM-5.3 (ILMUcode, Oct 2026)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,Users (where reported),"10,000+ organic users of ILMUchat at launch"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Malaysia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Model family,KazLLM (ISSAI KAZ-LLM)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Developer,"ISSAI, Nazarbayev University"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,How built,adapted (Meta Llama…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Latest version,KazLLM 8B and 70B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,"HF downloads, 30 days",6k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,"HF downloads, all time",239k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Users (where reported),"600,000 'users' or 'requests' (sources disagree)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Kazakhstan,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Model family,GigaChat
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Developer,Sber (state-controlled bank)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Open weights,partly: GigaChat…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Latest version,"GigaChat 3.5 432B-A28B (HF, 3 Sep 2026)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,"HF downloads, 30 days",378k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,"HF downloads, all time",5.99M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Users (where reported),None monthly users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Model family,Alice AI (formerly YandexGPT)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Developer,Yandex
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Open weights,partly:…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,"HF downloads, 30 days",25k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,"HF downloads, all time",443k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Users (where reported),43 million people asking Alice per month
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Russia,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Model family,DeepSeek
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Developer,DeepSeek (Hangzhou; High-Flyer)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,How built,from scratch (reportedly on Huawei…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Latest version,DeepSeek-V4.1-Flash (HF 10 Sep 2026; '1017' update Oct…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, 30 days",23.44M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, all time",423.85M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Users (where reported),122.65 million monthly active users (app)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Model family,Qwen / Qianwen app
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Developer,Alibaba Cloud (Tongyi Lab)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Open weights,mostly (flagship…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Latest version,"Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, 30 days",234.51M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, all time",4030.26M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Users (where reported),158.17 million monthly active users (Qwen/Qianwen…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Model family,Doubao
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Developer,ByteDance
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Open weights,No
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, 30 days",378k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, all time",8.38M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Users (where reported),419.08 million monthly active users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Model family,Kimi
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Developer,Moonshot AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Latest version,Kimi K3.1 Pro (HF 2 Nov 2026)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, 30 days",2.04M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, all time",55.64M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Users (where reported),US$300M annual recurring revenue
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Model family,GLM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Developer,Zhipu AI (Z.ai)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,How built,from scratch (GLM-5 trained on Huawei…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Latest version,GLM-5 (Feb 2026); GLM-5.2/5.3
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, 30 days",16.43M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,"HF downloads, all time",189.30M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",China,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,Model family,Command (Cohere)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,Developer,Cohere
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,How built,from scratch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,"HF downloads, 30 days",591k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,"HF downloads, all time",12.56M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,Users (where reported),about US$240M ARR end-2025 (from US$62M end-2024)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Canada,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Model family,Latam-GPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Developer,CENIA (Chile) with regional partners;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),How built,adapted (Meta Llama 3.1 base)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Latest version,Latam-GPT v1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),"HF downloads, 30 days",3k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),"HF downloads, all time",261k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Users (where reported),"no chat app (downloadable model only, budget…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Latin America (Chile-led),Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Brazil,Model family,Federal sovereign Portuguese LLM (planned);…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Brazil,Developer,Federal government / SERPRO; Piaui…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Brazil,How built,not stated
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Brazil,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),Model family,InkubaLM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),Developer,Lelapa AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),How built,from scratch (1.9B tokens)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),Latest version,InkubaLM-0.4B
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),"HF downloads, 30 days",251
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),"HF downloads, all time",56k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Africa (South Africa-based),Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,Model family,N-ATLaS
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,Developer,Awarri with NITDA and NCAIR
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,How built,adapted (Llama-3 8B fine-tune on 400M+…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,Open weights,gated
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,Latest version,N-ATLaS v1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,"HF downloads, 30 days",297k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,"HF downloads, all time",392k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Nigeria,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,Model family,Dicta-LM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,Developer,DICTA (Israel Center for Text Analysis)…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,How built,adapted/continued pre-training (base…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,Open weights,Yes
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,Latest version,Dicta-LM 3.0 (24B flagship; 12B; 1.7B)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,"HF downloads, 30 days",86k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,"HF downloads, all time",3.40M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Israel,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,Model family,Bilge (and Kumru)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,Developer,TUBITAK BILGEM (Bilge); VNGRS (Kumru)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,How built,from scratch (both reported)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,Open weights,Kumru-2B open;…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,"HF downloads, 30 days",2k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,"HF downloads, all time",76k
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,2,"Sovereign and national AI models, November 2026",Turkey,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Qwen (Alibaba),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Qwen (Alibaba),M downloads,234.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Meta Llama,Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Meta Llama,M downloads,12.3
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Mistral,Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,Mistral,M downloads,8.1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,30 other national,Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,3,One Chinese model family outdraws every national model maker combined,30 other national,M downloads,5.4
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Mistral (France),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Mistral (France),k downloads,8118
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Preferred Networks (JP),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Preferred Networks (JP),k downloads,731
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",LG EXAONE (Korea),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",LG EXAONE (Korea),k downloads,725
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Cohere (Canada),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Cohere (Canada),k downloads,591
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",LLM-jp (Japan),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",LLM-jp (Japan),k downloads,509
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",TII Falcon (UAE),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",TII Falcon (UAE),k downloads,378
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Sber GigaChat (Russia),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Sber GigaChat (Russia),k downloads,378
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",SK Telecom (Korea),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",SK Telecom (Korea),k downloads,344
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Apertus (Switzerland),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Apertus (Switzerland),k downloads,325
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Typhoon (Thailand),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Typhoon (Thailand),k downloads,320
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",MBZUAI IFM K2 (UAE),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",MBZUAI IFM K2 (UAE),k downloads,273
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Upstage Solar (Korea),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Upstage Solar (Korea),k downloads,186
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Sahabat-AI (Indonesia),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",Sahabat-AI (Indonesia),k downloads,126
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",HUMAIN ALLaM (Saudi),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",HUMAIN ALLaM (Saudi),k downloads,93
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",BSC ALIA (Spain),Series,Downloads
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,4,"Among national model makers, Mistral leads by a wide margin",BSC ALIA (Spain),k downloads,82
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",US: Claude Fable 5.2,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",US: Claude Fable 5.2,index score,64.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",China: Kimi K3.1 Pro,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",China: Kimi K3.1 Pro,index score,46.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",France: Mistral Large 4,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",France: Mistral Large 4,index score,26.1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",UAE: K2 Horizon 375B A23B,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",UAE: K2 Horizon 375B A23B,index score,17.8
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",South Korea: Solar Pro 4,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",South Korea: Solar Pro 4,index score,14.2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",Canada: Command A+,Series,Score
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,5,"Outside the US and China, the best national model scores well below the frontier",Canada: Command A+,index score,6.2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,1,Model,Claude Fable 5.2
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,1,Developer,Anthropic
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,1,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,1,Score,64.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,2,Model,Gemini 4 Carbon
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,2,Developer,Google
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,2,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,2,Score,60.0
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,3,Model,Claude Opus 5.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,3,Developer,Anthropic
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,3,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,3,Score,59.1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,4,Model,GPT-6 Astra
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,4,Developer,OpenAI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,4,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,4,Score,56.9
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,5,Model,GPT-6.1 Sol
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,5,Developer,OpenAI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,5,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,5,Score,54.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,6,Model,Claude Sonnet 5.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,6,Developer,Anthropic
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,6,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,6,Score,54.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,7,Model,GPT-6.1 Terra
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,7,Developer,OpenAI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,7,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,7,Score,51.3
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,8,Model,Gemini 4 Argon
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,8,Developer,Google
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,8,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,8,Score,50.4
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,9,Model,Muse Wonder Full
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,9,Developer,Meta
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,9,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,9,Score,50.1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,10,Model,Kimi K3.1 Pro
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,10,Developer,Kimi
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,10,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,10,Score,46.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,11,Model,Muse Wonder
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,11,Developer,Meta
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,11,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,11,Score,43.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,12,Model,Claude Haiku 5.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,12,Developer,Anthropic
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,12,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,12,Score,36.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,13,Model,Muse Ember
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,13,Developer,Meta
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,13,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,13,Score,36.0
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,14,Model,Grok 4.7
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,14,Developer,SpaceXAI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,14,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,14,Score,35.5
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,15,Model,Tencent Hy4
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,15,Developer,Tencent
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,15,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,15,Score,34.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,16,Model,Qwen3.8 Max (0902)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,16,Developer,Alibaba
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,16,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,16,Score,33.7
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,17,Model,DeepSeek V4.1 Flash 1017
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,17,Developer,DeepSeek
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,17,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,17,Score,32.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,18,Model,GLM-5.3
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,18,Developer,Z AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,18,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,18,Score,31.7
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,19,Model,Gemini 3.8 Flash
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,19,Developer,Google
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,19,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,19,Score,30.8
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,20,Model,Inkling 2 Small
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,20,Developer,Thinking Machines
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,20,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,6,Artificial Analysis Intelligence Index: top 20 distinct models,20,Score,30.6
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",DeepSeek,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",DeepSeek,Share of requests,31.8%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",DeepSeek,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",OpenAI,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",OpenAI,Share of requests,19.3%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",OpenAI,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Google,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Google,Share of requests,13.6%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Google,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Z.ai,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Z.ai,Share of requests,7.4%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Z.ai,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Anthropic,Country,US
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Anthropic,Share of requests,5.8%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Anthropic,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Qwen,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Qwen,Share of requests,5.7%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Qwen,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Stealth,Country,unknown
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Stealth,Share of requests,2.5%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Stealth,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Mistral,Country,France
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Mistral,Share of requests,2.3%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Mistral,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Tencent,Country,China
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Tencent,Share of requests,2.3%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Tencent,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",All other authors,Country,mixed
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",All other authors,Share of requests,9.2%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",All other authors,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Chinese authors (DeepSeek+Z.ai+Qwen+Tencent),Share of requests,47.2%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Chinese authors (DeepSeek+Z.ai+Qwen+Tencent),Confidence,DERIVED
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Top-10 models by tokens,Share of requests,83.4% Chinese
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,7,"OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",Top-10 models by tokens,Confidence,DERIVED
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Assistant,Doubao (ByteDance)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Value,419.08
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Measure,million MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Date,2026-09
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Source,QuestMobile via FourWeekMBA / 36Kr
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Assistant,Qwen / Qianwen (Alibaba)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Value,158.17
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Measure,million MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Date,2026-09
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Assistant,DeepSeek
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Value,122.65
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Measure,million MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Date,2026-09
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Assistant,All AI-native apps
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Value,546
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Measure,million MAU (+82.1% YoY)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Date,2026-09
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Source,QuestMobile via 36Kr
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,China (Western assistants blocked),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,18762276
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,app MAU (~91% of AI-app users)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,Mobile Index via Hankyung / FourWeekMBA
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,Claude
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,about 2.1 million
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,app MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,Gemini
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,8.45
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,million app MAU (WiseApp panel)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-04
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,WiseApp Retail
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,Naver AI Briefing (HyperCLOVA X)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,about 30 million
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,monthly users of AI search answers
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-05-28
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,Naver
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,Naver AI Tab
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,>10 million
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-08-07
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,Naver Q2 call
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Assistant,Statcounter referral share
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Value,"Gemini 65.25%, ChatGPT 23.62%, Perplexity 8.05%"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Measure,% of chatbot-referred page views
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Source,Statcounter (page opened)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,South Korea,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Assistant,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Value,75.77%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Measure,Statcounter AI-chatbot share (referral-based)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Date,2026-06
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Source,Statcounter
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Assistant,Le Chat / Vibe (Mistral)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Value,not tracked by Statcounter
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Measure,Statcounter share
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Date,2026-06
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Source,Statcounter
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Assistant,ChatGPT (traffic)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Value,77.2%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Measure,"share of AI-tool traffic, France (80.9% a year earlier)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Date,2026
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Source,SE Ranking
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Assistant,Le Chat (survey)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Value,14% (ChatGPT 79%)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Measure,share of French gen-AI users citing the tool
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Date,2025-06
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Source,Credoc via La Gazette France
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Assistant,ChatGPT / Gemini / Perplexity
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Value,43.33% / 36.38% / 12.05%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Measure,"Statcounter referral share, France"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Source,Statcounter (page opened)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,France,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,~40%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,share of AI-service web traffic
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2025 (Jan-Oct)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,Kommersant / 3DNews
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,DeepSeek
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,27.8%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2025
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,GigaChat (Sber)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,7.3%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2025
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,Qwen
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,6.6%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2025
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,Alice AI (Yandex)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,5.7%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2025
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,same
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,Statcounter (referrals)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,"Perplexity 39.34%, Gemini 32.44%, ChatGPT 23.38% (Oct 2026); Perplexity 47.92% / ChatGPT 39.95% (Apr 2026); Perplexity 32.27% / ChatGPT 47.69% (Jun 2026)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,AI-chatbot share
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,Statcounter Russia
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,Alice AI (operator data)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,"67% (DeepSeek 29%, ChatGPT 7%)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,share
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2026-Q1
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,Beeline Analytics
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,CONTESTED
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Assistant,All AI services
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Value,55%
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Measure,"monthly reach, population 12+"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Date,2026-09
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Source,Mediascope via RBC
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,Russia,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Assistant,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Value,100
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Measure,million weekly active users (#2 market at the time)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Date,2026-02-15
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Source,Sam Altman via TechCrunch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Assistant,ChatGPT
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Value,largest market by WAU; base doubled since January
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Measure,rank
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Date,2026-11-03
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Source,OpenAI India MD Prabhjeet Singh to The Economic…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Assistant,ChatGPT / Gemini (Sensor Tower)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Value,180M / 118M
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Measure,app MAU
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Date,2026-01
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Source,Sensor Tower via secondary
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Assistant,Sarvam Indus
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Value,None
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Measure,users
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Date,2026-02-20
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Source,Outlook Business
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Confidence,None
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Assistant,Statcounter referral share
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Value,"ChatGPT 50.39%, Gemini 35.11%, Perplexity 8.9%"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Measure,% of chatbot-referred page views
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Date,2026-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Source,Statcounter (page opened)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,India,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Assistant,ILMUchat (Malaysia)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Value,"10,000+"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Measure,organic users at launch
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Date,2026-06-25
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Source,The Edge Malaysia
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Assistant,KazLLM (Kazakhstan)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Value,"600,000"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Measure,users or requests (disputed)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Date,2026-02
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Source,Bes.media
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Confidence,CONTESTED
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Assistant,Japan 'Gennai' government AI
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Value,"3 domestic LLMs on trial (tsuzumi 2, Takane 32B, PLaMo 2.0 Prime)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Measure,trial
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Date,2026-07-10
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Source,Dempa Digital
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,8,Home-market use of national and global assistants,"Malaysia, Kazakhstan, Japan government",Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate (US),Country,United States
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate (US),Type of money,"private joint venture (OpenAI, Oracle, SoftBank,…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate (US),Key figures,"US$500B / 10 GW (target over four years, 2025-01-21); >9 GW across 7 US sites (projected by 2029) (planned capacity, 2026-04-17); 0.3 GW (operational (facility power, Abilene), 2026-04-22)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate (US),Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate UAE / UAE-US AI Campus,Country,United Arab Emirates
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate UAE / UAE-US AI Campus,Type of money,sovereign-linked (G42 builds; OpenAI and Oracle…
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate UAE / UAE-US AI Campus,Key figures,"1 GW cluster within 5 GW campus; first 200 MW 'in 2026' (plan, 2025-05-22); 0 (MW operational / H100e, 2026-11-12); up to 35,000 GB300-equivalent (US export authorisation each for G42 and HUMAIN, 2025-11-19)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Stargate UAE / UAE-US AI Campus,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,HUMAIN,Country,Saudi Arabia
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,HUMAIN,Type of money,sovereign vehicle (PIF-owned)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,HUMAIN,Key figures,"up to 600,000 Nvidia GPUs over three years (Saudi Arabia and US) (ceiling, 2025-11); up to 84 MW, ~27,000 GPUs in two phases through 2027; phase 1 = 14 MW, ~6,000 Blackwell B300 from Q4 2026…; 4.5% (Oct 2026 contracted GPUs as share of 600k ceiling, 2026-10)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,HUMAIN,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,EU InvestAI / AI Gigafactories / AI Factories,Country,European Union
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,EU InvestAI / AI Gigafactories / AI Factories,Type of money,mobilisation headline + EuroHPC procurement
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,EU InvestAI / AI Gigafactories / AI Factories,Key figures,"EUR 200B mobilisation incl. EUR 20B gigafactory fund (headline, 2025-02-11); formal call for up to 7 AI Gigafactories opened 30 Jul 2026, closes 12 Nov 2026; awards early 2027; ops…; >EUR 2.7B across 19 AI Factories (confirmed co-investment, 2024-2027)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,EU InvestAI / AI Gigafactories / AI Factories,Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",Country,United Kingdom
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",Type of money,budget
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",Key figures,"GBP 2B AI envelope, ~GBP 1B compute (Spending Review 2025, 2025-06); 20x AIRR expansion by 2030; 420 AI exaFLOPS (target, 2025-07); 5,448 (H100-equivalents (GH200), Isambard-AI, operational mid-2025, 2025-06-15)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"France (Choose France, Campus AI, Mistral Compute)",Country,France
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"France (Choose France, Campus AI, Mistral Compute)",Type of money,mostly private / sovereign-wealth (UAE)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"France (Choose France, Campus AI, Mistral Compute)",Key figures,"EUR 109B (~EUR 26B confirmed) (Choose France AI commitments, 2025-02); 1.4 GW (Paris-region campus), construction H2 2026, full ops 2028; expanded target up to 3 GW nationally with…; 44 MW, ~13,800 GB300; US$830M debt (Mistral Compute (Essonne), 2026-03)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"France (Choose France, Campus AI, Mistral Compute)",Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Germany (Industrial AI Cloud),Country,Germany
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Germany (Industrial AI Cloud),Type of money,private (Deutsche Telekom + Nvidia)
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Germany (Industrial AI Cloud),Key figures,"up to ~10,000 Blackwell GPUs (~0.5 EF), live Feb 2026; expanding to 20 MW with B300 after first phase sold…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Germany (Industrial AI Cloud),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,IndiaAI Mission compute,Country,India
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,IndiaAI Mission compute,Type of money,"cabinet outlay (INR 10,372 crore, ~US$1.25B)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,IndiaAI Mission compute,Key figures,"38231 (GPUs onboarded on common compute portal, 2026-03-25); +20,000 (GPUs announced 'in coming weeks', 2026-02-18); 38.2% (share of 100,000-GPU end-2026 target onboarded (Mar 2026), 2026-03)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,IndiaAI Mission compute,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"Japan (ABCI 3.0, METI/GENIAC, Noetra)",Country,Japan
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"Japan (ABCI 3.0, METI/GENIAC, Noetra)",Type of money,budget
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"Japan (ABCI 3.0, METI/GENIAC, Noetra)",Key figures,"6,128 H200 GPUs; operational 20 Jan 2025 (ABCI 3.0 (AIST), 2025-01-20); 16 (foundation-model themes selected for GENIAC phase-4 compute support, 2026-06-04); JPY 387.3B FY2026 aid to Noetra/AIST national physical-AI model (FY2026-FY2030) (budget, 2026-06-30)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"Japan (ABCI 3.0, METI/GENIAC, Noetra)",Confidence,HIGH
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"South Korea (260k GPU deal, national AI computing centre)",Country,South Korea
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"South Korea (260k GPU deal, national AI computing centre)",Type of money,budget + private
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"South Korea (260k GPU deal, national AI computing centre)",Key figures,"260,000 Nvidia Blackwell GPUs: government 50,000, Samsung 50,000, SK 50,000, Hyundai 50,000, Naver Cloud…; KRW 10.1T proposed (KRW 9.9T reported final) (2026 AI budget, 2025-11-04)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,"South Korea (260k GPU deal, national AI computing centre)",Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Canadian Sovereign AI Compute Strategy,Country,Canada
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Canadian Sovereign AI Compute Strategy,Type of money,budget
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Canadian Sovereign AI Compute Strategy,Key figures,"C$2B over five years (Budget 2024): C$700M AI Compute Challenge, C$300M AI Compute Access Fund, public…; up to C$240M to Cohere (first AI Compute Challenge recipient) (grant, 2025-03)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Canadian Sovereign AI Compute Strategy,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Nvidia sovereign AI revenue,Country,global
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Nvidia sovereign AI revenue,Type of money,commercial proxy
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Nvidia sovereign AI revenue,Key figures,">US$30B (more than tripled) (sovereign AI revenue FY2026 (Feb 2025-Jan 2026), 2026-02-25); >80% YoY; infrastructure in nearly 40 countries (sovereign revenue growth, Q1 FY2027, 2026-05-20); more than doubled YoY; +35% QoQ (sovereign revenue growth, Q2 FY2027 (to 26 Jul 2026), 2026-08)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Nvidia sovereign AI revenue,Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Brazilian AI Plan (PBIA),Country,Brazil
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Brazilian AI Plan (PBIA),Type of money,budget
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Brazilian AI Plan (PBIA),Key figures,"R$23B (2024-2028); +R$2.2B infrastructure (supercomputer, national cloud) Aug 2026 (budget, 2026-08-22)"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Brazilian AI Plan (PBIA),Confidence,MEDIUM
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Other national systems (Epoch GPU clusters),Country,various
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Other national systems (Epoch GPU clusters),Type of money,public supercomputers
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Other national systems (Epoch GPU clusters),Key figures,"Alps (CH) 10,752 + 6,400 H100e; Gefion (DK) 3,032; Yotta Shakti NM1 (IN) 4,096; Jean Zay P4 (FR) 1,587;…; US 86.3%, Malaysia 9.1%, China 2.1%, UK 0.8% (share of H100e in Epoch's tracked frontier data centres,…"
+https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/,2026-11-11,9,National compute programmes,Other national systems (Epoch GPU clusters),Confidence,HIGH

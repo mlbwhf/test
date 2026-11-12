@@ -1,0 +1,1887 @@
+{
+ "slug": "sovereign-ai-index-2026",
+ "path": "/indexes/geography-of-ai/sovereign-ai-index-2026/",
+ "parent_path": "/indexes/geography-of-ai/",
+ "csv": "report-ai-data-sovereign-ai-index-2026.csv",
+ "trail": [
+  [
+   "Indexes",
+   "/indexes/"
+  ],
+  [
+   "The Geography of AI",
+   "/indexes/geography-of-ai/"
+  ],
+  [
+   "Sovereign AI Index 2026",
+   "/indexes/geography-of-ai/sovereign-ai-index-2026/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; The Geography of AI &middot; Index &middot; Updated quarterly",
+ "title": "Sovereign AI Index 2026: National Models, Compute and Who Uses Them",
+ "dek": "58 national and sovereign AI models across 31 countries and regions, the compute programmes behind them, and the evidence on whether anyone uses them: downloads, users, leaderboard ranks and home-market share. Every figure dated, sourced and confidence-rated.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next update February 2027",
+ "edition": "November 2026 edition (rebuilt)",
+ "coverage": "2023/2026",
+ "nav_active": "Sovereign AI Index",
+ "nav": [
+  [
+   "Geography of AI",
+   "/indexes/geography-of-ai/"
+  ],
+  [
+   "AI use by country",
+   "/indexes/geography-of-ai/ai-use-by-country-2026/"
+  ],
+  [
+   "Sovereign AI Index",
+   "/indexes/geography-of-ai/sovereign-ai-index-2026/"
+  ],
+  [
+   "Most popular model by country",
+   "/indexes/geography-of-ai/popular-ai-models-by-country/"
+  ],
+  [
+   "State of AI Geography",
+   "/indexes/state-of-ai/state-of-ai-geography/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "58",
+   "label": "national and sovereign models catalogued in 31 countries and regions (Report AI, Nov 2026)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "5.8%",
+   "label": "30-day Hugging Face downloads of 31 national model makers combined, as a share of Alibaba's Qwen alone (Nov 2026)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "15 of 20",
+   "label": "top models on the Artificial Analysis Intelligence Index are American; 5 are Chinese; none from elsewhere (Nov 2026)",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "0 MW",
+   "label": "operating at Stargate UAE in November 2026; the first 200 MW is projected for December (Epoch AI)",
+   "confidence": "HIGH"
+  }
+ ],
+ "at_a_glance": [
+  "We catalogue 58 sovereign or national AI model families across 31 countries and regions. About 40 are described as trained from scratch and about 13 are adaptations of foreign open-weight models such as Meta's Llama, Google's Gemma, Alibaba's Qwen or Nvidia's Nemotron.",
+  "Measured by developer downloads, sovereign models are a niche: in the 30 days to 12 November 2026, 31 national model makers together recorded about 13.6 million Hugging Face downloads, about 5.8% of the 234.5 million for Alibaba's Qwen alone (Report AI calculation from Hugging Face data). France's Mistral accounts for most of that national total.",
+  "Measured by capability, the frontier is American and Chinese: 15 of the top 20 models on the Artificial Analysis Intelligence Index (v5.0.1, November 2026) come from US developers and 5 from Chinese ones. The best-scoring model from any other country is Mistral Large 4, at 26.1 against 64.6 for the leader.",
+  "Measured by home-market use, local champions win only where foreign assistants are blocked or weak: in China, ByteDance's Doubao had 419 million monthly users in September 2026; in South Korea, ChatGPT had about 91% of AI-app users despite years of investment in local models.",
+  "The money is mostly going into compute rather than models: national programmes in the UAE, Saudi Arabia, India, Japan, South Korea, Canada and the EU buy chips and data centres, then run a mix of imported and local models on them."
+ ],
+ "toc_extra": [
+  [
+   "stop-quoting",
+   "Numbers to stop quoting"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "about",
+   "About the data"
+  ]
+ ],
+ "analysis": [
+  "Sovereign AI has become one of the most used phrases in AI policy and one of the least defined. For this index we separate four things that are often run together: sovereign infrastructure (domestic compute under national control), sovereign models (trained from scratch or adapted from foreign open weights), sovereign data (control over national training corpora) and sovereign deployment (foreign models run in-country under local rules). Most countries pursue all four in name and fund mainly the first.",
+  "The popularity evidence is sobering for national models. On Hugging Face, the main distribution channel for open models, Chinese models took 41% of downloads between February 2025 and February 2026, ahead of US models, and Alibaba's Qwen alone outdraws every national model maker combined many times over. National models do find users where they serve a language or a regulated sector that global models serve poorly: Japanese government trials, Korean public services, Arabic-language deployments and Indian-language speech. But outside China and Russia, where policy or sanctions shape the market, no national assistant leads its home consumer market.",
+  "That does not make sovereign programmes pointless. Their realistic product is resilience and bargaining power rather than market share: domestic compute that keeps running if access is cut off, models that can be audited and adapted for public services, and the skills to do both. The June 2026 suspension of two US frontier models under export controls, and China's October 2026 draft controls on model weights, showed why governments value that. The risk is the one visible in our data: adapted models built on Qwen, Llama or Gemma inherit their base model's licence and, potentially, its home country's export rules.",
+  "The compute build-out is also slower than the headlines. Stargate UAE had no capacity operating in November 2026; Saudi Arabia's HUMAIN's '600,000 GPUs' is a three-year ceiling against signed deals for about 27,000; and India's common compute portal had onboarded about 38,000 GPUs by March 2026, roughly the figure it reported six months earlier."
+ ],
+ "takeaways": [
+  "Separate the layers: infrastructure, models, data and deployment are different kinds of sovereignty.",
+  "Most national models are adaptations of foreign open weights, chiefly Llama, Gemma, Qwen and Nemotron.",
+  "Downloads, users and leaderboard ranks all show national models as niche outside China.",
+  "Home-market leadership by a domestic assistant happens where foreign assistants are blocked or restricted.",
+  "Announced compute (GW, GPU ceilings) runs well ahead of operating compute."
+ ],
+ "chapters": [
+  {
+   "id": "typology",
+   "kicker": "1. What 'sovereign' means",
+   "action_title": "Sovereign AI is four different things, and most programmes fund infrastructure first",
+   "paras": [
+    "The typology below is used throughout this index. It draws on definitions from Stanford HAI, CSET, CNAS, McKinsey and Counterpoint Research, simplified into categories that can be measured."
+   ],
+   "tables": [
+    {
+     "title": "A typology of sovereign AI",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Sovereign AI (umbrella)",
+       "A state's capacity to develop, run and govern AI on infrastructure, data and models it controls, rather than renting them from foreign providers. Definitions are contested: 'hard' sovereignty means self-sufficiency across the stack; 'soft' sovereignty means control over the layers that matter for a given use case.",
+       ""
+      ],
+      [
+       "Sovereign infrastructure (compute)",
+       "Domestic data centres and GPU clusters under national legal control, funded by budgets, state banks or sovereign-wealth vehicles.",
+       "IndiaAI common compute (38,231 GPUs); Isambard-AI (UK); ABCI 3.0 (Japan); JUPITER (EU)"
+      ],
+      [
+       "Sovereign models - from scratch",
+       "Foundation models pre-trained from random initialisation by a national lab or champion.",
+       "Falcon (UAE); Jais 2 (UAE); K2 Think V2 (UAE); ALLaM 34B (Saudi)"
+      ],
+      [
+       "Sovereign models - adapted (continued pre-training / fine-tune of foreign open weights)",
+       "A national model built on a foreign open-weight base (Llama, Gemma, Qwen, Mistral, Nemotron) with local data.",
+       "SEA-LION v4 (Gemma 3; Qwen variant); Fanar 2.0 (Gemma-3-27B); KazLLM (Llama); Latam-GPT (Llama 3.1)"
+      ],
+      [
+       "Sovereign deployment of foreign models",
+       "Foreign proprietary or open models run in-country under local data residency, often via 'sovereign cloud' offers.",
+       "Japan's 'Gennai' government AI (OpenAI-powered, now A/B-testing domestic LLMs); SoftBank Cloud PF Type A on Oracle Alloy; Cohere on Bell AI Fabric (Canada)"
+      ],
+      [
+       "Sovereign data",
+       "Legal and practical control over national training corpora and the data pipeline (licensed national-library, news and administrative text).",
+       "GPT-NL licensed news + KB national library; Viettel administrative/regulatory corpora; TAIDE government documents; Jais 2's 600B Arabic tokens"
+      ],
+      [
+       "Sovereign capital",
+       "Public money behind the stack: budgets/appropriations, equity funds, sovereign-wealth vehicles, and mobilisation headlines - four categories that must never be summed.",
+       "IndiaAI Mission (budget); China National AI Fund (equity); HUMAIN, MGX (sovereign vehicles); EU InvestAI EUR 200B (mobilisation)"
+      ],
+      [
+       "Sovereign by default",
+       "Markets where foreign assistants are blocked or restricted, so domestic models dominate regardless of policy intent.",
+       "China: Doubao 419M MAU, Qwen 158M, DeepSeek 123M (Sep 2026); Russia (sanctions): domestic share depends on measurement method"
+      ],
+      [
+       "Popularity metrics (and why they cannot be compared)",
+       "Hugging Face downloads (developer pulls, inflated by CI/mirrors), derivatives (fine-tunes on a base), app MAU/WAU (consumer reach; panels disagree), web-traffic share, Statcounter referral share (clicks from chatbots to websites), OpenRouter token share (one developer aggregator), leaderboard rank (capability, not use).",
+       ""
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "catalogue",
+   "kicker": "2. The catalogue",
+   "action_title": "58 national models in 31 countries: about 40 trained from scratch, about 13 adapted from foreign open weights",
+   "paras": [
+    "Each row is a national or nationally backed model family, with its developer, how it was built, whether its weights are published, its latest version and its popularity on the measures available. Hugging Face figures are organisation-wide downloads in the 30 days to 12 November 2026 and all-time totals, from the Hugging Face API; they count developer downloads, including automated ones, not users.",
+    "Counts of how many models are 'from scratch' depend on definitions: Counterpoint Research found 56% of sovereign models in H1 2026 were adapted from foreign bases, and CNAS's August 2026 index counted 184 projects in 67 countries, about 40% trained from scratch."
+   ],
+   "tables": [
+    {
+     "title": "Sovereign and national AI models, November 2026",
+     "columns": [
+      "Country",
+      "Model family",
+      "Developer",
+      "How built",
+      "Open weights",
+      "Latest version",
+      "HF downloads, 30 days",
+      "HF downloads, all time",
+      "Users (where reported)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "France",
+       "Mistral (Mistral Large / Medium / Small;…",
+       "Mistral AI",
+       "from scratch (private national champion)",
+       "Yes",
+       "Mistral Large 4 (API preview 6 Oct 2026; open weights 29…",
+       "8.12M",
+       "332.01M",
+       "about 1 million app downloads in first 13 days",
+       "HIGH"
+      ],
+      [
+       "Germany",
+       "Aleph Alpha (Luminous; PhariaAI platform)",
+       "Aleph Alpha (Heidelberg)",
+       "from scratch (Luminous); later pivot to…",
+       "",
+       "",
+       "23k",
+       "127k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Germany / EU",
+       "Teuken (OpenGPT-X)",
+       "Fraunhofer IAIS & IIS with OpenGPT-X…",
+       "from scratch (~6T tokens per arXiv…",
+       "Yes",
+       "Teuken-7B-instruct (research and commercial v0.4)",
+       "5k",
+       "861k",
+       "",
+       "HIGH"
+      ],
+      [
+       "EU",
+       "OpenEuroLLM",
+       "Consortium of 20+ European…",
+       "from scratch (planned)",
+       "Yes",
+       "'First models' deliverable due 31 Jul 2026",
+       "19k",
+       "122k",
+       "",
+       "HIGH"
+      ],
+      [
+       "EU / Portugal",
+       "EuroLLM (and Portugal's AMALIA derivative)",
+       "Unbabel, Instituto Superior Tecnico and…",
+       "from scratch",
+       "Yes",
+       "EuroLLM-9B (22B reported Dec 2025, unconfirmed)",
+       "123k",
+       "3.71M",
+       "",
+       "HIGH"
+      ],
+      [
+       "United Kingdom",
+       "UK-LLM (English-Welsh reasoning model)",
+       "UCL, Bangor University with NVIDIA",
+       "adapted (NVIDIA Nemotron open…",
+       "",
+       "UK-LLM Welsh model",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "United Kingdom",
+       "Lumen Sovereign",
+       "Cosine (London, ~30 staff)",
+       "from scratch (claimed: pre-, mid- and…",
+       "",
+       "in development; deployment-readiness targeted end-2026",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Switzerland",
+       "Apertus",
+       "Swiss AI Initiative (EPFL, ETH Zurich,…",
+       "from scratch, fully open",
+       "Yes",
+       "Apertus 1.5 (70B and smaller; distilled 0.5B/1.5B/4B in May…",
+       "325k",
+       "6.09M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Spain",
+       "ALIA",
+       "Barcelona Supercomputing Center…",
+       "from scratch on MareNostrum 5 (9.37T…",
+       "Yes",
+       "ALIA-40b-instruct-2606 (HF, 30 Jun 2026); function-calling…",
+       "82k",
+       "2.27M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "Minerva / ChatMinerva",
+       "Sapienza NLP (Sapienza University of…",
+       "from scratch (500B+ words…",
+       "Yes",
+       "ChatMinerva (multimodal assistant on Minerva)",
+       "22k",
+       "737k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "Velvet",
+       "Almawave (listed; Almaviva group)",
+       "from scratch",
+       "Yes",
+       "Velvet2-3B (Hugging Face listing Oct 2026); Velvet 25B",
+       "6k",
+       "159k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Netherlands",
+       "GPT-NL",
+       "TNO, NFI, SURF",
+       "from scratch on Snellius with licensed…",
+       "",
+       "GPT-NL 1.0 (beta, launching partners only)",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Finland / Nordics",
+       "Poro, Viking",
+       "AMD Silo AI with TurkuNLP (University…",
+       "Poro 2 = continued pre-training of…",
+       "Yes",
+       "Poro 2 (8B, 70B)",
+       "16k",
+       "468k",
+       "",
+       "HIGH"
+      ],
+      [
+       "United Arab Emirates",
+       "Falcon (Falcon-H1, Falcon-H1R, Falcon-H1…",
+       "Technology Innovation Institute (TII),…",
+       "from scratch (hybrid Transformer-Mamba)",
+       "Yes",
+       "Falcon-H1R 7B (reasoning) and Falcon-H1 Arabic 3B/7B/34B;…",
+       "378k",
+       "68.71M",
+       "",
+       "HIGH"
+      ],
+      [
+       "United Arab Emirates",
+       "Jais",
+       "Inception (G42) with MBZUAI Institute…",
+       "from scratch (2.6T tokens; trained and…",
+       "Yes",
+       "Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B,…",
+       "30k",
+       "1.69M",
+       "None users",
+       "HIGH"
+      ],
+      [
+       "United Arab Emirates",
+       "K2 Think / K2-V2",
+       "MBZUAI Institute of Foundation Models…",
+       "from scratch, fully open",
+       "Yes",
+       "K2 Think V2",
+       "273k",
+       "1.51M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Saudi Arabia",
+       "ALLaM / HUMAIN Chat",
+       "HUMAIN (PIF-owned; ALLaM originated at…",
+       "from scratch (3T+ tokens per site page…",
+       "partly:…",
+       "ALLaM 34B (served via HUMAIN Chat)",
+       "93k",
+       "392k",
+       "None users",
+       "HIGH"
+      ],
+      [
+       "Qatar",
+       "Fanar",
+       "Qatar Computing Research Institute…",
+       "adapted: continual pre-training of…",
+       "Yes",
+       "Fanar 2.0 (Fanar-27B core model, FanarGuard moderation)",
+       "11k",
+       "9.97M",
+       "",
+       "HIGH"
+      ],
+      [
+       "India",
+       "Sarvam (Sarvam 30B, Sarvam 105B; Indus app)",
+       "Sarvam AI",
+       "from scratch on IndiaAI mission compute",
+       "Yes",
+       "Sarvam 105B and Sarvam 30B",
+       "64k",
+       "2.59M",
+       "None users",
+       "HIGH"
+      ],
+      [
+       "India",
+       "BharatGen Param2",
+       "BharatGen consortium (IIT…",
+       "from scratch (with NVIDIA collaboration)",
+       "Yes",
+       "Param2 17B-A2.4B (incl. Thinking checkpoint)",
+       "18k",
+       "244k",
+       "",
+       "HIGH"
+      ],
+      [
+       "India",
+       "EKA-1 (Project EKA)",
+       "Soket AI Labs",
+       "from scratch",
+       "Yes",
+       "EKA-1",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "Inya VoiceOS / Vachana",
+       "Gnani.ai",
+       "from scratch (speech; STT trained on…",
+       "",
+       "Inya VoiceOS 5B voice-to-voice (preview); Vachana TTS;…",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "Other IndiaAI foundation-model teams",
+       "Gan.AI (cohort 1); Tech Mahindra Makers…",
+       "not stated",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "Krutrim / Kruti",
+       "Krutrim (Ola group)",
+       "not stated",
+       "",
+       "Krutrim models (2T+ tokens, 22 languages per site page 957)",
+       "265k",
+       "440k",
+       "offline consumer assistant status",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "Sakana AI models",
+       "Sakana AI",
+       "research lab (model merging /…",
+       "",
+       "",
+       "8k",
+       "822k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "PLaMo",
+       "Preferred Networks (PFN)",
+       "from scratch",
+       "partly (Translate…",
+       "PLaMo 3.1 Prime (27 Oct 2026); PLaMo 3 Translate…",
+       "731k",
+       "2.93M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "LLM-jp",
+       "National Institute of Informatics (NII)…",
+       "from scratch (~12T tokens), fully open",
+       "Yes",
+       "LLM-jp-4.1 (33B/32B-A3B/8B thinking)",
+       "509k",
+       "6.42M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "Fugaku-LLM",
+       "RIKEN, Tokyo Tech, Fujitsu and partners",
+       "from scratch on Fugaku supercomputer",
+       "Yes",
+       "Fugaku-LLM 13B",
+       "24",
+       "15k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "tsuzumi",
+       "NTT",
+       "from scratch (lightweight)",
+       "No",
+       "tsuzumi 2 (chart/table update 19 May 2026)",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Japan",
+       "Sarashina",
+       "SB Intuitions (SoftBank)",
+       "from scratch",
+       "",
+       "Sarashina3 series (5 models, Jun 2026); Sarashina3.2 mini…",
+       "178k",
+       "3.57M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "National physical-AI foundation model",
+       "Noetra (formerly Japan AI Foundation…",
+       "from scratch (multimodal: language,…",
+       "",
+       "in development (FY2026-FY2030)",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "K-EXAONE / EXAONE",
+       "LG AI Research",
+       "from scratch",
+       "Yes",
+       "K-EXAONE 2.0 (750B-A37B, HF 29 Jul 2026)",
+       "725k",
+       "20.35M",
+       "",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "A.X",
+       "SK Telecom",
+       "from scratch",
+       "Yes",
+       "A.X K2 (HF, Aug 2026)",
+       "344k",
+       "17.12M",
+       "",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "Solar",
+       "Upstage",
+       "from scratch",
+       "",
+       "Solar Open 2 250B (open weights, Jul 2026); Solar Pro 4…",
+       "186k",
+       "4.90M",
+       "",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "Motif",
+       "Motif Technologies (with KAIST)",
+       "from scratch",
+       "",
+       "Motif3",
+       "8k",
+       "104k",
+       "",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "HyperCLOVA X",
+       "Naver Cloud",
+       "from scratch core; vision encoder from…",
+       "",
+       "HyperCLOVA X (SEED 4B open model; Think)",
+       "34k",
+       "4.73M",
+       "about 30 million monthly users of Naver AI…",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "NC AI (VARCO)",
+       "NC AI",
+       "not stated",
+       "",
+       "",
+       "4k",
+       "250k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Taiwan",
+       "TAIDE",
+       "National Science and Technology Council…",
+       "adapted (Meta Llama 3/3.1 and Google…",
+       "Yes",
+       "Gemma-3-TAIDE-12b-Chat-2602 (Feb 2026);…",
+       "54k",
+       "400k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Singapore",
+       "SEA-LION",
+       "AI Singapore (National Multimodal LLM…",
+       "adapted: v4 on Google Gemma 3 27B;…",
+       "Yes",
+       "SEA-LION v4.5 27B / v4.8 (120B-A12B, 30B-A3B) (2026…",
+       "66k",
+       "1.13M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Indonesia",
+       "Sahabat-AI",
+       "GoTo Group and Indosat Ooredoo Hutchison",
+       "adapted (SEA-LION / Llama-based)",
+       "Yes",
+       "",
+       "126k",
+       "1.56M",
+       "None users",
+       "HIGH"
+      ],
+      [
+       "Vietnam",
+       "VT-Super (Viettel AI)",
+       "Viettel (state-owned military telecom…",
+       "adapted: NVIDIA Nemotron 3 Super…",
+       "",
+       "VT-Super-120B-A12B",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Thailand",
+       "Typhoon",
+       "SCB 10X (SCBX banking group)",
+       "adapted (open base models, e.g.…",
+       "Yes",
+       "Typhoon 2 family; Typhoon-S post-training method (Jun…",
+       "320k",
+       "11.66M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Malaysia",
+       "ILMU",
+       "YTL AI Labs with Universiti Malaya",
+       "adapted: NVIDIA Nemotron fine-tune;…",
+       "",
+       "ILMU-Nemo-30B (Mar 2026); ILMU-GLM-5.3 (ILMUcode, Oct 2026)",
+       "",
+       "",
+       "10,000+ organic users of ILMUchat at launch",
+       "MEDIUM"
+      ],
+      [
+       "Kazakhstan",
+       "KazLLM (ISSAI KAZ-LLM)",
+       "ISSAI, Nazarbayev University",
+       "adapted (Meta Llama…",
+       "Yes",
+       "KazLLM 8B and 70B",
+       "6k",
+       "239k",
+       "600,000 'users' or 'requests' (sources disagree)",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "GigaChat",
+       "Sber (state-controlled bank)",
+       "from scratch",
+       "partly: GigaChat…",
+       "GigaChat 3.5 432B-A28B (HF, 3 Sep 2026)",
+       "378k",
+       "5.99M",
+       "None monthly users",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "Alice AI (formerly YandexGPT)",
+       "Yandex",
+       "from scratch",
+       "partly:…",
+       "",
+       "25k",
+       "443k",
+       "43 million people asking Alice per month",
+       "HIGH"
+      ],
+      [
+       "China",
+       "DeepSeek",
+       "DeepSeek (Hangzhou; High-Flyer)",
+       "from scratch (reportedly on Huawei…",
+       "Yes",
+       "DeepSeek-V4.1-Flash (HF 10 Sep 2026; '1017' update Oct…",
+       "23.44M",
+       "423.85M",
+       "122.65 million monthly active users (app)",
+       "HIGH"
+      ],
+      [
+       "China",
+       "Qwen / Qianwen app",
+       "Alibaba Cloud (Tongyi Lab)",
+       "from scratch",
+       "mostly (flagship…",
+       "Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug…",
+       "234.51M",
+       "4030.26M",
+       "158.17 million monthly active users (Qwen/Qianwen…",
+       "HIGH"
+      ],
+      [
+       "China",
+       "Doubao",
+       "ByteDance",
+       "from scratch",
+       "No",
+       "",
+       "378k",
+       "8.38M",
+       "419.08 million monthly active users",
+       "HIGH"
+      ],
+      [
+       "China",
+       "Kimi",
+       "Moonshot AI",
+       "from scratch",
+       "Yes",
+       "Kimi K3.1 Pro (HF 2 Nov 2026)",
+       "2.04M",
+       "55.64M",
+       "US$300M annual recurring revenue",
+       "HIGH"
+      ],
+      [
+       "China",
+       "GLM",
+       "Zhipu AI (Z.ai)",
+       "from scratch (GLM-5 trained on Huawei…",
+       "Yes",
+       "GLM-5 (Feb 2026); GLM-5.2/5.3",
+       "16.43M",
+       "189.30M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Canada",
+       "Command (Cohere)",
+       "Cohere",
+       "from scratch",
+       "",
+       "",
+       "591k",
+       "12.56M",
+       "about US$240M ARR end-2025 (from US$62M end-2024)",
+       "HIGH"
+      ],
+      [
+       "Latin America (Chile-led)",
+       "Latam-GPT",
+       "CENIA (Chile) with regional partners;…",
+       "adapted (Meta Llama 3.1 base)",
+       "Yes",
+       "Latam-GPT v1",
+       "3k",
+       "261k",
+       "no chat app (downloadable model only, budget…",
+       "HIGH"
+      ],
+      [
+       "Brazil",
+       "Federal sovereign Portuguese LLM (planned);…",
+       "Federal government / SERPRO; Piaui…",
+       "not stated",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Africa (South Africa-based)",
+       "InkubaLM",
+       "Lelapa AI",
+       "from scratch (1.9B tokens)",
+       "Yes",
+       "InkubaLM-0.4B",
+       "251",
+       "56k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Nigeria",
+       "N-ATLaS",
+       "Awarri with NITDA and NCAIR",
+       "adapted (Llama-3 8B fine-tune on 400M+…",
+       "gated",
+       "N-ATLaS v1",
+       "297k",
+       "392k",
+       "",
+       "HIGH"
+      ],
+      [
+       "Israel",
+       "Dicta-LM",
+       "DICTA (Israel Center for Text Analysis)…",
+       "adapted/continued pre-training (base…",
+       "Yes",
+       "Dicta-LM 3.0 (24B flagship; 12B; 1.7B)",
+       "86k",
+       "3.40M",
+       "",
+       "HIGH"
+      ],
+      [
+       "Turkey",
+       "Bilge (and Kumru)",
+       "TUBITAK BILGEM (Bilge); VNGRS (Kumru)",
+       "from scratch (both reported)",
+       "Kumru-2B open;…",
+       "",
+       "2k",
+       "76k",
+       "",
+       "HIGH"
+      ]
+     ],
+     "note": "Sources per row in the data download. Hugging Face organisation totals can include non-LLM repositories (embeddings, speech). Blank cells mean no reliable figure was found."
+    }
+   ]
+  },
+  {
+   "id": "downloads",
+   "kicker": "3. Popularity: downloads",
+   "action_title": "National model makers together draw about 6% of the downloads of Alibaba's Qwen alone",
+   "paras": [
+    "Hugging Face downloads are the most complete public measure of open-model popularity, though they count developers and automated systems rather than end users. In the 30 days to 12 November 2026, the Qwen organisation recorded about 234.5 million downloads. The 31 national and sovereign model makers we track recorded about 13.6 million between them, and France's Mistral alone accounted for about 60% of that (Report AI calculation).",
+    "Over longer windows the pattern is the same. The ATOM project's count of cumulative downloads put Qwen at about 942 million by March 2026, roughly twice Meta's Llama, and Hugging Face reported that Chinese models took 41% of all downloads between February 2025 and February 2026. Qwen is also the most popular base for national adaptations, which means part of the 'sovereign' ecosystem in Southeast Asia and elsewhere now runs on a Chinese foundation."
+   ],
+   "exhibits": [
+    {
+     "type": "bar",
+     "title": "One Chinese model family outdraws every national model maker combined",
+     "subtitle": "Hugging Face downloads in the 30 days to 12 Nov 2026, millions",
+     "unit": "M downloads",
+     "series": [
+      {
+       "name": "Downloads",
+       "points": [
+        [
+         "Qwen (Alibaba)",
+         234.5
+        ],
+        [
+         "Meta Llama",
+         12.3
+        ],
+        [
+         "Mistral",
+         8.1
+        ],
+        [
+         "30 other national",
+         5.4
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Hugging Face API, organisation download totals; Report AI calculation",
+     "notes": "Organisation-wide totals of the 30-day download counter; include automated downloads and non-LLM repositories. 'Other national' sums the national and sovereign organisations listed in the catalogue, excluding Mistral.",
+     "confidence": "DERIVED"
+    },
+    {
+     "type": "hbar",
+     "title": "Among national model makers, Mistral leads by a wide margin",
+     "subtitle": "Hugging Face downloads in the 30 days to 12 Nov 2026, national and sovereign organisations (thousands)",
+     "unit": "k downloads",
+     "series": [
+      {
+       "name": "Downloads",
+       "points": [
+        [
+         "Mistral (France)",
+         8118
+        ],
+        [
+         "Preferred Networks (JP)",
+         731
+        ],
+        [
+         "LG EXAONE (Korea)",
+         725
+        ],
+        [
+         "Cohere (Canada)",
+         591
+        ],
+        [
+         "LLM-jp (Japan)",
+         509
+        ],
+        [
+         "TII Falcon (UAE)",
+         378
+        ],
+        [
+         "Sber GigaChat (Russia)",
+         378
+        ],
+        [
+         "SK Telecom (Korea)",
+         344
+        ],
+        [
+         "Apertus (Switzerland)",
+         325
+        ],
+        [
+         "Typhoon (Thailand)",
+         320
+        ],
+        [
+         "MBZUAI IFM K2 (UAE)",
+         273
+        ],
+        [
+         "Upstage Solar (Korea)",
+         186
+        ],
+        [
+         "Sahabat-AI (Indonesia)",
+         126
+        ],
+        [
+         "HUMAIN ALLaM (Saudi)",
+         93
+        ],
+        [
+         "BSC ALIA (Spain)",
+         82
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Hugging Face API",
+     "notes": "Organisation-wide totals, including non-LLM repositories: Preferred Networks' most downloaded repo is an embedding model and Sber's a speech model. Community re-uploads are excluded.",
+     "confidence": "HIGH"
+    }
+   ]
+  },
+  {
+   "id": "capability",
+   "kicker": "4. Popularity: capability and usage share",
+   "action_title": "On capability leaderboards and developer platforms, the US and China take almost every top spot",
+   "paras": [
+    "On the Artificial Analysis Intelligence Index (v5.0.1, 12 November 2026), the top nine models are all from US developers, led by Claude Fable 5.2 at 64.6; the best Chinese model is Kimi K3.1 Pro at 46.5, the highest-ranked open-weight model. The best model from any third country is Mistral Large 4 from France at 26.1, followed by the UAE's K2 Horizon (17.8) and South Korea's Solar Pro 4 (14.2). No model from India, Japan, Russia or Germany appears on the index.",
+    "On OpenRouter, a developer marketplace that routes requests to many models, Chinese developers took about 47% of requests in the week beginning 2 November 2026 and US developers about 39% (Report AI calculation by developer country); DeepSeek alone had about 32%. OpenRouter notes that its rankings measure traffic through its own platform, not users or spending. LMArena's crowd-sourced rankings could not be verified for this edition."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "Outside the US and China, the best national model scores well below the frontier",
+     "subtitle": "Best model by developer country, Artificial Analysis Intelligence Index v5.0.1, 12 Nov 2026",
+     "unit": "index score",
+     "series": [
+      {
+       "name": "Score",
+       "points": [
+        [
+         "US: Claude Fable 5.2",
+         64.6
+        ],
+        [
+         "China: Kimi K3.1 Pro",
+         46.5
+        ],
+        [
+         "France: Mistral Large 4",
+         26.1
+        ],
+        [
+         "UAE: K2 Horizon 375B A23B",
+         17.8
+        ],
+        [
+         "South Korea: Solar Pro 4",
+         14.2
+        ],
+        [
+         "Canada: Command A+",
+         6.2
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Artificial Analysis",
+     "notes": "Best variant of each country's best model. Countries without any model on the index are omitted.",
+     "confidence": "HIGH"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Artificial Analysis Intelligence Index: top 20 distinct models",
+     "columns": [
+      "Rank",
+      "Model",
+      "Developer",
+      "Country",
+      "Score"
+     ],
+     "rows": [
+      [
+       "1",
+       "Claude Fable 5.2",
+       "Anthropic",
+       "US",
+       "64.6"
+      ],
+      [
+       "2",
+       "Gemini 4 Carbon",
+       "Google",
+       "US",
+       "60.0"
+      ],
+      [
+       "3",
+       "Claude Opus 5.5",
+       "Anthropic",
+       "US",
+       "59.1"
+      ],
+      [
+       "4",
+       "GPT-6 Astra",
+       "OpenAI",
+       "US",
+       "56.9"
+      ],
+      [
+       "5",
+       "GPT-6.1 Sol",
+       "OpenAI",
+       "US",
+       "54.6"
+      ],
+      [
+       "6",
+       "Claude Sonnet 5.5",
+       "Anthropic",
+       "US",
+       "54.5"
+      ],
+      [
+       "7",
+       "GPT-6.1 Terra",
+       "OpenAI",
+       "US",
+       "51.3"
+      ],
+      [
+       "8",
+       "Gemini 4 Argon",
+       "Google",
+       "US",
+       "50.4"
+      ],
+      [
+       "9",
+       "Muse Wonder Full",
+       "Meta",
+       "US",
+       "50.1"
+      ],
+      [
+       "10",
+       "Kimi K3.1 Pro",
+       "Kimi",
+       "China",
+       "46.5"
+      ],
+      [
+       "11",
+       "Muse Wonder",
+       "Meta",
+       "US",
+       "43.6"
+      ],
+      [
+       "12",
+       "Claude Haiku 5.5",
+       "Anthropic",
+       "US",
+       "36.5"
+      ],
+      [
+       "13",
+       "Muse Ember",
+       "Meta",
+       "US",
+       "36.0"
+      ],
+      [
+       "14",
+       "Grok 4.7",
+       "SpaceXAI",
+       "US",
+       "35.5"
+      ],
+      [
+       "15",
+       "Tencent Hy4",
+       "Tencent",
+       "China",
+       "34.6"
+      ],
+      [
+       "16",
+       "Qwen3.8 Max (0902)",
+       "Alibaba",
+       "China",
+       "33.7"
+      ],
+      [
+       "17",
+       "DeepSeek V4.1 Flash 1017",
+       "DeepSeek",
+       "China",
+       "32.6"
+      ],
+      [
+       "18",
+       "GLM-5.3",
+       "Z AI",
+       "China",
+       "31.7"
+      ],
+      [
+       "19",
+       "Gemini 3.8 Flash",
+       "Google",
+       "US",
+       "30.8"
+      ],
+      [
+       "20",
+       "Inkling 2 Small",
+       "Thinking Machines",
+       "US",
+       "30.6"
+      ]
+     ]
+    },
+    {
+     "title": "OpenRouter: share of requests by model developer, week beginning 2 Nov 2026",
+     "columns": [
+      "Developer",
+      "Country",
+      "Share of requests",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "DeepSeek",
+       "China",
+       "31.8%",
+       "HIGH"
+      ],
+      [
+       "OpenAI",
+       "US",
+       "19.3%",
+       "HIGH"
+      ],
+      [
+       "Google",
+       "US",
+       "13.6%",
+       "HIGH"
+      ],
+      [
+       "Z.ai",
+       "China",
+       "7.4%",
+       "HIGH"
+      ],
+      [
+       "Anthropic",
+       "US",
+       "5.8%",
+       "HIGH"
+      ],
+      [
+       "Qwen",
+       "China",
+       "5.7%",
+       "HIGH"
+      ],
+      [
+       "Stealth",
+       "unknown",
+       "2.5%",
+       "HIGH"
+      ],
+      [
+       "Mistral",
+       "France",
+       "2.3%",
+       "HIGH"
+      ],
+      [
+       "Tencent",
+       "China",
+       "2.3%",
+       "HIGH"
+      ],
+      [
+       "All other authors",
+       "mixed",
+       "9.2%",
+       "HIGH"
+      ],
+      [
+       "Chinese authors (DeepSeek+Z.ai+Qwen+Tencent)",
+       "",
+       "47.2%",
+       "DERIVED"
+      ],
+      [
+       "Top-10 models by tokens",
+       "",
+       "83.4% Chinese",
+       "DERIVED"
+      ]
+     ],
+     "note": "OpenRouter rankings measure requests routed through OpenRouter only, not users, tokens or spending."
+    }
+   ]
+  },
+  {
+   "id": "home",
+   "kicker": "5. Popularity: home markets",
+   "action_title": "Domestic assistants lead their home markets only where foreign ones are blocked or restricted",
+   "paras": [
+    "The consumer test of sovereignty is whether people at home choose the national assistant. In China, where Western assistants are blocked, domestic apps dominate: ByteDance's Doubao had about 419 million monthly users in September 2026, Alibaba's Qianwen about 158 million and DeepSeek about 123 million (QuestMobile). In Russia, Yandex's Alice AI reached about 48% of people aged 12 and over in September 2026, against 5% for Sber's GigaChat (Mediascope).",
+    "Elsewhere, global assistants lead even in countries with strong national programmes. In South Korea, ChatGPT's app had 18.76 million monthly users in October 2026, about 91% of AI-app users, and Naver closed its standalone chatbot in April 2026 to focus on AI answers inside search. In France, ChatGPT dominates consumer use while Mistral's strength is in enterprise and government contracts. In India, OpenAI said in November 2026 that the country had become ChatGPT's largest market."
+   ],
+   "tables": [
+    {
+     "title": "Home-market use of national and global assistants",
+     "columns": [
+      "Market",
+      "Assistant",
+      "Value",
+      "Measure",
+      "Date",
+      "Source",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "China (Western assistants blocked)",
+       "Doubao (ByteDance)",
+       "419.08",
+       "million MAU",
+       "2026-09",
+       "QuestMobile via FourWeekMBA / 36Kr",
+       "MEDIUM"
+      ],
+      [
+       "China (Western assistants blocked)",
+       "Qwen / Qianwen (Alibaba)",
+       "158.17",
+       "million MAU",
+       "2026-09",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "China (Western assistants blocked)",
+       "DeepSeek",
+       "122.65",
+       "million MAU",
+       "2026-09",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "China (Western assistants blocked)",
+       "All AI-native apps",
+       "546",
+       "million MAU (+82.1% YoY)",
+       "2026-09",
+       "QuestMobile via 36Kr",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "ChatGPT",
+       "18762276",
+       "app MAU (~91% of AI-app users)",
+       "2026-10",
+       "Mobile Index via Hankyung / FourWeekMBA",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "Claude",
+       "about 2.1 million",
+       "app MAU",
+       "2026-10",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "Gemini",
+       "8.45",
+       "million app MAU (WiseApp panel)",
+       "2026-04",
+       "WiseApp Retail",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "Naver AI Briefing (HyperCLOVA X)",
+       "about 30 million",
+       "monthly users of AI search answers",
+       "2026-05-28",
+       "Naver",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "Naver AI Tab",
+       ">10 million",
+       "MAU",
+       "2026-08-07",
+       "Naver Q2 call",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "Statcounter referral share",
+       "Gemini 65.25%, ChatGPT 23.62%, Perplexity 8.05%",
+       "% of chatbot-referred page views",
+       "2026-10",
+       "Statcounter (page opened)",
+       "HIGH"
+      ],
+      [
+       "France",
+       "ChatGPT",
+       "75.77%",
+       "Statcounter AI-chatbot share (referral-based)",
+       "2026-06",
+       "Statcounter",
+       "MEDIUM"
+      ],
+      [
+       "France",
+       "Le Chat / Vibe (Mistral)",
+       "not tracked by Statcounter",
+       "Statcounter share",
+       "2026-06",
+       "Statcounter",
+       "HIGH"
+      ],
+      [
+       "France",
+       "ChatGPT (traffic)",
+       "77.2%",
+       "share of AI-tool traffic, France (80.9% a year earlier)",
+       "2026",
+       "SE Ranking",
+       "MEDIUM"
+      ],
+      [
+       "France",
+       "Le Chat (survey)",
+       "14% (ChatGPT 79%)",
+       "share of French gen-AI users citing the tool",
+       "2025-06",
+       "Credoc via La Gazette France",
+       "MEDIUM"
+      ],
+      [
+       "France",
+       "ChatGPT / Gemini / Perplexity",
+       "43.33% / 36.38% / 12.05%",
+       "Statcounter referral share, France",
+       "2026-10",
+       "Statcounter (page opened)",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "ChatGPT",
+       "~40%",
+       "share of AI-service web traffic",
+       "2025 (Jan-Oct)",
+       "Kommersant / 3DNews",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "DeepSeek",
+       "27.8%",
+       "same",
+       "2025",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "GigaChat (Sber)",
+       "7.3%",
+       "same",
+       "2025",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "Qwen",
+       "6.6%",
+       "same",
+       "2025",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "Alice AI (Yandex)",
+       "5.7%",
+       "same",
+       "2025",
+       "same",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "Statcounter (referrals)",
+       "Perplexity 39.34%, Gemini 32.44%, ChatGPT 23.38% (Oct 2026); Perplexity 47.92% / ChatGPT 39.95% (Apr 2026); Perplexity 32.27% / ChatGPT 47.69% (Jun 2026)",
+       "AI-chatbot share",
+       "2026-10",
+       "Statcounter Russia",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "Alice AI (operator data)",
+       "67% (DeepSeek 29%, ChatGPT 7%)",
+       "share",
+       "2026-Q1",
+       "Beeline Analytics",
+       "CONTESTED"
+      ],
+      [
+       "Russia",
+       "All AI services",
+       "55%",
+       "monthly reach, population 12+",
+       "2026-09",
+       "Mediascope via RBC",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "ChatGPT",
+       "100",
+       "million weekly active users (#2 market at the time)",
+       "2026-02-15",
+       "Sam Altman via TechCrunch",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "ChatGPT",
+       "largest market by WAU; base doubled since January",
+       "rank",
+       "2026-11-03",
+       "OpenAI India MD Prabhjeet Singh to The Economic…",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "ChatGPT / Gemini (Sensor Tower)",
+       "180M / 118M",
+       "app MAU",
+       "2026-01",
+       "Sensor Tower via secondary",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "Sarvam Indus",
+       "None",
+       "users",
+       "2026-02-20",
+       "Outlook Business",
+       null
+      ],
+      [
+       "India",
+       "Statcounter referral share",
+       "ChatGPT 50.39%, Gemini 35.11%, Perplexity 8.9%",
+       "% of chatbot-referred page views",
+       "2026-10",
+       "Statcounter (page opened)",
+       "HIGH"
+      ],
+      [
+       "Malaysia, Kazakhstan, Japan government",
+       "ILMUchat (Malaysia)",
+       "10,000+",
+       "organic users at launch",
+       "2026-06-25",
+       "The Edge Malaysia",
+       "MEDIUM"
+      ],
+      [
+       "Malaysia, Kazakhstan, Japan government",
+       "KazLLM (Kazakhstan)",
+       "600,000",
+       "users or requests (disputed)",
+       "2026-02",
+       "Bes.media",
+       "CONTESTED"
+      ],
+      [
+       "Malaysia, Kazakhstan, Japan government",
+       "Japan 'Gennai' government AI",
+       "3 domestic LLMs on trial (tsuzumi 2, Takane 32B, PLaMo 2.0 Prime)",
+       "trial",
+       "2026-07-10",
+       "Dempa Digital",
+       "MEDIUM"
+      ]
+     ],
+     "note": "Measures differ by row (app users, reach, referral share, web traffic); compare within a market only. StatCounter figures measure clicks from chatbots to websites, not usage."
+    }
+   ]
+  },
+  {
+   "id": "compute",
+   "kicker": "6. Compute and money",
+   "action_title": "Announced sovereign compute runs well ahead of what is operating",
+   "paras": [
+    "Most sovereign money buys infrastructure. The table lists the main national programmes with their headline and, where available, delivered figures. Four kinds of money appear and should never be added together: budget appropriations, state equity funds, sovereign-wealth vehicles, and 'mobilisation' headlines that count expected private investment.",
+    "Delivery lags announcement. Epoch AI's data-centre tracking shows Stargate UAE with no capacity operating in November 2026, against a first 200 MW projected for December. HUMAIN's 600,000-GPU figure is a three-year ceiling; its signed October 2026 deal covers about 27,000 GPUs and 84 MW through 2027. Nvidia, the clearest commercial proxy, reported more than $30 billion of sovereign AI revenue in its fiscal 2026 and has given only growth rates since."
+   ],
+   "tables": [
+    {
+     "title": "National compute programmes",
+     "columns": [
+      "Programme",
+      "Country",
+      "Type of money",
+      "Key figures",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Stargate (US)",
+       "United States",
+       "private joint venture (OpenAI, Oracle, SoftBank,…",
+       "US$500B / 10 GW (target over four years, 2025-01-21); >9 GW across 7 US sites (projected by 2029) (planned capacity, 2026-04-17); 0.3 GW (operational (facility power, Abilene), 2026-04-22)",
+       "HIGH"
+      ],
+      [
+       "Stargate UAE / UAE-US AI Campus",
+       "United Arab Emirates",
+       "sovereign-linked (G42 builds; OpenAI and Oracle…",
+       "1 GW cluster within 5 GW campus; first 200 MW 'in 2026' (plan, 2025-05-22); 0 (MW operational / H100e, 2026-11-12); up to 35,000 GB300-equivalent (US export authorisation each for G42 and HUMAIN, 2025-11-19)",
+       "HIGH"
+      ],
+      [
+       "HUMAIN",
+       "Saudi Arabia",
+       "sovereign vehicle (PIF-owned)",
+       "up to 600,000 Nvidia GPUs over three years (Saudi Arabia and US) (ceiling, 2025-11); up to 84 MW, ~27,000 GPUs in two phases through 2027; phase 1 = 14 MW, ~6,000 Blackwell B300 from Q4 2026…; 4.5% (Oct 2026 contracted GPUs as share of 600k ceiling, 2026-10)",
+       "MEDIUM"
+      ],
+      [
+       "EU InvestAI / AI Gigafactories / AI Factories",
+       "European Union",
+       "mobilisation headline + EuroHPC procurement",
+       "EUR 200B mobilisation incl. EUR 20B gigafactory fund (headline, 2025-02-11); formal call for up to 7 AI Gigafactories opened 30 Jul 2026, closes 12 Nov 2026; awards early 2027; ops…; >EUR 2.7B across 19 AI Factories (confirmed co-investment, 2024-2027)",
+       "HIGH"
+      ],
+      [
+       "UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",
+       "United Kingdom",
+       "budget",
+       "GBP 2B AI envelope, ~GBP 1B compute (Spending Review 2025, 2025-06); 20x AIRR expansion by 2030; 420 AI exaFLOPS (target, 2025-07); 5,448 (H100-equivalents (GH200), Isambard-AI, operational mid-2025, 2025-06-15)",
+       "HIGH"
+      ],
+      [
+       "France (Choose France, Campus AI, Mistral Compute)",
+       "France",
+       "mostly private / sovereign-wealth (UAE)",
+       "EUR 109B (~EUR 26B confirmed) (Choose France AI commitments, 2025-02); 1.4 GW (Paris-region campus), construction H2 2026, full ops 2028; expanded target up to 3 GW nationally with…; 44 MW, ~13,800 GB300; US$830M debt (Mistral Compute (Essonne), 2026-03)",
+       "MEDIUM"
+      ],
+      [
+       "Germany (Industrial AI Cloud)",
+       "Germany",
+       "private (Deutsche Telekom + Nvidia)",
+       "up to ~10,000 Blackwell GPUs (~0.5 EF), live Feb 2026; expanding to 20 MW with B300 after first phase sold…",
+       "MEDIUM"
+      ],
+      [
+       "IndiaAI Mission compute",
+       "India",
+       "cabinet outlay (INR 10,372 crore, ~US$1.25B)",
+       "38231 (GPUs onboarded on common compute portal, 2026-03-25); +20,000 (GPUs announced 'in coming weeks', 2026-02-18); 38.2% (share of 100,000-GPU end-2026 target onboarded (Mar 2026), 2026-03)",
+       "MEDIUM"
+      ],
+      [
+       "Japan (ABCI 3.0, METI/GENIAC, Noetra)",
+       "Japan",
+       "budget",
+       "6,128 H200 GPUs; operational 20 Jan 2025 (ABCI 3.0 (AIST), 2025-01-20); 16 (foundation-model themes selected for GENIAC phase-4 compute support, 2026-06-04); JPY 387.3B FY2026 aid to Noetra/AIST national physical-AI model (FY2026-FY2030) (budget, 2026-06-30)",
+       "HIGH"
+      ],
+      [
+       "South Korea (260k GPU deal, national AI computing centre)",
+       "South Korea",
+       "budget + private",
+       "260,000 Nvidia Blackwell GPUs: government 50,000, Samsung 50,000, SK 50,000, Hyundai 50,000, Naver Cloud…; KRW 10.1T proposed (KRW 9.9T reported final) (2026 AI budget, 2025-11-04)",
+       "MEDIUM"
+      ],
+      [
+       "Canadian Sovereign AI Compute Strategy",
+       "Canada",
+       "budget",
+       "C$2B over five years (Budget 2024): C$700M AI Compute Challenge, C$300M AI Compute Access Fund, public…; up to C$240M to Cohere (first AI Compute Challenge recipient) (grant, 2025-03)",
+       "MEDIUM"
+      ],
+      [
+       "Nvidia sovereign AI revenue",
+       "global",
+       "commercial proxy",
+       ">US$30B (more than tripled) (sovereign AI revenue FY2026 (Feb 2025-Jan 2026), 2026-02-25); >80% YoY; infrastructure in nearly 40 countries (sovereign revenue growth, Q1 FY2027, 2026-05-20); more than doubled YoY; +35% QoQ (sovereign revenue growth, Q2 FY2027 (to 26 Jul 2026), 2026-08)",
+       "MEDIUM"
+      ],
+      [
+       "Brazilian AI Plan (PBIA)",
+       "Brazil",
+       "budget",
+       "R$23B (2024-2028); +R$2.2B infrastructure (supercomputer, national cloud) Aug 2026 (budget, 2026-08-22)",
+       "MEDIUM"
+      ],
+      [
+       "Other national systems (Epoch GPU clusters)",
+       "various",
+       "public supercomputers",
+       "Alps (CH) 10,752 + 6,400 H100e; Gefion (DK) 3,032; Yotta Shakti NM1 (IN) 4,096; Jean Zay P4 (FR) 1,587;…; US 86.3%, Malaysia 9.1%, China 2.1%, UK 0.8% (share of H100e in Epoch's tracked frontier data centres,…",
+       "HIGH"
+      ]
+     ],
+     "note": "Figures as announced or reported; see the data download for sources. Budget, equity, sovereign-wealth and mobilisation totals are different measures."
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "Perplexity holds about 48% of Russia's AI-chatbot market (because it stayed accessible while rivals restricted access).",
+   "fact": "[11 Nov ET verification] The number has a source but the framing is wrong. Statcounter recorded Perplexity at 47.92% of AI-chatbot-referred page views in Russia in April 2026 (all platforms), but Statcounter measures clicks from chatbots through to websites, not market share or users; Perplexity fell to 21.33% in September 2026 and was 39.34% in October 2026, when Gemini had 32.44% and ChatGPT 23.38%. Statcounter does not track GigaChat or Alice AI at all. Web-traffic data for 2025 put ChatGPT near 40% and DeepSeek at 27.8%. The access-restriction explanation is not supported by any source found.",
+   "link": ""
+  },
+  {
+   "claim": "South Korea runs on Naver's HyperCLOVA X / HyperCLOVA X is Korea's most-used AI model.",
+   "fact": "Naver closed its standalone Clova X chatbot in April 2026, and Korea's ministry dropped Naver Cloud from the national foundation-model project on 15 January 2026. ChatGPT's Korean app had 18.76 million monthly users in October 2026 (Mobile Index), about 91% of AI-app users. HyperCLOVA X's reach is through Naver search: AI Briefing ~30 million monthly users (May 2026). [11 Nov ET verification] Statcounter (Oct 2026) shows Gemini 65.25% and ChatGPT 23.62% of chatbot-referred page views in Korea and does not track Naver. On Hugging Face the official naver-hyperclovax org logged 33,507 downloads in 30 days vs 724,713 for LG's LGAI-EXAONE.",
+   "link": ""
+  },
+  {
+   "claim": "Fugaku-LLM serves Japan's public sector.",
+   "fact": "No evidence of government adoption was found. Japan's Digital Agency began trialling three domestic LLMs on its 'Gennai' platform in July 2026: NTT's tsuzumi 2, Fujitsu's Takane 32B and PFN's PLaMo 2.0 Prime. [11 Nov ET verification] Hugging Face: the Fugaku-LLM org's 3 repos logged 24 downloads in the last 30 days (14,584 all-time).",
+   "link": ""
+  },
+  {
+   "claim": "India is OpenAI's second-largest ChatGPT market.",
+   "fact": "True in February 2026 (100 million weekly users). On 3 November 2026 OpenAI's India managing director said India had become ChatGPT's largest market by weekly active users, with the user base doubling since January.",
+   "link": ""
+  },
+  {
+   "claim": "The IndiaAI Mission has 34,000 GPUs.",
+   "fact": "34,000+ was the May-June 2025 count. 38,231 GPUs were onboarded by 25 March 2026 (Lok Sabha), and the IT minister announced 20,000 more in February 2026; the end-2026 target is 100,000.",
+   "link": ""
+  },
+  {
+   "claim": "Falcon models have been downloaded 45 million times.",
+   "fact": "TII has since reported 55 million+ downloads across the Falcon ecosystem (2025); its Q1 2024 figure was 43 million. [11 Nov ET verification] Hugging Face API: TII's 137 public repos total 68.7M all-time downloads and 378,202 in the last 30 days (12 Nov 2026).",
+   "link": ""
+  },
+  {
+   "claim": "Mistral AI is valued at $14 billion.",
+   "fact": "That was the September 2025 Series C (EUR 11.7B). Mistral's EUR 3 billion Series D on 8 September 2026 valued it at more than EUR 21 billion post-money (~US$24B).",
+   "link": ""
+  },
+  {
+   "claim": "Le Chat is Mistral's consumer assistant.",
+   "fact": "Mistral renamed Le Chat to Vibe on 28 May 2026; quote the new name with 'formerly Le Chat'.",
+   "link": ""
+  },
+  {
+   "claim": "Aleph Alpha is Germany's independent sovereign AI champion.",
+   "fact": "Canada's Cohere agreed to acquire Aleph Alpha (announced 24 April 2026); the combined group keeps the Cohere name and Aleph Alpha shareholders hold about 10%.",
+   "link": ""
+  },
+  {
+   "claim": "Stargate UAE is live / went live in 2026.",
+   "fact": "Epoch AI's satellite-based tracking shows 0 MW operational at Stargate UAE as of November 2026, with the first two 100 MW buildings projected for December 2026.",
+   "link": ""
+  },
+  {
+   "claim": "Saudi Arabia's HUMAIN is deploying 600,000 Nvidia GPUs.",
+   "fact": "600,000 is an 'up to' ceiling over three years across Saudi Arabia and the US. The deal HUMAIN signed in October 2026 covers up to 84 MW and about 27,000 GPUs through 2027, starting with ~6,000 B300s in Q4 2026.",
+   "link": ""
+  },
+  {
+   "claim": "Most national 'sovereign' models are home-grown from scratch.",
+   "fact": "Counterpoint's H1 2026 index found 56% of sovereign LLMs are adapted from foreign bases (Llama 38%, Qwen 20%, Mistral 19% of those). CNAS puts from-scratch models at about 40% of tracked model projects (Aug 2026).",
+   "link": ""
+  },
+  {
+   "claim": "Chinese models take 61% of OpenRouter tokens.",
+   "fact": "61% is the Chinese share among the top-10 models only, Feb-Mar 2026. Platform-wide snapshots in April 2026 showed ~51%, and Chinese models' share of US enterprise traffic was 30-46% weekly. [11 Nov ET verification] See the newer verified entry (week of 2 Nov 2026).",
+   "link": ""
+  },
+  {
+   "claim": "Doubao has 382 million users; Qwen's app 167 million.",
+   "fact": "Those are May-June 2026 readings. QuestMobile's September 2026 figures: Doubao 419.08 million MAU, Qwen app 158.17 million (down), DeepSeek 122.65 million.",
+   "link": ""
+  },
+  {
+   "claim": "The EU is building four AI gigafactories with EUR 20 billion.",
+   "fact": "No site has been chosen. The formal EuroHPC call for up to seven gigafactories closed on 12 November 2026, with awards expected in early 2027; public funding reported at EUR 10 billion plus ~EUR 20 billion hoped-for private money.",
+   "link": ""
+  },
+  {
+   "claim": "Kazakhstan's KazLLM has 600,000 users.",
+   "fact": "Sources disagree on whether 600,000 refers to users or to requests; ISSAI reports 140,000+ downloads. Quote neither as 'users' without the caveat.",
+   "link": ""
+  },
+  {
+   "claim": "StatCounter shows ChatGPT's (or any chatbot's) market share in a country.",
+   "fact": "[11 Nov ET verification] Statcounter's AI-chatbot series counts page views on Statcounter-tracked websites that were referred by a chatbot (clicks out of answers), based on ~3 billion monthly page views. It is not users, prompts or sessions, it tracks only six global assistants (no Doubao, GigaChat, Alice, Naver, Le Chat), and October 2026 shows a series-wide break (ChatGPT worldwide 80.47% Sep -> 51.03% Oct).",
+   "link": ""
+  },
+  {
+   "claim": "Two Chinese models sit in the global top four (Artificial Analysis).",
+   "fact": "[11 Nov ET verification] On Artificial Analysis Intelligence Index v5.0.1 (12 Nov 2026) the nine highest-scoring distinct models are all from US labs; the best Chinese model is Moonshot's Kimi K3.1 Pro at 46.5 (#10, the top open-weights model). The September readings (Qwen3.8-Max 58, Kimi K3 57.1) were on an earlier index version and are not comparable.",
+   "link": ""
+  },
+  {
+   "claim": "Chinese models are 61% of OpenRouter traffic.",
+   "fact": "[11 Nov ET verification] Latest complete week (from 2 Nov 2026): Chinese authors had 47.2% of text requests (DeepSeek 31.8%, Z.ai 7.4%, Qwen 5.7%, Tencent 2.3%) vs 38.7% for OpenAI, Google and Anthropic; by tokens, Chinese models are 83.4% of the top-10 models' volume. State the metric (requests vs tokens) and the week.",
+   "link": ""
+  }
+ ],
+ "definitions": [
+  {
+   "term": "Sovereign AI (umbrella)",
+   "def": "A state's capacity to develop, run and govern AI on infrastructure, data and models it controls, rather than renting them from foreign providers. Definitions are contested: 'hard' sovereignty means self-sufficiency across the stack; 'soft' sovereignty means control over the layers that matter for a given use case."
+  },
+  {
+   "term": "Sovereign infrastructure (compute)",
+   "def": "Domestic data centres and GPU clusters under national legal control, funded by budgets, state banks or sovereign-wealth vehicles."
+  },
+  {
+   "term": "Sovereign models - from scratch",
+   "def": "Foundation models pre-trained from random initialisation by a national lab or champion."
+  },
+  {
+   "term": "Sovereign models - adapted (continued pre-training / fine-tune of foreign open weights)",
+   "def": "A national model built on a foreign open-weight base (Llama, Gemma, Qwen, Mistral, Nemotron) with local data."
+  },
+  {
+   "term": "Sovereign deployment of foreign models",
+   "def": "Foreign proprietary or open models run in-country under local data residency, often via 'sovereign cloud' offers."
+  },
+  {
+   "term": "Sovereign data",
+   "def": "Legal and practical control over national training corpora and the data pipeline (licensed national-library, news and administrative text)."
+  }
+ ],
+ "faq": [
+  {
+   "q": "What is sovereign AI?",
+   "a": "Sovereign AI is a country's capacity to develop, run and govern AI on infrastructure, data and models it controls, rather than renting them from foreign providers. In practice it covers four layers: domestic compute, national models (from scratch or adapted), control of training data, and in-country deployment of foreign models under local rules."
+  },
+  {
+   "q": "Which countries have built their own AI models?",
+   "a": "Report AI's November 2026 index catalogues 58 national model families across 31 countries and regions, including France (Mistral), the UAE (Falcon, Jais, K2), Saudi Arabia (ALLaM), India (Sarvam, BharatGen), Japan (PLaMo, LLM-jp, tsuzumi), South Korea (EXAONE, A.X, Solar), Switzerland (Apertus), Singapore (SEA-LION), Russia (GigaChat, Alice AI) and China (Qwen, DeepSeek, Doubao, Kimi, GLM)."
+  },
+  {
+   "q": "Are sovereign AI models popular?",
+   "a": "Mostly not, outside China. In the 30 days to 12 November 2026, 31 national model makers together had about 13.6 million Hugging Face downloads, about 5.8% of Alibaba's Qwen alone, and no model from outside the US and China ranks in the top 20 of the Artificial Analysis Intelligence Index."
+  },
+  {
+   "q": "What is the most popular sovereign AI model?",
+   "a": "By home-market users, China's Doubao (ByteDance) with about 419 million monthly users in September 2026. Among models outside the US and China, France's Mistral leads on developer downloads and capability scores."
+  },
+  {
+   "q": "How much are governments spending on sovereign AI?",
+   "a": "Announced figures run to hundreds of billions, but they mix budgets, state funds, sovereign-wealth vehicles and private 'mobilisation' totals that cannot be added together. Delivered compute is much smaller: Stargate UAE had no capacity operating in November 2026, and India's common compute portal had about 38,000 GPUs onboarded by March 2026."
+  }
+ ],
+ "methodology_extra": "The catalogue was compiled from developer announcements, model cards and national programme documents. Popularity measures come from the Hugging Face API (organisation download totals, read 12 November 2026), Artificial Analysis (Intelligence Index v5.0.1), OpenRouter's public rankings, StatCounter, and national app and audience trackers (QuestMobile, Mediascope, Mobile Index). Each measures something different; none is a count of users across all channels. Shares of downloads and requests by country, and counts of models by build type, are Report AI calculations (DERIVED). This edition replaces the July 2026 version of this page. ",
+ "related": "<a href=\"/indexes/geography-of-ai/\">The Geography of AI</a> &middot; <a href=\"/indexes/geography-of-ai/ai-use-by-country-2026/\">AI use by country 2026</a> &middot; <a href=\"/indexes/geography-of-ai/popular-ai-models-by-country/\">The most popular AI model in every country</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-geography/\">State of AI Geography 2026</a> &middot; <a href=\"/indexes/geography-of-ai/ai-in-india-2026/\">AI in India</a> &middot; <a href=\"/indexes/geography-of-ai/ai-middle-east-2026/\">AI in the Middle East</a> &middot; <a href=\"/indexes/geography-of-ai/ai-in-europe-2026/\">AI in Europe</a> &middot; <a href=\"/indexes/ai-economics/ai-government-spending-2026/\">AI government spending</a> &middot; <a href=\"/indexes/technical-benchmarks/chinese-ai-models-2026/\">Chinese AI models, ranked</a> &middot; <a href=\"/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/\">Open vs closed AI models</a> &middot; <a href=\"/glossary/sovereign-ai/\">Sovereign AI (glossary)</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "Sovereign artificial intelligence"
+ }
+}

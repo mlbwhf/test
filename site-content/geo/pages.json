@@ -1,0 +1,26 @@
+[
+ {
+  "slug": "sovereign-ai-index-2026",
+  "title": "Sovereign AI Index 2026: National Models, Compute and Who Uses Them \u2014 Report AI",
+  "excerpt": "58 national and sovereign AI models across 31 countries and regions, the compute programmes behind them, and the evidence on whether anyone uses them: downloads, users, leaderboard ranks and home-market share. Every figure dated, sourced and confidence-rated.",
+  "csv": "report-ai-data-sovereign-ai-index-2026.csv",
+  "url": "https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/",
+  "exhibits": 3,
+  "tables": 9,
+  "csv_rows": 853,
+  "parent_path": "/indexes/geography-of-ai/",
+  "file": "sovereign-ai-index-2026.html"
+ },
+ {
+  "slug": "ai-use-by-country-2026",
+  "title": "AI Use by Country 2026: Adoption Across the World \u2014 Report AI",
+  "excerpt": "How many people use AI in each of 147 economies, how fast that is changing, and which assistants they use. Built on Microsoft's AI Diffusion data, national trackers and global surveys, with every figure dated, sourced and confidence-rated.",
+  "csv": "report-ai-data-ai-use-by-country-2026.csv",
+  "url": "https://report-ai.org/indexes/geography-of-ai/ai-use-by-country-2026/",
+  "exhibits": 6,
+  "tables": 13,
+  "csv_rows": 1850,
+  "parent_path": "/indexes/geography-of-ai/",
+  "file": "ai-use-by-country-2026.html"
+ }
+]
