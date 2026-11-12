@@ -118,3 +118,13 @@ then give the new page the real slug and publish. URL unchanged; page ID changes
 - Japan "Fugaku-LLM in the public sector": no evidence; government trials tsuzumi 2, Takane 32B, PLaMo.
 - Stale: Doubao 382M→419M; China total 499M→546M; ChatGPT "1.1B monthly"→1B+ weekly; Gemini 662M→1B+ monthly;
   India now ChatGPT's largest market (OpenAI, 3 Nov 2026); "Updated August 2026" stamp vs 29 Oct modified.
+
+## K. Geography pages (11 Nov ET)
+
+| Page | ID | CSV media | Status |
+|---|---|---|---|
+| Sovereign AI Index 2026 rebuild (staged) | 3915 | 3982 | draft, slug sovereign-ai-index-2026-rebuild, parent 930, IDENTICAL 94,886 |
+| AI Use by Country 2026 | pending | | uploading |
+
+Swap for 934 at go-live (owner OK needed): set 934 slug → sovereign-ai-index-2026-archive + draft; set 3915 slug →
+sovereign-ai-index-2026, re-stamp dates if not 11 Nov, publish; verify permalink. 934 links no CSV.
