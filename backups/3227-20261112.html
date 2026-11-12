@@ -1,0 +1,199 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1080px;margin:0 auto;width:100%;line-height:1.5;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap a{color:#2545f5;}
+.tai-padx{padding:40px 36px;border-bottom:1px solid #e6e6ea;}
+.tai-wrap h2{font-weight:800;font-size:26px;letter-spacing:-0.02em;margin:0 0 14px;}
+.tai-wrap p{font-size:16px;line-height:1.65;color:#33333a;max-width:860px;}
+.tai-stat{padding:24px;border-right:1px solid #e6e6ea;}
+.tai-conf{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 7px;border-radius:2px;vertical-align:middle;}
+.tai-conf-hi{background:#e7f5ec;color:#177245;}
+.tai-conf-med{background:#fdf3e3;color:#9a6a00;}
+.tai-conf-der{background:#eef1fd;color:#2545f5;}
+.tai-v{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:2px;background:#111114;color:#fff;}
+.tai-entry{border:1px solid #e6e6ea;border-left:3px solid #2545f5;border-radius:3px;padding:20px 22px;margin:0 0 16px;scroll-margin-top:90px;}
+.tai-entry h3{font-weight:800;font-size:18px;letter-spacing:-0.01em;margin:8px 0 10px;line-height:1.3;}
+.tai-entry p{font-size:15px;margin:0 0 8px;}
+.tai-lbl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#77777f;}
+.tai-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tai-table th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e76;text-align:left;padding:10px 12px;border-bottom:2px solid #111114;}
+.tai-table td{padding:10px 12px;border-bottom:1px solid #ececf0;vertical-align:top;color:#33333a;}
+.tai-tablewrap{overflow-x:auto;}
+@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
+</style>
+<div class="tai-wrap">
+
+<div class="tai-padx" style="padding:48px 36px 36px;">
+<div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/reports/" style="color:#9a9aa2;text-decoration:none;">Reports</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">AI Statistics Fact-Check</span></div>
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Fact-Check Register &middot; Report AI</div>
+<h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">AI Statistics That Are Wrong</h1>
+<p style="font-size:18px;color:#55555e;margin:0 0 14px;">Some of the most quoted numbers in AI do not say what they are quoted as saying. This register traces widely repeated AI statistics back to their sources and records, for each one, what the source actually measured, the figure that survives checking, and how confident we are. It is updated monthly.</p>
+<div class="tai-mono" style="font-size:12px;color:#9a9aa2;">By the Report AI editorial team &middot; Published <time datetime="2026-10-29">29 October 2026</time> &middot; Next review 29 November 2026</div>
+</div>
+
+<div class="tai-statgrid" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;">
+<div class="tai-stat"><div style="font-weight:900;font-size:34px;letter-spacing:-0.03em;color:#2545f5;">2</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">wrong outright &mdash; including a factor-of-ten translation error</div></div>
+<div class="tai-stat"><div style="font-weight:900;font-size:34px;letter-spacing:-0.03em;color:#2545f5;">4</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">overstated or misdescribed &mdash; the source measured something narrower</div></div>
+<div class="tai-stat"><div style="font-weight:900;font-size:34px;letter-spacing:-0.03em;color:#2545f5;">3</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">superseded or out of date, still quoted as current</div></div>
+<div class="tai-stat" style="border-right:none;"><div style="font-weight:900;font-size:34px;letter-spacing:-0.03em;color:#2545f5;">4</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">untraceable, unsupported, contested, or a forecast quoted as fact</div></div>
+</div>
+
+<div class="tai-padx" style="background:#f5f5f7;">
+<div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">Analysis</div>
+<h2 style="font-size:30px;">Most bad AI statistics are not invented. They drift.</h2>
+<p>Almost none of the figures below was fabricated. Each began as a real number from a real source, and then changed on the way through the citation chain. The pattern is consistent enough to name. A figure measured on a broad definition gets repeated under a narrow label: phishing emails with <em>any</em> AI involvement become emails <em>written by</em> AI. A unit gets lost in translation: Chinese counts large numbers in units of 100 million, so a figure of &ldquo;3.8&rdquo; of those units is 380 million, not 3.8 billion. A forecast becomes a fact when the year it was forecasting arrives, and is then quoted as a measurement. And a figure that was correct when it was published keeps being quoted, without its date, long after the thing it measured has moved.</p>
+<p>The fifth mechanism is the simplest and the least excusable: arithmetic nobody does. The best-known example is the claim that a fake image of an explosion at the Pentagon wiped $500 billion off US stocks in May 2023. The same coverage reported the size of the move, and multiplying that move by the value of the S&amp;P 500 gives a number a fraction of the size. The claim survived three years of repetition because checking it required one multiplication.</p>
+<p>These errors matter more in AI than in most subjects for a specific reason. AI statistics are increasingly read, summarised and repeated by AI systems, which learn from exactly the repeated, undated, broadened versions this page corrects. A wrong number that appears on a hundred roundup pages is, to a model, a well-attested number. The only counterweight is a source that states the corrected figure plainly, with its date and its evidence, in a form that can be found and quoted.</p>
+<p>Two cautions about this register itself. First, inclusion means the figure fails <em>as commonly stated</em>; several of the underlying sources are perfectly sound and are cited with approval on our own pages. Second, our own site published versions of some of these errors before correcting them, and they are recorded in our <a href="/about/corrections/">corrections log</a>. A fact-checker that hides its own mistakes is not one.</p>
+<div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6e6e76;margin:22px 0 12px;">Key takeaways</div>
+<ul style="margin:0;padding-left:20px;max-width:860px;">
+<li style="font-size:15px;line-height:1.55;color:#33333a;margin-bottom:10px;"><strong>Definition drift is the commonest failure.</strong> Four of the thirteen entries describe a broad measurement with a narrow word.</li>
+<li style="font-size:15px;line-height:1.55;color:#33333a;margin-bottom:10px;"><strong>Dates fall off figures.</strong> Three entries were true when published and are now quoted as current.</li>
+<li style="font-size:15px;line-height:1.55;color:#33333a;margin-bottom:10px;"><strong>Forecasts become facts.</strong> &ldquo;$10.5 trillion of cybercrime in 2025&rdquo; is a 2020 projection, not a measurement.</li>
+<li style="font-size:15px;line-height:1.55;color:#33333a;margin-bottom:0;"><strong>Check the arithmetic.</strong> The $500 billion Pentagon-image figure does not survive a single multiplication.</li>
+</ul>
+</div>
+
+<div class="tai-padx">
+<h2>Summary table</h2>
+<div class="tai-tablewrap"><table class="tai-table">
+<tr><th>Commonly stated</th><th>What survives checking</th><th>Verdict</th></tr>
+<tr><td><a href="#fc-pentagon-500b">Fake Pentagon image wiped $500B off US stocks</a></td><td>Reported move implies ~$90&ndash;250B</td><td><span class="tai-v">Overstated</span></td></tr>
+<tr><td><a href="#fc-phishing-826">82.6% of phishing emails are written by AI</a></td><td>82.6% showed <em>any</em> AI involvement</td><td><span class="tai-v">Misdescribed</span></td></tr>
+<tr><td><a href="#fc-articles">AI now writes more web articles than humans</a></td><td>About half, and level since late 2024</td><td><span class="tai-v">Superseded</span></td></tr>
+<tr><td><a href="#fc-bec-37">FBI: 37% rise in AI-assisted email fraud</a></td><td>Not found in the FBI report; AI-linked BEC ~$30M</td><td><span class="tai-v">Untraceable</span></td></tr>
+<tr><td><a href="#fc-cyber-105t">Cybercrime cost the world $10.5T in 2025</a></td><td>A 2020 projection, not a measurement</td><td><span class="tai-v">Forecast as fact</span></td></tr>
+<tr><td><a href="#fc-deloitte-40b">Deepfake fraud will cost $40B by 2027</a></td><td>Forecast for <em>all</em> gen-AI fraud in the US</td><td><span class="tai-v">Misdescribed</span></td></tr>
+<tr><td><a href="#fc-arup">Arup's $25M is the biggest deepfake fraud</a></td><td>Fideuram lost &euro;95M (~$108M), Sept 2026</td><td><span class="tai-v">Superseded</span></td></tr>
+<tr><td><a href="#fc-doubao">Doubao has 3.8 billion users</a></td><td>382 million (3.8 &times; 100 million, misread as billions)</td><td><span class="tai-v">Wrong</span></td></tr>
+<tr><td><a href="#fc-chatgpt-28b">ChatGPT has 2.8 billion monthly users</a></td><td>No disclosure supports it; 1B+ weekly disclosed (Aug 2026)</td><td><span class="tai-v">Unsupported</span></td></tr>
+<tr><td><a href="#fc-chatgpt-800m">ChatGPT has 800 million weekly users</a></td><td>True in Oct 2025; 1B+ by Aug 2026</td><td><span class="tai-v">Out of date</span></td></tr>
+<tr><td><a href="#fc-claude">Claude has <em>N</em> million users</a></td><td>Estimates range 56M&ndash;245M for the same period</td><td><span class="tai-v">Contested</span></td></tr>
+<tr><td><a href="#fc-45-states">45 states have deepfake laws (cited for elections)</a></td><td>45&ndash;48 is sexual deepfakes; elections 30&ndash;33</td><td><span class="tai-v">Misdescribed</span></td></tr>
+<tr><td><a href="#fc-bartz">Court ruled AI training on books isn't fair use</a></td><td>It ruled training <em>was</em> fair use; piracy was not</td><td><span class="tai-v">Wrong</span></td></tr>
+</table></div>
+</div>
+
+<div class="tai-padx">
+<h2>The entries</h2>
+
+<div class="tai-entry" id="fc-pentagon-500b"><span class="tai-v">Overstated</span> <span class="tai-conf tai-conf-der">DERIVED</span>
+<h3>&ldquo;A fake AI image of a Pentagon explosion wiped $500 billion off the US stock market.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; 2023 news coverage (including TheStreet and SFist) and many later roundups.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; On 22 May 2023 the S&amp;P 500 dipped briefly after the fake image spread: about 0.26% on the figure most incident records use, about 30 index points in some reports. On an index worth roughly $34&ndash;36 trillion, those moves imply about <strong>$90 billion and $250 billion</strong> respectively. Reaching $500 billion would require a fall of about 1.4%. We found no source that shows how $500 billion was calculated.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-deepfake-market-manipulation/">AI Market Manipulation</a>.</p></div>
+
+<div class="tai-entry" id="fc-phishing-826"><span class="tai-v">Misdescribed</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;82.6% of phishing emails are written by AI.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; Security vendor blogs and statistics roundups, usually attributed to KnowBe4's 2025 phishing research.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; The figure counts emails showing <strong>any AI involvement</strong>, including personalisation or obfuscation, not emails written by AI. A separate estimate puts business-email-compromise messages <em>primarily</em> written by AI at about 40%. AI is involved in most phishing; it does not write 82.6% of it.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-cybercrime-phishing-wormgpt/">AI in Cybercrime</a>.</p></div>
+
+<div class="tai-entry" id="fc-articles"><span class="tai-v">Superseded</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;More articles on the web are now written by AI than by humans.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; Widely reported from an SEO firm's 2025 study, and sometimes misattributed to Ahrefs, whose different finding is that 74.2% of new pages contain <em>some</em> AI content.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; Graphite's original study estimated that articles written primarily by AI first outnumbered human-written ones in November 2024. Its own follow-up, with data through the first quarter of 2026, found the share has <strong>levelled off near 50%</strong> &mdash; 50.9% in the fourth quarter of 2025 and 49.9% in the first quarter of 2026. The accurate statement is &ldquo;about half, and no longer rising&rdquo;.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-slop-content-pollution-internet/">AI Slop</a>.</p></div>
+
+<div class="tai-entry" id="fc-bec-37"><span class="tai-v">Untraceable</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;The FBI reported a 37% rise in AI-assisted business email compromise.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; Secondary security blogs citing the FBI's 2025 Internet Crime Report.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; We could not find this figure in any account of the report's AI section. That section counts 22,364 complaints with an AI descriptor and $893 million in losses, of which business email compromise involving AI was about <strong>$30 million</strong>. The 37% may exist somewhere we could not reach, but until it is traced to the report it should not be attributed to the FBI.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-deepfake-fraud-statistics/">Deepfake Fraud</a>.</p></div>
+
+<div class="tai-entry" id="fc-cyber-105t"><span class="tai-v">Forecast as fact</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;Cybercrime cost the world $10.5 trillion in 2025.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; Industry reports, conference keynotes and some major publications, attributed to Cybersecurity Ventures.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; The figure comes from a <strong>2020 projection</strong> that costs would grow about 15% a year to reach $10.5 trillion in 2025. When 2025 arrived, the projection began to be quoted as the outcome. The firm publishes its cost categories but not its calculations. For scale, cybercrime losses reported to the FBI for 2025 were $20.9 billion, though that covers the US and only reported cases.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-dark-side-statistics-trends-2030-forecast/">The Dark Side of AI in Numbers</a>.</p></div>
+
+<div class="tai-entry" id="fc-deloitte-40b"><span class="tai-v">Misdescribed</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;Deepfake fraud will cost $40 billion by 2027.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; Deepfake statistics pages and vendor marketing, attributed to Deloitte.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; Deloitte's Center for Financial Services projected that <strong>generative-AI-enabled fraud</strong> losses in the US could reach $40 billion by 2027, up from $12.3 billion in 2023. It is a forecast, it covers all generative-AI-enabled fraud rather than deepfakes alone, and it is US-only. It resolves in 2027; we track it on our <a href="/reports/ai-predictions-scoreboard/">predictions scoreboard</a>.</p></div>
+
+<div class="tai-entry" id="fc-arup"><span class="tai-v">Superseded</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;The $25 million Arup video call is the biggest deepfake fraud.&rdquo;</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; It was, from early 2024. In September 2026 Reuters reported that fraudsters impersonating senior executives took <strong>&euro;95 million (about $108 million)</strong> from Fideuram, the private-banking arm of Intesa Sanpaolo, using a WhatsApp message and a cloned voice. About &euro;36 million is reported unrecovered.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-deepfake-fraud-statistics/">Deepfake Fraud: The Nine-Figure Heist Era</a>.</p></div>
+
+<div class="tai-entry" id="fc-doubao"><span class="tai-v">Wrong</span> <span class="tai-conf tai-conf-hi">HIGH</span>
+<h3>&ldquo;Doubao has 3.8 billion users.&rdquo;</h3>
+<p><span class="tai-lbl">Where it circulates</span> &mdash; At least one English-language outlet published it as a headline.</p>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; The Chinese figure is 3.8 <em>yi</em>, the standard Chinese unit of a hundred million, so it means about <strong>382 million</strong>, the monthly active user figure tracked by QuestMobile. The headline overstated it tenfold. The unit conversion is certain; the 382 million itself is a device-panel estimate, rated MEDIUM on our user-numbers page.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/ai-user-numbers-us-china-compared/">AI user numbers, US vs China</a>.</p></div>
+
+<div class="tai-entry" id="fc-chatgpt-28b"><span class="tai-v">Unsupported</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;ChatGPT has 2.8 billion monthly users.&rdquo;</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; We found no disclosure or measurement that supports it. OpenAI's own most recent ChatGPT figure is more than <strong>1 billion weekly</strong> active users, stated on 31 August 2026. A monthly figure would be higher than a weekly one, but 2.8 billion would be roughly a third of the world's population, and no source behind the claim shows how it was derived.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/indexes/enterprise-ai/chatgpt-statistics-2026/">ChatGPT Statistics</a>.</p></div>
+
+<div class="tai-entry" id="fc-chatgpt-800m"><span class="tai-v">Out of date</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;ChatGPT has 800 million weekly users.&rdquo;</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; Correct for October 2025, when OpenAI announced it. By August 2026 it was more than <strong>1 billion</strong>. The series runs 400 million (February 2025), about 700 million (July 2025), 800 million (October 2025), 900 million-plus (February 2026) and 1 billion-plus (August 2026). The same now applies to &ldquo;900 million&rdquo;: correct for February 2026, out of date since August. Figures calculated against 800 million at the time, such as OpenAI's October 2025 disclosure about suicide-related conversations, should keep that denominator; it is the current-tense use that is wrong.</p></div>
+
+<div class="tai-entry" id="fc-claude"><span class="tai-v">Contested</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>Any single figure for Claude's user numbers.</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; Published estimates for Claude's monthly users in the same period range from <strong>56 million to 245 million</strong>, a 4.4-fold spread, because they mix weekly and monthly measures, web traffic and app installs. Anthropic does not publish a consumer user count. Any single number should be quoted with its method, or as a range.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/ai-user-numbers-us-china-compared/">AI user numbers, US vs China</a>.</p></div>
+
+<div class="tai-entry" id="fc-45-states"><span class="tai-v">Misdescribed</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;45 states have deepfake laws&rdquo; &mdash; cited as protection for elections.</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; State counts depend on the category. Roughly <strong>45&ndash;48 states</strong> address sexual deepfakes. Election-deepfake laws exist in about <strong>30&ndash;33</strong>, depending on the tracker; Public Citizen counted 31 in October 2026. Quoting the larger number for elections overstates the protection voters have.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-deepfake-disinformation-voice-scams/">Synthetic Deception</a>.</p></div>
+
+<div class="tai-entry" id="fc-bartz"><span class="tai-v">Wrong</span> <span class="tai-conf tai-conf-med">MEDIUM</span>
+<h3>&ldquo;A court ruled that training AI on copyrighted books isn't fair use &mdash; and Anthropic paid $1.5 billion.&rdquo;</h3>
+<p><span class="tai-lbl">What the evidence says</span> &mdash; In <i>Bartz v. Anthropic</i> (June 2025) Judge William Alsup held that <strong>training was fair use</strong>, calling it &ldquo;exceedingly transformative&rdquo;, and that scanning lawfully bought books was fair use too. What he refused to excuse was downloading millions of pirated books and keeping them as a permanent library. That issue was headed to trial when Anthropic settled for about $1.5 billion. The liability came from how the books were obtained and stored, not from training on them.</p>
+<p><span class="tai-lbl">Detail</span> &mdash; <a href="/reports/dark-side-of-ai/ai-copyright-who-owns-the-rights/">Copyright and AI</a>.</p></div>
+</div>
+
+<div class="tai-padx">
+<h2>How we check a figure</h2>
+<p>Each entry follows the same steps. We find the earliest published version of the claim and the source it cites; read what that source says it measured, including its definitions, sample and dates; redo any arithmetic the claim depends on; and look for a newer edition of the same measurement. A figure is listed only when the commonly stated version differs materially from what the source supports.</p>
+<div class="tai-tablewrap"><table class="tai-table">
+<tr><th>Verdict</th><th>Meaning</th></tr>
+<tr><td><span class="tai-v">Wrong</span></td><td>The figure or the finding is incorrect as stated.</td></tr>
+<tr><td><span class="tai-v">Overstated</span></td><td>The source supports a materially smaller number.</td></tr>
+<tr><td><span class="tai-v">Misdescribed</span></td><td>The number is right but describes something different from what it is quoted as measuring.</td></tr>
+<tr><td><span class="tai-v">Superseded</span></td><td>A newer measurement, often from the same source, replaces it.</td></tr>
+<tr><td><span class="tai-v">Out of date</span></td><td>Correct at its date; quoted as current.</td></tr>
+<tr><td><span class="tai-v">Untraceable</span></td><td>Attributed to a source in which we could not find it.</td></tr>
+<tr><td><span class="tai-v">Unsupported</span></td><td>No disclosure or measurement we could find supports it.</td></tr>
+<tr><td><span class="tai-v">Contested</span></td><td>Credible estimates disagree too widely for any single figure.</td></tr>
+<tr><td><span class="tai-v">Forecast as fact</span></td><td>A projection quoted as a measured outcome.</td></tr>
+</table></div>
+</div>
+
+<div class="tai-padx">
+<h2>Frequently asked</h2>
+<p style="font-size:15px;margin:0 0 6px;"><strong>Why are so many AI statistics wrong?</strong></p>
+<p style="font-size:14.5px;color:#55555e;margin:0 0 18px;">Mostly through drift rather than invention. Figures measured on broad definitions are repeated under narrow labels, units are lost in translation, forecasts are quoted as outcomes once their year arrives, and correct figures keep circulating without their dates. Few people redo the arithmetic behind a striking number.</p>
+<p style="font-size:15px;margin:0 0 6px;"><strong>Did a fake AI image really wipe $500 billion off the stock market?</strong></p>
+<p style="font-size:14.5px;color:#55555e;margin:0 0 18px;">Probably not. The S&amp;P 500's reported dip in May 2023 &mdash; about 0.26%, or about 30 points in some accounts &mdash; implies roughly $90 billion to $250 billion on an index worth $34&ndash;36 trillion. Reaching $500 billion would need a fall of about 1.4%.</p>
+<p style="font-size:15px;margin:0 0 6px;"><strong>How many people actually use ChatGPT?</strong></p>
+<p style="font-size:14.5px;color:#55555e;margin:0 0 18px;">OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026, up from more than 900 million in February 2026. Claims of 2.8 billion monthly users are not supported by any disclosure we found, and the widely quoted 800 million was the October 2025 figure.</p>
+<p style="font-size:15px;margin:0 0 6px;"><strong>Is AI really writing most phishing emails?</strong></p>
+<p style="font-size:14.5px;color:#55555e;margin:0 0 18px;">AI is involved in most phishing, but the often-quoted 82.6% counts any AI involvement, including personalisation, not emails written by AI. Estimates for emails primarily written by AI are much lower, around 40% for business email compromise.</p>
+<p style="font-size:15px;margin:0 0 6px;"><strong>Can I suggest a figure to check?</strong></p>
+<p style="font-size:14.5px;color:#55555e;margin:0;">Yes. Send the figure and where you saw it through our <a href="/about/contact/">contact page</a>. We review submissions in the monthly update.</p>
+</div>
+
+<div class="tai-padx" style="padding:28px 36px;">
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:10px;">Methodology &amp; sources</div>
+<p style="font-size:13.5px;line-height:1.6;color:#6e6e76;">Each entry links to the Report AI page where the full sourcing sits. Confidence follows our <a href="/about/editorial-standards/">editorial standards</a>: HIGH where the correction rests on something certain (such as a unit conversion), MEDIUM where it rests on consistent secondary accounts of a source we could not open directly, and DERIVED where it rests on our own arithmetic, with the inputs shown. Several primary sources &mdash; court dockets, regulators and some publishers &mdash; are not reachable from our research environment, which is why most entries are MEDIUM. &ldquo;Where it circulates&rdquo; describes where we found the claim; it is not a list of every publication that repeated it. Cadence: monthly. Corrections: <a href="/about/corrections/">corrections log</a>.</p>
+</div>
+
+<div class="tai-padx" style="padding:28px 36px;border-bottom:none;">
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9aa2;margin-bottom:10px;">Related on Report AI</div>
+<p style="font-size:14px;margin:0;"><a href="/about/corrections/">Corrections log</a> &middot; <a href="/reports/ai-predictions-scoreboard/">AI predictions, scored</a> &middot; <a href="/about/editorial-standards/">Editorial standards</a> &middot; <a href="/reports/ai-user-numbers-us-china-compared/">AI user numbers</a> &middot; <a href="/reports/dark-side-of-ai/">The Dark Side of AI</a> &middot; <a href="/indexes/">All indexes</a></p>
+</div>
+
+</div>
+<!-- /wp:html -->
+<!-- wp:html -->
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","headline":"AI Statistics That Are Wrong: The Fact-Check Register","description":"Widely repeated AI statistics traced to their sources: what each source actually says, the corrected figure, and our confidence.","datePublished":"2026-10-29","dateModified":"2026-10-29","author":{"@type":"Organization","name":"Report AI","url":"https://report-ai.org"},"publisher":{"@id":"https://report-ai.org/#organization"},"about":["AI statistics","fact-check","misinformation","data quality"]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why are so many AI statistics wrong?","acceptedAnswer":{"@type":"Answer","text":"Mostly through drift rather than invention. Figures measured on broad definitions are repeated under narrow labels, units are lost in translation, forecasts are quoted as outcomes once their year arrives, and correct figures keep circulating without their dates."}},{"@type":"Question","name":"Did a fake AI image really wipe $500 billion off the stock market?","acceptedAnswer":{"@type":"Answer","text":"Probably not. The S&P 500's reported dip in May 2023, about 0.26 percent or about 30 points in some accounts, implies roughly 90 to 250 billion dollars on an index worth 34 to 36 trillion. Reaching 500 billion would need a fall of about 1.4 percent."}},{"@type":"Question","name":"How many people actually use ChatGPT?","acceptedAnswer":{"@type":"Answer","text":"OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026, up from more than 900 million in February 2026. Claims of 2.8 billion monthly users are not supported by any disclosure we found, and the widely quoted 800 million was the October 2025 figure."}},{"@type":"Question","name":"Is AI really writing most phishing emails?","acceptedAnswer":{"@type":"Answer","text":"AI is involved in most phishing, but the often-quoted 82.6 percent counts any AI involvement, including personalisation, not emails written by AI. Estimates for emails primarily written by AI are much lower, around 40 percent for business email compromise."}},{"@type":"Question","name":"Can I suggest a figure to check?","acceptedAnswer":{"@type":"Answer","text":"Yes. Send the figure and where you saw it through the Report AI contact page. Submissions are reviewed in the monthly update."}}]}]}</script>
+<!-- /wp:html -->
