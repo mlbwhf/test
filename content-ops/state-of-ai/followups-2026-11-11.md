@@ -46,6 +46,7 @@
 | State of AI Infrastructure & Energy 2026 | 3695 | 3752 | draft (IDENTICAL 131,203 bytes), 12 Nov |
 | State of AI Geography 2026 | 3704 | 3753 | draft (IDENTICAL 122,149 bytes, old build) → patch 3704-geography-20261112.json |
 | State of AI Industries 2026 | 3705 | 3754 | draft (IDENTICAL 134,267 bytes), 12 Nov |
+| State of AI Regulation 2026 | 3757 | 3836 | draft (IDENTICAL 127,911 bytes), 11 Nov ET |
 
 Corrections A1–A9 done 11 Nov (agent report): 376, 1100, 92, 89, 386, 413, 498, 374, 954, 930; ten rows on 3229.
 12 Nov: the owner's accidentally rejected edit was redone — 376 JSON-LD citation "Gartner Worldwide AI
