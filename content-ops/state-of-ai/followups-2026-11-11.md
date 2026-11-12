@@ -49,6 +49,7 @@
 | State of AI Regulation 2026 | 3757 | 3836 | draft (IDENTICAL 127,911 bytes), 11 Nov ET |
 | State of AI Risk 2026 | 3756 | 3839 | draft (IDENTICAL 125,212 bytes), 11 Nov ET |
 | State of AI, Year over Year | 3851 | 3922 | draft (IDENTICAL 121,620 bytes), 11 Nov ET |
+| State of AI in Numbers 2026 | 3847 | 4005 | draft (IDENTICAL 268,722), heading fixed to 'eleven numbers'; publishes mid-Dec |
 
 Corrections A1–A9 done 11 Nov (agent report): 376, 1100, 92, 89, 386, 413, 498, 374, 954, 930; ten rows on 3229.
 12 Nov: the owner's accidentally rejected edit was redone — 376 JSON-LD citation "Gartner Worldwide AI
@@ -128,3 +129,10 @@ then give the new page the real slug and publish. URL unchanged; page ID changes
 
 Swap for 934 at go-live (owner OK needed): set 934 slug → sovereign-ai-index-2026-archive + draft; set 3915 slug →
 sovereign-ai-index-2026, re-stamp dates if not 11 Nov, publish; verify permalink. 934 links no CSV.
+
+## L. Landing page 362 (go-live note)
+
+362 is the live parent of every State of AI page, so it cannot be swapped like 322/358/934 (children reference its ID).
+Its rebuilt content is 28.5 KB (3 chunks). At go-live, with the owner's OK, replace it in one update rather than marker
+chunks (no half-written live page): back up first; if the WAF blocks the single update, write the new content in a
+draft, then apply it in 3 sequential replacements of contiguous old sections so every intermediate state is complete.
