@@ -324,7 +324,7 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
     const teams = classTeams(c.board), tables = teams.length ? teams.map((t) => ({ id: t.id, name: t.name })) : [{ id: "class", name: "The class" }];
     const tid: string = tables.some((t) => t.id === ui.table) ? ui.table : tables.some((t) => t.id === c.team) ? (c.team as string) : tables[0]!.id;
     const gName = (g: string) => tables.find((t) => t.id === g)?.name ?? g;
-    const CF = { ...PB_DEFCFG(), ...rec("pbcfg") }, VIEW: string = ui.pbView || "bid";
+    const CF = { ...PB_DEFCFG(), ...rec("pbcfg") }, VIEW: string = ui.pbView === "cfg" && !c.trainer ? "bid" : ui.pbView || "bid";
     const setCF = (f: any) => { const c0 = { ...PB_DEFCFG(), ...rec("pbcfg") }; op({ key: "pbcfg", op: "set", value: { ...c0, ...(typeof f === "function" ? f(c0) : f) } }); };
     const ITEMS = CF.vs.flatMap((v: any) => v.items.map((it: any) => ({ ...it, vsId: v.id, vsN: v.n, vsC: v.c })));
     const memOf = (g: string) => Math.max(1, Math.min(12, +((CF.mem || {})[g] ?? CF.members) || 1)), perOf = (g: string) => (+CF.budget || 0) / memOf(g);
@@ -342,7 +342,7 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
     const view = (k: string) => setUi({ pbView: k });
     const money2 = (n: number) => money(n);
     T.pb = { gName: gName(tid), tableChips: tables.map((t) => ({ n: t.name, bg: t.id === tid ? "#14123a" : "#fff", fg: t.id === tid ? "#fff" : "#14123a", go: () => setUi({ table: t.id, pbWho: 0 }) })), canPickTable: c.trainer || !c.team || tables.length === 1,
-      tabs: [["bid", "Bid as a table"], ["res", "Consolidated results"], ["cfg", "⚙ Set up template"]].map(([k, l]) => ({ l, bg: VIEW === k ? "#14123a" : "#fff", fg: VIEW === k ? "#fff" : "#14123a", go: () => view(k!) })), isBid: VIEW === "bid", isRes: VIEW === "res", isCfg: VIEW === "cfg",
+      tabs: [["bid", "Bid as a table"], ["res", "Consolidated results"], ...(c.trainer ? [["cfg", "⚙ Set up template"]] : [])].map(([k, l]) => ({ l, bg: VIEW === k ? "#14123a" : "#fff", fg: VIEW === k ? "#fff" : "#14123a", go: () => view(k!) })), isBid: VIEW === "bid", isRes: VIEW === "res", isCfg: VIEW === "cfg",
       budget: money2(+CF.budget || 0), need: money2(need), gap: money2((+CF.budget || 0) - need), ppl, setPpl: val((s) => { const v = Math.max(1, Math.min(12, +s || 1)); setCF((c0: any) => ({ mem: { ...(c0.mem || {}), [tid]: v } })); }),
       people: Array.from({ length: ppl }, (_, p) => ({ n: pname(tid, p), bg: me === p ? "#ffe14d" : "#fff", left: money2(per - spent(tid, p)), lc: per - spent(tid, p) < 0 ? "#c8372d" : "#5b5b6e", go: () => setUi({ pbWho: p }) })),
       per: money2(per), me: pname(tid, me), myLeft: money2(myLeft), myBar: Math.max(0, Math.min(100, (1 - myLeft / (per || 1)) * 100)) + "%", myC: myLeft < 0 ? "#c8372d" : "#1fb89a", grpSpent: money2(grpSpent), grpLeft: money2((+CF.budget || 0) - grpSpent), grpBar: Math.min(100, (grpSpent / (+CF.budget || 1)) * 100) + "%",
@@ -451,7 +451,7 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
   }
 
   /* lesson 8: the video */
-  if (K === "vid") { const w = !!S["vid:" + exId]; T.vid = { url: cfg.url, watched: w, wl: w ? "✓ Watched" : "Mark as watched", wbg: w ? "#5ff0e0" : "#fff", go: () => op({ key: "vid:" + exId, op: "set", value: w ? null : true }) }; }
+  if (K === "vid") { const w = !!S["vid:" + exId]; T.vid = { url: /^https?:\/\//i.test(String(cfg.url ?? "")) ? cfg.url : "#", watched: w, wl: w ? "✓ Watched" : "Mark as watched", wbg: w ? "#5ff0e0" : "#fff", go: () => op({ key: "vid:" + exId, op: "set", value: w ? null : true }) }; }
 
   const kf = Object.fromEntries(K0.map((k) => ["k_" + k, K === k])); kf.k_tbl = K === "tbl" || K === "emi";
   K0.forEach((k) => { if (!T[k]) T[k] = BLANK; });

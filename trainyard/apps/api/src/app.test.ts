@@ -2424,3 +2424,30 @@ describe("co-instructors and team copies", () => {
     expect((await call("GET", "/v1/me", undefined, key)).status).toBe(200);
   });
 });
+
+describe("what a student's link may write", () => {
+  it("refuses script links on cards, another team's part of an exercise, and the trainer's setup", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM" }, root)).body.board.id as string;
+    const [ana, ben] = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }, { name: "Ben", email: "ben@example.io" }] }, root)).body.students as { id: string; token: string }[];
+    await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, root);
+    // A card's link is a web address or a page of the site, never a script.
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "javascript:alert(1)" } }, ana!.token)).status).toBe(400);
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "//evil.example" } }, ana!.token)).status).toBe(400);
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "https://scaledagile.com" } }, ana!.token)).status).toBe(201);
+    // Ana is in team 1: her team's keys are hers, team 2's and the budgeting setup are not.
+    const b = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board as { frames: { id: string; activity?: { board?: string } }[] };
+    const f = b.frames.find((x) => x.activity?.board === "lpm")!.id;
+    const put = (key: string, token: string) => call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(f)}/state`, { key, op: "set", value: { a: 1 } }, token);
+    expect((await put("t1|org", ana!.token)).status).toBe(200);
+    expect((await put("t2|org", ana!.token)).status).toBe(403);
+    expect((await put("t2|org", ben!.token)).status).toBe(200);
+    expect((await put("pbcfg", ana!.token)).status).toBe(403);
+    expect((await put("pbbids:t1", ana!.token)).status).toBe(200);
+    expect((await put("pbbids:t2", ana!.token)).status).toBe(403);
+    // The trainer writes anywhere.
+    expect((await put("t2|org", root)).status).toBe(200);
+    expect((await put("pbcfg", root)).status).toBe(200);
+  });
+});

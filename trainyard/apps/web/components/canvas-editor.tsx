@@ -925,7 +925,7 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                       </text>
                     </a>
                   ) : null}
-                  {typeof n.fields.link === "string" ? (
+                  {typeof n.fields.link === "string" && /^(https?:\/\/|\/(?!\/))/i.test(n.fields.link) ? (
                     <a href={n.fields.link} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
                       <rect x={n.x + w - 92} y={n.y + h - 34} width={82} height={26} rx={13} fill="#17212b" />
                       <text x={n.x + w - 51} y={n.y + h - 16} fontSize={13} textAnchor="middle" fill="#fff" fontFamily="var(--font-body)" fontWeight={600}>

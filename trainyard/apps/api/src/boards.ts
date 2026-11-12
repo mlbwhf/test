@@ -5,7 +5,7 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
+import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer, classTeams, teamRounds } from "@trainyard/core";
 import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, needsTemplateUpgrade, templateFrom, templateRevision, upgradeFromTemplate, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
@@ -476,7 +476,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     /** A picture for an image card (data URL). */
     src: ImageData.optional(),
     /** Typed card fields, merged into the card's fields. */
-    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").optional(),
+    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").refine((f) => f.link == null || (typeof f.link === "string" && /^(https?:\/\/|\/(?!\/))/i.test(f.link)), "A card's link is an http(s) address or a page of this site").optional(),
   });
   const asRef = (r: { kind: RefKind; id: string; boardId?: string | undefined }): Ref => ({ kind: r.kind, id: r.id, ...(r.boardId ? { boardId: r.boardId } : {}) });
   const checkRef = (ref: Ref) => {
@@ -633,6 +633,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = editable(req, req.params.id);
     const f = b.frames.find((x) => x.id === req.params.frameId);
     if (!f) throw notFound("Frame");
+    // A student's link writes their own team's part of the exercise only (teams.ts prefixes a team's
+    // keys with its id), and never the class's own setup of an exercise (participatory budgeting).
+    if (req.principal.guestBoardId) {
+      const sid = req.principal.userId.replace(/^guest:/, "");
+      const rounds = [classTeams(b), ...teamRounds(b)];
+      const all = new Set(rounds.flat().map((t) => t.id));
+      const mine = new Set(rounds.flat().filter((t) => t.members.includes(sid)).map((t) => t.id));
+      const key = req.body.key;
+      const prefix = key.includes("|") ? key.slice(0, key.indexOf("|")) : "";
+      const table = /^pbbids:(.+)$/.exec(key)?.[1];
+      if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
+    }
     const state = (f.state ??= {});
     const before = JSON.stringify(state).length;
     const value = applyStateOp(state, req.body as StateOp, () => `s${Date.now().toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`);
