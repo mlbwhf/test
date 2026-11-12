@@ -1,0 +1,94 @@
+English	Trainyard French	Official SAFe fr-ca (glossary)	Source	Note
+Agile Release Train (ART)	train de livraison agile (ART)	Train de livraison Agile	official	OQLF recommends the same term.
+ART	ART	ART	official	Acronym kept.
+Planning Interval (PI)	intervalle de planification (PI)	Incrément de programme	SAFe 6 rename	The French glossary still uses the SAFe 5 name "Program Increment". Keep "PI" in labels.
+PI Planning	PI Planning	Planification d'incrément de programme	usage	Event name kept in English, as French courses and teams say it. Long form on first mention: planification du PI.
+PI Objectives	objectifs de PI	Objectifs d'incrément du programme	adapted	SAFe 6 short form.
+Committed / uncommitted objectives	objectifs engagés / non engagés	—	usage	
+Business Value (BV)	valeur d'affaires (BV)	—	consistent	Matches "responsable d'affaires".
+Business Owners	responsables d'affaires	Responsable d'affaires	official	
+Product Owner (PO)	Product Owner (PO)	Responsable produit, PO	usage	Kept in English (role name used on certificates). Review.
+Product Management	gestion de produit	Gestion de produit	official	
+Release Train Engineer (RTE)	Release Train Engineer (RTE)	Conducteur du train de livraison	usage	Role name kept in English as on the RTE certificate; long French form available. Review.
+Scrum Master/Team Coach	Scrum Master/Team Coach	Scrum Master	usage	
+Epic	épopée	Épopées	official	Many teams in France say "Epic". Review.
+Epic Owner	responsable d'épopée	Responsables d'épopée	official	
+Feature	fonctionnalité	Fonctionnalités	official	
+Capability	capacité (capability)	—	adapted	Collides with team capacity; keep the English in brackets.
+Story / user story	récit / récit utilisateur	Récits	official	"User story" is common in France. Review.
+Enabler	enabler	Enabler	official	Kept in English.
+Story points	points de récit	—	adapted	
+Iteration	itération	Itération	official	
+Innovation and Planning (IP) Iteration	itération d'innovation et de planification (IP)	Itération d'innovation et de planification	official	
+Iteration Review	revue d'itération	Revue d'itération	official	
+System Demo	démonstration du système	Démonstration du système	official	
+Inspect and Adapt (I&A)	Inspecter et adapter (I&A)	Inspecter et Adapter, I&A	official	
+Lean Portfolio Management (LPM)	gestion de portefeuille Lean (LPM)	Gestion de portefeuille Lean	official	
+Strategic Themes	thèmes stratégiques	Thèmes stratégiques	official	
+Lean Budget Guardrails	garde-fous budgétaires Lean	Gardes-fou budgétaires Lean	official, spelling fixed	Correct plural is "garde-fous".
+Lean Budgets	budgets Lean	Budgétisation Lean	adapted	
+Participatory Budgeting	budgétisation participative	Budgétisation participative	official	SAFe 6.0+ renamed it Strategic Investment Planning.
+Portfolio Kanban	Kanban du portefeuille	Kanban du portefeuille	official	
+Portfolio Backlog	carnet du portefeuille	Carnet du portefeuille	official	
+ART Backlog	carnet de l'ART	Carnet du programme	SAFe 6 rename	
+Team Backlog	carnet de l'équipe	Carnet de l'équipe	official	
+Portfolio Canvas	canevas de portefeuille	—	adapted	
+Portfolio Vision	vision du portefeuille	Vision du portefeuille	official	
+Lean Business Case	dossier d'affaires Lean	—	adapted	
+Epic Hypothesis Statement	énoncé d'hypothèse d'épopée	—	adapted	
+Minimum Viable Product (MVP)	produit minimum viable (MVP)	—	usage	
+Weighted Shortest Job First (WSJF)	WSJF	Travaux pondérés les plus courts en premier	official	Acronym in labels; long form available.
+Cost of Delay	coût du délai	—	usage	
+Job size	taille du travail	—	usage	
+Value Stream	flux de valeur	Flux de valeur	official	
+Operational / Development Value Stream	flux de valeur opérationnel / de développement	Flux de valeur opérationnel / de développement	official	
+Solution	solution	Solution	official	
+Solution Train	train de solution	Train de solution	official	
+Milestone	jalon	Jalons	official	
+Roadmap	feuille de route	Feuille de route	official	
+Release on Demand	mise en service à la demande	Mise en service à la demande	official	
+Architectural Runway	piste d'architecture	Piste d'architecture	official	
+Built-In Quality	qualité intégrée	Qualité intégrée	official	
+Business Agility	agilité d'affaires	Agilité d'affaires	official	"Agilité métier" in France. Review.
+Lean-Agile Mindset	état d'esprit Lean-Agile	État d'esprit Lean-Agile	official	
+Core Values	valeurs fondamentales	Valeurs fondamentales	official	
+Customer Centricity	orientation client	Orientation client	official	
+Continuous Delivery Pipeline	pipeline de livraison continue	Pipeline de livraison continue	official	
+Communities of Practice	communautés de pratique	Communautés de pratique	official	
+Nonfunctional Requirements (NFRs)	exigences non fonctionnelles (NFR)	Exigences non-fonctionnelles	official	
+Acceptance Criteria	critères d'acceptation	—	usage	
+Definition of Done	définition de terminé (DoD)	—	usage	
+Confidence Vote	vote de confiance	—	usage	
+ROAM	ROAM (résolu, possédé, accepté, mitigé)	—	usage	Letters kept.
+Risk	risque	—	usage	
+Dependency	dépendance	—	usage	
+Capacity	capacité	—	usage	
+Velocity	vélocité	—	usage	
+Work in Process (WIP)	travail en cours (WIP)	—	usage	
+Objectives and Key Results (OKRs)	objectifs et résultats clés (OKR)	—	usage	
+Key Result	résultat clé	—	usage	
+Value Management Office (VMO)	bureau de gestion de la valeur (VMO)	—	adapted	
+Lean-Agile Center of Excellence (LACE)	centre d'excellence Lean-Agile (LACE)	—	adapted	
+SWOT	SWOT	—	usage	FFOM is the French acronym; SWOT is common in business.
+Funnel / Reviewing / Analyzing / Ready / Implementing / Done	Entonnoir / Revue / Analyse / Prêt / Mise en œuvre / Terminé	—	usage	Portfolio Kanban states.
+Pivot / Persevere	pivoter / persévérer	—	usage	
+Horizon 3/2/1/0: Evaluating / Emerging / Investing-Extracting / Retiring	évaluation / émergence / investissement-exploitation / retrait	—	adapted	
+Class (a training class)	formation	—	usage	"Class board" = tableau de la formation.
+Lesson	leçon	—	usage	As in SAFe French courseware.
+Trainer / co-instructor	formateur / co-formateur	—	usage	
+Student	participant	—	usage	
+Team	équipe	—	usage	
+Exercise / Activity / Discussion	exercice / activité / discussion	—	usage	
+Prepare / Share / Duration	Préparation / Partage / Durée	—	usage	Timer labels.
+Sticky (note)	post-it	—	usage	
+Group wall	mur du groupe	—	usage	
+Board	tableau	—	usage	
+Template	modèle	—	usage	
+Release (a product release)	mise en production	—	usage	"Release on Demand" keeps the official "mise en service à la demande".
+Outcome (ART outcome)	résultat	—	usage	"Key result" is "résultat clé".
+PO Sync / ART Sync / Coach Sync	Synchro PO / Synchro ART / Synchro des coachs	—	adapted	Could stay in English. Review.
+Product Manager	Product Manager	—	usage	Kept in English, like Product Owner. Review.
+Relentless Improvement	amélioration continue	—	usage	
+Freight yard (Trainyard planning room)	gare de triage	—	product	Train theme of the planning room.
+Dependency string (line on the board)	fil	—	product	
+How Might We (HMW)	Comment pourrions-nous (CPN)	—	adapted	Review.
