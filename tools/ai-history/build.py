@@ -189,7 +189,7 @@ if __name__ == '__main__':
     published_h = datetime.date.fromisoformat(published).strftime('%-d %B %Y')
     os.makedirs(outdir, exist_ok=True)
     out = []
-    for name, kind in (('report', 'report'), ('index', 'index')):
+    for name, kind in (('report', 'report'), ('perez', 'report'), ('index', 'index')):
         p = os.path.join(SRC, name + '.json')
         if not os.path.exists(p):
             continue
