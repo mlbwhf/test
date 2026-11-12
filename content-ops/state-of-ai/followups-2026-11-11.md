@@ -47,9 +47,8 @@
 Corrections A1–A9 done 11 Nov (agent report): 376, 1100, 92, 89, 386, 413, 498, 374, 954, 930; ten rows on 3229.
 12 Nov: the owner's accidentally rejected edit was redone — 376 JSON-LD citation "Gartner Worldwide AI
 Spending Forecast, May 2026" → "September 2026".
-Open: six downloadable CSVs still carry pre-correction labels (1100 SB 25-189; 92/89/386/413 SWE-bench /
-"past year"; 374 Korea 2025) — fix by uploading revised files under new names and repointing box + schema
-(no media deletes). 930: "38% … trained in China" year unchecked.
+12 Nov: six revised CSVs uploaded (commit 78d5439) and repointed in box + JSON-LD: 1100→3708, 92→3709,
+89→3710, 386→3711, 413→3712, 374→3713 (`*-rev20261111.csv`). Old media items remain, unlinked (no deletes). 930: "38% … trained in China" year unchecked.
 
 Before publishing: replace the truncated excerpts on 3521/3524/3526 with the sentence-safe ones in
 `site-content/state-of-ai/pages.json`. Owner action: AIOSEO Organization/WebSite schema still says
