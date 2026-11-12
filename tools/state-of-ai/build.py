@@ -25,6 +25,7 @@ YEARS = ['2024', '2025', '2026']
 ALL_YEARS = ['2022', '2023', '2024', '2025', '2026']
 
 NS = {}
+WORDS = {5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve'}
 # CSVs re-issued under a new name after the first upload (media has no trash; never overwrite)
 CSV_REV = {'state-of-ai-models-prices': 'report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv'}
 ON = ' class="on"'
@@ -299,7 +300,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
         str(year), f'Report AI &middot; State of AI in Numbers &middot; Annual edition {year}{" (retrospective)" if year != "2026" else ""}', title,
         intro['dek'],
         f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time>{status_note}', str(year)) + \
-        f'\n<div class="tai-padx"><div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">{year} in seven numbers</div>{five(lead)}' + \
+        f'\n<div class="tai-padx"><div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">{year} in {WORDS.get(len(lead), len(lead))} numbers</div>{five(lead)}' + \
         cite_box(title, f'{year} edition', url, published_h, csv_name, len(rows)) + '</div>' + \
         '\n<div class="tai-padx" style="background:#f5f5f7;"><div class="tai-mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;">The year in one page</div>' + \
         ''.join(f'<p>{E(p)}</p>' for p in intro['analysis']) + f'<p class="tai-mono" style="font-size:12px;color:#77777f;margin-top:18px;">In this report: {toc}</p></div>' + \
