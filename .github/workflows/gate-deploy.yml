@@ -42,7 +42,7 @@ jobs:
     env:
       DATABASE_URL: postgres://gate:gate@localhost:5432/gate
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with: { version: 10 }
       - uses: actions/setup-node@v4
@@ -64,7 +64,7 @@ jobs:
             dockerfile: infra/docker/Dockerfile.web
             image: ghcr.io/${{ github.repository_owner }}/gate-web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Copy compose file and scripts to the server
         uses: appleboy/scp-action@v1
         with:
