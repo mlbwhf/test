@@ -199,7 +199,7 @@
    "paras": [
     "Epoch AI, which maintains the most widely used database of notable models, estimates that training compute doubled roughly every 20 months before 2010 and about every six months afterwards, which is equivalent to growth of about 4–5× a year; for frontier language models since 2020 its estimate is about 5× a year. In 2018 OpenAI's 'AI and Compute' analysis put the growth from AlexNet to AlphaGo Zero at more than 300,000-fold.",
     "Exhibit 3 plots landmark models on a logarithmic scale, where each gridline is a tenfold increase. GPT-3 (May 2020) used about 3.1×10²³ FLOP; GPT-4 (March 2023) about 2.1×10²⁵; Grok 3 (February 2025) was the first model estimated above 10²⁶; and Epoch's estimate for GPT-6 Astra (September 2026) is about 9.4×10²⁶, roughly 45 times GPT-4. These are estimates: labs have disclosed less since 2023, and Stanford HAI reports that the average Foundation Model Transparency Index score fell from 58 to 40.",
-    "Cost has followed compute. Epoch AI and the AI Index estimate that training the original transformer cost about $930 in cloud compute in 2017, GPT-3 about $4.3 million, GPT-4 about $78 million, Gemini 1.0 Ultra about $191 million and Grok 4 about $490 million (Exhibit 4), a trend of about 2.4× a year since 2016. These figures cover the final training run only, not research, staff or failed runs. DeepSeek's widely quoted $5.6 million for DeepSeek-V3 is the stated GPU rental for its final run and is not comparable with them.",
+    "Cost has followed compute. On Epoch AI's amortised basis (hardware depreciation plus energy, in 2023 dollars), the final training run of AlexNet in 2012 cost about $16, the original transformer about $440, GPT-3 about $2.1 million, GPT-4 about $37 million and Grok 4 about $390 million (Exhibit 4). Priced at cloud-rental rates, the basis the Stanford HAI AI Index uses, the same runs cost roughly two to four times more: about $81 million for GPT-4 and about $850 million for Grok 3, and Epoch's headline estimate for Grok 4 is about $490 million. Epoch estimates that the cost of frontier language-model training has grown about 3.5× a year since 2020. All these figures cover the final training run only, not research, staff, data or failed runs. That is also why DeepSeek's widely quoted $5.6 million for DeepSeek-V3 (Epoch's amortised estimate is about $5.4 million) describes one run, not the cost of building the model.",
     "Parameter counts tell a less reliable story. GPT-3 had 175 billion parameters; the largest disclosed open models now exceed a trillion in total (DeepSeek V4-Pro, 1.6 trillion), but mixture-of-experts designs activate only a fraction per token, and most closed labs no longer publish the figure. The often-quoted 1.76 trillion for GPT-4 has never been confirmed by OpenAI."
    ],
    "exhibits": [
@@ -224,39 +224,46 @@
      ],
      "title": "Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra",
      "subtitle": "Estimated training compute of landmark AI models, 1957–2026 (floating-point operations, log scale)",
-     "source": "Source: Epoch AI, Notable AI Models; Report AI data for 2024–2026",
+     "source": "Source: Epoch AI, Notable AI Models (data downloaded 12 Nov 2026)",
      "notes": "Each gridline is a tenfold step. Values are Epoch estimates of varying confidence; the 2026 GPT-6 Astra figure is rated 'Likely' by Epoch. The 21-order span is a Report AI calculation.",
-     "confidence": "MEDIUM",
+     "confidence": "HIGH",
      "connect": false,
      "label_left": [
       "AlexNet",
       "Transformer"
+     ],
+     "exclude": [
+      "Largest",
+      "Theseus"
      ]
     },
     {
      "from": "series",
      "key": "b",
-     "unit_eq": "USD",
-     "exclude": [
-      "DeepSeek",
-      "Largest training run"
-     ],
+     "unit_eq": "USD (2023 dollars)",
+     "exclude": [],
      "type": "line",
      "log": true,
      "annotate": true,
      "name": "Training cost",
-     "unit": "US$",
-     "title": "A frontier training run went from about $930 to about $490 million in eight years",
-     "subtitle": "Estimated compute cost of the final training run of landmark models, 2017–2025 (US$, log scale)",
-     "source": "Source: Epoch AI and Stanford HAI AI Index (cloud-rental basis)",
-     "notes": "Final training run only; excludes research, staff and failed runs. DeepSeek-V3's stated $5.6M (final-run GPU rental) is excluded as not comparable. A summary of the AI Index 2026 citing about $120M for the largest mid-2025 run conflicts with Epoch's Grok 4 estimate and is not plotted (CONTESTED).",
-     "confidence": "MEDIUM",
+     "unit": "US$ (2023)",
+     "title": "The final training run of a frontier model went from about $16 to about $390 million in thirteen years",
+     "subtitle": "Amortised hardware and energy cost of the final training run of landmark models, 2012–2025 (US$, 2023 dollars, log scale)",
+     "source": "Source: Epoch AI, Notable AI Models (amortised cost estimates)",
+     "notes": "Final training run only; excludes research, staff, data and failed runs. Cloud-rental estimates, used by the Stanford HAI AI Index, are roughly two to four times higher. A summary of the AI Index 2026 citing about $120M for the largest mid-2025 run conflicts with Epoch's estimates and is not plotted (CONTESTED).",
+     "confidence": "HIGH",
      "connect": false,
      "label_only": [
+      "AlexNet",
       "Transformer",
       "GPT-3 175B",
       "GPT-4",
       "Grok 4"
+     ],
+     "match": "amortised cost (Epoch, 2023 USD)",
+     "strip": "— amortised cost (Epoch, 2023 USD)",
+     "label_left": [
+      "GPT-4"
      ]
     }
    ],
@@ -443,9 +450,9 @@
   {
    "id": "money",
    "kicker": "7. Capital and energy",
-   "action_title": "Money arrived in waves: corporate AI investment rose from about $80 billion in 2018 to $582 billion in 2025",
+   "action_title": "Money arrived in waves: corporate AI investment rose about 29-fold from 2013 to 2025, with a two-year dip after the 2021 peak",
    "paras": [
-    "The first AI boom was measured in research grants of a few million dollars a year; Japan's Fifth Generation project, the largest programme of the 1980s, spent a little under ¥57 billion (about $320 million) over a decade. The third boom is measured in hundreds of billions. The Stanford HAI AI Index puts global corporate AI investment, which includes mergers, minority stakes and private investment, at $79.6 billion in 2018, $276.1 billion in 2021 and $581.7 billion in 2025 (Exhibit 9).",
+    "The first AI boom was measured in research grants of a few million dollars a year; Japan's Fifth Generation project, the largest programme of the 1980s, spent a little under ¥57 billion (about $320 million) over a decade. The third boom is measured in hundreds of billions. In constant 2021 dollars, Our World in Data's series built on the Stanford HAI AI Index shows global corporate AI investment, which includes mergers, minority stakes, public offerings and private investment, rising from about $17 billion in 2013 to $361 billion in 2021, falling to $179 billion in 2023 and reaching $490 billion in 2025 (Exhibit 9), a 29-fold rise over the period (Report AI calculation). In current dollars the AI Index 2026 puts the 2025 total at $581.7 billion.",
     "Generative AI accounts for the steepest part of the rise: private investment in it went from about $3 billion in 2022 to $25.2 billion in 2023 and $170.9 billion in 2025, according to the AI Index. Crunchbase counts $202.3 billion of global AI venture funding in 2025 and a larger total for 2026 to date, driven by rounds such as OpenAI's $122 billion at an $852 billion valuation in March 2026.",
     "Energy is the newest constraint. The International Energy Agency estimates that data centres used about 415 TWh of electricity worldwide in 2024 and projects about 945 TWh by 2030, an annual growth rate of about 15% (Report AI calculation). In the United States, Lawrence Berkeley National Laboratory put data-centre consumption at about 176 TWh in 2023. Our State of AI Infrastructure & Energy 2026 report covers the build-out in detail."
    ],
@@ -453,17 +460,17 @@
     {
      "from": "series",
      "key": "f",
-     "match": "Global corporate AI investment (AI Index",
+     "match": "Global corporate AI investment — Total",
      "scale": 1000000000,
      "xfmt": "year",
      "type": "bar",
      "name": "Corporate AI investment",
      "unit": "US$ B",
-     "title": "Corporate AI investment more than doubled in 2025",
-     "subtitle": "Global corporate AI investment, selected years 2018–2025 (US$ billion)",
-     "source": "Source: Stanford HAI AI Index, 2023, 2025 and 2026 editions (Quid data)",
-     "notes": "Each edition restates earlier years; values are taken from the edition named in the data appendix and are not a single consistent series. Missing years were not available from one edition.",
-     "confidence": "MEDIUM"
+     "title": "Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",
+     "subtitle": "Global corporate AI investment, 2013–2025 (US$ billion, constant 2021 dollars)",
+     "source": "Source: Our World in Data, from Stanford HAI AI Index (Quid data)",
+     "notes": "Constant 2021 dollars, so values sit below the AI Index's current-dollar headlines (2025: $581.7B current). Includes M&A, minority stakes, public offerings and private investment.",
+     "confidence": "HIGH"
     },
     {
      "from": "series",
@@ -746,7 +753,7 @@
    {
     "indicator": "Corporate AI investment",
     "now": "$581.7B in 2025 (AI Index 2026)",
-    "signal": "A fall in the 2026 figure would be the first since 2022's dip."
+    "signal": "A fall in the 2026 figure would be the first since the 2022–2023 dip."
    },
    {
     "indicator": "Data-centre electricity",

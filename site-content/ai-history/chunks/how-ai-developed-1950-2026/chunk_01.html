@@ -1,0 +1,74 @@
+<!-- wp:html -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+.tai-wrap{font-family:'Archivo',sans-serif;color:#111114;max-width:1100px;margin:0 auto;width:100%;line-height:1.5;}
+.tai-wrap *{box-sizing:border-box;}
+.tai-mono{font-family:'IBM Plex Mono',monospace;}
+.tai-wrap a{color:#2545f5;}
+.tai-padx{padding:40px 36px;border-bottom:1px solid #e6e6ea;}
+.tai-wrap h2{font-weight:800;font-size:26px;letter-spacing:-0.02em;margin:0 0 14px;}
+.tai-wrap h3{font-weight:800;font-size:18px;margin:26px 0 10px;}
+.tai-wrap p{font-size:16px;line-height:1.65;color:#33333a;max-width:880px;}
+.tai-stat{padding:24px;border-right:1px solid #e6e6ea;}
+.tai-table{width:100%;border-collapse:collapse;font-size:13px;}
+.tai-table th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e76;text-align:left;padding:9px 10px;border-bottom:2px solid #111114;}
+.tai-table td{padding:10px;border-bottom:1px solid #ececf0;vertical-align:top;color:#33333a;}
+.tai-tablewrap{overflow-x:auto;}
+.tai-c{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.05em;padding:1px 5px;border-radius:2px;white-space:nowrap;vertical-align:middle;}
+.tai-c-HIGH{background:#e7f5ec;color:#177245;}.tai-c-MEDIUM{background:#fdf3e3;color:#9a6a00;}.tai-c-DERIVED{background:#eef1fd;color:#2545f5;}.tai-c-CONTESTED{background:#fde8e8;color:#b42318;}
+.tai-five{counter-reset:five;list-style:none;padding:0;margin:0;max-width:900px;}
+.tai-five li{counter-increment:five;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid #e6e6ea;font-size:16.5px;line-height:1.55;color:#111114;}
+.tai-five li:before{content:counter(five);position:absolute;left:0;top:12px;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:15px;color:#fff;background:#2545f5;width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;}
+.tai-cite{background:#fafafb;border:1px solid #e6e6ea;border-left:3px solid #2545f5;border-radius:6px;padding:14px 18px;font-size:14px;line-height:1.55;color:#33333a;margin:18px 0 0;max-width:900px;}
+.tai-yr{display:flex;align-items:flex-end;gap:6px;height:120px;}
+.tai-yr span{display:block;width:28px;border-radius:3px 3px 0 0;background:#c9cfe0;}
+.tai-yr span.n{background:#2545f5;}
+.tai-chart{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin:18px 0 6px;}
+.tai-chart .cap{font-size:13px;font-weight:700;margin-top:8px;line-height:1.3;}
+.tai-chart .val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55555e;margin-top:4px;}
+.tai-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.tai-nav a{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-decoration:none;border:1px solid #d9dbe3;border-radius:999px;padding:5px 11px;color:#111114;}
+.tai-nav a.on{background:#2545f5;border-color:#2545f5;color:#fff;}
+.tai-up{color:#177245;}.tai-down{color:#b42318;}
+.tai-glance{background:#111114;color:#fff;border-radius:8px;padding:26px 28px;max-width:920px;}
+.tai-glance ul{margin:0;padding-left:20px;}
+.tai-glance li{font-size:16px;line-height:1.55;margin-bottom:10px;color:#f2f2f5;}
+.tai-glance .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0ff;margin-bottom:12px;font-weight:600;}
+.tai-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:8px;}
+.tai-ch h2{font-size:clamp(22px,3.2vw,28px);line-height:1.2;max-width:900px;}
+.tai-side{background:#eef1fd;border-radius:6px;padding:18px 22px;margin:22px 0;max-width:880px;}
+.tai-side .t{font-weight:800;font-size:15px;margin-bottom:6px;}
+.tai-side p{font-size:14.5px;margin:0;}
+.tai-toc{columns:2;column-gap:36px;font-size:14px;max-width:900px;padding-left:18px;}
+.tai-toc li{margin-bottom:6px;break-inside:avoid;}
+.tai-dl dt{font-weight:700;font-size:14.5px;margin-top:12px;}.tai-dl dd{margin:2px 0 0;font-size:14.5px;color:#55555e;max-width:860px;}
+@media(max-width:900px){.tai-toc{columns:1;}}
+.tai-ex{position:relative;margin:26px 0 30px;padding:22px 0 0;border-top:2px solid #111114;max-width:900px;}
+.tai-ex-stamp{position:absolute;top:10px;right:0;width:76px;height:76px;transform:rotate(-8deg);opacity:.9;}
+.tai-ex-t,.tai-ex-s{padding-right:90px;}
+.tai-ex-wm{display:block;text-align:right;margin-top:6px;font-family:'Archivo',sans-serif;font-weight:900;font-size:15px;letter-spacing:-.02em;color:#111114;}.tai-ex-wm b{color:#2545f5;font-weight:900;}.tai-ex-wm i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11.5px;color:#77777f;letter-spacing:0;margin-left:6px;}
+@media(max-width:600px){.tai-ex-stamp{width:56px;height:56px;}.tai-ex-t,.tai-ex-s{padding-right:64px;}}
+.tai-ex-n{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2545f5;margin-bottom:6px;}
+.tai-ex-t{font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-0.01em;color:#111114;margin-bottom:4px;}
+.tai-ex-s{font-size:13.5px;color:#6e6e76;margin-bottom:14px;}
+.tai-mm-t{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#33333a;margin:12px 0 2px;}.tai-mm-t span{font-weight:400;color:#77777f;}
+.tai-ex-svg{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tai-ex-svg text{font-family:'IBM Plex Mono',monospace;}
+.tai-ex-src{font-size:12px;line-height:1.5;color:#77777f;margin-top:10px;border-top:1px solid #e6e6ea;padding-top:8px;}
+.tai-exdata{margin-top:8px;font-size:12.5px;}.tai-exdata summary{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#2545f5;}
+@media(max-width:900px){.tai-statgrid{grid-template-columns:1fr 1fr!important;}.tai-stat{border-bottom:1px solid #e6e6ea;}.tai-padx{padding:30px 20px!important;}}
+</style>
+<div class="tai-wrap">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs><path id="rai-ring" d="M18,80 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/><symbol id="rai-stamp" viewBox="0 0 160 160"><g fill="none" stroke="#2545f5"><circle cx="80" cy="80" r="76" stroke-width="3.2"/><circle cx="80" cy="80" r="72" stroke-width=".9"/><circle cx="80" cy="80" r="50" stroke-width="1.6"/></g><g fill="#2545f5"><text font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600"><textPath href="#rai-ring" textLength="386" lengthAdjust="spacing">SOURCED · DATED · CONFIDENCE-RATED · REPORT-AI.ORG ·</textPath></text><text x="80" y="75" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="17">REPORT</text><text x="80" y="104" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="900" font-size="32">AI</text><text x="80" y="117" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-weight="600" font-size="6.6" letter-spacing="1">BY THE NUMBERS</text></g><path d="M56 83H104" stroke="#2545f5" stroke-width="1.2"/></symbol></defs></svg><div class="tai-padx" style="padding:48px 36px 30px;">
+<div class="tai-mono" style="font-size:11px;color:#9a9aa2;margin-bottom:16px;"><a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a> <span style="color:#d3d3da;">/</span> <a href="/reports/" style="color:#9a9aa2;text-decoration:none;">Reports</a> <span style="color:#d3d3da;">/</span> <span style="color:#111114;">How AI developed, 1950–2026</span></div>
+<div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;margin-bottom:12px;">Report AI &middot; Long-run report &middot; 1950–2026 &middot; Reviewed quarterly</div>
+<h1 style="font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.0;letter-spacing:-0.03em;margin:0 0 16px;">How AI Developed, 1950–2026: Seven Decades in Numbers</h1>
+<p style="font-size:18px;color:#55555e;margin:0 0 14px;">From Turing's 1950 paper to models withheld for their cyber capabilities in 2026: the eras, booms and winters of artificial intelligence, measured in training compute, cost, benchmark scores, money and users.</p>
+<div class="tai-mono" style="font-size:12px;color:#9a9aa2;">By the Report AI editorial team &middot; Published <time datetime="2026-11-12">12 November 2026</time> &middot; Cadence: quarterly (STANDARD) &amp;middot; Next review February 2027</div>
+<div class="tai-nav"><a href="/reports/how-ai-developed-1950-2026/" class="on">The report</a><a href="/indexes/state-of-ai/ai-development-index/">AI Development Index</a><a href="/reports/ai-technological-revolution-perez/">The AI revolution (Perez method)</a><a href="/indexes/state-of-ai/state-of-ai-2022-2026/">Timeline 2022–2026</a><a href="/indexes/state-of-ai/">State of AI</a></div>
+</div>
+<div class="tai-statgrid" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #e6e6ea;"><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">~21</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">orders of magnitude of growth in training compute, from the 1957 Perceptron (~6.9×10⁵ FLOP) to GPT-6 Astra (~9.4×10²⁶ FLOP, Epoch AI estimate, Sep 2026) <span class="tai-c tai-c-DERIVED">DERIVED</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">187×</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">fall in the cheapest price for GPT-4-level output, from $37.50 per million tokens (Mar 2023) to $0.20 (Oct 2026) <span class="tai-c tai-c-DERIVED">DERIVED</span></div></div><div class="tai-stat"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">$581.7B</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">global corporate AI investment in 2025 (Stanford HAI AI Index 2026), up about 130% on 2024 <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div><div class="tai-stat" style="border-right:none;"><div style="font-weight:900;font-size:30px;letter-spacing:-0.03em;color:#2545f5;">1B+</div><div style="font-size:12px;line-height:1.35;color:#6e6e76;margin-top:8px;">ChatGPT weekly active users on 31 August 2026 (OpenAI), under four years after launch <span class="tai-c tai-c-MEDIUM">MEDIUM</span></div></div></div>
+<div class="tai-padx"><div class="tai-glance"><div class="k">At a glance</div><ul><li>Artificial intelligence has gone through three booms and two winters since the field was named in a proposal dated 31 August 1955. The current boom, which began with deep learning in 2012, is the first financed mainly by companies and revenue rather than government grants.</li><li>Epoch AI estimates that the compute used to train notable AI models grew about 4–5× a year after 2010, against a doubling roughly every 20 months before it. From the 1957 Perceptron to GPT-6 Astra in 2026 the increase is about 21 orders of magnitude (Report AI calculation).</li><li>Capability tests now fall in months rather than decades. ImageNet took five years to pass its human baseline (2010–2015); SWE-bench Verified went from 49% in late 2024 to 97.0% in September 2026.</li><li>The cheapest price for GPT-4-level output fell from $37.50 per million tokens at GPT-4's launch in March 2023 to about $0.20 in October 2026, a 187-fold drop (Report AI calculation), while ChatGPT passed 1 billion weekly users on 31 August 2026.</li><li>In 2026 capability began to outrun release: Anthropic withheld Claude Mythos Preview from general availability in April for its cyber capabilities, US export controls suspended Claude Fable 5 and Mythos 5 for 19 days in June, and OpenAI and Google gated their most cyber-capable models to vetted defenders.</li></ul></div><div class="tai-cite"><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2545f5;font-weight:600;margin-bottom:4px;">Cite this report</div>
+Report AI, <em>How AI Developed, 1950–2026: Seven Decades in Numbers</em>, November 2026 edition, published 12 November 2026. https://report-ai.org/reports/how-ai-developed-1950-2026/<br>
+<span id="download-data"><a href="/wp-content/uploads/2026/11/report-ai-data-how-ai-developed-1950-2026.csv" download style="font-weight:600;">Download the data (CSV)</a> &middot; every table and exhibit on this page, with sources and confidence ratings. Free to quote with attribution and a link.</span></div><div class="tai-mono" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#77777f;margin:30px 0 10px;">In this report</div><ol class="tai-toc"><li><a href="#eras">1. The shape of the story</a> &mdash; Seventy years of AI produced three booms, two winters, and one boom that is still running</li><li><a href="#symbolic">2. 1943–1993: rules and grants</a> &mdash; The first thirty years ran on government grants and confident forecasts, and both collapsed when the promises came due</li><li><a href="#learning">3. 1993–2017: learning from data</a> &mdash; Learning from data beat hand-written rules, but only once chips and datasets caught up</li><li><a href="#scale">4. 2017–2026: the scale era</a> &mdash; Since 2010 the compute used to train leading models has grown about 4–5× a year, and the cost of a frontier run has reached hundreds of millions of dollars</li><li><a href="#capability">5. Capability</a> &mdash; Benchmarks that once lasted a decade now saturate within two years of release</li><li><a href="#diffusion">6. Cost and diffusion</a> &mdash; Capability got about 190 times cheaper in three and a half years and reached a billion weekly users</li><li><a href="#money">7. Capital and energy</a> &mdash; Money arrived in waves: corporate AI investment rose about 29-fold from 2013 to 2025, with a two-year dip after the 2021 peak</li><li><a href="#y2026">8. 2026</a> &mdash; In 2026 capability began to outrun release: the most capable models went first to vetted defenders, and one was briefly switched off by government order</li><li><a href="#comparison">Comparison</a> &mdash; The current boom differs from the first two in who pays, what the core input costs and how many people use the result</li><li><a href="#stop-quoting">Numbers to stop quoting</a></li><li><a href="#outlook">Outlook</a></li><li><a href="#definitions">Definitions</a></li><li><a href="#faq">FAQ</a></li><li><a href="#about">About the research</a></li></ol></div>
+<!--RAI-NEXT-->

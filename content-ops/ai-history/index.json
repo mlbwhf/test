@@ -1,0 +1,407 @@
+{
+ "slug": "ai-development-index",
+ "path": "/indexes/state-of-ai/ai-development-index/",
+ "parent_path": "/indexes/state-of-ai/",
+ "csv": "report-ai-data-ai-development-index.csv",
+ "trail": [
+  [
+   "Indexes",
+   "/indexes/"
+  ],
+  [
+   "State of AI",
+   "/indexes/state-of-ai/"
+  ],
+  [
+   "AI Development Index",
+   "/indexes/state-of-ai/ai-development-index/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; Index &middot; 1950–2026 &middot; Updated quarterly",
+ "title": "AI Development Index: How AI Grew, 1950–2026",
+ "dek": "A year-by-year record of how artificial intelligence developed, in six measures: training compute, capability, cost, capital, adoption and risk. Every value is dated, sourced and confidence-rated, and the full dataset is free to download.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next update February 2027",
+ "edition": "November 2026 update",
+ "coverage": "1950/2026",
+ "nav_active": "AI Development Index",
+ "nav": [
+  [
+   "The report",
+   "/reports/how-ai-developed-1950-2026/"
+  ],
+  [
+   "AI Development Index",
+   "/indexes/state-of-ai/ai-development-index/"
+  ],
+  [
+   "The AI revolution (Perez method)",
+   "/reports/ai-technological-revolution-perez/"
+  ],
+  [
+   "Timeline 2022–2026",
+   "/indexes/state-of-ai/state-of-ai-2022-2026/"
+  ],
+  [
+   "State of AI",
+   "/indexes/state-of-ai/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "~9.4×10²⁶",
+   "label": "FLOP, the largest estimated training run to date (GPT-6 Astra, Epoch AI, Sep 2026)",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "5×",
+   "label": "a year: Epoch AI's growth rate for frontier language-model training compute since 2020",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "$0.20",
+   "label": "per million tokens: cheapest GPT-4-level price, Oct 2026 ($37.50 in Mar 2023)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "89%",
+   "label": "of McKinsey survey respondents say their organisation uses AI in at least one function (2026)",
+   "confidence": "MEDIUM"
+  }
+ ],
+ "at_a_glance": [
+  "The largest estimated AI training run grew from about 40 operations for Claude Shannon's maze-solving mouse in 1950 to about 9.4×10²⁶ for OpenAI's GPT-6 Astra in September 2026, according to Epoch AI.",
+  "Epoch AI estimates frontier language-model training compute has grown about 5× a year since 2020, and the cost of those runs about 3.5× a year.",
+  "Capability tests are saturating within one to two years of launch: SWE-bench Verified went from 49% to 97.0% between late 2024 and September 2026.",
+  "The cheapest GPT-4-level model cost $37.50 per million tokens in March 2023 and about $0.20 in October 2026.",
+  "Global corporate AI investment, in constant 2021 dollars, rose from about $17 billion in 2013 to $490 billion in 2025 (Our World in Data, from the Stanford HAI AI Index).",
+  "Reported AI incidents in the AI Incident Database rose from 233 in 2024 to 362 in 2025, as cited by the AI Index 2026."
+ ],
+ "toc_extra": [
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "about",
+   "About the data"
+  ]
+ ],
+ "analysis": [
+  "This index tracks AI's development through six measures that can be dated and sourced across decades, rather than through a single composite score. Composite indices hide their weights; separate measures let readers see that capability, cost and adoption have moved at very different speeds. The companion report, How AI Developed, 1950–2026, tells the story; this page holds the numbers.",
+  "The clearest long-run signal is compute. Epoch AI's database of notable models shows the largest training run of each year rising by about 25 orders of magnitude since 1950, with a sharp change of pace around 2010: before then compute doubled roughly every 20 months, in line with general computing, and afterwards about every six months. Since 2020 the largest language-model runs have grown about 5× a year. The record in November 2026 is Epoch's estimate of about 9.4×10²⁶ FLOP for GPT-6 Astra, roughly 45 times GPT-4.",
+  "Cost and capability have moved in opposite directions for buyers and builders. For buyers, a fixed level of capability gets dramatically cheaper: GPT-4-level output fell about 187-fold in price between March 2023 and October 2026. For builders, the frontier gets dearer: Epoch's amortised estimate for the final training run of Grok 4 is about $390 million, against about $16 for AlexNet in 2012. Capital has followed the builders, with corporate AI investment rising about 29-fold in real terms from 2013 to 2025.",
+  "Adoption and risk measures are younger and less consistent. McKinsey's survey shows organisational use rising from 20% of respondents in 2017 to 89% in 2026, and ChatGPT passed 1 billion weekly users in August 2026. Incident counts are rising too, but they record what is reported, not what happens, and the main public database could not be fully refreshed for this edition."
+ ],
+ "takeaways": [
+  "Compute is the longest consistent series: about 25 orders of magnitude from 1950 to 2026 in Epoch AI's largest-run-of-the-year data.",
+  "Growth sped up around 2010, from a 20-month doubling to roughly 6 months, and has run at about 5× a year for frontier language models since 2020.",
+  "A fixed capability gets cheaper fast; the newest frontier stays expensive to build and to buy.",
+  "Investment is cyclical even in this boom: corporate AI investment fell in 2022 and 2023 before more than doubling in 2025.",
+  "Compare like with like: weekly and monthly users, cloud-rental and amortised costs, and current and constant dollars are kept separate here."
+ ],
+ "chapters": [
+  {
+   "id": "scoreboard",
+   "kicker": "Decade by decade",
+   "action_title": "Every decade since 1950 raised the record for the largest training run except one: the 1970s, the decade of the first AI winter",
+   "paras": [
+    "The scoreboard below is generated from the dataset: for each decade it shows the eras it spanned, the largest training run in Epoch AI's notable-models data, how that record compares with the previous decade's, and the landmark events in our milestone register.",
+    "Two readings stand out. The 1970s record (about 5×10⁶ FLOP) sits below the 1960s one, the first AI winter showing up in the data. And the decade multiples are uneven because a single unusual model can set a decade's record; Epoch's fitted growth rates, in the compute section below, are the better guide to the trend. The 2020s figure covers 2020 to November 2026 only."
+   ],
+   "tables": [
+    {
+     "from": "decade_table",
+     "title": "The decade scoreboard",
+     "note": "Generated from the AI Development Index dataset (Report AI calculation). Model counts refer to models in our compute series, not all models built."
+    }
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "a",
+     "match": "Largest estimated training run of the year",
+     "type": "line",
+     "log": true,
+     "name": "Largest training run of the year",
+     "unit": "FLOP",
+     "title": "The largest training run of each year grew about 25 orders of magnitude since 1950",
+     "subtitle": "Training compute of the largest notable model each year, 1950–2026 (FLOP, log scale)",
+     "source": "Source: Epoch AI, Notable AI Models (downloaded 12 Nov 2026); Report AI selection of the annual maximum",
+     "notes": "Each point is the year's largest estimated run among Epoch's notable models; years with no notable model are skipped. Estimates carry Epoch confidence ratings; the 2026 value is rated 'Likely'.",
+     "confidence": "HIGH"
+    }
+   ]
+  },
+  {
+   "id": "compute",
+   "kicker": "1. Compute",
+   "action_title": "Training compute: from 10⁶ FLOP for the Perceptron to about 10²⁷ for today's frontier",
+   "paras": [
+    "Training compute is the number of arithmetic operations used to train a model. It is the measure most closely linked to capability gains in the deep-learning era and the one with the longest consistent record. All values are Epoch AI estimates; labs rarely disclose them, and Epoch rates each estimate's confidence.",
+    "Growth rates: Epoch estimates a doubling roughly every 20 months before 2010 and about every 6 months afterwards (about 4–5× a year), and about 5× a year for frontier language models since 2020 (90% interval 4–6×)."
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "a",
+     "unit_eq": "FLOP",
+     "exclude": [
+      "Largest estimated training run"
+     ],
+     "title": "Landmark models: estimated training compute"
+    },
+    {
+     "from": "series_table",
+     "key": "a",
+     "match": [
+      "Growth rate",
+      "Doubling time"
+     ],
+     "title": "Growth rates"
+    },
+    {
+     "from": "series_table",
+     "key": "c",
+     "unit_eq": "parameters",
+     "title": "Disclosed parameter counts",
+     "note": "GPT-4's parameter count has never been disclosed; the widely quoted 1.76–1.8 trillion is a rumour."
+    }
+   ]
+  },
+  {
+   "id": "capability",
+   "kicker": "2. Capability",
+   "action_title": "Capability: benchmarks rise from near zero to saturation in one to five years",
+   "paras": [
+    "Benchmark scores are the most quoted and least stable measure of AI progress. Each test measures something narrow, results depend on settings, and most scores are reported by the developer. The table lists the dated results in our dataset; the companion report charts four of them and estimates how long each test lasted."
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "d",
+     "title": "Benchmark results over time",
+     "note": "Vendor-reported unless the source says otherwise. SWE-bench (2023) and SWE-bench Verified (2024 onward) are different tests."
+    }
+   ]
+  },
+  {
+   "id": "cost",
+   "kicker": "3. Cost",
+   "action_title": "Cost: buying a fixed capability gets cheaper every year, while building the frontier gets dearer",
+   "paras": [
+    "Two cost measures run in opposite directions. The price of using a model at a fixed level of capability has fallen by one to two orders of magnitude every few years; the cost of training the newest frontier model has risen by about 2.4–3.5× a year, according to Epoch AI."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "e",
+     "match": "GPT-4-level cheapest blended price",
+     "unit_eq": "USD per million tokens (3:1 blend)",
+     "type": "line",
+     "log": true,
+     "annotate": true,
+     "strip": "GPT-4-level cheapest blended price",
+     "name": "Cheapest GPT-4-level price",
+     "unit": "US$ per M tokens",
+     "title": "GPT-4-level output fell about 187-fold in price in three and a half years",
+     "subtitle": "Cheapest blended price for a model at or above GPT-4's original level, Mar 2023–Oct 2026 (US$ per million tokens, log scale)",
+     "source": "Source: provider list prices; Report AI token price index",
+     "notes": "Blended at 3:1 input:output (Report AI method).",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "e",
+     "title": "Inference prices"
+    },
+    {
+     "from": "series_table",
+     "key": "b",
+     "title": "Training costs",
+     "note": "Amortised (hardware depreciation plus energy, 2023 dollars) and cloud-rental estimates are different methods and are labelled separately."
+    }
+   ]
+  },
+  {
+   "id": "capital",
+   "kicker": "4. Capital",
+   "action_title": "Capital: corporate AI investment rose about 29-fold in real terms from 2013 to 2025",
+   "paras": [
+    "Investment figures come from the Stanford HAI AI Index (Quid data), republished by Our World in Data in constant 2021 dollars. Each AI Index edition restates earlier years, so current-dollar figures from different editions should not be joined into one series; the constant-dollar series below is consistent."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "f",
+     "match": "Global private AI investment (OWID",
+     "scale": 1000000000,
+     "xfmt": "year",
+     "type": "bar",
+     "name": "Global private AI investment",
+     "unit": "US$ B (2021)",
+     "title": "Private AI investment doubled in 2025",
+     "subtitle": "Global private investment in AI, 2013–2025 (US$ billion, constant 2021 dollars)",
+     "source": "Source: Our World in Data, from Stanford HAI AI Index (Quid data)",
+     "notes": "Private investment only. The AI Index's current-dollar figure for 2025 is $344.7B.",
+     "confidence": "HIGH"
+    }
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "f",
+     "match": [
+      "Total",
+      "Generative",
+      "venture",
+      "(AI Index"
+     ],
+     "title": "Corporate, generative-AI and venture investment"
+    },
+    {
+     "from": "series_table",
+     "key": "f",
+     "match": [
+      "US private",
+      "China private"
+     ],
+     "title": "Private AI investment, United States and China"
+    }
+   ]
+  },
+  {
+   "id": "adoption",
+   "kicker": "5. Adoption and research output",
+   "action_title": "Adoption: from a specialist tool to a billion weekly users",
+   "paras": [
+    "Adoption is measured two ways here: by organisations (McKinsey's annual survey) and by people (ChatGPT weekly active users disclosed by OpenAI). Neither measures depth of use or financial impact. Research output is shown through notable-model counts by affiliation and country, and AI publications and patents."
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "h",
+     "title": "Organisational and consumer adoption"
+    },
+    {
+     "from": "series_table",
+     "key": "g",
+     "match": [
+      "Notable AI models — all",
+      "US-based",
+      "China-based"
+     ],
+     "title": "Notable AI models per year, all and by country"
+    },
+    {
+     "from": "series_table",
+     "key": "g",
+     "match": "affiliation",
+     "title": "Notable AI systems by affiliation (industry, academia, both)"
+    },
+    {
+     "from": "series_table",
+     "key": "k",
+     "title": "AI publications and patents"
+    }
+   ]
+  },
+  {
+   "id": "risk",
+   "kicker": "6. Risk and resources",
+   "action_title": "Risk and resources: incidents and electricity use are rising, but are the least complete series",
+   "paras": [
+    "Reported incidents measure what is reported to the AI Incident Database, which grows with attention as well as harm. Electricity figures for data centres cover all workloads, not only AI; AI-optimised servers are estimated separately where a source provides it."
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "i",
+     "title": "Reported AI incidents"
+    },
+    {
+     "from": "series_table",
+     "key": "j",
+     "title": "Data-centre electricity"
+    }
+   ]
+  },
+  {
+   "id": "milestones",
+   "kicker": "Register",
+   "action_title": "The milestone register: 70 dated events from 1943 to 2026",
+   "paras": [
+    "Every milestone below carries its date, what it showed, a source and a confidence rating. Events from 2022 onward are covered in more detail in the State of AI timeline and annual editions."
+   ],
+   "tables": [
+    {
+     "from": "milestones",
+     "from_year": 1900,
+     "to_year": 2100,
+     "title": "All milestones"
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [],
+ "stop_from_data": true,
+ "definitions": [
+  {
+   "term": "Training compute (FLOP)",
+   "def": "Total floating-point operations used to train a model; Epoch AI estimates it from hardware, training time and utilisation, or from parameters and training data."
+  },
+  {
+   "term": "Notable model",
+   "def": "A model in Epoch AI's database that meets its notability criteria (state of the art, highly cited, historically significant or widely used)."
+  },
+  {
+   "term": "Amortised training cost",
+   "def": "Hardware depreciation plus energy for the final training run, in constant dollars (Epoch AI method)."
+  },
+  {
+   "term": "Cloud-rental training cost",
+   "def": "The price of renting the same compute from a cloud provider; typically two to four times the amortised cost."
+  },
+  {
+   "term": "Constant 2021 dollars",
+   "def": "Values adjusted for inflation to 2021 prices, so years can be compared directly."
+  },
+  {
+   "term": "Weekly active users",
+   "def": "People who used a service at least once in a seven-day period; not comparable with monthly active users."
+  }
+ ],
+ "faq": [
+  {
+   "q": "What is the AI Development Index?",
+   "a": "Report AI's AI Development Index is a dated, sourced record of how AI has developed since 1950, tracked through six measures: training compute, capability (benchmarks), cost, capital, adoption, and risk and resources. It is updated quarterly and the full dataset is free to download as a CSV."
+  },
+  {
+   "q": "Why not combine the measures into one score?",
+   "a": "A single score would need weights that are arbitrary and would hide the fact that the measures move at very different speeds. Keeping them separate lets readers see, for example, that prices for a fixed capability fall while frontier training costs rise."
+  },
+  {
+   "q": "What is the largest AI training run so far?",
+   "a": "Epoch AI's estimate for OpenAI's GPT-6 Astra, released in September 2026, is about 9.4×10²⁶ floating-point operations, roughly 45 times GPT-4. Epoch rates the estimate 'Likely', with a range of about 5×10²⁶ to 2×10²⁷."
+  },
+  {
+   "q": "How fast is AI compute growing?",
+   "a": "Epoch AI estimates that training compute for frontier language models has grown about 5× a year since 2020 (90% interval 4–6×), and that compute for notable models doubled about every six months after 2010, against about every 20 months before."
+  },
+  {
+   "q": "How much is invested in AI each year?",
+   "a": "The Stanford HAI AI Index 2026 puts global corporate AI investment at $581.7 billion in 2025 in current dollars, of which private investment was $344.7 billion. In constant 2021 dollars, Our World in Data's series shows corporate investment of about $490 billion in 2025, up from about $17 billion in 2013."
+  }
+ ],
+ "methodology_extra": "The AI Development Index draws on Epoch AI's Notable AI Models dataset (downloaded 12 November 2026) for compute, parameters and training costs; Our World in Data's republication of the Stanford HAI AI Index for investment and model counts; the AI Index for prices, benchmarks, incidents, publications and patents; McKinsey's Global Survey on AI for organisational adoption; OpenAI for ChatGPT users; and the IEA, LBNL and Gartner for electricity. The decade scoreboard, growth multiples and the 187-fold price fall are Report AI calculations (DERIVED). Values that could not be checked against a primary source in this edition are rated MEDIUM; the AI Index 2026 summary claim of about $120 million for the largest mid-2025 training run is CONTESTED because Epoch's estimates for 2025 runs are higher. ",
+ "related": "<a href=\"/reports/how-ai-developed-1950-2026/\">How AI developed, 1950–2026 (report)</a> &middot; <a href=\"/reports/ai-technological-revolution-perez/\">The AI revolution, read through Carlota Perez's framework</a> &middot; <a href=\"/indexes/state-of-ai/\">State of AI</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-2022-2026/\">Timeline 2022–2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-models-prices/\">State of AI Models &amp; Prices 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-tokens/\">State of AI Tokens 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-finance/\">State of AI Finance 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-usage/\">State of AI Usage 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-infrastructure-energy/\">State of AI Infrastructure &amp; Energy 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-risk/\">State of AI Risk 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/\">AI model benchmarks</a> &middot; <a href=\"/indexes/ai-economics/llm-token-price-index/\">LLM Token Price Index</a> &middot; <a href=\"/reports/ai-statistics-fact-check/\">AI statistics fact-check</a> &middot; <a href=\"/glossary/benchmark/\">Benchmark</a> &middot; <a href=\"/glossary/large-language-model/\">Large language model</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "Artificial intelligence development indicators"
+ }
+}

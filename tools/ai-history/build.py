@@ -101,16 +101,24 @@ def resolve(ex):
     elif src == 'decade_table':
         rows = []
         comp = rows_for('a', unit='FLOP')
+        prev = None
         for dec in range(1950, 2030, 10):
             cs = [r for r in comp if dec <= float(r['x']) < dec + 10]
             top = max(cs, key=lambda r: float(r['value'])) if cs else None
             ms = [m for m in H['milestones'] if dec <= int(m['year']) < dec + 10]
             eras = [e['name'] for e in H['eras'] if e['start'] < dec + 10 and (e['end'] or 2026) > dec]
+            name = top['label'].split(': ', 1)[-1] if top else ''
+            v = float(top['value']) if top else None
+            if v and prev:
+                r_ = v / prev
+                chg = f'×{charts.sci(r_)}' if r_ >= 1 else f'lower (÷{charts.sci(1 / r_)})'
+            else:
+                chg = '—'
+            prev = v or prev
             rows.append([f'{dec}s', ', '.join(re.sub(r'\s*\(.*?\)', '', x) for x in eras),
-                         f"{charts.sci(float(top['value']))} FLOP ({top['label']}, {top['date']})" if top else '—',
-                         str(len(cs)), '; '.join(m['title'] for m in ms[:4]) + (f' (+{len(ms) - 4} more)' if len(ms) > 4 else ''),
-                         'DERIVED'])
-        ex['table'] = {'columns': ['Decade', 'Era(s)', 'Largest estimated training compute', 'Models in compute data', 'Landmarks', 'Confidence'], 'rows': rows}
+                         f"{charts.sci(v)} FLOP ({name}, {str(top['date'])[:4]})" if top else '—', chg,
+                         '; '.join(m['title'] for m in ms[:4]) + (f' (+{len(ms) - 4} more)' if len(ms) > 4 else ''), 'DERIVED'])
+        ex['table'] = {'columns': ['Decade', 'Era(s)', 'Largest estimated training run', 'Change on previous decade', 'Landmarks', 'Confidence'], 'rows': rows}
         ex['type'] = 'table'
     elif src == 'milestones':
         lo, hi = ex.get('from_year', 0), ex.get('to_year', 9999)

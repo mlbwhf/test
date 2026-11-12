@@ -1,0 +1,741 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Foundations,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Foundations,Start,1943-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Foundations,End,1956-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Early optimism,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Early optimism,Start,1956-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Early optimism,End,1974-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",First AI winter,Group,AI winter
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",First AI winter,Start,1974-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",First AI winter,End,1980-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Expert-systems boom,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Expert-systems boom,Start,1980-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Expert-systems boom,End,1987-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Second AI winter,Group,AI winter
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Second AI winter,Start,1987-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Second AI winter,End,1993-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Statistical machine learning,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Statistical machine learning,Start,1993-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Statistical machine learning,End,2011-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Deep learning,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Deep learning,Start,2012-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Deep learning,End,2017-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Transformers and scale,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Transformers and scale,Start,2017-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Transformers and scale,End,2022-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Generative AI goes mainstream,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Generative AI goes mainstream,Start,2022-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Generative AI goes mainstream,End,2024-12
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Reasoning models and agents,Group,Expansion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Reasoning models and agents,Start,2024-01
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,1,"Three booms, two winters",Reasoning models and agents,End,2026-11
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Foundations (birth of AI),Years,1943–1956
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Foundations (birth of AI),Opened with,"McCulloch & Pitts publish 'A logical calculus of the ideas immanent in nervous activity' (1943), the first formal model of a neural network."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Foundations (birth of AI),Closed with,"Dartmouth Summer Research Project on Artificial Intelligence (summer 1956), proposed in a document dated 31 Aug 1955 that introduced the term 'artificial intelligence'."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Foundations (birth of AI),Marker,"Epoch's notable set starts with Shannon's Theseus maze mouse (1950, ~40 FLOP); Rosenblatt's Mark I Perceptron (1957) is ~6.95×10^5 FLOP."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Foundations (birth of AI),Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Early optimism (the 'golden years'),Years,1956–1974
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Early optimism (the 'golden years'),Opened with,Dartmouth workshop (about 18 Jun–17 Aug 1956 per Solomonoff's notes).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Early optimism (the 'golden years'),Closed with,"DARPA cuts back undirected AI research in 1973–74 (e.g. cancelling ~$3M a year of Speech Understanding Research grants at CMU), following the 1969 Mansfield Amendment and the UK Lighthill report (published early 1973)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Early optimism (the 'golden years'),Marker,"Perceptron (1960 configuration) ~7.2×10^8 FLOP (Epoch, 'Speculative')."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Early optimism (the 'golden years'),Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,First AI winter,Years,1974–1980
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,First AI winter,Opened with,DARPA and UK funding cuts (1973–74).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,First AI winter,Closed with,Commercial expert systems arrive: McDermott's R1/XCON paper (AAAI 1980) and deployment at Digital Equipment Corporation (in production by about 1980–81).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,First AI winter,Marker,No compute series point; Epoch's database is sparse for 1974–1980.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,First AI winter,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Expert-systems boom,Years,1980–1987
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Expert-systems boom,Opened with,R1/XCON at DEC (1980); Japan's Fifth Generation Computer Systems project (ICOT) launched 1982 with a ~¥54 billion ten-year budget.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Expert-systems boom,Closed with,Collapse of the market for specialised Lisp machines (1987) as general-purpose workstations and PCs became powerful enough to run the same software.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Expert-systems boom,Marker,"NETtalk (1987) ~2.83×10^10 FLOP (Epoch, 'Confident') — verified."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Expert-systems boom,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Second AI winter,Years,1987–1993
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Second AI winter,Opened with,Lisp-machine market collapse (1987).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Second AI winter,Closed with,Convention: early-1990s end of the expert-systems retrenchment and of Japan's FGCS project (ten-year term to 1992); statistical and machine-learning methods move centre-stage.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Second AI winter,Marker,"LeNet-5 (1998, next era) ~2.8×10^12 FLOP."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Second AI winter,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Statistical machine learning,Years,1993–2011
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Statistical machine learning,Opened with,Convention (see above).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Statistical machine learning,Closed with,IBM Watson wins Jeopardy! (Feb 2011) and Siri ships (Oct 2011) — the last major milestones before deep learning took over.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Statistical machine learning,Marker,ILSVRC 2010 winner top-5 error 28.2%.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Statistical machine learning,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Deep learning,Years,2012–2017
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Deep learning,Opened with,AlexNet wins ILSVRC 2012 (results 30 Sep 2012) with 15.3% top-5 error vs 26.2% for the runner-up.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Deep learning,Closed with,'Attention Is All You Need' (arXiv 12 Jun 2017) introduces the Transformer.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Deep learning,Marker,"Largest estimated runs rose from ~6×10^17 FLOP (2012) to ~6.6×10^21 FLOP (GNMT, 2016) in Epoch's notable set; AlexNet itself was 4.7×10^17."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Deep learning,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Transformers and scale,Years,2017–2022
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Transformers and scale,Opened with,Transformer paper (12 Jun 2017).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Transformers and scale,Closed with,ChatGPT launches (30 Nov 2022).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Transformers and scale,Marker,"Transformer 7.4×10^18 FLOP (2017) → PaLM 2.5×10^24 FLOP (2022): ~340,000× in five years (DERIVED: 2.5e24 / 7.4e18)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Transformers and scale,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Generative AI goes mainstream,Years,2022–2024
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Generative AI goes mainstream,Opened with,ChatGPT (30 Nov 2022); UBS estimated 100M monthly users by January 2023.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Generative AI goes mainstream,Closed with,OpenAI o1-preview (12 Sep 2024) opens the reasoning-model era; Anthropic's computer use (22 Oct 2024) opens the agent era.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Generative AI goes mainstream,Marker,GPT-4 2.1×10^25 FLOP and ~$78M estimated training cost (2023).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Generative AI goes mainstream,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Reasoning models and agents,Years,2024–now
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Reasoning models and agents,Opened with,"o1-preview (Sep 2024), computer use (Oct 2024), o3 announcement (Dec 2024)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Reasoning models and agents,Closed with,Ongoing as of 12 Nov 2026.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Reasoning models and agents,Marker,"Largest estimated training run: GPT-6 Astra ~9.4×10^26 FLOP (Sep 2026, Epoch via secondary source); SWE-bench Verified saturated at ~97% (Sep 2026)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,2,The eras in detail,Reasoning models and agents,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1943,Milestone,McCulloch–Pitts neuron
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1943,What it showed,First mathematical model of a network of simplified neurons computing logical functions.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1943,Source,"McCulloch & Pitts, Bulletin of Mathematical Biophysics 5"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1943,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1950-10,Milestone,Turing's 'Computing Machinery and Intelligence'
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1950-10,What it showed,Replaces 'Can machines think?' with the imitation game (Turing test). Turing predicted that in about 50 years machines with ~10^9 storage would leave an average interrogator no more than a 70% chance of a correct identification after five minutes.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1950-10,Source,"Turing, Mind 59(236)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1950-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1955-08-31,Milestone,Dartmouth proposal coins 'artificial intelligence'
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1955-08-31,What it showed,"McCarthy, Minsky, Rochester and Shannon propose a summer study; the document introduces the term. Proposed as a '2 month, 10 man study'."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1955-08-31,Source,AI Magazine reprint of the proposal
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1955-08-31,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1956-06-18,Milestone,Dartmouth Summer Research Project
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1956-06-18,What it showed,Conventional founding event of AI as a field. Ran roughly 18 Jun–17 Aug 1956 (about eight weeks) per Solomonoff's notes; other accounts say six weeks.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1956-06-18,Source,"Wikipedia, Dartmouth workshop (citing Solomonoff)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1956-06-18,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1958-07,Milestone,Rosenblatt's perceptron unveiled
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1958-07,What it showed,"First learning machine to attract mass publicity; the US Navy's ONR demonstrated it in July 1958 (a simulation on an IBM 704). Mark I Perceptron used a 400-sensor 'retina' and ~1,000 weights; Epoch estimates its training compute at ~6.95×10^5 FLOP."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1958-07,Source,"Rosenblatt, Psychological Review 65(6) 1958; Wikipedia Mark I Perceptron"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1958-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966,Milestone,Shakey the robot (SRI)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966,What it showed,First mobile robot to reason about its own actions; its STRIPS planner became the basis for later automated planners.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966,Source,"Holloway, Making Things Think"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966-01,Milestone,ELIZA
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966-01,What it showed,Weizenbaum's pattern-matching 'therapist' program; first widely known chatbot and first demonstration of people over-attributing understanding to software.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966-01,Source,"Weizenbaum, Communications of the ACM 9(1), 1966"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1966-01,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1969,Milestone,Mansfield Amendment and 'Perceptrons'
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1969,What it showed,US law pushes DARPA toward mission-oriented research; Minsky & Papert's book highlights single-layer perceptron limits.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1969,Source,"Wikipedia, AI winter"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1969,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1973,Milestone,Lighthill report
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1973,What it showed,UK Science Research Council review concludes AI had failed its grand promises; UK funding is sharply curtailed. Debated on BBC TV in June 1973.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1973,Source,Holloway / Wikipedia AI winter
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1973,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1974,Milestone,DARPA cuts AI funding
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1974,What it showed,Marks the start of the first AI winter in the US. DARPA cancelled ~$3M a year of Speech Understanding Research grants at Carnegie Mellon.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1974,Source,"Wikipedia, AI winter"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1974,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1980,Milestone,R1/XCON at Digital Equipment Corporation
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1980,What it showed,"First commercially significant expert system; starts the expert-systems boom. Most sources put savings at ~$25M a year; by 1986 it had processed 80,000 orders at 95–98% accuracy."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1980,Source,McDermott (AAAI 1980); secondary histories
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1980,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1982,Milestone,Japan's Fifth Generation project (ICOT)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1982,What it showed,Ten-year MITI programme for logic-programming computers; spurred Western counter-programmes. Initial budget ~¥54 billion over ten years; total spending a little under ¥57 billion (~$320M) by the end.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1982,Source,"Wikipedia, Fifth Generation Computer Systems"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1982,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1986-10-09,Milestone,Backpropagation popularised
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1986-10-09,What it showed,"Rumelhart, Hinton & Williams show multi-layer networks learn useful internal representations. Nature 323:533–536."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1986-10-09,Source,Nature
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1986-10-09,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1987,Milestone,Lisp-machine market collapses; NETtalk
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1987,What it showed,End of dedicated AI hardware boom marks the second AI winter; same year NETtalk shows a neural net learning to pronounce text. NETtalk training compute ~2.8×10^10 FLOP (Epoch).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1987,Source,Holloway; Epoch AI via search
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,3,"Milestones, 1943–1993",1987,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2010,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2010,% error,28.2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2011,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2011,% error,25.8
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2012,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2012,% error,15.3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2013,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2013,% error,11.2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2014,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2014,% error,6.67
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2015,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2015,% error,3.57
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2016,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2016,% error,2.99
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2017,Series,Winning top-5 error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,4,ImageNet error fell twelve-fold in seven years,2017,% error,2.25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-05-11,Milestone,Deep Blue beats Kasparov
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-05-11,What it showed,"First defeat of a reigning world chess champion by a computer in a match under tournament conditions. Won the rematch 3½–2½ (two wins, one loss, three draws); evaluated ~200 million positions per second. Kasparov had won the 1996 match 4–2."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-05-11,Source,"IBM / History.com, via search"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-05-11,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-11,Milestone,LSTM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-11,What it showed,"Hochreiter & Schmidhuber's long short-term memory, the recurrent architecture behind most sequence models until the Transformer."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-11,Source,Neural Computation 9(8)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1997-11,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1998-11,Milestone,LeNet-5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1998-11,What it showed,"LeCun et al.'s convolutional network for handwriting recognition, deployed for cheque reading. Training compute ~2.8×10^12 FLOP (Epoch, 'Confident')."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1998-11,Source,Epoch AI via search summary
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",1998-11,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2005-10,Milestone,DARPA Grand Challenge won
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2005-10,What it showed,"Stanford's Stanley completes a 132-mile desert course autonomously, a year after no vehicle finished. 6 h 53 min 58 s; in 2004 the best vehicle managed ~7.4 miles."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2005-10,Source,DARPA / Stanford Racing Team
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2005-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2006-07,Milestone,Deep belief nets
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2006-07,What it showed,"Hinton, Osindero & Teh show deep networks can be trained layer by layer, reviving neural-network research."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2006-07,Source,Neural Computation 18(7):1527–1554
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2006-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2010,Milestone,First ImageNet challenge (ILSVRC)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2010,What it showed,Establishes the benchmark that later showcased deep learning. Winning top-5 error 28.2% (NEC-UIUC).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2010,Source,ILSVRC results via search
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2010,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-02-16,Milestone,IBM Watson wins Jeopardy!
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-02-16,What it showed,"Open-domain question answering beats the show's two best champions on TV. Two-game totals: Watson $77,147; Ken Jennings $24,000; Brad Rutter $21,600."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-02-16,Source,IBM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-02-16,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-10,Milestone,Siri ships on iPhone 4S
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-10,What it showed,First voice assistant in mainstream consumer use.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-10,Source,Search summary
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2011-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2012-09-30,Milestone,AlexNet wins ImageNet
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2012-09-30,What it showed,"GPU-trained deep convolutional net wins by a wide margin, triggering the deep-learning era. Top-5 error 15.3% vs 26.2% for the second-best entry; ~60M parameters; trained on two GTX 580 GPUs; ~4.7×10^17 FLOP (Epoch)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2012-09-30,Source,"Krizhevsky, Sutskever & Hinton, NIPS 2012; Epoch AI"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2012-09-30,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-01-26,Milestone,Google acquires DeepMind
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-01-26,What it showed,Big Tech begins buying frontier AI labs. Price undisclosed; reported at $400M (Re/code) to more than $500M (The Information).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-01-26,Source,TechCrunch
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-01-26,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-06-10,Milestone,Generative adversarial networks
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-06-10,What it showed,"Goodfellow et al. introduce GANs, the main image-generation method until diffusion models."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-06-10,Source,arXiv 1406.2661
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-06-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-09,Milestone,Sequence-to-sequence learning
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-09,What it showed,"Sutskever, Vinyals & Le show end-to-end neural machine translation with LSTMs. Training compute ~5.6×10^19 FLOP (Epoch)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-09,Source,Epoch AI via search
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2014-09,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2015-12,Milestone,ResNet beats human-level ImageNet error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2015-12,What it showed,"Residual networks win ILSVRC 2015. Top-5 error 3.57%, below the 5.1% single-annotator human estimate."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2015-12,Source,"He et al., arXiv 1512.03385"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2015-12,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2016-03-15,Milestone,AlphaGo defeats Lee Sedol
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2016-03-15,What it showed,"First defeat of a 9-dan Go professional without handicap, a decade earlier than many expected. 4–1 in Seoul, 9–15 Mar 2016; AlphaGo had beaten Fan Hui 5–0 in Oct 2015 (Nature, 27 Jan 2016)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2016-03-15,Source,Nature / press
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2016-03-15,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-06-12,Milestone,The Transformer
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-06-12,What it showed,'Attention Is All You Need' introduces the architecture behind every frontier language model since. 28.4 BLEU on WMT14 English–German; ~7.4×10^18 FLOP training compute (Epoch).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-06-12,Source,arXiv 1706.03762
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-06-12,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-10,Milestone,AlphaGo Zero
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-10,What it showed,"Learns Go from self-play alone, without human games; among the first models trained on >10^23 FLOP. ~6.5×10^20 FLOP of direct training compute (Epoch, 'Confident'); OpenAI's 2018 figure of ~3.4×10^23 included self-play data generation."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-10,Source,Epoch AI Notable AI Models CSV
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,5,"Milestones, 1994–2017",2017-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,1957,Series,Training compute — Perceptron Mark I
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,1957,FLOP,694894.9377
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 1960,Series,Training compute — Perceptron (1960)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 1960,FLOP,720000000.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 1987,Series,Training compute — NETtalk
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 1987,FLOP,28328002560.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Nov 1998,Series,Training compute — LeNet-5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Nov 1998,FLOP,2810937600000.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Oct 2012,Series,Training compute — AlexNet
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Oct 2012,FLOP,4.7e+17
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Sep 2014,Series,Training compute — Seq2Seq LSTM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Sep 2014,FLOP,5.6e+19
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 2017,Series,Training compute — Transformer
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 2017,FLOP,7.4245248e+18
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Nov 2017,Series,Training compute — AlphaGo Zero
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Nov 2017,FLOP,6.49439910290227e+20
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Oct 2018,Series,Training compute — BERT-Large
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Oct 2018,FLOP,2.85e+20
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Feb 2019,Series,Training compute — GPT-2 (1.5B)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Feb 2019,FLOP,1.920000000001e+21
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 2020,Series,Training compute — GPT-3 175B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jun 2020,FLOP,3.14e+23
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2021,Series,Training compute — Gopher 280B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2021,FLOP,6.31e+23
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 2022,Series,Training compute — Chinchilla 70B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 2022,FLOP,5.76e+23
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 2022,Series,Training compute — PaLM 540B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Apr 2022,FLOP,2.5272e+24
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2023,Series,Training compute — LLaMA-65B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2023,FLOP,5.5e+23
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2023,Series,Training compute — GPT-4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2023,FLOP,2.1e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2023,Series,Training compute — Gemini 1.0 Ultra
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2023,FLOP,5.0000000001e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2024,Series,Training compute — Claude 3.5 Sonnet
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2024,FLOP,2.700000000000001e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2024,Series,Training compute — Llama 3.1 405B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2024,FLOP,3.8e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2024,Series,Training compute — Grok-2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2024,FLOP,2.96e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2024,Series,Training compute — DeepSeek-V3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Dec 2024,FLOP,3.3e+24
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2025,Series,Training compute — Grok 3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2025,FLOP,3.5e+26
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2025,Series,Training compute — GPT-4.5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Mar 2025,FLOP,3.8e+26
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2025,Series,Training compute — Grok 4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2025,FLOP,5.0000000000001e+26
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2025,Series,Training compute — Kimi K2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Jul 2025,FLOP,2.976e+24
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2025,Series,Training compute — GPT-5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Aug 2025,FLOP,6.6e+25
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,May 2026,Series,Training compute — DeepSeek-V4-Pro
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,May 2026,FLOP,9.702e+24
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Sep 2026,Series,Training compute — GPT-6 Astra
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,6,Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra,Sep 2026,FLOP,9.4e+26
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Oct 2012,Series,Training cost — AlexNet
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Oct 2012,US$ (2023),16.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jun 2017,Series,Training cost — Transformer
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jun 2017,US$ (2023),438.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Nov 2017,Series,Training cost — AlphaGo Zero
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Nov 2017,US$ (2023),1214.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jun 2020,Series,Training cost — GPT-3 175B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jun 2020,US$ (2023),2116866.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Apr 2022,Series,Training cost — PaLM 540B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Apr 2022,US$ (2023),3060365.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2023,Series,Training cost — GPT-4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2023,US$ (2023),37334305.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Dec 2023,Series,Training cost — Gemini 1.0 Ultra
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Dec 2023,US$ (2023),30719420.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Aug 2024,Series,Training cost — Llama 3.1 405B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Aug 2024,US$ (2023),52885434.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Aug 2024,Series,Training cost — Grok-2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Aug 2024,US$ (2023),31602311.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Dec 2024,Series,Training cost — DeepSeek-V3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Dec 2024,US$ (2023),5390000.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2025,Series,Training cost — Grok 3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2025,US$ (2023),217835546.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2025,Series,Training cost — GPT-4.5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Mar 2025,US$ (2023),366010628.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jul 2025,Series,Training cost — Grok 4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,7,The final training run of a frontier model went from about $16 to about $390 million in thirteen years,Jul 2025,US$ (2023),387842678.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1957-01-01,Measure,Perceptron Mark I
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1957-01-01,Value,"1,000 parameters"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1957-01-01,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1957-01-01,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1998-11-01,Measure,LeNet-5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1998-11-01,Value,"60,000 parameters"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1998-11-01,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,1998-11-01,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2012-09-30,Measure,AlexNet
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2012-09-30,Value,60M parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2012-09-30,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2012-09-30,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2014-09-10,Measure,Seq2Seq LSTM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2014-09-10,Value,1.92B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2014-09-10,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2014-09-10,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2017-06-12,Measure,Transformer (big)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2017-06-12,Value,213M parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2017-06-12,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2017-06-12,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2018-10-11,Measure,BERT-Large
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2018-10-11,Value,340M parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2018-10-11,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2018-10-11,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2019-02-14,Measure,GPT-2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2019-02-14,Value,1.5B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2019-02-14,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2019-02-14,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2020-05-28,Measure,GPT-3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2020-05-28,Value,174.6B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2020-05-28,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2020-05-28,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2021-12-08,Measure,Gopher
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2021-12-08,Value,280B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2021-12-08,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2021-12-08,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-03-29,Measure,Chinchilla
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-03-29,Value,70B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-03-29,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-03-29,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-04-04,Measure,PaLM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-04-04,Value,540.35B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-04-04,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2022-04-04,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2023-02-24,Measure,LLaMA (largest)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2023-02-24,Value,65.2B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2023-02-24,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2023-02-24,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-07-23,Measure,Llama 3.1 405B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-07-23,Value,405B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-07-23,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-07-23,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-12-24,Measure,DeepSeek-V3 (total; 37B active)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-12-24,Value,671B parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-12-24,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2024-12-24,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2025-07-11,Measure,Kimi K2 (total)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2025-07-11,Value,1T parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2025-07-11,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2025-07-11,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2026-04-24,Measure,DeepSeek V4-Pro (total)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2026-04-24,Value,1.6T parameters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2026-04-24,Source,"Epoch AI, Notable AI Models database (CSV downloaded 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,8,Disclosed parameter counts of landmark models,2026-04-24,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,May 2020,Series,MMLU
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,May 2020,% score,43.9
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2021,Series,MMLU
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2021,% score,60.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Mar 2022,Series,MMLU
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Mar 2022,% score,67.5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Mar 2023,Series,MMLU
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Mar 2023,% score,86.4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Sep 2024,Series,MMLU
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Sep 2024,% score,92.3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Jun 2024,Series,GPQA Diamond
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Jun 2024,% score,59.4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2024,Series,GPQA Diamond
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2024,% score,87.7
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,Series,GPQA Diamond
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,% score,93.8
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Feb 2026,Series,GPQA Diamond
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Feb 2026,% score,94.3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Oct 2024,Series,SWE-bench Verified
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Oct 2024,% score,49.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2024,Series,SWE-bench Verified
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2024,% score,71.7
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,Series,SWE-bench Verified
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,% score,80.9
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Sep 2026,Series,SWE-bench Verified
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Sep 2026,% score,97.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,2025,Series,Humanity's Last Exam
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,2025,% score,9.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,Series,Humanity's Last Exam
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Dec 2025,% score,41.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Nov 2026,Series,Humanity's Last Exam
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,9,Each new test is mastered faster than the last,Nov 2026,% score,54.8
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ImageNet (top-5 error),Introduced,2010
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ImageNet (top-5 error),Starting best score,28.2% error
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ImageNet (top-5 error),Saturated or near-saturated,"3.57% error, below 5.1% human estimate (Dec 2015)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ImageNet (top-5 error),Time taken,about 5 years
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ImageNet (top-5 error),Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,MMLU,Introduced,2020
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,MMLU,Starting best score,43.9% (GPT-3)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,MMLU,Saturated or near-saturated,"92.3% (o1, 2024)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,MMLU,Time taken,about 4 years
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,MMLU,Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,GPQA Diamond,Introduced,Nov 2023
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,GPQA Diamond,Starting best score,"39% (GPT-4, main set)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,GPQA Diamond,Saturated or near-saturated,"87.7% (o3 preview, Dec 2024); 94.3% (Feb 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,GPQA Diamond,Time taken,about 1–2 years
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,GPQA Diamond,Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,SWE-bench Verified,Introduced,Aug 2024
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,SWE-bench Verified,Starting best score,49% (best generally available model)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,SWE-bench Verified,Saturated or near-saturated,97.0% (Sep 2026)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,SWE-bench Verified,Time taken,about 2 years
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,SWE-bench Verified,Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ARC-AGI-2,Introduced,2025
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ARC-AGI-2,Starting best score,single digits at launch
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ARC-AGI-2,Saturated or near-saturated,"84.6% (Feb 2026, ARC Prize-verified)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ARC-AGI-2,Time taken,about 1 year
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,ARC-AGI-2,Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,Humanity's Last Exam,Introduced,Jan 2025
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,Humanity's Last Exam,Starting best score,about 9%
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,Humanity's Last Exam,Saturated or near-saturated,54.8% (Oct 2026); not saturated
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,Humanity's Last Exam,Time taken,ongoing
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,10,How long benchmarks lasted,Humanity's Last Exam,Confidence,DERIVED
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Mar 2023,Series,Cheapest GPT-4-level price — (GPT-4 launch)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Mar 2023,US$ per M tokens,37.5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Nov 2023,Series,Cheapest GPT-4-level price — (GPT-4 Turbo)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Nov 2023,US$ per M tokens,15.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Dec 2024,Series,Cheapest GPT-4-level price — (DeepSeek-V3)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Dec 2024,US$ per M tokens,0.4775
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Sep 2025,Series,Cheapest GPT-4-level price — (DeepSeek-V3.2-Exp)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Sep 2025,US$ per M tokens,0.315
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Oct 2026,Series,Cheapest GPT-4-level price — (GPT-6 Luna / Haiku 5.5)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,11,GPT-4-level output fell from $37.50 to about $0.20 per million tokens,Oct 2026,US$ per M tokens,0.2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Nov 2023,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Nov 2023,M weekly users,100.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Aug 2024,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Aug 2024,M weekly users,200.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Dec 2024,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Dec 2024,M weekly users,300.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Feb 2025,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Feb 2025,M weekly users,400.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Mar 2025,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Mar 2025,M weekly users,500.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Jul 2025,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Jul 2025,M weekly users,700.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Oct 2025,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Oct 2025,M weekly users,800.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Mar 2026,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Mar 2026,M weekly users,900.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Sep 2026,Series,ChatGPT weekly active users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,12,ChatGPT went from 100 million to 1 billion weekly users in under three years,Sep 2026,M weekly users,1000.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2017,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2017,% of respondents,20.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2018,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2018,% of respondents,47.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2019,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2019,% of respondents,58.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2020,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2020,% of respondents,50.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2021,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2021,% of respondents,56.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2022,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2022,% of respondents,50.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2023,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,2023,% of respondents,55.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Mar 2024,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Mar 2024,% of respondents,72.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jul 2024,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jul 2024,% of respondents,78.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jul 2025,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jul 2025,% of respondents,88.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jun 2026,Series,Organisations using AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,13,Nine in ten organisations now report using AI somewhere,Jun 2026,% of respondents,89.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-05,Milestone,OpenAI 'AI and Compute'
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-05,What it showed,"First widely cited measurement of exploding training compute. More than 300,000× growth from AlexNet to AlphaGo Zero; 3.4-month doubling time (2012–2018)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-05,Source,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-05,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-10,Milestone,BERT
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-10,What it showed,Pre-trained bidirectional Transformer resets most language-understanding benchmarks. BERT-Large ~340M parameters; ~2.8×10^20 FLOP (Epoch).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-10,Source,Google; Epoch AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2018-10,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2019-02-14,Milestone,GPT-2 and staged release
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2019-02-14,What it showed,"OpenAI withholds the full model at first over misuse concerns, starting the release-norms debate. 1.5B parameters; ~1.9×10^21 FLOP (Epoch)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2019-02-14,Source,OpenAI; Epoch AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2019-02-14,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-05-28,Milestone,GPT-3
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-05-28,What it showed,Shows few-shot learning emerges from scale. 175B parameters; 3.14×10^23 FLOP; 43.9% on MMLU (few-shot); ~$4.3M estimated training cost (AI Index 2024).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-05-28,Source,"Brown et al., arXiv 2005.14165"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-05-28,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-11-30,Milestone,AlphaFold 2 at CASP14
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-11-30,What it showed,"Effectively solves single-chain protein structure prediction, a 50-year-old problem. Median 92.4 GDT across all targets (≈90 is considered competitive with experiment)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-11-30,Source,Google DeepMind
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2020-11-30,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-04,Milestone,PaLM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-04,What it showed,Largest dense model of its time; strong reasoning results. 540B parameters; ~2.5×10^24 FLOP (Epoch).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-04,Source,Google; Epoch AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-04,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-08-22,Milestone,Stable Diffusion released with open weights
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-08-22,What it showed,High-quality image generation runs on consumer hardware.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-08-22,Source,Stability AI via secondary timelines
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-08-22,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-11-30,Milestone,ChatGPT launches
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-11-30,What it showed,Generative AI becomes a mass consumer product. 1M users in five days (OpenAI); UBS estimated 100M monthly users by January 2023 from Similarweb data.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-11-30,Source,OpenAI; UBS via Reuters
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2022-11-30,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-02-24,Milestone,Meta releases LLaMA
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-02-24,What it showed,"Capable model weights spread beyond big labs (leaked publicly in early March), seeding the open-weight ecosystem. 7B–65B parameters."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-02-24,Source,Meta; secondary timelines
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-02-24,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-14,Milestone,GPT-4
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-14,What it showed,Frontier model with strong exam performance; sets the 'GPT-4 class' bar. 86.4% MMLU; ~2.1×10^25 FLOP and ~$78M training compute cost (Epoch/AI Index); OpenAI's 'top 10% of bar takers' claim was later disputed.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-14,Source,OpenAI technical report
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-14,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-22,Milestone,FLI 'pause' letter
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-22,What it showed,Open letter calls for a six-month pause on training systems more powerful than GPT-4.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-22,Source,Future of Life Institute
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-03-22,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-01,Milestone,Bletchley Park AI Safety Summit
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-01,What it showed,First intergovernmental summit on frontier-AI risk; Bletchley Declaration.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-01,Source,UK Government
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-01,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-06,Milestone,ChatGPT reaches 100M weekly users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-06,What it showed,OpenAI's first own disclosure of the 100M mark (weekly users). 100M weekly active users at OpenAI's first DevDay.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-06,Source,OpenAI DevDay via TechCrunch
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-11-06,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-12,Milestone,Gemini 1.0 Ultra
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-12,What it showed,"Google's first frontier multimodal model; most expensive training run estimated at the time. ~5.0×10^25 FLOP (Epoch, 'Speculative'); ~$191M cloud-basis cost in AI Index 2024 (Epoch's current CSV: $206M cloud, $30.7M amortised in 2023 USD)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-12,Source,Epoch AI; Stanford AI Index 2024
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2023-12,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-07,Milestone,Llama 3.1 405B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-07,What it showed,Open-weight model at near-frontier scale. ~3.8×10^25 FLOP (6 × 405B params × 15.6T tokens); ~$170M estimated cost (AI Index 2025).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-07,Source,Epoch AI; Stanford AI Index 2025
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-08-01,Milestone,EU AI Act enters into force
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-08-01,What it showed,First comprehensive AI statute in a major economy; obligations phase in from Feb 2025. Maximum fines €35M or 7% of worldwide turnover.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-08-01,Source,European Commission
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-08-01,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-09-12,Milestone,OpenAI o1-preview: reasoning models
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-09-12,What it showed,Models trained to 'think' before answering; inference-time compute becomes a scaling axis. OpenAI reported o1 solved 83% of AIME (the US IMO qualifier) problems with 64-sample consensus vs 13% for GPT-4o; o1-preview ~57%.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-09-12,Source,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-09-12,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-08,Milestone,Nobel Prizes for AI research
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-08,What it showed,Physics to Hopfield and Hinton (8 Oct); half of Chemistry to Hassabis and Jumper for AlphaFold (9 Oct).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-08,Source,Nobel announcements via press
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-08,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-22,Milestone,Computer use (Anthropic)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-22,What it showed,First frontier model offered with the ability to operate a desktop GUI; start of the agent era.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-22,Source,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-10-22,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-12-20,Milestone,o3 announced
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-12-20,What it showed,Large jumps on hard reasoning benchmarks. ARC-AGI-1 75.7% within the $10k limit (87.5% high-compute); FrontierMath 25.2% (OpenAI-run; Epoch's own later run ~10%); SWE-bench Verified 71.7%.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-12-20,Source,ARC Prize; OpenAI via press
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2024-12-20,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01,Milestone,Stargate announced
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01,What it showed,"Private US AI-infrastructure commitment marks the gigawatt-scale data-centre era. $500B over four years, $100B immediately."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01,Source,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01-20,Milestone,DeepSeek-R1
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01-20,What it showed,"Chinese open-weight reasoning model near the frontier at far lower prices. Nvidia lost ~$589B of market value on 27 Jan 2025 (Bloomberg; Reuters says ~$593B), a record one-day loss."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01-20,Source,Bloomberg; DeepSeek
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-01-20,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-02,Milestone,Grok 3: first model above 10^26 FLOP
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-02,What it showed,"Epoch's first estimate of a training run above 10^26 FLOP. ~3.5×10^26 FLOP (Epoch CSV, 'Likely'; ~80,000 H100s for ~3 months)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-02,Source,Epoch AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-02,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Milestone,AI wins IMO gold (certified)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,What it showed,"Natural-language maths at olympiad gold level within contest time. 35/42 (5 of 6 problems), Gemini Deep Think, certified by the IMO."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Source,Google DeepMind
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Milestone,Grok 4: largest known 2025 training run
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,What it showed,Largest estimated run of 2025. ~5×10^26 FLOP and ~$490M (Epoch median: 246M H100-hours).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Source,Epoch AI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-07,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-08-07,Milestone,GPT-5
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-08-07,What it showed,"Flagship launched at lower price than predecessors; Epoch estimates it used less training compute than GPT-4.5. ~6.6×10^25 FLOP (Epoch CSV, 'Speculative', CI 2e25–2e26) vs ~3.8×10^26 for GPT-4.5; $1.25 / $10 per million input/output tokens."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-08-07,Source,Epoch AI; OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-08-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-10-06,Milestone,ChatGPT at 800M weekly users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-10-06,What it showed,Consumer AI reaches roughly a tenth of humanity weekly. 800M weekly active users.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-10-06,Source,OpenAI DevDay via TechCrunch
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-10-06,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-11-24,Milestone,Claude Opus 4.5 passes 80% on SWE-bench Verified
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-11-24,What it showed,Autonomous software-engineering benchmark crosses 80%. 80.9% (vendor-reported).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-11-24,Source,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,14,"Milestones, 2018–2025",2025-11-24,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2013,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2013,US$ B,16.9475
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2014,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2014,US$ B,21.7933
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2015,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2015,US$ B,29.0729
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2016,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2016,US$ B,38.1831
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2017,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2017,US$ B,59.3852
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2018,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2018,US$ B,85.9181
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2019,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2019,US$ B,109.4555
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2020,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2020,US$ B,232.2935
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2021,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2021,US$ B,360.73
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2022,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2022,US$ B,234.4848
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2023,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2023,US$ B,178.7483
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2024,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2024,US$ B,218.5631
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2025,Series,Corporate AI investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,15,"Corporate AI investment peaked in 2021, dipped for two years, then more than doubled in 2025",2025,US$ B,489.5915
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2019,Series,Generative-AI private investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2019,US$ B,0.84
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2022,Series,Generative-AI private investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2022,US$ B,3.0
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2023,Series,Generative-AI private investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2023,US$ B,25.2
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2024,Series,Generative-AI private investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2024,US$ B,33.9
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2025,Series,Generative-AI private investment
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,16,Generative AI went from a niche to the centre of AI investment,2025,US$ B,170.9
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",OpenAI Trusted Access for Cyber,Group,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",OpenAI Trusted Access for Cyber,Start,2026-02
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",OpenAI Trusted Access for Cyber,End,2026-11
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Mythos Preview + Glasswing,Group,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Mythos Preview + Glasswing,Start,2026-04
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Mythos Preview + Glasswing,End,2026-11
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-5.4-Cyber to vetted tiers,Group,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-5.4-Cyber to vetted tiers,Start,2026-04
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-5.5-Cyber limited preview,Group,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-5.5-Cyber limited preview,Start,2026-05
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5 / Mythos 5 launch,Group,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5 / Mythos 5 launch,Start,2026-06
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Suspended by export order,Group,Government
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Suspended by export order,Start,2026-06
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Suspended by export order,End,2026-06
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Controls lifted 30 Jun; back 1 Jul,Group,Government
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Controls lifted 30 Jun; back 1 Jul,Start,2026-07
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",OpenAI pauses largest RL run,Group,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",OpenAI pauses largest RL run,Start,2026-08
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5.1 / Mythos 5.1,Group,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5.1 / Mythos 5.1,Start,2026-09
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release","Gemini 4 Argon, vetted first",Group,Google
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release","Gemini 4 Argon, vetted first",Start,2026-09
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release","Gemini 4 Argon, vetted first",End,2026-10
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5.2 / Mythos 5.2,Group,Anthropic
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",Fable 5.2 / Mythos 5.2,Start,2026-11
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-6 Cyber (OpenAI),Group,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,17,"Cyber-capable models in 2026: announce, gate, release",GPT-6 Cyber (OpenAI),Start,2026-11
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Anthropic refused to release its most powerful model because it 'worked too well',Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Anthropic refused to release its most powerful model because it 'worked too well',What the record shows,"Withheld from general availability because of its cyber capabilities, and deployed to vetted defenders through Project Glasswing (Anthropic, 7 Apr 2026)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",'Best-aligned' yet 'greatest alignment risk',Verdict,Accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",'Best-aligned' yet 'greatest alignment risk',What the record shows,"The card says the model 'likely poses the greatest alignment-related risk' of any it has released, while being 'the best-aligned model that we have released to date'."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",100% on 35 real-world cyber challenges,Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",100% on 35 real-world cyber challenges,What the record shows,"100% pass@1 on a 35-challenge subset of Cybench, a set of capture-the-flag puzzles, not real-world systems."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked","A researcher told it to escape a sealed box, and it emailed him in a park",Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked","A researcher told it to escape a sealed box, and it emailed him in a park",What the record shows,A simulated user in an automated test gave the instruction to an earlier internal version; a researcher received the email while eating a sandwich in a park.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It posted its escape method on the open web,Verdict,Accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It posted its escape method on the open web,What the record shows,"The earlier version posted exploit details to 'multiple hard-to-find, but technically public-facing, websites', unasked."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It attacked an AI judge that rejected its work,Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It attacked an AI judge that rejected its work,What the record shows,Fewer than 10 simple prompt-injection attempts by an earlier version; some rejections were caused by a harness error; none found in the final model.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It edited files it should not and hid the changes from git history,Verdict,Accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",It edited files it should not and hid the changes from git history,What the record shows,One documented case involving an earlier version.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",0.001% of a billion interactions is ten million incidents,Verdict,Wrong
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",0.001% of a billion interactions is ten million incidents,What the record shows,"0.001% of 1 billion is 10,000. The <0.001% figure is an upper bound for earlier versions in internal testing; Anthropic found no clear cover-ups in the final model."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Found a 17-year-old flaw giving takeover of any machine on a network,Verdict,Misleading
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Found a 17-year-old flaw giving takeover of any machine on a network,What the record shows,A FreeBSD NFS server flaw (CVE-2026-4747) giving root on machines running NFS.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Thousands of flaws in every major OS and browser; under 1% reported,Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Thousands of flaws in every major OS and browser; under 1% reported,What the record shows,"Thousands in total, some in every major OS and browser; under 1% fully patched (not reported) as of 7 April 2026."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Twelve partners and $100 million in credits,Verdict,Mostly accurate
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Twelve partners and $100 million in credits,What the record shows,"12 launch organisations including Anthropic, 40+ more, up to $100M in credits plus $4M in donations; expanded by about 150 organisations on 2 June 2026."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Anthropic will not release it because risks outweigh benefits,Verdict,"Misleading, out of date"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,18,"The viral 'Mythos file' video, checked",Anthropic will not release it because risks outweigh benefits,What the record shows,The Mythos-class model reached general availability as Claude Fable 5 on 9 June 2026.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-02,Milestone,ARC-AGI-2 above 80%
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-02,What it showed,"The benchmark launched in Mar 2025 to replace near-solved ARC-AGI-1 is largely solved within a year. 84.6% (Gemini 3 Deep Think upgrade, ARC Prize-verified, ~$13.62 per task)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-02,Source,ARC Prize via OfficeChai
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-02,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-03-31,Milestone,OpenAI raises $122B at $852B
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-03-31,What it showed,Largest private funding round on record. $122B at $852B post-money.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-03-31,Source,OpenAI; Bloomberg
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-03-31,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-07,Milestone,Claude Mythos Preview withheld from general release; Project Glasswing
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-07,What it showed,Anthropic announced its most capable model but restricted it to defensive-security partners because of its cyber capabilities: the first frontier model deliberately withheld from general availability for capability reasons. 12 launch organisations (incl. Anthropic) plus 40+ more; up to $100M in usage credits and $4M in donations to open-source security groups; $25 / $125 per M tokens after credits.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-07,Source,"Anthropic, Project Glasswing (opened 12 Nov 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-07,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-13,Milestone,AI Index 2026: corporate AI investment more than doubles
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-13,What it showed,Stanford HAI measures the 2025 investment surge. Global corporate AI investment $581.7B in 2025 (+130%); private investment $344.7B.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-13,Source,Stanford HAI AI Index 2026
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-04-13,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-06-09,Milestone,"Claude Fable 5 / Mythos 5 launched; suspended 12 Jun under US export controls, restored 1 Jul"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-06-09,What it showed,"Anthropic released Fable 5 generally and Mythos 5 to Glasswing partners on 9 Jun 2026, suspended both for all customers on 12 Jun after a US export-control directive, and redeployed both on 1 Jul (Mythos 5 for a set of US organisations only). $10 / $50 per million input/output tokens; access suspended for 19 days (12 Jun–1 Jul)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-06-09,Source,Anthropic launch post with 12 Jun and 1 Jul updates (opened 12 Nov 2026)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-06-09,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-07,Milestone,Perfect scores at IMO 2026
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-07,What it showed,"Several AI systems reported 42/42 at the Shanghai olympiad, saturating the contest as a benchmark. 42/42 reported for multiple systems (trade press)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-07,Source,Trade press via Digital Applied
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-07,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-08-31,Milestone,ChatGPT passes 1 billion weekly users
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-08-31,What it showed,First AI product above one billion weekly users. 1B+ weekly active users (OpenAI).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-08-31,Source,OpenAI
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-08-31,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Milestone,SWE-bench Verified saturated
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,What it showed,"Independent leaderboard stops running the benchmark on new releases. 97.0% (Claude Opus 5, Vals.ai harness)."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Source,Vals.ai
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Milestone,Claude Fable 5.1 / Mythos 5.1
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,What it showed,"Same model with two safeguard levels: Fable 5.1 generally available, Mythos 5.1 only through trusted-access programmes. Fable 5.1 lists at $10 / $50 per M tokens."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Source,"Anthropic, Fable 5.1 / Mythos 5.1 page (opened 12 Nov 2026; page dated September"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-01,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-03,Milestone,GPT-6 Astra: largest estimated training run
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-03,What it showed,"Epoch's largest training-compute estimate to date. ~9.4×10^26 FLOP (Epoch, 'Likely'; CI ~5e26–2e27), ~45× GPT-4; ≥100,000 GB200s, ~233 MW."
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-03,Source,Epoch AI Notable AI Models CSV
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-09-03,Confidence,HIGH
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-10-26,Milestone,Anthropic files S-1
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-10-26,What it showed,First frontier lab to file publicly for an IPO. H1 2026 revenue $16.3B; Q2 2026 first operating profit ($974M).
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-10-26,Source,Anthropic S-1 as reported
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-10-26,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-11-06,Milestone,OpenAI valued at $1.25 trillion
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-11-06,What it showed,First private AI lab valued above $1 trillion. First close of ~$11B at a reported $1.25T.
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-11-06,Source,"Bloomberg, Reuters as reported"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,19,"Milestones, 2026",2026-11-06,Confidence,MEDIUM
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Core idea,First boom (1956–1974),Symbolic reasoning and search
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Core idea,Second boom (1980–1987),Expert systems (hand-written rules)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Core idea,Third boom (2012–now),Learning from data at scale
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Who paid,First boom (1956–1974),"Government research grants (DARPA, UK SRC)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Who paid,Second boom (1980–1987),Corporations and national programmes (Japan's Fifth Generation)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Who paid,Third boom (2012–now),"Corporations, venture capital and public markets"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Scale of money,First boom (1956–1974),Grants of a few $M a year per programme
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Scale of money,Second boom (1980–1987),Fifth Generation: just under ¥57B (~$320M) over a decade
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Scale of money,Third boom (2012–now),$581.7B corporate AI investment in 2025 (AI Index)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Signature system,First boom (1956–1974),"Perceptron (1958), ELIZA (1966)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Signature system,Second boom (1980–1987),XCON (~$25M a year in savings)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Signature system,Third boom (2012–now),"ChatGPT (1B+ weekly users, Aug 2026)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Compute for a landmark model,First boom (1956–1974),~10⁶–10⁹ FLOP
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Compute for a landmark model,Second boom (1980–1987),"~10¹⁰ FLOP (NETtalk, 1987)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,Compute for a landmark model,Third boom (2012–now),~10²⁵–10²⁷ FLOP (2023–2026)
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,What ended it / main risk,First boom (1956–1974),"Lighthill report (1973), DARPA cuts (1974)"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,What ended it / main risk,Second boom (1980–1987),"Lisp-machine collapse (1987), brittleness"
+https://report-ai.org/reports/how-ai-developed-1950-2026/,2026-11-12,20,Three booms compared,What ended it / main risk,Third boom (2012–now),"Open: capex vs revenue, power, concentration"

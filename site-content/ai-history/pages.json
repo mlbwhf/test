@@ -1,0 +1,26 @@
+[
+ {
+  "slug": "how-ai-developed-1950-2026",
+  "title": "How AI Developed, 1950\u20132026: Seven Decades in Numbers \u2014 Report AI",
+  "excerpt": "From Turing's 1950 paper to models withheld for their cyber capabilities in 2026: the eras, booms and winters of artificial intelligence, measured in training compute, cost, benchmark scores, money and users.",
+  "csv": "report-ai-data-how-ai-developed-1950-2026.csv",
+  "url": "https://report-ai.org/reports/how-ai-developed-1950-2026/",
+  "exhibits": 11,
+  "tables": 20,
+  "csv_rows": 740,
+  "parent_path": "/reports/",
+  "file": "how-ai-developed-1950-2026.html"
+ },
+ {
+  "slug": "ai-development-index",
+  "title": "AI Development Index: How AI Grew, 1950\u20132026 \u2014 Report AI",
+  "excerpt": "A year-by-year record of how artificial intelligence developed, in six measures: training compute, capability, cost, capital, adoption and risk. Every value is dated, sourced and confidence-rated, and the full dataset is free to download.",
+  "csv": "report-ai-data-ai-development-index.csv",
+  "url": "https://report-ai.org/indexes/state-of-ai/ai-development-index/",
+  "exhibits": 3,
+  "tables": 19,
+  "csv_rows": 1986,
+  "parent_path": "/indexes/state-of-ai/",
+  "file": "ai-development-index.html"
+ }
+]
