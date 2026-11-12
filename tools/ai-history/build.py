@@ -304,9 +304,14 @@ if __name__ == '__main__':
     outdir = sys.argv[1]; published = sys.argv[2] if len(sys.argv) > 2 else datetime.date.today().isoformat()
     published_h = datetime.date.fromisoformat(published).strftime('%-d %B %Y')
     os.makedirs(outdir, exist_ok=True)
-    H.update(json.load(open(os.path.join(SRC, 'history-data.json'))))
+    # AIH_DATA: dataset file feeding `from` exhibits (default history-data.json);
+    # AIH_PAGES: comma list of name:kind (default the three AI-history pages)
+    dpath = os.path.join(SRC, os.environ.get('AIH_DATA', 'history-data.json'))
+    if os.path.exists(dpath):
+        H.update(json.load(open(dpath)))
+    plist = os.environ.get('AIH_PAGES', 'report:report,perez:report,index:index')
     out = []
-    for name, kind in (('report', 'report'), ('perez', 'report'), ('index', 'index')):
+    for name, kind in (x.split(':') for x in plist.split(',')):
         p = os.path.join(SRC, name + '.json')
         if not os.path.exists(p):
             continue
