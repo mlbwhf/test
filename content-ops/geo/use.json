@@ -1,0 +1,2686 @@
+{
+ "slug": "ai-use-by-country-2026",
+ "path": "/indexes/geography-of-ai/ai-use-by-country-2026/",
+ "parent_path": "/indexes/geography-of-ai/",
+ "csv": "report-ai-data-ai-use-by-country-2026.csv",
+ "trail": [
+  [
+   "Indexes",
+   "/indexes/"
+  ],
+  [
+   "The Geography of AI",
+   "/indexes/geography-of-ai/"
+  ],
+  [
+   "AI Use by Country 2026",
+   "/indexes/geography-of-ai/ai-use-by-country-2026/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; The Geography of AI &middot; Index &middot; Updated quarterly",
+ "title": "AI Use by Country 2026: Adoption Across the World",
+ "dek": "How many people use AI in each of 147 economies, how fast that is changing, and which assistants they use. Built on Microsoft's AI Diffusion data, national trackers and global surveys, with every figure dated, sourced and confidence-rated.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next update February 2027",
+ "edition": "November 2026 edition",
+ "coverage": "2025/2026",
+ "nav_active": "AI use by country",
+ "nav": [
+  [
+   "Geography of AI",
+   "/indexes/geography-of-ai/"
+  ],
+  [
+   "AI use by country",
+   "/indexes/geography-of-ai/ai-use-by-country-2026/"
+  ],
+  [
+   "Sovereign AI Index",
+   "/indexes/geography-of-ai/sovereign-ai-index-2026/"
+  ],
+  [
+   "Most popular model by country",
+   "/indexes/geography-of-ai/popular-ai-models-by-country/"
+  ],
+  [
+   "State of AI Geography",
+   "/indexes/state-of-ai/state-of-ai-geography/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "18.8%",
+   "label": "of the world's working-age population used generative AI in Q2 2026, up from 15.1% in H1 2025 (Microsoft)",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "73.3%",
+   "label": "United Arab Emirates, the highest share of any economy (Q2 2026)",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "12.6 pts",
+   "label": "gap between the Global North (28.8%) and South (16.2%), widening every edition",
+   "confidence": "HIGH"
+  },
+  {
+   "value": "+57%",
+   "label": "South Korea's rise, H1 2025 to Q2 2026: the fastest of any economy",
+   "confidence": "DERIVED"
+  }
+ ],
+ "at_a_glance": [
+  "About 18.8% of the world's people aged 15–64 used a generative AI product in the second quarter of 2026, according to Microsoft's AI Diffusion data, up from 15.1% in the first half of 2025. That is roughly 0.99 billion people (Report AI calculation).",
+  "The United Arab Emirates leads at 73.3%, followed by Singapore (64.3%); the United States ranks 21th at 33.0%, and China 67th at 17.5% on Microsoft's measure, which misses most Chinese domestic apps.",
+  "The divide is widening: the gap between the Global North (28.8%) and the Global South (16.2%) grew from 9.8 to 12.6 percentage points across four editions.",
+  "Growth has moved to East Asia: South Korea rose from 25.9% to 40.6% and Japan from 16.7% to 24.7% between H1 2025 and Q2 2026.",
+  "National trackers fill the gaps: China had 546M monthly users of AI-native apps in September 2026 (QuestMobile), and 55% of 12+ of Russians aged 12 and over used an AI service monthly (Mediascope), led by Yandex's Alice AI."
+ ],
+ "toc_extra": [
+  [
+   "stop-quoting",
+   "Numbers to stop quoting"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "about",
+   "About the data"
+  ]
+ ],
+ "analysis": [
+  "Three facts dominate the map of AI use. First, it is still a minority activity: on Microsoft's telemetry-based measure, fewer than one in five working-age people worldwide used a generative AI product in the second quarter of 2026. Second, the leaders are small, rich, connected economies rather than the countries that build frontier models: the United Arab Emirates, Singapore, Ireland, France and Norway all rank above the United States. Third, use is spreading fastest where governments and telecom operators have pushed it hard and where local-language quality has improved, notably in South Korea and Japan.",
+  "The divide is the uncomfortable finding. In every edition of Microsoft's data the Global North has pulled further ahead, from a 9.8-point gap to 12.6 points. Sub-Saharan Africa averages 10.6% and South Asia 16.4%, against 33.6% in North America. The constraint is mostly upstream of AI: internet access, digital skills, electricity and the quality of models in local languages.",
+  "Measures disagree, and the reasons matter. Microsoft's figures come from Windows and Microsoft-product telemetry adjusted to population, so they undercount countries where people use domestic apps on phones: China's own surveys report far higher use than Microsoft's 17.5%, and Russia's 9.9% sits beside a Mediascope reach of 55% of 12+. Surveys of the online population, such as the KPMG and University of Melbourne study, report higher use again, because they exclude people who are offline. We publish all three kinds of measure side by side and never rank countries across them.",
+  "For businesses the picture is earlier still. Eurostat found that about one in five EU enterprises with ten or more staff used at least one AI technology in 2025, and the OECD reports a similar share of firms across its members. Individual use runs ahead of organisational adoption almost everywhere."
+ ],
+ "takeaways": [
+  "Use the world figure with its definition: 18.8% of people aged 15–64 used generative AI in Q2 2026 (Microsoft), not '18.8% of internet users'.",
+  "Small, rich, well-connected economies lead; frontier-model builders do not top the adoption table.",
+  "The North–South gap is widening, not closing.",
+  "In China and Russia, national trackers are the better guide, because Microsoft's telemetry misses domestic apps.",
+  "Never rank countries across different measures: telemetry, surveys of online adults and app counts answer different questions."
+ ],
+ "chapters": [
+  {
+   "id": "ranking",
+   "kicker": "1. The ranking",
+   "action_title": "The United Arab Emirates and Singapore lead the world in AI use; the United States ranks 21th",
+   "paras": [
+    "Microsoft's AI Economy Institute estimates the share of each economy's working-age population that used a generative AI product in a period, from anonymised telemetry adjusted for device share, internet penetration and population. In the second quarter of 2026, 31 economies were above 30%, up from 26 a quarter earlier.",
+    "The top of the table is dominated by small, high-income economies with near-universal connectivity and active government programmes: United Arab Emirates (73.3%, #1), Singapore (64.3%, #2), Ireland (49.9%, #3), France (49.6%, #4) and Norway (49.4%, #5). Among the largest economies, the United Kingdom is at 43.7%, Germany 32.3%, Japan 24.7%, Brazil 20.2%, India 18.5% and Indonesia 14.8%."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "The United Arab Emirates and Singapore lead the world in AI use",
+     "subtitle": "Share of working-age population (15–64) using generative AI, top 20 economies, Q2 2026 (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Q2 2026",
+       "points": [
+        [
+         "UAE",
+         73.3
+        ],
+        [
+         "Singapore",
+         64.3
+        ],
+        [
+         "Ireland",
+         49.9
+        ],
+        [
+         "France",
+         49.6
+        ],
+        [
+         "Norway",
+         49.4
+        ],
+        [
+         "Spain",
+         45.1
+        ],
+        [
+         "New Zealand",
+         44.1
+        ],
+        [
+         "UK",
+         43.7
+        ],
+        [
+         "Netherlands",
+         43.5
+        ],
+        [
+         "Qatar",
+         43.5
+        ],
+        [
+         "Australia",
+         40.7
+        ],
+        [
+         "South Korea",
+         40.6
+        ],
+        [
+         "Belgium",
+         40.3
+        ],
+        [
+         "Switzerland",
+         39.1
+        ],
+        [
+         "Israel",
+         38.7
+        ],
+        [
+         "Canada",
+         38.5
+        ],
+        [
+         "Sweden",
+         37.3
+        ],
+        [
+         "Austria",
+         35.4
+        ],
+        [
+         "Taiwan",
+         33.8
+        ],
+        [
+         "Hungary",
+         33.3
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions)",
+     "notes": "Telemetry-based estimate adjusted to population; not a survey. Rankings from Microsoft's Q2 2026 dataset.",
+     "confidence": "HIGH"
+    },
+    {
+     "type": "hbar",
+     "title": "Among the largest economies, use ranges from about 10% to 50%",
+     "subtitle": "Share of working-age population using generative AI, selected large economies, Q2 2026 (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Q2 2026",
+       "points": [
+        [
+         "France",
+         49.6
+        ],
+        [
+         "UK",
+         43.7
+        ],
+        [
+         "South Korea",
+         40.6
+        ],
+        [
+         "Canada",
+         38.5
+        ],
+        [
+         "US",
+         33.0
+        ],
+        [
+         "Germany",
+         32.3
+        ],
+        [
+         "Italy",
+         31.4
+        ],
+        [
+         "Saudi Arabia",
+         31.4
+        ],
+        [
+         "Vietnam",
+         27.9
+        ],
+        [
+         "Japan",
+         24.7
+        ],
+        [
+         "South Africa",
+         23.9
+        ],
+        [
+         "Mexico",
+         21.4
+        ],
+        [
+         "Brazil",
+         20.2
+        ],
+        [
+         "Türkiye",
+         18.9
+        ],
+        [
+         "India",
+         18.5
+        ],
+        [
+         "China",
+         17.5
+        ],
+        [
+         "Egypt",
+         15.5
+        ],
+        [
+         "Indonesia",
+         14.8
+        ],
+        [
+         "Pakistan",
+         11.9
+        ],
+        [
+         "Nigeria",
+         10.4
+        ],
+        [
+         "Russia",
+         9.9
+        ],
+        [
+         "Bangladesh",
+         8.0
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions)",
+     "notes": "China and Russia are undercounted because the measure misses most domestic apps; see the national-tracker table.",
+     "confidence": "HIGH"
+    }
+   ]
+  },
+  {
+   "id": "divide",
+   "kicker": "2. The divide",
+   "action_title": "The gap between the Global North and South widened in every edition, to 12.6 percentage points",
+   "paras": [
+    "Microsoft splits its data into Global North and Global South. Use grew in both, but faster in the North: from 22.9% to 28.8%, against 13.1% to 16.2% in the South. The same report notes large gaps in the foundations of use: internet access, digital skills and electricity.",
+    "By region, using a working-age-population-weighted average of the economies Microsoft covers (Report AI calculation), North America leads at 33.6%, followed by Europe and Central Asia at 26.6%; Sub-Saharan Africa is lowest at 10.6%. 36 economies, mostly in Africa and smaller territories, carry identical values within regional groups in Microsoft's data, so they are regional estimates rather than national measurements and are flagged in the table."
+   ],
+   "exhibits": [
+    {
+     "type": "line",
+     "title": "AI use is rising in both halves of the world, faster in the North",
+     "subtitle": "Share of working-age population using generative AI, H1 2025 to Q2 2026 (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Global North",
+       "points": [
+        [
+         "H1 2025",
+         22.9
+        ],
+        [
+         "H2 2025",
+         24.7
+        ],
+        [
+         "Q1 2026",
+         27.5
+        ],
+        [
+         "Q2 2026",
+         28.8
+        ]
+       ]
+      },
+      {
+       "name": "Global South",
+       "points": [
+        [
+         "H1 2025",
+         13.1
+        ],
+        [
+         "H2 2025",
+         14.1
+        ],
+        [
+         "Q1 2026",
+         15.4
+        ],
+        [
+         "Q2 2026",
+         16.2
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions)",
+     "notes": "Four editions: H1 2025, H2 2025, Q1 2026 and Q2 2026. The world average sits between the two: 15.1% to 18.8%.",
+     "confidence": "HIGH"
+    },
+    {
+     "type": "hbar",
+     "title": "By region, use runs from about 11% to 34%",
+     "subtitle": "Working-age-population-weighted share using generative AI, by World Bank region, Q2 2026 (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Q2 2026",
+       "points": [
+        [
+         "North America",
+         33.6
+        ],
+        [
+         "Europe & Central Asia",
+         26.6
+        ],
+        [
+         "Latin America & Carib.",
+         20.1
+        ],
+        [
+         "East Asia & Pacific",
+         18.9
+        ],
+        [
+         "Middle East & N. Africa",
+         18.2
+        ],
+        [
+         "South Asia",
+         16.4
+        ],
+        [
+         "Sub-Saharan Africa",
+         10.6
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions); Report AI weighting by UN working-age population",
+     "notes": "Report AI calculation; the 147-economy weighted mean reproduces Microsoft's world figure.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Regional averages, four editions",
+     "columns": [
+      "Region",
+      "H1 2025",
+      "H2 2025",
+      "Q1 2026",
+      "Q2 2026",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "North America",
+       "27.0%",
+       "29.0%",
+       "31.9%",
+       "33.6%",
+       "DERIVED"
+      ],
+      [
+       "Europe & Central Asia",
+       "21.7%",
+       "23.3%",
+       "25.5%",
+       "26.6%",
+       "DERIVED"
+      ],
+      [
+       "Latin America & Caribbean",
+       "15.7%",
+       "17.0%",
+       "19.0%",
+       "20.1%",
+       "DERIVED"
+      ],
+      [
+       "East Asia & Pacific",
+       "15.6%",
+       "16.8%",
+       "17.7%",
+       "18.9%",
+       "DERIVED"
+      ],
+      [
+       "Middle East & North Africa",
+       "14.6%",
+       "15.8%",
+       "17.5%",
+       "18.2%",
+       "DERIVED"
+      ],
+      [
+       "South Asia",
+       "12.7%",
+       "14.0%",
+       "15.7%",
+       "16.4%",
+       "DERIVED"
+      ],
+      [
+       "Sub-Saharan Africa",
+       "8.6%",
+       "9.3%",
+       "10.2%",
+       "10.6%",
+       "DERIVED"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "growth",
+   "kicker": "3. Growth",
+   "action_title": "Growth has shifted to East Asia: South Korea, Japan and Thailand grew fastest",
+   "paras": [
+    "Between the first half of 2025 and the second quarter of 2026, South Korea's share rose by 57% in relative terms, from 25.9% to 40.6%, the fastest of any economy (Report AI calculation from Microsoft data). Japan (+48%) and Thailand (+47%) followed. In absolute terms the largest gains were in South Korea and the UAE, both up by about 14 percentage points.",
+    "Explanations offered in the national data include better local-language models, operator bundles that put AI assistants on phones by default, and government campaigns. The United States grew more slowly in relative terms, from a higher base."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "South Korea grew fastest",
+     "subtitle": "Relative change in the share using generative AI, H1 2025 to Q2 2026, fastest 12 economies (%)",
+     "unit": "% change",
+     "series": [
+      {
+       "name": "Change",
+       "points": [
+        [
+         "South Korea",
+         56.8
+        ],
+        [
+         "Japan",
+         47.9
+        ],
+        [
+         "Thailand",
+         47.3
+        ],
+        [
+         "Mongolia",
+         42.1
+        ],
+        [
+         "Turkey (Türkiye)",
+         41.0
+        ],
+        [
+         "Laos",
+         40.0
+        ],
+        [
+         "El Salvador",
+         37.7
+        ],
+        [
+         "Venezuela",
+         36.1
+        ],
+        [
+         "Suriname",
+         36.1
+        ],
+        [
+         "Guyana",
+         36.1
+        ],
+        [
+         "French Guiana",
+         36.1
+        ],
+        [
+         "Belarus",
+         35.5
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions); Report AI calculation",
+     "notes": "Relative change from different bases; see the full table for absolute values.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Large economies across four editions",
+     "columns": [
+      "Economy",
+      "H1 2025",
+      "H2 2025",
+      "Q1 2026",
+      "Q2 2026",
+      "Change (points)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "United States",
+       "26.3%",
+       "28.3%",
+       "31.3%",
+       "33.0%",
+       "+6.7",
+       "HIGH"
+      ],
+      [
+       "China",
+       "15.4%",
+       "16.3%",
+       "16.4%",
+       "17.5%",
+       "+2.1",
+       "HIGH"
+      ],
+      [
+       "India",
+       "14.2%",
+       "15.7%",
+       "17.6%",
+       "18.5%",
+       "+4.3",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "16.7%",
+       "19.1%",
+       "22.5%",
+       "24.7%",
+       "+8.0",
+       "HIGH"
+      ],
+      [
+       "Germany",
+       "26.5%",
+       "28.6%",
+       "31.1%",
+       "32.3%",
+       "+5.8",
+       "HIGH"
+      ],
+      [
+       "United Kingdom",
+       "36.4%",
+       "38.9%",
+       "42.2%",
+       "43.7%",
+       "+7.3",
+       "HIGH"
+      ],
+      [
+       "France",
+       "40.9%",
+       "44.0%",
+       "47.8%",
+       "49.6%",
+       "+8.7",
+       "HIGH"
+      ],
+      [
+       "Brazil",
+       "15.6%",
+       "17.1%",
+       "19.1%",
+       "20.2%",
+       "+4.6",
+       "HIGH"
+      ],
+      [
+       "Indonesia",
+       "11.7%",
+       "12.7%",
+       "14.1%",
+       "14.8%",
+       "+3.1",
+       "HIGH"
+      ],
+      [
+       "Nigeria",
+       "8.7%",
+       "9.3%",
+       "10.1%",
+       "10.4%",
+       "+1.7",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "7.6%",
+       "8.0%",
+       "9.5%",
+       "9.9%",
+       "+2.3",
+       "HIGH"
+      ],
+      [
+       "Mexico",
+       "16.7%",
+       "17.8%",
+       "20.1%",
+       "21.4%",
+       "+4.7",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "25.9%",
+       "30.7%",
+       "37.1%",
+       "40.6%",
+       "+14.7",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "25.8%",
+       "27.8%",
+       "30.2%",
+       "31.4%",
+       "+5.6",
+       "HIGH"
+      ],
+      [
+       "Canada",
+       "33.5%",
+       "35.0%",
+       "37.3%",
+       "38.5%",
+       "+5.0",
+       "HIGH"
+      ],
+      [
+       "Turkey (Türkiye)",
+       "13.4%",
+       "14.6%",
+       "17.4%",
+       "18.9%",
+       "+5.5",
+       "HIGH"
+      ],
+      [
+       "Saudi Arabia",
+       "23.7%",
+       "26.2%",
+       "29.4%",
+       "31.4%",
+       "+7.7",
+       "HIGH"
+      ],
+      [
+       "South Africa",
+       "19.3%",
+       "21.1%",
+       "23.1%",
+       "23.9%",
+       "+4.6",
+       "HIGH"
+      ],
+      [
+       "Egypt",
+       "12.5%",
+       "13.4%",
+       "14.8%",
+       "15.5%",
+       "+3.0",
+       "HIGH"
+      ],
+      [
+       "Pakistan",
+       "9.7%",
+       "10.3%",
+       "11.4%",
+       "11.9%",
+       "+2.2",
+       "HIGH"
+      ],
+      [
+       "Bangladesh",
+       "6.5%",
+       "7.1%",
+       "7.8%",
+       "8.0%",
+       "+1.5",
+       "HIGH"
+      ],
+      [
+       "Vietnam",
+       "21.2%",
+       "23.5%",
+       "26.5%",
+       "27.9%",
+       "+6.7",
+       "HIGH"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "table",
+   "kicker": "4. Every economy",
+   "action_title": "The full table: 147 economies, ranked",
+   "paras": [
+    "Every economy in Microsoft's Q2 2026 dataset, with its first-edition value, latest value, rank, change in percentage points and the share of its population using the internet (ITU, latest year). Economies marked 'regional estimate' share an identical value with others in their group in all editions and should not be read as national measurements."
+   ],
+   "tables": [
+    {
+     "title": "AI use by economy, Q2 2026",
+     "columns": [
+      "Economy",
+      "Region",
+      "H1 2025",
+      "Q2 2026",
+      "Rank",
+      "Change (pts)",
+      "Internet users",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "United Arab Emirates",
+       "Middle East & North Africa",
+       "59.4%",
+       "73.3%",
+       "1",
+       "+13.9",
+       "100.0%",
+       "HIGH"
+      ],
+      [
+       "Singapore",
+       "East Asia & Pacific",
+       "58.6%",
+       "64.3%",
+       "2",
+       "+5.7",
+       "94.4%",
+       "HIGH"
+      ],
+      [
+       "Ireland",
+       "Europe & Central Asia",
+       "41.7%",
+       "49.9%",
+       "3",
+       "+8.2",
+       "97.2%",
+       "HIGH"
+      ],
+      [
+       "France",
+       "Europe & Central Asia",
+       "40.9%",
+       "49.6%",
+       "4",
+       "+8.7",
+       "88.7%",
+       "HIGH"
+      ],
+      [
+       "Norway",
+       "Europe & Central Asia",
+       "45.3%",
+       "49.4%",
+       "5",
+       "+4.1",
+       "99.0%",
+       "HIGH"
+      ],
+      [
+       "Spain",
+       "Europe & Central Asia",
+       "39.7%",
+       "45.1%",
+       "6",
+       "+5.4",
+       "95.8%",
+       "HIGH"
+      ],
+      [
+       "New Zealand",
+       "East Asia & Pacific",
+       "37.6%",
+       "44.1%",
+       "7",
+       "+6.5",
+       "93.5%",
+       "HIGH"
+      ],
+      [
+       "United Kingdom",
+       "Europe & Central Asia",
+       "36.4%",
+       "43.7%",
+       "8",
+       "+7.3",
+       "95.5%",
+       "HIGH"
+      ],
+      [
+       "Netherlands",
+       "Europe & Central Asia",
+       "36.3%",
+       "43.5%",
+       "9",
+       "+7.2",
+       "97.0%",
+       "HIGH"
+      ],
+      [
+       "Qatar",
+       "Middle East & North Africa",
+       "35.7%",
+       "43.5%",
+       "10",
+       "+7.8",
+       "98.1%",
+       "HIGH"
+      ],
+      [
+       "Australia",
+       "East Asia & Pacific",
+       "34.5%",
+       "40.7%",
+       "11",
+       "+6.2",
+       "96.1%",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "East Asia & Pacific",
+       "25.9%",
+       "40.6%",
+       "12",
+       "+14.7",
+       "97.9%",
+       "HIGH"
+      ],
+      [
+       "Belgium",
+       "Europe & Central Asia",
+       "33.5%",
+       "40.3%",
+       "13",
+       "+6.8",
+       "95.8%",
+       "HIGH"
+      ],
+      [
+       "Switzerland",
+       "Europe & Central Asia",
+       "32.4%",
+       "39.1%",
+       "14",
+       "+6.7",
+       "97.3%",
+       "HIGH"
+      ],
+      [
+       "Israel",
+       "Middle East & North Africa",
+       "33.9%",
+       "38.7%",
+       "15",
+       "+4.8",
+       "88.2%",
+       "HIGH"
+      ],
+      [
+       "Canada",
+       "North America",
+       "33.5%",
+       "38.5%",
+       "16",
+       "+5.0",
+       "94.4%",
+       "HIGH"
+      ],
+      [
+       "Sweden",
+       "Europe & Central Asia",
+       "31.2%",
+       "37.3%",
+       "17",
+       "+6.1",
+       "95.8%",
+       "HIGH"
+      ],
+      [
+       "Austria",
+       "Europe & Central Asia",
+       "29.1%",
+       "35.4%",
+       "18",
+       "+6.3",
+       "91.9%",
+       "HIGH"
+      ],
+      [
+       "Taiwan",
+       "East Asia & Pacific",
+       "26.4%",
+       "33.8%",
+       "19",
+       "+7.4",
+       "",
+       "HIGH"
+      ],
+      [
+       "Hungary",
+       "Europe & Central Asia",
+       "27.9%",
+       "33.3%",
+       "20",
+       "+5.4",
+       "93.8%",
+       "HIGH"
+      ],
+      [
+       "United States",
+       "North America",
+       "26.3%",
+       "33.0%",
+       "21",
+       "+6.7",
+       "94.7%",
+       "HIGH"
+      ],
+      [
+       "Denmark",
+       "Europe & Central Asia",
+       "26.6%",
+       "32.4%",
+       "22",
+       "+5.8",
+       "99.8%",
+       "HIGH"
+      ],
+      [
+       "Germany",
+       "Europe & Central Asia",
+       "26.5%",
+       "32.3%",
+       "23",
+       "+5.8",
+       "93.5%",
+       "HIGH"
+      ],
+      [
+       "Poland",
+       "Europe & Central Asia",
+       "26.4%",
+       "32.3%",
+       "24",
+       "+5.9",
+       "88.6%",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "Europe & Central Asia",
+       "25.8%",
+       "31.4%",
+       "26",
+       "+5.6",
+       "89.2%",
+       "HIGH"
+      ],
+      [
+       "Saudi Arabia",
+       "Middle East & North Africa",
+       "23.7%",
+       "31.4%",
+       "25",
+       "+7.7",
+       "100.0%",
+       "HIGH"
+      ],
+      [
+       "Czechia",
+       "Europe & Central Asia",
+       "26.0%",
+       "31.2%",
+       "27",
+       "+5.2",
+       "87.7%",
+       "HIGH"
+      ],
+      [
+       "Jordan",
+       "Middle East & North Africa",
+       "25.4%",
+       "31.2%",
+       "28",
+       "+5.8",
+       "95.6%",
+       "HIGH"
+      ],
+      [
+       "Bulgaria",
+       "Europe & Central Asia",
+       "25.4%",
+       "30.7%",
+       "29",
+       "+5.3",
+       "82.4%",
+       "HIGH"
+      ],
+      [
+       "Finland",
+       "Europe & Central Asia",
+       "25.6%",
+       "30.6%",
+       "30",
+       "+5.0",
+       "93.7%",
+       "HIGH"
+      ],
+      [
+       "Slovenia",
+       "Europe & Central Asia",
+       "24.6%",
+       "30.1%",
+       "31",
+       "+5.5",
+       "90.8%",
+       "HIGH"
+      ],
+      [
+       "Costa Rica",
+       "Latin America & Caribbean",
+       "25.1%",
+       "29.7%",
+       "32",
+       "+4.6",
+       "87.2%",
+       "HIGH"
+      ],
+      [
+       "Vietnam",
+       "East Asia & Pacific",
+       "21.2%",
+       "27.9%",
+       "33",
+       "+6.7",
+       "84.2%",
+       "HIGH"
+      ],
+      [
+       "Lebanon",
+       "Middle East & North Africa",
+       "24.8%",
+       "27.7%",
+       "34",
+       "+2.9",
+       "80.6%",
+       "HIGH"
+      ],
+      [
+       "Oman",
+       "Middle East & North Africa",
+       "22.6%",
+       "27.6%",
+       "35",
+       "+5.0",
+       "95.3%",
+       "HIGH"
+      ],
+      [
+       "Portugal",
+       "Europe & Central Asia",
+       "22.4%",
+       "27.4%",
+       "36",
+       "+5.0",
+       "88.5%",
+       "HIGH"
+      ],
+      [
+       "Croatia",
+       "Europe & Central Asia",
+       "21.8%",
+       "27.2%",
+       "37",
+       "+5.4",
+       "83.6%",
+       "HIGH"
+      ],
+      [
+       "Slovakia",
+       "Europe & Central Asia",
+       "22.1%",
+       "27.1%",
+       "38",
+       "+5.0",
+       "89.8%",
+       "HIGH"
+      ],
+      [
+       "Colombia",
+       "Latin America & Caribbean",
+       "20.4%",
+       "25.9%",
+       "39",
+       "+5.5",
+       "79.3%",
+       "HIGH"
+      ],
+      [
+       "Dominican Republic",
+       "Latin America & Caribbean",
+       "22.0%",
+       "25.8%",
+       "40",
+       "+3.8",
+       "91.0%",
+       "HIGH"
+      ],
+      [
+       "Uruguay",
+       "Latin America & Caribbean",
+       "20.9%",
+       "25.7%",
+       "41",
+       "+4.8",
+       "92.0%",
+       "HIGH"
+      ],
+      [
+       "Serbia",
+       "Europe & Central Asia",
+       "19.7%",
+       "25.3%",
+       "42",
+       "+5.6",
+       "87.7%",
+       "HIGH"
+      ],
+      [
+       "Lithuania",
+       "Europe & Central Asia",
+       "21.0%",
+       "25.1%",
+       "43",
+       "+4.1",
+       "89.2%",
+       "HIGH"
+      ],
+      [
+       "Jamaica",
+       "Latin America & Caribbean",
+       "22.2%",
+       "25.0%",
+       "44",
+       "+2.8",
+       "90.1%",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "East Asia & Pacific",
+       "16.7%",
+       "24.7%",
+       "45",
+       "+8.0",
+       "85.5%",
+       "HIGH"
+      ],
+      [
+       "Panama",
+       "Latin America & Caribbean",
+       "20.3%",
+       "24.2%",
+       "46",
+       "+3.9",
+       "72.8%",
+       "HIGH"
+      ],
+      [
+       "Chile",
+       "Latin America & Caribbean",
+       "19.6%",
+       "24.0%",
+       "47",
+       "+4.4",
+       "95.6%",
+       "HIGH"
+      ],
+      [
+       "South Africa",
+       "Sub-Saharan Africa",
+       "19.3%",
+       "23.9%",
+       "48",
+       "+4.6",
+       "78.4%",
+       "HIGH"
+      ],
+      [
+       "Argentina",
+       "Latin America & Caribbean",
+       "17.8%",
+       "23.4%",
+       "49",
+       "+5.6",
+       "89.7%",
+       "HIGH"
+      ],
+      [
+       "Bosnia and Herzegovina",
+       "Europe & Central Asia",
+       "18.2%",
+       "23.2%",
+       "50",
+       "+5.0",
+       "86.1%",
+       "HIGH"
+      ],
+      [
+       "Malaysia",
+       "East Asia & Pacific",
+       "18.3%",
+       "22.6%",
+       "51",
+       "+4.3",
+       "98.0%",
+       "HIGH"
+      ],
+      [
+       "Kuwait",
+       "Middle East & North Africa",
+       "17.7%",
+       "22.6%",
+       "51",
+       "+4.9",
+       "100.0%",
+       "HIGH"
+      ],
+      [
+       "Georgia",
+       "Europe & Central Asia",
+       "17.3%",
+       "21.6%",
+       "53",
+       "+4.3",
+       "83.8%",
+       "HIGH"
+      ],
+      [
+       "Greece",
+       "Europe & Central Asia",
+       "17.7%",
+       "21.5%",
+       "54",
+       "+3.8",
+       "86.3%",
+       "HIGH"
+      ],
+      [
+       "Mexico",
+       "Latin America & Caribbean",
+       "16.7%",
+       "21.4%",
+       "55",
+       "+4.7",
+       "83.1%",
+       "HIGH"
+      ],
+      [
+       "Philippines",
+       "East Asia & Pacific",
+       "17.1%",
+       "20.7%",
+       "56",
+       "+3.6",
+       "67.3%",
+       "HIGH"
+      ],
+      [
+       "Ecuador",
+       "Latin America & Caribbean",
+       "17.0%",
+       "20.3%",
+       "57",
+       "+3.3",
+       "77.2%",
+       "HIGH"
+      ],
+      [
+       "Brazil",
+       "Latin America & Caribbean",
+       "15.6%",
+       "20.2%",
+       "58",
+       "+4.6",
+       "84.5%",
+       "HIGH"
+      ],
+      [
+       "El Salvador",
+       "Latin America & Caribbean",
+       "14.6%",
+       "20.1%",
+       "59",
+       "+5.5",
+       "66.5%",
+       "HIGH"
+      ],
+      [
+       "Albania",
+       "Europe & Central Asia",
+       "15.8%",
+       "19.2%",
+       "60",
+       "+3.4",
+       "85.9%",
+       "HIGH"
+      ],
+      [
+       "Moldova",
+       "Europe & Central Asia",
+       "16.6%",
+       "19.1%",
+       "61",
+       "+2.5",
+       "77.4%",
+       "HIGH"
+      ],
+      [
+       "Turkey (Türkiye)",
+       "Europe & Central Asia",
+       "13.4%",
+       "18.9%",
+       "62",
+       "+5.5",
+       "89.8%",
+       "HIGH"
+      ],
+      [
+       "Azerbaijan",
+       "Europe & Central Asia",
+       "14.2%",
+       "18.7%",
+       "63",
+       "+4.5",
+       "90.8%",
+       "HIGH"
+      ],
+      [
+       "India",
+       "South Asia",
+       "14.2%",
+       "18.5%",
+       "64",
+       "+4.3",
+       "70.0%",
+       "HIGH"
+      ],
+      [
+       "Romania",
+       "Europe & Central Asia",
+       "15.3%",
+       "18.0%",
+       "65",
+       "+2.7",
+       "91.3%",
+       "HIGH"
+      ],
+      [
+       "Mongolia",
+       "East Asia & Pacific",
+       "12.6%",
+       "17.9%",
+       "66",
+       "+5.3",
+       "85.1%",
+       "HIGH"
+      ],
+      [
+       "China",
+       "East Asia & Pacific",
+       "15.4%",
+       "17.5%",
+       "67",
+       "+2.1",
+       "91.6%",
+       "HIGH"
+      ],
+      [
+       "Guatemala",
+       "Latin America & Caribbean",
+       "13.7%",
+       "17.3%",
+       "68",
+       "+3.6",
+       "60.2%",
+       "HIGH"
+      ],
+      [
+       "Peru",
+       "Latin America & Caribbean",
+       "13.4%",
+       "17.3%",
+       "68",
+       "+3.9",
+       "82.0%",
+       "HIGH"
+      ],
+      [
+       "Kazakhstan",
+       "Europe & Central Asia",
+       "12.7%",
+       "16.9%",
+       "70",
+       "+4.2",
+       "93.4%",
+       "HIGH"
+      ],
+      [
+       "Gabon",
+       "Sub-Saharan Africa",
+       "12.3%",
+       "15.7%",
+       "71",
+       "+3.4",
+       "68.7%",
+       "HIGH"
+      ],
+      [
+       "Libya",
+       "Middle East & North Africa",
+       "12.7%",
+       "15.5%",
+       "72",
+       "+2.8",
+       "82.0%",
+       "HIGH"
+      ],
+      [
+       "Egypt",
+       "Middle East & North Africa",
+       "12.5%",
+       "15.5%",
+       "72",
+       "+3.0",
+       "74.6%",
+       "HIGH"
+      ],
+      [
+       "Namibia",
+       "Sub-Saharan Africa",
+       "13.0%",
+       "15.4%",
+       "74",
+       "+2.4",
+       "64.9%",
+       "HIGH"
+      ],
+      [
+       "Botswana",
+       "Sub-Saharan Africa",
+       "12.8%",
+       "15.0%",
+       "75",
+       "+2.2",
+       "57.5%",
+       "HIGH"
+      ],
+      [
+       "Indonesia",
+       "East Asia & Pacific",
+       "11.7%",
+       "14.8%",
+       "76",
+       "+3.1",
+       "72.8%",
+       "HIGH"
+      ],
+      [
+       "Nepal",
+       "South Asia",
+       "12.3%",
+       "14.6%",
+       "77",
+       "+2.3",
+       "46.3%",
+       "HIGH"
+      ],
+      [
+       "Honduras",
+       "Latin America & Caribbean",
+       "12.4%",
+       "14.5%",
+       "78",
+       "+2.1",
+       "58.6%",
+       "HIGH"
+      ],
+      [
+       "Senegal",
+       "Sub-Saharan Africa",
+       "12.4%",
+       "14.4%",
+       "79",
+       "+2.0",
+       "60.1%",
+       "HIGH"
+      ],
+      [
+       "Tunisia",
+       "Middle East & North Africa",
+       "12.3%",
+       "13.9%",
+       "80",
+       "+1.6",
+       "76.5%",
+       "HIGH"
+      ],
+      [
+       "Algeria",
+       "Middle East & North Africa",
+       "11.3%",
+       "13.8%",
+       "81",
+       "+2.5",
+       "77.4%",
+       "HIGH"
+      ],
+      [
+       "Côte d'Ivoire",
+       "Sub-Saharan Africa",
+       "10.8%",
+       "13.7%",
+       "82",
+       "+2.9",
+       "41.4%",
+       "HIGH"
+      ],
+      [
+       "Thailand",
+       "East Asia & Pacific",
+       "9.1%",
+       "13.4%",
+       "83",
+       "+4.3",
+       "90.9%",
+       "HIGH"
+      ],
+      [
+       "Zambia",
+       "Sub-Saharan Africa",
+       "11.7%",
+       "13.3%",
+       "84",
+       "+1.6",
+       "17.1%",
+       "HIGH"
+      ],
+      [
+       "Bolivia",
+       "Latin America & Caribbean",
+       "10.9%",
+       "13.3%",
+       "84",
+       "+2.4",
+       "79.7%",
+       "HIGH"
+      ],
+      [
+       "Iraq",
+       "Middle East & North Africa",
+       "10.3%",
+       "13.0%",
+       "86",
+       "+2.7",
+       "81.5%",
+       "HIGH"
+      ],
+      [
+       "Iran",
+       "Middle East & North Africa",
+       "9.6%",
+       "12.8%",
+       "87",
+       "+3.2",
+       "85.3%",
+       "HIGH"
+      ],
+      [
+       "Paraguay",
+       "Latin America & Caribbean",
+       "10.1%",
+       "12.6%",
+       "88",
+       "+2.5",
+       "81.6%",
+       "HIGH"
+      ],
+      [
+       "Nicaragua",
+       "Latin America & Caribbean",
+       "10.0%",
+       "12.5%",
+       "89",
+       "+2.5",
+       "61.4%",
+       "HIGH"
+      ],
+      [
+       "Morocco",
+       "Middle East & North Africa",
+       "10.5%",
+       "12.0%",
+       "90",
+       "+1.5",
+       "91.2%",
+       "HIGH"
+      ],
+      [
+       "Pakistan",
+       "South Asia",
+       "9.7%",
+       "11.9%",
+       "91",
+       "+2.2",
+       "57.3%",
+       "HIGH"
+      ],
+      [
+       "Gambia",
+       "Sub-Saharan Africa",
+       "10.6%",
+       "11.5%",
+       "92",
+       "+0.9",
+       "49.5%",
+       "HIGH"
+      ],
+      [
+       "Angola (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.9%",
+       "11.4%",
+       "93",
+       "+2.5",
+       "40.7%",
+       "MEDIUM"
+      ],
+      [
+       "Madagascar (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.9%",
+       "11.4%",
+       "93",
+       "+2.5",
+       "18.7%",
+       "MEDIUM"
+      ],
+      [
+       "Malawi (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.9%",
+       "11.4%",
+       "93",
+       "+2.5",
+       "19.0%",
+       "MEDIUM"
+      ],
+      [
+       "Mozambique (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.9%",
+       "11.4%",
+       "93",
+       "+2.5",
+       "20.5%",
+       "MEDIUM"
+      ],
+      [
+       "French Guiana (regional estimate)",
+       "Latin America & Caribbean",
+       "8.3%",
+       "11.3%",
+       "97",
+       "+3.0",
+       "",
+       "MEDIUM"
+      ],
+      [
+       "Guyana (regional estimate)",
+       "Latin America & Caribbean",
+       "8.3%",
+       "11.3%",
+       "97",
+       "+3.0",
+       "83.0%",
+       "MEDIUM"
+      ],
+      [
+       "Suriname (regional estimate)",
+       "Latin America & Caribbean",
+       "8.3%",
+       "11.3%",
+       "97",
+       "+3.0",
+       "87.4%",
+       "MEDIUM"
+      ],
+      [
+       "Venezuela (regional estimate)",
+       "Latin America & Caribbean",
+       "8.3%",
+       "11.3%",
+       "97",
+       "+3.0",
+       "76.7%",
+       "MEDIUM"
+      ],
+      [
+       "Benin (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "34.0%",
+       "MEDIUM"
+      ],
+      [
+       "Burkina Faso (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "28.3%",
+       "MEDIUM"
+      ],
+      [
+       "Ghana (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "72.2%",
+       "MEDIUM"
+      ],
+      [
+       "Guinea (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "33.3%",
+       "MEDIUM"
+      ],
+      [
+       "Guinea-Bissau (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "29.8%",
+       "MEDIUM"
+      ],
+      [
+       "Liberia (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "32.2%",
+       "MEDIUM"
+      ],
+      [
+       "Mali (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "36.8%",
+       "MEDIUM"
+      ],
+      [
+       "Mauritania (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "45.8%",
+       "MEDIUM"
+      ],
+      [
+       "Niger (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "15.6%",
+       "MEDIUM"
+      ],
+      [
+       "Nigeria (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "41.2%",
+       "MEDIUM"
+      ],
+      [
+       "Sierra Leone (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "25.1%",
+       "MEDIUM"
+      ],
+      [
+       "Togo (regional estimate)",
+       "Sub-Saharan Africa",
+       "8.7%",
+       "10.4%",
+       "101",
+       "+1.7",
+       "39.5%",
+       "MEDIUM"
+      ],
+      [
+       "Myanmar",
+       "East Asia & Pacific",
+       "8.4%",
+       "10.4%",
+       "101",
+       "+2.0",
+       "45.4%",
+       "HIGH"
+      ],
+      [
+       "Belarus",
+       "Europe & Central Asia",
+       "7.6%",
+       "10.3%",
+       "114",
+       "+2.7",
+       "94.3%",
+       "HIGH"
+      ],
+      [
+       "Kyrgyzstan",
+       "Europe & Central Asia",
+       "7.6%",
+       "10.0%",
+       "115",
+       "+2.4",
+       "92.0%",
+       "HIGH"
+      ],
+      [
+       "Lesotho",
+       "Sub-Saharan Africa",
+       "8.8%",
+       "9.9%",
+       "116",
+       "+1.1",
+       "51.8%",
+       "HIGH"
+      ],
+      [
+       "Russia",
+       "Europe & Central Asia",
+       "7.6%",
+       "9.9%",
+       "116",
+       "+2.3",
+       "94.4%",
+       "HIGH"
+      ],
+      [
+       "Ukraine",
+       "Europe & Central Asia",
+       "9.1%",
+       "9.5%",
+       "118",
+       "+0.4",
+       "82.5%",
+       "HIGH"
+      ],
+      [
+       "Cameroon (regional estimate)",
+       "Sub-Saharan Africa",
+       "7.0%",
+       "9.1%",
+       "119",
+       "+2.1",
+       "46.3%",
+       "MEDIUM"
+      ],
+      [
+       "Central African Republic (regional estimate)",
+       "Sub-Saharan Africa",
+       "7.0%",
+       "9.1%",
+       "119",
+       "+2.1",
+       "13.8%",
+       "MEDIUM"
+      ],
+      [
+       "Chad (regional estimate)",
+       "Sub-Saharan Africa",
+       "7.0%",
+       "9.1%",
+       "119",
+       "+2.1",
+       "12.6%",
+       "MEDIUM"
+      ],
+      [
+       "Congo (Republic) (regional estimate)",
+       "Sub-Saharan Africa",
+       "7.0%",
+       "9.1%",
+       "119",
+       "+2.1",
+       "47.3%",
+       "MEDIUM"
+      ],
+      [
+       "Congo (DRC) (regional estimate)",
+       "Sub-Saharan Africa",
+       "7.0%",
+       "9.1%",
+       "119",
+       "+2.1",
+       "19.7%",
+       "MEDIUM"
+      ],
+      [
+       "Kenya",
+       "Sub-Saharan Africa",
+       "7.8%",
+       "8.9%",
+       "124",
+       "+1.1",
+       "35.0%",
+       "HIGH"
+      ],
+      [
+       "Haiti",
+       "Latin America & Caribbean",
+       "7.1%",
+       "8.9%",
+       "124",
+       "+1.8",
+       "47.9%",
+       "HIGH"
+      ],
+      [
+       "Zimbabwe",
+       "Sub-Saharan Africa",
+       "6.9%",
+       "8.9%",
+       "124",
+       "+2.0",
+       "41.6%",
+       "HIGH"
+      ],
+      [
+       "Laos",
+       "East Asia & Pacific",
+       "6.0%",
+       "8.4%",
+       "127",
+       "+2.4",
+       "65.6%",
+       "HIGH"
+      ],
+      [
+       "Bangladesh",
+       "South Asia",
+       "6.5%",
+       "8.0%",
+       "128",
+       "+1.5",
+       "53.4%",
+       "HIGH"
+      ],
+      [
+       "Burundi (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "8.6%",
+       "MEDIUM"
+      ],
+      [
+       "Eritrea (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "14.3%",
+       "MEDIUM"
+      ],
+      [
+       "Ethiopia (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "21.9%",
+       "MEDIUM"
+      ],
+      [
+       "Somalia (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "27.9%",
+       "MEDIUM"
+      ],
+      [
+       "South Sudan (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "6.7%",
+       "MEDIUM"
+      ],
+      [
+       "Sudan (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "18.6%",
+       "MEDIUM"
+      ],
+      [
+       "Tanzania (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "31.2%",
+       "MEDIUM"
+      ],
+      [
+       "Uganda (regional estimate)",
+       "Sub-Saharan Africa",
+       "6.4%",
+       "8.0%",
+       "128",
+       "+1.6",
+       "8.9%",
+       "MEDIUM"
+      ],
+      [
+       "Armenia",
+       "Europe & Central Asia",
+       "6.2%",
+       "7.7%",
+       "137",
+       "+1.5",
+       "81.3%",
+       "HIGH"
+      ],
+      [
+       "Papua New Guinea",
+       "East Asia & Pacific",
+       "7.2%",
+       "7.6%",
+       "138",
+       "+0.4",
+       "18.8%",
+       "HIGH"
+      ],
+      [
+       "Sri Lanka",
+       "South Asia",
+       "6.2%",
+       "7.6%",
+       "138",
+       "+1.4",
+       "54.6%",
+       "HIGH"
+      ],
+      [
+       "Uzbekistan",
+       "Europe & Central Asia",
+       "5.7%",
+       "7.6%",
+       "138",
+       "+1.9",
+       "89.5%",
+       "HIGH"
+      ],
+      [
+       "Rwanda",
+       "Sub-Saharan Africa",
+       "6.0%",
+       "7.6%",
+       "138",
+       "+1.6",
+       "31.7%",
+       "HIGH"
+      ],
+      [
+       "Syria",
+       "Middle East & North Africa",
+       "6.7%",
+       "7.4%",
+       "142",
+       "+0.7",
+       "33.8%",
+       "HIGH"
+      ],
+      [
+       "Cuba",
+       "Latin America & Caribbean",
+       "5.7%",
+       "6.8%",
+       "143",
+       "+1.1",
+       "70.5%",
+       "HIGH"
+      ],
+      [
+       "Afghanistan (regional estimate)",
+       "South Asia",
+       "5.1%",
+       "6.3%",
+       "144",
+       "+1.2",
+       "16.1%",
+       "MEDIUM"
+      ],
+      [
+       "Tajikistan (regional estimate)",
+       "Europe & Central Asia",
+       "5.1%",
+       "6.3%",
+       "144",
+       "+1.2",
+       "55.8%",
+       "MEDIUM"
+      ],
+      [
+       "Turkmenistan (regional estimate)",
+       "Europe & Central Asia",
+       "5.1%",
+       "6.3%",
+       "144",
+       "+1.2",
+       "18.0%",
+       "MEDIUM"
+      ],
+      [
+       "Cambodia",
+       "East Asia & Pacific",
+       "4.6%",
+       "6.1%",
+       "147",
+       "+1.5",
+       "68.5%",
+       "HIGH"
+      ]
+     ],
+     "note": "Source: Microsoft AI Economy Institute, AI Diffusion reports and dataset (H1 2025 to Q2 2026 editions) (https://github.com/microsoft/ai-diffusion-report); internet use from ITU via Our World in Data. Change is a Report AI calculation."
+    }
+   ]
+  },
+  {
+   "id": "trackers",
+   "kicker": "5. Other measures",
+   "action_title": "National trackers and surveys show higher use where Microsoft's telemetry cannot see",
+   "paras": [
+    "Microsoft's measure is the only consistent cross-country series, but it is built on Microsoft products. In China, where Western assistants are blocked and phones run domestic apps, QuestMobile counted 546M monthly users of AI-native apps in September 2026, led by ByteDance's Doubao at 419.08M. In Russia, Mediascope found that 55% of 12+ of people aged 12 and over used an AI service in a month, with Yandex's Alice AI reaching about ~48% (~59M).",
+    "Surveys answer different questions again. Eurostat found 32.7% of EU residents aged 16–74 used generative AI tools in 2025, while 19.95% of EU enterprises with ten or more staff used at least one AI technology. The KPMG and University of Melbourne study found 66% of people across 47 countries using AI with some regularity, a survey of online respondents that reads higher than population-wide measures."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "Worldwide, ChatGPT still takes most chatbot web visits",
+     "subtitle": "Share of generative-AI chatbot website visits worldwide, Oct 2026 (posted 10 Nov 2026) (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Share",
+       "points": [
+        [
+         "ChatGPT",
+         55.7
+        ],
+        [
+         "Gemini",
+         24.2
+        ],
+        [
+         "Claude",
+         11.5
+        ],
+        [
+         "DeepSeek",
+         3.4
+        ],
+        [
+         "Grok",
+         2.2
+        ],
+        [
+         "Copilot",
+         1.1
+        ],
+        [
+         "Perplexity",
+         0.8
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Similarweb gen-AI traffic share update (X post), via FourWeekMBA / OfficeChai",
+     "notes": "Web visits only; excludes app use and assistants built into other products. Not a measure of users.",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "tables": [
+    {
+     "title": "National trackers and surveys",
+     "columns": [
+      "Where",
+      "Measure",
+      "Value",
+      "Date",
+      "Source",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "China",
+       "AI-native app monthly active users (deduplicated)",
+       "546M",
+       "Sep 2026",
+       "QuestMobile 2026 Q3 AI Application Market Development Report (via 36Kr, FourWeekMBA)",
+       "MEDIUM"
+      ],
+      [
+       "China",
+       "Doubao (ByteDance) monthly active users",
+       "419.08M",
+       "Sep 2026",
+       "QuestMobile 2026 Q3 AI Application Market Development Report (via 36Kr, FourWeekMBA)",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "Monthly reach of any AI service, population 12+",
+       "55% of 12+",
+       "Sep 2026",
+       "Mediascope (via RBC, Expert.ru, Kod.ru)",
+       "MEDIUM"
+      ],
+      [
+       "Russia",
+       "Yandex Alice AI / DeepSeek / GigaChat monthly reach",
+       "~48% (~59M) / 11% (13M) / 5% (6M)",
+       "Sep 2026",
+       "Mediascope (via RBC, Expert.ru, Kod.ru)",
+       "MEDIUM"
+      ],
+      [
+       "South Korea",
+       "ChatGPT share of AI-app users",
+       "~91%",
+       "Oct 2026",
+       "IGAWorks Mobile Index (Seoul Economic Daily, 9 Nov 2026); Wiseapp·Retail (Chosun Biz)",
+       "MEDIUM"
+      ],
+      [
+       "India",
+       "ChatGPT / Gemini monthly app users",
+       "180M / 118M",
+       "Jan 2026",
+       "Sensor Tower (via TechCrunch, Business Standard)",
+       "MEDIUM"
+      ],
+      [
+       "European Union",
+       "Individuals 16–74 using generative AI",
+       "32.7%",
+       "2025",
+       "Eurostat",
+       "HIGH"
+      ],
+      [
+       "European Union",
+       "Enterprises (10+ staff) using AI",
+       "19.95% (2024: 13.48%)",
+       "2025",
+       "Eurostat",
+       "HIGH"
+      ],
+      [
+       "OECD",
+       "Individuals using generative AI",
+       "36.8%",
+       "2025 (released Jan 2026)",
+       "OECD ICT Access and Usage by Individuals (via ITIF, 2 Mar 2026)",
+       "MEDIUM"
+      ],
+      [
+       "OECD",
+       "Firms using AI",
+       "20.2% (2024: 14.2%)",
+       "2025",
+       "OECD",
+       "MEDIUM"
+      ],
+      [
+       "47 countries",
+       "People intentionally using AI with some regularity",
+       "66%",
+       "Nov 2024-Jan 2025",
+       "University of Melbourne & KPMG, Trust, attitudes and use of AI 2025",
+       "MEDIUM"
+      ]
+     ],
+     "note": "Each row is a different measure; do not compare rows or rank countries across them."
+    }
+   ]
+  },
+  {
+   "id": "attitudes",
+   "kicker": "6. Attitudes",
+   "action_title": "Enthusiasm and anxiety are almost evenly split worldwide, and highest-use countries are not the most enthusiastic",
+   "paras": [
+    "Across 32 countries in March–April 2026, 51% of adults said AI products make them excited and 50% said they make them nervous (Ipsos AI Monitor 2026). Pew's 25-country median in 2025 found 34% more concerned than excited and 16% more excited than concerned. Optimism tends to be higher in Asia and lower in Europe and North America, a pattern that does not track adoption: several high-use European economies are among the more sceptical."
+   ],
+   "tables": [
+    {
+     "title": "Surveys used in this index",
+     "columns": [
+      "Survey",
+      "Coverage",
+      "Measure",
+      "Latest"
+     ],
+     "rows": [
+      [
+       "Microsoft AI Diffusion (telemetry, not a survey)",
+       "147 economies",
+       "% of 15-64 population that used a gen-AI product in period",
+       "Q2 2026 (21 Sep 2026)"
+      ],
+      [
+       "Anthropic Economic Index (Claude.ai usage)",
+       "150+ countries, US states",
+       "Anthropic AI Usage Index (usage share / working-age pop share)",
+       "Feb 2026 sample (country briefs Jul 2026); Jun 2026 report has no new country table"
+      ],
+      [
+       "University of Melbourne & KPMG, Trust, attitudes and use of AI 2025",
+       "47 countries, 48,340 people",
+       "regular intentional AI use; trust",
+       "Fieldwork Nov 2024-Jan 2025"
+      ],
+      [
+       "Ipsos AI Monitor 2026",
+       "32 countries, 23,532 adults",
+       "excited / nervous about AI products",
+       "20 Mar-3 Apr 2026"
+      ],
+      [
+       "Pew Research Center global attitudes",
+       "25 countries",
+       "more concerned than excited",
+       "Spring 2025 (published 15 Oct 2025)"
+      ],
+      [
+       "Stanford HAI AI Index 2026, Public Opinion (Ipsos data)",
+       "~30 countries",
+       "AI has more benefits than drawbacks",
+       "2025 survey"
+      ],
+      [
+       "Eurostat ICT usage in households and by individuals",
+       "EU-27 + EFTA/candidates",
+       "used gen-AI tools in last 3 months (16-74)",
+       "2025 (released Dec 2025)"
+      ],
+      [
+       "Eurostat ICT usage in enterprises",
+       "EU-27",
+       "enterprises (10+) using at least one AI technology",
+       "2025 (released 11 Dec 2025)"
+      ],
+      [
+       "OECD ICT access and usage",
+       "OECD 38",
+       "individuals using gen AI; firms using AI",
+       "2025 (Jan 2026)"
+      ],
+      [
+       "US Census Bureau BTOS",
+       "US businesses",
+       "used AI in a business function in prior two weeks",
+       "to 3 May 2026"
+      ],
+      [
+       "World Bank Enterprise Survey on AI Adoption (WDR 2026)",
+       "India, Jordan, Kenya, Mexico, Nigeria, Thailand, US (formal firms)",
+       "firms using AI",
+       "2025 (reported Aug 2026)"
+      ],
+      [
+       "BCG AI at Work 2025",
+       "11 countries, 10,600+ workers",
+       "regular AI use at work",
+       "Jun 2025"
+      ],
+      [
+       "Japan MIC Information & Communications White Paper 2026",
+       "Japan, US, Germany, China (3,108 online respondents 15-69)",
+       "ever used generative AI",
+       "Jan-Feb 2026"
+      ],
+      [
+       "Cetic.br TIC Domicílios 2025 (Brazil)",
+       "Brazil",
+       "internet users 10+ using gen AI",
+       "published 9 Dec 2025"
+      ],
+      [
+       "APJII Internet Survey 2026 (Indonesia)",
+       "Indonesia",
+       "have used AI",
+       "Jun 2026"
+      ],
+      [
+       "CNNIC (China)",
+       "China",
+       "generative AI users (ever used)",
+       "Jun 2026 (report 29 Sep 2026)"
+      ],
+      [
+       "Mediascope (Russia)",
+       "Russia, population 12+",
+       "monthly reach of AI services",
+       "Sep 2026"
+      ],
+      [
+       "GWI Core (vendor panel)",
+       "online adults 16+ in ~50 markets",
+       "use AI tools monthly",
+       "2025-26"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "Perplexity is Russia's most popular AI, with a 48% share.",
+   "fact": "48.07% was Perplexity's share of AI-chatbot referral page views to StatCounter-tagged sites in April 2026 - links clicked out of chatbots, not chatbot use. StatCounter's Aug 2026 desktop reading put ChatGPT at 40.2% and Perplexity at 26.7%. By monthly reach, Mediascope (Sep 2026) puts Yandex's Alice AI at ~48% of Russians aged 12+, DeepSeek at 11% and GigaChat at 5%.",
+   "link": ""
+  },
+  {
+   "claim": "Kenya has the highest AI usage in the world (97.5%).",
+   "fact": "97.5% is GWI's share of ONLINE Kenyan adults using AI tools monthly; only ~35% of Kenyans used the internet in 2024 (ITU). Microsoft estimates 8.9% of Kenya's working-age population used generative AI in Q2 2026.",
+   "link": ""
+  },
+  {
+   "claim": "Only 10.4% of Nigerians use AI (Microsoft).",
+   "fact": "Microsoft gives the identical value (8.7% -> 9.3% -> 10.1% -> 10.4%) to Nigeria and 11 other West African economies in every edition - a shared regional estimate, not a Nigeria measurement. Quote it as 'Microsoft's West Africa estimate'. Firm-level: the World Bank puts AI use among Nigerian formal firms at ~40% (2025).",
+   "link": ""
+  },
+  {
+   "claim": "ChatGPT adoption is four times higher in low-income countries.",
+   "fact": "OpenAI's Sept 2025 'How People Use ChatGPT' study says adoption GROWTH RATES in the lowest-income countries were over 4x those in the highest-income countries by May 2025 - growth from a low base, not a higher level.",
+   "link": ""
+  },
+  {
+   "claim": "India is ChatGPT's second-largest market.",
+   "fact": "True as of February 2026 (Sam Altman: 100M+ weekly users, #2 after the US). On 3 November 2026 OpenAI India MD Prabhjeet Singh told The Economic Times that India is now ChatGPT's largest market by weekly active users, with users doubling since January; no absolute figure was given.",
+   "link": ""
+  },
+  {
+   "claim": "South Korea's most-used AI is Naver's HyperCLOVA X, not ChatGPT.",
+   "fact": "App trackers show the opposite: IGAWorks Mobile Index counted 18.76M ChatGPT app users in Korea in Oct 2026, ~91% of users across tracked AI apps; Wiseapp counted ChatGPT 24.7M, Gemini 9.87M and Claude 4.04M in Sep 2026. Neither tracker lists a HyperCLOVA X / CLOVA X app at comparable scale (Naver's AI is embedded in search, which these trackers do not count as AI-app use).",
+   "link": ""
+  },
+  {
+   "claim": "92% of Indonesians use generative AI.",
+   "fact": "92% is the share of Indonesian KNOWLEDGE WORKERS in Microsoft/LinkedIn's 2024 Work Trend Index. Indonesia's national internet survey (APJII 2026) found 18.2% of respondents had used AI; Microsoft puts Indonesia at 14.8% of the working-age population (Q2 2026).",
+   "link": ""
+  },
+  {
+   "claim": "One in six people worldwide use AI / 16.3% global adoption (Microsoft).",
+   "fact": "16.3% was H2 2025. Microsoft's latest reading is 18.8% of the world's working-age population in June 2026 (Q2 2026 report, 21 Sep 2026).",
+   "link": ""
+  },
+  {
+   "claim": "The US ranks 24th in AI adoption.",
+   "fact": "24th was H2 2025 (28.3%). The US moved to 21st in Q1 2026 (31.3%) and stayed 21st in Q2 2026 at 33.0%.",
+   "link": ""
+  },
+  {
+   "claim": "Israel uses Claude 7x more than expected - the world's highest per-capita Claude use.",
+   "fact": "7.0 was Israel's AUI in Anthropic's Aug 2025 sample. In the Feb 2026 sample Anthropic lists Singapore first, then Israel, Luxembourg, Switzerland, the US and Canada (AUI 4.4), with Australia 7th (4.1). Always date AUI figures.",
+   "link": ""
+  },
+  {
+   "claim": "Most Chinese do not use AI: only 17.5% (Microsoft).",
+   "fact": "Microsoft's measure excludes several widely used Chinese domestic tools and Microsoft says its next edition will raise China most. CNNIC counted 700M+ Chinese generative-AI users (over 50%) in June 2026; QuestMobile counted 546M monthly users of AI-native apps in Sep 2026. Different measures - do not compare directly.",
+   "link": ""
+  },
+  {
+   "claim": "Japan lags: only about a quarter of Japanese have used generative AI.",
+   "fact": "26.7% was the previous MIC survey. Japan's 2026 Information and Communications White Paper (survey Jan-Feb 2026) found 58.8% have used gen AI (US 75.6%, Germany 75.6%, China 93.6%). Microsoft's working-age measure: Japan 24.7% in Q2 2026, up from 16.7% in H1 2025.",
+   "link": ""
+  }
+ ],
+ "definitions": [
+  {
+   "term": "AI user share (Microsoft)",
+   "def": "Microsoft AI user share = share of people aged 15-64 who used a generative AI product during the period, from anonymised Microsoft telemetry adjusted for OS/device share, internet penetration and population (technical paper arXiv 2511.02781)."
+  },
+  {
+   "term": "Global North and Global South",
+   "def": "Microsoft's grouping of economies by income and development; used here only as Microsoft defines it."
+  },
+  {
+   "term": "Regional estimate",
+   "def": "An economy for which Microsoft reports the same value as others in its group in every edition, indicating a modelled rather than measured figure."
+  },
+  {
+   "term": "Monthly active users (MAU)",
+   "def": "People who used an app or service at least once in a month; not comparable with weekly active users or with population shares."
+  },
+  {
+   "term": "Referral share (StatCounter)",
+   "def": "The share of clicks from AI chatbots to websites that StatCounter tracks; it measures links followed, not how many people use each chatbot."
+  }
+ ],
+ "faq": [
+  {
+   "q": "Which country uses AI the most?",
+   "a": "On Microsoft's AI Diffusion data, the United Arab Emirates had the highest share of working-age people using generative AI in Q2 2026, at 73.3%, followed by Singapore at 64.3% and Ireland at 49.9%."
+  },
+  {
+   "q": "What share of the world uses AI?",
+   "a": "About 18.8% of the world's working-age population (15–64) used a generative AI product in Q2 2026, up from 15.1% in H1 2025, according to Microsoft's AI Economy Institute."
+  },
+  {
+   "q": "How does the United States rank for AI use?",
+   "a": "The United States ranked 21th of 147 economies in Microsoft's Q2 2026 data, with 33.0% of working-age people using generative AI, up from 26.3% in H1 2025."
+  },
+  {
+   "q": "Why does China rank so low?",
+   "a": "Microsoft's measure (17.5% for China in Q2 2026) relies on Microsoft-product telemetry and misses most Chinese domestic apps. National data show far higher use: QuestMobile counted 546M monthly users of AI-native apps in China in September 2026."
+  },
+  {
+   "q": "Is the AI divide between rich and poor countries growing?",
+   "a": "Yes, on Microsoft's data: the gap between the Global North and Global South widened from 9.8 to 12.6 percentage points between H1 2025 and Q2 2026, as use grew faster in the North."
+  }
+ ],
+ "methodology_extra": "The core series is Microsoft's AI Diffusion dataset (147 economies, four editions), downloaded from Microsoft's public GitHub repository. National figures come from QuestMobile and CNNIC (China), Mediascope (Russia), Mobile Index and Wiseapp (South Korea), and app-intelligence firms (India); surveys from Eurostat, the OECD, KPMG and the University of Melbourne, Ipsos and Pew. Regional averages, growth rates, ranks of change and the world-user estimate are Report AI calculations (DERIVED). Different measures are shown side by side and never combined into one ranking. ",
+ "related": "<a href=\"/indexes/geography-of-ai/\">The Geography of AI</a> &middot; <a href=\"/indexes/geography-of-ai/sovereign-ai-index-2026/\">Sovereign AI Index 2026</a> &middot; <a href=\"/indexes/geography-of-ai/popular-ai-models-by-country/\">The most popular AI model in every country</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-geography/\">State of AI Geography 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-usage/\">State of AI Usage 2026</a> &middot; <a href=\"/indexes/geography-of-ai/ai-in-india-2026/\">AI in India</a> &middot; <a href=\"/indexes/geography-of-ai/ai-middle-east-2026/\">AI in the Middle East</a> &middot; <a href=\"/indexes/geography-of-ai/ai-in-europe-2026/\">AI in Europe</a> &middot; <a href=\"/indexes/state-of-ai/ai-development-index/\">AI Development Index</a> &middot; <a href=\"/indexes/enterprise-ai/chatgpt-statistics-2026/\">ChatGPT statistics</a> &middot; <a href=\"/glossary/sovereign-ai/\">Sovereign AI</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "Artificial intelligence adoption by country"
+ }
+}
